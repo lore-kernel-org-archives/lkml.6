@@ -1,572 +1,864 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751542AbeBWNTW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:19:22 -0500
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:44029 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbeBWNTT (ORCPT
+        id S1751713AbeBWNUA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:20:00 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39587 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751663AbeBWNT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:19:19 -0500
-X-Google-Smtp-Source: AG47ELusPl7DMcw9FXjgObStSfvwEQQsuctDINK0jjjSadSqo6p2TSrZkjEuT+MH/S8GkIfObc7HoVej9QvC7VqTHnU=
-MIME-Version: 1.0
-In-Reply-To: <20180223131442.GA19039@sophia>
-References: <cover.1513266127.git.vilhelm.gray@gmail.com> <20180101111630.7201e743@archlinux>
- <20180101130427.644b7a9d@archlinux> <CA+M3ks7QfOB4uNKF5FS7mESV-uT8oTziLJwU+XLbOb5Bqc_ynA@mail.gmail.com>
- <CA+M3ks4-dQ0tokrJza_j1fA_coxebnwMVyCjF1-ascE_fhrg8Q@mail.gmail.com> <20180223131442.GA19039@sophia>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Fri, 23 Feb 2018 14:19:16 +0100
-Message-ID: <CA+M3ks7a-L=4dj2gXwJ4i=jiRedSiGttUdfu0WeP2L1a+98nog@mail.gmail.com>
-Subject: Re: [PATCH v4 00/11] Introduce the Counter subsystem
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Feb 2018 08:19:58 -0500
+X-Google-Smtp-Source: AG47ELsBAFIEBqozfmT1QEt4u76NWPy3wdz/X3rDulpJ6B7m/JPvD2bMXZRSeGwWzxcF20k2/RwdTQ==
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Brian Starkey <brian.starkey@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Rob Clark <robdclark@gmail.com>, Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 1/4] drm: Add writeback connector type
+Date: Fri, 23 Feb 2018 08:17:51 -0500
+Message-Id: <20180223131758.18362-2-robdclark@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180223131758.18362-1-robdclark@gmail.com>
+References: <20180223131758.18362-1-robdclark@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1NDJeqe021700
 
-2018-02-23 14:14 GMT+01:00 William Breathitt Gray <vilhelm.gray@gmail.com>:
-> On Fri, Feb 23, 2018 at 01:58:36PM +0100, Benjamin Gaignard wrote:
->>2018-01-15 10:02 GMT+01:00 Benjamin Gaignard <benjamin.gaignard@linaro.org>:
->>> 2018-01-01 14:04 GMT+01:00 Jonathan Cameron <jic23@jic23.retrosnub.co.uk>:
->>>> On Mon, 1 Jan 2018 11:16:30 +0000
->>>> Jonathan Cameron <jic23@kernel.org> wrote:
->>>>
->>>> Sorry to top post but I just want to add some general comments across
->>>> the whole series.
->>>>
->>>> 1) Basics look good to me.  It all fits together well.
->>>> 2) I'm concerned about the two 'simplified interfaces' for a couple of reasons:
->>>> a) They add a lot of code and I'm not convinced the simplifications justify that.
->>>> b) They aren't as generically applicable as we might want. For example, it's
->>>> common for SoC Encoder blocks to operative in both the simple counter mode and
->>>> the quadrature counter mode.  To support that we have (I think) to go back to
->>>> basics and do it ourselves from the generic counter interface.  The TI eQEP
->>>> IP does these modes for example.
->>>>
->>>> So these simplifications serve two purposes (I think)
->>>> 1) To enforce interface.  This is nice (and I did some similar stuff in IIO
->>>>    for the same reason) but there is so much flexibility in the rest of the
->>>>    interface (from a code point of view) that I'm unsure this is significant.
->>>> 2) To save on boiler plate.  I'm not sure we save that much and that it couldn't
->>>>    mostly be achieved by providing some useful utility functions and
->>>>    standard enums / string arrays for the common cases.
->>>>
->>>> We have to justify a couple of thousand lines of core code.  To do that we
->>>> need to be saving a reasonably multiple more than that in driver code.
->>>>
->>>> The full setup for a generic_counter is not so complex that we need this
->>>> stuff.  Your examples make it all pretty clear what is going on and a
->>>> couple of clean well commented drivers to act as a baseline for new
->>>> implementations would get us much of the rest of the way.
->>>>
->>>> So going well, but this aspect needs some more consideration.
->>>>
->>>> I also think we need at least rough outlines of a few more drivers
->>>> in here to convince people that there aren't any problems that this
->>>> is too inflexible to cover.  Hopefully an ST one will be forthcoming.
->>>> If not we can do the exercise off datasheets.
->>>>
->>>
->>> Sorry for the long delay before answering to thread.
->>> I have succesfully implement and test a quadrature encoder driver
->>> on stm32 timer part. Some clean up are need but the basic functions
->>> like setting the two supported modes (quadX2 or quadX4) supported by
->>> my hardware, counting, preset and direction are functional.
->>>
->>> I have used the "simplified interface" so my driver is quite simple with
->>> only few functions to implement (~300 lines of code).
->>> When this series will be upstream we can convert stm32 drivers to use it.
->>>
->>> Thanks a lot for this work.
->>> Benjamin
->>
->>Any news about those patches ?
->>
->>Regards,
->>Benjamin
->
-> Hi Benjamin,
->
-> Sorry for going dark all this time, I'm still incorporating the changes
-> suggested by Jonathan in his review. The biggest change will likely be a
-> reimplementation of the "simple" and "quadrature" API as macros
-> leveraging the "generic" API in order to reduce a lot of redundant code
-> under the hood.
->
-> I think I might be comfortable releasing the next revision of the
-> patchset on March 3 or 4, so keep an eye out for it then. :)
+From: Brian Starkey <brian.starkey@arm.com>
 
-I will, thanks for the update.
+Writeback connectors represent writeback engines which can write the
+CRTC output to a memory framebuffer. Add a writeback connector type and
+related support functions.
 
->
-> William Breathitt Gray
->
->>
->>>
->>>> Jonathan
->>>>
->>>>> On Thu, 14 Dec 2017 15:50:29 -0500
->>>>> William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
->>>>>
->>>>> > Introduction
->>>>> > ============
->>>>> >
->>>>> > Apologies for going silent these past couple months just to return with
->>>>> > a patchset over 3000 lines larger than the last -- I should have been
->>>>> > releasing intermediate versions along the way so shame on me!
->>>>>
->>>>> :) Sometimes it's better to wait until you are moderately happy with it
->>>>> yourself!
->>>>>
->>>>> > The
->>>>> > Counter system has effectively been rewritten anew, so I believe very
->>>>> > little of the code in the previous versions of this patchset remain.
->>>>> > However, the Generic Counter paradigm has pretty much remained the same
->>>>> > so the theory should be familar. Regardless, I realize I'm dropping off
->>>>> > this patchset near the winter holidays so I don't expect a review until
->>>>> > well into January -- I'm just releasing this now before I myself head
->>>>> > off on an end of year sabbatical.
->>>>>
->>>>> It's at least a few hours into January so here goes before life gets
->>>>> properly busy again.
->>>>>
->>>>> >
->>>>> > The most significant difference between this version and the previous,
->>>>> > as well as part of the reason for the implementation code changes, is
->>>>> > the complete separation of the Generic Counter system from IIO. I
->>>>> > decided it was improper to build the Generic Counter system on top of
->>>>> > IIO core: it was leading to ugly code, convulted hacks, and forced
->>>>> > restrictions on the Generic Counter interface in order to appease the
->>>>> > architecture of the IIO system. Most importantly, the IIO core code that
->>>>> > was leveraged by the Generic Counter was so minor (essentially just the
->>>>> > sysfs attribute support) that it did not justify the extensive
->>>>> > hoop-jumping performed to make the code work.
->>>>> >
->>>>> > So this patchset introduces the Generic Counter interface without the
->>>>> > dependence on IIO code. This now gives the Generic Counter system the
->>>>> > freedom to aptly represent counter devices without implementation
->>>>> > compatibility concerns regarding other high-level subsystems.
->>>>> >
->>>>> > This also makes sense ontologically I believe because whereas the IIO
->>>>> > system appears more focused on representing the industrial I/O of a
->>>>> > device and their configuration directly, the Generic Counter system is
->>>>> > more concerned with the abstract representation of that counter device
->>>>> > and the relationships and configurations within which define its
->>>>> > operation at a high-level; a counter driver could in theory separately
->>>>> > support both the high-level Generic Counter representation of the device
->>>>> > as a whole (what are we counting conceptually, how much are we counting,
->>>>> > etc.), as well as the low-level IIO representation of the individual
->>>>> > inputs and outputs on that device (are the signals differential, do
->>>>> > certain signals have current requirements, etc.).
->>>>>
->>>>> I think there are concepts that over time may blur the lines more
->>>>> but agree with the basic point. I'm just planning to nick all your
->>>>> good ideas if they will improve IIO in turn.
->>>>>
->>>>> >
->>>>> > Overview
->>>>> > ========
->>>>> >
->>>>> > This patchset may be divided into three main groups:
->>>>> >
->>>>> >         * Generic Counter
->>>>> >         * Simple Counter
->>>>> >         * Quadrature Counter
->>>>> >
->>>>> > Each group begins with a patch introducing the implementation of the
->>>>> > interface system, followed afterwards by documentation patches. I
->>>>> > recommend reading through the documentation patches first to familiarize
->>>>> > your with the interface itself before jumping into the source code for
->>>>> > the implementation.
->>>>> >
->>>>> > The Simple Counter and Quadrature Counter groups also have example
->>>>> > driver code in the dummy-counter and 104-quad-8 patches respectively.
->>>>> > The Simple Counter and Quadrature Counter systems themselves being
->>>>> > subclasses of the Generic Counter may serve as example driver code for
->>>>> > the Generic Counter interface -- though I may end up adding an explicit
->>>>> > Generic Counter example in a later patch to the dummy-counter for easier
->>>>> > reference.
->>>>> >
->>>>> > Since the Generic Counter system no longer depends on IIO, I moved all
->>>>> > Counter related source code to the drivers/iio/counter/ directory to
->>>>> > keep everything contained together. In addition, with the IIO Kconfig
->>>>> > dependency removed, the COUNTER menu appear now appears at the same
->>>>> > level as the IIO menu:
->>>>> >
->>>>> >         -> Device drivers
->>>>> >           -> Counter Support (COUNTER [=m])
->>>>> >
->>>>> > I'm not sure if I should move driver/iio/counter/ to driver/counter/ in
->>>>> > order to match the Kconfig heirarchy or to keep it where it is to match
->>>>> > the legacy IIO counter location established when we first added the
->>>>> > 104-QUAD-8 driver.
->>>>>
->>>>> I would move it out entirely - otherwise things are just confusing.
->>>>> You 'could' sit it in IIO (as in put it under the top level menu option)
->>>>> if you would prefer but I don't thing that really makes sense.
->>>>>
->>>>> >
->>>>> > Paradigm updates
->>>>> > ================
->>>>> >
->>>>> > The Generic Counter paradigm has essentially remained the same from the
->>>>> > previous patch, but I have made some minor updates. In particular, I've
->>>>> > finally settled on a naming convention for the core components of a
->>>>> > Counter:
->>>>> >
->>>>> >         COUNT
->>>>> >         -----
->>>>> >         A Count represents the count data for a set of Signals. A Count
->>>>> >         has a count function mode (e.g. "increase" or "quadrature x4")
->>>>> >         which represents the update behavior for the count data. A Count
->>>>> >     also has a set of one or more associated Signals.
->>>>> >
->>>>> > This component was called "Value" in the previous patches. I believe
->>>>> > "Count" is a more direct name for this data, and it also matches how
->>>>> > datasheets and people commonly refer to this information in
->>>>> > documentation.
->>>>>
->>>>> Agreed - better name.
->>>>>
->>>>> >
->>>>> >         SIGNAL
->>>>> >         ------
->>>>> >         A Signal represents a counter input data; this is the data that
->>>>> >         is typically analyzed by the counter to determine the count
->>>>> >         data. A Signal may be associated to one or more Counts.
->>>>> >
->>>>> > The naming for this component has not changed since the previous
->>>>> > patches. I believe "Signal" is a fitting enough name for the input
->>>>> > data, as well as matching the common nomenclature for existing counter
->>>>> > devices.
->>>>> >
->>>>> >         SYNAPSE
->>>>> >         -------
->>>>> >         A Synapse represents the association of a Signal with a
->>>>> >         respective Count. Signal data affects respective Count data, and
->>>>> >         the Synapse represents this relationship. The Synapse action
->>>>> >         mode (e.g. "rising edge" or "double pulse") specifies the Signal
->>>>> >         data condition which triggers the respective Count's count
->>>>> >         function evaluation to update the count data. It is possible for
->>>>> >         the Synapse action mode to be "none" if a Signal is associated
->>>>> >         with a Count but does not trigger the count function (e.g. the
->>>>> >         direction signal line for a Pulse-Direction encoding counter).
->>>>> >
->>>>> > This component was called "Trigger" in the previous patches. I do not
->>>>> > believe "Trigger" was a good name for two main reasons: it could easily
->>>>> > be confused for the existing IIO trigger concept, and most importantly
->>>>> > it does not convey the connection association aspect of the
->>>>> > Count-Signal relationship.
->>>>>
->>>>> An alternative here would be to use MAP as a number of similar
->>>>> 'connection' type arrangements in the kernel do. It doesn't really
->>>>> imply the 'how' element though so perhaps a new term is indeed better.
->>>>>
->>>>>
->>>>> >
->>>>> > I settled on the "Synapse" name both due to etymology -- from Greek
->>>>> > _sunapsis_ meaning "conjunction" -- as well as a biological analogy:
->>>>> > just as neurons connect and fire communication over synapses, so does a
->>>>> > Counter Signal connect and fire communication to a Counter Count over a
->>>>> > Counter Synapse.
->>>>> >
->>>>> > Following the same naming convention and analogy, what was previously
->>>>> > called trigger_mode is now known as action_mode, named in reference to
->>>>> > action potential -- the condition in a neuron which triggers a fire
->>>>> > communication over a synapse, just as a Counter Signal condition
->>>>> > specified in the action_mode of a Counter Synapse triggers the count
->>>>> > function evaluation for a Counter Count.
->>>>> >
->>>>> > Counter classes descriptions
->>>>> > ============================
->>>>> >
->>>>> > The Generic Counter interface is the most general interface for
->>>>> > supporting counter devices; if it qualifies as a Counter, then it can be
->>>>> > represented by the Generic Counter interface. Unfortunately, the
->>>>> > flexibility of the interface does result in a more cumbersome
->>>>> > integration for driver authors: much of the components must be manually
->>>>> > configured by the author, which can be a tedious task for large and
->>>>> > complex counter devices.
->>>>> >
->>>>> > To this end, two subclasses of the Generic Counter interface as
->>>>> > introduced in this patchset: the Simple Counter interface, and the
->>>>> > Quadrature Counter interface. Both of these interfaces inherit the
->>>>> > Generic Counter paradigm, and may be seen as extensions to the interface
->>>>> > which restrict the components to a respective specific class of counter
->>>>> > devices in order to provide a more apt interface for such devices.
->>>>> >
->>>>> >         Simple Counter
->>>>> >         --------------
->>>>> >         Simple Counters are devices that count edge pulses on an input
->>>>> >         line (e.g. tally counters).
->>>>> >
->>>>> >         Since the relationship between Signals and Counts is known to be
->>>>> >         one-to-one, a simple_counter_count structure already contains
->>>>> >         the associated Signal member for the respective Count. A driver
->>>>> >         author no longer needs to worry about allocating a separate
->>>>> >         Signal and Synapse, nor about configuring the association
->>>>> >         between the respective Count and Signal; the Simple Counter
->>>>> >         interface abstracts away such details.
->>>>> >
->>>>> >         Furthermore, since the device type is known, component
->>>>> >         properties may be further defined and restricted: Count data is
->>>>> >         a signed integer, Signal data "low" and "high" state is set via
->>>>> >         enumeration constants, and so are count function and action mode
->>>>> >         restricted to well-defined "increase"/"decrease" and
->>>>> >         "none"/"rising edge"/"falling edge"/"both edges" enumeration
->>>>> >         constants respectively.
->>>>>
->>>>> I do wonder a little on whether this is too restrictive to actually
->>>>> represent many devices.
->>>>> >
->>>>> >         Quadrature Counter
->>>>> >         ------------------
->>>>> >         Quadrature Counters are devices that track position based on
->>>>> >         quadrature pair signals (e.g. rotary encoder counters).
->>>>> >
->>>>> >         Since the relationship between Signals and Counts is known to be
->>>>> >         a quadrature pair of Signals to each Count, a quad_counter_count
->>>>> >         structure already contains the associated Signal members for the
->>>>> >         respective Count. A driver author no longer needs to worry about
->>>>> >         allocating separate Signals and Synapses for each quadrature
->>>>> >         pair, nor about configuring the association between the
->>>>> >         respective Count and Signals; the Quadrature Counter interface
->>>>> >         abstracts away such details.
->>>>> >
->>>>> >         Furthermore, since the device type is known, component
->>>>> >         properties may be further defined and restricted: Count data is
->>>>> >         a signed integer, Signal data "low" and "high" state is set via
->>>>> >         enumeration constants, and so is count function mode restricted
->>>>> >         to well-defined enumeration constants to represent modes such as
->>>>> >         "pulse-direction" and "quadrature x4" for example.
->>>>>
->>>>> Pulse direction is definitely not a quadrature counter...  Maybe this needs
->>>>> a rename to dual-signal-counter or similar?
->>>>>
->>>>> Another classic case here would be increment / decrement counters where
->>>>> a signal is used for each operation (counting items between two light gates
->>>>> - used a lot in tracking products in the production industry).
->>>>>
->>>>> >
->>>>> > Note how driver authors no longer need to interact with Synapses
->>>>> > directly when utilizing the Simple Counter and Quadrature Counter
->>>>> > interfaces. This should make it easier too for authors to add support
->>>>> > since they don't need to fully understand the underlying Counter
->>>>> > paradigm in order to take advantage of the interfaces -- just define the
->>>>> > Counts and Signals, and they're ready to go.
->>>>> >
->>>>> > Even more so, the Quadrature Counter interface takes it a step further
->>>>> > and doesn't require action_modes to be explicitly set -- rather they are
->>>>> > implicitly determined internally by the system based on the direction
->>>>> > and function mode. Abstractions like these should make the Counter
->>>>> > interface system as a whole robust enough to handle the diverse classes
->>>>> > of counter devices out in the real world.
->>>>> >
->>>>> > Compilation warnings
->>>>> > ====================
->>>>> >
->>>>> > There are three main compilation warnings which pop for this patchset.
->>>>> > I've inspected these warnings and none are errors, however they do
->>>>> > require some explanation.
->>>>> >
->>>>> >         * 104-quad-8: warning: enumeration value
->>>>> >                 ‘QUAD_COUNTER_FUNCTION_PULSE_DIRECTION’ not handled in
->>>>> >                 switch
->>>>> >
->>>>> > The first warning is rather simple to explain: the
->>>>> > QUAD_COUNTER_FUNCTION_PULSE_DIRECTION state is handled by the parent if
->>>>> > statement's else condition, so an explicit case condition is not
->>>>> > necessary. I can add a default case line to pacify the compiler, but
->>>>> > since it would be empty the effort seems frivolous.
->>>>>
->>>>> Do it anyway and put a comment of /* Should not get here */
->>>>>
->>>>> Suppressing false warnings is useful from a code maintenance point of view.
->>>>>
->>>>> > In some sense as
->>>>> > well, a default case may make the switch logic less clear by implying
->>>>> > the possibility of additional cases which are not possible in the
->>>>> > context of that code path.
->>>>> >
->>>>> >         * simple-counter: warning: assignment discards ‘const’ qualifier
->>>>> >                 from pointer target type
->>>>> >         * quad-counter: warning: assignment discards ‘const’ qualifier
->>>>> >                 from pointer target type
->>>>> >
->>>>> > The second warning comes from the mapping of
->>>>> > simple_counter_device_ext/quad_counter_device_ext,
->>>>> > simple_counter_count_ext/quad_counter_count_ext, and
->>>>> > simple_counter_signal_ext/quad_counter_signal_ext to the internal
->>>>> > Counter counter_device_ext, counter_count_ext, and counter_signal_ext
->>>>> > structures respectively.
->>>>> >
->>>>> > The priv member of the counter_device_ext, counter_count_ext, or
->>>>> > counter_signal_ext is leveraged to pass the respective
->>>>> > simple_counter_device_ext/quad_counter_device_ext,
->>>>> > simple_counter_count_ext/quad_counter_count_ext, or
->>>>> > simple_counter_signal_ext/quad_counter_signal_ext structure to their
->>>>> > respective read/write callback. The priv member is generic on purpose to
->>>>> > allow any desired data to be passed; the supplied read/write callbacks
->>>>> > should know the datatype of the passed-in priv argument so they cast it
->>>>> > appropriately to access their expected data.
->>>>> >
->>>>> > As such, the 'const' qualifier of the structures are thus discarded but
->>>>> > subsequently cast back when the respective registered callback functions
->>>>> > are called. Since this is the intended use case of the priv member -- to
->>>>> > generically pass driver data for later recast -- I don't believe this
->>>>> > warning needs to be rectified.
->>>>>
->>>>> All warnings need to be rectified.  Sorry but this noise will do two things:
->>>>> 1) Get you a patch every few weeks from someone fixing it.
->>>>> 2) Potentially make real warnings harder to see.
->>>>>
->>>>> Sometimes we have to play games to work around them, but such is life.
->>>>>
->>>>> >
->>>>> >         * generic-counter: warning: passing argument 5 of
->>>>> >                 ‘counter_attribute_create’ discards ‘const’ qualifier
->>>>> >                 from pointer target type
->>>>> >         * generic-counter: warning: passing argument 6 of
->>>>> >                 ‘counter_attribute_create’ discards ‘const’ qualifier
->>>>> >                 from pointer target type
->>>>> >
->>>>> > The third warnings comes from a similar situation to the second warning:
->>>>> > a 'const' argument is passed generically via 'void *' for later recast.
->>>>> > In this cast, I decided to create a generic function called
->>>>> > counter_attribute_create in order to simplify the sysfs attribute
->>>>> > registration code in the generic-counter.c file.
->>>>> >
->>>>> > The counter_attribute_create function takes in read and write callbacks,
->>>>> > as well as two optional generic data arguments to be stored as 'void *'
->>>>> > (the component and component_data parameters). Using this setup allows
->>>>> > the counter_attribute_create function to be the sole function necessary
->>>>> > to create a desired Generic Counter sysfs attribute: read and write
->>>>> > callbacks are passed along with relevant Counter component and data
->>>>> > generically, which can be cast back later inside those read and write
->>>>> > functions to match the expected datatype.
->>>>> >
->>>>> > Using a generic counter_attribute_create function reduces duplicate
->>>>> > code, but it does result in many superfluous compilation warnings. I can
->>>>> > define new attribute_create functions specific to each type of sysfs
->>>>> > attribute in order to pacify the warnings, but that seems to be such a
->>>>> > waste to increase the amount of code with duplications that are
->>>>> > unnecessary. What would you recommend; should I attempt to pacify these
->>>>> > warnings or leave them be?
->>>>>
->>>>> You must fix them I'm afraid.
->>>>>
->>>>> >
->>>>> > Known TODO items
->>>>> > ================
->>>>> >
->>>>> > Although I've added the interface documentation files with rst file
->>>>> > extensions, I still need to familiarize myself with Sphinx markup
->>>>> > constructs to take advantage of the language. For example, I've copied
->>>>> > verbatim several structure definitions into the documentation directly,
->>>>> > but I believe this would be better left dynamically generated by using
->>>>> > the relevant markup syntax. I'll try to clean up the documentation then
->>>>> > once I've brushed up on Sphinx.
->>>>> >
->>>>> > As noted in a previous patchset version, the signal_write callback
->>>>> > should be removed from the interface; there are few if any cases where
->>>>> > it makese sense to have a signal_write callback since Signals are
->>>>> > always considered inputs in the context of the Counter paradigm.
->>>>> >
->>>>> > I've retained the signal_write callback in this version since I'm unsure
->>>>> > how to implement the dummy-counter Signal source. Benjamin Gaignard
->>>>> > suggested implementing dummy-counter as a gpio-counter which could use
->>>>> > gpio to provide a software quadratic counter. Is this the path I should
->>>>> > take?
->>>>>
->>>>> It would certainly work well and be simple enough for easy understanding.
->>>>> Also, it might be a useful driver in it's own right.
->>>>>
->>>>> >
->>>>> > Furthermore, the dummy-counter driver defines its own single
->>>>> > platform_device which restricts it to loading only a single instance.
->>>>> > I can fix this to allow multiple instances in the next patchset version
->>>>> > -- as suggested, I'll check out industrialio-sw-device.c for reference.
->>>>> >
->>>>> > Right now the dummy-counter driver only has example code for the Simple
->>>>> > Counter interface. It may be prudent to add example code for the Generic
->>>>> > Counter and Quadrature Counter interfaces too. I think dummy-counter
->>>>> > should serve as the reference driver implementation for all the Counter
->>>>> > interfaces, so that driver authors have an example of how to integrate
->>>>> > the particular interface they desire.
->>>>>
->>>>> Such a driver is useful, but it doesn't add much if you have another,
->>>>> only slightly more complex real driver that also does the job.
->>>>> Perhaps do them all as gpio based drivers for example?
->>>>> >
->>>>> > Finally, I only added very basic support for the Quadrature Counter
->>>>> > interface in the 104-QUAD-8 driver. It's possible to support all
->>>>> > existing IIO Counter sysfs attributes in the 104-QUAD-8 driver via
->>>>> > corresponding quad_counter_device_ext, quad_counter_count_ext, and
->>>>> > quad_counter_signal_ext structures, such that only the
->>>>> > /sys/bus/counter/devices/counterX/ directory needs to be accessed to
->>>>> > interact with the 104-QUAD-8 device. I'll try to add support for those
->>>>> > remaining sysfs attributes in the next patchset version.
->>>>> >
->>>>> > If I missed anything from the last patchset version review just remind
->>>>> > me again and I'll add it to my TODO list. ;)
->>>>>
->>>>> You are seriously optimistic if you think we can remember!
->>>>>
->>>>> Jonathan
->>>>>
->>>>> >
->>>>> > William Breathitt Gray (11):
->>>>> >   iio: Introduce the Generic Counter interface
->>>>> >   counter: Documentation: Add Generic Counter sysfs documentation
->>>>> >   docs: Add Generic Counter interface documentation
->>>>> >   counter: Introduce the Simple Counter interface
->>>>> >   counter: Documentation: Add Simple Counter sysfs documentation
->>>>> >   docs: Add Simple Counter interface documentation
->>>>> >   counter: Add dummy counter driver
->>>>> >   counter: Introduce the Quadrature Counter interface
->>>>> >   counter: Documentation: Add Quadrature Counter sysfs documentation
->>>>> >   docs: Add Quadrature Counter interface documentation
->>>>> >   counter: 104-quad-8: Add Quadrature Counter interface support
->>>>> >
->>>>> >  .../ABI/testing/sysfs-bus-counter-generic-sysfs    |  73 ++
->>>>> >  .../ABI/testing/sysfs-bus-counter-quadrature-sysfs |  76 ++
->>>>> >  .../ABI/testing/sysfs-bus-counter-simple-sysfs     |  61 ++
->>>>> >  Documentation/driver-api/iio/generic-counter.rst   | 434 +++++++++
->>>>> >  Documentation/driver-api/iio/index.rst             |   3 +
->>>>> >  Documentation/driver-api/iio/quad-counter.rst      | 444 +++++++++
->>>>> >  Documentation/driver-api/iio/simple-counter.rst    | 393 ++++++++
->>>>> >  MAINTAINERS                                        |   9 +
->>>>> >  drivers/iio/Kconfig                                |   3 +-
->>>>> >  drivers/iio/counter/104-quad-8.c                   | 257 +++++-
->>>>> >  drivers/iio/counter/Kconfig                        |  35 +-
->>>>> >  drivers/iio/counter/Makefile                       |   6 +
->>>>> >  drivers/iio/counter/dummy-counter.c                | 308 +++++++
->>>>> >  drivers/iio/counter/generic-counter.c              | 992 +++++++++++++++++++++
->>>>> >  drivers/iio/counter/quad-counter.c                 | 774 ++++++++++++++++
->>>>> >  drivers/iio/counter/simple-counter.c               | 734 +++++++++++++++
->>>>> >  include/linux/iio/counter.h                        | 629 +++++++++++++
->>>>> >  17 files changed, 5216 insertions(+), 15 deletions(-)
->>>>> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-generic-sysfs
->>>>> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-quadrature-sysfs
->>>>> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-simple-sysfs
->>>>> >  create mode 100644 Documentation/driver-api/iio/generic-counter.rst
->>>>> >  create mode 100644 Documentation/driver-api/iio/quad-counter.rst
->>>>> >  create mode 100644 Documentation/driver-api/iio/simple-counter.rst
->>>>> >  create mode 100644 drivers/iio/counter/dummy-counter.c
->>>>> >  create mode 100644 drivers/iio/counter/generic-counter.c
->>>>> >  create mode 100644 drivers/iio/counter/quad-counter.c
->>>>> >  create mode 100644 drivers/iio/counter/simple-counter.c
->>>>> >  create mode 100644 include/linux/iio/counter.h
->>>>> >
->>>>>
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
+Drivers should initialize a writeback connector with
+drm_writeback_connector_init() which takes care of setting up all the
+writeback-specific details on top of the normal functionality of
+drm_connector_init().
+
+Writeback connectors have a WRITEBACK_FB_ID property, used to set the
+output framebuffer, and a WRITEBACK_PIXEL_FORMATS blob used to expose the
+supported writeback formats to userspace.
+
+When a framebuffer is attached to a writeback connector with the
+WRITEBACK_FB_ID property, it is used only once (for the commit in which
+it was included), and userspace can never read back the value of
+WRITEBACK_FB_ID. WRITEBACK_FB_ID can only be set if the connector is
+attached to a CRTC.
+
+Changes since v1:
+ - Added drm_writeback.c + documentation
+ - Added helper to initialize writeback connector in one go
+ - Added core checks
+ - Squashed into a single commit
+ - Dropped the client cap
+ - Writeback framebuffers are no longer persistent
+
+Changes since v2:
+ Daniel Vetter:
+ - Subclass drm_connector to drm_writeback_connector
+ - Relax check to allow CRTC to be set without an FB
+ - Add some writeback_ prefixes
+ - Drop PIXEL_FORMATS_SIZE property, as it was unnecessary
+ Gustavo Padovan:
+ - Add drm_writeback_job to handle writeback signalling centrally
+
+Changes since v3:
+ - Rebased
+ - Rename PIXEL_FORMATS -> WRITEBACK_PIXEL_FORMATS
+
+Changes since v4:
+ - Added atomic_commit() vfunc to connector helper funcs, so that
+   writeback jobs are committed from atomic helpers
+
+Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+[rebased and fixed conflicts]
+Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+[rebased and added atomic_commit() vfunc for writeback jobs]
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+---
+ Documentation/gpu/drm-kms.rst            |   9 ++
+ drivers/gpu/drm/Makefile                 |   2 +-
+ drivers/gpu/drm/drm_atomic.c             | 130 ++++++++++++++++
+ drivers/gpu/drm/drm_atomic_helper.c      |  30 ++++
+ drivers/gpu/drm/drm_connector.c          |   4 +-
+ drivers/gpu/drm/drm_writeback.c          | 257 +++++++++++++++++++++++++++++++
+ include/drm/drm_atomic.h                 |   3 +
+ include/drm/drm_connector.h              |  13 ++
+ include/drm/drm_mode_config.h            |  14 ++
+ include/drm/drm_modeset_helper_vtables.h |  11 ++
+ include/drm/drm_writeback.h              |  89 +++++++++++
+ include/uapi/drm/drm_mode.h              |   1 +
+ 12 files changed, 561 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_writeback.c
+ create mode 100644 include/drm/drm_writeback.h
+
+diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+index 2dcf5b42015d..e7590dd2f71e 100644
+--- a/Documentation/gpu/drm-kms.rst
++++ b/Documentation/gpu/drm-kms.rst
+@@ -370,6 +370,15 @@ Connector Functions Reference
+ .. kernel-doc:: drivers/gpu/drm/drm_connector.c
+    :export:
+ 
++Writeback Connectors
++--------------------
++
++.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
++  :doc: overview
++
++.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
++  :export:
++
+ Encoder Abstraction
+ ===================
+ 
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 50093ff4479b..3d708959b224 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -18,7 +18,7 @@ drm-y       :=	drm_auth.o drm_bufs.o drm_cache.o \
+ 		drm_encoder.o drm_mode_object.o drm_property.o \
+ 		drm_plane.o drm_color_mgmt.o drm_print.o \
+ 		drm_dumb_buffers.o drm_mode_config.o drm_vblank.o \
+-		drm_syncobj.o drm_lease.o
++		drm_syncobj.o drm_lease.o drm_writeback.o
+ 
+ drm-$(CONFIG_DRM_LIB_RANDOM) += lib/drm_random.o
+ drm-$(CONFIG_DRM_VM) += drm_vm.o
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 46733d534587..019f131fe8be 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -30,6 +30,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_mode.h>
+ #include <drm/drm_print.h>
++#include <drm/drm_writeback.h>
+ #include <linux/sync_file.h>
+ 
+ #include "drm_crtc_internal.h"
+@@ -638,6 +639,46 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
+ 		crtc->funcs->atomic_print_state(p, state);
+ }
+ 
++/**
++ * drm_atomic_connector_check - check connector state
++ * @connector: connector to check
++ * @state: connector state to check
++ *
++ * Provides core sanity checks for connector state.
++ *
++ * RETURNS:
++ * Zero on success, error code on failure
++ */
++static int drm_atomic_connector_check(struct drm_connector *connector,
++		struct drm_connector_state *state)
++{
++	struct drm_crtc_state *crtc_state;
++	struct drm_writeback_job *writeback_job = state->writeback_job;
++
++	if ((connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK) ||
++	    !writeback_job)
++		return 0;
++
++	if (writeback_job->fb && !state->crtc) {
++		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] framebuffer without CRTC\n",
++				 connector->base.id, connector->name);
++		return -EINVAL;
++	}
++
++	if (state->crtc)
++		crtc_state = drm_atomic_get_existing_crtc_state(state->state,
++								state->crtc);
++
++	if (writeback_job->fb && !crtc_state->active) {
++		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] has framebuffer, but [CRTC:%d] is off\n",
++				 connector->base.id, connector->name,
++				 state->crtc->base.id);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ /**
+  * drm_atomic_get_plane_state - get plane state
+  * @state: global atomic state object
+@@ -1230,6 +1271,12 @@ static int drm_atomic_connector_set_property(struct drm_connector *connector,
+ 			return -EINVAL;
+ 		}
+ 		state->content_protection = val;
++	} else if (property == config->writeback_fb_id_property) {
++		struct drm_framebuffer *fb = drm_framebuffer_lookup(dev, NULL, val);
++		int ret = drm_atomic_set_writeback_fb_for_connector(state, fb);
++		if (fb)
++			drm_framebuffer_unreference(fb);
++		return ret;
+ 	} else if (connector->funcs->atomic_set_property) {
+ 		return connector->funcs->atomic_set_property(connector,
+ 				state, property, val);
+@@ -1311,6 +1358,9 @@ drm_atomic_connector_get_property(struct drm_connector *connector,
+ 		*val = state->scaling_mode;
+ 	} else if (property == connector->content_protection_property) {
+ 		*val = state->content_protection;
++	} else if (property == config->writeback_fb_id_property) {
++		/* Writeback framebuffer is one-shot, write and forget */
++		*val = 0;
+ 	} else if (connector->funcs->atomic_get_property) {
+ 		return connector->funcs->atomic_get_property(connector,
+ 				state, property, val);
+@@ -1518,6 +1568,75 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ }
+ EXPORT_SYMBOL(drm_atomic_set_crtc_for_connector);
+ 
++/*
++ * drm_atomic_get_writeback_job - return or allocate a writeback job
++ * @conn_state: Connector state to get the job for
++ *
++ * Writeback jobs have a different lifetime to the atomic state they are
++ * associated with. This convenience function takes care of allocating a job
++ * if there isn't yet one associated with the connector state, otherwise
++ * it just returns the existing job.
++ *
++ * Returns: The writeback job for the given connector state
++ */
++static struct drm_writeback_job *
++drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
++{
++	WARN_ON(conn_state->connector->connector_type !=
++		DRM_MODE_CONNECTOR_WRITEBACK);
++
++	if (!conn_state->writeback_job)
++		conn_state->writeback_job =
++			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
++
++	return conn_state->writeback_job;
++}
++
++/**
++ * drm_atomic_set_writeback_fb_for_connector - set writeback framebuffer
++ * @conn_state: atomic state object for the connector
++ * @fb: fb to use for the connector
++ *
++ * This is used to set the framebuffer for a writeback connector, which outputs
++ * to a buffer instead of an actual physical connector.
++ * Changing the assigned framebuffer requires us to grab a reference to the new
++ * fb and drop the reference to the old fb, if there is one. This function
++ * takes care of all these details besides updating the pointer in the
++ * state object itself.
++ *
++ * Note: The only way conn_state can already have an fb set is if the commit
++ * sets the property more than once.
++ *
++ * See also: drm_writeback_connector_init()
++ *
++ * Returns: 0 on success
++ */
++int drm_atomic_set_writeback_fb_for_connector(
++		struct drm_connector_state *conn_state,
++		struct drm_framebuffer *fb)
++{
++	struct drm_writeback_job *job =
++		drm_atomic_get_writeback_job(conn_state);
++	if (!job)
++		return -ENOMEM;
++
++	if (job->fb)
++		drm_framebuffer_unreference(job->fb);
++	if (fb)
++		drm_framebuffer_reference(fb);
++	job->fb = fb;
++
++	if (fb)
++		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
++				 fb->base.id, conn_state);
++	else
++		DRM_DEBUG_ATOMIC("Set [NOFB] for connector state %p\n",
++				 conn_state);
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_atomic_set_writeback_fb_for_connector);
++
+ /**
+  * drm_atomic_add_affected_connectors - add connectors for crtc
+  * @state: atomic state
+@@ -1636,6 +1755,8 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+ 	struct drm_plane_state *plane_state;
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *crtc_state;
++	struct drm_connector *conn;
++	struct drm_connector_state *conn_state;
+ 	int i, ret = 0;
+ 
+ 	DRM_DEBUG_ATOMIC("checking %p\n", state);
+@@ -1658,6 +1779,15 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+ 		}
+ 	}
+ 
++	for_each_new_connector_in_state(state, conn, conn_state, i) {
++		ret = drm_atomic_connector_check(conn, conn_state);
++		if (ret) {
++			DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] atomic core check failed\n",
++					 conn->base.id, conn->name);
++			return ret;
++		}
++	}
++
+ 	if (config->funcs->atomic_check)
+ 		ret = config->funcs->atomic_check(state->dev, state);
+ 
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index ae3cbfe9e01c..12b910755d84 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -30,6 +30,7 @@
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_writeback.h>
+ #include <linux/dma-fence.h>
+ 
+ #include "drm_crtc_helper_internal.h"
+@@ -1159,6 +1160,27 @@ void drm_atomic_helper_commit_modeset_disables(struct drm_device *dev,
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_disables);
+ 
++static void commit_writebacks(struct drm_device *dev, struct drm_atomic_state *old_state)
++{
++	struct drm_connector *connector;
++	struct drm_connector_state *new_conn_state;
++	int i;
++
++	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
++		const struct drm_connector_helper_funcs *funcs;
++
++		funcs = connector->helper_private;
++
++		if (new_conn_state->writeback_job &&
++		    new_conn_state->writeback_job->fb) {
++			WARN_ON(connector->connector_type !=
++				DRM_MODE_CONNECTOR_WRITEBACK);
++			funcs->atomic_commit(connector,
++					     new_conn_state->writeback_job);
++		}
++	}
++}
++
+ /**
+  * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
+  * @dev: DRM device
+@@ -1238,6 +1260,8 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+ 
+ 		drm_bridge_enable(encoder->bridge);
+ 	}
++
++	commit_writebacks(dev, old_state);
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_enables);
+ 
+@@ -3627,6 +3651,9 @@ __drm_atomic_helper_connector_duplicate_state(struct drm_connector *connector,
+ 	if (state->crtc)
+ 		drm_connector_get(connector);
+ 	state->commit = NULL;
++
++	/* Don't copy over a writeback job, they are used only once */
++	state->writeback_job = NULL;
+ }
+ EXPORT_SYMBOL(__drm_atomic_helper_connector_duplicate_state);
+ 
+@@ -3756,6 +3783,9 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
+ 
+ 	if (state->commit)
+ 		drm_crtc_commit_put(state->commit);
++
++	if (state->writeback_job)
++		drm_writeback_cleanup_job(state->writeback_job);
+ }
+ EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
+ 
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index 16b9c3810af2..add47f06ae70 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -87,6 +87,7 @@ static struct drm_conn_prop_enum_list drm_connector_enum_list[] = {
+ 	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual" },
+ 	{ DRM_MODE_CONNECTOR_DSI, "DSI" },
+ 	{ DRM_MODE_CONNECTOR_DPI, "DPI" },
++	{ DRM_MODE_CONNECTOR_WRITEBACK, "Writeback" },
+ };
+ 
+ void drm_connector_ida_init(void)
+@@ -249,7 +250,8 @@ int drm_connector_init(struct drm_device *dev,
+ 	config->num_connector++;
+ 	spin_unlock_irq(&config->connector_list_lock);
+ 
+-	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL)
++	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL &&
++	    connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+ 		drm_object_attach_property(&connector->base,
+ 					      config->edid_property,
+ 					      0);
+diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+new file mode 100644
+index 000000000000..da61f929cbc3
+--- /dev/null
++++ b/drivers/gpu/drm/drm_writeback.c
+@@ -0,0 +1,257 @@
++/*
++ * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
++ * Author: Brian Starkey <brian.starkey@arm.com>
++ *
++ * This program is free software and is provided to you under the terms of the
++ * GNU General Public License version 2 as published by the Free Software
++ * Foundation, and any use by you of this program is subject to the terms
++ * of such GNU licence.
++ */
++
++#include <drm/drm_crtc.h>
++#include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_property.h>
++#include <drm/drm_writeback.h>
++#include <drm/drmP.h>
++
++/**
++ * DOC: overview
++ *
++ * Writeback connectors are used to expose hardware which can write the output
++ * from a CRTC to a memory buffer. They are used and act similarly to other
++ * types of connectors, with some important differences:
++ *  - Writeback connectors don't provide a way to output visually to the user.
++ *  - Writeback connectors should always report as "disconnected" (so that
++ *    clients which don't understand them will ignore them).
++ *  - Writeback connectors don't have EDID.
++ *
++ * A framebuffer may only be attached to a writeback connector when the
++ * connector is attached to a CRTC. The WRITEBACK_FB_ID property which sets the
++ * framebuffer applies only to a single commit (see below). A framebuffer may
++ * not be attached while the CRTC is off.
++ *
++ * Writeback connectors have some additional properties, which userspace
++ * can use to query and control them:
++ *
++ *  "WRITEBACK_FB_ID":
++ *	Write-only object property storing a DRM_MODE_OBJECT_FB: it stores the
++ *	framebuffer to be written by the writeback connector. This property is
++ *	similar to the FB_ID property on planes, but will always read as zero
++ *	and is not preserved across commits.
++ *	Userspace must set this property to an output buffer every time it
++ *	wishes the buffer to get filled.
++ *
++ *  "WRITEBACK_PIXEL_FORMATS":
++ *	Immutable blob property to store the supported pixel formats table. The
++ *	data is an array of u32 DRM_FORMAT_* fourcc values.
++ *	Userspace can use this blob to find out what pixel formats are supported
++ *	by the connector's writeback engine.
++ */
++
++static bool create_writeback_properties(struct drm_device *dev)
++{
++	struct drm_property *prop;
++
++	if (!dev->mode_config.writeback_fb_id_property) {
++		prop = drm_property_create_object(dev, DRM_MODE_PROP_ATOMIC,
++						  "WRITEBACK_FB_ID",
++						  DRM_MODE_OBJECT_FB);
++		if (!prop)
++			return false;
++		dev->mode_config.writeback_fb_id_property = prop;
++	}
++
++	if (!dev->mode_config.writeback_pixel_formats_property) {
++		prop = drm_property_create(dev, DRM_MODE_PROP_BLOB | DRM_MODE_PROP_IMMUTABLE,
++					   "WRITEBACK_PIXEL_FORMATS", 0);
++		if (!prop)
++			return false;
++		dev->mode_config.writeback_pixel_formats_property = prop;
++	}
++
++	return true;
++}
++
++static const struct drm_encoder_funcs drm_writeback_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
++/**
++ * drm_writeback_connector_init - Initialize a writeback connector and its properties
++ * @dev: DRM device
++ * @wb_connector: Writeback connector to initialize
++ * @con_funcs: Connector funcs vtable
++ * @enc_helper_funcs: Encoder helper funcs vtable to be used by the internal encoder
++ * @formats: Array of supported pixel formats for the writeback engine
++ * @n_formats: Length of the formats array
++ *
++ * This function creates the writeback-connector-specific properties if they
++ * have not been already created, initializes the connector as
++ * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
++ * values. It will also create an internal encoder associated with the
++ * drm_writeback_connector and set it to use the @enc_helper_funcs vtable for
++ * the encoder helper.
++ *
++ * Drivers should always use this function instead of drm_connector_init() to
++ * set up writeback connectors.
++ *
++ * Returns: 0 on success, or a negative error code
++ */
++int drm_writeback_connector_init(struct drm_device *dev,
++				 struct drm_writeback_connector *wb_connector,
++				 const struct drm_connector_funcs *con_funcs,
++				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
++				 const u32 *formats, int n_formats)
++{
++	int ret;
++	struct drm_property_blob *blob;
++	struct drm_connector *connector = &wb_connector->base;
++	struct drm_mode_config *config = &dev->mode_config;
++
++	if (!create_writeback_properties(dev))
++		return -EINVAL;
++
++	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
++					formats);
++	if (IS_ERR(blob))
++		return PTR_ERR(blob);
++
++	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
++	ret = drm_encoder_init(dev, &wb_connector->encoder,
++			       &drm_writeback_encoder_funcs,
++			       DRM_MODE_ENCODER_VIRTUAL, NULL);
++	if (ret)
++		goto fail;
++
++	connector->interlace_allowed = 0;
++
++	ret = drm_connector_init(dev, connector, con_funcs,
++				 DRM_MODE_CONNECTOR_WRITEBACK);
++	if (ret)
++		goto connector_fail;
++
++	ret = drm_mode_connector_attach_encoder(connector,
++						&wb_connector->encoder);
++	if (ret)
++		goto attach_fail;
++
++	INIT_LIST_HEAD(&wb_connector->job_queue);
++	spin_lock_init(&wb_connector->job_lock);
++
++	drm_object_attach_property(&connector->base,
++				   config->writeback_fb_id_property, 0);
++
++	drm_object_attach_property(&connector->base,
++				   config->writeback_pixel_formats_property,
++				   blob->base.id);
++	wb_connector->pixel_formats_blob_ptr = blob;
++
++	return 0;
++
++attach_fail:
++	drm_connector_cleanup(connector);
++connector_fail:
++	drm_encoder_cleanup(&wb_connector->encoder);
++fail:
++	drm_property_unreference_blob(blob);
++	return ret;
++}
++EXPORT_SYMBOL(drm_writeback_connector_init);
++
++/**
++ * drm_writeback_queue_job - Queue a writeback job for later signalling
++ * @wb_connector: The writeback connector to queue a job on
++ * @job: The job to queue
++ *
++ * This function adds a job to the job_queue for a writeback connector. It
++ * should be considered to take ownership of the writeback job, and so any other
++ * references to the job must be cleared after calling this function.
++ *
++ * Drivers must ensure that for a given writeback connector, jobs are queued in
++ * exactly the same order as they will be completed by the hardware (and
++ * signaled via drm_writeback_signal_completion).
++ *
++ * For every call to drm_writeback_queue_job() there must be exactly one call to
++ * drm_writeback_signal_completion()
++ *
++ * See also: drm_writeback_signal_completion()
++ */
++void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
++			     struct drm_writeback_job *job)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&wb_connector->job_lock, flags);
++	list_add_tail(&job->list_entry, &wb_connector->job_queue);
++	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
++}
++EXPORT_SYMBOL(drm_writeback_queue_job);
++
++/**
++ * drm_writeback_cleanup_job - Cleanup and free a writeback job
++ * @job: The writeback job to free
++ *
++ * Drops any references held by the writeback job, and frees the structure.
++ */
++void drm_writeback_cleanup_job(struct drm_writeback_job *job)
++{
++	if (!job)
++		return;
++
++	if (job->fb)
++		drm_framebuffer_unreference(job->fb);
++	kfree(job);
++}
++EXPORT_SYMBOL(drm_writeback_cleanup_job);
++
++/*
++ * @cleanup_work: deferred cleanup of a writeback job
++ *
++ * The job cannot be cleaned up directly in drm_writeback_signal_completion,
++ * because it may be called in interrupt context. Dropping the framebuffer
++ * reference can sleep, and so the cleanup is deferred to a workqueue.
++ */
++static void cleanup_work(struct work_struct *work)
++{
++	struct drm_writeback_job *job = container_of(work,
++						     struct drm_writeback_job,
++						     cleanup_work);
++	drm_writeback_cleanup_job(job);
++}
++
++/**
++ * drm_writeback_signal_completion - Signal the completion of a writeback job
++ * @wb_connector: The writeback connector whose job is complete
++ *
++ * Drivers should call this to signal the completion of a previously queued
++ * writeback job. It should be called as soon as possible after the hardware
++ * has finished writing, and may be called from interrupt context.
++ * It is the driver's responsibility to ensure that for a given connector, the
++ * hardware completes writeback jobs in the same order as they are queued.
++ *
++ * Unless the driver is holding its own reference to the framebuffer, it must
++ * not be accessed after calling this function.
++ *
++ * See also: drm_writeback_queue_job()
++ */
++void
++drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector)
++{
++	unsigned long flags;
++	struct drm_writeback_job *job;
++
++	spin_lock_irqsave(&wb_connector->job_lock, flags);
++	job = list_first_entry_or_null(&wb_connector->job_queue,
++				       struct drm_writeback_job,
++				       list_entry);
++	if (job)
++		list_del(&job->list_entry);
++	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
++
++	if (WARN_ON(!job))
++		return;
++
++	INIT_WORK(&job->cleanup_work, cleanup_work);
++	queue_work(system_long_wq, &job->cleanup_work);
++}
++EXPORT_SYMBOL(drm_writeback_signal_completion);
+diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+index cf13842a6dbd..d7b0263cc5cf 100644
+--- a/include/drm/drm_atomic.h
++++ b/include/drm/drm_atomic.h
+@@ -594,6 +594,9 @@ void drm_atomic_set_fence_for_plane(struct drm_plane_state *plane_state,
+ int __must_check
+ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ 				  struct drm_crtc *crtc);
++int drm_atomic_set_writeback_fb_for_connector(
++		struct drm_connector_state *conn_state,
++		struct drm_framebuffer *fb);
+ int __must_check
+ drm_atomic_add_affected_connectors(struct drm_atomic_state *state,
+ 				   struct drm_crtc *crtc);
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 758a176e7b57..8701ebcc68b3 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -425,6 +425,19 @@ struct drm_connector_state {
+ 	 * protection. This is most commonly used for HDCP.
+ 	 */
+ 	unsigned int content_protection;
++
++	/**
++	 * @writeback_job: Writeback job for writeback connectors
++	 *
++	 * Holds the framebuffer for a writeback connector. As the writeback
++	 * completion may be asynchronous to the normal commit cycle, the
++	 * writeback job lifetime is managed separately from the normal atomic
++	 * state by this object.
++	 *
++	 * See also: drm_writeback_queue_job() and
++	 * drm_writeback_signal_completion()
++	 */
++	struct drm_writeback_job *writeback_job;
+ };
+ 
+ /**
+diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
+index 7569f22ffef6..c012e1148ec0 100644
+--- a/include/drm/drm_mode_config.h
++++ b/include/drm/drm_mode_config.h
+@@ -779,6 +779,20 @@ struct drm_mode_config {
+ 	 */
+ 	struct drm_property *panel_orientation_property;
+ 
++	/**
++	 * @writeback_fb_id_property: Property for writeback connectors, storing
++	 * the ID of the output framebuffer.
++	 * See also: drm_writeback_connector_init()
++	 */
++	struct drm_property *writeback_fb_id_property;
++	/**
++	 * @writeback_pixel_formats_property: Property for writeback connectors,
++	 * storing an array of the supported pixel formats for the writeback
++	 * engine (read-only).
++	 * See also: drm_writeback_connector_init()
++	 */
++	struct drm_property *writeback_pixel_formats_property;
++
+ 	/* dumb ioctl parameters */
+ 	uint32_t preferred_depth, prefer_shadow;
+ 
+diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+index 3e76ca805b0f..97d3a810bc85 100644
+--- a/include/drm/drm_modeset_helper_vtables.h
++++ b/include/drm/drm_modeset_helper_vtables.h
+@@ -974,6 +974,17 @@ struct drm_connector_helper_funcs {
+ 	 */
+ 	int (*atomic_check)(struct drm_connector *connector,
+ 			    struct drm_connector_state *state);
++
++	/**
++	 * @atomic_commit:
++	 *
++	 * For write-back connectors, this is the point to commit the write-
++	 * back job to hw.
++	 *
++	 * This callback is used by the atomic modeset helpers.
++	 */
++	void (*atomic_commit)(struct drm_connector *connector,
++			      struct drm_writeback_job *writeback_job);
+ };
+ 
+ /**
+diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+new file mode 100644
+index 000000000000..0bb95fd4907d
+--- /dev/null
++++ b/include/drm/drm_writeback.h
+@@ -0,0 +1,89 @@
++/*
++ * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
++ * Author: Brian Starkey <brian.starkey@arm.com>
++ *
++ * This program is free software and is provided to you under the terms of the
++ * GNU General Public License version 2 as published by the Free Software
++ * Foundation, and any use by you of this program is subject to the terms
++ * of such GNU licence.
++ */
++
++#ifndef __DRM_WRITEBACK_H__
++#define __DRM_WRITEBACK_H__
++#include <drm/drm_connector.h>
++#include <drm/drm_encoder.h>
++#include <linux/workqueue.h>
++
++struct drm_writeback_connector {
++	struct drm_connector base;
++
++	/**
++	 * @encoder: Internal encoder used by the connector to fulfill
++	 * the DRM framework requirements. The users of the
++	 * @drm_writeback_connector control the behaviour of the @encoder
++	 * by passing the @enc_funcs parameter to drm_writeback_connector_init()
++	 * function.
++	 */
++	struct drm_encoder encoder;
++
++	/**
++	 * @pixel_formats_blob_ptr:
++	 *
++	 * DRM blob property data for the pixel formats list on writeback
++	 * connectors
++	 * See also drm_writeback_connector_init()
++	 */
++	struct drm_property_blob *pixel_formats_blob_ptr;
++
++	/** @job_lock: Protects job_queue */
++	spinlock_t job_lock;
++
++	/**
++	 * @job_queue:
++	 *
++	 * Holds a list of a connector's writeback jobs; the last item is the
++	 * most recent. The first item may be either waiting for the hardware
++	 * to begin writing, or currently being written.
++	 *
++	 * See also: drm_writeback_queue_job() and
++	 * drm_writeback_signal_completion()
++	 */
++	struct list_head job_queue;
++};
++#define to_wb_connector(x) container_of(x, struct drm_writeback_connector, base)
++
++struct drm_writeback_job {
++	/**
++	 * @cleanup_work:
++	 *
++	 * Used to allow drm_writeback_signal_completion to defer dropping the
++	 * framebuffer reference to a workqueue.
++	 */
++	struct work_struct cleanup_work;
++	/**
++	 * @list_entry:
++	 *
++	 * List item for the connector's @job_queue
++	 */
++	struct list_head list_entry;
++	/**
++	 * @fb:
++	 *
++	 * Framebuffer to be written to by the writeback connector. Do not set
++	 * directly, use drm_atomic_set_writeback_fb_for_connector()
++	 */
++	struct drm_framebuffer *fb;
++};
++
++int drm_writeback_connector_init(struct drm_device *dev,
++				 struct drm_writeback_connector *wb_connector,
++				 const struct drm_connector_funcs *con_funcs,
++				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
++				 const u32 *formats, int n_formats);
++
++void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
++			     struct drm_writeback_job *job);
++
++void drm_writeback_cleanup_job(struct drm_writeback_job *job);
++void drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector);
++#endif
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index 2c575794fb52..7b47e184e95e 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -338,6 +338,7 @@ enum drm_mode_subconnector {
+ #define DRM_MODE_CONNECTOR_VIRTUAL      15
+ #define DRM_MODE_CONNECTOR_DSI		16
+ #define DRM_MODE_CONNECTOR_DPI		17
++#define DRM_MODE_CONNECTOR_WRITEBACK	18
+ 
+ struct drm_mode_get_connector {
+ 
+-- 
+2.14.3
