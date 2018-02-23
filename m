@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224h/XYdVKsa5YUhuP5I14ba4RYmAYRpCq2SRoJ5m9yA9BnVo9ds5TasxeLhPl2e2pRP5mTQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519411334; cv=none;
+X-Google-Smtp-Source: AG47ELvYbmeBBXOTrIY6Ow8xSbcdRQDVJ69GJaX9T5KwzxEoUYdZpQDdAQyHDgMaCghow4v+jQ9V
+ARC-Seal: i=1; a=rsa-sha256; t=1519411331; cv=none;
         d=google.com; s=arc-20160816;
-        b=B78gY3fC4Otq1sZqE2MDwSZVf42HIu12S6FA7UObz4uw9lmJZWj143HpOqx9rCZyTw
-         Lvi4NdjP6UEul+x+mjvF8ShutgA9/YLMVvOoxVma+9ok9guQcakjPsoiUwi3krrh9IU/
-         TVSJn1Cc/hnfwSk7xIxW8uJGZwHTsWlz1pFcci8LBhgD3XBMzzX90sVgLEDLe9Ifr7Jv
-         KeNJBuskClxaekIz9XsbC69+LTLVQlB5PZ/SMMR1J/Ds5DWlAcuh8C+nwx+MaIDCfrH7
-         bZZqsHlafXJ8H2pPkNrDvZd4h6OjSN+AOuWx0UziISXL1uaEmbBsjbM5xBW/gSpMhrcD
-         TY7A==
+        b=MXmJ16B5Vcd5QTcZgZOVxcipQv4NK0E/aOWPB9Z4kYxGaUce+m58aftzaru8jx3pIp
+         PB2w2IkH8QQzJUyDVh7AM/OC7EDTifqc88y8JpI++Xi3Gq8/bsGKc+QcbFIh7gyD3CFF
+         fGTm9WTz6m3glacivYWiU8AduQuUTaUGqwHleU3olSD6VRs5cRqGu1fX+watQ7jhpIx+
+         +ghBqCENiGKOUj2yoQRaDeM9cxYfZZLXI5r5S1W8R25HgrSlyj6WrTitJ6l0tpjdi/uT
+         /xWhB1BjAiRYVO8x2DIdVAeug+L7s5pLQTqOFa+WestKvoziL6tP0x3STjG7M6TGu4eQ
+         fttw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yqDuDNM7pH09jrq1E8L78Eo1sPDw8Z834TxPhvi7Srw=;
-        b=c2QR0gVx15Z1XYyzax87ogIHKpdTp3r+RXR4rbOCf7/5ddDTD2Iws6ofxQUlfDo7x2
-         fTVO1tsn+CUFLXDvOvLZMQO3CearlyAw4de8sVecMRsK/BD+MOhp8rZYOvx9KyjA/35o
-         cR8+XoAnzf5Ov53LGGMlzJmSjazqIiH0+XduoMrJxLmtHFlREn2QnYcnR170oPiPBTay
-         dRIVksXQePiQgrMLcu5wCJPmC51jTFQRf2SDELZTya0uRdJUXkfp0AuvqCr/a2rUYktc
-         YaBaQwQPe0ZIPzfxbX67vo1HvWZ9u4R32yxORvKZPl90wePPIE4iWJ1Zu3cyG9BBleTL
-         YyWw==
+        bh=l5tmCNOCL5ZPF8FZIxxcFUCMUVdA31MRxUkmbTMW7eo=;
+        b=bpTzKLisreN36uiU+3/Y2nQbj/J6mh5VRht2UBwLwIuQWs5WHnCHgFNEYmw0MOfoFE
+         M6dxwv3jmE7OC7vRAgyNR4/CRR+dzv05s/0Dx6X30qW3A2H2jslESZZ3oF1o7+JXXd06
+         b7jpHaPFmeJurQGOv+pg9dtPt94e3ZvB4KsOp+MH7dVzACPbAhD4xBzJDufuJp80qwOd
+         +maF4tO6l90ZZlSfMgATEjf7y9IxRvXVLPeMqD+vgU1jCkKbLLh2vmp4Zd4c7gYpnh/K
+         srniIZyaZYurdhoW5InzDd0kL6bzQOP196brad07MRsunRQN3vsM57x+Kk5wg0qYg5jY
+         PTKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Dakinevich <jan.dakinevich@gmail.com>,
-	Ladi Prosek <lprosek@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 192/193] KVM: nVMX: invvpid handling improvements
-Date: Fri, 23 Feb 2018 19:27:05 +0100
-Message-Id: <20180223170356.519362179@linuxfoundation.org>
+	Kamil Konieczny <k.konieczny@partner.samsung.com>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 193/193] crypto: s5p-sss - Fix kernel Oops in AES-ECB mode
+Date: Fri, 23 Feb 2018 19:27:06 +0100
+Message-Id: <20180223170356.654413380@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218259279654464?=
-X-GMAIL-MSGID: =?utf-8?q?1593218259279654464?=
+X-GMAIL-THRID: =?utf-8?q?1593217639655479509?=
+X-GMAIL-MSGID: =?utf-8?q?1593218256752603659?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,94 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Dakinevich <jan.dakinevich@gmail.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-commit bcdde302b8268ef7dbc4ddbdaffb5b44eafe9a1e upstream
+commit c927b080c67e3e97193c81fc1d27f4251bf4e036 upstream.
 
- - Expose all invalidation types to the L1
+In AES-ECB mode crypt is done with key only, so any use of IV
+can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
 
- - Reject invvpid instruction, if L1 passed zero vpid value to single
-   context invalidations
-
-Signed-off-by: Jan Dakinevich <jan.dakinevich@gmail.com>
-Tested-by: Ladi Prosek <lprosek@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-[jwang: port to 4.4]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Reported-by: Anand Moon <linux.amoon@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kvm/vmx.c |   36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -126,6 +126,12 @@ module_param_named(pml, enable_pml, bool
+---
+ drivers/crypto/s5p-sss.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -401,16 +401,21 @@ static void s5p_aes_crypt_start(struct s
+ 	uint32_t                    aes_control;
+ 	int                         err;
+ 	unsigned long               flags;
++	u8 *iv;
  
- #define VMX_MISC_EMULATED_PREEMPTION_TIMER_RATE 5
+ 	aes_control = SSS_AES_KEY_CHANGE_MODE;
+ 	if (mode & FLAGS_AES_DECRYPT)
+ 		aes_control |= SSS_AES_MODE_DECRYPT;
  
-+#define VMX_VPID_EXTENT_SUPPORTED_MASK		\
-+	(VMX_VPID_EXTENT_INDIVIDUAL_ADDR_BIT |	\
-+	VMX_VPID_EXTENT_SINGLE_CONTEXT_BIT |	\
-+	VMX_VPID_EXTENT_GLOBAL_CONTEXT_BIT |	\
-+	VMX_VPID_EXTENT_SINGLE_NON_GLOBAL_BIT)
-+
- /*
-  * These 2 parameters are used to config the controls for Pause-Loop Exiting:
-  * ple_gap:    upper bound on the amount of time between two successive
-@@ -2657,8 +2663,7 @@ static void nested_vmx_setup_ctls_msrs(s
- 	 */
- 	if (enable_vpid)
- 		vmx->nested.nested_vmx_vpid_caps = VMX_VPID_INVVPID_BIT |
--				VMX_VPID_EXTENT_SINGLE_CONTEXT_BIT |
--				VMX_VPID_EXTENT_GLOBAL_CONTEXT_BIT;
-+			VMX_VPID_EXTENT_SUPPORTED_MASK;
- 	else
- 		vmx->nested.nested_vmx_vpid_caps = 0;
+-	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
++	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
+-	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
++		iv = req->info;
++	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
+-
++		iv = req->info;
++	} else {
++		iv = NULL; /* AES_ECB */
++	}
+ 	if (dev->ctx->keylen == AES_KEYSIZE_192)
+ 		aes_control |= SSS_AES_KEY_SIZE_192;
+ 	else if (dev->ctx->keylen == AES_KEYSIZE_256)
+@@ -440,7 +445,7 @@ static void s5p_aes_crypt_start(struct s
+ 		goto outdata_error;
  
-@@ -7418,7 +7423,8 @@ static int handle_invvpid(struct kvm_vcp
- 	vmx_instruction_info = vmcs_read32(VMX_INSTRUCTION_INFO);
- 	type = kvm_register_readl(vcpu, (vmx_instruction_info >> 28) & 0xf);
+ 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+-	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
++	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
  
--	types = (vmx->nested.nested_vmx_vpid_caps >> 8) & 0x7;
-+	types = (vmx->nested.nested_vmx_vpid_caps &
-+			VMX_VPID_EXTENT_SUPPORTED_MASK) >> 8;
- 
- 	if (type >= 32 || !(types & (1 << type))) {
- 		nested_vmx_failValid(vcpu,
-@@ -7440,21 +7446,27 @@ static int handle_invvpid(struct kvm_vcp
- 	}
- 
- 	switch (type) {
-+	case VMX_VPID_EXTENT_INDIVIDUAL_ADDR:
- 	case VMX_VPID_EXTENT_SINGLE_CONTEXT:
--		/*
--		 * Old versions of KVM use the single-context version so we
--		 * have to support it; just treat it the same as all-context.
--		 */
-+	case VMX_VPID_EXTENT_SINGLE_NON_GLOBAL:
-+		if (!vpid) {
-+			nested_vmx_failValid(vcpu,
-+				VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID);
-+			skip_emulated_instruction(vcpu);
-+			return 1;
-+		}
-+		break;
- 	case VMX_VPID_EXTENT_ALL_CONTEXT:
--		__vmx_flush_tlb(vcpu, to_vmx(vcpu)->nested.vpid02);
--		nested_vmx_succeed(vcpu);
- 		break;
- 	default:
--		/* Trap individual address invalidation invvpid calls */
--		BUG_ON(1);
--		break;
-+		WARN_ON_ONCE(1);
-+		skip_emulated_instruction(vcpu);
-+		return 1;
- 	}
- 
-+	__vmx_flush_tlb(vcpu, vmx->nested.vpid02);
-+	nested_vmx_succeed(vcpu);
-+
- 	skip_emulated_instruction(vcpu);
- 	return 1;
- }
+ 	s5p_set_dma_indata(dev,  req->src);
+ 	s5p_set_dma_outdata(dev, req->dst);
