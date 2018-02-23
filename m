@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt862tIruSH4pOMAHMouaPArWdg8rHHFB9iqcadPQ3KaEmkiL04bdXodipmhlXNuuW0fEXl
-ARC-Seal: i=1; a=rsa-sha256; t=1519411009; cv=none;
+X-Google-Smtp-Source: AH8x224Tu48QdyLzglLKmKEAwJp2Uk9LXE7hL9OPXXKWE46E2NAXjMePKf7lgB4bo/FSmfVIXZ2l
+ARC-Seal: i=1; a=rsa-sha256; t=1519411006; cv=none;
         d=google.com; s=arc-20160816;
-        b=U8AwXriDhNWq0ChXNfTtG7JoKmEhPs5At9UYz1nTCzQjnaETFhabqvU/TYaRvfmpQB
-         JQG/ZvfeJpWLo6+fLAJqksU2OPz/1kH3cTeLbjDgbIh9yfkOlzyJKe+90IiRr5AnQ7Ls
-         0fvFIaUv7MUPpF5mCQ48emm+KCiOikwVcWactEpXYfBcFiXaKoXRU9WPqikO/ZkZCLts
-         hSUX+WsChmtbBN3U2fRuqwofSJn/tA8o5lYXAnHjntx/Y8+OpisqTLsXOBmJYcxr1bTo
-         QJLDv/XuPpFyJGDY92R+4fXUFoyJEqNHLKjMufZe5M8cjUVwIem6bvvHEUlZJFnKmq5Q
-         ka9g==
+        b=qlUnRjrg20YNWEwpMnD8u0CZ5aZBhrVn0Dc0dyhmijv+/NBLDD6FsPWrZve7lxPtAS
+         PuUMj7Gh+34xAKFGbe4mGoeJ2DwjUmSLTOVfc9m8L0ZtyZp0ZA925ZNhav0RlFs+0FEL
+         Cf3huBIrVIbWQjLgjyexf5LztIA4otdqATC7+bLaDVDUIDgPAcvhOD7EWJt7oDbqHmvO
+         5RQajjWbtMreWFv4pr7y5gwHCJzBfVbDvDn2SN+t1jMSgOWxS5Ad2jJcLHl+RHFRosEJ
+         aqxbCylcQKwATJrDWxJKj8Tq4Uv6c+s/ZZfsM3w/q93jA5stG6ao0NJ/PtKywdW+kkG/
+         RaYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SmBwSo++TQgsTqVk98Yr5jYDJKwWKU9blWEDjbgLACo=;
-        b=LwNOwQEi1pZq1abG1Mr/DUaurC7djYzsVMdtd/QwV0rYPINGQBrN8ua8TOJVTIxuMz
-         HmXcqNCkSDAfGpxVQt0KaP8HJyGXb5i5aRLbTK8jdLv6dJND+Ym3AIh/Rrw9rndeMFC1
-         pAxCGLCEWHCXr9r8DcGGP+rX9qMHgr23OcjUhKhYXCINqR24O3q8rRyGW/2vXp/kkEy+
-         QK3l/K4wwWFTZcEUrZ12KqXPT2J3jQ0eAvdal09yEIUL78ZP/69tPQy6F3FYsfkCteKd
-         YimzLvBUWC5P/EtyIcmlbz2hURrZY8HkT7AkOzWC/6lsiTaiA6vcA9xklrYFCwY9LntU
-         q4Dg==
+        bh=NtzqWvF3F/8k2b5dE4TOmiZ8DrGvCIxu8BzWXMqEcLE=;
+        b=kHYQc53XL/mixsLMzKJoexaNw7GLFYSXexoJyr7RVbmrMK8yZRVnK94MQR7psKFcY0
+         +SeobcsFqxMzF4XnceQ8p2kX+iJJI0wpqWt13CCTRaAQpxGMa2VY4s1eKstrdYZbGcsZ
+         RGD1LyG03nkuCHsvEt4aRm8TSKTjh/FTgK57pUAYD5telRM5R78Vvdpkl4mlK1Dr6seH
+         032KTayJw/c0ZpVrp9za/zAuqIrMjwkDVaZen0L8/M9Ndoxqk4qE4X1S81Xt7B1J49x0
+         kNSeV1CzeAnLoY9L/KJaOdqwo2PUP3c7cxN4DU5/UlXs3ShH2VuQ6RewF87Ce5XSXoaV
+         aAsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Marek Vasut <marex@denx.de>,
 	Brian Norris <computersforpeace@gmail.com>
-Subject: [PATCH 4.4 090/193] mtd: maps: add __init attribute
-Date: Fri, 23 Feb 2018 19:25:23 +0100
-Message-Id: <20180223170340.118210702@linuxfoundation.org>
+Subject: [PATCH 4.4 089/193] mtd: ichxrom: maybe-uninitialized with gcc-4.9
+Date: Fri, 23 Feb 2018 19:25:22 +0100
+Message-Id: <20180223170339.979260529@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217919100331243?=
-X-GMAIL-MSGID: =?utf-8?q?1593217919100331243?=
+X-GMAIL-THRID: =?utf-8?q?1593217915631987086?=
+X-GMAIL-MSGID: =?utf-8?q?1593217915631987086?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,82 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit e4106a7c8236eb7b91686d36f3bf33ee43db94b4 upstream.
+commit e70dda0868fad0f74c46df21f7f45fec24f29879 upstream.
 
-Add __init attribute on functions that are only called from other __init
-functions and that are not inlined, at least with gcc version 4.8.4 on an
-x86 machine with allyesconfig.  Currently, the functions are put in the
-.text.unlikely segment.  Declaring them as __init will cause them to be
-put in the .init.text and to disappear after initialization.
+pci_read_config_word() might fail and not initialize its output,
+as pointed out by older versions of gcc when using the -Wmaybe-unintialized
+flag:
 
-The result of objdump -x on the functions before the change is as follows:
+drivers/mtd/maps/ichxrom.c: In function ‘ichxrom_cleanup’:
+drivers/mtd/maps/ichxrom.c:63:2: error: ‘word’ is used uninitialized in this function [-Werror=uninitialized]
 
-00000000000001bc l     F .text.unlikely 00000000000006a2 ck804xrom_init_one.isra.1
-00000000000001aa l     F .text.unlikely 0000000000000764 esb2rom_init_one.isra.1
-00000000000001db l     F .text.unlikely 0000000000000716 ichxrom_init_one.isra.1
+This is apparently a correct warning, though it does not show up
+with newer compilers. Changing the code to not attempt to write
+back uninitialized data into PCI config space is a correct
+fix for the problem and avoids the warning.
 
-And after the change it is as follows:
-
-0000000000000000 l     F .init.text	000000000000069d ck804xrom_init_one.isra.1
-0000000000000000 l     F .init.text	000000000000075f esb2rom_init_one.isra.1
-0000000000000000 l     F .init.text	0000000000000711 ichxrom_init_one.isra.1
-
-Done with the help of Coccinelle.  The semantic patch checks for local
-static non-init functions that are called from an __init function and are
-not called from any other function.
-
-Note that in each case, the function is stored in the probe field of a
-pci_driver structure, but this code is under an #if 0.  The #if 0s have
-been unchanged since 2009 at the latest.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Marek Vasut <marex@denx.de>
 Signed-off-by: Brian Norris <computersforpeace@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/maps/ck804xrom.c |    4 ++--
- drivers/mtd/maps/esb2rom.c   |    4 ++--
- drivers/mtd/maps/ichxrom.c   |    4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/mtd/maps/ichxrom.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/maps/ck804xrom.c
-+++ b/drivers/mtd/maps/ck804xrom.c
-@@ -112,8 +112,8 @@ static void ck804xrom_cleanup(struct ck8
- }
- 
- 
--static int ck804xrom_init_one(struct pci_dev *pdev,
--			      const struct pci_device_id *ent)
-+static int __init ck804xrom_init_one(struct pci_dev *pdev,
-+				     const struct pci_device_id *ent)
- {
- 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
- 	u8 byte;
---- a/drivers/mtd/maps/esb2rom.c
-+++ b/drivers/mtd/maps/esb2rom.c
-@@ -144,8 +144,8 @@ static void esb2rom_cleanup(struct esb2r
- 	pci_dev_put(window->pdev);
- }
- 
--static int esb2rom_init_one(struct pci_dev *pdev,
--			    const struct pci_device_id *ent)
-+static int __init esb2rom_init_one(struct pci_dev *pdev,
-+				   const struct pci_device_id *ent)
- {
- 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
- 	struct esb2rom_window *window = &esb2rom_window;
 --- a/drivers/mtd/maps/ichxrom.c
 +++ b/drivers/mtd/maps/ichxrom.c
-@@ -86,8 +86,8 @@ static void ichxrom_cleanup(struct ichxr
- }
- 
- 
--static int ichxrom_init_one(struct pci_dev *pdev,
--			    const struct pci_device_id *ent)
-+static int __init ichxrom_init_one(struct pci_dev *pdev,
-+				   const struct pci_device_id *ent)
+@@ -57,10 +57,12 @@ static void ichxrom_cleanup(struct ichxr
  {
- 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
- 	struct ichxrom_window *window = &ichxrom_window;
+ 	struct ichxrom_map_info *map, *scratch;
+ 	u16 word;
++	int ret;
+ 
+ 	/* Disable writes through the rom window */
+-	pci_read_config_word(window->pdev, BIOS_CNTL, &word);
+-	pci_write_config_word(window->pdev, BIOS_CNTL, word & ~1);
++	ret = pci_read_config_word(window->pdev, BIOS_CNTL, &word);
++	if (!ret)
++		pci_write_config_word(window->pdev, BIOS_CNTL, word & ~1);
+ 	pci_dev_put(window->pdev);
+ 
+ 	/* Free all of the mtd devices */
