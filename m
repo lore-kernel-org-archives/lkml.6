@@ -1,60 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeBWADV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:03:21 -0500
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:33564 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeBWADU (ORCPT
+        id S1752014AbeBWALJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:11:09 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43475 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751553AbeBWALI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:03:20 -0500
-X-Google-Smtp-Source: AG47ELslFKJ0JrKy+3kiAaBTlYTvo5TvKgS7T0lerPXXc9A8C+Tjk/iV033Pb6N2VYfetN+aVN8t9vKuG8/XOfsftg4=
+        Thu, 22 Feb 2018 19:11:08 -0500
+X-ME-Sender: <xms:G1yPWgKoNKWXC3OqdYp-fO0BrSvw74hxpu9ztg5D1NbuF4eWQ9tTMQ>
+Message-Id: <1519344667.1024159.1280347184.36AD3FEC@webmail.messagingengine.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+To: "Wang, Haiyue" <haiyue.wang@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <201802230613.8bqOOUnw%fengguang.wu@intel.com>
-References: <20180222002854.GA29269@beast> <201802230613.8bqOOUnw%fengguang.wu@intel.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 22 Feb 2018 16:03:13 -0800
-X-Google-Sender-Auth: qawVAqkIO-BGWY600KQbpd2OGHE
-Message-ID: <CAGXu5jKx+ReiTOVnxANL=NsOTWuxzuATUYqtfi91GvFKVgR6Yg@mail.gmail.com>
-Subject: Re: [PATCH v2] kconfig.h: Include compiler types to avoid missed
- struct attributes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kbuild-all@01.org, kbuild test robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-efbb3405
+Date: Fri, 23 Feb 2018 10:41:07 +1030
+References: <20180222050324.21531-1-joel@jms.id.au>
+ <1519288786.101739.1279390200.1CD3EC51@webmail.messagingengine.com>
+ <23b668f1-ab4b-7ef3-ba1e-f252fbba4d1b@linux.intel.com>
+Subject: Re: [PATCH] MAINTAINERS: Update ASPEED entry with details
+In-Reply-To: <23b668f1-ab4b-7ef3-ba1e-f252fbba4d1b@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1N0BHfP029867
 
-On Thu, Feb 22, 2018 at 2:26 PM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Kees,
->
-> I love your patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16-rc2 next-20180222]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Kees-Cook/kconfig-h-Include-compiler-types-to-avoid-missed-struct-attributes/20180223-040717
-> config: mips-jz4740 (attached as .config)
-> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=mips
->
-> All errors (new ones prefixed by >>):
->
->>> Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
->    FATAL ERROR: Unable to parse input tree
->    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
->    /usr/bin/mkimage Can't add hashes to FIT blob
+Hi Haiyue,
 
-Ugh, the compiler_types.h commit breaks MIPS. I've reproduced this
-failure; debugging now....
+On Thu, 22 Feb 2018, at 19:20, Wang, Haiyue wrote:
+> Dear Andrew & Joel,
+> 
+> Since you are ASPEED BMC experts, any time and interest in eSPI code 
+> review ? I've sent
+> 
+> it before, but no more response. Intel recommends eSPI bus than LPC as I 
+> know. I just kept
+> 
+> the minimal eSPI code which is approved to work well in our real server 
+> boards for two more
+> 
+> years. Other part of eSPI driver from ASPEED's SDK  has been removed, 
+> because ePSI is a new
+> 
+> thing, we only use a small feature set like booting host.
+> 
+> We Intel submit this eSPI patch for openbmc upstreaming, hope for your 
+> response. :-)
+> 
+> https://patchwork.kernel.org/patch/10166577/
+> 
 
--Kees
+There are some comments against the v1 that you linked to above, is there a v2 on the lists?
 
--- 
-Kees Cook
-Pixel Security
+Separately it's better to ping us by replying to the patch itself and putting us in To/Cc, that way we keep discussions focused on the patch at hand here.
+
+Cheers,
+
+Andrew
