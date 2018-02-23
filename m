@@ -1,116 +1,89 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2452599-1519373734-2-11156489010236175720
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519373733; b=GoclnnMz18RDlkLJpAy4OR9x8ocPsRYlucPmHrnnk08RXjf
-    EF+DiGyimmfERDDjqPsrjCOaSjdKF7UiWdvxN/xgKi9tVHt3kAaV3fWG7ijywo0K
-    Vhb63eyWrEwAEyVeXMp5Vyun19TgHqeYU9CTa3d68uCezvjH7/9+VVyNPzQuVDwI
-    q3oz1DU5C1HxrIGWswWkPRIySRmOwAVBH9xH7dwafnlFJHadT0WfwOniWqHJ6lky
-    xjfwGxaDLNvNPz+EMLLQrTNwzwQc1E/wDQIPw+0SNH+G3EQpnZvKgHtMfhn7v0Hw
-    SRPA5TstuSNExYr2xKLFyIwU5iJkNj9thKjq8gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519373733; bh=u
-    aisTvNuBAypuZxnlioEI194pY+GanHtJ9mgWWZ3Psc=; b=le3glNg5VQc1CrCWk
-    sETPuuqX2U5T/41zsMYLd/sn+IlUqqxnkhJiBKrPmeinbcrT6zJ8TYwZZTbFcleh
-    ZRqS+bRrb7+V3Z/RbVwWQkGtvsYbo8VV0449hAVx3UnSEoNtwIKrGADQlp174lby
-    HAQWTZeNUE4gAe6CU5ifGjUbpfh+MsggDSAerpOQP3TV32WLYC8uf01WKK7i81cX
-    7lan3xzfqVNbquU8vFja41B0C8vQc8mE6GgxKXQmcLsRTP18ufEecwCApx3v3PUM
-    64JhdfyMyFXPL/pdVsRY7PsH0o7Y5p/eV/CUSgwhv4oZCQzT0/pA77jwB3bXzk7X
-    cC4sg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Fri, 23 Feb 2018 09:15:27 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Subject: Re: [PATCH 2/4] Staging: gdm724x: hci: Changed camel-case to
- snake-case.
-Message-ID: <20180223081526.GA12617@kroah.com>
-References: <CAFLvi22mENRoFd3Z6=a5tAcbiOGw3CCnvJy_7N4u783_k3jH5g@mail.gmail.com>
- <20180223013301.17646-1-quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180223013301.17646-1-quytelda@tamalin.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, deanahn@gctsemi.com, jonathankim@gctsemi.com,
- linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <quytelda@tamalin.org>
+X-Google-Smtp-Source: AG47ELsc9xDSQ08rkAiB/DwS8h3bTEvxsnvLIkbUpZRicSep4PYSCkw9jnlzaKq8Gxll9t51SCzs
+ARC-Seal: i=1; a=rsa-sha256; t=1519429605; cv=none;
+        d=google.com; s=arc-20160816;
+        b=LlG6vfmEjsjlUXxIgfNKAdftVcRW6bfjx/EZwPk/4rc1fWM8sbc01DaR4/LMY0a2Sz
+         buEFqCB/eLancUU+6ipWfWkZU3xUaBgDyqB9QMERfELpe8otTBkn0MK/67R50K2+2hJQ
+         kS2hu54Y7pgf/FkgEmE2d9CkOawa2Znp+yS+F8KzFZNkorCipTICYUH/2h8i6EBS8XN3
+         TDwlTOfQt3+KcFdw1/FBgEvxQbROnEpaMuuDqlPr24wT6Y2du/KRHI9rX56OlNwh+aPy
+         jct+kfSgCjd8vwrwfbHV1X5YD0h2ZzsAezuXORYnnOIyrzEGoaVIKt9i3OqgUYm2hgLx
+         jmWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=hbR1BchfMLvBstctK28wOKWeEhY/YQh9m75xjszlDoA=;
+        b=0lBQsvhp56Bz9zcRgmOyYSTmJ+8E98ErMJ2cuxNTKRqRUov3RgDlvFtUYcjlgz8mf6
+         vrHgXm47Ncvj0WBVN6DVrc1wOxue4Jk6tVgyss/HYi+vd6i8LBvzVrw5ag63hOndQL87
+         ymnWO523iDmZKXKCdrugHffueWKkk15Bki2A4Ag5xG2m0BWs10RHjS/WM1UMOYclLCWn
+         cyb4XBt/Q87FVazaryAQJkUhJqpfcAH7zY9kFg8tfMHtLQ6GQDGWFiDQ/5tGJ0GhNAn7
+         Vb6V8MfaRBYqwEWsFtPglQbn1YVwkpapyH6iIhnXg4FCQOYVHTjhFvLvD2qEnabPT9VT
+         xOWQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	deanahn@gctsemi.com,
+	dan.carpenter@oracle.com
+Cc: devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Quytelda Kahja <quytelda@tamalin.org>
+Subject: [PATCH] staging: gdm724x: hci: Remove unused struct sdu_header.
+Date: Fri, 23 Feb 2018 15:46:30 -0800
+Message-Id: <20180223234630.26894-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180223081526.GA12617@kroah.com>
+References: <20180223081526.GA12617@kroah.com>
+X-Provags-ID: V03:K0:IzW8SLiVs+SiiA1/ZMkhDl8dp8LrW91lC0Gn3jw2PVQdXdllFIZ
+ Zz0DIltl4qKswGQVZ3AIARkg2w9+lODp9W2nHarfGfoE2hlX62vtyHylzQc9CYJuU7yoR0V
+ afOes3r7sJr52ZA4mc5OtORNQLA3vKTtdSKslODfZ4+6tEL6NpegNlDn4ROyAkEfWMndh4Q
+ LLL3A3Ybk6XN9WvGJoZIQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eXMYatCcT3s=:GnCqf1ozfsC9XV/g95C5AG
+ FATVU9R6xOskx+R6e4d95XDP88IedGYAFJQO+Kr538B+B7EPNvV1ftKNziRsukh9QVofiCoRI
+ vfeLJKHCKCq7Y+Rt8ufI1ehq2hs6uzo6ZtE08siZId+aHXtEKRrOaQKufCpZteRmPPwsjGhsE
+ YYY+jbaffugFRd/GkE2epWRN2/F0jE41K1y1iJCIxXn5CCcVaVFO1BXndSQPvFP/Vx1Sukq/d
+ WjAMoYLkXin5T1swg4SFNZv+MTTwGPCaipn+PsBHfY7YoSshOXAG7EwG5CpMIbU/pXwVJbTk+
+ DncRxDrL7lcYlOSXXMPRGUz8pmZDTcgbhPmT2aCzdB/9bd8LnlH/vG+zn5JR9hQyejpEobX+R
+ VGXt2RpiWgaelCckevJj8tiayP4BjMXSZlznC4Q0GHC8cDUhjl5w+/FYiXiTQkGEgOWiX5WFt
+ P4cOCKnoulJDgLMG9qC6KiabgMRKF08nzkaMFihHYRvazdIS8YkMrCK9a6rsT65V1sE/EXzFS
+ p7oo7YaX3BI4xN01e/nf8bXSIxpZuWImqNZnkQU/+sjGCEaLo6UQxOENueWo/xOP4Nl+qXj2f
+ VhhRoQWgFcR4XkPFJsQuTJg2l43ouQnsWcGRiWLGbrdHn7esT0twLE0i/f5DEQxpolceH+Hsm
+ 5FG7cr2yKobt9OwN7ymaCmd3e7zVKRMv+CuA77sn+A6Qb9cwTxs4vs4bXxsiyxhGzmZAlLAlw
+ JADyzhkTRSmysbLWbGrqd3c8f5ksSAPbJeAwJw==
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593237418167069853?=
+X-GMAIL-MSGID: =?utf-8?q?1593237418167069853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 22, 2018 at 05:32:59PM -0800, Quytelda Kahja wrote:
-> Changed a variable name from camel to snake case to fix a coding style
-> issue.
-> 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> ---
->  drivers/staging/gdm724x/hci_packet.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
-> index 22ce8b9477b6..f8837c7103ac 100644
-> --- a/drivers/staging/gdm724x/hci_packet.h
-> +++ b/drivers/staging/gdm724x/hci_packet.h
-> @@ -50,7 +50,7 @@ struct tlv {
->  struct sdu_header {
->  	__dev16 cmd_evt;
->  	__dev16 len;
-> -	__dev32 dftEpsId;
-> +	__dev32 dft_eps_ID;
->  	__dev32 bearer_ID;
->  	__dev32 nic_type;
->  } __packed;
+struct sdu_header isn't actually used anywhere in this driver, so
+this change removes it on the assumption it isn't needed for any
+API.
 
-Why not just delete the whole structure if no one is using it?
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+---
+ drivers/staging/gdm724x/hci_packet.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
+index f8837c7103ac..695482464596 100644
+--- a/drivers/staging/gdm724x/hci_packet.h
++++ b/drivers/staging/gdm724x/hci_packet.h
+@@ -47,14 +47,6 @@ struct tlv {
+ 	u8 *data[1];
+ } __packed;
+ 
+-struct sdu_header {
+-	__dev16 cmd_evt;
+-	__dev16 len;
+-	__dev32 dft_eps_ID;
+-	__dev32 bearer_ID;
+-	__dev32 nic_type;
+-} __packed;
+-
+ struct sdu {
+ 	__dev16 cmd_evt;
+ 	__dev16 len;
+-- 
+2.16.2
