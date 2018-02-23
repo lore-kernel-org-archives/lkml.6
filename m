@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeBWKYk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:24:40 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:46216 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751664AbeBWKYe (ORCPT
+        id S1751789AbeBWKYp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:24:45 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36949 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbeBWKYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:24:34 -0500
-X-Google-Smtp-Source: AH8x227buZQoj8jj3eF7GbtOKX4AM7M5Bo4NRq5NK2bbRbqJKJlYoZrODMyQgpEG7g8r5z2rodgTpg==
+        Fri, 23 Feb 2018 05:24:40 -0500
+X-Google-Smtp-Source: AH8x227imSka2VRMFskrF7A/zwSmDyC9X4xwb3euugyFAfMT8pdqEopnjyg6U3ZmCrhzpsLMLccgpQ==
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Viresh Kumar <viresh.kumar@linaro.org>,
@@ -18,9 +18,9 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>,
         s.hauer@pengutronix.de, l.stach@pengutronix.de, shawnguo@kernel.org,
         fabio.estevam@nxp.com, nm@ti.com, xuwei5@hisilicon.com,
         robh+dt@kernel.org, olof@lixom.net
-Subject: [PATCH V7 11/13] boot_constraint: Add Qualcomm display controller constraints
-Date: Fri, 23 Feb 2018 15:53:50 +0530
-Message-Id: <f64dab629806633a78400bd663b4b2cf3e41283e.1519380923.git.viresh.kumar@linaro.org>
+Subject: [PATCH V7 13/13] boot_constraint: Add documentation
+Date: Fri, 23 Feb 2018 15:53:52 +0530
+Message-Id: <6b17ffecd9917ff4a1fad848839ea667e92d715f.1519380923.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 In-Reply-To: <cover.1519380923.git.viresh.kumar@linaro.org>
 References: <cover.1519380923.git.viresh.kumar@linaro.org>
@@ -30,181 +30,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sets boot constraints for the display controller used on Qualcomm
-dragonboard 410c.
+This adds boot constraint documentation.
 
-The display controlled is enabled by the bootloader to show a flash
-screen during kernel boot. The handover to kernel should be without any
-glitches on the screen.The resources of the display controller (like
-regulators) are shared with other peripherals, which may reconfigure
-those resources before the display driver comes up. The same problem can
-happen if the display driver probes first, as the constraints of the
-other devices (sharing same resources with display controller) may not
-be honored anymore by the kernel.
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/soc/qcom/Kconfig           |   8 +++
- drivers/soc/qcom/Makefile          |   1 +
- drivers/soc/qcom/boot_constraint.c | 122 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 drivers/soc/qcom/boot_constraint.c
+ .../driver-api/boot-constraint/constraints.rst     | 98 ++++++++++++++++++++++
+ Documentation/driver-api/boot-constraint/index.rst |  4 +
+ Documentation/driver-api/index.rst                 |  1 +
+ 3 files changed, 103 insertions(+)
+ create mode 100644 Documentation/driver-api/boot-constraint/constraints.rst
+ create mode 100644 Documentation/driver-api/boot-constraint/index.rst
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index e050eb83341d..7bbe87f9c775 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -107,4 +107,12 @@ config QCOM_WCNSS_CTRL
- 	  Client driver for the WCNSS_CTRL SMD channel, used to download nv
- 	  firmware to a newly booted WCNSS chip.
- 
-+config QCOM_BOOT_CONSTRAINT
-+	bool "Qualcomm Boot Constraints"
-+	depends on ARCH_QCOM
-+	select DEV_BOOT_CONSTRAINT
-+	default y
-+	help
-+	  Say y here to enable Boot Constraints on Qualcomm platforms.
-+
- endmenu
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index dcebf2814e6d..fcff64ec6538 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_QCOM_BOOT_CONSTRAINT) += boot_constraint.o
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
-diff --git a/drivers/soc/qcom/boot_constraint.c b/drivers/soc/qcom/boot_constraint.c
+diff --git a/Documentation/driver-api/boot-constraint/constraints.rst b/Documentation/driver-api/boot-constraint/constraints.rst
 new file mode 100644
-index 000000000000..ca01eb50d9a9
+index 000000000000..6da2df33f2c9
 --- /dev/null
-+++ b/drivers/soc/qcom/boot_constraint.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * This sets up Dragonboard 410c constraints on behalf of the bootloader, which
-+ * uses display controller to display a flash screen during system boot.
-+ *
-+ * Copyright (c) 2018 Linaro.
-+ * Viresh Kumar <viresh.kumar@linaro.org>
-+ * Rajendra Nayak <rnayak@codeaurora.org>
-+ */
++++ b/Documentation/driver-api/boot-constraint/constraints.rst
+@@ -0,0 +1,98 @@
++.. include:: <isonum.txt>
 +
-+#include <linux/boot_constraint.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
++=========================
++Boot Constraint Subsystem
++=========================
 +
-+static struct dev_boot_constraint_clk_info iface_clk_info = {
-+	.name = "iface_clk",
-+};
++:Copyright: |copy| 2017 Viresh Kumar <vireshk@kernel.org>, Linaro Ltd.
 +
-+static struct dev_boot_constraint_clk_info bus_clk_info = {
-+	.name = "bus_clk",
-+};
++Introduction
++============
 +
-+static struct dev_boot_constraint_clk_info core_clk_info = {
-+	.name = "core_clk",
-+};
++A lot of devices are configured and powered ON by the bootloader before passing
++on control to the operating system, Linux in our case.  It is important for some
++of them to keep working until the time a Linux device driver probes the device
++and reconfigure it.
 +
-+static struct dev_boot_constraint_clk_info vsync_clk_info = {
-+	.name = "vsync_clk",
-+};
++A typical example of that can be the LCD controller, which is used by the
++bootloaders to show image(s) while the platform boots Linux.  The LCD controller
++can be using resources like clk, regulators, etc, that are shared with other
++devices. These shared resources should be configured in such a way that they
++satisfy need of all the user devices.  If another device's (X) driver gets
++probed before the LCD controller driver, then it may end up disabling or
++reconfiguring these resources to ranges satisfying only the current user (device
++X) and that may make the LCD screen unstable and present a bad user experience.
 +
-+static struct dev_boot_constraint_clk_info esc0_clk_info = {
-+	.name = "core_clk",
-+};
++Another case can be a debug serial port (earlycon) enabled from the bootloader,
++which may be used to debug early kernel oops.
 +
-+static struct dev_boot_constraint_clk_info byte_clk_info = {
-+	.name = "byte_clk",
-+};
++There are also cases where the resources may not be shared, but the kernel will
++disable them forcefully as no users may have appeared until a certain point in
++the kernel boot.
 +
-+static struct dev_boot_constraint_clk_info pixel_clk_info = {
-+	.name = "pixel_clk",
-+};
++Of course we can have more complex cases where the same resource is getting used
++by multiple devices while the kernel boots and the order in which the devices
++get probed wouldn't matter as the other devices may break because of the chosen
++configuration of the first probed device.
 +
-+static struct dev_boot_constraint_supply_info vdda_info = {
-+	.name = "vdda"
-+};
++Adding boot constraints
++=======================
 +
-+static struct dev_boot_constraint_supply_info vddio_info = {
-+	.name = "vddio"
-+};
++A boot constraint defines a configuration requirement set for the device by the
++boot loader. For example, if a clock is enabled for a device by the bootloader
++and we want the device to be working as is until the time the device is probed
++by its driver, then keeping this clock enabled is one of the boot constraint.
 +
-+static struct dev_boot_constraint constraints_mdss[] = {
-+	{
-+		.type = DEV_BOOT_CONSTRAINT_PM,
-+		.data = NULL,
-+	},
-+};
++Following are the different type of boot constraints supported currently by the
++core:
 +
-+static struct dev_boot_constraint constraints_mdp[] = {
-+	{
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &iface_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &bus_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &core_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &vsync_clk_info,
-+	},
-+};
++.. kernel-doc:: include/linux/boot_constraint.h
++   :functions: dev_boot_constraint_type
 +
-+static struct dev_boot_constraint constraints_dsi[] = {
-+	{
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &esc0_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &byte_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_CLK,
-+		.data = &pixel_clk_info,
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_SUPPLY,
-+		.data = &vdda_info,
 +
-+	}, {
-+		.type = DEV_BOOT_CONSTRAINT_SUPPLY,
-+		.data = &vddio_info,
-+	},
-+};
++A single boot constraint can be added using the following helper:
 +
-+static struct dev_boot_constraint_of constraints[] = {
-+	{
-+		.compat = "qcom,mdss",
-+		.constraints = constraints_mdss,
-+		.count = ARRAY_SIZE(constraints_mdss),
-+	}, {
-+		.compat = "qcom,mdp5",
-+		.constraints = constraints_mdp,
-+		.count = ARRAY_SIZE(constraints_mdp),
-+	}, {
-+		.compat = "qcom,mdss-dsi-ctrl",
-+		.constraints = constraints_dsi,
-+		.count = ARRAY_SIZE(constraints_dsi),
-+	},
-+};
++.. kernel-doc:: drivers/bootconstraint/core.c
++   :functions: dev_boot_constraint_add
 +
-+static int __init qcom_constraints_init(void)
-+{
-+	/* Only Dragonboard 410c is supported for now */
-+	if (!of_machine_is_compatible("qcom,apq8016-sbc"))
-+		return 0;
 +
-+	dev_boot_constraint_add_deferrable_of(constraints,
-+					      ARRAY_SIZE(constraints));
++The second parameter to this routine describes the constraint to add and is
++represented by following structures:
 +
-+	return 0;
-+}
-+subsys_initcall(qcom_constraints_init);
++.. kernel-doc:: include/linux/boot_constraint.h
++   :functions: dev_boot_constraint dev_boot_constraint_info
++
++The power domain boot constraint doesn't need any data, while the clock and
++power supply boot constraint specific data is represented by following
++structures:
++
++.. kernel-doc:: include/linux/boot_constraint.h
++   :functions: dev_boot_constraint_supply_info dev_boot_constraint_clk_info
++
++
++In order to simplify adding multiple boot constraints for a platform, the boot
++constraints core supplies another helper which can be used to add all
++constraints for the platform.
++
++.. kernel-doc:: drivers/bootconstraint/deferrable_dev.c
++   :functions: dev_boot_constraint_add_deferrable_of
++
++
++The argument of this routine is described by following structure:
++
++.. kernel-doc:: include/linux/boot_constraint.h
++   :functions: dev_boot_constraint_of
++
++
++Removing boot constraints
++=========================
++
++Once the boot constraints are added, they will be honored by the boot constraint
++core until the time a driver tries to probe the device. The constraints are
++removed by the driver core if either the driver successfully probed the device
++or failed with an error value other than -EPROBE_DEFER. The constraints are kept
++as is for deferred probe. The driver core removes the constraints using the
++following helper, which must not be called directly by the platforms:
++
++.. kernel-doc:: drivers/bootconstraint/core.c
++   :functions: dev_boot_constraints_remove
+diff --git a/Documentation/driver-api/boot-constraint/index.rst b/Documentation/driver-api/boot-constraint/index.rst
+new file mode 100644
+index 000000000000..d6fce17626a2
+--- /dev/null
++++ b/Documentation/driver-api/boot-constraint/index.rst
+@@ -0,0 +1,4 @@
++.. toctree::
++   :maxdepth: 1
++
++   constraints
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index e9b41b1634f3..f982e71efb73 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -49,6 +49,7 @@ available subsections can be seen below.
+    dmaengine/index
+    slimbus
+    soundwire/index
++   boot-constraint/index
+ 
+ .. only::  subproject and html
+ 
 -- 
 2.15.0.194.g9af6a3dea062
