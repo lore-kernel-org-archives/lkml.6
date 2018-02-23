@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841409-1519419065-2-18210800641800506041
+X-Cyrus-Session-Id: sloti22d1t05-3841677-1519419046-2-6229076859916142783
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519419065; b=CkN8SR7C+vy4sCq/b4maDjde2/l03ZSH3bESXVcIKgTDLud
-    ftzE5NkT4zbHXfRt8ZPW4iLk+GJ8guFNgmhVhkF+FrfvEV9G1IKoq68SeQ94w8us
-    mNCCaKqcb2WtYF3cWQd366G4bXhED6Nza50FJiJyBWOPAe+qdMyybLkg8sTesTj0
-    3AQudogETimApaO223Xh3UES5emI0KY0HAnpwlrDa+mN9TeqxOZfsrIZ1tPaECEO
-    GGFRCf8INbYLZI1+C33xLuiLJVeaOlK4xCDWgXICn7Pz0VySZXTEPZxE6awafW+F
-    JkDg1FR4xCDw3h+b+prnPL0oYWZhtiMJQRObi4w==
+    t=1519419045; b=RSBZgRa5HRz328c4T9y9svxLRpofSGkzRpjGDFjuvKbmIsk
+    T2Db6oupp6mNtJ+gwa7SEUtCDTjtsqcQ9+i8q1E++MtGlEeJ7LTr7mw0nBHnlfVC
+    iUHTzTZlBhbXBkjKGMx71U0g4qSVdlIThjX5dHCZN/x1sJ1jMYPfhPqXaJY5CPJm
+    4T53lFAxeDNsPSP6Votd+yzaI+o33I2kGiN+aH9RbOxuDyx+/F4k3OSqJBCTUwD0
+    qpboAB6AAExlYXWjHOdpAvKHOeYS/dHYL66TaxpvtBsFfka5D7x/hS+o7vM/qx+A
+    ZL6svuqYhqZ+hSCKK8JWXsUAeTdIjSSjuSb4HwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519419065; bh=tL1Q6pDktVY3Wt6VvTiD12S/vD
-    Aqcb5jqzXRxYLu9Dw=; b=RDTSw90REQGilYUgZd85UiqcnsJM5amrlFGGujZlLp
-    VEWKflGLSJ24iEC39Bzmpscu4YpaQGbM0ueRGedJ7bOAXsVvsiHyZXG7rWO/FvRr
-    Ze2B6w6yYP3huD/P+rjJahkaEPBfxpz6bJ2VG0/QEr2UxMDhSlXWI6hXzriU7LUz
-    WKxi7mFWf8PLVEC9UOV+iuqdkbrlIO0/Khf3f2LlfJh2K/Z9F/h2ep61mRBlfbGP
-    9wZn4PpR75C11fwDL6e9lAsoiTkj2Ej46giS+fUdYR+ZdRdQXJPqNuF7mvlm6TJ8
-    2zgVCZLe5tIqux4cAU/HBC5MTFR94KYGvI2b5ZDEJSBg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519419045; bh=u12J1FfHXV7g1Qdozv/zqg+JQP
+    LOh48NXZ1nmnaaHa4=; b=KHjerUaIMe/fDQdoDxEh+gZqGE4c/zi2IkgxxcI3bH
+    ZXKkh4/gTuuuM2gBH2l6oAb5/cBFs+NNPQFNaSlD87/kQ3n44vcgyC4tgDfYehau
+    SwFUptG1ronqKGBjOtK7RNXEjfR4h6gsZXFGpTSUdVtjAjtgUk+Aw7+FjM99Ts+L
+    SbI74l4QUVAEkjbeXFEDx7s8H8ykqWv+HpquVUTC5dDdBtjsrtK7Srfd96firBAN
+    RKJXu59mY9lyuxoxqtUJVTre/hNoIrCXxQHmZdUV7Hfc0AsPwYBbLA+Aq6oAdIPl
+    NSU9Q5ira6erjisMJXpI+r8k1uj85jwFKioGqJDynVhg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752451AbeBWSbF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34768 "EHLO
+        id S1752422AbeBWSbJ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:31:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34828 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752422AbeBWSa7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:30:59 -0500
+        with ESMTP id S1752469AbeBWSbH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:07 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 29/58] Provide a function to create a NUL-terminated string from unterminated data
-Date: Fri, 23 Feb 2018 19:26:28 +0100
-Message-Id: <20180223170211.457413857@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3.18 31/58] ASoC: ux500: add MODULE_LICENSE tag
+Date: Fri, 23 Feb 2018 19:26:30 +0100
+Message-Id: <20180223170211.698217312@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -78,72 +78,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit f35157417215ec138c920320c746fdb3e04ef1d5 upstream.
+commit 1783c9d7cb7bc3181b9271665959b87280d98d8e upstream.
 
-Provide a function, kmemdup_nul(), that will create a NUL-terminated string
-from an unterminated character array where the length is known in advance.
+This adds MODULE_LICENSE/AUTHOR/DESCRIPTION tags to the ux500
+platform drivers, to avoid these build warnings:
 
-This is better than kstrndup() in situations where we already know the
-string length as the strnlen() in kstrndup() is superfluous.
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-plat-dma.o
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-mach-mop500.o
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+The company no longer exists, so the email addresses of the authors
+don't work any more, but I've added them anyway for consistency.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/string.h |    1 +
- mm/util.c              |   24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ sound/soc/ux500/mop500.c    |    4 ++++
+ sound/soc/ux500/ux500_pcm.c |    5 +++++
+ 2 files changed, 9 insertions(+)
 
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -121,6 +121,7 @@ void *memchr_inv(const void *s, int c, s
- extern char *kstrdup(const char *s, gfp_t gfp);
- extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
- extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
-+extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+--- a/sound/soc/ux500/mop500.c
++++ b/sound/soc/ux500/mop500.c
+@@ -168,3 +168,7 @@ static struct platform_driver snd_soc_mo
+ };
  
- extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
- extern void argv_free(char **argv);
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -42,6 +42,8 @@ EXPORT_SYMBOL(kstrdup);
-  * @s: the string to duplicate
-  * @max: read at most @max chars from @s
-  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Note: Use kmemdup_nul() instead if the size is known exactly.
-  */
- char *kstrndup(const char *s, size_t max, gfp_t gfp)
- {
-@@ -80,6 +82,28 @@ void *kmemdup(const void *src, size_t le
- EXPORT_SYMBOL(kmemdup);
- 
- /**
-+ * kmemdup_nul - Create a NUL-terminated string from unterminated data
-+ * @s: The data to stringify
-+ * @len: The size of the data
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ */
-+char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-+{
-+	char *buf;
+ module_platform_driver(snd_soc_mop500_driver);
 +
-+	if (!s)
-+		return NULL;
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("ASoC MOP500 board driver");
++MODULE_AUTHOR("Ola Lilja");
+--- a/sound/soc/ux500/ux500_pcm.c
++++ b/sound/soc/ux500/ux500_pcm.c
+@@ -166,3 +166,8 @@ int ux500_pcm_unregister_platform(struct
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(ux500_pcm_unregister_platform);
 +
-+	buf = kmalloc_track_caller(len + 1, gfp);
-+	if (buf) {
-+		memcpy(buf, s, len);
-+		buf[len] = '\0';
-+	}
-+	return buf;
-+}
-+EXPORT_SYMBOL(kmemdup_nul);
-+
-+/**
-  * memdup_user - duplicate memory region from user space
-  *
-  * @src: source address in user space
++MODULE_AUTHOR("Ola Lilja");
++MODULE_AUTHOR("Roger Nilsson");
++MODULE_DESCRIPTION("ASoC UX500 driver");
++MODULE_LICENSE("GPL v2");
