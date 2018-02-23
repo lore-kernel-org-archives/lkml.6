@@ -1,37 +1,37 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x224F93RkQd//9jhi3Idciloo8ENg3D/H+HZNDNqZeUBsvA6KFcgJZQytHTQNj3djtsqR5Mp2
-ARC-Seal: i=1; a=rsa-sha256; t=1519367784; cv=none;
+X-Google-Smtp-Source: AH8x225KM9V4vnIZy+oGMZBGMnDhQKgyqL1V4IAU4UlNYP4TY4QjDr2RwLOjjIOs/M3ggRB+t43t
+ARC-Seal: i=1; a=rsa-sha256; t=1519367488; cv=none;
         d=google.com; s=arc-20160816;
-        b=M/pkjm5gpv0dv1/zd8O3nYXKWkTm9KIc8b9hc6IK7VT2clETsMCr6OEwwfOE4W0An5
-         BJXeQTD+p3S+h/ELf++LaES7+f4xUj9bSwSyfjPyHU+LsiIKqpfG5qRTlJ4QdsggQVEX
-         g/DYeAlZRWPeXI+tVfX7SIM3RuP02Doj5TW5iTD7w74Rd7hI0bso4rmQKt8X4yEW1QF4
-         3/Y+5P+6iUPLLwfGoOR15qiEe6V4SImen9oU2460fPqQV3nYyrRJJE3qVBkQcdvWh+WQ
-         Se+q+eiojum0VCNudzlJS9Rdv/fO4hjTSerQ/YlOW/cKUmcSkShwwlNyxXcuRGWPMsGf
-         kjNw==
+        b=THz95SftzEStBTvKeTQLVsacCt1AbadjlAngS36ImlEK/nsfkp6ATar/bQWCBz0Shp
+         ltb53n9FbZrRw+eo/9DNChxg09KMLtGcw8DAS+Xqv0HMwhtt/2ebKxJMNwW3iRZ2gRuF
+         GhLdHyjQfUg8po6uhdCXDD82dlP7ESRWldi73+6jt0d+JlFdylgmPKsiUlkPycag1pPY
+         pzGnPzGrRH0B2VzfTUMUtRmpWK913e4wzAkVWDFsv8dlbjNUKTd83rqXZ7rvdFjNHeZL
+         JnOmhDHQzxC4ZCeZtO3HAUtZtAljI2zaiBWHib3GB/1hDXHhzC11L3JsyacKIVnRarTt
+         bJZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
          :date:content-transfer-encoding:mime-version:dkim-signature
          :dkim-signature:arc-authentication-results;
-        bh=/gChZMCEEKlSG5QhKcgnEiIpRfkH5BPX73snWDCd0Go=;
-        b=hAf3tj10xgfkHpq6zUxdTFiGCxSPkbas6ZhqNatpQLsglS62raFXkN1Gy0u4JUG9iO
-         sXR/+sd87J7nG+3BqEZOqnpjAUJ+OkSldjnk6sNg8CugPghZ4FsEz95M7M311eXPXqdv
-         0RXquZaYZTGpLw2wsoiLtHyvID5PojSWQgvCYiVUZcSDHTPIbzlzAd8QDdWJSaSRAsV0
-         /NyDCLr1lPZv0tUzb2mzggeYw8v3/iaT0bApQkyJj4Ke0fwLCxWMawulxe3WNcA0HCol
-         3VYeHaZF9BE0o/jE/KoanKh7ZYtKxjmXBLdG7zoZU7S+lRa0f2IRpqhJtqt8hY24YG7V
-         uSrg==
+        bh=dLaDwN9yLizt6V9Ceq/djIuMLyPeZaUoQqow1AM+ywM=;
+        b=SvkwHPQy8/cjsl4kriibDDtFa5jEnzlp21inNinRNqKcZ6Rq9sQXTU67V5zr2Xvo37
+         2577Yw9njnqNHtbmwAEPMgp8ShYqozqsTOsOEaEB22vGPl5yEPNRnRRYOnJ8lu94h6DA
+         MB480zCKz4Dbwjm3WkHjSUh6Yp+rdBo5DDqYrFZGk9CDsFVs4AfocpnMt9+4ZY4evc/R
+         tPvROdl3JBaCGxN2E+1KV9R0tjRGkPhCJWSKyZjU2u31sPsiMNsp8D9albTOU/T9eNWE
+         TDXzzKugRbk1QWsXB2IfCqrpLElNFqNf1G1PpsKP/x9DXG8ZDnrtJkZLGUtr+e3iPAhN
+         gbLA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=VY7ErGJb;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Rnsmx/WU;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YpjGI9jm;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WbPAeFiB;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=VY7ErGJb;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Rnsmx/WU;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YpjGI9jm;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WbPAeFiB;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Fri, 23 Feb 2018 12:06:22 +0530
+Date: Fri, 23 Feb 2018 12:01:26 +0530
 From: poza@codeaurora.org
 To: Randy Dunlap <rdunlap@infradead.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
@@ -40,18 +40,17 @@ Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
  <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
  linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
  Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>,
- linux-pci-owner@vger.kernel.org
+ <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Subject: Re: [PATCH v9 2/7] PCI/AER: factor out error reporting from AER
 In-Reply-To: <e2d8d85a-d044-cece-4da4-4c8e3e4d9ce1@infradead.org>
 References: <1519285571-5634-1-git-send-email-poza@codeaurora.org>
  <1519285571-5634-3-git-send-email-poza@codeaurora.org>
  <e2d8d85a-d044-cece-4da4-4c8e3e4d9ce1@infradead.org>
-Message-ID: <e01365a3fa319d6367af546f3be50903@codeaurora.org>
+Message-ID: <412cdd104d1e1cd1ca7e0d873c4b5a7b@codeaurora.org>
 User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593086410511514158?=
-X-GMAIL-MSGID: =?utf-8?q?1593172593632048648?=
+X-GMAIL-MSGID: =?utf-8?q?1593172283110449334?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -123,11 +122,6 @@ On 2018-02-23 00:53, Randy Dunlap wrote:
 > 			dev_printk(KERN_DEBUG, &dev->dev, "device has no%s driver\n",
 > 				   dev->driver ? " error-aware" : "");
 > 
-
-I might not be able to take care of this, because all the later patches
-are dependent on this, and probably I might have to manually merge.
-though I will give it a try :)
-
 >> +		}
 >> +
 >> +		/*
@@ -185,3 +179,6 @@ though I will give it a try :)
 >> +	int (*cb)(struct pci_dev *, void *))
 >> +{
 >> +	struct aer_broadcast_data result_data;
+
+
+Thanks for the comments, will take care of it.
