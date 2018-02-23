@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELviE5Dbo+9OSTulqWpWEe3pY63CPbtz78n94Niu3rCOxyIlitbZnx5zU/IyMJnErg6ljqs8
-ARC-Seal: i=1; a=rsa-sha256; t=1519410892; cv=none;
+X-Google-Smtp-Source: AG47ELvDrENeKaIWh14aVemCsih3xheCxqXdsuKjFGiOSRf5RLFtZNnNgt4SMkmmM/Eab87zF/T6
+ARC-Seal: i=1; a=rsa-sha256; t=1519410886; cv=none;
         d=google.com; s=arc-20160816;
-        b=0CrqM0AVLj+AeR9FM824nIh4xt51daYmIYpWkSTkehMnc7e1m62K+YpvcQLDECGdgP
-         e6UMOWp640hiSCCVUCe/tYyvGQAhaG00uZBh8qH91ADlCm9EKAOWJ7x6b/gAhApd+tdm
-         l6kvkZOD8TmijaFELAzncbrMiKqAi+NBVLvtqGF3XZtmXPEur+81vhM+zafjezylCGx3
-         TBVykOT1fNfFPZ97IBt0af8XKsRdZNGvVOoWC2hQwZpj9oxoiu+6z0g6HQMsNpaBxQGc
-         gwniEbGfFh2v/4WGFuRgZzJEtOLfXA6Qa/tAOTtrceH3dyOzAocQ59nKiU0TKGTokA1A
-         c5ow==
+        b=SBk/zSgoBbjaroc01t+xxCmRkrGXGbAFNW5wStHHgdQ+shKGGi9+Bm4VKz0STSN7D7
+         PKF1q7uA0+B6uDnbz1tghbE8xt1tJwL7dEFW8fMOK4oD3mnnkqufrlP9Y0MJsB9r6dMl
+         NWlfRKkPJ03HTjPrHe97TPf7qDRS8YOzH2e5+8AZDDm8konMSYM0/CUVHbKI/N7bnt7D
+         gC7i5Odyag0CduJWrmf7MjboYsysPgO2HOh2Jy82Z6XXVfVhwd/1Jx7Qx/kAS5XSwKor
+         4iSOCPFa1teqO9YSXqQDcLz4bGxHNPgZuY6nnfHnXC8b69ALhuc+hBxQR9jOnrftye8r
+         E/lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yONmBN0PwLawH/44puTRPwySCtZZ9oWD6LkdbP8s8iA=;
-        b=bqe3NtaraEfklSfiAQ6zybE+X1aL6QMbtJD9k+cXasmnzsJ/NLN51H7ZeK8LPafzPa
-         gNPkt+cO4hdjmE1ilNpefRE91FaYoG6/7308RakVrW80Gv9F/P+gxQ00tNylqX/V2iH2
-         MJzf67nE5hRN3Yarf21O/ct9nfa7inJZPTWDFjCB99SS/lbMxz4EWXTXYuqcCggS2SK6
-         6ZL9BUJ8p0J/yk+c7Av8e9wZbrfEvOYk86+eiIeF6J2LgyR5hdgBI4mzn/gtGIV3I/8t
-         BXWhCS07xyWCfcilOAP2eWM3JKfd3Iuf+LnikyQGrHrbU47jVp6jBbR9UuAyNkw9zW+9
-         JQeg==
+        bh=zyEpc2kXttN0xTeBvqBVu0ZPBtF2K6J3rpv1Zhvtt5k=;
+        b=c6HTqrFVIKrIEFFlmn+avBSV9oK6wptqkUd7NTm6Q02miOsqZ3QBxVrXPvZLBDFcpB
+         0b/j7QaB3+YQMx9JuaXuXHt329VasDUc85RjEs1cZ7jH10HCjocBPPaDQUNbXhf2aale
+         7Fpx+Vej3WIHD9TBbAAaW2ZUOq87oCUTNywuFsAlfx2oM4BK/JdPD9dGXLVWIeoMA2/f
+         aP7+DV+JJjTttVsq/O655e3KknL4al8h+vOJI00OAipi98EIUzvXhF9s+jk7xg4CpZVw
+         py4KQgiTGgeVkdLUj6ghVfXAHvAGSJ2VerrcKHNTlze9shq3YvC3SQ8phNlvzLBIrlzt
+         J4GA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
+	Nikolay Borisov <nborisov@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 050/193] dmaengine: ioat: Fix error handling path
-Date: Fri, 23 Feb 2018 19:24:43 +0100
-Message-Id: <20180223170333.848670432@linuxfoundation.org>
+Subject: [PATCH 4.4 048/193] btrfs: Fix possible off-by-one in btrfs_search_path_in_tree
+Date: Fri, 23 Feb 2018 19:24:41 +0100
+Message-Id: <20180223170333.493308033@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217795962943006?=
-X-GMAIL-MSGID: =?utf-8?q?1593217795962943006?=
+X-GMAIL-THRID: =?utf-8?q?1593217660394969402?=
+X-GMAIL-MSGID: =?utf-8?q?1593217789524213551?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Nikolay Borisov <nborisov@suse.com>
 
 
-[ Upstream commit 5c9afbda911ce20b3f2181d1e440a0222e1027dd ]
+[ Upstream commit c8bcbfbd239ed60a6562964b58034ac8a25f4c31 ]
 
-If the last test in 'ioat_dma_self_test()' fails, we must release all
-the allocated resources and not just part of them.
+The name char array passed to btrfs_search_path_in_tree is of size
+BTRFS_INO_LOOKUP_PATH_MAX (4080). So the actual accessible char indexes
+are in the range of [0, 4079]. Currently the code uses the define but this
+represents an off-by-one.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Implications:
+
+Size of btrfs_ioctl_ino_lookup_args is 4096, so the new byte will be
+written to extra space, not some padding that could be provided by the
+allocator.
+
+btrfs-progs store the arguments on stack, but kernel does own copy of
+the ioctl buffer and the off-by-one overwrite does not affect userspace,
+but the ending 0 might be lost.
+
+Kernel ioctl buffer is allocated dynamically so we're overwriting
+somebody else's memory, and the ioctl is privileged if args.objectid is
+not 256. Which is in most cases, but resolving a subvolume stored in
+another directory will trigger that path.
+
+Before this patch the buffer was one byte larger, but then the -1 was
+not added.
+
+Fixes: ac8e9819d71f907 ("Btrfs: add search and inode lookup ioctls")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ added implications ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/ioat/init.c |    2 +-
+ fs/btrfs/ioctl.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -395,7 +395,7 @@ static int ioat_dma_self_test(struct ioa
- 	if (memcmp(src, dest, IOAT_TEST_SIZE)) {
- 		dev_err(dev, "Self-test copy failed compare, disabling\n");
- 		err = -ENODEV;
--		goto free_resources;
-+		goto unmap_dma;
- 	}
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2231,7 +2231,7 @@ static noinline int btrfs_search_path_in
+ 	if (!path)
+ 		return -ENOMEM;
  
- unmap_dma:
+-	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX];
++	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX - 1];
+ 
+ 	key.objectid = tree_id;
+ 	key.type = BTRFS_ROOT_ITEM_KEY;
