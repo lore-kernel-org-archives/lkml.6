@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414103-2-4848418965868961502
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519414082-2-16654483400545227800
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414102; b=qWMC+ORHh8zQ0vMgDfvjDetXt8QIMRkmwSoMouzJH0x+A9W
-    WTNugm1yXkvRUIawJWQyPeein8FmeuXt0AEHfGKldw2KR7PrhRGuO4lQYUUqquLL
-    29vos92AOem5MgNSLiirJYfbGbgElOn2GHiR3xsQ9rUKZqMXY2B0F0co6mbupKyC
-    mj0RTpp53seghYA08VZ/5a2quojdpDygAdN5OrMFMz5nFyEYEgI7AHVVx1ZKPZYq
-    0+lSHJRaOmFrSX2z3a+yAAbq6sxzPWjfmI7DSeR8f/ukbSqxTQUYbhoG3g2T6/Uo
-    SlEAU4iVdAjSuNwc1rvQbZM+JcbxOi8kn37fgxw==
+    t=1519414082; b=RdAVN3rhPdMMD4s6GVAatpFAPxDbjLqa970/jhc4PFArKmU
+    TlKQ68dED9xMXO8L3uap7DK/KAXGG42yUIceffTXOuBdk/4xcx6HltZRJgNSb+7r
+    lRcY2me2+mTHGyHlmDB1H4xZJvRfJTYDx7JGj70LFrnjlbVv+bVm0rKzq2FrQNbZ
+    Q+MxSw8Hzt8szvUdDlS/fcUX3WPNt2dTRV5njM8h9gnfBH4N+IWMr/befmaj6crl
+    qRyrp6tvOaGv6b+fStmiXU2hIKWotb07PCZ4c74f78zyANNodWmY3L93tR4SJ3iD
+    Ub7LXd7aes7LS/xudfmylP9PrHB4MQRY/hTf13w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414102; bh=rwWu4s2sm2J+10jV+AkYtB5LIl
-    YA14gRivMLW6bCdTY=; b=UZD025gkyeIt27W5VQUXWQx1QvAsHBOMrMFMiF8OU+
-    aJpNiLlnwMBJZBVu+JYvNJQA5uT0n7vIfeVmbvfgX0p51t+d+zhK4Q2UfSzQ/T0o
-    X9Or+X6/9GnzOz9y6iGkT87Y9dzomAeDoFj2ON08o0OO2OFg7RtHSQ5YEWtadagL
-    4vgsZdaUv0n1oBm8tXYr/MfxHNNDE28VC45d+7BJK5WCy8kO6QmqX0ld+r1l/EyG
-    aQpxi9Jpd6C8vyE1BZ/YDhi+dk7nXtS3IE0YEKHhJPj5BWP+fbAERWOSqKDIX/HQ
-    r4ftMWftYf0g0M/jSx0IO5mIR/HZ3P3rq1Sm/vWBLPSQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414082; bh=tgdFYmR4duYv6z2/yg8ljQnOk6
+    qX+IffvTkQ7pyRq2c=; b=D40Nnost+sEy+JsaoWsEKGCzxmTSfkehP6nEQLcSC7
+    yql5TO6u0qnTFzYF6+Zqk0c5NtGTW44sXFv2H+daFArXhSZL1d+EjvWAriVEVkzZ
+    q4Sc4qlG72XnUxRjPV2MwDw/TGUUrScHAlp5jaqfugAUACvp/ARs2/UAmAHxU5Bu
+    YlDzRwpqTSKddlB4K5IpAtI6qVSUYpEZQ+haskylMNNLme4BF/q01MANvoHb0tdu
+    +Zef7lPfVjcGBQD2iF8VKrW/Us9Myi+DIAv4+exUdEZYED+7ON9V3a0Z4ATSOQQF
+    pYjRlfD7esnCVBZReRUqj20SQAzK9+q6PyCtPHWDC3PQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935048AbeBWT2H (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:28:07 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46802 "EHLO
+        id S934856AbeBWSwR (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:52:17 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935100AbeBWSwM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:12 -0500
+        with ESMTP id S935075AbeBWSwP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:15 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 065/159] ARM: dts: logicpd-somlv: Fix wl127x pinmux
-Date: Fri, 23 Feb 2018 19:26:13 +0100
-Message-Id: <20180223170751.436340815@linuxfoundation.org>
+Subject: [PATCH 4.14 066/159] ARM: dts: am4372: Correct the interrupts_properties of McASP
+Date: Fri, 23 Feb 2018 19:26:14 +0100
+Message-Id: <20180223170751.566126629@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -79,68 +79,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adam Ford <aford173@gmail.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
 
-[ Upstream commit cd7594ac3281722cb8f10d6f6c7e4287747c7a9d ]
+[ Upstream commit 627395a6f8091c0aa18f49dca7df59ba3ec147ef ]
 
-The pin assignment for the wl127x interrupt was incorrect.  I am
-not sure how this every worked.  This also eliminates a conflict with
-the SMC911x ethernet driver and properly moves pinmuxes for the
-related gpio to omap3_pmx_wkup from omap3_pmx_core.
+Fixes the following warnings:
 
-Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD
-DM3730 SOM-LV")
+arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
+interrupts size is (8), expected multiple of 12 in
+/ocp@44000000/mcasp@48038000
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
+interrupts size is (8), expected multiple of 12 in
+/ocp@44000000/mcasp@4803C000
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/logicpd-som-lv.dtsi |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/am4372.dtsi |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
-+++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
-@@ -121,7 +121,7 @@
- 
- &mmc3 {
- 	interrupts-extended = <&intc 94 &omap3_pmx_core2 0x46>;
--	pinctrl-0 = <&mmc3_pins>;
-+	pinctrl-0 = <&mmc3_pins &wl127x_gpio>;
- 	pinctrl-names = "default";
- 	vmmc-supply = <&wl12xx_vmmc>;
- 	non-removable;
-@@ -132,8 +132,8 @@
- 	wlcore: wlcore@2 {
- 		compatible = "ti,wl1273";
- 		reg = <2>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <24 IRQ_TYPE_LEVEL_HIGH>; /* gpio 152 */
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>; /* gpio 2 */
- 		ref-clock-frequency = <26000000>;
- 	};
- };
-@@ -157,8 +157,6 @@
- 			OMAP3_CORE1_IOPAD(0x2166, PIN_INPUT_PULLUP | MUX_MODE3)	/* sdmmc2_dat5.sdmmc3_dat1 */
- 			OMAP3_CORE1_IOPAD(0x2168, PIN_INPUT_PULLUP | MUX_MODE3)	/* sdmmc2_dat6.sdmmc3_dat2 */
- 			OMAP3_CORE1_IOPAD(0x216a, PIN_INPUT_PULLUP | MUX_MODE3)	/* sdmmc2_dat6.sdmmc3_dat3 */
--			OMAP3_CORE1_IOPAD(0x2184, PIN_INPUT_PULLUP | MUX_MODE4)	/* mcbsp4_clkx.gpio_152 */
--			OMAP3_CORE1_IOPAD(0x2a0c, PIN_OUTPUT | MUX_MODE4)	/* sys_boot1.gpio_3 */
- 			OMAP3_CORE1_IOPAD(0x21d0, PIN_INPUT_PULLUP | MUX_MODE3) /* mcspi1_cs1.sdmmc3_cmd */
- 			OMAP3_CORE1_IOPAD(0x21d2, PIN_INPUT_PULLUP | MUX_MODE3)	/* mcspi1_cs2.sdmmc_clk */
- 		>;
-@@ -228,6 +226,12 @@
- 			OMAP3_WKUP_IOPAD(0x2a0e, PIN_OUTPUT | MUX_MODE4)	/* sys_boot2.gpio_4 */
- 		>;
- 	};
-+	wl127x_gpio: pinmux_wl127x_gpio_pin {
-+		pinctrl-single,pins = <
-+			OMAP3_WKUP_IOPAD(0x2a0c, PIN_INPUT | MUX_MODE4)		/* sys_boot0.gpio_2 */
-+			OMAP3_WKUP_IOPAD(0x2a0c, PIN_OUTPUT | MUX_MODE4)	/* sys_boot1.gpio_3 */
-+		>;
-+	};
- };
- 
- &omap3_pmx_core2 {
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -927,7 +927,8 @@
+ 			reg = <0x48038000 0x2000>,
+ 			      <0x46000000 0x400000>;
+ 			reg-names = "mpu", "dat";
+-			interrupts = <80>, <81>;
++			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "tx", "rx";
+ 			status = "disabled";
+ 			dmas = <&edma 8 2>,
+@@ -941,7 +942,8 @@
+ 			reg = <0x4803C000 0x2000>,
+ 			      <0x46400000 0x400000>;
+ 			reg-names = "mpu", "dat";
+-			interrupts = <82>, <83>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "tx", "rx";
+ 			status = "disabled";
+ 			dmas = <&edma 10 2>,
