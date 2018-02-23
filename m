@@ -1,86 +1,150 @@
-Return-Path: <dan.j.williams@intel.com>
-X-Google-Smtp-Source: AH8x225iT1eiM2xkOcI+/MylWgJEKTJ2ffF1sRwLgAtFaGlYBReCyl4GaumoU5w31KCnYVMPej28
-ARC-Seal: i=1; a=rsa-sha256; t=1519424079; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Qco5i/hiXQuGzgfBT+QZ9rFt3kMGEdedAf/eHdx42sqdfPy/W+E+qHkvBqSSPSRWNn
-         L1HfqDNA2UShL3CJh2Yd1RA9443Whqts3v+mJGzhth2boRpAC0EPE90i5B7athRNSb9G
-         2lPVeN/xzd3NXygpx9fUGb8dSN9jFBUFMpxZivlIZWPHiP1Y9eR3VpwHXy/o1NIy6mpa
-         P3n3s7JMn2KHihMK8oVTmDnAg67nLAKO6p3JRBpAzga+twAAkPfZIOU4NyUdoTU2VWRY
-         vBsztX5AJ3KPFPfZCFtSkorevEPrxekNlkl+8DGIBmd1p3XjYezTgDQRM73XkwamMixl
-         i7tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:date:cc:to:from:subject
-         :arc-authentication-results;
-        bh=RjIXJ3VITKCk2BoGKohkTzODzX2jhNUd7UNb9SEETyY=;
-        b=wGnjHh/SAf4QHlS/+kS/av4wv9x1E/V/7bnyhzLpE25MBhQ0ipDmUnOyW9zPyzb5Gj
-         ocLyVcdzIW5CfgjVCH6SrUXE/mqZY5EdmDllrvgFy4tEfDVKPJlysc12F27trLsBRpw5
-         fv6MY4MQxzfbhgTpHr1X+G4JzH/veP9bZepKedQoKAj6ghoMzdsJqgmZ0sxtBiYnNJJc
-         TKbRmda6Y00X/K1DSmgmNkY4hK1CoaUNZcaxonyzq0w3EA3LwSwZ4tmKHvhhfYEJec7M
-         BOEFYjr6996bnHTVSzzvleSSa1KFLGNEzi92aZQ19iWrl2z+vXWcVmM6ZGc6jKYD7NVa
-         3Wmw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4006443-1519424097-2-7062392486152592308
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519424096; b=KSxhNB1WxJd+2hIJ9g63PAi71rSw2xFY6HSyL4TtNG448c7
+    CPUgVP6Re1EGKZt5SR9FJ9VkDOb7ynLFkG1qp61SVKTYVawEy4oIzH+j2/qrx9zK
+    rRapRdb4u4ldAX5Ut5I00Z5xgI1/EIQYSFuw1RUocxB4gplW1D1VywygWBOQcKvt
+    RVy8cHrYF1x3DxrT5Rxw6+ysCZCVJCFkMeEGyY/zJkaY23fE+4jaN133jVHBxOBI
+    8aPQrkT1GY7qhOeemHlL89KgHM81TD8jlKg05IKO2fna7aZzSg+BRDFzbvubG3ff
+    QDtZNfzheBWL8o6Vou2YcAIq8g1CrS1u/k7ifiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519424096; bh=gxLtZgh4t2AKz32oYGC1PJdaPsUSp723CQA9ac6YOa8=; b=R
+    dlhR+pFC3KbY0KAT9inWom3D4XisZa4hCZrmeQj1Xim13iHBhlWq1SBKqSiahSLt
+    GY9+6Ptwg+oahXwuhCAgNBcrfje33oOGVIvoGIbIvnRZ9CopBCqrfIQMFI9Wf1+G
+    pR5iBozclQ3GonLAbTnxN7qaFz9MkVG+dgjCu90ehKUzpctXZq7ulZ/ikXo2bvJt
+    IEy/IVXIPEO2Syl+jr8Suolb6kv/e6xzbGiB+ZDNY2wh0krdDjk5SuTmso/N6Ho2
+    /c2hguqnCeTcvA0sHuZby+dpwAvviBKQjtKDkqz0DcIwEWdlwBk26Aj7NcVWB7d/
+    ndCawwomSRXAGesSWredw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752452AbeBWWOx (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 17:14:53 -0500
+Received: from mga03.intel.com ([134.134.136.65]:44695 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751882AbeBWWOu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 23 Feb 2018 17:14:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
-   d="scan'208";a="22639690"
-Subject: [4.9-stable PATCH 02/11] fs/dax.c: fix inefficiency in
- dax_writeback_mapping_range()
+   d="scan'208";a="33162583"
+Subject: [4.9-stable PATCH 04/11] device-dax: implement ->split() to catch
+ invalid munmap attempts
 From: Dan Williams <dan.j.williams@intel.com>
 To: gregkh@linuxfoundation.org
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Bcc: dan.j.williams@intel.com
-Date: Fri, 23 Feb 2018 14:05:33 -0800
-Message-ID: <151942353293.21775.3589635231521871832.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 23 Feb 2018 14:05:43 -0800
+Message-ID: <151942354379.21775.5321017414392517094.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593231623385291381?=
-X-GMAIL-MSGID: =?utf-8?q?1593231623385291381?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jan Kara <jack@suse.cz>
+commit 9702cffdbf2129516db679e4467db81e1cd287da upstream.
 
-commit 1eb643d02b21412e603b42cdd96010a2ac31c05f upstream.
+Similar to how device-dax enforces that the 'address', 'offset', and
+'len' parameters to mmap() be aligned to the device's fundamental
+alignment, the same constraints apply to munmap().  Implement ->split()
+to fail munmap calls that violate the alignment constraint.
 
-dax_writeback_mapping_range() fails to update iteration index when
-searching radix tree for entries needing cache flushing.  Thus each
-pagevec worth of entries is searched starting from the start which is
-inefficient and prone to livelocks.  Update index properly.
+Otherwise, we later fail VM_BUG_ON checks in the unmap_page_range() path
+with crash signatures of the form:
 
-Link: http://lkml.kernel.org/r/20170619124531.21491-1-jack@suse.cz
-Fixes: 9973c98ecfda3 ("dax: add support for fsync/sync")
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
+    vma ffff8800b60c8a88 start 00007f88c0000000 end 00007f88c0e00000
+    next           (null) prev           (null) mm ffff8800b61150c0
+    prot 8000000000000027 anon_vma           (null) vm_ops ffffffffa0091240
+    pgoff 0 file ffff8800b638ef80 private_data           (null)
+    flags: 0x380000fb(read|write|shared|mayread|maywrite|mayexec|mayshare|softdirty|mixedmap|hugepage)
+    ------------[ cut here ]------------
+    kernel BUG at mm/huge_memory.c:2014!
+    [..]
+    RIP: 0010:__split_huge_pud+0x12a/0x180
+    [..]
+    Call Trace:
+     unmap_page_range+0x245/0xa40
+     ? __vma_adjust+0x301/0x990
+     unmap_vmas+0x4c/0xa0
+     unmap_region+0xae/0x120
+     ? __vma_rb_erase+0x11a/0x230
+     do_munmap+0x276/0x410
+     vm_munmap+0x6a/0xa0
+     SyS_munmap+0x1d/0x30
+
+Link: http://lkml.kernel.org/r/151130418681.4029.7118245855057952010.stgit@dwillia2-desk3.amr.corp.intel.com
+Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: Jeff Moyer <jmoyer@redhat.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- fs/dax.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/dax/dax.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 800748f10b3d..71f87d74afe1 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -785,6 +785,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 			if (ret < 0)
- 				return ret;
- 		}
-+		start_index = indices[pvec.nr - 1] + 1;
- 	}
- 	return 0;
+diff --git a/drivers/dax/dax.c b/drivers/dax/dax.c
+index 40be3747724d..473b44c008dd 100644
+--- a/drivers/dax/dax.c
++++ b/drivers/dax/dax.c
+@@ -453,9 +453,21 @@ static int dax_dev_pmd_fault(struct vm_area_struct *vma, unsigned long addr,
+ 	return rc;
  }
+ 
++static int dax_dev_split(struct vm_area_struct *vma, unsigned long addr)
++{
++	struct file *filp = vma->vm_file;
++	struct dax_dev *dax_dev = filp->private_data;
++	struct dax_region *dax_region = dax_dev->region;
++
++	if (!IS_ALIGNED(addr, dax_region->align))
++		return -EINVAL;
++	return 0;
++}
++
+ static const struct vm_operations_struct dax_dev_vm_ops = {
+ 	.fault = dax_dev_fault,
+ 	.pmd_fault = dax_dev_pmd_fault,
++	.split = dax_dev_split,
+ };
+ 
+ static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
