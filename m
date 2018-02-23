@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv+7xGz+10hWbTJTDZcYXC6sJ/M7ohbjgwMYIhp3QiRhJnTCat7JYc8/YnacGABnGx2OMmI
-ARC-Seal: i=1; a=rsa-sha256; t=1519410923; cv=none;
+X-Google-Smtp-Source: AH8x227jTV8rdFo5+p1HZI968VE6EqHQxiDx4iE9uYmFs2DCsIji3ktiEEgOZ15G+TMOUWOq5yry
+ARC-Seal: i=1; a=rsa-sha256; t=1519410918; cv=none;
         d=google.com; s=arc-20160816;
-        b=vYKsNiZ+K/ibxdpAMPrF8elOOnCIgBK3zud7OfLjhufs4wMItsNbCxsOkSx55O2hHT
-         ZnV4a8C1qSoPmSMNmyFUR67vnVrJj6FYZGdQHT4CxLq69cBfXmdsIYEVyaNbPmL4/x+P
-         vR8xgfSLAxydYMu+njex0ycKQjsLjOOeSfpn+1whL/XIWDZImxEH5hB/E5sd1GUXQrIE
-         I2BDxnD91Mj1B3zDzqj+xiYJDmZbwEWBlHeWq6wyXgRCj+gFhCxE6VLmOsRt2iNrcBeQ
-         qGF4OgP9KQBKAUQtJ5ogBjiQG6UwUyK7FPEnIlaZEm97eCHia6k/J7+bEN+CZDPQ7NeD
-         I8Uw==
+        b=BPitHX4nJFFIeS2D1wFR54z5RLXDk9xxUEfkT6KGiAzhT5ZevyRTD+hYRWFywyuA5S
+         ai9kIWLIpsHkaOOUIpqSyry6tMRDI2dgiUyM1VX4DdhPIsD4WSEma5Njm8b5ffjk4S/9
+         /2O//po7jram3GPYayfUYa8fipgqytBk4L1hkBT7gVUWqSlqwQScVhjLiaP9PD7YTaVi
+         nNDo9FoQ4z243U+omW2P7NYKT7xk5i2vbD6dr0+EbKcv9WI0lgD3Jm60iUOAHfXl8Sx2
+         3rDfXJfugTBdasFiMB9CjSu5zinaH4Z9i+VROIX8xbvdCOJz8jXZqoB/GBBvwEeKn3/0
+         5c3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=w+JU5RV7KnYAT2gPQDiCqeBhb30Xa3UGQXJC3de36Xo=;
-        b=IwlJkqkzZocF4JgS2n4VWhum8Ad5rjyAsRW1PmQsf8pA6CIRlclZezCbMREGSNL5BL
-         Fu4m/ZMCdzyuTGOtfwimWJ45WZOidQPlxnlMB4WhaIkNbtEGfAX5MJEg180YTy6Obiyk
-         vMSZNelibRsyIZ/lltBs2AmA+ocuDRwfJ23YUsEt0K2/fzlF3w9fOQE11TGoOhF6HRpk
-         WpCMI18VDtAs0ZOVayWJYtgg47KSxzLXbnXXxK57ua5N12pj77yLIOGMqSNCINRCcRy1
-         gPaUjD7j6VSPCHzIOoZJKAKvc7UOBgkGqqa8ylodBdicOQ9yct4KK8Y0WnAOFcOi+T1p
-         FWrQ==
+        bh=aHigSq6gE1xl+LHVShOTqsK+GI+oor2HDSnbePRQhAE=;
+        b=F4rOcQR6PSDz9MYwAAXP7KJsc9cqFKVfz+CHa4533Hk+18+J1YvtWp9qNKvztKox9l
+         ormvYru2nd4yxHLQ7DG3k+dvsG9vGHWhJsatZyWi/C6jt/fDtIDaHPrU+fquXMj0L5vl
+         HmtMv+MoBU09QSNFizye0jfQ1i1ju89wg37h/YctjYZE2bHPGGd77bvmoCgrnMsB2Bkw
+         AyR7N/4Ym6YqPg3a5lzxuFThsUntVcQeHxVlziwojmYuprZbAYMaIJxJcaKkA9kbnLci
+         xodm/+bZ26VimskNx2HdomxW6qTxeuGn2RZk5zDv3uazPdp9gcMVeP74zwylhIg0X7OE
+         QyWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lyude <lyude@redhat.com>,
-	Karol Herbst <kherbst@redhat.com>,
-	Pekka Paalanen <ppaalanen@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	nouveau@lists.freedesktop.org,
-	Ingo Molnar <mingo@kernel.org>,
+	Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+	Vinod Koul <vinod.koul@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 059/193] x86/mm/kmmio: Fix mmiotrace for page unaligned addresses
-Date: Fri, 23 Feb 2018 19:24:52 +0100
-Message-Id: <20180223170335.220215513@linuxfoundation.org>
+Subject: [PATCH 4.4 057/193] dmaengine: jz4740: disable/unprepare clk if probe fails
+Date: Fri, 23 Feb 2018 19:24:50 +0100
+Message-Id: <20180223170334.928949847@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -48,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217627914352720?=
-X-GMAIL-MSGID: =?utf-8?q?1593217828551348582?=
+X-GMAIL-THRID: =?utf-8?q?1593217621401354157?=
+X-GMAIL-MSGID: =?utf-8?q?1593217822667263148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,114 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Karol Herbst <kherbst@redhat.com>
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
 
 
-[ Upstream commit 6d60ce384d1d5ca32b595244db4077a419acc687 ]
+[ Upstream commit eb9436966fdc84cebdf222952a99898ab46d9bb0 ]
 
-If something calls ioremap() with an address not aligned to PAGE_SIZE, the
-returned address might be not aligned as well. This led to a probe
-registered on exactly the returned address, but the entire page was armed
-for mmiotracing.
+in error path of jz4740_dma_probe(), call clk_disable_unprepare() to clean
+up.
 
-On calling iounmap() the address passed to unregister_kmmio_probe() was
-PAGE_SIZE aligned by the caller leading to a complete freeze of the
-machine.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-We should always page align addresses while (un)registerung mappings,
-because the mmiotracer works on top of pages, not mappings. We still keep
-track of the probes based on their real addresses and lengths though,
-because the mmiotrace still needs to know what are mapped memory regions.
-
-Also move the call to mmiotrace_iounmap() prior page aligning the address,
-so that all probes are unregistered properly, otherwise the kernel ends up
-failing memory allocations randomly after disabling the mmiotracer.
-
-Tested-by: Lyude <lyude@redhat.com>
-Signed-off-by: Karol Herbst <kherbst@redhat.com>
-Acked-by: Pekka Paalanen <ppaalanen@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: nouveau@lists.freedesktop.org
-Link: http://lkml.kernel.org/r/20171127075139.4928-1-kherbst@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 25ce6c35fea0 MIPS: jz4740: Remove custom DMA API
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/ioremap.c |    4 ++--
- arch/x86/mm/kmmio.c   |   12 +++++++-----
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ drivers/dma/dma-jz4740.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -348,11 +348,11 @@ void iounmap(volatile void __iomem *addr
- 	    (void __force *)addr < phys_to_virt(ISA_END_ADDRESS))
- 		return;
+--- a/drivers/dma/dma-jz4740.c
++++ b/drivers/dma/dma-jz4740.c
+@@ -557,7 +557,7 @@ static int jz4740_dma_probe(struct platf
  
-+	mmiotrace_iounmap(addr);
-+
- 	addr = (volatile void __iomem *)
- 		(PAGE_MASK & (unsigned long __force)addr);
+ 	ret = dma_async_device_register(dd);
+ 	if (ret)
+-		return ret;
++		goto err_clk;
  
--	mmiotrace_iounmap(addr);
--
- 	/* Use the vm area unlocked, assuming the caller
- 	   ensures there isn't another iounmap for the same address
- 	   in parallel. Reuse of the virtual address is prevented by
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -434,17 +434,18 @@ int register_kmmio_probe(struct kmmio_pr
- 	unsigned long flags;
- 	int ret = 0;
- 	unsigned long size = 0;
-+	unsigned long addr = p->addr & PAGE_MASK;
- 	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
- 	unsigned int l;
- 	pte_t *pte;
+ 	irq = platform_get_irq(pdev, 0);
+ 	ret = request_irq(irq, jz4740_dma_irq, 0, dev_name(&pdev->dev), dmadev);
+@@ -570,6 +570,8 @@ static int jz4740_dma_probe(struct platf
  
- 	spin_lock_irqsave(&kmmio_lock, flags);
--	if (get_kmmio_probe(p->addr)) {
-+	if (get_kmmio_probe(addr)) {
- 		ret = -EEXIST;
- 		goto out;
- 	}
+ err_unregister:
+ 	dma_async_device_unregister(dd);
++err_clk:
++	clk_disable_unprepare(dmadev->clk);
+ 	return ret;
+ }
  
--	pte = lookup_address(p->addr, &l);
-+	pte = lookup_address(addr, &l);
- 	if (!pte) {
- 		ret = -EINVAL;
- 		goto out;
-@@ -453,7 +454,7 @@ int register_kmmio_probe(struct kmmio_pr
- 	kmmio_count++;
- 	list_add_rcu(&p->list, &kmmio_probes);
- 	while (size < size_lim) {
--		if (add_kmmio_fault_page(p->addr + size))
-+		if (add_kmmio_fault_page(addr + size))
- 			pr_err("Unable to set page fault.\n");
- 		size += page_level_size(l);
- 	}
-@@ -527,19 +528,20 @@ void unregister_kmmio_probe(struct kmmio
- {
- 	unsigned long flags;
- 	unsigned long size = 0;
-+	unsigned long addr = p->addr & PAGE_MASK;
- 	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
- 	struct kmmio_fault_page *release_list = NULL;
- 	struct kmmio_delayed_release *drelease;
- 	unsigned int l;
- 	pte_t *pte;
- 
--	pte = lookup_address(p->addr, &l);
-+	pte = lookup_address(addr, &l);
- 	if (!pte)
- 		return;
- 
- 	spin_lock_irqsave(&kmmio_lock, flags);
- 	while (size < size_lim) {
--		release_kmmio_fault_page(p->addr + size, &release_list);
-+		release_kmmio_fault_page(addr + size, &release_list);
- 		size += page_level_size(l);
- 	}
- 	list_del_rcu(&p->list);
