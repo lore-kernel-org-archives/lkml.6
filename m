@@ -1,410 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeBXKpS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 05:45:18 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:45705 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751436AbeBXKpE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 05:45:04 -0500
-X-Google-Smtp-Source: AH8x2242tYZVehUlyzIyqbdU7YxYLr0u5Y0FbtmMgdeEvxNHhxB1Gc92a0knP7Gr1udLPaf2U7Z8DA==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
-        andy.shevchenko@gmail.com
-Subject: [PATCH v2 3/3] gpio: Add Spreadtrum PMIC EIC driver support
-Date: Sat, 24 Feb 2018 18:44:20 +0800
-Message-Id: <f4a2fefb4c3179e7598dbc8141a661833200b922.1519468782.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
-References: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
-In-Reply-To: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
-References: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
+        id S1751429AbeBXLG2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 06:06:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751000AbeBXLG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 06:06:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7129221774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 24 Feb 2018 11:06:21 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Narcisa Ana Maria Vasile <narcisaanamaria12@gmail.com>
+Cc: Richard Lai <richard@richardman.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: ccs811: Renamed resistance member in
+ ccs811_reading struct
+Message-ID: <20180224110621.3d8b40b6@archlinux>
+In-Reply-To: <20180220202450.GA11057@nati-X550JK>
+References: <1518570519-1117-1-git-send-email-richard@richardman.com>
+        <20180217141442.728c941b@archlinux>
+        <20180220202450.GA11057@nati-X550JK>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Spreadtrum PMIC EIC controller contains only one bank of debounce EIC,
-and this bank contains 16 EICs. Each EIC can only be used as input mode,
-as well as supporting the debounce and the capability to trigger interrupts
-when detecting input signals.
+On Tue, 20 Feb 2018 22:24:50 +0200
+Narcisa Ana Maria Vasile <narcisaanamaria12@gmail.com> wrote:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v1:
- - New patch in v2.
----
- drivers/gpio/Kconfig              |    8 +
- drivers/gpio/Makefile             |    1 +
- drivers/gpio/gpio-pmic-eic-sprd.c |  328 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 337 insertions(+)
- create mode 100644 drivers/gpio/gpio-pmic-eic-sprd.c
+> On Sat, Feb 17, 2018 at 02:14:42PM +0000, Jonathan Cameron wrote:
+> > On Wed, 14 Feb 2018 01:08:35 +0000
+> > Richard Lai <richard@richardman.com> wrote:
+> >   
+> > > The resistance member in ccs811_reading struct is an unsigned 16-bit
+> > > integer variable used to store RAW_DATA register bytes read from CCS811.
+> > > It is kind of misleading to name this struct member as resistance.
+> > > 
+> > > About the RAW_DATA register bytes, the CCS811 datasheet states that:
+> > > -----
+> > > Two byte read only register which contains the latest readings from the
+> > > sense resistor.
+> > > 
+> > > The most significant 6 bits of the Byte 0 contain the value of the current
+> > > through the sensor (0μA to 63μA).
+> > > 
+> > > The lower 10 bits contain (as computed from the ADC) the readings of the
+> > > voltage across the sensor with the selected current (1023 = 1.65V)"
+> > > -----
+> > >   
+>     True.
+> 
+> > > Hence, the RAW_DATA register byte contains information about electric
+> > > current and voltage of the CCS811 sensor. Calling this struct member
+> > > 'resistance' is kind of misleading, although both electric current and
+> > > voltage are needed to calculate the electrical resistance of the sensor
+> > > using Ohm's law, V = I x R, in which a new channel type of IIO_RESISTANCE
+> > > may be added to the driver in the future.
+> > >   
+>     
+> 
+> > > Signed-off-by: Richard Lai <richard@richardman.com>  
+> > This seems logical to me, but I'd just like to let it sit for a few
+> > more days to let Narcisa have time to respond.
+> >   
+>     I agree, Richard's suggestion is a better fit as a name for this
+>     register.
+Cool.  Ideally please give a formal
+Acked-by: as then it is recorded in the record rather than deep in an email
+archive.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c937407..f642314 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -380,6 +380,14 @@ config GPIO_PL061
- 	help
- 	  Say yes here to support the PrimeCell PL061 GPIO device
- 
-+config GPIO_PMIC_EIC_SPRD
-+	tristate "Spreadtrum PMIC EIC support"
-+	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-+	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to support Spreadtrum PMIC EIC device.
-+
- config GPIO_PXA
- 	bool "PXA GPIO support"
- 	depends on ARCH_PXA || ARCH_MMP
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 66eaa9e..50ba64b 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_GPIO_PCI_IDIO_16)	+= gpio-pci-idio-16.o
- obj-$(CONFIG_GPIO_PCIE_IDIO_24)	+= gpio-pcie-idio-24.o
- obj-$(CONFIG_GPIO_PISOSR)	+= gpio-pisosr.o
- obj-$(CONFIG_GPIO_PL061)	+= gpio-pl061.o
-+obj-$(CONFIG_GPIO_PMIC_EIC_SPRD)	+= gpio-pmic-eic-sprd.o
- obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-new file mode 100644
-index 0000000..ed5d6b2
---- /dev/null
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -0,0 +1,328 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Spreadtrum Communications Inc.
-+ * Copyright (C) 2018 Linaro Ltd.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* EIC registers definition */
-+#define SPRD_PMIC_EIC_DATA		0x0
-+#define SPRD_PMIC_EIC_DMSK		0x4
-+#define SPRD_PMIC_EIC_IEV		0x14
-+#define SPRD_PMIC_EIC_IE		0x18
-+#define SPRD_PMIC_EIC_RIS		0x1c
-+#define SPRD_PMIC_EIC_MIS		0x20
-+#define SPRD_PMIC_EIC_IC		0x24
-+#define SPRD_PMIC_EIC_TRIG		0x28
-+#define SPRD_PMIC_EIC_CTRL0		0x40
-+
-+/*
-+ * The PMIC EIC controller only has one bank, and each bank now can contain
-+ * 16 EICs.
-+ */
-+#define SPRD_PMIC_EIC_PER_BANK_NR	16
-+#define SPRD_PMIC_EIC_NR		SPRD_PMIC_EIC_PER_BANK_NR
-+#define SPRD_PMIC_EIC_DATA_MASK		GENMASK(15, 0)
-+#define SPRD_PMIC_EIC_BIT(x)		((x) & (SPRD_PMIC_EIC_PER_BANK_NR - 1))
-+#define SPRD_PMIC_EIC_DBNC_MASK		GENMASK(11, 0)
-+
-+/*
-+ * These registers are modified under the irq bus lock and cached to avoid
-+ * unnecessary writes in bus_sync_unlock.
-+ */
-+enum { REG_IEV, REG_IE, REG_TRIG, CACHE_NR_REGS };
-+
-+/**
-+ * struct sprd_pmic_eic - PMIC EIC controller
-+ * @chip: the gpio_chip structure.
-+ * @intc: the irq_chip structure.
-+ * @regmap: the regmap from the parent device.
-+ * @offset: the EIC controller's offset address of the PMIC.
-+ * @reg: the array to cache the EIC registers.
-+ * @buslock: for bus lock/sync and unlock.
-+ * @irq: the interrupt number of the PMIC EIC conteroller.
-+ */
-+struct sprd_pmic_eic {
-+	struct gpio_chip chip;
-+	struct irq_chip intc;
-+	struct regmap *map;
-+	u32 offset;
-+	u8 reg[CACHE_NR_REGS];
-+	struct mutex buslock;
-+	int irq;
-+};
-+
-+static void sprd_pmic_eic_update(struct gpio_chip *chip, unsigned int offset,
-+				 u16 reg, unsigned int val)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 shift = SPRD_PMIC_EIC_BIT(offset);
-+
-+	regmap_update_bits(pmic_eic->map, pmic_eic->offset + reg,
-+			   BIT(shift), val << shift);
-+}
-+
-+static int sprd_pmic_eic_read(struct gpio_chip *chip, unsigned int offset,
-+			      u16 reg)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 value;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	return !!(value & BIT(SPRD_PMIC_EIC_BIT(offset)));
-+}
-+
-+static int sprd_pmic_eic_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 1);
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_free(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 0);
-+}
-+
-+static int sprd_pmic_eic_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	return sprd_pmic_eic_read(chip, offset, SPRD_PMIC_EIC_DATA);
-+}
-+
-+static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
-+			      int value)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+}
-+
-+static int sprd_pmic_eic_set_debounce(struct gpio_chip *chip,
-+				      unsigned int offset,
-+				      unsigned int debounce)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 reg, value;
-+	int ret;
-+
-+	reg = SPRD_PMIC_EIC_CTRL0 + SPRD_PMIC_EIC_BIT(offset) * 0x4;
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	value &= ~SPRD_PMIC_EIC_DBNC_MASK;
-+	value |= debounce / 1000;
-+	return regmap_write(pmic_eic->map, pmic_eic->offset + reg, value);
-+}
-+
-+static int sprd_pmic_eic_set_config(struct gpio_chip *chip, unsigned int offset,
-+				    unsigned long config)
-+{
-+	unsigned long param = pinconf_to_config_param(config);
-+	u32 arg = pinconf_to_config_argument(config);
-+
-+	if (param == PIN_CONFIG_INPUT_DEBOUNCE)
-+		return sprd_pmic_eic_set_debounce(chip, offset, arg);
-+
-+	return -ENOTSUPP;
-+}
-+
-+static void sprd_pmic_eic_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 0;
-+	pmic_eic->reg[REG_TRIG] = 0;
-+}
-+
-+static void sprd_pmic_eic_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 1;
-+	pmic_eic->reg[REG_TRIG] = 1;
-+}
-+
-+static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
-+				      unsigned int flow_type)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	switch (flow_type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		pmic_eic->reg[REG_IEV] = 1;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		pmic_eic->reg[REG_IEV] = 0;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	irq_set_handler_locked(data, handle_level_irq);
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_bus_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	mutex_lock(&pmic_eic->buslock);
-+}
-+
-+static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 offset = irqd_to_hwirq(data);
-+
-+	/* Set irq type */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
-+			     pmic_eic->reg[REG_IEV]);
-+	/* Set irq unmask */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
-+			     pmic_eic->reg[REG_IE]);
-+	/* Generate trigger start pulse for debounce EIC */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG,
-+			     pmic_eic->reg[REG_TRIG]);
-+
-+	mutex_unlock(&pmic_eic->buslock);
-+}
-+
-+static irqreturn_t sprd_pmic_eic_irq_handler(int irq, void *data)
-+{
-+	struct sprd_pmic_eic *pmic_eic = data;
-+	struct gpio_chip *chip = &pmic_eic->chip;
-+	u32 n, girq, val;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + SPRD_PMIC_EIC_MIS,
-+			  &val);
-+	if (ret)
-+		return IRQ_RETVAL(ret);
-+
-+	val &= SPRD_PMIC_EIC_DATA_MASK;
-+
-+	for (n = 0; n < chip->ngpio; n++) {
-+		if (!(BIT(n) & val))
-+			continue;
-+
-+		/* Clear the interrupt */
-+		sprd_pmic_eic_update(chip, n, SPRD_PMIC_EIC_IC, 1);
-+
-+		girq = irq_find_mapping(chip->irq.domain, n);
-+		handle_nested_irq(girq);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int sprd_pmic_eic_probe(struct platform_device *pdev)
-+{
-+	struct gpio_irq_chip *irq;
-+	struct sprd_pmic_eic *pmic_eic;
-+	int ret;
-+
-+	pmic_eic = devm_kzalloc(&pdev->dev, sizeof(*pmic_eic), GFP_KERNEL);
-+	if (!pmic_eic)
-+		return -ENOMEM;
-+
-+	mutex_init(&pmic_eic->buslock);
-+
-+	pmic_eic->irq = platform_get_irq(pdev, 0);
-+	if (pmic_eic->irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC interrupt.\n");
-+		return pmic_eic->irq;
-+	}
-+
-+	pmic_eic->map = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!pmic_eic->map)
-+		return -ENODEV;
-+
-+	ret = of_property_read_u32(pdev->dev.of_node, "reg", &pmic_eic->offset);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC base address.\n");
-+		return ret;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, pmic_eic->irq, NULL,
-+					sprd_pmic_eic_irq_handler,
-+					IRQF_TRIGGER_LOW |
-+					IRQF_ONESHOT | IRQF_NO_SUSPEND,
-+					dev_name(&pdev->dev), pmic_eic);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to request PMIC EIC IRQ.\n");
-+		return ret;
-+	}
-+
-+	pmic_eic->chip.label = dev_name(&pdev->dev);
-+	pmic_eic->chip.ngpio = SPRD_PMIC_EIC_NR;
-+	pmic_eic->chip.base = -1;
-+	pmic_eic->chip.parent = &pdev->dev;
-+	pmic_eic->chip.of_node = pdev->dev.of_node;
-+	pmic_eic->chip.direction_input = sprd_pmic_eic_direction_input;
-+	pmic_eic->chip.request = sprd_pmic_eic_request;
-+	pmic_eic->chip.free = sprd_pmic_eic_free;
-+	pmic_eic->chip.set_config = sprd_pmic_eic_set_config;
-+	pmic_eic->chip.set = sprd_pmic_eic_set;
-+	pmic_eic->chip.get = sprd_pmic_eic_get;
-+
-+	pmic_eic->intc.name = dev_name(&pdev->dev);
-+	pmic_eic->intc.irq_mask = sprd_pmic_eic_irq_mask;
-+	pmic_eic->intc.irq_unmask = sprd_pmic_eic_irq_unmask;
-+	pmic_eic->intc.irq_set_type = sprd_pmic_eic_irq_set_type;
-+	pmic_eic->intc.irq_bus_lock = sprd_pmic_eic_bus_lock;
-+	pmic_eic->intc.irq_bus_sync_unlock = sprd_pmic_eic_bus_sync_unlock;
-+	pmic_eic->intc.flags = IRQCHIP_SKIP_SET_WAKE;
-+
-+	irq = &pmic_eic->chip.irq;
-+	irq->chip = &pmic_eic->intc;
-+	irq->threaded = true;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &pmic_eic->chip, pmic_eic);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip %d.\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, pmic_eic);
-+	return 0;
-+}
-+
-+static const struct of_device_id sprd_pmic_eic_of_match[] = {
-+	{ .compatible = "sprd,sc27xx-eic", },
-+	{ /* end of list */ }
-+};
-+MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
-+
-+static struct platform_driver sprd_pmic_eic_driver = {
-+	.probe = sprd_pmic_eic_probe,
-+	.driver = {
-+		.name = "sprd-pmic-eic",
-+		.of_match_table	= sprd_pmic_eic_of_match,
-+	},
-+};
-+
-+module_platform_driver(sprd_pmic_eic_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum PMIC EIC driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
+> > Feel free to give me a poke if it looks like I have forgotten this
+> > in a week or so.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> > > ---
+> > >  drivers/iio/chemical/ccs811.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/iio/chemical/ccs811.c b/drivers/iio/chemical/ccs811.c
+> > > index 8e8beb7..e6f6bc4 100644
+> > > --- a/drivers/iio/chemical/ccs811.c
+> > > +++ b/drivers/iio/chemical/ccs811.c
+> > > @@ -66,7 +66,7 @@ struct ccs811_reading {
+> > >  	__be16 voc;
+> > >  	u8 status;
+> > >  	u8 error;
+> > > -	__be16 resistance;
+> > > +	__be16 raw_data;
+> > >  } __attribute__((__packed__));
+> > >  
+> > >  struct ccs811_data {
+> > > @@ -202,12 +202,12 @@ static int ccs811_read_raw(struct iio_dev *indio_dev,
+> > >  
+> > >  		switch (chan->type) {
+> > >  		case IIO_VOLTAGE:
+> > > -			*val = be16_to_cpu(data->buffer.resistance) &
+> > > +			*val = be16_to_cpu(data->buffer.raw_data) &
+> > >  					   CCS811_VOLTAGE_MASK;
+> > >  			ret = IIO_VAL_INT;
+> > >  			break;
+> > >  		case IIO_CURRENT:
+> > > -			*val = be16_to_cpu(data->buffer.resistance) >> 10;
+> > > +			*val = be16_to_cpu(data->buffer.raw_data) >> 10;
+> > >  			ret = IIO_VAL_INT;
+> > >  			break;
+> > >  		case IIO_CONCENTRATION:  
+> >   
