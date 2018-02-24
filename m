@@ -1,80 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeBXBFc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 20:05:32 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751983AbeBXBF3 (ORCPT
+        id S1752512AbeBXBPb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 20:15:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43174 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751983AbeBXBPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 20:05:29 -0500
-Date: Fri, 23 Feb 2018 17:05:11 -0800
-From: Ram Pai <linuxram@us.ibm.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, mpe@ellerman.id.au, mingo@redhat.com,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-        benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
-Subject: Re: [PATCH v12 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if
- CONFIG_ARCH_HAS_PKEYS is enabled
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
- <201802231528.snWZIspR%fengguang.wu@intel.com>
+        Fri, 23 Feb 2018 20:15:30 -0500
+Date: Fri, 23 Feb 2018 17:15:28 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Cong Wang <xiyou.wangcong@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: Chris Mi <chrism@mellanox.com>
+Subject: Re: Fwd: Re: Kernel panic with 4.16-rc1 (and 4.16-rc2) running
+ selftest
+Message-ID: <20180224011528.GA15231@bombadil.infradead.org>
+References: <7995f335-ccac-bfdc-bb37-46d0f887c647@oracle.com>
+ <b926a569-c05e-dd49-a25d-555e88e9ff8e@infradead.org>
+ <CAM_iQpUveA5T6-y7bguaPUok-LphJrLYxw6kNgaMorsxm4z9NA@mail.gmail.com>
+ <CAM_iQpWSRe0t1Dr=7o+1ejULV=F+_Wx1v7yyw=NRBUTYttMxog@mail.gmail.com>
+ <96bf4941-17c0-0796-292c-b66087f5f52e@infradead.org>
+ <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201802231528.snWZIspR%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18022401-0040-0000-0000-0000043732BE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022401-0041-0000-0000-000020D95288
-Message-Id: <20180224010511.GK5559@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802240012
+In-Reply-To: <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 03:11:45PM +0800, kbuild test robot wrote:
-> Hi Ram,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16-rc2 next-20180222]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
->         chmod +x ~/bin/make.cross
-...snip..
->         # save the attached .config to linux build tree
->         make.cross ARCH=powerpc 
-> 
-> Note: the linux-review/Ram-Pai/mm-x86-powerpc-Enhancements-to-Memory-Protection-Keys/20180223-042743 HEAD c5692bca45543c242ffca15c811923e4c548ed19 builds fine.
->       It only hurts bisectibility.
+On Fri, Feb 23, 2018 Randy Dunlap wrote:
+> [add Matthew Wilcox; hopefully he can look/see]
 
-oops, it broke git-bisect on powerpc :-(
-The following change will fix it. This should nail it down.
+Thanks, Randy.  I don't understand why nobody else thought to cc the
+author of the patch that it was bisected to ...
 
-diff --git a/arch/powerpc/include/asm/pkeys.h
-b/arch/powerpc/include/asm/pkeys.h
-index 0409c80..0b3b669 100644
---- a/arch/powerpc/include/asm/pkeys.h
-+++ b/arch/powerpc/include/asm/pkeys.h
-@@ -25,6 +25,7 @@
- # define VM_PKEY_BIT1  VM_HIGH_ARCH_1
- # define VM_PKEY_BIT2  VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3  VM_HIGH_ARCH_3
- # define VM_PKEY_BIT4  VM_HIGH_ARCH_4
-+#elif !defined(VM_PKEY_BIT4)
-+# define VM_PKEY_BIT4  VM_HIGH_ARCH_4
-#endif
+> On 02/23/2018 04:13 PM, Cong Wang wrote:
+> > On Fri, Feb 23, 2018 at 3:27 PM, Cong Wang <xiyou.wangcong@gmail.com>
+> wrote:
+> >> On Fri, Feb 23, 2018 at 11:00 AM, Randy Dunlap <rdunlap@infradead.org>
+> wrote:
+> >>> On 02/23/2018 08:05 AM, Khalid Aziz wrote:
+> >>>> Same selftest does not cause panic on 4.15. git bisect pointed to
+> commit 6ce711f2750031d12cec91384ac5cfa0a485b60a ("idr: Make 1-based IDRs
+> more efficient").
+> >>>> Kernel config is attached.
+> >>
+> >> Looks like something horribly wrong with u32 key id idr...
+> >
+> > Adding a few printk's, I got:
+> >
+> > [   31.231560] requested handle = ffe00000
+> > [   31.232426] allocated handle = 0
+> > ...
+> > [   31.246475] requested handle = ffd00000
+> > [   31.247555] allocated handle = 1
+> >
+> >
+> > So the bug is here where we can't allocate a specific handle:
+> >
+> >                         err = idr_alloc_u32(&tp_c->handle_idr, ht,
+> &handle,
+> >                                             handle, GFP_KERNEL);
+> >                         if (err) {
+> >                                 kfree(ht);
+> >                                 return err;
+> >                         }
+
+Please try this patch.  It fixes ffe00000, but there may be more things
+tested that it may not work for.
+
+Chris Mi, what happened to that set of testcases you promised to write
+for me?
+
+diff --git a/lib/idr.c b/lib/idr.c
+index c98d77fcf393..10d9b8d47c33 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -36,8 +36,8 @@ int idr_alloc_u32(struct idr *idr, void *ptr, u32 *nextid,
+ {
+ 	struct radix_tree_iter iter;
+ 	void __rcu **slot;
+-	int base = idr->idr_base;
+-	int id = *nextid;
++	unsigned int base = idr->idr_base;
++	unsigned int id = *nextid;
+ 
+ 	if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
+ 		return -EINVAL;
