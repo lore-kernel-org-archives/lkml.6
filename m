@@ -1,30 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751422AbeBXMUi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 07:20:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40170 "EHLO mail.kernel.org"
+        id S1751399AbeBXMYf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 07:24:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750751AbeBXMUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 07:20:36 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD3021741
+        id S1750751AbeBXMYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 07:24:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A817821741
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Feb 2018 12:20:29 +0000
+Date: Sat, 24 Feb 2018 12:24:28 +0000
 From: Jonathan Cameron <jic23@kernel.org>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, maxime.ripard@bootlin.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        lee.jones@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 13/13] iio: adc: axp20x_adc: remove !! in favor of
- ternary condition
-Message-ID: <20180224122029.1520fe89@archlinux>
-In-Reply-To: <9ec180ff4358ac6e163115aa7832a0674b6a640e.1519044068.git-series.quentin.schulz@bootlin.com>
-References: <cover.6545459c99a33874413abf619136986f53d2c2a2.1519044068.git-series.quentin.schulz@bootlin.com>
-        <9ec180ff4358ac6e163115aa7832a0674b6a640e.1519044068.git-series.quentin.schulz@bootlin.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com,
+        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio:dummy: Fix coding style in Kconfig
+Message-ID: <20180224122428.007ccf89@archlinux>
+In-Reply-To: <20180220132804.fnlsi6ag6h5rrqya@smtp.gmail.com>
+References: <20180220132804.fnlsi6ag6h5rrqya@smtp.gmail.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -33,54 +28,83 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018 13:47:36 +0100
-Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+On Tue, 20 Feb 2018 10:28:04 -0300
+Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-> !!'s behaviour isn't that obvious and sparse complained about it, so
-> let's replace it with a ternary condition.
+> This patch fixes the checkpatch.pl warning:
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+> drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
+> describes the config symbol fully
+> drivers/iio/dummy/Kconfig:29: WARNING: please write a paragraph that
+> describes the config symbol fully
+> 
+> This patch expands the explanation about IIO_DUMMY_EVGEN by using the
+> code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
+> way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
+> from file iio_simple_dummy_buffer.c. Finally, this patch apply the
+> coding-style for Kconfig files (Documentation/process/coding-style.rst)
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+
+Several different things going on in the one patch, please do
+it as a short series with one thing per patch.
+
+Certainly do the coding style separately from the additional documentation.
 
 Thanks,
 
 Jonathan
 
+
 > ---
->  drivers/iio/adc/axp20x_adc.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/iio/dummy/Kconfig | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/iio/adc/axp20x_adc.c b/drivers/iio/adc/axp20x_adc.c
-> index a30a972..7a745cf 100644
-> --- a/drivers/iio/adc/axp20x_adc.c
-> +++ b/drivers/iio/adc/axp20x_adc.c
-> @@ -365,7 +365,7 @@ static int axp20x_adc_offset_voltage(struct iio_dev *indio_dev, int channel,
->  		return -EINVAL;
->  	}
+> diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
+> index 5a29fbd3c531..4a7127fb2979 100644
+> --- a/drivers/iio/dummy/Kconfig
+> +++ b/drivers/iio/dummy/Kconfig
+> @@ -9,20 +9,24 @@ config IIO_DUMMY_EVGEN
+>  	tristate
 >  
-> -	*val = !!(*val) * 700000;
-> +	*val = *val ? 700000 : 0;
+>  config IIO_SIMPLE_DUMMY
+> -       tristate "An example driver with no hardware requirements"
+> -       depends on IIO_SW_DEVICE
+> -       help
+> -	 Driver intended mainly as documentation for how to write
+> -	 a driver. May also be useful for testing userspace code
+> -	 without hardware.
+> +	tristate "An example driver with no hardware requirements"
+> +	depends on IIO_SW_DEVICE
+> +	help
+> +	  Driver intended mainly as documentation for how to write
+> +	  a driver. May also be useful for testing userspace code
+> +	  without hardware.
 >  
->  	return IIO_VAL_INT;
->  }
-> @@ -442,15 +442,17 @@ static int axp20x_write_raw(struct iio_dev *indio_dev,
->  	if (val != 0 && val != 700000)
->  		return -EINVAL;
+>  if IIO_SIMPLE_DUMMY
 >  
-> +	val = val ? 1 : 0;
+>  config IIO_SIMPLE_DUMMY_EVENTS
+> -       bool "Event generation support"
+> -       select IIO_DUMMY_EVGEN
+> -       help
+> -         Add some dummy events to the simple dummy driver.
+> +	bool "Event generation support"
+> +	select IIO_DUMMY_EVGEN
+> +	help
+> +	  Add some dummy events to the simple dummy driver.
 > +
->  	switch (chan->channel) {
->  	case AXP20X_GPIO0_V:
->  		reg = AXP20X_GPIO10_IN_RANGE_GPIO0;
-> -		regval = AXP20X_GPIO10_IN_RANGE_GPIO0_VAL(!!val);
-> +		regval = AXP20X_GPIO10_IN_RANGE_GPIO0_VAL(val);
->  		break;
+> +	  The purpose of this is to generate 'fake' event interrupts thus
+> +	  allowing that driver's code to be as close as possible to that
+> +	  a normal driver talking to hardware.
 >  
->  	case AXP20X_GPIO1_V:
->  		reg = AXP20X_GPIO10_IN_RANGE_GPIO1;
-> -		regval = AXP20X_GPIO10_IN_RANGE_GPIO1_VAL(!!val);
-> +		regval = AXP20X_GPIO10_IN_RANGE_GPIO1_VAL(val);
->  		break;
+>  config IIO_SIMPLE_DUMMY_BUFFER
+>  	bool "Buffered capture support"
+> @@ -32,6 +36,8 @@ config IIO_SIMPLE_DUMMY_BUFFER
+>  	help
+>  	  Add buffered data capture to the simple dummy driver.
 >  
->  	default:
+> +	  Buffer handling elements of industrial I/O reference driver.
+> +	  Uses the kfifo buffer.
+>  endif # IIO_SIMPLE_DUMMY
+>  
+>  endmenu
