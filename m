@@ -1,171 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeBXD3y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 22:29:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54274 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751917AbeBXD3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 22:29:53 -0500
-Date: Fri, 23 Feb 2018 19:30:13 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
- <74dbcbd4-6034-0be9-7674-ccb058de6177@gmail.com>
- <ea223820-6a1a-b1a6-58c5-c4c720ef58ea@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea223820-6a1a-b1a6-58c5-c4c720ef58ea@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022403-0024-0000-0000-0000032BFF39
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008587; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00994206; UDB=6.00505249; IPR=6.00773546;
- MB=3.00019716; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-24 03:29:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022403-0025-0000-0000-0000472185A2
-Message-Id: <20180224033013.GR2855@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802240041
+        id S1752847AbeBXDcg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 22:32:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53110 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752217AbeBXDce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 22:32:34 -0500
+From: Jason Wang <jasowang@redhat.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mst@redhat.com, sergei.shtylyov@cogentembedded.com,
+        christoffer.dall@linaro.org, brouer@redhat.com,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH V4 net 1/3] Revert "tuntap: add missing xdp flush"
+Date: Sat, 24 Feb 2018 11:32:24 +0800
+Message-Id: <1519443146-9089-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 12:22:24PM +0900, Akira Yokosawa wrote:
-> On 2018/02/22 07:29:02 +0900, Akira Yokosawa wrote:
-> > On 2018/02/22 2:15, Alan Stern wrote:
-> >> Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
-> >> smp_read_barrier_depends, and lockless_dereference") was accidentally
-> >> merged too early, while it was still in RFC form.  This patch adds in
-> >> the missing pieces.
-> >>
-> >> Akira pointed out some typos in the original patch, and he noted that
-> >> cheatsheet.txt should be updated to indicate how unsuccessful RMW
-> >> operations relate to address dependencies.
-> > 
-> > My point was to separate unannotated loads from READ_ONCE(), if the
-> > cheatsheet should concern such accesses as well.
-> > Unsuccessful RMW operations were brought up by Andrea.
-> >
-> 
-> Paul, can you amend above paragraph in the change log to something like:
-> 
->     Akira pointed out some typos in the original patch, and he noted that
->     cheatsheet.txt should be updated to indicate READ_ONCE() implies
->     address dependency, which invited Andrea's observation that it should
->     also be updated to indicate how unsuccessful RMW operations relate to
->     address dependencies.
-> 
-> , if Alan and Andrea are OK with the amendment.
-> 
-> Also, please append my Acked-by.
-> 
-> Acked-by: Akira Yokosawa <akiyks@gmail.com>
+This reverts commit 762c330d670e3d4b795cf7a8d761866fdd1eef49. The
+reason is we try to batch packets for devmap which causes calling
+xdp_do_flush() in the process context. Simply disabling preemption
+may not work since process may move among processors which lead
+xdp_do_flush() to miss some flushes on some processors.
 
-I can still amend this, and have added your Acked-by.  If Alan and Andrea
-OK with your change, I will apply that also.
+So simply revert the patch, a follow-up patch will add the xdp flush
+correctly.
 
-							Thanx, Paul
+Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
+Fixes: 762c330d670e ("tuntap: add missing xdp flush")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/tun.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-> >> Andrea pointed out that the macro for rcu_dereference() in linux.def
-> >> should now use the "once" annotation instead of "deref".  He also
-> >> suggested that the comments should mention commit 5a8897cc7631
-> >> ("locking/atomics/alpha: Add smp_read_barrier_depends() to
-> >> _release()/_relaxed() atomics") as an important precursor, and he
-> >> contributed commit cb13b424e986 ("locking/xchg/alpha: Add
-> >> unconditional memory barrier to cmpxchg()"), another prerequisite.
-> >>
-> >> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> >> Suggested-by: Akira Yokosawa <akiyks@gmail.com>
-> >> Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-> >> Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
-> >>
-> > 
-> > The change itself looks good to me.
-> > 
-> > Acked-by: Akira Yokosawa <akiyks@gmail.com>
-> > 
-> >        Thanks, Akira
-> > 
-> >> ---
-> >>
-> >>  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
-> >>  tools/memory-model/Documentation/explanation.txt |    4 ++--
-> >>  tools/memory-model/linux-kernel.def              |    2 +-
-> >>  3 files changed, 6 insertions(+), 6 deletions(-)
-> >>
-> >> Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> >> ===================================================================
-> >> --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
-> >> +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> >> @@ -1,11 +1,11 @@
-> >>                                    Prior Operation     Subsequent Operation
-> >>                                    ---------------  ---------------------------
-> >>                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-> >> -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
-> >> +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
-> >>  
-> >>  Store, e.g., WRITE_ONCE()            Y                                       Y
-> >> -Load, e.g., READ_ONCE()              Y                              Y        Y
-> >> -Unsuccessful RMW operation           Y                              Y        Y
-> >> +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
-> >> +Unsuccessful RMW operation           Y                          Y   Y        Y
-> >>  rcu_dereference()                    Y                          Y   Y        Y
-> >>  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
-> >>  Successful *_release()         C        Y  Y    Y     W                      Y
-> >> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-> >> ===================================================================
-> >> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-> >> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-> >> @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
-> >>  executed on C before the fence (i.e., those which precede the fence in
-> >>  program order).
-> >>  
-> >> -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> >> +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> >>  other properties which we discuss later.
-> >>  
-> >>  
-> >> @@ -1138,7 +1138,7 @@ final effect is that even though the two
-> >>  program order, it appears that they aren't.
-> >>  
-> >>  This could not have happened if the local cache had processed the
-> >> -incoming stores in FIFO order.  In constrast, other architectures
-> >> +incoming stores in FIFO order.  By contrast, other architectures
-> >>  maintain at least the appearance of FIFO order.
-> >>  
-> >>  In practice, this difficulty is solved by inserting a special fence
-> >> Index: usb-4.x/tools/memory-model/linux-kernel.def
-> >> ===================================================================
-> >> --- usb-4.x.orig/tools/memory-model/linux-kernel.def
-> >> +++ usb-4.x/tools/memory-model/linux-kernel.def
-> >> @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
-> >>  smp_store_release(X,V) { __store{release}(*X,V); }
-> >>  smp_load_acquire(X) __load{acquire}(*X)
-> >>  rcu_assign_pointer(X,V) { __store{release}(X,V); }
-> >> -rcu_dereference(X) __load{deref}(X)
-> >> +rcu_dereference(X) __load{once}(X)
-> >>  
-> >>  // Fences
-> >>  smp_mb() { __fence{mb} ; }
-> >>
-> > 
-> 
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index b52258c..2823a4a 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -181,7 +181,6 @@ struct tun_file {
+ 	struct tun_struct *detached;
+ 	struct ptr_ring tx_ring;
+ 	struct xdp_rxq_info xdp_rxq;
+-	int xdp_pending_pkts;
+ };
+ 
+ struct tun_flow_entry {
+@@ -1662,7 +1661,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 		case XDP_REDIRECT:
+ 			get_page(alloc_frag->page);
+ 			alloc_frag->offset += buflen;
+-			++tfile->xdp_pending_pkts;
+ 			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
+ 			if (err)
+ 				goto err_redirect;
+@@ -1984,11 +1982,6 @@ static ssize_t tun_chr_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	result = tun_get_user(tun, tfile, NULL, from,
+ 			      file->f_flags & O_NONBLOCK, false);
+ 
+-	if (tfile->xdp_pending_pkts) {
+-		tfile->xdp_pending_pkts = 0;
+-		xdp_do_flush_map();
+-	}
+-
+ 	tun_put(tun);
+ 	return result;
+ }
+@@ -2325,13 +2318,6 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 	ret = tun_get_user(tun, tfile, m->msg_control, &m->msg_iter,
+ 			   m->msg_flags & MSG_DONTWAIT,
+ 			   m->msg_flags & MSG_MORE);
+-
+-	if (tfile->xdp_pending_pkts >= NAPI_POLL_WEIGHT ||
+-	    !(m->msg_flags & MSG_MORE)) {
+-		tfile->xdp_pending_pkts = 0;
+-		xdp_do_flush_map();
+-	}
+-
+ 	tun_put(tun);
+ 	return ret;
+ }
+@@ -3163,7 +3149,6 @@ static int tun_chr_open(struct inode *inode, struct file * file)
+ 	sock_set_flag(&tfile->sk, SOCK_ZEROCOPY);
+ 
+ 	memset(&tfile->tx_ring, 0, sizeof(tfile->tx_ring));
+-	tfile->xdp_pending_pkts = 0;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
