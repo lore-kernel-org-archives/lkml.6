@@ -1,140 +1,71 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225gX0hFhvTrlRmxlSpTD101Hp5YcocK2WmlaSciPsLFvxJmfoEHHwC9h+uKxJWMS06+w6Zz
-ARC-Seal: i=1; a=rsa-sha256; t=1519752350; cv=none;
+X-Google-Smtp-Source: AH8x224L/AJll0NQ0eWtPl2MAS7JPxkhP2NifrGyWSPU28iWNZ/S+ayLjDLZBQJvdc40EsaTUad3
+ARC-Seal: i=1; a=rsa-sha256; t=1519461560; cv=none;
         d=google.com; s=arc-20160816;
-        b=XQw1gMo+1bA7J2zBlxoMJlm7JfvPZCF4SLni+Cm4HoOfA1X0HGZGWbV/M3NKM0lGlx
-         fsW0MskBtoDN3v1Ua5nqqg68UwRU3PVeaVtoV98bqjOvgXZlXrl438jwOZ7QdeTe7uZq
-         rLzDlLPr/WVJHQyPaXLS8nDGxPpMcdrxBY1lB3qgyl+ukfM42GQokwoFARQC2SYrp5xG
-         KbYT9CLwsjWGGAYIzpcLI/Mbmqq8ieIgqBOwaWQ+zty2xp6ikkVMxI8SunFRySOOaUSF
-         QsQiXRJLLSx+edXrTbHHPmSs5oZJ9Qg5T+dtWp/29aIWuKI9VSwUY+l3BDjZsby4Rz9q
-         mleA==
+        b=a4Q9u7mhOiTrR3CPw+kCS0jXUqAWFDfaEOSXwOw8RyIrfcLemCN9/K/+0INWcnCUdd
+         nncE/FYPm/S/w6FryzAj/sYY/lXl6ngTEgRnAw6rPzZI4m7v4GHZ6Rfz5VG2IvIvgWTu
+         v+zV9zLxFjMYkj9K+41CXYDQ0KDLuJYY2GmtlUd5HZwrshTqBb47lb4ECxpS9WmoeYCN
+         w6jjlA62nruoTmFre2jAOlYm2yz/VGVsNNiNhD/5CsnENE4rtxEvT9sfw6crVoAThTWm
+         8FqaJ03HOEuNfZ6i4eMDwX9oqQRruyR8Ue1gxGgWheyNM3Qdiffag59ESRv2YO6kTWSv
+         wQRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=j6WDFwY1pC7sFFEsX/zt/+IIq/Y2LCROwKYim4taiD4=;
-        b=Uvkogtz7tBHjftS5gRIMghi3SuAr9IlVbALs7MbXn7w5Vhd7bfqC72ApekAEZw4Ia/
-         mdTGF1DHfq6fDqY7TfXe7DKMk7DHKJR4tYqSbpxyP2u+KVFGDnlWT2ehNuLB+cAKlZdv
-         O5FZKDBxambt2YNpc1PHm9AHU+g5yY7YfO5G1WZ4p5M+ZkqkGek1kWurycogVuMDF4BV
-         OuT7X18T4gM5av9MtPWpym/MayHXkiteE+YuNGyn1afAW+kQnXuPe/rda31eDwJFvkuI
-         S3/7anb7i6Wrkb/OG5UJhbLdVlClXkqKdfa6QG4alwnfNzKLTZlMYunU/Az9WmX3okjC
-         LqDw==
+        h=list-id:precedence:sender:user-agent:in-reply-to
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=ZbdcwCtGcpxPDuniXxY/+wrVAjbS16Sw2jjOlbfz29A=;
+        b=DeER5kosq4aFEor2nNHjuIIDQp+wBbSAf3E/PaJXsVJf5x/wYPE036gxElW9J3J464
+         7OnY5PfYZoh9pZv4Q4zYz8giL46Ve0CvwaYQeKZO5B3GT1B4jBEXfomk+uH+uja/YHZI
+         dXOWmapWAooxyIOIxGRdxicaisk6jSTcae+YqDn9NvjI45Ooq4TwloZwq0I31clZik10
+         FZiHVKjJNt/eku1PFdPEtRd7thsTCKbp4x5HWFmmy2KLVQ5yLfoR24OkYngqKSn6fvSN
+         nKs9zUZ39/0I61hNvVUblq+PxwBJrsBL1tSuJjn3O5uiR5uZitINgpRlosPCKUV5eRMk
+         L6eQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=bkkyIos2;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=bkkyIos2;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeB0RZt (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 27 Feb 2018 12:25:49 -0500
-Received: from osg.samsung.com ([64.30.133.232]:33509 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751552AbeB0RZr (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:25:47 -0500
-Subject: Re: [PATCH 5/5] selftests: futex Makefile add top level TAP header
- echo to RUN_TESTS
-To: Darren Hart <dvhart@infradead.org>, mingo@redhat.com
-Cc: shuah@kernel.org, tbird20d@gmail.com, tglx@linutronix.de,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
+        id S1751378AbeBXIjU (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 24 Feb 2018 03:39:20 -0500
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:42729 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeBXIjT (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 24 Feb 2018 03:39:19 -0500
+Date: Sat, 24 Feb 2018 09:39:14 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: shuah@kernel.org, dvhart@infradead.org, tbird20d@gmail.com,
+        tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 0/5] Handling for TAP header level
+Message-ID: <20180224083914.x6qygtno7ms2dyzy@gmail.com>
 References: <cover.1519423340.git.shuahkh@osg.samsung.com>
- <bec2e6c01cbf3b2f6dc49e022a2a7543fc7f3182.1519423341.git.shuahkh@osg.samsung.com>
- <20180224214244.GA31352@fury>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <d8c446cb-fa30-ec1f-944a-c7763a3e80b7@osg.samsung.com>
-Date: Tue, 27 Feb 2018 10:25:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180224214244.GA31352@fury>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1519423340.git.shuahkh@osg.samsung.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593231540843660776?=
-X-GMAIL-MSGID: =?utf-8?q?1593575841421240606?=
+X-GMAIL-THRID: =?utf-8?q?1593231463102479903?=
+X-GMAIL-MSGID: =?utf-8?q?1593270925593661301?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/24/2018 02:42 PM, Darren Hart wrote:
-> On Fri, Feb 23, 2018 at 03:11:40PM -0700, Shuah Khan wrote:
->> Add top level TAP header echo, testname and separator line to make
->> the output consistent with the common run_tests target.
-> 
-> No objection to the changes, but I'll echo Ingo's request for a more
-> detailed justification for why these changes are warranted. We've seen
-> this a few times with recent changes to kselftests, I think too much
-> might be being assumed regarding the individual test author's tracking
-> of the core of the kselftests ongoing work.
-> 
 
-Ingo/Darren,
+* Shuah Khan <shuahkh@osg.samsung.com> wrote:
 
-Sorry for not giving a better justification. I should have kept audience
-in mind that test authors might not be up on the framework changes.
+> This patch series is a result discussion with Tim Bird about nested TAP header 
+> handling. Based on the discussion, I am introducing a environment variable to 
+> prevent nested TAP headers. These patches improve the run_tests output and the 
+> output from the script generated by emit_tests.
 
-Nested TAP header example:
+Could you please provider a higher level description about what 'nested TAP header 
+handling' is about and what it is good for?
 
-TAP version 13
-selftests: step_after_suspend_test
-========================================
-TAP version 13                                           (#Nested header)
-Bail out! open("/sys/power/state") failed (is this test running as root?)
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-not ok 1..1 selftests:  step_after_suspend_test [FAIL]
-selftests: breakpoint_test
-========================================
-TAP version 13                                            (#Nested header)
-Pass 110 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+Thanks,
 
-<snip>
-
-1..110
-ok 1..2 selftests: breakpoint_test [PASS]
-
-
-Some tests print TAP headers. This is helpful when test is run by itself.
-However, when "make kselftest" or "make -C" is used then common run_tests
-does its TAP header and nested headers get printed.
-
-Nested headers are a problem for TAP13 parsers. Hence, I decided to go
-with a simpler approach to suppress TAP headers using env. variable
-that gets checked in the framework and suppresses the header.
-
-selftests: kselftest framework: add handling for TAP header level
-
-This minimizes the churn to actual tests and framework handles the
-TAP details.
-
-futex test overrides the generic run_tests, so it needed changes to
-add a top level TAP header. Otherwise, you will see nested TAP header
-for each of the individual futxex tests as shown in the example below.
-
-
-TAP version 13
-# futex_requeue_pi: Test requeue functionality
-#       Arguments: broadcast=0 locked=0 owner=0 timeout=0ns
-not ok 1 # error futex-requeue-pi
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 1
-1..1
-
-I can capture the nested TAP headers being a problem for parsers in
-the changelog. I will have to send v2 anyway, "make -C" still has
-the nested headers for fuxtex tests.
-
-My goal is to not have the individual test authors be concerned about
-the TAP13 details and handle it in the framework. I am making changes
-to framework and test Makefiles for the TAP13 and other common formatting
-type features as opposed to individual test code. Test Makefiles that use
-lib.mk don't need changes either, futex needs changes mainly because of
-overrides.
-
-Hope this help. I will do a better job of explaining in the future.
-
-thanks,
--- Shuah
-
+	Ingo
