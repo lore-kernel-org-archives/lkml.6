@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751487AbeBXSwC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 13:52:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40896 "EHLO mx2.suse.de"
+        id S1751485AbeBXUHB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 15:07:01 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:33572 "EHLO fuzix.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751370AbeBXSwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 13:52:01 -0500
-Date: Sat, 24 Feb 2018 19:51:41 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Gustavo Leite <gustavoleite.ti@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>, Baoquan He <bhe@redhat.com>,
-        Ian Abbott <abbotti@mev.co.uk>, Randy Dunlap <rdunlap@infradead.org>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH] linux/kernel.h: break long lines
-Message-ID: <20180224185141.GC29374@pd.tnic>
-References: <20180224181003.29604-1-gustavoleite.ti@gmail.com>
- <20180224183044.GB29374@pd.tnic>
- <20180224184530.GC31264@thunk.org>
+        id S1751428AbeBXUHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 15:07:00 -0500
+Date: Sat, 24 Feb 2018 20:06:17 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Joe Konno <joe.konno@linux.intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Matthew Garrett <mjg59@google.com>, Peter Jones <pjones@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+Message-ID: <20180224200617.75cfe5f2@alans-desktop>
+In-Reply-To: <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+        <20180215182208.35003-2-joe.konno@linux.intel.com>
+        <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+        <20180220211849.fqjb6rdmypl6opir@agluck-desk>
+        <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+        <20180220233008.55rfm7zw62hrao5p@agluck-desk>
+        <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
+        <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
+        <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
+        <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180224184530.GC31264@thunk.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 01:45:30PM -0500, Theodore Ts'o wrote:
-> static inline int __must_check
-> kstrtou64_from_user(const char __user *s, size_t count, unsigned int base, u64 *res)
+On Wed, 21 Feb 2018 09:03:00 +0000
+> The thing I like about rate limiting (for everyone including root) is
+> that it does not break anybody's workflow (unless EFI variable access
+> occurs on a hot path, in which case you're either a) asking for it, or
+> b) the guy trying to DoS us), and that it can make exploitation of any
+> potential Spectre v1 vulnerabilities impractical at the same time. At
 
-Yeah, had already typed that one in the reply but then opted for not
-mentioning it because it is a bit controversial with maintainers. :)
+b) doesn't make spectre v1 much harder alas. What matters there is that
+you turn on the right CPU protections before calling into EFI and turn
+them off afterwards. EFI firmware internally isn't built with retpoline
+anyway.
 
-> Which yes, is still longer than 80 characters.  But this is where
-> blindly following coding guidelines as if they are fundamentalist
-> biblical doctrine is not really a great idea.  The goal is to make the
-> code easier to read, and very often it's important to apply _judgement_.
-> (Which is one of the reasons why I generally don't really like newbies
-> trying to apply checkpatch.pl to existing source files.)
-
-That's basically what I was trying to say but your formulation is much
-better.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Alan
