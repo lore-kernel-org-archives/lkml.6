@@ -1,49 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeBXWLH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 17:11:07 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:60999 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751481AbeBXWLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 17:11:04 -0500
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 12/15] drm/sun4i: Allow building on arm64
-Date: Sat, 24 Feb 2018 22:45:42 +0100
-Message-Id: <20180224214545.3740-13-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+        id S1751522AbeBXWGE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 17:06:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47994 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751399AbeBXWGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 17:06:03 -0500
+Date: Sat, 24 Feb 2018 22:06:01 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+Subject: Re: [PATCH] lib/test_kmod: Fix an integer overflow test
+Message-ID: <20180224220601.GG14069@wotan.suse.de>
+References: <20180122102754.GD23912@mwanda>
+ <20180224025941.GB14069@wotan.suse.de>
+ <20180224084516.pex3ogxzipzj2o5y@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180224084516.pex3ogxzipzj2o5y@mwanda>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
-is compatible to 32-bit SoCs, so allow building DRM driver for
-arm64 architecture.
+On Sat, Feb 24, 2018 at 11:45:16AM +0300, Dan Carpenter wrote:
+> On Sat, Feb 24, 2018 at 02:59:41AM +0000, Luis R. Rodriguez wrote:
+> > On Mon, Jan 22, 2018 at 01:27:54PM +0300, Dan Carpenter wrote:
+> > > The main problem is that the parentheses are in the wrong place and the
+> > > unlikely() call returns either 0 or 1 so it's never less than zero.
+> > 
+> > Doh, thanks, yes. Seems worth considering a grammar rule for it.
+> > 
+> > > The other problem is that signed integer overflows like "INT_MAX + 1" are
+> > > undefined behavior.
+> > 
+> > Likewise.
+> > 
+> > This seems like another possible generic typo issue. But I would not resolve it
+> > the way you did, in this particular case below num_test_devs represents the
+> > number of already registered devs, before we increment. So the way to resolve
+> > this would be:
+> > 
+> > 	if (num_test_devs + 1 == INT_MAX)
+> > 
+> > I'll get this upstream, thanks!
+> 
+> There is no issue if num_test_devs is INT_MAX.  But capping it at
+> INT_MAX - 1 is also fine.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If num_test_devs is INT_MAX, then doing num_test_devs + 1 overflows
+and as you noted that is undefined?
 
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index 7327da3bc94f..eee6bc0eaf97 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_SUN4I
- 	tristate "DRM Support for Allwinner A10 Display Engine"
--	depends on DRM && ARM && COMMON_CLK
-+	depends on DRM && (ARM || ARM64) && COMMON_CLK
- 	depends on ARCH_SUNXI || COMPILE_TEST
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_HELPER
--- 
-2.16.2
+  Luis
