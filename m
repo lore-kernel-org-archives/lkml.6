@@ -1,59 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752803AbeBXCKg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 21:10:36 -0500
-Received: from ozlabs.org ([103.22.144.67]:51599 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751917AbeBXCKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 21:10:34 -0500
-Date: Sat, 24 Feb 2018 13:10:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the kvm-fixes tree
-Message-ID: <20180224131018.4f1fd758@canb.auug.org.au>
+        id S1753040AbeBXCqq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 21:46:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58966 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeBXCqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 21:46:45 -0500
+Date: Fri, 23 Feb 2018 18:46:41 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Chris Mi <chrism@mellanox.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: Fwd: Re: Kernel panic with 4.16-rc1 (and 4.16-rc2) running
+ selftest
+Message-ID: <20180224024641.GB15231@bombadil.infradead.org>
+References: <7995f335-ccac-bfdc-bb37-46d0f887c647@oracle.com>
+ <b926a569-c05e-dd49-a25d-555e88e9ff8e@infradead.org>
+ <CAM_iQpUveA5T6-y7bguaPUok-LphJrLYxw6kNgaMorsxm4z9NA@mail.gmail.com>
+ <CAM_iQpWSRe0t1Dr=7o+1ejULV=F+_Wx1v7yyw=NRBUTYttMxog@mail.gmail.com>
+ <96bf4941-17c0-0796-292c-b66087f5f52e@infradead.org>
+ <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
+ <20180224011528.GA15231@bombadil.infradead.org>
+ <VI1PR0501MB2143077CA6E5A728B8F581BAABC30@VI1PR0501MB2143.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/toCtzXesCqjndJv6swp2I95"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR0501MB2143077CA6E5A728B8F581BAABC30@VI1PR0501MB2143.eurprd05.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/toCtzXesCqjndJv6swp2I95
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Feb 24, 2018 at 01:49:35AM +0000, Chris Mi wrote:
+> To verify this patch, the following is a sanity test case:
+> 
+> # tc qdisc delete dev $link ingress > /dev/null 2>&1;
+> # tc qdisc add dev $link ingress;
+> # tc filter add dev $link prio 1 protocol ip handle 0x80000001 parent ffff: flower skip_hw src_mac e4:11:0:0:0:2 dst_mac e4:12:0:0:0:2 action drop;
+> # tc filter show dev $link parent ffff:
+> 
+> filter pref 1 flower chain 0
+> filter pref 1 flower chain 0 handle 0x80000001
 
-Hi all,
+I added these tests to my local tree for now.
 
-Commits
-
-  99158246208b ("KVM: nVMX: preserve SECONDARY_EXEC_DESC without UMIP")
-  103c763c72dd ("KVM/x86: remove WARN_ON() for when vm_munmap() fails")
-  b28676bb8ae4 ("KVM: mmu: Fix overlap between public and private memslots")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/toCtzXesCqjndJv6swp2I95
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqQyYoACgkQAVBC80lX
-0GzgBQf8CGIPbrJdtx1S/OB+NawqUrrtKO1vkYSCyUaEodUwN5RIjAl/i5Lybdll
-A/xgSIoMQC9rca1zampbfs/8WP+ztis5kAxpTasdlHWiThUUW3NplSmwV8oWblII
-FXtHcfBkp5oMP57hZJ25EfV52PFUCo7vQrbWwtbpE4eoUJP+j+ty8lJ8ASCcqfzq
-uKrw5G3OshvokdPIwVHd8VVu90QLi9xCDQ5sSUf6X7UviLEnybiAh5cksPZ5dbQK
-Ex9wnlf4Ghp/qUGD4U8EwR7ktRv4N1gzIGpZwBZriBwcVPbENtkY1XAJC8fcxQPv
-XuHVQy5HeXV6uZi1d4JmbHK1sm1NNg==
-=CfQX
------END PGP SIGNATURE-----
-
---Sig_/toCtzXesCqjndJv6swp2I95--
+diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+index 44ef9eba5a7a..28d99325a32d 100644
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -178,6 +178,29 @@ void idr_get_next_test(int base)
+ 	idr_destroy(&idr);
+ }
+ 
++void idr_u32_test(struct idr *idr, int base)
++{
++	assert(idr_is_empty(idr));
++	idr_init_base(idr, base);
++	u32 handle = 10;
++	idr_alloc_u32(idr, NULL, &handle, handle, GFP_KERNEL);
++	BUG_ON(handle != 10);
++	idr_remove(idr, handle);
++	assert(idr_is_empty(idr));
++
++	handle = 0x80000001;
++	idr_alloc_u32(idr, NULL, &handle, handle, GFP_KERNEL);
++	BUG_ON(handle != 0x80000001);
++	idr_remove(idr, handle);
++	assert(idr_is_empty(idr));
++
++	handle = 0xffe00000;
++	idr_alloc_u32(idr, NULL, &handle, handle, GFP_KERNEL);
++	BUG_ON(handle != 0xffe00000);
++	idr_remove(idr, handle);
++	assert(idr_is_empty(idr));
++}
++
+ void idr_checks(void)
+ {
+ 	unsigned long i;
+@@ -248,6 +271,9 @@ void idr_checks(void)
+ 	idr_get_next_test(0);
+ 	idr_get_next_test(1);
+ 	idr_get_next_test(4);
++	idr_u32_test(&idr, 0);
++	idr_u32_test(&idr, 1);
++	idr_u32_test(&idr, 4);
+ }
+ 
+ /*
