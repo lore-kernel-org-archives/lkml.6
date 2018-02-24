@@ -1,118 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752742AbeBXDUs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 22:20:48 -0500
-Received: from ozlabs.org ([103.22.144.67]:44697 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751917AbeBXDUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 22:20:47 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: andrew.donnellan@au1.ibm.com, bharata@linux.vnet.ibm.com,
-        fbarrat@linux.vnet.ibm.com, jjalvare@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mikey@neuling.org, mlord@pobox.com, mwb@linux.vnet.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.16-4 tag
-Date: Sat, 24 Feb 2018 14:20:25 +1100
-Message-ID: <87sh9r9ipy.fsf@concordia.ellerman.id.au>
+        id S1752829AbeBXDWc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 22:22:32 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42373 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751917AbeBXDWa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 22:22:30 -0500
+X-Google-Smtp-Source: AH8x227SxfTmvaajiXVCR93c5dbS9A+HfiRbU/A6OEkI2cxX8H+g4CRD154hcyGeziuhfnvG967hwQ==
+Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
+ smp_read_barrier_depends, and lockless_dereference
+To: Alan Stern <stern@rowland.harvard.edu>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Andrea Parri <parri.andrea@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>
+References: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
+ <74dbcbd4-6034-0be9-7674-ccb058de6177@gmail.com>
+From: Akira Yokosawa <akiyks@gmail.com>
+Message-ID: <ea223820-6a1a-b1a6-58c5-c4c720ef58ea@gmail.com>
+Date: Sat, 24 Feb 2018 12:22:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <74dbcbd4-6034-0be9-7674-ccb058de6177@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On 2018/02/22 07:29:02 +0900, Akira Yokosawa wrote:
+> On 2018/02/22 2:15, Alan Stern wrote:
+>> Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
+>> smp_read_barrier_depends, and lockless_dereference") was accidentally
+>> merged too early, while it was still in RFC form.  This patch adds in
+>> the missing pieces.
+>>
+>> Akira pointed out some typos in the original patch, and he noted that
+>> cheatsheet.txt should be updated to indicate how unsuccessful RMW
+>> operations relate to address dependencies.
+> 
+> My point was to separate unannotated loads from READ_ONCE(), if the
+> cheatsheet should concern such accesses as well.
+> Unsuccessful RMW operations were brought up by Andrea.
+>
 
-Hi Linus,
+Paul, can you amend above paragraph in the change log to something like:
 
-Please pull some more powerpc fixes for 4.16:
+    Akira pointed out some typos in the original patch, and he noted that
+    cheatsheet.txt should be updated to indicate READ_ONCE() implies
+    address dependency, which invited Andrea's observation that it should
+    also be updated to indicate how unsuccessful RMW operations relate to
+    address dependencies.
 
-The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f51:
+, if Alan and Andrea are OK with the amendment.
 
-  Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
+Also, please append my Acked-by.
 
-are available in the git repository at:
+Acked-by: Akira Yokosawa <akiyks@gmail.com>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.16-4
-
-for you to fetch changes up to eb0a2d2620ae431c543963c8c7f08f597366fc60:
-
-  powerpc/powernv: Support firmware disable of RFI flush (2018-02-23 16:55:42 +1100)
-
-----------------------------------------------------------------
-powerpc fixes for 4.16 #4
-
-Add handling for a missing instruction in our 32-bit BPF JIT so that it can be
-used for seccomp filtering.
-
-Add a missing NULL pointer check before a function call in new EEH code.
-
-Fix an error path in the new ocxl driver to correctly return EFAULT.
-
-The support for the new ibm,drc-info device tree property turns out to need
-several fixes, so for now we just stop advertising to firmware that we support
-it until the bugs can be ironed out.
-
-One fix for the new drmem code which was incorrectly modifying the device tree
-in place.
-
-Finally two fixes for the RFI flush support, so that firmware can advertise to
-us that it should be disabled entirely so as not to affect performance.
-
-Thanks to:
-  Bharata B Rao, Frederic Barrat, Juan J. Alvarez, Mark Lord, Michael Bringmann.
-
-----------------------------------------------------------------
-Bharata B Rao (1):
-      powerpc/mm/drmem: Fix unexpected flag value in ibm,dynamic-memory-v2
-
-Frederic Barrat (1):
-      ocxl: Fix potential bad errno on irq allocation
-
-Juan J. Alvarez (1):
-      powerpc/eeh: Fix crashes in eeh_report_resume()
-
-Mark Lord (1):
-      powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
-
-Michael Bringmann (1):
-      powerpc/pseries: Revert support for ibm,drc-info devtree property
-
-Michael Ellerman (3):
-      powerpc/pseries: Fix duplicate firmware feature for DRC_INFO
-      powerpc/pseries: Support firmware disable of RFI flush
-      powerpc/powernv: Support firmware disable of RFI flush
-
- arch/powerpc/include/asm/firmware.h    | 2 +-
- arch/powerpc/kernel/eeh_driver.c       | 3 ++-
- arch/powerpc/kernel/prom_init.c        | 2 +-
- arch/powerpc/mm/drmem.c                | 6 +++---
- arch/powerpc/net/bpf_jit_comp.c        | 3 +++
- arch/powerpc/platforms/powernv/setup.c | 4 ++++
- arch/powerpc/platforms/pseries/setup.c | 3 ++-
- drivers/misc/ocxl/file.c               | 6 ++++--
- 8 files changed, 20 insertions(+), 9 deletions(-)
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJakNn5AAoJEFHr6jzI4aWAoZ0QAKFGs85ISZD2RIQSQpepBFGx
-a80YvoSJ55Jessml+Q/sifO67TDzxw0Ho24mlrmY5TZ+EbQ+MzJJMFgMeR8GhWnB
-ij7/B3pavj/f9xGirTajzQroDYr5vQLyRrs6qh7fAcAUE88TcvjchErnGswojcKf
-cqB4YUXHcIjjrRctDZabPKLhFb+ZD1743dcr5OmVpKCc3Mq50dQVD3ccMGyG5YVZ
-o+WTNuEcoj5r02Z0pRFA8mtP2s/W8HIYEzmLQYiMa3uwdkAvG+KKO6VeNOxIXLbu
-dcOV3oRtedlnitjhJq8IiGIV4S8ATmyRNKZcf7tp32FTEmdytkSnteNbAmFspi+A
-YhTnleatP5EC0rbBo4Z++tp/XXViDpABCXs7ELOClQA0j4zL65bFjG1KVwF+VrhF
-4R6YpQLpoT7G8NNUds0GbvgMgU/CJRMZZ+g8Oh8CKfXw/7Sn22NhlJ2op58f5QYz
-BKNd3fc7CBiKaNoDB6d0lyYTwMdRBTlzivuDO+RaeUIzqheloO+fLgTKpFkVHSVX
-3yXqIRjHLXXUUf4H+XnKHWPcHZfrb1tkia/XOunZae5VRjZ00nNs+Eu5gLXzNQQV
-yLzS0TxXBUNhYCRPoN9BZPyYWvqxLjdYu+pkRILUq2fwcjl4MQ3zjgTHO6JNJtIC
-U8Faql2zo2bVyNVBoFAv
-=+pki
------END PGP SIGNATURE-----
---=-=-=--
+        Thanks, Akira
+ 
+>>
+>> Andrea pointed out that the macro for rcu_dereference() in linux.def
+>> should now use the "once" annotation instead of "deref".  He also
+>> suggested that the comments should mention commit 5a8897cc7631
+>> ("locking/atomics/alpha: Add smp_read_barrier_depends() to
+>> _release()/_relaxed() atomics") as an important precursor, and he
+>> contributed commit cb13b424e986 ("locking/xchg/alpha: Add
+>> unconditional memory barrier to cmpxchg()"), another prerequisite.
+>>
+>> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+>> Suggested-by: Akira Yokosawa <akiyks@gmail.com>
+>> Suggested-by: Andrea Parri <parri.andrea@gmail.com>
+>> Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
+>>
+> 
+> The change itself looks good to me.
+> 
+> Acked-by: Akira Yokosawa <akiyks@gmail.com>
+> 
+>        Thanks, Akira
+> 
+>> ---
+>>
+>>  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
+>>  tools/memory-model/Documentation/explanation.txt |    4 ++--
+>>  tools/memory-model/linux-kernel.def              |    2 +-
+>>  3 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
+>> ===================================================================
+>> --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
+>> +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
+>> @@ -1,11 +1,11 @@
+>>                                    Prior Operation     Subsequent Operation
+>>                                    ---------------  ---------------------------
+>>                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
+>> -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
+>> +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
+>>  
+>>  Store, e.g., WRITE_ONCE()            Y                                       Y
+>> -Load, e.g., READ_ONCE()              Y                              Y        Y
+>> -Unsuccessful RMW operation           Y                              Y        Y
+>> +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
+>> +Unsuccessful RMW operation           Y                          Y   Y        Y
+>>  rcu_dereference()                    Y                          Y   Y        Y
+>>  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
+>>  Successful *_release()         C        Y  Y    Y     W                      Y
+>> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+>> ===================================================================
+>> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
+>> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+>> @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
+>>  executed on C before the fence (i.e., those which precede the fence in
+>>  program order).
+>>  
+>> -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
+>> +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
+>>  other properties which we discuss later.
+>>  
+>>  
+>> @@ -1138,7 +1138,7 @@ final effect is that even though the two
+>>  program order, it appears that they aren't.
+>>  
+>>  This could not have happened if the local cache had processed the
+>> -incoming stores in FIFO order.  In constrast, other architectures
+>> +incoming stores in FIFO order.  By contrast, other architectures
+>>  maintain at least the appearance of FIFO order.
+>>  
+>>  In practice, this difficulty is solved by inserting a special fence
+>> Index: usb-4.x/tools/memory-model/linux-kernel.def
+>> ===================================================================
+>> --- usb-4.x.orig/tools/memory-model/linux-kernel.def
+>> +++ usb-4.x/tools/memory-model/linux-kernel.def
+>> @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
+>>  smp_store_release(X,V) { __store{release}(*X,V); }
+>>  smp_load_acquire(X) __load{acquire}(*X)
+>>  rcu_assign_pointer(X,V) { __store{release}(X,V); }
+>> -rcu_dereference(X) __load{deref}(X)
+>> +rcu_dereference(X) __load{once}(X)
+>>  
+>>  // Fences
+>>  smp_mb() { __fence{mb} ; }
+>>
+> 
