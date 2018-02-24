@@ -1,219 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeBXCAI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 21:00:08 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752011AbeBXCAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 21:00:07 -0500
-Date: Sat, 24 Feb 2018 09:59:56 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 00/17] Add kexec_file_load support to s390
-Message-ID: <20180224015956.GA11191@dhcp-128-65.nay.redhat.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
- <20180214073543.GA12328@dhcp-128-65.nay.redhat.com>
- <20180214105449.1325bfbe@ThinkPad>
- <20180223083405.GA29498@dhcp-128-65.nay.redhat.com>
- <20180223110143.1747fb3f@ThinkPad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223110143.1747fb3f@ThinkPad>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752607AbeBXCIj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 21:08:39 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34219 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751917AbeBXCIh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 21:08:37 -0500
+X-Google-Smtp-Source: AH8x227BDwOWDpPMhPbWc0He92D6s25YJvy0zxBdG+2WrobMYpsAdGB3YrAmWHH52zTEpti8QxwFYw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
+        andy.shevchenko@gmail.com
+Subject: [PATCH v5 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Sat, 24 Feb 2018 10:07:17 +0800
+Message-Id: <c2db9b3b5c611cadfbe5ea97327be7ee5981fa54.1519437750.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/18 at 11:01am, Philipp Rudo wrote:
-> Hi Dave
-> 
-> On Fri, 23 Feb 2018 16:34:05 +0800
-> Dave Young <dyoung@redhat.com> wrote:
-> 
-> > On 02/14/18 at 10:54am, Philipp Rudo wrote:
-> > > Hi Dave,
-> > > 
-> > > I just browsed AKASHI's patches (v7). The way I see it the common code changes
-> > > are on different areas of kexec_file and shouldn't get in conflict. Only in the
-> > > arch code (s390 and arm64) some function calls might need an update. But I have
-> > > to take a closer look on the patches first.  
-> > 
-> > I'm tring both in local branch with both series (V8 from AKASHI and this series),
-> > but there are indeed some conflicts, may because AKASHI factored out some arch
-> > code from ppc/x86 to common code.
-> 
-> I feared this would happen.  I didn't have time to look at AKASHI's v8
-> yesterday but hope to find some today. How do you think i should handle
-> conflicts with his patches? I don't think it is wise to include the changes
-> into my patches as that would make AKASHI's patches a prereq for mine. Is adding
-> one (multiple?) fixup patches on top of my series ok for you?
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
-Arch code need arch maintainer to review, maybe either of you can send
-the common part first before the arch code, eg. AKASHI can split the common
- cleanup patches and post them as a separate series, after these prep
-series are reviewed then other patches can be refreshed based on it.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes since v4:
+ - No updates.
 
-Seems in AKASHI's series, only patch 2, 3 ,4 ,5 is needed if split out
-as a common change series.
+Changes since v3:
+ - Add acked tag from Rob.
 
-What do you think? 
-> 
-> Thanks
-> Philipp
-> 
-> > > 
-> > > @AKASHI: Welcome to the list. While browsing I couldn't find any
-> > > arch_apply_relocation function for arm64. These require the biggest changes in
-> > > my patch set. Did I just miss it or does arm64 work differently?
-> > > 
-> > > @Dave: Happy holiday  
-> > 
-> > Thank you!
-> > 
-> > > 
-> > > Thanks
-> > > Philipp
-> > > 
-> > > On Wed, 14 Feb 2018 15:35:43 +0800
-> > > Dave Young <dyoung@redhat.com> wrote:
-> > >   
-> > > > Hi Philipp,
-> > > > 
-> > > > I added AKASHI in cc, he posted arm64 kexec_file series previously.
-> > > > I would like to read both series especially the general part, but
-> > > > maybe at the end of this month because of a holiday..
-> > > > 
-> > > > From the patch log the cleanup looks nice, but still need read the
-> > > > details.
-> > > > 
-> > > > On 02/12/18 at 11:07am, Philipp Rudo wrote:  
-> > > > > Hi everybody
-> > > > > 
-> > > > > resending the series as there was no reaction, yet. Furthermore i was told
-> > > > > that Andrew and the x86 list should also be CCed, so welcome.
-> > > > > 
-> > > > > No changes made to the patches since first time i sent them. The patches
-> > > > > apply to the current master (v4.16-rc1).
-> > > > > 
-> > > > > Thanks
-> > > > > Philipp
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > this series adds the kexec_file_load system call to s390. Before the system
-> > > > > call is added there are some preparations/clean ups to common
-> > > > > kexec_file_load. In detail this series contains:
-> > > > > 
-> > > > > Patch #1&2: Minor cleanups/fixes.
-> > > > > 
-> > > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> > > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> > > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> > > > > depending on the section. With these patches the section address will be
-> > > > > calculated verbosely and sh_offset will contain the offset of the section
-> > > > > in the stripped purgatory binary (purgatory_buf).
-> > > > > 
-> > > > > Patch #10: Allows architectures to set the purgaory load address. This
-> > > > > patch is important for s390 as the kernel and purgatory have to be loaded
-> > > > > to fixed addresses. In current code this is impossible as the purgatory
-> > > > > load is opaque to the architecture.
-> > > > > 
-> > > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
-> > > > > directory.
-> > > > > 
-> > > > > Patches #12-17 finally adds the kexec_file_load system call to s390.
-> > > > > 
-> > > > > Please note that I had to touch arch code for x86 and power a little. In
-> > > > > theory this should not change the behavior but I don't have a way to test
-> > > > > it. Cross-compiling with defconfig(*) works fine for both.
-> > > > > 
-> > > > > Thanks
-> > > > > Philipp
-> > > > > 
-> > > > > (*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
-> > > > > 
-> > > > > Philipp Rudo (17):
-> > > > >   kexec_file: Silence compile warnings
-> > > > >   kexec_file: Remove checks in kexec_purgatory_load
-> > > > >   kexec_file: Make purgatory_info->ehdr const
-> > > > >   kexec_file: Search symbols in read-only kexec_purgatory
-> > > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-> > > > >   kexec_file: Split up __kexec_load_puragory
-> > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-> > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-> > > > >   kexec_file: Remove mis-use of sh_offset field
-> > > > >   kexec_file: Allow archs to set purgatory load address
-> > > > >   kexec_file: Move purgatories sha256 to common code
-> > > > >   s390/kexec_file: Prepare setup.h for kexec_file_load
-> > > > >   s390/kexec_file: Add purgatory
-> > > > >   s390/kexec_file: Add kexec_file_load system call
-> > > > >   s390/kexec_file: Add image loader
-> > > > >   s390/kexec_file: Add crash support to image loader
-> > > > >   s390/kexec_file: Add ELF loader
-> > > > > 
-> > > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
-> > > > >  arch/s390/Kbuild                               |   1 +
-> > > > >  arch/s390/Kconfig                              |   4 +
-> > > > >  arch/s390/include/asm/kexec.h                  |  23 ++
-> > > > >  arch/s390/include/asm/purgatory.h              |  17 ++
-> > > > >  arch/s390/include/asm/setup.h                  |  40 ++-
-> > > > >  arch/s390/kernel/Makefile                      |   1 +
-> > > > >  arch/s390/kernel/asm-offsets.c                 |   5 +
-> > > > >  arch/s390/kernel/compat_wrapper.c              |   1 +
-> > > > >  arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
-> > > > >  arch/s390/kernel/kexec_image.c                 |  78 +++++
-> > > > >  arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
-> > > > >  arch/s390/kernel/syscalls/syscall.tbl          |   1 +
-> > > > >  arch/s390/purgatory/Makefile                   |  37 +++
-> > > > >  arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
-> > > > >  arch/s390/purgatory/purgatory.c                |  42 +++
-> > > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
-> > > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
-> > > > >  arch/x86/purgatory/Makefile                    |   3 +
-> > > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
-> > > > >  include/linux/kexec.h                          |  38 +--
-> > > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
-> > > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
-> > > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
-> > > > >  24 files changed, 1200 insertions(+), 284 deletions(-)
-> > > > >  create mode 100644 arch/s390/include/asm/purgatory.h
-> > > > >  create mode 100644 arch/s390/kernel/kexec_elf.c
-> > > > >  create mode 100644 arch/s390/kernel/kexec_image.c
-> > > > >  create mode 100644 arch/s390/kernel/machine_kexec_file.c
-> > > > >  create mode 100644 arch/s390/purgatory/Makefile
-> > > > >  create mode 100644 arch/s390/purgatory/head.S
-> > > > >  create mode 100644 arch/s390/purgatory/purgatory.c
-> > > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> > > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > > > > 
-> > > > > -- 
-> > > > > 2.13.5
-> > > > > 
-> > > > > 
-> > > > > _______________________________________________
-> > > > > kexec mailing list
-> > > > > kexec@lists.infradead.org
-> > > > > http://lists.infradead.org/mailman/listinfo/kexec    
-> > > > 
-> > > > Thanks
-> > > > Dave
-> > > >   
-> > >   
-> > 
-> > _______________________________________________
-> > kexec mailing list
-> > kexec@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/kexec
-> > 
-> 
+Changes since v2:
+ - No updates.
+
+Changes since v1:
+ - No updates.
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
++
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
++
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
+-- 
+1.7.9.5
