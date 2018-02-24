@@ -1,399 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751499AbeBXQPn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 11:15:43 -0500
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:54462 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeBXQPl (ORCPT
+        id S1751485AbeBXQiw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 11:38:52 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:39124 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeBXQit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 11:15:41 -0500
-X-Google-Smtp-Source: AG47ELtT+DygqqzybbHB/uz093QKyC2qVKDd+gqofYEG1epOaSvtP2oQxxTMUpe60SfL2M2mDeAyPQ==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20180224120507.GA25447@ming.t460p>
-Date: Sat, 24 Feb 2018 17:15:36 +0100
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
+        Sat, 24 Feb 2018 11:38:49 -0500
+X-Google-Smtp-Source: AG47ELu204gLpHZ3fIldwLYv7EOLcrZtaaHrGLXsAF1SX6KOU+xiiAxuqhcq7OJZ800iDhIT/2zXLpiqmQSdz2DhcsI=
+MIME-Version: 1.0
+In-Reply-To: <20180223200333.6410-3-Yazen.Ghannam@amd.com>
+References: <20180223200333.6410-1-Yazen.Ghannam@amd.com> <20180223200333.6410-3-Yazen.Ghannam@amd.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Sat, 24 Feb 2018 16:38:47 +0000
+Message-ID: <CAKv+Gu8ShPeJz0HsqR=8GSjj+PyC=sVJv_MhidVR6cU4W-WjLA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] efi: Decode IA32/X64 Processor Error Section
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-efi@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ivan Kozik <ivan@ludios.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>,
-        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
-        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
-Message-Id: <E88ED546-53DB-4792-A7D5-10C91C1DD47E@linaro.org>
-References: <20180207211920.6343-1-paolo.valente@linaro.org>
- <20180223150705.GB30079@ming.t460p>
- <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
- <20180223161751.GA17466@ming.t460p>
- <A6215E5D-3AA0-4908-8F4F-AEBE5B7D8C85@linaro.org>
- <20180224120507.GA25447@ming.t460p>
-To: Ming Lei <ming.lei@redhat.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Borislav Petkov <bp@suse.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1OGFpUb012085
 
+On 23 February 2018 at 20:03, Yazen Ghannam <Yazen.Ghannam@amd.com> wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+>
+> Recognize the IA32/X64 Processor Error Section.
+>
+> Do the section decoding in a new "cper-x86.c" file and add this to the
+> Makefile depending on a new "UEFI_CPER_X86" config option.
+>
+> Print the Local APIC ID and CPUID info from the Processor Error Record.
+>
+> The "Processor Error Info" and "Processor Context" fields will be
+> decoded in following patches.
+>
+> Based on UEFI 2.7 Table 255. Processor Error Record.
+>
+> Cc: <stable@vger.kernel.org> # 4.16.x
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  drivers/firmware/efi/Kconfig    |  5 +++++
+>  drivers/firmware/efi/Makefile   |  2 ++
+>  drivers/firmware/efi/cper-x86.c | 26 ++++++++++++++++++++++++++
+>  drivers/firmware/efi/cper.c     | 10 ++++++++++
+>  include/linux/cper.h            |  2 ++
+>  5 files changed, 45 insertions(+)
+>  create mode 100644 drivers/firmware/efi/cper-x86.c
+>
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index 3098410abad8..8b684147835d 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -174,6 +174,11 @@ config UEFI_CPER_ARM
+>         depends on UEFI_CPER && ( ARM || ARM64 )
+>         default y
+>
+> +config UEFI_CPER_X86
+> +       bool
+> +       depends on UEFI_CPER && ( X86_32 || X86_64 )
 
+Just 'UEFI_CPER && X86' should be sufficient, no?
 
-> Il giorno 24 feb 2018, alle ore 13:05, Ming Lei <ming.lei@redhat.com> ha scritto:
-> 
-> On Sat, Feb 24, 2018 at 08:54:31AM +0100, Paolo Valente wrote:
->> 
->> 
->>> Il giorno 23 feb 2018, alle ore 17:17, Ming Lei <ming.lei@redhat.com> ha scritto:
->>> 
->>> Hi Paolo,
->>> 
->>> On Fri, Feb 23, 2018 at 04:41:36PM +0100, Paolo Valente wrote:
->>>> 
->>>> 
->>>>> Il giorno 23 feb 2018, alle ore 16:07, Ming Lei <ming.lei@redhat.com> ha scritto:
->>>>> 
->>>>> Hi Paolo,
->>>>> 
->>>>> On Wed, Feb 07, 2018 at 10:19:20PM +0100, Paolo Valente wrote:
->>>>>> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
->>>>>> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
->>>>>> be re-inserted into the active I/O scheduler for that device. As a
->>>>> 
->>>>> No, this behaviour isn't related with commit a6a252e64914, and
->>>>> it has been there since blk_mq_requeue_request() is introduced.
->>>>> 
->>>> 
->>>> Hi Ming,
->>>> actually, we wrote the above statement after simply following the call
->>>> chain that led to the failure.  In this respect, the change in commit
->>>> a6a252e64914:
->>>> 
->>>> static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
->>>> +                                      bool has_sched,
->>>>                                      struct request *rq)
->>>> {
->>>> -       if (rq->tag == -1) {
->>>> +       /* dispatch flush rq directly */
->>>> +       if (rq->rq_flags & RQF_FLUSH_SEQ) {
->>>> +               spin_lock(&hctx->lock);
->>>> +               list_add(&rq->queuelist, &hctx->dispatch);
->>>> +               spin_unlock(&hctx->lock);
->>>> +               return true;
->>>> +       }
->>>> +
->>>> +       if (has_sched) {
->>>>               rq->rq_flags |= RQF_SORTED;
->>>> -               return false;
->>>> +               WARN_ON(rq->tag != -1);
->>>>       }
->>>> 
->>>> -       /*
->>>> -        * If we already have a real request tag, send directly to
->>>> -        * the dispatch list.
->>>> -        */
->>>> -       spin_lock(&hctx->lock);
->>>> -       list_add(&rq->queuelist, &hctx->dispatch);
->>>> -       spin_unlock(&hctx->lock);
->>>> -       return true;
->>>> +       return false;
->>>> }
->>>> 
->>>> makes blk_mq_sched_bypass_insert return false for all non-flush
->>>> requests.  From that, the anomaly described in our commit follows, for
->>>> bfq any stateful scheduler that waits for the completion of requests
->>>> that passed through it.  I'm elaborating again a little bit on this in
->>>> my replies to your next points below.
->>> 
->>> Before a6a252e64914, follows blk_mq_sched_bypass_insert()
->>> 
->>>      if (rq->tag == -1) {
->>>              rq->rq_flags |= RQF_SORTED;
->>>              return false;
->>> 	   }
->>> 
->>>      /*
->>>       * If we already have a real request tag, send directly to
->>>       * the dispatch list.
->>>       */
->>>      spin_lock(&hctx->lock);
->>>      list_add(&rq->queuelist, &hctx->dispatch);
->>>      spin_unlock(&hctx->lock);
->>>      return true;
->>> 
->>> This function still returns false for all non-flush request, so nothing
->>> changes wrt. this kind of handling.
->>> 
->> 
->> Yep Ming.  I don't have the expertise to tell you why, but the failure
->> in the USB case was caused by an rq that is not flush, but for which
->> rq->tag != -1.  So, the previous version of blk_mq_sched_bypass_insert
->> returned true, and there was not failure, while after commit
->> a6a252e64914 the function returns true and the failure occurs if bfq
->> does not exploit the requeue hook.
->> 
->> You have actually shown it yourself, several months ago, through the
->> simple code instrumentation you made and used to show that bfq was
->> stuck.  And I guess it can still be reproduced very easily, unless
->> something else has changed in blk-mq.
->> 
->> BTW, if you can shed a light on this fact, that would be a great
->> occasion to learn for me.
-> 
-> The difference should be made by commit 923218f6166a84 (blk-mq: don't
-> allocate driver tag upfront for flush rq), which releases driver tag
-> before requeuing the request, but that is definitely the correct thing
-> to do.
-> 
+> +       default y
+> +
+>  config EFI_DEV_PATH_PARSER
+>         bool
+>         depends on ACPI
+> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+> index cb805374f4bc..7cf8d75ebe51 100644
+> --- a/drivers/firmware/efi/Makefile
+> +++ b/drivers/firmware/efi/Makefile
+> @@ -31,3 +31,5 @@ obj-$(CONFIG_ARM)                     += $(arm-obj-y)
+>  obj-$(CONFIG_ARM64)                    += $(arm-obj-y)
+>  obj-$(CONFIG_EFI_CAPSULE_LOADER)       += capsule-loader.o
+>  obj-$(CONFIG_UEFI_CPER_ARM)            += cper-arm.o
+> +
 
-Ok.  We just did a bisection, guided by changes in the
-function blk_mq_sched_bypass_insert, as that is the function whose
-different return value led to the hang.  And commit a6a252e64914
-apparently was the latest commit after which the hang occurs.
+Spurious newline
 
-Anyway, what matters is just that, from some commit on, a requeued
-request that before that commit was not re-inserted into the scheduler
-started to be re-inserted.  And this was the trigger of the failure.
+> +obj-$(CONFIG_UEFI_CPER_X86)            += cper-x86.o
+> diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+> new file mode 100644
+> index 000000000000..b50ee3cdf637
+> --- /dev/null
+> +++ b/drivers/firmware/efi/cper-x86.c
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018, Advanced Micro Devices, Inc.
+> +// Copyright (C) 2018, Yazen Ghannam <yazen.ghannam@amd.com>
+> +
 
->> 
->>>> 
->>>> I don't mean that this change is an error, it simply sends a stateful
->>>> scheduler in an inconsistent state, unless the scheduler properly
->>>> handles the requeue that precedes the re-insertion into the
->>>> scheduler.
->>>> 
->>>> If this clarifies the situation, but there is still some misleading
->>>> statement in the commit, just let me better understand, and I'll be
->>>> glad to rectify it, if possible somehow.
->>>> 
->>>> 
->>>>> And you can see blk_mq_requeue_request() is called by lots of drivers,
->>>>> especially it is often used in error handler, see SCSI's example.
->>>>> 
->>>>>> consequence, I/O schedulers may get the same request inserted again,
->>>>>> even several times, without a finish_request invoked on that request
->>>>>> before each re-insertion.
->>>>>> 
->>>> 
->>>> ...
->>>> 
->>>>>> @@ -5426,7 +5482,8 @@ static struct elevator_type iosched_bfq_mq = {
->>>>>> 	.ops.mq = {
->>>>>> 		.limit_depth		= bfq_limit_depth,
->>>>>> 		.prepare_request	= bfq_prepare_request,
->>>>>> -		.finish_request		= bfq_finish_request,
->>>>>> +		.requeue_request        = bfq_finish_requeue_request,
->>>>>> +		.finish_request		= bfq_finish_requeue_request,
->>>>>> 		.exit_icq		= bfq_exit_icq,
->>>>>> 		.insert_requests	= bfq_insert_requests,
->>>>>> 		.dispatch_request	= bfq_dispatch_request,
->>>>> 
->>>>> This way may not be correct since blk_mq_sched_requeue_request() can be
->>>>> called for one request which won't enter io scheduler.
->>>>> 
->>>> 
->>>> Exactly, there are two cases: requeues that lead to subsequent
->>>> re-insertions, and requeues that don't.  The function
->>>> bfq_finish_requeue_request handles both, and both need to be handled,
->>>> to inform bfq that it has not to wait for the completion of rq any
->>>> longer.
->>>> 
->>>> One special case is when bfq_finish_requeue_request gets invoked even
->>>> if rq has nothing to do with any scheduler.  In that case,
->>>> bfq_finish_requeue_request exists immediately.
->>>> 
->>>> 
->>>>> __blk_mq_requeue_request() is called for two cases:
->>>>> 
->>>>> 	- one is that the requeued request is added to hctx->dispatch, such
->>>>> 	as blk_mq_dispatch_rq_list()
->>>> 
->>>> yes
->>>> 
->>>>> 	- another case is that the request is requeued to io scheduler, such as
->>>>> 	blk_mq_requeue_request().
->>>>> 
->>>> 
->>>> yes
->>>> 
->>>>> For the 1st case, blk_mq_sched_requeue_request() shouldn't be called
->>>>> since it is nothing to do with scheduler,
->>>> 
->>>> No, if that rq has been inserted and then extracted from the scheduler
->>>> through a dispatch_request, then it has.  The scheduler is stateful,
->>>> and keeps state for rq, because it must do so, until a completion or a
->>>> requeue arrive.  In particular, bfq may decide that no other
->>> 
->>> This 'requeue' to hctx->dispatch is invisible to io scheduler, and from
->>> io scheduler view, seems no difference between STS_OK and STS_RESOURCE,
->>> since this request will be submitted to lld automatically by blk-mq
->>> core.
->>> 
->>> Also in legacy path, no such notification to io scheduler too.
->> 
->> ok, still, for reasons that at this point I don't know, in the last
->> 9-10 years it has never been reported a failure caused by a request
->> that has been first dispatched by bfq and then re-inserted into bfq
->> without being completed.  This new event is the problem.
-> 
-> This mechanism is invented by blk-mq, and I guess it is for avoiding to
-> disable irq when acquiring hctx->lock since blk-mq's completion handler
-> is done in irq context.
-> 
-> Legacy's requeue won't re-insert one request to scheduler queue.
+Do you really own the copyright for code that you write on behalf of
+your employer?
 
-ok, that's the root cause of this issue then.
-
-> 
->> 
->> 
->>>> bfq_queues must be served before rq has been completed, because this
->>>> is necessary to preserve its target service guarantees.  If bfq is not
->>>> informed, either through its completion or its requeue hook, then it
->>>> will wait forever.
->>> 
->>> The .finish_request will be called after this request is completed for this
->>> case, either after this io is completed by device, or timeout.
->>> 
->>> Or .requeue_request will be called if the driver need to requeue it to
->>> io scheduler via blk_mq_requeue_request() explicitly.
->>> 
->>> So io scheduler will be made sure to get notified.
->>> 
->> 
->> So, you mean that the scheduler will get notified in a way or the
->> other, if it has a requeue hook defined, right?  Or, simply, the
->> request will be eventually completed, thus unblocking the scheduler?
-> 
-> Right, once .queue_rq() returns BLK_STS_RESOURCE, this rq is added to
-> hctx->dispatch list, and finally it will be completed via driver or
-> timeout handler, or it may be re-inserted to io scheduler queue via
-> blk_mq_requeue_request() by driver in driver's completion handler.
-> 
-> So io scheduler will get the notification finally.
-
-Yes, provided that the scheduler has a requeue hook, otherwise is one
-case it is not notified before the re-isnertion.  And from this
-troubles follow with a stateful scheduler like bfq.
-
-> 
->> 
->> 
->>>> 
->>>>> seems we only need to do that
->>>>> for 2nd case.
->>>>> 
->>>> 
->>>>> So looks we need the following patch:
->>>>> 
->>>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>>> index 23de7fd8099a..a216f3c3c3ce 100644
->>>>> --- a/block/blk-mq.c
->>>>> +++ b/block/blk-mq.c
->>>>> @@ -712,7 +714,6 @@ static void __blk_mq_requeue_request(struct request *rq)
->>>>> 
->>>>> 	trace_block_rq_requeue(q, rq);
->>>>> 	wbt_requeue(q->rq_wb, &rq->issue_stat);
->>>>> -	blk_mq_sched_requeue_request(rq);
->>>>> 
->>>> 
->>>> By doing so, if rq has 'passed' through bfq, then you block again bfq
->>>> forever.
->>> 
->>> Could you explain it a bit why bfq is blocked by this way?
->> 
->> It's a theoretical problem (unfortunately not just a contingency you
->> can work around).  If you want to guarantee that a process doing sync
->> I/O, and with a higher weight than other processes, gets a share of
->> the total throughput proportional to its weight, then you have to idle
->> the device during the service slot of that process.  Otherwise, the
->> pending requests of the other processes will simply slip through
->> *every time* the high-weight process has no pending request because it
->> is blocked by one of its sync request.  The final result will be loss
->> of control on the percentage of requests of the high-weight process
->> that get dispatched w.r.t. to the total number of requests
->> dispatched.  So, failure to provide the process with its due share of
->> the throughput.
->> 
->> I'm working on solutions to compensate for this nasty service
->> constraint, and its effects on throughput, but this is another story.
-> 
-> As I explained, io scheduler will get notified via either
-> .finish_request or .requeue_request finally, so there shouldn't be
-> such block if this patch is in.
-> 
-
-Well, it depends on which patch is your "this patch" :)
-
-I mean, if you refer to your new patch, then I'm afraid the
-answer is "no, exactly because of what you explained".  In fact, in
-case of a re-insertion, the scheduler gets notified through its
-requeue hook.  But for this mechanism to work, the scheduler must have
-a its requeue hook defined.  bfq had no such a hook defined, and our
-patch defines exactly it.  So, I don'n see how the re-insertion case
-might be handled correctly without our patch.  Maybe I'm just missing
-something here.
-
-
->> 
->>> 
->>>> 
->>>> Of course, I may be wrong, as I don't have a complete mental model of
->>>> all what blk-mq does around bfq.  But I thin that you can quickly
->>>> check whether a hang occurs again if you add this change.  In
->>>> particular, it should happen in the USB former failure case.
->>> 
->>> USB/BFQ runs well on my parted test with this change, and this test can
->>> trigger the IO hang issue easily on kyber or without your patch of 'block,
->>> bfq: add requeue-request hook'.
->>> 
->> 
->> Great!  According to the facts I reported at the beginning of
->> this email, I guess your patch works because it avoids the
->> nasty case for bfq, i.e., a request re-inserted into bfq without being
->> completed first, right? 
-> 
-> BFQ still can get notified via .requeue_request when one request is re-inserted
-> to BFQ with this patch.
-> 
->> And then, about the requeues without
->> re-insertions, everything works because the latter type of requests
->> eventually get a completion.  Is it correct?
-> 
-> Right.
-> 
->> 
->> Sorry for being pedantic, but because of our lack of expertise on
->> these requeueing mechanism, we worked really a lot on this commit, and
->> it would be frustrating if we bumped again into troubles, after
->> removing it.  Apart from that, if this commit is useless, it is
->> perfectly fine for me that it is reverted and replaced by a better
->> solution.  In the end, less code in bfq means less room for bugs ;)
-> 
-> I agree. We should deal with this issue in a simple/clean way, just like
-> the patch of 'block: kyber: fix domain token leak during requeue'.
-> 
-
-Our patch "block, bfq: add requeue-request hook" is exactly the bfq
-counterpart of the patch 'block: kyber: fix domain token leak during requeue'
-
-> Now could you please let us know if you are fine with the patch of 'blk-mq:
-> don't call io sched's .requeue_request when requeueing rq to ->dispatch'?
-> 
-
-Absolutely.  Just, in view of what you explained, and of what I wrote
-in this reply, such a patch does not seem to make our patch useless.
-
-Thanks,
-Paolo
-
-
-> 
-> Thanks,
-> Ming
+> +#include <linux/cper.h>
+> +
+> +/*
+> + * We don't need a "CPER_IA" prefix since these are all locally defined.
+> + * This will save us a lot of line space.
+> + */
+> +#define VALID_LAPIC_ID                 BIT_ULL(0)
+> +#define VALID_CPUID_INFO               BIT_ULL(1)
+> +
+> +void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
+> +{
+> +       printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
+> +
+> +       if (proc->validation_bits & VALID_LAPIC_ID)
+> +               printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
+> +
+> +       if (proc->validation_bits & VALID_CPUID_INFO) {
+> +               printk("%sCPUID Info:\n", pfx);
+> +               print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
+> +                              sizeof(proc->cpuid), 0);
+> +       }
+> +}
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index c165933ebf38..5a59b582c9aa 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -469,6 +469,16 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
+>                         cper_print_proc_arm(newpfx, arm_err);
+>                 else
+>                         goto err_section_too_small;
+> +#endif
+> +#if defined(CONFIG_UEFI_CPER_X86)
+> +       } else if (guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
+> +               struct cper_sec_proc_ia *ia_err = acpi_hest_get_payload(gdata);
+> +
+> +               printk("%ssection_type: IA32/X64 processor error\n", newpfx);
+> +               if (gdata->error_data_length >= sizeof(*ia_err))
+> +                       cper_print_proc_ia(newpfx, ia_err);
+> +               else
+> +                       goto err_section_too_small;
+>  #endif
+>         } else {
+>                 const void *err = acpi_hest_get_payload(gdata);
+> diff --git a/include/linux/cper.h b/include/linux/cper.h
+> index 4b5f8459b403..9c703a0abe6e 100644
+> --- a/include/linux/cper.h
+> +++ b/include/linux/cper.h
+> @@ -551,5 +551,7 @@ const char *cper_mem_err_unpack(struct trace_seq *,
+>                                 struct cper_mem_err_compact *);
+>  void cper_print_proc_arm(const char *pfx,
+>                          const struct cper_sec_proc_arm *proc);
+> +void cper_print_proc_ia(const char *pfx,
+> +                       const struct cper_sec_proc_ia *proc);
+>
+>  #endif
+> --
+> 2.14.1
+>
