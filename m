@@ -1,68 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751555AbeBXVzU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 16:55:20 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35273 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751399AbeBXVzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 16:55:18 -0500
-X-Google-Smtp-Source: AH8x226cEH9gAP+UWsEBLKXH2TxQZYBryV7hp+YusRlfpnMQQ5YSoPKnR8HIfY5NNms8hip4XY58Jw==
-Subject: Re: Removing architectures without upstream gcc support
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, James Hogan <jhogan@kernel.org>,
-        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <20180223154316.35b26857@alans-desktop> <20180223171019.GA1125@roeck-us.net>
- <20180223181943.GF30522@ZenIV.linux.org.uk>
- <1519414328.30443.29.camel@HansenPartnership.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <de4b7d03-7682-24e1-f07e-6424e56a9665@roeck-us.net>
-Date: Sat, 24 Feb 2018 13:55:13 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519414328.30443.29.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1751600AbeBXV4G (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 16:56:06 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:58283 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751464AbeBXV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 16:56:04 -0500
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 04/15] clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
+Date: Sat, 24 Feb 2018 22:45:34 +0100
+Message-Id: <20180224214545.3740-5-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 11:32 AM, James Bottomley wrote:
-> On Fri, 2018-02-23 at 18:19 +0000, Al Viro wrote:
-> [...]
->> IIRC, parisc/qemu stuff had been announced a while ago;
-> 
-> I have, but it didn't work sufficiently for me to either boot a kernel
-> using system emulation or start an architecture container using user
-> emulation.  I'll try again now that qemu has gone through several
-> revisions.
-> 
+CLK_PLL_VIDEO needs to be referenced in HDMI DT entry as a possible
+PHY clock parent.
 
-I can boot a parisc image to CLI using ToT qemu, ToT kernel built with
-	make ARCH=parisc CROSS_COMPILE=hppa-linux-" defconfig
-	make ARCH=parisc CROSS_COMPILE=hppa-linux-"
+Export it so it can be used later in DT.
 
-qemu command line:
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
+ include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-qemu-system-hppa -nographic -monitor none -kernel vmlinux \
-	--append "console=/dev/ttyS0 root=/dev/sda" \
-	-drive file=rootfs.ext2,format=raw,if=scsi
-
-I built the root file system using a modified buildroot based on 2018.02-rc2
-with hppa support added.
-
-Guenter
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+index 1b4baea37d81..73d7392c968c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+@@ -26,7 +26,9 @@
+ #define CLK_PLL_AUDIO_2X	3
+ #define CLK_PLL_AUDIO_4X	4
+ #define CLK_PLL_AUDIO_8X	5
+-#define CLK_PLL_VIDEO		6
++
++/* PLL_VIDEO is exported */
++
+ #define CLK_PLL_VE		7
+ #define CLK_PLL_DDR		8
+ 
+diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
+index e139fe5c62ec..c5f7e9a70968 100644
+--- a/include/dt-bindings/clock/sun8i-h3-ccu.h
++++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
+@@ -43,6 +43,8 @@
+ #ifndef _DT_BINDINGS_CLK_SUN8I_H3_H_
+ #define _DT_BINDINGS_CLK_SUN8I_H3_H_
+ 
++#define CLK_PLL_VIDEO		6
++
+ #define CLK_PLL_PERIPH0		9
+ 
+ #define CLK_CPUX		14
+-- 
+2.16.2
