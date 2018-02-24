@@ -1,75 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeBXBCo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 20:02:44 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45833 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbeBXBCm (ORCPT
+        id S1752487AbeBXBFc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 20:05:32 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751983AbeBXBF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 20:02:42 -0500
-X-Google-Smtp-Source: AH8x224UrMI1wolkG+Tu9v1PTmZvs8yKsnsagJkvBMFxzPUozTAaDXoCfEf5INbsaXWvU72CGgX6ow==
-Date: Fri, 23 Feb 2018 17:02:41 -0800 (PST)
-X-Google-Original-Date: Fri, 23 Feb 2018 16:57:50 PST (-0800)
-Subject: Re: [patches] Re: [PATCH v4 0/6] Add dynamic ftrace support for RISC-V platforms
-In-Reply-To: <20180221024539.GA3735@andestech.com>
-CC: albert@sifive.com, rostedt@goodmis.org, mingo@redhat.com,
-        patches@groups.riscv.org, linux-kernel@vger.kernel.org,
-        greentime@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: alankao@andestech.com
-Message-ID: <mhng-8be751e6-f51b-433f-8e08-0aff87034ac2@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 23 Feb 2018 20:05:29 -0500
+Date: Fri, 23 Feb 2018 17:05:11 -0800
+From: Ram Pai <linuxram@us.ibm.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, mpe@ellerman.id.au, mingo@redhat.com,
+        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
+Subject: Re: [PATCH v12 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if
+ CONFIG_ARCH_HAS_PKEYS is enabled
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
+ <201802231528.snWZIspR%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201802231528.snWZIspR%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18022401-0040-0000-0000-0000043732BE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022401-0041-0000-0000-000020D95288
+Message-Id: <20180224010511.GK5559@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802240012
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018 18:45:39 PST (-0800), alankao@andestech.com wrote:
-> On Tue, Feb 13, 2018 at 01:13:15PM +0800, Alan Quey-Liang Kao(高魁良) wrote:
->> This patch set includes the building blocks of dynamic ftrace features
->> for RISC-V machines.
->> 
->> Changes in v4:
->>  - Organize code structure according to changes in v3
->>  - Rebase onto the riscv-linux-4.15 branch at github's 
->>    riscv/riscv-linux repo.  Note that this set is based on the previous
->>    ftrace patch, which provided basic support.
->> 
->> Changes in v3:
->>  - Replace the nops at the tracer call sites into "call ftrace_stub"
->>    instructions for better understanding (1/6, 2/6 and 5/6)
->> 
->> Changes in v2:
->>  - Fix the return value as writing to kernel text goes wrong (2/6)
->>  - Replace manual comparisons by calling memcmp (2/6)
->>  - Simplify the conditional assignment in the Makefile (1/6)
->> 
->> Alan Kao (6):
->>   riscv/ftrace: Add RECORD_MCOUNT support
->>   riscv/ftrace: Add dynamic function tracer support
->>   riscv/ftrace: Add dynamic function graph tracer support
->>   riscv/ftrace: Add ARCH_SUPPORTS_FTRACE_OPS support
->>   riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support
->>   riscv/ftrace: Add HAVE_FUNCTION_GRAPH_RET_ADDR_PTR support
->> 
->>  arch/riscv/Kconfig              |   3 +
->>  arch/riscv/Makefile             |   3 +
->>  arch/riscv/include/asm/ftrace.h |  56 ++++++++++
->>  arch/riscv/kernel/Makefile      |   5 +-
->>  arch/riscv/kernel/ftrace.c      | 175 ++++++++++++++++++++++++++++-
->>  arch/riscv/kernel/mcount-dyn.S  | 239 ++++++++++++++++++++++++++++++++++++++++
->>  arch/riscv/kernel/mcount.S      |  22 ++--
->>  arch/riscv/kernel/stacktrace.c  |   6 +
->>  scripts/recordmcount.pl         |   5 +
->>  9 files changed, 501 insertions(+), 13 deletions(-)
->>  create mode 100644 arch/riscv/kernel/mcount-dyn.S
->> 
->> -- 
->> 2.15.1
->>
->
-> Any comments? 
+On Fri, Feb 23, 2018 at 03:11:45PM +0800, kbuild test robot wrote:
+> Hi Ram,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc2 next-20180222]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+>         chmod +x ~/bin/make.cross
+...snip..
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=powerpc 
+> 
+> Note: the linux-review/Ram-Pai/mm-x86-powerpc-Enhancements-to-Memory-Protection-Keys/20180223-042743 HEAD c5692bca45543c242ffca15c811923e4c548ed19 builds fine.
+>       It only hurts bisectibility.
 
-Sorry, my email latency is a bit long now as I'm still backed up from FOSDEM.  
-This looks good, it should already be in our for-next branch.
+oops, it broke git-bisect on powerpc :-(
+The following change will fix it. This should nail it down.
+
+diff --git a/arch/powerpc/include/asm/pkeys.h
+b/arch/powerpc/include/asm/pkeys.h
+index 0409c80..0b3b669 100644
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -25,6 +25,7 @@
+ # define VM_PKEY_BIT1  VM_HIGH_ARCH_1
+ # define VM_PKEY_BIT2  VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3  VM_HIGH_ARCH_3
+ # define VM_PKEY_BIT4  VM_HIGH_ARCH_4
++#elif !defined(VM_PKEY_BIT4)
++# define VM_PKEY_BIT4  VM_HIGH_ARCH_4
+#endif
