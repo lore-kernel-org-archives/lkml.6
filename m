@@ -1,75 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752833AbeBXAwj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 19:52:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:58895 "EHLO mga09.intel.com"
+        id S1752855AbeBXAwr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 19:52:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:52461 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752782AbeBXAwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 19:52:34 -0500
+        id S1752782AbeBXAwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 19:52:44 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,385,1515484800";
-   d="scan'208";a="37031461"
-From: "Huang\, Ying" <ying.huang@intel.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][mm-next] mm, swap: make bool enable_vma_readahead and function swap_vma_readahead static
-References: <20180223164852.5159-1-colin.king@canonical.com>
-Date: Sat, 24 Feb 2018 08:52:32 +0800
-In-Reply-To: <20180223164852.5159-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 23 Feb 2018 16:48:52 +0000")
-Message-ID: <87vaen2oq7.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+   d="scan'208";a="32391445"
+Subject: [PATCH v3 5/6] dax: short circuit vma_is_fsdax() in the
+ CONFIG_FS_DAX=n case
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Date: Fri, 23 Feb 2018 16:43:37 -0800
+Message-ID: <151943301788.29249.13371602951635567379.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <151943298533.29249.14597996053028346159.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151943298533.29249.14597996053028346159.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+Do not bother looking up the file type in the case when Filesystem-DAX
+is disabled at build time.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The bool enable_vma_readahead and function swap_vma_readahead are local
-> to the source and do not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> mm/swap_state.c:41:6: warning: symbol 'enable_vma_readahead' was not
-> declared. Should it be static?
-> mm/swap_state.c:742:13: warning: symbol 'swap_vma_readahead' was not
-> declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/fs.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: "Huang, Ying" <ying.huang@intel.com>
-
-> ---
->  mm/swap_state.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 8dde719e973c..f3952138f01d 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -38,7 +38,7 @@ static const struct address_space_operations swap_aops = {
->  
->  struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
->  static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
-> -bool enable_vma_readahead __read_mostly = true;
-> +static bool enable_vma_readahead __read_mostly = true;
->  
->  #define SWAP_RA_WIN_SHIFT	(PAGE_SHIFT / 2)
->  #define SWAP_RA_HITS_MASK	((1UL << SWAP_RA_WIN_SHIFT) - 1)
-> @@ -739,8 +739,8 @@ static void swap_ra_info(struct vm_fault *vmf,
->  	pte_unmap(orig_pte);
->  }
->  
-> -struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-> -				    struct vm_fault *vmf)
-> +static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-> +				       struct vm_fault *vmf)
->  {
->  	struct blk_plug plug;
->  	struct vm_area_struct *vma = vmf->vma;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7418341578a3..c97fc4dbaae1 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3197,6 +3197,8 @@ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
+ 
+ 	if (!vma->vm_file)
+ 		return false;
++	if (!IS_ENABLED(CONFIG_FS_DAX))
++		return false;
+ 	if (!vma_is_dax(vma))
+ 		return false;
+ 	inode = file_inode(vma->vm_file);
