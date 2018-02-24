@@ -1,66 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753175AbeBXCrs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 21:47:48 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5665 "EHLO huawei.com"
+        id S1753063AbeBXCuf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 21:50:35 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5263 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753154AbeBXCrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 21:47:45 -0500
-Subject: Re: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
-To: <v9fs-developer@lists.sourceforge.net>, <viro@zeniv.linux.org.uk>
-References: <5A7D3C08.7020309@huawei.com>
-CC: <ericvh@gmail.com>, <rminnich@sandia.gov>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Latchesar Ionkov" <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>
-From: jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5A90D23F.5070601@huawei.com>
-Date: Sat, 24 Feb 2018 10:47:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752525AbeBXCud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 21:50:33 -0500
+Subject: Re: [PATCH V2 7/7] cpuidle/drivers/cpuidle-arm: Register the cooling
+ device
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, <edubezval@gmail.com>
+CC: <kevin.wangtao@linaro.org>, <leo.yan@linaro.org>,
+        <vincent.guittot@linaro.org>, <amit.kachhap@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <javi.merino@kernel.org>,
+        <rui.zhang@intel.com>, <daniel.thompson@linaro.org>,
+        <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
+ <1519226968-19821-8-git-send-email-daniel.lezcano@linaro.org>
+From: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
+Message-ID: <3b852c23-8bfd-0699-f219-fa694e8ceb71@hisilicon.com>
+Date: Sat, 24 Feb 2018 10:50:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <5A7D3C08.7020309@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <1519226968-19821-8-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
+X-Originating-IP: [10.121.90.40]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/9 14:13, jiangyiwen wrote:
-> User use some syscall, for example mmap(v9fs_file_mmap), it will not
-> update atime even if user's mnt_flags have MNT_NOATIME, because
-> v9fs default set SB_NOATIME in v9fs_set_super.
+
+
+On 2018/2/21 23:29, Daniel Lezcano wrote:
+> Register the ARM generic cpuidle driver as a cooling device.
 > 
-> For supporting access time is updated when user mount with relatime,
-> we should clear SB_NOATIME by default.
-> 
-> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
->  fs/9p/vfs_super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/cpuidle/cpuidle-arm.c | 5 +++++
+>   1 file changed, 5 insertions(+)
 > 
-> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-> index af03c2a..48ce504 100644
-> --- a/fs/9p/vfs_super.c
-> +++ b/fs/9p/vfs_super.c
-> @@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
->  	if (v9ses->cache)
->  		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
+> diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
+> index ddee1b6..c100915 100644
+> --- a/drivers/cpuidle/cpuidle-arm.c
+> +++ b/drivers/cpuidle/cpuidle-arm.c
+> @@ -11,6 +11,7 @@
+>   
+>   #define pr_fmt(fmt) "CPUidle arm: " fmt
+>   
+> +#include <linux/cpu_cooling.h>
+>   #include <linux/cpuidle.h>
+>   #include <linux/cpumask.h>
+>   #include <linux/cpu_pm.h>
+> @@ -172,6 +173,10 @@ static int __init arm_idle_init(void)
+>   			goto out_fail;
+>   	}
+>   
+> +	ret = cpuidle_cooling_register();
+> +	if (ret)
+> +		pr_warn("Failed to register the cpuidle cooling device\n");
+> +
+SoC which uses Big-Little architecture doesn't use cpuidle-arm driver, is it
+better to put cpuidle_cooling_register to cpuidle_register_driver, and use the
+cpumask of cpuidle driver to register cpuidle cooling device intead of get it
+from topology?
+>   	return 0;
+>   
+>   out_fail:
 > 
-> -	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
-> +	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
->  	if (!v9ses->cache)
->  		sb->s_flags |= SB_SYNCHRONOUS;
-> 
-Hi Alexander Viro and Eric,
-
-My patch has already sent two weeks, but nobody help me
-to review, I have a question about now who is the v9fs's
-maintainer? Or who can help me review the patch?
-
-I hope v9fs's maintainer can give me some advices or
-merge into the mainline if it has no problem.
-
-Thanks,
-Yiwen.
