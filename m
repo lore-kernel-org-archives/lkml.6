@@ -1,109 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751289AbeBXIiO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 03:38:14 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeBXIiN (ORCPT
+        id S1751328AbeBXIlP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 03:41:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37576 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbeBXIlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 03:38:13 -0500
-Date: Sat, 24 Feb 2018 09:38:07 +0100
+        Sat, 24 Feb 2018 03:41:14 -0500
+Date: Sat, 24 Feb 2018 09:41:06 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 04/17] lockdep: Introduce
- lock_list::dep
-Message-ID: <20180224083807.GB25201@hirez.programming.kicks-ass.net>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-5-boqun.feng@gmail.com>
- <20180223115520.GV25181@hirez.programming.kicks-ass.net>
- <20180223123732.acxbavnf2ktd4lzl@tardis>
- <20180224053250.ketrlbq4gtx573qo@tardis>
- <20180224063005.efbowkoq2v4qndan@tardis>
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: mark.rutland@arm.com, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        avilaj@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] perf/core: Add support for PMUs that can be read
+ from any CPU
+Message-ID: <20180224084106.GC25201@hirez.programming.kicks-ass.net>
+References: <1519431578-11995-1-git-send-email-skannan@codeaurora.org>
+ <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180224063005.efbowkoq2v4qndan@tardis>
+In-Reply-To: <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 02:30:05PM +0800, Boqun Feng wrote:
-> On Sat, Feb 24, 2018 at 01:32:50PM +0800, Boqun Feng wrote:
-
-> > 	/*
-> > 	 * DEP_*_BIT in lock_list::dep
-> > 	 *
-> > 	 * For dependency @prev -> @next:
-> > 	 *
-> > 	 *   RR: both @prev and @next are recursive read locks, i.e. ->read == 2.
-> > 	 *   RN: @prev is recursive and @next is non-recursive.
-> > 	 *   NR: @prev is a not recursive and @next is recursive.
-> > 	 *   NN: both @prev and @next are non-recursive.
-> > 	 * 
-> > 	 * Note that we define the value of DEP_*_BITs so that:
-> > 	 * 	bit0 is prev->read != 2
-> > 	 * 	bit1 is next->read != 2
-> > 	 */
-> > 	#define DEP_RR_BIT 0
-> > 	#define DEP_RN_BIT 1
-> > 	#define DEP_NR_BIT 2
-> > 	#define DEP_NN_BIT 3
-> > 
-> > 	#define DEP_RR_MASK (1U << (DEP_RR_BIT))
-> > 	#define DEP_RN_MASK (1U << (DEP_RN_BIT))
-> > 	#define DEP_NR_MASK (1U << (DEP_NR_BIT))
-> > 	#define DEP_NN_MASK (1U << (DEP_NN_BIT))
-> > 
-> > 	static inline unsigned int
-> > 	__calc_dep_bit(struct held_lock *prev, struct held_lock *next)
-> > 	{
-> > 		return (prev->read != 2) + ((next->read != 2) << 1)
-> > 	}
-> > 
-> > 	static inline u8 calc_dep(struct held_lock *prev, struct held_lock *next)
-> > 	{
-> > 		return 1U << __calc_dep_bit(prev, next);
-> > 	}
-> > 
-> >  	static inline bool only_rx(u8 dep)
-> >  	{
-> >  		return !(dep & (DEP_NR_MASK | DEP_NN_MASK));
-> >  	}
-> > 
-> >  	static inline bool only_xr(u8 dep)
-> >  	{
-> >  		return !(dep & (DEP_NR_MASK | DEP_NN_MASK));
-> >  	}
-> > 
-
-> > > > 	if (have_xr && is_rx(entry->dep))
-> > > > 		continue;
-> > > > 
-> > > > 	entry->have_xr = is_xr(entry->dep);
-> > > > 
+On Fri, Feb 23, 2018 at 04:19:38PM -0800, Saravana Kannan wrote:
+> Some PMUs events can be read from any CPU. So allow the PMU to mark
+> events as such. For these events, we don't need to reject reads or
+> make smp calls to the event's CPU and cause unnecessary wake ups.
 > 
-> Hmm.. I think this part also needs some tweak:
-> 
-> 	/* if -> prev is *R, and we only have R* for prev -> this, * skip*/
-> 	if (have_xr && only_rx(entry->dep))
-> 		continue;
-> 	
-> 	/*
-> 	 * we pick a *R for prev -> this only if:
-> 	 *     prev -> this dependencies are all *R 
-> 	 * or
-> 	 *     -> prev is *R, and we don't have NN for prev -> this
-> 	 */
-> 	entry->have_xr = only_xr(entry->dep) || (have_xr && !is_nn(entry->dep));
-> 
-> otherwise, we will wrongly set entry->have_xr to false if have_xr is
-> true and we have RN for prev -> this.
+> Good examples of such events would be events from caches shared across
+> all CPUs.
 
-OK, so its saturday morning and such, but what? Why should we set
-have_xr true when we have RN? Note that if we only had RN we'd already
-have bailed on the continue due to only_rx().
+So why would the existing ACTIVE_PKG not work for you? Because clearly
+your example does not cross a package.
 
-So can you elaborate a bit?
+> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+> ---
+>  include/linux/perf_event.h |  3 +++
+>  kernel/events/core.c       | 10 ++++++++--
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 7546822..ee8978f 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -510,9 +510,12 @@ typedef void (*perf_overflow_handler_t)(struct perf_event *,
+>   * PERF_EV_CAP_SOFTWARE: Is a software event.
+>   * PERF_EV_CAP_READ_ACTIVE_PKG: A CPU event (or cgroup event) that can be read
+>   * from any CPU in the package where it is active.
+> + * PERF_EV_CAP_READ_ANY_CPU: A CPU event (or cgroup event) that can be read
+> + * from any CPU.
+>   */
+>  #define PERF_EV_CAP_SOFTWARE		BIT(0)
+>  #define PERF_EV_CAP_READ_ACTIVE_PKG	BIT(1)
+> +#define PERF_EV_CAP_READ_ANY_CPU	BIT(2)
+>  
+>  #define SWEVENT_HLIST_BITS		8
+>  #define SWEVENT_HLIST_SIZE		(1 << SWEVENT_HLIST_BITS)
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 5d3df58..570187b 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -3484,6 +3484,10 @@ static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+>  {
+>  	u16 local_pkg, event_pkg;
+>  
+> +	if (event->group_caps & PERF_EV_CAP_READ_ANY_CPU) {
+> +		return smp_processor_id();
+> +	}
+> +
+>  	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+>  		int local_cpu = smp_processor_id();
+>  
+
+> @@ -3575,6 +3579,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>  {
+>  	unsigned long flags;
+>  	int ret = 0;
+> +	bool is_any_cpu = !!(event->group_caps & PERF_EV_CAP_READ_ANY_CPU);
+>  
+>  	/*
+>  	 * Disabling interrupts avoids all counter scheduling (context
+> @@ -3600,7 +3605,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>  
+>  	/* If this is a per-CPU event, it must be for this CPU */
+>  	if (!(event->attach_state & PERF_ATTACH_TASK) &&
+> -	    event->cpu != smp_processor_id()) {
+> +	    event->cpu != smp_processor_id() &&
+> +	    !is_any_cpu) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> @@ -3610,7 +3616,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>  	 * or local to this CPU. Furthermore it means its ACTIVE (otherwise
+>  	 * oncpu == -1).
+>  	 */
+> -	if (event->oncpu == smp_processor_id())
+> +	if (event->oncpu == smp_processor_id() || is_any_cpu)
+>  		event->pmu->read(event);
+>  
+>  	*value = local64_read(&event->count);
+
+And why are you modifying read_local for this? That didn't support
+ACTIVE_PKG, so why should it support this?
+
+And again, where are the users?
