@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751497AbeBXQDV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 11:03:21 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:41518 "EHLO vps-vb.mhejs.net"
+        id S1751570AbeBXQD3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 11:03:29 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:41684 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751364AbeBXQDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 11:03:20 -0500
+        id S1751514AbeBXQD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 11:03:26 -0500
 From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH 1/3] X.509: unpack RSA signatureValue field from BIT STRING
+Subject: [PATCH 2/3] crypto: ccp - return an actual key size from RSA max_size
+ callback
 To: Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
 Cc: David Howells <dhowells@redhat.com>,
         Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
         keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-ID: <44885af5-b1f5-30cb-5f51-226949cb11a6@maciej.szmigiero.name>
-Date: Sat, 24 Feb 2018 17:03:12 +0100
+Message-ID: <51c265e4-6153-3e5e-316a-ebef059ac36a@maciej.szmigiero.name>
+Date: Sat, 24 Feb 2018 17:03:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -26,44 +27,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+rsa-pkcs1pad uses a value returned from a RSA implementation max_size
+callback as a size of an input buffer passed to the RSA implementation for
+encrypt and sign operations.
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
+CCP RSA implementation uses a hardware input buffer which size depends only
+on the current RSA key length, so it should return this key length in
+the max_size callback, too.
+This also matches what the kernel software RSA implementation does.
 
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
-
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
+Previously, the value returned from this callback was always the maximum
+RSA key size the CCP hardware supports.
+This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
+for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
+tried to copy this large input buffer into a RSA key length-sized hardware
+input buffer.
 
 Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
 Cc: stable@vger.kernel.org
 ---
- crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/crypto/ccp/ccp-crypto-rsa.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index ce2df8c9c583..88c26a4538ae 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/crypto/ccp/ccp-crypto-rsa.c b/drivers/crypto/ccp/ccp-crypto-rsa.c
+index e6db8672d89c..05850dfd7940 100644
+--- a/drivers/crypto/ccp/ccp-crypto-rsa.c
++++ b/drivers/crypto/ccp/ccp-crypto-rsa.c
+@@ -60,10 +60,9 @@ static int ccp_rsa_complete(struct crypto_async_request *async_req, int ret)
  
-+	if (!strcmp(ctx->cert->sig->pkey_algo, "rsa")) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
+ static unsigned int ccp_rsa_maxsize(struct crypto_akcipher *tfm)
+ {
+-	if (ccp_version() > CCP_VERSION(3, 0))
+-		return CCP5_RSA_MAXMOD;
+-	else
+-		return CCP_RSA_MAXMOD;
++	struct ccp_ctx *ctx = akcipher_tfm_ctx(tfm);
 +
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
++	return ctx->u.rsa.n_len;
+ }
+ 
+ static int ccp_rsa_crypt(struct akcipher_request *req, bool encrypt)
