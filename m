@@ -1,80 +1,81 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-803568-1519459166-2-9707365196017725085
+X-Cyrus-Session-Id: sloti22d1t05-803568-1519459163-2-9966948384769050023
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519459165; b=VCxZX4zp6wjt8tA/VCWhViX42hExutehdG63QKmkpTBKEHN
-    vQDvjDSU/Be0tboo3GB/8bMgLJHQ8k/7MuNRq6Es+YUoRA4tlEbktklbWkxF7OW+
-    KzeaNykH0xPA9g56qTBKChGympfO5sw/zx+IQSUFEUYgNxKY2IEFQPnQ0iqiVb9f
-    9fMC4veOxZTUJy7jJZp9aDMxCzUVyUHX90XvC8xRTkUEcchJTAxWiZfggIqK7iOd
-    as0fyffPN1q3l/Es78LNjS2IQzA19lLcf+C8JcXAvzmweethFIyRUNdh49LmUn2s
-    Mt5M92MyVclSIasJOpz0/JZwvxgAeM9ETrtuhOA==
+    t=1519459162; b=K2LDYtzocdN4xQ0BGqfR6jCXASAvA6OJQycoCKVEd/gebId
+    VI51YE97x1eeOOJezNbB45C7GgnLRCGb5GsyzKz9XVHX7dETu3RLXuNPM+1TBcN4
+    H4Uku+fpTnQyzycjj0lo7xguGvZY2O878AU10i8MZH9/dYPjFeCdqa+PvofkkNxV
+    HWMod6fFXcLyNiEoKAgAcJB3IQ8l819TdSSo3hokz0HeXsX7DkzQNkXxbeiWM/42
+    CREqk1zaB75DU+cWpTCs/72Xxb4ayqOFXTKvM1SWth2t3diTk8R9dc1VTqc7fBns
+    QZ8Ui6lOnRmNhNtzw1hwHVq8sYreBGZMcBtGSHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519459165; bh=x
-    2H2SEHRZO2KJKhnXs6EdRsOzQHyn6FEkOfhrIQZDzk=; b=qXGY45gbShbpasSOJ
-    gPyDYCvq1m0U8bWfV4vKSwGrbtErM3l/PkJVpwYxBP6Pu4IkBwUjZdDj1DMN508Y
-    PyPx3bBVynOJulH2TPc8cz0KWPl28FGDnF6s4CBEzBR9bRojmoSkjgoOjpmwGgPo
-    9XljJ0fdzJGX2wQDGhggSVGh3C3waOh4aBDauLmY9Q+O+RBr0KBoGh+xveHGXuAC
-    XbCtUiZQdhnpbv55vmyf4TJCGebNNdewfxXqAoU1JZ/x3KtO/+rBiYtjtD79xk5B
-    685TNvtyrNqbUvyS6ReQZkSQTay3uT8cIMb9QcZU3gwyiR45WSvsI476LnDOiyDE
-    LuZxw==
+    :content-transfer-encoding:sender; s=arctest; t=1519459162; bh=q
+    di73nVb5UcPj5CaDAle5clHFCAQfX6xFRKy7ycHQOg=; b=r/zHhHbP340I7yB+k
+    BV7JedXlNw4sw40dyr+p8J697/M13SpkwYAo3WJjvsregOOs3nI/UdaGOsh79IPj
+    SK928rKUzSwhSv1cMHm3JGey92fVyGTgf/Yocd6v0lOAwvSEaEeXfzRo+mUkuaju
+    Ps43/v1N/rgQEKQOwO+V6XSpfFALgDMUz+a7y1YjyxS6NC4JbaEuKl6YIsPgIYAP
+    eWTFBVJC04MNqtbNd8qR/Y1PvqL95KkDoc27HFlxVwfh73+VkDaw7bxTLnjtAVXs
+    9fOqpW/NSa7tRDQrtVJnjFQ4oOkgoFZ8IiFlXPT06CgCLm9HJ5aHz+/0xNbntGD1
+    RXKXw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	christian.gromm@microchip.com
-Subject: [PATCH 3/4] staging: most: Remove unnecessary OOM messages.
-Date: Fri, 23 Feb 2018 23:58:34 -0800
-Message-Id: <20180224075835.11618-3-quytelda@tamalin.org>
+Subject: [PATCH 2/4] staging: most: Replace calls to BUG_ON() with WARN_ONCE()
+ and return.
+Date: Fri, 23 Feb 2018 23:58:33 -0800
+Message-Id: <20180224075835.11618-2-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180224075835.11618-1-quytelda@tamalin.org>
 References: <20180224075835.11618-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:wUNY6SdarZ55oCTRGXR4WH5SD8hr3jLxTD2rpJ4LoQCEGJGAcqK
- sWzHto0Uv6vEijuMMLaMCmVbF8B7Dzd88Las2n5t9h9h5igM/IL7DHa1yCTJkyYxi6S3T67
- suxh1Ksn8GGaihgGY2auaDsoxBN+IC+xK9G9SQhLLCWHLcP1PIqpoKjViXRBZCDxqqPLCX7
- PCnAFP23X4YsvBj4WBPAw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Z7HDrraEC/Y=:yB2ShG64hmatvU4DXP2Vd4
- 3hamPzpiWDHvqTepNiAwpbMOVxo/QboJcC41yaqaG2l6bscJsg5aTq1T9EDXSe7fnptckooRf
- Z55KdzvrFuev2KnZqtMjqaqcBkhtakhqw3+0Atp4UgjY7KbyRwYuAdpO6JGSyQREu+UgbtsX3
- v2d7IhFGpwsOTqPs2UEeGgwgMEOYRBf9uk+BGd7V6LbbgwESsgGBl0oVP0vC6DVQ3G8qpliBE
- dacKTvWDbGY075bbdsAcGZnXtSJk89HayqjXK7rdlpd1d+qm8IizUDeXL/kRECv6wLh01VVdM
- pQqUjWuEEKGNDZlLNwEHewqmgfRiQrPh9XKJwnx+HrutEk0GKCHrLBIaOuwi5dXMeHwCjSupn
- QW2cvTpMtzkZUBQvwdYDZ454++YsI/68oiVS9pn8VzufFjEeGy1saoGLA8uudbO6U+NYdTU+d
- q+zlsJopt7KsbkHoH6h+TCUYsQ1upidOMiFb+YONSus6NLiURDAigWdVoa29FATmxxSbq28ZV
- cWFqCnNH8NyHT9WlqtPWUH9DQTj3gw0LEk+Zr00jSMxWcchi50zW++U5lknCqRl8kqqw39X7S
- NSvcpIO4KP/k17LLTOsIlsVbca2ySzNvBHOQEYP5VEHCBi2ZnPDVnj/dK2QVsyvVlVFI918h1
- 6w4LzR0fTs+WPq+sXj45JNRROEa4uoRxYVW8bnXlYNxau98IZx0lbzl5B2YOPWPVrPRIMXiW5
- gyPELCw0yD1tlRihlq612xVCLAvxe2GYmOu3Nw==
+X-Provags-ID: V03:K0:FYU909ctc9yRhlJjtYmHmIbFm6Ku+mp0Skq0GHh2TfXhf/GnjwK
+ we4IE2YiZCVhNwpZxhUDL/Le5/nQZwN7h5eC2zXNqpqfC6r3j9Xuoae8ZYb9094QBh+KNQr
+ uRA6hiRtAQyINPpwF2KHHrUUNDFPi95wKxlsBoYWJI/fmTGrGoCRWGlVEPSvTQP0MDtp0hv
+ wzPqWhEYJWoEuP9YgljGg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iv1NPe9SzPQ=:88Oc5UXcEtDW6kyVbIvhfv
+ 8QCZ7DsW6Wf/thKaU8LarVIa5IeHy+VJgtVbFhsfz3Itu2axEhT8qNX7ahaCPQYQiSKbjYtNA
+ hbGHEA4FYOfdedz36+clIvm5c7vrf7f//SEBZturNqJRlM7ZaAJE4kBtzzMVEcb80kpYldaj9
+ 0NSrxqLann6F+TTHnno7aA0/ySPz4x6xmeFZNZERzwKXPddyE3hEh610/gsMkysALQb+eGPSb
+ uYoX5+P3VX1T3ncnxaJdwyJhR30dowS4qrXaFEkF3/K4yaDXit12RX0A6B4i+vrfFOXViRqRQ
+ s8r7v+fORF0Z5Q/N0gwMuNVEgdoI6KX8XWmG05K7GUUOwVglTidq9tca5dV4ih/sYc86ci444
+ SguQeHPm81LAOBrdXBzoHBM4LE59QfblCdLDOKOyAtu2sYVTDckyAUpqKoX47S7CWFByS9e26
+ j5idD7HlcFWK1EpHnR67Fj2OUGFEjsi1EAmE7JSbBETErhZZr5Szig5KN0qM0W7mxjD6rjDSf
+ PnuTRjqyOvmrkzNtrGKeeKPWUnEq7CNBtWfn2fzcJILa+Fn6tkLd2aIZ/AJy1l1luUc8DXsul
+ CcyMLmgQjoiwnEjKk3mzUvnSDoU5KUNXVJW+TeHAfyCtysQr2kWqe6T3t8bJ/sS5ikISNdF/7
+ JAVEaNBi921qVx6GYIVYMVQNPuLyzQ6RQWGMWRcfu8hJRzqCdh5K8Bh9t3GuhowrE2rEX+9aL
+ NsXnbErl8YSnUiZFteG9qcjoVlrAOHRL7qRWIA==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -97,34 +98,52 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It isn't necessary for the driver to log out-of-memory errors, so
-these have been removed and the functions simply return -ENOMEM.
+Replace calls to BUG_ON() used to check for NULL pointers with WARN_ONCE()
+followed by a return.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/most/core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/most/core.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index 3f65390a6e17..b8792d70db8b 100644
+index 18157dd80324..3f65390a6e17 100644
 --- a/drivers/staging/most/core.c
 +++ b/drivers/staging/most/core.c
-@@ -1210,7 +1210,6 @@ int most_start_channel(struct most_interface *iface, int id,
- 		num_buffer = arm_mbo_chain(c, c->cfg.direction,
- 					   most_write_completion);
- 	if (unlikely(!num_buffer)) {
--		pr_info("failed to allocate memory\n");
- 		ret = -ENOMEM;
- 		goto error;
- 	}
-@@ -1389,7 +1388,6 @@ int most_register_interface(struct most_interface *iface)
+@@ -916,7 +916,11 @@ static void arm_mbo(struct mbo *mbo)
+ 	unsigned long flags;
+ 	struct most_channel *c;
  
- 	iface->p = kzalloc(sizeof(*iface->p), GFP_KERNEL);
- 	if (!iface->p) {
--		pr_info("Failed to allocate interface instance\n");
- 		ida_simple_remove(&mdev_id, id);
- 		return -ENOMEM;
- 	}
+-	BUG_ON((!mbo) || (!mbo->context));
++	if (WARN_ONCE(!mbo || !mbo->context,
++		      "Bad mbo or missing channel reference.\n")) {
++		return;
++	}
++
+ 	c = mbo->context;
+ 
+ 	if (c->is_poisoned) {
+@@ -1001,7 +1005,7 @@ static int arm_mbo_chain(struct most_channel *c, int dir,
+ void most_submit_mbo(struct mbo *mbo)
+ {
+ 	if (WARN_ONCE(!mbo || !mbo->context,
+-		      "bad mbo or missing channel reference\n"))
++		      "Bad mbo or missing channel reference.\n"))
+ 		return;
+ 
+ 	nq_hdm_mbo(mbo);
+@@ -1019,7 +1023,10 @@ static void most_write_completion(struct mbo *mbo)
+ {
+ 	struct most_channel *c;
+ 
+-	BUG_ON((!mbo) || (!mbo->context));
++	if (WARN_ONCE(!mbo || !mbo->context,
++		      "Bad mbo or missing channel reference.\n")) {
++		return;
++	}
+ 
+ 	c = mbo->context;
+ 	if (mbo->status == MBO_E_INVAL)
 -- 
 2.16.2
 
