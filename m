@@ -1,312 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeBXX13 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 18:27:29 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58366 "EHLO
+        id S1751812AbeBXX2X (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 18:28:23 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58374 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbeBXX1Z (ORCPT
+        with ESMTP id S1751500AbeBXX1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 24 Feb 2018 18:27:25 -0500
 To: "David S. Miller" <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <edba0c6e3224fe9f446d2606872ac3de781dff2f.1519514463.git.fthain@telegraphics.com.au>
+        linux-kernel@vger.kernel.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>
+Message-Id: <9f0f6a8180c9aa06fc8f31bb7e7024fe002fbd80.1519514463.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1519514463.git.fthain@telegraphics.com.au>
 References: <cover.1519514463.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 1/4] net/macsonic: Convert to nubus_driver
+Subject: [PATCH net 3/4] net/sonic: Clean up and modernize log messages
 Date: Sat, 24 Feb 2018 18:27:25 -0500 (EST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This resolves an old issue preventing any NuBus SONIC NICs from
-working in a Mac with an on-board SONIC device.
+Add missing printk severity levels by adopting pr_foo() calls for the
+platform_driver and dev_foo() calls for the nubus_driver.
+Avoid KERN_CONT usage as per advice from checkpatch.
+Avoid #ifdef around printk calls.
+Don't log driver probe messages after calling register_netdev().
 
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Chris Zankel <chris@zankel.net>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/macsonic.c | 173 ++++++++++++++++++++++----------
- 1 file changed, 119 insertions(+), 54 deletions(-)
+Only the macsonic.c changes have been tested. The other changes
+are similar but untested.
+---
+ drivers/net/ethernet/natsemi/jazzsonic.c | 13 ++++-----
+ drivers/net/ethernet/natsemi/macsonic.c  | 49 ++++++++++++++------------------
+ drivers/net/ethernet/natsemi/xtsonic.c   | 11 +++----
+ 3 files changed, 33 insertions(+), 40 deletions(-)
 
+diff --git a/drivers/net/ethernet/natsemi/jazzsonic.c b/drivers/net/ethernet/natsemi/jazzsonic.c
+index d5b28884e21e..58495316d318 100644
+--- a/drivers/net/ethernet/natsemi/jazzsonic.c
++++ b/drivers/net/ethernet/natsemi/jazzsonic.c
+@@ -142,17 +142,14 @@ static int sonic_probe1(struct net_device *dev)
+ 		i++;
+ 
+ 	if (known_revisions[i] == 0xffff) {
+-		printk("SONIC ethernet controller not found (0x%4x)\n",
+-		       silicon_revision);
++		pr_info("SONIC ethernet controller not found (0x%4x)\n",
++			silicon_revision);
+ 		goto out;
+ 	}
+ 
+ 	if (sonic_debug  &&  version_printed++ == 0)
+ 		printk(version);
+ 
+-	printk(KERN_INFO "%s: Sonic ethernet found at 0x%08lx, ",
+-	       dev_name(lp->device), dev->base_addr);
+-
+ 	/*
+ 	 * Put the sonic into software reset, then
+ 	 * retrieve and print the ethernet address.
+@@ -245,12 +242,14 @@ static int jazz_sonic_probe(struct platform_device *pdev)
+ 	err = sonic_probe1(dev);
+ 	if (err)
+ 		goto out;
++
++	pr_info("SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
++		dev->base_addr, dev->dev_addr, dev->irq);
++
+ 	err = register_netdev(dev);
+ 	if (err)
+ 		goto out1;
+ 
+-	printk("%s: MAC %pM IRQ %d\n", dev->name, dev->dev_addr, dev->irq);
+-
+ 	return 0;
+ 
+ out1:
 diff --git a/drivers/net/ethernet/natsemi/macsonic.c b/drivers/net/ethernet/natsemi/macsonic.c
-index b922ab5cedea..c744912f55a9 100644
+index f6745a893c82..dc690f287a6d 100644
 --- a/drivers/net/ethernet/natsemi/macsonic.c
 +++ b/drivers/net/ethernet/natsemi/macsonic.c
-@@ -60,8 +60,6 @@
- #include <asm/macints.h>
- #include <asm/mac_via.h>
+@@ -311,8 +311,6 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
+ 	int sr;
+ 	bool commslot = macintosh_config->expansion_type == MAC_EXP_PDS_COMM;
  
--static char mac_sonic_string[] = "macsonic";
+-	printk(KERN_INFO "Checking for internal Macintosh ethernet (SONIC).. ");
 -
- #include "sonic.h"
+ 	/* Bogus probing, on the models which may or may not have
+ 	   Ethernet (BTW, the Ethernet *is* always at the same
+ 	   address, and nothing else lives there, at least if Apple's
+@@ -322,13 +320,11 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
  
- /* These should basically be bus-size and endian independent (since
-@@ -410,7 +408,7 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
- 	return macsonic_init(dev);
- }
+ 		card_present = hwreg_present((void*)ONBOARD_SONIC_REGISTERS);
+ 		if (!card_present) {
+-			printk("none.\n");
++			pr_info("Onboard/comm-slot SONIC not found\n");
+ 			return -ENODEV;
+ 		}
+ 	}
  
--static int mac_nubus_sonic_ethernet_addr(struct net_device *dev,
-+static int mac_sonic_nubus_ethernet_addr(struct net_device *dev,
- 					 unsigned long prom_addr, int id)
- {
- 	int i;
-@@ -449,70 +447,49 @@ static int macsonic_ident(struct nubus_rsrc *fres)
- 	return -1;
- }
- 
--static int mac_nubus_sonic_probe(struct net_device *dev)
-+static int mac_sonic_nubus_probe_board(struct nubus_board *board, int id,
-+				       struct net_device *dev)
- {
--	static int slots;
--	struct nubus_rsrc *ndev = NULL;
- 	struct sonic_local* lp = netdev_priv(dev);
- 	unsigned long base_addr, prom_addr;
- 	u16 sonic_dcr;
--	int id = -1;
- 	int reg_offset, dma_bitmode;
- 
--	/* Find the first SONIC that hasn't been initialized already */
--	for_each_func_rsrc(ndev) {
--		if (ndev->category != NUBUS_CAT_NETWORK ||
--		    ndev->type != NUBUS_TYPE_ETHERNET)
--			continue;
+-	printk("yes\n");
 -
--		/* Have we seen it already? */
--		if (slots & (1<<ndev->board->slot))
--			continue;
--		slots |= 1<<ndev->board->slot;
--
--		/* Is it one of ours? */
--		if ((id = macsonic_ident(ndev)) != -1)
--			break;
--	}
--
--	if (ndev == NULL)
--		return -ENODEV;
--
- 	switch (id) {
- 	case MACSONIC_DUODOCK:
--		base_addr = ndev->board->slot_addr + DUODOCK_SONIC_REGISTERS;
--		prom_addr = ndev->board->slot_addr + DUODOCK_SONIC_PROM_BASE;
-+		base_addr = board->slot_addr + DUODOCK_SONIC_REGISTERS;
-+		prom_addr = board->slot_addr + DUODOCK_SONIC_PROM_BASE;
- 		sonic_dcr = SONIC_DCR_EXBUS | SONIC_DCR_RFT0 | SONIC_DCR_RFT1 |
- 		            SONIC_DCR_TFT0;
- 		reg_offset = 2;
- 		dma_bitmode = SONIC_BITMODE32;
- 		break;
- 	case MACSONIC_APPLE:
--		base_addr = ndev->board->slot_addr + APPLE_SONIC_REGISTERS;
--		prom_addr = ndev->board->slot_addr + APPLE_SONIC_PROM_BASE;
-+		base_addr = board->slot_addr + APPLE_SONIC_REGISTERS;
-+		prom_addr = board->slot_addr + APPLE_SONIC_PROM_BASE;
- 		sonic_dcr = SONIC_DCR_BMS | SONIC_DCR_RFT1 | SONIC_DCR_TFT0;
- 		reg_offset = 0;
- 		dma_bitmode = SONIC_BITMODE32;
- 		break;
- 	case MACSONIC_APPLE16:
--		base_addr = ndev->board->slot_addr + APPLE_SONIC_REGISTERS;
--		prom_addr = ndev->board->slot_addr + APPLE_SONIC_PROM_BASE;
-+		base_addr = board->slot_addr + APPLE_SONIC_REGISTERS;
-+		prom_addr = board->slot_addr + APPLE_SONIC_PROM_BASE;
- 		sonic_dcr = SONIC_DCR_EXBUS | SONIC_DCR_RFT1 | SONIC_DCR_TFT0 |
- 		            SONIC_DCR_PO1 | SONIC_DCR_BMS;
- 		reg_offset = 0;
- 		dma_bitmode = SONIC_BITMODE16;
- 		break;
- 	case MACSONIC_DAYNALINK:
--		base_addr = ndev->board->slot_addr + APPLE_SONIC_REGISTERS;
--		prom_addr = ndev->board->slot_addr + DAYNALINK_PROM_BASE;
-+		base_addr = board->slot_addr + APPLE_SONIC_REGISTERS;
-+		prom_addr = board->slot_addr + DAYNALINK_PROM_BASE;
- 		sonic_dcr = SONIC_DCR_RFT1 | SONIC_DCR_TFT0 |
- 		            SONIC_DCR_PO1 | SONIC_DCR_BMS;
- 		reg_offset = 0;
- 		dma_bitmode = SONIC_BITMODE16;
- 		break;
- 	case MACSONIC_DAYNA:
--		base_addr = ndev->board->slot_addr + DAYNA_SONIC_REGISTERS;
--		prom_addr = ndev->board->slot_addr + DAYNA_SONIC_MAC_ADDR;
-+		base_addr = board->slot_addr + DAYNA_SONIC_REGISTERS;
-+		prom_addr = board->slot_addr + DAYNA_SONIC_MAC_ADDR;
- 		sonic_dcr = SONIC_DCR_BMS |
- 		            SONIC_DCR_RFT1 | SONIC_DCR_TFT0 | SONIC_DCR_PO1;
- 		reg_offset = 0;
-@@ -528,14 +505,14 @@ static int mac_nubus_sonic_probe(struct net_device *dev)
- 	dev->base_addr = base_addr;
- 	lp->reg_offset = reg_offset;
- 	lp->dma_bitmode = dma_bitmode;
--	dev->irq = SLOT2IRQ(ndev->board->slot);
-+	dev->irq = SLOT2IRQ(board->slot);
- 
- 	if (!sonic_version_printed) {
+ 	/* Danger!  My arms are flailing wildly!  You *must* set lp->reg_offset
+ 	 * and dev->base_addr before using SONIC_READ() or SONIC_WRITE() */
+ 	dev->base_addr = ONBOARD_SONIC_REGISTERS;
+@@ -341,14 +337,11 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
  		printk(KERN_INFO "%s", version);
  		sonic_version_printed = 1;
  	}
- 	printk(KERN_INFO "%s: %s in slot %X\n",
--	       dev_name(lp->device), ndev->board->name, ndev->board->slot);
-+	       dev_name(lp->device), board->name, board->slot);
- 	printk(KERN_INFO "%s: revision 0x%04x, using %d bit DMA and register offset %d\n",
- 	       dev_name(lp->device), SONIC_READ(SONIC_SR), dma_bitmode?32:16, reg_offset);
+-	printk(KERN_INFO "%s: onboard / comm-slot SONIC at 0x%08lx\n",
+-	       dev_name(lp->device), dev->base_addr);
  
-@@ -557,14 +534,17 @@ static int mac_nubus_sonic_probe(struct net_device *dev)
- 	SONIC_WRITE(SONIC_ISR, 0x7fff);
+ 	/* The PowerBook's SONIC is 16 bit always. */
+ 	if (macintosh_config->ident == MAC_MODEL_PB520) {
+ 		lp->reg_offset = 0;
+ 		lp->dma_bitmode = SONIC_BITMODE16;
+-		sr = SONIC_READ(SONIC_SR);
+ 	} else if (commslot) {
+ 		/* Some of the comm-slot cards are 16 bit.  But some
+ 		   of them are not.  The 32-bit cards use offset 2 and
+@@ -365,22 +358,21 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
+ 		else {
+ 			lp->dma_bitmode = SONIC_BITMODE16;
+ 			lp->reg_offset = 0;
+-			sr = SONIC_READ(SONIC_SR);
+ 		}
+ 	} else {
+ 		/* All onboard cards are at offset 2 with 32 bit DMA. */
+ 		lp->reg_offset = 2;
+ 		lp->dma_bitmode = SONIC_BITMODE32;
+-		sr = SONIC_READ(SONIC_SR);
+ 	}
+-	printk(KERN_INFO
+-	       "%s: revision 0x%04x, using %d bit DMA and register offset %d\n",
+-	       dev_name(lp->device), sr, lp->dma_bitmode?32:16, lp->reg_offset);
  
+-#if 0 /* This is sometimes useful to find out how MacOS configured the card. */
+-	printk(KERN_INFO "%s: DCR: 0x%04x, DCR2: 0x%04x\n", dev_name(lp->device),
+-	       SONIC_READ(SONIC_DCR) & 0xffff, SONIC_READ(SONIC_DCR2) & 0xffff);
+-#endif
++	pr_info("Onboard/comm-slot SONIC, revision 0x%04x, %d bit DMA, register offset %d\n",
++		SONIC_READ(SONIC_SR), lp->dma_bitmode ? 32 : 16,
++		lp->reg_offset);
++
++	/* This is sometimes useful to find out how MacOS configured the card */
++	pr_debug("%s: DCR=0x%04x, DCR2=0x%04x\n", __func__,
++		 SONIC_READ(SONIC_DCR) & 0xffff,
++		 SONIC_READ(SONIC_DCR2) & 0xffff);
+ 
+ 	/* Software reset, then initialize control registers. */
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+@@ -401,6 +393,9 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
  	/* Now look for the MAC address. */
--	if (mac_nubus_sonic_ethernet_addr(dev, prom_addr, id) != 0)
-+	if (mac_sonic_nubus_ethernet_addr(dev, prom_addr, id) != 0)
- 		return -ENODEV;
+ 	mac_onboard_sonic_ethernet_addr(dev);
  
-+	dev_info(&board->dev, "SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
-+		 dev->base_addr, dev->dev_addr, dev->irq);
++	pr_info("SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
++		dev->base_addr, dev->dev_addr, dev->irq);
 +
  	/* Shared init code */
  	return macsonic_init(dev);
  }
- 
--static int mac_sonic_probe(struct platform_device *pdev)
-+static int mac_sonic_platform_probe(struct platform_device *pdev)
- {
- 	struct net_device *dev;
- 	struct sonic_local *lp;
-@@ -579,16 +559,10 @@ static int mac_sonic_probe(struct platform_device *pdev)
- 	SET_NETDEV_DEV(dev, &pdev->dev);
- 	platform_set_drvdata(pdev, dev);
- 
--	/* This will catch fatal stuff like -ENOMEM as well as success */
- 	err = mac_onboard_sonic_probe(dev);
--	if (err == 0)
--		goto found;
--	if (err != -ENODEV)
--		goto out;
--	err = mac_nubus_sonic_probe(dev);
- 	if (err)
- 		goto out;
--found:
+@@ -508,15 +503,15 @@ static int mac_sonic_nubus_probe_board(struct nubus_board *board, int id,
+ 		printk(KERN_INFO "%s", version);
+ 		sonic_version_printed = 1;
+ 	}
+-	printk(KERN_INFO "%s: %s in slot %X\n",
+-	       dev_name(lp->device), board->name, board->slot);
+-	printk(KERN_INFO "%s: revision 0x%04x, using %d bit DMA and register offset %d\n",
+-	       dev_name(lp->device), SONIC_READ(SONIC_SR), dma_bitmode?32:16, reg_offset);
+-
+-#if 0 /* This is sometimes useful to find out how MacOS configured the card. */
+-	printk(KERN_INFO "%s: DCR: 0x%04x, DCR2: 0x%04x\n", dev_name(lp->device),
+-	       SONIC_READ(SONIC_DCR) & 0xffff, SONIC_READ(SONIC_DCR2) & 0xffff);
+-#endif
 +
- 	err = register_netdev(dev);
++	dev_info(&board->dev, "%s, revision 0x%04x, %d bit DMA, register offset %d\n",
++		 board->name, SONIC_READ(SONIC_SR),
++		 lp->dma_bitmode ? 32 : 16, lp->reg_offset);
++
++	/* This is sometimes useful to find out how MacOS configured the card */
++	dev_dbg(&board->dev, "%s: DCR=0x%04x, DCR2=0x%04x\n", __func__,
++		SONIC_READ(SONIC_DCR) & 0xffff,
++		SONIC_READ(SONIC_DCR2) & 0xffff);
+ 
+ 	/* Software reset, then initialize control registers. */
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+@@ -564,8 +559,6 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
  	if (err)
  		goto out;
-@@ -610,7 +584,7 @@ MODULE_ALIAS("platform:macsonic");
  
- #include "sonic.c"
- 
--static int mac_sonic_device_remove(struct platform_device *pdev)
-+static int mac_sonic_platform_remove(struct platform_device *pdev)
- {
- 	struct net_device *dev = platform_get_drvdata(pdev);
- 	struct sonic_local* lp = netdev_priv(dev);
-@@ -623,12 +597,103 @@ static int mac_sonic_device_remove(struct platform_device *pdev)
+-	printk("%s: MAC %pM IRQ %d\n", dev->name, dev->dev_addr, dev->irq);
+-
  	return 0;
- }
  
--static struct platform_driver mac_sonic_driver = {
--	.probe  = mac_sonic_probe,
--	.remove = mac_sonic_device_remove,
--	.driver	= {
--		.name	= mac_sonic_string,
-+static struct platform_driver mac_sonic_platform_driver = {
-+	.probe  = mac_sonic_platform_probe,
-+	.remove = mac_sonic_platform_remove,
-+	.driver = {
-+		.name = "macsonic",
-+	},
-+};
-+
-+static int mac_sonic_nubus_probe(struct nubus_board *board)
-+{
-+	struct net_device *ndev;
-+	struct sonic_local *lp;
-+	struct nubus_rsrc *fres;
-+	int id = -1;
-+	int err;
-+
-+	/* The platform driver will handle a PDS or Comm Slot card (even if
-+	 * it has a pseudoslot declaration ROM).
-+	 */
-+	if (macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
-+		return -ENODEV;
-+
-+	for_each_board_func_rsrc(board, fres) {
-+		if (fres->category != NUBUS_CAT_NETWORK ||
-+		    fres->type != NUBUS_TYPE_ETHERNET)
-+			continue;
-+
-+		id = macsonic_ident(fres);
-+		if (id != -1)
-+			break;
-+	}
-+	if (!fres)
-+		return -ENODEV;
-+
-+	ndev = alloc_etherdev(sizeof(struct sonic_local));
-+	if (!ndev)
-+		return -ENOMEM;
-+
-+	lp = netdev_priv(ndev);
-+	lp->device = &board->dev;
-+	SET_NETDEV_DEV(ndev, &board->dev);
-+
-+	err = mac_sonic_nubus_probe_board(board, id, ndev);
-+	if (err)
-+		goto out;
-+
-+	err = register_netdev(ndev);
-+	if (err)
-+		goto out;
-+
-+	nubus_set_drvdata(board, ndev);
-+
-+	return 0;
-+
-+out:
-+	free_netdev(ndev);
-+	return err;
-+}
-+
-+static int mac_sonic_nubus_remove(struct nubus_board *board)
-+{
-+	struct net_device *ndev = nubus_get_drvdata(board);
-+	struct sonic_local *lp = netdev_priv(ndev);
-+
-+	unregister_netdev(ndev);
-+	dma_free_coherent(lp->device,
-+			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
-+			  lp->descriptors, lp->descriptors_laddr);
-+	free_netdev(ndev);
-+
-+	return 0;
-+}
-+
-+static struct nubus_driver mac_sonic_nubus_driver = {
-+	.probe  = mac_sonic_nubus_probe,
-+	.remove = mac_sonic_nubus_remove,
-+	.driver = {
-+		.name = "macsonic-nubus",
-+		.owner = THIS_MODULE,
- 	},
- };
+ out:
+diff --git a/drivers/net/ethernet/natsemi/xtsonic.c b/drivers/net/ethernet/natsemi/xtsonic.c
+index 1817deea98a4..d1659c75cce8 100644
+--- a/drivers/net/ethernet/natsemi/xtsonic.c
++++ b/drivers/net/ethernet/natsemi/xtsonic.c
+@@ -155,8 +155,8 @@ static int __init sonic_probe1(struct net_device *dev)
+ 		i++;
  
--module_platform_driver(mac_sonic_driver);
-+static int perr, nerr;
+ 	if (known_revisions[i] == 0xffff) {
+-		printk("SONIC ethernet controller not found (0x%4x)\n",
+-				silicon_revision);
++		pr_info("SONIC ethernet controller not found (0x%4x)\n",
++			silicon_revision);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -273,12 +273,13 @@ int xtsonic_probe(struct platform_device *pdev)
+ 
+ 	if ((err = sonic_probe1(dev)))
+ 		goto out;
 +
-+static int __init mac_sonic_init(void)
-+{
-+	perr = platform_driver_register(&mac_sonic_platform_driver);
-+	nerr = nubus_driver_register(&mac_sonic_nubus_driver);
-+	return 0;
-+}
-+module_init(mac_sonic_init);
++	pr_info("SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
++		dev->base_addr, dev->dev_addr, dev->irq);
 +
-+static void __exit mac_sonic_exit(void)
-+{
-+	if (!perr)
-+		platform_driver_unregister(&mac_sonic_platform_driver);
-+	if (!nerr)
-+		nubus_driver_unregister(&mac_sonic_nubus_driver);
-+}
-+module_exit(mac_sonic_exit);
+ 	if ((err = register_netdev(dev)))
+ 		goto out1;
+ 
+-	printk("%s: SONIC ethernet @%08lx, MAC %pM, IRQ %d\n", dev->name,
+-	       dev->base_addr, dev->dev_addr, dev->irq);
+-
+ 	return 0;
+ 
+ out1:
 -- 
 2.16.1
