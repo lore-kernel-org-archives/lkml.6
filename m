@@ -1,348 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751410AbeBXMFh (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 07:05:37 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750990AbeBXMFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 07:05:34 -0500
-Date: Sat, 24 Feb 2018 20:05:13 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ivan Kozik <ivan@ludios.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>,
-        Holger =?iso-8859-1?Q?Hoffst=E4tte?=
-        <holger@applied-asynchrony.com>,
-        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
-Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
-Message-ID: <20180224120507.GA25447@ming.t460p>
-References: <20180207211920.6343-1-paolo.valente@linaro.org>
- <20180223150705.GB30079@ming.t460p>
- <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
- <20180223161751.GA17466@ming.t460p>
- <A6215E5D-3AA0-4908-8F4F-AEBE5B7D8C85@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A6215E5D-3AA0-4908-8F4F-AEBE5B7D8C85@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751463AbeBXMKW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 07:10:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750990AbeBXMKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 07:10:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E046B60272
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH v5] arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC
+Date: Sat, 24 Feb 2018 06:09:53 -0600
+Message-Id: <1519474193-25973-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 08:54:31AM +0100, Paolo Valente wrote:
-> 
-> 
-> > Il giorno 23 feb 2018, alle ore 17:17, Ming Lei <ming.lei@redhat.com> ha scritto:
-> > 
-> > Hi Paolo,
-> > 
-> > On Fri, Feb 23, 2018 at 04:41:36PM +0100, Paolo Valente wrote:
-> >> 
-> >> 
-> >>> Il giorno 23 feb 2018, alle ore 16:07, Ming Lei <ming.lei@redhat.com> ha scritto:
-> >>> 
-> >>> Hi Paolo,
-> >>> 
-> >>> On Wed, Feb 07, 2018 at 10:19:20PM +0100, Paolo Valente wrote:
-> >>>> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
-> >>>> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
-> >>>> be re-inserted into the active I/O scheduler for that device. As a
-> >>> 
-> >>> No, this behaviour isn't related with commit a6a252e64914, and
-> >>> it has been there since blk_mq_requeue_request() is introduced.
-> >>> 
-> >> 
-> >> Hi Ming,
-> >> actually, we wrote the above statement after simply following the call
-> >> chain that led to the failure.  In this respect, the change in commit
-> >> a6a252e64914:
-> >> 
-> >> static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
-> >> +                                      bool has_sched,
-> >>                                       struct request *rq)
-> >> {
-> >> -       if (rq->tag == -1) {
-> >> +       /* dispatch flush rq directly */
-> >> +       if (rq->rq_flags & RQF_FLUSH_SEQ) {
-> >> +               spin_lock(&hctx->lock);
-> >> +               list_add(&rq->queuelist, &hctx->dispatch);
-> >> +               spin_unlock(&hctx->lock);
-> >> +               return true;
-> >> +       }
-> >> +
-> >> +       if (has_sched) {
-> >>                rq->rq_flags |= RQF_SORTED;
-> >> -               return false;
-> >> +               WARN_ON(rq->tag != -1);
-> >>        }
-> >> 
-> >> -       /*
-> >> -        * If we already have a real request tag, send directly to
-> >> -        * the dispatch list.
-> >> -        */
-> >> -       spin_lock(&hctx->lock);
-> >> -       list_add(&rq->queuelist, &hctx->dispatch);
-> >> -       spin_unlock(&hctx->lock);
-> >> -       return true;
-> >> +       return false;
-> >> }
-> >> 
-> >> makes blk_mq_sched_bypass_insert return false for all non-flush
-> >> requests.  From that, the anomaly described in our commit follows, for
-> >> bfq any stateful scheduler that waits for the completion of requests
-> >> that passed through it.  I'm elaborating again a little bit on this in
-> >> my replies to your next points below.
-> > 
-> > Before a6a252e64914, follows blk_mq_sched_bypass_insert()
-> > 
-> >       if (rq->tag == -1) {
-> >               rq->rq_flags |= RQF_SORTED;
-> >               return false;
-> > 	   }
-> > 
-> >       /*
-> >        * If we already have a real request tag, send directly to
-> >        * the dispatch list.
-> >        */
-> >       spin_lock(&hctx->lock);
-> >       list_add(&rq->queuelist, &hctx->dispatch);
-> >       spin_unlock(&hctx->lock);
-> >       return true;
-> > 
-> > This function still returns false for all non-flush request, so nothing
-> > changes wrt. this kind of handling.
-> > 
-> 
-> Yep Ming.  I don't have the expertise to tell you why, but the failure
-> in the USB case was caused by an rq that is not flush, but for which
-> rq->tag != -1.  So, the previous version of blk_mq_sched_bypass_insert
-> returned true, and there was not failure, while after commit
-> a6a252e64914 the function returns true and the failure occurs if bfq
-> does not exploit the requeue hook.
-> 
-> You have actually shown it yourself, several months ago, through the
-> simple code instrumentation you made and used to show that bfq was
-> stuck.  And I guess it can still be reproduced very easily, unless
-> something else has changed in blk-mq.
-> 
-> BTW, if you can shed a light on this fact, that would be a great
-> occasion to learn for me.
+The DCache clean & ICache invalidation requirements for instructions
+to be data coherence are discoverable through new fields in CTR_EL0.
+The following two control bits DIC and IDC were defined for this
+purpose. No need to perform point of unification cache maintenance
+operations from software on systems where CPU caches are transparent.
 
-The difference should be made by commit 923218f6166a84 (blk-mq: don't
-allocate driver tag upfront for flush rq), which releases driver tag
-before requeuing the request, but that is definitely the correct thing
-to do.
+This patch optimize the three functions __flush_cache_user_range(),
+clean_dcache_area_pou() and invalidate_icache_range() if the hardware
+reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
+instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
+in order to avoid the unnecessary overhead.
 
-> 
-> >> 
-> >> I don't mean that this change is an error, it simply sends a stateful
-> >> scheduler in an inconsistent state, unless the scheduler properly
-> >> handles the requeue that precedes the re-insertion into the
-> >> scheduler.
-> >> 
-> >> If this clarifies the situation, but there is still some misleading
-> >> statement in the commit, just let me better understand, and I'll be
-> >> glad to rectify it, if possible somehow.
-> >> 
-> >> 
-> >>> And you can see blk_mq_requeue_request() is called by lots of drivers,
-> >>> especially it is often used in error handler, see SCSI's example.
-> >>> 
-> >>>> consequence, I/O schedulers may get the same request inserted again,
-> >>>> even several times, without a finish_request invoked on that request
-> >>>> before each re-insertion.
-> >>>> 
-> >> 
-> >> ...
-> >> 
-> >>>> @@ -5426,7 +5482,8 @@ static struct elevator_type iosched_bfq_mq = {
-> >>>> 	.ops.mq = {
-> >>>> 		.limit_depth		= bfq_limit_depth,
-> >>>> 		.prepare_request	= bfq_prepare_request,
-> >>>> -		.finish_request		= bfq_finish_request,
-> >>>> +		.requeue_request        = bfq_finish_requeue_request,
-> >>>> +		.finish_request		= bfq_finish_requeue_request,
-> >>>> 		.exit_icq		= bfq_exit_icq,
-> >>>> 		.insert_requests	= bfq_insert_requests,
-> >>>> 		.dispatch_request	= bfq_dispatch_request,
-> >>> 
-> >>> This way may not be correct since blk_mq_sched_requeue_request() can be
-> >>> called for one request which won't enter io scheduler.
-> >>> 
-> >> 
-> >> Exactly, there are two cases: requeues that lead to subsequent
-> >> re-insertions, and requeues that don't.  The function
-> >> bfq_finish_requeue_request handles both, and both need to be handled,
-> >> to inform bfq that it has not to wait for the completion of rq any
-> >> longer.
-> >> 
-> >> One special case is when bfq_finish_requeue_request gets invoked even
-> >> if rq has nothing to do with any scheduler.  In that case,
-> >> bfq_finish_requeue_request exists immediately.
-> >> 
-> >> 
-> >>> __blk_mq_requeue_request() is called for two cases:
-> >>> 
-> >>> 	- one is that the requeued request is added to hctx->dispatch, such
-> >>> 	as blk_mq_dispatch_rq_list()
-> >> 
-> >> yes
-> >> 
-> >>> 	- another case is that the request is requeued to io scheduler, such as
-> >>> 	blk_mq_requeue_request().
-> >>> 
-> >> 
-> >> yes
-> >> 
-> >>> For the 1st case, blk_mq_sched_requeue_request() shouldn't be called
-> >>> since it is nothing to do with scheduler,
-> >> 
-> >> No, if that rq has been inserted and then extracted from the scheduler
-> >> through a dispatch_request, then it has.  The scheduler is stateful,
-> >> and keeps state for rq, because it must do so, until a completion or a
-> >> requeue arrive.  In particular, bfq may decide that no other
-> > 
-> > This 'requeue' to hctx->dispatch is invisible to io scheduler, and from
-> > io scheduler view, seems no difference between STS_OK and STS_RESOURCE,
-> > since this request will be submitted to lld automatically by blk-mq
-> > core.
-> > 
-> > Also in legacy path, no such notification to io scheduler too.
-> 
-> ok, still, for reasons that at this point I don't know, in the last
-> 9-10 years it has never been reported a failure caused by a request
-> that has been first dispatched by bfq and then re-inserted into bfq
-> without being completed.  This new event is the problem.
+CTR_EL0.DIC: Instruction cache invalidation requirements for
+ instruction to data coherence. The meaning of this bit[29].
+  0: Instruction cache invalidation to the point of unification
+     is required for instruction to data coherence.
+  1: Instruction cache cleaning to the point of unification is
+      not required for instruction to data coherence.
 
-This mechanism is invented by blk-mq, and I guess it is for avoiding to
-disable irq when acquiring hctx->lock since blk-mq's completion handler
-is done in irq context.
+CTR_EL0.IDC: Data cache clean requirements for instruction to data
+ coherence. The meaning of this bit[28].
+  0: Data cache clean to the point of unification is required for
+     instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+     or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+  1: Data cache clean to the point of unification is not required
+     for instruction to data coherence.
 
-Legacy's requeue won't re-insert one request to scheduler queue.
+Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+Changes since v4:
+  -Moved patching ARM64_HAS_CACHE_DIC inside invalidate_icache_by_line
+  -Removed 'dsb	ishst' for ARM64_HAS_CACHE_DIC as Mark suggested.
 
-> 
-> 
-> >> bfq_queues must be served before rq has been completed, because this
-> >> is necessary to preserve its target service guarantees.  If bfq is not
-> >> informed, either through its completion or its requeue hook, then it
-> >> will wait forever.
-> > 
-> > The .finish_request will be called after this request is completed for this
-> > case, either after this io is completed by device, or timeout.
-> > 
-> > Or .requeue_request will be called if the driver need to requeue it to
-> > io scheduler via blk_mq_requeue_request() explicitly.
-> > 
-> > So io scheduler will be made sure to get notified.
-> > 
-> 
-> So, you mean that the scheduler will get notified in a way or the
-> other, if it has a requeue hook defined, right?  Or, simply, the
-> request will be eventually completed, thus unblocking the scheduler?
+Changes since v3:
+  -Added preprocessor guard CONFIG_xxx to code snippets in cache.S
+  -Changed barrier attributes from ISH to ISHST.
 
-Right, once .queue_rq() returns BLK_STS_RESOURCE, this rq is added to
-hctx->dispatch list, and finally it will be completed via driver or
-timeout handler, or it may be re-inserted to io scheduler queue via
-blk_mq_requeue_request() by driver in driver's completion handler.
+Changes since v2:
+  -Included barriers, DSB/ISB with DIC set, and DSB with IDC set.
+  -Single Kconfig option.
 
-So io scheduler will get the notification finally.
+Changes since v1:
+  -Reworded commit text.
+  -Used the alternatives framework as Catalin suggested.
+  -Rebased on top of https://patchwork.kernel.org/patch/10227927/
 
-> 
-> 
-> >> 
-> >>> seems we only need to do that
-> >>> for 2nd case.
-> >>> 
-> >> 
-> >>> So looks we need the following patch:
-> >>> 
-> >>> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> >>> index 23de7fd8099a..a216f3c3c3ce 100644
-> >>> --- a/block/blk-mq.c
-> >>> +++ b/block/blk-mq.c
-> >>> @@ -712,7 +714,6 @@ static void __blk_mq_requeue_request(struct request *rq)
-> >>> 
-> >>> 	trace_block_rq_requeue(q, rq);
-> >>> 	wbt_requeue(q->rq_wb, &rq->issue_stat);
-> >>> -	blk_mq_sched_requeue_request(rq);
-> >>> 
-> >> 
-> >> By doing so, if rq has 'passed' through bfq, then you block again bfq
-> >> forever.
-> > 
-> > Could you explain it a bit why bfq is blocked by this way?
-> 
-> It's a theoretical problem (unfortunately not just a contingency you
-> can work around).  If you want to guarantee that a process doing sync
-> I/O, and with a higher weight than other processes, gets a share of
-> the total throughput proportional to its weight, then you have to idle
-> the device during the service slot of that process.  Otherwise, the
-> pending requests of the other processes will simply slip through
-> *every time* the high-weight process has no pending request because it
-> is blocked by one of its sync request.  The final result will be loss
-> of control on the percentage of requests of the high-weight process
-> that get dispatched w.r.t. to the total number of requests
-> dispatched.  So, failure to provide the process with its due share of
-> the throughput.
-> 
-> I'm working on solutions to compensate for this nasty service
-> constraint, and its effects on throughput, but this is another story.
+ arch/arm64/Kconfig                 | 12 ++++++++++++
+ arch/arm64/include/asm/assembler.h |  6 ++++++
+ arch/arm64/include/asm/cache.h     |  5 +++++
+ arch/arm64/include/asm/cpucaps.h   |  4 +++-
+ arch/arm64/kernel/cpufeature.c     | 40 ++++++++++++++++++++++++++++++++------
+ arch/arm64/mm/cache.S              | 13 +++++++++++++
+ 6 files changed, 73 insertions(+), 7 deletions(-)
 
-As I explained, io scheduler will get notified via either
-.finish_request or .requeue_request finally, so there shouldn't be
-such block if this patch is in.
-
-> 
-> > 
-> >> 
-> >> Of course, I may be wrong, as I don't have a complete mental model of
-> >> all what blk-mq does around bfq.  But I thin that you can quickly
-> >> check whether a hang occurs again if you add this change.  In
-> >> particular, it should happen in the USB former failure case.
-> > 
-> > USB/BFQ runs well on my parted test with this change, and this test can
-> > trigger the IO hang issue easily on kyber or without your patch of 'block,
-> > bfq: add requeue-request hook'.
-> > 
-> 
-> Great!  According to the facts I reported at the beginning of
-> this email, I guess your patch works because it avoids the
-> nasty case for bfq, i.e., a request re-inserted into bfq without being
-> completed first, right? 
-
-BFQ still can get notified via .requeue_request when one request is re-inserted
-to BFQ with this patch.
-
-> And then, about the requeues without
-> re-insertions, everything works because the latter type of requests
-> eventually get a completion.  Is it correct?
-
-Right.
-
-> 
-> Sorry for being pedantic, but because of our lack of expertise on
-> these requeueing mechanism, we worked really a lot on this commit, and
-> it would be frustrating if we bumped again into troubles, after
-> removing it.  Apart from that, if this commit is useless, it is
-> perfectly fine for me that it is reverted and replaced by a better
-> solution.  In the end, less code in bfq means less room for bugs ;)
-
-I agree. We should deal with this issue in a simple/clean way, just like
-the patch of 'block: kyber: fix domain token leak during requeue'.
-
-Now could you please let us know if you are fine with the patch of 'blk-mq:
-don't call io sched's .requeue_request when requeueing rq to ->dispatch'?
-
-
-Thanks,
-Ming
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index f55fe5b..82b8053 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1095,6 +1095,18 @@ config ARM64_RAS_EXTN
+ 	  and access the new registers if the system supports the extension.
+ 	  Platform RAS features may additionally depend on firmware support.
+ 
++config ARM64_SKIP_CACHE_POU
++	bool "Enable support to skip cache POU operations"
++	default y
++	help
++	  Explicit point of unification cache operations can be eliminated
++	  in software if the hardware handles transparently. The new bits in
++	  CTR_EL0, CTR_EL0.DIC and CTR_EL0.IDC indicates the hardware
++	  capabilities of ICache and DCache POU requirements.
++
++	  Selecting this feature will allow the kernel to optimize the POU
++	  cache maintaince operations where it requires 'D{I}C C{I}VAU'
++
+ endmenu
+ 
+ config ARM64_SVE
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 3c78835..39f2274 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -444,6 +444,11 @@
+  * 	Corrupts:	tmp1, tmp2
+  */
+ 	.macro invalidate_icache_by_line start, end, tmp1, tmp2, label
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_DIC
++	b	9996f
++alternative_else_nop_endif
++#endif
+ 	icache_line_size \tmp1, \tmp2
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\tmp2, \start, \tmp2
+@@ -453,6 +458,7 @@
+ 	cmp	\tmp2, \end
+ 	b.lo	9997b
+ 	dsb	ish
++9996:
+ 	isb
+ 	.endm
+ 
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index ea9bb4e..e22178b 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -20,8 +20,13 @@
+ 
+ #define CTR_L1IP_SHIFT		14
+ #define CTR_L1IP_MASK		3
++#define CTR_DMLINE_SHIFT	16
++#define CTR_ERG_SHIFT		20
+ #define CTR_CWG_SHIFT		24
+ #define CTR_CWG_MASK		15
++#define CTR_IDC_SHIFT		28
++#define CTR_DIC_SHIFT		29
++#define CTR_B31_SHIFT		31
+ 
+ #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+ 
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index bb26382..8dd42ae 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -45,7 +45,9 @@
+ #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+ #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+ #define ARM64_HAS_RAS_EXTN			26
++#define ARM64_HAS_CACHE_IDC			27
++#define ARM64_HAS_CACHE_DIC			28
+ 
+-#define ARM64_NCAPS				27
++#define ARM64_NCAPS				29
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index ff8a6e9..aea1484 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
+ };
+ 
+ static const struct arm64_ftr_bits ftr_ctr[] = {
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, CTR_B31_SHIFT, 1, 1),         /* RES1 */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
+ 	/*
+ 	 * Linux can handle differing I-cache policies. Userspace JITs will
+ 	 * make use of *minLine.
+@@ -864,6 +864,20 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
+ 					ID_AA64PFR0_FP_SHIFT) < 0;
+ }
+ 
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_IDC_SHIFT));
++}
++
++static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_DIC_SHIFT));
++}
++#endif
++
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+ 
+@@ -1100,6 +1114,20 @@ static int cpu_copy_el2regs(void *__unused)
+ 		.enable = cpu_clear_disr,
+ 	},
+ #endif /* CONFIG_ARM64_RAS_EXTN */
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++	{
++		.desc = "Skip D-Cache maintenance 'DC CVAU' (CTR_EL0.IDC=1)",
++		.capability = ARM64_HAS_CACHE_IDC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_idc,
++	},
++	{
++		.desc = "Skip I-Cache maintenance 'IC IVAU' (CTR_EL0.DIC=1)",
++		.capability = ARM64_HAS_CACHE_DIC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_dic,
++	},
++#endif /* CONFIG_ARM64_SKIP_CACHE_POU */
+ 	{},
+ };
+ 
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 758bde7..d8d7a32 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -50,6 +50,12 @@ ENTRY(flush_icache_range)
+  */
+ ENTRY(__flush_cache_user_range)
+ 	uaccess_ttbr0_enable x2, x3, x4
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	b	8f
++alternative_else_nop_endif
++#endif
+ 	dcache_line_size x2, x3
+ 	sub	x3, x2, #1
+ 	bic	x4, x0, x3
+@@ -60,6 +66,7 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+ 	b.lo	1b
+ 	dsb	ish
+ 
++8:
+ 	invalidate_icache_by_line x0, x1, x2, x3, 9f
+ 	mov	x0, #0
+ 1:
+@@ -116,6 +123,12 @@ ENDPIPROC(__flush_dcache_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pou)
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	ret
++alternative_else_nop_endif
++#endif
+ 	dcache_by_line_op cvau, ish, x0, x1, x2, x3
+ 	ret
+ ENDPROC(__clean_dcache_area_pou)
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
