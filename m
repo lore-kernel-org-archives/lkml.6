@@ -1,122 +1,346 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeBXPS1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 10:18:27 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:30101 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeBXPSZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 10:18:25 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w1OFI7TU021835
-X-Nifty-SrcIP: [209.85.213.53]
-X-Google-Smtp-Source: AG47ELsGoyZ4IJUT6RvD7CTnhHQ4ahgqkzzFF/SxW7aYbsib6BZqjnqa4K88/X/Qw4d0BXuOVUrdeonMjGf0+IMdbhQ=
-MIME-Version: 1.0
-In-Reply-To: <20180221111447.ki7v66azmfgch5om@dell5510>
-References: <1519114728-1084-1-git-send-email-yamada.masahiro@socionext.com> <20180221111447.ki7v66azmfgch5om@dell5510>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 25 Feb 2018 00:17:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS7n2Qwvo83XGHNJLu1WeE8W8y2CZkSG=vsNKjYD0z_LQ@mail.gmail.com>
-Message-ID: <CAK7LNAS7n2Qwvo83XGHNJLu1WeE8W8y2CZkSG=vsNKjYD0z_LQ@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: clean-up reverse dependency help implementation
-To: Petr Vorel <petr.vorel@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751455AbeBXPqU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 10:46:20 -0500
+Received: from mga06.intel.com ([134.134.136.31]:1968 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeBXPqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 10:46:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,388,1515484800";
+   d="scan'208";a="33842571"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after granting locality
+Date: Sat, 24 Feb 2018 17:43:16 +0200
+Message-Id: <20180224154316.26607-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-21 20:14 GMT+09:00 Petr Vorel <petr.vorel@gmail.com>:
-> Hi Masahiro,
->
->> This commit splits out the special E_OR handling ('-' instead of '||')
->> into a dedicated helper expr_print_revdev().
->
->> Restore the original expr_print() prior to commit 1ccb27143360
->> ("kconfig: make "Selected by:" and "Implied by:" readable").
->
->> This makes sense because:
->
->>   - We need to chop those expressions only when printing the reverse
->>     dependency, and only when E_OR is encountered
->
->>   - Otherwise, it should be printed as before, so fall back to
->>     expr_print()
->
->> This also improves the behavior; for a single line, it was previously
->> displayed in the same line as "Selected by", like this:
->
->>   Selected by: A [=n] && B [=n]
->
->> This will be displayed in a new line, consistently:
->
->>   Selected by:
->>   - A [=n] && B [=n]
->
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
->> ---
->
-> <snip>
->
->>       get_symbol_props_str(r, sym, P_SELECT, _("  Selects: "));
->>       if (sym->rev_dep.expr) {
->> -             str_append(r, _("  Selected by: "));
->> +             str_append(r, _("  Selected by: \n"));
->                                        ^
-> I'd remove unnecessary whitespace here ^.
+The correct sequence is to first request locality and only after
+that perform cmd_ready handshake, otherwise the hardware will drop
+the subsequent message as from the device point of view the cmd_ready
+handshake wasn't performed. Symmetrically locality has to be relinquished
+only after going idle handshake has completed, this requires that
+go_idle has to poll for the completion and as well locality
+relinquish has to poll for completion so it is not overridden
+in back to back commands flow.
 
+The issue is only visible on devices that support multiple localities.
 
-I decided to not touch the text inside _( ... ) in this patch
-although I do not think anybody translated "  Selected by: ".
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+V2: poll for locality relinquish completion
+V3: 1. Print error message upon locality relinquish failure
+    2. Don't override rc code on error path with locality relinquish
+V4: 3. Don't capture locality relinquish error code in rc, just print
+	the error message.
 
-I just moved str_append(r, "\n");
+       return value.
+ drivers/char/tpm/tpm-interface.c |  20 +++++---
+ drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 4 files changed, 93 insertions(+), 41 deletions(-)
 
-Anyway, this line will be removed soon.
-
-
-Applied to linux-kbuild/kconfig.
-
-
-
-
-
-
-
->                 str_append(r, _("  Selected by:\n"));
->>               expr_gstr_print_revdep(sym->rev_dep.expr, r);
->> -             str_append(r, "\n");
->>       }
->
->>       get_symbol_props_str(r, sym, P_IMPLY, _("  Implies: "));
->>       if (sym->implied.expr) {
->> -             str_append(r, _("  Implied by: "));
->> +             str_append(r, _("  Implied by: \n"));
-> The same here.
->
->>               expr_gstr_print_revdep(sym->implied.expr, r);
->> -             str_append(r, "\n");
->>       }
->
->>       str_append(r, "\n\n");
->
->
-> Kind regards,
-> Petr
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..4d74bacca5a1 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_lock(&chip->tpm_mutex);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+@@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
+ 	}
+ 
++	if (chip->dev.parent)
++		pm_runtime_get_sync(chip->dev.parent);
++
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+ 		goto out;
+@@ -499,17 +500,24 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
++	if (chip->dev.parent)
++		pm_runtime_put_sync(chip->dev.parent);
++
+ 	if (need_locality && chip->ops->relinquish_locality) {
+-		chip->ops->relinquish_locality(chip, chip->locality);
++		/* this coud be on error path, don't override error code */
++		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
++
++		if (l_rc) {
++			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
++				__func__, l_rc);
++		}
+ 		chip->locality = -1;
+ 	}
++
+ out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
+-
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7b3c2a8aa9de..497edd9848cd 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+ 	u32 smc_func_id;
+ };
+ 
++static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
++				unsigned long timeout)
++{
++	ktime_t start;
++	ktime_t stop;
++
++	start = ktime_get();
++	stop = ktime_add(start, ms_to_ktime(timeout));
++
++	do {
++		if ((ioread32(reg) & mask) == value)
++			return true;
++
++		usleep_range(50, 100);
++	} while (ktime_before(ktime_get(), stop));
++
++	return ((ioread32(reg) & mask) == value);
++}
++
+ /**
+  * crb_go_idle - request tpm crb device to go the idle state
+  *
+@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+  *
+  * Return: 0 always
+  */
+-static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+-	/* we don't really care when this settles */
+ 
++	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
++				 CRB_CTRL_REQ_GO_IDLE/* mask */,
++				 0, /* value */
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "goIdle timed out\n");
++		return -ETIME;
++	}
+ 	return 0;
+ }
+ 
+-static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+-				unsigned long timeout)
+-{
+-	ktime_t start;
+-	ktime_t stop;
+-
+-	start = ktime_get();
+-	stop = ktime_add(start, ms_to_ktime(timeout));
+-
+-	do {
+-		if ((ioread32(reg) & mask) == value)
+-			return true;
+-
+-		usleep_range(50, 100);
+-	} while (ktime_before(ktime_get(), stop));
+-
+-	return false;
+-}
+-
+ /**
+  * crb_cmd_ready - request tpm crb device to enter ready state
+  *
+@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __maybe_unused crb_cmd_ready(struct device *dev,
+-					struct crb_priv *priv)
++static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int crb_request_locality(struct tpm_chip *chip, int loc)
++static int __crb_request_locality(struct device *dev,
++				  struct crb_priv *priv, int loc)
+ {
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+-		CRB_LOC_STATE_TPM_REG_VALID_STS;
++		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+ 
+ 	if (!priv->regs_h)
+ 		return 0;
+@@ -207,21 +212,45 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
+ 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+ 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+ 				 TPM2_TIMEOUT_C)) {
+-		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+ 		return -ETIME;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++static int crb_request_locality(struct tpm_chip *chip, int loc)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 
++	return __crb_request_locality(&chip->dev, priv, loc);
++}
++
++static int __crb_relinquish_locality(struct device *dev,
++				     struct crb_priv *priv, int loc)
++{
++	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
++		   CRB_LOC_STATE_TPM_REG_VALID_STS;
++	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
++
+ 	if (!priv->regs_h)
+-		return;
++		return 0;
+ 
+ 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
++	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++static int crb_relinquish_locality(struct tpm_chip *chip, int loc)
++{
++	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
++
++	return __crb_relinquish_locality(&chip->dev, priv, loc);
+ }
+ 
+ static u8 crb_status(struct tpm_chip *chip)
+@@ -475,6 +504,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+ 	}
+ 
++	ret = __crb_request_locality(dev, priv, 0);
++	if (ret)
++		return ret;
++
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+ 	if (IS_ERR(priv->regs_t))
+@@ -531,6 +564,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++	__crb_relinquish_locality(dev, priv, 0);
++
+ 	return ret;
+ }
+ 
+@@ -588,10 +623,14 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc = __crb_request_locality(dev, priv, 0);
+ 	if (rc)
+ 		return rc;
+ 
++	rc  = crb_cmd_ready(dev, priv);
++	if (rc)
++		goto out;
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -601,12 +640,15 @@ static int crb_acpi_add(struct acpi_device *device)
+ 		crb_go_idle(dev, priv);
+ 		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+-		return rc;
++		goto out;
+ 	}
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_sync(dev);
+ 
+-	return 0;
++out:
++	__crb_relinquish_locality(dev, priv, 0);
++
++	return rc;
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 183a5f54d875..a22b12adbdfd 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -143,11 +143,13 @@ static bool check_locality(struct tpm_chip *chip, int l)
+ 	return false;
+ }
+ 
+-static void release_locality(struct tpm_chip *chip, int l)
++static int release_locality(struct tpm_chip *chip, int l)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
++
++	return 0;
+ }
+ 
+ static int request_locality(struct tpm_chip *chip, int l)
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index bcdd3790e94d..06639fb6ab85 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -44,7 +44,7 @@ struct tpm_class_ops {
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+-	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.14.3
