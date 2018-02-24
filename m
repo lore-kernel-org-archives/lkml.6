@@ -1,77 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeBXHXG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 02:23:06 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45764 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750844AbeBXHXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 02:23:05 -0500
-Date: Sat, 24 Feb 2018 15:22:57 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Tyler Baicar <tbaicar@codeaurora.org>
-Cc: ard.biesheuvel@linaro.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jhugo@codeaurora.org,
-        sgoel@codeaurora.org, takahiro.akashi@linaro.org, timur@codeaurora.org
-Subject: Re: [PATCH 2/2] efi/esrt: mark ESRT memory region as nomap
-Message-ID: <20180224072257.GB3264@dhcp-128-65.nay.redhat.com>
-References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
- <1519414953-5478-3-git-send-email-tbaicar@codeaurora.org>
+        id S1751228AbeBXH1g (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 02:27:36 -0500
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:33426 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbeBXH1e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 02:27:34 -0500
+X-Google-Smtp-Source: AG47ELvTfO0KbRHpW38tvZAyawsVg9G9n8vmXr92JftbNWnFiaISUqUxFr22PNNtdvrVOHoXsmt1Wg==
+X-ME-Sender: <xms:5BORWuiipl8xF__gXKlITsHAp6xImKas7PkXOZTid29AVOQD33VcoQ>
+Date: Sat, 24 Feb 2018 15:31:01 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 04/17] lockdep: Introduce
+ lock_list::dep
+Message-ID: <20180224073101.2eylqelqzmszm4ee@tardis>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-5-boqun.feng@gmail.com>
+ <20180223115520.GV25181@hirez.programming.kicks-ass.net>
+ <20180223123732.acxbavnf2ktd4lzl@tardis>
+ <20180224053250.ketrlbq4gtx573qo@tardis>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="syyq6fb6s2xyxvvg"
 Content-Disposition: inline
-In-Reply-To: <1519414953-5478-3-git-send-email-tbaicar@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180224053250.ketrlbq4gtx573qo@tardis>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/18 at 12:42pm, Tyler Baicar wrote:
-> The ESRT memory region is being exposed as System RAM in /proc/iomem
-> which is wrong because it cannot be overwritten. This memory is needed
-> for kexec kernels in order to properly initialize ESRT, so if it is
-> overwritten it will cause ESRT failures in the kexec kernel. Mark this
-> region as nomap so that it is not overwritten.
-> 
-> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
-> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
->  drivers/firmware/efi/esrt.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
-> index 504f3c3..f5f79c7 100644
-> --- a/drivers/firmware/efi/esrt.c
-> +++ b/drivers/firmware/efi/esrt.c
-> @@ -335,6 +335,14 @@ void __init efi_esrt_init(void)
->  	pr_info("Reserving ESRT space from %pa to %pa.\n", &esrt_data, &end);
->  	efi_mem_reserve(esrt_data, esrt_data_size);
->  
-> +	/*
-> +	 * Mark the ESRT memory region as nomap to avoid it being exposed as
-> +	 * System RAM in /proc/iomem. Otherwise this block can be overwritten
-> +	 * which will then cause failures in kexec'd kernels since the ESRT
-> +	 * information is no longer there.
-> +	 */
-> +	memblock_mark_nomap(esrt_data, esrt_data_size);
-> +
 
-On my X86 machine, esrt region was marked as reserved /proc/iomem,
-this issue could be a arm64 only problem, it is better to handle this in
-arm init code.
+--syyq6fb6s2xyxvvg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Feb 24, 2018 at 01:32:50PM +0800, Boqun Feng wrote:
+[...]
+>=20
+> I also reorder bit number for each kind of dependency, so that we have a
+> simple __calc_dep_bit(), see the following:
+>=20
+> 	/*
+> 	 * DEP_*_BIT in lock_list::dep
+> 	 *
+> 	 * For dependency @prev -> @next:
+> 	 *
+> 	 *   RR: both @prev and @next are recursive read locks, i.e. ->read =3D=
+=3D 2.
+> 	 *   RN: @prev is recursive and @next is non-recursive.
+> 	 *   NR: @prev is a not recursive and @next is recursive.
+> 	 *   NN: both @prev and @next are non-recursive.
+> 	 *=20
+> 	 * Note that we define the value of DEP_*_BITs so that:
+> 	 * 	bit0 is prev->read !=3D 2
+> 	 * 	bit1 is next->read !=3D 2
+> 	 */
+> 	#define DEP_RR_BIT 0
+> 	#define DEP_RN_BIT 1
+> 	#define DEP_NR_BIT 2
 
->  	pr_debug("esrt-init: loaded.\n");
->  err_memunmap:
->  	early_memunmap(va, size);
-> -- 
-> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Oops, to make the following __cal_dep_bit() works, we should have:
 
-Thanks
-Dave
+ 	#define DEP_NR_BIT 1
+ 	#define DEP_RN_BIT 2
+
+instead.
+
+Regards,
+Boqun
+
+> 	#define DEP_NN_BIT 3
+>=20
+> 	#define DEP_RR_MASK (1U << (DEP_RR_BIT))
+> 	#define DEP_RN_MASK (1U << (DEP_RN_BIT))
+> 	#define DEP_NR_MASK (1U << (DEP_NR_BIT))
+> 	#define DEP_NN_MASK (1U << (DEP_NN_BIT))
+>=20
+> 	static inline unsigned int
+> 	__calc_dep_bit(struct held_lock *prev, struct held_lock *next)
+> 	{
+> 		return (prev->read !=3D 2) + ((next->read !=3D 2) << 1)
+> 	}
+>=20
+> 	static inline u8 calc_dep(struct held_lock *prev, struct held_lock *next)
+> 	{
+> 		return 1U << __calc_dep_bit(prev, next);
+> 	}
+>=20
+
+--syyq6fb6s2xyxvvg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqRFK8ACgkQSXnow7UH
++rjx6AgAmqvbxr2uys+7crIa5r1C+Sr5v+LjaefOjQc2s5N7joFdsFaKQTDKpnbM
+kcN6Wv0gBJNKO5YTYvFlTTVQhIIQzIiYfAv9F+t00VxwI3opOwxbxDziMEtQkC+m
+eHkSZ1z/t2K6C6mWDO9LbUuubk6nieFdHuHqbrxzE0HDp1RInOwIXlC2z9iOf4k+
+GD5EfJZmfslxrdsm/ZsFJmAsjgcMsYdliXscRW6N9kXItkC0arXNmNOP4DXUhWTZ
+c6RQfhyrvuNpc0fF/0oGLC6gTkXbTOgxhNy/bhdwhilUzk1A06cy+Pqe23gONpki
+ffdAPJJSTEhnhATE6jquqMHR3bcwFw==
+=FPN2
+-----END PGP SIGNATURE-----
+
+--syyq6fb6s2xyxvvg--
