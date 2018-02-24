@@ -1,242 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751370AbeBXHWn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 02:22:43 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42127 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbeBXHWl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 02:22:41 -0500
-X-Google-Smtp-Source: AG47ELujPTUJKKUdyK8vxkkFpBogfYthMfVPFsmwk+cPX/nBGIQOGZrbIbIKYGcJR6XQdyvuyiI96A==
-Date: Sat, 24 Feb 2018 17:22:26 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
-        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 2/6] powerpc/mm/slice: create header files dedicated
- to slices
-Message-ID: <20180224172226.777c78bd@roar.ozlabs.ibm.com>
-In-Reply-To: <d73e104992133e8fd17c798d817687bf2ea8b50a.1519305410.git.christophe.leroy@c-s.fr>
-References: <455276187b369bf019e91715b7488e86cd932d49.1519305410.git.christophe.leroy@c-s.fr>
-        <d73e104992133e8fd17c798d817687bf2ea8b50a.1519305410.git.christophe.leroy@c-s.fr>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751447AbeBXHXG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 02:23:06 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45764 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750844AbeBXHXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 02:23:05 -0500
+Date: Sat, 24 Feb 2018 15:22:57 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Tyler Baicar <tbaicar@codeaurora.org>
+Cc: ard.biesheuvel@linaro.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jhugo@codeaurora.org,
+        sgoel@codeaurora.org, takahiro.akashi@linaro.org, timur@codeaurora.org
+Subject: Re: [PATCH 2/2] efi/esrt: mark ESRT memory region as nomap
+Message-ID: <20180224072257.GB3264@dhcp-128-65.nay.redhat.com>
+References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
+ <1519414953-5478-3-git-send-email-tbaicar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519414953-5478-3-git-send-email-tbaicar@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018 15:27:22 +0100 (CET)
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-
-> In preparation for the following patch which will enhance 'slices'
-> for supporting PPC32 in order to fix an issue on hugepages on 8xx,
-> this patch takes out of page*.h all bits related to 'slices' and put
-> them into newly created slice.h header files.
-> While common parts go into asm/slice.h, subarch specific
-> parts go into respective books3s/64/slice.c and nohash/64/slice.c
-> 'slices'
+On 02/23/18 at 12:42pm, Tyler Baicar wrote:
+> The ESRT memory region is being exposed as System RAM in /proc/iomem
+> which is wrong because it cannot be overwritten. This memory is needed
+> for kexec kernels in order to properly initialize ESRT, so if it is
+> overwritten it will cause ESRT failures in the kexec kernel. Mark this
+> region as nomap so that it is not overwritten.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-I don't see a problem with this. Even by itself it seems like
-a good cleanup.
-
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-
+> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
+> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
 > ---
->  v5: new - come from a split of patch 2 of v4
+>  drivers/firmware/efi/esrt.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
->  arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
->  arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
->  arch/powerpc/include/asm/page.h            |  1 +
->  arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
->  arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
->  5 files changed, 80 insertions(+), 59 deletions(-)
->  create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
->  create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
->  create mode 100644 arch/powerpc/include/asm/slice.h
+> diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
+> index 504f3c3..f5f79c7 100644
+> --- a/drivers/firmware/efi/esrt.c
+> +++ b/drivers/firmware/efi/esrt.c
+> @@ -335,6 +335,14 @@ void __init efi_esrt_init(void)
+>  	pr_info("Reserving ESRT space from %pa to %pa.\n", &esrt_data, &end);
+>  	efi_mem_reserve(esrt_data, esrt_data_size);
+>  
+> +	/*
+> +	 * Mark the ESRT memory region as nomap to avoid it being exposed as
+> +	 * System RAM in /proc/iomem. Otherwise this block can be overwritten
+> +	 * which will then cause failures in kexec'd kernels since the ESRT
+> +	 * information is no longer there.
+> +	 */
+> +	memblock_mark_nomap(esrt_data, esrt_data_size);
+> +
+
+On my X86 machine, esrt region was marked as reserved /proc/iomem,
+this issue could be a arm64 only problem, it is better to handle this in
+arm init code.
+
+
+>  	pr_debug("esrt-init: loaded.\n");
+>  err_memunmap:
+>  	early_memunmap(va, size);
+> -- 
+> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project.
 > 
-> diff --git a/arch/powerpc/include/asm/book3s/64/slice.h b/arch/powerpc/include/asm/book3s/64/slice.h
-> new file mode 100644
-> index 000000000000..db0dedab65ee
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/book3s/64/slice.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_POWERPC_BOOK3S_64_SLICE_H
-> +#define _ASM_POWERPC_BOOK3S_64_SLICE_H
-> +
-> +#ifdef CONFIG_PPC_MM_SLICES
-> +
-> +#define SLICE_LOW_SHIFT		28
-> +#define SLICE_LOW_TOP		(0x100000000ul)
-> +#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
-> +#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
-> +
-> +#define SLICE_HIGH_SHIFT	40
-> +#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
-> +#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
-> +
-> +#else /* CONFIG_PPC_MM_SLICES */
-> +
-> +#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
-> +#define slice_set_user_psize(mm, psize)		\
-> +do {						\
-> +	(mm)->context.user_psize = (psize);	\
-> +	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
-> +} while (0)
-> +
-> +#endif /* CONFIG_PPC_MM_SLICES */
-> +
-> +#endif /* _ASM_POWERPC_BOOK3S_64_SLICE_H */
-> diff --git a/arch/powerpc/include/asm/nohash/64/slice.h b/arch/powerpc/include/asm/nohash/64/slice.h
-> new file mode 100644
-> index 000000000000..ad0d6e3cc1c5
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/nohash/64/slice.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_POWERPC_NOHASH_64_SLICE_H
-> +#define _ASM_POWERPC_NOHASH_64_SLICE_H
-> +
-> +#ifdef CONFIG_PPC_64K_PAGES
-> +#define get_slice_psize(mm, addr)	MMU_PAGE_64K
-> +#else /* CONFIG_PPC_64K_PAGES */
-> +#define get_slice_psize(mm, addr)	MMU_PAGE_4K
-> +#endif /* !CONFIG_PPC_64K_PAGES */
-> +#define slice_set_user_psize(mm, psize)	do { BUG(); } while (0)
-> +
-> +#endif /* _ASM_POWERPC_NOHASH_64_SLICE_H */
-> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-> index 8da5d4c1cab2..d5f1c41b7dba 100644
-> --- a/arch/powerpc/include/asm/page.h
-> +++ b/arch/powerpc/include/asm/page.h
-> @@ -344,5 +344,6 @@ typedef struct page *pgtable_t;
->  
->  #include <asm-generic/memory_model.h>
->  #endif /* __ASSEMBLY__ */
-> +#include <asm/slice.h>
->  
->  #endif /* _ASM_POWERPC_PAGE_H */
-> diff --git a/arch/powerpc/include/asm/page_64.h b/arch/powerpc/include/asm/page_64.h
-> index 56234c6fcd61..af04acdb873f 100644
-> --- a/arch/powerpc/include/asm/page_64.h
-> +++ b/arch/powerpc/include/asm/page_64.h
-> @@ -86,65 +86,6 @@ extern u64 ppc64_pft_size;
->  
->  #endif /* __ASSEMBLY__ */
->  
-> -#ifdef CONFIG_PPC_MM_SLICES
-> -
-> -#define SLICE_LOW_SHIFT		28
-> -#define SLICE_HIGH_SHIFT	40
-> -
-> -#define SLICE_LOW_TOP		(0x100000000ul)
-> -#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
-> -#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
-> -
-> -#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
-> -#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
-> -
-> -#ifndef __ASSEMBLY__
-> -struct mm_struct;
-> -
-> -extern unsigned long slice_get_unmapped_area(unsigned long addr,
-> -					     unsigned long len,
-> -					     unsigned long flags,
-> -					     unsigned int psize,
-> -					     int topdown);
-> -
-> -extern unsigned int get_slice_psize(struct mm_struct *mm,
-> -				    unsigned long addr);
-> -
-> -extern void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
-> -extern void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
-> -				  unsigned long len, unsigned int psize);
-> -
-> -#endif /* __ASSEMBLY__ */
-> -#else
-> -#define slice_init()
-> -#ifdef CONFIG_PPC_BOOK3S_64
-> -#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
-> -#define slice_set_user_psize(mm, psize)		\
-> -do {						\
-> -	(mm)->context.user_psize = (psize);	\
-> -	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
-> -} while (0)
-> -#else /* !CONFIG_PPC_BOOK3S_64 */
-> -#ifdef CONFIG_PPC_64K_PAGES
-> -#define get_slice_psize(mm, addr)	MMU_PAGE_64K
-> -#else /* CONFIG_PPC_64K_PAGES */
-> -#define get_slice_psize(mm, addr)	MMU_PAGE_4K
-> -#endif /* !CONFIG_PPC_64K_PAGES */
-> -#define slice_set_user_psize(mm, psize)	do { BUG(); } while(0)
-> -#endif /* CONFIG_PPC_BOOK3S_64 */
-> -
-> -#define slice_set_range_psize(mm, start, len, psize)	\
-> -	slice_set_user_psize((mm), (psize))
-> -#endif /* CONFIG_PPC_MM_SLICES */
-> -
-> -#ifdef CONFIG_HUGETLB_PAGE
-> -
-> -#ifdef CONFIG_PPC_MM_SLICES
-> -#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
-> -#endif
-> -
-> -#endif /* !CONFIG_HUGETLB_PAGE */
-> -
->  #define VM_DATA_DEFAULT_FLAGS \
->  	(is_32bit_task() ? \
->  	 VM_DATA_DEFAULT_FLAGS32 : VM_DATA_DEFAULT_FLAGS64)
-> diff --git a/arch/powerpc/include/asm/slice.h b/arch/powerpc/include/asm/slice.h
-> new file mode 100644
-> index 000000000000..17c5a5d8c418
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/slice.h
-> @@ -0,0 +1,40 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_POWERPC_SLICE_H
-> +#define _ASM_POWERPC_SLICE_H
-> +
-> +#ifdef CONFIG_PPC_BOOK3S_64
-> +#include <asm/book3s/64/slice.h>
-> +#else
-> +#include <asm/nohash/64/slice.h>
-> +#endif
-> +
-> +#ifdef CONFIG_PPC_MM_SLICES
-> +
-> +#ifdef CONFIG_HUGETLB_PAGE
-> +#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
-> +#endif
-> +#define HAVE_ARCH_UNMAPPED_AREA
-> +#define HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +struct mm_struct;
-> +
-> +unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
-> +				      unsigned long flags, unsigned int psize,
-> +				      int topdown);
-> +
-> +unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr);
-> +
-> +void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
-> +void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
-> +			   unsigned long len, unsigned int psize);
-> +#endif /* __ASSEMBLY__ */
-> +
-> +#else /* CONFIG_PPC_MM_SLICES */
-> +
-> +#define slice_set_range_psize(mm, start, len, psize)	\
-> +	slice_set_user_psize((mm), (psize))
-> +#endif /* CONFIG_PPC_MM_SLICES */
-> +
-> +#endif /* _ASM_POWERPC_SLICE_H */
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Thanks
+Dave
