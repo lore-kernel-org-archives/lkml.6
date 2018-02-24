@@ -1,113 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeBXKhx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 05:37:53 -0500
-Received: from rgout0301.bt.lon5.cpcloud.co.uk ([65.20.0.207]:30543 "EHLO
-        rgout03.bt.lon5.cpcloud.co.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750905AbeBXKhw (ORCPT
+        id S1751417AbeBXKo7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 05:44:59 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34314 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbeBXKo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 05:37:52 -0500
-X-OWM-Source-IP: 81.132.46.76 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtfedrheejgddufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpedtuddrohhrghenucfkphepkedurddufedvrdegiedrjeeinecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddufedv
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtfedrheejgddufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpedtuddrohhrghenucfkphepkedurddufedvrdegiedrjeeinecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddufedv
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtfedrheejgddufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpedtuddrohhrghenucfkphepkedurddufedvrdegiedrjeeinecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddufedv
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtfedrheejgddufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpedtuddrohhrghenucfkphepkedurddufedvrdegiedrjeeinecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddufedv
-Message-ID: <1519468182.2469.7.camel@btinternet.com>
-Subject: Re: [PATCH] selinux: fix typo in selinux_netlbl_sctp_sk_clone
- declaration
-From: Richard Haines <richard_c_haines@btinternet.com>
-To: Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>,
-        nhorman@tuxdriver.com, marcelo.leitner@gmail.com
-Cc: Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Martin Kepplinger <martink@posteo.de>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 24 Feb 2018 10:29:42 +0000
-In-Reply-To: <CAHC9VhTVaogfgf-R=so5mtrh9i1Vy9bnNm5CENgKKDKnSeWjZw@mail.gmail.com>
-References: <20180223211235.2402024-1-arnd@arndb.de>
-         <CAHC9VhTVaogfgf-R=so5mtrh9i1Vy9bnNm5CENgKKDKnSeWjZw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 24 Feb 2018 05:44:57 -0500
+X-Google-Smtp-Source: AH8x227GAzwMwi9nrg1HboDPjAeIKfS0aBVH6+/zJL5R5rWF3Pzcp9arNuHjC9Xe7lje9mi9XiPvMw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
+        andy.shevchenko@gmail.com
+Subject: [PATCH v2 1/3] dt-bindings: gpio: Add Spreadtrum EIC controller documentation
+Date: Sat, 24 Feb 2018 18:44:18 +0800
+Message-Id: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-23 at 16:25 -0500, Paul Moore wrote:
-> On Fri, Feb 23, 2018 at 4:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > A missing 'struct' keyword caused a build error when
-> > CONFIG_NETLABEL
-> > is disabled:
-> > 
-> > In file included from security/selinux/hooks.c:99:
-> > security/selinux/include/netlabel.h:135:66: error: unknown type
-> > name 'sock'
-> >  static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > sock *newsk)
-> >                                                                   ^
-> > ~~~
-> > security/selinux/hooks.c: In function 'selinux_sctp_sk_clone':
-> > security/selinux/hooks.c:5188:2: error: implicit declaration of
-> > function 'selinux_netlbl_sctp_sk_clone'; did you mean
-> > 'selinux_netlbl_inet_csk_clone'? [-Werror=implicit-function-
-> > declaration]
-> > 
-> > Fixes: db97c9f9d312 ("selinux: Add SCTP support")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  security/selinux/include/netlabel.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Thanks, merged and pushed to selinux/next.
-> 
-> Richard was going to submit a patch for that, but I don't think he
-> would mind you beating him :)
+This patch adds the device tree bindings for the Spreadtrum EIC
+controller. The EIC can be seen as a special type of GPIO, which
+can only be used as input mode.
 
-Don't mind at all. What I will do then is fix the problem highlighted
-by [1] that affects "[PATCH V7 2/4] sctp: Add ip option support", I'll
-issue a V8 asap.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes since v1:
+ - Fix some typos and grammar issues.
+ - Add more explanation to make things clear.
+ - List all device nodes as examples.
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   97 ++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
 
-[1] https://lists.01.org/pipermail/kbuild-all/2018-February/043695.html
-
-> 
-> > diff --git a/security/selinux/include/netlabel.h
-> > b/security/selinux/include/netlabel.h
-> > index 6ef4953431dc..8671de09c363 100644
-> > --- a/security/selinux/include/netlabel.h
-> > +++ b/security/selinux/include/netlabel.h
-> > @@ -132,7 +132,8 @@ static inline void
-> > selinux_netlbl_inet_csk_clone(struct sock *sk, u16 family)
-> >  {
-> >         return;
-> >  }
-> > -static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > sock *newsk)
-> > +static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> > +                                               struct sock *newsk)
-> >  {
-> >         return;
-> >  }
-> > --
-> > 2.9.0
-> > 
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+new file mode 100644
+index 0000000..93d98d0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -0,0 +1,97 @@
++Spreadtrum EIC controller bindings
++
++The EIC is the abbreviation of external interrupt controller, which can
++be used only in input mode. The Spreadtrum platform has 2 EIC controllers,
++one is in digital chip, and another one is in PMIC. The digital chip EIC
++controller contains 4 sub-modules: EIC-debounce, EIC-latch, EIC-async and
++EIC-sync. But the PMIC EIC controller contains only one EIC-debounce sub-
++module.
++
++The EIC-debounce sub-module provides up to 8 source input signal
++connections. A debounce mechanism is used to capture the input signals'
++stable status (millisecond resolution) and a single-trigger mechanism
++is introduced into this sub-module to enhance the input event detection
++reliability. In addition, this sub-module's clock can be shut off
++automatically to reduce power dissipation. Moreover the debounce range
++is from 1ms to 4s with a step size of 1ms. The input signal will be
++ignored if it is asserted for less than 1 ms.
++
++The EIC-latch sub-module is used to latch some special power down signals
++and generate interrupts, since the EIC-latch does not depend on the APB
++clock to capture signals.
++
++The EIC-async sub-module uses a 32kHz clock to capture the short signals
++(microsecond resolution) to generate interrupts by level or edge trigger.
++
++The EIC-sync is similar with GPIO's input function, which is a synchronized
++signal input register. It can generate interrupts by level or edge trigger
++when detecting input signals.
++
++Required properties:
++- compatible: Should be one of the following:
++  "sprd,sc9860-eic-debounce",
++  "sprd,sc9860-eic-latch",
++  "sprd,sc9860-eic-async",
++  "sprd,sc9860-eic-sync",
++  "sprd,sc27xx-eic".
++- reg: Define the base and range of the I/O address space containing
++  the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++  the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++  to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	eic_debounce: gpio@40210000 {
++		compatible = "sprd,sc9860-eic-debounce";
++		reg = <0 0x40210000 0 0x80>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	eic_latch: gpio@40210080 {
++		compatible = "sprd,sc9860-eic-latch";
++		reg = <0 0x40210080 0 0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	eic_async: gpio@402100a0 {
++		compatible = "sprd,sc9860-eic-async";
++		reg = <0 0x402100a0 0 0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	eic_sync: gpio@402100c0 {
++		compatible = "sprd,sc9860-eic-sync";
++		reg = <0 0x402100c0 0 0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	pmic_eic: gpio@300 {
++		compatible = "sprd,sc27xx-eic";
++		reg = <0x300>;
++		interrupt-parent = <&sc2731_pmic>;
++		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
+-- 
+1.7.9.5
