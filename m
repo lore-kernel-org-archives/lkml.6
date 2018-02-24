@@ -1,58 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751553AbeBXVvx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 16:51:53 -0500
-Received: from sonic306-22.consmr.mail.ne1.yahoo.com ([66.163.189.84]:41415
-        "EHLO sonic306-22.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751399AbeBXVvv (ORCPT
+        id S1751555AbeBXVzU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 16:55:20 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35273 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751399AbeBXVzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 16:51:51 -0500
-X-YMail-OSG: 80j.57cVM1lTdLC7QKcGYN5j0rebEwUVKYEy5353dr.FeeAKHblhKDQsIWk0Z5l
- CnJOZRoWzSzVDwSyq.TcVFcMxFixJRXlBg0JBYe2bjwhlMjjzvaUbueK1j2y9nIt68d7kX5AF7yt
- nrykH5JcOTl9TAPTxBhZZm2iMNenkolpLwR2tpG_T83.72p.OsgutoqCOwVOkm7LjaWWEG2dy3II
- AlkEgvIKd2zA98TJiO4ZHpYJPsl7Ye6ut2ifMAFt6z612JWgHBoRvpYp6mRNxsSVVWkVdvUXf67F
- fSbZGR30Pc7zaVVJpnCA4rcCLRNln7ri5jDJ.xa9OsTj2AMNfoHvLMsKQG57.AroYPj9g5EtJz0Q
- 5STu5H1NagbszMVXTurDGCMXk7_hkD3ubduH.4nvPCJ1KiHptDhC1tjPT5RSleJi.0F1k66EguMr
- H5IYPePRt0aty_ruAkYyapXyC.XGenq_ITapXMPIIqxiADEUiUeF1LGY4glerJ.acTxNVkK_6fIP
- sPzoVVP126TobS_suKJeAJFwtzoXJdGW6qFpjaQSpvVZqzAkp
-From: Denis Du <dudenis2000@yahoo.ca>
-To: davem@davemloft.net
-Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Denis Du <dudenis2000@yahoo.ca>
-Subject: [PATCH] netdev: carrier detect ok, don't turn off negotiation
-Date: Sat, 24 Feb 2018 16:51:42 -0500
-Message-Id: <1519509102-5629-1-git-send-email-dudenis2000@yahoo.ca>
-X-Mailer: git-send-email 1.9.1
+        Sat, 24 Feb 2018 16:55:18 -0500
+X-Google-Smtp-Source: AH8x226cEH9gAP+UWsEBLKXH2TxQZYBryV7hp+YusRlfpnMQQ5YSoPKnR8HIfY5NNms8hip4XY58Jw==
+Subject: Re: Removing architectures without upstream gcc support
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, James Hogan <jhogan@kernel.org>,
+        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222234833.GA3047@roeck-us.net>
+ <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
+ <20180223154316.35b26857@alans-desktop> <20180223171019.GA1125@roeck-us.net>
+ <20180223181943.GF30522@ZenIV.linux.org.uk>
+ <1519414328.30443.29.camel@HansenPartnership.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <de4b7d03-7682-24e1-f07e-6424e56a9665@roeck-us.net>
+Date: Sat, 24 Feb 2018 13:55:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519414328.30443.29.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes when physical lines have a just good noise to make the protocol
-handshaking fail, but the carrier detect still good. Then after remove of
-the noise, nobody will trigger this protocol to be start again to cause
-the link to never come back. The fix is when the carrier is still on, not
-terminate the protocol handshaking.
+On 02/23/2018 11:32 AM, James Bottomley wrote:
+> On Fri, 2018-02-23 at 18:19 +0000, Al Viro wrote:
+> [...]
+>> IIRC, parisc/qemu stuff had been announced a while ago;
+> 
+> I have, but it didn't work sufficiently for me to either boot a kernel
+> using system emulation or start an architecture container using user
+> emulation.  I'll try again now that qemu has gone through several
+> revisions.
+> 
 
-Signed-off-by: Denis Du <dudenis2000@yahoo.ca>
----
- drivers/net/wan/hdlc_ppp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I can boot a parisc image to CLI using ToT qemu, ToT kernel built with
+	make ARCH=parisc CROSS_COMPILE=hppa-linux-" defconfig
+	make ARCH=parisc CROSS_COMPILE=hppa-linux-"
 
-diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
-index afeca6b..ab8b3cb 100644
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -574,7 +574,10 @@ static void ppp_timer(struct timer_list *t)
- 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
- 				     0, NULL);
- 			proto->restart_counter--;
--		} else
-+		} else if (netif_carrier_ok(proto->dev))
-+			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
-+				     0, NULL);
-+		else
- 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
- 				     0, NULL);
- 		break;
--- 
-2.1.4
+qemu command line:
+
+qemu-system-hppa -nographic -monitor none -kernel vmlinux \
+	--append "console=/dev/ttyS0 root=/dev/sda" \
+	-drive file=rootfs.ext2,format=raw,if=scsi
+
+I built the root file system using a modified buildroot based on 2018.02-rc2
+with hppa support added.
+
+Guenter
