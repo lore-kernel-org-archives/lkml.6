@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751594AbeBXWLI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 17:11:08 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:60993 "EHLO mail.siol.net"
+        id S1751563AbeBXWLH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 17:11:07 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:60999 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751399AbeBXWLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751481AbeBXWLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 24 Feb 2018 17:11:04 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
@@ -14,9 +14,9 @@ Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 02/15] clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-Date: Sat, 24 Feb 2018 22:45:32 +0100
-Message-Id: <20180224214545.3740-3-jernej.skrabec@siol.net>
+Subject: [PATCH 12/15] drm/sun4i: Allow building on arm64
+Date: Sat, 24 Feb 2018 22:45:42 +0100
+Message-Id: <20180224214545.3740-13-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
 References: <20180224214545.3740-1-jernej.skrabec@siol.net>
@@ -24,58 +24,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although user manuals for H3 and H5 SoCs state that minimal rate
-supported by video PLL is around 30 MHz, it seems that in reality
-minimal rate is around 192 MHz.
-
-Experiments showed that any rate below 96 MHz doesn't produce any video
-output at all. Even at this frequency, stable output depends on right
-factors. For example, when N = 4 and M = 1, output is stable and when N
-= 8 and M = 2, it's not.
-
-BSP clock driver suggest that minimum stable frequency is 192 MHz. That
-would also be in line with A64 SoC, which has similar periphery.
-
-Set minimal video PLL rate for H3/H5 to 192 MHz.
+64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
+is compatible to 32-bit SoCs, so allow building DRM driver for
+arm64 architecture.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/sun4i/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 29bc0566b776..b9f39078c0b2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -69,17 +69,18 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				       BIT(28),	/* lock */
- 				       CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
--					"osc24M", 0x0010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video_clk, "pll-video",
-+					    "osc24M", 0x0010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x0018,
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index 7327da3bc94f..eee6bc0eaf97 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -1,6 +1,6 @@
+ config DRM_SUN4I
+ 	tristate "DRM Support for Allwinner A10 Display Engine"
+-	depends on DRM && ARM && COMMON_CLK
++	depends on DRM && (ARM || ARM64) && COMMON_CLK
+ 	depends on ARCH_SUNXI || COMPILE_TEST
+ 	select DRM_GEM_CMA_HELPER
+ 	select DRM_KMS_HELPER
 -- 
 2.16.2
