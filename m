@@ -1,94 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751302AbeBXJEq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 04:04:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57524 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeBXJEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 04:04:42 -0500
-Subject: Re: [PATCH V2] nvme-pci: set cq_vector to -1 if io queue setup fails
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1518693221-2430-1-git-send-email-jianchao.w.wang@oracle.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <204f523b-b4dd-d0d4-a5c8-8f0a744eb54f@oracle.com>
-Date: Sat, 24 Feb 2018 17:04:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751416AbeBXJIe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 04:08:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750844AbeBXJIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 04:08:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B23821741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Sat, 24 Feb 2018 17:08:21 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Martin Kaiser <martin@kaiser.cx>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: mx35_3ds: remove unnecessary USB OTG init flag
+Message-ID: <20180224090818.GP3217@dragon>
+References: <1519251463-12318-1-git-send-email-martin@kaiser.cx>
 MIME-Version: 1.0
-In-Reply-To: <1518693221-2430-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8813 signatures=668678
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802240117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519251463-12318-1-git-send-email-martin@kaiser.cx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
-
-Can you take a review on this ?
-
-Thanks in advance
-Really appreciate
-Jianchao
-
-On 02/15/2018 07:13 PM, Jianchao Wang wrote:
-> nvme cq irq is freed based on queue_count. When the sq/cq creation
-> fails, irq will not be setup. free_irq will warn 'Try to free
-> already-free irq'.
+On Wed, Feb 21, 2018 at 11:17:43PM +0100, Martin Kaiser wrote:
+> The platform-specific init function for the USB OTG port,
+> mx35_3ds_otg_init(), sets the MXC_EHCI_INTERNAL_PHY flag.
 > 
-> To fix it, set the nvmeq->cq_vector to -1, then nvme_suspend_queue
-> will ignore it.
+> This flag is applicable only to the host port, not to the OTG port. It's
+> ignored by mx35_initialize_usb_hw() when the OTG port is initialized.
 > 
-> Change log:
-> V1 -> V2
->  - Follow Keith's suggestion, just set cq_vector to -1 if io queue setup
->    fails.
->  - Change patch name and comment
+> Remove the flag to make it clear what is actually configured.
 > 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+
+We do not take any patch on legacy board files, unless it fixes some
+real problem.
+
+Shawn
+
 > ---
->  drivers/nvme/host/pci.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  arch/arm/mach-imx/mach-mx35_3ds.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 4a7c420..f4528ef 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -1452,7 +1452,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
->  	nvmeq->cq_vector = qid - 1;
->  	result = adapter_alloc_cq(dev, qid, nvmeq);
->  	if (result < 0)
-> -		return result;
-> +		goto clean_cq_vector;
+> diff --git a/arch/arm/mach-imx/mach-mx35_3ds.c b/arch/arm/mach-imx/mach-mx35_3ds.c
+> index 1c33a6c..f1963f2 100644
+> --- a/arch/arm/mach-imx/mach-mx35_3ds.c
+> +++ b/arch/arm/mach-imx/mach-mx35_3ds.c
+> @@ -407,7 +407,7 @@ static void __init imx35_3ds_init_mc13892(void)
 >  
->  	result = adapter_alloc_sq(dev, qid, nvmeq);
->  	if (result < 0)
-> @@ -1461,14 +1461,17 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
->  	nvme_init_queue(nvmeq, qid);
->  	result = queue_request_irq(nvmeq);
->  	if (result < 0)
-> -		goto release_sq;
-> +		goto offline;
->  
->  	return result;
->  
-> - release_sq:
-> +offline:
-> +	dev->online_queues--;
->  	adapter_delete_sq(dev, qid);
-> - release_cq:
-> +release_cq:
->  	adapter_delete_cq(dev, qid);
-> +clean_cq_vector:
-> +	nvmeq->cq_vector = -1;
->  	return result;
+>  static int mx35_3ds_otg_init(struct platform_device *pdev)
+>  {
+> -	return mx35_initialize_usb_hw(pdev->id, MXC_EHCI_INTERNAL_PHY);
+> +	return mx35_initialize_usb_hw(pdev->id, 0);
 >  }
 >  
+>  /* OTG config */
+> -- 
+> 2.1.4
 > 
