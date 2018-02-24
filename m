@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751594AbeBXQmw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 11:42:52 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36693 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751364AbeBXQmv (ORCPT
+        id S1751634AbeBXQn1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 11:43:27 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38464 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeBXQnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 11:42:51 -0500
-X-Google-Smtp-Source: AG47ELswH13IhqYUfOng6riANQNwkqN0CSiCc+kggdGdm8zsU1iHEXZLjZ6I79ynw42mSD2zCDUxOduEX+02Cibc+SQ=
+        Sat, 24 Feb 2018 11:43:25 -0500
+X-Google-Smtp-Source: AH8x2241p+IIZX48HPt4m3VfQo/wV1FbwOC97LWI4qhKPnjvxeVFdnKtLhm5QmsAG+I9drKgHBY9kfErwvlNJ9iYBSw=
 MIME-Version: 1.0
-In-Reply-To: <20180223200333.6410-6-Yazen.Ghannam@amd.com>
-References: <20180223200333.6410-1-Yazen.Ghannam@amd.com> <20180223200333.6410-6-Yazen.Ghannam@amd.com>
+In-Reply-To: <20180223200333.6410-7-Yazen.Ghannam@amd.com>
+References: <20180223200333.6410-1-Yazen.Ghannam@amd.com> <20180223200333.6410-7-Yazen.Ghannam@amd.com>
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sat, 24 Feb 2018 16:42:49 +0000
-Message-ID: <CAKv+Gu8OaE72HOm0+cKKPtq4keffKUFaWvfqWFo_r4pQs0krnQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] efi: Decode IA32/X64 Cache, TLB, and Bus Check structures
+Date: Sat, 24 Feb 2018 16:43:24 +0000
+Message-ID: <CAKv+Gu9btAJ9u+bqT3FdT9G7mdMzhWLLd0BBMnZQgsTZfkOBig@mail.gmail.com>
+Subject: Re: [PATCH 6/8] efi: Decode additional IA32/X64 Bus Check fields
 To: Yazen Ghannam <Yazen.Ghannam@amd.com>
 Cc: linux-efi@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -28,158 +28,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 23 February 2018 at 20:03, Yazen Ghannam <Yazen.Ghannam@amd.com> wrote:
 > From: Yazen Ghannam <yazen.ghannam@amd.com>
 >
-> Print the common fields of the Cache, TLB, and Bus check structures.The
-> fields of these three check types are the same except for a few more
-> fields in the Bus check structure. The remaining Bus check structure
-> fields will be decoded in a following patch.
+> The "Participation Type", "Time Out", and "Address Space" fields are
+> unique to the IA32/X64 Bus Check structure. Print these fields.
 >
-> Based on UEFI 2.7,
-> Table 257. IA32/X64 Cache Check Structure
-> Table 258. IA32/X64 TLB Check Structure
-> Table 259. IA32/X64 Bus Check Structure
+> Based on UEFI 2.7 Table 259. IA32/X64 Bus Check Structure
 >
 > Cc: <stable@vger.kernel.org> # 4.16.x
 > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 > ---
->  drivers/firmware/efi/cper-x86.c | 101 +++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 100 insertions(+), 1 deletion(-)
+>  drivers/firmware/efi/cper-x86.c | 44 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 >
 > diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
-> index 3b86223bdb67..75f664043076 100644
+> index 75f664043076..df4cf6221d8e 100644
 > --- a/drivers/firmware/efi/cper-x86.c
 > +++ b/drivers/firmware/efi/cper-x86.c
-> @@ -33,6 +33,25 @@
->  #define INFO_VALID_RESPONDER_ID                BIT_ULL(3)
->  #define INFO_VALID_IP                  BIT_ULL(4)
+> @@ -42,6 +42,10 @@
+>  #define CHECK_VALID_RESTARTABLE_IP     BIT_ULL(6)
+>  #define CHECK_VALID_OVERFLOW           BIT_ULL(7)
 >
-> +#define CHECK_VALID_TRANS_TYPE         BIT_ULL(0)
-> +#define CHECK_VALID_OPERATION          BIT_ULL(1)
-> +#define CHECK_VALID_LEVEL              BIT_ULL(2)
-> +#define CHECK_VALID_PCC                        BIT_ULL(3)
-> +#define CHECK_VALID_UNCORRECTED                BIT_ULL(4)
-> +#define CHECK_VALID_PRECISE_IP         BIT_ULL(5)
-> +#define CHECK_VALID_RESTARTABLE_IP     BIT_ULL(6)
-> +#define CHECK_VALID_OVERFLOW           BIT_ULL(7)
+> +#define CHECK_VALID_BUS_PART_TYPE      BIT_ULL(8)
+> +#define CHECK_VALID_BUS_TIME_OUT       BIT_ULL(9)
+> +#define CHECK_VALID_BUS_ADDR_SPACE     BIT_ULL(10)
 > +
-> +#define CHECK_VALID_BITS(check)                ((check & GENMASK_ULL(15, 0)))
-> +#define CHECK_TRANS_TYPE(check)                ((check & GENMASK_ULL(17, 16)) >> 16)
-> +#define CHECK_OPERATION(check)         ((check & GENMASK_ULL(21, 18)) >> 18)
-> +#define CHECK_LEVEL(check)             ((check & GENMASK_ULL(24, 22)) >> 22)
+>  #define CHECK_VALID_BITS(check)                ((check & GENMASK_ULL(15, 0)))
+>  #define CHECK_TRANS_TYPE(check)                ((check & GENMASK_ULL(17, 16)) >> 16)
+>  #define CHECK_OPERATION(check)         ((check & GENMASK_ULL(21, 18)) >> 18)
+> @@ -52,6 +56,10 @@
+>  #define CHECK_RESTARTABLE_IP           BIT_ULL(28)
+>  #define CHECK_OVERFLOW                 BIT_ULL(29)
+>
+> +#define CHECK_BUS_PART_TYPE(check)     ((check & GENMASK_ULL(31, 30)) >> 30)
+> +#define CHECK_BUS_TIME_OUT             BIT_ULL(32)
+> +#define CHECK_BUS_ADDR_SPACE(check)    ((check & GENMASK_ULL(34, 33)) >> 33)
+> +
 
 Parens around 'check' please
 
-> +#define CHECK_PCC                      BIT_ULL(25)
-> +#define CHECK_UNCORRECTED              BIT_ULL(26)
-> +#define CHECK_PRECISE_IP               BIT_ULL(27)
-> +#define CHECK_RESTARTABLE_IP           BIT_ULL(28)
-> +#define CHECK_OVERFLOW                 BIT_ULL(29)
-> +
 >  enum err_types {
 >         ERR_TYPE_CACHE = 0,
 >         ERR_TYPE_TLB,
-> @@ -55,11 +74,83 @@ static enum err_types cper_get_err_type(const guid_t *err_type)
->                 return N_ERR_TYPES;
->  }
+> @@ -92,6 +100,20 @@ static const char * const ia_check_op_strs[] = {
+>         "snoop",
+>  };
 >
-> +static const char * const ia_check_trans_type_strs[] = {
-> +       "Instruction",
-> +       "Data Access",
+> +static const char * const ia_check_bus_part_type_strs[] = {
+> +       "Local Processor originated request",
+> +       "Local Processor responded to request",
+> +       "Local Processor observed",
 > +       "Generic",
 > +};
 > +
-> +static const char * const ia_check_op_strs[] = {
-> +       "generic error",
-> +       "generic read",
-> +       "generic write",
-> +       "data read",
-> +       "data write",
-> +       "instruction fetch",
-> +       "prefetch",
-> +       "eviction",
-> +       "snoop",
+> +static const char * const ia_check_bus_addr_space_strs[] = {
+> +       "Memory Access",
+> +       "Reserved",
+> +       "I/O",
+> +       "Other Transaction",
 > +};
 > +
-> +static inline void print_bool(char *str, const char *pfx, u64 check, u64 bit)
-> +{
-> +       printk("%s%s: %s\n", pfx, str, (check & bit) ? "true" : "false");
-> +}
+>  static inline void print_bool(char *str, const char *pfx, u64 check, u64 bit)
+>  {
+>         printk("%s%s: %s\n", pfx, str, (check & bit) ? "true" : "false");
+> @@ -144,6 +166,28 @@ static void print_err_info(const char *pfx, enum err_types err_type, u64 check)
+>
+>         if (validation_bits & CHECK_VALID_OVERFLOW)
+>                 print_bool("Overflow", pfx, check, CHECK_OVERFLOW);
 > +
-> +static void print_err_info(const char *pfx, enum err_types err_type, u64 check)
-
-u8 for err_type please
-
-> +{
-> +       u16 validation_bits = CHECK_VALID_BITS(check);
-> +
-> +       printk("%sValidation Bits: 0x%04x\n", pfx, validation_bits);
-> +
-> +       if (err_type == ERR_TYPE_MS)
+> +       if (err_type != ERR_TYPE_BUS)
 > +               return;
 > +
-> +       if (validation_bits & CHECK_VALID_TRANS_TYPE) {
-> +               u8 trans_type = CHECK_TRANS_TYPE(check);
+> +       if (validation_bits & CHECK_VALID_BUS_PART_TYPE) {
+> +               u8 part_type = CHECK_BUS_PART_TYPE(check);
 > +
-> +               printk("%sTransaction Type: %u, %s\n", pfx, trans_type,
-> +                        trans_type < ARRAY_SIZE(ia_check_trans_type_strs) ?
-> +                        ia_check_trans_type_strs[trans_type] : "unknown");
+> +               printk("%sParticipation Type: %u, %s\n", pfx, part_type,
+> +                        part_type < ARRAY_SIZE(ia_check_bus_part_type_strs) ?
+> +                        ia_check_bus_part_type_strs[part_type] : "unknown");
 > +       }
 > +
-> +       if (validation_bits & CHECK_VALID_OPERATION) {
-> +               u8 op = CHECK_OPERATION(check);
+> +       if (validation_bits & CHECK_VALID_BUS_TIME_OUT)
+> +               print_bool("Time Out", pfx, check, CHECK_BUS_TIME_OUT);
 > +
-> +               /*
-> +                * CACHE has more operation types than TLB or BUS, though the
-> +                * name and the order are the same.
-> +                */
-> +               u8 max_ops = (err_type == ERR_TYPE_CACHE) ? 9 : 7;
+> +       if (validation_bits & CHECK_VALID_BUS_ADDR_SPACE) {
+> +               u8 addr_space = CHECK_BUS_ADDR_SPACE(check);
 > +
-> +               printk("%sOperation: %u, %s\n", pfx, op,
-> +                        op < max_ops ? ia_check_op_strs[op] : "unknown");
+> +               printk("%sAddress Space: %u, %s\n", pfx, addr_space,
+> +                        addr_space < ARRAY_SIZE(ia_check_bus_addr_space_strs) ?
+> +                        ia_check_bus_addr_space_strs[addr_space] : "unknown");
 > +       }
-> +
-> +       if (validation_bits & CHECK_VALID_LEVEL)
-> +               printk("%sLevel: %llu\n", pfx, CHECK_LEVEL(check));
-> +
-> +       if (validation_bits & CHECK_VALID_PCC)
-> +               print_bool("Processor Context Corrupt", pfx, check, CHECK_PCC);
-> +
-> +       if (validation_bits & CHECK_VALID_UNCORRECTED)
-> +               print_bool("Uncorrected", pfx, check, CHECK_UNCORRECTED);
-> +
-> +       if (validation_bits & CHECK_VALID_PRECISE_IP)
-> +               print_bool("Precise IP", pfx, check, CHECK_PRECISE_IP);
-> +
-> +       if (validation_bits & CHECK_VALID_RESTARTABLE_IP)
-> +               print_bool("Restartable IP", pfx, check, CHECK_RESTARTABLE_IP);
-> +
-> +       if (validation_bits & CHECK_VALID_OVERFLOW)
-> +               print_bool("Overflow", pfx, check, CHECK_OVERFLOW);
-> +}
-> +
+>  }
+>
 >  void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
->  {
->         int i;
->         struct cper_ia_err_info *err_info;
-> -       char newpfx[64];
-> +       char newpfx[64], infopfx[64];
->         enum err_types err_type;
->
->         printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
-> @@ -93,6 +184,14 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
->                 if (err_info->validation_bits & INFO_VALID_CHECK_INFO) {
->                         printk("%sCheck Information: 0x%016llx\n", newpfx,
->                                  err_info->check_info);
-> +
-> +                       if (err_type < N_ERR_TYPES) {
-> +                               snprintf(infopfx, sizeof(infopfx), "%s%s",
-> +                                        newpfx, INDENT_SP);
-> +
-> +                               print_err_info(infopfx, err_type,
-> +                                              err_info->check_info);
-> +                       }
->                 }
->
->                 if (err_info->validation_bits & INFO_VALID_TARGET_ID) {
 > --
 > 2.14.1
 >
