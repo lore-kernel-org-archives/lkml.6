@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeBXNBn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 08:01:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46500 "EHLO mail.kernel.org"
+        id S1751481AbeBXNDQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 08:03:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750934AbeBXNBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 08:01:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D1C3214C5
+        id S1750934AbeBXNDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 08:03:15 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFE62178B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Feb 2018 13:01:36 +0000
+Date: Sat, 24 Feb 2018 13:03:09 +0000
 From: Jonathan Cameron <jic23@kernel.org>
 To: Fabrice Gasnier <fabrice.gasnier@st.com>
 Cc: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
@@ -17,12 +17,12 @@ Cc: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
         <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>,
         <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH 4/7] iio: adc: stm32-dfsdm: fix multiple channel
- initialization
-Message-ID: <20180224130136.0e4fae4b@archlinux>
-In-Reply-To: <1519390261-25453-5-git-send-email-fabrice.gasnier@st.com>
+Subject: Re: [PATCH 5/7] iio: adc: stm32-dfsdm: misc style improvements and
+ fixes
+Message-ID: <20180224130309.7129e79f@archlinux>
+In-Reply-To: <1519390261-25453-6-git-send-email-fabrice.gasnier@st.com>
 References: <1519390261-25453-1-git-send-email-fabrice.gasnier@st.com>
-        <1519390261-25453-5-git-send-email-fabrice.gasnier@st.com>
+        <1519390261-25453-6-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -31,190 +31,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Feb 2018 13:50:58 +0100
+On Fri, 23 Feb 2018 13:50:59 +0100
 Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-> When several channels are registered (e.g. via st,adc-channels property):
-> - channels array is wrongly filled in. Only 1st element in array is being
->   initialized with last registered channel.
->   Fix it by passing reference to relevant channel (e.g. array[index]).
-> - only last initialized channel can work properly (e.g. unique 'ch_id'
->   is used). Converting any other channel result in conversion timeout.
->   Fix it by getting rid of 'ch_id', use chan->channel instead.
+> Misc fixes & style improvements:
+> - checkpatch warns about line over 80 characters.
+> - remove extra spaces and a blank line (e.g. checkpatch --strict)
+> - remove bad error message always printed in probe routine.
 > 
 > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Applied to the fixes-togreg branch of iio.git.
+I'd have preferred this as 3 patches doing one type fo fix each.
+
+Anyhow, I'll need to hold this until the fixes have made there
+way upstream.  Give me a poke if I seem to have forgotten
+and the dependencies have made it back to my togreg branch.
 
 Thanks,
 
 Jonathan
 
 > ---
->  drivers/iio/adc/stm32-dfsdm-adc.c | 39 +++++++++++++++++++++------------------
->  1 file changed, 21 insertions(+), 18 deletions(-)
+>  drivers/iio/adc/stm32-dfsdm-adc.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-> index 0eff811..01422d1 100644
+> index 01422d1..57bcb45 100644
 > --- a/drivers/iio/adc/stm32-dfsdm-adc.c
 > +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-> @@ -54,7 +54,6 @@ struct stm32_dfsdm_adc {
->  	struct stm32_dfsdm *dfsdm;
->  	const struct stm32_dfsdm_dev_data *dev_data;
->  	unsigned int fl_id;
-> -	unsigned int ch_id;
->  
->  	/* ADC specific */
->  	unsigned int oversamp;
-> @@ -384,7 +383,7 @@ static ssize_t dfsdm_adc_audio_set_spiclk(struct iio_dev *indio_dev,
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
->  	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-> -	struct stm32_dfsdm_channel *ch = &adc->dfsdm->ch_list[adc->ch_id];
-> +	struct stm32_dfsdm_channel *ch = &adc->dfsdm->ch_list[chan->channel];
->  	unsigned int sample_freq = adc->sample_freq;
->  	unsigned int spi_freq;
->  	int ret;
-> @@ -419,18 +418,20 @@ static ssize_t dfsdm_adc_audio_set_spiclk(struct iio_dev *indio_dev,
->  	return len;
+> @@ -253,7 +253,8 @@ static int stm32_dfsdm_start_filter(struct stm32_dfsdm *dfsdm,
+>  				  DFSDM_CR1_RSWSTART(1));
 >  }
 >  
-> -static int stm32_dfsdm_start_conv(struct stm32_dfsdm_adc *adc, bool dma)
-> +static int stm32_dfsdm_start_conv(struct stm32_dfsdm_adc *adc,
-> +				  const struct iio_chan_spec *chan,
-> +				  bool dma)
+> -static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm, unsigned int fl_id)
+> +static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm,
+> +				    unsigned int fl_id)
 >  {
->  	struct regmap *regmap = adc->dfsdm->regmap;
->  	int ret;
->  	unsigned int dma_en = 0, cont_en = 0;
+>  	/* Disable conversion */
+>  	regmap_update_bits(dfsdm->regmap, DFSDM_CR1(fl_id),
+> @@ -337,7 +338,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>  					    "st,adc-channel-types", chan_idx,
+>  					    &of_str);
+>  	if (!ret) {
+> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+>  		if (val < 0)
+>  			return val;
+>  	} else {
+> @@ -349,7 +350,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>  					    "st,adc-channel-clk-src", chan_idx,
+>  					    &of_str);
+>  	if (!ret) {
+> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+>  		if (val < 0)
+>  			return val;
+>  	} else {
+> @@ -1093,7 +1094,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+>  	char *name;
+>  	int ret, irq, val;
 >  
-> -	ret = stm32_dfsdm_start_channel(adc->dfsdm, adc->ch_id);
-> +	ret = stm32_dfsdm_start_channel(adc->dfsdm, chan->channel);
+> -
+>  	dev_data = of_device_get_match_data(dev);
+>  	iio = devm_iio_device_alloc(dev, sizeof(*adc));
+>  	if (!iio) {
+> @@ -1161,7 +1161,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
 >  	if (ret < 0)
->  		return ret;
+>  		goto err_cleanup;
 >  
->  	ret = stm32_dfsdm_filter_configure(adc->dfsdm, adc->fl_id,
-> -					   adc->ch_id);
-> +					   chan->channel);
->  	if (ret < 0)
->  		goto stop_channels;
->  
-> @@ -464,12 +465,13 @@ static int stm32_dfsdm_start_conv(struct stm32_dfsdm_adc *adc, bool dma)
->  
->  	regmap_update_bits(regmap, DFSDM_CR1(adc->fl_id),
->  			   DFSDM_CR1_RCONT_MASK, 0);
-> -	stm32_dfsdm_stop_channel(adc->dfsdm, adc->ch_id);
-> +	stm32_dfsdm_stop_channel(adc->dfsdm, chan->channel);
->  
->  	return ret;
->  }
->  
-> -static void stm32_dfsdm_stop_conv(struct stm32_dfsdm_adc *adc)
-> +static void stm32_dfsdm_stop_conv(struct stm32_dfsdm_adc *adc,
-> +				  const struct iio_chan_spec *chan)
->  {
->  	struct regmap *regmap = adc->dfsdm->regmap;
->  
-> @@ -482,7 +484,7 @@ static void stm32_dfsdm_stop_conv(struct stm32_dfsdm_adc *adc)
->  	regmap_update_bits(regmap, DFSDM_CR1(adc->fl_id),
->  			   DFSDM_CR1_RCONT_MASK, 0);
->  
-> -	stm32_dfsdm_stop_channel(adc->dfsdm, adc->ch_id);
-> +	stm32_dfsdm_stop_channel(adc->dfsdm, chan->channel);
->  }
->  
->  static int stm32_dfsdm_set_watermark(struct iio_dev *indio_dev,
-> @@ -609,6 +611,7 @@ static int stm32_dfsdm_adc_dma_start(struct iio_dev *indio_dev)
->  static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> +	const struct iio_chan_spec *chan = &indio_dev->channels[0];
->  	int ret;
->  
->  	/* Reset adc buffer index */
-> @@ -618,7 +621,7 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = stm32_dfsdm_start_conv(adc, true);
-> +	ret = stm32_dfsdm_start_conv(adc, chan, true);
->  	if (ret) {
->  		dev_err(&indio_dev->dev, "Can't start conversion\n");
->  		goto stop_dfsdm;
-> @@ -635,7 +638,7 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
->  	return 0;
->  
->  err_stop_conv:
-> -	stm32_dfsdm_stop_conv(adc);
-> +	stm32_dfsdm_stop_conv(adc, chan);
->  stop_dfsdm:
->  	stm32_dfsdm_stop_dfsdm(adc->dfsdm);
->  
-> @@ -645,11 +648,12 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
->  static int stm32_dfsdm_predisable(struct iio_dev *indio_dev)
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> +	const struct iio_chan_spec *chan = &indio_dev->channels[0];
->  
->  	if (adc->dma_chan)
->  		dmaengine_terminate_all(adc->dma_chan);
->  
-> -	stm32_dfsdm_stop_conv(adc);
-> +	stm32_dfsdm_stop_conv(adc, chan);
->  
->  	stm32_dfsdm_stop_dfsdm(adc->dfsdm);
->  
-> @@ -730,7 +734,7 @@ static int stm32_dfsdm_single_conv(struct iio_dev *indio_dev,
->  	if (ret < 0)
->  		goto stop_dfsdm;
->  
-> -	ret = stm32_dfsdm_start_conv(adc, false);
-> +	ret = stm32_dfsdm_start_conv(adc, chan, false);
->  	if (ret < 0) {
->  		regmap_update_bits(adc->dfsdm->regmap, DFSDM_CR2(adc->fl_id),
->  				   DFSDM_CR2_REOCIE_MASK, DFSDM_CR2_REOCIE(0));
-> @@ -751,7 +755,7 @@ static int stm32_dfsdm_single_conv(struct iio_dev *indio_dev,
->  	else
->  		ret = IIO_VAL_INT;
->  
-> -	stm32_dfsdm_stop_conv(adc);
-> +	stm32_dfsdm_stop_conv(adc, chan);
->  
->  stop_dfsdm:
->  	stm32_dfsdm_stop_dfsdm(adc->dfsdm);
-> @@ -765,7 +769,7 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
->  	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-> -	struct stm32_dfsdm_channel *ch = &adc->dfsdm->ch_list[adc->ch_id];
-> +	struct stm32_dfsdm_channel *ch = &adc->dfsdm->ch_list[chan->channel];
->  	unsigned int spi_freq = adc->spi_freq;
->  	int ret = -EINVAL;
->  
-> @@ -972,7 +976,6 @@ static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev,
->  	}
->  	ch->scan_type.realbits = 24;
->  	ch->scan_type.storagebits = 32;
-> -	adc->ch_id = ch->channel;
->  
->  	return stm32_dfsdm_chan_configure(adc->dfsdm,
->  					  &adc->dfsdm->ch_list[ch->channel]);
-> @@ -1001,7 +1004,7 @@ static int stm32_dfsdm_audio_init(struct iio_dev *indio_dev)
->  	}
->  	ch->info_mask_separate = BIT(IIO_CHAN_INFO_SAMP_FREQ);
->  
-> -	d_ch = &adc->dfsdm->ch_list[adc->ch_id];
-> +	d_ch = &adc->dfsdm->ch_list[ch->channel];
->  	if (d_ch->src != DFSDM_CHANNEL_SPI_CLOCK_EXTERNAL)
->  		adc->spi_freq = adc->dfsdm->spi_master_freq;
->  
-> @@ -1042,8 +1045,8 @@ static int stm32_dfsdm_adc_init(struct iio_dev *indio_dev)
->  		return -ENOMEM;
->  
->  	for (chan_idx = 0; chan_idx < num_ch; chan_idx++) {
-> -		ch->scan_index = chan_idx;
-> -		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, ch);
-> +		ch[chan_idx].scan_index = chan_idx;
-> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &ch[chan_idx]);
+> -	dev_err(dev, "of_platform_populate\n");
+>  	if (dev_data->type == DFSDM_AUDIO) {
+>  		ret = of_platform_populate(np, NULL, NULL, dev);
 >  		if (ret < 0) {
->  			dev_err(&indio_dev->dev, "Channels init failed\n");
->  			return ret;
