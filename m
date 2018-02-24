@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x226OEsX9Hb9FZzXoX3K7eEJNIiUog2+qvgxrBsSV5nFyIuI8bX8KyzbAH0SZnDzDAazKvNXJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519450507; cv=none;
+X-Google-Smtp-Source: AH8x224m4yBrIeacdxzjyGP40Rnh2bctl5gr0lHOUMzWtpmdpWvkUYNoUkmFZU7I0Sve/nfQSVzO
+ARC-Seal: i=1; a=rsa-sha256; t=1519450478; cv=none;
         d=google.com; s=arc-20160816;
-        b=EGcyVssGvDq7fgnxrN9pL1KmdjN55CodMI6uwG8HaposIqGPnXijNHM0uUMFjXa4Uu
-         jlbGDIV6sDEVZl252WYTSsFw5FazgpXTAD6P7uzmRN3H1FKnJ5ddoyp4HO5X1kBOYxO2
-         5W5qv1m8JKTFEl0n7YwPuCvVi6yyISZmUlP0MF41s8bPbM+qFilvZEH5rqrdePEPfmDy
-         QSnE5lGQItElGd+o0AsMOE7VTAC+/ywQThz3WG9m5/sximZjD0IE9tR6UU9AAVvuYxdL
-         jjd2AAHAQl1fHSe/HJoCC9VaU/CTtNMwDnq1bZjtpCsRizJtoeTJU1hCNxZBSJYX24M1
-         hctA==
+        b=MVR3HZuGn4XdcBaCu3LLp20LoI3s/L3F+hr0w2/ltCOLvP5v/cyvDygarS9/qgq9rB
+         gG7rfu+5/Kbfx4lK6ZwYy8PnebxSRTbPdXdt6T7cLGmV1ZTFN4cGUrCShob3JeoVkp45
+         QV1PKon5BYUCDxSAGeDuelB6vsFzF3Q3WUoZPzMn4hEsK0gDdqWahQjcq+q4WZ9sIN0k
+         QkNIz/Vf5xOOa1GQ+pcFfN7sUeV20xRUSStDwoWk/V3rg3yggccytpMQXjNns3Ca21m/
+         qQu3dMgXvW+SnJUgY9Hi7XTiq/VpUFX7rHUo7XdDHLNIA+JOW6Z0LkJ7r2SFn5EMDyFz
+         LSOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=UYgdscLlWO/NRE22OSrBcF2hK7ny87xrwSo8tz8mH/0=;
-        b=vTWvGa1obZugduVRzTLykNpXPAZv8D0ERDTNOQN6sxWWs2d3xPp6GdLWFeMxPFlRtU
-         vU/bnztJ059ILIA4pIz+tlUtqDQdlVFvPLV0vi21FE9uFK+vPtDEnx/GCUxZocvZFOW7
-         ac1Aq7/5bXAgTp4GjbCiKHgWd3nSU51amXpdsBm3votc3/5wDkVMrHWC2pyJhFw4Pw6d
-         sbn8Sbce9yZtsjphoKPCusa+PdFg2lUZjYCH7ePlVwhCIAbrEREn1AA73Y5HZzM/xe2e
-         OhtjcfkEWVZbjPbNdORWE4UmSJIuPX+phRhR5620bSq3JNPjpM1hZR1kuc3jy90fGkSP
-         C2XA==
+        bh=D5mLE1gVSVOZe2kTq2FZqyR5fJZ61veZNS7jhAEUjGQ=;
+        b=NUeeJsg1ARZbWiwcdouGbfgy8MNlPli7W3ovr9TJX9CuPq4v74TCVy2ZjWqko17+rb
+         1KxCxnlyc8oJc4YrAQC93tu93QBT4yJjhHfNxsNFciYrnEEYx8yoUMqbuURV4mVGjNxI
+         AulNVuRrjVrysdsa3t5SNYaU8iDxLcvQj59GZMHSyYyOufwkMZ/aoUS2HcF8L1hO4Fm2
+         N8Yu2Nsst+K0C94r7Kq9dmxSJh1SK77hNVLp5NOi6MGWPbcIAXyAVAyjFkM5qpq/QJEw
+         E2tEtvjCZuwfbwnya3x7ZjrdNvOywV9tNgK3kovxQDaJUxCy6KFukC7n3jTPMNE/RSDZ
+         HN7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeBXFfH (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 24 Feb 2018 00:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45210 "EHLO mail.kernel.org"
+        id S1751351AbeBXFei (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 24 Feb 2018 00:34:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751308AbeBXFfG (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 24 Feb 2018 00:35:06 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2085E21741
+        id S1751272AbeBXFeh (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 24 Feb 2018 00:34:37 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C68D21785
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v3 13/18] x86: ptrace: Add function argument access API
-Date: Sat, 24 Feb 2018 14:34:42 +0900
-Message-Id: <151945048211.27508.108330725907416663.stgit@devbox>
+Subject: [PATCH v3 12/18] tracing: probeevent: Add symbol type
+Date: Sat, 24 Feb 2018 14:34:13 +0900
+Message-Id: <151945045339.27508.2060392008212724572.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <151945010287.27508.6226184958678620828.stgit@devbox>
 References: <151945010287.27508.6226184958678620828.stgit@devbox>
@@ -54,104 +54,126 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593259335581230602?=
-X-GMAIL-MSGID: =?utf-8?q?1593259335581230602?=
+X-GMAIL-THRID: =?utf-8?q?1593259304939005165?=
+X-GMAIL-MSGID: =?utf-8?q?1593259304939005165?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add regs_get_argument() which returns N th argument of the
-function call.
-Note that this chooses most probably assignment, in some case
-it can be incorrect (e.g. passing data structure or floating
-point etc.)
-
-This is expected to be called from kprobes or ftrace with regs
-where the top of stack is the return address.
+Add "symbol" type to probeevent, which is an alias of u32 or u64
+(depends on BITS_PER_LONG). This shows the result value in
+symbol+offset style. This type is only available with kprobe
+events.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/Kconfig                  |    7 +++++++
- arch/x86/Kconfig              |    1 +
- arch/x86/include/asm/ptrace.h |   38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 46 insertions(+)
+ Changes in v2:
+  - Add symbol type to README file.
+---
+ Documentation/trace/kprobetrace.txt |    3 +++
+ kernel/trace/trace.c                |    2 +-
+ kernel/trace/trace_probe.c          |    8 ++++++++
+ kernel/trace/trace_probe.h          |   12 +++++++++---
+ 4 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 76c0b54443b1..4126ad4b122c 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -272,6 +272,13 @@ config HAVE_REGS_AND_STACK_ACCESS_API
- 	  declared in asm/ptrace.h
- 	  For example the kprobes-based event tracer needs this API.
- 
-+config HAVE_FUNCTION_ARG_ACCESS_API
-+	bool
-+	help
-+	  This symbol should be selected by an architecure if it supports
-+	  the API needed to access function arguments from pt_regs,
-+	  declared in asm/ptrace.h
+diff --git a/Documentation/trace/kprobetrace.txt b/Documentation/trace/kprobetrace.txt
+index 1a3a3d6bc2a8..d49381f2e411 100644
+--- a/Documentation/trace/kprobetrace.txt
++++ b/Documentation/trace/kprobetrace.txt
+@@ -62,6 +62,7 @@ respectively. 'x' prefix implies it is unsigned. Traced arguments are shown
+ in decimal ('s' and 'u') or hexadecimal ('x'). Without type casting, 'x32'
+ or 'x64' is used depends on the architecture (e.g. x86-32 uses x32, and
+ x86-64 uses x64).
 +
- config HAVE_CLK
- 	bool
- 	help
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 552b3d0eae36..eb0cad381ace 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -176,6 +176,7 @@ config X86
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_RCU_TABLE_FREE
- 	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
- 	select HAVE_STACK_VALIDATION		if X86_64
- 	select HAVE_SYSCALL_TRACEPOINTS
-diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-index 6de1fd3d0097..c2304b25e2fd 100644
---- a/arch/x86/include/asm/ptrace.h
-+++ b/arch/x86/include/asm/ptrace.h
-@@ -256,6 +256,44 @@ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
- 		return 0;
- }
+ String type is a special type, which fetches a "null-terminated" string from
+ kernel space. This means it will fail and store NULL if the string container
+ has been paged out.
+@@ -70,6 +71,8 @@ offset, and container-size (usually 32). The syntax is;
  
-+/**
-+ * regs_get_kernel_argument() - get Nth function argument in kernel
-+ * @regs:	pt_regs of that context
-+ * @n:		function argument number (start from 0)
-+ *
-+ * regs_get_argument() returns @n th argument of the function call.
-+ * Note that this chooses most probably assignment, in some case
-+ * it can be incorrect.
-+ * This is expected to be called from kprobes or ftrace with regs
-+ * where the top of stack is the return address.
-+ */
-+static inline unsigned long regs_get_kernel_argument(struct pt_regs *regs,
-+						     unsigned int n)
+  b<bit-width>@<bit-offset>/<container-size>
+ 
++Symbol type('symbol') is an alias of u32 or u64 type (depends on BITS_PER_LONG)
++which shows given pointer in "symbol+offset" style.
+ For $comm, the default type is "string"; any other type is invalid.
+ 
+ 
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 20a2300ae4e8..8f08811d15b8 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4609,7 +4609,7 @@ static const char readme_msg[] =
+ 	"\t     args: <name>=fetcharg[:type]\n"
+ 	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
+ 	"\t           $stack<index>, $stack, $retval, $comm\n"
+-	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string,\n"
++	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
+ 	"\t           b<bit-width>@<bit-offset>/<container-size>\n"
+ #endif
+ 	"  events/\t\t- Directory containing all trace event subsystems:\n"
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 9c1b55e0ccfd..4c83b00ebec0 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -58,6 +58,13 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x16, u16, "0x%x")
+ DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
+ DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
+ 
++int PRINT_TYPE_FUNC_NAME(symbol)(struct trace_seq *s, void *data, void *ent)
 +{
-+	static const unsigned int argument_offs[] = {
-+#ifdef __i386__
-+		offsetof(struct pt_regs, ax),
-+		offsetof(struct pt_regs, cx),
-+		offsetof(struct pt_regs, dx),
-+#define NR_REG_ARGUMENTS 3
-+#else
-+		offsetof(struct pt_regs, di),
-+		offsetof(struct pt_regs, si),
-+		offsetof(struct pt_regs, dx),
-+		offsetof(struct pt_regs, cx),
-+		offsetof(struct pt_regs, r8),
-+		offsetof(struct pt_regs, r9),
-+#define NR_REG_ARGUMENTS 6
-+#endif
-+	};
-+
-+	if (n >= NR_REG_ARGUMENTS) {
-+		n -= NR_REG_ARGUMENTS - 1;
-+		return regs_get_kernel_stack_nth(regs, n);
-+	} else
-+		return regs_get_register(regs, argument_offs[n]);
++	trace_seq_printf(s, "%pS", (void *)*(unsigned long *)data);
++	return !trace_seq_has_overflowed(s);
 +}
++const char PRINT_TYPE_FMT_NAME(symbol)[] = "%pS";
 +
- #define arch_has_single_step()	(1)
- #ifdef CONFIG_X86_DEBUGCTLMSR
- #define arch_has_block_step()	(1)
+ /* Print type function for string type */
+ int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
+ {
+@@ -91,6 +98,7 @@ static const struct fetch_type probe_fetch_types[] = {
+ 	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
+ 	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
+ 	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
++	ASSIGN_FETCH_TYPE_ALIAS(symbol, ADDR_FETCH_TYPE, ADDR_FETCH_TYPE, 0),
+ 
+ 	ASSIGN_FETCH_TYPE_END
+ };
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 3bc43c1ce628..ef477bd8468a 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -157,6 +157,7 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(x32);
+ DECLARE_BASIC_PRINT_TYPE_FUNC(x64);
+ 
+ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
++DECLARE_BASIC_PRINT_TYPE_FUNC(symbol);
+ 
+ /* Default (unsigned long) fetch type */
+ #define __DEFAULT_FETCH_TYPE(t) x##t
+@@ -164,6 +165,10 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
+ #define DEFAULT_FETCH_TYPE _DEFAULT_FETCH_TYPE(BITS_PER_LONG)
+ #define DEFAULT_FETCH_TYPE_STR __stringify(DEFAULT_FETCH_TYPE)
+ 
++#define __ADDR_FETCH_TYPE(t) u##t
++#define _ADDR_FETCH_TYPE(t) __ADDR_FETCH_TYPE(t)
++#define ADDR_FETCH_TYPE _ADDR_FETCH_TYPE(BITS_PER_LONG)
++
+ #define __ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, _fmttype)	\
+ 	{.name = _name,				\
+ 	 .size = _size,					\
+@@ -172,13 +177,14 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
+ 	 .fmt = PRINT_TYPE_FMT_NAME(ptype),		\
+ 	 .fmttype = _fmttype,				\
+ 	}
+-
++#define _ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, _fmttype)	\
++	__ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, #_fmttype)
+ #define ASSIGN_FETCH_TYPE(ptype, ftype, sign)			\
+-	__ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, #ptype)
++	_ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, ptype)
+ 
+ /* If ptype is an alias of atype, use this macro (show atype in format) */
+ #define ASSIGN_FETCH_TYPE_ALIAS(ptype, atype, ftype, sign)		\
+-	__ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, #atype)
++	_ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, atype)
+ 
+ #define ASSIGN_FETCH_TYPE_END {}
+ 
 
