@@ -1,109 +1,193 @@
-Return-Path: <maxime.ripard@bootlin.com>
-X-Google-Smtp-Source: AH8x225k6izo4mtZdk2vM4DpwPG6ERRd6pOanLDPqZ1tDZdjFdcsxnNjPimJtJsENvcPT1S/1ki6
-ARC-Seal: i=1; a=rsa-sha256; t=1519716326; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AH8x2257+jMaO3cSkumQCuILzxE4NiOlMUpXb4wrcGBFKGZXGVGPg2xXDctFwphXn9OB7oq63JwF
+ARC-Seal: i=1; a=rsa-sha256; t=1519450130; cv=none;
         d=google.com; s=arc-20160816;
-        b=nzj9PYTiSiea1/vKYz1ekL3XhLSHBZHgXem+qJLmstzWgNSrqwhmgHc/zXos0NEWOy
-         hsI+TvYjfJ+XOViwSH8vciV16ZiQrlR1oRPoAJjfJBWcIuViPukk5BpJ0lPC//89CNMj
-         8D8jQRdpK3AuNlHzsTkqUMRLDYRRIevxN6ryah+BesXs230NcKoi9FyRbVDHnTz4LoHm
-         21CcNuZ20neZr3YrBjEU5P61jBLA4GIPI+Noa/yLtVVHGYU8SbUmY+F1i3Aieu7kEZwv
-         gGG3em2GWw4HXU8gn0aGsirjRQIBVgJ+IGdTE5+hsER4HZ4OEvVpbNqzSlgfCRFAxCcH
-         HM4A==
+        b=EjRyaevZnl0tqSOXhhbLyYf25xC2dp0TVwR+XTRbzj4LeNLS1vBphuU6sENzCDrnvy
+         3xsmc+3fmU2gi6CdECIr/vFSV1pFKywHEalP0WDZM0XZlhBrAQOyYITBXjndHgJpk6WL
+         twW5QapLUpMN+xfpxHYHPkH1WvsSgqNDZ818XFghIK9cVEWBmlSbQ2Ex5j4ZAtyBiToT
+         gchhw/3SdokVwFjHS73XEJdi0BBxRnH/UU7BhN/XZ1sZqxBfiDe23d1jUsViMNROpQwW
+         BJ28Gn/mJpFilEflzuQaoeln78I0JCa+q0fbrvPANSj0C49Kw1VcABbStorO8rTOgfq1
+         HSvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=JBS03H4uRLUR2EgOFHZmaNhSFlst2NLvvy3orFIKe38=;
-        b=Z/0BnKXrl1PIsCknzxM1LiiyBim8q+kjy4dYscFYt26+9gFYRLcfx0IZiL5nIhjte4
-         I6NXQbyzn3UVekkdThRrvRx2kiIAtmnL/2v1BHKctBWsxqX3u1xCaM61ciXv+4fQaP7v
-         hC60a0xh7EZYQwFct464FlQEgqw+a3aU1pMCRtfvs6/oeF9xM0dyjfUwsqfAyuIUmMYr
-         hvKbjT2e7dt2lRDpatUOXYd1gQd7UjNan9HO55NZDqMFiBKi1GdiD5dUpym3G8okBsTl
-         8CY3Wad7hYtaMtKu2YlXJel4rtAIza9pVlnE7B+Rjz+Fx0wjlN6t27RFxiRZiIcYlilF
-         QIww==
+        h=list-id:precedence:sender:content-transfer-encoding:mime-version
+         :user-agent:message-id:date:subject:cc:to:from:dmarc-filter
+         :arc-authentication-results;
+        bh=DR7umQM+MuLRBykocVUYGLqkxkGYYqL/XJfQGh/kzIM=;
+        b=AmBR9kfz6Ro1R6thu+90Fgb865bh8/XbesgVaBvwNdZQ+xHoSjXUCdO5jM5TuYaOop
+         ucgq6bNxgV+7JcJxyAA3qCEqrG1c8CrzNmsa8Gl+ph2ov3efMgmxjBZ/A3eEbL7HAQDk
+         32d7ScdHJdUgTbs2/WRdUC6M43ShpEvwz4cD/9iemhhrJfGxBB2BMdnfWCD/xJvY6WgA
+         2aCJv8KAvqOIt4hiH/cpa0f5DtcQ6KVvTlLZfWXmgPiarO/+tm1guLQBTDQsO7ijOrrp
+         Z9LgWBEAT8UdImkleXiOPl6eK6hL21Kg023ECfa5RY6mYtg2GThaIweX/iJV1SX5Exz3
+         eqkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
-Date: Tue, 27 Feb 2018 08:25:24 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Yong Deng <yong.deng@magewell.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Yannick Fertre <yannick.fertre@st.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v8 2/2] media: V3s: Add support for Allwinner CSI.
-Message-ID: <20180227072524.5pjoxoo4yowfw43v@flea>
-References: <1519697566-32600-1-git-send-email-yong.deng@magewell.com>
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750964AbeBXF2t (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 24 Feb 2018 00:28:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750841AbeBXF2s (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 24 Feb 2018 00:28:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCAE21741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        shuah@kernel.org
+Subject: [PATCH v3 00/18] tracing: probeevent: Improve fetcharg features
+Date: Sat, 24 Feb 2018 14:28:23 +0900
+Message-Id: <151945010287.27508.6226184958678620828.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fkl5txttwye7c5om"
-Content-Disposition: inline
-In-Reply-To: <1519697566-32600-1-git-send-email-yong.deng@magewell.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590918123212414894?=
-X-GMAIL-MSGID: =?utf-8?q?1593538066585822307?=
+X-GMAIL-THRID: =?utf-8?q?1593258939698310078?=
+X-GMAIL-MSGID: =?utf-8?q?1593258939698310078?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
 
---fkl5txttwye7c5om
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the 3rd version of the fetch-arg improvement series.
+This includes variable changes on fetcharg framework like,
 
-On Tue, Feb 27, 2018 at 10:12:46AM +0800, Yong Deng wrote:
-> Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> interface and CSI1 is used for parallel interface. This is not
-> documented in datasheet but by test and guess.
->=20
-> This patch implement a v4l2 framework driver for it.
->=20
-> Currently, the driver only support the parallel interface. MIPI-CSI2,
-> ISP's support are not included in this patch.
->=20
-> Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Signed-off-by: Yong Deng <yong.deng@magewell.com>
+- Add fetcharg testcases (syntax, argN, symbol, string and array)
+- Rewrite fetcharg framework with fetch_insn, switch-case based
+  instead of function pointer.
+- Add "symbol" type support, which shows symbol+offset instead of
+  address value.
+- Add "$argN" fetcharg, which fetches function parameters.
+  (currently only for x86-64)
+- Add array type support (including string arrary :) ) ,
+  which enables to get fixed length array from probe-events.
 
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+V2 is here:
+ https://lkml.org/lkml/2018/2/21/863
 
-Maxime
+Changes from the v2 are here:
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ - [1/18] Use kstrtol instead of kstrtoul. (Thanks Namhyung!)
+ - [7/18][8/18] Split out probe type table unification.
+ - [14/18] Show $arg<N> in README only when this feature is supported
+ - [16/18] Use ip register instead of top of stack for symbol type test
 
---fkl5txttwye7c5om
-Content-Type: application/pgp-signature; name="signature.asc"
+Last 2 changes are for non x86 environment, I've tested on arm/arm64.
 
------BEGIN PGP SIGNATURE-----
+Here are examples:
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVB+MACgkQ0rTAlCFN
-r3SN/g//bxWocMt6hu3dxRXkZ1oj77FTZkLTsoNzIlcd1zh+buI3HHSoWYilOeVU
-zLJj0nokWoF9FRuryNqiDXFjhOiRqLb3mgvu6HRRWVuQ7xwr1X3IN1ntG8aSy+5m
-zy5xCT89S24QkcZNalZ0YKCM/qs2i12AXw6LMLFdoABeNz9WygFI3tch1qIX/CwT
-IFQVh8ATY0RlYp275+A2OjzB5GSqbIeyMKjaPjWkIVP8iV3KkcuXvIjfMmnqm5Ok
-HvMDJopDYu+95krEEeue82nhFzMSa4npAdu7Vxq2cNS88txV6zj/3dURt7CWk/v6
-B/X2kKU3jH4HZ40BeNeuulSQdmSIlIPZEpYruiqimvurxqNKAQqBOnsiRGU+WWBh
-9HRhhB7/8rSkZj5Dq/Xbrm/4zP1+lAYDL7nHgQeuFBIdosvvQYbzwhnnrbBIN/oU
-qcwIrsjnz9wxzh5QbIMlEIXKLJBpFgmotgbc+A/QqUWzidoYp26JJScFeXcI68H7
-oNW3O3XMdP8q3Q3O8YyWklhHMvEFvo8UBiqf4Fo6J1cYwMxPnL8N/yFQwzNuxyLJ
-1j1tSxAepyrSHj6nvCq+HYMjmbODLCzxlS9Rk86PTM5vNAxNo6bQKxT+HVauwHfd
-JprB6jgC6mCJaqCugHCB+H14H8KdOdSOsL9f3UpfRoEkf5bgYJ8=
-=Kft4
------END PGP SIGNATURE-----
+o 'symbol' type
 
---fkl5txttwye7c5om--
+ # echo 'p vfs_read $stack0:symbol' > kprobe_events 
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-729   [007] ...2   105.753637: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=SyS_read+0x42/0x90
+            tail-736   [000] ...2   105.754904: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=kernel_read+0x2c/0x40
+            tail-736   [000] ...2   105.754929: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=kernel_read+0x2c/0x40
+
+
+o $argN 
+
+ # echo 'p vfs_read $arg0 $arg1 $arg2' > kprobe_events
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-726   [007] ...2   134.288973: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d98ec00 arg2=0x7ffeb4330f79 arg3=0x1
+            tail-731   [000] ...2   134.289987: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d9dd200 arg2=0xffff88001d8a0a00 arg3=0x80
+            tail-731   [000] ...2   134.290016: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d9dd200 arg2=0xffff88001faf4a00 arg3=0x150
+
+
+o Array type
+
+ # echo 'p vfs_read +0($stack):x64 +0($stack):x8[8]' > kprobe_events 
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-729   [007] ...2    91.701664: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b1252 arg2={0x52,0x12,0x1b,0x81,0xff,0xff,0xff,0xff}
+            tail-734   [000] ...2    91.702366: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b0dec arg2={0xec,0xd,0x1b,0x81,0xff,0xff,0xff,0xff}
+            tail-734   [000] ...2    91.702386: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b0dec arg2={0xec,0xd,0x1b,0x81,0xff,0xff,0xff,0xff}
+ #
+ # cat events/kprobes/p_vfs_read_0/format 
+name: p_vfs_read_0
+ID: 1069
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:unsigned long __probe_ip;	offset:8;	size:8;	signed:0;
+	field:u64 arg1;	offset:16;	size:0;	signed:0;
+	field:u8 arg2[8];	offset:24;	size:8;	signed:0;
+
+print fmt: "(%lx) arg1=0x%Lx arg2={0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x}", REC->__probe_ip, REC->arg1, REC->arg2[0], REC->arg2[1], REC->arg2[2], REC->arg2[3], REC->arg2[4], REC->arg2[5], REC->arg2[6], REC->arg2[7]
+
+o String Array type
+
+ # echo "p create_trace_kprobe arg1=+0(%si):string[3]" > kprobe_events 
+ # echo test1 test2 test3 >> kprobe_events 
+sh: write error: Invalid argument
+ # echo 'p vfs_read $stack' >> kprobe_events 
+ # tail -n 2 trace 
+              sh-744   [007] ...1   183.382407: p_create_trace_kprobe_0: (create_trace_kprobe+0x0/0x890) arg1={"test1","test2","test3"}
+              sh-744   [007] ...1   230.487809: p_create_trace_kprobe_0: (create_trace_kprobe+0x0/0x890) arg1={"p","vfs_read","$stack"}
+
+
+Thank you,
+
+---
+
+Masami Hiramatsu (18):
+      [BUGFIX] tracing: probeevent: Fix to support minus offset from symbol
+      selftests: ftrace: Add probe event argument syntax testcase
+      selftests: ftrace: Add a testcase for string type with kprobe_event
+      tracing: probeevent: Cleanup print argument functions
+      tracing: probeevent: Cleanup argument field definition
+      tracing: probeevent: Remove NOKPROBE_SYMBOL from print functions
+      tracing: probeevent: Introduce new argument fetching code
+      tracing: probeevent: Unify fetch type tables
+      tracing: probeevent: Return consumed bytes of dynamic area
+      tracing: probeevent: Append traceprobe_ for exported function
+      tracing: probeevent: Unify fetch_insn processing common part
+      tracing: probeevent: Add symbol type
+      x86: ptrace: Add function argument access API
+      tracing: probeevent: Add $argN for accessing function args
+      tracing: probeevent: Add array type support
+      selftests: ftrace: Add a testcase for symbol type
+      selftests: ftrace: Add a testcase for $argN with kprobe_event
+      selftests: ftrace: Add a testcase for array type with kprobe_event
+
+
+ Documentation/trace/kprobetrace.txt                |   26 +
+ arch/Kconfig                                       |    7 
+ arch/x86/Kconfig                                   |    1 
+ arch/x86/include/asm/ptrace.h                      |   38 +
+ kernel/trace/trace.c                               |    9 
+ kernel/trace/trace_kprobe.c                        |  366 ++++--------
+ kernel/trace/trace_probe.c                         |  629 +++++++++-----------
+ kernel/trace/trace_probe.h                         |  284 +++------
+ kernel/trace/trace_probe_tmpl.h                    |  214 +++++++
+ kernel/trace/trace_uprobe.c                        |  168 ++---
+ .../ftrace/test.d/kprobe/kprobe_args_argN.tc       |   25 +
+ .../ftrace/test.d/kprobe/kprobe_args_array.tc      |   75 ++
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   46 +
+ .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   77 ++
+ .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |   97 +++
+ 15 files changed, 1171 insertions(+), 891 deletions(-)
+ create mode 100644 kernel/trace/trace_probe_tmpl.h
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_array.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
