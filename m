@@ -1,48 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752341AbeBXAnE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 19:43:04 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751864AbeBXAnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 19:43:03 -0500
-Subject: Re: [PATCH] KVM: x86: move LAPIC initialization after VMCS creation
-To: Liran Alon <liran.alon@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <764f4da9-2d0c-41cf-a4a4-d9b3bf3447c2@default>
+        id S1752792AbeBXAwe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 19:52:34 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52427 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbeBXAwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 19:52:31 -0500
+X-Google-Smtp-Source: AG47ELvTW8/KuurPOgAEppRVwdeDgY5ccHymi+EW7S5X1QP3WGvo1zVMklxblV+x67TyV3PqfwYZEg==
 From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <79e3fc04-c76e-186e-3b73-74f5128dff91@redhat.com>
-Date: Sat, 24 Feb 2018 01:43:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <764f4da9-2d0c-41cf-a4a4-d9b3bf3447c2@default>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to userspace
+Date: Sat, 24 Feb 2018 01:52:26 +0100
+Message-Id: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/02/2018 01:39, Liran Alon wrote:
-> I agree with the bug and the fix.
-> It makes sense to reset LAPIC in the same place other components are reset
-> rather than in it's creation.
-> 
-> However, I failed to understand why you mention it fixes commit:
-> 851c1a18c541 ("KVM: nVMX: Fix injection to L2 when L1 don't intercept external-interrupts")
-> 
-> Before and after that commit, vmx_hwapic_irr_update() did exactly the same
-> because is_guest_mode(vcpu)==false at this point.
-> Therefore, vmx_hwapic_irr_update() has always just called vmx_set_rvi()
-> which has not changed in that commit.
-> 
-> It seems to me that the commit which introduced this issue is actually:
-> 4191db26b714 ("KVM: x86: Update APICv on APIC reset")
-> 
-> What am I missing?
+Use the new MSR feature framework to expose the ARCH_CAPABILITIES MSR to
+userspace.  This way, userspace can access the capabilities even if it
+does not have the permissions to read MSRs.
 
-No, you're right.  But then I'm not sure why I'm only seeing the issue
-now, and not with 4.15 kernels.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 12 +++++++++++-
+ arch/x86/kvm/x86.c |  1 +
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Paolo
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 130fca0ea1bf..99689061e11e 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3228,7 +3228,17 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
+ 
+ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
+ {
+-	return 1;
++	switch (msr->index) {
++	case MSR_IA32_ARCH_CAPABILITIES:
++		if (!boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
++			return 1;
++		rdmsrl(msr->index, msr->data);
++		break;
++	default:
++		return 1;
++	}
++
++	return 0;
+ }
+ 
+ /*
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 54b4ed55945b..e9a8cc9e3b2b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1054,6 +1054,7 @@ bool kvm_rdpmc(struct kvm_vcpu *vcpu)
+  * can be used by a hypervisor to validate requested CPU features.
+  */
+ static u32 msr_based_features[] = {
++	MSR_IA32_ARCH_CAPABILITIES,
+ 	MSR_F10H_DECFG,
+ };
+ 
+-- 
+1.8.3.1
