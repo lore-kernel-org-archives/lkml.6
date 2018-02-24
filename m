@@ -1,92 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752512AbeBXBPb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 20:15:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751983AbeBXBPa (ORCPT
+        id S1752501AbeBXBi1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 20:38:27 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:33435 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751873AbeBXBiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 20:15:30 -0500
-Date: Fri, 23 Feb 2018 17:15:28 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: Chris Mi <chrism@mellanox.com>
-Subject: Re: Fwd: Re: Kernel panic with 4.16-rc1 (and 4.16-rc2) running
- selftest
-Message-ID: <20180224011528.GA15231@bombadil.infradead.org>
-References: <7995f335-ccac-bfdc-bb37-46d0f887c647@oracle.com>
- <b926a569-c05e-dd49-a25d-555e88e9ff8e@infradead.org>
- <CAM_iQpUveA5T6-y7bguaPUok-LphJrLYxw6kNgaMorsxm4z9NA@mail.gmail.com>
- <CAM_iQpWSRe0t1Dr=7o+1ejULV=F+_Wx1v7yyw=NRBUTYttMxog@mail.gmail.com>
- <96bf4941-17c0-0796-292c-b66087f5f52e@infradead.org>
- <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
+        Fri, 23 Feb 2018 20:38:25 -0500
+Subject: Re: [PATCH v2 1/3] ARC: mcip: halt GFRC together with ARC cores
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
+References: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <49291bc3-665b-2cd8-aabc-4adb67b73413@synopsys.com>
+Date: Fri, 23 Feb 2018 17:38:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 Randy Dunlap wrote:
-> [add Matthew Wilcox; hopefully he can look/see]
+On 02/23/2018 08:41 AM, Eugeniy Paltsev wrote:
+> Currently GFRC is running regardless state of ARC cores in the SMP cluster.
+> That means even if ARC cores are halted when doing JTAG debugging GFRC
+> [our source of wall-time] continues to run giving us unexpected warnings
+> once we allow ARC cores to run due to some tasks being stuck for too
+> long.
+>
+> Starting from ARC HS v3.0 it's possible to tie GFRC to state of up-to 4
+> ARC cores with help of GFRC's CORE register where we set a mask for
+> cores which state we need to rely on.
+>
+> We update cpu mask every time new cpu came online instead of using
+> hardcoded one or using mask generated from "possible_cpus" as we
+> want it set correctly even if we run kernel on HW which has fewer cores
+> than expected (or we launch kernel via debugger and kick fever cores
+> than HW has)
+>
+> Signed-off-by: Alexey Brodkin<abrodkin@synopsys.com>
+> Signed-off-by: Eugeniy Paltsev<Eugeniy.Paltsev@synopsys.com>
 
-Thanks, Randy.  I don't understand why nobody else thought to cc the
-author of the patch that it was bisected to ...
-
-> On 02/23/2018 04:13 PM, Cong Wang wrote:
-> > On Fri, Feb 23, 2018 at 3:27 PM, Cong Wang <xiyou.wangcong@gmail.com>
-> wrote:
-> >> On Fri, Feb 23, 2018 at 11:00 AM, Randy Dunlap <rdunlap@infradead.org>
-> wrote:
-> >>> On 02/23/2018 08:05 AM, Khalid Aziz wrote:
-> >>>> Same selftest does not cause panic on 4.15. git bisect pointed to
-> commit 6ce711f2750031d12cec91384ac5cfa0a485b60a ("idr: Make 1-based IDRs
-> more efficient").
-> >>>> Kernel config is attached.
-> >>
-> >> Looks like something horribly wrong with u32 key id idr...
-> >
-> > Adding a few printk's, I got:
-> >
-> > [   31.231560] requested handle = ffe00000
-> > [   31.232426] allocated handle = 0
-> > ...
-> > [   31.246475] requested handle = ffd00000
-> > [   31.247555] allocated handle = 1
-> >
-> >
-> > So the bug is here where we can't allocate a specific handle:
-> >
-> >                         err = idr_alloc_u32(&tp_c->handle_idr, ht,
-> &handle,
-> >                                             handle, GFP_KERNEL);
-> >                         if (err) {
-> >                                 kfree(ht);
-> >                                 return err;
-> >                         }
-
-Please try this patch.  It fixes ffe00000, but there may be more things
-tested that it may not work for.
-
-Chris Mi, what happened to that set of testcases you promised to write
-for me?
-
-diff --git a/lib/idr.c b/lib/idr.c
-index c98d77fcf393..10d9b8d47c33 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -36,8 +36,8 @@ int idr_alloc_u32(struct idr *idr, void *ptr, u32 *nextid,
- {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
--	int base = idr->idr_base;
--	int id = *nextid;
-+	unsigned int base = idr->idr_base;
-+	unsigned int id = *nextid;
- 
- 	if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
- 		return -EINVAL;
+Acked-by: vineet Gupta <vgupta@synopsys.com>
