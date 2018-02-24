@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeBXVqt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 16:46:49 -0500
+        id S1751820AbeBXVqs (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 16:46:48 -0500
 Received: from mailoutvs4.siol.net ([213.250.19.137]:56355 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751756AbeBXVqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 16:46:25 -0500
+        id S1751784AbeBXVqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 16:46:30 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
@@ -14,9 +14,9 @@ Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 13/15] ARM: dts: sunxi: h3/h5: Add HDMI pipeline
-Date: Sat, 24 Feb 2018 22:45:43 +0100
-Message-Id: <20180224214545.3740-14-jernej.skrabec@siol.net>
+Subject: [PATCH 15/15] ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
+Date: Sat, 24 Feb 2018 22:45:45 +0100
+Message-Id: <20180224214545.3740-16-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
 References: <20180224214545.3740-1-jernej.skrabec@siol.net>
@@ -24,152 +24,157 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds all entries needed for HDMI to function properly.
+Enable HDMI output on all boards with HDMI connector.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 108 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 108 insertions(+)
+ .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 25 ++++++++++++++++++++++
+ .../dts/allwinner/sun50i-h5-orangepi-prime.dts     | 25 ++++++++++++++++++++++
+ .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    | 25 ++++++++++++++++++++++
+ 3 files changed, 75 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index 7a83b15225c7..e70348ed9bc0 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -105,6 +105,12 @@
- 		};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+index 9e51d3a5f4e6..7236cd81875f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+@@ -67,6 +67,17 @@
+ 		stdout-path = "serial0:115200n8";
  	};
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-h3-display-engine";
-+		allwinner,pipelines = <&mixer0>;
-+		status = "disabled";
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
 +	};
 +
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -123,6 +129,29 @@
- 			#reset-cells = <1>;
- 		};
+ 	leds {
+ 		compatible = "gpio-leds";
  
-+		mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-h3-de2-mixer-0";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER0>,
-+				 <&display_clocks CLK_MIXER0>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_MIXER0>;
+@@ -121,6 +132,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -153,6 +168,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
 +
-+				mixer0_out: port@1 {
-+					reg = <1>;
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+					mixer0_out_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
+index 0f25c4a6f15d..0cc9f4a9e733 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
+@@ -62,6 +62,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
 +			};
 +		};
++	};
 +
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-h3-system-controller",
- 				"syscon";
-@@ -138,6 +167,41 @@
- 			#dma-cells = <1>;
- 		};
+ 	leds {
+ 		compatible = "gpio-leds";
  
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun8i-h3-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
+@@ -128,6 +139,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -160,6 +175,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
 +
-+				tcon0_in: port@0 {
-+					reg = <0>;
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+					tcon0_in_mixer0: endpoint {
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+index af43533c7134..1bc3d9351941 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+@@ -58,6 +58,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon0_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon0>;
-+					};
-+				};
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
 +			};
 +		};
++	};
 +
- 		mmc0: mmc@1c0f000 {
- 			/* compatible and clocks are in per SoC .dtsi file */
- 			reg = <0x01c0f000 0x1000>;
-@@ -684,6 +748,50 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+ 	reg_vcc3v3: vcc3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc3v3";
+@@ -73,6 +84,20 @@
+ 	};
+ };
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-h3-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
++&de {
++	status = "okay";
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++&hdmi {
++	status = "okay";
++};
 +
-+				hdmi_in: port@0 {
-+					reg = <0>;
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+					hdmi_in_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-h3-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu 6>;
-+			clock-names = "bus", "mod", "pll-0";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins_a>;
 -- 
 2.16.2
