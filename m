@@ -1,47 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeBYM3t (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 07:29:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48003 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751653AbeBYM3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 07:29:48 -0500
-Date: Sun, 25 Feb 2018 13:29:24 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com,
-        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
-Message-ID: <20180225122924.GB26323@pd.tnic>
-References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
- <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
- <20180224214818.GD29374@pd.tnic>
- <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+        id S1751782AbeBYMks (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 07:40:48 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43863 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeBYMkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 07:40:47 -0500
+X-Google-Smtp-Source: AG47ELuxL6/omadWpHCyLek41Jt+D7dNcMe6WI0W5IgM4Zmw5LylS8XJBiDzAJpW84v6rBC9I3P+XzHfxS3qzn8zu28=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CANiq72mKWerHDO-TARJ3ixSmKghpt7E3tK6YW03XPB-mzXBpkA@mail.gmail.com>
+References: <20171126025329.32044-1-dja@axtens.net> <CANiq72=dbgyFMqCg0MPihGgdtjZAmAMu-ZpNkaTu17W1o9rYRg@mail.gmail.com>
+ <87r2pah1c2.fsf@linkitivity.dja.id.au> <CANiq72mKWerHDO-TARJ3ixSmKghpt7E3tK6YW03XPB-mzXBpkA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 25 Feb 2018 13:40:26 +0100
+Message-ID: <CANiq72mz3oHhKBHRG6jsOpoBFmgGkNZtp8UbVjSXNwesrUQBnQ@mail.gmail.com>
+Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: add MODULE_LICENSE("GPL")
+To: Daniel Axtens <dja@axtens.net>
+Cc: Paul Burton <paul.burton@mips.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 01:52:05PM +0300, Kirill A. Shutemov wrote:
-> Could you check if the patch below makes a difference?
-> 
-> If it is, could you check 0x9d000 address instead of 0x99000?
+On Sun, Feb 25, 2018 at 1:25 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Sat, Feb 24, 2018 at 4:08 PM, Daniel Axtens <dja@axtens.net> wrote:
+>> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
+>>
+>>> Hi Daniel,
+>>>
+>>> On Sun, Nov 26, 2017 at 3:53 AM, Daniel Axtens <dja@axtens.net> wrote:
+>>>> This matches the header at the top of the file and squashes:
+>>>>
+>>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
+>>>> see include/linux/module.h for more information
+>>>>
+>>>> Signed-off-by: Daniel Axtens <dja@axtens.net>
+>>>> ---
+>>>>  drivers/auxdisplay/img-ascii-lcd.c | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+>>>> index db040b378224..7315ffa79537 100644
+>>>> --- a/drivers/auxdisplay/img-ascii-lcd.c
+>>>> +++ b/drivers/auxdisplay/img-ascii-lcd.c
+>>>> @@ -441,3 +441,5 @@ static struct platform_driver img_ascii_lcd_driver = {
+>>>>         .remove = img_ascii_lcd_remove,
+>>>>  };
+>>>>  module_platform_driver(img_ascii_lcd_driver);
+>>>> +
+>>>> +MODULE_LICENSE("GPL");
+>>>
+>>> This was submitted just a few days before yours, and now it is in at
+>>> 09c479f7f1fbfaf848e5813996793966cd50be81
+>>> ("auxdisplay: img-ascii-lcd: add missing
+>>> MODULE_DESCRIPTION/AUTHOR/LICENSE").
+>>>
+>>> In any case, thanks for the patch! :-)
+>>
+>> Thanks!
+>>
+>> I was submitting the patches in part because I was considering
+>> submitting a change that made the license warning a fatal error and I
+>> wanted to make sure I had covered the obvious missing ones first.
+>>
+>> Would making the warning fatal impact on you?
+>
+> drivers/auxdisplay/arm-charlcd.c is missing MODULE_LICENSE. I will
+> send the patch for that which should be in for 4.17.
 
-Both don't make a difference.
+Never mind that, it is builtin.
 
-Thx.
+So all is good for drivers/auxdisplay already.
 
--- 
-Regards/Gruss,
-    Boris.
+Cheers,
+Miguel
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+>
+> Apart from that one, the rest of drivers/auxdisplay is fine.
+>
+> Cheers,
+> Miguel
+>
+>>
+>> Regards,
+>> Daniel
+>>>
+>>> Cheers,
+>>> Miguel
+>>>
+>>>> --
+>>>> 2.11.0
+>>>>
