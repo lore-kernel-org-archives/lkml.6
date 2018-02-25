@@ -1,96 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751782AbeBYMks (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 07:40:48 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43863 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeBYMkr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 07:40:47 -0500
-X-Google-Smtp-Source: AG47ELuxL6/omadWpHCyLek41Jt+D7dNcMe6WI0W5IgM4Zmw5LylS8XJBiDzAJpW84v6rBC9I3P+XzHfxS3qzn8zu28=
+        id S1751771AbeBYMn5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 07:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751683AbeBYMny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 07:43:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CD221736
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
+        Jon Medhurst <tixy@linaro.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        David Long <dave.long@linaro.org>
+Subject: [BUGFIX PATCH v2 1/2] arm: kprobes: Prohibit kprobes on do_undefinstr
+Date: Sun, 25 Feb 2018 21:43:34 +0900
+Message-Id: <151956261434.20858.3784217115908190486.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <CANiq72mKWerHDO-TARJ3ixSmKghpt7E3tK6YW03XPB-mzXBpkA@mail.gmail.com>
-References: <20171126025329.32044-1-dja@axtens.net> <CANiq72=dbgyFMqCg0MPihGgdtjZAmAMu-ZpNkaTu17W1o9rYRg@mail.gmail.com>
- <87r2pah1c2.fsf@linkitivity.dja.id.au> <CANiq72mKWerHDO-TARJ3ixSmKghpt7E3tK6YW03XPB-mzXBpkA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 25 Feb 2018 13:40:26 +0100
-Message-ID: <CANiq72mz3oHhKBHRG6jsOpoBFmgGkNZtp8UbVjSXNwesrUQBnQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: add MODULE_LICENSE("GPL")
-To: Daniel Axtens <dja@axtens.net>
-Cc: Paul Burton <paul.burton@mips.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 1:25 PM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> On Sat, Feb 24, 2018 at 4:08 PM, Daniel Axtens <dja@axtens.net> wrote:
->> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
->>
->>> Hi Daniel,
->>>
->>> On Sun, Nov 26, 2017 at 3:53 AM, Daniel Axtens <dja@axtens.net> wrote:
->>>> This matches the header at the top of the file and squashes:
->>>>
->>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
->>>> see include/linux/module.h for more information
->>>>
->>>> Signed-off-by: Daniel Axtens <dja@axtens.net>
->>>> ---
->>>>  drivers/auxdisplay/img-ascii-lcd.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
->>>> index db040b378224..7315ffa79537 100644
->>>> --- a/drivers/auxdisplay/img-ascii-lcd.c
->>>> +++ b/drivers/auxdisplay/img-ascii-lcd.c
->>>> @@ -441,3 +441,5 @@ static struct platform_driver img_ascii_lcd_driver = {
->>>>         .remove = img_ascii_lcd_remove,
->>>>  };
->>>>  module_platform_driver(img_ascii_lcd_driver);
->>>> +
->>>> +MODULE_LICENSE("GPL");
->>>
->>> This was submitted just a few days before yours, and now it is in at
->>> 09c479f7f1fbfaf848e5813996793966cd50be81
->>> ("auxdisplay: img-ascii-lcd: add missing
->>> MODULE_DESCRIPTION/AUTHOR/LICENSE").
->>>
->>> In any case, thanks for the patch! :-)
->>
->> Thanks!
->>
->> I was submitting the patches in part because I was considering
->> submitting a change that made the license warning a fatal error and I
->> wanted to make sure I had covered the obvious missing ones first.
->>
->> Would making the warning fatal impact on you?
->
-> drivers/auxdisplay/arm-charlcd.c is missing MODULE_LICENSE. I will
-> send the patch for that which should be in for 4.17.
+Prohibit kprobes on do_undefinstr because kprobes on
+arm is implemented by undefined instruction. This means
+if we probe do_undefinstr(), it can cause infinit
+recursive exception.
 
-Never mind that, it is builtin.
+Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ arch/arm/kernel/traps.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-So all is good for drivers/auxdisplay already.
-
-Cheers,
-Miguel
-
->
-> Apart from that one, the rest of drivers/auxdisplay is fine.
->
-> Cheers,
-> Miguel
->
->>
->> Regards,
->> Daniel
->>>
->>> Cheers,
->>> Miguel
->>>
->>>> --
->>>> 2.11.0
->>>>
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index 5e3633c24e63..2fe87109ae46 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -19,6 +19,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/hardirq.h>
+ #include <linux/kdebug.h>
++#include <linux/kprobes.h>
+ #include <linux/module.h>
+ #include <linux/kexec.h>
+ #include <linux/bug.h>
+@@ -417,7 +418,8 @@ void unregister_undef_hook(struct undef_hook *hook)
+ 	raw_spin_unlock_irqrestore(&undef_lock, flags);
+ }
+ 
+-static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
++static nokprobe_inline
++int call_undef_hook(struct pt_regs *regs, unsigned int instr)
+ {
+ 	struct undef_hook *hook;
+ 	unsigned long flags;
+@@ -490,6 +492,7 @@ asmlinkage void do_undefinstr(struct pt_regs *regs)
+ 
+ 	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
+ }
++NOKPROBE_SYMBOL(do_undefinstr)
+ 
+ /*
+  * Handle FIQ similarly to NMI on x86 systems.
