@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeBYNYG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 08:24:06 -0500
-Received: from mga17.intel.com ([192.55.52.151]:48188 "EHLO mga17.intel.com"
+        id S1751805AbeBYN1K (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 08:27:10 -0500
+Received: from mga02.intel.com ([134.134.136.20]:51771 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751692AbeBYNYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 08:24:03 -0500
+        id S1751699AbeBYN1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 08:27:08 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,393,1515484800";
-   d="scan'208";a="206816229"
-Message-ID: <1519565039.10722.145.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
+   d="scan'208";a="30528290"
+Message-ID: <1519565224.10722.148.camel@linux.intel.com>
+Subject: Re: [PATCH v1 4/4] pci: Re-use new dmi_get_bios_year() helper
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
@@ -20,10 +20,11 @@ Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-Date: Sun, 25 Feb 2018 15:23:59 +0200
-In-Reply-To: <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
+Date: Sun, 25 Feb 2018 15:27:04 +0200
+In-Reply-To: <20180223214051.GN14632@bhelgaas-glaptop.roam.corp.google.com>
 References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-         <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
+         <20180222125923.57385-4-andriy.shevchenko@linux.intel.com>
+         <20180223214051.GN14632@bhelgaas-glaptop.roam.corp.google.com>
 Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.5-1 
@@ -33,43 +34,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-23 at 15:35 -0600, Bjorn Helgaas wrote:
-> On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
-> > It's used in several places and more users may come.
-> > By using this helper they may create a slightly cleaner code.
-> > 
+On Fri, 2018-02-23 at 15:40 -0600, Bjorn Helgaas wrote:
+> Please use
+> 
+>   PCI: Re-use ...
+> 
+> to match the prevailing drivers/pci style.
+
+Noted. (Same for x86/PCI part)
+
+> On Thu, Feb 22, 2018 at 02:59:23PM +0200, Andy Shevchenko wrote:
+> > ...instead of open coding its functionality.
+> 
+> Same comment about making the changelog complete, independent of the
+> subject.
+
+Any suggestion how it would look like? (Same question for previous
+comment)
+
 > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  include/linux/dmi.h | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/include/linux/dmi.h b/include/linux/dmi.h
-> > index 46e151172d95..241c27008c70 100644
-> > --- a/include/linux/dmi.h
-> > +++ b/include/linux/dmi.h
-> > @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
-> >  
-> >  #endif
-> >  
-> > +static inline int dmi_get_bios_year(void)
-> > +{
-> > +	int year;
-> > +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-> > +	return year;
-> > +}
 > 
-> I don't really care personally, and I assume this series will go via a
-> non-PCI tree, but making this inline looks similar to this, which
-> wasn't well-received:
-> 
-> https://lkml.kernel.org/r/CA+55aFypU331cQy-
-> 6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-"Yes, that header file is already full of random inline functions, but
-they are generally wrapper functions that don't really do anything, ..."
+Thanks!
 
-I think the function above is exactly from the "wrapper that doesn't
-really do anything" category.
+> Let me know if you want me to take the series.  Otherwise I'll assume
+> it
+> goes elsewhere.
+
+Ingo took them into x86/platform.
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
