@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeBYR0p (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 12:26:45 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50220 "EHLO
+        id S1752030AbeBYR1L (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 12:27:11 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50217 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeBYRXA (ORCPT
+        with ESMTP id S1751855AbeBYRW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 12:23:00 -0500
-X-Google-Smtp-Source: AG47ELtWRxBbX1gfcfULOsiBxoX2/WkKlgFs3mOQSd5+sIUgrpiXFOHR7D2Z8Y3JQs5OzEvkiv00kA==
+        Sun, 25 Feb 2018 12:22:59 -0500
+X-Google-Smtp-Source: AG47ELt/sxJbmhBM3MoqNIKJoXtjQM65SU2Ku9GAz8Oh0MxwFqvXMWyZEtDMZ3wCCgIFs09evQkNnA==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-Date: Sun, 25 Feb 2018 18:22:21 +0100
-Message-Id: <20180225172236.29650-7-malat@debian.org>
+Subject: [PATCH 04/21] powerpc: Mark both tmp variables as unused
+Date: Sun, 25 Feb 2018 18:22:19 +0100
+Message-Id: <20180225172236.29650-5-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180225172236.29650-1-malat@debian.org>
 References: <20180225172236.29650-1-malat@debian.org>
@@ -27,52 +27,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite check size - 1 <= Y as size < Y since `size` is unsigned value.
-Fix warning (treated as error in W=1):
+Since the value of `tmp` is never intended to be read, declare both `tmp`
+variables as unused. Fix warning (treated as error in W=1):
 
   CC      arch/powerpc/kernel/signal_32.o
-In file included from ./include/linux/uaccess.h:14:0,
-                 from ./include/asm-generic/termios-base.h:8,
-                 from ./arch/powerpc/include/asm/termios.h:20,
-                 from ./include/uapi/linux/termios.h:6,
-                 from ./include/linux/tty.h:7,
-                 from arch/powerpc/kernel/signal_32.c:36:
-./include/asm-generic/termios-base.h: In function ‘user_termio_to_kernel_termios’:
-./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
-   (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
-                                   ^
-./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro ‘__access_ok’
-   __access_ok((__force unsigned long)(addr), (size), get_fs()))
-   ^~~~~~~~~~~
-./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro ‘access_ok’
-  if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
-      ^~~~~~~~~
-./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro ‘__get_user_check’
-  __get_user_check((x), (ptr), sizeof(*(ptr)))
-  ^~~~~~~~~~~~~~~~
-./include/asm-generic/termios-base.h:36:6: note: in expansion of macro ‘get_user’
-  if (get_user(termios->c_line, &termio->c_line) < 0)
-      ^~~~~~~~
-[...]
+arch/powerpc/kernel/signal_32.c: In function ‘sys_swapcontext’:
+arch/powerpc/kernel/signal_32.c:1048:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
+  unsigned char tmp;
+                ^~~
+arch/powerpc/kernel/signal_32.c: In function ‘sys_debug_setcontext’:
+arch/powerpc/kernel/signal_32.c:1234:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
+  unsigned char tmp;
+                ^~~
 cc1: all warnings being treated as errors
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/signal_32.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 51bfeb8777f0..fadc406bd39d 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -49,7 +49,7 @@
+diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+index a46de0035214..492f03451877 100644
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -1045,7 +1045,7 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 		     struct ucontext __user *new_ctx,
+ 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+ {
+-	unsigned char tmp;
++	unsigned char tmp __maybe_unused;
+ 	int ctx_has_vsx_region = 0;
  
- #define __access_ok(addr, size, segment)	\
- 	(((addr) <= (segment).seg) &&		\
--	 (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
-+	 (((size) == 0) || ((size) < ((segment).seg - (addr)))))
- 
- #endif
- 
+ #ifdef CONFIG_PPC64
+@@ -1231,7 +1231,7 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+ {
+ 	struct sig_dbg_op op;
+ 	int i;
+-	unsigned char tmp;
++	unsigned char tmp __maybe_unused;
+ 	unsigned long new_msr = regs->msr;
+ #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+ 	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
 -- 
 2.11.0
