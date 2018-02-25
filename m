@@ -1,153 +1,140 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2089732-1519370872-2-11420452669705174021
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-153198-1519572319-2-4769141814646004891
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519370871; b=KaSVy1LKT1fQ8dqK3d9wlE1WZBGnl74I6OYEoZIvQt0SxR1
-    nScKhkHQTPKbHW6QZHoujy9w7dbP/svC24RTz9ma0jxIMKzimGRK5z5LzhDI5DHU
-    Q0FTbcnKjdNd4wQW+HQ+RCwEmtivQYzM/n9boB90BgcEv7eqrm5zU3qQz7y+0XeA
-    t1ZNHPuHh88ktqdkRvOODFAVhFXu1Kesysm5jptQ49GoyxwIyltpSOFdcd1qrLKS
-    papAhMtwg0HMsxOtkCkU+GsQ+P8IFeuB9tfWHV5frN6PIVWk6dh+Wkn+ijPh/9lc
-    os1uxxZ1H54FUdROdSRXVquq/dyBhBcoQJVhmBA==
+    t=1519572319; b=edZxDtR4XAgJUkizx5H3Or1/qVbF7PnA6QkrqAZaeXfn8gv
+    TUy2HeHVyMsJHMRm55fE/G3aZA02XaGe/hEyp0bL3r+/WXMy3uzKUXilTyUrnWWl
+    GpWWMfbMmmtkp7irWg5ql69jItuzwDSVxTwPuVGkQSVMcMlNZkhSyZW2okoz3xPK
+    nuIdoVdVJKfST1qYotYWjeAFvD+Z8Wth+EfA8++yRZ7B5MF1wHwLP84HKsPVCjmO
+    9u2xrPS9ehiCsdsH0EJBJf9fAjZ2cG90zhu31v5l5FMqW+M/oWZL4ATNP0h4wKG9
+    fhQuiVaJwedwtPjFYLoQrWoZZuPErvl38xdH3dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519370871; bh=Kf/cUYuXMUryoGnK1rMJNeI7PZLoL9Nj7y+935Om2dQ=; b=C
-    0geBLNx3JRj8KBCNoJxXQpA5A+yk6GWb67eDrLonLgq0puuBn946eSKyOodcobH/
-    rc95+bdVbMJ/aU/w6VuXz1DknVu35nOe/gjNP99HzbiB9Vm7CxySToSY6gSvbQpY
-    OpPn1sN2PBtD23lYeqJ/TQ6k8ctAOF0mylMhoDdcr8tY4/N+/baRY/NksjnNm0wZ
-    REQ+XVaHW0RO8Ey6inG0ZphlU/tZZQjDT5mhUJJaqCCMdjayEk1xR8qb/zNhDbgU
-    Bdvtth5oMPEfS6QJE92stOvGi+pRitVQZF5Oy5tWqhIwOoU7XZUJB0pCmZgbDsJA
-    4cXp81V/YlkpINHW5dpaw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519572319; bh=mtYHECPBnZaW4hTODOx/5Hcbqa
+    Pt+nHygEta1rxF1o8=; b=pyDmI6CaqAeHeIFe9A/suXyGdouoCOwvpGf3/c7KWL
+    HnM/kVHLblbsMG9jeGVLv9FJjvA+VlJhRtVJJjo0MhzyP/RY7mqrenJiOoQzCDJI
+    +D7Pcqwn0wZAGoVmxa2nTCg1jbb+X5nPx6Xs91y8gk+URu4CbdWQJ8N0NL3si2ns
+    lAz9n7Qxx02tRGfhwgTMpuCDPRbBi5DXU8fxs0BP71TwqX20axziiLc8tCDMdr3L
+    AvwsQWgOEuFcP4Aq/jy41pNpvyfbczNAhVztqXy88bIiTSUmS2+ERHLYmHxuYi1t
+    Ujt7VfsoQleBTLYMNUZGgYuBw1qzkaHVL+2DirEMVmVQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeBWH1b (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 02:27:31 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4737 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751515AbeBWH1N (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 23 Feb 2018 02:27:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,382,1515484800";
-   d="scan'208";a="206416408"
-Subject: [PATCH v2 5/5] vfio: disable filesystem-dax page pinning
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Haozhong Zhang <haozhong.zhang@intel.com>,
-        Michal Hocko <mhocko@suse.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-mm@kvack.org, Alex Williamson <alex.williamson@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Date: Thu, 22 Feb 2018 23:18:06 -0800
-Message-ID: <151937028640.18973.6759836444320779319.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <151937026001.18973.12034171121582300402.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151937026001.18973.12034171121582300402.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.17.1-9-g687f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1751634AbeBYPZO (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 25 Feb 2018 10:25:14 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751540AbeBYPZN (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Sun, 25 Feb 2018 10:25:13 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH v2 00/12] USB Type-C device-connection, mux and switch support
+Date: Sun, 25 Feb 2018 16:24:58 +0100
+Message-Id: <20180225152510.10159-1-hdegoede@redhat.com>
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Filesystem-DAX is incompatible with 'longterm' page pinning. Without
-page cache indirection a DAX mapping maps filesystem blocks directly.
-This means that the filesystem must not modify a file's block map while
-any page in a mapping is pinned. In order to prevent the situation of
-userspace holding of filesystem operations indefinitely, disallow
-'longterm' Filesystem-DAX mappings.
+Hi All,
 
-RDMA has the same conflict and the plan there is to add a 'with lease'
-mechanism to allow the kernel to notify userspace that the mapping is
-being torn down for block-map maintenance. Perhaps something similar can
-be put in place for vfio.
+Here is version 2 of Heikki's and my USB Type-C device-connection, mux and
+switch support series. Version 2 brings various small code and style fixes
+based on review of v1 (no major changes).
 
-Note that xfs and ext4 still report:
+Here is the cover-letter of v1:
 
-   "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
+Some devices with an USB Type-C connector have a bunch of muxes
+behind that connector which need to be controlled by the kernel (rather
+then having them controlled by firmware as on most devices).
 
-...at mount time, and resolving the dax-dma-vs-truncate problem is one
-of the last hurdles to remove that designation.
+Quite a while back I submitted a patch-series to tie together these muxes
+and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
+framework. But the way I used the mux framework went against what it was
+designed for, so in the end that series got nowhere.
 
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: kvm@vger.kernel.org
-Cc: <stable@vger.kernel.org>
-Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
-Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
+recently been working on solving the same problem for some boards he is
+doing hardware-enablement for.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index e30e29ae4819..45657e2b1ff7 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -338,11 +338,12 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- {
- 	struct page *page[1];
- 	struct vm_area_struct *vma;
-+	struct vm_area_struct *vmas[1];
- 	int ret;
- 
- 	if (mm == current->mm) {
--		ret = get_user_pages_fast(vaddr, 1, !!(prot & IOMMU_WRITE),
--					  page);
-+		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
-+					      page, vmas);
- 	} else {
- 		unsigned int flags = 0;
- 
-@@ -351,7 +352,18 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 
- 		down_read(&mm->mmap_sem);
- 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
--					    NULL, NULL);
-+					    vmas, NULL);
-+		/*
-+		 * The lifetime of a vaddr_get_pfn() page pin is
-+		 * userspace-controlled. In the fs-dax case this could
-+		 * lead to indefinite stalls in filesystem operations.
-+		 * Disallow attempts to pin fs-dax pages via this
-+		 * interface.
-+		 */
-+		if (ret > 0 && vma_is_fsdax(vmas[0])) {
-+			ret = -EOPNOTSUPP;
-+			put_page(page[0]);
-+		}
- 		up_read(&mm->mmap_sem);
- 	}
- 
+Heikki has come up with a number of infrastructure patches for this.
+The first one is a new device-connection framework. This solves the
+problem of describing non bus device-links on x86 in what in my experience
+with this problematic area is a really nice simple, clean and *generic*
+way. This could for example in the near future also replace the custom
+lookup code in the pwm subsys and the custom pwm_add_table() /
+pwm_remove_table() functions.
+
+The other 3 patches add a framework for the different type of Type-C /
+USB "muxes".
+
+Heikki and I have gone through a number of iterations of these patches
+together and we believe these are now ready for merging. Since merging
+infrastructure patches without users is not done and Heikki's own use-case
+for these is not yet ready for merging, the rest of this series consists
+of patches by me to make the Type-C connector found on some Cherry Trail
+devices (finally) be able to actually work as an USB port and not just
+a charge port.
+
+The last patch uses the new usb-role-switch framework to also do proper
+devcie / host switching on CHT devices with a USB micro AB connector.
+This is also a big feature for CHT users, because before this they had
+to do a reboot to get an OTG-host cable recognized (on some devices).
+
+Part of this series is an usb-role-switch driver for the role-switch
+found inside the xhci controller on e.g. CHT devices, this is currently
+implemented as the generic xhci controller instantiating a platform
+child-device for this, since this really is a separate chunk of HW
+which happens to sit in the XHCI mmio space. This approach may not be
+universally liked, given that in this new series the role-switch driver
+is much smaller and does not have any external deps anymore we could
+just integrate it into the xhci code if that is preferred.
+
+About merging this series (once everything is reviewed, etc.), there are
+quite some interdependencies in it esp. a lot of the patches depend on
+the first patch. Luckily patches 1-10 all apply to subsystems which are
+maintained by Greg (most to the USB subsys). Which just leaves patches
+11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
+for the platform/x86 and extcon maintainers to merge once this is done?
+
+Regards,
+
+Hans
