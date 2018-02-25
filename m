@@ -1,89 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751945AbeBYXfw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 18:35:52 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59682 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeBYXfv (ORCPT
+        id S1751967AbeBYXgw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 18:36:52 -0500
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34853 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeBYXgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 18:35:51 -0500
-Subject: Re: [PATCH v5 0/4] ARM: OMAP2+: AM33XX/AM43XX: Add suspend-resume
- support
-To: Dave Gerlach <d-gerlach@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Keerthy J <j-keerthy@ti.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-References: <20180223154357.23504-1-d-gerlach@ti.com>
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <a56830af-cf81-3603-ba58-2a2c65c49f34@oracle.com>
-Date: Sun, 25 Feb 2018 15:35:21 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 25 Feb 2018 18:36:51 -0500
+X-Google-Smtp-Source: AG47ELtTUTRs7evoY7yJJ+QMwUF24PZPoSM6dVtrDNeHEKNvygb6WbibbyvZAc2bRwVUOTF/uteOwnOWX0f+yYYypNw=
 MIME-Version: 1.0
-In-Reply-To: <20180223154357.23504-1-d-gerlach@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8815 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802250311
+From: Pradyumna Kaushik <pkaushi1@binghamton.edu>
+Date: Sun, 25 Feb 2018 18:36:49 -0500
+Message-ID: <CAO6sEsCoWpiR+B=GcpQfp1CFiTa2YkoyxEEMezP_Dr2faq-EeQ@mail.gmail.com>
+Subject: Inconsistent values of perfevent hardware counters when measuring
+ power consumption of DRAM using RAPL
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+Hi,
 
-On 2/23/2018 7:43 AM, Dave Gerlach wrote:
-> Hi,
-> 
-> This is a minor update to previous series sent here [1] to switch to
-> SPDX license headers. Because update is so minor I have included original
-> cover letter below unmodified with the exception of updated links.
-> 
-> This series contains the remaining code to enable suspend to mem and standby
-> on am335x and am437x platforms. All dependencies have been merged and this
-> is just a rebase on v4.16-rc1. For this to work on am437x-gp-evm this
-> bug fix patch [2] is required but suspend works fine on am335x platforms
-> without it. V3 of this series can be found here [3].
-> 
-> This code also depends on firmware for the wkup_m3 that is available here [4]
-> that can either be placed in /lib/firmware or built in to the kernel.
-> 
-> For testing the drivers required are:
-> 
-> CONFIG_MAILBOX
-> CONFIG_OMAP2PLUS_MBOX
-> CONFIG_WKUP_M3_RPROC
-> CONFIG_SOC_TI
-> CONFIG_WKUP_M3_IPC
-> CONFIG_TI_EMIF_SRAM
-> CONFIG_AMX3_PM
-> 
-> There is a device tree patch series to follow immediately after this that will
-> completely enable suspend, all patches pushed here [5] for convenience
-> including the aforementioned [2] regulator bug fix if anyone is testing.
-> 
-> Regards,
-> Dave
-> 
-> [1] https://www.spinics.net/lists/linux-omap/msg141652.html
-> [2] https://www.spinics.net/lists/linux-omap/msg141626.html
-> [3] https://www.spinics.net/lists/arm-kernel/msg595931.html
-> [4] https://git.ti.com/processor-firmware/ti-amx3-cm3-pm-firmware/blobs/7eb9c0856a9e8b3b42bf64f761da135852b8eea7/bin/am335x-pm-firmware.elf
-> [5] https://github.com/dgerlach/linux-pm/tree/upstream/v4.16/amx3-suspend-v5
-> 
-> Dave Gerlach (4):
->    ARM: OMAP2+: Introduce low-level suspend code for AM33XX
->    ARM: OMAP2+: Introduce low-level suspend code for AM43XX
->    ARM: OMAP2+: pm33xx-core: Add platform code needed for PM
->    soc: ti: Add pm33xx driver for basic suspend support
-> 
-Are you going to pickup this series ?
+I recently noticed a large inconsistency in the data retrieved from
+the perf_event hardware counters pertaining to the power consumption
+of DRAM.
+This inconsistency was noticed upon a kernel upgrade from 4.4.0 to 4.14.20.
 
-Regards,
-Santosh
+Machine specs,
+Dual Socket.
+Processor specs: Intel(R) Xeon(R) CPU E5-2650 v3, 2.30 GHz (10 cores
+with 2 threads per core).
+So, overall it's a 20 core, 40 thread machine.
+TDP of the machine -- 210 Watts (105 Watts for each Xeon processor)
+
+In my research lab, we use performance co-pilot to measure power
+consumption of the CPU and DRAM through the use of perfevent hardware
+counters and RAPL.
+
+Old results
+Ubuntu Xenial
+Kernel Version: 4.4.0
+idle power consumption of CPU -- 33.34 Watts
+idle power consumption of DRAM -- 14.76 Watts
+
+New results (after kernel upgrade):
+Ubuntu Xenial
+Kernel Version: 4.14.20
+Idle power consumption of CPU -- 33.23 Watts
+Idle power consumption of DRAM -- 59.15 Watts
+
+Can anyone give me some insight as to why this is the case?
+
+-- 
+Thanks and Regards
+Pradyumna Kaushik
+
+Graduate Student
+Department of Computer Science
+Thomas J. Watson School of Engineering and Applied Science
+Binghamton University
