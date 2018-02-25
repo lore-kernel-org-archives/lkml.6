@@ -1,131 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751953AbeBYPZx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 10:25:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57005 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751851AbeBYPZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 10:25:49 -0500
-Date: Sun, 25 Feb 2018 16:25:35 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v4 03/10] ARM: sun8i: smp: Add support for A83T
-Message-ID: <20180225162535.7406803c@dell-desktop.home>
-In-Reply-To: <20180223150305.7jsuxay2idzvcy2w@flea.lan>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
-        <20180223133742.26044-4-mylene.josserand@bootlin.com>
-        <20180223150305.7jsuxay2idzvcy2w@flea.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1751742AbeBYPlQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 10:41:16 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33074 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751630AbeBYPlP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 10:41:15 -0500
+X-Google-Smtp-Source: AG47ELsV1LjGW6XOWXzl4YyDw6WuMaZT/cjDFQL3MkDG2t2OP4I38OmzOyh7DUXX8UfWpDODnCQIeg==
+Message-ID: <1519573271.4702.10.camel@redhat.com>
+Subject: Re: [lkp-robot] [iversion]  c0cef30e4f:  aim7.jobs-per-min -18.0%
+ regression
+From: Jeff Layton <jlayton@redhat.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Date: Sun, 25 Feb 2018 10:41:11 -0500
+In-Reply-To: <20180225150505.GD7144@yexl-desktop>
+References: <20180225150505.GD7144@yexl-desktop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, 23 Feb 2018 16:03:05 +0100
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-
-> On Fri, Feb 23, 2018 at 02:37:35PM +0100, Mylène Josserand wrote:
-> > Add the support for A83T.
-> > 
-> > A83T SoC has an additional register than A80 to handle CPU configurations:
-> > R_CPUS_CFG. Information about the register comes from Allwinner's BSP
-> > driver.
-> > An important difference is the Power Off Gating register for clusters
-> > which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  arch/arm/mach-sunxi/Kconfig  |   2 +-
-> >  arch/arm/mach-sunxi/mc_smp.c | 168 +++++++++++++++++++++++++++++++++++++++++--
-> >  2 files changed, 162 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> > index ce53ceaf4cc5..a0ad35c41c02 100644
-> > --- a/arch/arm/mach-sunxi/Kconfig
-> > +++ b/arch/arm/mach-sunxi/Kconfig
-> > @@ -51,7 +51,7 @@ config MACH_SUN9I
-> >  config ARCH_SUNXI_MC_SMP
-> >  	bool
-> >  	depends on SMP
-> > -	default MACH_SUN9I
-> > +	default y if MACH_SUN9I || MACH_SUN8I
-> >  	select ARM_CCI400_PORT_CTRL
-> >  	select ARM_CPU_SUSPEND
-> >  
-> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-> > index de02e5662557..3bd9066a1422 100644
-> > --- a/arch/arm/mach-sunxi/mc_smp.c
-> > +++ b/arch/arm/mach-sunxi/mc_smp.c
-> > @@ -55,22 +55,32 @@
-> >  #define CPUCFG_CX_RST_CTRL_L2_RST	BIT(8)
-> >  #define CPUCFG_CX_RST_CTRL_CX_RST(n)	BIT(4 + (n))
-> >  #define CPUCFG_CX_RST_CTRL_CORE_RST(n)	BIT(n)
-> > +#define CPUCFG_CX_RST_CTRL_CORE_RST_ALL	(0xf << 0)
-> >  
-> >  #define PRCM_CPU_PO_RST_CTRL(c)		(0x4 + 0x4 * (c))
-> >  #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
-> >  #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
-> >  #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
-> > +/* The power off register for clusters are different from SUN9I and SUN8I */
-> > +#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I	BIT(0)
-> >  #define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
-> >  #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
-> >  #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
-> >  #define PRCM_CPU_SOFT_ENTRY_REG		0x164
-> >  
-> > +/* R_CPUCFG registers, specific to SUN8I */
-> > +#define R_CPUCFG_CLUSTER_PO_RST_CTRL(c)	(0x30 + (c) * 0x4)
-> > +#define R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(n)	BIT(n)
-> > +#define R_CPUCFG_CPU_SOFT_ENTRY_REG	0x01a4
-> > +
-> >  #define CPU0_SUPPORT_HOTPLUG_MAGIC0	0xFA50392F
-> >  #define CPU0_SUPPORT_HOTPLUG_MAGIC1	0x790DCA3A
-> >  
-> >  static void __iomem *cpucfg_base;
-> > +static void __iomem *r_cpucfg_base;
-> >  static void __iomem *prcm_base;
-> >  static void __iomem *sram_b_smp_base;
-> > +static bool is_sun9i;  
+On Sun, 2018-02-25 at 23:05 +0800, kernel test robot wrote:
+> Greeting,
 > 
-> Since you always check for that condition to always be false, can't
-> you do the opposite, ie have it called is_a83t, and verify it to be
-> true?
-
-Yes, I will switch the test.
-
+> FYI, we noticed a -18.0% regression of aim7.jobs-per-min due to commit:
 > 
-> >  	/* Set the hardware entry point address */
-> > -	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
-> > -	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
-> > +	if (is_sun9i)
-> > +		writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
-> > +		       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
-> > +	else
-> > +		writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
-> > +		       r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG);  
 > 
-> if (is_a83t)
-> 	reg = prcm_base + PRCM_CPU_SOFT_ENTRY_REG;
-> else
-> 	reg = r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG;
-> writel(__pa_symbol(sunxi_mc_smp_secondary_startup), reg);
+> commit: c0cef30e4ff0dc025f4a1660b8f0ba43ed58426e ("iversion: make inode_cmp_iversion{+raw} return bool instead of s64")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> in testcase: aim7
+> on test machine: 40 threads Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz with 384G memory
+> with following parameters:
+> 
+> 	disk: 4BRD_12G
+> 	md: RAID0
+> 	fs: xfs
+> 	test: disk_src
+> 	load: 3000
+> 	cpufreq_governor: performance
+> 
+> test-description: AIM7 is a traditional UNIX system level benchmark suite which is used to test and measure the performance of multiuser system.
+> test-url: https://sourceforge.net/projects/aimbench/files/aim-suite7/
+> 
 > 
 
-Make sense, thanks for the review.
+I'm a bit suspicious of this result.
 
-Mylene
+This patch only changes inode_cmp_iversion{+raw} (since renamed to
+inode_eq_iversion{+raw}), and that neither should ever be called from
+xfs. The patch is fairly trivial too, and I wouldn't expect a big
+performance hit.
 
+Is IMA involved here at all? I didn't see any evidence of it, but the
+kernel config did have it enabled.
+
+
+> 
+> Details are as below:
+> -------------------------------------------------------------------------------------------------->
+> 
+> 
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+> 
+> =========================================================================================
+> compiler/cpufreq_governor/disk/fs/kconfig/load/md/rootfs/tbox_group/test/testcase:
+>   gcc-7/performance/4BRD_12G/xfs/x86_64-rhel-7.2/3000/RAID0/debian-x86_64-2016-08-31.cgz/lkp-ivb-ep01/disk_src/aim7
+> 
+> commit: 
+>   3da90b159b (" f2fs-for-4.16-rc1")
+>   c0cef30e4f ("iversion: make inode_cmp_iversion{+raw} return bool instead of s64")
+> 
+> 3da90b159b146672 c0cef30e4ff0dc025f4a1660b8 
+> ---------------- -------------------------- 
+>          %stddev     %change         %stddev
+>              \          |                \  
+>      40183           -18.0%      32964        aim7.jobs-per-min
+>     448.60           +21.9%     546.68        aim7.time.elapsed_time
+>     448.60           +21.9%     546.68        aim7.time.elapsed_time.max
+>       5615 ±  5%     +33.4%       7489 ±  4%  aim7.time.involuntary_context_switches
+>       3086           +14.0%       3518        aim7.time.system_time
+>   19439782            -5.6%   18359474        aim7.time.voluntary_context_switches
+>     199333           +14.3%     227794 ±  2%  interrupts.CAL:Function_call_interrupts
+>       0.59            -0.1        0.50        mpstat.cpu.usr%
+>    2839401           +16.0%    3293688        softirqs.SCHED
+>    7600068           +15.1%    8747820        softirqs.TIMER
+>     118.00 ± 43%     +98.7%     234.50 ± 15%  vmstat.io.bo
+>      87840           -22.4%      68154        vmstat.system.cs
+>     552798 ±  6%     +15.8%     640107 ±  4%  numa-numastat.node0.local_node
+>     557345 ±  6%     +15.7%     644666 ±  4%  numa-numastat.node0.numa_hit
+>     528341 ±  7%     +21.7%     642933 ±  4%  numa-numastat.node1.local_node
+>     531604 ±  7%     +21.6%     646209 ±  4%  numa-numastat.node1.numa_hit
+>  2.147e+09           -12.4%   1.88e+09        cpuidle.C1.time
+>   13702041           -14.7%   11683737        cpuidle.C1.usage
+>  2.082e+08 ±  4%     +28.1%  2.667e+08 ±  5%  cpuidle.C1E.time
+>  4.719e+08 ±  2%     +23.1%  5.807e+08 ±  4%  cpuidle.C3.time
+>  1.141e+10           +31.0%  1.496e+10        cpuidle.C6.time
+>   15672622           +27.8%   20031028        cpuidle.C6.usage
+>   13520572 ±  3%     +29.5%   17514398 ±  9%  cpuidle.POLL.time
+>     278.25 ±  5%     -46.0%     150.25 ± 73%  numa-vmstat.node0.nr_dirtied
+>       3200 ± 14%     -20.6%       2542 ± 19%  numa-vmstat.node0.nr_mapped
+>     277.75 ±  5%     -46.2%     149.50 ± 73%  numa-vmstat.node0.nr_written
+>      28.50 ± 52%    +448.2%     156.25 ± 70%  numa-vmstat.node1.nr_dirtied
+>       2577 ± 19%     +26.3%       3255 ± 15%  numa-vmstat.node1.nr_mapped
+>     634338 ±  4%      +7.8%     683959 ±  4%  numa-vmstat.node1.numa_hit
+>     457411 ±  6%     +10.8%     506800 ±  5%  numa-vmstat.node1.numa_local
+>       3734 ±  8%     -11.5%       3306 ±  6%  proc-vmstat.numa_hint_faults_local
+>    1114538           +18.3%    1318978        proc-vmstat.numa_hit
+>    1106722           +18.5%    1311136        proc-vmstat.numa_local
+>      22100            +7.5%      23753 ±  4%  proc-vmstat.numa_pages_migrated
+>    1174556           +18.0%    1386359        proc-vmstat.pgalloc_normal
+>    1241445           +18.1%    1466086        proc-vmstat.pgfault
+>    1138310           +19.3%    1358132        proc-vmstat.pgfree
+>      22100            +7.5%      23753 ±  4%  proc-vmstat.pgmigrate_success
+>      53332 ± 43%    +143.0%     129617 ± 14%  proc-vmstat.pgpgout
+>       1.42 ±  2%      +1.7        3.07        perf-stat.branch-miss-rate%
+>  1.064e+10          +123.3%  2.375e+10        perf-stat.branch-misses
+>      10.79            +0.6       11.43        perf-stat.cache-miss-rate%
+>  5.583e+09            +5.9%  5.915e+09        perf-stat.cache-misses
+>   39652092            -5.0%   37662545        perf-stat.context-switches
+>       1.29           +11.7%       1.44        perf-stat.cpi
+>  4.637e+12           +12.8%   5.23e+12        perf-stat.cpu-cycles
+>  8.653e+11            +9.8%  9.498e+11 ±  2%  perf-stat.dTLB-loads
+>  3.654e+11           +12.4%  4.109e+11        perf-stat.dTLB-stores
+>       0.78           -10.5%       0.70        perf-stat.ipc
+>    1214932           +17.9%    1432266        perf-stat.minor-faults
+>  1.334e+09            -1.8%   1.31e+09        perf-stat.node-store-misses
+>  1.651e+09            -1.8%   1.62e+09        perf-stat.node-stores
+>    1214954           +17.9%    1432313        perf-stat.page-faults
+>     256.75          -100.0%       0.00        turbostat.Avg_MHz
+>      21.39           -21.4        0.00        turbostat.Busy%
+>       1200          -100.0%       0.00        turbostat.Bzy_MHz
+>   13695007          -100.0%       0.00        turbostat.C1
+>      11.92           -11.9        0.00        turbostat.C1%
+>    2116683 ±  2%    -100.0%       0.00        turbostat.C1E
+>       1.16 ±  4%      -1.2        0.00        turbostat.C1E%
+>    3112269          -100.0%       0.00        turbostat.C3
+>       2.62 ±  2%      -2.6        0.00        turbostat.C3%
+>   15671277          -100.0%       0.00        turbostat.C6
+>      63.38           -63.4        0.00        turbostat.C6%
+>      49.46          -100.0%       0.00        turbostat.CPU%c1
+>       1.42 ±  2%    -100.0%       0.00        turbostat.CPU%c3
+>      27.73          -100.0%       0.00        turbostat.CPU%c6
+>      31.41          -100.0%       0.00        turbostat.CorWatt
+>      63.25          -100.0%       0.00        turbostat.CoreTmp
+>   18919351          -100.0%       0.00        turbostat.IRQ
+>       1.21 ± 18%    -100.0%       0.00        turbostat.Pkg%pc2
+>       0.67 ± 31%    -100.0%       0.00        turbostat.Pkg%pc6
+>      63.25          -100.0%       0.00        turbostat.PkgTmp
+>      57.63          -100.0%       0.00        turbostat.PkgWatt
+>      30.73          -100.0%       0.00        turbostat.RAMWatt
+>      36030          -100.0%       0.00        turbostat.SMI
+>       3000          -100.0%       0.00        turbostat.TSC_MHz
+> 
+>                                                                                 
+>                                   aim7.jobs-per-min                             
+>                                                                                 
+>   41000 +-+-----------------------------------------------------------------+   
+>         |  ..+....+....  ..+....+....+....   ..+....+....+...+....          |   
+>   40000 +-+            +.                 +..                     +         |   
+>   39000 +-+                                                                 |   
+>         |                                                                   |   
+>   38000 +-+                                                                 |   
+>   37000 +-+                                                                 |   
+>         |                                                                   |   
+>   36000 +-+                                                                 |   
+>   35000 +-+                                                                 |   
+>         |                                                                   |   
+>   34000 +-+                                                                 |   
+>   33000 +-+                                         O                  O    |   
+>         O    O    O    O   O    O    O    O    O         O   O    O         O   
+>   32000 +-+-----------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                                                                                         
+>                                                                                 
+> [*] bisect-good sample
+> [O] bisect-bad  sample
+> 
+> 
+> 
+> Disclaimer:
+> Results have been estimated based on internal Intel analysis and are provided
+> for informational purposes only. Any difference in system hardware or software
+> design or configuration may affect actual performance.
+> 
+> 
+> Thanks,
+> Xiaolong
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Jeff Layton <jlayton@redhat.com>
