@@ -1,81 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751925AbeBYWuH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 17:50:07 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58513 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751738AbeBYWuE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 17:50:04 -0500
-Date: Sun, 25 Feb 2018 23:50:02 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180225225002.GA6078@amd>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <20180223154316.35b26857@alans-desktop>
- <20180223171019.GA1125@roeck-us.net>
- <20180225202806.735a6870@alans-desktop>
+        id S1751949AbeBYWvK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 17:51:10 -0500
+Received: from ozlabs.org ([103.22.144.67]:42139 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751738AbeBYWvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 17:51:08 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 26 Feb 2018 09:50:31 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the v4l-dvb-fixes tree
+Message-ID: <20180226095031.74f46e71@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <20180225202806.735a6870@alans-desktop>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kLnQLeJoDsenAWekz+/8sDx"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/kLnQLeJoDsenAWekz+/8sDx
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Hi Mauro,
 
-On Sun 2018-02-25 20:28:06, Alan Cox wrote:
-> > FWIW, alpha and m68k are known boot with qemu (even though m68k
-> > generates a warning traceback with the mainline kernel).
->=20
-> M68K works - people actively use it. Crazy people true 8). Alpha I
-> believe one or two people boot. I just need to track down some discs for
-> my Alpha 8)
+After merging the v4l-dvb-fixes tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-I guess it would be useful to track who tested what kernel on what
-hardware ... and I created a project for
-that. Feel free to contribute: https://github.com/pavelmachek/missy --
-I'd like to get some data from "big" iron...
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/common/videobuf=
+2/vb2-trace.o
+see include/linux/module.h for more information
 
-									Pavel
+Exposed by commit
+
+  e77c31ed60d1 ("media: videobuf2: fix build issues with vb2-trace")
+
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Cheers,
+Stephen Rothwell
 
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/kLnQLeJoDsenAWekz+/8sDx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlqTPZoACgkQMOfwapXb+vLKywCgk2z5SVeKJcYPKZ6cWyThLJMR
-OnQAoIPqgq/lzlii0UrakhlWdMkuYyYy
-=Tfvd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqTPbcACgkQAVBC80lX
+0GzgWAf/bLpHttIwBEkhY3WzbVDzC9d6E2QFPBJupnBuLk8mHXl0iNTppXyG5Iq/
+EvTb+xNbQRDKvwMFhHZbKpku8ew96QK40mFYLfIXQBY8eHs+jOnrK+dRjae/MJeQ
+hrcejHitaT5y0RiLjo2CFnuFspXR2jD4/5IafVpkSe5zXxNV79WsUOdmrX2mcZkU
+VNGTK2cIyUuqVfCpC1E51oVeCQ1vUsEtc6RtM4we5PIuhI0/dPWDWZyoBLIQHDJY
+4aomOWy1ltSiyljJM9X2Ko3v+4I8TTeJTSPSpuKwxt10HbRKS9p3W7minbwl/aXC
+E3kYnSqRsDqhkXccFAbC85bFWvlKlw==
+=bfBj
 -----END PGP SIGNATURE-----
 
---ZPt4rx8FFjLCG7dd--
+--Sig_/kLnQLeJoDsenAWekz+/8sDx--
