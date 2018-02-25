@@ -1,90 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751979AbeBYT5x (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 14:57:53 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34049 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbeBYT5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 14:57:51 -0500
-Date: Sun, 25 Feb 2018 20:57:48 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] i2c: imx: Fix PM device usage count
-Message-ID: <20180225195748.5itrchj36wz5mquu@pengutronix.de>
-References: <20180224224328.2pfki7rqcxqetmlz@agrajag.zerfleddert.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180224224328.2pfki7rqcxqetmlz@agrajag.zerfleddert.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1751937AbeBYUOl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 15:14:41 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58882 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751699AbeBYUOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 15:14:38 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] rtc: m41t80: fix race conditions
+Date: Sun, 25 Feb 2018 21:14:31 +0100
+Message-Id: <20180225201431.9775-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 11:43:28PM +0100, Tobias Jordan wrote:
-> pm_runtime_get_sync() increases the device's usage count even when
-> reporting an error, so add a call to pm_runtime_put_noidle() in the
-> related error branches.
-> 
-> Fixes: 588eb93ea49f ("i2c: imx: add runtime pm support to improve the
->   performance")
-> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-> ---
-> In i2c_imx_xfer(), one could also move the "out" label up (in front of
-> the call to pm_runtime_put_autosuspend()), but I'm not sure what the
-> underlying error scenario is; calling _put_noidle() seems to be the
-> safer bet.
-> 
-> This is one of a number of patches for problems found using coccinelle 
-> scripting in the SIL2LinuxMP project. The patch has been compile-tested;
-> it's based on linux-next-20180223.
-> 
-> For a discussion of the corresponding issue, see
-> https://marc.info/?l=linux-pm&m=151904483924999&w=2
+The IRQ is requested before the struct rtc is allocated and registered, but
+this struct is used in the IRQ handler, leading to:
 
-I don't get the original mail, so reply here. In reply to the question I
-would have asked here, too:
+Unable to handle kernel NULL pointer dereference at virtual address 0000017c
+pgd = a38a2f9b
+[0000017c] *pgd=00000000
+Internal error: Oops: 5 [#1] ARM
+Modules linked in:
+CPU: 0 PID: 613 Comm: irq/48-m41t80 Not tainted 4.16.0-rc1+ #42
+Hardware name: Atmel SAMA5
+PC is at mutex_lock+0x14/0x38
+LR is at m41t80_handle_irq+0x1c/0x9c
+pc : [<c06e864c>]    lr : [<c04b70f0>]    psr: 20000013
+sp : dec73f30  ip : 00000000  fp : dec56d98
+r10: df437cf0  r9 : c0a03008  r8 : c0145ffc
+r7 : df5c4300  r6 : dec568d0  r5 : df593000  r4 : 0000017c
+r3 : df592800  r2 : 60000013  r1 : df593000  r0 : 0000017c
+Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c53c7d  Table: 20004059  DAC: 00000051
+Process irq/48-m41t80 (pid: 613, stack limit = 0xb52d091e)
+Stack: (0xdec73f30 to 0xdec74000)
+3f20:                                     dec56840 df5c4300 00000001 df5c4300
+3f40: c0145ffc c0146018 dec56840 ffffe000 00000001 c0146290 dec567c0 00000000
+3f60: c0146084 ed7c9a62 c014615c dec56d80 dec567c0 00000000 dec72000 dec56840
+3f80: c014615c c012ffc0 dec72000 dec567c0 c012fe80 00000000 00000000 00000000
+3fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 29282726 2d2c2b2a
+[<c06e864c>] (mutex_lock) from [<c04b70f0>] (m41t80_handle_irq+0x1c/0x9c)
+[<c04b70f0>] (m41t80_handle_irq) from [<c0146018>] (irq_thread_fn+0x1c/0x54)
+[<c0146018>] (irq_thread_fn) from [<c0146290>] (irq_thread+0x134/0x1c0)
+[<c0146290>] (irq_thread) from [<c012ffc0>] (kthread+0x140/0x148)
+[<c012ffc0>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+Exception stack(0xdec73fb0 to 0xdec73ff8)
+3fa0:                                     00000000 00000000 00000000 00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+Code: e3c33d7f e3c3303f f5d0f000 e593300c (e1901f9f)
+---[ end trace 22b027302eb7c604 ]---
+genirq: exiting task "irq/48-m41t80" (613) is an active IRQ thread (irq 48)
 
-> Why isn't ...get_sync() directly calling ...put_noidle() but relies on
-> the driver implementation to do it? It seems unintuitive for a _get_
-> function to increase the usage count although returning an error.
+Also, there is another possible race condition. The probe function is not
+allowed to fail after the RTC is registered because the following may
+happen:
 
-Rafael replied:
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
 
-> Because ...get_sync() returns an error when runtime PM is disabled and
-> we wanted that case to be transparent for the users of it.
-> 
-> In the majority of cases (if not always) errors returned by
-> ...get_sync()
-> mean disabled runtime PM or flaky hardware and the latter is much less
-> common (and generally there's not much to do about them in the kernel
-> anyway).
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+before requesting the IRQ and register the it as late as possible.
 
-If pm_runtime_get_sync() should be transparent for the users if PM is
-disable, why not simply return success then? Or introduce a return value
-convention like:
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-m41t80.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-	<0 (i.e. -ESOMETHIN) is error
-	0 success
-	1 PM is disabled
-
-(Taking a quick glimpse there seem to be already some cases where 1 or
--ESOMETHING is returned, but I didn't find documentation explaining the
-return values.)
-
-Best regards
-Uwe
-
+diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
+index b3e33320c0bf..f77320948fc4 100644
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -885,7 +885,6 @@ static int m41t80_probe(struct i2c_client *client,
+ {
+ 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+ 	int rc = 0;
+-	struct rtc_device *rtc = NULL;
+ 	struct rtc_time tm;
+ 	struct m41t80_data *m41t80_data = NULL;
+ 	bool wakeup_source = false;
+@@ -909,6 +908,10 @@ static int m41t80_probe(struct i2c_client *client,
+ 		m41t80_data->features = id->driver_data;
+ 	i2c_set_clientdata(client, m41t80_data);
+ 
++	m41t80_data->rtc =  devm_rtc_allocate_device(&client->dev);
++	if (IS_ERR(m41t80_data->rtc))
++		return PTR_ERR(m41t80_data->rtc);
++
+ #ifdef CONFIG_OF
+ 	wakeup_source = of_property_read_bool(client->dev.of_node,
+ 					      "wakeup-source");
+@@ -932,15 +935,11 @@ static int m41t80_probe(struct i2c_client *client,
+ 		device_init_wakeup(&client->dev, true);
+ 	}
+ 
+-	rtc = devm_rtc_device_register(&client->dev, client->name,
+-				       &m41t80_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(rtc))
+-		return PTR_ERR(rtc);
++	m41t80_data->rtc->ops = &m41t80_rtc_ops;
+ 
+-	m41t80_data->rtc = rtc;
+ 	if (client->irq <= 0) {
+ 		/* We cannot support UIE mode if we do not have an IRQ line */
+-		rtc->uie_unsupported = 1;
++		m41t80_data->rtc->uie_unsupported = 1;
+ 	}
+ 
+ 	/* Make sure HT (Halt Update) bit is cleared */
+@@ -993,6 +992,11 @@ static int m41t80_probe(struct i2c_client *client,
+ 	if (m41t80_data->features & M41T80_FEATURE_SQ)
+ 		m41t80_sqw_register_clk(m41t80_data);
+ #endif
++
++	rc = rtc_register_device(m41t80_data->rtc);
++	if (rc)
++		return rc;
++
+ 	return 0;
+ }
+ 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.16.2
