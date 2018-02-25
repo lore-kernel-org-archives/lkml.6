@@ -1,136 +1,268 @@
-Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AG47ELvLESTZLOpEfY+M3EjScPSgCPTM/MaLOqMxywJXtjj2lv518k2qq84zuAbCjRxrvbNJAFhr
-ARC-Seal: i=1; a=rsa-sha256; t=1519596824; cv=none;
+Return-Path: <idgar@virtualoco.com>
+X-Google-Smtp-Source: AG47ELvJxmg0ugK9MbH3jI75l6Ans+vTHqnI0CWtGvCcLHNPuoMEzRpyDth2+LGc+d0GfgSDuC0v
+ARC-Seal: i=1; a=rsa-sha256; t=1519574298; cv=none;
         d=google.com; s=arc-20160816;
-        b=NyzZrEIE7FYK/TzrdWOY/HAtRuYW8HueD6AsW6LLe9YAhda59xA16vgdW8QUcQ4bQ6
-         UV303T5GSjMl0pgmj7l/0nRYbgmnlONxHHa9CRb7rFxvK3N38ns6gwa9ZoqbnwT4Okzo
-         i0ckUReLj51ni5A4DPNNJ3s9dOAV3keSLlKR7MAhFA9qEhZU69bSNxkIxlhaWEcgjbHf
-         3fJXz1NkQlizHY+28c6wxInLLVCCY/tmNxslWnxnIQq42poerF4bf2dN/QrQeAuGlV6t
-         rr9/SMymOdFr1hf+P5KTnaRIFdgOu3288tuxKGHTHr7alIRaS6FPj9w+Fgu9A6ucRhTJ
-         xH3g==
+        b=wnady1zYcEW2TojPlWfGcjWHyDrkuKx3KFiURUwdHEE5jgvQ0zdlSJw2boa1pk+2fj
+         mevXymcLXv+VeggBzn4te/mahGVyl72EsBOcND6A5L1ZGiN7VAT3jIIn5kitUzXElntS
+         I36ICwEFOknHFyukSspyu/uyzLEXKWJRNCHzvQIXz/L0PuVqPsOXtnzOWnweppGuWbn9
+         Ok4cEbwptA/5WQG2p6zgSoT7aiEHRmtCza4WUPSq+7gtIUJ4R2H2xPiEsmc7r/Hm8n0w
+         Xy2tNQJS7knfnb1RreqvK/92NxzHMqQAfRgN9h78PcTRJrONMQTbfooi0Bl3cvqe1Fc2
+         GkLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=N/USEuMu/kUs5kTHWRoCexqnBR+r78tGoYCTOeCT87A=;
-        b=X95qLUtgE97mYa3iaWdfP9MS3qlmgpUmCMEsTpEzSLeM6Z3S1NIZvlRcp4byh+g8VE
-         3HyeFpMfBVbqWWWKZSKb+EaQzLvAYJP7TnN+N8eBEmRNgkkDJIz1EHhiNrCszto8YESc
-         El6+XtWRGmFa1q+2nYjtiajJvKtL4ywmUMAsw7MuX1Fc4JEtL2nO+34AYdwyNVvfnIPB
-         2LFHPrfdhoHJpDpNHbjRz+o12CNKyvEZ0Mf2SXIOeQwtQDY4Nbk/eOtYqJEcR7Rpe7le
-         n4w5fXm5h/viyRlksxZKlkc3Mx2Wgc1xdZ9RoW4BxVOcYHt7oPQgrqnOhx/RPtCPZzI1
-         zFmQ==
+        bh=KafxwblQkDq07Y7yWIUTmTY9rTFxwwJ9Fc22L6+1hg8=;
+        b=Q61Xd53cbDEBObPSJw1tZZTStbirv1sQVfopOP7tuiJ40WQEDffgLIin1jdR9vq/M2
+         tOjf0KmfsPttcHfH/X5aD7tANeao/tpsb7cvBgzhHk/AehazQ3b04iwkxH6n/OAjI+8S
+         BidFtJLiEmP5LslDoFVCVijRcUykDpjThNSgDg8WANCOcXRbbYxJK4Dtp3Y6AaZr0IOZ
+         MHZtUIZyYyKtiQHzjAN+nE2k5ybvxrafsqawLgPtlFRucjEpAlaIjMlSro+7Xyj2arf+
+         2wlEPRjZDx2yFUz/Uob8s6X5t9RQvMRfigkhx7/MBRxenmOBWFrl2bQTQfUXv+rhU6du
+         zBlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XRTF78l4;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=CkKl3TE7;
-       spf=neutral (google.com: 66.111.4.29 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=WK3c/mxR;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XRTF78l4;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=CkKl3TE7;
-       spf=neutral (google.com: 66.111.4.29 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:FzWTWspIujks8wO7uglVqBa6VzNvtSytXRPGGIca2ZI3hQs6LKDLzQ>
-Date: Mon, 26 Feb 2018 09:13:39 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	tycho@tycho.ws, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Pull Request for linux-next
-Message-ID: <20180225221339.GA2808@eros>
-References: <20180225075907.GB9456@eros>
- <20180226075422.6d55953d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Content-Disposition: inline
-In-Reply-To: <20180226075422.6d55953d@canb.auug.org.au>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=WK3c/mxR;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+From: Or Idgar <idgar@virtualoco.com>
+To: linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: oidgar@redhat.com,
+	idgar@virtualoco.com,
+	ghammer@redhat.com,
+	Or Idgar <oridgar@gmail.com>
+Subject: [PATCH v3] drivers/virt: vm_gen_counter: initial driver implementation
+Date: Sun, 25 Feb 2018 17:55:25 +0200
+Message-Id: <20180225155525.25436-1-idgar@virtualoco.com>
+X-Mailer: git-send-email 2.14.3
+X-ZohoMailClient: External
+X-ZohoMail: Z_638866495 SPT_1 Z_638866494 SPT_1 SLF_D
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593358997453174821?=
-X-GMAIL-MSGID: =?utf-8?q?1593412760277147462?=
+X-GMAIL-THRID: =?utf-8?q?1593375847957640337?=
+X-GMAIL-MSGID: =?utf-8?q?1593389139553459998?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Or Idgar <oridgar@gmail.com>
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch is a driver which expose the Virtual Machine Generation ID
+via sysfs. The ID is a UUID value used to differentiate between virtual
+machines.
 
-On Mon, Feb 26, 2018 at 07:54:22AM +1100, Stephen Rothwell wrote:
-> Hi Tobin,
->=20
-> On Sun, 25 Feb 2018 18:59:07 +1100 "Tobin C. Harding" <me@tobin.cc> wrote:
-> >
-> > Would it be possible to get the development tree for
-> > scripts/leaking_addresses.pl included in Linux-next please.
-> >=20
-> > The tree is hosted on kernel.org
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/tobin/leaks.git/
-> >=20
-> > I have created a branch called linux-next.  This branch is not tagged or
-> > signed.  I'm super new to kernel maintainer branch management, ATM the
-> > tree mirrors GregKH's staging tree setup i.e 3 branches
-> >=20
-> > 	master
-> > 	leaks-testing
-> > 	leaks-next
-> >=20
-> > Development done on leaks-testing.  Once patches have been rinsed
-> > through LKML move them to leaks-next.  Any holes in that?
->=20
-> That looks fine to me.  I have added your leaks-next branch from
-> today.  It would be nice to see some Reviewed-by or Acked-by tags on
-> your commits.
+The VM-Generation ID is a feature defined by Microsoft (paper:
+http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
+hypervisor vendors.
 
-Yeah I know that would be awesome, there doesn't seem to be a lot of
-interest in this script ATM.  None of my recent patches have gotten any
-comments what so ever.  We have a second maintainer now though so
-hopefully there will be at least two sets of eyes going over it.
+Signed-off-by: Or Idgar <oridgar@gmail.com>
+---
 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgement of your code.
+Changes in v3 from v1 (v2 lack of patch changelog):
+- replaced GPL2 section with SPDX line.
+- including linux/kobject.h for hypervisor_kobj.
+- using acpi_os_map_memory instead acpi_os_map_iomem.
 
-lol, that line made my heart jump into mouth ready for the comment to
-come :)
+ Documentation/ABI/testing/sysfs-hypervisor |  13 +++
+ drivers/misc/Kconfig                       |   6 ++
+ drivers/misc/Makefile                      |   1 +
+ drivers/misc/vmgenid.c                     | 140 +++++++++++++++++++++++++++++
+ 4 files changed, 160 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
+ create mode 100644 drivers/misc/vmgenid.c
 
-> The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.=20
->=20
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
->         Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and=20
->      * destined for the current or next Linux merge window.
->=20
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
-
-Cheers,
-Tobin.
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCgAGBQJakzUOAAoJEEC/nkwmnWYHF4QQAKJ52BUMrMeTv1Yh6S4AmerH
-LsE1M/FrBkjoJpiP27uXhRQNYDmm+E0rlTRscmB6Cyfm2q3W5ZRnBGPvHHmmO9r0
-Nz/hte3nCFSG/BLnsmtRdJ9yuqcNBc/ekcMTP1JbKLM9RVvw5t6i4UaHBzGoPjJt
-nQk7hWtS38QwXr7419VsJBEKPl/x5E2b86WcgT1Sg0GD9BHCArOR//W06ProNBaA
-CCMny3Es+wMMdCbzcJj1sEaAcuRCx6OM1e+0Q2CXQChUlMNBxpAiOk5vN9TpM2gj
-SodMiICCY3J+mXoCAbBue66bXeUi/uwmbLDS1f52EM+j9SJL3BZZ9B4yfE7qflNu
-J52qwGhpGqfOiSKo9w/WfZafvrtkaqjFzzSPz1vC3t69V/WI93/CNy9f1+WIL+ZH
-9InW5g8kJPKQYLq3pDaxPBbuLCK/qPXoJxttOlQfAsgTiEywkXM3GhvbA4dd2ZvI
-fWWiwiRG9IZ2RyXsF7JKbydMkVbyXCuuPpnoUzh2/iu/L6lC11Cb0ec55gcb6Xfd
-NtPXDSpXjTueh+dP+oxGI+ij0l7qQx9XMZCAP7qNHw5kS3ckzkNvbIDSxgQsoZBS
-L956JD8TGIljKRx9y93lwzqPccavm/PxBXiVWCnLQqehgD1ZU33XkU8GnZAckXjo
-ze15gUSqdyF9ev9LK33u
-=t+BO
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
+new file mode 100644
+index 000000000000..2f9a7b8eab70
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-hypervisor
+@@ -0,0 +1,13 @@
++What:		/sys/hypervisor/vm_gen_counter
++Date:		February 2018
++Contact:	Or Idgar <idgar@virtualoco.com>
++		Gal Hammer <ghammer@redhat.com>
++Description:	Expose the virtual machine generation ID. The directory
++		contains two files: "generation_id" and "raw". Both files
++		represent the same information.
++
++		"generation_id" file is a UUID string
++		representation.
++
++		"raw" file is a 128-bit integer
++		representation (binary).
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 03605f8fc0dc..5a74802bdfb4 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -500,6 +500,12 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
+ 
++config VMGENID
++	tristate "Virtual Machine Generation ID driver"
++	help
++	  This is a Virtual Machine Generation ID driver which provides
++	  a virtual machine unique identifier.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index c3c8624f4d95..067aa666bb6a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_VMGENID)		+= vmgenid.o
+ 
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
+diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
+new file mode 100644
+index 000000000000..6b7ec9bd45e8
+--- /dev/null
++++ b/drivers/misc/vmgenid.c
+@@ -0,0 +1,140 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Virtual Machine Generation ID driver
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
++ *	Authors:
++ *	  Or Idgar <oridgar@gmail.com>
++ *	  Gal Hammer <ghammer@redhat.com>
++ *
++ */
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/kobject.h>
++#include <linux/acpi.h>
++#include <linux/uuid.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
++MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
++MODULE_DESCRIPTION("Virtual Machine Generation ID");
++MODULE_VERSION("0.1");
++
++ACPI_MODULE_NAME("vmgenid");
++
++static u64 phy_addr;
++
++static ssize_t generation_id_show(struct device *_d,
++			      struct device_attribute *attr, char *buf)
++{
++	uuid_t *uuidp;
++	ssize_t result;
++
++	uuidp = acpi_os_map_memory(phy_addr, sizeof(uuid_t));
++	if (!uuidp)
++		return -EFAULT;
++
++	result = sprintf(buf, "%pUl\n", uuidp);
++	acpi_os_unmap_memory(uuidp, sizeof(uuid_t));
++	return result;
++}
++static DEVICE_ATTR_RO(generation_id);
++
++static ssize_t raw_show(struct device *_d,
++			struct device_attribute *attr,
++			      char *buf)
++{
++	uuid_t *uuidp;
++
++	uuidp = acpi_os_map_memory(phy_addr, sizeof(uuid_t));
++	if (!uuidp)
++		return -EFAULT;
++	memcpy(buf, uuidp, sizeof(uuid_t));
++	acpi_os_unmap_memory(uuidp, sizeof(uuid_t));
++	return sizeof(uuid_t);
++}
++static DEVICE_ATTR_RO(raw);
++
++static struct attribute *vmgenid_attrs[] = {
++	&dev_attr_generation_id.attr,
++	&dev_attr_raw.attr,
++	NULL,
++};
++static const struct attribute_group vmgenid_group = {
++	.name = "vm_gen_counter",
++	.attrs = vmgenid_attrs,
++};
++
++static int get_vmgenid(acpi_handle handle)
++{
++	int i;
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	acpi_status status;
++	union acpi_object *pss;
++	union acpi_object *element;
++
++	status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
++	if (ACPI_FAILURE(status)) {
++		ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
++		return -ENODEV;
++	}
++	pss = buffer.pointer;
++	if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
++		return -EFAULT;
++
++	phy_addr = 0;
++	for (i = 0; i < pss->package.count; i++) {
++		element = &(pss->package.elements[i]);
++		if (element->type != ACPI_TYPE_INTEGER)
++			return -EFAULT;
++		phy_addr |= element->integer.value << i*32;
++	}
++	return 0;
++}
++
++static int acpi_vmgenid_add(struct acpi_device *device)
++{
++	int retval;
++
++	if (!device)
++		return -EINVAL;
++	retval = get_vmgenid(device->handle);
++	if (retval < 0)
++		return retval;
++	return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
++}
++
++static int acpi_vmgenid_remove(struct acpi_device *device)
++{
++	sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
++	return 0;
++}
++
++static const struct acpi_device_id vmgenid_ids[] = {
++	{"QEMUVGID", 0},
++	{"", 0},
++};
++
++static struct acpi_driver acpi_vmgenid_driver = {
++	.name = "vm_gen_counter",
++	.ids = vmgenid_ids,
++	.owner = THIS_MODULE,
++	.ops = {
++		.add = acpi_vmgenid_add,
++		.remove = acpi_vmgenid_remove,
++	}
++};
++
++static int __init vmgenid_init(void)
++{
++	return acpi_bus_register_driver(&acpi_vmgenid_driver);
++}
++
++static void __exit vmgenid_exit(void)
++{
++	acpi_bus_unregister_driver(&acpi_vmgenid_driver);
++}
++
++module_init(vmgenid_init);
++module_exit(vmgenid_exit);
+-- 
+2.14.3
