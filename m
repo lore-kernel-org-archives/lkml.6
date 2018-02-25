@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751669AbeBYOGl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 09:06:41 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41003 "EHLO
+        id S1751759AbeBYOHK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 09:07:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57997 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbeBYOGj (ORCPT
+        with ESMTP id S1751710AbeBYOHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 09:06:39 -0500
-Date: Sun, 25 Feb 2018 06:05:55 -0800
+        Sun, 25 Feb 2018 09:07:08 -0500
+Date: Sun, 25 Feb 2018 06:06:50 -0800
 From: tip-bot for Randy Dunlap <tipbot@zytor.com>
-Message-ID: <tip-e69c61dd050e410d78363e5fe6e56a9f719abdf5@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, rdunlap@infradead.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <02745e91-c117-74b5-d043-dceb3d4bb4e0@infradead.org>
-References: <02745e91-c117-74b5-d043-dceb3d4bb4e0@infradead.org>
+Message-ID: <tip-6ce5ae7977c89f2a09092954396a66c90e8213f2@git.kernel.org>
+Cc: rdunlap@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Reply-To: rdunlap@infradead.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org>
+References: <582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq: Drop 5 #included header files from irq.h
-Git-Commit-ID: e69c61dd050e410d78363e5fe6e56a9f719abdf5
+Subject: [tip:locking/core] mutex: Drop linkage.h from mutex.h
+Git-Commit-ID: 6ce5ae7977c89f2a09092954396a66c90e8213f2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,53 +31,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e69c61dd050e410d78363e5fe6e56a9f719abdf5
-Gitweb:     https://git.kernel.org/tip/e69c61dd050e410d78363e5fe6e56a9f719abdf5
+Commit-ID:  6ce5ae7977c89f2a09092954396a66c90e8213f2
+Gitweb:     https://git.kernel.org/tip/6ce5ae7977c89f2a09092954396a66c90e8213f2
 Author:     Randy Dunlap <rdunlap@infradead.org>
-AuthorDate: Sat, 24 Feb 2018 21:22:18 -0800
+AuthorDate: Sat, 24 Feb 2018 21:22:12 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 25 Feb 2018 14:57:23 +0100
+CommitDate: Sun, 25 Feb 2018 15:00:46 +0100
 
-genirq: Drop 5 #included header files from irq.h
+mutex: Drop linkage.h from mutex.h
 
-<linux/irq.h> does not use nor need several of its #included files,
-so drop those header files from irq.h.
+<linux/mutex.h> does not use nor need <linux/linkage.h>, so drop that
+one header file from mutex.h.
 
-<linux/irq.h> is currently #included in around 1135 C source files
+<linux/mutex.h> is currently #included in around 1250 C source files
 (oops, I didn't count other header files that #include it), making it
-the 29th most-used header file.
+the 27th most-used header file.
 
 Build tested on i386 and x86_64 * (allnoconfig, tiny.config, defconfig,
 allyesconfig, and allmodconfig) and x64_64 allmodconfig + SMP=disabled.
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/02745e91-c117-74b5-d043-dceb3d4bb4e0@infradead.org
+Link: https://lkml.kernel.org/r/582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org
 
 ---
- include/linux/irq.h | 5 -----
- 1 file changed, 5 deletions(-)
+ include/linux/mutex.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index a0231e96a578..979eed1b2654 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -10,18 +10,13 @@
-  * Thanks. --rmk
-  */
- 
--#include <linux/smp.h>
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index f25c13423bd4..9b7fe56692bd 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -14,7 +14,6 @@
+ #include <asm/current.h>
+ #include <linux/list.h>
+ #include <linux/spinlock_types.h>
 -#include <linux/linkage.h>
- #include <linux/cache.h>
- #include <linux/spinlock.h>
- #include <linux/cpumask.h>
--#include <linux/gfp.h>
- #include <linux/irqhandler.h>
- #include <linux/irqreturn.h>
- #include <linux/irqnr.h>
--#include <linux/errno.h>
- #include <linux/topology.h>
--#include <linux/wait.h>
- #include <linux/io.h>
- #include <linux/slab.h>
- 
+ #include <linux/lockdep.h>
+ #include <linux/atomic.h>
+ #include <asm/processor.h>
