@@ -1,48 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751789AbeBYPSk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 10:18:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45936 "EHLO mail.kernel.org"
+        id S1751837AbeBYPTI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 10:19:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56840 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751682AbeBYPSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 10:18:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A85821736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant initialization of
- pointer 'p'
-To: Colin King <colin.king@canonical.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180221181340.7596-1-colin.king@canonical.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <d7d316b1-7e55-115c-0c45-f381ce774bee@kernel.org>
-Date: Sun, 25 Feb 2018 23:17:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751717AbeBYPTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 10:19:06 -0500
+Date: Sun, 25 Feb 2018 16:19:01 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v4 01/10] ARM: sun9i: smp: Add sun9i dt parsing function
+Message-ID: <20180225161901.207b69fe@dell-desktop.home>
+In-Reply-To: <20180223145423.5og5bdhtznu5qlw7@flea.lan>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+        <20180223133742.26044-2-mylene.josserand@bootlin.com>
+        <20180223145423.5og5bdhtznu5qlw7@flea.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180221181340.7596-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/22 2:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer p is initialized with a value that is never read and is later
-> re-assigned a new value, hence the initialization is redundant and can
-> be removed.
-> 
-> Cleans up clang warning:
-> fs/f2fs/extent_cache.c:463:19: warning: Value stored to 'p' during
-> its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On Fri, 23 Feb 2018 15:54:23 +0100
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+
+> Hi,
+> 
+> On Fri, Feb 23, 2018 at 02:37:33PM +0100, Mylène Josserand wrote:
+> > To prepare the support for sun8i-a83t, create a new function
+> > that handles all the resources needed on sun9i-a80 (because
+> > it will be different from sun8i-a83t).
+> > 
+> > All the parsing of device tree is moved into this new function:
+> > sun9i_dt_parsing. Create also a function to release the resources
+> > retrieved during the dt parsing in case there is an error in init
+> > function.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/mc_smp.c | 99 ++++++++++++++++++++++++++------------------
+> >  1 file changed, 58 insertions(+), 41 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> > index 11e46c6efb90..650a2ad4398f 100644
+> > --- a/arch/arm/mach-sunxi/mc_smp.c
+> > +++ b/arch/arm/mach-sunxi/mc_smp.c
+> > @@ -684,35 +684,22 @@ static int __init sunxi_mc_smp_lookback(void)
+> >  	return ret;
+> >  }
+> >  
+> > -static int __init sunxi_mc_smp_init(void)
+> > +static int sun9i_dt_parsing(struct resource res)  
+> 
+> Like I told you in the previous version, this should be _parse_dt, and
+> not _dt_parsing.
+
+Sorry, I forgot this review.
+
+> 
+> Also, I'm not sure why you are passing by copy the resource structure?
+> 
+> >  {
+> > -	struct device_node *cpucfg_node, *sram_node, *node;
+> > -	struct resource res;
+> > +	struct device_node *prcm_node, *cpucfg_node, *sram_node;
+> >  	int ret;
+> >  
+> > -	if (!of_machine_is_compatible("allwinner,sun9i-a80"))
+> > -		return -ENODEV;
+> > -
+> > -	if (!sunxi_mc_smp_cpu_table_init())
+> > -		return -EINVAL;
+> > -
+> > -	if (!cci_probed()) {
+> > -		pr_err("%s: CCI-400 not available\n", __func__);
+> > -		return -ENODEV;
+> > -	}
+> > -
+> > -	node = of_find_compatible_node(NULL, NULL, "allwinner,sun9i-a80-prcm");
+> > -	if (!node) {
+> > -		pr_err("%s: PRCM not available\n", __func__);
+> > +	prcm_node = of_find_compatible_node(NULL, NULL,
+> > +				       "allwinner,sun9i-a80-prcm");
+> > +	if (!prcm_node)
+> >  		return -ENODEV;
+> > -	}
+> >  
+> >  	/*
+> >  	 * Unfortunately we can not request the I/O region for the PRCM.
+> >  	 * It is shared with the PRCM clock.
+> >  	 */
+> > -	prcm_base = of_iomap(node, 0);
+> > -	of_node_put(node);
+> > +	prcm_base = of_iomap(prcm_node, 0);  
+> 
+> So it does more a bit more than just parsing the DT?
+> 
+> Can you maybe just fill the DT nodes and have the common part map the
+> memory regions if the pointer is not NULL?
+
+Yep, I will rework this function to only parse device tree nodes.
 
 Thanks,
+
+Mylène
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
