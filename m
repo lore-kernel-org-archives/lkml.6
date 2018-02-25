@@ -1,407 +1,218 @@
-Return-Path: <kernel-hardening-return-11964-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsg8Hxs5ypqcyjRru2pKt9LEhhSZGUgXakOx97BJzDhbIRXxvBEprtDy1UB+9cxOF/CT0XX
-ARC-Seal: i=1; a=rsa-sha256; t=1519669581; cv=none;
+Return-Path: <kernel-hardening-return-11942-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x225TKlPM59E2kb3D2fJ6nqTj2bFtndb+KhJSf46SVHT1V0iz2Dg6GkbVfsbp4vmMXu3rfzUa
+ARC-Seal: i=1; a=rsa-sha256; t=1519526041; cv=none;
         d=google.com; s=arc-20160816;
-        b=UO0/nhPBJ4vtvx9l0CexCH5cOIIHFCR0TSDxyCnbxvBEPAWszfJxqpsQMyYox1ERXb
-         G/Hf/qKZxo1Fn6VoZjTclK/yv2vONLeVnq0eFTFL5Up/9ocwHVM8fEUP71tDOigA5+cZ
-         9ML3S04h8t/i/9dCWQeJEVdjp3R8aqGHzaPxCpGlgGk5sfhM3cjSbuBEZMiS07sRD7g3
-         zcp83H/aZtVI3ECO27J9RAcJxEvPJtJ/fyJzFnVMjjGjJlXeNlzya+MogkMF1rNNJMZ8
-         GFrnyhMo4sXrTWXh1hKqYGRJwM0XJ0zuJgMdxuKCrvz5Z14cuGYvQkY/cqj02jNoiTe2
-         kqxQ==
+        b=O4Mr13gynA+MxJdctr+I3cHbdQERWdd28uKgOn2KW5qsUptoS/WqS9VUdC7J8cfaMH
+         eYQGKPu3HJL9SGtdTSjBxUcN0Vgeh14CE6yD5XmTOIx7bFQfc9ru7jNYH3c51cibPkus
+         ihkaVbVlP6rdDRoh8abTsJxgi8d6e5kP/d623EZktlplYmP/JBLMEcBSygqGzU8btlzT
+         5TvF5VFi7J1HsC3xwJNDSFZTxys27KyM+lMu0kdlxQ84Dx2jP5aNIhQthbihNW5+5NIj
+         ltVQzuoUqUYf2RBVgf2GiMkY+caR8WhMr0qLRNFBtKFjyFJcqtAke7gq5S9Xhn88mOcW
+         u7LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=iU4r4Nd1DbPHpnIdj7qoLAwHe2cHAZgOAtTINJwP0C8=;
-        b=qZW36noSjpC/K/e9ft+BZJZ8XOeXPcJprSPuT4KCe/DPQCM3/udsEgCLdC7fw7wuae
-         WWCo7sPJPl4weA2vKLipM0MRwGfIKXpMoO/EfKEQRNa4412fYm+5dVC798Zh1q559ddN
-         vZl5FyggPqj5nvmM+yFjWbQjuCc0mqX38RqdShPc78TZn799/oTyTPneEfza1xum3du7
-         fxaIfkWfU4WZEMgbdk9w9Os0YmnGgIAZOjjecimbLV0Pkcshr3+ZrwRPme2IBJakKdCD
-         YDWNT/VkxEbta3iQIO3Je9PK0QslHg8myy02Ku1nIshHfVwK9A/O+tk/9ecuSG4SxJO8
-         OQew==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=bS9jeIGRRhc9/A0ZNOpQ8hMqXMeB+DJ3qbT7UFg7eiI=;
+        b=jfRlEcTHw1bnBruKHnjwUJJ+emVxI2nOqYY1I9Ro8mUt+fViOJR3VXkAT5hndnG2LE
+         0CwlDmvTLULLJ14YCFXKvjmjSMpdJvdZdBx0TjQ6ujmVsCUf/+Mq6zFRnophMO2yjumP
+         Jm7BOrXz0rBjk1Ot3N5PcNCiNJcZ+NSd1rhKXe95hM7cM/lB4MTGsifaeUegKkMiGgjd
+         BWRmvCA+9WwHK2TSCwOrFMgVWkBZUoid3JXC0HmFab3iH9Pw+5N5x1g/qa894cBZtM/R
+         XIy8NWsSoQ45ieRqu07ZWWmPlSTiwQ8ef/4vKyj1qOewEFyetdOxOtY9lWS/d0wp8/Wd
+         2+Mg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FS/gb6nL;
-       spf=pass (google.com: domain of kernel-hardening-return-11964-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11964-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-11942-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11942-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FS/gb6nL;
-       spf=pass (google.com: domain of kernel-hardening-return-11964-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11964-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-11942-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11942-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,391,1515484800";
+   d="gz'50?scan'50,208,50";a="177856173"
+Date: Sun, 25 Feb 2018 10:33:21 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: kbuild-all@01.org, david@fromorbit.com, willy@infradead.org,
+	keescook@chromium.org, mhocko@kernel.org, labbott@redhat.com,
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+	Igor Stoppa <igor.stoppa@huawei.com>
 Subject: Re: [PATCH 4/7] Protectable Memory
-To: Igor Stoppa <igor.stoppa@huawei.com>, david@fromorbit.com,
- willy@infradead.org, keescook@chromium.org, mhocko@kernel.org
-Cc: labbott@redhat.com, linux-security-module@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com
-References: <20180223144807.1180-1-igor.stoppa@huawei.com>
- <20180223144807.1180-5-igor.stoppa@huawei.com>
- <55aea52e-3557-4d8d-7b1a-a0b5c9ce3090@gmail.com>
- <4aa98672-7b36-5bf3-33b0-f7e69901cbe5@huawei.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <e4116e4f-3a74-f37b-1aa7-4d71aae680d6@gmail.com>
-Date: Mon, 26 Feb 2018 10:25:57 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+Message-ID: <201802251005.338ZhiMt%fengguang.wu@intel.com>
+References: <20180223144807.1180-5-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <4aa98672-7b36-5bf3-33b0-f7e69901cbe5@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/mixed; boundary="8t9RHnE3ZwKMSgU+"
+Content-Disposition: inline
+In-Reply-To: <20180223144807.1180-5-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593203741176702055?=
-X-GMAIL-MSGID: =?utf-8?q?1593489051146926154?=
+X-GMAIL-MSGID: =?utf-8?q?1593338539019525513?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-inlined responses.
 
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2/26/18 6:28 AM, Igor Stoppa wrote:
->
-> On 24/02/18 02:10, J Freyensee wrote:
->> On 2/23/18 6:48 AM, Igor Stoppa wrote:
-> [...]
->
->>> +struct gen_pool *pmalloc_create_pool(const char *name,
->>> +					 int min_alloc_order);
->> Same comments as earlier.  If this is new API with new code being
->> introduced into the kernel, can the variables be declared to avoid weird
->> problems?  Like min_alloc_order being a negative value makes little
->> sense (based on the description here), so can it be declared as size_t
->> or unsigned int?
-> in this case, yes, but I see it as different case
+Hi Igor,
 
-OK.
+Thank you for the patch! Yet something to improve:
 
->
-> [...]
->
->>> + * * NULL				- either no memory available or
->>> + *					  pool already read-only
->>> + */
->> I don't know if an errno value is being set, but setting a variable
->> somewhere using EROFS or ENOMEM would more accurate diagnose those two
->> NULL conditions.
-> I expect that the latter is highly unlikely to happen, because the user
-> of the API controls if the pool is locked or not.
->
-> I think it shouldn't come as a surprise to the one who locked the pool,
-> if the pool is locked.
->
-> If the pool is used with concurrent users, attention should be paid to
-> not lock it before ever user is happy (this is where the user of the API
-> has to provide own locking.)
->
-> Since the information if the pool is already protected is actually
-> present in the pmalloc_data structure associated with the pool, I was
-> tempted to make it available through the API, but that seemed wrong.
->
-> The user of the API should be very aware of the state of the pool, since
-> the user is the one who sets it. Why would it have to be read back?
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc2]
+[cannot apply to next-20180223]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-OK, sounds good :-).
+url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/genalloc-track-beginning-of-allocations/20180225-081601
+config: arm-allnoconfig (attached as .config)
+compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=arm 
 
->
->>> +void *pmalloc(struct gen_pool *pool, size_t size, gfp_t gfp);
->>> +
->>> +
->>> +/**
->>> + * pzalloc() - zero-initialized version of pmalloc
->>> + * @pool: handle to the pool to be used for memory allocation
->>> + * @size: amount of memory (in bytes) requested
->>> + * @gfp: flags for page allocation
->>> + *
->>> + * Executes pmalloc, initializing the memory requested to 0,
->>> + * before returning the pointer to it.
->>> + *
->>> + * Return:
->>> + * * pointer to the memory requested	- success
->>> + * * NULL				- either no memory available or
->>> + *					  pool already read-only
->>> + */
->> Same comment here, though that inline function below looks highly
->> optimized...
-> The same applies here.
-> I'm not very fond of the idea of returning the status elsewhere and in a
-> way that is not intrinsically connected with the action that has
-> determined the change of state.
->
-> AFAIK *alloc functions return either the memory requested or NULL.
-> I wonder how realistic this case is.
+All errors (new ones prefixed by >>):
 
-OK.
+   mm/pmalloc.o: In function `pmalloc_prealloc':
+>> pmalloc.c:(.text+0x280): undefined reference to `vfree_atomic'
+   mm/pmalloc.o: In function `pmalloc':
+   pmalloc.c:(.text+0x2c4): undefined reference to `vfree_atomic'
+   mm/pmalloc.o: In function `pmalloc_chunk_free':
+   pmalloc.c:(.text+0x9e): undefined reference to `vfree_atomic'
 
->
-> [...]
->
->>> +	if (unlikely(!(pool && n && size)))
->> Has this code been run through sparse?
-> I use "make C=1 W=1"
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-OK.
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
->
->> I know one thing sparse looks at
->> is if NULL is being treated like a 0, and sparse does check cases when 0
->> is being used in place for NULL for pointer checks, and I'm wondering if
->> that line of code would pass.
-> It's a logical AND: wouldn't NULL translate to false, rather 0?
-> I can add an explicit check against NULL, it's probably more readable
-> too, but I don't think that the current construct treats NULL as 0.
+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
+9M1+OVRwZo6oLZMB/f8Aeda4nWJTAAA=
 
-If it passes sparse, I think it's fine.
-
->
-> [...]
->
->>> +	if (unlikely(pool == NULL || s == NULL))
->> Here, the right check is being done, so at the very least, I would make
->> the last line I commented on the same as this one for code continuity.
-> ok
->
-> [...]
->
->>> +	if (unlikely(!(pool && chunk)))
->> Please make this check the same as the last line I commented on,
->> especially since it's the same struct being checked.
-> yes
-
-OK :-)
-
-
->
-> [...]
->
->>> +	if (!name) {
->>> +		WARN_ON(1);
->> ??  Maybe the name check should be in WARN_ON()?
-> true :-(
-
-OK.
-
-
->
-> [...]
->
->>> +	if (unlikely(!req_size || !pool))
->> same unlikely() check problem mentioned before.
->>> +		return -1;
->> Can we use an errno value instead for better diagnosibility?
->>> +
->>> +	data = pool->data;
->>> +
->>> +	if (data == NULL)
->>> +		return -1;
->> Same here (ENOMEM or ENXIO comes to mind).
->>> +
->>> +	if (unlikely(data->protected)) {
->>> +		WARN_ON(1);
->> Maybe re-write this with the check inside WARN_ON()?
->>> +		return -1;
->> Same here, how about a different errno value for this case?
-> yes, to all of the above
-
-OK.
-
->
-> [...]
->
->>> +static void pmalloc_chunk_set_protection(struct gen_pool *pool,
->>> +
->>> +					 struct gen_pool_chunk *chunk,
->>> +					 void *data)
->>> +{
->>> +	const bool *flag = data;
->>> +	size_t chunk_size = chunk->end_addr + 1 - chunk->start_addr;
->>> +	unsigned long pages = chunk_size / PAGE_SIZE;
->>> +
->>> +	BUG_ON(chunk_size & (PAGE_SIZE - 1));
->> Re-think WARN_ON() for BUG_ON()?  And also check chunk as well, as it's
->> being used below?
-> ok
->
->>> +
->>> +	if (*flag)
->>> +		set_memory_ro(chunk->start_addr, pages);
->>> +	else
->>> +		set_memory_rw(chunk->start_addr, pages);
->>> +}
->>> +
->>> +static int pmalloc_pool_set_protection(struct gen_pool *pool, bool protection)
->>> +{
->>> +	struct pmalloc_data *data;
->>> +	struct gen_pool_chunk *chunk;
->>> +
->>> +	if (unlikely(!pool))
->>> +		return -EINVAL;
->> This is example of what I'd perfer seeing in check_alloc_params().
-> yes
->
->>> +
->>> +	data = pool->data;
->>> +
->>> +	if (unlikely(!data))
->>> +		return -EINVAL;
->> ENXIO or EIO or ENOMEM sound better?
-> Why? At least based on he description from errno-base.h, EINVAL seemed
-> the most appropriate:
->
-> #define	EIO		 5	/* I/O error */
-> #define	ENXIO		 6	/* No such device or address */
-> #define	ENOMEM		12	/* Out of memory */
->
-> #define	EINVAL		22	/* Invalid argument */
->
-> If I was really pressed to change it, I'd rather pick:
->
-> #define	EFAULT		14	/* Bad address */
->
-
-OK, very reasonable.
-
-
->>> +
->>> +	if (unlikely(data->protected == protection)) {
->>> +		WARN_ON(1);
->> Better to put the check inside WARN_ON, me thinks...
-> yes, I have no idea why I wrote it like that  :-(
-
-No worries :-).
-
-
->
->>> +		return 0;
->>> +	}
->>> +
->>> +	data->protected = protection;
->>> +	list_for_each_entry(chunk, &(pool)->chunks, next_chunk)
->>> +		pmalloc_chunk_set_protection(pool, chunk, &protection);
->>> +	return 0;
->>> +}
->>> +
->>> +int pmalloc_protect_pool(struct gen_pool *pool)
->>> +{
->>> +	return pmalloc_pool_set_protection(pool, true);
->> Is pool == NULL being checked somewhere, similar to previous functions
->> in this patch?
-> right.
-
-OK.
-
-
->
->>> +}
->>> +
->>> +
->>> +static void pmalloc_chunk_free(struct gen_pool *pool,
->>> +			       struct gen_pool_chunk *chunk, void *data)
->>> +{
->> Wat is 'data' being used for? Looks unused.  Should parameters be
->> checked, like other ones?
->
-> This is the iterator that is passed to genalloc
-> genalloc defines the format for the iterator, because it *will* want to
-> pass the pointer to the opaque data structure.
-
-OK.
-
-
->
->>> +	untag_chunk(chunk);
->>> +	gen_pool_flush_chunk(pool, chunk);
->>> +	vfree_atomic((void *)chunk->start_addr);
->>> +}
->>> +
->>> +
->>> +int pmalloc_destroy_pool(struct gen_pool *pool)
->>> +{
->>> +	struct pmalloc_data *data;
->>> +
->>> +	if (unlikely(pool == NULL))
->>> +		return -EINVAL;
->>> +
->>> +	data = pool->data;
->>> +
->>> +	if (unlikely(data == NULL))
->>> +		return -EINVAL;
->> I'd use a different errno value since you already used it for pool.
-> Thinking more about this, how about collapsing them?
-> I do need to check for the value of data, before I dereference it,
-> however the causes are very different:
->
-> * wrong pool pointer - definitely possible
-> * corrupted data structure (data member overwritten) - highly unlikely
-
-
-That sounds good.
-
-
->>> +
->>> +	mutex_lock(&pmalloc_mutex);
->>> +	list_del(&data->node);
->>> +	mutex_unlock(&pmalloc_mutex);
->>> +
->>> +	if (likely(data->pool_kobject))
->>> +		pmalloc_disconnect(data, data->pool_kobject);
->>> +
->>> +	pmalloc_pool_set_protection(pool, false);
->>> +	gen_pool_for_each_chunk(pool, pmalloc_chunk_free, NULL);
->>> +	gen_pool_destroy(pool);
->>> +	kfree(data);
->> Does data need to be set to NULL in this case, as data is a member of
->> pool (pool->data)?  I'm worried about dangling pointer scenarios which
->> probably isn't good for security modules?
-> The pool was destroyed in the previous step.
-> There is nothing left that can be set to NULL.
-> Unless we are expecting an use-after-free of the pool structure.
-> But everything it was referring to is gone as well.
->
-> If we really want to go after this case, then basically everything that
-> has been allocated should be poisoned before being freed.
->
-> Isn't it a bit too much?
-
-I'd ask one of the maintainers (James or Serge) if it's too much, this 
-is the Linux Security Module after all.  But it also could be a kernel 
-hardening thing to do?
-
->
->>> +	return 0;
->>> +}
->>> +
->>> +/*
->>> + * When the sysfs is ready to receive registrations, connect all the
->>> + * pools previously created. Also enable further pools to be connected
->>> + * right away.
->>> + */
->>> +static int __init pmalloc_late_init(void)
->>> +{
->>> +	struct pmalloc_data *data, *n;
->>> +
->>> +	pmalloc_kobject = kobject_create_and_add("pmalloc", kernel_kobj);
->>> +
->>> +	mutex_lock(&pmalloc_mutex);
->>> +	pmalloc_list = &pmalloc_final_list;
->>> +
->>> +	if (likely(pmalloc_kobject != NULL)) {
->>> +		list_for_each_entry_safe(data, n, &pmalloc_tmp_list, node) {
->>> +			list_move(&data->node, &pmalloc_final_list);
->>> +			pmalloc_connect(data);
->>> +		}
->>> +	}
->> It would be nice to have the init() return an error value in case of
->> failure.
-> ok
->
-> --
-> igor
-
-Thanks,
-Jay
+--8t9RHnE3ZwKMSgU+--
