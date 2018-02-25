@@ -1,111 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751605AbeBYAus (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 19:50:48 -0500
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:48320 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751500AbeBYAup (ORCPT
+        id S1751611AbeBYBjl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 20:39:41 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55179 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751558AbeBYBjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 19:50:45 -0500
-Date: Sun, 25 Feb 2018 01:50:32 +0100
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Michal Hocko <mhocko@kernel.org>, <akpm@linux-foundation.org>
-CC: Randy Dunlap <rdunlap@infradead.org>, <broonie@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
-        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
-        richard -rw- weinberger <richard.weinberger@gmail.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: mmotm 2018-02-21-14-48 uploaded (mm/page_alloc.c on UML)
-Message-ID: <20180225005032.GA11826@vmlxhi-102.adit-jv.com>
-References: <20180221224839.MqsDtkGCK%akpm@linux-foundation.org>
- <7bcc52db-57eb-45b0-7f20-c93a968599cd@infradead.org>
- <20180222072037.GC30681@dhcp22.suse.cz>
- <20180222103832.GA11623@vmlxhi-102.adit-jv.com>
- <20180222125955.GD30681@dhcp22.suse.cz>
- <20180222130814.GA30385@vmlxhi-102.adit-jv.com>
- <20180222132630.GH30681@dhcp22.suse.cz>
+        Sat, 24 Feb 2018 20:39:39 -0500
+X-Google-Smtp-Source: AG47ELvNb+GVa+fuDgJkdq+ksfUuJwr5rLEoWw4R+a9n73HOJ/mVkK/4FiY33DwciMCJGhnFKC+tQ/gJgVgjDgSB62Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180222132630.GH30681@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <1519421630-12025-2-git-send-email-joe.lawrence@redhat.com>
+References: <1519421630-12025-1-git-send-email-joe.lawrence@redhat.com> <1519421630-12025-2-git-send-email-joe.lawrence@redhat.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Sat, 24 Feb 2018 17:38:57 -0800
+Message-ID: <CAOFm3uF8HT=5gRG_AvvZwHnVDgrV1HxByG+Gxaqc+uEFYFnFxw@mail.gmail.com>
+Subject: Re: [PATCH v0 1/3] livepatch: add sample cumulative patch
+To: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: live-patching@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andrew, Michal,
+Joe,
 
-On Thu, Feb 22, 2018 at 02:26:30PM +0100, Michal Hocko wrote:
-> On Thu 22-02-18 14:08:14, Eugeniu Rosca wrote:
-> > On Thu, Feb 22, 2018 at 01:59:55PM +0100, Michal Hocko wrote:
-> > > On Thu 22-02-18 11:38:32, Eugeniu Rosca wrote:
-> > > > Hi Michal,
-> > > > 
-> > > > Please, let me know if any action is expected from my end.
-> > > 
-> > > I do not thing anything is really needed right now. If you have a strong
-> > > opinion about the solution (ifdef vs. noop stub) then speak up.
-> > 
-> > No different preference on my side. I was more thinking if you are going
-> > to amend the patch or create a fix on top of it. Since it didn't reach
-> > mainline, it makes sense to amend it. If you can do it without the
-> > intervention of the author, that's also fine for me.
-> 
-> Andrew usually takes the incremental fix and then squash them when
-> sending to Linus
+On Fri, Feb 23, 2018 at 1:33 PM, Joe Lawrence <joe.lawrence@redhat.com> wrote:
+> Add a simple atomic replace / cumulative livepatch example.
+>
+> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+> ---
+>  samples/livepatch/Makefile               |   1 +
+>  samples/livepatch/livepatch-cumulative.c | 216 +++++++++++++++++++++++++++++++
+>  2 files changed, 217 insertions(+)
+>  create mode 100644 samples/livepatch/livepatch-cumulative.c
+>
+> diff --git a/samples/livepatch/Makefile b/samples/livepatch/Makefile
+> index 2472ce39a18d..dd0e2a8af1af 100644
+> --- a/samples/livepatch/Makefile
+> +++ b/samples/livepatch/Makefile
+> @@ -5,3 +5,4 @@ obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-shadow-fix2.o
+>  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-demo.o
+>  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-mod.o
+>  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-busymod.o
+> +obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-cumulative.o
+> diff --git a/samples/livepatch/livepatch-cumulative.c b/samples/livepatch/livepatch-cumulative.c
+> new file mode 100644
+> index 000000000000..ab036439e08c
+> --- /dev/null
+> +++ b/samples/livepatch/livepatch-cumulative.c
+> @@ -0,0 +1,216 @@
+> +/*
+> + * Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version 2
+> + * of the License, or (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
+> + */
 
-This may sound like bikeshedding, but if commit [1] is squashed onto [2],
-the resulted commit will pointlessly relocate the ifdef line, like seen
-in [3]. Feel free to skip this comment/request, but imho applying [4] on
-top of [1] would then result in a cleaner squashed commit. No functional
-change is intended here. TIA.
+May be you could use the new SPDX tags instead of this fine but long
+legalese? [1]
+This would replace ~12 lines of comment by a single line with the same effect.
+Thanks!
 
-[1] linux-next commit 5fd667a8c762 ("mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma-fix")
-[2] linux-next commit 72a571e91476 ("mm: page_alloc: skip over regions of invalid pfns on UMA")
-
-[3] Ugly and unneeded ifdef line relocation
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cb416723538f..a89b029985ef 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5355,12 +5355,12 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
-                        goto not_early;
-
-                if (!early_pfn_valid(pfn)) {
--#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
-                        /*
-                         * Skip to the pfn preceding the next valid one (or
-                         * end_pfn), such that we hit a valid pfn (or end_pfn)
-                         * on our next iteration of the loop.
-                         */
-+#ifdef CONFIG_HAVE_MEMBLOCK
-                        pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
- #endif
-                        continue;
-
-
-[4] Patch to be applied on top of [1], for a cleaner squashed commit.
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a89b029985ef..10cbf9f1fb35 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5355,12 +5355,12 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
-                        goto not_early;
-
-                if (!early_pfn_valid(pfn)) {
-+#ifdef CONFIG_HAVE_MEMBLOCK
-                        /*
-                         * Skip to the pfn preceding the next valid one (or
-                         * end_pfn), such that we hit a valid pfn (or end_pfn)
-                         * on our next iteration of the loop.
-                         */
--#ifdef CONFIG_HAVE_MEMBLOCK
-                        pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
- #endif
-                        continue;
-
-Best regards,
-Eugeniu.
+[1]  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+--
+Philippe
