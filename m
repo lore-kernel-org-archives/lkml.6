@@ -1,118 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751783AbeBYNUx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 08:20:53 -0500
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:38954 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeBYNUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 08:20:50 -0500
-Date: Sun, 25 Feb 2018 13:20:14 +0000
-From: Nicholas Mc Guire <der.herr@hofr.at>
-To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [SIL2review] [PATCH] i2c: img-scb: fix PM device usage count
-Message-ID: <20180225132014.GA8844@osadl.at>
-References: <20180224224303.3mpwhal2axcr6aos@agrajag.zerfleddert.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180224224303.3mpwhal2axcr6aos@agrajag.zerfleddert.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751801AbeBYNYG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 08:24:06 -0500
+Received: from mga17.intel.com ([192.55.52.151]:48188 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751692AbeBYNYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 08:24:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,393,1515484800";
+   d="scan'208";a="206816229"
+Message-ID: <1519565039.10722.145.camel@linux.intel.com>
+Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Date: Sun, 25 Feb 2018 15:23:59 +0200
+In-Reply-To: <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+         <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 11:43:03PM +0100, Tobias Jordan wrote:
-> pm_runtime_get_sync() increases the device's usage count even when
-> reporting an error, so add a call to pm_runtime_put_noidle() in the
-> error branch.
-
-the increment is unconditional:
-  pm_runtime_get_sync
-  -> __pm_runtime_resume(dev, RPM_GET_PUT);
-     -> if (rpmflags & RPM_GET_PUT) atomic_inc(&dev->power.usage_count);
-
-the decrement though is conditional:
-  pm_runtime_put_noidle
-  -> atomic_add_unless(&dev->power.usage_count, -1, 0);
-
-would it not be possible to use an atomic_dec() here rahter than
-atomic_add_unless() ? probably only a few cylces
-
-Also just wondering - could one not decrement in pm_runtime_get_sync on the
-error path rather than defering this to the caller and fixing it there ?
-something like:
-
-int __pm_runtime_resume(struct device *dev, int rpmflags)
-{
-	...
-	if (rpmflags & RPM_GET_PUT) 
-		atomic_inc(&dev->power.usage_count);
-
-        spin_lock_irqsave(&dev->power.lock, flags);
-        retval = rpm_resume(dev, rpmflags);
-        spin_unlock_irqrestore(&dev->power.lock, flags);
-
-	if (retival < 0)
-		atomic_dec(&dev->power.usage_count);
-
-	return retval;
-}
-
-that would require other changes then I guess (did not look into it).
-but if resume fails does it ever make sense to increment the use count ?
-
+On Fri, 2018-02-23 at 15:35 -0600, Bjorn Helgaas wrote:
+> On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
+> > It's used in several places and more users may come.
+> > By using this helper they may create a slightly cleaner code.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  include/linux/dmi.h | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/include/linux/dmi.h b/include/linux/dmi.h
+> > index 46e151172d95..241c27008c70 100644
+> > --- a/include/linux/dmi.h
+> > +++ b/include/linux/dmi.h
+> > @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
+> >  
+> >  #endif
+> >  
+> > +static inline int dmi_get_bios_year(void)
+> > +{
+> > +	int year;
+> > +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
+> > +	return year;
+> > +}
 > 
-> Fixes: 93222bd9b966 ("i2c: img-scb: Add runtime PM")
-> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+> I don't really care personally, and I assume this series will go via a
+> non-PCI tree, but making this inline looks similar to this, which
+> wasn't well-received:
+> 
+> https://lkml.kernel.org/r/CA+55aFypU331cQy-
+> 6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
 
-Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
+"Yes, that header file is already full of random inline functions, but
+they are generally wrapper functions that don't really do anything, ..."
 
-> ---
-> This is one of a number of patches for problems found using coccinelle 
-> scripting in the SIL2LinuxMP project. The patch has been compile-tested;
-> it's based on linux-next-20180223.
-> 
-> For a discussion of the corresponding issue, see
-> https://marc.info/?l=linux-pm&m=151904483924999&w=2
-> 
->  drivers/i2c/busses/i2c-img-scb.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-img-scb.c b/drivers/i2c/busses/i2c-img-scb.c
-> index f038858b6c54..569a1a8a2753 100644
-> --- a/drivers/i2c/busses/i2c-img-scb.c
-> +++ b/drivers/i2c/busses/i2c-img-scb.c
-> @@ -1061,8 +1061,10 @@ static int img_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->  	}
->  
->  	ret = pm_runtime_get_sync(adap->dev.parent);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		pm_runtime_put_noidle(adap->dev.parent);
->  		return ret;
-> +	}
->  
->  	for (i = 0; i < num; i++) {
->  		struct i2c_msg *msg = &msgs[i];
-> @@ -1162,8 +1164,10 @@ static int img_i2c_init(struct img_i2c *i2c)
->  	int ret;
->  
->  	ret = pm_runtime_get_sync(i2c->adap.dev.parent);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		pm_runtime_put_noidle(i2c->adap.dev.parent);
->  		return ret;
-> +	}
->  
->  	rev = img_i2c_readl(i2c, SCB_CORE_REV_REG);
->  	if ((rev & 0x00ffffff) < 0x00020200) {
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> SIL2review mailing list
-> SIL2review@lists.osadl.org
-> https://lists.osadl.org/mailman/listinfo/sil2review
+I think the function above is exactly from the "wrapper that doesn't
+really do anything" category.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
