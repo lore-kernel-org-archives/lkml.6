@@ -1,64 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751760AbeBYOhG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 09:37:06 -0500
-Received: from foss.arm.com ([217.140.101.70]:41442 "EHLO foss.arm.com"
+        id S1751829AbeBYOiM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 09:38:12 -0500
+Received: from foss.arm.com ([217.140.101.70]:41480 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751638AbeBYOhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 09:37:04 -0500
-Date: Sun, 25 Feb 2018 14:36:53 +0000
+        id S1751814AbeBYOiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 09:38:08 -0500
+Date: Sun, 25 Feb 2018 14:38:03 +0000
 From: Mark Rutland <mark.rutland@arm.com>
 To: Saravana Kannan <skannan@codeaurora.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, will.deacon@arm.com,
-        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
-        peterz@infradead.org, jonathan.cameron@huawei.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
-        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-Message-ID: <20180225143653.peb4quk3ha5h3t5x@salmiak>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5A90B77E.8040105@codeaurora.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        avilaj@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] perf/core: Add support for PMUs that can be read
+ from any CPU
+Message-ID: <20180225143802.denbkubqjg2dc7af@salmiak>
+References: <1519431578-11995-1-git-send-email-skannan@codeaurora.org>
+ <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5A90B77E.8040105@codeaurora.org>
+In-Reply-To: <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 04:53:18PM -0800, Saravana Kannan wrote:
-> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
-> > +static void dsu_pmu_event_update(struct perf_event *event)
-> > +{
-> > +	struct hw_perf_event *hwc = &event->hw;
-> > +	u64 delta, prev_count, new_count;
-> > +
-> > +	do {
-> > +		/* We may also be called from the irq handler */
-> > +		prev_count = local64_read(&hwc->prev_count);
-> > +		new_count = dsu_pmu_read_counter(event);
-> > +	} while (local64_cmpxchg(&hwc->prev_count, prev_count, new_count) !=
-> > +			prev_count);
-> > +	delta = (new_count - prev_count) & DSU_PMU_COUNTER_MASK(hwc->idx);
-> > +	local64_add(delta, &event->count);
-> > +}
-> > +
-> > +static void dsu_pmu_read(struct perf_event *event)
-> > +{
-> > +	dsu_pmu_event_update(event);
-> > +}
+On Fri, Feb 23, 2018 at 04:19:38PM -0800, Saravana Kannan wrote:
+> Some PMUs events can be read from any CPU. So allow the PMU to mark
+> events as such. For these events, we don't need to reject reads or
+> make smp calls to the event's CPU and cause unnecessary wake ups.
+> 
+> Good examples of such events would be events from caches shared across
+> all CPUs.
 
-> I sent out a patch that'll allow PMUs to set an event flag to avoid
-> unnecessary smp calls when the event can be read from any CPU. You could
-> just always set that if you can't have multiple DSU's running the kernel (I
-> don't know if the current ARM designs support having multiple DSUs in a
-> SoC/system) or set it if associated_cpus == cpu_present_mask.
+I think that if we need to generalize PERF_EV_CAP_READ_ACTIVE_PKG, it would be
+better to give events a pointer to a cpumask. That could then cover all cases
+quite trivially:
 
-As-is, that won't be safe, given the read function calls the event_update()
-function, which has side-effects on hwc->prec_count and event->count. Those
-need to be serialized somehow.
+static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+{
+	int local_cpu = smp_processor_id();
+
+	if (event->read_mask &&
+	    cpumask_test_cpu(local_cpu, event->read_mask))
+		event_cpu = local_cpu;
+	
+	return event_cpu;
+}
+
+... in the PERF_EV_CAP_READ_ACTIVE_PKG case, we can use the exiting(?) package
+masks, and more generally we can re-use the PMU's affinit mask if it has one.
+
+That said, I see that many pmu::read() implementations have side-effects on
+hwc->prev_count, and event->count, so I worry that this won't be sfe in general
+(e.g. if we race with the IRQ handler on another CPU).
 
 Thanks,
 Mark.
