@@ -1,70 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeBYMVX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 07:21:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751590AbeBYMVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 07:21:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15EE21719
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sun, 25 Feb 2018 21:21:18 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Wang Nan <wangnan0@huawei.com>,
-        Will Deacon <will.deacon@arm.com>, Jon Medhurst <tixy@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Long <dave.long@linaro.org>
-Subject: Re: [PATCH 2/2] arm: kprobes: Prohibit kprobes on get_user
- functions
-Message-Id: <20180225212118.ee09db43772a338151762730@kernel.org>
-In-Reply-To: <151945939903.11045.1486072728379559979.stgit@devbox>
-References: <151945937038.11045.14421944772744094357.stgit@devbox>
-        <151945939903.11045.1486072728379559979.stgit@devbox>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751715AbeBYMZp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 07:25:45 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36427 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751585AbeBYMZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 07:25:41 -0500
+X-Google-Smtp-Source: AG47ELtRIzPkkot04rTpi3LVQ0n3xb7wcllvGKIVSNWeZ9XFjOObm6sR/RrHzJRetxwW/BjrOFZHj+9wVCSIu+ZYVYc=
+MIME-Version: 1.0
+In-Reply-To: <87r2pah1c2.fsf@linkitivity.dja.id.au>
+References: <20171126025329.32044-1-dja@axtens.net> <CANiq72=dbgyFMqCg0MPihGgdtjZAmAMu-ZpNkaTu17W1o9rYRg@mail.gmail.com>
+ <87r2pah1c2.fsf@linkitivity.dja.id.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 25 Feb 2018 13:25:20 +0100
+Message-ID: <CANiq72mKWerHDO-TARJ3ixSmKghpt7E3tK6YW03XPB-mzXBpkA@mail.gmail.com>
+Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: add MODULE_LICENSE("GPL")
+To: Daniel Axtens <dja@axtens.net>
+Cc: Paul Burton <paul.burton@mips.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 24 Feb 2018 17:03:19 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Sat, Feb 24, 2018 at 4:08 PM, Daniel Axtens <dja@axtens.net> wrote:
+> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
+>
+>> Hi Daniel,
+>>
+>> On Sun, Nov 26, 2017 at 3:53 AM, Daniel Axtens <dja@axtens.net> wrote:
+>>> This matches the header at the top of the file and squashes:
+>>>
+>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
+>>> see include/linux/module.h for more information
+>>>
+>>> Signed-off-by: Daniel Axtens <dja@axtens.net>
+>>> ---
+>>>  drivers/auxdisplay/img-ascii-lcd.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+>>> index db040b378224..7315ffa79537 100644
+>>> --- a/drivers/auxdisplay/img-ascii-lcd.c
+>>> +++ b/drivers/auxdisplay/img-ascii-lcd.c
+>>> @@ -441,3 +441,5 @@ static struct platform_driver img_ascii_lcd_driver = {
+>>>         .remove = img_ascii_lcd_remove,
+>>>  };
+>>>  module_platform_driver(img_ascii_lcd_driver);
+>>> +
+>>> +MODULE_LICENSE("GPL");
+>>
+>> This was submitted just a few days before yours, and now it is in at
+>> 09c479f7f1fbfaf848e5813996793966cd50be81
+>> ("auxdisplay: img-ascii-lcd: add missing
+>> MODULE_DESCRIPTION/AUTHOR/LICENSE").
+>>
+>> In any case, thanks for the patch! :-)
+>
+> Thanks!
+>
+> I was submitting the patches in part because I was considering
+> submitting a change that made the license warning a fatal error and I
+> wanted to make sure I had covered the obvious missing ones first.
+>
+> Would making the warning fatal impact on you?
 
-> Since do_undefinstr() uses get_user to get the undefined
-> instruction, it can be called before kprobes processes
-> recursive check. This can cause an infinit recursive
-> exception.
-> Prohibit probing on get_user functions.
-> 
-> Fixes: 24ba613c9d6c ("ARM kprobes: core code")
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  arch/arm/include/asm/assembler.h |    8 ++++++++
->  arch/arm/lib/getuser.S           |   10 ++++++++++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-> index bc8d4bbd82e2..dd5e7f30eaed 100644
-> --- a/arch/arm/include/asm/assembler.h
-> +++ b/arch/arm/include/asm/assembler.h
-> @@ -536,4 +536,12 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
->  #endif
->  	.endm
->  
-> +#ifdef CONFIG_KPROBES
-> +# define _ASM_NOKPROBE(entry)				\
-> +	.pushsection "_kprobe_blacklist", "aw" ;	\
-> +	.balign 4 ;					\
-> +	.long entry;					\
-> +	.popsection
+drivers/auxdisplay/arm-charlcd.c is missing MODULE_LICENSE. I will
+send the patch for that which should be in for 4.17.
 
-Oops, I missed #else block... which cause build error if !CONFIG_KPROBES.
-I'll update it soon.
+Apart from that one, the rest of drivers/auxdisplay is fine.
 
-Thanks,
+Cheers,
+Miguel
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>
+> Regards,
+> Daniel
+>>
+>> Cheers,
+>> Miguel
+>>
+>>> --
+>>> 2.11.0
+>>>
