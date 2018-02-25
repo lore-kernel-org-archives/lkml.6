@@ -1,151 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeBYUOl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 15:14:41 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58882 "EHLO mail.bootlin.com"
+        id S1751953AbeBYU3a (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 15:29:30 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:36108 "EHLO fuzix.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeBYUOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 15:14:38 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: m41t80: fix race conditions
-Date: Sun, 25 Feb 2018 21:14:31 +0100
-Message-Id: <20180225201431.9775-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751826AbeBYU31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 15:29:27 -0500
+Date: Sun, 25 Feb 2018 20:28:06 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180225202806.735a6870@alans-desktop>
+In-Reply-To: <20180223171019.GA1125@roeck-us.net>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+        <20180222234833.GA3047@roeck-us.net>
+        <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
+        <20180223154316.35b26857@alans-desktop>
+        <20180223171019.GA1125@roeck-us.net>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IRQ is requested before the struct rtc is allocated and registered, but
-this struct is used in the IRQ handler, leading to:
+> FWIW, alpha and m68k are known boot with qemu (even though m68k
+> generates a warning traceback with the mainline kernel).
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000017c
-pgd = a38a2f9b
-[0000017c] *pgd=00000000
-Internal error: Oops: 5 [#1] ARM
-Modules linked in:
-CPU: 0 PID: 613 Comm: irq/48-m41t80 Not tainted 4.16.0-rc1+ #42
-Hardware name: Atmel SAMA5
-PC is at mutex_lock+0x14/0x38
-LR is at m41t80_handle_irq+0x1c/0x9c
-pc : [<c06e864c>]    lr : [<c04b70f0>]    psr: 20000013
-sp : dec73f30  ip : 00000000  fp : dec56d98
-r10: df437cf0  r9 : c0a03008  r8 : c0145ffc
-r7 : df5c4300  r6 : dec568d0  r5 : df593000  r4 : 0000017c
-r3 : df592800  r2 : 60000013  r1 : df593000  r0 : 0000017c
-Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c53c7d  Table: 20004059  DAC: 00000051
-Process irq/48-m41t80 (pid: 613, stack limit = 0xb52d091e)
-Stack: (0xdec73f30 to 0xdec74000)
-3f20:                                     dec56840 df5c4300 00000001 df5c4300
-3f40: c0145ffc c0146018 dec56840 ffffe000 00000001 c0146290 dec567c0 00000000
-3f60: c0146084 ed7c9a62 c014615c dec56d80 dec567c0 00000000 dec72000 dec56840
-3f80: c014615c c012ffc0 dec72000 dec567c0 c012fe80 00000000 00000000 00000000
-3fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 29282726 2d2c2b2a
-[<c06e864c>] (mutex_lock) from [<c04b70f0>] (m41t80_handle_irq+0x1c/0x9c)
-[<c04b70f0>] (m41t80_handle_irq) from [<c0146018>] (irq_thread_fn+0x1c/0x54)
-[<c0146018>] (irq_thread_fn) from [<c0146290>] (irq_thread+0x134/0x1c0)
-[<c0146290>] (irq_thread) from [<c012ffc0>] (kthread+0x140/0x148)
-[<c012ffc0>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-Exception stack(0xdec73fb0 to 0xdec73ff8)
-3fa0:                                     00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-Code: e3c33d7f e3c3303f f5d0f000 e593300c (e1901f9f)
----[ end trace 22b027302eb7c604 ]---
-genirq: exiting task "irq/48-m41t80" (613) is an active IRQ thread (irq 48)
+M68K works - people actively use it. Crazy people true 8). Alpha I
+believe one or two people boot. I just need to track down some discs for
+my Alpha 8)
 
-Also, there is another possible race condition. The probe function is not
-allowed to fail after the RTC is registered because the following may
-happen:
-
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
-
-Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-before requesting the IRQ and register the it as late as possible.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-m41t80.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-index b3e33320c0bf..f77320948fc4 100644
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -885,7 +885,6 @@ static int m41t80_probe(struct i2c_client *client,
- {
- 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
- 	int rc = 0;
--	struct rtc_device *rtc = NULL;
- 	struct rtc_time tm;
- 	struct m41t80_data *m41t80_data = NULL;
- 	bool wakeup_source = false;
-@@ -909,6 +908,10 @@ static int m41t80_probe(struct i2c_client *client,
- 		m41t80_data->features = id->driver_data;
- 	i2c_set_clientdata(client, m41t80_data);
- 
-+	m41t80_data->rtc =  devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(m41t80_data->rtc))
-+		return PTR_ERR(m41t80_data->rtc);
-+
- #ifdef CONFIG_OF
- 	wakeup_source = of_property_read_bool(client->dev.of_node,
- 					      "wakeup-source");
-@@ -932,15 +935,11 @@ static int m41t80_probe(struct i2c_client *client,
- 		device_init_wakeup(&client->dev, true);
- 	}
- 
--	rtc = devm_rtc_device_register(&client->dev, client->name,
--				       &m41t80_rtc_ops, THIS_MODULE);
--	if (IS_ERR(rtc))
--		return PTR_ERR(rtc);
-+	m41t80_data->rtc->ops = &m41t80_rtc_ops;
- 
--	m41t80_data->rtc = rtc;
- 	if (client->irq <= 0) {
- 		/* We cannot support UIE mode if we do not have an IRQ line */
--		rtc->uie_unsupported = 1;
-+		m41t80_data->rtc->uie_unsupported = 1;
- 	}
- 
- 	/* Make sure HT (Halt Update) bit is cleared */
-@@ -993,6 +992,11 @@ static int m41t80_probe(struct i2c_client *client,
- 	if (m41t80_data->features & M41T80_FEATURE_SQ)
- 		m41t80_sqw_register_clk(m41t80_data);
- #endif
-+
-+	rc = rtc_register_device(m41t80_data->rtc);
-+	if (rc)
-+		return rc;
-+
- 	return 0;
- }
- 
--- 
-2.16.2
+Alan
