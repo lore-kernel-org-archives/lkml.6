@@ -1,72 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeBYOHK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 09:07:10 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57997 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751710AbeBYOHI (ORCPT
+        id S1751705AbeBYOKK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 09:10:10 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54086 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751568AbeBYOKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 09:07:08 -0500
-Date: Sun, 25 Feb 2018 06:06:50 -0800
-From: tip-bot for Randy Dunlap <tipbot@zytor.com>
-Message-ID: <tip-6ce5ae7977c89f2a09092954396a66c90e8213f2@git.kernel.org>
-Cc: rdunlap@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de
-Reply-To: rdunlap@infradead.org, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org>
-References: <582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] mutex: Drop linkage.h from mutex.h
-Git-Commit-ID: 6ce5ae7977c89f2a09092954396a66c90e8213f2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 25 Feb 2018 09:10:07 -0500
+X-Google-Smtp-Source: AH8x224/W1A+5KhoNS0SogZ3VZWNYiHs4iTaDTMncYEYJE8XsKfgwsG/pMA4S49crecdwKy2HkZYkw==
+Date: Sun, 25 Feb 2018 17:09:58 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Borislav Petkov <bp@suse.de>
+Cc: tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180225140958.76brtollupvrbuwy@node.shutemov.name>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+ <20180225122924.GB26323@pd.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180225122924.GB26323@pd.tnic>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6ce5ae7977c89f2a09092954396a66c90e8213f2
-Gitweb:     https://git.kernel.org/tip/6ce5ae7977c89f2a09092954396a66c90e8213f2
-Author:     Randy Dunlap <rdunlap@infradead.org>
-AuthorDate: Sat, 24 Feb 2018 21:22:12 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 25 Feb 2018 15:00:46 +0100
+On Sun, Feb 25, 2018 at 01:29:24PM +0100, Borislav Petkov wrote:
+> On Sun, Feb 25, 2018 at 01:52:05PM +0300, Kirill A. Shutemov wrote:
+> > Could you check if the patch below makes a difference?
+> > 
+> > If it is, could you check 0x9d000 address instead of 0x99000?
+> 
+> Both don't make a difference.
 
-mutex: Drop linkage.h from mutex.h
+Hm. Could you share dmesg from the kernel that works fine?
 
-<linux/mutex.h> does not use nor need <linux/linkage.h>, so drop that
-one header file from mutex.h.
-
-<linux/mutex.h> is currently #included in around 1250 C source files
-(oops, I didn't count other header files that #include it), making it
-the 27th most-used header file.
-
-Build tested on i386 and x86_64 * (allnoconfig, tiny.config, defconfig,
-allyesconfig, and allmodconfig) and x64_64 allmodconfig + SMP=disabled.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/582b3892-4e4c-06b2-a368-5c2d439de7fc@infradead.org
-
----
- include/linux/mutex.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index f25c13423bd4..9b7fe56692bd 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -14,7 +14,6 @@
- #include <asm/current.h>
- #include <linux/list.h>
- #include <linux/spinlock_types.h>
--#include <linux/linkage.h>
- #include <linux/lockdep.h>
- #include <linux/atomic.h>
- #include <asm/processor.h>
+-- 
+ Kirill A. Shutemov
