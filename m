@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751905AbeBYVsL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 16:48:11 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46663 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbeBYVsK (ORCPT
+        id S1751912AbeBYWDI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 17:03:08 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38183 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbeBYWDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 16:48:10 -0500
-X-Google-Smtp-Source: AG47ELtCYHsI2StNte4sdIclEM76Jo99RCEBoa4A+yf1o3VF/4GPUSGZvWHWvZ4OfTWySNZqbUbUmA==
-From: Max Filippov <jcmvbkbc@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PULL 0/2] Xtensa fixes for v4.16
-Date: Sun, 25 Feb 2018 13:47:32 -0800
-Message-Id: <20180225214732.16449-1-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Sun, 25 Feb 2018 17:03:07 -0500
+X-Google-Smtp-Source: AG47ELuflqRoFqcOKqsS+dK/77WlubFLWyLYD1s9qRDy6dVA0B/2ju3zcu94omrhB8GCZSKshw+cH0uYcRIZAQ9wNdE=
+MIME-Version: 1.0
+In-Reply-To: <20180225144421.GB7144@yexl-desktop>
+References: <20180225144421.GB7144@yexl-desktop>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Sun, 25 Feb 2018 14:03:03 -0800
+Message-ID: <CALvZod7=kgWDMPbrDUGXznoJgv47fq-PUa97onVhS8x73TR+6g@mail.gmail.com>
+Subject: Re: [lkp-robot] [mm, mlock, vmscan] 9c4e6b1a70: stress-ng.hdd.ops_per_sec
+ -7.9% regression
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Balbir Singh <bsingharora@gmail.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Jan Kara <jack@suse.cz>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>, Mel Gorman <mgorman@suse.de>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sun, Feb 25, 2018 at 6:44 AM, kernel test robot
+<xiaolong.ye@intel.com> wrote:
+>
+> Greeting,
+>
+> FYI, we noticed a -7.9% regression of stress-ng.hdd.ops_per_sec due to commit:
+>
+>
+> commit: 9c4e6b1a7027f102990c0395296015a812525f4d ("mm, mlock, vmscan: no more skipping pagevecs")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> in testcase: stress-ng
+> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 128G memory
+> with following parameters:
+>
 
-please pull the following two fixes for reserved memory/DMA buffers
-allocation in high memory on xtensa architecture.
+Hi Xiaolong,
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Is there a way I can get the output of "perf record -a -g" running in
+parallel to the actual test on this machine. As I have mentioned
+before I am not able to reproduce this issue. However I am trying to
+repro on a VM with 4 vcpus and 4 GiB memory and I don't see any
+difference. I am suspecting that it may repro on a larger machine but
+I don't have access to one.
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20180225
-
-for you to fetch changes up to 6137e4166004e2ec383ac05d5ca15831f4668806:
-
-  xtensa: support DMA buffers in high memory (2018-02-16 19:19:54 -0800)
-
-----------------------------------------------------------------
-Xtensa fixes for 4.16
-
-- fix memory accounting when reserved memory is in high memory region;
-- fix DMA allocation from high memory.
-
-----------------------------------------------------------------
-Max Filippov (2):
-      xtensa: fix high memory/reserved memory collision
-      xtensa: support DMA buffers in high memory
-
- arch/xtensa/kernel/pci-dma.c | 40 ++++++++++++++++++-------
- arch/xtensa/mm/init.c        | 70 +++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 93 insertions(+), 17 deletions(-)
-
--- 
-Thanks.
--- Max
+thanks,
+Shakeel
