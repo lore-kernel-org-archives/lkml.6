@@ -1,62 +1,61 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-604962-1519585460-2-4649996465427599944
+X-Cyrus-Session-Id: sloti22d1t05-168518-1519572390-2-799683041888517718
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519585459; b=dlfdrXIIS/Aptn2CDVNpsvSz7AJGDRMuc+ZSe5MAQJplcgG
-    UD7ztMHrhR8tHg9uY5Szs52xVJfoAIeTswoxxY0hD+M0x7sSV2dk4xWtgRve3rTH
-    RLP6ggmUu/5RF+HVg0GsM9hIW1IczxlHYS1FlTlef5jEzVKzAbyYOIr1gjF6MES/
-    Jh3BQ7ZKQ0dE3pkDT61htMosgVEL0CxZFhZwamiXU1zAxTmM2QytCAWa4DJfk1lZ
-    9+JxjnT8HvLlTTN++18VIT9mwUwPY4bTc0/kRcC7cckqaP1ddMAJ+2BKRTJkeefN
-    wTmEmpiwgsZGDS+QEKS1RPVycLEincofeO6upSA==
+    t=1519572390; b=vbE591oqaHmlQ+z5j5tnJJC+EXzVR8NHjTETFNry2Bmi8hJ
+    arVsNghtW3gAjmKWAxM6jFcY0ArDz7A074z0xaetXALn3h9fUnf2JcEkAOWwn/F9
+    b67pmHZaRldStXZCeW89Ew8AYGS3s2HCstaG0SYvXOxET8QYtiWF7j437WWyVa4z
+    hKx3sNj8YniOqvtMinjkr8VSDAfaqqpC4njFLA90znKuFwWfBskrVsnvLGyaV/Pl
+    6UpmqQiQdw7BPRhaRCl06FWkmbZimu3hYzZ2MJggtKPul3/HavzdYV+XIoakphNa
+    gv0s59SJObh0cazw3Ao9+a6m+zCCn3Hphf8++7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519585459; bh=Z5beVAykiKKdafJaGIBlCbfxbvhEjQufoI+CrWUNzws=; b=T
-    ZJVrVty2FD2kgtjw5QlMKlIUoCVoGTvX2oMd4lfA+lZiKkXkz9skK4VdAQ+MVXnm
-    u8NE0wCqO95XHQfiusbvJWPeHwbs97zOhnEmzCB529FxSuCbrMEE68I+zjcwLt2M
-    6dfmT9FmQOFOYjPG5n/CPKfVLS1x40o8QM03a/G8CWTMreu8iQvEssIEkRQCe39w
-    o67j5f+CiqnumlHMmwYae8nBnOjfirWqyu6PY/4uAMaAFXFkKxcotHgHC4wa1Gyr
-    GItc3pG/XuBoPXaNV/X2UydKZbGX+AL96aTw+Pk4LfGGtHIZHcRWRITeRB4SoMvp
-    xAiCV2PurWWcx8EW8E0Ew==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HOP+qp97 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519572390;
+    bh=b9T5QQte2+QYUr7mCvpC7WBaE2J0/+NNxPikyeR11QM=; b=C2cDdjzwrOzp
+    3xmbzA4kpDdpAGdRXpTTq/DSCxfzJslztW0q6TTYj+p9SdJVVwzOjtzNK+ziOERE
+    N2GHGwz+Ekgby+OoVBQh4RQ1FXwU0la1+sELehmBBC8noZ/4UhL1hGTn9Z4loTqx
+    zbyB6yEQxEyDXTQndCX1XBU0yST8uAsQjQWKF8PQkxPRPvnT9NvfFSYPkXu8K7oH
+    gNAxaNHNeMQGnu/1Wd0+j8s1OmnkfM06lQ4oSwckjWRRFcWq+Lro3ccquFU4plp2
+    RGAfE5bcO6hXIV4LsfxTmV1x7/PsSPMR3YsOE1a3i6OMWKtvt7os9o2+FhzM7flC
+    OZFdUTpstA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HOP+qp97 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeBYTEP (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 25 Feb 2018 14:04:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39308 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751638AbeBYTEO (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Sun, 25 Feb 2018 14:04:14 -0500
-Subject: Re: [PATCH v2 01/12] drivers: base: Unified device connection lookup
-To: Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
+        id S1751872AbeBYPZd (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 25 Feb 2018 10:25:33 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33644 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751853AbeBYPZ3 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Sun, 25 Feb 2018 10:25:29 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -64,266 +63,318 @@ To: Hans de Goede <hdegoede@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org
+Subject: [PATCH v2 09/12] usb: roles: Add Intel xHCI USB role switch driver
+Date: Sun, 25 Feb 2018 16:25:07 +0100
+Message-Id: <20180225152510.10159-10-hdegoede@redhat.com>
+In-Reply-To: <20180225152510.10159-1-hdegoede@redhat.com>
 References: <20180225152510.10159-1-hdegoede@redhat.com>
- <20180225152510.10159-2-hdegoede@redhat.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6d89fe84-7196-fe60-86d9-29b05fa97ad8@infradead.org>
-Date: Sun, 25 Feb 2018 11:04:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180225152510.10159-2-hdegoede@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/25/2018 07:24 AM, Hans de Goede wrote:
-> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> 
-> Several frameworks - clk, gpio, phy, pmw, etc. - maintain
-> lookup tables for describing connections and provide custom
-> API for handling them. This introduces a single generic
-> lookup table and API for the connections.
-> 
-> The motivation for this commit is centralizing the
-> connection lookup, but the goal is to ultimately extract the
-> connection descriptions also from firmware by using the
-> fwnode_graph_* functions and other mechanisms that are
-> available.
-> 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v2:
-> -Add a (struct devcon) cast to the DEVCON() macro
-> ---
->  Documentation/driver-api/device_connection.rst |  43 ++++++++
->  drivers/base/Makefile                          |   3 +-
->  drivers/base/devcon.c                          | 139 +++++++++++++++++++++++++
->  include/linux/connection.h                     |  33 ++++++
->  4 files changed, 217 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/driver-api/device_connection.rst
->  create mode 100644 drivers/base/devcon.c
->  create mode 100644 include/linux/connection.h
-> 
-> diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-> new file mode 100644
-> index 000000000000..d52604448356
-> --- /dev/null
-> +++ b/Documentation/driver-api/device_connection.rst
-> @@ -0,0 +1,43 @@
-> +==================
-> +Device connections
-> +==================
-> +
-> +Introduction
-> +------------
-> +
-> +Devices have often connections to other devices that are out side of the direct
+Various Intel SoCs (Cherry Trail, Broxton and others) have an internal USB
+role switch for swiching the OTG USB data lines between the xHCI host
+controller and the dwc3 gadget controller.
 
-   Devices often have connections                       are outside of
+Note on some Cherry Trail systems there is ACPI/AML code listening to
+edge interrupts on the id-pin (through an _AIE ACPI method) and switching
+the role between ROLE_HOST and ROLE_NONE based on the id-pin. Note it does
+not set the role to ROLE_DEVICE, because device-mode is usually not used
+under Windows.
 
-> +child/parent relationship. A serial or network communication controller, which
-> +could be a PCI device, may need to be able to get a reference to its PHY
-> +component, which could be attached to for example the I2C bus. Some device
+The presence of AML code which modifies the cfg0 reg (on some systems)
+means that our read/write/modify of cfg0 may race with the AML code
+doing the same to avoid this we take the global ACPI lock while doing
+the read/write/modify.
 
-                    could be attached for example to the I2C bus.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Drop unnecessary depends on EXTCON from Kconfig
+-Use BIT(), resource_size()
+-Various other small style fixes
+---
+ MAINTAINERS                                    |   6 +
+ drivers/usb/Kconfig                            |   2 +
+ drivers/usb/Makefile                           |   2 +
+ drivers/usb/roles/Kconfig                      |  14 ++
+ drivers/usb/roles/Makefile                     |   1 +
+ drivers/usb/roles/intel-xhci-usb-role-switch.c | 192 +++++++++++++++++++++++++
+ 6 files changed, 217 insertions(+)
+ create mode 100644 drivers/usb/roles/Kconfig
+ create mode 100644 drivers/usb/roles/Makefile
+ create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
 
-> +drivers need to be able to control the clocks or the GPIOs for their devices,
-> +and so on.
-> +
-> +Device connections are generic descriptions of any type of connection between
-> +two separate devices.
-> +
-> +Device connections alone do not create a dependency between the two devices.
-> +They are only descriptions which are not tied to either of devices directly.
-
-                                                           of the devices directly.
-
-> +A dependency between the two devices exists only if one of the two endpoint
-> +devices requests a reference to the other. The descriptions themselves can be
-> +defined in firmware (not yet supported) or they can be build-in.
-
-                                                          built-in.
-
-> +
-> +Usage
-> +-----
-> +
-> +Device connections should exist before device ``->probe`` callback is called for
-> +either endpoint devices in the description. If the connections are defined in
-
-                   device
-
-> +firmware, this is not a problem. It should be considered if the connection
-> +descriptions are "build-in", and need to be added separately.
-
-                    "built-in",
-
-> +
-> +The connection description consist of the names of the two devices with the
-
-                              consists
-
-> +connection, i.e. the endpoints, and unique identifier for the connection which
-> +is needed if there are multiple connections between the two devices.
-> +
-> +After a descriptions exist, the devices in it can request reference to the other
-
-           description exists,
-
-> +endpoint device, or they can request the description itself.
-> +
-> +API
-> +---
-> +
-> +.. kernel-doc:: drivers/base/devcon.c
-> +   : functions: __device_find_connection device_find_connection add_device_connection remove_device_connection
-
-> diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-> new file mode 100644
-> index 000000000000..6f9e4f7280a5
-> --- /dev/null
-> +++ b/drivers/base/devcon.c
-> @@ -0,0 +1,139 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
-> + * Device connections
-> + *
-> + * Copyright (C) 2018 Intel Corporation
-> + * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> + */
-> +
-> +#include <linux/connection.h>
-> +#include <linux/device.h>
-> +
-> +static DEFINE_MUTEX(devcon_lock);
-> +static LIST_HEAD(devcon_list);
-> +
-> +/**
-> + * __device_find_connection - Find physical connection to a device
-> + * @dev: Device with the connection
-> + * @con_id: Identifier for the connection
-> + * @data: Data for the match function
-> + * @match: Function to check and convert the connection description
-> + *
-> + * Find a connection with unique identifier @con_id between @dev and an other
-
-                                                                        another
-
-> + * device. @match will be used to convert the connection description to data the
-> + * caller is expecting to be returned.
-> + */
-> +void *__device_find_connection(struct device *dev, const char *con_id,
-> +			       void *data,
-> +			       void *(*match)(struct devcon *con, int ep,
-> +					      void *data))
-> +{
-> +	const char *devname = dev_name(dev);
-> +	struct devcon *con;
-> +	void *ret = NULL;
-> +	int ep;
-> +
-> +	if (!match)
-> +		return NULL;
-> +
-> +	rcu_read_lock();
-> +
-> +	list_for_each_entry_rcu(con, &devcon_list, list) {
-> +		ep = match_string(con->endpoint, 2, devname);
-> +		if (ep < 0)
-> +			continue;
-> +
-> +		if (con_id && strcmp(con->id, con_id))
-> +			continue;
-> +
-> +		ret = match(con, !ep, data);
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(__device_find_connection);
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/i2c.h>
-> +#include <linux/pci.h>
-> +
-> +static struct bus_type *generic_match_buses[] = {
-> +	&platform_bus_type,
-> +#ifdef CONFIG_PCI
-> +	&pci_bus_type,
-> +#endif
-> +#ifdef CONFIG_I2C
-> +	&i2c_bus_type,
-> +#endif
-> +#ifdef CONFIG_SPI_MASTER
-> +	&spi_bus_type,
-> +#endif
-> +	NULL,
-> +};
-> +
-> +/* This tries to find the device from the most common bus types by name. */
-> +static void *generic_match(struct devcon *con, int ep, void *data)
-> +{
-> +	struct bus_type *bus;
-> +	struct device *dev;
-> +
-> +	for (bus = generic_match_buses[0]; bus; bus++) {
-> +		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
-> +		if (dev)
-> +			return dev;
-> +	}
-> +
-> +	/*
-> +	 * We only get called if a connection was found, tell the caller to
-
-	                                          found; tell
-
-> +	 * wait for the other device to show-up.
-
-	                                show up.
-
-> +	 */
-> +	return ERR_PTR(-EPROBE_DEFER);
-> +}
-> +
-> +/**
-> + * device_find_connection - Find two devices connected together
-> + * @dev: Device with the connection
-> + * @con_id: Identifier for the connection
-> + *
-> + * Find a connection with unique identifier @con_id between @dev and an
-
-                                                                    and
-
-> + * other device. On success returns handle to the device that is connected
-
-      another
-
-> + * to @dev, with the reference count for the found device incremented. Returns
-> + * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
-> + * connection was found but the other device has not been enumerated yet.
-> + */
-> +struct device *device_find_connection(struct device *dev, const char *con_id)
-> +{
-> +	return __device_find_connection(dev, con_id, generic_match, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(device_find_connection);
-
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6c7a29db9060..2547429952ce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14395,6 +14395,12 @@ S:	Maintained
+ F:	Documentation/hid/hiddev.txt
+ F:	drivers/hid/usbhid/
+ 
++USB INTEL XHCI ROLE MUX DRIVER
++M:	Hans de Goede <hdegoede@redhat.com>
++L:	linux-usb@vger.kernel.org
++S:	Maintained
++F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
++
+ USB ISP116X DRIVER
+ M:	Olav Kongas <ok@artecdesign.ee>
+ L:	linux-usb@vger.kernel.org
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index f278958e04ca..75f7fb151f71 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -171,6 +171,8 @@ source "drivers/usb/gadget/Kconfig"
+ 
+ source "drivers/usb/typec/Kconfig"
+ 
++source "drivers/usb/roles/Kconfig"
++
+ config USB_LED_TRIG
+ 	bool "USB LED Triggers"
+ 	depends on LEDS_CLASS && LEDS_TRIGGERS
+diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
+index 060643a1b5c8..7d1b8c82b208 100644
+--- a/drivers/usb/Makefile
++++ b/drivers/usb/Makefile
+@@ -65,3 +65,5 @@ obj-$(CONFIG_USB_COMMON)	+= common/
+ obj-$(CONFIG_USBIP_CORE)	+= usbip/
+ 
+ obj-$(CONFIG_TYPEC)		+= typec/
++
++obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles/
+diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
+new file mode 100644
+index 000000000000..f5a5e6f79f1b
+--- /dev/null
++++ b/drivers/usb/roles/Kconfig
+@@ -0,0 +1,14 @@
++if USB_ROLE_SWITCH
++
++config USB_ROLES_INTEL_XHCI
++	tristate "Intel XHCI USB Role Switch"
++	depends on ACPI && X86
++	help
++	  Driver for the internal USB role switch for switching the USB data
++	  lines between the xHCI host controller and the dwc3 gadget controller
++	  found on various Intel SoCs.
++
++	  To compile the driver as a module, choose M here: the module will
++	  be called intel-xhci-usb-role-switch.
++
++endif # USB_ROLE_SWITCH
+diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
+new file mode 100644
+index 000000000000..e44b179ba275
+--- /dev/null
++++ b/drivers/usb/roles/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_USB_ROLES_INTEL_XHCI) += intel-xhci-usb-role-switch.o
+diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+new file mode 100644
+index 000000000000..3d7be5eace49
+--- /dev/null
++++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+@@ -0,0 +1,192 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Intel XHCI (Cherry Trail, Broxton and others) USB OTG role switch driver
++ *
++ * Copyright (c) 2016-2017 Hans de Goede <hdegoede@redhat.com>
++ *
++ * Loosely based on android x86 kernel code which is:
++ *
++ * Copyright (C) 2014 Intel Corp.
++ *
++ * Author: Wu, Hao
++ */
++
++#include <linux/acpi.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/usb/role.h>
++
++/* register definition */
++#define DUAL_ROLE_CFG0			0x68
++#define SW_VBUS_VALID			BIT(24)
++#define SW_IDPIN_EN			BIT(21)
++#define SW_IDPIN			BIT(20)
++
++#define DUAL_ROLE_CFG1			0x6c
++#define HOST_MODE			BIT(29)
++
++#define DUAL_ROLE_CFG1_POLL_TIMEOUT	1000
++
++#define DRV_NAME			"intel_xhci_usb_sw"
++
++struct intel_xhci_usb_data {
++	struct usb_role_switch *role_sw;
++	void __iomem *base;
++};
++
++struct intel_xhci_acpi_match {
++	const char *hid;
++	int hrv;
++};
++
++/*
++ * ACPI IDs for PMICs which do not support separate data and power role
++ * detection (USB ACA detection for micro USB OTG), we allow userspace to
++ * change the role manually on these.
++ */
++static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
++	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
++};
++
++static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
++{
++	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++	unsigned long timeout;
++	acpi_status status;
++	u32 glk, val;
++
++	/*
++	 * On many CHT devices ACPI event (_AEI) handlers read / modify /
++	 * write the cfg0 register, just like we do. Take the ACPI lock
++	 * to avoid us racing with the AML code.
++	 */
++	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
++	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
++		dev_err(dev, "Error could not acquire lock\n");
++		return -EIO;
++	}
++
++	/* Set idpin value as requested */
++	val = readl(data->base + DUAL_ROLE_CFG0);
++	switch (role) {
++	case USB_ROLE_NONE:
++		val |= SW_IDPIN;
++		val &= ~SW_VBUS_VALID;
++		break;
++	case USB_ROLE_HOST:
++		val &= ~SW_IDPIN;
++		val &= ~SW_VBUS_VALID;
++		break;
++	case USB_ROLE_DEVICE:
++		val |= SW_IDPIN;
++		val |= SW_VBUS_VALID;
++		break;
++	}
++	val |= SW_IDPIN_EN;
++
++	writel(val, data->base + DUAL_ROLE_CFG0);
++
++	acpi_release_global_lock(glk);
++
++	/* In most case it takes about 600ms to finish mode switching */
++	timeout = jiffies + msecs_to_jiffies(DUAL_ROLE_CFG1_POLL_TIMEOUT);
++
++	/* Polling on CFG1 register to confirm mode switch.*/
++	do {
++		val = readl(data->base + DUAL_ROLE_CFG1);
++		if (!!(val & HOST_MODE) == (role == USB_ROLE_HOST))
++			return 0;
++
++		/* Interval for polling is set to about 5 - 10 ms */
++		usleep_range(5000, 10000);
++	} while (time_before(jiffies, timeout));
++
++	dev_warn(dev, "Timeout waiting for role-switch\n");
++	return -ETIMEDOUT;
++}
++
++static enum usb_role intel_xhci_usb_get_role(struct device *dev)
++{
++	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++	enum usb_role role;
++	u32 val;
++
++	val = readl(data->base + DUAL_ROLE_CFG0);
++
++	if (!(val & SW_IDPIN))
++		role = USB_ROLE_HOST;
++	else if (val & SW_VBUS_VALID)
++		role = USB_ROLE_DEVICE;
++	else
++		role = USB_ROLE_NONE;
++
++	return role;
++}
++
++static struct usb_role_switch_desc sw_desc = {
++	.set = intel_xhci_usb_set_role,
++	.get = intel_xhci_usb_get_role,
++};
++
++static int intel_xhci_usb_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct intel_xhci_usb_data *data;
++	struct resource *res;
++	int i;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	data->base = devm_ioremap_nocache(dev, res->start, resource_size(res));
++	if (IS_ERR(data->base))
++		return PTR_ERR(data->base);
++
++	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
++		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
++				     allow_userspace_ctrl_ids[i].hrv))
++			sw_desc.allow_userspace_control = true;
++
++	platform_set_drvdata(pdev, data);
++
++	data->role_sw = usb_role_switch_register(dev, &sw_desc);
++	if (IS_ERR(data->role_sw))
++		return PTR_ERR(data->role_sw);
++
++	return 0;
++}
++
++int intel_xhci_usb_remove(struct platform_device *pdev)
++{
++	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
++
++	usb_role_switch_unregister(data->role_sw);
++	return 0;
++}
++
++static const struct platform_device_id intel_xhci_usb_table[] = {
++	{ .name = DRV_NAME },
++	{}
++};
++MODULE_DEVICE_TABLE(platform, intel_xhci_usb_table);
++
++static struct platform_driver intel_xhci_usb_driver = {
++	.driver = {
++		.name = DRV_NAME,
++	},
++	.id_table = intel_xhci_usb_table,
++	.probe = intel_xhci_usb_probe,
++	.remove = intel_xhci_usb_remove,
++};
++
++module_platform_driver(intel_xhci_usb_driver);
++
++MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("Intel XHCI USB role switch driver");
++MODULE_LICENSE("GPL");
 -- 
-~Randy
+2.14.3
+
