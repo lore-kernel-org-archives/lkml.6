@@ -1,83 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeBYTuZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 14:50:25 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:32942 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeBYTuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 14:50:16 -0500
-X-Google-Smtp-Source: AG47ELszQgov3d1tTOAS0aCQan25rFlXLo8B7A0FaIe7kCaMm12vdfFhtTUN4WnRZLHEhgp+5Qrd5WQnO8Mv5UANq58=
+        id S1752057AbeBYTuT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 14:50:19 -0500
+Received: from mout.gmx.net ([212.227.15.15]:40487 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751921AbeBYTuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 14:50:15 -0500
+Subject: Re: [PATCH 04/11] signal/parisc: Document a conflict with SI_USER
+ with SIGFPE
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        linux-arch@vger.kernel.org
+References: <87373b6ghs.fsf@xmission.com>
+ <20180112005940.23279-4-ebiederm@xmission.com>
+ <20180112222944.GA22642@ls3530.fritz.box> <87fu5s4l4b.fsf@xmission.com>
+From: Helge Deller <deller@gmx.de>
+Message-ID: <68641c9e-99c6-34d3-83aa-1241bddef33c@gmx.de>
+Date: Sun, 25 Feb 2018 20:49:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <682e1867-3fd3-3267-f626-724f08481e9c@infradead.org>
-References: <20180225124652.76r5tucjebyplw2q@gmail.com> <682e1867-3fd3-3267-f626-724f08481e9c@infradead.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 25 Feb 2018 20:49:55 +0100
-Message-ID: <CANiq72mL1yUOJkWDaPRkV2hirnfaUZ_D_dSx8m7g4VcJC=mioQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: arm-charlcd: Fix struct charlcd doc line
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <triad@df.lth.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87fu5s4l4b.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:dLwrQfvOQYdESUwN7IqumebiwIU59ldNeJntMaX1X425iLhcqXH
+ 9cP3LyOroz3+RVLpMfvn7BRtqiNH6aW82PLOCRNJVzaZuCnhkmehg7jIOumDKI9CGToMYUw
+ p1JJQQnHv6MYvHYPB6M69OnKwCImAKByin8+VzsrpHWQn52380Msem93r+z1HEuYyizZJCq
+ 4sovCFRSxlPI/HG5GmWMw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1jGnjEx7CTc=:3mXg+l0J0VTgnsyP/txg2C
+ 0ZYg+/7LXIIRwoWcbRUzVjjoPc1itcZQ6b4AQBrHOersxzoGHSzT0yHvLKU2cHhYUjDpjfkS9
+ lggYT9VZ6puOF7TPKH4qRhk3dbjyMdP9eIbsA++A3ZIcHSaoS3OZTFgRhInGjaoFjAYzV9Ooo
+ uXNnkrKzB8CuFLvEoHDDEV0kt5l0Ldt1G3bXP7wOSMA5Q4OWiZtJaYQYK2q4mplZyP/U9zgk1
+ zR/FyupMOHuxhbdG6xnhxuczTR7nIMEoSg9mJw6IoDEYnPBw4giD9BvfShSvNJQgPAerUUTJh
+ 9RSTOAiAF59vDty7PT5pXUguKJTXnn9fh8pjTUQeOzF6wniFPt/yMkHAYtHltPNWMWxBXiv2/
+ NC7UzMuiFQFT/QdbFHbfSCQiB3+MsX00Yn8MZJVSaE0+n1y/HDLmvuhcauEozgBPSi7y1//Gj
+ fEWOYvF681GseZJPaZMAwPbTzvuHh8uXUFOCkiBQsH/2zh2tTKWUgrf0MmYAlj16XwrawkMQt
+ S5UHkWcQV74YAZETw4aLq7CYKhnjcFyZScKCzGcoYNgQTXDrqvYf4QWkQXJoMCT54yo4wYkHU
+ T7tmvLMNvDNmlAMOZBCJGLkdLeUobutkQpeOG4FUQGbOA/lUUn+nZdPJqOBS9BW/XpcPuGQs7
+ 67gNuDijJ8U9xN3jRUREXS8PHnxFfPrjloxfNkq8OOTYMP+G8h2EUWzOVzhZymfzg0QJBl7YN
+ I8j+0pjLwOjLuMa/3dWOzZKwcvhQnQJiSJtl10spyOkwx3CW4FZ0w4jr+pcrOczfpTEj73P2p
+ WwRJ9DlhxaFbAPH4K3IM1D0eqUlo3W/1SHYWh3EFUyiSYzAvrY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 7:13 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 02/25/2018 04:46 AM, Miguel Ojeda wrote:
->> There was a missing first line and a missing member,
->> which gave a warning under W=1:
+On 23.02.2018 01:15, Eric W. Biederman wrote:
+> Helge Deller <deller@gmx.de> writes:
+> 
+>> * Eric W. Biederman <ebiederm@xmission.com>:
+>>> Setting si_code to 0 results in a userspace seeing an si_code of 0.
+>>> This is the same si_code as SI_USER.  Posix and common sense requires
+>>> that SI_USER not be a signal specific si_code.  As such this use of 0
+>>> for the si_code is a pretty horribly broken ABI.
+>>>
+>>> Further use of si_code == 0 guaranteed that copy_siginfo_to_user saw a
+>>> value of __SI_KILL and now sees a value of SIL_KILL with the result
+>>> that uid and pid fields are copied and which might copying the si_addr
+>>> field by accident but certainly not by design.  Making this a very
+>>> flakey implementation.
+>>>
+>>> Utilizing FPE_FIXME siginfo_layout will now return SIL_FAULT and the
+>>> appropriate fields will reliably be copied.
+>>>
+>>> This bug is 13 years old and parsic machines are no longer being built
+>>> so I don't know if it possible or worth fixing it.  But it is at least
+>>> worth documenting this so other architectures don't make the same
+>>> mistake.
 >>
->>     CC      drivers/auxdisplay/arm-charlcd.o
->>   drivers/auxdisplay/arm-charlcd.c:57: warning: Cannot understand
->>    * @dev: a pointer back to containing device on line 57 - I thought
->>   it was a doc line
 >>
->> Cc: Linus Walleij <triad@df.lth.se>
->> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->> ---
->> Please let me know if anyone does not want this in 4.17.
+>> I think we should fix it, even if we now break the ABI.
 >>
->>  drivers/auxdisplay/arm-charlcd.c | 2 ++
->>  1 file changed, 2 insertions(+)
+>> It's about a "conditional trap" which needs to be handled by userspace.
+>> I doubt there is any Linux code out which is utilizing this
+>> parisc-specific trap.
 >>
->> diff --git a/drivers/auxdisplay/arm-charlcd.c b/drivers/auxdisplay/arm-charlcd.c
->> index b3176ee92b90..27cf08a05e93 100644
->> --- a/drivers/auxdisplay/arm-charlcd.c
->> +++ b/drivers/auxdisplay/arm-charlcd.c
->> @@ -54,12 +54,14 @@
->>  #define HD_BUSY_FLAG                 0x80U
+>> I'd suggest to add a new FPE trap si_code (e.g. FPE_CONDTRAP).
+>> While at it, maybe we should include the already existing FPE_MDAOVF
+>> from the frv architecture, so that arch/frv/include/uapi/asm/siginfo.h
+>> can go completely.
 >>
->>  /**
->> + * struct charlcd
->
-> Can you make that more like:
->  * struct charlcd - <some brief description>
->
-> please.  And merged soon would be fine.
->
+>> Suggested patch is below.
+>>
+>> I'm willing to test the patch below on the parisc architecture for a few
+>> weeks. And it will break arch/x86/kernel/signal_compat.c which needs
+>> looking at then too.
+> 
+> Have you managed to test this change?
 
-Sure! I will do:
+Sadly I haven't done any further testing yet.
+ 
+> I am sitting looking at another new FPE si_code and if this has been tested
+> I figure FPE_CONDTRAP should get the next available FPE si_code and the
+> other change should get the one that follows.
 
- /**
-+ * struct charlcd - Private data structure
-  * @dev: a pointer back to containing device
+I'm fine either way. Do you have a git tree I can pull which includes
+all your patches? I can then start testing.
 
-Cheers,
-Miguel
-
->>   * @dev: a pointer back to containing device
->>   * @phybase: the offset to the controller in physical memory
->>   * @physize: the size of the physical page
->>   * @virtbase: the offset to the controller in virtual memory
->>   * @irq: reserved interrupt number
->>   * @complete: completion structure for the last LCD command
->> + * @init_work: delayed work structure to initialize the display on boot
->>   */
->>  struct charlcd {
->>       struct device *dev;
->>
->
-> thanks,
-> --
-> ~Randy
+Helge
