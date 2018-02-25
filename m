@@ -1,149 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeBYPUx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 10:20:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750987AbeBYPUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 10:20:51 -0500
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [virtio-dev] [RFC PATCH V2] virtio_pci: Add SR-IOV support
-From: Yan Vugenfirer <yvugenfi@redhat.com>
-In-Reply-To: <20180222175250.97135.98386.stgit@mdrustad-mac04.local>
-Date: Sun, 25 Feb 2018 17:20:47 +0200
-Cc: virtio-dev@lists.oasis-open.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        dan.daly@intel.com, alex.williamson@redhat.com, MRustad@gmail.com,
-        alexander.duyck@gmail.com, mst@redhat.com
+        id S1751953AbeBYPZx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 10:25:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57005 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751851AbeBYPZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 10:25:49 -0500
+Date: Sun, 25 Feb 2018 16:25:35 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v4 03/10] ARM: sun8i: smp: Add support for A83T
+Message-ID: <20180225162535.7406803c@dell-desktop.home>
+In-Reply-To: <20180223150305.7jsuxay2idzvcy2w@flea.lan>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+        <20180223133742.26044-4-mylene.josserand@bootlin.com>
+        <20180223150305.7jsuxay2idzvcy2w@flea.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
-Message-Id: <7B7DC8E0-9F6A-403F-8077-39FC3939482E@redhat.com>
-References: <20180222175250.97135.98386.stgit@mdrustad-mac04.local>
-To: Mark Rustad <mark.d.rustad@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On Fri, 23 Feb 2018 16:03:05 +0100
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> On 22 Feb 2018, at 19:52, Mark Rustad <mark.d.rustad@intel.com> wrote:
+> On Fri, Feb 23, 2018 at 02:37:35PM +0100, Mylène Josserand wrote:
+> > Add the support for A83T.
+> > 
+> > A83T SoC has an additional register than A80 to handle CPU configurations:
+> > R_CPUS_CFG. Information about the register comes from Allwinner's BSP
+> > driver.
+> > An important difference is the Power Off Gating register for clusters
+> > which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/Kconfig  |   2 +-
+> >  arch/arm/mach-sunxi/mc_smp.c | 168 +++++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 162 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> > index ce53ceaf4cc5..a0ad35c41c02 100644
+> > --- a/arch/arm/mach-sunxi/Kconfig
+> > +++ b/arch/arm/mach-sunxi/Kconfig
+> > @@ -51,7 +51,7 @@ config MACH_SUN9I
+> >  config ARCH_SUNXI_MC_SMP
+> >  	bool
+> >  	depends on SMP
+> > -	default MACH_SUN9I
+> > +	default y if MACH_SUN9I || MACH_SUN8I
+> >  	select ARM_CCI400_PORT_CTRL
+> >  	select ARM_CPU_SUSPEND
+> >  
+> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> > index de02e5662557..3bd9066a1422 100644
+> > --- a/arch/arm/mach-sunxi/mc_smp.c
+> > +++ b/arch/arm/mach-sunxi/mc_smp.c
+> > @@ -55,22 +55,32 @@
+> >  #define CPUCFG_CX_RST_CTRL_L2_RST	BIT(8)
+> >  #define CPUCFG_CX_RST_CTRL_CX_RST(n)	BIT(4 + (n))
+> >  #define CPUCFG_CX_RST_CTRL_CORE_RST(n)	BIT(n)
+> > +#define CPUCFG_CX_RST_CTRL_CORE_RST_ALL	(0xf << 0)
+> >  
+> >  #define PRCM_CPU_PO_RST_CTRL(c)		(0x4 + 0x4 * (c))
+> >  #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+> >  #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+> >  #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
+> > +/* The power off register for clusters are different from SUN9I and SUN8I */
+> > +#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I	BIT(0)
+> >  #define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+> >  #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+> >  #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+> >  #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+> >  
+> > +/* R_CPUCFG registers, specific to SUN8I */
+> > +#define R_CPUCFG_CLUSTER_PO_RST_CTRL(c)	(0x30 + (c) * 0x4)
+> > +#define R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(n)	BIT(n)
+> > +#define R_CPUCFG_CPU_SOFT_ENTRY_REG	0x01a4
+> > +
+> >  #define CPU0_SUPPORT_HOTPLUG_MAGIC0	0xFA50392F
+> >  #define CPU0_SUPPORT_HOTPLUG_MAGIC1	0x790DCA3A
+> >  
+> >  static void __iomem *cpucfg_base;
+> > +static void __iomem *r_cpucfg_base;
+> >  static void __iomem *prcm_base;
+> >  static void __iomem *sram_b_smp_base;
+> > +static bool is_sun9i;  
 > 
-> Hardware-realized virtio-pci devices can implement SR-IOV, so this
-> patch enables its use. The device in question is an upcoming Intel
-> NIC that implements both a virtio-net PF and virtio-net VFs. These
-> are hardware realizations of what has been up to now been a software
-> interface.
-> 
-> The device in question has the following 4-part PCI IDs:
-> 
-> PF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 15fe
-> VF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 05fe
+> Since you always check for that condition to always be false, can't
+> you do the opposite, ie have it called is_a83t, and verify it to be
+> true?
 
-Small mistake in the commit message. Red Hat (Qumranet) vendor ID is 1af4, virtio-net device ID is 1041.
-Should be:
-PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
-VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
-
-Best regards,
-Yan.
+Yes, I will switch the test.
 
 > 
-> The patch needs no check for device ID, because the callback will
-> never be made for devices that do not assert the capability or
-> when run on a platform incapable of SR-IOV.
+> >  	/* Set the hardware entry point address */
+> > -	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
+> > -	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
+> > +	if (is_sun9i)
+> > +		writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
+> > +		       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
+> > +	else
+> > +		writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
+> > +		       r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG);  
 > 
-> One reason for this patch is because the hardware requires the
-> vendor ID of a VF to be the same as the vendor ID of the PF that
-> created it. So it seemed logical to simply have a fully-functioning
-> virtio-net PF create the VFs. This patch makes that possible.
+> if (is_a83t)
+> 	reg = prcm_base + PRCM_CPU_SOFT_ENTRY_REG;
+> else
+> 	reg = r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG;
+> writel(__pa_symbol(sunxi_mc_smp_secondary_startup), reg);
 > 
-> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-> Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
-> ---
-> Changes in V2:
-> - Simplified logic from previous version, removed added driver variable
-> - Disable SR-IOV on driver removal excapt when VFs are assigned
-> - Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
-> ---
-> drivers/virtio/virtio_pci_common.c |   47 ++++++++++++++++++++++++++++++++++++
-> 1 file changed, 47 insertions(+)
-> 
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 48d4d1cf1cb6..78b53ffc4cee 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -572,6 +572,47 @@ static int virtio_pci_probe(struct pci_dev *pci_dev,
-> 	return rc;
-> }
-> 
-> +#ifdef CONFIG_PCI_IOV
-> +static int virtio_pci_sriov_disable(struct pci_dev *pci_dev)
-> +{
-> +	/* If vfs are assigned we cannot shut down SR-IOV without causing
-> +	 * issues, so just leave the hardware available.
-> +	 */
-> +	if (pci_vfs_assigned(pci_dev)) {
-> +		dev_warn(&pci_dev->dev,
-> +			 "Unloading driver while VFs are assigned - VFs will not be deallocated\n");
-> +		return -EPERM;
-> +	}
-> +	pci_disable_sriov(pci_dev);
-> +	return 0;
-> +}
-> +
-> +static int virtio_pci_sriov_enable(struct pci_dev *pci_dev, int num_vfs)
-> +{
-> +	int rc = 0;
-> +
-> +	if (pci_num_vf(pci_dev))
-> +		return -EINVAL;
-> +
-> +	rc = pci_enable_sriov(pci_dev, num_vfs);
-> +	if (rc) {
-> +		dev_warn(&pci_dev->dev, "Failed to enable PCI sriov: %d\n", rc);
-> +		return rc;
-> +	}
-> +	dev_info(&pci_dev->dev, "SR-IOV enabled with %d VFs\n", num_vfs);
-> +	return num_vfs;
-> +}
-> +
-> +static int virtio_pci_sriov_configure(struct pci_dev *dev, int num_vfs)
-> +{
-> +	if (num_vfs)
-> +		return virtio_pci_sriov_enable(dev, num_vfs);
-> +	if (!pci_num_vf(dev))
-> +		return -EINVAL;
-> +	return virtio_pci_sriov_disable(dev);
-> +}
-> +#endif /* CONFIG_PCI_IOV */
-> +
-> static void virtio_pci_remove(struct pci_dev *pci_dev)
-> {
-> 	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> @@ -584,6 +625,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> 	else
-> 		virtio_pci_modern_remove(vp_dev);
-> 
-> +#ifdef CONFIG_PCI_IOV
-> +	virtio_pci_sriov_disable(pci_dev);
-> +#endif
-> 	pci_disable_device(pci_dev);
-> 	put_device(dev);
-> }
-> @@ -596,6 +640,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> #ifdef CONFIG_PM_SLEEP
-> 	.driver.pm	= &virtio_pci_pm_ops,
-> #endif
-> +#ifdef CONFIG_PCI_IOV
-> +	.sriov_configure = virtio_pci_sriov_configure,
-> +#endif
-> };
-> 
-> module_pci_driver(virtio_pci_driver);
-> 
-> 
-> ---------------------------------------------------------------------
-> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> 
+
+Make sense, thanks for the review.
+
+Mylene
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
