@@ -1,63 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeBYQf2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 11:35:28 -0500
-Received: from agrajag.zerfleddert.de ([88.198.237.222]:50646 "EHLO
-        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751667AbeBYQfY (ORCPT
+        id S1751839AbeBYQvB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 11:51:01 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38650 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbeBYQu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 11:35:24 -0500
-Date: Sun, 25 Feb 2018 17:27:30 +0100
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-To: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [SIL2review] [PATCH] i2c: img-scb: fix PM device usage count
-Message-ID: <20180225172730.2b443978@denkmatte>
-In-Reply-To: <20180225132014.GA8844@osadl.at>
-References: <20180224224303.3mpwhal2axcr6aos@agrajag.zerfleddert.de>
-        <20180225132014.GA8844@osadl.at>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Sun, 25 Feb 2018 11:50:59 -0500
+X-Google-Smtp-Source: AH8x227R7ITvXLAqCfzMj5V7QxZtog9QibfDo6zti0xqdvNCd5XaPeTG0RFUFvlEbCxSi7pSvc1ICQ==
+Date: Sun, 25 Feb 2018 08:50:56 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] locking/refcounts: Switch to UD2 for exceptions
+Message-ID: <20180225165056.GA11719@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+As done in commit 3b3a371cc9bc ("x86/debug: Use UD2 for WARN()"), this
+switches to UD2 from UD0 to keep disassembly readable.
 
-On Sun, 25 Feb 2018 13:20:14 +0000 Nicholas Mc Guire wrote:
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/x86/include/asm/refcount.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> the decrement though is conditional:
->   pm_runtime_put_noidle
->   -> atomic_add_unless(&dev->power.usage_count, -1, 0);  
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 4e44250e7d0d..ebe0ae2548b6 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -17,7 +17,7 @@
+ #define _REFCOUNT_EXCEPTION				\
+ 	".pushsection .text..refcount\n"		\
+ 	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD0 "\n"				\
++	"112:\t" ASM_UD2 "\n"				\
+ 	ASM_UNREACHABLE					\
+ 	".popsection\n"					\
+ 	"113:\n"					\
+-- 
+2.7.4
 
-pm_runtime_put_noidle is playing it safe by not decrementing past 0, I
-think that's a good thing.
 
-> Also just wondering - could one not decrement in pm_runtime_get_sync
-> on the error path rather than defering this to the caller and fixing
-> it there ?
-
-That's what I've asked linux-pm in the linked discussion:
-
-> > https://marc.info/?l=linux-pm&m=151904483924999&w=2
-
-As far as I've understood the idea is that most "error" return values
-actually are a result of disabled runtime PM, and that should be
-transparent to the caller. Looking at the code, that's what the vast
-majority of callers do - they just ignore the return value of
-pm_runtime_get_sync, and somewhere later have an
-unconditional pm_runtime_put_... call.
-
-So the only issue are callers that don't ignore the pm_runtime_get_sync
-return value, probably because they're having some kind of special
-requirements for error handling. For those, they need to ensure that a
-proper _put_ is done somewhere in the error path.
-
-> Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
-
-Thanks for the review!,
-
-Tobias
+-- 
+Kees Cook
+Pixel Security
