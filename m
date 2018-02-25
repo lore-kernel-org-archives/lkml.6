@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751945AbeBYXws (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 18:52:48 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:39752 "EHLO
+        id S1751960AbeBYXyt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 18:54:49 -0500
+Received: from mxf98a.netcup.net ([46.38.249.138]:45070 "EHLO
         mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751884AbeBYXwr (ORCPT
+        with ESMTP id S1751921AbeBYXyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 18:52:47 -0500
+        Sun, 25 Feb 2018 18:54:44 -0500
 Authentication-Results: mxf98a;
         spf=pass (sender IP is 77.7.101.1) smtp.mailfrom=rabel@robertabel.eu smtp.helo=buildbert.robertabel.eu
 From: Robert Abel <rabel@robertabel.eu>
@@ -17,12 +17,12 @@ Cc: Robert Abel <rabel@robertabel.eu>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
  graphics command
-Date: Mon, 26 Feb 2018 00:52:32 +0100
-Message-Id: <20180225235236.31162-1-rabel@robertabel.eu>
+Date: Mon, 26 Feb 2018 00:54:28 +0100
+Message-Id: <20180225235432.31209-1-rabel@robertabel.eu>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
 References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
-X-PPP-Message-ID: <20180225235246.31196.58550@mxf98a.netcup.net>
+X-PPP-Message-ID: <20180225235442.31368.42173@mxf98a.netcup.net>
 X-PPP-Vhost: robertabel.eu
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
