@@ -1,72 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751841AbeBYPmh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 10:42:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751815AbeBYPmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 10:42:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837DA21777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to set KEEP_SIZE bit in f2fs_zero_range
-Date: Sun, 25 Feb 2018 23:38:21 +0800
-Message-Id: <20180225153821.3292-1-chao@kernel.org>
-X-Mailer: git-send-email 2.14.1.145.gb3622a4ee
+        id S1751858AbeBYQCN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 11:02:13 -0500
+Received: from smtprelay02.ispgateway.de ([80.67.31.40]:17636 "EHLO
+        smtprelay02.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeBYQCK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 11:02:10 -0500
+Subject: Re: [OpenRISC] Removing architectures without upstream gcc support
+To: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>,
+        linux-hexagon@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        David Howells <dhowells@redhat.com>, openrisc@lists.librecores.org,
+        Lennox Wu <lennox.wu@gmail.com>, James Hogan <jhogan@kernel.org>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-metag@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+From: Philipp Wagner <lists@philipp-wagner.com>
+Message-ID: <155284c9-7fd4-2f2c-0216-1c43622f88c3@philipp-wagner.com>
+Date: Sun, 25 Feb 2018 16:43:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Df-Sender: bGlzdHNAcGhpbGlwcC13YWduZXIuY29t
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+Am 22.02.2018 um 16:45 schrieb Arnd Bergmann:
+> While building the cross-toolchains, I noticed that overall, we can build almost
+> all linux target architectures with upstream binutils and gcc these days,
+> however there are still some exceptions, and I'd like to find out if anyone
+> has objections to removing the ones that do not have upstream support.
+> This are the four architectures I found:
+> [...]
+> * OpenRISC is a RISC architecture with a free license and an
+>   active community. It seems to have lost a bit of steam after RISC-V
+>   is rapidly taking over that niche, but there are chips out there and
+>   the design isn't going away. Listing it here for completeness only
+>   because there is no upstream gcc port yet, but this will hopefully
+>   change in the future based on
+>   https://lists.librecores.org/pipermail/openrisc/2018-January/000958.html
+>   and I had no problems locating the gcc-7.x tree for building my
+>   toolchains. The port is actively being maintained.
 
-As Jayashree Mohan reported:
+It's mostly mentioned in the mailing list thread you linked to, but just
+for completeness in this thread:
 
-A simple workload to reproduce this would be :
-1. create foo
-2. Write (8K - 16K)  // foo size = 16K now
-3. fsync()
-4. falloc zero_range , keep_size (4202496 - 4210688) // foo size must be 16K
-5. fdatasync()
-Crash now
+The OpenRISC GCC port is maintained and regularly updated to newer GCC
+versions. It is not, however, upstreamed to the FSF due to a single
+missing FSF copyright assignment from a developer who has written large
+parts of the initial port. All code which has copyright assignments in
+place (binutils, GDB, etc.) has been upstreamed lately.
 
-On recovery, we see that the file size is 4210688 and not 16K, which
-violates the semantics of keep_size flag. We have a test case to
-reproduce this using CrashMonkey on 4.15 kernel. Try this out by
-simply running :
- ./c_harness -f /dev/sda -d /dev/cow_ram0 -t f2fs -e 102400  -P -v
- tests/generic_468_zero.so
+For GCC, Stafford Horne is actively working on rewriting the parts which
+we don't have the FSF copyright assignment for (and unless something
+very surprising happens, won't get). [If anyone wants to help, there's
+GSoC project for it as well:
+https://fossi-foundation.org/gsoc18-ideas#openrisc-gcc-port]
 
-The root cause is that we miss to set KEEP_SIZE bit correctly in zero_range
-when zeroing block cross EOF with FALLOC_FL_KEEP_SIZE, let's fix this
-missing case.
+So I'd be very sad if the openrisc port gets dropped from Linux upstream.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index f64bcd0a7f73..6a202e5a6386 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1348,8 +1348,12 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 	}
- 
- out:
--	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size)
--		f2fs_i_size_write(inode, new_size);
-+	if (new_size > i_size_read(inode)) {
-+		if (mode & FALLOC_FL_KEEP_SIZE)
-+			file_set_keep_isize(inode);
-+		else
-+			f2fs_i_size_write(inode, new_size);
-+	}
- out_sem:
- 	up_write(&F2FS_I(inode)->i_mmap_sem);
- 
--- 
-2.14.1.145.gb3622a4ee
+Philipp
