@@ -1,84 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeBYAfC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Feb 2018 19:35:02 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51317 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751500AbeBYAfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Feb 2018 19:35:00 -0500
-Date: Sun, 25 Feb 2018 01:34:58 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Karel Zak <kzak@redhat.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Igor Plyatov <plyatov@gmail.com>, linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com,
-        util-linux@vger.kernel.org, J William Piggott <elseifthen@gmx.com>
-Subject: Re: 500 ms delay in time saved into RTC
-Message-ID: <20180225003458.GB19904@piout.net>
-References: <30ae185f-28c9-54f1-2884-4ee7801b130e@gmail.com>
- <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
- <20180219110328.n7yjorinjm3xxckr@ws.net.home>
+        id S1751605AbeBYAus (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Feb 2018 19:50:48 -0500
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:48320 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751500AbeBYAup (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Feb 2018 19:50:45 -0500
+Date: Sun, 25 Feb 2018 01:50:32 +0100
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Michal Hocko <mhocko@kernel.org>, <akpm@linux-foundation.org>
+CC: Randy Dunlap <rdunlap@infradead.org>, <broonie@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
+        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
+        richard -rw- weinberger <richard.weinberger@gmail.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: mmotm 2018-02-21-14-48 uploaded (mm/page_alloc.c on UML)
+Message-ID: <20180225005032.GA11826@vmlxhi-102.adit-jv.com>
+References: <20180221224839.MqsDtkGCK%akpm@linux-foundation.org>
+ <7bcc52db-57eb-45b0-7f20-c93a968599cd@infradead.org>
+ <20180222072037.GC30681@dhcp22.suse.cz>
+ <20180222103832.GA11623@vmlxhi-102.adit-jv.com>
+ <20180222125955.GD30681@dhcp22.suse.cz>
+ <20180222130814.GA30385@vmlxhi-102.adit-jv.com>
+ <20180222132630.GH30681@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180219110328.n7yjorinjm3xxckr@ws.net.home>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180222132630.GH30681@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Andrew, Michal,
 
-On 19/02/2018 at 12:03:28 +0100, Karel Zak wrote:
-> On Mon, Feb 19, 2018 at 08:11:05AM +0100, Rasmus Villemoes wrote:
-> > It's because util-linux's hwclock still assumes the world is x86. See
-> > this comment in the util-linux source code:
+On Thu, Feb 22, 2018 at 02:26:30PM +0100, Michal Hocko wrote:
+> On Thu 22-02-18 14:08:14, Eugeniu Rosca wrote:
+> > On Thu, Feb 22, 2018 at 01:59:55PM +0100, Michal Hocko wrote:
+> > > On Thu 22-02-18 11:38:32, Eugeniu Rosca wrote:
+> > > > Hi Michal,
+> > > > 
+> > > > Please, let me know if any action is expected from my end.
+> > > 
+> > > I do not thing anything is really needed right now. If you have a strong
+> > > opinion about the solution (ifdef vs. noop stub) then speak up.
 > > 
-> >         /*
-> >          * The Hardware Clock can only be set to any integer time plus one
-> >          * half second.  The integer time is required because there is no
-> >          * interface to set or get a fractional second.  The additional half
-> >          * second is because the Hardware Clock updates to the following
-> >          * second precisely 500 ms (not 1 second!) after you release the
-> >          * divider reset (after setting the new time) - see description of
-> >          * DV2, DV1, DV0 in Register A in the MC146818A data sheet (and note
-> > 
-> > So if hwclock is asked to --systohc at time 01:02:03.x, it waits until
-> > the time is 01:02:03.5 to set the rtc to 01:02:03, or if that has
-> > already passed, waits until  01:02:04.5 and sets it to 01:02:04.
-> > 
-> > On our ARM BSP we patch util-linux to have the "implicit fractional
-> > part" configurable, and trying to upstream something like that has been
-> > on my todo-list for quite a while. See
-> > 
-> > https://raw.githubusercontent.com/oe-lite/base/master/recipes/util-linux/util-linux-2.29/hwclock-tweak-delay.patch
-> > 
-> > for the patch we currently use (on top of that, we change the 0.5
-> > initializer to 0.0 to avoid having to always pass the --delay argument).
-> > Incidentally, it seems we're on the same util-linux version, so you
-> > should be able to try out that patch and see if it works for you.
+> > No different preference on my side. I was more thinking if you are going
+> > to amend the patch or create a fix on top of it. Since it didn't reach
+> > mainline, it makes sense to amend it. If you can do it without the
+> > intervention of the author, that's also fine for me.
 > 
-> Would be possible to somehow detect what is the right default setting for
-> --delay? I mean for example detect architecture / clock HW, etc.
-> 
-> I have no problem with --delay, but it's tuning for advanced users and
-> HW specific stuff. It would be nice to have something more portable.
-> 
+> Andrew usually takes the incremental fix and then squash them when
+> sending to Linus
 
-This is what I'm using to synchronize the RTC to the system time:
+This may sound like bikeshedding, but if commit [1] is squashed onto [2],
+the resulted commit will pointlessly relocate the ifdef line, like seen
+in [3]. Feel free to skip this comment/request, but imho applying [4] on
+top of [1] would then result in a cleaner squashed commit. No functional
+change is intended here. TIA.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/tree/rtc-sync.c
+[1] linux-next commit 5fd667a8c762 ("mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma-fix")
+[2] linux-next commit 72a571e91476 ("mm: page_alloc: skip over regions of invalid pfns on UMA")
 
-With sane RTCs, it manages to do so with a good precision, 10µs on a
-pcf85363 connected to a sama5d4 xplained, 96µs on my PC.
+[3] Ugly and unneeded ifdef line relocation
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb416723538f..a89b029985ef 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5355,12 +5355,12 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+                        goto not_early;
 
-It can still be improved and doesn't handle RTCs in localtime.
+                if (!early_pfn_valid(pfn)) {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+                        /*
+                         * Skip to the pfn preceding the next valid one (or
+                         * end_pfn), such that we hit a valid pfn (or end_pfn)
+                         * on our next iteration of the loop.
+                         */
++#ifdef CONFIG_HAVE_MEMBLOCK
+                        pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+ #endif
+                        continue;
 
-I'm planning to integrate that in hwclock at some point i(hopefully
-soon) but I didn't have the time to dive too much in the code yet.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+[4] Patch to be applied on top of [1], for a cleaner squashed commit.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a89b029985ef..10cbf9f1fb35 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5355,12 +5355,12 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+                        goto not_early;
+
+                if (!early_pfn_valid(pfn)) {
++#ifdef CONFIG_HAVE_MEMBLOCK
+                        /*
+                         * Skip to the pfn preceding the next valid one (or
+                         * end_pfn), such that we hit a valid pfn (or end_pfn)
+                         * on our next iteration of the loop.
+                         */
+-#ifdef CONFIG_HAVE_MEMBLOCK
+                        pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+ #endif
+                        continue;
+
+Best regards,
+Eugeniu.
