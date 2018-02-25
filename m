@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeBYRWt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 12:22:49 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34537 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751758AbeBYRWr (ORCPT
+        id S1751886AbeBYRXB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 12:23:01 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33250 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751758AbeBYRWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 12:22:47 -0500
-X-Google-Smtp-Source: AH8x225Rk/fTGRqdj4GadXOT7IZ4MIqp41gjEbG2jKv83rDE6DCjGL3jmMd3hU89WjTYoSo1ZhVtyA==
+        Sun, 25 Feb 2018 12:22:54 -0500
+X-Google-Smtp-Source: AG47ELsPaFZlofA9a8OZZkNr00LrMhoCa7oT1D4/VLfBFAfUN6W0jLyg8KTNn4OtK+3o4FDXURxXZw==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH 00/21] powerpc/gamecube: make W=1 compilation errors free
-Date: Sun, 25 Feb 2018 18:22:15 +0100
-Message-Id: <20180225172236.29650-1-malat@debian.org>
+Subject: [PATCH 01/21] powerpc: Remove warning on array size when empty
+Date: Sun, 25 Feb 2018 18:22:16 +0100
+Message-Id: <20180225172236.29650-2-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180225172236.29650-1-malat@debian.org>
+References: <20180225172236.29650-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -25,63 +27,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I started working on warnings treated as error on ppc32. As a first step,
-here is a set of patches to make gamecube error free when using W=1:
+When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
+array feature_properties is defined as an empty array, which in turn
+triggers the following warning (treated as error on W=1):
 
-$ make ARCH=powerpc gamecube_defconfig
-$ make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- W=1
+  CC      arch/powerpc/kernel/prom.o
+arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
+arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
+  for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+                ^
+cc1: all warnings being treated as errors
 
-Using:
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/kernel/prom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-$ powerpc-linux-gnu-gcc --version
-powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
-
-
-Mathieu Malaterre (21):
-  powerpc: Remove warning on array size when empty
-  powerpc: Move the inline keyword at the beginning of function
-    declaration
-  powerpc: Mark the variable earlycon_acpi_spcr_enable maybe_unused
-  powerpc: Mark both tmp variables as unused
-  powerpc: Avoid comparison of unsigned long >= 0 in pfn_valid
-  powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-  powerpc: Make functions flipper_pic_init & ug_udbg_putc static
-  powerpc: Make function __giveup_fpu static
-  powerpc: Make function save_all static
-  powerpc: Add missing prototype for slb_miss_bad_addr
-  powerpc: Add missing prototype for hdec_interrupt
-  powerpc: Add missing prototype for time_init
-  powerpc: Add missing prototype for arch_dup_task_struct
-  powerpc: Add missing prototype for arch_irq_work_raise
-  powerpc: Add missing prototype for MMU_setup
-  powerpc: Add missing prototype for init_IRQ
-  powerpc: Add missing prototype for sys_debug_setcontext
-  powerpc: Add missing prototypes for sys_sigreturn & sys_rt_sigreturn
-  powerpc: Add missing prototypes for hw_breakpoint_handler &
-    arch_unregister_hw_breakpoint
-  powerpc: Add missing prototypes for ppc_select & ppc_fadvise64_64
-  powerpc: Add missing prototypes in setup_32.c
-
- arch/powerpc/include/asm/asm-prototypes.h          | 9 +++++++++
- arch/powerpc/include/asm/hw_breakpoint.h           | 2 ++
- arch/powerpc/include/asm/irq.h                     | 1 +
- arch/powerpc/include/asm/irq_work.h                | 1 +
- arch/powerpc/include/asm/page.h                    | 3 ++-
- arch/powerpc/include/asm/thread_info.h             | 1 +
- arch/powerpc/include/asm/time.h                    | 2 ++
- arch/powerpc/include/asm/uaccess.h                 | 2 +-
- arch/powerpc/kernel/process.c                      | 4 ++--
- arch/powerpc/kernel/prom.c                         | 3 +--
- arch/powerpc/kernel/setup.h                        | 5 +++++
- arch/powerpc/kernel/setup_32.c                     | 2 ++
- arch/powerpc/kernel/signal.h                       | 5 +++++
- arch/powerpc/kernel/signal_32.c                    | 4 ++--
- arch/powerpc/lib/sstep.c                           | 4 ++--
- arch/powerpc/mm/init_32.c                          | 1 +
- arch/powerpc/platforms/embedded6xx/flipper-pic.c   | 2 +-
- arch/powerpc/platforms/embedded6xx/usbgecko_udbg.c | 2 +-
- include/linux/serial_core.h                        | 1 +
- 19 files changed, 42 insertions(+), 12 deletions(-)
-
+diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+index 4dffef947b8a..6e8e4122820e 100644
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@ -291,11 +291,10 @@ static inline void identical_pvr_fixup(unsigned long node)
+ 
+ static void __init check_cpu_feature_properties(unsigned long node)
+ {
+-	unsigned long i;
+ 	struct feature_property *fp = feature_properties;
+ 	const __be32 *prop;
+ 
+-	for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
++	for (; fp != feature_properties + ARRAY_SIZE(feature_properties); ++fp) {
+ 		prop = of_get_flat_dt_prop(node, fp->name, NULL);
+ 		if (prop && be32_to_cpup(prop) >= fp->min_value) {
+ 			cur_cpu_spec->cpu_features |= fp->cpu_feature;
 -- 
 2.11.0
