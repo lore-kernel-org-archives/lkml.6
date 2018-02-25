@@ -1,103 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeBYTuT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 14:50:19 -0500
-Received: from mout.gmx.net ([212.227.15.15]:40487 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751921AbeBYTuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 14:50:15 -0500
-Subject: Re: [PATCH 04/11] signal/parisc: Document a conflict with SI_USER
- with SIGFPE
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        John David Anglin <dave.anglin@bell.net>, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-References: <87373b6ghs.fsf@xmission.com>
- <20180112005940.23279-4-ebiederm@xmission.com>
- <20180112222944.GA22642@ls3530.fritz.box> <87fu5s4l4b.fsf@xmission.com>
-From: Helge Deller <deller@gmx.de>
-Message-ID: <68641c9e-99c6-34d3-83aa-1241bddef33c@gmx.de>
-Date: Sun, 25 Feb 2018 20:49:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751979AbeBYT5x (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 14:57:53 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34049 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751762AbeBYT5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 14:57:51 -0500
+Date: Sun, 25 Feb 2018 20:57:48 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] i2c: imx: Fix PM device usage count
+Message-ID: <20180225195748.5itrchj36wz5mquu@pengutronix.de>
+References: <20180224224328.2pfki7rqcxqetmlz@agrajag.zerfleddert.de>
 MIME-Version: 1.0
-In-Reply-To: <87fu5s4l4b.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:dLwrQfvOQYdESUwN7IqumebiwIU59ldNeJntMaX1X425iLhcqXH
- 9cP3LyOroz3+RVLpMfvn7BRtqiNH6aW82PLOCRNJVzaZuCnhkmehg7jIOumDKI9CGToMYUw
- p1JJQQnHv6MYvHYPB6M69OnKwCImAKByin8+VzsrpHWQn52380Msem93r+z1HEuYyizZJCq
- 4sovCFRSxlPI/HG5GmWMw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:1jGnjEx7CTc=:3mXg+l0J0VTgnsyP/txg2C
- 0ZYg+/7LXIIRwoWcbRUzVjjoPc1itcZQ6b4AQBrHOersxzoGHSzT0yHvLKU2cHhYUjDpjfkS9
- lggYT9VZ6puOF7TPKH4qRhk3dbjyMdP9eIbsA++A3ZIcHSaoS3OZTFgRhInGjaoFjAYzV9Ooo
- uXNnkrKzB8CuFLvEoHDDEV0kt5l0Ldt1G3bXP7wOSMA5Q4OWiZtJaYQYK2q4mplZyP/U9zgk1
- zR/FyupMOHuxhbdG6xnhxuczTR7nIMEoSg9mJw6IoDEYnPBw4giD9BvfShSvNJQgPAerUUTJh
- 9RSTOAiAF59vDty7PT5pXUguKJTXnn9fh8pjTUQeOzF6wniFPt/yMkHAYtHltPNWMWxBXiv2/
- NC7UzMuiFQFT/QdbFHbfSCQiB3+MsX00Yn8MZJVSaE0+n1y/HDLmvuhcauEozgBPSi7y1//Gj
- fEWOYvF681GseZJPaZMAwPbTzvuHh8uXUFOCkiBQsH/2zh2tTKWUgrf0MmYAlj16XwrawkMQt
- S5UHkWcQV74YAZETw4aLq7CYKhnjcFyZScKCzGcoYNgQTXDrqvYf4QWkQXJoMCT54yo4wYkHU
- T7tmvLMNvDNmlAMOZBCJGLkdLeUobutkQpeOG4FUQGbOA/lUUn+nZdPJqOBS9BW/XpcPuGQs7
- 67gNuDijJ8U9xN3jRUREXS8PHnxFfPrjloxfNkq8OOTYMP+G8h2EUWzOVzhZymfzg0QJBl7YN
- I8j+0pjLwOjLuMa/3dWOzZKwcvhQnQJiSJtl10spyOkwx3CW4FZ0w4jr+pcrOczfpTEj73P2p
- WwRJ9DlhxaFbAPH4K3IM1D0eqUlo3W/1SHYWh3EFUyiSYzAvrY=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180224224328.2pfki7rqcxqetmlz@agrajag.zerfleddert.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.02.2018 01:15, Eric W. Biederman wrote:
-> Helge Deller <deller@gmx.de> writes:
+On Sat, Feb 24, 2018 at 11:43:28PM +0100, Tobias Jordan wrote:
+> pm_runtime_get_sync() increases the device's usage count even when
+> reporting an error, so add a call to pm_runtime_put_noidle() in the
+> related error branches.
 > 
->> * Eric W. Biederman <ebiederm@xmission.com>:
->>> Setting si_code to 0 results in a userspace seeing an si_code of 0.
->>> This is the same si_code as SI_USER.  Posix and common sense requires
->>> that SI_USER not be a signal specific si_code.  As such this use of 0
->>> for the si_code is a pretty horribly broken ABI.
->>>
->>> Further use of si_code == 0 guaranteed that copy_siginfo_to_user saw a
->>> value of __SI_KILL and now sees a value of SIL_KILL with the result
->>> that uid and pid fields are copied and which might copying the si_addr
->>> field by accident but certainly not by design.  Making this a very
->>> flakey implementation.
->>>
->>> Utilizing FPE_FIXME siginfo_layout will now return SIL_FAULT and the
->>> appropriate fields will reliably be copied.
->>>
->>> This bug is 13 years old and parsic machines are no longer being built
->>> so I don't know if it possible or worth fixing it.  But it is at least
->>> worth documenting this so other architectures don't make the same
->>> mistake.
->>
->>
->> I think we should fix it, even if we now break the ABI.
->>
->> It's about a "conditional trap" which needs to be handled by userspace.
->> I doubt there is any Linux code out which is utilizing this
->> parisc-specific trap.
->>
->> I'd suggest to add a new FPE trap si_code (e.g. FPE_CONDTRAP).
->> While at it, maybe we should include the already existing FPE_MDAOVF
->> from the frv architecture, so that arch/frv/include/uapi/asm/siginfo.h
->> can go completely.
->>
->> Suggested patch is below.
->>
->> I'm willing to test the patch below on the parisc architecture for a few
->> weeks. And it will break arch/x86/kernel/signal_compat.c which needs
->> looking at then too.
+> Fixes: 588eb93ea49f ("i2c: imx: add runtime pm support to improve the
+>   performance")
+> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+> ---
+> In i2c_imx_xfer(), one could also move the "out" label up (in front of
+> the call to pm_runtime_put_autosuspend()), but I'm not sure what the
+> underlying error scenario is; calling _put_noidle() seems to be the
+> safer bet.
 > 
-> Have you managed to test this change?
+> This is one of a number of patches for problems found using coccinelle 
+> scripting in the SIL2LinuxMP project. The patch has been compile-tested;
+> it's based on linux-next-20180223.
+> 
+> For a discussion of the corresponding issue, see
+> https://marc.info/?l=linux-pm&m=151904483924999&w=2
 
-Sadly I haven't done any further testing yet.
- 
-> I am sitting looking at another new FPE si_code and if this has been tested
-> I figure FPE_CONDTRAP should get the next available FPE si_code and the
-> other change should get the one that follows.
+I don't get the original mail, so reply here. In reply to the question I
+would have asked here, too:
 
-I'm fine either way. Do you have a git tree I can pull which includes
-all your patches? I can then start testing.
+> Why isn't ...get_sync() directly calling ...put_noidle() but relies on
+> the driver implementation to do it? It seems unintuitive for a _get_
+> function to increase the usage count although returning an error.
 
-Helge
+Rafael replied:
+
+> Because ...get_sync() returns an error when runtime PM is disabled and
+> we wanted that case to be transparent for the users of it.
+> 
+> In the majority of cases (if not always) errors returned by
+> ...get_sync()
+> mean disabled runtime PM or flaky hardware and the latter is much less
+> common (and generally there's not much to do about them in the kernel
+> anyway).
+
+If pm_runtime_get_sync() should be transparent for the users if PM is
+disable, why not simply return success then? Or introduce a return value
+convention like:
+
+	<0 (i.e. -ESOMETHIN) is error
+	0 success
+	1 PM is disabled
+
+(Taking a quick glimpse there seem to be already some cases where 1 or
+-ESOMETHING is returned, but I didn't find documentation explaining the
+return values.)
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
