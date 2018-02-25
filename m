@@ -1,72 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeBYR1L (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 12:27:11 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50217 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751855AbeBYRW7 (ORCPT
+        id S1751885AbeBYRtJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 12:49:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58170 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751847AbeBYRtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 12:22:59 -0500
-X-Google-Smtp-Source: AG47ELt/sxJbmhBM3MoqNIKJoXtjQM65SU2Ku9GAz8Oh0MxwFqvXMWyZEtDMZ3wCCgIFs09evQkNnA==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH 04/21] powerpc: Mark both tmp variables as unused
-Date: Sun, 25 Feb 2018 18:22:19 +0100
-Message-Id: <20180225172236.29650-5-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180225172236.29650-1-malat@debian.org>
-References: <20180225172236.29650-1-malat@debian.org>
+        Sun, 25 Feb 2018 12:49:07 -0500
+Date: Sun, 25 Feb 2018 09:49:27 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
+        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
+ cond_resched_rcu_qs() in favor of cond_resched()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20171201192122.GA19301@linux.vnet.ibm.com>
+ <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180224151240.0d63a059@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180224151240.0d63a059@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022517-0048-0000-0000-0000023F29C4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008595; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00994970; UDB=6.00505699; IPR=6.00774304;
+ MB=3.00019734; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-25 17:49:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022517-0049-0000-0000-0000444033F4
+Message-Id: <20180225174927.GC2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-25_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802250237
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the value of `tmp` is never intended to be read, declare both `tmp`
-variables as unused. Fix warning (treated as error in W=1):
+On Sat, Feb 24, 2018 at 03:12:40PM -0500, Steven Rostedt wrote:
+> On Fri,  1 Dec 2017 11:21:40 -0800
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > Now that cond_resched() also provides RCU quiescent states when
+> > needed, it can be used in place of cond_resched_rcu_qs().  This
+> > commit therefore makes this change.
+> 
+> Are you sure this is true?
 
-  CC      arch/powerpc/kernel/signal_32.o
-arch/powerpc/kernel/signal_32.c: In function ‘sys_swapcontext’:
-arch/powerpc/kernel/signal_32.c:1048:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
-  unsigned char tmp;
-                ^~~
-arch/powerpc/kernel/signal_32.c: In function ‘sys_debug_setcontext’:
-arch/powerpc/kernel/signal_32.c:1234:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
-  unsigned char tmp;
-                ^~~
-cc1: all warnings being treated as errors
+Up to a point.  If a given CPU has been blocking an RCU grace period for
+long enough, that CPU's rcu_dynticks.rcu_need_heavy_qs will be set, and
+then the next cond_resched() will be treated as a cond_resched_rcu_qs().
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- arch/powerpc/kernel/signal_32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+However, to your point, if there is no grace period in progress or if 
+the current grace period is not waiting on the CPU in question or if
+the grace-period kthread is starved of CPU, then cond_resched() has no
+effect on RCU.  Unless of course it results in a context switch.
 
-diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-index a46de0035214..492f03451877 100644
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1045,7 +1045,7 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
- 		     struct ucontext __user *new_ctx,
- 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+> I just bisected a lock up on my machine down to this commit.
+> 
+> With CONFIG_TRACEPOINT_BENCHMARK=y
+> 
+> # cd linux.git/tools/testing/selftests/ftrace/
+> # ./ftracetest test.d/ftrace/func_traceonoff_triggers.tc
+> 
+> Locks up with a backtrace of:
+> 
+> [  614.186509] INFO: rcu_tasks detected stalls on tasks:
+
+Ah, but this is RCU-tasks!  Which never sets rcu_dynticks.rcu_need_heavy_qs,
+thus needing a real context switch.
+
+Hey, when you said that synchronize_rcu_tasks() could take a very long
+time, I took you at your word!  ;-)
+
+Does the following (untested, probably does not even build) patch make
+cond_resched() take a more peremptory approach to RCU-tasks?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0c337f5ba3c4..5155fe5e7702 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1088,12 +1088,16 @@ EXPORT_SYMBOL_GPL(rcu_is_watching);
+ void rcu_request_urgent_qs_task(struct task_struct *t)
  {
--	unsigned char tmp;
-+	unsigned char tmp __maybe_unused;
- 	int ctx_has_vsx_region = 0;
+ 	int cpu;
++	struct rcu_dynticks *rdtp;
  
- #ifdef CONFIG_PPC64
-@@ -1231,7 +1231,7 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
- {
- 	struct sig_dbg_op op;
- 	int i;
--	unsigned char tmp;
-+	unsigned char tmp __maybe_unused;
- 	unsigned long new_msr = regs->msr;
- #ifdef CONFIG_PPC_ADV_DEBUG_REGS
- 	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
--- 
-2.11.0
+ 	barrier();
+ 	cpu = task_cpu(t);
+ 	if (!task_curr(t))
+ 		return; /* This task is not running on that CPU. */
+-	smp_store_release(per_cpu_ptr(&rcu_dynticks.rcu_urgent_qs, cpu), true);
++	rdtp = per_cpu_ptr(&rcu_dynticks, cpu);
++	WRITE_ONCE(rdtp->rcu_need_heavy_qs, true);
++	/* Store rcu_need_heavy_qs before rcu_urgent_qs. */
++	smp_store_release(&rdtp->rcu_urgent_qs, true);
+ }
+ 
+ #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_HOTPLUG_CPU)
