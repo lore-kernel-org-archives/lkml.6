@@ -1,149 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751718AbeBYKhQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 05:37:16 -0500
-Received: from mga14.intel.com ([192.55.52.115]:35342 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751688AbeBYKhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 05:37:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,393,1515484800";
-   d="scan'208";a="30508939"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after
- granting locality
-Thread-Topic: [PATCH 1/2 v4] tpm: cmd_ready command can be issued only after
- granting locality
-Thread-Index: AQHTrYagkPigyJ4us0ezmhdADlpCwqO0vNaAgAAtdZA=
-Date: Sun, 25 Feb 2018 10:37:08 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94228C1A@hasmsx108.ger.corp.intel.com>
-References: <20180224154316.26607-1-tomas.winkler@intel.com>
- <20180225094045.4zkqbrt5yi3ao562@linux.intel.com>
-In-Reply-To: <20180225094045.4zkqbrt5yi3ao562@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTE2NzlmZTktNGQ0Ni00MDY3LWFhNTQtZTM1YWEwOWEyZjllIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJwdTlzemJRK2pxVHVsczJLTTdRZkpaSE5oa3Y1eTM2dlNpOFVJNDBHVDNXTlhZVkhmS09wWkMzTHA4VlZjME9EIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.252.0.220]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751639AbeBYKwS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 05:52:18 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39898 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeBYKwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 05:52:14 -0500
+X-Google-Smtp-Source: AH8x225ogEQ//AjYwrnBel7PMHTHFNIoCnhgbqlVlYy4qS6PbVOxFnByIjBEp3ORUV1UYr0YYxUYxg==
+Date: Sun, 25 Feb 2018 13:52:05 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Borislav Petkov <bp@suse.de>
+Cc: tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180224214818.GD29374@pd.tnic>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Feb 24, 2018 at 10:48:18PM +0100, Borislav Petkov wrote:
+> On Sun, Feb 11, 2018 at 04:19:38AM -0800, tip-bot for Kirill A. Shutemov wrote:
+> > Commit-ID:  b91993a87aff6dafd60a9c8ce80ebc425161a815
+> > Gitweb:     https://git.kernel.org/tip/b91993a87aff6dafd60a9c8ce80ebc425161a815
+> > Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > AuthorDate: Fri, 9 Feb 2018 17:22:27 +0300
+> > Committer:  Ingo Molnar <mingo@kernel.org>
+> > CommitDate: Sun, 11 Feb 2018 12:36:19 +0100
+> > 
+> > x86/boot/compressed/64: Prepare trampoline memory
 > 
-> On Sat, Feb 24, 2018 at 05:43:16PM +0200, Tomas Winkler wrote:
-> > The correct sequence is to first request locality and only after that
-> > perform cmd_ready handshake, otherwise the hardware will drop the
-> > subsequent message as from the device point of view the cmd_ready
-> > handshake wasn't performed. Symmetrically locality has to be
-> > relinquished only after going idle handshake has completed, this
-> > requires that go_idle has to poll for the completion and as well
-> > locality relinquish has to poll for completion so it is not overridden
-> > in back to back commands flow.
-> >
-> > The issue is only visible on devices that support multiple localities.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > V2: poll for locality relinquish completion
-> > V3: 1. Print error message upon locality relinquish failure
-> >     2. Don't override rc code on error path with locality relinquish
-> > V4: 3. Don't capture locality relinquish error code in rc, just print
-> > 	the error message.
-> >
-> >        return value.
-> >  drivers/char/tpm/tpm-interface.c |  20 +++++---
-> >  drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------
-> ------
-> >  drivers/char/tpm/tpm_tis_core.c  |   4 +-
-> >  include/linux/tpm.h              |   2 +-
-> >  4 files changed, 93 insertions(+), 41 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 9e80a953d693..4d74bacca5a1 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
-> tpm_space *space,
-> >  	if (!(flags & TPM_TRANSMIT_UNLOCKED))
-> >  		mutex_lock(&chip->tpm_mutex);
-> >
-> > -	if (chip->dev.parent)
-> > -		pm_runtime_get_sync(chip->dev.parent);
-> >
-> >  	if (chip->ops->clk_enable != NULL)
-> >  		chip->ops->clk_enable(chip, true);
-> > @@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
-> tpm_space *space,
-> >  		chip->locality = rc;
-> >  	}
-> >
-> > +	if (chip->dev.parent)
-> > +		pm_runtime_get_sync(chip->dev.parent);
-> > +
-> >  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> >  	if (rc)
-> >  		goto out;
-> > @@ -499,17 +500,24 @@ ssize_t tpm_transmit(struct tpm_chip *chip,
-> struct tpm_space *space,
-> >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> >
-> >  out:
-> > +	if (chip->dev.parent)
-> > +		pm_runtime_put_sync(chip->dev.parent);
-> > +
-> >  	if (need_locality && chip->ops->relinquish_locality) {
-> > -		chip->ops->relinquish_locality(chip, chip->locality);
-> > +		/* this coud be on error path, don't override error code */
-> > +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
-> 
-> Declaration should be in the beginning of the function.
+> This patch breaks X in my test guest image here. The failing Xorg.0.log file
+> has:
 
-No, it shouldn't. I cannot find any reference to this statement, I've already explained my reasoning in a previous mail. 
-  
-> 
-> > +
-> > +		if (l_rc) {
-> > +			dev_err(&chip->dev, "%s: relinquish_locality: error
-> %d\n",
-> > +				__func__, l_rc);
-> > +		}
-> 
-> In kernel coding style, this should be w/o curly braces.
+Looks like the heuristic to finding right spot for trampoline fails. I
+don't understand why.
 
-Yep, missed that, will resubmit
+Could you check if the patch below makes a difference?
 
+If it is, could you check 0x9d000 address instead of 0x99000?
 
-> I can fix these cosmetic issues
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Doesn't this need
-> 
-> Fixes: 877c57d0d0ca ("tpm_crb: request and relinquish locality 0")
-> And shouldn't this also have
-> 
-> Cc: stable@vger.kernel.org
-> 
-> ?
-Good points
-Thanks
-Tomas
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index dad5da7b4c1a..7274a02406a4 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -32,6 +32,7 @@ struct paging_config paging_prepare(void)
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+ 		paging_config.l5_required = 1;
+ 
++#if 0
+ 	/*
+ 	 * Find a suitable spot for the trampoline.
+ 	 * This code is based on reserve_bios_regions().
+@@ -49,6 +50,9 @@ struct paging_config paging_prepare(void)
+ 	/* Place the trampoline just below the end of low memory, aligned to 4k */
+ 	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
+ 	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
++#else
++	paging_config.trampoline_start = 0x99000;
++#endif
+ 
+ 	trampoline = (unsigned long *)paging_config.trampoline_start;
+ 
+-- 
+ Kirill A. Shutemov
