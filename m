@@ -1,115 +1,136 @@
-Return-Path: <sfr@canb.auug.org.au>
-X-Google-Smtp-Source: AH8x224TMIiqVU5vqFYyc0HK499w5J5XQD4mMGvONIhD+fuujaB5Xvn5KqGebqe4Tr0UvW50mi8t
-ARC-Seal: i=1; a=rsa-sha256; t=1519592103; cv=none;
+Return-Path: <me@tobin.cc>
+X-Google-Smtp-Source: AG47ELvLESTZLOpEfY+M3EjScPSgCPTM/MaLOqMxywJXtjj2lv518k2qq84zuAbCjRxrvbNJAFhr
+ARC-Seal: i=1; a=rsa-sha256; t=1519596824; cv=none;
         d=google.com; s=arc-20160816;
-        b=GfmzssY0Y1coV2HHHifafzLyvZW7TNhEr7c4DDTC+2dMzMTWo8aASvB7Fxki7RYLzH
-         GWaOMZS8vfw0JDxBARMWmmWS+f4/3F1QMK58AtWdf/eeRpkdHCpBo8qfh1ENeosVRUcr
-         xMTvHAlphgsceLU7sDCmJIi6DfoFR3I+G2loU4zJpP2ia6aBNb0Fwbh0SHEcO3HfbVAd
-         s3DZ2GYfMY2RnC4NUUkkMJiYVrPXXKvz9cVMPhROTNhtNMlrxWith/9SExRvUGtnLTNu
-         umqcGppTED/ylbhH3HhXOq4WmRK+j7mdQRxfu5ml1tSV2MXQvXyb0NCaCjFDQg5bXe/X
-         1EpQ==
+        b=NyzZrEIE7FYK/TzrdWOY/HAtRuYW8HueD6AsW6LLe9YAhda59xA16vgdW8QUcQ4bQ6
+         UV303T5GSjMl0pgmj7l/0nRYbgmnlONxHHa9CRb7rFxvK3N38ns6gwa9ZoqbnwT4Okzo
+         i0ckUReLj51ni5A4DPNNJ3s9dOAV3keSLlKR7MAhFA9qEhZU69bSNxkIxlhaWEcgjbHf
+         3fJXz1NkQlizHY+28c6wxInLLVCCY/tmNxslWnxnIQq42poerF4bf2dN/QrQeAuGlV6t
+         rr9/SMymOdFr1hf+P5KTnaRIFdgOu3288tuxKGHTHr7alIRaS6FPj9w+Fgu9A6ucRhTJ
+         xH3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
-         :date:dkim-signature:arc-authentication-results;
-        bh=TAo8O6MHrrxYHAc0EvKC8Xp+8tYg+u7W4Y71efOCW10=;
-        b=B9qarv8sKrtuE4F+Sd3cRGXGBn0CJQTuIYmdAmQWjLPT/Zm/NKKjni5uAyKUvQqzl4
-         wjE+1gmdaNjrQ8773XCjwYHpJ8F1pQ/o229ei2HrD3VW9lIS7mZLZbNA/DulrP8gB+yg
-         rO3w8HGOyPZ77U+u00Ees1hmraEV13cMtyWyABEXIbCaqB3iVIznvpLPkvnADbs8PVDF
-         dvhS46er8edjy90CW4X5V8gb/AZuz4bg6jWmitwLu6ESXIrqQACr+StqSbAi1UeCx/+O
-         qLGtImwaR3oFGq18DoImGwKaepzup65yRJLMep5hNRENJJnLCC9Pgg5QXeQMtVlBUK5z
-         MVSw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=N/USEuMu/kUs5kTHWRoCexqnBR+r78tGoYCTOeCT87A=;
+        b=X95qLUtgE97mYa3iaWdfP9MS3qlmgpUmCMEsTpEzSLeM6Z3S1NIZvlRcp4byh+g8VE
+         3HyeFpMfBVbqWWWKZSKb+EaQzLvAYJP7TnN+N8eBEmRNgkkDJIz1EHhiNrCszto8YESc
+         El6+XtWRGmFa1q+2nYjtiajJvKtL4ywmUMAsw7MuX1Fc4JEtL2nO+34AYdwyNVvfnIPB
+         2LFHPrfdhoHJpDpNHbjRz+o12CNKyvEZ0Mf2SXIOeQwtQDY4Nbk/eOtYqJEcR7Rpe7le
+         n4w5fXm5h/viyRlksxZKlkc3Mx2Wgc1xdZ9RoW4BxVOcYHt7oPQgrqnOhx/RPtCPZzI1
+         zFmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=e9fA62XS;
-       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XRTF78l4;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=CkKl3TE7;
+       spf=neutral (google.com: 66.111.4.29 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=e9fA62XS;
-       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 26 Feb 2018 07:54:22 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, tycho@tycho.ws, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XRTF78l4;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=CkKl3TE7;
+       spf=neutral (google.com: 66.111.4.29 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+X-ME-Sender: <xms:FzWTWspIujks8wO7uglVqBa6VzNvtSytXRPGGIca2ZI3hQs6LKDLzQ>
+Date: Mon, 26 Feb 2018 09:13:39 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	tycho@tycho.ws, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: Pull Request for linux-next
-Message-ID: <20180226075422.6d55953d@canb.auug.org.au>
-In-Reply-To: <20180225075907.GB9456@eros>
+Message-ID: <20180225221339.GA2808@eros>
 References: <20180225075907.GB9456@eros>
+ <20180226075422.6d55953d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/16di3vRB_/m2AX.QEVf7Opp"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+Content-Disposition: inline
+In-Reply-To: <20180226075422.6d55953d@canb.auug.org.au>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593358997453174821?=
-X-GMAIL-MSGID: =?utf-8?q?1593407809108245422?=
+X-GMAIL-MSGID: =?utf-8?q?1593412760277147462?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/16di3vRB_/m2AX.QEVf7Opp
-Content-Type: text/plain; charset=US-ASCII
+
+--WIyZ46R2i8wDzkSu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tobin,
-
-On Sun, 25 Feb 2018 18:59:07 +1100 "Tobin C. Harding" <me@tobin.cc> wrote:
->
-> Would it be possible to get the development tree for
-> scripts/leaking_addresses.pl included in Linux-next please.
+On Mon, Feb 26, 2018 at 07:54:22AM +1100, Stephen Rothwell wrote:
+> Hi Tobin,
 >=20
-> The tree is hosted on kernel.org
+> On Sun, 25 Feb 2018 18:59:07 +1100 "Tobin C. Harding" <me@tobin.cc> wrote:
+> >
+> > Would it be possible to get the development tree for
+> > scripts/leaking_addresses.pl included in Linux-next please.
+> >=20
+> > The tree is hosted on kernel.org
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/tobin/leaks.git/
+> >=20
+> > I have created a branch called linux-next.  This branch is not tagged or
+> > signed.  I'm super new to kernel maintainer branch management, ATM the
+> > tree mirrors GregKH's staging tree setup i.e 3 branches
+> >=20
+> > 	master
+> > 	leaks-testing
+> > 	leaks-next
+> >=20
+> > Development done on leaks-testing.  Once patches have been rinsed
+> > through LKML move them to leaks-next.  Any holes in that?
 >=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/tobin/leaks.git/
+> That looks fine to me.  I have added your leaks-next branch from
+> today.  It would be nice to see some Reviewed-by or Acked-by tags on
+> your commits.
+
+Yeah I know that would be awesome, there doesn't seem to be a lot of
+interest in this script ATM.  None of my recent patches have gotten any
+comments what so ever.  We have a second maintainer now though so
+hopefully there will be at least two sets of eyes going over it.
+
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgement of your code.
+
+lol, that line made my heart jump into mouth ready for the comment to
+come :)
+
+> The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window.=20
 >=20
-> I have created a branch called linux-next.  This branch is not tagged or
-> signed.  I'm super new to kernel maintainer branch management, ATM the
-> tree mirrors GregKH's staging tree setup i.e 3 branches
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and=20
+>      * destined for the current or next Linux merge window.
 >=20
-> 	master
-> 	leaks-testing
-> 	leaks-next
->=20
-> Development done on leaks-testing.  Once patches have been rinsed
-> through LKML move them to leaks-next.  Any holes in that?
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
 
-That looks fine to me.  I have added your leaks-next branch from
-today.  It would be nice to see some Reviewed-by or Acked-by tags on
-your commits.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/16di3vRB_/m2AX.QEVf7Opp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Tobin.
+--WIyZ46R2i8wDzkSu
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqTIn4ACgkQAVBC80lX
-0Gw2/QgAk3VJYEP0IWWUp/L17hyYDe7vkPjDAF8w1GX4F55t6UvNP0GH+M/n1Q/l
-3w0IzZpDNoJD7c8nNsEvNAdCBbSOgTD7ArsrgogrrQhb2nd+Bf+ysN7ICLtBb79P
-Zziu55x2qOr7D+76ZxX+hVoikDpjwPF/qQ4t9u1QVUVI4bTvZl602R84ERWoXo7o
-FGIHs/yQJ4AI20nuuPLkOGzST3AATeosR+osZIMxR3YiN2lzTje5yyRRMT/6jZno
-SXiqfq6nhXUDUB4H526K2jx7E9O+bBrqtYWj9Sxkl6wtdH4NronEzEjBodMfDZAn
-vSA350lcbHz5x6GZzP75Jhg6ZOeTCw==
-=sUh/
+iQIcBAEBCgAGBQJakzUOAAoJEEC/nkwmnWYHF4QQAKJ52BUMrMeTv1Yh6S4AmerH
+LsE1M/FrBkjoJpiP27uXhRQNYDmm+E0rlTRscmB6Cyfm2q3W5ZRnBGPvHHmmO9r0
+Nz/hte3nCFSG/BLnsmtRdJ9yuqcNBc/ekcMTP1JbKLM9RVvw5t6i4UaHBzGoPjJt
+nQk7hWtS38QwXr7419VsJBEKPl/x5E2b86WcgT1Sg0GD9BHCArOR//W06ProNBaA
+CCMny3Es+wMMdCbzcJj1sEaAcuRCx6OM1e+0Q2CXQChUlMNBxpAiOk5vN9TpM2gj
+SodMiICCY3J+mXoCAbBue66bXeUi/uwmbLDS1f52EM+j9SJL3BZZ9B4yfE7qflNu
+J52qwGhpGqfOiSKo9w/WfZafvrtkaqjFzzSPz1vC3t69V/WI93/CNy9f1+WIL+ZH
+9InW5g8kJPKQYLq3pDaxPBbuLCK/qPXoJxttOlQfAsgTiEywkXM3GhvbA4dd2ZvI
+fWWiwiRG9IZ2RyXsF7JKbydMkVbyXCuuPpnoUzh2/iu/L6lC11Cb0ec55gcb6Xfd
+NtPXDSpXjTueh+dP+oxGI+ij0l7qQx9XMZCAP7qNHw5kS3ckzkNvbIDSxgQsoZBS
+L956JD8TGIljKRx9y93lwzqPccavm/PxBXiVWCnLQqehgD1ZU33XkU8GnZAckXjo
+ze15gUSqdyF9ev9LK33u
+=t+BO
 -----END PGP SIGNATURE-----
 
---Sig_/16di3vRB_/m2AX.QEVf7Opp--
+--WIyZ46R2i8wDzkSu--
