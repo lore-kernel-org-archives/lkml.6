@@ -1,64 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeBYFWW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 00:22:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48136 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751540AbeBYFWT (ORCPT
+        id S1751545AbeBYGCj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 01:02:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59268 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750720AbeBYGCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 00:22:19 -0500
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] headers: linux/irq.h: drop 5 #included header files
-To: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Message-ID: <02745e91-c117-74b5-d043-dceb3d4bb4e0@infradead.org>
-Date: Sat, 24 Feb 2018 21:22:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 25 Feb 2018 01:02:37 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EF9060556
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rfried@codeaurora.org
+From: Ramon Fried <rfried@codeaurora.org>
+To: davem@davemloft.net, kvalo@codeaurora.org, marcel@holtmann.org,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ramon Fried <rfried@codeaurora.org>
+Subject: [PATCH 1/6] qrtr: add MODULE_ALIAS macro to smd
+Date: Sun, 25 Feb 2018 08:02:23 +0200
+Message-Id: <20180225060223.17304-1-rfried@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Added MODULE_ALIAS("rpmsg:IPCRTR") to ensure qrtr-smd and qrtr will load
+when IPCRTR channel is detected.
 
-<linux/irq.h> does not use nor need several of its #included files,
-so drop those header files from irq.h.
-
-<linux/irq.h> is currently #included in around 1135 C source files
-(oops, I didn't count other header files that #include it), making it
-the 29th most-used header file.
-
-Build tested on i386 and x86_64 * (allnoconfig, tiny.config, defconfig,
-allyesconfig, and allmodconfig) and x64_64 allmodconfig + SMP=disabled.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Ramon Fried <rfried@codeaurora.org>
 ---
-Ingo/Thomas, please include this in tip.git for more thorough testing.
----
- include/linux/irq.h |    5 -----
- 1 file changed, 5 deletions(-)
+ net/qrtr/smd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- linux.orig/include/linux/irq.h
-+++ linux.next/include/linux/irq.h
-@@ -10,18 +10,13 @@
-  * Thanks. --rmk
-  */
+diff --git a/net/qrtr/smd.c b/net/qrtr/smd.c
+index 50615d5efac1..9cf089b9754e 100644
+--- a/net/qrtr/smd.c
++++ b/net/qrtr/smd.c
+@@ -114,5 +114,6 @@ static struct rpmsg_driver qcom_smd_qrtr_driver = {
  
--#include <linux/smp.h>
--#include <linux/linkage.h>
- #include <linux/cache.h>
- #include <linux/spinlock.h>
- #include <linux/cpumask.h>
--#include <linux/gfp.h>
- #include <linux/irqhandler.h>
- #include <linux/irqreturn.h>
- #include <linux/irqnr.h>
--#include <linux/errno.h>
- #include <linux/topology.h>
--#include <linux/wait.h>
- #include <linux/io.h>
- #include <linux/slab.h>
+ module_rpmsg_driver(qcom_smd_qrtr_driver);
  
++MODULE_ALIAS("rpmsg:IPCRTR");
+ MODULE_DESCRIPTION("Qualcomm IPC-Router SMD interface driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
