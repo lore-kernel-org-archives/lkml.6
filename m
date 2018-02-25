@@ -1,76 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751920AbeBYXeZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 18:34:25 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:34707 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeBYXeX (ORCPT
+        id S1751945AbeBYXfw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 18:35:52 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751770AbeBYXfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 18:34:23 -0500
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 77.7.101.1) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
- graphics command
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20180209235012.4993-1-rabel@robertabel.eu>
- <20180209235012.4993-2-rabel@robertabel.eu>
- <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
- <20180210092003.GA20377@1wt.eu>
- <CANiq72m6bFYywFa30HhtiAxPP0sK+bWgsxwUhT+b-Sjh0baBCA@mail.gmail.com>
- <CAHp75VfQUNVB9qoxcM5DSWz7Peu40oqtVO6dQse8ASRQa5ufEg@mail.gmail.com>
- <db968c03-f471-0ab5-2dba-74a567d2f6d1@robertabel.eu>
- <CAHp75Vd1u0RxzE7WR444p0n+yutErp6OJUrqm1za=JcY0C=+ig@mail.gmail.com>
-From: Robert Abel <rabel@robertabel.eu>
-Message-ID: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
-Date: Mon, 26 Feb 2018 00:34:19 +0100
+        Sun, 25 Feb 2018 18:35:51 -0500
+Subject: Re: [PATCH v5 0/4] ARM: OMAP2+: AM33XX/AM43XX: Add suspend-resume
+ support
+To: Dave Gerlach <d-gerlach@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keerthy J <j-keerthy@ti.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+References: <20180223154357.23504-1-d-gerlach@ti.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <a56830af-cf81-3603-ba58-2a2c65c49f34@oracle.com>
+Date: Sun, 25 Feb 2018 15:35:21 -0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vd1u0RxzE7WR444p0n+yutErp6OJUrqm1za=JcY0C=+ig@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <20180225233421.30277.38554@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+In-Reply-To: <20180223154357.23504-1-d-gerlach@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8815 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802250311
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+Hi Tony,
 
-On 15 Feb 2018 11:57, Andy Shevchenko wrote:
-> On Thu, Feb 15, 2018 at 1:17 AM, Robert Abel <rabel@robertabel.eu> wrote:
->> hex_to_bin look fine to me, although personally I'm not a big fan of its
->> use of tolower.
+On 2/23/2018 7:43 AM, Dave Gerlach wrote:
+> Hi,
 > 
-> Let's duplicate then over and over?
-
-I was speaking more generally about performance here. There is a reason
-for kstrtox.c:57
-(https://elixir.bootlin.com/linux/v4.14.7/source/lib/kstrtox.c#L57)
-> unsigned int lc = c | 0x20; /* don't tolower() this line */
-
-> Can you point to the documentation where user can easily (w/o reading
-> the code) get how it suppose to be?
-
-Unfortunately not. I read the code myself to know how it is supposed to
-work. That's definitely a gap in documentation.
-
-> On Thu, Feb 15, 2018 at 1:17 AM, Robert Abel <rabel@robertabel.eu> wrote:
->> I noticed the only part of the code that does make use of library
->> functions, parsing x and y coordinates using kstrtoul, is broken.
->> Apparently it used to use simple_strtoul, which worked and then got
->> replaced.
-> By which commit?
-
-129957069e6af42a6e021d90679c56662c95f7e1
-(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=129957069e6af42a6e021d90679c56662c95f7e1)
-
-I'll try to answer to this email with relevant patches for charlcd.c.
+> This is a minor update to previous series sent here [1] to switch to
+> SPDX license headers. Because update is so minor I have included original
+> cover letter below unmodified with the exception of updated links.
+> 
+> This series contains the remaining code to enable suspend to mem and standby
+> on am335x and am437x platforms. All dependencies have been merged and this
+> is just a rebase on v4.16-rc1. For this to work on am437x-gp-evm this
+> bug fix patch [2] is required but suspend works fine on am335x platforms
+> without it. V3 of this series can be found here [3].
+> 
+> This code also depends on firmware for the wkup_m3 that is available here [4]
+> that can either be placed in /lib/firmware or built in to the kernel.
+> 
+> For testing the drivers required are:
+> 
+> CONFIG_MAILBOX
+> CONFIG_OMAP2PLUS_MBOX
+> CONFIG_WKUP_M3_RPROC
+> CONFIG_SOC_TI
+> CONFIG_WKUP_M3_IPC
+> CONFIG_TI_EMIF_SRAM
+> CONFIG_AMX3_PM
+> 
+> There is a device tree patch series to follow immediately after this that will
+> completely enable suspend, all patches pushed here [5] for convenience
+> including the aforementioned [2] regulator bug fix if anyone is testing.
+> 
+> Regards,
+> Dave
+> 
+> [1] https://www.spinics.net/lists/linux-omap/msg141652.html
+> [2] https://www.spinics.net/lists/linux-omap/msg141626.html
+> [3] https://www.spinics.net/lists/arm-kernel/msg595931.html
+> [4] https://git.ti.com/processor-firmware/ti-amx3-cm3-pm-firmware/blobs/7eb9c0856a9e8b3b42bf64f761da135852b8eea7/bin/am335x-pm-firmware.elf
+> [5] https://github.com/dgerlach/linux-pm/tree/upstream/v4.16/amx3-suspend-v5
+> 
+> Dave Gerlach (4):
+>    ARM: OMAP2+: Introduce low-level suspend code for AM33XX
+>    ARM: OMAP2+: Introduce low-level suspend code for AM43XX
+>    ARM: OMAP2+: pm33xx-core: Add platform code needed for PM
+>    soc: ti: Add pm33xx driver for basic suspend support
+> 
+Are you going to pickup this series ?
 
 Regards,
-
-Robert
+Santosh
