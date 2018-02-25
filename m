@@ -1,84 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeBYHkl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 02:40:41 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43912 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbeBYHki (ORCPT
+        id S1751593AbeBYHt5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 02:49:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54030 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbeBYHty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 02:40:38 -0500
-Date: Sun, 25 Feb 2018 07:40:05 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Ogness <john.ogness@linutronix.de>
-Subject: Re: [BUG] lock_parent() breakage when used from shrink_dentry_list()
- (was Re: [PATCH v2 6/6] fs/dcache: Avoid remaining try_lock loop in
- shrink_dentry_list())
-Message-ID: <20180225073950.GI30522@ZenIV.linux.org.uk>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
- <20180222235025.28662-7-john.ogness@linutronix.de>
- <20180223035814.GZ30522@ZenIV.linux.org.uk>
- <20180223040814.GA30522@ZenIV.linux.org.uk>
- <87h8q7erlo.fsf@linutronix.de>
- <20180223150928.GC30522@ZenIV.linux.org.uk>
- <20180223174216.GD30522@ZenIV.linux.org.uk>
- <20180223201317.GG30522@ZenIV.linux.org.uk>
- <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
- <20180224002248.GH30522@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180224002248.GH30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Sun, 25 Feb 2018 02:49:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A39060590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rfried@codeaurora.org
+From: Ramon Fried <rfried@codeaurora.org>
+To: davem@davemloft.net, kvalo@codeaurora.org, marcel@holtmann.org,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ramon Fried <rfried@codeaurora.org>
+Subject: [PATCH v3] qrtr: add MODULE_ALIAS macro to smd
+Date: Sun, 25 Feb 2018 09:49:37 +0200
+Message-Id: <20180225074937.1131-1-rfried@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 12:22:48AM +0000, Al Viro wrote:
-> On Fri, Feb 23, 2018 at 01:35:52PM -0800, Linus Torvalds wrote:
-> 
-> > This is too subtle, and your fix to check d_lockref.count < 0 sounds
-> > wrong to me. If it's really gone, maybe it has been reused and the
-> > refcount is positive again, but it's something else than a dentry
-> > entirely?
-> > 
-> > Hmm.
-> > 
-> > No, you extended the rcu read section, so I guess your patch is fine.
-> > And lock_parent already has that pattern, soiit's not new.
-> > 
-> > Ok, I agree, looks like lock_parent should just re-check that thing
-> > that it already checked earler, but that now might be true again
-> > because of we dropped d_lock.
-> 
-> IMO that's the right thing for backports; whether we keep it after
-> the getting rid of trylock loops is a different question.  Note that
-> the only case where we do not have __dentry_kill() prevention
-> guaranteed by the caller (either by holding a reference, or by
-> holding onto ->i_lock all along) is in shrink_dentry_list().
-> And there we have more than enough of other subtle crap.
-> 
-> Moreover, there we have a good reason to treat "it had been moved"
-> as "kick it off the shrink list and free if it's already dead",
-> which might simplify the things.  Below is a stab at that:
+Added MODULE_ALIAS("rpmsg:IPCRTR") to ensure qrtr-smd and qrtr will load
+when IPCRTR channel is detected.
 
-FWIW, a variant of that series is in #work.dcache; it's
-almost certainly not the final (I want to clean the things up
-and probably reorder them as well) and it needs one hell of
-profiling and review.  It seems to work, and I don't see any
-obvious performance regressions (everything seems to be within
-normal noise), but I'd like it beaten up a lot more.
+Signed-off-by: Ramon Fried <rfried@codeaurora.org>
 
-Parts are from John's series, parts are rewritten as discussed
-upthread.  As the result, trylock loops are gone and no new
-retry loops had been added in their place - lock_parent() still
-has one, but that's it.
+---
+V2: Corrected subject line, this is not a part of a patchset.
+V3: Placed the changelog under the ---.
 
-I'll play with cleaning up and reordering tomorrow after I get
-some sleep.  In the meanwhile, the current state of that set is at
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.dcache
+ net/qrtr/smd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/qrtr/smd.c b/net/qrtr/smd.c
+index 50615d5efac1..9cf089b9754e 100644
+--- a/net/qrtr/smd.c
++++ b/net/qrtr/smd.c
+@@ -114,5 +114,6 @@ static struct rpmsg_driver qcom_smd_qrtr_driver = {
+ 
+ module_rpmsg_driver(qcom_smd_qrtr_driver);
+ 
++MODULE_ALIAS("rpmsg:IPCRTR");
+ MODULE_DESCRIPTION("Qualcomm IPC-Router SMD interface driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
