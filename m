@@ -1,71 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeBYVfY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 16:35:24 -0500
-Received: from g4t3427.houston.hpe.com ([15.241.140.73]:21375 "EHLO
-        g4t3427.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751923AbeBYVdl (ORCPT
+        id S1751905AbeBYVsL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 16:48:11 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46663 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751680AbeBYVsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 16:33:41 -0500
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
-To: wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com, mingo@kernel.org,
-        marcus.folkesson@gmail.com, Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: [PATCH v4 03/10] watchdog/hpwdt: Update nmi_panic message.
-Date: Sun, 25 Feb 2018 14:32:52 -0700
-Message-Id: <20180225213259.2861-4-jerry.hoemann@hpe.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180225213259.2861-1-jerry.hoemann@hpe.com>
-References: <20180225213259.2861-1-jerry.hoemann@hpe.com>
+        Sun, 25 Feb 2018 16:48:10 -0500
+X-Google-Smtp-Source: AG47ELtCYHsI2StNte4sdIclEM76Jo99RCEBoa4A+yf1o3VF/4GPUSGZvWHWvZ4OfTWySNZqbUbUmA==
+From: Max Filippov <jcmvbkbc@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 0/2] Xtensa fixes for v4.16
+Date: Sun, 25 Feb 2018 13:47:32 -0800
+Message-Id: <20180225214732.16449-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include the nmistat in the nmi_panic message to give support
-an indication why the NMI was called (e.g. a timeout or generate
-nmi button.)
+Hi Linus,
 
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
----
- drivers/watchdog/hpwdt.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+please pull the following two fixes for reserved memory/DMA buffers
+allocation in high memory on xtensa architecture.
 
-diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-index 8ea8e7466dd9..2a6f3be22c98 100644
---- a/drivers/watchdog/hpwdt.c
-+++ b/drivers/watchdog/hpwdt.c
-@@ -113,19 +113,23 @@ static int hpwdt_my_nmi(void)
-  */
- static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
- {
--	if ((ulReason == NMI_UNKNOWN) && !hpwdt_my_nmi())
-+	unsigned int mynmi = hpwdt_my_nmi();
-+	static char panic_msg[] =
-+		"00: An NMI occurred. Depending on your system the reason "
-+		"for the NMI is logged in any one of the following resources:\n"
-+		"1. Integrated Management Log (IML)\n"
-+		"2. OA Syslog\n"
-+		"3. OA Forward Progress Log\n"
-+		"4. iLO Event Log";
-+
-+	if ((ulReason == NMI_UNKNOWN) && mynmi)
- 		return NMI_DONE;
- 
- 	if (allow_kdump)
- 		hpwdt_stop();
- 
--	nmi_panic(regs, "An NMI occurred. Depending on your system the reason "
--		"for the NMI is logged in any one of the following "
--		"resources:\n"
--		"1. Integrated Management Log (IML)\n"
--		"2. OA Syslog\n"
--		"3. OA Forward Progress Log\n"
--		"4. iLO Event Log");
-+	hex_byte_pack(panic_msg, mynmi);
-+	nmi_panic(regs, panic_msg);
- 
- 	return NMI_HANDLED;
- }
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20180225
+
+for you to fetch changes up to 6137e4166004e2ec383ac05d5ca15831f4668806:
+
+  xtensa: support DMA buffers in high memory (2018-02-16 19:19:54 -0800)
+
+----------------------------------------------------------------
+Xtensa fixes for 4.16
+
+- fix memory accounting when reserved memory is in high memory region;
+- fix DMA allocation from high memory.
+
+----------------------------------------------------------------
+Max Filippov (2):
+      xtensa: fix high memory/reserved memory collision
+      xtensa: support DMA buffers in high memory
+
+ arch/xtensa/kernel/pci-dma.c | 40 ++++++++++++++++++-------
+ arch/xtensa/mm/init.c        | 70 +++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 93 insertions(+), 17 deletions(-)
+
 -- 
-2.13.6
+Thanks.
+-- Max
