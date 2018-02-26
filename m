@@ -1,43 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeBZKT6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:19:58 -0500
-Received: from mail-io0-f176.google.com ([209.85.223.176]:45628 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeBZKTz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:19:55 -0500
-X-Google-Smtp-Source: AG47ELtx7p6blFU6c/eKwPs3z04NHWUOvEueQSYVwUyGkZTFdK5ynIc1qyQlbplgu19nx0sWrz8KLPo3yis6E74/moA=
+        id S1752474AbeBZKUf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:20:35 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46630 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752045AbeBZKUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 05:20:34 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="23177042"
+Date: Mon, 26 Feb 2018 12:20:29 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Jeremy McNicoll <jmcnicol@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>
+Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
+Message-ID: <20180226102029.GG27191@lahna.fi.intel.com>
+References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
+ <20180222231736.GA628@mini-rhel.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180219133038.21995-2-ckeepax@opensource.cirrus.com>
-References: <20180219133038.21995-1-ckeepax@opensource.cirrus.com> <20180219133038.21995-2-ckeepax@opensource.cirrus.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Feb 2018 11:19:54 +0100
-Message-ID: <CACRpkdY_Z-sNRf=D8zn1V3G5C6cnfwVaTmQzH7OyEaF4yNuDoA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mfd: arizona: Update DT doc to support more
- standard reset binding
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222231736.GA628@mini-rhel.redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 2:30 PM, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
+On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
+> > +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+> > +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
+> > +			link, depth);
+> 
+> This kind of condition sounds more like an error instead of info.
+> Please bump this up to tb_WARN/tb_warn ideally tb_err().
 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->
-> Changes since v1:
->  - Drop vendor prefix from new binding since it is a standard property.
+No, this is not an error.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> BTW - why do we have tb_WARN and tb_warn in drivers/thunderbolt/tb.h ?
 
-Yours,
-Linus Walleij
+_WARN dumps out backtrace as well.
