@@ -1,84 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeBZNlO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:41:14 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:50014 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeBZNlL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:41:11 -0500
-X-Google-Smtp-Source: AG47ELs8V/MeSzchs3b6TAgSj+Cjrp+Pojm7V2Z/kJIniwwJMUCUJnXn/P/EALSJTudaKUmnQWw+2fmlPNDYcsgQdF0=
+        id S1753005AbeBZNoD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:44:03 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35898 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752264AbeBZNn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:43:58 -0500
+Subject: Re: [PATCH V4 net 2/3] tuntap: disable preemption during XDP
+ processing
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        sergei.shtylyov@cogentembedded.com, christoffer.dall@linaro.org
+References: <1519443146-9089-1-git-send-email-jasowang@redhat.com>
+ <1519443146-9089-2-git-send-email-jasowang@redhat.com>
+ <20180226120209.3c3b172b@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <5e46686c-7d51-2125-c279-b75d68e18fe8@redhat.com>
+Date: Mon, 26 Feb 2018 21:43:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <dda0457a-c16a-3440-a547-15f49e52ec95@suse.com>
-References: <20180223232538.4314-1-pasha.tatashin@oracle.com>
- <20180223232538.4314-2-pasha.tatashin@oracle.com> <dda0457a-c16a-3440-a547-15f49e52ec95@suse.com>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Mon, 26 Feb 2018 08:39:54 -0500
-X-Gmail-Original-Message-ID: <CAOAebxt6CtQYQ5MxOrpyrLdVapPnw3XePTWUAz1SGuRoukaNGA@mail.gmail.com>
-Message-ID: <CAOAebxt6CtQYQ5MxOrpyrLdVapPnw3XePTWUAz1SGuRoukaNGA@mail.gmail.com>
-Subject: Re: [v1 1/1] xen, mm: Allow deferred page initialization for xen pv domains
-To: Juergen Gross <jgross@suse.com>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>, akataria@vmware.com,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, boris.ostrovsky@oracle.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>, labbott@redhat.com,
-        kirill.shutemov@linux.intel.com, bp@suse.de, minipli@googlemail.com,
-        jinb.park7@gmail.com, dan.j.williams@intel.com, bhe@redhat.com,
-        zhang.jia@linux.alibaba.com, Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8815 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=893
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802260182
+In-Reply-To: <20180226120209.3c3b172b@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Juergen,
 
-Thank you for taking a look at this patch, I will address your
-comments, and send out an updated patch.
 
->>  extern void default_banner(void);
+On 2018年02月26日 19:02, Jesper Dangaard Brouer wrote:
+> On Sat, 24 Feb 2018 11:32:25 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> Except for tuntap, all other drivers' XDP was implemented at NAPI
+>> poll() routine in a bh. This guarantees all XDP operation were done at
+>> the same CPU which is required by e.g BFP_MAP_TYPE_PERCPU_ARRAY. But
+> There is a typo in the defined name "BFP_MAP_TYPE_PERCPU_ARRAY".
+> Besides it is NOT a requirement that comes from the map type
+> BPF_MAP_TYPE_PERCPU_ARRAY.
+
+But it looks to me that bpf_array uses percpu structure, e.g in 
+percpu_array_map_lookup_elem() it tries to access it through this_cpu_ptr().
+
+>
+> The requirement comes from the bpf_redirect_map helper (and only partly
+> devmap + cpumap types), as the BPF helper/program stores information in
+> the per-cpu redirect_info struct (see filter.c), that is used by
+> xdp_do_redirect() and xdp_do_flush_map().
+>
+>   struct redirect_info {
+> 	u32 ifindex;
+> 	u32 flags;
+> 	struct bpf_map *map;
+> 	struct bpf_map *map_to_flush;
+> 	unsigned long   map_owner;
+>   };
+>   static DEFINE_PER_CPU(struct redirect_info, redirect_info);
+>
+>   [...]
+>   void xdp_do_flush_map(void)
+>   {
+> 	struct redirect_info *ri = this_cpu_ptr(&redirect_info);
+> 	struct bpf_map *map = ri->map_to_flush;
+>   [...]
+>
+> Notice the same redirect_info is used by the TC clsbpf system...
+>
+>
+>> for tuntap, we do it in process context and we try to protect XDP
+>> processing by RCU reader lock. This is insufficient since
+>> CONFIG_PREEMPT_RCU can preempt the RCU reader critical section which
+>> breaks the assumption that all XDP were processed in the same CPU.
 >>
->> +static inline void paravirt_after_bootmem(void)
->> +{
->> +     pv_init_ops.after_bootmem();
->> +}
->> +
+>> Fixing this by simply disabling preemption during XDP processing.
+> I guess, this could pamper over the problem...
 >
-> Putting this in the paravirt framework is overkill IMO. There is no need
-> to patch the callsites for optimal performance.
->
-> I'd put it into struct x86_hyper_init and pre-init it with x86_init_noop
+> But I generally find it problematic that the tuntap is not invoking XDP
+> from NAPI poll() routine in BH-context, as that context provided us
+> with some protection that allow certain kind of optimizations (like
+> this flush API).  I hope this will not limit us in the future, that
+> tuntap driver violate the XDP call context.
 
-Sure, I will move it into x86_hyper_init.
+Good to see tuntap is on the radar :), it was easily forgotten. I was 
+glad to test anything new in XDP for tuntap. But I do not see any thing 
+that prevents us from having a similar environment that NAPI poll() can 
+provides. I admit the flush is inefficient now, but it does not mean we 
+can't solve it in the future. E.g for the flush, I plan to introduce the 
+batching API which can accept an array of skb/XDP pointers in its 
+sendmsg(). Then we can do a more efficient flush.
 
->>
->> +/*
->> + * During early boot all pages are pinned, but we do not have struct pages,
->> + * so return true until struct pages are ready.
->> + */
->
-> Uuh, this comment is just not true.
->
-> The "pinned" state for Xen means it is a pv pagetable known to Xen. Such
-> pages are read-only for the guest and can be modified via hypercalls
-> only.
->
-> So either the "pinned" state will be tested for page tables only, in
-> which case the comment needs adjustment, or the code is wrong.
+Note, tuntap supports NAPI (IFF_NAPI), but the main use case is kernel 
+rx path hardening. Unless rx batching is enabled, it would be slower 
+than non NAPI mode. Technically, it can support XDP but need more work 
+(e.g work at the level of XDP buffer instead of skb).
 
-The comment should state: During early boot all _page table_ pages are pinned
+I tend to do fixes or optimizations on the current code unless we find a 
+real blocker.
 
-Thank you,
-Pavel
+>
+>> Fixes: 761876c857cb ("tap: XDP support")
+> $ git describe --contains 761876c857cb
+> v4.14-rc1~130^2~270^2
+
+So please let me know if you're ok with the fix.
+
+Thanks
