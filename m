@@ -1,109 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeBZNoD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:44:03 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752264AbeBZNn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:43:58 -0500
-Subject: Re: [PATCH V4 net 2/3] tuntap: disable preemption during XDP
- processing
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        sergei.shtylyov@cogentembedded.com, christoffer.dall@linaro.org
-References: <1519443146-9089-1-git-send-email-jasowang@redhat.com>
- <1519443146-9089-2-git-send-email-jasowang@redhat.com>
- <20180226120209.3c3b172b@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <5e46686c-7d51-2125-c279-b75d68e18fe8@redhat.com>
-Date: Mon, 26 Feb 2018 21:43:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753119AbeBZNq4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:46:56 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:32846 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753053AbeBZNqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:46:53 -0500
+X-Google-Smtp-Source: AG47ELuPhZCK2I+t/IiJjozbIcvGWdmpbzysmSu50k18fjCCx8QlOri7VTF8wHT3lvsDCbKVPShOa3ENbNpJXb3t4gQ=
 MIME-Version: 1.0
-In-Reply-To: <20180226120209.3c3b172b@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180226130558.7634-2-rf@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-2-rf@opensource.cirrus.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 26 Feb 2018 15:46:50 +0200
+Message-ID: <CAHp75VdTdtT8D0OmPo1DPZfjEogSJcBRJBuesHDPrB+bD9CVgA@mail.gmail.com>
+Subject: Re: [PATCH v8 1/9] mfd: madera: Add register definitions for Cirrus
+ Logic Madera codecs
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年02月26日 19:02, Jesper Dangaard Brouer wrote:
-> On Sat, 24 Feb 2018 11:32:25 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
+On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
+> This patch adds a header file of register definitions for Cirrus
+> Logic "Madera" class codecs. These codecs are all based off a common
+> set of hardware IP so have a common register map (with a few minor
+> device-to-device variations).
 >
->> Except for tuntap, all other drivers' XDP was implemented at NAPI
->> poll() routine in a bh. This guarantees all XDP operation were done at
->> the same CPU which is required by e.g BFP_MAP_TYPE_PERCPU_ARRAY. But
-> There is a typo in the defined name "BFP_MAP_TYPE_PERCPU_ARRAY".
-> Besides it is NOT a requirement that comes from the map type
-> BPF_MAP_TYPE_PERCPU_ARRAY.
-
-But it looks to me that bpf_array uses percpu structure, e.g in 
-percpu_array_map_lookup_elem() it tries to access it through this_cpu_ptr().
-
+> The registers.h file is tool-generated directly from the hardware design
+> but has been manually stripped down to reduce size (full register
+> map is >44000 lines). All names are kept the same as datasheet names
+> so that they can be cross-referenced between source and datasheet without
+> confusion.
 >
-> The requirement comes from the bpf_redirect_map helper (and only partly
-> devmap + cpumap types), as the BPF helper/program stores information in
-> the per-cpu redirect_info struct (see filter.c), that is used by
-> xdp_do_redirect() and xdp_do_flush_map().
+> The register map layout is kept fully-defined rather than factored into
+> macros and/or block-indexing code. The major reasons for this are:
 >
->   struct redirect_info {
-> 	u32 ifindex;
-> 	u32 flags;
-> 	struct bpf_map *map;
-> 	struct bpf_map *map_to_flush;
-> 	unsigned long   map_owner;
->   };
->   static DEFINE_PER_CPU(struct redirect_info, redirect_info);
+>  - #1 is that it makes the source highly greppable, which is important.
+>    "What does the driver do with register bits XYZ" or "Where does it use
+>    register bits XYZ" are commonly types of questions. These can be quickly
+>    answered by a grep. Squashing definitions into generator macros or block-
+>    indexing code is a way of defeating grep.
 >
->   [...]
->   void xdp_do_flush_map(void)
->   {
-> 	struct redirect_info *ri = this_cpu_ptr(&redirect_info);
-> 	struct bpf_map *map = ri->map_to_flush;
->   [...]
+>  - most of the register definitions are used in tables, so a constant value
+>    is required. Using generator macros make the table definition clunky and
+>    obscure.
 >
-> Notice the same redirect_info is used by the TC clsbpf system...
+>  - the code is clearer when it's there in the source exactly what register
+>    and field it is using
 >
+>  - it is easier to diff the register map of a new (unsupported) codec against
+>    what is already supported and merge in differences
 >
->> for tuntap, we do it in process context and we try to protect XDP
->> processing by RCU reader lock. This is insufficient since
->> CONFIG_PREEMPT_RCU can preempt the RCU reader critical section which
->> breaks the assumption that all XDP were processed in the same CPU.
->>
->> Fixing this by simply disabling preemption during XDP processing.
-> I guess, this could pamper over the problem...
->
-> But I generally find it problematic that the tuntap is not invoking XDP
-> from NAPI poll() routine in BH-context, as that context provided us
-> with some protection that allow certain kind of optimizations (like
-> this flush API).  I hope this will not limit us in the future, that
-> tuntap driver violate the XDP call context.
+>  - it makes the register map available in source for maintenance/debugging
+>    instead of having to refer back to the datasheet for a register map
 
-Good to see tuntap is on the radar :), it was easily forgotten. I was 
-glad to test anything new in XDP for tuntap. But I do not see any thing 
-that prevents us from having a similar environment that NAPI poll() can 
-provides. I admit the flush is inefficient now, but it does not mean we 
-can't solve it in the future. E.g for the flush, I plan to introduce the 
-batching API which can accept an array of skb/XDP pointers in its 
-sendmsg(). Then we can do a more efficient flush.
+...
 
-Note, tuntap supports NAPI (IFF_NAPI), but the main use case is kernel 
-rx path hardening. Unless rx batching is enabled, it would be slower 
-than non NAPI mode. Technically, it can support XDP but need more work 
-(e.g work at the level of XDP buffer instead of skb).
+> +#define MADERA_OTP_HPDET_GRADIENT_1X_MASK          0x0000FF00
 
-I tend to do fixes or optimizations on the current code unless we find a 
-real blocker.
+> +#define MADERA_OTP_HPDET_GRADIENT_0X_MASK          0x000000FF
 
->
->> Fixes: 761876c857cb ("tap: XDP support")
-> $ git describe --contains 761876c857cb
-> v4.14-rc1~130^2~270^2
+GENMASK() for all masks?
 
-So please let me know if you're ok with the fix.
-
-Thanks
+-- 
+With Best Regards,
+Andy Shevchenko
