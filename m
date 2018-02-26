@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224tYOYm2yQEgdVo5VGm4VUL6EGWjRFrNEH6isLCor7FxrHBwi1aKiWhSg9HA+E4xrXi39wj
-ARC-Seal: i=1; a=rsa-sha256; t=1519676177; cv=none;
+X-Google-Smtp-Source: AG47ELtiRl4aqigdFugAtVBlJeITi/jZrIRWJCcJLZq0jupOe1L1Mvx0Hcp9tQAXgYzbGxvGUEwN
+ARC-Seal: i=1; a=rsa-sha256; t=1519676176; cv=none;
         d=google.com; s=arc-20160816;
-        b=wB/EttJwk+TVNdOdV/qMq+VqpKDD2LyvbHGyX7TEZIrS/6yJHuxMSw1tJcmfvBdvcY
-         3VDczILUW57hs/iT8rmj6e/dIW6JgNGguecXy/jNMpn3YvxcawhAzJXNxsq/NGWuqhjW
-         KtVwcbGPJSzJA2xfX9+mzUTHXuKPNrG5tIr9upXr64RYMw7i6YXk0Eo9rwcMXYqoHBtM
-         HZ59IA/hfNA7UWOU2S0ysKaBJgWPmLmJQisjAWxB9Udsaa3KNX5hx/K16laNQ7WocQUY
-         MK4SW/edtpvybNpwhkvLcRg8tsDMo86sHQHgNWK+zYpsFWRTQ6YdGuq5cFfMftlymMsI
-         N2YA==
+        b=Fj2hDeW+K+1LDuCLHKDAd7+i63pV45wGuuVqmvEaOEuZjdhYVwXEJyIp90kEobWeaF
+         8nLtzerQplqow1qanRyh4KzM6zop/rDv8xO7+Yhl95ifqfQypQwwKPXJ2HCulV0uVMm0
+         X9OVmFa2IuLDEIj1RBvMbHRaKQTABtNWWyJscENJcaLvm0ibOEG2NKs8YdoCbgRwdOJy
+         bS2J6tLZzJ3hvL925KPeiMFyjebSQDXKYeQTGt1mnW3ve3iN5tQzENR7f+GwHYdJ4bgE
+         d4Asu9XMyQYTdypgc5em1NOyIx+HqsLr+OBBEh9L5RgCfAxd5DeNqn7JV9mQgXc+WKp9
+         YN9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5Z5ND4VKO+piTp53D0t47+mf2zVv3/SkL1KkTapJIxo=;
-        b=VjvLtL48apdKCcxPmrX3J2hqA6B4cQhxgjx9zrIBtyjukqpxo0sfJu0ZDuxiQIgf21
-         aVqPLSvX+TETCyd75lvUz8mtFR4unkYsbvkHsJJrE1tYv/5ZXSD43If6OrZPr6LDF87s
-         8VSoy9Utft3QGTZ13nOMquhsTnGNeKChz5AnMNSWY202B7YEs5H19FfjCFQHGGwmeUAp
-         c7KhRgmFF2wM5mnbjyB9MtngrUDM+qHzY5IezRhEiG0WdmEkql+IswUq9ptnY4CnKgWZ
-         UQ61cew0HJIuE5k8QcI1JwOZe9MMcDG5zRWOkIQt4doekZHoGn7lS+ZPu1sBtm5kzYRy
-         szew==
+        bh=Sj8QaG64QqBW83/0P8kE4FEZSz7G+Nj9YQ7ub1J4UyY=;
+        b=z/Ll1BArw/W1AJjtvRjkeVoEFAzlwuvfbZTwXPnYlGuBFNr2V+5AXe3H0rR0XVE9hB
+         e7+oDB+65mur9+FgqHTODvui6Ja2yzkkCpAkB3RXSf2cpHRFkHWknebDUFdEoxmJfIsK
+         ue9DFKQmHhFEbsaT3vrboyea9J5z/s2QdZF1AZGRRCkgAGrZ3OhdFU/XNsC0cARNUMsW
+         IfWP8+k9uNMLLvIUpVk2qlGPv5/TE2M0Zqse4V7Mz0wFHZ1P4+2piqcNkdUJhOLKDjFX
+         OA7w2e8SJBibsCpsbgue4XQ/6LQjC6HdRDUqCRZf0fXRNrwWdyfMAZe3VEIzZN1N33ca
+         31Yg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3.18 05/13] cfg80211: fix cfg80211_beacon_dup
-Date: Mon, 26 Feb 2018 21:15:33 +0100
-Message-Id: <20180226201527.479367174@linuxfoundation.org>
+	Hannes Reinecke <hare@suse.de>,
+	Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 04/13] scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
+Date: Mon, 26 Feb 2018 21:15:32 +0100
+Message-Id: <20180226201527.442649944@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
 References: <20180226201527.242286068@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495967259015884?=
-X-GMAIL-MSGID: =?utf-8?q?1593495967259015884?=
+X-GMAIL-THRID: =?utf-8?q?1593495966223734995?=
+X-GMAIL-MSGID: =?utf-8?q?1593495966223734995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-commit bee92d06157fc39d5d7836a061c7d41289a55797 upstream.
+commit c39813652700f3df552b6557530f1e5f782dbe2f upstream.
 
-gcc-8 warns about some obviously incorrect code:
+The fcp_rsp_info structure as defined in the FC spec has an initial 3
+bytes reserved field. The ibmvfc driver mistakenly defined this field as
+4 bytes resulting in the rsp_code field being defined in what should be
+the start of the second reserved field and thus always being reported as
+zero by the driver.
 
-net/mac80211/cfg.c: In function 'cfg80211_beacon_dup':
-net/mac80211/cfg.c:2896:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+Ideally, we should wire ibmvfc up with libfc for the sake of code
+deduplication, and ease of maintaining standardized structures in a
+single place. However, for now simply fixup the definition in ibmvfc for
+backporting to distros on older kernels. Wiring up with libfc will be
+done in a followup patch.
 
->From the context, I conclude that we want to copy from beacon into
-new_beacon, as we do in the rest of the function.
-
-Cc: stable@vger.kernel.org
-Fixes: 73da7d5bab79 ("mac80211: add channel switch command and beacon callbacks")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    2 +-
+ drivers/scsi/ibmvscsi/ibmvfc.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2769,7 +2769,7 @@ cfg80211_beacon_dup(struct cfg80211_beac
- 	}
- 	if (beacon->probe_resp_len) {
- 		new_beacon->probe_resp_len = beacon->probe_resp_len;
--		beacon->probe_resp = pos;
-+		new_beacon->probe_resp = pos;
- 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
- 		pos += beacon->probe_resp_len;
- 	}
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -366,7 +366,7 @@ enum ibmvfc_fcp_rsp_info_codes {
+ };
+ 
+ struct ibmvfc_fcp_rsp_info {
+-	__be16 reserved;
++	u8 reserved[3];
+ 	u8 rsp_code;
+ 	u8 reserved2[4];
+ }__attribute__((packed, aligned (2)));
