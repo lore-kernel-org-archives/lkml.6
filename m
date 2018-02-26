@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227anKNl1mxdJ7/uNRO+AIZXgO0ClxSqGSINFmOZ+8HzHQsR4tTLtSqY1DbCc5f+rmxUisKy
-ARC-Seal: i=1; a=rsa-sha256; t=1519676690; cv=none;
+X-Google-Smtp-Source: AH8x227s0rnpK098fGcW0hlTbCynLKQpOY08cwvC4uyccUf1M0ZHSLYUlUnJq/2dOKjISop6ousS
+ARC-Seal: i=1; a=rsa-sha256; t=1519676687; cv=none;
         d=google.com; s=arc-20160816;
-        b=n6aKM5GW+6YDT8cTQP2jwpPS6U6KguAK/cs3nCdeWLw+/Ch5J4HtLWl1y7MV7KeZBz
-         HX+S61puHeTL8om5zZxPEoVmKiI5DiTQ997Pra50Hyh2iEyxmN0sJZu3ClSosEsDfYcj
-         d87/JcaGd23HnPRjE2zxbAsgFDEio58OFZlthyT1CCWo4q/sQhCf6smwuJow0oryONi0
-         v9S2mM+7wV+lZH4jqY0QjTgTo449SPhQocU1SToWe5J53mG3zxGc9Jzuno85aOLUFFO7
-         XJYdk7QEZauK8c0nQdhef20VrsjaUoTbH0FvfhRsE0Stq9hIpV1LyHrZsjr+7ew8vJjc
-         KVyw==
+        b=DjDTKpbsPEUVAymYSTGqbjiGzpgmbj2vxN3Wly48loQrVVE+T2jUGzO09AZHm7H5rl
+         X8Eu985ssQMRipLjr5mLiJeu/VF73cjY+OmK9AEjCZuYOb/nQ+rckqZD+CA2IZO0zX4F
+         qVdGxsp5tp2VP8Y64NJQQ3xoc63sl6cr6xXKPDt/vpBTpkDDLqOUwUS9ivG1tAKf5b7T
+         JDIvp/lbr/LXFdC7M5Q9xkBmQVpCzqR50AGxAddM413feQdTZ/s97J6iLKT5muV6E2MX
+         ku0nH27r6cmifHmaQ5SGG43oRAm9iWykFPsR8/uqX0Ol6lZU8UuPETfP66Q7wvPTGjcf
+         v/4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8KuwRGcaf9w0usa3ep5lyQm08wB9i4oGvxUg7vt3pO4=;
-        b=XZXHBVdcKOKvm5SNVbuIcxX1Mura6/3w6LYw550TmEJEmdESnzCS5s/5xQuZDfhWAC
-         uf9lsKYL2cBoFfhImwuCeaHORdCN3bT9gBMPT+T9wQx6fRcy+hOembousiq2r+5jVUEh
-         dPXNa5fSTejvUX8S9y8r1rvQ1KwqLzD09SYHUw/ljZkuCUTI+bDNEzmQf26edlGCmKAN
-         tNbEIS2/3C7yAJhe9sxtm+w8ZEwcOvOOpKu6srqz3Bq1vQpyQKMIfV1y6TYkgWTMr1ij
-         +23lY1l4N/1hkMfK9X12nAkvWwdUqEy503gFymTWszV0Ok3fcCz9d46hZRQuJVw2uU9k
-         4Huw==
+        bh=HwBiXabckjXCInN8m5rq8eB8Fs5+38v+L+8wCc37mX8=;
+        b=RrF3PEIE66C/wtFoJIG2QIwFMJ8/0hKJo5evdN1bBqpAr1O6wgYnYN+iSOD6L4pdXT
+         NBzagQMSsxsmHAzkGh1IklLmnIkIopTPeq1zv3/LE16WfTtkPyER9JzFue2I6BNOG4nj
+         sfAGT7h6uBMAT+6H7bjTkzOUOyEQPBzWh2S19ru78IiS1K03iqrXZrIviCMrZFfMdiUI
+         oMfF5pyaeb6zX4YtkcTLbANdZOSykZ+42PY4wlcit5Qm7BBGFEJVhgKFiZUl7rPNX7XT
+         7p18epBLfvaN6ZHvlA99GWWiJ038IaRjuUPZJTUNa7VyCApepZOQu9gWv+yFsCgaN/ea
+         gkag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 08/54] cfg80211: fix cfg80211_beacon_dup
-Date: Mon, 26 Feb 2018 21:21:45 +0100
-Message-Id: <20180226202144.774953452@linuxfoundation.org>
+	Peter Mamonov <pmamonov@gmail.com>,
+	James Hogan <jhogan@kernel.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-mips@linux-mips.org
+Subject: [PATCH 4.14 07/54] MIPS: Drop spurious __unused in struct compat_flock
+Date: Mon, 26 Feb 2018 21:21:44 +0100
+Message-Id: <20180226202144.720516819@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495967259015884?=
-X-GMAIL-MSGID: =?utf-8?q?1593496505830471656?=
+X-GMAIL-THRID: =?utf-8?q?1593496502135975414?=
+X-GMAIL-MSGID: =?utf-8?q?1593496502135975414?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: James Hogan <jhogan@kernel.org>
 
-commit bee92d06157fc39d5d7836a061c7d41289a55797 upstream.
+commit 6ae1756faddefd7494353380ee546dd38c2f97eb upstream.
 
-gcc-8 warns about some obviously incorrect code:
+MIPS' struct compat_flock doesn't match the 32-bit struct flock, as it
+has an extra short __unused before pad[4], which combined with alignment
+increases the size to 40 bytes compared with struct flock's 36 bytes.
 
-net/mac80211/cfg.c: In function 'cfg80211_beacon_dup':
-net/mac80211/cfg.c:2896:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+Since commit 8c6657cb50cb ("Switch flock copyin/copyout primitives to
+copy_{from,to}_user()"), put_compat_flock() writes the full compat_flock
+struct to userland, which results in corruption of the userland word
+after the struct flock when running 32-bit userlands on 64-bit kernels.
 
->From the context, I conclude that we want to copy from beacon into
-new_beacon, as we do in the rest of the function.
+This was observed to cause a bus error exception when starting Firefox
+on Debian 8 (Jessie).
 
-Cc: stable@vger.kernel.org
-Fixes: 73da7d5bab79 ("mac80211: add channel switch command and beacon callbacks")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-by: Peter Mamonov <pmamonov@gmail.com>
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Tested-by: Peter Mamonov <pmamonov@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.13+
+Patchwork: https://patchwork.linux-mips.org/patch/18646/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/include/asm/compat.h |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2863,7 +2863,7 @@ cfg80211_beacon_dup(struct cfg80211_beac
- 	}
- 	if (beacon->probe_resp_len) {
- 		new_beacon->probe_resp_len = beacon->probe_resp_len;
--		beacon->probe_resp = pos;
-+		new_beacon->probe_resp = pos;
- 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
- 		pos += beacon->probe_resp_len;
- 	}
+--- a/arch/mips/include/asm/compat.h
++++ b/arch/mips/include/asm/compat.h
+@@ -86,7 +86,6 @@ struct compat_flock {
+ 	compat_off_t	l_len;
+ 	s32		l_sysid;
+ 	compat_pid_t	l_pid;
+-	short		__unused;
+ 	s32		pad[4];
+ };
+ 
