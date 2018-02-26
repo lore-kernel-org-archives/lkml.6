@@ -1,171 +1,87 @@
-Return-Path: <leo.wen@rock-chips.com>
-X-Google-Smtp-Source: AH8x224CavQ8bGKcLaqX6/dlWFdFWR58q2qkauzfhlUpD4hR3+GNL4+DHkCcz2MmgcKdirs9DNoz
-ARC-Seal: i=1; a=rsa-sha256; t=1519780991; cv=none;
+Return-Path: <heiko@sntech.de>
+X-Google-Smtp-Source: AH8x2260pKsS6i3nHF5iKOApbDRLzKNa4rplvEGyX3BwSp+a3duVqTHCXzQdjvWsKNXt6Wz9906H
+ARC-Seal: i=1; a=rsa-sha256; t=1519658165; cv=none;
         d=google.com; s=arc-20160816;
-        b=qtnS1HaxS2FBuW0a1OTu/8M7+Ec1npo6hqXZyDFqehMzdQT+IH8GxwgAVq4tE7NioE
-         HlW5VWpECIkBys2xgssDW5zexFaVdI73uD+pJN4SDwPcUpYTwZc810p/8z6naP9N/dxi
-         Is+12eeGzHKEco6NQX9SENFxHyJgHIJvtGmQdbUvShR0BpfTW2X59vUktna/BtA+xuBI
-         UQJENCGENO6q5PyyFUxsFZdv2xLdkIorRWiIWx9E0OUngilaSJ0mmLVyK4CvwRu6gy1t
-         lKHx6agBH07z3Wl4YcUc23Vme41U6O32HMuWAKVc6pwjvFXUd6JZ93O9TZadWHY9LavV
-         Helg==
+        b=idKVLIkdaS8vk/DjqP/TnCc6+syc6KBo13ump7yJouMPMFhucdiRCMTHMhsMvj1gG1
+         Dt5jKyHnLBYyr54Ih9/hVR2M+OdEuj8FefrvFOJTYbzgcMhnPpZQ46S1Gbyf1agbV9D1
+         ymFT8bapRuuzc2iMcaE3llPKrihcE3ph1pBAW42I2Xcp4df+ZFQXtJ7Dk5uxmsHz1P7M
+         0P77BlbInerv1Zq2p3+w0908UlFSEOP2GCCkHkSi0lypiSIy4WiU9V04FRxbd2hiFlHw
+         Qa/ZCRn0CHXttbTcs2xsvqteAsnnTxXlBp8M4kXWuCAsT4POpdtU8pMzWXGB/SL9QNHg
+         PNWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:arc-authentication-results;
-        bh=9C+9pMGSr2jSTf2pWIUDIwUclyL4gmsGkjvWZia7rI4=;
-        b=xyY4dfImGTQsmqSS2AbCtgRg5u3abtMuNJ2pouav6ta2CiHi6TgYHtv3NMSbyjl1P1
-         kQhnsh1jhyEgENTeYKWPI29NWQR0RrxhZexrSpxS+boAUH8b/c17eQWBRlP4a3kCCoOV
-         R3x2h+zxnG0+9TGdWBiWFiyZN7dY3QGbCGQvD505eJnsSMXMheHWhY9iUsfCxbdtl2VV
-         9zPtvqW6sEftMa+24n4e+9FaAgeqLajLjO196+lVDjA/gOIyKBAoZ0gGUUEj0OXo8EPL
-         LRSFtZjT6tBK2opuGz/VfUu19H09Dn88a8//FcPunTiCgp7efRXxc9qsjkVogeA+AvH/
-         t+RA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=zVPgh1m6SFBJ4kq74vMDrCTak/tugkB/fEMLzReQAq0=;
+        b=QUiWHEZXNo6VjxHDpr6vz+fN9KP7RyzFujCAtzBiiCuwl1EwoxBwFitqEDbjjFjP3Y
+         i5/hQAOThZ5GCh8Z1WwpC0iDbcDv2S6oBUd0+6QfynINSO3/uGTsB+5iZvFZwqyPRHCC
+         6kphPgOaPVt2vBCMp86HCsrgJxhyLwW4oumdarF0UHyZ1uCikp6Cxv/NKQ4jBSvRuTor
+         hEs41tSQ7reWfztoI+BIyujVnqs4RkOV16zM146dsc8LZE6OpXxmaEv9VE8wO5V1o2yt
+         sstVfXG89Vf6pcYxKo33mTH7W9tlHR1/zRP4VeprJeWtCmZdcnHzA6g7lwu5vFdUyBns
+         nymw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.130 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
+       spf=pass (google.com: best guess record for domain of heiko@sntech.de designates 95.129.55.99 as permitted sender) smtp.mailfrom=heiko@sntech.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.130 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: leo.wen@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: leo.wen@rock-chips.com
-X-UNIQUE-TAG: <24f3e79e4a88a7f2918cd5565e50f783>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Date: Wed, 28 Feb 2018 09:23:06 +0800
-From: =?utf-8?Q?=E6=B8=A9=E6=9A=96?= <leo.wen@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Wu
- <david.wu@rock-chips.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Greg KH
- <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
- "=?utf-8?Q?jacob2.chen=40rock-chips.com?=" <jacob2.chen@rock-chips.com>,
- "=?utf-8?Q?linux-kernel=40vger.kernel.org?="
- <linux-kernel@vger.kernel.org>,
- "=?utf-8?Q?linux-media=40vger.kernel.org?="
- <linux-media@vger.kernel.org>, Eddie Cai <eddie.cai@rock-chips.com>
-Message-ID: <3BF5B98C-DDE6-45F8-856E-8EB624D8D4C6@rock-chips.com>
-In-Reply-To: <14366388.KYv6Y7EbEA@phil>
-References: <1519632964-64257-1-git-send-email-leo.wen@rock-chips.com>
- <CACRpkdZDWvqrpop9FaJUidJjR8jB=Db-WztePrqKSg5Yp5gvCA@mail.gmail.com>
- <06296C1C-0ACB-4BB2-86DF-EBDBE3265DA4@rock-chips.com>
- <14366388.KYv6Y7EbEA@phil>
-Subject: =?UTF-8?B?5Zue5aSN77yaIFtQQVRDSCBWMiAxLw==?=
- =?UTF-8?B?Ml0gW21lZGlhXSBBZGQgUm9ja2NoaXAgUksxNjA4IGRyaXZlcg==?=
-X-Mailer: MailMasterPC/4.3.1.1011 (Windows 10 RS3)
-X-CUSTOM-MAIL-MASTER-SENT-ID: F59AFC95-D4D6-49F2-9D73-0979B6816877
+       spf=pass (google.com: best guess record for domain of heiko@sntech.de designates 95.129.55.99 as permitted sender) smtp.mailfrom=heiko@sntech.de
+From: Heiko Stuebner <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wen Nuan <leo.wen@rock-chips.com>, David Wu <david.wu@rock-chips.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "David S. Miller" <davem@davemloft.net>, Greg KH <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, jacob2.chen@rock-chips.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Eddie Cai <eddie.cai@rock-chips.com>
+Subject: Re: [PATCH V2 1/2] [media] Add Rockchip RK1608 driver
+Date: Mon, 26 Feb 2018 16:15:44 +0100
+Message-ID: <3613277.0XuNfbW5nk@phil>
+In-Reply-To: <CACRpkdZDWvqrpop9FaJUidJjR8jB=Db-WztePrqKSg5Yp5gvCA@mail.gmail.com>
+References: <1519632964-64257-1-git-send-email-leo.wen@rock-chips.com> <1519632964-64257-2-git-send-email-leo.wen@rock-chips.com> <CACRpkdZDWvqrpop9FaJUidJjR8jB=Db-WztePrqKSg5Yp5gvCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593450825351606714?=
-X-GMAIL-MSGID: =?utf-8?q?1593605872719913483?=
+X-GMAIL-MSGID: =?utf-8?q?1593477080789609366?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PGh0bWw+DQo8aGVhZD4NCiAgICA8bWV0YSBodHRwLWVxdWl2PSdDb250ZW50LVR5cGUnIGNvbnRl
-bnQ9J3RleHQvaHRtbDsgY2hhcnNldD1VVEYtOCc+DQo8L2hlYWQ+DQo8Ym9keT4NCjxzdHlsZT4N
-CiAgICAqew0KICAgICAgICBtYXJnaW46IDA7DQogICAgICAgIHBhZGRpbmc6IDA7DQogICAgfQ0K
-ICAgIGZvbnR7DQogICAgICAgIGxpbmUtaGVpZ2h0OiAxLjY7DQogICAgfQ0KICAgIHVsLG9sew0K
-ICAgICAgICBwYWRkaW5nLWxlZnQ6IDIwcHg7DQogICAgICAgIGxpc3Qtc3R5bGUtcG9zaXRpb246
-IGluc2lkZTsNCiAgICB9DQo8L3N0eWxlPg0KPGRpdiBzdHlsZSA9ICdmb250LWZhbWlseToi5b6u
-6L2v6ZuF6buRIjsgbGluZS1oZWlnaHQ6MS42Oyc+DQogICAgPGRpdj4KPGRpdj48c3Bhbj5IaSBI
-ZWlrbyw8L3NwYW4+PC9kaXY+CjxkaXYgaWQ9Im50ZXMtcGNtYWlsLXNpZ25hdHVyZSIgc3R5bGU9
-ImZvbnQtZmFtaWx5Oiflvq7ova/pm4Xpu5EnIj4KICAgIDxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+
-CiAgICAgICAgYSNudGVzLXBjbWFpbC1zaWduYXR1cmUtZGVmYXVsdDpob3ZlciB7CiAgICAgICAg
-ICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOwogICAgICAgICAgICBjb2xvcjogIzE5OWNm
-ZjsKICAgICAgICAgICAgY3Vyc29yOiBwb2ludGVyOwogICAgICAgIH0KICAgICAgICBhI250ZXMt
-cGNtYWlsLXNpZ25hdHVyZS1kZWZhdWx0OmFjdGl2ZSB7CiAgICAgICAgICAgIHRleHQtZGVjb3Jh
-dGlvbjogdW5kZXJsaW5lOwogICAgICAgICAgICBjb2xvcjogIzI0NmZjZTsKICAgICAgICAgICAg
-Y3Vyc29yOiBwb2ludGVyOwogICAgICAgIH0KICAgIDwvc3R5bGU+CgoKPC9kaXY+PC9kaXY+PGRp
-diBjbGFzcz0iSi1yZXBseSIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6I2YyZjJmMjtjb2xvcjpi
-bGFjaztwYWRkaW5nLXRvcDo2cHg7cGFkZGluZy1ib3R0b206NnB4O2JvcmRlci1yYWRpdXM6M3B4
-Oy1tb3otYm9yZGVyLXJhZGl1czozcHg7LXdlYmtpdC1ib3JkZXItcmFkaXVzOjNweDttYXJnaW4t
-dG9wOjQ1cHg7bWFyZ2luLWJvdHRvbToyMHB4O2ZvbnQtZmFtaWx5Oiflvq7ova/pm4Xpu5EnOyI+
-CiAgICA8ZGl2IHN0eWxlPSJmb250LXNpemU6MTJweDtsaW5lLWhlaWdodDoxLjU7d29yZC1icmVh
-azpicmVhay1hbGw7bWFyZ2luLWxlZnQ6MTBweDttYXJnaW4tcmlnaHQ6MTBweCI+5ZyoPHNwYW4g
-Y2xhc3M9Im1haWwtZGF0ZSI+MjAxOOW5tDLmnIgyN+aXpSAyMzoxMjwvc3Bhbj7vvIw8YSBjbGFz
-cz0ibWFpbC10byIgc3R5bGU9InRleHQtZGVjb3JhdGlvbjpub25lO2NvbG9yOiMyYTgzZjI7IiBo
-cmVmPSJtYWlsdG86aGVpa29Ac250ZWNoLmRlIj5IZWlrbyBTdHVlYm5lciZsdDtoZWlrb0BzbnRl
-Y2guZGUmZ3Q7PC9hPiDlhpnpgZPvvJogPC9kaXY+CjwvZGl2Pgo8YmxvY2txdW90ZSBpZD0ibnRl
-cy1wY21haWwtcXVvdGUiIHN0eWxlPSJtYXJnaW46IDA7IHBhZGRpbmc6IDA7IGZvbnQtc2l6ZTog
-MTRweDsgZm9udC1mYW1pbHk6ICflvq7ova/pm4Xpu5EnOyI+CkhpIExlbyw8YnI+PGJyPkFtIERp
-ZW5zdGFnLCAyNy4gRmVicnVhciAyMDE4LCAwNDoxNTo0NiBDRVQgc2NocmllYiDmuKnmmpY6PGJy
-PiA8YmxvY2txdW90ZSBjbGFzcz0ibW1icWMxIj5UaGFuayB5b3UgZm9yIHlvdXIgYWR2aWNlISBJ
-IHdpbGwgcmV2aXNlIGl0IGFjY29yZGluZyB0byB5b3VyIHN1Z2dlc3Rpb24uPGJyPjwvYmxvY2tx
-dW90ZT48YnI+cGxlYXNlIGFsc28ga2VlcCBhbiBleWUgb24gbXkgcmVwbHkgdG8gTGludXMnIG1h
-aWwgcG9pbnRpbmcgb3V0IHNvbWU8YnI+b3RoZXIgaXNzdWVzIHdoZXJlIHRoZSBkcml2ZXIgc2hv
-dWxkIG5vdCB0aWUgaW50byBzb2Mtc3BlY2lmaWMgYXJlYXM8YnI+bGlrZSB0aGUgY2xvY2sgY29u
-dHJvbGxlciBldGMuPGJyPjxicj48YnI+VGhhbmtzPGJyPkhlaWtvPGJyPjxicj48c3BhbiBzdHls
-ZT0iY29sb3I6IHJnYig2NywgNjcsIDY3KTsgZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlm
-OyBsaW5lLWhlaWdodDogMjRweDsgb3JwaGFuczogMjsiPiZuYnNwO0knbGwgcGF5IGF0dGVudGlv
-biB0byB0aGVzZSBwcm9ibGVtcyBhbmQgcmV2aXNlIHRoZW0uJm5ic3A7PC9zcGFuPjxzcGFuIHN0
-eWxlPSJsaW5lLWhlaWdodDogMjIuNHB4OyI+PGZvbnQgY29sb3I9IiMyNDI0MjQiPlRoYW5rIHlv
-dSBmb3IgeW91ciBhZHZpY2UhPC9mb250Pjwvc3Bhbj48L2Jsb2NrcXVvdGU+PGJsb2NrcXVvdGUg
-aWQ9Im50ZXMtcGNtYWlsLXF1b3RlIiBzdHlsZT0ibWFyZ2luOiAwcHg7IHBhZGRpbmc6IDBweDsi
-PjxkaXYgc3R5bGU9Im9ycGhhbnM6IDI7Ij48Zm9udCBjb2xvcj0iIzQzNDM0MyIgZmFjZT0iQXJp
-YWwsIHNhbnMtc2VyaWYiPjxzcGFuIHN0eWxlPSJsaW5lLWhlaWdodDogMjRweDsiPjxicj48L3Nw
-YW4+PC9mb250PjwvZGl2PkFtIERpZW5zdGFnLCAyNy4gRmVicnVhciAyMDE4LCAwNDoxNTo0NiBD
-RVQgc2NocmllYiDmuKnmmpY6PGJyPiA8YmxvY2txdW90ZSBjbGFzcz0ibW1icWMxIiBzdHlsZT0i
-Zm9udC1mYW1pbHk6IOW+rui9r+mbhem7kTsgZm9udC1zaXplOiAxNHB4OyI+T24gMi8yNi8yMDE4
-IDE4OjEy77yMTGludXMgV2FsbGVpaiZsdDtsaW51cy53YWxsZWlqQGxpbmFyby5vcmcmZ3Q7ICZu
-YnNwO3dyb3Rl77yaPGJyPiBPbiBNb24sIEZlYiAyNiwgMjAxOCBhdCA5OjE2IEFNLCBXZW4gTnVh
-biAmbHQ7bGVvLndlbkByb2NrLWNoaXBzLmNvbSZndDsgd3JvdGU6PGJyPiArICZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwO3BkYXRhLSZndDtncmZfZ3BpbzJiX2lvbXV4ID0gaW9yZW1hcCgocmVz
-b3VyY2Vfc2l6ZV90KTxicj4gICsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KEdSRl9CQVNFX0FERFIgKzxicj4gICsgJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-R1JGX0dQSU8yQl9JT01VWCksIDQpOzxicj4gICsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Z3JmX3ZhbCA9IF9fcmF3X3JlYWRsKHBkYXRhLSZndDtncmZfZ3BpbzJiX2lvbXV4KTs8YnI+ICAr
-ICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO19fcmF3X3dyaXRlbCgoKGdyZl92YWwpIHwgKDEg
-Jmx0OyZsdDsgNikgfCAoMSAmbHQ7Jmx0OyAoNiArIDE2KSkpLDxicj4gICsgJm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cGRhdGEtJmd0O2dyZl9ncGlvMmJf
-aW9tdXgpOzxicj4gICs8YnI+ICArICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3BkYXRhLSZn
-dDtncmZfaW9fdnNlbCA9IGlvcmVtYXAoKHJlc291cmNlX3NpemVfdCk8YnI+ICArICZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyhHUkZfQkFTRV9BRERSICsgR1JGX0lPX1ZTRUwp
-LCA0KTs8YnI+ICArICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2dyZl92YWwgPSBfX3Jhd19y
-ZWFkbChwZGF0YS0mZ3Q7Z3JmX2lvX3ZzZWwpOzxicj4gICsgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7X19yYXdfd3JpdGVsKCgoZ3JmX3ZhbCkgfCAoMSAmbHQ7Jmx0OyAxKSB8ICgxICZsdDsm
-bHQ7ICgxICsgMTYpKSksPGJyPiAgKyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDtwZGF0YS0mZ3Q7Z3JmX2lvX3ZzZWwpOzxicj4gPGJyPiBZb3UgYXJlIGRv
-aW5nIHBpbiBjb250cm9sIG9uIHRoZSBzaWRlIG9mIHRoZSBwaW4gY29udHJvbCBzdWJzeXN0ZW08
-YnI+IGl0IGxvb2tzIGxpa2U/PGJyPiA8YnI+IEkgdGhpbmsgRGF2aWQgV3UgYW5kIEhlaWtvIFN0
-dWJuZXIgbmVlZHMgdG8gaGF2ZSBhIGxvb2sgYXQgd2hhdCB5b3U8YnI+IGFyZSBkb2luZyBoZXJl
-IHRvIHN1Z2dlc3Qgb3RoZXIgc29sdXRpb25zLjxicj4gPGJyPiBBcGFydCBmcm9tIHRoYXQsIHdo
-eSB1c2UgX19yYXdfd3JpdGVsIGluc3RlYWQgb2YganVzdCB3cml0ZWwoKT88YnI+IDxicj4gVGhp
-cyBwaW4gaXMgaW9tdXgsIGRlZmF1bHQgR1BJTywgbmVlZCB0byBiZSBjaGFuZ2VkIHRvIENMSy4g
-PGJyPiBUaGlzIENMSyBpcyBwcm92aWRlZCB0byBleHRlcm5hbCBzZW5zb3IgZm9yIHVzZS48YnI+
-IEknbGwgdXNlIHdyaXRlbCgpLjxicj48L2Jsb2NrcXVvdGU+PGJyPkFzIHN0YXRlZCwgcGxlYXNl
-IGRvbid0IGRpcmVjdGx5IGFjY2VzcyBzb2MgYmxvY2tzIGxpa2UgdGhlIGNsb2NrPGJyPmNvbnRy
-b2xsZXIgb3IgaW9tdXhlcywgdGhlcmUgYXJlIHN0YW5kYXJkIEFQSXMgbGlrZSB0aGUgZ2VuZXJh
-bDxicj5jbG9jayBBUEkgYW5kIGFsc28gYXNzaWduZWQtY2xvY2sqIGRldmljZXRyZWUgcHJvcGVy
-dGllcy48YnI+PGJyPlNpbWlsYXJseSBmb3IgcGluY3RybCBhY2Nlc3MuPGJyPjxicj5TbyB0aGVy
-ZSBzaG91bGQgbm90IGJlIGFueSB3cml0ZWwgKG9yIGlvcmVtYXApIGF0IGFsbCBpbiB0aGlzIHNw
-aSBkcml2ZXI8YnI+SSdkIHRoaW5rLjxicj48YnI+PGJyPlRoYW5rczxicj5IZWlrbzwvYmxvY2tx
-dW90ZT48YmxvY2txdW90ZSBpZD0ibnRlcy1wY21haWwtcXVvdGUiIHN0eWxlPSJtYXJnaW46IDBw
-eDsgcGFkZGluZzogMHB4OyI+PGJyPlRoYW5rcy5JJ2xsIG1ha2UgYSByZWFzb25hYmxlIHJldmlz
-aW9uLjwvYmxvY2txdW90ZT48IS0t8J+YgC0tPg0KPC9kaXY+DQo8L2JvZHk+DQo8L2h0bWw+
+Hi Linus,
+
+thanks for catching these things :-) .
+
+Am Montag, 26. Februar 2018, 11:12:30 CET schrieb Linus Walleij:
+> On Mon, Feb 26, 2018 at 9:16 AM, Wen Nuan <leo.wen@rock-chips.com> wrote:
+> > +               pdata->grf_gpio2b_iomux = ioremap((resource_size_t)
+> > +                                                 (GRF_BASE_ADDR +
+> > +                                                  GRF_GPIO2B_IOMUX), 4);
+> > +               grf_val = __raw_readl(pdata->grf_gpio2b_iomux);
+> > +               __raw_writel(((grf_val) | (1 << 6) | (1 << (6 + 16))),
+> > +                            pdata->grf_gpio2b_iomux);
+> > +
+> > +               pdata->grf_io_vsel = ioremap((resource_size_t)
+> > +                                             (GRF_BASE_ADDR + GRF_IO_VSEL), 4);
+> > +               grf_val = __raw_readl(pdata->grf_io_vsel);
+> > +               __raw_writel(((grf_val) | (1 << 1) | (1 << (1 + 16))),
+> > +                            pdata->grf_io_vsel);
+> 
+> You are doing pin control on the side of the pin control subsystem
+> it looks like?
+> 
+> I think David Wu and Heiko Stubner needs to have a look at what you
+> are doing here to suggest other solutions.
+
+Especially as the rk1608 seems to be some a spi-connected peripheral.
+So it should definitly not touch _any_ soc-specific registers at all.
+
+I just looked up the patch in patchwork and apart from the one Linus
+quoted above, I found quite a bit more open-coded pinctrl settings
+as well as direct writes to the clock controller and even io-voltage
+selections.
+
+All these things are highly soc-specific so vary with each soc this
+ic gets connected to and the kernel does provide abstractions for
+all of them. For clock-rates there are the clock-apis and also
+the assigned-clock* properties for the devicetree, pinctrl supports
+multiple states and io-vsel selections normally should just monitor
+the supply-regulator via the io-domain driver we already have
+[See vqmmc handling in for sd-cards for example].
+
+So this driver should not touch anything of that sort and therefore
+should _not_ contain any iomem-based read or write at all.
+
+
+Heiko
