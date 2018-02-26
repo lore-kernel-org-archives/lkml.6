@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225pGPtPHbH2paf3Z2NF5oXJPR4tiMt1GBONKyJh6xRDRLqsErav7Nd7tlDWSymAZsIPIFzo
-ARC-Seal: i=1; a=rsa-sha256; t=1519676610; cv=none;
+X-Google-Smtp-Source: AG47ELvGZQpwlUVtsgzYgv2ANMo8Dak1asey+DkW+zPwJwBUx5zwbN1mCffFWnzDG282BH6vUCPz
+ARC-Seal: i=1; a=rsa-sha256; t=1519676607; cv=none;
         d=google.com; s=arc-20160816;
-        b=IDW2/Qkj1kdbwDDhPe/BpdVhQjL82m1pu6GGEbwgiyS89UntqPG/z9g1s0IAbrita7
-         txHYvxLOIyuAzqEUDVATzUUbXWd+VMW+4g690GhLjsEtmvgSLzvD6LAP0mSw3epfewvJ
-         lTFdlPjIyzVe43UR5ljsOYpClXLdlk53TiexSpNzHmTCDCMbrFrFlRpO2OxScdoXO8uj
-         Hqaro7l2+hTTU6E3GLDFd/WKUzV2qHALtiKka3SFXR5a1dY8E7Xdgrw1wbEYsGek2tad
-         KM2xikF8U1kmO4Ua+QeOZyWAsTfrPt9Iae8jQpzKbq4mAKn1xp4Oc/46BaW7zG7S9+Yo
-         Blbw==
+        b=tFjaAKOi5RjNWecb+zNNDhdJmrB4nEXm7vdYN7pYfhc+fQPdLvoojcqiPMqls/Jegk
+         p4vTtAdNrXEJk6E96OLLl2NCzGv9wPYfibT9P1jqRS9yFa5FpPQiS2Qtbg5DhnJ1/sQw
+         A68eDuteiYBj8Wc8CmaS5zTK9ner0HyRYtoxrTjvQfVHpL0KnSTFWrDEYUXgwLO4ZDGi
+         AHm+jaVjiUqZej+gQLbB8raGWTOiOtH7bwKU0RxsenwW1jo25XhlqkzIQbo9ES3CR322
+         FQbvfr4Gc2WKBgEy6ugi91W01CoA2HV6H/VVMNlr8QyV/OH9hx/5KfqaWFfQPF5DRe6l
+         HXiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nj1OrQlk2uBQaaL/wX9hqhFZW7qeyUjjpseHtEYadNo=;
-        b=Yyxih+qONiV8xtJxHSIeUsXkQsupZJxnVWqWQhMY+48+dXhkFze0SXt8LyebhyWJ+y
-         EQ7tHJPi7rAsAahin9+6WwPEd3qd0jeFUSaTJi0chGiOgjeEVSpKNVQ65Xn0ZjoDTpEL
-         CccbD3sRnylRx2QKsotkuOcAXDOsxEBsr+gzvTLGd8iMyHWHv2EvgC2+ldfmf7lnQIx3
-         ZHiYnB7Zp3iIRWnKgfZHo31LgYOTYmKDnqWLH/ANwKdzDa2DDqW9NAoESnaWsmnkM+Wy
-         YnVxa0Nv8DXpzyhd5nVJOdbmUjYubzmBk/KDG9fCbdvfUt+uCfbFMASS4xQhhd4e6wza
-         t3mg==
+        bh=HlRPxs2l5dGh96zvEGAK1/h1N2M4F1X1z5/om2eroXY=;
+        b=IOOxejQK3PtvSgUnaKRF6gDlw79y9XH270vA3XbQCA0oS+vaMrCl9Mm6xV9VDJboIs
+         3OU+EggDvQ8YcyNV/9kFz5tUVYAxNDwtqxVE65wwepL4JDl9qTUg0XLkbX/3MJdW9NJi
+         Cb34PLoqVMky1JIKagNDzXgtep3xYomPdS/0nHusvERIsLaspp+mOu1vojBfJbA0Jr3f
+         p15+MTQswtOirRg4CJmlcd2+zHsgfTyUZYBw0+vqsw32SAkKdKoHp95r+DD7TD6v5Aaj
+         H69ehRt2ltoAibP9fYTx9+jhH5vJpjpd4r5uW8pLBmEGNMPa+6FgZIXgjGP0O3Jo/ckN
+         /CNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Biggers <ebiggers@google.com>,
 	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.14 14/54] PKCS#7: fix certificate blacklisting
-Date: Mon, 26 Feb 2018 21:21:51 +0100
-Message-Id: <20180226202145.084527004@linuxfoundation.org>
+Subject: [PATCH 4.14 13/54] PKCS#7: fix certificate chain verification
+Date: Mon, 26 Feb 2018 21:21:50 +0100
+Message-Id: <20180226202145.028369057@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496421895342058?=
-X-GMAIL-MSGID: =?utf-8?q?1593496421895342058?=
+X-GMAIL-THRID: =?utf-8?q?1593496371074574553?=
+X-GMAIL-MSGID: =?utf-8?q?1593496418698961519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,53 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 29f4a67c17e19314b7d74b8569be935e6c7edf50 upstream.
+commit 971b42c038dc83e3327872d294fe7131bab152fc upstream.
 
-If there is a blacklisted certificate in a SignerInfo's certificate
-chain, then pkcs7_verify_sig_chain() sets sinfo->blacklisted and returns
-0.  But, pkcs7_verify() fails to handle this case appropriately, as it
-actually continues on to the line 'actual_ret = 0;', indicating that the
-SignerInfo has passed verification.  Consequently, PKCS#7 signature
-verification ignores the certificate blacklist.
+When pkcs7_verify_sig_chain() is building the certificate chain for a
+SignerInfo using the certificates in the PKCS#7 message, it is passing
+the wrong arguments to public_key_verify_signature().  Consequently,
+when the next certificate is supposed to be used to verify the previous
+certificate, the next certificate is actually used to verify itself.
 
-Fix this by not considering blacklisted SignerInfos to have passed
-verification.
+An attacker can use this bug to create a bogus certificate chain that
+has no cryptographic relationship between the beginning and end.
 
-Also fix the function comment with regards to when 0 is returned.
+Fortunately I couldn't quite find a way to use this to bypass the
+overall signature verification, though it comes very close.  Here's the
+reasoning: due to the bug, every certificate in the chain beyond the
+first actually has to be self-signed (where "self-signed" here refers to
+the actual key and signature; an attacker might still manipulate the
+certificate fields such that the self_signed flag doesn't actually get
+set, and thus the chain doesn't end immediately).  But to pass trust
+validation (pkcs7_validate_trust()), either the SignerInfo or one of the
+certificates has to actually be signed by a trusted key.  Since only
+self-signed certificates can be added to the chain, the only way for an
+attacker to introduce a trusted signature is to include a self-signed
+trusted certificate.
 
-Fixes: 03bb79315ddc ("PKCS#7: Handle blacklisted certificates")
-Cc: <stable@vger.kernel.org> # v4.12+
+But, when pkcs7_validate_trust_one() reaches that certificate, instead
+of trying to verify the signature on that certificate, it will actually
+look up the corresponding trusted key, which will succeed, and then try
+to verify the *previous* certificate, which will fail.  Thus, disaster
+is narrowly averted (as far as I could tell).
+
+Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
+Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/asymmetric_keys/pkcs7_verify.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ crypto/asymmetric_keys/pkcs7_verify.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/crypto/asymmetric_keys/pkcs7_verify.c
 +++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -369,8 +369,7 @@ static int pkcs7_verify_one(struct pkcs7
-  *
-  *  (*) -EBADMSG if some part of the message was invalid, or:
-  *
-- *  (*) 0 if no signature chains were found to be blacklisted or to contain
-- *	unsupported crypto, or:
-+ *  (*) 0 if a signature chain passed verification, or:
-  *
-  *  (*) -EKEYREJECTED if a blacklisted key was encountered, or:
-  *
-@@ -426,8 +425,11 @@ int pkcs7_verify(struct pkcs7_message *p
- 
- 	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
- 		ret = pkcs7_verify_one(pkcs7, sinfo);
--		if (sinfo->blacklisted && actual_ret == -ENOPKG)
--			actual_ret = -EKEYREJECTED;
-+		if (sinfo->blacklisted) {
-+			if (actual_ret == -ENOPKG)
-+				actual_ret = -EKEYREJECTED;
-+			continue;
-+		}
- 		if (ret < 0) {
- 			if (ret == -ENOPKG) {
- 				sinfo->unsupported_crypto = true;
+@@ -273,7 +273,7 @@ static int pkcs7_verify_sig_chain(struct
+ 				sinfo->index);
+ 			return 0;
+ 		}
+-		ret = public_key_verify_signature(p->pub, p->sig);
++		ret = public_key_verify_signature(p->pub, x509->sig);
+ 		if (ret < 0)
+ 			return ret;
+ 		x509->signer = p;
