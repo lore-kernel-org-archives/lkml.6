@@ -1,23 +1,23 @@
 Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AH8x227WLRDW7IpVsrwhZ0PSxygC6xdg+zhBFN0dS7tnpdRW34gqR7OthIyX0OSBkuvRPN+J6yY9
-ARC-Seal: i=1; a=rsa-sha256; t=1519660214; cv=none;
+X-Google-Smtp-Source: AH8x227apVu/jPWb6X3cwf8WPOldI2s7lFnChGWGsZSwEFHPW+M0kFdrnZQU6jqkJ5m4feqzks7U
+ARC-Seal: i=1; a=rsa-sha256; t=1519660213; cv=none;
         d=google.com; s=arc-20160816;
-        b=hA/wywKRVPFabjuNtFR5NZXF88j6l+Atpc7YyWyx1g4SQvQ5oPiMlIAN61eiG9dXXt
-         AIs03MnFx7OnAa9M+5F5t3CtoLeQjUwAqYhDitGwEf1g1B67RvYZMhiPuDslO0h6zoQ0
-         TLx8gGTjWjHwI0t/fHr4wOEmw7NT68yTHyREX5R//wGkNorazamZ1XwNrl0ZwJqLFBEY
-         Rbpwwn5MsG16piafRCoYQiaqL6uLBWGXSfhn3k+l7MLoF7/9dK6ikDDFA/KQ0yxGnsbD
-         zwgP08nKyBSzOhWU4Izt3IvtupG7b/isIS2C2roi+C5TUIxlORt6Y83uDcVfbmVyizMu
-         CgBg==
+        b=WxYXslafGPDIbGhV9Sjpl+J0yUgw2Rs4jlUoarEJppWUvOcYZAH3xTcjIX0ao71oay
+         YWKIuSPfjmm4VeGJ8CwEVKshseQIE4fPiTp8S7kw7mf8WkM9t/Ri4Uh6qReJID+DF2KP
+         C+p0xn/Oz/mH5bM6Y2agZsmMPOi3rdr+FetjjIy/pyDwI+yeoE0QeX2shIjRSWtsTgN5
+         yqBzjgFE6YqKdSS+4xT4u+kH0uBUYtGLGuI44J3T3zaJ2CFeDo91JqnnMo4eQEp9GFj4
+         6mOyY5sJWYQ4hp2NXeXNzv8XOnC4hlahBBWftqbJSAGtrGvDDAs4u+hf/opTpkFAT+2O
+         11sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=ta9LhXn85vb1XFnsfKaEKeCXMIG68OSksyEOb27OeKY=;
-        b=CPHif8ngXkW+fZx57yTKiDdihL2AZ1AO3Mt3zus5eFy0H/TL2zSaqDGlMO9GHUwYVZ
-         QCYI4fCz27loGB48oP7W0kt9jYg3zncJdMz34DrjYktnZWQbsUaYbSnFgZx1Wppi7ywF
-         VS84uuljoARrWR54a+VkRFD7yDxdTtaMLI26n/dZ1D0syMBNpKk64IIX4QScwG3SDvot
-         gXUygjIFKzRkIj4xwqZczzS1Bo5Fe/5VoJlX4qfQDYS2cEzWe/GJGiIoTi5DVE33Bqwh
-         cjB3VSbBeRa2W6OVguQbVVve+TCSxWL/VKgU91+e5Vxxd2LuQYeCo7NboDmt2SYZ6ff6
-         IhXA==
+        bh=ir4JYssC/hPTmapG7Y4vaVn93RsvPEQEHYaSuX7lK/c=;
+        b=LYPkWLwxcGGiCdjKPp9GGVYgg5sN8hbV6EKsNoF5Ubd5DJQpNi+X3hAw7mn4M8731t
+         1A7Rp/cfEiChvXrtZEVvXOxuWkR+u1q2/h61gtQuuKrVj+96RNXxkL8QggTCGv0WYJSw
+         zDSblBNS5xS55K9s70URL/gslQZyTBJVj/ZtGze7nCY81mxFa1bNVPS+iZguidgs4X18
+         yILfoo8BDuCb/mrvGnuY58p+fFa+xJNvUv8FQkADZGFXHqP15fmJVIWX3v1coA/UL7B2
+         nP7v4AL+g3+n786e1gIHXU4UhucQIE2xLEV0zHTq/1oPn9iY2mOARZqzjCMgRneigrF/
+         6EIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
@@ -35,9 +35,9 @@ CC: <joe@perches.com>, <benh@kernel.crashing.org>,
 	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
 	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
 	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
-Subject: [PATCH v15 2/9] PCI: Remove unused __weak attribute in pci_register_io_range()
-Date: Tue, 27 Feb 2018 00:40:42 +0800
-Message-ID: <1519663249-9850-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v15 5/9] OF: Add missing I/O range exception for indirect-IO devices
+Date: Tue, 27 Feb 2018 00:40:45 +0800
+Message-ID: <1519663249-9850-6-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
 References: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
@@ -46,36 +46,196 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593479228599256466?=
-X-GMAIL-MSGID: =?utf-8?q?1593479228599256466?=
+X-GMAIL-THRID: =?utf-8?q?1593479228300915227?=
+X-GMAIL-MSGID: =?utf-8?q?1593479228300915227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+From: Zhichang Yuan <yuanzhichang@hisilicon.com>
 
-Currently pci_register_io_range() has only one definition;
-therefore there is no use of the __weak attribute.
+There are some special ISA/LPC devices that work on a specific I/O range
+where it is not correct to specify a 'ranges' property in DTS parent node
+as CPU addresses translated from DTS node are only for memory space on
+some architectures, such as Arm64. Without the parent 'ranges' property,
+current of_translate_address() return an error.
+Here we add special handling for this case.
+During the OF address translation, some checking will be performed to
+identify whether the device node is registered as indirect-IO. If yes,
+the I/O translation will be done in a different way from that one of PCI
+MMIO. In this way, the I/O 'reg' property of the special ISA/LPC devices
+will be parsed correctly.
 
+Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
 Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>    #earlier draft
+Acked-by: Rob Herring <robh@kernel.org>
+Andy Shevchenko <andy.shevchenko@gmail.com>
 Tested-by: dann frazier <dann.frazier@canonical.com>
 ---
- drivers/pci/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/of/address.c | 92 +++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 76 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd1..4666a01 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3455,7 +3455,7 @@ struct io_range {
-  * Record the PCI IO range (expressed as CPU physical address + size).
-  * Return a negative value if an error has occured, zero otherwise
+diff --git a/drivers/of/address.c b/drivers/of/address.c
+index cdf047b..c434f659 100644
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -5,6 +5,7 @@
+ #include <linux/fwnode.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/logic_pio.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/pci.h>
+@@ -562,9 +563,14 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+  * that translation is impossible (that is we are not dealing with a value
+  * that can be mapped to a cpu physical address). This is not really specified
+  * that way, but this is traditionally the way IBM at least do things
++ *
++ * Whenever the translation fails, the *host pointer will be set to the
++ * device that had registered logical PIO mapping, and the return code is
++ * relative to that node.
   */
--int __weak pci_register_io_range(phys_addr_t addr, resource_size_t size)
-+int pci_register_io_range(phys_addr_t addr, resource_size_t size)
+ static u64 __of_translate_address(struct device_node *dev,
+-				  const __be32 *in_addr, const char *rprop)
++				  const __be32 *in_addr, const char *rprop,
++				  struct device_node **host)
  {
- 	int err = 0;
+ 	struct device_node *parent = NULL;
+ 	struct of_bus *bus, *pbus;
+@@ -577,6 +583,7 @@ static u64 __of_translate_address(struct device_node *dev,
+ 	/* Increase refcount at current level */
+ 	of_node_get(dev);
+ 
++	*host = NULL;
+ 	/* Get parent & match bus type */
+ 	parent = of_get_parent(dev);
+ 	if (parent == NULL)
+@@ -597,6 +604,8 @@ static u64 __of_translate_address(struct device_node *dev,
+ 
+ 	/* Translate */
+ 	for (;;) {
++		struct logic_pio_hwaddr *iorange;
++
+ 		/* Switch to parent bus */
+ 		of_node_put(dev);
+ 		dev = parent;
+@@ -609,6 +618,19 @@ static u64 __of_translate_address(struct device_node *dev,
+ 			break;
+ 		}
+ 
++		/*
++		 * For indirectIO device which has no ranges property, get
++		 * the address from reg directly.
++		 */
++		iorange = find_io_range_by_fwnode(&dev->fwnode);
++		if (iorange && (iorange->flags != LOGIC_PIO_CPU_MMIO)) {
++			result = of_read_number(addr + 1, na - 1);
++			pr_debug("indirectIO matched(%pOF) 0x%llx\n",
++				 dev, result);
++			*host = of_node_get(dev);
++			break;
++		}
++
+ 		/* Get new parent bus and counts */
+ 		pbus = of_match_bus(parent);
+ 		pbus->count_cells(dev, &pna, &pns);
+@@ -640,13 +662,32 @@ static u64 __of_translate_address(struct device_node *dev,
+ 
+ u64 of_translate_address(struct device_node *dev, const __be32 *in_addr)
+ {
+-	return __of_translate_address(dev, in_addr, "ranges");
++	struct device_node *host;
++	u64 ret;
++
++	ret = __of_translate_address(dev, in_addr, "ranges", &host);
++	if (host) {
++		of_node_put(host);
++		return OF_BAD_ADDR;
++	}
++
++	return ret;
+ }
+ EXPORT_SYMBOL(of_translate_address);
+ 
+ u64 of_translate_dma_address(struct device_node *dev, const __be32 *in_addr)
+ {
+-	return __of_translate_address(dev, in_addr, "dma-ranges");
++	struct device_node *host;
++	u64 ret;
++
++	ret = __of_translate_address(dev, in_addr, "dma-ranges", &host);
++
++	if (host) {
++		of_node_put(host);
++		return OF_BAD_ADDR;
++	}
++
++	return ret;
+ }
+ EXPORT_SYMBOL(of_translate_dma_address);
+ 
+@@ -688,29 +729,48 @@ const __be32 *of_get_address(struct device_node *dev, int index, u64 *size,
+ }
+ EXPORT_SYMBOL(of_get_address);
+ 
++static u64 of_translate_ioport(struct device_node *dev, const __be32 *in_addr,
++			u64 size)
++{
++	u64 taddr;
++	unsigned long port;
++	struct device_node *host;
++
++	taddr = __of_translate_address(dev, in_addr, "ranges", &host);
++	if (host) {
++		/* host specific port access */
++		port = logic_pio_trans_hwaddr(&host->fwnode, taddr, size);
++		of_node_put(host);
++	} else {
++		/* memory mapped I/O range */
++		port = pci_address_to_pio(taddr);
++	}
++
++	if (port == (unsigned long)-1)
++		return OF_BAD_ADDR;
++
++	return port;
++}
++
+ static int __of_address_to_resource(struct device_node *dev,
+ 		const __be32 *addrp, u64 size, unsigned int flags,
+ 		const char *name, struct resource *r)
+ {
+ 	u64 taddr;
+ 
+-	if ((flags & (IORESOURCE_IO | IORESOURCE_MEM)) == 0)
++	if (flags & IORESOURCE_MEM)
++		taddr = of_translate_address(dev, addrp);
++	else if (flags & IORESOURCE_IO)
++		taddr = of_translate_ioport(dev, addrp, size);
++	else
+ 		return -EINVAL;
+-	taddr = of_translate_address(dev, addrp);
++
+ 	if (taddr == OF_BAD_ADDR)
+ 		return -EINVAL;
+ 	memset(r, 0, sizeof(struct resource));
+-	if (flags & IORESOURCE_IO) {
+-		unsigned long port;
+-		port = pci_address_to_pio(taddr);
+-		if (port == (unsigned long)-1)
+-			return -EINVAL;
+-		r->start = port;
+-		r->end = port + size - 1;
+-	} else {
+-		r->start = taddr;
+-		r->end = taddr + size - 1;
+-	}
++
++	r->start = taddr;
++	r->end = taddr + size - 1;
+ 	r->flags = flags;
+ 	r->name = name ? name : dev->full_name;
  
 -- 
 1.9.1
