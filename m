@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227/OBFFHIvbdIPf7vAtbvdyCJ9Q1dEt6AI9pZDQfxMA7Ny3W4SwIesrIIBH5xQ8FJsH///3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676562; cv=none;
+X-Google-Smtp-Source: AG47ELuv/OXTf/YUg/1MGICO8F1cxeS4Lw2kMpBEzPSbxp+w0y8ROKJVjdhGceROrOrd4en52C4s
+ARC-Seal: i=1; a=rsa-sha256; t=1519676559; cv=none;
         d=google.com; s=arc-20160816;
-        b=PrD9AMkojBBxMaKNhjwNMGvU30o4GbTgNf/RLUpAFVTsCmL08l0GUE0Gzox4sHsVeC
-         mhH1VOsze3JU8etBVPD/PmxuOWYzaRIj2qQ9XgIWWq44LkrO6j+eSUVxngTCtcpeNOEu
-         0+G+2z/fS3sNl9anAw8oBUlBSX8S/GSqAtVVJgEL5FnN8cNkmfj3eM7AbeEBK9zlUCzt
-         QQPg0w5ZFa5YPrx9XnzMSdj9+UXcRg5TKVw9TkZNYylV0PKpIOd2IJaEEHqL7PynlzCp
-         V66hZAGYlQvaD/gkL0coJqp4ey3xb620/ce9WAp319WtZpcUdxUm4qQeNxkh6tN5lZlX
-         Lw+Q==
+        b=oMGBBGhGQtGUCeR5HSK7a9EnTpsk/5iTgATfqFnBAi535X5W7RzbWfV+/qHdTPRA85
+         /4XElU5gEXwbzDux0rVNWKTGXW6di/Zhh7dEmB00yven1BvBsvsUHdKXYQ8jOtViaGwT
+         pxIxpze6mERaGBXMqPSfkCFWg825QSls4sS9wz8Ti+Qfe6haMbCFvXOQS3+rzL94XRQS
+         o+Z79DVsL+WF6vPq1qRszVAZd3aVm0jFtHxaOHyHN1MtcGRqUT2eSN/6djYbSSmZuOCu
+         a1InqZy1Of6cpLHF4hUXyduEtaSaQCBA5NP4Y3+JauPDuRSrCNtUPF3uY1w+kgWMUlb4
+         eJ/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bnYnkrMMuhTkTz5+cB6L5RZ+HYZEQ6rZK/Ajcs2qVL4=;
-        b=yvYfUQIozdZT+wwMXrDHUNE23zsoDptud+WEpCfpL2ySKi4EIlFoXzp/cDAVoMyXhQ
-         O1QNBvOtD69r5hc5j3jL5NXsrNwgmGY9WRv+JOmxFGUT8Wb0d4wFFipP3ubwrGiTBkrY
-         QhEMdKAS0v6dx93rEO/GgwOs0DE853oWaL/y1xTEssF2FwFVOtAu3XqDvKJgh88XwDmn
-         HSZWV9Z1+g99pZMT9Y1l848RLcGi9Y0iWOkQxf0BtMQn/FXL20IvYnxNwMxkpxJBh0ar
-         HarHxVmQC77OYaLXiWbMDxYLazfSSiz+QQNI4qQX3gPG9IMZrIUGP9EidCccFUlV44md
-         +fZQ==
+        bh=Ci883YQ318n9H0+R8zlzgxh8LJYyQ2c0aQ3jgtuCmU0=;
+        b=GKEio3cQ0kYyoieZBbDLXLafH9UYQNlO4l22o1ie9XHXlDmTLHb3zZywKuAaQi2iY0
+         Wj09067uIRWW9N1ZIrOfZtb3Lzcih48D8hcaoXopNlEb4CqN6ORRtbJryPzo1B4NSHQU
+         I1Jb+FJYH1TzsqgNlXcgE7cX0Y3bcncwJRxGwgC/06ZgLyzD/amXpFZJwOZXZwN6fyF9
+         Rxs422r9To/zIa6bK8dWoapS1+ifchpA0oxfJLUQvK8T3YoEb2olwuT1DmxIsfiThpvl
+         pQJAQAGd6PGnRfBWkrPJ6ZDCj0/dV92Fh4XDpdM0H2qJFHM+Y+uPLbnpEkPqh6KaMmQP
+         lJtQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Paolo Valente <paolo.valente@linaro.org>,
 	Eric Biggers <ebiggers@google.com>,
 	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.9 06/39] PKCS#7: fix certificate chain verification
-Date: Mon, 26 Feb 2018 21:20:27 +0100
-Message-Id: <20180226201643.948101062@linuxfoundation.org>
+Subject: [PATCH 4.9 05/39] X.509: fix BUG_ON() when hash algorithm is unsupported
+Date: Mon, 26 Feb 2018 21:20:26 +0100
+Message-Id: <20180226201643.899108793@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496371074574553?=
-X-GMAIL-MSGID: =?utf-8?q?1593496371074574553?=
+X-GMAIL-THRID: =?utf-8?q?1593496367609163811?=
+X-GMAIL-MSGID: =?utf-8?q?1593496367609163811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,54 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 971b42c038dc83e3327872d294fe7131bab152fc upstream.
+commit 437499eea4291ae9621e8763a41df027c110a1ef upstream.
 
-When pkcs7_verify_sig_chain() is building the certificate chain for a
-SignerInfo using the certificates in the PKCS#7 message, it is passing
-the wrong arguments to public_key_verify_signature().  Consequently,
-when the next certificate is supposed to be used to verify the previous
-certificate, the next certificate is actually used to verify itself.
+The X.509 parser mishandles the case where the certificate's signature's
+hash algorithm is not available in the crypto API.  In this case,
+x509_get_sig_params() doesn't allocate the cert->sig->digest buffer;
+this part seems to be intentional.  However,
+public_key_verify_signature() is still called via
+x509_check_for_self_signed(), which triggers the 'BUG_ON(!sig->digest)'.
 
-An attacker can use this bug to create a bogus certificate chain that
-has no cryptographic relationship between the beginning and end.
+Fix this by making public_key_verify_signature() return -ENOPKG if the
+hash buffer has not been allocated.
 
-Fortunately I couldn't quite find a way to use this to bypass the
-overall signature verification, though it comes very close.  Here's the
-reasoning: due to the bug, every certificate in the chain beyond the
-first actually has to be self-signed (where "self-signed" here refers to
-the actual key and signature; an attacker might still manipulate the
-certificate fields such that the self_signed flag doesn't actually get
-set, and thus the chain doesn't end immediately).  But to pass trust
-validation (pkcs7_validate_trust()), either the SignerInfo or one of the
-certificates has to actually be signed by a trusted key.  Since only
-self-signed certificates can be added to the chain, the only way for an
-attacker to introduce a trusted signature is to include a self-signed
-trusted certificate.
+Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled:
 
-But, when pkcs7_validate_trust_one() reaches that certificate, instead
-of trying to verify the signature on that certificate, it will actually
-look up the corresponding trusted key, which will succeed, and then try
-to verify the *previous* certificate, which will fail.  Thus, disaster
-is narrowly averted (as far as I could tell).
+    openssl req -new -sha512 -x509 -batch -nodes -outform der \
+        | keyctl padd asymmetric desc @s
 
 Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
+Reported-by: Paolo Valente <paolo.valente@linaro.org>
+Cc: Paolo Valente <paolo.valente@linaro.org>
 Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/asymmetric_keys/pkcs7_verify.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/asymmetric_keys/public_key.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -261,7 +261,7 @@ static int pkcs7_verify_sig_chain(struct
- 				sinfo->index);
- 			return 0;
- 		}
--		ret = public_key_verify_signature(p->pub, p->sig);
-+		ret = public_key_verify_signature(p->pub, x509->sig);
- 		if (ret < 0)
- 			return ret;
- 		x509->signer = p;
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -93,9 +93,11 @@ int public_key_verify_signature(const st
+ 
+ 	BUG_ON(!pkey);
+ 	BUG_ON(!sig);
+-	BUG_ON(!sig->digest);
+ 	BUG_ON(!sig->s);
+ 
++	if (!sig->digest)
++		return -ENOPKG;
++
+ 	alg_name = sig->pkey_algo;
+ 	if (strcmp(sig->pkey_algo, "rsa") == 0) {
+ 		/* The data wangled by the RSA algorithm is typically padded
