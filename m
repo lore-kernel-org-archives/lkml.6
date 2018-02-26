@@ -1,124 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeBZJ03 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:26:29 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37794 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbeBZJ0Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:26:25 -0500
+        id S1752250AbeBZJ1A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:27:00 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:41661 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751563AbeBZJ05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:26:57 -0500
+Date: Mon, 26 Feb 2018 10:26:45 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
+ H6 DTSI file
+Message-ID: <20180226092645.xghkmfowenzlbm42@flea.lan>
+References: <20180223123555.64009-6-icenowy@aosc.io>
+ <20180223123555.64009-7-icenowy@aosc.io>
+ <20180223152038.2bflylwa6vj4gzfj@flea.lan>
+ <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
 MIME-Version: 1.0
-Message-ID: <1f6d0e8e-6d76-4262-9e8b-f8b1f23d8248@default>
-Date: Mon, 26 Feb 2018 01:26:19 -0800 (PST)
-From: Liran Alon <liran.alon@oracle.com>
-To: <kernellwp@gmail.com>
-Cc: <rkrcmar@redhat.com>, <pbonzini@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-X-Mailer: Zimbra on Oracle Beehive
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z6o7m63bqzv2zod7"
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8815 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802260128
+In-Reply-To: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1Q9QX9r025219
 
 
------ kernellwp@gmail.com wrote:
+--z6o7m63bqzv2zod7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Linux (among the others) has checks to make sure that certain features
-> 
-> aren't enabled on a certain family/model/stepping if the microcode
-> version 
-> isn't greater than or equal to a known good version.
-> 
-> By exposing the real microcode version, we're preventing buggy guests
-> that
-> don't check that they are running virtualized (i.e., they should trust
-> the
-> hypervisor) from disabling features that are effectively not buggy.
-> 
-> Suggested-by: Filippo Sironi <sironi@amazon.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 1 +
->  arch/x86/kvm/x86.c              | 8 ++++++--
->  2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h
-> b/arch/x86/include/asm/kvm_host.h
-> index 938d453..6e13f2f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
->  	u64 smi_count;
->  	bool tpr_access_reporting;
->  	u64 ia32_xss;
-> +	u32 microcode_version;
->  
->  	/*
->  	 * Paging state of the vcpu
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 1a3ed81..cc51c61 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2247,7 +2247,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
-> struct msr_data *msr_info)
->  
->  	switch (msr) {
->  	case MSR_AMD64_NB_CFG:
-> -	case MSR_IA32_UCODE_REV:
->  	case MSR_IA32_UCODE_WRITE:
->  	case MSR_VM_HSAVE_PA:
->  	case MSR_AMD64_PATCH_LOADER:
-> @@ -2255,6 +2254,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
-> struct msr_data *msr_info)
->  	case MSR_AMD64_DC_CFG:
->  		break;
->  
-> +	case MSR_IA32_UCODE_REV:
-> +		if (msr_info->host_initiated)
-> +			vcpu->arch.microcode_version = data >> 32;
-> +		break;
->  	case MSR_EFER:
->  		return set_efer(vcpu, data);
->  	case MSR_K7_HWCR:
-> @@ -2550,7 +2553,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu,
-> struct msr_data *msr_info)
->  		msr_info->data = 0;
->  		break;
->  	case MSR_IA32_UCODE_REV:
-> -		msr_info->data = 0x100000000ULL;
-> +		msr_info->data = (u64)vcpu->arch.microcode_version << 32;
->  		break;
->  	case MSR_MTRRcap:
->  	case 0x200 ... 0x2ff:
-> @@ -8232,6 +8235,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool
-> init_event)
->  	vcpu->arch.regs_dirty = ~0;
->  
->  	vcpu->arch.ia32_xss = 0;
-> +	vcpu->arch.microcode_version = 0x1;
->  
->  	kvm_x86_ops->vcpu_reset(vcpu, init_event);
->  }
-> -- 
-> 2.7.4
+On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
+> >> +	psci {
+> >> +		compatible =3D "arm,psci-0.2";
+> >> +		method =3D "smc";
+> >> +	};
+> >
+> >Is it needed? The bootloader should fill it with whatever version it
+> >has, shouldn't it?
+>=20
+> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
+> info.
+>=20
+> See A64/H5 device trees.
 
-I think you need to add MSR_IA32_UCODE_REV to emulated_msrs[]
-to allow for proper live-migration of this MSR value.
+So if the PSCI version implemented in ATF ever changes, we would have
+to update all the DT everywhere, but only if you're running the new
+version?
 
-The rest seems fine to me. :)
+Sigh.
 
-Regards,
--Liran
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--z6o7m63bqzv2zod7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT0tQACgkQ0rTAlCFN
+r3TLwg/+Nz8rd3gYDqm5pcrYPGIJN0H61KEsqx/iB8F9FplnrLVH79Y2LXuehDAD
+OFNpmoWWZMXoRePjL/rpoA6/EfXeBddtks+IyMgAHQgBWqDjHgAvq0IV7NUAQ0hb
+AfcIVhDAposY/s8e0BmANAdxLZESlQkZE2kqZEgQ8nr1yDVHam4iALk0gp4DTwef
+U0aDUttzBlHmGZmcEVRuxh2CoPualNFBmav4+GLR/8UdzK/yu64bJHaVan19M9R7
+mGQ8JcU5GJgdFzWFrECgOCsgT5scQqEnve9PxA0w7NYqvP6yCPqTLQ0B58xPl92p
+CEgJqbogmdhE5a9/Mv+G1NXnJlUHFtJkQ030tMRAj6sA247wPnowW5uFnPYi35xc
+CfFrlG+IzcFYDdPy3wfhyHPfGn7o9yxZMNchlseLywyM4uBwf8wjds3nKNeP0Y0m
+NH8ZJK8PKQ+LXfj7Ihu4VSpmH64zkYSQwqMbjFFvuJXGsnBPqqS/Ok+ZzXKjgh1r
+/8grCvGLfKL/r/9/VCYFx0/oGh23oicUBkYLFAsYcDb3lOA0TO+03pqtdXARshaO
+QTbdqBi9Iz90Y3lxOfbpRMG90RvonBeUh9GpeRXKfxL5mD4M5vGh7lD3a2Jojek4
+mj2++whGyo3wLYsFirdAqeA4b0oGSJffC3vpSjzz1OW7U9MhJXA=
+=8ds1
+-----END PGP SIGNATURE-----
+
+--z6o7m63bqzv2zod7--
