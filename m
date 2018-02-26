@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsa4Xf/AqFOEYDi0eA6tkfol0+LYO0TF8yZrWkvdCzimFTCfT3YSYj4jIuyQRtl+l+SXdHU
-ARC-Seal: i=1; a=rsa-sha256; t=1519676916; cv=none;
+X-Google-Smtp-Source: AH8x224Z1UqBpAyZRM1U/pj/3VoOKL9lFJKxj4ZZDqVcxyhDkRoBS7INk1yAHG3w7fNngBpxQNhR
+ARC-Seal: i=1; a=rsa-sha256; t=1519676913; cv=none;
         d=google.com; s=arc-20160816;
-        b=in8Jlu0vm0iYyZqc7uwMfZN8Dngk5IJNmvdvaRzyzGTK8lccWdZ0tBRx+AnHtdLhdR
-         cb1P3PPRm9NXiVsNADUNjgPMHwb6R5pBfIrDeWAR/E2AZeRUvabFBLWiLz8QW0ggjZ5H
-         XJpQ5vzppwa6RvuEjgdNlfCYKJQehMCOjFRIWRb5bbvVUQM74CyvTx/CcMrpWmTw6Pao
-         AhrzRPtH5+4WtIn8N1eyUrwhrMyUUDsouz+FiChvYJbqTSJcwrhR8VJg/jNrEpcyvQgo
-         fefytsCISTbcvezh/teRfn6w9X5pPtRrAMMHuc9aCHiVe9L4i773w/6z2necTcUT/h8m
-         f5rQ==
+        b=0E70hZPGEv+apUKhKIRFNtycsbsPPkBaIxM1CQNr4V8qUnHE/eSgn+gobD/B96aKGv
+         kMZZhT3Xwv/YJ6bCa1zio8DJoWUYjGZ9I8lPgmjOIB02IuV9O6EliNM+uhZB7OtfvNyz
+         fquFv9yRBp/PQaDIG/0MoSymYxI6xKEXka+aIV8yQvH/vmG0YSocRKyqVCCzec3MaUHw
+         dvH2BBv3LQLeNzMKEvip5zw9xm14FTkg9klZ2OhWZ06D9qIN0N/m2LF6NXPLc2Lc0w6O
+         NCGahIorOeIwH2S8NE0IiB58bnttJS82R9Rs5VyJ6OhXRV73I1zFr+SceYAtDZkLqHmi
+         1PEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IQ2CXha6CJWn1zGyLrlA9bYf2kP2U9O66yzTG37fph4=;
-        b=EZDTIfFN/I9HkU2sf04dO4Xewrs1WvcIq+rSwXIVil0kq3ZFRJHg2vcl+EVmW7oQTR
-         BZGwn11p4TqPGaWlylu6wQJbshWxOoq0F/CYfeabtBuBF9X3act+asA5Lu0f7Wez05T1
-         pKhe+5jLXQ08sT8NlCFil/FNu57yLKeHe2X39zaryLuajve25MHZU6RcTmglXruaryVG
-         75D5aR9IACLDdqeQUZMUQQT/LlB4+e+ND4t3ePrTuMq6LglUs4uMdr48yQvwa38Pp7Mh
-         EIUXr53KFZZrSFmwlZ4edgwKjQRqYnzS+6aN1r3VoGfZBdslWeJkgb/ovIkHJDw673Ak
-         hfnQ==
+        bh=TCKz+2KLg3SyBxGSXgHC4nUM7bTXRQlsEP7cu1uIHJ4=;
+        b=IPMEZJ/b7EWQBME0+hth4pdNe38kuma8Ge7T4DGKjeCFQJzoJI7n6LXbUvnIfz9u5S
+         PyVZbAJvDMGdBGMxr3HNFyaw3ctM6+yiUHpskFU9H8hFBJBJdHzt6+dCHK/KDp4rx7mu
+         VqUwFLo3qqG74fXJbcMknJM9UmXlrug1DE8YyAdJjSDCd2PoXWKdeAkqggrYgOB8uL0s
+         dL5jOOrghWQGY9/G4P+pOwRSPOv636HA1l+O0am/WxSxeCLuH2avQEydCAl3YnUQk6R7
+         4ijR9+XeV0XVQt1Ld6OU/2GQprb1V/ZNapVBeBJKkC3TJYrka0L+2fEhKd0ovX4w2i0k
+         gNow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Huang Rui <ray.huang@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 56/64] drm/amdgpu: disable MMHUB power gating on raven
-Date: Mon, 26 Feb 2018 21:22:33 +0100
-Message-Id: <20180226202155.831900463@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.15 55/64] drm: Handle unexpected holes in color-eviction
+Date: Mon, 26 Feb 2018 21:22:32 +0100
+Message-Id: <20180226202155.787556654@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496531110567555?=
-X-GMAIL-MSGID: =?utf-8?q?1593496742139594889?=
+X-GMAIL-THRID: =?utf-8?q?1593496527590323155?=
+X-GMAIL-MSGID: =?utf-8?q?1593496739716889768?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,128 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Huang Rui <ray.huang@amd.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 400b6afbaa949914460e5fd1d769c5e26ef1f6b8 upstream.
+commit b8ff1802815913aad52695898cccbc9f77b7e726 upstream.
 
-MMHUB power gating still has issue, and doesn't work on raven at current. So
-disable it for the moment.
+During eviction, the driver may free more than one hole in the drm_mm
+due to the side-effects in evicting the scanned nodes. However,
+drm_mm_scan_color_evict() expects that the scan result is the first
+available hole (in the mru freed hole_stack list):
 
-Signed-off-by: Huang Rui <ray.huang@amd.com>
-Acked-by: Hawking Zhang <Hawking.Zhang@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+  kernel BUG at drivers/gpu/drm/drm_mm.c:844!
+  invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+  Dumping ftrace buffer:
+     (ftrace buffer empty)
+  Modules linked in: i915 snd_hda_codec_analog snd_hda_codec_generic coretemp snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core lpc_ich snd_pcm e1000e mei_me prime_numbers mei
+  CPU: 1 PID: 1490 Comm: gem_userptr_bli Tainted: G     U           4.16.0-rc1-g740f57c54ecf-kasan_6+ #1
+  Hardware name: Dell Inc. OptiPlex 755                 /0PU052, BIOS A08 02/19/2008
+  RIP: 0010:drm_mm_scan_color_evict+0x2b8/0x3d0
+  RSP: 0018:ffff880057a573f8 EFLAGS: 00010287
+  RAX: ffff8800611f5980 RBX: ffff880057a575d0 RCX: dffffc0000000000
+  RDX: 00000000029d5000 RSI: 1ffff1000af4aec1 RDI: ffff8800611f5a10
+  RBP: ffff88005ab884d0 R08: ffff880057a57600 R09: 000000000afff000
+  R10: 1ffff1000b5710b5 R11: 0000000000001000 R12: 1ffff1000af4ae82
+  R13: ffff8800611f59b0 R14: ffff8800611f5980 R15: ffff880057a57608
+  FS:  00007f2de0c2e8c0(0000) GS:ffff88006ac40000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007f2ddde1e000 CR3: 00000000609b2000 CR4: 00000000000006e0
+  Call Trace:
+   ? drm_mm_scan_remove_block+0x330/0x330
+   ? drm_mm_scan_remove_block+0x151/0x330
+   i915_gem_evict_something+0x711/0xbd0 [i915]
+   ? igt_evict_contexts+0x50/0x50 [i915]
+   ? nop_clear_range+0x10/0x10 [i915]
+   ? igt_evict_something+0x90/0x90 [i915]
+   ? i915_gem_gtt_reserve+0x1a1/0x320 [i915]
+   i915_gem_gtt_insert+0x237/0x400 [i915]
+   __i915_vma_do_pin+0xc25/0x1a20 [i915]
+   eb_lookup_vmas+0x1c63/0x3790 [i915]
+   ? i915_gem_check_execbuffer+0x250/0x250 [i915]
+   ? trace_hardirqs_on_caller+0x33f/0x590
+   ? _raw_spin_unlock_irqrestore+0x39/0x60
+   ? __pm_runtime_resume+0x7d/0xf0
+   i915_gem_do_execbuffer+0x86a/0x2ff0 [i915]
+   ? __kmalloc+0x132/0x340
+   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
+   ? drm_ioctl_kernel+0x12e/0x1c0
+   ? drm_ioctl+0x662/0x980
+   ? eb_relocate_slow+0xa90/0xa90 [i915]
+   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
+   ? __might_fault+0xea/0x1a0
+   i915_gem_execbuffer2_ioctl+0x3cc/0x760 [i915]
+   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
+   ? lock_acquire+0x3c0/0x3c0
+   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
+   drm_ioctl_kernel+0x12e/0x1c0
+   drm_ioctl+0x662/0x980
+   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
+   ? drm_getstats+0x20/0x20
+   ? debug_check_no_obj_freed+0x2a6/0x8c0
+   do_vfs_ioctl+0x170/0xe70
+   ? ioctl_preallocate+0x170/0x170
+   ? task_work_run+0xbe/0x160
+   ? lock_acquire+0x3c0/0x3c0
+   ? trace_hardirqs_on_caller+0x33f/0x590
+   ? _raw_spin_unlock_irq+0x2f/0x50
+   SyS_ioctl+0x36/0x70
+   ? do_vfs_ioctl+0xe70/0xe70
+   do_syscall_64+0x18c/0x5d0
+   entry_SYSCALL_64_after_hwframe+0x26/0x9b
+  RIP: 0033:0x7f2ddf13b587
+  RSP: 002b:00007fff15c4f9d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2ddf13b587
+  RDX: 00007fff15c4fa20 RSI: 0000000040406469 RDI: 0000000000000003
+  RBP: 00007fff15c4fa20 R08: 0000000000000000 R09: 00007f2ddf3fe120
+  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000040406469
+  R13: 0000000000000003 R14: 00007fff15c4fa20 R15: 00000000000000c7
+  Code: 00 00 00 4a c7 44 22 08 00 00 00 00 42 c7 44 22 10 00 00 00 00 48 81 c4 b8 00 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 0b 0f 0b <0f> 0b 31 c0 eb c0 4c 89 ef e8 9a 09 41 ff e9 1e fe ff ff 4c 89
+  RIP: drm_mm_scan_color_evict+0x2b8/0x3d0 RSP: ffff880057a573f8
+
+We can trivially relax this assumption by searching the hole_stack for
+the scan result and warn instead if the driver called us without any
+result.
+
+Fixes: 3fa489dabea9 ("drm: Apply tight eviction scanning to color_adjust")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.11+
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180219113543.8010-1-chris@chris-wilson.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/soc15.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_mm.c |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/soc15.c
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
-@@ -659,8 +659,8 @@ static int soc15_common_early_init(void
- 			AMD_CG_SUPPORT_MC_LS |
- 			AMD_CG_SUPPORT_SDMA_MGCG |
- 			AMD_CG_SUPPORT_SDMA_LS;
--		adev->pg_flags = AMD_PG_SUPPORT_SDMA |
--				 AMD_PG_SUPPORT_MMHUB;
-+		adev->pg_flags = AMD_PG_SUPPORT_SDMA;
+--- a/drivers/gpu/drm/drm_mm.c
++++ b/drivers/gpu/drm/drm_mm.c
+@@ -836,9 +836,24 @@ struct drm_mm_node *drm_mm_scan_color_ev
+ 	if (!mm->color_adjust)
+ 		return NULL;
+ 
+-	hole = list_first_entry(&mm->hole_stack, typeof(*hole), hole_stack);
+-	hole_start = __drm_mm_hole_node_start(hole);
+-	hole_end = hole_start + hole->hole_size;
++	/*
++	 * The hole found during scanning should ideally be the first element
++	 * in the hole_stack list, but due to side-effects in the driver it
++	 * may not be.
++	 */
++	list_for_each_entry(hole, &mm->hole_stack, hole_stack) {
++		hole_start = __drm_mm_hole_node_start(hole);
++		hole_end = hole_start + hole->hole_size;
 +
- 		adev->external_rev_id = 0x1;
- 		break;
- 	default:
++		if (hole_start <= scan->hit_start &&
++		    hole_end >= scan->hit_end)
++			break;
++	}
++
++	/* We should only be called after we found the hole previously */
++	DRM_MM_BUG_ON(&hole->hole_stack == &mm->hole_stack);
++	if (unlikely(&hole->hole_stack == &mm->hole_stack))
++		return NULL;
+ 
+ 	DRM_MM_BUG_ON(hole_start > scan->hit_start);
+ 	DRM_MM_BUG_ON(hole_end < scan->hit_end);
