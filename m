@@ -1,73 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752756AbeBZMJu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:09:50 -0500
-Received: from mga02.intel.com ([134.134.136.20]:25790 "EHLO mga02.intel.com"
+        id S1752806AbeBZMPf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:15:35 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:54336 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752292AbeBZMJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:09:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="20355639"
-Message-ID: <1519646980.12825.4.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2 v5] tpm: cmd_ready command can be issued only after
- granting locality
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 26 Feb 2018 14:09:40 +0200
-In-Reply-To: <20180225120049.29308-1-tomas.winkler@intel.com>
-References: <20180225120049.29308-1-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752353AbeBZMPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 07:15:33 -0500
+Date: Mon, 26 Feb 2018 13:15:09 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Wanpeng Li <kernellwp@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+Message-ID: <20180226121509.GE4377@pd.tnic>
+References: <20180226094148.GA15539@pd.tnic>
+ <CANRm+CzODxLQ4UHgFCnpjABmBUvi9sbw=uyO1xk1dyWgnH86ig@mail.gmail.com>
+ <20180226104921.GA4377@pd.tnic>
+ <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
+ <20180226111630.GB4377@pd.tnic>
+ <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
+ <20180226113000.GC4377@pd.tnic>
+ <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
+ <20180226114409.GD4377@pd.tnic>
+ <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-02-25 at 14:00 +0200, Tomas Winkler wrote:
->  	if (need_locality && chip->ops->relinquish_locality) {
-> -		chip->ops->relinquish_locality(chip, chip->locality);
-> +		/* this coud be on error path, don't override error code */
-> +		int l_rc = chip->ops->relinquish_locality(chip, chip-
-> >locality);
-> +
-> +		if (l_rc)
-> +			dev_err(&chip->dev, "%s: relinquish_locality: error
-> %d\n",
-> +				__func__, l_rc);
-> +
->  		chip->locality = -1;
->  	}
+On Mon, Feb 26, 2018 at 12:54:52PM +0100, Paolo Bonzini wrote:
+> I don't understand how one thing follows from the other.  How are writes
+> to 0x8B related to having a virtualized microcode loaded (which is a
+> concept that actually makes no sense at all)?
 
-The 'l_rc' declaration causes NAK as I've stated before.
+I'm questioning the whole idea. 0x8b is the MSR which gives you the
+microcode revision. Most CPUs don't even allow writing to it, AFAICT.
+(SDM says "may prevent writing" on VM transitions.)
 
-Why don't you just make a helper function:
+So how is that host-initiated write to 0x8b is even going to work, in
+reality? kvm module writes the microcode version in there? How does the
+admin work around that?
 
-static void tpm_relinquish_locality(struct tpm_chip *chip)
-{
-	int rc;
+> It has already been fixed for a few months, and fixing it is indeed the
+> right thing to do independent of this patch.
 
-	if (!chip->ops->relinquish_locality)
-		return 0;
+Yap.
 
-	rc = chip->ops->relinquish_locality(chip);
-	if (rc)
-		dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
+-- 
+Regards/Gruss,
+    Boris.
 
-	chip->locality = -1;
-}
-
-Then the original code would be simply:
-
-if (need_locality)
-	tpm_relinquish_locality(chip);
-
-/Jarkko
+Good mailing practices for 400: avoid top-posting and trim the reply.
