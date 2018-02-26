@@ -1,136 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeBZOVL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:21:11 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:41909
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753298AbeBZOVK (ORCPT
+        id S1753646AbeBZOYe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:24:34 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:26276 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753325AbeBZOY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:21:10 -0500
-From: Luc Maranget <luc.maranget@inria.fr>
-X-IronPort-AV: E=Sophos;i="5.47,396,1515452400";
-   d="scan'208";a="256138438"
-Date: Mon, 26 Feb 2018 15:21:07 +0100
-To: Daniel Lustig <dlustig@nvidia.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-Message-ID: <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
-References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
- <20180222134004.GN25181@hirez.programming.kicks-ass.net>
- <20180222141249.GA14033@andrea>
- <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
- <20180222181317.GI2855@linux.vnet.ibm.com>
- <20180222182717.GS25181@hirez.programming.kicks-ass.net>
- <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+        Mon, 26 Feb 2018 09:24:27 -0500
+X-IronPort-AV: E=Sophos;i="5.47,396,1515481200";
+   d="scan'208";a="11497802"
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+CC: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
+        <b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+        <dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
+        <sean@mess.org>, <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
+        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+Date: Mon, 26 Feb 2018 16:24:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87po4s2hve.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 2/22/2018 10:27 AM, Peter Zijlstra wrote:
-> > On Thu, Feb 22, 2018 at 10:13:17AM -0800, Paul E. McKenney wrote:
-> >> So we have something that is not all that rare in the Linux kernel
-> >> community, namely two conflicting more-or-less concurrent changes.
-> >> This clearly needs to be resolved, either by us not strengthening the
-> >> Linux-kernel memory model in the way we were planning to or by you
-> >> strengthening RISC-V to be no weaker than PowerPC for these sorts of
-> >> externally viewed release-acquire situations.
-> >>
-> >> Other thoughts?
-> > 
-> > Like said in the other email, I would _much_ prefer to not go weaker
-> > than PPC, I find that PPC is already painfully weak at times.
+
+
+On 26.02.2018 11:57, Jani Nikula wrote:
+> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>>> were adapted to this change.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>> ---
+>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>>  drivers/bus/ts-nbus.c                |  2 +-
+>>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>>  include/linux/pwm.h                  |  6 ++++--
+>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>>> index 2030a6b77a09..696fa25dafd2 100644
+>>> --- a/drivers/video/backlight/lm3630a_bl.c
+>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>>  {
+>>>  	unsigned int period = pchip->pdata->pwm_period;
+>>>  	unsigned int duty = br * period / br_max;
+>>> +	struct pwm_caps caps = { };
+>>>  
+>>> -	pwm_config(pchip->pwmd, duty, period);
+>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+>>
+>> Well... I admit I've only really looked at the patches that impact 
+>> backlight but dispersing this really odd looking bit twiddling 
+>> throughout the kernel doesn't strike me a great API design.
+>>
+>> IMHO callers should not be required to find the first set bit in
+>> some specially crafted set of capability bits simply to get sane 
+>> default behaviour.
 > 
-> Sure, and RISC-V could make this work too by using RCsc instructions
-> and/or by using lightweight fences instead.  It just wasn't clear at
-> first whether smp_load_acquire() and smp_store_release() were RCpc,
-> RCsc, or something else, 
+> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+> error prone.
 
-As far as I now understand, they are something else. Something in-between.
+Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+from your side?
 
-Basically, considering a multi-copy atomic model, and following RISCV
-axiomatic herd notations
+Or, what about using a function like pwm_mode_first() to get the first supported
+mode by PWM channel?
 
-RCpc
-   [Acq];po in ppo (ie Acquire "half barrier")
-   po;[Rel] in ppo (ie Release "half barrier")
+Or, would you prefer to solve this inside pwm_config() function, let's say, in
+case an invalid mode is passed as argument, to let pwm_config() to choose the
+first available PWM mode for PWM channel passed as argument?
 
-RCsc adds the rule
-   [Rel];po;[Acq] in ppo. (ie Store release followed by load Acquire is
-                          kept in order)
-
-While LKMM has a less constrained additional rule
-   [Rel];po-loc;[Acq]     (ie Store release followed by load Acquire from
-                          the SAME location is  kept in order)
-(For specialists LKMM is formulated differently, the overall
-effect is the same)
-
-> and hence whether RISC-V would actually need
-> to use something stronger than pure RCpc there.  Likewise for
-> spin_unlock()/spin_lock() and everywhere else this comes up.
-On may here observe that the LKMM rule is here precisely to
-forbid Andrea's test. In that aspect,the suggested RISCv implemention
-of lock and unlock on spinlock_t is too weak as it allows the test.
-
-However, I cannot conclude on smp_load_acquire/smp_store_release (see below).
-
-> 
-> As Paul's email in the other thread observed, RCpc seems to be
-> OK for smp_load_acquire()/smp_store_release() at least according
-> to the current LKMM herd spec.  Unlock/lock are stronger already
-> I guess.  But if there's an active proposal to strengthen them all
-> to something stricter than pure RCpc, then that's good to know.
-
-As illustrated above  RCpc is not enough to implement LLKM
-smp_load_acquire()/smp_store_release(). However, I do not know
-for sure what the current implementation of smp_load_acquire()
-and smp_store_release() (ie LLKM primitives) in RISCV.
-As far as I could find the current implementation is the generic default
-that uses strong fences and is safe.
-
-On a related note, it may not be clear yet to everyone
-that LLKM has "platonic spinlocks".
-
-That is, locks are not implemented from more basic primitive but are specified.
-The specification can be described as behaving that way:
-  - A lock behaves as a read-modify-write. teh read behaving as a read-acquire
-  - A unlock behaves as a store release.
-  - Lock and Unlock operation (to a given lock variable)
-    alternate in some total order. This order induces teh usal relations
-    between accesses to a given location.
-
-This of course strongly suggest implementing lock with a RWM (R being acquire,
-ie amoswap.aq in RISCV)  and unlock as a store release
-(ie amoswap.rl in RISCV). And again, this is too weak given LKMM
-additional rule for RC. However, nothing prevents from a different
-implemention provided it is safe.
-As regards LKMM spinlocks, I am not sure that having strong
-implementations of lock/unlock in Power (lwsync) and
-ARMv8 (RCsc?) commands a specification stronger than the current one.
-
+Thank you,
+Claudiu Beznea
 
 > 
-> My understanding from earlier discussions is that ARM has no plans
-> to use their own RCpc instruction for smp_load_acquire() instead
-> of their RCsc instructions.  Is that still true?  If they were to
-> use the RCpc load there, that would cause them to have the same
-> problem we're discussing here, right?  Just checking.
+> BR,
+> Jani.
 > 
-> Dan
+> 
