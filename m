@@ -1,81 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752015AbeBZErW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 23:47:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45044 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751947AbeBZErU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 23:47:20 -0500
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
-To: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: npiggin@gmail.com, mpe@ellerman.id.au,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: [PATCH] cpuidle/powernv : Restore different PSSCR for idle and hotplug
-In-Reply-To: <1519053500-31860-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-References: <1519053500-31860-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-Date: Mon, 26 Feb 2018 15:47:12 +1100
+        id S1752106AbeBZEsl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 23:48:41 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32109 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751947AbeBZEsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 23:48:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="32780730"
+Subject: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for virtio_pci
+ devices
+To: virtio-dev@lists.oasis-open.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+From: Mark Rustad <mark.d.rustad@intel.com>
+Cc: dan.daly@intel.com, alex.williamson@redhat.com, MRustad@gmail.com,
+        alexander.duyck@gmail.com, mst@redhat.com
+Date: Sun, 25 Feb 2018 20:48:38 -0800
+Message-ID: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+User-Agent: StGit/0.15
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18022604-0008-0000-0000-000002DB4C1A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008598; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995190; UDB=6.00505831; IPR=6.00774523;
- MB=3.00019739; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 04:47:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022604-0009-0000-0000-00003862FE37
-Message-Id: <87vaekmk6n.fsf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260063
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> writes:
-> commit 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
-> states via stop API.") uses stop-api provided by the firmware to restore
-> PSSCR. PSSCR restore is required for handling special wakeup. When special
-> wakeup is completed, the core enters stop state based on restored PSSCR.
->
-> Currently PSSCR is restored to deepest available stop state, causing
-> a idle cpu to enter deeper stop state on a special wakeup, which causes
-> the cpu to hang on wakeup.
->
-> A "sensors" command which reads temperature (through DTS sensors) on idle
-> cpu can trigger special wakeup.
->
-> Failed Scenario :
-> Request restore of PSSCR with RL = 11
-> cpu enters idle state (stop5)
->   user triggers "sensors" command
->    Assert special wakeup on cpu
->      Restores PSSCR with RL = 11  <---- Done by firmware
->       Read DTS sensor
->    Deassert special wakeup
->   cpu enters idle state (stop11) <-- Instead of stop5
->
-> Cpu hang is caused because cpu ended up in a deeper state than it requested
->
-> This patch fixes instability caused by special wakeup when stop11 is
-> enabled. Requests restore of PSSCR to deepest stop state used by cpuidle.
-> Only when offlining cpu, request restore of PSSCR to deepest stop state.
-> On onlining cpu, request restore of PSSCR to deepest stop state used by
-> cpuidle.
->
-> Fixes : 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
-> states via stop API.")
+Hardware-realized virtio_pci devices can implement SR-IOV, so this
+patch enables its use. The device in question is an upcoming Intel
+NIC that implements both a virtio_net PF and virtio_net VFs. These
+are hardware realizations of what has been up to now been a software
+interface.
 
-This should CC stable ?
+The device in question has the following 4-part PCI IDs:
 
-We'll need this to enable stop11 in firmware and not break things, right?
+PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
 
--- 
-Stewart Smith
-OPAL Architect, IBM.
+The patch needs no check for device ID, because the callback will
+never be made for devices that do not assert the capability or
+when run on a platform incapable of SR-IOV.
+
+One reason for this patch is because the hardware requires the
+vendor ID of a VF to be the same as the vendor ID of the PF that
+created it. So it seemed logical to simply have a fully-functioning
+virtio_net PF create the VFs. This patch makes that possible.
+
+Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+---
+Changes in V4:
+- V3 was a mis-send, this has what was intended
+- Move most code to new helpers in pci/iov.c, pci_sriov_configure_generic
+  and pci_sriov_disable_generic
+- Correct mislabeling of vendor and device IDs
+- Other minor changelog fixes
+- Rebased to pci/master, since most changes are in that area now
+- No new ifdefs with this approach (yay)
+Changes in V3:
+- Missent patch, please disregard
+Changes in V2:
+- Simplified logic from previous version, removed added driver variable
+- Disable SR-IOV on driver removal except when VFs are assigned
+- Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
+---
+ drivers/pci/iov.c                  |   50 ++++++++++++++++++++++++++++++++++++
+ drivers/virtio/virtio_pci_common.c |    2 +
+ include/linux/pci.h                |   10 +++++++
+ 3 files changed, 62 insertions(+)
+
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 677924ae0350..4b110e169b7c 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -367,6 +367,56 @@ static void sriov_disable(struct pci_dev *dev)
+ 	pci_iov_set_numvfs(dev, 0);
+ }
+ 
++/**
++ * pci_sriov_disable_generic - standard helper to disable SR-IOV
++ * @dev:the PCI PF device whose VFs are to be disabled
++ */
++int pci_sriov_disable_generic(struct pci_dev *dev)
++{
++	/*
++	 * If vfs are assigned we cannot shut down SR-IOV without causing
++	 * issues, so just leave the hardware available.
++	 */
++	if (pci_vfs_assigned(dev)) {
++		pci_warn(dev,
++			 "Cannot disable SR-IOV while VFs are assigned - VFs will not be deallocated\n");
++		return -EPERM;
++	}
++	pci_disable_sriov(dev);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pci_sriov_disable_generic);
++
++static int pci_sriov_enable(struct pci_dev *dev, int num_vfs)
++{
++	int rc;
++
++	if (pci_num_vf(dev))
++		return -EINVAL;
++
++	rc = pci_enable_sriov(dev, num_vfs);
++	if (rc) {
++		pci_warn(dev, "Failed to enable PCI sriov: %d\n", rc);
++		return rc;
++	}
++	pci_info(dev, "SR-IOV enabled with %d VFs\n", num_vfs);
++	return num_vfs;
++}
++
++/**
++ * pci_sriov_configure_generic - standard helper to configure SR-IOV
++ * @dev: the PCI PF device that is configuring SR-IOV
++ */
++int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
++{
++	if (num_vfs)
++		return pci_sriov_enable(dev, num_vfs);
++	if (!pci_num_vf(dev))
++		return -EINVAL;
++	return pci_sriov_disable_generic(dev);
++}
++EXPORT_SYMBOL_GPL(pci_sriov_configure_generic);
++
+ static int sriov_init(struct pci_dev *dev, int pos)
+ {
+ 	int i, bar64;
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..d7679377131f 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	else
+ 		virtio_pci_modern_remove(vp_dev);
+ 
++	pci_sriov_disable_generic(pci_dev);
+ 	pci_disable_device(pci_dev);
+ 	put_device(dev);
+ }
+@@ -596,6 +597,7 @@ static struct pci_driver virtio_pci_driver = {
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
++	.sriov_configure = pci_sriov_configure_generic,
+ };
+ 
+ module_pci_driver(virtio_pci_driver);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 024a1beda008..937124d4e098 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1947,6 +1947,8 @@ int pci_iov_virtfn_devfn(struct pci_dev *dev, int id);
+ 
+ int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
+ void pci_disable_sriov(struct pci_dev *dev);
++int pci_sriov_disable_generic(struct pci_dev *dev);
++int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs);
+ int pci_iov_add_virtfn(struct pci_dev *dev, int id);
+ void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
+ int pci_num_vf(struct pci_dev *dev);
+@@ -1973,6 +1975,14 @@ static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+ static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
+ 					 int id) { }
+ static inline void pci_disable_sriov(struct pci_dev *dev) { }
++static inline int pci_sriov_disable_generic(struct pci_dev *dev)
++{
++	return -ENODEV;
++}
++static inline int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
++{
++	return -ENODEV;
++}
+ static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
+ static inline int pci_vfs_assigned(struct pci_dev *dev)
+ { return 0; }
