@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225qhid2A0HS/kSvQ321NwSsZ4rKDVJ3PbTL/tLwqHRGCxHQyW4FypZY6wNoxYwVnqDXntDq
-ARC-Seal: i=1; a=rsa-sha256; t=1519676883; cv=none;
+X-Google-Smtp-Source: AH8x227irdwdJB9s+lpZc4hHDTD3LC2kmvFo+/9zhOKRT7OdI4lNtmX5x0wVGFyj5dctok2LcB4w
+ARC-Seal: i=1; a=rsa-sha256; t=1519676852; cv=none;
         d=google.com; s=arc-20160816;
-        b=yzxumoKrizPgOlkoxGU/AYfD4ZjcXfZ7ABZZGYUAiE1yz9r5i/cay7EJCWyrBV3ibO
-         kLhVqscADnJnEOHv6M2zRlzQd4qi0Z4RGlDP1lOT3p07fQrT8OkhGh+cYOJvtFjoXcKY
-         XNSKYXJ6K1KFhLu8tofexKkqJafrlRcp1uY470pPT3NpP2TswshSuL4KRiQJwbxYmTvF
-         2Ts+IcnNr6IDWHM609WuxNx1UAwhiFa98kANIxhD5eKevWURWTv1feMd3Oe+EAqOMyus
-         hZPS4aIn3boAUkYJQGFhz3OfiSlev+3sZJwH0PBw81Ll3JepHx3OB5cmrD2OfIqSeO/i
-         xzSg==
+        b=iAozRVwN4aS4EPE4ptFfiFGr7YL97UhNY6x4yL9fZB8dPhyfhWUAGFAw0qYrvp0ANZ
+         yyTpxrbWExozLjFuBz6S4TnZFB3C4VLhmSRjETOj/JTqphqsqAcmx0txNkMcRJ/2VOm5
+         eb+1j0nbRaS/rpmbCFAIWREDN5JIGmMdEdfNa+wOaqsAhzq6pNC5sRgf3GH0lrsAk4Uz
+         bI8II2g33wvZoegPPf8C6y8FB4uVv6N8FzEgM9bvFFg08N/aujQZCXg/2t4LkViurVeW
+         2urLL79FyUr4D4PzEHNY5Cu0iQ0pouvHX4rl0f+wGunO8lDwWSwR0zt+LcxEazT9gTfp
+         ihhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LEY2rx1nlnRYLhmdK969GB2O1P4v38WE2hbcpfkiZZk=;
-        b=Kr72GtfF4dwx27OFy7Gj8XvLJ2Dy2Yw/QPqjq1KZRX2ZzCYb/itUelJo+Vj8oewM2R
-         TgCFu0KkoppvvN16s16n+mVc1Qgdlao7COPSm0vV9iRAmlPCV7Tu5YokAxrZciPDmH5Y
-         LLrjohSLb2yUHmZzdk5s2SfEzxwxbBwf/5KXTVPQLjfLQYorABgvwzq+c6zAl+oMX0J/
-         42ai3DTwoIN/JOaeHxg2vlQ2Rw49C3DGV97VpqyoQYczFjUQ7eEkBY8m2Vn2E7jKw6AU
-         NnHxFZgedCdpdXDOplRyueyi1WI+QrTR7DOpM2gafbO8hmBRvhdWpZ+A/O/17fh+dA4L
-         tiNQ==
+        bh=R2d7wkjCR2/gMp5Y46XXFSwRVMTO945ZnVqMRTBXymE=;
+        b=RzMD1MSXyqpxs6xT9weaPpABAwNYUm5Xy/9NYMAPk2knju/4hFbhvWPS1eoAhmszf+
+         DnLOltEa14hO0jgrhJiPiJlOtv36qfrY3acPTwiA4Icsxes0VCIf4tolI5EFcO6frBEE
+         K/GXceLTWRyl0xdKP0CGzGdn4x2WNhOoiSQM/UJxI3qR0HYk7CQS3S+CNT2mmLoa63qU
+         wHNE29c9BYr5bIGMyYYFjyPxCsXDq8FnQ4Mpg4XZ82k1HPa7LPTFYfklDvQ4NEJfCmGO
+         FBfpCTc/RDkyFlb4kUJv2t1C+mIYRi0GpbP3JUxgSVIyynk7rZaOgOri2WUoAEB1hgZ3
+         VZRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thinh Nguyen <thinhn@synopsys.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 46/64] usb: dwc3: ep0: Reset TRB counter for ep0 IN
-Date: Mon, 26 Feb 2018 21:22:23 +0100
-Message-Id: <20180226202155.420348783@linuxfoundation.org>
+	Ben Gardner <gardner.ben@gmail.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.15 09/64] i2c: designware: must wait for enable
+Date: Mon, 26 Feb 2018 21:21:46 +0100
+Message-Id: <20180226202153.830139273@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496566604653259?=
-X-GMAIL-MSGID: =?utf-8?q?1593496707594247421?=
+X-GMAIL-THRID: =?utf-8?q?1593496508464542854?=
+X-GMAIL-MSGID: =?utf-8?q?1593496675103318799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,39 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Ben Gardner <gardner.ben@gmail.com>
 
-commit f035d139ffece7b6a7b8bfb17bd0ba715ee57a04 upstream.
+commit fba4adbbf670577e605f9ad306629db6031cd48b upstream.
 
-DWC3 tracks TRB counter for each ep0 direction separately. In control
-read transfer completion handler, the driver needs to reset the TRB
-enqueue counter for ep0 IN direction. Currently the driver only resets
-the TRB counter for control OUT endpoint. Check for the data direction
-and properly reset the TRB counter from correct control endpoint.
+One I2C bus on my Atom E3845 board has been broken since 4.9.
+It has two devices, both declared by ACPI and with built-in drivers.
 
-Cc: stable@vger.kernel.org
-Fixes: c2da2ff00606 ("usb: dwc3: ep0: don't use ep0in for transfers")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+There are two back-to-back transactions originating from the kernel, one
+targeting each device. The first transaction works, the second one locks
+up the I2C controller. The controller never recovers.
+
+These kernel logs show up whenever an I2C transaction is attempted after
+this failure.
+i2c-designware-pci 0000:00:18.3: timeout in disabling adapter
+i2c-designware-pci 0000:00:18.3: timeout waiting for bus ready
+
+Waiting for the I2C controller status to indicate that it is enabled
+before programming it fixes the issue.
+
+I have tested this patch on 4.14 and 4.15.
+
+Fixes: commit 2702ea7dbec5 ("i2c: designware: wait for disable/enable only if necessary")
+Cc: linux-stable <stable@vger.kernel.org> #4.13+
+Signed-off-by: Ben Gardner <gardner.ben@gmail.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/ep0.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-designware-master.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@ -858,7 +858,12 @@ static void dwc3_ep0_complete_data(struc
- 		trb++;
- 		trb->ctrl &= ~DWC3_TRB_CTRL_HWO;
- 		trace_dwc3_complete_trb(ep0, trb);
--		ep0->trb_enqueue = 0;
-+
-+		if (r->direction)
-+			dwc->eps[1]->trb_enqueue = 0;
-+		else
-+			dwc->eps[0]->trb_enqueue = 0;
-+
- 		dwc->ep0_bounced = false;
- 	}
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -207,7 +207,7 @@ static void i2c_dw_xfer_init(struct dw_i
+ 	i2c_dw_disable_int(dev);
  
+ 	/* Enable the adapter */
+-	__i2c_dw_enable(dev, true);
++	__i2c_dw_enable_and_wait(dev, true);
+ 
+ 	/* Clear and enable interrupts */
+ 	dw_readl(dev, DW_IC_CLR_INTR);
