@@ -1,120 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753781AbeBZONL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:13:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:3197 "EHLO mga17.intel.com"
+        id S1753797AbeBZONR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:13:17 -0500
+Received: from foss.arm.com ([217.140.101.70]:50482 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753396AbeBZOLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:11:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="29840189"
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jeremy McNicoll <jmcnicol@redhat.com>,
-        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 11/18] thunderbolt: Add tb_switch_find_by_route()
-Date: Mon, 26 Feb 2018 17:10:41 +0300
-Message-Id: <20180226141048.83949-12-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
-References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
+        id S1753525AbeBZONC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:13:02 -0500
+Date: Mon, 26 Feb 2018 14:12:57 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: srinivas.kandagatla@linaro.org
+Cc: stanimir.varbanov@linaro.org, svarbanov@mm-sol.com,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: qcom: use regulator bulk api for apq8064 supplies
+Message-ID: <20180226141257.GB23806@e107981-ln.cambridge.arm.com>
+References: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radion Mirchevsky <radion.mirchevsky@intel.com>
+On Thu, Feb 15, 2018 at 01:26:37PM +0000, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch converts existing regulators to use regulator bulk apis,
+> to make it consistent with msm8996 changes also cut down some redundant code.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Changes since v1:
+> 	updated index correctly and use ARRAY_SIZE
+> 
+>  drivers/pci/dwc/pcie-qcom.c | 52 +++++++++++++--------------------------------
 
-With the new ICM messaging there is need for find switch by route string
-instead of link and depth. Add new function that makes it possible.
+Applied to pci/dwc for v4.17, thanks.
 
-Signed-off-by: Radion Mirchevsky <radion.mirchevsky@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/thunderbolt/switch.c | 33 +++++++++++++++++++++++++++++++++
- drivers/thunderbolt/tb.h     |  1 +
- 2 files changed, 34 insertions(+)
+Lorenzo
 
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 2a0bded44922..4e2b2097bbfc 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1479,6 +1479,7 @@ struct tb_sw_lookup {
- 	u8 link;
- 	u8 depth;
- 	const uuid_t *uuid;
-+	u64 route;
- };
- 
- static int tb_switch_match(struct device *dev, void *data)
-@@ -1494,6 +1495,11 @@ static int tb_switch_match(struct device *dev, void *data)
- 	if (lookup->uuid)
- 		return !memcmp(sw->uuid, lookup->uuid, sizeof(*lookup->uuid));
- 
-+	if (lookup->route) {
-+		return sw->config.route_lo == lower_32_bits(lookup->route) &&
-+		       sw->config.route_hi == upper_32_bits(lookup->route);
-+	}
-+
- 	/* Root switch is matched only by depth */
- 	if (!lookup->depth)
- 		return !sw->depth;
-@@ -1551,6 +1557,33 @@ struct tb_switch *tb_switch_find_by_uuid(struct tb *tb, const uuid_t *uuid)
- 	return NULL;
- }
- 
-+/**
-+ * tb_switch_find_by_route() - Find switch by route string
-+ * @tb: Domain the switch belongs
-+ * @route: Route string to look for
-+ *
-+ * Returned switch has reference count increased so the caller needs to
-+ * call tb_switch_put() when done with the switch.
-+ */
-+struct tb_switch *tb_switch_find_by_route(struct tb *tb, u64 route)
-+{
-+	struct tb_sw_lookup lookup;
-+	struct device *dev;
-+
-+	if (!route)
-+		return tb_switch_get(tb->root_switch);
-+
-+	memset(&lookup, 0, sizeof(lookup));
-+	lookup.tb = tb;
-+	lookup.route = route;
-+
-+	dev = bus_find_device(&tb_bus_type, NULL, &lookup, tb_switch_match);
-+	if (dev)
-+		return tb_to_switch(dev);
-+
-+	return NULL;
-+}
-+
- void tb_switch_exit(void)
- {
- 	ida_destroy(&nvm_ida);
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index c7bd77e9c2c3..2cd6085a6e10 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -386,6 +386,7 @@ struct tb_switch *get_switch_at_route(struct tb_switch *sw, u64 route);
- struct tb_switch *tb_switch_find_by_link_depth(struct tb *tb, u8 link,
- 					       u8 depth);
- struct tb_switch *tb_switch_find_by_uuid(struct tb *tb, const uuid_t *uuid);
-+struct tb_switch *tb_switch_find_by_route(struct tb *tb, u64 route);
- 
- static inline struct tb_switch *tb_switch_get(struct tb_switch *sw)
- {
--- 
-2.16.1
+>  1 file changed, 15 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index e3f20e09a18d..50ff9b879c27 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -79,6 +79,7 @@
+>  #define PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE	0x358
+>  #define SLV_ADDR_SPACE_SZ			0x10000000
+>  
+> +#define QCOM_PCIE_2_1_0_MAX_SUPPLY	3
+>  struct qcom_pcie_resources_2_1_0 {
+>  	struct clk *iface_clk;
+>  	struct clk *core_clk;
+> @@ -88,9 +89,7 @@ struct qcom_pcie_resources_2_1_0 {
+>  	struct reset_control *ahb_reset;
+>  	struct reset_control *por_reset;
+>  	struct reset_control *phy_reset;
+> -	struct regulator *vdda;
+> -	struct regulator *vdda_phy;
+> -	struct regulator *vdda_refclk;
+> +	struct regulator_bulk_data supplies[QCOM_PCIE_2_1_0_MAX_SUPPLY];
+>  };
+>  
+>  struct qcom_pcie_resources_1_0_0 {
+> @@ -218,18 +217,15 @@ static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> +	int ret;
+>  
+> -	res->vdda = devm_regulator_get(dev, "vdda");
+> -	if (IS_ERR(res->vdda))
+> -		return PTR_ERR(res->vdda);
+> -
+> -	res->vdda_phy = devm_regulator_get(dev, "vdda_phy");
+> -	if (IS_ERR(res->vdda_phy))
+> -		return PTR_ERR(res->vdda_phy);
+> -
+> -	res->vdda_refclk = devm_regulator_get(dev, "vdda_refclk");
+> -	if (IS_ERR(res->vdda_refclk))
+> -		return PTR_ERR(res->vdda_refclk);
+> +	res->supplies[0].supply = "vdda";
+> +	res->supplies[1].supply = "vdda_phy";
+> +	res->supplies[2].supply = "vdda_refclk";
+> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(res->supplies),
+> +				      res->supplies);
+> +	if (ret)
+> +		return ret;
+>  
+>  	res->iface_clk = devm_clk_get(dev, "iface");
+>  	if (IS_ERR(res->iface_clk))
+> @@ -275,9 +271,7 @@ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
+>  	clk_disable_unprepare(res->iface_clk);
+>  	clk_disable_unprepare(res->core_clk);
+>  	clk_disable_unprepare(res->phy_clk);
+> -	regulator_disable(res->vdda);
+> -	regulator_disable(res->vdda_phy);
+> -	regulator_disable(res->vdda_refclk);
+> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+>  
+>  static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+> @@ -288,24 +282,12 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+>  	u32 val;
+>  	int ret;
+>  
+> -	ret = regulator_enable(res->vdda);
+> -	if (ret) {
+> -		dev_err(dev, "cannot enable vdda regulator\n");
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(res->supplies), res->supplies);
+> +	if (ret < 0) {
+> +		dev_err(dev, "cannot enable regulators\n");
+>  		return ret;
+>  	}
+>  
+> -	ret = regulator_enable(res->vdda_refclk);
+> -	if (ret) {
+> -		dev_err(dev, "cannot enable vdda_refclk regulator\n");
+> -		goto err_refclk;
+> -	}
+> -
+> -	ret = regulator_enable(res->vdda_phy);
+> -	if (ret) {
+> -		dev_err(dev, "cannot enable vdda_phy regulator\n");
+> -		goto err_vdda_phy;
+> -	}
+> -
+>  	ret = reset_control_assert(res->ahb_reset);
+>  	if (ret) {
+>  		dev_err(dev, "cannot assert ahb reset\n");
+> @@ -389,11 +371,7 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+>  err_clk_phy:
+>  	clk_disable_unprepare(res->iface_clk);
+>  err_assert_ahb:
+> -	regulator_disable(res->vdda_phy);
+> -err_vdda_phy:
+> -	regulator_disable(res->vdda_refclk);
+> -err_refclk:
+> -	regulator_disable(res->vdda);
+> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.15.1
+> 
