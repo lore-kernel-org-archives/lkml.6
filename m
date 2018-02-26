@@ -1,119 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeBZIvh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:51:37 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36959 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeBZIvf (ORCPT
+        id S1751962AbeBZI6n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:58:43 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:49915 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751064AbeBZI6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:51:35 -0500
-X-Google-Smtp-Source: AH8x226AQMQj6yXsQEadYBUPYeiOWHlQQFLo75kzPMi4RHwMQgF45tUmdSVdExnk0Qi8q50N3NuF2g==
-From: baegjae@gmail.com
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        baegjae@gmail.com
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-multipath: fix sysfs dangerously created links
-Date: Mon, 26 Feb 2018 17:51:23 +0900
-Message-Id: <20180226085123.26120-1-baegjae@gmail.com>
-X-Mailer: git-send-email 2.8.3.windows.1
+        Mon, 26 Feb 2018 03:58:41 -0500
+X-ME-Sender: <xms:QMyTWqfNmuJOsvV4_mMlCgPNAj_ewtE7UYW3CBcSswPeFquC11oJ5w>
+Date: Mon, 26 Feb 2018 19:58:37 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Andrew Cooks <andrew.cooks@opengear.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
+        "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC"
+        <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
+        platypus-sw@opengear.com
+Subject: Re: [RESEND][PATCH v4 1/3] i2c: piix4: Fix port selection for AMD
+ Family 16h Model 30h
+Message-ID: <20180226085837.GA15131@eros>
+References: <cover.1519601860.git.andrew.cooks@opengear.com>
+ <be68c29f603153cf047cd893c6b9d6423073632d.1519601860.git.andrew.cooks@opengear.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be68c29f603153cf047cd893c6b9d6423073632d.1519601860.git.andrew.cooks@opengear.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baegjae Sung <baegjae@gmail.com>
+On Mon, Feb 26, 2018 at 10:28:43AM +1000, Andrew Cooks wrote:
+> Family 16h Model 30h SMBus controller needs the same port selection fix
+> as described and fixed in commit 0fe16195f891 ("i2c: piix4: Fix SMBus port
+> selection for AMD Family 17h chips")
+> 
+> commit 6befa3fde65f ("i2c: piix4: Support alternative port selection
+> register") also fixed the port selection for Hudson2, but unfortunately
+> this is not the exact same device and the AMD naming and PCI Device IDs
+> aren't particularly helpful here.
+> 
+> The SMBus port selection register is common to the following Families
+> and models, as documented in AMD's publicly available BIOS and Kernel
+> Developer Guides:
+> 
+>  50742 - Family 15h Model 60h-6Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
+>  55072 - Family 15h Model 70h-7Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
+>  52740 - Family 16h Model 30h-3Fh (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS)
+> 
+> The Hudson2 PCI Device ID (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS) is shared
+> between Bolton FCH and Family 16h Model 30h, but the location of the
+> SmBus0Sel port selection bits are different:
+> 
+>  51192 - Bolton Register Reference Guide
+> 
+> We distinguish between Bolton and Family 16h Model 30h using the PCI
+> Revision ID:
+> 
+>   Bolton is device 0x780b, revision 0x15
+>   Family 16h Model 30h is device 0x780b, revision 0x1F
+>   Family 15h Model 60h and 70h are both device 0x790b, revision 0x4A.
+> 
+> The following additional public AMD BKDG documents were checked and do
+> not share the same port selection register:
+> 
+>  42301 - Family 15h Model 00h-0Fh doesn't mention any
+>  42300 - Family 15h Model 10h-1Fh doesn't mention any
+>  49125 - Family 15h Model 30h-3Fh doesn't mention any
+> 
+>  48751 - Family 16h Model 00h-0Fh uses the previously supported
+>          index register SB800_PIIX4_PORT_IDX_ALT at 0x2e
+> 
+> Signed-off-by: Andrew Cooks <andrew.cooks@opengear.com>
+> ---
+>  drivers/i2c/busses/i2c-piix4.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+> index 174579d..5c90a44 100644
+> --- a/drivers/i2c/busses/i2c-piix4.c
+> +++ b/drivers/i2c/busses/i2c-piix4.c
+> @@ -99,7 +99,7 @@
+>  #define SB800_PIIX4_PORT_IDX_MASK	0x06
+>  #define SB800_PIIX4_PORT_IDX_SHIFT	1
+>  
+> -/* On kerncz, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
+> +/* On kerncz and Hudson2, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
+>  #define SB800_PIIX4_PORT_IDX_KERNCZ		0x02
+>  #define SB800_PIIX4_PORT_IDX_MASK_KERNCZ	0x18
+>  #define SB800_PIIX4_PORT_IDX_SHIFT_KERNCZ	3
+> @@ -359,18 +359,16 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
+>  
+>  	/* Find which register is used for port selection */
+>  	if (PIIX4_dev->vendor == PCI_VENDOR_ID_AMD) {
+> -		switch (PIIX4_dev->device) {
+> -		case PCI_DEVICE_ID_AMD_KERNCZ_SMBUS:
+> +		if ((PIIX4_dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS) ||
 
-If multipathing is enabled, each NVMe subsystem creates a head
-namespace (e.g., nvme0n1) and multiple private namespaces
-(e.g., nvme0c0n1 and nvme0c1n1) in sysfs. When creating links for
-private namespaces, links of head namespace are used, so the
-namespace creation order must be followed (e.g., nvme0n1 ->
-nvme0c1n1). If the order is not followed, links of sysfs will be
-incomplete or kernel panic will occur.
+nit:		if (PIIX4_dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS ||
 
-The kernel panic was:
-  kernel BUG at fs/sysfs/symlink.c:27!
-  Call Trace:
-    nvme_mpath_add_disk_links+0x5d/0x80 [nvme_core]
-    nvme_validate_ns+0x5c2/0x850 [nvme_core]
-    nvme_scan_work+0x1af/0x2d0 [nvme_core]
+> +		    (PIIX4_dev->device == PCI_DEVICE_ID_AMD_HUDSON2_SMBUS &&
+> +			   PIIX4_dev->revision >= 0x1F)) {
 
-Correct order
-Context A     Context B
-nvme0n1
-nvme0c0n1     nvme0c1n1
 
-Incorrect order
-Context A     Context B
-              nvme0c1n1
-nvme0n1
-nvme0c0n1
-
-The function of a head namespace creation is moved to maintain the
-correct order. We verified the code with or without multipathing
-using three vendors of dual-port NVMe SSDs.
-
-Signed-off-by: Baegjae Sung <baegjae@gmail.com>
----
- drivers/nvme/host/core.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0fe7ea35c221..28777b7352a5 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2844,7 +2844,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
- }
- 
- static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
--		struct nvme_id_ns *id, bool *new)
-+		struct nvme_id_ns *id)
- {
- 	struct nvme_ctrl *ctrl = ns->ctrl;
- 	bool is_shared = id->nmic & (1 << 0);
-@@ -2860,8 +2860,7 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
- 			ret = PTR_ERR(head);
- 			goto out_unlock;
- 		}
--
--		*new = true;
-+		nvme_mpath_add_disk(head);
- 	} else {
- 		struct nvme_ns_ids ids;
- 
-@@ -2873,8 +2872,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
- 			ret = -EINVAL;
- 			goto out_unlock;
- 		}
--
--		*new = false;
- 	}
- 
- 	list_add_tail(&ns->siblings, &head->list);
-@@ -2945,7 +2942,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	struct nvme_id_ns *id;
- 	char disk_name[DISK_NAME_LEN];
- 	int node = dev_to_node(ctrl->dev), flags = GENHD_FL_EXT_DEVT;
--	bool new = true;
- 
- 	ns = kzalloc_node(sizeof(*ns), GFP_KERNEL, node);
- 	if (!ns)
-@@ -2971,7 +2967,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	if (id->ncap == 0)
- 		goto out_free_id;
- 
--	if (nvme_init_ns_head(ns, nsid, id, &new))
-+	if (nvme_init_ns_head(ns, nsid, id))
- 		goto out_free_id;
- 	nvme_setup_streams_ns(ctrl, ns);
- 	
-@@ -3037,8 +3033,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
- 			ns->disk->disk_name);
- 
--	if (new)
--		nvme_mpath_add_disk(ns->head);
- 	nvme_mpath_add_disk_links(ns);
- 	return;
-  out_unlink_ns:
--- 
-2.16.2
+Hope this helps,
+Tobin.
