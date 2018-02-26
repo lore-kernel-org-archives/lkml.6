@@ -1,145 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeBZKEf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:04:35 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40417 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752023AbeBZKE3 (ORCPT
+        id S1752417AbeBZKGq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:06:46 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34725 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751609AbeBZKGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:04:29 -0500
-X-Google-Smtp-Source: AH8x224iz1InZM3I73QzwMu/Vffup0eU1+T+UH5AHUX31a8/yla1NvxAYyT/zb6wyaUSCz/6AKvXsg==
-Date: Mon, 26 Feb 2018 15:34:25 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v7 14/15] cpufreq: Add module to register cpufreq on
- Krait CPUs
-Message-ID: <20180226100425.GO26947@vireshk-i7>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
- <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
+        Mon, 26 Feb 2018 05:06:43 -0500
+X-Google-Smtp-Source: AG47ELvwu5VyRVyth3FZgx6yzSz7RhVoK2Uvf/3+PQpQisiEt3RbKc8FpYxHoRd0/HuMlnJeHf0lXvYsaRn3NmmzCGs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180226094148.GA15539@pd.tnic>
+References: <1519629838-4898-1-git-send-email-wanpengli@tencent.com> <20180226094148.GA15539@pd.tnic>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Mon, 26 Feb 2018 18:06:42 +0800
+Message-ID: <CANRm+CzODxLQ4UHgFCnpjABmBUvi9sbw=uyO1xk1dyWgnH86ig@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+To: Borislav Petkov <bp@alien8.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-02-18, 15:23, Sricharan R wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
+2018-02-26 17:41 GMT+08:00 Borislav Petkov <bp@alien8.de>:
+> On Mon, Feb 26, 2018 at 03:23:58PM +0800, Wanpeng Li wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> Linux (among the others) has checks to make sure that certain features
+>> aren't enabled on a certain family/model/stepping if the microcode version
+>> isn't greater than or equal to a known good version.
+>>
+>> By exposing the real microcode version, we're preventing buggy guests that
+>
+> Where do we prevent userspace from coming up with some non-sensical
+> microcode revision?
 
-Is this email id still valid ?
+I think it is the host admin(e.g. cloud provider)'s responsibility to
+set an expected microcode revision. In addition, the non-sensical
+value which is written by the guest will not reflect to guest-visible
+microcode revision and just be ignored in this implementation.
 
-> +static int __init qcom_cpufreq_populate_opps(struct nvmem_cell *pvs_nvmem,
-> +					     struct opp_table **tbl)
-> +{
-> +	int speed = 0, pvs = 0, pvs_ver = 0, cpu;
-> +	struct device *cpu_dev;
-> +	u8 *buf;
-> +	size_t len;
-> +	char pvs_name[] = "speedXX-pvsXX-vXX";
-> +
-> +	buf = nvmem_cell_read(pvs_nvmem, &len);
-> +	if (len == 4)
-> +		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-> +	else if (len == 8)
-> +		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-> +	else
-> +		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
-> +
-> +	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
-> +		 speed, pvs, pvs_ver);
-> +
-> +	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
-> +		cpu_dev = get_cpu_device(cpu);
-> +		if (!cpu_dev)
-> +			return -ENODEV;
-> +
-> +		tbl[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
-> +
-> +		if (IS_ERR(tbl[cpu])) {
-> +			tbl[cpu] = 0;
-> +			pr_warn("failed to add OPP name %s\n", pvs_name);
-> +			return PTR_ERR(tbl[cpu]);
-
-You just set tbl[cpu] to 0 :)
-
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init qcom_cpufreq_driver_init(void)
-> +{
-> +	struct platform_device *pdev;
-> +	struct device *cpu_dev;
-> +	struct device_node *np;
-> +	struct nvmem_cell *pvs_nvmem;
-> +	struct opp_table *tbl[NR_CPUS] = { NULL };
-> +	int ret, cpu = 0;
-> +
-> +	cpu_dev = get_cpu_device(0);
-> +	if (!cpu_dev)
-> +		return -ENODEV;
-> +
-> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +	if (!np)
-> +		return -ENOENT;
-> +
-> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
-> +		ret = -ENOENT;
-> +		goto free_np;
-> +	}
-> +
-> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
-> +	if (IS_ERR(pvs_nvmem)) {
-> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
-> +		ret = PTR_ERR(pvs_nvmem);
-> +		goto free_np;
-> +	}
-> +
-> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl);
-> +	if (ret)
-> +		goto free_opp_name;
-> +
-> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> +	if (IS_ERR(pdev)) {
-> +		ret = PTR_ERR(pdev);
-> +		goto free_opp_name;
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	return 0;
-> +
-> +free_opp_name:
-> +	while (tbl[cpu]) {
-> +		dev_pm_opp_put_prop_name(tbl[cpu]);
-> +		cpu++;
-> +	}
-> +
-> +free_np:
-> +	of_node_put(np);
-> +
-> +	return ret;
-> +}
-> +late_initcall(qcom_cpufreq_driver_init);
-> +
-> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
-> +MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
-> +MODULE_LICENSE("GPL v2");
-
-Everything else is fine. Fix above issue and you can add
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Regards,
+Wanpeng Li
