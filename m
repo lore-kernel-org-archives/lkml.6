@@ -1,151 +1,247 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713482-1519321839-2-15181795331889199796
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519321838; b=fGLlKVGua5oPFnZTdj8044qAMd6mdVPnSFeWh/ZddmvCzi8
-    Hd7tKGmis/51LS3DTWc6owjkAUVphsmZvcxz2KeHoYZCLKZbWYLlg2Shol5qZ1Nc
-    oTzxAbApzwAV5c/DEqdNib3D8L04BTWNogEojz4HrktTDbsZPlasRXy1tslAdsU5
-    J2Yn4LCC1SULdbgzgSw/IOu39KH92f5EvffO1kX9o+J7qUa3ng2GtcF9NvFYX0hS
-    UsAJ7NafyxTaEV1Do97YGwGDaJIP7CDa8MeBHNXecvjQWEXN4HSpm/gGxWWY4Imb
-    aDLKCbR6qs7QaLtAjI1bH6aiKX90JTEYnXPyZjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519321838; bh=sOJquLft11jlZ7Bbp6FGKP09kn
-    BUjeIlJvffJWPJbqI=; b=aGYkB2avsbr7qt4Vou8/mNaXelYI9RNIzwBRUIsAGF
-    BcTKG62ySpiaAh2Dk81bsrnEYTWkJ4GhNsOSLw9cXGn0t2s9nL5Y8t3HLTMItGYB
-    uSVEHVGJKSDSXj2+KKT3yLW/hDwSjdYCdMp9BsLZAjvSbm52WR38NY6NaXEAseVy
-    0liJ3of1pTVvOoZ0nCIEKF/l0/b02Of2hN6GsfAZjybDD8450yIUkss4Vw7e26NI
-    SnGnoW8vLIC+lcwY9sNUrd4BG21t9QWQDakIvuH7uv/d2CXs1U0SjFtUSXCe7y26
-    XrEMnvwfGHZbWrJzsMe7sKt1aB9JWWd36UTGLjEURR8A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=huawei.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=huawei.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933593AbeBVRuI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 12:50:08 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5662 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933441AbeBVRuF (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:50:05 -0500
-From: John Garry <john.garry@huawei.com>
-To: <andriy.shevchenko@linux.intel.com>, <gregkh@linuxfoundation.org>,
-        <slaby@suse.com>, <p.zabel@pengutronix.de>, <heiko@sntech.de>,
-        <ed.blake@sondrel.com>, <jhogan@kernel.org>
-CC: <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [RFC PATCH 1/2] serial: 8250_dw: add IO space support
-Date: Fri, 23 Feb 2018 02:42:02 +0800
-Message-ID: <1519324923-196857-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519324923-196857-1-git-send-email-john.garry@huawei.com>
-References: <1519324923-196857-1-git-send-email-john.garry@huawei.com>
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x224nvmNP+xDmcgCESHtXCa4YLCXmqzee/x5LDnHSyUy1CBrCVDHjuam/WTDyU3xhyzU0wyih
+ARC-Seal: i=1; a=rsa-sha256; t=1519656611; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mz11eyBw9EB3KpdWDgyvKNeAdUNGyWCkRVovFFlR2WF3KCZAqXwPcIpLygGdFa4xXA
+         6u3mHhJ9dqEXdZGX0r0MBKObzAlmpD4KMTRv+mV+0L+9dDTP6TTQun6SjjAe+VIkjb8D
+         u+synHqwHn5k/aB8iMoJNUtu8BpS2XGQNsKbPzKuz63QrCpZuCJEJL92Y6b28+UB6pu7
+         ZU9w4KQpfXd3dhz58v7NWwihk9pv28bI49udwJD85ZWBwqqbxkh9OfKg3IZZXykeXdYH
+         Jx77kZsQ3K+GX1iME+QIYayGExHW1NWncN7bYh02BPnqJcl+tJAkIA22HvxvwztDeWoz
+         0MeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
+        bh=Q9MpetSxcdsa/sUVAV01DMtzIQ3adqrHy8Yw034r8bw=;
+        b=M2CO2I/PU+jTWU08z6yEF6VIrKoLCwiMeVlDyBpllku31zy6fNkyQcF1IbkbdQZ2Eg
+         wzB5Lgit8d37I2YoZbjfeUxNamgsUqy9wY3jdT7eEqw9qslxGScJCE2G+rX3RfiQDhUL
+         GpxaCXU5gaDY4fKSt8o3YadqprlaGQsA6uf9tAUbbOKfEf+mIZcJAJkPf+FCELuMJTFq
+         t7sAuqGUjorh0hlB8KS/wOBRuBn0QVwNm8c9jZeVza5B3vTo8OqXwN9xzgNnnCudzQmB
+         0/Xf2ZaldjRfE+/Ptj/WXCgRHJVAMrRnR7xczE16WIkBBaOUxPmJ9WgwliJWYpKP6rZ1
+         ai4A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=iSxd9k4Y;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=iSxd9k4Y;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w1QEnYON012254
+X-Nifty-SrcIP: [209.85.217.171]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+In-Reply-To: <87a7x3l8gr.fsf@linux.intel.com>
+References: <1516712454-2915-3-git-send-email-hayashi.kunihiko@socionext.com>
+ <87o9lklnwb.fsf@linux.intel.com> <20180124215228.ED43.4A936039@socionext.com> <87a7x3l8gr.fsf@linux.intel.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 26 Feb 2018 23:48:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARE0YT8HQ-shz=Kg9eaB0pZzaefoqMe-ZnE=eqSQWFp-w@mail.gmail.com>
+Message-ID: <CAK7LNARE0YT8HQ-shz=Kg9eaB0pZzaefoqMe-ZnE=eqSQWFp-w@mail.gmail.com>
+Subject: Re: [PATCH 2/4] usb: dwc3: add dwc3 glue layer for UniPhier SoCs
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-usb@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590388281135869275?=
+X-GMAIL-MSGID: =?utf-8?q?1593475450543023641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The current 8250_dw driver only supports MEM iotype. It is desired
-to have a platform device-based 8250 UART driver for ACPI FW
-with IO port iotype, so update the driver to support this.
+Hi Felipe,
 
-Note: a solution needs to be found for autconfig
-using MEM accessors only.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/tty/serial/8250/8250_dw.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+2018-01-24 21:58 GMT+09:00 Felipe Balbi <balbi@kernel.org>:
+>
+> Hi,
+>
+> Kunihiko Hayashi <hayashi.kunihiko@socionext.com> writes:
+>> Hello Felipe,
+>>
+>> Thank you for your comments.
+>>
+>> On Tue, 23 Jan 2018 15:12:36 +0200 <balbi@kernel.org> wrote:
+>>
+>>>
+>>> Hi,
+>>>
+>>> Kunihiko Hayashi <hayashi.kunihiko@socionext.com> writes:
+>>> > Add a specific glue layer for UniPhier SoC platform to support
+>>> > USB host mode. It manages hardware operating sequences to enable multiple
+>>> > clock gates and assert resets, and to prepare to use dwc3 controller
+>>> > on the SoC.
+>>> >
+>>> > This patch also handles the physical layer that has same register space
+>>> > as the glue layer, because it needs to integrate initialziation sequence
+>>> > between glue and phy.
+>>> >
+>>> > In case of some SoCs, since some initialization values for PHY are
+>>> > included in nvmem, this patch includes the way to get the values from nvmem.
+>>> >
+>>> > It supports PXs2 and LD20 SoCs.
+>>> >
+>>> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>> > Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
+>>> > Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+>>> > ---
+>>> >  drivers/usb/dwc3/Kconfig         |   9 +
+>>> >  drivers/usb/dwc3/Makefile        |   1 +
+>>> >  drivers/usb/dwc3/dwc3-uniphier.c | 554 +++++++++++++++++++++++++++++++++++++++
+>>> >  3 files changed, 564 insertions(+)
+>>> >  create mode 100644 drivers/usb/dwc3/dwc3-uniphier.c
+>>
+>> ...snip...
+>>
+>>> > +
+>>> > +static void dwc3u_ssphy_testio_write(struct dwc3u_priv *priv, int port,
+>>> > +                               u32 data)
+>>>
+>>> anything with sshphy or hsphy in the name should probably be part of a
+>>> PHY driver using drivers/phy/ framework.
+>>
+>> I can try to separate phy control from this driver.
+>> However, phy registers belongs to "dwc3-glue" IO map area (65b00000),
+>> and this area also contains a reset bit for "dwc3-core" hardware.
+>>
+>> Although the phy driver is called from dwc3-core driver,
+>> we need to deassert the reset bit before probing dwc3-core driver.
+>>
+>> As shown later, I think that it's difficut to determine the order of
+>> initializing the registers in this area.
+>>
+>>> > +static void dwc3u_vbus_disable(struct dwc3u_priv *priv)
+>>> > +{
+>>> > +  int i;
+>>> > +
+>>> > +  for (i = 0; i < priv->nvbus; i++) {
+>>> > +          dwc3u_maskwrite(priv, VBUS_CONTROL(i),
+>>> > +                          DRVVBUS_REG_EN | DRVVBUS_REG,
+>>> > +                          DRVVBUS_REG_EN | 0);
+>>> > +  }
+>>> > +}
+>>>
+>>> drivers/regulator maybe?
+>>
+>> VBUS_CONTROL register is used for determing whether "dwc3-glue" hardware
+>> enables vbus connected with "regulator" hardware.
+>>
+>> The regulator driver should manage "regulator" hardware, and
+>> I don't think that the driver should manage this register.
+>>
+>>> > +static void dwc3u_reset_init(struct dwc3u_priv *priv)
+>>> > +{
+>>> > +  dwc3u_maskwrite(priv, RESET_CTL, LINK_RESET, 0);
+>>> > +  usleep_range(1000, 2000);
+>>> > +  dwc3u_maskwrite(priv, RESET_CTL, LINK_RESET, LINK_RESET);
+>>> > +}
+>>> > +
+>>> > +static void dwc3u_reset_clear(struct dwc3u_priv *priv)
+>>> > +{
+>>> > +  dwc3u_maskwrite(priv, RESET_CTL, LINK_RESET, 0);
+>>> > +}
+>>>
+>>> drivers/reset ?
+>>
+>> The reset driver manages "sysctrl" IO map area in our SoC.
+>>
+>> RESET_CTL register belongs to "dwc3-glue" IO map area,
+>> and the kernel can't access this area until enabling usb clocks and
+>> deasserting usb resets in "sysctrl".
+>>
+>> I think that "dwc3-glue" register control should be separated from
+>> "sysctrl".
+>
+> Just split your address space and treat your glue as a device with
+> several children:
+>
+> glue@65b00000 {
+>         compatible = "foo"
+>
+>         phy@bar {
+>                 ...
+>         };
+>
+>         sysctrl@baz {
+>                 ...
+>         };
+>
+>         dwc3@foo {
+>                 compatible = "snps, dwc3";
+>                 ...
+>         };
+> };
+>
+> Then you know that you can let dwc3/core.c handle the PHY for you. If we
+> need to teach dwc3/core.c about regulators, we can do that. But we don't
+> need SoC-specific hacks ;-)
+>
+> --
+> balbi
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index cd1b94a..28fbc8f 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -405,7 +405,7 @@ static void dw8250_setup_port(struct uart_port *p)
- static int dw8250_probe(struct platform_device *pdev)
- {
- 	struct uart_8250_port uart = {};
--	struct resource *regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	struct resource *regs;
- 	int irq = platform_get_irq(pdev, 0);
- 	struct uart_port *p = &uart.port;
- 	struct device *dev = &pdev->dev;
-@@ -413,6 +413,9 @@ static int dw8250_probe(struct platform_device *pdev)
- 	int err;
- 	u32 val;
- 
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0) ?:
-+	       platform_get_resource(pdev, IORESOURCE_IO, 0);
-+
- 	if (!regs) {
- 		dev_err(dev, "no registers defined\n");
- 		return -EINVAL;
-@@ -425,22 +428,28 @@ static int dw8250_probe(struct platform_device *pdev)
- 	}
- 
- 	spin_lock_init(&p->lock);
--	p->mapbase	= regs->start;
- 	p->irq		= irq;
- 	p->handle_irq	= dw8250_handle_irq;
- 	p->pm		= dw8250_do_pm;
- 	p->type		= PORT_8250;
- 	p->flags	= UPF_SHARE_IRQ | UPF_FIXED_PORT;
- 	p->dev		= dev;
--	p->iotype	= UPIO_MEM;
--	p->serial_in	= dw8250_serial_in;
--	p->serial_out	= dw8250_serial_out;
- 	p->set_ldisc	= dw8250_set_ldisc;
- 	p->set_termios	= dw8250_set_termios;
- 
--	p->membase = devm_ioremap(dev, regs->start, resource_size(regs));
--	if (!p->membase)
--		return -ENOMEM;
-+	if ((regs->flags & IORESOURCE_TYPE_BITS) == IORESOURCE_MEM) {
-+		p->mapbase	= regs->start;
-+		p->membase = devm_ioremap(dev, regs->start,
-+					  resource_size(regs));
-+		if (!p->membase)
-+			return -ENOMEM;
-+		p->iotype = UPIO_MEM;
-+		p->serial_in	= dw8250_serial_in;
-+		p->serial_out	= dw8250_serial_out;
-+	} else {
-+		p->iobase = regs->start;
-+		p->iotype = UPIO_PORT;
-+	}
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
+
+Slightly related question.
+
+
+Why don't we put clocks and resets to dwc3/core.c?
+
+dwc3-of-simple.c only handles clocks and resets.
+This is generic enough to be added to dwc3/core.c, I think.
+
+
+I checked the two instances of dwc3-of-simple.
+
+"qcom,dwc3"
+https://github.com/torvalds/linux/blob/v4.16-rc3/arch/arm64/boot/dts/qcom/msm8996.dtsi#L780
+
+"rockchip,rk3399-dwc3"
+https://github.com/torvalds/linux/blob/v4.16-rc3/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L395
+
+
+They just contain clocks, resets, and "snps,dwc3" sub-node.
+
+
+If we do that,
+
+usb@7600000 {
+        compatible = "qcom,dwc3";
+        clocks = ...;
+
+        dwc3@7600000 {
+                compatible = "snps,dwc3";
+                reg = ...;
+                interrupts = ...;
+                phys = ...;
+        }
+};
+
+
+will be turned into
+
+
+dwc3@7600000 {
+        compatible = "qcom,dwc3", "snps,dwc3";
+        reg = ...;
+        clocks = ...;
+        interrupts = ...;
+        phys = ...;
+};
+
+
+This looks simpler.
+
+
+
+
+Also, dwc3/core.c and dwc3-of-simple.c
+duplicate runtime PM.
+
+
+
 -- 
-1.9.1
-
+Best Regards
+Masahiro Yamada
