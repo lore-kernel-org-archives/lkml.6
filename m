@@ -1,67 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676843-2-17346789917059148964
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676842; b=VbKastnJ//s+PkLg+XcTbz0xoHv3YVbcAYxnTzRYZt/6M46
-    g5aivj8rqYR0cJlzmWd5a7mPBHJUxUb6AtEJ+R5QW0sBu7gKiGhqT/8T2eEIxp43
-    FmeG6aLFJDQBh8F2wedZUrOTWBOmbkmhcou2d+EFpRhz/t8VRR6feLqPqysqGphY
-    k2LI1fdK/kC6qKkniZep7ltaIQOIoFjLnuOc7F83NIwKw5WuKkdYJneO+bd1/u9a
-    ShQuDIbCp/cI6F1jVELok90SYC/RLYnT6YElAcxk7Wbwg8YWoRk81Ud9O97uQ57K
-    3qi0JFyB5wglMBx0kPdxdX4w/rhOWCNK0WZ6fdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676842; bh=IAlcO60sCxUv/c093SzpDxulQK
-    0+iyeqCGiluRjCaJw=; b=pWkGkXJ1I3dXcm70dwuMnvkIr6/T/OZLtxlmhME9MF
-    /nivoK9ouQjqCIvDeJOyxYeHqqZHsjbIPlu2qXu+/iRcdF38EzwCkSwZMQ00FTwL
-    xb90zxMfmLTwdrXL63mkq2RyC6GzO25t1vNZnwL7kjoqPRolFJop0eD5y/1fAC2K
-    rCjW522SiIU9uDmPPJS8J6WnTv0ojoRVyLdfTi49XOPloZSlx93mJ/AEUphosmmw
-    7pym5g8zKjDXmOsuAlQvjoEnAtHUxlT6CSfWmV2ysEQZouwRCcVafsFPlFGGuTDs
-    JryFlBR0MJoPAfyVrbdtPzdCrPt+LVsbgVjS1Y+nor5Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753648AbeBZU1S (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:27:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36424 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753644AbeBZU1Q (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:27:16 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuNnX8N6QVwQSQBGFDVlDSZYgGKGs9SNHBpWuiNAvfzagX669txHKdQCmv6sAzCC/3u9Cen
+ARC-Seal: i=1; a=rsa-sha256; t=1519676832; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zUKs28u5y6gF/oiGuPhDE0+tDLM9RIxCtzJc0w+SdGxHzcXNICjaDE3rfCK0WKBKPN
+         hyiEo8+4JWDcY5Z4mMl1DftueSte247JRxSWDSWCgjkFJgjCPGGEtCxH981PbUtuF52v
+         nXvBWeRz6/nzcQT1//5MNthsFI43EVEZN0joZ0dfKlBK9+8xv3KBY+4EmRVwY8sW0mE2
+         IRzubINmydTSYf/ASn/OkuDYTtlvamOVhqnS+YTmHKfihTc5P18BtC67iBbAQB8FTIYS
+         Q+LaJ/UUpaOC4QoLwM5wkJx9wMsPg7KcF4987W9smpElPNfOkdKFimyC7uUQsJWNb6Qi
+         8gYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=fxtWk2YGvzJNfOERnRgVP7xH2zLm89/51Ht4LxQTMjo=;
+        b=oxiAFuo9/oPrl/y3SCX2lDaBURZuyCoxD303mEHAPwgkZB0RqtrigqHGGlOwit/vd6
+         Z36hnl9Wy0pVbUsuHr0U/Qn71EI6XJlq0FxErqCR6MtV/hAglJEu0AHTaF3bvyb2lSGv
+         jx7CzgtNB95fuU/KMlG8tB4iu54hEGEyM/n6WaV8shxpzef5KI5JK6KZDD/2tzlKBeIF
+         BKzWikg+uj4bQtuZUeAoL590juwJHVOmfdlHuZt0UzeJhYkfs5QvrJka0Gu3ja6HHdyX
+         16dnr83nwz5fU+elrk/Mv3WbfGGOG9geLfPLHt8iao6SLfkbR0wWhEs4RJOglFHDJPEl
+         mecA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 04/64] MIPS: boot: Define __ASSEMBLY__ for its.S build
-Date: Mon, 26 Feb 2018 21:21:41 +0100
-Message-Id: <20180226202153.629766347@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Patrick McLean <chutzpah@gentoo.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.15 03/64] kconfig.h: Include compiler types to avoid missed struct attributes
+Date: Mon, 26 Feb 2018 21:21:40 +0100
+Message-Id: <20180226202153.589811845@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -69,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593496476457815622?=
+X-GMAIL-MSGID: =?utf-8?q?1593496654254294275?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,37 +53,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Kees Cook <keescook@chromium.org>
 
-commit 0f9da844d87796ac31b04e81ee95e155e9043132 upstream.
+commit 28128c61e08eaeced9cc8ec0e6b5d677b5b94690 upstream.
 
-The MIPS %.its.S compiler command did not define __ASSEMBLY__, which meant
-when compiler_types.h was added to kconfig.h, unexpected things appeared
-(e.g. struct declarations) which should not have been present. As done in
-the general %.S compiler command, __ASSEMBLY__ is now included here too.
+The header files for some structures could get included in such a way
+that struct attributes (specifically __randomize_layout from path.h) would
+be parsed as variable names instead of attributes. This could lead to
+some instances of a structure being unrandomized, causing nasty GPFs, etc.
 
-The failure was:
+This patch makes sure the compiler_types.h header is included in
+kconfig.h so that we've always got types and struct attributes defined,
+since kconfig.h is included from the compiler command line.
 
-    Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
-    FATAL ERROR: Unable to parse input tree
-    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
-    /usr/bin/mkimage Can't add hashes to FIT blob
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: 28128c61e08e ("kconfig.h: Include compiler types to avoid missed struct attributes")
+Reported-by: Patrick McLean <chutzpah@gentoo.org>
+Root-caused-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: 3859a271a003 ("randstruct: Mark various structs for randomization")
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/boot/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/kconfig.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/mips/boot/Makefile
-+++ b/arch/mips/boot/Makefile
-@@ -126,6 +126,7 @@ $(obj)/vmlinux.its.S: $(addprefix $(srct
+--- a/include/linux/kconfig.h
++++ b/include/linux/kconfig.h
+@@ -64,4 +64,7 @@
+  */
+ #define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
  
- quiet_cmd_cpp_its_S = ITS     $@
-       cmd_cpp_its_S = $(CPP) $(cpp_flags) -P -C -o $@ $< \
-+			-D__ASSEMBLY__ \
- 		        -DKERNEL_NAME="\"Linux $(KERNELRELEASE)\"" \
- 			-DVMLINUX_BINARY="\"$(3)\"" \
- 			-DVMLINUX_COMPRESSION="\"$(2)\"" \
++/* Make sure we always have all types and struct attributes defined. */
++#include <linux/compiler_types.h>
++
+ #endif /* __LINUX_KCONFIG_H */
