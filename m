@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuwbHSy/nRu/9wgOdUyS8klV1PlAHAfkD6eMVpjhaXsZptgcmOCUjPZKdsDPw2aFj4iRPa4
-ARC-Seal: i=1; a=rsa-sha256; t=1519676497; cv=none;
+X-Google-Smtp-Source: AG47ELsJrIcW3YrAKDH8oHs+ZqBdmmV1IXZcygj566jfXX8NMKDDgYdl0BclY0VkEj8abqFN0d1l
+ARC-Seal: i=1; a=rsa-sha256; t=1519676494; cv=none;
         d=google.com; s=arc-20160816;
-        b=rWzGN1N6WUBtzWsKhkYew+CJgN3s194NSf4f8kbH7F3cTJubLtb3m2oshYrOk39HR5
-         Odd+B28JgK89cuxNP04j3eN9Lphv02J6HsIPRiywAmtA3uibMHOaFZGNW8P7Usb78Wos
-         QDxiKHP9Y9iH908c9LQCNaknf31jf+HtSoqH1i9yKZt+BAEa1/Wl/Sg1VOCiz3xTk+47
-         3MAgrSSh7uaHFWvlC1WpcDxsohUjWwVdk1JORJIt/KcsY7jO0DsyLiHq9kSAJ5zxpOXz
-         3iXsmSmryGUBD60rvLK7gYawuwj7QSsNGpj8UimlEqzoRpS/vT16jedmbzLEOHSTKiDL
-         nDPA==
+        b=nu6YiEizziCNCuHIWVbQLckAIjz7NASfBEfN7P1bisz6cBW6r+7PKrehqG2IzLmfE8
+         MzLLKeQSovVP9t7/R1P5GKU/8t/+1mifJ+K50ntunp2PxIRsQD0zSZOJhrzpVp4f962G
+         eyYyKiphjNDjRxDzaccXmcXj/gIfD2rFW0O7zCvkIHkiMLc/GId7Xf9eH2UUvpnE2/Tn
+         ib3Chs6U+CtC3cF9YRwh96hquYOAsVnLK+LXYceYwOVYFzLFZGmNmsltPEOWSySgB5+6
+         cUkarvMXiXNNWUqINeEGEj3IphDDzh6T3ZRyVFFsJOM+u8/UNzsk2S8rRLXSZTKkjHHV
+         ed7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7wU8ynKX5FUmd+2+4oUjmzoqRHtXoTNiPHkTcSlu/0M=;
-        b=dwUUAZKgB6QyzVSmV0K4vKWmk4PMbW02wog1gngPOoKWdZc4sZKhyN1Z9fnp34lxkf
-         fQr0Lbai3zJRBybeLzr0e3aBd5gVVHq4C0KnMjVzJstMnoROBN81zk2VUMcK6Rik2JyG
-         kyHOrLUYUoNXA9psd6368fTKoq2eNN66U+mlgTMCNP6SDqN/YG+Dk3Wufq/3D2WX0Am1
-         1k+olRhAmlevDIPuRPcROOQ08OxT8ma1jZykDgagP+C6c9fnCKG7gIL3o2qJi12C1yh1
-         9hO5+XOggzCb1oUZU+4pEQnoYbc/0y/z+ewnDfyHyJ46Hf4Wxnjm4rQ+ZRnEmN4oVhiD
-         h52g==
+        bh=aalfLn3YzfLAZN3gX8Dgk1D9ooRSHQXhv2eCzLqi02Q=;
+        b=XmtbXTgmrvB3ICyJBHWoYXAwYqC0W4KgPyO8BvhUsQbN1Nki/Yf82HbgVy1ooRQRC6
+         wjxCVoFdMDquyQd/UwUzGBXgHKiiFo1nbCzu2/1gtVNktHdxVYcRnvmRC/+s2v9BBAvn
+         MAAQollath88qlJFU4Z273QPUvplIYy/MoOJQXQ8uPhrAglBbKsC9ZMU6gMmoWRAG+b0
+         +d3XcoLA/jOmN8fhZX2/ex2yaQByNMX1NM5khINrKaaebFjMO2B/B2uOL0hPfQgs8g7b
+         1bJ8EWHWYlwjiHIa8XSGXXztxP5A854Q1m+eHhMdf/LgnS5VF42TNFEXODdX4L+hCpKh
+         0C/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thinh Nguyen <thinhn@synopsys.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 18/39] usb: dwc3: gadget: Set maxpacket size for ep0 IN
-Date: Mon, 26 Feb 2018 21:20:39 +0100
-Message-Id: <20180226201644.476471017@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Mario Kleiner <mario.kleiner.de@gmail.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.9 17/39] drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
+Date: Mon, 26 Feb 2018 21:20:38 +0100
+Message-Id: <20180226201644.438807933@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495949068185016?=
-X-GMAIL-MSGID: =?utf-8?q?1593496303201893931?=
+X-GMAIL-THRID: =?utf-8?q?1593496004383920080?=
+X-GMAIL-MSGID: =?utf-8?q?1593496300416085443?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,39 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 6180026341e852a250e1f97ebdcf71684a3c81b9 upstream.
+commit 06998a756a3865817b87a129a7e5d5bb66dc1ec3 upstream.
 
-There are 2 control endpoint structures for DWC3. However, the driver
-only updates the OUT direction control endpoint structure during
-ConnectDone event. DWC3 driver needs to update the endpoint max packet
-size for control IN endpoint as well. If the max packet size is not
-properly set, then the driver will incorrectly calculate the data
-transfer size and fail to send ZLP for HS/FS 3-stage control read
-transfer.
+Similar to commit e10aec652f31 ("drm/edid: Add 6 bpc quirk for display
+AEO model 0."), the EDID reports "DFP 1.x compliant TMDS" but it support
+6bpc instead of 8 bpc.
 
-The fix is simply to update the max packet size for the ep0 IN direction
-during ConnectDone event.
+Hence, use 6 bpc quirk for this panel.
 
-Cc: stable@vger.kernel.org
-Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 196f954e2509 ("drm/i915/dp: Revert "drm/i915/dp: fall back to 18 bpp when sink capability is unknown"")
+BugLink: https://bugs.launchpad.net/bugs/1749420
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Mario Kleiner <mario.kleiner.de@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180218085359.7817-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/drm_edid.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2528,6 +2528,8 @@ static void dwc3_gadget_conndone_interru
- 		break;
- 	}
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -107,6 +107,9 @@ static const struct edid_quirk {
+ 	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
+ 	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
  
-+	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
++	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
++	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
 +
- 	/* Enable USB2 LPM Capability */
- 
- 	if ((dwc->revision > DWC3_REVISION_194A) &&
+ 	/* Belinea 10 15 55 */
+ 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
+ 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
