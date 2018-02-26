@@ -1,172 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeBZKh6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:37:58 -0500
-Received: from mga04.intel.com ([192.55.52.120]:47917 "EHLO mga04.intel.com"
+        id S1752581AbeBZKjQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:39:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:47950 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752045AbeBZKh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:37:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="37485539"
-Subject: Re: [PATCH 11/12] PM / AVS: SmartReflex: Prepare to use device tree
- based probing
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>
-References: <20180223210100.86732-1-tony@atomide.com>
- <20180223210100.86732-12-tony@atomide.com>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <5d37e6ff-9b89-b677-859e-6eeae5527276@intel.com>
-Date: Mon, 26 Feb 2018 11:37:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752218AbeBZKjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 05:39:15 -0500
+Date: Mon, 26 Feb 2018 10:39:16 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Daniel Lustig <dlustig@nvidia.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
+ spin_unlock()
+Message-ID: <20180226103915.GA8736@arm.com>
+References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+ <20180222134004.GN25181@hirez.programming.kicks-ass.net>
+ <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+ <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net>
+ <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180223210100.86732-12-tony@atomide.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/23/2018 10:00 PM, Tony Lindgren wrote:
-> We are currently probing smartreflex with omap_device while we are
-> already probing smartreflex related interconnect target module with
-> ti-sysc driver and dts data.
->
-> Before we can flip things on for ti-sysc, we need to prepare the
-> smartreflex driver a bit:
->
-> 1. The smartreflex clock is really for the whole interconnect target
->     module. So it may be configured at the parent device level with
->     ti-sysc
->
-> 2. With ti-sysc, we have the child device manage interconnect target
->     module directly if pm_runtime_irq_safe() is set and there is only
->     one child. In that case nobody else is going to call pm_runtime_get
->     and put, so we need to add these calls to idle smartreflex properly
->     after probe if not fully configured
->
-> 3. With ti-sysc, the parent driver may rebind. So we want to use
->     platform_driver_register() and don't want probe to be __init
->
-> Note that this patch depends on the related changes to ti-sysc driver
-> and omap_device probing to prevent both ti-sysc and omap_device to
-> try to probe smartreflex.
->
-> Cc: linux-pm@vger.kernel.org
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+On Thu, Feb 22, 2018 at 11:47:57AM -0800, Daniel Lustig wrote:
+> On 2/22/2018 10:27 AM, Peter Zijlstra wrote:
+> > On Thu, Feb 22, 2018 at 10:13:17AM -0800, Paul E. McKenney wrote:
+> >> So we have something that is not all that rare in the Linux kernel
+> >> community, namely two conflicting more-or-less concurrent changes.
+> >> This clearly needs to be resolved, either by us not strengthening the
+> >> Linux-kernel memory model in the way we were planning to or by you
+> >> strengthening RISC-V to be no weaker than PowerPC for these sorts of
+> >> externally viewed release-acquire situations.
+> >>
+> >> Other thoughts?
+> > 
+> > Like said in the other email, I would _much_ prefer to not go weaker
+> > than PPC, I find that PPC is already painfully weak at times.
+> 
+> Sure, and RISC-V could make this work too by using RCsc instructions
+> and/or by using lightweight fences instead.  It just wasn't clear at
+> first whether smp_load_acquire() and smp_store_release() were RCpc,
+> RCsc, or something else, and hence whether RISC-V would actually need
+> to use something stronger than pure RCpc there.  Likewise for
+> spin_unlock()/spin_lock() and everywhere else this comes up.
+> 
+> As Paul's email in the other thread observed, RCpc seems to be
+> OK for smp_load_acquire()/smp_store_release() at least according
+> to the current LKMM herd spec.  Unlock/lock are stronger already
+> I guess.  But if there's an active proposal to strengthen them all
+> to something stricter than pure RCpc, then that's good to know.
+> 
+> My understanding from earlier discussions is that ARM has no plans
+> to use their own RCpc instruction for smp_load_acquire() instead
+> of their RCsc instructions.  Is that still true?  If they were to
+> use the RCpc load there, that would cause them to have the same
+> problem we're discussing here, right?  Just checking.
 
-You need an ACK from Kevin Hilman on this anyway and if you receive one, 
-please feel free to route it whatever way is convenient for you.
+Agreed. No plans to use the LDAPR instruction in Linux.
 
-> ---
->   drivers/power/avs/smartreflex.c | 41 ++++++++++++++++++++++++++++++++++-------
->   1 file changed, 34 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/power/avs/smartreflex.c b/drivers/power/avs/smartreflex.c
-> --- a/drivers/power/avs/smartreflex.c
-> +++ b/drivers/power/avs/smartreflex.c
-> @@ -132,12 +132,16 @@ static void sr_set_clk_length(struct omap_sr *sr)
->   	struct clk *fck;
->   	u32 fclk_speed;
->   
-> -	fck = clk_get(&sr->pdev->dev, "fck");
-> -
-> +	/* Try interconnect target module fck first if it already exists */
-> +	fck = clk_get(sr->pdev->dev.parent, "fck");
->   	if (IS_ERR(fck)) {
-> -		dev_err(&sr->pdev->dev, "%s: unable to get fck for device %s\n",
-> -			__func__, dev_name(&sr->pdev->dev));
-> -		return;
-> +		fck = clk_get(&sr->pdev->dev, "fck");
-> +		if (IS_ERR(fck)) {
-> +			dev_err(&sr->pdev->dev,
-> +				"%s: unable to get fck for device %s\n",
-> +				__func__, dev_name(&sr->pdev->dev));
-> +			return;
-> +		}
->   	}
->   
->   	fclk_speed = clk_get_rate(fck);
-> @@ -838,7 +842,7 @@ static int omap_sr_autocomp_store(void *data, u64 val)
->   DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops, omap_sr_autocomp_show,
->   			omap_sr_autocomp_store, "%llu\n");
->   
-> -static int __init omap_sr_probe(struct platform_device *pdev)
-> +static int omap_sr_probe(struct platform_device *pdev)
->   {
->   	struct omap_sr *sr_info;
->   	struct omap_sr_data *pdata = pdev->dev.platform_data;
-> @@ -898,6 +902,12 @@ static int __init omap_sr_probe(struct platform_device *pdev)
->   
->   	list_add(&sr_info->node, &sr_list);
->   
-> +	ret = pm_runtime_get_sync(&pdev->dev);
-> +	if (ret < 0) {
-> +		pm_runtime_put_noidle(&pdev->dev);
-> +		goto err_list_del;
-> +	}
-> +
->   	/*
->   	 * Call into late init to do initializations that require
->   	 * both sr driver and sr class driver to be initiallized.
-> @@ -966,12 +976,17 @@ static int __init omap_sr_probe(struct platform_device *pdev)
->   
->   	}
->   
-> +	pm_runtime_put_sync(&pdev->dev);
-> +
->   	return ret;
->   
->   err_debugfs:
->   	debugfs_remove_recursive(sr_info->dbg_dir);
->   err_list_del:
->   	list_del(&sr_info->node);
-> +
-> +	pm_runtime_put_sync(&pdev->dev);
-> +
->   	return ret;
->   }
->   
-> @@ -1025,11 +1040,23 @@ static void omap_sr_shutdown(struct platform_device *pdev)
->   	return;
->   }
->   
-> +static const struct of_device_id omap_sr_match[] = {
-> +	{ .compatible = "ti,omap3-smartreflex-core", },
-> +	{ .compatible = "ti,omap3-smartreflex-mpu-iva", },
-> +	{ .compatible = "ti,omap4-smartreflex-core", },
-> +	{ .compatible = "ti,omap4-smartreflex-mpu", },
-> +	{ .compatible = "ti,omap4-smartreflex-iva", },
-> +	{  },
-> +};
-> +MODULE_DEVICE_TABLE(of, omap_sr_match);
-> +
->   static struct platform_driver smartreflex_driver = {
-> +	.probe		= omap_sr_probe,
->   	.remove         = omap_sr_remove,
->   	.shutdown	= omap_sr_shutdown,
->   	.driver		= {
->   		.name	= DRIVER_NAME,
-> +		.of_match_table	= omap_sr_match,
->   	},
->   };
->   
-> @@ -1048,7 +1075,7 @@ static int __init sr_init(void)
->   	else
->   		pr_warn("%s: No PMIC hook to init smartreflex\n", __func__);
->   
-> -	ret = platform_driver_probe(&smartreflex_driver, omap_sr_probe);
-> +	ret = platform_driver_register(&smartreflex_driver);
->   	if (ret) {
->   		pr_err("%s: platform driver register failed for SR\n",
->   		       __func__);
+Will
