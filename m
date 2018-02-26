@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs16fAqgPqxSZSSNlONC6sdh6wSSh8m9uLK9UYW9+n8y9L9QRtehNa3X0CZWUgITUp3UT5t
-ARC-Seal: i=1; a=rsa-sha256; t=1519676901; cv=none;
+X-Google-Smtp-Source: AH8x225BOq20tL8PdCYj63MMf3Kbn/g9gor2HqT7K/koPMcooVCS6XE1nwBF8/dkhJ5fwMtSyAY5
+ARC-Seal: i=1; a=rsa-sha256; t=1519676898; cv=none;
         d=google.com; s=arc-20160816;
-        b=tg7pZ/UhV+qGl6OUwNSm2emJAR3dnOgDHEHoTlbFiH4lLBxTEQ5wun5ABxv/joEoNO
-         i0zwkoFAmt4slvpRVSqbtlLOdZbBvUL1ZzA+cGX+VS8wGFgOw4Q4lUTbsVSlaC4atL4m
-         jC0E9wxItEPTGes4nvUXB02aQu7LKQB8mMB9CfEnVInWcopI4ljHrN80XtIeaR7n3dpK
-         Bpk7Y/WBqNEkXhAAEN6BdEI89Vp5dGtPPpZfE262kw6VQ9byR6GiVc4XHczR5y7VTJG3
-         ufu1a2AwP+loobmt4O8X74KT53oj/acoNiNFgG6gKZkCns490ebMo8l+sycnPgd3tJdX
-         olYw==
+        b=KBH7pfBRb9ctM9KsvVuQQUlU2wCVwByPBBkvIePwdgoa9ARsZgUah+80fwe3G11HaY
+         yDS5w3ewWXdBCue7Fbgmnz0IAW4XjZt7Gv7kWPuBLJTLxUfFp5P4DbKrH+ugM4DInDlF
+         f2IwSpWVGjtCVT14DQDW1T5Te4E0s34Q0DuVDBq+UonzGSKKaxZkPzzWtb3nL22hZ/2V
+         RQfqjNf3jZNhaajEoDpmhY6YrUteS5X9QgRT+RPY6WdT1qgyoD9U/Qk1nGp/muvKbXjq
+         6Ep8vaarpOy8VrfkH/rjBEfbUsj360eNft5M48twGSazTLtjZimwQVUNHqoXwZr3J4zT
+         prjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AfD8H/2qlan5daKGjD1jjOVZxi7RktWVG5YbLX6Gy88=;
-        b=frmMTRNrOklTue8NGpmyX3FAsM02Nd6v4WB34BkxkJzsy4TdheGihW4UuVgA1IvfdV
-         jdVHR8DqgH3CEz9X+vuOjU/vKwQoU5Lr/wQNn7HtEsOTGiR7CCyeErnnz7cwTAOZAnMm
-         xw7PrUuor8boMcsd2i2pFNO0xNVS+PCYlPIzpYvGvu3g2EMyM0zuKYfUOwecghbSFakz
-         g174gwe5iDQ0XB00LdnNXuMUKoM3kesonu6Hf3tl4iYf6z1iODFoJv7NyMh+y9PkNzl6
-         64FzmC8xBUYPXvhefsdAGPfHaRj4S+1cL7Bcw1L759/s8YeMG2X1VgHB/gvuivuXVaTh
-         DxGA==
+        bh=fHK4V7XOi1qV87bWvaSVehchrJ5VegbnUXpL0fohENM=;
+        b=Kiz/Rt5FIhtQWJPNp7j/+PnH/Tu8UiCagMMFpFmeeNU7w9z29zXDJMWVivNT4Ep9FX
+         0v5vwrASBMvK7emQ+O7iSQJqyXUlydBoY3dnXq4TtQAUMtxK/L69ZrYrY6QKNChZ7KfV
+         p55gCcZ9AKBBaD5V4BZIO83tiB32l5yrghnC//5vx2Ri2miF5sEORGorwIpeZDE+RiWJ
+         envMowXCne6lDr0sqIzBs49dOgYnViuoemsH4WTQi+JmxLDur2V7iajaIHwkMFphxbjP
+         Zkz38SlgRPfRI7bLZb63ALqqCyLSYu/HiwmH7nyLk7zEwsltiZxpQsCRXIkwEq3gQxv3
+         wc+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Mayank Rana <mrana@codeaurora.org>,
 	Jack Pham <jackp@codeaurora.org>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 51/64] usb: gadget: f_fs: Use config_ep_by_speed()
-Date: Mon, 26 Feb 2018 21:22:28 +0100
-Message-Id: <20180226202155.631310593@linuxfoundation.org>
+Subject: [PATCH 4.15 50/64] usb: gadget: f_fs: Process all descriptors during bind
+Date: Mon, 26 Feb 2018 21:22:27 +0100
+Message-Id: <20180226202155.589853324@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496518220924076?=
-X-GMAIL-MSGID: =?utf-8?q?1593496726376375778?=
+X-GMAIL-THRID: =?utf-8?q?1593495953448268879?=
+X-GMAIL-MSGID: =?utf-8?q?1593496722938161155?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,91 +52,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jack Pham <jackp@codeaurora.org>
 
-commit 675272d092e4a5570bace92593776f7348daf4c5 upstream.
+commit 6cf439e0d37463e42784271179c8a308fd7493c6 upstream.
 
-In commit 2bfa0719ac2a ("usb: gadget: function: f_fs: pass
-companion descriptor along") there is a pointer arithmetic
-bug where the comp_desc is obtained as follows:
+During _ffs_func_bind(), the received descriptors are evaluated
+to prepare for binding with the gadget in order to allocate
+endpoints and optionally set up OS descriptors. However, the
+high- and super-speed descriptors are only parsed based on
+whether the gadget_is_dualspeed() and gadget_is_superspeed()
+calls are true, respectively.
 
- comp_desc = (struct usb_ss_ep_comp_descriptor *)(ds +
-	       USB_DT_ENDPOINT_SIZE);
+This is a problem in case a userspace program always provides
+all of the {full,high,super,OS} descriptors when configuring a
+function. Then, for example if a gadget device is not capable
+of SuperSpeed, the call to ffs_do_descs() for the SS descriptors
+is skipped, resulting in an incorrect offset calculation for
+the vla_ptr when moving on to the OS descriptors that follow.
+This causes ffs_do_os_descs() to fail as it is now looking at
+the SS descriptors' offset within the raw_descs buffer instead.
 
-Since ds is a pointer to usb_endpoint_descriptor, adding
-7 to it ends up going out of bounds (7 * sizeof(struct
-usb_endpoint_descriptor), which is actually 7*9 bytes) past
-the SS descriptor. As a result the maxburst value will be
-read incorrectly, and the UDC driver will also get a garbage
-comp_desc (assuming it uses it).
+_ffs_func_bind() should evaluate the descriptors unconditionally,
+so remove the checks for gadget speed.
 
-Since Felipe wrote, "Eventually, f_fs.c should be converted
-to use config_ep_by_speed() like all other functions, though",
-let's finally do it. This allows the other usb_ep fields to
-be properly populated, such as maxpacket and mult. It also
-eliminates the awkward speed-based descriptor lookup since
-config_ep_by_speed() does that already using the ones found
-in struct usb_function.
-
-Fixes: 2bfa0719ac2a ("usb: gadget: function: f_fs: pass companion descriptor along")
+Fixes: f0175ab51993 ("usb: gadget: f_fs: OS descriptors support")
 Cc: stable@vger.kernel.org
+Co-Developed-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Mayank Rana <mrana@codeaurora.org>
 Signed-off-by: Jack Pham <jackp@codeaurora.org>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_fs.c |   38 ++++++-------------------------------
- 1 file changed, 7 insertions(+), 31 deletions(-)
+ drivers/usb/gadget/function/f_fs.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 --- a/drivers/usb/gadget/function/f_fs.c
 +++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1852,44 +1852,20 @@ static int ffs_func_eps_enable(struct ff
+@@ -2976,10 +2976,8 @@ static int _ffs_func_bind(struct usb_con
+ 	struct ffs_data *ffs = func->ffs;
  
- 	spin_lock_irqsave(&func->ffs->eps_lock, flags);
- 	while(count--) {
--		struct usb_endpoint_descriptor *ds;
--		struct usb_ss_ep_comp_descriptor *comp_desc = NULL;
--		int needs_comp_desc = false;
--		int desc_idx;
--
--		if (ffs->gadget->speed == USB_SPEED_SUPER) {
--			desc_idx = 2;
--			needs_comp_desc = true;
--		} else if (ffs->gadget->speed == USB_SPEED_HIGH)
--			desc_idx = 1;
--		else
--			desc_idx = 0;
--
--		/* fall-back to lower speed if desc missing for current speed */
--		do {
--			ds = ep->descs[desc_idx];
--		} while (!ds && --desc_idx >= 0);
--
--		if (!ds) {
--			ret = -EINVAL;
--			break;
--		}
--
- 		ep->ep->driver_data = ep;
--		ep->ep->desc = ds;
+ 	const int full = !!func->ffs->fs_descs_count;
+-	const int high = gadget_is_dualspeed(func->gadget) &&
+-		func->ffs->hs_descs_count;
+-	const int super = gadget_is_superspeed(func->gadget) &&
+-		func->ffs->ss_descs_count;
++	const int high = !!func->ffs->hs_descs_count;
++	const int super = !!func->ffs->ss_descs_count;
  
--		if (needs_comp_desc) {
--			comp_desc = (struct usb_ss_ep_comp_descriptor *)(ds +
--					USB_DT_ENDPOINT_SIZE);
--			ep->ep->maxburst = comp_desc->bMaxBurst + 1;
--			ep->ep->comp_desc = comp_desc;
-+		ret = config_ep_by_speed(func->gadget, &func->function, ep->ep);
-+		if (ret) {
-+			pr_err("%s: config_ep_by_speed(%s) returned %d\n",
-+					__func__, ep->ep->name, ret);
-+			break;
- 		}
- 
- 		ret = usb_ep_enable(ep->ep);
- 		if (likely(!ret)) {
- 			epfile->ep = ep;
--			epfile->in = usb_endpoint_dir_in(ds);
--			epfile->isoc = usb_endpoint_xfer_isoc(ds);
-+			epfile->in = usb_endpoint_dir_in(ep->ep->desc);
-+			epfile->isoc = usb_endpoint_xfer_isoc(ep->ep->desc);
- 		} else {
- 			break;
- 		}
+ 	int fs_len, hs_len, ss_len, ret, i;
+ 	struct ffs_ep *eps_ptr;
