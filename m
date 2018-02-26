@@ -1,279 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeBZOE7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:04:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
+        id S1753256AbeBZOFc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:05:32 -0500
+Received: from foss.arm.com ([217.140.101.70]:50340 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752933AbeBZOE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:04:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7D421719
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 2/2] f2fs: expose extension_list sysfs entry
-Date: Mon, 26 Feb 2018 22:04:13 +0800
-Message-Id: <20180226140413.12939-1-chao@kernel.org>
-X-Mailer: git-send-email 2.14.1.145.gb3622a4ee
+        id S1752587AbeBZOFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:05:30 -0500
+Date: Mon, 26 Feb 2018 14:05:23 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: srinivas.kandagatla@linaro.org
+Cc: stanimir.varbanov@linaro.org, svarbanov@mm-sol.com,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: qcom: add missing supplies required for msm8996
+Message-ID: <20180226140523.GA23806@e107981-ln.cambridge.arm.com>
+References: <20180215132248.5572-1-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215132248.5572-1-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Thu, Feb 15, 2018 at 01:22:48PM +0000, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch adds supplies that are required for msm8996. vdda
+> is analog supply that go in to controller, and vddpe_3v3 is
+> supply to PCIe endpoint.
+> 
+> Without these supplies PCIe endpoints which require power supplies are
+> not enumerated at all, as there is no one to power it up.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> changes since v2:
+> 	Add back empty line suggested by Stan
+> 	use ARRAY_SIZE
+> 
+>  .../devicetree/bindings/pci/qcom,pcie.txt          |  4 ++++
+>  drivers/pci/dwc/pcie-qcom.c                        | 23 +++++++++++++++++++++-
 
-This patch adds a sysfs entry 'extension_list' to support
-query/add/del item in extension list.
+Applied to pci/dwc for v4.17, thanks.
 
-Query:
-cat /sys/fs/f2fs/<device>/extension_list
+Lorenzo
 
-Add:
-echo 'extension' > /sys/fs/f2fs/<device>/extension_list
-
-Del:
-echo '!extension' > /sys/fs/f2fs/<device>/extension_list
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- add document of extension_list sysfs entry.
- Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++
- fs/f2fs/f2fs.h                          |  4 +++-
- fs/f2fs/file.c                          |  4 ++--
- fs/f2fs/namei.c                         | 42 ++++++++++++++++++++++++++++++---
- fs/f2fs/super.c                         |  2 +-
- fs/f2fs/sysfs.c                         | 40 +++++++++++++++++++++++++++++++
- include/linux/f2fs_fs.h                 |  3 ++-
- 7 files changed, 96 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index d870b5514d15..7fa84e349ad9 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -192,3 +192,12 @@ Date:		November 2017
- Contact:	"Sheng Yong" <shengyong1@huawei.com>
- Description:
- 		 Controls readahead inode block in readdir.
-+
-+What:		/sys/fs/f2fs/<disk>/extension_list
-+Date:		Feburary 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Description:
-+		 Used to control configure extension list:
-+		 - Query: cat /sys/fs/f2fs/<disk>/extension_list
-+		 - Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0332c44a1d93..030436be2a35 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1048,7 +1048,7 @@ struct f2fs_sb_info {
- 	struct super_block *sb;			/* pointer to VFS super block */
- 	struct proc_dir_entry *s_proc;		/* proc entry */
- 	struct f2fs_super_block *raw_super;	/* raw super block pointer */
--	struct mutex sb_lock;			/* lock for raw super block */
-+	struct rw_semaphore sb_lock;		/* lock for raw super block */
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
- 
-@@ -2612,6 +2612,8 @@ void handle_failed_inode(struct inode *inode);
- /*
-  * namei.c
-  */
-+int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
-+								bool set);
- struct dentry *f2fs_get_parent(struct dentry *child);
- 
- /*
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c355e4435b08..b2ff7146cf10 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1966,7 +1966,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
- 	if (err)
- 		return err;
- 
--	mutex_lock(&sbi->sb_lock);
-+	down_write(&sbi->sb_lock);
- 
- 	if (uuid_is_nonzero(sbi->raw_super->encrypt_pw_salt))
- 		goto got_it;
-@@ -1985,7 +1985,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
- 									16))
- 		err = -EFAULT;
- out_err:
--	mutex_unlock(&sbi->sb_lock);
-+	up_write(&sbi->sb_lock);
- 	mnt_drop_write_file(filp);
- 	return err;
- }
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index c4c94c7e9f4f..fa8e5c06ba39 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -171,16 +171,52 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
- static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
- 		const unsigned char *name)
- {
--	int i;
--	__u8 (*extlist)[8] = sbi->raw_super->extension_list;
-+	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
-+	int i, count;
-+
-+	down_read(&sbi->sb_lock);
-+
-+	count = le32_to_cpu(sbi->raw_super->extension_count);
- 
--	int count = le32_to_cpu(sbi->raw_super->extension_count);
- 	for (i = 0; i < count; i++) {
- 		if (is_multimedia_file(name, extlist[i])) {
- 			file_set_cold(inode);
- 			break;
- 		}
- 	}
-+
-+	up_read(&sbi->sb_lock);
-+}
-+
-+int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
-+{
-+	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
-+	int count = le32_to_cpu(sbi->raw_super->extension_count);
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (strcmp(name, extlist[i]))
-+			continue;
-+
-+		if (set)
-+			return -EINVAL;
-+
-+		memcpy(extlist[i], extlist[i + 1],
-+				F2FS_EXTENSION_LEN * (count - i - 1));
-+		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
-+		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
-+		return 0;
-+	}
-+
-+	if (!set)
-+		return -EINVAL;
-+
-+	if (count == F2FS_MAX_EXTENSION)
-+		return -EINVAL;
-+
-+	strncpy(extlist[count], name, strlen(name));
-+	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
-+	return 0;
- }
- 
- static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1b49ad477dd9..9b17355434f6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2233,7 +2233,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->dirty_device = 0;
- 	spin_lock_init(&sbi->dev_lock);
- 
--	mutex_init(&sbi->sb_lock);
-+	init_rwsem(&sbi->sb_lock);
- }
- 
- static int init_percpu_info(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 374ee5c82f94..d27b28e602a6 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -136,6 +136,18 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	if (!ptr)
- 		return -EINVAL;
- 
-+	if (!strcmp(a->attr.name, "extension_list")) {
-+		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
-+					sbi->raw_super->extension_list;
-+		int count = le32_to_cpu(sbi->raw_super->extension_count);
-+		int len = 0, i;
-+
-+		for (i = 0; i < count; i++)
-+			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
-+								extlist[i]);
-+		return len;
-+	}
-+
- 	ui = (unsigned int *)(ptr + a->offset);
- 
- 	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
-@@ -154,6 +166,32 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 	if (!ptr)
- 		return -EINVAL;
- 
-+	if (!strcmp(a->attr.name, "extension_list")) {
-+		const char *name = strim((char *)buf);
-+		bool set = true;
-+
-+		if (name[0] == '!') {
-+			name++;
-+			set = false;
-+		}
-+
-+		if (strlen(name) >= F2FS_EXTENSION_LEN)
-+			return -EINVAL;
-+
-+		down_write(&sbi->sb_lock);
-+
-+		ret = update_extension_list(sbi, name, set);
-+		if (ret)
-+			goto out;
-+
-+		ret = f2fs_commit_super(sbi, false);
-+		if (ret)
-+			update_extension_list(sbi, name, !set);
-+out:
-+		up_write(&sbi->sb_lock);
-+		return ret ? ret : count;
-+	}
-+
- 	ui = (unsigned int *)(ptr + a->offset);
- 
- 	ret = kstrtoul(skip_spaces(buf), 0, &t);
-@@ -307,6 +345,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_super_block, extension_list, extension_list);
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
-@@ -357,6 +396,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
-+	ATTR_LIST(extension_list),
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	ATTR_LIST(inject_rate),
- 	ATTR_LIST(inject_type),
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index f7f09907e69d..3d03f51282ac 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -21,6 +21,7 @@
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
- #define F2FS_BLKSIZE_BITS		12	/* bits for F2FS_BLKSIZE */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
-+#define F2FS_EXTENSION_LEN		8	/* max size of extension */
- #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) >> F2FS_BLKSIZE_BITS)
- 
- #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
-@@ -102,7 +103,7 @@ struct f2fs_super_block {
- 	__u8 uuid[16];			/* 128-bit uuid for volume */
- 	__le16 volume_name[MAX_VOLUME_NAME];	/* volume name */
- 	__le32 extension_count;		/* # of extensions below */
--	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
-+	__u8 extension_list[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];/* extension array */
- 	__le32 cp_payload;
- 	__u8 version[VERSION_LEN];	/* the kernel version */
- 	__u8 init_version[VERSION_LEN];	/* the initial kernel version */
--- 
-2.14.1.145.gb3622a4ee
+>  2 files changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+> index 3c9d321b3d3b..1fd703bd73e0 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+> @@ -189,6 +189,10 @@
+>  	Value type: <phandle>
+>  	Definition: A phandle to the analog power supply for IC which generates
+>  		    reference clock
+> +- vddpe-3v3-supply:
+> +	Usage: optional
+> +	Value type: <phandle>
+> +	Definition: A phandle to the PCIe endpoint power supply
+>  
+>  - phys:
+>  	Usage: required for apq8084
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index 3e89909f8cb9..e3f20e09a18d 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -102,12 +102,14 @@ struct qcom_pcie_resources_1_0_0 {
+>  	struct regulator *vdda;
+>  };
+>  
+> +#define QCOM_PCIE_2_3_2_MAX_SUPPLY	2
+>  struct qcom_pcie_resources_2_3_2 {
+>  	struct clk *aux_clk;
+>  	struct clk *master_clk;
+>  	struct clk *slave_clk;
+>  	struct clk *cfg_clk;
+>  	struct clk *pipe_clk;
+> +	struct regulator_bulk_data supplies[QCOM_PCIE_2_3_2_MAX_SUPPLY];
+>  };
+>  
+>  struct qcom_pcie_resources_2_4_0 {
+> @@ -521,6 +523,14 @@ static int qcom_pcie_get_resources_2_3_2(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> +	int ret;
+> +
+> +	res->supplies[0].supply = "vdda";
+> +	res->supplies[1].supply = "vddpe-3v3";
+> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(res->supplies),
+> +				      res->supplies);
+> +	if (ret)
+> +		return ret;
+>  
+>  	res->aux_clk = devm_clk_get(dev, "aux");
+>  	if (IS_ERR(res->aux_clk))
+> @@ -550,6 +560,8 @@ static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
+>  	clk_disable_unprepare(res->master_clk);
+>  	clk_disable_unprepare(res->cfg_clk);
+>  	clk_disable_unprepare(res->aux_clk);
+> +
+> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+>  
+>  static void qcom_pcie_post_deinit_2_3_2(struct qcom_pcie *pcie)
+> @@ -567,10 +579,16 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
+>  	u32 val;
+>  	int ret;
+>  
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(res->supplies), res->supplies);
+> +	if (ret < 0) {
+> +		dev_err(dev, "cannot enable regulators\n");
+> +		return ret;
+> +	}
+> +
+>  	ret = clk_prepare_enable(res->aux_clk);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable aux clock\n");
+> -		return ret;
+> +		goto err_aux_clk;
+>  	}
+>  
+>  	ret = clk_prepare_enable(res->cfg_clk);
+> @@ -621,6 +639,9 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
+>  err_cfg_clk:
+>  	clk_disable_unprepare(res->aux_clk);
+>  
+> +err_aux_clk:
+> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.15.1
+> 
