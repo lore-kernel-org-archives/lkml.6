@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtbmnxFiKKBs3Z8vFEC00H+NLNmjWdKGlr1Cs2mqIEBUJEc8oC4On0fiB7yCxvkDThEqFAt
-ARC-Seal: i=1; a=rsa-sha256; t=1519676472; cv=none;
+X-Google-Smtp-Source: AH8x225Eg9u3YheuWXKNjXWwu+c4SF7oknUhKckMCXGn6MIETrlal8YnnUNFSckPZlCIjnuJTLxl
+ARC-Seal: i=1; a=rsa-sha256; t=1519676469; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZAQzRahuKwloI3AdzvkDUxbDAZaR7NYA0WmggLPuIfe89H6eJetpMX2nCS6lERyfPu
-         QdLen3FreMVYBl6p+ceiv+jYbAdS/weZrgTjCE59NKUd1/zj5IqgIj6TaFvyXaYE0cnw
-         j0Xfp9noAo+/YuruR+hEpy9ktdaMmjH6U5RimGCVr8lYjZ4njZThgNfgSC7wWNnTkrNf
-         OjrVa5XL9pRy+eu/cRkgS2qrzBaeF6n6vFZRoT9m+n9s6wuFX91XXMcduHnA5vuU7kja
-         pW3BxuxiPORnjUiQ83XsD6V/PGxb0KGZAwRFAT3adfS9uLykwuAoRXMXk7NfshqzwJkU
-         PrwA==
+        b=K6Jltko2+8s2Up8BOBWEeDIklmdVuTHStG/77adTJwwPnJkFGoBBhfElyDSmYh5vxV
+         7vePhiKboK0fcNqS8z9iXhXgDihgsgdvT16zfc5pUjd4E1xw9Kpg1cCowhGzumhdoZOj
+         F2xGSC5ycCtfXYKOsHr0NknKRmU0geb6uOjmtddWzSGKEUee3SBzGDFHvZyjO2susMde
+         BPFXcWwrz567U/+4l2rJqYneD6ovDSZmSHx4VQa2ZAwuNewVa92qh1fBHHHccVfcO4ZG
+         +jCOnzCYAJHZW2mSPyK8l+hb9Uz4ov/+001a1L3l6+cGXFCVwNpKvStx4WAm8tKrUenw
+         b3Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6tcQQ2MfE9B+kgeV934x4Z+DcG3eltidJVXlCVgQLbE=;
-        b=SYMUrYXIPkEOKBeQeUiTA1ulNTB2MzXobVXYmOm+R0O2m4RdsBta4tmKX0Gw5iBe3Y
-         5oAk5Cpx68Sj9EAYIfSpe6rzxfqqodM5ZZfv2OgEmSQZcIWQFhCq2I9OuzjDz0mp72Pt
-         QyF+NbPwZa8HKq+CSsxttDzq1BmhliUwwBfwMYUnRQ+xnLGHLLIGRq+EHUGni037HCsn
-         INrXi8Eog5aQU7QjGxihI3pqMcOqLKAsDpUBOb3cCXbLuDgcgZg1hQx263Sfx9Nih1Qo
-         jOPEh4jAD4e1yxy2AWss+3o3f80Z/+1/NXF3NfbWk/PYd6VvkFV2xrTaYsNrRcPE53PT
-         I0yw==
+        bh=iHRYq8dWA+CkdqJQdqFPBiJK/HQMGpRbc9r8z3O+v9E=;
+        b=NLXwZ1BKuSaqqIlG6iyId+XIFDwraNxtld3l19pzvhSib/F+owRBaNGo2jbNveGzYl
+         CMYOSvYnk47pvkz5nvwtJ1q6rbrEZ4wEa60+/KU9A00lPfBoc8XXZNJqkdtyoESkgvRC
+         37DpIy2VmN2qT4Aeq2T3t6SAK9zlqKgC0eH++0fiPxobhQ8o7YMX6B55KR+Q2orZ3Nw1
+         QrDp8019EUzHuLWmN4zmYcRWHm1NaWzEmYWKkxyPt9Eo0z0fU4HY9q6Jt0WRG8PVPn+r
+         EbkzL+OFqhGVPMyB6HdAIu6sI3D/CzQjgxjELjOHn11CpDHmbSaPdt1vNA0yd3Afwhyk
+         Rmcw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,30 +26,25 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jessica Yu <jeyu@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Martin Sebor <msebor@gcc.gnu.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Robert Richter <rric@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	oprofile-list@lists.sf.net,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 10/39] x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-Date: Mon, 26 Feb 2018 21:20:31 +0100
-Message-Id: <20180226201644.124112415@linuxfoundation.org>
+	Xin Long <lucien.xin@gmail.com>,
+	syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Krzysztof Piotr Oledzki <ole@ans.pl>
+Subject: [PATCH 4.9 01/39] netfilter: drop outermost socket lock in getsockopt()
+Date: Mon, 26 Feb 2018 21:20:22 +0100
+Message-Id: <20180226201643.722949192@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495973889701786?=
-X-GMAIL-MSGID: =?utf-8?q?1593496277072936428?=
+X-GMAIL-THRID: =?utf-8?q?1593495940069905483?=
+X-GMAIL-MSGID: =?utf-8?q?1593496273886944619?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,66 +52,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
+commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
 
-GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
-data from CPU 0 to all other CPUs, which when building a non-SMP
-kernel turns into a memcpy() with identical source and destination
-pointers:
+The Syzbot reported a possible deadlock in the netfilter area caused by
+rtnl lock, xt lock and socket lock being acquired with a different order
+on different code paths, leading to the following backtrace:
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
 
- arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
- arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          per_cpu(cpu_msrs, 0).multiplex,
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          sizeof(struct op_msr) * model->num_virt_counters);
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
- arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
- arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+======================================================
+WARNING: possible circular locking dependency detected
+4.15.0+ #301 Not tainted
+------------------------------------------------------
+syzkaller233489/4179 is trying to acquire lock:
+  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
 
-I have analyzed a number of such warnings now: some are valid and the
-GCC warning is welcome. Others turned out to be false-positives, and
-GCC was changed to not warn about those any more. This is a corner case
-that is a false-positive but the GCC developers feel it's better to keep
-warning about it.
+but task is already holding lock:
+  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
+xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
 
-In this case, it seems best to work around it by telling GCC
-a little more clearly that this code path is never hit with
-an IS_ENABLED() configuration check.
+which lock already depends on the new lock.
+===
 
-Cc:stable as we also want old kernels to build cleanly with GCC-8.
+Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), we already acquire the socket lock in
+the innermost scope, where needed. In such commit I forgot to remove
+the outer-most socket lock from the getsockopt() path, this commit
+addresses the issues dropping it now.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Sebor <msebor@gcc.gnu.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: oprofile-list@lists.sf.net
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+v1 -> v2: fix bad subj, added relavant 'fixes' tag
+
+Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
+Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
+Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
+Suggested-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/oprofile/nmi_int.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_sockglue.c   |    7 +------
+ net/ipv6/ipv6_sockglue.c |   10 ++--------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
---- a/arch/x86/oprofile/nmi_int.c
-+++ b/arch/x86/oprofile/nmi_int.c
-@@ -472,7 +472,7 @@ static int nmi_setup(void)
- 		goto fail;
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1552,10 +1552,7 @@ int ip_getsockopt(struct sock *sk, int l
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
  
- 	for_each_possible_cpu(cpu) {
--		if (!cpu)
-+		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
- 			continue;
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+@@ -1587,9 +1584,7 @@ int compat_ip_getsockopt(struct sock *sk
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
  
- 		memcpy(per_cpu(cpu_msrs, cpu).counters,
+-		lock_sock(sk);
+ 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
+-		release_sock(sk);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1343,10 +1343,7 @@ int ipv6_getsockopt(struct sock *sk, int
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET6, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+@@ -1385,10 +1382,7 @@ int compat_ipv6_getsockopt(struct sock *
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = compat_nf_getsockopt(sk, PF_INET6,
+-					   optname, optval, &len);
+-		release_sock(sk);
++		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
