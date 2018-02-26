@@ -1,80 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754082AbeBZUc7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 15:32:59 -0500
-Received: from sauhun.de ([88.99.104.3]:38479 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753760AbeBZUc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 15:32:57 -0500
-Date: Mon, 26 Feb 2018 21:32:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Steven Honeyman <stevenhoneyman@gmail.com>,
-        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mario Limonciello <Mario_Limonciello@dell.com>,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-Message-ID: <20180226203255.lnnzipipjz5l2itz@ninjato>
-References: <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
- <20180128144509.pobnj7cayc4psgrj@pali>
- <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
- <20180131120348.azy25aqvn5wrdkeh@pali>
- <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
- <20180212153012.vffvjmz26ifyxbj5@pali>
- <CAHp75VfF+qwCXcr3yuayE-Z+UG9wuMOKfGzLhdyPk79daEi9gQ@mail.gmail.com>
- <20180213150004.5d2v7y7wwuure4io@pali>
- <CAHp75VfxgbFiDxyrqyMRE8s85L1_EzkVvrA1NGYA5_su=5oGVQ@mail.gmail.com>
- <20180213165023.xmzovx7fd3gdljxw@pali>
+        id S1754089AbeBZUdI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 15:33:08 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38356 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753831AbeBZUdF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 15:33:05 -0500
+X-Google-Smtp-Source: AH8x2258B5t0JIB/Y4rEWziM7x3pk+pyDHCXD6rMrzsDGaKb9ZNiQQ3jG5zNGmGt7dcVif1eTXbDOyalJBZC/arkOm4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zswupbexvwztthqj"
-Content-Disposition: inline
-In-Reply-To: <20180213165023.xmzovx7fd3gdljxw@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180223121456.GZ25201@hirez.programming.kicks-ass.net>
+References: <CAM_iQpXvuYKn94WjJ9nSjzhk8DzYAvDmdgxsi6cc9CdBfkdTnw@mail.gmail.com>
+ <20180223121456.GZ25201@hirez.programming.kicks-ass.net>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Mon, 26 Feb 2018 12:32:44 -0800
+Message-ID: <CAM_iQpUn2Dw=RLXDwEykvhiQDGBfkRVgcb39UN91VAmbk3=i0w@mail.gmail.com>
+Subject: Re: Long standing kernel warning: perfevents: irq loop stuck!
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>, "Liang, Kan" <kan.liang@intel.com>,
+        jolsa@redhat.com, bigeasy@linutronix.de,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 23, 2018 at 4:14 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Feb 22, 2018 at 08:59:47PM -0800, Cong Wang wrote:
+>> Hello,
+>>
+>> We keep seeing the following kernel warning from 3.10 kernel to 4.9
+>> kernel, it exists for a rather long time.
+>>
+>> Google search shows there was a patch from Ingo:
+>> https://patchwork.kernel.org/patch/6308681/
+>>
+>> but it doesn't look like ever merged into mainline...
+>>
+>> I don't know how it is triggered. Please let me know if any other
+>> information I can provide.
+>
+> What exact workload are you using to reproduce?
 
---zswupbexvwztthqj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have no idea how to reproduce it. It has been reported so many times
+from so many different machines via ABRT.
 
 
-> I'm not maintainer of i2c-i801.ko, Jean Delvare & Wolfram Sang are.
-> Therefore instructing future contributors would be up to them.
+>
+> And I'm taking that the patch 'works' for you?
 
-This is really Jean's realm.
+I don't try it yet, because according to Ingo himself, that patch
+is not complete:
+
+"
+Also, I'd apply the quirk not just to Haswell, but Nehalem, Westmere
+and Ivy Bridge as well, I have seen it as early as on a Nehalem
+prototype box.
+"
+
+I can try it if that patch makes sense for you and if you can make it
+complete. ;)
 
 
---zswupbexvwztthqj
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Given the HSD143 errata and its possible relevance, have you tried
+> changing the magic number to 32, does it then still fix things?
+>
+> No real objection to the patch as such, it just needs a coherent comment
+> and a tested-by tag I think.
 
------BEGIN PGP SIGNATURE-----
+I will give it a try. Please let me know if you have an updated
+version of that patch I can apply on recent kernel (4.9), since it was
+made almost 3 years ago, otherwise I can apply it manually.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUbvcACgkQFA3kzBSg
-KbbdcA//TTyCuZh33VimGE+9TaemKkLPnBtK0Igsd48ULTWn076k7Ap/nzVcCaRf
-coMlZXkLbWkAkDmpoJ9t6YvIxXzxrils7QIcizjO4jcXNqgJbSyy1ejSqqRZcuJb
-p/9KcKZtDHY+EsgdO4meJohoRKUHxCp5tQ0p7Drlq+cFyVMYR4vvvh9gTDeTpH2p
-c6qOKQqvww6iY+9lqr0B4nyiJkQHyeDKsKBlUl/ZeGfFUkSTWo/jxNIik/oZecx8
-KLIiNN9FCcpp3j4UJVBBv70Kcrwq/2RkcfNzeqbqxLehI3jKVueIIt/tG9ZkvBvQ
-pbie3C6QTuQrZgEkEGUcz/ipmmeGQ5jhLXksdoT/S74zTdBpeBpDP0GLa16pq9QQ
-yg0oNYB6SIzrtWQmtmz8xOuJ1n/VkVgOjLynEDk07+i8C3CNWEn9XK6ORPwopfb8
-MWkz/mhwzEoqKA4hPCY5Pyu0ha+vhc8xs845tNB2S/1ID6JOFbkHboKJFumrGzZu
-lpbJd0keU3caV9IN4AEx+OT9IP9wJCJlfy+HD0dwziTpGgGBLbncBOFW/LqcfGLp
-mgBrkxg6Dmr8qUS522CA2Mc4JaC75Qk5uzbwFEvz0nM8ASBX7U+J1Utn2BWEMraP
-09VnTc37amGcZ3hX3Q/htQBid+fcV2UKQOo9b01XuCR0G7zIrgU=
-=1eH4
------END PGP SIGNATURE-----
+It will take some time due to the deployment process of a new kernel.
 
---zswupbexvwztthqj--
+Thanks!
