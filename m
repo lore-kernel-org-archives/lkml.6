@@ -1,80 +1,91 @@
-Return-Path: <kernel-hardening-return-11952-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsb57qwJCkAbnwujIQofgdjI+jgMitWFU6iLUHP/ZxEe0ZwS6pmXRX4yiEaMv9nnCZcUjWd
-ARC-Seal: i=1; a=rsa-sha256; t=1519607418; cv=none;
+Return-Path: <kernel-hardening-return-11955-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELviOXfLwro/bhLwM2Q6Jvixq8gMYUUFfi58frz0elAVbNKTaBJfjKNwl10MR756pr7u+iE+
+ARC-Seal: i=1; a=rsa-sha256; t=1519610514; cv=none;
         d=google.com; s=arc-20160816;
-        b=vp8zex9m+LIRuigx379eRf2ZD2IBVmuj6eUGw1Em3gyfnlwGqOuFf7P1EyakM2KgpN
-         Bct3DnToqDr2PwfzfGDGetNyFXszHHXsdavDhpnYHtKhW9XUlrcpw1BsMgUe18AEQKXI
-         zB6PshffCGGQPQzE9ZTNq6Y0jueIC58by5ePpY3CvZvgK3QvpqAjEFteFBEiuqEk4xer
-         XQ2AIpfjPFppV08pVuMFyTxnpYEOSFHnM9g3XYSP7sa4LSyIMCMrFLaK0HmdZViUkWrU
-         XjFkMMB4GqW8bTdWvWmuohaYSNB+r1GnUeODmhUyubNal4aRoQixdKgIcIyQEOLvgWmJ
-         sEaA==
+        b=yZlQ2o2136rQfxRm32bdPB5M397RUutmAhr5A64WYA260PXekS5Awy6RxLy4UTaRuy
+         BVWR8PF8t+dj6Doylo5+bh3DF6dl7DW1YHgowSWNTuN5U4G5rj637kqh/DUbS7/cinlc
+         F2RWf/Imo8JBqIE01kzi9kmmOF9yQb0HgPxsHMNr4VaoCrGCp2v21wnJnnJH6eQs4hJ1
+         /UsKb7y4AeDrv5I0GPagZSUEw9FmXVZv1H/6U2hTRtiufK7b0zEnUxroB5JH5SaB3t5w
+         5L9RL+dS5+qcF+XrOXo0ofhFLyPjDtUpcljib2V/FMyR0lZ3s/jddupULOeLNYBZ4Kwc
+         QN5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=DcQtHhR2lftXnHFobrnIvXK6iqZpGIiFH8eIUGsLVjc=;
-        b=aVKLfPY8ZJpbnxzJxXezhjed/2q93W+eQ+wnxSj4H1muaHKCM3xcS7Lbw1eDeRaObR
-         rXXH/26WcZkmOKyqdAxfaMLbt26SQJrcnEesWmKiZR8uJf5c+wo9D+QmN4gTgITNykR4
-         IX7ySfhE4VAvNsoa5szBX5kJ66mEK9rADTdDhVz2XcCj+PT1H06RWY+cbnE6xy6YDEvY
-         MktrZZOmc2O08ZkXwMSOCJ+bS0bS1Ir1sQCYOsPoiHKiShXkuCfgA7Vm0+wOVllZ/XCZ
-         UIaK4Fq0oKGRWTLMgo2OYQzHf64jzzfMQJxVGWUsrivjpVJ0FZ/vBeIZD8WTRW060cTy
-         If3A==
+         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=bn2TvKO69NbKdfqbrQA9wa9T4E5KsVDfameyBqIHyB8=;
+        b=lOyNJAFGqo2UJUDO55M1jk2HGPzwv3QFC/+fbGp0zO99fujOoRNSZx1KQjWsSS6Buo
+         YE6nyUk6JZxUuHnRZ9N9OXbTL5hjINI+v7kTH7V9Ew/dCs4Do2smkcOw28RMeuNyfQKK
+         TwnK4UFy1XOLscOS8Hh4Hch1w6dhx97tx0uiLbkYtT3eX7eeB5v5GYZd8trz1F2cyZgD
+         e3+Q3XDOqjPHtF4JHYSni4es809begSP/tgRet4G7GD7U4+4AgGx7YJUdoGwk/5Q6Y3W
+         qK1MGoYtXqC3Z5S7f/n+RGXYDZDLpn+z3Wgm1kqn2Hz8H2aYicRecL6+OVSfhbD7V7SV
+         GSTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=YN2jvr3L;
-       spf=pass (google.com: domain of kernel-hardening-return-11952-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11952-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=DfAol2/j;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BYXR0TMZ;
+       spf=pass (google.com: domain of kernel-hardening-return-11955-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11955-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=YN2jvr3L;
-       spf=pass (google.com: domain of kernel-hardening-return-11952-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11952-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=DfAol2/j;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BYXR0TMZ;
+       spf=pass (google.com: domain of kernel-hardening-return-11955-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11955-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Sun, 25 Feb 2018 18:09:53 -0700
-From: Tycho Andersen <tycho@tycho.ws>
-To: "Tobin C. Harding" <me@tobin.cc>
+X-ME-Sender: <xms:f2qTWrsF1T0XC24_qZM81lyGyYrlXlbr6ezfB0x_0Jh9m9R_PpdiHQ>
+Date: Mon, 26 Feb 2018 13:01:32 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Tycho Andersen <tycho@tycho.ws>
 Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
 	LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 4/4] leaking_addresses: add scan_once array
-Message-ID: <20180226010953.37z3sz3rwcnj426k@cisco>
+Message-ID: <20180226020132.GF2808@eros>
 References: <1519008649-15782-1-git-send-email-me@tobin.cc>
  <1519008649-15782-5-git-send-email-me@tobin.cc>
+ <20180226010953.37z3sz3rwcnj426k@cisco>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519008649-15782-5-git-send-email-me@tobin.cc>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180226010953.37z3sz3rwcnj426k@cisco>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592796084722705424?=
-X-GMAIL-MSGID: =?utf-8?q?1593423869039911845?=
+X-GMAIL-MSGID: =?utf-8?q?1593427114552099653?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Tobin,
+On Sun, Feb 25, 2018 at 06:09:53PM -0700, Tycho Andersen wrote:
+> Hi Tobin,
+> 
+> On Mon, Feb 19, 2018 at 01:50:49PM +1100, Tobin C. Harding wrote:
+> > +sub already_scanned
+> > +{
+> > +	my ($filename) = @_;
+> > +	state %seen;
+> > +
+> > +	foreach (@once_only) {
+> > +		if (/^$filename$/) {
+> > +			if ($seen{$_} == 1) {
+> 
+> This should be something like,
+> 
+> if (($seen{$_} //= 0) == 1) {
+> 
+> otherwise I get a bunch of uninitialized warnings,
+> 
+> Use of uninitialized value in pattern match (m//) at /usr/share/perl/5.26/Math/BigInt.pm line 1199.
+>     Math::BigInt::bcmp(Math::BigInt=HASH(0x55dc2f7e4580), undef) called at /usr/share/perl/5.26/Math/BigInt.pm line 1257
+>     Math::BigInt::beq(Math::BigInt=HASH(0x55dc2f7e4580), undef) called at /usr/share/perl/5.26/Math/BigInt.pm line 105
+>     Math::BigInt::__ANON__(Math::BigInt=HASH(0x55dc2f7e4580), undef, 1) called at ./leaking_addresses.pl line 422
+>     main::already_scanned("smaps") called at ./leaking_addresses.pl line 448
+>     main::skip("/proc/1/smaps") called at ./leaking_addresses.pl line 509
+>     main::walk("/proc", "/sys") called at ./leaking_addresses.pl line 159
+> 
+> Tycho
 
-On Mon, Feb 19, 2018 at 01:50:49PM +1100, Tobin C. Harding wrote:
-> +sub already_scanned
-> +{
-> +	my ($filename) = @_;
-> +	state %seen;
-> +
-> +	foreach (@once_only) {
-> +		if (/^$filename$/) {
-> +			if ($seen{$_} == 1) {
+Cool, thanks.  Will fix and re-spin.
 
-This should be something like,
 
-if (($seen{$_} //= 0) == 1) {
-
-otherwise I get a bunch of uninitialized warnings,
-
-Use of uninitialized value in pattern match (m//) at /usr/share/perl/5.26/Math/BigInt.pm line 1199.
-    Math::BigInt::bcmp(Math::BigInt=HASH(0x55dc2f7e4580), undef) called at /usr/share/perl/5.26/Math/BigInt.pm line 1257
-    Math::BigInt::beq(Math::BigInt=HASH(0x55dc2f7e4580), undef) called at /usr/share/perl/5.26/Math/BigInt.pm line 105
-    Math::BigInt::__ANON__(Math::BigInt=HASH(0x55dc2f7e4580), undef, 1) called at ./leaking_addresses.pl line 422
-    main::already_scanned("smaps") called at ./leaking_addresses.pl line 448
-    main::skip("/proc/1/smaps") called at ./leaking_addresses.pl line 509
-    main::walk("/proc", "/sys") called at ./leaking_addresses.pl line 159
-
-Tycho
+	Tobin
