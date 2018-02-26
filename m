@@ -1,67 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752083AbeBZQ0L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:26:11 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:38320 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751813AbeBZQ0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:26:09 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-Date: Mon, 26 Feb 2018 17:16:44 +0100
-Message-ID: <2676311.2IEVhXnSIE@jernej-laptop>
-In-Reply-To: <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
+        id S1752045AbeBZQ2i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:28:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58742 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751334AbeBZQ2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:28:36 -0500
+Date: Mon, 26 Feb 2018 17:28:32 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
+Message-ID: <20180226172832.7bf82336@endymion>
+In-Reply-To: <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+        <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julian,
+Hi Andy,
 
-Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby napisal(a):
-> Hi Jernej,
+On Thu, 22 Feb 2018 14:59:21 +0200, Andy Shevchenko wrote:
+> ...instead of open coding its functionality.
 > 
-> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Enable HDMI output on all boards which have HDMI connector.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts        
-> >   | 25 ++++++++++++++++++++++
-> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts         
-> >   | 25 ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts  
-> >         | 25 ++++++++++++++++++++++
-> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts      
-> >   | 24 +++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts  
-> >        | 25 ++++++++++++++++++++++ 8 files changed, 199 insertions(+)
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  arch/x86/pci/acpi.c            | 8 ++------
+>  arch/x86/pci/direct.c          | 5 ++---
+>  arch/x86/pci/mmconfig-shared.c | 9 ++-------
+>  3 files changed, 6 insertions(+), 16 deletions(-)
 > 
-> As I understand it, the H2+ is just a slightly trimmed down H3. In
-> terms of HDMI support, the difference is that the H2+ can't output 4k.
-> If this code is compatible with the H2+, could you please add the
-> necessary bits and pieces to the h2-plus DTSs too?
+> diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
+> index 7df49c40665e..00e60de30328 100644
+> --- a/arch/x86/pci/acpi.c
+> +++ b/arch/x86/pci/acpi.c
+> @@ -140,12 +140,8 @@ static const struct dmi_system_id pci_crs_quirks[] __initconst = {
+>  
+>  void __init pci_acpi_crs_quirks(void)
+>  {
+> -	int year;
+> -
+> -	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year < 2008) {
+> -		if (iomem_resource.end <= 0xffffffff)
+> -			pci_use_crs = false;
+> -	}
+> +	if ((dmi_get_bios_year() < 2008) && (iomem_resource.end <= 0xffffffff))
+> +		pci_use_crs = false;
 
-There are only 3 H2+ boards in kernel and none of them has HDMI connector, so 
-there's nothing to do actually. But if such board is added to kernel, it would 
-be trivially add proper nodes, since all H2+ boards include H3 DTSI.
+You are changing the behavior here, when DMI does not provide a BIOS
+date. Beforehand, the test would fail and pci_use_crs would be left
+alone. After your change, dmi_get_bios_year() will return 0, and
+"0 < 2008" is true, so pci_use_crs is set to false.
 
-Best regards,
-Jernej
+I have no opinion on what this driver should do in such case, but I
+certainly wouldn't expect a change of behavior from a "use a helper
+instead of open-coding" kind of patch.
+
+I don't think you can safely assume that the code calling
+dmi_get_bios_year() will always do the right thing when 0 is being
+returned. It's up to the calling code to decide what the default
+behavior should be.
+
+Also there are more parentheses than needed.
+
+>  
+>  	dmi_check_system(pci_crs_quirks);
+>  
+> diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
+> index 2d9503323d10..a51074c55982 100644
+> --- a/arch/x86/pci/direct.c
+> +++ b/arch/x86/pci/direct.c
+> @@ -195,14 +195,13 @@ static const struct pci_raw_ops pci_direct_conf2 = {
+>  static int __init pci_sanity_check(const struct pci_raw_ops *o)
+>  {
+>  	u32 x = 0;
+> -	int year, devfn;
+> +	int devfn;
+>  
+>  	if (pci_probe & PCI_NO_CHECKS)
+>  		return 1;
+>  	/* Assume Type 1 works for newer systems.
+>  	   This handles machines that don't have anything on PCI Bus 0. */
+> -	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
+> -	if (year >= 2001)
+> +	if (dmi_get_bios_year() >= 2001)
+>  		return 1;
+>  
+>  	for (devfn = 0; devfn < 0x100; devfn++) {
+> diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+> index 96684d0adcf9..0b40482578b8 100644
+> --- a/arch/x86/pci/mmconfig-shared.c
+> +++ b/arch/x86/pci/mmconfig-shared.c
+> @@ -547,19 +547,14 @@ static void __init pci_mmcfg_reject_broken(int early)
+>  static int __init acpi_mcfg_check_entry(struct acpi_table_mcfg *mcfg,
+>  					struct acpi_mcfg_allocation *cfg)
+>  {
+> -	int year;
+> -
+>  	if (cfg->address < 0xFFFFFFFF)
+>  		return 0;
+>  
+>  	if (!strncmp(mcfg->header.oem_id, "SGI", 3))
+>  		return 0;
+>  
+> -	if (mcfg->header.revision >= 1) {
+> -		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
+> -		    year >= 2010)
+> -			return 0;
+> -	}
+> +	if ((mcfg->header.revision >= 1) && (dmi_get_bios_year() >= 2010))
+> +		return 0;
+
+Here too some parentheses are not needed.
+
+>  
+>  	pr_err(PREFIX "MCFG region for %04x [bus %02x-%02x] at %#llx "
+>  	       "is above 4GB, ignored\n", cfg->pci_segment,
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
