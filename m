@@ -1,69 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeBZTqv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 14:46:51 -0500
-Received: from mga02.intel.com ([134.134.136.20]:58877 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751465AbeBZTqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 14:46:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="34291662"
-Date: Mon, 26 Feb 2018 21:46:45 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Jeremy McNicoll <jmcnicol@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
-Message-ID: <20180226194645.GA3774@lahna.fi.intel.com>
-References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
- <20180222231736.GA628@mini-rhel.redhat.com>
- <20180226102029.GG27191@lahna.fi.intel.com>
- <20180226133802.GR27191@lahna.fi.intel.com>
- <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751544AbeBZTtJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 14:49:09 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44876 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751340AbeBZTtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 14:49:07 -0500
+Message-ID: <1519674546.3941.2.camel@HansenPartnership.com>
+Subject: Re: [GIT PULL] tpmdd fixes for 4.16
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date: Mon, 26 Feb 2018 11:49:06 -0800
+In-Reply-To: <alpine.LRH.2.21.1802270552260.29062@namei.org>
+References: <20180226124144.GA8675@linux.intel.com>
+         <alpine.LRH.2.21.1802270552260.29062@namei.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 11:28:16AM -0800, Jeremy McNicoll wrote:
-> On 2018-02-26 5:38 AM, Mika Westerberg wrote:
-> > On Mon, Feb 26, 2018 at 12:20:29PM +0200, Mika Westerberg wrote:
-> > > On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
-> > > > > +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
-> > > > > +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
-> > > > > +			link, depth);
-> > > > 
-> > > > This kind of condition sounds more like an error instead of info.
-> > > > Please bump this up to tb_WARN/tb_warn ideally tb_err().
-> > > 
-> > > No, this is not an error.
+On Tue, 2018-02-27 at 05:52 +1100, James Morris wrote:
+> On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
+> 
 > > 
-> > To be more clear, it is totally fine to have the firmware to reject some
-> > devices. For example in case of the new usbonly security level the
-> > firmware rejects other devices but the first.
+> > Hi
+> > 
+> > Here is a batch of critical fixes for 4.16.
 > > 
 > 
-> Ok. Is that kind of information available to the kernel?  What security
-> mode we are in?
-> 
-> ie) if (LINK_REJECTED && !USB_SECURITY)
->        print "Error switch %u was rejected since its not usbonly"
->     endif
-> 
-> I am sure something like that simplified pseudo code above would
-> be somewhat useful to users when debugging.
+> Do you have CVEs for these?  If so, please include them in the commit
+> messages.
 
-That's why it is on info level so it goes to dmesg but does not scare
-the user :-)
+Heh, well, I suppose from this everyone now knows they're fixes for
+vulnerabilities.  The CVE doesn't usually show up until after the
+embargo is released, so we don't have one yet.
+
+James
