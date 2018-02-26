@@ -1,325 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752055AbeBZQWs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:22:48 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56236 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751550AbeBZQWr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:22:47 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Dave Young <dyoung@redhat.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH 06/11] kexec_file: Split up __kexec_load_puragory
-Date: Mon, 26 Feb 2018 16:16:15 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18022615-0040-0000-0000-00000416F7DC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022615-0041-0000-0000-0000261A19E6
-Message-Id: <20180226151620.20970-7-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260202
+        id S1752092AbeBZQYW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:24:22 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:37657 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751550AbeBZQYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:24:20 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 11/15] drm/sun4i: Add support for H3 HDMI PHY variant
+Date: Mon, 26 Feb 2018 17:24:13 +0100
+Message-ID: <5983773.Yp6r9qpA8a@jernej-laptop>
+In-Reply-To: <20180224214545.3740-12-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-12-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When inspecting __kexec_load_purgatory you find that it has two tasks
+Hi all,
 
-	1) setting up the kexec_buffer for the new kernel and,
-	2) setting up pi->sechdrs for the final load address.
+Dne sobota, 24. februar 2018 ob 22:45:41 CET je Jernej Skrabec napisal(a):
+> While A83T HDMI PHY seems to be just customized Synopsys HDMI PHY, H3
+> HDMI PHY is completely custom PHY.
+> 
+> However, they still have many things in common like clock and reset
+> setup, setting sync polarity and more.
+> 
+> Add support for H3 HDMI PHY variant.
+> 
+> While documentation exists for this PHY variant, it doesn't go in great
+> details. Because of that, almost all settings are copied from BSP linux
+> 4.4. Interestingly, those settings are slightly different to those found
+> in a older BSP with Linux 3.4. For now, no user visible difference was
+> found between them.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/Makefile             |   1 +
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |   6 +
+>  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 263
+> ++++++++++++++++++++++++++++- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c |
+> 130 ++++++++++++++
+>  4 files changed, 397 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+> 
+[...]
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+> b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c new file mode 100644
+> index 000000000000..3c34ec5ff4af
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+> @@ -0,0 +1,130 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "sun8i_dw_hdmi.h"
+> +
+> +struct sun8i_phy_clk {
+> +	struct clk_hw		hw;
+> +	struct sun8i_hdmi_phy	*phy;
+> +};
+> +
+> +static inline struct sun8i_phy_clk *hw_to_phy_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct sun8i_phy_clk, hw);
+> +}
+> +
+> +static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
+> +					struct clk_rate_request *req)
+> +{
+> +	unsigned long rate = req->rate;
+> +	unsigned long best_rate = 0;
+> +	struct clk_hw *parent;
+> +	int best_div = 1;
+> +	int i;
+> +
+> +	parent = clk_hw_get_parent(hw);
+> +
+> +	for (i = 1; i <= 16; i++) {
+> +		unsigned long ideal = rate * i;
+> +		unsigned long rounded;
+> +
+> +		rounded = clk_hw_round_rate(parent, ideal);
+> +
+> +		if (rounded == ideal) {
+> +			best_rate = rounded;
+> +			best_div = i;
+> +			break;
+> +		}
+> +
+> +		if (abs(rate - rounded) < abs(rate - best_rate / best_div)) {
 
-The two tasks are independent of each other. To improve readability split
-up __kexec_load_purgatory into two functions, one for each task, and call
-them directly from kexec_load_purgatory.
+Here is a bug. Above line should be:
+if (abs(rate - rounded / i) < abs(rate - best_rate / best_div)) {
 
-Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
----
- kernel/kexec_file.c | 200 +++++++++++++++++++++++++++-------------------------
- 1 file changed, 103 insertions(+), 97 deletions(-)
+I guess this could solve the issue described in cover letter.
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 80c7f658afc0..d1c3ec8dc6b1 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -649,39 +649,97 @@ static int kexec_calculate_store_digests(struct kimage *image)
- 	return ret;
- }
- 
--/* Actually load purgatory. Lot of code taken from kexec-tools */
--static int __kexec_load_purgatory(struct kimage *image, unsigned long min,
--				  unsigned long max, int top_down)
-+/*
-+ * kexec_purgatory_setup_kbuf - prepare buffer to load purgatory.
-+ * @pi:		Purgatory to be loaded.
-+ * @kbuf:	Buffer to setup.
-+ *
-+ * Allocates the memory needed for the buffer. Caller is responsible to free
-+ * the memory after use.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
-+				      struct kexec_buf *kbuf)
- {
--	struct purgatory_info *pi = &image->purgatory_info;
--	unsigned long align, bss_align, bss_sz, bss_pad;
--	unsigned long entry, load_addr, curr_load_addr, bss_addr, offset;
--	unsigned char *buf_addr, *src;
--	int i, ret = 0, entry_sidx = -1;
--	const Elf_Shdr *sechdrs_c;
--	Elf_Shdr *sechdrs = NULL;
--	struct kexec_buf kbuf = { .image = image, .bufsz = 0, .buf_align = 1,
--				  .buf_min = min, .buf_max = max,
--				  .top_down = top_down };
-+	const Elf_Shdr *sechdrs;
-+	unsigned long bss_align;
-+	unsigned long bss_sz;
-+	unsigned long align;
-+	int i, ret;
- 
--	/*
--	 * sechdrs_c points to section headers in purgatory and are read
--	 * only. No modifications allowed.
--	 */
--	sechdrs_c = (void *)pi->ehdr + pi->ehdr->e_shoff;
-+	sechdrs = (void *)pi->ehdr + pi->ehdr->e_shoff;
-+	bss_align = 1;
-+	bss_sz = 0;
-+
-+	for (i = 0; i < pi->ehdr->e_shnum; i++) {
-+		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
-+			continue;
-+
-+		align = sechdrs[i].sh_addralign;
-+		if (sechdrs[i].sh_type != SHT_NOBITS) {
-+			if (kbuf->buf_align < align)
-+				kbuf->buf_align = align;
-+			kbuf->bufsz = ALIGN(kbuf->bufsz, align);
-+			kbuf->bufsz += sechdrs[i].sh_size;
-+		} else {
-+			if (bss_align < align)
-+				bss_align = align;
-+			bss_sz = ALIGN(bss_sz, align);
-+			bss_sz += sechdrs[i].sh_size;
-+		}
-+	}
-+	kbuf->bufsz = ALIGN(kbuf->bufsz, bss_align);
-+	kbuf->memsz = kbuf->bufsz + bss_sz;
-+	if (kbuf->buf_align < bss_align)
-+		kbuf->buf_align = bss_align;
-+
-+	kbuf->buffer = vzalloc(kbuf->bufsz);
-+	if (!kbuf->buffer)
-+		return -ENOMEM;
-+	pi->purgatory_buf = kbuf->buffer;
-+
-+	ret = kexec_add_buffer(kbuf);
-+	if (ret)
-+		goto out;
-+	pi->purgatory_load_addr = kbuf->mem;
-+
-+	return 0;
-+out:
-+	vfree(pi->purgatory_buf);
-+	pi->purgatory_buf = NULL;
-+	return ret;
-+}
-+
-+/*
-+ * kexec_purgatory_setup_sechdrs - prepares the pi->sechdrs buffer.
-+ * @pi:		Purgatory to be loaded.
-+ * @kbuf:	Buffer prepared to store purgatory.
-+ *
-+ * Allocates the memory needed for the buffer. Caller is responsible to free
-+ * the memory after use.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
-+					 struct kexec_buf *kbuf)
-+{
-+	unsigned long curr_load_addr;
-+	unsigned long load_addr;
-+	unsigned long bss_addr;
-+	unsigned long offset;
-+	unsigned char *buf_addr;
-+	unsigned char *src;
-+	Elf_Shdr *sechdrs;
-+	int entry_sidx = -1;
-+	int i;
- 
--	/*
--	 * We can not modify sechdrs_c[] and its fields. It is read only.
--	 * Copy it over to a local copy where one can store some temporary
--	 * data and free it at the end. We need to modify ->sh_addr and
--	 * ->sh_offset fields to keep track of permanent and temporary
--	 * locations of sections.
--	 */
- 	sechdrs = vzalloc(pi->ehdr->e_shnum * sizeof(Elf_Shdr));
- 	if (!sechdrs)
- 		return -ENOMEM;
--
--	memcpy(sechdrs, sechdrs_c, pi->ehdr->e_shnum * sizeof(Elf_Shdr));
-+	memcpy(sechdrs, (void *)pi->ehdr + pi->ehdr->e_shoff,
-+	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
-+	pi->sechdrs = sechdrs;
- 
- 	/*
- 	 * We seem to have multiple copies of sections. First copy is which
-@@ -709,7 +767,7 @@ static int __kexec_load_purgatory(struct kimage *image, unsigned long min,
- 	 * Identify entry point section and make entry relative to section
- 	 * start.
- 	 */
--	entry = pi->ehdr->e_entry;
-+	kbuf->image->start = pi->ehdr->e_entry;
- 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
- 		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
- 			continue;
-@@ -722,63 +780,19 @@ static int __kexec_load_purgatory(struct kimage *image, unsigned long min,
- 		    ((sechdrs[i].sh_addr + sechdrs[i].sh_size) >
- 		     pi->ehdr->e_entry)) {
- 			entry_sidx = i;
--			entry -= sechdrs[i].sh_addr;
-+			kbuf->image->start -= sechdrs[i].sh_addr;
- 			break;
- 		}
- 	}
- 
--	/* Determine how much memory is needed to load relocatable object. */
--	bss_align = 1;
--	bss_sz = 0;
--
--	for (i = 0; i < pi->ehdr->e_shnum; i++) {
--		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
--			continue;
--
--		align = sechdrs[i].sh_addralign;
--		if (sechdrs[i].sh_type != SHT_NOBITS) {
--			if (kbuf.buf_align < align)
--				kbuf.buf_align = align;
--			kbuf.bufsz = ALIGN(kbuf.bufsz, align);
--			kbuf.bufsz += sechdrs[i].sh_size;
--		} else {
--			/* bss section */
--			if (bss_align < align)
--				bss_align = align;
--			bss_sz = ALIGN(bss_sz, align);
--			bss_sz += sechdrs[i].sh_size;
--		}
--	}
--
--	/* Determine the bss padding required to align bss properly */
--	bss_pad = 0;
--	if (kbuf.bufsz & (bss_align - 1))
--		bss_pad = bss_align - (kbuf.bufsz & (bss_align - 1));
--
--	kbuf.memsz = kbuf.bufsz + bss_pad + bss_sz;
--
--	/* Allocate buffer for purgatory */
--	kbuf.buffer = vzalloc(kbuf.bufsz);
--	if (!kbuf.buffer) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	if (kbuf.buf_align < bss_align)
--		kbuf.buf_align = bss_align;
--
--	/* Add buffer to segment list */
--	ret = kexec_add_buffer(&kbuf);
--	if (ret)
--		goto out;
--	pi->purgatory_load_addr = kbuf.mem;
--
- 	/* Load SHF_ALLOC sections */
--	buf_addr = kbuf.buffer;
--	load_addr = curr_load_addr = pi->purgatory_load_addr;
--	bss_addr = load_addr + kbuf.bufsz + bss_pad;
-+	buf_addr = kbuf->buffer;
-+	load_addr = curr_load_addr = kbuf->mem;
-+	bss_addr = load_addr + kbuf->bufsz;
- 
- 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
-+		unsigned long align;
-+
- 		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
- 			continue;
- 
-@@ -810,24 +824,9 @@ static int __kexec_load_purgatory(struct kimage *image, unsigned long min,
- 
- 	/* Update entry point based on load address of text section */
- 	if (entry_sidx >= 0)
--		entry += sechdrs[entry_sidx].sh_addr;
--
--	/* Make kernel jump to purgatory after shutdown */
--	image->start = entry;
--
--	/* Used later to get/set symbol values */
--	pi->sechdrs = sechdrs;
-+		kbuf->image->start += sechdrs[entry_sidx].sh_addr;
- 
--	/*
--	 * Used later to identify which section is purgatory and skip it
--	 * from checksumming.
--	 */
--	pi->purgatory_buf = kbuf.buffer;
--	return ret;
--out:
--	vfree(sechdrs);
--	vfree(kbuf.buffer);
--	return ret;
-+	return 0;
- }
- 
- static int kexec_apply_relocations(struct kimage *image)
-@@ -897,16 +896,23 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
- {
- 	struct purgatory_info *pi = &image->purgatory_info;
- 	int ret;
-+	struct kexec_buf kbuf = { .image = image, .bufsz = 0, .buf_align = 1,
-+				  .buf_min = min, .buf_max = max,
-+				  .top_down = top_down };
- 
- 	if (kexec_purgatory_size <= 0)
- 		return -EINVAL;
- 
- 	pi->ehdr = (const Elf_Ehdr *)kexec_purgatory;
- 
--	ret = __kexec_load_purgatory(image, min, max, top_down);
-+	ret = kexec_purgatory_setup_kbuf(pi, &kbuf);
- 	if (ret)
- 		return ret;
- 
-+	ret = kexec_purgatory_setup_sechdrs(pi, &kbuf);
-+	if (ret)
-+		goto out_free_kbuf;
-+
- 	ret = kexec_apply_relocations(image);
- 	if (ret)
- 		goto out;
-@@ -916,7 +922,7 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
- out:
- 	vfree(pi->sechdrs);
- 	pi->sechdrs = NULL;
--
-+out_free_kbuf:
- 	vfree(pi->purgatory_buf);
- 	pi->purgatory_buf = NULL;
- 	return ret;
--- 
-2.13.5
+Best regards,
+Jernej
+
+> +			best_rate = rounded;
+> +			best_div = i;
+> +		}
+> +	}
+> +
+> +	req->rate = best_rate / best_div;
+> +	req->best_parent_rate = best_rate;
+> +	req->best_parent_hw = parent;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long sun8i_phy_clk_recalc_rate(struct clk_hw *hw,
+> +					       unsigned long parent_rate)
+> +{
+> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
+> +	u32 reg;
+> +
+> +	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, &reg);
+> +	reg = ((reg >> SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT) &
+> +		SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK) + 1;
+> +
+> +	return parent_rate / reg;
+> +}
+> +
+> +static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				  unsigned long parent_rate)
+> +{
+> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
+> +	unsigned long best_rate = 0;
+> +	u8 best_m = 0, m;
+> +
+> +	for (m = 1; m <= 16; m++) {
+> +		unsigned long tmp_rate = parent_rate / m;
+> +
+> +		if (tmp_rate > rate)
+> +			continue;
+> +
+> +		if (!best_rate ||
+> +		    (rate - tmp_rate) < (rate - best_rate)) {
+> +			best_rate = tmp_rate;
+> +			best_m = m;
+> +		}
+> +	}
+> +
+> +	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
+> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
+> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(best_m));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops sun8i_phy_clk_ops = {
+> +	.determine_rate	= sun8i_phy_clk_determine_rate,
+> +	.recalc_rate	= sun8i_phy_clk_recalc_rate,
+> +	.set_rate	= sun8i_phy_clk_set_rate,
+> +};
+> +
+> +int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
+> +{
+> +	struct clk_init_data init;
+> +	struct sun8i_phy_clk *priv;
+> +	const char *parents[1];
+> +
+> +	parents[0] = __clk_get_name(phy->clk_pll0);
+> +	if (!parents[0])
+> +		return -ENODEV;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	init.name = "hdmi-phy-clk";
+> +	init.ops = &sun8i_phy_clk_ops;
+> +	init.parent_names = parents;
+> +	init.num_parents = 1;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +
+> +	priv->phy = phy;
+> +	priv->hw.init = &init;
+> +
+> +	phy->clk_phy = devm_clk_register(dev, &priv->hw);
+> +	if (IS_ERR(phy->clk_phy))
+> +		return PTR_ERR(phy->clk_phy);
+> +
+> +	return 0;
+> +}
+> --
+> 2.16.2
