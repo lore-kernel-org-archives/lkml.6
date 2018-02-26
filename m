@@ -1,44 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752601AbeBZK2h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:28:37 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:45938 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeBZK2d (ORCPT
+        id S1752688AbeBZK3J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:29:09 -0500
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:54358 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752379AbeBZK3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:28:33 -0500
-X-Google-Smtp-Source: AG47ELs0oAUwJy2epaGd30ukzFwhq7fiyUTOXvTlx1dOLBHsRj5kFN0z0UiTkRFPSBulLhelNdDpdoidxiia9BT2cUs=
+        Mon, 26 Feb 2018 05:29:06 -0500
+X-Google-Smtp-Source: AH8x22584Wg9i4bi27yYIgFeJFxwv5KmL/LUS/bCeH/H4Thz+WcGZyjpRLsXpptW06nTw2UJfibMXg==
 MIME-Version: 1.0
-In-Reply-To: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
-References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Feb 2018 11:28:32 +0100
-Message-ID: <CACRpkdbZ30G1wBOpLR7JxLjBKU1ozd8d8upVbymfiEb0q-ibqA@mail.gmail.com>
-Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20180226102557.7bgjs3txp7cbridn@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <20180224214545.3740-2-jernej.skrabec@siol.net> <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+ <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com> <20180226102557.7bgjs3txp7cbridn@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 26 Feb 2018 18:28:43 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67X8BpvSbxj4So0fdPnY5c6yEKza6b=KZWf7qxMaOUXWg@mail.gmail.com>
+Message-ID: <CAGb2v67X8BpvSbxj4So0fdPnY5c6yEKza6b=KZWf7qxMaOUXWg@mail.gmail.com>
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
-<mail@maciej.szmigiero.name> wrote:
-
-> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
+On Mon, Feb 26, 2018 at 6:25 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Mon, Feb 26, 2018 at 05:43:01PM +0800, Chen-Yu Tsai wrote:
+>> On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
+>> <maxime.ripard@bootlin.com> wrote:
+>> > Hi,
+>> >
+>> > On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+>> >> Some NM PLLs doesn't work well when their output clock rate is set below
+>> >> certain rate.
+>> >>
+>> >> Add support for that constrain.
+>> >
+>> > In such a case, you should round the rate to the minimum the clock can
+>> > operate at, and not return an error.
+>>
+>> That's true for round_rate. But what's the expected behavior of set_rate?
+>> AFAIK we presume all users call round_rate before set_rate, but that doesn't
+>> seem to be true all the time.
 >
-> Now that the patch series changing ISA_BUS_API dependency to selection
-> was merged this reversion will do the same for gpio-winbond driver to
-> make it consistent with other ISA bus gpio drivers.
->
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> One of the first things that happens during a set_rate is a round_rate:
+> https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/clk/clk.c#L1873
 
-Patch applied.
+Ah! This was added recently in commit ca5e089a32c5 ("clk: use round rate
+to bail out early in set_rate").
 
-Yours,
-Linus Walleij
+Thanks for the tip!
+ChenYu
