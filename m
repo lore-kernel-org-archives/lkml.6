@@ -1,331 +1,96 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AG47ELsnPQSnh3Wiy+ryAQMZYy9yQd9CVBCfTgd0XXKGeaHoBWdmD1J+YV2R2NdtqFWV5PXy2se0
-ARC-Seal: i=1; a=rsa-sha256; t=1519636171; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AG47ELtyc3cnn6f62RAe+NVSbFvDALav9lbtfSFqcaY8R0oenwHf+OuTSGmCG2k9hJHN67BEfrUa
+ARC-Seal: i=1; a=rsa-sha256; t=1519643883; cv=none;
         d=google.com; s=arc-20160816;
-        b=r+a6zAa6NtyhNrMN6x6Hhq8Mxix2CMv9Tb0wcNojOFCS7hiAfUUW2tHZe7CzoZQfxs
-         GgAyuVHzkUtw0DTZCx+3BGr0xLbRfYas7AYoamgzppnwnwwQB//TSWI++sAlQbIyNL2G
-         xoaqV1KqnB2CGGYyzt9sA4ZgiPCAqpc8URS8n7csCAxZACYmQbTpjgTeZoM0ggEL0XBx
-         iHVN9wNqmaRAlhoN4gmnRW1olXpZtGzoC7Le0bUpU6Y5Cg5setydN86VvlSNm76X70oE
-         ZJFtGdNUwvRDULVQLpOAUcAobEvPvwQYiAAxaGdzq9XvOIjqnd0EZtHCaxCbLZ1Parzu
-         m8sA==
+        b=1K5iOoCnIS7oalOHTfXFU9Uhy9abHIl+UuVzT6W4eriyJvR9rvIW7qMiy8OmdGHNHf
+         u45rohYDwCQKtuJfang6o9RLjFMvUIgxeEqv/tYJCAFEDWk7Cxjqd7wHs/Mvm396n2H7
+         7ZRgef9GOfxIrEYxHlf876suFconoH6INmnOuhfo0UpJFycsKrYhM8hh089RvKOC24H+
+         iq3OBNippLZCTbDnleydugGVE7SxXPpQ4yX1uyVn0D2qlYKSELf81Vy/t3KFyZqkxGt9
+         m4F6UJy82hB7NfTAkK0YZ+MzyHfgf4m1kkrPfEELjS1ol/rC38nwhaBKpdTOUl1BySMK
+         z/Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=sQJ7oD6b4D2/c1EFlUclmVG+aMq8GbCXfPHuSIhW0d4=;
-        b=fVpBkoauQQGUGyti2+a3lOJMR8SxvcH0oqQL/rr/vlOuz0EJ0yI3omgOst3DW65JsX
-         y5bpM1OwsTmmWnoOjybpSCJn4h25I15Pyfuz7uktd5+082cZnesNqlrpzAUE8q0okWCw
-         PBJA9LTVJuxd4aeCYvJAWZ1usHtf9nKTAG2iVs8jcuek2R8AxVVRCFbZhsbuY2dHo54G
-         PRuP3nWa/WQTeAKRbd4BB015pjTaXueVZmOLm15+ZCC6AXj9Tr9449rVHLvHgJVKtj6R
-         q6knwNRRUEJPFdaqWMV9Or7TAuagr4CtqYMTM7Q2Dy7qMjGxV7qpGZ1Ys3Va5a/W/M9T
-         OzYg==
+        bh=AEvYV77/nhFWZ74ODK3iw2CyNbW0HSv9YhHt9aA6UT0=;
+        b=fWvt3F3vFsHnNU8wCr8ZGZ3Xy24O1XUyhVgVW/IS48rVB52cJk9IuJXApDqvbz5Kxh
+         rtRa340W1KsaEIygzzgyzmaKx330U636JSagyevXiAGy5fOOmQx+pAbFjbAbXCcPI6U4
+         0qHotj0ha+ZZjR3gbNdOiOh1tHqchpLBRDcPuZZmfMUcf0nYFrHGbxsMaCxyFk74ZRIJ
+         N/8G1BoW+JiF/DXFgQPzl93PYoFQB+izsTu+vEceipmE9Liv1BP3Vr/KkPRPLob93FbW
+         U8xvvcrLO/sFAdSOmLQce8vzs3oQPpyuHvZ+POZV1wTIVWrk69Lfe08yJ+S0tl97H7UR
+         DmvA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=bY8Xef4F;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v3 01/12] drivers: base: Unified device connection lookup
-Date: Mon, 26 Feb 2018 10:09:14 +0100
-Message-Id: <20180226090925.29436-2-hdegoede@redhat.com>
-In-Reply-To: <20180226090925.29436-1-hdegoede@redhat.com>
-References: <20180226090925.29436-1-hdegoede@redhat.com>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=bY8Xef4F;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: Remove unnecessary printk for failed allocation" to the regmap tree
+In-Reply-To: <56cba529-03eb-9088-3fea-8fbb50c355af@users.sourceforge.net>
+Message-Id: <E1eqGnC-0005cx-9Z@debutante>
+Date: Mon, 26 Feb 2018 11:18:02 +0000
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454017476208824?=
-X-GMAIL-MSGID: =?utf-8?q?1593454017476208824?=
+X-GMAIL-THRID: =?utf-8?q?1593462104317777984?=
+X-GMAIL-MSGID: =?utf-8?q?1593462104317777984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The patch
 
-Several frameworks - clk, gpio, phy, pmw, etc. - maintain
-lookup tables for describing connections and provide custom
-API for handling them. This introduces a single generic
-lookup table and API for the connections.
+   regmap: Remove unnecessary printk for failed allocation
 
-The motivation for this commit is centralizing the
-connection lookup, but the goal is to ultimately extract the
-connection descriptions also from firmware by using the
-fwnode_graph_* functions and other mechanisms that are
-available.
+has been applied to the regmap tree at
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b4ecfec5ee3f282a4ac0876de332876fec9b488c Mon Sep 17 00:00:00 2001
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Date: Thu, 22 Feb 2018 12:59:11 +0000
+Subject: [PATCH] regmap: Remove unnecessary printk for failed allocation
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Changes in v3:
--Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
+ drivers/base/regmap/regmap.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Changes in v2:
--Add a (struct devcon) cast to the DEVCON() macro
----
- Documentation/driver-api/device_connection.rst |  43 ++++++++
- drivers/base/Makefile                          |   3 +-
- drivers/base/devcon.c                          | 139 +++++++++++++++++++++++++
- include/linux/connection.h                     |  33 ++++++
- 4 files changed, 217 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/driver-api/device_connection.rst
- create mode 100644 drivers/base/devcon.c
- create mode 100644 include/linux/connection.h
-
-diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-new file mode 100644
-index 000000000000..64a3e5e9bb7c
---- /dev/null
-+++ b/Documentation/driver-api/device_connection.rst
-@@ -0,0 +1,43 @@
-+==================
-+Device connections
-+==================
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 8fe6e08fa41e..707b0450ad72 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -2050,10 +2050,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 			return -EINVAL;
+ 
+ 		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
+-		if (!wval) {
+-			dev_err(map->dev, "Error in memory allocation\n");
++		if (!wval)
+ 			return -ENOMEM;
+-		}
 +
-+Introduction
-+------------
-+
-+Devices often have connections to other devices that are outside of the direct
-+child/parent relationship. A serial or network communication controller, which
-+could be a PCI device, may need to be able to get a reference to its PHY
-+component, which could be attached for example to the I2C bus. Some device
-+drivers need to be able to control the clocks or the GPIOs for their devices,
-+and so on.
-+
-+Device connections are generic descriptions of any type of connection between
-+two separate devices.
-+
-+Device connections alone do not create a dependency between the two devices.
-+They are only descriptions which are not tied to either of the devices directly.
-+A dependency between the two devices exists only if one of the two endpoint
-+devices requests a reference to the other. The descriptions themselves can be
-+defined in firmware (not yet supported) or they can be built-in.
-+
-+Usage
-+-----
-+
-+Device connections should exist before device ``->probe`` callback is called for
-+either endpoint device in the description. If the connections are defined in
-+firmware, this is not a problem. It should be considered if the connection
-+descriptions are "built-in", and need to be added separately.
-+
-+The connection description consists of the names of the two devices with the
-+connection, i.e. the endpoints, and unique identifier for the connection which
-+is needed if there are multiple connections between the two devices.
-+
-+After a description exists, the devices in it can request reference to the other
-+endpoint device, or they can request the description itself.
-+
-+API
-+---
-+
-+.. kernel-doc:: drivers/base/devcon.c
-+   : functions: __device_find_connection device_find_connection add_device_connection remove_device_connection
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index e32a52490051..12a7f64d35a9 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   driver.o class.o platform.o \
- 			   cpu.o firmware.o init.o map.o devres.o \
- 			   attribute_container.o transport_class.o \
--			   topology.o container.o property.o cacheinfo.o
-+			   topology.o container.o property.o cacheinfo.o \
-+			   devcon.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
- obj-y			+= power/
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-new file mode 100644
-index 000000000000..1628dcb34709
---- /dev/null
-+++ b/drivers/base/devcon.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * Device connections
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ */
-+
-+#include <linux/connection.h>
-+#include <linux/device.h>
-+
-+static DEFINE_MUTEX(devcon_lock);
-+static LIST_HEAD(devcon_list);
-+
-+/**
-+ * __device_find_connection - Find physical connection to a device
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and another
-+ * device. @match will be used to convert the connection description to data the
-+ * caller is expecting to be returned.
-+ */
-+void *__device_find_connection(struct device *dev, const char *con_id,
-+			       void *data,
-+			       void *(*match)(struct devcon *con, int ep,
-+					      void *data))
-+{
-+	const char *devname = dev_name(dev);
-+	struct devcon *con;
-+	void *ret = NULL;
-+	int ep;
-+
-+	if (!match)
-+		return NULL;
-+
-+	rcu_read_lock();
-+
-+	list_for_each_entry_rcu(con, &devcon_list, list) {
-+		ep = match_string(con->endpoint, 2, devname);
-+		if (ep < 0)
-+			continue;
-+
-+		if (con_id && strcmp(con->id, con_id))
-+			continue;
-+
-+		ret = match(con, !ep, data);
-+		if (ret)
-+			break;
-+	}
-+
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(__device_find_connection);
-+
-+#include <linux/platform_device.h>
-+#include <linux/spi/spi.h>
-+#include <linux/i2c.h>
-+#include <linux/pci.h>
-+
-+static struct bus_type *generic_match_buses[] = {
-+	&platform_bus_type,
-+#ifdef CONFIG_PCI
-+	&pci_bus_type,
-+#endif
-+#ifdef CONFIG_I2C
-+	&i2c_bus_type,
-+#endif
-+#ifdef CONFIG_SPI_MASTER
-+	&spi_bus_type,
-+#endif
-+	NULL,
-+};
-+
-+/* This tries to find the device from the most common bus types by name. */
-+static void *generic_match(struct devcon *con, int ep, void *data)
-+{
-+	struct bus_type *bus;
-+	struct device *dev;
-+
-+	for (bus = generic_match_buses[0]; bus; bus++) {
-+		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
-+		if (dev)
-+			return dev;
-+	}
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the other device to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * device_find_connection - Find two devices connected together
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and
-+ * another device. On success returns handle to the device that is connected
-+ * to @dev, with the reference count for the found device incremented. Returns
-+ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
-+ * connection was found but the other device has not been enumerated yet.
-+ */
-+struct device *device_find_connection(struct device *dev, const char *con_id)
-+{
-+	return __device_find_connection(dev, con_id, generic_match, NULL);
-+}
-+EXPORT_SYMBOL_GPL(device_find_connection);
-+
-+/**
-+ * add_device_connection - Register a collection of connection descriptions
-+ * @con: Collection of connection descriptions to be registered
-+ */
-+void add_device_connection(struct devcon *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_add_tail_rcu(&con->list, &devcon_list);
-+	mutex_unlock(&devcon_lock);
-+}
-+EXPORT_SYMBOL_GPL(add_device_connection);
-+
-+/**
-+ * remove_device_connections - Unregister collection of connection descriptions
-+ * @con: Collection of connection descriptions to be unregistered
-+ */
-+void remove_device_connection(struct devcon *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_del_rcu(&con->list);
-+	mutex_unlock(&devcon_lock);
-+	/* The caller may free the devcon struct immediately afterwards. */
-+	synchronize_rcu();
-+}
-+EXPORT_SYMBOL_GPL(remove_device_connection);
-diff --git a/include/linux/connection.h b/include/linux/connection.h
-new file mode 100644
-index 000000000000..0b4430eae53a
---- /dev/null
-+++ b/include/linux/connection.h
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#ifndef _LINUX_CONNECTION_H_
-+#define _LINUX_CONNECTION_H_
-+
-+#include <linux/list.h>
-+
-+struct device;
-+
-+/**
-+ * struct devcon - Device Connection Descriptor
-+ * @endpoint: The names of the two devices connected together
-+ * @id: Unique identifier for the connection
-+ */
-+struct devcon {
-+	const char		*endpoint[2];
-+	const char		*id;
-+	struct list_head	list;
-+};
-+
-+void *__device_find_connection(struct device *dev, const char *con_id,
-+			       void *data,
-+			       void *(*match)(struct devcon *con, int ep,
-+					      void *data));
-+
-+struct device *device_find_connection(struct device *dev, const char *con_id);
-+
-+#define DEVCON(_ep0, _ep1, _id)    (struct devcon) { { _ep0, _ep1 }, _id, }
-+
-+void add_device_connection(struct devcon *con);
-+void remove_device_connection(struct devcon *con);
-+
-+#endif /* _LINUX_CONNECTION_H_ */
+ 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
+ 			map->format.parse_inplace(wval + i);
+ 
 -- 
-2.14.3
+2.16.1
