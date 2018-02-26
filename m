@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeBZUUS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 15:20:18 -0500
-Received: from sauhun.de ([88.99.104.3]:38392 "EHLO pokefinder.org"
+        id S1752563AbeBZUW5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 15:22:57 -0500
+Received: from sauhun.de ([88.99.104.3]:38408 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751558AbeBZUUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 15:20:15 -0500
-Date: Mon, 26 Feb 2018 21:20:13 +0100
+        id S1752065AbeBZUWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 15:22:50 -0500
+Date: Mon, 26 Feb 2018 21:22:48 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: George Cherian <george.cherian@cavium.com>
 Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 2/4] i2c: xlp9xx: Handle transactions with I2C_M_RECV_LEN
- properly
-Message-ID: <20180226202013.l3z27ejdepjyk2oh@ninjato>
+Subject: Re: [PATCH 4/4] i2c: xlp9xx: Check for Bus state after every transfer
+Message-ID: <20180226202248.ej3bt5o7sam6qljv@ninjato>
 References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com>
- <1516253964-4615-2-git-send-email-george.cherian@cavium.com>
+ <1516253964-4615-4-git-send-email-george.cherian@cavium.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rllogxxrfymchyg4"
+        protocol="application/pgp-signature"; boundary="so6pugmormqou3ys"
 Content-Disposition: inline
-In-Reply-To: <1516253964-4615-2-git-send-email-george.cherian@cavium.com>
+In-Reply-To: <1516253964-4615-4-git-send-email-george.cherian@cavium.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rllogxxrfymchyg4
+--so6pugmormqou3ys
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 18, 2018 at 05:39:22AM +0000, George Cherian wrote:
-> In case of transaction with I2C_M_RECV_LEN set, make sure the driver reads
-> the first byte and then updates the RX fifo with the expected length. Set
-> threshold to 1 byte so that driver gets an interrupt on receiving the fir=
-st byte.
-> After which the transfer length is updated depending on the received leng=
-th.
+
+On Thu, Jan 18, 2018 at 05:39:24AM +0000, George Cherian wrote:
+> I2C bus enters the STOP condition after the DATA_DONE interrupt is raised.
+> Essentially the driver should be checking the bus state before sending
+> the next transaction.
+
+Yes.
+
+> In case the next transaction is initiated while the
+> bus is busy, the prior transactions stop condition is not acheived.
+
+I didn't fully get why you can't check the BUSY bit and wait a little
+just before you push out the next message?
+
+> Add the check to make sure the bus is not busy before next transaction.
 >=20
-> Signed-off-by: George Cherian <george.cherian@cavium.com>
 
-Applied to for-next, thanks!
-
-
---rllogxxrfymchyg4
+--so6pugmormqou3ys
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUa/0ACgkQFA3kzBSg
-KbZxJBAAjtAEFTugvWCoiIZntfgbfJU7pdcq/vMlq6sacI0vUCZ0RFru5ao//BPA
-IdTPNDKLccmACy9iRjm7mlbvJAECqIbViim08NHbsLJ7biZ6Qg7ff0BfrlR8Voc3
-4aLs4I5TyvorfhuT/jU54NVEXQeTxL1od0h449G3MS/21cbBCzgzHkM741V7HXa2
-XZ8mfTPK97NXp4EXQ8Xy4QFxMmxvrc45DsIafWbOxJ3qanOZCZ5hkAsS084GxQb8
-2o+xpceg5EFdW/65v1IuEwZjJ5HeQ2siff8MUuPDaKGari0zrNeckmVzlss8imBn
-xci+/KmZr7XZeaAv8Jhn5DhIJQE167A7sdT5fs+ce3a3eulXw9QlXVMZOGFxNx1t
-Y6cB6BRYsr97kQdw6SkFK0dW1LNulnA6CQY9XXhqMmky4FEIMvDP2TpQ/FgeivhL
-LDJEVefBJpOvLirHZEU50/vNBjjBPUr0KdKwKP49IO/FGAPP2WT+pNFLEor6A5ni
-sTp+xXLLml1t8GUvte6ob/2bWCkN/BAZ54APArqLsmvKbN5/EOEAgHlcwIfi1LVo
-bINEDQrctPS4EqGE9iXwHYuAv7VBHDFzbzwiTlhO1F8iTZG9LtraFOTZ0ZetbMWY
-FPWUiJUBuR9RADWyhHnaxQ0JRSisDSn+cnkRqHdhByFg0OyTzp0=
-=J07U
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUbJgACgkQFA3kzBSg
+KbbGNQ//WU7ImxeMl2MyWb8KEoDuAo2ntOwhbgLbjqs6SiaVmYywdprday3YZ1+d
+vD+qu3eNGpxz4SCOgdbyFaJBFJ5xUUTdouDq6N2qB/nYITnlxfNERBQ6wYd/G/qE
+tRMIrztqboUMDwUHWndf55INrVtKkMuN5z3VuO5LYltlCv/PkgnHqp6ZIy1SavdZ
+2XJjib4ONXDEEsSM8ZKChZ6wA3RP3z/CwrS04HMFWHvxhdQmTfiE7Y/HsMVGZoJf
+vORRGA1+Hv004e5g+yB2QdU3ilZJm4TPTTmLkkvLJS8UKu9dzPW4DPxbbo0F9k6l
+VnECUI46eNTPz8EH91K+mZU9mrSSYCurxSpnCeF1WIbEI5K1mprRq4TFMD7AsPoZ
+Wn2boV2nBYsRmwsEcziN50Kq2MBFYIjwfGS3pPN5AUMuV1hCErtLQndpW5i+5gSg
+wfpCPgFjuI6LFhd0CxLOWCDLjmVhX+vgtgCNGiJ71b7RsRM3esKV0ZS3R9it3QPQ
+RFOnAvNZ5s1cv1iDJm0EekXaTGvTDhMlH8JA7NLFbRaA5CFKz0mbOD7GR/tGSqFy
+hkzISqaYCro/KqEAlIDnnc/2lvQmTLv9s7hBA3nK9SHz9fKrRAH+DrIRelunYo+M
+J38YvmqcH7ke8i7B0KwtfF3Lz5cQrXNiLasockIvqIIsoppIGyc=
+=G9ND
 -----END PGP SIGNATURE-----
 
---rllogxxrfymchyg4--
+--so6pugmormqou3ys--
