@@ -1,67 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeBZIEd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:04:33 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37085 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeBZIEb (ORCPT
+        id S1752163AbeBZIMF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:12:05 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:24160 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeBZIL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:04:31 -0500
-X-Google-Smtp-Source: AH8x225aZUeRIxcjHB97WpXgNViO1p+dvJ5Yk8wYlrmAvZJimzUV53o3Jbp3TAiq6pG48QloTeozEw==
-Date: Mon, 26 Feb 2018 11:04:22 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
-Message-ID: <20180226080421.x3wm2v4yepp6vcjs@node.shutemov.name>
-References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
- <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
- <20180224214818.GD29374@pd.tnic>
- <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
- <20180226073552.xabt55ukp24inut5@gmail.com>
- <20180226075027.r5n5j6jvfum5o3z6@gmail.com>
+        Mon, 26 Feb 2018 03:11:58 -0500
+X-IronPort-AV: E=Sophos;i="5.47,396,1515481200";
+   d="scan'208";a="11701320"
+Subject: Re: [PATCH v3 01/10] pwm: extend PWM framework with PWM modes
+To: kbuild test robot <lkp@intel.com>
+CC: <kbuild-all@01.org>, <thierry.reding@gmail.com>, <shc_work@mail.ru>,
+        <kgene@kernel.org>, <krzk@kernel.org>, <linux@armlinux.org.uk>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
+        <b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+        <dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
+        <sean@mess.org>, <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
+        <jingoohan1@gmail.com>, <milo.kim@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <corbet@lwn.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
+        <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <1519300881-8136-2-git-send-email-claudiu.beznea@microchip.com>
+ <201802250410.reI8wAy2%fengguang.wu@intel.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <a26cdf7b-024e-957b-8691-c3c898d0d9d6@microchip.com>
+Date: Mon, 26 Feb 2018 10:11:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226075027.r5n5j6jvfum5o3z6@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <201802250410.reI8wAy2%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 08:50:27AM +0100, Ingo Molnar wrote:
-> 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > We need to re-do this as we have now run into _exactly_ the kind of difficult to 
-> > debug bug that I was worried about when I insisted on the many iterations of 
-> > this patch-set...
-> 
-> Ok, so I rebased tip:x86/mm and removed these two commits:
-> 
-> adf9ca9c69a2: x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
-> 
->  arch/x86/boot/compressed/head_64.S | 127 ++++++++++++++++++++++++++-----------
->  1 file changed, 89 insertions(+), 38 deletions(-)
-> 
-> b91993a87aff: x86/boot/compressed/64: Prepare trampoline memory
-> 
->  arch/x86/boot/compressed/head_64.S    | 24 ++++++++++-
->  arch/x86/boot/compressed/pgtable.h    | 18 ++++++++
->  arch/x86/boot/compressed/pgtable_64.c | 79 +++++++++++++++++++++++++++++++++++
->  3 files changed, 120 insertions(+), 1 deletion(-)
-> 
-> The other 5-level paging related commits tested out fine and are properly 
-> fine-grained.
-> 
-> Please split these two patches up - the first patch can probably be split up into 
-> 5 parts or so. Let's start with no more than 5 patches per iteration, ok?
+I'll rebase it on latest for-next in next version.
 
-Sure.
+Thank you,
+Claudiu Beznea
 
--- 
- Kirill A. Shutemov
+On 24.02.2018 22:49, kbuild test robot wrote:
+> Hi Claudiu,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on pwm/for-next]
+> [also build test WARNING on v4.16-rc2 next-20180223]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Claudiu-Beznea/extend-PWM-framework-to-support-PWM-modes/20180225-024011
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git for-next
+> config: xtensa-allmodconfig (attached as .config)
+> compiler: xtensa-linux-gcc (GCC) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=xtensa 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> drivers//pwm/pwm-sun4i.c:36:0: warning: "PWM_MODE" redefined
+>     #define PWM_MODE  BIT(7)
+>     
+>    In file included from drivers//pwm/pwm-sun4i.c:19:0:
+>    include/linux/pwm.h:40:0: note: this is the location of the previous definition
+>     #define PWM_MODE(name)  BIT(PWM_MODE_##name##_BIT)
+>     
+> 
+> vim +/PWM_MODE +36 drivers//pwm/pwm-sun4i.c
+> 
+> 09853ce7 Alexandre Belloni 2014-12-17  29  
+> 09853ce7 Alexandre Belloni 2014-12-17  30  #define PWMCH_OFFSET		15
+> 09853ce7 Alexandre Belloni 2014-12-17  31  #define PWM_PRESCAL_MASK	GENMASK(3, 0)
+> 09853ce7 Alexandre Belloni 2014-12-17  32  #define PWM_PRESCAL_OFF		0
+> 09853ce7 Alexandre Belloni 2014-12-17  33  #define PWM_EN			BIT(4)
+> 09853ce7 Alexandre Belloni 2014-12-17  34  #define PWM_ACT_STATE		BIT(5)
+> 09853ce7 Alexandre Belloni 2014-12-17  35  #define PWM_CLK_GATING		BIT(6)
+> 09853ce7 Alexandre Belloni 2014-12-17 @36  #define PWM_MODE		BIT(7)
+> 09853ce7 Alexandre Belloni 2014-12-17  37  #define PWM_PULSE		BIT(8)
+> 09853ce7 Alexandre Belloni 2014-12-17  38  #define PWM_BYPASS		BIT(9)
+> 09853ce7 Alexandre Belloni 2014-12-17  39  
+> 
+> :::::: The code at line 36 was first introduced by commit
+> :::::: 09853ce7bc1003a490c7ee74a5705d7a7cf16b7d pwm: Add Allwinner SoC support
+> 
+> :::::: TO: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> :::::: CC: Thierry Reding <thierry.reding@gmail.com>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
