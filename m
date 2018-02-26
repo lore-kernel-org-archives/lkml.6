@@ -1,86 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752682AbeBZLCP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:02:15 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752379AbeBZLCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:02:13 -0500
-Date: Mon, 26 Feb 2018 12:02:09 +0100
-From: Jesper Dangaard Brouer <brouer@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        sergei.shtylyov@cogentembedded.com, christoffer.dall@linaro.org,
-        brouer@redhat.com
-Subject: Re: [PATCH V4 net 2/3] tuntap: disable preemption during XDP
- processing
-Message-ID: <20180226120209.3c3b172b@redhat.com>
-In-Reply-To: <1519443146-9089-2-git-send-email-jasowang@redhat.com>
-References: <1519443146-9089-1-git-send-email-jasowang@redhat.com>
-        <1519443146-9089-2-git-send-email-jasowang@redhat.com>
+        id S1752561AbeBZLEX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:04:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48386 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752264AbeBZLEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 06:04:22 -0500
+Date: Mon, 26 Feb 2018 11:04:22 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Hanjun Guo <guohanjun@huawei.com>
+Cc: "Wangxuefeng (E)" <wxf.wang@hisilicon.com>,
+        "toshi.kani" <toshi.kani@hpe.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        cpandya <cpandya@codeaurora.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, linux-mm <linux-mm@kvack.org>,
+        akpm <akpm@linux-foundation.org>,
+        "mark.rutland" <mark.rutland@arm.com>,
+        "catalin.marinas" <catalin.marinas@arm.com>, mhocko <mhocko@suse.com>,
+        "hanjun.guo" <hanjun.guo@linaro.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUkZDIHBhdGNoXSBp?= =?utf-8?Q?oremap?=
+ =?utf-8?Q?=3A?= don't set up huge I/O mappings when p4d/pud/pmd is zero
+Message-ID: <20180226110422.GD8736@arm.com>
+References: <1514460261-65222-1-git-send-email-guohanjun@huawei.com>
+ <861128ce-966f-7006-45ba-6a7298918686@codeaurora.org>
+ <1519175992.16384.121.camel@hpe.com>
+ <etPan.5a8d2180.1dbfd272.49b8@localhost>
+ <20180221115758.GA7614@arm.com>
+ <32c9b1c3-086b-ba54-f9e9-aefa50066730@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32c9b1c3-086b-ba54-f9e9-aefa50066730@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 24 Feb 2018 11:32:25 +0800
-Jason Wang <jasowang@redhat.com> wrote:
-
-> Except for tuntap, all other drivers' XDP was implemented at NAPI
-> poll() routine in a bh. This guarantees all XDP operation were done at
-> the same CPU which is required by e.g BFP_MAP_TYPE_PERCPU_ARRAY. But
-
-There is a typo in the defined name "BFP_MAP_TYPE_PERCPU_ARRAY".
-Besides it is NOT a requirement that comes from the map type
-BPF_MAP_TYPE_PERCPU_ARRAY.
-
-The requirement comes from the bpf_redirect_map helper (and only partly
-devmap + cpumap types), as the BPF helper/program stores information in
-the per-cpu redirect_info struct (see filter.c), that is used by
-xdp_do_redirect() and xdp_do_flush_map().
-
- struct redirect_info {
-	u32 ifindex;
-	u32 flags;
-	struct bpf_map *map;
-	struct bpf_map *map_to_flush;
-	unsigned long   map_owner;
- };
- static DEFINE_PER_CPU(struct redirect_info, redirect_info);
-
- [...]
- void xdp_do_flush_map(void)
- { 
-	struct redirect_info *ri = this_cpu_ptr(&redirect_info);
-	struct bpf_map *map = ri->map_to_flush;
- [...]
-
-Notice the same redirect_info is used by the TC clsbpf system...
-
-
-> for tuntap, we do it in process context and we try to protect XDP
-> processing by RCU reader lock. This is insufficient since
-> CONFIG_PREEMPT_RCU can preempt the RCU reader critical section which
-> breaks the assumption that all XDP were processed in the same CPU.
+On Mon, Feb 26, 2018 at 06:57:20PM +0800, Hanjun Guo wrote:
+> On 2018/2/21 19:57, Will Deacon wrote:
+> > [sorry, trying to deal with top-posting here]
+> > 
+> > On Wed, Feb 21, 2018 at 07:36:34AM +0000, Wangxuefeng (E) wrote:
+> >>      The old flow of reuse the 4k page as 2M page does not follow the BBM flow
+> >> for page table reconstruction，not only the memory leak problems.  If BBM flow
+> >> is not followed，the speculative prefetch of tlb will made false tlb entries
+> >> cached in MMU, the false address will be got， panic will happen.
+> > 
+> > If I understand Toshi's suggestion correctly, he's saying that the PMD can
+> > be cleared when unmapping the last PTE (like try_to_free_pte_page). In this
+> > case, there's no issue with the TLB because this is exactly BBM -- the PMD
+> > is cleared and TLB invalidation is issued before the PTE table is freed. A
+> > subsequent 2M map request will see an empty PMD and put down a block
+> > mapping.
+> > 
+> > The downside is that freeing becomes more expensive as the last level table
+> > becomes more sparsely populated and you need to ensure you don't have any
+> > concurrent maps going on for the same table when you're unmapping. I also
+> > can't see a neat way to fit this into the current vunmap code. Perhaps we
+> > need an iounmap_page_range.
+> > 
+> > In the meantime, the code in lib/ioremap.c looks totally broken so I think
+> > we should deselect CONFIG_HAVE_ARCH_HUGE_VMAP on arm64 until it's fixed.
 > 
-> Fixing this by simply disabling preemption during XDP processing.
+> Simply do something below at now (before the broken code is fixed)?
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index b2b95f7..a86148c 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -84,7 +84,6 @@ config ARM64
+>         select HAVE_ALIGNED_STRUCT_PAGE if SLUB
+>         select HAVE_ARCH_AUDITSYSCALL
+>         select HAVE_ARCH_BITREVERSE
+> -   select HAVE_ARCH_HUGE_VMAP
+>         select HAVE_ARCH_JUMP_LABEL
+>         select HAVE_ARCH_KASAN if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
+>         select HAVE_ARCH_KGDB
 
-I guess, this could pamper over the problem...
+No, that actually breaks with the use of block mappings for the kernel
+text. Anyway, see:
 
-But I generally find it problematic that the tuntap is not invoking XDP
-from NAPI poll() routine in BH-context, as that context provided us
-with some protection that allow certain kind of optimizations (like
-this flush API).  I hope this will not limit us in the future, that
-tuntap driver violate the XDP call context.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=15122ee2c515a253b0c66a3e618bc7ebe35105eb
 
-> Fixes: 761876c857cb ("tap: XDP support")
-
-$ git describe --contains 761876c857cb
-v4.14-rc1~130^2~270^2
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Will
