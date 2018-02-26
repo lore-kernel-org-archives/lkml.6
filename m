@@ -1,97 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeBZJye (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:54:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45074 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeBZJy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:54:27 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B19261137
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v7 05/15] dt-bindings: clock: Document qcom,hfpll
-Date: Mon, 26 Feb 2018 15:23:21 +0530
-Message-Id: <1519638811-17269-6-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+        id S1752689AbeBZJ5t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:57:49 -0500
+Received: from mga01.intel.com ([192.55.52.88]:19168 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752402AbeBZJ5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:57:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="33645589"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
+        krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
+        sboyd@codeaurora.org, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org,
+        b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net,
+        dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
+        sean@mess.org, lee.jones@linaro.org, jingoohan1@gmail.com,
+        milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+In-Reply-To: <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com> <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+Date: Mon, 26 Feb 2018 11:57:25 +0200
+Message-ID: <87po4s2hve.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>> were adapted to this change.
+>> 
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> ---
+>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>  drivers/bus/ts-nbus.c                |  2 +-
+>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>  include/linux/pwm.h                  |  6 ++++--
+>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>> index 2030a6b77a09..696fa25dafd2 100644
+>> --- a/drivers/video/backlight/lm3630a_bl.c
+>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>  {
+>>  	unsigned int period = pchip->pdata->pwm_period;
+>>  	unsigned int duty = br * period / br_max;
+>> +	struct pwm_caps caps = { };
+>>  
+>> -	pwm_config(pchip->pwmd, duty, period);
+>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+>
+> Well... I admit I've only really looked at the patches that impact 
+> backlight but dispersing this really odd looking bit twiddling 
+> throughout the kernel doesn't strike me a great API design.
+>
+> IMHO callers should not be required to find the first set bit in
+> some specially crafted set of capability bits simply to get sane 
+> default behaviour.
 
-Adds bindings document for qcom,hfpll instantiated within
-the Krait processor subsystem as separate register region.
+Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+error prone.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+BR,
+Jani.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-new file mode 100644
-index 0000000..771cb0a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -0,0 +1,46 @@
-+High-Frequency PLL (HFPLL)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>:
-+		shall contain only one of the following. The generic
-+		compatible "qcom,hfpll" should be also included.
-+
-+                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-+                        "qcom,hfpll-apq8064", "qcom,hfpll"
-+                        "qcom,hfpll-msm8974", "qcom,hfpll"
-+                        "qcom,hfpll-msm8960", "qcom,hfpll"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: address and size of HPLL registers. An optional second
-+		    element specifies the address and size of the alias
-+		    register region.
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-+		    starting at 0. Otherwise hfpll_Y where Y is more specific
-+		    such as "l2".
-+
-+Example:
-+
-+1) An HFPLL for the L2 cache.
-+
-+	clock-controller@f9016000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf9016000 0x30>;
-+		clock-output-names = "hfpll_l2";
-+	};
-+
-+2) An HFPLL for CPU0. This HFPLL has the alias register region.
-+
-+	clock-controller@f908a000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-+		clock-output-names = "hfpll0";
-+	};
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Jani Nikula, Intel Open Source Technology Center
