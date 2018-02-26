@@ -1,110 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeBZMwd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:52:33 -0500
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:33831 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeBZMwb (ORCPT
+        id S1752910AbeBZM4I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:56:08 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40622 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbeBZM4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:52:31 -0500
-X-Google-Smtp-Source: AH8x224Zxumcme+opQ3uPv/opcUy/DeEDH6sEdvGdc/Wo7JXBQ/28ft6/2/Y+uwseNgNwerEYYArLdPIy1VFJDSWvFU=
+        Mon, 26 Feb 2018 07:56:04 -0500
+X-Google-Smtp-Source: AG47ELtGfRRZeLG3/WRJcSVVNsidwtuJ1OL89KgQYeNDsZYZTTlDenjOxzaQwb4l2ct1G3kA1cRFHA==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: hch@lst.de, keith.busch@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        jthumshirn@suse.de,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH v2 1/1] nvme: implement log page low/high offset and dwords
+Date: Mon, 26 Feb 2018 13:55:40 +0100
+Message-Id: <20180226125540.9513-2-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180226125540.9513-1-mb@lightnvm.io>
+References: <20180226125540.9513-1-mb@lightnvm.io>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+a1yWWfz5NZKjb1v8EFJA-Yag4ZjGxq7K2fJ6A2JRDnOA@mail.gmail.com>
-References: <cover.1517246437.git.dvyukov@google.com> <20180130153609.GA10917@arm.com>
- <20180131072858.5hoy6wsukda27v2o@gmail.com> <CACT4Y+Y1Qbsd4DOb6K6y0MVC2e_StjgYERE9ntJmQb+6BtZciA@mail.gmail.com>
- <20180131161725.GA18758@arm.com> <CACT4Y+Ymn4U7R849psS49N8LKesAEpsTBnbZbpgJsvut6CsQ6g@mail.gmail.com>
- <CACT4Y+a1yWWfz5NZKjb1v8EFJA-Yag4ZjGxq7K2fJ6A2JRDnOA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 26 Feb 2018 13:52:10 +0100
-Message-ID: <CACT4Y+YjtCPq+OEWfw3E1ahttef+AkT3RTMxWvYX3mq8B-FCBA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] x86, kasan: add KASAN checks to atomic operations
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 11:40 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Feb 7, 2018 at 3:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
->> On Wed, Jan 31, 2018 at 5:17 PM, Will Deacon <will.deacon@arm.com> wrote:
->>>> > * Will Deacon <will.deacon@arm.com> wrote:
->>>> >> e.g. for atomic[64]_read, your asm-generic header looks like:
->>>> >>
->>>> >> #ifndef _LINUX_ATOMIC_INSTRUMENTED_H
->>>> >> #define _LINUX_ATOMIC_INSTRUMENTED_H
->>>> >>
->>>> >> #include <linux/build_bug.h>
->>>> >> #include <linux/kasan-checks.h>
->>>> >>
->>>> >> static __always_inline int __atomic_read_instrumented(const atomic_t *v)
->>>> >> {
->>>> >>       kasan_check_read(v, sizeof(*v));
->>>> >>       return atomic_read(v);
->>>> >> }
->>>> >>
->>>> >> static __always_inline s64 __atomic64_read_instrumented(const atomic64_t *v)
->>>> >> {
->>>> >>       kasan_check_read(v, sizeof(*v));
->>>> >>       return atomic64_read(v);
->>>> >> }
->>>> >>
->>>> >> #undef atomic_read
->>>> >> #undef atomic64_read
->>>> >>
->>>> >> #define atomic_read   __atomic_read_instrumented
->>>> >> #define atomic64_read __atomic64_read_instrumented
->>>> >>
->>>> >> #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
->>>> >>
->>>> >> and the arch code just includes that in asm/atomic.h once it's done with
->>>> >> its definitions.
->>>> >>
->>>> >> What do you think? Too stinky?
->>>> >
->>>> > Hm, so while this could work - I actually *like* the low level changes: they are
->>>> > straightforward, trivial, easy to read and they add the arch_ prefix that makes it
->>>> > abundantly clear that this isn't the highest level interface.
->>>> >
->>>> > The KASAN callbacks in the generic methods are also abundantly clear and very easy
->>>> > to read. I could literally verify the sanity of the series while still being only
->>>> > half awake. ;-)
->>>> >
->>>> > Also note that the arch renaming should be 'trivial', in the sense that any
->>>> > missing rename results in a clear build breakage. Plus any architecture making use
->>>> > of this new KASAN feature should probably be tested before it's enabled - and the
->>>> > renaming of the low level atomic APIs kind of forces that too.
->>>> >
->>>> > So while this approach creates some churn, this series is IMHO a marked
->>>> > improvement over the previous iterations.
->>>>
->>>>
->>>> I think I mildly leaning towards Ingo's point.
->>>> I guess people will first find the version in arch (because that's
->>>> where they used to be), but that version is actually not the one that
->>>> is called.
->>>> The renaming is mechanical and you get build errors if anything is
->>>> wrong. It's macros that caused hard to debug runtime crashes and
->>>> multiple revisions of this series.
->>>
->>> Sure, and it sounds like you're proposing to do the arm64 changes anyway so
->>> I'm not complaining! Just thought I'd float the alternative to see what
->>> people think.
->>
->>
->> Any other comments?
->> Ingo, will you take this to locking tree?
->
->
-> Any other comments?
-> Ingo, will you take this to locking tree?
+NVMe 1.2.1 extends the get log page interface to include 64 bit
+offset and increases the number of dwords to 32 bits. Implement
+for future use.
 
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/nvme/host/core.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-Peter, Ingo, ping.
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 740ceb28067c..2e9e9f973a75 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -80,11 +80,6 @@ static struct class *nvme_subsys_class;
+ static void nvme_ns_remove(struct nvme_ns *ns);
+ static int nvme_revalidate_disk(struct gendisk *disk);
+ 
+-static __le32 nvme_get_log_dw10(u8 lid, size_t size)
+-{
+-	return cpu_to_le32((((size / 4) - 1) << 16) | lid);
+-}
+-
+ int nvme_reset_ctrl(struct nvme_ctrl *ctrl)
+ {
+ 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_RESETTING))
+@@ -2132,16 +2127,33 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 	return ret;
+ }
+ 
++static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
++			    u8 log_page, void *log,
++			    size_t size, size_t offset)
++{
++	struct nvme_command c = { };
++	unsigned long dwlen = size / 4 - 1;
++
++	c.get_log_page.opcode = nvme_admin_get_log_page;
++
++	if (ns)
++		c.get_log_page.nsid = cpu_to_le32(ns->head->ns_id);
++	else
++		c.get_log_page.nsid = cpu_to_le32(NVME_NSID_ALL);
++
++	c.get_log_page.lid = log_page;
++	c.get_log_page.numdl = cpu_to_le16(dwlen & ((1 << 16) - 1));
++	c.get_log_page.numdu = cpu_to_le16(dwlen >> 16);
++	c.get_log_page.lpol = cpu_to_le32(offset & ((1ULL << 32) - 1));
++	c.get_log_page.lpou = cpu_to_le32(offset >> 32ULL);
++
++	return nvme_submit_sync_cmd(ctrl->admin_q, &c, log, size);
++}
++
+ static int nvme_get_log(struct nvme_ctrl *ctrl, u8 log_page, void *log,
+ 			size_t size)
+ {
+-	struct nvme_command c = { };
+-
+-	c.common.opcode = nvme_admin_get_log_page;
+-	c.common.nsid = cpu_to_le32(NVME_NSID_ALL);
+-	c.common.cdw10[0] = nvme_get_log_dw10(log_page, size);
+-
+-	return nvme_submit_sync_cmd(ctrl->admin_q, &c, log, size);
++	return nvme_get_log_ext(ctrl, NULL, log_page, log, size, 0);
+ }
+ 
+ static int nvme_get_effects_log(struct nvme_ctrl *ctrl)
+-- 
+2.11.0
