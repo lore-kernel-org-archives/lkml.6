@@ -1,84 +1,91 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AH8x225Pg4eDkv6OjWuAS8djBfZrzXtRABL125uHYaCiK5LMVG5t13picOKIyzj6tkUWnC6RGlni
-ARC-Seal: i=1; a=rsa-sha256; t=1519321157; cv=none;
+Return-Path: <shuah@kernel.org>
+X-Google-Smtp-Source: AG47ELst+0wBX5KEmOiOGnALK6pMqcJOWomKgUOA3/TdN568fnbIYllx8nn72S++Mhthvn5iUsdX
+ARC-Seal: i=1; a=rsa-sha256; t=1519663236; cv=none;
         d=google.com; s=arc-20160816;
-        b=tpBEeXLlBRXRxuL56dun1SMeNXGHiuir0BQ2YwiiUnuMhMofjUiYaIT/r3DaU1H56S
-         wpMh1e7cX6IX6zcwoIljD5GmJHxSgFIypbEq65egfnbmYGEHe6MDqAVl4iiNTyXViTL5
-         jBmk2yyocUxI6ov2qy+QyF1VedYVPWn6fCHYPeMpWinVliheCTCaUYdyfcD9/PoB66J1
-         SZYf5dPNb9NSs9D2e2ERlLXoU/NAQxNeHrKqG1BWxoUHIMgm8OJCBdJvh+dYbqOlKxF6
-         d+O9tv1PNdvzInaKBtY4zV8GMmhPCIVlkwHgbifEey6ol3aQO7YM5fpj8IoMu/Z58sDZ
-         uinA==
+        b=QKCqj2/oTN5ZhILcPWINeIkKGIWcRrCrqXnjQqZQHr4DgH/h/3In+JEpK4n/PwXHBp
+         xHvpm6hnByML9OXYAYmtcHKlfkdGyi9xeunOVMARSKRie82nq4Pk1IX8AS9QzduCpQ/K
+         63VrR2RPGcOcL5xXL4dqunoOVcCkQBGoP6aA/iuIewYrm73iJhxmHWSlySqKAj1kzy2W
+         UTyQz7LwUPYOjIRrFbi9FpB5wEaU1HIzdVzPWEuWuH2qWV9dq+ZqX2kOHRk2y/5UxK+k
+         TWB086xhBya7n4SVyFQF/tvtRG7xYldbW1kFaQI8Hn1dNXR7/Qrr+A24N8mH5P0yTNYu
+         zYRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=3CG81BIdh8ktZ1lwYP5/xbtY/7dzA4am7fIvrmaYYyk=;
-        b=NdcDns2pJUrKEqo5XrdTf2HIVPx/1KPDEUQ8IdteQYITcCqZcTFrHThNC/8hPLwdzZ
-         p3FDw96GQf0yuR7Dgho6y+2nS7gzQGNg7tqo6vPw5j50qulPX216deGfLtFyDEFlk8oP
-         OlZJbMi9DpFJhLJ0Oiw4HhobkXVZO5jbFg7g8kv597iQ6GIG1fdPAy4UlJhXc56zmK3/
-         FzXtrebVbTm5q2GoFtXk7XDegtSLb0WCQ6p4vm1hoFW8hdoYz9QTedOoah5qb0xkYzoy
-         bw2qavV3F9cZikAsHA/pxftszUxLKUbldzD5cQI/2d2/a9u9B9cwqWZdQixKAsgyVoVW
-         iaVw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:reply-to
+         :arc-authentication-results;
+        bh=180Gh+3BW6qNcE+xKr7MMadiHIl1B4LO/NFDUrGlmjE=;
+        b=k2XFH+RigOjKIkaR7fmsulA4A1jy784HRTLs0u+cXuJTOIIOBTjd2o9XVP/oONdIh8
+         zrubZdq22wTU3Jo9XvDAdEli7p1eMVo63fAnBrnTu7UjHHOO1Rmzjvl6bEnbuUOXcKGO
+         h1cGjcABwkY1ckzPBNSviZ6/0AAbJvuySnVUH3M/XIDwLrWPVqFQeIkCFCTdvugP+w8k
+         RUEdduax/su3V6sUR6MmLqI2Xm3r10Jzvn0dfPwIjW5tmABF3Q0WKMwONcBOVo65t0bs
+         tscUqm2HpfBSe0SfKqnJ4/gdoJ7lPokV9b+rQIQnbVGVnASzs6alQuYM9C7BHB7Ga35n
+         v1Ig==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       spf=neutral (google.com: 64.68.200.34 is neither permitted nor denied by best guess record for domain of shuah@kernel.org) smtp.mailfrom=shuah@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usbip: vudc: fix null pointer dereference on udc->lock
-Date: Thu, 22 Feb 2018 17:39:17 +0000
-Message-Id: <20180222173917.10841-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+       spf=neutral (google.com: 64.68.200.34 is neither permitted nor denied by best guess record for domain of shuah@kernel.org) smtp.mailfrom=shuah@kernel.org
+Reply-To: shuah@kernel.org
+Subject: Re: [PATCH] usbip: vudc: fix null pointer dereference on udc->lock
+To: Colin King <colin.king@canonical.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+References: <20180222173917.10841-1-colin.king@canonical.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <0e3059a0-1310-5d08-4623-f1cf34c52fc0@kernel.org>
+Date: Mon, 26 Feb 2018 09:40:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180222173917.10841-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593123702701163352?=
-X-GMAIL-MSGID: =?utf-8?q?1593123702701163352?=
+X-GMAIL-MSGID: =?utf-8?q?1593482398185269412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On 02/22/2018 10:39 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the driver attempts to spin lock on udc->lock before a NULL
+> pointer check is performed on udc, hence there is a potential null
+> pointer dereference on udc->lock.  Fix this by moving the null check
+> on udc before the lock occurs.
+> 
+> Fixes: ea6873a45a22 ("usbip: vudc: Add SysFS infrastructure for VUDC")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/usb/usbip/vudc_sysfs.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
+> index d86f72bbbb91..6dcd3ff655c3 100644
+> --- a/drivers/usb/usbip/vudc_sysfs.c
+> +++ b/drivers/usb/usbip/vudc_sysfs.c
+> @@ -105,10 +105,14 @@ static ssize_t usbip_sockfd_store(struct device *dev, struct device_attribute *a
+>  	if (rv != 0)
+>  		return -EINVAL;
+>  
+> +	if (!udc) {
+> +		dev_err(dev, "no device");
+> +		return -ENODEV;
+> +	}
+>  	spin_lock_irqsave(&udc->lock, flags);
+>  	/* Don't export what we don't have */
+> -	if (!udc || !udc->driver || !udc->pullup) {
+> -		dev_err(dev, "no device or gadget not bound");
+> +	if (!udc->driver || !udc->pullup) {
+> +		dev_err(dev, "gadget not bound");
+>  		ret = -ENODEV;
+>  		goto unlock;
+>  	}
+> 
 
-Currently the driver attempts to spin lock on udc->lock before a NULL
-pointer check is performed on udc, hence there is a potential null
-pointer dereference on udc->lock.  Fix this by moving the null check
-on udc before the lock occurs.
+Thanks for the patch. Looks good to me.
 
-Fixes: ea6873a45a22 ("usbip: vudc: Add SysFS infrastructure for VUDC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
-Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
-Cc: stable <stable@vger.kernel.org>
----
- drivers/usb/usbip/vudc_sysfs.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
-index d86f72bbbb91..6dcd3ff655c3 100644
---- a/drivers/usb/usbip/vudc_sysfs.c
-+++ b/drivers/usb/usbip/vudc_sysfs.c
-@@ -105,10 +105,14 @@ static ssize_t usbip_sockfd_store(struct device *dev, struct device_attribute *a
- 	if (rv != 0)
- 		return -EINVAL;
- 
-+	if (!udc) {
-+		dev_err(dev, "no device");
-+		return -ENODEV;
-+	}
- 	spin_lock_irqsave(&udc->lock, flags);
- 	/* Don't export what we don't have */
--	if (!udc || !udc->driver || !udc->pullup) {
--		dev_err(dev, "no device or gadget not bound");
-+	if (!udc->driver || !udc->pullup) {
-+		dev_err(dev, "gadget not bound");
- 		ret = -ENODEV;
- 		goto unlock;
- 	}
--- 
-2.15.1
+thanks,
+-- Shuah
