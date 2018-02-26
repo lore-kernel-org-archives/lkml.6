@@ -1,131 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeBZHtQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:49:16 -0500
-Received: from foss.arm.com ([217.140.101.70]:44838 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750882AbeBZHtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:49:14 -0500
-Subject: Re: [PATCH] cpufreq: scpi: invoke frequency-invariance setter
- function
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-References: <20180220111057.14756-1-dietmar.eggemann@arm.com>
- <CAJZ5v0hB+Uk8SNVqUH3fr1y0SXbY1Rd26b84P-8PPV8FiPbnWw@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <23dba70b-aa83-4a21-a33d-733bec215264@arm.com>
-Date: Mon, 26 Feb 2018 08:49:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752197AbeBZHtn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:49:43 -0500
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45076 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbeBZHtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 02:49:41 -0500
+X-Google-Smtp-Source: AG47ELvbm4/IzLcd718We5PqFgxeLjS8PmzeZZfk1KI8E8YmDFoP7yN2yYC2B2LwNK3gj9xDvS4mGMAHHO1++dsSTYM=
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hB+Uk8SNVqUH3fr1y0SXbY1Rd26b84P-8PPV8FiPbnWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <55d52f37-c24d-c2da-43c6-73a55403d3b6@c-s.fr>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-6-malat@debian.org>
+ <55d52f37-c24d-c2da-43c6-73a55403d3b6@c-s.fr>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Mon, 26 Feb 2018 08:49:20 +0100
+X-Google-Sender-Auth: np-Qa_as9v6m6xUmNe1MiuRMqbI
+Message-ID: <CA+7wUszvNAD-j5PkA3wYBF7oYfu3+L7vCXtyyhiOBdwyVnH9cQ@mail.gmail.com>
+Subject: Re: [PATCH 05/21] powerpc: Avoid comparison of unsigned long >= 0 in pfn_valid
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1Q7nlSN011420
 
-On 02/22/2018 11:27 PM, Rafael J. Wysocki wrote:
-> On Tue, Feb 20, 2018 at 12:10 PM, Dietmar Eggemann
-> <dietmar.eggemann@arm.com> wrote:
-
-[...]
-
->> Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
->> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
->> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> This is really minor, but I would reorder this slightly.
-
-Tried to figure out what would be the better order. Not sure since I saw
-different examples. Can you tell what would be the best tag order?
-
-[...]
-
->> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
->> index c32a833e1b00..3101d4e9c2de 100644
->> --- a/drivers/cpufreq/scpi-cpufreq.c
->> +++ b/drivers/cpufreq/scpi-cpufreq.c
->> @@ -51,13 +51,19 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
->>   static int
->>   scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
->>   {
->> +       unsigned long freq = policy->freq_table[index].frequency;
->>          struct scpi_data *priv = policy->driver_data;
->> -       u64 rate = policy->freq_table[index].frequency * 1000;
->> +       u64 rate = freq * 1000;
->>          int ret;
+On Mon, Feb 26, 2018 at 7:32 AM, Christophe LEROY
+<christophe.leroy@c-s.fr> wrote:
+>
+>
+> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
 >>
->>          ret = clk_set_rate(priv->clk, rate);
->> -       if (!ret && (clk_get_rate(priv->clk) != rate))
->> -               ret = -EIO;
->> +       if (!ret) {
-> 
-> I would do:
-> 
-> if (ret)
->          return ret;
-> 
-> arch_set_freq_scale(policy->related_cpus, freq, policy->cpuinfo.max_freq);
-> 
-> if (clk_get_rate(priv->clk) != rate)
->          return -EIO;
-> 
-> return 0;
-> 
-> That's somewhat easier to follow for me.
-
-Yes I can change this.
-
-> 
->> +               if (clk_get_rate(priv->clk) != rate)
->> +                       ret = -EIO;
->> +
->> +               arch_set_freq_scale(policy->related_cpus, freq,
->> +                                   policy->cpuinfo.max_freq);
->> +       }
+>> Rewrite comparison since all values compared are of type `unsigned long`.
 >>
->>          return ret;
->>   }
->> --
-> 
-> I also am not sure why you want to call arch_set_freq_scale() even if
-> the new clock rate didn't stick.
+>> Fix a warning (treated as error in W=1):
+>>
+>>    CC      arch/powerpc/kernel/irq.o
+>> In file included from ./include/linux/bug.h:5:0,
+>>                   from ./include/linux/cpumask.h:13,
+>>                   from ./include/linux/smp.h:13,
+>>                   from ./include/linux/kernel_stat.h:5,
+>>                   from arch/powerpc/kernel/irq.c:35:
+>> ./include/linux/dma-mapping.h: In function ‘dma_map_resource’:
+>> ./arch/powerpc/include/asm/page.h:129:32: error: comparison of unsigned
+>> expression >= 0 is always true [-Werror=type-limits]
+>>   #define pfn_valid(pfn)  ((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
+>>                                  ^
+>> Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>> ---
+>>   arch/powerpc/include/asm/page.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/page.h
+>> b/arch/powerpc/include/asm/page.h
+>> index 8da5d4c1cab2..19dea64e7ed2 100644
+>> --- a/arch/powerpc/include/asm/page.h
+>> +++ b/arch/powerpc/include/asm/page.h
+>> @@ -126,7 +126,8 @@ extern long long virt_phys_offset;
+>>     #ifdef CONFIG_FLATMEM
+>>   #define ARCH_PFN_OFFSET               ((unsigned long)(MEMORY_START >>
+>> PAGE_SHIFT))
+>> -#define pfn_valid(pfn)         ((pfn) >= ARCH_PFN_OFFSET && (pfn) <
+>> max_mapnr)
+>> +#define pfn_valid(pfn) \
+>> +               (((pfn) - ARCH_PFN_OFFSET) < (max_mapnr -
+>> ARCH_PFN_OFFSET))
+>
+>
+> What will happen when ARCH_PFN_OFFSET is not nul and pfn is lower than
+> ARCH_PFN_OFFSET ?
 
-Right, this is much better.
+I assumed that normal unsigned integers modulo would make the test
+fail. But for some particular value of max_mapnr the two are indeed
+not equivalent.
 
- static int
- scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
- {
-+       unsigned long freq = policy->freq_table[index].frequency;
-        struct scpi_data *priv = policy->driver_data;
--       u64 rate = policy->freq_table[index].frequency * 1000;
-+       u64 rate = freq * 1000;
-        int ret;
- 
-        ret = clk_set_rate(priv->clk, rate);
--       if (!ret && (clk_get_rate(priv->clk) != rate))
--               ret = -EIO;
- 
--       return ret;
-+       if (ret)
-+               return ret;
-+
-+       if (clk_get_rate(priv->clk) != rate)
-+               return -EIO;
-+
-+       arch_set_freq_scale(policy->related_cpus, freq,
-+                           policy->cpuinfo.max_freq);
-+
-+       return 0;
-
-Will send out a v2 as soon as I know the preferred tag order.
+> Christophe
+>
+>
+>>   #endif
+>>     #define virt_to_pfn(kaddr)  (__pa(kaddr) >> PAGE_SHIFT)
+>>
+>
