@@ -1,171 +1,286 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751608AbeBZIWx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:22:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:14654 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751998AbeBZIWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:22:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="20374167"
-From: "Huang\, Ying" <ying.huang@intel.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH RESEND 1/2] mm: swap: clean up swap readahead
-References: <20180220085249.151400-1-minchan@kernel.org>
-        <20180220085249.151400-2-minchan@kernel.org>
-        <874lm83zho.fsf@yhuang-dev.intel.com>
-        <20180226045617.GA112402@rodete-desktop-imager.corp.google.com>
-        <87d10stjk5.fsf@yhuang-dev.intel.com>
-        <20180226054104.GC112402@rodete-desktop-imager.corp.google.com>
-Date: Mon, 26 Feb 2018 16:22:41 +0800
-In-Reply-To: <20180226054104.GC112402@rodete-desktop-imager.corp.google.com>
-        (Minchan Kim's message of "Mon, 26 Feb 2018 14:41:04 +0900")
-Message-ID: <87zi3wrwha.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752318AbeBZIXV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:23:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39097 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752062AbeBZIXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 03:23:14 -0500
+Subject: Re: [PATCH 2/2] f2fs: expose extension_list sysfs entry
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180211145321.11285-1-chao@kernel.org>
+ <20180211145321.11285-2-chao@kernel.org>
+ <20180225092904.GB13378@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <7b5be9af-4f85-2130-edd1-2701876e9670@huawei.com>
+Date: Mon, 26 Feb 2018 16:26:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <20180225092904.GB13378@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minchan Kim <minchan@kernel.org> writes:
+Hi Jaegeuk,
 
-> On Mon, Feb 26, 2018 at 01:18:50PM +0800, Huang, Ying wrote:
->> Minchan Kim <minchan@kernel.org> writes:
->> 
->> > On Fri, Feb 23, 2018 at 04:02:27PM +0800, Huang, Ying wrote:
->> >> <minchan@kernel.org> writes:
->> >> [snip]
->> >> 
->> >> > diff --git a/mm/swap_state.c b/mm/swap_state.c
->> >> > index 39ae7cfad90f..c56cce64b2c3 100644
->> >> > --- a/mm/swap_state.c
->> >> > +++ b/mm/swap_state.c
->> >> > @@ -332,32 +332,38 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
->> >> >  			       unsigned long addr)
->> >> >  {
->> >> >  	struct page *page;
->> >> > -	unsigned long ra_info;
->> >> > -	int win, hits, readahead;
->> >> >  
->> >> >  	page = find_get_page(swap_address_space(entry), swp_offset(entry));
->> >> >  
->> >> >  	INC_CACHE_INFO(find_total);
->> >> >  	if (page) {
->> >> > +		bool vma_ra = swap_use_vma_readahead();
->> >> > +		bool readahead = TestClearPageReadahead(page);
->> >> > +
->> >> 
->> >> TestClearPageReadahead() cannot be called for compound page.  As in
->> >> 
->> >> PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
->> >> 	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
->> >> 
->> >> >  		INC_CACHE_INFO(find_success);
->> >> >  		if (unlikely(PageTransCompound(page)))
->> >> >  			return page;
->> >> > -		readahead = TestClearPageReadahead(page);
->> >> 
->> >> So we can only call it here after checking whether page is compound.
->> >
->> > Hi Huang,
->> >
->> > Thanks for cathing this.
->> > However, I don't see the reason we should rule out THP page for
->> > readahead marker. Could't we relax the rule?
->> >
->> > I hope we can do so that we could remove PageTransCompound check
->> > for readahead marker, which makes code ugly.
->> >
->> > From 748b084d5c3960ec2418d8c51a678aada30f1072 Mon Sep 17 00:00:00 2001
->> > From: Minchan Kim <minchan@kernel.org>
->> > Date: Mon, 26 Feb 2018 13:46:43 +0900
->> > Subject: [PATCH] mm: relax policy for PG_readahead
->> >
->> > This flag is in use for anon THP page so let's relax it.
->> >
->> > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> > Signed-off-by: Minchan Kim <minchan@kernel.org>
->> > ---
->> >  include/linux/page-flags.h | 4 ++--
->> >  1 file changed, 2 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> > index e34a27727b9a..f12d4dfae580 100644
->> > --- a/include/linux/page-flags.h
->> > +++ b/include/linux/page-flags.h
->> > @@ -318,8 +318,8 @@ PAGEFLAG(MappedToDisk, mappedtodisk, PF_NO_TAIL)
->> >  /* PG_readahead is only used for reads; PG_reclaim is only for writes */
->> >  PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
->> >  	TESTCLEARFLAG(Reclaim, reclaim, PF_NO_TAIL)
->> > -PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
->> > -	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
->> > +PAGEFLAG(Readahead, reclaim, PF_NO_TAIL)
->> > +	TESTCLEARFLAG(Readahead, reclaim, PF_NO_TAIL)
->> >  
->> >  #ifdef CONFIG_HIGHMEM
->> >  /*
->> 
->> We never set Readahead bit for THP in reality.  The original code acts
->> as document for this.  I don't think it is a good idea to change this
->> without a good reason.
->
-> I don't like such divergence so that we don't need to care about whether
-> the page is THP or not. However, there is pointless to confuse ra stat
-> counters, too. How about this?
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 8dde719e973c..e169d137d27c 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -348,12 +348,17 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
->  	INC_CACHE_INFO(find_total);
->  	if (page) {
->  		bool vma_ra = swap_use_vma_readahead();
-> -		bool readahead = TestClearPageReadahead(page);
-> +		bool readahead;
->  
->  		INC_CACHE_INFO(find_success);
-> +		/*
-> +		 * At the moment, we doesn't support PG_readahead for anon THP
-> +		 * so let's bail out rather than confusing the readahead stat.
-> +		 */
->  		if (unlikely(PageTransCompound(page)))
->  			return page;
->  
-> +		readahead = TestClearPageReadahead(page);
->  		if (vma && vma_ra) {
->  			unsigned long ra_val;
->  			int win, hits;
-> @@ -608,8 +613,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->  			continue;
->  		if (page_allocated) {
->  			swap_readpage(page, false);
-> -			if (offset != entry_offset &&
-> -			    likely(!PageTransCompound(page))) {
-> +			if (offset != entry_offset) {
->  				SetPageReadahead(page);
->  				count_vm_event(SWAP_RA);
->  			}
-> @@ -772,8 +776,7 @@ struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
->  			continue;
->  		if (page_allocated) {
->  			swap_readpage(page, false);
-> -			if (i != ra_info.offset &&
-> -			    likely(!PageTransCompound(page))) {
-> +			if (i != ra_info.offset) {
->  				SetPageReadahead(page);
->  				count_vm_event(SWAP_RA);
->  			}
+On 2018/2/25 17:29, Jaegeuk Kim wrote:
+> On 02/11, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> This patch adds a sysfs entry 'extension_list' to support lookup/
+>> add/delete item in extension list.
+> 
+> Hi Chao,
+> 
+> We need Doc change as well.
 
-This looks good for me.  Thanks!
+Oh, right, let me add it.
 
-Best Regards,
-Huang, Ying
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Lookup:
+>> cat /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Add:
+>> echo 'extension' > /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Delete:
+>> echo '!extension' > /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h          |  4 +++-
+>>  fs/f2fs/file.c          |  4 ++--
+>>  fs/f2fs/namei.c         | 42 +++++++++++++++++++++++++++++++++++++++---
+>>  fs/f2fs/super.c         |  2 +-
+>>  fs/f2fs/sysfs.c         | 40 ++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/f2fs_fs.h |  3 ++-
+>>  6 files changed, 87 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 0332c44a1d93..030436be2a35 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1048,7 +1048,7 @@ struct f2fs_sb_info {
+>>  	struct super_block *sb;			/* pointer to VFS super block */
+>>  	struct proc_dir_entry *s_proc;		/* proc entry */
+>>  	struct f2fs_super_block *raw_super;	/* raw super block pointer */
+>> -	struct mutex sb_lock;			/* lock for raw super block */
+>> +	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>>  	int valid_super_block;			/* valid super block no */
+>>  	unsigned long s_flag;				/* flags for sbi */
+>>  
+>> @@ -2612,6 +2612,8 @@ void handle_failed_inode(struct inode *inode);
+>>  /*
+>>   * namei.c
+>>   */
+>> +int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+>> +								bool set);
+>>  struct dentry *f2fs_get_parent(struct dentry *child);
+>>  
+>>  /*
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index f26a0bd17469..f64bcd0a7f73 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -1969,7 +1969,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+>>  	if (err)
+>>  		return err;
+>>  
+>> -	mutex_lock(&sbi->sb_lock);
+>> +	down_write(&sbi->sb_lock);
+>>  
+>>  	if (uuid_is_nonzero(sbi->raw_super->encrypt_pw_salt))
+>>  		goto got_it;
+>> @@ -1988,7 +1988,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+>>  									16))
+>>  		err = -EFAULT;
+>>  out_err:
+>> -	mutex_unlock(&sbi->sb_lock);
+>> +	up_write(&sbi->sb_lock);
+>>  	mnt_drop_write_file(filp);
+>>  	return err;
+>>  }
+>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>> index c4c94c7e9f4f..fa8e5c06ba39 100644
+>> --- a/fs/f2fs/namei.c
+>> +++ b/fs/f2fs/namei.c
+>> @@ -171,16 +171,52 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
+>>  static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
+>>  		const unsigned char *name)
+>>  {
+>> -	int i;
+>> -	__u8 (*extlist)[8] = sbi->raw_super->extension_list;
+>> +	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+>> +	int i, count;
+>> +
+>> +	down_read(&sbi->sb_lock);
+>> +
+>> +	count = le32_to_cpu(sbi->raw_super->extension_count);
+>>  
+>> -	int count = le32_to_cpu(sbi->raw_super->extension_count);
+>>  	for (i = 0; i < count; i++) {
+>>  		if (is_multimedia_file(name, extlist[i])) {
+>>  			file_set_cold(inode);
+>>  			break;
+>>  		}
+>>  	}
+>> +
+>> +	up_read(&sbi->sb_lock);
+>> +}
+>> +
+>> +int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
+>> +{
+>> +	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+>> +	int count = le32_to_cpu(sbi->raw_super->extension_count);
+>> +	int i;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		if (strcmp(name, extlist[i]))
+>> +			continue;
+>> +
+>> +		if (set)
+>> +			return -EINVAL;
+>> +
+>> +		memcpy(extlist[i], extlist[i + 1],
+>> +				F2FS_EXTENSION_LEN * (count - i - 1));
+>> +		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
+>> +		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
+>> +		return 0;
+>> +	}
+>> +
+>> +	if (!set)
+>> +		return -EINVAL;
+>> +
+>> +	if (count == F2FS_MAX_EXTENSION)
+>> +		return -EINVAL;
+>> +
+>> +	strncpy(extlist[count], name, strlen(name));
+>> +	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
+>> +	return 0;
+>>  }
+>>  
+>>  static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 1b49ad477dd9..9b17355434f6 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2233,7 +2233,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>>  	sbi->dirty_device = 0;
+>>  	spin_lock_init(&sbi->dev_lock);
+>>  
+>> -	mutex_init(&sbi->sb_lock);
+>> +	init_rwsem(&sbi->sb_lock);
+>>  }
+>>  
+>>  static int init_percpu_info(struct f2fs_sb_info *sbi)
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index 374ee5c82f94..d27b28e602a6 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -136,6 +136,18 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>>  	if (!ptr)
+>>  		return -EINVAL;
+>>  
+>> +	if (!strcmp(a->attr.name, "extension_list")) {
+>> +		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
+>> +					sbi->raw_super->extension_list;
+>> +		int count = le32_to_cpu(sbi->raw_super->extension_count);
+>> +		int len = 0, i;
+>> +
+>> +		for (i = 0; i < count; i++)
+>> +			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+>> +								extlist[i]);
+>> +		return len;
+>> +	}
+>> +
+>>  	ui = (unsigned int *)(ptr + a->offset);
+>>  
+>>  	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
+>> @@ -154,6 +166,32 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>>  	if (!ptr)
+>>  		return -EINVAL;
+>>  
+>> +	if (!strcmp(a->attr.name, "extension_list")) {
+>> +		const char *name = strim((char *)buf);
+>> +		bool set = true;
+>> +
+>> +		if (name[0] == '!') {
+>> +			name++;
+>> +			set = false;
+>> +		}
+>> +
+>> +		if (strlen(name) >= F2FS_EXTENSION_LEN)
+>> +			return -EINVAL;
+>> +
+>> +		down_write(&sbi->sb_lock);
+>> +
+>> +		ret = update_extension_list(sbi, name, set);
+>> +		if (ret)
+>> +			goto out;
+>> +
+>> +		ret = f2fs_commit_super(sbi, false);
+>> +		if (ret)
+>> +			update_extension_list(sbi, name, !set);
+>> +out:
+>> +		up_write(&sbi->sb_lock);
+>> +		return ret ? ret : count;
+>> +	}
+>> +
+>>  	ui = (unsigned int *)(ptr + a->offset);
+>>  
+>>  	ret = kstrtoul(skip_spaces(buf), 0, &t);
+>> @@ -307,6 +345,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_super_block, extension_list, extension_list);
+>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>>  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
+>>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
+>> @@ -357,6 +396,7 @@ static struct attribute *f2fs_attrs[] = {
+>>  	ATTR_LIST(iostat_enable),
+>>  	ATTR_LIST(readdir_ra),
+>>  	ATTR_LIST(gc_pin_file_thresh),
+>> +	ATTR_LIST(extension_list),
+>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>>  	ATTR_LIST(inject_rate),
+>>  	ATTR_LIST(inject_type),
+>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>> index f7f09907e69d..3d03f51282ac 100644
+>> --- a/include/linux/f2fs_fs.h
+>> +++ b/include/linux/f2fs_fs.h
+>> @@ -21,6 +21,7 @@
+>>  #define F2FS_BLKSIZE			4096	/* support only 4KB block */
+>>  #define F2FS_BLKSIZE_BITS		12	/* bits for F2FS_BLKSIZE */
+>>  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+>> +#define F2FS_EXTENSION_LEN		8	/* max size of extension */
+>>  #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) >> F2FS_BLKSIZE_BITS)
+>>  
+>>  #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
+>> @@ -102,7 +103,7 @@ struct f2fs_super_block {
+>>  	__u8 uuid[16];			/* 128-bit uuid for volume */
+>>  	__le16 volume_name[MAX_VOLUME_NAME];	/* volume name */
+>>  	__le32 extension_count;		/* # of extensions below */
+>> -	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
+>> +	__u8 extension_list[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];/* extension array */
+>>  	__le32 cp_payload;
+>>  	__u8 version[VERSION_LEN];	/* the kernel version */
+>>  	__u8 init_version[VERSION_LEN];	/* the initial kernel version */
+>> -- 
+>> 2.14.1.145.gb3622a4ee
+> 
+> .
+> 
