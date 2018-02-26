@@ -1,84 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752299AbeBZQGC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:06:02 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42313 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbeBZQGB (ORCPT
+        id S1751932AbeBZQHC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:07:02 -0500
+Received: from mail-io0-f178.google.com ([209.85.223.178]:38043 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750877AbeBZQHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:06:01 -0500
-X-Google-Smtp-Source: AG47ELswZzlGkKtQjYBVaWEd1rQBHzpVan4fx8EGyZxsB1dVWj/AIvcN3z1ui7hvpn+AfmliBPFaU7O3KVsZ1q46O/E=
+        Mon, 26 Feb 2018 11:07:01 -0500
+X-Google-Smtp-Source: AG47ELsHIx6hBKGSh4vG2QWj+N48pnpBEokcsfWvdZDwgi56+QiWObPBJf4YQSEZZGkhX9GBttK+IfuPLpjpMNw8lQ0=
 MIME-Version: 1.0
-In-Reply-To: <DM5PR12MB1916F87127E0C2EF6F042247F8C10@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180223200333.6410-1-Yazen.Ghannam@amd.com> <20180223200333.6410-9-Yazen.Ghannam@amd.com>
- <CAKv+Gu_kwJTxsmmQSAMKgSmK6w_-BhqBTnv3Sqv-K1TCYq4X-Q@mail.gmail.com> <DM5PR12MB1916F87127E0C2EF6F042247F8C10@DM5PR12MB1916.namprd12.prod.outlook.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 26 Feb 2018 16:06:00 +0000
-Message-ID: <CAKv+Gu9yHZEd5JjrmYVqb6ESCR5rP0kYZCNeAcy1kuYpjxJ7jQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] efi: Decode IA32/X64 Context Info structure
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+In-Reply-To: <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
+References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+ <20180222134004.GN25181@hirez.programming.kicks-ass.net> <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com> <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net> <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+ <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 26 Feb 2018 08:06:59 -0800
+X-Google-Sender-Auth: cMCb4WadqRBhWl4I8ZHV2u08Hls
+Message-ID: <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and spin_unlock()
+To: Luc Maranget <luc.maranget@inria.fr>
+Cc: Daniel Lustig <dlustig@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>, Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 February 2018 at 16:05, Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
->> -----Original Message-----
->> From: Ard Biesheuvel [mailto:ard.biesheuvel@linaro.org]
->> Sent: Saturday, February 24, 2018 11:46 AM
->> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
->> Cc: linux-efi@vger.kernel.org; Linux Kernel Mailing List <linux-
->> kernel@vger.kernel.org>; Borislav Petkov <bp@suse.de>; the arch/x86
->> maintainers <x86@kernel.org>
->> Subject: Re: [PATCH 8/8] efi: Decode IA32/X64 Context Info structure
->>
->> On 23 February 2018 at 20:03, Yazen Ghannam
->> <Yazen.Ghannam@amd.com> wrote:
->> > From: Yazen Ghannam <yazen.ghannam@amd.com>
->> >
->> > Print the fields of the IA32/X64 Context Information structure.
->> >
->> > Print the "Register Array" as raw values. Some context types are defined
->> > in the UEFI spec, so more detailed decoded may be added in the future.
->> >
->> > Based on UEFI 2.7 section N.2.4.2.2 IA32/X64 Processor Context
->> > Information Structure.
->> >
->> > Cc: <stable@vger.kernel.org> # 4.16.x
->> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
->> > ---
->> >  drivers/firmware/efi/cper-x86.c | 55
->> +++++++++++++++++++++++++++++++++++++++++
->> >  1 file changed, 55 insertions(+)
->> >
->> > diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-
->> x86.c
->> > index 02b1b424f537..bb6cef0b5e53 100644
->> > --- a/drivers/firmware/efi/cper-x86.c
->> > +++ b/drivers/firmware/efi/cper-x86.c
->> > @@ -13,6 +13,7 @@
->> >  #define VALID_LAPIC_ID                 BIT_ULL(0)
->> >  #define VALID_CPUID_INFO               BIT_ULL(1)
->> >  #define VALID_PROC_ERR_INFO_NUM(bits)  ((bits & GENMASK_ULL(7, 2))
->> >> 2)
->> > +#define VALID_PROC_CNXT_INFO_NUM(bits) ((bits & GENMASK_ULL(13,
->> 8)) >> 8)
->>
->> Parens
->>
->> Also, CNXT isn't really idiomatic when abbreviating 'context' (and you
->> use CTX below as well)
->>
+On Mon, Feb 26, 2018 at 6:21 AM, Luc Maranget <luc.maranget@inria.fr> wrote:
 >
-> The UEFI spec uses PROC_CONTEXT_INFO_NUM.
->
-> Would you prefer 1 or 2 below?
-> 1) VALID_PROC_CONTEXT_INFO_NUM
-> 2) VALID_PROC_CTX_INFO_NUM
->
+> That is, locks are not implemented from more basic primitive but are specified.
+> The specification can be described as behaving that way:
+>   - A lock behaves as a read-modify-write. the read behaving as a read-acquire
 
-Let's go with 2) since you're already using CTX in numerous places.
+This is wrong, or perhaps just misleading.
+
+The *whole* r-m-w acts as an acquire. Not just the read part. The
+write is very much part of it.
+
+Maybe that's what you meant, but it read to me as "just the read part
+of the rmw behaves as a read-acquire".
+
+Because it is very important that the _write_ part of the rmw is also
+ordered wrt everything that is inside the spinlock.
+
+So doing a spinlock as
+
+ (a) read-locked-acquire
+   modify
+ (c) write-conditional
+
+would be wrong, because the accesses inside the spinlock are ordered
+not just wrt the read-acquire, they have to be ordered wrt the write
+too.
+
+So it is closer to say that it's the _write_ of the r-m-w sequence
+that has the acquire semantics, not the read.
+
+>   - A unlock behaves as a store release.
+
+Yes.
+
+                  Linus
