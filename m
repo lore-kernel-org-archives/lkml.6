@@ -1,23 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AG47ELvKLKXyOFJQvMOJpY9UDtaYqPd4L6Jf3c++CMx45q+fbBlDEwopH+EhxKwKn9RcGvviCb0W
-ARC-Seal: i=1; a=rsa-sha256; t=1519636172; cv=none;
+X-Google-Smtp-Source: AG47ELsnPQSnh3Wiy+ryAQMZYy9yQd9CVBCfTgd0XXKGeaHoBWdmD1J+YV2R2NdtqFWV5PXy2se0
+ARC-Seal: i=1; a=rsa-sha256; t=1519636171; cv=none;
         d=google.com; s=arc-20160816;
-        b=i3XpOiP7WxJo1KugXZtndNXL4to7lhqAyze4uLNsjT7M5Q7c9gpZ56zYDd7bRSG4vr
-         IybIAsDyksnBJMfiJ6qr1Kk2o5QGAbyf+MwndD+cNgsn48tM7ViIKXPl+dOK1wFvmsEE
-         UdCe7lmmTenW9rnI6fo8qkET6fldIwabIkM94ffvk7eZLhViCe+aaV0cp8OyXXgMooKM
-         d0QkBthk+sn6Y9DI45aY/74gLKTroWxJxu2/OyCJlMOG9Q14kOEFcPZFz1x786cZCnuM
-         x+Uvr0cuPLh3ugPJ6TgYcLNgPm7SMX9tTVJMVFlLTcd1LpYl6Z6EKeSS2EgB/GyOwypk
-         lmEA==
+        b=r+a6zAa6NtyhNrMN6x6Hhq8Mxix2CMv9Tb0wcNojOFCS7hiAfUUW2tHZe7CzoZQfxs
+         GgAyuVHzkUtw0DTZCx+3BGr0xLbRfYas7AYoamgzppnwnwwQB//TSWI++sAlQbIyNL2G
+         xoaqV1KqnB2CGGYyzt9sA4ZgiPCAqpc8URS8n7csCAxZACYmQbTpjgTeZoM0ggEL0XBx
+         iHVN9wNqmaRAlhoN4gmnRW1olXpZtGzoC7Le0bUpU6Y5Cg5setydN86VvlSNm76X70oE
+         ZJFtGdNUwvRDULVQLpOAUcAobEvPvwQYiAAxaGdzq9XvOIjqnd0EZtHCaxCbLZ1Parzu
+         m8sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Yqf3MkLSAZQllKR2v+fj0AYtqAZ3zDF/t+bc4+kq7UM=;
-        b=jHnDPey2QOZ86V2AEgqgEq8Vo431gmQJB+ELhuSc+IzKpKeLGSEBm7uTpDIsWKpVsF
-         MuJ/bL3aMgBv42wflsT2bFfifzMJy7jNGNMU/p5yomSJdXSwFU1k/L/4AFzgjx1J+vGX
-         Kw7myyjvdfTcu7pG7QfcTa04ucGxj8DKhn5TnWXQohwGeUjIHu1De0edTbRSk0H4W8Nx
-         P1IynhlRSMzHcBtpc7Dq7Y3LHzp+Bv/idokVq0gSSldFc97YaqUKDKyJ51nApPynA/Bx
-         OErR/3jKLvqL8/suMXnaIr2MtplgtwQxEnuIuWxC1Sp2kKRKA7VuDDg7P7foHrLNyP8Y
-         4uzg==
+        bh=sQJ7oD6b4D2/c1EFlUclmVG+aMq8GbCXfPHuSIhW0d4=;
+        b=fVpBkoauQQGUGyti2+a3lOJMR8SxvcH0oqQL/rr/vlOuz0EJ0yI3omgOst3DW65JsX
+         y5bpM1OwsTmmWnoOjybpSCJn4h25I15Pyfuz7uktd5+082cZnesNqlrpzAUE8q0okWCw
+         PBJA9LTVJuxd4aeCYvJAWZ1usHtf9nKTAG2iVs8jcuek2R8AxVVRCFbZhsbuY2dHo54G
+         PRuP3nWa/WQTeAKRbd4BB015pjTaXueVZmOLm15+ZCC6AXj9Tr9449rVHLvHgJVKtj6R
+         q6knwNRRUEJPFdaqWMV9Or7TAuagr4CtqYMTM7Q2Dy7qMjGxV7qpGZ1Ys3Va5a/W/M9T
+         OzYg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -37,405 +37,295 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v3 02/12] usb: typec: Start using ERR_PTR
-Date: Mon, 26 Feb 2018 10:09:15 +0100
-Message-Id: <20180226090925.29436-3-hdegoede@redhat.com>
+Subject: [PATCH v3 01/12] drivers: base: Unified device connection lookup
+Date: Mon, 26 Feb 2018 10:09:14 +0100
+Message-Id: <20180226090925.29436-2-hdegoede@redhat.com>
 In-Reply-To: <20180226090925.29436-1-hdegoede@redhat.com>
 References: <20180226090925.29436-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454020032800489?=
-X-GMAIL-MSGID: =?utf-8?q?1593454020032800489?=
+X-GMAIL-THRID: =?utf-8?q?1593454017476208824?=
+X-GMAIL-MSGID: =?utf-8?q?1593454017476208824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-In order to allow the USB Type-C Class driver take care of
-things like muxes and other possible dependencies for the
-port drivers, returning ERR_PTR instead of NULL from the
-registration functions in case of failure.
+Several frameworks - clk, gpio, phy, pmw, etc. - maintain
+lookup tables for describing connections and provide custom
+API for handling them. This introduces a single generic
+lookup table and API for the connections.
 
-The reason for taking over control of the muxes for example
-is because handling them in the port drivers would be just
-boilerplate.
+The motivation for this commit is centralizing the
+connection lookup, but the goal is to ultimately extract the
+connection descriptions also from firmware by using the
+fwnode_graph_* functions and other mechanisms that are
+available.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
 Changes in v3:
--Add Guenter's Reviewed-by
+-Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
 
 Changes in v2:
--Add IS_ERR_OR_NULL() checks to the unregister functions
+-Add a (struct devcon) cast to the DEVCON() macro
 ---
- drivers/usb/typec/tcpm.c      | 16 +++++++++-------
- drivers/usb/typec/tps6598x.c  | 15 ++++++++-------
- drivers/usb/typec/typec.c     | 44 +++++++++++++++++++++----------------------
- drivers/usb/typec/ucsi/ucsi.c | 31 ++++++++++++++++++------------
- 4 files changed, 58 insertions(+), 48 deletions(-)
+ Documentation/driver-api/device_connection.rst |  43 ++++++++
+ drivers/base/Makefile                          |   3 +-
+ drivers/base/devcon.c                          | 139 +++++++++++++++++++++++++
+ include/linux/connection.h                     |  33 ++++++
+ 4 files changed, 217 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/driver-api/device_connection.rst
+ create mode 100644 drivers/base/devcon.c
+ create mode 100644 include/linux/connection.h
 
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index f4d563ee7690..7cd28b700a7f 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -1044,7 +1044,7 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
- 		break;
- 	case CMDT_RSP_ACK:
- 		/* silently drop message if we are not connected */
--		if (!port->partner)
-+		if (IS_ERR_OR_NULL(port->partner))
- 			break;
- 
- 		switch (cmd) {
-@@ -3743,8 +3743,8 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	port->port_type = tcpc->config->type;
- 
- 	port->typec_port = typec_register_port(port->dev, &port->typec_caps);
--	if (!port->typec_port) {
--		err = -ENOMEM;
-+	if (IS_ERR(port->typec_port)) {
-+		err = PTR_ERR(port->typec_port);
- 		goto out_destroy_wq;
- 	}
- 
-@@ -3753,15 +3753,17 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 
- 		i = 0;
- 		while (paltmode->svid && i < ARRAY_SIZE(port->port_altmode)) {
--			port->port_altmode[i] =
--			  typec_port_register_altmode(port->typec_port,
--						      paltmode);
--			if (!port->port_altmode[i]) {
-+			struct typec_altmode *alt;
+diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
+new file mode 100644
+index 000000000000..64a3e5e9bb7c
+--- /dev/null
++++ b/Documentation/driver-api/device_connection.rst
+@@ -0,0 +1,43 @@
++==================
++Device connections
++==================
 +
-+			alt = typec_port_register_altmode(port->typec_port,
-+							  paltmode);
-+			if (IS_ERR(alt)) {
- 				tcpm_log(port,
- 					 "%s: failed to register port alternate mode 0x%x",
- 					 dev_name(dev), paltmode->svid);
- 				break;
- 			}
-+			port->port_altmode[i] = alt;
- 			i++;
- 			paltmode++;
- 		}
-diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-index 2719f5d382f7..37a15c14a6c6 100644
---- a/drivers/usb/typec/tps6598x.c
-+++ b/drivers/usb/typec/tps6598x.c
-@@ -158,15 +158,15 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 		desc.identity = &tps->partner_identity;
- 	}
- 
--	tps->partner = typec_register_partner(tps->port, &desc);
--	if (!tps->partner)
--		return -ENODEV;
--
- 	typec_set_pwr_opmode(tps->port, mode);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
- 	typec_set_vconn_role(tps->port, TPS_STATUS_VCONN(status));
- 	typec_set_data_role(tps->port, TPS_STATUS_DATAROLE(status));
- 
-+	tps->partner = typec_register_partner(tps->port, &desc);
-+	if (IS_ERR(tps->partner))
-+		return PTR_ERR(tps->partner);
++Introduction
++------------
 +
- 	if (desc.identity)
- 		typec_partner_set_identity(tps->partner);
- 
-@@ -175,7 +175,8 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 
- static void tps6598x_disconnect(struct tps6598x *tps, u32 status)
- {
--	typec_unregister_partner(tps->partner);
-+	if (!IS_ERR(tps->partner))
-+		typec_unregister_partner(tps->partner);
- 	tps->partner = NULL;
- 	typec_set_pwr_opmode(tps->port, TYPEC_PWR_MODE_USB);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
-@@ -418,8 +419,8 @@ static int tps6598x_probe(struct i2c_client *client)
- 	tps->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
- 
- 	tps->port = typec_register_port(&client->dev, &tps->typec_cap);
--	if (!tps->port)
--		return -ENODEV;
-+	if (IS_ERR(tps->port))
-+		return PTR_ERR(tps->port);
- 
- 	if (status & TPS_STATUS_PLUG_PRESENT) {
- 		ret = tps6598x_connect(tps, status);
-diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/typec.c
-index 735726ced602..dc28ad868d93 100644
---- a/drivers/usb/typec/typec.c
-+++ b/drivers/usb/typec/typec.c
-@@ -386,7 +386,7 @@ typec_register_altmode(struct device *parent,
- 
- 	alt = kzalloc(sizeof(*alt), GFP_KERNEL);
- 	if (!alt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	alt->svid = desc->svid;
- 	alt->n_modes = desc->n_modes;
-@@ -402,7 +402,7 @@ typec_register_altmode(struct device *parent,
- 		dev_err(parent, "failed to register alternate mode (%d)\n",
- 			ret);
- 		put_device(&alt->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return alt;
-@@ -417,7 +417,7 @@ typec_register_altmode(struct device *parent,
-  */
- void typec_unregister_altmode(struct typec_altmode *alt)
- {
--	if (alt)
-+	if (!IS_ERR_OR_NULL(alt))
- 		device_unregister(&alt->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_altmode);
-@@ -509,7 +509,7 @@ EXPORT_SYMBOL_GPL(typec_partner_register_altmode);
-  *
-  * Registers a device for USB Type-C Partner described in @desc.
-  *
-- * Returns handle to the partner on success or NULL on failure.
-+ * Returns handle to the partner on success or ERR_PTR on failure.
-  */
- struct typec_partner *typec_register_partner(struct typec_port *port,
- 					     struct typec_partner_desc *desc)
-@@ -519,7 +519,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 
- 	partner = kzalloc(sizeof(*partner), GFP_KERNEL);
- 	if (!partner)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	partner->usb_pd = desc->usb_pd;
- 	partner->accessory = desc->accessory;
-@@ -542,7 +542,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
- 		put_device(&partner->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return partner;
-@@ -557,7 +557,7 @@ EXPORT_SYMBOL_GPL(typec_register_partner);
-  */
- void typec_unregister_partner(struct typec_partner *partner)
- {
--	if (partner)
-+	if (!IS_ERR_OR_NULL(partner))
- 		device_unregister(&partner->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_partner);
-@@ -587,7 +587,7 @@ static const struct device_type typec_plug_dev_type = {
-  * the plug lists in response to Discover Modes command need to be listed in an
-  * array in @desc.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_plug_register_altmode(struct typec_plug *plug,
-@@ -606,7 +606,7 @@ EXPORT_SYMBOL_GPL(typec_plug_register_altmode);
-  * Cable Plug represents a plug with electronics in it that can response to USB
-  * Power Delivery SOP Prime or SOP Double Prime packages.
-  *
-- * Returns handle to the cable plug on success or NULL on failure.
-+ * Returns handle to the cable plug on success or ERR_PTR on failure.
-  */
- struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 				       struct typec_plug_desc *desc)
-@@ -617,7 +617,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 
- 	plug = kzalloc(sizeof(*plug), GFP_KERNEL);
- 	if (!plug)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sprintf(name, "plug%d", desc->index);
- 
-@@ -631,7 +631,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 	if (ret) {
- 		dev_err(&cable->dev, "failed to register plug (%d)\n", ret);
- 		put_device(&plug->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return plug;
-@@ -646,7 +646,7 @@ EXPORT_SYMBOL_GPL(typec_register_plug);
-  */
- void typec_unregister_plug(struct typec_plug *plug)
- {
--	if (plug)
-+	if (!IS_ERR_OR_NULL(plug))
- 		device_unregister(&plug->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_plug);
-@@ -724,7 +724,7 @@ EXPORT_SYMBOL_GPL(typec_cable_set_identity);
-  * Registers a device for USB Type-C Cable described in @desc. The cable will be
-  * parent for the optional cable plug devises.
-  *
-- * Returns handle to the cable on success or NULL on failure.
-+ * Returns handle to the cable on success or ERR_PTR on failure.
-  */
- struct typec_cable *typec_register_cable(struct typec_port *port,
- 					 struct typec_cable_desc *desc)
-@@ -734,7 +734,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 
- 	cable = kzalloc(sizeof(*cable), GFP_KERNEL);
- 	if (!cable)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	cable->type = desc->type;
- 	cable->active = desc->active;
-@@ -757,7 +757,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register cable (%d)\n", ret);
- 		put_device(&cable->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return cable;
-@@ -772,7 +772,7 @@ EXPORT_SYMBOL_GPL(typec_register_cable);
-  */
- void typec_unregister_cable(struct typec_cable *cable)
- {
--	if (cable)
-+	if (!IS_ERR_OR_NULL(cable))
- 		device_unregister(&cable->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_cable);
-@@ -1256,7 +1256,7 @@ EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
-  * This routine is used to register an alternate mode that @port is capable of
-  * supporting.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_port_register_altmode(struct typec_port *port,
-@@ -1273,7 +1273,7 @@ EXPORT_SYMBOL_GPL(typec_port_register_altmode);
-  *
-  * Registers a device for USB Type-C Port described in @cap.
-  *
-- * Returns handle to the port on success or NULL on failure.
-+ * Returns handle to the port on success or ERR_PTR on failure.
-  */
- struct typec_port *typec_register_port(struct device *parent,
- 				       const struct typec_capability *cap)
-@@ -1285,12 +1285,12 @@ struct typec_port *typec_register_port(struct device *parent,
- 
- 	port = kzalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	id = ida_simple_get(&typec_index_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		kfree(port);
--		return NULL;
-+		return ERR_PTR(id);
- 	}
- 
- 	if (cap->type == TYPEC_PORT_DFP)
-@@ -1326,7 +1326,7 @@ struct typec_port *typec_register_port(struct device *parent,
- 	if (ret) {
- 		dev_err(parent, "failed to register port (%d)\n", ret);
- 		put_device(&port->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return port;
-@@ -1341,7 +1341,7 @@ EXPORT_SYMBOL_GPL(typec_register_port);
-  */
- void typec_unregister_port(struct typec_port *port)
- {
--	if (port)
-+	if (!IS_ERR_OR_NULL(port))
- 		device_unregister(&port->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_port);
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 79046fe66426..69d544cfcd45 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -260,38 +260,45 @@ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
- 
- static int ucsi_register_partner(struct ucsi_connector *con)
- {
--	struct typec_partner_desc partner;
-+	struct typec_partner_desc desc;
-+	struct typec_partner *partner;
- 
- 	if (con->partner)
- 		return 0;
- 
--	memset(&partner, 0, sizeof(partner));
-+	memset(&desc, 0, sizeof(desc));
- 
- 	switch (con->status.partner_type) {
- 	case UCSI_CONSTAT_PARTNER_TYPE_DEBUG:
--		partner.accessory = TYPEC_ACCESSORY_DEBUG;
-+		desc.accessory = TYPEC_ACCESSORY_DEBUG;
- 		break;
- 	case UCSI_CONSTAT_PARTNER_TYPE_AUDIO:
--		partner.accessory = TYPEC_ACCESSORY_AUDIO;
-+		desc.accessory = TYPEC_ACCESSORY_AUDIO;
- 		break;
- 	default:
- 		break;
- 	}
- 
--	partner.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
-+	desc.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
- 
--	con->partner = typec_register_partner(con->port, &partner);
--	if (!con->partner) {
--		dev_err(con->ucsi->dev, "con%d: failed to register partner\n",
--			con->num);
--		return -ENODEV;
-+	partner = typec_register_partner(con->port, &desc);
-+	if (IS_ERR(partner)) {
-+		dev_err(con->ucsi->dev,
-+			"con%d: failed to register partner (%ld)\n", con->num,
-+			PTR_ERR(partner));
-+		return PTR_ERR(partner);
- 	}
- 
-+	con->partner = partner;
++Devices often have connections to other devices that are outside of the direct
++child/parent relationship. A serial or network communication controller, which
++could be a PCI device, may need to be able to get a reference to its PHY
++component, which could be attached for example to the I2C bus. Some device
++drivers need to be able to control the clocks or the GPIOs for their devices,
++and so on.
 +
- 	return 0;
- }
- 
- static void ucsi_unregister_partner(struct ucsi_connector *con)
- {
-+	if (!con->partner)
-+		return;
++Device connections are generic descriptions of any type of connection between
++two separate devices.
 +
- 	typec_unregister_partner(con->partner);
- 	con->partner = NULL;
- }
-@@ -606,8 +613,8 @@ static int ucsi_register_port(struct ucsi *ucsi, int index)
- 
- 	/* Register the connector */
- 	con->port = typec_register_port(ucsi->dev, cap);
--	if (!con->port)
--		return -ENODEV;
-+	if (IS_ERR(con->port))
-+		return PTR_ERR(con->port);
- 
- 	/* Get the status */
- 	UCSI_CMD_GET_CONNECTOR_STATUS(ctrl, con->num);
++Device connections alone do not create a dependency between the two devices.
++They are only descriptions which are not tied to either of the devices directly.
++A dependency between the two devices exists only if one of the two endpoint
++devices requests a reference to the other. The descriptions themselves can be
++defined in firmware (not yet supported) or they can be built-in.
++
++Usage
++-----
++
++Device connections should exist before device ``->probe`` callback is called for
++either endpoint device in the description. If the connections are defined in
++firmware, this is not a problem. It should be considered if the connection
++descriptions are "built-in", and need to be added separately.
++
++The connection description consists of the names of the two devices with the
++connection, i.e. the endpoints, and unique identifier for the connection which
++is needed if there are multiple connections between the two devices.
++
++After a description exists, the devices in it can request reference to the other
++endpoint device, or they can request the description itself.
++
++API
++---
++
++.. kernel-doc:: drivers/base/devcon.c
++   : functions: __device_find_connection device_find_connection add_device_connection remove_device_connection
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index e32a52490051..12a7f64d35a9 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
+ 			   driver.o class.o platform.o \
+ 			   cpu.o firmware.o init.o map.o devres.o \
+ 			   attribute_container.o transport_class.o \
+-			   topology.o container.o property.o cacheinfo.o
++			   topology.o container.o property.o cacheinfo.o \
++			   devcon.o
+ obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
+ obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+ obj-y			+= power/
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+new file mode 100644
+index 000000000000..1628dcb34709
+--- /dev/null
++++ b/drivers/base/devcon.c
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0
++/**
++ * Device connections
++ *
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
++ */
++
++#include <linux/connection.h>
++#include <linux/device.h>
++
++static DEFINE_MUTEX(devcon_lock);
++static LIST_HEAD(devcon_list);
++
++/**
++ * __device_find_connection - Find physical connection to a device
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
++ * @data: Data for the match function
++ * @match: Function to check and convert the connection description
++ *
++ * Find a connection with unique identifier @con_id between @dev and another
++ * device. @match will be used to convert the connection description to data the
++ * caller is expecting to be returned.
++ */
++void *__device_find_connection(struct device *dev, const char *con_id,
++			       void *data,
++			       void *(*match)(struct devcon *con, int ep,
++					      void *data))
++{
++	const char *devname = dev_name(dev);
++	struct devcon *con;
++	void *ret = NULL;
++	int ep;
++
++	if (!match)
++		return NULL;
++
++	rcu_read_lock();
++
++	list_for_each_entry_rcu(con, &devcon_list, list) {
++		ep = match_string(con->endpoint, 2, devname);
++		if (ep < 0)
++			continue;
++
++		if (con_id && strcmp(con->id, con_id))
++			continue;
++
++		ret = match(con, !ep, data);
++		if (ret)
++			break;
++	}
++
++	rcu_read_unlock();
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(__device_find_connection);
++
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/i2c.h>
++#include <linux/pci.h>
++
++static struct bus_type *generic_match_buses[] = {
++	&platform_bus_type,
++#ifdef CONFIG_PCI
++	&pci_bus_type,
++#endif
++#ifdef CONFIG_I2C
++	&i2c_bus_type,
++#endif
++#ifdef CONFIG_SPI_MASTER
++	&spi_bus_type,
++#endif
++	NULL,
++};
++
++/* This tries to find the device from the most common bus types by name. */
++static void *generic_match(struct devcon *con, int ep, void *data)
++{
++	struct bus_type *bus;
++	struct device *dev;
++
++	for (bus = generic_match_buses[0]; bus; bus++) {
++		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
++		if (dev)
++			return dev;
++	}
++
++	/*
++	 * We only get called if a connection was found, tell the caller to
++	 * wait for the other device to show up.
++	 */
++	return ERR_PTR(-EPROBE_DEFER);
++}
++
++/**
++ * device_find_connection - Find two devices connected together
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
++ *
++ * Find a connection with unique identifier @con_id between @dev and
++ * another device. On success returns handle to the device that is connected
++ * to @dev, with the reference count for the found device incremented. Returns
++ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
++ * connection was found but the other device has not been enumerated yet.
++ */
++struct device *device_find_connection(struct device *dev, const char *con_id)
++{
++	return __device_find_connection(dev, con_id, generic_match, NULL);
++}
++EXPORT_SYMBOL_GPL(device_find_connection);
++
++/**
++ * add_device_connection - Register a collection of connection descriptions
++ * @con: Collection of connection descriptions to be registered
++ */
++void add_device_connection(struct devcon *con)
++{
++	mutex_lock(&devcon_lock);
++	list_add_tail_rcu(&con->list, &devcon_list);
++	mutex_unlock(&devcon_lock);
++}
++EXPORT_SYMBOL_GPL(add_device_connection);
++
++/**
++ * remove_device_connections - Unregister collection of connection descriptions
++ * @con: Collection of connection descriptions to be unregistered
++ */
++void remove_device_connection(struct devcon *con)
++{
++	mutex_lock(&devcon_lock);
++	list_del_rcu(&con->list);
++	mutex_unlock(&devcon_lock);
++	/* The caller may free the devcon struct immediately afterwards. */
++	synchronize_rcu();
++}
++EXPORT_SYMBOL_GPL(remove_device_connection);
+diff --git a/include/linux/connection.h b/include/linux/connection.h
+new file mode 100644
+index 000000000000..0b4430eae53a
+--- /dev/null
++++ b/include/linux/connection.h
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#ifndef _LINUX_CONNECTION_H_
++#define _LINUX_CONNECTION_H_
++
++#include <linux/list.h>
++
++struct device;
++
++/**
++ * struct devcon - Device Connection Descriptor
++ * @endpoint: The names of the two devices connected together
++ * @id: Unique identifier for the connection
++ */
++struct devcon {
++	const char		*endpoint[2];
++	const char		*id;
++	struct list_head	list;
++};
++
++void *__device_find_connection(struct device *dev, const char *con_id,
++			       void *data,
++			       void *(*match)(struct devcon *con, int ep,
++					      void *data));
++
++struct device *device_find_connection(struct device *dev, const char *con_id);
++
++#define DEVCON(_ep0, _ep1, _id)    (struct devcon) { { _ep0, _ep1 }, _id, }
++
++void add_device_connection(struct devcon *con);
++void remove_device_connection(struct devcon *con);
++
++#endif /* _LINUX_CONNECTION_H_ */
 -- 
 2.14.3
