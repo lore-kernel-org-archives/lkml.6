@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226KcRIbem3zv8ney0QhXSOlNZn2Td2eOSAt8Sah+aP9FoWLOXylswgSTP0nVNIMYKWIgbTm
-ARC-Seal: i=1; a=rsa-sha256; t=1519676813; cv=none;
+X-Google-Smtp-Source: AH8x225NEHtaDH0Af3c4QyctoAs2bUMpBM/HsJbbTLoEq+qC74AySHmzYAu4yRmNzuGfZPuPIige
+ARC-Seal: i=1; a=rsa-sha256; t=1519676810; cv=none;
         d=google.com; s=arc-20160816;
-        b=TkCwC/BRZ4Ph8gRRnmVmX5qdk5KW2ko1OHNGEQajIq+GyfUUG9i0U8AgIQFxwcFTy7
-         zz1mE2tO1LEn6fmPel1+5+VxnCCKkrla7OhQgDeZUjv54Ylclt92+6IqduuUfQQX7v7a
-         7Nlj3joOJZpT5RlWQGcKAI5UTvZgH7CqBpWhaJ8xPlR4Z80y2NUjOIqigrqFuiMyTIwr
-         2QEHRtpsUl9nCiK3cm567czwvKIezc1Rroht0bzaKOblIQST25Vz27garw+3juINX+Fl
-         fxmnZE/Aj3tRP3tta5qRTslKUT/oIrXDRMhDwadpxZ04zs7oJyrY8va/iA0HKvoPHrt6
-         b8CA==
+        b=grkvjwSZpTQFzqdKfMtlqi/s2hCjntPMLyWIBleeFOx5eFCs62jYrwSnmjjzyKripx
+         3LiNL2vDQ36BNNng+1uQWHo21AmmpU7jAavT0Ao/Kdg9gReajo0PxbFISZF7kJJN6bYd
+         qllE1W6Le94c9re1a0b7N5bKYVPwqjG040BhbnXGuRaGl1PHVtvWlnA6jkHWwbOX2FsW
+         NJReSqszhMQQs6OubuDTAjtOL3RsO9awtIXWVTpIQRZaiTZcT0FcKCFU1VTOzQIGe0hq
+         oCbQ7zUaIuw3ERc6YjwpEefV1hSPki3TIpaxB+KmqQ2Acfyn/gNdeZQu0t8iAqCJvhZt
+         BQBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=usxpVvsw/UIr5Gf3qX3GpUOSVv+VH7k1CvZRl71jsk8=;
-        b=DhCs92/vOsmHcVQkc3xzDbqurLn/Mws48ZU8tcZs+JGpyeXbJVo6U9axE3hTMtWgQF
-         L4jedXTaSnHtrdfjW+rGjd7HUcqSvUpHgA4ONyzKPFuLS0zI1PaQwkeOCuvrLmb4Aax0
-         ks1cIR05NKjTG9WbawGovM3EleInZIUOYG6oQFUrqGmqjmce6EwVFMAMaL3AH3khX0wT
-         asdB3B106207JwPDkBkEGG5kW229wlMLeZk2g85JlnnpjWtysucYZEqg/53WJDx4AvMX
-         KxzM4hDeguBDAl63BSjN4KkolryThiSh2CYgVeI31sAqEZr/840LbmHYbgrKtM5tVFre
-         hEwg==
+        bh=PU5TZvAhChUsLi3+hZM+BQQbVZiZ/sDo3YBTHqhV7Kg=;
+        b=Tcgn5IHbDuqh3/kyBKACD//tcfVIvdwTU588xmXRTEdiPFDPu0EDOkjawsP/DI+Khh
+         era2WPiwwJEyqEesC0jBpW1Ao9b7ukI9qado7EPtJmIWyCqNW9JqwN3mkIqwDDGHJwqo
+         ChFuWUzBIZ1eVFkgP8jA4p63lEGOqS6n6lfueTHIuAYPOkEXzGZw4l1KGX+JAp5RGp/K
+         hSjHxJ0TewVTvSJ2F65yuYxNTc6x8vgV+RsrIHS7eWrAKM/uDM9ieht0rUvWn6JRyEHd
+         yxGORRvEICSROEb0oN+VtrRvNE+cODYowTHXJ1TUTKsCWZUF+M/2Al0Axj9zq8YRufrm
+         txCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andreas Klinger <ak@it-klinger.de>,
+	Fabrice Gasnier <fabrice.gasnier@st.com>,
 	Stable@vger.kernel.org,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.15 23/64] iio: srf08: fix link error "devm_iio_triggered_buffer_setup" undefined
-Date: Mon, 26 Feb 2018 21:22:00 +0100
-Message-Id: <20180226202154.461701474@linuxfoundation.org>
+Subject: [PATCH 4.15 22/64] iio: adc: stm32: fix stm32h7_adc_enable error handling
+Date: Mon, 26 Feb 2018 21:21:59 +0100
+Message-Id: <20180226202154.411957860@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496451515173902?=
-X-GMAIL-MSGID: =?utf-8?q?1593496635206682339?=
+X-GMAIL-THRID: =?utf-8?q?1593496448510056884?=
+X-GMAIL-MSGID: =?utf-8?q?1593496631076370567?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andreas Klinger <ak@it-klinger.de>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-commit 511051d509ec54642dd6d30fdf2caa33c23619cc upstream.
+commit a3b5655ebdb501a98a45c0d3265dca9f2fe0218a upstream.
 
-Functions for triggered buffer support are needed by this module.
-If they are not defined accidentally by another driver, there's an error
-thrown out while linking.
+Error handling in stm32h7_adc_enable routine doesn't unwind enable
+sequence correctly. ADEN can only be cleared by hardware (e.g. by
+writing one to ADDIS).
+It's also better to clear ADRDY just after it's been set by hardware.
 
-Add a select of IIO_BUFFER and IIO_TRIGGERED_BUFFER in the Kconfig file.
+Fixes: 95e339b6e85d ("iio: adc: stm32: add support for STM32H7")
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-Fixes: a83195937151 ("iio: srf08: add triggered buffer support")
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/proximity/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iio/adc/stm32-adc.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/iio/proximity/Kconfig
-+++ b/drivers/iio/proximity/Kconfig
-@@ -68,6 +68,8 @@ config SX9500
+--- a/drivers/iio/adc/stm32-adc.c
++++ b/drivers/iio/adc/stm32-adc.c
+@@ -765,8 +765,6 @@ static int stm32h7_adc_enable(struct stm
+ 	int ret;
+ 	u32 val;
  
- config SRF08
- 	tristate "Devantech SRF02/SRF08/SRF10 ultrasonic ranger sensor"
-+	select IIO_BUFFER
-+	select IIO_TRIGGERED_BUFFER
- 	depends on I2C
- 	help
- 	  Say Y here to build a driver for Devantech SRF02/SRF08/SRF10
+-	/* Clear ADRDY by writing one, then enable ADC */
+-	stm32_adc_set_bits(adc, STM32H7_ADC_ISR, STM32H7_ADRDY);
+ 	stm32_adc_set_bits(adc, STM32H7_ADC_CR, STM32H7_ADEN);
+ 
+ 	/* Poll for ADRDY to be set (after adc startup time) */
+@@ -774,8 +772,11 @@ static int stm32h7_adc_enable(struct stm
+ 					   val & STM32H7_ADRDY,
+ 					   100, STM32_ADC_TIMEOUT_US);
+ 	if (ret) {
+-		stm32_adc_clr_bits(adc, STM32H7_ADC_CR, STM32H7_ADEN);
++		stm32_adc_set_bits(adc, STM32H7_ADC_CR, STM32H7_ADDIS);
+ 		dev_err(&indio_dev->dev, "Failed to enable ADC\n");
++	} else {
++		/* Clear ADRDY by writing one */
++		stm32_adc_set_bits(adc, STM32H7_ADC_ISR, STM32H7_ADRDY);
+ 	}
+ 
+ 	return ret;
