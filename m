@@ -1,35 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeBZVwB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:52:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45382 "EHLO
+        id S1751950AbeBZVw5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:52:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51604 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751165AbeBZVv6 (ORCPT
+        by vger.kernel.org with ESMTP id S1751586AbeBZVwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:51:58 -0500
-Date: Mon, 26 Feb 2018 13:52:19 -0800
+        Mon, 26 Feb 2018 16:52:50 -0500
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org
 Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com
-Subject: [PATCH tip/core/rcu 0/20] Miscellaneous fixes
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        fweisbec@gmail.com, oleg@redhat.com,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 11/20] rcu: More clearly identify grace-period kthread stack dump
+Date: Mon, 26 Feb 2018 13:53:01 -0800
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180226215219.GA27379@linux.vnet.ibm.com>
+References: <20180226215219.GA27379@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18022621-0040-0000-0000-000003FD5BD3
+x-cbid: 18022621-0056-0000-0000-0000042458A3
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995529; UDB=6.00506033; IPR=6.00774858;
- MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 21:51:55
+ PH=3.00000004; SC=3.00000254; SDB=6.00995530; UDB=6.00506033; IPR=6.00774858;
+ MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 21:52:48
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022621-0041-0000-0000-000007FE65E2
-Message-Id: <20180226215219.GA27379@linux.vnet.ibm.com>
+x-cbparentid: 18022621-0057-0000-0000-00000866621C
+Message-Id: <1519681990-31349-11-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,71 +40,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+It is not always obvious that the stack dump from a starved grace-period
+kthread isn't instead that of a CPU stalling the current grace period.
+This commit therefore adds a pr_err() flagging these dumps.
 
-This series provides miscellaneous fixes:
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ kernel/rcu/tree.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-1.	Remove unnecessary spinlock in rcu_boot_init_percpu_data(),
-	courtesy of Lihao Liang.
-
-2.	Eliminate NO_HZ_FULL_ALL, instead relying on the nohz_full
-	kernel boot parameter.
-
-3.	Fix CPU offload boot message when no CPUs are offloaded.
-
-4.	Fix typo in rcutorture documentation, courtesy of Lihao Liang.
-
-5.	Fix typo in the rcu_head structure's comments,courtesy of Lihao
-	Liang.
-
-6.	Call touch_nmi_watchdog() while printing stall warnings,
-	courtesy of Tejun Heo.
-
-7.	Remove obsolete boost statistics for debugfs.
-
-8-10.	Remove obsolete statistics for debugfs.
-
-11.	More clearly identify grace-period kthread stack dump.
-
-12.	Consolidate rcu.h #ifdefs.
-
-13.	Remove redundant nxttail index macro define, courtesy of
-	Liu Changcheng.
-
-14.	Use wrapper for lockdep asserts, courtesy of Matthew Wilcox.
-
-15.	Fix init_rcu_head() comment.
-
-16.	Fix misprint in srcu_funnel_exp_start, courtesy of Ildar Ismagilov.
-
-17.	Add more tracing of expedited grace periods.
-
-18.	Trace expedited GP delays due to transitioning CPUs.
-
-19.	Make expedited RCU CPU selection avoid unnecessary stores.
-
-20.	Create RCU-specific workqueues with rescuers.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/timers/NO_HZ.txt                              |    7 -
- include/linux/rcupdate.h                                    |   10 +
- include/linux/types.h                                       |    2 
- include/trace/events/rcu.h                                  |    4 
- kernel/rcu/rcu.h                                            |   38 ++++--
- kernel/rcu/srcutree.c                                       |   12 --
- kernel/rcu/tree.c                                           |   72 ++++--------
- kernel/rcu/tree.h                                           |   36 ------
- kernel/rcu/tree_exp.h                                       |   38 ++++--
- kernel/rcu/tree_plugin.h                                    |   34 +++--
- kernel/time/Kconfig                                         |   10 -
- kernel/time/tick-sched.c                                    |   22 ---
- tools/testing/selftests/rcutorture/configs/rcu/TASKS03      |    1 
- tools/testing/selftests/rcutorture/configs/rcu/TASKS03.boot |    2 
- tools/testing/selftests/rcutorture/configs/rcu/TREE04       |    1 
- tools/testing/selftests/rcutorture/configs/rcu/TREE04.boot  |    2 
- tools/testing/selftests/rcutorture/configs/rcu/TREE07       |    1 
- tools/testing/selftests/rcutorture/doc/rcu-test-image.txt   |    2 
- 18 files changed, 128 insertions(+), 166 deletions(-)
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 86fc087c7777..4d7c727020f0 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1350,6 +1350,7 @@ static void rcu_check_gp_kthread_starvation(struct rcu_state *rsp)
+ 		       rsp->gp_kthread ? rsp->gp_kthread->state : ~0,
+ 		       rsp->gp_kthread ? task_cpu(rsp->gp_kthread) : -1);
+ 		if (rsp->gp_kthread) {
++			pr_err("RCU grace-period kthread stack dump:\n");
+ 			sched_show_task(rsp->gp_kthread);
+ 			wake_up_process(rsp->gp_kthread);
+ 		}
+-- 
+2.5.2
