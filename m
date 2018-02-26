@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519677329-2-15094933033836648765
+X-Cyrus-Session-Id: sloti22d1t05-3726165-1519677316-2-15336179461398401461
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519677329; b=FS6X5Zmy18wq5ZKsRHKbyIT9G9GUQswQtKssCelUQ+grsMq
-    57W+lGYVrQkXcsajvx804cPB8P01nvGJVM9R6UIBZ97lwNaNh2Ie5xoo1LNvHWxk
-    QM/YiNKZ8YxtoNb9hzEZbZg3kUuWo/d33qVvPYu7p/7+U82G8hAXZ3PmFYpH9tyq
-    CgmAXFIO/Z+j21M4hnK28g8Qhfx7RLFiFoW/L4/nPh12AZHFLSoGqJi5l3BZ+jJK
-    UVyl8z30LoRoDrsgdnEL1RQXExWKZUDoAtKxWmyoqRgf9/Vg6MlxzUbQKE9zDVbG
-    0s9bvoQGuCR/tYen91BxgdiGEGoqyae8C87Rqiw==
+    t=1519677315; b=hm+pUPHd02G+GOwVJLCSHYAduFRhpSVCo3Eb8Qmx/U/PNh9
+    EsN6gbBIQSlS5XRir8IKdTZn7vKm773XA/oCAvmvYkVQ6ZElax/JYELHA//OOsYX
+    kvt9ulsybQso1QBP0N7+RC0kdxVdF4/s9NmQVjhGu4QBwwZ+AoqYnWANlWZXZnSI
+    RJ1F/ieTElX//3JhLprNTQziVv6Y0JNli0QZqV4OrD+Q9B2roWM8jC3pw+3VoVGS
+    eINjfTbeM/qKPcuUJQeFVAN60sDP+1HTiR2NDmeO2qKzufGSpQQekCC0MwXLxZCd
+    bTz12es6FEulMvKDi5Lu/0XaIewTjmQmYiPabyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519677329; bh=8zrgYiVrELcnUf8ZsxS3njXAIN
-    sFE4+3CQD5lj+diWc=; b=GAzHQyu98fY2xv96EIvjUMoxzP9ToYQ8QM8SesDJRO
-    BtiSode9OABBJ8RFfm8zXPpnRCLMEcehh1MffFj7T2JeXNU7GxXuPDilczRQXio+
-    oFwaVqKYPTNxxEUJkmwn4g55fEVST4UGD+2FLGw6CMcQ7nAAcR/98A7Fty39MWVg
-    eJStyt1TnJypFlc/xv2Elt595JJ6IOSDfJgi7gn57kQDqFyNtXtywNfXhy2HN0rA
-    YWQoah2KrMzZOXDkmVGhCt9GAWWXPkqCedQA489Z/zbK/ht22SIi5g3YycX94OjB
-    EdaInzi84M1/ywbAwUrBffZXbDuL2pgsDERuzAJjqjlw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519677315; bh=QeySiBzTm9pCebOOH7HlYdwF5j
+    hj3LxlGrdsFPrdZbY=; b=Bj4uwgVyIjCJSyg1cgh+zv3NrPGJwF1wdm0O8pNXa7
+    TUMrdFbe7B/NeC7yJpuvcYuNzUyrJsJQkAPop5Ym+Xe25bYaujQ52aLcWxw1Jbet
+    N+0eQq4WZ0JXUNXJjS1erqI3Nq/Ju38YyAqPRaBpO63WFnhj9zTSzddeHva4JgRL
+    P0JYEIjn+YfMv97UBuXq9Nc7f9F6NwYI0Am/sztYOBA0z/dWJwhUNqAtfhB8QMNk
+    QelB+Qxq8estp9xrUWHN2pjV6oBP/cZ5/eVGfoHfaYfT2s/XQFHwmsoweYVdluSE
+    988BoOXDK/CTLcLCjlYxEKeCj3XnHqF4OHP1HNyPF2wg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750877AbeBZUfM (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:35:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36974 "EHLO
+        id S1753821AbeBZU16 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:27:58 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753820AbeBZU16 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:27:58 -0500
+        with ESMTP id S1752442AbeBZU1w (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:27:52 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 45/64] usb: dwc3: gadget: Set maxpacket size for ep0 IN
-Date: Mon, 26 Feb 2018 21:22:22 +0100
-Message-Id: <20180226202155.369082229@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.15 43/64] drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
+Date: Mon, 26 Feb 2018 21:22:20 +0100
+Message-Id: <20180226202155.283389834@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -78,39 +80,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 6180026341e852a250e1f97ebdcf71684a3c81b9 upstream.
+commit 06998a756a3865817b87a129a7e5d5bb66dc1ec3 upstream.
 
-There are 2 control endpoint structures for DWC3. However, the driver
-only updates the OUT direction control endpoint structure during
-ConnectDone event. DWC3 driver needs to update the endpoint max packet
-size for control IN endpoint as well. If the max packet size is not
-properly set, then the driver will incorrectly calculate the data
-transfer size and fail to send ZLP for HS/FS 3-stage control read
-transfer.
+Similar to commit e10aec652f31 ("drm/edid: Add 6 bpc quirk for display
+AEO model 0."), the EDID reports "DFP 1.x compliant TMDS" but it support
+6bpc instead of 8 bpc.
 
-The fix is simply to update the max packet size for the ep0 IN direction
-during ConnectDone event.
+Hence, use 6 bpc quirk for this panel.
 
-Cc: stable@vger.kernel.org
-Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 196f954e2509 ("drm/i915/dp: Revert "drm/i915/dp: fall back to 18 bpp when sink capability is unknown"")
+BugLink: https://bugs.launchpad.net/bugs/1749420
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Mario Kleiner <mario.kleiner.de@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180218085359.7817-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/drm_edid.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2744,6 +2744,8 @@ static void dwc3_gadget_conndone_interru
- 		break;
- 	}
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -113,6 +113,9 @@ static const struct edid_quirk {
+ 	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
+ 	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
  
-+	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
++	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
++	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
 +
- 	/* Enable USB2 LPM Capability */
- 
- 	if ((dwc->revision > DWC3_REVISION_194A) &&
+ 	/* Belinea 10 15 55 */
+ 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
+ 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
