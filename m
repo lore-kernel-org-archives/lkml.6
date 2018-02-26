@@ -1,57 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753369AbeBZNIM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:08:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56338 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753170AbeBZNGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:06:14 -0500
-Date: Mon, 26 Feb 2018 14:05:54 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-Message-ID: <20180226130553.GI4377@pd.tnic>
-References: <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
- <20180226113000.GC4377@pd.tnic>
- <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
- <20180226114409.GD4377@pd.tnic>
- <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
- <20180226121509.GE4377@pd.tnic>
- <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
- <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com>
- <20180226122205.GG4377@pd.tnic>
- <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
+        id S1753338AbeBZNIB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:08:01 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:50480 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752557AbeBZNGK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:06:10 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
+        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
+CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Richard Fitzgerald" <rf@opensource.cirrus.com>
+Subject: [PATCH v8 0/9] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
+Date: Mon, 26 Feb 2018 13:05:49 +0000
+Message-ID: <20180226130558.7634-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=523 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802260174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:41:38PM +0100, Paolo Bonzini wrote:
-> More like "-cpu foo,ucode_rev=0xdeadbeef".  But in practice what would
-> happen is one of the following:
-> 
-> 1) "-cpu host" sets ucode_rev to the same value of the host, everyone
-> else leaves it to zero as is now.
-> 
-> 2) Only Amazon uses this feature and we ignore it. :)
+NOTE: Compared to older versions of this chain I have removed patches at the
+end of the chain that were being ignored until the earlier patches had been
+merged - an impossible circular dependency. There were too many moving targets
+to keep the whole chain up-to-date and so patches that were already acked were
+getting stale. The subset of patches here are all acked or close-to-acked, and
+can be built and used as they are to produce a working pinctrl and gpio.
 
-I fear that that might get misused and we probably should consider some
-trivial range checking and each qemu cpu model would have a valid range
-or so.
+The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
+devices. In addition to the core audio capability they have onboard GPIO,
+regulators, DSPs and interrupt controller and a large register map space
+accessed over SPI or I2C. This family of codecs is based around common IP
+blocks and they are managed by a set of common drivers referred to as "Madera".
 
-Or we should better do that in kvm_set_msr_common directly... although
-if we do it here, it would require kvm knowing about all those different
-microcode revisions and qemu cpu models sounds better...
+Richard Fitzgerald (9):
+  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
+  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
+  mfd: madera: Add common support for Cirrus Logic Madera codecs
+  mfd: madera: Register map tables for Cirrus Logic CS47L35
+  mfd: madera: Register map tables for Cirrus Logic CS47L85
+  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
+  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
+  gpio: madera: Support Cirrus Logic Madera class codecs
+
+ Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
+ MAINTAINERS                                        |   16 +
+ drivers/gpio/Kconfig                               |    6 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-madera.c                         |  203 +
+ drivers/mfd/Kconfig                                |   50 +
+ drivers/mfd/Makefile                               |   14 +
+ drivers/mfd/cs47l35-tables.c                       | 1609 ++++++++
+ drivers/mfd/cs47l85-tables.c                       | 3009 +++++++++++++++
+ drivers/mfd/cs47l90-tables.c                       | 2674 +++++++++++++
+ drivers/mfd/madera-core.c                          |  602 +++
+ drivers/mfd/madera-i2c.c                           |  141 +
+ drivers/mfd/madera-spi.c                           |  140 +
+ drivers/mfd/madera.h                               |   44 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/cirrus/Kconfig                     |   15 +
+ drivers/pinctrl/cirrus/Makefile                    |   13 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   45 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   59 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   57 +
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c       | 1074 ++++++
+ drivers/pinctrl/cirrus/pinctrl-madera.h            |   41 +
+ include/linux/mfd/madera/core.h                    |  190 +
+ include/linux/mfd/madera/pdata.h                   |   62 +
+ include/linux/mfd/madera/registers.h               | 3917 ++++++++++++++++++++
+ 27 files changed, 14185 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+ create mode 100644 drivers/gpio/gpio-madera.c
+ create mode 100644 drivers/mfd/cs47l35-tables.c
+ create mode 100644 drivers/mfd/cs47l85-tables.c
+ create mode 100644 drivers/mfd/cs47l90-tables.c
+ create mode 100644 drivers/mfd/madera-core.c
+ create mode 100644 drivers/mfd/madera-i2c.c
+ create mode 100644 drivers/mfd/madera-spi.c
+ create mode 100644 drivers/mfd/madera.h
+ create mode 100644 drivers/pinctrl/cirrus/Kconfig
+ create mode 100644 drivers/pinctrl/cirrus/Makefile
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera-core.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
+ create mode 100644 include/linux/mfd/madera/core.h
+ create mode 100644 include/linux/mfd/madera/pdata.h
+ create mode 100644 include/linux/mfd/madera/registers.h
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.11.0
