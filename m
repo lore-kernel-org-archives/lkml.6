@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeBZXIo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 18:08:44 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:47411 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbeBZXIk (ORCPT
+        id S1751759AbeBZXJc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 18:09:32 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46118 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeBZXJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:08:40 -0500
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 77.7.26.24) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
- graphics command
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
- <20180225235432.31209-1-rabel@robertabel.eu>
-From: Robert Abel <rabel@robertabel.eu>
-Message-ID: <f71f052e-fe62-aff9-35a8-dac1cb333575@robertabel.eu>
-Date: Tue, 27 Feb 2018 00:08:37 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180225235432.31209-1-rabel@robertabel.eu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <20180226230839.12420.29205@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+        Mon, 26 Feb 2018 18:09:30 -0500
+X-Google-Smtp-Source: AH8x225Z6SBBJvoYUP7QYYJ4BQCwjlIewzQ8CKPecVlXf+zNT6WyhFTro9hwVG6vjDau+nfqG5QapA==
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] mm: Provide consistent declaration for num_poisoned_pages
+Date: Mon, 26 Feb 2018 15:09:25 -0800
+Message-Id: <1519686565-8224-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 Feb 2018 00:54, Robert Abel wrote:> Robert Abel (4):
->   auxdisplay: charlcd: fix two-line command ^[[LN not marked as
->     processed
->   auxdisplay: charlcd: name x/y address struct
->   auxdisplay: charlcd: fix x/y address commands
->   auxdisplay: charlcd: make home command unshift display
+clang reports the following compile warning.
 
-So I think as it stands, only the first patch is being picked up, while
-the other three will need rework, which is fine.
+In file included from mm/vmscan.c:56:
+./include/linux/swapops.h:327:22: warning:
+	section attribute is specified on redeclared variable [-Wsection]
+extern atomic_long_t num_poisoned_pages __read_mostly;
+                     ^
+./include/linux/mm.h:2585:22: note: previous declaration is here
+extern atomic_long_t num_poisoned_pages;
+                     ^
 
-I think I'm going to wait a little while with the x/y fix until the
-simple_strto* situation has settled.
+Let's use __read_mostly everywhere.
 
-For the home command basically only more comments in code should be
-necessary.
-More comments will also be good for the x/y issue once I change the
-implementation.
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+---
+ include/linux/mm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-
-Robert
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..bd4bd59f02c1 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
+ extern int sysctl_memory_failure_early_kill;
+ extern int sysctl_memory_failure_recovery;
+ extern void shake_page(struct page *p, int access);
+-extern atomic_long_t num_poisoned_pages;
++extern atomic_long_t num_poisoned_pages __read_mostly;
+ extern int soft_offline_page(struct page *page, int flags);
+ 
+ 
+-- 
+2.7.4
