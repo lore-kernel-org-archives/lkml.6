@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226SUm7B3c4V+c0D2WKZQ8/NTYiGtJtVrZrdLh7KB8wd1P2TcK3wZtgfXp5zpR8qN2AWKuD9
+X-Google-Smtp-Source: AH8x224QHdqN2bn7pyusEZS+YT2fsPUVZacDMg0mc1qQrCjrqN0cMRX4TOjVrOULw0E7KfCg+oHf
 ARC-Seal: i=1; a=rsa-sha256; t=1519676175; cv=none;
         d=google.com; s=arc-20160816;
-        b=rtCYGqP91O9+GZOxQM9l3RVJoZB514NYd/LQHYjC6HgrJHg7+bFYw+o4lEvew8bAgP
-         zvN/jwWhNgiUbMWGIffv2mZD9Fil0Xf/CqbwPBS21UbG524yiDBFe59d8rC7g+dOq19f
-         gjQK2a2dBpHmbUQodvBYR+swD4OasWn8SXU60pWiUf+H3yWZFm+jGD4+J1UqE/U/AaPg
-         RDobcbcESxwYeJxRHJ+tYTjTyUYwjLghv3yAZtXbgF390FTZsPRZJ/QfQGFYG6uMviaT
-         jqdW3mUP4SS3y8yeR2AeC/AX2R93VuAJnSGPPAP1sbZtGONkshvGwM8AEUXXOs6P8qZg
-         zNNA==
+        b=HDUQK5OvdOVLLawoqmzUQu48MJU9qQDQcwpFODzq+CD1A9KvSorrBWr6gq7+3rOkCT
+         qlVnLKs3MvELuBhstzIUf62k1nR1MMdbkvwgKZZwFg4Jve+bVA59mkPRK8j9Mk83v/gG
+         oDOAZ/VlQlLY63H7B6RA6VUkmiixWRDaJX1gITKwt8plM6KeXqI+DdAqBJVwj4fXusbr
+         +VlRV+Hsm0FalavTcWsTpoE6jgvgKScvmtmpZHw6onkmOtJq0JLeWIKWLgei+Riu9l8E
+         1n9D/ZXKNTwYoItu7sW8w/ogQyd9h5di+SlYRibLDh/AblF+m+7l71aHyJf35ZDOK9Wo
+         f/+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2xmKLvhqyX+kiXphx3WNZ9na+DL56v5xBGZfyY1pcmg=;
-        b=f3pOLCZZVu2JrBX0BiXXFE1grFjkLCzRNcK0IrquJtHVkZun558vWfzxhtFo1xLJNh
-         PYvj+R8BfnqoPSazt/V7BNK3De3+d+AZY1NuCYTVsvlLvwtxhbfniJfdSXzC8UOpdSaR
-         mo5F2CCnp94QISivIKVOITDT15fJJQgSsBOXTIfOE6uhy/2HCMn5/7WKUCRhOt18IknF
-         kELetcN0V7ZRwbzeITtauOUew0sDLsa3L68Jy80DOIvA8qSUR2SOSaf4qCPkdQLz87ev
-         Xjh3nBaRpkl9jimxLhm9Sk6mnZ8Su1yBBQgr4XdfhD/J9AzanbxTVhKfYjUJfVWloINo
-         kRVg==
+        bh=/o/bdl/UNwgsMkUw/2+A2C8I9+GdpvkcjZM6pcmuyNE=;
+        b=r9IJVPU6ruCR4MbsgqfznYlLRASCGud7tc4lcy9W9vVkCEoSr+kFiwN5E1tUJgLfrD
+         ipkklOaLAWriW4x0xVjQJrP0q6/9dTf5CCMvGyv+3TgJkdcGeaSQQCjM3JTAT9KbZxO5
+         xGrNUvWw65xuyYlyYoY25v9icUBW8ZUNzf7fs14CwA1Pl7EpMdMVNoJUuNBIUx7wuElA
+         XOReKAtPknkDFtdA2puhXlfalql/baVQ6rbmEGVu4CawZ9DlTJ+pWMY4xivADsdTCqRR
+         +CeQ9JRZ6z+upijr+ViQOMkI8dyF33fs2HDIYXiTIYK3x5OcF8kCJXc7tfOPg09g1F5u
+         sypA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Eric Biggers <ebiggers@google.com>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH 3.18 13/13] ASN.1: fix out-of-bounds read when parsing indefinite length item
-Date: Mon, 26 Feb 2018 21:15:41 +0100
-Message-Id: <20180226201527.813245634@linuxfoundation.org>
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Johan Hovold <johan@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 3.18 02/13] PCI: keystone: Fix interrupt-controller-node lookup
+Date: Mon, 26 Feb 2018 21:15:30 +0100
+Message-Id: <20180226201527.354817968@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
 References: <20180226201527.242286068@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495964796880297?=
-X-GMAIL-MSGID: =?utf-8?q?1593495964796880297?=
+X-GMAIL-THRID: =?utf-8?q?1593495965325088800?=
+X-GMAIL-MSGID: =?utf-8?q?1593495965325088800?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,129 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
+From: Johan Hovold <johan@kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+commit eac56aa3bc8af3d9b9850345d0f2da9d83529134 upstream.
 
-commit e0058f3a874ebb48b25be7ff79bc3b4e59929f90 upstream.
+Fix child-node lookup during initialisation which was using the wrong
+OF-helper and ended up searching the whole device tree depth-first
+starting at the parent rather than just matching on its children.
 
-In asn1_ber_decoder(), indefinitely-sized ASN.1 items were being passed
-to the action functions before their lengths had been computed, using
-the bogus length of 0x80 (ASN1_INDEFINITE_LENGTH).  This resulted in
-reading data past the end of the input buffer, when given a specially
-crafted message.
+To make things worse, the parent pci node could end up being prematurely
+freed as of_find_node_by_name() drops a reference to its first argument.
+Any matching child interrupt-controller node was also leaked.
 
-Fix it by rearranging the code so that the indefinite length is resolved
-before the action is called.
-
-This bug was originally found by fuzzing the X.509 parser in userspace
-using libFuzzer from the LLVM project.
-
-KASAN report (cleaned up slightly):
-
-    BUG: KASAN: slab-out-of-bounds in memcpy ./include/linux/string.h:341 [inline]
-    BUG: KASAN: slab-out-of-bounds in x509_fabricate_name.constprop.1+0x1a4/0x940 crypto/asymmetric_keys/x509_cert_parser.c:366
-    Read of size 128 at addr ffff880035dd9eaf by task keyctl/195
-
-    CPU: 1 PID: 195 Comm: keyctl Not tainted 4.14.0-09238-g1d3b78bbc6e9 #26
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-    Call Trace:
-     __dump_stack lib/dump_stack.c:17 [inline]
-     dump_stack+0xd1/0x175 lib/dump_stack.c:53
-     print_address_description+0x78/0x260 mm/kasan/report.c:252
-     kasan_report_error mm/kasan/report.c:351 [inline]
-     kasan_report+0x23f/0x350 mm/kasan/report.c:409
-     memcpy+0x1f/0x50 mm/kasan/kasan.c:302
-     memcpy ./include/linux/string.h:341 [inline]
-     x509_fabricate_name.constprop.1+0x1a4/0x940 crypto/asymmetric_keys/x509_cert_parser.c:366
-     asn1_ber_decoder+0xb4a/0x1fd0 lib/asn1_decoder.c:447
-     x509_cert_parse+0x1c7/0x620 crypto/asymmetric_keys/x509_cert_parser.c:89
-     x509_key_preparse+0x61/0x750 crypto/asymmetric_keys/x509_public_key.c:174
-     asymmetric_key_preparse+0xa4/0x150 crypto/asymmetric_keys/asymmetric_type.c:388
-     key_create_or_update+0x4d4/0x10a0 security/keys/key.c:850
-     SYSC_add_key security/keys/keyctl.c:122 [inline]
-     SyS_add_key+0xe8/0x290 security/keys/keyctl.c:62
-     entry_SYSCALL_64_fastpath+0x1f/0x96
-
-    Allocated by task 195:
-     __do_kmalloc_node mm/slab.c:3675 [inline]
-     __kmalloc_node+0x47/0x60 mm/slab.c:3682
-     kvmalloc ./include/linux/mm.h:540 [inline]
-     SYSC_add_key security/keys/keyctl.c:104 [inline]
-     SyS_add_key+0x19e/0x290 security/keys/keyctl.c:62
-     entry_SYSCALL_64_fastpath+0x1f/0x96
-
-Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
-Reported-by: Alexander Potapenko <glider@google.com>
-Cc: <stable@vger.kernel.org> # v3.7+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
+Cc: stable <stable@vger.kernel.org>     # 3.18
+Acked-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+[lorenzo.pieralisi@arm.com: updated commit subject]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+[johan: backport to 4.4]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- lib/asn1_decoder.c |   43 ++++++++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 19 deletions(-)
 
---- a/lib/asn1_decoder.c
-+++ b/lib/asn1_decoder.c
-@@ -305,38 +305,43 @@ next_op:
+---
+ drivers/pci/host/pci-keystone.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+--- a/drivers/pci/host/pci-keystone.c
++++ b/drivers/pci/host/pci-keystone.c
+@@ -179,14 +179,16 @@ static int ks_pcie_get_irq_controller_in
+ 	}
  
- 	/* Decide how to handle the operation */
- 	switch (op) {
--	case ASN1_OP_MATCH_ANY_ACT:
--	case ASN1_OP_COND_MATCH_ANY_ACT:
--		ret = actions[machine[pc + 1]](context, hdr, tag, data + dp, len);
--		if (ret < 0)
--			return ret;
--		goto skip_data;
--
--	case ASN1_OP_MATCH_ACT:
--	case ASN1_OP_MATCH_ACT_OR_SKIP:
--	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
--		ret = actions[machine[pc + 2]](context, hdr, tag, data + dp, len);
--		if (ret < 0)
--			return ret;
--		goto skip_data;
--
- 	case ASN1_OP_MATCH:
- 	case ASN1_OP_MATCH_OR_SKIP:
-+	case ASN1_OP_MATCH_ACT:
-+	case ASN1_OP_MATCH_ACT_OR_SKIP:
- 	case ASN1_OP_MATCH_ANY:
-+	case ASN1_OP_MATCH_ANY_ACT:
- 	case ASN1_OP_COND_MATCH_OR_SKIP:
-+	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
- 	case ASN1_OP_COND_MATCH_ANY:
--	skip_data:
-+	case ASN1_OP_COND_MATCH_ANY_ACT:
+ 	/* interrupt controller is in a child node */
+-	*np_temp = of_find_node_by_name(np_pcie, controller);
++	*np_temp = of_get_child_by_name(np_pcie, controller);
+ 	if (!(*np_temp)) {
+ 		dev_err(dev, "Node for %s is absent\n", controller);
+ 		goto out;
+ 	}
+ 	temp = of_irq_count(*np_temp);
+-	if (!temp)
++	if (!temp) {
++		of_node_put(*np_temp);
+ 		goto out;
++	}
+ 	if (temp > max_host_irqs)
+ 		dev_warn(dev, "Too many %s interrupts defined %u\n",
+ 			(legacy ? "legacy" : "MSI"), temp);
+@@ -200,6 +202,9 @@ static int ks_pcie_get_irq_controller_in
+ 		if (host_irqs[temp] < 0)
+ 			break;
+ 	}
 +
- 		if (!(flags & FLAG_CONS)) {
- 			if (flags & FLAG_INDEFINITE_LENGTH) {
-+				size_t tmp = dp;
++	of_node_put(*np_temp);
 +
- 				ret = asn1_find_indefinite_length(
--					data, datalen, &dp, &len, &errmsg);
-+					data, datalen, &tmp, &len, &errmsg);
- 				if (ret < 0)
- 					goto error;
--			} else {
--				dp += len;
- 			}
- 			pr_debug("- LEAF: %zu\n", len);
- 		}
-+
-+		if (op & ASN1_OP_MATCH__ACT) {
-+			unsigned char act;
-+
-+			if (op & ASN1_OP_MATCH__ANY)
-+				act = machine[pc + 1];
-+			else
-+				act = machine[pc + 2];
-+			ret = actions[act](context, hdr, tag, data + dp, len);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		if (!(flags & FLAG_CONS))
-+			dp += len;
- 		pc += asn1_op_lengths[op];
- 		goto next_op;
- 
+ 	if (temp) {
+ 		*num_irqs = temp;
+ 		ret = 0;
