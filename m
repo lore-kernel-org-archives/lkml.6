@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeBZXyH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 18:54:07 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:37242 "EHLO
+        id S1751664AbeBZXyY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 18:54:24 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:37264 "EHLO
         out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751175AbeBZXyF (ORCPT
+        with ESMTP id S1751611AbeBZXyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:54:05 -0500
+        Mon, 26 Feb 2018 18:54:22 -0500
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Miklos Szeredi <mszeredi@redhat.com>
 Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
@@ -15,38 +15,36 @@ Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
         Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Mon, 26 Feb 2018 17:52:56 -0600
-Message-Id: <20180226235302.12708-1-ebiederm@xmission.com>
+Date: Mon, 26 Feb 2018 17:52:57 -0600
+Message-Id: <20180226235302.12708-2-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <87po4rz4ui.fsf_-_@xmission.com>
 References: <87po4rz4ui.fsf_-_@xmission.com>
-X-XM-SPF: eid=1eqSap-0005iL-Lz;;;mid=<20180226235302.12708-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/PDj16ZF0z1t1IBbnWpBlIM4vXMVUg6SQ=
+X-XM-SPF: eid=1eqSas-0005iL-6d;;;mid=<20180226235302.12708-2-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+OggSHD8J40qOOFyoFhAS6R1SXVyVSXCY=
 X-SA-Exim-Connect-IP: 174.19.85.160
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.5 XMGappySubj_01 Very gappy subject
         *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=78]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=78 
-X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 545 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.2 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.19 (0.2%),
-        extract_message_metadata: 26 (4.8%), get_uri_detail_list: 2.8 (0.5%),
-        tests_pri_-1000: 10 (1.8%), tests_pri_-950: 1.99 (0.4%), tests_pri_-900: 1.61
-        (0.3%), tests_pri_-400: 30 (5.6%), check_bayes: 28 (5.2%), b_tokenize: 11
-        (2.1%), b_tok_get_all: 7 (1.3%), b_comp_prob: 4.0 (0.7%), b_tok_touch_all:
-        2.7 (0.5%), b_finish: 0.81 (0.1%), tests_pri_0: 458 (84.1%),
-        check_dkim_signature: 0.83 (0.2%), check_dkim_adsp: 4.2 (0.8%),
-        tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v7 1/7] fuse: Remove the buggy retranslation of pids in fuse_dev_do_read
+X-Spam-Timing: total 15025 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.3 (0.0%), b_tie_ro: 2.3 (0.0%), parse: 1.02 (0.0%),
+        extract_message_metadata: 13 (0.1%), get_uri_detail_list: 2.3 (0.0%),
+        tests_pri_-1000: 3.0 (0.0%), tests_pri_-950: 1.20 (0.0%), tests_pri_-900:
+        1.02 (0.0%), tests_pri_-400: 25 (0.2%), check_bayes: 24 (0.2%), b_tokenize:
+        10 (0.1%), b_tok_get_all: 7 (0.0%), b_comp_prob: 2.3 (0.0%), b_tok_touch_all:
+        2.6 (0.0%), b_finish: 0.63 (0.0%), tests_pri_0: 192 (1.3%),
+        check_dkim_signature: 0.46 (0.0%), check_dkim_adsp: 3.5 (0.0%),
+        tests_pri_500: 14783 (98.4%), poll_dns_idle: 14776 (98.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: [PATCH v7 2/7] fuse: Fail all requests with invalid uids or gids
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -54,53 +52,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the point of fuse_dev_do_read the user space process that initiated the
-action on the fuse filesystem may no longer exist.  The process have been
-killed or may have fired an asynchronous request and exited.
+Upon a cursory examinination the uid and gid of a fuse request are
+necessary for correct operation.  Failing a fuse request where those
+values are not reliable seems a straight forward and reliable means of
+ensuring that fuse requests with bad data are not sent or processed.
 
-If the initial process has exited the code "pid_vnr(find_pid_ns(in->h.pid,
-fc->pid_ns)" will either return a pid of 0, or in the unlikely event that
-the pid has been reallocated it can return practically any pid.  Any pid is
-possible as the pid allocator allocates pid numbers in different pid
-namespaces independently.
+In most cases the vfs will avoid actions it suspects will cause
+an inode write back of an inode with an invalid uid or gid.  But that does
+not map precisely to what fuse is doing, so test for this and solve
+this at the fuse level as well.
 
-The only way to make translation in fuse_dev_do_read reliable is to call
-get_pid in fuse_req_init_context, and pid_vnr followed by put_pid in
-fuse_dev_do_read.  That reference counting in other contexts has been shown
-to bounce cache lines between processors and in general be slow.  So that is
-not desirable.
+Performing this work in fuse_req_init_context is cheap as the code is
+already performing the translation here and only needs to check the
+result of the translation to see if things are not representable in
+a form the fuse server can handle.
 
-The only known user of running the fuse server in a different pid namespace
-from the filesystem does not care what the pids are in the fuse messages
-so removing this code should not matter.
-
-Getting the translation to a server running outside of the pid namespace
-of a container can still be achieved by playing setns games at mount time.
-It is also possible to add an option to pass a pid namespace into the fuse
-filesystem at mount time.
-
-Fixes: 5d6d3a301c4e ("fuse: allow server to run in different pid_ns")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/fuse/dev.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/fuse/dev.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5d06384c2cae..0fb58f364fa6 100644
+index 0fb58f364fa6..2886a56d5f61 100644
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -1260,12 +1260,6 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
- 	in = &req->in;
- 	reqsize = in->h.len;
+@@ -112,11 +112,20 @@ static void __fuse_put_request(struct fuse_req *req)
+ 	refcount_dec(&req->count);
+ }
  
--	if (task_active_pid_ns(current) != fc->pid_ns) {
--		rcu_read_lock();
--		in->h.pid = pid_vnr(find_pid_ns(in->h.pid, fc->pid_ns));
--		rcu_read_unlock();
--	}
+-static void fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
++static bool fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
+ {
+-	req->in.h.uid = from_kuid_munged(&init_user_ns, current_fsuid());
+-	req->in.h.gid = from_kgid_munged(&init_user_ns, current_fsgid());
++	req->in.h.uid = from_kuid(&init_user_ns, current_fsuid());
++	req->in.h.gid = from_kgid(&init_user_ns, current_fsgid());
+ 	req->in.h.pid = pid_nr_ns(task_pid(current), fc->pid_ns);
++
++	return (req->in.h.uid != ((uid_t)-1)) && (req->in.h.gid != ((gid_t)-1));
++}
++
++static void fuse_req_init_context_nofail(struct fuse_req *req)
++{
++	req->in.h.uid = 0;
++	req->in.h.gid = 0;
++	req->in.h.pid = 0;
+ }
+ 
+ void fuse_set_initialized(struct fuse_conn *fc)
+@@ -162,12 +171,13 @@ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
+ 			wake_up(&fc->blocked_waitq);
+ 		goto out;
+ 	}
 -
- 	/* If request is too large, reply with an error and restart the read */
- 	if (nbytes < reqsize) {
- 		req->out.h.error = -EIO;
+-	fuse_req_init_context(fc, req);
+ 	__set_bit(FR_WAITING, &req->flags);
+ 	if (for_background)
+ 		__set_bit(FR_BACKGROUND, &req->flags);
+-
++	if (unlikely(!fuse_req_init_context(fc, req))) {
++		fuse_put_request(fc, req);
++		return ERR_PTR(-EOVERFLOW);
++	}
+ 	return req;
+ 
+  out:
+@@ -256,7 +266,7 @@ struct fuse_req *fuse_get_req_nofail_nopages(struct fuse_conn *fc,
+ 	if (!req)
+ 		req = get_reserved_req(fc, file);
+ 
+-	fuse_req_init_context(fc, req);
++	fuse_req_init_context_nofail(req);
+ 	__set_bit(FR_WAITING, &req->flags);
+ 	__clear_bit(FR_BACKGROUND, &req->flags);
+ 	return req;
 -- 
 2.14.1
