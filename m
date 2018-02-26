@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751761AbeBZR5s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:57:48 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:33705 "EHLO
+        id S1751831AbeBZR5y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:57:54 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:34480 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeBZR5q (ORCPT
+        with ESMTP id S1750941AbeBZR5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:57:46 -0500
+        Mon, 26 Feb 2018 12:57:49 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: geert@linux-m68k.org, horms@verge.net.au,
         sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
@@ -15,9 +15,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] arm64: dts: renesas: r8a7796: Set EtherAVB phy mode to "rgmii"
-Date: Mon, 26 Feb 2018 18:57:10 +0100
-Message-Id: <1519667836-31330-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 3/8] arm64: dts: renesas: r8a7795: Set EtherAVB phy mode to "rgmii"
+Date: Mon, 26 Feb 2018 18:57:11 +0100
+Message-Id: <1519667836-31330-4-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -31,16 +31,16 @@ RX/TX channels.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 6075511..a99b0b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -974,7 +974,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1f32340..87327eb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -873,7 +873,7 @@
  			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
  			resets = <&cpg 812>;
 -			phy-mode = "rgmii-txid";
 +			phy-mode = "rgmii";
