@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227PG9PR1EyzyQzKp43pNBR8rSgAXKWoUuqbWjSmCuwU9xYmNnZK012iCRPhp3VgE1KrqesT
-ARC-Seal: i=1; a=rsa-sha256; t=1519676699; cv=none;
+X-Google-Smtp-Source: AH8x2258q2fOKCBnUxukourynn2buSlwFi6PtcUfdCtrkdExBitl0aPnsWMjrTfd/ad4gRFp2ALT
+ARC-Seal: i=1; a=rsa-sha256; t=1519676693; cv=none;
         d=google.com; s=arc-20160816;
-        b=OVobsZyVLriJ1vufNgfIqjbEWokdc+isA6uXve8mIg2h/hXc31+Ulr7pT+4zvkMNAc
-         sOpfIQ7NgrZLyNvccbZzPndYUSENOybmd2/7doFPha2zrpr5fGwJ8U80mcgG0L1Ngh23
-         w7/XrfrLvxNNQf6xBSrNFrE1SX+S0gM4olFfhMzKEOZlZ3vsFjyEfiSePBzvFrSGNIzu
-         0OYCmtmnp9XU5zE7KMQkuPE+ft31Hcc5h/Mc9vBBhpE7N4R5fUQYeMNDdRFIf7WsKU6f
-         C2/4aHzp3PlgjJuwWDTV+tdk6nhSNhoz+HEcsY9ORCYRCdrrq7SyU8xjclGzPzy18XNM
-         1ehg==
+        b=JQNyiiM4QGb8se7yNkIHu6fXYzPR1DnUO+wpIxg4wr4r84LJSBZ0phZ1aO3HnkgtMb
+         jc8InxbWt/v/Hn5Vpbp6Ryfdmq8Zgejtwp4hP4yLzcz+6xLuZp/kH814y+2afPmTiCHK
+         RhvtkHtcK5HbciJEaSMWiyeqeoM2s3cYR/LEvTkHizTUM0db7M0Sxam+Z6j34niXrtQf
+         UzvYqgayZ5yyyO+wSIHz+w1nPss9bNIY9gc+E3kQm6ZzG58+0aceFW16U8nu/zAEm8dR
+         RTr2TJLXo/sN9N6GMddvzcSiKPWevaI53Fgyq+5+JB+1iK/UqvnG+iI7eYfsQQf+GoXw
+         sYOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wXVW11F2Y0b1awvDAKpi3CRLwWbrIMsiflP8yzvwYhE=;
-        b=S2xKNcoVbtY06JztYLNoa11p1X/xbWNsfhVGLcUHrF2KGCBcCrfbZuUIbF4sRiQ9Gr
-         OTOCiYHn62HlKn37nnAwPeteYquXSsre+570dPOKRvciFVSl59jbPJ0RzUZ3ixUdMQME
-         7YV87LdHIcwe4KwX6POPwIWpSuCkbcBTufbo3UOed5SkWy6EunS/snfIiqCbE26Z015P
-         TRb+Wr42pvlgXPLopSC4N8+yhS76L6mxgJAEmiQrCUdehH30uSjJ5CTsMLP3e6InxuSK
-         zgI+mdfDo9LvAGq+iXxwIUMykAE7mJJBOZdtzxrpgn2E942aEOHl9pp8q8w+O43DLxXp
-         qioQ==
+        bh=pAe6Ssw6U2XkLuXhZo/zivXUbJqzd22af7l3NcEBl5A=;
+        b=dsIPFdh/sm1AefiRw4ztiZCuOAohHOuTfLsKIrW8bWOZSX+8sZz1zZET+j5vrWgu/P
+         +UfwbRBotB5KndyuvstSkOwBHudC3qfGVIJXTmgEjL7qWs0bd71ISHf9JW9Wp5/ph6PH
+         Hl6tETx37O2+TOAcvtVGkeQBh22AFuP7yBH7x+kYKgy7CUS9vwhxez5CQKpG2suqqwkF
+         IXWUJOOUKVsIuSJD8UbYuRw1lDISifJRPYtG4/kOmr8BXfZKbezSyxXL3pbWHPAKuaun
+         CbkrEa2jwEYbL3iLD48VFGb2JHB6b7UoSdKMahzsivRYMREz1G8qBcZgBd3UmhfQ7TG6
+         g9Wg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shanker Donthineni <shankerd@codeaurora.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 35/54] arm64: cpufeature: Fix CTR_EL0 field definitions
-Date: Mon, 26 Feb 2018 21:22:12 +0100
-Message-Id: <20180226202146.129259164@linuxfoundation.org>
+	Ben Gardner <gardner.ben@gmail.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 09/54] i2c: designware: must wait for enable
+Date: Mon, 26 Feb 2018 21:21:46 +0100
+Message-Id: <20180226202144.816692358@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496514564207090?=
-X-GMAIL-MSGID: =?utf-8?q?1593496514564207090?=
+X-GMAIL-THRID: =?utf-8?q?1593496508464542854?=
+X-GMAIL-MSGID: =?utf-8?q?1593496508464542854?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Ben Gardner <gardner.ben@gmail.com>
 
-commit be68a8aaf925aaf35574260bf820bb09d2f9e07f upstream.
+commit fba4adbbf670577e605f9ad306629db6031cd48b upstream.
 
-Our field definitions for CTR_EL0 suffer from a number of problems:
+One I2C bus on my Atom E3845 board has been broken since 4.9.
+It has two devices, both declared by ACPI and with built-in drivers.
 
-  - The IDC and DIC fields are missing, which causes us to enable CTR
-    trapping on CPUs with either of these returning non-zero values.
+There are two back-to-back transactions originating from the kernel, one
+targeting each device. The first transaction works, the second one locks
+up the I2C controller. The controller never recovers.
 
-  - The ERG is FTR_LOWER_SAFE, whereas it should be treated like CWG as
-    FTR_HIGHER_SAFE so that applications can use it to avoid false sharing.
+These kernel logs show up whenever an I2C transaction is attempted after
+this failure.
+i2c-designware-pci 0000:00:18.3: timeout in disabling adapter
+i2c-designware-pci 0000:00:18.3: timeout waiting for bus ready
 
-  - [nit] A RES1 field is described as "RAO"
+Waiting for the I2C controller status to indicate that it is enabled
+before programming it fixes the issue.
 
-This patch updates the CTR_EL0 field definitions to fix these issues.
+I have tested this patch on 4.14 and 4.15.
 
-Cc: <stable@vger.kernel.org>
-Cc: Shanker Donthineni <shankerd@codeaurora.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: commit 2702ea7dbec5 ("i2c: designware: wait for disable/enable only if necessary")
+Cc: linux-stable <stable@vger.kernel.org> #4.13+
+Signed-off-by: Ben Gardner <gardner.ben@gmail.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/cpufeature.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-designware-master.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -175,9 +175,11 @@ static const struct arm64_ftr_bits ftr_i
- };
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -207,7 +207,7 @@ static void i2c_dw_xfer_init(struct dw_i
+ 	i2c_dw_disable_int(dev);
  
- static const struct arm64_ftr_bits ftr_ctr[] = {
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),	/* RAO */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* ERG */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
- 	/*
- 	 * Linux can handle differing I-cache policies. Userspace JITs will
+ 	/* Enable the adapter */
+-	__i2c_dw_enable(dev, true);
++	__i2c_dw_enable_and_wait(dev, true);
+ 
+ 	/* Clear and enable interrupts */
+ 	dw_readl(dev, DW_IC_CLR_INTR);
