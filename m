@@ -1,126 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBZKZN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:25:13 -0500
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:41656 "EHLO
-        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751745AbeBZKZM (ORCPT
+        id S1752555AbeBZKZh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:25:37 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37809 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752523AbeBZKZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:25:12 -0500
-Subject: Linux 4.16: Reported regressions as of Monday, 2018-02-26 (Was: Linux
- 4.16-rc3)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CA+55aFxk5KBxL9DvRtBivP3hKT-aOAzvSA_B47L1+y0P2GLe_A@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
-Message-ID: <2cf45d87-066c-7368-3fbd-20675f2d74ae@leemhuis.info>
-Date: Mon, 26 Feb 2018 11:25:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Feb 2018 05:25:33 -0500
+X-Google-Smtp-Source: AH8x2253/G6dpt+6tKGsrfE1Y+2k1pRBti5G8xGWjUoJm8aSAWhzaPEOgbAUbB+PDsiNS616O1wo7Q==
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxk5KBxL9DvRtBivP3hKT-aOAzvSA_B47L1+y0P2GLe_A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519640712;1466fb33;
-X-HE-SMSGID: 1eqFy1-0007hI-Kc
+In-Reply-To: <20180226101252.ozdsxjvawgkemz2c@flea.lan>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+ <20180223133742.26044-11-mylene.josserand@bootlin.com> <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
+ <20180226101252.ozdsxjvawgkemz2c@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 26 Feb 2018 18:25:10 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
+Message-ID: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        quentin.schulz@bootlin.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.02.2018 04:05, Linus Torvalds wrote:
-> We're on the normal schedule for 4.16 and everything still looks very regular.
+On Mon, Feb 26, 2018 at 6:12 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Sat, Feb 24, 2018 at 12:17:13AM +0800, Chen-Yu Tsai wrote:
+>> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
+>> <mylene.josserand@bootlin.com> wrote:
+>> > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
+>> > It should be done by the bootloader but it is currently not the case,
+>> > even for boot CPU because this SoC is booting in secure mode.
+>> > It leads to an random offset value meaning that each CPU will have a
+>> > different time, which isn't working very well.
+>> >
+>> > Add assembly code used for boot CPU and secondary CPU cores to make
+>> > sure that the CNTVOFF register is initialized.
+>> >
+>> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+>> > ---
+>> >  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
+>> >  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
+>> >  2 files changed, 25 insertions(+)
+>> >
+>> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+>> > index d5c97e945e69..605896251927 100644
+>> > --- a/arch/arm/mach-sunxi/headsmp.S
+>> > +++ b/arch/arm/mach-sunxi/headsmp.S
+>> > @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
+>> >         first: .word sunxi_mc_smp_first_comer - .
+>> >  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+>> >
+>> > +ENTRY(sunxi_init_cntvoff)
+>> > +       /*
+>> > +        * CNTVOFF has to be initialized either from non-secure Hypervisor
+>> > +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+>> > +        * then it should be handled by the secure code
+>> > +        */
+>> > +       cps     #MON_MODE
+>> > +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
+>> > +       orr     r0, r1, #1
+>> > +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
+>> > +       instr_sync
+>> > +       mov     r0, #0
+>> > +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
+>> > +       instr_sync
+>> > +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
+>> > +       instr_sync
+>> > +       cps     #SVC_MODE
+>> > +       ret     lr
+>> > +ENDPROC(sunxi_init_cntvoff)
+>>
+>> There is no need to move all the assembly into a separate file, just
+>> to add this function. Everything can be inlined as a naked function.
+>> The "instr_sync" macro can be replaced with "isb", which is what it
+>> expands to anyway.
+>>
+>> I really want to keep everything self-contained without global symbols,
+>> and in C files if possible.
+>
+> What is the rationale for keeping it in C files (beside the global
+> symbols)? Because the syntax is quite ugly, and it's much easier to
+> read, review and amend using a separate file.
 
-Hi! Find below my second regression report for Linux 4.16. It lists 8
-regressions I'm currently aware of.
+Global symbols and keeping everything in one place I guess.
+This symbol would be used in a few places, so I suppose having it
+in a separate assembly file would be OK.
 
-To anyone reading this: Are you aware of any other regressions that got
-introduced this development cycle? Then please let me know by mail (a
-simple bounce or forward to the email address is enough!).
+>> >  #ifdef CONFIG_SMP
+>> >  ENTRY(sunxi_boot)
+>> >         bl      sunxi_mc_smp_cluster_cache_enable
+>> > +       bl      sunxi_init_cntvoff
+>> >         b       secondary_startup
+>> >  ENDPROC(sunxi_boot)
+>> >
+>> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+>> > index 5e9602ce1573..4bb041492b54 100644
+>> > --- a/arch/arm/mach-sunxi/sunxi.c
+>> > +++ b/arch/arm/mach-sunxi/sunxi.c
+>> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
+>> >  };
+>> >
+>> >  extern void __init sun6i_reset_init(void);
+>> > +extern void sunxi_init_cntvoff(void);
+>> > +
+>> >  static void __init sun6i_timer_init(void)
+>> >  {
+>> > +       sunxi_init_cntvoff();
+>>
+>> You should check the enable-method to see if PSCI is set or not,
+>> as an indicator whether the kernel is booted secure or non-secure.
+>
+> It's an indicator, but it's not really a perfect one. You could very
+> well have your kernel booted in non-secure, without PSCI. Or even with
+> PSCI, but without the SMP ops.
+>
+> We have a quite big number of these cases already, where, depending on
+> the configuration, we might not have access to the device we write to,
+> the number of hacks to just enable that device for non-secure is a
+> good example of that.
 
-For details see http://bit.ly/lnxregtrackid And please tell me if there
-is anything in the report that shouldn't be there.
+I wouldn't consider them hacks though. The hardware gives the option
+to have control of many devices delegated solely to secure-only, or
+secure/non-secure. Our present model is to support everything we can
+in Linux directly, instead of through some firmware interface to a
+non-existent firmware.
 
-Ciao, Thorsten
+ChenYu
 
-== Current regressions ==
-
-Debian kernel package tool make-kpkg stalls indefinitely during kernel
-build due to commit "kconfig: remove check_stdin()"
-Status: stalled after some discussions; seems nobody really cares deeply?
-Note: From the discussion: "Shouldn't be a problem to back this one out
-either if it turns out to cause massive amounts of pain in practice I
-guess, even if it's the Debian tools doing something weird."
-Reported: 2018-02-12
-https://marc.info/?l=linux-kernel&m=151846414807219
-Cause: d2a04648a5dbc3d1d043b35257364f0197d4d868
-Linux-Regression-ID: 2fd778
-
-Dell R640 does not boot due to SCSI/SATA failure
-Reported: 2018-02-22
-https://marc.info/?l=linux-kernel&m=151931128006031
-Cause: 84676c1f21e8
-Linux-Regression-ID: 15a115
-
-On Nokia N900:/dev/input/event6 aka AV Jack support disappeared
-Status: quite new
-Reported: 2018-02-24
-https://marc.info/?l=linux-omap&m=151950886524308&w=2
-Cause: 14e3e295b2b9
-Linux-Regression-ID: 4b650f
-
-SD card reader stopped working
-Status: quite new
-Reported: 2018-02-24
-https://bugzilla.kernel.org/show_bug.cgi?id=198917
-Linux-Regression-ID: 9adeaf
-
-[mm, mlock, vmscan]  9c4e6b1a70:  stress-ng.hdd.ops_per_sec -7.9% regression
-Status: WIP
-Note: performance regression found by lkp-robot
-Reported: 2018-02-25
-https://marc.info/?l=linux-kernel&m=151956997301994
-Cause: 9c4e6b1a7027f102990c0395296015a812525f4d
-
-aim7.jobs-per-min -18.0% regression
-Status: WIP; bisection result is doubted, but was verified
-Note: performance regression found by lkp-robot
-Reported: 2018-02-25
-https://marc.info/?l=linux-kernel&m=151957120702272&w=2
-Cause: c0cef30e4ff0dc025f4a1660b8f0ba43ed58426e
-
-Interrupt storm after suspend causes one busy kworker
-Status: quite new
-Reported: 2018-02-25
-https://bugzilla.kernel.org/show_bug.cgi?id=198929
-Linux-Regression-ID: 41c451
-
-
-== Fix heading mainline ==
-
-Dell XPS 13 9360 keyboard no longer works
-Status: Fix in the platform tree from what I've heard
-Reported: 2018-02-22
-https://marc.info/?l=linux-kernel&m=151927645427980
-Cause: 30323fb6d552c41997baca5292bf7001366cab57
-
-
-== Fixed since last report ==
-
-DM Regression: read() returns data when it shouldn't
-Status: Was fixed already when last report was compiled
-Reported: 2018-02-14
-https://marc.info/?l=linux-kernel&m=151861337518109&w=2
-Cause: 18a25da84354c6bb655320de6072c00eda6eb602
-Linux-Regression-ID: 9e195f
-
-
-== Fixed before it was properly added to the report ==
-
-kconfig.h: Include compiler types to avoid missed struct attributes
-https://git.kernel.org/torvalds/c/28128c61e08e
-
-i2c-designware: sound and s2ram broken on Broadwell-U system since
-commit ca382f5b38f367b6 (add i2c gpio recovery option)
-https://git.kernel.org/torvalds/c/d1fa74520dcd
+>> AFAIK trying to set CNTVOFF under non-secure would be very bad.
+>
+> Just like any other access we do :/
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
