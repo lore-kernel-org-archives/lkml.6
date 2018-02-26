@@ -1,100 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeBZRGC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:06:02 -0500
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:43661 "EHLO
-        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbeBZRGA (ORCPT
+        id S1751654AbeBZRGL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:06:11 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:50720 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbeBZRGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:06:00 -0500
-X-Google-Smtp-Source: AG47ELvMDfwi77zvep9o7v/kwEf6AvT/DOR2xSbNxyT7BM5+r/TFV2tZBuVipjbWwPkfBtKP6ssa+Lg7sIwHHGJ12V4=
+        Mon, 26 Feb 2018 12:06:08 -0500
+Subject: Re: Fwd: Re: Kernel panic with 4.16-rc1 (and 4.16-rc2) running
+ selftest
+To: Matthew Wilcox <willy@infradead.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: Chris Mi <chrism@mellanox.com>
+References: <7995f335-ccac-bfdc-bb37-46d0f887c647@oracle.com>
+ <b926a569-c05e-dd49-a25d-555e88e9ff8e@infradead.org>
+ <CAM_iQpUveA5T6-y7bguaPUok-LphJrLYxw6kNgaMorsxm4z9NA@mail.gmail.com>
+ <CAM_iQpWSRe0t1Dr=7o+1ejULV=F+_Wx1v7yyw=NRBUTYttMxog@mail.gmail.com>
+ <96bf4941-17c0-0796-292c-b66087f5f52e@infradead.org>
+ <CAFhKne9Dyx1uvRz_9rvCq7mewAbLA5T77P21oBQfOR7JzP_1aQ@mail.gmail.com>
+ <20180224011528.GA15231@bombadil.infradead.org>
+From: Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <a32f69ae-5b88-7c87-5359-ba16bb490c03@oracle.com>
+Date: Mon, 26 Feb 2018 10:05:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-y3GG+McAK2b8SCmMf60fo_XSHFBAWsKGw3OBvD04ggg@mail.gmail.com>
-References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
- <20180222191647.4727-3-ard.biesheuvel@linaro.org> <CAHp75Vc1AGzdgTB281XVo=FmZerkU1vijLih3JUO=_wNPjxgfA@mail.gmail.com>
- <CAKv+Gu9XkmSPHZf+jVKOm-SX1GCWJUc7y3zTCuaHBwk8O3OC3Q@mail.gmail.com>
- <CAHp75VfFKDkQQ9-vdjzDfE2Cdk2Cb93+kdceYQgEqt3hti=Wkg@mail.gmail.com>
- <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
- <CAHp75VcjUey4K1xOkjKjn_ppPKC0bktcBK2p9NjcPYG1ed7X0g@mail.gmail.com> <CAKv+Gu-y3GG+McAK2b8SCmMf60fo_XSHFBAWsKGw3OBvD04ggg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 26 Feb 2018 19:05:59 +0200
-Message-ID: <CAHp75Vco1wUR7cUu-zuaP-TVMnm+m7X+CctnRC0cgvpuo5S2vg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180224011528.GA15231@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=773
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802260223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QH67ht025893
 
-On Mon, Feb 26, 2018 at 4:58 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 26 February 2018 at 11:35, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> On Mon, Feb 26, 2018 at 11:59 AM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 23 February 2018 at 13:12, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>>> On Fri, Feb 23, 2018 at 2:40 PM, Ard Biesheuvel
->>>> <ard.biesheuvel@linaro.org> wrote:
+On 02/23/2018 06:15 PM, Matthew Wilcox wrote:
+> On Fri, Feb 23, 2018 Randy Dunlap wrote:
+>> [add Matthew Wilcox; hopefully he can look/see]
+> 
+> Thanks, Randy.  I don't understand why nobody else thought to cc the
+> author of the patch that it was bisected to ...
 
->>>> Replace 'baudclk' with 'pclk' and p->uartclk with i2c->clkrate in
->>>> above and you are almost done.
+Sorry, Willy. That was my fault. I should have cc'd you to begin with.
 
->>> I don't think this is better.
->>
->> It's a pattern over ACPI vs. clk cases at least for now.
->> But hold on. We have already an example of dealing with ACPI /
->> non-ACPI cases for I2C controllers — i2c-designware-platdrv.c.
->> Check how it's done there.
->>
->> I actually totally forgot about ACPI slaves described in the table. We
->> need to take into account the ones with lowest bus speed.
->>
->
-> Wow, that code is absolutely terrible.
+> 
+> Please try this patch.  It fixes ffe00000, but there may be more things
+> tested that it may not work for.
+> 
 
-To some degree I may say yes it is.
+This patch fixes the problem. I do not see kernel panics with this patch 
+any more.
 
-> So even while _DSD device properties require vendor prefixes, which
-> are lacking in this case,
+--
+Khalid
 
-What kind? clock-frequency? Does it require prefix?
-
-> and the fact that the ACPI flavor of the
-> Designware I2C controller now provides two different ways to get the
-> timing parameters (using device properties or using SSCN/FMCN/etc ACPI
-> methods), you think this is a shining example of how this should be
-> implemented?
-
-No, those methods because of windows driver and existed ACPI tables at
-that time.
-You are not supposed to uglify your case.
-
-> Also, I still think implementing a clock device using rate X just to
-> interrogate it for its rate (returning X) is absolutely pointless.
-
-OTOH the deviation in the driver is what I absolutely against of.
-Driver must not know the resource provider (ideally at all).
-
-> So what I can do is invent an ACPI method that returns the PCLK rate.
-> Would that work for you?
-
-Again, looking into existing examples (UART, I2C, etc) we better to
-create a generic helper in clock framework that would provide us a
-clock based on property value.
-But doing different paths for different resource providers is not what
-we are looking for.
-
-P.S. To move this somehow forward I may propose to submit an OF
-driver, and discuss ACPI part after.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> Chris Mi, what happened to that set of testcases you promised to write
+> for me?
+> 
+> diff --git a/lib/idr.c b/lib/idr.c
+> index c98d77fcf393..10d9b8d47c33 100644
+> --- a/lib/idr.c
+> +++ b/lib/idr.c
+> @@ -36,8 +36,8 @@ int idr_alloc_u32(struct idr *idr, void *ptr, u32 *nextid,
+>   {
+>   	struct radix_tree_iter iter;
+>   	void __rcu **slot;
+> -	int base = idr->idr_base;
+> -	int id = *nextid;
+> +	unsigned int base = idr->idr_base;
+> +	unsigned int id = *nextid;
+>   
+>   	if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
+>   		return -EINVAL;
+> 
