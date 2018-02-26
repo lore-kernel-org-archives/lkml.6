@@ -1,88 +1,269 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3229654-1519661845-2-16662407191769476834
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519661844; b=fdJfqYQZebvmb01g+583DTLi6H3+Fk4d17ttMcGNeAyMMcl
-    5/la1/Frd5YysUifhg9PuhrQt2PMJh6wRC/Xmgme3qnpCieeZCAUP3HoxVQDgMjt
-    BM1qkXeMl29Rb2q/+W07phyrVwVtB+Sfolq1Tc5OuEjJe6HhWuAlT9UzLGxZDw2C
-    N4Ckio9cSqMWxalPNeOqDZKGTFWxk3DGV65m1of8HQS1I1l85H1/3eL8jFDGNrbr
-    XvimJiZaugctF7k3JVKaG/8jMPm1nk+hXYSfdjVBQ60HcyTCg9gKpPUj0IRHx1xq
-    gejbQltnFlWyjiPHdDala8qkIhfv5ZbAk6E72aA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:date:from:to:cc:subject
-    :references:in-reply-to:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519661844; bh=cgrP7PgDiPPHfJDQaTt1rmkPUnF0ybqqSFfyT5/H+hU=; b=L
-    kNZYlx9RkQycjukdRH5tuDcY68Fi+7/yp2S4RE5U4wkrUegJ8ufAImkWQ0UlX7Wa
-    /5WFLsrFp8njuOw6fj6cARjyim094UkOhKSLtypJ+inok3/czsN/orhUJ/wKbZLY
-    0Q/S5BxVa/bVYYZZtxstNmif9O+LSPLYoEEVOr5b8sTc20a7ahSE2Yg7io1F9WSS
-    7+0M2kbreJRZFJ43A43LUUJFgppCBYHN8slojM8foKZzWQ+KfUSkpHYMF54L2k6i
-    YPFm+MlkK9r6RxqiG2P+YFWoDjdoQ2hyQDTBSzsjwCKSOzTO6YtvC5goajZDENHU
-    fCkmwyuhGXNsIAfUXofdg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751446AbeBZQRW convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Mon, 26 Feb 2018 11:17:22 -0500
-Received: from prv-mh.provo.novell.com ([137.65.248.74]:46828 "EHLO
-        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeBZQRV (ORCPT
-        <rfc822;groupwise-stable@vger.kernel.org:7:2>);
-        Mon, 26 Feb 2018 11:17:21 -0500
-Message-Id: <5A94411C02000078001ABDF1@prv-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Mon, 26 Feb 2018 09:17:16 -0700
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Juergen Gross" <jgross@suse.com>
-Cc: <x86@kernel.org>, <tglx@linutronix.de>,
-        <xen-devel@lists.xenproject.org>, <boris.ostrovsky@oracle.com>,
-        <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <hpa@zytor.com>
-Subject: Re: [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before suspend
-References: <20180226140818.4849-1-jgross@suse.com>
-In-Reply-To: <20180226140818.4849-1-jgross@suse.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <john.garry@huawei.com>
+X-Google-Smtp-Source: AG47ELsmebhtLQdrdk/iL/rw5IHACNDr9KC3BmYv9Lqh7yOyN9T+wY9hr6wev/dy0I99OhjppDYx
+ARC-Seal: i=1; a=rsa-sha256; t=1519660216; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SSPEI4cVzsLNprFq893rDaMr1nYwMwd5IVgYbV+brfzBjx/AIl8Bl+SkH12T5QERU5
+         efCJ05VLf6PSL9EMnHKsYTPGC38dt8/PoAD/q01D9OtZcuKYaI8qgx42CamrcDT/wdUA
+         Nat6vIkkqo1gNyVe4Zbzt/4O61FZYLI9vRvCpS22cx1dS5ScpChDu1HaPTdE+NNab7Ct
+         N92OumXRkgyOswoXGlBF3GJPVqRiICHs31b1GEHZgsu+pYRWK9FeM68Sf5Oi93ROFuIX
+         R5TEnKzi2JttLidlLsKhGLXx6aXRSHqG58DPkW0fANdEmyJBiRn3bE41tcL2Lb3P3/1g
+         Yy7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=HfhqGXThZeot6CyYzlxr2CIYXIQpoRrNyDH+TTP30Nk=;
+        b=Kze0jJYEFkG5G5czZdqSBKrWMeU9VvPzAB9I/h+DooKF/5aYL6Azjr8Ct1v2wnojhm
+         9N3eoGMS6PPk4/5c98q+hypgRP6Z43DociN3m4ZYhUUIdSFodZxerkrVgrkrOzHYWlyp
+         GNs00g+3ynSOTAhaQdDyMwm1KTurDxb3gDyY182pfOqVM55Z8R+X/28bSv+prqqW97RT
+         2POOpeqBcCJ5+ZdG2yKyoROfHoJfqfIdvFFyoI343PPCWyGm7PUIuA5NsnUYBDVA/S5S
+         4svVd9zXdVJh5F7MVClrqGLEqI0h19ZfZMkvvJ/4Ebkhluq+sQNPU13YXL3HDP2n7GNJ
+         naBQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=john.garry@huawei.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=john.garry@huawei.com
+From: John Garry <john.garry@huawei.com>
+To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
+	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
+	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
+	<andy.shevchenko@gmail.com>, <robh@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>
+CC: <joe@perches.com>, <benh@kernel.crashing.org>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
+	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
+Subject: [PATCH v15 0/9] LPC: legacy ISA I/O support
+Date: Tue, 27 Feb 2018 00:40:40 +0800
+Message-ID: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593479231373740190?=
+X-GMAIL-MSGID: =?utf-8?q?1593479231373740190?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
->>> On 26.02.18 at 15:08, <jgross@suse.com> wrote:
-> Older Xen versions (4.5 and before) might have problems migrating pv
-> guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
-> suspending zero that MSR and restore it after being resumed.
-> 
-> Cc: stable@vger.kernel.org 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+This patchset supports the IPMI-bt device attached to the Low-Pin-Count
+interface implemented on Hisilicon Hip06/Hip07 SoC.
+                        -----------
+                        | LPC host|
+                        |         |
+                        -----------
+                             |
+                _____________V_______________LPC
+                  |                       |
+                  V                       V
+                                     ------------
+                                     |  BT(ipmi)|
+                                     ------------
 
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
+When master accesses those peripherals beneath the Hip06/Hip07 LPC, a specific
+LPC driver is needed to make LPC host generate the standard LPC I/O cycles with
+the target peripherals'I/O port addresses. But on curent arm64 world, there is
+no real I/O accesses. All the I/O operations through in/out accessors are based
+on MMIO ranges; on Hip06/Hip07 LPC the I/O accesses are performed through driver
+specific accessors rather than MMIO.
+To solve this issue and keep the relevant existing peripherals' drivers untouched,
+this patchset:
+   - introduces a generic I/O space management framework, logical PIO, to support
+      I/O operations on host controllers operating either on MMIO buses or on buses
+     requiring specific driver I/O accessors;
+   - redefines the in/out accessors to provide a unified interface for both MMIO
+     and driver specific I/O operations. Using logical PIO, th call of in/out() from
+     the host children drivers, such as ipmi-si, will be redirected to the
+     corresponding device-specific I/O hooks to perform the I/O accesses.
+
+Based on this patch-set, all the I/O accesses to Hip06/Hip07 LPC peripherals can
+be supported without any changes on the existing ipmi-si driver.
+
+The whole patchset has been tested on Hip07 D05 board both using DTB and ACPI.
+
+Differences to v14:
+- addressed coding style comments from Andy
+- applied tags from Rafael, Andy, and Dann
+- rebased to linux next 20180223 (had to fix locally arm64 build issue)
+
+Differences to v13:
+- dropped ACPI scan handler and added patch to not enumerate children
+  of indirect IO hosts in ACPI code
+- tidied up logic_pio.c a bit for kerneldoc and made some APIs clearer
+  to understand
+- tided (and simplified) hisi_lpc.c and added new ACPI probe code
+  (same as previous ACPI scan handler code, so comments from Rafael
+  and Andy included)
+- reinstated PCI range upper limit check in pci_pio_to_address()
+- dropped Dann Frazier's "tested-by" tag in light of changes
+- rebase to linuxnext 20180219 (had to fix locally arm64 build issue)
+
+Differences to v12:
+    - Addressed ACPI comments from Rafael and Andy, including:
+     - added SPDX license identifiers (other new files in the series got this also)
+     - fixed style issues, like superflous newlines and symbol naming
+     - add fuller acpi_indirectio.c patch commit message
+     - dropped acpi_indirectio_host_data (author's decision) to simplify
+    - added Rob Herring's tag
+    - rebase to linux-next 20180212
+    
+Differences to v11:
+    - fixed build errors for i386, m68k, and tile
+    - added a comment in LPC driver commit log why we set
+       the kernel config as bool
+    - some tidying logic_pio code
+
+Differences to v10:
+    - dropped CONFIG_LOGIC_PIO. Reason is that CONFIG_PCI
+      depends on this, and CONFIG_PCI is a per-arch CONFIG.
+      So we would require all arch's kconfig to select this.
+    - Addressed Dann Frazier's comments on LPC driver, and
+      sopme other cleanup
+    - Moved logic_pio.h to be included in generic asm io.h
+    - Fixed ACPI indirect IO host setup to handle >1 child
+    - Relocated ACPI indirect IO host setup code to
+      drivers/acpi
+    - Rebased to linux next-20180118
+
+Changes from v9:
+  - patch 2 has been split into 3 patches according to Bjorn comments on
+    v9 thread
+  - patch 1 has been reworked accordign to Bjorn comments on v9
+  - now logic_pio_trans_hwaddr() has a sanity check to make sure the resource
+    size fits into the assigned range
+  - in patch 5 the MFD framework has been used to probe the LPC children
+    according to the suggestion from Mika Westerberg
+  - Maintaner has changed to Huawei Linuxarm mailing list
+
+Changes from v8:
+  - Simplified LIB IO framewrok
+  - Moved INDIRECT PIO ACPI framework under acpi/arm64
+  - Renamed occurrences of "lib io" and "indirect io" to "lib pio" and
+    "indirect pio" to keep the patchset nomenclature consistent
+  - Removed Alignment reuqirements
+  - Moved LPC specific code out of ACPI common framework
+  - Now PIO indirect HW ranges can overlap
+  - Changed HiSilicon LPC driver maintainer (Gabriele Paoloni now) and split
+    maintaner file modifications in a separate commit
+  - Removed the commit with the DT nodes support for hip06 and hip07 (to be
+    pushed separately)
+  - Added a checking on ioport_map() not to break that function as Arnd points
+    out in V7 review thread;
+  - fixed the compile issues on alpha, m68k;
+
+Changes from V7:
+  - Based on Arnd's comment, rename the LIBIO as LOGIC_PIO;
+  - Improved the mapping process in LOGIC_PIO to gain better efficiency when
+    redirecting the I/O accesses to right device driver;
+  - To reduce the impact on PCI MMIO to a minimum, add a new
+    CONFIG_INDIRECT_PIO for indirect-IO hosts/devices;
+  - Added a new ACPI handler for indirect-IO hosts/devices;
+  - Fixed the compile issues on V6;
+
+Changes from V6:
+  - According to the comments from Bjorn and Alex, merge PCI IO and indirect-IO
+    into a generic I/O space management, LIBIO;
+  - Adopted the '_DEP' to replace the platform bus notifier. In this way, we can
+    ensure the LPC peripherals' I/O resources had been translated to logical IO
+    before the LPC peripheral enumeration;
+  - Replaced the rwlock with rcu list based on Alex's suggestion;
+  - Applied relaxed write/read to LPC driver;
+  - Some bugs fixing and some optimazations based on the comments of V6;
+
+Changes from V5:
+  - Made the extio driver more generic and locate in lib/;
+  - Supported multiple indirect-IO bus instances;
+  - Extended the pci_register_io_range() to support indirect-IO, then dropped
+  the I/O reservation used in previous patchset;
+  - Reimplemented the ACPI LPC support;
+  - Fixed some bugs, including the compile error on other archs, the module
+  building failure found by Ming Lei, etc;
+
+Changes from V4:
+  - Some revises based on the comments from Bjorn, Rob on V4;
+  - Fixed the compile error on some platforms, such as openrisc;
+
+Changes from V3:
+  - UART support deferred to a separate patchset; This patchset only support
+  ipmi device under LPC;
+  - LPC bus I/O range is fixed to 0 ~ (PCIBIOS_MIN_IO - 1), which is separeted
+  from PCI/PCIE PIO space;
+  - Based on Arnd's remarks, removed the ranges property from Hip06 lpc dts and
+  added a new fixup function, of_isa_indirect_io(), to get the I/O address
+  directly from LPC dts configurations;
+  - Support in(w,l)/out(w,l) for Hip06 lpc I/O;
+  - Decouple the header file dependency on the gerenic io.h by defining in/out
+  as normal functions in c file;
+  - removed unused macro definitions in the LPC driver;
+
+Changes from V2:
+  - Support the PIO retrieval from the linux PIO generated by
+  pci_address_to_pio. This method replace the 4K PIO reservation in V2;
+  - Support the flat-tree earlycon;
+  - Some revises based on Arnd's remarks;
+  - Make sure the linux PIO range allocated to Hip06 LPC peripherals starts
+  from non-ZERO;
+
+Changes from V1:
+  - Support the ACPI LPC device;
+  - Optimize the dts LPC driver in ISA compatible mode;
+  - Reserve the IO range below 4K in avoid the possible conflict with PCI host
+  IO ranges;
+  - Support the LPC uart and relevant earlycon;
+
+V14 thread here: https://lkml.org/lkml/2018/2/19/460
+V13 thread here: https://lkml.org/lkml/2018/2/13/744
+V12 thread here: https://lkml.org/lkml/2018/1/23/508
+V11 thread here: https://lkml.org/lkml/2018/1/21/38
+V10 thread here: https://lkml.org/lkml/2017/10/27/465
+V9 thread here: https://lkml.org/lkml/2017/5/25/263
+V8 thread here: https://lkml.org/lkml/2017/3/30/619
+V7 thread here: https://lkml.org/lkml/2017/3/12/279
+v6 thread here: https://lkml.org/lkml/2017/1/24/25
+v5 thread here: https://lkml.org/lkml/2016/11/7/955
+v4 thread here: https://lkml.org/lkml/2016/10/20/149
+v3 thread here: https://lkml.org/lkml/2016/9/14/326
+v2 thread here: https://lkml.org/lkml/2016/9/7/356
+v1 thread here: https://lkml.org/lkml/2015/12/29/154
+
+Gabriele Paoloni (2):
+  PCI: Remove unused __weak attribute in pci_register_io_range()
+  PCI: Add fwnode handler as input param of pci_register_io_range()
+
+John Garry (3):
+  ACPI / scan: do not enumerate Indirect IO host children
+  HISI LPC: Add ACPI support
+  MAINTAINERS: Add maintainer for HiSilicon LPC driver
+
+Zhichang Yuan (4):
+  LIB: Introduce a generic PIO mapping method
+  PCI: Apply the new generic I/O management on PCI IO hosts
+  OF: Add missing I/O range exception for indirect-IO devices
+  HISI LPC: Support the LPC host on Hip06/Hip07 with DT bindings
+
+ .../arm/hisilicon/hisilicon-low-pin-count.txt      |  33 ++
+ MAINTAINERS                                        |   7 +
+ drivers/acpi/pci_root.c                            |   8 +-
+ drivers/acpi/scan.c                                |  14 +
+ drivers/bus/Kconfig                                |   8 +
+ drivers/bus/Makefile                               |   2 +
+ drivers/bus/hisi_lpc.c                             | 624 +++++++++++++++++++++
+ drivers/of/address.c                               |  96 +++-
+ drivers/pci/pci.c                                  |  95 +---
+ include/asm-generic/io.h                           |   4 +-
+ include/linux/logic_pio.h                          | 127 +++++
+ include/linux/pci.h                                |   3 +-
+ lib/Kconfig                                        |  15 +
+ lib/Makefile                                       |   2 +
+ lib/logic_pio.c                                    | 285 ++++++++++
+ 15 files changed, 1225 insertions(+), 98 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
+ create mode 100644 drivers/bus/hisi_lpc.c
+ create mode 100644 include/linux/logic_pio.h
+ create mode 100644 lib/logic_pio.c
+
+-- 
+1.9.1
