@@ -1,85 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751079AbeBZFMV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 00:12:21 -0500
-Received: from LGEAMRELO13.lge.com ([156.147.23.53]:52541 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeBZFMU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 00:12:20 -0500
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [PATCH] rcu: Remove the unnecessary separate function, rcu_preempt_do_callback()
-Date: Mon, 26 Feb 2018 14:11:36 +0900
-Message-Id: <1519621896-8786-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751574AbeBZFP0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 00:15:26 -0500
+Received: from ozlabs.org ([103.22.144.67]:40441 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750793AbeBZFPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 00:15:24 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 26 Feb 2018 16:15:16 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20180226161516.5df31663@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zOZioeUq7Ml.JO_ap=cnu_v"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rcu_preemptp_do_callback() was introduced in commit 09223371dea(rcu:
-Use softirq to address performance regression), where it had to be
-distinguished between in the case CONFIG_TREE_PREEMPT_RCU is set and
-it's not.
+--Sig_/zOZioeUq7Ml.JO_ap=cnu_v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now that the code was cleaned up so that rcu_preemt_do_callback() is
-only called in rcu_kthread_do_work() in the same file, tree_plugin.h,
-we don't have to keep the separate function anymore. Remove it for a
-better readability.
+Hi Andrew,
 
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+After merging the akpm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+security/keys/big_key.c: In function 'big_key_free_buffer':
+security/keys/big_key.c:146:3: error: implicit declaration of function 'vun=
+map'; did you mean 'kunmap'? [-Werror=3Dimplicit-function-declaration]
+   vunmap(buf->virt);
+   ^~~~~~
+   kunmap
+security/keys/big_key.c: In function 'big_key_alloc_buffer':
+security/keys/big_key.c:187:14: error: implicit declaration of function 'vm=
+ap'; did you mean 'kmap'? [-Werror=3Dimplicit-function-declaration]
+  buf->virt =3D vmap(buf->pages, buf->nr_pages, VM_MAP, PAGE_KERNEL);
+              ^~~~
+              kmap
+security/keys/big_key.c:187:46: error: 'VM_MAP' undeclared (first use in th=
+is function); did you mean 'VM_SAO'?
+  buf->virt =3D vmap(buf->pages, buf->nr_pages, VM_MAP, PAGE_KERNEL);
+                                              ^~~~~~
+                                              VM_SAO
+security/keys/big_key.c:187:46: note: each undeclared identifier is reporte=
+d only once for each function it appears in
+
+Caused by commit
+
+  d9f4bb1a0f4d ("KEYS: Use individual pages in big_key for crypto buffers")
+
+in Linus' tree, but most likely exposed by commit
+
+  e8bd5e5c63b6 ("headers: untangle kmemleak.h from mm.h")
+
+in the akpm-current tree (kmemleak.h includes vmalloc.h).
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Feb 2018 15:58:03 +1100
+Subject: [PATCH] KEYS: include vmalloc.h for vmap etc
+
+This was discovered after a patch that removed kmemleak.h from slab.h.
+
+Fixes: d9f4bb1a0f4d ("KEYS: Use individual pages in big_key for crypto buff=
+ers")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- kernel/rcu/tree.h        |  1 -
- kernel/rcu/tree_plugin.h | 11 +----------
- 2 files changed, 1 insertion(+), 11 deletions(-)
+ security/keys/big_key.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 478b79e..4172833 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -439,7 +439,6 @@ struct rcu_state {
- static void invoke_rcu_callbacks_kthread(void);
- static bool rcu_is_callbacks_kthread(void);
- #ifdef CONFIG_RCU_BOOST
--static void rcu_preempt_do_callbacks(void);
- static int rcu_spawn_one_boost_kthread(struct rcu_state *rsp,
- 						 struct rcu_node *rnp);
- #endif /* #ifdef CONFIG_RCU_BOOST */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 26d7a31..1070a04 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -686,15 +686,6 @@ static void rcu_preempt_check_callbacks(void)
- 		t->rcu_read_unlock_special.b.need_qs = true;
- }
- 
--#ifdef CONFIG_RCU_BOOST
--
--static void rcu_preempt_do_callbacks(void)
--{
--	rcu_do_batch(rcu_state_p, this_cpu_ptr(rcu_data_p));
--}
--
--#endif /* #ifdef CONFIG_RCU_BOOST */
--
- /**
-  * call_rcu() - Queue an RCU callback for invocation after a grace period.
-  * @head: structure to be used for queueing the RCU updates.
-@@ -1170,7 +1161,7 @@ static void rcu_kthread_do_work(void)
- {
- 	rcu_do_batch(&rcu_sched_state, this_cpu_ptr(&rcu_sched_data));
- 	rcu_do_batch(&rcu_bh_state, this_cpu_ptr(&rcu_bh_data));
--	rcu_preempt_do_callbacks();
-+	rcu_do_batch(rcu_state_p, this_cpu_ptr(rcu_data_p));
- }
- 
- static void rcu_cpu_kthread_setup(unsigned int cpu)
--- 
-1.9.1
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index fa728f662a6f..e5823de23f4f 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -18,6 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/scatterlist.h>
+ #include <linux/random.h>
++#include <linux/vmalloc.h>
+ #include <keys/user-type.h>
+ #include <keys/big_key-type.h>
+ #include <crypto/aead.h>
+--=20
+2.16.1
+
+Linus, is it worth putting this directly into your tree, or should it
+just wait for the patch from Andrew's tree that exposes it?
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zOZioeUq7Ml.JO_ap=cnu_v
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqTl+QACgkQAVBC80lX
+0Gzj1Af+LB4Zxk+ySZCDT2lFNvUd0JeHfq2CGqFv+f/Mbly09P0pQlS5RE3YoLEj
+P5HbAaKV0Zmdt0OVf6kKtDH/We3MRK3Jz5ZaTzYSbVhOs+Au7HXhtP41kt9HzXL7
+FL/1i18TRWHhpSaVMFOQBRtpyXv1hC1lFklj6i0zztkdTu+3dlXlE4NVL52TjLo4
+OHHWeM2561eCFm8LovbiG175QDpLXEfW/R7reg0nFc4zHDw9bzyoRDPiFk4ZOLj1
+stGc4cQjQv1mKizFLrLSRelZqW2teFWxy2Ok78mFDoB5OFrbg+PjQPH5A+5xbcrr
+1UAJ+sUZtCRnbCB/37hCrT2LO6l//w==
+=/TF9
+-----END PGP SIGNATURE-----
+
+--Sig_/zOZioeUq7Ml.JO_ap=cnu_v--
