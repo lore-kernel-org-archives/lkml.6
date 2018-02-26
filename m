@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751979AbeBZVxA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:53:00 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52412 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751610AbeBZVwu (ORCPT
+        id S1751923AbeBZVw4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:52:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49704 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751553AbeBZVwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Feb 2018 16:52:50 -0500
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -14,21 +14,22 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com,
+        Lihao Liang <lianglihao@huawei.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 08/20] rcu: Remove obsolete callback-invocation statistics for debugfs
-Date: Mon, 26 Feb 2018 13:52:58 -0800
+Subject: [PATCH tip/core/rcu 01/20] rcu: Remove unnecessary spinlock in rcu_boot_init_percpu_data()
+Date: Mon, 26 Feb 2018 13:52:51 -0800
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180226215219.GA27379@linux.vnet.ibm.com>
 References: <20180226215219.GA27379@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18022621-0008-0000-0000-000002DB9D2D
+x-cbid: 18022621-0036-0000-0000-000002C6D7FA
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.00995530; UDB=6.00506033; IPR=6.00774858;
- MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 21:52:49
+ MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 21:52:48
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022621-0009-0000-0000-00003864E4FA
-Message-Id: <1519681990-31349-8-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18022621-0037-0000-0000-0000437841A0
+Message-Id: <1519681990-31349-1-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -40,57 +41,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The debugfs interface displayed statistics on RCU callback invocation but
-this interface has since been removed.  This commit therefore removes the
-no-longer-used rcu_data structure's ->n_cbs_invoked and ->n_nocbs_invoked
-fields along with their updates.
+From: Lihao Liang <lianglihao@huawei.com>
 
-If this information proves necessary in the future, the corresponding
-event traces will be added.
+Since rcu_boot_init_percpu_data() is only called at boot time,
+there is no data race and spinlock is not needed.
 
+Signed-off-by: Lihao Liang <lianglihao@huawei.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c        | 1 -
- kernel/rcu/tree.h        | 2 --
- kernel/rcu/tree_plugin.h | 1 -
- 3 files changed, 4 deletions(-)
+ kernel/rcu/tree.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 66c73a214cff..8e0711954bbf 100644
+index 491bdf39f276..66c73a214cff 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -2691,7 +2691,6 @@ static void rcu_do_batch(struct rcu_state *rsp, struct rcu_data *rdp)
- 	/* Update counts and requeue any remaining callbacks. */
- 	rcu_segcblist_insert_done_cbs(&rdp->cblist, &rcl);
- 	smp_mb(); /* List handling before counting for rcu_barrier(). */
--	rdp->n_cbs_invoked += count;
- 	rcu_segcblist_insert_count(&rdp->cblist, &rcl);
+@@ -3636,12 +3636,9 @@ static void rcu_init_new_rnp(struct rcu_node *rnp_leaf)
+ static void __init
+ rcu_boot_init_percpu_data(int cpu, struct rcu_state *rsp)
+ {
+-	unsigned long flags;
+ 	struct rcu_data *rdp = per_cpu_ptr(rsp->rda, cpu);
+-	struct rcu_node *rnp = rcu_get_root(rsp);
  
- 	/* Reinstate batch limit if we have worked down the excess. */
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 01abd1c4e5da..b258fac73524 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -211,8 +211,6 @@ struct rcu_data {
- 					/* different grace periods. */
- 	long		qlen_last_fqs_check;
- 					/* qlen at last check for QS forcing */
--	unsigned long	n_cbs_invoked;	/* count of RCU cbs invoked. */
--	unsigned long	n_nocbs_invoked; /* count of no-CBs RCU cbs invoked. */
- 	unsigned long	n_force_qs_snap;
- 					/* did other CPU force QS recently? */
- 	long		blimit;		/* Upper limit on a processed batch */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 0d552985b905..1c2d58a85511 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -2243,7 +2243,6 @@ static int rcu_nocb_kthread(void *arg)
- 		smp_mb__before_atomic();  /* _add after CB invocation. */
- 		atomic_long_add(-c, &rdp->nocb_q_count);
- 		atomic_long_add(-cl, &rdp->nocb_q_count_lazy);
--		rdp->n_nocbs_invoked += c;
- 	}
- 	return 0;
+ 	/* Set up local state, ensuring consistent view of global state. */
+-	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 	rdp->grpmask = leaf_node_cpu_bit(rdp->mynode, cpu);
+ 	rdp->dynticks = &per_cpu(rcu_dynticks, cpu);
+ 	WARN_ON_ONCE(rdp->dynticks->dynticks_nesting != 1);
+@@ -3649,7 +3646,6 @@ rcu_boot_init_percpu_data(int cpu, struct rcu_state *rsp)
+ 	rdp->cpu = cpu;
+ 	rdp->rsp = rsp;
+ 	rcu_boot_init_nocb_percpu_data(rdp);
+-	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
  }
+ 
+ /*
 -- 
 2.5.2
