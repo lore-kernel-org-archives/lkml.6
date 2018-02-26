@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeBZSS0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:18:26 -0500
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:37008 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeBZSSY (ORCPT
+        id S1751803AbeBZSTl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:19:41 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46785 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeBZSTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:18:24 -0500
-X-Google-Smtp-Source: AG47ELsh/C5S4MlWOEgU4kc1FZDxtRy+DFL/Cc7XvamnpCyZW8kApNgJ6AcFIFL/FqIIQ8sOiJyuspCHpvPthcR67TU=
+        Mon, 26 Feb 2018 13:19:38 -0500
+X-Google-Smtp-Source: AG47ELvtuZut5Ft83O9VdQ280mZHC2UUL5Y01u3fVmq6GCP+McwPc//2SByEq2094+PE9wtnwhXLndf4zdE654UtKg0=
 MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-5-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519667836-31330-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-6-git-send-email-jacopo+renesas@jmondi.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:18:23 +0100
-X-Google-Sender-Auth: UKTSid8d-5NGQMUUezs3UNTOpMU
-Message-ID: <CAMuHMdUZ903w5esCODRtMqa9BG=4DSgt_MtzM=BSJP+mkHOLxg@mail.gmail.com>
-Subject: Re: [PATCH 4/8] arm64: dts: renesas: r8a77995: Set EtherAVB phy mode
- to "rgmii"
+Date: Mon, 26 Feb 2018 19:19:35 +0100
+X-Google-Sender-Auth: BgAPmSkGItnYfbZmXfRO78ZfQQU
+Message-ID: <CAMuHMdWyKOT_aGfgkfZMFVTj3-__OmbiOrYqxXP5fL-ApLTifA@mail.gmail.com>
+Subject: Re: [PATCH 5/8] dt-bindings: iommu/ipmmu-vmsa: Add R-Car M3-N (R8A77965)
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Simon Horman <horms@verge.net.au>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
@@ -34,15 +33,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Set the "phy-mode" property of EtherAVB device to "rgmii" and let board
-> files override it if the installed PHY layer provides delays for the
-> RX/TX channels.
+> Add Renesas R-Car M3-N (R8A77965) compat string to IPMMU DT bindings
+> documentation.
 >
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-But you need a patch to update r8a7795-draak.dtsi first.
 
 Gr{oetje,eeting}s,
 
