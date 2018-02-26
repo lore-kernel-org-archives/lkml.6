@@ -1,134 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeBZLfU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:35:20 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:37049 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751877AbeBZLfS (ORCPT
+        id S1752775AbeBZLgR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:36:17 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37291 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752544AbeBZLgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:35:18 -0500
-X-Google-Smtp-Source: AG47ELsEwXrckX9qY33kaI34GFUjMfjHkyOS17VKCCkKmXvyBILH0DaDuDNpKTUGG750QY5L1EDa3oOW4TQfpBgo0mg=
+        Mon, 26 Feb 2018 06:36:16 -0500
+From: Colin King <colin.king@canonical.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix error return checking
+Date: Mon, 26 Feb 2018 11:36:14 +0000
+Message-Id: <20180226113614.3092-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
-References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
- <20180222191647.4727-3-ard.biesheuvel@linaro.org> <CAHp75Vc1AGzdgTB281XVo=FmZerkU1vijLih3JUO=_wNPjxgfA@mail.gmail.com>
- <CAKv+Gu9XkmSPHZf+jVKOm-SX1GCWJUc7y3zTCuaHBwk8O3OC3Q@mail.gmail.com>
- <CAHp75VfFKDkQQ9-vdjzDfE2Cdk2Cb93+kdceYQgEqt3hti=Wkg@mail.gmail.com> <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 26 Feb 2018 13:35:16 +0200
-Message-ID: <CAHp75VcjUey4K1xOkjKjn_ppPKC0bktcBK2p9NjcPYG1ed7X0g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QBZPEH026702
 
-On Mon, Feb 26, 2018 at 11:59 AM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 23 February 2018 at 13:12, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> On Fri, Feb 23, 2018 at 2:40 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 23 February 2018 at 12:27, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>>> On Thu, Feb 22, 2018 at 9:16 PM, Ard Biesheuvel
->>>> <ard.biesheuvel@linaro.org> wrote:
-> ...
->>>>> +       ret = device_property_read_u32(&pdev->dev, "clock-frequency",
->>>>> +                                      &speed_khz);
->>>>> +       if (ret) {
->>>>> +               dev_err(&pdev->dev,
->>>>> +                       "Missing clock-frequency property\n");
->>>>> +               return -EINVAL;
->>>>> +       }
->>>>> +       speed_khz /= 1000;
->>
->>>>> +       if (dev_of_node(&pdev->dev)) {
->>>>> +               i2c->clk = devm_clk_get(&pdev->dev, "pclk");
->>>>> +               if (IS_ERR(i2c->clk)) {
->>>>> +                       dev_err(&pdev->dev, "cannot get clock\n");
->>>>> +                       return PTR_ERR(i2c->clk);
->>>>> +               }
->>>>> +               dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
->>>>> +
->>>>> +               i2c->clkrate = clk_get_rate(i2c->clk);
->>>>> +               dev_dbg(&pdev->dev, "clock rate %d\n", i2c->clkrate);
->>>>> +               clk_prepare_enable(i2c->clk);
->>>>> +       } else {
->>>>> +               ret = device_property_read_u32(&pdev->dev,
->>>>> +                                              "socionext,pclk-rate",
->>>>> +                                              &i2c->clkrate);
->>>>> +               if (ret)
->>>>> +                       return ret;
->>>>> +       }
->>>>
->>>> Okay, I got this case. It's more likely the one in 8250_dw.c.
->>>>
->>>> Can you do the similar way?
->>
->>> Could you elaborate?
->>
->> --- 8< --- 8< --- 8< ---
->>         device_property_read_u32(dev, "clock-frequency", &p->uartclk);
->>
->>        /* If there is separate baudclk, get the rate from it. */
->>        data->clk = devm_clk_get(dev, "baudclk");
->> ...
->>        if (IS_ERR(data->clk) && PTR_ERR(data->clk) == -EPROBE_DEFER)
->>                return -EPROBE_DEFER;
->>        if (!IS_ERR_OR_NULL(data->clk)) {
->>                err = clk_prepare_enable(data->clk);
->>                if (err)
->>                        dev_warn(dev, "could not enable optional baudclk: %d\n",
->>                                 err);
->>                else
->>                        p->uartclk = clk_get_rate(data->clk);
->>        }
->>
->>        /* If no clock rate is defined, fail. */
->>        if (!p->uartclk) {
->>                dev_err(dev, "clock rate not defined\n");
->>                err = -EINVAL;
->>                goto err_clk;
->> --- 8< --- 8< --- 8< ---
->>
->> Replace 'baudclk' with 'pclk' and p->uartclk with i2c->clkrate in
->> above and you are almost done.
->>
->
-> I don't think this is better.
+From: Colin Ian King <colin.king@canonical.com>
 
-It's a pattern over ACPI vs. clk cases at least for now.
-But hold on. We have already an example of dealing with ACPI /
-non-ACPI cases for I2C controllers — i2c-designware-platdrv.c.
-Check how it's done there.
+The error checks on freq for a negative error return always fails because
+freq is unsigned and can never be negative. Fix this by making freq a
+signed long.
 
-I actually totally forgot about ACPI slaves described in the table. We
-need to take into account the ones with lowest bus speed.
+Detected with Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
 
->  The generic DT I2C 'clock-frequency'
-> property denotes the bus clock rate not the rate of the clock that
-> feeds the IP block. This is rather different from the UART bindings.
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clocksource/fsl_ftm_timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Also, I don't want to support 'socionext,pclk-rate' for DT platforms,
-> only for ACPI platforms.
-
-Unfortunately, we are strong against deviations between DT and ACPI in
-case of device properties.
-You may provide a clock and use devm_clk_get() without any concerns
-from where this comes from.
-
-You won't find any deviation in DW I2C driver since there is none,
-while driver works for non-ACPI platforms as well.
-
+diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
+index 3ee7e6fea621..846d18daf893 100644
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
+ 
+ static unsigned long __init ftm_clk_init(struct device_node *np)
+ {
+-	unsigned long freq;
++	long freq;
+ 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.15.1
