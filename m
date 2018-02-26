@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2387525-1519634329-2-2721449804083819453
+X-Cyrus-Session-Id: sloti22d1t05-2387525-1519634286-2-8447596354937846555
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519634328; b=fH8Ti1yBId8IdHK7iPfnk3ya4amxHTzDwZbMsVP/2QhfpmO
-    1pvqfjU6DDPzuqcGcPnbvYL9Ovql+gs44yDCxiRQ5HRCCk284uUOhSRpcfTQJuQN
-    oIfdG5BOzsQ3Cw8EVifHdAoYy44qoY5WiJP01pqN8bVINrezY28Rs7fbwyA7eKEX
-    nmcrfXtyTWfOpenvtgMlT4ucI2hG49lqXZk2jkUCZh4Rss1KknFKiTAoNxGEmNE8
-    Ls27N2oz0tVnCenof+gh67lurd1OHl7Qrhxn6ZChcY7+d5K4rRx3ci5zH7gGFjZY
-    b1HTVwyoF1XNemL5vf5hxy85PnlWypCx0x2arTQ==
+    t=1519634286; b=F22Opjh0R0V0xAxU05396dlM92Ncv0o6g/5e8TQZE4gEhGI
+    5ewTWrpK8KSkyiSsx158zCZ0GpNAvu7dVR3vfPfe0xjbSiObGgfd2i4Ux2D8OUJC
+    okZij/zhRFuliZoaI81Q0Vdp9vLrt4skeHU+BVo2dgUDY0AULEfcYQA8K4JIZMYA
+    U2IIji7i/uxj6lSQODij99Yfmz/D60wTc5MmKqWYrTjLvG16vt1TqJoq43Xm7BsT
+    vzG7s4vGP79IMgNLSSoXZrpTr+5OPX75OCh1HOR/AzziZ/oqcNRC6oGdz/G7KVyC
+    J+IT0NM2B3DKnlpw0QiMi5tRwCDS3UFamJM/Snw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519634328;
-    bh=5lK+ndVcYpPWXEM1yPl0Iv5G8Ce26XZw/h8DlWl28GE=; b=mC0XD58RKy2Z
-    hr8TP7UIEm6WhHOlKklCjhGmQCUe61VChiUtkLeQR0MN7L5UtxIPeQ6VmQCyt3uo
-    VRKxB73e1yMbk6in0TYN9+9LU9VQTREbYiDVlok2QP7Xp72XsopJBahAMsKEKSSw
-    hxYHg0fTtOhEbKvterCknQxlIXiGcmTD62y0xpP9BmkwjSAq+vGKngr3sMHuUA4f
-    dzX0wFBK5aA4yTGBdwhRAfeGDKb9Ykzct+wgZwfUaiDrH5mC6DALwaiAPwnChdvE
-    x9mC10mtXkwPujBIlcujb5NxEM52h8DeMmXT7DodZ43FtPmK3hb7Sz89uVv+aFzP
-    03SqDSy7Rw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=QGcL7VmY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519634286;
+    bh=lhAelKOq2c/bCw+d6iNI4ebwtqsTn1Sf3YKBl7GlNsA=; b=q/XHsU5nOtrT
+    3peFaYqfyIfQlXxLTrNXQKVozDScuVwVuXV+YXMDckf1uRxlYJlS5ihIyWOP2v0A
+    XK6Ij3KFmdvaXOqsZw2quCB99SEgD39REHdanHEAMDfYoXivS61DIGWi7Z9HtLOx
+    vhA+3dMI1PQlo8rq3e2hBz8UONKBjSpJcxXUpcWqxZM5Gg4/vn4ntu/u0TSXbyGu
+    hNBogxupavz6IwzTaOanoxou++sW+Z5yjUcN6GgaoAWs6HhzmefJGYbKqiEf4sdq
+    OmjgTvlUB0PvXK1zCtzGFI70Mx9JUmTjVFeGYsD+8fczen/9XFVxnDqdn4jy7WuS
+    llPe0JipiA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=khZZHeON x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bJU+Jysp;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gv5O9Lxr;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=QGcL7VmY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=khZZHeON x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bJU+Jysp;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gv5O9Lxr;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeBZIVs (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:21:48 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36806 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752309AbeBZIVo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:21:44 -0500
-X-Google-Smtp-Source: AH8x224nz4ECAwY7Q1rAcmxgNazNydUSgEzE6TTXWQ+He1+HxfmJn5sN8WcruE8Y1ctNNgxIWjgfVQ==
+        id S1752174AbeBZIWQ (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:22:16 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39582 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751548AbeBZIWN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:22:13 -0500
+X-Google-Smtp-Source: AH8x225Q/Kce6H+Ucz58puaL4U66Y3pTGmU+rtCPJOY36u2lOluIoWlg5oSbQUkbiLS+sWT0f9lTkA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,12 +64,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Cc: Yury Norov <ynorov@caviumnetworks.com>,
-        Laura Abbott <labbott@redhat.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH 05/52] arm64: move TASK_* definitions to <asm/processor.h>
-Date: Mon, 26 Feb 2018 16:19:39 +0800
-Message-Id: <1519633227-29832-6-git-send-email-alex.shi@linaro.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH 09/52] arm64: Make USER_DS an inclusive limit
+Date: Mon, 26 Feb 2018 16:19:43 +0800
+Message-Id: <1519633227-29832-10-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
 References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
@@ -79,129 +77,160 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Yury Norov <ynorov@caviumnetworks.com>
+From: Robin Murphy <robin.murphy@arm.com>
 
-commit eef94a3d09aab upstream.
+commit 51369e398d0d upstream.
 
-ILP32 series [1] introduces the dependency on <asm/is_compat.h> for
-TASK_SIZE macro. Which in turn requires <asm/thread_info.h>, and
-<asm/thread_info.h> include <asm/memory.h>, giving a circular dependency,
-because TASK_SIZE is currently located in <asm/memory.h>.
+Currently, USER_DS represents an exclusive limit while KERNEL_DS is
+inclusive. In order to do some clever trickery for speculation-safe
+masking, we need them both to behave equivalently - there aren't enough
+bits to make KERNEL_DS exclusive, so we have precisely one option. This
+also happens to correct a longstanding false negative for a range
+ending on the very top byte of kernel memory.
 
-In other architectures, TASK_SIZE is defined in <asm/processor.h>, and
-moving TASK_SIZE there fixes the problem.
+Mark Rutland points out that we've actually got the semantics of
+addresses vs. segments muddled up in most of the places we need to
+amend, so shuffle the {USER,KERNEL}_DS definitions around such that we
+can correct those properly instead of just pasting "-1"s everywhere.
 
-Discussion: https://patchwork.kernel.org/patch/9929107/
-
-[1] https://github.com/norov/linux/tree/ilp32-next
-
-CC: Will Deacon <will.deacon@arm.com>
-CC: Laura Abbott <labbott@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+(cherry picked from commit 83b20dff71ea949431cf57c6aebaaf7ebd5c1991)
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 
 Conflicts:
-	no ptrace.h in arch/arm64/kernel/entry.S
+	force replace __range_ok and add asm/processor.h
+	in arch/arm64/include/asm/uaccess.h
+	using old macro TI_ADDR_LIMIT instead of TSK_TI_ADDR_LIMIT
+	in arch/arm64/kernel/entry.S
+	manual change USER_DS to TASK_SIZE in arch/arm64/mm/fault.c
 ---
- arch/arm64/include/asm/memory.h    | 15 ---------------
- arch/arm64/include/asm/processor.h | 21 +++++++++++++++++++++
+ arch/arm64/include/asm/processor.h |  3 +++
+ arch/arm64/include/asm/uaccess.h   | 46 ++++++++++++++++++++++----------------
  arch/arm64/kernel/entry.S          |  2 +-
- 3 files changed, 22 insertions(+), 16 deletions(-)
+ arch/arm64/mm/fault.c              |  2 +-
+ 4 files changed, 32 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 53211a0..269b979 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -60,8 +60,6 @@
-  * KIMAGE_VADDR - the virtual address of the start of the kernel image
-  * VA_BITS - the maximum number of bits for virtual addresses.
-  * VA_START - the first kernel virtual address.
-- * TASK_SIZE - the maximum size of a user space task.
-- * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
-  */
- #define VA_BITS			(CONFIG_ARM64_VA_BITS)
- #define VA_START		(UL(0xffffffffffffffff) << VA_BITS)
-@@ -74,19 +72,6 @@
- #define PCI_IO_END		(VMEMMAP_START - SZ_2M)
- #define PCI_IO_START		(PCI_IO_END - PCI_IO_SIZE)
- #define FIXADDR_TOP		(PCI_IO_START - SZ_2M)
--#define TASK_SIZE_64		(UL(1) << VA_BITS)
--
--#ifdef CONFIG_COMPAT
--#define TASK_SIZE_32		UL(0x100000000)
--#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
--				TASK_SIZE_32 : TASK_SIZE_64)
--#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
--				TASK_SIZE_32 : TASK_SIZE_64)
--#else
--#define TASK_SIZE		TASK_SIZE_64
--#endif /* CONFIG_COMPAT */
--
--#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
- 
- #define KERNEL_START      _text
- #define KERNEL_END        _end
 diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 60e3482..4258f4d 100644
+index 4258f4d..5917147 100644
 --- a/arch/arm64/include/asm/processor.h
 +++ b/arch/arm64/include/asm/processor.h
-@@ -19,6 +19,10 @@
- #ifndef __ASM_PROCESSOR_H
- #define __ASM_PROCESSOR_H
+@@ -21,6 +21,9 @@
  
-+#define TASK_SIZE_64		(UL(1) << VA_BITS)
+ #define TASK_SIZE_64		(UL(1) << VA_BITS)
+ 
++#define KERNEL_DS	UL(-1)
++#define USER_DS		(TASK_SIZE_64 - 1)
 +
-+#ifndef __ASSEMBLY__
-+
+ #ifndef __ASSEMBLY__
+ 
  /*
-  * Default implementation of macro that returns current
-  * instruction pointer ("program counter").
-@@ -37,6 +41,22 @@
- #include <asm/ptrace.h>
- #include <asm/types.h>
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 09c9b59..7b1eb49 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -36,6 +36,7 @@
+ #include <asm/errno.h>
+ #include <asm/memory.h>
+ #include <asm/compiler.h>
++#include <asm/processor.h>
  
-+/*
-+ * TASK_SIZE - the maximum size of a user space task.
-+ * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
-+ */
-+#ifdef CONFIG_COMPAT
-+#define TASK_SIZE_32		UL(0x100000000)
-+#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
-+				TASK_SIZE_32 : TASK_SIZE_64)
-+#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
-+				TASK_SIZE_32 : TASK_SIZE_64)
-+#else
-+#define TASK_SIZE		TASK_SIZE_64
-+#endif /* CONFIG_COMPAT */
-+
-+#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
-+
- #define STACK_TOP_MAX		TASK_SIZE_64
- #ifdef CONFIG_COMPAT
- #define AARCH32_VECTORS_BASE	0xffff0000
-@@ -192,4 +212,5 @@ int cpu_enable_pan(void *__unused);
- int cpu_enable_uao(void *__unused);
- int cpu_enable_cache_maint_trap(void *__unused);
+ #define VERIFY_READ 0
+ #define VERIFY_WRITE 1
+@@ -62,10 +63,7 @@ struct exception_table_entry
  
-+#endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
+ extern int fixup_exception(struct pt_regs *regs);
+ 
+-#define KERNEL_DS	(-1UL)
+ #define get_ds()	(KERNEL_DS)
+-
+-#define USER_DS		TASK_SIZE_64
+ #define get_fs()	(current_thread_info()->addr_limit)
+ 
+ static inline void set_fs(mm_segment_t fs)
+@@ -90,22 +88,32 @@ static inline void set_fs(mm_segment_t fs)
+  * Returns 1 if the range is valid, 0 otherwise.
+  *
+  * This is equivalent to the following test:
+- * (u65)addr + (u65)size <= current->addr_limit
+- *
+- * This needs 65-bit arithmetic.
++ * (u65)addr + (u65)size <= (u65)current->addr_limit + 1
+  */
+-#define __range_ok(addr, size)						\
+-({									\
+-	unsigned long __addr = (unsigned long __force)(addr);		\
+-	unsigned long flag, roksum;					\
+-	__chk_user_ptr(addr);						\
+-	asm("adds %1, %1, %3; ccmp %1, %4, #2, cc; cset %0, ls"		\
+-		: "=&r" (flag), "=&r" (roksum)				\
+-		: "1" (__addr), "Ir" (size),				\
+-		  "r" (current_thread_info()->addr_limit)		\
+-		: "cc");						\
+-	flag;								\
+-})
++static inline unsigned long __range_ok(unsigned long addr, unsigned long size)
++{
++	unsigned long limit = current_thread_info()->addr_limit;
++
++	__chk_user_ptr(addr);
++	asm volatile(
++	// A + B <= C + 1 for all A,B,C, in four easy steps:
++	// 1: X = A + B; X' = X % 2^64
++	"	adds	%0, %0, %2\n"
++	// 2: Set C = 0 if X > 2^64, to guarantee X' > C in step 4
++	"	csel	%1, xzr, %1, hi\n"
++	// 3: Set X' = ~0 if X >= 2^64. For X == 2^64, this decrements X'
++	//    to compensate for the carry flag being set in step 4. For
++	//    X > 2^64, X' merely has to remain nonzero, which it does.
++	"	csinv	%0, %0, xzr, cc\n"
++	// 4: For X < 2^64, this gives us X' - C - 1 <= 0, where the -1
++	//    comes from the carry in being clear. Otherwise, we are
++	//    testing X' - C == 0, subject to the previous adjustments.
++	"	sbcs	xzr, %0, %1\n"
++	"	cset	%0, ls\n"
++	: "+r" (addr), "+r" (limit) : "Ir" (size) : "cc");
++
++	return addr;
++}
+ 
+ /*
+  * When dealing with data aborts, watchpoints, or instruction traps we may end
+@@ -114,7 +122,7 @@ static inline void set_fs(mm_segment_t fs)
+  */
+ #define untagged_addr(addr)		sign_extend64(addr, 55)
+ 
+-#define access_ok(type, addr, size)	__range_ok(addr, size)
++#define access_ok(type, addr, size)	__range_ok((unsigned long)(addr), size)
+ #define user_addr_max			get_fs
+ 
+ #define _ASM_EXTABLE(from, to)						\
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index b4c7db4..478f0fe 100644
+index 478f0fe..6915697 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -28,7 +28,7 @@
- #include <asm/errno.h>
- #include <asm/esr.h>
- #include <asm/irq.h>
--#include <asm/memory.h>
-+#include <asm/processor.h>
- #include <asm/thread_info.h>
- #include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
+@@ -103,7 +103,7 @@
+ 	/* Save the task's original addr_limit and set USER_DS (TASK_SIZE_64) */
+ 	ldr	x20, [tsk, #TI_ADDR_LIMIT]
+ 	str	x20, [sp, #S_ORIG_ADDR_LIMIT]
+-	mov	x20, #TASK_SIZE_64
++	mov	x20, #USER_DS
+ 	str	x20, [tsk, #TI_ADDR_LIMIT]
+ 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
+ 	.endif /* \el == 0 */
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 403fe9e..4df70c9 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -332,7 +332,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
+ 		mm_flags |= FAULT_FLAG_WRITE;
+ 	}
+ 
+-	if (is_permission_fault(esr) && (addr < USER_DS)) {
++	if (is_permission_fault(esr) && (addr < TASK_SIZE)) {
+ 		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
+ 		if (regs->orig_addr_limit == KERNEL_DS)
+ 			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
 -- 
 2.7.4
