@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753340AbeBZNT3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:19:29 -0500
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38731 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753026AbeBZNR1 (ORCPT
+        id S1753370AbeBZNTn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:19:43 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36302 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753188AbeBZNRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:17:27 -0500
-X-Google-Smtp-Source: AH8x224Om+h1qpAGjbJuZVRrm04EaUh67f5GrzsIgMIGtB5FidrG256hqndXVTFfMuabaZhVh1fJNw==
+        Mon, 26 Feb 2018 08:17:41 -0500
+X-Google-Smtp-Source: AH8x224pIbtqfsCxEabKzJpo469u9lVjyscFDYUIX9tTo4WE5yjUk6vbjE0P162rwmY9wqUVxOngwQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH V3 00/19] lightnvm: pblk: implement 2.0 support
-Date: Mon, 26 Feb 2018 14:16:59 +0100
-Message-Id: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 12/19] lightnvn: pblk: use generic address format
+Date: Mon, 26 Feb 2018 14:17:11 +0100
+Message-Id: <1519651038-16845-13-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
+References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -25,107 +27,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-# Changes since V2:
+Use the generic address format on common address manipulations.
 
-Apply Matias' feedback:
- - Remove generic nvm_id identify structure.
- - Do not remap capabilities (cap) to media and controlled capabilities
-   (mccap). Instead, add a comment to prevent confusion when
-   crosschecking with 2.0 spec.
- - Change maxoc and maxocpu defaults from 1 block to the max number of
-   blocks.
- - Re-implement the generic geometry to use nvm_geo on both device and
-   targets. Maintain nvm_common_geo to make it easier to copy the common
-   part of the geometry (without having to overwrite target-specific
-   fields, which is ugly and error prone). Matias, if you still want to
-   get rid of this, we can do it.
- - Re-order patches with renaming to make them more meaningful. These
-   belong to the series, since the name changes are motivated by 2.0
-   inclusions. The only exception would be 36d10bfd3234, but I hope it
-   is OK I include it here.
+Signed-off-by: Javier González <javier@cnexlabs.com>
+---
+ drivers/lightnvm/pblk-core.c  | 10 +++++-----
+ drivers/lightnvm/pblk-map.c   |  4 ++--
+ drivers/lightnvm/pblk-sysfs.c |  4 ++--
+ drivers/lightnvm/pblk.h       |  4 ++--
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-Also,
- - Eliminate a dependency between luns and lines in the init/exit
-   refactoring.
- - Use the global address format when possible to avoid defaulting on
-   the 1.2 path. This will safe headaches if the address format changes
-   at some point.
-
-I took out the patch allowing to do bit shifts on non power-of-2 media
-formats on pblk's mapping since it requires touching many places that
-are not 2.0 related. I'll submit this separately.
-
-# Changes since V1:
-
-Apply Matias' feedback:
- - Rebase on top of Matias' latest patches.
- - Use nvme_get_log_ext to submit report chunk and export it.
- - Re-write report chunk based on Matias' suggestions. Here, I
-   maintained the lba interface, but it was necessary to redo the
-   address formatting to match the chunk log page format. For pblk,
-   this means a double address transformation, but it enables the
-   standard path to use lbas, plus, this is not in the fast path.
- - Fold address format together with address transformations.
- - Split the generic geometry patch in different patches.
- - Remove refactoring of ligthnvm's core sysfs.
-
-Feedback not applied:
- - Not letting pblk know about 1.2 and 2.0 bad block paths.
-   Since the interfaces for get/set bad block and report chunk are so
-   different, moving this logic to core adds assumptions on how the
-   targets would want to get the data back. A way of doing this is
-   creating a logical report chunk on the 1.2 path, but this would
-   mean that values like the wear-index are invalid, which requires
-   the target knowledge. I'm open to suggestions here.
-
-Also:
- - Do some further renamings
- - Create a generic address format to make it explicit where we share
-   1.2 and 2.0 fields to avoid address formatting in the fast path.
- - Add new fields to sysfs to complete spec and show major/minor
-   versions (version and subversion to respect current interface).
-
-Implement 2.0 support in pblk. This includes the address formatting and
-mapping paths, as well as the sysfs entries for them.
-
-Javier
-
-Javier González (19):
-  lightnvm: simplify geometry structure.
-  lightnvm: add controller capabilities to 2.0
-  lightnvm: add minor version to generic geometry
-  lightnvm: add shorten OCSSD version in geo
-  lightnvm: complete geo structure with maxoc*
-  lightnvm: pblk: check for supported version
-  lightnvm: complete 2.0 values in sysfs
-  lightnvm: rename number of channels and luns
-  lightnvm: rename sect_* to sec_*
-  lightnvm: add support for 2.0 address format
-  lightnvm: pblk: rename ppaf* to addrf*
-  lightnvn: pblk: use generic address format
-  lightnvm: make address conversions depend on generic device
-  nvme: make nvme_get_log_ext available
-  lightnvm: implement get log report chunk helpers
-  lightnvm: define chunk states
-  lightnvm: pblk: implement get log report chunk
-  lightnvm: pblk: refactor init/exit sequences
-  lightnvm: pblk: implement 2.0 support
-
- drivers/lightnvm/core.c          | 199 +++++-----
- drivers/lightnvm/pblk-core.c     | 151 +++++--
- drivers/lightnvm/pblk-gc.c       |   2 +-
- drivers/lightnvm/pblk-init.c     | 833 +++++++++++++++++++++++----------------
- drivers/lightnvm/pblk-map.c      |   4 +-
- drivers/lightnvm/pblk-read.c     |   2 +-
- drivers/lightnvm/pblk-recovery.c |  14 +-
- drivers/lightnvm/pblk-rl.c       |   2 +-
- drivers/lightnvm/pblk-sysfs.c    | 134 ++++++-
- drivers/lightnvm/pblk-write.c    |   2 +-
- drivers/lightnvm/pblk.h          | 255 ++++++++----
- drivers/nvme/host/lightnvm.c     | 458 ++++++++++++++-------
- drivers/nvme/host/nvme.h         |   3 +
- include/linux/lightnvm.h         | 338 ++++++++++------
- 14 files changed, 1559 insertions(+), 838 deletions(-)
-
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 7c726003a8d2..1d7c6313f3d9 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -885,7 +885,7 @@ int pblk_line_erase(struct pblk *pblk, struct pblk_line *line)
+ 		}
+ 
+ 		ppa = pblk->luns[bit].bppa; /* set ch and lun */
+-		ppa.g.blk = line->id;
++		ppa.a.blk = line->id;
+ 
+ 		atomic_dec(&line->left_eblks);
+ 		WARN_ON(test_and_set_bit(bit, line->erase_bitmap));
+@@ -1693,8 +1693,8 @@ static void __pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list,
+ 	int i;
+ 
+ 	for (i = 1; i < nr_ppas; i++)
+-		WARN_ON(ppa_list[0].g.lun != ppa_list[i].g.lun ||
+-				ppa_list[0].g.ch != ppa_list[i].g.ch);
++		WARN_ON(ppa_list[0].a.lun != ppa_list[i].a.lun ||
++				ppa_list[0].a.ch != ppa_list[i].a.ch);
+ #endif
+ 
+ 	ret = down_timeout(&rlun->wr_sem, msecs_to_jiffies(30000));
+@@ -1738,8 +1738,8 @@ void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas)
+ 	int i;
+ 
+ 	for (i = 1; i < nr_ppas; i++)
+-		WARN_ON(ppa_list[0].g.lun != ppa_list[i].g.lun ||
+-				ppa_list[0].g.ch != ppa_list[i].g.ch);
++		WARN_ON(ppa_list[0].a.lun != ppa_list[i].a.lun ||
++				ppa_list[0].a.ch != ppa_list[i].a.ch);
+ #endif
+ 
+ 	rlun = &pblk->luns[pos];
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 04e08d76ea5f..20dbaa89c9df 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -127,7 +127,7 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 			atomic_dec(&e_line->left_eblks);
+ 
+ 			*erase_ppa = rqd->ppa_list[i];
+-			erase_ppa->g.blk = e_line->id;
++			erase_ppa->a.blk = e_line->id;
+ 
+ 			spin_unlock(&e_line->lock);
+ 
+@@ -168,6 +168,6 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 		set_bit(bit, e_line->erase_bitmap);
+ 		atomic_dec(&e_line->left_eblks);
+ 		*erase_ppa = pblk->luns[bit].bppa; /* set ch and lun */
+-		erase_ppa->g.blk = e_line->id;
++		erase_ppa->a.blk = e_line->id;
+ 	}
+ }
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index d3b50741b691..ccfb3abd2773 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -39,8 +39,8 @@ static ssize_t pblk_sysfs_luns_show(struct pblk *pblk, char *page)
+ 		sz += snprintf(page + sz, PAGE_SIZE - sz,
+ 				"pblk: pos:%d, ch:%d, lun:%d - %d\n",
+ 					i,
+-					rlun->bppa.g.ch,
+-					rlun->bppa.g.lun,
++					rlun->bppa.a.ch,
++					rlun->bppa.a.lun,
+ 					active);
+ 	}
+ 
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 46b29a492f74..6e1fcd1a538a 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -936,12 +936,12 @@ static inline int pblk_pad_distance(struct pblk *pblk)
+ 
+ static inline int pblk_ppa_to_line(struct ppa_addr p)
+ {
+-	return p.g.blk;
++	return p.a.blk;
+ }
+ 
+ static inline int pblk_ppa_to_pos(struct nvm_geo *geo, struct ppa_addr p)
+ {
+-	return p.g.lun * geo->num_ch + p.g.ch;
++	return p.a.lun * geo->num_ch + p.a.ch;
+ }
+ 
+ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
 -- 
 2.7.4
