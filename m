@@ -1,61 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeBZLbT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:31:19 -0500
-Received: from gofer.mess.org ([88.97.38.141]:42623 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752451AbeBZLbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:31:17 -0500
-Date: Mon, 26 Feb 2018 11:31:15 +0000
-From: Sean Young <sean@mess.org>
-To: James Hogan <jhogan@kernel.org>
-Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 12/13] media: img-ir: Drop METAG dependency
-Message-ID: <20180226113114.jpewudrlez3pla2y@gofer.mess.org>
-References: <20180221233825.10024-1-jhogan@kernel.org>
- <20180221233825.10024-13-jhogan@kernel.org>
+        id S1752627AbeBZLfU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:35:20 -0500
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:37049 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751877AbeBZLfS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 06:35:18 -0500
+X-Google-Smtp-Source: AG47ELsEwXrckX9qY33kaI34GFUjMfjHkyOS17VKCCkKmXvyBILH0DaDuDNpKTUGG750QY5L1EDa3oOW4TQfpBgo0mg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180221233825.10024-13-jhogan@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
+References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
+ <20180222191647.4727-3-ard.biesheuvel@linaro.org> <CAHp75Vc1AGzdgTB281XVo=FmZerkU1vijLih3JUO=_wNPjxgfA@mail.gmail.com>
+ <CAKv+Gu9XkmSPHZf+jVKOm-SX1GCWJUc7y3zTCuaHBwk8O3OC3Q@mail.gmail.com>
+ <CAHp75VfFKDkQQ9-vdjzDfE2Cdk2Cb93+kdceYQgEqt3hti=Wkg@mail.gmail.com> <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 26 Feb 2018 13:35:16 +0200
+Message-ID: <CAHp75VcjUey4K1xOkjKjn_ppPKC0bktcBK2p9NjcPYG1ed7X0g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] i2c: add support for Socionext SynQuacer I2C controller
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QBZPEH026702
 
-On Wed, Feb 21, 2018 at 11:38:24PM +0000, James Hogan wrote:
-> Now that arch/metag/ has been removed, remove the METAG dependency from
-> the IMG IR device driver. The hardware is also present on MIPS SoCs so
-> the driver still has value.
-> 
-> Signed-off-by: James Hogan <jhogan@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-metag@vger.kernel.org
+On Mon, Feb 26, 2018 at 11:59 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 23 February 2018 at 13:12, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> On Fri, Feb 23, 2018 at 2:40 PM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On 23 February 2018 at 12:27, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>>> On Thu, Feb 22, 2018 at 9:16 PM, Ard Biesheuvel
+>>>> <ard.biesheuvel@linaro.org> wrote:
+> ...
+>>>>> +       ret = device_property_read_u32(&pdev->dev, "clock-frequency",
+>>>>> +                                      &speed_khz);
+>>>>> +       if (ret) {
+>>>>> +               dev_err(&pdev->dev,
+>>>>> +                       "Missing clock-frequency property\n");
+>>>>> +               return -EINVAL;
+>>>>> +       }
+>>>>> +       speed_khz /= 1000;
+>>
+>>>>> +       if (dev_of_node(&pdev->dev)) {
+>>>>> +               i2c->clk = devm_clk_get(&pdev->dev, "pclk");
+>>>>> +               if (IS_ERR(i2c->clk)) {
+>>>>> +                       dev_err(&pdev->dev, "cannot get clock\n");
+>>>>> +                       return PTR_ERR(i2c->clk);
+>>>>> +               }
+>>>>> +               dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
+>>>>> +
+>>>>> +               i2c->clkrate = clk_get_rate(i2c->clk);
+>>>>> +               dev_dbg(&pdev->dev, "clock rate %d\n", i2c->clkrate);
+>>>>> +               clk_prepare_enable(i2c->clk);
+>>>>> +       } else {
+>>>>> +               ret = device_property_read_u32(&pdev->dev,
+>>>>> +                                              "socionext,pclk-rate",
+>>>>> +                                              &i2c->clkrate);
+>>>>> +               if (ret)
+>>>>> +                       return ret;
+>>>>> +       }
+>>>>
+>>>> Okay, I got this case. It's more likely the one in 8250_dw.c.
+>>>>
+>>>> Can you do the similar way?
+>>
+>>> Could you elaborate?
+>>
+>> --- 8< --- 8< --- 8< ---
+>>         device_property_read_u32(dev, "clock-frequency", &p->uartclk);
+>>
+>>        /* If there is separate baudclk, get the rate from it. */
+>>        data->clk = devm_clk_get(dev, "baudclk");
+>> ...
+>>        if (IS_ERR(data->clk) && PTR_ERR(data->clk) == -EPROBE_DEFER)
+>>                return -EPROBE_DEFER;
+>>        if (!IS_ERR_OR_NULL(data->clk)) {
+>>                err = clk_prepare_enable(data->clk);
+>>                if (err)
+>>                        dev_warn(dev, "could not enable optional baudclk: %d\n",
+>>                                 err);
+>>                else
+>>                        p->uartclk = clk_get_rate(data->clk);
+>>        }
+>>
+>>        /* If no clock rate is defined, fail. */
+>>        if (!p->uartclk) {
+>>                dev_err(dev, "clock rate not defined\n");
+>>                err = -EINVAL;
+>>                goto err_clk;
+>> --- 8< --- 8< --- 8< ---
+>>
+>> Replace 'baudclk' with 'pclk' and p->uartclk with i2c->clkrate in
+>> above and you are almost done.
+>>
+>
+> I don't think this is better.
 
-Acked-by: Sean Young <sean@mess.org>
+It's a pattern over ACPI vs. clk cases at least for now.
+But hold on. We have already an example of dealing with ACPI /
+non-ACPI cases for I2C controllers — i2c-designware-platdrv.c.
+Check how it's done there.
 
+I actually totally forgot about ACPI slaves described in the table. We
+need to take into account the ones with lowest bus speed.
 
-> ---
->  drivers/media/rc/img-ir/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/rc/img-ir/Kconfig b/drivers/media/rc/img-ir/Kconfig
-> index a896d3c83a1c..d2c6617d468e 100644
-> --- a/drivers/media/rc/img-ir/Kconfig
-> +++ b/drivers/media/rc/img-ir/Kconfig
-> @@ -1,7 +1,7 @@
->  config IR_IMG
->  	tristate "ImgTec IR Decoder"
->  	depends on RC_CORE
-> -	depends on METAG || MIPS || COMPILE_TEST
-> +	depends on MIPS || COMPILE_TEST
->  	select IR_IMG_HW if !IR_IMG_RAW
->  	help
->  	   Say Y or M here if you want to use the ImgTec infrared decoder
-> -- 
-> 2.13.6
+>  The generic DT I2C 'clock-frequency'
+> property denotes the bus clock rate not the rate of the clock that
+> feeds the IP block. This is rather different from the UART bindings.
+
+> Also, I don't want to support 'socionext,pclk-rate' for DT platforms,
+> only for ACPI platforms.
+
+Unfortunately, we are strong against deviations between DT and ACPI in
+case of device properties.
+You may provide a clock and use devm_clk_get() without any concerns
+from where this comes from.
+
+You won't find any deviation in DW I2C driver since there is none,
+while driver works for non-ACPI platforms as well.
+
+-- 
+With Best Regards,
+Andy Shevchenko
