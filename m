@@ -1,81 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752043AbeBZI73 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:59:29 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:49605 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751561AbeBZI71 (ORCPT
+        id S1752349AbeBZJBq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:01:46 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55672 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752114AbeBZJA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:59:27 -0500
-X-ME-Sender: <xms:b8yTWmml85i9N5OBet9osq4aDn56esmbeseVbw-aaCNYrIZP6CLx3g>
-Date: Mon, 26 Feb 2018 19:59:24 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Andrew Cooks <andrew.cooks@opengear.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC"
-        <linux-i2c@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
-        platypus-sw@opengear.com
-Subject: Re: [RESEND][PATCH v4 3/3] i2c: piix4: add ACPI support
-Message-ID: <20180226085924.GB15131@eros>
-References: <cover.1519601860.git.andrew.cooks@opengear.com>
- <d197d95d77afa2054ff1b2c593dae7939030e24b.1519601860.git.andrew.cooks@opengear.com>
+        Mon, 26 Feb 2018 04:00:58 -0500
+Date: Mon, 26 Feb 2018 10:00:50 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 04/17] lockdep: Introduce
+ lock_list::dep
+Message-ID: <20180226090050.GE25201@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-5-boqun.feng@gmail.com>
+ <20180223115520.GV25181@hirez.programming.kicks-ass.net>
+ <20180223123732.acxbavnf2ktd4lzl@tardis>
+ <20180224053250.ketrlbq4gtx573qo@tardis>
+ <20180224063005.efbowkoq2v4qndan@tardis>
+ <20180224083807.GB25201@hirez.programming.kicks-ass.net>
+ <20180224090019.3smjampkk4zoacb3@tardis>
+ <20180224092651.hjxznghmuiyj4rnp@tardis>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d197d95d77afa2054ff1b2c593dae7939030e24b.1519601860.git.andrew.cooks@opengear.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180224092651.hjxznghmuiyj4rnp@tardis>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 10:28:45AM +1000, Andrew Cooks wrote:
-> Enable the i2c-piix4 SMBus controller driver to enumerate I2C slave
-> devices using ACPI. It builds on the related I2C mux device work
-> in commit 8eb5c87a92c0 ("i2c: add ACPI support for I2C mux ports")
+On Sat, Feb 24, 2018 at 05:26:52PM +0800, Boqun Feng wrote:
+> > This is for case like:
+> > 
+> > 	TASK1:
+> > 		read_lock(A);
+> > 		read_lock(B);
+> > 	
+> > 	TASK2:
+> > 		write_lock(B);
+> > 		read_lock(C);
+> > 	
+> > 	TASK3:
+> > 		read_lock(B);
+> > 		write_lock(C);
+> > 
+> > 	TASK4:
+> > 		read_lock(C);
+> > 		write_lock(A);
+> > 
+> > , which is not a deadlock.
+> > 
 > 
-> In the i2c-piix4 driver the adapters are enumerated as:
->  Main SMBus adapter Port 0, Port 2, ..., aux port (i.e., ASF adapter)
+> After TASK 1,2,3 have executed, we have A -(RR)-> B, B -(RN/NR)-> C, and
+> when TASK4 executed, we will try to add C -(RN)-> A into the graph.
+> Before that we need to check whether we have a A -> ... -(*N)-> C path
+> in the graph already, so we search from A (@prev is C and @this is A):
 > 
-> However, in the AMD BKDG documentation[1], the implied order of ports is:
->  Main SMBus adapter Port 0, ASF adapter, Port 2, Port 3, ...
+> *	we set A->have_xr to false, because the dependency we are adding
+> 	is a RN.
 > 
-> This ordering difference is unfortunate. We assume that ACPI
-> developers will use the Linux ordering.
+> *	we find A -(RR)-> B, and since have_xr (= A->have_xr) is false,
+> 	we can pick this dependency, and since for A -> B, we only have
+> 	RR, so we set B->have_xr to true.
 > 
-> [1] 52740 BIOS and Kernel Developer's Guide (BKDG) for AMD Family 16h
-> Models 30h-3Fh Processors
+> *	we then find B -(RN/NR)-> C, and since have_xr (= B->have_xr) is
+> 	true, we will pick it only only_rx(C->dep) return false,
+> 	otherwise we skip. Because we have RN and NR for B -> C,
+> 	therefore we won't skip B -> C.
 > 
-> Signed-off-by: Andrew Cooks <andrew.cooks@opengear.com>
-> ---
->  drivers/i2c/busses/i2c-piix4.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> *	Now we try to set C->have_xr, if we set it to only_xr(C->dep),
+> 	we will set it to false, right? Because B -> C has RN.
 > 
-> diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-> index 01f1610..9a6cdc8 100644
-> --- a/drivers/i2c/busses/i2c-piix4.c
-> +++ b/drivers/i2c/busses/i2c-piix4.c
-> @@ -837,6 +837,12 @@ static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
->  	/* set up the sysfs linkage to our parent device */
->  	adap->dev.parent = &dev->dev;
->  
-> +	if (has_acpi_companion(&dev->dev)) {
-> +		acpi_preset_companion(&adap->dev,
-> +				ACPI_COMPANION(&dev->dev),
-> +				piix4_adapter_count);
+> *	Since we now find a entry equal to @prev, we go into the
+> 	hlock_conflict() logic and for expression
+> 		
+> 		hlock->read != 2 || !entry->have_xr 
+> 	
+> 	@hlock is the C in TASK4, so hlock->read == 2, and @entry is the
+> 	C whose ->have_xr we just set, so entry->have_xr is false.
+> 	Therefore hlock_conflict() returns true. And that indicates we
+> 	find a deadlock in the search. But the above senario can not
+> 	introduce a deadlock.
+> 
+> Could this help you, or I miss something?
 
-nit:
-		acpi_preset_companion(&adap->dev,
-				      ACPI_COMPANION(&dev->dev),
-				      piix4_adapter_count);
+Yes, although it took me forever to grasp because I have snot for brains
+atm :-(
 
-> +	}
-> +
->  	snprintf(adap->name, sizeof(adap->name),
->  		"SMBus PIIX4 adapter%s at %04x", name, smba);
+Would something like:
 
 
-Hope this helps,
-Tobin
+	dep = entry->dep;
+
+	/* Mask out all *R -> R* relations. */
+	if (have_xr)
+		dep &= ~(RR_MASK | RN_MASK);
+
+	/* If nothing left, we're done. */
+	if (!dep)
+		continue;
+
+	/* If there are (only) *R left, set that for the next step. */
+	entry->have_xr = !(dep & (RN_MASK | NN_MASK));
+
+
+Work? I think that reads fairly simple.
