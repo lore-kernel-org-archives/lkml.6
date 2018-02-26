@@ -1,133 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeBZQ2i (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:28:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58742 "EHLO mx2.suse.de"
+        id S1752230AbeBZQb0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:31:26 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37934 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeBZQ2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:28:36 -0500
-Date: Mon, 26 Feb 2018 17:28:32 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
-Message-ID: <20180226172832.7bf82336@endymion>
-In-Reply-To: <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
-References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-        <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1752021AbeBZQbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:31:25 -0500
+Date: Mon, 26 Feb 2018 17:31:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Paul Menzel <pmenzel+linux-irq@molgen.mpg.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: Re: `do_IRQ: 1.55 No irq handler for vector` on ASRock E350M1
+Message-ID: <20180226163102.GM4377@pd.tnic>
+References: <8bb6b660-ce08-37a7-d1ab-38a690595856@molgen.mpg.de>
+ <alpine.DEB.2.21.1802231914590.1437@nanos.tec.linutronix.de>
+ <20180223190950.GJ4981@pd.tnic>
+ <61f2fc82-4eee-8678-c37a-dc300dde4edf@molgen.mpg.de>
+ <alpine.DEB.2.21.1802240941190.1825@nanos.tec.linutronix.de>
+ <c84da3a5-107c-2ddc-d108-ebb33df49719@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c84da3a5-107c-2ddc-d108-ebb33df49719@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-On Thu, 22 Feb 2018 14:59:21 +0200, Andy Shevchenko wrote:
-> ...instead of open coding its functionality.
+On Mon, Feb 26, 2018 at 10:14:10AM -0600, Tom Lendacky wrote:
+> On 2/24/2018 2:59 AM, Thomas Gleixner wrote:
+> > On Sat, 24 Feb 2018, Paul Menzel wrote:
+> >> Am 23.02.2018 um 20:09 schrieb Borislav Petkov:
+> >>> On Fri, Feb 23, 2018 at 07:18:34PM +0100, Thomas Gleixner wrote:
+> >>>> Borislav is seeing similar issues on larger AMD machines. The interrupt
+> >>>> seems to come from BIOS/microcode during bringup of secondary CPUs and we
+> >>>> have no idea why.
+> >>>
+> >>> Paul, can you boot 4.14 and grep your dmesg for something like:
+> >>>
+> >>> [    0.000000] spurious 8259A interrupt: IRQ7. >
+> >>> ?
+> >>
+> >> No, I do not see that. Please find the logs attached.
+> > 
+> > From your 4.14 log:
+> > 
+> > Feb 19 09:48:06.843173 kodi kernel: CPU 0 irqstacks, hard=e9b0a000 soft=e9b0c000
+> > Feb 19 09:48:06.843216 kodi kernel: spurious 8259A interrupt: IRQ7.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  arch/x86/pci/acpi.c            | 8 ++------
->  arch/x86/pci/direct.c          | 5 ++---
->  arch/x86/pci/mmconfig-shared.c | 9 ++-------
->  3 files changed, 6 insertions(+), 16 deletions(-)
+> I think I remember seeing something like this previously and it turned out
+> to be a BIOS bug.  All the AP's were enabled to work with the legacy 8259
+> interrupt controller.  In an SMP system, only one processor in the system
+> should be configured to handle legacy 8259 interrupts (ExtINT delivery
+> mode - see Intel's SDM, Volume 3, section 10.5.1, Delivery Mode).  Once
+> the BIOS was fixed, the spurious interrupt message went away.
 > 
-> diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
-> index 7df49c40665e..00e60de30328 100644
-> --- a/arch/x86/pci/acpi.c
-> +++ b/arch/x86/pci/acpi.c
-> @@ -140,12 +140,8 @@ static const struct dmi_system_id pci_crs_quirks[] __initconst = {
->  
->  void __init pci_acpi_crs_quirks(void)
->  {
-> -	int year;
-> -
-> -	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year < 2008) {
-> -		if (iomem_resource.end <= 0xffffffff)
-> -			pci_use_crs = false;
-> -	}
-> +	if ((dmi_get_bios_year() < 2008) && (iomem_resource.end <= 0xffffffff))
-> +		pci_use_crs = false;
+> I believe at some point during UEFI, the APs were exposed to an ExtINT
+> interrupt.  Since they were configured to handle ExtINT delivery mode and
+> interrupts were not yet enabled, the interrupt was left pending.  When the
+> APs were started by the OS and interrupts were enabled, the interrupt
+> triggered. Since the original pending interrupt was handled by the BSP,
+> there was no longer an interrupt actually pending, so the 8259 responds
+> with IRQ 7 when queried by the OS.  This occurred for each AP.
 
-You are changing the behavior here, when DMI does not provide a BIOS
-date. Beforehand, the test would fail and pci_use_crs would be left
-alone. After your change, dmi_get_bios_year() will return 0, and
-"0 < 2008" is true, so pci_use_crs is set to false.
+Interesting - is this something that can happen on Zen too?
 
-I have no opinion on what this driver should do in such case, but I
-certainly wouldn't expect a change of behavior from a "use a helper
-instead of open-coding" kind of patch.
-
-I don't think you can safely assume that the code calling
-dmi_get_bios_year() will always do the right thing when 0 is being
-returned. It's up to the calling code to decide what the default
-behavior should be.
-
-Also there are more parentheses than needed.
-
->  
->  	dmi_check_system(pci_crs_quirks);
->  
-> diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
-> index 2d9503323d10..a51074c55982 100644
-> --- a/arch/x86/pci/direct.c
-> +++ b/arch/x86/pci/direct.c
-> @@ -195,14 +195,13 @@ static const struct pci_raw_ops pci_direct_conf2 = {
->  static int __init pci_sanity_check(const struct pci_raw_ops *o)
->  {
->  	u32 x = 0;
-> -	int year, devfn;
-> +	int devfn;
->  
->  	if (pci_probe & PCI_NO_CHECKS)
->  		return 1;
->  	/* Assume Type 1 works for newer systems.
->  	   This handles machines that don't have anything on PCI Bus 0. */
-> -	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-> -	if (year >= 2001)
-> +	if (dmi_get_bios_year() >= 2001)
->  		return 1;
->  
->  	for (devfn = 0; devfn < 0x100; devfn++) {
-> diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
-> index 96684d0adcf9..0b40482578b8 100644
-> --- a/arch/x86/pci/mmconfig-shared.c
-> +++ b/arch/x86/pci/mmconfig-shared.c
-> @@ -547,19 +547,14 @@ static void __init pci_mmcfg_reject_broken(int early)
->  static int __init acpi_mcfg_check_entry(struct acpi_table_mcfg *mcfg,
->  					struct acpi_mcfg_allocation *cfg)
->  {
-> -	int year;
-> -
->  	if (cfg->address < 0xFFFFFFFF)
->  		return 0;
->  
->  	if (!strncmp(mcfg->header.oem_id, "SGI", 3))
->  		return 0;
->  
-> -	if (mcfg->header.revision >= 1) {
-> -		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
-> -		    year >= 2010)
-> -			return 0;
-> -	}
-> +	if ((mcfg->header.revision >= 1) && (dmi_get_bios_year() >= 2010))
-> +		return 0;
-
-Here too some parentheses are not needed.
-
->  
->  	pr_err(PREFIX "MCFG region for %04x [bus %02x-%02x] at %#llx "
->  	       "is above 4GB, ignored\n", cfg->pci_segment,
-
+Because I have such reports too.
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
