@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226gY8bY/6qs9IQb3SedX9dNzPbR/taT5LqYK1jdFnohIs3u/nOu6CbUAcvZgK03yKD3jzTS
-ARC-Seal: i=1; a=rsa-sha256; t=1519676476; cv=none;
+X-Google-Smtp-Source: AG47ELtbmnxFiKKBs3Z8vFEC00H+NLNmjWdKGlr1Cs2mqIEBUJEc8oC4On0fiB7yCxvkDThEqFAt
+ARC-Seal: i=1; a=rsa-sha256; t=1519676472; cv=none;
         d=google.com; s=arc-20160816;
-        b=eW+zkCllyg7ckxw1DIIGFyUIjoqOm7xnUXoLtghQ4sdpz5KHl6nPtPAojA5MGKfxF4
-         RvwWoJ6isX9IVDyCVTjbfAAG9qoaJyL2r/qDCHeNZmkZTWCQl9id/dvDwvvhyc7R6PLW
-         cN+VimUUMC0puvz/2GCIbsOQzTz+eUj8FbSDATPI115224l/csCfGzlaHsLkEI7oztAe
-         ZgTEkyRKcIAp/PG0fsOWycVc2ktOTZZ8NrpKFaALVrm9FxwXg545PoX4HP0IML2r0Pu1
-         PY1Xd7frXMTa3o6exAKFGP9lpAmRy7Jqk2b3hVouHF4Vypq/K9z5tNUFDlUDH5xSsJAC
-         +P8g==
+        b=ZAQzRahuKwloI3AdzvkDUxbDAZaR7NYA0WmggLPuIfe89H6eJetpMX2nCS6lERyfPu
+         QdLen3FreMVYBl6p+ceiv+jYbAdS/weZrgTjCE59NKUd1/zj5IqgIj6TaFvyXaYE0cnw
+         j0Xfp9noAo+/YuruR+hEpy9ktdaMmjH6U5RimGCVr8lYjZ4njZThgNfgSC7wWNnTkrNf
+         OjrVa5XL9pRy+eu/cRkgS2qrzBaeF6n6vFZRoT9m+n9s6wuFX91XXMcduHnA5vuU7kja
+         pW3BxuxiPORnjUiQ83XsD6V/PGxb0KGZAwRFAT3adfS9uLykwuAoRXMXk7NfshqzwJkU
+         PrwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X0ip+MVOEggWH8ebx0UDhoNg4PJk46KlotkObMeOe40=;
-        b=crpn0oJ7ZZPV3CLtIzt8+ctpwK40gaDFfjJWvxl8tdeGnlderZpEw2EgDZj8NVW0u4
-         Q60WKHwQU1fnNVnRQxWy+CblDVGF+n2vniD/XGLZj0ltv9iL5rI7PfVVP5KJg+pDI6a9
-         7Hhchdu7dnazAhnO383/YXCWJ+qNKHi3u+fVTg8EN+4aFKf8NdDD/ZBOHCa3WNVqPSO4
-         aseMQxicAwBBhe3XGyg/on+5DnGI0YeRwMMe+PAGIXhNxBRf0me9YEHZAsRqzw4qFKei
-         vP08uXEmmMLPVzkqJb8gsoIKUxpxv+wn+8NVS0C3Q3f7RZhdaFbEGSTalVDu94CHlO26
-         REXQ==
+        bh=6tcQQ2MfE9B+kgeV934x4Z+DcG3eltidJVXlCVgQLbE=;
+        b=SYMUrYXIPkEOKBeQeUiTA1ulNTB2MzXobVXYmOm+R0O2m4RdsBta4tmKX0Gw5iBe3Y
+         5oAk5Cpx68Sj9EAYIfSpe6rzxfqqodM5ZZfv2OgEmSQZcIWQFhCq2I9OuzjDz0mp72Pt
+         QyF+NbPwZa8HKq+CSsxttDzq1BmhliUwwBfwMYUnRQ+xnLGHLLIGRq+EHUGni037HCsn
+         INrXi8Eog5aQU7QjGxihI3pqMcOqLKAsDpUBOb3cCXbLuDgcgZg1hQx263Sfx9Nih1Qo
+         jOPEh4jAD4e1yxy2AWss+3o3f80Z/+1/NXF3NfbWk/PYd6VvkFV2xrTaYsNrRcPE53PT
+         I0yw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shanker Donthineni <shankerd@codeaurora.org>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 11/39] irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-Date: Mon, 26 Feb 2018 21:20:32 +0100
-Message-Id: <20180226201644.161641651@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Jessica Yu <jeyu@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin Sebor <msebor@gcc.gnu.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Robert Richter <rric@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	oprofile-list@lists.sf.net,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 10/39] x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
+Date: Mon, 26 Feb 2018 21:20:31 +0100
+Message-Id: <20180226201644.124112415@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495977277445952?=
-X-GMAIL-MSGID: =?utf-8?q?1593496281173643082?=
+X-GMAIL-THRID: =?utf-8?q?1593495973889701786?=
+X-GMAIL-MSGID: =?utf-8?q?1593496277072936428?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +57,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shanker Donthineni <shankerd@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 21ec30c0ef5234fb1039cc7c7737d885bf875a9e upstream.
+commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
 
-A DMB instruction can be used to ensure the relative order of only
-memory accesses before and after the barrier. Since writes to system
-registers are not memory operations, barrier DMB is not sufficient
-for observability of memory accesses that occur before ICC_SGI1R_EL1
-writes.
+GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
+data from CPU 0 to all other CPUs, which when building a non-SMP
+kernel turns into a memcpy() with identical source and destination
+pointers:
 
-A DSB instruction ensures that no instructions that appear in program
-order after the DSB instruction, can execute until the DSB instruction
-has completed.
+ arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
+ arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          per_cpu(cpu_msrs, 0).multiplex,
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          sizeof(struct op_msr) * model->num_virt_counters);
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
+ arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+ arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 
+I have analyzed a number of such warnings now: some are valid and the
+GCC warning is welcome. Others turned out to be false-positives, and
+GCC was changed to not warn about those any more. This is a corner case
+that is a false-positive but the GCC developers feel it's better to keep
+warning about it.
+
+In this case, it seems best to work around it by telling GCC
+a little more clearly that this code path is never hit with
+an IS_ENABLED() configuration check.
+
+Cc:stable as we also want old kernels to build cleanly with GCC-8.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Sebor <msebor@gcc.gnu.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <rric@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: oprofile-list@lists.sf.net
 Cc: stable@vger.kernel.org
-Acked-by: Will Deacon <will.deacon@arm.com>,
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3.c |    2 +-
+ arch/x86/oprofile/nmi_int.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -616,7 +616,7 @@ static void gic_raise_softirq(const stru
- 	 * Ensure that stores to Normal memory are visible to the
- 	 * other CPUs before issuing the IPI.
- 	 */
--	smp_wmb();
-+	wmb();
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -472,7 +472,7 @@ static int nmi_setup(void)
+ 		goto fail;
  
- 	for_each_cpu(cpu, mask) {
- 		unsigned long cluster_id = cpu_logical_map(cpu) & ~0xffUL;
+ 	for_each_possible_cpu(cpu) {
+-		if (!cpu)
++		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
+ 			continue;
+ 
+ 		memcpy(per_cpu(cpu_msrs, cpu).counters,
