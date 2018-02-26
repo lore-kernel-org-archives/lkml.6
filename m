@@ -1,94 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeBZWpA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:45:00 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45511 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751429AbeBZWo6 (ORCPT
+        id S1751677AbeBZWqZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:46:25 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43440 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751245AbeBZWqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:44:58 -0500
-X-Google-Smtp-Source: AG47ELvUPlK8wO2mNu3P+hoipJ+o9ao7xh3HQMzsZ78uYglkVEStmVqYRBdI6+JIE5dqHhW/ZVH5aD0dsv+fFe1NEiM=
+        Mon, 26 Feb 2018 17:46:23 -0500
+X-Google-Smtp-Source: AG47ELsUoaMaRO7h/nGag1KaHgOxNwnnhP+JA/lDU69YRctAz4JO/Rqa63a9hzQh8wVbGEID7ZUFC8mvapKXugSGJtM=
 MIME-Version: 1.0
-In-Reply-To: <20180227003257-mutt-send-email-mst@kernel.org>
-References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
- <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
- <E8D91EBA-F75D-4FF9-BDE8-FCE3A4B4B007@intel.com> <CAKgT0UcG91o3H8jmSJFfyt2p_CoqxgCYrEX2Xchoira6nu6mNg@mail.gmail.com>
- <20180227003257-mutt-send-email-mst@kernel.org>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Mon, 26 Feb 2018 14:44:56 -0800
-Message-ID: <CAKgT0UdicSYCJ_=oCUrxKg+zx5X3B9ubt1X+BdfP42n4NR9B3g@mail.gmail.com>
-Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for virtio_pci devices
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "MRustad@gmail.com" <MRustad@gmail.com>
+In-Reply-To: <20180226224224.244247-1-mka@chromium.org>
+References: <20180226224224.244247-1-mka@chromium.org>
+From: Guenter Roeck <groeck@google.com>
+Date: Mon, 26 Feb 2018 14:46:22 -0800
+Message-ID: <CABXOdTchzieb_qSZJ=FpE5TmrhhCVh5xBPzS2dOSaLHKL2M-EA@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: Make enum conversion explicit in kvm_pdptr_read()
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QMj6hI002126
 
-On Mon, Feb 26, 2018 at 2:38 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Mon, Feb 26, 2018 at 10:05:31AM -0800, Alexander Duyck wrote:
->> On Mon, Feb 26, 2018 at 9:48 AM, Rustad, Mark D <mark.d.rustad@intel.com> wrote:
->> > Alex,
->> >
->> >> On Feb 26, 2018, at 7:26 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
->> >>
->> >> Mark,
->> >>
->> >> In the future please don't put my "Reviewed-by" on a patch that I
->> >> haven't reviewed. I believe I reviewed one of the earlier patches, but
->> >> I hadn't reviewed this version.
->> >
->> > I'm very sorry. I completely spaced doing something about that. I think yours was the first Reviewed-by I ever had in this way. In the future I will remove such things from my changelog right after sending. Thanks for alerting me to what I had failed to do.
->> >
->> >> Also, after thinking about it over the weekend we may want to look at
->> >> just coming up with a truly "generic" solution that is applied to
->> >> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
->> >> on them. That would allow us to handle the uio, vfio, pci-stub, and
->> >> virtio cases all in one fell swoop. I think us going though and
->> >> modifying one patch at a time to do this kind of thing isn't going to
->> >> scale.
->> >
->> > The notion of that kind of troubles me - at least pci-stub does. Having worked on ixgbe a bit, I have to wonder what kind of havoc would ensue if an ixgbe device were assigned to a guest, and an attempt was made to allocate VFs by the pci-stub. The guest could be running any version of the ixgbe driver, possibly even an old one that didn't support SR-IOV. Even if it did support SR-IOV, I don't know how it would respond to mailbox messages when it doesn't think it has VFs.
->>
->> The assumption here is that the root user knows what they are doing.
+On Mon, Feb 26, 2018 at 2:42 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> The type 'enum kvm_reg_ex' is an extension of 'enum kvm_reg', however
+> the extension is only semantical and the compiler doesn't know about the
+> relationship between the two types. In kvm_pdptr_read() a value of the
+> extended type is passed to kvm_x86_ops->cache_reg(), which expects a
+> value of the base type. Clang raises the following warning about the
+> type mismatch:
 >
-> There are tools that let non-root users load the stub.
+> arch/x86/kvm/kvm_cache_regs.h:44:32: warning: implicit conversion from
+>   enumeration type 'enum kvm_reg_ex' to different enumeration type
+>   'enum kvm_reg' [-Wenum-conversion]
+>     kvm_x86_ops->cache_reg(vcpu, VCPU_EXREG_PDPTR);
 >
-> People use that to e.g.  prevent a native driver from loading while also
-> assuming it won't break the kernel.
+> Cast VCPU_EXREG_PDPTR to 'enum kvm_reg' to make the compiler happy.
 >
->
->> We have already had some discussion on this in regards to VFIO. My
->> thought is we look at adding a new PCI sysfs option called
->> "sriov_unmanaged_autoprobe" that would be similar to
->> "sriov_drivers_autoprobe" and is used to determine if we allow for
->> auto probing of the VFs into the host kernel when SR-IOV is enabled.
->
-> I'm not sure how a global option can work for use-cases
-> such as containers though.
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-It isn't global. It is per PF. There is a sysfs value per PF called
-"sriov_drivers_autoprobe" that currently controls if VFs are
-automatically bound by drivers from the kernel. What I am suggesting
-is we split that value, and then add a new one called
-"sriov_unmanaged_autoprobe" to handle the case where either there is
-no driver on the PF or the driver loaded doesn't support SR-IOV. The
-default behavior for it would be to be disabled by default so if VFs
-are spawned by an unmanaged PF the drivers don't load on them by
-default. The root user can toggle the sysfs entry if they want that
-behavior to change.
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-The idea based on a request by Alex Williamson that we prevent VF
-drivers from loading in the host if a PF is managed by user-space or a
-firmware entity and we don't have a clear way of configuring VFs from
-the kernel.
-
-- Alex
+> ---
+>  arch/x86/kvm/kvm_cache_regs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+> index f500293dad8d..58ba12071014 100644
+> --- a/arch/x86/kvm/kvm_cache_regs.h
+> +++ b/arch/x86/kvm/kvm_cache_regs.h
+> @@ -41,7 +41,7 @@ static inline u64 kvm_pdptr_read(struct kvm_vcpu *vcpu, int index)
+>
+>         if (!test_bit(VCPU_EXREG_PDPTR,
+>                       (unsigned long *)&vcpu->arch.regs_avail))
+> -               kvm_x86_ops->cache_reg(vcpu, VCPU_EXREG_PDPTR);
+> +               kvm_x86_ops->cache_reg(vcpu, (enum kvm_reg)VCPU_EXREG_PDPTR);
+>
+>         return vcpu->arch.walk_mmu->pdptrs[index];
+>  }
+> --
+> 2.16.1.291.g4437f3f132-goog
+>
