@@ -1,57 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeBZLgR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:36:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37291 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752544AbeBZLgQ (ORCPT
+        id S1752790AbeBZLhi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:37:38 -0500
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:46210 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752264AbeBZLhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:36:16 -0500
-From: Colin King <colin.king@canonical.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix error return checking
-Date: Mon, 26 Feb 2018 11:36:14 +0000
-Message-Id: <20180226113614.3092-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 26 Feb 2018 06:37:33 -0500
+X-Google-Smtp-Source: AG47ELv4f5N+f0jkAaFdgLyv8SYE/sytqfcYHx7UFEnv6RZl3uPP7E0dn6DnnMH3T8j+gepwxQZrwqaw+WxLgVg6zqA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180226113000.GC4377@pd.tnic>
+References: <1519629838-4898-1-git-send-email-wanpengli@tencent.com>
+ <20180226094148.GA15539@pd.tnic> <CANRm+CzODxLQ4UHgFCnpjABmBUvi9sbw=uyO1xk1dyWgnH86ig@mail.gmail.com>
+ <20180226104921.GA4377@pd.tnic> <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
+ <20180226111630.GB4377@pd.tnic> <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
+ <20180226113000.GC4377@pd.tnic>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Mon, 26 Feb 2018 19:37:32 +0800
+Message-ID: <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+To: Borislav Petkov <bp@alien8.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+2018-02-26 19:30 GMT+08:00 Borislav Petkov <bp@alien8.de>:
+> On Mon, Feb 26, 2018 at 07:25:28PM +0800, Wanpeng Li wrote:
+>> Both are the same values set by kvm userspace.
+>
+> This still doesn't answer my question what "the non-sensical value which
+> is written by the guest will not reflect to guest-visible microcode
+> revision" means?
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+The guest write is ignored as the original kvm implementation before the patch.
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
+>
+>> This is correct. The link explains why the userspace sets microcode
+>> revision is still needed.
+>
+> Why is it still needed?
 
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clocksource/fsl_ftm_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm, the apic_check_deadline_errata() example can be referred to.
 
-diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
-index 3ee7e6fea621..846d18daf893 100644
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
- 
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
--- 
-2.15.1
+Regards,
+Wanpeng Li
