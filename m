@@ -1,50 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeBZUjy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 15:39:54 -0500
-Received: from mga11.intel.com ([192.55.52.93]:37494 "EHLO mga11.intel.com"
+        id S1753716AbeBZUkb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 15:40:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47291 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752212AbeBZUjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 15:39:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="178244350"
-Date: Mon, 26 Feb 2018 12:39:37 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>,
-        "Liang, Kan" <kan.liang@intel.com>, jolsa@redhat.com,
-        bigeasy@linutronix.de, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Long standing kernel warning: perfevents: irq loop stuck!
-Message-ID: <20180226203937.GA21543@tassilo.jf.intel.com>
-References: <CAM_iQpXvuYKn94WjJ9nSjzhk8DzYAvDmdgxsi6cc9CdBfkdTnw@mail.gmail.com>
- <20180223121456.GZ25201@hirez.programming.kicks-ass.net>
+        id S1752784AbeBZUk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 15:40:28 -0500
+Date: Mon, 26 Feb 2018 21:40:22 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/4] pci: Re-use new dmi_get_bios_year() helper
+Message-ID: <20180226214022.7b239783@endymion>
+In-Reply-To: <20180222125923.57385-4-andriy.shevchenko@linux.intel.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+        <20180222125923.57385-4-andriy.shevchenko@linux.intel.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223121456.GZ25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Given the HSD143 errata and its possible relevance, have you tried
-> changing the magic number to 32, does it then still fix things?
+On Thu, 22 Feb 2018 14:59:23 +0200, Andy Shevchenko wrote:
+> ...instead of open coding its functionality.
 > 
-> No real objection to the patch as such, it just needs a coherent comment
-> and a tested-by tag I think.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pci/pci.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index f6a4dd10d9b0..ae654e21439d 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2258,8 +2258,6 @@ void pci_config_pm_runtime_put(struct pci_dev *pdev)
+>   */
+>  bool pci_bridge_d3_possible(struct pci_dev *bridge)
+>  {
+> -	unsigned int year;
+> -
+>  	if (!pci_is_pcie(bridge))
+>  		return false;
+>  
+> @@ -2287,10 +2285,8 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+>  		 * It should be safe to put PCIe ports from 2015 or newer
+>  		 * to D3.
+>  		 */
+> -		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
+> -		    year >= 2015) {
+> +		if (dmi_get_bios_year() >= 2015)
+>  			return true;
+> -		}
+>  		break;
+>  	}
+>  
 
-128 min period will affect a lot of valid use cases with slower ticking
-events.  I often use smaller periods there.
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
-It would be better to debug this properly.
-
-Or at a minimum only do the limitation for the events that tick really
-fast (like cycles, uops retired etc.)
-
--Andi
+-- 
+Jean Delvare
+SUSE L3 Support
