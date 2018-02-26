@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224QHdqN2bn7pyusEZS+YT2fsPUVZacDMg0mc1qQrCjrqN0cMRX4TOjVrOULw0E7KfCg+oHf
-ARC-Seal: i=1; a=rsa-sha256; t=1519676175; cv=none;
+X-Google-Smtp-Source: AH8x225viO2YrudDOsFYt3hzQXjEqcMyB8BOoo7R2BQQCIa1H/ljluwTXZc/6xGuHcPvnVJW7IuL
+ARC-Seal: i=1; a=rsa-sha256; t=1519676164; cv=none;
         d=google.com; s=arc-20160816;
-        b=HDUQK5OvdOVLLawoqmzUQu48MJU9qQDQcwpFODzq+CD1A9KvSorrBWr6gq7+3rOkCT
-         qlVnLKs3MvELuBhstzIUf62k1nR1MMdbkvwgKZZwFg4Jve+bVA59mkPRK8j9Mk83v/gG
-         oDOAZ/VlQlLY63H7B6RA6VUkmiixWRDaJX1gITKwt8plM6KeXqI+DdAqBJVwj4fXusbr
-         +VlRV+Hsm0FalavTcWsTpoE6jgvgKScvmtmpZHw6onkmOtJq0JLeWIKWLgei+Riu9l8E
-         1n9D/ZXKNTwYoItu7sW8w/ogQyd9h5di+SlYRibLDh/AblF+m+7l71aHyJf35ZDOK9Wo
-         f/+Q==
+        b=OyQGOuoD0j+3sgFumWTBunuf5T3rxZb7ROKbwGcFxfaBBR1i5mAgzsIuRhFERusPi6
+         dzoc8YfJ2oRSTbTO1A1gGG9JdGtWglWA9VvXMwKojsTKMk6aHtM2H9L6kSudJv07vY31
+         iJsDqWSLhu7d2sAz3vqQFkYsFLbFg2a24bMWu/C8JTsP84GsCPB3GBjH2F/srA1Wpk28
+         NjqhKWEoLtPJRMK2Tq25cMaVIZZjCQ+k3tsDwyiAxBKQwRU/f/GNtVN94LKueJLvl25k
+         gscllFaPDf79oqRqrGvuiqfj1euvusADohKmhIz4sXMEKx3AnddIkbaDoMEgqqy5bATQ
+         mMXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/o/bdl/UNwgsMkUw/2+A2C8I9+GdpvkcjZM6pcmuyNE=;
-        b=r9IJVPU6ruCR4MbsgqfznYlLRASCGud7tc4lcy9W9vVkCEoSr+kFiwN5E1tUJgLfrD
-         ipkklOaLAWriW4x0xVjQJrP0q6/9dTf5CCMvGyv+3TgJkdcGeaSQQCjM3JTAT9KbZxO5
-         xGrNUvWw65xuyYlyYoY25v9icUBW8ZUNzf7fs14CwA1Pl7EpMdMVNoJUuNBIUx7wuElA
-         XOReKAtPknkDFtdA2puhXlfalql/baVQ6rbmEGVu4CawZ9DlTJ+pWMY4xivADsdTCqRR
-         +CeQ9JRZ6z+upijr+ViQOMkI8dyF33fs2HDIYXiTIYK3x5OcF8kCJXc7tfOPg09g1F5u
-         sypA==
+        bh=Wwsy1ZeEAxaIDOs/VAfzegrlZ4mIzI0OK7o4bdsqnzc=;
+        b=YwQcG2+KdyWv4KalvupPxNBK54AlWovlu6dV0XlM/Mhx7wDs6m+AHBPSY9fbWft4ba
+         jDqX6AWSAx+OcKrOAgmZjc819Gr9J8vbc1nyFb2RLuNsj62tcN9hw1qoYjOi8Sly4OJS
+         Pcx+72f8Fb6iBFGye5hl+riK9dzd34Q30A+UlhzL03+4m7/rwTDGzFU9pS5zRS/K5v8X
+         zWY1w3pgjCb/VKsO6ww7b+23hogvIO4eRsZ1PQhEohNj57YpnoIgnnRwj4qhA/Yha1q8
+         /U2Ih67D1VTlL7WmnBMM8Obz/c78zsOzAvGfUlwJAL7EKwiy0m6K84r2Xc/++9Z1Li55
+         U/Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Murali Karicheri <m-karicheri2@ti.com>,
-	Johan Hovold <johan@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 3.18 02/13] PCI: keystone: Fix interrupt-controller-node lookup
-Date: Mon, 26 Feb 2018 21:15:30 +0100
-Message-Id: <20180226201527.354817968@linuxfoundation.org>
+	Mayank Rana <mrana@codeaurora.org>,
+	Jack Pham <jackp@codeaurora.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 3.18 12/13] usb: gadget: f_fs: Process all descriptors during bind
+Date: Mon, 26 Feb 2018 21:15:40 +0100
+Message-Id: <20180226201527.771288503@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
 References: <20180226201527.242286068@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495965325088800?=
-X-GMAIL-MSGID: =?utf-8?q?1593495965325088800?=
+X-GMAIL-THRID: =?utf-8?q?1593495953448268879?=
+X-GMAIL-MSGID: =?utf-8?q?1593495953448268879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Jack Pham <jackp@codeaurora.org>
 
-commit eac56aa3bc8af3d9b9850345d0f2da9d83529134 upstream.
+commit 6cf439e0d37463e42784271179c8a308fd7493c6 upstream.
 
-Fix child-node lookup during initialisation which was using the wrong
-OF-helper and ended up searching the whole device tree depth-first
-starting at the parent rather than just matching on its children.
+During _ffs_func_bind(), the received descriptors are evaluated
+to prepare for binding with the gadget in order to allocate
+endpoints and optionally set up OS descriptors. However, the
+high- and super-speed descriptors are only parsed based on
+whether the gadget_is_dualspeed() and gadget_is_superspeed()
+calls are true, respectively.
 
-To make things worse, the parent pci node could end up being prematurely
-freed as of_find_node_by_name() drops a reference to its first argument.
-Any matching child interrupt-controller node was also leaked.
+This is a problem in case a userspace program always provides
+all of the {full,high,super,OS} descriptors when configuring a
+function. Then, for example if a gadget device is not capable
+of SuperSpeed, the call to ffs_do_descs() for the SS descriptors
+is skipped, resulting in an incorrect offset calculation for
+the vla_ptr when moving on to the OS descriptors that follow.
+This causes ffs_do_os_descs() to fail as it is now looking at
+the SS descriptors' offset within the raw_descs buffer instead.
 
-Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
-Cc: stable <stable@vger.kernel.org>     # 3.18
-Acked-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-[lorenzo.pieralisi@arm.com: updated commit subject]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-[johan: backport to 4.4]
-Signed-off-by: Johan Hovold <johan@kernel.org>
+_ffs_func_bind() should evaluate the descriptors unconditionally,
+so remove the checks for gadget speed.
+
+Fixes: f0175ab51993 ("usb: gadget: f_fs: OS descriptors support")
+Cc: stable@vger.kernel.org
+Co-Developed-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-keystone.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_fs.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/host/pci-keystone.c
-+++ b/drivers/pci/host/pci-keystone.c
-@@ -179,14 +179,16 @@ static int ks_pcie_get_irq_controller_in
- 	}
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -2727,10 +2727,8 @@ static int _ffs_func_bind(struct usb_con
+ 	struct ffs_data *ffs = func->ffs;
  
- 	/* interrupt controller is in a child node */
--	*np_temp = of_find_node_by_name(np_pcie, controller);
-+	*np_temp = of_get_child_by_name(np_pcie, controller);
- 	if (!(*np_temp)) {
- 		dev_err(dev, "Node for %s is absent\n", controller);
- 		goto out;
- 	}
- 	temp = of_irq_count(*np_temp);
--	if (!temp)
-+	if (!temp) {
-+		of_node_put(*np_temp);
- 		goto out;
-+	}
- 	if (temp > max_host_irqs)
- 		dev_warn(dev, "Too many %s interrupts defined %u\n",
- 			(legacy ? "legacy" : "MSI"), temp);
-@@ -200,6 +202,9 @@ static int ks_pcie_get_irq_controller_in
- 		if (host_irqs[temp] < 0)
- 			break;
- 	}
-+
-+	of_node_put(*np_temp);
-+
- 	if (temp) {
- 		*num_irqs = temp;
- 		ret = 0;
+ 	const int full = !!func->ffs->fs_descs_count;
+-	const int high = gadget_is_dualspeed(func->gadget) &&
+-		func->ffs->hs_descs_count;
+-	const int super = gadget_is_superspeed(func->gadget) &&
+-		func->ffs->ss_descs_count;
++	const int high = !!func->ffs->hs_descs_count;
++	const int super = !!func->ffs->ss_descs_count;
+ 
+ 	int fs_len, hs_len, ss_len, ret, i;
+ 
