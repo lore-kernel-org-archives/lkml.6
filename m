@@ -1,73 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751836AbeBZRLk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:11:40 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751789AbeBZRLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:11:35 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] x86/hyper-v: detect nested features
-Date: Mon, 26 Feb 2018 18:11:20 +0100
-Message-Id: <20180226171121.18974-5-vkuznets@redhat.com>
-In-Reply-To: <20180226171121.18974-1-vkuznets@redhat.com>
-References: <20180226171121.18974-1-vkuznets@redhat.com>
+        id S1751697AbeBZRMG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:12:06 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:45426 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeBZRMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:12:05 -0500
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        "Matt Redfearn" <matt.redfearn@mips.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 4/4] MIPS: VDSO: Replace __mips_isa_rev with MIPS_ISA_REV
+Date: Mon, 26 Feb 2018 17:02:45 +0000
+Message-ID: <1519664565-10955-5-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519664565-10955-1-git-send-email-matt.redfearn@mips.com>
+References: <1519664565-10955-1-git-send-email-matt.redfearn@mips.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1519665043-321457-2236-2367-4
+X-BESS-VER: 2018.2-r1802232356
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190443
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TLFS 5.0 says: "Support for an enlightened VMCS interface is reported with
-CPUID leaf 0x40000004. If an enlightened VMCS interface is supported,
- additional nested enlightenments may be discovered by reading the CPUID
-leaf 0x4000000A (see 2.4.11)."
+Remove the need to check that __mips_isa_rev is defined by using the
+newly added MIPS_ISA_REV.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 ---
- arch/x86/include/asm/mshyperv.h | 2 ++
- arch/x86/kernel/cpu/mshyperv.c  | 3 +++
- 2 files changed, 5 insertions(+)
 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 778d2efd34f1..355844d5ac4f 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -26,12 +26,14 @@ enum hv_cpuid_function {
- 	HVCPUID_FEATURES			= 0x40000003,
- 	HVCPUID_ENLIGHTENMENT_INFO		= 0x40000004,
- 	HVCPUID_IMPLEMENTATION_LIMITS		= 0x40000005,
-+	HVCPUID_NESTED_FEATURES			= 0x4000000A
- };
+ arch/mips/vdso/elf.S | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/mips/vdso/elf.S b/arch/mips/vdso/elf.S
+index be37bbb1f061..428a1917afc6 100644
+--- a/arch/mips/vdso/elf.S
++++ b/arch/mips/vdso/elf.S
+@@ -10,6 +10,8 @@
  
- struct ms_hyperv_info {
- 	u32 features;
- 	u32 misc_features;
- 	u32 hints;
-+	u32 nested_features;
- 	u32 max_vp_index;
- 	u32 max_lp_index;
- };
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 9340f41ce8d3..7a387f7a28b8 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -207,6 +207,9 @@ static void __init ms_hyperv_init_platform(void)
- 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
- 	}
+ #include "vdso.h"
  
-+	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
-+		ms_hyperv.nested_features = cpuid_eax(HVCPUID_NESTED_FEATURES);
++#include <asm/isa-rev.h>
 +
- #ifdef CONFIG_X86_LOCAL_APIC
- 	if (ms_hyperv.features & HV_X64_ACCESS_FREQUENCY_MSRS &&
- 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+ #include <linux/elfnote.h>
+ #include <linux/version.h>
+ 
+@@ -40,11 +42,7 @@ __mips_abiflags:
+ 	.byte	__mips		/* isa_level */
+ 
+ 	/* isa_rev */
+-#ifdef __mips_isa_rev
+-	.byte	__mips_isa_rev
+-#else
+-	.byte	0
+-#endif
++	.byte	MIPS_ISA_REV
+ 
+ 	/* gpr_size */
+ #ifdef __mips64
+@@ -54,7 +52,7 @@ __mips_abiflags:
+ #endif
+ 
+ 	/* cpr1_size */
+-#if (defined(__mips_isa_rev) && __mips_isa_rev >= 6) || defined(__mips64)
++#if (MIPS_ISA_REV >= 6) || defined(__mips64)
+ 	.byte	2		/* AFL_REG_64 */
+ #else
+ 	.byte	1		/* AFL_REG_32 */
 -- 
-2.14.3
+2.7.4
