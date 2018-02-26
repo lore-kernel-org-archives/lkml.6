@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu9KuZmWMC90t1Z6vQSlyEEv2tN9haAfu/IJzws8+EuWDEOufkXG6+xJPdEji9i13sBwZy3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676807; cv=none;
+X-Google-Smtp-Source: AH8x227e8PCEEPtc52dgNdybb/0sEiNWZF+RXGAHtcfK7buBNtZzEr7sN9Vq9SqWNV4e/TdqSBdY
+ARC-Seal: i=1; a=rsa-sha256; t=1519676804; cv=none;
         d=google.com; s=arc-20160816;
-        b=KCJuZbCGIMJXYxLe9kFELOYPBKeIE0rMQXeqU03BbOtIksV/u0Yg3PsxNtU9gnVxQr
-         GGxCJ5cDGoyqc5ixJV4j0cOIM5DmRdWBj8EJQY7R94IZ7tAGsziU8GOSUhn3fyAWcmAA
-         /ErhOdUhZCgxVJAMBLtQjXq0lO1+O5PiRsVfJTlXXSYrmkvmNQJ6gKBvrGcNzGFe8drQ
-         ZvYud91QK/KBTeowJsLSsYCBdvIPoOcxofhsMJw8YC7JUKEb1Q8AupkUPq1hPzGV6vjD
-         CENnb4lVMY7j+mL5ZkjYqJN99gJboAt5RQeqDwBRuV0p8iR1+XeCbWAnS768g8azEoFk
-         cRKQ==
+        b=rRy1gnJRFRndRSZCLd6bqYT/5ScNMzt2Ojv+Ra+tDOejC75+UOD1Rbre5m2UbX9IR3
+         D2KOW7+cl+75nKW3nnIxmcOCghXugueiJxGsAAek2JweuMzDBHXGziN8wSFtoVhi4fbx
+         zFPk/A05EW7eSlv7aTNDdZS6ayYeULcoH2kITNAvfYd9S7rnH3UraovDu8PZQnYhTp0k
+         iYDhGeshE51BXaZQLrlo3IqBYRnT7zySL0Bb9/B7PWIDo5cvyzoclQyzyWHhrG/pi5Yb
+         17qnxf4Fi7cUptlZ84iX06tgiEgvNXASAyD+EpZ4CaL0x02ZA4mIKV5EwZImeWAqyKRy
+         qRqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8fdED4rXE9vPdtr1lkl8/uorq8hf1llMTnFGfZQcPmo=;
-        b=BAd8dmLmOK58UBnoWZwCi0isq6OqRkpUXy6A5uOvuyZnZRH9IvERybCmWS4PepP+Vu
-         mKkCuwpdzTdfPlToxwog6dFREUjJmfTvXt6V7+2TGSD2JZlv4OUquMBUpae9YeZZuW9I
-         mFjyN9hbbXDkAVdaiB+SrbnnDwPnHfjTaUrOwJ+i7aFh1Ew8HelwgFMuL3lAZZGC+sUZ
-         /X4dMPcg9tVxMQWFHp1QxH9D+M3eDWdu8uBOIBwDj2T7Zx98gGc1hD852XyM0fECe6/u
-         OnHwDUu1eQx8V/57YP1LN3n6QVCxgJd8ewBSPes+ZnkNmBOP2aXh1u8+Nw+2ACMtXb1l
-         gFHg==
+        bh=g3ENGFsLeGlRaTu0Av36gO8FhLkSy80wewk5mWZLSZU=;
+        b=dqRfKdZtt8lBMfEEAMIB4xUGqk/PW9xbWI2KE/9mlcD0etm0ZDneZPg3dExPnMAt4g
+         UbuZ+HM5slqLv8MTz2pdgEWVtVbR10+TPTjfVLvXcocW988YE6T9fdUcBT4MI0HeyMiN
+         ciaqB9J4i/lAvOB7Es4OrTVg9HWxsjM416X9fEFoRVHOJ55ILZFgb4lBkah6ib3JxWGx
+         ljlFA3efpoKlYNSyPyEVjlKDbmWEdjRkqL4thZy9P2WQLsUfQhfGqtsjBC+qEfPMueFJ
+         WT/Pb88B140QU+1JQenhYyAIn/srpQII9OpPQzzPgkwC/uTXhEc7ltsftq2GbpZVGPc/
+         pD3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Noa Osherovich <noaos@mellanox.com>,
 	Leon Romanovsky <leonro@mellanox.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.15 21/64] RDMA/uverbs: Sanitize user entered port numbers prior to access it
-Date: Mon, 26 Feb 2018 21:21:58 +0100
-Message-Id: <20180226202154.355981720@linuxfoundation.org>
+Subject: [PATCH 4.15 20/64] RDMA/uverbs: Fix circular locking dependency
+Date: Mon, 26 Feb 2018 21:21:57 +0100
+Message-Id: <20180226202154.309904731@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496444917005663?=
-X-GMAIL-MSGID: =?utf-8?q?1593496627847130867?=
+X-GMAIL-THRID: =?utf-8?q?1593496437790868994?=
+X-GMAIL-MSGID: =?utf-8?q?1593496624963714648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,129 +53,150 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 5d4c05c3ee36f67ddc107ab5ea0898af01a62cc1 upstream.
+commit 1ff5325c3ca1843228a86549318bbd3b414b9207 upstream.
 
-==================================================================
-BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs+0x6f2/0x8c0
-Read of size 4 at addr ffff88006476a198 by task syzkaller697701/265
+Avoid circular locking dependency by calling
+to uobj_alloc_commit() outside of xrcd_tree_mutex lock.
 
-CPU: 0 PID: 265 Comm: syzkaller697701 Not tainted 4.15.0+ #90
+======================================================
+WARNING: possible circular locking dependency detected
+4.15.0+ #87 Not tainted
+------------------------------------------------------
+syzkaller401056/269 is trying to acquire lock:
+ (&uverbs_dev->xrcd_tree_mutex){+.+.}, at: [<000000006c12d2cd>] uverbs_free_xrcd+0xd2/0x360
+
+but task is already holding lock:
+ (&ucontext->uobjects_lock){+.+.}, at: [<00000000da010f09>] uverbs_cleanup_ucontext+0x168/0x730
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&ucontext->uobjects_lock){+.+.}:
+       __mutex_lock+0x111/0x1720
+       rdma_alloc_commit_uobject+0x22c/0x600
+       ib_uverbs_open_xrcd+0x61a/0xdd0
+       ib_uverbs_write+0x7f9/0xef0
+       __vfs_write+0x10d/0x700
+       vfs_write+0x1b0/0x550
+       SyS_write+0xc7/0x1a0
+       entry_SYSCALL_64_fastpath+0x1e/0x8b
+
+-> #0 (&uverbs_dev->xrcd_tree_mutex){+.+.}:
+       lock_acquire+0x19d/0x440
+       __mutex_lock+0x111/0x1720
+       uverbs_free_xrcd+0xd2/0x360
+       remove_commit_idr_uobject+0x6d/0x110
+       uverbs_cleanup_ucontext+0x2f0/0x730
+       ib_uverbs_cleanup_ucontext.constprop.3+0x52/0x120
+       ib_uverbs_close+0xf2/0x570
+       __fput+0x2cd/0x8d0
+       task_work_run+0xec/0x1d0
+       do_exit+0x6a1/0x1520
+       do_group_exit+0xe8/0x380
+       SyS_exit_group+0x1e/0x20
+       entry_SYSCALL_64_fastpath+0x1e/0x8b
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ucontext->uobjects_lock);
+                               lock(&uverbs_dev->xrcd_tree_mutex);
+                               lock(&ucontext->uobjects_lock);
+  lock(&uverbs_dev->xrcd_tree_mutex);
+
+ *** DEADLOCK ***
+
+3 locks held by syzkaller401056/269:
+ #0:  (&file->cleanup_mutex){+.+.}, at: [<00000000c9f0c252>] ib_uverbs_close+0xac/0x570
+ #1:  (&ucontext->cleanup_rwsem){++++}, at: [<00000000b6994d49>] uverbs_cleanup_ucontext+0xf6/0x730
+ #2:  (&ucontext->uobjects_lock){+.+.}, at: [<00000000da010f09>] uverbs_cleanup_ucontext+0x168/0x730
+
+stack backtrace:
+CPU: 0 PID: 269 Comm: syzkaller401056 Not tainted 4.15.0+ #87
 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
 Call Trace:
  dump_stack+0xde/0x164
  ? dma_virt_map_sg+0x22c/0x22c
- ? show_regs_print_info+0x17/0x17
- ? lock_contended+0x11a0/0x11a0
- print_address_description+0x83/0x3e0
- kasan_report+0x18c/0x4b0
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? lookup_get_idr_uobject+0x120/0x200
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? modify_qp+0xd0e/0x1350
- modify_qp+0xd0e/0x1350
- ib_uverbs_modify_qp+0xf9/0x170
- ? ib_uverbs_query_qp+0xa70/0xa70
- ib_uverbs_write+0x7f9/0xef0
- ? attach_entity_load_avg+0x8b0/0x8b0
- ? ib_uverbs_query_qp+0xa70/0xa70
- ? uverbs_devnode+0x110/0x110
+ ? uverbs_cleanup_ucontext+0x168/0x730
+ ? console_unlock+0x502/0xbd0
+ print_circular_bug.isra.24+0x35e/0x396
+ ? print_circular_bug_header+0x12e/0x12e
+ ? find_usage_backwards+0x30/0x30
+ ? entry_SYSCALL_64_fastpath+0x1e/0x8b
+ validate_chain.isra.28+0x25d1/0x40c0
+ ? check_usage+0xb70/0xb70
+ ? graph_lock+0x160/0x160
+ ? find_usage_backwards+0x30/0x30
  ? cyc2ns_read_end+0x10/0x10
  ? print_irqtrace_events+0x280/0x280
+ ? __lock_acquire+0x93d/0x1630
+ __lock_acquire+0x93d/0x1630
+ lock_acquire+0x19d/0x440
+ ? uverbs_free_xrcd+0xd2/0x360
+ __mutex_lock+0x111/0x1720
+ ? uverbs_free_xrcd+0xd2/0x360
+ ? uverbs_free_xrcd+0xd2/0x360
+ ? __mutex_lock+0x828/0x1720
+ ? mutex_lock_io_nested+0x1550/0x1550
+ ? uverbs_cleanup_ucontext+0x168/0x730
+ ? __lock_acquire+0x9a9/0x1630
+ ? mutex_lock_io_nested+0x1550/0x1550
+ ? uverbs_cleanup_ucontext+0xf6/0x730
+ ? lock_contended+0x11a0/0x11a0
+ ? uverbs_free_xrcd+0xd2/0x360
+ uverbs_free_xrcd+0xd2/0x360
+ remove_commit_idr_uobject+0x6d/0x110
+ uverbs_cleanup_ucontext+0x2f0/0x730
  ? sched_clock_cpu+0x18/0x200
- ? _raw_spin_unlock_irq+0x29/0x40
- ? _raw_spin_unlock_irq+0x29/0x40
- ? _raw_spin_unlock_irq+0x29/0x40
- ? time_hardirqs_on+0x27/0x670
- __vfs_write+0x10d/0x700
- ? uverbs_devnode+0x110/0x110
- ? kernel_read+0x170/0x170
- ? _raw_spin_unlock_irq+0x29/0x40
- ? finish_task_switch+0x1bd/0x7a0
- ? finish_task_switch+0x194/0x7a0
- ? prandom_u32_state+0xe/0x180
- ? rcu_read_unlock+0x80/0x80
- ? security_file_permission+0x93/0x260
- vfs_write+0x1b0/0x550
- SyS_write+0xc7/0x1a0
- ? SyS_read+0x1a0/0x1a0
+ ? uverbs_close_fd+0x1c0/0x1c0
+ ib_uverbs_cleanup_ucontext.constprop.3+0x52/0x120
+ ib_uverbs_close+0xf2/0x570
+ ? ib_uverbs_remove_one+0xb50/0xb50
+ ? ib_uverbs_remove_one+0xb50/0xb50
+ __fput+0x2cd/0x8d0
+ task_work_run+0xec/0x1d0
+ do_exit+0x6a1/0x1520
+ ? fsnotify_first_mark+0x220/0x220
+ ? exit_notify+0x9f0/0x9f0
+ ? entry_SYSCALL_64_fastpath+0x5/0x8b
+ ? entry_SYSCALL_64_fastpath+0x5/0x8b
  ? trace_hardirqs_on_thunk+0x1a/0x1c
- entry_SYSCALL_64_fastpath+0x1e/0x8b
-RIP: 0033:0x433c29
-RSP: 002b:00007ffcf2be82a8 EFLAGS: 00000217
-
-Allocated by task 62:
- kasan_kmalloc+0xa0/0xd0
- kmem_cache_alloc+0x141/0x480
- dup_fd+0x101/0xcc0
- copy_process.part.62+0x166f/0x4390
- _do_fork+0x1cb/0xe90
- kernel_thread+0x34/0x40
- call_usermodehelper_exec_work+0x112/0x260
- process_one_work+0x929/0x1aa0
- worker_thread+0x5c6/0x12a0
- kthread+0x346/0x510
- ret_from_fork+0x3a/0x50
-
-Freed by task 259:
- kasan_slab_free+0x71/0xc0
- kmem_cache_free+0xf3/0x4c0
- put_files_struct+0x225/0x2c0
- exit_files+0x88/0xc0
- do_exit+0x67c/0x1520
+ ? time_hardirqs_on+0x27/0x670
+ ? time_hardirqs_off+0x27/0x490
+ ? syscall_return_slowpath+0x6c/0x460
+ ? entry_SYSCALL_64_fastpath+0x5/0x8b
  do_group_exit+0xe8/0x380
  SyS_exit_group+0x1e/0x20
  entry_SYSCALL_64_fastpath+0x1e/0x8b
-
-The buggy address belongs to the object at ffff88006476a000
- which belongs to the cache files_cache of size 832
-The buggy address is located 408 bytes inside of
- 832-byte region [ffff88006476a000, ffff88006476a340)
-The buggy address belongs to the page:
-page:ffffea000191da80 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
-flags: 0x4000000000008100(slab|head)
-raw: 4000000000008100 0000000000000000 0000000000000000 0000000100080008
-raw: 0000000000000000 0000000100000001 ffff88006bcf7a80 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88006476a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88006476a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88006476a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff88006476a200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88006476a280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+RIP: 0033:0x431ce9
 
 Cc: syzkaller <syzkaller@googlegroups.com>
 Cc: <stable@vger.kernel.org> # 4.11
-Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
+Fixes: fd3c7904db6e ("IB/core: Change idr objects to use the new schema")
 Reported-by: Noa Osherovich <noaos@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_cmd.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_cmd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/drivers/infiniband/core/uverbs_cmd.c
 +++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -1970,8 +1970,15 @@ static int modify_qp(struct ib_uverbs_fi
- 		goto release_qp;
- 	}
+@@ -560,9 +560,10 @@ ssize_t ib_uverbs_open_xrcd(struct ib_uv
+ 	if (f.file)
+ 		fdput(f);
  
-+	if ((cmd->base.attr_mask & IB_QP_AV) &&
-+	    !rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
-+		ret = -EINVAL;
-+		goto release_qp;
-+	}
++	mutex_unlock(&file->device->xrcd_tree_mutex);
 +
- 	if ((cmd->base.attr_mask & IB_QP_ALT_PATH) &&
--	    !rdma_is_port_valid(qp->device, cmd->base.alt_port_num)) {
-+	    (!rdma_is_port_valid(qp->device, cmd->base.alt_port_num) ||
-+	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num))) {
- 		ret = -EINVAL;
- 		goto release_qp;
- 	}
+ 	uobj_alloc_commit(&obj->uobject);
+ 
+-	mutex_unlock(&file->device->xrcd_tree_mutex);
+ 	return in_len;
+ 
+ err_copy:
