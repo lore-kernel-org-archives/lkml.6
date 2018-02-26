@@ -1,54 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752359AbeBZJn1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:43:27 -0500
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:55075 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbeBZJnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:43:25 -0500
-X-Google-Smtp-Source: AH8x224xik+R2y+TUleN4PvFd5CXmpPx2zMOZHpXrSGunhrDXCXqlGnK+QaNxWzjaQnvblU0Y0UEyw==
+        id S1752452AbeBZJpJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:45:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51466 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751688AbeBZJpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:45:05 -0500
+Date: Mon, 26 Feb 2018 10:44:45 +0100
+From: Borislav Petkov <bp@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC fix for 4.16
+Message-ID: <20180226094445.GA14140@pd.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
- <20180224214545.3740-2-jernej.skrabec@siol.net> <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 26 Feb 2018 17:43:01 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
-Message-ID: <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
-Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> Hi,
->
-> On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
->> Some NM PLLs doesn't work well when their output clock rate is set below
->> certain rate.
->>
->> Add support for that constrain.
->
-> In such a case, you should round the rate to the minimum the clock can
-> operate at, and not return an error.
+Hi Linus,
 
-That's true for round_rate. But what's the expected behavior of set_rate?
-AFAIK we presume all users call round_rate before set_rate, but that doesn't
-seem to be true all the time.
+please pull this one fix to sb_edac, preventing memory corruption on
+KNL.
 
-ChenYu
+Thx.
+
+---
+The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f51:
+
+  Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_fixes_for_4.16
+
+for you to fetch changes up to bf8486709ac7fad99e4040dea73fe466c57a4ae1:
+
+  EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL (2018-02-23 12:05:37 +0100)
+
+----------------------------------------------------------------
+sb_edac: Prevent memory corruption on KNL (from Anna Karbownik)
+
+----------------------------------------------------------------
+Anna Karbownik (1):
+      EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL
+
+ drivers/edac/sb_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
