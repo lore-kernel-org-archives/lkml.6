@@ -1,73 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeBZS2u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:28:50 -0500
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:43604 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeBZS2s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:28:48 -0500
-X-Google-Smtp-Source: AG47ELtD7z9D4aEedRQcOnijTDY5yFGqh2mqUuYSnLN/Heiz8CSZ2o3cDaQvHYSTLqnXFRZFl8gkSeHIK0v8do0RJ64=
-MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:28:47 +0100
-X-Google-Sender-Auth: o5JcChObq7piTXMLZ41MMoIZIsg
-Message-ID: <CAMuHMdXwxhT7MP5xs3HLP3oFX+V9rhCM5jQycXUiCyBOKOUg1Q@mail.gmail.com>
-Subject: Re: [PATCH 0/8] R-Car M3-N: Enable EtherAVB device node
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751682AbeBZSaM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:30:12 -0500
+Received: from mga11.intel.com ([192.55.52.93]:30230 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750986AbeBZSaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 13:30:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
+   d="scan'208";a="207119539"
+From: kan.liang@intel.com
+To: mingo@kernel.org, acme@kernel.org
+Cc: linux-kernel@vger.kernel.org, Kan Liang <Kan.liang@intel.com>
+Subject: [PATCH] perf top: Fix annoying fallback message on older kernel
+Date: Mon, 26 Feb 2018 10:17:10 -0800
+Message-Id: <1519669030-176549-1-git-send-email-kan.liang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+From: Kan Liang <Kan.liang@intel.com>
 
-On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->   as discussed with you Sergei and Geert, in order to enable EtherAVB for
-> R8A77965 we first wanted to make the phy-mode "rgmii-txid" a board specific
-> property for all other SoCs.
+On older (v4.4) kernels, the annoying fallback message can be observed
+in 'perf top'.
 
-Thanks for your series!
+The 'perf top' has been changed to overwrite mode since
+'commit ebebbf082357 ("perf top: Switch default mode to overwrite mode")'
+For the older kernels which don't have overwrite mode support, the 'perf
+top' will fall back to non-overwrite mode and print out the fallback
+message by ui__warning, which needs user's input to close.
 
-> This series adds  the phy-mode property to salvator-common.dtsi and reset the
-> one for R8A77965/R8A7796/R8A77995 to "rgmii".
+The fallback message is not critical message for end users. Turning it
+to debug message which is printed when running with -vv.
 
-I forgot that r8a7795.dtsi and r8a7796.dtsi are used for the ULCB boards, too.
-So to avoid regressions, you need to make a similar change to ulcb.dtsi like you
-made for salvator-common.dtsi.
+Fixes: ebebbf082357 ("perf top: Switch default mode to overwrite mode")
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kan Liang <Kan.liang@intel.com>
+---
+ tools/perf/builtin-top.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In addition, r8a77995.dtsi is only used for the Draak board.
-So you have to update r8a7795-draak.dtsi first, too.
-
-> Then, in order to enable EtherAVB for R-Car M3-N, iommu nodes had to be added
-> as they are referenced by the "avb" device node (CC the iommu list for the
-> series for that reason).
-
-I don't think we need the iommu properties and nodes at this early stage.
-Ethernet works fine without them. Simon, do you agree?
-
-P.S. scripts/dtc/dtx_diff is a great tool to compare DTBs before and after your
-      changes. It would have revealed the changes for ULCB and Draak.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index b7c823b..35ac016 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -991,7 +991,7 @@ static int perf_top_overwrite_fallback(struct perf_top *top,
+ 	evlist__for_each_entry(evlist, counter)
+ 		counter->attr.write_backward = false;
+ 	opts->overwrite = false;
+-	ui__warning("fall back to non-overwrite mode\n");
++	pr_debug2("fall back to non-overwrite mode\n");
+ 	return 1;
+ }
+ 
+-- 
+2.7.4
