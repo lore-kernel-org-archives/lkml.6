@@ -1,189 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeBZHSC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:18:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41454 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751310AbeBZHSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:18:00 -0500
-Subject: Re: [v1 1/1] xen, mm: Allow deferred page initialization for xen pv
- domains
-To: Pavel Tatashin <pasha.tatashin@oracle.com>, steven.sistare@oracle.com,
-        daniel.m.jordan@oracle.com, akataria@vmware.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        boris.ostrovsky@oracle.com, akpm@linux-foundation.org, mhocko@suse.com,
-        vbabka@suse.cz, luto@kernel.org, labbott@redhat.com,
-        kirill.shutemov@linux.intel.com, bp@suse.de, minipli@googlemail.com,
-        jinb.park7@gmail.com, dan.j.williams@intel.com, bhe@redhat.com,
-        zhang.jia@linux.alibaba.com, mgorman@techsingularity.net,
-        hannes@cmpxchg.org, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-mm@kvack.org
-References: <20180223232538.4314-1-pasha.tatashin@oracle.com>
- <20180223232538.4314-2-pasha.tatashin@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <dda0457a-c16a-3440-a547-15f49e52ec95@suse.com>
-Date: Mon, 26 Feb 2018 08:17:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752115AbeBZHYI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:24:08 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33765 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751310AbeBZHYF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 02:24:05 -0500
+X-Google-Smtp-Source: AG47ELsVi55XRfFDqscGADDXGjd1sZAkwRjOpedFlIfA/qKseahVqz6nd8xnQMczHTy2xdxa3PMlpg==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: X86: Allow userspace to define the microcode version
+Date: Mon, 26 Feb 2018 15:23:58 +0800
+Message-Id: <1519629838-4898-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180223232538.4314-2-pasha.tatashin@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/02/18 00:25, Pavel Tatashin wrote:
-> Juergen Gross noticed that commit
-> f7f99100d8d ("mm: stop zeroing memory during allocation in vmemmap")
-> broke XEN PV domains when deferred struct page initialization is enabled.
-> 
-> This is because the xen's PagePinned() flag is getting erased from struct
-> pages when they are initialized later in boot.
-> 
-> Juergen fixed this problem by disabling deferred pages on xen pv domains.
-> However, it is desirable to have this feature available, as it reduces boot
-> time. This fix re-enables the feature for pv-dmains, and fixes the problem
-> the following way:
-> 
-> The fix is to delay setting PagePinned flag until struct pages for all
-> allocated memory are initialized (until free_all_bootmem()).
-> 
-> A new hypervisor op pv_init_ops.after_bootmem() is called to let xen know
-> that boot allocator is done, and hence struct pages for all the allocated
-> memory are now initialized. If deferred page initialization is enabled, the
-> rest of struct pages are going to be initialized later in boot once
-> page_alloc_init_late() is called.
-> 
-> xen_after_bootmem() is xen's implementation of pv_init_ops.after_bootmem(),
-> we walk page table and mark every page as pinned.
-> 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->  arch/x86/include/asm/paravirt.h       |  9 +++++++++
->  arch/x86/include/asm/paravirt_types.h |  3 +++
->  arch/x86/kernel/paravirt.c            |  1 +
->  arch/x86/mm/init_32.c                 |  1 +
->  arch/x86/mm/init_64.c                 |  1 +
->  arch/x86/xen/mmu_pv.c                 | 38 ++++++++++++++++++++++++-----------
->  mm/page_alloc.c                       |  4 ----
->  7 files changed, 41 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-> index 9be2bf13825b..737e596a9836 100644
-> --- a/arch/x86/include/asm/paravirt.h
-> +++ b/arch/x86/include/asm/paravirt.h
-> @@ -820,6 +820,11 @@ static inline notrace unsigned long arch_local_irq_save(void)
->  
->  extern void default_banner(void);
->  
-> +static inline void paravirt_after_bootmem(void)
-> +{
-> +	pv_init_ops.after_bootmem();
-> +}
-> +
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Putting this in the paravirt framework is overkill IMO. There is no need
-to patch the callsites for optimal performance.
+Linux (among the others) has checks to make sure that certain features 
+aren't enabled on a certain family/model/stepping if the microcode version 
+isn't greater than or equal to a known good version.
 
-I'd put it into struct x86_hyper_init and pre-init it with x86_init_noop
+By exposing the real microcode version, we're preventing buggy guests that
+don't check that they are running virtualized (i.e., they should trust the
+hypervisor) from disabling features that are effectively not buggy.
 
->  #else  /* __ASSEMBLY__ */
->  
->  #define _PVSITE(ptype, clobbers, ops, word, algn)	\
-> @@ -964,6 +969,10 @@ static inline void paravirt_arch_dup_mmap(struct mm_struct *oldmm,
->  static inline void paravirt_arch_exit_mmap(struct mm_struct *mm)
->  {
->  }
-> +
-> +static inline void paravirt_after_bootmem(void)
-> +{
-> +}
->  #endif /* __ASSEMBLY__ */
->  #endif /* !CONFIG_PARAVIRT */
->  #endif /* _ASM_X86_PARAVIRT_H */
-> diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-> index 180bc0bff0fb..da78a3610168 100644
-> --- a/arch/x86/include/asm/paravirt_types.h
-> +++ b/arch/x86/include/asm/paravirt_types.h
-> @@ -86,6 +86,9 @@ struct pv_init_ops {
->  	 */
->  	unsigned (*patch)(u8 type, u16 clobber, void *insnbuf,
->  			  unsigned long addr, unsigned len);
-> +
-> +	/* called right after we finish boot allocator */
-> +	void (*after_bootmem)(void);
->  } __no_randomize_layout;
->  
->  
-> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> index 99dc79e76bdc..7b5f931e2e3a 100644
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -315,6 +315,7 @@ struct pv_info pv_info = {
->  
->  struct pv_init_ops pv_init_ops = {
->  	.patch = native_patch,
-> +	.after_bootmem = paravirt_nop,
->  };
->  
->  struct pv_time_ops pv_time_ops = {
-> diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-> index 79cb066f40c0..6096d0d9ecbc 100644
-> --- a/arch/x86/mm/init_32.c
-> +++ b/arch/x86/mm/init_32.c
-> @@ -763,6 +763,7 @@ void __init mem_init(void)
->  	free_all_bootmem();
->  
->  	after_bootmem = 1;
-> +	paravirt_after_bootmem();
->  
->  	mem_init_print_info(NULL);
->  	printk(KERN_INFO "virtual kernel memory layout:\n"
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 332f6e25977a..70b7b5093d07 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1189,6 +1189,7 @@ void __init mem_init(void)
->  	/* this will put all memory onto the freelists */
->  	free_all_bootmem();
->  	after_bootmem = 1;
-> +	paravirt_after_bootmem();
->  
->  	/*
->  	 * Must be done after boot memory is put on freelist, because here we
-> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> index d20763472920..603589809334 100644
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -116,6 +116,8 @@ DEFINE_PER_CPU(unsigned long, xen_current_cr3);	 /* actual vcpu cr3 */
->  
->  static phys_addr_t xen_pt_base, xen_pt_size __initdata;
->  
-> +static DEFINE_STATIC_KEY_FALSE(xen_struct_pages_ready);
-> +
->  /*
->   * Just beyond the highest usermode address.  STACK_TOP_MAX has a
->   * redzone above it, so round it up to a PGD boundary.
-> @@ -155,11 +157,18 @@ void make_lowmem_page_readwrite(void *vaddr)
->  }
->  
->  
-> +/*
-> + * During early boot all pages are pinned, but we do not have struct pages,
-> + * so return true until struct pages are ready.
-> + */
+Suggested-by: Filippo Sironi <sironi@amazon.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/x86.c              | 8 ++++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-Uuh, this comment is just not true.
-
-The "pinned" state for Xen means it is a pv pagetable known to Xen. Such
-pages are read-only for the guest and can be modified via hypercalls
-only.
-
-So either the "pinned" state will be tested for page tables only, in
-which case the comment needs adjustment, or the code is wrong.
-
-
-Juergen
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 938d453..6e13f2f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
+ 	u64 smi_count;
+ 	bool tpr_access_reporting;
+ 	u64 ia32_xss;
++	u32 microcode_version;
+ 
+ 	/*
+ 	 * Paging state of the vcpu
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1a3ed81..cc51c61 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2247,7 +2247,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
+ 	switch (msr) {
+ 	case MSR_AMD64_NB_CFG:
+-	case MSR_IA32_UCODE_REV:
+ 	case MSR_IA32_UCODE_WRITE:
+ 	case MSR_VM_HSAVE_PA:
+ 	case MSR_AMD64_PATCH_LOADER:
+@@ -2255,6 +2254,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_AMD64_DC_CFG:
+ 		break;
+ 
++	case MSR_IA32_UCODE_REV:
++		if (msr_info->host_initiated)
++			vcpu->arch.microcode_version = data >> 32;
++		break;
+ 	case MSR_EFER:
+ 		return set_efer(vcpu, data);
+ 	case MSR_K7_HWCR:
+@@ -2550,7 +2553,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		msr_info->data = 0;
+ 		break;
+ 	case MSR_IA32_UCODE_REV:
+-		msr_info->data = 0x100000000ULL;
++		msr_info->data = (u64)vcpu->arch.microcode_version << 32;
+ 		break;
+ 	case MSR_MTRRcap:
+ 	case 0x200 ... 0x2ff:
+@@ -8232,6 +8235,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	vcpu->arch.regs_dirty = ~0;
+ 
+ 	vcpu->arch.ia32_xss = 0;
++	vcpu->arch.microcode_version = 0x1;
+ 
+ 	kvm_x86_ops->vcpu_reset(vcpu, init_event);
+ }
+-- 
+2.7.4
