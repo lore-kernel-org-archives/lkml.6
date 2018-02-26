@@ -1,34 +1,36 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2970050-1519654106-2-4796250278766513390
+X-Cyrus-Session-Id: sloti22d1t05-3229654-1519661845-2-16662407191769476834
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519654105; b=fOzGv5aoX/09Rs2us24MNqvcpB7oKYOIg1zA1a1WlEu/SJD
-    S1k1yKF4A4sq/M4Y1ulpyyurs8dSpuZtZ0vt2RtO6BebTDYWcf26/5tE44zxrKmh
-    mGEdvDxPnNcHBTWIhsa28JXdwcIcsynoxUOR8xj0cSbMkW57uOcfAbcfbi954LPX
-    YqonzgLlqj3XE2prIWJxqKgYDqFGKxpVuof0wzqoGSPEJU6Z0yzGMiHV7mmn5CHI
-    I3FgsW2dSe1Kuh2jP03i9ag1tQADgW6Tw2lcP5IRVuBIBA11x2a5RfrpVUxRAuBT
-    HwW+tJGh+3aU/ODy/BtghpLu65vlaKflu5GqRBw==
+    t=1519661844; b=fdJfqYQZebvmb01g+583DTLi6H3+Fk4d17ttMcGNeAyMMcl
+    5/la1/Frd5YysUifhg9PuhrQt2PMJh6wRC/Xmgme3qnpCieeZCAUP3HoxVQDgMjt
+    BM1qkXeMl29Rb2q/+W07phyrVwVtB+Sfolq1Tc5OuEjJe6HhWuAlT9UzLGxZDw2C
+    N4Ckio9cSqMWxalPNeOqDZKGTFWxk3DGV65m1of8HQS1I1l85H1/3eL8jFDGNrbr
+    XvimJiZaugctF7k3JVKaG/8jMPm1nk+hXYSfdjVBQ60HcyTCg9gKpPUj0IRHx1xq
+    gejbQltnFlWyjiPHdDala8qkIhfv5ZbAk6E72aA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1519654105; bh=AF3g3Pl2cKVxDr43dIpnIfz9c8
-    b9bREUijfxrFBM0AY=; b=BqP4pHpkdkm/uHmYd5M++fiDYeW6ESpyQKcBWnTsc9
-    USA7fK0EFE7RznxrTF9nXQ8bnxVZPyMdIAoaTqCQKFz6JWELqN9lMgEpQQ18gBkJ
-    TsZnOMo5SX3OBlT4g9xEw7SZJ0KO3beU/nxNtz2Mrfv4L+XfdPiZ+Quu2xDr0p7e
-    j7VuIiTVEQhJ7DTl9nCKZ5zNQtkvL5+TSYtYITuq4ednKumF2h1y+PE3htRc+pSY
-    ES9uiQdj1Zx0g6nsSaPex9BW/a/smmzYGS0vJIBiB/+n8SHYnM8YlJD9mhohMrm0
-    sMVxTXT0RnMTGjid1qggTDSEQbM2ZCAlMFCP/XKZy9bQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:in-reply-to:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519661844; bh=cgrP7PgDiPPHfJDQaTt1rmkPUnF0ybqqSFfyT5/H+hU=; b=L
+    kNZYlx9RkQycjukdRH5tuDcY68Fi+7/yp2S4RE5U4wkrUegJ8ufAImkWQ0UlX7Wa
+    /5WFLsrFp8njuOw6fj6cARjyim094UkOhKSLtypJ+inok3/czsN/orhUJ/wKbZLY
+    0Q/S5BxVa/bVYYZZtxstNmif9O+LSPLYoEEVOr5b8sTc20a7ahSE2Yg7io1F9WSS
+    7+0M2kbreJRZFJ43A43LUUJFgppCBYHN8slojM8foKZzWQ+KfUSkpHYMF54L2k6i
+    YPFm+MlkK9r6RxqiG2P+YFWoDjdoQ2hyQDTBSzsjwCKSOzTO6YtvC5goajZDENHU
+    fCkmwyuhGXNsIAfUXofdg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -36,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
@@ -46,92 +48,41 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752063AbeBZOIW (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 09:08:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46453 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751825AbeBZOIW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:08:22 -0500
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc: boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, jbeulich@suse.com,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before suspend
-Date: Mon, 26 Feb 2018 15:08:18 +0100
-Message-Id: <20180226140818.4849-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.6
+        id S1751446AbeBZQRW convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Mon, 26 Feb 2018 11:17:22 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:46828 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbeBZQRV (ORCPT
+        <rfc822;groupwise-stable@vger.kernel.org:7:2>);
+        Mon, 26 Feb 2018 11:17:21 -0500
+Message-Id: <5A94411C02000078001ABDF1@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 26 Feb 2018 09:17:16 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Juergen Gross" <jgross@suse.com>
+Cc: <x86@kernel.org>, <tglx@linutronix.de>,
+        <xen-devel@lists.xenproject.org>, <boris.ostrovsky@oracle.com>,
+        <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, <hpa@zytor.com>
+Subject: Re: [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before suspend
+References: <20180226140818.4849-1-jgross@suse.com>
+In-Reply-To: <20180226140818.4849-1-jgross@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Older Xen versions (4.5 and before) might have problems migrating pv
-guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
-suspending zero that MSR and restore it after being resumed.
+>>> On 26.02.18 at 15:08, <jgross@suse.com> wrote:
+> Older Xen versions (4.5 and before) might have problems migrating pv
+> guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
+> suspending zero that MSR and restore it after being resumed.
+> 
+> Cc: stable@vger.kernel.org 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/xen/suspend.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
-index d9f96cc5d743..1d83152c761b 100644
---- a/arch/x86/xen/suspend.c
-+++ b/arch/x86/xen/suspend.c
-@@ -1,12 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/types.h>
- #include <linux/tick.h>
-+#include <linux/percpu-defs.h>
- 
- #include <xen/xen.h>
- #include <xen/interface/xen.h>
- #include <xen/grant_table.h>
- #include <xen/events.h>
- 
-+#include <asm/cpufeatures.h>
-+#include <asm/msr-index.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/page.h>
- #include <asm/fixmap.h>
-@@ -15,6 +18,8 @@
- #include "mmu.h"
- #include "pmu.h"
- 
-+static DEFINE_PER_CPU(u64, spec_ctrl);
-+
- void xen_arch_pre_suspend(void)
- {
- 	xen_save_time_memory_area();
-@@ -35,6 +40,9 @@ void xen_arch_post_suspend(int cancelled)
- 
- static void xen_vcpu_notify_restore(void *data)
- {
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-+		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
-+
- 	/* Boot processor notified via generic timekeeping_resume() */
- 	if (smp_processor_id() == 0)
- 		return;
-@@ -44,7 +52,15 @@ static void xen_vcpu_notify_restore(void *data)
- 
- static void xen_vcpu_notify_suspend(void *data)
- {
-+	u64 tmp;
-+
- 	tick_suspend_local();
-+
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
-+		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
-+		this_cpu_write(spec_ctrl, tmp);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	}
- }
- 
- void xen_arch_resume(void)
--- 
-2.13.6
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
