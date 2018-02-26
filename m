@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsk0imgKw2d8GbvY8T0p531LnQoFbqYpjZconWLL9npaI7y27z8o7HXv1PdutRdyQX7APH1
-ARC-Seal: i=1; a=rsa-sha256; t=1519676585; cv=none;
+X-Google-Smtp-Source: AH8x224O2zSgdyHSWGpE2lcV5Rlb/YS4TOKqp5EIgWZX1N/0yMbTnQBayMUx5G+b8aOuwPmCwMax
+ARC-Seal: i=1; a=rsa-sha256; t=1519676581; cv=none;
         d=google.com; s=arc-20160816;
-        b=vmxpxuwSVmt9gonYGL3GCZENS7F+nMoQmFfAGpVvsXdFIZxgHbW6T/NKTOI3tugB/T
-         DOrkAR4kb4OCx8QN/cHP+DlG3Rajpa5U+p8gCl4wnXVac1NQId+rH4dn4cfbJgClOQaF
-         KTGC6yVLRSvxZEZV/gDIXAgL41pjXglx3+MxjXu/jrFRBkVsNRX0nL16n33Wg0lpo5wd
-         VbaGPZ+plp8pu7YbsVHyqLb6davdrrmGcZuohxsDKnUBLThec+5MPFS9Q/O2TgjREbXS
-         s/vWgQfCZQxFwVcYKlDlpp5ehsHgjJTCbXGhh4V5Ombxa0WpcdOpzWtsqRDEiI8vGQbN
-         urlw==
+        b=mMv6t3wgq/uASsv4iW4BnlOC5IdXDPC/cyBNyCC4gtMTbGeM/rU0b5GawXoLddb9ee
+         ggakv3krpEXH5Uu19sQpcN049NWuFwkHACsWH/dlPXv7Ns78N0k7MnXjnmaPnSb2LOuw
+         p9ESnwjh2b1q4L/9Ga7oRF6Na3//iRTepVFQ9gb4oNRPSHMrj8xzsLAf2PuC9VEgyDEo
+         NMZfcpFM2wyMKhutk5RFVdLk+c3xAILh98SDwkbkOYOJ1vL72TwZFjV+9shhAj9uEbUe
+         PqAQiD75AVz3A78rHR1Cy59y3uabpI3qhhFZIxJkFq5bVG2+nbkf/SRy6E2GIEfnEaAn
+         JV0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hQtXKlz0k3jmicATKetmzwOxwdXUIomHybqNSgX1B7I=;
-        b=lzM9/cOsnx45Y/7ULrn7Licj38Ip+WGC5+ikDJ+AbVEehi17E+VTGmlbGe7tJgXZwF
-         AhJcey5TlAmvT9ETHMiwHGIlXIHyp6HwlBXXpd7Y83qIOfs8c7J3y0cP650KgBP9YHkO
-         oDgeuDO/MI88jWDGvJjQpysRL3yisve5wKj+zauez4HD3RMUdmhd6OqYm+ooWq6J1MyT
-         HGF1zSB0pltDdagnR/QrgI9BIrHeL82JPXejcwL+Pba0SLVU2FNJB/8YmcSjC5be9/ah
-         BvAzUJWjm0qVCfQTUwgTAEIkE95PsHF9f1mOEU+bexr6DZqg+rdASFRNj/TgfWbCFiQf
-         CWDA==
+        bh=Vt2pagSk4OTx2a40ROa+IZn/42UuAt/x/wwGTy7rAkY=;
+        b=lY4tceTw1tQyBvnB2YvZn5Jyqbwz30fVXF/T68pPCDD2Ei0NDvgJLo6pzDYEssw2Fo
+         Csu26xrlYbI6LSCdWSntM6lDQOWKsSyUU6CkOOF3I2wUwrbwsoCL3/SGpKHrFsTxR2c/
+         LqJwr5ZFdqRN0RKaluHZqIx+p3UnVyxUj4n9cuB7XTbHDyrUuRUz1E54TNbSzJE/eBYa
+         LIlWDJj7hlGarSir/Al/GWEVElk+HTrPLIG8ZT0QrMdMGElIT8GWbWxymR9A/hcNVg2U
+         gQ0vGlKkf6CWovmBPE4pRMlHolZC4ceIapWP45ik/6vEi76jZl/gSzHrEo2TOm2ghgeE
+         fXIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,27 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>,
 	Dan Williams <dan.j.williams@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 39/39] x86/entry/64: Clear extra registers beyond syscall arguments, to reduce speculation attack surface
-Date: Mon, 26 Feb 2018 21:21:00 +0100
-Message-Id: <20180226201645.379416320@linuxfoundation.org>
+	Jan Kara <jack@suse.cz>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Christoph Hellwig <hch@lst.de>,
+	Doug Ledford <dledford@redhat.com>,
+	Hal Rosenstock <hal.rosenstock@gmail.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
+	Jeff Moyer <jmoyer@redhat.com>,
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	Sean Hefty <sean.hefty@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 38/39] mm: fail get_vaddr_frames() for filesystem-dax mappings
+Date: Mon, 26 Feb 2018 21:20:59 +0100
+Message-Id: <20180226201645.332724931@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -50,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496395138590553?=
-X-GMAIL-MSGID: =?utf-8?q?1593496395138590553?=
+X-GMAIL-THRID: =?utf-8?q?1593496390854252085?=
+X-GMAIL-MSGID: =?utf-8?q?1593496390854252085?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,71 +67,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit 8e1eb3fa009aa7c0b944b3c8b26b07de0efb3200 upstream.
+commit b7f0554a56f21fb3e636a627450a9add030889be upstream.
 
-At entry userspace may have (maliciously) populated the extra registers
-outside the syscall calling convention with arbitrary values that could
-be useful in a speculative execution (Spectre style) attack.
+Until there is a solution to the dma-to-dax vs truncate problem it is
+not safe to allow V4L2, Exynos, and other frame vector users to create
+long standing / irrevocable memory registrations against filesytem-dax
+vmas.
 
-Clear these registers to minimize the kernel's attack surface.
-
-Note, this only clears the extra registers and not the unused
-registers for syscalls less than 6 arguments, since those registers are
-likely to be clobbered well before their values could be put to use
-under speculation.
-
-Note, Linus found that the XOR instructions can be executed with
-minimized cost if interleaved with the PUSH instructions, and Ingo's
-analysis found that R10 and R11 should be included in the register
-clearing beyond the typical 'extra' syscall calling convention
-registers.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Andi Kleen <ak@linux.intel.com>
+[dan.j.williams@intel.com: add comment for vma_is_fsdax() check in get_vaddr_frames(), per Jan]
+  Link: http://lkml.kernel.org/r/151197874035.26211.4061781453123083667.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: http://lkml.kernel.org/r/151068939985.7446.15684639617389154187.stgit@dwillia2-desk3.amr.corp.intel.com
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Sean Hefty <sean.hefty@intel.com>
 Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787988577.7847.16733592218894189003.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog and the code comments. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/entry/entry_64.S |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ mm/frame_vector.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -176,13 +176,26 @@ GLOBAL(entry_SYSCALL_64_after_swapgs)
- 	pushq	%r8				/* pt_regs->r8 */
- 	pushq	%r9				/* pt_regs->r9 */
- 	pushq	%r10				/* pt_regs->r10 */
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -52,6 +52,18 @@ int get_vaddr_frames(unsigned long start
+ 		ret = -EFAULT;
+ 		goto out;
+ 	}
++
 +	/*
-+	 * Clear extra registers that a speculation attack might
-+	 * otherwise want to exploit. Interleave XOR with PUSH
-+	 * for better uop scheduling:
++	 * While get_vaddr_frames() could be used for transient (kernel
++	 * controlled lifetime) pinning of memory pages all current
++	 * users establish long term (userspace controlled lifetime)
++	 * page pinning. Treat get_vaddr_frames() like
++	 * get_user_pages_longterm() and disallow it for filesystem-dax
++	 * mappings.
 +	 */
-+	xorq	%r10, %r10			/* nospec   r10 */
- 	pushq	%r11				/* pt_regs->r11 */
-+	xorq	%r11, %r11			/* nospec   r11 */
- 	pushq	%rbx				/* pt_regs->rbx */
-+	xorl	%ebx, %ebx			/* nospec   rbx */
- 	pushq	%rbp				/* pt_regs->rbp */
-+	xorl	%ebp, %ebp			/* nospec   rbp */
- 	pushq	%r12				/* pt_regs->r12 */
-+	xorq	%r12, %r12			/* nospec   r12 */
- 	pushq	%r13				/* pt_regs->r13 */
-+	xorq	%r13, %r13			/* nospec   r13 */
- 	pushq	%r14				/* pt_regs->r14 */
-+	xorq	%r14, %r14			/* nospec   r14 */
- 	pushq	%r15				/* pt_regs->r15 */
-+	xorq	%r15, %r15			/* nospec   r15 */
- 
- 	/* IRQs are off. */
- 	movq	%rsp, %rdi
++	if (vma_is_fsdax(vma))
++		return -EOPNOTSUPP;
++
+ 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+ 		vec->got_ref = true;
+ 		vec->is_pfns = false;
