@@ -1,207 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753964AbeBZOll (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:41:41 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51094 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753719AbeBZOl3 (ORCPT
+        id S1753866AbeBZOo2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:44:28 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36662 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753415AbeBZOo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:41:29 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: rui.zhang@intel.com, rjw@rjwysocki.net
-Cc: groeck@chromium.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, snanda@chromium.org, lenb@kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
-Subject: [RESEND PATCH v3 2/2] thermal: core: introduce thermal zone device mode control
-Date: Mon, 26 Feb 2018 15:41:18 +0100
-Message-Id: <20180226144118.24693-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180226144118.24693-1-enric.balletbo@collabora.com>
-References: <20180226144118.24693-1-enric.balletbo@collabora.com>
+        Mon, 26 Feb 2018 09:44:27 -0500
+X-Google-Smtp-Source: AG47ELvr2l7q1R4F6iua8+9/Fiu/xqwxZ23OpHrhlrbNI/p7JTWosMQQ9tqha+TadGiq5/tPP1gWIg2Wzt2S1Sz87FA=
+MIME-Version: 1.0
+In-Reply-To: <20180225172236.29650-2-malat@debian.org>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-2-malat@debian.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 26 Feb 2018 16:44:25 +0200
+Message-ID: <CAHp75Vdpdr-0-vdvo0SBx2XcM=HePrUbbb4SM9+ExT_i-1B69Q@mail.gmail.com>
+Subject: Re: [PATCH 01/21] powerpc: Remove warning on array size when empty
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
+        <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QEidPX001766
 
-From: Zhang Rui <rui.zhang@intel.com>
+On Sun, Feb 25, 2018 at 7:22 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
+> array feature_properties is defined as an empty array, which in turn
+> triggers the following warning (treated as error on W=1):
+>
+>   CC      arch/powerpc/kernel/prom.o
+> arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
+> arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
+>   for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+>                 ^
+> cc1: all warnings being treated as errors
+>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  arch/powerpc/kernel/prom.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+> index 4dffef947b8a..6e8e4122820e 100644
+> --- a/arch/powerpc/kernel/prom.c
+> +++ b/arch/powerpc/kernel/prom.c
+> @@ -291,11 +291,10 @@ static inline void identical_pvr_fixup(unsigned long node)
+>
+>  static void __init check_cpu_feature_properties(unsigned long node)
+>  {
+> -       unsigned long i;
+>         struct feature_property *fp = feature_properties;
+>         const __be32 *prop;
+>
 
-Thermal "mode" sysfs attribute is introduced to enable/disable a thermal
-zone, and .get_mode()/.set_mode() callback is introduced for platform
-thermal driver to enable/disable the hardware thermal control logic. And
-thermal core takes no action upon thermal zone enable/disable.
+Much simpler is just add
 
-Actually, this is not quite right because thermal core still pokes those
-disabled thermal zones occasionally, e.g. upon system resume.
+if (ARRAY_SIZE() == 0)
+ return;
 
-To fix this, a new flag 'mode' is introduced in struct thermal_zone_device
-to represent the thermal zone mode, and several decisions have been made
-based on this flag, including
-1. check the thermal zone mode right after it's registered.
-2. skip updating thermal zone if the zone is disabled
-3. stop the polling timer when the thermal zone is disabled
-
-Note: basically, this patch doesn't affect the existing always-enabled
-thermal zones much, with just one exception -
-thermal zone .get_mode() must be well prepared to reflect the real thermal
-zone status upon the thermal zone registration.
-
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-That's another attempt to land these to patches that were sent long time
-ago but never got merged, although, apparently, there is no issue with
-it. Latest discussion about these here:
-
- https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1436081.html
+> -       for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+> +       for (; fp != feature_properties + ARRAY_SIZE(feature_properties); ++fp) {
+>                 prop = of_get_flat_dt_prop(node, fp->name, NULL);
+>                 if (prop && be32_to_cpup(prop) >= fp->min_value) {
+>                         cur_cpu_spec->cpu_features |= fp->cpu_feature;
+> --
+> 2.11.0
+>
 
 
-Changes in v3:
-- [2/2] Rework by Zhang Rui.
 
-Changes in v2:
-- [2/2] Implement in thermal subsystem instead of ACPI thermal driver (Zhang Rui)
-
- drivers/thermal/thermal_core.c  | 37 +++++++++++++++++++++++++++++++++++--
- drivers/thermal/thermal_sysfs.c | 24 +++++++-----------------
- include/linux/thermal.h         |  3 +++
- 3 files changed, 45 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 2b1b0ba393a4..8716ba5b2761 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -306,9 +306,9 @@ static void monitor_thermal_zone(struct thermal_zone_device *tz)
- {
- 	mutex_lock(&tz->lock);
- 
--	if (tz->passive)
-+	if (tz->mode == THERMAL_DEVICE_ENABLED && tz->passive)
- 		thermal_zone_device_set_polling(tz, tz->passive_delay);
--	else if (tz->polling_delay)
-+	else if (tz->mode == THERMAL_DEVICE_ENABLED && tz->polling_delay)
- 		thermal_zone_device_set_polling(tz, tz->polling_delay);
- 	else
- 		thermal_zone_device_set_polling(tz, 0);
-@@ -464,11 +464,35 @@ static void thermal_zone_device_reset(struct thermal_zone_device *tz)
- 		pos->initialized = false;
- }
- 
-+int thermal_zone_set_mode(struct thermal_zone_device *tz,
-+				 enum thermal_device_mode mode)
-+{
-+	int result;
-+
-+	if (!tz->ops->set_mode)
-+		return -EPERM;
-+
-+	result = tz->ops->set_mode(tz, mode);
-+	if (result)
-+		return result;
-+
-+	if (tz->mode != mode) {
-+		tz->mode = mode;
-+		monitor_thermal_zone(tz);
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(thermal_zone_set_mode);
-+
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
- 	int count;
- 
-+	/* Do nothing if the thermal zone is disabled */
-+	if (tz->mode == THERMAL_DEVICE_DISABLED)
-+		return;
-+
- 	if (atomic_read(&in_suspend))
- 		return;
- 
-@@ -1278,6 +1302,15 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
- 
- 	thermal_zone_device_reset(tz);
-+
-+	if (tz->ops->get_mode) {
-+		enum thermal_device_mode mode;
-+
-+		result = tz->ops->get_mode(tz, &mode);
-+		tz->mode = result ? THERMAL_DEVICE_ENABLED : mode;
-+	} else
-+		tz->mode = THERMAL_DEVICE_ENABLED;
-+
- 	/* Update the new thermal zone and mark it as already updated. */
- 	if (atomic_cmpxchg(&tz->need_update, 1, 0))
- 		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index ba81c9080f6e..2746540289c4 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -51,18 +51,9 @@ static ssize_t
- mode_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
--	enum thermal_device_mode mode;
--	int result;
--
--	if (!tz->ops->get_mode)
--		return -EPERM;
- 
--	result = tz->ops->get_mode(tz, &mode);
--	if (result)
--		return result;
--
--	return sprintf(buf, "%s\n", mode == THERMAL_DEVICE_ENABLED ? "enabled"
--		       : "disabled");
-+	return sprintf(buf, "%s\n", tz->mode == THERMAL_DEVICE_ENABLED ?
-+		       "enabled" : "disabled");
- }
- 
- static ssize_t
-@@ -70,18 +61,17 @@ mode_store(struct device *dev, struct device_attribute *attr,
- 	   const char *buf, size_t count)
- {
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
-+	enum thermal_device_mode mode;
- 	int result;
- 
--	if (!tz->ops->set_mode)
--		return -EPERM;
--
- 	if (!strncmp(buf, "enabled", sizeof("enabled") - 1))
--		result = tz->ops->set_mode(tz, THERMAL_DEVICE_ENABLED);
-+		mode = THERMAL_DEVICE_ENABLED;
- 	else if (!strncmp(buf, "disabled", sizeof("disabled") - 1))
--		result = tz->ops->set_mode(tz, THERMAL_DEVICE_DISABLED);
-+		mode = THERMAL_DEVICE_DISABLED;
- 	else
--		result = -EINVAL;
-+		return -EINVAL;
- 
-+	result = thermal_zone_set_mode(tz, mode);
- 	if (result)
- 		return result;
- 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 8c5302374eaa..ff60977c91da 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -211,6 +211,7 @@ struct thermal_zone_device {
- 	struct thermal_attr *trip_type_attrs;
- 	struct thermal_attr *trip_hyst_attrs;
- 	void *devdata;
-+	enum thermal_device_mode mode;
- 	int trips;
- 	unsigned long trips_disabled;	/* bitmap for disabled trips */
- 	int passive_delay;
-@@ -466,6 +467,8 @@ struct thermal_zone_device *thermal_zone_get_zone_by_name(const char *name);
- int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
- int thermal_zone_get_slope(struct thermal_zone_device *tz);
- int thermal_zone_get_offset(struct thermal_zone_device *tz);
-+int thermal_zone_set_mode(struct thermal_zone_device *tz,
-+			  enum thermal_device_mode mode);
- 
- int get_tz_trend(struct thermal_zone_device *, int);
- struct thermal_instance *get_thermal_instance(struct thermal_zone_device *,
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
