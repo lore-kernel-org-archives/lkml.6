@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2387525-1519633672-2-8488228527936709022
+X-Cyrus-Session-Id: sloti22d1t05-2387526-1519633662-2-9195571609449676887
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES encaro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519633672; b=AnbuDzh3VMpWAiyW9wpLxXQt04lClzPdh44Fe3pPYTlD00O
-    /ac1e2Co80XKh1qweITKPPaR7rfAXUr9DmvMCr/N/Zi3i28++Qqf50IGh9UA4Yz3
-    BJeWTNn0mVmyO+wGpzCxzwwxZYhvsY+YbzHw4G7QM5FIcf1G4Qm7FIDog3Pe1iBG
-    LpbHz5mMLFytJN0S+HZiuaFwCaLihDydcNcfVvg2NrvyU34LYDlti+nPwar+9hJk
-    pUKW9ln1+BIe4H1Lwp9lvN+8xTQUQ8egfvT+fsirJPrmkIPo6Ab7krvbmbspkA+w
-    ipW/ith2z+ogcFLfWRCe514RFD9S3H7PnJnlyVA==
+    t=1519633661; b=Cl2lmYIOaOrrdJP0B0hbGlWd9W5Gn602njuHBWLfc38R6K2
+    qRYY4AVt8AOUaHlslIiqwshpfwXp9T5CaJ5SsNz4bn6OE8NWRpcomczE+9tMotnw
+    iUXo4sED77hHhSl6sYqUK4mJsVtlu8Oyx6RawspTOwJ5d4aPOjki4/C9U0Y11X/p
+    Nqu7TaHhLefAw6z571KO8cLnmE6RmRITFxh3vYJNrb5Qut1dNYZ7NX1LD2JhZQuA
+    xW/P2yLx99Dx6XLS8XAiPT6boBJTQgDpWpcfIlzuHDCC+rjD8MpZ7YYtchwc9WBB
+    YBnW0QPpQQe2summP9Zzsq4vU8Lsf5LXHYedvbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519633672;
-    bh=TZy7LbCE06w5P4ocO94iT/5aR/zA6c96V+vApCDKSFE=; b=qPVyNiPyHdYf
-    u8E88PKTSTViIGa/RXCfdohM6QA9BG3EyvJSeS8enjXsBCCs7S4qUfWPIotRrzjq
-    I3zPgVzdK/ctpx45SaZv6nQp4gFcxK38DYBgf28+y4bOwtz9fQu/P8V0xem8zFBK
-    MoVlm850yV+KC12wmVAoJFDgYI8EHXlEvWAtr+Zj2C2w/NXqe6PNVMXJ8Kr+YiXI
-    p3Yovw8++X0tGsL5WAgWjkebxheYRTRXOulDZ393+p7p9m4Fkl0VFvqftoLI1Duf
-    RHN2FhMtMobzoHwR0eGrZ0gygt7Oguqf6nU1pmapIYxpg+tPzKrGeiVQUkxhP7xb
-    gz2d6Fhutg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OfTMe6MG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519633661;
+    bh=EGJE0Nu47ttv68Cv7IDoZdvRv6F03kpbdP4X9eVpyD0=; b=AQquzQnBILbY
+    cpR3XBUZHmmHQDFVCQ4duPqwgO3GHfoCZiTHpZU4M8F/tpS1d2JSqm3yIx4EKklC
+    1tMwKgTd0Q9ESCUX+xVLSFzm2v3cF52zXplGVtqo92QtsocCnO9KDYw96h/9HaGJ
+    mxj6mUr8koZfXqleE8cCcpgL8+iVYAjLNgj3f8Y3Zep/d4nLzpIuFOmKLz+QO31T
+    AD+6zV9kN+yJNQbojDTA1kX/wvR3gVP6DsjEXj6QfaqveSmCsEQmPioyznIUYJ94
+    cPsoyBqUO3Mg+W+qpXhCBjCaa17UfVQzTt+548AL36TdCQLKHaWv1eghAr/PIdeb
+    tgqt14yAEQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=db7VIA95 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LTSdPiz/;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zu2T9Ebh;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OfTMe6MG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=db7VIA95 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LTSdPiz/;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zu2T9Ebh;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752879AbeBZI1n (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:27:43 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:44756 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752205AbeBZI1k (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:27:40 -0500
-X-Google-Smtp-Source: AH8x227MqUeEVCGm07uKULLGNfsMO2P2X4nMU9d1Psa9gsiwLW+FD51YIOlRxQxM+BTMd6EKlfmoew==
+        id S1752855AbeBZI1h (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:27:37 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46002 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752865AbeBZI1e (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:27:34 -0500
+X-Google-Smtp-Source: AH8x226FXXBAN6jeZg6J+9NAKHiCuOuf6xBe3ZftMOGkbk1yKnD2bdz6Y2XvKbmopSBNNwyAq1EetA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 50/52] arm: Invalidate icache on prefetch abort outside of user mapping on Cortex-A15
-Date: Mon, 26 Feb 2018 16:20:24 +0800
-Message-Id: <1519633227-29832-51-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 49/52] arm: Add icache invalidation on switch_mm for Cortex-A15
+Date: Mon, 26 Feb 2018 16:20:23 +0800
+Message-Id: <1519633227-29832-50-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
 References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
@@ -80,45 +80,125 @@ From: Marc Zyngier <marc.zyngier@arm.com>
 
 ** Not yet queued for inclusion in mainline **
 
-In order to prevent aliasing attacks on the branch predictor,
-invalidate the icache on Cortex-A15, which has the side effect
-of invalidating the BTB. This requires ACTLR[0] to be set to 1
-(secure operation).
+In order to avoid aliasing attacks against the branch predictor,
+Cortex-A15 require to invalidate the BTB when switching
+from one user context to another. The only way to do so on this
+CPU is to perform an ICIALLU, having set ACTLR[0] to 1 from secure
+mode.
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm/include/asm/cp15.h | 1 +
- arch/arm/mm/fault.c         | 4 ++++
- 2 files changed, 5 insertions(+)
+ arch/arm/mm/proc-v7-2level.S | 10 ++++++++++
+ arch/arm/mm/proc-v7-3level.S | 10 ++++++++++
+ arch/arm/mm/proc-v7.S        | 23 ++++++++++++++++++++++-
+ 3 files changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
-index 0672ddc..b74b174 100644
---- a/arch/arm/include/asm/cp15.h
-+++ b/arch/arm/include/asm/cp15.h
-@@ -65,6 +65,7 @@
- #define write_sysreg(v, ...)		__write_sysreg(v, __VA_ARGS__)
- 
- #define BPIALL				__ACCESS_CP15(c7, 0, c5, 6)
-+#define ICIALLU				__ACCESS_CP15(c7, 0, c5, 0)
- 
- extern unsigned long cr_alignment;	/* defined in entry-armv.S */
- 
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 17fd0c7..a9c924b 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -409,6 +409,10 @@ do_pabt_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 		case ARM_CPU_PART_CORTEX_A17:
- 			write_sysreg(0, BPIALL);
- 			break;
+diff --git a/arch/arm/mm/proc-v7-2level.S b/arch/arm/mm/proc-v7-2level.S
+index 0422e58b..6d81ed7 100644
+--- a/arch/arm/mm/proc-v7-2level.S
++++ b/arch/arm/mm/proc-v7-2level.S
+@@ -40,7 +40,16 @@
+  *	Note that we always need to flush BTAC/BTB if IBE is set
+  *	even on Cortex-A8 revisions not affected by 430973.
+  *	If IBE is not set, the flush BTAC/BTB won't do anything.
++ *
++ *	Cortex-A15 requires ACTLR[0] to be set from secure in order
++ *	for the icache invalidation to also invalidate the BTB.
+  */
++ENTRY(cpu_v7_icinv_switch_mm)
++#ifdef CONFIG_MMU
++	mcr	p15, 0, r0, c7, c5, 0		@ ICIALLU
++	/* Fall through to switch_mm... */
++#endif
 +
-+		case ARM_CPU_PART_CORTEX_A15:
-+			write_sysreg(0, ICIALLU);
-+			break;
- 		}
- 	}
+ ENTRY(cpu_v7_btbinv_switch_mm)
+ #ifdef CONFIG_MMU
+ 	mov	r2, #0
+@@ -67,6 +76,7 @@ ENTRY(cpu_v7_switch_mm)
+ 	bx	lr
+ ENDPROC(cpu_v7_switch_mm)
+ ENDPROC(cpu_v7_btbinv_switch_mm)
++ENDPROC(cpu_v7_icinv_switch_mm)
+ 
+ /*
+  *	cpu_v7_set_pte_ext(ptep, pte)
+diff --git a/arch/arm/mm/proc-v7-3level.S b/arch/arm/mm/proc-v7-3level.S
+index a25450b..af6d7b1 100644
+--- a/arch/arm/mm/proc-v7-3level.S
++++ b/arch/arm/mm/proc-v7-3level.S
+@@ -54,6 +54,15 @@
+  * Set the translation table base pointer to be pgd_phys (physical address of
+  * the new TTB).
+  */
++ENTRY(cpu_v7_icinv_switch_mm)
++#ifdef CONFIG_MMU
++	/*
++	 * Cortex-A15 requires ACTLR[0] to be set from secure in order
++	 * for the icache invalidation to also invalidate the BTB.
++	 */
++	mcr	p15, 0, r0, c7, c5, 0		@ ICIALLU
++	/* Fall through to switch_mm... */
++#endif
+ ENTRY(cpu_v7_btbinv_switch_mm)
+ #ifdef CONFIG_MMU
+ 	mcr	p15, 0, r0, c7, c5, 6			@ flush BTAC/BTB
+@@ -69,6 +78,7 @@ ENTRY(cpu_v7_switch_mm)
+ 	ret	lr
+ ENDPROC(cpu_v7_switch_mm)
+ ENDPROC(cpu_v7_btbinv_switch_mm)
++ENDPROC(cpu_v7_icinv_switch_mm)
+ 
+ #ifdef __ARMEB__
+ #define rl r3
+diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+index ff7018a..f385933 100644
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -227,6 +227,26 @@ ENDPROC(cpu_ca9mp_do_resume)
+ 	globl_equ	cpu_ca17_do_resume,	cpu_v7_do_resume
  #endif
+ 
++/*
++ * Cortex-A15
++ */
++	globl_equ	cpu_ca15_proc_init,	cpu_v7_proc_init
++	globl_equ	cpu_ca15_proc_fin,	cpu_v7_proc_fin
++	globl_equ	cpu_ca15_reset,		cpu_v7_reset
++	globl_equ	cpu_ca15_do_idle,	cpu_v7_do_idle
++	globl_equ	cpu_ca15_dcache_clean_area, cpu_v7_dcache_clean_area
++	globl_equ	cpu_ca15_set_pte_ext,	cpu_v7_set_pte_ext
++	globl_equ	cpu_ca15_suspend_size,	cpu_v7_suspend_size
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	globl_equ	cpu_ca15_switch_mm,	cpu_v7_icinv_switch_mm
++#else
++	globl_equ	cpu_ca15_switch_mm,	cpu_v7_switch_mm
++#endif
++#ifdef CONFIG_ARM_CPU_SUSPEND
++	globl_equ	cpu_ca15_do_suspend,	cpu_v7_do_suspend
++	globl_equ	cpu_ca15_do_resume,	cpu_v7_do_resume
++#endif
++
+ #ifdef CONFIG_CPU_PJ4B
+ 	globl_equ	cpu_pj4b_switch_mm,     cpu_v7_switch_mm
+ 	globl_equ	cpu_pj4b_set_pte_ext,	cpu_v7_set_pte_ext
+@@ -568,6 +588,7 @@ __v7_setup_stack:
+ 
+ 	@ define struct processor (see <asm/proc-fns.h> and proc-macros.S)
+ 	define_processor_functions v7, dabort=v7_early_abort, pabort=v7_pabort, suspend=1
++	define_processor_functions ca15, dabort=v7_early_abort, pabort=v7_pabort, suspend=1
+ 	define_processor_functions ca17, dabort=v7_early_abort, pabort=v7_pabort, suspend=1
+ #ifndef CONFIG_ARM_LPAE
+ 	define_processor_functions ca8, dabort=v7_early_abort, pabort=v7_pabort, suspend=1
+@@ -689,7 +710,7 @@ __v7_ca12mp_proc_info:
+ __v7_ca15mp_proc_info:
+ 	.long	0x410fc0f0
+ 	.long	0xff0ffff0
+-	__v7_proc __v7_ca15mp_proc_info, __v7_ca15mp_setup
++	__v7_proc __v7_ca15mp_proc_info, __v7_ca15mp_setup, proc_fns = ca15_processor_functions
+ 	.size	__v7_ca15mp_proc_info, . - __v7_ca15mp_proc_info
+ 
+ 	/*
 -- 
 2.7.4
