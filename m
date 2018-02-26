@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2265RoVmSJ4DIIaTmW98b+URGLYAlTu1nVDsPSdjKai2aRXmy3zsz+BpZocUtTCI8GgkSxoJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519676651; cv=none;
+X-Google-Smtp-Source: AH8x224fOsHGRaNCm8MVZw3+kv6WEyj+hitBKplv2nFcZ8ceX8gKrhOUAlxNRw2ZDYgn1Fsn0F8C
+ARC-Seal: i=1; a=rsa-sha256; t=1519676648; cv=none;
         d=google.com; s=arc-20160816;
-        b=jYRMG/Nn3hWaq8TR7K3aqClybx8tFYibBdi6BjtgmK0Y4kSf+NgnagLm8zBZ8JLmwu
-         mHJ8V1ZUrlJ+1TFlt4VrydI6YFkMp2RcNscQ1h7o+oWVCK/WRB/x79WZ9hYLLP5J20LM
-         jIYhBq5jj7YeVX6tm+SDZMvfI1h2f+GQzKXWRHqZTHMHbdvvaUEAcBuLMcNTs4jSfOiF
-         h9jxsuLNEknz+smR0Pbua5oLT18DN89SgUZJEzJpUiT0g13Wq8co9t+9XIurQNHoH0VE
-         xyeT0IqexHsP41CzFYy3KZVZLhWlelN7h9+sHbTzLitPLwlsQWQDiKOY0uxv+CMiwXb5
-         pPSQ==
+        b=ZUMucE7tG4fzBt0vLh19km1CO/IsNnyaQxepC56o6Rql6nTG50qZGwZoHij7upyB9c
+         /qo0SG6xJqMupm4x/eu7gVRnSS0hgr7ZOIdGAQU33d8nMRC62bW6VbBvC5IRj1f+/tsg
+         AI3SB62pJME3EFqa/OLc84PXccKyv6Ixu4N4Wx98y4tN1bWoEReCr0nRQy/G2Nxk6Cfi
+         MMsaMRpO2jDGUs3+sQ/AXMRWL7pU1GaGxFyIEoIm+VLqaZGpwKUY2q0pYFVEgtoHMkYX
+         Ats4XsznyVS8XzOI0r4bD0Ax9cTpP0Dwil4PMAOfQAqgs/rdF3TcJwK0vlXDw5sRMFxx
+         CAxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4CAKnvNcIyJcCzCRCuLmpoyiA2j6Uerg9dWs5mEibF0=;
-        b=dy45JnmKrCDaFUDChbROKLDXawOqfHArAHWn053djLeP10Fq0+9Xv/DEy06EFpVQwA
-         bEmEi16j1Jow1Uj1jIUm4nF7eDFxf6966z7Rc4kwRB/Ymj5yYhvXPB8hNdyCMaB2citv
-         foF9Zoneqrb6VatVwub3DUjmeDtuL3CKCnP9ZJQDA9MuOUNSPalEj/Lpn2xgtQ9RD7Qp
-         EFAOUbzAu9mh9PzUWXYZZAt0VLhnCpFpI8+Hkz/Czl+VszG5bi/ALCJUgVz+yk8km6wz
-         tdrPwSnoB1K41lijP30wJ9W/YSd1tJtasRkyGqj+Om4+VNp7mPUcH8lgTuc+RbNO2Tn5
-         PUyg==
+        bh=FD4RgaXX9snmOKDHODnW+TF9hPuhYTT2zutMw54daxI=;
+        b=b+GdvvpOrzsRjFE5ddFx2JR5k6PN4Qjv34LD0L3AQRLHlpC+z9deMfYp+gq8s9W1A8
+         xKktTGVQMEqICynIXHwX0uCrUEPosncADyo21V3JIOspwtnRm7DitYqN5LJ4MZGEf6ET
+         9C5+pndniQngp9m5PAdOC4tToU8bUP6A/OIVZkMJd80gtY5ieDSrxJYWKDNX+DdMzGlK
+         /7pPxXO/afPkkGNZAUmn2+HN104EK1VL4bJdy1pMhvJ/4mSqNqHU2jKL6Vat6lPMtopG
+         iKEnhr4XDvk5GLKqMUnCwXWIV2A0fBZNMlG2ATo1G8em1wpMUb+N59fJFts5yRdKB2b4
+         xopw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,18 +27,18 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Jessica Yu <jeyu@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Martin Sebor <msebor@gcc.gnu.org>,
+	Babu Moger <babu.moger@amd.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Nicolas Pitre <nico@linaro.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Robert Richter <rric@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	oprofile-list@lists.sf.net,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 26/54] x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-Date: Mon, 26 Feb 2018 21:22:03 +0100
-Message-Id: <20180226202145.709601114@linuxfoundation.org>
+	Will Deacon <will.deacon@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 25/54] Kbuild: always define endianess in kconfig.h
+Date: Mon, 26 Feb 2018 21:22:02 +0100
+Message-Id: <20180226202145.645881375@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -48,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495973889701786?=
-X-GMAIL-MSGID: =?utf-8?q?1593496464390723071?=
+X-GMAIL-THRID: =?utf-8?q?1593496460929119249?=
+X-GMAIL-MSGID: =?utf-8?q?1593496460929119249?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,64 +59,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
+commit 101110f6271ce956a049250c907bc960030577f8 upstream.
 
-GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
-data from CPU 0 to all other CPUs, which when building a non-SMP
-kernel turns into a memcpy() with identical source and destination
-pointers:
+Build testing with LTO found a couple of files that get compiled
+differently depending on whether asm/byteorder.h gets included early
+enough or not.  In particular, include/asm-generic/qrwlock_types.h is
+affected by this, but there are probably others as well.
 
- arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
- arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          per_cpu(cpu_msrs, 0).multiplex,
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          sizeof(struct op_msr) * model->num_virt_counters);
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
- arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
- arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+The symptom is a series of LTO link time warnings, including these:
 
-I have analyzed a number of such warnings now: some are valid and the
-GCC warning is welcome. Others turned out to be false-positives, and
-GCC was changed to not warn about those any more. This is a corner case
-that is a false-positive but the GCC developers feel it's better to keep
-warning about it.
+    net/netlabel/netlabel_unlabeled.h:223: error: type of 'netlbl_unlhsh_add' does not match original declaration [-Werror=lto-type-mismatch]
+     int netlbl_unlhsh_add(struct net *net,
+    net/netlabel/netlabel_unlabeled.c:377: note: 'netlbl_unlhsh_add' was previously declared here
 
-In this case, it seems best to work around it by telling GCC
-a little more clearly that this code path is never hit with
-an IS_ENABLED() configuration check.
+    include/net/ipv6.h:360: error: type of 'ipv6_renew_options_kern' does not match original declaration [-Werror=lto-type-mismatch]
+     ipv6_renew_options_kern(struct sock *sk,
+    net/ipv6/exthdrs.c:1162: note: 'ipv6_renew_options_kern' was previously declared here
 
-Cc:stable as we also want old kernels to build cleanly with GCC-8.
+    net/core/dev.c:761: note: 'dev_get_by_name_rcu' was previously declared here
+     struct net_device *dev_get_by_name_rcu(struct net *net, const char *name)
+    net/core/dev.c:761: note: code may be misoptimized unless -fno-strict-aliasing is used
 
+    drivers/gpu/drm/i915/i915_drv.h:3377: error: type of 'i915_gem_object_set_to_wc_domain' does not match original declaration [-Werror=lto-type-mismatch]
+     i915_gem_object_set_to_wc_domain(struct drm_i915_gem_object *obj, bool write);
+    drivers/gpu/drm/i915/i915_gem.c:3639: note: 'i915_gem_object_set_to_wc_domain' was previously declared here
+
+    include/linux/debugfs.h:92:9: error: type of 'debugfs_attr_read' does not match original declaration [-Werror=lto-type-mismatch]
+     ssize_t debugfs_attr_read(struct file *file, char __user *buf,
+    fs/debugfs/file.c:318: note: 'debugfs_attr_read' was previously declared here
+
+    include/linux/rwlock_api_smp.h:30: error: type of '_raw_read_unlock' does not match original declaration [-Werror=lto-type-mismatch]
+     void __lockfunc _raw_read_unlock(rwlock_t *lock) __releases(lock);
+    kernel/locking/spinlock.c:246:26: note: '_raw_read_unlock' was previously declared here
+
+    include/linux/fs.h:3308:5: error: type of 'simple_attr_open' does not match original declaration [-Werror=lto-type-mismatch]
+     int simple_attr_open(struct inode *inode, struct file *file,
+    fs/libfs.c:795: note: 'simple_attr_open' was previously declared here
+
+All of the above are caused by include/asm-generic/qrwlock_types.h
+failing to include asm/byteorder.h after commit e0d02285f16e
+("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
+in linux-4.15.
+
+Similar bugs may or may not exist in older kernels as well, but there is
+no easy way to test those with link-time optimizations, and kernels
+before 4.14 are harder to fix because they don't have Babu's patch
+series
+
+We had similar issues with CONFIG_ symbols in the past and ended up
+always including the configuration headers though linux/kconfig.h.  This
+works around the issue through that same file, defining either
+__BIG_ENDIAN or __LITTLE_ENDIAN depending on CONFIG_CPU_BIG_ENDIAN,
+which is now always set on all architectures since commit 4c97a0c8fee3
+("arch: define CPU_BIG_ENDIAN for all fixed big endian archs").
+
+Link: http://lkml.kernel.org/r/20180202154104.1522809-2-arnd@arndb.de
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Sebor <msebor@gcc.gnu.org>
+Cc: Babu Moger <babu.moger@amd.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Nicolas Pitre <nico@linaro.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Richter <rric@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: oprofile-list@lists.sf.net
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/oprofile/nmi_int.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/kconfig.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/x86/oprofile/nmi_int.c
-+++ b/arch/x86/oprofile/nmi_int.c
-@@ -460,7 +460,7 @@ static int nmi_setup(void)
- 		goto fail;
+--- a/include/linux/kconfig.h
++++ b/include/linux/kconfig.h
+@@ -4,6 +4,12 @@
  
- 	for_each_possible_cpu(cpu) {
--		if (!cpu)
-+		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
- 			continue;
+ #include <generated/autoconf.h>
  
- 		memcpy(per_cpu(cpu_msrs, cpu).counters,
++#ifdef CONFIG_CPU_BIG_ENDIAN
++#define __BIG_ENDIAN 4321
++#else
++#define __LITTLE_ENDIAN 1234
++#endif
++
+ #define __ARG_PLACEHOLDER_1 0,
+ #define __take_second_arg(__ignored, val, ...) val
+ 
