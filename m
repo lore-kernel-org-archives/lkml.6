@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752910AbeBZM4I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:56:08 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40622 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbeBZM4E (ORCPT
+        id S1752822AbeBZM4G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:56:06 -0500
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:42899 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbeBZM4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:56:04 -0500
-X-Google-Smtp-Source: AG47ELtGfRRZeLG3/WRJcSVVNsidwtuJ1OL89KgQYeNDsZYZTTlDenjOxzaQwb4l2ct1G3kA1cRFHA==
+        Mon, 26 Feb 2018 07:56:03 -0500
+X-Google-Smtp-Source: AG47ELsvboIafYK08YQZErZs+e2kEJiYByOirW9qyX+7s/VuLYhYqp67cOxSpj28SZ4raI+hhH/bag==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: hch@lst.de, keith.busch@intel.com
 Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         jthumshirn@suse.de,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH v2 1/1] nvme: implement log page low/high offset and dwords
-Date: Mon, 26 Feb 2018 13:55:40 +0100
-Message-Id: <20180226125540.9513-2-mb@lightnvm.io>
+Subject: [PATCH v2 0/1] nvme: extend log page implementation
+Date: Mon, 26 Feb 2018 13:55:39 +0100
+Message-Id: <20180226125540.9513-1-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180226125540.9513-1-mb@lightnvm.io>
-References: <20180226125540.9513-1-mb@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -26,71 +24,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NVMe 1.2.1 extends the get log page interface to include 64 bit
-offset and increases the number of dwords to 32 bits. Implement
-for future use.
+This patch introduces support for get log page offset and extends
+the number of dwords to be 32 bits.
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
+Changes from v1:
+
+ - Suggestion from Johannes that paratheses around (size / 4) - 1 can
+   be removed.
+ - Make nvme_get_log_ext() static. Expose when the function is used by
+   lightnvm.
+ - Make sure to use unsigned long long when shifting a u64 with a
+   constant.
+
+Matias Bjørling (1):
+  nvme: implement log page low/high offset and dwords
+
  drivers/nvme/host/core.c | 36 ++++++++++++++++++++++++------------
  1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 740ceb28067c..2e9e9f973a75 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -80,11 +80,6 @@ static struct class *nvme_subsys_class;
- static void nvme_ns_remove(struct nvme_ns *ns);
- static int nvme_revalidate_disk(struct gendisk *disk);
- 
--static __le32 nvme_get_log_dw10(u8 lid, size_t size)
--{
--	return cpu_to_le32((((size / 4) - 1) << 16) | lid);
--}
--
- int nvme_reset_ctrl(struct nvme_ctrl *ctrl)
- {
- 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_RESETTING))
-@@ -2132,16 +2127,33 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	return ret;
- }
- 
-+static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-+			    u8 log_page, void *log,
-+			    size_t size, size_t offset)
-+{
-+	struct nvme_command c = { };
-+	unsigned long dwlen = size / 4 - 1;
-+
-+	c.get_log_page.opcode = nvme_admin_get_log_page;
-+
-+	if (ns)
-+		c.get_log_page.nsid = cpu_to_le32(ns->head->ns_id);
-+	else
-+		c.get_log_page.nsid = cpu_to_le32(NVME_NSID_ALL);
-+
-+	c.get_log_page.lid = log_page;
-+	c.get_log_page.numdl = cpu_to_le16(dwlen & ((1 << 16) - 1));
-+	c.get_log_page.numdu = cpu_to_le16(dwlen >> 16);
-+	c.get_log_page.lpol = cpu_to_le32(offset & ((1ULL << 32) - 1));
-+	c.get_log_page.lpou = cpu_to_le32(offset >> 32ULL);
-+
-+	return nvme_submit_sync_cmd(ctrl->admin_q, &c, log, size);
-+}
-+
- static int nvme_get_log(struct nvme_ctrl *ctrl, u8 log_page, void *log,
- 			size_t size)
- {
--	struct nvme_command c = { };
--
--	c.common.opcode = nvme_admin_get_log_page;
--	c.common.nsid = cpu_to_le32(NVME_NSID_ALL);
--	c.common.cdw10[0] = nvme_get_log_dw10(log_page, size);
--
--	return nvme_submit_sync_cmd(ctrl->admin_q, &c, log, size);
-+	return nvme_get_log_ext(ctrl, NULL, log_page, log, size, 0);
- }
- 
- static int nvme_get_effects_log(struct nvme_ctrl *ctrl)
 -- 
 2.11.0
