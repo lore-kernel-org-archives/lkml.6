@@ -1,31 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752951AbeBZLT1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:19:27 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51634 "EHLO
+        id S1752513AbeBZLVn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:21:43 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58444 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752559AbeBZLRm (ORCPT
+        with ESMTP id S1752048AbeBZLVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:17:42 -0500
+        Mon, 26 Feb 2018 06:21:41 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Barry Song <baohua@kernel.org>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT" to the asoc tree
-In-Reply-To: <20180223124117.24686-1-colin.king@canonical.com>
-Message-Id: <E1eqGmh-0005VX-8k@debutante>
-Date: Mon, 26 Feb 2018 11:17:31 +0000
+To: Olivier Moysan <olivier.moysan@st.com>
+Cc: olivier moysan <olivier.moysan@st.com>,
+        Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel@stlinux.com, linux-kernel@vger.kernel.org,
+        olivier.moysan@st.com, arnaud.pouliquen@st.com,
+        benjamin.gaignard@st.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: stm32: Add S/PDIF to SAI bindings" to the asoc tree
+In-Reply-To: <1519052437-24011-2-git-send-email-olivier.moysan@st.com>
+Message-Id: <E1eqGpT-0006EP-2M@debutante>
+Date: Mon, 26 Feb 2018 11:20:23 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT
+   ASoC: stm32: Add S/PDIF to SAI bindings
 
 has been applied to the asoc tree at
 
@@ -50,33 +53,35 @@ to this mail.
 Thanks,
 Mark
 
->From f49f49aa1541615f1f77bf2c62f184459825ed92 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 12:41:17 +0000
-Subject: [PATCH] ASoC: sirf: remove duplicated bit-wise or of
- USP_RXFIFO_THD_INT
+>From 994f46610bafd75a5881544bce9dd3acdbe3626a Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Mon, 19 Feb 2018 16:00:35 +0100
+Subject: [PATCH] ASoC: stm32: Add S/PDIF to SAI bindings
 
-Bit pattern USP_RXFIFO_THD_INT is being bit-wise or'd twice;
-remove the redundant 2nd USP_RXFIFO_THD_INT
+Add S/PDIF IEC6958 protocol support to STM32 SAI bindings.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: olivier moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sirf/sirf-usp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/st,stm32-sai.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/sirf/sirf-usp.h b/sound/soc/sirf/sirf-usp.h
-index bf0201cb15bc..e22e13a619e8 100644
---- a/sound/soc/sirf/sirf-usp.h
-+++ b/sound/soc/sirf/sirf-usp.h
-@@ -154,7 +154,7 @@
- 					USP_RX_IO_DMA_INT|\
- 					USP_RXFIFO_FULL_INT|\
- 					USP_RXFIFO_THD_INT|\
--					USP_RXFIFO_THD_INT|USP_RX_TIMEOUT_INT)
-+					USP_RX_TIMEOUT_INT)
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
+index b1acc1a256ba..f301cdf0b7e6 100644
+--- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
++++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
+@@ -45,6 +45,12 @@ SAI subnodes Optional properties:
+ 	This property sets SAI sub-block as slave of another SAI sub-block.
+ 	Must contain the phandle and index of the sai sub-block providing
+ 	the synchronization.
++  - st,iec60958: support S/PDIF IEC6958 protocol for playback
++	IEC60958 protocol is not available for capture.
++	By default, custom protocol is assumed, meaning that protocol is
++	configured according to protocol defined in related DAI link node,
++	such as i2s, left justified, right justified, dsp and pdm protocols.
++	Note: ac97 protocol is not supported by SAI driver
  
- #define USP_INT_ALL        0x1FFF
- 
+ The device node should contain one 'port' child node with one child 'endpoint'
+ node, according to the bindings defined in Documentation/devicetree/bindings/
 -- 
 2.16.1
