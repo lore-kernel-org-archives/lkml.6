@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeBZVEJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:04:09 -0500
-Received: from sauhun.de ([88.99.104.3]:38399 "EHLO pokefinder.org"
+        id S1751245AbeBZVMv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:12:51 -0500
+Received: from mga02.intel.com ([134.134.136.20]:1819 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752241AbeBZUVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 15:21:17 -0500
-Date: Mon, 26 Feb 2018 21:21:15 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: George Cherian <george.cherian@cavium.com>
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
-Subject: Re: [PATCH 3/4] i2c: xlp9xx: report SMBus block read functionality
-Message-ID: <20180226202115.2imhdxo3p2q5amgq@ninjato>
-References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com>
- <1516253964-4615-3-git-send-email-george.cherian@cavium.com>
+        id S1750921AbeBZVMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 16:12:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="20474556"
+Subject: Re: [PATCH v12 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if
+ CONFIG_ARCH_HAS_PKEYS is enabled
+To: Ram Pai <linuxram@us.ibm.com>, mpe@ellerman.id.au, mingo@redhat.com,
+        akpm@linux-foundation.org
+References: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
+ <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <a5481355-9630-7f63-15ce-2b12d1520979@intel.com>
+Date: Mon, 26 Feb 2018 13:12:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ykxogx732rnljfuf"
-Content-Disposition: inline
-In-Reply-To: <1516253964-4615-3-git-send-email-george.cherian@cavium.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/21/2018 03:52 PM, Ram Pai wrote:
+> VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+> is enabled. Powerpc also needs these bits. Hence lets define the
+> VM_PKEY_BITx bits for any architecture that enables
+> CONFIG_ARCH_HAS_PKEYS.
 
---ykxogx732rnljfuf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Your fixed version looks fine to me.
 
-On Thu, Jan 18, 2018 at 05:39:23AM +0000, George Cherian wrote:
-> From: Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
->=20
-> Report SMBus block read functionality which is actually supported.
->=20
-> Signed-off-by: Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
-
-Applied to for-next but squashed it with patch 2 because I'd think you
-also want that fix before enabling it in 'functionality'. Let me know if
-you disagree.
-
-
---ykxogx732rnljfuf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUbDsACgkQFA3kzBSg
-KbYCNw/8Ci4sV8otTQkJvGY/EAtKFLXkIRtCiFvgm2AH1V7tVZ/qdRzuThmHvcOc
-ilBrFbsR3hO6B6s/H7O62jTQEErnbRzcSmAN2+zsq0DoDCsh/Saz95riF3S4lMi9
-lrBKh9yYXPHgWX3ljY4yO77YidxZsMdJdLh46rst1RW871V+du5Mm7rXG7lVayfq
-lvhlORcOnKQ9SD+iQO4I184sm3jN46Rah8DM4PCVXENd/vzquCU7/S8zUucG1pNI
-fWYH554DHxtBWiso2ovpKWBzXdoeSrrsZA2KjJZRJAGVT6zZ1w2MOedYeWOWgxFC
-v996SCGUr4jSBWcp0dHxBBJdMj5YfZxmMh9S6wU+d3LGvmXv01As8k/NxefCIF1K
-n7LTmso5slLY0xK7u01HnKU7P3bqSqLgO0NExJtQ4hNmkHqjoFb5sNJskF1hXTDq
-KiclFQ/KKN6jWRo5L5nOihLIl7fWBXXPpTpNBWqNvdw2hMJWf7pdwQDkGAtLHmzx
-wgZMOQFApLKXwLzNfvOXJ43CqJAx9nGPE1fKY5vzlTXoW2hn3VAW6S5jq6RZQ84u
-oGV9ZK0dvq4SWfTpjqNyry8etBpRX4rCsh9DsxARzGBYeb+nvn6LvF9GkrBSHgPE
-HHIJ9Y8Ci7HvTteccG0bGwh9mKCJTBUDQ1aMzlj3GmOY8viiY6M=
-=npub
------END PGP SIGNATURE-----
-
---ykxogx732rnljfuf--
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
