@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ZFoQHcw9jC5zQoCaNqtKSBb7nVGZBUbEWR1wQrYAa+nkSWyK8QR9r3uyG9Wak6clg05sA
-ARC-Seal: i=1; a=rsa-sha256; t=1519676500; cv=none;
+X-Google-Smtp-Source: AG47ELuwbHSy/nRu/9wgOdUyS8klV1PlAHAfkD6eMVpjhaXsZptgcmOCUjPZKdsDPw2aFj4iRPa4
+ARC-Seal: i=1; a=rsa-sha256; t=1519676497; cv=none;
         d=google.com; s=arc-20160816;
-        b=0ENMNXSbR4d+l8FWDj28hWEzw6P00ocgJ5DEgmvXhWVSFtE5G5gnhizoipG8lkpXzG
-         CI3dIwgoLJ4e2cnOXfWBFPja0HAeKdYv8aKgDykv7zy7t9+TJKXmygnRf83jjHf2upb9
-         20eTga97vQeYWjXBdSdu5xNXLfgdF5b+7QuuF7s3SdefwajgCmmm1IkxNjFpwqvVF+5b
-         yWBzw5zTNZTsjlK1MGtmQBVL6iUF/krqtLPkmBsruqENAujbZ7stRRuswoXrTTCR+XBM
-         U7ZS+SPbDrQ+N1kyX2LBYN4U4uhZOYHMpKT7qdCweESoLFZaUaGpELBNG5bm1xCSXWom
-         8o+g==
+        b=rWzGN1N6WUBtzWsKhkYew+CJgN3s194NSf4f8kbH7F3cTJubLtb3m2oshYrOk39HR5
+         Odd+B28JgK89cuxNP04j3eN9Lphv02J6HsIPRiywAmtA3uibMHOaFZGNW8P7Usb78Wos
+         QDxiKHP9Y9iH908c9LQCNaknf31jf+HtSoqH1i9yKZt+BAEa1/Wl/Sg1VOCiz3xTk+47
+         3MAgrSSh7uaHFWvlC1WpcDxsohUjWwVdk1JORJIt/KcsY7jO0DsyLiHq9kSAJ5zxpOXz
+         3iXsmSmryGUBD60rvLK7gYawuwj7QSsNGpj8UimlEqzoRpS/vT16jedmbzLEOHSTKiDL
+         nDPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TSDvl5jBq59CLlRJ75c2zQUXjqzb+0WDKIPCLpfe434=;
-        b=R1z432j8if+8F2gcZh6LLDk+54ffHB0dlyqH1HPpHBbqcCtZWOUUB9IRFZBavRgct8
-         1MgTw7UY6/bX+s6C7oZWvqc0dtHISxqdo/isrHMSyYgHukn6ntXm8GhiCBjMwKrkSlgw
-         tTpYYj4z49L1K2uU1QY34n2DVFbmW/sD8McBX9iNSybINuBIHELSalmeti+qDXJKVTog
-         rfLyaFVl9RH6qKke22PHKg4kbwp6CInFFGf93QwyHkjanVQrk2WoDvDHUz6OS8I8v92C
-         7yQZ1q2K4SHZ0qeo0RwscAzarMzYOzZ9Alq6USvMngibOl8mAw3CmYX1HfTsHRNqB7bY
-         ux7A==
+        bh=7wU8ynKX5FUmd+2+4oUjmzoqRHtXoTNiPHkTcSlu/0M=;
+        b=dwUUAZKgB6QyzVSmV0K4vKWmk4PMbW02wog1gngPOoKWdZc4sZKhyN1Z9fnp34lxkf
+         fQr0Lbai3zJRBybeLzr0e3aBd5gVVHq4C0KnMjVzJstMnoROBN81zk2VUMcK6Rik2JyG
+         kyHOrLUYUoNXA9psd6368fTKoq2eNN66U+mlgTMCNP6SDqN/YG+Dk3Wufq/3D2WX0Am1
+         1k+olRhAmlevDIPuRPcROOQ08OxT8ma1jZykDgagP+C6c9fnCKG7gIL3o2qJi12C1yh1
+         9hO5+XOggzCb1oUZU+4pEQnoYbc/0y/z+ewnDfyHyJ46Hf4Wxnjm4rQ+ZRnEmN4oVhiD
+         h52g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Karsten Koop <kkoop@ld-didactic.de>
-Subject: [PATCH 4.9 19/39] usb: ldusb: add PIDs for new CASSY devices supported by this driver
-Date: Mon, 26 Feb 2018 21:20:40 +0100
-Message-Id: <20180226201644.523383405@linuxfoundation.org>
+	Thinh Nguyen <thinhn@synopsys.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.9 18/39] usb: dwc3: gadget: Set maxpacket size for ep0 IN
+Date: Mon, 26 Feb 2018 21:20:39 +0100
+Message-Id: <20180226201644.476471017@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496011031039879?=
-X-GMAIL-MSGID: =?utf-8?q?1593496306400624762?=
+X-GMAIL-THRID: =?utf-8?q?1593495949068185016?=
+X-GMAIL-MSGID: =?utf-8?q?1593496303201893931?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,66 +49,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Karsten Koop <kkoop@ld-didactic.de>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit 52ad2bd8918158266fc88a05f95429b56b6a33c5 upstream.
+commit 6180026341e852a250e1f97ebdcf71684a3c81b9 upstream.
 
-This patch adds support for new CASSY devices to the ldusb driver. The
-PIDs are also added to the ignore list in hid-quirks.
+There are 2 control endpoint structures for DWC3. However, the driver
+only updates the OUT direction control endpoint structure during
+ConnectDone event. DWC3 driver needs to update the endpoint max packet
+size for control IN endpoint as well. If the max packet size is not
+properly set, then the driver will incorrectly calculate the data
+transfer size and fail to send ZLP for HS/FS 3-stage control read
+transfer.
 
-Signed-off-by: Karsten Koop <kkoop@ld-didactic.de>
-Cc: stable <stable@vger.kernel.org>
+The fix is simply to update the max packet size for the ep0 IN direction
+during ConnectDone event.
+
+Cc: stable@vger.kernel.org
+Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-core.c   |    3 +++
- drivers/hid/hid-ids.h    |    3 +++
- drivers/usb/misc/ldusb.c |    6 ++++++
- 3 files changed, 12 insertions(+)
+ drivers/usb/dwc3/gadget.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2443,6 +2443,9 @@ static const struct hid_device_id hid_ig
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -608,6 +608,9 @@
- #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033
- #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035
- #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038
-+#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040
-+#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042
-+#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043
- #define USB_DEVICE_ID_LD_JWM		0x1080
- #define USB_DEVICE_ID_LD_DMMP		0x1081
- #define USB_DEVICE_ID_LD_UMIP		0x1090
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -46,6 +46,9 @@
- #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033	/* USB Product ID of Micro-CASSY Time (reserved) */
- #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035	/* USB Product ID of Micro-CASSY Temperature */
- #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038	/* USB Product ID of Micro-CASSY pH */
-+#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040	/* USB Product ID of Power Analyser CASSY */
-+#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042	/* USB Product ID of Converter Controller CASSY */
-+#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043	/* USB Product ID of Machine Test CASSY */
- #define USB_DEVICE_ID_LD_JWM		0x1080	/* USB Product ID of Joule and Wattmeter */
- #define USB_DEVICE_ID_LD_DMMP		0x1081	/* USB Product ID of Digital Multimeter P (reserved) */
- #define USB_DEVICE_ID_LD_UMIP		0x1090	/* USB Product ID of UMI P */
-@@ -88,6 +91,9 @@ static const struct usb_device_id ld_usb
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
-+	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
-+	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
-+	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
- 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2528,6 +2528,8 @@ static void dwc3_gadget_conndone_interru
+ 		break;
+ 	}
+ 
++	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
++
+ 	/* Enable USB2 LPM Capability */
+ 
+ 	if ((dwc->revision > DWC3_REVISION_194A) &&
