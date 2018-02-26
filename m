@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtDm+TEN7qakYI1uSswCcHdraNrGlfClc4yzZTEksjQb07wFH8L0fU+tZsAsCH84Om2In7e
-ARC-Seal: i=1; a=rsa-sha256; t=1519676488; cv=none;
+X-Google-Smtp-Source: AH8x225x7ydbiGX+zBJ4LGYHCe4yJJ7M4rcqsSnrNTKBili9ievSFeOzU3hprt86MWhzm4TXMXyq
+ARC-Seal: i=1; a=rsa-sha256; t=1519676485; cv=none;
         d=google.com; s=arc-20160816;
-        b=vnLytS6gPRcQ61/JQm096qiKkAzAcmNQOCGtuyFioP7eNOjloCyFffNdPoMP9AHClZ
-         ST2jWsUFDcFWdsEB24AHcInGVGk99c2zM16u3UIVEMO4yh83AJOywVXe5sDRuna7YNGo
-         E98ljfVK9eBGcvv9sa6k2bsIsvpkyk9iurC7zTQK6MpHp1B0/eCVWHFo2OemOYukJMeI
-         2H2UsLSCOkVJOqlLQrsRZcbjyg+HKWY3lHvi+OfQsRynw8bPbZzuKCXD0IQTV6C/sk+d
-         x1+QwpUgdVzhS5PvsTCZsSAHDUwjmFM/7Dk9sZtZJ1u2fNiyb6IzPsJa+iQjLRd5hDa3
-         /Cog==
+        b=mCAZVN9T17739UvD+td6coQ9Sdz3UxB29rFCGmWnb2NkoDpJRNFCG22xVSe7o9rmHO
+         0HPtSeXCGkoSQunAOjI3tfJwL3ZyDC7BcxlwtIV6Zhg9kHFa9td20RiQ4iV76ooxoOF1
+         F2qvTB+t1PBPqHwuhwz0tZEcDIJY4iW58luDv+89YMCqVS8FCyyia3OAfZ7Vaf9u1ooy
+         ywiXTSL+qQreH2Sd1KHJ03swRA1LFoXY2foufxZa180121VYCL0PSF48flwFoV4ucuA/
+         lprKmydv7Bp45G5GbC32JASVhuxug3aMaIx9h9q42J2LwRQ16PcV5aF3KpnqD9XzKGlA
+         Ezag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/QB82oLoZFAWMiPh+eiU2NKbfgr0lHGNuXMvusdLGg0=;
-        b=yiPrFqfU/WJl1Q0cm2Du/5p0iVwHX65NAvJ+eW2Ze2RL4lvYyt4QSpDu9FXz7Cy9NR
-         0FF978X8qxQ62irn7zWDHcXHWG1CQe4ZRmReKmpP8XojjRbToJh8oHbbjhz6oxj9s+KN
-         39t3sNbKH7Np223sB1j19yHSENDHK7dg8dBD0yP0RYZ/f7nwWUGhNGzIzdM7WGLX84sp
-         WRt028Ey7d78SIcGiVTgR3XR7lGIpbRXhkTaa+EPclcssf1FN5t+VyNUd1JkaipaCQjI
-         rkJDsDiLbz+hkYDaQoPCTHjHHqoNKQipWpEthHkYMrhKkGnTtvZ3wp7rzgieCX+zQGHj
-         IRvQ==
+        bh=if9oOJ6fXovO1Tm8YiXbFAI0SQs3x9VXGdCe6S5r86Q=;
+        b=BDNK37Bgf6GzrYJzBMOtIGV44J0GR7q5nS/EdTpesqPHbDK/smqGpnz1+XwXwyZWJV
+         iTolfub0/xE9/xrSZhysp0wYpXnn3Vbcy2kg8tAGsYU8DyT3J0FoBzoAf1f33qXRRll3
+         lYyajjT4ncWVm1y8a1rOw8cfsTmdPNIrsjBZG6uNjBmcXwcjHaklfIBd2iMeY8IAanqa
+         KlCVU/i/t26l3Z5bgdqOwiP6jYW1ZPmGfx/3aYTJNMXfFX0Kcet4OuHwuwIyE2vttsXC
+         +HCXzmR/71pDkLE1PSAprQxuPUSy6vnjIztE2IiRb6ONPjgQoXsyPB4I53iIDLi3GxNM
+         XR9w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Weiser <michael.weiser@gmx.de>,
-	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 15/39] arm64: Disable unhandled signal log messages by default
-Date: Mon, 26 Feb 2018 21:20:36 +0100
-Message-Id: <20180226201644.357861004@linuxfoundation.org>
+	Alan Stern <stern@rowland.harvard.edu>,
+	Aman Deep <aman.deep@samsung.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH 4.9 14/39] usb: ohci: Proper handling of ed_rm_list to handle race condition between usb_kill_urb() and finish_unlinks()
+Date: Mon, 26 Feb 2018 21:20:35 +0100
+Message-Id: <20180226201644.311208882@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495943344886080?=
-X-GMAIL-MSGID: =?utf-8?q?1593496293856113882?=
+X-GMAIL-THRID: =?utf-8?q?1593495994383041854?=
+X-GMAIL-MSGID: =?utf-8?q?1593496290916100925?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,57 +50,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Weiser <michael.weiser@gmx.de>
+From: AMAN DEEP <aman.deep@samsung.com>
 
-commit 5ee39a71fd89ab7240c5339d04161c44a8e03269 upstream.
+commit 46408ea558df13b110e0866b99624384a33bdeba upstream.
 
-aarch64 unhandled signal kernel messages are very verbose, suggesting
-them to be more of a debugging aid:
+There is a race condition between finish_unlinks->finish_urb() function
+and usb_kill_urb() in ohci controller case. The finish_urb calls
+spin_unlock(&ohci->lock) before usb_hcd_giveback_urb() function call,
+then if during this time, usb_kill_urb is called for another endpoint,
+then new ed will be added to ed_rm_list at beginning for unlink, and
+ed_rm_list will point to newly added.
 
-sigsegv[33]: unhandled level 2 translation fault (11) at 0x00000000, esr
-0x92000046, in sigsegv[400000+71000]
-CPU: 1 PID: 33 Comm: sigsegv Tainted: G        W        4.15.0-rc3+ #3
-Hardware name: linux,dummy-virt (DT)
-pstate: 60000000 (nZCv daif -PAN -UAO)
-pc : 0x4003f4
-lr : 0x4006bc
-sp : 0000fffffe94a060
-x29: 0000fffffe94a070 x28: 0000000000000000
-x27: 0000000000000000 x26: 0000000000000000
-x25: 0000000000000000 x24: 00000000004001b0
-x23: 0000000000486ac8 x22: 00000000004001c8
-x21: 0000000000000000 x20: 0000000000400be8
-x19: 0000000000400b30 x18: 0000000000484728
-x17: 000000000865ffc8 x16: 000000000000270f
-x15: 00000000000000b0 x14: 0000000000000002
-x13: 0000000000000001 x12: 0000000000000000
-x11: 0000000000000000 x10: 0008000020008008
-x9 : 000000000000000f x8 : ffffffffffffffff
-x7 : 0004000000000000 x6 : ffffffffffffffff
-x5 : 0000000000000000 x4 : 0000000000000000
-x3 : 00000000004003e4 x2 : 0000fffffe94a1e8
-x1 : 000000000000000a x0 : 0000000000000000
+When finish_urb() is completed in finish_unlinks() and ed->td_list
+becomes empty as in below code (in finish_unlinks() function):
 
-Disable them by default, so they can be enabled using
-/proc/sys/debug/exception-trace.
+        if (list_empty(&ed->td_list)) {
+                *last = ed->ed_next;
+                ed->ed_next = NULL;
+        } else if (ohci->rh_state == OHCI_RH_RUNNING) {
+                *last = ed->ed_next;
+                ed->ed_next = NULL;
+                ed_schedule(ohci, ed);
+        }
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+The *last = ed->ed_next will make ed_rm_list to point to ed->ed_next
+and previously added ed by usb_kill_urb will be left unreferenced by
+ed_rm_list. This causes usb_kill_urb() hang forever waiting for
+finish_unlink to remove added ed from ed_rm_list.
+
+The main reason for hang in this race condtion is addition and removal
+of ed from ed_rm_list in the beginning during usb_kill_urb and later
+last* is modified in finish_unlinks().
+
+As suggested by Alan Stern, the solution for proper handling of
+ohci->ed_rm_list is to remove ed from the ed_rm_list before finishing
+any URBs. Then at the end, we can add ed back to the list if necessary.
+
+This properly handle the updated ohci->ed_rm_list in usb_kill_urb().
+
+Fixes: 977dcfdc6031 ("USB: OHCI: don't lose track of EDs when a controller dies")
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Aman Deep <aman.deep@samsung.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/traps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/ohci-q.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -50,7 +50,7 @@ static const char *handler[]= {
- 	"Error"
- };
+--- a/drivers/usb/host/ohci-q.c
++++ b/drivers/usb/host/ohci-q.c
+@@ -1018,6 +1018,8 @@ skip_ed:
+ 		 * have modified this list.  normally it's just prepending
+ 		 * entries (which we'd ignore), but paranoia won't hurt.
+ 		 */
++		*last = ed->ed_next;
++		ed->ed_next = NULL;
+ 		modified = 0;
  
--int show_unhandled_signals = 1;
-+int show_unhandled_signals = 0;
+ 		/* unlink urbs as requested, but rescan the list after
+@@ -1076,21 +1078,22 @@ rescan_this:
+ 			goto rescan_this;
  
- /*
-  * Dump out the contents of some kernel memory nicely...
+ 		/*
+-		 * If no TDs are queued, take ED off the ed_rm_list.
++		 * If no TDs are queued, ED is now idle.
+ 		 * Otherwise, if the HC is running, reschedule.
+-		 * If not, leave it on the list for further dequeues.
++		 * If the HC isn't running, add ED back to the
++		 * start of the list for later processing.
+ 		 */
+ 		if (list_empty(&ed->td_list)) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed->state = ED_IDLE;
+ 			list_del(&ed->in_use_list);
+ 		} else if (ohci->rh_state == OHCI_RH_RUNNING) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed_schedule(ohci, ed);
+ 		} else {
+-			last = &ed->ed_next;
++			ed->ed_next = ohci->ed_rm_list;
++			ohci->ed_rm_list = ed;
++			/* Don't loop on the same ED */
++			if (last == &ohci->ed_rm_list)
++				last = &ed->ed_next;
+ 		}
+ 
+ 		if (modified)
