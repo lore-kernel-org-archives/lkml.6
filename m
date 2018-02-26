@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2246fWdnR3THFuv9m5Lm4oFAOZxxU+GBi8PAD04QTMbYUOYVvDzLvcPvgw+ujUfQaUL1i5zp
-ARC-Seal: i=1; a=rsa-sha256; t=1519676678; cv=none;
+X-Google-Smtp-Source: AG47ELv99/uTEaSDrxQUrBjJi++U5fj0ZC43wOugYpS6GHLQVKwL3GxDr02+eENmlap5qDj5oOuC
+ARC-Seal: i=1; a=rsa-sha256; t=1519676675; cv=none;
         d=google.com; s=arc-20160816;
-        b=xHHKlKjSnvPCpjdaPL3TFThUJyj7NlP4cRKVMcV1Rc4+80EwnCZj3e9bHW/wYiP6ct
-         CnglLJqxits5Suoj+9NzXHz51k/WM4gf35ITT3ganlxfORwFQH6cMmSnbaUWCmw8O452
-         3XieEhJPYqczBkqPV1P2T4pkDZdjAE6SGs94CidPZFi2TIs8QyZ2rgLXFfomUSqgn4N7
-         J9HFabpocK0aTHI2RYmoINiispyZK/wG8/jnNAdgN7Ql0jSdqbbp7mRRD64XILQ7PDjN
-         jvq6kFSvgFu4A34T7Be/PC5k0rybiVuyjILNJVBKPXMx5jI0AcZX8uyypp982sS8Q5bo
-         SMrg==
+        b=B46hgTltqf/v/bnPWoEaRRG5wX1ObaEIhj9W2gByb3nYvRmW/rN0mwXk3m+UtmYegO
+         NohZoUjLXikq0F6/XUGzi+JbndQ/BZfZOpxtiwFL7czc2StYUoV2kDeRiP8hK/igzEYG
+         +DS465baqq+dquI7oNnqdznCpS8YjNVr9H2T9JMKX7Pw0QlOTapfysxuRJsLX5Dr9vWf
+         OMlfhbhZZ1xN0weJcGhlBGP6M5YJzW+XJzrfxOc3eYKAnNB9kTc2jZHRCRCK6+NKb9fl
+         khncnTfUso/kvnlvd6rXpeQ2McUrvKZJGEV0R7uVfy2CIfQW5nmPGaHMKNlhrcod5Ax2
+         whZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ghOdayHawiZQzTx3dy8r1e45N6mAEQ10Ua9slkZ8jHQ=;
-        b=y8iPuv7Aycir/mylup0wVKhGDWOGDx5iEbXqv4/3gnkgwGiBS7CEcQtMxeE8BSwzNO
-         ucHWJbF9fnnW9G9WQOPxq/pb0v4HCDYElu+lVswCSvo/3RrssYuokrgy+S15Do+Tl0p4
-         +M//COAaRoAYewKD7RQ/WYuej9JpjZgb5ze/uI/nxVSoKXbTNZNDCG2ex1kboy0794fx
-         Q2YBgP/4aPlMYfaz/86E97xB2Wq0+OeOqwylTuJ2HFxzRUIaIgrGNMjITql/bDpEW44h
-         ODEtV3/tZinrKjzxmtiFUcypwRE/TF1IFys/sz0ZeBl3QpSCxejfg2ZitCE3g+LBtUQu
-         bnUg==
+        bh=/VvjL1CR8fYSJKNgwusDLHpQSqJkzAAFrK5PnLQL1rc=;
+        b=1KuCyc0VRhEiY6oncasbhY43ITfnvAZrpDzxlin4YtH5UTusYznSYbB42XjeI4Dx+5
+         y8sAHIHUlQ67xJX1NjtFOhFE5neibuOSgEZFZAKjSZlp7jTtEo1TVNW46b9wPix5z1gt
+         jzArnuA5XXHNO7+83maRhKOKa8QpI0Rhd0UbaU9IZkiHvcxgdDPRDsrT2g0Iu5n6rmOg
+         x/uanzgzbCGCVx5j4IQgLz4MfFm0Gg/7RO4wQndWIHL0RuLkjhwF747nw4OFJPqrfG63
+         liRAnr8XhAt1ajdUwtx1u4gzFs3ZtGbvnD5pUDhG1uxxMKL9weCivf3m4Nhj9wsdqpWg
+         BYOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	kbuild test robot <lkp@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 04/54] MIPS: boot: Define __ASSEMBLY__ for its.S build
-Date: Mon, 26 Feb 2018 21:21:41 +0100
-Message-Id: <20180226202144.593307237@linuxfoundation.org>
+	Will Deacon <will.deacon@arm.com>,
+	Michael Weiser <michael.weiser@gmx.de>
+Subject: [PATCH 4.14 33/54] arm64: Remove unimplemented syscall log message
+Date: Mon, 26 Feb 2018 21:22:10 +0100
+Message-Id: <20180226202146.045950031@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496492959707345?=
-X-GMAIL-MSGID: =?utf-8?q?1593496492959707345?=
+X-GMAIL-THRID: =?utf-8?q?1593496489575231525?=
+X-GMAIL-MSGID: =?utf-8?q?1593496489575231525?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Michael Weiser <michael.weiser@gmx.de>
 
-commit 0f9da844d87796ac31b04e81ee95e155e9043132 upstream.
+commit 1962682d2b2fbe6cfa995a85c53c069fadda473e upstream.
 
-The MIPS %.its.S compiler command did not define __ASSEMBLY__, which meant
-when compiler_types.h was added to kconfig.h, unexpected things appeared
-(e.g. struct declarations) which should not have been present. As done in
-the general %.S compiler command, __ASSEMBLY__ is now included here too.
+Stop printing a (ratelimited) kernel message for each instance of an
+unimplemented syscall being called. Userland making an unimplemented
+syscall is not necessarily misbehaviour and to be expected with a
+current userland running on an older kernel. Also, the current message
+looks scary to users but does not actually indicate a real problem nor
+help them narrow down the cause. Just rely on sys_ni_syscall() to return
+-ENOSYS.
 
-The failure was:
-
-    Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
-    FATAL ERROR: Unable to parse input tree
-    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
-    /usr/bin/mkimage Can't add hashes to FIT blob
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: 28128c61e08e ("kconfig.h: Include compiler types to avoid missed struct attributes")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/boot/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/traps.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
---- a/arch/mips/boot/Makefile
-+++ b/arch/mips/boot/Makefile
-@@ -126,6 +126,7 @@ $(obj)/vmlinux.its.S: $(addprefix $(srct
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -573,14 +573,6 @@ asmlinkage long do_ni_syscall(struct pt_
+ 	}
+ #endif
  
- quiet_cmd_cpp_its_S = ITS     $@
-       cmd_cpp_its_S = $(CPP) $(cpp_flags) -P -C -o $@ $< \
-+			-D__ASSEMBLY__ \
- 		        -DKERNEL_NAME="\"Linux $(KERNELRELEASE)\"" \
- 			-DVMLINUX_BINARY="\"$(3)\"" \
- 			-DVMLINUX_COMPRESSION="\"$(2)\"" \
+-	if (show_unhandled_signals_ratelimited()) {
+-		pr_info("%s[%d]: syscall %d\n", current->comm,
+-			task_pid_nr(current), regs->syscallno);
+-		dump_instr("", regs);
+-		if (user_mode(regs))
+-			__show_regs(regs);
+-	}
+-
+ 	return sys_ni_syscall();
+ }
+ 
