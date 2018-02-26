@@ -1,328 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeBZIVR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:21:17 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45021 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751522AbeBZIVN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:21:13 -0500
-X-Google-Smtp-Source: AH8x22699v4A2dCspHJA4ePcpDmXk7VlDMX5BjFy08nSNrazRAdUBt2RZTTdEn8K9+Dm5ePORsDB8w==
-Subject: Re: [PATCH 0/9] drm/xen-front: Add support for Xen PV display
- frontend
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <4c7e6f65-1787-3815-22b5-f9495e388c06@gmail.com>
-Date: Mon, 26 Feb 2018 10:21:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751608AbeBZIWx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:22:53 -0500
+Received: from mga01.intel.com ([192.55.52.88]:14654 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751998AbeBZIWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 03:22:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="20374167"
+From: "Huang\, Ying" <ying.huang@intel.com>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH RESEND 1/2] mm: swap: clean up swap readahead
+References: <20180220085249.151400-1-minchan@kernel.org>
+        <20180220085249.151400-2-minchan@kernel.org>
+        <874lm83zho.fsf@yhuang-dev.intel.com>
+        <20180226045617.GA112402@rodete-desktop-imager.corp.google.com>
+        <87d10stjk5.fsf@yhuang-dev.intel.com>
+        <20180226054104.GC112402@rodete-desktop-imager.corp.google.com>
+Date: Mon, 26 Feb 2018 16:22:41 +0800
+In-Reply-To: <20180226054104.GC112402@rodete-desktop-imager.corp.google.com>
+        (Minchan Kim's message of "Mon, 26 Feb 2018 14:41:04 +0900")
+Message-ID: <87zi3wrwha.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-**
-
-*Hi, all!*
-
-*
-
-Last *Friday* some concerns on #dri-devel were raised wrt "yet
-
-another driver" for Xen and why not virtio-gpu. Let me highlight
-
-on why we need a new paravirtualized driver for Xen and why we
-
-can't just use virtio. Hope this helps the communities (both Xen
-
-and DRI) to have better understanding of this work and our motivation.
-
-
-Disclaimer: some or all of the below may sound weak argument or
-
-not 100% correct, so any help on clarifying the below is more
-
-than welcome ;)
-
-
-1. First of all, we are targeting ARM embedded use-cases and for
-
-ARM we do not use QEMU [1]: "...Xen on ARM is not just a straight
-
-1:1 port of x86 Xen... Xen on ARM does not need QEMU because it does
-
-not do any emulation. It accomplishes the goal by exploiting
-
-virtualization support in hardware as much as possible and using
-
-paravirtualized interfaces for IO."
-
-
-That being said it is still possible to run virtio-gpu and Xen+QEMU: [2]
-
-
-In this case QEMU can be used for device virtualization, e.g. network,
-
-block, console. But these already exist as Xen para-virtualized drivers
-
-again eliminating the need for QEMU: typical ARM system runs 
-para-virtualized
-
-drivers for network, block, console etc.
-
-
-2. virtio-gpu requires PCI/MMIO emulation
-
-virtio-gpu (virtio-gpu-pci) require virtio-pci, but para-virtualized device
-
-drivers do not need this.
-
-
-3. No need for 3d/virgl.
-
-There are use-cases which either do not use OpenGL at all or will use
-
-custom virtualization solutions allowing sharing of a real GPU with guest,
-
-e.g. vGPU approach.
-
-
-4. More freedom for buffer allocation.
-
-As of now virtio-gpu is only capable of allocating buffers via TTM, while
-
-there are use-cases where we need to have more freedom:
-
-for systems which do not provide IOMMU support, but having specific
-
-requirements for display buffers, it is possible to allocate such buffers
-
-at backend side and share those with the frontend driver.
-
-For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
-
-physically contiguous memory (in PA, not IPA), this allows implementing
-
-zero-copying use-cases.
-
-
-5. Zero-copying support at backend side
-
-Having native Xen implementation allows implementing zero-copying use-cases
-
-on backend side with the help of supporting driver DRM driver [3] which we
-
-hope to upstream as well (it is not yet ready in terms of code cleanup).
-
-
-6. QEMU backends for virtio-gpu cannot be used as is, e.g. guest displays
-
-could be just a part of the final user experience. Thus, a QEMU backend
-
-must be modified to interact, for example, with Automotive Grade Linux
-
-display manager. So, QEMU part needs modifications.
-
-In our use-case we have a backend which supports multi-touch and guest
-
-display(s) and running either as a weston client (which is not supported
-
-by QEMU at the moment?) or KMS/DRM client. This allows us to enable much
-
-more use-cases**without the need to run QEMU.
-
-*
-
-*Thank you,*
-
-**Oleksandr Andrushchenko*
-*
-
-*
-*
-
-*[1] 
-https://wiki.xen.org/wiki/Xen_ARM_with_Virtualization_Extensions_whitepaper*
-
-*
-
-[2] https://elinux.org/R-Car/Virtualization
-
-[3] 
-https://github.com/xen-troops/linux/blob/ces2018/drivers/gpu/drm/xen/xen_drm_zcopy_drv.c
-
-
-*
-
-
-On 02/21/2018 10:03 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Minchan Kim <minchan@kernel.org> writes:
+
+> On Mon, Feb 26, 2018 at 01:18:50PM +0800, Huang, Ying wrote:
+>> Minchan Kim <minchan@kernel.org> writes:
+>> 
+>> > On Fri, Feb 23, 2018 at 04:02:27PM +0800, Huang, Ying wrote:
+>> >> <minchan@kernel.org> writes:
+>> >> [snip]
+>> >> 
+>> >> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+>> >> > index 39ae7cfad90f..c56cce64b2c3 100644
+>> >> > --- a/mm/swap_state.c
+>> >> > +++ b/mm/swap_state.c
+>> >> > @@ -332,32 +332,38 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
+>> >> >  			       unsigned long addr)
+>> >> >  {
+>> >> >  	struct page *page;
+>> >> > -	unsigned long ra_info;
+>> >> > -	int win, hits, readahead;
+>> >> >  
+>> >> >  	page = find_get_page(swap_address_space(entry), swp_offset(entry));
+>> >> >  
+>> >> >  	INC_CACHE_INFO(find_total);
+>> >> >  	if (page) {
+>> >> > +		bool vma_ra = swap_use_vma_readahead();
+>> >> > +		bool readahead = TestClearPageReadahead(page);
+>> >> > +
+>> >> 
+>> >> TestClearPageReadahead() cannot be called for compound page.  As in
+>> >> 
+>> >> PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
+>> >> 	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
+>> >> 
+>> >> >  		INC_CACHE_INFO(find_success);
+>> >> >  		if (unlikely(PageTransCompound(page)))
+>> >> >  			return page;
+>> >> > -		readahead = TestClearPageReadahead(page);
+>> >> 
+>> >> So we can only call it here after checking whether page is compound.
+>> >
+>> > Hi Huang,
+>> >
+>> > Thanks for cathing this.
+>> > However, I don't see the reason we should rule out THP page for
+>> > readahead marker. Could't we relax the rule?
+>> >
+>> > I hope we can do so that we could remove PageTransCompound check
+>> > for readahead marker, which makes code ugly.
+>> >
+>> > From 748b084d5c3960ec2418d8c51a678aada30f1072 Mon Sep 17 00:00:00 2001
+>> > From: Minchan Kim <minchan@kernel.org>
+>> > Date: Mon, 26 Feb 2018 13:46:43 +0900
+>> > Subject: [PATCH] mm: relax policy for PG_readahead
+>> >
+>> > This flag is in use for anon THP page so let's relax it.
+>> >
+>> > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>> > Signed-off-by: Minchan Kim <minchan@kernel.org>
+>> > ---
+>> >  include/linux/page-flags.h | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> > index e34a27727b9a..f12d4dfae580 100644
+>> > --- a/include/linux/page-flags.h
+>> > +++ b/include/linux/page-flags.h
+>> > @@ -318,8 +318,8 @@ PAGEFLAG(MappedToDisk, mappedtodisk, PF_NO_TAIL)
+>> >  /* PG_readahead is only used for reads; PG_reclaim is only for writes */
+>> >  PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
+>> >  	TESTCLEARFLAG(Reclaim, reclaim, PF_NO_TAIL)
+>> > -PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
+>> > -	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
+>> > +PAGEFLAG(Readahead, reclaim, PF_NO_TAIL)
+>> > +	TESTCLEARFLAG(Readahead, reclaim, PF_NO_TAIL)
+>> >  
+>> >  #ifdef CONFIG_HIGHMEM
+>> >  /*
+>> 
+>> We never set Readahead bit for THP in reality.  The original code acts
+>> as document for this.  I don't think it is a good idea to change this
+>> without a good reason.
 >
-> Hello!
+> I don't like such divergence so that we don't need to care about whether
+> the page is THP or not. However, there is pointless to confuse ra stat
+> counters, too. How about this?
 >
-> This patch series adds support for Xen [1] para-virtualized
-> frontend display driver. It implements the protocol from
-> include/xen/interface/io/displif.h [2].
-> Accompanying backend [3] is implemented as a user-space application
-> and its helper library [4], capable of running as a Weston client
-> or DRM master.
-> Configuration of both backend and frontend is done via
-> Xen guest domain configuration options [5].
->
-> *******************************************************************************
-> * Driver limitations
-> *******************************************************************************
->   1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
->      allocated buffers) below are not supported at the same time.
->
->   2. Only primary plane without additional properties is supported.
->
->   3. Only one video mode supported which resolution is configured via XenStore.
->
->   4. All CRTCs operate at fixed frequency of 60Hz.
->
-> *******************************************************************************
-> * Driver modes of operation in terms of display buffers used
-> *******************************************************************************
->   Depending on the requirements for the para-virtualized environment, namely
->   requirements dictated by the accompanying DRM/(v)GPU drivers running in both
->   host and guest environments, number of operating modes of para-virtualized
->   display driver are supported:
->    - display buffers can be allocated by either frontend driver or backend
->    - display buffers can be allocated to be contiguous in memory or not
->
->   Note! Frontend driver itself has no dependency on contiguous memory for
->         its operation.
->
-> *******************************************************************************
-> * 1. Buffers allocated by the frontend driver.
-> *******************************************************************************
->
->   The below modes of operation are configured at compile-time via
->   frontend driver's kernel configuration.
->
->   1.1. Front driver configured to use GEM CMA helpers
->        This use-case is useful when used with accompanying DRM/vGPU driver in
->        guest domain which was designed to only work with contiguous buffers,
->        e.g. DRM driver based on GEM CMA helpers: such drivers can only import
->        contiguous PRIME buffers, thus requiring frontend driver to provide
->        such. In order to implement this mode of operation para-virtualized
->        frontend driver can be configured to use GEM CMA helpers.
->
->   1.2. Front driver doesn't use GEM CMA
->        If accompanying drivers can cope with non-contiguous memory then, to
->        lower pressure on CMA subsystem of the kernel, driver can allocate
->        buffers from system memory.
->
->   Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
->     may require IOMMU support on the platform, so accompanying DRM/vGPU
->     hardware can still reach display buffer memory while importing PRIME
->     buffers from the frontend driver.
->
-> *******************************************************************************
-> * 2. Buffers allocated by the backend
-> *******************************************************************************
->
->   This mode of operation is run-time configured via guest domain configuration
->   through XenStore entries.
->
->   For systems which do not provide IOMMU support, but having specific
->   requirements for display buffers it is possible to allocate such buffers
->   at backend side and share those with the frontend.
->   For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
->   physically contiguous memory, this allows implementing zero-copying
->   use-cases.
->
->
-> I would like to thank at least, but not at last the following
-> people/communities who helped this driver to happen ;)
->
-> 1. My team at EPAM for continuous support
-> 2. Xen community for answering tons of questions on different
-> modes of operation of the driver with respect to virtualized
-> environment.
-> 3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
-> 4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
-> 5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
->
-> Thank you,
-> Oleksandr Andrushchenko
->
-> P.S. There are two dependencies for this driver limiting some of the
-> use-cases which are on review now:
-> 1. "drm/simple_kms_helper: Add {enable|disable}_vblank callback support" [9]
-> 2. "drm/simple_kms_helper: Fix NULL pointer dereference with no active CRTC" [10]
->
-> [1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
-> [2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
-> [3] https://github.com/xen-troops/displ_be
-> [4] https://github.com/xen-troops/libxenbe
-> [5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
-> [6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
-> [7] https://www.spinics.net/lists/dri-devel/msg164102.html
-> [8] https://www.spinics.net/lists/dri-devel/msg164463.html
-> [9] https://patchwork.freedesktop.org/series/38073/
-> [10] https://patchwork.freedesktop.org/series/38139/
->
-> Oleksandr Andrushchenko (9):
->    drm/xen-front: Introduce Xen para-virtualized frontend driver
->    drm/xen-front: Implement Xen bus state handling
->    drm/xen-front: Read driver configuration from Xen store
->    drm/xen-front: Implement Xen event channel handling
->    drm/xen-front: Implement handling of shared display buffers
->    drm/xen-front: Introduce DRM/KMS virtual display driver
->    drm/xen-front: Implement KMS/connector handling
->    drm/xen-front: Implement GEM operations
->    drm/xen-front: Implement communication with backend
->
->   drivers/gpu/drm/Kconfig                     |   2 +
->   drivers/gpu/drm/Makefile                    |   1 +
->   drivers/gpu/drm/xen/Kconfig                 |  30 ++
->   drivers/gpu/drm/xen/Makefile                |  17 +
->   drivers/gpu/drm/xen/xen_drm_front.c         | 712 ++++++++++++++++++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front.h         | 154 ++++++
->   drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  84 ++++
->   drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  45 ++
->   drivers/gpu/drm/xen/xen_drm_front_conn.c    | 125 +++++
->   drivers/gpu/drm/xen/xen_drm_front_conn.h    |  35 ++
->   drivers/gpu/drm/xen/xen_drm_front_drv.c     | 294 ++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front_drv.h     |  73 +++
->   drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 399 ++++++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  89 ++++
->   drivers/gpu/drm/xen/xen_drm_front_gem.c     | 360 ++++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front_gem.h     |  46 ++
->   drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  93 ++++
->   drivers/gpu/drm/xen/xen_drm_front_kms.c     | 299 ++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front_kms.h     |  30 ++
->   drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 430 +++++++++++++++++
->   drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  80 ++++
->   21 files changed, 3398 insertions(+)
->   create mode 100644 drivers/gpu/drm/xen/Kconfig
->   create mode 100644 drivers/gpu/drm/xen/Makefile
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
->
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 8dde719e973c..e169d137d27c 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -348,12 +348,17 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
+>  	INC_CACHE_INFO(find_total);
+>  	if (page) {
+>  		bool vma_ra = swap_use_vma_readahead();
+> -		bool readahead = TestClearPageReadahead(page);
+> +		bool readahead;
+>  
+>  		INC_CACHE_INFO(find_success);
+> +		/*
+> +		 * At the moment, we doesn't support PG_readahead for anon THP
+> +		 * so let's bail out rather than confusing the readahead stat.
+> +		 */
+>  		if (unlikely(PageTransCompound(page)))
+>  			return page;
+>  
+> +		readahead = TestClearPageReadahead(page);
+>  		if (vma && vma_ra) {
+>  			unsigned long ra_val;
+>  			int win, hits;
+> @@ -608,8 +613,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+>  			continue;
+>  		if (page_allocated) {
+>  			swap_readpage(page, false);
+> -			if (offset != entry_offset &&
+> -			    likely(!PageTransCompound(page))) {
+> +			if (offset != entry_offset) {
+>  				SetPageReadahead(page);
+>  				count_vm_event(SWAP_RA);
+>  			}
+> @@ -772,8 +776,7 @@ struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+>  			continue;
+>  		if (page_allocated) {
+>  			swap_readpage(page, false);
+> -			if (i != ra_info.offset &&
+> -			    likely(!PageTransCompound(page))) {
+> +			if (i != ra_info.offset) {
+>  				SetPageReadahead(page);
+>  				count_vm_event(SWAP_RA);
+>  			}
+
+This looks good for me.  Thanks!
+
+Best Regards,
+Huang, Ying
