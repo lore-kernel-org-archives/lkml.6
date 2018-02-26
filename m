@@ -1,99 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752290AbeBZIte (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:49:34 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40174 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751740AbeBZItb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:49:31 -0500
-Date: Mon, 26 Feb 2018 09:49:19 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: hao_zhang <hao5781286@gmail.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 2/4] ARM: dtsi: add pwm node for sun8i.
-Message-ID: <20180226084919.wt2yljq3nxr5g2vu@flea.lan>
-References: <20180225135134.GA14529@arx-s1>
+        id S1752300AbeBZIuC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:50:02 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35929 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbeBZIt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 03:49:58 -0500
+X-Google-Smtp-Source: AG47ELvGYHIgvrr4KnUKRHG7rai7DRnLdYSbHWPnAeOUcCMCbN3uC/SopN0BDRlfP5ggqL878/7Zsw==
+Date: Mon, 26 Feb 2018 11:49:55 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, peterz@infradead.org,
+        luto@amacapital.net, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180226084955.GB5308@uranus.lan>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+ <20180226073552.xabt55ukp24inut5@gmail.com>
+ <20180226080256.j7jzuxyokx42uytd@node.shutemov.name>
+ <20180226081533.GA5308@uranus.lan>
+ <20180226083709.al5pvzwzyxuci4qp@node.shutemov.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fexov7z6xzyq67m7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180225135134.GA14529@arx-s1>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180226083709.al5pvzwzyxuci4qp@node.shutemov.name>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 26, 2018 at 11:37:09AM +0300, Kirill A. Shutemov wrote:
+> On Mon, Feb 26, 2018 at 11:15:34AM +0300, Cyrill Gorcunov wrote:
+> > On Mon, Feb 26, 2018 at 11:02:56AM +0300, Kirill A. Shutemov wrote:
+> > ...
+> > > > Also, could do a puts() hexdump of the affected memory area _before_ we overwrite 
+> > > > it? Is it empty? Could we add some debug warning that checks that it's all zeroes?
+> > > 
+> > > The problem is that we don't really have a way get a message out of there.
+> > > 
+> > > http://lkml.kernel.org/r/793b9c55-e85b-97b5-c857-dd8edcda4081@zytor.com
+> > > 
+> > 
+> > I'm sorry for stepping in (since I didn't follow the series in details)
+> > but can't we use vga memory here and print this early data tere?
+> 
+> I have no idea how to do this :/
 
---fexov7z6xzyq67m7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+https://wiki.osdev.org/Printing_To_Screen
 
-On Sun, Feb 25, 2018 at 09:51:34PM +0800, hao_zhang wrote:
-> This patch adds pwm node for sun8i.
->=20
-> Signed-off-by: hao_zhang <hao5781286@gmail.com>
-> ---
->  arch/arm/boot/dts/sun8i-r40.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r=
-40.dtsi
-> index 173dcc1..99a0261 100644
-> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-> @@ -295,6 +295,11 @@
->  				bias-pull-up;
->  			};
-> =20
-> +			pwm_ch0_pin: pwm-ch0-pin {
-> +				pins =3D "PB2";
-> +				function =3D "pwm";
-> +			};
-> +
->  			uart0_pb_pins: uart0-pb-pins {
->  				pins =3D "PB22", "PB23";
->  				function =3D "uart0";
-> @@ -306,6 +311,14 @@
->  			reg =3D <0x01c20c90 0x10>;
->  		};
-> =20
-> +		pwm: pwm@1c23400 {
-> +			     compatible =3D "allwinner,sun8i-r40-pwm";
-> +			     reg =3D <0x01c23400 0x154>;
+Kirill, note that it might not do the trick at all, just give
+the link a shot and check if it would worth the efforts.
 
-The size must be the size of the whole memory block allocated to the
-controller, so that would be 0x400 in this case.
+> 
+> And what about systems without monitor at all?
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fexov7z6xzyq67m7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTyg4ACgkQ0rTAlCFN
-r3Rkig/9GI/xqfLzW6iT4OlKaSseYWJWJ6rvEt1oY8o7bkVa4mMLV7POVS12FbCc
-fGQeq9vDI4ohMwW6Wgu7PARNXRTMaVUkt2CKVewaniGiWoFshUTvmw8UiEWKtshK
-Nu8P9DfhfTIEU1SPWBTy3y6LcPwbCTVMbNzqFthNCI5/ac3yzHPP4UrYhwFPQh3M
-JYVfG5c+pard1iSIt4+kX3P9AEnmDuX3SY2QHxsDTwYG2v6GT/ExazLidBb1JeFn
-scMeZvXmpK7X+XmNaAMECU59m41W6exkbPAYu5o1XqQFKvrkjpbVB1rEaCdc6RWH
-T7dh+G6KJi/1J+PE9MScYFkJIiEXugnVygKGhq7La3lrXDuv5QmnasBTVJvUlf2L
-lUpe7OMy8+WfqUaR4n7smhCU2/IFWODp6UxHg0ZpXjjlQjWN7n+iyQYLfHti8iVk
-2EoB1EhOTtB6dcxHN53MirTw3jy4XtHYuRthODDkMmdC+qBJJgI9VSqtBHkrznnT
-uc5V6lRfpyIiqI3Mhzqfyvs2mqZrZO1P/m2iFF37ngN1uHDvzej/bNPiuWb4rNxO
-Eqg9TLroJfnaKw/f+asfdF3JmIrHUHl7fmL4RqPYFMFJaVDgqHM63o4vlecMO8zD
-uby9ebszip4put0K3SMa/egmkkCdrRlagMSsiJyasAoldZBb9CY=
-=ZRzc
------END PGP SIGNATURE-----
-
---fexov7z6xzyq67m7--
+Such early boot things *require* additional equipment
+anyway jtag/monitors/etc for debug stage at least.
