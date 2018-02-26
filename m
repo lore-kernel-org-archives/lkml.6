@@ -1,72 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751746AbeBZSFJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:05:09 -0500
-Received: from mga02.intel.com ([134.134.136.20]:48839 "EHLO mga02.intel.com"
+        id S1751800AbeBZSFS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:05:18 -0500
+Received: from foss.arm.com ([217.140.101.70]:53874 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750941AbeBZSFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:05:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="20488735"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Andi Kleen <ak@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 1/5] x86/boot/compressed/64: Describe the logic behind LA57 check
-Date: Mon, 26 Feb 2018 21:04:47 +0300
-Message-Id: <20180226180451.86788-2-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180226180451.86788-1-kirill.shutemov@linux.intel.com>
-References: <20180226180451.86788-1-kirill.shutemov@linux.intel.com>
+        id S1751764AbeBZSFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 13:05:17 -0500
+Date: Mon, 26 Feb 2018 18:05:18 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, james.morse@arm.com
+Subject: Re: [PATCH v2 1/2] arm64: Relax constraints on ID feature bits
+Message-ID: <20180226180517.GG26147@arm.com>
+References: <20180207142106.10716-1-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180207142106.10716-1-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch explains the LA57 check in more details.
+On Wed, Feb 07, 2018 at 02:21:05PM +0000, Suzuki K Poulose wrote:
+> We treat most of the feature bits in the ID registers as STRICT,
+> implying that all CPUs should match it the boot CPU state. However,
+> for most of the features, we can handle if there are any mismatches
+> by using the safe value. e.g, HWCAPs and other features used by the
+> kernel. Relax the constraint on the feature bits whose mismatch can
+> be handled by the kernel.
+> 
+> For VHE, if there is a mismatch we don't care if the kernel is
+> not using it. If the kernel is indeed running in EL2 mode, then
+> the mismatches results in a panic. Similarly for ASID bits we
+> take care of conflicts.
+> 
+> For other features like, PAN, UAO we only enable it only if we
+> have it on all the CPUs. For IESB, we set the SCTLR bit unconditionally
+> anyways.
+> 
+> For features that aren't currently used by kernel
+>  (e.g ID_AA64MFMR1:{LOR,HPD}, ID_AA64MMFR2:LSM) make them NONSTRICT.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Dave Martin <dave.martin@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v1:
+>  - Make ID_AA64MMFR1_EL1:LOR/HPD, ID_AA64MMFR1_EL1:LSM non-strict
+>    as they aren't used by the kernel.
+>  - Added comments around different fields.
+>  - Make ID_AA64MMFR2:CNP non-strict, as we could decide to use it
+>    only when it is available on all the CPUs.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/boot/compressed/pgtable_64.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+This does mean we need to be careful when adding support for a new feature
+because the cpufeature code is no longer guaranteeing homogeneity. I can't
+see how we can detect this, so I suppose we'll just need to be careful to
+pick this up during review.
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 3f1697fcc7a8..45c76eff2718 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -18,10 +18,22 @@ struct paging_config paging_prepare(void)
- {
- 	struct paging_config paging_config = {};
- 
--	/* Check if LA57 is desired and supported */
--	if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
--			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
-+	/*
-+	 * Check if LA57 is desired and supported.
-+	 *
-+	 * There are two parts to the check:
-+	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
-+	 *   - if the machine supports 5-level paging:
-+	 *     + CPUID leaf 7 is supported
-+	 *     + the leaf has the feature bit set
-+	 *
-+	 * That's substitute for boot_cpu_has() in early boot code.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
-+			native_cpuid_eax(0) >= 7 &&
-+			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
- 		paging_config.l5_required = 1;
-+	}
- 
- 	return paging_config;
- }
--- 
-2.16.1
+It's also a bit nasty that older kernels won't shout about mismatched
+features but a new kernel might. I have a slight concern that this means
+integration problems might slip through the cracks when a design is
+validating against an older kernel.
+
+Finally, there's still the problem that some features cannot be
+enabled/disabled by the kernel and we can end up in a position where a
+user application might SIGILL only on some CPUs if it's using an instruction
+that isn't supported across the whole system. I think that sort of
+configuration *does* warrant the current sanity check message/taint; afaict
+we still go ahead and use the safe value, clobbering things like the hwcap,
+but we should draw attention to the fact that userspace might crash if it's
+trying to probe for these instructions using traps.
+
+I'd like to hear what others think about this. As it stands, I don't think
+this patch is quite right but I wouldn't be against relaxing specific
+features to be NONSTRICT where we know that the kernel today can deal with
+that transparently to userspace.
+
+Will
