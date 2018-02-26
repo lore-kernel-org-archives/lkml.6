@@ -1,108 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751995AbeBZFUV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 00:20:21 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46171 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750839AbeBZFUQ (ORCPT
+        id S1751968AbeBZF2i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 00:28:38 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40231 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeBZF2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 00:20:16 -0500
-X-Google-Smtp-Source: AG47ELsIPN325m/CCO37T2329e3pDcW5IgA94V4X3IrsXoV75lqF9ThEXupWhFeaBW10xvTZ7BvQdQ==
-Date: Mon, 26 Feb 2018 14:20:09 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] mm: Fix races between address_space dereference and free
- in page_evicatable
-Message-ID: <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
-References: <20180212081227.1940-1-ying.huang@intel.com>
- <20180218092245.GA52741@rodete-laptop-imager.corp.google.com>
- <20180219105735.32iplpsmnigwf75j@quack2.suse.cz>
+        Mon, 26 Feb 2018 00:28:35 -0500
+X-Google-Smtp-Source: AH8x227QqQ98RukVZv4uzjHinPOCSRUA+6sklNq71V5SXYvXEHQTvjZ4vYuReOxMlUPW0wQGDicwCg==
+Date: Mon, 26 Feb 2018 00:28:31 -0500
+From: Bo YU <tsu.yubo@gmail.com>
+To: jiangyiwen <jiangyiwen@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        v9fs-developer@lists.sourceforge.net, viro@zeniv.linux.org.uk,
+        ericvh@gmail.com, rminnich@sandia.gov, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
+Message-ID: <20180226052831.GA26535@yubo-2>
+References: <5A7D3C08.7020309@huawei.com>
+ <5A90D23F.5070601@huawei.com>
+ <5A936439.9040700@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180219105735.32iplpsmnigwf75j@quack2.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5A936439.9040700@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
-
-On Mon, Feb 19, 2018 at 11:57:35AM +0100, Jan Kara wrote:
-> Hi Minchan,
-> 
-> On Sun 18-02-18 18:22:45, Minchan Kim wrote:
-> > On Mon, Feb 12, 2018 at 04:12:27PM +0800, Huang, Ying wrote:
-> > > From: Huang Ying <ying.huang@intel.com>
-> > > 
-> > > When page_mapping() is called and the mapping is dereferenced in
-> > > page_evicatable() through shrink_active_list(), it is possible for the
-> > > inode to be truncated and the embedded address space to be freed at
-> > > the same time.  This may lead to the following race.
-> > > 
-> > > CPU1                                                CPU2
-> > > 
-> > > truncate(inode)                                     shrink_active_list()
-> > >   ...                                                 page_evictable(page)
-> > >   truncate_inode_page(mapping, page);
-> > >     delete_from_page_cache(page)
-> > >       spin_lock_irqsave(&mapping->tree_lock, flags);
-> > >         __delete_from_page_cache(page, NULL)
-> > >           page_cache_tree_delete(..)
-> > >             ...                                         mapping = page_mapping(page);
-> > >             page->mapping = NULL;
-> > >             ...
-> > >       spin_unlock_irqrestore(&mapping->tree_lock, flags);
-> > >       page_cache_free_page(mapping, page)
-> > >         put_page(page)
-> > >           if (put_page_testzero(page)) -> false
-> > > - inode now has no pages and can be freed including embedded address_space
-> > > 
-> > >                                                         mapping_unevictable(mapping)
-> > > 							  test_bit(AS_UNEVICTABLE, &mapping->flags);
-> > > - we've dereferenced mapping which is potentially already free.
-> > > 
-> > > Similar race exists between swap cache freeing and page_evicatable() too.
-> > > 
-> > > The address_space in inode and swap cache will be freed after a RCU
-> > > grace period.  So the races are fixed via enclosing the page_mapping()
-> > > and address_space usage in rcu_read_lock/unlock().  Some comments are
-> > > added in code to make it clear what is protected by the RCU read lock.
-> > 
-> > Is it always true for every FSes, even upcoming FSes?
-> > IOW, do we have any strict rule FS folks must use RCU(i.e., call_rcu)
-> > to destroy inode?
-> > 
-> > Let's cc linux-fs.
-> 
-> That's actually a good question. Pathname lookup relies on inodes being
-> protected by RCU so "normal" filesystems definitely need to use RCU freeing
-> of inodes. OTOH a filesystem could in theory refuse any attempt for RCU
-> pathname walk (in its .d_revalidate/.d_compare callback) and then get away
-> with freeing its inodes normally AFAICT. I don't see that happening
-> anywhere in the tree but in theory it is possible with some effort... But
-> frankly I don't see a good reason for that so all we should do is to
-> document that .destroy_inode needs to free the inode structure through RCU
-> if it uses page cache? Al?
-
-Yub, it would be much better. However, how does this patch fix the problem?
-Although it can make only page_evictable safe, we could go with the page
-further and finally uses page->mapping, again.
-For instance,
-
-shrink_active_list
-	page_evictable();
-	..
-	page_referened()
-		page_rmapping
-			page->mapping
-
-I think caller should lock the page to protect entire operation, which
-have been used more widely to pin a address_space.
-
-Thanks.
+Hi,
+I think you would better to modify the subject line without
+[V9fs-developers].
+On Mon, Feb 26, 2018 at 09:34:49AM +0800, jiangyiwen wrote:
+>On 2018/2/24 10:47, jiangyiwen wrote:
+>> On 2018/2/9 14:13, jiangyiwen wrote:
+>>> User use some syscall, for example mmap(v9fs_file_mmap), it will not
+>>> update atime even if user's mnt_flags have MNT_NOATIME, because
+>>> v9fs default set SB_NOATIME in v9fs_set_super.
+>>>
+>>> For supporting access time is updated when user mount with relatime,
+>>> we should clear SB_NOATIME by default.
+>>>
+>>> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+>>> ---
+>>>  fs/9p/vfs_super.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
+>>> index af03c2a..48ce504 100644
+>>> --- a/fs/9p/vfs_super.c
+>>> +++ b/fs/9p/vfs_super.c
+>>> @@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
+>>>  	if (v9ses->cache)
+>>>  		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
+>>>
+>>> -	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
+>>> +	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
+>>>  	if (!v9ses->cache)
+>>>  		sb->s_flags |= SB_SYNCHRONOUS;
+>>>
+>> Hi Alexander Viro and Eric,
+>>
+>> My patch has already sent two weeks, but nobody help me
+>> to review, I have a question about now who is the v9fs's
+>> maintainer? Or who can help me review the patch?
+>>
+>> I hope v9fs's maintainer can give me some advices or
+>> merge into the mainline if it has no problem.
+>>
+>> Thanks,
+>> Yiwen.
+>>
+>Hi Andrew,
+>
+>My patch has already sent more than two weeks, but nobody
+>help me to review, I have a question about now who is the
+>v9fs's maintainer? Or who can help me review the patch?
+>
+There is no maintainer with V9fs  in get_maintain.pl and V9fs git tree
+laterest commit before two years.so,situation become bad.
+Maybe you eamil linus directly,although this is't good
+>I hope v9fs's maintainer can give me some advices or
+>merge into the mainline if it has no problem.
+>
+>Thanks,
+>Yiwen.
+>
+>--
+>To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
