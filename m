@@ -1,39 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeBZJqI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:46:08 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34684 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751816AbeBZJqF (ORCPT
+        id S1752507AbeBZJq3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:46:29 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45136 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbeBZJq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:46:05 -0500
-X-Google-Smtp-Source: AG47ELtFX0R9+0GrSZDlYdjjUuELDrZRe8HeEZsR6oC7K4QS+n9hF14zqpwuhhYBGSAMIemHMprobfaLpzGG9QDGMzQ=
+        Mon, 26 Feb 2018 04:46:26 -0500
+X-Google-Smtp-Source: AG47ELvanxOdC9FBThLB6YDA9WxzayODAK5LfcOV3dP/XMFVAtaCbNAMvFVdfVdisaPFVuhLzIy52DvTIMMAuwZgGA8=
 MIME-Version: 1.0
-In-Reply-To: <20180127235140.CBFF12962D@kvm5.telegraphics.com.au>
-References: <20180127235140.CBFF12962D@kvm5.telegraphics.com.au>
+In-Reply-To: <20180127235140.EA71C296D4@kvm5.telegraphics.com.au>
+References: <20180127235140.EA71C296D4@kvm5.telegraphics.com.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 10:46:04 +0100
-X-Google-Sender-Auth: S1EsMCij_wEOO45TL17yDqmWK8Q
-Message-ID: <CAMuHMdU4+Ag0VEVB0p7HG+J-Pgr95XmSwdB-PF3LO6CiVxe0kA@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Fix apparent race condition in Baboon interrupt dispatch
+Date: Mon, 26 Feb 2018 10:46:25 +0100
+X-Google-Sender-Auth: rByR7LlWPx5sGF8C-aJSMvt-f2k
+Message-ID: <CAMuHMdUuYF7uoH5ZAHsnEv+Y9VJXEUBAiYKxBpHkXpdDMi+FWw@mail.gmail.com>
+Subject: Re: [PATCH] macintosh/via-pmu68k: Initialize PMU driver with
+ setup_arch and arch_initcall
 To: Finn Thain <fthain@telegraphics.com.au>
-Cc: linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Jan 28, 2018 at 12:51 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> The algorithm used in baboon_irq() appears to be subject to a race
-> condition: an IRQ flag could be lost if asserted between the MOV
-> instructions from and to the interrupt flag register. However,
-> testing shows that the write to the flag register has no effect.
-> Rewrite this loop to remove the apparent race condition.
+> The PMU watchdog will power down the system if the kernel is slow
+> to start up, e.g. due to unpacking a large initrd. The powerpc
+> version of this driver (via-pmu.c) has a solution for the same
+> problem. It uses this call sequence:
 >
-> No-one seems to know how to clear Baboon IRQ flags, or whether
-> that's even possible, so add a comment about this.
+> setup_arch
+>         find_via_pmu
+>                 init_pmu
+> ...
+> arch_initcall
+>         via_pmu_start
 >
+> Bring via-pmu68k.c into line with via-pmu.c to fix this issue.
+>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 > Tested-by: Stan Johnson <userm57@yahoo.com>
 > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
