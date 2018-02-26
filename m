@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753838AbeBZOOg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:14:36 -0500
-Received: from mga18.intel.com ([134.134.136.126]:55048 "EHLO mga18.intel.com"
+        id S1753841AbeBZOO4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:14:56 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23426 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753033AbeBZOK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:10:59 -0500
+        id S1753357AbeBZOK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:10:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="207045794"
+   d="scan'208";a="20377385"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: Andreas Noever <andreas.noever@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Andreas Noever <andreas.noever@gmail.com>,
         Jeremy McNicoll <jmcnicol@redhat.com>,
         Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 15/18] thunderbolt: Add 'boot' attribute for devices
-Date: Mon, 26 Feb 2018 17:10:45 +0300
-Message-Id: <20180226141048.83949-16-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 08/18] thunderbolt: Factor common ICM add and update operations out
+Date: Mon, 26 Feb 2018 17:10:38 +0300
+Message-Id: <20180226141048.83949-9-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
 References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
@@ -33,188 +33,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yehezkel Bernat <yehezkel.bernat@intel.com>
+The newer ICM will not use link and depth to address devices. Instead it
+uses route strings. In order to take advantage of the existing code
+factor out common operations so that we can use the same functions with
+the new ICM as well.
 
-In various cases, Thunderbolt device can be connected by ICM on boot
-without waiting for approval from user. Most cases are related to
-OEM-specific BIOS configurations. This information is interesting for
-user-space as if the device isn't in SW ACL, it may create a friction in
-the user experience where the device is automatically authorized if it's
-connected on boot but requires an explicit user action if connected
-after OS is up. User-space can use this information to suggest adding
-the device to SW ACL for auto-authorization on later connections.
+No functional changes intended.
 
-Signed-off-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- Documentation/ABI/testing/sysfs-bus-thunderbolt |  7 +++++++
- drivers/thunderbolt/icm.c                       | 12 ++++++++----
- drivers/thunderbolt/switch.c                    | 14 ++++++++++++++
- drivers/thunderbolt/tb.h                        |  2 ++
- drivers/thunderbolt/tb_msgs.h                   |  1 +
- 5 files changed, 32 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/icm.c | 136 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 87 insertions(+), 49 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-index 93798c02e28b..1f145b727d76 100644
---- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
-+++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-@@ -38,6 +38,13 @@ Description:	This attribute is used to authorize Thunderbolt devices
- 		   the device did not contain a key at all, and
- 		   EKEYREJECTED if the challenge response did not match.
- 
-+What: /sys/bus/thunderbolt/devices/.../boot
-+Date:		Jun 2018
-+KernelVersion:	4.17
-+Contact:	thunderbolt-software@lists.01.org
-+Description:	This attribute contains 1 if Thunderbolt device was already
-+		authorized on boot and 0 otherwise.
-+
- What: /sys/bus/thunderbolt/devices/.../key
- Date:		Sep 2017
- KernelVersion:	4.13
 diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index c7cb5cd36f68..1d6bbfc558f4 100644
+index 34d7740d1cbd..55006994b517 100644
 --- a/drivers/thunderbolt/icm.c
 +++ b/drivers/thunderbolt/icm.c
-@@ -402,7 +402,7 @@ static int icm_fr_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
- static void add_switch(struct tb_switch *parent_sw, u64 route,
- 		       const uuid_t *uuid, u8 connection_id, u8 connection_key,
- 		       u8 link, u8 depth, enum tb_security_level security_level,
--		       bool authorized)
-+		       bool authorized, bool boot)
+@@ -374,6 +374,57 @@ static int icm_fr_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
+ 	return 0;
+ }
+ 
++static void add_switch(struct tb_switch *parent_sw, u64 route,
++		       const uuid_t *uuid, u8 connection_id, u8 connection_key,
++		       u8 link, u8 depth, enum tb_security_level security_level,
++		       bool authorized)
++{
++	struct tb_switch *sw;
++
++	sw = tb_switch_alloc(parent_sw->tb, &parent_sw->dev, route);
++	if (!sw)
++		return;
++
++	sw->uuid = kmemdup(uuid, sizeof(*uuid), GFP_KERNEL);
++	sw->connection_id = connection_id;
++	sw->connection_key = connection_key;
++	sw->link = link;
++	sw->depth = depth;
++	sw->authorized = authorized;
++	sw->security_level = security_level;
++
++	/* Link the two switches now */
++	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
++	tb_upstream_port(sw)->remote = tb_port_at(route, parent_sw);
++
++	if (tb_switch_add(sw)) {
++		tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
++		tb_switch_put(sw);
++		return;
++	}
++}
++
++static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
++			  u64 route, u8 connection_id, u8 connection_key,
++			  u8 link, u8 depth)
++{
++	/* Disconnect from parent */
++	tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
++	/* Re-connect via updated port*/
++	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
++
++	/* Update with the new addressing information */
++	sw->config.route_hi = upper_32_bits(route);
++	sw->config.route_lo = lower_32_bits(route);
++	sw->connection_id = connection_id;
++	sw->connection_key = connection_key;
++	sw->link = link;
++	sw->depth = depth;
++
++	/* This switch still exists */
++	sw->is_unplugged = false;
++}
++
+ static void remove_switch(struct tb_switch *sw)
+ {
+ 	struct tb_switch *parent_sw;
+@@ -383,6 +434,31 @@ static void remove_switch(struct tb_switch *sw)
+ 	tb_switch_remove(sw);
+ }
+ 
++static void add_xdomain(struct tb_switch *sw, u64 route,
++			const uuid_t *local_uuid, const uuid_t *remote_uuid,
++			u8 link, u8 depth)
++{
++	struct tb_xdomain *xd;
++
++	xd = tb_xdomain_alloc(sw->tb, &sw->dev, route, local_uuid, remote_uuid);
++	if (!xd)
++		return;
++
++	xd->link = link;
++	xd->depth = depth;
++
++	tb_port_at(route, sw)->xdomain = xd;
++
++	tb_xdomain_add(xd);
++}
++
++static void update_xdomain(struct tb_xdomain *xd, u64 route, u8 link)
++{
++	xd->link = link;
++	xd->route = route;
++	xd->is_unplugged = false;
++}
++
+ static void remove_xdomain(struct tb_xdomain *xd)
  {
  	struct tb_switch *sw;
- 
-@@ -417,6 +417,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
- 	sw->depth = depth;
- 	sw->authorized = authorized;
- 	sw->security_level = security_level;
-+	sw->boot = boot;
- 
- 	/* Link the two switches now */
- 	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
-@@ -431,7 +432,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
- 
- static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
- 			  u64 route, u8 connection_id, u8 connection_key,
--			  u8 link, u8 depth)
-+			  u8 link, u8 depth, bool boot)
+@@ -397,6 +473,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
  {
- 	/* Disconnect from parent */
- 	tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
-@@ -445,6 +446,7 @@ static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
- 	sw->connection_key = connection_key;
- 	sw->link = link;
- 	sw->depth = depth;
-+	sw->boot = boot;
- 
- 	/* This switch still exists */
- 	sw->is_unplugged = false;
-@@ -504,6 +506,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	const struct icm_fr_event_device_connected *pkg =
+ 		(const struct icm_fr_event_device_connected *)hdr;
++	enum tb_security_level security_level;
+ 	struct tb_switch *sw, *parent_sw;
+ 	struct icm *icm = tb_priv(tb);
  	bool authorized = false;
- 	struct tb_xdomain *xd;
- 	u8 link, depth;
-+	bool boot;
- 	u64 route;
- 	int ret;
- 
-@@ -513,6 +516,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+@@ -409,6 +486,8 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	depth = (pkg->link_info & ICM_LINK_INFO_DEPTH_MASK) >>
+ 		ICM_LINK_INFO_DEPTH_SHIFT;
  	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
- 	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
- 			 ICM_FLAGS_SLEVEL_SHIFT;
-+	boot = pkg->link_info & ICM_LINK_INFO_BOOT;
++	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
++			 ICM_FLAGS_SLEVEL_SHIFT;
  
  	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
  		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
-@@ -546,7 +550,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+@@ -441,16 +520,8 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		 */
  		if (sw->depth == depth && sw_phy_port == phy_port &&
  		    !!sw->authorized == authorized) {
- 			update_switch(parent_sw, sw, route, pkg->connection_id,
--				      pkg->connection_key, link, depth);
-+				      pkg->connection_key, link, depth, boot);
+-			tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+-			tb_port_at(route, parent_sw)->remote =
+-				   tb_upstream_port(sw);
+-			sw->config.route_hi = upper_32_bits(route);
+-			sw->config.route_lo = lower_32_bits(route);
+-			sw->connection_id = pkg->connection_id;
+-			sw->connection_key = pkg->connection_key;
+-			sw->link = link;
+-			sw->depth = depth;
+-			sw->is_unplugged = false;
++			update_switch(parent_sw, sw, route, pkg->connection_id,
++				      pkg->connection_key, link, depth);
  			tb_switch_put(sw);
  			return;
  		}
-@@ -595,7 +599,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- 
- 	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
- 		   pkg->connection_key, link, depth, security_level,
--		   authorized);
-+		   authorized, boot);
- 
- 	tb_switch_put(parent_sw);
- }
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 4e2b2097bbfc..e9e30aaab2a3 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -775,6 +775,15 @@ static ssize_t authorized_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(authorized);
- 
-+static ssize_t boot_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct tb_switch *sw = tb_to_switch(dev);
-+
-+	return sprintf(buf, "%u\n", sw->boot);
-+}
-+static DEVICE_ATTR_RO(boot);
-+
- static ssize_t device_show(struct device *dev, struct device_attribute *attr,
- 			   char *buf)
- {
-@@ -951,6 +960,7 @@ static DEVICE_ATTR_RO(unique_id);
- 
- static struct attribute *switch_attrs[] = {
- 	&dev_attr_authorized.attr,
-+	&dev_attr_boot.attr,
- 	&dev_attr_device.attr,
- 	&dev_attr_device_name.attr,
- 	&dev_attr_key.attr,
-@@ -979,6 +989,10 @@ static umode_t switch_attr_is_visible(struct kobject *kobj,
- 		if (sw->dma_port)
- 			return attr->mode;
- 		return 0;
-+	} else if (attr == &dev_attr_boot.attr) {
-+		if (tb_route(sw))
-+			return attr->mode;
-+		return 0;
+@@ -497,30 +568,10 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
  	}
  
- 	return sw->safe_mode ? 0 : attr->mode;
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 2cd6085a6e10..9c9cef875ca8 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -66,6 +66,7 @@ struct tb_switch_nvm {
-  * @nvm: Pointer to the NVM if the switch has one (%NULL otherwise)
-  * @no_nvm_upgrade: Prevent NVM upgrade of this switch
-  * @safe_mode: The switch is in safe-mode
-+ * @boot: Whether the switch was already authorized on boot or not
-  * @authorized: Whether the switch is authorized by user or policy
-  * @work: Work used to automatically authorize a switch
-  * @security_level: Switch supported security level
-@@ -99,6 +100,7 @@ struct tb_switch {
- 	struct tb_switch_nvm *nvm;
- 	bool no_nvm_upgrade;
- 	bool safe_mode;
-+	bool boot;
- 	unsigned int authorized;
- 	struct work_struct work;
- 	enum tb_security_level security_level;
-diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
-index 931db2a7c7b3..9f52f842257a 100644
---- a/drivers/thunderbolt/tb_msgs.h
-+++ b/drivers/thunderbolt/tb_msgs.h
-@@ -179,6 +179,7 @@ struct icm_fr_event_device_connected {
- #define ICM_LINK_INFO_DEPTH_MASK	GENMASK(7, 4)
- #define ICM_LINK_INFO_APPROVED		BIT(8)
- #define ICM_LINK_INFO_REJECTED		BIT(9)
-+#define ICM_LINK_INFO_BOOT		BIT(10)
+-	sw = tb_switch_alloc(tb, &parent_sw->dev, route);
+-	if (!sw) {
+-		tb_switch_put(parent_sw);
+-		return;
+-	}
++	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
++		   pkg->connection_key, link, depth, security_level,
++		   authorized);
  
- struct icm_fr_pkg_approve_device {
- 	struct icm_pkg_header hdr;
+-	sw->uuid = kmemdup(&pkg->ep_uuid, sizeof(pkg->ep_uuid), GFP_KERNEL);
+-	sw->connection_id = pkg->connection_id;
+-	sw->connection_key = pkg->connection_key;
+-	sw->link = link;
+-	sw->depth = depth;
+-	sw->authorized = authorized;
+-	sw->security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
+-				ICM_FLAGS_SLEVEL_SHIFT;
+-
+-	/* Link the two switches now */
+-	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
+-	tb_upstream_port(sw)->remote = tb_port_at(route, parent_sw);
+-
+-	ret = tb_switch_add(sw);
+-	if (ret) {
+-		tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+-		tb_switch_put(sw);
+-	}
+ 	tb_switch_put(parent_sw);
+ }
+ 
+@@ -591,9 +642,7 @@ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		phy_port = phy_port_from_route(route, depth);
+ 
+ 		if (xd->depth == depth && xd_phy_port == phy_port) {
+-			xd->link = link;
+-			xd->route = route;
+-			xd->is_unplugged = false;
++			update_xdomain(xd, route, link);
+ 			tb_xdomain_put(xd);
+ 			return;
+ 		}
+@@ -643,19 +692,8 @@ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
+ 	}
+ 
+-	xd = tb_xdomain_alloc(sw->tb, &sw->dev, route,
+-			      &pkg->local_uuid, &pkg->remote_uuid);
+-	if (!xd) {
+-		tb_switch_put(sw);
+-		return;
+-	}
+-
+-	xd->link = link;
+-	xd->depth = depth;
+-
+-	tb_port_at(route, sw)->xdomain = xd;
+-
+-	tb_xdomain_add(xd);
++	add_xdomain(sw, route, &pkg->local_uuid, &pkg->remote_uuid, link,
++		    depth);
+ 	tb_switch_put(sw);
+ }
+ 
 -- 
 2.16.1
