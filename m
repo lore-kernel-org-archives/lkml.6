@@ -1,40 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeBZVzK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:55:10 -0500
-Received: from muru.com ([72.249.23.125]:58432 "EHLO muru.com"
+        id S1752008AbeBZVzW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:55:22 -0500
+Received: from mga06.intel.com ([134.134.136.31]:46123 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeBZVzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:55:09 -0500
-Date: Mon, 26 Feb 2018 13:55:07 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        id S1751823AbeBZVzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 16:55:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="20977690"
+Message-ID: <1519682116.10722.206.camel@linux.intel.com>
+Subject: Re: [PATCHv2] PM / wakeirq: Add wakeup name to dedicated wake irqs
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v1] genirq: Add wakeup sysfs node to show IRQ wakeup state
-Message-ID: <20180226215507.GH16043@atomide.com>
-References: <20180226155043.67937-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226155043.67937-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 26 Feb 2018 23:55:16 +0200
+In-Reply-To: <20180226215102.GG16043@atomide.com>
+References: <20180223220612.35181-1-tony@atomide.com>
+         <1519565632.10722.150.camel@linux.intel.com>
+         <20180226215102.GG16043@atomide.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180226 15:51]:
-> Surprisingly there is no simple way to see if the IRQ line in question
-> is wakeup source or not.
-> 
-> Note that wakeup might be an OOB (out-of-band) source like GPIO line
-> which makes things slightly more complicated.
-> 
-> Add a sysfs node to cover this case.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, 2018-02-26 at 13:51 -0800, Tony Lindgren wrote:
+> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180225 13:37]:
+> > On Fri, 2018-02-23 at 14:06 -0800, Tony Lindgren wrote:
+> > > 
 
-Works for me:
 
-Tested-by: Tony Lindgren <tony@atomide.com>
+> +	wirq->name = kasprintf(GFP_KERNEL, "%s:wakeup",
+> +			       dev_name(dev));
+
+Can it make one line?
+
+In any case,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
