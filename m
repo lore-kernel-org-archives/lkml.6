@@ -1,57 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753895AbeBZOPV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:15:21 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50782 "EHLO mail.bootlin.com"
+        id S1753861AbeBZOPN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:15:13 -0500
+Received: from mga18.intel.com ([134.134.136.126]:55048 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753356AbeBZOPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:15:14 -0500
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: davem@davemloft.net
-Cc: Yan Markman <ymarkman@marvell.com>, mw@semihalf.com,
-        stefanc@marvell.com, thomas.petazzoni@free-electrons.com,
-        gregory.clement@free-electrons.com, miquel.raynal@free-electrons.com,
-        nadavh@marvell.com, maxime.chevallier@bootlin.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH net-next 1/3] net: mvpp2: avoid checking for free aggregated descriptors twice
-Date: Mon, 26 Feb 2018 15:14:25 +0100
-Message-Id: <20180226141427.31536-1-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.14.3
+        id S1753356AbeBZOK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:10:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="207045788"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jeremy McNicoll <jmcnicol@redhat.com>,
+        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 12/18] thunderbolt: Add tb_xdomain_find_by_route()
+Date: Mon, 26 Feb 2018 17:10:42 +0300
+Message-Id: <20180226141048.83949-13-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
+References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan Markman <ymarkman@marvell.com>
+From: Radion Mirchevsky <radion.mirchevsky@intel.com>
 
-Avoid repeating the check for free aggregated descriptors when it
-already failed at the beginning of the function.
+This is needed by the new ICM interface to find xdomains by route string
+instead of link and depth.
 
-Signed-off-by: Yan Markman <ymarkman@marvell.com>
-[Antoine: commit message]
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+While there update existing tb_xdomain_find_* functions to use
+tb_xdomain_get() instead of open-coding the same.
+
+Signed-off-by: Radion Mirchevsky <radion.mirchevsky@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/xdomain.c | 47 ++++++++++++++++++++++++++++++++-----------
+ include/linux/thunderbolt.h   | 13 ++++++++++++
+ 2 files changed, 48 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 5a1668cdb461..55300b1fe6c0 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -5224,11 +5224,10 @@ static int mvpp2_aggr_desc_num_check(struct mvpp2 *priv,
- 		u32 val = mvpp2_read(priv, MVPP2_AGGR_TXQ_STATUS_REG(cpu));
+diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
+index f25d88d4552b..8abb4e843085 100644
+--- a/drivers/thunderbolt/xdomain.c
++++ b/drivers/thunderbolt/xdomain.c
+@@ -1255,6 +1255,7 @@ struct tb_xdomain_lookup {
+ 	const uuid_t *uuid;
+ 	u8 link;
+ 	u8 depth;
++	u64 route;
+ };
  
- 		aggr_txq->count = val & MVPP2_AGGR_TXQ_PENDING_MASK;
+ static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
+@@ -1275,9 +1276,13 @@ static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
+ 			if (lookup->uuid) {
+ 				if (uuid_equal(xd->remote_uuid, lookup->uuid))
+ 					return xd;
+-			} else if (lookup->link == xd->link &&
++			} else if (lookup->link &&
++				   lookup->link == xd->link &&
+ 				   lookup->depth == xd->depth) {
+ 				return xd;
++			} else if (lookup->route &&
++				   lookup->route == xd->route) {
++				return xd;
+ 			}
+ 		} else if (port->remote) {
+ 			xd = switch_find_xdomain(port->remote->sw, lookup);
+@@ -1313,12 +1318,7 @@ struct tb_xdomain *tb_xdomain_find_by_uuid(struct tb *tb, const uuid_t *uuid)
+ 	lookup.uuid = uuid;
+ 
+ 	xd = switch_find_xdomain(tb->root_switch, &lookup);
+-	if (xd) {
+-		get_device(&xd->dev);
+-		return xd;
 -	}
 -
--	if ((aggr_txq->count + num) > MVPP2_AGGR_TXQ_SIZE)
--		return -ENOMEM;
+-	return NULL;
++	return tb_xdomain_get(xd);
+ }
+ EXPORT_SYMBOL_GPL(tb_xdomain_find_by_uuid);
  
-+		if ((aggr_txq->count + num) > MVPP2_AGGR_TXQ_SIZE)
-+			return -ENOMEM;
-+	}
- 	return 0;
+@@ -1349,13 +1349,36 @@ struct tb_xdomain *tb_xdomain_find_by_link_depth(struct tb *tb, u8 link,
+ 	lookup.depth = depth;
+ 
+ 	xd = switch_find_xdomain(tb->root_switch, &lookup);
+-	if (xd) {
+-		get_device(&xd->dev);
+-		return xd;
+-	}
++	return tb_xdomain_get(xd);
++}
+ 
+-	return NULL;
++/**
++ * tb_xdomain_find_by_route() - Find an XDomain by route string
++ * @tb: Domain where the XDomain belongs to
++ * @route: XDomain route string
++ *
++ * Finds XDomain by walking through the Thunderbolt topology below @tb.
++ * The returned XDomain will have its reference count increased so the
++ * caller needs to call tb_xdomain_put() when it is done with the
++ * object.
++ *
++ * This will find all XDomains including the ones that are not yet added
++ * to the bus (handshake is still in progress).
++ *
++ * The caller needs to hold @tb->lock.
++ */
++struct tb_xdomain *tb_xdomain_find_by_route(struct tb *tb, u64 route)
++{
++	struct tb_xdomain_lookup lookup;
++	struct tb_xdomain *xd;
++
++	memset(&lookup, 0, sizeof(lookup));
++	lookup.route = route;
++
++	xd = switch_find_xdomain(tb->root_switch, &lookup);
++	return tb_xdomain_get(xd);
+ }
++EXPORT_SYMBOL_GPL(tb_xdomain_find_by_route);
+ 
+ bool tb_xdomain_handle_request(struct tb *tb, enum tb_cfg_pkg_type type,
+ 			       const void *buf, size_t size)
+diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
+index 7b69853188b1..27b9be34d4b9 100644
+--- a/include/linux/thunderbolt.h
++++ b/include/linux/thunderbolt.h
+@@ -237,6 +237,7 @@ int tb_xdomain_enable_paths(struct tb_xdomain *xd, u16 transmit_path,
+ 			    u16 receive_ring);
+ int tb_xdomain_disable_paths(struct tb_xdomain *xd);
+ struct tb_xdomain *tb_xdomain_find_by_uuid(struct tb *tb, const uuid_t *uuid);
++struct tb_xdomain *tb_xdomain_find_by_route(struct tb *tb, u64 route);
+ 
+ static inline struct tb_xdomain *
+ tb_xdomain_find_by_uuid_locked(struct tb *tb, const uuid_t *uuid)
+@@ -250,6 +251,18 @@ tb_xdomain_find_by_uuid_locked(struct tb *tb, const uuid_t *uuid)
+ 	return xd;
  }
  
++static inline struct tb_xdomain *
++tb_xdomain_find_by_route_locked(struct tb *tb, u64 route)
++{
++	struct tb_xdomain *xd;
++
++	mutex_lock(&tb->lock);
++	xd = tb_xdomain_find_by_route(tb, route);
++	mutex_unlock(&tb->lock);
++
++	return xd;
++}
++
+ static inline struct tb_xdomain *tb_xdomain_get(struct tb_xdomain *xd)
+ {
+ 	if (xd)
 -- 
-2.14.3
+2.16.1
