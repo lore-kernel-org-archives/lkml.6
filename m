@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeBZSRa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:17:30 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44372 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeBZSR2 (ORCPT
+        id S1751799AbeBZSRp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:17:45 -0500
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:36900 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751737AbeBZSRn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:17:28 -0500
-X-Google-Smtp-Source: AG47ELthzCIXeC0JMWMv8XutbU6V5flAH9vCzLqA0rkWyQISzFlXJs+61l/glUxVPn1vU8JqepbfY05328Uf+BNuDqE=
+        Mon, 26 Feb 2018 13:17:43 -0500
+X-Google-Smtp-Source: AG47ELv+NyswMKr0jJx+MrlQRQhGndOLKgwuhOHZnvJi2vrqZRFMdMBJI7nskP2jakqF3LJYP+4M//md8+eXjtYUJhM=
 MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519667836-31330-4-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-4-git-send-email-jacopo+renesas@jmondi.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:17:27 +0100
-X-Google-Sender-Auth: Zi7UQL86KwCOpLqOheiBr9aLGOk
-Message-ID: <CAMuHMdVnS3_f6ZsaJ3=SqZwAdKv+mWqJ1_q2VpKD+VMvsqZEnw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] arm64: dts: renesas: r8a7796: Set EtherAVB phy mode
+Date: Mon, 26 Feb 2018 19:17:41 +0100
+X-Google-Sender-Auth: VBKcAcerw7_u6YktIReCnJA-zKg
+Message-ID: <CAMuHMdXFa=t4F6gtwq4PnSjyXchbCoETjkphgy-A_RYMWyOnBQ@mail.gmail.com>
+Subject: Re: [PATCH 3/8] arm64: dts: renesas: r8a7795: Set EtherAVB phy mode
  to "rgmii"
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Simon Horman <horms@verge.net.au>,
