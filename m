@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226Qx1mq5+1RZQed/MY4YrGHVvij+yXwdWB28JR8J/vzM5LiP6RsdZ261bleHB3G7iiJDxLK
-ARC-Seal: i=1; a=rsa-sha256; t=1519676154; cv=none;
+X-Google-Smtp-Source: AH8x226bdpWeUJKmQws4TS5Iui66xAFbBK0k8Qlis0NKxLXASzfmLYIelpilokdhM+mnEu+AYtHT
+ARC-Seal: i=1; a=rsa-sha256; t=1519676151; cv=none;
         d=google.com; s=arc-20160816;
-        b=f/oCRcjj6tT5WNHJRnEqFF4uQ7IW/gnbEAxuosDRqKVlWYMmTJC238RI2ZYncqExLk
-         DiDcHPdFPslT5CX3nkZBtq8nmdvIY+Q7VrpbSRe24ASicPt7gP0251dIo3243lNijwJ1
-         wMPF7D3ikk4glbZJwFFNGDMF26nUQzfzK4EVs7ulD0hwmfdNpj+IR3jV4xNRegA+i4lV
-         Fy4PmZkbjLIsQ5CBhpJqK839kxdJj43Vyp1EHKA4G66v30crUhYXYxWEDM2Mc47XGGnG
-         12upcB8oQSg4w38YObL13G5Apn0EiOl5heJ/G4xUmg6LI0vNb1T85jhQut1Sx+QP03n2
-         7s1Q==
+        b=knRwourw8noTtZHqWCFC81TZ7rCdCIs/sTbDoNyRFm4q5y+xzxRyL4/2uUwfCMqB3B
+         lrGUSAj79Wz9O7dgQ3FV35/nXaYwpEZMrPSaNr+fKiZz8f4mMnPDmuk2C0aR95OSGk6n
+         AT2ckZFJS0PbJ6PaO5xj/0ekv8pw2yxsJhVgwWXBm8FbcFVlIsfYJk7gLI/aOcxG0+e7
+         O0KGhaukm21c9ICWv15KC2VCehWwaduJ7jzgIRKC2QyQ4IwkivlEnP/WDcj3mQHBkmuq
+         Kv4GIzpywSA8vyFUjB6e79+/yO7xrKd924ieNSr6Td1rYS2BZ+wxMPECURu7JLCsRfBM
+         f0cQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GR5RLbDS4pBihCDe7qDhGOXIbm8TfU4wKGGSREomat4=;
-        b=BFCb7etxbQvkeB9wv2KW3+fyOBHYAYvh4IvSr5Te32NPVFtshDlFvk4zUsz/1FXMgy
-         wmMXMxiBMfFHlbcEetnRnPcPzgijjSccFbJ1qOs3xxYR1pGs98k4+xbPbFjRAz66AsbF
-         qXCi1c9VtkHWR0jUYSva+LOHXa/9jLc7uV1rA8MZuqmH1zCZPrwcbrNn2YE/v9R0q+03
-         0lYtNjWJSjiszXMESHVwjn5SuYNnjW8D9dWYqwhkxbg+kre5z/QeQtN2Z5Sbo6HIbsAA
-         tO9aMEHbklEJ6QxWahZfbwMYEE1SC2nPFrc4ajURqB2eFgpJ61Yq4MuYv3fEWLe+FGf6
-         zC7w==
+        bh=8G9qa0eDUptpjwV9QBWtYjwwgvAqTTe66wVCe8s01OU=;
+        b=pSeBagD/ZrMC9fV2dJvSCWnvLDe80bEfJMxTwDaNfsB5Fpo2inpf+WkKqp6VuZo0NW
+         s4Vt2xBUEB6fmdS6nw5QfqiY6nZCR8pb82affSb7R6+aVbC+KDTyaQ8favHcrxAfIMd2
+         zqqfsu0tuOT8Wq8m830wepoMLpvz5iDa+GPjSuXNGZ1GfHOhPeyoi0jiFtJpLlv9FYpz
+         jaD5gj3Qnpy6shmkeYSrS0BqUBnhWYebjFNL9Yntl5AjvgTCvUZ33BBoKyy1EIwVXWou
+         7luAAaDn2/ugFxNkujkrSmHVH/qxEN7Lg0sf8A4Ri4ZVDKhXOhV5TLsKBH3jLVz5FExq
+         9Ycg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,25 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Weiser <michael.weiser@gmx.de>,
-	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 3.18 10/13] arm64: Disable unhandled signal log messages by default
-Date: Mon, 26 Feb 2018 21:15:38 +0100
-Message-Id: <20180226201527.680787933@linuxfoundation.org>
+	Xin Long <lucien.xin@gmail.com>,
+	syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Krzysztof Piotr Oledzki <ole@ans.pl>
+Subject: [PATCH 3.18 01/13] netfilter: drop outermost socket lock in getsockopt()
+Date: Mon, 26 Feb 2018 21:15:29 +0100
+Message-Id: <20180226201527.311780415@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
 References: <20180226201527.242286068@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495943344886080?=
-X-GMAIL-MSGID: =?utf-8?q?1593495943344886080?=
+X-GMAIL-THRID: =?utf-8?q?1593495940069905483?=
+X-GMAIL-MSGID: =?utf-8?q?1593495940069905483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,57 +52,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Weiser <michael.weiser@gmx.de>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 5ee39a71fd89ab7240c5339d04161c44a8e03269 upstream.
+commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
 
-aarch64 unhandled signal kernel messages are very verbose, suggesting
-them to be more of a debugging aid:
+The Syzbot reported a possible deadlock in the netfilter area caused by
+rtnl lock, xt lock and socket lock being acquired with a different order
+on different code paths, leading to the following backtrace:
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
 
-sigsegv[33]: unhandled level 2 translation fault (11) at 0x00000000, esr
-0x92000046, in sigsegv[400000+71000]
-CPU: 1 PID: 33 Comm: sigsegv Tainted: G        W        4.15.0-rc3+ #3
-Hardware name: linux,dummy-virt (DT)
-pstate: 60000000 (nZCv daif -PAN -UAO)
-pc : 0x4003f4
-lr : 0x4006bc
-sp : 0000fffffe94a060
-x29: 0000fffffe94a070 x28: 0000000000000000
-x27: 0000000000000000 x26: 0000000000000000
-x25: 0000000000000000 x24: 00000000004001b0
-x23: 0000000000486ac8 x22: 00000000004001c8
-x21: 0000000000000000 x20: 0000000000400be8
-x19: 0000000000400b30 x18: 0000000000484728
-x17: 000000000865ffc8 x16: 000000000000270f
-x15: 00000000000000b0 x14: 0000000000000002
-x13: 0000000000000001 x12: 0000000000000000
-x11: 0000000000000000 x10: 0008000020008008
-x9 : 000000000000000f x8 : ffffffffffffffff
-x7 : 0004000000000000 x6 : ffffffffffffffff
-x5 : 0000000000000000 x4 : 0000000000000000
-x3 : 00000000004003e4 x2 : 0000fffffe94a1e8
-x1 : 000000000000000a x0 : 0000000000000000
+======================================================
+WARNING: possible circular locking dependency detected
+4.15.0+ #301 Not tainted
+------------------------------------------------------
+syzkaller233489/4179 is trying to acquire lock:
+  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
 
-Disable them by default, so they can be enabled using
-/proc/sys/debug/exception-trace.
+but task is already holding lock:
+  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
+xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+which lock already depends on the new lock.
+===
+
+Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), we already acquire the socket lock in
+the innermost scope, where needed. In such commit I forgot to remove
+the outer-most socket lock from the getsockopt() path, this commit
+addresses the issues dropping it now.
+
+v1 -> v2: fix bad subj, added relavant 'fixes' tag
+
+Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
+Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
+Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
+Suggested-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/traps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_sockglue.c   |    7 +------
+ net/ipv6/ipv6_sockglue.c |   10 ++--------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -45,7 +45,7 @@ static const char *handler[]= {
- 	"Error"
- };
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1375,10 +1375,7 @@ int ip_getsockopt(struct sock *sk, int l
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
  
--int show_unhandled_signals = 1;
-+int show_unhandled_signals = 0;
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+@@ -1410,9 +1407,7 @@ int compat_ip_getsockopt(struct sock *sk
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
  
- /*
-  * Dump out the contents of some memory nicely...
+-		lock_sock(sk);
+ 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
+-		release_sock(sk);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1314,10 +1314,7 @@ int ipv6_getsockopt(struct sock *sk, int
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET6, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+@@ -1356,10 +1353,7 @@ int compat_ipv6_getsockopt(struct sock *
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = compat_nf_getsockopt(sk, PF_INET6,
+-					   optname, optval, &len);
+-		release_sock(sk);
++		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
