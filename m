@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv8dTM/pAssE8ABgzbY4+pk10oo7HLAe7dInb8arEnQtwjOwG11+kdzYqVpZXSEQXvTfDq3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676224; cv=none;
+X-Google-Smtp-Source: AH8x2269flAHl4NLCsNef6KwKfj661EVI6E72M+WuZxXytEr6AsGJgHJqZh4KIT2n7T8x6pl06xj
+ARC-Seal: i=1; a=rsa-sha256; t=1519676221; cv=none;
         d=google.com; s=arc-20160816;
-        b=EA2htXLdn1abyH9e4VFbDRQddL7T9a41URiDbk3PYgG0RigJSV3MMzbBa4MqjxtrNp
-         BjhlWqZIl6vSSSxZJS03OCaFP+NEglEFHVvy2qS2lWzefGHPn8Ep4KM8pBuH3/YPgIzc
-         DMWyUorDmpzbMTzG33iqNuVKrwczW0a5iJ9BRU4lswarhR+Hq9z5ldZ993FiH3NvReIB
-         ocFmStPzP/ZmBm+V2aizGq/J0RBbK896UbkVw9n/FQ0lalXRtTKQ8wz0D1tgZXtJajSw
-         1CJdfsrPCNlcTKw3VlPyMveLAbfran+8xLHQKf5vtOypJYXVYA3rSCrBWsZKQd6I+Scd
-         kaqg==
+        b=VO0oPbROuA8HdC8+LURRKohlQ6emcpTfaTjg8usvdIvrhE8Ez01bYBGeJEas7J8oYY
+         zr5UnCSeUtk/DPFk+IlXz84JD6ZjtGOyopOkdhczWRqo0tKN7btbQSr1QlILqfzSBdnM
+         Lmz0Cse7Z1sIcBKdLlKfmHCA9MKfLaRJvOmG0BZlV6LalGO+uNbKM3k64j6jeKJMZeNn
+         7GpeKdeXOfKh9QRhMG9UKYER4Re6YzaUcb/Bm/W/9rgP0UkA4S3n4gUyB+p568tLucdY
+         2ltPsAX2pQmNg5KM8Hax7pow7CsYN3MKrgo1u4rERuh4KFXLVFdNHlNQj1y5swND5k3Q
+         aEYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uWXkQ5l8+x6Xa8Ab/LT4flnJiOOyuS/JD6mO/GlDdQk=;
-        b=Y3/QYgMpiSx2zUSDkzGnFKHJ9RwuXz9jYTm74EIPAgWs2WSYsB0vfQEwjggDrGg2cV
-         2QDXI5wDBykteABScKJ7lDjK8ivV6WkYSmLz2Zf60DpbEGq4v6ZbGFmo02TXdyUs+RAO
-         t4/AxRkPm/Gmd5M0A9CN7dPk05NgHamiiCR07PEGwXUcv9w88EIh89EXqvcjPDpGjtlq
-         MpdUShLlIqOJsEcA8MLkXuzw/y0xocceSiXr5bMImc61w49ay5nuPch6NAFlWpbEZexU
-         5zwY+jly2jsB0KQFH6X9qB/bnGJ91JGXTLyAwiz8Kv5SkhpyDdsHxxkXH+4hJWNUQS1M
-         IB8A==
+        bh=J7b9x1yypyxdDwnJeZgZaC7IAI2ChFkLBDCgu5z6puo=;
+        b=bgfY8YDcBS0VOjSOZtkRipUVlPi9UZBlZLcjrftmPGnU3NXbmyo6dl6hGPpdByzSRn
+         Qv5p5RtaxWJmChHqFLlvuGBaPbQ9mSk3FhQFF32E5nvr3l8I8kaYRLHrNpN4PHkN6GB7
+         EiqAT+oq7SbgpwhKmaRSIjW41qrNeJYwDWJAqUPesjbBrd5grv6/kZROI29eMzOZRgwC
+         JqF1Vfunkqjy3f4WRhHcWk4jb8IX2BNunTiGuOvwkYx8ERBtjFdif/DMDgjE9yLDxk7X
+         P187CA40s/8aDlY2vg061W4Y0/FZqMwT2AMl13yzeV5KEI8MfOsZ11u6mkZAI7+8Lzc6
+         XBGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bernhard Kaindl <bernhard.kaindl@thalesgroup.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 02/22] powerpc/64s: Fix RFI flush dependency on HARDLOCKUP_DETECTOR
-Date: Mon, 26 Feb 2018 21:16:02 +0100
-Message-Id: <20180226201558.809893153@linuxfoundation.org>
+	Mayank Rana <mrana@codeaurora.org>,
+	Jack Pham <jackp@codeaurora.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 19/22] usb: gadget: f_fs: Process all descriptors during bind
+Date: Mon, 26 Feb 2018 21:16:19 +0100
+Message-Id: <20180226201559.576997613@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496017277626852?=
-X-GMAIL-MSGID: =?utf-8?q?1593496017277626852?=
+X-GMAIL-THRID: =?utf-8?q?1593495953448268879?=
+X-GMAIL-MSGID: =?utf-8?q?1593496013998997758?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Jack Pham <jackp@codeaurora.org>
 
-The backport of commit aa8a5e0062ac ("powerpc/64s: Add support for RFI
-flush of L1-D cache"), incorrectly placed the new RFI flush code
-inside an existing #ifdef CONFIG_HARDLOCKUP_DETECTOR block.
+commit 6cf439e0d37463e42784271179c8a308fd7493c6 upstream.
 
-This has the obvious effect of requiring HARDLOCKUP_DETECTOR to be
-enabled in order for RFI flush to be enabled, which is a bug.
+During _ffs_func_bind(), the received descriptors are evaluated
+to prepare for binding with the gadget in order to allocate
+endpoints and optionally set up OS descriptors. However, the
+high- and super-speed descriptors are only parsed based on
+whether the gadget_is_dualspeed() and gadget_is_superspeed()
+calls are true, respectively.
 
-Fix it by moving the #endif up to where it belongs.
+This is a problem in case a userspace program always provides
+all of the {full,high,super,OS} descriptors when configuring a
+function. Then, for example if a gadget device is not capable
+of SuperSpeed, the call to ffs_do_descs() for the SS descriptors
+is skipped, resulting in an incorrect offset calculation for
+the vla_ptr when moving on to the OS descriptors that follow.
+This causes ffs_do_os_descs() to fail as it is now looking at
+the SS descriptors' offset within the raw_descs buffer instead.
 
-Fixes: c3892946315e ("powerpc/64s: Add support for RFI flush of L1-D cache")
-Reported-by: Bernhard Kaindl <bernhard.kaindl@thalesgroup.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+_ffs_func_bind() should evaluate the descriptors unconditionally,
+so remove the checks for gadget speed.
+
+Fixes: f0175ab51993 ("usb: gadget: f_fs: OS descriptors support")
+Cc: stable@vger.kernel.org
+Co-Developed-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kernel/setup_64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -835,6 +835,7 @@ static int __init disable_hardlockup_det
- 	return 0;
- }
- early_initcall(disable_hardlockup_detector);
-+#endif
+---
+ drivers/usb/gadget/function/f_fs.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -2756,10 +2756,8 @@ static int _ffs_func_bind(struct usb_con
+ 	struct ffs_data *ffs = func->ffs;
  
- #ifdef CONFIG_PPC_BOOK3S_64
- static enum l1d_flush_type enabled_flush_types;
-@@ -973,4 +974,3 @@ ssize_t cpu_show_meltdown(struct device
- 	return sprintf(buf, "Vulnerable\n");
- }
- #endif /* CONFIG_PPC_BOOK3S_64 */
--#endif
+ 	const int full = !!func->ffs->fs_descs_count;
+-	const int high = gadget_is_dualspeed(func->gadget) &&
+-		func->ffs->hs_descs_count;
+-	const int super = gadget_is_superspeed(func->gadget) &&
+-		func->ffs->ss_descs_count;
++	const int high = !!func->ffs->hs_descs_count;
++	const int super = !!func->ffs->ss_descs_count;
+ 
+ 	int fs_len, hs_len, ss_len, ret, i;
+ 	struct ffs_ep *eps_ptr;
