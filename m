@@ -1,106 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeBZIot (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:44:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39681 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751567AbeBZIop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:44:45 -0500
-Date: Mon, 26 Feb 2018 09:44:33 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: hao_zhang <hao5781286@gmail.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: pwm: binding allwinner sun8i.
-Message-ID: <20180226084433.jcahdixnz63jo34m@flea.lan>
-References: <20180225135045.GA14508@arx-s1>
+        id S1751886AbeBZIqL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:46:11 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33894 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeBZIqK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 03:46:10 -0500
+X-Google-Smtp-Source: AG47ELuMgDYEZvCw723daFZ9y4Ya06Qiewdz1FCDsQzS4Pi4N1NYd+bU+wvh/vwl3FjHAzhMnLf9lTMSrP4EZRKo9CE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rzg4gjmtenrchmoq"
-Content-Disposition: inline
-In-Reply-To: <20180225135045.GA14508@arx-s1>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180225235432.31209-4-rabel@robertabel.eu>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu> <20180225235432.31209-4-rabel@robertabel.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 09:46:08 +0100
+X-Google-Sender-Auth: -5YqLas176jUPT0dOcOi0SVY1N4
+Message-ID: <CAMuHMdW4i0-22zakETxEaio9rvVNuvvbQEwwehBfze=jeQLnHQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
+To: Robert Abel <rabel@robertabel.eu>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Willy Tarreau <w@1wt.eu>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Robert,
 
---rzg4gjmtenrchmoq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 26, 2018 at 12:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> NUL-terminate each individual number to be parsed.
+> To do this, the next command character and a pointer to its argument
+> are found and stored. The command character is then overwritten by NUL
+> before kstr* functions are called on the buffer.
+>
+> Signed-off-by: Robert Abel <rabel@robertabel.eu>
 
-Hi,
+Thanks for your patch!
 
-On Sun, Feb 25, 2018 at 09:50:45PM +0800, hao_zhang wrote:
-> This patch adds allwinner sun8i pwm binding documents.
->=20
-> Signed-off-by: hao_zhang <hao5781286@gmail.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-sun8i.txt | 18 +++++++++++++++=
-+++
->  1 file changed, 18 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Docume=
-ntation/devicetree/bindings/pwm/pwm-sun8i.txt
-> new file mode 100644
-> index 0000000..e8c48be
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> @@ -0,0 +1,18 @@
-> +Allwinner sun8i R40/V40/T3 SoC PWM controller
+> --- a/drivers/auxdisplay/charlcd.c
+> +++ b/drivers/auxdisplay/charlcd.c
+> @@ -471,28 +471,63 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+>                 break;
+>         }
+>         case 'x':       /* gotoxy : LxXXX[yYYY]; */
+> -       case 'y':       /* gotoxy : LyYYY[xXXX]; */
+> +       case 'y': {     /* gotoxy : LyYYY[xXXX]; */
 > +
-> +Required properties:
-> +  - compatible: should be one of:
-> +    - "allwinner,sun8i-r40-pwm"
-> +  - reg: physical base address and length of the controller's registers
-> +  - #pwm-cells: should be 3. See pwm.txt in this directory for a descrip=
-tion of
-> +    the cells format.
-> +  - clocks: From common clock binding, handle to the parent clock.
+> +               char* nxt_esc;
+> +               char  nxt_cmd;
+> +               char  cmd;
+> +               struct charlcd_priv_addr tmp_addr;
 > +
-> +Example:
+>                 if (!strchr(esc, ';'))
+>                         break;
+>
+> -               while (*esc) {
+> -                       if (*esc == 'x') {
+> -                               esc++;
+> -                               if (kstrtoul(esc, 10, &priv->addr.x) < 0)
+> +               /* sequence is processed whether legal or illegal */
+> +               processed = 1;
 > +
-> +pwm: pwm@1c23400 {
-> +	     compatible =3D "allwinner,sun8i-pwm";
+> +               /* copy current address to temporary buffer */
+> +               tmp_addr = priv->addr;
+> +
+> +               nxt_cmd = *esc++;
+> +               nxt_esc = esc;
+> +
+> +               while ('\0' != *esc) {
+> +
+> +                       cmd = nxt_cmd;
+> +                       esc = nxt_esc;
+> +                       nxt_esc = strpbrk(esc, "xy;");
+> +                       if (NULL != nxt_esc) {
+> +                               nxt_cmd = *nxt_esc;
+> +                               /* terminate current sequence with NUL */
+> +                               *nxt_esc++ = '\0';
+> +                       }
 
-The compatible you have here isn't the one documented.
+So if none of "x", "y", or ";" is found, nxt_cmd will still contain
+the current command?
+Shouldn't it be reset to '\0' or so?
 
-> +	     reg =3D <0x01c23400 0x154>;
+> +
+> +                       if ('x' == cmd) {
+> +                               if (kstrtoul(esc, 10, &tmp_addr.x) < 0)
+>                                         break;
+> -                       } else if (*esc == 'y') {
+> -                               esc++;
+> -                               if (kstrtoul(esc, 10, &priv->addr.y) < 0)
+> +                       } else if ('y' == cmd) {
+> +                               if (kstrtoul(esc, 10, &tmp_addr.y) < 0)
+>                                         break;
+>                         } else {
+> +                               /* break on unknown command or ';' */
+>                                 break;
+>                         }
+> +
+>                 }
+>
+> +               /* unknown commands in sequence will be followed by at least ';' */
+> +               if ('\0' != *esc)
+> +                       break;
+> +
+> +               /* clamp new x/y coordinates */
+> +               if (tmp_addr.x >= lcd->width)
+> +                       tmp_addr.x = lcd->width - 1;
+> +               tmp_addr.y %= lcd->height;
+> +
+> +               priv->addr = tmp_addr;
+>                 charlcd_gotoxy(lcd);
+> -               processed = 1;
+>                 break;
+>         }
+> +       }
+>
+>         /* TODO: This indent party here got ugly, clean it! */
+>         /* Check whether one flag was changed */
 
-And the size isn't correct, even though that doesn't really make any
-difference here.
+Gr{oetje,eeting}s,
 
-Thanks!
-Maxime
+                        Geert
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---rzg4gjmtenrchmoq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTyPAACgkQ0rTAlCFN
-r3TyaQ/9GikdziVYAKqwaqJ5Ak1H9bU3XgtLpJ3uYTelfB0Zcq1sTY50v0Iw24+U
-FtXspyouhbrOe5RTHQYIVLyXrXvI65Ufo3oCVKGtS27txUB6FpVkkuRZCUD9Jgbv
-BvMGteYfADuOv+COxonHuuRNTvbxP8ZaMRpgFUhwKzVEKmBucUP/yAB9xyiznori
-dlm0VCIIHp/G6HL0FWuCLC1f/AzSw3vtQvbtvfx8CnmT9HDXxLTjO20WiNpUeCEM
-NhqY93sNBr8UAH1wLRBh3fFcwgOxI9e7+1fs3WKxY2gNinZsVFO3c2kvPQBxwrpj
-qqYxE+0qc6Y49CyWCx+4VuWgytDo3vDavkhm0sopgihd8GDeA6kUQpK0COpSV8LE
-h4OrOaBkNfsZBQgIdWtJGeaWZCEjuaDqMZnyJ+ZKkvzJZERWC2gRgNqilxqssT1W
-OLMz3MQMnxQExGe9iPScxDteYPFlcTEiJd+z3pSsHBX2B4OTSLS+bdW/mSyIHazP
-L5GUNTe6M271WczTHCbg89/n5fBvpIJTOYwlk/pUgNgl85eLAVAWY0p9ultCmH+Y
-cuUzzWA5kR1dm3tSBX+kK3ndiaFyn/h3w0bVpbwOBoC9tKnJqic0KmDRjMG5FcMt
-biOpZ6ahEeXj3j7X6VOVcUGKEUXnnN7AfVrPj4jweeacWRZGKeM=
-=naAz
------END PGP SIGNATURE-----
-
---rzg4gjmtenrchmoq--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
