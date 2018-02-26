@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227JESoqxz4VUGq68YwLwFQKzdPZlivYJQDUhP8WqjYKo054wCajNIoQxQERB3UbQJEqieMP
-ARC-Seal: i=1; a=rsa-sha256; t=1519676886; cv=none;
+X-Google-Smtp-Source: AH8x225qhid2A0HS/kSvQ321NwSsZ4rKDVJ3PbTL/tLwqHRGCxHQyW4FypZY6wNoxYwVnqDXntDq
+ARC-Seal: i=1; a=rsa-sha256; t=1519676883; cv=none;
         d=google.com; s=arc-20160816;
-        b=pbtEWKbWIAqcC/UJzvcSRI5npPuznsXesqtDfXJuPrkGHYtDtG+V3mh629C1Tde5Fh
-         BGoBjlGL1DZEplcUfPodz/scsTN9n9kHmddnfHkslqCChKUTmuX8tE0GaCDKXnw8eC5j
-         pI3bNJptYn8yXzunr/elI/GM+qr8wYmbfqYp9ID4d4Clmm0dp9aAgZy9CmIKunx7pPVG
-         Mb8Xj3L2rUZMQ7x0GQW2/HEZYdAnNoDUgVnMjwhryAfzkTeJr1W2eJbyj2u8oPEiJHHi
-         4Ev8AqOVA69izMz1bOXxh8xWmTk3L6CAycTn7bJT2Y3iV14oQPgjmibc6FehAjGX01AB
-         xXeA==
+        b=yzxumoKrizPgOlkoxGU/AYfD4ZjcXfZ7ABZZGYUAiE1yz9r5i/cay7EJCWyrBV3ibO
+         kLhVqscADnJnEOHv6M2zRlzQd4qi0Z4RGlDP1lOT3p07fQrT8OkhGh+cYOJvtFjoXcKY
+         XNSKYXJ6K1KFhLu8tofexKkqJafrlRcp1uY470pPT3NpP2TswshSuL4KRiQJwbxYmTvF
+         2Ts+IcnNr6IDWHM609WuxNx1UAwhiFa98kANIxhD5eKevWURWTv1feMd3Oe+EAqOMyus
+         hZPS4aIn3boAUkYJQGFhz3OfiSlev+3sZJwH0PBw81Ll3JepHx3OB5cmrD2OfIqSeO/i
+         xzSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Bnbz0IGNpt9jPtiwqkQKT4bbYGG96HCvfdzDOmQK/II=;
-        b=WgNQdT/xmPO3LFAwniuLRvp5oqg6x2qdT2FHGVfAdU0jQSD2o+KGw8IJ0PLv5H6cyL
-         tSnO4EO0j3BVnfI6OgM+OtMmvkRafumX7w05Q5i0pfnf45aCQvH/dt146HHgW5qOchfM
-         Sf2bcKakYvgeoEuACUZuv8klv2J/5b7yYX4WcZY2s5164JTbxG1h+zN1R5V4aGZ+pr8O
-         Bir2NH40i6QICRV242sHT3pQGUVO+t9wjCrA9N41o5n6WxlF24WseWpIoq5pzO8HWDaX
-         BDwRgUSWh4wM1NV64bcaowGTwS5pb7VQSRD2pxrC0dU1+wvKGG6rG1fPSmPBHE0kQKmT
-         FIqQ==
+        bh=LEY2rx1nlnRYLhmdK969GB2O1P4v38WE2hbcpfkiZZk=;
+        b=Kr72GtfF4dwx27OFy7Gj8XvLJ2Dy2Yw/QPqjq1KZRX2ZzCYb/itUelJo+Vj8oewM2R
+         TgCFu0KkoppvvN16s16n+mVc1Qgdlao7COPSm0vV9iRAmlPCV7Tu5YokAxrZciPDmH5Y
+         LLrjohSLb2yUHmZzdk5s2SfEzxwxbBwf/5KXTVPQLjfLQYorABgvwzq+c6zAl+oMX0J/
+         42ai3DTwoIN/JOaeHxg2vlQ2Rw49C3DGV97VpqyoQYczFjUQ7eEkBY8m2Vn2E7jKw6AU
+         NnHxFZgedCdpdXDOplRyueyi1WI+QrTR7DOpM2gafbO8hmBRvhdWpZ+A/O/17fh+dA4L
+         tiNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Li Jun <jun.li@nxp.com>,
-	Peter Chen <peter.chen@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
+	Thinh Nguyen <thinhn@synopsys.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 47/64] usb: phy: mxs: Fix NULL pointer dereference on i.MX23/28
-Date: Mon, 26 Feb 2018 21:22:24 +0100
-Message-Id: <20180226202155.466230975@linuxfoundation.org>
+Subject: [PATCH 4.15 46/64] usb: dwc3: ep0: Reset TRB counter for ep0 IN
+Date: Mon, 26 Feb 2018 21:22:23 +0100
+Message-Id: <20180226202155.420348783@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496710797544236?=
-X-GMAIL-MSGID: =?utf-8?q?1593496710797544236?=
+X-GMAIL-THRID: =?utf-8?q?1593496566604653259?=
+X-GMAIL-MSGID: =?utf-8?q?1593496707594247421?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,51 +49,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit 499350865387f8b8c40a9e9453a9a7eb3cec5dc4 upstream.
+commit f035d139ffece7b6a7b8bfb17bd0ba715ee57a04 upstream.
 
-Commit e93650994a95 ("usb: phy: mxs: add usb charger type detection")
-causes the following kernel hang on i.MX28:
+DWC3 tracks TRB counter for each ep0 direction separately. In control
+read transfer completion handler, the driver needs to reset the TRB
+enqueue counter for ep0 IN direction. Currently the driver only resets
+the TRB counter for control OUT endpoint. Check for the data direction
+and properly reset the TRB counter from correct control endpoint.
 
-[    2.207973] usbcore: registered new interface driver usb-storage
-[    2.235659] Unable to handle kernel NULL pointer dereference at virtual address 00000188
-[    2.244195] pgd = (ptrval)
-[    2.246994] [00000188] *pgd=00000000
-[    2.250676] Internal error: Oops: 5 [#1] ARM
-[    2.254979] Modules linked in:
-[    2.258089] CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc8-next-20180117-00002-g75d5f21 #7
-[    2.266724] Hardware name: Freescale MXS (Device Tree)
-[    2.271921] PC is at regmap_read+0x0/0x5c
-[    2.275977] LR is at mxs_phy_charger_detect+0x34/0x1dc
-
-mxs_phy_charger_detect() makes accesses to the anatop registers via regmap,
-however i.MX23/28 do not have such registers, which causes a NULL pointer
-dereference.
-
-Fix the issue by doing a NULL check on the 'regmap' pointer.
-
-Fixes: e93650994a95 ("usb: phy: mxs: add usb charger type detection")
-Cc: <stable@vger.kernel.org> # v4.15
-Reviewed-by: Li Jun <jun.li@nxp.com>
-Acked-by: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: stable@vger.kernel.org
+Fixes: c2da2ff00606 ("usb: dwc3: ep0: don't use ep0in for transfers")
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/phy/phy-mxs-usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/dwc3/ep0.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/phy/phy-mxs-usb.c
-+++ b/drivers/usb/phy/phy-mxs-usb.c
-@@ -602,6 +602,9 @@ static enum usb_charger_type mxs_phy_cha
- 	void __iomem *base = phy->io_priv;
- 	enum usb_charger_type chgr_type = UNKNOWN_TYPE;
- 
-+	if (!regmap)
-+		return UNKNOWN_TYPE;
+--- a/drivers/usb/dwc3/ep0.c
++++ b/drivers/usb/dwc3/ep0.c
+@@ -858,7 +858,12 @@ static void dwc3_ep0_complete_data(struc
+ 		trb++;
+ 		trb->ctrl &= ~DWC3_TRB_CTRL_HWO;
+ 		trace_dwc3_complete_trb(ep0, trb);
+-		ep0->trb_enqueue = 0;
 +
- 	if (mxs_charger_data_contact_detect(mxs_phy))
- 		return chgr_type;
++		if (r->direction)
++			dwc->eps[1]->trb_enqueue = 0;
++		else
++			dwc->eps[0]->trb_enqueue = 0;
++
+ 		dwc->ep0_bounced = false;
+ 	}
  
