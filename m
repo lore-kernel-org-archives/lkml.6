@@ -1,97 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeBZH1H (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:27:07 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752053AbeBZH1E (ORCPT
+        id S1752093AbeBZHf6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:35:58 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36891 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeBZHf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:27:04 -0500
-Date: Sun, 25 Feb 2018 23:26:45 -0800
-From: Ram Pai <linuxram@us.ibm.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, bsingharora@gmail.com, hbabu@us.ibm.com,
-        mhocko@kernel.org, bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
-        corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
-Subject: Re: [PATCH v12 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if
- CONFIG_ARCH_HAS_PKEYS is enabled
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
- <201802231528.snWZIspR%fengguang.wu@intel.com>
- <20180224010511.GK5559@ram.oc3035372033.ibm.com>
- <43082fe4-a6e4-2468-0069-4fbc53418c79@linux.vnet.ibm.com>
+        Mon, 26 Feb 2018 02:35:56 -0500
+X-Google-Smtp-Source: AH8x226esYbSsXtLtg3LWc+ZalP6m2tjLcle+0FsaFSp2KIPPvoZk4w7s361NS0e1tFIMIwbQIIT2Q==
+Date: Mon, 26 Feb 2018 08:35:52 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Borislav Petkov <bp@suse.de>, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180226073552.xabt55ukp24inut5@gmail.com>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <43082fe4-a6e4-2468-0069-4fbc53418c79@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18022607-0008-0000-0000-000004D472B8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022607-0009-0000-0000-00001E678B7D
-Message-Id: <20180226072645.GA1060@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260101
+In-Reply-To: <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 05:27:11PM +0530, Aneesh Kumar K.V wrote:
-> 
-> 
-> On 02/24/2018 06:35 AM, Ram Pai wrote:
-> >On Fri, Feb 23, 2018 at 03:11:45PM +0800, kbuild test robot wrote:
-> >>Hi Ram,
-> >>
-> >>Thank you for the patch! Yet something to improve:
-> >>
-> >>[auto build test ERROR on linus/master]
-> >>[also build test ERROR on v4.16-rc2 next-20180222]
-> >>[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> >>
-> >>         chmod +x ~/bin/make.cross
-> >...snip..
-> >>         # save the attached .config to linux build tree
-> >>         make.cross ARCH=powerpc
-> >>
-> >>Note: the linux-review/Ram-Pai/mm-x86-powerpc-Enhancements-to-Memory-Protection-Keys/20180223-042743 HEAD c5692bca45543c242ffca15c811923e4c548ed19 builds fine.
-> >>       It only hurts bisectibility.
-> >
-> >oops, it broke git-bisect on powerpc :-(
-> >The following change will fix it. This should nail it down.
-> >
-> >diff --git a/arch/powerpc/include/asm/pkeys.h
-> >b/arch/powerpc/include/asm/pkeys.h
-> >index 0409c80..0b3b669 100644
-> >--- a/arch/powerpc/include/asm/pkeys.h
-> >+++ b/arch/powerpc/include/asm/pkeys.h
-> >@@ -25,6 +25,7 @@
-> >  # define VM_PKEY_BIT1  VM_HIGH_ARCH_1
-> >  # define VM_PKEY_BIT2  VM_HIGH_ARCH_2
-> >  # define VM_PKEY_BIT3  VM_HIGH_ARCH_3
-> >  # define VM_PKEY_BIT4  VM_HIGH_ARCH_4
-> >+#elif !defined(VM_PKEY_BIT4)
-> >+# define VM_PKEY_BIT4  VM_HIGH_ARCH_4
-> >#endif
-> >
-> 
-> Why don't you remove this powerpc definition completely in this
-> patch? 
 
-That was my thought too, but refrained from sneaking in the changes into
-the patch, to maintain the integrity of all the reviewed-by.
+* Kirill A. Shutemov <kirill@shutemov.name> wrote:
 
-Was planning on sending a seperate patch to remove the
-powerpc definition entirely.
+> +#if 0
+>  	/*
+>  	 * Find a suitable spot for the trampoline.
+>  	 * This code is based on reserve_bios_regions().
+> @@ -49,6 +50,9 @@ struct paging_config paging_prepare(void)
+>  	/* Place the trampoline just below the end of low memory, aligned to 4k */
+>  	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
+>  	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
+> +#else
+> +	paging_config.trampoline_start = 0x99000;
+> +#endif
 
-RP
+So if it's suspected to be 'Video BIOS undeclared RAM use' related then wouldn't a 
+lower address be safer?
+
+Such as:
+
+	paging_config.trampoline_start = 0x40000;
+
+or so?
+
+Also, could do a puts() hexdump of the affected memory area _before_ we overwrite 
+it? Is it empty? Could we add some debug warning that checks that it's all zeroes?
+
+I also kind of regret that this remained a single commit:
+
+ 3 files changed, 120 insertions(+), 1 deletion(-)
+
+this should be split up further:
+
+ - one patch that adds trampoline space to the kernel image
+ - one patch that calculates the trampoline address and prints the address
+ - one or two patch that does the functional changes
+ - (any more split-up you can think of - early boot code is very fragile!)
+
+It will be painful to rebase x86/mm but I think it's unavoidable at this stage.
+
+There's also a few other things I don't like in paging_prepare():
+
+1)
+
+        /* Check if LA57 is desired and supported */
+        if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
+                        (native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+                paging_config.l5_required = 1;
+
+... it isn't explained why this feature CPU check is so complex.
+
+2)
+
++       /* Place the trampoline just below the end of low memory, aligned to 4k */
++       paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
++       paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
+
+placing trampolines just below or just above BIOS images is fragile. Instead a 
+better heuristic is to use the "middle" of suspected available RAM and work from 
+there.
+
+3)
+
++       /* Clear trampoline memory first */
++       memset(trampoline, 0, TRAMPOLINE_32BIT_SIZE);
+
+Memory bootup state is typically all zeroes (except maybe for kexec), so this 
+should check that what it's clearing doesn't contain any data.
+
+It should probably also clear this memory _after_ use.
+
+4)
+
++       /*
++        * Set up a new page table that will be used for switching from 4-
++        * to 5-level paging or vice versa. In other cases trampoline
++        * wouldn't touch CR3.
++        *
++        * For 4- to 5-level paging transition, set up current CR3 as the
++        * first and the only entry in a new top-level page table.
++        *
++        * For 5- to 4-level paging transition, copy page table pointed by
++        * first entry in the current top-level page table as our new
++        * top-level page table. We just cannot point to the page table
++        * from trampoline as it may be above 4G.
++        */
++       if (paging_config.l5_required) {
++               trampoline[TRAMPOLINE_32BIT_PGTABLE_OFFSET] = __native_read_cr3() + _PAGE_TABLE_NOENC;
++       } else if (native_read_cr4() & X86_CR4_LA57) {
++               unsigned long src;
++
++               src = *(unsigned long *)__native_read_cr3() & PAGE_MASK;
++               memcpy(trampoline + TRAMPOLINE_32BIT_PGTABLE_OFFSET / sizeof(unsigned long),
++                      (void *)src, PAGE_SIZE);
++       }
+
+Why '+ _PAGE_TABLE_NOENC', while not ' |' ?
+
+Also, it isn't clear what is where at this stage and it would be helpful to add 
+comments explaining the general purpose.
+
+There's also two main objects here:
+
+ - the mode switching code trampoline
+ - the trampoline pagetable
+
+it's not clear from this code where is which - and the naming isn't overly clear 
+either: is '*trampoline' the code, or the pagetable, or both?
+
+We need to re-do this as we have now run into _exactly_ the kind of difficult to 
+debug bug that I was worried about when I insisted on the many iterations of this 
+patch-set...
+
+Thanks,
+
+	Ingo
