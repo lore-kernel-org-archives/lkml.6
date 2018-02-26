@@ -1,245 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeBZX3L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 18:29:11 -0500
-Received: from ozlabs.org ([103.22.144.67]:37755 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750969AbeBZX3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:29:09 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 27 Feb 2018 10:28:59 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Networking <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <20180227102859.466d6d78@canb.auug.org.au>
-In-Reply-To: <20180226114147.2ab5c647@canb.auug.org.au>
-References: <20180226114147.2ab5c647@canb.auug.org.au>
+        id S1751676AbeBZXae (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 18:30:34 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35394 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751245AbeBZXad (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 18:30:33 -0500
+Date: Tue, 27 Feb 2018 00:30:33 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Daniel Baluta <daniel.baluta@gmail.com>, linus.walleij@linaro.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, peter.ujfalusi@ti.com,
+        Linux-ALSA <alsa-devel@alsa-project.org>, ivo.g.dimitrov.75@gmail.com,
+        khilman@kernel.org, tony@atomide.com, aaro.koskinen@iki.fi,
+        kernel list <linux-kernel@vger.kernel.org>, sre@kernel.org,
+        martijn@brixit.nl,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Mark Brown <broonie@kernel.org>, abcloriens@gmail.com,
+        sakari.ailus@linux.intel.com, pali.rohar@gmail.com,
+        clayton@craftyguy.net, linux-omap@vger.kernel.org,
+        "Andrew F . Davis" <afd@ti.com>, patrikbachan@gmail.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        serge@hallyn.com
+Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
+Message-ID: <20180226233033.GA14094@amd>
+References: <20180224214617.GA22619@amd>
+ <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
+ <20180226131318.GA14045@amd>
+ <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
+ <20180226231336.GA18565@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pW2pXFrdKTN4VWUmV2ml=Gs"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+In-Reply-To: <20180226231336.GA18565@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/pW2pXFrdKTN4VWUmV2ml=Gs
-Content-Type: text/plain; charset=US-ASCII
+
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi!
 
-On Mon, 26 Feb 2018 11:41:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the bpf-next tree got a conflict in:
+> > >> JFYI: This issues is tracked in the regression reports for Linux 4.16
+> > >> (http://bit.ly/lnxregrep416 ) with this id:
+> > >>
+> > >> Linux-Regression-ID: lr#4b650f
+> > >
+> > > Ok, so it seems that issue is bigger: whole sound subsystem does not
+> > > work. /proc/asound/cards is empty.
+> > >
+> > > 7e6127c1240ed569cdda2a67c8f03836f9f28c05 seems to be bad already.
+> > >
+> > > I tried to revert sound/soc changes, and sound is broken, too. Nasty
+> >=20
+> >=20
+> > dmesg log?
 >=20
->   tools/testing/selftests/bpf/test_verifier.c
+> Partial dmesg is at:
+> https://github.com/pavelmachek/missy/blob/master/db/phone/nokia/n900/pave=
+l/2018.1291171648263/dmesg.out
 >=20
-> between commit:
+> I should be able to get full one...
 >=20
->   ca36960211eb ("bpf: allow xadd only on aligned memory")
+> I did git bisect, and the winner seems to be:
 >=20
-> from the bpf tree and commit:
->=20
->   23d191a82c13 ("bpf: add various jit test cases")
->=20
-> from the bpf-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc tools/testing/selftests/bpf/test_verifier.c
-> index 437c0b1c9d21,c987d3a2426f..000000000000
-> --- a/tools/testing/selftests/bpf/test_verifier.c
-> +++ b/tools/testing/selftests/bpf/test_verifier.c
-> @@@ -11163,64 -11140,95 +11166,153 @@@ static struct bpf_test tests[] =3D=
+> pavel@duo:/data/l/linux-n900$ git bisect bad
+> c85823390215e52d68d3826df92a447ed31e5c80 is the first bad commit
+> commit c85823390215e52d68d3826df92a447ed31e5c80
+> Author: Linus Walleij <linus.walleij@linaro.org>
+> Date:   Wed Dec 27 16:37:44 2017 +0100
+
+I reverted it on top of v4.16-rc2, and sound now works. Ideas?
+
+(Aha, and I see I made small mistake reverting... but...)
+
+								Pavel
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 564bb7a..50cc590 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -157,36 +157,6 @@ int of_get_named_gpio_flags(struct device_node *np, co=
+nst char *list_name,
+ EXPORT_SYMBOL(of_get_named_gpio_flags);
 =20
->   		.result =3D REJECT,
->   		.prog_type =3D BPF_PROG_TYPE_TRACEPOINT,
->   	},
->  +	{
->  +		"xadd/w check unaligned stack",
->  +		.insns =3D {
->  +			BPF_MOV64_IMM(BPF_REG_0, 1),
->  +			BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_0, -8),
->  +			BPF_STX_XADD(BPF_W, BPF_REG_10, BPF_REG_0, -7),
->  +			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_10, -8),
->  +			BPF_EXIT_INSN(),
->  +		},
->  +		.result =3D REJECT,
->  +		.errstr =3D "misaligned stack access off",
->  +		.prog_type =3D BPF_PROG_TYPE_SCHED_CLS,
->  +	},
->  +	{
->  +		"xadd/w check unaligned map",
->  +		.insns =3D {
->  +			BPF_ST_MEM(BPF_DW, BPF_REG_10, -8, 0),
->  +			BPF_MOV64_REG(BPF_REG_2, BPF_REG_10),
->  +			BPF_ALU64_IMM(BPF_ADD, BPF_REG_2, -8),
->  +			BPF_LD_MAP_FD(BPF_REG_1, 0),
->  +			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
->  +				     BPF_FUNC_map_lookup_elem),
->  +			BPF_JMP_IMM(BPF_JNE, BPF_REG_0, 0, 1),
->  +			BPF_EXIT_INSN(),
->  +			BPF_MOV64_IMM(BPF_REG_1, 1),
->  +			BPF_STX_XADD(BPF_W, BPF_REG_0, BPF_REG_1, 3),
->  +			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 3),
->  +			BPF_EXIT_INSN(),
->  +		},
->  +		.fixup_map1 =3D { 3 },
->  +		.result =3D REJECT,
->  +		.errstr =3D "misaligned value access off",
->  +		.prog_type =3D BPF_PROG_TYPE_SCHED_CLS,
->  +	},
->  +	{
->  +		"xadd/w check unaligned pkt",
->  +		.insns =3D {
->  +			BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1,
->  +				    offsetof(struct xdp_md, data)),
->  +			BPF_LDX_MEM(BPF_W, BPF_REG_3, BPF_REG_1,
->  +				    offsetof(struct xdp_md, data_end)),
->  +			BPF_MOV64_REG(BPF_REG_1, BPF_REG_2),
->  +			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 8),
->  +			BPF_JMP_REG(BPF_JLT, BPF_REG_1, BPF_REG_3, 2),
->  +			BPF_MOV64_IMM(BPF_REG_0, 99),
->  +			BPF_JMP_IMM(BPF_JA, 0, 0, 6),
->  +			BPF_MOV64_IMM(BPF_REG_0, 1),
->  +			BPF_ST_MEM(BPF_W, BPF_REG_2, 0, 0),
->  +			BPF_ST_MEM(BPF_W, BPF_REG_2, 3, 0),
->  +			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 1),
->  +			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 2),
->  +			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_2, 1),
->  +			BPF_EXIT_INSN(),
->  +		},
->  +		.result =3D REJECT,
->  +		.errstr =3D "BPF_XADD stores into R2 packet",
->  +		.prog_type =3D BPF_PROG_TYPE_XDP,
->  +	},
-> + 	{
-> + 		"jit: lsh, rsh, arsh by 1",
-> + 		.insns =3D {
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_MOV64_IMM(BPF_REG_1, 0xff),
-> + 			BPF_ALU64_IMM(BPF_LSH, BPF_REG_1, 1),
-> + 			BPF_ALU32_IMM(BPF_LSH, BPF_REG_1, 1),
-> + 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0x3fc, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_ALU64_IMM(BPF_RSH, BPF_REG_1, 1),
-> + 			BPF_ALU32_IMM(BPF_RSH, BPF_REG_1, 1),
-> + 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0xff, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_ALU64_IMM(BPF_ARSH, BPF_REG_1, 1),
-> + 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0x7f, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 2),
-> + 			BPF_EXIT_INSN(),
-> + 		},
-> + 		.result =3D ACCEPT,
-> + 		.retval =3D 2,
-> + 	},
-> + 	{
-> + 		"jit: mov32 for ldimm64, 1",
-> + 		.insns =3D {
-> + 			BPF_MOV64_IMM(BPF_REG_0, 2),
-> + 			BPF_LD_IMM64(BPF_REG_1, 0xfeffffffffffffffULL),
-> + 			BPF_ALU64_IMM(BPF_RSH, BPF_REG_1, 32),
-> + 			BPF_LD_IMM64(BPF_REG_2, 0xfeffffffULL),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_1, BPF_REG_2, 1),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 		},
-> + 		.result =3D ACCEPT,
-> + 		.retval =3D 2,
-> + 	},
-> + 	{
-> + 		"jit: mov32 for ldimm64, 2",
-> + 		.insns =3D {
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_LD_IMM64(BPF_REG_1, 0x1ffffffffULL),
-> + 			BPF_LD_IMM64(BPF_REG_2, 0xffffffffULL),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_1, BPF_REG_2, 1),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 2),
-> + 			BPF_EXIT_INSN(),
-> + 		},
-> + 		.result =3D ACCEPT,
-> + 		.retval =3D 2,
-> + 	},
-> + 	{
-> + 		"jit: various mul tests",
-> + 		.insns =3D {
-> + 			BPF_LD_IMM64(BPF_REG_2, 0xeeff0d413122ULL),
-> + 			BPF_LD_IMM64(BPF_REG_0, 0xfefefeULL),
-> + 			BPF_LD_IMM64(BPF_REG_1, 0xefefefULL),
-> + 			BPF_ALU64_REG(BPF_MUL, BPF_REG_0, BPF_REG_1),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_2, 2),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_LD_IMM64(BPF_REG_3, 0xfefefeULL),
-> + 			BPF_ALU64_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_3, BPF_REG_2, 2),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_MOV32_REG(BPF_REG_2, BPF_REG_2),
-> + 			BPF_LD_IMM64(BPF_REG_0, 0xfefefeULL),
-> + 			BPF_ALU32_REG(BPF_MUL, BPF_REG_0, BPF_REG_1),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_2, 2),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_LD_IMM64(BPF_REG_3, 0xfefefeULL),
-> + 			BPF_ALU32_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_3, BPF_REG_2, 2),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_LD_IMM64(BPF_REG_0, 0x952a7bbcULL),
-> + 			BPF_LD_IMM64(BPF_REG_1, 0xfefefeULL),
-> + 			BPF_LD_IMM64(BPF_REG_2, 0xeeff0d413122ULL),
-> + 			BPF_ALU32_REG(BPF_MUL, BPF_REG_2, BPF_REG_1),
-> + 			BPF_JMP_REG(BPF_JEQ, BPF_REG_2, BPF_REG_0, 2),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 1),
-> + 			BPF_EXIT_INSN(),
-> + 			BPF_MOV64_IMM(BPF_REG_0, 2),
-> + 			BPF_EXIT_INSN(),
-> + 		},
-> + 		.result =3D ACCEPT,
-> + 		.retval =3D 2,
-> + 	},
-> +=20
->   };
->  =20
->   static int probe_filter_length(const struct bpf_insn *fp)
+ /*
+- * The SPI GPIO bindings happened before we managed to establish that GPIO
+- * properties should be named "foo-gpios" so we have this special kludge f=
+or
+- * them.
+- */
+-static struct gpio_desc *of_find_spi_gpio(struct device *dev, const char *=
+con_id,
+-					  enum of_gpio_flags *of_flags)
+-{
+-	char prop_name[32]; /* 32 is max size of property name */
+-	struct device_node *np =3D dev->of_node;
+-	struct gpio_desc *desc;
+-
+-	/*
+-	 * Hopefully the compiler stubs the rest of the function if this
+-	 * is false.
+-	 */
+-	if (!IS_ENABLED(CONFIG_SPI_MASTER))
+-		return ERR_PTR(-ENOENT);
+-
+-	/* Allow this specifically for "spi-gpio" devices */
+-	if (!of_device_is_compatible(np, "spi-gpio") || !con_id)
+-		return ERR_PTR(-ENOENT);
+-
+-	/* Will be "gpio-sck", "gpio-mosi" or "gpio-miso" */
+-	snprintf(prop_name, sizeof(prop_name), "%s-%s", "gpio", con_id);
+-
+-	desc =3D of_get_named_gpiod_flags(np, prop_name, 0, of_flags);
+-	return desc;
+-}
+-
+-/*
+  * Some regulator bindings happened before we managed to establish that GP=
+IO
+  * properties should be named "foo-gpios" so we have this special kludge f=
+or
+  * them.
+@@ -230,7 +200,6 @@ struct gpio_desc *of_find_gpio(struct device *dev, cons=
+t char *con_id,
+ 	struct gpio_desc *desc;
+ 	unsigned int i;
+=20
+-	/* Try GPIO property "foo-gpios" and "foo-gpio" */
+ 	for (i =3D 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id)
+ 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
+@@ -245,14 +214,6 @@ struct gpio_desc *of_find_gpio(struct device *dev, con=
+st char *con_id,
+ 			break;
+ 	}
+=20
+-	/* Special handling for SPI GPIOs if used */
+-	if (IS_ERR(desc))
+-		desc =3D of_find_spi_gpio(dev, con_id, &of_flags);
+-
+-	/* Special handling for regulator GPIOs if used */
+-	if (IS_ERR(desc))
+-		desc =3D of_find_regulator_gpio(dev, con_id, &of_flags);
+-
+ 	if (IS_ERR(desc))
+ 		return desc;
 
-This conflict is now between the bfp tree and the net-next tree.
 
 --=20
-Cheers,
-Stephen Rothwell
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Sig_/pW2pXFrdKTN4VWUmV2ml=Gs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqUmDsACgkQAVBC80lX
-0GyJdQgAoC+RwCc+n5j/Uhb7HhoPp7LQHWrnm09OpCot8RiZh9MLEpXhoS5U29pm
-Irjv6n/Lve4pECzK//aK5uodkngTzKUj3lWqpUfw4TQlrtP8TBRPjOGd9HN3ZNNy
-OQyaoz9ZC+uCCzq6ylb4Ks9BUwqdkZp5s7T56gcFmXMCoard8WOUgUVcJuOVOdS8
-GttUKEiTdOuhxVsRref4oDKKCqDfEbKnv4eVLC0YvoylGcJiSUJhvZ9w81tXGl7v
-6pGb2wxVF4qjEyV4XtXj384jQUdjNNai1FwQylSpHrSjXy/ZUClBcuu4uyRBdNjQ
-Z8OK9MDjj4mIejMGQ0W9r+NZGkpcfQ==
-=yuOQ
+iEYEARECAAYFAlqUmJkACgkQMOfwapXb+vIZagCfQFlDUl2ERptijp9TZH6xUCsb
+xtMAn3iHq1MnaNloSnqeMpQyxd5xLyF9
+=KExY
 -----END PGP SIGNATURE-----
 
---Sig_/pW2pXFrdKTN4VWUmV2ml=Gs--
+--EVF5PPMfhYS0aIcm--
