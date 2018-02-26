@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeBZGrq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 01:47:46 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39723 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeBZGrp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 01:47:45 -0500
-X-Google-Smtp-Source: AG47ELtOFz0ZrwQrEtXik9q4qTz/OTZGlkViZbx1MqnXNoNhH4JzVtLhRnWNuQUWOHMAf5qjXxTS7ByGnYOtxAqr8dw=
+        id S1752136AbeBZGub (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 01:50:31 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:30684 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751153AbeBZGu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 01:50:29 -0500
+Subject: Re: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in
+ __access_ok
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org
+References: <20180225172236.29650-1-malat@debian.org>
+ <20180225172236.29650-7-malat@debian.org>
+ <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <6cba215c-127e-f3eb-b525-773b6aed0eb7@c-s.fr>
+Date: Mon, 26 Feb 2018 07:50:26 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180223024320.GA321@shlinux2>
-References: <20180115092735.20969-1-peng.fan@nxp.com> <20180223024320.GA321@shlinux2>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 26 Feb 2018 07:47:43 +0100
-Message-ID: <CAHUa44EdO1MRmKjp-s=uJ6eNcHEZyEhnt4kVhBURLNS6GiDohw@mail.gmail.com>
-Subject: Re: [PATCH] tee: correct max value for id allocation
-To: Peng Fan <van.freenix@gmail.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 3:43 AM, Peng Fan <van.freenix@gmail.com> wrote:
-> Hi Jens,
->
-> Any comments on this patch?
->
-> Thanks,
-> Peng
 
-Sorry, forgot about this one. Looks good to me, I'll pick it up.
 
-Thanks,
-Jens
+Le 26/02/2018 à 07:34, Christophe LEROY a écrit :
+> 
+> 
+> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
+>> Rewrite check size - 1 <= Y as size < Y since `size` is unsigned value.
+>> Fix warning (treated as error in W=1):
+>>
+>>    CC      arch/powerpc/kernel/signal_32.o
+>> In file included from ./include/linux/uaccess.h:14:0,
+>>                   from ./include/asm-generic/termios-base.h:8,
+>>                   from ./arch/powerpc/include/asm/termios.h:20,
+>>                   from ./include/uapi/linux/termios.h:6,
+>>                   from ./include/linux/tty.h:7,
+>>                   from arch/powerpc/kernel/signal_32.c:36:
+>> ./include/asm-generic/termios-base.h: In function 
+>> ‘user_termio_to_kernel_termios’:
+>> ./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of 
+>> unsigned expression >= 0 is always true [-Werror=type-limits]
+>>     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
+>>                                     ^
+>> ./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro 
+>> ‘__access_ok’
+>>     __access_ok((__force unsigned long)(addr), (size), get_fs()))
+>>     ^~~~~~~~~~~
+>> ./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of 
+>> macro ‘access_ok’
+>>    if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
+>>        ^~~~~~~~~
+>> ./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro 
+>> ‘__get_user_check’
+>>    __get_user_check((x), (ptr), sizeof(*(ptr)))
+>>    ^~~~~~~~~~~~~~~~
+>> ./include/asm-generic/termios-base.h:36:6: note: in expansion of macro 
+>> ‘get_user’
+>>    if (get_user(termios->c_line, &termio->c_line) < 0)
+>>        ^~~~~~~~
+>> [...]
+>> cc1: all warnings being treated as errors
+>>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>> ---
+>>   arch/powerpc/include/asm/uaccess.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/uaccess.h 
+>> b/arch/powerpc/include/asm/uaccess.h
+>> index 51bfeb8777f0..fadc406bd39d 100644
+>> --- a/arch/powerpc/include/asm/uaccess.h
+>> +++ b/arch/powerpc/include/asm/uaccess.h
+>> @@ -49,7 +49,7 @@
+>>   #define __access_ok(addr, size, segment)    \
+>>       (((addr) <= (segment).seg) &&        \
+>> -     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
+>> +     (((size) == 0) || ((size) < ((segment).seg - (addr)))))
+> 
+> IIUC, ((2 - 1) <= 1) is the same as (2 < 1) ?????
 
-> On Mon, Jan 15, 2018 at 05:27:35PM +0800, Peng Fan wrote:
->>The privileged dev id range is [TEE_NUM_DEVICES / 2, TEE_NUM_DEVICES).
->>The non-privileged dev id range is [0, TEE_NUM_DEVICES / 2).
+
+Note that I already try to submit a fix for this warning 3 years ago 
+(https://patchwork.ozlabs.org/patch/418075/) and it was rejected with 
+the following comment:
+
+Again, I don't think Linux enables this warning.  What did you do to
+produce this?  In any case, it's a bad warning that doesn't take macros
+into account, and the answer is not to make the code less clear by hiding
+the fact that zero is a special case.
+
+Christophe
+
+
+> 
+> Christophe
+> 
+>>   #endif
 >>
->>So when finding a slot for them, need to use different max value.
->>
->>Signed-off-by: Peng Fan <peng.fan@nxp.com>
->>Cc: Jens Wiklander <jens.wiklander@linaro.org>
->>---
->> drivers/tee/tee_core.c | 14 +++++++++-----
->> 1 file changed, 9 insertions(+), 5 deletions(-)
->>
->>diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
->>index 3d49ac2e3c84..d1f4ecdbc8cc 100644
->>--- a/drivers/tee/tee_core.c
->>+++ b/drivers/tee/tee_core.c
->>@@ -701,7 +701,7 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
->> {
->>       struct tee_device *teedev;
->>       void *ret;
->>-      int rc;
->>+      int rc, max_id;
->>       int offs = 0;
->>
->>       if (!teedesc || !teedesc->name || !teedesc->ops ||
->>@@ -715,16 +715,20 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
->>               goto err;
->>       }
->>
->>-      if (teedesc->flags & TEE_DESC_PRIVILEGED)
->>+      max_id = TEE_NUM_DEVICES / 2;
->>+
->>+      if (teedesc->flags & TEE_DESC_PRIVILEGED) {
->>               offs = TEE_NUM_DEVICES / 2;
->>+              max_id = TEE_NUM_DEVICES;
->>+      }
->>
->>       spin_lock(&driver_lock);
->>-      teedev->id = find_next_zero_bit(dev_mask, TEE_NUM_DEVICES, offs);
->>-      if (teedev->id < TEE_NUM_DEVICES)
->>+      teedev->id = find_next_zero_bit(dev_mask, max_id, offs);
->>+      if (teedev->id < max_id)
->>               set_bit(teedev->id, dev_mask);
->>       spin_unlock(&driver_lock);
->>
->>-      if (teedev->id >= TEE_NUM_DEVICES) {
->>+      if (teedev->id >= max_id) {
->>               ret = ERR_PTR(-ENOMEM);
->>               goto err;
->>       }
->>--
->>2.14.1
->>
->
-> --
