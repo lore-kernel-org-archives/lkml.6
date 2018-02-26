@@ -1,84 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBZD0X (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:26:23 -0500
-Received: from cock.li ([185.100.85.212]:55388 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751978AbeBZD0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:26:20 -0500
+        id S1752159AbeBZDiC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:38:02 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751958AbeBZDiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:38:01 -0500
+Subject: Re: [PATCH] f2fs: allocate buffer for decrypting filename to avoid
+ panic
+To: Eric Biggers <ebiggers3@gmail.com>,
+        Yunlong Song <yunlong.song@huawei.com>
+CC: <jaegeuk@kernel.org>, <chao@kernel.org>, <yunlong.song@icloud.com>,
+        <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <20180224183230.GA933@zzz.localdomain>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <e1e07be3-2291-ada6-da67-47aa7f73f1df@huawei.com>
+Date: Mon, 26 Feb 2018 11:42:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180224183230.GA933@zzz.localdomain>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Mon, 26 Feb 2018 03:26:18 +0000
-From: thetruthbeforeus@firemail.cc
-To: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] mmc: dw_mmc: remove the deprecated
- "clock-freq-min-max" property -- You wokr with japanese after they fucked you
-In-Reply-To: <9938e4eb-45aa-bf68-dd64-bb0a23f99e3d@samsung.com>
-References: <CGME20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342@epcas2p1.samsung.com>
- <20180223064138.18401-1-jh80.chung@samsung.com>
- <CAHp75Vd27mFnSJTOta0ZWhfOGz1WA8ETNgU_GpuxEJ9nnhsR-g@mail.gmail.com>
- <7ba335af-3fc5-2afd-8c52-03dca5eba9a4@rock-chips.com>
- <CAHp75VcthggOwOPjQFNX-xMmK44F99oXYOdeBxfO=euT_JvkoQ@mail.gmail.com>
- <9938e4eb-45aa-bf68-dd64-bb0a23f99e3d@samsung.com>
-Message-ID: <5f9c516ebf049dbd85df7e7378b64ad8@firemail.cc>
-User-Agent: Roundcube Webmail/1.3.3
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You all know that you're working with white and japanese mthr fuckers 
-right? you just fine with that? After what they did to your people? Ok 
-then. You be you. You be you.
+Hi Eric, Yunlong,
 
-Here's some real talk about the while mother fuckers:
-https://www.liveleak.com/view?i=c34_1519605684
+On 2018/2/25 2:32, Eric Biggers wrote:
+> Hi Yunlong,
+> 
+> On Sat, Feb 24, 2018 at 05:14:58PM +0800, Yunlong Song wrote:
+>> In some platforms (such as arm), high memory is used, then the
+>> decrypting filename will cause panic, the reason see commit
+>> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+>> for decrypting filename"):
+>>
+>>  We got dentry pages from high_mem, and its address space directly goes into the
+>>  decryption path via f2fs_fname_disk_to_usr.
+>>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+>>
+>>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>>  ...
+>>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+>>
+>> Howerver, later patches:
+>> commit 922ec355f86365388203672119b5bca346a45085 ("f2fs crypto: avoid
+>> unneeded memory allocation when {en/de}crypting symlink")
+>> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
+>> unneeded memory allocation in ->readdir")
+>>
+>> reverts the codes, which causes panic again in arm, so let's add the old
+>> patch again.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>  fs/f2fs/dir.c   |  7 +++++++
+>>  fs/f2fs/namei.c | 10 +++++++++-
+>>  2 files changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index f00b5ed..c0cf3e7b 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>>  			int save_len = fstr->len;
+>>  			int err;
+>>  
+>> +			de_name.name = kmalloc(de_name.len, GFP_NOFS);
+>> +			if (!de_name.name)
+>> +				return -ENOMEM;
+>> +
+>> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
+>> +
+>>  			err = fscrypt_fname_disk_to_usr(d->inode,
+>>  						(u32)de->hash_code, 0,
+>>  						&de_name, fstr);
+>> +			kfree(de_name.name);
+>>  			if (err)
+>>  				return err;
+>>  
+>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>> index c4c94c7..2cb70c1 100644
+>> --- a/fs/f2fs/namei.c
+>> +++ b/fs/f2fs/namei.c
+>> @@ -1170,8 +1170,13 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>>  
+>>  	/* Symlink is encrypted */
+>>  	sd = (struct fscrypt_symlink_data *)caddr;
+>> -	cstr.name = sd->encrypted_path;
+>>  	cstr.len = le16_to_cpu(sd->len);
+>> +	cstr.name = kmalloc(cstr.len, GFP_NOFS);
+>> +	if (!cstr.name) {
+>> +		res = -ENOMEM;
+>> +		goto errout;
+>> +	}
+>> +	memcpy(cstr.name, sd->encrypted_path, cstr.len);
+>>  
+>>  	/* this is broken symlink case */
+>>  	if (unlikely(cstr.len == 0)) {
+>> @@ -1198,6 +1203,8 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>>  		goto errout;
+>>  	}
+>>  
+>> +	kfree(cstr.name);
+>> +
+>>  	paddr = pstr.name;
+>>  
+>>  	/* Null-terminate the name */
+>> @@ -1207,6 +1214,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>>  	set_delayed_call(done, kfree_link, paddr);
+>>  	return paddr;
+>>  errout:
+>> +	kfree(cstr.name);
+>>  	fscrypt_fname_free_buffer(&pstr);
+>>  	put_page(cpage);
+>>  	return ERR_PTR(res);
+>> -- 
+>> 1.8.5.2
+>>
+> 
+> The pagecache for symlinks in f2fs already uses lowmem only, so the change to
+> ->get_link() isn't needed.  Also that part of the patch doesn't apply to
+> upstream.
+> 
+> For directories we may need your fix.  Note: kmalloc + memcpy should be replaced
+> with kmemdup.  But alternatively, directory pages could be restricted to lowmem
 
-On 2018-02-26 02:07, Jaehoon Chung wrote:
-> On 02/24/2018 01:16 AM, Andy Shevchenko wrote:
->> On Fri, Feb 23, 2018 at 4:19 PM, Shawn Lin <shawn.lin@rock-chips.com> 
->> wrote:
->>> On 2018/2/23 21:27, Andy Shevchenko wrote:
->>>> On Fri, Feb 23, 2018 at 8:41 AM, Jaehoon Chung 
->>>> <jh80.chung@samsung.com>
->>>> wrote:
->>>>> 
->>>>> 'clock-freq-min-max' property had already deprecated.
->>>>> Remove the 'clock-freq-min-max' property that is kept to maintain
->>>>> the compatibility.
->>>> 
->>>> 
->>>> Removing a property without telling the user what to expect is a bad
->>>> idea and ABI breakage.
->>>> 
->>> 
->>> What's the general process to remove a property?
->>> 
->>> I guess we should do:
->>> 1) deprecate it in the first place and remove it from all upstream DT
->>> 2) wait some long enough days for expecting the stale of all old DTB
->>> containing that property
->>> 3) remove the functionality of the deprecated property from the 
->>> driver
->>> but still leave some warning there
->>> 4) remove the left warning finally
->> 
->> I don't know. Perhaps Rob can shed a light here.
->> But I would really OK with removal of some of such properties from
->> some drivers where it's more burden to keep them.
+I'd like to suggest to use f2fs_kmalloc, so that we can deploy memory allocation
+failure injection functionality in all places of f2fs, which can help to check
+error handling in those places.
+
+Thanks,
+
+> which would match ext4.
 > 
-> This property had deprecated about 8months ago.
-> I think that it was enough to keep this property for maintaining the
-> compatibility.
+> Eric
 > 
-> I didn't remove this property without any alternative.
+> .
 > 
-> Best Regards,
-> Jaehoon Chung
-> 
->> 
->>> And for the ABI breakage, we should add something in 
->>> Documentation/ABI
->>> /obsolete  or Documentation/ABI/removed ?
->> 
