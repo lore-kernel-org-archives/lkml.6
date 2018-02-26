@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225WIsr7pMLrGafRgaUzS5XL0xPHL8t6QsBXbIJ1wmEMFr/1PA6JB30eP8mPgyYE9/rASjM7
+X-Google-Smtp-Source: AH8x225MLNIIFy0RwIjJPr00rN1edB/3u27wUHEXHK1qe45KcbuXtiSLqqDi44JB7PxZDvyvOvd4
 ARC-Seal: i=1; a=rsa-sha256; t=1519676529; cv=none;
         d=google.com; s=arc-20160816;
-        b=vF15fuDE4AbLW4CaFW/SIPV25QGdeg2W82uJMA0KOgGCLtWS31YdmEEea0UgQqkoUN
-         HUHeBMKY+gE8I6nIxyz7G0gFdPu7gi2UCLkxh3X/wDxDZ8bpa7egJPqagtq6EAJnF7HI
-         QGp20KwdKYc6D0kOjlvdE9kVqX71bVXfAmAUw4XAb7eStO3VLOPNHZ7ouiAknqbRXFCS
-         HZl6LYDUwrEifTeTCef50R7kzwjiZRgmOV7ClC88sqnHYSNQHQzot98XZmfE9oCTImNX
-         Nw0J1xLjNZEJd1DXZER6hYIUFKmiAC3Gb5DJZwIN6w9n28SY2P2hQ/xXAtczjexqmE7y
-         S1Cg==
+        b=XpOwUJ3ghNvRYKnlzHzAhhuWQIcYAB4iVS0BoN2/Mq53l7UVKEUi7U8c2bYqCtMU5K
+         ZHFguw4A31YvYmn5u7XnXSO9cgUBg7a2zB6WuL6Vn+uw4ZZnkjXwmopJcG5bslO5O4/i
+         Pc+i3d77juFxx+UZTIe8gL6xU7N/xB8Mi+jDPO7Ja9WqwdUW++AgccScPyGjMKDmQxce
+         tL/dl3tGk46Zo9RIqz4Lyb37/zcTNLRkRfRabWdJclMLrpdtE4ZK1tJrXzYf/r1Wv6kP
+         am7nu0XT5ndTw0EXVYaqw6EPIgdUv1CUubMkzY/8quZbrOERv94K9WvnZGpZEuJ+Mh5v
+         9Qqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZnrriezaO+2wscSQxvYhGmGv5EdaeUh5of7vP4Rlss0=;
-        b=DK2qY33A+04SPQ9PSoOAca/6A9jwKBQGkbcs5HP27PQBvW3kz8Ki8F43VKiWgyoljx
-         vNNXZCyAAlrdO1EZjci77WJN/DVV6ibuPttqUYGe5hvu8wwF6O85IK/j6whZBWBFJoEt
-         HKw+lzpWzv5T54dm8g+Aw3yyVB4PsxoLdW86fbt7GVswloiw88UZz7bJGz8/3lZjV/GV
-         moVnYSv+844lErsgd9S3baKRHbFooVECfA82QFSSu3IL1imF4ynKDbXMb+FkWcE4YswV
-         1xYnc0xdDEuv+Fe3RHvLXzuyN538BY7xZXfMNhpQXxc75ELMBT0BbacBv577MlxUh9q8
-         EGSw==
+        bh=7K/q5vbge+h9li2umH0MTp6KagsE6tJJ9TRssD3wQ8o=;
+        b=nRECxPxxRjEnDIt5KFhpLTlIOAcJIMrZQtjLwzqFdeYbC+pTd9o5+AU1V+o2U5UQ/I
+         5fPrUGlA3e967avBO9EP4g2Ud7u7fln0dO2KsMA9mh/ksYxLKMoDQf2kUnZtqM8KQE4M
+         nCzYVIzABa13x/IB75huce2m8P1zINpiZIOV9KbIQrUHRuIiVckjE2LFDwMT7/oU++Z4
+         It8NuoR6G/+3O1yBQht1UPyjtz15+dU1FxVkmoxXmYK2bJbxpXi4pElRhhr7IKmOw97H
+         DRlTL53M12QLHYeJCFiyR/i626+a4jA4w+XjcHVVFfJW8cCz4KPHxfFzvwHkPhRJFhEq
+         JWqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 22/39] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-Date: Mon, 26 Feb 2018 21:20:43 +0100
-Message-Id: <20180226201644.648054891@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.9 23/39] drm/amdgpu: Add dpm quirk for Jet PRO (v2)
+Date: Mon, 26 Feb 2018 21:20:44 +0100
+Message-Id: <20180226201644.686950325@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496020414539698?=
-X-GMAIL-MSGID: =?utf-8?q?1593496336361990701?=
+X-GMAIL-THRID: =?utf-8?q?1593496336623972311?=
+X-GMAIL-MSGID: =?utf-8?q?1593496336623972311?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 17aa31f13cad25daa19d3f923323f552e87bc874 upstream.
+commit f2e5262f75ecb40a6e56554e156a292ab9e1d1b7 upstream.
 
-This fixes an issue that a gadget driver (usb_f_fs) is possible to
-stop rx transactions after the usb-dmac is used because the following
-functions missed to set/check the "running" flag.
- - usbhsf_dma_prepare_pop_with_usb_dmac()
- - usbhsf_dma_pop_done_with_usb_dmac()
+Fixes stability issues.
 
-So, if next transaction uses pio, the usbhsf_prepare_pop() can not
-start the transaction because the "running" flag is 0.
+v2: clamp sclk to 600 Mhz
 
-Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=103370
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/renesas_usbhs/fifo.c |    5 +++++
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c |    5 +++++
  1 file changed, 5 insertions(+)
 
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -1001,6 +1001,10 @@ static int usbhsf_dma_prepare_pop_with_u
- 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
- 		goto usbhsf_pio_prepare_pop;
- 
-+	/* return at this time if the pipe is running */
-+	if (usbhs_pipe_is_running(pipe))
-+		return 0;
-+
- 	usbhs_pipe_config_change_bfre(pipe, 1);
- 
- 	ret = usbhsf_fifo_select(pipe, fifo, 0);
-@@ -1191,6 +1195,7 @@ static int usbhsf_dma_pop_done_with_usb_
- 	usbhsf_fifo_clear(pipe, fifo);
- 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
- 
-+	usbhs_pipe_running(pipe, 0);
- 	usbhsf_dma_stop(pipe, fifo);
- 	usbhsf_dma_unmap(pkt);
- 	usbhsf_fifo_unselect(pipe, pipe->fifo);
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+@@ -3507,6 +3507,11 @@ static void si_apply_state_adjust_rules(
+ 			max_sclk = 75000;
+ 			max_mclk = 80000;
+ 		}
++		if ((adev->pdev->revision == 0xC3) ||
++		    (adev->pdev->device == 0x6665)) {
++			max_sclk = 60000;
++			max_mclk = 80000;
++		}
+ 	} else if (adev->asic_type == CHIP_OLAND) {
+ 		if ((adev->pdev->revision == 0xC7) ||
+ 		    (adev->pdev->revision == 0x80) ||
