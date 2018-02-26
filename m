@@ -1,71 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753061AbeBZNFq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:05:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:49780 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752647AbeBZNFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:05:43 -0500
-Date: Mon, 26 Feb 2018 13:05:36 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Mark Salter <msalter@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: arm_pmu_acpi: Fix armpmu_alloc call from invalid
- context
-Message-ID: <20180226130535.7wvvyst5bwj76ss3@salmiak>
-References: <20180208174504.30665-1-msalter@redhat.com>
- <20180208175433.p2a3g2q7tctfpk7c@lakrids.cambridge.arm.com>
- <1518112700.2911.0.camel@redhat.com>
+        id S1753162AbeBZNGJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:06:09 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:50442 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752557AbeBZNGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:06:04 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
+        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
+CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Richard Fitzgerald" <rf@opensource.cirrus.com>
+Subject: [PATCH v8 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+Date: Mon, 26 Feb 2018 13:05:56 +0000
+Message-ID: <20180226130558.7634-8-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180226130558.7634-1-rf@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518112700.2911.0.camel@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802260174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 12:58:20PM -0500, Mark Salter wrote:
-> On Thu, 2018-02-08 at 17:54 +0000, Mark Rutland wrote:
-> > Hi Mark,
-> > 
-> > On Thu, Feb 08, 2018 at 12:45:04PM -0500, Mark Salter wrote:
-> > > When booting an arm64 debug kernel with ACPI, I see:
-> > > 
-> > >    BUG: sleeping function called from invalid context at mm/slab.h:420
-> > >    in_atomic(): 0, irqs_disabled(): 128, pid: 12, name: cpuhp/0
-> > >    1 lock held by cpuhp/0/12:
-> > >     #0:  (cpuhp_state-up){+.+.}, at: [<0000000057aa0dae>] cpuhp_thread_fun+0x13c/0x258
-> > >    irq event stamp: 28
-> > >    hardirqs last  enabled at (27): [<000000000b861658>] _raw_spin_unlock_irq+0x38/0x58
-> > >    hardirqs last disabled at (28): [<000000006231cfb1>] cpuhp_thread_fun+0xd0/0x258
-> > >    softirqs last  enabled at (0): [<0000000054d9737a>] copy_process.isra.32.part.33+0x450/0x1480
-> > >    softirqs last disabled at (0): [<          (null)>]           (null)
-> > >    CPU: 0 PID: 12 Comm: cpuhp/0 Not tainted 4.15.0+ #18
-> > >    Hardware name: AppliedMicro X-Gene Mustang Board/X-Gene Mustang Board, BIOS 3.06.25 Oct 17 2016
-> > >    Call trace:
-> > >     dump_backtrace+0x0/0x188
-> > >     show_stack+0x24/0x2c
-> > >     dump_stack+0xa4/0xe0
-> > >     ___might_sleep+0x208/0x234
-> > >     __might_sleep+0x58/0x8c
-> > >     kmem_cache_alloc_trace+0x248/0x3e0
-> > >     armpmu_alloc+0x38/0x1a8
-> > >     arm_pmu_acpi_cpu_starting+0x11c/0x15c
-> > >     cpuhp_invoke_callback+0x120/0x100c
-> > >     cpuhp_thread_fun+0xe8/0x258
-> > >     smpboot_thread_fn+0x170/0x268
-> > >     kthread+0x110/0x13c
-> > >     ret_from_fork+0x10/0x18
-> > 
-> > I have patches to address this:
-> > 
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557838.html
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/acpi-pmu-lockdep
-> 
-> Awesome, I completely missed that. Thanks.
+This is the binding description of the pinctrl driver for Cirrus Logic
+Madera codecs. The binding uses the generic pinctrl binding so  the main
+purpose here is to describe the device-specific names for groups and
+functions.
 
-As a heads-up, these were merged in v4.16-rc3.
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     | 99 ++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
 
-Mark.
+diff --git a/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+new file mode 100644
+index 000000000000..b0e36cf0d289
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+@@ -0,0 +1,99 @@
++Cirrus Logic Madera class audio codecs pinctrl driver
++
++The Cirrus Logic Madera codecs provide a number of GPIO functions for
++interfacing to external hardware and to provide logic outputs to other devices.
++Certain groups of GPIO pins also have an alternate function, normally as an
++audio interface.
++
++The set of available GPIOs, functions and alternate function groups differs
++between codecs so refer to the datasheet for the codec for further information
++on what is supported on that device.
++
++The properties for this driver exist within the parent MFD driver node.
++
++See also
++  the core bindings for the parent MFD driver:
++    Documentation/devicetree/bindings/mfd/madera.txt
++
++  the generic pinmix bindings:
++    Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++
++Required properties of parent mfd node:
++  - pinctrl-names : must be "default"
++  - pinctrl-0 : a phandle to the node containing the subnodes containing default
++      configurations
++
++Required subnodes:
++  One subnode is required to contain the default settings. It contains an
++  arbitrary number of configuration subnodes, one for each group or pin
++  configuration you want to apply as a default.
++
++Required properties of configuration subnodes:
++  - groups : name of one pin group to configure. One of:
++	aif1, aif2, aif3, aif4, mif1, mif2, mif3, pdmspk1, pdmspk2,
++	dmic4, dmic5, dmic6,
++	gpio1, gpio2, ..., gpio40
++    The gpioN groups select the single pin of this name for configuration
++
++Optional properties of configuration subnodes:
++  Any configuration option not explicitly listed in the dts will be left at
++  chip default setting.
++
++  - function : name of function to assign to this group. One of:
++	aif1, aif2, aif3, aif4, mif1, mif2, mif3, pdmspk1, pdmspk2,
++	dmic3, dmic4, dmic5, dmic6,
++	io, dsp-gpio, irq1, irq2,
++	fll1-clk, fll1-lock, fll2-clk, fll2-lock, fll3-clk, fll3-lock,
++	fllao-clk, fllao-lock,
++	opclk, opclk-async, pwm1, pwm2, spdif,
++	asrc1-in1-lock, asrc1-in2-lock, asrc2-in1-lock, asrc2-in2-lock,
++	spkl-short-circuit, spkr-short-circuit, spk-shutdown,
++	spk-overheat-shutdown, spk-overheat-warn,
++	timer1-sts, timer2-sts, timer3-sts, timer4-sts, timer5-sts, timer6-sts,
++	timer7-sts, timer8-sts,
++	log1-fifo-ne, log2-fifo-ne, log3-fifo-ne, log4-fifo-ne, log5-fifo-ne,
++	log6-fifo-ne, log7-fifo-ne, log8-fifo-ne,
++
++  - bias-disable : disable pull-up and pull-down
++  - bias-bus-hold : enable buskeeper
++  - bias-pull-up : output is pulled-up
++  - bias-pull-down : output is pulled-down
++  - drive-push-pull : CMOS output
++  - drive-open-drain : open-drain output
++  - drive-strength : drive strength in mA. Valid values are 4 or 8
++  - input-schmitt-enable : enable schmitt-trigger mode
++  - input-schmitt-disable : disable schmitt-trigger mode
++  - input-debounce : A value of 0 disables debounce, a value !=0 enables
++	debounce
++  - output-low : set the pin to output mode with low level
++  - output-high : set the pin to output mode with high level
++
++Example:
++
++cs47l85@0 {
++	compatible = "cirrus,cs47l85";
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&cs47l85_defaults>;
++
++	cs47l85_defaults: cs47l85-gpio-defaults {
++		aif1 {
++			groups = "aif1";
++			function = "aif1";
++			bias-bus-hold;
++		};
++
++		aif2 {
++			groups = "aif2";
++			function = "aif2";
++			bias-bus-hold;
++		};
++
++		opclk {
++			groups = "gpio1";
++			function = "opclk";
++			bias-pull-up;
++			drive-strength = <8>;
++		};
++	};
++};
+-- 
+2.11.0
