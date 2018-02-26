@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3776141-1519677587-2-10364652609713436727
+X-Cyrus-Session-Id: sloti22d1t05-3776141-1519677586-2-12906531363870015201
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519677587; b=s8LADrm49b3RCFaV94mW2Wzqa7banuOQOADJD8yH98esiK8
-    VxgFg4ZCfWxIC2KpCmwfxEQV5Gr/9LjaU8uPesdj6NT0nRxBlCqihIHsypfEUSAh
-    bVntfOq+zWo8MkRh7ZB5Zau2lgGspLZUAM/kstkUyOUHcK0Q2aX5+mpnc7F87Gce
-    7timim2O9Yr6OFdf2TymiksPV0JP3IAuesylj9R5TqOVpMGRA4cly0nsXgkMBOSy
-    hA7N3qz5/oZqQEB1O6yjs8uvIejJvKQwCxHMtNwC7G3mLkii7mpWMJuKW+MnbeHb
-    mpwjeoasnAOaZ+wFRc4PXdLEX70tPRAgf4HaqaA==
+    t=1519677585; b=bRpbQ39M4cZiG9mHmMudjh2PO8Bj/AmSF1V+1mLG3EcWVjL
+    5NWMV4XwWnPnWlm4DQVzet18eb2X8txiwo+yOLnOFRPjc5ZajS5YYFFv01V+dWt+
+    Bwz53uAjj3qDRTPC5I6/mXePu04DriBWJD1lbbf6L0emKqryLD+3vy/ZpC7vHFLI
+    /RXvPhSPd+UVOGWq/Rn4L/KQOme/5BIYpL+7KSIttYgyIQELA5HkvU1eB5jcEKrg
+    DXh2WDu1JNze9MAbnPL0iX/52SKD5p5FUYmd0R4bZhfOWq5G2hCJLChLE0OiCtWf
+    17tZthFzT5erF8Q6ScXzZokBZpcfodT06x8Fn1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519677587; bh=NfgxwQndUVroTo5QI3o6KUAJ13
-    zIVq/Vithc30EJRXs=; b=K1UcC3nZDDYzoXBES3vHe5dAdPEG/jkLzKQ5VkN69f
-    hTfDde3CDKsSwdDvaMpXCEQv/0SmVwDd8UiWtQgcN+AY3UuhBYvRChpQCx6Mqoo0
-    sFHhTIfzIe0yf3AuwaWxsZmej5BHbKJ6Ly/Hx5BLiSFKl1YQxHl9dmYd9/lAOu5Y
-    Gr8UwA2Vb15MzJhHFHnoqrj0LtTmRCFnkYnHBZdd06tswzCKJOF+CImubNb2TAN4
-    QyL/8xQ3AJCRZKaaRSsUVR2UXJBhB6U1L/kMLm9cucPpEHpMc4QP+EdE3cwLb3Qw
-    Em1PE85tLSWE4WK6yvxnhE1chZMA0lkJ8zN5Uma2uX9w==
+    :list-id; s=arctest; t=1519677585; bh=FsYTUblSK+T3hLI6+qisWdRG57
+    C7CzETiH35oDmC2Bo=; b=ZMvyJJs7RYfphUi5LUmNS9pQxkjaQZoy/azR6YZX5W
+    /8Wujf0FZdT57/ONKpkZVFJNFW2VHPYTuCiRU5KCnbtCu3AN3obj/xhHCKbxA65/
+    jyPm5uGVK4q379v2G4nuoFrHtE8F491JvxjuIlhQn5o0stgJKvV8L28vMfSg5vVB
+    ra+qQWTOn9Pr3BNVs2vuP10bTRU+2IFpJicRkbMyUIOGgVD5bYR2n9BKkJFINbVc
+    Z2KXehFnEvzttHULa+xqMiFEbfhlGn8QnYS/mByHQga1pL9/BcwvCSVqxixaC9LX
+    PUB9dtne+RFQNKMEfV+B1l50amTaPbuC62cDjJRDPPJA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753739AbeBZUjp (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:39:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36472 "EHLO
+        id S1753676AbeBZU1Z (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:27:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36462 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753674AbeBZU1Z (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:27:25 -0500
+        with ESMTP id S1753671AbeBZU1W (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:27:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Mamonov <pmamonov@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-mips@linux-mips.org
-Subject: [PATCH 4.15 07/64] MIPS: Drop spurious __unused in struct compat_flock
-Date: Mon, 26 Feb 2018 21:21:44 +0100
-Message-Id: <20180226202153.748429368@linuxfoundation.org>
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 06/64] scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
+Date: Mon, 26 Feb 2018 21:21:43 +0100
+Message-Id: <20180226202153.711954770@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -80,43 +79,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-commit 6ae1756faddefd7494353380ee546dd38c2f97eb upstream.
+commit c39813652700f3df552b6557530f1e5f782dbe2f upstream.
 
-MIPS' struct compat_flock doesn't match the 32-bit struct flock, as it
-has an extra short __unused before pad[4], which combined with alignment
-increases the size to 40 bytes compared with struct flock's 36 bytes.
+The fcp_rsp_info structure as defined in the FC spec has an initial 3
+bytes reserved field. The ibmvfc driver mistakenly defined this field as
+4 bytes resulting in the rsp_code field being defined in what should be
+the start of the second reserved field and thus always being reported as
+zero by the driver.
 
-Since commit 8c6657cb50cb ("Switch flock copyin/copyout primitives to
-copy_{from,to}_user()"), put_compat_flock() writes the full compat_flock
-struct to userland, which results in corruption of the userland word
-after the struct flock when running 32-bit userlands on 64-bit kernels.
+Ideally, we should wire ibmvfc up with libfc for the sake of code
+deduplication, and ease of maintaining standardized structures in a
+single place. However, for now simply fixup the definition in ibmvfc for
+backporting to distros on older kernels. Wiring up with libfc will be
+done in a followup patch.
 
-This was observed to cause a bus error exception when starting Firefox
-on Debian 8 (Jessie).
-
-Reported-by: Peter Mamonov <pmamonov@gmail.com>
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Tested-by: Peter Mamonov <pmamonov@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.13+
-Patchwork: https://patchwork.linux-mips.org/patch/18646/
+Cc: <stable@vger.kernel.org>
+Reported-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/compat.h |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/ibmvscsi/ibmvfc.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/compat.h
-+++ b/arch/mips/include/asm/compat.h
-@@ -86,7 +86,6 @@ struct compat_flock {
- 	compat_off_t	l_len;
- 	s32		l_sysid;
- 	compat_pid_t	l_pid;
--	short		__unused;
- 	s32		pad[4];
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -367,7 +367,7 @@ enum ibmvfc_fcp_rsp_info_codes {
  };
  
+ struct ibmvfc_fcp_rsp_info {
+-	__be16 reserved;
++	u8 reserved[3];
+ 	u8 rsp_code;
+ 	u8 reserved2[4];
+ }__attribute__((packed, aligned (2)));
