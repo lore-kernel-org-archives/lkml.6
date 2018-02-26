@@ -1,643 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751992AbeBZBTj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 20:19:39 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43889 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeBZBTd (ORCPT
+        id S1751997AbeBZBVI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 20:21:08 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43453 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751915AbeBZBVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 20:19:33 -0500
-X-Google-Smtp-Source: AG47ELu9xtxddb4bZ0yCCq7514uAS2tF7VILLoj3F6YIFtCDXGuxnry4BUfykU5TD5bvfPY6X651KA==
-From: Leo Yan <leo.yan@linaro.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH bpf-next v2] samples/bpf: Add program for CPU state statistics
-Date: Mon, 26 Feb 2018 09:19:12 +0800
-Message-Id: <1519607952-12299-1-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Sun, 25 Feb 2018 20:21:02 -0500
+X-Google-Smtp-Source: AH8x227/LRoAZn1QmBBP2G6edasZ+bZNFLoBGsuwaRL3yySnK9pTo3/swfOPCRWGoapzRiX1pKh6dg==
+Date: Mon, 26 Feb 2018 10:21:02 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: Dave Young <dyoung@redhat.com>
+Cc: Philipp Rudo <prudo@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH 00/17] Add kexec_file_load support to s390
+Message-ID: <20180226012100.GA6019@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Young <dyoung@redhat.com>,
+        Philipp Rudo <prudo@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+ <20180214073543.GA12328@dhcp-128-65.nay.redhat.com>
+ <20180214105449.1325bfbe@ThinkPad>
+ <20180223083405.GA29498@dhcp-128-65.nay.redhat.com>
+ <20180223110143.1747fb3f@ThinkPad>
+ <20180224015956.GA11191@dhcp-128-65.nay.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180224015956.GA11191@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU is active when have running tasks on it and CPUFreq governor can
-select different operating points (OPP) according to different workload;
-we use 'pstate' to present CPU state which have running tasks with one
-specific OPP.  On the other hand, CPU is idle which only idle task on
-it, CPUIdle governor can select one specific idle state to power off
-hardware logics; we use 'cstate' to present CPU idle state.
+On Sat, Feb 24, 2018 at 09:59:56AM +0800, Dave Young wrote:
+> On 02/23/18 at 11:01am, Philipp Rudo wrote:
+> > Hi Dave
+> > 
+> > On Fri, 23 Feb 2018 16:34:05 +0800
+> > Dave Young <dyoung@redhat.com> wrote:
+> > 
+> > > On 02/14/18 at 10:54am, Philipp Rudo wrote:
+> > > > Hi Dave,
+> > > > 
+> > > > I just browsed AKASHI's patches (v7). The way I see it the common code changes
+> > > > are on different areas of kexec_file and shouldn't get in conflict. Only in the
+> > > > arch code (s390 and arm64) some function calls might need an update. But I have
+> > > > to take a closer look on the patches first.  
+> > > 
+> > > I'm tring both in local branch with both series (V8 from AKASHI and this series),
+> > > but there are indeed some conflicts, may because AKASHI factored out some arch
+> > > code from ppc/x86 to common code.
+> > 
+> > I feared this would happen.  I didn't have time to look at AKASHI's v8
+> > yesterday but hope to find some today. How do you think i should handle
+> > conflicts with his patches? I don't think it is wise to include the changes
+> > into my patches as that would make AKASHI's patches a prereq for mine. Is adding
+> > one (multiple?) fixup patches on top of my series ok for you?
+> 
+> Arch code need arch maintainer to review, maybe either of you can send
+> the common part first before the arch code, eg. AKASHI can split the common
+>  cleanup patches and post them as a separate series, after these prep
+> series are reviewed then other patches can be refreshed based on it.
+> 
+> Seems in AKASHI's series, only patch 2, 3 ,4 ,5 is needed if split out
+> as a common change series.
 
-Based on trace events 'cpu_idle' and 'cpu_frequency' we can accomplish
-the duration statistics for every state.  Every time when CPU enters
-into or exits from idle states, the trace event 'cpu_idle' is recorded;
-trace event 'cpu_frequency' records the event for CPU OPP changing, so
-it's easily to know how long time the CPU stays in the specified OPP,
-and the CPU must be not in any idle state.
+Yeah, all of those are touching kernel/kexec_file.c and in turn
+they can conflict if being applied with 390 patches, but none of changes
+that I made on kexec_file.c are overlapped with Phillips', I suppose
+that merging these two patch sets is rather straightforward.
 
-This patch is to utilize the mentioned trace events for pstate and
-cstate statistics.  To achieve more accurate profiling data, the program
-uses below sequence to insure CPU running/idle time aren't missed:
+@Phillips: I hope that your patch#14 and #17 be aligned with my patch#3
+as it is factoring out arch_kexec_{image_probe, image_load, verify_sig}()
+and arch_kimage_file_post_load_cleanup().
 
-- Before profiling the user space program wakes up all CPUs for once, so
-  can avoid to missing account time for CPU staying in idle state for
-  long time; the program forces to set 'scaling_max_freq' to lowest
-  frequency and then restore 'scaling_max_freq' to highest frequency,
-  this can ensure the frequency to be set to lowest frequency and later
-  after start to run workload the frequency can be easily to be changed
-  to higher frequency;
+Thanks,
+-Takahiro AKASHI
 
-- User space program reads map data and update statistics for every 5s,
-  so this is same with other sample bpf programs for avoiding big
-  overload introduced by bpf program self;
-
-- When send signal to terminate program, the signal handler wakes up
-  all CPUs, set lowest frequency and restore highest frequency to
-  'scaling_max_freq'; this is exactly same with the first step so
-  avoid to missing account CPU pstate and cstate time during last
-  stage.  Finally it reports the latest statistics.
-
-The program has been tested on Hikey board with octa CA53 CPUs, below
-is one example for statistics result, the format mainly follows up
-Jesper Dangaard Brouer suggestion.
-
-Jesper reminds to 'get printf to pretty print with thousands separators
-use %' and setlocale(LC_NUMERIC, "en_US")', tried three different arm64
-GCC toolchains (5.4.0 20160609, 6.2.1 20161016, 6.3.0 20170516) but all
-of them cannot support printf flag character %' on arm64 platform, so go
-back print number without grouping mode.
-
-CPU states statistics:
-state(ms)  cstate-0    cstate-1    cstate-2    pstate-0    pstate-1    pstate-2    pstate-3    pstate-4
-CPU-0      767         6111        111863      561         31          756         853         190
-CPU-1      241         10606       107956      484         125         646         990         85
-CPU-2      413         19721       98735       636         84          696         757         89
-CPU-3      84          11711       79989       17516       909         4811        5773        341
-CPU-4      152         19610       98229       444         53          649         708         1283
-CPU-5      185         8781        108697      666         91          671         677         1365
-CPU-6      157         21964       95825       581         67          566         684         1284
-CPU-7      125         15238       102704      398         20          665         786         1197
-
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- samples/bpf/Makefile       |   4 +
- samples/bpf/cpustat_kern.c | 281 +++++++++++++++++++++++++++++++++++++++++++++
- samples/bpf/cpustat_user.c | 219 +++++++++++++++++++++++++++++++++++
- 3 files changed, 504 insertions(+)
- create mode 100644 samples/bpf/cpustat_kern.c
- create mode 100644 samples/bpf/cpustat_user.c
-
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index ec3fc8d..2c2a587 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -43,6 +43,7 @@ hostprogs-y += xdp_redirect_cpu
- hostprogs-y += xdp_monitor
- hostprogs-y += xdp_rxq_info
- hostprogs-y += syscall_tp
-+hostprogs-y += cpustat
- 
- # Libbpf dependencies
- LIBBPF := ../../tools/lib/bpf/bpf.o ../../tools/lib/bpf/nlattr.o
-@@ -93,6 +94,7 @@ xdp_redirect_cpu-objs := bpf_load.o $(LIBBPF) xdp_redirect_cpu_user.o
- xdp_monitor-objs := bpf_load.o $(LIBBPF) xdp_monitor_user.o
- xdp_rxq_info-objs := bpf_load.o $(LIBBPF) xdp_rxq_info_user.o
- syscall_tp-objs := bpf_load.o $(LIBBPF) syscall_tp_user.o
-+cpustat-objs := bpf_load.o $(LIBBPF) cpustat_user.o
- 
- # Tell kbuild to always build the programs
- always := $(hostprogs-y)
-@@ -144,6 +146,7 @@ always += xdp_monitor_kern.o
- always += xdp_rxq_info_kern.o
- always += xdp2skb_meta_kern.o
- always += syscall_tp_kern.o
-+always += cpustat_kern.o
- 
- HOSTCFLAGS += -I$(objtree)/usr/include
- HOSTCFLAGS += -I$(srctree)/tools/lib/
-@@ -188,6 +191,7 @@ HOSTLOADLIBES_xdp_redirect_cpu += -lelf
- HOSTLOADLIBES_xdp_monitor += -lelf
- HOSTLOADLIBES_xdp_rxq_info += -lelf
- HOSTLOADLIBES_syscall_tp += -lelf
-+HOSTLOADLIBES_cpustat += -lelf
- 
- # Allows pointing LLC/CLANG to a LLVM backend with bpf support, redefine on cmdline:
- #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
-diff --git a/samples/bpf/cpustat_kern.c b/samples/bpf/cpustat_kern.c
-new file mode 100644
-index 0000000..68c84da
---- /dev/null
-+++ b/samples/bpf/cpustat_kern.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/version.h>
-+#include <linux/ptrace.h>
-+#include <uapi/linux/bpf.h>
-+#include "bpf_helpers.h"
-+
-+/*
-+ * The CPU number, cstate number and pstate number are based
-+ * on 96boards Hikey with octa CA53 CPUs.
-+ *
-+ * Every CPU have three idle states for cstate:
-+ *   WFI, CPU_OFF, CLUSTER_OFF
-+ *
-+ * Every CPU have 5 operating points:
-+ *   208MHz, 432MHz, 729MHz, 960MHz, 1200MHz
-+ *
-+ * This code is based on these assumption and other platforms
-+ * need to adjust these definitions.
-+ */
-+#define MAX_CPU			8
-+#define MAX_PSTATE_ENTRIES	5
-+#define MAX_CSTATE_ENTRIES	3
-+
-+static int cpu_opps[] = { 208000, 432000, 729000, 960000, 1200000 };
-+
-+/*
-+ * my_map structure is used to record cstate and pstate index and
-+ * timestamp (Idx, Ts), when new event incoming we need to update
-+ * combination for new state index and timestamp (Idx`, Ts`).
-+ *
-+ * Based on (Idx, Ts) and (Idx`, Ts`) we can calculate the time
-+ * interval for the previous state: Duration(Idx) = Ts` - Ts.
-+ *
-+ * Every CPU has one below array for recording state index and
-+ * timestamp, and record for cstate and pstate saperately:
-+ *
-+ * +--------------------------+
-+ * | cstate timestamp         |
-+ * +--------------------------+
-+ * | cstate index             |
-+ * +--------------------------+
-+ * | pstate timestamp         |
-+ * +--------------------------+
-+ * | pstate index             |
-+ * +--------------------------+
-+ */
-+#define MAP_OFF_CSTATE_TIME	0
-+#define MAP_OFF_CSTATE_IDX	1
-+#define MAP_OFF_PSTATE_TIME	2
-+#define MAP_OFF_PSTATE_IDX	3
-+#define MAP_OFF_NUM		4
-+
-+struct bpf_map_def SEC("maps") my_map = {
-+	.type = BPF_MAP_TYPE_ARRAY,
-+	.key_size = sizeof(u32),
-+	.value_size = sizeof(u64),
-+	.max_entries = MAX_CPU * MAP_OFF_NUM,
-+};
-+
-+/* cstate_duration records duration time for every idle state per CPU */
-+struct bpf_map_def SEC("maps") cstate_duration = {
-+	.type = BPF_MAP_TYPE_ARRAY,
-+	.key_size = sizeof(u32),
-+	.value_size = sizeof(u64),
-+	.max_entries = MAX_CPU * MAX_CSTATE_ENTRIES,
-+};
-+
-+/* pstate_duration records duration time for every operating point per CPU */
-+struct bpf_map_def SEC("maps") pstate_duration = {
-+	.type = BPF_MAP_TYPE_ARRAY,
-+	.key_size = sizeof(u32),
-+	.value_size = sizeof(u64),
-+	.max_entries = MAX_CPU * MAX_PSTATE_ENTRIES,
-+};
-+
-+/*
-+ * The trace events for cpu_idle and cpu_frequency are taken from:
-+ * /sys/kernel/debug/tracing/events/power/cpu_idle/format
-+ * /sys/kernel/debug/tracing/events/power/cpu_frequency/format
-+ *
-+ * These two events have same format, so define one common structure.
-+ */
-+struct cpu_args {
-+	u64 pad;
-+	u32 state;
-+	u32 cpu_id;
-+};
-+
-+/* calculate pstate index, returns MAX_PSTATE_ENTRIES for failure */
-+static u32 find_cpu_pstate_idx(u32 frequency)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < sizeof(cpu_opps) / sizeof(u32); i++) {
-+		if (frequency == cpu_opps[i])
-+			return i;
-+	}
-+
-+	return i;
-+}
-+
-+SEC("tracepoint/power/cpu_idle")
-+int bpf_prog1(struct cpu_args *ctx)
-+{
-+	u64 *cts, *pts, *cstate, *pstate, prev_state, cur_ts, delta;
-+	u32 key, cpu, pstate_idx;
-+	u64 *val;
-+
-+	if (ctx->cpu_id > MAX_CPU)
-+		return 0;
-+
-+	cpu = ctx->cpu_id;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_CSTATE_TIME;
-+	cts = bpf_map_lookup_elem(&my_map, &key);
-+	if (!cts)
-+		return 0;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_CSTATE_IDX;
-+	cstate = bpf_map_lookup_elem(&my_map, &key);
-+	if (!cstate)
-+		return 0;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_PSTATE_TIME;
-+	pts = bpf_map_lookup_elem(&my_map, &key);
-+	if (!pts)
-+		return 0;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_PSTATE_IDX;
-+	pstate = bpf_map_lookup_elem(&my_map, &key);
-+	if (!pstate)
-+		return 0;
-+
-+	prev_state = *cstate;
-+	*cstate = ctx->state;
-+
-+	if (!*cts) {
-+		*cts = bpf_ktime_get_ns();
-+		return 0;
-+	}
-+
-+	cur_ts = bpf_ktime_get_ns();
-+	delta = cur_ts - *cts;
-+	*cts = cur_ts;
-+
-+	/*
-+	 * When state doesn't equal to (u32)-1, the cpu will enter
-+	 * one idle state; for this case we need to record interval
-+	 * for the pstate.
-+	 *
-+	 *                 OPP2
-+	 *            +---------------------+
-+	 *     OPP1   |                     |
-+	 *   ---------+                     |
-+	 *                                  |  Idle state
-+	 *                                  +---------------
-+	 *
-+	 *            |<- pstate duration ->|
-+	 *            ^                     ^
-+	 *           pts                  cur_ts
-+	 */
-+	if (ctx->state != (u32)-1) {
-+
-+		/* record pstate after have first cpu_frequency event */
-+		if (!*pts)
-+			return 0;
-+
-+		delta = cur_ts - *pts;
-+
-+		pstate_idx = find_cpu_pstate_idx(*pstate);
-+		if (pstate_idx >= MAX_PSTATE_ENTRIES)
-+			return 0;
-+
-+		key = cpu * MAX_PSTATE_ENTRIES + pstate_idx;
-+		val = bpf_map_lookup_elem(&pstate_duration, &key);
-+		if (val)
-+			__sync_fetch_and_add((long *)val, delta);
-+
-+	/*
-+	 * When state equal to (u32)-1, the cpu just exits from one
-+	 * specific idle state; for this case we need to record
-+	 * interval for the pstate.
-+	 *
-+	 *       OPP2
-+	 *   -----------+
-+	 *              |                          OPP1
-+	 *              |                     +-----------
-+	 *              |     Idle state      |
-+	 *              +---------------------+
-+	 *
-+	 *              |<- cstate duration ->|
-+	 *              ^                     ^
-+	 *             cts                  cur_ts
-+	 */
-+	} else {
-+
-+		key = cpu * MAX_CSTATE_ENTRIES + prev_state;
-+		val = bpf_map_lookup_elem(&cstate_duration, &key);
-+		if (val)
-+			__sync_fetch_and_add((long *)val, delta);
-+	}
-+
-+	/* Update timestamp for pstate as new start time */
-+	if (*pts)
-+		*pts = cur_ts;
-+
-+	return 0;
-+}
-+
-+SEC("tracepoint/power/cpu_frequency")
-+int bpf_prog2(struct cpu_args *ctx)
-+{
-+	u64 *pts, *cstate, *pstate, prev_state, cur_ts, delta;
-+	u32 key, cpu, pstate_idx;
-+	u64 *val;
-+
-+	cpu = ctx->cpu_id;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_PSTATE_TIME;
-+	pts = bpf_map_lookup_elem(&my_map, &key);
-+	if (!pts)
-+		return 0;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_PSTATE_IDX;
-+	pstate = bpf_map_lookup_elem(&my_map, &key);
-+	if (!pstate)
-+		return 0;
-+
-+	key = cpu * MAP_OFF_NUM + MAP_OFF_CSTATE_IDX;
-+	cstate = bpf_map_lookup_elem(&my_map, &key);
-+	if (!cstate)
-+		return 0;
-+
-+	prev_state = *pstate;
-+	*pstate = ctx->state;
-+
-+	if (!*pts) {
-+		*pts = bpf_ktime_get_ns();
-+		return 0;
-+	}
-+
-+	cur_ts = bpf_ktime_get_ns();
-+	delta = cur_ts - *pts;
-+	*pts = cur_ts;
-+
-+	/* When CPU is in idle, bail out to skip pstate statistics */
-+	if (*cstate != (u32)(-1))
-+		return 0;
-+
-+	/*
-+	 * The cpu changes to another different OPP (in below diagram
-+	 * change frequency from OPP3 to OPP1), need recording interval
-+	 * for previous frequency OPP3 and update timestamp as start
-+	 * time for new frequency OPP1.
-+	 *
-+	 *                 OPP3
-+	 *            +---------------------+
-+	 *     OPP2   |                     |
-+	 *   ---------+                     |
-+	 *                                  |    OPP1
-+	 *                                  +---------------
-+	 *
-+	 *            |<- pstate duration ->|
-+	 *            ^                     ^
-+	 *           pts                  cur_ts
-+	 */
-+	pstate_idx = find_cpu_pstate_idx(*pstate);
-+	if (pstate_idx >= MAX_PSTATE_ENTRIES)
-+		return 0;
-+
-+	key = cpu * MAX_PSTATE_ENTRIES + pstate_idx;
-+	val = bpf_map_lookup_elem(&pstate_duration, &key);
-+	if (val)
-+		__sync_fetch_and_add((long *)val, delta);
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-+u32 _version SEC("version") = LINUX_VERSION_CODE;
-diff --git a/samples/bpf/cpustat_user.c b/samples/bpf/cpustat_user.c
-new file mode 100644
-index 0000000..2b4cd1a
---- /dev/null
-+++ b/samples/bpf/cpustat_user.c
-@@ -0,0 +1,219 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <signal.h>
-+#include <sched.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <linux/bpf.h>
-+#include <locale.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
-+#include <sys/wait.h>
-+
-+#include "libbpf.h"
-+#include "bpf_load.h"
-+
-+#define MAX_CPU			8
-+#define MAX_PSTATE_ENTRIES	5
-+#define MAX_CSTATE_ENTRIES	3
-+#define MAX_STARS		40
-+
-+#define CPUFREQ_MAX_SYSFS_PATH	"/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
-+#define CPUFREQ_LOWEST_FREQ	"208000"
-+#define CPUFREQ_HIGHEST_FREQ	"12000000"
-+
-+struct cpu_stat_data {
-+	unsigned long cstate[MAX_CSTATE_ENTRIES];
-+	unsigned long pstate[MAX_PSTATE_ENTRIES];
-+};
-+
-+static struct cpu_stat_data stat_data[MAX_CPU];
-+
-+static void cpu_stat_print(void)
-+{
-+	int i, j;
-+	char state_str[sizeof("cstate-9")];
-+	struct cpu_stat_data *data;
-+
-+	/* Clear screen */
-+	printf("\033[2J");
-+
-+	/* Header */
-+	printf("\nCPU states statistics:\n");
-+	printf("%-10s ", "state(ms)");
-+
-+	for (i = 0; i < MAX_CSTATE_ENTRIES; i++) {
-+		sprintf(state_str, "cstate-%d", i);
-+		printf("%-11s ", state_str);
-+	}
-+
-+	for (i = 0; i < MAX_PSTATE_ENTRIES; i++) {
-+		sprintf(state_str, "pstate-%d", i);
-+		printf("%-11s ", state_str);
-+	}
-+
-+	printf("\n");
-+
-+	for (j = 0; j < MAX_CPU; j++) {
-+		data = &stat_data[j];
-+
-+		printf("CPU-%-6d ", j);
-+		for (i = 0; i < MAX_CSTATE_ENTRIES; i++)
-+			printf("%-11ld ", data->cstate[i] / 1000000);
-+
-+		for (i = 0; i < MAX_PSTATE_ENTRIES; i++)
-+			printf("%-11ld ", data->pstate[i] / 1000000);
-+
-+		printf("\n");
-+	}
-+}
-+
-+static void cpu_stat_update(int cstate_fd, int pstate_fd)
-+{
-+	unsigned long key, value;
-+	int c, i;
-+
-+	for (c = 0; c < MAX_CPU; c++) {
-+		for (i = 0; i < MAX_CSTATE_ENTRIES; i++) {
-+			key = c * MAX_CSTATE_ENTRIES + i;
-+			bpf_map_lookup_elem(cstate_fd, &key, &value);
-+			stat_data[c].cstate[i] = value;
-+		}
-+
-+		for (i = 0; i < MAX_PSTATE_ENTRIES; i++) {
-+			key = c * MAX_PSTATE_ENTRIES + i;
-+			bpf_map_lookup_elem(pstate_fd, &key, &value);
-+			stat_data[c].pstate[i] = value;
-+		}
-+	}
-+}
-+
-+/*
-+ * This function is copied from 'idlestat' tool function
-+ * idlestat_wake_all() in idlestate.c.
-+ *
-+ * It sets the self running task affinity to cpus one by one so can wake up
-+ * the specific CPU to handle scheduling; this results in all cpus can be
-+ * waken up once and produce ftrace event 'trace_cpu_idle'.
-+ */
-+static int cpu_stat_inject_cpu_idle_event(void)
-+{
-+	int rcpu, i, ret;
-+	cpu_set_t cpumask;
-+	cpu_set_t original_cpumask;
-+
-+	ret = sysconf(_SC_NPROCESSORS_CONF);
-+	if (ret < 0)
-+		return -1;
-+
-+	rcpu = sched_getcpu();
-+	if (rcpu < 0)
-+		return -1;
-+
-+	/* Keep track of the CPUs we will run on */
-+	sched_getaffinity(0, sizeof(original_cpumask), &original_cpumask);
-+
-+	for (i = 0; i < ret; i++) {
-+
-+		/* Pointless to wake up ourself */
-+		if (i == rcpu)
-+			continue;
-+
-+		/* Pointless to wake CPUs we will not run on */
-+		if (!CPU_ISSET(i, &original_cpumask))
-+			continue;
-+
-+		CPU_ZERO(&cpumask);
-+		CPU_SET(i, &cpumask);
-+
-+		sched_setaffinity(0, sizeof(cpumask), &cpumask);
-+	}
-+
-+	/* Enable all the CPUs of the original mask */
-+	sched_setaffinity(0, sizeof(original_cpumask), &original_cpumask);
-+	return 0;
-+}
-+
-+/*
-+ * It's possible to have no any frequency change for long time and cannot
-+ * get ftrace event 'trace_cpu_frequency' for long period, this introduces
-+ * big deviation for pstate statistics.
-+ *
-+ * To solve this issue, below code forces to set 'scaling_max_freq' to 208MHz
-+ * for triggering ftrace event 'trace_cpu_frequency' and then recovery back to
-+ * the maximum frequency value 1.2GHz.
-+ */
-+static int cpu_stat_inject_cpu_frequency_event(void)
-+{
-+	int len, fd;
-+
-+	fd = open(CPUFREQ_MAX_SYSFS_PATH, O_WRONLY);
-+	if (fd < 0) {
-+		printf("failed to open scaling_max_freq, errno=%d\n", errno);
-+		return fd;
-+	}
-+
-+	len = write(fd, CPUFREQ_LOWEST_FREQ, strlen(CPUFREQ_LOWEST_FREQ));
-+	if (len < 0) {
-+		printf("failed to open scaling_max_freq, errno=%d\n", errno);
-+		goto err;
-+	}
-+
-+	len = write(fd, CPUFREQ_HIGHEST_FREQ, strlen(CPUFREQ_HIGHEST_FREQ));
-+	if (len < 0) {
-+		printf("failed to open scaling_max_freq, errno=%d\n", errno);
-+		goto err;
-+	}
-+
-+err:
-+	close(fd);
-+	return len;
-+}
-+
-+static void int_exit(int sig)
-+{
-+	cpu_stat_inject_cpu_idle_event();
-+	cpu_stat_inject_cpu_frequency_event();
-+	cpu_stat_update(map_fd[1], map_fd[2]);
-+	cpu_stat_print();
-+	exit(0);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	char filename[256];
-+	int ret;
-+
-+	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);
-+
-+	if (load_bpf_file(filename)) {
-+		printf("%s", bpf_log_buf);
-+		return 1;
-+	}
-+
-+	ret = cpu_stat_inject_cpu_idle_event();
-+	if (ret < 0)
-+		return 1;
-+
-+	ret = cpu_stat_inject_cpu_frequency_event();
-+	if (ret < 0)
-+		return 1;
-+
-+	signal(SIGINT, int_exit);
-+	signal(SIGTERM, int_exit);
-+
-+	while (1) {
-+		cpu_stat_update(map_fd[1], map_fd[2]);
-+		cpu_stat_print();
-+		sleep(5);
-+	}
-+
-+	return 0;
-+}
--- 
-2.7.4
+> What do you think? 
+> > 
+> > Thanks
+> > Philipp
+> > 
+> > > > 
+> > > > @AKASHI: Welcome to the list. While browsing I couldn't find any
+> > > > arch_apply_relocation function for arm64. These require the biggest changes in
+> > > > my patch set. Did I just miss it or does arm64 work differently?
+> > > > 
+> > > > @Dave: Happy holiday  
+> > > 
+> > > Thank you!
+> > > 
+> > > > 
+> > > > Thanks
+> > > > Philipp
+> > > > 
+> > > > On Wed, 14 Feb 2018 15:35:43 +0800
+> > > > Dave Young <dyoung@redhat.com> wrote:
+> > > >   
+> > > > > Hi Philipp,
+> > > > > 
+> > > > > I added AKASHI in cc, he posted arm64 kexec_file series previously.
+> > > > > I would like to read both series especially the general part, but
+> > > > > maybe at the end of this month because of a holiday..
+> > > > > 
+> > > > > From the patch log the cleanup looks nice, but still need read the
+> > > > > details.
+> > > > > 
+> > > > > On 02/12/18 at 11:07am, Philipp Rudo wrote:  
+> > > > > > Hi everybody
+> > > > > > 
+> > > > > > resending the series as there was no reaction, yet. Furthermore i was told
+> > > > > > that Andrew and the x86 list should also be CCed, so welcome.
+> > > > > > 
+> > > > > > No changes made to the patches since first time i sent them. The patches
+> > > > > > apply to the current master (v4.16-rc1).
+> > > > > > 
+> > > > > > Thanks
+> > > > > > Philipp
+> > > > > > 
+> > > > > > ---
+> > > > > > 
+> > > > > > this series adds the kexec_file_load system call to s390. Before the system
+> > > > > > call is added there are some preparations/clean ups to common
+> > > > > > kexec_file_load. In detail this series contains:
+> > > > > > 
+> > > > > > Patch #1&2: Minor cleanups/fixes.
+> > > > > > 
+> > > > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+> > > > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+> > > > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+> > > > > > depending on the section. With these patches the section address will be
+> > > > > > calculated verbosely and sh_offset will contain the offset of the section
+> > > > > > in the stripped purgatory binary (purgatory_buf).
+> > > > > > 
+> > > > > > Patch #10: Allows architectures to set the purgaory load address. This
+> > > > > > patch is important for s390 as the kernel and purgatory have to be loaded
+> > > > > > to fixed addresses. In current code this is impossible as the purgatory
+> > > > > > load is opaque to the architecture.
+> > > > > > 
+> > > > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
+> > > > > > directory.
+> > > > > > 
+> > > > > > Patches #12-17 finally adds the kexec_file_load system call to s390.
+> > > > > > 
+> > > > > > Please note that I had to touch arch code for x86 and power a little. In
+> > > > > > theory this should not change the behavior but I don't have a way to test
+> > > > > > it. Cross-compiling with defconfig(*) works fine for both.
+> > > > > > 
+> > > > > > Thanks
+> > > > > > Philipp
+> > > > > > 
+> > > > > > (*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
+> > > > > > 
+> > > > > > Philipp Rudo (17):
+> > > > > >   kexec_file: Silence compile warnings
+> > > > > >   kexec_file: Remove checks in kexec_purgatory_load
+> > > > > >   kexec_file: Make purgatory_info->ehdr const
+> > > > > >   kexec_file: Search symbols in read-only kexec_purgatory
+> > > > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+> > > > > >   kexec_file: Split up __kexec_load_puragory
+> > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+> > > > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+> > > > > >   kexec_file: Remove mis-use of sh_offset field
+> > > > > >   kexec_file: Allow archs to set purgatory load address
+> > > > > >   kexec_file: Move purgatories sha256 to common code
+> > > > > >   s390/kexec_file: Prepare setup.h for kexec_file_load
+> > > > > >   s390/kexec_file: Add purgatory
+> > > > > >   s390/kexec_file: Add kexec_file_load system call
+> > > > > >   s390/kexec_file: Add image loader
+> > > > > >   s390/kexec_file: Add crash support to image loader
+> > > > > >   s390/kexec_file: Add ELF loader
+> > > > > > 
+> > > > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+> > > > > >  arch/s390/Kbuild                               |   1 +
+> > > > > >  arch/s390/Kconfig                              |   4 +
+> > > > > >  arch/s390/include/asm/kexec.h                  |  23 ++
+> > > > > >  arch/s390/include/asm/purgatory.h              |  17 ++
+> > > > > >  arch/s390/include/asm/setup.h                  |  40 ++-
+> > > > > >  arch/s390/kernel/Makefile                      |   1 +
+> > > > > >  arch/s390/kernel/asm-offsets.c                 |   5 +
+> > > > > >  arch/s390/kernel/compat_wrapper.c              |   1 +
+> > > > > >  arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
+> > > > > >  arch/s390/kernel/kexec_image.c                 |  78 +++++
+> > > > > >  arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
+> > > > > >  arch/s390/kernel/syscalls/syscall.tbl          |   1 +
+> > > > > >  arch/s390/purgatory/Makefile                   |  37 +++
+> > > > > >  arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
+> > > > > >  arch/s390/purgatory/purgatory.c                |  42 +++
+> > > > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+> > > > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+> > > > > >  arch/x86/purgatory/Makefile                    |   3 +
+> > > > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
+> > > > > >  include/linux/kexec.h                          |  38 +--
+> > > > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+> > > > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
+> > > > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+> > > > > >  24 files changed, 1200 insertions(+), 284 deletions(-)
+> > > > > >  create mode 100644 arch/s390/include/asm/purgatory.h
+> > > > > >  create mode 100644 arch/s390/kernel/kexec_elf.c
+> > > > > >  create mode 100644 arch/s390/kernel/kexec_image.c
+> > > > > >  create mode 100644 arch/s390/kernel/machine_kexec_file.c
+> > > > > >  create mode 100644 arch/s390/purgatory/Makefile
+> > > > > >  create mode 100644 arch/s390/purgatory/head.S
+> > > > > >  create mode 100644 arch/s390/purgatory/purgatory.c
+> > > > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> > > > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > > > > > 
+> > > > > > -- 
+> > > > > > 2.13.5
+> > > > > > 
+> > > > > > 
+> > > > > > _______________________________________________
+> > > > > > kexec mailing list
+> > > > > > kexec@lists.infradead.org
+> > > > > > http://lists.infradead.org/mailman/listinfo/kexec    
+> > > > > 
+> > > > > Thanks
+> > > > > Dave
+> > > > >   
+> > > >   
+> > > 
+> > > _______________________________________________
+> > > kexec mailing list
+> > > kexec@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/kexec
+> > > 
+> > 
