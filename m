@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELta2Je20lmbeQhPhTEPpeEw3satfbfLmknxwZcZnOLaYjOhVjdKLjxq4q1FtRBxInLF2LQT
-ARC-Seal: i=1; a=rsa-sha256; t=1519676755; cv=none;
+X-Google-Smtp-Source: AH8x225K5LiabfMO77FAcUGs2V83rYB7WXg2SlK3CvtbVCizxC8aUPWfuylaoq9UxjqUsabihZy0
+ARC-Seal: i=1; a=rsa-sha256; t=1519676752; cv=none;
         d=google.com; s=arc-20160816;
-        b=egmO0z+WTxEPiIshbsJz0GyTlrVqmU8bVBgoCwuKZjqhT5zwUsoJYrX9Dy7Ggkq6CZ
-         h+ddKKaojQIBQhz+DOqja4/n4AnQUp4Mcr7PVLGjGbB284NWlfPDjFP5OCG8qEv48VPv
-         dtTe9xNeB3E55Yw/YGf4bwabDgdqOt+iyl+Mq0SgzJm3J8cjdAzoWMhlLsw72CcWvrLs
-         oTNVymYkBdWs2pn6P+y0eozICKhH/cW9fJVDOblpJSf7eAb64uWTSaYOi+iqwCm+0yXq
-         YZNrRueOzEu7gHaGcHZlFNzpCEHinEk4t4LZPOJu4coH0c8wt6UjNAYcN7NBZrn6ZKFh
-         dkmQ==
+        b=ko+Y6DEcDZBIwF1fyEUFv+uW6wvsqnYI2fdH8Y115+mJw5L+yRgIbvvYAEI5+Lg9BN
+         wKnzO2SWqQ1m6FaM4Dumtc6TXt3RqCDfJ5+CH3KqT1gefrT7eqT2vW3HaaV11CeCglE1
+         tpAeg7aEKt8klbwlccazRO+RKkbUFCTBolg6fSM6RJ9nPzLxZCN6OxoEm2v8DH7OOo1D
+         ceWUBDiDhfATvb1f6DM1t5sY8UZnvkNqE7VF4zurmTF4lih7jbz4ijZDYJOd+0UzXAQX
+         gRiUcWiss1+QV2He73EX6uSDC6UGitz0pXrPY09ai8lmWUiDwRYMsOf66LIUQyJpDGlk
+         rEcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ac+3pa5OSHajOyyjXsyeCyS5LX6++1G3mPTrmMww4ao=;
-        b=1CdzwpD4d26oQ4wsI+Xse5+uNO6WiJ/jqJdKFMBADPJKz6QMzFQZfBNyPga2U1QidM
-         N2CnscvB2Ca9MlcnDKQDAj/YvoG2zJybSb0qGDFoURJEE/gfeg0Q4+Ls3T6kQptjXccL
-         qmEwznwy9+a/iTviGtTqv2ZoUUb0koIHJkddxEuiIibe5Xg3MEVXUzedt9CYmZTRkUAu
-         /S7b/LUB6FK8ndQoLLgT5Vy+vsm2QtQnw4QLBLIHnWag1OHjZBmlO4PcDmYsvzLPo5JH
-         pFLhghCv7dix1GrY0Y+dxZcNz9KVTsDOTS0lgxAd5mx/sXrvjC0Vakys3sVT32IOKLn1
-         mQGQ==
+        bh=pwYa0ZGVmwBGRu1vMoiJNHJi2tefNA4boRsS3/tFPcQ=;
+        b=TdxaD4vlXSYrhTfghre55UmL13grvOg18ND7Hpw98qRhNM2jsoJPcWS6vKAFwpNZah
+         9oSvUgmdFDGk2DgPTeBWl5p3ZENsDW2wnQuZJFL6OkQ8Te6kUX0HicJiC5LQVY6Zqgdl
+         lPCvWzBkP43VxcgMyKyv+X5fMacCielCU28U9kDgJXhtQuWOEZzFcv/jFWAHIWnyczdO
+         yaFncO1mjWfOQsCV7H0v9Ky7dRwsirBVh8tKDCTrLVX1APARJ8KsSisH99VJoVfjbyFD
+         Q+XTVJwasMvJlvN0peVAmeTySr5K/3VkYAKnQNiBAe1LkKDRHYf/A6JT8s8vNFRDXVGa
+         U3sA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.14 42/54] Revert "usb: musb: host: dont start next rx urb if current one failed"
-Date: Mon, 26 Feb 2018 21:22:19 +0100
-Message-Id: <20180226202146.470724007@linuxfoundation.org>
+	Karsten Koop <kkoop@ld-didactic.de>
+Subject: [PATCH 4.14 41/54] usb: ldusb: add PIDs for new CASSY devices supported by this driver
+Date: Mon, 26 Feb 2018 21:22:18 +0100
+Message-Id: <20180226202146.425701085@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496312946551337?=
-X-GMAIL-MSGID: =?utf-8?q?1593496573186781225?=
+X-GMAIL-THRID: =?utf-8?q?1593496011031039879?=
+X-GMAIL-MSGID: =?utf-8?q?1593496570127784031?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,42 +48,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Karsten Koop <kkoop@ld-didactic.de>
 
-commit 44eb5e12b845cc8a0634f21b70ef07d774eb4b25 upstream.
+commit 52ad2bd8918158266fc88a05f95429b56b6a33c5 upstream.
 
-This reverts commit dbac5d07d13e330e6706813c9fde477140fb5d80.
+This patch adds support for new CASSY devices to the ldusb driver. The
+PIDs are also added to the ignore list in hid-quirks.
 
-commit dbac5d07d13e ("usb: musb: host: don't start next rx urb if current one failed")
-along with commit b5801212229f ("usb: musb: host: clear rxcsr error bit if set")
-try to solve the issue described in [1], but the latter alone is
-sufficient, and the former causes the issue as in [2], so now revert it.
-
-[1] https://marc.info/?l=linux-usb&m=146173995117456&w=2
-[2] https://marc.info/?l=linux-usb&m=151689238420622&w=2
-
-Cc: stable@vger.kernel.org # v4.7+
-Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Karsten Koop <kkoop@ld-didactic.de>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_host.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/hid/hid-core.c   |    3 +++
+ drivers/hid/hid-ids.h    |    3 +++
+ drivers/usb/misc/ldusb.c |    6 ++++++
+ 3 files changed, 12 insertions(+)
 
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -418,13 +418,7 @@ static void musb_advance_schedule(struct
- 		}
- 	}
- 
--	/*
--	 * The pipe must be broken if current urb->status is set, so don't
--	 * start next urb.
--	 * TODO: to minimize the risk of regression, only check urb->status
--	 * for RX, until we have a test case to understand the behavior of TX.
--	 */
--	if ((!status || !is_in) && qh && qh->is_ready) {
-+	if (qh != NULL && qh->is_ready) {
- 		musb_dbg(musb, "... next ep%d %cX urb %p",
- 		    hw_ep->epnum, is_in ? 'R' : 'T', next_urb(qh));
- 		musb_start_urb(musb, is_in, qh);
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2716,6 +2716,9 @@ static const struct hid_device_id hid_ig
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -634,6 +634,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043
+ #define USB_DEVICE_ID_LD_JWM		0x1080
+ #define USB_DEVICE_ID_LD_DMMP		0x1081
+ #define USB_DEVICE_ID_LD_UMIP		0x1090
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -46,6 +46,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033	/* USB Product ID of Micro-CASSY Time (reserved) */
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035	/* USB Product ID of Micro-CASSY Temperature */
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038	/* USB Product ID of Micro-CASSY pH */
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040	/* USB Product ID of Power Analyser CASSY */
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042	/* USB Product ID of Converter Controller CASSY */
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043	/* USB Product ID of Machine Test CASSY */
+ #define USB_DEVICE_ID_LD_JWM		0x1080	/* USB Product ID of Joule and Wattmeter */
+ #define USB_DEVICE_ID_LD_DMMP		0x1081	/* USB Product ID of Digital Multimeter P (reserved) */
+ #define USB_DEVICE_ID_LD_UMIP		0x1090	/* USB Product ID of UMI P */
+@@ -88,6 +91,9 @@ static const struct usb_device_id ld_usb
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
