@@ -1,45 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753067AbeBZMnd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:43:33 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:43692 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753042AbeBZMn3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:43:29 -0500
-X-Google-Smtp-Source: AG47ELu3oT4IdbZGJIimP13jLKy5JjEMbzM/5ZnfX7fTMWCfGecOvM35D8PMt8v9eIEbghz0I4FiK7BRK8ptjr5l6uI=
+        id S1752929AbeBZMpA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:45:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39542 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752548AbeBZMo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 07:44:57 -0500
+Date: Mon, 26 Feb 2018 13:44:55 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        linux-ext4@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>
+Subject: Re: v4.16-rc2: virtio-block + ext4 lockdep splats / sleeping from
+ invalid context
+Message-ID: <20180226124455.rkp3xfn3cqplzh4p@quack2.suse.cz>
+References: <20180223154735.x4ezmpjbjm6o6duw@lakrids.cambridge.arm.com>
+ <20180226105256.jagidoki6vsrvzb4@quack2.suse.cz>
+ <20180226113818.v544mmjsavc4x5q2@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180226120418.3589-1-colin.king@canonical.com>
-References: <20180226120418.3589-1-colin.king@canonical.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 26 Feb 2018 09:43:27 -0300
-Message-ID: <CAOMZO5DriLRHgwD3rn562UM5WtwTmb-owZ+OTTmfCONvmGNG8A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than
- or equal zero
-To: Colin King <colin.king@canonical.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        inus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226113818.v544mmjsavc4x5q2@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 9:04 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The unsigned integer nfuncs is being error checked with a value less
-> or equal to zero; this is always false if of_get_child_count returns
-> a -ve for an error condition since nfuncs is not signed. Fix this by
-> making variables nfuncs and i signed integers.
->
-> Detected with Coccinelle:
-> drivers/pinctrl/freescale/pinctrl-imx.c:620:6-12: WARNING: Unsigned
-> expression compared with zero: nfuncs <= 0
->
-> Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Mon 26-02-18 11:38:19, Mark Rutland wrote:
+> On Mon, Feb 26, 2018 at 11:52:56AM +0100, Jan Kara wrote:
+> > On Fri 23-02-18 15:47:36, Mark Rutland wrote:
+> > > Hi all,
+> > > 
+> > > While fuzzing arm64/v4.16-rc2 with syzkaller, I simultaneously hit a
+> > > number of splats in the block layer:
+> > > 
+> > > * inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-R} usage in
+> > >   jbd2_trans_will_send_data_barrier
+> > > 
+> > > * BUG: sleeping function called from invalid context at mm/mempool.c:320
+> > > 
+> > > * WARNING: CPU: 0 PID: 0 at block/blk.h:297 generic_make_request_checks+0x670/0x750
+> > > 
+> > > ... I've included the full splats at the end of the mail.
+> > > 
+> > > These all happen in the context of the virtio block IRQ handler, so I
+> > > wonder if this calls something that doesn't expect to be called from IRQ
+> > > context. Is it valid to call blk_mq_complete_request() or
+> > > blk_mq_end_request() from an IRQ handler?
+> > 
+> > No, it's likely a bug in detection whether IO completion should be deferred
+> > to a workqueue or not. Does attached patch fix the problem? I don't see
+> > exactly this being triggered by the syzkaller but it's close enough :)
+> > 
+> > 								Honza
+> 
+> That seems to be it!
+> 
+> With the below patch applied, I can't trigger the bug after ~10 minutes,
+> whereas prior to the patch I can trigger it in ~10 seconds. I'll leave
+> that running for a while just in case there's another part to the
+> problem, but FWIW:
+> 
+> Tested-by: Mark Rutland <mark.rutland@arm.com>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Thanks for testing! Sent the patch to Jens for inclusion.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
