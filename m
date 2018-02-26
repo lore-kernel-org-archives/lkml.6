@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753453AbeBZNWV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:22:21 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35544 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753289AbeBZNRr (ORCPT
+        id S1753551AbeBZNWb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:22:31 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39367 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753282AbeBZNRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Feb 2018 08:17:47 -0500
-X-Google-Smtp-Source: AH8x225LdUjScVWo6Rbk5Umlu8qaHhIJzhL9T/9TJiUCfONLF/i1opEcoJvdh8dsDaH54QWx5hnVvw==
+X-Google-Smtp-Source: AG47ELuhJDQ3pCtXaExysKyGJfpW3WdmL1sr9na9/tD5AaKLqkI2JEyYEvEgJ1MaE8dSRh5Hkc+aGQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 16/19] lightnvm: define chunk states
-Date: Mon, 26 Feb 2018 14:17:15 +0100
-Message-Id: <1519651038-16845-17-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 15/19] lightnvm: implement get log report chunk helpers
+Date: Mon, 26 Feb 2018 14:17:14 +0100
+Message-Id: <1519651038-16845-16-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
 References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
@@ -27,41 +28,216 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define chunk states as given in the 2.0 spec. Also, add an extra chunk
-state that signals that the chunk is in use by the host. This allows for
-the chunk metadata to be "owned" by a target when active, thus
-completing the chunk state machine from the host perspective and
-facilitating sanity checks. This state is transparent for the device.
+From: Javier González <javier@javigon.com>
+
+The 2.0 spec provides a report chunk log page that can be retrieved
+using the stangard nvme get log page. This replaces the dedicated
+get/put bad block table in 1.2.
+
+This patch implements the helper functions to allow targets retrieve the
+chunk metadata using get log page
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- include/linux/lightnvm.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/lightnvm/core.c      | 11 +++++++
+ drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/lightnvm.h     | 24 ++++++++++++++
+ 3 files changed, 109 insertions(+)
 
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 776ffdc2e137..74830d5dbd6e 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -232,6 +232,20 @@ struct nvm_addr_format {
- 	u64	rsv_mask[2];
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index fae5e8c6fcd0..0f4114cb48ee 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -719,6 +719,17 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
+ 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
+ }
+ 
++int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
++		struct ppa_addr ppa, int nchks)
++{
++	struct nvm_dev *dev = tgt_dev->parent;
++
++	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
++
++	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
++						(sector_t)ppa.ppa, nchks);
++}
++EXPORT_SYMBOL(nvm_get_chunk_meta);
+ 
+ int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
+ 		       int nr_ppas, int type)
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 377e6525e53f..7c4af132d072 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+ 	nvme_nvm_admin_set_bb_tbl	= 0xf1,
  };
  
-+enum {
-+	/* Chunk states */
-+	NVM_CHK_ST_FREE =	1 << 0,
-+	NVM_CHK_ST_CLOSED =	1 << 1,
-+	NVM_CHK_ST_OPEN =	1 << 2,
-+	NVM_CHK_ST_OFFLINE =	1 << 3,
-+	NVM_CHK_ST_HOST_USE =	1 << 7,
++enum nvme_nvm_log_page {
++	NVME_NVM_LOG_REPORT_CHUNK	= 0xca,
++};
 +
-+	/* Chunk types */
-+	NVM_CHK_TP_W_SEQ =	1 << 0,
-+	NVM_CHK_TP_W_RAN =	1 << 1,
-+	NVM_CHK_TP_SZ_SPEC =	1 << 4,
+ struct nvme_nvm_ph_rw {
+ 	__u8			opcode;
+ 	__u8			flags;
+@@ -236,6 +240,16 @@ struct nvme_nvm_id20 {
+ 	__u8			vs[1024];
+ };
+ 
++struct nvme_nvm_chk_meta {
++	__u8	state;
++	__u8	type;
++	__u8	wi;
++	__u8	rsvd[5];
++	__le64	slba;
++	__le64	cnlb;
++	__le64	wp;
 +};
 +
  /*
-  * Note: The structure size is linked to nvme_nvm_chk_meta such that the same
-  * buffer can be used when converting from little endian to cpu addressing.
+  * Check we didn't inadvertently grow the command struct
+  */
+@@ -252,6 +266,9 @@ static inline void _nvme_nvm_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) != 32);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=
++						sizeof(struct nvm_chk_meta));
+ }
+ 
+ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
+@@ -558,6 +575,61 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
+ 	return ret;
+ }
+ 
++/*
++ * Expect the lba in device format
++ */
++static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
++				 struct nvm_chk_meta *meta,
++				 sector_t slba, int nchks)
++{
++	struct nvm_geo *dev_geo = &ndev->geo;
++	struct nvme_ns *ns = ndev->q->queuedata;
++	struct nvme_ctrl *ctrl = ns->ctrl;
++	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
++	struct ppa_addr ppa;
++	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
++	size_t log_pos, offset, len;
++	int ret, i;
++
++	/* Normalize lba address space to obtain log offset */
++	ppa.ppa = slba;
++	ppa = dev_to_generic_addr(ndev, ppa);
++
++	log_pos = ppa.m.chk;
++	log_pos += ppa.m.pu * dev_geo->c.num_chk;
++	log_pos += ppa.m.grp * dev_geo->num_lun * dev_geo->c.num_chk;
++
++	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
++
++	while (left) {
++		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
++
++		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
++				dev_meta, len, offset);
++		if (ret) {
++			dev_err(ctrl->device, "Get REPORT CHUNK log error\n");
++			break;
++		}
++
++		for (i = 0; i < len; i += sizeof(struct nvme_nvm_chk_meta)) {
++			meta->state = dev_meta->state;
++			meta->type = dev_meta->type;
++			meta->wi = dev_meta->wi;
++			meta->slba = le64_to_cpu(dev_meta->slba);
++			meta->cnlb = le64_to_cpu(dev_meta->cnlb);
++			meta->wp = le64_to_cpu(dev_meta->wp);
++
++			meta++;
++			dev_meta++;
++		}
++
++		offset += len;
++		left -= len;
++	}
++
++	return ret;
++}
++
+ static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct nvme_ns *ns,
+ 				    struct nvme_nvm_command *c)
+ {
+@@ -689,6 +761,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
+ 	.get_bb_tbl		= nvme_nvm_get_bb_tbl,
+ 	.set_bb_tbl		= nvme_nvm_set_bb_tbl,
+ 
++	.get_chk_meta		= nvme_nvm_get_chk_meta,
++
+ 	.submit_io		= nvme_nvm_submit_io,
+ 	.submit_io_sync		= nvme_nvm_submit_io_sync,
+ 
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 2b909592568a..776ffdc2e137 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -81,10 +81,13 @@ struct nvm_rq;
+ struct nvm_id;
+ struct nvm_dev;
+ struct nvm_tgt_dev;
++struct nvm_chk_meta;
+ 
+ typedef int (nvm_id_fn)(struct nvm_dev *);
+ typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
+ typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
++typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct nvm_chk_meta *,
++								sector_t, int);
+ typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
+ typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
+ typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
+@@ -98,6 +101,8 @@ struct nvm_dev_ops {
+ 	nvm_op_bb_tbl_fn	*get_bb_tbl;
+ 	nvm_op_set_bb_fn	*set_bb_tbl;
+ 
++	nvm_get_chk_meta_fn	*get_chk_meta;
++
+ 	nvm_submit_io_fn	*submit_io;
+ 	nvm_submit_io_sync_fn	*submit_io_sync;
+ 
+@@ -227,6 +232,20 @@ struct nvm_addr_format {
+ 	u64	rsv_mask[2];
+ };
+ 
++/*
++ * Note: The structure size is linked to nvme_nvm_chk_meta such that the same
++ * buffer can be used when converting from little endian to cpu addressing.
++ */
++struct nvm_chk_meta {
++	u8	state;
++	u8	type;
++	u8	wi;
++	u8	rsvd[5];
++	u64	slba;
++	u64	cnlb;
++	u64	wp;
++};
++
+ struct nvm_target {
+ 	struct list_head list;
+ 	struct nvm_tgt_dev *dev;
+@@ -502,6 +521,11 @@ extern struct nvm_dev *nvm_alloc_dev(int);
+ extern int nvm_register(struct nvm_dev *);
+ extern void nvm_unregister(struct nvm_dev *);
+ 
++
++extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
++			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
++			      int nchks);
++
+ extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
+ 			      int, int);
+ extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
 -- 
 2.7.4
