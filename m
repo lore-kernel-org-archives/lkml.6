@@ -1,52 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeBZSTl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:19:41 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46785 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeBZSTi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:19:38 -0500
-X-Google-Smtp-Source: AG47ELvtuZut5Ft83O9VdQ280mZHC2UUL5Y01u3fVmq6GCP+McwPc//2SByEq2094+PE9wtnwhXLndf4zdE654UtKg0=
+        id S1751950AbeBZSTt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:19:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751758AbeBZSTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 13:19:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B1A217B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 26 Feb 2018 12:19:43 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/4] pci: Re-use new dmi_get_bios_year() helper
+Message-ID: <20180226181943.GC25159@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+ <20180222125923.57385-4-andriy.shevchenko@linux.intel.com>
+ <20180223214051.GN14632@bhelgaas-glaptop.roam.corp.google.com>
+ <1519565224.10722.148.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-6-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-6-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:19:35 +0100
-X-Google-Sender-Auth: BgAPmSkGItnYfbZmXfRO78ZfQQU
-Message-ID: <CAMuHMdWyKOT_aGfgkfZMFVTj3-__OmbiOrYqxXP5fL-ApLTifA@mail.gmail.com>
-Subject: Re: [PATCH 5/8] dt-bindings: iommu/ipmmu-vmsa: Add R-Car M3-N (R8A77965)
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519565224.10722.148.camel@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add Renesas R-Car M3-N (R8A77965) compat string to IPMMU DT bindings
-> documentation.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On Sun, Feb 25, 2018 at 03:27:04PM +0200, Andy Shevchenko wrote:
+> On Fri, 2018-02-23 at 15:40 -0600, Bjorn Helgaas wrote:
+> > On Thu, Feb 22, 2018 at 02:59:23PM +0200, Andy Shevchenko wrote:
+> > > ...instead of open coding its functionality.
+> > 
+> > Same comment about making the changelog complete, independent of the
+> > subject.
+> 
+> Any suggestion how it would look like? (Same question for previous
+> comment)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+  PCI: Re-use new dmi_get_bios_year() helper
 
-Gr{oetje,eeting}s,
+  Use new dmi_get_bios_year() helper instead of open-coding its
+  functionality.
 
-                        Geert
+The usual document structure is something like:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  TITLE
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  This abstract contains a summary of the entire document, in a few
+  paragraphs of complete sentences.
+
+Where "TITLE" makes sense all by itself, even without reading the
+body, and "Body" is a complete statement that also makes sense all by
+itself without having to read "TITLE" first.
+
+Granted, it's trivial, but following the convention improves
+readability slightly because it fits the reader's expectations.
+
+When the body is "...instead of open coding its functionality", it's a
+bit of a hiccup because I have to start over and look back up to the
+title to re-read the thing as a whole.
+
+Bjorn
