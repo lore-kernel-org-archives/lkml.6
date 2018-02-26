@@ -1,161 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752099AbeBZDGw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:06:52 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5266 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751945AbeBZDGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:06:51 -0500
-Subject: Re: [PATCH] f2fs: allocate buffer for decrypting filename to avoid
- panic
-To: Eric Biggers <ebiggers3@gmail.com>
-CC: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <miaoxie@huawei.com>,
-        <bintian.wang@huawei.com>, <shengyong1@huawei.com>,
-        <heyunlei@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <20180224183230.GA933@zzz.localdomain>
-From: Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <1815fa55-7a32-799a-5f12-45e3d239c469@huawei.com>
-Date: Mon, 26 Feb 2018 11:06:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180224183230.GA933@zzz.localdomain>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+        id S1752152AbeBZDG7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:06:59 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36612 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751945AbeBZDGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:06:55 -0500
+X-Google-Smtp-Source: AG47ELsNoq2I37ZTWI0xgJYptutW4L8N6BnnUvWJIm1GXROfTsJjytYYXKcTZOaolCsEOBWDBvmmoQ==
+From: linxiulei@gmail.com
+To: peterz@infradead.org, jolsa@redhat.com, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, eranian@gmail.com,
+        torvalds@linux-foundation.org, linux-perf-users@vger.kernel.org,
+        brendan.d.gregg@gmail.com
+Cc: yang_oliver@hotmail.com, jinli.zjl@alibaba-inc.com,
+        "leilei.lin" <leilei.lin@alibaba-inc.com>
+Subject: [PATCH v5] perf/core: Fix installing arbitrary cgroup event into cpu
+Date: Mon, 26 Feb 2018 11:06:39 +0800
+Message-Id: <20180226030639.33843-1-linxiulei@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eric,
-     Thanks for your review, I have removed the symlink part and use
-kmemdup instead. As for directory pages restricted to lowmem, I am
-not sure whether it is proper for f2fs, since the directory structures
-of f2fs are different from ext4. So I just keep its old kmap.
+From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 
-On 2018/2/25 2:32, Eric Biggers wrote:
-> Hi Yunlong,
-> 
-> On Sat, Feb 24, 2018 at 05:14:58PM +0800, Yunlong Song wrote:
->> In some platforms (such as arm), high memory is used, then the
->> decrypting filename will cause panic, the reason see commit
->> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
->> for decrypting filename"):
->>
->>   We got dentry pages from high_mem, and its address space directly goes into the
->>   decryption path via f2fs_fname_disk_to_usr.
->>   But, sg_init_one assumes the address is not from high_mem, so we can get this
->>   panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
->>
->>   kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->>   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>   ...
->>    (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->>    (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->>    (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->>    (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->>    (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->>    (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->>    (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->>    (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->>    (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->>    (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->>    (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
->>
->> Howerver, later patches:
->> commit 922ec355f86365388203672119b5bca346a45085 ("f2fs crypto: avoid
->> unneeded memory allocation when {en/de}crypting symlink")
->> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
->> unneeded memory allocation in ->readdir")
->>
->> reverts the codes, which causes panic again in arm, so let's add the old
->> patch again.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/dir.c   |  7 +++++++
->>   fs/f2fs/namei.c | 10 +++++++++-
->>   2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index f00b5ed..c0cf3e7b 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>   			int save_len = fstr->len;
->>   			int err;
->>   
->> +			de_name.name = kmalloc(de_name.len, GFP_NOFS);
->> +			if (!de_name.name)
->> +				return -ENOMEM;
->> +
->> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
->> +
->>   			err = fscrypt_fname_disk_to_usr(d->inode,
->>   						(u32)de->hash_code, 0,
->>   						&de_name, fstr);
->> +			kfree(de_name.name);
->>   			if (err)
->>   				return err;
->>   
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index c4c94c7..2cb70c1 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -1170,8 +1170,13 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>   
->>   	/* Symlink is encrypted */
->>   	sd = (struct fscrypt_symlink_data *)caddr;
->> -	cstr.name = sd->encrypted_path;
->>   	cstr.len = le16_to_cpu(sd->len);
->> +	cstr.name = kmalloc(cstr.len, GFP_NOFS);
->> +	if (!cstr.name) {
->> +		res = -ENOMEM;
->> +		goto errout;
->> +	}
->> +	memcpy(cstr.name, sd->encrypted_path, cstr.len);
->>   
->>   	/* this is broken symlink case */
->>   	if (unlikely(cstr.len == 0)) {
->> @@ -1198,6 +1203,8 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>   		goto errout;
->>   	}
->>   
->> +	kfree(cstr.name);
->> +
->>   	paddr = pstr.name;
->>   
->>   	/* Null-terminate the name */
->> @@ -1207,6 +1214,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>   	set_delayed_call(done, kfree_link, paddr);
->>   	return paddr;
->>   errout:
->> +	kfree(cstr.name);
->>   	fscrypt_fname_free_buffer(&pstr);
->>   	put_page(cpage);
->>   	return ERR_PTR(res);
->> -- 
->> 1.8.5.2
->>
-> 
-> The pagecache for symlinks in f2fs already uses lowmem only, so the change to
-> ->get_link() isn't needed.  Also that part of the patch doesn't apply to
-> upstream.
-> 
-> For directories we may need your fix.  Note: kmalloc + memcpy should be replaced
-> with kmemdup.  But alternatively, directory pages could be restricted to lowmem
-> which would match ext4.
-> 
-> Eric
-> 
-> .
-> 
+Do not install cgroup event into the CPU context and schedule it
+if the cgroup is not running on this CPU
 
+While there is no task of cgroup running specified CPU, current
+kernel still install cgroup event into CPU context that causes
+another cgroup event can't be installed into this CPU.
+
+This patch prevent scheduling events at __perf_install_in_context()
+and installing events at list_update_cgroup_event() if cgroup isn't
+running on specified CPU.
+
+Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+---
+ v2: Set cpuctx->cgrp only if the same cgroup is running on this
+   CPU otherwise following events couldn't be activated immediately
+ v3: Enhance the comments and commit message
+ v4: Adjust to config
+ v5: Clear cpuctx->cgrp only when no cgroup event exists
+
+ kernel/events/core.c | 54 +++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4df5b69..f3ffa70 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -933,31 +933,45 @@ list_update_cgroup_event(struct perf_event *event,
+ {
+ 	struct perf_cpu_context *cpuctx;
+ 	struct list_head *cpuctx_entry;
++	struct perf_cgroup *cgrp;
+ 
+ 	if (!is_cgroup_event(event))
+ 		return;
+ 
+-	if (add && ctx->nr_cgroups++)
+-		return;
+-	else if (!add && --ctx->nr_cgroups)
+-		return;
+ 	/*
+ 	 * Because cgroup events are always per-cpu events,
+ 	 * this will always be called from the right CPU.
+ 	 */
+ 	cpuctx = __get_cpu_context(ctx);
+-	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+-	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+-	if (add) {
+-		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++	cgrp = perf_cgroup_from_task(current, ctx);
++
++	/*
++	 * if only the cgroup is running on this cpu
++	 * and cpuctx->cgrp == NULL (otherwise it would've
++	 * been set with running cgroup), we put this cgroup
++	 * into cpu context. Or it would case mismatch in
++	 * following cgroup events at event_filter_match()
++	 */
++	if (add && !cpuctx->cgrp &&
++			cgroup_is_descendant(cgrp->css.cgroup,
++			event->cgrp->css.cgroup)) {
++		cpuctx->cgrp = cgrp;
++	}
++
++	if (add && ctx->nr_cgroups++)
++		return;
++	else if (!add && --ctx->nr_cgroups)
++		return;
+ 
++	/* no cgroup running */
++	if (!add)
++		cpuctx->cgrp = NULL;
++
++	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
++	if (add)
+ 		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+-		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
+-			cpuctx->cgrp = cgrp;
+-	} else {
++	else
+ 		list_del(cpuctx_entry);
+-		cpuctx->cgrp = NULL;
+-	}
+ }
+ 
+ #else /* !CONFIG_CGROUP_PERF */
+@@ -2311,6 +2325,20 @@ static int  __perf_install_in_context(void *info)
+ 		raw_spin_lock(&task_ctx->lock);
+ 	}
+ 
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		/*
++		 * Only care about cgroup events.
++		 *
++		 * If only the task belongs to cgroup of this event,
++		 * we will continue the installment
++		 */
++		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
++					event->cgrp->css.cgroup);
++	}
++#endif
++
+ 	if (reprogram) {
+ 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
+ 		add_event_to_ctx(event, ctx);
 -- 
-Thanks,
-Yunlong Song
+2.8.4.31.g9ed660f
