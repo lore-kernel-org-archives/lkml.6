@@ -1,86 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752250AbeBZJ1A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:27:00 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:41661 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751563AbeBZJ05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:26:57 -0500
-Date: Mon, 26 Feb 2018 10:26:45 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
- H6 DTSI file
-Message-ID: <20180226092645.xghkmfowenzlbm42@flea.lan>
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
- <20180223152038.2bflylwa6vj4gzfj@flea.lan>
- <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z6o7m63bqzv2zod7"
-Content-Disposition: inline
-In-Reply-To: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
-User-Agent: NeoMutt/20180223
+        id S1752284AbeBZJ1N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:27:13 -0500
+Received: from smtp-4.orcon.net.nz ([60.234.4.59]:51858 "EHLO
+        smtp-4.orcon.net.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752027AbeBZJ1J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:27:09 -0500
+From: Michael Cree <mcree@orcon.net.nz>
+To: linux-alpha@vger.kernel.org
+Cc: Matt Turner <mattst88@gmail.com>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Richard Henderson <rth@twiddle.net>, linux-kernel@vger.kernel.org,
+        Michael Cree <mcree@orcon.net.nz>
+Subject: [PATCH] alpha: Implement CPU vulnerabilities sysfs functions.
+Date: Mon, 26 Feb 2018 22:02:12 +1300
+Message-Id: <20180226090212.23871-1-mcree@orcon.net.nz>
+X-Mailer: git-send-email 2.11.0
+X-GeoIP: NZ
+X-Spam_score: -2.9
+X-Spam_score_int: -28
+X-Spam_bar: --
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Implement the CPU vulnerabilty show functions for meltdown, spectre_v1
+and spectre_v2 on Alpha.
 
---z6o7m63bqzv2zod7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tests on XP1000 (EV67/667MHz) and ES45 (EV68CB/1.25GHz) show them
+to be vulnerable to Meltdown and Spectre V1.  In the case of
+Meltdown I saw a 1 to 2% success rate in reading bytes on the
+XP1000 and 50 to 60% success rate on the ES45. (This compares to
+99.97% success reported for Intel CPUs.)  Report EV6 and later
+CPUs as vulnerable.
 
-On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
-> >> +	psci {
-> >> +		compatible =3D "arm,psci-0.2";
-> >> +		method =3D "smc";
-> >> +	};
-> >
-> >Is it needed? The bootloader should fill it with whatever version it
-> >has, shouldn't it?
->=20
-> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
-> info.
->=20
-> See A64/H5 device trees.
+Tests on PWS600au (EV56/600MHz) for Spectre V1 attack were
+unsuccessful (though I did not try particularly hard) so mark EV4
+through to EV56 as not vulnerable.
 
-So if the PSCI version implemented in ATF ever changes, we would have
-to update all the DT everywhere, but only if you're running the new
-version?
+Signed-off-by: Michael Cree <mcree@orcon.net.nz>
+---
+ arch/alpha/Kconfig         |  1 +
+ arch/alpha/kernel/Makefile |  2 +-
+ arch/alpha/kernel/bugs.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+), 1 deletion(-)
+ create mode 100644 arch/alpha/kernel/bugs.c
 
-Sigh.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---z6o7m63bqzv2zod7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT0tQACgkQ0rTAlCFN
-r3TLwg/+Nz8rd3gYDqm5pcrYPGIJN0H61KEsqx/iB8F9FplnrLVH79Y2LXuehDAD
-OFNpmoWWZMXoRePjL/rpoA6/EfXeBddtks+IyMgAHQgBWqDjHgAvq0IV7NUAQ0hb
-AfcIVhDAposY/s8e0BmANAdxLZESlQkZE2kqZEgQ8nr1yDVHam4iALk0gp4DTwef
-U0aDUttzBlHmGZmcEVRuxh2CoPualNFBmav4+GLR/8UdzK/yu64bJHaVan19M9R7
-mGQ8JcU5GJgdFzWFrECgOCsgT5scQqEnve9PxA0w7NYqvP6yCPqTLQ0B58xPl92p
-CEgJqbogmdhE5a9/Mv+G1NXnJlUHFtJkQ030tMRAj6sA247wPnowW5uFnPYi35xc
-CfFrlG+IzcFYDdPy3wfhyHPfGn7o9yxZMNchlseLywyM4uBwf8wjds3nKNeP0Y0m
-NH8ZJK8PKQ+LXfj7Ihu4VSpmH64zkYSQwqMbjFFvuJXGsnBPqqS/Ok+ZzXKjgh1r
-/8grCvGLfKL/r/9/VCYFx0/oGh23oicUBkYLFAsYcDb3lOA0TO+03pqtdXARshaO
-QTbdqBi9Iz90Y3lxOfbpRMG90RvonBeUh9GpeRXKfxL5mD4M5vGh7lD3a2Jojek4
-mj2++whGyo3wLYsFirdAqeA4b0oGSJffC3vpSjzz1OW7U9MhJXA=
-=8ds1
------END PGP SIGNATURE-----
-
---z6o7m63bqzv2zod7--
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index e96adcbcab41..b2022885ced8 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -18,6 +18,7 @@ config ALPHA
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select AUDIT_ARCH
+ 	select GENERIC_CLOCKEVENTS
++	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_STRNCPY_FROM_USER
+ 	select GENERIC_STRNLEN_USER
+diff --git a/arch/alpha/kernel/Makefile b/arch/alpha/kernel/Makefile
+index bf7b41fa7b01..5a74581bf0ee 100644
+--- a/arch/alpha/kernel/Makefile
++++ b/arch/alpha/kernel/Makefile
+@@ -9,7 +9,7 @@ ccflags-y	:= -Wno-sign-compare
+ 
+ obj-y    := entry.o traps.o process.o osf_sys.o irq.o \
+ 	    irq_alpha.o signal.o setup.o ptrace.o time.o \
+-	    systbls.o err_common.o io.o
++	    systbls.o err_common.o io.o bugs.o
+ 
+ obj-$(CONFIG_VGA_HOSE)	+= console.o
+ obj-$(CONFIG_SMP)	+= smp.o
+diff --git a/arch/alpha/kernel/bugs.c b/arch/alpha/kernel/bugs.c
+new file mode 100644
+index 000000000000..08cc10d7fa17
+--- /dev/null
++++ b/arch/alpha/kernel/bugs.c
+@@ -0,0 +1,45 @@
++
++#include <asm/hwrpb.h>
++#include <linux/device.h>
++
++
++#ifdef CONFIG_SYSFS
++
++static int cpu_is_ev6_or_later(void)
++{
++	struct percpu_struct *cpu;
++        unsigned long cputype;
++
++        cpu = (struct percpu_struct *)((char *)hwrpb + hwrpb->processor_offset);
++        cputype = cpu->type & 0xffffffff;
++        /* Include all of EV6, EV67, EV68, EV7, EV79 and EV69. */
++        return (cputype == EV6_CPU) || ((cputype >= EV67_CPU) && (cputype <= EV69_CPU));
++}
++
++ssize_t cpu_show_meltdown(struct device *dev,
++			  struct device_attribute *attr, char *buf)
++{
++	if (cpu_is_ev6_or_later())
++		return sprintf(buf, "Vulnerable\n");
++	else
++		return sprintf(buf, "Not affected\n");
++}
++
++ssize_t cpu_show_spectre_v1(struct device *dev,
++                            struct device_attribute *attr, char *buf)
++{
++	if (cpu_is_ev6_or_later())
++		return sprintf(buf, "Vulnerable\n");
++	else
++		return sprintf(buf, "Not affected\n");
++}
++
++ssize_t cpu_show_spectre_v2(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	if (cpu_is_ev6_or_later())
++		return sprintf(buf, "Vulnerable\n");
++	else
++		return sprintf(buf, "Not affected\n");
++}
++#endif
+-- 
+2.11.0
