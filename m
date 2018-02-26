@@ -1,138 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeBZDzY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:55:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55098 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeBZDzU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:55:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6215F6070A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH 9/9] scsi: ufs: Add clock ungating to a separate workqueue
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        Vijay Viswanath <vviswana@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.1519120988.git.asutoshd@codeaurora.org>
- <1c92a979dce897db920d9b9a625923d64cba2266.1519120988.git.asutoshd@codeaurora.org>
- <CANiq72==rFxaw7+ZQv41Zbr+-fJvHiQVzVucrRFpUzrQtN750w@mail.gmail.com>
-From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <68880931-6f39-1ffc-92f6-f3b90cec396c@codeaurora.org>
-Date: Mon, 26 Feb 2018 09:25:14 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752178AbeBZD6G (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:58:06 -0500
+Received: from ozlabs.org ([103.22.144.67]:55967 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751959AbeBZD6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:58:03 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 26 Feb 2018 14:57:56 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>,
+        Ingo Molnar <mingo@elte.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>
+Subject: linux-next: build failure after merge of the percpu tree
+Message-ID: <20180226145756.228d1e23@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CANiq72==rFxaw7+ZQv41Zbr+-fJvHiQVzVucrRFpUzrQtN750w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mtTtVY7XKF=aWFkX/2MNmCb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/2018 5:27 AM, Miguel Ojeda wrote:
-> On Wed, Feb 21, 2018 at 5:56 AM, Asutosh Das <asutoshd@codeaurora.org> wrote:
->> From: Vijay Viswanath <vviswana@codeaurora.org>
->>
->> UFS driver can receive a request during memory reclaim by kswapd.
->> So when ufs driver puts the ungate work in queue, and if there are no
->> idle workers, kthreadd is invoked to create a new kworker. Since
->> kswapd task holds a mutex which kthreadd also needs, this can cause
->> a deadlock situation. So ungate work must be done in a separate
->> work queue with WQ__RECLAIM flag enabled.Such a workqueue will have
-> 
-> WQ_MEM_RECLAIM here. Also space after dot.
-> 
->> a rescue thread which will be called when the above deadlock
->> condition is possible.
->>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> ---
->>   drivers/scsi/ufs/ufshcd.c | 10 +++++++++-
->>   drivers/scsi/ufs/ufshcd.h |  1 +
->>   2 files changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index 6541e1d..bb3382a 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -1503,7 +1503,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
->>                  hba->clk_gating.state = REQ_CLKS_ON;
->>                  trace_ufshcd_clk_gating(dev_name(hba->dev),
->>                                          hba->clk_gating.state);
->> -               schedule_work(&hba->clk_gating.ungate_work);
->> +               queue_work(hba->clk_gating.clk_gating_workq,
->> +                          &hba->clk_gating.ungate_work);
->>                  /*
->>                   * fall through to check if we should wait for this
->>                   * work to be done or not.
->> @@ -1689,6 +1690,8 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
->>
->>   static void ufshcd_init_clk_gating(struct ufs_hba *hba)
->>   {
->> +       char wq_name[sizeof("ufs_clk_gating_00")];
->> +
->>          if (!ufshcd_is_clkgating_allowed(hba))
->>                  return;
->>
->> @@ -1696,6 +1699,10 @@ static void ufshcd_init_clk_gating(struct ufs_hba *hba)
->>          INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
->>          INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
->>
->> +       snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
->> +                hba->host->host_no);
->> +       hba->clk_gating.clk_gating_workq = create_singlethread_workqueue(wq_name);
-> 
-> Shouldn't this be alloc_ordered_workqueue() with WQ_MEM_RECLAIM then?
-> (create_singlethread_workqueue() and friends are deprecated).
-> 
-> Cheers,
-> Miguel
-> 
->> +
->>          hba->clk_gating.is_enabled = true;
->>
->>          hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
->> @@ -1723,6 +1730,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba *hba)
->>          device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
->>          cancel_work_sync(&hba->clk_gating.ungate_work);
->>          cancel_delayed_work_sync(&hba->clk_gating.gate_work);
->> +       destroy_workqueue(hba->clk_gating.clk_gating_workq);
->>   }
->>
->>   /* Must be called with host lock acquired */
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index 4385741..570c33e 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -361,6 +361,7 @@ struct ufs_clk_gating {
->>          struct device_attribute enable_attr;
->>          bool is_enabled;
->>          int active_reqs;
->> +       struct workqueue_struct *clk_gating_workq;
->>   };
->>
->>   struct ufs_saved_pwr_info {
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Miguel
-Thanks for the review.
+Hi all,
 
-I'll check this and put up the changes in v2.
+After merging the percpu tree, today's linux-next build (sparc defconfig)
+failed like this:
 
+mm/percpu.c: In function 'pcpu_balance_workfn':
+mm/percpu.c:1613:3: error: implicit declaration of function 'cond_resched';=
+ did you mean 'should_resched'? [-Werror=3Dimplicit-function-declaration]
+   cond_resched();
+   ^~~~~~~~~~~~
+   should_resched
 
--asd
+Caused by commit
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+  accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()")
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Feb 2018 14:47:39 +1100
+Subject: [PATCH] percpu: include sched.h for cond_resched()
+
+Fixes: accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()=
+")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/percpu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 36e7b65ba6cf..15a398c00791 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -80,6 +80,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/workqueue.h>
+ #include <linux/kmemleak.h>
++#include <linux/sched.h>
+=20
+ #include <asm/cacheflush.h>
+ #include <asm/sections.h>
+--=20
+2.16.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqThcQACgkQAVBC80lX
+0Gxp2Af/R0uJKlQL9fAltStm4xJtBSVe+P4tdTRCn2t0A3x6hWn6w/N/AX3a4e8O
+Fgb0ycThY19E5oWmLq/6nzRrDoVW72VaVqbGNrQ6LncXsjBSX+3prK9tQM7NN6un
+gNKuVmS+Zl5tcf+NAYusodye3n2fNyXfsohACb6ITR8KfxcdYEmg44ZL1iwq/cKi
+cUspBGiEx1DFpHTckRzHdpEk580nanOlruWyIS+P0XtTloPUfcOtFU25t8a/go3k
+gLMw5YU4jkFcDDNVmyp0/m0lBHNA1oMiVBLxfBmndF5COk5nTEQusUQuK9e03HDD
+XGi+T/ZC4xqn+pt0rYG05NuF1pANvg==
+=ibhL
+-----END PGP SIGNATURE-----
+
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb--
