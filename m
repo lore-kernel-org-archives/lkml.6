@@ -1,73 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751658AbeBZV3e (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:29:34 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38595 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeBZV3c (ORCPT
+        id S1751815AbeBZVax (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:30:53 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51646 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeBZVav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:29:32 -0500
-X-Google-Smtp-Source: AG47ELuStGGehXqquVT93TifAEOYfC/lHWMvNf7iaCtAt9Fpo150pvh+7GVWPGNcgo+4NlNmR2Hx0w==
-Subject: Re: [RFC PATCH] ARM: configs: sunxi: Set ondemand govenor as default
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, davem@davemloft.net,
-        arnd@arndb.de, mchehab@kernel.org, clabbe.montjoie@gmail.com,
-        rask@formelder.dk, krzk@kernel.org, sean@mess.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180217142235.28541-1-embed3d@gmail.com>
- <20180219081050.vvfhnbw4foved2fb@flea.lan>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <15992664-76be-2584-0f8d-424eadc23925@gmail.com>
-Date: Mon, 26 Feb 2018 22:29:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Feb 2018 16:30:51 -0500
+Date: Mon, 26 Feb 2018 16:30:19 -0500
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Borislav Petkov <bp@alien8.de>, x86@kernel.org, mingo@redhat.com,
+        tglx@linutronix.de
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+Message-ID: <20180226213019.GE9497@char.us.oracle.com>
+References: <20180226114409.GD4377@pd.tnic>
+ <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
+ <20180226121509.GE4377@pd.tnic>
+ <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
+ <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com>
+ <20180226122205.GG4377@pd.tnic>
+ <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
+ <20180226143912.GC22024@char.us.oracle.com>
+ <20180226193711.GS4377@pd.tnic>
+ <20180226205130.GZ22024@char.us.oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180219081050.vvfhnbw4foved2fb@flea.lan>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226205130.GZ22024@char.us.oracle.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802260269
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 26, 2018 at 03:51:30PM -0500, Konrad Rzeszutek Wilk wrote:
+> On Mon, Feb 26, 2018 at 08:37:11PM +0100, Borislav Petkov wrote:
+> > On Mon, Feb 26, 2018 at 09:39:12AM -0500, Konrad Rzeszutek Wilk wrote:
+> > > diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> > > index d19e903214b4..87d044ce837f 100644
+> > > --- a/arch/x86/kernel/cpu/intel.c
+> > > +++ b/arch/x86/kernel/cpu/intel.c
+> > > @@ -144,6 +144,13 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
+> > >  {
+> > >  	int i;
+> > >  
+> > > +	/*
+> > > +	 * We know that the hypervisor lie to us on the microcode version so
+> > > +	 * we may as well trust that it is running the correct version.
+> > > +	 */
+> > > +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> > 
+> > I guess
+> > 
+> > 	cpu_has(c, X86_FEATURE_HYPERVISOR)
+> > 
+> > since we're passing a ptr to the current CPU.
+> 
+> Ah yes. Let me fix it up and repost.
 
+I've posted it (but I can't seem to find it on LKML). Here it is in this
+thread. Also adding ingo + tglrx
 
-On 19.02.2018 09:10, Maxime Ripard wrote:
-> On Sat, Feb 17, 2018 at 03:22:35PM +0100, Philipp Rossak wrote:
->> Right now the performance govenor is the default frequency govenor on
->> sunxi devices. This causes some general problems.
->> When the cpu is idle the cpu runs with its maximum frequency.
->> This causes a higher cpu temperature in the idle state. When the cpu is
->> now under load the cpu gets with that higher idle temperature now faster
->> to its thermal limits.
->> An other big problem of the performace govenor is the missing
->> thermal throttling. Some tests with cpuburn resulted in a system crash
->> when the soc reached its thermal limits since no thermal throttling
->> occurred.
-> 
-> This won't change anything with cpuburn. While cpuburn will be
-> running, ondemand will increase the frequency of the cores to the
-> maximum frequency, putting yourself in the exact same situation.
-> 
-I see here a totally different behavior on the hardware (Bananapi M2, A31s).
-First ondemand increases the cpu frequency, when the maximum temperature 
-is reached, then it throttles down the cpu step by step to its minimum.
-And the cpu doesn't get killed, like with the performance govenor.
+>From 6abac2ccf105d57d60c094950e32139e435cbefe Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Mon, 26 Feb 2018 09:35:01 -0500
+Subject: [PATCH v2] x86/spectre_v2: Don't check bad microcode versions when
+ running under hypervisors.
 
-I can record some "logs" with RPi-Monitor if this is requiered.
+As:
+ 1) We know they lie about the env anyhow (host mismatch)
+ 2) Even if the hypervisor (Xen, KVM, VMWare, etc) provided
+    a valid "correct" value, it all gets to be very murky
+    when migration happens (do you provide the "new"
+    microcode of the machine?).
 
-> The only difference is going to be when you're idle or have a rather
-> small CPU load. But then, you won't heat much in that case either.
-> 
->> With this patch we set the default frequency govenor to ondemand mode
->> and reduce the temperature when the cpu is idle and activate the thermal
->> throtteling.
-> 
-> This patch doesn't activate the thermal throttling.
-> 
-> Maxime
-> 
+And in reality the cloud vendors are the ones that should make
+sure that the microcode that is running is correct and we should
+just sing lalalala and trust them.
 
-Sorry for my late reply!
-Philipp
+CC: stable@vger.kernel.org
+CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: x86@kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+
+---
+v2: Change comments to be more in line with the state of the world.
+v3: Use cpu_has instead of boot_cpu_has per Borislav's review.
+---
+ arch/x86/kernel/cpu/intel.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index d19e903214b4..4aa9fd379390 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -144,6 +144,13 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
+ {
+ 	int i;
+ 
++	/*
++	 * We know that the hypervisor lie to us on the microcode version so
++	 * we may as well hope that it is running the correct version.
++	 */
++	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
++		return false;
++
+ 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
+ 		if (c->x86_model == spectre_bad_microcodes[i].model &&
+ 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
+-- 
+2.13.4
