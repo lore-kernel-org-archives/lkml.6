@@ -1,67 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751923AbeBZRs3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:48:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35106 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751507AbeBZRs0 (ORCPT
+        id S1751604AbeBZRue (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:50:34 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35953 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbeBZRud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:48:26 -0500
-Subject: Re: [PATCH 1/1] Additional strict check on ELF file. Checks segments
- are followed in order of 'p_vaddr ' value ascending. It fixes erorr in
- total_mapping_size with computation total size. This error happens if
- segments in ELF file are not in order.
-To: Ilya Smith <blackzert@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180226154659.10218-1-blackzert@gmail.com>
- <20180226154659.10218-2-blackzert@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <16811dde-abb3-1504-003c-475d40610f9f@infradead.org>
-Date: Mon, 26 Feb 2018 09:48:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Feb 2018 12:50:33 -0500
+X-Google-Smtp-Source: AG47ELsJEPqVn9hcpAVGjBGv7g3uSwmcqYdFI7RoYRlJKPFecQYlJ3s6W+E17UJKWS6FqXOWqIa8pNO87zhbbDNdbG0=
 MIME-Version: 1.0
-In-Reply-To: <20180226154659.10218-2-blackzert@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-7-malat@debian.org>
+ <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr> <6cba215c-127e-f3eb-b525-773b6aed0eb7@c-s.fr>
+ <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Mon, 26 Feb 2018 18:50:11 +0100
+X-Google-Sender-Auth: o1fSPYWGg_5ZZsiYprS_6JompWI
+Message-ID: <CA+7wUsx047shRJ92PJ+cvg24HNhMnYzM0t5zUdEOaSE00sXkSg@mail.gmail.com>
+Subject: Re: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QHoexR010872
 
-On 02/26/2018 07:46 AM, Ilya Smith wrote:
-> Signed-off-by: Ilya Smith <blackzert@gmail.com>
-> ---
->  fs/binfmt_elf.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index bdb201230bae..970b42044240 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -524,6 +524,52 @@ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
->  
->  #endif /* !CONFIG_ARCH_BINFMT_ELF_STATE */
->  
-> +/**
-> + * elf_check_phdr() - common check ELF program header.
-> + * @phdr: The program header to check
-> + * @phdr_num: Count of program headers in @phdr from elf header.
-> + *
-> + * Checks ELF binary meets specification.
-> + *
-> + * Return: Zero to proceed with ELF load, non-zero to faile the ELF load
+On Mon, Feb 26, 2018 at 8:44 AM, Mathieu Malaterre <malat@debian.org> wrote:
+> On Mon, Feb 26, 2018 at 7:50 AM, Christophe LEROY
+> <christophe.leroy@c-s.fr> wrote:
+>>
+>>
+>> Le 26/02/2018 à 07:34, Christophe LEROY a écrit :
+>>>
+>>>
+>>>
+>>> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
+>>>>
+>>>> Rewrite check size - 1 <= Y as size < Y since `size` is unsigned value.
+>>>> Fix warning (treated as error in W=1):
+>>>>
+>>>>    CC      arch/powerpc/kernel/signal_32.o
+>>>> In file included from ./include/linux/uaccess.h:14:0,
+>>>>                   from ./include/asm-generic/termios-base.h:8,
+>>>>                   from ./arch/powerpc/include/asm/termios.h:20,
+>>>>                   from ./include/uapi/linux/termios.h:6,
+>>>>                   from ./include/linux/tty.h:7,
+>>>>                   from arch/powerpc/kernel/signal_32.c:36:
+>>>> ./include/asm-generic/termios-base.h: In function
+>>>> ‘user_termio_to_kernel_termios’:
+>>>> ./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned
+>>>> expression >= 0 is always true [-Werror=type-limits]
+>>>>     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
+>>>>                                     ^
+>>>> ./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro
+>>>> ‘__access_ok’
+>>>>     __access_ok((__force unsigned long)(addr), (size), get_fs()))
+>>>>     ^~~~~~~~~~~
+>>>> ./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro
+>>>> ‘access_ok’
+>>>>    if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
+>>>>        ^~~~~~~~~
+>>>> ./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro
+>>>> ‘__get_user_check’
+>>>>    __get_user_check((x), (ptr), sizeof(*(ptr)))
+>>>>    ^~~~~~~~~~~~~~~~
+>>>> ./include/asm-generic/termios-base.h:36:6: note: in expansion of macro
+>>>> ‘get_user’
+>>>>    if (get_user(termios->c_line, &termio->c_line) < 0)
+>>>>        ^~~~~~~~
+>>>> [...]
+>>>> cc1: all warnings being treated as errors
+>>>>
+>>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>>> ---
+>>>>   arch/powerpc/include/asm/uaccess.h | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/powerpc/include/asm/uaccess.h
+>>>> b/arch/powerpc/include/asm/uaccess.h
+>>>> index 51bfeb8777f0..fadc406bd39d 100644
+>>>> --- a/arch/powerpc/include/asm/uaccess.h
+>>>> +++ b/arch/powerpc/include/asm/uaccess.h
+>>>> @@ -49,7 +49,7 @@
+>>>>   #define __access_ok(addr, size, segment)    \
+>>>>       (((addr) <= (segment).seg) &&        \
+>>>> -     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
+>>>> +     (((size) == 0) || ((size) < ((segment).seg - (addr)))))
+>>>
+>>>
+>>> IIUC, ((2 - 1) <= 1) is the same as (2 < 1) ?????
+>>
+>
+> The whole series was pretty mediocre, but this one was actually pretty
+> destructive. Thanks for catching this.
+>
+>>
+>> Note that I already try to submit a fix for this warning 3 years ago
+>> (https://patchwork.ozlabs.org/patch/418075/) and it was rejected with the
+>> following comment:
 
-                                                         fail
+Tested again today with gcc 6.3.0 and gcc is still producing the
+original warning (treated as error).
 
-> + *		   with that return code.
-> + */
-> +static int elf_check_phdr(struct elf_phdr *phdr, unsigned long phdr_num)
-> +{
+>> Again, I don't think Linux enables this warning.  What did you do to
+>> produce this?  In any case, it's a bad warning that doesn't take macros
+>> into account, and the answer is not to make the code less clear by hiding
+>> the fact that zero is a special case.
+>
+> Right. I'll try to see how to make W=1 run without error with an
+> alternate solution.
 
-And it would be nicer/better to have all of the "intro" text in the body of this
-message instead of in another email.
+So the other alternative is to update a bunch of ppc32 defconfig(s)
+with: CONFIG_PPC_DISABLE_WERROR=y.
 
-thanks,
--- 
-~Randy
+Would that be preferable ?
+
+>> Christophe
+>>
+>>
+>>>
+>>> Christophe
+>>>
+>>>>   #endif
+>>>>
+>>
