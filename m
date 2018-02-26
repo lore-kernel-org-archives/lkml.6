@@ -1,23 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AG47ELsRCoSpV/dmwkyKh4Y6af6etszf0nYyn7TjXI7thJFkMkxqRscw4twPipHxoPLoF7o+QBCJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519670371; cv=none;
+X-Google-Smtp-Source: AG47ELsJ3DimkHk+N51udk/1nzvbTNlUc6qUI0TwvveP6x5ryqCJssJNDw/RGqLAreyN6CQwYk7e
+ARC-Seal: i=1; a=rsa-sha256; t=1519670370; cv=none;
         d=google.com; s=arc-20160816;
-        b=hUx0oR7JjO8l0zoh2IV3jcA4ijqPOZqts8hoW3FIOwQTC11UYkSt9QgleyrI2AIJZH
-         OvXkrjdHWKTCvRMNcW8Hb3jjM+ZRp+5HNSSN66PAC5nrDllf4smpuaQwW4GT1X1uPFlS
-         eicTqlxZTFZw2e1YJwPnzeBP9+bpNzOjDlnR6sZIXnyVv9NO8pNiLLy6o3XQtOLKLM0b
-         gvdCiNAhKyfQcE+uxDDtiVP8tMKqJx1pw1QwkSPEMZhtI2YDJ8R5Kwdmd4+RtUqiN7tC
-         ctSWSByxr3tz323T9r4elREYmbzxEI7T+CzUklr5FkhgEvEG3ntqXfknsi9VGlhYXicp
-         +atw==
+        b=RWAWMROy08Fu5FQMT8cxW7nQ1WO1wEFC8/oRXwwVEiX3xosTwAp24cYvDfsSHnAXqC
+         77oAslO7Z7L4/icB/2BDWZO4irylkmPwwXU96hcycg0g2kQdRClR5XZ1ZG8dNn0lRUWg
+         L+IjIGoBuNVtYVxyjV2JbgzhHEXyMB8074gdfpmfmYGl3JTWRxyXPWcZjKkEbNFxMN2A
+         4lNQNWf+EJTXc8cI1x+d12I+xSQ+pZUSLa30wKAiZjLcAxuR5/JEzILj4/f3S7YRcwlv
+         QIdQ+S2n7sMSEywo/hgZ6reYCQQ+XOKUS1b+r2MEVQj5j4LjR5X7t8QeQyFgJNkMOWUC
+         cN/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=levLoPgfpsyLxs+wBeVc+vnKWcmWQfUylKdcA8ysBwM=;
-        b=LJ+Od1hm6FRzAtWf/oQBAfAS91Hw0MWjWdCYQ6XWjwzGQDnS4RhV3PZCrLb2Mz+5JP
-         aAUF5wlWVcNKeJk6XJkOMxzx4+1DTeBTzGEgQ1bKDR/d6VbtJxopMsZE2yTY5w8YqVYM
-         oXoGicFr/25x6WGdpUzMjB5liJ0hD3WRMMJKI9XNl0isjVRUKP5kXrxdR3Hq3RuJMrgQ
-         Jf86msBwsy1YzOqqSAVNH8wS0GhWUkYqAuWocanJe9ZEGKrfR4QwGr2arlCbubL5PYHD
-         uHaW9iXuOEBZACs5U9Zo4S3oPD7D7zlGay23/JPF9HP2HNUROYdLanT9AaY99wE3X4Wu
-         imvA==
+        bh=oZEhsG04E25k+Nf8+dfLDiBunSEj3WLA0iKe1j1ZBDk=;
+        b=BlLx5zZ46TFJzA+FnSJfBoB9F+KA9KvLn0OCPM3oTM+FvqlGDzmv88I8dJ+6kBkEMY
+         XcFlIGPsh8iZtlsO36uk1AnD2aW2YdjEayINbAZYk+BrhExdc7c4m8bXAsXPM6rEjvSN
+         iC4VpL9ydXTgRoc22C3YdPfsU6Dr3m26BZk4K+WPbOdBkFoLE4LPDFKmJI+33i/Aj9gf
+         3fN8sv5RRMWW+oGzlQEilpMEIrA+dQsLRaXbOCl6R76m4CusjXFbS5o3FRX3ZO1gJp7y
+         xYZgqAxccdlKLcZM4zYuYUacyCiYqTjgavMjUv0W/TD6PA0gC2meXCes26JDGMe9npcN
+         q0VA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -37,36 +37,30 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v4 04/12] usb: common: Small class for USB role switches
-Date: Mon, 26 Feb 2018 19:39:11 +0100
-Message-Id: <20180226183919.24353-5-hdegoede@redhat.com>
+Subject: [PATCH v4 03/12] usb: typec: API for controlling USB Type-C Multiplexers
+Date: Mon, 26 Feb 2018 19:39:10 +0100
+Message-Id: <20180226183919.24353-4-hdegoede@redhat.com>
 In-Reply-To: <20180226183919.24353-1-hdegoede@redhat.com>
 References: <20180226183919.24353-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454024376318409?=
-X-GMAIL-MSGID: =?utf-8?q?1593489879987059296?=
+X-GMAIL-THRID: =?utf-8?q?1593454021385729944?=
+X-GMAIL-MSGID: =?utf-8?q?1593489877905194634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-USB role switch is a device that can be used to choose the
-data role for USB connector. With dual-role capable USB
-controllers, the controller itself will be the switch, but
-on some platforms the USB host and device controllers are
-separate IPs and there is a mux between them and the
-connector. On those platforms the mux driver will need to
-register the switch.
+USB Type-C connectors consist of various muxes and switches
+that route the pins on the connector to the right locations.
+The USB Type-C drivers need to be able to control the muxes,
+as they are the ones that know things like the cable plug
+orientation, and the current mode that was negotiated with
+the partner.
 
-With USB Type-C connectors, the host-to-device relationship
-is negotiated over the Configuration Channel (CC). That
-means the USB Type-C drivers need to be in control of the
-role switch. The class provides a simple API for the USB
-Type-C drivers for the control.
-
-For other types of USB connectors (mainly microAB) the class
-provides user space control via sysfs attribute file that
-can be used to request role swapping from the switch.
+This introduces a small API for registering and controlling
+cable plug orientation switches, and separate small API for
+registering and controlling pin multiplexer/demultiplexer
+switches that are needed with Accessory/Alternate Modes.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
@@ -74,79 +68,316 @@ Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
 Changes in v4:
--Consistently use IS_ERR_OR_NULL where applicable
 -Add Andy's Reviewed-by
 
-Changes in v2:
--Minor style fixes from review of v1
+Changes in v3:
+-Add #include-s for a few missing headers to drivers/usb/typec/mux.c
+-Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
 ---
- Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
- drivers/usb/Kconfig                            |   3 +
- drivers/usb/common/Makefile                    |   1 +
- drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
- include/linux/usb/role.h                       |  51 +++++
- 5 files changed, 381 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
- create mode 100644 drivers/usb/common/roles.c
- create mode 100644 include/linux/usb/role.h
+ Documentation/driver-api/usb/typec.rst |  73 +++++++++++--
+ drivers/usb/typec/Makefile             |   1 +
+ drivers/usb/typec/{typec.c => class.c} |  70 ++++++++++++
+ drivers/usb/typec/mux.c                | 190 +++++++++++++++++++++++++++++++++
+ include/linux/usb/typec.h              |  14 +++
+ include/linux/usb/typec_mux.h          |  55 ++++++++++
+ 6 files changed, 392 insertions(+), 11 deletions(-)
+ rename drivers/usb/typec/{typec.c => class.c} (95%)
+ create mode 100644 drivers/usb/typec/mux.c
+ create mode 100644 include/linux/usb/typec_mux.h
 
-diff --git a/Documentation/ABI/testing/sysfs-class-usb_role b/Documentation/ABI/testing/sysfs-class-usb_role
-new file mode 100644
-index 000000000000..3b810a425a52
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-usb_role
-@@ -0,0 +1,21 @@
-+What:		/sys/class/usb_role/
-+Date:		Jan 2018
-+Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+Description:
-+		Place in sysfs for USB Role Switches. USB Role Switch is a
-+		device that can select the data role (host or device) for USB
-+		port.
-+
-+What:		/sys/class/usb_role/<switch>/role
-+Date:		Jan 2018
-+Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+Description:
-+		The current role of the switch. This attribute can be used for
-+		requesting role swapping with non-USB Type-C ports. With USB
-+		Type-C ports, the ABI defined for USB Type-C connector class
-+		must be used.
-+
-+		Valid values:
-+		- none
-+		- host
-+		- device
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index 148f3ee70286..f278958e04ca 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -203,4 +203,7 @@ config USB_ULPI_BUS
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called ulpi.
+diff --git a/Documentation/driver-api/usb/typec.rst b/Documentation/driver-api/usb/typec.rst
+index 8a7249f2ff04..feb31946490b 100644
+--- a/Documentation/driver-api/usb/typec.rst
++++ b/Documentation/driver-api/usb/typec.rst
+@@ -61,7 +61,7 @@ Registering the ports
+ The port drivers will describe every Type-C port they control with struct
+ typec_capability data structure, and register them with the following API:
  
-+config USB_ROLE_SWITCH
-+	tristate
-+
- endif # USB_SUPPORT
-diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
-index 0a7c45e85481..fb4d5ef4165c 100644
---- a/drivers/usb/common/Makefile
-+++ b/drivers/usb/common/Makefile
-@@ -9,3 +9,4 @@ usb-common-$(CONFIG_USB_LED_TRIG) += led.o
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_register_port typec_unregister_port
  
- obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
- obj-$(CONFIG_USB_ULPI_BUS)	+= ulpi.o
-+obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles.o
-diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
+ When registering the ports, the prefer_role member in struct typec_capability
+@@ -80,7 +80,7 @@ typec_partner_desc. The class copies the details of the partner during
+ registration. The class offers the following API for registering/unregistering
+ partners.
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_register_partner typec_unregister_partner
+ 
+ The class will provide a handle to struct typec_partner if the registration was
+@@ -92,7 +92,7 @@ should include handle to struct usb_pd_identity instance. The class will then
+ create a sysfs directory for the identity under the partner device. The result
+ of Discover Identity command can then be reported with the following API:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_partner_set_identity
+ 
+ Registering Cables
+@@ -113,7 +113,7 @@ typec_cable_desc and about a plug in struct typec_plug_desc. The class copies
+ the details during registration. The class offers the following API for
+ registering/unregistering cables and their plugs:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_register_cable typec_unregister_cable typec_register_plug typec_unregister_plug
+ 
+ The class will provide a handle to struct typec_cable and struct typec_plug if
+@@ -125,7 +125,7 @@ include handle to struct usb_pd_identity instance. The class will then create a
+ sysfs directory for the identity under the cable device. The result of Discover
+ Identity command can then be reported with the following API:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_cable_set_identity
+ 
+ Notifications
+@@ -135,7 +135,7 @@ When the partner has executed a role change, or when the default roles change
+ during connection of a partner or cable, the port driver must use the following
+ APIs to report it to the class:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_set_data_role typec_set_pwr_role typec_set_vconn_role typec_set_pwr_opmode
+ 
+ Alternate Modes
+@@ -150,7 +150,7 @@ and struct typec_altmode_desc which is a container for all the supported modes.
+ Ports that support Alternate Modes need to register each SVID they support with
+ the following API:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_port_register_altmode
+ 
+ If a partner or cable plug provides a list of SVIDs as response to USB Power
+@@ -159,12 +159,12 @@ registered.
+ 
+ API for the partners:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_partner_register_altmode
+ 
+ API for the Cable Plugs:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_plug_register_altmode
+ 
+ So ports, partners and cable plugs will register the alternate modes with their
+@@ -172,11 +172,62 @@ own functions, but the registration will always return a handle to struct
+ typec_altmode on success, or NULL. The unregistration will happen with the same
+ function:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_unregister_altmode
+ 
+ If a partner or cable plug enters or exits a mode, the port driver needs to
+ notify the class with the following API:
+ 
+-.. kernel-doc:: drivers/usb/typec/typec.c
++.. kernel-doc:: drivers/usb/typec/class.c
+    :functions: typec_altmode_update_active
++
++Multiplexer/DeMultiplexer Switches
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++USB Type-C connectors may have one or more mux/demux switches behind them. Since
++the plugs can be inserted right-side-up or upside-down, a switch is needed to
++route the correct data pairs from the connector to the USB controllers. If
++Alternate or Accessory Modes are supported, another switch is needed that can
++route the pins on the connector to some other component besides USB. USB Type-C
++Connector Class supplies an API for registering those switches.
++
++.. kernel-doc:: drivers/usb/typec/mux.c
++   :functions: typec_switch_register typec_switch_unregister typec_mux_register typec_mux_unregister
++
++In most cases the same physical mux will handle both the orientation and mode.
++However, as the port drivers will be responsible for the orientation, and the
++alternate mode drivers for the mode, the two are always separated into their
++own logical components: "mux" for the mode and "switch" for the orientation.
++
++When a port is registered, USB Type-C Connector Class requests both the mux and
++the switch for the port. The drivers can then use the following API for
++controlling them:
++
++.. kernel-doc:: drivers/usb/typec/class.c
++   :functions: typec_set_orientation typec_set_mode
++
++If the connector is dual-role capable, there may also be a switch for the data
++role. USB Type-C Connector Class does not supply separate API for them. The
++port drivers can use USB Role Class API with those.
++
++Illustration of the muxes behind a connector that supports an alternate mode:
++
++                     ------------------------
++                     |       Connector      |
++                     ------------------------
++                            |         |
++                     ------------------------
++                      \     Orientation    /
++                       --------------------
++                                |
++                       --------------------
++                      /        Mode        \
++                     ------------------------
++                         /              \
++      ------------------------        --------------------
++      |       Alt Mode       |       /      USB Role      \
++      ------------------------      ------------------------
++                                         /            \
++                     ------------------------      ------------------------
++                     |       USB Host       |      |       USB Device     |
++                     ------------------------      ------------------------
+diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
+index bb3138a6eaac..56b2e9516ec1 100644
+--- a/drivers/usb/typec/Makefile
++++ b/drivers/usb/typec/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_TYPEC)		+= typec.o
++typec-y				:= class.o mux.o
+ obj-$(CONFIG_TYPEC_TCPM)	+= tcpm.o
+ obj-y				+= fusb302/
+ obj-$(CONFIG_TYPEC_WCOVE)	+= typec_wcove.o
+diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/class.c
+similarity index 95%
+rename from drivers/usb/typec/typec.c
+rename to drivers/usb/typec/class.c
+index dc28ad868d93..2620a694704f 100644
+--- a/drivers/usb/typec/typec.c
++++ b/drivers/usb/typec/class.c
+@@ -11,6 +11,7 @@
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+ #include <linux/usb/typec.h>
++#include <linux/usb/typec_mux.h>
+ 
+ struct typec_mode {
+ 	int				index;
+@@ -70,6 +71,10 @@ struct typec_port {
+ 	enum typec_port_type		port_type;
+ 	struct mutex			port_type_lock;
+ 
++	enum typec_orientation		orientation;
++	struct typec_switch		*sw;
++	struct typec_mux		*mux;
++
+ 	const struct typec_capability	*cap;
+ };
+ 
+@@ -92,6 +97,7 @@ static const struct device_type typec_port_dev_type;
+ static DEFINE_IDA(typec_index_ida);
+ static struct class *typec_class;
+ 
++/* ------------------------------------------------------------------------- */
+ /* Common attributes */
+ 
+ static const char * const typec_accessory_modes[] = {
+@@ -1137,6 +1143,8 @@ static void typec_release(struct device *dev)
+ 	struct typec_port *port = to_typec_port(dev);
+ 
+ 	ida_simple_remove(&typec_index_ida, port->id);
++	typec_switch_put(port->sw);
++	typec_mux_put(port->mux);
+ 	kfree(port);
+ }
+ 
+@@ -1246,6 +1254,47 @@ void typec_set_pwr_opmode(struct typec_port *port,
+ }
+ EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
+ 
++/* ------------------------------------------ */
++/* API for Multiplexer/DeMultiplexer Switches */
++
++/**
++ * typec_set_orientation - Set USB Type-C cable plug orientation
++ * @port: USB Type-C Port
++ * @orientation: USB Type-C cable plug orientation
++ *
++ * Set cable plug orientation for @port.
++ */
++int typec_set_orientation(struct typec_port *port,
++			  enum typec_orientation orientation)
++{
++	int ret;
++
++	if (port->sw) {
++		ret = port->sw->set(port->sw, orientation);
++		if (ret)
++			return ret;
++	}
++
++	port->orientation = orientation;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(typec_set_orientation);
++
++/**
++ * typec_set_mode - Set mode of operation for USB Type-C connector
++ * @port: USB Type-C port for the connector
++ * @mode: Operation mode for the connector
++ *
++ * Set mode @mode for @port. This function will configure the muxes needed to
++ * enter @mode.
++ */
++int typec_set_mode(struct typec_port *port, int mode)
++{
++	return port->mux ? port->mux->set(port->mux, mode) : 0;
++}
++EXPORT_SYMBOL_GPL(typec_set_mode);
++
+ /* --------------------------------------- */
+ 
+ /**
+@@ -1293,6 +1342,18 @@ struct typec_port *typec_register_port(struct device *parent,
+ 		return ERR_PTR(id);
+ 	}
+ 
++	port->sw = typec_switch_get(cap->fwnode ? &port->dev : parent);
++	if (IS_ERR(port->sw)) {
++		ret = PTR_ERR(port->sw);
++		goto err_switch;
++	}
++
++	port->mux = typec_mux_get(cap->fwnode ? &port->dev : parent);
++	if (IS_ERR(port->mux)) {
++		ret = PTR_ERR(port->mux);
++		goto err_mux;
++	}
++
+ 	if (cap->type == TYPEC_PORT_DFP)
+ 		role = TYPEC_SOURCE;
+ 	else if (cap->type == TYPEC_PORT_UFP)
+@@ -1330,6 +1391,15 @@ struct typec_port *typec_register_port(struct device *parent,
+ 	}
+ 
+ 	return port;
++
++err_mux:
++	typec_switch_put(port->sw);
++
++err_switch:
++	ida_simple_remove(&typec_index_ida, port->id);
++	kfree(port);
++
++	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL_GPL(typec_register_port);
+ 
+diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
 new file mode 100644
-index 000000000000..bd616042afca
+index 000000000000..efd4079a96f2
 --- /dev/null
-+++ b/drivers/usb/common/roles.c
-@@ -0,0 +1,305 @@
++++ b/drivers/usb/typec/mux.c
+@@ -0,0 +1,190 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * USB Role Switch Support
++/**
++ * USB Type-C Multiplexer/DeMultiplexer Switch support
 + *
 + * Copyright (C) 2018 Intel Corporation
 + * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
@@ -154,357 +385,290 @@ index 000000000000..bd616042afca
 + */
 +
 +#include <linux/connection.h>
-+#include <linux/usb/role.h>
 +#include <linux/device.h>
-+#include <linux/module.h>
++#include <linux/list.h>
 +#include <linux/mutex.h>
-+#include <linux/slab.h>
++#include <linux/usb/typec_mux.h>
 +
-+static struct class *role_class;
++static DEFINE_MUTEX(switch_lock);
++static DEFINE_MUTEX(mux_lock);
++static LIST_HEAD(switch_list);
++static LIST_HEAD(mux_list);
 +
-+struct usb_role_switch {
-+	struct device dev;
-+	struct mutex lock; /* device lock*/
-+	enum usb_role role;
-+
-+	/* From descriptor */
-+	struct device *usb2_port;
-+	struct device *usb3_port;
-+	struct device *udc;
-+	usb_role_switch_set_t set;
-+	usb_role_switch_get_t get;
-+	bool allow_userspace_control;
-+};
-+
-+#define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
-+
-+/**
-+ * usb_role_switch_set_role - Set USB role for a switch
-+ * @sw: USB role switch
-+ * @role: USB role to be switched to
-+ *
-+ * Set USB role @role for @sw.
-+ */
-+int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
++static void *typec_switch_match(struct devcon *con, int ep, void *data)
 +{
-+	int ret;
++	struct typec_switch *sw;
 +
-+	if (IS_ERR_OR_NULL(sw))
-+		return 0;
++	list_for_each_entry(sw, &switch_list, entry)
++		if (!strcmp(con->endpoint[ep], dev_name(sw->dev)))
++			return sw;
 +
-+	mutex_lock(&sw->lock);
-+
-+	ret = sw->set(sw->dev.parent, role);
-+	if (!ret)
-+		sw->role = role;
-+
-+	mutex_unlock(&sw->lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_set_role);
-+
-+/**
-+ * usb_role_switch_get_role - Get the USB role for a switch
-+ * @sw: USB role switch
-+ *
-+ * Depending on the role-switch-driver this function returns either a cached
-+ * value of the last set role, or reads back the actual value from the hardware.
-+ */
-+enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
-+{
-+	enum usb_role role;
-+
-+	if (IS_ERR_OR_NULL(sw))
-+		return USB_ROLE_NONE;
-+
-+	mutex_lock(&sw->lock);
-+
-+	if (sw->get)
-+		role = sw->get(sw->dev.parent);
-+	else
-+		role = sw->role;
-+
-+	mutex_unlock(&sw->lock);
-+
-+	return role;
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
-+
-+static int __switch_match(struct device *dev, const void *name)
-+{
-+	return !strcmp((const char *)name, dev_name(dev));
-+}
-+
-+static void *usb_role_switch_match(struct devcon *con, int ep, void *data)
-+{
-+	struct device *dev;
-+
-+	dev = class_find_device(role_class, NULL, con->endpoint[ep],
-+				__switch_match);
-+
-+	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
++	/*
++	 * We only get called if a connection was found, tell the caller to
++	 * wait for the switch to show up.
++	 */
++	return ERR_PTR(-EPROBE_DEFER);
 +}
 +
 +/**
-+ * usb_role_switch_get - Find USB role switch linked with the caller
++ * typec_switch_get - Find USB Type-C orientation switch
 + * @dev: The caller device
 + *
-+ * Finds and returns role switch linked with @dev. The reference count for the
-+ * found switch is incremented.
++ * Finds a switch linked with @dev. Returns a reference to the switch on
++ * success, NULL if no matching connection was found, or
++ * ERR_PTR(-EPROBE_DEFER) when a connection was found but the switch
++ * has not been enumerated yet.
 + */
-+struct usb_role_switch *usb_role_switch_get(struct device *dev)
++struct typec_switch *typec_switch_get(struct device *dev)
 +{
-+	return __device_find_connection(dev, "usb-role-switch", NULL,
-+					usb_role_switch_match);
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_get);
++	struct typec_switch *sw;
 +
-+/**
-+ * usb_role_switch_put - Release handle to a switch
-+ * @sw: USB Role Switch
-+ *
-+ * Decrement reference count for @sw.
-+ */
-+void usb_role_switch_put(struct usb_role_switch *sw)
-+{
++	mutex_lock(&switch_lock);
++	sw = __device_find_connection(dev, "typec-switch", NULL,
++				      typec_switch_match);
 +	if (!IS_ERR_OR_NULL(sw))
-+		put_device(&sw->dev);
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_put);
-+
-+static umode_t
-+usb_role_switch_is_visible(struct kobject *kobj, struct attribute *attr, int n)
-+{
-+	struct device *dev = container_of(kobj, typeof(*dev), kobj);
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+
-+	if (sw->allow_userspace_control)
-+		return attr->mode;
-+
-+	return 0;
-+}
-+
-+static const char * const usb_roles[] = {
-+	[USB_ROLE_NONE]		= "none",
-+	[USB_ROLE_HOST]		= "host",
-+	[USB_ROLE_DEVICE]	= "device",
-+};
-+
-+static ssize_t
-+role_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+	enum usb_role role = usb_role_switch_get_role(sw);
-+
-+	return sprintf(buf, "%s\n", usb_roles[role]);
-+}
-+
-+static ssize_t role_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t size)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+	int ret;
-+
-+	ret = sysfs_match_string(usb_roles, buf);
-+	if (ret < 0) {
-+		bool res;
-+
-+		/* Extra check if the user wants to disable the switch */
-+		ret = kstrtobool(buf, &res);
-+		if (ret || res)
-+			return -EINVAL;
-+	}
-+
-+	ret = usb_role_switch_set_role(sw, ret);
-+	if (ret)
-+		return ret;
-+
-+	return size;
-+}
-+static DEVICE_ATTR_RW(role);
-+
-+static struct attribute *usb_role_switch_attrs[] = {
-+	&dev_attr_role.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group usb_role_switch_group = {
-+	.is_visible = usb_role_switch_is_visible,
-+	.attrs = usb_role_switch_attrs,
-+};
-+
-+static const struct attribute_group *usb_role_switch_groups[] = {
-+	&usb_role_switch_group,
-+	NULL,
-+};
-+
-+static int
-+usb_role_switch_uevent(struct device *dev, struct kobj_uevent_env *env)
-+{
-+	int ret;
-+
-+	ret = add_uevent_var(env, "USB_ROLE_SWITCH=%s", dev_name(dev));
-+	if (ret)
-+		dev_err(dev, "failed to add uevent USB_ROLE_SWITCH\n");
-+
-+	return ret;
-+}
-+
-+static void usb_role_switch_release(struct device *dev)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+
-+	kfree(sw);
-+}
-+
-+static const struct device_type usb_role_dev_type = {
-+	.name = "usb_role_switch",
-+	.groups = usb_role_switch_groups,
-+	.uevent = usb_role_switch_uevent,
-+	.release = usb_role_switch_release,
-+};
-+
-+/**
-+ * usb_role_switch_register - Register USB Role Switch
-+ * @parent: Parent device for the switch
-+ * @desc: Description of the switch
-+ *
-+ * USB Role Switch is a device capable or choosing the role for USB connector.
-+ * On platforms where the USB controller is dual-role capable, the controller
-+ * driver will need to register the switch. On platforms where the USB host and
-+ * USB device controllers behind the connector are separate, there will be a
-+ * mux, and the driver for that mux will need to register the switch.
-+ *
-+ * Returns handle to a new role switch or ERR_PTR. The content of @desc is
-+ * copied.
-+ */
-+struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc)
-+{
-+	struct usb_role_switch *sw;
-+	int ret;
-+
-+	if (!desc || !desc->set)
-+		return ERR_PTR(-EINVAL);
-+
-+	sw = kzalloc(sizeof(*sw), GFP_KERNEL);
-+	if (!sw)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_init(&sw->lock);
-+
-+	sw->allow_userspace_control = desc->allow_userspace_control;
-+	sw->usb2_port = desc->usb2_port;
-+	sw->usb3_port = desc->usb3_port;
-+	sw->udc = desc->udc;
-+	sw->set = desc->set;
-+	sw->get = desc->get;
-+
-+	sw->dev.parent = parent;
-+	sw->dev.class = role_class;
-+	sw->dev.type = &usb_role_dev_type;
-+	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
-+
-+	ret = device_register(&sw->dev);
-+	if (ret) {
-+		put_device(&sw->dev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	/* TODO: Symlinks for the host port and the device controller. */
++		get_device(sw->dev);
++	mutex_unlock(&switch_lock);
 +
 +	return sw;
 +}
-+EXPORT_SYMBOL_GPL(usb_role_switch_register);
++EXPORT_SYMBOL_GPL(typec_switch_get);
 +
 +/**
-+ * usb_role_switch_unregister - Unregsiter USB Role Switch
-+ * @sw: USB Role Switch
++ * typec_put_switch - Release USB Type-C orientation switch
++ * @sw: USB Type-C orientation switch
 + *
-+ * Unregister switch that was registered with usb_role_switch_register().
++ * Decrement reference count for @sw.
 + */
-+void usb_role_switch_unregister(struct usb_role_switch *sw)
++void typec_switch_put(struct typec_switch *sw)
 +{
 +	if (!IS_ERR_OR_NULL(sw))
-+		device_unregister(&sw->dev);
++		put_device(sw->dev);
 +}
-+EXPORT_SYMBOL_GPL(usb_role_switch_unregister);
-+
-+static int __init usb_roles_init(void)
-+{
-+	role_class = class_create(THIS_MODULE, "usb_role");
-+	return PTR_ERR_OR_ZERO(role_class);
-+}
-+subsys_initcall(usb_roles_init);
-+
-+static void __exit usb_roles_exit(void)
-+{
-+	class_destroy(role_class);
-+}
-+module_exit(usb_roles_exit);
-+
-+MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
-+MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("USB Role Class");
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-new file mode 100644
-index 000000000000..2ef347bd1fdb
---- /dev/null
-+++ b/include/linux/usb/role.h
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#ifndef __LINUX_USB_ROLE_H
-+#define __LINUX_USB_ROLE_H
-+
-+struct usb_role_switch;
-+
-+enum usb_role {
-+	USB_ROLE_NONE,
-+	USB_ROLE_HOST,
-+	USB_ROLE_DEVICE,
-+};
-+
-+typedef int (*usb_role_switch_set_t)(struct device *dev, enum usb_role role);
-+typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
++EXPORT_SYMBOL_GPL(typec_switch_put);
 +
 +/**
-+ * struct usb_role_switch_desc - USB Role Switch Descriptor
-+ * @usb2_port: Optional reference to the host controller port device (USB2)
-+ * @usb3_port: Optional reference to the host controller port device (USB3)
-+ * @udc: Optional reference to the peripheral controller device
-+ * @set: Callback for setting the role
-+ * @get: Callback for getting the role (optional)
-+ * @allow_userspace_control: If true userspace may change the role through sysfs
++ * typec_switch_register - Register USB Type-C orientation switch
++ * @sw: USB Type-C orientation switch
 + *
-+ * @usb2_port and @usb3_port will point to the USB host port and @udc to the USB
-+ * device controller behind the USB connector with the role switch. If
-+ * @usb2_port, @usb3_port and @udc are included in the description, the
-+ * reference count for them should be incremented by the caller of
-+ * usb_role_switch_register() before registering the switch.
++ * This function registers a switch that can be used for routing the correct
++ * data pairs depending on the cable plug orientation from the USB Type-C
++ * connector to the USB controllers. USB Type-C plugs can be inserted
++ * right-side-up or upside-down.
 + */
-+struct usb_role_switch_desc {
-+	struct device *usb2_port;
-+	struct device *usb3_port;
-+	struct device *udc;
-+	usb_role_switch_set_t set;
-+	usb_role_switch_get_t get;
-+	bool allow_userspace_control;
++int typec_switch_register(struct typec_switch *sw)
++{
++	mutex_lock(&switch_lock);
++	list_add_tail(&sw->entry, &switch_list);
++	mutex_unlock(&switch_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(typec_switch_register);
++
++/**
++ * typec_switch_unregister - Unregister USB Type-C orientation switch
++ * @sw: USB Type-C orientation switch
++ *
++ * Unregister switch that was registered with typec_switch_register().
++ */
++void typec_switch_unregister(struct typec_switch *sw)
++{
++	mutex_lock(&switch_lock);
++	list_del(&sw->entry);
++	mutex_unlock(&switch_lock);
++}
++EXPORT_SYMBOL_GPL(typec_switch_unregister);
++
++/* ------------------------------------------------------------------------- */
++
++static void *typec_mux_match(struct devcon *con, int ep, void *data)
++{
++	struct typec_mux *mux;
++
++	list_for_each_entry(mux, &mux_list, entry)
++		if (!strcmp(con->endpoint[ep], dev_name(mux->dev)))
++			return mux;
++
++	/*
++	 * We only get called if a connection was found, tell the caller to
++	 * wait for the switch to show up.
++	 */
++	return ERR_PTR(-EPROBE_DEFER);
++}
++
++/**
++ * typec_mux_get - Find USB Type-C Multiplexer
++ * @dev: The caller device
++ *
++ * Finds a mux linked to the caller. This function is primarily meant for the
++ * Type-C drivers. Returns a reference to the mux on success, NULL if no
++ * matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a connection
++ * was found but the mux has not been enumerated yet.
++ */
++struct typec_mux *typec_mux_get(struct device *dev)
++{
++	struct typec_mux *mux;
++
++	mutex_lock(&mux_lock);
++	mux = __device_find_connection(dev, "typec-mux", NULL, typec_mux_match);
++	if (!IS_ERR_OR_NULL(mux))
++		get_device(mux->dev);
++	mutex_unlock(&mux_lock);
++
++	return mux;
++}
++EXPORT_SYMBOL_GPL(typec_mux_get);
++
++/**
++ * typec_mux_put - Release handle to a Multiplexer
++ * @mux: USB Type-C Connector Multiplexer/DeMultiplexer
++ *
++ * Decrements reference count for @mux.
++ */
++void typec_mux_put(struct typec_mux *mux)
++{
++	if (!IS_ERR_OR_NULL(mux))
++		put_device(mux->dev);
++}
++EXPORT_SYMBOL_GPL(typec_mux_put);
++
++/**
++ * typec_mux_register - Register Multiplexer routing USB Type-C pins
++ * @mux: USB Type-C Connector Multiplexer/DeMultiplexer
++ *
++ * USB Type-C connectors can be used for alternate modes of operation besides
++ * USB when Accessory/Alternate Modes are supported. With some of those modes,
++ * the pins on the connector need to be reconfigured. This function registers
++ * multiplexer switches routing the pins on the connector.
++ */
++int typec_mux_register(struct typec_mux *mux)
++{
++	mutex_lock(&mux_lock);
++	list_add_tail(&mux->entry, &mux_list);
++	mutex_unlock(&mux_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(typec_mux_register);
++
++/**
++ * typec_mux_unregister - Unregister Multiplexer Switch
++ * @sw: USB Type-C Connector Multiplexer/DeMultiplexer
++ *
++ * Unregister mux that was registered with typec_mux_register().
++ */
++void typec_mux_unregister(struct typec_mux *mux)
++{
++	mutex_lock(&mux_lock);
++	list_del(&mux->entry);
++	mutex_unlock(&mux_lock);
++}
++EXPORT_SYMBOL_GPL(typec_mux_unregister);
+diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+index 0d44ce6af08f..2408e5c2ed91 100644
+--- a/include/linux/usb/typec.h
++++ b/include/linux/usb/typec.h
+@@ -60,6 +60,12 @@ enum typec_accessory {
+ 
+ #define TYPEC_MAX_ACCESSORY	3
+ 
++enum typec_orientation {
++	TYPEC_ORIENTATION_NONE,
++	TYPEC_ORIENTATION_NORMAL,
++	TYPEC_ORIENTATION_REVERSE,
 +};
 +
-+int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
-+enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
-+struct usb_role_switch *usb_role_switch_get(struct device *dev);
-+void usb_role_switch_put(struct usb_role_switch *sw);
+ /*
+  * struct usb_pd_identity - USB Power Delivery identity data
+  * @id_header: ID Header VDO
+@@ -185,6 +191,8 @@ struct typec_partner_desc {
+  * @pd_revision: USB Power Delivery Specification revision if supported
+  * @prefer_role: Initial role preference
+  * @accessory: Supported Accessory Modes
++ * @sw: Cable plug orientation switch
++ * @mux: Multiplexer switch for Alternate/Accessory Modes
+  * @fwnode: Optional fwnode of the port
+  * @try_role: Set data role preference for DRP port
+  * @dr_set: Set Data Role
+@@ -202,6 +210,8 @@ struct typec_capability {
+ 	int			prefer_role;
+ 	enum typec_accessory	accessory[TYPEC_MAX_ACCESSORY];
+ 
++	struct typec_switch	*sw;
++	struct typec_mux	*mux;
+ 	struct fwnode_handle	*fwnode;
+ 
+ 	int		(*try_role)(const struct typec_capability *,
+@@ -245,4 +255,8 @@ void typec_set_pwr_role(struct typec_port *port, enum typec_role role);
+ void typec_set_vconn_role(struct typec_port *port, enum typec_role role);
+ void typec_set_pwr_opmode(struct typec_port *port, enum typec_pwr_opmode mode);
+ 
++int typec_set_orientation(struct typec_port *port,
++			  enum typec_orientation orientation);
++int typec_set_mode(struct typec_port *port, int mode);
 +
-+struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc);
-+void usb_role_switch_unregister(struct usb_role_switch *sw);
+ #endif /* __LINUX_USB_TYPEC_H */
+diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
+new file mode 100644
+index 000000000000..12c1b057834b
+--- /dev/null
++++ b/include/linux/usb/typec_mux.h
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+#endif /* __LINUX_USB_ROLE_H */
++#ifndef __USB_TYPEC_MUX
++#define __USB_TYPEC_MUX
++
++#include <linux/list.h>
++#include <linux/usb/typec.h>
++
++struct device;
++
++/**
++ * struct typec_switch - USB Type-C cable orientation switch
++ * @dev: Switch device
++ * @entry: List entry
++ * @set: Callback to the driver for setting the orientation
++ *
++ * USB Type-C pin flipper switch routing the correct data pairs from the
++ * connector to the USB controller depending on the orientation of the cable
++ * plug.
++ */
++struct typec_switch {
++	struct device *dev;
++	struct list_head entry;
++
++	int (*set)(struct typec_switch *sw, enum typec_orientation orientation);
++};
++
++/**
++ * struct typec_switch - USB Type-C connector pin mux
++ * @dev: Mux device
++ * @entry: List entry
++ * @set: Callback to the driver for setting the state of the mux
++ *
++ * Pin Multiplexer/DeMultiplexer switch routing the USB Type-C connector pins to
++ * different components depending on the requested mode of operation. Used with
++ * Accessory/Alternate modes.
++ */
++struct typec_mux {
++	struct device *dev;
++	struct list_head entry;
++
++	int (*set)(struct typec_mux *mux, int state);
++};
++
++struct typec_switch *typec_switch_get(struct device *dev);
++void typec_switch_put(struct typec_switch *sw);
++int typec_switch_register(struct typec_switch *sw);
++void typec_switch_unregister(struct typec_switch *sw);
++
++struct typec_mux *typec_mux_get(struct device *dev);
++void typec_mux_put(struct typec_mux *mux);
++int typec_mux_register(struct typec_mux *mux);
++void typec_mux_unregister(struct typec_mux *mux);
++
++#endif /* __USB_TYPEC_MUX */
 -- 
 2.14.3
