@@ -1,79 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752460AbeBZIgi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:36:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:60050 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751575AbeBZIeP (ORCPT
+        id S1752431AbeBZIhY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:37:24 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34728 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752096AbeBZIhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:34:15 -0500
-X-UUID: 0971185db2ad48cd898d63a30c79b535-20180226
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-To: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>
-CC: <srv_heupstream@mediatek.com>, <liguo.zhang@mediatek.com>,
-        <yingjoe.chen@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <biao.huang@mediatek.com>, <yt.shen@mediatek.com>,
-        <hongzhou.yang@mediatek.com>, <erin.lo@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v2 2/4] arm64: dts: mt2712: add pintcrl device node.
-Date: Mon, 26 Feb 2018 16:34:00 +0800
-Message-ID: <1519634042-12063-3-git-send-email-zhiyong.tao@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
-References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
+        Mon, 26 Feb 2018 03:37:19 -0500
+X-Google-Smtp-Source: AH8x227ilAP4NIRPJXCFUXz1MsJxnuCTaTraJarAupEx0vTLwamjDSC7I+kOUWL8kco0YsqNzBKC+w==
+Date: Mon, 26 Feb 2018 11:37:09 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, peterz@infradead.org,
+        luto@amacapital.net, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180226083709.al5pvzwzyxuci4qp@node.shutemov.name>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+ <20180226073552.xabt55ukp24inut5@gmail.com>
+ <20180226080256.j7jzuxyokx42uytd@node.shutemov.name>
+ <20180226081533.GA5308@uranus.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226081533.GA5308@uranus.lan>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds pintcrl device node for mt2712.
+On Mon, Feb 26, 2018 at 11:15:34AM +0300, Cyrill Gorcunov wrote:
+> On Mon, Feb 26, 2018 at 11:02:56AM +0300, Kirill A. Shutemov wrote:
+> ...
+> > > Also, could do a puts() hexdump of the affected memory area _before_ we overwrite 
+> > > it? Is it empty? Could we add some debug warning that checks that it's all zeroes?
+> > 
+> > The problem is that we don't really have a way get a message out of there.
+> > 
+> > http://lkml.kernel.org/r/793b9c55-e85b-97b5-c857-dd8edcda4081@zytor.com
+> > 
+> 
+> I'm sorry for stepping in (since I didn't follow the series in details)
+> but can't we use vga memory here and print this early data tere?
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+I have no idea how to do this :/
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index d7688bc..fb3b051 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/mt2712-power.h>
-+#include "mt2712-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt2712";
-@@ -258,6 +259,23 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	syscfg_pctl_a: syscfg_pctl_a@10005000 {
-+		compatible = "mediatek,mt2712-pctl-a-syscfg", "syscon";
-+		reg = <0 0x10005000 0 0x1000>;
-+	};
-+
-+	pio: pinctrl@10005000 {
-+		compatible = "mediatek,mt2712-pinctrl";
-+		reg = <0 0x1000b000 0 0x1000>;
-+		mediatek,pctl-regmap = <&syscfg_pctl_a>;
-+		pins-are-numbered;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	scpsys: scpsys@10006000 {
- 		compatible = "mediatek,mt2712-scpsys", "syscon";
- 		#power-domain-cells = <1>;
+And what about systems without monitor at all?
+
 -- 
-1.9.1
+ Kirill A. Shutemov
