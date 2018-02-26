@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeBZDXF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:23:05 -0500
-Received: from g9t5009.houston.hpe.com ([15.241.48.73]:60544 "EHLO
-        g9t5009.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752167AbeBZDWh (ORCPT
+        id S1752299AbeBZDXd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:23:33 -0500
+Received: from g9t5008.houston.hpe.com ([15.241.48.72]:60970 "EHLO
+        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeBZDWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:22:37 -0500
+        Sun, 25 Feb 2018 22:22:36 -0500
 From: Jerry Hoemann <jerry.hoemann@hpe.com>
 To: wim@linux-watchdog.org, linux@roeck-us.net
 Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         rwright@hpe.com, maurice.a.saldivar@hpe.com, mingo@kernel.org,
         marcus.folkesson@gmail.com, Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: [PATCH v5 9/9] watchdog/hpwdt: Update driver version.
-Date: Sun, 25 Feb 2018 20:22:27 -0700
-Message-Id: <20180226032227.14615-10-jerry.hoemann@hpe.com>
+Subject: [PATCH v5 7/9] watchdog/hpwdt: Programable Pretimeout NMI
+Date: Sun, 25 Feb 2018 20:22:25 -0700
+Message-Id: <20180226032227.14615-8-jerry.hoemann@hpe.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180226032227.14615-1-jerry.hoemann@hpe.com>
 References: <20180226032227.14615-1-jerry.hoemann@hpe.com>
@@ -22,25 +22,159 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update driver version number to reflect changes.
+Make whether or not the hpwdt watchdog delivers a pretimeout NMI
+programable by the user.
+
+The underlying iLO hardware is programmable as to whether or not
+a pre-timeout NMI is delivered to the system before the iLO resets
+the system.  However, the iLO does not allow for programming the
+length of time that NMI is delivered before the system is reset.
+
+By watchdog API, in hpwdt_set_pretimeout a val == 0 disables the NMI.
+When val != 0, hpwdt_set_pretimeout will enable the pretimeout NMI
+provided the current timeout is greator than the HW specified
+pretimeout length. Otherwise an error is returned.
+
+In set_timeout, if the new timeout is <= an already established pretimeout,
+the pretimeout is canceled.  This matches the action watchdog_set_timeout
+in the watchdog core would do if an hpwdt specific set_timeout
+function wasn't specified.
 
 Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 ---
- drivers/watchdog/hpwdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/hpwdt.c | 53 ++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-index b82bbeed0e43..a43ab2cecca2 100644
+index 68e84a212d00..b8205c6e61c1 100644
 --- a/drivers/watchdog/hpwdt.c
 +++ b/drivers/watchdog/hpwdt.c
-@@ -26,7 +26,7 @@
- #include <linux/watchdog.h>
- #include <asm/nmi.h>
- 
--#define HPWDT_VERSION			"1.4.0"
-+#define HPWDT_VERSION			"2.0.0"
- #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
+@@ -31,11 +31,12 @@
  #define TICKS_TO_SECS(ticks)		((ticks) * 128 / 1000)
  #define HPWDT_MAX_TIMER			TICKS_TO_SECS(65535)
+ #define DEFAULT_MARGIN			30
++#define PRETIMEOUT_SEC			9
+ 
+ static bool ilo5;
+ static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
+-static unsigned int reload;			/* the computed soft_margin */
+ static bool nowayout = WATCHDOG_NOWAYOUT;
++static bool pretimeout = IS_ENABLED(CONFIG_HPWDT_NMI_DECODING);
+ 
+ static void __iomem *pci_mem_addr;		/* the PCI-memory address */
+ static unsigned long __iomem *hpwdt_nmistat;
+@@ -55,10 +56,11 @@ MODULE_DEVICE_TABLE(pci, hpwdt_devices);
+  */
+ static int hpwdt_start(struct watchdog_device *wdd)
+ {
+-	reload = SECS_TO_TICKS(wdd->timeout);
++	int control = 0x81 | (pretimeout ? 0x4 : 0);
++	int reload = SECS_TO_TICKS(wdd->timeout);
+ 
+ 	iowrite16(reload, hpwdt_timer_reg);
+-	iowrite8(0x85, hpwdt_timer_con);
++	iowrite8(control, hpwdt_timer_con);
+ 
+ 	return 0;
+ }
+@@ -81,7 +83,10 @@ static int hpwdt_stop_core(struct watchdog_device *wdd)
+ 
+ static int hpwdt_ping(struct watchdog_device *wdd)
+ {
++	int reload = SECS_TO_TICKS(wdd->timeout);
++
+ 	iowrite16(reload, hpwdt_timer_reg);
++
+ 	return 0;
+ }
+ 
+@@ -93,12 +98,37 @@ static unsigned int hpwdt_gettimeleft(struct watchdog_device *wdd)
+ static int hpwdt_settimeout(struct watchdog_device *wdd, unsigned int val)
+ {
+ 	wdd->timeout = val;
++	if (val <= wdd->pretimeout) {
++		wdd->pretimeout = 0;
++		pretimeout = 0;
++		if (watchdog_active(wdd))
++			hpwdt_start(wdd);
++	}
+ 	hpwdt_ping(wdd);
+ 
+ 	return 0;
+ }
+ 
+ #ifdef CONFIG_HPWDT_NMI_DECODING
++static int hpwdt_set_pretimeout(struct watchdog_device *wdd, unsigned int req)
++{
++	unsigned int val = 0;
++
++	if (req) {
++		val = PRETIMEOUT_SEC;
++		if (val >= wdd->timeout)
++			return -EINVAL;
++	}
++
++	wdd->pretimeout = val;
++	pretimeout = !!val;
++
++	if (watchdog_active(wdd))
++		hpwdt_start(wdd);
++
++	return 0;
++}
++
+ static int hpwdt_my_nmi(void)
+ {
+ 	return ioread8(hpwdt_nmistat) & 0x6;
+@@ -121,6 +151,9 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+ 	if (ilo5 && ulReason == NMI_UNKNOWN && mynmi)
+ 		return NMI_DONE;
+ 
++	if (ilo5 && !pretimeout)
++		return NMI_DONE;
++
+ 	hpwdt_stop();
+ 
+ 	hex_byte_pack(panic_msg, mynmi);
+@@ -132,7 +165,8 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+ 
+ 
+ static const struct watchdog_info ident = {
+-	.options = WDIOF_SETTIMEOUT |
++	.options = WDIOF_PRETIMEOUT    |
++		   WDIOF_SETTIMEOUT    |
+ 		   WDIOF_KEEPALIVEPING |
+ 		   WDIOF_MAGICCLOSE,
+ 	.identity = "HPE iLO2+ HW Watchdog Timer",
+@@ -149,6 +183,9 @@ static const struct watchdog_ops hpwdt_ops = {
+ 	.ping		= hpwdt_ping,
+ 	.set_timeout	= hpwdt_settimeout,
+ 	.get_timeleft	= hpwdt_gettimeleft,
++#ifdef CONFIG_HPWDT_NMI_DECODING
++	.set_pretimeout	= hpwdt_set_pretimeout,
++#endif
+ };
+ 
+ static struct watchdog_device hpwdt_dev = {
+@@ -157,6 +194,9 @@ static struct watchdog_device hpwdt_dev = {
+ 	.min_timeout	= 1,
+ 	.max_timeout	= HPWDT_MAX_TIMER,
+ 	.timeout	= DEFAULT_MARGIN,
++#ifdef CONFIG_HPWDT_NMI_DECODING
++	.pretimeout	= PRETIMEOUT_SEC,
++#endif
+ };
+ 
+ 
+@@ -317,4 +357,9 @@ module_param(nowayout, bool, 0);
+ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 		__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+ 
++#ifdef CONFIG_HPWDT_NMI_DECODING
++module_param(pretimeout, bool, 0);
++MODULE_PARM_DESC(pretimeout, "Watchdog pretimeout enabled");
++#endif
++
+ module_pci_driver(hpwdt_driver);
 -- 
 2.13.6
