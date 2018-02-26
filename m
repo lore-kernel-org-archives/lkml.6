@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ylh3IfvVoQab2/oEExu7/lNO64bNd+g4CQa+TeEUqQ/5k6fPRCvhRU5NvRpzVcXfvmhfD
-ARC-Seal: i=1; a=rsa-sha256; t=1519676823; cv=none;
+X-Google-Smtp-Source: AH8x224otnqszwJm5cYP2c8poS+DRY2STcWhg8AIgFxfmy28wTXrUQDnYac+2WBQRgLNmEmxiqXn
+ARC-Seal: i=1; a=rsa-sha256; t=1519676820; cv=none;
         d=google.com; s=arc-20160816;
-        b=aMIZKVg2S7loeH5pTWbxWbg+RMVL/lvdP4gSFLFOKVG+bX+9bBSV9Z8V/oCmDj0NPR
-         YsYXtlxYANOXizOjNOrKAZXWcC7bk2wwBIbda9jCuklkG4R45Czb1giaJG862KOMRNiK
-         DSCywtlssk2DSMDHd1ALMjNkqJswQBpLEaNETFRelsV0qoFUQ5rcO+AdELpinw1Ho2Gs
-         UYAmmrfjUBA5YnfUNkjCW7GW0RrczlKZGRH7wj6I9l03Z/9G0EhT+0k46WMr58FQ1Dqw
-         iol2EvGtug+Pqpf/h3U/af/Fj+N9EpZfIwQKng6mINFUKdYW9LaZ5BqGnWEIe4bRPYOA
-         DA3w==
+        b=wrLTRV/Q51p+dBVnRGvc9c1ZvHfg3rKWwCjutZsNmAV8x6psvtBXGUZiSwrIHajkqB
+         75TBRMUu620P1ls2aYIoPhmo3Q9zcKdNiqzukVEPxcF5gekcCqNb2oz+mOOdozMxvt2p
+         +jkLgnN+9KI1pFgrUAQ5Se4IpCw2IiVv9hZtCKRBTBq2JJthp1igzQqPIGfhE9PMseoq
+         lnPOir1oCSVHQFO1ZHQIRvpNs4zu6Zw646kc4qYqEQIm1wYrUdNJAYipzikDbBdi+8S+
+         84iWaEZBpw5areDwg0CkmEmuNfT/cHGQYSCdrikz8FR18ojLJ6abSUvU3Dj5cZIAG9q0
+         RMtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ENn24/ai3tGEjVwgqk1fEDoraDTvhJai3Dz7jB7/4Go=;
-        b=pPfhHIJGR5B5mXh/oHOACwRL8PtyXalJoArhZSDCSIfPid6vqYCVBfFWS3kNVn82Nq
-         ig0fq+IvHk/iEgqcp7CNCBCkgSV8xkdb/F/n1q1mOetx0U0JYdL6ka7gNMCPx0VcZBxd
-         nvunUCvhi2WmX/iiuiJgalZxhBnBYAJcreFCjwQE255bm2/nlBxzSf8/FbwX5YgEPAxv
-         mCPNpj1CIoDaYJg3vySk+08EHiymmxM9+Pne+BkWyGIlL3kavoTNZcvCQ2Xm23b9t/sC
-         eoXR/nEM56sXhq1bZ+wTcI88aitDLt7S85jZQwZy0ECY60FWHq1vdxQdwX3i4PZkTnZk
-         3myA==
+        bh=Eb5zzIY9dUWDuFl0YukBCHo811JrgQCJZTVTFwV+l9k=;
+        b=GlZiVv68Zs5atTMp8gyoI+B1VeA1swjLEFWnzUFOZUYIQ0wW2srKQkO87/a4cY2bwY
+         EhMQ7/1OpGKjJ4wk6+mAd66K/ixQTd30TH9z2owGChbgFcCTb04dVOohk+dMnYRa+uQy
+         9W0uynAAU0tbitmq/OGIO5NPfkLyBXGlugQkDLvD5AW+vi5azAZoj+h/q0L+mwp9lw7c
+         47Nrne6pzOBQXR9wbxhjBuxugSxKW5cE+pTr24gUo73PMNl/AzChG6Md85ZOHCPQytbA
+         9QGTod9Dm49ymCRj09wkQZ6g4pPIQnrNLe9arZcuDLYbKOZpj2Xk8hgGi6eMdB6+WC88
+         8WAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Babu Moger <babu.moger@amd.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Nicolas Pitre <nico@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will.deacon@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 26/64] Kbuild: always define endianess in kconfig.h
-Date: Mon, 26 Feb 2018 21:22:03 +0100
-Message-Id: <20180226202154.578575708@linuxfoundation.org>
+	Robin Getz <Robin.Getz@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Stable@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.15 25/64] iio: adis_lib: Initialize trigger before requesting interrupt
+Date: Mon, 26 Feb 2018 21:22:02 +0100
+Message-Id: <20180226202154.540694031@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -48,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496460929119249?=
-X-GMAIL-MSGID: =?utf-8?q?1593496644833754591?=
+X-GMAIL-THRID: =?utf-8?q?1593495970626183407?=
+X-GMAIL-MSGID: =?utf-8?q?1593496641604578396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,93 +51,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-commit 101110f6271ce956a049250c907bc960030577f8 upstream.
+commit f027e0b3a774e10302207e91d304bbf99e3a8b36 upstream.
 
-Build testing with LTO found a couple of files that get compiled
-differently depending on whether asm/byteorder.h gets included early
-enough or not.  In particular, include/asm-generic/qrwlock_types.h is
-affected by this, but there are probably others as well.
+The adis_probe_trigger() creates a new IIO trigger and requests an
+interrupt associated with the trigger. The interrupt uses the generic
+iio_trigger_generic_data_rdy_poll() function as its interrupt handler.
 
-The symptom is a series of LTO link time warnings, including these:
+Currently the driver initializes some fields of the trigger structure after
+the interrupt has been requested. But an interrupt can fire as soon as it
+has been requested. This opens up a race condition.
 
-    net/netlabel/netlabel_unlabeled.h:223: error: type of 'netlbl_unlhsh_add' does not match original declaration [-Werror=lto-type-mismatch]
-     int netlbl_unlhsh_add(struct net *net,
-    net/netlabel/netlabel_unlabeled.c:377: note: 'netlbl_unlhsh_add' was previously declared here
+iio_trigger_generic_data_rdy_poll() will access the trigger data structure
+and dereference the ops field. If the ops field is not yet initialized this
+will result in a NULL pointer deref.
 
-    include/net/ipv6.h:360: error: type of 'ipv6_renew_options_kern' does not match original declaration [-Werror=lto-type-mismatch]
-     ipv6_renew_options_kern(struct sock *sk,
-    net/ipv6/exthdrs.c:1162: note: 'ipv6_renew_options_kern' was previously declared here
+It is not expected that the device generates an interrupt at this point, so
+typically this issue did not surface unless e.g. due to a hardware
+misconfiguration (wrong interrupt number, wrong polarity, etc.).
 
-    net/core/dev.c:761: note: 'dev_get_by_name_rcu' was previously declared here
-     struct net_device *dev_get_by_name_rcu(struct net *net, const char *name)
-    net/core/dev.c:761: note: code may be misoptimized unless -fno-strict-aliasing is used
+But some newer devices from the ADIS family start to generate periodic
+interrupts in their power-on reset configuration and unfortunately the
+interrupt can not be masked in the device.  This makes the race condition
+much more visible and the following crash has been observed occasionally
+when booting a system using the ADIS16460.
 
-    drivers/gpu/drm/i915/i915_drv.h:3377: error: type of 'i915_gem_object_set_to_wc_domain' does not match original declaration [-Werror=lto-type-mismatch]
-     i915_gem_object_set_to_wc_domain(struct drm_i915_gem_object *obj, bool write);
-    drivers/gpu/drm/i915/i915_gem.c:3639: note: 'i915_gem_object_set_to_wc_domain' was previously declared here
+	Unable to handle kernel NULL pointer dereference at virtual address 00000008
+	pgd = c0004000
+	[00000008] *pgd=00000000
+	Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+	Modules linked in:
+	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.9.0-04126-gf9739f0-dirty #257
+	Hardware name: Xilinx Zynq Platform
+	task: ef04f640 task.stack: ef050000
+	PC is at iio_trigger_notify_done+0x30/0x68
+	LR is at iio_trigger_generic_data_rdy_poll+0x18/0x20
+	pc : [<c042d868>]    lr : [<c042d924>]    psr: 60000193
+	sp : ef051bb8  ip : 00000000  fp : ef106400
+	r10: c081d80a  r9 : ef3bfa00  r8 : 00000087
+	r7 : ef051bec  r6 : 00000000  r5 : ef3bfa00  r4 : ee92ab00
+	r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : ee97e400
+	Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+	Control: 18c5387d  Table: 0000404a  DAC: 00000051
+	Process swapper/0 (pid: 1, stack limit = 0xef050210)
+	[<c042d868>] (iio_trigger_notify_done) from [<c0065b10>] (__handle_irq_event_percpu+0x88/0x118)
+	[<c0065b10>] (__handle_irq_event_percpu) from [<c0065bbc>] (handle_irq_event_percpu+0x1c/0x58)
+	[<c0065bbc>] (handle_irq_event_percpu) from [<c0065c30>] (handle_irq_event+0x38/0x5c)
+	[<c0065c30>] (handle_irq_event) from [<c0068e28>] (handle_level_irq+0xa4/0x130)
+	[<c0068e28>] (handle_level_irq) from [<c0064e74>] (generic_handle_irq+0x24/0x34)
+	[<c0064e74>] (generic_handle_irq) from [<c021ab7c>] (zynq_gpio_irqhandler+0xb8/0x13c)
+	[<c021ab7c>] (zynq_gpio_irqhandler) from [<c0064e74>] (generic_handle_irq+0x24/0x34)
+	[<c0064e74>] (generic_handle_irq) from [<c0065370>] (__handle_domain_irq+0x5c/0xb4)
+	[<c0065370>] (__handle_domain_irq) from [<c000940c>] (gic_handle_irq+0x48/0x8c)
+	[<c000940c>] (gic_handle_irq) from [<c0013e8c>] (__irq_svc+0x6c/0xa8)
 
-    include/linux/debugfs.h:92:9: error: type of 'debugfs_attr_read' does not match original declaration [-Werror=lto-type-mismatch]
-     ssize_t debugfs_attr_read(struct file *file, char __user *buf,
-    fs/debugfs/file.c:318: note: 'debugfs_attr_read' was previously declared here
+To fix this make sure that the trigger is fully initialized before
+requesting the interrupt.
 
-    include/linux/rwlock_api_smp.h:30: error: type of '_raw_read_unlock' does not match original declaration [-Werror=lto-type-mismatch]
-     void __lockfunc _raw_read_unlock(rwlock_t *lock) __releases(lock);
-    kernel/locking/spinlock.c:246:26: note: '_raw_read_unlock' was previously declared here
-
-    include/linux/fs.h:3308:5: error: type of 'simple_attr_open' does not match original declaration [-Werror=lto-type-mismatch]
-     int simple_attr_open(struct inode *inode, struct file *file,
-    fs/libfs.c:795: note: 'simple_attr_open' was previously declared here
-
-All of the above are caused by include/asm-generic/qrwlock_types.h
-failing to include asm/byteorder.h after commit e0d02285f16e
-("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
-in linux-4.15.
-
-Similar bugs may or may not exist in older kernels as well, but there is
-no easy way to test those with link-time optimizations, and kernels
-before 4.14 are harder to fix because they don't have Babu's patch
-series
-
-We had similar issues with CONFIG_ symbols in the past and ended up
-always including the configuration headers though linux/kconfig.h.  This
-works around the issue through that same file, defining either
-__BIG_ENDIAN or __LITTLE_ENDIAN depending on CONFIG_CPU_BIG_ENDIAN,
-which is now always set on all architectures since commit 4c97a0c8fee3
-("arch: define CPU_BIG_ENDIAN for all fixed big endian archs").
-
-Link: http://lkml.kernel.org/r/20180202154104.1522809-2-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Babu Moger <babu.moger@amd.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: ccd2b52f4ac6 ("staging:iio: Add common ADIS library")
+Reported-by: Robin Getz <Robin.Getz@analog.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/kconfig.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/iio/imu/adis_trigger.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/include/linux/kconfig.h
-+++ b/include/linux/kconfig.h
-@@ -4,6 +4,12 @@
+--- a/drivers/iio/imu/adis_trigger.c
++++ b/drivers/iio/imu/adis_trigger.c
+@@ -46,6 +46,10 @@ int adis_probe_trigger(struct adis *adis
+ 	if (adis->trig == NULL)
+ 		return -ENOMEM;
  
- #include <generated/autoconf.h>
- 
-+#ifdef CONFIG_CPU_BIG_ENDIAN
-+#define __BIG_ENDIAN 4321
-+#else
-+#define __LITTLE_ENDIAN 1234
-+#endif
++	adis->trig->dev.parent = &adis->spi->dev;
++	adis->trig->ops = &adis_trigger_ops;
++	iio_trigger_set_drvdata(adis->trig, adis);
 +
- #define __ARG_PLACEHOLDER_1 0,
- #define __take_second_arg(__ignored, val, ...) val
+ 	ret = request_irq(adis->spi->irq,
+ 			  &iio_trigger_generic_data_rdy_poll,
+ 			  IRQF_TRIGGER_RISING,
+@@ -54,9 +58,6 @@ int adis_probe_trigger(struct adis *adis
+ 	if (ret)
+ 		goto error_free_trig;
  
+-	adis->trig->dev.parent = &adis->spi->dev;
+-	adis->trig->ops = &adis_trigger_ops;
+-	iio_trigger_set_drvdata(adis->trig, adis);
+ 	ret = iio_trigger_register(adis->trig);
+ 
+ 	indio_dev->trig = iio_trigger_get(adis->trig);
