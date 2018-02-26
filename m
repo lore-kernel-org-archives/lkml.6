@@ -1,138 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeBZCYz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 21:24:55 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41632 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751968AbeBZCXZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 21:23:25 -0500
-X-Google-Smtp-Source: AH8x227QjWj0PxqwOr9prmsQHiMhBWH8MQnVKuuKXzZY8vu3Tf9Ps9cbsOdNWGD8nrN2e7maIdMLdQ==
-From: frowand.list@gmail.com
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org
-Subject: [PATCH 1/6] of: unittest: clean up changeset test
-Date: Sun, 25 Feb 2018 18:22:25 -0800
-Message-Id: <1519611750-22355-2-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
-References: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
+        id S1752058AbeBZCbt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 21:31:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57142 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751931AbeBZCbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 21:31:44 -0500
+From: Benjamin Poirier <bpoirier@suse.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] e1000e: Fix link check race condition.
+Date: Mon, 26 Feb 2018 11:31:18 +0900
+Message-Id: <20180226023118.17439-1-bpoirier@suse.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <CAKgT0UffXiggXxC5x1vrtbnKPHzcy8+VTRvBGBH-7tCYmUi6LQ@mail.gmail.com>
+References: <CAKgT0UffXiggXxC5x1vrtbnKPHzcy8+VTRvBGBH-7tCYmUi6LQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+Alex reported the following race condition:
 
-In preparation for fixing __of_node_dup(), clean up the unittest
-function that calls it.
+/* link goes up... interrupt... schedule watchdog */
+\ e1000_watchdog_task
+	\ e1000e_has_link
+		\ hw->mac.ops.check_for_link() === e1000e_check_for_copper_link
+			\ e1000e_phy_has_link_generic(..., &link)
+				link = true
 
-Devicetree nodes created from a flattened device tree have a name
-property.  Follow this convention for nodes added by a changeset.
+					 /* link goes down... interrupt */
+					 \ e1000_msix_other
+						 hw->mac.get_link_status = true
 
-For node added by changeset, remove incorrect initialization of
-child node pointer.
+			/* link is up */
+			mac->get_link_status = false
 
-Add an additional node pointer 'changeset' to more naturally reflect
-where in the tree the changeset is added.
+		link_active = true
+		/* link_active is true, wrongly, and stays so because
+		 * get_link_status is false */
 
-Make changeset add property error messages unique.
+Avoid this problem by making sure that we don't set get_link_status = false
+after having checked the link.
 
-Add whitespace to break apart logic blocks.
+It seems this problem has been present since the introduction of e1000e.
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Link: https://lkml.org/lkml/2018/1/29/338
+Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
 ---
+ drivers/net/ethernet/intel/e1000e/ich8lan.c | 41 ++++++++++++++++-------------
+ drivers/net/ethernet/intel/e1000e/mac.c     | 14 +++++++---
+ 2 files changed, 33 insertions(+), 22 deletions(-)
 
-checkpatch warnings for "line over 80 characters" are for unittest
-code in a function with long lines as a normal style.
-
-
- drivers/of/unittest.c | 42 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 7a9abaae874d..490bbee0cf87 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -562,42 +562,72 @@ static void __init of_unittest_property_copy(void)
- static void __init of_unittest_changeset(void)
- {
- #ifdef CONFIG_OF_DYNAMIC
--	struct property *ppadd, padd = { .name = "prop-add", .length = 0, .value = "" };
-+	struct property *ppadd, padd = { .name = "prop-add", .length = 1, .value = "" };
-+	struct property *ppname_n1,  pname_n1  = { .name = "name", .length = 3, .value = "n1"  };
-+	struct property *ppname_n2,  pname_n2  = { .name = "name", .length = 3, .value = "n2"  };
-+	struct property *ppname_n21, pname_n21 = { .name = "name", .length = 3, .value = "n21" };
- 	struct property *ppupdate, pupdate = { .name = "prop-update", .length = 5, .value = "abcd" };
- 	struct property *ppremove;
--	struct device_node *n1, *n2, *n21, *nremove, *parent, *np;
-+	struct device_node *n1, *n2, *n21, *nchangeset, *nremove, *parent, *np;
- 	struct of_changeset chgset;
+diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+index ff308b05d68c..3c2c4f87e075 100644
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -1386,6 +1386,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	 */
+ 	if (!mac->get_link_status)
+ 		return 1;
++	mac->get_link_status = false;
  
- 	n1 = __of_node_dup(NULL, "/testcase-data/changeset/n1");
- 	unittest(n1, "testcase setup failure\n");
-+
- 	n2 = __of_node_dup(NULL, "/testcase-data/changeset/n2");
- 	unittest(n2, "testcase setup failure\n");
-+
- 	n21 = __of_node_dup(NULL, "%s/%s", "/testcase-data/changeset/n2", "n21");
- 	unittest(n21, "testcase setup failure %p\n", n21);
--	nremove = of_find_node_by_path("/testcase-data/changeset/node-remove");
-+
-+	nchangeset = of_find_node_by_path("/testcase-data/changeset");
-+	nremove = of_get_child_by_name(nchangeset, "node-remove");
- 	unittest(nremove, "testcase setup failure\n");
-+
- 	ppadd = __of_prop_dup(&padd, GFP_KERNEL);
- 	unittest(ppadd, "testcase setup failure\n");
-+
-+	ppname_n1  = __of_prop_dup(&pname_n1, GFP_KERNEL);
-+	unittest(ppname_n1, "testcase setup failure\n");
-+
-+	ppname_n2  = __of_prop_dup(&pname_n2, GFP_KERNEL);
-+	unittest(ppname_n2, "testcase setup failure\n");
-+
-+	ppname_n21 = __of_prop_dup(&pname_n21, GFP_KERNEL);
-+	unittest(ppname_n21, "testcase setup failure\n");
-+
- 	ppupdate = __of_prop_dup(&pupdate, GFP_KERNEL);
- 	unittest(ppupdate, "testcase setup failure\n");
--	parent = nremove->parent;
-+
-+	parent = nchangeset;
- 	n1->parent = parent;
- 	n2->parent = parent;
- 	n21->parent = n2;
--	n2->child = n21;
-+
- 	ppremove = of_find_property(parent, "prop-remove", NULL);
- 	unittest(ppremove, "failed to find removal prop");
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -1393,12 +1394,12 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	 */
+ 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
+ 	if (ret_val)
+-		return ret_val;
++		goto out;
  
- 	of_changeset_init(&chgset);
-+
- 	unittest(!of_changeset_attach_node(&chgset, n1), "fail attach n1\n");
-+	unittest(!of_changeset_add_property(&chgset, n1, ppname_n1), "fail add prop name\n");
-+
- 	unittest(!of_changeset_attach_node(&chgset, n2), "fail attach n2\n");
-+	unittest(!of_changeset_add_property(&chgset, n2, ppname_n2), "fail add prop name\n");
-+
- 	unittest(!of_changeset_detach_node(&chgset, nremove), "fail remove node\n");
-+	unittest(!of_changeset_add_property(&chgset, n21, ppname_n21), "fail add prop name\n");
-+
- 	unittest(!of_changeset_attach_node(&chgset, n21), "fail attach n21\n");
--	unittest(!of_changeset_add_property(&chgset, parent, ppadd), "fail add prop\n");
-+
-+	unittest(!of_changeset_add_property(&chgset, parent, ppadd), "fail add prop prop-add\n");
- 	unittest(!of_changeset_update_property(&chgset, parent, ppupdate), "fail update prop\n");
- 	unittest(!of_changeset_remove_property(&chgset, parent, ppremove), "fail remove prop\n");
-+
- 	unittest(!of_changeset_apply(&chgset), "apply failed\n");
+ 	if (hw->mac.type == e1000_pchlan) {
+ 		ret_val = e1000_k1_gig_workaround_hv(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
  
-+	of_node_put(nchangeset);
+ 	/* When connected at 10Mbps half-duplex, some parts are excessively
+@@ -1431,7 +1432,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 
+ 		ret_val = hw->phy.ops.acquire(hw);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 
+ 		if (hw->mac.type == e1000_pch2lan)
+ 			emi_addr = I82579_RX_CONFIG;
+@@ -1453,7 +1454,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		hw->phy.ops.release(hw);
+ 
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 
+ 		if (hw->mac.type >= e1000_pch_spt) {
+ 			u16 data;
+@@ -1462,14 +1463,14 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 			if (speed == SPEED_1000) {
+ 				ret_val = hw->phy.ops.acquire(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 				ret_val = e1e_rphy_locked(hw,
+ 							  PHY_REG(776, 20),
+ 							  &data);
+ 				if (ret_val) {
+ 					hw->phy.ops.release(hw);
+-					return ret_val;
++					goto out;
+ 				}
+ 
+ 				ptr_gap = (data & (0x3FF << 2)) >> 2;
+@@ -1483,18 +1484,18 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 				}
+ 				hw->phy.ops.release(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 			} else {
+ 				ret_val = hw->phy.ops.acquire(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 				ret_val = e1e_wphy_locked(hw,
+ 							  PHY_REG(776, 20),
+ 							  0xC023);
+ 				hw->phy.ops.release(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 			}
+ 		}
+@@ -1521,7 +1522,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	    (hw->adapter->pdev->device == E1000_DEV_ID_PCH_I218_V3)) {
+ 		ret_val = e1000_k1_workaround_lpt_lp(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 	if (hw->mac.type >= e1000_pch_lpt) {
+ 		/* Set platform power management values for
+@@ -1529,7 +1530,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		 */
+ 		ret_val = e1000_platform_pm_pch_lpt(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 
+ 	/* Clear link partner's EEE ability */
+@@ -1551,22 +1552,22 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		ew32(FEXTNVM6, fextnvm6);
+ 	}
+ 
+-	if (!link)
++	if (!link) {
++		mac->get_link_status = true;
+ 		return 0;	/* No link detected */
+-
+-	mac->get_link_status = false;
++	}
+ 
+ 	switch (hw->mac.type) {
+ 	case e1000_pch2lan:
+ 		ret_val = e1000_k1_workaround_lv(hw);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 		/* fall-thru */
+ 	case e1000_pchlan:
+ 		if (hw->phy.type == e1000_phy_82578) {
+ 			ret_val = e1000_link_stall_workaround_hv(hw);
+ 			if (ret_val)
+-				return ret_val;
++				goto out;
+ 		}
+ 
+ 		/* Workaround for PCHx parts in half-duplex:
+@@ -1595,7 +1596,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	if (hw->phy.type > e1000_phy_82579) {
+ 		ret_val = e1000_set_eee_pchlan(hw);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 
+ 	/* If we are forcing speed/duplex, then we simply return since
+@@ -1618,10 +1619,14 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+ 	if (ret_val) {
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
++		goto out;
+ 	}
+ 
+ 	return 1;
 +
- 	/* Make sure node names are constructed correctly */
- 	unittest((np = of_find_node_by_path("/testcase-data/changeset/n2/n21")),
- 		 "'%pOF' not added\n", n21);
++out:
++	mac->get_link_status = true;
++	return ret_val;
+ }
+ 
+ static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
+diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
+index db735644b312..60c8beaf5cb3 100644
+--- a/drivers/net/ethernet/intel/e1000e/mac.c
++++ b/drivers/net/ethernet/intel/e1000e/mac.c
+@@ -427,6 +427,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	 */
+ 	if (!mac->get_link_status)
+ 		return 1;
++	mac->get_link_status = false;
+ 
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -434,12 +435,13 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	 */
+ 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
+ 	if (ret_val)
+-		return ret_val;
++		goto out;
+ 
+-	if (!link)
++	if (!link) {
++		mac->get_link_status = true;
+ 		return 0;	/* No link detected */
++	}
+ 
+-	mac->get_link_status = false;
+ 
+ 	/* Check if there was DownShift, must be checked
+ 	 * immediately after link-up
+@@ -466,10 +468,14 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+ 	if (ret_val) {
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
++		goto out;
+ 	}
+ 
+ 	return 1;
++
++out:
++	mac->get_link_status = true;
++	return ret_val;
+ }
+ 
+ /**
 -- 
-Frank Rowand <frank.rowand@sony.com>
+2.16.1
