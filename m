@@ -1,54 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751993AbeBYX5W (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 18:57:22 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41694 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751905AbeBYX5T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 18:57:19 -0500
-X-Google-Smtp-Source: AH8x225qHQt1CoXhbT38iY+ruq8HOtdGNnQwO7CKZYVVBJbhWl5KMgHFTYNTtyyHcHtr5FBcIWTojg==
-Date: Sun, 25 Feb 2018 15:57:17 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rwright@hpe.com,
-        maurice.a.saldivar@hpe.com, mingo@kernel.org,
-        marcus.folkesson@gmail.com
-Subject: Re: [v4,01/10] watchdog/hpwdt: Update copyright.
-Message-ID: <20180225235717.GA6627@roeck-us.net>
-References: <20180225213259.2861-2-jerry.hoemann@hpe.com>
+        id S1751938AbeBZAQf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 19:16:35 -0500
+Received: from koef.zs64.net ([212.12.50.230]:34337 "EHLO koef.zs64.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751817AbeBZAQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 19:16:33 -0500
+Date: Sun, 25 Feb 2018 19:00:48 -0500
+From: Martin Cracauer <cracauer@cons.org>
+To: linux-kernel@vger.kernel.org
+Subject: userfaultfd(2) Write Protect / struct uffdio_writeprotect
+Message-ID: <20180226000048.GA40481@cons.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180225213259.2861-2-jerry.hoemann@hpe.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 02:32:50PM -0700, Jerry Hoemann wrote:
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> ---
->  drivers/watchdog/hpwdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index f1f00dfc0e68..3d435d6d3226 100644
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -4,7 +4,7 @@
->   *
->   *	SoftDog	0.05:	A Software Watchdog Device
->   *
-> - *	(c) Copyright 2015 Hewlett Packard Enterprise Development LP
-> + *	(c) Copyright 2018 Hewlett Packard Enterprise Development LP
+Hoi.
 
-Not really sure if it makes sense to have this as separate patch.
-Either case, it messes up your changelog.
+What is the status of the remaining work for userfaultfd(2), the write
+protect support? I am talking about 'struct uffdio_writeprotect' and
+friends.  This helps with my garbage collection work, and there are
+virtual machine folks who want to use it for live migration.  Right
+now I'm using a SIGSEGV handler, nobody wants that.
 
-Guenter
+It is in the aa tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git
 
->   *	Thomas Mingarelli <thomas.mingarelli@hpe.com>
->   *
->   *	This program is free software; you can redistribute it and/or
+I think I am missing the commits to master between Sept 7, 2017 and
+Sept 20, 2017.  Merging from aa to mainline seems to have stopped at
+that point.
+
+Anybody knows what the merging status is? I have some free cycles at
+this time, however it looks like I'll be taking a full-time job soon.
+I'd love to see it in before I get distracted.
+
+More detail:
+
+The write support in userfaultfd(2) helps me with garbage collection.
+I was waiting for it to show up in mainline while I was at Google, to
+then change SBCL's GC for ITA's search engine QPX to it.  That never
+happened before I left Google, and I cannot expect testers inside to
+run a custom kernel for benchmarking my changes.  Tech info is here:
+
+https://www.cons.org/cracauer/cracauer-userfaultfd.html
+
+https://medium.com/@MartinCracauer/generational-garbage-collection-write-barriers-write-protection-and-userfaultfd-2-8b0e796b8f7f
+
+I have not, but can, connect to various virtual machine people to find
+out why they aren't complaining about the lack of this.  Maybe they
+have an alternative that I could use as well?
+
+Anybody else here who has a use case for this?
+
+I'm happy to give more details.
+
+Martin
+-- 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Martin Cracauer <cracauer@cons.org>   http://www.cons.org/cracauer/
