@@ -1,102 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeBZJ5t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:57:49 -0500
-Received: from mga01.intel.com ([192.55.52.88]:19168 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752402AbeBZJ5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:57:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="33645589"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
-        krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
-        sboyd@codeaurora.org, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org,
-        b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net,
-        dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
-        sean@mess.org, lee.jones@linaro.org, jingoohan1@gmail.com,
-        milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-In-Reply-To: <20180222123308.mypx2r7n6o63mj5z@oak.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com> <20180222123308.mypx2r7n6o63mj5z@oak.lan>
-Date: Mon, 26 Feb 2018 11:57:25 +0200
-Message-ID: <87po4s2hve.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1752526AbeBZJ6M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:58:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45318 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752541AbeBZJyd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:54:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E3B360F90
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 07/15] clk: qcom: Add IPQ806X's HFPLLs
+Date: Mon, 26 Feb 2018 15:23:23 +0530
+Message-Id: <1519638811-17269-8-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
-> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->> were adapted to this change.
->> 
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->> ---
->>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>  drivers/bus/ts-nbus.c                |  2 +-
->>  drivers/clk/clk-pwm.c                |  3 ++-
->>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>  drivers/hwmon/pwm-fan.c              |  2 +-
->>  drivers/input/misc/max77693-haptic.c |  2 +-
->>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>  drivers/leds/leds-pwm.c              |  5 ++++-
->>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>  include/linux/pwm.h                  |  6 ++++--
->>  16 files changed, 70 insertions(+), 21 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
->> index 2030a6b77a09..696fa25dafd2 100644
->> --- a/drivers/video/backlight/lm3630a_bl.c
->> +++ b/drivers/video/backlight/lm3630a_bl.c
->> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
->>  {
->>  	unsigned int period = pchip->pdata->pwm_period;
->>  	unsigned int duty = br * period / br_max;
->> +	struct pwm_caps caps = { };
->>  
->> -	pwm_config(pchip->pwmd, duty, period);
->> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
->> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
->
-> Well... I admit I've only really looked at the patches that impact 
-> backlight but dispersing this really odd looking bit twiddling 
-> throughout the kernel doesn't strike me a great API design.
->
-> IMHO callers should not be required to find the first set bit in
-> some specially crafted set of capability bits simply to get sane 
-> default behaviour.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Agreed. IMHO the regular use case becomes rather tedious, ugly, and
-error prone.
+Describe the HFPLLs present on IPQ806X devices.
 
-BR,
-Jani.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 28eb200..d571cf8 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
+ 
+ static struct clk_pll pll0 = {
+@@ -113,6 +114,84 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -2800,6 +2879,9 @@ enum {
+ 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
+ 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
+ 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
 -- 
-Jani Nikula, Intel Open Source Technology Center
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
