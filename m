@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvMpWze1v15tMpZ0LuMJiEzrVnqlcAxrcQm5ocfYd/MOf6U/mFXGHFZiDXAunVfS6XYP0td
-ARC-Seal: i=1; a=rsa-sha256; t=1519676577; cv=none;
+X-Google-Smtp-Source: AH8x226KdGISVpPwC10WDSges9+eMQK8Zef1afH5qVqjpesSQ9HJ2xvRKMmy38v/xjofijzybDnf
+ARC-Seal: i=1; a=rsa-sha256; t=1519676574; cv=none;
         d=google.com; s=arc-20160816;
-        b=iXOSltPe/eZMKCjx4D6CmzfQ6EhXjZY+rgUxpUrSjW6c++8Fj+mJ4EeKbMUrtZ2qDe
-         HOtmoBnFeKifFPqwpR2ARymYzXCkMKxfsNT7rLIjzg2XleLwON5fir8x/PxUrE2MXnXn
-         t0v53kP7NqavEC3ah+Vn2R+/WDuDStmFVcQNVYAerARXm/4fXBEW/5taBmJ0QUhLxXKb
-         SU1jLqSYDE8fChZG2wxjahZKXZRFgSrb4Uyr/rvz/ec1vZX1cgfoYZPW6P9hKXrkVSPu
-         2K7NQuN7ZNpy+eleN/9CZTEQZs8kV9uzGXtvZ+0wsBHcOHoiRFSVBKwtHr8t+4DdwHTO
-         s9+Q==
+        b=uexcvd3zaDko6WigK11qAslsRViuckVpOjPr9JIlzV+AAEMjWvUeESX3YA0gUMgwOi
+         yAUSs/aJioTvnMGKMeUTaGckxZauKLev+8+DPz3LqiUSTGK1ywePvF67RW8kd+Rc6cof
+         qlmY3E3yKW43gxhZ4n37sANPR5IWHMKwW8SuUATE+qZlDjp0SrdKAnPL8gNCHdcy0w5K
+         wF4YdPoWTT4JdeRcac2vIOL6hNtaBLQmjjJBoPzOtvFg/O7GkMosENAmb4+h/RO36t7z
+         8cN8bUQ42Eikqj82QKyEeXiG/E7hOqlt7Cml44Y84505MD5lk6zkE156AzFHylT6gZpi
+         aXqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tIZhhCboYYS+rnbDlp3dn5iRKVO1yAR1PI7YIpVe9mc=;
-        b=OPRqf2PQa+fnJbvJdNUMQ06hu0zKUV3QBi5yvsIhJhUhKhwcHm4RZ7xDMTVkm8U7Yt
-         KYonOGzKHY9J2GQe8iGycAFHCB368rJDA8EvpkdNDc3HZBJjewkDK1iQstLWkGVCId7+
-         IzMv99pNioa43o9ikFUG7WEo8Op6p54TSKSe9tpU0bisLCyoUCMwRwQ2JM5fkH064bFy
-         kFlSxONa4Ip/j6bikiXrxEoYkLHFzaCU1Et6bXVojVodrfrSVcr+0SKGzNDKSUSyR0G7
-         9Ovf3QfG7hfuaAD/oI1e5TTkI8UVa2CoQ8pRORNZT0sUj3jFNDh0Y3mNlk3EQpGdFTY2
-         Yveg==
+        bh=HLzt02HCnJgwlRtJ7fgHfKRrC/R+IMm8urnWdMbCBiI=;
+        b=NwCSYJMHwasRr0+arv3TXUcDbmYsTE+PI7O/O0BCysaH7J/PTLCvyh0wAxr4qjKe6m
+         QQI4UbDjiVs0surniszU5yM4L0+iqsA0qYhfzMG+u1slDFdsdBpJL3CoIs061fMqISXe
+         Ys22ZpvAUSXe52apkxylPiWyPxijP7q8gnkeMdAbsBhoFF8GPJrSg6i9V8wTuQ0HYgtm
+         K9mO+NrNmUtf0nKBwSHpC/oBPZwdattAgd012vukcbKkFayLug5Ogg852ejtHrIqsDq1
+         qzWpuy2NBgOpoDnBtxsqCqa/ZIKRxFOP8gchZ1OvrBcjuHrdvoG3LCzvUofmOLTbteKp
+         ULEw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
 	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 37/39] mm: Fix devm_memremap_pages() collision handling
-Date: Mon, 26 Feb 2018 21:20:58 +0100
-Message-Id: <20180226201645.292220747@linuxfoundation.org>
+Subject: [PATCH 4.9 36/39] libnvdimm, dax: fix 1GB-aligned namespaces vs physical misalignment
+Date: Mon, 26 Feb 2018 21:20:57 +0100
+Message-Id: <20180226201645.252595532@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593231662350727514?=
-X-GMAIL-MSGID: =?utf-8?q?1593496387556325036?=
+X-GMAIL-THRID: =?utf-8?q?1593496383639634177?=
+X-GMAIL-MSGID: =?utf-8?q?1593496383639634177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,76 +48,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan H. Schönherr <jschoenh@amazon.de>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 77dd66a3c67c93ab401ccc15efff25578be281fd upstream.
+commit 41fce90f26333c4fa82e8e43b9ace86c4e8a0120 upstream.
 
-If devm_memremap_pages() detects a collision while adding entries
-to the radix-tree, we call pgmap_radix_release(). Unfortunately,
-the function removes *all* entries for the range -- including the
-entries that caused the collision in the first place.
+The following namespace configuration attempt:
 
-Modify pgmap_radix_release() to take an additional argument to
-indicate where to stop, so that only newly added entries are removed
-from the tree.
+    # ndctl create-namespace -e namespace0.0 -m devdax -a 1G -f
+    libndctl: ndctl_dax_enable: dax0.1: failed to enable
+      Error: namespace0.0: failed to enable
+
+    failed to reconfigure namespace: No such device or address
+
+...fails when the backing memory range is not physically aligned to 1G:
+
+    # cat /proc/iomem | grep Persistent
+    210000000-30fffffff : Persistent Memory (legacy)
+
+In the above example the 4G persistent memory range starts and ends on a
+256MB boundary.
+
+We handle this case correctly when needing to handle cases that violate
+section alignment (128MB) collisions against "System RAM", and we simply
+need to extend that padding/truncation for the 1GB alignment use case.
 
 Cc: <stable@vger.kernel.org>
-Fixes: 9476df7d80df ("mm: introduce find_dev_pagemap()")
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+Fixes: 315c562536c4 ("libnvdimm, pfn: add 'align' attribute...")
+Reported-and-tested-by: Jane Chu <jane.chu@oracle.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/memremap.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/nvdimm/pfn_devs.c |   15 ++++++++++++---
+ include/linux/kernel.h    |    1 +
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -194,7 +194,7 @@ void put_zone_device_page(struct page *p
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -563,6 +563,12 @@ static struct vmem_altmap *__nvdimm_setu
+ 	return altmap;
  }
- EXPORT_SYMBOL(put_zone_device_page);
  
--static void pgmap_radix_release(struct resource *res)
-+static void pgmap_radix_release(struct resource *res, resource_size_t end_key)
++static u64 phys_pmem_align_down(struct nd_pfn *nd_pfn, u64 phys)
++{
++	return min_t(u64, PHYS_SECTION_ALIGN_DOWN(phys),
++			ALIGN_DOWN(phys, nd_pfn->align));
++}
++
+ static int nd_pfn_init(struct nd_pfn *nd_pfn)
  {
- 	resource_size_t key, align_start, align_size, align_end;
+ 	u32 dax_label_reserve = is_nd_dax(&nd_pfn->dev) ? SZ_128K : 0;
+@@ -618,13 +624,16 @@ static int nd_pfn_init(struct nd_pfn *nd
+ 	start = nsio->res.start;
+ 	size = PHYS_SECTION_ALIGN_UP(start + size) - start;
+ 	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
+-				IORES_DESC_NONE) == REGION_MIXED) {
++				IORES_DESC_NONE) == REGION_MIXED
++			|| !IS_ALIGNED(start + resource_size(&nsio->res),
++				nd_pfn->align)) {
+ 		size = resource_size(&nsio->res);
+-		end_trunc = start + size - PHYS_SECTION_ALIGN_DOWN(start + size);
++		end_trunc = start + size - phys_pmem_align_down(nd_pfn,
++				start + size);
+ 	}
  
-@@ -203,8 +203,11 @@ static void pgmap_radix_release(struct r
- 	align_end = align_start + align_size - 1;
+ 	if (start_pad + end_trunc)
+-		dev_info(&nd_pfn->dev, "%s section collision, truncate %d bytes\n",
++		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
+ 				dev_name(&ndns->dev), start_pad + end_trunc);
  
- 	mutex_lock(&pgmap_lock);
--	for (key = res->start; key <= res->end; key += SECTION_SIZE)
-+	for (key = res->start; key <= res->end; key += SECTION_SIZE) {
-+		if (key >= end_key)
-+			break;
- 		radix_tree_delete(&pgmap_radix, key >> PA_SECTION_SHIFT);
-+	}
- 	mutex_unlock(&pgmap_lock);
- }
+ 	/*
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -46,6 +46,7 @@
+ #define REPEAT_BYTE(x)	((~0ul / 0xff) * (x))
  
-@@ -255,7 +258,7 @@ static void devm_memremap_pages_release(
- 	unlock_device_hotplug();
- 
- 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
--	pgmap_radix_release(res);
-+	pgmap_radix_release(res, -1);
- 	dev_WARN_ONCE(dev, pgmap->altmap && pgmap->altmap->alloc,
- 			"%s: failed to free all reserved pages\n", __func__);
- }
-@@ -289,7 +292,7 @@ struct dev_pagemap *find_dev_pagemap(res
- void *devm_memremap_pages(struct device *dev, struct resource *res,
- 		struct percpu_ref *ref, struct vmem_altmap *altmap)
- {
--	resource_size_t key, align_start, align_size, align_end;
-+	resource_size_t key = 0, align_start, align_size, align_end;
- 	pgprot_t pgprot = PAGE_KERNEL;
- 	struct dev_pagemap *pgmap;
- 	struct page_map *page_map;
-@@ -392,7 +395,7 @@ void *devm_memremap_pages(struct device
- 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
-  err_pfn_remap:
-  err_radix:
--	pgmap_radix_release(res);
-+	pgmap_radix_release(res, key);
- 	devres_free(page_map);
- 	return ERR_PTR(error);
- }
+ #define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
++#define ALIGN_DOWN(x, a)	__ALIGN_KERNEL((x) - ((a) - 1), (a))
+ #define __ALIGN_MASK(x, mask)	__ALIGN_KERNEL_MASK((x), (mask))
+ #define PTR_ALIGN(p, a)		((typeof(p))ALIGN((unsigned long)(p), (a)))
+ #define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
