@@ -1,149 +1,99 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-89514-1519694094-2-14146380947892455707
+X-Cyrus-Session-Id: sloti22d1t05-3025739-1519656039-2-11857340884765739156
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, T_RP_MATCHES_RCVD -0.01,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='gbk'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519694094; b=Mj5Pdcq81id0jVvrGyaiXx4znvnYTkvTTPfI4ULJJwtg7wx
-    qgxq4iOR8gbdXrwPraPgiWicQcqds+671ET/tP4bkOTvgyBeheo2aFwiLu2mzirm
-    ENxNJg45E3Q6CR+CT1o692202T324gF4IjR/ChUSDNukDsFSe9QNqQMRbFhxkQtw
-    fgQHaAIXagz/PTeIfVxv10eEea7P8WYPfNkOmaJ+j0K/r3EViDM2hbbUWsIpek6e
-    hnrTcGzr0rUlAtDkzksON0087dEKbFbwToSKB0Xd7uYmsdr2uLxhuLuOfXOTYAHZ
-    9nUToVWETpj/pBy6gtwcvnYQtK/dR1Jc9jowI2w==
+    t=1519656038; b=ZFUK2gaPwoDq9zo+Ur+k6wCxp8QrRmTrHy7KdLVmEJ/8iaJ
+    AnLg/lTTNJ75Z7FN9vCvlB0+byw0Vm2f8BFYVMTJTkaMX9lOOCYGswcBQ62Vwavk
+    6fV6y6rRHN+cQPE1YGZgwgxgHgFH6IxPISXQXTgI1yJTxSTdYjC5vbwO0FHDXLet
+    XTLTzsWQixhhpq7rlbSzHoQf7CftLYe05gLoUF8QzA2hAkYxEO/Nd9y9+gTXL+9m
+    C7O66W+FmhAQhmtbfd/ZlNYJdO+1Bl3QePjU+DEnaIMF/dBmXU+PAjb46vHj7N17
+    QRVywOpw9TbDNV7uMRzGftOJ6xk+f8YV5R+iXEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=cc:subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519694094; bh=9rf1etHn+fQjEvha65G8LDDPlRpRSM/6qOStiUe+xow=; b=B
-    BW2Fn8AbETdQW635VMpq25dn0VaPpaBv8YeDuD/WPEAM4ai88wGRTlAZaSFrbta0
-    C4i7wyglMsFzo7YWRgAvytrWdnjLhF3Iyb763+kf4m9C9iGrckZTRDur0kjb40xz
-    Ey6lzKZMC9pUXqdh0ZX7tmv3+Co+hsEiTDWST6JvU9ggVFwibEYo0i/sSVdVNu1d
-    GlRt0RBLkwGOEcMzrD4KTxkpJe91IL6M1zlNXAFE8vWHE0cqiVzBl/xB0qFC2jg0
-    EDYFAPvs8dOzQE5+dY41vzGwvMepNbdd46eLhseh3r4Gz7M9v1VcGV85Ec2w8uTS
-    cLpvy8HRk5Cm8VVQLKnVw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519656038; bh=x7Jrs745mCdXtuVchbKMxnLHAA6YHDRnaNULy4
+    wz3SU=; b=o+KZYykJX/MeJCT0L2Y4zcBPdG344srX5ev93/a/evi5vQcSRQ4CY2
+    e/1AyzPLpDx3jPnvgNkNsrBF9Aec058I08+nadhiprJ7bQJy+kqr/FePjflKObhe
+    J+7GdFeju8+5IRwOojFL7K/HhLBl59uI46hDiPlyKB8dZ/0gNkh0qHw3RUlVoGbb
+    VQ0l73V09RGKI1KlL+lBjb4o88g/+VXzjPI7gkTq+K0AY02NrAVGv8vQ39JhB1nh
+    pPY4fE57BGlBGOAmElLp2aBwVxStbLcFGmFDzGYf1xEjXrzMke2nohJQLyy8k0Kg
+    4W8lTeS1Gpwu44cQucsvqA+Z58LSBd0Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LDjlgihF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=k+Vz9sN2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rock-chips.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LDjlgihF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=k+Vz9sN2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rock-chips.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeB0BOv (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 20:14:51 -0500
-Received: from lucky1.263xmail.com ([211.157.147.130]:41694 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeB0BOu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 20:14:50 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: vineet.gupta1@synopsys.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <9ceb694a5a29c582a22539b72e91f653>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: shawn.lin@rock-chips.com,
+        id S1753477AbeBZOkh (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 09:40:37 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36086 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753298AbeBZOkg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 09:40:36 -0500
+X-Google-Smtp-Source: AG47ELuJUuxEdV/z0Xx8O3oeZjpZH7mLadcxa4rHyiS+6WwCnzHTuV2EhNNMlC2PWzgOTckuBKelwcu2GAsJlwHICq8=
+MIME-Version: 1.0
+In-Reply-To: <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
+References: <20180226143413.44134-1-Evgeniy.Didin@synopsys.com> <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 26 Feb 2018 16:40:34 +0200
+Message-ID: <CAHp75Vepn=nS9=WRpKhPLQ04EJEpL0tcne-DfV6ip-ELH9ggRA@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v3] mmc: dw_mmc: Fix the DTO timeout overflow
+ calculation for 32-bit systems
+To: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
+Cc: linux-mmc@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Douglas Anderson <dianders@chromium.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        stable@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: [PATCH 1/2 v3] mmc: dw_mmc: Fix the DTO timeout overflow
- calculation for 32-bit systems
-To: Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
-        linux-mmc@vger.kernel.org
-References: <20180226143413.44134-1-Evgeniy.Didin@synopsys.com>
- <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <d955cc19-1398-3c05-4742-32664480d07d@rock-chips.com>
-Date: Tue, 27 Feb 2018 09:14:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        Stable <stable@vger.kernel.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Mon, Feb 26, 2018 at 4:34 PM, Evgeniy Didin
+<Evgeniy.Didin@synopsys.com> wrote:
+> In commit 9d9491a7da2a ("mmc: dw_mmc: Fix the DTO timeout calculation") have been made
+> changes which cause multiply overflow for 32-bit systems.
+> The broken timeout calculations caused false interrupt latency warnings
+> and stacktrace splat (such as below) when accessing the SD Card.
 
-> Tested-by: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-> Fixes: ARC STAR 9001306872 HSDK, sdio: board crashes when copying big files
-> 
-> Signed-off-by: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-> 
-> CC: Alexey Brodkin <abrodkin@synopsys.com>
-> CC: Eugeniy Paltsev <paltsev@synopsys.com>
-> CC: Douglas Anderson <dianders@chromium.org>
-> CC: Ulf Hansson <ulf.hansson@linaro.org>
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-snps-arc@lists.infradead.org
-> Cc: <stable@vger.kernel.org> #  9d9491a7da2a mmc: dw_mmc: Fix the DTO timeout calculation
+> +       drto_ms = DIV_ROUND_UP((u64)MSEC_PER_SEC * drto_clks * drto_div,
+>                                host->bus_hz);
 
-As I said, the correct tag may be:
+Same as per patch 2.
 
-Reported-by: Vineet Gupta <Vineet.Gupta1@synopsys.com> # ARC STAR 
-9001306872 HSDK, sdio: board crashes when copying big files
-Tested-by: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Fixes: 9d9491a7da2a ("mmc: dw_mmc: Fix the DTO timeout calculation")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-...
-...
-
-
-> ---
-> Nothing changed since v2.
->   drivers/mmc/host/dw_mmc.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-
-> -	drto_ms = DIV_ROUND_UP(MSEC_PER_SEC * drto_clks * drto_div,
-> +
-> +	drto_ms = DIV_ROUND_UP((u64)MSEC_PER_SEC * drto_clks * drto_div,
->   			       host->bus_hz);
->   
-
-Hmm?
-
-#define DIV_ROUND_DOWN_ULL(ll, d) \
-	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
-
-#define DIV_ROUND_UP_ULL(ll, d)		DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
-
-
-It uses intermediate unsigned long long _tmp for your "multiply", namely
-MSEC_PER_SEC * drto_clks * drto_div, which could solves the problem.
-So I don't see why DIV_ROUND_UP_ULL can't work for you?
-
-
->   	/* add a bit spare time */
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
