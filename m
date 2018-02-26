@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753381AbeBZNW5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:22:57 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38048 "EHLO
+        id S1753364AbeBZNXJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:23:09 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36280 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753271AbeBZNRp (ORCPT
+        with ESMTP id S1753117AbeBZNRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:17:45 -0500
-X-Google-Smtp-Source: AH8x2265KZYm1oQgUjIE7ZAb+lWhPIsMxDwPGQSw4wHGGhSTA3qEnh1fRNd8PPdlhZO/6JqfpvFyrQ==
+        Mon, 26 Feb 2018 08:17:33 -0500
+X-Google-Smtp-Source: AG47ELuTpwQ+E5BCW4+DHuij4jGw0kT/dJiq6VqyGW2YFlMA1j3uHuR+1hh2rSgeb77ZojYTfupOtw==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 14/19] nvme: make nvme_get_log_ext available
-Date: Mon, 26 Feb 2018 14:17:13 +0100
-Message-Id: <1519651038-16845-15-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 06/19] lightnvm: pblk: check for supported version
+Date: Mon, 26 Feb 2018 14:17:05 +0100
+Message-Id: <1519651038-16845-7-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
 References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
@@ -27,28 +27,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make nvme_get_log_ext available outside of core.c.
+At this point, only 1.2 spec is supported, thus check for it. Also,
+since device-side L2P is only supported in the 1.2 spec, make sure to
+only check its value under 1.2.
 
-This is in preparation for using it in lightnvm.c
-
-Signed-off-by: Javier González <javier@cnexlabs.>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/nvme/host/nvme.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/lightnvm/pblk-init.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 1ca08f4993ba..505f797f8c6c 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -396,6 +396,9 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
- int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
- int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 95ecb0ec736b..6e0567971cf6 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -990,9 +990,15 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 	struct pblk *pblk;
+ 	int ret;
  
-+int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-+		     u8 log_page, void *log, size_t size, size_t offset);
+-	if (dev->geo.c.dom & NVM_RSP_L2P) {
++	if (geo->c.version != NVM_OCSSD_SPEC_12) {
++		pr_err("pblk: OCSSD version not supported (%u)\n",
++							geo->c.version);
++		return ERR_PTR(-EINVAL);
++	}
 +
- extern const struct attribute_group nvme_ns_id_attr_group;
- extern const struct block_device_operations nvme_ns_head_ops;
++	if (geo->c.version == NVM_OCSSD_SPEC_12 && geo->c.dom & NVM_RSP_L2P) {
+ 		pr_err("pblk: host-side L2P table not supported. (%x)\n",
+-							dev->geo.c.dom);
++							geo->c.dom);
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
 -- 
 2.7.4
