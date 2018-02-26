@@ -1,51 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeBZTmU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 14:42:20 -0500
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:44236 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751499AbeBZTmS (ORCPT
+        id S1751445AbeBZTqV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 14:46:21 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:46234 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750762AbeBZTqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 14:42:18 -0500
-X-Google-Smtp-Source: AH8x227i0bVKm8Q0j1/vWuYx8HWhax4RdpAG6r5YrKEG4lCrBEauyZqBYJcM9d0Oer7JFaWIzh78/g==
-Subject: Re: [PATCH 0/6] of: remove kbasename() from core
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
- <CAMuHMdUj63OQnJWz=Q57dbc1XKOnq+_et5-E_4yQjTZt+c++GQ@mail.gmail.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <48509f67-9e94-ebe6-746b-c1262ea143b0@gmail.com>
-Date: Mon, 26 Feb 2018 11:42:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUj63OQnJWz=Q57dbc1XKOnq+_et5-E_4yQjTZt+c++GQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 26 Feb 2018 14:46:20 -0500
+Date: Mon, 26 Feb 2018 14:46:18 -0500 (EST)
+Message-Id: <20180226.144618.918714632713424711.davem@davemloft.net>
+To: fthain@telegraphics.com.au
+Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/4] Fixes, cleanup and modernization for SONIC
+ ethernet drivers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1519514463.git.fthain@telegraphics.com.au>
+References: <cover.1519514463.git.fthain@telegraphics.com.au>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/18 01:03, Geert Uytterhoeven wrote:
-> Hi Frank,
-> 
-> On Mon, Feb 26, 2018 at 3:22 AM,  <frowand.list@gmail.com> wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> Struct device_node full_name no longer includes the full path
->> name.
-> 
-> Is this now also true on systems with real Open Firmware?
+From: Finn Thain <fthain@telegraphics.com.au>
+Date: Sat, 24 Feb 2018 18:27:24 -0500 (EST)
 
-Thanks, good point.  I can not remove the kbasename() calls.
+> Changes since v4 of combined patch series:
+> - Removed redundant and non-portable MACH_IS_MAC tests.
+> - Omitted patches unrelated to SONIC drivers.
+> - Dropped changes to the 'version_printed' logic and debug message text.
 
-Will re-spin, as a much smaller patch to deal with the
-overlay issues.
-
--Frank
+Series applied, thank you.
