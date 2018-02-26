@@ -1,524 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeBZPbf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:31:35 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38625 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751605AbeBZPbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:31:31 -0500
-X-Google-Smtp-Source: AH8x227QP/KPLayvx1ONybrIQzktGyp0PijiYkNV+zRVv8gjhpS/XXwVVaFpSW/diWdUTOZtTvADrA==
-From: minyard@acm.org
-To: openipmi-developer@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alistair Popple <alistair@popple.id.au>, Jeremy Kerr <jk@ozlabs.org>,
-        Joel Stanley <joel@jms.id.au>, Rocky Craig <rocky.craig@hp.com>
-Subject: [PATCH] ipmi: Add or fix SPDX-License-Identifier in all files
-Date: Mon, 26 Feb 2018 09:24:51 -0600
-Message-Id: <1519658691-10401-1-git-send-email-minyard@acm.org>
-X-Mailer: git-send-email 2.7.4
+        id S1752035AbeBZPbp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:31:45 -0500
+Received: from mga07.intel.com ([134.134.136.100]:39490 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751628AbeBZPbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:31:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
+   d="scan'208";a="33712202"
+From: Jani Nikula <jani.nikula@intel.com>
+To: Chris Wilson <chris@chris-wilson.co.uk>, linux-kernel@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Jean Delvare <khali@linux-fr.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Li Zhong <zhong@linux.vnet.ibm.com>,
+        Petri Latvala <petri.latvala@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH] kernel: Downgrade warning for unsafe parameters
+In-Reply-To: <20180226151919.9674-1-chris@chris-wilson.co.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180226151919.9674-1-chris@chris-wilson.co.uk>
+Date: Mon, 26 Feb 2018 17:31:32 +0200
+Message-ID: <87tvu322ej.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+On Mon, 26 Feb 2018, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> As using an unsafe module parameter is, by its very definition, an
+> expected user action, emitting a warning is overkill. Nothing has yet
+> gone wrong, and we add a taint flag for any future oops should
+> something actually go wrong. So instead of having a user controllable
+> pr_warn, downgrade it to a pr_notice for "a normal, but significant
+> condition".
+>
+> We make use of unsafe kernel parameters in igt (we have not yet
+> succeeded in removing all such debugging options), which generates a
+> warning and taints the kernel. The warning is unhelpful as we then need
+> to filter it out again as we check that every test themselves do not
+> provoke any kernel warnings.
 
-And get rid of the license text that is no longer necessary.
+IGT being https://cgit.freedesktop.org/drm/igt-gpu-tools/ for those not
+in the DRM/KMS circles.
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Alistair Popple <alistair@popple.id.au>
-Cc: Jeremy Kerr <jk@ozlabs.org>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Rocky Craig <rocky.craig@hp.com>
----
+> References: 91f9d330cc14 ("module: make it possible to have unsafe, tainting module params")
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Jani Nikula <jani.nikula@intel.com>
+> Cc: Rusty Russell <rusty@rustcorp.com.au>
+> Cc: Jean Delvare <khali@linux-fr.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Li Zhong <zhong@linux.vnet.ibm.com>
+> Cc: Petri Latvala <petri.latvala@intel.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Just a cleanup of these things.
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
- drivers/char/ipmi/bt-bmc.c           |  6 +-----
- drivers/char/ipmi/ipmi_bt_sm.c       | 22 ++--------------------
- drivers/char/ipmi/ipmi_devintf.c     | 22 +---------------------
- drivers/char/ipmi/ipmi_kcs_sm.c      | 22 +---------------------
- drivers/char/ipmi/ipmi_msghandler.c  | 22 +---------------------
- drivers/char/ipmi/ipmi_powernv.c     |  6 +-----
- drivers/char/ipmi/ipmi_poweroff.c    | 22 +---------------------
- drivers/char/ipmi/ipmi_si.h          |  1 +
- drivers/char/ipmi/ipmi_si_hardcode.c |  1 +
- drivers/char/ipmi/ipmi_si_hotmod.c   |  1 +
- drivers/char/ipmi/ipmi_si_intf.c     | 22 +---------------------
- drivers/char/ipmi/ipmi_si_mem_io.c   |  1 +
- drivers/char/ipmi/ipmi_si_parisc.c   |  1 +
- drivers/char/ipmi/ipmi_si_pci.c      |  1 +
- drivers/char/ipmi/ipmi_si_platform.c |  1 +
- drivers/char/ipmi/ipmi_si_port_io.c  |  1 +
- drivers/char/ipmi/ipmi_si_sm.h       | 22 +---------------------
- drivers/char/ipmi/ipmi_smic_sm.c     | 24 ++----------------------
- drivers/char/ipmi/ipmi_ssif.c        |  6 +-----
- drivers/char/ipmi/ipmi_watchdog.c    | 22 +---------------------
- 20 files changed, 22 insertions(+), 204 deletions(-)
+When I added the unsafe module params, I erred on the side of making
+more noise about tainting, but there was really no discussion about
+it. FWIW, I don't mind the change, as long as it's not debug level.
 
-diff --git a/drivers/char/ipmi/bt-bmc.c b/drivers/char/ipmi/bt-bmc.c
-index c95b93b..8328c82 100644
---- a/drivers/char/ipmi/bt-bmc.c
-+++ b/drivers/char/ipmi/bt-bmc.c
-@@ -1,10 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015-2016, IBM Corporation.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-  */
- 
- #include <linux/atomic.h>
-diff --git a/drivers/char/ipmi/ipmi_bt_sm.c b/drivers/char/ipmi/ipmi_bt_sm.c
-index feafdab..6e63819 100644
---- a/drivers/char/ipmi/ipmi_bt_sm.c
-+++ b/drivers/char/ipmi/ipmi_bt_sm.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  ipmi_bt_sm.c
-  *
-@@ -5,26 +6,7 @@
-  *  of the driver architecture at http://sourceforge.net/projects/openipmi 
-  *
-  *  Author:	Rocky Craig <first.last@hp.com>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.  */
-+ */
- 
- #include <linux/kernel.h> /* For printk. */
- #include <linux/string.h>
-diff --git a/drivers/char/ipmi/ipmi_devintf.c b/drivers/char/ipmi/ipmi_devintf.c
-index 5f1bc91..e21565b 100644
---- a/drivers/char/ipmi/ipmi_devintf.c
-+++ b/drivers/char/ipmi/ipmi_devintf.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_devintf.c
-  *
-@@ -8,27 +9,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/char/ipmi/ipmi_kcs_sm.c b/drivers/char/ipmi/ipmi_kcs_sm.c
-index 1da61af..fe1ce1d 100644
---- a/drivers/char/ipmi/ipmi_kcs_sm.c
-+++ b/drivers/char/ipmi/ipmi_kcs_sm.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_kcs_sm.c
-  *
-@@ -8,27 +9,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- /*
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index e0b0d7e..898d2b7 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_msghandler.c
-  *
-@@ -8,27 +9,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/char/ipmi/ipmi_powernv.c b/drivers/char/ipmi/ipmi_powernv.c
-index bcf493d..d2c2c76 100644
---- a/drivers/char/ipmi/ipmi_powernv.c
-+++ b/drivers/char/ipmi/ipmi_powernv.c
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * PowerNV OPAL IPMI driver
-  *
-  * Copyright 2014 IBM Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License as published by the Free
-- * Software Foundation; either version 2 of the License, or (at your option)
-- * any later version.
-  */
- 
- #define pr_fmt(fmt)        "ipmi-powernv: " fmt
-diff --git a/drivers/char/ipmi/ipmi_poweroff.c b/drivers/char/ipmi/ipmi_poweroff.c
-index 38e6af1..e46b821 100644
---- a/drivers/char/ipmi/ipmi_poweroff.c
-+++ b/drivers/char/ipmi/ipmi_poweroff.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_poweroff.c
-  *
-@@ -9,27 +10,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002,2004 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-diff --git a/drivers/char/ipmi/ipmi_si.h b/drivers/char/ipmi/ipmi_si.h
-index 17ce5f7..f52d6e0 100644
---- a/drivers/char/ipmi/ipmi_si.h
-+++ b/drivers/char/ipmi/ipmi_si.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * ipmi_si.h
-  *
-diff --git a/drivers/char/ipmi/ipmi_si_hardcode.c b/drivers/char/ipmi/ipmi_si_hardcode.c
-index fa9a478..e0c02e1 100644
---- a/drivers/char/ipmi/ipmi_si_hardcode.c
-+++ b/drivers/char/ipmi/ipmi_si_hardcode.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/moduleparam.h>
- #include "ipmi_si.h"
-diff --git a/drivers/char/ipmi/ipmi_si_hotmod.c b/drivers/char/ipmi/ipmi_si_hotmod.c
-index fc03b9b..414a64a 100644
---- a/drivers/char/ipmi/ipmi_si_hotmod.c
-+++ b/drivers/char/ipmi/ipmi_si_hotmod.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_si_hotmod.c
-  *
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index af2da23..4a1285b 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_si.c
-  *
-@@ -10,27 +11,6 @@
-  *
-  * Copyright 2002 MontaVista Software Inc.
-  * Copyright 2006 IBM Corp., Christian Krafft <krafft@de.ibm.com>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- /*
-diff --git a/drivers/char/ipmi/ipmi_si_mem_io.c b/drivers/char/ipmi/ipmi_si_mem_io.c
-index 8796396..dfb5650 100644
---- a/drivers/char/ipmi/ipmi_si_mem_io.c
-+++ b/drivers/char/ipmi/ipmi_si_mem_io.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io.h>
- #include "ipmi_si.h"
-diff --git a/drivers/char/ipmi/ipmi_si_parisc.c b/drivers/char/ipmi/ipmi_si_parisc.c
-index 6b10f0e..07b5509 100644
---- a/drivers/char/ipmi/ipmi_si_parisc.c
-+++ b/drivers/char/ipmi/ipmi_si_parisc.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/module.h>
- #include <asm/hardware.h>	/* for register_parisc_driver() stuff */
-diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
-index fff1e0f..5f9f889 100644
---- a/drivers/char/ipmi/ipmi_si_pci.c
-+++ b/drivers/char/ipmi/ipmi_si_pci.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_si_pci.c
-  *
-diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
-index f421487..995794c 100644
---- a/drivers/char/ipmi/ipmi_si_platform.c
-+++ b/drivers/char/ipmi/ipmi_si_platform.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_si_platform.c
-  *
-diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
-index e5ce174..9290427 100644
---- a/drivers/char/ipmi/ipmi_si_port_io.c
-+++ b/drivers/char/ipmi/ipmi_si_port_io.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io.h>
- #include "ipmi_si.h"
-diff --git a/drivers/char/ipmi/ipmi_si_sm.h b/drivers/char/ipmi/ipmi_si_sm.h
-index aa8d88a..de8ceb5 100644
---- a/drivers/char/ipmi/ipmi_si_sm.h
-+++ b/drivers/char/ipmi/ipmi_si_sm.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * ipmi_si_sm.h
-  *
-@@ -11,27 +12,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- #include <linux/ipmi.h>
-diff --git a/drivers/char/ipmi/ipmi_smic_sm.c b/drivers/char/ipmi/ipmi_smic_sm.c
-index 8f7c73f..5c82ce0 100644
---- a/drivers/char/ipmi/ipmi_smic_sm.c
-+++ b/drivers/char/ipmi/ipmi_smic_sm.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_smic_sm.c
-  *
-@@ -18,28 +19,7 @@
-  * copyright notice:
-  * (c) Copyright 2001 Grant Grundler (c) Copyright
-  * 2001 Hewlett-Packard Company
-- *
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.  */
-+ */
- 
- #include <linux/kernel.h> /* For printk. */
- #include <linux/string.h>
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index 5da345e..2babf56 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_ssif.c
-  *
-@@ -13,11 +14,6 @@
-  *
-  * Copyright 2003 Intel Corporation
-  * Copyright 2005 MontaVista Software
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-  */
- 
- /*
-diff --git a/drivers/char/ipmi/ipmi_watchdog.c b/drivers/char/ipmi/ipmi_watchdog.c
-index a58acdc..db06cef 100644
---- a/drivers/char/ipmi/ipmi_watchdog.c
-+++ b/drivers/char/ipmi/ipmi_watchdog.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ipmi_watchdog.c
-  *
-@@ -8,27 +9,6 @@
-  *         source@mvista.com
-  *
-  * Copyright 2002 MontaVista Software Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License as published by the
-- *  Free Software Foundation; either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *
-- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
-- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-- *  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-- *  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-- *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- #include <linux/module.h>
+BR,
+Jani.
+
+> ---
+>  kernel/params.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/params.c b/kernel/params.c
+> index cc9108c2a1fd..ce89f757e6da 100644
+> --- a/kernel/params.c
+> +++ b/kernel/params.c
+> @@ -111,8 +111,8 @@ bool parameq(const char *a, const char *b)
+>  static void param_check_unsafe(const struct kernel_param *kp)
+>  {
+>  	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+> -		pr_warn("Setting dangerous option %s - tainting kernel\n",
+> -			kp->name);
+> +		pr_notice("Setting dangerous option %s - tainting kernel\n",
+> +			  kp->name);
+>  		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+>  	}
+>  }
+
 -- 
-2.7.4
+Jani Nikula, Intel Open Source Technology Center
