@@ -1,69 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752109AbeBZDOS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:14:18 -0500
-Received: from out20-1.mail.aliyun.com ([115.124.20.1]:37615 "EHLO
-        out20-1.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751960AbeBZDOR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:14:17 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.260804|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04486;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.B5B-1F2_1519614839;
-From: Yong Deng <yong.deng@magewell.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Chen-Yu Tsai <wens@csie.org>, Marcus Cooper <codekipper@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Yong Deng <yong.deng@magewell.com>
-Subject: [PATCH] ASoC: sun4i-i2s: Fix offset tune for SUN8I
-Date: Mon, 26 Feb 2018 11:12:18 +0800
-Message-Id: <1519614738-10959-1-git-send-email-yong.deng@magewell.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752141AbeBZDPz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:15:55 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751958AbeBZDPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:15:50 -0500
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+Date: Mon, 26 Feb 2018 11:15:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519607771-20613-1-git-send-email-mst@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SUN8I_I2S_TX_CHAN_OFFSET_MASK should be GENMASK(13, 12).
-And offset tune of RX should also be updated.
 
-Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
 
-Signed-off-by: Yong Deng <yong.deng@magewell.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On 2018年02月26日 09:17, Michael S. Tsirkin wrote:
+> So pointer rings work fine, but they have a problem: make them too small
+> and not enough entries fit.  Make them too large and you start flushing
+> your cache and running out of memory.
+>
+> This is a new idea of mine: a ring backed by a linked list. Once you run
+> out of ring entries, instead of a drop you fall back on a list with a
+> common lock.
+>
+> Should work well for the case where the ring is typically sized
+> correctly, but will help address the fact that some user try to set e.g.
+> tx queue length to 1000000.
+>
+> In other words, the idea is that if a user sets a really huge TX queue
+> length, we allocate a ptr_ring which is smaller, and use the backup
+> linked list when necessary to provide the requested TX queue length
+> legitimately.
+>
+> My hope this will move us closer to direction where e.g. fw codel can
+> use ptr rings without locking at all.  The API is still very rough, and
+> I really need to take a hard look at lock nesting.
+>
+> Compiled only, sending for early feedback/flames.
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>
+> changes from v1:
+> - added clarifications by DaveM in the commit log
+> - build fixes
+>
+>   include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 61 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index d72b2e7..8aa8882 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -31,11 +31,18 @@
+>   #include <asm/errno.h>
+>   #endif
+>   
+> +/* entries must start with the following structure */
+> +struct plist {
+> +	struct plist *next;
+> +	struct plist *last; /* only valid in the 1st entry */
+> +};
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index a4aa931ebfae..797cafffaac8 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -110,12 +110,15 @@
- 
- #define SUN8I_I2S_TX_CHAN_MAP_REG	0x44
- #define SUN8I_I2S_TX_CHAN_SEL_REG	0x34
--#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 11)
-+#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 12)
- #define SUN8I_I2S_TX_CHAN_OFFSET(offset)	(offset << 12)
- #define SUN8I_I2S_TX_CHAN_EN_MASK		GENMASK(11, 4)
- #define SUN8I_I2S_TX_CHAN_EN(num_chan)		(((1 << num_chan) - 1) << 4)
- 
- #define SUN8I_I2S_RX_CHAN_SEL_REG	0x54
-+#define SUN8I_I2S_RX_CHAN_OFFSET_MASK		GENMASK(13, 12)
-+#define SUN8I_I2S_RX_CHAN_OFFSET(offset)	(offset << 12)
-+
- #define SUN8I_I2S_RX_CHAN_MAP_REG	0x58
- 
- /**
-@@ -460,6 +463,9 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 		regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
- 				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
- 				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
-+		regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
-+				   SUN8I_I2S_RX_CHAN_OFFSET_MASK,
-+				   SUN8I_I2S_RX_CHAN_OFFSET(offset));
- 	}
- 
- 	regmap_field_write(i2s->field_fmt_mode, val);
--- 
-1.8.3.1
+So I wonder whether or not it's better to do this in e.g skb_array 
+implementation. Then it can use its own prev/next field.
+
+> +
+>   struct ptr_ring {
+>   	int producer ____cacheline_aligned_in_smp;
+>   	spinlock_t producer_lock;
+>   	int consumer_head ____cacheline_aligned_in_smp; /* next valid entry */
+>   	int consumer_tail; /* next entry to invalidate */
+> +	struct plist *consumer_list;
+>   	spinlock_t consumer_lock;
+>   	/* Shared consumer/producer data */
+>   	/* Read-only by both the producer and the consumer */
+> @@ -120,10 +127,40 @@ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
+>   }
+>   
+>   /*
+> - * Note: resize (below) nests producer lock within consumer lock, so if you
+> - * consume in interrupt or BH context, you must disable interrupts/BH when
+> - * calling this.
+> + * Note: resize API with the _fallback should be used when calling this.
+>    */
+> +static inline int ptr_ring_produce_fallback(struct ptr_ring *r, void *ptr)
+> +{
+> +	int ret;
+> +	unsigned long flags;
+> +	struct plist *p = ptr;
+> +
+> +	p->next = NULL;
+> +	p->last = p;
+> +
+> +	spin_lock_irqsave(&r->producer_lock, flags);
+> +	ret = __ptr_ring_produce(r, ptr);
+> +	if (ret) {
+> +		spin_lock(&r->consumer_lock);
+> +		ret = __ptr_ring_produce(r, ptr);
+> +		if (ret) {
+> +			int producer = r->producer ? r->producer - 1 :
+> +				r->size - 1;
+> +			struct plist *first = r->queue[producer];
+> +
+> +			BUG_ON(!first);
+> +
+> +			first->last->next = p;
+> +			first->last = p;
+
+I believe we still need a limitation on the total size of the queue.
+
+Thanks
+
+> +		}
+> +		spin_unlock(&r->consumer_lock);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&r->producer_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+>   static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
+>   {
+>   	int ret;
+> @@ -135,6 +172,7 @@ static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
+>   	return ret;
+>   }
+>   
+> +
+>   static inline int ptr_ring_produce_irq(struct ptr_ring *r, void *ptr)
+>   {
+>   	int ret;
+> @@ -359,6 +397,26 @@ static inline void *ptr_ring_consume_bh(struct ptr_ring *r)
+>   	return ptr;
+>   }
+>   
+> +static inline void *ptr_ring_consume_fallback(struct ptr_ring *r)
+> +{
+> +	unsigned long flags;
+> +	struct plist *ptr;
+> +
+> +	spin_lock_irqsave(&r->consumer_lock, flags);
+> +	if (r->consumer_list) {
+> +		ptr = r->consumer_list;
+> +		r->consumer_list = ptr->next;
+> +	} else {
+> +		ptr = __ptr_ring_consume(r);
+> +		if (ptr) {
+> +			r->consumer_list = ptr->next;
+> +		}
+> +	}
+> +	spin_unlock_irqrestore(&r->consumer_lock, flags);
+> +
+> +	return ptr;
+> +}
+> +
+>   static inline int ptr_ring_consume_batched(struct ptr_ring *r,
+>   					   void **array, int n)
+>   {
