@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226+rBM/Z8vUK4vYjcqr90nof6+C6Uqr3aSOgn5TaGh4JDmt/BptnTXol7i5A2hnYzIEJiUA
-ARC-Seal: i=1; a=rsa-sha256; t=1519676669; cv=none;
+X-Google-Smtp-Source: AH8x227+VsDrDH9Kvsf5Nn9B6vMB4Wg4GRwgXe0xSUOlhPzcvlbu8hU97d0AIp0BuvjsYxVJ3Vda
+ARC-Seal: i=1; a=rsa-sha256; t=1519676666; cv=none;
         d=google.com; s=arc-20160816;
-        b=x3qHOIeC0riJmrWqKDqVrrW7M+XDligFIldCVnjEdSFExWigdHVq19cEsbJhSF1cBu
-         tV9FFDN8hGevaPvOE8GVDMjk86cy0NkrlCb5hMF/CFrWPzjKpLLz5p7O3YXYuO2D2+A+
-         m0mdlspZ7FIpTgKy380r/JPVydyMciGzrh4mxOp0JJ0vdK7R+7K56rAWhTbMfuqZcumc
-         1QBWVyADmF+pblonoc5g85k8rbverPnH20IBH6He+tDoi/HJoDUk2PvsyUlDfCtulsiU
-         0Yv86qvbbMOUFoQbA9H8O84+QZZEFSO3335iwQaPJgdtn0L6MLYNI/r7kObfsDY0K8fm
-         Teig==
+        b=RSZJp74RsrQ2Z1F4UjJ81OIEHp+2vWmk6t5wWursWsH8NTiV7sNts162pEERfHnTAZ
+         jWv3oUfYjhS5wrkl/Do8U/4y6hXydIKJkj9e6ljaKOdnOgSZOafoUbrPze5WjesTm2ZM
+         a64Sb8amIzGVKsl2b3BAn23fC4hkU5VLpkWijXEocv5qNLME/B7wDN2zHNuWzpVhByOS
+         aQxWInwZy6zbekNo/TbegXO/aMTqMO2eQZvhAQsMoSsOap7+iWfGu4Wznr2dohq+13lO
+         9wghjJweWdmyaMBqpyBwWWN3RJZ/ZXAIj82RZTlruJnoRFIzqUD73XyExxn1oOgMbQDK
+         RqvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RVUq4w16zB6i/HIZuTW3GEXVjMiPbx4Gjae+RR6cIa0=;
-        b=CoitXLGoIpFnwxngFwWi8jnpJmQTCxH6X57WntZ6iVRzyiaKJp4S9wOFb4sexXlqfr
-         EanIKxOn9N9reTJMO/ARFMEM4JuycJBzi1KfFac3iofaNjkm39tstuV4HsOhe4WFhzE+
-         qpg+Yz+YQgIW34rY127GJyJUD6XW9/Vyn1JAskY+D+VMhM7ID6xwb/gr5RHSiY/Do7WB
-         uA1JNZ7aUW81vuCgUwzcvM5Tw6qJ1TlcmLiR+nrpFeIbwCQnbeQA5s0NrXcGlerT//Lq
-         1hNyQFgBi3tLbDQHmRp1TqZfg2i6pHTJL2WbALCMfdgopToXaQb24NU3YezG+ZPU1FxS
-         EpzA==
+        bh=NKNsAPgMiZx96GwIJ9jsBcoAAj+lm5YSXm1zQHVdvdg=;
+        b=vmvYgGYq86APwtsUtF2khi1ofRkOj7ZVMuZZ0pgfsCSPZ4q1s7oVvCKqGC0K7/hKe9
+         KfFPMOjxTAxLQblWB8sntQrcoGp0LWnwOuRJwIGfvG2GLcHqH+5eGqDwoj416A/fV/tG
+         33+ETyodpcVcIiJN+zxoUFRRRJo1DZiPDlHZARadJutwTNLWUafcUH8mETHteWpgz6Uw
+         +xR5KPQJjk1Y6uF4aYM2NpvFOgGLpN9tgR/JrQekNGigiUOhoSLMmDnTnlK98KjSY4lL
+         u08k1AtQvxqDGUPA4qmSf5TnrM+giTlGNQr5MFepR2RCk8OEUvALAfVIDoeZ7iGJhLSg
+         Dvbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shigeru Yoshida <Shigeru.Yoshida@windriver.com>,
-	Haiqing Bai <Haiqing.Bai@windriver.com>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.14 31/54] ohci-hcd: Fix race condition caused by ohci_urb_enqueue() and io_watchdog_func()
-Date: Mon, 26 Feb 2018 21:22:08 +0100
-Message-Id: <20180226202145.953180588@linuxfoundation.org>
+	Casey Leedom <leedom@chelsio.com>,
+	Arjun Vynipadath <arjun@chelsio.com>,
+	Ganesh Goudar <ganeshgr@chelsio.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 30/54] PCI/cxgb4: Extend T3 PCI quirk to T4+ devices
+Date: Mon, 26 Feb 2018 21:22:07 +0100
+Message-Id: <20180226202145.900045822@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496287558138852?=
-X-GMAIL-MSGID: =?utf-8?q?1593496483462051630?=
+X-GMAIL-THRID: =?utf-8?q?1593496284533740690?=
+X-GMAIL-MSGID: =?utf-8?q?1593496479943895275?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,146 +51,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shigeru Yoshida <shigeru.yoshida@windriver.com>
+From: Casey Leedom <leedom@chelsio.com>
 
-commit b2685bdacdaab065c172b97b55ab46c6be77a037 upstream.
+commit 7dcf688d4c78a18ba9538b2bf1b11dc7a43fe9be upstream.
 
-Running io_watchdog_func() while ohci_urb_enqueue() is running can
-cause a race condition where ohci->prev_frame_no is corrupted and the
-watchdog can mis-detect following error:
+We've run into a problem where our device is attached
+to a Virtual Machine and the use of the new pci_set_vpd_size()
+API doesn't help.  The VM kernel has been informed that
+the accesses are okay, but all of the actual VPD Capability
+Accesses are trapped down into the KVM Hypervisor where it
+goes ahead and imposes the silent denials.
 
-  ohci-platform 664a0800.usb: frame counter not updating; disabled
-  ohci-platform 664a0800.usb: HC died; cleaning up
+The right idea is to follow the kernel.org
+commit 1c7de2b4ff88 ("PCI: Enable access to non-standard VPD for
+Chelsio devices (cxgb3)") which Alexey Kardashevskiy authored
+to establish a PCI Quirk for our T3-based adapters. This commit
+extends that PCI Quirk to cover Chelsio T4 devices and later.
 
-Specifically, following scenario causes a race condition:
+The advantage of this approach is that the VPD Size gets set early
+in the Base OS/Hypervisor Boot and doesn't require that the cxgb4
+driver even be available in the Base OS/Hypervisor.  Thus PF4 can
+be exported to a Virtual Machine and everything should work.
 
-  1. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
-     and enters the critical section
-  2. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
-     returns false
-  3. ohci_urb_enqueue() sets ohci->prev_frame_no to a frame number
-     read by ohci_frame_no(ohci)
-  4. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
-  5. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
-     flags) and exits the critical section
-  6. Later, ohci_urb_enqueue() is called
-  7. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
-     and enters the critical section
-  8. The timer scheduled on step 4 expires and io_watchdog_func() runs
-  9. io_watchdog_func() calls spin_lock_irqsave(&ohci->lock, flags)
-     and waits on it because ohci_urb_enqueue() is already in the
-     critical section on step 7
- 10. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
-     returns false
- 11. ohci_urb_enqueue() sets ohci->prev_frame_no to new frame number
-     read by ohci_frame_no(ohci) because the frame number proceeded
-     between step 3 and 6
- 12. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
- 13. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
-     flags) and exits the critical section, then wake up
-     io_watchdog_func() which is waiting on step 9
- 14. io_watchdog_func() enters the critical section
- 15. io_watchdog_func() calls ohci_frame_no(ohci) and set frame_no
-     variable to the frame number
- 16. io_watchdog_func() compares frame_no and ohci->prev_frame_no
-
-On step 16, because this calling of io_watchdog_func() is scheduled on
-step 4, the frame number set in ohci->prev_frame_no is expected to the
-number set on step 3.  However, ohci->prev_frame_no is overwritten on
-step 11.  Because step 16 is executed soon after step 11, the frame
-number might not proceed, so ohci->prev_frame_no must equals to
-frame_no.
-
-To address above scenario, this patch introduces a special sentinel
-value IO_WATCHDOG_OFF and set this value to ohci->prev_frame_no when
-the watchdog is not pending or running.  When ohci_urb_enqueue()
-schedules the watchdog (step 4 and 12 above), it compares
-ohci->prev_frame_no to IO_WATCHDOG_OFF so that ohci->prev_frame_no is
-not overwritten while io_watchdog_func() is running.
-
-Signed-off-by: Shigeru Yoshida <Shigeru.Yoshida@windriver.com>
-Signed-off-by: Haiqing Bai <Haiqing.Bai@windriver.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 67e658794ca1 ("cxgb4: Set VPD size so we can read both VPD structures")
+Cc: <stable@vger.kernel.org>  # v4.9+
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/ohci-hcd.c |   10 +++++++---
- drivers/usb/host/ohci-hub.c |    4 +++-
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   10 --------
+ drivers/pci/quirks.c                       |   35 +++++++++++++++++------------
+ 2 files changed, 21 insertions(+), 24 deletions(-)
 
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -73,6 +73,7 @@ static const char	hcd_name [] = "ohci_hc
- 
- #define	STATECHANGE_DELAY	msecs_to_jiffies(300)
- #define	IO_WATCHDOG_DELAY	msecs_to_jiffies(275)
-+#define	IO_WATCHDOG_OFF		0xffffff00
- 
- #include "ohci.h"
- #include "pci-quirks.h"
-@@ -230,7 +231,7 @@ static int ohci_urb_enqueue (
- 		}
- 
- 		/* Start up the I/O watchdog timer, if it's not running */
--		if (!timer_pending(&ohci->io_watchdog) &&
-+		if (ohci->prev_frame_no == IO_WATCHDOG_OFF &&
- 				list_empty(&ohci->eds_in_use) &&
- 				!(ohci->flags & OHCI_QUIRK_QEMU)) {
- 			ohci->prev_frame_no = ohci_frame_no(ohci);
-@@ -501,6 +502,7 @@ static int ohci_init (struct ohci_hcd *o
- 
- 	setup_timer(&ohci->io_watchdog, io_watchdog_func,
- 			(unsigned long) ohci);
-+	ohci->prev_frame_no = IO_WATCHDOG_OFF;
- 
- 	ohci->hcca = dma_alloc_coherent (hcd->self.controller,
- 			sizeof(*ohci->hcca), &ohci->hcca_dma, GFP_KERNEL);
-@@ -730,7 +732,7 @@ static void io_watchdog_func(unsigned lo
- 	u32		head;
- 	struct ed	*ed;
- 	struct td	*td, *td_start, *td_next;
--	unsigned	frame_no;
-+	unsigned	frame_no, prev_frame_no = IO_WATCHDOG_OFF;
- 	unsigned long	flags;
- 
- 	spin_lock_irqsave(&ohci->lock, flags);
-@@ -835,7 +837,7 @@ static void io_watchdog_func(unsigned lo
- 			}
- 		}
- 		if (!list_empty(&ohci->eds_in_use)) {
--			ohci->prev_frame_no = frame_no;
-+			prev_frame_no = frame_no;
- 			ohci->prev_wdh_cnt = ohci->wdh_cnt;
- 			ohci->prev_donehead = ohci_readl(ohci,
- 					&ohci->regs->donehead);
-@@ -845,6 +847,7 @@ static void io_watchdog_func(unsigned lo
- 	}
- 
-  done:
-+	ohci->prev_frame_no = prev_frame_no;
- 	spin_unlock_irqrestore(&ohci->lock, flags);
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -2632,7 +2632,6 @@ void t4_get_regs(struct adapter *adap, v
  }
  
-@@ -973,6 +976,7 @@ static void ohci_stop (struct usb_hcd *h
- 	if (quirk_nec(ohci))
- 		flush_work(&ohci->nec_work);
- 	del_timer_sync(&ohci->io_watchdog);
-+	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+ #define EEPROM_STAT_ADDR   0x7bfc
+-#define VPD_SIZE           0x800
+ #define VPD_BASE           0x400
+ #define VPD_BASE_OLD       0
+ #define VPD_LEN            1024
+@@ -2670,15 +2669,6 @@ int t4_get_raw_vpd_params(struct adapter
+ 	if (!vpd)
+ 		return -ENOMEM;
  
- 	ohci_writel (ohci, OHCI_INTR_MIE, &ohci->regs->intrdisable);
- 	ohci_usb_reset(ohci);
---- a/drivers/usb/host/ohci-hub.c
-+++ b/drivers/usb/host/ohci-hub.c
-@@ -310,8 +310,10 @@ static int ohci_bus_suspend (struct usb_
- 		rc = ohci_rh_suspend (ohci, 0);
- 	spin_unlock_irq (&ohci->lock);
+-	/* We have two VPD data structures stored in the adapter VPD area.
+-	 * By default, Linux calculates the size of the VPD area by traversing
+-	 * the first VPD area at offset 0x0, so we need to tell the OS what
+-	 * our real VPD size is.
+-	 */
+-	ret = pci_set_vpd_size(adapter->pdev, VPD_SIZE);
+-	if (ret < 0)
+-		goto out;
+-
+ 	/* Card information normally starts at VPD_BASE but early cards had
+ 	 * it at 0.
+ 	 */
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3412,22 +3412,29 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
  
--	if (rc == 0)
-+	if (rc == 0) {
- 		del_timer_sync(&ohci->io_watchdog);
-+		ohci->prev_frame_no = IO_WATCHDOG_OFF;
-+	}
- 	return rc;
+ static void quirk_chelsio_extend_vpd(struct pci_dev *dev)
+ {
+-	pci_set_vpd_size(dev, 8192);
++	int chip = (dev->device & 0xf000) >> 12;
++	int func = (dev->device & 0x0f00) >>  8;
++	int prod = (dev->device & 0x00ff) >>  0;
++
++	/*
++	 * If this is a T3-based adapter, there's a 1KB VPD area at offset
++	 * 0xc00 which contains the preferred VPD values.  If this is a T4 or
++	 * later based adapter, the special VPD is at offset 0x400 for the
++	 * Physical Functions (the SR-IOV Virtual Functions have no VPD
++	 * Capabilities).  The PCI VPD Access core routines will normally
++	 * compute the size of the VPD by parsing the VPD Data Structure at
++	 * offset 0x000.  This will result in silent failures when attempting
++	 * to accesses these other VPD areas which are beyond those computed
++	 * limits.
++	 */
++	if (chip == 0x0 && prod >= 0x20)
++		pci_set_vpd_size(dev, 8192);
++	else if (chip >= 0x4 && func < 0x8)
++		pci_set_vpd_size(dev, 2048);
  }
  
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x20, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x21, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x22, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x23, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x24, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x25, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x26, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x30, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x31, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x32, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x35, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x36, quirk_chelsio_extend_vpd);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x37, quirk_chelsio_extend_vpd);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, PCI_ANY_ID,
++			quirk_chelsio_extend_vpd);
+ 
+ #ifdef CONFIG_ACPI
+ /*
