@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeBZRg6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:36:58 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:21815 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbeBZRgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751630AbeBZRgz (ORCPT <rfc822;w@1wt.eu>);
         Mon, 26 Feb 2018 12:36:55 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:3746 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBZRgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:36:50 -0500
 X-IronPort-AV: E=Sophos;i="5.47,397,1515456000";
-   d="scan'208";a="596814924"
+   d="scan'208";a="333500580"
 From: Amit Shah <aams@amazon.com>
 To: <xen-devel@lists.xenproject.org>
 CC: <linux-kernel@vger.kernel.org>, Amit Shah <aams@amazon.com>,
@@ -20,9 +20,9 @@ CC: <linux-kernel@vger.kernel.org>, Amit Shah <aams@amazon.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "K. Y. Srinivasan" <kys@microsoft.com>,
         Liu Shuo <shuo.a.liu@intel.com>, Anoob Soman <anoob.soman@citrix.com>
-Subject: [PATCH 1/2] xen: fix out-of-bounds irq unbind for MSI message groups
-Date: Mon, 26 Feb 2018 17:36:34 +0000
-Message-ID: <1519666595-41362-2-git-send-email-aams@amazon.com>
+Subject: [PATCH 2/2] xen: events: free irqs in error condition
+Date: Mon, 26 Feb 2018 17:36:35 +0000
+Message-ID: <1519666595-41362-3-git-send-email-aams@amazon.com>
 X-Mailer: git-send-email 2.7.3.AMZN
 In-Reply-To: <1519666595-41362-1-git-send-email-aams@amazon.com>
 References: <1519666595-41362-1-git-send-email-aams@amazon.com>
@@ -32,11 +32,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1QHb4Rs003023
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1QHbFs3003091
 
-When an MSI descriptor was not available, the error path would try to
-unbind an irq that was never acquired - potentially unbinding an
-unrelated irq.
+In case of errors in irq setup for MSI, free up the allocated irqs.
 
 Fixes: 4892c9b4ada9f9 ("xen: add support for MSI message groups")
 Reported-by: Hooman Mirhadi <mirhadih@amazon.com>
@@ -56,17 +54,17 @@ Signed-off-by: Amit Shah <aams@amazon.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-index 1ab4bd1..b6b8b29 100644
+index b6b8b29..96aa575 100644
 --- a/drivers/xen/events/events_base.c
 +++ b/drivers/xen/events/events_base.c
-@@ -749,6 +749,7 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
- 	}
- 
- 	ret = irq_set_msi_desc(irq, msidesc);
-+	i--;
- 	if (ret < 0)
- 		goto error_irq;
- out:
+@@ -758,6 +758,7 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
+ error_irq:
+ 	for (; i >= 0; i--)
+ 		__unbind_from_irq(irq + i);
++	xen_free_irq(irq);
+ 	mutex_unlock(&irq_mapping_update_lock);
+ 	return ret;
+ }
 -- 
 2.7.3.AMZN
 
