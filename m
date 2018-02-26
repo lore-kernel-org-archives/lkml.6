@@ -1,100 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751628AbeBZRKJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:10:09 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53176 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750826AbeBZRKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:10:08 -0500
-Date: Mon, 26 Feb 2018 17:10:08 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luc Maranget <luc.maranget@inria.fr>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>, Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-Message-ID: <20180226171008.GC30736@arm.com>
-References: <20180222134004.GN25181@hirez.programming.kicks-ass.net>
- <20180222141249.GA14033@andrea>
- <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
- <20180222181317.GI2855@linux.vnet.ibm.com>
- <20180222182717.GS25181@hirez.programming.kicks-ass.net>
- <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
- <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
- <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
- <20180226162426.GB17158@arm.com>
- <CA+55aFyT=+8m0mmpeegP8LOVtkCYv3O2vyO-ZcQdLAR=s309jg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyT=+8m0mmpeegP8LOVtkCYv3O2vyO-ZcQdLAR=s309jg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751724AbeBZRL2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:11:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36670 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751463AbeBZRL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:11:27 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Enlightened VMCS support for KVM on Hyper-V
+Date: Mon, 26 Feb 2018 18:11:16 +0100
+Message-Id: <20180226171121.18974-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 09:00:43AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 26, 2018 at 8:24 AM, Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > Strictly speaking, that's not what we've got implemented on arm64: only
-> > the read part of the RmW has Acquire semantics, but there is a total
-> > order on the lock/unlock operations for the lock.
-> 
-> Hmm.
-> 
-> I thought we had exactly that bug on some architecture with the queued
-> spinlocks, and people decided it was wrong.
-> 
-> But it's possible that I mis-remember, and that we decided it was ok after all.
-> 
-> > spin_lock(&lock);
-> > WRITE_ONCE(foo, 42);
-> >
-> > then another CPU could do:
-> >
-> > if (smp_load_acquire(&foo) == 42)
-> >         BUG_ON(!spin_is_locked(&lock));
-> >
-> > and that could fire. Is that relied on somewhere?
-> 
-> I have a distinct memory that we said the spinlock write is seen in
-> order, wrt the writes inside the spinlock, and the reason was
-> something very similar to the above, except that "spin_is_locked()"
-> was about our spin_unlock_wait().
+Changes since v1:
+- The only comment I got for v1 was from kbuild test robot. The issue
+  was addressed by moving HV_X64_ENLIGHTENED_VMCS_RECOMMENDED definition
+  to PATCH2.
+- Rebased to current kvm/queue.
 
-Yes, we did run into problems with spin_unlock_wait and we ended up
-strengthening the arm64 implementation to do an RmW, which puts it into
-the total order of lock/unlock operations. However, we then went and
-killed the thing because it was seldom used correctly and we struggled
-to define what "correctly" even meant!
+When running nested KVM on Hyper-V it's possible to use so called
+'Enlightened VMCS' and do normal memory reads/writes instead of
+doing VMWRITE/VMREAD instructions. In addition, clean field mask
+provides a huge room for optimization on L0's side.
 
-> Because we had something very much like the above in the exit path,
-> where we would look at some state and do "spin_unlock_wait()" and
-> expect to be guaranteed to be the last user after that.
-> 
-> But a few months ago we obviously got rid of spin_unlock_wait exactly
-> because people were worried about the semantics.
+Tight CPUID loop test shows significant speedup (current kvm/queue on
+E5-2667 v4 @ 3.20GHz):
+ Before: 20766 cycles
+ After: 8912 cycles
 
-Similarly for spin_can_lock.
+The series is based on current kvm/queue tree.
 
-> So maybe I just remember an older issue that simply became a non-issue
-> with that.
+Ladi Prosek (1):
+  x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+    HV_X64_MSR_VP_ASSIST_PAGE
 
-I think so. If we need to, I could make spin_is_locked do an RmW on
-arm64 so we can say that all successful spin_* operations are totally
-ordered for a given lock, but spin_is_locked is normally only used as a
-coarse debug check anyway where it's assumed that if it's held, it's
-held by the current CPU. We should probably move most users over to
-lockdep and see what we're left with.
+Vitaly Kuznetsov (4):
+  x86/hyper-v: allocate and use Virtual Processor Assist Pages
+  x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+  x86/hyper-v: detect nested features
+  x86/kvm: use Enlightened VMCS when running on Hyper-V
 
-Will
+ arch/x86/hyperv/hv_init.c          |  33 +++
+ arch/x86/include/asm/mshyperv.h    |  12 +
+ arch/x86/include/uapi/asm/hyperv.h | 223 ++++++++++++++-
+ arch/x86/kernel/cpu/mshyperv.c     |   3 +
+ arch/x86/kvm/hyperv.c              |   8 +-
+ arch/x86/kvm/lapic.h               |   2 +-
+ arch/x86/kvm/vmx.c                 | 561 ++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c                 |   2 +-
+ 8 files changed, 825 insertions(+), 19 deletions(-)
+
+-- 
+2.14.3
