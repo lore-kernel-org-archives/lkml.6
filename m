@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753389AbeBZNTp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:19:45 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52472 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753177AbeBZNRj (ORCPT
+        id S1753458AbeBZNT6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:19:58 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39335 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753160AbeBZNRh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:17:39 -0500
-X-Google-Smtp-Source: AH8x224k8Yuc7RkrOZ7grY3mTSRaCNAUNeWF4dfx1wmcTqbop0fB6yVZTdFMTO4xYyoXmsy3eVQffg==
+        Mon, 26 Feb 2018 08:17:37 -0500
+X-Google-Smtp-Source: AG47ELuR0MJmhPT8D5MoAEA0JgOWBve2twzREHSvkI2PHvXNU+MP61wxqUfleQ1vRXvmnrqwwVE1Vw==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 11/19] lightnvm: pblk: rename ppaf* to addrf*
-Date: Mon, 26 Feb 2018 14:17:10 +0100
-Message-Id: <1519651038-16845-12-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 09/19] lightnvm: rename sect_* to sec_*
+Date: Mon, 26 Feb 2018 14:17:08 +0100
+Message-Id: <1519651038-16845-10-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
 References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
@@ -27,143 +27,182 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for 2.0 support in pblk, rename variables referring to
-the address format to addrf and reserve ppaf for the 1.2 path.
+Rename abbreviations for sector from sect_* to sec_* as most of the code
+uses this format and it is confusing when using the different
+structures.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c  |  8 ++++----
- drivers/lightnvm/pblk-sysfs.c |  4 ++--
- drivers/lightnvm/pblk.h       | 16 ++++++++--------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/lightnvm/pblk-init.c  | 8 ++++----
+ drivers/lightnvm/pblk-sysfs.c | 4 ++--
+ drivers/lightnvm/pblk.h       | 8 ++++----
+ drivers/nvme/host/lightnvm.c  | 8 ++++----
+ include/linux/lightnvm.h      | 8 ++++----
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 30aec863f136..ec39800eea42 100644
+index 7e3297be517d..30aec863f136 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -80,7 +80,7 @@ static size_t pblk_trans_map_size(struct pblk *pblk)
- {
- 	int entry_size = 8;
+@@ -179,16 +179,16 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
+ 	dst->blk_len = src->blk_len;
+ 	dst->pg_len = src->pg_len;
+ 	dst->pln_len = src->pln_len;
+-	dst->sect_len = src->sect_len;
++	dst->sec_len = src->sec_len;
  
--	if (pblk->ppaf_bitsize < 32)
-+	if (pblk->addrf_len < 32)
- 		entry_size = 4;
+-	dst->sect_offset = 0;
+-	dst->pln_offset = dst->sect_len;
++	dst->sec_offset = 0;
++	dst->pln_offset = dst->sec_len;
+ 	dst->ch_offset = dst->pln_offset + dst->pln_len;
+ 	dst->lun_offset = dst->ch_offset + dst->ch_len;
+ 	dst->pg_offset = dst->lun_offset + dst->lun_len;
+ 	dst->blk_offset = dst->pg_offset + dst->pg_len;
  
- 	return entry_size * pblk->rl.nr_secs;
-@@ -198,7 +198,7 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
- 	return dst->blk_offset + src->blk_len;
- }
- 
--static int pblk_set_ppaf(struct pblk *pblk)
-+static int pblk_set_addrf(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -210,7 +210,7 @@ static int pblk_set_ppaf(struct pblk *pblk)
- 		return -EINVAL;
- 	}
- 
--	pblk->ppaf_bitsize = pblk_set_addrf_12(geo, (void *)&pblk->ppaf);
-+	pblk->addrf_len = pblk_set_addrf_12(geo, (void *)&pblk->addrf);
- 
- 	return 0;
- }
-@@ -319,7 +319,7 @@ static int pblk_core_init(struct pblk *pblk)
- 	if (!pblk->r_end_wq)
- 		goto free_bb_wq;
- 
--	if (pblk_set_ppaf(pblk))
-+	if (pblk_set_addrf(pblk))
- 		goto free_r_end_wq;
- 
- 	if (pblk_rwb_init(pblk))
+-	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
++	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
+ 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
+ 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
+ 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
 diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 81288aa9162a..d3b50741b691 100644
+index 5eb21a279361..81288aa9162a 100644
 --- a/drivers/lightnvm/pblk-sysfs.c
 +++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -117,12 +117,12 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 	struct nvm_addr_format_12 *geo_ppaf;
- 	ssize_t sz = 0;
- 
--	ppaf = (struct nvm_addr_format_12 *)&pblk->ppaf;
-+	ppaf = (struct nvm_addr_format_12 *)&pblk->addrf;
- 	geo_ppaf = (struct nvm_addr_format_12 *)&geo->c.addrf;
- 
- 	sz = snprintf(page, PAGE_SIZE,
- 		"pblk:(s:%d)ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
--			pblk->ppaf_bitsize,
-+			pblk->addrf_len,
- 			ppaf->ch_offset, ppaf->ch_len,
- 			ppaf->lun_offset, ppaf->lun_len,
+@@ -128,7 +128,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
  			ppaf->blk_offset, ppaf->blk_len,
+ 			ppaf->pg_offset, ppaf->pg_len,
+ 			ppaf->pln_offset, ppaf->pln_len,
+-			ppaf->sect_offset, ppaf->sect_len);
++			ppaf->sec_offset, ppaf->sec_len);
+ 
+ 	sz += snprintf(page + sz, PAGE_SIZE - sz,
+ 		"device:ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
+@@ -137,7 +137,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+ 			geo_ppaf->blk_offset, geo_ppaf->blk_len,
+ 			geo_ppaf->pg_offset, geo_ppaf->pg_len,
+ 			geo_ppaf->pln_offset, geo_ppaf->pln_len,
+-			geo_ppaf->sect_offset, geo_ppaf->sect_len);
++			geo_ppaf->sec_offset, geo_ppaf->sec_len);
+ 
+ 	return sz;
+ }
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 4f7a365436f1..46b29a492f74 100644
+index 1f32284b0aec..4f7a365436f1 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -570,8 +570,8 @@ struct pblk {
- 	struct pblk_line_mgmt l_mg;		/* Line management */
- 	struct pblk_line_meta lm;		/* Line metadata */
+@@ -957,7 +957,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+ 	ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
+ 	ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
+ 	ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
+-	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sect_offset;
++	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
  
--	struct nvm_addr_format ppaf;
--	int ppaf_bitsize;
-+	struct nvm_addr_format addrf;
-+	int addrf_len;
+ 	return ppa;
+ }
+@@ -973,7 +973,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
+ 	paddr |= (u64)p.g.lun << ppaf->lun_offset;
+ 	paddr |= (u64)p.g.pg << ppaf->pg_offset;
+ 	paddr |= (u64)p.g.pl << ppaf->pln_offset;
+-	paddr |= (u64)p.g.sec << ppaf->sect_offset;
++	paddr |= (u64)p.g.sec << ppaf->sec_offset;
  
- 	struct pblk_rb rwb;
+ 	return paddr;
+ }
+@@ -998,7 +998,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
+ 		ppa64.g.blk = (ppa32 & ppaf->blk_mask) >> ppaf->blk_offset;
+ 		ppa64.g.pg = (ppa32 & ppaf->pg_mask) >> ppaf->pg_offset;
+ 		ppa64.g.pl = (ppa32 & ppaf->pln_mask) >> ppaf->pln_offset;
+-		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sect_offset;
++		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sec_offset;
+ 	}
  
-@@ -948,7 +948,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
- 					      u64 line_id)
- {
- 	struct nvm_addr_format_12 *ppaf =
--				(struct nvm_addr_format_12 *)&pblk->ppaf;
-+				(struct nvm_addr_format_12 *)&pblk->addrf;
- 	struct ppa_addr ppa;
+ 	return ppa64;
+@@ -1022,7 +1022,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
+ 		ppa32 |= ppa64.g.blk << ppaf->blk_offset;
+ 		ppa32 |= ppa64.g.pg << ppaf->pg_offset;
+ 		ppa32 |= ppa64.g.pl << ppaf->pln_offset;
+-		ppa32 |= ppa64.g.sec << ppaf->sect_offset;
++		ppa32 |= ppa64.g.sec << ppaf->sec_offset;
+ 	}
  
- 	ppa.ppa = 0;
-@@ -966,7 +966,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
- 							struct ppa_addr p)
- {
- 	struct nvm_addr_format_12 *ppaf =
--				(struct nvm_addr_format_12 *)&pblk->ppaf;
-+				(struct nvm_addr_format_12 *)&pblk->addrf;
- 	u64 paddr;
+ 	return ppa32;
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index f3f524dc1389..377e6525e53f 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -262,21 +262,21 @@ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
+ 	dst->blk_len = src->blk_len;
+ 	dst->pg_len = src->pg_len;
+ 	dst->pln_len = src->pln_len;
+-	dst->sect_len = src->sec_len;
++	dst->sec_len = src->sec_len;
  
- 	paddr = (u64)p.g.ch << ppaf->ch_offset;
-@@ -991,7 +991,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
- 		ppa64.c.is_cached = 1;
- 	} else {
- 		struct nvm_addr_format_12 *ppaf =
--				(struct nvm_addr_format_12 *)&pblk->ppaf;
-+				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 	dst->ch_offset = src->ch_offset;
+ 	dst->lun_offset = src->lun_offset;
+ 	dst->blk_offset = src->blk_offset;
+ 	dst->pg_offset = src->pg_offset;
+ 	dst->pln_offset = src->pln_offset;
+-	dst->sect_offset = src->sec_offset;
++	dst->sec_offset = src->sec_offset;
  
- 		ppa64.g.ch = (ppa32 & ppaf->ch_mask) >> ppaf->ch_offset;
- 		ppa64.g.lun = (ppa32 & ppaf->lun_mask) >> ppaf->lun_offset;
-@@ -1015,7 +1015,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
- 		ppa32 |= 1U << 31;
- 	} else {
- 		struct nvm_addr_format_12 *ppaf =
--				(struct nvm_addr_format_12 *)&pblk->ppaf;
-+				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
+ 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
+ 	dst->blk_mask = ((1ULL << dst->blk_len) - 1) << dst->blk_offset;
+ 	dst->pg_mask = ((1ULL << dst->pg_len) - 1) << dst->pg_offset;
+ 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
+-	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
++	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
+ }
  
- 		ppa32 |= ppa64.g.ch << ppaf->ch_offset;
- 		ppa32 |= ppa64.g.lun << ppaf->lun_offset;
-@@ -1033,7 +1033,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
- {
- 	struct ppa_addr ppa;
+ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+@@ -975,7 +975,7 @@ static ssize_t nvm_dev_attr_show_ppaf(struct nvm_addr_format_12 *ppaf,
+ 				ppaf->pln_offset, ppaf->pln_len,
+ 				ppaf->blk_offset, ppaf->blk_len,
+ 				ppaf->pg_offset, ppaf->pg_len,
+-				ppaf->sect_offset, ppaf->sect_len);
++				ppaf->sec_offset, ppaf->sec_len);
+ }
  
--	if (pblk->ppaf_bitsize < 32) {
-+	if (pblk->addrf_len < 32) {
- 		u32 *map = (u32 *)pblk->trans_map;
+ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 797594d6519f..18bb9e9774d6 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -163,14 +163,14 @@ struct nvm_addr_format_12 {
+ 	u8	blk_len;
+ 	u8	pg_len;
+ 	u8	pln_len;
+-	u8	sect_len;
++	u8	sec_len;
  
- 		ppa = pblk_ppa32_to_ppa64(pblk, map[lba]);
-@@ -1049,7 +1049,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
- static inline void pblk_trans_map_set(struct pblk *pblk, sector_t lba,
- 						struct ppa_addr ppa)
- {
--	if (pblk->ppaf_bitsize < 32) {
-+	if (pblk->addrf_len < 32) {
- 		u32 *map = (u32 *)pblk->trans_map;
+ 	u8	ch_offset;
+ 	u8	lun_offset;
+ 	u8	blk_offset;
+ 	u8	pg_offset;
+ 	u8	pln_offset;
+-	u8	sect_offset;
++	u8	sec_offset;
  
- 		map[lba] = pblk_ppa64_to_ppa32(pblk, ppa);
+ 	u64	ch_mask;
+ 	u64	lun_mask;
+@@ -391,7 +391,7 @@ static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev *tgt_dev,
+ 	l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
+ 	l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
+ 	l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
+-	l.ppa |= ((u64)r.g.sec) << ppaf->sect_offset;
++	l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
+ 
+ 	return l;
+ }
+@@ -411,7 +411,7 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_tgt_dev *tgt_dev,
+ 	l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
+ 	l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
+ 	l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
+-	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sect_offset;
++	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
+ 
+ 	return l;
+ }
 -- 
 2.7.4
