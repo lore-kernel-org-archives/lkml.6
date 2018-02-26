@@ -1,160 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeBZFlM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 00:41:12 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:39530 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeBZFlK (ORCPT
+        id S1751954AbeBZFrG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 00:47:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36826 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750749AbeBZFrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 00:41:10 -0500
-X-Google-Smtp-Source: AG47ELvIxJuuE452lWo0kGESFHr60dNm+IqG/wbPtXHwxFdB1gwGuGcaF6/XN7ZU5V0F1ZNvMG3twg==
-Date: Mon, 26 Feb 2018 14:41:04 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH RESEND 1/2] mm: swap: clean up swap readahead
-Message-ID: <20180226054104.GC112402@rodete-desktop-imager.corp.google.com>
-References: <20180220085249.151400-1-minchan@kernel.org>
- <20180220085249.151400-2-minchan@kernel.org>
- <874lm83zho.fsf@yhuang-dev.intel.com>
- <20180226045617.GA112402@rodete-desktop-imager.corp.google.com>
- <87d10stjk5.fsf@yhuang-dev.intel.com>
+        Mon, 26 Feb 2018 00:47:05 -0500
+Date: Sun, 25 Feb 2018 21:47:27 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
+        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
+ cond_resched_rcu_qs() in favor of cond_resched()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20171201192122.GA19301@linux.vnet.ibm.com>
+ <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180224151240.0d63a059@vmware.local.home>
+ <20180225174927.GC2855@linux.vnet.ibm.com>
+ <20180225181730.GA3963@linux.vnet.ibm.com>
+ <20180225235748.4ce882e5@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87d10stjk5.fsf@yhuang-dev.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180225235748.4ce882e5@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022605-0052-0000-0000-000002BE6048
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008599; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00995210; UDB=6.00505843; IPR=6.00774543;
+ MB=3.00019741; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 05:47:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022605-0053-0000-0000-00005BD09131
+Message-Id: <20180226054727.GJ2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802260078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:18:50PM +0800, Huang, Ying wrote:
-> Minchan Kim <minchan@kernel.org> writes:
+On Sun, Feb 25, 2018 at 11:57:48PM -0500, Steven Rostedt wrote:
+> On Sun, 25 Feb 2018 10:17:30 -0800
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 > 
-> > On Fri, Feb 23, 2018 at 04:02:27PM +0800, Huang, Ying wrote:
-> >> <minchan@kernel.org> writes:
-> >> [snip]
-> >> 
-> >> > diff --git a/mm/swap_state.c b/mm/swap_state.c
-> >> > index 39ae7cfad90f..c56cce64b2c3 100644
-> >> > --- a/mm/swap_state.c
-> >> > +++ b/mm/swap_state.c
-> >> > @@ -332,32 +332,38 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
-> >> >  			       unsigned long addr)
-> >> >  {
-> >> >  	struct page *page;
-> >> > -	unsigned long ra_info;
-> >> > -	int win, hits, readahead;
-> >> >  
-> >> >  	page = find_get_page(swap_address_space(entry), swp_offset(entry));
-> >> >  
-> >> >  	INC_CACHE_INFO(find_total);
-> >> >  	if (page) {
-> >> > +		bool vma_ra = swap_use_vma_readahead();
-> >> > +		bool readahead = TestClearPageReadahead(page);
-> >> > +
-> >> 
-> >> TestClearPageReadahead() cannot be called for compound page.  As in
-> >> 
-> >> PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-> >> 	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-> >> 
-> >> >  		INC_CACHE_INFO(find_success);
-> >> >  		if (unlikely(PageTransCompound(page)))
-> >> >  			return page;
-> >> > -		readahead = TestClearPageReadahead(page);
-> >> 
-> >> So we can only call it here after checking whether page is compound.
-> >
-> > Hi Huang,
-> >
-> > Thanks for cathing this.
-> > However, I don't see the reason we should rule out THP page for
-> > readahead marker. Could't we relax the rule?
-> >
-> > I hope we can do so that we could remove PageTransCompound check
-> > for readahead marker, which makes code ugly.
-> >
-> > From 748b084d5c3960ec2418d8c51a678aada30f1072 Mon Sep 17 00:00:00 2001
-> > From: Minchan Kim <minchan@kernel.org>
-> > Date: Mon, 26 Feb 2018 13:46:43 +0900
-> > Subject: [PATCH] mm: relax policy for PG_readahead
-> >
-> > This flag is in use for anon THP page so let's relax it.
-> >
-> > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > ---
-> >  include/linux/page-flags.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> > index e34a27727b9a..f12d4dfae580 100644
-> > --- a/include/linux/page-flags.h
-> > +++ b/include/linux/page-flags.h
-> > @@ -318,8 +318,8 @@ PAGEFLAG(MappedToDisk, mappedtodisk, PF_NO_TAIL)
-> >  /* PG_readahead is only used for reads; PG_reclaim is only for writes */
-> >  PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
-> >  	TESTCLEARFLAG(Reclaim, reclaim, PF_NO_TAIL)
-> > -PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-> > -	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-> > +PAGEFLAG(Readahead, reclaim, PF_NO_TAIL)
-> > +	TESTCLEARFLAG(Readahead, reclaim, PF_NO_TAIL)
-> >  
-> >  #ifdef CONFIG_HIGHMEM
-> >  /*
 > 
-> We never set Readahead bit for THP in reality.  The original code acts
-> as document for this.  I don't think it is a good idea to change this
-> without a good reason.
+> > And probably not.  You are probably running CONFIG_PREEMPT=y (otherwise
+> > RCU-tasks is trivial), so cond_resched() is a complete no-op:
+> > 
+> > static inline int _cond_resched(void) { return 0; }
+> > 
+> > I could make this call rcu_all_qs(), but I would not expect Peter Zijlstra
+> > to be at all happy with that sort of change.
+> > 
+> > And the people who asked for the cond_resched() work probably aren't
+> > going to be happy with the resumed proliferation of cond_resched_rcu_qs().
+> > 
+> > Hmmm...  Grasping at straws...  Could we make cond_resched() be something
+> > like a tracepoint and instrument them with cond_resched_rcu_qs() if the
+> > current RCU-tasks grace period ran for more that (say) a minute of its
+> > ten-minute stall-warning span?
+> > 
+> 
+> Instead of monkeying with cond_resched(), since this is "special" code,
+> why don't I just have that code call it directly?
+> 
+> 	cond_resched();
+> 	rcu_note_voluntary_context_switch(current);
 
-I don't like such divergence so that we don't need to care about whether
-the page is THP or not. However, there is pointless to confuse ra stat
-counters, too. How about this?
+The advantage of the last patch that I sent is that the special call
+is in one place.  (This is the one that adds the "special" definition
+for _cond_resched().)
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 8dde719e973c..e169d137d27c 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -348,12 +348,17 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
- 	INC_CACHE_INFO(find_total);
- 	if (page) {
- 		bool vma_ra = swap_use_vma_readahead();
--		bool readahead = TestClearPageReadahead(page);
-+		bool readahead;
- 
- 		INC_CACHE_INFO(find_success);
-+		/*
-+		 * At the moment, we doesn't support PG_readahead for anon THP
-+		 * so let's bail out rather than confusing the readahead stat.
-+		 */
- 		if (unlikely(PageTransCompound(page)))
- 			return page;
- 
-+		readahead = TestClearPageReadahead(page);
- 		if (vma && vma_ra) {
- 			unsigned long ra_val;
- 			int win, hits;
-@@ -608,8 +613,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 			continue;
- 		if (page_allocated) {
- 			swap_readpage(page, false);
--			if (offset != entry_offset &&
--			    likely(!PageTransCompound(page))) {
-+			if (offset != entry_offset) {
- 				SetPageReadahead(page);
- 				count_vm_event(SWAP_RA);
- 			}
-@@ -772,8 +776,7 @@ struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
- 			continue;
- 		if (page_allocated) {
- 			swap_readpage(page, false);
--			if (i != ra_info.offset &&
--			    likely(!PageTransCompound(page))) {
-+			if (i != ra_info.offset) {
- 				SetPageReadahead(page);
- 				count_vm_event(SWAP_RA);
- 			}
+							Thanx, Paul
