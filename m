@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225eDHb5C+/phlZ+bXHlIE0YUviSAr//an8pqmsjALeKjwvLuZMbGcjci0aNovDt5o4keoat
-ARC-Seal: i=1; a=rsa-sha256; t=1519676209; cv=none;
+X-Google-Smtp-Source: AG47ELtuhfeV+12/q0BKYyh/rrVh5DKxdOUA34b8+PQLiVx4AD/rQ2qV1pLngHIZOKZocDVqqZjr
+ARC-Seal: i=1; a=rsa-sha256; t=1519676206; cv=none;
         d=google.com; s=arc-20160816;
-        b=UCqcysOHjkv8tdsumDFZwyAi/Uyv3jzNya++2q7Seb5gxhjaYpkXEBXBg58bpIoLCv
-         fG26hwNSRWFB0aHivYrE5fV0dmfybv9z3PQcagz2zC1tPFZC8oeiW3JJ2HHEyPoMdZ4R
-         a98Fj1PgWwy3dBU1ndDr9lG4NqaJ0KCYviTqaY8UeESvjBX8vVJgRaOooXEgxvsvbDtJ
-         SOrJaJM7ARCFE2CVAzaT3pmvEuK/MAQg9Rp8Kbw56GqhQCOb1+d4c2X/7l3hrZB9z2uL
-         CYnR3R4hPJLmgWLQ2v8y8VOnXvCzdjYGH2+EBLtQk1dzqXzGgzR8fVl4owz7pO2n7bh9
-         Ofzw==
+        b=P5FyvwjOJ71QO7P9QUzAd9CLVTLzd25o5GMljs5C5MZo48pnFLQ2dTcLgseLpOw6d0
+         GPKWVdTCVuGM/jOz4HpYSVgIYv4SamAIkbsc0rhqDXeTQ3j/oYUjQH4I21Lmfgvk2BZi
+         BTEKGr8Xmwuvi3HVdB3OxmbcCTKkhMahU4m+M+2LajgSrNlCvbofX36N7HALtX5l1HQ0
+         1y3vGrihFr8j3blE2xy0ruY1byJnHxYN3oUm1ZQ6X/OsFhVevEssqtcyLWTS1F+rIy5o
+         lHkwwuAg/5ClTY7ZsljI7guXdsVwzIZdU3ztcitW39mOJLgc2J5TiozDl/tTCSOM8lMM
+         rN9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iQp/fmcTr/FZb4kdrNvlfbYJUTYiU5GOch3UXkIAgMw=;
-        b=g4pc1uqL0MFi6ec8WTlVY+MHfrmap4CS8WLT9QXahZbTnkSziYsPhUbY4WvMmhcyp0
-         /h/ZoEkQBd/Cr9oiTttw4RCFKVl533tdS46iNGLsE+ByU8xC+6ucO5iGk31JA/C4/UJV
-         3UMY82mwCHkUlyOMXxpWAOzfyDK/29wPCLLJWozyv1je8TDpQrMqmPsenpUfrCjFsAl3
-         BBj93qLMQjLICb9kS71iiXLzCVe/LGsjXo+sS0/6o65SPFj5PHLo36ofRJhI8QnnI35d
-         uI+/mPBdiHZEeAYwlSK3amaov2NZDL56Oe3FqwwkBVn74Ztw3INxkECbwRlbwqT0wtsZ
-         wG+A==
+        bh=ai8tdKpH+KnPvg6WRsvvgsI7mcGfkaJ4KtfGzOuUAkE=;
+        b=G6CVXnSQjIz12x2sv7mCK6vHTeokOTgRdvlBPAy9NW0+qZBWW1+9FipV9Ec5LKwahm
+         vnreLFZuKy2COUF9AL1Q5QDRhE3ag6w5RzhkVWBXLAu9GDzeXkyckGhl2IMFrfwlBMeT
+         jqtv02b2GHxu60cZHnQHoEAsqC4uRCeDuaQwpiERik+L7NjJ5Jkvzof8igl/s0sbbTB4
+         +nxvcv4yn95fq4ciF213wcQuiHNPGIEFxbgzJ7VnrZXRuc7tYd6xQ27zLTWWCDo+x8Ko
+         muaiENK1qHXeTA4pHuuHdvLQ+8SX4ZHCRvZmNoiL9Nz76584RVXoJJ9ocra+Xwl7osoj
+         0+9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jack Stocker <jackstocker.93@gmail.com>
-Subject: [PATCH 4.4 15/22] Add delay-init quirk for Corsair K70 RGB keyboards
-Date: Mon, 26 Feb 2018 21:16:15 +0100
-Message-Id: <20180226201559.393477489@linuxfoundation.org>
+	Michael Weiser <michael.weiser@gmx.de>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.4 14/22] arm64: Disable unhandled signal log messages by default
+Date: Mon, 26 Feb 2018 21:16:14 +0100
+Message-Id: <20180226201559.356670419@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496000178812018?=
-X-GMAIL-MSGID: =?utf-8?q?1593496000178812018?=
+X-GMAIL-THRID: =?utf-8?q?1593495943344886080?=
+X-GMAIL-MSGID: =?utf-8?q?1593495997623501497?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,36 +49,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jack Stocker <jackstocker.93@gmail.com>
+From: Michael Weiser <michael.weiser@gmx.de>
 
-commit 7a1646d922577b5b48c0d222e03831141664bb59 upstream.
+commit 5ee39a71fd89ab7240c5339d04161c44a8e03269 upstream.
 
-Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
-Corsair K70 RGB keyboards also require the DELAY_INIT quirk to
-start correctly at boot.
+aarch64 unhandled signal kernel messages are very verbose, suggesting
+them to be more of a debugging aid:
 
-Device ids found here:
-usb 3-3: New USB device found, idVendor=1b1c, idProduct=1b13
-usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 3-3: Product: Corsair K70 RGB Gaming Keyboard
+sigsegv[33]: unhandled level 2 translation fault (11) at 0x00000000, esr
+0x92000046, in sigsegv[400000+71000]
+CPU: 1 PID: 33 Comm: sigsegv Tainted: G        W        4.15.0-rc3+ #3
+Hardware name: linux,dummy-virt (DT)
+pstate: 60000000 (nZCv daif -PAN -UAO)
+pc : 0x4003f4
+lr : 0x4006bc
+sp : 0000fffffe94a060
+x29: 0000fffffe94a070 x28: 0000000000000000
+x27: 0000000000000000 x26: 0000000000000000
+x25: 0000000000000000 x24: 00000000004001b0
+x23: 0000000000486ac8 x22: 00000000004001c8
+x21: 0000000000000000 x20: 0000000000400be8
+x19: 0000000000400b30 x18: 0000000000484728
+x17: 000000000865ffc8 x16: 000000000000270f
+x15: 00000000000000b0 x14: 0000000000000002
+x13: 0000000000000001 x12: 0000000000000000
+x11: 0000000000000000 x10: 0008000020008008
+x9 : 000000000000000f x8 : ffffffffffffffff
+x7 : 0004000000000000 x6 : ffffffffffffffff
+x5 : 0000000000000000 x4 : 0000000000000000
+x3 : 00000000004003e4 x2 : 0000fffffe94a1e8
+x1 : 000000000000000a x0 : 0000000000000000
 
-Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Disable them by default, so they can be enabled using
+/proc/sys/debug/exception-trace.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/traps.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -225,6 +225,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -49,7 +49,7 @@ static const char *handler[]= {
+ 	"Error"
+ };
  
-+	/* Corsair K70 RGB */
-+	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Corsair Strafe RGB */
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
+-int show_unhandled_signals = 1;
++int show_unhandled_signals = 0;
  
+ /*
+  * Dump out the contents of some memory nicely...
