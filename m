@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuAU1DzZN8DCNJ7cE8iOg3gt44ZVs+6taHXXNfou5k+1i8jmwz0COttgqalRcCf9b0Xdkpk
-ARC-Seal: i=1; a=rsa-sha256; t=1519676929; cv=none;
+X-Google-Smtp-Source: AG47ELs7tZyWtlQHarBUjHsekKOFHMucLJd5ekMIMlBJ2mPmTg+/wToEnbplsjwP/ZQzaIF2nmr9
+ARC-Seal: i=1; a=rsa-sha256; t=1519676926; cv=none;
         d=google.com; s=arc-20160816;
-        b=DjpStvbaVRQ88qYHtgGQUox52uJeunzCLO4shsMZ0BQr270dqU2ZU7fb8Bv+Ug+7md
-         L56Z78IzbZjQ6n6UhxjanppQ7F7a0WcHGE+Glg9zJXK7Xrg5SD4t3qy1uFba74jPC1X0
-         suwib6wb5JgnYqhdx++K2ri7EwzO0nguNqA0vifFs5kX9B9j7Sqkmt1ivkqlIk5Uch3C
-         YMbcq+4RLY1Dg7VFt+J6TG7vgoemSiQ3bjdieBA18xYhN+CUyc7B+qeIG64JIM7pArP5
-         YZ1npiY/B6uccuyARKRBc6YXaQu9moDv0RgQoA4CrB1YgjSvrdp9QnnG7VlEuu9FlkZI
-         v6BA==
+        b=L36EUcllq7JaySYs+mQV8A3Y3qI9ztIORwZab9OR5AUSkuRtD/L1X74BazCdhD9lQQ
+         d3CaYo9sn0y2DANiHgJRMjGBYyHbBJJktmTkvJPsqeMcOzn/yNvbgB4Efi76ivPHyPkU
+         ZkGEe6uTaBo50UgCNbxmx3m5oQCAE0qD/F8951vkurfsyl+fcx4waBpVQDuOcfgf2p3F
+         IE/vx6v5RVIC26uIxIpHH/Q3MkT+0GgfKLfdtVZ4ezeXVZX3/DFo9nmoE0bHxqlNgDJ8
+         +noVKUCe/br7r0xyeLis53zs1oyE43y5cXSZWyCWaXONHHni7jOws4J8FnWhztH6K8VY
+         WL2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WeTwzZr25idPxkvhSwY5j4k0jeU35BJztQHnsu6zWR8=;
-        b=BdFf1KOo30dL3TM7nOIZ8+9UNClVYhIaZuWcFxtzW3B8TaYKetbUF4IPDCbWYKKfhj
-         tpeon1m6OCNiy6yYf1llRsfMJPxk28D0C2SbQtRqWAsfGSUl6fxj6W6j/eXew9L/Ltpe
-         FQ9+pvf6H5B7cWt8qzM9719ry9MinQGhJxEInHOY7HKZRj6/BsmGoCqdPcIFtqS+GeGl
-         cxnE1+p1c4Ne0dTW4L+cC19T37VblDSJ9v4OtBdENSXkPfHa3P2U6BTpkRh6NY3UK0cG
-         YqEkBActTlXqx1qDD+4SfDP0qghQuXfm9lvMmT9WWJWbHJqYf7emma9/Xr7QyN7A7BXt
-         KiGQ==
+        bh=D82LDh4KiRUMxHOOMIwKTbdap0RiKfhPrtSOCxJyIQw=;
+        b=cebl3vfRJzRRyHikJ4KQ0YkxxCaqxdcqyXSm44pTQFCxGv6zNYwwOgqOI0+1A0xnJg
+         EU6OANB4m8UlczQ4JqQTpOZDThlwQ8+FUVKxWEMRbAH6FD5SgR1T5ieiWrqyWBmGAnDQ
+         VYBGWfESB3LeDd29D6g8XLuFRLp0XaaSq+n/B70ZjIAQwVu+WbrhXqsHgxuorY71qG+H
+         TLO8A9Y+YtFZk9beZAOs4XU1EbChiMgq6d2vlh+nnvHkobiwOgxnHb912N0y5jThFYdd
+         o6L1sfpeWPaQXUwglVJDpyp4N4eN7vtR8Qfdl4kGjXaKFegSUocCi2iWGciN/zEP/EWF
+         RY4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xiangliang Yu <Xiangliang.Yu@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 59/64] drm/amdgpu: only check mmBIF_IOV_FUNC_IDENTIFIER on tonga/fiji
-Date: Mon, 26 Feb 2018 21:22:36 +0100
-Message-Id: <20180226202155.971692043@linuxfoundation.org>
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.15 32/64] irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
+Date: Mon, 26 Feb 2018 21:22:09 +0100
+Message-Id: <20180226202154.827569198@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496537116574874?=
-X-GMAIL-MSGID: =?utf-8?q?1593496756415197128?=
+X-GMAIL-THRID: =?utf-8?q?1593495977277445952?=
+X-GMAIL-MSGID: =?utf-8?q?1593496753228582105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,49 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
 
-commit 57ad33a307bf85cafda3a77c03a555c9f9ee4139 upstream.
+commit 21ec30c0ef5234fb1039cc7c7737d885bf875a9e upstream.
 
-We only support SR-IOV on tonga/fiji.  Don't check this register
-on other VI parts.
+A DMB instruction can be used to ensure the relative order of only
+memory accesses before and after the barrier. Since writes to system
+registers are not memory operations, barrier DMB is not sufficient
+for observability of memory accesses that occur before ICC_SGI1R_EL1
+writes.
 
-Fixes: 048765ad5af7c89 (amdgpu: fix asic initialization for virtualized environments (v2))
-Reviewed-by: Xiangliang Yu <Xiangliang.Yu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+A DSB instruction ensures that no instructions that appear in program
+order after the DSB instruction, can execute until the DSB instruction
+has completed.
+
 Cc: stable@vger.kernel.org
+Acked-by: Will Deacon <will.deacon@arm.com>,
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/vi.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/irqchip/irq-gic-v3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/vi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vi.c
-@@ -449,14 +449,19 @@ static bool vi_read_bios_from_rom(struct
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -688,7 +688,7 @@ static void gic_raise_softirq(const stru
+ 	 * Ensure that stores to Normal memory are visible to the
+ 	 * other CPUs before issuing the IPI.
+ 	 */
+-	smp_wmb();
++	wmb();
  
- static void vi_detect_hw_virtualization(struct amdgpu_device *adev)
- {
--	uint32_t reg = RREG32(mmBIF_IOV_FUNC_IDENTIFIER);
--	/* bit0: 0 means pf and 1 means vf */
--	/* bit31: 0 means disable IOV and 1 means enable */
--	if (reg & 1)
--		adev->virt.caps |= AMDGPU_SRIOV_CAPS_IS_VF;
-+	uint32_t reg = 0;
- 
--	if (reg & 0x80000000)
--		adev->virt.caps |= AMDGPU_SRIOV_CAPS_ENABLE_IOV;
-+	if (adev->asic_type == CHIP_TONGA ||
-+	    adev->asic_type == CHIP_FIJI) {
-+	       reg = RREG32(mmBIF_IOV_FUNC_IDENTIFIER);
-+	       /* bit0: 0 means pf and 1 means vf */
-+	       /* bit31: 0 means disable IOV and 1 means enable */
-+	       if (reg & 1)
-+		       adev->virt.caps |= AMDGPU_SRIOV_CAPS_IS_VF;
-+
-+	       if (reg & 0x80000000)
-+		       adev->virt.caps |= AMDGPU_SRIOV_CAPS_ENABLE_IOV;
-+	}
- 
- 	if (reg == 0) {
- 		if (is_virtual_machine()) /* passthrough mode exclus sr-iov mode */
+ 	for_each_cpu(cpu, mask) {
+ 		u64 cluster_id = MPIDR_TO_SGI_CLUSTER_ID(cpu_logical_map(cpu));
