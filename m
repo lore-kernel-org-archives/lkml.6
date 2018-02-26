@@ -1,46 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751722AbeBZQNP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:13:15 -0500
-Received: from mail-it0-f47.google.com ([209.85.214.47]:38725 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751429AbeBZQNK (ORCPT
+        id S1751795AbeBZQNo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:13:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35364 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751455AbeBZQNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:13:10 -0500
-X-Google-Smtp-Source: AG47ELtVRFXr262nTiYn0udQkK3G8Ua/l9NNz65aeUYt8dnhUORNKWi/5EDg7D/H/sM5Wq6IJxVee2Jgy/VKJGLdBr0=
-MIME-Version: 1.0
-In-Reply-To: <30581e0c-88f0-8a8e-a620-e5b20027175b@redhat.com>
-References: <1519436776-2987-1-git-send-email-pbonzini@redhat.com>
- <CA+55aFxeFRsDB+DaDW+E1daFRgk4Ccy=Tmt7cPn2A-uCmqW1iw@mail.gmail.com> <30581e0c-88f0-8a8e-a620-e5b20027175b@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 26 Feb 2018 08:13:09 -0800
-X-Google-Sender-Auth: 7qxKl4dq4dCQTM20nbyM4kRoJYU
-Message-ID: <CA+55aFzuOAn4d4gkvXNAfNnRwgsAa3G4H9HJNUfSxDJ0Wetagw@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for 4.16-rc3
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 26 Feb 2018 11:13:43 -0500
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Dave Young <dyoung@redhat.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH 09/11] kexec_file: Remove mis-use of sh_offset field
+Date: Mon, 26 Feb 2018 16:16:18 +0100
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18022615-0008-0000-0000-000004D4AC7A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022615-0009-0000-0000-00001E67C78D
+Message-Id: <20180226151620.20970-10-prudo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802260202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 12:28 AM, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> I rebased to correct a "Fixes" tag that pointed to the wrong commit.
-> This: https://marc.info/?l=kvm&m=151943277910352&w=2 is the mail that
-> pointed out the right commit, and you can see that those 28 commits have
-> times that are clustered five minutes after that mail.
->
-> The SEV patches indeed have been committed about half an hour before
-> sending the PULL request, because no one outside AMD has all the
-> hardware and code to test them.  Half an hour is about the time it takes
-> me to do the final smoke test before sending a pull request.
+The current code uses the sh_offset field in purgatory_info->sechdrs to
+store a pointer to the current load address of the section. Depending
+whether the section will be loaded or not this is either a pointer into
+purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
+violation of the ELF standard but also makes the code very hard to
+understand as you cannot tell if the memory you are using is read-only or
+not.
 
-So this is the kind of information I'd like to see in the pull
-request, so that I don't have to wonder why something went wrong.
+Remove this mis-use and store the offset of the section in
+pugaroty_info->purgatory_buf in sh_offset.
 
-I'll pull again after I've had my morning coffee.
+Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+---
+ arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
+ kernel/kexec_file.c                | 33 +++------------------------------
+ 2 files changed, 9 insertions(+), 34 deletions(-)
 
-              Linus
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 51667c8b5c9b..41db74bdc88b 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 		 * rel[i].r_offset contains byte offset from beginning
+ 		 * of section to the storage unit affected.
+ 		 *
+-		 * This is location to update (->sh_offset). This is temporary
+-		 * buffer where section is currently loaded. This will finally
+-		 * be loaded to a different address later, pointed to by
++		 * This is location to update. This is temporary buffer
++		 * where section is currently loaded. This will finally be
++		 * loaded to a different address later, pointed to by
+ 		 * ->sh_addr. kexec takes care of moving it
+ 		 *  (kexec_load_segment()).
+ 		 */
+-		location = (void *)(section->sh_offset + rel[i].r_offset);
++		location = pi->purgatory_buf;
++		location += section->sh_offset;
++		location += rel[i].r_offset;
+ 
+ 		/* Final address of the location */
+ 		address = section->sh_addr + rel[i].r_offset;
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 746b91e46e34..25b44d1a664a 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
+ 	pi->sechdrs = sechdrs;
+ 
+-	/*
+-	 * We seem to have multiple copies of sections. First copy is which
+-	 * is embedded in kernel in read only section. Some of these sections
+-	 * will be copied to a temporary buffer and relocated. And these
+-	 * sections will finally be copied to their final destination at
+-	 * segment load time.
+-	 *
+-	 * Use ->sh_offset to reflect section address in memory. It will
+-	 * point to original read only copy if section is not allocatable.
+-	 * Otherwise it will point to temporary copy which will be relocated.
+-	 *
+-	 * Use ->sh_addr to contain final address of the section where it
+-	 * will go during execution time.
+-	 */
+-	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+-		if (sechdrs[i].sh_type == SHT_NOBITS)
+-			continue;
+-
+-		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
+-						sechdrs[i].sh_offset;
+-	}
+-
+ 	offset = 0;
+ 	bss_addr = kbuf->mem + kbuf->bufsz;
+ 	kbuf->image->start = pi->ehdr->e_entry;
+@@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 			kbuf->image->start += kbuf->mem + offset;
+ 		}
+ 
+-		src = (void *)sechdrs[i].sh_offset;
++		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
+ 		dst = pi->purgatory_buf + offset;
+ 		memcpy(dst, src, sechdrs[i].sh_size);
+ 
+ 		sechdrs[i].sh_addr = kbuf->mem + offset;
+-
+-		/*
+-		 * This section got copied to temporary buffer. Update
+-		 * ->sh_offset accordingly.
+-		 */
+-		sechdrs[i].sh_offset = (unsigned long)dst;
++		sechdrs[i].sh_offset = offset;
+ 		offset += sechdrs[i].sh_size;
+ 	}
+ 
+@@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
+ 		return -EINVAL;
+ 	}
+ 
+-	sym_buf = (char *)sec->sh_offset + sym->st_value;
++	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
+ 
+ 	if (get_value)
+ 		memcpy((void *)buf, sym_buf, size);
+-- 
+2.13.5
