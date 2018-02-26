@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226S/ETEyqaGXL54AJYAqE9T060iEnHz/syLor10hhJNKhnLoWm1mLTLd+4PloOEnzTMw7mj
-ARC-Seal: i=1; a=rsa-sha256; t=1519676547; cv=none;
+X-Google-Smtp-Source: AH8x2275mzZsYPgW1olYlT+E9qrqMTLjth7DE2cgQQ4DfJCIc8ChsAR43vrOpEq1sQyNe6bbJbpb
+ARC-Seal: i=1; a=rsa-sha256; t=1519676544; cv=none;
         d=google.com; s=arc-20160816;
-        b=LsN+u1iHkjw0lNf2+NP33+SXRnvHDD1hWsBRinM2D6Yj2d3czUozgiUsPbZvm+JDI7
-         s41Fi6MFsBaMaByzRhG/olg7wgQeAb6Qdx7/6RkA8NYm1MCjzOGfehTPDdA7Ujdy88pi
-         hOCTkRfuP/fI7/bx3XjG/QcGSYTNXh1Za3cPdKWq08icGsi/mQfkBHvSsXa0jfZyVusu
-         aPC81ZIJVpAjOLJ/QiMVHUGzrI7rOqbDD5/vRfyfYB8RZhQHuh6XS0vgtFMfDMcOwHRo
-         llFNIwemM8cCObuuEic1b84T4FhjAWyV63VPDMCwJuZtJR+ifwZ4oA8vH06O5ET5M84a
-         q14A==
+        b=Yu2EUM/HSVFf+FytAlSTnh4Y0qXjccogEy0S6/241NtDDcKguZtbwu1D6FsMyi/u9a
+         mBoDIopMWYPLPKeqg9C95Ze9DoGfOXTgCwe+mR315ScjNjOEUyU7BOGb8HuhRrmHzDfs
+         +zGATLVckzWs7a/ayqu3ooSccN10vhClx/iExai+Bui5Pti7NAlJZRZ7AUfT5b4kwX/4
+         bLfsEy+en8LoUVaWhFj0vejKD21JMb2Wo4wdyVJH0m0VyfroKI9q1Fc4o99jvHcYwwMs
+         iPPgtw6uJnjMZ/uSthPCq3WdOTPiJsAK4IJEqKvEKOWoun6H31l9OKyf7T7VFfIzxs0b
+         HoSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zYSTgnnXYxCmWa9lwbYmCnciFanTeDNnMZ+qEifDo4w=;
-        b=RdEdDYrk5i7w15NgBVgOJTmZSvf2VOuayJyZgKbLXsIiFOq78q9lJ0cn/4bREKEtYx
-         gnTNKgaBwEvUSpHizdmBffpnYnJwPKcqutCIh8RIApe/k9RWIr21Z0a9rU/JKe9zlYU/
-         JI6fndWFEJ6NC17iVn29/H1/pSRBFfZeW6qDKuYL34F++sQ7lo52pQpgwvbYH1OSAo85
-         nNMb/1w4KbOZNmzWWBTEZDlI8WFWRhUJgmuskFI+zu2i2N8y2YWQNDdrsWhCg8xVLy1G
-         bHsE+Qm6JqbpYbm2LlLBEPzHfzVGwj+kNdtjShzw+unyK1mkthhZsdej9v9gimSD9gli
-         khFw==
+        bh=PPcCaKhpyhi2+nE/5Bhq8iCkcZvj0JM30xX6vYRsYZc=;
+        b=ab7HSPNBktpLralqnpWhxG1B4nfwjenVz1/q9XT4AfbrLIlvQhgOzZnAnOtzGL2/Dm
+         ajLPlCEUBWLoyWmAwNO+pcYg+UOTmbRi4XvvtyCQ/4UJQyXrHn2eyNR+CzLLxLu0462i
+         E/MlLEcwpneUWG8AFvmZNbnYsQHTbkO03y//xaRJI6QaAyn4qt++5D3jagLyD+bR+t/o
+         UPDswcABZj3/IpOPjoaD2fA5fve8IYogIjjx0JX6Er17hEuU3UIEH1pnQYtFf1eYWibt
+         Kwymk+Jz2f4tn9U1rG0BhdGe1/4G8I/BVwqui5yrQu+TNDExsdzsMvRn/AJHOLcWPWyR
+         bIWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jeff Moyer <jmoyer@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 32/39] device-dax: implement ->split() to catch invalid munmap attempts
-Date: Mon, 26 Feb 2018 21:20:53 +0100
-Message-Id: <20180226201645.078680087@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 31/39] libnvdimm: fix integer overflow static analysis warning
+Date: Mon, 26 Feb 2018 21:20:52 +0100
+Message-Id: <20180226201645.039001170@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496355512111333?=
-X-GMAIL-MSGID: =?utf-8?q?1593496355512111333?=
+X-GMAIL-THRID: =?utf-8?q?1593496352333936285?=
+X-GMAIL-MSGID: =?utf-8?q?1593496352333936285?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,69 +51,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit 9702cffdbf2129516db679e4467db81e1cd287da upstream.
+commit 58738c495e15badd2015e19ff41f1f1ed55200bc upstream.
 
-Similar to how device-dax enforces that the 'address', 'offset', and
-'len' parameters to mmap() be aligned to the device's fundamental
-alignment, the same constraints apply to munmap().  Implement ->split()
-to fail munmap calls that violate the alignment constraint.
+Dan reports:
+    The patch 62232e45f4a2: "libnvdimm: control (ioctl) messages for
+    nvdimm_bus and nvdimm devices" from Jun 8, 2015, leads to the
+    following static checker warning:
 
-Otherwise, we later fail VM_BUG_ON checks in the unmap_page_range() path
-with crash signatures of the form:
+            drivers/nvdimm/bus.c:1018 __nd_ioctl()
+            warn: integer overflows 'buf_len'
 
-    vma ffff8800b60c8a88 start 00007f88c0000000 end 00007f88c0e00000
-    next           (null) prev           (null) mm ffff8800b61150c0
-    prot 8000000000000027 anon_vma           (null) vm_ops ffffffffa0091240
-    pgoff 0 file ffff8800b638ef80 private_data           (null)
-    flags: 0x380000fb(read|write|shared|mayread|maywrite|mayexec|mayshare|softdirty|mixedmap|hugepage)
-    ------------[ cut here ]------------
-    kernel BUG at mm/huge_memory.c:2014!
-    [..]
-    RIP: 0010:__split_huge_pud+0x12a/0x180
-    [..]
-    Call Trace:
-     unmap_page_range+0x245/0xa40
-     ? __vma_adjust+0x301/0x990
-     unmap_vmas+0x4c/0xa0
-     unmap_region+0xae/0x120
-     ? __vma_rb_erase+0x11a/0x230
-     do_munmap+0x276/0x410
-     vm_munmap+0x6a/0xa0
-     SyS_munmap+0x1d/0x30
+    From a casual review, this seems like it might be a real bug.  On
+    the first iteration we load some data into in_env[].  On the second
+    iteration we read a use controlled "in_size" from nd_cmd_in_size().
+    It can go up to UINT_MAX - 1.  A high number means we will fill the
+    whole in_env[] buffer.  But we potentially keep looping and adding
+    more to in_len so now it can be any value.
 
-Link: http://lkml.kernel.org/r/151130418681.4029.7118245855057952010.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Jeff Moyer <jmoyer@redhat.com>
+    It simple enough to change, but it feels weird that we keep looping
+    even though in_env is totally full.  Shouldn't we just return an
+    error if we don't have space for desc->in_num.
+
+We keep looping because the size of the total input is allowed to be
+bigger than the 'envelope' which is a subset of the payload that tells
+us how much data to expect. For safety explicitly check that buf_len
+does not overflow which is what the checker flagged.
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 62232e45f4a2: "libnvdimm: control (ioctl) messages for nvdimm_bus..."
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dax/dax.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/nvdimm/bus.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/dax/dax.c
-+++ b/drivers/dax/dax.c
-@@ -453,9 +453,21 @@ static int dax_dev_pmd_fault(struct vm_a
- 	return rc;
- }
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -812,16 +812,17 @@ static int __nd_ioctl(struct nvdimm_bus
+ 		int read_only, unsigned int ioctl_cmd, unsigned long arg)
+ {
+ 	struct nvdimm_bus_descriptor *nd_desc = nvdimm_bus->nd_desc;
+-	size_t buf_len = 0, in_len = 0, out_len = 0;
+ 	static char out_env[ND_CMD_MAX_ENVELOPE];
+ 	static char in_env[ND_CMD_MAX_ENVELOPE];
+ 	const struct nd_cmd_desc *desc = NULL;
+ 	unsigned int cmd = _IOC_NR(ioctl_cmd);
+ 	void __user *p = (void __user *) arg;
+ 	struct device *dev = &nvdimm_bus->dev;
+-	struct nd_cmd_pkg pkg;
+ 	const char *cmd_name, *dimm_name;
++	u32 in_len = 0, out_len = 0;
+ 	unsigned long cmd_mask;
++	struct nd_cmd_pkg pkg;
++	u64 buf_len = 0;
+ 	void *buf;
+ 	int rc, i;
  
-+static int dax_dev_split(struct vm_area_struct *vma, unsigned long addr)
-+{
-+	struct file *filp = vma->vm_file;
-+	struct dax_dev *dax_dev = filp->private_data;
-+	struct dax_region *dax_region = dax_dev->region;
-+
-+	if (!IS_ALIGNED(addr, dax_region->align))
-+		return -EINVAL;
-+	return 0;
-+}
-+
- static const struct vm_operations_struct dax_dev_vm_ops = {
- 	.fault = dax_dev_fault,
- 	.pmd_fault = dax_dev_pmd_fault,
-+	.split = dax_dev_split,
- };
+@@ -882,7 +883,7 @@ static int __nd_ioctl(struct nvdimm_bus
+ 	}
  
- static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	if (cmd == ND_CMD_CALL) {
+-		dev_dbg(dev, "%s:%s, idx: %llu, in: %zu, out: %zu, len %zu\n",
++		dev_dbg(dev, "%s:%s, idx: %llu, in: %u, out: %u, len %llu\n",
+ 				__func__, dimm_name, pkg.nd_command,
+ 				in_len, out_len, buf_len);
+ 
+@@ -912,9 +913,9 @@ static int __nd_ioctl(struct nvdimm_bus
+ 		out_len += out_size;
+ 	}
+ 
+-	buf_len = out_len + in_len;
++	buf_len = (u64) out_len + (u64) in_len;
+ 	if (buf_len > ND_IOCTL_MAX_BUFLEN) {
+-		dev_dbg(dev, "%s:%s cmd: %s buf_len: %zu > %d\n", __func__,
++		dev_dbg(dev, "%s:%s cmd: %s buf_len: %llu > %d\n", __func__,
+ 				dimm_name, cmd_name, buf_len,
+ 				ND_IOCTL_MAX_BUFLEN);
+ 		return -EINVAL;
