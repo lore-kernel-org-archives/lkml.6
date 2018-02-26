@@ -1,67 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676255-2-501596943442788766
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676255; b=EfrEozLmH1F4lKC5vwkXMEtX0l3IVqEXfN0mTwrjRV73VC/
-    Lhfaa3mDI7qjCSGxZItW6JyrM6NhAj8NoPIFAEB29td0Ive8fHENm6Agr18KRRaf
-    +0LLPDx0z67OxucaICLWdMLoNK8NTuCUR0kWaNT3yus+/ka4ohsXTxwvRPqG0iBy
-    OShV85u52LmvvyYjDlDZx3sLY6XNbFsAc0JL0yrviPAlneaL/oEKi3Ld4Fys1ZhN
-    9URbSVmHytQqifcrGmZhLPrwlgIrYlMuOWRjQxNUL4dpSANwtb06fGb7kta35+vI
-    zDhzlswK0gLZ8pyYEGXy12RENY4zErARynIpsXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676255; bh=MAvfjNpwjVqr1qOra09Uvkb37G
-    vml+vuc3pSW4rBuus=; b=qWKSQv8/vmg90cBr1bM/cawMqFZM3i980/0bfnxKfA
-    79Ql5Mu6WHJqaOA7fdmudrwdXjKVPf94gIGmd+m5VVs67tw2hlHCcMtoW0wE7+Xs
-    Os1FXHWBb5Z/z7rugq03Ie+ez2AMwBiJr4LmTmc3DKNnz57S6MbaBgc3nWT0h/9s
-    PbCEhmEsqjuI2GAgbgxhzry2G2l5bB2Qt/C40EdrZkBXCvdsgOpq3ma68mAK8zmT
-    6sxYRW2xAho0P3fZUZuGQkU+lCbM5FWwyid14lI9jrQTGnbHeKllakiNpxtl79Tv
-    VVJ7F/hrFtnenvp8go+v3N+wbOFgRHiRQuu/Ts21HtGA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeBZURc (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:17:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59902 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeBZURa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:30 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELv8dTM/pAssE8ABgzbY4+pk10oo7HLAe7dInb8arEnQtwjOwG11+kdzYqVpZXSEQXvTfDq3
+ARC-Seal: i=1; a=rsa-sha256; t=1519676224; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EA2htXLdn1abyH9e4VFbDRQddL7T9a41URiDbk3PYgG0RigJSV3MMzbBa4MqjxtrNp
+         BjhlWqZIl6vSSSxZJS03OCaFP+NEglEFHVvy2qS2lWzefGHPn8Ep4KM8pBuH3/YPgIzc
+         DMWyUorDmpzbMTzG33iqNuVKrwczW0a5iJ9BRU4lswarhR+Hq9z5ldZ993FiH3NvReIB
+         ocFmStPzP/ZmBm+V2aizGq/J0RBbK896UbkVw9n/FQ0lalXRtTKQ8wz0D1tgZXtJajSw
+         1CJdfsrPCNlcTKw3VlPyMveLAbfran+8xLHQKf5vtOypJYXVYA3rSCrBWsZKQd6I+Scd
+         kaqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=uWXkQ5l8+x6Xa8Ab/LT4flnJiOOyuS/JD6mO/GlDdQk=;
+        b=Y3/QYgMpiSx2zUSDkzGnFKHJ9RwuXz9jYTm74EIPAgWs2WSYsB0vfQEwjggDrGg2cV
+         2QDXI5wDBykteABScKJ7lDjK8ivV6WkYSmLz2Zf60DpbEGq4v6ZbGFmo02TXdyUs+RAO
+         t4/AxRkPm/Gmd5M0A9CN7dPk05NgHamiiCR07PEGwXUcv9w88EIh89EXqvcjPDpGjtlq
+         MpdUShLlIqOJsEcA8MLkXuzw/y0xocceSiXr5bMImc61w49ay5nuPch6NAFlWpbEZexU
+         5zwY+jly2jsB0KQFH6X9qB/bnGJ91JGXTLyAwiz8Kv5SkhpyDdsHxxkXH+4hJWNUQS1M
+         IB8A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 07/22] scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
-Date: Mon, 26 Feb 2018 21:16:07 +0100
-Message-Id: <20180226201559.068748822@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Bernhard Kaindl <bernhard.kaindl@thalesgroup.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 02/22] powerpc/64s: Fix RFI flush dependency on HARDLOCKUP_DETECTOR
+Date: Mon, 26 Feb 2018 21:16:02 +0100
+Message-Id: <20180226201558.809893153@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -69,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593496017277626852?=
+X-GMAIL-MSGID: =?utf-8?q?1593496017277626852?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,40 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit c39813652700f3df552b6557530f1e5f782dbe2f upstream.
+The backport of commit aa8a5e0062ac ("powerpc/64s: Add support for RFI
+flush of L1-D cache"), incorrectly placed the new RFI flush code
+inside an existing #ifdef CONFIG_HARDLOCKUP_DETECTOR block.
 
-The fcp_rsp_info structure as defined in the FC spec has an initial 3
-bytes reserved field. The ibmvfc driver mistakenly defined this field as
-4 bytes resulting in the rsp_code field being defined in what should be
-the start of the second reserved field and thus always being reported as
-zero by the driver.
+This has the obvious effect of requiring HARDLOCKUP_DETECTOR to be
+enabled in order for RFI flush to be enabled, which is a bug.
 
-Ideally, we should wire ibmvfc up with libfc for the sake of code
-deduplication, and ease of maintaining standardized structures in a
-single place. However, for now simply fixup the definition in ibmvfc for
-backporting to distros on older kernels. Wiring up with libfc will be
-done in a followup patch.
+Fix it by moving the #endif up to where it belongs.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: c3892946315e ("powerpc/64s: Add support for RFI flush of L1-D cache")
+Reported-by: Bernhard Kaindl <bernhard.kaindl@thalesgroup.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/ibmvscsi/ibmvfc.h |    2 +-
+ arch/powerpc/kernel/setup_64.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/ibmvscsi/ibmvfc.h
-+++ b/drivers/scsi/ibmvscsi/ibmvfc.h
-@@ -366,7 +366,7 @@ enum ibmvfc_fcp_rsp_info_codes {
- };
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -835,6 +835,7 @@ static int __init disable_hardlockup_det
+ 	return 0;
+ }
+ early_initcall(disable_hardlockup_detector);
++#endif
  
- struct ibmvfc_fcp_rsp_info {
--	__be16 reserved;
-+	u8 reserved[3];
- 	u8 rsp_code;
- 	u8 reserved2[4];
- }__attribute__((packed, aligned (2)));
+ #ifdef CONFIG_PPC_BOOK3S_64
+ static enum l1d_flush_type enabled_flush_types;
+@@ -973,4 +974,3 @@ ssize_t cpu_show_meltdown(struct device
+ 	return sprintf(buf, "Vulnerable\n");
+ }
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+-#endif
