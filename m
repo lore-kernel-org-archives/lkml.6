@@ -1,137 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeBZNPF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:15:05 -0500
-Received: from mail-db5eur01on0047.outbound.protection.outlook.com ([104.47.2.47]:33639
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752449AbeBZNPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:15:02 -0500
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Colin King <colin.king@canonical.com>,
-        Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        inus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than
- or equal zero
-Thread-Topic: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less
- than or equal zero
-Thread-Index: AQHTrvnwlIEEua2LxUKAPWlm3f9MXKO2p4Fw
-Date: Mon, 26 Feb 2018 13:14:59 +0000
-Message-ID: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <20180226120418.3589-1-colin.king@canonical.com>
-In-Reply-To: <20180226120418.3589-1-colin.king@canonical.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com;
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB419;7:NkGXAqjnGHqoqy/u+PWoxl6Bwr7HFCo6MxHgXsOJGTsaQ2rqP5Wo0SqhT0ZisqK+GJJ+RYIGs08KSHoXTXh97gzSiLkOn8HTASa/MnYmFj0G+BdAKX7PVX0fNz0c3MZ4vnYVqj44JlK6YjVdqzWFo3VWi7yIOYXJ2WYBcGs70AF0I1tr9ofuVxxiH6SSFcC+bXfB26MFpgnjPKp9DfBnVOcoU/5XxGwpqM3EwGaGuKDvlQhasafFLdphM3BTwBTh
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ff9293c3-7bff-4683-abff-08d57d1af014
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM3PR04MB419;
-x-ms-traffictypediagnostic: AM3PR04MB419:
-x-microsoft-antispam-prvs: <AM3PR04MB41938931DC2FEEEC68163B580C10@AM3PR04MB419.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(198206253151910);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501161)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041288)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB419;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB419;
-x-forefront-prvs: 05954A7C45
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(39380400002)(199004)(189003)(13464003)(7696005)(102836004)(6246003)(26005)(6436002)(99286004)(186003)(54906003)(81166006)(3280700002)(76176011)(55016002)(39060400002)(5660300001)(86362001)(105586002)(6506007)(53546011)(9686003)(106356001)(53936002)(3660700001)(14454004)(59450400001)(2900100001)(316002)(6116002)(3846002)(74316002)(68736007)(2906002)(2501003)(4326008)(2950100002)(97736004)(81156014)(8676002)(66066001)(7736002)(25786009)(110136005)(33656002)(478600001)(5250100002)(229853002)(8936002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB419;H:AM3PR04MB306.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: W3QJFGaibU++9V0Rcn3rK74l5RYE0op0qgNwwUqjReRdNF84c/nS8JH3QQdgs9yOwLsGOYbFOV3HShrA5YXr9A1FTHIfHyECZ1P/yJ5I65fSPzLdip8QVaTxBKdChxuiWc42tJn4iz6oxmM1zru9gpKZNtFZDMlbAd1tsWqB0ns=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1753340AbeBZNT3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:19:29 -0500
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:38731 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753026AbeBZNR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:17:27 -0500
+X-Google-Smtp-Source: AH8x224Om+h1qpAGjbJuZVRrm04EaUh67f5GrzsIgMIGtB5FidrG256hqndXVTFfMuabaZhVh1fJNw==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH V3 00/19] lightnvm: pblk: implement 2.0 support
+Date: Mon, 26 Feb 2018 14:16:59 +0100
+Message-Id: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff9293c3-7bff-4683-abff-08d57d1af014
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2018 13:14:59.2676
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB419
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1QDFBBi000739
 
-> -----Original Message-----
-> From: Colin King [mailto:colin.king@canonical.com]
-> Sent: Monday, February 26, 2018 8:04 PM
-> To: A.s. Dong <aisheng.dong@nxp.com>; Fabio Estevam
-> <festevam@gmail.com>; Shawn Guo <shawnguo@kernel.org>; Stefan
-> Agner <stefan@agner.ch>; inus Walleij <linus.walleij@linaro.org>; linux-
-> gpio@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or
-> equal zero
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The unsigned integer nfuncs is being error checked with a value less or equal
-> to zero; this is always false if of_get_child_count returns a -ve for an error
-> condition since nfuncs is not signed. Fix this by making variables nfuncs and i
-> signed integers.
-> 
-> Detected with Coccinelle:
-> drivers/pinctrl/freescale/pinctrl-imx.c:620:6-12: WARNING: Unsigned
-> expression compared with zero: nfuncs <= 0
-> 
-> Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 24aaddd760a0..1e8ca83352d0 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -605,8 +605,8 @@ static int imx_pinctrl_probe_dt(struct
-> platform_device *pdev,
->  	struct device_node *np = pdev->dev.of_node;
->  	struct device_node *child;
->  	struct pinctrl_dev *pctl = ipctl->pctl;
-> -	u32 nfuncs = 0;
-> -	u32 i = 0;
-> +	int nfuncs = 0;
-> +	int i = 0;
->  	bool flat_funcs;
-> 
+# Changes since V2:
 
-I saw 'i', later used, is converted to u32 unconditionally. (GCC did not complain)
-e.g.
-radix_tree_insert
-imx_pinctrl_parse_functions
+Apply Matias' feedback:
+ - Remove generic nvm_id identify structure.
+ - Do not remap capabilities (cap) to media and controlled capabilities
+   (mccap). Instead, add a comment to prevent confusion when
+   crosschecking with 2.0 spec.
+ - Change maxoc and maxocpu defaults from 1 block to the max number of
+   blocks.
+ - Re-implement the generic geometry to use nvm_geo on both device and
+   targets. Maintain nvm_common_geo to make it easier to copy the common
+   part of the geometry (without having to overwrite target-specific
+   fields, which is ugly and error prone). Matias, if you still want to
+   get rid of this, we can do it.
+ - Re-order patches with renaming to make them more meaningful. These
+   belong to the series, since the name changes are motivated by 2.0
+   inclusions. The only exception would be 36d10bfd3234, but I hope it
+   is OK I include it here.
 
-And of_get_child_count seems can't  return a minor value.
+Also,
+ - Eliminate a dependency between luns and lines in the init/exit
+   refactoring.
+ - Use the global address format when possible to avoid defaulting on
+   the 1.2 path. This will safe headaches if the address format changes
+   at some point.
 
-So does something like below look better?
+I took out the patch allowing to do bit shifts on non power-of-2 media
+formats on pblk's mapping since it requires touching many places that
+are not 2.0 related. I'll submit this separately.
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index c976ffe..4259209 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -612,7 +612,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
-                nfuncs = 1;
-        } else {
-                nfuncs = of_get_child_count(np);
--               if (nfuncs <= 0) {
-+               if (nfuncs == 0) {
-                        dev_err(&pdev->dev, "no functions defined\n");
-                        return -EINVAL;
-                }
+# Changes since V1:
 
-Regards
-Dong Aisheng
+Apply Matias' feedback:
+ - Rebase on top of Matias' latest patches.
+ - Use nvme_get_log_ext to submit report chunk and export it.
+ - Re-write report chunk based on Matias' suggestions. Here, I
+   maintained the lba interface, but it was necessary to redo the
+   address formatting to match the chunk log page format. For pblk,
+   this means a double address transformation, but it enables the
+   standard path to use lbas, plus, this is not in the fast path.
+ - Fold address format together with address transformations.
+ - Split the generic geometry patch in different patches.
+ - Remove refactoring of ligthnvm's core sysfs.
 
->  	if (!np)
-> --
-> 2.15.1
+Feedback not applied:
+ - Not letting pblk know about 1.2 and 2.0 bad block paths.
+   Since the interfaces for get/set bad block and report chunk are so
+   different, moving this logic to core adds assumptions on how the
+   targets would want to get the data back. A way of doing this is
+   creating a logical report chunk on the 1.2 path, but this would
+   mean that values like the wear-index are invalid, which requires
+   the target knowledge. I'm open to suggestions here.
+
+Also:
+ - Do some further renamings
+ - Create a generic address format to make it explicit where we share
+   1.2 and 2.0 fields to avoid address formatting in the fast path.
+ - Add new fields to sysfs to complete spec and show major/minor
+   versions (version and subversion to respect current interface).
+
+Implement 2.0 support in pblk. This includes the address formatting and
+mapping paths, as well as the sysfs entries for them.
+
+Javier
+
+Javier González (19):
+  lightnvm: simplify geometry structure.
+  lightnvm: add controller capabilities to 2.0
+  lightnvm: add minor version to generic geometry
+  lightnvm: add shorten OCSSD version in geo
+  lightnvm: complete geo structure with maxoc*
+  lightnvm: pblk: check for supported version
+  lightnvm: complete 2.0 values in sysfs
+  lightnvm: rename number of channels and luns
+  lightnvm: rename sect_* to sec_*
+  lightnvm: add support for 2.0 address format
+  lightnvm: pblk: rename ppaf* to addrf*
+  lightnvn: pblk: use generic address format
+  lightnvm: make address conversions depend on generic device
+  nvme: make nvme_get_log_ext available
+  lightnvm: implement get log report chunk helpers
+  lightnvm: define chunk states
+  lightnvm: pblk: implement get log report chunk
+  lightnvm: pblk: refactor init/exit sequences
+  lightnvm: pblk: implement 2.0 support
+
+ drivers/lightnvm/core.c          | 199 +++++-----
+ drivers/lightnvm/pblk-core.c     | 151 +++++--
+ drivers/lightnvm/pblk-gc.c       |   2 +-
+ drivers/lightnvm/pblk-init.c     | 833 +++++++++++++++++++++++----------------
+ drivers/lightnvm/pblk-map.c      |   4 +-
+ drivers/lightnvm/pblk-read.c     |   2 +-
+ drivers/lightnvm/pblk-recovery.c |  14 +-
+ drivers/lightnvm/pblk-rl.c       |   2 +-
+ drivers/lightnvm/pblk-sysfs.c    | 134 ++++++-
+ drivers/lightnvm/pblk-write.c    |   2 +-
+ drivers/lightnvm/pblk.h          | 255 ++++++++----
+ drivers/nvme/host/lightnvm.c     | 458 ++++++++++++++-------
+ drivers/nvme/host/nvme.h         |   3 +
+ include/linux/lightnvm.h         | 338 ++++++++++------
+ 14 files changed, 1559 insertions(+), 838 deletions(-)
+
+-- 
+2.7.4
