@@ -1,67 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754374AbeBZPIW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:08:22 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:32809 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754311AbeBZPHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:07:54 -0500
-X-Google-Smtp-Source: AH8x224LzhuhCuAgbGRb/ANuUJmfJgVvmwQHNE5FYjB2+dRxAe+fp4uKumAr7DTe+1B/4zAQIslbhw==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-kernel@vger.kernel.org, cphealy@gmail.com,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 2/3] mfd: rave-sp: Convert print_hex_dump() to print_hex_dump_debug()
-Date: Mon, 26 Feb 2018 07:07:38 -0800
-Message-Id: <20180226150739.13457-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180226150739.13457-1-andrew.smirnov@gmail.com>
-References: <20180226150739.13457-1-andrew.smirnov@gmail.com>
+        id S1754209AbeBZPJd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:09:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:51170 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753952AbeBZPFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:05:00 -0500
+From: Will Deacon <will.deacon@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@kernel.org,
+        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RFC PATCH v2 04/12] openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
+Date: Mon, 26 Feb 2018 15:04:52 +0000
+Message-Id: <1519657500-15094-5-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
+References: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert print_hex_dump() to print_hex_dump_debug() to be able to
-leverage CONFIG_DYNAMIC_DEBUG.
+The openrisc implementation of asm/cmpxchg.h pulls in linux/bitops.h
+so that it can refer to BITS_PER_BYTE. It also transitively relies on
+this pulling in linux/compiler.h for READ_ONCE.
 
-Cc: linux-kernel@vger.kernel.org
-Cc: cphealy@gmail.com
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Replace the #include with asm-generic/bits.h and linux/compiler.h
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- drivers/mfd/rave-sp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/openrisc/include/asm/cmpxchg.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-index 9e4c83ff2aec..cec1e309b31f 100644
---- a/drivers/mfd/rave-sp.c
-+++ b/drivers/mfd/rave-sp.c
-@@ -311,8 +311,8 @@ static int rave_sp_write(struct rave_sp *sp, const u8 *data, u8 data_size)
+diff --git a/arch/openrisc/include/asm/cmpxchg.h b/arch/openrisc/include/asm/cmpxchg.h
+index d29f7db53906..94b578388fe2 100644
+--- a/arch/openrisc/include/asm/cmpxchg.h
++++ b/arch/openrisc/include/asm/cmpxchg.h
+@@ -16,8 +16,9 @@
+ #ifndef __ASM_OPENRISC_CMPXCHG_H
+ #define __ASM_OPENRISC_CMPXCHG_H
  
- 	length = dest - frame;
++#include  <linux/compiler.h>
+ #include  <linux/types.h>
+-#include  <linux/bitops.h>
++#include  <asm-generic/bits.h>
  
--	print_hex_dump(KERN_DEBUG, "rave-sp tx: ", DUMP_PREFIX_NONE,
--		       16, 1, frame, length, false);
-+	print_hex_dump_debug("rave-sp tx: ", DUMP_PREFIX_NONE,
-+			     16, 1, frame, length, false);
+ #define __HAVE_ARCH_CMPXCHG 1
  
- 	return serdev_device_write(sp->serdev, frame, length, HZ);
- }
-@@ -453,8 +453,8 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
- 	struct device *dev           = &sp->serdev->dev;
- 	u8 crc_calculated[checksum_length];
- 
--	print_hex_dump(KERN_DEBUG, "rave-sp rx: ", DUMP_PREFIX_NONE,
--		       16, 1, data, length, false);
-+	print_hex_dump_debug("rave-sp rx: ", DUMP_PREFIX_NONE,
-+			     16, 1, data, length, false);
- 
- 	if (unlikely(length <= checksum_length)) {
- 		dev_warn(dev, "Dropping short frame\n");
 -- 
-2.14.3
+2.1.4
