@@ -1,104 +1,137 @@
-Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELtBka8SFGsUZvhtnMTDpvdSPqmCug3bE9f0aqRHyImcjor5nW+kIruZBl6Ccw4BnoR57EPS
-ARC-Seal: i=1; a=rsa-sha256; t=1519403049; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VCNvEjQ3H9FvHmKnCC5jowRgQdbWd5HkJNarKHYLE3nYso/bc57RM3CQxp4iHxIkak
-         xnESuBXASV4GVq4oN4UMfMFOrisKhIPJLUOAnj5XuVbcVbScJQzJUkArqOk3fQNaLcUs
-         rzVFxvIC0wnkXH3yTUvy2hsobxTlczovbK/hJ0maJZ21Xlf1g2n6Atqtx+3uqz+sRoZx
-         X3ZURFPSAti+BPbofCvCFCYlS95T5LzK5gLuetU/WkeErmdOxEHYogs03BquyVITG1vz
-         A+PGlFw73PsnijnZc9OLKFpTwrX58IF28adYHKMdLeNdwqUUV22UiHXOcmife8OVJu5C
-         TiEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=q3UXyp+tnqviAHY2DeuyyRpdyMaApC+pjq/q5ocp9lw=;
-        b=HfN18yILCddc9WzH9synlCvdUw4xPYDZ5zABBYkeP9qR9Af7090ikUOMn20XqFp7eP
-         6FoAMnXAUKA3YtP/KwI0s1rveBKx8Hl3TtAtXdmYaB7C7cd1/6mrkc3ck5QtR6s+XDNK
-         ZXZ3kE1kNAwjDtoMWOWHtJbnDOlv9d/kPbrahfxot+dVy0tHRsxY/IjAzON/8jjXAKMS
-         bv/f22rfVx1PSNBzxgIHEEdsVIveJxkbiOpSK39ZX9ULdbGZhua9Uy16IUlOIn3kbGPC
-         hYJuULurfvsTYp/FvGSzDURgvswjaTyV14GMp4dp7ftO+A3kdvKKeCiUGDodhkJoJblO
-         4+cQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: ALKML <linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	DTML <devicetree@vger.kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Alexey Klimov <klimov.linux@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v6 01/20] dt-bindings: mailbox: add support for mailbox client shared memory
-Date: Fri, 23 Feb 2018 16:23:31 +0000
-Message-Id: <1519403030-21189-2-git-send-email-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
-References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2970050-1519654106-2-4796250278766513390
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519654105; b=fOzGv5aoX/09Rs2us24MNqvcpB7oKYOIg1zA1a1WlEu/SJD
+    S1k1yKF4A4sq/M4Y1ulpyyurs8dSpuZtZ0vt2RtO6BebTDYWcf26/5tE44zxrKmh
+    mGEdvDxPnNcHBTWIhsa28JXdwcIcsynoxUOR8xj0cSbMkW57uOcfAbcfbi954LPX
+    YqonzgLlqj3XE2prIWJxqKgYDqFGKxpVuof0wzqoGSPEJU6Z0yzGMiHV7mmn5CHI
+    I3FgsW2dSe1Kuh2jP03i9ag1tQADgW6Tw2lcP5IRVuBIBA11x2a5RfrpVUxRAuBT
+    HwW+tJGh+3aU/ODy/BtghpLu65vlaKflu5GqRBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519654105; bh=AF3g3Pl2cKVxDr43dIpnIfz9c8
+    b9bREUijfxrFBM0AY=; b=BqP4pHpkdkm/uHmYd5M++fiDYeW6ESpyQKcBWnTsc9
+    USA7fK0EFE7RznxrTF9nXQ8bnxVZPyMdIAoaTqCQKFz6JWELqN9lMgEpQQ18gBkJ
+    TsZnOMo5SX3OBlT4g9xEw7SZJ0KO3beU/nxNtz2Mrfv4L+XfdPiZ+Quu2xDr0p7e
+    j7VuIiTVEQhJ7DTl9nCKZ5zNQtkvL5+TSYtYITuq4ednKumF2h1y+PE3htRc+pSY
+    ES9uiQdj1Zx0g6nsSaPex9BW/a/smmzYGS0vJIBiB/+n8SHYnM8YlJD9mhohMrm0
+    sMVxTXT0RnMTGjid1qggTDSEQbM2ZCAlMFCP/XKZy9bQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752063AbeBZOIW (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 09:08:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46453 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751825AbeBZOIW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:08:22 -0500
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc: boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, jbeulich@suse.com,
+        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
+Subject: [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before suspend
+Date: Mon, 26 Feb 2018 15:08:18 +0100
+Message-Id: <20180226140818.4849-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.6
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593209572102769304?=
-X-GMAIL-MSGID: =?utf-8?q?1593209572102769304?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Many users of the mailbox controllers depend on the shared memory
-between the two end points to exchange the main data while using simple
-doorbell mechanism to alert the end points of the presence of a message.
+Older Xen versions (4.5 and before) might have problems migrating pv
+guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
+suspending zero that MSR and restore it after being resumed.
 
-This patch defines device tree bindings to represent such shared memory
-in a generic way.
-
-Cc: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- .../devicetree/bindings/mailbox/mailbox.txt        | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/x86/xen/suspend.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/mailbox.txt b/Documentation/devicetree/bindings/mailbox/mailbox.txt
-index be05b9746c69..af8ecee2ac68 100644
---- a/Documentation/devicetree/bindings/mailbox/mailbox.txt
-+++ b/Documentation/devicetree/bindings/mailbox/mailbox.txt
-@@ -23,6 +23,11 @@ assign appropriate mailbox channel to client drivers.
+diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
+index d9f96cc5d743..1d83152c761b 100644
+--- a/arch/x86/xen/suspend.c
++++ b/arch/x86/xen/suspend.c
+@@ -1,12 +1,15 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/types.h>
+ #include <linux/tick.h>
++#include <linux/percpu-defs.h>
  
- Optional property:
- - mbox-names: List of identifier strings for each mailbox channel.
-+- shmem : List of phandle pointing to the shared memory(SHM) area between the
-+	  users of these mailboxes for IPC, one for each mailbox. This shared
-+	  memory can be part of any memory reserved for the purpose of this
-+	  communication between the mailbox client and the remote.
-+
+ #include <xen/xen.h>
+ #include <xen/interface/xen.h>
+ #include <xen/grant_table.h>
+ #include <xen/events.h>
  
- Example:
- 	pwr_cntrl: power {
-@@ -30,3 +35,26 @@ assign appropriate mailbox channel to client drivers.
- 		mbox-names = "pwr-ctrl", "rpc";
- 		mboxes = <&mailbox 0 &mailbox 1>;
- 	};
++#include <asm/cpufeatures.h>
++#include <asm/msr-index.h>
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/page.h>
+ #include <asm/fixmap.h>
+@@ -15,6 +18,8 @@
+ #include "mmu.h"
+ #include "pmu.h"
+ 
++static DEFINE_PER_CPU(u64, spec_ctrl);
 +
-+Example with shared memory(shmem):
+ void xen_arch_pre_suspend(void)
+ {
+ 	xen_save_time_memory_area();
+@@ -35,6 +40,9 @@ void xen_arch_post_suspend(int cancelled)
+ 
+ static void xen_vcpu_notify_restore(void *data)
+ {
++	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
++		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
 +
-+	sram: sram@50000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x50000000 0x10000>;
+ 	/* Boot processor notified via generic timekeeping_resume() */
+ 	if (smp_processor_id() == 0)
+ 		return;
+@@ -44,7 +52,15 @@ static void xen_vcpu_notify_restore(void *data)
+ 
+ static void xen_vcpu_notify_suspend(void *data)
+ {
++	u64 tmp;
 +
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x50000000 0x10000>;
+ 	tick_suspend_local();
 +
-+		cl_shmem: shmem@0 {
-+			compatible = "client-shmem";
-+			reg = <0x0 0x200>;
-+		};
-+	};
-+
-+	client@2e000000 {
-+		...
-+		mboxes = <&mailbox 0>;
-+		shmem = <&cl_shmem>;
-+		..
-+	};
++	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
++		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
++		this_cpu_write(spec_ctrl, tmp);
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	}
+ }
+ 
+ void xen_arch_resume(void)
 -- 
-2.7.4
+2.13.6
