@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224Xrszi5hWkxicbqN4exDI0EWTsFUGZoaHk1YCXW7fANhmMIPD34j4Wkt1eD/fCoDuaiY9O
-ARC-Seal: i=1; a=rsa-sha256; t=1519676826; cv=none;
+X-Google-Smtp-Source: AH8x227ylh3IfvVoQab2/oEExu7/lNO64bNd+g4CQa+TeEUqQ/5k6fPRCvhRU5NvRpzVcXfvmhfD
+ARC-Seal: i=1; a=rsa-sha256; t=1519676823; cv=none;
         d=google.com; s=arc-20160816;
-        b=jQwGYvUKNEfXC3ZURUzN935YT0WFMlq4R0AFh+g7awj6yh7Y+T70efr2wFidDMGp23
-         K6e63+4QRemg3iBdSOMvMSPbcTF21m9u06Hzgh5UrAxT0Er/7iFq1SSkCEBm+ILXjy2J
-         YFkqTfq1aQmqgcHIGdY5MmJpoFGVr4yaY2b+N1nD2P1oYzqIfLUZZeiUKw8LV9EUtBnj
-         /gIQpOF3K2FswLLIKosde1U0mRmxgcz/pTwZonTvZji68CfcrvMq5jvb1KIBPRFlHtYn
-         BIydDmHfymxrklIteBXoxQI3nI/MwMF0qJi1jnGPTK0Y5643+FoytQDK9YB9jia8hM7H
-         7K+Q==
+        b=aMIZKVg2S7loeH5pTWbxWbg+RMVL/lvdP4gSFLFOKVG+bX+9bBSV9Z8V/oCmDj0NPR
+         YsYXtlxYANOXizOjNOrKAZXWcC7bk2wwBIbda9jCuklkG4R45Czb1giaJG862KOMRNiK
+         DSCywtlssk2DSMDHd1ALMjNkqJswQBpLEaNETFRelsV0qoFUQ5rcO+AdELpinw1Ho2Gs
+         UYAmmrfjUBA5YnfUNkjCW7GW0RrczlKZGRH7wj6I9l03Z/9G0EhT+0k46WMr58FQ1Dqw
+         iol2EvGtug+Pqpf/h3U/af/Fj+N9EpZfIwQKng6mINFUKdYW9LaZ5BqGnWEIe4bRPYOA
+         DA3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dO4mQlhlrChXh2ZkZrW+l0q4sGlSkK17/gAv5KA+shQ=;
-        b=MVCT4cKcdujWsj+d9FPUT4aqDn6D34hHd4GH6lbvLJfDoaTY2vA5N7scM8o6q8RIJz
-         WnaCdyWLuI3ULbH4jQnyfhNV1esefNBRzRMEIMNRBzRa4APWCg0uwNjpjkslHNWEBm3C
-         XYXsMx0sKn+z9c9Aci7+iJZOnwWcBK2X2QSX+XV+uAZuJS68M6VHTOZ9iKSj0+3hXbfY
-         DaQLASWPseAzJOcpCeitKlb0KpTvPQabyCTRxS4FpvUCZQhSFonx2/X9DKV/b1cZTHgk
-         6UqP2oO9vQOaBn6rfpPq3E4SBnd7Pnl5ylLv2qILvvh0jDGBKE/uS33UnOlVXfVSyqG7
-         EMOw==
+        bh=ENn24/ai3tGEjVwgqk1fEDoraDTvhJai3Dz7jB7/4Go=;
+        b=pPfhHIJGR5B5mXh/oHOACwRL8PtyXalJoArhZSDCSIfPid6vqYCVBfFWS3kNVn82Nq
+         ig0fq+IvHk/iEgqcp7CNCBCkgSV8xkdb/F/n1q1mOetx0U0JYdL6ka7gNMCPx0VcZBxd
+         nvunUCvhi2WmX/iiuiJgalZxhBnBYAJcreFCjwQE255bm2/nlBxzSf8/FbwX5YgEPAxv
+         mCPNpj1CIoDaYJg3vySk+08EHiymmxM9+Pne+BkWyGIlL3kavoTNZcvCQ2Xm23b9t/sC
+         eoXR/nEM56sXhq1bZ+wTcI88aitDLt7S85jZQwZy0ECY60FWHq1vdxQdwX3i4PZkTnZk
+         3myA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yuriy Vostrikov <delamonpansie@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Babu Moger <babu.moger@amd.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Nicolas Pitre <nico@linaro.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 27/64] x86/apic/vector: Handle vector release on CPU unplug correctly
-Date: Mon, 26 Feb 2018 21:22:04 +0100
-Message-Id: <20180226202154.620009713@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will.deacon@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 26/64] Kbuild: always define endianess in kconfig.h
+Date: Mon, 26 Feb 2018 21:22:03 +0100
+Message-Id: <20180226202154.578575708@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -43,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496647326652148?=
-X-GMAIL-MSGID: =?utf-8?q?1593496647326652148?=
+X-GMAIL-THRID: =?utf-8?q?1593496460929119249?=
+X-GMAIL-MSGID: =?utf-8?q?1593496644833754591?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,77 +57,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit e84cf6aa501c58bf4bf451f1e425192ec090aed2 upstream.
+commit 101110f6271ce956a049250c907bc960030577f8 upstream.
 
-When a irq vector is replaced, then the previous vector is normally
-released when the first interrupt happens on the new vector. If the target
-CPU of the previous vector is already offline when the new vector is
-installed, then the previous vector is silently discarded, which leads to
-accounting issues causing suspend failures and other problems.
+Build testing with LTO found a couple of files that get compiled
+differently depending on whether asm/byteorder.h gets included early
+enough or not.  In particular, include/asm-generic/qrwlock_types.h is
+affected by this, but there are probably others as well.
 
-Adjust the logic so that the previous vector is freed in the underlying
-matrix allocator to ensure that the accounting stays correct.
+The symptom is a series of LTO link time warnings, including these:
 
-Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
-Reported-by: Yuriy Vostrikov <delamonpansie@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Yuriy Vostrikov <delamonpansie@gmail.com>
+    net/netlabel/netlabel_unlabeled.h:223: error: type of 'netlbl_unlhsh_add' does not match original declaration [-Werror=lto-type-mismatch]
+     int netlbl_unlhsh_add(struct net *net,
+    net/netlabel/netlabel_unlabeled.c:377: note: 'netlbl_unlhsh_add' was previously declared here
+
+    include/net/ipv6.h:360: error: type of 'ipv6_renew_options_kern' does not match original declaration [-Werror=lto-type-mismatch]
+     ipv6_renew_options_kern(struct sock *sk,
+    net/ipv6/exthdrs.c:1162: note: 'ipv6_renew_options_kern' was previously declared here
+
+    net/core/dev.c:761: note: 'dev_get_by_name_rcu' was previously declared here
+     struct net_device *dev_get_by_name_rcu(struct net *net, const char *name)
+    net/core/dev.c:761: note: code may be misoptimized unless -fno-strict-aliasing is used
+
+    drivers/gpu/drm/i915/i915_drv.h:3377: error: type of 'i915_gem_object_set_to_wc_domain' does not match original declaration [-Werror=lto-type-mismatch]
+     i915_gem_object_set_to_wc_domain(struct drm_i915_gem_object *obj, bool write);
+    drivers/gpu/drm/i915/i915_gem.c:3639: note: 'i915_gem_object_set_to_wc_domain' was previously declared here
+
+    include/linux/debugfs.h:92:9: error: type of 'debugfs_attr_read' does not match original declaration [-Werror=lto-type-mismatch]
+     ssize_t debugfs_attr_read(struct file *file, char __user *buf,
+    fs/debugfs/file.c:318: note: 'debugfs_attr_read' was previously declared here
+
+    include/linux/rwlock_api_smp.h:30: error: type of '_raw_read_unlock' does not match original declaration [-Werror=lto-type-mismatch]
+     void __lockfunc _raw_read_unlock(rwlock_t *lock) __releases(lock);
+    kernel/locking/spinlock.c:246:26: note: '_raw_read_unlock' was previously declared here
+
+    include/linux/fs.h:3308:5: error: type of 'simple_attr_open' does not match original declaration [-Werror=lto-type-mismatch]
+     int simple_attr_open(struct inode *inode, struct file *file,
+    fs/libfs.c:795: note: 'simple_attr_open' was previously declared here
+
+All of the above are caused by include/asm-generic/qrwlock_types.h
+failing to include asm/byteorder.h after commit e0d02285f16e
+("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
+in linux-4.15.
+
+Similar bugs may or may not exist in older kernels as well, but there is
+no easy way to test those with link-time optimizations, and kernels
+before 4.14 are harder to fix because they don't have Babu's patch
+series
+
+We had similar issues with CONFIG_ symbols in the past and ended up
+always including the configuration headers though linux/kconfig.h.  This
+works around the issue through that same file, defining either
+__BIG_ENDIAN or __LITTLE_ENDIAN depending on CONFIG_CPU_BIG_ENDIAN,
+which is now always set on all architectures since commit 4c97a0c8fee3
+("arch: define CPU_BIG_ENDIAN for all fixed big endian archs").
+
+Link: http://lkml.kernel.org/r/20180202154104.1522809-2-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Babu Moger <babu.moger@amd.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Nicolas Pitre <nico@linaro.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180222112316.930791749@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/apic/vector.c |   25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ include/linux/kconfig.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -134,21 +134,40 @@ static void apic_update_vector(struct ir
- {
- 	struct apic_chip_data *apicd = apic_chip_data(irqd);
- 	struct irq_desc *desc = irq_data_to_desc(irqd);
-+	bool managed = irqd_affinity_is_managed(irqd);
+--- a/include/linux/kconfig.h
++++ b/include/linux/kconfig.h
+@@ -4,6 +4,12 @@
  
- 	lockdep_assert_held(&vector_lock);
+ #include <generated/autoconf.h>
  
- 	trace_vector_update(irqd->irq, newvec, newcpu, apicd->vector,
- 			    apicd->cpu);
++#ifdef CONFIG_CPU_BIG_ENDIAN
++#define __BIG_ENDIAN 4321
++#else
++#define __LITTLE_ENDIAN 1234
++#endif
++
+ #define __ARG_PLACEHOLDER_1 0,
+ #define __take_second_arg(__ignored, val, ...) val
  
--	/* Setup the vector move, if required  */
--	if (apicd->vector && cpu_online(apicd->cpu)) {
-+	/*
-+	 * If there is no vector associated or if the associated vector is
-+	 * the shutdown vector, which is associated to make PCI/MSI
-+	 * shutdown mode work, then there is nothing to release. Clear out
-+	 * prev_vector for this and the offlined target case.
-+	 */
-+	apicd->prev_vector = 0;
-+	if (!apicd->vector || apicd->vector == MANAGED_IRQ_SHUTDOWN_VECTOR)
-+		goto setnew;
-+	/*
-+	 * If the target CPU of the previous vector is online, then mark
-+	 * the vector as move in progress and store it for cleanup when the
-+	 * first interrupt on the new vector arrives. If the target CPU is
-+	 * offline then the regular release mechanism via the cleanup
-+	 * vector is not possible and the vector can be immediately freed
-+	 * in the underlying matrix allocator.
-+	 */
-+	if (cpu_online(apicd->cpu)) {
- 		apicd->move_in_progress = true;
- 		apicd->prev_vector = apicd->vector;
- 		apicd->prev_cpu = apicd->cpu;
- 	} else {
--		apicd->prev_vector = 0;
-+		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
-+				managed);
- 	}
- 
-+setnew:
- 	apicd->vector = newvec;
- 	apicd->cpu = newcpu;
- 	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
