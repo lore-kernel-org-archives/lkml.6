@@ -1,99 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeBZMfV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:35:21 -0500
-Received: from smtprelay08.ispgateway.de ([134.119.228.107]:3642 "EHLO
-        smtprelay08.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeBZMfT (ORCPT
+        id S1752776AbeBZMkt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:40:49 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37807 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752443AbeBZMkp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:35:19 -0500
-Subject: Re: [OpenRISC] Removing architectures without upstream gcc support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonas Bonn <jonas@southpole.se>, Chen Liqin <liqin.linux@gmail.com>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, David Howells <dhowells@redhat.com>,
-        openrisc@lists.librecores.org, Lennox Wu <lennox.wu@gmail.com>,
-        James Hogan <jhogan@kernel.org>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
-        whitequark@whitequark.org
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <155284c9-7fd4-2f2c-0216-1c43622f88c3@philipp-wagner.com>
- <CAK8P3a1Pd5+mGocnpQyPNYEqqqwpDJAb+FnWS6OJxuO1d-R=2A@mail.gmail.com>
-From: Philipp Wagner <lists@philipp-wagner.com>
-Message-ID: <57602e7e-a9c6-3480-7e99-7d274e836ed6@philipp-wagner.com>
-Date: Mon, 26 Feb 2018 13:10:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1Pd5+mGocnpQyPNYEqqqwpDJAb+FnWS6OJxuO1d-R=2A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Df-Sender: bGlzdHNAcGhpbGlwcC13YWduZXIuY29t
+        Mon, 26 Feb 2018 07:40:45 -0500
+X-Google-Smtp-Source: AH8x227GxLDloUj4r0snGXVnqMqfULbpeAFAnVbjDwXQ/X/x5d7XUaZrIGAaz3FeGQV9PEVsEY0GGw==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: dmatlack@google.com
+Subject: [PATCH 0/2] KVM: nVMX: expose VMX capabilities as MSR features
+Date: Mon, 26 Feb 2018 13:40:07 +0100
+Message-Id: <1519648809-16694-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/2018 09:00 AM, Arnd Bergmann wrote:
-> On Sun, Feb 25, 2018 at 4:43 PM, Philipp Wagner
-> <lists@philipp-wagner.com> wrote:
->> Am 22.02.2018 um 16:45 schrieb Arnd Bergmann:
->>> While building the cross-toolchains, I noticed that overall, we can build almost
->>> all linux target architectures with upstream binutils and gcc these days,
->>> however there are still some exceptions, and I'd like to find out if anyone
->>> has objections to removing the ones that do not have upstream support.
->>> This are the four architectures I found:
->>> [...]
->>> * OpenRISC is a RISC architecture with a free license and an
->>>    active community. It seems to have lost a bit of steam after RISC-V
->>>    is rapidly taking over that niche, but there are chips out there and
->>>    the design isn't going away. Listing it here for completeness only
->>>    because there is no upstream gcc port yet, but this will hopefully
->>>    change in the future based on
->>>    https://lists.librecores.org/pipermail/openrisc/2018-January/000958.html
->>>    and I had no problems locating the gcc-7.x tree for building my
->>>    toolchains. The port is actively being maintained.
->>
->> It's mostly mentioned in the mailing list thread you linked to, but just
->> for completeness in this thread:
->>
->> The OpenRISC GCC port is maintained and regularly updated to newer GCC
->> versions. It is not, however, upstreamed to the FSF due to a single
->> missing FSF copyright assignment from a developer who has written large
->> parts of the initial port. All code which has copyright assignments in
->> place (binutils, GDB, etc.) has been upstreamed lately.
->>
->> For GCC, Stafford Horne is actively working on rewriting the parts which
->> we don't have the FSF copyright assignment for (and unless something
->> very surprising happens, won't get). [If anyone wants to help, there's
->> GSoC project for it as well:
->> https://fossi-foundation.org/gsoc18-ideas#openrisc-gcc-port]
->>
->> So I'd be very sad if the openrisc port gets dropped from Linux upstream.
-> 
-> Yes, definitely. What I was really trying to say here is I consider openrisc
-> an obvious exception to the 'no more ports without upstream gcc' rule
-> because of the above.
-> 
-> On a related note, has anyone successfully built an openrisc kernel with
-> llvm/clang? As we discussed for arch/hexagon/, that architecture is unlikely
-> to ever get an upstream gcc port, but like openrisc does have an upstream
-> llvm port and they actually use that.
+These patches add the VMX capability MSRs to the /dev/kvm ioctls
+KVM_GET_MSR_FEATURE_INDEX_LIST and KVM_GET_MSRS, so that userspace
+can easily probe which VMX features are actually supported by KVM.
 
-Actually the LLVM port of or1k isn't upstream either. CCing whitequark, 
-who might know more about the (non-)plans of getting the backend 
-upstream. I also don't know of anyone having tried to build the openrisc 
-kernel with LLVM, would certainly be an interesting thing to try.
+This will help the implementation of nested hypervisor migration,
+even for heterogeneous clusters.
 
-> I know that x86 and arm64 mostly work with llvm, arm32 works in some of
-> the more common configurations at least (not big-endian or older CPUs
-> though) and some others probably work as well. I have already build both
-> gcc-5.5 and gcc-7.3 for openrisc and uploaded those to
-> https://www.kernel.org/pub/tools/crosstool/files/bin/, but if llvm works as
-> well, that could be one more reason to try to build a working set of
-> clang based cross toolchains.
+Patch 1 is just refactoring, while patch 2 implements the feature.
 
-Philipp
+Thanks,
+
+Paolo
+
+Paolo Bonzini (2):
+  KVM: nVMX: introduce struct nested_vmx_msrs
+  KVM: nVMX: expose VMX capabilities for nested hypervisors to userspace
+
+ arch/x86/kvm/vmx.c | 367 ++++++++++++++++++++++++++++-------------------------
+ arch/x86/kvm/x86.c |  19 +++
+ 2 files changed, 210 insertions(+), 176 deletions(-)
+
+-- 
+1.8.3.1
