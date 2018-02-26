@@ -1,151 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753797AbeBZONR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:13:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:50482 "EHLO foss.arm.com"
+        id S1753746AbeBZONG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:13:06 -0500
+Received: from mga12.intel.com ([192.55.52.136]:47072 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753525AbeBZONC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:13:02 -0500
-Date: Mon, 26 Feb 2018 14:12:57 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: srinivas.kandagatla@linaro.org
-Cc: stanimir.varbanov@linaro.org, svarbanov@mm-sol.com,
-        linux-pci@vger.kernel.org, bhelgaas@google.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: qcom: use regulator bulk api for apq8064 supplies
-Message-ID: <20180226141257.GB23806@e107981-ln.cambridge.arm.com>
-References: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753405AbeBZOLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:11:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="20875493"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jeremy McNicoll <jmcnicol@redhat.com>,
+        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 05/18] thunderbolt: Wait a bit longer for root switch config space
+Date: Mon, 26 Feb 2018 17:10:35 +0300
+Message-Id: <20180226141048.83949-6-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
+References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 01:26:37PM +0000, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> This patch converts existing regulators to use regulator bulk apis,
-> to make it consistent with msm8996 changes also cut down some redundant code.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Changes since v1:
-> 	updated index correctly and use ARRAY_SIZE
-> 
->  drivers/pci/dwc/pcie-qcom.c | 52 +++++++++++++--------------------------------
+In some case reading root switch config space takes longer than what we
+are currently waiting in the driver resulting timeout and failure.
+Increase number of retries to allow some more time for the root switch
+config space to become accesssible.
 
-Applied to pci/dwc for v4.17, thanks.
+Also log an error if the timeout is exceeded so we know why the driver
+probe failed.
 
-Lorenzo
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/thunderbolt/icm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->  1 file changed, 15 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index e3f20e09a18d..50ff9b879c27 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -79,6 +79,7 @@
->  #define PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE	0x358
->  #define SLV_ADDR_SPACE_SZ			0x10000000
->  
-> +#define QCOM_PCIE_2_1_0_MAX_SUPPLY	3
->  struct qcom_pcie_resources_2_1_0 {
->  	struct clk *iface_clk;
->  	struct clk *core_clk;
-> @@ -88,9 +89,7 @@ struct qcom_pcie_resources_2_1_0 {
->  	struct reset_control *ahb_reset;
->  	struct reset_control *por_reset;
->  	struct reset_control *phy_reset;
-> -	struct regulator *vdda;
-> -	struct regulator *vdda_phy;
-> -	struct regulator *vdda_refclk;
-> +	struct regulator_bulk_data supplies[QCOM_PCIE_2_1_0_MAX_SUPPLY];
->  };
->  
->  struct qcom_pcie_resources_1_0_0 {
-> @@ -218,18 +217,15 @@ static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
->  	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
->  	struct dw_pcie *pci = pcie->pci;
->  	struct device *dev = pci->dev;
-> +	int ret;
->  
-> -	res->vdda = devm_regulator_get(dev, "vdda");
-> -	if (IS_ERR(res->vdda))
-> -		return PTR_ERR(res->vdda);
-> -
-> -	res->vdda_phy = devm_regulator_get(dev, "vdda_phy");
-> -	if (IS_ERR(res->vdda_phy))
-> -		return PTR_ERR(res->vdda_phy);
-> -
-> -	res->vdda_refclk = devm_regulator_get(dev, "vdda_refclk");
-> -	if (IS_ERR(res->vdda_refclk))
-> -		return PTR_ERR(res->vdda_refclk);
-> +	res->supplies[0].supply = "vdda";
-> +	res->supplies[1].supply = "vdda_phy";
-> +	res->supplies[2].supply = "vdda_refclk";
-> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(res->supplies),
-> +				      res->supplies);
-> +	if (ret)
-> +		return ret;
->  
->  	res->iface_clk = devm_clk_get(dev, "iface");
->  	if (IS_ERR(res->iface_clk))
-> @@ -275,9 +271,7 @@ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
->  	clk_disable_unprepare(res->iface_clk);
->  	clk_disable_unprepare(res->core_clk);
->  	clk_disable_unprepare(res->phy_clk);
-> -	regulator_disable(res->vdda);
-> -	regulator_disable(res->vdda_phy);
-> -	regulator_disable(res->vdda_refclk);
-> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
->  }
->  
->  static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
-> @@ -288,24 +282,12 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
->  	u32 val;
->  	int ret;
->  
-> -	ret = regulator_enable(res->vdda);
-> -	if (ret) {
-> -		dev_err(dev, "cannot enable vdda regulator\n");
-> +	ret = regulator_bulk_enable(ARRAY_SIZE(res->supplies), res->supplies);
-> +	if (ret < 0) {
-> +		dev_err(dev, "cannot enable regulators\n");
->  		return ret;
->  	}
->  
-> -	ret = regulator_enable(res->vdda_refclk);
-> -	if (ret) {
-> -		dev_err(dev, "cannot enable vdda_refclk regulator\n");
-> -		goto err_refclk;
-> -	}
-> -
-> -	ret = regulator_enable(res->vdda_phy);
-> -	if (ret) {
-> -		dev_err(dev, "cannot enable vdda_phy regulator\n");
-> -		goto err_vdda_phy;
-> -	}
-> -
->  	ret = reset_control_assert(res->ahb_reset);
->  	if (ret) {
->  		dev_err(dev, "cannot assert ahb reset\n");
-> @@ -389,11 +371,7 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
->  err_clk_phy:
->  	clk_disable_unprepare(res->iface_clk);
->  err_assert_ahb:
-> -	regulator_disable(res->vdda_phy);
-> -err_vdda_phy:
-> -	regulator_disable(res->vdda_refclk);
-> -err_refclk:
-> -	regulator_disable(res->vdda);
-> +	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
->  
->  	return ret;
->  }
-> -- 
-> 2.15.1
-> 
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index 182226023acb..1183321586c5 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -828,7 +828,7 @@ __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
+ 	struct icm_pkg_driver_ready request = {
+ 		.hdr.code = ICM_DRIVER_READY,
+ 	};
+-	unsigned int retries = 10;
++	unsigned int retries = 50;
+ 	int ret;
+ 
+ 	memset(&reply, 0, sizeof(reply));
+@@ -856,6 +856,7 @@ __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
+ 		msleep(50);
+ 	} while (--retries);
+ 
++	tb_err(tb, "failed to read root switch config space, giving up\n");
+ 	return -ETIMEDOUT;
+ }
+ 
+-- 
+2.16.1
