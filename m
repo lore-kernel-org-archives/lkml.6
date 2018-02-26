@@ -1,180 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeBZLiD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:38:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:48940 "EHLO foss.arm.com"
+        id S1752839AbeBZLi1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:38:27 -0500
+Received: from foss.arm.com ([217.140.101.70]:48956 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbeBZLiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:38:00 -0500
-Subject: Re: [RFC PATCH] irqchip/gic-v3-its: apply ACPI device based quirks
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180213141118.3092-1-ard.biesheuvel@linaro.org>
- <f0a6a635-0b0f-01d1-bc64-3d3d95b5de0b@arm.com>
- <CAKv+Gu_Em_QFpGeRWra0uBxOm7rbhc12waxhCRd5tmRyqt1yrg@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <2d038761-66f2-026e-6255-964bbad6c20e@arm.com>
-Date: Mon, 26 Feb 2018 11:37:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752157AbeBZLiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 06:38:23 -0500
+Date: Mon, 26 Feb 2018 11:38:19 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-ext4@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>
+Subject: Re: v4.16-rc2: virtio-block + ext4 lockdep splats / sleeping from
+ invalid context
+Message-ID: <20180226113818.v544mmjsavc4x5q2@lakrids.cambridge.arm.com>
+References: <20180223154735.x4ezmpjbjm6o6duw@lakrids.cambridge.arm.com>
+ <20180226105256.jagidoki6vsrvzb4@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_Em_QFpGeRWra0uBxOm7rbhc12waxhCRd5tmRyqt1yrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226105256.jagidoki6vsrvzb4@quack2.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/18 11:09, Ard Biesheuvel wrote:
-> On 26 February 2018 at 10:18, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> Hi Ard,
->>
->> On 13/02/18 14:11, Ard Biesheuvel wrote:
->>> Reapply the SynQuacer quirk for ITS frames that are matched by 'SCX0005'
->>> based ACPI devices, replacing the dummy fwnode with the one populated by
->>> the ACPI device core.
->>>
->>> This allows the SynQuacer ACPI tables to publish a device node such
->>> as
->>>
->>>     Device (ITS0) {
->>>       Name (_HID, "SCX0005")
->>>       Name (_ADR, 0x30020000)
->>>       Name (_DSD, Package ()  // _DSD: Device-Specific Data
->>>       {
->>>         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->>>         Package () {
->>>           Package (2) {
->>>             "socionext,synquacer-pre-its",
->>>             Package () { 0x58000000, 0x200000 }
->>>           },
->>>         }
->>>       })
->>>     }
->>>
->>> which will trigger the existing quirk that replaces the doorbell
->>> address with the appropriate address in the pre-ITS frame.
->>>
->>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> ---
->>> Marc, Lorenzo,
->>>
->>> I am aware that this patch may be seen as controversial, but I would like to
->>> propose it nonetheless. The reason is that this is the only thing standing in
->>> the way of full ACPI support in Socionext SynQuacer based platforms.
->>>
->>> The pre-ITS is a monstrosity, but as it turns out, Socionext had help from
->>> ARM designing it, and the reason we need DT/ACPI based quirks in the first
->>> place is that the IIDR of this GICv3 implementation is simply the ARM Ltd.
->>> one (as they designed the IP)
->>
->> That's odd. A bit of archaeology shows that ARM indeed designed a
->> pre-ITS, but that one doesn't break isolation at all (it still has a
->> single doorbell). So whatever creative changes Socionext applied to that
->> piece of IP (assuming this is the same IP), they didn't really
->> understand the far reaching impact it has.
->>
+On Mon, Feb 26, 2018 at 11:52:56AM +0100, Jan Kara wrote:
+> On Fri 23-02-18 15:47:36, Mark Rutland wrote:
+> > Hi all,
+> > 
+> > While fuzzing arm64/v4.16-rc2 with syzkaller, I simultaneously hit a
+> > number of splats in the block layer:
+> > 
+> > * inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-R} usage in
+> >   jbd2_trans_will_send_data_barrier
+> > 
+> > * BUG: sleeping function called from invalid context at mm/mempool.c:320
+> > 
+> > * WARNING: CPU: 0 PID: 0 at block/blk.h:297 generic_make_request_checks+0x670/0x750
+> > 
+> > ... I've included the full splats at the end of the mail.
+> > 
+> > These all happen in the context of the virtio block IRQ handler, so I
+> > wonder if this calls something that doesn't expect to be called from IRQ
+> > context. Is it valid to call blk_mq_complete_request() or
+> > blk_mq_end_request() from an IRQ handler?
 > 
-> OK, thanks for digging that up. All the information I have on this
-> topic is second hand, and I had no reason to assume their account of
-> the history was inaccurate.
-
-No worries. There is a short description of the PITS in the integration
-guide, but I don't think that's available to the mere mortal, unfortunately.
-
+> No, it's likely a bug in detection whether IO completion should be deferred
+> to a workqueue or not. Does attached patch fix the problem? I don't see
+> exactly this being triggered by the syzkaller but it's close enough :)
 > 
->>>
->>> Please take this into consideration when reviewing this patch,
->>>
->>> Thanks,
->>> Ard.
->>>
->>>  drivers/irqchip/irq-gic-v3-its.c | 39 ++++++++++++++++++++
->>>  1 file changed, 39 insertions(+)
->>>
->>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->>> index 06f025fd5726..a63973baf08a 100644
->>> --- a/drivers/irqchip/irq-gic-v3-its.c
->>> +++ b/drivers/irqchip/irq-gic-v3-its.c
->>> @@ -3517,3 +3517,42 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->>>
->>>       return 0;
->>>  }
->>> +
->>> +#if defined(CONFIG_SOCIONEXT_SYNQUACER_PREITS) && defined(CONFIG_ACPI)
->>> +static acpi_status __init acpi_its_device_probe (acpi_handle handle,
->>> +                                              u32 depth, void *context,
->>> +                                              void **ret)
->>> +{
->>> +     struct acpi_device *adev;
->>> +     unsigned long long phys_base;
->>> +     struct its_node *its;
->>> +     acpi_status status;
->>> +     int err;
->>> +
->>> +     err = acpi_bus_get_device(handle, &adev);
->>> +     if (err)
->>> +             return AE_CTRL_TERMINATE;
->>> +
->>> +     status = acpi_evaluate_integer(handle, "_ADR", NULL, &phys_base);
->>> +     if (ACPI_FAILURE(status))
->>> +             return status;
->>> +
->>> +     list_for_each_entry(its, &its_nodes, entry)
->>> +             if (its->phys_base == phys_base) {
->>> +                     irq_domain_free_fwnode(its->fwnode_handle);
->>
->> That line scares me. What about irq domains that are hold a pointer to
->> this handle? its_init_domain() uses it to construct the LPI domain, and
->> it is now pointing to some free memory.
->>
->> You'd need to reassign all the domains that match this fwnode before
->> freeing it.
->>
-> 
-> OK, I can iterate over the domains using irq_find_matching_fwspec()
-> and update the handles one by one. Not pretty, but that is a lost
-> cause anyway for this patch.
+> 								Honza
 
-Yeah, that should do the trick.
+That seems to be it!
 
-> 
->>> +                     its->fwnode_handle = &adev->fwnode;
->>> +                     its_enable_quirk_socionext_synquacer(its);
->>> +                     break;
->>> +             }
->>> +
->>> +     return AE_CTRL_TERMINATE;
->>> +}
->>> +
->>> +static int __init acpi_its_device_probe_init(void)
->>> +{
->>> +     if (!acpi_disabled)
->>> +             acpi_get_devices("SCX0005", acpi_its_device_probe, NULL, NULL);
->>> +     return 0;
->>> +}
->>> +subsys_initcall_sync(acpi_its_device_probe_init);
->>> +#endif
->>>
->>
->> Is there any chance that MSIs could be allocated before this kicks in?
->> If that happens, we're in trouble...
-> 
-> This SoC does not have any MSI capable platform devices, so the only
-> consumers are PCI devices, and PCI drivers are registered as a
-> device_initcal().
+With the below patch applied, I can't trigger the bug after ~10 minutes,
+whereas prior to the patch I can trigger it in ~10 seconds. I'll leave
+that running for a while just in case there's another part to the
+problem, but FWIW:
 
-Ideally, we'd only do the reasignment if domain->mapcount is zero.
+Tested-by: Mark Rutland <mark.rutland@arm.com>
 
 Thanks,
+Mark.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> From 501d97ed88f5020a55a0de4d546df5ad11461cea Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Mon, 26 Feb 2018 11:36:52 +0100
+> Subject: [PATCH] direct-io: Fix sleep in atomic due to sync AIO
+> 
+> Commit e864f39569f4 "fs: add RWF_DSYNC aand RWF_SYNC" added additional
+> way for direct IO to become synchronous and thus trigger fsync from the
+> IO completion handler. Then commit 9830f4be159b "fs: Use RWF_* flags for
+> AIO operations" allowed these flags to be set for AIO as well. However
+> that commit forgot to update the condition checking whether the IO
+> completion handling should be defered to a workqueue and thus AIO DIO
+> with RWF_[D]SYNC set will call fsync() from IRQ context resulting in
+> sleep in atomic.
+> 
+> Fix the problem by checking directly iocb flags (the same way as it is
+> done in dio_complete()) instead of checking all conditions that could
+> lead to IO being synchronous.
+> 
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> CC: stable@vger.kernel.org
+> Reported-by: Mark Rutland <mark.rutland@arm.com>
+> Fixes: 9830f4be159b29399d107bffb99e0132bc5aedd4
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/direct-io.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index a0ca9e48e993..1357ef563893 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -1274,8 +1274,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	 */
+>  	if (dio->is_async && iov_iter_rw(iter) == WRITE) {
+>  		retval = 0;
+> -		if ((iocb->ki_filp->f_flags & O_DSYNC) ||
+> -		    IS_SYNC(iocb->ki_filp->f_mapping->host))
+> +		if (iocb->ki_flags & IOCB_DSYNC)
+>  			retval = dio_set_defer_completion(dio);
+>  		else if (!dio->inode->i_sb->s_dio_done_wq) {
+>  			/*
+> -- 
+> 2.13.6
+> 
