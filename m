@@ -1,76 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752462AbeBZKHk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:07:40 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:62533 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeBZKHj (ORCPT
+        id S1752354AbeBZKIY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:08:24 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39467 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeBZKIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:07:39 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Cc: Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: imx: Fix PM device usage count
-Date: Mon, 26 Feb 2018 11:08:29 +0100
-Message-ID: <31679751.ihdXrgd1zD@aspire.rjw.lan>
-In-Reply-To: <20180225195748.5itrchj36wz5mquu@pengutronix.de>
-References: <20180224224328.2pfki7rqcxqetmlz@agrajag.zerfleddert.de> <20180225195748.5itrchj36wz5mquu@pengutronix.de>
+        Mon, 26 Feb 2018 05:08:17 -0500
+X-Google-Smtp-Source: AG47ELuc1P7cFWEyuMW0j8dNxXSvJipeznfG8Agsrdaozx50+9Ve6LC29AsXJUbPjEbqXk4nlNUFYGVOEo8WetfFAlM=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <1f6d0e8e-6d76-4262-9e8b-f8b1f23d8248@default>
+References: <1f6d0e8e-6d76-4262-9e8b-f8b1f23d8248@default>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Mon, 26 Feb 2018 18:08:14 +0800
+Message-ID: <CANRm+CwE1SSU_WWrJZKTkCR62WUdRrPex0=CjgrL4LExsmbOdQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+To: Liran Alon <liran.alon@oracle.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QA8UMx002671
 
-On Sunday, February 25, 2018 8:57:48 PM CET Uwe Kleine-K�nig wrote:
-> On Sat, Feb 24, 2018 at 11:43:28PM +0100, Tobias Jordan wrote:
-> > pm_runtime_get_sync() increases the device's usage count even when
-> > reporting an error, so add a call to pm_runtime_put_noidle() in the
-> > related error branches.
-> > 
-> > Fixes: 588eb93ea49f ("i2c: imx: add runtime pm support to improve the
-> >   performance")
-> > Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-> > ---
-> > In i2c_imx_xfer(), one could also move the "out" label up (in front of
-> > the call to pm_runtime_put_autosuspend()), but I'm not sure what the
-> > underlying error scenario is; calling _put_noidle() seems to be the
-> > safer bet.
-> > 
-> > This is one of a number of patches for problems found using coccinelle 
-> > scripting in the SIL2LinuxMP project. The patch has been compile-tested;
-> > it's based on linux-next-20180223.
-> > 
-> > For a discussion of the corresponding issue, see
-> > https://marc.info/?l=linux-pm&m=151904483924999&w=2
-> 
-> I don't get the original mail, so reply here. In reply to the question I
-> would have asked here, too:
-> 
-> > Why isn't ...get_sync() directly calling ...put_noidle() but relies on
-> > the driver implementation to do it? It seems unintuitive for a _get_
-> > function to increase the usage count although returning an error.
-> 
-> Rafael replied:
-> 
-> > Because ...get_sync() returns an error when runtime PM is disabled and
-> > we wanted that case to be transparent for the users of it.
-> > 
-> > In the majority of cases (if not always) errors returned by
-> > ...get_sync()
-> > mean disabled runtime PM or flaky hardware and the latter is much less
-> > common (and generally there's not much to do about them in the kernel
-> > anyway).
-> 
-> If pm_runtime_get_sync() should be transparent for the users if PM is
-> disable, why not simply return success then?
+2018-02-26 17:26 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>
+> ----- kernellwp@gmail.com wrote:
+>
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> Linux (among the others) has checks to make sure that certain features
+>>
+>> aren't enabled on a certain family/model/stepping if the microcode
+>> version
+>> isn't greater than or equal to a known good version.
+>>
+>> By exposing the real microcode version, we're preventing buggy guests
+>> that
+>> don't check that they are running virtualized (i.e., they should trust
+>> the
+>> hypervisor) from disabling features that are effectively not buggy.
+>>
+>> Suggested-by: Filippo Sironi <sironi@amazon.de>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>>  arch/x86/include/asm/kvm_host.h | 1 +
+>>  arch/x86/kvm/x86.c              | 8 ++++++--
+>>  2 files changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/kvm_host.h
+>> b/arch/x86/include/asm/kvm_host.h
+>> index 938d453..6e13f2f 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
+>>       u64 smi_count;
+>>       bool tpr_access_reporting;
+>>       u64 ia32_xss;
+>> +     u32 microcode_version;
+>>
+>>       /*
+>>        * Paging state of the vcpu
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index 1a3ed81..cc51c61 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -2247,7 +2247,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
+>> struct msr_data *msr_info)
+>>
+>>       switch (msr) {
+>>       case MSR_AMD64_NB_CFG:
+>> -     case MSR_IA32_UCODE_REV:
+>>       case MSR_IA32_UCODE_WRITE:
+>>       case MSR_VM_HSAVE_PA:
+>>       case MSR_AMD64_PATCH_LOADER:
+>> @@ -2255,6 +2254,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
+>> struct msr_data *msr_info)
+>>       case MSR_AMD64_DC_CFG:
+>>               break;
+>>
+>> +     case MSR_IA32_UCODE_REV:
+>> +             if (msr_info->host_initiated)
+>> +                     vcpu->arch.microcode_version = data >> 32;
+>> +             break;
+>>       case MSR_EFER:
+>>               return set_efer(vcpu, data);
+>>       case MSR_K7_HWCR:
+>> @@ -2550,7 +2553,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu,
+>> struct msr_data *msr_info)
+>>               msr_info->data = 0;
+>>               break;
+>>       case MSR_IA32_UCODE_REV:
+>> -             msr_info->data = 0x100000000ULL;
+>> +             msr_info->data = (u64)vcpu->arch.microcode_version << 32;
+>>               break;
+>>       case MSR_MTRRcap:
+>>       case 0x200 ... 0x2ff:
+>> @@ -8232,6 +8235,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool
+>> init_event)
+>>       vcpu->arch.regs_dirty = ~0;
+>>
+>>       vcpu->arch.ia32_xss = 0;
+>> +     vcpu->arch.microcode_version = 0x1;
+>>
+>>       kvm_x86_ops->vcpu_reset(vcpu, init_event);
+>>  }
+>> --
+>> 2.7.4
+>
+> I think you need to add MSR_IA32_UCODE_REV to emulated_msrs[]
+> to allow for proper live-migration of this MSR value.
 
-Because *some* users of it want to get the error.
+Good catch, will do in v2.
 
-They generally need to handle the rumtime PM disabled situation differently.
-
-Thanks,
-Rafael
+Regards,
+Wanpeng Li
