@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676384-2-721455027299911383
+X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676380-2-5708934387172413597
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676384; b=qrzTqT/SBd8v53CtHkU4EQdJB5h1xWQMdC+A3IOt/iOC+gJ
-    PnA0L2SuNd5BgS/xtZBHshMJWLIZMrHpXiYVhbCW2+5spXmdiN0BcA+OrC3xtGRb
-    Q1ickeqqTcsGPPJPz5FEgE716nOdWyyrlEhf+eGbRsg8bYAIJWLmNfgzyJNvdZoN
-    znXAYkeIptuDnAQY2spJKhiDs6feWp9aLFpPas/3pa7g2OmhZ5F0njJVYRn03kjc
-    SFp9IL/eIJKwDKrRvAxRk3u4Pk+pl+tersRDSn1QkOIEkobdVTQEstYlaufsX59E
-    WG4uyvN0LcMZkT0lNez07Ck1FPxV27VBKgBbbxw==
+    t=1519676380; b=gEV3eiR4eeE6IXYphXNdbfZhRbp9KxXoeuYIyZSFsNmV6TT
+    HFhEGI14wkqsjh/QNRIFQqVEJ/h+LwoJDrg6DTArUvFG/sgVacxpN513oFNCdQRY
+    jpQHXJiDgdkZpbZjv/ne6tzi+vH/5+t1ayGMXhj8Zr8o7AfWFG7cxo1zEf03QySh
+    oo6qFDZLY+vip6Q9OmejfbPS+1FLRrvZC6J2ULeArXwY6LJJApEhrRSd1fxliFwW
+    L/AX+gh343sM98S7tWYbndzRtWbnYxQMqIrMmOOLWgik27hJlPiq7AQY7+/OqumJ
+    +LHwBjZHYT4suwqxMPB9hFh8itu+atfVaon8LlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676384; bh=jTKtLkPItEVLAjTaMDy0w0TeQF
-    zQQ7sT5zXHli8ah90=; b=rzgisUi7jrcK5kNoRGYkEDx8H6IdBYYxsczarIa8a1
-    F/0WcB2+S5qORhoC+IwYbatXbHVxiYh7i/T6VOxhi8P2REW+526R6zcH+Nf5l3tF
-    tbAnwHlhT2G4CaKkMRA7+i3jaMdtenqgMr7PcvfDH4aBk3J3A1DL2NZz9TadvJ7Q
-    S1+436DRkyU+N2T8q1QfhWjjIZUWivOLL4/CjwpCd52YSU1427f9HDWAImmMe6l/
-    koZtHWSKt1XuAVAu8cV6fCVPSXXhcwQn6ZAgr+UHOihc3C+2MbnWEzx8f7fjY3WT
-    smzZeabpIhxNN2JA6UH9M8pyhYLwn5JQLxaLgGroaieg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519676380; bh=HbUun5r4Smy6O1Q1CQxyFyjfZl
+    PuPymisR6nUtT02s4=; b=I4WQMnoPcMHKnkMy0LT7i/RtDmTbPyv+MbnT8U8PNU
+    ry5K+Le3dHIFTr00nunoAXg3m24arHiumTXrDbDD8as+jG54y8Hb1SagC/4WsYyh
+    4EvrTMfZkC/FjJbpTFEiiK0NQt//L4vipNCLMGWbYyq090EoYsZN+No4tO/D1QwR
+    8YpPHcTMi6xgcYl6A3azukQNVPIAtryFsNqFvTuSq7C+/qn2W1VS0YpsPnMi4xPc
+    me4SvO4ewyI2tl5yJfvbXh/kFQK4IndGYwt/2P3l9VfS5cwmznMA/bVlNYVMGAOC
+    zCy/VyrvTQ1nz7xm5f69nKHqnT2xqp59PciDUYHRPHjg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBZURO (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:17:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59778 "EHLO
+        id S1751553AbeBZUT1 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:19:27 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59798 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeBZURL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:11 -0500
+        with ESMTP id S1751446AbeBZURO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.4 21/22] drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
-Date: Mon, 26 Feb 2018 21:16:21 +0100
-Message-Id: <20180226201559.658971149@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.4 22/22] binder: add missing binder_unlock()
+Date: Mon, 26 Feb 2018 21:16:22 +0100
+Message-Id: <20180226201559.693431247@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -78,38 +78,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 458d876eb869d5a88b53074c6c271b8b9adc0f07 upstream.
+From: Eric Biggers <ebiggers@google.com>
 
-We only support vga_switcheroo and runtime pm on PX/HG systems
-so forcing runpm to 1 doesn't do anything useful anyway.
+When commit 4be5a2810489 ("binder: check for binder_thread allocation
+failure in binder_poll()") was applied to 4.4-stable and 4.9-stable it
+was forgotten to release the global binder lock in the new error path.
+The global binder lock wasn't removed until v4.14, by commit
+a60b890f607d ("binder: remove global binder lock").
 
-Only call vga_switcheroo_init_domain_pm_ops() for PX/HG so
-that the cleanup path is correct as well.  This mirrors what
-radeon does as well.
+Fix the new error path to release the lock.
 
-v2: rework the patch originally sent by Lukas (Alex)
-
-Acked-by: Lukas Wunner <lukas@wunner.de>
-Reported-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de> (v1)
-Cc: stable@vger.kernel.org
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/android/binder.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1467,8 +1467,6 @@ int amdgpu_device_init(struct amdgpu_dev
- 	 * ignore it */
- 	vga_client_register(adev->pdev, adev, NULL, amdgpu_vga_set_decode);
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2622,8 +2622,10 @@ static unsigned int binder_poll(struct f
+ 	binder_lock(__func__);
  
--	if (amdgpu_runtime_pm == 1)
--		runtime = true;
- 	if (amdgpu_device_is_px(ddev))
- 		runtime = true;
- 	vga_switcheroo_register_client(adev->pdev, &amdgpu_switcheroo_ops, runtime);
+ 	thread = binder_get_thread(proc);
+-	if (!thread)
++	if (!thread) {
++		binder_unlock(__func__);
+ 		return POLLERR;
++	}
+ 
+ 	wait_for_proc_work = thread->transaction_stack == NULL &&
+ 		list_empty(&thread->todo) && thread->return_error == BR_OK;
