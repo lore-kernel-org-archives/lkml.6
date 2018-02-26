@@ -1,41 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeBZCz7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 21:55:59 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35075 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751958AbeBZCz5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 21:55:57 -0500
-X-Google-Smtp-Source: AG47ELsHkGMXfhf+Un8CYk2i89CSWf1QcDCiVCmMUy6gHavvV+L8KK/Qwi+voEAReVbGDI/d6w8tFg==
+        id S1752113AbeBZC6l (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 21:58:41 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37472 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751945AbeBZC6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 21:58:40 -0500
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] f2fs: allocate buffer for decrypting filename to avoid panic
+Date: Mon, 26 Feb 2018 10:57:55 +0800
+Message-ID: <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1519613032-10244-1-git-send-email-yong.deng@magewell.com>
-References: <1519613032-10244-1-git-send-email-yong.deng@magewell.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 26 Feb 2018 10:55:35 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65-Gz8jarHMpKS+S7rNRkknBPF5qV5VCSpeDYQG7woVDw@mail.gmail.com>
-Message-ID: <CAGb2v65-Gz8jarHMpKS+S7rNRkknBPF5qV5VCSpeDYQG7woVDw@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: sun4i-i2s: Fix RX slot number of SUN8I
-To: Yong Deng <yong.deng@magewell.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Marcus Cooper <codekipper@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.107.193.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 10:43 AM, Yong Deng <yong.deng@magewell.com> wrote:
-> I2S's RX slot number of SUN8I should be shifted 4 bit to left.
->
-> Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
->
-> Signed-off-by: Yong Deng <yong.deng@magewell.com>
+In some platforms (such as arm), high memory is used, then the
+decrypting filename will cause panic, the reason see commit
+569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+for decrypting filename"):
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+ We got dentry pages from high_mem, and its address space directly goes into the
+ decryption path via f2fs_fname_disk_to_usr.
+ But, sg_init_one assumes the address is not from high_mem, so we can get this
+ panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+
+ kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+ Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+ ...
+  (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+  (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+  (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+  (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+  (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+  (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+  (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+  (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+  (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+  (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+  (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+
+Howerver, later patches:
+commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
+unneeded memory allocation in ->readdir")
+
+reverts the codes, which causes panic again in arm, so let's add part of
+the old patch again for dentry page.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/dir.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index f00b5ed..23fff48 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -825,9 +825,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			int save_len = fstr->len;
+ 			int err;
+ 
++			de_name.name = kmemdup(d->filename[bit_pos],
++				de_name.len, GFP_NOFS);
++			if (!de_name.name)
++				return -ENOMEM;
++
+ 			err = fscrypt_fname_disk_to_usr(d->inode,
+ 						(u32)de->hash_code, 0,
+ 						&de_name, fstr);
++			kfree(de_name.name);
+ 			if (err)
+ 				return err;
+ 
+-- 
+1.8.5.2
