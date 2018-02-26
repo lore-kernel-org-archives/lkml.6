@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227NmZuWnzwxe1KCrcHcXilwNGzc2Gr5cKFJElqPO4dF+sOU9y7pinEB/qxl3Spmh59b469z
-ARC-Seal: i=1; a=rsa-sha256; t=1519676617; cv=none;
+X-Google-Smtp-Source: AH8x224xM5heLDNqKDcedTEH3exKPkEqO+ea71LD89ixcEXULkKTMsT42ZGW1DR+E0QkvaC+xv1k
+ARC-Seal: i=1; a=rsa-sha256; t=1519676613; cv=none;
         d=google.com; s=arc-20160816;
-        b=bs9uMZvM3TuAJzmkKH+5Q2f/PfRGiwA/DaZDWtElvBfM6E5ZOMhREClBcubHy2Vz9d
-         +ZXu3FSYejjP5OEEgixATVPvbb7ThLbjiDL1Uv4pwiAznH/+/eNwIxWeJymEJJsFuXwD
-         1j231jyPiGCLwpdf9UCB7dRBb74S0V78acU/OVEMtiYqNh2iJZdzYbBey4rekvFVzdPu
-         WfUKwTq47ALAKPvgaBpNpdEOLDCDulDK5F8V7F+9FfJzCAOV3rOnbjgPRQjmWqMBLvyk
-         nXUIy1o3p5SLdpH919XgdgOmunyirBna9412aij5FjM+OPK9Gh13WdwdebtwMYegnIe/
-         M12g==
+        b=Gt4U2zmKwfp8usi3y+R2sg8ehDAeLjQELp/59LzrOE/OR5vO0jMSc3S3H9mNt2Rlk0
+         FBDyQfIfk73Eq2rGqO2M9aTXsej0nFOC8cahHz2GFQX44/jf6RS3QM9f+R7LjIK6x2hW
+         1xEqGxoxAh1+mGNNuRxlVu6j4su+VjH/aCT2Rz9D16blBiOyuNBZKY8hbtO0loe77Mra
+         7tXu0RSHcQp3u4SC1g9daZlrY9MyfxjXh1pJWzHDs2J+Zu0qXRlVOrrlyRbUCT6VNlTl
+         hgGENP0PiHsyS+4Id/zxIXYDo5HVWIOufHhbCObPXWIa3Xay4qEKmS5zTGnEVk/cWWcZ
+         Jc3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OuAjyPJBUY9VHpyJJVjUk2IlxnxO5m00t16sTy8Qu0Y=;
-        b=rpWUNdXpZmdh7exKakl1CudBtbjtxRzLX2y4ZzgvQ7405zVlDgrfpkjObaUvBCPMOe
-         mzGDMseSI5aZ0yAM+lBEq2VWREXaFH65x4mrn+2lbkJDS6vK5YkWKdt9O8bVmjfVRwGI
-         DBv3dIknT2IR5ZON0EfaXBNySzq3eWgOo9aHq8QJp8jB9onaY+zywfR0BtEX80TXxyv8
-         aWX7rKy5ASBcPG0cBkCCTGBv9H9Cy7RIlv7bq238G5PInJkk8H4Mn07ab8SKn0Iy5t7F
-         DlN7M28OeSK+Gxdu5RrO0EzEyZjtESgTHvPm07h1Vp6RnIvvBcj76MlDPJaSJ5yf4yRl
-         jsYw==
+        bh=P7QHFSssHPxeqVi52deINguJ0YTjCj/45elannTq5Ow=;
+        b=SglGZVZgnkBHrYETwG+nM1sVO7x8Lqqr72gLDUulZt8axwVH1/Mj3S0eOwHYGAd2SB
+         EmcWFPm2MKNwuPgKC2BQI64ayyEsVe7xMCE+cZWyTlguRIcd8noh0NleE/NcYGaonu+A
+         Dz3rF5WRNgrJduBndr0vUyUOAdjj53gv8BMwsATJPAaKETQMFaRb0kIHcPw9l2fdyjUv
+         K8Sp5w1ukTe+de4eV0+ZivDSuTdHGe6/lJgDvwVVsh1beMNmZvsucq95c05rZC2Fou2s
+         3XDVVKv2DZ8E7Pi+CNISxGZ0gieoaPAxWg+UFUXElQ78d+5tJ1H9f0zC63DaJYTmEqxW
+         LmJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzkaller <syzkaller@googlegroups.com>,
-	Noa Osherovich <noaos@mellanox.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 16/54] RDMA/uverbs: Protect from races between lookup and destroy of uobjects
-Date: Mon, 26 Feb 2018 21:21:53 +0100
-Message-Id: <20180226202145.182820006@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4.14 15/54] extcon: int3496: process id-pin first so that we start with the right status
+Date: Mon, 26 Feb 2018 21:21:52 +0100
+Message-Id: <20180226202145.139357900@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496428888877297?=
-X-GMAIL-MSGID: =?utf-8?q?1593496428888877297?=
+X-GMAIL-THRID: =?utf-8?q?1593496425033407350?=
+X-GMAIL-MSGID: =?utf-8?q?1593496425033407350?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,159 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 6623e3e3cd78020016d3fa42555763178e94ab64 upstream.
+commit 0434352d3d2e950cf5e743f6062abd87de22f960 upstream.
 
-The race is between lookup_get_idr_uobject and
-uverbs_idr_remove_uobj -> uverbs_uobject_put.
+Some other drivers may be waiting for our extcon to show-up, exiting their
+probe methods with -EPROBE_DEFER until we show up.
 
-We deliberately do not call sychronize_rcu after the idr_remove in
-uverbs_idr_remove_uobj for performance reasons, instead we call
-kfree_rcu() during uverbs_uobject_put.
+These drivers will typically get the cable state directly after getting
+the extcon, this commit changes the int3496 code to wait for the initial
+processing of the id-pin to complete before exiting probe() with 0, which
+will cause devices waiting on the defered probe to get reprobed.
 
-However, this means we can obtain pointers to uobj's that have
-already been released and must protect against krefing them
-using kref_get_unless_zero.
+This fixes a race where the initial work might still be running while other
+drivers were already calling extcon_get_state().
 
-==================================================================
-BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-Read of size 4 at addr ffff88005fda1ac8 by task syz-executor2/441
-
-CPU: 1 PID: 441 Comm: syz-executor2 Not tainted 4.15.0-rc2+ #56
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-Call Trace:
-dump_stack+0x8d/0xd4
-print_address_description+0x73/0x290
-kasan_report+0x25c/0x370
-? copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-? uverbs_try_lock_object+0x68/0xc0
-? modify_qp.isra.7+0xdc4/0x10e0
-modify_qp.isra.7+0xdc4/0x10e0
-ib_uverbs_modify_qp+0xfe/0x170
-? ib_uverbs_query_qp+0x970/0x970
-? __lock_acquire+0xa11/0x1da0
-ib_uverbs_write+0x55a/0xad0
-? ib_uverbs_query_qp+0x970/0x970
-? ib_uverbs_query_qp+0x970/0x970
-? ib_uverbs_open+0x760/0x760
-? futex_wake+0x147/0x410
-? sched_clock_cpu+0x18/0x180
-? check_prev_add+0x1680/0x1680
-? do_futex+0x3b6/0xa30
-? sched_clock_cpu+0x18/0x180
-__vfs_write+0xf7/0x5c0
-? ib_uverbs_open+0x760/0x760
-? kernel_read+0x110/0x110
-? lock_acquire+0x370/0x370
-? __fget+0x264/0x3b0
-vfs_write+0x18a/0x460
-SyS_write+0xc7/0x1a0
-? SyS_read+0x1a0/0x1a0
-? trace_hardirqs_on_thunk+0x1a/0x1c
-entry_SYSCALL_64_fastpath+0x18/0x85
-RIP: 0033:0x448e29
-RSP: 002b:00007f443fee0c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f443fee16bc RCX: 0000000000448e29
-RDX: 0000000000000078 RSI: 00000000209f8000 RDI: 0000000000000012
-RBP: 000000000070bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000008e98 R14: 00000000006ebf38 R15: 0000000000000000
-
-Allocated by task 1:
-kmem_cache_alloc_trace+0x16c/0x2f0
-mlx5_alloc_cmd_msg+0x12e/0x670
-cmd_exec+0x419/0x1810
-mlx5_cmd_exec+0x40/0x70
-mlx5_core_mad_ifc+0x187/0x220
-mlx5_MAD_IFC+0xd7/0x1b0
-mlx5_query_mad_ifc_gids+0x1f3/0x650
-mlx5_ib_query_gid+0xa4/0xc0
-ib_query_gid+0x152/0x1a0
-ib_query_port+0x21e/0x290
-mlx5_port_immutable+0x30f/0x490
-ib_register_device+0x5dd/0x1130
-mlx5_ib_add+0x3e7/0x700
-mlx5_add_device+0x124/0x510
-mlx5_register_interface+0x11f/0x1c0
-mlx5_ib_init+0x56/0x61
-do_one_initcall+0xa3/0x250
-kernel_init_freeable+0x309/0x3b8
-kernel_init+0x14/0x180
-ret_from_fork+0x24/0x30
-
-Freed by task 1:
-kfree+0xeb/0x2f0
-mlx5_free_cmd_msg+0xcd/0x140
-cmd_exec+0xeba/0x1810
-mlx5_cmd_exec+0x40/0x70
-mlx5_core_mad_ifc+0x187/0x220
-mlx5_MAD_IFC+0xd7/0x1b0
-mlx5_query_mad_ifc_gids+0x1f3/0x650
-mlx5_ib_query_gid+0xa4/0xc0
-ib_query_gid+0x152/0x1a0
-ib_query_port+0x21e/0x290
-mlx5_port_immutable+0x30f/0x490
-ib_register_device+0x5dd/0x1130
-mlx5_ib_add+0x3e7/0x700
-mlx5_add_device+0x124/0x510
-mlx5_register_interface+0x11f/0x1c0
-mlx5_ib_init+0x56/0x61
-do_one_initcall+0xa3/0x250
-kernel_init_freeable+0x309/0x3b8
-kernel_init+0x14/0x180
-ret_from_fork+0x24/0x30
-
-The buggy address belongs to the object at ffff88005fda1ab0
-which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 24 bytes inside of
-32-byte region [ffff88005fda1ab0, ffff88005fda1ad0)
-The buggy address belongs to the page:
-page:00000000d5655c19 count:1 mapcount:0 mapping: (null)
-index:0xffff88005fda1fc0
-flags: 0x4000000000000100(slab)
-raw: 4000000000000100 0000000000000000 ffff88005fda1fc0 0000000180550008
-raw: ffffea00017f6780 0000000400000004 ffff88006c803980 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-ffff88005fda1980: fc fc fb fb fb fb fc fc fb fb fb fb fc fc fb fb
-ffff88005fda1a00: fb fb fc fc fb fb fb fb fc fc 00 00 00 00 fc fc
-ffff88005fda1a80: fb fb fb fb fc fc fb fb fb fb fc fc fb fb fb fb
-ffff88005fda1b00: fc fc 00 00 00 00 fc fc fb fb fb fb fc fc fb fb
-ffff88005fda1b80: fb fb fc fc fb fb fb fb fc fc fb fb fb fb fc fc
-==================================================================@
-
-Cc: syzkaller <syzkaller@googlegroups.com>
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: 3832125624b7 ("IB/core: Add support for idr types")
-Reported-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 2f556bdb9f2e ("extcon: int3496: Add Intel INT3496 ACPI ... driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/rdma_core.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/extcon/extcon-intel-int3496.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/rdma_core.c
-+++ b/drivers/infiniband/core/rdma_core.c
-@@ -196,7 +196,15 @@ static struct ib_uobject *lookup_get_idr
- 		goto free;
+--- a/drivers/extcon/extcon-intel-int3496.c
++++ b/drivers/extcon/extcon-intel-int3496.c
+@@ -153,8 +153,9 @@ static int int3496_probe(struct platform
+ 		return ret;
  	}
  
--	uverbs_uobject_get(uobj);
-+	/*
-+	 * The idr_find is guaranteed to return a pointer to something that
-+	 * isn't freed yet, or NULL, as the free after idr_remove goes through
-+	 * kfree_rcu(). However the object may still have been released and
-+	 * kfree() could be called at any time.
-+	 */
-+	if (!kref_get_unless_zero(&uobj->ref))
-+		uobj = ERR_PTR(-ENOENT);
-+
- free:
- 	rcu_read_unlock();
- 	return uobj;
+-	/* queue initial processing of id-pin */
++	/* process id-pin so that we start with the right status */
+ 	queue_delayed_work(system_wq, &data->work, 0);
++	flush_delayed_work(&data->work);
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
