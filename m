@@ -1,163 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeBZKQs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:16:48 -0500
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:35408 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeBZKQr (ORCPT
+        id S1752570AbeBZKRd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:17:33 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38796 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbeBZKRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:16:47 -0500
-X-Google-Smtp-Source: AG47ELujmzhhhV94woOaVIXt7hjvK5+UsrjJi4sT/4f6vAgSp4akwsch66eEODx9RRpWLlrX9zX+oQ==
-X-ME-Sender: <xms:jd6TWphmD75DpbEx62aSdytaWfJOEu0q98uEkOgpKQl_s6PYuAblxA>
-Date: Mon, 26 Feb 2018 18:20:16 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 04/17] lockdep: Introduce
- lock_list::dep
-Message-ID: <20180226102016.4rms4ro6wcwwsw7d@tardis>
-References: <20180222070904.548-5-boqun.feng@gmail.com>
- <20180223115520.GV25181@hirez.programming.kicks-ass.net>
- <20180223123732.acxbavnf2ktd4lzl@tardis>
- <20180224053250.ketrlbq4gtx573qo@tardis>
- <20180224063005.efbowkoq2v4qndan@tardis>
- <20180224083807.GB25201@hirez.programming.kicks-ass.net>
- <20180224090019.3smjampkk4zoacb3@tardis>
- <20180224092651.hjxznghmuiyj4rnp@tardis>
- <20180226090050.GE25201@hirez.programming.kicks-ass.net>
- <20180226101524.xaarifgmhzdzq7gs@tardis>
+        Mon, 26 Feb 2018 05:17:31 -0500
+X-Google-Smtp-Source: AG47ELvXNHRgJ6XrYmPoz8gi2VdwS60NjbrPERKWnoOr6CcDDrfv9Aov0agtLTVfTEFpQ9gSDcNqNg==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v2] KVM: X86: Allow userspace to define the microcode version
+Date: Mon, 26 Feb 2018 18:17:19 +0800
+Message-Id: <1519640239-4428-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pdbmadqmexido3oa"
-Content-Disposition: inline
-In-Reply-To: <20180226101524.xaarifgmhzdzq7gs@tardis>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Wanpeng Li <wanpengli@tencent.com>
 
---pdbmadqmexido3oa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Linux (among the others) has checks to make sure that certain features 
+aren't enabled on a certain family/model/stepping if the microcode version 
+isn't greater than or equal to a known good version.
 
-On Mon, Feb 26, 2018 at 06:15:24PM +0800, Boqun Feng wrote:
-> On Mon, Feb 26, 2018 at 10:00:50AM +0100, Peter Zijlstra wrote:
-> > On Sat, Feb 24, 2018 at 05:26:52PM +0800, Boqun Feng wrote:
-> > > > This is for case like:
-> > > >=20
-> > > > 	TASK1:
-> > > > 		read_lock(A);
-> > > > 		read_lock(B);
-> > > > =09
-> > > > 	TASK2:
-> > > > 		write_lock(B);
-> > > > 		read_lock(C);
-> > > > =09
-> > > > 	TASK3:
-> > > > 		read_lock(B);
-> > > > 		write_lock(C);
-> > > >=20
-> > > > 	TASK4:
-> > > > 		read_lock(C);
-> > > > 		write_lock(A);
-> > > >=20
-> > > > , which is not a deadlock.
-> > > >=20
-> > >=20
-> > > After TASK 1,2,3 have executed, we have A -(RR)-> B, B -(RN/NR)-> C, =
-and
-> > > when TASK4 executed, we will try to add C -(RN)-> A into the graph.
-> > > Before that we need to check whether we have a A -> ... -(*N)-> C path
-> > > in the graph already, so we search from A (@prev is C and @this is A):
-> > >=20
-> > > *	we set A->have_xr to false, because the dependency we are adding
-> > > 	is a RN.
-> > >=20
-> > > *	we find A -(RR)-> B, and since have_xr (=3D A->have_xr) is false,
-> > > 	we can pick this dependency, and since for A -> B, we only have
-> > > 	RR, so we set B->have_xr to true.
-> > >=20
-> > > *	we then find B -(RN/NR)-> C, and since have_xr (=3D B->have_xr) is
-> > > 	true, we will pick it only only_rx(C->dep) return false,
-> > > 	otherwise we skip. Because we have RN and NR for B -> C,
-> > > 	therefore we won't skip B -> C.
-> > >=20
-> > > *	Now we try to set C->have_xr, if we set it to only_xr(C->dep),
-> > > 	we will set it to false, right? Because B -> C has RN.
-> > >=20
-> > > *	Since we now find a entry equal to @prev, we go into the
-> > > 	hlock_conflict() logic and for expression
-> > > 	=09
-> > > 		hlock->read !=3D 2 || !entry->have_xr=20
-> > > =09
-> > > 	@hlock is the C in TASK4, so hlock->read =3D=3D 2, and @entry is the
-> > > 	C whose ->have_xr we just set, so entry->have_xr is false.
-> > > 	Therefore hlock_conflict() returns true. And that indicates we
-> > > 	find a deadlock in the search. But the above senario can not
-> > > 	introduce a deadlock.
-> > >=20
-> > > Could this help you, or I miss something?
-> >=20
-> > Yes, although it took me forever to grasp because I have snot for brains
-> > atm :-(
-> >=20
->=20
-> Take care!
->=20
-> > Would something like:
-> >=20
-> >=20
-> > 	dep =3D entry->dep;
-> >=20
-> > 	/* Mask out all *R -> R* relations. */
-> > 	if (have_xr)
-> > 		dep &=3D ~(RR_MASK | RN_MASK);
-> >=20
-> > 	/* If nothing left, we're done. */
-> > 	if (!dep)
-> > 		continue;
-> >=20
-> > 	/* If there are (only) *R left, set that for the next step. */
-> > 	entry->have_xr =3D !(dep & (RN_MASK | NN_MASK));
-> >=20
-> >=20
-> > Work? I think that reads fairly simple.
->=20
-> I think that works, will apply this simplification to see whether the
-> self tests agree.
->=20
+By exposing the real microcode version, we're preventing buggy guests that
+don't check that they are running virtualized (i.e., they should trust the
+hypervisor) from disabling features that are effectively not buggy.
 
-And the self tests agree this works ;-) Thank you!
+Suggested-by: Filippo Sironi <sironi@amazon.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+v1 -> v2:
+ * add MSR_IA32_UCODE_REV to emulated_msrs
 
-Regards,
-Boqun
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/x86.c              | 9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-> Btw, given the comments in the code, I think it's better to name
-> "have_xr" as "only_xr"? I have a feeling that my comment-less code
-> somehow misled you to that name ;-(
->=20
-> Regards,
-> Boqun
->=20
-
-
-
---pdbmadqmexido3oa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqT310ACgkQSXnow7UH
-+riesgf/XuROhOCzU01HK8REoVFuiOnBNYDY2FzfZtKj1NC5skZ1Uw0WJt81kyVt
-+5TYUH4h9eBfHq9zbOAg3KHEBvS0xWwdtjfWUTVoETGXQvqoaUTJdeWGY57oJgco
-EfABVzafTecuwAPpzFEpMIPvP0o66igt5zHT0K8gi3rGzcBx0NMaz5B+zmJHldUB
-C6iRrE9if7wksFFSlul7sA+9MVykYS9jx+yi8dJtS46nhR7Sj6iEwuuc1NPGokBQ
-HY/Ej58uO0/ocgp+esjHracDOXlGV9mjohidhNDtGbhZlc8J9cgLQCmfxraOJHfY
-5t7PMtEFl7b8wj6jks7sYGYr6UXQ0g==
-=B6LP
------END PGP SIGNATURE-----
-
---pdbmadqmexido3oa--
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 938d453..6e13f2f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
+ 	u64 smi_count;
+ 	bool tpr_access_reporting;
+ 	u64 ia32_xss;
++	u32 microcode_version;
+ 
+ 	/*
+ 	 * Paging state of the vcpu
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1a3ed81..4ae9517 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1047,6 +1047,7 @@ static u32 emulated_msrs[] = {
+ 	MSR_SMI_COUNT,
+ 	MSR_PLATFORM_INFO,
+ 	MSR_MISC_FEATURES_ENABLES,
++	MSR_IA32_UCODE_REV,
+ };
+ 
+ static unsigned num_emulated_msrs;
+@@ -2247,7 +2248,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
+ 	switch (msr) {
+ 	case MSR_AMD64_NB_CFG:
+-	case MSR_IA32_UCODE_REV:
+ 	case MSR_IA32_UCODE_WRITE:
+ 	case MSR_VM_HSAVE_PA:
+ 	case MSR_AMD64_PATCH_LOADER:
+@@ -2255,6 +2255,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_AMD64_DC_CFG:
+ 		break;
+ 
++	case MSR_IA32_UCODE_REV:
++		if (msr_info->host_initiated)
++			vcpu->arch.microcode_version = data >> 32;
++		break;
+ 	case MSR_EFER:
+ 		return set_efer(vcpu, data);
+ 	case MSR_K7_HWCR:
+@@ -2550,7 +2554,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		msr_info->data = 0;
+ 		break;
+ 	case MSR_IA32_UCODE_REV:
+-		msr_info->data = 0x100000000ULL;
++		msr_info->data = (u64)vcpu->arch.microcode_version << 32;
+ 		break;
+ 	case MSR_MTRRcap:
+ 	case 0x200 ... 0x2ff:
+@@ -8232,6 +8236,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	vcpu->arch.regs_dirty = ~0;
+ 
+ 	vcpu->arch.ia32_xss = 0;
++	vcpu->arch.microcode_version = 0x1;
+ 
+ 	kvm_x86_ops->vcpu_reset(vcpu, init_event);
+ }
+-- 
+2.7.4
