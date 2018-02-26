@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226x/n3UVGlxeHPgkP1GfdHYxgHaa7BLlvdZrb/4Volh6XRmzpxu/gVC9Lkflg77tIoQOkGM
-ARC-Seal: i=1; a=rsa-sha256; t=1519676938; cv=none;
+X-Google-Smtp-Source: AH8x224N/UWP5ZA/YobUtsjcRf9MjOCH8uMZpqvgqYfInpvlJ2y0oDQLySn89rH7uK+lJDTFDtuR
+ARC-Seal: i=1; a=rsa-sha256; t=1519676932; cv=none;
         d=google.com; s=arc-20160816;
-        b=SFfnogHTDbJPKXAAvh4q8AeH39cUYOSmhtxOr5Ct3mbTQlf5UTnMy5rPGxK7/kHv8L
-         uQSLpx4LaEwiEMgQ+nAgJzu4a6GbuXuVJ2AlVKAAKfBGA7rnQ7upQ8RNg2wvbNhlzqVO
-         QkEbGiZPhtRGqm388gT2Ce0w4sfa7jzuobOVBq29tevC+luM08YRbm77jf/veVZ2ZwIl
-         8noPMtVoOdZ2mJdOO2b1rqC+P9Rvu3Po36iugirZJOPI+JDkjRH5gzgi1WAwQbIuW+qa
-         Ut0tILWm7sHyD8i6qfdVYM2gvtjwsgb6DuSXYm+Q+QS/Sbs3tfYhQbXlKut2RvsUIDFN
-         tV0g==
+        b=F5HYF6rRp0iCuYb1FNtxpu/ArehSGF9cCjV37p2pKpLizyASqz4PAhXzLyvEZcEyLy
+         XlNgrwlV+3foaYaJwP5s/VHUCNHWxcPI41INr5kLn4lqdCFTH3zrjt6YfAsddJzSvHNG
+         yK3qAm9ZbaTFEbDYyXc1kj3/XuiReTmd09TE4Ukd/p0IAz7tbSpez8MoRbyTcl+L64kI
+         oJG4DK/1BNEEnTWcpVCEj8H/Cy7pttR7dZAhjkjqUN4u4dkgLOKRc10w6P8nZ9Umwtul
+         i2HS63iZNIKzTv/mCOJsZnWhK+3pwhgSH1B/DNgsRMWaqzHwWbkZ1YhVjbbKnn8HdNV0
+         v/lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FYeLj7P6cPQ/5l4+4TfUg7DASvteQH8bvmw5beMCM1g=;
-        b=x8FRFkt4ab7R7naTVuKYe6vhrY883d1aW4qY2eqwHFgor5QMjZMAZkquSVXTUxIic5
-         2ry3TdfHCa+l4q0SwR4w4vRWHd8jHrtPst3WTEnSNUAGmruv+zvMaiAbZhFDeRtUQ5Rb
-         wVPhxEC12D+TYxSmBd0sHAPtI0gsoLWyhVOZbq4dC97/qoObuFXTpPEX0j+evu7px6pU
-         7c9oZxv1sYR7Rq0+Xaf8mbYhE9oETrYhOucDBNy+SU7Eeb7Jhl7m6SiRYIKS7qjwhVpg
-         TUui2aEmJrAF3SyfYHrHRRyV9VxjRTvKtch9B1RL6douitRK36xsxOJhz9xHh+LwgOSM
-         2aFg==
+        bh=8BD83flCpt47sgoSw5jxJ/+SV+7sqU8cL9hbO9vZMOQ=;
+        b=08Fiu2KE27Zafx9ZBeyUM23scLAmMTTohGngLCy4mywtkN99sdsdNKWdtQ5n0rJ42I
+         uLvjg6y51fKRJnoZrhmFl1LjXT/062658K0mQLdShXOtHQVBzF5Xj1/IRN2OPYKOfxwo
+         Hcmf/ZlbM22pJ8XWLyS9ZKN85ETtojuUD0kLvsxuwdZqU25n2O6QBkIOUC6Aq7MozIau
+         nnJFNdrXIAg9UAogyf/nHhbHuTwO+9qMRUEknTGKBD/Oa9twrRQEo5+YtsZNr9OMIemS
+         LK2/C7jHcfAcLUneNtJQvBcYGgmxQzxZkTRfMocshwGJxyJIPaiNKL7jaFKgcQh8KtE2
+         dzAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 62/64] drm/amdgpu: add new device to use atpx quirk
-Date: Mon, 26 Feb 2018 21:22:39 +0100
-Message-Id: <20180226202156.100546208@linuxfoundation.org>
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Junwei Zhang <Jerry.Zhang@amd.com>
+Subject: [PATCH 4.15 60/64] drm/amdgpu: add atpx quirk handling (v2)
+Date: Mon, 26 Feb 2018 21:22:37 +0100
+Message-Id: <20180226202156.012760798@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496338608308970?=
-X-GMAIL-MSGID: =?utf-8?q?1593496766127050455?=
+X-GMAIL-THRID: =?utf-8?q?1593496540331149794?=
+X-GMAIL-MSGID: =?utf-8?q?1593496759785388440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +50,126 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 6e59de2048eb375a9bfcd39461ef841cd2a78962 upstream.
+commit 052c299080cd6859f82a8154a7a673fafabe644c upstream.
 
-The affected system (0x0813) is pretty similar to another one (0x0812),
-it also needs to use ATPX power control.
+Add quirks for handling PX/HG systems.  In this case, add
+a quirk for a weston dGPU that only seems to properly power
+down using ATPX power control rather than HG (_PR3).
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+v2: append a new weston XT
+
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Junwei Zhang <Jerry.Zhang@amd.com> (v2)
+Reviewed-and-Tested-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |   57 ++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 7 deletions(-)
 
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-@@ -568,6 +568,7 @@ static const struct amdgpu_px_quirk amdg
- 	/* HG _PR3 doesn't seem to work on this A+A weston board */
- 	{ 0x1002, 0x6900, 0x1002, 0x0124, AMDGPU_PX_QUIRK_FORCE_ATPX },
- 	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
-+	{ 0x1002, 0x6900, 0x1028, 0x0813, AMDGPU_PX_QUIRK_FORCE_ATPX },
- 	{ 0, 0, 0, 0, 0 },
+@@ -14,6 +14,16 @@
+ 
+ #include "amd_acpi.h"
+ 
++#define AMDGPU_PX_QUIRK_FORCE_ATPX  (1 << 0)
++
++struct amdgpu_px_quirk {
++	u32 chip_vendor;
++	u32 chip_device;
++	u32 subsys_vendor;
++	u32 subsys_device;
++	u32 px_quirk_flags;
++};
++
+ struct amdgpu_atpx_functions {
+ 	bool px_params;
+ 	bool power_cntl;
+@@ -35,6 +45,7 @@ struct amdgpu_atpx {
+ static struct amdgpu_atpx_priv {
+ 	bool atpx_detected;
+ 	bool bridge_pm_usable;
++	unsigned int quirks;
+ 	/* handle for device - and atpx */
+ 	acpi_handle dhandle;
+ 	acpi_handle other_handle;
+@@ -205,13 +216,19 @@ static int amdgpu_atpx_validate(struct a
+ 
+ 	atpx->is_hybrid = false;
+ 	if (valid_bits & ATPX_MS_HYBRID_GFX_SUPPORTED) {
+-		printk("ATPX Hybrid Graphics\n");
+-		/*
+-		 * Disable legacy PM methods only when pcie port PM is usable,
+-		 * otherwise the device might fail to power off or power on.
+-		 */
+-		atpx->functions.power_cntl = !amdgpu_atpx_priv.bridge_pm_usable;
+-		atpx->is_hybrid = true;
++		if (amdgpu_atpx_priv.quirks & AMDGPU_PX_QUIRK_FORCE_ATPX) {
++			printk("ATPX Hybrid Graphics, forcing to ATPX\n");
++			atpx->functions.power_cntl = true;
++			atpx->is_hybrid = false;
++		} else {
++			printk("ATPX Hybrid Graphics\n");
++			/*
++			 * Disable legacy PM methods only when pcie port PM is usable,
++			 * otherwise the device might fail to power off or power on.
++			 */
++			atpx->functions.power_cntl = !amdgpu_atpx_priv.bridge_pm_usable;
++			atpx->is_hybrid = true;
++		}
+ 	}
+ 
+ 	atpx->dgpu_req_power_for_displays = false;
+@@ -547,6 +564,30 @@ static const struct vga_switcheroo_handl
+ 	.get_client_id = amdgpu_atpx_get_client_id,
  };
  
++static const struct amdgpu_px_quirk amdgpu_px_quirk_list[] = {
++	/* HG _PR3 doesn't seem to work on this A+A weston board */
++	{ 0x1002, 0x6900, 0x1002, 0x0124, AMDGPU_PX_QUIRK_FORCE_ATPX },
++	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
++	{ 0, 0, 0, 0, 0 },
++};
++
++static void amdgpu_atpx_get_quirks(struct pci_dev *pdev)
++{
++	const struct amdgpu_px_quirk *p = amdgpu_px_quirk_list;
++
++	/* Apply PX quirks */
++	while (p && p->chip_device != 0) {
++		if (pdev->vendor == p->chip_vendor &&
++		    pdev->device == p->chip_device &&
++		    pdev->subsystem_vendor == p->subsys_vendor &&
++		    pdev->subsystem_device == p->subsys_device) {
++			amdgpu_atpx_priv.quirks |= p->px_quirk_flags;
++			break;
++		}
++		++p;
++	}
++}
++
+ /**
+  * amdgpu_atpx_detect - detect whether we have PX
+  *
+@@ -570,6 +611,7 @@ static bool amdgpu_atpx_detect(void)
+ 
+ 		parent_pdev = pci_upstream_bridge(pdev);
+ 		d3_supported |= parent_pdev && parent_pdev->bridge_d3;
++		amdgpu_atpx_get_quirks(pdev);
+ 	}
+ 
+ 	while ((pdev = pci_get_class(PCI_CLASS_DISPLAY_OTHER << 8, pdev)) != NULL) {
+@@ -579,6 +621,7 @@ static bool amdgpu_atpx_detect(void)
+ 
+ 		parent_pdev = pci_upstream_bridge(pdev);
+ 		d3_supported |= parent_pdev && parent_pdev->bridge_d3;
++		amdgpu_atpx_get_quirks(pdev);
+ 	}
+ 
+ 	if (has_atpx && vga_count == 2) {
