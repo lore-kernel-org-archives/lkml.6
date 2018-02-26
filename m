@@ -1,71 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeBZVsO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 16:48:14 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:54808 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeBZVrZ (ORCPT
+        id S1751964AbeBZVsV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 16:48:21 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:38010 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751814AbeBZVsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:47:25 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose.Abreu@synopsys.com, pavel@ucw.cz,
-        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/4] net: stmmac: use correct barrier between coherent memory and MMIO
-Date: Mon, 26 Feb 2018 22:47:07 +0100
-Message-Id: <20180226214709.4359-3-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180226214709.4359-1-niklas.cassel@axis.com>
-References: <20180226214709.4359-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+        Mon, 26 Feb 2018 16:48:17 -0500
+X-Google-Smtp-Source: AG47ELvOhW4VwzKMX0AebcJI8/2p+j3EZTMtsJpVCR/blLCxh2hPPmOJqmMQI7Fyn4b0Qkj0OOfBWw==
+Date: Mon, 26 Feb 2018 13:48:14 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Aaron Lu <aaron.lu@intel.com>
+cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/3] mm/free_pcppages_bulk: update pcp->count inside
+In-Reply-To: <20180226135346.7208-2-aaron.lu@intel.com>
+Message-ID: <alpine.DEB.2.20.1802261345550.135844@chino.kir.corp.google.com>
+References: <20180226135346.7208-1-aaron.lu@intel.com> <20180226135346.7208-2-aaron.lu@intel.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last memory barrier in stmmac_xmit()/stmmac_tso_xmit() is placed
-between a coherent memory write and a MMIO write:
+On Mon, 26 Feb 2018, Aaron Lu wrote:
 
-The own bit is written in First Desc (TSO: MSS desc or First Desc).
-<barrier>
-The DMA engine is started by a write to the tx desc tail pointer/
-enable dma transmission register, i.e. a MMIO write.
+> Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+> update pcp->count immediately after so it's natural to do it inside
+> free_pcppages_bulk().
+> 
+> No functionality or performance change is expected from this patch.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+>  mm/page_alloc.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cb416723538f..3154859cccd6 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1117,6 +1117,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+>  	int batch_free = 0;
+>  	bool isolated_pageblocks;
+>  
+> +	pcp->count -= count;
+>  	spin_lock(&zone->lock);
+>  	isolated_pageblocks = has_isolate_pageblock(zone);
+>  
 
-This barrier cannot be a simple dma_wmb(), since a dma_wmb() is only
-used to guarantee the ordering, with respect to other writes,
-to cache coherent DMA memory.
+Why modify pcp->count before the pages have actually been freed?
 
-To guarantee that the cache coherent memory writes have completed
-before we attempt to write to the cache incoherent MMIO region,
-we need to use the more heavyweight barrier wmb().
+I doubt that it matters too much, but at least /proc/zoneinfo uses 
+zone->lock.  I think it should be done after the lock is dropped.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 3b5e7b06e796..6dd04f237b2a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2997,7 +2997,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 	 * descriptor and then barrier is needed to make sure that
- 	 * all is coherent before granting the DMA engine.
- 	 */
--	dma_wmb();
-+	wmb();
- 
- 	if (netif_msg_pktdata(priv)) {
- 		pr_info("%s: curr=%d dirty=%d f=%d, e=%d, f_p=%p, nfrags %d\n",
-@@ -3221,7 +3221,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
- 		 * descriptor and then barrier is needed to make sure that
- 		 * all is coherent before granting the DMA engine.
- 		 */
--		dma_wmb();
-+		wmb();
- 	}
- 
- 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
--- 
-2.14.2
+Otherwise, looks good.
