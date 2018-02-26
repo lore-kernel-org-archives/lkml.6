@@ -1,57 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeBZWNP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:13:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751745AbeBZWNL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:13:11 -0500
-Date: Mon, 26 Feb 2018 14:13:34 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Next batch of LKMM patches
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1751539AbeBZWS0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:18:26 -0500
+Received: from gate.crashing.org ([63.228.1.57]:60989 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbeBZWSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 17:18:25 -0500
+Date: Mon, 26 Feb 2018 16:17:48 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: christophe leroy <christophe.leroy@c-s.fr>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
+Message-ID: <20180226221747.GV21977@gate.crashing.org>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-7-malat@debian.org> <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr> <6cba215c-127e-f3eb-b525-773b6aed0eb7@c-s.fr> <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com> <CA+7wUsx047shRJ92PJ+cvg24HNhMnYzM0t5zUdEOaSE00sXkSg@mail.gmail.com> <4ddba8bc-b1e5-24a0-602e-672e7b51b203@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022622-0052-0000-0000-000002BEB030
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995536; UDB=6.00506037; IPR=6.00774865;
- MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 22:13:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022622-0053-0000-0000-00005BD26960
-Message-Id: <20180226221334.GA1849@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260278
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4ddba8bc-b1e5-24a0-602e-672e7b51b203@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Mon, Feb 26, 2018 at 09:00:09PM +0100, christophe leroy wrote:
+> Le 26/02/2018 à 18:50, Mathieu Malaterre a écrit :
+> >On Mon, Feb 26, 2018 at 8:44 AM, Mathieu Malaterre <malat@debian.org> 
+> >wrote:
+> >>On Mon, Feb 26, 2018 at 7:50 AM, Christophe LEROY
+> >><christophe.leroy@c-s.fr> wrote:
+> >>>Note that I already try to submit a fix for this warning 3 years ago
+> >>>(https://patchwork.ozlabs.org/patch/418075/) and it was rejected with the
+> >>>following comment:
+> >
+> >Tested again today with gcc 6.3.0 and gcc is still producing the
+> >original warning (treated as error).
+> 
+> That's right, it seems that recent versions of gcc are not happy anymore 
+> with that change.
+> 
+> Maybe Segher has a suggestion for that one ?
 
-The following set of LKMM patches in -rcu look to me to be ready to
-send off.  If you disagree, please do let me know so that we can fix
-whatever problems that there might be.  If I do not hear otherwise,
-I will send them off this coming Friday.
+Your patch:
 
-							Thanx, Paul
+ #define __access_ok(addr, size, segment)	\
+ 	(((addr) <= (segment).seg) &&		\
+-	 (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
++	 (((size) <= 1) || (((size) - 1) <= ((segment).seg - (addr)))))
 
-------------------------------------------------------------------------
+Is there any reason to write this as a macro?  Let's make this more
+readable:
 
-5bb25a486ccb "memory-barriers: More text to de-emphasize smp_read_barrier_depends()"
-b59fd89b465f "tools/memory-model: Remove mention of docker/gentoo image"
-d5e6bc0a0ed4 "tools/memory-order: Add documentation of new litmus test
-3eab67f3c41b "tools/memory-model: Update: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference"
+static inline int __access_ok(unsigned long addr, unsigned long size,
+			      mm_segment_t seg)
+{
+	if (addr > seg.seg)
+		return 0;
+	return (size == 0 || size - 1 <= seg.seg - addr);
+}
+
+and I think we are done already, or will this warn for any input?
+
+
+Segher
