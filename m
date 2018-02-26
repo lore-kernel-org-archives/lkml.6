@@ -1,113 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeBZJBt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:01:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40801 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbeBZJAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:00:51 -0500
-Date: Mon, 26 Feb 2018 10:00:38 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: hao_zhang <hao5781286@gmail.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Message-ID: <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
-References: <20180225135308.GA14561@arx-s1>
+        id S1752090AbeBZJD1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:03:27 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:35861 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751548AbeBZJDX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:03:23 -0500
+X-Google-Smtp-Source: AG47ELv9AiVKDeR2wy4FAt66luq52hwlb65DS7jZs+p8mfLkUSNJgnFoAXLU9yKWQDs8VnRUL8mghjF1mzdhVMCzuCU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qll7qxses6t7myt2"
-Content-Disposition: inline
-In-Reply-To: <20180225135308.GA14561@arx-s1>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
+References: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 10:03:22 +0100
+X-Google-Sender-Auth: Z1BLUHvOF3n4CPh7ICDAns0LG1k
+Message-ID: <CAMuHMdUj63OQnJWz=Q57dbc1XKOnq+_et5-E_4yQjTZt+c++GQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] of: remove kbasename() from core
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Frank,
 
---qll7qxses6t7myt2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 26, 2018 at 3:22 AM,  <frowand.list@gmail.com> wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Struct device_node full_name no longer includes the full path
+> name.
 
-Hi,
+Is this now also true on systems with real Open Firmware?
 
-Thanks for respinning this serie. It looks mostly good, but you still
-have a quite significant number of checkpatch (--strict) warnings that
-you should address.
+Gr{oetje,eeting}s,
 
-On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
-> +#define CAPTURE_IRQ_ENABLE_REG	0x0010
-> +#define CFIE(ch)	BIT(ch << 1 + 1)
-> +#define CRIE(ch)	BIT(ch << 1)
+                        Geert
 
-You should also put your argument between parentheses here (and in all
-your other macros).
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +static const u16 div_m_table[] =3D {
-> +	1,
-> +	2,
-> +	4,
-> +	8,
-> +	16,
-> +	32,
-> +	64,
-> +	128,
-> +	256
-> +};
-
-If this is just a power of two, you can use either the power of two /
-ilog2 to switch back and forth, instead of using that table.
-
-> +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +		struct pwm_state *state)
-> +{
-> +	int ret;
-> +	struct sun8i_pwm_chip *sun8i_pwm =3D to_sun8i_pwm_chip(chip);
-> +	struct pwm_state cstate;
-> +
-> +	pwm_get_state(pwm, &cstate);
-> +	if (!cstate.enabled) {
-> +		ret =3D clk_prepare_enable(sun8i_pwm->clk);
-> +		if (ret) {
-> +			dev_err(chip->dev, "Failed to enable PWM clock\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	spin_lock(&sun8i_pwm->ctrl_lock);
-
-What do you need that spinlock for? Can you use a mutex instead?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---qll7qxses6t7myt2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTzLUACgkQ0rTAlCFN
-r3SqOg//bo7m7IUR7oYaiZbqV2DycgSB6AAogE2/r1a6VnXdnqndUd/7wd0OPG0C
-lxdFSuONBYUgz0nrl7gobSCN59TMN4b2IFVW547jvjxZ95s5D8otpujTFTQes2kx
-ss37r7SCClQvmtr8H3uJYiIzt7NGRVT+/XUGSthHGVBZmkgHdpWfDboiDFyko3ZU
-bC4lofM2UoOOAsfHns9AZE+9BiXhZ7/sT7q19Msmd4zcC8xv5Su6b1zZAkSHvI1J
-9kay0dUMzI37/1XqR6xAMWQeMybK4sO9+OKnSYYmID7NKrTGdTA0G0rUsLOa+QTf
-ycMkUYJoq6ddxejrpNzHrkTuhJ9FGGZEoYtDT4gpH9LWC96/8Asq3VIrX/Gxg8uM
-6DjYa4ehkGxBMZ74wyBDxn71w9Pv1OlIgbg/AtvDt4QcvVMI6cF+yy8Qnj0YSu3w
-If9eybVDcdBUEp6d+xT0eq/JOJ2sqxRsIRwrXSiaVc9379yeO0EpJsT1bXF7P5zw
-fHhCYfUByrvOEDE+Ql/0LCn2y6FyrHQ6jc4kuEpf9ZdqDw6On4WQFardROmkeN87
-ThtGBKNX5n4fb1rLA/qgVlQp1vt2ULGRkiBjklMbxglIlbiyTSZmM+m+UfZJSmtV
-4qvUCB7rzWd3SveRbF1fm/XNXpjFTfwxaBdBRtjuEHcTK4u+s3E=
-=LwIi
------END PGP SIGNATURE-----
-
---qll7qxses6t7myt2--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
