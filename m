@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeBZWC3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:02:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57574 "EHLO
+        id S1752033AbeBZWC2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:02:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34198 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751823AbeBZWCV (ORCPT
+        by vger.kernel.org with ESMTP id S1751587AbeBZWCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:02:21 -0500
+        Mon, 26 Feb 2018 17:02:20 -0500
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org
 Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -15,20 +15,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 12/12] torture: Provide more sensible nreader/nwriter defaults for rcuperf
-Date: Mon, 26 Feb 2018 14:02:41 -0800
+Subject: [PATCH tip/core/rcu 04/12] rcutorture: Re-enable testing of dynamic expediting
+Date: Mon, 26 Feb 2018 14:02:33 -0800
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180226220225.GA32136@linux.vnet.ibm.com>
 References: <20180226220225.GA32136@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18022622-0008-0000-0000-000002DB9DD4
+x-cbid: 18022622-0036-0000-0000-000002C6D8B2
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.00995533; UDB=6.00506035; IPR=6.00774861;
- MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 22:02:19
+ MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 22:02:18
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022622-0009-0000-0000-00003864E994
-Message-Id: <1519682561-510-12-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18022622-0037-0000-0000-000043784654
+Message-Id: <1519682561-510-4-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -40,93 +40,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default values for nreader and nwriter are apparently not all that
-user-friendly, resulting in people doing scalability tests that ran all
-runs at large scale.  This commit therefore makes both the nreaders and
-nwriters module default to the number of CPUs, and adds a comment to
-rcuperf.c stating that the number of CPUs should be specified using the
-nr_cpus kernel boot parameter.  This commit also eliminates the redundant
-rcuperf scripting specification of default values for these parameters.
+During boot, normal grace periods are processed as expedited.  When
+rcutorture is built into the kernel, it starts during boot and thus
+detects that normal grace periods are unconditionally expedited.
+Therefore, rcutorture concludes that there is no point in trying
+to dynamically enable expediting, do it disables this aspect of testing,
+which is a bit of an overreaction to the temporary boot-time expediting.
+
+This commit therefore rechecks forced expediting throughout the test,
+enabling dynamic expediting if normal grace periods are processed
+normally at any point.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/rcuperf.c                               | 21 ++++++++++++++++++-
- .../rcutorture/configs/rcuperf/ver_functions.sh    | 24 +---------------------
- 2 files changed, 21 insertions(+), 24 deletions(-)
+ kernel/rcu/rcutorture.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index d1ebdf9868bb..777e7a6a0292 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -61,11 +61,30 @@ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.vnet.ibm.com>");
- #define VERBOSE_PERFOUT_ERRSTRING(s) \
- 	do { if (verbose) pr_alert("%s" PERF_FLAG "!!! %s\n", perf_type, s); } while (0)
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 6c46cd1d8fd7..2964b9236ddc 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -909,14 +909,10 @@ rcu_torture_writer(void *arg)
+ 	int nsynctypes = 0;
  
-+/*
-+ * The intended use cases for the nreaders and nwriters module parameters
-+ * are as follows:
-+ *
-+ * 1.	Specify only the nr_cpus kernel boot parameter.  This will
-+ *	set both nreaders and nwriters to the value specified by
-+ *	nr_cpus for a mixed reader/writer test.
-+ *
-+ * 2.	Specify the nr_cpus kernel boot parameter, but set
-+ *	rcuperf.nreaders to zero.  This will set nwriters to the
-+ *	value specified by nr_cpus for an update-only test.
-+ *
-+ * 3.	Specify the nr_cpus kernel boot parameter, but set
-+ *	rcuperf.nwriters to zero.  This will set nreaders to the
-+ *	value specified by nr_cpus for a read-only test.
-+ *
-+ * Various other use cases may of course be specified.
-+ */
-+
- torture_param(bool, gp_async, false, "Use asynchronous GP wait primitives");
- torture_param(int, gp_async_max, 1000, "Max # outstanding waits per reader");
- torture_param(bool, gp_exp, false, "Use expedited GP wait primitives");
- torture_param(int, holdoff, 10, "Holdoff time before test start (s)");
--torture_param(int, nreaders, 0, "Number of RCU reader threads");
-+torture_param(int, nreaders, -1, "Number of RCU reader threads");
- torture_param(int, nwriters, -1, "Number of RCU updater threads");
- torture_param(bool, shutdown, !IS_ENABLED(MODULE),
- 	      "Shutdown at end of performance tests.");
-diff --git a/tools/testing/selftests/rcutorture/configs/rcuperf/ver_functions.sh b/tools/testing/selftests/rcutorture/configs/rcuperf/ver_functions.sh
-index b9603115d7c7..d36b8fd6f0fc 100644
---- a/tools/testing/selftests/rcutorture/configs/rcuperf/ver_functions.sh
-+++ b/tools/testing/selftests/rcutorture/configs/rcuperf/ver_functions.sh
-@@ -20,32 +20,10 @@
- #
- # Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+ 	VERBOSE_TOROUT_STRING("rcu_torture_writer task started");
+-	if (!can_expedite) {
++	if (!can_expedite)
+ 		pr_alert("%s" TORTURE_FLAG
+-			 " GP expediting controlled from boot/sysfs for %s,\n",
++			 " GP expediting controlled from boot/sysfs for %s.\n",
+ 			 torture_type, cur_ops->name);
+-		pr_alert("%s" TORTURE_FLAG
+-			 " Disabled dynamic grace-period expediting.\n",
+-			 torture_type);
+-	}
  
--# rcuperf_param_nreaders bootparam-string
--#
--# Adds nreaders rcuperf module parameter if not already specified.
--rcuperf_param_nreaders () {
--	if ! echo "$1" | grep -q "rcuperf.nreaders"
--	then
--		echo rcuperf.nreaders=-1
--	fi
--}
--
--# rcuperf_param_nwriters bootparam-string
--#
--# Adds nwriters rcuperf module parameter if not already specified.
--rcuperf_param_nwriters () {
--	if ! echo "$1" | grep -q "rcuperf.nwriters"
--	then
--		echo rcuperf.nwriters=-1
--	fi
--}
--
- # per_version_boot_params bootparam-string config-file seconds
- #
- # Adds per-version torture-module parameters to kernels supporting them.
- per_version_boot_params () {
--	echo $1 `rcuperf_param_nreaders "$1"` \
--		`rcuperf_param_nwriters "$1"` \
--		rcuperf.shutdown=1 \
-+	echo $1 rcuperf.shutdown=1 \
- 		rcuperf.verbose=1
- }
+ 	/* Initialize synctype[] array.  If none set, take default. */
+ 	if (!gp_cond1 && !gp_exp1 && !gp_normal1 && !gp_sync1)
+@@ -1011,6 +1007,9 @@ rcu_torture_writer(void *arg)
+ 				rcu_unexpedite_gp();
+ 			if (++expediting > 3)
+ 				expediting = -expediting;
++		} else if (!can_expedite) { /* Disabled during boot, recheck. */
++			can_expedite = !rcu_gp_is_expedited() &&
++				       !rcu_gp_is_normal();
+ 		}
+ 		rcu_torture_writer_state = RTWS_STUTTER;
+ 		stutter_wait("rcu_torture_writer");
+@@ -1021,6 +1020,10 @@ rcu_torture_writer(void *arg)
+ 	while (can_expedite && expediting++ < 0)
+ 		rcu_unexpedite_gp();
+ 	WARN_ON_ONCE(can_expedite && rcu_gp_is_expedited());
++	if (!can_expedite)
++		pr_alert("%s" TORTURE_FLAG
++			 " Dynamic grace-period expediting was disabled.\n",
++			 torture_type);
+ 	rcu_torture_writer_state = RTWS_STOPPING;
+ 	torture_kthread_stopping("rcu_torture_writer");
+ 	return 0;
 -- 
 2.5.2
