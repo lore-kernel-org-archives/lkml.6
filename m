@@ -1,277 +1,160 @@
-Return-Path: <yong.deng@magewell.com>
-X-Google-Smtp-Source: AH8x225zVh039YRGVfTWyKsIKhOAdRvUn3dJ0NY8ernBwOmK3iNBrVf8eGjtUgRfudlN8qxjTsyK
-ARC-Seal: i=1; a=rsa-sha256; t=1519697171; cv=none;
+Return-Path: <hverkuil@xs4all.nl>
+X-Google-Smtp-Source: AH8x2269fMviWFkD420/Q9Mh3LQaO7PEqSKCQ3qgQS+0yK6AKO7mSm5YmUJM5RUDx+jD03KwNNek
+ARC-Seal: i=1; a=rsa-sha256; t=1519643211; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZsevUD/wJlpo0jhMhvDindstCQDHiZc09yaoLIPlv3w0KFxFR2E/kBV2+lPC48Cw3m
-         aKbbZSxTcL/BbU3jvOQcQBSYUk3dAB7fH6nMUsH4gKAVEF2Lx/4DN9pP5NL4/LQbbvhy
-         9vkCkCBCkd2ms5EEmdj/0mkET9TB5HNv/qz03EIVzBQS92eHUurNFYRPngYnw5JPqIs2
-         oTapU65TSj5W4D9ryis/kVZ+9dCxUeubOaOqqyXsXjrzVgzaJ9q5SpvbLsQ2dT5cqDBB
-         /bomuw5hpp1wOQhMWVatiLOVn6JyDryQQKTyDoFe+rqLE1v7M/zIC8ZMPAYzVbrCwE0O
-         NCkQ==
+        b=q+yeuaKOQgsaOnzRqYUKHVvaeGgpfb3HUROeyYJA/RMohUrXYB5g/eSGm8K7V28ADc
+         xaiOOb5DckqUXQlyWU0qNoVu+MiwoB0BZ8/EPPcBh9+JMze69lqyj0odSOeXZxLeVBOe
+         hnxOGw4lK/y3ob655IG/sd/XpaHytuXLMcCAwgLzZW6aHrzwK0GrLQlU3sQoJfkvpWBf
+         JjjwNQHj3i4nTa9eeNZXTfNkFoULdR0wxr1s599r11rLSnPMP+0nJDZaoMmylbmaJK/t
+         Md0STcxn3JrK9O4nmtFOv+RtdRW0C70WetBPSr/1F/J7jkMFTVyUkC0KVR3juGLFed8U
+         1rLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=woVJRRug8r1FRIatbwljDFnk6mujiYYtb6749xW50do=;
-        b=bgarM2fAApHY2W9UwZJzvfCnN02urWjtFgBnsaGzOaqRMVCgY2CdomTSgczgtTM2mD
-         +3Q9M+ntnO0jNeI45omvVNv1v+VVTIC9fWpiQvWis9MQMIJNQFXLcuWzoqa7YHYm9ceY
-         O4UXNmUOGcQPRngdqhPpRCgbhrWmEROfesPgOmiqF8s8UFDsXCHfcvtp0x7GFKxk14LY
-         HGLURoniWwFwQfN4f+sy457qMg3K4ZWtwkr5Or2JrLuQPpxebyqI9GOlgrVnKGx9ankp
-         IWOOI6F0gCd5H9M5seJ5773bUiSzSoDSifcOcgcYCgmmBNNUeBrve7QTiCH20Z7QeViC
-         ZaKQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=HWypjzyaYdKX8NDnmfHlK+hrgSdXohWFzP0eFzM+u1Y=;
+        b=B9i+tsjezapHxEosCu2i/UAKsclHaWYmwTdRzI5Ci9i7q3VcR3Y856g16WI9kZYCUi
+         OMascG0pbC7lbtpM0d1dzpfGHuMgixs0ieoM7iIbZj6cf60PqTEe6kcbTrRGBInhCaSv
+         JKIqgBk8PKtIrAuwdo8ExipriD/gdhJZSYMpCgWH9YQMvyUt1WB+Ppkkrfrq2YTjMlni
+         kLvmDya1wBXVFL6dZDTsDOoCQGeG+MJLM3H06ij0/Num3t6hq8rYH0N/TEBAnuA5GSoS
+         Ccw3vj/TB8fos5JPwmvBlR4OsTtdQiv5KX9Sn8Me6JVYdOKYIkFT1xG4uNalS1XwOO/m
+         ubnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.62 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.25 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.62 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07444317|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.B5xeX75_1519697157;
-From: Yong Deng <yong.deng@magewell.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Yannick Fertre <yannick.fertre@st.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Todor Tomov <todor.tomov@linaro.org>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Yong Deng <yong.deng@magewell.com>
-Subject: [PATCH v8 0/2] Initial Allwinner V3s CSI Support
-Date: Tue, 27 Feb 2018 10:05:13 +0800
-Message-Id: <1519697113-32202-1-git-send-email-yong.deng@magewell.com>
-X-Mailer: git-send-email 1.8.3.1
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.25 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
+Subject: Re: [PATCH v7 2/2] media: V3s: Add support for Allwinner CSI.
+To: Yong <yong.deng@magewell.com>, Randy Dunlap <rdunlap@infradead.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Chen-Yu Tsai <wens@csie.org>, "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Hans Verkuil <hans.verkuil@cisco.com>,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ Hugues Fruchet <hugues.fruchet@st.com>,
+ Yannick Fertre <yannick.fertre@st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+ Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Rick Chang <rick.chang@mediatek.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <1517217696-17816-1-git-send-email-yong.deng@magewell.com>
+ <c86097d7-dade-01e5-3826-3f22f9ca4b4f@infradead.org>
+ <20180130104833.a06e44c558c7ddc6b38e20b3@magewell.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ce3a30b9-f017-61b6-1fe6-f5dcc8bd3ec3@xs4all.nl>
+Date: Mon, 26 Feb 2018 12:06:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180130104833.a06e44c558c7ddc6b38e20b3@magewell.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOGnvlmQpjJiP3+Ub8nzoqbYEJx9Q7SNHwW7V0DFim4Md2+6/LSgDXD7MX0965db4fYhTeuGhy7LoaaJfp8roLTD8Fsa1y4hJofDuJidhj4a5vtSL+4O
+ Btw4Vp6FETu+8/idUoAoKq21C32ExbStAjv806UodzHrIcnV+QHdsJfIL2wjF6YDJgTtnd+fSKa+fQrdRWJR2fJATuauxqiiYS5M0SkL5qHAmm+Pa2pl0y1X
+ wFMIVJQU2kO/6lw/I6ufXfANiYeUeHOGLo7uZ1vspBVZxx6nMhdDuTJBsWkmwmuRVx2tGKHlXxfwvlgYiGqt/aTGo/4LCZwZy6O1p9Z1oKuXf3NpJ5RS75+D
+ Gpkj/DYZZ3O9Mk6WwBgzdqPMNeU/a5k6u2DExd+mX5l/pLij+VptcAgva8P1rXDl+cMLwyn9sYyylLDEjpxokx86rhsxIXPO+VpfOP9mjDgO0luMwC3+5SrB
+ 9/DIE/POr8BsNr3VWIkDe3at9J+QAlzcDhbSBChPquLwxKVyyrVrNyx4tkno2SbKGcsv4n3IY/r/y4PdytV1sn0WK5opg35ZrPs0/oXire95MJ/RoYFrKEkC
+ HJknRGZ+lZ49HHysurrC2lcoSJrzawL9FAcy32jl68iCZw54WVv9RH8BwISHKBfaEf8GGnFiZ/++0j/agb9im/GPptSz/1ddf8IV7sVqzhvm0Cxp0vLCaOmz
+ pfiwpd4qKyD15wlGLfPHCm84tjJhLnYVfpz50Ge3XEgETqIV4pPwFinavEp7XUa72EuYCO1AKfELVF1AJsB5Wabx7kLeGUtniwaoT+e4lAnziWt1b23P2tgJ
+ t6Z5U7M1GsOk1zd585ao54vmIHXWcI8SGFk16PsgFgSAdv/BPmGhickozEWAxUq7rZ6DPGUw04nzPDi3tgDC1XuzkIwLQbhSYMa4rAvs/xkeRLjpvQV7ndNq
+ JD2naS1b9k8iV/Wl3kYIoN+/roC7Ws/8jPxS2tFxyk5727gR3Ec0aM2fyXFse9+WqMdF9A==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593517981596193271?=
-X-GMAIL-MSGID: =?utf-8?q?1593517981596193271?=
+X-GMAIL-THRID: =?utf-8?q?1590918123212414894?=
+X-GMAIL-MSGID: =?utf-8?q?1593461400372982202?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchset add initial support for Allwinner V3s CSI.
+Hi all,
 
-Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-interface and CSI1 is used for parallel interface. This is not
-documented in datasheet but by test and guess.
+On 01/30/2018 03:48 AM, Yong wrote:
+> Hi,
+> 
+> On Mon, 29 Jan 2018 13:49:14 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> On 01/29/2018 01:21 AM, Yong Deng wrote:
+>>> Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+>>> interface and CSI1 is used for parallel interface. This is not
+>>> documented in datasheet but by test and guess.
+>>>
+>>> This patch implement a v4l2 framework driver for it.
+>>>
+>>> Currently, the driver only support the parallel interface. MIPI-CSI2,
+>>> ISP's support are not included in this patch.
+>>>
+>>> Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>>> Signed-off-by: Yong Deng <yong.deng@magewell.com>
+>>> ---
+>>
+>>
+>> A previous version (I think v6) had a build error with the use of
+>> PHYS_OFFSET, so Kconfig was modified to depend on ARM and ARCH_SUNXI
+>> (one of which seems to be overkill).  As is here, the COMPILE_TEST piece is
+>> meaningless for all arches except ARM.  If you care enough for COMPILE_TEST
+>> (and I would), then you could make COMPILE_TEST useful on any arch by
+>> removing the "depends on ARM" (the ARCH_SUNXI takes care of that) and by
+>> having an alternate value for PHYS_OFFSET, like so:
+>>
+>> +#if defined(CONFIG_COMPILE_TEST) && !defined(PHYS_OFFSET)
+>> +#define PHYS_OFFSET	0
+>> +#endif
+>>
+>> With those 2 changes, the driver builds for me on x86_64.
+> 
+> I have considered this method.
+> But it's so sick to put these code in dirver (for my own). I mean 
+> this is meaningless for the driver itself and make people confused.
+> 
+> I grepped the driver/ code and I found many drivers writing Kconfig
+> like this. For example:
+> ARM && COMPILE_TEST
+> MIPS && COMPILE_TEST
+> PPC64 && COMPILE_TEST
+> 
+> BTW, for my own, I do not care about COMPILE_TEST.
 
-This patchset implement a v4l2 framework driver and add a binding 
-documentation for it. 
+There was a discussion about this in the v6 patch, but it petered out.
 
-Currently, the driver only support the parallel interface. And has been
-tested with a BT1120 signal which generating from FPGA. The following
-fetures are not support with this patchset:
-  - ISP 
-  - MIPI-CSI2
-  - Master clock for camera sensor
-  - Power regulator for the front end IC
+I want to merge this driver, but I would very much prefer that this
+compiles with COMPILE_TEST. So unless someone has a better solution, then
+adding 'hack' that defines PHYS_OFFSET to 0 for COMPILE_TEST would be required.
 
-Changes in v8:
-  * Revert to v6 and add 'hack' for PHYS_OFFSET.
+Otherwise this driver looks good, so it is just this issue blocking it.
 
-Changes in v7:
-  * Add 'depends on ARM' in Kconfig to avoid built with non-ARM arch.
+Regards,
 
-Changes in v6:
-  * Add Rob Herring's review tag.
-  * Fix a NULL pointer dereference by picking Maxime Ripard's patch.
-  * Add Maxime Ripard's test tag.
+	Hans
 
-Changes in v5:
-  * Using the new SPDX tags.
-  * Fix MODULE_LICENSE.
-  * Add many default cases and warning messages.
-  * Detail the parallel bus properties
-  * Fix some spelling and syntax mistakes.
-
-Changes in v4:
-  * Deal with the CSI 'INNER QUEUE'.
-    CSI will lookup the next dma buffer for next frame before the
-    the current frame done IRQ triggered. This is not documented
-    but reported by Ondřej Jirman.
-    The BSP code has workaround for this too. It skip to mark the
-    first buffer as frame done for VB2 and pass the second buffer
-    to CSI in the first frame done ISR call. Then in second frame
-    done ISR call, it mark the first buffer as frame done for VB2
-    and pass the third buffer to CSI. And so on. The bad thing is
-    that the first buffer will be written twice and the first frame
-    is dropped even the queued buffer is sufficient.
-    So, I make some improvement here. Pass the next buffer to CSI
-    just follow starting the CSI. In this case, the first frame
-    will be stored in first buffer, second frame in second buffer.
-    This mothed is used to avoid dropping the first frame, it
-    would also drop frame when lacking of queued buffer.
-  * Fix: using a wrong mbus_code when getting the supported formats
-  * Change all fourcc to pixformat
-  * Change some function names
-
-Changes in v3:
-  * Get rid of struct sun6i_csi_ops
-  * Move sun6i-csi to new directory drivers/media/platform/sunxi
-  * Merge sun6i_csi.c and sun6i_csi_v3s.c into sun6i_csi.c
-  * Use generic fwnode endpoints parser
-  * Only support a single subdev to make things simple
-  * Many complaintion fix
-
-Changes in v2: 
-  * Change sunxi-csi to sun6i-csi
-  * Rebase to media_tree master branch 
-
-Following is the 'v4l2-compliance -s -f' output, I have test this
-with both interlaced and progressive signal:
-
-# ./v4l2-compliance -s -f
-v4l2-compliance SHA   : 6049ea8bd64f9d78ef87ef0c2b3dc9b5de1ca4a1
-
-Driver Info:
-        Driver name   : sun6i-video
-        Card type     : sun6i-csi
-        Bus info      : platform:csi
-        Driver version: 4.15.0
-        Capabilities  : 0x84200001
-                Video Capture
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps   : 0x04200001
-                Video Capture
-                Streaming
-                Extended Pix Format
-
-Compliance test for device /dev/video0 (not using libv4l2):
-
-Required ioctls:
-        test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-        test second video open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-        test for unlimited opens: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-        test VIDIOC_LOG_STATUS: OK (Not Supported)
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 1 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-Test input 0:
-
-        Control ioctls:
-                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
-                test VIDIOC_QUERYCTRL: OK (Not Supported)
-                test VIDIOC_G/S_CTRL: OK (Not Supported)
-                test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
-                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
-                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-                Standard Controls: 0 Private Controls: 0
-
-        Format ioctls:
-                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-                test VIDIOC_G/S_PARM: OK (Not Supported)
-                test VIDIOC_G_FBUF: OK (Not Supported)
-                test VIDIOC_G_FMT: OK
-                test VIDIOC_TRY_FMT: OK
-                test VIDIOC_S_FMT: OK
-                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-                test Cropping: OK (Not Supported)
-                test Composing: OK (Not Supported)
-                test Scaling: OK (Not Supported)
-
-        Codec ioctls:
-                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-        Buffer ioctls:
-                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-                test VIDIOC_EXPBUF: OK
-
-Test input 0:
-
-Streaming ioctls:
-        test read/write: OK (Not Supported)
-        test MMAP: OK                                     
-        test USERPTR: OK (Not Supported)
-        test DMABUF: Cannot test, specify --expbuf-device
-
-Stream using all formats:
-        test MMAP for Format HM12, Frame Size 1280x720:
-                Stride 1920, Field None: OK                                 
-        test MMAP for Format NV12, Frame Size 1280x720:
-                Stride 1920, Field None: OK                                 
-        test MMAP for Format NV21, Frame Size 1280x720:
-                Stride 1920, Field None: OK                                 
-        test MMAP for Format YU12, Frame Size 1280x720:
-                Stride 1920, Field None: OK                                 
-        test MMAP for Format YV12, Frame Size 1280x720:
-                Stride 1920, Field None: OK                                 
-        test MMAP for Format NV16, Frame Size 1280x720:
-                Stride 2560, Field None: OK                                 
-        test MMAP for Format NV61, Frame Size 1280x720:
-                Stride 2560, Field None: OK                                 
-        test MMAP for Format 422P, Frame Size 1280x720:
-                Stride 2560, Field None: OK                                 
-
-Total: 54, Succeeded: 54, Failed: 0, Warnings: 0
-
-Yong Deng (2):
-  dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
-  media: V3s: Add support for Allwinner CSI.
-
- .../devicetree/bindings/media/sun6i-csi.txt        |  59 ++
- MAINTAINERS                                        |   8 +
- drivers/media/platform/Kconfig                     |   1 +
- drivers/media/platform/Makefile                    |   2 +
- drivers/media/platform/sunxi/sun6i-csi/Kconfig     |   9 +
- drivers/media/platform/sunxi/sun6i-csi/Makefile    |   3 +
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 911 +++++++++++++++++++++
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h | 143 ++++
- .../media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h | 196 +++++
- .../media/platform/sunxi/sun6i-csi/sun6i_video.c   | 753 +++++++++++++++++
- .../media/platform/sunxi/sun6i-csi/sun6i_video.h   |  53 ++
- 11 files changed, 2138 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Kconfig
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Makefile
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
-
--- 
-1.8.3.1
+> 
+>>
+>>> diff --git a/drivers/media/platform/sunxi/sun6i-csi/Kconfig b/drivers/media/platform/sunxi/sun6i-csi/Kconfig
+>>> new file mode 100644
+>>> index 0000000..f80c965
+>>> --- /dev/null
+>>> +++ b/drivers/media/platform/sunxi/sun6i-csi/Kconfig
+>>> @@ -0,0 +1,10 @@
+>>> +config VIDEO_SUN6I_CSI
+>>> +	tristate "Allwinner V3s Camera Sensor Interface driver"
+>>> +	depends on ARM
+>>> +	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API && HAS_DMA
+>>> +	depends on ARCH_SUNXI || COMPILE_TEST
+>>> +	select VIDEOBUF2_DMA_CONTIG
+>>> +	select REGMAP_MMIO
+>>> +	select V4L2_FWNODE
+>>> +	---help---
+>>> +	   Support for the Allwinner Camera Sensor Interface Controller on V3s.
+>>
+>> thanks,
+>> -- 
+>> ~Randy
+> 
+> 
+> Thanks,
+> Yong
+> 
