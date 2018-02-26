@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuGvElZhE+e7DeED4OUHsEJsOvs5AMvqhSP3c3y0URNuibhMdU4vf3yRuWqCK49UZDSYfkM
-ARC-Seal: i=1; a=rsa-sha256; t=1519676532; cv=none;
+X-Google-Smtp-Source: AH8x227Wj7nyJoIDmiOpxTGCw/KehQxm7+Zbqs46Mw2oCYMUnqHPVmdxFgwqEvUGiUE+1La68jHk
+ARC-Seal: i=1; a=rsa-sha256; t=1519676531; cv=none;
         d=google.com; s=arc-20160816;
-        b=nB6nSAb2/IbAXvdReXruHlEyDr6ukSLNzu4jlFaWIypzZxtvN4YBZstDy1JzgZg/G1
-         kZ5WQip9WikCB/3vObpxxh2EMjBOnx3cBT1uuW+xtCianBpCsOaBfNIbrwh3TmUTMS0S
-         arMKMpiSYYpLny5jFtdabPRBQ/P52BwfG0Tk8xdZ1EiwTj9Zqvlf+8WLZRMcXmv6lO+F
-         Wseb/w5kZ8I0WtELt64I45QIi8gZL32PbclVcye2L3DtWMtTlwB8WjhxDclIgmqmokWJ
-         7CC/mLfoHWTMfE6TzfQI8rPHekO1xfIALEe5lOOFy18KGlqYVF0/QUfYrRSanz8EkgOw
-         YKkA==
+        b=BGoHirLj/Q4H3wAbnYlpC3CUjNJKpyIEOLVHtmDY+mHsQf6czESUoFxydxZPhnWsc6
+         52tz+fd+AKGtapoB6TTQL5Hmuohp/vURBFMNuNBsH7fZfeYDZCuZfoOelVaS+fzqdbs1
+         Ddf5kx/Tuw2x9wnTSyCunY/gIdpMPknhosdQzJMhQLBYk5U7Pa9uCGB75FXXRFmPw1as
+         fK8RCDiicKa8wuw71Nvf29Gged/T67E7NEwJacBa1udX7WvXi0HBpIQ3urhLeip6DdzO
+         0QpeMa2qdi8UxFzAULvP7kazAMut5WNmAI2Mh8nPfXwhmvdLCKKKSljroL/3/9NgayQW
+         eH7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GaY7ZRfSvpKsVDibuWMp4JbtIPsXmo8E3zlBWRLJKVQ=;
-        b=SsBzuJ1Jey8Fjvfir3xt2bfB921WOGGBoXIytQOTXL1sXvyKzJFPwjQZ9IKlCN5e1S
-         d21vwH36Iea88yiM/hLYBjedeQv2/TeRCZiV0FaOBVp3O/VJbNeiOCbUo36lE0PXm//Q
-         8qa1htC7BIYEKagVc1pGXl7eu3fN9m+LV0HcygHKvHLHMS+AQraJHU42AsAeaq9CTeAi
-         +LoVRs16LeHT4OjKBFfi8yODQA5+aoBAunA+MRdJD5RHIyPqRCdC5W+wvsWgJqC025Oy
-         OBbQ39R0I7PyGCytB15rY7O049oYYw90rEqL+mUdqK/NbYib37SAWzTgWuL8xJ8O2Swk
-         gDCw==
+        bh=tvF/8jF88M9ij+1fDQWY3cP9znXrBcU0sZLmYlJzFoE=;
+        b=nN2Q+Dsd+JOvpYhi1ewo49bD3KkKee/83OSPGGNe7QpyOOBCDx3S2LciwxJ0LiVl5+
+         9m/KjmLzJC6xpLNU0yeYNBVbMG7y4Pm5nfynZ74Avb9t2z7CxiFRoPJ3TKgc0K7jXs+C
+         eyouw72nk2As4t8qLGtSBbELLSHTpF2NYbMK+kWwMChg4sPdoQGpIXvh3Cv5jjj2g/DA
+         XyLo0yxDOK3PJGSlMJrAg86zm646Z3gxEbMuYdoIDchdpuDI8GTdRhYYhQYi7mZWcjFi
+         FQLi9X7D62jmnUU2oYbL5YaBCBB6buCclM9geR2oFocCCWAevCfWmoqfcizRSv+pUBm3
+         o8NQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.9 28/39] X.509: fix NULL dereference when restricting key with unsupported_sig
-Date: Mon, 26 Feb 2018 21:20:49 +0100
-Message-Id: <20180226201644.906209281@linuxfoundation.org>
+	Lukas Wunner <lukas@wunner.de>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.9 25/39] drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
+Date: Mon, 26 Feb 2018 21:20:46 +0100
+Message-Id: <20180226201644.773192877@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496339342709279?=
-X-GMAIL-MSGID: =?utf-8?q?1593496339342709279?=
+X-GMAIL-THRID: =?utf-8?q?1593496025366379001?=
+X-GMAIL-MSGID: =?utf-8?q?1593496338359185411?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,56 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 4b34968e77ad09628cfb3c4a7daf2adc2cefc6e8 upstream.
+commit 458d876eb869d5a88b53074c6c271b8b9adc0f07 upstream.
 
-The asymmetric key type allows an X.509 certificate to be added even if
-its signature's hash algorithm is not available in the crypto API.  In
-that case 'payload.data[asym_auth]' will be NULL.  But the key
-restriction code failed to check for this case before trying to use the
-signature, resulting in a NULL pointer dereference in
-key_or_keyring_common() or in restrict_link_by_signature().
+We only support vga_switcheroo and runtime pm on PX/HG systems
+so forcing runpm to 1 doesn't do anything useful anyway.
 
-Fix this by returning -ENOPKG when the signature is unsupported.
+Only call vga_switcheroo_init_domain_pm_ops() for PX/HG so
+that the cleanup path is correct as well.  This mirrors what
+radeon does as well.
 
-Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled and
-keyctl has support for the 'restrict_keyring' command:
+v2: rework the patch originally sent by Lukas (Alex)
 
-    keyctl new_session
-    keyctl restrict_keyring @s asymmetric builtin_trusted
-    openssl req -new -sha512 -x509 -batch -nodes -outform der \
-        | keyctl padd asymmetric desc @s
-
-Fixes: a511e1af8b12 ("KEYS: Move the point of trust determination to __key_link()")
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Lukas Wunner <lukas@wunner.de>
+Reported-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de> (v1)
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- crypto/asymmetric_keys/restrict.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/crypto/asymmetric_keys/restrict.c
-+++ b/crypto/asymmetric_keys/restrict.c
-@@ -66,8 +66,9 @@ __setup("ca_keys=", ca_keys_setup);
-  *
-  * Returns 0 if the new certificate was accepted, -ENOKEY if we couldn't find a
-  * matching parent certificate in the trusted list, -EKEYREJECTED if the
-- * signature check fails or the key is blacklisted and some other error if
-- * there is a matching certificate but the signature check cannot be performed.
-+ * signature check fails or the key is blacklisted, -ENOPKG if the signature
-+ * uses unsupported crypto, or some other error if there is a matching
-+ * certificate but the signature check cannot be performed.
-  */
- int restrict_link_by_signature(struct key *trust_keyring,
- 			       const struct key_type *type,
-@@ -86,6 +87,8 @@ int restrict_link_by_signature(struct ke
- 		return -EOPNOTSUPP;
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1678,8 +1678,6 @@ int amdgpu_device_init(struct amdgpu_dev
+ 	 * ignore it */
+ 	vga_client_register(adev->pdev, adev, NULL, amdgpu_vga_set_decode);
  
- 	sig = payload->data[asym_auth];
-+	if (!sig)
-+		return -ENOPKG;
- 	if (!sig->auth_ids[0] && !sig->auth_ids[1])
- 		return -ENOKEY;
- 
+-	if (amdgpu_runtime_pm == 1)
+-		runtime = true;
+ 	if (amdgpu_device_is_px(ddev))
+ 		runtime = true;
+ 	vga_switcheroo_register_client(adev->pdev, &amdgpu_switcheroo_ops, runtime);
