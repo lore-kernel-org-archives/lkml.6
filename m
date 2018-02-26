@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225NEHtaDH0Af3c4QyctoAs2bUMpBM/HsJbbTLoEq+qC74AySHmzYAu4yRmNzuGfZPuPIige
-ARC-Seal: i=1; a=rsa-sha256; t=1519676810; cv=none;
+X-Google-Smtp-Source: AG47ELu9KuZmWMC90t1Z6vQSlyEEv2tN9haAfu/IJzws8+EuWDEOufkXG6+xJPdEji9i13sBwZy3
+ARC-Seal: i=1; a=rsa-sha256; t=1519676807; cv=none;
         d=google.com; s=arc-20160816;
-        b=grkvjwSZpTQFzqdKfMtlqi/s2hCjntPMLyWIBleeFOx5eFCs62jYrwSnmjjzyKripx
-         3LiNL2vDQ36BNNng+1uQWHo21AmmpU7jAavT0Ao/Kdg9gReajo0PxbFISZF7kJJN6bYd
-         qllE1W6Le94c9re1a0b7N5bKYVPwqjG040BhbnXGuRaGl1PHVtvWlnA6jkHWwbOX2FsW
-         NJReSqszhMQQs6OubuDTAjtOL3RsO9awtIXWVTpIQRZaiTZcT0FcKCFU1VTOzQIGe0hq
-         oCbQ7zUaIuw3ERc6YjwpEefV1hSPki3TIpaxB+KmqQ2Acfyn/gNdeZQu0t8iAqCJvhZt
-         BQBw==
+        b=KCJuZbCGIMJXYxLe9kFELOYPBKeIE0rMQXeqU03BbOtIksV/u0Yg3PsxNtU9gnVxQr
+         GGxCJ5cDGoyqc5ixJV4j0cOIM5DmRdWBj8EJQY7R94IZ7tAGsziU8GOSUhn3fyAWcmAA
+         /ErhOdUhZCgxVJAMBLtQjXq0lO1+O5PiRsVfJTlXXSYrmkvmNQJ6gKBvrGcNzGFe8drQ
+         ZvYud91QK/KBTeowJsLSsYCBdvIPoOcxofhsMJw8YC7JUKEb1Q8AupkUPq1hPzGV6vjD
+         CENnb4lVMY7j+mL5ZkjYqJN99gJboAt5RQeqDwBRuV0p8iR1+XeCbWAnS768g8azEoFk
+         cRKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PU5TZvAhChUsLi3+hZM+BQQbVZiZ/sDo3YBTHqhV7Kg=;
-        b=Tcgn5IHbDuqh3/kyBKACD//tcfVIvdwTU588xmXRTEdiPFDPu0EDOkjawsP/DI+Khh
-         era2WPiwwJEyqEesC0jBpW1Ao9b7ukI9qado7EPtJmIWyCqNW9JqwN3mkIqwDDGHJwqo
-         ChFuWUzBIZ1eVFkgP8jA4p63lEGOqS6n6lfueTHIuAYPOkEXzGZw4l1KGX+JAp5RGp/K
-         hSjHxJ0TewVTvSJ2F65yuYxNTc6x8vgV+RsrIHS7eWrAKM/uDM9ieht0rUvWn6JRyEHd
-         yxGORRvEICSROEb0oN+VtrRvNE+cODYowTHXJ1TUTKsCWZUF+M/2Al0Axj9zq8YRufrm
-         txCw==
+        bh=8fdED4rXE9vPdtr1lkl8/uorq8hf1llMTnFGfZQcPmo=;
+        b=BAd8dmLmOK58UBnoWZwCi0isq6OqRkpUXy6A5uOvuyZnZRH9IvERybCmWS4PepP+Vu
+         mKkCuwpdzTdfPlToxwog6dFREUjJmfTvXt6V7+2TGSD2JZlv4OUquMBUpae9YeZZuW9I
+         mFjyN9hbbXDkAVdaiB+SrbnnDwPnHfjTaUrOwJ+i7aFh1Ew8HelwgFMuL3lAZZGC+sUZ
+         /X4dMPcg9tVxMQWFHp1QxH9D+M3eDWdu8uBOIBwDj2T7Zx98gGc1hD852XyM0fECe6/u
+         OnHwDUu1eQx8V/57YP1LN3n6QVCxgJd8ewBSPes+ZnkNmBOP2aXh1u8+Nw+2ACMtXb1l
+         gFHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fabrice Gasnier <fabrice.gasnier@st.com>,
-	Stable@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.15 22/64] iio: adc: stm32: fix stm32h7_adc_enable error handling
-Date: Mon, 26 Feb 2018 21:21:59 +0100
-Message-Id: <20180226202154.411957860@linuxfoundation.org>
+	syzkaller <syzkaller@googlegroups.com>,
+	Noa Osherovich <noaos@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.15 21/64] RDMA/uverbs: Sanitize user entered port numbers prior to access it
+Date: Mon, 26 Feb 2018 21:21:58 +0100
+Message-Id: <20180226202154.355981720@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496448510056884?=
-X-GMAIL-MSGID: =?utf-8?q?1593496631076370567?=
+X-GMAIL-THRID: =?utf-8?q?1593496444917005663?=
+X-GMAIL-MSGID: =?utf-8?q?1593496627847130867?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +51,131 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit a3b5655ebdb501a98a45c0d3265dca9f2fe0218a upstream.
+commit 5d4c05c3ee36f67ddc107ab5ea0898af01a62cc1 upstream.
 
-Error handling in stm32h7_adc_enable routine doesn't unwind enable
-sequence correctly. ADEN can only be cleared by hardware (e.g. by
-writing one to ADDIS).
-It's also better to clear ADRDY just after it's been set by hardware.
+==================================================================
+BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs+0x6f2/0x8c0
+Read of size 4 at addr ffff88006476a198 by task syzkaller697701/265
 
-Fixes: 95e339b6e85d ("iio: adc: stm32: add support for STM32H7")
+CPU: 0 PID: 265 Comm: syzkaller697701 Not tainted 4.15.0+ #90
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+ dump_stack+0xde/0x164
+ ? dma_virt_map_sg+0x22c/0x22c
+ ? show_regs_print_info+0x17/0x17
+ ? lock_contended+0x11a0/0x11a0
+ print_address_description+0x83/0x3e0
+ kasan_report+0x18c/0x4b0
+ ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
+ ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
+ ? lookup_get_idr_uobject+0x120/0x200
+ ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
+ copy_ah_attr_from_uverbs+0x6f2/0x8c0
+ ? modify_qp+0xd0e/0x1350
+ modify_qp+0xd0e/0x1350
+ ib_uverbs_modify_qp+0xf9/0x170
+ ? ib_uverbs_query_qp+0xa70/0xa70
+ ib_uverbs_write+0x7f9/0xef0
+ ? attach_entity_load_avg+0x8b0/0x8b0
+ ? ib_uverbs_query_qp+0xa70/0xa70
+ ? uverbs_devnode+0x110/0x110
+ ? cyc2ns_read_end+0x10/0x10
+ ? print_irqtrace_events+0x280/0x280
+ ? sched_clock_cpu+0x18/0x200
+ ? _raw_spin_unlock_irq+0x29/0x40
+ ? _raw_spin_unlock_irq+0x29/0x40
+ ? _raw_spin_unlock_irq+0x29/0x40
+ ? time_hardirqs_on+0x27/0x670
+ __vfs_write+0x10d/0x700
+ ? uverbs_devnode+0x110/0x110
+ ? kernel_read+0x170/0x170
+ ? _raw_spin_unlock_irq+0x29/0x40
+ ? finish_task_switch+0x1bd/0x7a0
+ ? finish_task_switch+0x194/0x7a0
+ ? prandom_u32_state+0xe/0x180
+ ? rcu_read_unlock+0x80/0x80
+ ? security_file_permission+0x93/0x260
+ vfs_write+0x1b0/0x550
+ SyS_write+0xc7/0x1a0
+ ? SyS_read+0x1a0/0x1a0
+ ? trace_hardirqs_on_thunk+0x1a/0x1c
+ entry_SYSCALL_64_fastpath+0x1e/0x8b
+RIP: 0033:0x433c29
+RSP: 002b:00007ffcf2be82a8 EFLAGS: 00000217
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Allocated by task 62:
+ kasan_kmalloc+0xa0/0xd0
+ kmem_cache_alloc+0x141/0x480
+ dup_fd+0x101/0xcc0
+ copy_process.part.62+0x166f/0x4390
+ _do_fork+0x1cb/0xe90
+ kernel_thread+0x34/0x40
+ call_usermodehelper_exec_work+0x112/0x260
+ process_one_work+0x929/0x1aa0
+ worker_thread+0x5c6/0x12a0
+ kthread+0x346/0x510
+ ret_from_fork+0x3a/0x50
+
+Freed by task 259:
+ kasan_slab_free+0x71/0xc0
+ kmem_cache_free+0xf3/0x4c0
+ put_files_struct+0x225/0x2c0
+ exit_files+0x88/0xc0
+ do_exit+0x67c/0x1520
+ do_group_exit+0xe8/0x380
+ SyS_exit_group+0x1e/0x20
+ entry_SYSCALL_64_fastpath+0x1e/0x8b
+
+The buggy address belongs to the object at ffff88006476a000
+ which belongs to the cache files_cache of size 832
+The buggy address is located 408 bytes inside of
+ 832-byte region [ffff88006476a000, ffff88006476a340)
+The buggy address belongs to the page:
+page:ffffea000191da80 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
+flags: 0x4000000000008100(slab|head)
+raw: 4000000000008100 0000000000000000 0000000000000000 0000000100080008
+raw: 0000000000000000 0000000100000001 ffff88006bcf7a80 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88006476a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88006476a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88006476a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88006476a200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88006476a280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+Cc: syzkaller <syzkaller@googlegroups.com>
+Cc: <stable@vger.kernel.org> # 4.11
+Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/stm32-adc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/uverbs_cmd.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/adc/stm32-adc.c
-+++ b/drivers/iio/adc/stm32-adc.c
-@@ -765,8 +765,6 @@ static int stm32h7_adc_enable(struct stm
- 	int ret;
- 	u32 val;
- 
--	/* Clear ADRDY by writing one, then enable ADC */
--	stm32_adc_set_bits(adc, STM32H7_ADC_ISR, STM32H7_ADRDY);
- 	stm32_adc_set_bits(adc, STM32H7_ADC_CR, STM32H7_ADEN);
- 
- 	/* Poll for ADRDY to be set (after adc startup time) */
-@@ -774,8 +772,11 @@ static int stm32h7_adc_enable(struct stm
- 					   val & STM32H7_ADRDY,
- 					   100, STM32_ADC_TIMEOUT_US);
- 	if (ret) {
--		stm32_adc_clr_bits(adc, STM32H7_ADC_CR, STM32H7_ADEN);
-+		stm32_adc_set_bits(adc, STM32H7_ADC_CR, STM32H7_ADDIS);
- 		dev_err(&indio_dev->dev, "Failed to enable ADC\n");
-+	} else {
-+		/* Clear ADRDY by writing one */
-+		stm32_adc_set_bits(adc, STM32H7_ADC_ISR, STM32H7_ADRDY);
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -1970,8 +1970,15 @@ static int modify_qp(struct ib_uverbs_fi
+ 		goto release_qp;
  	}
  
- 	return ret;
++	if ((cmd->base.attr_mask & IB_QP_AV) &&
++	    !rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
++		ret = -EINVAL;
++		goto release_qp;
++	}
++
+ 	if ((cmd->base.attr_mask & IB_QP_ALT_PATH) &&
+-	    !rdma_is_port_valid(qp->device, cmd->base.alt_port_num)) {
++	    (!rdma_is_port_valid(qp->device, cmd->base.alt_port_num) ||
++	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num))) {
+ 		ret = -EINVAL;
+ 		goto release_qp;
+ 	}
