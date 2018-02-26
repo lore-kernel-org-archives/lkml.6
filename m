@@ -1,37 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224Z1UqBpAyZRM1U/pj/3VoOKL9lFJKxj4ZZDqVcxyhDkRoBS7INk1yAHG3w7fNngBpxQNhR
-ARC-Seal: i=1; a=rsa-sha256; t=1519676913; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0E70hZPGEv+apUKhKIRFNtycsbsPPkBaIxM1CQNr4V8qUnHE/eSgn+gobD/B96aKGv
-         kMZZhT3Xwv/YJ6bCa1zio8DJoWUYjGZ9I8lPgmjOIB02IuV9O6EliNM+uhZB7OtfvNyz
-         fquFv9yRBp/PQaDIG/0MoSymYxI6xKEXka+aIV8yQvH/vmG0YSocRKyqVCCzec3MaUHw
-         dvH2BBv3LQLeNzMKEvip5zw9xm14FTkg9klZ2OhWZ06D9qIN0N/m2LF6NXPLc2Lc0w6O
-         NCGahIorOeIwH2S8NE0IiB58bnttJS82R9Rs5VyJ6OhXRV73I1zFr+SceYAtDZkLqHmi
-         1PEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=TCKz+2KLg3SyBxGSXgHC4nUM7bTXRQlsEP7cu1uIHJ4=;
-        b=IPMEZJ/b7EWQBME0+hth4pdNe38kuma8Ge7T4DGKjeCFQJzoJI7n6LXbUvnIfz9u5S
-         PyVZbAJvDMGdBGMxr3HNFyaw3ctM6+yiUHpskFU9H8hFBJBJdHzt6+dCHK/KDp4rx7mu
-         VqUwFLo3qqG74fXJbcMknJM9UmXlrug1DE8YyAdJjSDCd2PoXWKdeAkqggrYgOB8uL0s
-         dL5jOOrghWQGY9/G4P+pOwRSPOv636HA1l+O0am/WxSxeCLuH2avQEydCAl3YnUQk6R7
-         4ijR9+XeV0XVQt1Ld6OU/2GQprb1V/ZNapVBeBJKkC3TJYrka0L+2fEhKd0ovX4w2i0k
-         gNow==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3709765-1519676912-2-2851949866121941595
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519676911; b=QIZJEzywBoJGLbxL5J5cqxRzWcDlk3gchikfWKbpoUI4gH6
+    CxrxUiiP6cUTmbQAcMNP6RseGkkXgMJTh1PhA2273fLyuykBeuIMGRDVGi9rI31o
+    tjdoLSWJieiTADBkd0GJ65E9ExjfMI9CI7AdyPB6HSPrRY8NLJOnLBPLhhqBKaAy
+    Xti1Q+cTO+HiGzqSeASywcpHDMRolihglKJFHb/78qz1Vj1BZGRwDGBBc+L8kHzs
+    AcdDUgD9eF6g0fu6eM/2ViPgHAxeCaZHEir2nKrDlmsHKuxC6/ImqP9bY89OcgCY
+    h7yCScy5XdDAe8LoxdK53r5uxKAfkjdDiCmIBfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519676911; bh=9alsys2IZ32X5tPFadBTe0iGPN
+    WXPAN33Sygv3HS6Vs=; b=rK9EzDfv5nhFAdTErNA6jMe9lNBGQKcErSa/NmAC5I
+    avR29y+yO8Kv+2W9WRdCVa5hRKbcwrlYdVkhLXHR0U/NkM7qFlywVOzqvluAlKbQ
+    VK8WnVxe4T6zQEOmucEsHyQ2dNI2u3onY3D+c1X2e99tlBzeWjgrtWgShFumVrNq
+    AtpjG364nyHiaQT9vzlps8vfVJocVjpobyvHI7XTl9Uy4dq1v9t2ceZZBz4Wvx43
+    fU64Zlpm4bQrLuWzvrz9PPHxdbvsWhVyUJZAgOADpKuLvTh0vIpm/iPkft+dQJIb
+    B0z13vhvXpOMlVvwKp3EIAGiB6OQiPIn75kGrh8uvFog==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753950AbeBZU22 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:28:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37192 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbeBZU20 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:28:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.15 55/64] drm: Handle unexpected holes in color-eviction
-Date: Mon, 26 Feb 2018 21:22:32 +0100
-Message-Id: <20180226202155.787556654@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rosin <peda@axenita.se>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PATCH 4.15 53/64] drm/cirrus: Load lut in crtc_commit
+Date: Mon, 26 Feb 2018 21:22:30 +0100
+Message-Id: <20180226202155.705573549@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -39,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496527590323155?=
-X-GMAIL-MSGID: =?utf-8?q?1593496739716889768?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,128 +80,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-commit b8ff1802815913aad52695898cccbc9f77b7e726 upstream.
+commit 745fd50f3b044db6a3922e1718306555613164b0 upstream.
 
-During eviction, the driver may free more than one hole in the drm_mm
-due to the side-effects in evicting the scanned nodes. However,
-drm_mm_scan_color_evict() expects that the scan result is the first
-available hole (in the mru freed hole_stack list):
+In the past the ast driver relied upon the fbdev emulation helpers to
+call ->load_lut at boot-up. But since
 
-  kernel BUG at drivers/gpu/drm/drm_mm.c:844!
-  invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-  Dumping ftrace buffer:
-     (ftrace buffer empty)
-  Modules linked in: i915 snd_hda_codec_analog snd_hda_codec_generic coretemp snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core lpc_ich snd_pcm e1000e mei_me prime_numbers mei
-  CPU: 1 PID: 1490 Comm: gem_userptr_bli Tainted: G     U           4.16.0-rc1-g740f57c54ecf-kasan_6+ #1
-  Hardware name: Dell Inc. OptiPlex 755                 /0PU052, BIOS A08 02/19/2008
-  RIP: 0010:drm_mm_scan_color_evict+0x2b8/0x3d0
-  RSP: 0018:ffff880057a573f8 EFLAGS: 00010287
-  RAX: ffff8800611f5980 RBX: ffff880057a575d0 RCX: dffffc0000000000
-  RDX: 00000000029d5000 RSI: 1ffff1000af4aec1 RDI: ffff8800611f5a10
-  RBP: ffff88005ab884d0 R08: ffff880057a57600 R09: 000000000afff000
-  R10: 1ffff1000b5710b5 R11: 0000000000001000 R12: 1ffff1000af4ae82
-  R13: ffff8800611f59b0 R14: ffff8800611f5980 R15: ffff880057a57608
-  FS:  00007f2de0c2e8c0(0000) GS:ffff88006ac40000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f2ddde1e000 CR3: 00000000609b2000 CR4: 00000000000006e0
-  Call Trace:
-   ? drm_mm_scan_remove_block+0x330/0x330
-   ? drm_mm_scan_remove_block+0x151/0x330
-   i915_gem_evict_something+0x711/0xbd0 [i915]
-   ? igt_evict_contexts+0x50/0x50 [i915]
-   ? nop_clear_range+0x10/0x10 [i915]
-   ? igt_evict_something+0x90/0x90 [i915]
-   ? i915_gem_gtt_reserve+0x1a1/0x320 [i915]
-   i915_gem_gtt_insert+0x237/0x400 [i915]
-   __i915_vma_do_pin+0xc25/0x1a20 [i915]
-   eb_lookup_vmas+0x1c63/0x3790 [i915]
-   ? i915_gem_check_execbuffer+0x250/0x250 [i915]
-   ? trace_hardirqs_on_caller+0x33f/0x590
-   ? _raw_spin_unlock_irqrestore+0x39/0x60
-   ? __pm_runtime_resume+0x7d/0xf0
-   i915_gem_do_execbuffer+0x86a/0x2ff0 [i915]
-   ? __kmalloc+0x132/0x340
-   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
-   ? drm_ioctl_kernel+0x12e/0x1c0
-   ? drm_ioctl+0x662/0x980
-   ? eb_relocate_slow+0xa90/0xa90 [i915]
-   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
-   ? __might_fault+0xea/0x1a0
-   i915_gem_execbuffer2_ioctl+0x3cc/0x760 [i915]
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   ? lock_acquire+0x3c0/0x3c0
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   drm_ioctl_kernel+0x12e/0x1c0
-   drm_ioctl+0x662/0x980
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   ? drm_getstats+0x20/0x20
-   ? debug_check_no_obj_freed+0x2a6/0x8c0
-   do_vfs_ioctl+0x170/0xe70
-   ? ioctl_preallocate+0x170/0x170
-   ? task_work_run+0xbe/0x160
-   ? lock_acquire+0x3c0/0x3c0
-   ? trace_hardirqs_on_caller+0x33f/0x590
-   ? _raw_spin_unlock_irq+0x2f/0x50
-   SyS_ioctl+0x36/0x70
-   ? do_vfs_ioctl+0xe70/0xe70
-   do_syscall_64+0x18c/0x5d0
-   entry_SYSCALL_64_after_hwframe+0x26/0x9b
-  RIP: 0033:0x7f2ddf13b587
-  RSP: 002b:00007fff15c4f9d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2ddf13b587
-  RDX: 00007fff15c4fa20 RSI: 0000000040406469 RDI: 0000000000000003
-  RBP: 00007fff15c4fa20 R08: 0000000000000000 R09: 00007f2ddf3fe120
-  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000040406469
-  R13: 0000000000000003 R14: 00007fff15c4fa20 R15: 00000000000000c7
-  Code: 00 00 00 4a c7 44 22 08 00 00 00 00 42 c7 44 22 10 00 00 00 00 48 81 c4 b8 00 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 0b 0f 0b <0f> 0b 31 c0 eb c0 4c 89 ef e8 9a 09 41 ff e9 1e fe ff ff 4c 89
-  RIP: drm_mm_scan_color_evict+0x2b8/0x3d0 RSP: ffff880057a573f8
+commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
+Author: Peter Rosin <peda@axentia.se>
+Date:   Tue Jul 4 12:36:57 2017 +0200
 
-We can trivially relax this assumption by searching the hole_stack for
-the scan result and warn instead if the driver called us without any
-result.
+drm/fb-helper: factor out pseudo-palette
 
-Fixes: 3fa489dabea9 ("drm: Apply tight eviction scanning to color_adjust")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.11+
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180219113543.8010-1-chris@chris-wilson.co.uk
+that's cleaned up and drivers are expected to boot into a consistent
+lut state. This patch fixes that.
+
+Fixes: b8e2b0199cc3 ("drm/fb-helper: factor out pseudo-palette")
+Cc: Peter Rosin <peda@axenita.se>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: <stable@vger.kernel.org> # v4.14+
+References: https://bugzilla.kernel.org/show_bug.cgi?id=198123
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180131110450.22153-1-daniel.vetter@ffwll.ch
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_mm.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/cirrus/cirrus_mode.c |   40 ++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 17 deletions(-)
 
---- a/drivers/gpu/drm/drm_mm.c
-+++ b/drivers/gpu/drm/drm_mm.c
-@@ -836,9 +836,24 @@ struct drm_mm_node *drm_mm_scan_color_ev
- 	if (!mm->color_adjust)
- 		return NULL;
+--- a/drivers/gpu/drm/cirrus/cirrus_mode.c
++++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
+@@ -294,22 +294,7 @@ static void cirrus_crtc_prepare(struct d
+ {
+ }
  
--	hole = list_first_entry(&mm->hole_stack, typeof(*hole), hole_stack);
--	hole_start = __drm_mm_hole_node_start(hole);
--	hole_end = hole_start + hole->hole_size;
-+	/*
-+	 * The hole found during scanning should ideally be the first element
-+	 * in the hole_stack list, but due to side-effects in the driver it
-+	 * may not be.
-+	 */
-+	list_for_each_entry(hole, &mm->hole_stack, hole_stack) {
-+		hole_start = __drm_mm_hole_node_start(hole);
-+		hole_end = hole_start + hole->hole_size;
-+
-+		if (hole_start <= scan->hit_start &&
-+		    hole_end >= scan->hit_end)
-+			break;
-+	}
-+
-+	/* We should only be called after we found the hole previously */
-+	DRM_MM_BUG_ON(&hole->hole_stack == &mm->hole_stack);
-+	if (unlikely(&hole->hole_stack == &mm->hole_stack))
-+		return NULL;
+-/*
+- * This is called after a mode is programmed. It should reverse anything done
+- * by the prepare function
+- */
+-static void cirrus_crtc_commit(struct drm_crtc *crtc)
+-{
+-}
+-
+-/*
+- * The core can pass us a set of gamma values to program. We actually only
+- * use this for 8-bit mode so can't perform smooth fades on deeper modes,
+- * but it's a requirement that we provide the function
+- */
+-static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
+-				 u16 *blue, uint32_t size,
+-				 struct drm_modeset_acquire_ctx *ctx)
++static void cirrus_crtc_load_lut(struct drm_crtc *crtc)
+ {
+ 	struct drm_device *dev = crtc->dev;
+ 	struct cirrus_device *cdev = dev->dev_private;
+@@ -317,7 +302,7 @@ static int cirrus_crtc_gamma_set(struct
+ 	int i;
  
- 	DRM_MM_BUG_ON(hole_start > scan->hit_start);
- 	DRM_MM_BUG_ON(hole_end < scan->hit_end);
+ 	if (!crtc->enabled)
+-		return 0;
++		return;
+ 
+ 	r = crtc->gamma_store;
+ 	g = r + crtc->gamma_size;
+@@ -330,6 +315,27 @@ static int cirrus_crtc_gamma_set(struct
+ 		WREG8(PALETTE_DATA, *g++ >> 8);
+ 		WREG8(PALETTE_DATA, *b++ >> 8);
+ 	}
++}
++
++/*
++ * This is called after a mode is programmed. It should reverse anything done
++ * by the prepare function
++ */
++static void cirrus_crtc_commit(struct drm_crtc *crtc)
++{
++	cirrus_crtc_load_lut(crtc);
++}
++
++/*
++ * The core can pass us a set of gamma values to program. We actually only
++ * use this for 8-bit mode so can't perform smooth fades on deeper modes,
++ * but it's a requirement that we provide the function
++ */
++static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
++				 u16 *blue, uint32_t size,
++				 struct drm_modeset_acquire_ctx *ctx)
++{
++	cirrus_crtc_load_lut(crtc);
+ 
+ 	return 0;
+ }
