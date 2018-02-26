@@ -1,102 +1,95 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1199706-1519728891-2-14959974712273931197
+X-Cyrus-Session-Id: sloti22d1t05-3025739-1519655667-2-3539415382956012325
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519728890; b=wIUjGFSIzxiMhZ27B1Xw5c9Z//fUQJUAKakC1DMve/QN0+Q
-    t963WG+fuPHHjHTU/xiPTwh/Bn7JPRFzEdfxtlVvFvCLEFr1RSgU80+9KKkbJNKE
-    CcU++oJ69oeKn9J3zLwvS0AfkuDaAtrGSM4tjYln2dLMoV8Jr+Qpy+BJEoPBLMNW
-    jKHtY2Xw0p0KHg9tv5Jtvk3W9IpM9fRKW/igBmtpuJV5fMPwSN3OAjFrbprV+UFg
-    sCoXEn9xIw/BjRTyKUT9ZWkckarrS65iFWE0NsoxbMsjpDGKsxtcvffmyC9VnLzY
-    skHDPYNztKzx/xLwPH9F4oSNFJI/o6Qbe+5iiWw==
+    t=1519655666; b=WLExMCqWtK9hTxdzCFTQYABazr8ao7qkOs+LaySr2zwxYkp
+    yU6TH/hxq9SDG9yH3+lRCpj3bm1uyrKbs9ARXKMLGUOV6BwbbqWo8ukwAosylyQT
+    aoVv/4DbOjVmPRQRQvc8P/SPkQUQjkcisRxLDKA5SL7scWJ0qbpweKwH3PFkNPgZ
+    ES20AqT0JComacll9UgmPKgCfxHIr0Fvzc8hR5VZacyZnf7dnmbcFBvpdPB5IsrX
+    /sCIeCr8YsTBKZRLuT2wjreDeRMsiahsHQs8LGHB2cwSkG4hSfeRphRzJ2T0rM/T
+    mwhmBVbUK9flkvWPg0lT6k+E16gt05cpQ4RuWsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1519728890; bh=5Pbq01ywFxrVoKvgfOQJLLrUpb46WofKxS28r6YxrnY=; b=O
-    ErG5sjuVGbktZqzUshPqAw0uMToYK8FosOu8mP0XkMnmsQngIvjJczOm5HLAiZ53
-    VbAuABAY2qdstiZHnPL/xtwBHOH1p9SOLuEMzwl4X0xExWNpR+WKBwT6vZ3DOzts
-    9KYhG/jIwQD2oEwq9mqLf4K61TJdI+i3+M55Ln3pFL10BCEcH/yDaLZtmzRNzNia
-    PJpDEd9C620jNIAMJaJWVNQGOuZO4QttiU/gNAdDMLUnz3t2Cj5N3D7E1kyMDWbD
-    FlunKhxti042I15J3LvVB4e0ktMq4bkxSxObe1NEnst94txTbyMIaSiiheOa75RY
-    yqeiqyzJcUKC6+DprDfyw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519655666; bh=iDBIRUDpKmh8dMmead54G44vrh
+    PxLQcd2utBhT+GJ1I=; b=hgi4QGPuo8+OeAcaNKg+flTJ3fE+EwDXXYIdmAGyeh
+    pKNUx3M9mF1WIcR11C2CfPEzICIMcxybswML13NjbzkfXr4n0Rf6jHXDtNVzYvWM
+    CeaG5IAaWHOA1NbBcxP5E+PhuT4itzxIItZbjiRnyGm4tpcne058kyIF14oW+3gr
+    MM47EtYVBkQspsidFij7oXdrIAdq/RUn6q1vuhI+TVr8jIm381nhRYz7FeDb73so
+    hvjg+Y4J9e8VFIs1rMc92lbLfXeuro7txdPPMCQ1nkYt0RQmAfxPBIsCuh71dp8Q
+    JeSr9pvjsiKC5ldIqq/BKL+095AjR+wW2VSdaw0W7SRQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=PEQwB2Il x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=PEQwB2Il x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeB0Kyr (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 05:54:47 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:41668 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752526AbeB0Kyq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 05:54:46 -0500
-From: Roger Quadros <rogerq@ti.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
-        "# v4 . 12+" <stable@vger.kernel.org>
-Subject: [PATCH] usb: dwc3: prevent setting PRTCAP to OTG from debugfs
-Date: Tue, 27 Feb 2018 12:54:37 +0200
-Message-ID: <1519728877-9366-1-git-send-email-rogerq@ti.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1753333AbeBZOeX (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 09:34:23 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:34148 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753298AbeBZOeW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 09:34:22 -0500
+From: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
+To: linux-mmc@vger.kernel.org
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        stable@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: [PATCH 0/2 v3] mmc: dw_mmc: Fix DTO/STO timeout overflow calculation
+Date: Mon, 26 Feb 2018 17:34:11 +0300
+Message-Id: <20180226143413.44134-1-Evgeniy.Didin@synopsys.com>
+X-Mailer: git-send-email 2.11.0
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We don't support PRTCAP == OTG yet, so prevent user from
-setting it via debugfs.
+For some 32-bit architectures calculation of DTO and STO timeout can be incorrect
+due to multiply overflow. Lets prevent this by casting multiply and result to u64.
 
-Fixes: 41ce1456e1db ("usb: dwc3: core: make dwc3_set_mode() work properly")
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Suggested by Jisheng Zhang.
+Switch DIV_ROUND_UP macro to DIV_ROUND_UP_ULL is not reasonable
+because overflow happens on multiply and DIV_ROUND_UP_ULL helps
+with sum overflow.
+
 ---
- drivers/usb/dwc3/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes since v2:
+-add fix for cto_ms
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index e94bf91..df4569d 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -119,6 +119,9 @@ static void __dwc3_set_mode(struct work_struct *work)
- 	if (dwc->dr_mode != USB_DR_MODE_OTG)
- 		return;
- 
-+	if (dwc->desired_dr_role == DWC3_GCTL_PRTCAP_OTG)
-+		return;
-+
- 	switch (dwc->current_dr_role) {
- 	case DWC3_GCTL_PRTCAP_HOST:
- 		dwc3_host_exit(dwc);
+Evgeniy Didin (2):
+  mmc: dw_mmc: Fix the DTO timeout overflow calculation for 32-bit
+    systems
+  mmc: dw_mmc: Fix the CTO overflow calculation for 32-bit systems
+
+ drivers/mmc/host/dw_mmc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.11.0
