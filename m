@@ -1,202 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752092AbeBZQYW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:24:22 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:37657 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751550AbeBZQYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:24:20 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 11/15] drm/sun4i: Add support for H3 HDMI PHY variant
-Date: Mon, 26 Feb 2018 17:24:13 +0100
-Message-ID: <5983773.Yp6r9qpA8a@jernej-laptop>
-In-Reply-To: <20180224214545.3740-12-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-12-jernej.skrabec@siol.net>
+        id S1752104AbeBZQY3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:24:29 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40460 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751550AbeBZQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:24:24 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
+   d="scan'208";a="207153186"
+Date: Mon, 26 Feb 2018 09:24:40 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: baegjae@gmail.com
+Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-multipath: fix sysfs dangerously created links
+Message-ID: <20180226162440.GB10832@localhost.localdomain>
+References: <20180226085123.26120-1-baegjae@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226085123.26120-1-baegjae@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Mon, Feb 26, 2018 at 05:51:23PM +0900, baegjae@gmail.com wrote:
+> From: Baegjae Sung <baegjae@gmail.com>
+> 
+> If multipathing is enabled, each NVMe subsystem creates a head
+> namespace (e.g., nvme0n1) and multiple private namespaces
+> (e.g., nvme0c0n1 and nvme0c1n1) in sysfs. When creating links for
+> private namespaces, links of head namespace are used, so the
+> namespace creation order must be followed (e.g., nvme0n1 ->
+> nvme0c1n1). If the order is not followed, links of sysfs will be
+> incomplete or kernel panic will occur.
+> 
+> The kernel panic was:
+>   kernel BUG at fs/sysfs/symlink.c:27!
+>   Call Trace:
+>     nvme_mpath_add_disk_links+0x5d/0x80 [nvme_core]
+>     nvme_validate_ns+0x5c2/0x850 [nvme_core]
+>     nvme_scan_work+0x1af/0x2d0 [nvme_core]
+> 
+> Correct order
+> Context A     Context B
+> nvme0n1
+> nvme0c0n1     nvme0c1n1
+> 
+> Incorrect order
+> Context A     Context B
+>               nvme0c1n1
+> nvme0n1
+> nvme0c0n1
+> 
+> The function of a head namespace creation is moved to maintain the
+> correct order. We verified the code with or without multipathing
+> using three vendors of dual-port NVMe SSDs.
+> 
+> Signed-off-by: Baegjae Sung <baegjae@gmail.com>
 
-Dne sobota, 24. februar 2018 ob 22:45:41 CET je Jernej Skrabec napisal(a):
-> While A83T HDMI PHY seems to be just customized Synopsys HDMI PHY, H3
-> HDMI PHY is completely custom PHY.
-> 
-> However, they still have many things in common like clock and reset
-> setup, setting sync polarity and more.
-> 
-> Add support for H3 HDMI PHY variant.
-> 
-> While documentation exists for this PHY variant, it doesn't go in great
-> details. Because of that, almost all settings are copied from BSP linux
-> 4.4. Interestingly, those settings are slightly different to those found
-> in a older BSP with Linux 3.4. For now, no user visible difference was
-> found between them.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Thanks, I see what you mean on the potential ordering problem here.
+Calling nvme_mpath_add_disk, though, before the 'head' has any namespace
+paths available looks like you'll get a lot of 'no path available'
+warnings during the bring-up. It should resolve itself shortly after,
+but the warnings will be a bit alarming, right?
+
 > ---
->  drivers/gpu/drm/sun4i/Makefile             |   1 +
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |   6 +
->  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 263
-> ++++++++++++++++++++++++++++- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c |
-> 130 ++++++++++++++
->  4 files changed, 397 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+>  drivers/nvme/host/core.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-[...]
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c new file mode 100644
-> index 000000000000..3c34ec5ff4af
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "sun8i_dw_hdmi.h"
-> +
-> +struct sun8i_phy_clk {
-> +	struct clk_hw		hw;
-> +	struct sun8i_hdmi_phy	*phy;
-> +};
-> +
-> +static inline struct sun8i_phy_clk *hw_to_phy_clk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct sun8i_phy_clk, hw);
-> +}
-> +
-> +static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request *req)
-> +{
-> +	unsigned long rate = req->rate;
-> +	unsigned long best_rate = 0;
-> +	struct clk_hw *parent;
-> +	int best_div = 1;
-> +	int i;
-> +
-> +	parent = clk_hw_get_parent(hw);
-> +
-> +	for (i = 1; i <= 16; i++) {
-> +		unsigned long ideal = rate * i;
-> +		unsigned long rounded;
-> +
-> +		rounded = clk_hw_round_rate(parent, ideal);
-> +
-> +		if (rounded == ideal) {
-> +			best_rate = rounded;
-> +			best_div = i;
-> +			break;
-> +		}
-> +
-> +		if (abs(rate - rounded) < abs(rate - best_rate / best_div)) {
-
-Here is a bug. Above line should be:
-if (abs(rate - rounded / i) < abs(rate - best_rate / best_div)) {
-
-I guess this could solve the issue described in cover letter.
-
-Best regards,
-Jernej
-
-> +			best_rate = rounded;
-> +			best_div = i;
-> +		}
-> +	}
-> +
-> +	req->rate = best_rate / best_div;
-> +	req->best_parent_rate = best_rate;
-> +	req->best_parent_hw = parent;
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long sun8i_phy_clk_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-> +	u32 reg;
-> +
-> +	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, &reg);
-> +	reg = ((reg >> SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT) &
-> +		SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK) + 1;
-> +
-> +	return parent_rate / reg;
-> +}
-> +
-> +static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long parent_rate)
-> +{
-> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-> +	unsigned long best_rate = 0;
-> +	u8 best_m = 0, m;
-> +
-> +	for (m = 1; m <= 16; m++) {
-> +		unsigned long tmp_rate = parent_rate / m;
-> +
-> +		if (tmp_rate > rate)
-> +			continue;
-> +
-> +		if (!best_rate ||
-> +		    (rate - tmp_rate) < (rate - best_rate)) {
-> +			best_rate = tmp_rate;
-> +			best_m = m;
-> +		}
-> +	}
-> +
-> +	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
-> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
-> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(best_m));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops sun8i_phy_clk_ops = {
-> +	.determine_rate	= sun8i_phy_clk_determine_rate,
-> +	.recalc_rate	= sun8i_phy_clk_recalc_rate,
-> +	.set_rate	= sun8i_phy_clk_set_rate,
-> +};
-> +
-> +int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
-> +{
-> +	struct clk_init_data init;
-> +	struct sun8i_phy_clk *priv;
-> +	const char *parents[1];
-> +
-> +	parents[0] = __clk_get_name(phy->clk_pll0);
-> +	if (!parents[0])
-> +		return -ENODEV;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	init.name = "hdmi-phy-clk";
-> +	init.ops = &sun8i_phy_clk_ops;
-> +	init.parent_names = parents;
-> +	init.num_parents = 1;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +
-> +	priv->phy = phy;
-> +	priv->hw.init = &init;
-> +
-> +	phy->clk_phy = devm_clk_register(dev, &priv->hw);
-> +	if (IS_ERR(phy->clk_phy))
-> +		return PTR_ERR(phy->clk_phy);
-> +
-> +	return 0;
-> +}
-> --
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 0fe7ea35c221..28777b7352a5 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -2844,7 +2844,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
+>  }
+>  
+>  static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+> -		struct nvme_id_ns *id, bool *new)
+> +		struct nvme_id_ns *id)
+>  {
+>  	struct nvme_ctrl *ctrl = ns->ctrl;
+>  	bool is_shared = id->nmic & (1 << 0);
+> @@ -2860,8 +2860,7 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+>  			ret = PTR_ERR(head);
+>  			goto out_unlock;
+>  		}
+> -
+> -		*new = true;
+> +		nvme_mpath_add_disk(head);
+>  	} else {
+>  		struct nvme_ns_ids ids;
+>  
+> @@ -2873,8 +2872,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+>  			ret = -EINVAL;
+>  			goto out_unlock;
+>  		}
+> -
+> -		*new = false;
+>  	}
+>  
+>  	list_add_tail(&ns->siblings, &head->list);
+> @@ -2945,7 +2942,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+>  	struct nvme_id_ns *id;
+>  	char disk_name[DISK_NAME_LEN];
+>  	int node = dev_to_node(ctrl->dev), flags = GENHD_FL_EXT_DEVT;
+> -	bool new = true;
+>  
+>  	ns = kzalloc_node(sizeof(*ns), GFP_KERNEL, node);
+>  	if (!ns)
+> @@ -2971,7 +2967,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+>  	if (id->ncap == 0)
+>  		goto out_free_id;
+>  
+> -	if (nvme_init_ns_head(ns, nsid, id, &new))
+> +	if (nvme_init_ns_head(ns, nsid, id))
+>  		goto out_free_id;
+>  	nvme_setup_streams_ns(ctrl, ns);
+>  	
+> @@ -3037,8 +3033,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+>  		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
+>  			ns->disk->disk_name);
+>  
+> -	if (new)
+> -		nvme_mpath_add_disk(ns->head);
+>  	nvme_mpath_add_disk_links(ns);
+>  	return;
+>   out_unlink_ns:
+> -- 
 > 2.16.2
+> 
