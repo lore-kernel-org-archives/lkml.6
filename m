@@ -1,60 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751689AbeBZWnk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:43:40 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:51472 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbeBZWnj (ORCPT
+        id S1751752AbeBZWpA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:45:00 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45511 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeBZWo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:43:39 -0500
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 77.7.26.24) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
- <20180225235432.31209-1-rabel@robertabel.eu>
- <20180225235432.31209-2-rabel@robertabel.eu>
- <20180225235432.31209-3-rabel@robertabel.eu>
- <20180225235432.31209-4-rabel@robertabel.eu>
- <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
-From: Robert Abel <rabel@robertabel.eu>
-Message-ID: <50a2fd51-8bdb-d2b7-c2b3-7df638fdedde@robertabel.eu>
-Date: Mon, 26 Feb 2018 23:43:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Feb 2018 17:44:58 -0500
+X-Google-Smtp-Source: AG47ELvUPlK8wO2mNu3P+hoipJ+o9ao7xh3HQMzsZ78uYglkVEStmVqYRBdI6+JIE5dqHhW/ZVH5aD0dsv+fFe1NEiM=
 MIME-Version: 1.0
-In-Reply-To: <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <20180226224338.10041.88383@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+In-Reply-To: <20180227003257-mutt-send-email-mst@kernel.org>
+References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+ <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
+ <E8D91EBA-F75D-4FF9-BDE8-FCE3A4B4B007@intel.com> <CAKgT0UcG91o3H8jmSJFfyt2p_CoqxgCYrEX2Xchoira6nu6mNg@mail.gmail.com>
+ <20180227003257-mutt-send-email-mst@kernel.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 26 Feb 2018 14:44:56 -0800
+Message-ID: <CAKgT0UdicSYCJ_=oCUrxKg+zx5X3B9ubt1X+BdfP42n4NR9B3g@mail.gmail.com>
+Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for virtio_pci devices
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "MRustad@gmail.com" <MRustad@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QMj6hI002126
 
-On 26 Feb 2018 17:49, Miguel Ojeda wrote:
-> On a general note, the code seems a bit convoluted for what it does,
-> specially without the comment written in the commit message :-) Isn't
-> it simpler to use a tiny array in the stack and put the numbers to be
-> converted instead of modifying the input sequence and dancing with
-> pointers?
+On Mon, Feb 26, 2018 at 2:38 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Mon, Feb 26, 2018 at 10:05:31AM -0800, Alexander Duyck wrote:
+>> On Mon, Feb 26, 2018 at 9:48 AM, Rustad, Mark D <mark.d.rustad@intel.com> wrote:
+>> > Alex,
+>> >
+>> >> On Feb 26, 2018, at 7:26 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
+>> >>
+>> >> Mark,
+>> >>
+>> >> In the future please don't put my "Reviewed-by" on a patch that I
+>> >> haven't reviewed. I believe I reviewed one of the earlier patches, but
+>> >> I hadn't reviewed this version.
+>> >
+>> > I'm very sorry. I completely spaced doing something about that. I think yours was the first Reviewed-by I ever had in this way. In the future I will remove such things from my changelog right after sending. Thanks for alerting me to what I had failed to do.
+>> >
+>> >> Also, after thinking about it over the weekend we may want to look at
+>> >> just coming up with a truly "generic" solution that is applied to
+>> >> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
+>> >> on them. That would allow us to handle the uio, vfio, pci-stub, and
+>> >> virtio cases all in one fell swoop. I think us going though and
+>> >> modifying one patch at a time to do this kind of thing isn't going to
+>> >> scale.
+>> >
+>> > The notion of that kind of troubles me - at least pci-stub does. Having worked on ixgbe a bit, I have to wonder what kind of havoc would ensue if an ixgbe device were assigned to a guest, and an attempt was made to allocate VFs by the pci-stub. The guest could be running any version of the ixgbe driver, possibly even an old one that didn't support SR-IOV. Even if it did support SR-IOV, I don't know how it would respond to mailbox messages when it doesn't think it has VFs.
+>>
+>> The assumption here is that the root user knows what they are doing.
+>
+> There are tools that let non-root users load the stub.
+>
+> People use that to e.g.  prevent a native driver from loading while also
+> assuming it won't break the kernel.
+>
+>
+>> We have already had some discussion on this in regards to VFIO. My
+>> thought is we look at adding a new PCI sysfs option called
+>> "sriov_unmanaged_autoprobe" that would be similar to
+>> "sriov_drivers_autoprobe" and is used to determine if we allow for
+>> auto probing of the VFs into the host kernel when SR-IOV is enabled.
+>
+> I'm not sure how a global option can work for use-cases
+> such as containers though.
 
-That's what I felt at first, too. If we can drop the backwards
-compatibility of repeated xy commands, the whole affair gets much
-easier, but will unfortunately break existing use.
+It isn't global. It is per PF. There is a sysfs value per PF called
+"sriov_drivers_autoprobe" that currently controls if VFs are
+automatically bound by drivers from the kernel. What I am suggesting
+is we split that value, and then add a new one called
+"sriov_unmanaged_autoprobe" to handle the case where either there is
+no driver on the PF or the driver loaded doesn't support SR-IOV. The
+default behavior for it would be to be disabled by default so if VFs
+are spawned by an unmanaged PF the drivers don't load on them by
+default. The root user can toggle the sysfs entry if they want that
+behavior to change.
 
-Ex. ^[[Lx004y002x006; --> x6y2, because repeats of x would just
-overwrite earlier values. That's what the while loop allowed in the
-first place.
+The idea based on a request by Alex Williamson that we prevent VF
+drivers from loading in the host if a PF is managed by user-space or a
+firmware entity and we don't have a clear way of configuring VFs from
+the kernel.
 
-I suspect the while loop to parse was just a clever way of parsing y
-followed by x and x followed by y using the same code and the
-overwriting behavior is actually an unaccounted-for side-effect.
-
-Regards,
-
-Robert
+- Alex
