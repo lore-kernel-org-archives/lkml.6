@@ -1,139 +1,370 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3069381-1519656489-2-2102750320525694827
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519656489; b=V7R1CaZd8OjNv1FzhSLVMv6AJVbSXX0rfq1gKoU+DzGsKvc
-    djI4G3fB7930C1QIl820xjSkZOWtGL6pfZK3gayFobIOdovt8LoH8r5Dfo10xyDk
-    aukDcdXSTamVFDJq1GniPKy1GHauCrxRX6d05hnWO9WRcVLPBP8L2u78rHuzCWGN
-    gJv+DBq52g2e0NoWS1BnwxuBxYZJpx74XU7kUvQYlRFIp/vcmbyJIDHaVgmFSwob
-    yjg2xyLy2oMGS7k+my/T85pj/bFUzFq+LTrlZDRTGP7O+wGk05m/9gtjC51PP/Lm
-    xeF4xqFiTkzJsdV6mTbrNcP1QwmdHDWC13JfeDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519656489; bh=w
-    eDzYMGyw0pEI4+g8fyn/8e+hNRy0yz5RfiEhOxC/h4=; b=ZRYKyQXxCYjayUqn6
-    y2oE45bMvwONTejhwEH5utrPeAwnV0QTcPipv7q1Zz+YL2K2G+LT7IcFkVHOLYLd
-    49P7pisO2ZUVYtMufsvU2gXYSauXHg7tkRIAI0cGOBj3wrZ5ze9JC7dwWhZajrAp
-    oPmURQ6NgwisAvm73zxLzDS04j5EWVa42cqqS4DiYxAg00oS+3CgE6SOf91G8P4/
-    C+eG6HQ+0IvYdfcfc5ooYX0kE2Eguj3waQCbnTajqLAV3lDsbdjto6fEhDYd3Lus
-    p06cr1xuiVqApQYzfYJED7uIMZVqm0L3NIxxJZAvnihBokAb2y2aeE8ayiMlf2XY
-    W3m/w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SxEv1fP2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=casper.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SxEv1fP2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=casper.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amavis-Alert: BAD HEADER SECTION, Improper folded header field made up
- entirely of whitespace (char 20 hex): X-Spam-Report: ....9 points, 5.0
- required)\n \n  pts rule nam[...]
-Date: Mon, 26 Feb 2018 14:47:56 +0000 (GMT)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH 1/3] staging: lustre: lov: use correct env in
- lov_io_data_version_end()
-In-Reply-To: <151933737380.16436.3113702074708223689.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1802261447160.13228@casper.infradead.org>
-References: <151933726925.16436.9827896439357574011.stgit@noble>
- <151933737380.16436.3113702074708223689.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Return-Path: <jdelvare@suse.de>
+X-Google-Smtp-Source: AG47ELsL6OK/3opQaLGm5YM3/lcjQZUO5p3rxrShmjBkcEYILKTApbfs+GlhB9csShdcDEN4qgGK
+ARC-Seal: i=1; a=rsa-sha256; t=1519636803; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wEANgSiRJPrjhXFSQK0GoeROKYoG1DRvHCtxqheE61mrATywwhMR40bakWNBkMOOlw
+         Kg+lRyQQNlmx4KfwbS4Mq9iCDylPyxC+CiAs1qyWKkpOvgk3/eG16Nlc/qeFlhC4UbaO
+         AsPKuTnBLynCl9Bxdil4JUEnZTdDEJ3DQrcCnapJfyNijKPq3dGLtOTAXWVVuA4GR1qQ
+         PWFKicM6VMEF1B6JsjxFtBIAsQTmq2wpZJJo8noS/BYpfH8WkBUr3gAqZVNrQV4bBgj0
+         Q43gWswScEmvXN1h2LdCebhEiGM62YibvhMI7cfUKmBZiWi4DXw/PTmtLZmodL9RkqGn
+         rfzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:organization:message-id
+         :subject:cc:to:from:date:arc-authentication-results;
+        bh=Gg74D1VIatPErR+vgmjcgOG4dzfUAuTfJCo2+O5TKpA=;
+        b=Jk4sRXEsoZbsFrmIQEDj2fZ4a+k+562GEtX7XSS1YgDshYnGwATXozmjgMtKVTe915
+         hXj2wIhUu/L9v+WxQN6C3V/wwYj/t85kVtjuTXnd1tq1kMscZ2T/F8cgB2em/xfLXteO
+         +yP40rjmt6J5hUFKtONbixSaF7q8nTbsD6AacYry3NK5ai++1JfBAmMqbsdEUcAzc5oD
+         Dy9Kdjyfl9GUhdojm1gwdUJ912EtMj8aTWVGY7+KGF7zchz6nM+IjBHjXFFLRzhHIGqj
+         2f9ryR00ET4ZnPmrGEjKG9xUWd9EZkHssMnG01l4WfevNx79BkGosio0CvLxQQXgpt22
+         xBbQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jdelvare@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jdelvare@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jdelvare@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jdelvare@suse.de
+Date: Mon, 26 Feb 2018 10:20:00 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>
+Subject: [PATCH] eeprom: New ee1004 driver for DDR4 memory
+Message-ID: <20180226102000.1b76640e@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180226_144757_192443_07F67CB5 
-X-CRM114-Status: GOOD (  18.91  )
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Oleg Drokin <oleg.drokin@intel.com>,
- Lustre Development List <lustre-devel@lists.lustre.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593454680453951468?=
+X-GMAIL-MSGID: =?utf-8?q?1593454680453951468?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The EEPROMs which hold the SPD data on DDR4 memory modules are no
+longer standard AT24C02-compatible EEPROMs. They are 512-byte EEPROMs
+which use only 1 I2C address for data access. You need to switch
+between the lower page and the upper page of data by sending commands
+on the SMBus.
 
-> lov - the logical object volume manager - is responsible for
-> striping data across multiple volumes.
-> 
-> So when it is given a request, it creates one or more
-> sub-requests, one for each target volume.  Each sub_io
-> request has a sub_env environment which it operates in.
-> 
-> When lov_io_data_version_end() calls lov_io_end_wrapper() to
-> wait for and close off a sub_io, it passes the wrong
-> environment.
-> 
-> This causes an LINVRNT() to fail in cl2osc_io(), and may
-> cause other problems.
-> 
-> This patch changes the call to use ->sub_env, much like
-> other code in the same file.
-> 
-> Fixes: f0cf21abcccc ("staging: lustre: clio: add CIT_DATA_VERSION and remove IOC_LOV_GETINFO")
-> Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ drivers/misc/eeprom/Kconfig  |   11 +
+ drivers/misc/eeprom/Makefile |    1 
+ drivers/misc/eeprom/ee1004.c |  281 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 293 insertions(+)
 
-Reviewed-by: James Simmons <jsimmons@infradead.org>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-4.16-rc3/drivers/misc/eeprom/ee1004.c	2018-02-26 10:00:21.122240279 +0100
+@@ -0,0 +1,281 @@
++/*
++ * ee1004 - driver for DDR4 SPD EEPROMs
++ *
++ * Copyright (C) 2017 Jean Delvare
++ *
++ * Based on the at24 driver:
++ * Copyright (C) 2005-2007 David Brownell
++ * Copyright (C) 2008 Wolfram Sang, Pengutronix
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++
++/*
++ * DDR4 memory modules use special EEPROMs following the Jedec EE1004
++ * specification. These are 512-byte EEPROMs using a single I2C address
++ * in the 0x50-0x57 range for data. One of two 256-byte page is selected
++ * by writing a command to I2C address 0x36 or 0x37 on the same I2C bus.
++ *
++ * Therefore we need to request these 2 additional addresses, and serialize
++ * access to all such EEPROMs with a single mutex.
++ *
++ * We assume it is safe to read up to 32 bytes at once from these EEPROMs.
++ * We use SMBus access even if I2C is available, these EEPROMs are small
++ * enough, and reading from them infrequent enough, that we favor simplicity
++ * over performance.
++ */
++
++#define EE1004_ADDR_SET_PAGE		0x36
++#define EE1004_EEPROM_SIZE		512
++#define EE1004_PAGE_SIZE		256
++#define EE1004_PAGE_SHIFT		8
++
++/*
++ * Mutex protects ee1004_set_page and ee1004_dev_count, and must be held
++ * from page selection to end of read.
++ */
++static DEFINE_MUTEX(ee1004_bus_lock);
++static struct i2c_client *ee1004_set_page[2];
++static unsigned int ee1004_dev_count;
++static int ee1004_current_page;
++
++static const struct i2c_device_id ee1004_ids[] = {
++	{ "ee1004", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, ee1004_ids);
++
++/*-------------------------------------------------------------------------*/
++
++static ssize_t ee1004_eeprom_read(struct i2c_client *client, char *buf,
++				  unsigned int offset, size_t count)
++{
++	int status;
++
++	if (count > I2C_SMBUS_BLOCK_MAX)
++		count = I2C_SMBUS_BLOCK_MAX;
++	/* Can't cross page boundaries */
++	if (unlikely(offset + count > EE1004_PAGE_SIZE))
++		count = EE1004_PAGE_SIZE - offset;
++
++	status = i2c_smbus_read_i2c_block_data_or_emulated(client, offset,
++							   count, buf);
++	dev_dbg(&client->dev, "read %zu@%d --> %d\n", count, offset, status);
++
++	return status;
++}
++
++static ssize_t ee1004_read(struct file *filp, struct kobject *kobj,
++			   struct bin_attribute *bin_attr,
++			   char *buf, loff_t off, size_t count)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct i2c_client *client = to_i2c_client(dev);
++	size_t requested = count;
++	int page;
++
++	if (unlikely(!count))
++		return count;
++
++	page = off >> EE1004_PAGE_SHIFT;
++	if (unlikely(page > 1))
++		return 0;
++	off &= (1 << EE1004_PAGE_SHIFT) - 1;
++
++	/*
++	 * Read data from chip, protecting against concurrent access to
++	 * other EE1004 SPD EEPROMs on the same adapter.
++	 */
++	mutex_lock(&ee1004_bus_lock);
++
++	while (count) {
++		int status;
++
++		/* Select page */
++		if (page != ee1004_current_page) {
++			/* Data is ignored */
++			status = i2c_smbus_write_byte(ee1004_set_page[page],
++						      0x00);
++			if (status < 0) {
++				dev_err(dev, "Failed to select page %d (%d)\n",
++					page, status);
++				mutex_unlock(&ee1004_bus_lock);
++				return status;
++			}
++			dev_dbg(dev, "Selected page %d\n", page);
++			ee1004_current_page = page;
++		}
++
++		status = ee1004_eeprom_read(client, buf, off, count);
++		if (status < 0) {
++			mutex_unlock(&ee1004_bus_lock);
++			return status;
++		}
++		buf += status;
++		off += status;
++		count -= status;
++
++		if (off == EE1004_PAGE_SIZE) {
++			page++;
++			off = 0;
++		}
++	}
++
++	mutex_unlock(&ee1004_bus_lock);
++
++	return requested;
++}
++
++static const struct bin_attribute eeprom_attr = {
++	.attr = {
++		.name = "eeprom",
++		.mode = 0444,
++	},
++	.size = EE1004_EEPROM_SIZE,
++	.read = ee1004_read,
++};
++
++static int ee1004_probe(struct i2c_client *client,
++			const struct i2c_device_id *id)
++{
++	int err, cnr = 0;
++	const char *slow = NULL;
++
++	/* Make sure we can operate on this adapter */
++	if (!i2c_check_functionality(client->adapter,
++				     I2C_FUNC_SMBUS_READ_BYTE |
++				     I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
++		if (i2c_check_functionality(client->adapter,
++				     I2C_FUNC_SMBUS_READ_BYTE |
++				     I2C_FUNC_SMBUS_READ_WORD_DATA))
++			slow = "word";
++		else if (i2c_check_functionality(client->adapter,
++				     I2C_FUNC_SMBUS_READ_BYTE |
++				     I2C_FUNC_SMBUS_READ_BYTE_DATA))
++			slow = "byte";
++		else
++			return -EPFNOSUPPORT;
++	}
++
++	/* Use 2 dummy devices for page select command */
++	mutex_lock(&ee1004_bus_lock);
++	if (++ee1004_dev_count == 1) {
++		for (cnr = 0; cnr < 2; cnr++) {
++			ee1004_set_page[cnr] = i2c_new_dummy(client->adapter,
++						EE1004_ADDR_SET_PAGE + cnr);
++			if (!ee1004_set_page[cnr]) {
++				dev_err(&client->dev,
++					"address 0x%02x unavailable\n",
++					EE1004_ADDR_SET_PAGE + cnr);
++				err = -EADDRINUSE;
++				goto err_clients;
++			}
++		}
++	} else if (i2c_adapter_id(client->adapter) !=
++		   i2c_adapter_id(ee1004_set_page[0]->adapter)) {
++		dev_err(&client->dev,
++			"Driver only supports devices on a single I2C bus\n");
++		err = -EOPNOTSUPP;
++		goto err_clients;
++	}
++
++	/* Remember current page to avoid unneeded page select */
++	err = i2c_smbus_read_byte(ee1004_set_page[0]);
++	if (err == -ENXIO) {
++		/* Nack means page 1 is selected */
++		ee1004_current_page = 1;
++	} else if (err < 0) {
++		/* Anything else is a real error, bail out */
++		goto err_clients;
++	} else {
++		/* Ack means page 0 is selected, returned value meaningless */
++		ee1004_current_page = 0;
++	}
++	dev_dbg(&client->dev, "Currently selected page: %d\n",
++		ee1004_current_page);
++	mutex_unlock(&ee1004_bus_lock);
++
++	/* Create the sysfs eeprom file */
++	err = sysfs_create_bin_file(&client->dev.kobj, &eeprom_attr);
++	if (err)
++		goto err_clients_lock;
++
++	dev_info(&client->dev,
++		 "%u byte EE1004-compliant SPD EEPROM, read-only\n",
++		 EE1004_EEPROM_SIZE);
++	if (slow)
++		dev_notice(&client->dev,
++			   "Falling back to %s reads, performance will suffer\n",
++			   slow);
++
++	return 0;
++
++ err_clients_lock:
++	mutex_lock(&ee1004_bus_lock);
++ err_clients:
++	if (--ee1004_dev_count == 0) {
++		for (cnr--; cnr >= 0; cnr--) {
++			i2c_unregister_device(ee1004_set_page[cnr]);
++			ee1004_set_page[cnr] = NULL;
++		}
++	}
++	mutex_unlock(&ee1004_bus_lock);
++
++	return err;
++}
++
++static int ee1004_remove(struct i2c_client *client)
++{
++	int i;
++
++	sysfs_remove_bin_file(&client->dev.kobj, &eeprom_attr);
++
++	/* Remove page select clients if this is the last device */
++	mutex_lock(&ee1004_bus_lock);
++	if (--ee1004_dev_count == 0) {
++		for (i = 0; i < 2; i++) {
++			i2c_unregister_device(ee1004_set_page[i]);
++			ee1004_set_page[i] = NULL;
++		}
++	}
++	mutex_unlock(&ee1004_bus_lock);
++
++	return 0;
++}
++
++/*-------------------------------------------------------------------------*/
++
++static struct i2c_driver ee1004_driver = {
++	.driver = {
++		.name = "ee1004",
++	},
++	.probe = ee1004_probe,
++	.remove = ee1004_remove,
++	.id_table = ee1004_ids,
++};
++
++static int __init ee1004_init(void)
++{
++	return i2c_add_driver(&ee1004_driver);
++}
++module_init(ee1004_init);
++
++static void __exit ee1004_exit(void)
++{
++	i2c_del_driver(&ee1004_driver);
++}
++module_exit(ee1004_exit);
++
++MODULE_DESCRIPTION("Driver for EE1004-compliant DDR4 SPD EEPROMs");
++MODULE_AUTHOR("Jean Delvare");
++MODULE_LICENSE("GPL");
+--- linux-4.16-rc3.orig/drivers/misc/eeprom/Kconfig	2018-02-26 03:50:41.000000000 +0100
++++ linux-4.16-rc3/drivers/misc/eeprom/Kconfig	2018-02-26 10:00:21.122240279 +0100
+@@ -111,4 +111,15 @@ config EEPROM_IDT_89HPESX
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called idt_89hpesx.
+ 
++config EEPROM_EE1004
++	tristate "SPD EEPROMs on DDR4 memory modules"
++	depends on I2C && SYSFS
++	help
++	  Enable this driver to get read support to SPD EEPROMs following
++	  the JEDEC EE1004 standard. These are typically found on DDR4
++	  SDRAM memory modules.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called ee1004.
++
+ endmenu
+--- linux-4.16-rc3.orig/drivers/misc/eeprom/Makefile	2018-02-26 03:50:41.000000000 +0100
++++ linux-4.16-rc3/drivers/misc/eeprom/Makefile	2018-02-26 10:00:21.122240279 +0100
+@@ -7,3 +7,4 @@ obj-$(CONFIG_EEPROM_93CX6)	+= eeprom_93c
+ obj-$(CONFIG_EEPROM_93XX46)	+= eeprom_93xx46.o
+ obj-$(CONFIG_EEPROM_DIGSY_MTC_CFG) += digsy_mtc_eeprom.o
+ obj-$(CONFIG_EEPROM_IDT_89HPESX) += idt_89hpesx.o
++obj-$(CONFIG_EEPROM_EE1004)	+= ee1004.o
 
-> ---
->  drivers/staging/lustre/lustre/lov/lov_io.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/lov/lov_io.c b/drivers/staging/lustre/lustre/lov/lov_io.c
-> index c0dbf6cd53b4..b823f8a21856 100644
-> --- a/drivers/staging/lustre/lustre/lov/lov_io.c
-> +++ b/drivers/staging/lustre/lustre/lov/lov_io.c
-> @@ -483,7 +483,7 @@ lov_io_data_version_end(const struct lu_env *env, const struct cl_io_slice *ios)
->  	struct lov_io_sub *sub;
->  
->  	list_for_each_entry(sub, &lio->lis_active, sub_linkage) {
-> -		lov_io_end_wrapper(env, sub->sub_io);
-> +		lov_io_end_wrapper(sub->sub_env, sub->sub_io);
->  
->  		parent->u.ci_data_version.dv_data_version +=
->  			sub->sub_io->u.ci_data_version.dv_data_version;
-> 
-> 
-> 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+-- 
+Jean Delvare
+SUSE L3 Support
