@@ -1,123 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeBZRQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:16:26 -0500
-Received: from mail-it0-f43.google.com ([209.85.214.43]:38178 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751448AbeBZRQY (ORCPT
+        id S1751744AbeBZRQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:16:56 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:36759 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeBZRQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:16:24 -0500
-X-Google-Smtp-Source: AG47ELtfHHbOXvYsw0b11ni8htokVtwuY9wh2tGANaezUpBdf81TW7W10htpe9qtn0DYuMowrqTJWKzhPXQRvZAivCw=
+        Mon, 26 Feb 2018 12:16:54 -0500
+X-Google-Smtp-Source: AG47ELthmtQIFHKne0yXaVu4ZbF1DUPIwNmi526u+eGCzhCoRAjA5sqwnsIK9t85XT5PN6prl4daIWQ0Jcx0HgENC3s=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vco1wUR7cUu-zuaP-TVMnm+m7X+CctnRC0cgvpuo5S2vg@mail.gmail.com>
-References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
- <20180222191647.4727-3-ard.biesheuvel@linaro.org> <CAHp75Vc1AGzdgTB281XVo=FmZerkU1vijLih3JUO=_wNPjxgfA@mail.gmail.com>
- <CAKv+Gu9XkmSPHZf+jVKOm-SX1GCWJUc7y3zTCuaHBwk8O3OC3Q@mail.gmail.com>
- <CAHp75VfFKDkQQ9-vdjzDfE2Cdk2Cb93+kdceYQgEqt3hti=Wkg@mail.gmail.com>
- <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
- <CAHp75VcjUey4K1xOkjKjn_ppPKC0bktcBK2p9NjcPYG1ed7X0g@mail.gmail.com>
- <CAKv+Gu-y3GG+McAK2b8SCmMf60fo_XSHFBAWsKGw3OBvD04ggg@mail.gmail.com> <CAHp75Vco1wUR7cUu-zuaP-TVMnm+m7X+CctnRC0cgvpuo5S2vg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 26 Feb 2018 17:16:22 +0000
-Message-ID: <CAKv+Gu8ZAt43km=mANa9Ehx1Evbj8cLB5vFsFwji9x6ARvD-sw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
+In-Reply-To: <20180225235432.31209-5-rabel@robertabel.eu>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu> <20180225235432.31209-4-rabel@robertabel.eu>
+ <20180225235432.31209-5-rabel@robertabel.eu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Feb 2018 18:16:33 +0100
+Message-ID: <CANiq72=Qj+dsWYb6pVtAH6DMbAndSOFO8EmQF3ncFZTo_0bNMQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] auxdisplay: charlcd: make home command unshift display
+To: Robert Abel <rabel@robertabel.eu>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QHGViF029167
 
-On 26 February 2018 at 17:05, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Mon, Feb 26, 2018 at 4:58 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 26 February 2018 at 11:35, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>> On Mon, Feb 26, 2018 at 11:59 AM, Ard Biesheuvel
->>> <ard.biesheuvel@linaro.org> wrote:
->>>> On 23 February 2018 at 13:12, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>>>> On Fri, Feb 23, 2018 at 2:40 PM, Ard Biesheuvel
->>>>> <ard.biesheuvel@linaro.org> wrote:
->
->>>>> Replace 'baudclk' with 'pclk' and p->uartclk with i2c->clkrate in
->>>>> above and you are almost done.
->
->>>> I don't think this is better.
->>>
->>> It's a pattern over ACPI vs. clk cases at least for now.
->>> But hold on. We have already an example of dealing with ACPI /
->>> non-ACPI cases for I2C controllers — i2c-designware-platdrv.c.
->>> Check how it's done there.
->>>
->>> I actually totally forgot about ACPI slaves described in the table. We
->>> need to take into account the ones with lowest bus speed.
->>>
->>
->> Wow, that code is absolutely terrible.
->
-> To some degree I may say yes it is.
->
->> So even while _DSD device properties require vendor prefixes, which
->> are lacking in this case,
->
-> What kind? clock-frequency? Does it require prefix?
->
+On Mon, Feb 26, 2018 at 12:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> A user has no way of unshifting the display programmatically once shifted.
+> Users cannot rely on ^[[H (home) to result in their message being seen either.
+> Use the actual HOME command 0x02 instead of only returning to x0/y0.
+> Users can still do ^[[Lx0y0; (go to x/y) if they wish to use the 'old' home
+> function.
+> Implement fast clearing of LCD by going to x0/y0 first, clearing display and
+> then calling home to possibly unshift display possibly avoiding artifacts by
+> not unshifting before clearing display.
 
-What I remember from the _DSD discussions is that we should vendor
-prefixes for per-device properties, and only use unprefixed names for
-generic properties. However, looking more closely, I understand that
-this undermines the idea of having parity between DT and ACPI, because
-DT did not require vendor prefixes in the past (but it does now)
+Thanks for the patch! It seems reasonable. However, like in the
+previous patch, I feel that these commit messages describe -- usefully
+-- the current code and some of the decisions for its design, and as
+such they should be part of the code. Could you please put some of
+that reasoning in the actual code? i.e. as comments for the
+charlcd_clear_fast() and charlcd_home() functions, explaining why each
+of them is implemented the way it is. That would be great. Also
+hinting that the users can also use the "old" home functionality (or
+maybe implementing it as another third alternative). Then you can
+leave the commit message explaining only why the change was done, i.e.
+why it improves the previous situation, referring to the new
+functions.
 
-I guess 'clock-frequency' is one that would not require such a vendor prefix.
+Cheers,
+Miguel
 
->> and the fact that the ACPI flavor of the
->> Designware I2C controller now provides two different ways to get the
->> timing parameters (using device properties or using SSCN/FMCN/etc ACPI
->> methods), you think this is a shining example of how this should be
->> implemented?
 >
-> No, those methods because of windows driver and existed ACPI tables at
-> that time.
-> You are not supposed to uglify your case.
+> Signed-off-by: Robert Abel <rabel@robertabel.eu>
+> ---
+>  drivers/auxdisplay/charlcd.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 >
-
-OK, in that case, can you please spell out what you think is
-mandatory? Because handwavy references to existing UART and I2C
-drivers are not helping me here.
-
->> Also, I still think implementing a clock device using rate X just to
->> interrogate it for its rate (returning X) is absolutely pointless.
+> diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+> index 24cabe88c7f0..41f9aa4a73d4 100644
+> --- a/drivers/auxdisplay/charlcd.c
+> +++ b/drivers/auxdisplay/charlcd.c
+> @@ -43,6 +43,8 @@
+>  /* LCD commands */
+>  #define LCD_CMD_DISPLAY_CLEAR  0x01    /* Clear entire display */
 >
-> OTOH the deviation in the driver is what I absolutely against of.
-> Driver must not know the resource provider (ideally at all).
+> +#define LCD_CMD_HOME            0x02    /* Set DDRAM address to 0 and unshift display */
+> +
+>  #define LCD_CMD_ENTRY_MODE     0x04    /* Set entry mode */
+>  #define LCD_CMD_CURSOR_INC     0x02    /* Increment cursor */
 >
-
-There is no 'resource provider'. There is only a single number, which
-is the clock rate, and is only used to calculate some internal
-dividers of the I2C IP block.
-
->> So what I can do is invent an ACPI method that returns the PCLK rate.
->> Would that work for you?
+> @@ -182,7 +184,8 @@ static void charlcd_home(struct charlcd *lcd)
 >
-> Again, looking into existing examples (UART, I2C, etc) we better to
-> create a generic helper in clock framework that would provide us a
-> clock based on property value.
-> But doing different paths for different resource providers is not what
-> we are looking for.
+>         priv->addr.x = 0;
+>         priv->addr.y = 0;
+> -       charlcd_gotoxy(lcd);
+> +       lcd->ops->write_cmd(lcd, LCD_CMD_HOME);
+> +       long_sleep(2);
+>  }
 >
-> P.S. To move this somehow forward I may propose to submit an OF
-> driver, and discuss ACPI part after.
+>  static void charlcd_print(struct charlcd *lcd, char c)
+> @@ -202,9 +205,12 @@ static void charlcd_print(struct charlcd *lcd, char c)
 >
-
-Thanks, but that does not really work for me. What I can do is split
-it into an initial DT only driver, and a followup ACPI patch.
-
-Can you point me to an example of such a clock provider?
+>  static void charlcd_clear_fast(struct charlcd *lcd)
+>  {
+> +       struct charlcd_priv *priv = to_priv(lcd);
+>         int pos;
+>
+> -       charlcd_home(lcd);
+> +       priv->addr.x = 0;
+> +       priv->addr.y = 0;
+> +       charlcd_gotoxy(lcd);
+>
+>         if (lcd->ops->clear_fast)
+>                 lcd->ops->clear_fast(lcd);
+> --
+> 2.11.0
+>
