@@ -1,66 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeBZKIj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:08:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53670 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752402AbeBZKIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:08:34 -0500
-Date: Mon, 26 Feb 2018 11:08:32 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 5/6] dax: short circuit vma_is_fsdax() in the
- CONFIG_FS_DAX=n case
-Message-ID: <20180226100832.xidetsf3eoagumqd@quack2.suse.cz>
-References: <151943298533.29249.14597996053028346159.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151943301788.29249.13371602951635567379.stgit@dwillia2-desk3.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752535AbeBZKIw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:08:52 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:34321 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752114AbeBZKIu (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:11:1>);
+        Mon, 26 Feb 2018 05:08:50 -0500
+Message-Id: <5A93EABD02000078001AB9EC@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 26 Feb 2018 03:08:45 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Andrey Ryabinin" <aryabinin@virtuozzo.com>
+Cc: <bp@alien8.de>, <brgerst@gmail.com>, <dvyukov@google.com>,
+        <glider@google.com>, <peterz@infradead.org>, <luto@kernel.org>,
+        <mingo@kernel.org>, <tglx@linutronix.de>,
+        <torvalds@linux-foundation.org>, <boris.ostrovsky@oracle.com>,
+        <dvlasenk@redhat.com>, <jpoimboe@redhat.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tip-commits@vger.kernel.org>, <hpa@zytor.com>
+Subject: Re: [tip:x86/mm] x86/mm: Consider effective protection
+ attributes in W+X check
+References: <5A8FDE8902000078001AABBB@prv-mh.provo.novell.com>
+ <tip-672c0ae09b33a11d8f31fc61526632e96301164c@git.kernel.org>
+ <cd48304c-4317-6b5a-bde3-113645df8f81@virtuozzo.com>
+In-Reply-To: <cd48304c-4317-6b5a-bde3-113645df8f81@virtuozzo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <151943301788.29249.13371602951635567379.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-02-18 16:43:37, Dan Williams wrote:
-> Do not bother looking up the file type in the case when Filesystem-DAX
-> is disabled at build time.
+>>> On 26.02.18 at 11:00, <aryabinin@virtuozzo.com> wrote:
+> On 02/26/2018 11:48 AM, tip-bot for Jan Beulich wrote:
+>> @@ -351,7 +362,7 @@ static inline bool kasan_page_table(struct seq_file *m, struct pg_state *st,
+>>  	    (pgtable_l5_enabled && __pa(pt) == __pa(kasan_zero_p4d)) ||
+>>  	    __pa(pt) == __pa(kasan_zero_pud)) {
+>>  		pgprotval_t prot = pte_flags(kasan_zero_pte[0]);
+>> -		note_page(m, st, __pgprot(prot), 5);
+>> +		note_page(m, st, __pgprot(prot), 0, 5);
 > 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Isn't this disables W+X check for kasan page table?
+> Methinks it should be 'prot' here.
 
-Looks good. You can add:
+Might well be - I actually did ask the question before sending v3,
+but didn't get any answer (yet). The kasan_zero_p?d names
+suggested to me that this is a shortcut for mappings which
+otherwise would be non-present anyway, but that was merely a
+guess. As to W+X checks - I can't see how the result could be
+any better if the protections of kasan_zero_pte[0] would be
+used: Those can't possibly be applicable independent of VA.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/fs.h |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7418341578a3..c97fc4dbaae1 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3197,6 +3197,8 @@ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
->  
->  	if (!vma->vm_file)
->  		return false;
-> +	if (!IS_ENABLED(CONFIG_FS_DAX))
-> +		return false;
->  	if (!vma_is_dax(vma))
->  		return false;
->  	inode = file_inode(vma->vm_file);
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jan
