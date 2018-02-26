@@ -1,78 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeBZNLN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:11:13 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49886 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752547AbeBZNLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:11:12 -0500
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH v2] cpufreq: scpi: invoke frequency-invariance setter function
-Date: Mon, 26 Feb 2018 13:11:03 +0000
-Message-Id: <20180226131103.5951-1-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.11.0
+        id S1753146AbeBZNM2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:12:28 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46790 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbeBZNMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:12:24 -0500
+Date: Mon, 26 Feb 2018 13:12:07 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 01/10] regmap: mmio: Add function to attach a clock
+Message-ID: <20180226131207.GB6681@sirena.org.uk>
+References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
+ <1155920db000d014fd1cd604ed48d1b9a8f64ac1.1519204731.git-series.maxime.ripard@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
+Content-Disposition: inline
+In-Reply-To: <1155920db000d014fd1cd604ed48d1b9a8f64ac1.1519204731.git-series.maxime.ripard@bootlin.com>
+X-Cookie: Do not remove tag under penalty of law.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
-changed the cpufreq driver on juno from arm_big_little to scpi.
 
-The scpi set_target function does not call the frequency-invariance
-setter function arch_set_freq_scale() like the arm_big_little set_target
-function does. As a result the task scheduler load and utilization
-signals are not frequency-invariant on this platform anymore.
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by adding a call to arch_set_freq_scale() into
-scpi_cpufreq_set_target().
+On Wed, Feb 21, 2018 at 10:20:25AM +0100, Maxime Ripard wrote:
+> From: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> regmap_init_mmio_clk allows to specify a clock that needs to be enabled
+> while accessing the registers.
 
-Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/scpi-cpufreq.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index c32a833e1b00..d300a163945f 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -51,15 +51,23 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
- static int
- scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
- {
-+	unsigned long freq = policy->freq_table[index].frequency;
- 	struct scpi_data *priv = policy->driver_data;
--	u64 rate = policy->freq_table[index].frequency * 1000;
-+	u64 rate = freq * 1000;
- 	int ret;
- 
- 	ret = clk_set_rate(priv->clk, rate);
--	if (!ret && (clk_get_rate(priv->clk) != rate))
--		ret = -EIO;
- 
--	return ret;
-+	if (ret)
-+		return ret;
-+
-+	if (clk_get_rate(priv->clk) != rate)
-+		return -EIO;
-+
-+	arch_set_freq_scale(policy->related_cpus, freq,
-+			    policy->cpuinfo.max_freq);
-+
-+	return 0;
- }
- 
- static int
--- 
-2.11.0
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/m=
+mio-clk-config
+
+for you to fetch changes up to 31895662f9ba81e8ea9ef05abf8edcb29d4b9c18:
+
+  regmap: mmio: Add function to attach a clock (2018-02-26 11:05:44 +0000)
+
+----------------------------------------------------------------
+regmap: MMIO regmap clock configuration
+
+This patch provides a mechanism for specifying a different clock to be
+used with the regmap clock integration.
+
+----------------------------------------------------------------
+Maxime Ripard (1):
+      regmap: mmio: Add function to attach a clock
+
+ drivers/base/regmap/regmap-mmio.c | 24 ++++++++++++++++++++++++
+ include/linux/regmap.h            |  3 +++
+ 2 files changed, 27 insertions(+)
+
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqUB6YACgkQJNaLcl1U
+h9Cikwf+PMimnrn6dNczsXsvqRvm5hhO/h8dL0IBFzkQtwmA/qj6bHgIcu99EHNg
+rvyz+J6fGket2zqJGO1LX6sbUa9v0FoedKk1VqesmaSzIr/Z3QB6kmPXArGIr7T+
+u0dEmntyUh6CLNyjEyQJMuQEKWSoxjQnb8LbWpdydUynzUlJR6eSzM9vInxxmRqt
+McyD/wqJLNVBuc8Z8Xzlpqrx/IEKVUQsznUV8hAPW/GHq/H2ziCE8OFofVaRCqPW
+OjRpcs7suLWn1ky3iieLkGg/iJvbRGsI5xrRgs9MxqRr6HETVghViFGwYKd9Uyw7
+DagDsMXB9k5bWNsgDA5Oa1+xTIMUXw==
+=DRh6
+-----END PGP SIGNATURE-----
+
+--xXmbgvnjoT4axfJE--
