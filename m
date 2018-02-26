@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ROG4vwM2+ayq6NqT+aQhoGq2DcJq5x3KY6Ik15gzcJGFs79zudR6RglBeedfUFj8llTXS
-ARC-Seal: i=1; a=rsa-sha256; t=1519676479; cv=none;
+X-Google-Smtp-Source: AH8x226gY8bY/6qs9IQb3SedX9dNzPbR/taT5LqYK1jdFnohIs3u/nOu6CbUAcvZgK03yKD3jzTS
+ARC-Seal: i=1; a=rsa-sha256; t=1519676476; cv=none;
         d=google.com; s=arc-20160816;
-        b=Do6Q0DhcIn300v9imdJrhCgKQMgzhKRWRAgPld+deeE1kMVvhhVLkKe0gxI0XhzJYF
-         2C1pvMLFK6D6Sj2ui/2HytApfWD8c3btFWK82MtS1rgLIwcelWH43GPdMBqRuAZXhu8C
-         jDrczqor1n/ZLyZGYSvOH3OK97qOom4I/zxihmJ/esxTgIWUPr/ytXmBorw0fUbyBvBF
-         hlsJT+hCF/DD5FoMW3h6PBs8+vI5uHQftlsm2bUPC0KoGosH9PusZ3ZHiwq3hLYL10HA
-         5VYj74fKUaL8KBiKDopAGnl+o5BVn/4y6otktrK2kZrNK1c9B+gaLhugkZhjUFSuUcgY
-         Y5hA==
+        b=eW+zkCllyg7ckxw1DIIGFyUIjoqOm7xnUXoLtghQ4sdpz5KHl6nPtPAojA5MGKfxF4
+         RvwWoJ6isX9IVDyCVTjbfAAG9qoaJyL2r/qDCHeNZmkZTWCQl9id/dvDwvvhyc7R6PLW
+         cN+VimUUMC0puvz/2GCIbsOQzTz+eUj8FbSDATPI115224l/csCfGzlaHsLkEI7oztAe
+         ZgTEkyRKcIAp/PG0fsOWycVc2ktOTZZ8NrpKFaALVrm9FxwXg545PoX4HP0IML2r0Pu1
+         PY1Xd7frXMTa3o6exAKFGP9lpAmRy7Jqk2b3hVouHF4Vypq/K9z5tNUFDlUDH5xSsJAC
+         +P8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1qwg3coAeMEZnz0wDsqTSaWlHiHb5eZfiBFR0uhjrOY=;
-        b=phps8LeuB6WNMEN83/cE3ki6FfTjhbx5MIJID5vzBJsfBz/mUDij/kZ+398Yyncv/F
-         NKiEsIN7LfuvP3f88XdP3RaJPJauNa+i48Uc3zXHEknfkNiHw6RIl9jJ6NOyBvPKhp+k
-         +LK9nHNtVOIwn3J43QtIeqw6UY7FNcBKR4NdyL7HdDfcgx9GwAGTAIf6ANI/DrI0MePc
-         YKqNMdbdVab6SIgTrbpJvUXwHq5qEna0eI8RGqhyvQftbno4gp7TAH1LxYnQ8h7zpB6x
-         lrG1/lgW6IZg2B8NiEiY1DDfpNkQt0yej7KFbdhUUUF7EcGNgNQiTHQJs8mdwejhXmdW
-         iHGw==
+        bh=X0ip+MVOEggWH8ebx0UDhoNg4PJk46KlotkObMeOe40=;
+        b=crpn0oJ7ZZPV3CLtIzt8+ctpwK40gaDFfjJWvxl8tdeGnlderZpEw2EgDZj8NVW0u4
+         Q60WKHwQU1fnNVnRQxWy+CblDVGF+n2vniD/XGLZj0ltv9iL5rI7PfVVP5KJg+pDI6a9
+         7Hhchdu7dnazAhnO383/YXCWJ+qNKHi3u+fVTg8EN+4aFKf8NdDD/ZBOHCa3WNVqPSO4
+         aseMQxicAwBBhe3XGyg/on+5DnGI0YeRwMMe+PAGIXhNxBRf0me9YEHZAsRqzw4qFKei
+         vP08uXEmmMLPVzkqJb8gsoIKUxpxv+wn+8NVS0C3Q3f7RZhdaFbEGSTalVDu94CHlO26
+         REXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Casey Leedom <leedom@chelsio.com>,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 12/39] PCI/cxgb4: Extend T3 PCI quirk to T4+ devices
-Date: Mon, 26 Feb 2018 21:20:33 +0100
-Message-Id: <20180226201644.210768090@linuxfoundation.org>
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.9 11/39] irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
+Date: Mon, 26 Feb 2018 21:20:32 +0100
+Message-Id: <20180226201644.161641651@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496284533740690?=
-X-GMAIL-MSGID: =?utf-8?q?1593496284533740690?=
+X-GMAIL-THRID: =?utf-8?q?1593495977277445952?=
+X-GMAIL-MSGID: =?utf-8?q?1593496281173643082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,110 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Casey Leedom <leedom@chelsio.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
 
-commit 7dcf688d4c78a18ba9538b2bf1b11dc7a43fe9be upstream.
+commit 21ec30c0ef5234fb1039cc7c7737d885bf875a9e upstream.
 
-We've run into a problem where our device is attached
-to a Virtual Machine and the use of the new pci_set_vpd_size()
-API doesn't help.  The VM kernel has been informed that
-the accesses are okay, but all of the actual VPD Capability
-Accesses are trapped down into the KVM Hypervisor where it
-goes ahead and imposes the silent denials.
+A DMB instruction can be used to ensure the relative order of only
+memory accesses before and after the barrier. Since writes to system
+registers are not memory operations, barrier DMB is not sufficient
+for observability of memory accesses that occur before ICC_SGI1R_EL1
+writes.
 
-The right idea is to follow the kernel.org
-commit 1c7de2b4ff88 ("PCI: Enable access to non-standard VPD for
-Chelsio devices (cxgb3)") which Alexey Kardashevskiy authored
-to establish a PCI Quirk for our T3-based adapters. This commit
-extends that PCI Quirk to cover Chelsio T4 devices and later.
+A DSB instruction ensures that no instructions that appear in program
+order after the DSB instruction, can execute until the DSB instruction
+has completed.
 
-The advantage of this approach is that the VPD Size gets set early
-in the Base OS/Hypervisor Boot and doesn't require that the cxgb4
-driver even be available in the Base OS/Hypervisor.  Thus PF4 can
-be exported to a Virtual Machine and everything should work.
-
-Fixes: 67e658794ca1 ("cxgb4: Set VPD size so we can read both VPD structures")
-Cc: <stable@vger.kernel.org>  # v4.9+
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Acked-by: Will Deacon <will.deacon@arm.com>,
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   10 --------
- drivers/pci/quirks.c                       |   35 +++++++++++++++++------------
- 2 files changed, 21 insertions(+), 24 deletions(-)
+ drivers/irqchip/irq-gic-v3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -2596,7 +2596,6 @@ void t4_get_regs(struct adapter *adap, v
- }
- 
- #define EEPROM_STAT_ADDR   0x7bfc
--#define VPD_SIZE           0x800
- #define VPD_BASE           0x400
- #define VPD_BASE_OLD       0
- #define VPD_LEN            1024
-@@ -2634,15 +2633,6 @@ int t4_get_raw_vpd_params(struct adapter
- 	if (!vpd)
- 		return -ENOMEM;
- 
--	/* We have two VPD data structures stored in the adapter VPD area.
--	 * By default, Linux calculates the size of the VPD area by traversing
--	 * the first VPD area at offset 0x0, so we need to tell the OS what
--	 * our real VPD size is.
--	 */
--	ret = pci_set_vpd_size(adapter->pdev, VPD_SIZE);
--	if (ret < 0)
--		goto out;
--
- 	/* Card information normally starts at VPD_BASE but early cards had
- 	 * it at 0.
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -616,7 +616,7 @@ static void gic_raise_softirq(const stru
+ 	 * Ensure that stores to Normal memory are visible to the
+ 	 * other CPUs before issuing the IPI.
  	 */
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3369,22 +3369,29 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
+-	smp_wmb();
++	wmb();
  
- static void quirk_chelsio_extend_vpd(struct pci_dev *dev)
- {
--	pci_set_vpd_size(dev, 8192);
-+	int chip = (dev->device & 0xf000) >> 12;
-+	int func = (dev->device & 0x0f00) >>  8;
-+	int prod = (dev->device & 0x00ff) >>  0;
-+
-+	/*
-+	 * If this is a T3-based adapter, there's a 1KB VPD area at offset
-+	 * 0xc00 which contains the preferred VPD values.  If this is a T4 or
-+	 * later based adapter, the special VPD is at offset 0x400 for the
-+	 * Physical Functions (the SR-IOV Virtual Functions have no VPD
-+	 * Capabilities).  The PCI VPD Access core routines will normally
-+	 * compute the size of the VPD by parsing the VPD Data Structure at
-+	 * offset 0x000.  This will result in silent failures when attempting
-+	 * to accesses these other VPD areas which are beyond those computed
-+	 * limits.
-+	 */
-+	if (chip == 0x0 && prod >= 0x20)
-+		pci_set_vpd_size(dev, 8192);
-+	else if (chip >= 0x4 && func < 0x8)
-+		pci_set_vpd_size(dev, 2048);
- }
- 
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x20, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x21, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x22, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x23, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x24, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x25, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x26, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x30, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x31, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x32, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x35, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x36, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x37, quirk_chelsio_extend_vpd);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, PCI_ANY_ID,
-+			quirk_chelsio_extend_vpd);
- 
- #ifdef CONFIG_ACPI
- /*
+ 	for_each_cpu(cpu, mask) {
+ 		unsigned long cluster_id = cpu_logical_map(cpu) & ~0xffUL;
