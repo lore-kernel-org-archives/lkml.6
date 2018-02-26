@@ -1,34 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751689AbeBZUJd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 15:09:33 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750762AbeBZUJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 15:09:32 -0500
-Date: Mon, 26 Feb 2018 15:09:31 -0500 (EST)
-Message-Id: <20180226.150931.1510520972063842669.davem@redhat.com>
-To: rfried@codeaurora.org
-Cc: kvalo@codeaurora.org, marcel@holtmann.org, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] qrtr: add MODULE_ALIAS macro to smd
-From: David Miller <davem@redhat.com>
-In-Reply-To: <20180225074937.1131-1-rfried@codeaurora.org>
-References: <20180225074937.1131-1-rfried@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751522AbeBZULR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 15:11:17 -0500
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:41248 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750814AbeBZULQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 15:11:16 -0500
+From: Justin Chen <justin.chen@broadcom.com>
+To: linux-rtc@vger.kernel.org
+Cc: a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        computersforpeace@gmail.com, gregory.0xf0@gmail.com,
+        f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        Justin Chen <justin.chen@broadcom.com>,
+        Justin Chen <justinpopo6@gmail.com>
+Subject: [PATCH v2] rtc: brcmstb-waketimer: Set wktmr prescaler
+Date: Mon, 26 Feb 2018 12:09:58 -0800
+Message-Id: <1519675798-26720-1-git-send-email-justin.chen@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ramon Fried <rfried@codeaurora.org>
-Date: Sun, 25 Feb 2018 09:49:37 +0200
+The HW default is one tick per second, however instead of assuming this,
+lets make sure the waketimer is actually one tick per second before
+arming the alarm.
 
-> Added MODULE_ALIAS("rpmsg:IPCRTR") to ensure qrtr-smd and qrtr will load
-> when IPCRTR channel is detected.
-> 
-> Signed-off-by: Ramon Fried <rfried@codeaurora.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+---
+ drivers/rtc/rtc-brcmstb-waketimer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Applied, thanks.
+diff --git a/drivers/rtc/rtc-brcmstb-waketimer.c b/drivers/rtc/rtc-brcmstb-waketimer.c
+index 796ac79..231b2f7 100644
+--- a/drivers/rtc/rtc-brcmstb-waketimer.c
++++ b/drivers/rtc/rtc-brcmstb-waketimer.c
+@@ -60,6 +60,9 @@ static void brcmstb_waketmr_set_alarm(struct brcmstb_waketmr *timer,
+ {
+ 	brcmstb_waketmr_clear_alarm(timer);
+ 
++	/* Make sure we are actually counting in seconds */
++	writel_relaxed(timer->rate, timer->base + BRCMSTB_WKTMR_PRESCALER);
++
+ 	writel_relaxed(secs + 1, timer->base + BRCMSTB_WKTMR_ALARM);
+ }
+ 
+-- 
+2.7.4
