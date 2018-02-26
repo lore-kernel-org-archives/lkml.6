@@ -1,174 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751676AbeBZXae (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 18:30:34 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35394 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeBZXad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:30:33 -0500
-Date: Tue, 27 Feb 2018 00:30:33 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Daniel Baluta <daniel.baluta@gmail.com>, linus.walleij@linaro.org
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, peter.ujfalusi@ti.com,
-        Linux-ALSA <alsa-devel@alsa-project.org>, ivo.g.dimitrov.75@gmail.com,
-        khilman@kernel.org, tony@atomide.com, aaro.koskinen@iki.fi,
-        kernel list <linux-kernel@vger.kernel.org>, sre@kernel.org,
-        martijn@brixit.nl,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Mark Brown <broonie@kernel.org>, abcloriens@gmail.com,
-        sakari.ailus@linux.intel.com, pali.rohar@gmail.com,
-        clayton@craftyguy.net, linux-omap@vger.kernel.org,
-        "Andrew F . Davis" <afd@ti.com>, patrikbachan@gmail.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        serge@hallyn.com
-Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
-Message-ID: <20180226233033.GA14094@amd>
-References: <20180224214617.GA22619@amd>
- <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
- <20180226131318.GA14045@amd>
- <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
- <20180226231336.GA18565@amd>
+        id S1751567AbeBZXen (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 18:34:43 -0500
+Received: from namei.org ([65.99.196.166]:50712 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeBZXem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 18:34:42 -0500
+Date: Tue, 27 Feb 2018 10:33:37 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd fixes for 4.16
+In-Reply-To: <1519674546.3941.2.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.21.1802271033190.9747@namei.org>
+References: <20180226124144.GA8675@linux.intel.com>         <alpine.LRH.2.21.1802270552260.29062@namei.org> <1519674546.3941.2.camel@HansenPartnership.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Content-Disposition: inline
-In-Reply-To: <20180226231336.GA18565@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/mixed; boundary="1665246916-613390738-1519688018=:9747"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--1665246916-613390738-1519688018=:9747
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Hi!
+On Mon, 26 Feb 2018, James Bottomley wrote:
 
-> > >> JFYI: This issues is tracked in the regression reports for Linux 4.16
-> > >> (http://bit.ly/lnxregrep416 ) with this id:
-> > >>
-> > >> Linux-Regression-ID: lr#4b650f
-> > >
-> > > Ok, so it seems that issue is bigger: whole sound subsystem does not
-> > > work. /proc/asound/cards is empty.
-> > >
-> > > 7e6127c1240ed569cdda2a67c8f03836f9f28c05 seems to be bad already.
-> > >
-> > > I tried to revert sound/soc changes, and sound is broken, too. Nasty
-> >=20
-> >=20
-> > dmesg log?
->=20
-> Partial dmesg is at:
-> https://github.com/pavelmachek/missy/blob/master/db/phone/nokia/n900/pave=
-l/2018.1291171648263/dmesg.out
->=20
-> I should be able to get full one...
->=20
-> I did git bisect, and the winner seems to be:
->=20
-> pavel@duo:/data/l/linux-n900$ git bisect bad
-> c85823390215e52d68d3826df92a447ed31e5c80 is the first bad commit
-> commit c85823390215e52d68d3826df92a447ed31e5c80
-> Author: Linus Walleij <linus.walleij@linaro.org>
-> Date:   Wed Dec 27 16:37:44 2017 +0100
+> On Tue, 2018-02-27 at 05:52 +1100, James Morris wrote:
+> > On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
+> > 
+> > > 
+> > > Hi
+> > > 
+> > > Here is a batch of critical fixes for 4.16.
+> > > 
+> > 
+> > Do you have CVEs for these?  If so, please include them in the commit
+> > messages.
+> 
+> Heh, well, I suppose from this everyone now knows they're fixes for
+> vulnerabilities.  The CVE doesn't usually show up until after the
+> embargo is released, so we don't have one yet.
 
-I reverted it on top of v4.16-rc2, and sound now works. Ideas?
+Anyone with half a brain can read Linus' -rc commits and work it out.
 
-(Aha, and I see I made small mistake reverting... but...)
+-- 
+James Morris
+<jmorris@namei.org>
 
-								Pavel
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 564bb7a..50cc590 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -157,36 +157,6 @@ int of_get_named_gpio_flags(struct device_node *np, co=
-nst char *list_name,
- EXPORT_SYMBOL(of_get_named_gpio_flags);
-=20
- /*
-- * The SPI GPIO bindings happened before we managed to establish that GPIO
-- * properties should be named "foo-gpios" so we have this special kludge f=
-or
-- * them.
-- */
--static struct gpio_desc *of_find_spi_gpio(struct device *dev, const char *=
-con_id,
--					  enum of_gpio_flags *of_flags)
--{
--	char prop_name[32]; /* 32 is max size of property name */
--	struct device_node *np =3D dev->of_node;
--	struct gpio_desc *desc;
--
--	/*
--	 * Hopefully the compiler stubs the rest of the function if this
--	 * is false.
--	 */
--	if (!IS_ENABLED(CONFIG_SPI_MASTER))
--		return ERR_PTR(-ENOENT);
--
--	/* Allow this specifically for "spi-gpio" devices */
--	if (!of_device_is_compatible(np, "spi-gpio") || !con_id)
--		return ERR_PTR(-ENOENT);
--
--	/* Will be "gpio-sck", "gpio-mosi" or "gpio-miso" */
--	snprintf(prop_name, sizeof(prop_name), "%s-%s", "gpio", con_id);
--
--	desc =3D of_get_named_gpiod_flags(np, prop_name, 0, of_flags);
--	return desc;
--}
--
--/*
-  * Some regulator bindings happened before we managed to establish that GP=
-IO
-  * properties should be named "foo-gpios" so we have this special kludge f=
-or
-  * them.
-@@ -230,7 +200,6 @@ struct gpio_desc *of_find_gpio(struct device *dev, cons=
-t char *con_id,
- 	struct gpio_desc *desc;
- 	unsigned int i;
-=20
--	/* Try GPIO property "foo-gpios" and "foo-gpio" */
- 	for (i =3D 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
- 		if (con_id)
- 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
-@@ -245,14 +214,6 @@ struct gpio_desc *of_find_gpio(struct device *dev, con=
-st char *con_id,
- 			break;
- 	}
-=20
--	/* Special handling for SPI GPIOs if used */
--	if (IS_ERR(desc))
--		desc =3D of_find_spi_gpio(dev, con_id, &of_flags);
--
--	/* Special handling for regulator GPIOs if used */
--	if (IS_ERR(desc))
--		desc =3D of_find_regulator_gpio(dev, con_id, &of_flags);
--
- 	if (IS_ERR(desc))
- 		return desc;
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqUmJkACgkQMOfwapXb+vIZagCfQFlDUl2ERptijp9TZH6xUCsb
-xtMAn3iHq1MnaNloSnqeMpQyxd5xLyF9
-=KExY
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+--1665246916-613390738-1519688018=:9747--
