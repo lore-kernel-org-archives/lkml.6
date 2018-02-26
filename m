@@ -1,124 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751553AbeBZQzW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:55:22 -0500
-Received: from mail-qk0-f174.google.com ([209.85.220.174]:41434 "EHLO
-        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeBZQzU (ORCPT
+        id S1751424AbeBZQ5P (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:57:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750941AbeBZQ5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:55:20 -0500
-X-Google-Smtp-Source: AG47ELv6qHV/erEy4BDU6uwUtW+lKnF2HS+CHeuBSZKMq7pBhUehPESmMF5DfeyiJ6gwnP0U7SzxJe+RyBzuKvzzsOI=
+        Mon, 26 Feb 2018 11:57:14 -0500
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Dave Young <dyoung@redhat.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH 01/11] kexec_file: Silence compile warnings
+Date: Mon, 26 Feb 2018 16:16:10 +0100
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcrx2rLDsJduWx75Wa57yTRqtQ1dqZMkCGv64K0bOYLiQ@mail.gmail.com>
-References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
- <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
- <20180225235432.31209-3-rabel@robertabel.eu> <20180225235432.31209-4-rabel@robertabel.eu>
- <CAHp75Vcrx2rLDsJduWx75Wa57yTRqtQ1dqZMkCGv64K0bOYLiQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 26 Feb 2018 17:54:59 +0100
-Message-ID: <CANiq72m6fDBAg9b5XdYxAtM8gHuCS7bTtJnFSLJ7=GyvSZAhHA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Robert Abel <rabel@robertabel.eu>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022615-0016-0000-0000-00000529FF97
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022615-0017-0000-0000-0000286627E1
+Message-Id: <20180226151620.20970-2-prudo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802260202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 12:44 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, Feb 26, 2018 at 1:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
->> NUL-terminate each individual number to be parsed.
->> To do this, the next command character and a pointer to its argument
->> are found and stored. The command character is then overwritten by NUL
->> before kstr* functions are called on the buffer.
->
-> Can we avoid yoda style of programming?
->
->>         case 'x':       /* gotoxy : LxXXX[yYYY]; */
->> +       case 'y': {     /* gotoxy : LyYYY[xXXX]; */
->> +
->> +               char* nxt_esc;
->> +               char  nxt_cmd;
->> +               char  cmd;
->> +               struct charlcd_priv_addr tmp_addr;
->> +
->>                 if (!strchr(esc, ';'))
->>                         break;
->>
->> +               /* sequence is processed whether legal or illegal */
->> +               processed = 1;
->> +
->> +               /* copy current address to temporary buffer */
->> +               tmp_addr = priv->addr;
->> +
->> +               nxt_cmd = *esc++;
->> +               nxt_esc = esc;
->> +
->> +               while ('\0' != *esc) {
->> +
->> +                       cmd = nxt_cmd;
->> +                       esc = nxt_esc;
->> +                       nxt_esc = strpbrk(esc, "xy;");
->> +                       if (NULL != nxt_esc) {
->> +                               nxt_cmd = *nxt_esc;
->> +                               /* terminate current sequence with NUL */
->> +                               *nxt_esc++ = '\0';
->> +                       }
->> +
->> +                       if ('x' == cmd) {
->> +                               if (kstrtoul(esc, 10, &tmp_addr.x) < 0)
->>                                         break;
->
->> +                       } else if ('y' == cmd) {
->> +                               if (kstrtoul(esc, 10, &tmp_addr.y) < 0)
->>                                         break;
->
-> Perhaps instead of dancing around kstrtox() better to switch to
-> simple_strtoul() ?
+When building the kernel with CONFIG_KEXEC_FILE enabled gcc prints a
+compile warning multiple times.
 
-It seems deprecated:
+In file included from <path>/linux/init/initramfs.c:526:0:
+<path>/include/linux/kexec.h:120:9: warning: ‘struct kimage’ declared inside parameter list [enabled by default]
+         unsigned long cmdline_len);
+         ^
+This is because the typedefs for kexec_file_load uses struct kimage before
+it is declared. Fix this by simply forward declaring struct kimage.
 
-/* Obsolete, do not use.  Use kstrto<foo> instead */
-extern unsigned long simple_strtoul(const char *,char **,unsigned int);
+Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+---
+ include/linux/kexec.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
->>                         } else {
->> +                               /* break on unknown command or ';' */
->>                                 break;
->>                         }
->> +
->>                 }
->>
->> +               /* unknown commands in sequence will be followed by at least ';' */
->> +               if ('\0' != *esc)
->> +                       break;
->> +
->> +               /* clamp new x/y coordinates */
->> +               if (tmp_addr.x >= lcd->width)
->> +                       tmp_addr.x = lcd->width - 1;
->> +               tmp_addr.y %= lcd->height;
->> +
->> +               priv->addr = tmp_addr;
->>                 charlcd_gotoxy(lcd);
->>                 break;
->
->>         }
->> +       }
->
-> Same indentation level or my mailer hides this from me?
-
-It is the same, but it is also how the other 'case's do it -- which in
-this case looks just wrong since it is the last one of the switch. I
-am not sure what is the preferred way of doing these kind of blocks,
-coding-style.rst does not seem to give an example for this case.
-
-Cheers,
-Miguel
-
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index f16f6ceb3875..7bae5e87bf0d 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -114,6 +114,8 @@ struct purgatory_info {
+ 	unsigned long purgatory_load_addr;
+ };
+ 
++struct kimage;
++
+ typedef int (kexec_probe_t)(const char *kernel_buf, unsigned long kernel_size);
+ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+ 			     unsigned long kernel_len, char *initrd,
+-- 
+2.13.5
