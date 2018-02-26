@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuNnX8N6QVwQSQBGFDVlDSZYgGKGs9SNHBpWuiNAvfzagX669txHKdQCmv6sAzCC/3u9Cen
-ARC-Seal: i=1; a=rsa-sha256; t=1519676832; cv=none;
+X-Google-Smtp-Source: AG47ELsnLeFtUJB+AVQ7MhIFwV+T8od3Q6o86jnuh7jdaD0L2vfw0EAzU6nSAN/UGhwRyp2A9aKH
+ARC-Seal: i=1; a=rsa-sha256; t=1519676829; cv=none;
         d=google.com; s=arc-20160816;
-        b=zUKs28u5y6gF/oiGuPhDE0+tDLM9RIxCtzJc0w+SdGxHzcXNICjaDE3rfCK0WKBKPN
-         hyiEo8+4JWDcY5Z4mMl1DftueSte247JRxSWDSWCgjkFJgjCPGGEtCxH981PbUtuF52v
-         nXvBWeRz6/nzcQT1//5MNthsFI43EVEZN0joZ0dfKlBK9+8xv3KBY+4EmRVwY8sW0mE2
-         IRzubINmydTSYf/ASn/OkuDYTtlvamOVhqnS+YTmHKfihTc5P18BtC67iBbAQB8FTIYS
-         Q+LaJ/UUpaOC4QoLwM5wkJx9wMsPg7KcF4987W9smpElPNfOkdKFimyC7uUQsJWNb6Qi
-         8gYA==
+        b=yQfCn8bOUOA1HXbm7ejBYArfGOT9AmG1bIdW8aJEAYuaj9pdZ7O3p/Dfvt9lY3RxmM
+         imyn72dHVKWmzKTxKoAurtZQEGH2lot2OQSJmvi0Nu2S+etVtUoFo/4Iv+Tl97pkT+cQ
+         MbitjrauLKvBZubypd5dACDGv8n0Zhq/JkezGuI71zYIMRPcuaZ44Qre+AbgeNgcMGKq
+         y/NUb/Z2ui94vxk+CbnYjGEX8vwq2cMkj7bVfWWS8kcEOF86OWnopogHcnXQqvqG7nE2
+         ijbcw2mJvipPsJRqKfXjg9sD/awMSs6wGMk/SX0gosMj8EauOka6gv7dBn6DUuYUxSaH
+         35tA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fxtWk2YGvzJNfOERnRgVP7xH2zLm89/51Ht4LxQTMjo=;
-        b=oxiAFuo9/oPrl/y3SCX2lDaBURZuyCoxD303mEHAPwgkZB0RqtrigqHGGlOwit/vd6
-         Z36hnl9Wy0pVbUsuHr0U/Qn71EI6XJlq0FxErqCR6MtV/hAglJEu0AHTaF3bvyb2lSGv
-         jx7CzgtNB95fuU/KMlG8tB4iu54hEGEyM/n6WaV8shxpzef5KI5JK6KZDD/2tzlKBeIF
-         BKzWikg+uj4bQtuZUeAoL590juwJHVOmfdlHuZt0UzeJhYkfs5QvrJka0Gu3ja6HHdyX
-         16dnr83nwz5fU+elrk/Mv3WbfGGOG9geLfPLHt8iao6SLfkbR0wWhEs4RJOglFHDJPEl
-         mecA==
+        bh=O8HXuaisIAo+trrkGYx/d0JXH3YCvGFIqWS6/pzt+aI=;
+        b=sdKZBFTu/wh92gJqJytOgpWviL5f+yWR/9Q4PhxljBo9BlxSofeTnOrBRPO1MSaZVj
+         g6mr8LoLLRCUToYGW9v6Lczud7hOrU2wO22qcRGu9Oz90wdJVaL1cCw3tKpbSNXJ8MV8
+         3vqlzfr0RNoEMxmJbkn6rebt6xbDbWYW5GAvBbP6QYYZ9Qrv3iPMmBJ00hwOw+oSLd4v
+         SBvhQZMYRRdDSZzRVXZY/6rklBHIJla7zowDHKcxhCEI9+wQlTZLb+7cNJBIBiJiRYyf
+         ulo5GHTFIszeTYRBlsEn8qHdgvS1akpuyYx20hIsEJALy2i3W1Lc9pOJIL+1z/zgpEAu
+         jxpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Patrick McLean <chutzpah@gentoo.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jessica Yu <jeyu@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.15 03/64] kconfig.h: Include compiler types to avoid missed struct attributes
-Date: Mon, 26 Feb 2018 21:21:40 +0100
-Message-Id: <20180226202153.589811845@linuxfoundation.org>
+	Martin Sebor <msebor@gcc.gnu.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Robert Richter <rric@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	oprofile-list@lists.sf.net,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 28/64] x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
+Date: Mon, 26 Feb 2018 21:22:05 +0100
+Message-Id: <20180226202154.656148557@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -42,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496476457815622?=
-X-GMAIL-MSGID: =?utf-8?q?1593496654254294275?=
+X-GMAIL-THRID: =?utf-8?q?1593495973889701786?=
+X-GMAIL-MSGID: =?utf-8?q?1593496651181518327?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +57,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 28128c61e08eaeced9cc8ec0e6b5d677b5b94690 upstream.
+commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
 
-The header files for some structures could get included in such a way
-that struct attributes (specifically __randomize_layout from path.h) would
-be parsed as variable names instead of attributes. This could lead to
-some instances of a structure being unrandomized, causing nasty GPFs, etc.
+GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
+data from CPU 0 to all other CPUs, which when building a non-SMP
+kernel turns into a memcpy() with identical source and destination
+pointers:
 
-This patch makes sure the compiler_types.h header is included in
-kconfig.h so that we've always got types and struct attributes defined,
-since kconfig.h is included from the compiler command line.
+ arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
+ arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          per_cpu(cpu_msrs, 0).multiplex,
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          sizeof(struct op_msr) * model->num_virt_counters);
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
+ arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+ arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 
-Reported-by: Patrick McLean <chutzpah@gentoo.org>
-Root-caused-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: 3859a271a003 ("randstruct: Mark various structs for randomization")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+I have analyzed a number of such warnings now: some are valid and the
+GCC warning is welcome. Others turned out to be false-positives, and
+GCC was changed to not warn about those any more. This is a corner case
+that is a false-positive but the GCC developers feel it's better to keep
+warning about it.
+
+In this case, it seems best to work around it by telling GCC
+a little more clearly that this code path is never hit with
+an IS_ENABLED() configuration check.
+
+Cc:stable as we also want old kernels to build cleanly with GCC-8.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Sebor <msebor@gcc.gnu.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <rric@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: oprofile-list@lists.sf.net
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/kconfig.h |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/oprofile/nmi_int.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/kconfig.h
-+++ b/include/linux/kconfig.h
-@@ -64,4 +64,7 @@
-  */
- #define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -460,7 +460,7 @@ static int nmi_setup(void)
+ 		goto fail;
  
-+/* Make sure we always have all types and struct attributes defined. */
-+#include <linux/compiler_types.h>
-+
- #endif /* __LINUX_KCONFIG_H */
+ 	for_each_possible_cpu(cpu) {
+-		if (!cpu)
++		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
+ 			continue;
+ 
+ 		memcpy(per_cpu(cpu_msrs, cpu).counters,
