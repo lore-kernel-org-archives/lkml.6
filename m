@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226P8D0DQo7dJ3I+wk1uBWtONEPyjrKkO/SUQ4CFpm0DHutV544uMgs36m3AB41K6jKi9DPC
-ARC-Seal: i=1; a=rsa-sha256; t=1519676708; cv=none;
+X-Google-Smtp-Source: AG47ELugRLKa5O8AqZ75JO9UYxGFsBCjaOOyT74s/YBLGBrk5rGjqN3UkxdxiyLvp8uepV1Qw5vk
+ARC-Seal: i=1; a=rsa-sha256; t=1519676705; cv=none;
         d=google.com; s=arc-20160816;
-        b=OIrxE2Ecq2omLgLZoFNN54mly/t2NX+GMaALzfnyL8P/tO5hvzM6bLFHhMa3X5oVK3
-         KFQutxe59sULdkrtx8M5yRwlnqk01NswZHX52LyNmFTtHMQzs9R48Qq9Yklld0n4NpIo
-         qz9ZZToENmKQsNpLGTpCzu0kc96e4iX0vgH/2VeVP/ZyzG/lX3VUozhADR4S3cUue1nH
-         wSgR/sj/RyuYsQqVUoRr1vtIl1ZnmR9UJdNVXKSi3a2SLeZ2/v5sL33+HaIRz0v2zjqn
-         f48w5fLia10HuurlroFUgVQkwnEklUBufg/83GeYgcEyDBnLZ6yrXtpLbnm9YwX0yPnj
-         oE7w==
+        b=020JbZfNuQ8wbAPF5NGFINod2prI3xt5KdMvDRz8vmr975CQPIrIXcPt8raYsgqo2i
+         0VR4EK1U8G/qE3v5iVq0cyEjtXpNA77vVJrD57o+I9GhXqRK+Eu456DHF+43Y884+P3H
+         JtF8JkdeIwB5qnhWZ2oVIu5bhuh0OuQgdsaXMfcSE0VcQqJjxlN8t4Q+j/85xbueCJtY
+         641J82bPIGdhrIshh5l3V0hQr/rNZJlfkRijuksofvr6/7OwRcUuWqIC2P9Dn8zFUU+6
+         K4k+8iSzSOaitBRn7Sq19b82LOz7/2bLeCta1Mh9Q+oMP+iXbccJZkjlWuQjdorw/r1I
+         o74Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=q4wB0YmSDwOBztRFjaFk/5uyfCzB2WIoX1yGuQK4+PM=;
-        b=aN2YQ3tZMrr8VtJ1XhoDrwZldE+U0VFgXNE1D1wbaglALYWBGxps5lYJ+V2XrNOMum
-         goEg5ZPx56lHVZxNO1oTQICyCQkDNwYA5xYvZsQTgLlY82IvrqZT0lAhNtHHkiJQ/6Ah
-         Tdo88J5jpgWDZPrOnzYy8uhNGudMTLhbhbPeUM0us1PX5wO0ycBntEMBuFuPRJWEo2+E
-         Tiu0gCEiTtWMki5xOavtxoK6M5cB5X6Ky978ox/G1U3bb4XLiFbGfJI7V/Ixywc/pzHT
-         LRjivhO5H/EdDvM+8VIzn9BDIF7Acdj15gTpQQn5MplTfrRMgKptgJwaXqlIEn4UXx3E
-         ce8Q==
+        bh=l/iz5oJlNV+D2Je1p6cCLUoGFR06YOay+TXEzOoh+AY=;
+        b=0aKhSsHJJorHK1lbROWphFpOYWno/fdYCrcl++YFWO5tV3VVxDPj8TNzbhUOdElXWs
+         A8pL+fk3IMFONwA3L6GlkdWhAk2pQsQbTG/FcyNveh5F/xRP1UpBDLus79kqoEos7Tam
+         nn+ZRsHlHOCpXhVQyOTIxOtGc0ie0ui1+YpwG9MgedBAlpnUJXxiLsV4NtKjgYkdvjJX
+         TX9iC0fkk7L+YBP/7mGyNgUc33wlcs0B261mfuGhTVFqV0xPmr3Mc2xLeSI/g9ktwCT9
+         nSAIv4D5J6nKTfTz9eIoM8+GgNNr7r/5bgh81D4j2FxY7ixe9OG9HEeC63ziAWFsvgHX
+         9xYg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Rosin <peda@axenita.se>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Gerd Hoffmann <kraxel@redhat.com>
-Subject: [PATCH 4.14 46/54] drm/cirrus: Load lut in crtc_commit
-Date: Mon, 26 Feb 2018 21:22:23 +0100
-Message-Id: <20180226202146.715891524@linuxfoundation.org>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 45/54] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
+Date: Mon, 26 Feb 2018 21:22:22 +0100
+Message-Id: <20180226202146.653301014@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496524480353186?=
-X-GMAIL-MSGID: =?utf-8?q?1593496524480353186?=
+X-GMAIL-THRID: =?utf-8?q?1593496020414539698?=
+X-GMAIL-MSGID: =?utf-8?q?1593496521367903464?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,96 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 745fd50f3b044db6a3922e1718306555613164b0 upstream.
+commit 17aa31f13cad25daa19d3f923323f552e87bc874 upstream.
 
-In the past the ast driver relied upon the fbdev emulation helpers to
-call ->load_lut at boot-up. But since
+This fixes an issue that a gadget driver (usb_f_fs) is possible to
+stop rx transactions after the usb-dmac is used because the following
+functions missed to set/check the "running" flag.
+ - usbhsf_dma_prepare_pop_with_usb_dmac()
+ - usbhsf_dma_pop_done_with_usb_dmac()
 
-commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
-Author: Peter Rosin <peda@axentia.se>
-Date:   Tue Jul 4 12:36:57 2017 +0200
+So, if next transaction uses pio, the usbhsf_prepare_pop() can not
+start the transaction because the "running" flag is 0.
 
-drm/fb-helper: factor out pseudo-palette
-
-that's cleaned up and drivers are expected to boot into a consistent
-lut state. This patch fixes that.
-
-Fixes: b8e2b0199cc3 ("drm/fb-helper: factor out pseudo-palette")
-Cc: Peter Rosin <peda@axenita.se>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: <stable@vger.kernel.org> # v4.14+
-References: https://bugzilla.kernel.org/show_bug.cgi?id=198123
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20180131110450.22153-1-daniel.vetter@ffwll.ch
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
+Cc: <stable@vger.kernel.org> # v3.19+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/cirrus/cirrus_mode.c |   40 ++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+ drivers/usb/renesas_usbhs/fifo.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/gpu/drm/cirrus/cirrus_mode.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
-@@ -294,22 +294,7 @@ static void cirrus_crtc_prepare(struct d
- {
- }
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -998,6 +998,10 @@ static int usbhsf_dma_prepare_pop_with_u
+ 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
+ 		goto usbhsf_pio_prepare_pop;
  
--/*
-- * This is called after a mode is programmed. It should reverse anything done
-- * by the prepare function
-- */
--static void cirrus_crtc_commit(struct drm_crtc *crtc)
--{
--}
--
--/*
-- * The core can pass us a set of gamma values to program. We actually only
-- * use this for 8-bit mode so can't perform smooth fades on deeper modes,
-- * but it's a requirement that we provide the function
-- */
--static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
--				 u16 *blue, uint32_t size,
--				 struct drm_modeset_acquire_ctx *ctx)
-+static void cirrus_crtc_load_lut(struct drm_crtc *crtc)
- {
- 	struct drm_device *dev = crtc->dev;
- 	struct cirrus_device *cdev = dev->dev_private;
-@@ -317,7 +302,7 @@ static int cirrus_crtc_gamma_set(struct
- 	int i;
- 
- 	if (!crtc->enabled)
--		return 0;
-+		return;
- 
- 	r = crtc->gamma_store;
- 	g = r + crtc->gamma_size;
-@@ -330,6 +315,27 @@ static int cirrus_crtc_gamma_set(struct
- 		WREG8(PALETTE_DATA, *g++ >> 8);
- 		WREG8(PALETTE_DATA, *b++ >> 8);
- 	}
-+}
++	/* return at this time if the pipe is running */
++	if (usbhs_pipe_is_running(pipe))
++		return 0;
 +
-+/*
-+ * This is called after a mode is programmed. It should reverse anything done
-+ * by the prepare function
-+ */
-+static void cirrus_crtc_commit(struct drm_crtc *crtc)
-+{
-+	cirrus_crtc_load_lut(crtc);
-+}
-+
-+/*
-+ * The core can pass us a set of gamma values to program. We actually only
-+ * use this for 8-bit mode so can't perform smooth fades on deeper modes,
-+ * but it's a requirement that we provide the function
-+ */
-+static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
-+				 u16 *blue, uint32_t size,
-+				 struct drm_modeset_acquire_ctx *ctx)
-+{
-+	cirrus_crtc_load_lut(crtc);
+ 	usbhs_pipe_config_change_bfre(pipe, 1);
  
- 	return 0;
- }
+ 	ret = usbhsf_fifo_select(pipe, fifo, 0);
+@@ -1188,6 +1192,7 @@ static int usbhsf_dma_pop_done_with_usb_
+ 	usbhsf_fifo_clear(pipe, fifo);
+ 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
+ 
++	usbhs_pipe_running(pipe, 0);
+ 	usbhsf_dma_stop(pipe, fifo);
+ 	usbhsf_dma_unmap(pkt);
+ 	usbhsf_fifo_unselect(pipe, pipe->fifo);
