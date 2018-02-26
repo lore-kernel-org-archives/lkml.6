@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226/+TXsIq70xmbZTJpVVhpu2QzdQwuD4+d0HMUZkdBVTCc8MnwwG2HQqDtMSZlw+kdYpWxu
-ARC-Seal: i=1; a=rsa-sha256; t=1519676541; cv=none;
+X-Google-Smtp-Source: AG47ELsbg00xLYHrpwXkphmCMQatwNFGXKRaMcMgcPGajqYfsOEWCgks94XaCndZoRiWGKmwRVXB
+ARC-Seal: i=1; a=rsa-sha256; t=1519676538; cv=none;
         d=google.com; s=arc-20160816;
-        b=AMVA1N4Db7asksSKDg9x0nvXCvbfsGIrsOHcMl3IEzwol9r8QUQ79yD7BM3JuyBDlz
-         Ez2TG5wGxPihTcRKtwsqD3kroOMcJj2Ybn+2m77hFgGDustccVPkdKmwJQpQ3W2qw/yj
-         PT6slDVnNNFhvAJlMyYbM4OyctWZNZ+jTC9N1VEuFruRClYgcZyx5m6qLhzBH3zIPSfh
-         lIKnZPVovZPb6lzwhckrx4wsESi6eUErIgiahN2QttePuwA4NrKGf/4Wcw8ngKaBHOPQ
-         682bEaXJ1lwl76tS1jNLDN98J/iATGczodO252clk5MwYfgCiEC8S6Z/cduyybFVUivC
-         iGiw==
+        b=ZVnwljBLA9Ycem8mTeoH6ulYv536shPu3EN6xrY6XarjAR086BVwLbQRu5WN8nI8ha
+         pR86QTuzvlso1sMD1m+zensfv8BQ0ILdDPaHftAz6sd34T8eE+p/hWxFbLOSIP7mnPRC
+         iZli9HO0aNQoA6Hm9qA2d2EjC50RxP+MMamICFWZr3jVvwbWRbJH2DL8TrE07MyDPbkf
+         j2alFolTFw/S1JuEoyyWW07NjxMzI08IPSKUQ/dkzwfx2pFDwEbEPmW9ECVsBJeTldqN
+         2PTiICSADcO6uVzAZQg0X8784b7a6gNt9ucnLt3q5m3qpMexmlyyuTQuf4I9wkwq/FAs
+         GYUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KubXiy3v81fUhrGUGSfbbFRuAocxrRjCuo+nZKv+4ng=;
-        b=adlhzF+b60zLxpQlRI/3db6o0NtPuL1mwMqti4+RZmbvVyx55vbCGxzLtJUuhND0N7
-         opgUYRH+hVLnQPagMU19yPBXIQJljdWYuBGltB3w0s+Lwf8Qae1aLIEyCJlJb1CZsiH+
-         pEjEY/J5YuX7E529RTgLnrP/V9ZpYFsup4KC608UmaJzTsIab4cynz6zRRZFI002MBa0
-         Cq/e/YsQ2p4QJvLPL/9JAq93ny1cTS3r0rPN4EBRjTEHtC4dMSSoF7Qso9cUo2NA7pDl
-         dIXEEuiiCiR3RCrOkSUpqpWYDT6AOc/tFZTSZZ9iwmeTexXyqrhZd/ZGrZZRRyWzJuGS
-         xsFw==
+        bh=7w3GiR9bjBOOlwKouIn4mjdHC/ThtL1eVsMvlrfdGoc=;
+        b=fH3gq75VcQ3mHW+I4RVZvyPCvMHkmvSMsvniJzNTL79eDXkgCD1Fh+risRF/7odjvF
+         fpSRpXtewv9intk1fR4b28309RHZLX2rxRr+6dE+pX/rineN428l9VIAiymxsud9Uhug
+         Zge0UCEUucqhhtWIH2WDTg+ZozWui3ZKL/T/bQV6SiJE/pCT9oZ36+MNYVDFKC1BmVyA
+         f9vd4rmg4yxB/MZO63kfWdTwBF89WBVQtlphLCQD6Mn4xgvnyalc8C7bQvpn1iR3Kswr
+         3WoNTP+isxvUbWfskyLqQvgbC9dNiMUI/wn6MI0EWluUYdL90gWk8vqWtHoy8mbbe5ud
+         wKng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	Ross Zwisler <ross.zwisler@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 30/39] fs/dax.c: fix inefficiency in dax_writeback_mapping_range()
-Date: Mon, 26 Feb 2018 21:20:51 +0100
-Message-Id: <20180226201644.994652037@linuxfoundation.org>
+	Hannes Reinecke <hare@suse.de>,
+	Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 03/39] scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
+Date: Mon, 26 Feb 2018 21:20:24 +0100
+Message-Id: <20180226201643.804600786@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496349085817871?=
-X-GMAIL-MSGID: =?utf-8?q?1593496349085817871?=
+X-GMAIL-THRID: =?utf-8?q?1593495966223734995?=
+X-GMAIL-MSGID: =?utf-8?q?1593496345773536277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,35 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-commit 1eb643d02b21412e603b42cdd96010a2ac31c05f upstream.
+commit c39813652700f3df552b6557530f1e5f782dbe2f upstream.
 
-dax_writeback_mapping_range() fails to update iteration index when
-searching radix tree for entries needing cache flushing.  Thus each
-pagevec worth of entries is searched starting from the start which is
-inefficient and prone to livelocks.  Update index properly.
+The fcp_rsp_info structure as defined in the FC spec has an initial 3
+bytes reserved field. The ibmvfc driver mistakenly defined this field as
+4 bytes resulting in the rsp_code field being defined in what should be
+the start of the second reserved field and thus always being reported as
+zero by the driver.
 
-Link: http://lkml.kernel.org/r/20170619124531.21491-1-jack@suse.cz
-Fixes: 9973c98ecfda3 ("dax: add support for fsync/sync")
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
+Ideally, we should wire ibmvfc up with libfc for the sake of code
+deduplication, and ease of maintaining standardized structures in a
+single place. However, for now simply fixup the definition in ibmvfc for
+backporting to distros on older kernels. Wiring up with libfc will be
+done in a followup patch.
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/dax.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -785,6 +785,7 @@ int dax_writeback_mapping_range(struct a
- 			if (ret < 0)
- 				return ret;
- 		}
-+		start_index = indices[pvec.nr - 1] + 1;
- 	}
- 	return 0;
- }
+---
+ drivers/scsi/ibmvscsi/ibmvfc.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -367,7 +367,7 @@ enum ibmvfc_fcp_rsp_info_codes {
+ };
+ 
+ struct ibmvfc_fcp_rsp_info {
+-	__be16 reserved;
++	u8 reserved[3];
+ 	u8 rsp_code;
+ 	u8 reserved2[4];
+ }__attribute__((packed, aligned (2)));
