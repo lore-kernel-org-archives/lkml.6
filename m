@@ -1,63 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752181AbeBZDpx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:45:53 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36159 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeBZDpt (ORCPT
+        id S1752151AbeBZDzY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:55:24 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55098 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751959AbeBZDzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:45:49 -0500
-X-Google-Smtp-Source: AG47ELv0EvwfaiTLFuS7FXJBnS3xcOrBWRItKWD8Kmx0QJhGALjAZexAndYWUjmEV27F0eaxHVhRnonKQNAbWYKGfaA=
+        Sun, 25 Feb 2018 22:55:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6215F6070A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH 9/9] scsi: ufs: Add clock ungating to a separate workqueue
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Vijay Viswanath <vviswana@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.1519120988.git.asutoshd@codeaurora.org>
+ <1c92a979dce897db920d9b9a625923d64cba2266.1519120988.git.asutoshd@codeaurora.org>
+ <CANiq72==rFxaw7+ZQv41Zbr+-fJvHiQVzVucrRFpUzrQtN750w@mail.gmail.com>
+From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <68880931-6f39-1ffc-92f6-f3b90cec396c@codeaurora.org>
+Date: Mon, 26 Feb 2018 09:25:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <61e56a69-5722-138e-481e-44473a79b388@linaro.org>
-References: <20180103200114.23922-1-andrew.smirnov@gmail.com>
- <CAMRc=Mct60LMcr-CGJue1dTK+XNwz=dmkm2arTGeN1czeN9JoA@mail.gmail.com> <61e56a69-5722-138e-481e-44473a79b388@linaro.org>
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Sun, 25 Feb 2018 19:45:48 -0800
-Message-ID: <CAHQ1cqGp3jPvb1FNd9SoP_t-hzAHZazAOobrgM2yustrZ5ja6w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/22] Verbatim device names and devm_nvmem_(un)register()
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Heiko Stuebner <heiko@sntech.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANiq72==rFxaw7+ZQv41Zbr+-fJvHiQVzVucrRFpUzrQtN750w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 1:17 AM, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
->
-> On 24/01/18 11:13, Bartosz Golaszewski wrote:
->>>
->>>
->> Hi Srinivas,
+On 2/24/2018 5:27 AM, Miguel Ojeda wrote:
+> On Wed, Feb 21, 2018 at 5:56 AM, Asutosh Das <asutoshd@codeaurora.org> wrote:
+>> From: Vijay Viswanath <vviswana@codeaurora.org>
 >>
->> I don't see this series in next - is it going to miss this merge window?
+>> UFS driver can receive a request during memory reclaim by kswapd.
+>> So when ufs driver puts the ungate work in queue, and if there are no
+>> idle workers, kthreadd is invoked to create a new kworker. Since
+>> kswapd task holds a mutex which kthreadd also needs, this can cause
+>> a deadlock situation. So ungate work must be done in a separate
+>> work queue with WQ__RECLAIM flag enabled.Such a workqueue will have
+> 
+> WQ_MEM_RECLAIM here. Also space after dot.
+> 
+>> a rescue thread which will be called when the above deadlock
+>> condition is possible.
 >>
->
-> Thanks for your patience.
->
-> In general, I pick stuff which are sent before rc5-rc6 and send it to Greg
-> KH for inclusion in char-misc tree.
->
-> These patches will be queued for next release cycle..
->
+>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>> ---
+>>   drivers/scsi/ufs/ufshcd.c | 10 +++++++++-
+>>   drivers/scsi/ufs/ufshcd.h |  1 +
+>>   2 files changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index 6541e1d..bb3382a 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -1503,7 +1503,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
+>>                  hba->clk_gating.state = REQ_CLKS_ON;
+>>                  trace_ufshcd_clk_gating(dev_name(hba->dev),
+>>                                          hba->clk_gating.state);
+>> -               schedule_work(&hba->clk_gating.ungate_work);
+>> +               queue_work(hba->clk_gating.clk_gating_workq,
+>> +                          &hba->clk_gating.ungate_work);
+>>                  /*
+>>                   * fall through to check if we should wait for this
+>>                   * work to be done or not.
+>> @@ -1689,6 +1690,8 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
+>>
+>>   static void ufshcd_init_clk_gating(struct ufs_hba *hba)
+>>   {
+>> +       char wq_name[sizeof("ufs_clk_gating_00")];
+>> +
+>>          if (!ufshcd_is_clkgating_allowed(hba))
+>>                  return;
+>>
+>> @@ -1696,6 +1699,10 @@ static void ufshcd_init_clk_gating(struct ufs_hba *hba)
+>>          INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
+>>          INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
+>>
+>> +       snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
+>> +                hba->host->host_no);
+>> +       hba->clk_gating.clk_gating_workq = create_singlethread_workqueue(wq_name);
+> 
+> Shouldn't this be alloc_ordered_workqueue() with WQ_MEM_RECLAIM then?
+> (create_singlethread_workqueue() and friends are deprecated).
+> 
+> Cheers,
+> Miguel
+> 
+>> +
+>>          hba->clk_gating.is_enabled = true;
+>>
+>>          hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
+>> @@ -1723,6 +1730,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba *hba)
+>>          device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
+>>          cancel_work_sync(&hba->clk_gating.ungate_work);
+>>          cancel_delayed_work_sync(&hba->clk_gating.gate_work);
+>> +       destroy_workqueue(hba->clk_gating.clk_gating_workq);
+>>   }
+>>
+>>   /* Must be called with host lock acquired */
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+>> index 4385741..570c33e 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -361,6 +361,7 @@ struct ufs_clk_gating {
+>>          struct device_attribute enable_attr;
+>>          bool is_enabled;
+>>          int active_reqs;
+>> +       struct workqueue_struct *clk_gating_workq;
+>>   };
+>>
+>>   struct ufs_saved_pwr_info {
+>> --
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>
 
-Srinivas:
+Hi Miguel
+Thanks for the review.
 
-Correct me if I am wrong, but doesn't seem like these patches made it
-to char-misc tree yet. I was recently rebasing them on top of Linus'
-master and ended up having to resolve a couple of merge conflicts, so
-would you like me to re-spin v4 on top of 4.16-rc1 (or any other
-version) and re-submit the series?
+I'll check this and put up the changes in v2.
 
-Thanks,
-Andrey Smirnov
+
+-asd
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
