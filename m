@@ -1,94 +1,111 @@
-Return-Path: <mika.westerberg@linux.intel.com>
-X-Google-Smtp-Source: AH8x227HZRN/X9Kvdqq1rZwpVguJUFmk9c4kC/dFvg+IF5H6xVjX41gw3i2LrnNBNGuzkOUDZ1SC
-ARC-Seal: i=1; a=rsa-sha256; t=1519645974; cv=none;
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AG47ELtTt/DB9rIt6LNcyDJ1+7ccFFgfwtgcRP8i6kxd/2ZqR6wfq11jKwFwcgzkpfQLRH/omyeD
+ARC-Seal: i=1; a=rsa-sha256; t=1519636169; cv=none;
         d=google.com; s=arc-20160816;
-        b=kVXEnbRgo8j/MZi+VLpoCuoTWDOUYBd66HqkExo3YBdAwg8UXQ1Az6BtV9z/SNRGbo
-         JRWWwkkuPdC4LR3JzRwnify3/BRtHuVbFcevgNkASyGW9R5hsJx5c6yMgMwexh9+pn+o
-         pzLIwPxwYJbQR7lxmQdKDq/OA2npOwYsQmkSo+Ky9hTrb2AU/FVRTj3KH0blVpzHPHSy
-         78/JQmvHNf5nZxG3tPL2JP/JEr1u4/ei88rbzvYb5++fz+ntoC+LSoY1RM0DFqwY3kJZ
-         a+d78+svOhSvKHXn4W1uvzsaewVqdLyIzyxPGmWEtejnBHjahYa+M/z9Tzh34TcLCS7x
-         vaqA==
+        b=bmWagiOU8VTzKnNU//m7kU0cykTM24ffh8Ws0jhvpZ8Iwx1lEEtLtf0rZ6mHB9mdVV
+         6w9MATy4ShnLYhMzgLAYz/OoNkxigdTuadBL2RdbG2Vt9M99h98CAeBV8IKxjCfpzzwF
+         ppuwXsedrtI1rl/ipiu1U+cMK2tVrhvJcktCGxtRnQANNxP5t1XypPMa8iF/LR3UdeQN
+         iGhxb4qR1LQZogLk7HHaViWIhWQCw+mmB26csR0WOR0IHRE1s/FDYYpAYYuLC63/0not
+         zHwVNO44/BOzmoTBfD1HANtTlApIXrREqWm40hxwhsVOb1cde/zjTuaUN5psaykiCrnG
+         ENrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:organization:in-reply-to:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=GK3TMquHFNLG91V/UTdHgZaDalQSIw4GrcsqG5bsw2I=;
-        b=J3KLY7tcfEvAWXvvUjMvbErzLuJdruItq2UpmBYy67EQRS1ccEFIfD+Eb8tfGXcvGV
-         UMMeiZbyD0edfaWAnxQbIU5sBObcQOFYm+YDhZZbua4gXtrznqVVPbTAS3Xgw7x6EO/T
-         wZHlKcpRMuh7qgq7nUTtNSsFdX/ycowDmdBkM82ikdw0kCL+HrufHoWKfP2N9b7BlFkt
-         0g7vZ6gpe2W5Vquz8DcnPYDhdakE7Ih1M0Jc0mjAE2tRzAySyOzGjrAGUKcJGSi5GVca
-         QHYTHXkLkiU+PMXVsdVagWVe33mzcePlBbsYko/l+IP8FrALsGVFGLi3h7QxGVGIuAkB
-         Wzcg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Yrg+IgrYbkl2G6UVNMs587uL50uS4tj1POItKXgiyRE=;
+        b=bajO00OsEHCRZ7wP8vGvn0ES3PrLiaMpufWNBjV7ZsprgSwD4jzuULpkZxJkDdVhuO
+         HiBjVkCtwVC4q4++3snMH0+sGhbCIJ+Rl6mxqfYiT2JXqR2ql6ybLPFwKDcPRC5hdymZ
+         8xjmofPhimOlcayg6zgFe64RHtX5oAvN8XUfonkEmzIV8+1CbuFX/ePAP4ZMrEHhrEfc
+         3akb9Hn8oDiJWijg+SDFNNWH1FdWk1o8H3LDOZdm7tnLkmDU4ULoEHSyPqGS5UxnglBi
+         bk3DJT8sPeGigV+661HfgiHj8xlyFKM+yYli1YBfCumdpjT6MdfOCpQbfIV5TvJqMyVO
+         eoVg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mika.westerberg@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=mika.westerberg@linux.intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="37498120"
-Date: Mon, 26 Feb 2018 13:52:47 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Linux PCI <linux-pci@vger.kernel.org>,
-	Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Mathias Nyman <mathias.nyman@intel.com>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, Peter Wu <peter@lekensteyn.nl>,
-	Qipeng Zha <qipeng.zha@intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Dave Airlie <airlied@gmail.com>, Qi Zheng <qi.zheng@intel.com>
-Subject: Re: [PATCH v1 1/2] PCI: Add PCIe port runtime suspend details
-Message-ID: <20180226115247.GN27191@lahna.fi.intel.com>
-References: <151908155159.37696.9710083237704994886.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <151908203999.37696.12678235610905422348.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <CAJZ5v0hys5UY69H=ARHA-EsmH-CVqTQNSQciktDQ=nVBEKJHqQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hys5UY69H=ARHA-EsmH-CVqTQNSQciktDQ=nVBEKJHqQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.1 (2017-09-22)
+	Guenter Roeck <linux@roeck-us.net>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v3 00/12] USB Type-C device-connection, mux and switch support
+Date: Mon, 26 Feb 2018 10:09:13 +0100
+Message-Id: <20180226090925.29436-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592872970483997772?=
-X-GMAIL-MSGID: =?utf-8?q?1593464297331623717?=
+X-GMAIL-THRID: =?utf-8?q?1593454016298840899?=
+X-GMAIL-MSGID: =?utf-8?q?1593454016298840899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 10:31:51AM +0100, Rafael J. Wysocki wrote:
-> On Tue, Feb 20, 2018 at 12:14 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > Add details about how we decide whether we can put a PCI bridge in D3.
-> > 9d26d3a8f1b0 ("PCI: Put PCIe ports into D3 during suspend") added this
-> > support to reduce power consumption on Intel Sunrise Point and Broxton
-> > platforms.
-> >
-> > In some cases we don't use D3 for bridges even when it should work, simply
-> > because it's impractical to test the configuration, or we tripped over some
-> > possible hardware issue on older platforms.  Links to discussion of the
-> > PCIe port runtime power management patches, which includes mention of these
-> > issues, are below.
-> >
-> > No functional change.
-> >
-> > Link: v1: https://lkml.kernel.org/r/1456750566-116248-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: v2: https://lkml.kernel.org/r/1460111790-92836-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: v3: https://lkml.kernel.org/r/1460628268-16204-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: v4: https://lkml.kernel.org/r/1461578004-129094-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: v5: https://lkml.kernel.org/r/1461919919-120102-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: v6: https://lkml.kernel.org/r/1464855435-32960-1-git-send-email-mika.westerberg@linux.intel.com
-> > Link: https://lkml.kernel.org/r/2858019.9TUCWsDpTB@aspire.rjw.lan
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi All,
 
-Also
+Here is version 3 of Heikki's and my USB Type-C device-connection, mux and
+switch support series. Version 2 and 3 bring various small code and style
+fixes based on review (no major changes).
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Here is the original cover-letter of v1:
+
+Some devices with an USB Type-C connector have a bunch of muxes
+behind that connector which need to be controlled by the kernel (rather
+then having them controlled by firmware as on most devices).
+
+Quite a while back I submitted a patch-series to tie together these muxes
+and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
+framework. But the way I used the mux framework went against what it was
+designed for, so in the end that series got nowhere.
+
+Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
+recently been working on solving the same problem for some boards he is
+doing hardware-enablement for.
+
+Heikki has come up with a number of infrastructure patches for this.
+The first one is a new device-connection framework. This solves the
+problem of describing non bus device-links on x86 in what in my experience
+with this problematic area is a really nice simple, clean and *generic*
+way. This could for example in the near future also replace the custom
+lookup code in the pwm subsys and the custom pwm_add_table() /
+pwm_remove_table() functions.
+
+The other 3 patches add a framework for the different type of Type-C /
+USB "muxes".
+
+Heikki and I have gone through a number of iterations of these patches
+together and we believe these are now ready for merging. Since merging
+infrastructure patches without users is not done and Heikki's own use-case
+for these is not yet ready for merging, the rest of this series consists
+of patches by me to make the Type-C connector found on some Cherry Trail
+devices (finally) be able to actually work as an USB port and not just
+a charge port.
+
+The last patch uses the new usb-role-switch framework to also do proper
+devcie / host switching on CHT devices with a USB micro AB connector.
+This is also a big feature for CHT users, because before this they had
+to do a reboot to get an OTG-host cable recognized (on some devices).
+
+Part of this series is an usb-role-switch driver for the role-switch
+found inside the xhci controller on e.g. CHT devices, this is currently
+implemented as the generic xhci controller instantiating a platform
+child-device for this, since this really is a separate chunk of HW
+which happens to sit in the XHCI mmio space. This approach may not be
+universally liked, given that in this new series the role-switch driver
+is much smaller and does not have any external deps anymore we could
+just integrate it into the xhci code if that is preferred.
+
+About merging this series (once everything is reviewed, etc.), there are
+quite some interdependencies in it esp. a lot of the patches depend on
+the first patch. Luckily patches 1-10 all apply to subsystems which are
+maintained by Greg (most to the USB subsys). Which just leaves patches
+11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
+for the platform/x86 and extcon maintainers to merge once this is done?
+
+Regards,
+
+Hans
