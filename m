@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224O2zSgdyHSWGpE2lcV5Rlb/YS4TOKqp5EIgWZX1N/0yMbTnQBayMUx5G+b8aOuwPmCwMax
-ARC-Seal: i=1; a=rsa-sha256; t=1519676581; cv=none;
+X-Google-Smtp-Source: AG47ELvMpWze1v15tMpZ0LuMJiEzrVnqlcAxrcQm5ocfYd/MOf6U/mFXGHFZiDXAunVfS6XYP0td
+ARC-Seal: i=1; a=rsa-sha256; t=1519676577; cv=none;
         d=google.com; s=arc-20160816;
-        b=mMv6t3wgq/uASsv4iW4BnlOC5IdXDPC/cyBNyCC4gtMTbGeM/rU0b5GawXoLddb9ee
-         ggakv3krpEXH5Uu19sQpcN049NWuFwkHACsWH/dlPXv7Ns78N0k7MnXjnmaPnSb2LOuw
-         p9ESnwjh2b1q4L/9Ga7oRF6Na3//iRTepVFQ9gb4oNRPSHMrj8xzsLAf2PuC9VEgyDEo
-         NMZfcpFM2wyMKhutk5RFVdLk+c3xAILh98SDwkbkOYOJ1vL72TwZFjV+9shhAj9uEbUe
-         PqAQiD75AVz3A78rHR1Cy59y3uabpI3qhhFZIxJkFq5bVG2+nbkf/SRy6E2GIEfnEaAn
-         JV0A==
+        b=iXOSltPe/eZMKCjx4D6CmzfQ6EhXjZY+rgUxpUrSjW6c++8Fj+mJ4EeKbMUrtZ2qDe
+         HOtmoBnFeKifFPqwpR2ARymYzXCkMKxfsNT7rLIjzg2XleLwON5fir8x/PxUrE2MXnXn
+         t0v53kP7NqavEC3ah+Vn2R+/WDuDStmFVcQNVYAerARXm/4fXBEW/5taBmJ0QUhLxXKb
+         SU1jLqSYDE8fChZG2wxjahZKXZRFgSrb4Uyr/rvz/ec1vZX1cgfoYZPW6P9hKXrkVSPu
+         2K7NQuN7ZNpy+eleN/9CZTEQZs8kV9uzGXtvZ+0wsBHcOHoiRFSVBKwtHr8t+4DdwHTO
+         s9+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Vt2pagSk4OTx2a40ROa+IZn/42UuAt/x/wwGTy7rAkY=;
-        b=lY4tceTw1tQyBvnB2YvZn5Jyqbwz30fVXF/T68pPCDD2Ei0NDvgJLo6pzDYEssw2Fo
-         Csu26xrlYbI6LSCdWSntM6lDQOWKsSyUU6CkOOF3I2wUwrbwsoCL3/SGpKHrFsTxR2c/
-         LqJwr5ZFdqRN0RKaluHZqIx+p3UnVyxUj4n9cuB7XTbHDyrUuRUz1E54TNbSzJE/eBYa
-         LIlWDJj7hlGarSir/Al/GWEVElk+HTrPLIG8ZT0QrMdMGElIT8GWbWxymR9A/hcNVg2U
-         gQ0vGlKkf6CWovmBPE4pRMlHolZC4ceIapWP45ik/6vEi76jZl/gSzHrEo2TOm2ghgeE
-         fXIg==
+        bh=tIZhhCboYYS+rnbDlp3dn5iRKVO1yAR1PI7YIpVe9mc=;
+        b=OPRqf2PQa+fnJbvJdNUMQ06hu0zKUV3QBi5yvsIhJhUhKhwcHm4RZ7xDMTVkm8U7Yt
+         KYonOGzKHY9J2GQe8iGycAFHCB368rJDA8EvpkdNDc3HZBJjewkDK1iQstLWkGVCId7+
+         IzMv99pNioa43o9ikFUG7WEo8Op6p54TSKSe9tpU0bisLCyoUCMwRwQ2JM5fkH064bFy
+         kFlSxONa4Ip/j6bikiXrxEoYkLHFzaCU1Et6bXVojVodrfrSVcr+0SKGzNDKSUSyR0G7
+         9Ovf3QfG7hfuaAD/oI1e5TTkI8UVa2CoQ8pRORNZT0sUj3jFNDh0Y3mNlk3EQpGdFTY2
+         Yveg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,27 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jan Kara <jack@suse.cz>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Doug Ledford <dledford@redhat.com>,
-	Hal Rosenstock <hal.rosenstock@gmail.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
-	Jeff Moyer <jmoyer@redhat.com>,
-	Ross Zwisler <ross.zwisler@linux.intel.com>,
-	Sean Hefty <sean.hefty@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 38/39] mm: fail get_vaddr_frames() for filesystem-dax mappings
-Date: Mon, 26 Feb 2018 21:20:59 +0100
-Message-Id: <20180226201645.332724931@linuxfoundation.org>
+	"=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 37/39] mm: Fix devm_memremap_pages() collision handling
+Date: Mon, 26 Feb 2018 21:20:58 +0100
+Message-Id: <20180226201645.292220747@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -56,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496390854252085?=
-X-GMAIL-MSGID: =?utf-8?q?1593496390854252085?=
+X-GMAIL-THRID: =?utf-8?q?1593231662350727514?=
+X-GMAIL-MSGID: =?utf-8?q?1593496387556325036?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -65,61 +49,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Jan H. Schönherr <jschoenh@amazon.de>
 
-commit b7f0554a56f21fb3e636a627450a9add030889be upstream.
+commit 77dd66a3c67c93ab401ccc15efff25578be281fd upstream.
 
-Until there is a solution to the dma-to-dax vs truncate problem it is
-not safe to allow V4L2, Exynos, and other frame vector users to create
-long standing / irrevocable memory registrations against filesytem-dax
-vmas.
+If devm_memremap_pages() detects a collision while adding entries
+to the radix-tree, we call pgmap_radix_release(). Unfortunately,
+the function removes *all* entries for the range -- including the
+entries that caused the collision in the first place.
 
-[dan.j.williams@intel.com: add comment for vma_is_fsdax() check in get_vaddr_frames(), per Jan]
-  Link: http://lkml.kernel.org/r/151197874035.26211.4061781453123083667.stgit@dwillia2-desk3.amr.corp.intel.com
-Link: http://lkml.kernel.org/r/151068939985.7446.15684639617389154187.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Sean Hefty <sean.hefty@intel.com>
+Modify pgmap_radix_release() to take an additional argument to
+indicate where to stop, so that only newly added entries are removed
+from the tree.
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 9476df7d80df ("mm: introduce find_dev_pagemap()")
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/frame_vector.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ kernel/memremap.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/mm/frame_vector.c
-+++ b/mm/frame_vector.c
-@@ -52,6 +52,18 @@ int get_vaddr_frames(unsigned long start
- 		ret = -EFAULT;
- 		goto out;
- 	}
-+
-+	/*
-+	 * While get_vaddr_frames() could be used for transient (kernel
-+	 * controlled lifetime) pinning of memory pages all current
-+	 * users establish long term (userspace controlled lifetime)
-+	 * page pinning. Treat get_vaddr_frames() like
-+	 * get_user_pages_longterm() and disallow it for filesystem-dax
-+	 * mappings.
-+	 */
-+	if (vma_is_fsdax(vma))
-+		return -EOPNOTSUPP;
-+
- 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
- 		vec->got_ref = true;
- 		vec->is_pfns = false;
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -194,7 +194,7 @@ void put_zone_device_page(struct page *p
+ }
+ EXPORT_SYMBOL(put_zone_device_page);
+ 
+-static void pgmap_radix_release(struct resource *res)
++static void pgmap_radix_release(struct resource *res, resource_size_t end_key)
+ {
+ 	resource_size_t key, align_start, align_size, align_end;
+ 
+@@ -203,8 +203,11 @@ static void pgmap_radix_release(struct r
+ 	align_end = align_start + align_size - 1;
+ 
+ 	mutex_lock(&pgmap_lock);
+-	for (key = res->start; key <= res->end; key += SECTION_SIZE)
++	for (key = res->start; key <= res->end; key += SECTION_SIZE) {
++		if (key >= end_key)
++			break;
+ 		radix_tree_delete(&pgmap_radix, key >> PA_SECTION_SHIFT);
++	}
+ 	mutex_unlock(&pgmap_lock);
+ }
+ 
+@@ -255,7 +258,7 @@ static void devm_memremap_pages_release(
+ 	unlock_device_hotplug();
+ 
+ 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
+-	pgmap_radix_release(res);
++	pgmap_radix_release(res, -1);
+ 	dev_WARN_ONCE(dev, pgmap->altmap && pgmap->altmap->alloc,
+ 			"%s: failed to free all reserved pages\n", __func__);
+ }
+@@ -289,7 +292,7 @@ struct dev_pagemap *find_dev_pagemap(res
+ void *devm_memremap_pages(struct device *dev, struct resource *res,
+ 		struct percpu_ref *ref, struct vmem_altmap *altmap)
+ {
+-	resource_size_t key, align_start, align_size, align_end;
++	resource_size_t key = 0, align_start, align_size, align_end;
+ 	pgprot_t pgprot = PAGE_KERNEL;
+ 	struct dev_pagemap *pgmap;
+ 	struct page_map *page_map;
+@@ -392,7 +395,7 @@ void *devm_memremap_pages(struct device
+ 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
+  err_pfn_remap:
+  err_radix:
+-	pgmap_radix_release(res);
++	pgmap_radix_release(res, key);
+ 	devres_free(page_map);
+ 	return ERR_PTR(error);
+ }
