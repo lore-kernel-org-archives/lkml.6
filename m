@@ -1,92 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753146AbeBZNM2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:12:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46790 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbeBZNMY (ORCPT
+        id S1753221AbeBZNNV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:13:21 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47429 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752608AbeBZNNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:12:24 -0500
-Date: Mon, 26 Feb 2018 13:12:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 01/10] regmap: mmio: Add function to attach a clock
-Message-ID: <20180226131207.GB6681@sirena.org.uk>
-References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
- <1155920db000d014fd1cd604ed48d1b9a8f64ac1.1519204731.git-series.maxime.ripard@bootlin.com>
+        Mon, 26 Feb 2018 08:13:20 -0500
+Date: Mon, 26 Feb 2018 14:13:18 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        afd@ti.com, broonie@kernel.org, peter.ujfalusi@ti.com,
+        alsa-devel@alsa-project.org
+Subject: Re: regression v4.16 on Nokia N900: sound does not work
+Message-ID: <20180226131318.GA14045@amd>
+References: <20180224214617.GA22619@amd>
+ <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
 Content-Disposition: inline
-In-Reply-To: <1155920db000d014fd1cd604ed48d1b9a8f64ac1.1519204731.git-series.maxime.ripard@bootlin.com>
-X-Cookie: Do not remove tag under penalty of law.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---xXmbgvnjoT4axfJE
+--ZPt4rx8FFjLCG7dd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 21, 2018 at 10:20:25AM +0100, Maxime Ripard wrote:
-> From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Hi!
+
+> JFYI: This issues is tracked in the regression reports for Linux 4.16
+> (http://bit.ly/lnxregrep416 ) with this id:
 >=20
-> regmap_init_mmio_clk allows to specify a clock that needs to be enabled
-> while accessing the registers.
+> Linux-Regression-ID: lr#4b650f
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Ok, so it seems that issue is bigger: whole sound subsystem does not
+work. /proc/asound/cards is empty.
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+7e6127c1240ed569cdda2a67c8f03836f9f28c05 seems to be bad already.
 
-are available in the Git repository at:
+I tried to revert sound/soc changes, and sound is broken, too. Nasty
+:-(.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/m=
-mio-clk-config
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-for you to fetch changes up to 31895662f9ba81e8ea9ef05abf8edcb29d4b9c18:
-
-  regmap: mmio: Add function to attach a clock (2018-02-26 11:05:44 +0000)
-
-----------------------------------------------------------------
-regmap: MMIO regmap clock configuration
-
-This patch provides a mechanism for specifying a different clock to be
-used with the regmap clock integration.
-
-----------------------------------------------------------------
-Maxime Ripard (1):
-      regmap: mmio: Add function to attach a clock
-
- drivers/base/regmap/regmap-mmio.c | 24 ++++++++++++++++++++++++
- include/linux/regmap.h            |  3 +++
- 2 files changed, 27 insertions(+)
-
---xXmbgvnjoT4axfJE
+--ZPt4rx8FFjLCG7dd
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqUB6YACgkQJNaLcl1U
-h9Cikwf+PMimnrn6dNczsXsvqRvm5hhO/h8dL0IBFzkQtwmA/qj6bHgIcu99EHNg
-rvyz+J6fGket2zqJGO1LX6sbUa9v0FoedKk1VqesmaSzIr/Z3QB6kmPXArGIr7T+
-u0dEmntyUh6CLNyjEyQJMuQEKWSoxjQnb8LbWpdydUynzUlJR6eSzM9vInxxmRqt
-McyD/wqJLNVBuc8Z8Xzlpqrx/IEKVUQsznUV8hAPW/GHq/H2ziCE8OFofVaRCqPW
-OjRpcs7suLWn1ky3iieLkGg/iJvbRGsI5xrRgs9MxqRr6HETVghViFGwYKd9Uyw7
-DagDsMXB9k5bWNsgDA5Oa1+xTIMUXw==
-=DRh6
+iEYEARECAAYFAlqUB+4ACgkQMOfwapXb+vIhdwCgkR+ZVhkvkCoNjdoCziV2w6FC
+YYQAn2VYm6zqizP3Kg1a/eIUwWPmlYBX
+=nnpw
 -----END PGP SIGNATURE-----
 
---xXmbgvnjoT4axfJE--
+--ZPt4rx8FFjLCG7dd--
