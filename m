@@ -1,46 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeBZSuZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 13:50:25 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:45642 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeBZSuX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:50:23 -0500
-Date: Mon, 26 Feb 2018 13:50:22 -0500 (EST)
-Message-Id: <20180226.135022.860881687141218018.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        sergei.shtylyov@cogentembedded.com, christoffer.dall@linaro.org,
-        brouer@redhat.com
-Subject: Re: [PATCH V4 net 3/3] tuntap: correctly add the missing XDP flush
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1519443146-9089-3-git-send-email-jasowang@redhat.com>
-References: <1519443146-9089-1-git-send-email-jasowang@redhat.com>
-        <1519443146-9089-3-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751849AbeBZSwh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 13:52:37 -0500
+Received: from namei.org ([65.99.196.166]:50674 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751367AbeBZSwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 13:52:36 -0500
+Date: Tue, 27 Feb 2018 05:52:32 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd fixes for 4.16
+In-Reply-To: <20180226124144.GA8675@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1802270552260.29062@namei.org>
+References: <20180226124144.GA8675@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Sat, 24 Feb 2018 11:32:26 +0800
+On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
 
-> We don't flush batched XDP packets through xdp_do_flush_map(), this
-> will cause packets stall at TX queue. Consider we don't do XDP on NAPI
-> poll(), the only possible fix is to call xdp_do_flush_map()
-> immediately after xdp_do_redirect().
+> Hi
 > 
-> Note, this in fact won't try to batch packets through devmap, we could
-> address in the future.
+> Here is a batch of critical fixes for 4.16.
 > 
-> Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
-> Fixes: 761876c857cb ("tap: XDP support")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Applied, and all 3 patches queued up for -stable.
+Do you have CVEs for these?  If so, please include them in the commit 
+messages.
 
-Thanks.
+
+-- 
+James Morris
+<jmorris@namei.org>
