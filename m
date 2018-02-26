@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226zu8M8FCpS0/u+MptWZpCm4D29Hg7zL4AqPEqUJupeZm9nZQDofx+bZA1YrUbSnY+gGlkW
-ARC-Seal: i=1; a=rsa-sha256; t=1519676711; cv=none;
+X-Google-Smtp-Source: AH8x226P8D0DQo7dJ3I+wk1uBWtONEPyjrKkO/SUQ4CFpm0DHutV544uMgs36m3AB41K6jKi9DPC
+ARC-Seal: i=1; a=rsa-sha256; t=1519676708; cv=none;
         d=google.com; s=arc-20160816;
-        b=bzcGzusyte2JgI7SG3u2oiOQXNJwMIYkZ72a0SekLbU+5mYTcZzDrpfdlNbXfZnVwo
-         VgfrW7bZ1v/APS7gXRb5gEhUtQuyEHf/GFNUDloDOxabH11qK/Lruk5jwmdQCNEmn94B
-         fhOabN0RvS1+KfvVlc2zOfVAk0nBi3CxmV83cffCT1F4F64WGm+bq8fe9clicDEmYNXV
-         +NeB92Ck6f4ffTvPmBHpjzreedWCbhfZz8rtm4/dL2v7fnjXZSf2KIo90C6J1vAHmAmE
-         DaFHILeAKnABXGX97VBbBsScsWuapisW0Co2JIVxLnMIayMHzKQ+xaZIEuENMDTK3gKg
-         rEoA==
+        b=OIrxE2Ecq2omLgLZoFNN54mly/t2NX+GMaALzfnyL8P/tO5hvzM6bLFHhMa3X5oVK3
+         KFQutxe59sULdkrtx8M5yRwlnqk01NswZHX52LyNmFTtHMQzs9R48Qq9Yklld0n4NpIo
+         qz9ZZToENmKQsNpLGTpCzu0kc96e4iX0vgH/2VeVP/ZyzG/lX3VUozhADR4S3cUue1nH
+         wSgR/sj/RyuYsQqVUoRr1vtIl1ZnmR9UJdNVXKSi3a2SLeZ2/v5sL33+HaIRz0v2zjqn
+         f48w5fLia10HuurlroFUgVQkwnEklUBufg/83GeYgcEyDBnLZ6yrXtpLbnm9YwX0yPnj
+         oE7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GYFIJRFrSxAk1jVD7717Ii1coPAq0W/A54XPV4GWywA=;
-        b=kvc7wPBaard7boCnGLDw2+B59GYgUKuqz/ludHDsZjSNW5i/X8SrV7XRAThC3z3giO
-         kWAnm08Iu5uuRKpAl1CJB98AYHYYLv7a8sdwGuo61kpPQP7/X6nbA8ULnMy0Cq6MW+gB
-         ixg5YTDWtAtSETRWuBEbzfeks0A4khEJ2nmZq1em87ApU+iIQs+t+gKfyUyWPK+LToWR
-         xA4bPdtVQfjVIIeWB4JRj8Uz7uoif2Y6PwgXGFqVXhipMS6tRlDrgOuOF57M/wJr0DZQ
-         nHukDEnM0g4CP9kVW/QC4HcqNKGt3OmomEuySFQpkzBfXkVDnbAov51CLSFzObyfZG3I
-         6KEg==
+        bh=q4wB0YmSDwOBztRFjaFk/5uyfCzB2WIoX1yGuQK4+PM=;
+        b=aN2YQ3tZMrr8VtJ1XhoDrwZldE+U0VFgXNE1D1wbaglALYWBGxps5lYJ+V2XrNOMum
+         goEg5ZPx56lHVZxNO1oTQICyCQkDNwYA5xYvZsQTgLlY82IvrqZT0lAhNtHHkiJQ/6Ah
+         Tdo88J5jpgWDZPrOnzYy8uhNGudMTLhbhbPeUM0us1PX5wO0ycBntEMBuFuPRJWEo2+E
+         Tiu0gCEiTtWMki5xOavtxoK6M5cB5X6Ky978ox/G1U3bb4XLiFbGfJI7V/Ixywc/pzHT
+         LRjivhO5H/EdDvM+8VIzn9BDIF7Acdj15gTpQQn5MplTfrRMgKptgJwaXqlIEn4UXx3E
+         ce8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 47/54] drm: Handle unexpected holes in color-eviction
-Date: Mon, 26 Feb 2018 21:22:24 +0100
-Message-Id: <20180226202146.775577941@linuxfoundation.org>
+	Peter Rosin <peda@axenita.se>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PATCH 4.14 46/54] drm/cirrus: Load lut in crtc_commit
+Date: Mon, 26 Feb 2018 21:22:23 +0100
+Message-Id: <20180226202146.715891524@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496527590323155?=
-X-GMAIL-MSGID: =?utf-8?q?1593496527590323155?=
+X-GMAIL-THRID: =?utf-8?q?1593496524480353186?=
+X-GMAIL-MSGID: =?utf-8?q?1593496524480353186?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,128 +51,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-commit b8ff1802815913aad52695898cccbc9f77b7e726 upstream.
+commit 745fd50f3b044db6a3922e1718306555613164b0 upstream.
 
-During eviction, the driver may free more than one hole in the drm_mm
-due to the side-effects in evicting the scanned nodes. However,
-drm_mm_scan_color_evict() expects that the scan result is the first
-available hole (in the mru freed hole_stack list):
+In the past the ast driver relied upon the fbdev emulation helpers to
+call ->load_lut at boot-up. But since
 
-  kernel BUG at drivers/gpu/drm/drm_mm.c:844!
-  invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-  Dumping ftrace buffer:
-     (ftrace buffer empty)
-  Modules linked in: i915 snd_hda_codec_analog snd_hda_codec_generic coretemp snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core lpc_ich snd_pcm e1000e mei_me prime_numbers mei
-  CPU: 1 PID: 1490 Comm: gem_userptr_bli Tainted: G     U           4.16.0-rc1-g740f57c54ecf-kasan_6+ #1
-  Hardware name: Dell Inc. OptiPlex 755                 /0PU052, BIOS A08 02/19/2008
-  RIP: 0010:drm_mm_scan_color_evict+0x2b8/0x3d0
-  RSP: 0018:ffff880057a573f8 EFLAGS: 00010287
-  RAX: ffff8800611f5980 RBX: ffff880057a575d0 RCX: dffffc0000000000
-  RDX: 00000000029d5000 RSI: 1ffff1000af4aec1 RDI: ffff8800611f5a10
-  RBP: ffff88005ab884d0 R08: ffff880057a57600 R09: 000000000afff000
-  R10: 1ffff1000b5710b5 R11: 0000000000001000 R12: 1ffff1000af4ae82
-  R13: ffff8800611f59b0 R14: ffff8800611f5980 R15: ffff880057a57608
-  FS:  00007f2de0c2e8c0(0000) GS:ffff88006ac40000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f2ddde1e000 CR3: 00000000609b2000 CR4: 00000000000006e0
-  Call Trace:
-   ? drm_mm_scan_remove_block+0x330/0x330
-   ? drm_mm_scan_remove_block+0x151/0x330
-   i915_gem_evict_something+0x711/0xbd0 [i915]
-   ? igt_evict_contexts+0x50/0x50 [i915]
-   ? nop_clear_range+0x10/0x10 [i915]
-   ? igt_evict_something+0x90/0x90 [i915]
-   ? i915_gem_gtt_reserve+0x1a1/0x320 [i915]
-   i915_gem_gtt_insert+0x237/0x400 [i915]
-   __i915_vma_do_pin+0xc25/0x1a20 [i915]
-   eb_lookup_vmas+0x1c63/0x3790 [i915]
-   ? i915_gem_check_execbuffer+0x250/0x250 [i915]
-   ? trace_hardirqs_on_caller+0x33f/0x590
-   ? _raw_spin_unlock_irqrestore+0x39/0x60
-   ? __pm_runtime_resume+0x7d/0xf0
-   i915_gem_do_execbuffer+0x86a/0x2ff0 [i915]
-   ? __kmalloc+0x132/0x340
-   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
-   ? drm_ioctl_kernel+0x12e/0x1c0
-   ? drm_ioctl+0x662/0x980
-   ? eb_relocate_slow+0xa90/0xa90 [i915]
-   ? i915_gem_execbuffer2_ioctl+0x10f/0x760 [i915]
-   ? __might_fault+0xea/0x1a0
-   i915_gem_execbuffer2_ioctl+0x3cc/0x760 [i915]
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   ? lock_acquire+0x3c0/0x3c0
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   drm_ioctl_kernel+0x12e/0x1c0
-   drm_ioctl+0x662/0x980
-   ? i915_gem_execbuffer_ioctl+0xba0/0xba0 [i915]
-   ? drm_getstats+0x20/0x20
-   ? debug_check_no_obj_freed+0x2a6/0x8c0
-   do_vfs_ioctl+0x170/0xe70
-   ? ioctl_preallocate+0x170/0x170
-   ? task_work_run+0xbe/0x160
-   ? lock_acquire+0x3c0/0x3c0
-   ? trace_hardirqs_on_caller+0x33f/0x590
-   ? _raw_spin_unlock_irq+0x2f/0x50
-   SyS_ioctl+0x36/0x70
-   ? do_vfs_ioctl+0xe70/0xe70
-   do_syscall_64+0x18c/0x5d0
-   entry_SYSCALL_64_after_hwframe+0x26/0x9b
-  RIP: 0033:0x7f2ddf13b587
-  RSP: 002b:00007fff15c4f9d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2ddf13b587
-  RDX: 00007fff15c4fa20 RSI: 0000000040406469 RDI: 0000000000000003
-  RBP: 00007fff15c4fa20 R08: 0000000000000000 R09: 00007f2ddf3fe120
-  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000040406469
-  R13: 0000000000000003 R14: 00007fff15c4fa20 R15: 00000000000000c7
-  Code: 00 00 00 4a c7 44 22 08 00 00 00 00 42 c7 44 22 10 00 00 00 00 48 81 c4 b8 00 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 0b 0f 0b <0f> 0b 31 c0 eb c0 4c 89 ef e8 9a 09 41 ff e9 1e fe ff ff 4c 89
-  RIP: drm_mm_scan_color_evict+0x2b8/0x3d0 RSP: ffff880057a573f8
+commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
+Author: Peter Rosin <peda@axentia.se>
+Date:   Tue Jul 4 12:36:57 2017 +0200
 
-We can trivially relax this assumption by searching the hole_stack for
-the scan result and warn instead if the driver called us without any
-result.
+drm/fb-helper: factor out pseudo-palette
 
-Fixes: 3fa489dabea9 ("drm: Apply tight eviction scanning to color_adjust")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.11+
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180219113543.8010-1-chris@chris-wilson.co.uk
+that's cleaned up and drivers are expected to boot into a consistent
+lut state. This patch fixes that.
+
+Fixes: b8e2b0199cc3 ("drm/fb-helper: factor out pseudo-palette")
+Cc: Peter Rosin <peda@axenita.se>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: <stable@vger.kernel.org> # v4.14+
+References: https://bugzilla.kernel.org/show_bug.cgi?id=198123
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180131110450.22153-1-daniel.vetter@ffwll.ch
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_mm.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/cirrus/cirrus_mode.c |   40 ++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 17 deletions(-)
 
---- a/drivers/gpu/drm/drm_mm.c
-+++ b/drivers/gpu/drm/drm_mm.c
-@@ -834,9 +834,24 @@ struct drm_mm_node *drm_mm_scan_color_ev
- 	if (!mm->color_adjust)
- 		return NULL;
+--- a/drivers/gpu/drm/cirrus/cirrus_mode.c
++++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
+@@ -294,22 +294,7 @@ static void cirrus_crtc_prepare(struct d
+ {
+ }
  
--	hole = list_first_entry(&mm->hole_stack, typeof(*hole), hole_stack);
--	hole_start = __drm_mm_hole_node_start(hole);
--	hole_end = hole_start + hole->hole_size;
-+	/*
-+	 * The hole found during scanning should ideally be the first element
-+	 * in the hole_stack list, but due to side-effects in the driver it
-+	 * may not be.
-+	 */
-+	list_for_each_entry(hole, &mm->hole_stack, hole_stack) {
-+		hole_start = __drm_mm_hole_node_start(hole);
-+		hole_end = hole_start + hole->hole_size;
-+
-+		if (hole_start <= scan->hit_start &&
-+		    hole_end >= scan->hit_end)
-+			break;
-+	}
-+
-+	/* We should only be called after we found the hole previously */
-+	DRM_MM_BUG_ON(&hole->hole_stack == &mm->hole_stack);
-+	if (unlikely(&hole->hole_stack == &mm->hole_stack))
-+		return NULL;
+-/*
+- * This is called after a mode is programmed. It should reverse anything done
+- * by the prepare function
+- */
+-static void cirrus_crtc_commit(struct drm_crtc *crtc)
+-{
+-}
+-
+-/*
+- * The core can pass us a set of gamma values to program. We actually only
+- * use this for 8-bit mode so can't perform smooth fades on deeper modes,
+- * but it's a requirement that we provide the function
+- */
+-static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
+-				 u16 *blue, uint32_t size,
+-				 struct drm_modeset_acquire_ctx *ctx)
++static void cirrus_crtc_load_lut(struct drm_crtc *crtc)
+ {
+ 	struct drm_device *dev = crtc->dev;
+ 	struct cirrus_device *cdev = dev->dev_private;
+@@ -317,7 +302,7 @@ static int cirrus_crtc_gamma_set(struct
+ 	int i;
  
- 	DRM_MM_BUG_ON(hole_start > scan->hit_start);
- 	DRM_MM_BUG_ON(hole_end < scan->hit_end);
+ 	if (!crtc->enabled)
+-		return 0;
++		return;
+ 
+ 	r = crtc->gamma_store;
+ 	g = r + crtc->gamma_size;
+@@ -330,6 +315,27 @@ static int cirrus_crtc_gamma_set(struct
+ 		WREG8(PALETTE_DATA, *g++ >> 8);
+ 		WREG8(PALETTE_DATA, *b++ >> 8);
+ 	}
++}
++
++/*
++ * This is called after a mode is programmed. It should reverse anything done
++ * by the prepare function
++ */
++static void cirrus_crtc_commit(struct drm_crtc *crtc)
++{
++	cirrus_crtc_load_lut(crtc);
++}
++
++/*
++ * The core can pass us a set of gamma values to program. We actually only
++ * use this for 8-bit mode so can't perform smooth fades on deeper modes,
++ * but it's a requirement that we provide the function
++ */
++static int cirrus_crtc_gamma_set(struct drm_crtc *crtc, u16 *red, u16 *green,
++				 u16 *blue, uint32_t size,
++				 struct drm_modeset_acquire_ctx *ctx)
++{
++	cirrus_crtc_load_lut(crtc);
+ 
+ 	return 0;
+ }
