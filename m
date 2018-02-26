@@ -1,68 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751863AbeBZRRk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:17:40 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:35925 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751654AbeBZRR1 (ORCPT
+        id S1751654AbeBZRSo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:18:44 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48574 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeBZRSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:17:27 -0500
-From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-To: kishon@ti.com
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-Subject: [PATCH v2 2/2] pci: endpoint: Fix kernel panic after put_device()
-Date: Mon, 26 Feb 2018 18:16:17 +0100
-Message-Id: <20180226171617.10016-3-embedded24@evers-fischer.de>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180226171617.10016-1-embedded24@evers-fischer.de>
-References: <20180226171617.10016-1-embedded24@evers-fischer.de>
-X-Provags-ID: V03:K0:alg9JALAWbk+wUBLvrmih0f+atHeD+6HOPi1tsGD+4UCw7noD6d
- vOs+YwmqFxifpZR1DHYQn49JKBxxdxIzQXUEU/rSU9876rC5mksnVu75aJP+U7xp5QfowT1
- EjAR26gtObnCHCttT63ib5WaZJA6HKxLjUaG0xPo6dQQ/eo/xBk6GWo91ttqG1N15pkdnfX
- M0D/zrdbTFG4AiOi3cCLA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ug8TGNibxHA=:vGFeKrRURb9oz62wLnubEL
- px8Pv6MfZ2AFvXf42UOHUnPYhV4LjMQKTZV9pVZ1KypiL9AuikzOQlJxV69neT0beRqNF3g2W
- J3upXBH1FjrJ0H8R2BToYYMeRBaOCw+XJCNiwl09vDqCkjfC+/v/QtHECaTt6yn5Ss135pwjx
- HrF/TXbTR+bFS+M4jBAWABi7qdbXfxT/7K6/7Z3jaaG/SP4af7k36H4lIY0tZ6j6JDFm4Z8Ja
- 4T6IxK5ZIqWauhsAMeufX5OHjMFD21mvxtq8U1D8jUHbw7RLTE2hwXaUb8bSG9SLojJs6nakB
- xSPSL3KTs58m0XbbbzoXY/84JYqKExtCAImNqOruyfEB8DpF8VxJCmS0mhi7TohQoARvtq4hF
- W4Vfy0um8Bdo8vdFo1RI91Y+pr1wgJ9kLFlakNuKlmcfGpBoXUcpHP12+owv6jiRWQIdpQcto
- 3yEZFrDJe0F/V8BOsDSgPx2Utnl1K/7IMDThPbDUkb8yG+8BGfSbzeRMplaSPy++sgOQWWrHK
- RLzXpljhY3THPLcx95StoDAJFBsFz5q5bXYYadRqzFs8xT2mKwpt5lH9naOIZLNXrDaWw2gEd
- utRndW8d2izTcRoSYoOxElz7C6AVU9kLkd1zBzdHRIjemYFXNS2HuQigqgoDS1Uy8owy4ktBr
- 6kD7NWVMHwR1Wutj78o03dxxCCX8X0MxJj7y/W7ZfgArK72yl8b55cVSAM2q3drINdkfOxw9U
- AIjuaQ6hH9tyyvpegB3s+c57H0ZimWLNhQOGwg==
+        Mon, 26 Feb 2018 12:18:43 -0500
+Subject: Re: [PATCH v8 18/24] mm: Provide speculative fault infrastructure
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1518794738-4186-19-git-send-email-ldufour@linux.vnet.ibm.com>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Message-ID: <5b16d6ce-6b62-e4ca-2d78-c25bb008e27e@oracle.com>
+Date: Mon, 26 Feb 2018 12:16:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1518794738-4186-19-git-send-email-ldufour@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802260225
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Hi Laurent,
 
-'put_device()' calls the relase function 'pci_epf_dev_release()',
-which already frees 'epf->name' and 'epf'.
+This series doesn't build for me[*] when CONFIG_TRANSPARENT_HUGEPAGE is unset.
 
-Therefore we must not free them again after 'put_device()'.
+The problem seems to be that the BUILD_BUG() version of pmd_same is called in pte_map_lock:
 
-Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
----
- drivers/pci/endpoint/pci-epf-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 02/16/2018 10:25 AM, Laurent Dufour wrote:
+> +static bool pte_map_lock(struct vm_fault *vmf)
+> +{
+...snip...
+> +	if (!pmd_same(pmdval, vmf->orig_pmd))
+> +		goto out;
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 1f2506f32bb9..1878a6776519 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -232,7 +232,7 @@ struct pci_epf *pci_epf_create(const char *name)
- 
- put_dev:
- 	put_device(dev);
--	kfree(epf->name);
-+	return ERR_PTR(ret);
- 
- free_epf:
- 	kfree(epf);
--- 
-2.16.2
+Since SPF can now call pmd_same without THP, maybe the way to fix it is just
+
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 2cfa3075d148..e130692db24a 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -375,7 +375,8 @@ static inline int pte_unused(pte_t pte)
+  #endif
+  
+  #ifndef __HAVE_ARCH_PMD_SAME
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || \
++    defined(CONFIG_SPECULATIVE_PAGE_FAULT)
+  static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+  {
+         return pmd_val(pmd_a) == pmd_val(pmd_b);
+
+?
+
+Daniel
+
+
+[*]  The errors are:
+
+In file included from /home/dmjordan/src/linux/include/linux/kernel.h:10:0,
+                  from /home/dmjordan/src/linux/include/linux/list.h:9,
+                  from /home/dmjordan/src/linux/include/linux/smp.h:12,
+                  from /home/dmjordan/src/linux/include/linux/kernel_stat.h:5,
+                  from /home/dmjordan/src/linux/mm/memory.c:41:
+In function ‘pmd_same.isra.104’,
+     inlined from ‘pte_map_lock’ at /home/dmjordan/src/linux/mm/memory.c:2380:7:
+/home/dmjordan/src/linux/include/linux/compiler.h:324:38: error: call to ‘__compiletime_assert_391’ declared with attribute error: BUILD_BUG failed
+   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                       ^
+/home/dmjordan/src/linux/include/linux/compiler.h:304:4: note: in definition of macro ‘__compiletime_assert’
+     prefix ## suffix();    \
+     ^~~~~~
+/home/dmjordan/src/linux/include/linux/compiler.h:324:2: note: in expansion of macro ‘_compiletime_assert’
+   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+   ^~~~~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/linux/build_bug.h:45:37: note: in expansion of macro ‘compiletime_assert’
+  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                      ^~~~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/linux/build_bug.h:79:21: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+                      ^~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/asm-generic/pgtable.h:391:2: note: in expansion of macro ‘BUILD_BUG’
+   BUILD_BUG();
+   ^~~~~~~~~
+   CC      block/elevator.o
+   CC      crypto/crypto_wq.o
+In function ‘pmd_same.isra.104’,
+     inlined from ‘pte_spinlock’ at /home/dmjordan/src/linux/mm/memory.c:2326:7,
+     inlined from ‘handle_pte_fault’ at /home/dmjordan/src/linux/mm/memory.c:4181:7:
+/home/dmjordan/src/linux/include/linux/compiler.h:324:38: error: call to ‘__compiletime_assert_391’ declared with attribute error: BUILD_BUG failed
+   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                       ^
+/home/dmjordan/src/linux/include/linux/compiler.h:304:4: note: in definition of macro ‘__compiletime_assert’
+     prefix ## suffix();    \
+     ^~~~~~
+/home/dmjordan/src/linux/include/linux/compiler.h:324:2: note: in expansion of macro ‘_compiletime_assert’
+   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+   ^~~~~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/linux/build_bug.h:45:37: note: in expansion of macro ‘compiletime_assert’
+  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                      ^~~~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/linux/build_bug.h:79:21: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+                      ^~~~~~~~~~~~~~~~
+/home/dmjordan/src/linux/include/asm-generic/pgtable.h:391:2: note: in expansion of macro ‘BUILD_BUG’
+   BUILD_BUG();
+   ^~~~~~~~~
+...
+make[2]: *** [/home/dmjordan/src/linux/scripts/Makefile.build:316: mm/memory.o] Error 1
+make[1]: *** [/home/dmjordan/src/linux/Makefile:1047: mm] Error 2
