@@ -1,136 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752104AbeBZQY3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:24:29 -0500
-Received: from mga02.intel.com ([134.134.136.20]:40460 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751550AbeBZQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:24:24 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="207153186"
-Date: Mon, 26 Feb 2018 09:24:40 -0700
-From: Keith Busch <keith.busch@intel.com>
-To: baegjae@gmail.com
-Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-multipath: fix sysfs dangerously created links
-Message-ID: <20180226162440.GB10832@localhost.localdomain>
-References: <20180226085123.26120-1-baegjae@gmail.com>
+        id S1752125AbeBZQYn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:24:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52686 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751735AbeBZQY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:24:26 -0500
+Date: Mon, 26 Feb 2018 16:24:27 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luc Maranget <luc.maranget@inria.fr>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>, Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
+ spin_unlock()
+Message-ID: <20180226162426.GB17158@arm.com>
+References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+ <20180222134004.GN25181@hirez.programming.kicks-ass.net>
+ <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+ <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net>
+ <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+ <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
+ <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180226085123.26120-1-baegjae@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 05:51:23PM +0900, baegjae@gmail.com wrote:
-> From: Baegjae Sung <baegjae@gmail.com>
+On Mon, Feb 26, 2018 at 08:06:59AM -0800, Linus Torvalds wrote:
+> On Mon, Feb 26, 2018 at 6:21 AM, Luc Maranget <luc.maranget@inria.fr> wrote:
+> >
+> > That is, locks are not implemented from more basic primitive but are specified.
+> > The specification can be described as behaving that way:
+> >   - A lock behaves as a read-modify-write. the read behaving as a read-acquire
 > 
-> If multipathing is enabled, each NVMe subsystem creates a head
-> namespace (e.g., nvme0n1) and multiple private namespaces
-> (e.g., nvme0c0n1 and nvme0c1n1) in sysfs. When creating links for
-> private namespaces, links of head namespace are used, so the
-> namespace creation order must be followed (e.g., nvme0n1 ->
-> nvme0c1n1). If the order is not followed, links of sysfs will be
-> incomplete or kernel panic will occur.
+> This is wrong, or perhaps just misleading.
 > 
-> The kernel panic was:
->   kernel BUG at fs/sysfs/symlink.c:27!
->   Call Trace:
->     nvme_mpath_add_disk_links+0x5d/0x80 [nvme_core]
->     nvme_validate_ns+0x5c2/0x850 [nvme_core]
->     nvme_scan_work+0x1af/0x2d0 [nvme_core]
+> The *whole* r-m-w acts as an acquire. Not just the read part. The
+> write is very much part of it.
 > 
-> Correct order
-> Context A     Context B
-> nvme0n1
-> nvme0c0n1     nvme0c1n1
+> Maybe that's what you meant, but it read to me as "just the read part
+> of the rmw behaves as a read-acquire".
 > 
-> Incorrect order
-> Context A     Context B
->               nvme0c1n1
-> nvme0n1
-> nvme0c0n1
+> Because it is very important that the _write_ part of the rmw is also
+> ordered wrt everything that is inside the spinlock.
 > 
-> The function of a head namespace creation is moved to maintain the
-> correct order. We verified the code with or without multipathing
-> using three vendors of dual-port NVMe SSDs.
+> So doing a spinlock as
 > 
-> Signed-off-by: Baegjae Sung <baegjae@gmail.com>
+>  (a) read-locked-acquire
+>    modify
+>  (c) write-conditional
+> 
+> would be wrong, because the accesses inside the spinlock are ordered
+> not just wrt the read-acquire, they have to be ordered wrt the write
+> too.
+> 
+> So it is closer to say that it's the _write_ of the r-m-w sequence
+> that has the acquire semantics, not the read.
 
-Thanks, I see what you mean on the potential ordering problem here.
-Calling nvme_mpath_add_disk, though, before the 'head' has any namespace
-paths available looks like you'll get a lot of 'no path available'
-warnings during the bring-up. It should resolve itself shortly after,
-but the warnings will be a bit alarming, right?
+Strictly speaking, that's not what we've got implemented on arm64: only
+the read part of the RmW has Acquire semantics, but there is a total
+order on the lock/unlock operations for the lock. For example, if one
+CPU does:
 
-> ---
->  drivers/nvme/host/core.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 0fe7ea35c221..28777b7352a5 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2844,7 +2844,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
->  }
->  
->  static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
-> -		struct nvme_id_ns *id, bool *new)
-> +		struct nvme_id_ns *id)
->  {
->  	struct nvme_ctrl *ctrl = ns->ctrl;
->  	bool is_shared = id->nmic & (1 << 0);
-> @@ -2860,8 +2860,7 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
->  			ret = PTR_ERR(head);
->  			goto out_unlock;
->  		}
-> -
-> -		*new = true;
-> +		nvme_mpath_add_disk(head);
->  	} else {
->  		struct nvme_ns_ids ids;
->  
-> @@ -2873,8 +2872,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
->  			ret = -EINVAL;
->  			goto out_unlock;
->  		}
-> -
-> -		*new = false;
->  	}
->  
->  	list_add_tail(&ns->siblings, &head->list);
-> @@ -2945,7 +2942,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->  	struct nvme_id_ns *id;
->  	char disk_name[DISK_NAME_LEN];
->  	int node = dev_to_node(ctrl->dev), flags = GENHD_FL_EXT_DEVT;
-> -	bool new = true;
->  
->  	ns = kzalloc_node(sizeof(*ns), GFP_KERNEL, node);
->  	if (!ns)
-> @@ -2971,7 +2967,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->  	if (id->ncap == 0)
->  		goto out_free_id;
->  
-> -	if (nvme_init_ns_head(ns, nsid, id, &new))
-> +	if (nvme_init_ns_head(ns, nsid, id))
->  		goto out_free_id;
->  	nvme_setup_streams_ns(ctrl, ns);
->  	
-> @@ -3037,8 +3033,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->  		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
->  			ns->disk->disk_name);
->  
-> -	if (new)
-> -		nvme_mpath_add_disk(ns->head);
->  	nvme_mpath_add_disk_links(ns);
->  	return;
->   out_unlink_ns:
-> -- 
-> 2.16.2
-> 
+spin_lock(&lock);
+WRITE_ONCE(foo, 42);
+
+then another CPU could do:
+
+if (smp_load_acquire(&foo) == 42)
+	BUG_ON(!spin_is_locked(&lock));
+
+and that could fire. Is that relied on somewhere?
+
+Will
