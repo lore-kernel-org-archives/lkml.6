@@ -1,183 +1,146 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2058923-1519109829-2-14838364758609845073
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519109828; b=nIOwnjjLe6qz1CrIRyONIIv8KrGuGSvdYbNFPggKMlIGFNW
-    onQ7HJQkXGCLll64azessieiyz+Ut0pjIFLOe04AGrco4E1UGWOtJGZrcVGx2VlM
-    PAXVvwwfultLE44lhfWzjkX6kBvI0A37nEVhF6w33aJZO/xJsqWwngLJ91Jg4S2L
-    wpknDZCkvtY+e+TeREcLEiQeNRWZNmkHZydelbtBr59O7WIrQfwRAs9h7dKLY7xl
-    3rtsiSXDTCkcCII8UdrJGgEF72K4vzrkR/s0SOT2vBzY1Thit6Tweu3xD95c8Q+e
-    4coIPyNDDuauYwsOH9SVJH4b7QenpDh7UrUYNdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519109828; bh=n
-    LsUUOSu/15qzKLO4dgggISdqujCUAbUmfz97G6mfDw=; b=ELY07Mseh83lCobfD
-    c+UcMYFF7xa5jVwJMqazcDkmfSH5gC8p8jkuqfXIhsaZvx9QZ+LnCe0yg1UtGhB7
-    ld0UURPwZSPd1h/R8ncPXc7lbfRwmAwcIXeZEpMhLkm5Qk8mKJeV+k9ejhaeEd6J
-    Iu0Y714l3kLX+sRdklYumUXq1rwrx0NtqayXeLlKtBy6E5cfgXn13Bt94+ylphoK
-    Ab7FP/xW4McFbz2vhza/ifITYpw8DNij5jWd1bGCVrPCGG7gULJuDXDKmi+AWq8Y
-    YHker2ovg+bwXFdv21dCQx4pza1S51lUOt8u4tBKGj5V9ZS6dE+kMZzau/y8qS4D
-    DbxNQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com,
- hans.verkuil@cisco.com
-Subject: [PATCH v2] Staging: bcm2048: Fix function argument alignment in
+Return-Path: <hverkuil@xs4all.nl>
+X-Google-Smtp-Source: AH8x227+AQVZnrxNVUFGZQMXbzCqmGSREWYo0iQC7Ytj5GgcBMzcPZ2NkMCIDSMe8cae4BEAAG7m
+ARC-Seal: i=1; a=rsa-sha256; t=1519653086; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VinWilcqEWeb4Rz+g9U42h1GzItwq7MO60utad/1SGVVlTZEC9Ol3gvfvZSdSnhr5X
+         v3C83Pdtx0zeI34gT4Q/0ASjkJQ2e4Y9H3XDsKjZQVx+k7r0axJnqKRT2cvwK7T2MHIT
+         sAgxgCz+gB1XUb7B5aI1kz+gQsasSER6ohVwje9ghy/ddMsitwd3iseB9TtZXC+hI3BU
+         taUWvb0WO2BTBujA/tmHgFTDaC5nrwTtbJHrG5YawUkbibYgMCjkIi4x4vtd0RM4XUJx
+         3YCXJGzfvdef+Z5T6eYSMqzpvAK+rBWjJb9IAm1wOPn4Ok0awbVVhaM45a7T+gUmpgfv
+         6tJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=gLHEPpO9LPEWinvR1Jv0JLOiou7vc+C2Hy5EPDMNxPM=;
+        b=MtRk+uzW/ccwJ9K3KN08uBB/ID4aoGbZYRE/mlLS71KsUyuVDP6u9fyK/De3PU5cIT
+         fSsh3sDAbA2WthTjNV6Z2eq6ibvWlSvf8e+R9eanum5uEHCQQ9zrHCARJPMEoQDSZ/NQ
+         9VHOaHd2ir+A400oM/tnD5ZY4FcA8VHQKJeErFHqkWdyXDoi+/g/WPgNXWD33c5+10h6
+         2Ct/W4JCQCvHncm2SRsyjyx+E+sDJm5xbyFk1nfAZrCLjvV93UEI9fOfYTSKnyXIe/BG
+         9zQGvkR3Q7XgH88ksK331pyKHXYFoMWt5Kle35VI+1DOywLI50K2GthzAgBb7jCDn1i1
+         yRMQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.30 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.30 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
+Subject: Re: [PATCH v2] Staging: bcm2048: Fix function argument alignment in
  radio-bcm2048.c.
-Date: Mon, 19 Feb 2018 22:53:04 -0800
-Message-Id: <20180220065304.8943-1-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180219072550.hz4vpomsaz2ajrnm@mwanda>
+To: Quytelda Kahja <quytelda@tamalin.org>, gregkh@linuxfoundation.org,
+ dan.carpenter@oracle.com, hans.verkuil@cisco.com
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org
 References: <20180219072550.hz4vpomsaz2ajrnm@mwanda>
-X-Provags-ID: V03:K0:fs9hCWKhSsN8vvVXb9mYvPfHtsrYsgvThlx3KWR6zW2kfIPEETJ
- y6iWHoPPny59DnhRXRSKeGqTWxkwX1yNWWndsUddhIZ7OSMmoaIktfWg2SJrRdm9EKrVTCS
- ivVYTfYWs0Ak6o7HICy7Cwxyc3m/pWP8GAmF2avsoUjONLohkLIKAB+IL3bdxXVuhCpabhZ
- D0q39FRFGqaJGjxap6G2w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:KPqxnLUXOvQ=:rX9/ZXeq0+MEeA+WtWNV+x
- muwd9VKiDaFk59ETJK5R1EMN3yl29lCGsRv++f/7sd7DxfsPTgX9STIQ/rqqDhnqsif8wFP3c
- pbgGvfh3k0QqvyIoFhoCoKFKgP1eZFH7z2kw+YMz4x2EhV16QBrsmagYwa11Cc0kf/3saEys/
- MKDQi8i6AkQUuMpiXVc5LO9fElZhzRSBjlZRQgpF9T9Q9nLJqulUfzVRKbiwgtYIWNLiUsxcQ
- QrwcpYG2opGrJAN5nThKr4/LZEdKIHwNhIkQdHTi08yvobajKc94RtWkl43Xa7KVylvdGt8sK
- sNVIUUhfcFM3YFzYXEUnjsSPrPwsSqQVsU8oopDYkCvueJHekFT+dtWTAgxbbrO8QxsuOHqdW
- pAUwShbbIJkd8S0lN7XmlYEsFOlXguPhhZa/sxJ1H4FwZZOuJCqbVWkm7DL9I+ard7jAXR8jT
- UC6ceAQYHDe7cvzRDeikAmJIu1xKjHc/6Ftkozy8hpwvbUlv7r32jnHG8rD9U0WS/TTACKeVw
- SL0obosqz7jVk3/1n+rJjEarI5yOIjwoFFgl0SRtgxFoR2c5+hjSet8TsbDfpp4UqPrm3bIIw
- LxLwX8Ep4xxFeAtkmblWN2bCLf0vU0UKpwIi8Bc1Ge7gv3Rq1+jNiopZBN2PkTv/L3u6Yov7w
- eLAJ3e5jy9OigKSyL+GLQGg5qyJyEjyYjoR2ozyxAmp5sCh2uk/fZHaOBg3/nyUNwfye6eixS
- DiQUliPsy06S7Gb6YIBABRAC1pqsuisfJHCHUA==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Quytelda Kahja <quytelda@tamalin.org>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+ <20180220065304.8943-1-quytelda@tamalin.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <cb62e915-eb9c-9252-1f0a-cc85c8ea3530@xs4all.nl>
+Date: Mon, 26 Feb 2018 14:51:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180220065304.8943-1-quytelda@tamalin.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-CMAE-Envelope: MS4wfGOu+HXsM7oFxd/GRnfcEPEcz4qHYlskNb2XS9GnzvoyotRNp3B8+6p3VF222uF5BvtNxZczoiWA04vXZMmK9z/y8yUW5DaVVes6gU7/mr8p82ElghvY
+ nxWYrtJijG3UIAHXedfejqwYJprzb2hCOx/ZdOlwyXUmWE5wdNXDewjRaA2kbU6A8JZpxpPEerndtD5S21w7bIdpzwpGFX+MDcWiT4gnZSmiIpy+u/O9T2Qp
+ lWv0b7blCArg68JDu1jOK+oyt44VAEPFCsJfde2yT/8Wa7gBbUVTF576tLwYPE0OPNyVJYlSroArwUMOs9eaANl/4KQLynUggHajMMNSDykMtJnXD/5wfUrc
+ WBmWRnL9
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592788103867027821?=
+X-GMAIL-MSGID: =?utf-8?q?1593471754725947695?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix a coding style problem.
+On 02/20/2018 07:53 AM, Quytelda Kahja wrote:
+> Fix a coding style problem.
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
-This is the patch without the unnecessary fixes for line length.
+What coding style problem? You should give a short description of
+what you are fixing.
 
- drivers/staging/media/bcm2048/radio-bcm2048.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+> ---
+> This is the patch without the unnecessary fixes for line length.
+> 
+>  drivers/staging/media/bcm2048/radio-bcm2048.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/staging/media/bcm2048/radio-bcm2048.c b/drivers/staging/media/bcm2048/radio-bcm2048.c
+> index 06d1920150da..f38a4f2acdde 100644
+> --- a/drivers/staging/media/bcm2048/radio-bcm2048.c
+> +++ b/drivers/staging/media/bcm2048/radio-bcm2048.c
+> @@ -1864,7 +1864,7 @@ static int bcm2048_probe(struct bcm2048_device *bdev)
+>  		goto unlock;
+>  
+>  	err = bcm2048_set_fm_search_rssi_threshold(bdev,
+> -					BCM2048_DEFAULT_RSSI_THRESHOLD);
+> +						   BCM2048_DEFAULT_RSSI_THRESHOLD);
+>  	if (err < 0)
+>  		goto unlock;
+>  
 
-diff --git a/drivers/staging/media/bcm2048/radio-bcm2048.c b/drivers/staging/media/bcm2048/radio-bcm2048.c
-index 06d1920150da..f38a4f2acdde 100644
---- a/drivers/staging/media/bcm2048/radio-bcm2048.c
-+++ b/drivers/staging/media/bcm2048/radio-bcm2048.c
-@@ -1864,7 +1864,7 @@ static int bcm2048_probe(struct bcm2048_device *bdev)
- 		goto unlock;
- 
- 	err = bcm2048_set_fm_search_rssi_threshold(bdev,
--					BCM2048_DEFAULT_RSSI_THRESHOLD);
-+						   BCM2048_DEFAULT_RSSI_THRESHOLD);
- 	if (err < 0)
- 		goto unlock;
- 
-@@ -1942,9 +1942,9 @@ static irqreturn_t bcm2048_handler(int irq, void *dev)
-  */
- #define property_write(prop, type, mask, check)				\
- static ssize_t bcm2048_##prop##_write(struct device *dev,		\
--					struct device_attribute *attr,	\
--					const char *buf,		\
--					size_t count)			\
-+				      struct device_attribute *attr,	\
-+				      const char *buf,			\
-+				      size_t count)			\
- {									\
- 	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
- 	type value;							\
-@@ -1966,8 +1966,8 @@ static ssize_t bcm2048_##prop##_write(struct device *dev,		\
- 
- #define property_read(prop, mask)					\
- static ssize_t bcm2048_##prop##_read(struct device *dev,		\
--					struct device_attribute *attr,	\
--					char *buf)			\
-+				     struct device_attribute *attr,	\
-+				     char *buf)				\
- {									\
- 	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
- 	int value;							\
-@@ -1985,8 +1985,8 @@ static ssize_t bcm2048_##prop##_read(struct device *dev,		\
- 
- #define property_signed_read(prop, size, mask)				\
- static ssize_t bcm2048_##prop##_read(struct device *dev,		\
--					struct device_attribute *attr,	\
--					char *buf)			\
-+				     struct device_attribute *attr,	\
-+				     char *buf)				\
- {									\
- 	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
- 	size value;							\
-@@ -2005,8 +2005,8 @@ property_read(prop, mask)						\
- 
- #define property_str_read(prop, size)					\
- static ssize_t bcm2048_##prop##_read(struct device *dev,		\
--					struct device_attribute *attr,	\
--					char *buf)			\
-+				     struct device_attribute *attr,	\
-+				     char *buf)				\
- {									\
- 	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
- 	int count;							\
-@@ -2175,7 +2175,7 @@ static int bcm2048_fops_release(struct file *file)
- }
- 
- static __poll_t bcm2048_fops_poll(struct file *file,
--				      struct poll_table_struct *pts)
-+				  struct poll_table_struct *pts)
- {
- 	struct bcm2048_device *bdev = video_drvdata(file);
- 	__poll_t retval = 0;
--- 
-2.16.2
+Just drop this change: it will replace one warning (non-aligned) with
+another (> 80 cols).
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+This code is fine as it is.
+
+Regards,
+
+	Hans
+
+> @@ -1942,9 +1942,9 @@ static irqreturn_t bcm2048_handler(int irq, void *dev)
+>   */
+>  #define property_write(prop, type, mask, check)				\
+>  static ssize_t bcm2048_##prop##_write(struct device *dev,		\
+> -					struct device_attribute *attr,	\
+> -					const char *buf,		\
+> -					size_t count)			\
+> +				      struct device_attribute *attr,	\
+> +				      const char *buf,			\
+> +				      size_t count)			\
+>  {									\
+>  	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
+>  	type value;							\
+> @@ -1966,8 +1966,8 @@ static ssize_t bcm2048_##prop##_write(struct device *dev,		\
+>  
+>  #define property_read(prop, mask)					\
+>  static ssize_t bcm2048_##prop##_read(struct device *dev,		\
+> -					struct device_attribute *attr,	\
+> -					char *buf)			\
+> +				     struct device_attribute *attr,	\
+> +				     char *buf)				\
+>  {									\
+>  	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
+>  	int value;							\
+> @@ -1985,8 +1985,8 @@ static ssize_t bcm2048_##prop##_read(struct device *dev,		\
+>  
+>  #define property_signed_read(prop, size, mask)				\
+>  static ssize_t bcm2048_##prop##_read(struct device *dev,		\
+> -					struct device_attribute *attr,	\
+> -					char *buf)			\
+> +				     struct device_attribute *attr,	\
+> +				     char *buf)				\
+>  {									\
+>  	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
+>  	size value;							\
+> @@ -2005,8 +2005,8 @@ property_read(prop, mask)						\
+>  
+>  #define property_str_read(prop, size)					\
+>  static ssize_t bcm2048_##prop##_read(struct device *dev,		\
+> -					struct device_attribute *attr,	\
+> -					char *buf)			\
+> +				     struct device_attribute *attr,	\
+> +				     char *buf)				\
+>  {									\
+>  	struct bcm2048_device *bdev = dev_get_drvdata(dev);		\
+>  	int count;							\
+> @@ -2175,7 +2175,7 @@ static int bcm2048_fops_release(struct file *file)
+>  }
+>  
+>  static __poll_t bcm2048_fops_poll(struct file *file,
+> -				      struct poll_table_struct *pts)
+> +				  struct poll_table_struct *pts)
+>  {
+>  	struct bcm2048_device *bdev = video_drvdata(file);
+>  	__poll_t retval = 0;
+> 
