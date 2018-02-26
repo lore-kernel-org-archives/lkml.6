@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2274kxKdywxDB7NhyVHBHHwynArYi8a4NFCC8WpRaSTuvIE2pmLOTk5b0zjEuOWYUq22UcKW
-ARC-Seal: i=1; a=rsa-sha256; t=1519676601; cv=none;
+X-Google-Smtp-Source: AG47ELsd3gjsWhPygpEFaLkQUSEHf6Vf+zlV53BJy3o0cgdUA7aKlQK2duc8Z6A5QZr0JxAYvHHb
+ARC-Seal: i=1; a=rsa-sha256; t=1519676597; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tkdxi7bbvbchCzZ7m3sPhc9aZ5zNKqLS2Sc3CSBS9IvUVmCrDsQz5n0qHjBZBNpwCc
-         8049b1OZiHIAieTmWrHehmC3ZuwWTY2jgCISjB3tyoJle+I3Uj51PV4+bymY2MOAnrbv
-         jeDILKuwmPr4Kby8mEMCdIuAhj1Xl9+YmTxw4lI2a0zxsIgWRGA7M7TLW6fDtRq//D6j
-         8sZ3KOpghiMDisTWCseNKwK+Yi4CvAfwtV3PSJIJ9jnXmWYsDlPbyXMMU2v1HeE14m+u
-         kSXwp9vod/N0jL6q7ikILTYaxOSYc7v+5MY6/qw9GzLmmdrW48uAKscCkUKqS2Hka6QT
-         0nAw==
+        b=HP+bD8FQOa7QgiS82/U/3ULYvNlTpX2fC1X2VqWKKTyMyLE2jvRJLloNTVfmu2sSgX
+         TNkZtZm//7pNauhxAkugtJOHqvkOwCv4GEuiXeFysUAVj+ra0uZYoyJtFQkQukdOj/9F
+         fAPzLJrFO/etbxsLa16gbT4ZQsItX6lfeUBQ26Qtsqgs17VSIwbqlSKg/A9iy1phnGzu
+         D1M7n9IGOBIkbHxny6Kx8BtbYa+yNW7YcdE8rKSBSq5pb5zIqOb81vQtdt3fHY9Zaqgk
+         4L5XVrePdG9I6Q0UFUHtllSRbDbZfHgIEbhG4xNMHCCvRaaZYvI1eOpPwqdHzGU+fZfy
+         Q9Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7hdIvQ5hrPwEHx6PkZ2JBBxAbK++vm2FKhD2Mu86VLQ=;
-        b=M4+9MQ8AUmmioZYph+UcTiQG85afwpapxbVmHHMpHz6rYNKfZHIv0EFv7u4j8v+pM3
-         NfDCt5cvrz5bnUXkyRoJBQ9BjLU40BPwvF7DjzJSfe/bTgRVreGfbZlkLKeXudiOiwuW
-         7iXpDUdadYX4l0AcTLxZwPzi2ivHmi70tINNZtPlWRFrZZKgb73HgxhMfkVxdQN0xE3N
-         9g1FinMBvFMGNQnyaD3TkV2ageghsLJcOdri2Nomk+1nJeffMjVit0ldQ4O1leLLQZAD
-         Hgf0NAP7VxVFMaEYBRHNjFG3lAx8sAdOQaCO/EOApC76sRPrcoYzs90m0iDAm5aKzz8c
-         U43Q==
+        bh=e+f2tTjUdMXnxnXiJ73cHw9d6mh2AKnQzyxMuUho88k=;
+        b=WiRMpLP17DCSsUvwA9fX6RnzQAbvTWxL/0Lbb8e+3yKRkT2lInWNrCYfT7ALQir7HJ
+         Mf2p1VC86hhjcoHXwUvP3UjEVNQhp1N/qdpaG+84Ry85EfqWEy9By+MHXxwhrsSDvDsr
+         f7ve42jqqiew3eeN7fk3nyk9r6GECSmDaJq7pLKFo/QPuflGEsiuX1YW+bihB/v8pIo7
+         Y1N3JIcAOUO0fJGhl+jFGatEzkTus+a9LjC87K6PRVMLTEH0tFlBg8f78CqZdX+fGtw6
+         7T5G7QJIMqZLhBynqHjJSpPNTPVi3YuWJBhfJYyXcNLmRGuWWoZdrfJl0Jm1CJI+2FCk
+         /Hpg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paolo Valente <paolo.valente@linaro.org>,
-	Eric Biggers <ebiggers@google.com>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.14 11/54] X.509: fix BUG_ON() when hash algorithm is unsupported
-Date: Mon, 26 Feb 2018 21:21:48 +0100
-Message-Id: <20180226202144.931709445@linuxfoundation.org>
+	Eric Anholt <eric@anholt.net>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	stable@kernel.org
+Subject: [PATCH 4.14 10/54] i2c: bcm2835: Set up the rising/falling edge delays
+Date: Mon, 26 Feb 2018 21:21:47 +0100
+Message-Id: <20180226202144.869715000@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496367609163811?=
-X-GMAIL-MSGID: =?utf-8?q?1593496411730673450?=
+X-GMAIL-THRID: =?utf-8?q?1593496407794895346?=
+X-GMAIL-MSGID: =?utf-8?q?1593496407794895346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +51,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Eric Anholt <eric@anholt.net>
 
-commit 437499eea4291ae9621e8763a41df027c110a1ef upstream.
+commit fe32a815f05c8568669a062587435e15f9345764 upstream.
 
-The X.509 parser mishandles the case where the certificate's signature's
-hash algorithm is not available in the crypto API.  In this case,
-x509_get_sig_params() doesn't allocate the cert->sig->digest buffer;
-this part seems to be intentional.  However,
-public_key_verify_signature() is still called via
-x509_check_for_self_signed(), which triggers the 'BUG_ON(!sig->digest)'.
+We were leaving them in the power on state (or the state the firmware
+had set up for some client, if we were taking over from them).  The
+boot state was 30 core clocks, when we actually want to sample some
+time after (to make sure that the new input bit has actually arrived).
 
-Fix this by making public_key_verify_signature() return -ENOPKG if the
-hash buffer has not been allocated.
-
-Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled:
-
-    openssl req -new -sha512 -x509 -batch -nodes -outform der \
-        | keyctl padd asymmetric desc @s
-
-Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
-Reported-by: Paolo Valente <paolo.valente@linaro.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/asymmetric_keys/public_key.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-bcm2835.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -93,9 +93,11 @@ int public_key_verify_signature(const st
+--- a/drivers/i2c/busses/i2c-bcm2835.c
++++ b/drivers/i2c/busses/i2c-bcm2835.c
+@@ -50,6 +50,9 @@
+ #define BCM2835_I2C_S_CLKT	BIT(9)
+ #define BCM2835_I2C_S_LEN	BIT(10) /* Fake bit for SW error reporting */
  
- 	BUG_ON(!pkey);
- 	BUG_ON(!sig);
--	BUG_ON(!sig->digest);
- 	BUG_ON(!sig->s);
- 
-+	if (!sig->digest)
-+		return -ENOPKG;
++#define BCM2835_I2C_FEDL_SHIFT	16
++#define BCM2835_I2C_REDL_SHIFT	0
 +
- 	alg_name = sig->pkey_algo;
- 	if (strcmp(sig->pkey_algo, "rsa") == 0) {
- 		/* The data wangled by the RSA algorithm is typically padded
+ #define BCM2835_I2C_CDIV_MIN	0x0002
+ #define BCM2835_I2C_CDIV_MAX	0xFFFE
+ 
+@@ -81,7 +84,7 @@ static inline u32 bcm2835_i2c_readl(stru
+ 
+ static int bcm2835_i2c_set_divider(struct bcm2835_i2c_dev *i2c_dev)
+ {
+-	u32 divider;
++	u32 divider, redl, fedl;
+ 
+ 	divider = DIV_ROUND_UP(clk_get_rate(i2c_dev->clk),
+ 			       i2c_dev->bus_clk_rate);
+@@ -100,6 +103,22 @@ static int bcm2835_i2c_set_divider(struc
+ 
+ 	bcm2835_i2c_writel(i2c_dev, BCM2835_I2C_DIV, divider);
+ 
++	/*
++	 * Number of core clocks to wait after falling edge before
++	 * outputting the next data bit.  Note that both FEDL and REDL
++	 * can't be greater than CDIV/2.
++	 */
++	fedl = max(divider / 16, 1u);
++
++	/*
++	 * Number of core clocks to wait after rising edge before
++	 * sampling the next incoming data bit.
++	 */
++	redl = max(divider / 4, 1u);
++
++	bcm2835_i2c_writel(i2c_dev, BCM2835_I2C_DEL,
++			   (fedl << BCM2835_I2C_FEDL_SHIFT) |
++			   (redl << BCM2835_I2C_REDL_SHIFT));
+ 	return 0;
+ }
+ 
