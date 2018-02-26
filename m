@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2387526-1519634053-2-7646488480170890854
+X-Cyrus-Session-Id: sloti22d1t05-2387443-1519634044-2-17142144032370509704
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,62 +13,61 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519634052; b=uP9FI6zlNhoddJLu1voyRbXuczQAokN8q5qIoKo8HSB91dQ
-    4Y4S4LQIUIxIQtwwF05xdvV2L3o2VuAaKBLJj7G8hSGS32S4MpFgyHRJe2EEQDY2
-    khOfWhuwlVsOvyRpstx7WgPl4xVDQlWVKL7BSA0hxxkAW40gCf+bOpcpTURQS1qR
-    UyWbE8ZRlVgYqSxdkwwcPmyDiSk3dHC+0kvNAnLAi27HGPlIDyoJ2CDGSHcSkJiv
-    0Gdmfx79M2d8uCFNbbjPMLdqwuQc+vQMPw9Pu4arTkGKsq1WtDf2rnnioChZI0lc
-    rT+CIf7CPFWJOQGXxKcFy7eGycpofMg17rrQh5w==
+    t=1519634044; b=cw7fg8vq+jdl549Au/6Gif+pwBMNTaxuvmZ3NvGrL1gej/u
+    qahL5VcPgVWg5fP151prsiPlcYnBibASKCgj0vTxduaEy78PODP2bmFRWs1TS0Ox
+    Mt1kLKAOXzTYTFUMoaL1jl7ICNZHq5lKPFpSyve09aBFIWu3tyZimkrsO648utcT
+    zgi6dCk0Zj5tlZAn2Kd55wVM97m1lc5jFrG0zYE5FE+BYIpgdukCqn+NISy9LOt4
+    PcYPVFBRogKE21HEYqRan11u8ZTiESvESi1tpaZZW0DkkZ4C/M4zIpwJAxCmmIOK
+    Qf/5RU0yVO4lT/lz3CNw2VWzdaBGMSH0ZRQTKrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519634052;
-    bh=tfc0ew0kAdAAuBXUjDfVzA2fzAypIwJmE3g0LacJX+Y=; b=Jj4DClxaSbl2
-    XKWGBDNEiWOprUWsdrhyQQTtQlPfvaF8JHoPgxboXwJrG4nYNquTAVu8f37pVsmZ
-    VVdLN3GyWICpkwgTb/By9k5WnHh8GjAQ8R0/YqJgEA2hH4yAytX0mbcN4e8XOvnr
-    J655x8bs9Yi4AmPGyWXXblZkKo9owCASyMXIFVuleRsS5v3ImctQMWPIu3+eEcp9
-    5xCtbTlIaHGL2atrfknFM87Pbz0dTTDzR8/tGBlemD9IGtDatK7eNTBltLJzmteU
-    UTJh/7R/sBlbt6m0esyhZrlPzs8Loi5sw+A3wUN8fAJkpqORRfIlunuv1lJ7YH5o
-    /1jRWpJPVw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=L+2IwLVV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519634044;
+    bh=XfV6Yv3SjvB5RVvJ7haGkLOWLK58ZxDQcMshzGS5NdQ=; b=Cg5GdiKYxRwU
+    Wx8iij1Zse5zZVORafoKuwgurKmstPsJiigkHKlTFe1u1VVKarEYJZh/+IF+WGy2
+    lTHzTezmeUir5toCCJ/gsIZA0A14s0bQXlIB7XT/ZouqgUFqPDFjyDxRt9QOEe+F
+    ILxBLpcCPjUVkaMZJ2xXrqJaImork4WyS+6wWwt1uukOyO4BnhelK5DPny0gq9Ds
+    TOD8K064d9SmusXGXnQjupLAQ4kjLea6hM8cqGccrVzZJIvyKr0OR+fy4HS12dXq
+    34CL7ktS/Ixlk32I+RWmed3TZvxdA1qNuQRfCNeOu5ZpZGG/RpxXOuN0nbUN6+fk
+    m5yROtQDwQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=GUnDuslp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EeKxGUjl;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Z6DXOyTM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=L+2IwLVV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=GUnDuslp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EeKxGUjl;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Z6DXOyTM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeBZIXR (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:23:17 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37589 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752073AbeBZIXN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:23:13 -0500
-X-Google-Smtp-Source: AH8x225w45emhMQsQfhEt+GkVCTXs31wTps36odkn0QmvtPN9e+G4fkFsZIsFt73V0xx8Y+mHY+hbQ==
+        id S1751796AbeBZId7 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:33:59 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46578 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752505AbeBZIXT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:23:19 -0500
+X-Google-Smtp-Source: AH8x2268NzAetSUpA0ot47O8YLJiHqyCJ0/DrSnxNvRlT5UzI+fGUtw6VuPS5lFsPgGcUNNHBM4wTA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-kernel@lists.infradead.org (open list:POWER STATE
-        COORDINATION INTERFACE (PSCI)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 17/52] drivers/firmware: Expose psci_get_version through psci_ops structure
-Date: Mon, 26 Feb 2018 16:19:51 +0800
-Message-Id: <1519633227-29832-18-git-send-email-alex.shi@linaro.org>
+        stable@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
+Cc: James Morse <james.morse@arm.com>
+Subject: [PATCH 18/52] arm64: cpufeature: __this_cpu_has_cap() shouldn't stop early
+Date: Mon, 26 Feb 2018 16:19:52 +0800
+Message-Id: <1519633227-29832-19-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
 References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
@@ -78,49 +77,61 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Will Deacon <will.deacon@arm.com>
+From: James Morse <james.morse@arm.com>
 
-commit d68e3ba5303f upstream.
+commit edf298cfce47 upstream.
+Alex Shi rewrite this commit on func this_cpu_has_cap(). The following commit
+log is still meaningful.
 
-Entry into recent versions of ARM Trusted Firmware will invalidate the CPU
-branch predictor state in order to protect against aliasing attacks.
+    this_cpu_has_cap() tests caps->desc not caps->matches, so it stops
+    walking the list when it finds a 'silent' feature, instead of
+    walking to the end of the list.
 
-This patch exposes the PSCI "VERSION" function via psci_ops, so that it
-can be invoked outside of the PSCI driver where necessary.
+    Prior to v4.6's 644c2ae198412 ("arm64: cpufeature: Test 'matches' pointer
+    to find the end of the list") we always tested desc to find the end of
+    a capability list. This was changed for dubious things like PAN_NOT_UAO.
+    v4.7's e3661b128e53e ("arm64: Allow a capability to be checked on
+    single CPU") added this_cpu_has_cap() using the old desc style test.
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+    CC: Suzuki K Poulose <suzuki.poulose@arm.com>
+    Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+    Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+    Signed-off-by: James Morse <james.morse@arm.com>
+    Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+    Signed-off-by: Will Deacon <will.deacon@arm.com>
+
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- drivers/firmware/psci.c | 2 ++
- include/linux/psci.h    | 1 +
- 2 files changed, 3 insertions(+)
+ arch/arm64/include/asm/futex.h | 1 +
+ arch/arm64/kernel/cpufeature.c | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 8263429..9a3ce76 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -496,6 +496,8 @@ static void __init psci_init_migrate(void)
- static void __init psci_0_2_set_functions(void)
- {
- 	pr_info("Using standard PSCI v0.2 function IDs\n");
-+	psci_ops.get_version = psci_get_version;
-+
- 	psci_function_id[PSCI_FN_CPU_SUSPEND] =
- 					PSCI_FN_NATIVE(0_2, CPU_SUSPEND);
- 	psci_ops.cpu_suspend = psci_cpu_suspend;
-diff --git a/include/linux/psci.h b/include/linux/psci.h
-index bdea1cb..6306ab1 100644
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -26,6 +26,7 @@ int psci_cpu_init_idle(unsigned int cpu);
- int psci_cpu_suspend_enter(unsigned long index);
+diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+index 1943cf6..718140a 100644
+--- a/arch/arm64/include/asm/futex.h
++++ b/arch/arm64/include/asm/futex.h
+@@ -20,6 +20,7 @@
  
- struct psci_operations {
-+	u32 (*get_version)(void);
- 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
- 	int (*cpu_off)(u32 state);
- 	int (*cpu_on)(unsigned long cpuid, unsigned long entry_point);
+ #include <linux/futex.h>
+ #include <linux/uaccess.h>
++#include <linux/compiler.h>
+ 
+ #include <asm/errno.h>
+ 
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 3a129d4..fcb67e0 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1063,8 +1063,8 @@ bool this_cpu_has_cap(unsigned int cap)
+ 	if (WARN_ON(preemptible()))
+ 		return false;
+ 
+-	for (caps = arm64_features; caps->desc; caps++)
+-		if (caps->capability == cap && caps->matches)
++	for (caps = arm64_features; caps->matches; caps++)
++		if (caps->capability == cap)
+ 			return caps->matches(caps, SCOPE_LOCAL_CPU);
+ 
+ 	return false;
 -- 
 2.7.4
