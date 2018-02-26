@@ -1,75 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeBZGhl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 01:37:41 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33949 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeBZGhk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 01:37:40 -0500
-X-Google-Smtp-Source: AH8x225yPZNzn1IvHHqSe8PDiyesLD+rkCwRbPyJrRsEdfJtUfw3LSmshlmYX7BvJMM2IlB9mSQfJQ==
-Date: Mon, 26 Feb 2018 15:37:35 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3] printk: Relocate wake_klogd check close to the end of
- console_unlock()
-Message-ID: <20180226063735.GC12539@jagdpanzerIV>
-References: <20180208130402.15157-1-pmladek@suse.com>
- <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
- <20180219160122.upqkpbbffm3rth6p@pathway.suse.cz>
+        id S1752165AbeBZGiL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 01:38:11 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38755 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750793AbeBZGiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 01:38:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="32798725"
+From: "Huang\, Ying" <ying.huang@intel.com>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] mm: Fix races between address_space dereference and free in page_evicatable
+References: <20180212081227.1940-1-ying.huang@intel.com>
+        <20180218092245.GA52741@rodete-laptop-imager.corp.google.com>
+        <20180219105735.32iplpsmnigwf75j@quack2.suse.cz>
+        <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
+Date: Mon, 26 Feb 2018 14:38:04 +0800
+In-Reply-To: <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
+        (Minchan Kim's message of "Mon, 26 Feb 2018 14:20:09 +0900")
+Message-ID: <874lm4tfw3.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180219160122.upqkpbbffm3rth6p@pathway.suse.cz>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/19/18 17:01), Petr Mladek wrote:
-[..]
-> -	raw_spin_lock(&logbuf_lock);
->  	retry = console_seq != log_next_seq;
-> +	/*
-> +	 * Check whether userland needs notification. Do this only when really
-> +	 * leaving to avoid race with console_trylock_spinning().
-> +	 */
-> +	if (seen_seq != log_next_seq && !retry) {
-> +		wake_klogd = true;
-> +		seen_seq = log_next_seq;
-> +	}
+Minchan Kim <minchan@kernel.org> writes:
 
-Let's add the "why" part. This "!retry" might be hard to understand. We
-are looking at
+> Hi Jan,
+>
+> On Mon, Feb 19, 2018 at 11:57:35AM +0100, Jan Kara wrote:
+>> Hi Minchan,
+>> 
+>> On Sun 18-02-18 18:22:45, Minchan Kim wrote:
+>> > On Mon, Feb 12, 2018 at 04:12:27PM +0800, Huang, Ying wrote:
+>> > > From: Huang Ying <ying.huang@intel.com>
+>> > > 
+>> > > When page_mapping() is called and the mapping is dereferenced in
+>> > > page_evicatable() through shrink_active_list(), it is possible for the
+>> > > inode to be truncated and the embedded address space to be freed at
+>> > > the same time.  This may lead to the following race.
+>> > > 
+>> > > CPU1                                                CPU2
+>> > > 
+>> > > truncate(inode)                                     shrink_active_list()
+>> > >   ...                                                 page_evictable(page)
+>> > >   truncate_inode_page(mapping, page);
+>> > >     delete_from_page_cache(page)
+>> > >       spin_lock_irqsave(&mapping->tree_lock, flags);
+>> > >         __delete_from_page_cache(page, NULL)
+>> > >           page_cache_tree_delete(..)
+>> > >             ...                                         mapping = page_mapping(page);
+>> > >             page->mapping = NULL;
+>> > >             ...
+>> > >       spin_unlock_irqrestore(&mapping->tree_lock, flags);
+>> > >       page_cache_free_page(mapping, page)
+>> > >         put_page(page)
+>> > >           if (put_page_testzero(page)) -> false
+>> > > - inode now has no pages and can be freed including embedded address_space
+>> > > 
+>> > >                                                         mapping_unevictable(mapping)
+>> > > 							  test_bit(AS_UNEVICTABLE, &mapping->flags);
+>> > > - we've dereferenced mapping which is potentially already free.
+>> > > 
+>> > > Similar race exists between swap cache freeing and page_evicatable() too.
+>> > > 
+>> > > The address_space in inode and swap cache will be freed after a RCU
+>> > > grace period.  So the races are fixed via enclosing the page_mapping()
+>> > > and address_space usage in rcu_read_lock/unlock().  Some comments are
+>> > > added in code to make it clear what is protected by the RCU read lock.
+>> > 
+>> > Is it always true for every FSes, even upcoming FSes?
+>> > IOW, do we have any strict rule FS folks must use RCU(i.e., call_rcu)
+>> > to destroy inode?
+>> > 
+>> > Let's cc linux-fs.
+>> 
+>> That's actually a good question. Pathname lookup relies on inodes being
+>> protected by RCU so "normal" filesystems definitely need to use RCU freeing
+>> of inodes. OTOH a filesystem could in theory refuse any attempt for RCU
+>> pathname walk (in its .d_revalidate/.d_compare callback) and then get away
+>> with freeing its inodes normally AFAICT. I don't see that happening
+>> anywhere in the tree but in theory it is possible with some effort... But
+>> frankly I don't see a good reason for that so all we should do is to
+>> document that .destroy_inode needs to free the inode structure through RCU
+>> if it uses page cache? Al?
+>
+> Yub, it would be much better. However, how does this patch fix the problem?
+> Although it can make only page_evictable safe, we could go with the page
+> further and finally uses page->mapping, again.
+> For instance,
+>
+> shrink_active_list
+> 	page_evictable();
+> 	..
+> 	page_referened()
+> 		page_rmapping
+> 			page->mapping
 
-- CPUa is about to leave console_unlock()
-- printk on CPUb appends a new message
-- CPUa detects that `console_seq != log_next_seq', updates `seen_seq'
-- printk on CPUb is getting preempted
-- CPUa re-takes the console_sem via retry path
-- printk CPUb is becoming TASK_RUNNING again - it now spins for console_sem,
-  since we have an active console_sem owner
-- CPUa detects that there is a console_sem waiter, so it offloads the
-  printing task, without ever waking up klogd
+This only checks the value of page->mapping, not deference
+page->mapping.  So it should be safe.
 
+Best Regards,
+Huang, Ying
 
-Either we can have that complex "seen_seq != log_next_seq && !retry"
-check - or we simply can add
-
-	if (console_lock_spinning_disable_and_check()) {
-		printk_safe_exit_irqrestore(flags);
-		if (wake_klogd)
-			wake_up_klogd();
-	}
-
-to the offloading return path.
-
-The later is *may be* simpler to follow. The rule is: every
-!console_suspend and !cant-use-consoles return path from console_unlock()
-must wake_up_klogd() [if needed].
-
-	-ss
+> I think caller should lock the page to protect entire operation, which
+> have been used more widely to pin a address_space.
+>
+> Thanks.
