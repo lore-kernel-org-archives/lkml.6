@@ -1,78 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeBZJaE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:30:04 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:35983 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeBZJ37 (ORCPT
+        id S1752312AbeBZJaT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:30:19 -0500
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:36023 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeBZJaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:29:59 -0500
-X-Google-Smtp-Source: AG47ELvDino77b5K9wF/zsgCFHgLXO2/BHJ6OlYPJdQvQ4S7Zgwp9YWWcqOE6PxcA4lrURQCwdukfbi+aSw/Rieaw0Y=
+        Mon, 26 Feb 2018 04:30:15 -0500
+X-Google-Smtp-Source: AG47ELtGK2dUdT0agNGVuKl5U3B1KPoloCCxmS0hjKrkiBD/Q/4HD3F066wmEM+Vtp28ier+2n8otQ==
+Subject: Re: [PATCH v3 00/22] Verbatim device names and
+ devm_nvmem_(un)register()
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Heiko Stuebner <heiko@sntech.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180103200114.23922-1-andrew.smirnov@gmail.com>
+ <CAMRc=Mct60LMcr-CGJue1dTK+XNwz=dmkm2arTGeN1czeN9JoA@mail.gmail.com>
+ <61e56a69-5722-138e-481e-44473a79b388@linaro.org>
+ <CAHQ1cqGp3jPvb1FNd9SoP_t-hzAHZazAOobrgM2yustrZ5ja6w@mail.gmail.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <858e2843-1aa9-05e5-7f36-926da1c92db1@linaro.org>
+Date: Mon, 26 Feb 2018 09:30:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1519565039.10722.145.camel@linux.intel.com>
-References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
- <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com> <1519565039.10722.145.camel@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Feb 2018 10:29:58 +0100
-X-Google-Sender-Auth: gBey5OOhu6CukSLWm-RGKbMUmxU
-Message-ID: <CAJZ5v0hK3fvgL42qowQFBbcG5JABec42R781vBbia0Z2MQy31w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHQ1cqGp3jPvb1FNd9SoP_t-hzAHZazAOobrgM2yustrZ5ja6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 25, 2018 at 2:23 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Fri, 2018-02-23 at 15:35 -0600, Bjorn Helgaas wrote:
->> On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
->> > It's used in several places and more users may come.
->> > By using this helper they may create a slightly cleaner code.
->> >
->> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> > ---
->> >  include/linux/dmi.h | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> >
->> > diff --git a/include/linux/dmi.h b/include/linux/dmi.h
->> > index 46e151172d95..241c27008c70 100644
->> > --- a/include/linux/dmi.h
->> > +++ b/include/linux/dmi.h
->> > @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
->> >
->> >  #endif
->> >
->> > +static inline int dmi_get_bios_year(void)
->> > +{
->> > +   int year;
->> > +   dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
->> > +   return year;
->> > +}
->>
->> I don't really care personally, and I assume this series will go via a
->> non-PCI tree, but making this inline looks similar to this, which
->> wasn't well-received:
->>
->> https://lkml.kernel.org/r/CA+55aFypU331cQy-
->> 6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
->
-> "Yes, that header file is already full of random inline functions, but
-> they are generally wrapper functions that don't really do anything, ..."
->
-> I think the function above is exactly from the "wrapper that doesn't
-> really do anything" category.
+Hi Andrey,
+Thankyou for your patience.
 
-Yes, but honestly does it need to be inline even so?
+On 26/02/18 03:45, Andrey Smirnov wrote:
+> On Thu, Jan 25, 2018 at 1:17 AM, Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>>
+>>
+>> On 24/01/18 11:13, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>> Hi Srinivas,
+>>>
+>>> I don't see this series in next - is it going to miss this merge window?
+>>>
+>>
+>> Thanks for your patience.
+>>
+>> In general, I pick stuff which are sent before rc5-rc6 and send it to Greg
+>> KH for inclusion in char-misc tree.
+>>
+>> These patches will be queued for next release cycle..
+>>
+> 
+> Srinivas:
+> 
+> Correct me if I am wrong, but doesn't seem like these patches made it
+> to char-misc tree yet. I was recently rebasing them on top of Linus'
 
-Why don't you simply put the wrapper into dmi_scan.c and export it?
+As this is 4.17 material, these will not go into char-misc tree until or 
+after rc5.
+> master and ended up having to resolve a couple of merge conflicts, so
+> would you like me to re-spin v4 on top of 4.16-rc1 (or any other
+> version) and re-submit the series?
+Sure thanks, If you can respin the patches than that would reduce my 
+time while sending it to Greg. I will send them to Greg next week.
+
+thanks,
+Srini
+> 
+> Thanks,
+> Andrey Smirnov
+> 
