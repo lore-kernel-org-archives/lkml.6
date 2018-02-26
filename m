@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753746AbeBZONG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:13:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:47072 "EHLO mga12.intel.com"
+        id S1753711AbeBZOM6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:12:58 -0500
+Received: from mga17.intel.com ([192.55.52.151]:3201 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753405AbeBZOLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753422AbeBZOLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Feb 2018 09:11:03 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="20875493"
+   d="scan'208";a="37527227"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: Andreas Noever <andreas.noever@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Andreas Noever <andreas.noever@gmail.com>,
         Jeremy McNicoll <jmcnicol@redhat.com>,
         Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 05/18] thunderbolt: Wait a bit longer for root switch config space
-Date: Mon, 26 Feb 2018 17:10:35 +0300
-Message-Id: <20180226141048.83949-6-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 09/18] thunderbolt: Correct function name in kernel-doc comment
+Date: Mon, 26 Feb 2018 17:10:39 +0300
+Message-Id: <20180226141048.83949-10-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
 References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
@@ -33,40 +33,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some case reading root switch config space takes longer than what we
-are currently waiting in the driver resulting timeout and failure.
-Increase number of retries to allow some more time for the root switch
-config space to become accesssible.
+From: Radion Mirchevsky <radion.mirchevsky@intel.com>
 
-Also log an error if the timeout is exceeded so we know why the driver
-probe failed.
+Use correct name in kernel-doc of tb_switch_find_by_uuid().
 
+Signed-off-by: Radion Mirchevsky <radion.mirchevsky@intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/thunderbolt/icm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/thunderbolt/switch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index 182226023acb..1183321586c5 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -828,7 +828,7 @@ __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
- 	struct icm_pkg_driver_ready request = {
- 		.hdr.code = ICM_DRIVER_READY,
- 	};
--	unsigned int retries = 10;
-+	unsigned int retries = 50;
- 	int ret;
- 
- 	memset(&reply, 0, sizeof(reply));
-@@ -856,6 +856,7 @@ __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
- 		msleep(50);
- 	} while (--retries);
- 
-+	tb_err(tb, "failed to read root switch config space, giving up\n");
- 	return -ETIMEDOUT;
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 1cc79785ce42..2a0bded44922 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1528,7 +1528,7 @@ struct tb_switch *tb_switch_find_by_link_depth(struct tb *tb, u8 link, u8 depth)
  }
  
+ /**
+- * tb_switch_find_by_link_depth() - Find switch by UUID
++ * tb_switch_find_by_uuid() - Find switch by UUID
+  * @tb: Domain the switch belongs
+  * @uuid: UUID to look for
+  *
 -- 
 2.16.1
