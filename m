@@ -1,122 +1,114 @@
-Return-Path: <alex.shi@linaro.org>
-X-Cyrus-Session-Id: sloti22d1t05-3220176-1519791049-2-8816448645405942527
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2387443-1519634353-2-16724512728308545637
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
-  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='74.125.83.67', Host='mail-pg0-f67.google.com', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: alex.shi@linaro.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519791048; b=KtZyZQEvqkjo09QLrd1tJMKVC/FdyoZGEokitU/afphWy9m
-    vK0Pl55t0DW7Bje42RJUwsD6kxaob7VKL7ihajnwiWZWt9O/TyGTkBp3J7H0U3af
-    ETlikI5a9fucKJzcV+YNon37WnIVblviBa0Cffa0XfEeKGx4Nba6+ryPVUVp+Zzf
-    mknP7M3GQsrzfy3NkjhiTfnCVdRqrX6NBZjo6Rh/batijeZb68AL00XLIwcbbs4e
-    rZmMEBRbWbn6pxIYwNl4FPYmNctu0LtFE1AFSx+AWfyOreLD77InBcWYuO6y5QIM
-    kvQvFfw290eUO8TjVIKTaWOtA+6bxOxDdvYkUMg==
+    t=1519634352; b=TyjlJwOFOz8m/GM7RKcpxGILtTKi7F0qJEUvMHAC/Nk4+b0
+    JBd5LF5Ur/P6wV+1sR0dYheily49YBWCpJZmmLZufSM0DCCxFpqSnYAe8hDgBrrW
+    U5v27VtWkV8K/X/1P6L1zp66+fc2KBhX/5nxpiSgYj2BtqiFPG7X+PMaqgUZitnP
+    Btu+At7k46jkXnVxfpznmSABI5JVyaavyGNia7eFD5l4ODZPYOpIF1MrxX/x0EaO
+    ZMXoperpVM3Uo9zHtJBHsJzjkPtNnEaBg/O67Ju58LdaIufSZNipfQ1c3Q15ZjhF
+    6oO4KH6kkZ90rtsJFhX5kRUJvGNPs4Pi/oRmxVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding; s=arctest; t=1519791048; bh=RZMUAaCI
-    eHGpW7bJVe81xnfhceYtJIPBe6A7RWj0JMM=; b=dyde3dpyi61A+x0sRST+dHUC
-    cdyJIjKm7SM91NqZjCZaDoXEQ5ZTfD18UiVcX4t+8kxbldJuT6bdbtmYixk1nrC3
-    8ZRp8oRGYFOdUObaFdzodUoP3fjhxQfxmzTAQGRgFaJBkhhl9AZyUDbJOkt1L9XH
-    yPjwip+PCCJ1ELk/NcOWYsydjIZDmjGtiGmOOPmwYYR60StjWdOIXQUdvjhFaE2V
-    8SeVXZGTeo292moKHsjXX3MKiqSEZ5K5PyZk1u3ihcRCkxv141b9C6NLc6RZg0om
-    zW4yWlHV9X04X1gmGYlsou3mpwGm91HCneNhGr3oq/i6qMU/sSxLmbCmGn22Yg==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519634352;
+    bh=Bg7B0hfDb1LbDSK0bEabGd/Si+r1Y+auDWs+NQonZeA=; b=LijRFOzPTckT
+    /43j/aHLM2WTFjTepPayw9Y+g9vymZLHQsd0xc0OGdgMeUhqZcZEONBIzT6IzByz
+    u6QEjdlHWd4jJ7WEt2XeQ1i9QJVvXYRshRzwkW2MAYJ+j19V6OvdQO84aui/1q3T
+    JG0yti4YgEjoPPXqhVAI/HQY6h6qrpMBaBq5Zt4Tr6XkWotte4Ww/MoUU9H9Sj6x
+    62p+tttg87azmt/OaW59eG++dGwvwKw2Gn43c4slsIZkOzT0hbBS14fhcm/Lugza
+    QlRxP8O2wBOnMQIOEn2RzuuHUp6pHHCHF5b9CgQJYY7YR23Im3AHPSHRvD9ClnWV
+    pABb4GJk4g==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=UeMm45UZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=alex.shi@linaro.org smtp.helo=mail-pg0-f67.google.com;
-    x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=QlORI9Wk;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
-    x-return-mx=pass smtp.domain=linaro.org smtp.result=pass smtp_is_org_domain=yes header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=BMCqSGmr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DUSyLFO6;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=UeMm45UZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=alex.shi@linaro.org smtp.helo=mail-pg0-f67.google.com;
-    x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=QlORI9Wk;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
-    x-return-mx=pass smtp.domain=linaro.org smtp.result=pass smtp_is_org_domain=yes header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x224CqkdP52jxO3COWRbJyFlzRnc4OEUWBkQ723XQmZeUmyaayFkHSw5LOqxH3s8KOo/nQTU0YQ==
-Subject: Re: [PATCH 46/52] arm: Add BTB invalidation on switch_mm for
- Cortex-A9, A12 and A17
-To: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>, Marc Zyngier <marc.zyngier@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, stable@vger.kernel.org,
- Russell King <linux@armlinux.org.uk>,
- "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
- <1519633227-29832-47-git-send-email-alex.shi@linaro.org>
- <20180226100518.GA11378@kroah.com>
- <3fa9ebcb-fe94-bbd6-49a7-e90c91c3905e@linaro.org>
- <20180226104505.GB8736@arm.com>
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=BMCqSGmr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DUSyLFO6;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752056AbeBZIjK (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:39:10 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37479 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeBZIVP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:21:15 -0500
+X-Google-Smtp-Source: AH8x225GtuDjcL0QucfzSjww7zbNpuJoA5RCQwI3ED+F5YO4e197B7t5BtuY38zYorreW7S7hTkXwg==
 From: Alex Shi <alex.shi@linaro.org>
-Message-ID: <a12f1c0c-1d79-768f-97e4-2ef62ebf150c@linaro.org>
-Date: Wed, 28 Feb 2018 12:10:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180226104505.GB8736@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org,
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
+        linux-kernel@vger.kernel.org (open list)
+Cc: Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 01/52] mm: Introduce lm_alias
+Date: Mon, 26 Feb 2018 16:19:35 +0800
+Message-Id: <1519633227-29832-2-git-send-email-alex.shi@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
+References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Laura Abbott <labbott@redhat.com>
 
+commit 568c5fe5a54 upstream.
 
-On 02/26/2018 06:45 PM, Will Deacon wrote:
-> On Mon, Feb 26, 2018 at 06:40:42PM +0800, Alex Shi wrote:
->>
->>
->> On 02/26/2018 06:05 PM, Greg KH wrote:
->>> On Mon, Feb 26, 2018 at 04:20:20PM +0800, Alex Shi wrote:
->>>> From: Marc Zyngier <marc.zyngier@arm.com>
->>>>
->>>> ** Not yet queued for inclusion in mainline **
->>>
->>> As Marc said, this should have been a HUGE clue that we can't take this
->>> patch.  Please go re-read
->>> 	https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
->>>
->>
->> Thanks for comments, Greg!
->>
->> I read the rules for several times, and thought it maybe a exception for
->> this bug fix. But since MarcZ said so. We can wait. :)
-> 
-> The reason I added the disclaimer to the commit message was precisely to
-> avoid these things accidentally going into stable. If stable diverges
-> significantly from mainline, it's just going to make backports of other
-> patches more difficult. So no, we shouldn't be considering an exception
-> for this.
-> 
+Certain architectures may have the kernel image mapped separately to
+alias the linear map. Introduce a macro lm_alias to translate a kernel
+image symbol into its linear alias. This is used in part with work to
+add CONFIG_DEBUG_VIRTUAL support for arm64.
 
-Hi Will,
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org>
+---
+ include/linux/mm.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Got it. Thanks for explanations!
-I remove all non upstream patches and put it on
-
-git://git.linaro.org/kernel/linux-linaro-stable.git
-v4.9-spectre-upstream-only
-
-If other patches passed review. it could be got as whole branch from there.
-
-Thanks
-Alex
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2217e2f..edd2480 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -76,6 +76,10 @@ extern int mmap_rnd_compat_bits __read_mostly;
+ #define page_to_virt(x)	__va(PFN_PHYS(page_to_pfn(x)))
+ #endif
+ 
++#ifndef lm_alias
++#define lm_alias(x)	__va(__pa_symbol(x))
++#endif
++
+ /*
+  * To prevent common memory management code establishing
+  * a zero page mapping on a read fault.
+-- 
+2.7.4
