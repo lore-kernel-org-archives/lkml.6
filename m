@@ -1,80 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeBZJr6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:47:58 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752114AbeBZJrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:47:49 -0500
-Subject: Re: [PATCH 1/2] vfio: platform: Fix reset module leak in error path
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
- <1518539815-13774-2-git-send-email-geert+renesas@glider.be>
- <2fe86be6-a3e2-9bd6-1d72-63cf0fe3a731@redhat.com>
- <CAMuHMdXm97QFTC8VYDoByHsXaG5BQqFdhwqMTuGVRKDe-oh8EQ@mail.gmail.com>
- <CAMuHMdVkTy=TELjG0Jh7HMDe5075EHSebpNUWqBDt+6ik_Aixw@mail.gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <9c79c6ba-c3a8-68f3-4ac6-00858bd1ccb5@redhat.com>
-Date: Mon, 26 Feb 2018 10:47:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1752425AbeBZJsL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:48:11 -0500
+Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:47314 "EHLO
+        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751877AbeBZJsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:48:04 -0500
+Subject: Re: regression v4.16 on Nokia N900:/dev/input/event6 aka AV Jack
+ support disappeared
+To: Pavel Machek <pavel@ucw.cz>, pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
+        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
+        afd@ti.com
+Cc: broonie@kernel.org, peter.ujfalusi@ti.com, alsa-devel@alsa-project.org
+References: <20180224214617.GA22619@amd>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Message-ID: <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
+Date: Mon, 26 Feb 2018 10:47:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVkTy=TELjG0Jh7HMDe5075EHSebpNUWqBDt+6ik_Aixw@mail.gmail.com>
+In-Reply-To: <20180224214617.GA22619@amd>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519638484;5267e43a;
+X-HE-SMSGID: 1eqFNq-00070Q-NQ
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+JFYI: This issues is tracked in the regression reports for Linux 4.16
+(http://bit.ly/lnxregrep416 ) with this id:
 
-On 21/02/18 17:07, Geert Uytterhoeven wrote:
-> Hi Eric,
-> 
-> On Wed, Feb 14, 2018 at 10:32 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Feb 14, 2018 at 9:36 AM, Auger Eric <eric.auger@redhat.com> wrote:
->>> If I am not wrong we also leak the reset_module if
->>> vfio_platform_get_reset() fails to find the reset function (of_reset ==
->>> NULL), in which case we should do the module_put() in
->>> vfio_platform_get_reset().
->>
->> Correct. Will look into fixing it...
-> 
-> Upon second look, I don't think there's a leak in vfio_platform_get_reset().
-> 
-> If try_module_get() succeeded, there will always be a valid reset function
-> (unless someone registered a vfio_reset_handler with a NULL reset function).
-Hum yes, you are right. So the code is fine as is. Sorry for the noise.
+Linux-Regression-ID: lr#4b650f
 
-Thanks
+Please include this line in the comment section of patches that are
+supposed to fix the issue. Please also mention the string once in other
+mailinglist threads or different bug tracking entries if you or someone
+else start to discuss the issue there. By including that string you make
+it a whole lot easier to track where an issue gets discussed and how far
+patches to fix it have made it. For more details on this please see
+here: http://bit.ly/lnxregtrackid
 
-Eric
+Thx for your help. Ciao, Thorsten
 
-
+On 24.02.2018 22:46, Pavel Machek wrote:
+> Hi!
 > 
-> Or do you mean the call to request_module()?
-> That one doesn't do a module_get(), it merely tries to load a module.
-> Hence there's no need to do a module_put() afterwards.
+> In v4.16, AV jack support disappeared.
 > 
-> Gr{oetje,eeting}s,
+> This one is suspect:
 > 
->                         Geert
+> commit 7be4b5dc7ffa9499ac6ef33a5ffa9ff43f9b7057
+> Author: Andrew F. Davis <afd@ti.com>
+> Date:   Wed Nov 29 11:13:59 2017 -0600
 > 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>     ARM: dts: omap3-n900: Fix the audio CODEC's reset pin
 > 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+>     The correct DT property for specifying a GPIO used for reset
+>         is "reset-gpios", fix this here.
+> 
+>     Fixes: 14e3e295b2b9 ("ARM: dts: omap3-n900: Add TLV320AIC3X
+>     support")
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> How was it tested? It reverts polarity of reset pin, but
+> sound/soc/codecs/tlv320aic3x.c treats those as aliases:
+> 
+>  ret = of_get_named_gpio(np, "reset-gpios", 0);
+>  if (ret >= 0) {
+>     aic3x->gpio_reset = ret;
+>  } else {
+>  ret = of_get_named_gpio(np, "gpio-reset", 0);
+>  if (ret > 0) {
+>     dev_warn(&i2c->dev, "Using deprecated property \"gpio-r\eset\", please update your DT");
+>     aic3x->gpio_reset = ret;
+> 
+> 
+> 									Pavel
 > 
