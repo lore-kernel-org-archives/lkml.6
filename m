@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeBZPxd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:53:33 -0500
-Received: from mga12.intel.com ([192.55.52.136]:51429 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752127AbeBZPx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:53:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="207145283"
-Subject: Re: [PATCH ipmi/kcs_bmc v6] ipmi: kcs_bmc: coding-style fixes and use
- new poll type
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1519660094-9748-1-git-send-email-haiyue.wang@linux.intel.com>
- <3e0822bc-1cb5-f110-c2f2-3ffe7c3c8d3a@acm.org>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <c529abf6-e761-f975-e4df-f3afac53d467@linux.intel.com>
-Date: Mon, 26 Feb 2018 23:53:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752450AbeBZPxm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:53:42 -0500
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:47033 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeBZPxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:53:38 -0500
+X-Google-Smtp-Source: AG47ELtxk6ucb51PwQqQ4gmwOWp05MtZN4iTnnRkWro9jPpi+SEVPoFbwazPI4jNt4smIWNGekyF2QxYgca7Aeb9vhg=
 MIME-Version: 1.0
-In-Reply-To: <3e0822bc-1cb5-f110-c2f2-3ffe7c3c8d3a@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CAMuHMdX_+N4WzXp+g+B9f5H9k1LCe2vyGUO-RRkOAiARerTWtw@mail.gmail.com>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
+ <CAMuHMdX_+N4WzXp+g+B9f5H9k1LCe2vyGUO-RRkOAiARerTWtw@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Feb 2018 16:53:17 +0100
+Message-ID: <CANiq72k1DKUsko4-SiF2FzK1bSQypND0N8hdNN4sFVPFyNxSqg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] auxdisplay: charlcd: fix two-line command ^[[LN not
+ marked as processed
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Robert Abel <rabel@robertabel.eu>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 26, 2018 at 9:34 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Feb 26, 2018 at 12:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
+>> Signed-off-by: Robert Abel <rabel@robertabel.eu>
+>
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+Good catch Robert! Picking it up for 4.17.
 
-On 2018-02-26 23:50, Corey Minyard wrote:
-> On 02/26/2018 09:48 AM, Haiyue Wang wrote:
->> Many for coding-style fixes, and update the poll API with the new
->> type '__poll_t', this is new commit from linux-4.16-rc1.
->>
->> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
->
-> Sorry for the delay, I was on jury duty last week.  But it looks like 
-> you got
-> some useful changes in.
->
-> I'm hoping you are done with this patch :-).  I've included in my 
-> tree, but
-> I can replace if necessary.
->
-> Thanks,
->
-Thanks for your time, my mistake, this one should be last one. :-)
+Cheers,
+Miguel
 
-BR,
-Haiyue
-
-> -corey
 >
->> ---
->> v5 -> v6:
->>   - Add the missed change to EPOLLIN.
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
