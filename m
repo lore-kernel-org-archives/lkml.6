@@ -1,63 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeBZTzE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 14:55:04 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44499 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750814AbeBZTzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 14:55:03 -0500
-Date: Mon, 26 Feb 2018 20:55:05 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: David Woodhouse <dwmw2@infradead.org>
-cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com, mingo@kernel.org
-Subject: Re: [PATCH v3 2/4] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-In-Reply-To: <1519125725.7876.117.camel@infradead.org>
-Message-ID: <alpine.DEB.2.21.1802262054160.1402@nanos.tec.linutronix.de>
-References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>  <1519037457-7643-3-git-send-email-dwmw@amazon.co.uk>  <alpine.DEB.2.21.1802200854010.24268@nanos.tec.linutronix.de>  <1519116825.7876.112.camel@infradead.org>
- <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>  <alpine.DEB.2.21.1802201141160.24268@nanos.tec.linutronix.de> <1519125725.7876.117.camel@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751665AbeBZTzY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 14:55:24 -0500
+Received: from sauhun.de ([88.99.104.3]:38280 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751522AbeBZTzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 14:55:23 -0500
+Date: Mon, 26 Feb 2018 20:55:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+        =?utf-8?B?Wm9sdMOhbiBCw7ZzesO2cm3DqW55aQ==?= <zboszor@pr.hu>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: piix4: Use request_muxed_region
+Message-ID: <20180226195521.vs32bemg7iopkjvd@ninjato>
+References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+ <20180212111041.027edd85@endymion>
+ <20180212185152.GA20877@roeck-us.net>
+ <20180214152305.57b76ea5@endymion>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1732896448-1519674909=:1402"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vvgnqlsxbfrdninx"
+Content-Disposition: inline
+In-Reply-To: <20180214152305.57b76ea5@endymion>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-1732896448-1519674909=:1402
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+--vvgnqlsxbfrdninx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 20 Feb 2018, David Woodhouse wrote:
-> On Tue, 2018-02-20 at 11:42 +0100, Thomas Gleixner wrote:
-> > 
-> > > > However, Paolo is very insistent that taking the trap every time is
-> > > > actually a lot *slower* than really frobbing IBRS on certain
-> > > > microarchitectures, so my hand-waving "pfft, what did they expect?" is
-> > > > not acceptable.
-> > > > 
-> > > > Which I think puts us back to the "throwing the toys out of the pram"
-> > 
-> > There are no more toys in the pram. I threw them all out weeks ago ...
-> 
-> One option is to take the patch as-is¹ with the trap on every access.
-> As soon as Intel define that 'IBRS_ALL_AND_THE_BIT_IS_A_NOOP' bit in
-> MSR_IA32_ARCH_CAPABILITIES, *then* we can expose it to guests directly
-> again just as we do at the moment.
+On Wed, Feb 14, 2018 at 03:23:05PM +0100, Jean Delvare wrote:
+> On Mon, 12 Feb 2018 10:51:52 -0800, Guenter Roeck wrote:
+> > On Mon, Feb 12, 2018 at 11:10:41AM +0100, Jean Delvare wrote:
+> > > On Sat, 30 Dec 2017 08:50:57 -0800, Guenter Roeck wrote: =20
+> > > > @@ -298,12 +295,15 @@ static int piix4_setup_sb800(struct pci_dev *=
+PIIX4_dev,
+> > > >  	else
+> > > >  		smb_en =3D (aux) ? 0x28 : 0x2c;
+> > > > =20
+> > > > -	mutex_lock(&piix4_mutex_sb800);
+> > > > +	if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2, "sb800_piix4_sm=
+b"))
+> > > > +		return -EBUSY; =20
+> > >=20
+> > > This would happen if and only if another driver has requested the
+> > > region already but without IORESOURCE_MUXED, right? Don't you want to=
+ =20
+> >=20
+> > Or if its call to alloc_resource() fails.
+>=20
+> OK, two things which are not supposed to happen, so failing is the
+> right thing to do.
+>=20
+> > > write an error message then? I don't think request_muxed_region() will
+> > > do, and probe failing with -EBUSY but no error message logged would be
+> > > hard to diagnose.
+> >
+> > NP, though the analysis is quite simple - /proc/iomem will show the cul=
+prit.
+>=20
+> I'm confused. How would the user know what to look for in /proc/iomem
+> (or, I believe, /proc/ioports actually) if the driver does not print
+> which resource allocation failed?
+>=20
+> If the information is already printed somewhere, then I agree there's no
+> point adding a message. But from the code I could not find it.
 
-Arjan, is there any update on this?
+I don't see any ack or rev from Jean, so I guess there are open issues?
 
-Thanks,
 
-	tglx
---8323329-1732896448-1519674909=:1402--
+--vvgnqlsxbfrdninx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUZikACgkQFA3kzBSg
+KbYvMxAAo0aFcnHK9L9U8NcRkWpk+BlQqeIiiNmH39XGzhpRb+24ObkGF9T45X1k
+nQHu+g1vBP00VAO/Y50n1DWRNy9COx4n4hkIvh5w8VtnecnYOI5tJWVw0V2lzH/B
+tBJQ41wcCBDcAEPoA36lpUnbaGMgyh9hX8gJLJJ8Jir+3p61nwVI69y3jkxihVis
+4bXgH9uohS0TBYkE4EEyVrc/dSxjx+sAd+V4xsmguNVKmMY9cl3H0a4vHkVEePYs
+oBIcH/QLVY0pP700KIlKeq4NRmzjnkF9vf6fq8+Hj4mj4q8YpBUwdUohVbvvbpK/
+zHHYArLHbU8msu4gok129lVywpchtlwslkm8nY2QOCmzJkZvInsX+DoGPg5UxXzb
+8t7DY+/DYczA/JEoAp2gbrdztoPVNFBJITgRcbiapTXwhf1TTW1iR0AFLCB42Br5
+ys0/6uU/kpyfs21Zc/P5ckZbBnMtbf0UAkIuZlmYgYtCDHzHaC+0u3OX/Hh4/XCY
+8FOrOCKhkzQWBCRf9dHtoEfLk0LAK/cNuVJWkb8cyvFOha4VdUeoROWTapdIKPsV
+XY/esTXaJMlnJKlfaUZ5BwPYrsaFidN4DPif8wJadpCy6M1m89Ub6oLGOCBn7Osh
+fCoZMbw2ujASwO8TMZeDtWcQw+8qGZkssn+rG6fiBxMTDGtuKkc=
+=hXuL
+-----END PGP SIGNATURE-----
+
+--vvgnqlsxbfrdninx--
