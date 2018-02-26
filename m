@@ -1,171 +1,375 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeBZDTP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:19:15 -0500
-Received: from mga11.intel.com ([192.55.52.93]:33155 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751958AbeBZDTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:19:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,395,1515484800";
-   d="scan'208";a="20265594"
-Subject: [RFC PATCH V3] virtio_pci: Add SR-IOV support
-To: virtio-dev@lists.oasis-open.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-From: Mark Rustad <mark.d.rustad@intel.com>
-Cc: dan.daly@intel.com, alex.williamson@redhat.com, MRustad@gmail.com,
-        alexander.duyck@gmail.com, mst@redhat.com
-Date: Sun, 25 Feb 2018 19:19:11 -0800
-Message-ID: <20180226031911.18980.80488.stgit@mdrustad-mac04.local>
-User-Agent: StGit/0.15
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752203AbeBZDWl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:22:41 -0500
+Received: from g4t3425.houston.hpe.com ([15.241.140.78]:3730 "EHLO
+        g4t3425.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752133AbeBZDWe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:22:34 -0500
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+To: wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rwright@hpe.com, maurice.a.saldivar@hpe.com, mingo@kernel.org,
+        marcus.folkesson@gmail.com, Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: [PATCH v5 4/9] watchdog/hpwdt: Modify to use watchdog core.
+Date: Sun, 25 Feb 2018 20:22:22 -0700
+Message-Id: <20180226032227.14615-5-jerry.hoemann@hpe.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180226032227.14615-1-jerry.hoemann@hpe.com>
+References: <20180226032227.14615-1-jerry.hoemann@hpe.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hardware-realized virtio-pci devices can implement SR-IOV, so this
-patch enables its use. The device in question is an upcoming Intel
-NIC that implements both a virtio-net PF and virtio-net VFs. These
-are hardware realizations of what has been up to now been a software
-interface.
+Follow Documentation/watchdog/convert_drivers_to_kernel_api.txt to
+convert hpwdt from legacy watchdog driver to use the watchdog core.
 
-The device in question has the following 4-part PCI IDs:
+Removed functions: hpwdt_open, hpwdt_release, hpwdt_write, hpwdt_ioctl
+Removed data structures: hpwdt_fops, hpwdt_miscdev, watchdog_device
+Modified functions: hpwdt_start, hpwdt_stop, hpwdt_ping, hpwdt_gettimeleft
+Added functions: hpwdt_settimeout
+Added structures: watchdog_device
 
-PF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 15fe
-VF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 05fe
+Update Kconfig file to show that hpwdt now selects WATCHDOG_CORE.
 
-The patch needs no check for device ID, because the callback will
-never be made for devices that do not assert the capability or
-when run on a platform incapable of SR-IOV.
-
-One reason for this patch is because the hardware requires the
-vendor ID of a VF to be the same as the vendor ID of the PF that
-created it. So it seemed logical to simply have a fully-functioning
-virtio-net PF create the VFs. This patch makes that possible.
-
-Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 ---
-Changes in V3:
-- Move most code to a new helper in pci/iov.c, pci_sriov_configure
-Changes in V2:
-- Simplified logic from previous version, removed added driver variable
-- Disable SR-IOV on driver removal excapt when VFs are assigned
-- Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
----
- drivers/pci/iov.c                  |   48 ++++++++++++++++++++++++++++++++++++
- drivers/virtio/virtio_pci_common.c |    2 ++
- include/linux/pci.h                |   10 ++++++++
- 3 files changed, 60 insertions(+)
+ drivers/watchdog/Kconfig |   1 +
+ drivers/watchdog/hpwdt.c | 216 +++++++++++------------------------------------
+ 2 files changed, 48 insertions(+), 169 deletions(-)
 
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 677924ae0350..ddd44a9d93ec 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -367,6 +367,54 @@ static void sriov_disable(struct pci_dev *dev)
- 	pci_iov_set_numvfs(dev, 0);
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 37460cd6cabb..e873522fca2d 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1118,6 +1118,7 @@ config IT87_WDT
+ 
+ config HP_WATCHDOG
+ 	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
++	select WATCHDOG_CORE
+ 	depends on X86 && PCI
+ 	help
+ 	  A software monitoring watchdog and NMI sourcing driver. This driver
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index 44c3038cc531..0e35bb735d8e 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -16,17 +16,13 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/device.h>
+-#include <linux/fs.h>
+ #include <linux/io.h>
+-#include <linux/bitops.h>
+ #include <linux/kernel.h>
+-#include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+ #include <linux/types.h>
+-#include <linux/uaccess.h>
+ #include <linux/watchdog.h>
+ #include <asm/nmi.h>
+ 
+@@ -42,8 +38,6 @@ static bool nowayout = WATCHDOG_NOWAYOUT;
+ #ifdef CONFIG_HPWDT_NMI_DECODING
+ static unsigned int allow_kdump = 1;
+ #endif
+-static char expect_release;
+-static unsigned long hpwdt_is_open;
+ 
+ static void __iomem *pci_mem_addr;		/* the PCI-memory address */
+ static unsigned long __iomem *hpwdt_nmistat;
+@@ -61,11 +55,14 @@ MODULE_DEVICE_TABLE(pci, hpwdt_devices);
+ /*
+  *	Watchdog operations
+  */
+-static void hpwdt_start(void)
++static int hpwdt_start(struct watchdog_device *wdd)
+ {
+-	reload = SECS_TO_TICKS(soft_margin);
++	reload = SECS_TO_TICKS(wdd->timeout);
++
+ 	iowrite16(reload, hpwdt_timer_reg);
+ 	iowrite8(0x85, hpwdt_timer_con);
++
++	return 0;
  }
  
-+/**
-+ * pci_sriov_disable - standard helper to disable SR-IOV
-+ * @dev:the PCI PF device whose VFs are to be disabled
-+ */
-+int pci_sriov_disable(struct pci_dev *dev)
+ static void hpwdt_stop(void)
+@@ -77,31 +74,32 @@ static void hpwdt_stop(void)
+ 	iowrite8(data, hpwdt_timer_con);
+ }
+ 
+-static void hpwdt_ping(void)
++static int hpwdt_stop_core(struct watchdog_device *wdd)
+ {
+-	iowrite16(reload, hpwdt_timer_reg);
++	hpwdt_stop();
++
++	return 0;
+ }
+ 
+-static int hpwdt_change_timer(int new_margin)
++static int hpwdt_ping(struct watchdog_device *wdd)
+ {
+-	if (new_margin < 1 || new_margin > HPWDT_MAX_TIMER) {
+-		pr_warn("New value passed in is invalid: %d seconds\n",
+-			new_margin);
+-		return -EINVAL;
+-	}
+-
+-	soft_margin = new_margin;
+-	pr_debug("New timer passed in is %d seconds\n", new_margin);
+-	reload = SECS_TO_TICKS(soft_margin);
+-
++	iowrite16(reload, hpwdt_timer_reg);
+ 	return 0;
+ }
+ 
+-static int hpwdt_time_left(void)
++static unsigned int hpwdt_gettimeleft(struct watchdog_device *wdd)
+ {
+ 	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
+ }
+ 
++static int hpwdt_settimeout(struct watchdog_device *wdd, unsigned int val)
 +{
-+	/*
-+	 * If vfs are assigned we cannot shut down SR-IOV without causing
-+	 * issues, so just leave the hardware available.
-+	 */
-+	if (pci_vfs_assigned(dev)) {
-+		pci_warn(&dev->dev,
-+			 "Cannot disable SR-IOV while VFs are assigned - VFs will not be deallocated\n");
-+		return -EPERM;
-+	}
-+	pci_disable_sriov(dev);
++	wdd->timeout = val;
++	hpwdt_ping(wdd);
++
 +	return 0;
 +}
 +
-+static int pci_sriov_enable(struct pci_dev *dev, int num_vfs)
-+{
-+	int rc;
-+
-+	if (pci_num_vf(dev))
-+		return -EINVAL;
-+
-+	rc = pci_enable_sriov(dev, num_vfs);
-+	if (rc) {
-+		pci_warn(dev, "Failed to enable PCI sriov: %d\n", rc);
-+		return rc;
-+	}
-+	dev_info(dev, "SR-IOV enabled with %d VFs\n", num_vfs);
-+	return num_vfs;
-+}
-+
-+/**
-+ * pci_sriov_configure - standard helper to configure SR-IOV
-+ * @dev: the PCI PF device that is configuring SR-IOV
-+ */
-+int pci_sriov_configure(struct pci_dev *dev, int num_vfs)
-+{
-+	if (num_vfs)
-+		return pci_sriov_enable(dev, num_vfs);
-+	if (!pci_num_vf(dev))
-+		return -EINVAL;
-+	return pci_sriov_disable(dev);
-+}
-+
- static int sriov_init(struct pci_dev *dev, int pos)
+ #ifdef CONFIG_HPWDT_NMI_DECODING
+ static int hpwdt_my_nmi(void)
  {
- 	int i, bar64;
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..37e353c4f8b4 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	else
- 		virtio_pci_modern_remove(vp_dev);
- 
-+	pci_sriov_disable(pci_dev);
- 	pci_disable_device(pci_dev);
- 	put_device(dev);
+@@ -135,68 +133,6 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
  }
-@@ -596,6 +597,7 @@ static struct pci_driver virtio_pci_driver = {
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+	.sriov_configure = pci_sriov_configure,
+ #endif /* CONFIG_HPWDT_NMI_DECODING */
+ 
+-/*
+- *	/dev/watchdog handling
+- */
+-static int hpwdt_open(struct inode *inode, struct file *file)
+-{
+-	/* /dev/watchdog can only be opened once */
+-	if (test_and_set_bit(0, &hpwdt_is_open))
+-		return -EBUSY;
+-
+-	/* Start the watchdog */
+-	hpwdt_start();
+-	hpwdt_ping();
+-
+-	return nonseekable_open(inode, file);
+-}
+-
+-static int hpwdt_release(struct inode *inode, struct file *file)
+-{
+-	/* Stop the watchdog */
+-	if (expect_release == 42) {
+-		hpwdt_stop();
+-	} else {
+-		pr_crit("Unexpected close, not stopping watchdog!\n");
+-		hpwdt_ping();
+-	}
+-
+-	expect_release = 0;
+-
+-	/* /dev/watchdog is being closed, make sure it can be re-opened */
+-	clear_bit(0, &hpwdt_is_open);
+-
+-	return 0;
+-}
+-
+-static ssize_t hpwdt_write(struct file *file, const char __user *data,
+-	size_t len, loff_t *ppos)
+-{
+-	/* See if we got the magic character 'V' and reload the timer */
+-	if (len) {
+-		if (!nowayout) {
+-			size_t i;
+-
+-			/* note: just in case someone wrote the magic character
+-			 * five months ago... */
+-			expect_release = 0;
+-
+-			/* scan to see whether or not we got the magic char. */
+-			for (i = 0; i != len; i++) {
+-				char c;
+-				if (get_user(c, data + i))
+-					return -EFAULT;
+-				if (c == 'V')
+-					expect_release = 42;
+-			}
+-		}
+-
+-		/* someone wrote to us, we should reload the timer */
+-		hpwdt_ping();
+-	}
+-
+-	return len;
+-}
+ 
+ static const struct watchdog_info ident = {
+ 	.options = WDIOF_SETTIMEOUT |
+@@ -205,90 +141,32 @@ static const struct watchdog_info ident = {
+ 	.identity = "HPE iLO2+ HW Watchdog Timer",
  };
  
- module_pci_driver(virtio_pci_driver);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 024a1beda008..ef6b359afefd 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1947,6 +1947,8 @@ int pci_iov_virtfn_devfn(struct pci_dev *dev, int id);
+-static long hpwdt_ioctl(struct file *file, unsigned int cmd,
+-	unsigned long arg)
+-{
+-	void __user *argp = (void __user *)arg;
+-	int __user *p = argp;
+-	int new_margin, options;
+-	int ret = -ENOTTY;
+-
+-	switch (cmd) {
+-	case WDIOC_GETSUPPORT:
+-		ret = 0;
+-		if (copy_to_user(argp, &ident, sizeof(ident)))
+-			ret = -EFAULT;
+-		break;
+-
+-	case WDIOC_GETSTATUS:
+-	case WDIOC_GETBOOTSTATUS:
+-		ret = put_user(0, p);
+-		break;
+-
+-	case WDIOC_KEEPALIVE:
+-		hpwdt_ping();
+-		ret = 0;
+-		break;
+-
+-	case WDIOC_SETOPTIONS:
+-		ret = get_user(options, p);
+-		if (ret)
+-			break;
+-
+-		if (options & WDIOS_DISABLECARD)
+-			hpwdt_stop();
+-
+-		if (options & WDIOS_ENABLECARD) {
+-			hpwdt_start();
+-			hpwdt_ping();
+-		}
+-		break;
+-
+-	case WDIOC_SETTIMEOUT:
+-		ret = get_user(new_margin, p);
+-		if (ret)
+-			break;
+-
+-		ret = hpwdt_change_timer(new_margin);
+-		if (ret)
+-			break;
+-
+-		hpwdt_ping();
+-		/* Fall */
+-	case WDIOC_GETTIMEOUT:
+-		ret = put_user(soft_margin, p);
+-		break;
+-
+-	case WDIOC_GETTIMELEFT:
+-		ret = put_user(hpwdt_time_left(), p);
+-		break;
+-	}
+-	return ret;
+-}
+-
+ /*
+  *	Kernel interfaces
+  */
+-static const struct file_operations hpwdt_fops = {
+-	.owner = THIS_MODULE,
+-	.llseek = no_llseek,
+-	.write = hpwdt_write,
+-	.unlocked_ioctl = hpwdt_ioctl,
+-	.open = hpwdt_open,
+-	.release = hpwdt_release,
++
++static const struct watchdog_ops hpwdt_ops = {
++	.owner		= THIS_MODULE,
++	.start		= hpwdt_start,
++	.stop		= hpwdt_stop_core,
++	.ping		= hpwdt_ping,
++	.set_timeout	= hpwdt_settimeout,
++	.get_timeleft	= hpwdt_gettimeleft,
+ };
  
- int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
- void pci_disable_sriov(struct pci_dev *dev);
-+int pci_sriov_disable(struct pci_dev *dev);
-+int pci_sriov_configure(struct pci_dev *dev, int num_vfs);
- int pci_iov_add_virtfn(struct pci_dev *dev, int id);
- void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
- int pci_num_vf(struct pci_dev *dev);
-@@ -1973,6 +1975,14 @@ static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
- 					 int id) { }
- static inline void pci_disable_sriov(struct pci_dev *dev) { }
-+static inline int pci_sriov_disable(struct pci_dev *dev)
-+{
-+	return -ENODEV;
-+}
-+static inline int pci_sriov_configure(struct pci_dev *dev, int num_vfs)
-+{
-+	return -ENODEV;
-+}
- static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
- static inline int pci_vfs_assigned(struct pci_dev *dev)
- { return 0; }
+-static struct miscdevice hpwdt_miscdev = {
+-	.minor = WATCHDOG_MINOR,
+-	.name = "watchdog",
+-	.fops = &hpwdt_fops,
++static struct watchdog_device hpwdt_dev = {
++	.info		= &ident,
++	.ops		= &hpwdt_ops,
++	.min_timeout	= 1,
++	.max_timeout	= HPWDT_MAX_TIMER,
++	.timeout	= DEFAULT_MARGIN,
+ };
+ 
++
+ /*
+  *	Init & Exit
+  */
+ 
+-
+ static int hpwdt_init_nmi_decoding(struct pci_dev *dev)
+ {
+ #ifdef CONFIG_HPWDT_NMI_DECODING
+@@ -379,29 +257,29 @@ static int hpwdt_init_one(struct pci_dev *dev,
+ 	/* Make sure that timer is disabled until /dev/watchdog is opened */
+ 	hpwdt_stop();
+ 
+-	/* Make sure that we have a valid soft_margin */
+-	if (hpwdt_change_timer(soft_margin))
+-		hpwdt_change_timer(DEFAULT_MARGIN);
+-
+ 	/* Initialize NMI Decoding functionality */
+ 	retval = hpwdt_init_nmi_decoding(dev);
+ 	if (retval != 0)
+ 		goto error_init_nmi_decoding;
+ 
+-	retval = misc_register(&hpwdt_miscdev);
++	watchdog_set_nowayout(&hpwdt_dev, nowayout);
++	if (watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL))
++		dev_warn(&dev->dev, "Invalid soft_margin: %d.\n", soft_margin);
++
++	hpwdt_dev.parent = &dev->dev;
++	retval = watchdog_register_device(&hpwdt_dev);
+ 	if (retval < 0) {
+-		dev_warn(&dev->dev,
+-			"Unable to register miscdev on minor=%d (err=%d).\n",
+-			WATCHDOG_MINOR, retval);
+-		goto error_misc_register;
++		dev_err(&dev->dev, "watchdog register failed: %d.\n", retval);
++		goto error_wd_register;
+ 	}
+ 
+ 	dev_info(&dev->dev, "HPE Watchdog Timer Driver: %s"
+ 			", timer margin: %d seconds (nowayout=%d).\n",
+-			HPWDT_VERSION, soft_margin, nowayout);
++			HPWDT_VERSION, hpwdt_dev.timeout, nowayout);
++
+ 	return 0;
+ 
+-error_misc_register:
++error_wd_register:
+ 	hpwdt_exit_nmi_decoding();
+ error_init_nmi_decoding:
+ 	pci_iounmap(dev, pci_mem_addr);
+@@ -415,7 +293,7 @@ static void hpwdt_exit(struct pci_dev *dev)
+ 	if (!nowayout)
+ 		hpwdt_stop();
+ 
+-	misc_deregister(&hpwdt_miscdev);
++	watchdog_unregister_device(&hpwdt_dev);
+ 	hpwdt_exit_nmi_decoding();
+ 	pci_iounmap(dev, pci_mem_addr);
+ 	pci_disable_device(dev);
+-- 
+2.13.6
