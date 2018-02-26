@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2387443-1519633685-2-1090473951371950554
+X-Cyrus-Session-Id: sloti22d1t05-2387526-1519633675-2-8161563101526313081
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,63 +8,73 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_H
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: to='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519633685; b=QVlGyR3ozCShmylALnsPCOBtw9D/uflVDO8T8wVXJWGc9r/
-    Lj95tlhUZ0JEtNvrwVkNKHqgn0mNthHERZlstliLX37tODoncAAQJZw4CjBprFc7
-    NS0t4CNdigIytjONHRd4GswnQwyEK/4yRpnVLv4tYd3jtgrrIqgPSj57tsJZQTfO
-    oO4wT7RoQnSb2/bKzQy5K44CmT/jLsaWP+/1do2brP5IoevmW5f9iF4LKxqiQEEh
-    m8DoyaJQ9ZXQ5jKKwvTi/jez5anl315OpMp0ZqH3gOKem0kUDWd8f89feOeAC5tS
-    BFeaG63Kq7TFooC75isIjMrXU9gFgdlxPD83uWA==
+    t=1519633674; b=H0sV4dmqatU/pd5UdCnstmMMujtVPWPBmS+kanROL72qpK5
+    NLD9P7vIqauvr82Fuc82kN22S8iO6RA4/KMgLbmGWE/99JQoXDlaMojQJWS3+6FD
+    ilpzKo7U6y47QpKw+WrNPxCZpX8Dyyy9cATmys7hBOXfRX75VoJKmTtzaBdC8ZO6
+    H2WWTjndKnUAuHgLD+uZqU3eqAl+Xf3de21P5EKTxon7cy3SPnzpIbg+VhKwDjJ8
+    LT5Wdqtw8j7G2NpieAGQ+3Wt7wcQgsaqRUo3PXHb1U+a0yUTeK0+ehYuvj6nHj9U
+    vkdptcJGk61wdmjLpGapEOBYScwTA4NYt9T+Bsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519633685;
-    bh=V4bM2YvsCwu18ZG/KjQ3BYGqsjNxEw8lX9Jc6LRIgdo=; b=mN72bID3KuSB
-    TZhi8ggpWAeSdNw0HQ2T+sjx/K9ykgttUz0N+AwqUN3XOXyyODm+sRnhVKoLIIfE
-    5cByaVdCFHQijgBus383UKRmCZQK2YF4fg1Nr025+Dc6ayZMAYHlqn01BWx9bJLi
-    S2T4uL0hr7OPpT0duleToTXHYhz4g7cvtclK5e7FXPgkGntqraJvp/eXlJ8oQCcs
-    piIt3NtdOBNFkHsYKvYGyZ+mEQFx5hisZDbmfpkh2mTimtJPfQX7EC55Eafa1ytO
-    ovxFYGlorkb++Gt6weQFF0aN+a/RQPO2vFKEHycnrZwap+SqB/udyUy+sa13nsEx
-    74ZZtqkVQw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=KE6Jdb94 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519633674;
+    bh=TVG6WlEkeS+IhPzLyRKtulufYo3MBwa/boLRfDGGR6U=; b=aVxu9mOjhar2
+    bOgiOIX4nr4+gtXwSejyeQMK/lsa1ATHTQPLXU6yH/8kvp80wIz8xcwXOzMbKNT8
+    4njfwysr2+E/G2oIUzaEAZTn9OrmbmzMw9q7xc7kHJRE/12NQh28zQCah+1dxJ43
+    IpRgv//7HdeIzD2N5hN19IJSpa+/3xduIpvtmhVc3orPEYGB624s8U7Epyeb+AVl
+    vKeshFjtJd0mJI4L32QwUaUScuKW59OoJurW86QBWhZmP5GLOvqhkB+QBxKTnMqu
+    p9NtxhDfGDMqPeMVAcZkknWQAeqslB1lPjHhvWp+mscoTFQFx2B4/r4tLxFLGp92
+    OocE3yIqdw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=D16PV8HT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DnCXcE7q;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UWB0Vov8;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=KE6Jdb94 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=D16PV8HT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DnCXcE7q;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UWB0Vov8;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeBZI17 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:27:59 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35047 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752899AbeBZI14 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:27:56 -0500
-X-Google-Smtp-Source: AH8x225CPNDG3fT3WHgUM6nCiKIdeEWnqeI2Jilw/Ijb2gUwrxPdyRQCgECG9tmhMoSVWmGzevitVQ==
+        id S1752433AbeBZI1x (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:27:53 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39720 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752890AbeBZI1t (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:27:49 -0500
+X-Google-Smtp-Source: AH8x224M4O1vxd/LYN/xl9O5dhNikRATrb1arMpwsxnDkmDKcry+Gkoi1DGjtXT2Pi2MqpyR0p/bLQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 52/52] arm64: Add README describing the branch
-Date: Mon, 26 Feb 2018 16:20:26 +0800
-Message-Id: <1519633227-29832-53-git-send-email-alex.shi@linaro.org>
+        stable@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org (moderated list:KERNEL VIRTUAL
+        MACHINE (KVM) FOR ARM),
+        kvmarm@lists.cs.columbia.edu (open list:KERNEL VIRTUAL MACHINE (KVM)
+        FOR ARM),
+        kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 51/52] arm: KVM: Invalidate icache on guest exit for Cortex-A15
+Date: Mon, 26 Feb 2018 16:20:25 +0800
+Message-Id: <1519633227-29832-52-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
 References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
@@ -74,64 +84,81 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Will Deacon <will.deacon@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Provide some basic guidance about this branch, its layout and how we plan
-to deploy changes in the future.
+** Not yet queued for inclusion in mainline **
 
+In order to avoid aliasing attacks against the branch predictor
+on Cortex-A15, let's invalidate the BTB on guest exit, which can
+only be done by invalidating the icache (with ACTLR[0] being set).
+
+We use the same hack as for A12/A17 to perform the vector decoding.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- SPECTRE-MELTDOWN-MITIGATIONS.README | 41 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 SPECTRE-MELTDOWN-MITIGATIONS.README
+ arch/arm/include/asm/kvm_mmu.h |  5 +++++
+ arch/arm/kvm/hyp/hyp-entry.S   | 24 ++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/SPECTRE-MELTDOWN-MITIGATIONS.README b/SPECTRE-MELTDOWN-MITIGATIONS.README
-new file mode 100644
-index 0000000..7b71b81
---- /dev/null
-+++ b/SPECTRE-MELTDOWN-MITIGATIONS.README
-@@ -0,0 +1,41 @@
-+INTRODUCTION
-+============
+diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+index 2887129..a602467 100644
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -235,6 +235,11 @@ static inline void *kvm_get_hyp_vector(void)
+ 		return kvm_ksym_ref(__kvm_hyp_vector_bp_inv);
+ 	}
+ 
++	case ARM_CPU_PART_CORTEX_A15:
++	{
++		extern char __kvm_hyp_vector_ic_inv[];
++		return kvm_ksym_ref(__kvm_hyp_vector_ic_inv);
++	}
+ #endif
+ 	default:
+ 	{
+diff --git a/arch/arm/kvm/hyp/hyp-entry.S b/arch/arm/kvm/hyp/hyp-entry.S
+index b6b8cb1..4492768 100644
+--- a/arch/arm/kvm/hyp/hyp-entry.S
++++ b/arch/arm/kvm/hyp/hyp-entry.S
+@@ -73,6 +73,28 @@ __kvm_hyp_vector:
+ 
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+ 	.align 5
++__kvm_hyp_vector_ic_inv:
++	.global __kvm_hyp_vector_ic_inv
 +
-+This branch is based on the v4.15 release of Linux and contains arm64
-+mitigations against the cache speculation side-channels described at
-+http://www.arm.com/security-update and commonly referred to as "Spectre" and
-+"Meltdown". Mitigations against variant 2 are also included for the 32-bit
-+armv7 architecture.
++	/*
++	 * We encode the exception entry in the bottom 3 bits of
++	 * SP, and we have to guarantee to be 8 bytes aligned.
++	 */
++	W(add)	sp, sp, #1	/* Reset 	  7 */
++	W(add)	sp, sp, #1	/* Undef	  6 */
++	W(add)	sp, sp, #1	/* Syscall	  5 */
++	W(add)	sp, sp, #1	/* Prefetch abort 4 */
++	W(add)	sp, sp, #1	/* Data abort	  3 */
++	W(add)	sp, sp, #1	/* HVC		  2 */
++	W(add)	sp, sp, #1	/* IRQ		  1 */
++	W(nop)			/* FIQ		  0 */
 +
++	mcr	p15, 0, r0, c7, c5, 0	/* ICIALLU */
++	isb
 +
-+LAYOUT
-+======
++	b	decode_vectors
 +
-+Each commit contains a subject prefix which clearly identifies the variant
-+which it is attempting to mitigate against:
++	.align 5
+ __kvm_hyp_vector_bp_inv:
+ 	.global __kvm_hyp_vector_bp_inv
+ 
+@@ -92,6 +114,8 @@ __kvm_hyp_vector_bp_inv:
+ 	mcr	p15, 0, r0, c7, c5, 6	/* BPIALL */
+ 	isb
+ 
++decode_vectors:
 +
-+  [Variant 1/Spectre-v1]
-+  [Variant 2/Spectre-v2]
-+  [Variant 3/Meltdown]
-+
-+The commit message begins with a reference to the upstream commit ID. The
-+arm64 patches are targeting the v4.16 release of Linux and so the upstream
-+commit IDs may not appear in mainline releases prior to v4.16, although they
-+should still be accurate.
-+
-+
-+NOTES TO INTEGRATORS
-+====================
-+
-+Please note that this branch is intended to be used as the basis for backport
-+efforts into stable and distribution kernels. It is not intended to be
-+integrated directly into production kernels and will consequently be frozen
-+when v4.16 is released after which it *WILL NOT RECEIVE FURTHER UPDATES*.
-+
-+Subsequent fixes and mitigation work will be queued in the mainline kernel
-+and CC'd to the stable trees as per the usual kernel development process.
-+Integrators are advised to track these trees as closely as possible.
-+
-+The patches here are intended to be specific to the arm/arm64 architectures
-+and therefore mitigation efforts elsewhere in the kernel (for example, in the
-+eBPF subsystem) are not included as part of this branch.
+ #ifdef CONFIG_THUMB2_KERNEL
+ 	/*
+ 	 * Yet another silly hack: Use VPIDR as a temp register.
 -- 
 2.7.4
