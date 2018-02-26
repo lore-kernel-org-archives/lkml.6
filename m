@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2387526-1519634281-2-4795955620704817128
+X-Cyrus-Session-Id: sloti22d1t05-2387443-1519634277-2-11830794391123295241
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519634280; b=iE9uRtwFvjXJ/TgIDyH9BV7V4XmyiXeXhsfSr4JXNHlmqMx
-    bTW6x/oTr3cLJqpzDRA6qWOxsru2UVtM01S/KitnKwdQrn3prld/St4z1Jly2fvc
-    YwC0FsSNVEKfv8YNjPrCOxVf+HL/0wn/RuuCz9U76Qi8jFTXiX3P4sq22WjmgnYi
-    oqfins7J6gWhCr0kltoFzpyUlFl/MM21QbcZvRyLbDun7eEcjSoKxMdvmmpumEFK
-    4YFS82ECAqPth5qx9IOcNelmPh53eOfLt6jmLHycn8Y20KveXzIJH7+N/7VWBozX
-    w+SB2x1hbAiIGr7LwPFTbftlSWGi2SbbdeKdA7g==
+    t=1519634276; b=AjiszaXHhAWWfya60NxVPjHpViyH96XZwrJDzSb4Fj9JdI2
+    w5pwmd65Ixv+JqIamWoQaWOl0WJTIkmYO9fZ0eKF1TbwyPeUyEo6rzmnFD78ol2k
+    2b1xo5ym9cHRdn36MLNKJe4BvMrHv6bEdZvME8IDKOb+2Xieoy26ZX1tsYRy38/8
+    5B+K23WgkpKkSNkTeNYNZf7EcwWWa/z+8to8qYQOjpqG0AJ/Cp/tL6388TYDODHB
+    lGRy9jubADm5277JNu8jCTSV1F77sjvtuqtMgmuGbqadva5HOKcd9hUrH7TqjNNi
+    v85GqUfHLhU3G8bLoAcV0toC2uNZOuTkCmZlU8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519634280;
-    bh=i4j5LLlcJTrNi6a03osuM7FMBFfhyS0MAdksfWz86sU=; b=FHhMVLQIAjaw
-    rguExC3VIkdm0GP6qiRg5p7veJMZcBT1vo9xoCwpEMTeFuF16kZoGqtcCebsDldK
-    z2GxhCSXYzun7nBs8adKRxzOvW1BMRF+Hp+6Ck2RZYPc+RmzIhX+G/OlCh3aanW1
-    9uP8OOydDLQF+zkTzthd3U1saBSfs+qKAIRh8tAZdHj40R5JiPRdCqahdror8WHY
-    FkSpYGL2EDJw4ZATHPb3zxprjdrb1zQL13pnVG2HbAGxV3WzhgCg4UHzfgTmI1mv
-    crKvMG6BPIkwYbJAonSwCWeS75EUr9r/Lkhnyn22vSMwYF4wRDk3my7wpu4HPLKT
-    G5EmhEeOAw==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519634276;
+    bh=5TmZ3GA7LvmXHit8kAa24HeUaVa3IsIu64SOGOdKiTk=; b=cy+tSpq2ud/r
+    BoY3J8/B8fJnzgFaKpxP0apMrz7WX19k6LyZQzDSpNCcoCF3i2crXA0Xvoug6SsY
+    fCK1UcX01Z4EozVizBnoJ2HI8BDVrecqSvxHs0On2ABda5UYbxTi5N4cUrHt8eJH
+    ARZ8IE6YbcNqRIAToCMrIY0dXZbwcIi/mIibYVo6ig7ssBeHq2aWC+0xpGcw7Tne
+    Y7XWRzntfYL++X1BE2YjcddIBtTS6Ie4OZkH39RZ41Ix9xCmTxU5zT9DRVyRdkXD
+    a3RPlfAwaobiPM9pXrCwmG1YA8Ca6uo6uPbLX7eXrBzcOzMSOnoV1oifIBUnXLQF
+    2H9posJTKQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=JAXXbMCF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=BGz3ciIA x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WZKE5qvC;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=P97UTV92;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=JAXXbMCF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=BGz3ciIA x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WZKE5qvC;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=P97UTV92;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752406AbeBZIWZ (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:22:25 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46518 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752218AbeBZIWU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:22:20 -0500
-X-Google-Smtp-Source: AH8x2240v9HJxH7eArEAuo+3ebxf9m37afhAiJHH6uqC9ak7tcWxn+nteuodgO7OODWSgXs2ki9+Iw==
+        id S1752423AbeBZIWd (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 03:22:33 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45648 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752355AbeBZIW2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:22:28 -0500
+X-Google-Smtp-Source: AH8x225K288jL9+I0rnD3GJIU7+PFUQiDlPJLq79E8qY5kYBdLI20lJJJoBUbgOA9Asan44ErroPmA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,10 +64,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Cc: Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH 10/52] arm64: Use pointer masking to limit uaccess speculation
-Date: Mon, 26 Feb 2018 16:19:44 +0800
-Message-Id: <1519633227-29832-11-git-send-email-alex.shi@linaro.org>
+Cc: Dave Martin <Dave.Martin@arm.com>
+Subject: [PATCH 11/52] arm64: syscallno is secretly an int, make it official
+Date: Mon, 26 Feb 2018 16:19:45 +0800
+Message-Id: <1519633227-29832-12-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
 References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
@@ -77,82 +77,247 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 4d8efc2d5ee4 upstream.
+commit 35d0e6fb4d upstream.
 
-Similarly to x86, mitigate speculation past an access_ok() check by
-masking the pointer against the address limit before use.
+The upper 32 bits of the syscallno field in thread_struct are
+handled inconsistently, being sometimes zero extended and sometimes
+sign-extended.  In fact, only the lower 32 bits seem to have any
+real significance for the behaviour of the code: it's been OK to
+handle the upper bits inconsistently because they don't matter.
 
-Even if we don't expect speculative writes per se, it is plausible that
-a CPU may still speculate at least as far as fetching a cache line for
-writing, hence we also harden put_user() and clear_user() for peace of
-mind.
+Currently, the only place I can find where those bits are
+significant is in calling trace_sys_enter(), which may be
+unintentional: for example, if a compat tracer attempts to cancel a
+syscall by passing -1 to (COMPAT_)PTRACE_SET_SYSCALL at the
+syscall-enter-stop, it will be traced as syscall 4294967295
+rather than -1 as might be expected (and as occurs for a native
+tracer doing the same thing).  Elsewhere, reads of syscallno cast
+it to an int or truncate it.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+There's also a conspicuous amount of code and casting to bodge
+around the fact that although semantically an int, syscallno is
+stored as a u64.
+
+Let's not pretend any more.
+
+In order to preserve the stp x instruction that stores the syscall
+number in entry.S, this patch special-cases the layout of struct
+pt_regs for big endian so that the newly 32-bit syscallno field
+maps onto the low bits of the stored value.  This is not beautiful,
+but benchmarking of the getpid syscall on Juno suggests indicates a
+minor slowdown if the stp is split into an stp x and stp w.
+
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/include/asm/uaccess.h | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/processor.h |  2 +-
+ arch/arm64/include/asm/ptrace.h    |  9 ++++++++-
+ arch/arm64/kernel/entry.S          | 34 +++++++++++++++++-----------------
+ arch/arm64/kernel/ptrace.c         |  2 +-
+ arch/arm64/kernel/signal.c         |  6 +++---
+ arch/arm64/kernel/signal32.c       |  2 +-
+ arch/arm64/kernel/traps.c          |  2 +-
+ 7 files changed, 32 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 7b1eb49..3531fec 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -170,6 +170,26 @@ static inline void uaccess_enable_not_uao(void)
- }
- 
- /*
-+ * Sanitise a uaccess pointer such that it becomes NULL if above the
-+ * current addr_limit.
-+ */
-+#define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
-+static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
-+{
-+	void __user *safe_ptr;
-+
-+	asm volatile(
-+	"	bics	xzr, %1, %2\n"
-+	"	csel	%0, %1, xzr, eq\n"
-+	: "=&r" (safe_ptr)
-+	: "r" (ptr), "r" (current_thread_info()->addr_limit)
-+	: "cc");
-+
-+	csdb();
-+	return safe_ptr;
-+}
-+
-+/*
-  * The "__xxx" versions of the user access functions do not verify the address
-  * space - it must have been done previously with a separate "access_ok()"
-  * call.
-@@ -241,7 +261,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_READ, __p, sizeof(*__p)) ?			\
--		__get_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __get_user((x), __p) :	\
- 		((x) = 0, -EFAULT);					\
- })
- 
-@@ -307,7 +327,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_WRITE, __p, sizeof(*__p)) ?			\
--		__put_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __put_user((x), __p) :	\
- 		-EFAULT;						\
- })
- 
-@@ -368,7 +388,7 @@ static inline unsigned long __must_check copy_in_user(void __user *to, const voi
- static inline unsigned long __must_check clear_user(void __user *to, unsigned long n)
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index 5917147..f5cdda6 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -130,7 +130,7 @@ struct thread_struct {
+ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
  {
- 	if (access_ok(VERIFY_WRITE, to, n))
--		n = __clear_user(to, n);
-+		n = __clear_user(__uaccess_mask_ptr(to), n);
- 	return n;
+ 	memset(regs, 0, sizeof(*regs));
+-	regs->syscallno = ~0UL;
++	regs->syscallno = ~0;
+ 	regs->pc = pc;
  }
  
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index ada08b5..7721d7a 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -116,7 +116,14 @@ struct pt_regs {
+ 		};
+ 	};
+ 	u64 orig_x0;
+-	u64 syscallno;
++#ifdef __AARCH64EB__
++	u32 unused2;
++	s32 syscallno;
++#else
++	s32 syscallno;
++	u32 unused2;
++#endif
++
+ 	u64 orig_addr_limit;
+ 	u64 unused;	// maintain 16 byte alignment
+ };
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 6915697..48c41ff 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -116,8 +116,8 @@
+ 	 * Set syscallno to -1 by default (overridden later if real syscall).
+ 	 */
+ 	.if	\el == 0
+-	mvn	x21, xzr
+-	str	x21, [sp, #S_SYSCALLNO]
++	mvn	w21, wzr
++	str	w21, [sp, #S_SYSCALLNO]
+ 	.endif
+ 
+ 	/*
+@@ -232,8 +232,9 @@ alternative_else_nop_endif
+  *
+  * x7 is reserved for the system call number in 32-bit mode.
+  */
+-sc_nr	.req	x25		// number of system calls
+-scno	.req	x26		// syscall number
++wsc_nr	.req	w25		// number of system calls
++wscno	.req	w26		// syscall number
++xscno	.req	x26		// syscall number (zero-extended)
+ stbl	.req	x27		// syscall table pointer
+ tsk	.req	x28		// current thread_info
+ 
+@@ -519,8 +520,8 @@ el0_svc_compat:
+ 	 * AArch32 syscall handling
+ 	 */
+ 	adrp	stbl, compat_sys_call_table	// load compat syscall table pointer
+-	uxtw	scno, w7			// syscall number in w7 (r7)
+-	mov     sc_nr, #__NR_compat_syscalls
++	mov	wscno, w7			// syscall number in w7 (r7)
++	mov     wsc_nr, #__NR_compat_syscalls
+ 	b	el0_svc_naked
+ 
+ 	.align	6
+@@ -741,19 +742,19 @@ ENDPROC(ret_from_fork)
+ 	.align	6
+ el0_svc:
+ 	adrp	stbl, sys_call_table		// load syscall table pointer
+-	uxtw	scno, w8			// syscall number in w8
+-	mov	sc_nr, #__NR_syscalls
++	mov	wscno, w8			// syscall number in w8
++	mov	wsc_nr, #__NR_syscalls
+ el0_svc_naked:					// compat entry point
+-	stp	x0, scno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
++	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
+ 	enable_dbg_and_irq
+ 	ct_user_exit 1
+ 
+ 	ldr	x16, [tsk, #TI_FLAGS]		// check for syscall hooks
+ 	tst	x16, #_TIF_SYSCALL_WORK
+ 	b.ne	__sys_trace
+-	cmp     scno, sc_nr                     // check upper syscall limit
++	cmp     wscno, wsc_nr			// check upper syscall limit
+ 	b.hs	ni_sys
+-	ldr	x16, [stbl, scno, lsl #3]	// address in the syscall table
++	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
+ 	blr	x16				// call sys_* routine
+ 	b	ret_fast_syscall
+ ni_sys:
+@@ -767,24 +768,23 @@ ENDPROC(el0_svc)
+ 	 * switches, and waiting for our parent to respond.
+ 	 */
+ __sys_trace:
+-	mov	w0, #-1				// set default errno for
+-	cmp     scno, x0			// user-issued syscall(-1)
++	cmp     wscno, #-1			// user-issued syscall(-1)?
+ 	b.ne	1f
+-	mov	x0, #-ENOSYS
++	mov	x0, #-ENOSYS			// set default errno if so
+ 	str	x0, [sp, #S_X0]
+ 1:	mov	x0, sp
+ 	bl	syscall_trace_enter
+ 	cmp	w0, #-1				// skip the syscall?
+ 	b.eq	__sys_trace_return_skipped
+-	uxtw	scno, w0			// syscall number (possibly new)
++	mov	wscno, w0			// syscall number (possibly new)
+ 	mov	x1, sp				// pointer to regs
+-	cmp	scno, sc_nr			// check upper syscall limit
++	cmp	wscno, wsc_nr			// check upper syscall limit
+ 	b.hs	__ni_sys_trace
+ 	ldp	x0, x1, [sp]			// restore the syscall args
+ 	ldp	x2, x3, [sp, #S_X2]
+ 	ldp	x4, x5, [sp, #S_X4]
+ 	ldp	x6, x7, [sp, #S_X6]
+-	ldr	x16, [stbl, scno, lsl #3]	// address in the syscall table
++	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
+ 	blr	x16				// call sys_* routine
+ 
+ __sys_trace_return:
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index 8eedeef..193c621 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -1346,7 +1346,7 @@ static void tracehook_report_syscall(struct pt_regs *regs,
+ 	if (dir == PTRACE_SYSCALL_EXIT)
+ 		tracehook_report_syscall_exit(regs, 0);
+ 	else if (tracehook_report_syscall_entry(regs))
+-		regs->syscallno = ~0UL;
++		regs->syscallno = ~0;
+ 
+ 	regs->regs[regno] = saved_reg;
+ }
+diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+index 404dd67..fd7eba8 100644
+--- a/arch/arm64/kernel/signal.c
++++ b/arch/arm64/kernel/signal.c
+@@ -113,7 +113,7 @@ static int restore_sigframe(struct pt_regs *regs,
+ 	/*
+ 	 * Avoid sys_rt_sigreturn() restarting.
+ 	 */
+-	regs->syscallno = ~0UL;
++	regs->syscallno = ~0;
+ 
+ 	err |= !valid_user_regs(&regs->user_regs, current);
+ 
+@@ -332,7 +332,7 @@ static void do_signal(struct pt_regs *regs)
+ {
+ 	unsigned long continue_addr = 0, restart_addr = 0;
+ 	int retval = 0;
+-	int syscall = (int)regs->syscallno;
++	int syscall = regs->syscallno;
+ 	struct ksignal ksig;
+ 
+ 	/*
+@@ -346,7 +346,7 @@ static void do_signal(struct pt_regs *regs)
+ 		/*
+ 		 * Avoid additional syscall restarting via ret_to_user.
+ 		 */
+-		regs->syscallno = ~0UL;
++		regs->syscallno = ~0;
+ 
+ 		/*
+ 		 * Prepare for system call restart. We do this here so that a
+diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
+index b7063de..1effea2 100644
+--- a/arch/arm64/kernel/signal32.c
++++ b/arch/arm64/kernel/signal32.c
+@@ -354,7 +354,7 @@ static int compat_restore_sigframe(struct pt_regs *regs,
+ 	/*
+ 	 * Avoid compat_sys_sigreturn() restarting.
+ 	 */
+-	regs->syscallno = ~0UL;
++	regs->syscallno = ~0;
+ 
+ 	err |= !valid_user_regs(&regs->user_regs, current);
+ 
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index c743d1f..59f80b0 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -541,7 +541,7 @@ asmlinkage long do_ni_syscall(struct pt_regs *regs)
+ 
+ 	if (show_unhandled_signals_ratelimited()) {
+ 		pr_info("%s[%d]: syscall %d\n", current->comm,
+-			task_pid_nr(current), (int)regs->syscallno);
++			task_pid_nr(current), regs->syscallno);
+ 		dump_instr("", regs);
+ 		if (user_mode(regs))
+ 			__show_regs(regs);
 -- 
 2.7.4
