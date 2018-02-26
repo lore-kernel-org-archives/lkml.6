@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22455wFfeULOJ7/JrTGVuWuhtRl7gDxQstRS+t6d6IY/+k3/bs0ZcI4J0VIFzkaz7aaB9YwD
-ARC-Seal: i=1; a=rsa-sha256; t=1519676791; cv=none;
+X-Google-Smtp-Source: AH8x224LT29bDpDIDzGZ9Dep8zdykXJeS8mS5kAQNnyik5XsdGLGXfxT3YKZKvuimzU0PMEJba5Z
+ARC-Seal: i=1; a=rsa-sha256; t=1519676788; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRiUkK0AOTC2juKsV/EBkkBXwVgaUOgb/k8/umzncgL3P5O4Eupk1OAoTurffYYQ7H
-         LKvVkU8XZwIZX8At9yKyZxSjLMT+azeICHcXt1ckVMYzYnzpIeZZ7UaF01yvATtN9+gk
-         J6n/1IbFR2JH0sE0CcklJuvQtyAUSZp/yKEUuAMzngD4t5+7+U5GxBillDmBif/qb+G9
-         lcH0e6L6TPuC2Qx9RlGmn0KkUqGHJi0Al1xPN+xrST415+8nlU0Vr7a2tBYUEeqkqRcS
-         P9HSo1CQtsAxwfPqvuFqgu4ukGB3x7N/BoesGt1tXDSIXZX1/CeSQ2aNpIEAFg4g35xz
-         nvwA==
+        b=Bz4znkWB5nRcRufvPPoHcaEE8CZEkDOqmuwHBjWi3h2XH6/CSuSvfCK9v+5jw6DEKz
+         jU8HMQMRoCVfF2sd68GvbzVFKvpKzBrk2fv63hpeKAY8gocWHJjALvBOeKgHKC7nXyiC
+         doqpW20OWBbqckgtzv0to88gq4DLVduCRrz3yurK8T+AjiQfqlkQvIucjEZw1jrHv1HH
+         l9p96sz5lUz3D1zLvBX0XIg8JqLUfQ8+dwt+Ta+Ax5saHysneC8K+lchBuNqBmyFklro
+         7ELa6qZGmavNMue4XYSRSjF4Mxj4l7hUVu2RjLnhoND7UFuxye5Qb84Ml4cOc80VMtVr
+         eIfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hI4HJ+HvQEmEydnDg5zrfIxq2Ib/PHHut8NvIJ+udBw=;
-        b=yNprBxXRcoNHsxsCo0ZDxgamsCUytu3lpTjRLF28u0LXKnD6QzFODJgpqtTf7wJxNj
-         iM0widk8Zta8cyVjJFqJGYEzpcTyGmxQ4MOHnOq6vpbphIVi9Fw0cvpexElgm6f8/ElJ
-         kkAEioj5c4yzGbq5vp6rhz1FcXqbpGndRmY3ePn0+F73FqAWlb03+2reFy1MrpARPPOP
-         DKP75JYSShPwVG+RTfPygI4osFw7vhHyJHMzQUyu9Urly08xJg0ZGksA12iQN5+lt7OX
-         pD/jyZ42wS8G62yrdN+GcexJmXUHxp4p84c2NlIZGRjztuVWH03cqvpYsKPNyo4xM7yZ
-         c20g==
+        bh=5HTJbw1GXF9zWZNfbQ8FzRB327TVgK0HY+ZcwzVIFy0=;
+        b=PNiIE8KbORo0hW4ttd/Ra7uiPtOmvBXnMUIeMPbE/uQ4r/rJPPbsSNybW9tc/4SzbW
+         LVaLBSURjlo0/d/UdwLY/egpS1MozKvxm7RlOLYGJVAxSAoEvdO9eeeDrb+1Ddc54Dge
+         DgPpbGdt8OwBZwX1q3WO/k+x81KVWMcbP6mSJQ59ywgk9xchAEVuv+uve5SMDcG+9Xf1
+         T6ULvhZNyqIwlKuhpDwStMLhTe5CwIcvPnvz9JAAbkE/8PCpQquzSeZgPFGMaHNs3oan
+         XRj7MdJcRKN1rHteqmHlwa+XmvUBxOU7DSGm5Fr0dAEBMniVbSBeEbBxcoKZwgUcQ7m9
+         orFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzkaller <syzkaller@googlegroups.com>,
-	Noa Osherovich <noaos@mellanox.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.15 17/64] RDMA/uverbs: Protect from races between lookup and destroy of uobjects
-Date: Mon, 26 Feb 2018 21:21:54 +0100
-Message-Id: <20180226202154.178082595@linuxfoundation.org>
+	Yuriy Vostrikov <delamonpansie@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH 4.15 16/64] genirq/matrix: Handle CPU offlining proper
+Date: Mon, 26 Feb 2018 21:21:53 +0100
+Message-Id: <20180226202154.136078662@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496428888877297?=
-X-GMAIL-MSGID: =?utf-8?q?1593496611737997486?=
+X-GMAIL-THRID: =?utf-8?q?1593496608255303914?=
+X-GMAIL-MSGID: =?utf-8?q?1593496608255303914?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,159 +51,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 6623e3e3cd78020016d3fa42555763178e94ab64 upstream.
+commit 651ca2c00405a2ae3870cc0b4f15a182eb6fbe26 upstream.
 
-The race is between lookup_get_idr_uobject and
-uverbs_idr_remove_uobj -> uverbs_uobject_put.
+At CPU hotunplug the corresponding per cpu matrix allocator is shut down and
+the allocated interrupt bits are discarded under the assumption that all
+allocated bits have been either migrated away or shut down through the
+managed interrupts mechanism.
 
-We deliberately do not call sychronize_rcu after the idr_remove in
-uverbs_idr_remove_uobj for performance reasons, instead we call
-kfree_rcu() during uverbs_uobject_put.
+This is not true because interrupts which are not started up might have a
+vector allocated on the outgoing CPU. When the interrupt is started up
+later or completely shutdown and freed then the allocated vector is handed
+back, triggering warnings or causing accounting issues which result in
+suspend failures and other issues.
 
-However, this means we can obtain pointers to uobj's that have
-already been released and must protect against krefing them
-using kref_get_unless_zero.
+Change the CPU hotplug mechanism of the matrix allocator so that the
+remaining allocations at unplug time are preserved and global accounting at
+hotplug is correctly readjusted to take the dormant vectors into account.
 
-==================================================================
-BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-Read of size 4 at addr ffff88005fda1ac8 by task syz-executor2/441
-
-CPU: 1 PID: 441 Comm: syz-executor2 Not tainted 4.15.0-rc2+ #56
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-Call Trace:
-dump_stack+0x8d/0xd4
-print_address_description+0x73/0x290
-kasan_report+0x25c/0x370
-? copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
-? uverbs_try_lock_object+0x68/0xc0
-? modify_qp.isra.7+0xdc4/0x10e0
-modify_qp.isra.7+0xdc4/0x10e0
-ib_uverbs_modify_qp+0xfe/0x170
-? ib_uverbs_query_qp+0x970/0x970
-? __lock_acquire+0xa11/0x1da0
-ib_uverbs_write+0x55a/0xad0
-? ib_uverbs_query_qp+0x970/0x970
-? ib_uverbs_query_qp+0x970/0x970
-? ib_uverbs_open+0x760/0x760
-? futex_wake+0x147/0x410
-? sched_clock_cpu+0x18/0x180
-? check_prev_add+0x1680/0x1680
-? do_futex+0x3b6/0xa30
-? sched_clock_cpu+0x18/0x180
-__vfs_write+0xf7/0x5c0
-? ib_uverbs_open+0x760/0x760
-? kernel_read+0x110/0x110
-? lock_acquire+0x370/0x370
-? __fget+0x264/0x3b0
-vfs_write+0x18a/0x460
-SyS_write+0xc7/0x1a0
-? SyS_read+0x1a0/0x1a0
-? trace_hardirqs_on_thunk+0x1a/0x1c
-entry_SYSCALL_64_fastpath+0x18/0x85
-RIP: 0033:0x448e29
-RSP: 002b:00007f443fee0c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f443fee16bc RCX: 0000000000448e29
-RDX: 0000000000000078 RSI: 00000000209f8000 RDI: 0000000000000012
-RBP: 000000000070bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000008e98 R14: 00000000006ebf38 R15: 0000000000000000
-
-Allocated by task 1:
-kmem_cache_alloc_trace+0x16c/0x2f0
-mlx5_alloc_cmd_msg+0x12e/0x670
-cmd_exec+0x419/0x1810
-mlx5_cmd_exec+0x40/0x70
-mlx5_core_mad_ifc+0x187/0x220
-mlx5_MAD_IFC+0xd7/0x1b0
-mlx5_query_mad_ifc_gids+0x1f3/0x650
-mlx5_ib_query_gid+0xa4/0xc0
-ib_query_gid+0x152/0x1a0
-ib_query_port+0x21e/0x290
-mlx5_port_immutable+0x30f/0x490
-ib_register_device+0x5dd/0x1130
-mlx5_ib_add+0x3e7/0x700
-mlx5_add_device+0x124/0x510
-mlx5_register_interface+0x11f/0x1c0
-mlx5_ib_init+0x56/0x61
-do_one_initcall+0xa3/0x250
-kernel_init_freeable+0x309/0x3b8
-kernel_init+0x14/0x180
-ret_from_fork+0x24/0x30
-
-Freed by task 1:
-kfree+0xeb/0x2f0
-mlx5_free_cmd_msg+0xcd/0x140
-cmd_exec+0xeba/0x1810
-mlx5_cmd_exec+0x40/0x70
-mlx5_core_mad_ifc+0x187/0x220
-mlx5_MAD_IFC+0xd7/0x1b0
-mlx5_query_mad_ifc_gids+0x1f3/0x650
-mlx5_ib_query_gid+0xa4/0xc0
-ib_query_gid+0x152/0x1a0
-ib_query_port+0x21e/0x290
-mlx5_port_immutable+0x30f/0x490
-ib_register_device+0x5dd/0x1130
-mlx5_ib_add+0x3e7/0x700
-mlx5_add_device+0x124/0x510
-mlx5_register_interface+0x11f/0x1c0
-mlx5_ib_init+0x56/0x61
-do_one_initcall+0xa3/0x250
-kernel_init_freeable+0x309/0x3b8
-kernel_init+0x14/0x180
-ret_from_fork+0x24/0x30
-
-The buggy address belongs to the object at ffff88005fda1ab0
-which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 24 bytes inside of
-32-byte region [ffff88005fda1ab0, ffff88005fda1ad0)
-The buggy address belongs to the page:
-page:00000000d5655c19 count:1 mapcount:0 mapping: (null)
-index:0xffff88005fda1fc0
-flags: 0x4000000000000100(slab)
-raw: 4000000000000100 0000000000000000 ffff88005fda1fc0 0000000180550008
-raw: ffffea00017f6780 0000000400000004 ffff88006c803980 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-ffff88005fda1980: fc fc fb fb fb fb fc fc fb fb fb fb fc fc fb fb
-ffff88005fda1a00: fb fb fc fc fb fb fb fb fc fc 00 00 00 00 fc fc
-ffff88005fda1a80: fb fb fb fb fc fc fb fb fb fb fc fc fb fb fb fb
-ffff88005fda1b00: fc fc 00 00 00 00 fc fc fb fb fb fb fc fc fb fb
-ffff88005fda1b80: fb fb fc fc fb fb fb fb fc fc fb fb fb fb fc fc
-==================================================================@
-
-Cc: syzkaller <syzkaller@googlegroups.com>
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: 3832125624b7 ("IB/core: Add support for idr types")
-Reported-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 2f75d9e1c905 ("genirq: Implement bitmap matrix allocator")
+Reported-by: Yuriy Vostrikov <delamonpansie@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Yuriy Vostrikov <delamonpansie@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180222112316.849980972@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/rdma_core.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ kernel/irq/matrix.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/infiniband/core/rdma_core.c
-+++ b/drivers/infiniband/core/rdma_core.c
-@@ -196,7 +196,15 @@ static struct ib_uobject *lookup_get_idr
- 		goto free;
- 	}
+--- a/kernel/irq/matrix.c
++++ b/kernel/irq/matrix.c
+@@ -16,6 +16,7 @@ struct cpumap {
+ 	unsigned int		available;
+ 	unsigned int		allocated;
+ 	unsigned int		managed;
++	bool			initialized;
+ 	bool			online;
+ 	unsigned long		alloc_map[IRQ_MATRIX_SIZE];
+ 	unsigned long		managed_map[IRQ_MATRIX_SIZE];
+@@ -81,9 +82,11 @@ void irq_matrix_online(struct irq_matrix
  
--	uverbs_uobject_get(uobj);
-+	/*
-+	 * The idr_find is guaranteed to return a pointer to something that
-+	 * isn't freed yet, or NULL, as the free after idr_remove goes through
-+	 * kfree_rcu(). However the object may still have been released and
-+	 * kfree() could be called at any time.
-+	 */
-+	if (!kref_get_unless_zero(&uobj->ref))
-+		uobj = ERR_PTR(-ENOENT);
+ 	BUG_ON(cm->online);
+ 
+-	bitmap_zero(cm->alloc_map, m->matrix_bits);
+-	cm->available = m->alloc_size - (cm->managed + m->systembits_inalloc);
+-	cm->allocated = 0;
++	if (!cm->initialized) {
++		cm->available = m->alloc_size;
++		cm->available -= cm->managed + m->systembits_inalloc;
++		cm->initialized = true;
++	}
+ 	m->global_available += cm->available;
+ 	cm->online = true;
+ 	m->online_maps++;
+@@ -370,14 +373,16 @@ void irq_matrix_free(struct irq_matrix *
+ 	if (WARN_ON_ONCE(bit < m->alloc_start || bit >= m->alloc_end))
+ 		return;
+ 
+-	if (cm->online) {
+-		clear_bit(bit, cm->alloc_map);
+-		cm->allocated--;
++	clear_bit(bit, cm->alloc_map);
++	cm->allocated--;
 +
- free:
- 	rcu_read_unlock();
- 	return uobj;
++	if (cm->online)
+ 		m->total_allocated--;
+-		if (!managed) {
+-			cm->available++;
++
++	if (!managed) {
++		cm->available++;
++		if (cm->online)
+ 			m->global_available++;
+-		}
+ 	}
+ 	trace_irq_matrix_free(bit, cpu, m, cm);
+ }
