@@ -1,150 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753659AbeBZOMK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:12:10 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45423 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753521AbeBZOLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:11:14 -0500
-X-Google-Smtp-Source: AG47ELuQuSSqIlXWbmpCswYGobg2w0KkQMdoLu1p8h7h1kzTp4/Fd03rk9UJJV7Cza6G6AC7uDhdyE018nsHIquYXqc=
-MIME-Version: 1.0
-In-Reply-To: <20180226130558.7634-4-rf@opensource.cirrus.com>
-References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-4-rf@opensource.cirrus.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 26 Feb 2018 16:11:13 +0200
-Message-ID: <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/9] mfd: madera: Add common support for Cirrus Logic
- Madera codecs
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753781AbeBZONL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:13:11 -0500
+Received: from mga17.intel.com ([192.55.52.151]:3197 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753396AbeBZOLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:11:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
+   d="scan'208";a="29840189"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jeremy McNicoll <jmcnicol@redhat.com>,
+        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 11/18] thunderbolt: Add tb_switch_find_by_route()
+Date: Mon, 26 Feb 2018 17:10:41 +0300
+Message-Id: <20180226141048.83949-12-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
+References: <20180226141048.83949-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
-> This adds the generic core support for Cirrus Logic "Madera" class codecs.
-> These are complex audio codec SoCs with a variety of digital and analogue
-> I/O, onboard audio processing and DSPs, and other features.
->
-> These codecs are all based off a common set of hardware IP so can be
-> supported by a core of common code (with a few minor device-to-device
-> variations).
+From: Radion Mirchevsky <radion.mirchevsky@intel.com>
 
+With the new ICM messaging there is need for find switch by route string
+instead of link and depth. Add new function that makes it possible.
 
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation; version 2.
+Signed-off-by: Radion Mirchevsky <radion.mirchevsky@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/thunderbolt/switch.c | 33 +++++++++++++++++++++++++++++++++
+ drivers/thunderbolt/tb.h     |  1 +
+ 2 files changed, 34 insertions(+)
 
-This is redundant.
-
-> +static void madera_enable_hard_reset(struct madera *madera)
-> +{
-> +       if (madera->reset_gpio)
-
-if (!...)
- return
-
-> +               gpiod_set_value_cansleep(madera->reset_gpio, 0);
-> +}
-> +
-> +static void madera_disable_hard_reset(struct madera *madera)
-> +{
-> +       if (madera->reset_gpio) {
-
-Ditto.
-
-> +               gpiod_set_value_cansleep(madera->reset_gpio, 1);
-> +               usleep_range(1000, 2000);
-> +       }
-> +}
-> +
-
-> +#ifdef CONFIG_PM
-
-__maybe_unused
-
-
-> +const struct dev_pm_ops madera_pm_ops = {
-> +       SET_RUNTIME_PM_OPS(madera_runtime_suspend,
-> +                          madera_runtime_resume,
-> +                          NULL)
-> +};
-
-There is a macro helper for this I believe.
-
-> +const struct of_device_id madera_of_match[] = {
-> +       { .compatible = "cirrus,cs47l35", .data = (void *)CS47L35 },
-> +       { .compatible = "cirrus,cs47l85", .data = (void *)CS47L85 },
-> +       { .compatible = "cirrus,cs47l90", .data = (void *)CS47L90 },
-> +       { .compatible = "cirrus,cs47l91", .data = (void *)CS47L91 },
-> +       { .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
-
-> +       {},
-
-No comma.
-
-> +};
-
-
-> +               ret = devm_gpio_request_one(madera->dev,
-> +                                           madera->pdata.reset,
-> +                                           GPIOF_DIR_OUT | GPIOF_INIT_LOW,
-> +                                           "madera reset");
-> +               if (!ret)
-> +                       madera->reset_gpio = gpio_to_desc(madera->pdata.reset);
-
-Why? What's wrong with descriptors?
-
-> +       dev_set_drvdata(madera->dev, madera);
-...
-> +       if (dev_get_platdata(madera->dev))
-
-What this dance for?
-
-> +       ret = mfd_add_devices(madera->dev, PLATFORM_DEVID_NONE,
-> +                             mfd_devs, n_devs,
-> +                             NULL, 0, NULL);
-
-devm_?
-
-> +       if (i2c->dev.of_node) {
-> +               of_id = of_match_device(madera_of_match, &i2c->dev);
-> +               if (of_id)
-> +                       type = (unsigned long)of_id->data;
-> +       } else {
-> +               type = id->driver_data;
-> +       }
-
-> +       if (spi->dev.of_node) {
-> +               of_id = of_match_device(madera_of_match, &spi->dev);
-> +               if (of_id)
-> +                       type = (unsigned long)of_id->data;
-
-There is a helper to get match data.
-
-> +       } else {
-> +               type = id->driver_data;
-> +       }
-
-> +struct madera_irqchip_pdata;
-> +struct madera_codec_pdata;
-
-
-Why do you need platform data in new code?
-
-> + * @reset:         GPIO controlling /RESET (0 = none)
-
-Shouldn't be descriptor?
-
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 2a0bded44922..4e2b2097bbfc 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1479,6 +1479,7 @@ struct tb_sw_lookup {
+ 	u8 link;
+ 	u8 depth;
+ 	const uuid_t *uuid;
++	u64 route;
+ };
+ 
+ static int tb_switch_match(struct device *dev, void *data)
+@@ -1494,6 +1495,11 @@ static int tb_switch_match(struct device *dev, void *data)
+ 	if (lookup->uuid)
+ 		return !memcmp(sw->uuid, lookup->uuid, sizeof(*lookup->uuid));
+ 
++	if (lookup->route) {
++		return sw->config.route_lo == lower_32_bits(lookup->route) &&
++		       sw->config.route_hi == upper_32_bits(lookup->route);
++	}
++
+ 	/* Root switch is matched only by depth */
+ 	if (!lookup->depth)
+ 		return !sw->depth;
+@@ -1551,6 +1557,33 @@ struct tb_switch *tb_switch_find_by_uuid(struct tb *tb, const uuid_t *uuid)
+ 	return NULL;
+ }
+ 
++/**
++ * tb_switch_find_by_route() - Find switch by route string
++ * @tb: Domain the switch belongs
++ * @route: Route string to look for
++ *
++ * Returned switch has reference count increased so the caller needs to
++ * call tb_switch_put() when done with the switch.
++ */
++struct tb_switch *tb_switch_find_by_route(struct tb *tb, u64 route)
++{
++	struct tb_sw_lookup lookup;
++	struct device *dev;
++
++	if (!route)
++		return tb_switch_get(tb->root_switch);
++
++	memset(&lookup, 0, sizeof(lookup));
++	lookup.tb = tb;
++	lookup.route = route;
++
++	dev = bus_find_device(&tb_bus_type, NULL, &lookup, tb_switch_match);
++	if (dev)
++		return tb_to_switch(dev);
++
++	return NULL;
++}
++
+ void tb_switch_exit(void)
+ {
+ 	ida_destroy(&nvm_ida);
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index c7bd77e9c2c3..2cd6085a6e10 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -386,6 +386,7 @@ struct tb_switch *get_switch_at_route(struct tb_switch *sw, u64 route);
+ struct tb_switch *tb_switch_find_by_link_depth(struct tb *tb, u8 link,
+ 					       u8 depth);
+ struct tb_switch *tb_switch_find_by_uuid(struct tb *tb, const uuid_t *uuid);
++struct tb_switch *tb_switch_find_by_route(struct tb *tb, u64 route);
+ 
+ static inline struct tb_switch *tb_switch_get(struct tb_switch *sw)
+ {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.16.1
