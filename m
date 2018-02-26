@@ -1,151 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeBZKZh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:25:37 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37809 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752523AbeBZKZd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:25:33 -0500
-X-Google-Smtp-Source: AH8x2253/G6dpt+6tKGsrfE1Y+2k1pRBti5G8xGWjUoJm8aSAWhzaPEOgbAUbB+PDsiNS616O1wo7Q==
-MIME-Version: 1.0
-In-Reply-To: <20180226101252.ozdsxjvawgkemz2c@flea.lan>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
- <20180223133742.26044-11-mylene.josserand@bootlin.com> <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
- <20180226101252.ozdsxjvawgkemz2c@flea.lan>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 26 Feb 2018 18:25:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
-Message-ID: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        id S1752573AbeBZK0C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:26:02 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44941 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752336AbeBZK0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 05:26:00 -0500
+Date: Mon, 26 Feb 2018 11:25:57 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        quentin.schulz@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM
+ PLLs
+Message-ID: <20180226102557.7bgjs3txp7cbridn@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <20180224214545.3740-2-jernej.skrabec@siol.net>
+ <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+ <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dxrtdxft72nv6clt"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 6:12 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Sat, Feb 24, 2018 at 12:17:13AM +0800, Chen-Yu Tsai wrote:
->> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
->> <mylene.josserand@bootlin.com> wrote:
->> > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
->> > It should be done by the bootloader but it is currently not the case,
->> > even for boot CPU because this SoC is booting in secure mode.
->> > It leads to an random offset value meaning that each CPU will have a
->> > different time, which isn't working very well.
->> >
->> > Add assembly code used for boot CPU and secondary CPU cores to make
->> > sure that the CNTVOFF register is initialized.
->> >
->> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
->> > ---
->> >  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
->> >  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
->> >  2 files changed, 25 insertions(+)
->> >
->> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
->> > index d5c97e945e69..605896251927 100644
->> > --- a/arch/arm/mach-sunxi/headsmp.S
->> > +++ b/arch/arm/mach-sunxi/headsmp.S
->> > @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
->> >         first: .word sunxi_mc_smp_first_comer - .
->> >  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
->> >
->> > +ENTRY(sunxi_init_cntvoff)
->> > +       /*
->> > +        * CNTVOFF has to be initialized either from non-secure Hypervisor
->> > +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
->> > +        * then it should be handled by the secure code
->> > +        */
->> > +       cps     #MON_MODE
->> > +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
->> > +       orr     r0, r1, #1
->> > +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
->> > +       instr_sync
->> > +       mov     r0, #0
->> > +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
->> > +       instr_sync
->> > +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
->> > +       instr_sync
->> > +       cps     #SVC_MODE
->> > +       ret     lr
->> > +ENDPROC(sunxi_init_cntvoff)
->>
->> There is no need to move all the assembly into a separate file, just
->> to add this function. Everything can be inlined as a naked function.
->> The "instr_sync" macro can be replaced with "isb", which is what it
->> expands to anyway.
->>
->> I really want to keep everything self-contained without global symbols,
->> and in C files if possible.
->
-> What is the rationale for keeping it in C files (beside the global
-> symbols)? Because the syntax is quite ugly, and it's much easier to
-> read, review and amend using a separate file.
 
-Global symbols and keeping everything in one place I guess.
-This symbol would be used in a few places, so I suppose having it
-in a separate assembly file would be OK.
+--dxrtdxft72nv6clt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> >  #ifdef CONFIG_SMP
->> >  ENTRY(sunxi_boot)
->> >         bl      sunxi_mc_smp_cluster_cache_enable
->> > +       bl      sunxi_init_cntvoff
->> >         b       secondary_startup
->> >  ENDPROC(sunxi_boot)
->> >
->> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
->> > index 5e9602ce1573..4bb041492b54 100644
->> > --- a/arch/arm/mach-sunxi/sunxi.c
->> > +++ b/arch/arm/mach-sunxi/sunxi.c
->> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
->> >  };
->> >
->> >  extern void __init sun6i_reset_init(void);
->> > +extern void sunxi_init_cntvoff(void);
->> > +
->> >  static void __init sun6i_timer_init(void)
->> >  {
->> > +       sunxi_init_cntvoff();
->>
->> You should check the enable-method to see if PSCI is set or not,
->> as an indicator whether the kernel is booted secure or non-secure.
->
-> It's an indicator, but it's not really a perfect one. You could very
-> well have your kernel booted in non-secure, without PSCI. Or even with
-> PSCI, but without the SMP ops.
->
-> We have a quite big number of these cases already, where, depending on
-> the configuration, we might not have access to the device we write to,
-> the number of hacks to just enable that device for non-secure is a
-> good example of that.
+On Mon, Feb 26, 2018 at 05:43:01PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > Hi,
+> >
+> > On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+> >> Some NM PLLs doesn't work well when their output clock rate is set bel=
+ow
+> >> certain rate.
+> >>
+> >> Add support for that constrain.
+> >
+> > In such a case, you should round the rate to the minimum the clock can
+> > operate at, and not return an error.
+>=20
+> That's true for round_rate. But what's the expected behavior of set_rate?
+> AFAIK we presume all users call round_rate before set_rate, but that does=
+n't
+> seem to be true all the time.
 
-I wouldn't consider them hacks though. The hardware gives the option
-to have control of many devices delegated solely to secure-only, or
-secure/non-secure. Our present model is to support everything we can
-in Linux directly, instead of through some firmware interface to a
-non-existent firmware.
+One of the first things that happens during a set_rate is a round_rate:
+https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/clk/clk.c#L1873
 
-ChenYu
+Maxime
 
->> AFAIK trying to set CNTVOFF under non-secure would be very bad.
->
-> Just like any other access we do :/
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--dxrtdxft72nv6clt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT4LQACgkQ0rTAlCFN
+r3T82Q//XfVSf/LYhtSjfNluMQUsBGgfDZcrFQEQfFSe5p1v72zjU292NQonhjQa
+EPas8HKpm1lpKz8b1cEzT8VSdi4/JgkES4FXDfdGfzkZFKgU/EQUljAgMyrVmgpJ
+2kKgKtOVg3PO0VlzFXcTBcqPn/5TVDnPNG7w6BjmLMhpkhSKiZ9XqxGdZNMBEfcW
+ck+Nhg6wd/vTbBxRyWmuZIh+Dp2Wk2upzejNG/vm7OS7z0AMW85FoA6LrtbEnkD9
+v9lcEdJhDmAEy9lhl8vZ2qdjNbbqtIN4UXd4p3nUVyyOiEULFdN7OBRNSZYnOFrI
+9Ac1X8LSfK1/1N6kHdoinIgEv/ZMT7vHXk6WG8x80YS8mAv/nh4HRfTdTNnWP9mg
+JeUYl9KNQ0cUJsTxPGTOfyduv6mAgQRgwYrHJgVF5WI7ovrU+MX7hJAKp/YlXbhn
+mHugHcCTJh4OO/sLhq/f8zH+ZX+HxuEOreReRl0scWbnFLV1Okck7DU1aNT77LK1
+B5Qj0mnerD1bqBZtxxAuj+v/wA1CE+W+iMwi7O+YBawuyDu4naO9WTlpZsfkNS9H
+8ZAFzYZbcebdO3JO6+To9tq2KdGYijYz5OpCnhMJsvZb/z9AgeBaOHNuJnWgIkBt
+r9m734o5BlBk172h2J44SxN6HoZ3Q540EuS2T6xJJV2Hr9cyySE=
+=7CGv
+-----END PGP SIGNATURE-----
+
+--dxrtdxft72nv6clt--
