@@ -1,47 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeBZKYk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:24:40 -0500
-Received: from mail-it0-f53.google.com ([209.85.214.53]:50756 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeBZKYg (ORCPT
+        id S1752436AbeBZKZN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:25:13 -0500
+Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:41656 "EHLO
+        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751745AbeBZKZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:24:36 -0500
-X-Google-Smtp-Source: AG47ELt+Zgimvlm4wp2i19BhBnfBZ+XvnQcg9l/MVOzrz7Uc822YOsoB9Dh1+oc1SBLt8uuQbKbvZSNjpRoL6W/5at0=
+        Mon, 26 Feb 2018 05:25:12 -0500
+Subject: Linux 4.16: Reported regressions as of Monday, 2018-02-26 (Was: Linux
+ 4.16-rc3)
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CA+55aFxk5KBxL9DvRtBivP3hKT-aOAzvSA_B47L1+y0P2GLe_A@mail.gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
+Message-ID: <2cf45d87-066c-7368-3fbd-20675f2d74ae@leemhuis.info>
+Date: Mon, 26 Feb 2018 11:25:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221091623.4accxa2qglmo3scl@flea.lan>
-References: <20180221081100.17662-1-maxime.ripard@bootlin.com>
- <CACRpkdYkT7TJrhyQoJr=ZK7w8+KY=_fgjrJeaZCsLHA_6WbZbg@mail.gmail.com> <20180221091623.4accxa2qglmo3scl@flea.lan>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Feb 2018 11:24:35 +0100
-Message-ID: <CACRpkdb1=H-KqZyB50k9gUSUJXtGqeYA8w05Q_P8Jod-2wmWpg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Keep returning EPROBE_DEFER when we should
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CA+55aFxk5KBxL9DvRtBivP3hKT-aOAzvSA_B47L1+y0P2GLe_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519640712;1466fb33;
+X-HE-SMSGID: 1eqFy1-0007hI-Kc
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:16 AM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Wed, Feb 21, 2018 at 09:17:15AM +0100, Linus Walleij wrote:
->> On Wed, Feb 21, 2018 at 9:11 AM, Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->>
-> This is slightly embarrassing, but that patch doesn't actually fix
-> anything. I tried to be smart and rework it to look nicer, and
-> obviously failed.
->
-> Can you squash
-> http://code.bulix.org/z1vkt1-286673
->
-> in the commit?
+On 26.02.2018 04:05, Linus Torvalds wrote:
+> We're on the normal schedule for 4.16 and everything still looks very regular.
 
-This site is down. Can you send a new version of the patch or
-just reply with the change inline here?
+Hi! Find below my second regression report for Linux 4.16. It lists 8
+regressions I'm currently aware of.
 
-Yours,
-Linus Walleij
+To anyone reading this: Are you aware of any other regressions that got
+introduced this development cycle? Then please let me know by mail (a
+simple bounce or forward to the email address is enough!).
+
+For details see http://bit.ly/lnxregtrackid And please tell me if there
+is anything in the report that shouldn't be there.
+
+Ciao, Thorsten
+
+== Current regressions ==
+
+Debian kernel package tool make-kpkg stalls indefinitely during kernel
+build due to commit "kconfig: remove check_stdin()"
+Status: stalled after some discussions; seems nobody really cares deeply?
+Note: From the discussion: "Shouldn't be a problem to back this one out
+either if it turns out to cause massive amounts of pain in practice I
+guess, even if it's the Debian tools doing something weird."
+Reported: 2018-02-12
+https://marc.info/?l=linux-kernel&m=151846414807219
+Cause: d2a04648a5dbc3d1d043b35257364f0197d4d868
+Linux-Regression-ID: 2fd778
+
+Dell R640 does not boot due to SCSI/SATA failure
+Reported: 2018-02-22
+https://marc.info/?l=linux-kernel&m=151931128006031
+Cause: 84676c1f21e8
+Linux-Regression-ID: 15a115
+
+On Nokia N900:/dev/input/event6 aka AV Jack support disappeared
+Status: quite new
+Reported: 2018-02-24
+https://marc.info/?l=linux-omap&m=151950886524308&w=2
+Cause: 14e3e295b2b9
+Linux-Regression-ID: 4b650f
+
+SD card reader stopped working
+Status: quite new
+Reported: 2018-02-24
+https://bugzilla.kernel.org/show_bug.cgi?id=198917
+Linux-Regression-ID: 9adeaf
+
+[mm, mlock, vmscan]  9c4e6b1a70:  stress-ng.hdd.ops_per_sec -7.9% regression
+Status: WIP
+Note: performance regression found by lkp-robot
+Reported: 2018-02-25
+https://marc.info/?l=linux-kernel&m=151956997301994
+Cause: 9c4e6b1a7027f102990c0395296015a812525f4d
+
+aim7.jobs-per-min -18.0% regression
+Status: WIP; bisection result is doubted, but was verified
+Note: performance regression found by lkp-robot
+Reported: 2018-02-25
+https://marc.info/?l=linux-kernel&m=151957120702272&w=2
+Cause: c0cef30e4ff0dc025f4a1660b8f0ba43ed58426e
+
+Interrupt storm after suspend causes one busy kworker
+Status: quite new
+Reported: 2018-02-25
+https://bugzilla.kernel.org/show_bug.cgi?id=198929
+Linux-Regression-ID: 41c451
+
+
+== Fix heading mainline ==
+
+Dell XPS 13 9360 keyboard no longer works
+Status: Fix in the platform tree from what I've heard
+Reported: 2018-02-22
+https://marc.info/?l=linux-kernel&m=151927645427980
+Cause: 30323fb6d552c41997baca5292bf7001366cab57
+
+
+== Fixed since last report ==
+
+DM Regression: read() returns data when it shouldn't
+Status: Was fixed already when last report was compiled
+Reported: 2018-02-14
+https://marc.info/?l=linux-kernel&m=151861337518109&w=2
+Cause: 18a25da84354c6bb655320de6072c00eda6eb602
+Linux-Regression-ID: 9e195f
+
+
+== Fixed before it was properly added to the report ==
+
+kconfig.h: Include compiler types to avoid missed struct attributes
+https://git.kernel.org/torvalds/c/28128c61e08e
+
+i2c-designware: sound and s2ram broken on Broadwell-U system since
+commit ca382f5b38f367b6 (add i2c gpio recovery option)
+https://git.kernel.org/torvalds/c/d1fa74520dcd
