@@ -1,81 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeBZRsW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:48:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeBZRre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:47:34 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33D421771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/5] f2fs: add auto tuning for small devices
-Date: Mon, 26 Feb 2018 09:47:28 -0800
-Message-Id: <20180226174731.26679-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
-In-Reply-To: <20180226174731.26679-1-jaegeuk@kernel.org>
-References: <20180226174731.26679-1-jaegeuk@kernel.org>
+        id S1751923AbeBZRs3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:48:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35106 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeBZRs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:48:26 -0500
+Subject: Re: [PATCH 1/1] Additional strict check on ELF file. Checks segments
+ are followed in order of 'p_vaddr ' value ascending. It fixes erorr in
+ total_mapping_size with computation total size. This error happens if
+ segments in ELF file are not in order.
+To: Ilya Smith <blackzert@gmail.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180226154659.10218-1-blackzert@gmail.com>
+ <20180226154659.10218-2-blackzert@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <16811dde-abb3-1504-003c-475d40610f9f@infradead.org>
+Date: Mon, 26 Feb 2018 09:48:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180226154659.10218-2-blackzert@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If f2fs is running on top of very small devices, it's worth to avoid abusing
-free LBAs. In order to achieve that, this patch introduces some parameter
-tuning.
+On 02/26/2018 07:46 AM, Ilya Smith wrote:
+> Signed-off-by: Ilya Smith <blackzert@gmail.com>
+> ---
+>  fs/binfmt_elf.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index bdb201230bae..970b42044240 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -524,6 +524,52 @@ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
+>  
+>  #endif /* !CONFIG_ARCH_BINFMT_ELF_STATE */
+>  
+> +/**
+> + * elf_check_phdr() - common check ELF program header.
+> + * @phdr: The program header to check
+> + * @phdr_num: Count of program headers in @phdr from elf header.
+> + *
+> + * Checks ELF binary meets specification.
+> + *
+> + * Return: Zero to proceed with ELF load, non-zero to faile the ELF load
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.h |  2 ++
- fs/f2fs/super.c   | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+                                                         fail
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index f11c4bc82c78..dbb774aaf387 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -596,6 +596,8 @@ static inline int utilization(struct f2fs_sb_info *sbi)
- #define DEF_MIN_FSYNC_BLOCKS	8
- #define DEF_MIN_HOT_BLOCKS	16
- 
-+#define SMALL_VOLUME_SEGMENTS	(16 * 512)	/* 16GB */
-+
- enum {
- 	F2FS_IPU_FORCE,
- 	F2FS_IPU_SSR,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b7c0bdd1e532..9515c10eebad 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2512,6 +2512,18 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 	return 0;
- }
- 
-+static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_sm_info *sm_i = SM_I(sbi);
-+
-+	/* adjust parameters according to the volume size */
-+	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
-+		sbi->alloc_mode = ALLOC_MODE_REUSE;
-+		sm_i->dcc_info->discard_granularity = 1;
-+		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
-+	}
-+}
-+
- static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- {
- 	struct f2fs_sb_info *sbi;
-@@ -2864,6 +2876,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	f2fs_join_shrinker(sbi);
- 
-+	f2fs_tuning_parameters(sbi);
-+
- 	f2fs_msg(sbi->sb, KERN_NOTICE, "Mounted with checkpoint version = %llx",
- 				cur_cp_version(F2FS_CKPT(sbi)));
- 	f2fs_update_time(sbi, CP_TIME);
+> + *		   with that return code.
+> + */
+> +static int elf_check_phdr(struct elf_phdr *phdr, unsigned long phdr_num)
+> +{
+
+And it would be nicer/better to have all of the "intro" text in the body of this
+message instead of in another email.
+
+thanks,
 -- 
-2.15.0.531.g2ccb3012c9-goog
+~Randy
