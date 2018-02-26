@@ -1,75 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751786AbeBZRup convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:50:45 -0500
-Received: from mga09.intel.com ([134.134.136.24]:35663 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751704AbeBZRun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:50:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
-   d="scan'208";a="29888371"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "MRustad@gmail.com" <MRustad@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
- virtio_pci devices
-Thread-Topic: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
- virtio_pci devices
-Thread-Index: AQHTrxYr0v8hXKkJ4k2CFRm3mzXHzqO3e+MA
-Date: Mon, 26 Feb 2018 17:48:15 +0000
-Message-ID: <E8D91EBA-F75D-4FF9-BDE8-FCE3A4B4B007@intel.com>
-References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
- <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
-In-Reply-To: <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.81.5]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3EF8EE341FE89847A02E31C769C6A168@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1751857AbeBZRvF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:51:05 -0500
+Received: from mail-it0-f53.google.com ([209.85.214.53]:51861 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751637AbeBZRvC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:51:02 -0500
+X-Google-Smtp-Source: AH8x2268aRIvsHZphJIauyOJhSCu5cZ+TH7QNfDBFhBEX8wTyAYxFU+Vn+Rjo4KL082yg2fPEAv0yJS+0Jql/vOcC6U=
 MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu8ZAt43km=mANa9Ehx1Evbj8cLB5vFsFwji9x6ARvD-sw@mail.gmail.com>
+References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
+ <20180222191647.4727-3-ard.biesheuvel@linaro.org> <CAHp75Vc1AGzdgTB281XVo=FmZerkU1vijLih3JUO=_wNPjxgfA@mail.gmail.com>
+ <CAKv+Gu9XkmSPHZf+jVKOm-SX1GCWJUc7y3zTCuaHBwk8O3OC3Q@mail.gmail.com>
+ <CAHp75VfFKDkQQ9-vdjzDfE2Cdk2Cb93+kdceYQgEqt3hti=Wkg@mail.gmail.com>
+ <CAKv+Gu__HiajW5fWvRnDft3+ef+gOowijxEd8wrF4U5Vu=3o0Q@mail.gmail.com>
+ <CAHp75VcjUey4K1xOkjKjn_ppPKC0bktcBK2p9NjcPYG1ed7X0g@mail.gmail.com>
+ <CAKv+Gu-y3GG+McAK2b8SCmMf60fo_XSHFBAWsKGw3OBvD04ggg@mail.gmail.com>
+ <CAHp75Vco1wUR7cUu-zuaP-TVMnm+m7X+CctnRC0cgvpuo5S2vg@mail.gmail.com> <CAKv+Gu8ZAt43km=mANa9Ehx1Evbj8cLB5vFsFwji9x6ARvD-sw@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 26 Feb 2018 17:51:00 +0000
+Message-ID: <CAKv+Gu9qc=h1mC=6CHiu5aX0NSjLgzahyQ1xdRWo5ZYwcDir1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] i2c: add support for Socionext SynQuacer I2C controller
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QHp9Jk011068
 
-Alex,
+On 26 February 2018 at 17:16, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 26 February 2018 at 17:05, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> On Mon, Feb 26, 2018 at 4:58 PM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On 26 February 2018 at 11:35, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>>> On Mon, Feb 26, 2018 at 11:59 AM, Ard Biesheuvel
+>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>> On 23 February 2018 at 13:12, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>>>>> On Fri, Feb 23, 2018 at 2:40 PM, Ard Biesheuvel
+>>>>>> <ard.biesheuvel@linaro.org> wrote:
+>>
+>>>>>> Replace 'baudclk' with 'pclk' and p->uartclk with i2c->clkrate in
+>>>>>> above and you are almost done.
+>>
+>>>>> I don't think this is better.
+>>>>
+>>>> It's a pattern over ACPI vs. clk cases at least for now.
+>>>> But hold on. We have already an example of dealing with ACPI /
+>>>> non-ACPI cases for I2C controllers — i2c-designware-platdrv.c.
+>>>> Check how it's done there.
+>>>>
+>>>> I actually totally forgot about ACPI slaves described in the table. We
+>>>> need to take into account the ones with lowest bus speed.
+>>>>
+>>>
+>>> Wow, that code is absolutely terrible.
+>>
+>> To some degree I may say yes it is.
+>>
+>>> So even while _DSD device properties require vendor prefixes, which
+>>> are lacking in this case,
+>>
+>> What kind? clock-frequency? Does it require prefix?
+>>
+>
+> What I remember from the _DSD discussions is that we should vendor
+> prefixes for per-device properties, and only use unprefixed names for
+> generic properties. However, looking more closely, I understand that
+> this undermines the idea of having parity between DT and ACPI, because
+> DT did not require vendor prefixes in the past (but it does now)
+>
+> I guess 'clock-frequency' is one that would not require such a vendor prefix.
+>
+>>> and the fact that the ACPI flavor of the
+>>> Designware I2C controller now provides two different ways to get the
+>>> timing parameters (using device properties or using SSCN/FMCN/etc ACPI
+>>> methods), you think this is a shining example of how this should be
+>>> implemented?
+>>
+>> No, those methods because of windows driver and existed ACPI tables at
+>> that time.
+>> You are not supposed to uglify your case.
+>>
+>
+> OK, in that case, can you please spell out what you think is
+> mandatory? Because handwavy references to existing UART and I2C
+> drivers are not helping me here.
+>
+>>> Also, I still think implementing a clock device using rate X just to
+>>> interrogate it for its rate (returning X) is absolutely pointless.
+>>
+>> OTOH the deviation in the driver is what I absolutely against of.
+>> Driver must not know the resource provider (ideally at all).
+>>
+>
+> There is no 'resource provider'. There is only a single number, which
+> is the clock rate, and is only used to calculate some internal
+> dividers of the I2C IP block.
+>
+>>> So what I can do is invent an ACPI method that returns the PCLK rate.
+>>> Would that work for you?
+>>
+>> Again, looking into existing examples (UART, I2C, etc) we better to
+>> create a generic helper in clock framework that would provide us a
+>> clock based on property value.
+>> But doing different paths for different resource providers is not what
+>> we are looking for.
+>>
+>> P.S. To move this somehow forward I may propose to submit an OF
+>> driver, and discuss ACPI part after.
+>>
+>
+> Thanks, but that does not really work for me. What I can do is split
+> it into an initial DT only driver, and a followup ACPI patch.
+>
+> Can you point me to an example of such a clock provider?
 
-> On Feb 26, 2018, at 7:26 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> 
-> Mark,
-> 
-> In the future please don't put my "Reviewed-by" on a patch that I
-> haven't reviewed. I believe I reviewed one of the earlier patches, but
-> I hadn't reviewed this version.
+Perhaps we could agree on the binding first? Currently, I have the following
 
-I'm very sorry. I completely spaced doing something about that. I think yours was the first Reviewed-by I ever had in this way. In the future I will remove such things from my changelog right after sending. Thanks for alerting me to what I had failed to do.
+    Device (I2C0) {
+      Name (_HID, "SCX0003")
+      Name (_UID, Zero)
+      Name (_CRS, ResourceTemplate () {
+        Memory32Fixed (ReadWrite, SYNQUACER_I2C1_BASE, SYNQUACER_I2C1_SIZE)
+        Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive) { 197 }
+      })
 
-> Also, after thinking about it over the weekend we may want to look at
-> just coming up with a truly "generic" solution that is applied to
-> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
-> on them. That would allow us to handle the uio, vfio, pci-stub, and
-> virtio cases all in one fell swoop. I think us going though and
-> modifying one patch at a time to do this kind of thing isn't going to
-> scale.
+      Name (_DSD, Package ()  // _DSD: Device-Specific Data
+      {
+        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package () {
+          Package (2) { "socionext,pclk-rate", 62500000 },
+        }
+      })
 
-The notion of that kind of troubles me - at least pci-stub does. Having worked on ixgbe a bit, I have to wonder what kind of havoc would ensue if an ixgbe device were assigned to a guest, and an attempt was made to allocate VFs by the pci-stub. The guest could be running any version of the ixgbe driver, possibly even an old one that didn't support SR-IOV. Even if it did support SR-IOV, I don't know how it would respond to mailbox messages when it doesn't think it has VFs.
+and I don't intend to add 'clock-frequency' here because it would be
+redundant anyway.
 
-> I'll try to do some digging and find the VFIO approach we had been
-> working on. I think with a couple tweaks we can probably make that
-> truly generic and ready for submission.
-
-I'd like to know more about you are thinking about.
-
--- 
-Mark Rustad, Networking Division, Intel Corporation
+Does this look sane?
