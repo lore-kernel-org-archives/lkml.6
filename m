@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226KdGISVpPwC10WDSges9+eMQK8Zef1afH5qVqjpesSQ9HJ2xvRKMmy38v/xjofijzybDnf
-ARC-Seal: i=1; a=rsa-sha256; t=1519676574; cv=none;
+X-Google-Smtp-Source: AH8x225wSqJfKl2+q+r4WEH4oy5DPtPE3PlzPwKBJ+hqfqP5cX+sWaj0f2+vNfufhCaqznyZAPw6
+ARC-Seal: i=1; a=rsa-sha256; t=1519676571; cv=none;
         d=google.com; s=arc-20160816;
-        b=uexcvd3zaDko6WigK11qAslsRViuckVpOjPr9JIlzV+AAEMjWvUeESX3YA0gUMgwOi
-         yAUSs/aJioTvnMGKMeUTaGckxZauKLev+8+DPz3LqiUSTGK1ywePvF67RW8kd+Rc6cof
-         qlmY3E3yKW43gxhZ4n37sANPR5IWHMKwW8SuUATE+qZlDjp0SrdKAnPL8gNCHdcy0w5K
-         wF4YdPoWTT4JdeRcac2vIOL6hNtaBLQmjjJBoPzOtvFg/O7GkMosENAmb4+h/RO36t7z
-         8cN8bUQ42Eikqj82QKyEeXiG/E7hOqlt7Cml44Y84505MD5lk6zkE156AzFHylT6gZpi
-         aXqg==
+        b=jdt1o16qrK2ywK1SEeJbKc2GB+NqPFtCey3EuPX0cruOztfs9V9V5ZyChuGsWFvXr3
+         2fFdzi0MqWoNerbYjmMLL93NRWX6hcWTdIjC5CEMLMtsJaLCROjVQlycT3v+ygyj4qzW
+         3QMB3i32GOxwSnYGja5wbT8dqqvSdqBoN/sa2dwSTWmUx4z/VJkamu4r15/8U9LcLakc
+         zFdKwCMFQhdzJBtluoZsw7s7jbkPVhnlxcMMPAYJmwX1YZyk/aS8XGjEfo4XK+c/xHaI
+         sOzcDIydZyFbAutGkFPB5pMCTCq7wSPJVvHaeHgilr5gybiOY95TBSVzMxZ3mgCVEQAD
+         O/+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HLzt02HCnJgwlRtJ7fgHfKRrC/R+IMm8urnWdMbCBiI=;
-        b=NwCSYJMHwasRr0+arv3TXUcDbmYsTE+PI7O/O0BCysaH7J/PTLCvyh0wAxr4qjKe6m
-         QQI4UbDjiVs0surniszU5yM4L0+iqsA0qYhfzMG+u1slDFdsdBpJL3CoIs061fMqISXe
-         Ys22ZpvAUSXe52apkxylPiWyPxijP7q8gnkeMdAbsBhoFF8GPJrSg6i9V8wTuQ0HYgtm
-         K9mO+NrNmUtf0nKBwSHpC/oBPZwdattAgd012vukcbKkFayLug5Ogg852ejtHrIqsDq1
-         qzWpuy2NBgOpoDnBtxsqCqa/ZIKRxFOP8gchZ1OvrBcjuHrdvoG3LCzvUofmOLTbteKp
-         ULEw==
+        bh=Iaspw5zngV/tY8HTOXEgH0r9My34m6SHMZihsk/GDpc=;
+        b=FDCS9CCdwLLAI7hAHHNRPHPhA0eNv0K51GgCFnvrvYioK4PsmE1oCJ3JFaX9HSQuzc
+         dGaPgmqvoUADFRZmmVbQ/dW1jIai38B9zC4Jfy+7YTqmfmAseIM2OyI4J563uPaqT5OS
+         84o6sD2XrXAtGZvgdQ/nsz1XDVJMFzLFxIOT2EtoHkot4QOuBDDpedYxq+l6i2YAUQAc
+         IcmfcmnrOIP6vtStSmkN3kIiQGj1VS2LVfX1fdTwYA2XMAJd8mFU45LDFi9i8t2NFgn/
+         5EJnJvWut9OyuTzkJtDFmc4q65LHvLfwRlHSWoimHvRted+lkaKsWR/p1x1dJ+QWpEfc
+         gxLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 36/39] libnvdimm, dax: fix 1GB-aligned namespaces vs physical misalignment
-Date: Mon, 26 Feb 2018 21:20:57 +0100
-Message-Id: <20180226201645.252595532@linuxfoundation.org>
+	Robin Getz <Robin.Getz@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Stable@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.9 09/39] iio: adis_lib: Initialize trigger before requesting interrupt
+Date: Mon, 26 Feb 2018 21:20:30 +0100
+Message-Id: <20180226201644.080040089@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496383639634177?=
-X-GMAIL-MSGID: =?utf-8?q?1593496383639634177?=
+X-GMAIL-THRID: =?utf-8?q?1593495970626183407?=
+X-GMAIL-MSGID: =?utf-8?q?1593496380367730933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,82 +51,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-commit 41fce90f26333c4fa82e8e43b9ace86c4e8a0120 upstream.
+commit f027e0b3a774e10302207e91d304bbf99e3a8b36 upstream.
 
-The following namespace configuration attempt:
+The adis_probe_trigger() creates a new IIO trigger and requests an
+interrupt associated with the trigger. The interrupt uses the generic
+iio_trigger_generic_data_rdy_poll() function as its interrupt handler.
 
-    # ndctl create-namespace -e namespace0.0 -m devdax -a 1G -f
-    libndctl: ndctl_dax_enable: dax0.1: failed to enable
-      Error: namespace0.0: failed to enable
+Currently the driver initializes some fields of the trigger structure after
+the interrupt has been requested. But an interrupt can fire as soon as it
+has been requested. This opens up a race condition.
 
-    failed to reconfigure namespace: No such device or address
+iio_trigger_generic_data_rdy_poll() will access the trigger data structure
+and dereference the ops field. If the ops field is not yet initialized this
+will result in a NULL pointer deref.
 
-...fails when the backing memory range is not physically aligned to 1G:
+It is not expected that the device generates an interrupt at this point, so
+typically this issue did not surface unless e.g. due to a hardware
+misconfiguration (wrong interrupt number, wrong polarity, etc.).
 
-    # cat /proc/iomem | grep Persistent
-    210000000-30fffffff : Persistent Memory (legacy)
+But some newer devices from the ADIS family start to generate periodic
+interrupts in their power-on reset configuration and unfortunately the
+interrupt can not be masked in the device.  This makes the race condition
+much more visible and the following crash has been observed occasionally
+when booting a system using the ADIS16460.
 
-In the above example the 4G persistent memory range starts and ends on a
-256MB boundary.
+	Unable to handle kernel NULL pointer dereference at virtual address 00000008
+	pgd = c0004000
+	[00000008] *pgd=00000000
+	Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+	Modules linked in:
+	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.9.0-04126-gf9739f0-dirty #257
+	Hardware name: Xilinx Zynq Platform
+	task: ef04f640 task.stack: ef050000
+	PC is at iio_trigger_notify_done+0x30/0x68
+	LR is at iio_trigger_generic_data_rdy_poll+0x18/0x20
+	pc : [<c042d868>]    lr : [<c042d924>]    psr: 60000193
+	sp : ef051bb8  ip : 00000000  fp : ef106400
+	r10: c081d80a  r9 : ef3bfa00  r8 : 00000087
+	r7 : ef051bec  r6 : 00000000  r5 : ef3bfa00  r4 : ee92ab00
+	r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : ee97e400
+	Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+	Control: 18c5387d  Table: 0000404a  DAC: 00000051
+	Process swapper/0 (pid: 1, stack limit = 0xef050210)
+	[<c042d868>] (iio_trigger_notify_done) from [<c0065b10>] (__handle_irq_event_percpu+0x88/0x118)
+	[<c0065b10>] (__handle_irq_event_percpu) from [<c0065bbc>] (handle_irq_event_percpu+0x1c/0x58)
+	[<c0065bbc>] (handle_irq_event_percpu) from [<c0065c30>] (handle_irq_event+0x38/0x5c)
+	[<c0065c30>] (handle_irq_event) from [<c0068e28>] (handle_level_irq+0xa4/0x130)
+	[<c0068e28>] (handle_level_irq) from [<c0064e74>] (generic_handle_irq+0x24/0x34)
+	[<c0064e74>] (generic_handle_irq) from [<c021ab7c>] (zynq_gpio_irqhandler+0xb8/0x13c)
+	[<c021ab7c>] (zynq_gpio_irqhandler) from [<c0064e74>] (generic_handle_irq+0x24/0x34)
+	[<c0064e74>] (generic_handle_irq) from [<c0065370>] (__handle_domain_irq+0x5c/0xb4)
+	[<c0065370>] (__handle_domain_irq) from [<c000940c>] (gic_handle_irq+0x48/0x8c)
+	[<c000940c>] (gic_handle_irq) from [<c0013e8c>] (__irq_svc+0x6c/0xa8)
 
-We handle this case correctly when needing to handle cases that violate
-section alignment (128MB) collisions against "System RAM", and we simply
-need to extend that padding/truncation for the 1GB alignment use case.
+To fix this make sure that the trigger is fully initialized before
+requesting the interrupt.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 315c562536c4 ("libnvdimm, pfn: add 'align' attribute...")
-Reported-and-tested-by: Jane Chu <jane.chu@oracle.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: ccd2b52f4ac6 ("staging:iio: Add common ADIS library")
+Reported-by: Robin Getz <Robin.Getz@analog.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/nvdimm/pfn_devs.c |   15 ++++++++++++---
- include/linux/kernel.h    |    1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/nvdimm/pfn_devs.c
-+++ b/drivers/nvdimm/pfn_devs.c
-@@ -563,6 +563,12 @@ static struct vmem_altmap *__nvdimm_setu
- 	return altmap;
- }
+---
+ drivers/iio/imu/adis_trigger.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/drivers/iio/imu/adis_trigger.c
++++ b/drivers/iio/imu/adis_trigger.c
+@@ -47,6 +47,10 @@ int adis_probe_trigger(struct adis *adis
+ 	if (adis->trig == NULL)
+ 		return -ENOMEM;
  
-+static u64 phys_pmem_align_down(struct nd_pfn *nd_pfn, u64 phys)
-+{
-+	return min_t(u64, PHYS_SECTION_ALIGN_DOWN(phys),
-+			ALIGN_DOWN(phys, nd_pfn->align));
-+}
++	adis->trig->dev.parent = &adis->spi->dev;
++	adis->trig->ops = &adis_trigger_ops;
++	iio_trigger_set_drvdata(adis->trig, adis);
 +
- static int nd_pfn_init(struct nd_pfn *nd_pfn)
- {
- 	u32 dax_label_reserve = is_nd_dax(&nd_pfn->dev) ? SZ_128K : 0;
-@@ -618,13 +624,16 @@ static int nd_pfn_init(struct nd_pfn *nd
- 	start = nsio->res.start;
- 	size = PHYS_SECTION_ALIGN_UP(start + size) - start;
- 	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
--				IORES_DESC_NONE) == REGION_MIXED) {
-+				IORES_DESC_NONE) == REGION_MIXED
-+			|| !IS_ALIGNED(start + resource_size(&nsio->res),
-+				nd_pfn->align)) {
- 		size = resource_size(&nsio->res);
--		end_trunc = start + size - PHYS_SECTION_ALIGN_DOWN(start + size);
-+		end_trunc = start + size - phys_pmem_align_down(nd_pfn,
-+				start + size);
- 	}
+ 	ret = request_irq(adis->spi->irq,
+ 			  &iio_trigger_generic_data_rdy_poll,
+ 			  IRQF_TRIGGER_RISING,
+@@ -55,9 +59,6 @@ int adis_probe_trigger(struct adis *adis
+ 	if (ret)
+ 		goto error_free_trig;
  
- 	if (start_pad + end_trunc)
--		dev_info(&nd_pfn->dev, "%s section collision, truncate %d bytes\n",
-+		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
- 				dev_name(&ndns->dev), start_pad + end_trunc);
+-	adis->trig->dev.parent = &adis->spi->dev;
+-	adis->trig->ops = &adis_trigger_ops;
+-	iio_trigger_set_drvdata(adis->trig, adis);
+ 	ret = iio_trigger_register(adis->trig);
  
- 	/*
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -46,6 +46,7 @@
- #define REPEAT_BYTE(x)	((~0ul / 0xff) * (x))
- 
- #define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
-+#define ALIGN_DOWN(x, a)	__ALIGN_KERNEL((x) - ((a) - 1), (a))
- #define __ALIGN_MASK(x, mask)	__ALIGN_KERNEL_MASK((x), (mask))
- #define PTR_ALIGN(p, a)		((typeof(p))ALIGN((unsigned long)(p), (a)))
- #define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+ 	indio_dev->trig = iio_trigger_get(adis->trig);
