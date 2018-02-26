@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753458AbeBZNT6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:19:58 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39335 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753160AbeBZNRh (ORCPT
+        id S1753414AbeBZNTt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:19:49 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36294 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753171AbeBZNRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:17:37 -0500
-X-Google-Smtp-Source: AG47ELuR0MJmhPT8D5MoAEA0JgOWBve2twzREHSvkI2PHvXNU+MP61wxqUfleQ1vRXvmnrqwwVE1Vw==
+        Mon, 26 Feb 2018 08:17:38 -0500
+X-Google-Smtp-Source: AG47ELuinssSIeyttCVbgbk9AxzU2J8nKjQ7Z3bddMGkC1SxteHM8U4Clqy1BV2YvJNhdgCX/aburA==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 09/19] lightnvm: rename sect_* to sec_*
-Date: Mon, 26 Feb 2018 14:17:08 +0100
-Message-Id: <1519651038-16845-10-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 10/19] lightnvm: add support for 2.0 address format
+Date: Mon, 26 Feb 2018 14:17:09 +0100
+Message-Id: <1519651038-16845-11-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
 References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
@@ -27,180 +27,205 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename abbreviations for sector from sect_* to sec_* as most of the code
-uses this format and it is confusing when using the different
-structures.
+Add support for 2.0 address format. Also, align address bits for 1.2 and
+2.0 to be able to operate on channel and luns without requiring a format
+conversion. Use a generic address format for this purpose.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c  | 8 ++++----
- drivers/lightnvm/pblk-sysfs.c | 4 ++--
- drivers/lightnvm/pblk.h       | 8 ++++----
- drivers/nvme/host/lightnvm.c  | 8 ++++----
- include/linux/lightnvm.h      | 8 ++++----
- 5 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/lightnvm/core.c  |  20 ++++-----
+ include/linux/lightnvm.h | 105 ++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 86 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 7e3297be517d..30aec863f136 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -179,16 +179,16 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
- 	dst->blk_len = src->blk_len;
- 	dst->pg_len = src->pg_len;
- 	dst->pln_len = src->pln_len;
--	dst->sect_len = src->sect_len;
-+	dst->sec_len = src->sec_len;
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 45bed54488f9..92ea6e39dd64 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -196,8 +196,8 @@ static struct nvm_tgt_dev *nvm_create_tgt_dev(struct nvm_dev *dev,
  
--	dst->sect_offset = 0;
--	dst->pln_offset = dst->sect_len;
-+	dst->sec_offset = 0;
-+	dst->pln_offset = dst->sec_len;
- 	dst->ch_offset = dst->pln_offset + dst->pln_len;
- 	dst->lun_offset = dst->ch_offset + dst->ch_len;
- 	dst->pg_offset = dst->lun_offset + dst->lun_len;
- 	dst->blk_offset = dst->pg_offset + dst->pg_len;
+ 		for (j = 0; j < luns_in_chnl; j++) {
+ 			luns[lunid].ppa = 0;
+-			luns[lunid].g.ch = i;
+-			luns[lunid++].g.lun = j;
++			luns[lunid].a.ch = i;
++			luns[lunid++].a.lun = j;
  
--	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
-+	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
- 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
- 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
- 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 5eb21a279361..81288aa9162a 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -128,7 +128,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 			ppaf->blk_offset, ppaf->blk_len,
- 			ppaf->pg_offset, ppaf->pg_len,
- 			ppaf->pln_offset, ppaf->pln_len,
--			ppaf->sect_offset, ppaf->sect_len);
-+			ppaf->sec_offset, ppaf->sec_len);
+ 			lun_offs[j] = blun;
+ 			lun_roffs[j + blun] = blun;
+@@ -563,22 +563,22 @@ static void nvm_unregister_map(struct nvm_dev *dev)
+ static void nvm_map_to_dev(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *p)
+ {
+ 	struct nvm_dev_map *dev_map = tgt_dev->map;
+-	struct nvm_ch_map *ch_map = &dev_map->chnls[p->g.ch];
+-	int lun_off = ch_map->lun_offs[p->g.lun];
++	struct nvm_ch_map *ch_map = &dev_map->chnls[p->a.ch];
++	int lun_off = ch_map->lun_offs[p->a.lun];
  
- 	sz += snprintf(page + sz, PAGE_SIZE - sz,
- 		"device:ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
-@@ -137,7 +137,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 			geo_ppaf->blk_offset, geo_ppaf->blk_len,
- 			geo_ppaf->pg_offset, geo_ppaf->pg_len,
- 			geo_ppaf->pln_offset, geo_ppaf->pln_len,
--			geo_ppaf->sect_offset, geo_ppaf->sect_len);
-+			geo_ppaf->sec_offset, geo_ppaf->sec_len);
- 
- 	return sz;
- }
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 1f32284b0aec..4f7a365436f1 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -957,7 +957,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
- 	ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
- 	ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
- 	ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
--	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sect_offset;
-+	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
- 
- 	return ppa;
- }
-@@ -973,7 +973,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
- 	paddr |= (u64)p.g.lun << ppaf->lun_offset;
- 	paddr |= (u64)p.g.pg << ppaf->pg_offset;
- 	paddr |= (u64)p.g.pl << ppaf->pln_offset;
--	paddr |= (u64)p.g.sec << ppaf->sect_offset;
-+	paddr |= (u64)p.g.sec << ppaf->sec_offset;
- 
- 	return paddr;
- }
-@@ -998,7 +998,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
- 		ppa64.g.blk = (ppa32 & ppaf->blk_mask) >> ppaf->blk_offset;
- 		ppa64.g.pg = (ppa32 & ppaf->pg_mask) >> ppaf->pg_offset;
- 		ppa64.g.pl = (ppa32 & ppaf->pln_mask) >> ppaf->pln_offset;
--		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sect_offset;
-+		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sec_offset;
- 	}
- 
- 	return ppa64;
-@@ -1022,7 +1022,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
- 		ppa32 |= ppa64.g.blk << ppaf->blk_offset;
- 		ppa32 |= ppa64.g.pg << ppaf->pg_offset;
- 		ppa32 |= ppa64.g.pl << ppaf->pln_offset;
--		ppa32 |= ppa64.g.sec << ppaf->sect_offset;
-+		ppa32 |= ppa64.g.sec << ppaf->sec_offset;
- 	}
- 
- 	return ppa32;
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index f3f524dc1389..377e6525e53f 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -262,21 +262,21 @@ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
- 	dst->blk_len = src->blk_len;
- 	dst->pg_len = src->pg_len;
- 	dst->pln_len = src->pln_len;
--	dst->sect_len = src->sec_len;
-+	dst->sec_len = src->sec_len;
- 
- 	dst->ch_offset = src->ch_offset;
- 	dst->lun_offset = src->lun_offset;
- 	dst->blk_offset = src->blk_offset;
- 	dst->pg_offset = src->pg_offset;
- 	dst->pln_offset = src->pln_offset;
--	dst->sect_offset = src->sec_offset;
-+	dst->sec_offset = src->sec_offset;
- 
- 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
- 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
- 	dst->blk_mask = ((1ULL << dst->blk_len) - 1) << dst->blk_offset;
- 	dst->pg_mask = ((1ULL << dst->pg_len) - 1) << dst->pg_offset;
- 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
--	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
-+	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
+-	p->g.ch += ch_map->ch_off;
+-	p->g.lun += lun_off;
++	p->a.ch += ch_map->ch_off;
++	p->a.lun += lun_off;
  }
  
- static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
-@@ -975,7 +975,7 @@ static ssize_t nvm_dev_attr_show_ppaf(struct nvm_addr_format_12 *ppaf,
- 				ppaf->pln_offset, ppaf->pln_len,
- 				ppaf->blk_offset, ppaf->blk_len,
- 				ppaf->pg_offset, ppaf->pg_len,
--				ppaf->sect_offset, ppaf->sect_len);
-+				ppaf->sec_offset, ppaf->sec_len);
+ static void nvm_map_to_tgt(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *p)
+ {
+ 	struct nvm_dev *dev = tgt_dev->parent;
+ 	struct nvm_dev_map *dev_rmap = dev->rmap;
+-	struct nvm_ch_map *ch_rmap = &dev_rmap->chnls[p->g.ch];
+-	int lun_roff = ch_rmap->lun_offs[p->g.lun];
++	struct nvm_ch_map *ch_rmap = &dev_rmap->chnls[p->a.ch];
++	int lun_roff = ch_rmap->lun_offs[p->a.lun];
+ 
+-	p->g.ch -= ch_rmap->ch_off;
+-	p->g.lun -= lun_roff;
++	p->a.ch -= ch_rmap->ch_off;
++	p->a.lun -= lun_roff;
  }
  
- static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ static void nvm_ppa_tgt_to_dev(struct nvm_tgt_dev *tgt_dev,
 diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 797594d6519f..18bb9e9774d6 100644
+index 18bb9e9774d6..8cda1125c34a 100644
 --- a/include/linux/lightnvm.h
 +++ b/include/linux/lightnvm.h
-@@ -163,14 +163,14 @@ struct nvm_addr_format_12 {
- 	u8	blk_len;
- 	u8	pg_len;
- 	u8	pln_len;
--	u8	sect_len;
-+	u8	sec_len;
+@@ -16,12 +16,21 @@ enum {
+ 	NVM_IOTYPE_GC = 1,
+ };
  
- 	u8	ch_offset;
- 	u8	lun_offset;
- 	u8	blk_offset;
- 	u8	pg_offset;
- 	u8	pln_offset;
--	u8	sect_offset;
-+	u8	sec_offset;
+-#define NVM_BLK_BITS (16)
+-#define NVM_PG_BITS  (16)
+-#define NVM_SEC_BITS (8)
+-#define NVM_PL_BITS  (8)
+-#define NVM_LUN_BITS (8)
+-#define NVM_CH_BITS  (7)
++/* common format */
++#define NVM_GEN_CH_BITS  (8)
++#define NVM_GEN_LUN_BITS (8)
++#define NVM_GEN_BLK_BITS (16)
++#define NVM_GEN_RESERVED (32)
++
++/* 1.2 format */
++#define NVM_12_PG_BITS  (16)
++#define NVM_12_PL_BITS  (4)
++#define NVM_12_SEC_BITS (4)
++#define NVM_12_RESERVED (8)
++
++/* 2.0 format */
++#define NVM_20_SEC_BITS (24)
++#define NVM_20_RESERVED (8)
  
- 	u64	ch_mask;
- 	u64	lun_mask;
-@@ -391,7 +391,7 @@ static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev *tgt_dev,
- 	l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
- 	l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
- 	l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
--	l.ppa |= ((u64)r.g.sec) << ppaf->sect_offset;
-+	l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
+ enum {
+ 	NVM_OCSSD_SPEC_12 = 12,
+@@ -31,16 +40,34 @@ enum {
+ struct ppa_addr {
+ 	/* Generic structure for all addresses */
+ 	union {
++		/* generic device format */
+ 		struct {
+-			u64 blk		: NVM_BLK_BITS;
+-			u64 pg		: NVM_PG_BITS;
+-			u64 sec		: NVM_SEC_BITS;
+-			u64 pl		: NVM_PL_BITS;
+-			u64 lun		: NVM_LUN_BITS;
+-			u64 ch		: NVM_CH_BITS;
+-			u64 reserved	: 1;
++			u64 ch		: NVM_GEN_CH_BITS;
++			u64 lun		: NVM_GEN_LUN_BITS;
++			u64 blk		: NVM_GEN_BLK_BITS;
++			u64 reserved	: NVM_GEN_RESERVED;
++		} a;
++
++		/* 1.2 device format */
++		struct {
++			u64 ch		: NVM_GEN_CH_BITS;
++			u64 lun		: NVM_GEN_LUN_BITS;
++			u64 blk		: NVM_GEN_BLK_BITS;
++			u64 pg		: NVM_12_PG_BITS;
++			u64 pl		: NVM_12_PL_BITS;
++			u64 sec		: NVM_12_SEC_BITS;
++			u64 reserved	: NVM_12_RESERVED;
+ 		} g;
+ 
++		/* 2.0 device format */
++		struct {
++			u64 grp		: NVM_GEN_CH_BITS;
++			u64 pu		: NVM_GEN_LUN_BITS;
++			u64 chk		: NVM_GEN_BLK_BITS;
++			u64 sec		: NVM_20_SEC_BITS;
++			u64 reserved	: NVM_20_RESERVED;
++		} m;
++
+ 		struct {
+ 			u64 line	: 63;
+ 			u64 is_cached	: 1;
+@@ -382,16 +409,26 @@ static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev *tgt_dev,
+ 						  struct ppa_addr r)
+ {
+ 	struct nvm_geo *geo = &tgt_dev->geo;
+-	struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&geo->c.addrf;
+ 	struct ppa_addr l;
+ 
+-	l.ppa = ((u64)r.g.ch) << ppaf->ch_offset;
+-	l.ppa |= ((u64)r.g.lun) << ppaf->lun_offset;
+-	l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
+-	l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
+-	l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
+-	l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
++	if (geo->c.version == NVM_OCSSD_SPEC_12) {
++		struct nvm_addr_format_12 *ppaf =
++				(struct nvm_addr_format_12 *)&geo->c.addrf;
++
++		l.ppa = ((u64)r.g.ch) << ppaf->ch_offset;
++		l.ppa |= ((u64)r.g.lun) << ppaf->lun_offset;
++		l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
++		l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
++		l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
++		l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
++	} else {
++		struct nvm_addr_format *lbaf = &geo->c.addrf;
++
++		l.ppa = ((u64)r.m.grp) << lbaf->ch_offset;
++		l.ppa |= ((u64)r.m.pu) << lbaf->lun_offset;
++		l.ppa |= ((u64)r.m.chk) << lbaf->chk_offset;
++		l.ppa |= ((u64)r.m.sec) << lbaf->sec_offset;
++	}
  
  	return l;
  }
-@@ -411,7 +411,7 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_tgt_dev *tgt_dev,
- 	l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
- 	l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
- 	l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
--	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sect_offset;
-+	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
+@@ -400,18 +437,28 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_tgt_dev *tgt_dev,
+ 						  struct ppa_addr r)
+ {
+ 	struct nvm_geo *geo = &tgt_dev->geo;
+-	struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&geo->c.addrf;
+ 	struct ppa_addr l;
+ 
+ 	l.ppa = 0;
+ 
+-	l.g.ch = (r.ppa & ppaf->ch_mask) >> ppaf->ch_offset;
+-	l.g.lun = (r.ppa & ppaf->lun_mask) >> ppaf->lun_offset;
+-	l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
+-	l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
+-	l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
+-	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
++	if (geo->c.version == NVM_OCSSD_SPEC_12) {
++		struct nvm_addr_format_12 *ppaf =
++				(struct nvm_addr_format_12 *)&geo->c.addrf;
++
++		l.g.ch = (r.ppa & ppaf->ch_mask) >> ppaf->ch_offset;
++		l.g.lun = (r.ppa & ppaf->lun_mask) >> ppaf->lun_offset;
++		l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
++		l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
++		l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
++		l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
++	} else {
++		struct nvm_addr_format *lbaf = &geo->c.addrf;
++
++		l.m.grp = (r.ppa & lbaf->ch_mask) >> lbaf->ch_offset;
++		l.m.pu = (r.ppa & lbaf->lun_mask) >> lbaf->lun_offset;
++		l.m.chk = (r.ppa & lbaf->chk_mask) >> lbaf->chk_offset;
++		l.m.sec = (r.ppa & lbaf->sec_mask) >> lbaf->sec_offset;
++	}
  
  	return l;
  }
