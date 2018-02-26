@@ -1,149 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeBZHf6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:35:58 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36891 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeBZHf4 (ORCPT
+        id S1752143AbeBZHhE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:37:04 -0500
+Received: from mail-it0-f43.google.com ([209.85.214.43]:39654 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeBZHhA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:35:56 -0500
-X-Google-Smtp-Source: AH8x226esYbSsXtLtg3LWc+ZalP6m2tjLcle+0FsaFSp2KIPPvoZk4w7s361NS0e1tFIMIwbQIIT2Q==
-Date: Mon, 26 Feb 2018 08:35:52 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Borislav Petkov <bp@suse.de>, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
-Message-ID: <20180226073552.xabt55ukp24inut5@gmail.com>
-References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
- <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
- <20180224214818.GD29374@pd.tnic>
- <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+        Mon, 26 Feb 2018 02:37:00 -0500
+X-Google-Smtp-Source: AH8x225pbLKBej6ahERXo4BeVt/hV784Ko+qbmqBKPT6Mbt66BbBQPnrfEwFX5nkCEv52eKc2heU7A==
+Date: Mon, 26 Feb 2018 16:36:52 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] mm: Fix races between address_space dereference and free
+ in page_evicatable
+Message-ID: <20180226073652.GA168047@rodete-desktop-imager.corp.google.com>
+References: <20180212081227.1940-1-ying.huang@intel.com>
+ <20180218092245.GA52741@rodete-laptop-imager.corp.google.com>
+ <20180219105735.32iplpsmnigwf75j@quack2.suse.cz>
+ <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
+ <874lm4tfw3.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <874lm4tfw3.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 26, 2018 at 02:38:04PM +0800, Huang, Ying wrote:
+> Minchan Kim <minchan@kernel.org> writes:
+> 
+> > Hi Jan,
+> >
+> > On Mon, Feb 19, 2018 at 11:57:35AM +0100, Jan Kara wrote:
+> >> Hi Minchan,
+> >> 
+> >> On Sun 18-02-18 18:22:45, Minchan Kim wrote:
+> >> > On Mon, Feb 12, 2018 at 04:12:27PM +0800, Huang, Ying wrote:
+> >> > > From: Huang Ying <ying.huang@intel.com>
+> >> > > 
+> >> > > When page_mapping() is called and the mapping is dereferenced in
+> >> > > page_evicatable() through shrink_active_list(), it is possible for the
+> >> > > inode to be truncated and the embedded address space to be freed at
+> >> > > the same time.  This may lead to the following race.
+> >> > > 
+> >> > > CPU1                                                CPU2
+> >> > > 
+> >> > > truncate(inode)                                     shrink_active_list()
+> >> > >   ...                                                 page_evictable(page)
+> >> > >   truncate_inode_page(mapping, page);
+> >> > >     delete_from_page_cache(page)
+> >> > >       spin_lock_irqsave(&mapping->tree_lock, flags);
+> >> > >         __delete_from_page_cache(page, NULL)
+> >> > >           page_cache_tree_delete(..)
+> >> > >             ...                                         mapping = page_mapping(page);
+> >> > >             page->mapping = NULL;
+> >> > >             ...
+> >> > >       spin_unlock_irqrestore(&mapping->tree_lock, flags);
+> >> > >       page_cache_free_page(mapping, page)
+> >> > >         put_page(page)
+> >> > >           if (put_page_testzero(page)) -> false
+> >> > > - inode now has no pages and can be freed including embedded address_space
+> >> > > 
+> >> > >                                                         mapping_unevictable(mapping)
+> >> > > 							  test_bit(AS_UNEVICTABLE, &mapping->flags);
+> >> > > - we've dereferenced mapping which is potentially already free.
+> >> > > 
+> >> > > Similar race exists between swap cache freeing and page_evicatable() too.
+> >> > > 
+> >> > > The address_space in inode and swap cache will be freed after a RCU
+> >> > > grace period.  So the races are fixed via enclosing the page_mapping()
+> >> > > and address_space usage in rcu_read_lock/unlock().  Some comments are
+> >> > > added in code to make it clear what is protected by the RCU read lock.
+> >> > 
+> >> > Is it always true for every FSes, even upcoming FSes?
+> >> > IOW, do we have any strict rule FS folks must use RCU(i.e., call_rcu)
+> >> > to destroy inode?
+> >> > 
+> >> > Let's cc linux-fs.
+> >> 
+> >> That's actually a good question. Pathname lookup relies on inodes being
+> >> protected by RCU so "normal" filesystems definitely need to use RCU freeing
+> >> of inodes. OTOH a filesystem could in theory refuse any attempt for RCU
+> >> pathname walk (in its .d_revalidate/.d_compare callback) and then get away
+> >> with freeing its inodes normally AFAICT. I don't see that happening
+> >> anywhere in the tree but in theory it is possible with some effort... But
+> >> frankly I don't see a good reason for that so all we should do is to
+> >> document that .destroy_inode needs to free the inode structure through RCU
+> >> if it uses page cache? Al?
+> >
+> > Yub, it would be much better. However, how does this patch fix the problem?
+> > Although it can make only page_evictable safe, we could go with the page
+> > further and finally uses page->mapping, again.
+> > For instance,
+> >
+> > shrink_active_list
+> > 	page_evictable();
+> > 	..
+> > 	page_referened()
+> > 		page_rmapping
+> > 			page->mapping
+> 
+> This only checks the value of page->mapping, not deference
+> page->mapping.  So it should be safe.
 
-* Kirill A. Shutemov <kirill@shutemov.name> wrote:
+Oops, you're right. I got confused. However, I want to make the lock
+consistent(i.e., use page_lock to protect address_space) but cannot
+come with better way.
 
-> +#if 0
->  	/*
->  	 * Find a suitable spot for the trampoline.
->  	 * This code is based on reserve_bios_regions().
-> @@ -49,6 +50,9 @@ struct paging_config paging_prepare(void)
->  	/* Place the trampoline just below the end of low memory, aligned to 4k */
->  	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
->  	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
-> +#else
-> +	paging_config.trampoline_start = 0x99000;
-> +#endif
+Sorry for the noise, Huang.
 
-So if it's suspected to be 'Video BIOS undeclared RAM use' related then wouldn't a 
-lower address be safer?
-
-Such as:
-
-	paging_config.trampoline_start = 0x40000;
-
-or so?
-
-Also, could do a puts() hexdump of the affected memory area _before_ we overwrite 
-it? Is it empty? Could we add some debug warning that checks that it's all zeroes?
-
-I also kind of regret that this remained a single commit:
-
- 3 files changed, 120 insertions(+), 1 deletion(-)
-
-this should be split up further:
-
- - one patch that adds trampoline space to the kernel image
- - one patch that calculates the trampoline address and prints the address
- - one or two patch that does the functional changes
- - (any more split-up you can think of - early boot code is very fragile!)
-
-It will be painful to rebase x86/mm but I think it's unavoidable at this stage.
-
-There's also a few other things I don't like in paging_prepare():
-
-1)
-
-        /* Check if LA57 is desired and supported */
-        if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
-                        (native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
-                paging_config.l5_required = 1;
-
-... it isn't explained why this feature CPU check is so complex.
-
-2)
-
-+       /* Place the trampoline just below the end of low memory, aligned to 4k */
-+       paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
-+       paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
-
-placing trampolines just below or just above BIOS images is fragile. Instead a 
-better heuristic is to use the "middle" of suspected available RAM and work from 
-there.
-
-3)
-
-+       /* Clear trampoline memory first */
-+       memset(trampoline, 0, TRAMPOLINE_32BIT_SIZE);
-
-Memory bootup state is typically all zeroes (except maybe for kexec), so this 
-should check that what it's clearing doesn't contain any data.
-
-It should probably also clear this memory _after_ use.
-
-4)
-
-+       /*
-+        * Set up a new page table that will be used for switching from 4-
-+        * to 5-level paging or vice versa. In other cases trampoline
-+        * wouldn't touch CR3.
-+        *
-+        * For 4- to 5-level paging transition, set up current CR3 as the
-+        * first and the only entry in a new top-level page table.
-+        *
-+        * For 5- to 4-level paging transition, copy page table pointed by
-+        * first entry in the current top-level page table as our new
-+        * top-level page table. We just cannot point to the page table
-+        * from trampoline as it may be above 4G.
-+        */
-+       if (paging_config.l5_required) {
-+               trampoline[TRAMPOLINE_32BIT_PGTABLE_OFFSET] = __native_read_cr3() + _PAGE_TABLE_NOENC;
-+       } else if (native_read_cr4() & X86_CR4_LA57) {
-+               unsigned long src;
-+
-+               src = *(unsigned long *)__native_read_cr3() & PAGE_MASK;
-+               memcpy(trampoline + TRAMPOLINE_32BIT_PGTABLE_OFFSET / sizeof(unsigned long),
-+                      (void *)src, PAGE_SIZE);
-+       }
-
-Why '+ _PAGE_TABLE_NOENC', while not ' |' ?
-
-Also, it isn't clear what is where at this stage and it would be helpful to add 
-comments explaining the general purpose.
-
-There's also two main objects here:
-
- - the mode switching code trampoline
- - the trampoline pagetable
-
-it's not clear from this code where is which - and the naming isn't overly clear 
-either: is '*trampoline' the code, or the pagetable, or both?
-
-We need to re-do this as we have now run into _exactly_ the kind of difficult to 
-debug bug that I was worried about when I insisted on the many iterations of this 
-patch-set...
-
-Thanks,
-
-	Ingo
+> 
+> Best Regards,
+> Huang, Ying
+> 
+> > I think caller should lock the page to protect entire operation, which
+> > have been used more widely to pin a address_space.
+> >
+> > Thanks.
