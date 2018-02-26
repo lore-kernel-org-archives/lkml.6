@@ -1,49 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeBZLaY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:30:24 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52542 "EHLO mail.skyhub.de"
+        id S1752783AbeBZLbT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:31:19 -0500
+Received: from gofer.mess.org ([88.97.38.141]:42623 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752353AbeBZLaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:30:20 -0500
-Date: Mon, 26 Feb 2018 12:30:00 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-Message-ID: <20180226113000.GC4377@pd.tnic>
-References: <1519629838-4898-1-git-send-email-wanpengli@tencent.com>
- <20180226094148.GA15539@pd.tnic>
- <CANRm+CzODxLQ4UHgFCnpjABmBUvi9sbw=uyO1xk1dyWgnH86ig@mail.gmail.com>
- <20180226104921.GA4377@pd.tnic>
- <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
- <20180226111630.GB4377@pd.tnic>
- <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
+        id S1752451AbeBZLbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 06:31:17 -0500
+Date: Mon, 26 Feb 2018 11:31:15 +0000
+From: Sean Young <sean@mess.org>
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 12/13] media: img-ir: Drop METAG dependency
+Message-ID: <20180226113114.jpewudrlez3pla2y@gofer.mess.org>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+ <20180221233825.10024-13-jhogan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180221233825.10024-13-jhogan@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 07:25:28PM +0800, Wanpeng Li wrote:
-> Both are the same values set by kvm userspace.
+On Wed, Feb 21, 2018 at 11:38:24PM +0000, James Hogan wrote:
+> Now that arch/metag/ has been removed, remove the METAG dependency from
+> the IMG IR device driver. The hardware is also present on MIPS SoCs so
+> the driver still has value.
+> 
+> Signed-off-by: James Hogan <jhogan@kernel.org>
+> Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-metag@vger.kernel.org
 
-This still doesn't answer my question what "the non-sensical value which
-is written by the guest will not reflect to guest-visible microcode
-revision" means?
+Acked-by: Sean Young <sean@mess.org>
 
-> This is correct. The link explains why the userspace sets microcode
-> revision is still needed.
 
-Why is it still needed?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> ---
+>  drivers/media/rc/img-ir/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/rc/img-ir/Kconfig b/drivers/media/rc/img-ir/Kconfig
+> index a896d3c83a1c..d2c6617d468e 100644
+> --- a/drivers/media/rc/img-ir/Kconfig
+> +++ b/drivers/media/rc/img-ir/Kconfig
+> @@ -1,7 +1,7 @@
+>  config IR_IMG
+>  	tristate "ImgTec IR Decoder"
+>  	depends on RC_CORE
+> -	depends on METAG || MIPS || COMPILE_TEST
+> +	depends on MIPS || COMPILE_TEST
+>  	select IR_IMG_HW if !IR_IMG_RAW
+>  	help
+>  	   Say Y or M here if you want to use the ImgTec infrared decoder
+> -- 
+> 2.13.6
