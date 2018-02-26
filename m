@@ -1,167 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751947AbeBZRND (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:13:03 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751396AbeBZRLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:11:31 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] x86/hyper-v: allocate and use Virtual Processor Assist Pages
-Date: Mon, 26 Feb 2018 18:11:18 +0100
-Message-Id: <20180226171121.18974-3-vkuznets@redhat.com>
-In-Reply-To: <20180226171121.18974-1-vkuznets@redhat.com>
-References: <20180226171121.18974-1-vkuznets@redhat.com>
+        id S1751692AbeBZRPS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:15:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750767AbeBZRPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:15:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD3F21719
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 26 Feb 2018 12:15:14 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH] rcu: Remove the unnecessary separate function,
+ rcu_preempt_do_callback()
+Message-ID: <20180226121514.122669b9@vmware.local.home>
+In-Reply-To: <1519621896-8786-1-git-send-email-byungchul.park@lge.com>
+References: <1519621896-8786-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Virtual Processor Assist Pages usage allows us to do optimized EOI
-processing for APIC, enable Enlightened VMCS support in KVM and more.
-struct hv_vp_assist_page is defined according to the Hyper-V TLFS v5.0b.
+On Mon, 26 Feb 2018 14:11:36 +0900
+Byungchul Park <byungchul.park@lge.com> wrote:
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v1:
-  move HV_X64_ENLIGHTENED_VMCS_RECOMMENDED definition to this patch
----
- arch/x86/hyperv/hv_init.c          | 33 +++++++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h    | 10 ++++++++++
- arch/x86/include/uapi/asm/hyperv.h | 13 +++++++++++++
- 3 files changed, 56 insertions(+)
+> rcu_preemptp_do_callback() was introduced in commit 09223371dea(rcu:
+> Use softirq to address performance regression), where it had to be
+> distinguished between in the case CONFIG_TREE_PREEMPT_RCU is set and
+> it's not.
+> 
+> Now that the code was cleaned up so that rcu_preemt_do_callback() is
+> only called in rcu_kthread_do_work() in the same file, tree_plugin.h,
+> we don't have to keep the separate function anymore. Remove it for a
+> better readability.
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 2edc49e7409b..acf21fa93e2c 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -88,6 +88,9 @@ EXPORT_SYMBOL_GPL(hyperv_cs);
- u32 *hv_vp_index;
- EXPORT_SYMBOL_GPL(hv_vp_index);
- 
-+struct hv_vp_assist_page **hv_vp_assist_page;
-+EXPORT_SYMBOL_GPL(hv_vp_assist_page);
-+
- u32 hv_max_vp_index;
- 
- static int hv_cpu_init(unsigned int cpu)
-@@ -101,6 +104,23 @@ static int hv_cpu_init(unsigned int cpu)
- 	if (msr_vp_index > hv_max_vp_index)
- 		hv_max_vp_index = msr_vp_index;
- 
-+	if (!hv_vp_assist_page)
-+		return 0;
-+
-+	if (!hv_vp_assist_page[smp_processor_id()])
-+		hv_vp_assist_page[smp_processor_id()] =
-+			__vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL);
-+
-+	if (hv_vp_assist_page[smp_processor_id()]) {
-+		u64 val;
-+
-+		val = vmalloc_to_pfn(hv_vp_assist_page[smp_processor_id()]);
-+		val = (val << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) |
-+			HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
-+
-+		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, val);
-+	}
-+
- 	return 0;
- }
- 
-@@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
- 	struct hv_reenlightenment_control re_ctrl;
- 	unsigned int new_cpu;
- 
-+	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
-+		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
-+		vfree(hv_vp_assist_page[cpu]);
-+		hv_vp_assist_page[cpu] = NULL;
-+	}
-+
- 	if (hv_reenlightenment_cb == NULL)
- 		return 0;
- 
-@@ -241,6 +267,13 @@ void hyperv_init(void)
- 	if (!hv_vp_index)
- 		return;
- 
-+	hv_vp_assist_page = kcalloc(num_possible_cpus(),
-+				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
-+	if (!hv_vp_assist_page) {
-+		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
-+		return;
-+	}
-+
- 	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
- 			      hv_cpu_init, hv_cpu_die) < 0)
- 		goto free_vp_index;
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 25283f7eb299..778d2efd34f1 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -294,6 +294,12 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
-  */
- extern u32 *hv_vp_index;
- extern u32 hv_max_vp_index;
-+extern struct hv_vp_assist_page **hv_vp_assist_page;
-+
-+static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-+{
-+	return hv_vp_assist_page[cpu];
-+}
- 
- /**
-  * hv_cpu_number_to_vp_number() - Map CPU to VP.
-@@ -330,6 +336,10 @@ static inline void hyperv_setup_mmu_ops(void) {}
- static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
- static inline void clear_hv_tscchange_cb(void) {}
- static inline void hyperv_stop_tsc_emulation(void) {};
-+static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_HYPERV */
- 
- #ifdef CONFIG_HYPERV_TSCPAGE
-diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
-index 45cc62352040..bd7a2f020f68 100644
---- a/arch/x86/include/uapi/asm/hyperv.h
-+++ b/arch/x86/include/uapi/asm/hyperv.h
-@@ -156,6 +156,9 @@
- /* Recommend using the newer ExProcessorMasks interface */
- #define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
- 
-+/* Recommend using enlightened VMCS */
-+#define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED    (1 << 14)
-+
- /*
-  * Crash notification flag.
-  */
-@@ -414,6 +417,16 @@ struct hv_timer_message_payload {
- 	__u64 delivery_time;	/* When the message was delivered */
- };
- 
-+/* Define virtual processor assist page structure. */
-+struct hv_vp_assist_page {
-+	__u32 apic_assist;
-+	__u32 reserved;
-+	__u64 vtl_control[2];
-+	__u64 nested_enlightenments_control[2];
-+	__u32 enlighten_vmentry;
-+	__u64 current_nested_vmcs;
-+};
-+
- #define HV_STIMER_ENABLE		(1ULL << 0)
- #define HV_STIMER_PERIODIC		(1ULL << 1)
- #define HV_STIMER_LAZY			(1ULL << 2)
--- 
-2.14.3
+Looks good to me (looks like commit f8b7fc6b51 "rcu: use softirq
+instead of kthreads except when RCU_BOOST=y" cleaned up the ifdefs and
+removed the requirement).
+
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
