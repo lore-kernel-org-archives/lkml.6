@@ -1,37 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753076AbeBZNCh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:02:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40761 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753177AbeBZNCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:02:32 -0500
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Matias =?utf-8?Q?Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc: hch@lst.de, keith.busch@intel.com, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 1/1] nvme: implement log page low/high offset and dwords
-References: <20180226125540.9513-1-mb@lightnvm.io>
-        <20180226125540.9513-2-mb@lightnvm.io>
-Date: Mon, 26 Feb 2018 14:02:30 +0100
-In-Reply-To: <20180226125540.9513-2-mb@lightnvm.io> ("Matias =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B8rling=22's?=
-        message of "Mon, 26 Feb 2018 13:55:40 +0100")
-Message-ID: <mqdy3jfc3a1.fsf@linux-x5ow.site>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
+        id S1753236AbeBZNEO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:04:14 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3196 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753197AbeBZNEM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:04:12 -0500
+From: Alexandre Torgue <alexandre.torgue@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH] MAINTAINERS: update entries for ARM/STM32
+Date: Mon, 26 Feb 2018 14:03:48 +0100
+Message-ID: <1519650228-6271-1-git-send-email-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Changes old git repository to the maintained one and adds more patterns.
+
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3bdc260..802b984 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1999,8 +1999,10 @@ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+ M:	Alexandre Torgue <alexandre.torgue@st.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mcoquelin/stm32.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
+ N:	stm32
++F:	arch/arm/boot/dts/stm32*
++F:	arch/arm/mach-stm32/
+ F:	drivers/clocksource/armv7m_systick.c
+ 
+ ARM/TANGO ARCHITECTURE
 -- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+2.7.4
