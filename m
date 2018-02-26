@@ -1,44 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752160AbeBZHrZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:47:25 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:36883 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751014AbeBZHrW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:47:22 -0500
-X-Google-Smtp-Source: AG47ELvidInK4kS+lBnTwzIAqaq+A7nV5SVc1SoTdF6lgYd4dsGj1NB3IVzLJVw7P55HnlOXgJTiJf+jdus9eeBeDNA=
+        id S1752169AbeBZHtQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:49:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:44838 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750882AbeBZHtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 02:49:14 -0500
+Subject: Re: [PATCH] cpufreq: scpi: invoke frequency-invariance setter
+ function
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>
+References: <20180220111057.14756-1-dietmar.eggemann@arm.com>
+ <CAJZ5v0hB+Uk8SNVqUH3fr1y0SXbY1Rd26b84P-8PPV8FiPbnWw@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <23dba70b-aa83-4a21-a33d-733bec215264@arm.com>
+Date: Mon, 26 Feb 2018 08:49:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <87mv004p0t.fsf@xmission.com>
-References: <878tbmf5vl.fsf@xmission.com> <20180221202908.17258-4-ebiederm@xmission.com>
- <CAOssrKeNLBeMkMrrCeRBO9Z80zFxCCEygKL3DErnQ9xBoLkH0g@mail.gmail.com>
- <87inao6dfa.fsf@xmission.com> <87mv004p0t.fsf@xmission.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Mon, 26 Feb 2018 08:47:21 +0100
-Message-ID: <CAOssrKd+c0Mx+=S-+zr1QS8a37Pm=VGki=FVR+LXQZBsk3byqA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] fuse: Ensure posix acls are translated outside of init_user_ns
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0hB+Uk8SNVqUH3fr1y0SXbY1Rd26b84P-8PPV8FiPbnWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 11:50 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
+On 02/22/2018 11:27 PM, Rafael J. Wysocki wrote:
+> On Tue, Feb 20, 2018 at 12:10 PM, Dietmar Eggemann
+> <dietmar.eggemann@arm.com> wrote:
 
-> So if we could figure out how to use the generic acl support for the old
-> brand of fuse filesystems that don't set FUSE_POSIX_ACL it would be much
-> easier to support them long term.
+[...]
 
-Simplest and most robust way seems to be to do everything the same (as
-with FUSE_POSIX_ACL) but tell the vfs not to cache the acl.
+>> Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+> 
+> This is really minor, but I would reorder this slightly.
 
-Thanks,
-Miklos
+Tried to figure out what would be the better order. Not sure since I saw
+different examples. Can you tell what would be the best tag order?
+
+[...]
+
+>> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+>> index c32a833e1b00..3101d4e9c2de 100644
+>> --- a/drivers/cpufreq/scpi-cpufreq.c
+>> +++ b/drivers/cpufreq/scpi-cpufreq.c
+>> @@ -51,13 +51,19 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
+>>   static int
+>>   scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+>>   {
+>> +       unsigned long freq = policy->freq_table[index].frequency;
+>>          struct scpi_data *priv = policy->driver_data;
+>> -       u64 rate = policy->freq_table[index].frequency * 1000;
+>> +       u64 rate = freq * 1000;
+>>          int ret;
+>>
+>>          ret = clk_set_rate(priv->clk, rate);
+>> -       if (!ret && (clk_get_rate(priv->clk) != rate))
+>> -               ret = -EIO;
+>> +       if (!ret) {
+> 
+> I would do:
+> 
+> if (ret)
+>          return ret;
+> 
+> arch_set_freq_scale(policy->related_cpus, freq, policy->cpuinfo.max_freq);
+> 
+> if (clk_get_rate(priv->clk) != rate)
+>          return -EIO;
+> 
+> return 0;
+> 
+> That's somewhat easier to follow for me.
+
+Yes I can change this.
+
+> 
+>> +               if (clk_get_rate(priv->clk) != rate)
+>> +                       ret = -EIO;
+>> +
+>> +               arch_set_freq_scale(policy->related_cpus, freq,
+>> +                                   policy->cpuinfo.max_freq);
+>> +       }
+>>
+>>          return ret;
+>>   }
+>> --
+> 
+> I also am not sure why you want to call arch_set_freq_scale() even if
+> the new clock rate didn't stick.
+
+Right, this is much better.
+
+ static int
+ scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+ {
++       unsigned long freq = policy->freq_table[index].frequency;
+        struct scpi_data *priv = policy->driver_data;
+-       u64 rate = policy->freq_table[index].frequency * 1000;
++       u64 rate = freq * 1000;
+        int ret;
+ 
+        ret = clk_set_rate(priv->clk, rate);
+-       if (!ret && (clk_get_rate(priv->clk) != rate))
+-               ret = -EIO;
+ 
+-       return ret;
++       if (ret)
++               return ret;
++
++       if (clk_get_rate(priv->clk) != rate)
++               return -EIO;
++
++       arch_set_freq_scale(policy->related_cpus, freq,
++                           policy->cpuinfo.max_freq);
++
++       return 0;
+
+Will send out a v2 as soon as I know the preferred tag order.
