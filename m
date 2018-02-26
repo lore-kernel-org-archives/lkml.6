@@ -1,112 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeBZQLV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:11:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58984 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751463AbeBZQLT (ORCPT
+        id S1751582AbeBZQNG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:13:06 -0500
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:38299 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbeBZQNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:11:19 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Dave Young <dyoung@redhat.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH 00/11] kexec_file: Clean up purgatory load
-Date: Mon, 26 Feb 2018 16:16:09 +0100
-X-Mailer: git-send-email 2.13.5
+        Mon, 26 Feb 2018 11:13:04 -0500
+X-Google-Smtp-Source: AG47ELs4YrMosJjl00DxZIujZe4F9rnB98nyjCG1K2gehy6lQ35nOuIbLx0fi05I5eedPsY+AoZsqiTKH6eXbKFhC2M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022615-0040-0000-0000-00000416F7D7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022615-0041-0000-0000-0000261A19E1
-Message-Id: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260202
+In-Reply-To: <5A90563E.4020608@arm.com>
+References: <1519322552-7374-1-git-send-email-gengdongjiu@huawei.com> <5A90563E.4020608@arm.com>
+From: gengdongjiu <gengdj.1984@gmail.com>
+Date: Tue, 27 Feb 2018 00:13:03 +0800
+Message-ID: <CAMj-D2Cd7_fCwMuHKr-UQ3i4LEDkktxcg_GtO-QCqnj52mHyKA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: rename the function arm64_is_ras_serror() to avoid confusion
+To: James Morse <james.morse@arm.com>
+Cc: Dongjiu Geng <gengdongjiu@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, Huangshaoyu <huangshaoyu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi James,
+   Thanks a lot for your review.
 
-Hi everybody
+2018-02-24 1:58 GMT+08:00 James Morse <james.morse@arm.com>:
+> Hi Dongjiu Geng,
+>
+> On 22/02/18 18:02, Dongjiu Geng wrote:
+>> The RAS SError Syndrome can be Implementation-Defined,
+>> arm64_is_ras_serror() is used to judge whether it is RAS SError,
+>> but arm64_is_ras_serror() does not include this judgement. In order
+>> to avoid function name confusion, we rename the arm64_is_ras_serror()
+>> to arm64_is_categorized_ras_serror(), this function is used to
+>> judge whether it is categorized RAS Serror.
+>
+> I don't see how 'categorized' is relevant. The most significant ISS bit is used
+> to determine if this is an IMP-DEF ESR, or one that uses the architected layout.
 
-following the discussion with Dave and AKASHI, here are the common code
-patches extracted from my recent patch set (Add kexec_file_load support to
-s390) [1]. The patches were extracted to allow upstream integration together
-with AKASHI's common code patches before the arch code gets adjusted to the
-new base.
+>From the name arm64_is_ras_serror(), it used to judge whether this is
+RAS Serror,
+but arm64_is_ras_serror() think the IMP-DEF SError is not RAS SError,
+as shown the code note
+and code in[1]. In fact the IMP-DEF SError is also RAS SError, so when
+I read the code, it looks like
+confusion, so I rename it to arm64_is_categorized_ras_serror(), then
+this function is only used to
+judge whether this is categorized RAS SError,
+if it is categorized, the code will continue judge its Asynchronous Error Type.
+if it is uncategorized, the code will panic(this is the original code
+logic) or not panic when we support kernel-first or can isolate the
+SError
 
-The reason for this series is to prepare common code for adding
-kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
-field during purgatory load. In detail this series contains:
+[1]:
+ /*
+  *  ...................................................
+   *CPUs with the RAS extensions have an Implementation-Defined-Syndrome bit
+- * If this bit is set, we know its not a RAS SError.
+  * ...............................................................................
+  */
+static inline bool arm64_is_ras_serror(u32 esr)
+ {
+        WARN_ON(preemptible());
 
-Patch #1&2: Minor cleanups/fixes.
+        if (esr & ESR_ELx_IDS)
+                return false;
+        .........................
+}
 
-Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-depending on the section. With these patches the section address will be
-calculated verbosely and sh_offset will contain the offset of the section
-in the stripped purgatory binary (purgatory_buf).
+>
+> DFSC of zero means uncategorised. What should we do with an uncategorised SError?
 
-Patch #10: Allows architectures to set the purgatory load address. This
-patch is important for s390 as the kernel and purgatory have to be loaded
-to fixed addresses. In current code this is impossible as the purgatory
-load is opaque to the architecture.
+yes, so it returns false because it is uncategorised.
 
-Patch #11: Moves x86 purgatories sha implementation to common lib/
-directory to allow reuse in other architectures.
+>
+> From 2.4.3 "ESB and other physical errors" of [0]
+> | It is IMPLEMENTATION DEFINED whether [..]uncategorized SError interrupts
+> | are containable or Uncontainable, and whether they can be synchronized by an
+> | Error Synchronization Barrier.
+>
+> We treat uncategorized as uncontainable as that's the worst thing it could be.
 
-The patches apply to v4.16-rc3. There are no changes compared to [1] (all
-requested changes only affected s390 code). Please note that I had to touch
-arch code for x86 and power a little. In theory this should not change the
-behavior but I don't have a way to test it. Cross-compiling with
-defconfig [2] works fine for both.
+in original code, system will panic if it is uncategorized, I do not
+change this logic.
+ I only rename this function name to make it less confusion
+it no need to panic for uncontainable if we can isolate this error.
 
-Thanks
-Philipp
 
-[1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
-[2] On x86 with the orc unwinder and stack validation turned off. objtool
-    SEGFAULTs on s390...
+>
+> On aarch32 uncontainable and uncategorized even share an encoding.
+> (AET:00 in G7.2.43 "DFSR, Data Fault Status Register", 'state of the PE after
+> taking the SError interrupt exception')
+>
+>
+>> Change some code notes, unrecoverable RAS errors is imprecise, but
+>> Recoverable RAS errors is precise.
+>
+> Unrecoverable and Recoverable (but we don't know where it is) are both grouped
+> into 'can't make progress'. The comment says:
+> | The exception may have been imprecise.
+> because one of those two is imprecise.
+>
+> If anyone cares which one is which, they can read the spec.
+>
+> I expect this code will one day be replaced with proper kernel-first support,
+> its only here to avoid panic()ing due to corrected errors.
 
-Philipp Rudo (11):
-  kexec_file: Silence compile warnings
-  kexec_file: Remove checks in kexec_purgatory_load
-  kexec_file: Make purgatory_info->ehdr const
-  kexec_file: Search symbols in read-only kexec_purgatory
-  kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-  kexec_file: Split up __kexec_load_puragory
-  kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-  kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-  kexec_file: Remove mis-use of sh_offset field
-  kexec_file: Allow archs to set purgatory load address
-  kexec_file: Move purgatories sha256 to common code
+Ok, thanks for the explanation.
 
- arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
- arch/x86/kernel/kexec-bzimage64.c              |   8 +-
- arch/x86/kernel/machine_kexec_64.c             |  66 ++---
- arch/x86/purgatory/Makefile                    |   3 +
- arch/x86/purgatory/purgatory.c                 |   2 +-
- include/linux/kexec.h                          |  38 +--
- {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
- kernel/kexec_file.c                            | 375 ++++++++++++-------------
- {arch/x86/purgatory => lib}/sha256.c           |   4 +-
- 9 files changed, 244 insertions(+), 271 deletions(-)
- rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
- rename {arch/x86/purgatory => lib}/sha256.c (99%)
 
--- 
-2.13.5
+>
+>
+> Thanks,
+>
+> James
+>
+> [0]
+> https://static.docs.arm.com/ddi0587/a/RAS%20Extension-release%20candidate_march_29.pdf
