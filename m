@@ -1,124 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeBZLme (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:42:34 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54016 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeBZLmc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:42:32 -0500
-X-Google-Smtp-Source: AG47ELvmBcW5OhRkLunOurBwFr72y4nU/ayL27zCklEO7E/aRY/8BN2U84rZBaQHhCALVYApt6rObQ==
-Subject: Re: [PATCH v2] KVM: X86: Allow userspace to define the microcode
- version
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1519640239-4428-1-git-send-email-wanpengli@tencent.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <469812b9-d003-249a-d6d3-de74c24e4146@redhat.com>
-Date: Mon, 26 Feb 2018 12:42:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752842AbeBZLoe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:44:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53120 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752264AbeBZLob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 06:44:31 -0500
+Date: Mon, 26 Feb 2018 12:44:09 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+Message-ID: <20180226114409.GD4377@pd.tnic>
+References: <1519629838-4898-1-git-send-email-wanpengli@tencent.com>
+ <20180226094148.GA15539@pd.tnic>
+ <CANRm+CzODxLQ4UHgFCnpjABmBUvi9sbw=uyO1xk1dyWgnH86ig@mail.gmail.com>
+ <20180226104921.GA4377@pd.tnic>
+ <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
+ <20180226111630.GB4377@pd.tnic>
+ <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
+ <20180226113000.GC4377@pd.tnic>
+ <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1519640239-4428-1-git-send-email-wanpengli@tencent.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2018 11:17, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Linux (among the others) has checks to make sure that certain features 
-> aren't enabled on a certain family/model/stepping if the microcode version 
-> isn't greater than or equal to a known good version.
-> 
-> By exposing the real microcode version, we're preventing buggy guests that
-> don't check that they are running virtualized (i.e., they should trust the
-> hypervisor) from disabling features that are effectively not buggy.
-> 
-> Suggested-by: Filippo Sironi <sironi@amazon.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v1 -> v2:
->  * add MSR_IA32_UCODE_REV to emulated_msrs
-> 
->  arch/x86/include/asm/kvm_host.h | 1 +
->  arch/x86/kvm/x86.c              | 9 +++++++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 938d453..6e13f2f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
->  	u64 smi_count;
->  	bool tpr_access_reporting;
->  	u64 ia32_xss;
-> +	u32 microcode_version;
->  
->  	/*
->  	 * Paging state of the vcpu
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 1a3ed81..4ae9517 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1047,6 +1047,7 @@ static u32 emulated_msrs[] = {
->  	MSR_SMI_COUNT,
->  	MSR_PLATFORM_INFO,
->  	MSR_MISC_FEATURES_ENABLES,
-> +	MSR_IA32_UCODE_REV,
->  };
->  
->  static unsigned num_emulated_msrs;
-> @@ -2247,7 +2248,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  
->  	switch (msr) {
->  	case MSR_AMD64_NB_CFG:
-> -	case MSR_IA32_UCODE_REV:
->  	case MSR_IA32_UCODE_WRITE:
->  	case MSR_VM_HSAVE_PA:
->  	case MSR_AMD64_PATCH_LOADER:
-> @@ -2255,6 +2255,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	case MSR_AMD64_DC_CFG:
->  		break;
->  
-> +	case MSR_IA32_UCODE_REV:
-> +		if (msr_info->host_initiated)
-> +			vcpu->arch.microcode_version = data >> 32;
+On Mon, Feb 26, 2018 at 07:37:32PM +0800, Wanpeng Li wrote:
+> The guest write is ignored as the original kvm implementation before the patch.
 
-Please remove the shifts, and add the MSR_IA32_UCODE_REV version to the
-"feature MSRs" recently added by Tom Lendacky.
+That will never work because there's no virtualized microcode loader.
+Which will be a dumb idea anyway.
 
-Thanks,
+Goes to show that dealing with microcode revisions for a guest is the
+wrong approach.
 
-Paolo
+> Hmm, the apic_check_deadline_errata() example can be referred to.
 
-> +		break;
->  	case MSR_EFER:
->  		return set_efer(vcpu, data);
->  	case MSR_K7_HWCR:
-> @@ -2550,7 +2554,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		msr_info->data = 0;
->  		break;
->  	case MSR_IA32_UCODE_REV:
-> -		msr_info->data = 0x100000000ULL;
-> +		msr_info->data = (u64)vcpu->arch.microcode_version << 32;
->  		break;
->  	case MSR_MTRRcap:
->  	case 0x200 ... 0x2ff:
-> @@ -8232,6 +8236,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	vcpu->arch.regs_dirty = ~0;
->  
->  	vcpu->arch.ia32_xss = 0;
-> +	vcpu->arch.microcode_version = 0x1;
->  
->  	kvm_x86_ops->vcpu_reset(vcpu, init_event);
->  }
-> 
+So that's basically what I'm saying - fix apic_check_deadline_errata()
+to check whether the kernel runs as a guest.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
