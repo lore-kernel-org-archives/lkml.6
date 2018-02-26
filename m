@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv99/uTEaSDrxQUrBjJi++U5fj0ZC43wOugYpS6GHLQVKwL3GxDr02+eENmlap5qDj5oOuC
-ARC-Seal: i=1; a=rsa-sha256; t=1519676675; cv=none;
+X-Google-Smtp-Source: AH8x225RkO3jo/v+36HfHiAy7k5TcKS3ff5rDtKJheOTch97JAKx9EvbmGynEgq9orYhh3ERNxZQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519676672; cv=none;
         d=google.com; s=arc-20160816;
-        b=B46hgTltqf/v/bnPWoEaRRG5wX1ObaEIhj9W2gByb3nYvRmW/rN0mwXk3m+UtmYegO
-         NohZoUjLXikq0F6/XUGzi+JbndQ/BZfZOpxtiwFL7czc2StYUoV2kDeRiP8hK/igzEYG
-         +DS465baqq+dquI7oNnqdznCpS8YjNVr9H2T9JMKX7Pw0QlOTapfysxuRJsLX5Dr9vWf
-         OMlfhbhZZ1xN0weJcGhlBGP6M5YJzW+XJzrfxOc3eYKAnNB9kTc2jZHRCRCK6+NKb9fl
-         khncnTfUso/kvnlvd6rXpeQ2McUrvKZJGEV0R7uVfy2CIfQW5nmPGaHMKNlhrcod5Ax2
-         whZw==
+        b=d9elT8ny6pp5PBICwm0vrI21oxUUX3Wd63pXc3w7UNc9jMStuaFByRyGDrjoU2WrZ/
+         mCWPlKWjiKPTDLLZHlYEvtWu5lbr4io5EkpXZBy0vYE+OVi8yJi0yKG87P7MZFat5IeI
+         61RojRcWxMBgsV1n6teOAOh+VWl3t4RhAlUC0WF43u/J+IkupfdsuXqAFlOnV8IN7sNY
+         JnOLuytbPwcEm5+Mcq8bXl+COKnnk03mRklEQH9arQp8NGGIiN5N2k3F6MkceBoeJ4uF
+         1NwWrjeNHMQLsBRpBwhx4DiOGcYNt9LusrIqv0Np6c0BKR9rZkAbM9Xx4TaRoaTlToWG
+         OiJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/VvjL1CR8fYSJKNgwusDLHpQSqJkzAAFrK5PnLQL1rc=;
-        b=1KuCyc0VRhEiY6oncasbhY43ITfnvAZrpDzxlin4YtH5UTusYznSYbB42XjeI4Dx+5
-         y8sAHIHUlQ67xJX1NjtFOhFE5neibuOSgEZFZAKjSZlp7jTtEo1TVNW46b9wPix5z1gt
-         jzArnuA5XXHNO7+83maRhKOKa8QpI0Rhd0UbaU9IZkiHvcxgdDPRDsrT2g0Iu5n6rmOg
-         x/uanzgzbCGCVx5j4IQgLz4MfFm0Gg/7RO4wQndWIHL0RuLkjhwF747nw4OFJPqrfG63
-         liRAnr8XhAt1ajdUwtx1u4gzFs3ZtGbvnD5pUDhG1uxxMKL9weCivf3m4Nhj9wsdqpWg
-         BYOg==
+        bh=46Ex4e9tWcnvgg6Qz0m/pO3vZTUm4V5B3cLChnGGOGU=;
+        b=K34bh7pyJNrXZZqCKR9oy02TjH0Zu9k4MZ5EHyeYuxu5mTw+doQr9b0SBcHkKIgokS
+         cjJRlNXy3wLknJS9lmUUPeb8CjR+4D37fNsPP7Yf+YWH1Na7+Vy6QFUJL9qpuaHXS/1o
+         v3OKOX3LaAPMYbKqrguH8aL+2gGi415AQLt5PLCUMx/ACR8dEGl8ynHFiQRdT9ricFyC
+         FkGJqKUwsf7086PPCxqfS8C8HHoGP6cE7lpoXLQIbHyJuyXJIkd2xXsgqkgd1XWraqCg
+         Ywry/S+2l3OVoS2RsfE+tSrtSis5m7sN4hlgXeQhuJuCLQS2Bjg4GV3rH60+X9LVkJGo
+         yjTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Weiser <michael.weiser@gmx.de>
-Subject: [PATCH 4.14 33/54] arm64: Remove unimplemented syscall log message
-Date: Mon, 26 Feb 2018 21:22:10 +0100
-Message-Id: <20180226202146.045950031@linuxfoundation.org>
+	Alan Stern <stern@rowland.harvard.edu>,
+	Aman Deep <aman.deep@samsung.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH 4.14 32/54] usb: ohci: Proper handling of ed_rm_list to handle race condition between usb_kill_urb() and finish_unlinks()
+Date: Mon, 26 Feb 2018 21:22:09 +0100
+Message-Id: <20180226202145.990513693@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496489575231525?=
-X-GMAIL-MSGID: =?utf-8?q?1593496489575231525?=
+X-GMAIL-THRID: =?utf-8?q?1593495994383041854?=
+X-GMAIL-MSGID: =?utf-8?q?1593496486955953603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +50,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Weiser <michael.weiser@gmx.de>
+From: AMAN DEEP <aman.deep@samsung.com>
 
-commit 1962682d2b2fbe6cfa995a85c53c069fadda473e upstream.
+commit 46408ea558df13b110e0866b99624384a33bdeba upstream.
 
-Stop printing a (ratelimited) kernel message for each instance of an
-unimplemented syscall being called. Userland making an unimplemented
-syscall is not necessarily misbehaviour and to be expected with a
-current userland running on an older kernel. Also, the current message
-looks scary to users but does not actually indicate a real problem nor
-help them narrow down the cause. Just rely on sys_ni_syscall() to return
--ENOSYS.
+There is a race condition between finish_unlinks->finish_urb() function
+and usb_kill_urb() in ohci controller case. The finish_urb calls
+spin_unlock(&ohci->lock) before usb_hcd_giveback_urb() function call,
+then if during this time, usb_kill_urb is called for another endpoint,
+then new ed will be added to ed_rm_list at beginning for unlink, and
+ed_rm_list will point to newly added.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+When finish_urb() is completed in finish_unlinks() and ed->td_list
+becomes empty as in below code (in finish_unlinks() function):
+
+        if (list_empty(&ed->td_list)) {
+                *last = ed->ed_next;
+                ed->ed_next = NULL;
+        } else if (ohci->rh_state == OHCI_RH_RUNNING) {
+                *last = ed->ed_next;
+                ed->ed_next = NULL;
+                ed_schedule(ohci, ed);
+        }
+
+The *last = ed->ed_next will make ed_rm_list to point to ed->ed_next
+and previously added ed by usb_kill_urb will be left unreferenced by
+ed_rm_list. This causes usb_kill_urb() hang forever waiting for
+finish_unlink to remove added ed from ed_rm_list.
+
+The main reason for hang in this race condtion is addition and removal
+of ed from ed_rm_list in the beginning during usb_kill_urb and later
+last* is modified in finish_unlinks().
+
+As suggested by Alan Stern, the solution for proper handling of
+ohci->ed_rm_list is to remove ed from the ed_rm_list before finishing
+any URBs. Then at the end, we can add ed back to the list if necessary.
+
+This properly handle the updated ohci->ed_rm_list in usb_kill_urb().
+
+Fixes: 977dcfdc6031 ("USB: OHCI: don't lose track of EDs when a controller dies")
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Aman Deep <aman.deep@samsung.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/traps.c |    8 --------
- 1 file changed, 8 deletions(-)
+ drivers/usb/host/ohci-q.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -573,14 +573,6 @@ asmlinkage long do_ni_syscall(struct pt_
- 	}
- #endif
+--- a/drivers/usb/host/ohci-q.c
++++ b/drivers/usb/host/ohci-q.c
+@@ -1018,6 +1018,8 @@ skip_ed:
+ 		 * have modified this list.  normally it's just prepending
+ 		 * entries (which we'd ignore), but paranoia won't hurt.
+ 		 */
++		*last = ed->ed_next;
++		ed->ed_next = NULL;
+ 		modified = 0;
  
--	if (show_unhandled_signals_ratelimited()) {
--		pr_info("%s[%d]: syscall %d\n", current->comm,
--			task_pid_nr(current), regs->syscallno);
--		dump_instr("", regs);
--		if (user_mode(regs))
--			__show_regs(regs);
--	}
--
- 	return sys_ni_syscall();
- }
+ 		/* unlink urbs as requested, but rescan the list after
+@@ -1076,21 +1078,22 @@ rescan_this:
+ 			goto rescan_this;
  
+ 		/*
+-		 * If no TDs are queued, take ED off the ed_rm_list.
++		 * If no TDs are queued, ED is now idle.
+ 		 * Otherwise, if the HC is running, reschedule.
+-		 * If not, leave it on the list for further dequeues.
++		 * If the HC isn't running, add ED back to the
++		 * start of the list for later processing.
+ 		 */
+ 		if (list_empty(&ed->td_list)) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed->state = ED_IDLE;
+ 			list_del(&ed->in_use_list);
+ 		} else if (ohci->rh_state == OHCI_RH_RUNNING) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed_schedule(ohci, ed);
+ 		} else {
+-			last = &ed->ed_next;
++			ed->ed_next = ohci->ed_rm_list;
++			ohci->ed_rm_list = ed;
++			/* Don't loop on the same ED */
++			if (last == &ohci->ed_rm_list)
++				last = &ed->ed_next;
+ 		}
+ 
+ 		if (modified)
