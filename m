@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226wdrxqfKfM04OAavf7J6NtGw8A7LGANyRkfk2Q+C3JIZeTc1qV7fW6y4B18jZAZVNZqrEs
-ARC-Seal: i=1; a=rsa-sha256; t=1519676959; cv=none;
+X-Google-Smtp-Source: AH8x224CeG5oDVoXwohpPcdHAyzgPls2zTSr+DX0O+dseeuiabkyeVasp2IfGN8mqN+wSPBWfwgg
+ARC-Seal: i=1; a=rsa-sha256; t=1519676956; cv=none;
         d=google.com; s=arc-20160816;
-        b=DYiJCc86g+jCn1Q+h/QEl2Nanb2vVEaChVPA7XLZavB438Z6QNKrz2cqstwro3zZaj
-         EWdMuB1+aICG6bwW6RNElSqhgH4dF+bUR0C3Lw8qgDXL7vF60MHRcJ+rhrVJ839SK1UY
-         tiKYdTN1fXKLVlcQsCgjmjzD4Gsm+kv66/q4eDhsN1HEI1d4D56mEmZElAyj7FFSj/py
-         u2mGMYos/tgzlxhedQT/QCvXT4aLTnJXuFNFCj8kU/9b+GUz3C+0FFV5p4WU0wY1nSg3
-         /LGRZrOjVQkjT1RFOH3xlRTfzVLabqoG6KvEhbha4wtp7izlRDUn/J4Qism5WpLD+0+s
-         BJxw==
+        b=uupOlrKefysdPg/qSag4prManw6y3FuY46aSQgo7VeWBni1zsqFvA9DCZBw10rqb07
+         ZX7hGHskwElaPPxoMuN8zRJsztUFrkT02axF5Ya1//0qjYWc6gvZHs8Wzu2Ea+8HEPhP
+         rf5VkP9jt0640PxrDrdpS3ge5rUG3LF/3/EYOCqp1p3HsJB0qX5XTktCqBowURC0Fmeq
+         LKWfvXYSz7oNeYezKdmEnynrfjyevMQDRTWi4WTS3xAprW5Up9raVaTHE3HSxSpbbuzZ
+         kYCZL0ntdN9WYAIu5xt4xjJcjfEA3qERTg8P3tK+4KAp80xs3hjMyoKqTv5gu1Z4g3UA
+         vUHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Snua8oiQao0wbfTOGjx5ax24nVBhe2cEU1Z4JqBbiNk=;
-        b=IR73kM11IPuLcplsBB4afMgXpm0Woyikpn7X0+5YsWNEs1LMdpDPTUexbRerdwAVmt
-         9TH1lPCZM3/K7WVNgAZ8xtOYRUyJSX31VDt6XFovXSiy71fW9dgxfEzJoGyhZu3wRmM3
-         GYFPR+2h0n+xbGTFYW96ZVGPlVdtjYDefG8gstIx/sepUdimdvQBQcTTLDilIAy1qUf7
-         PTZOoBxdTreQoFNZtc6c14up7ngcO6LJL68VFNGmoUnREmwz6OXEJ4Ktudk1REMzf3QB
-         JP2QO7fLb0gfsqLzUuRBPxJ3uWKUln9SI/HLQ7wEMKVFshAX5fJxnhspaXcAUJOYvmbg
-         6fxA==
+        bh=Y74UJuX1bAk5VIo1/2wAno8TEuft8jSKdHF3IfAMIes=;
+        b=uGHkFOCb704UJfiWqIwdzcRv+e3swQmRlbRUsU03IfyJPTETWVKIirR3KvzfC+kxv3
+         CAEGkRYxJSVOynxd0IueYl1C/OuDmtgunpl3PoAIW4R34uup1fFSim6vjBs4nN7x1BtN
+         0s4MtEp2Rg/z1b+ezflot+Ru5u3fau3SuaAWPrPIgBmXZWJ6tEeWrnix+hrW7bzihPXg
+         IbkXt8zF3S2LN4nz22cOphRnLVEavg9a2MhY63HZpcTnxyiuac2LnWp6zcuxEUnq6EMP
+         dfLxC4fvEVHWWLiHF1sHnlYt3VmkCLOjcsM4oWxejx8gbehbIFyMUtMCBwb/BSnz9QCy
+         ehzg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Aman Deep <aman.deep@samsung.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH 4.15 38/64] usb: ohci: Proper handling of ed_rm_list to handle race condition between usb_kill_urb() and finish_unlinks()
-Date: Mon, 26 Feb 2018 21:22:15 +0100
-Message-Id: <20180226202155.079238024@linuxfoundation.org>
+	Shigeru Yoshida <Shigeru.Yoshida@windriver.com>,
+	Haiqing Bai <Haiqing.Bai@windriver.com>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.15 37/64] ohci-hcd: Fix race condition caused by ohci_urb_enqueue() and io_watchdog_func()
+Date: Mon, 26 Feb 2018 21:22:14 +0100
+Message-Id: <20180226202155.043753482@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495994383041854?=
-X-GMAIL-MSGID: =?utf-8?q?1593496787933214790?=
+X-GMAIL-THRID: =?utf-8?q?1593496287558138852?=
+X-GMAIL-MSGID: =?utf-8?q?1593496784658298947?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,91 +50,146 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: AMAN DEEP <aman.deep@samsung.com>
+From: Shigeru Yoshida <shigeru.yoshida@windriver.com>
 
-commit 46408ea558df13b110e0866b99624384a33bdeba upstream.
+commit b2685bdacdaab065c172b97b55ab46c6be77a037 upstream.
 
-There is a race condition between finish_unlinks->finish_urb() function
-and usb_kill_urb() in ohci controller case. The finish_urb calls
-spin_unlock(&ohci->lock) before usb_hcd_giveback_urb() function call,
-then if during this time, usb_kill_urb is called for another endpoint,
-then new ed will be added to ed_rm_list at beginning for unlink, and
-ed_rm_list will point to newly added.
+Running io_watchdog_func() while ohci_urb_enqueue() is running can
+cause a race condition where ohci->prev_frame_no is corrupted and the
+watchdog can mis-detect following error:
 
-When finish_urb() is completed in finish_unlinks() and ed->td_list
-becomes empty as in below code (in finish_unlinks() function):
+  ohci-platform 664a0800.usb: frame counter not updating; disabled
+  ohci-platform 664a0800.usb: HC died; cleaning up
 
-        if (list_empty(&ed->td_list)) {
-                *last = ed->ed_next;
-                ed->ed_next = NULL;
-        } else if (ohci->rh_state == OHCI_RH_RUNNING) {
-                *last = ed->ed_next;
-                ed->ed_next = NULL;
-                ed_schedule(ohci, ed);
-        }
+Specifically, following scenario causes a race condition:
 
-The *last = ed->ed_next will make ed_rm_list to point to ed->ed_next
-and previously added ed by usb_kill_urb will be left unreferenced by
-ed_rm_list. This causes usb_kill_urb() hang forever waiting for
-finish_unlink to remove added ed from ed_rm_list.
+  1. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
+     and enters the critical section
+  2. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
+     returns false
+  3. ohci_urb_enqueue() sets ohci->prev_frame_no to a frame number
+     read by ohci_frame_no(ohci)
+  4. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
+  5. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
+     flags) and exits the critical section
+  6. Later, ohci_urb_enqueue() is called
+  7. ohci_urb_enqueue() calls spin_lock_irqsave(&ohci->lock, flags)
+     and enters the critical section
+  8. The timer scheduled on step 4 expires and io_watchdog_func() runs
+  9. io_watchdog_func() calls spin_lock_irqsave(&ohci->lock, flags)
+     and waits on it because ohci_urb_enqueue() is already in the
+     critical section on step 7
+ 10. ohci_urb_enqueue() calls timer_pending(&ohci->io_watchdog) and it
+     returns false
+ 11. ohci_urb_enqueue() sets ohci->prev_frame_no to new frame number
+     read by ohci_frame_no(ohci) because the frame number proceeded
+     between step 3 and 6
+ 12. ohci_urb_enqueue() schedules io_watchdog_func() with mod_timer()
+ 13. ohci_urb_enqueue() calls spin_unlock_irqrestore(&ohci->lock,
+     flags) and exits the critical section, then wake up
+     io_watchdog_func() which is waiting on step 9
+ 14. io_watchdog_func() enters the critical section
+ 15. io_watchdog_func() calls ohci_frame_no(ohci) and set frame_no
+     variable to the frame number
+ 16. io_watchdog_func() compares frame_no and ohci->prev_frame_no
 
-The main reason for hang in this race condtion is addition and removal
-of ed from ed_rm_list in the beginning during usb_kill_urb and later
-last* is modified in finish_unlinks().
+On step 16, because this calling of io_watchdog_func() is scheduled on
+step 4, the frame number set in ohci->prev_frame_no is expected to the
+number set on step 3.  However, ohci->prev_frame_no is overwritten on
+step 11.  Because step 16 is executed soon after step 11, the frame
+number might not proceed, so ohci->prev_frame_no must equals to
+frame_no.
 
-As suggested by Alan Stern, the solution for proper handling of
-ohci->ed_rm_list is to remove ed from the ed_rm_list before finishing
-any URBs. Then at the end, we can add ed back to the list if necessary.
+To address above scenario, this patch introduces a special sentinel
+value IO_WATCHDOG_OFF and set this value to ohci->prev_frame_no when
+the watchdog is not pending or running.  When ohci_urb_enqueue()
+schedules the watchdog (step 4 and 12 above), it compares
+ohci->prev_frame_no to IO_WATCHDOG_OFF so that ohci->prev_frame_no is
+not overwritten while io_watchdog_func() is running.
 
-This properly handle the updated ohci->ed_rm_list in usb_kill_urb().
-
-Fixes: 977dcfdc6031 ("USB: OHCI: don't lose track of EDs when a controller dies")
+Signed-off-by: Shigeru Yoshida <Shigeru.Yoshida@windriver.com>
+Signed-off-by: Haiqing Bai <Haiqing.Bai@windriver.com>
 Acked-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Aman Deep <aman.deep@samsung.com>
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-diff --git a/drivers/usb/host/ohci-q.c b/drivers/usb/host/ohci-q.c
-index b2ec8c399363..4ccb85a67bb3 100644
---- a/drivers/usb/host/ohci-q.c
-+++ b/drivers/usb/host/ohci-q.c
-@@ -1019,6 +1019,8 @@ static void finish_unlinks(struct ohci_hcd *ohci)
- 		 * have modified this list.  normally it's just prepending
- 		 * entries (which we'd ignore), but paranoia won't hurt.
- 		 */
-+		*last = ed->ed_next;
-+		ed->ed_next = NULL;
- 		modified = 0;
+---
+ drivers/usb/host/ohci-hcd.c |   10 +++++++---
+ drivers/usb/host/ohci-hub.c |    4 +++-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -74,6 +74,7 @@ static const char	hcd_name [] = "ohci_hc
  
- 		/* unlink urbs as requested, but rescan the list after
-@@ -1077,21 +1079,22 @@ static void finish_unlinks(struct ohci_hcd *ohci)
- 			goto rescan_this;
+ #define	STATECHANGE_DELAY	msecs_to_jiffies(300)
+ #define	IO_WATCHDOG_DELAY	msecs_to_jiffies(275)
++#define	IO_WATCHDOG_OFF		0xffffff00
  
- 		/*
--		 * If no TDs are queued, take ED off the ed_rm_list.
-+		 * If no TDs are queued, ED is now idle.
- 		 * Otherwise, if the HC is running, reschedule.
--		 * If not, leave it on the list for further dequeues.
-+		 * If the HC isn't running, add ED back to the
-+		 * start of the list for later processing.
- 		 */
- 		if (list_empty(&ed->td_list)) {
--			*last = ed->ed_next;
--			ed->ed_next = NULL;
- 			ed->state = ED_IDLE;
- 			list_del(&ed->in_use_list);
- 		} else if (ohci->rh_state == OHCI_RH_RUNNING) {
--			*last = ed->ed_next;
--			ed->ed_next = NULL;
- 			ed_schedule(ohci, ed);
- 		} else {
--			last = &ed->ed_next;
-+			ed->ed_next = ohci->ed_rm_list;
-+			ohci->ed_rm_list = ed;
-+			/* Don't loop on the same ED */
-+			if (last == &ohci->ed_rm_list)
-+				last = &ed->ed_next;
+ #include "ohci.h"
+ #include "pci-quirks.h"
+@@ -231,7 +232,7 @@ static int ohci_urb_enqueue (
  		}
  
- 		if (modified)
+ 		/* Start up the I/O watchdog timer, if it's not running */
+-		if (!timer_pending(&ohci->io_watchdog) &&
++		if (ohci->prev_frame_no == IO_WATCHDOG_OFF &&
+ 				list_empty(&ohci->eds_in_use) &&
+ 				!(ohci->flags & OHCI_QUIRK_QEMU)) {
+ 			ohci->prev_frame_no = ohci_frame_no(ohci);
+@@ -501,6 +502,7 @@ static int ohci_init (struct ohci_hcd *o
+ 		return 0;
+ 
+ 	timer_setup(&ohci->io_watchdog, io_watchdog_func, 0);
++	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+ 
+ 	ohci->hcca = dma_alloc_coherent (hcd->self.controller,
+ 			sizeof(*ohci->hcca), &ohci->hcca_dma, GFP_KERNEL);
+@@ -730,7 +732,7 @@ static void io_watchdog_func(struct time
+ 	u32		head;
+ 	struct ed	*ed;
+ 	struct td	*td, *td_start, *td_next;
+-	unsigned	frame_no;
++	unsigned	frame_no, prev_frame_no = IO_WATCHDOG_OFF;
+ 	unsigned long	flags;
+ 
+ 	spin_lock_irqsave(&ohci->lock, flags);
+@@ -835,7 +837,7 @@ static void io_watchdog_func(struct time
+ 			}
+ 		}
+ 		if (!list_empty(&ohci->eds_in_use)) {
+-			ohci->prev_frame_no = frame_no;
++			prev_frame_no = frame_no;
+ 			ohci->prev_wdh_cnt = ohci->wdh_cnt;
+ 			ohci->prev_donehead = ohci_readl(ohci,
+ 					&ohci->regs->donehead);
+@@ -845,6 +847,7 @@ static void io_watchdog_func(struct time
+ 	}
+ 
+  done:
++	ohci->prev_frame_no = prev_frame_no;
+ 	spin_unlock_irqrestore(&ohci->lock, flags);
+ }
+ 
+@@ -973,6 +976,7 @@ static void ohci_stop (struct usb_hcd *h
+ 	if (quirk_nec(ohci))
+ 		flush_work(&ohci->nec_work);
+ 	del_timer_sync(&ohci->io_watchdog);
++	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+ 
+ 	ohci_writel (ohci, OHCI_INTR_MIE, &ohci->regs->intrdisable);
+ 	ohci_usb_reset(ohci);
+--- a/drivers/usb/host/ohci-hub.c
++++ b/drivers/usb/host/ohci-hub.c
+@@ -311,8 +311,10 @@ static int ohci_bus_suspend (struct usb_
+ 		rc = ohci_rh_suspend (ohci, 0);
+ 	spin_unlock_irq (&ohci->lock);
+ 
+-	if (rc == 0)
++	if (rc == 0) {
+ 		del_timer_sync(&ohci->io_watchdog);
++		ohci->prev_frame_no = IO_WATCHDOG_OFF;
++	}
+ 	return rc;
+ }
+ 
