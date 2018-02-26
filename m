@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676396-2-391572992553318083
+X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676384-2-721455027299911383
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676396; b=aMthdYMaDs6gBvXi8QvzVawFnVucLDLiRZTKlpbHStLn2pT
-    h9BHbnaYaB/KAd889BPjQmK7L/zzGh4Mw1J3CN5iJdiG2IaHN+pXhwiF+sITAyk7
-    yLHZ8ftyU5f+BmTNSADXCgxhBQUdtX+nUxML80OaVP2XP1juPzMvfpk4Xq8TeDZO
-    T+nDx5R0DGLvf0h4Nct5RTAjEBGMGn4igH8NDsdVb4etl7Vk6cJFnUU4uzlka+CA
-    FDeNim9AQWW97HuxLalxOUDodOJB6BLKvEeK4ospay+dt8WIaAgZF8T5yAwWU+lU
-    ZLvEy/0aL38ctf+OI2m4DRnCxCiQc4ARqXefc0A==
+    t=1519676384; b=qrzTqT/SBd8v53CtHkU4EQdJB5h1xWQMdC+A3IOt/iOC+gJ
+    PnA0L2SuNd5BgS/xtZBHshMJWLIZMrHpXiYVhbCW2+5spXmdiN0BcA+OrC3xtGRb
+    Q1ickeqqTcsGPPJPz5FEgE716nOdWyyrlEhf+eGbRsg8bYAIJWLmNfgzyJNvdZoN
+    znXAYkeIptuDnAQY2spJKhiDs6feWp9aLFpPas/3pa7g2OmhZ5F0njJVYRn03kjc
+    SFp9IL/eIJKwDKrRvAxRk3u4Pk+pl+tersRDSn1QkOIEkobdVTQEstYlaufsX59E
+    WG4uyvN0LcMZkT0lNez07Ck1FPxV27VBKgBbbxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676396; bh=6jStXJ81kVKmmH1ueHG3qnSAkH
-    K6wJq3KaorKnAcRIE=; b=WR03C21lcaE3M/we7BSDDJxa3BqSw+41rIWyqCgXUZ
-    tWL8SEAVJQ42xqBbN2PnhIGi/lq9Va2O5PaTFK2oRsvdHM91qsB4f6Es998Q8Tuz
-    yveYnAiAczWnqg3ZTIB+I0Kly2DCU6kO4OBuMjybrq92RXYvUSt01t4Z0vCdIf0l
-    iaWTVP7lxbLUAvOyIYNvNvB22o9gxYEpW5DQQf7a+Fy6YMbZGFw3Q6l+2eL9IenX
-    nAihRo4m5kHOm/iuDt5DoS7igmnjTAu+FoOF/EGbws6fB9SF6xnMEo6qdoMFHXEv
-    qt1FuOkHJliF1qnjh24xnTg+0OfjR5Rqfnn8YKARsHwQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519676384; bh=jTKtLkPItEVLAjTaMDy0w0TeQF
+    zQQ7sT5zXHli8ah90=; b=rzgisUi7jrcK5kNoRGYkEDx8H6IdBYYxsczarIa8a1
+    F/0WcB2+S5qORhoC+IwYbatXbHVxiYh7i/T6VOxhi8P2REW+526R6zcH+Nf5l3tF
+    tbAnwHlhT2G4CaKkMRA7+i3jaMdtenqgMr7PcvfDH4aBk3J3A1DL2NZz9TadvJ7Q
+    S1+436DRkyU+N2T8q1QfhWjjIZUWivOLL4/CjwpCd52YSU1427f9HDWAImmMe6l/
+    koZtHWSKt1XuAVAu8cV6fCVPSXXhcwQn6ZAgr+UHOihc3C+2MbnWEzx8f7fjY3WT
+    smzZeabpIhxNN2JA6UH9M8pyhYLwn5JQLxaLgGroaieg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751396AbeBZURI (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:17:08 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59754 "EHLO
+        id S1751424AbeBZURO (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:17:14 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeBZURG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:06 -0500
+        with ESMTP id S1751022AbeBZURL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:11 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.4 20/22] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-Date: Mon, 26 Feb 2018 21:16:20 +0100
-Message-Id: <20180226201559.616888894@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.4 21/22] drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
+Date: Mon, 26 Feb 2018 21:16:21 +0100
+Message-Id: <20180226201559.658971149@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -79,47 +78,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 17aa31f13cad25daa19d3f923323f552e87bc874 upstream.
+commit 458d876eb869d5a88b53074c6c271b8b9adc0f07 upstream.
 
-This fixes an issue that a gadget driver (usb_f_fs) is possible to
-stop rx transactions after the usb-dmac is used because the following
-functions missed to set/check the "running" flag.
- - usbhsf_dma_prepare_pop_with_usb_dmac()
- - usbhsf_dma_pop_done_with_usb_dmac()
+We only support vga_switcheroo and runtime pm on PX/HG systems
+so forcing runpm to 1 doesn't do anything useful anyway.
 
-So, if next transaction uses pio, the usbhsf_prepare_pop() can not
-start the transaction because the "running" flag is 0.
+Only call vga_switcheroo_init_domain_pm_ops() for PX/HG so
+that the cleanup path is correct as well.  This mirrors what
+radeon does as well.
 
-Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+v2: rework the patch originally sent by Lukas (Alex)
+
+Acked-by: Lukas Wunner <lukas@wunner.de>
+Reported-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de> (v1)
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/renesas_usbhs/fifo.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -999,6 +999,10 @@ static int usbhsf_dma_prepare_pop_with_u
- 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
- 		goto usbhsf_pio_prepare_pop;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1467,8 +1467,6 @@ int amdgpu_device_init(struct amdgpu_dev
+ 	 * ignore it */
+ 	vga_client_register(adev->pdev, adev, NULL, amdgpu_vga_set_decode);
  
-+	/* return at this time if the pipe is running */
-+	if (usbhs_pipe_is_running(pipe))
-+		return 0;
-+
- 	usbhs_pipe_config_change_bfre(pipe, 1);
- 
- 	ret = usbhsf_fifo_select(pipe, fifo, 0);
-@@ -1189,6 +1193,7 @@ static int usbhsf_dma_pop_done_with_usb_
- 	usbhsf_fifo_clear(pipe, fifo);
- 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
- 
-+	usbhs_pipe_running(pipe, 0);
- 	usbhsf_dma_stop(pipe, fifo);
- 	usbhsf_dma_unmap(pkt);
- 	usbhsf_fifo_unselect(pipe, pipe->fifo);
+-	if (amdgpu_runtime_pm == 1)
+-		runtime = true;
+ 	if (amdgpu_device_is_px(ddev))
+ 		runtime = true;
+ 	vga_switcheroo_register_client(adev->pdev, &amdgpu_switcheroo_ops, runtime);
