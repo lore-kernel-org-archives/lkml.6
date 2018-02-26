@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeBZCXe (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 21:23:34 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43078 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeBZCX1 (ORCPT
+        id S1752123AbeBZCXm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 21:23:42 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38569 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752046AbeBZCX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 21:23:27 -0500
-X-Google-Smtp-Source: AH8x226RLDUArrmRcTpx28p2VULVGpoD3Hla37/DkXWEKKEilW6LfWyhZi7o/s2kXP1QRkkw4qgPzw==
+        Sun, 25 Feb 2018 21:23:29 -0500
+X-Google-Smtp-Source: AH8x224/sbwbt4jkqULwpkj3OPq5Iklj1g2yeph0sKJSpWBUmr4NPj94jThtWa9F7purFywkIVN2qQ==
 From: frowand.list@gmail.com
 To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
         Pantelis Antoniou <panto@antoniou-consulting.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         geert@linux-m68k.org
-Subject: [PATCH 3/6] of: remove kbasename(of->full_name) from base.c
-Date: Sun, 25 Feb 2018 18:22:27 -0800
-Message-Id: <1519611750-22355-4-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH 4/6] of: remove kbasename(of->full_name) from kobj.c
+Date: Sun, 25 Feb 2018 18:22:28 -0800
+Message-Id: <1519611750-22355-5-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
 References: <1519611750-22355-1-git-send-email-frowand.list@gmail.com>
@@ -31,23 +31,21 @@ needed to extract the basename from full_name.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/of/kobj.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index ad28de96e13f..926d08b8674d 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -691,8 +691,8 @@ struct device_node *__of_find_node_by_path(struct device_node *parent,
- 		return NULL;
- 
- 	__for_each_child_of_node(parent, child) {
--		const char *name = kbasename(child->full_name);
--		if (strncmp(path, name, len) == 0 && (strlen(name) == len))
-+		if (strncmp(path, child->full_name, len) == 0 &&
-+		    (strlen(child->full_name) == len))
- 			return child;
+diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
+index 7a0a18980b98..b0aecea35706 100644
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -128,7 +128,7 @@ int __of_attach_node_sysfs(struct device_node *np)
+ 		name = safe_name(&of_kset->kobj, "base");
+ 		parent = NULL;
+ 	} else {
+-		name = safe_name(&np->parent->kobj, kbasename(np->full_name));
++		name = safe_name(&np->parent->kobj, np->full_name);
+ 		parent = &np->parent->kobj;
  	}
- 	return NULL;
+ 	if (!name)
 -- 
 Frank Rowand <frank.rowand@sony.com>
