@@ -1,65 +1,35 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676519-2-10530167423595038162
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676519; b=mHzOXb9r03AYAolWegfywVHmBUvslBfyMSyMbtzD13X3kKu
-    2jBKSkjs+kYe13TBySB6Kq3+WRHrWiCpwZxYzNc0mT0N8ltjNXrl71GMOdUHuyMt
-    P2mZFgzRsgJR1u38XynLO4DXT1hdkWGf8ijtUrSr75V7QBi1/9GrPnI67aLNLUJa
-    NTZ3sD3eQQIKRZ4Sh89V6NgihU+D++RKlgH+GXx1ruuApQPUPPX/elI82tZ8HZSX
-    rVzIPyoulIYcqFWsF3SqXOSX//DFGp8dz3cbfas9CboGqHpNgg5DU65VzGjtJ0XR
-    RFRpILMXyJNrfVrxZsuEuGgkuCpVZS9zH6FlAzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676519; bh=g6pSEZB92Om89FhUfLiUkrZ1s8
-    Sn7kRQXEWQUSQvNMI=; b=O/m+7Ig/oNq4F9yco5Sbj7rJGC+v/0ZhVM5n4S7C2H
-    bqlYK9z5b8FiGCtc6jqOJgIUBuM+mKrFF3c5oHXrFc3EMRqU08Kr56Qtfq9lmHbP
-    avbqqUtC+v1/j1Q7GFyWm3sP2vK55qHNjn3NBzhS7HjqysToYPR9mBLcIpuTwObU
-    ITQ0BFAVR6kHokOBbk5ziFbyvRez13G1NTQ+V1uGD06uDXxvQGyk4KFnV86kYLkD
-    CCPXk1qskxK14rWLChVfdbuJRH8H+Sx1VfHw/8YqHENPoJe2Mh8YLa/NSrQl0z4i
-    v6eVNef6LbKXZfUA5yIn0HK5qIEGcEuyxhWNn5XQU+ig==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752441AbeBZUVr (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:21:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33288 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752433AbeBZUVp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:21:45 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226yQczKHcU/eeICx+DjuaAQYP3BQLDtzu7tOX81D8hlV8qNcmsDkZ0PTizaiQias+qjG4Dy
+ARC-Seal: i=1; a=rsa-sha256; t=1519676503; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bd7PPDYoE6nW4CVWCdOcvuML7O0oO0XQA1qTR95NCUqqV5zJfGabWpl3M9xBBXLvnv
+         dOEUdKeJ6DugCqGpifnypdbPZBXungAg6WIA+uvmTl9bwVW4qY7jCQlmBoExyfnJq75n
+         Ns47TuUKNUq+UzS+ld6VF3I+td6s3cdMRNRG8AuO/ODhzlW9j6Foyp7NCnnT0fmdski2
+         1Ac+hxV7ktxoNCI5GO3LiS6mouPig/bFMN+DZYW000E3i9QKm68OfWvdDEwKWnFYB7Yq
+         fOX/DhngqrOpfFZGkWZnaX+Eo9v3ajZzd0D+rgUDs0E4LfufV80M0A8c751FbrkouiM+
+         TYrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Gas30AwcMIyrdxs7ew8hiNzUDYIye61g+54zCV2/3lQ=;
+        b=qqXkKs5NL2rsddIE/2uGnQGPBKSO0/J0wmHh/ovstoUvmww0kQpFgFK0thpOLceSsQ
+         BgGIhrueQuTIt1yboLODFpOaeoeEVFOy63Iyyogz6ilmUQ3D1UyVBRXCvrdBkDZSo7VA
+         f3xAXbNCkPgJLSFzbYin9e1JshWJFaWUHbH+B17NYZ1QKtbnBjL8U+G07XpT/0S0Mirb
+         dmMCjclqnRR6TMRS05DPxXU8SV0gAAKGr2bjhPJWY1r9szE00/zZUPFRU6rCxpk3LJEE
+         fA8b/cawJdTWsRjjc/WzJUTBzes59A1QCotp9uHbQSuaMKAP7oJogtAhuVlYAlULBS8M
+         MEVw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 20/39] Revert "usb: musb: host: dont start next rx urb if current one failed"
-Date: Mon, 26 Feb 2018 21:20:41 +0100
-Message-Id: <20180226201644.564598430@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.9 02/39] xtensa: fix high memory/reserved memory collision
+Date: Mon, 26 Feb 2018 21:20:23 +0100
+Message-Id: <20180226201643.762779523@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -67,9 +37,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593495966162056282?=
+X-GMAIL-MSGID: =?utf-8?q?1593496309802443203?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,42 +48,131 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 44eb5e12b845cc8a0634f21b70ef07d774eb4b25 upstream.
+commit 6ac5a11dc674bc5016ea716e8082fff61f524dc1 upstream.
 
-This reverts commit dbac5d07d13e330e6706813c9fde477140fb5d80.
+Xtensa memory initialization code frees high memory pages without
+checking whether they are in the reserved memory regions or not. That
+results in invalid value of totalram_pages and duplicate page usage by
+CMA and highmem. It produces a bunch of BUGs at startup looking like
+this:
 
-commit dbac5d07d13e ("usb: musb: host: don't start next rx urb if current one failed")
-along with commit b5801212229f ("usb: musb: host: clear rxcsr error bit if set")
-try to solve the issue described in [1], but the latter alone is
-sufficient, and the former causes the issue as in [2], so now revert it.
+BUG: Bad page state in process swapper  pfn:70800
+page:be60c000 count:0 mapcount:-127 mapping:  (null) index:0x1
+flags: 0x80000000()
+raw: 80000000 00000000 00000001 ffffff80 00000000 be60c014 be60c014 0000000a
+page dumped because: nonzero mapcount
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Tainted: G    B            4.16.0-rc1-00015-g7928b2cbe55b-dirty #23
+Stack:
+ bd839d33 00000000 00000018 ba97b64c a106578c bd839d70 be60c000 00000000
+ a1378054 bd86a000 00000003 ba97b64c a1066166 bd839da0 be60c000 ffe00000
+ a1066b58 bd839dc0 be504000 00000000 000002f4 bd838000 00000000 0000001e
+Call Trace:
+ [<a1065734>] bad_page+0xac/0xd0
+ [<a106578c>] free_pages_check_bad+0x34/0x4c
+ [<a1066166>] __free_pages_ok+0xae/0x14c
+ [<a1066b58>] __free_pages+0x30/0x64
+ [<a1365de5>] init_cma_reserved_pageblock+0x35/0x44
+ [<a13682dc>] cma_init_reserved_areas+0xf4/0x148
+ [<a10034b8>] do_one_initcall+0x80/0xf8
+ [<a1361c16>] kernel_init_freeable+0xda/0x13c
+ [<a125b59d>] kernel_init+0x9/0xd0
+ [<a1004304>] ret_from_kernel_thread+0xc/0x18
 
-[1] https://marc.info/?l=linux-usb&m=146173995117456&w=2
-[2] https://marc.info/?l=linux-usb&m=151689238420622&w=2
+Only free high memory pages that are not reserved.
 
-Cc: stable@vger.kernel.org # v4.7+
-Signed-off-by: Bin Liu <b-liu@ti.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_host.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ arch/xtensa/mm/init.c |   70 +++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -418,13 +418,7 @@ static void musb_advance_schedule(struct
- 		}
- 	}
+--- a/arch/xtensa/mm/init.c
++++ b/arch/xtensa/mm/init.c
+@@ -77,19 +77,75 @@ void __init zones_init(void)
+ 	free_area_init_node(0, zones_size, ARCH_PFN_OFFSET, NULL);
+ }
  
--	/*
--	 * The pipe must be broken if current urb->status is set, so don't
--	 * start next urb.
--	 * TODO: to minimize the risk of regression, only check urb->status
--	 * for RX, until we have a test case to understand the behavior of TX.
--	 */
--	if ((!status || !is_in) && qh && qh->is_ready) {
-+	if (qh != NULL && qh->is_ready) {
- 		musb_dbg(musb, "... next ep%d %cX urb %p",
- 		    hw_ep->epnum, is_in ? 'R' : 'T', next_urb(qh));
- 		musb_start_urb(musb, is_in, qh);
++#ifdef CONFIG_HIGHMEM
++static void __init free_area_high(unsigned long pfn, unsigned long end)
++{
++	for (; pfn < end; pfn++)
++		free_highmem_page(pfn_to_page(pfn));
++}
++
++static void __init free_highpages(void)
++{
++	unsigned long max_low = max_low_pfn;
++	struct memblock_region *mem, *res;
++
++	reset_all_zones_managed_pages();
++	/* set highmem page free */
++	for_each_memblock(memory, mem) {
++		unsigned long start = memblock_region_memory_base_pfn(mem);
++		unsigned long end = memblock_region_memory_end_pfn(mem);
++
++		/* Ignore complete lowmem entries */
++		if (end <= max_low)
++			continue;
++
++		if (memblock_is_nomap(mem))
++			continue;
++
++		/* Truncate partial highmem entries */
++		if (start < max_low)
++			start = max_low;
++
++		/* Find and exclude any reserved regions */
++		for_each_memblock(reserved, res) {
++			unsigned long res_start, res_end;
++
++			res_start = memblock_region_reserved_base_pfn(res);
++			res_end = memblock_region_reserved_end_pfn(res);
++
++			if (res_end < start)
++				continue;
++			if (res_start < start)
++				res_start = start;
++			if (res_start > end)
++				res_start = end;
++			if (res_end > end)
++				res_end = end;
++			if (res_start != start)
++				free_area_high(start, res_start);
++			start = res_end;
++			if (start == end)
++				break;
++		}
++
++		/* And now free anything which remains */
++		if (start < end)
++			free_area_high(start, end);
++	}
++}
++#else
++static void __init free_highpages(void)
++{
++}
++#endif
++
+ /*
+  * Initialize memory pages.
+  */
+ 
+ void __init mem_init(void)
+ {
+-#ifdef CONFIG_HIGHMEM
+-	unsigned long tmp;
+-
+-	reset_all_zones_managed_pages();
+-	for (tmp = max_low_pfn; tmp < max_pfn; tmp++)
+-		free_highmem_page(pfn_to_page(tmp));
+-#endif
++	free_highpages();
+ 
+ 	max_mapnr = max_pfn - ARCH_PFN_OFFSET;
+ 	high_memory = (void *)__va(max_low_pfn << PAGE_SHIFT);
