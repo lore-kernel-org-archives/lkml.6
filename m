@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226ytSCO8BsvQ0TmBFIeIaga/OWW46kSDVxZeekUpTsujE1vO7w6zCVE7OOxwtla830OQzp3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676733; cv=none;
+X-Google-Smtp-Source: AG47ELvVa0IjR2PlPhlrYSLjHwE9CB817BbrwfoaxIYfG9TGtQsK6UrEyuiJfxTPO6NUhM4YManM
+ARC-Seal: i=1; a=rsa-sha256; t=1519676730; cv=none;
         d=google.com; s=arc-20160816;
-        b=TwIlhMKau6kE/9e9n1zGvIOje7jjZ3smalMUgLAHvSR4+4VIF79BR7QLnsk89gKZk6
-         bzm1cuerliNwVuG1ThTzmi30rGj9aCPRZUDhceJK/sbSW7LFVkYShZNcDSeLRc7WJZ/p
-         70/fjq0qX0HMUR3CQ64dIjOVg2ateCVEcFgbO9bkRgMoGoxQoWq5PI6I94j0hHyiW+Am
-         7btsmEtOvF3oQUSTovLEJCnNG2tgxDNy8NBsepydHY/3x7M8Fl2l71PSeL/CO+GfALuX
-         QOCvHo9jIVmYZymL5dr8DuwSDbTGHzoWD1LsW+SEjBgN7GpQiFgwB6CKiMMS8LnrROKB
-         MbJQ==
+        b=xCwnp3Uwtu9rLJkhocQZvhA+8Flfv/jk25AQngHZPmawbMt2NnMOVwxHF0M+VO8O+L
+         pXm9RZJxKkqgWc0m8ej1BH2l0s24IdRflmCtArL4K7BUGpS0KKZXqFEBiCl1njsZZ5o1
+         BjlYqdaNXaGCtU6mhfWCIdXynXiHuqNwKy0lhZeGbs8+z5Ro7a+hfw6u0ZBveCu7nwYg
+         E/60EZWlSKMtfamY3PZflP/K78iyGmOVKhAwe89s9KBCmFCmO0Ivr8MnmExQQsJUWcNL
+         wGfqEMZN2TDzPw/1GtV75GD/dlUjF7P+Jybdt8prL66RhlmW+Kv4cpglPtpzvkFqTW/I
+         cWBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tYGvNq8xlguW6kboZoXhBs6qgVhyjPZsEd5ZFMWpDHE=;
-        b=BxXC1B6vR8RT9M1D6EEeNLfBR5yPXIcM1G30hTEexWFXFW4x9TOOZuccMhGUDwKhyr
-         isctTvtTcqhUfG3U5LgTqqtJuz0kjv+Wf6KyKJDOxmu3P0jLXtrpa8iwO5I8nuNVrUFi
-         nHD8b54HkzxdsMogBkAC6JTEa97ms8CQT7ivaAOJh4V4J61aszsnr3Z3mc+rwA/PCb3k
-         sJcC0HF9kcX9NnjaddndCNcLm2uZiFpEK6bfqfVx6lDpSjQ3ZK9tBsh1Sz4MepeU0zX0
-         fI1ZmrDv55jqWytCDZpPgFkTgjl38d0hP0B+Zs77c/FKxAIvA8qR36vW2CaPTmAWGh2S
-         1Kpw==
+        bh=8XhWt0tE/5tGf7eOFDhSSHTT2nX0eptki1bIqvvVuRI=;
+        b=LAGWHDqlk+5vRlKAMNNbkzv25qZ34zi8wevqUIdPjuoMfC/99MXE0ovUV3NjuwGSxW
+         qwn2ZCZslMvwAViScCG9Wn9FX9XvgicIzppk7ztBBfnBJiOwmKuCIne34fK9214XFJ5P
+         IEid3Ye/9NXy0qT7h6O+njtk3XymvRQrIZgLtIRagG2hCrc6lCBImDRSOj6Ns75XlZNc
+         zY/ZWhPOR3TubSUC3T/J0v57fYEq6wEXLT6H48c5nq8mnQAfADSyS+r4P5ka3ZkDDqU+
+         ycSPsiv+02SnMlKYrnn2vtl+YqsOaN1yQ29X8t3Rse9hFycp875Qj7/h47HVt9faVnC8
+         HfNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jack Stocker <jackstocker.93@gmail.com>
-Subject: [PATCH 4.14 36/54] Add delay-init quirk for Corsair K70 RGB keyboards
-Date: Mon, 26 Feb 2018 21:22:13 +0100
-Message-Id: <20180226202146.176577559@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 53/54] drm/amdgpu: add new device to use atpx quirk
+Date: Mon, 26 Feb 2018 21:22:30 +0100
+Message-Id: <20180226202147.432021093@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496000178812018?=
-X-GMAIL-MSGID: =?utf-8?q?1593496550282213889?=
+X-GMAIL-THRID: =?utf-8?q?1593496338608308970?=
+X-GMAIL-MSGID: =?utf-8?q?1593496546975871912?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,36 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jack Stocker <jackstocker.93@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 7a1646d922577b5b48c0d222e03831141664bb59 upstream.
+commit 6e59de2048eb375a9bfcd39461ef841cd2a78962 upstream.
 
-Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
-Corsair K70 RGB keyboards also require the DELAY_INIT quirk to
-start correctly at boot.
+The affected system (0x0813) is pretty similar to another one (0x0812),
+it also needs to use ATPX power control.
 
-Device ids found here:
-usb 3-3: New USB device found, idVendor=1b1c, idProduct=1b13
-usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 3-3: Product: Corsair K70 RGB Gaming Keyboard
-
-Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -225,6 +225,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
- 
-+	/* Corsair K70 RGB */
-+	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Corsair Strafe RGB */
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+@@ -568,6 +568,7 @@ static const struct amdgpu_px_quirk amdg
+ 	/* HG _PR3 doesn't seem to work on this A+A weston board */
+ 	{ 0x1002, 0x6900, 0x1002, 0x0124, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
++	{ 0x1002, 0x6900, 0x1028, 0x0813, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0, 0, 0, 0, 0 },
+ };
  
