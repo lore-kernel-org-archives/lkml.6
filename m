@@ -1,51 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754209AbeBZPJd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:09:33 -0500
-Received: from foss.arm.com ([217.140.101.70]:51170 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753952AbeBZPFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:05:00 -0500
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: [RFC PATCH v2 04/12] openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
-Date: Mon, 26 Feb 2018 15:04:52 +0000
-Message-Id: <1519657500-15094-5-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
-References: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
+        id S1752296AbeBZPZS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:25:18 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:59170 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751732AbeBZPZP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:25:15 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document R-Car M3-N support
+Date: Mon, 26 Feb 2018 16:25:12 +0100
+Message-Id: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The openrisc implementation of asm/cmpxchg.h pulls in linux/bitops.h
-so that it can refer to BITS_PER_BYTE. It also transitively relies on
-this pulling in linux/compiler.h for READ_ONCE.
+Document support for the Interrupt Controller for Externel Devices
+(INTC-EX) in the Renesas M3-N (r8a77965) SoC.
 
-Replace the #include with asm-generic/bits.h and linux/compiler.h
+No driver update is needed.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/openrisc/include/asm/cmpxchg.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/openrisc/include/asm/cmpxchg.h b/arch/openrisc/include/asm/cmpxchg.h
-index d29f7db53906..94b578388fe2 100644
---- a/arch/openrisc/include/asm/cmpxchg.h
-+++ b/arch/openrisc/include/asm/cmpxchg.h
-@@ -16,8 +16,9 @@
- #ifndef __ASM_OPENRISC_CMPXCHG_H
- #define __ASM_OPENRISC_CMPXCHG_H
- 
-+#include  <linux/compiler.h>
- #include  <linux/types.h>
--#include  <linux/bitops.h>
-+#include  <asm-generic/bits.h>
- 
- #define __HAVE_ARCH_CMPXCHG 1
- 
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+index 33c9a10fdc91a1dc..20f121daa9106f17 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+@@ -14,6 +14,7 @@ Required properties:
+     - "renesas,irqc-r8a7794" (R-Car E2)
+     - "renesas,intc-ex-r8a7795" (R-Car H3)
+     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
++    - "renesas,intc-ex-r8a77965" (R-Car M3-N)
+     - "renesas,intc-ex-r8a77970" (R-Car V3M)
+     - "renesas,intc-ex-r8a77995" (R-Car D3)
+ - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
 -- 
-2.1.4
+2.7.4
