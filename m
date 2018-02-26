@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225BOq20tL8PdCYj63MMf3Kbn/g9gor2HqT7K/koPMcooVCS6XE1nwBF8/dkhJ5fwMtSyAY5
-ARC-Seal: i=1; a=rsa-sha256; t=1519676898; cv=none;
+X-Google-Smtp-Source: AH8x227yZ1qoucxGG1hQBmlMG344oY8ZsARFHhBmDCmuDc9MvNhN0o0HCXnZIJM3Agiux1rvZU3/
+ARC-Seal: i=1; a=rsa-sha256; t=1519676895; cv=none;
         d=google.com; s=arc-20160816;
-        b=KBH7pfBRb9ctM9KsvVuQQUlU2wCVwByPBBkvIePwdgoa9ARsZgUah+80fwe3G11HaY
-         yDS5w3ewWXdBCue7Fbgmnz0IAW4XjZt7Gv7kWPuBLJTLxUfFp5P4DbKrH+ugM4DInDlF
-         f2IwSpWVGjtCVT14DQDW1T5Te4E0s34Q0DuVDBq+UonzGSKKaxZkPzzWtb3nL22hZ/2V
-         RQfqjNf3jZNhaajEoDpmhY6YrUteS5X9QgRT+RPY6WdT1qgyoD9U/Qk1nGp/muvKbXjq
-         6Ep8vaarpOy8VrfkH/rjBEfbUsj360eNft5M48twGSazTLtjZimwQVUNHqoXwZr3J4zT
-         prjg==
+        b=tHNq6DEC/n9ZFCQlJ63KMKFJUJIyW3deZ8+5JY2aCOcgJ51PmKOzeEN9M3MTRd9XTp
+         JLj3rpEf9Moy/oTLvWsksZlmy+gq4Lv2XQO7hSNUBY/4iEw1ynDT+vrrkPS81v2ze8DO
+         Z17SMhgqNK43WwjG9r9N/PeTUia1YRMFkl0IC4ECmqOn0ndkyEITpASy2LKYqM41yNqB
+         GvNUhea0vHdvS9e7FHcXp1SOHxYillakncSiUTBe0gDxT8SPXxf173rg2iJLSSYolidz
+         7kpjPAxPr9RtZMcnjw6pieAvvMPr5eCpuSWZrpQJJCnM+6Vm7jz0OT8SDddUpYxasbNX
+         wWAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fHK4V7XOi1qV87bWvaSVehchrJ5VegbnUXpL0fohENM=;
-        b=Kiz/Rt5FIhtQWJPNp7j/+PnH/Tu8UiCagMMFpFmeeNU7w9z29zXDJMWVivNT4Ep9FX
-         0v5vwrASBMvK7emQ+O7iSQJqyXUlydBoY3dnXq4TtQAUMtxK/L69ZrYrY6QKNChZ7KfV
-         p55gCcZ9AKBBaD5V4BZIO83tiB32l5yrghnC//5vx2Ri2miF5sEORGorwIpeZDE+RiWJ
-         envMowXCne6lDr0sqIzBs49dOgYnViuoemsH4WTQi+JmxLDur2V7iajaIHwkMFphxbjP
-         Zkz38SlgRPfRI7bLZb63ALqqCyLSYu/HiwmH7nyLk7zEwsltiZxpQsCRXIkwEq3gQxv3
-         wc+A==
+        bh=0/0Vs3uoxJDogdASkWPvyHlvHfpnaAnhN0I/uGhhWgY=;
+        b=WQVGiOAp7KR8JPdyrBw54WIG8G/3ayZkRZDqzysmc1LMqncnPaqLPyCcqR4juZJTsw
+         7Pjqg/UWHPXqVheVHN94rJsTX9tjLWD99yh1YvVqJntoMiZ9JYeii4UPweCeDCrAJJDK
+         /okzsIqofdGOIa0Sk352OXH45UzmtXYKguB54niR3g5/v7rwH6r6Xm8oO21muJNoBAUQ
+         7RXyC6u1I9Q+PshoA1/Iv0OrNalwK0ETuntNtXCPd/woOiPxTy0gWgjwUFVlXBCfuUyE
+         x82j3C2M51dlXI+avwmS5gFyDkcssUKfoczJ0xH+qC5bJqDJQznUU81tlSxDvqq9Tlm4
+         TVMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mayank Rana <mrana@codeaurora.org>,
-	Jack Pham <jackp@codeaurora.org>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.15 50/64] usb: gadget: f_fs: Process all descriptors during bind
-Date: Mon, 26 Feb 2018 21:22:27 +0100
-Message-Id: <20180226202155.589853324@linuxfoundation.org>
+	Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.15 49/64] Revert "usb: musb: host: dont start next rx urb if current one failed"
+Date: Mon, 26 Feb 2018 21:22:26 +0100
+Message-Id: <20180226202155.548768959@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495953448268879?=
-X-GMAIL-MSGID: =?utf-8?q?1593496722938161155?=
+X-GMAIL-THRID: =?utf-8?q?1593496312946551337?=
+X-GMAIL-MSGID: =?utf-8?q?1593496719782422933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +48,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jack Pham <jackp@codeaurora.org>
+From: Bin Liu <b-liu@ti.com>
 
-commit 6cf439e0d37463e42784271179c8a308fd7493c6 upstream.
+commit 44eb5e12b845cc8a0634f21b70ef07d774eb4b25 upstream.
 
-During _ffs_func_bind(), the received descriptors are evaluated
-to prepare for binding with the gadget in order to allocate
-endpoints and optionally set up OS descriptors. However, the
-high- and super-speed descriptors are only parsed based on
-whether the gadget_is_dualspeed() and gadget_is_superspeed()
-calls are true, respectively.
+This reverts commit dbac5d07d13e330e6706813c9fde477140fb5d80.
 
-This is a problem in case a userspace program always provides
-all of the {full,high,super,OS} descriptors when configuring a
-function. Then, for example if a gadget device is not capable
-of SuperSpeed, the call to ffs_do_descs() for the SS descriptors
-is skipped, resulting in an incorrect offset calculation for
-the vla_ptr when moving on to the OS descriptors that follow.
-This causes ffs_do_os_descs() to fail as it is now looking at
-the SS descriptors' offset within the raw_descs buffer instead.
+commit dbac5d07d13e ("usb: musb: host: don't start next rx urb if current one failed")
+along with commit b5801212229f ("usb: musb: host: clear rxcsr error bit if set")
+try to solve the issue described in [1], but the latter alone is
+sufficient, and the former causes the issue as in [2], so now revert it.
 
-_ffs_func_bind() should evaluate the descriptors unconditionally,
-so remove the checks for gadget speed.
+[1] https://marc.info/?l=linux-usb&m=146173995117456&w=2
+[2] https://marc.info/?l=linux-usb&m=151689238420622&w=2
 
-Fixes: f0175ab51993 ("usb: gadget: f_fs: OS descriptors support")
-Cc: stable@vger.kernel.org
-Co-Developed-by: Mayank Rana <mrana@codeaurora.org>
-Signed-off-by: Mayank Rana <mrana@codeaurora.org>
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: stable@vger.kernel.org # v4.7+
+Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_fs.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/musb/musb_host.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -2976,10 +2976,8 @@ static int _ffs_func_bind(struct usb_con
- 	struct ffs_data *ffs = func->ffs;
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -393,13 +393,7 @@ static void musb_advance_schedule(struct
+ 		}
+ 	}
  
- 	const int full = !!func->ffs->fs_descs_count;
--	const int high = gadget_is_dualspeed(func->gadget) &&
--		func->ffs->hs_descs_count;
--	const int super = gadget_is_superspeed(func->gadget) &&
--		func->ffs->ss_descs_count;
-+	const int high = !!func->ffs->hs_descs_count;
-+	const int super = !!func->ffs->ss_descs_count;
- 
- 	int fs_len, hs_len, ss_len, ret, i;
- 	struct ffs_ep *eps_ptr;
+-	/*
+-	 * The pipe must be broken if current urb->status is set, so don't
+-	 * start next urb.
+-	 * TODO: to minimize the risk of regression, only check urb->status
+-	 * for RX, until we have a test case to understand the behavior of TX.
+-	 */
+-	if ((!status || !is_in) && qh && qh->is_ready) {
++	if (qh != NULL && qh->is_ready) {
+ 		musb_dbg(musb, "... next ep%d %cX urb %p",
+ 		    hw_ep->epnum, is_in ? 'R' : 'T', next_urb(qh));
+ 		musb_start_urb(musb, is_in, qh);
