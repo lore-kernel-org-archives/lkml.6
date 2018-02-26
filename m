@@ -1,265 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752884AbeBZMuw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 07:50:52 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5675 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752548AbeBZMuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:50:50 -0500
-From: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To: <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <wangxiongfeng2@huawei.com>
-Subject: [PATCH] pciehp: fix a race between pciehp and removing operations by sysfs
-Date: Mon, 26 Feb 2018 20:41:15 +0800
-Message-ID: <1519648875-38196-1-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1752921AbeBZMwd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 07:52:33 -0500
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:33831 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752289AbeBZMwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 07:52:31 -0500
+X-Google-Smtp-Source: AH8x224Zxumcme+opQ3uPv/opcUy/DeEDH6sEdvGdc/Wo7JXBQ/28ft6/2/Y+uwseNgNwerEYYArLdPIy1VFJDSWvFU=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CACT4Y+a1yWWfz5NZKjb1v8EFJA-Yag4ZjGxq7K2fJ6A2JRDnOA@mail.gmail.com>
+References: <cover.1517246437.git.dvyukov@google.com> <20180130153609.GA10917@arm.com>
+ <20180131072858.5hoy6wsukda27v2o@gmail.com> <CACT4Y+Y1Qbsd4DOb6K6y0MVC2e_StjgYERE9ntJmQb+6BtZciA@mail.gmail.com>
+ <20180131161725.GA18758@arm.com> <CACT4Y+Ymn4U7R849psS49N8LKesAEpsTBnbZbpgJsvut6CsQ6g@mail.gmail.com>
+ <CACT4Y+a1yWWfz5NZKjb1v8EFJA-Yag4ZjGxq7K2fJ6A2JRDnOA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 26 Feb 2018 13:52:10 +0100
+Message-ID: <CACT4Y+YjtCPq+OEWfw3E1ahttef+AkT3RTMxWvYX3mq8B-FCBA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] x86, kasan: add KASAN checks to atomic operations
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiongfeng Wang <xiongfeng.wang@linaro.com>
+On Tue, Feb 20, 2018 at 11:40 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Feb 7, 2018 at 3:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Jan 31, 2018 at 5:17 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>> > * Will Deacon <will.deacon@arm.com> wrote:
+>>>> >> e.g. for atomic[64]_read, your asm-generic header looks like:
+>>>> >>
+>>>> >> #ifndef _LINUX_ATOMIC_INSTRUMENTED_H
+>>>> >> #define _LINUX_ATOMIC_INSTRUMENTED_H
+>>>> >>
+>>>> >> #include <linux/build_bug.h>
+>>>> >> #include <linux/kasan-checks.h>
+>>>> >>
+>>>> >> static __always_inline int __atomic_read_instrumented(const atomic_t *v)
+>>>> >> {
+>>>> >>       kasan_check_read(v, sizeof(*v));
+>>>> >>       return atomic_read(v);
+>>>> >> }
+>>>> >>
+>>>> >> static __always_inline s64 __atomic64_read_instrumented(const atomic64_t *v)
+>>>> >> {
+>>>> >>       kasan_check_read(v, sizeof(*v));
+>>>> >>       return atomic64_read(v);
+>>>> >> }
+>>>> >>
+>>>> >> #undef atomic_read
+>>>> >> #undef atomic64_read
+>>>> >>
+>>>> >> #define atomic_read   __atomic_read_instrumented
+>>>> >> #define atomic64_read __atomic64_read_instrumented
+>>>> >>
+>>>> >> #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
+>>>> >>
+>>>> >> and the arch code just includes that in asm/atomic.h once it's done with
+>>>> >> its definitions.
+>>>> >>
+>>>> >> What do you think? Too stinky?
+>>>> >
+>>>> > Hm, so while this could work - I actually *like* the low level changes: they are
+>>>> > straightforward, trivial, easy to read and they add the arch_ prefix that makes it
+>>>> > abundantly clear that this isn't the highest level interface.
+>>>> >
+>>>> > The KASAN callbacks in the generic methods are also abundantly clear and very easy
+>>>> > to read. I could literally verify the sanity of the series while still being only
+>>>> > half awake. ;-)
+>>>> >
+>>>> > Also note that the arch renaming should be 'trivial', in the sense that any
+>>>> > missing rename results in a clear build breakage. Plus any architecture making use
+>>>> > of this new KASAN feature should probably be tested before it's enabled - and the
+>>>> > renaming of the low level atomic APIs kind of forces that too.
+>>>> >
+>>>> > So while this approach creates some churn, this series is IMHO a marked
+>>>> > improvement over the previous iterations.
+>>>>
+>>>>
+>>>> I think I mildly leaning towards Ingo's point.
+>>>> I guess people will first find the version in arch (because that's
+>>>> where they used to be), but that version is actually not the one that
+>>>> is called.
+>>>> The renaming is mechanical and you get build errors if anything is
+>>>> wrong. It's macros that caused hard to debug runtime crashes and
+>>>> multiple revisions of this series.
+>>>
+>>> Sure, and it sounds like you're proposing to do the arm64 changes anyway so
+>>> I'm not complaining! Just thought I'd float the alternative to see what
+>>> people think.
+>>
+>>
+>> Any other comments?
+>> Ingo, will you take this to locking tree?
+>
+>
+> Any other comments?
+> Ingo, will you take this to locking tree?
 
-When I run a stress test about pcie hotplug and removing operations by
-sysfs, I got a hange task, and the following call trace is printed.
 
- INFO: task kworker/0:2:4413 blocked for more than 120 seconds.
-       Tainted: P        W  O    4.12.0-rc1 #1
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- kworker/0:2     D    0  4413      2 0x00000000
- Workqueue: pciehp-0 pciehp_power_thread
- Call trace:
- [<ffff0000080861d4>] __switch_to+0x94/0xa8
- [<ffff000008bea9c0>] __schedule+0x1b0/0x708
- [<ffff000008beaf58>] schedule+0x40/0xa4
- [<ffff000008beb33c>] schedule_preempt_disabled+0x28/0x40
- [<ffff000008bec1dc>] __mutex_lock.isra.8+0x148/0x50c
- [<ffff000008bec5c4>] __mutex_lock_slowpath+0x24/0x30
- [<ffff000008bec618>] mutex_lock+0x48/0x54
- [<ffff0000084d8188>] pci_lock_rescan_remove+0x20/0x28
- [<ffff0000084f87c0>] pciehp_unconfigure_device+0x54/0x1cc
- [<ffff0000084f8260>] pciehp_disable_slot+0x4c/0xbc
- [<ffff0000084f8370>] pciehp_power_thread+0xa0/0xb8
- [<ffff0000080e9ce8>] process_one_work+0x13c/0x3f8
- [<ffff0000080ea004>] worker_thread+0x60/0x3e4
- [<ffff0000080f0814>] kthread+0x10c/0x138
- [<ffff0000080836c0>] ret_from_fork+0x10/0x50
- INFO: task bash:31732 blocked for more than 120 seconds.
-       Tainted: P        W  O    4.12.0-rc1 #1
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- bash            D    0 31732      1 0x00000009
- Call trace:
- [<ffff0000080861d4>] __switch_to+0x94/0xa8
- [<ffff000008bea9c0>] __schedule+0x1b0/0x708
- [<ffff000008beaf58>] schedule+0x40/0xa4
- [<ffff000008bee7b4>] schedule_timeout+0x1a0/0x340
- [<ffff000008bebb88>] wait_for_common+0x108/0x1bc
- [<ffff000008bebc64>] wait_for_completion+0x28/0x34
- [<ffff0000080e7594>] flush_workqueue+0x130/0x488
- [<ffff0000080e79b0>] drain_workqueue+0xc4/0x164
- [<ffff0000080ec3cc>] destroy_workqueue+0x28/0x1f4
- [<ffff0000084fa094>] pciehp_release_ctrl+0x34/0xe0
- [<ffff0000084f75b0>] pciehp_remove+0x30/0x3c
- [<ffff0000084f24d8>] pcie_port_remove_service+0x3c/0x54
- [<ffff00000876b1e4>] device_release_driver_internal+0x150/0x1d0
- [<ffff00000876b28c>] device_release_driver+0x28/0x34
- [<ffff00000876a018>] bus_remove_device+0xe0/0x11c
- [<ffff000008766348>] device_del+0x200/0x304
- [<ffff00000876646c>] device_unregister+0x20/0x38
- [<ffff0000084f2560>] remove_iter+0x44/0x54
- [<ffff000008765230>] device_for_each_child+0x4c/0x90
- [<ffff0000084f2c98>] pcie_port_device_remove+0x2c/0x48
- [<ffff0000084f2f48>] pcie_portdrv_remove+0x60/0x6c
- [<ffff0000084e3de4>] pci_device_remove+0x48/0x110
- [<ffff00000876b1e4>] device_release_driver_internal+0x150/0x1d0
- [<ffff00000876b28c>] device_release_driver+0x28/0x34
- [<ffff0000084db028>] pci_stop_bus_device+0x9c/0xac
- [<ffff0000084db190>] pci_stop_and_remove_bus_device_locked+0x24/0x3c
- [<ffff0000084e5eb0>] remove_store+0x74/0x80
- [<ffff000008764680>] dev_attr_store+0x44/0x5c
- [<ffff0000082e7e1c>] sysfs_kf_write+0x5c/0x74
- [<ffff0000082e7014>] kernfs_fop_write+0xcc/0x1dc
- [<ffff0000082602e0>] __vfs_write+0x48/0x13c
- [<ffff00000826174c>] vfs_write+0xa8/0x198
- [<ffff000008262ce8>] SyS_write+0x54/0xb0
- [<ffff000008083730>] el0_svc_naked+0x24/0x28
-
-There is a race condition between these two kinds of operations.
-When the Attention button on a PCIE slot is pressed, 5 seconds later,
-pciehp_power_thread() will be scheduled on slot->wq. This function will
-call pciehp_unconfigure_device(), which will try to get a global mutex
-lock 'pci_rescan_remove_lock'.
-
-At the same time, we remove the pcie port by sysfs, which results in
-pci_stop_and_remove_bus_device_locked() called. This function will get
-the global mutex lock 'pci_rescan_remove_lock', and then release the
-struct 'ctrl', which will wait until the work_struct on slot->wq is
-finished.
-
-If pci_stop_and_remove_bus_device_locked() got the mutex lock, and
-before it drains workqueue slot->wq, pciehp_power_thread() is scheduled
-on slot->wq and tries to get the mutex lock but failed, so it will just
-wait. Then pci_stop_and_remove_bus_device_locked() tries to drain workqueue
-slot->wq and wait until work struct 'pciehp_power_thread()' is finished.
-Then a hung_task occurs.
-
-So this two kinds of operation, removing through attention buttion and
-removing through /sys/devices/pci***/remove, should not be excuted at the
-same time. This patch add a global variable to mark that one of these
-operations is under processing. When this variable is set,  if another
-operation is requested, it will be rejected.
-
-At first, I want to add a flag for each pci slot to record whether a
-removing operation is under processing. When a bridge is being removed,
-the flags of all the slots below the bridge need to be checked. But it
-is hard for us to guarantee the atomic access. So I just use a global
-flag.
-
-Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
----
- drivers/pci/hotplug/pciehp_ctrl.c |  7 +++++++
- drivers/pci/hotplug/pciehp_hpc.c  | 12 +++++++++++-
- drivers/pci/pci-sysfs.c           | 11 +++++++++--
- drivers/pci/remove.c              |  6 ++++++
- include/linux/pci.h               |  3 +++
- 5 files changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index c684faa..e6fc5d7 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -30,6 +30,7 @@ void pciehp_queue_interrupt_event(struct slot *p_slot, u32 event_type)
- 	info = kmalloc(sizeof(*info), GFP_ATOMIC);
- 	if (!info) {
- 		ctrl_err(p_slot->ctrl, "dropped event %d (ENOMEM)\n", event_type);
-+		slot_being_removed_rescanned = 0;
- 		return;
- 	}
- 
-@@ -174,6 +175,7 @@ static void pciehp_power_thread(struct work_struct *work)
- 		mutex_lock(&p_slot->lock);
- 		p_slot->state = STATIC_STATE;
- 		mutex_unlock(&p_slot->lock);
-+		slot_being_removed_rescanned = 0;
- 		break;
- 	case ENABLE_REQ:
- 		mutex_lock(&p_slot->hotplug_lock);
-@@ -184,6 +186,7 @@ static void pciehp_power_thread(struct work_struct *work)
- 		mutex_lock(&p_slot->lock);
- 		p_slot->state = STATIC_STATE;
- 		mutex_unlock(&p_slot->lock);
-+		slot_being_removed_rescanned = 0;
- 		break;
- 	default:
- 		break;
-@@ -202,6 +205,7 @@ static void pciehp_queue_power_work(struct slot *p_slot, int req)
- 	if (!info) {
- 		ctrl_err(p_slot->ctrl, "no memory to queue %s request\n",
- 			 (req == ENABLE_REQ) ? "poweron" : "poweroff");
-+		slot_being_removed_rescanned = 0;
- 		return;
- 	}
- 	info->p_slot = p_slot;
-@@ -270,6 +274,7 @@ static void handle_button_press_event(struct slot *p_slot)
- 		ctrl_info(ctrl, "Slot(%s): Action canceled due to button press\n",
- 			  slot_name(p_slot));
- 		p_slot->state = STATIC_STATE;
-+		slot_being_removed_rescanned = 0;
- 		break;
- 	case POWEROFF_STATE:
- 	case POWERON_STATE:
-@@ -280,10 +285,12 @@ static void handle_button_press_event(struct slot *p_slot)
- 		 */
- 		ctrl_info(ctrl, "Slot(%s): Button ignored\n",
- 			  slot_name(p_slot));
-+		slot_being_removed_rescanned = 0;
- 		break;
- 	default:
- 		ctrl_err(ctrl, "Slot(%s): Ignoring invalid state %#x\n",
- 			 slot_name(p_slot), p_slot->state);
-+		slot_being_removed_rescanned = 0;
- 		break;
- 	}
- }
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8..5ef5387 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -608,7 +608,17 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 	if (events & PCI_EXP_SLTSTA_ABP) {
- 		ctrl_info(ctrl, "Slot(%s): Attention button pressed\n",
- 			  slot_name(slot));
--		pciehp_queue_interrupt_event(slot, INT_BUTTON_PRESS);
-+
-+		if (!test_and_set_bit(0, &slot_being_removed_rescanned))
-+			pciehp_queue_interrupt_event(slot, INT_BUTTON_PRESS);
-+		else {
-+			if (slot->state == BLINKINGOFF_STATE || slot->state == BLINKINGON_STATE)
-+				pciehp_queue_interrupt_event(slot, INT_BUTTON_PRESS);
-+			else
-+				ctrl_info(ctrl, "Slot(%s): Slot operation failed because a remove or"
-+					" rescan operation is under processing, please try later!\n",
-+					slot_name(slot));
-+		}
- 	}
- 
- 	/*
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index eb6bee8..9fd1699 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -499,8 +499,15 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
- 	if (kstrtoul(buf, 0, &val) < 0)
- 		return -EINVAL;
- 
--	if (val && device_remove_file_self(dev, attr))
--		pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
-+	if (val && device_remove_file_self(dev, attr)) {
-+		if (!test_and_set_bit(0, &slot_being_removed_rescanned)) {
-+			pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
-+			slot_being_removed_rescanned = 0;
-+		} else {
-+			pr_info("Slot is being removed or rescanned, please try later!\n");
-+			return -EPERM;
-+		}
-+	}
- 	return count;
- }
- static struct device_attribute dev_remove_attr = __ATTR(remove,
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index 6f072ea..6d36d53 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -4,6 +4,12 @@
- #include <linux/pci-aspm.h>
- #include "pci.h"
- 
-+/*
-+ * When a slot is being hotplug through Attention Button or being
-+ * removed/rescanned through sysfs, this flag is set.
-+ */
-+unsigned long slot_being_removed_rescanned;
-+
- static void pci_free_resources(struct pci_dev *dev)
- {
- 	int i;
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 024a1be..e1711ce 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -846,6 +846,9 @@ enum pcie_bus_config_types {
- /* Do NOT directly access these two variables, unless you are arch-specific PCI
-  * code, or PCI core code. */
- extern struct list_head pci_root_buses;	/* List of all known PCI buses */
-+
-+extern unsigned long slot_being_removed_rescanned;
-+
- /* Some device drivers need know if PCI is initiated */
- int no_pci_devices(void);
- 
--- 
-1.7.12.4
+Peter, Ingo, ping.
