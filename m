@@ -1,69 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751539AbeBZWS0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:18:26 -0500
-Received: from gate.crashing.org ([63.228.1.57]:60989 "EHLO gate.crashing.org"
+        id S1751729AbeBZWX1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:23:27 -0500
+Received: from muru.com ([72.249.23.125]:58456 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750877AbeBZWSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:18:25 -0500
-Date: Mon, 26 Feb 2018 16:17:48 -0600
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: christophe leroy <christophe.leroy@c-s.fr>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-Message-ID: <20180226221747.GV21977@gate.crashing.org>
-References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-7-malat@debian.org> <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr> <6cba215c-127e-f3eb-b525-773b6aed0eb7@c-s.fr> <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com> <CA+7wUsx047shRJ92PJ+cvg24HNhMnYzM0t5zUdEOaSE00sXkSg@mail.gmail.com> <4ddba8bc-b1e5-24a0-602e-672e7b51b203@c-s.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+        id S1751669AbeBZWXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 17:23:25 -0500
+Date: Mon, 26 Feb 2018 14:23:23 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-omap@vger.kernel.org,
+        Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0.5/12] ARM: OMAP2+: Prepare to pass auxdata for
+ smartreflex
+Message-ID: <20180226222323.GJ16043@atomide.com>
+References: <20180223214119.GB5593@atomide.com>
+ <201802261623.teHicLDZ%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ddba8bc-b1e5-24a0-602e-672e7b51b203@c-s.fr>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <201802261623.teHicLDZ%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 09:00:09PM +0100, christophe leroy wrote:
-> Le 26/02/2018 à 18:50, Mathieu Malaterre a écrit :
-> >On Mon, Feb 26, 2018 at 8:44 AM, Mathieu Malaterre <malat@debian.org> 
-> >wrote:
-> >>On Mon, Feb 26, 2018 at 7:50 AM, Christophe LEROY
-> >><christophe.leroy@c-s.fr> wrote:
-> >>>Note that I already try to submit a fix for this warning 3 years ago
-> >>>(https://patchwork.ozlabs.org/patch/418075/) and it was rejected with the
-> >>>following comment:
-> >
-> >Tested again today with gcc 6.3.0 and gcc is still producing the
-> >original warning (treated as error).
+* kbuild test robot <lkp@intel.com> [180226 08:39]:
+> >> arch/arm/mach-omap2/pdata-quirks.c:517:36: error: array type has incomplete element type 'struct omap_sr_data'
+>     struct omap_sr_data __maybe_unused omap_sr_pdata[OMAP_SR_NR];
+>                                        ^~~~~~~~~~~~~
 > 
-> That's right, it seems that recent versions of gcc are not happy anymore 
-> with that change.
+> vim +517 arch/arm/mach-omap2/pdata-quirks.c
 > 
-> Maybe Segher has a suggestion for that one ?
+>    516	
+>  > 517	struct omap_sr_data __maybe_unused omap_sr_pdata[OMAP_SR_NR];
+>    518	
 
-Your patch:
+Thanks kbt. Looks like it needs to be out of the ifdef
+CONFIG_POWER_AVS_OMAP in include/linux/power/smartreflex.h.
 
- #define __access_ok(addr, size, segment)	\
- 	(((addr) <= (segment).seg) &&		\
--	 (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
-+	 (((size) <= 1) || (((size) - 1) <= ((segment).seg - (addr)))))
+Updated patch below.
 
-Is there any reason to write this as a macro?  Let's make this more
-readable:
+Regards,
 
-static inline int __access_ok(unsigned long addr, unsigned long size,
-			      mm_segment_t seg)
-{
-	if (addr > seg.seg)
-		return 0;
-	return (size == 0 || size - 1 <= seg.seg - addr);
-}
+Tony
 
-and I think we are done already, or will this warn for any input?
+8< ---------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Thu, 22 Feb 2018 13:57:30 -0800
+Subject: [PATCH] ARM: OMAP2+: Prepare to pass auxdata for smartreflex
 
+We are still initializing smartreflex with platform data using
+omap_device_build(). We can instead pass the platform data in
+with auxdata in pdata-quirks.c and make the driver use that
+in later patches.
 
-Segher
+Note that we cannot enable the auxdata use yet, this is done
+in the last patch of the series.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/mach-omap2/pdata-quirks.c | 13 +++++++++++++
+ arch/arm/mach-omap2/sr_device.c    |  2 ++
+ include/linux/power/smartreflex.h  | 10 +++++++++-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -17,6 +17,7 @@
+ #include <linux/wl12xx.h>
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
++#include <linux/power/smartreflex.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/fixed.h>
+ 
+@@ -542,6 +543,8 @@ static struct pdata_init auxdata_quirks[] __initdata = {
+ 	{ /* sentinel */ },
+ };
+ 
++struct omap_sr_data __maybe_unused omap_sr_pdata[OMAP_SR_NR];
++
+ static struct of_dev_auxdata omap_auxdata_lookup[] __initdata = {
+ #ifdef CONFIG_MACH_NOKIA_N8X0
+ 	OF_DEV_AUXDATA("ti,omap2420-mmc", 0x4809c000, "mmci-omap.0", NULL),
+@@ -551,6 +554,10 @@ static struct of_dev_auxdata omap_auxdata_lookup[] __initdata = {
+ #ifdef CONFIG_ARCH_OMAP3
+ 	OF_DEV_AUXDATA("ti,omap2-iommu", 0x5d000000, "5d000000.mmu",
+ 		       &omap3_iommu_pdata),
++	OF_DEV_AUXDATA("ti,omap3-smartreflex-core", 0x480cb000,
++		       "480cb000.smartreflex", &omap_sr_pdata[OMAP_SR_CORE]),
++	OF_DEV_AUXDATA("ti,omap3-smartreflex-mpu-iva", 0x480c9000,
++		       "480c9000.smartreflex", &omap_sr_pdata[OMAP_SR_MPU]),
+ 	OF_DEV_AUXDATA("ti,omap3-hsmmc", 0x4809c000, "4809c000.mmc", &mmc_pdata[0]),
+ 	OF_DEV_AUXDATA("ti,omap3-hsmmc", 0x480b4000, "480b4000.mmc", &mmc_pdata[1]),
+ 	OF_DEV_AUXDATA("nokia,n900-ir", 0, "n900-ir", &rx51_ir_data),
+@@ -580,6 +587,12 @@ static struct of_dev_auxdata omap_auxdata_lookup[] __initdata = {
+ 		       &omap4_iommu_pdata),
+ 	OF_DEV_AUXDATA("ti,omap4-iommu", 0x55082000, "55082000.mmu",
+ 		       &omap4_iommu_pdata),
++	OF_DEV_AUXDATA("ti,omap4-smartreflex-iva", 0x4a0db000,
++		       "4a0db000.smartreflex", &omap_sr_pdata[OMAP_SR_IVA]),
++	OF_DEV_AUXDATA("ti,omap4-smartreflex-core", 0x4a0dd000,
++		       "4a0dd000.smartreflex", &omap_sr_pdata[OMAP_SR_CORE]),
++	OF_DEV_AUXDATA("ti,omap4-smartreflex-mpu", 0x4a0d9000,
++		       "4a0d9000.smartreflex", &omap_sr_pdata[OMAP_SR_MPU]),
+ #endif
+ #ifdef CONFIG_SOC_DRA7XX
+ 	OF_DEV_AUXDATA("ti,dra7-hsmmc", 0x4809c000, "4809c000.mmc",
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -89,6 +89,8 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
+ 	sr_data->nvalue_count = j;
+ }
+ 
++extern struct omap_sr_data omap_sr_pdata[];
++
+ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
+ {
+ 	struct omap_sr_data *sr_data;
+diff --git a/include/linux/power/smartreflex.h b/include/linux/power/smartreflex.h
+--- a/include/linux/power/smartreflex.h
++++ b/include/linux/power/smartreflex.h
+@@ -143,6 +143,13 @@
+ #define OMAP3430_SR_ERRWEIGHT		0x04
+ #define OMAP3430_SR_ERRMAXLIMIT		0x02
+ 
++enum sr_instance {
++	OMAP_SR_MPU,			/* shared with iva on omap3 */
++	OMAP_SR_CORE,
++	OMAP_SR_IVA,
++	OMAP_SR_NR,
++};
++
+ struct omap_sr {
+ 	char				*name;
+ 	struct list_head		node;
+@@ -207,7 +214,6 @@ struct omap_smartreflex_dev_attr {
+ 	const char      *sensor_voltdm_name;
+ };
+ 
+-#ifdef CONFIG_POWER_AVS_OMAP
+ /*
+  * The smart reflex driver supports CLASS1 CLASS2 and CLASS3 SR.
+  * The smartreflex class driver should pass the class type.
+@@ -290,6 +296,8 @@ struct omap_sr_data {
+ 	struct voltagedomain		*voltdm;
+ };
+ 
++#ifdef CONFIG_POWER_AVS_OMAP
++
+ /* Smartreflex module enable/disable interface */
+ void omap_sr_enable(struct voltagedomain *voltdm);
+ void omap_sr_disable(struct voltagedomain *voltdm);
+-- 
+2.16.2
