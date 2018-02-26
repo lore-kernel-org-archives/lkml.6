@@ -1,36 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeBZTqV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 14:46:21 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:46234 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeBZTqU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 14:46:20 -0500
-Date: Mon, 26 Feb 2018 14:46:18 -0500 (EST)
-Message-Id: <20180226.144618.918714632713424711.davem@davemloft.net>
-To: fthain@telegraphics.com.au
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/4] Fixes, cleanup and modernization for SONIC
- ethernet drivers
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1519514463.git.fthain@telegraphics.com.au>
-References: <cover.1519514463.git.fthain@telegraphics.com.au>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751566AbeBZTqv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 14:46:51 -0500
+Received: from mga02.intel.com ([134.134.136.20]:58877 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751465AbeBZTqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 14:46:50 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
+   d="scan'208";a="34291662"
+Date: Mon, 26 Feb 2018 21:46:45 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Jeremy McNicoll <jmcnicol@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>
+Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
+Message-ID: <20180226194645.GA3774@lahna.fi.intel.com>
+References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
+ <20180222231736.GA628@mini-rhel.redhat.com>
+ <20180226102029.GG27191@lahna.fi.intel.com>
+ <20180226133802.GR27191@lahna.fi.intel.com>
+ <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
-Date: Sat, 24 Feb 2018 18:27:24 -0500 (EST)
+On Mon, Feb 26, 2018 at 11:28:16AM -0800, Jeremy McNicoll wrote:
+> On 2018-02-26 5:38 AM, Mika Westerberg wrote:
+> > On Mon, Feb 26, 2018 at 12:20:29PM +0200, Mika Westerberg wrote:
+> > > On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
+> > > > > +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+> > > > > +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
+> > > > > +			link, depth);
+> > > > 
+> > > > This kind of condition sounds more like an error instead of info.
+> > > > Please bump this up to tb_WARN/tb_warn ideally tb_err().
+> > > 
+> > > No, this is not an error.
+> > 
+> > To be more clear, it is totally fine to have the firmware to reject some
+> > devices. For example in case of the new usbonly security level the
+> > firmware rejects other devices but the first.
+> > 
+> 
+> Ok. Is that kind of information available to the kernel?  What security
+> mode we are in?
+> 
+> ie) if (LINK_REJECTED && !USB_SECURITY)
+>        print "Error switch %u was rejected since its not usbonly"
+>     endif
+> 
+> I am sure something like that simplified pseudo code above would
+> be somewhat useful to users when debugging.
 
-> Changes since v4 of combined patch series:
-> - Removed redundant and non-portable MACH_IS_MAC tests.
-> - Omitted patches unrelated to SONIC drivers.
-> - Dropped changes to the 'version_printed' logic and debug message text.
-
-Series applied, thank you.
+That's why it is on info level so it goes to dmesg but does not scare
+the user :-)
