@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELugRLKa5O8AqZ75JO9UYxGFsBCjaOOyT74s/YBLGBrk5rGjqN3UkxdxiyLvp8uepV1Qw5vk
-ARC-Seal: i=1; a=rsa-sha256; t=1519676705; cv=none;
+X-Google-Smtp-Source: AG47ELuUgh1sOWExwgCSLeQoO4fuxp+cGwZP0s3RaDDaTKpcLQnBD1FxRHbWcTU3rj+nsYekw/2j
+ARC-Seal: i=1; a=rsa-sha256; t=1519676702; cv=none;
         d=google.com; s=arc-20160816;
-        b=020JbZfNuQ8wbAPF5NGFINod2prI3xt5KdMvDRz8vmr975CQPIrIXcPt8raYsgqo2i
-         0VR4EK1U8G/qE3v5iVq0cyEjtXpNA77vVJrD57o+I9GhXqRK+Eu456DHF+43Y884+P3H
-         JtF8JkdeIwB5qnhWZ2oVIu5bhuh0OuQgdsaXMfcSE0VcQqJjxlN8t4Q+j/85xbueCJtY
-         641J82bPIGdhrIshh5l3V0hQr/rNZJlfkRijuksofvr6/7OwRcUuWqIC2P9Dn8zFUU+6
-         K4k+8iSzSOaitBRn7Sq19b82LOz7/2bLeCta1Mh9Q+oMP+iXbccJZkjlWuQjdorw/r1I
-         o74Q==
+        b=B6WvC0Wpo+hnHcEbEiOA1DE70n2gHzdT9on9ot9c6rx385K5eIF8sQ5uErD2dBq+om
+         HqTksmze/4+KiYbIT7/irpTlhbdnqDIBVK90Ko5FcZLBfT6z0vLEkyiVLxjDi0T2/Iry
+         EdFjpEFp97mNDhs1Lt+sRbQdzJTVTYUfl2OcU47uIFsyOeqzbekx9n1Jq9QpeEXAQzz1
+         8Y4p7x0t04yoh9AvugAnLpnCAVs1y1Po+DTBhBgpzombGILaeqhJfpbZixd4QE6lJPYE
+         ZnfbWIvkF5AwwBbkNdBL8nUPEwaHDlTz06Ja5jGQczaK8FVMztiiBXkQoOzfaWP965pb
+         wp5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l/iz5oJlNV+D2Je1p6cCLUoGFR06YOay+TXEzOoh+AY=;
-        b=0aKhSsHJJorHK1lbROWphFpOYWno/fdYCrcl++YFWO5tV3VVxDPj8TNzbhUOdElXWs
-         A8pL+fk3IMFONwA3L6GlkdWhAk2pQsQbTG/FcyNveh5F/xRP1UpBDLus79kqoEos7Tam
-         nn+ZRsHlHOCpXhVQyOTIxOtGc0ie0ui1+YpwG9MgedBAlpnUJXxiLsV4NtKjgYkdvjJX
-         TX9iC0fkk7L+YBP/7mGyNgUc33wlcs0B261mfuGhTVFqV0xPmr3Mc2xLeSI/g9ktwCT9
-         nSAIv4D5J6nKTfTz9eIoM8+GgNNr7r/5bgh81D4j2FxY7ixe9OG9HEeC63ziAWFsvgHX
-         9xYg==
+        bh=fj/+KfKwHWCDvv437N+KEf0PZe+IG+OAWB8VTzrFa6I=;
+        b=JPKMm5sDSQh8Kpt656SlpNFWlMAttD8XYQpqfzI8Kh/o2XnXUZt6IpJhDQm8MEjqp4
+         pdc884KbvhHo6B1qK2s9cg3ydahoRfvVM/5PFEqJlOCxnFRnsIaMDN24tZBiASZY+P68
+         zaPrpI0Q44fH9ejCpCS5Ms538+SbX2EmMWMIu8B7EFU6xzrmN0IBjMQwUN12iqMHqV3R
+         rNPhaO1BHlwleDtVBXlQNQtQqZZ9lphHsWBxeCBvLPXjhq6dIbU6e8i5fHwfm+0Zj1vv
+         tAcIkXuFNKrcnkp9qnvfBmxzf69z7AP0x7tj373IlyfSM+YWBs/ZlLGxN7BVE5jRDYzr
+         rD6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Jack Pham <jackp@codeaurora.org>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 45/54] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-Date: Mon, 26 Feb 2018 21:22:22 +0100
-Message-Id: <20180226202146.653301014@linuxfoundation.org>
+Subject: [PATCH 4.14 44/54] usb: gadget: f_fs: Use config_ep_by_speed()
+Date: Mon, 26 Feb 2018 21:22:21 +0100
+Message-Id: <20180226202146.586025196@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496020414539698?=
-X-GMAIL-MSGID: =?utf-8?q?1593496521367903464?=
+X-GMAIL-THRID: =?utf-8?q?1593496518220924076?=
+X-GMAIL-MSGID: =?utf-8?q?1593496518220924076?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +49,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Jack Pham <jackp@codeaurora.org>
 
-commit 17aa31f13cad25daa19d3f923323f552e87bc874 upstream.
+commit 675272d092e4a5570bace92593776f7348daf4c5 upstream.
 
-This fixes an issue that a gadget driver (usb_f_fs) is possible to
-stop rx transactions after the usb-dmac is used because the following
-functions missed to set/check the "running" flag.
- - usbhsf_dma_prepare_pop_with_usb_dmac()
- - usbhsf_dma_pop_done_with_usb_dmac()
+In commit 2bfa0719ac2a ("usb: gadget: function: f_fs: pass
+companion descriptor along") there is a pointer arithmetic
+bug where the comp_desc is obtained as follows:
 
-So, if next transaction uses pio, the usbhsf_prepare_pop() can not
-start the transaction because the "running" flag is 0.
+ comp_desc = (struct usb_ss_ep_comp_descriptor *)(ds +
+	       USB_DT_ENDPOINT_SIZE);
 
-Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Since ds is a pointer to usb_endpoint_descriptor, adding
+7 to it ends up going out of bounds (7 * sizeof(struct
+usb_endpoint_descriptor), which is actually 7*9 bytes) past
+the SS descriptor. As a result the maxburst value will be
+read incorrectly, and the UDC driver will also get a garbage
+comp_desc (assuming it uses it).
+
+Since Felipe wrote, "Eventually, f_fs.c should be converted
+to use config_ep_by_speed() like all other functions, though",
+let's finally do it. This allows the other usb_ep fields to
+be properly populated, such as maxpacket and mult. It also
+eliminates the awkward speed-based descriptor lookup since
+config_ep_by_speed() does that already using the ones found
+in struct usb_function.
+
+Fixes: 2bfa0719ac2a ("usb: gadget: function: f_fs: pass companion descriptor along")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/renesas_usbhs/fifo.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/gadget/function/f_fs.c |   38 ++++++-------------------------------
+ 1 file changed, 7 insertions(+), 31 deletions(-)
 
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -998,6 +998,10 @@ static int usbhsf_dma_prepare_pop_with_u
- 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
- 		goto usbhsf_pio_prepare_pop;
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1856,44 +1856,20 @@ static int ffs_func_eps_enable(struct ff
  
-+	/* return at this time if the pipe is running */
-+	if (usbhs_pipe_is_running(pipe))
-+		return 0;
-+
- 	usbhs_pipe_config_change_bfre(pipe, 1);
+ 	spin_lock_irqsave(&func->ffs->eps_lock, flags);
+ 	while(count--) {
+-		struct usb_endpoint_descriptor *ds;
+-		struct usb_ss_ep_comp_descriptor *comp_desc = NULL;
+-		int needs_comp_desc = false;
+-		int desc_idx;
+-
+-		if (ffs->gadget->speed == USB_SPEED_SUPER) {
+-			desc_idx = 2;
+-			needs_comp_desc = true;
+-		} else if (ffs->gadget->speed == USB_SPEED_HIGH)
+-			desc_idx = 1;
+-		else
+-			desc_idx = 0;
+-
+-		/* fall-back to lower speed if desc missing for current speed */
+-		do {
+-			ds = ep->descs[desc_idx];
+-		} while (!ds && --desc_idx >= 0);
+-
+-		if (!ds) {
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+ 		ep->ep->driver_data = ep;
+-		ep->ep->desc = ds;
  
- 	ret = usbhsf_fifo_select(pipe, fifo, 0);
-@@ -1188,6 +1192,7 @@ static int usbhsf_dma_pop_done_with_usb_
- 	usbhsf_fifo_clear(pipe, fifo);
- 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
+-		if (needs_comp_desc) {
+-			comp_desc = (struct usb_ss_ep_comp_descriptor *)(ds +
+-					USB_DT_ENDPOINT_SIZE);
+-			ep->ep->maxburst = comp_desc->bMaxBurst + 1;
+-			ep->ep->comp_desc = comp_desc;
++		ret = config_ep_by_speed(func->gadget, &func->function, ep->ep);
++		if (ret) {
++			pr_err("%s: config_ep_by_speed(%s) returned %d\n",
++					__func__, ep->ep->name, ret);
++			break;
+ 		}
  
-+	usbhs_pipe_running(pipe, 0);
- 	usbhsf_dma_stop(pipe, fifo);
- 	usbhsf_dma_unmap(pkt);
- 	usbhsf_fifo_unselect(pipe, pipe->fifo);
+ 		ret = usb_ep_enable(ep->ep);
+ 		if (likely(!ret)) {
+ 			epfile->ep = ep;
+-			epfile->in = usb_endpoint_dir_in(ds);
+-			epfile->isoc = usb_endpoint_xfer_isoc(ds);
++			epfile->in = usb_endpoint_dir_in(ep->ep->desc);
++			epfile->isoc = usb_endpoint_xfer_isoc(ep->ep->desc);
+ 		} else {
+ 			break;
+ 		}
