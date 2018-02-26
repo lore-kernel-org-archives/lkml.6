@@ -1,191 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeBZP4E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:56:04 -0500
-Received: from mail-cys01nam02on0086.outbound.protection.outlook.com ([104.47.37.86]:35776
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751908AbeBZP4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:56:02 -0500
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: RE: [PATCH 2/8] efi: Decode IA32/X64 Processor Error Section
-Thread-Topic: [PATCH 2/8] efi: Decode IA32/X64 Processor Error Section
-Thread-Index: AQHTrOG3PIo4V0EfjUqEu1qvc8lwWqOzwh6AgAMWjwA=
-Date: Mon, 26 Feb 2018 15:55:59 +0000
-Message-ID: <DM5PR12MB19162BF302938727F04FA470F8C10@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180223200333.6410-1-Yazen.Ghannam@amd.com>
- <20180223200333.6410-3-Yazen.Ghannam@amd.com>
- <CAKv+Gu8ShPeJz0HsqR=8GSjj+PyC=sVJv_MhidVR6cU4W-WjLA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8ShPeJz0HsqR=8GSjj+PyC=sVJv_MhidVR6cU4W-WjLA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-x-originating-ip: [71.199.237.95]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1561;7:eaKmoD+X3ZPPWo8ad2zcKW3doDeLdvC8fSg/ZymZy2AkKBXhbitK1vC0ELDCWFC52J5PrLd9Cz5uFHe2aRAXAxz+Q1lGna9wfdkixxpMMc9W37H4FIf9AK7Ai+OBFUDC03Jg7FZpWtkRvJN8Nefoy4u/Xlh0iksh/AkUiYNk6Cz8fuxKd53U9daDTGIHpB9cLy72hQQ2nKtmdo70duck37w9kxJERRPYhLycTeOy1DbvLN3pBRUQ57Xna12JD3ZM;20:DC0tLPvL1Cbmm5TgqXwk2fIACJ13A40/z+LAeSkz/mM0eYOLgD3P1Xjtis/zSIfZkqaVO5EdNABaoiICQN865EZPlOpdvFvYxmbyJOG6cfaxuQImRJ7qMD1FNzyFzb2HB60hsALmqTuHX9goHOgoYLymQNGqCXZ7PpccHsL8wy8uarAwdB18pSAoNU+un8iNoJwvsnzCeGMyNNj3lBne9ho4A2MycEBDRFwEypYOdH7tiI7tp8ys0SvwZ2QezEJZ
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0cb29596-d8fd-4baf-9ef1-08d57d316e24
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1561;
-x-ms-traffictypediagnostic: DM5PR12MB1561:
-x-microsoft-antispam-prvs: <DM5PR12MB15619AB912BAB41C6E006862F8C10@DM5PR12MB1561.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501161)(6055026)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB1561;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1561;
-x-forefront-prvs: 05954A7C45
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(346002)(39860400002)(366004)(376002)(189003)(199004)(13464003)(7696005)(478600001)(3846002)(55016002)(26005)(8936002)(186003)(72206003)(14454004)(102836004)(86362001)(575784001)(6116002)(6506007)(4326008)(81166006)(8676002)(3660700001)(97736004)(81156014)(66066001)(6436002)(2900100001)(33656002)(3280700002)(53546011)(25786009)(2906002)(53936002)(6916009)(5250100002)(54906003)(74316002)(316002)(2950100002)(229853002)(6246003)(99286004)(7736002)(305945005)(9686003)(5660300001)(76176011)(105586002)(106356001)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1561;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: qmQRpithytlTz27lcvCT6ezjPtMAcR9ZztSqh0N53ZtKt5g6KVxn+c52JeyOXr2AqgWxidlFJBIhi6Hk3djbxgP07cNpXnp1Y11zuqqEMyYlyzK2CP3cMkCY1ODtukgkTzlx8GXt0i6txQnFJu5M6SK2qj32bPg3CbiTWDlsV34=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1752358AbeBZP5i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:57:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55160 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752280AbeBZP5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:57:36 -0500
+Date: Mon, 26 Feb 2018 16:57:34 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3] printk: Relocate wake_klogd check close to the end of
+ console_unlock()
+Message-ID: <20180226155734.dzwg3aovqnwtvkoy@pathway.suse.cz>
+References: <20180208130402.15157-1-pmladek@suse.com>
+ <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
+ <20180219160122.upqkpbbffm3rth6p@pathway.suse.cz>
+ <20180226063735.GC12539@jagdpanzerIV>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cb29596-d8fd-4baf-9ef1-08d57d316e24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2018 15:55:59.5993
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1561
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226063735.GC12539@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1QFuASi031444
 
-> -----Original Message-----
-> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
-> owner@vger.kernel.org] On Behalf Of Ard Biesheuvel
-> Sent: Saturday, February 24, 2018 11:39 AM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: linux-efi@vger.kernel.org; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>; Borislav Petkov <bp@suse.de>; the arch/x86
-> maintainers <x86@kernel.org>
-> Subject: Re: [PATCH 2/8] efi: Decode IA32/X64 Processor Error Section
+On Mon 2018-02-26 15:37:35, Sergey Senozhatsky wrote:
+> On (02/19/18 17:01), Petr Mladek wrote:
+> [..]
+> > -	raw_spin_lock(&logbuf_lock);
+> >  	retry = console_seq != log_next_seq;
+> > +	/*
+> > +	 * Check whether userland needs notification. Do this only when really
+> > +	 * leaving to avoid race with console_trylock_spinning().
+> > +	 */
+> > +	if (seen_seq != log_next_seq && !retry) {
+> > +		wake_klogd = true;
+> > +		seen_seq = log_next_seq;
+> > +	}
 > 
-...
-> >
-> > diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> > index 3098410abad8..8b684147835d 100644
-> > --- a/drivers/firmware/efi/Kconfig
-> > +++ b/drivers/firmware/efi/Kconfig
-> > @@ -174,6 +174,11 @@ config UEFI_CPER_ARM
-> >         depends on UEFI_CPER && ( ARM || ARM64 )
-> >         default y
-> >
-> > +config UEFI_CPER_X86
-> > +       bool
-> > +       depends on UEFI_CPER && ( X86_32 || X86_64 )
+> Let's add the "why" part. This "!retry" might be hard to understand. We
+> are looking at
 > 
-> Just 'UEFI_CPER && X86' should be sufficient, no?
-> 
+> - CPUa is about to leave console_unlock()
+> - printk on CPUb appends a new message
+> - CPUa detects that `console_seq != log_next_seq', updates `seen_seq'
+> - printk on CPUb is getting preempted
+> - CPUa re-takes the console_sem via retry path
+> - printk CPUb is becoming TASK_RUNNING again - it now spins for console_sem,
+>   since we have an active console_sem owner
+> - CPUa detects that there is a console_sem waiter, so it offloads the
+>   printing task, without ever waking up klogd
 
-Yes.
+Yes, this is the scenario. I agree that it is very tricky.
 
-> > +       default y
-> > +
-> >  config EFI_DEV_PATH_PARSER
-> >         bool
-> >         depends on ACPI
-> > diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-> > index cb805374f4bc..7cf8d75ebe51 100644
-> > --- a/drivers/firmware/efi/Makefile
-> > +++ b/drivers/firmware/efi/Makefile
-> > @@ -31,3 +31,5 @@ obj-$(CONFIG_ARM)                     += $(arm-obj-y)
-> >  obj-$(CONFIG_ARM64)                    += $(arm-obj-y)
-> >  obj-$(CONFIG_EFI_CAPSULE_LOADER)       += capsule-loader.o
-> >  obj-$(CONFIG_UEFI_CPER_ARM)            += cper-arm.o
-> > +
+> Either we can have that complex "seen_seq != log_next_seq && !retry"
+> check - or we simply can add
 > 
-> Spurious newline
+> 	if (console_lock_spinning_disable_and_check()) {
+> 		printk_safe_exit_irqrestore(flags);
+> 		if (wake_klogd)
+> 			wake_up_klogd();
+> 	}
 > 
-
-Okay.
-
-> > +obj-$(CONFIG_UEFI_CPER_X86)            += cper-x86.o
-> > diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-
-> x86.c
-> > new file mode 100644
-> > index 000000000000..b50ee3cdf637
-> > --- /dev/null
-> > +++ b/drivers/firmware/efi/cper-x86.c
-> > @@ -0,0 +1,26 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018, Advanced Micro Devices, Inc.
-> > +// Copyright (C) 2018, Yazen Ghannam <yazen.ghannam@amd.com>
-> > +
+> to the offloading return path.
 > 
-> Do you really own the copyright for code that you write on behalf of
-> your employer?
-> 
+> The later is *may be* simpler to follow. The rule is: every
+> !console_suspend and !cant-use-consoles return path from console_unlock()
+> must wake_up_klogd() [if needed].
 
-I'll drop that line.
+Yes, this looks more straighforward. It might cause earlier and more
+often wakeup but we want to go this way anyway. I do not see any
+real problem with it.
 
-> > +#include <linux/cper.h>
-> > +
-> > +/*
-> > + * We don't need a "CPER_IA" prefix since these are all locally defined.
-> > + * This will save us a lot of line space.
-> > + */
-> > +#define VALID_LAPIC_ID                 BIT_ULL(0)
-> > +#define VALID_CPUID_INFO               BIT_ULL(1)
-> > +
-> > +void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia
-> *proc)
-> > +{
-> > +       printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
-> > +
-> > +       if (proc->validation_bits & VALID_LAPIC_ID)
-> > +               printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
-> > +
-> > +       if (proc->validation_bits & VALID_CPUID_INFO) {
-> > +               printk("%sCPUID Info:\n", pfx);
-> > +               print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc-
-> >cpuid,
-> > +                              sizeof(proc->cpuid), 0);
-> > +       }
-> > +}
-> > diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> > index c165933ebf38..5a59b582c9aa 100644
-> > --- a/drivers/firmware/efi/cper.c
-> > +++ b/drivers/firmware/efi/cper.c
-> > @@ -469,6 +469,16 @@ cper_estatus_print_section(const char *pfx, struct
-> acpi_hest_generic_data *gdata
-> >                         cper_print_proc_arm(newpfx, arm_err);
-> >                 else
-> >                         goto err_section_too_small;
-> > +#endif
-> > +#if defined(CONFIG_UEFI_CPER_X86)
-> > +       } else if (guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
-> > +               struct cper_sec_proc_ia *ia_err = acpi_hest_get_payload(gdata);
-> > +
-> > +               printk("%ssection_type: IA32/X64 processor error\n", newpfx);
-> > +               if (gdata->error_data_length >= sizeof(*ia_err))
-> > +                       cper_print_proc_ia(newpfx, ia_err);
-> > +               else
-> > +                       goto err_section_too_small;
-> >  #endif
-> >         } else {
-> >                 const void *err = acpi_hest_get_payload(gdata);
-> > diff --git a/include/linux/cper.h b/include/linux/cper.h
-> > index 4b5f8459b403..9c703a0abe6e 100644
-> > --- a/include/linux/cper.h
-> > +++ b/include/linux/cper.h
-> > @@ -551,5 +551,7 @@ const char *cper_mem_err_unpack(struct
-> trace_seq *,
-> >                                 struct cper_mem_err_compact *);
-> >  void cper_print_proc_arm(const char *pfx,
-> >                          const struct cper_sec_proc_arm *proc);
-> > +void cper_print_proc_ia(const char *pfx,
-> > +                       const struct cper_sec_proc_ia *proc);
-> >
-> >  #endif
-> > --
-> > 2.14.1
-> >
+Okay, what about the following patch for 4.16-rc4?
+
+>From 7450da0e7e0d7ee5926f09c8bbbaa44c67ae0b48 Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Mon, 26 Feb 2018 15:44:20 +0100
+Subject: [PATCH] printk: Wake klogd when passing console_lock owner
+
+wake_klogd is a local variable in console_unlock(). The information
+is lost when the console_lock owner using the busy wait added by
+the commit dbdda842fe96f8932 ("printk: Add console owner and waiter
+logic to load balance console writes"). The following race is
+possible:
+
+CPU0				CPU1
+console_unlock()
+
+  for (;;)
+     /* calling console for last message */
+
+				printk()
+				  log_store()
+				    log_next_seq++;
+
+     /* see new message */
+     if (seen_seq != log_next_seq) {
+	wake_klogd = true;
+	seen_seq = log_next_seq;
+     }
+
+     console_lock_spinning_enable();
+
+				  if (console_trylock_spinning())
+				     /* spinning */
+
+     if (console_lock_spinning_disable_and_check()) {
+	printk_safe_exit_irqrestore(flags);
+	return;
+
+				  console_unlock()
+				    if (seen_seq != log_next_seq) {
+				    /* already seen */
+				    /* nothing to do */
+
+Result: Nobody would wakeup klogd.
+
+One solution would be to make a global variable from wake_klogd.
+But then we would need to manipulate it under a lock or so.
+
+This patch wakes klogd also when console_lock is passed to the
+spinning waiter. It looks like the right way to go. Also userspace
+should have a chance to see and store any "flood" of messages.
+
+Note that the very late klogd wake up was a historic solution.
+It made sense on single CPU systems or when sys_syslog() operations
+were synchronized using the big kernel lock like in v2.1.113.
+But it is questionable these days.
+
+Fixes: dbdda842fe96f8932 ("printk: Add console owner and waiter logic to load balance console writes")
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index fc1123583fa6..f274fbef821d 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2397,7 +2397,7 @@ void console_unlock(void)
+ 
+ 		if (console_lock_spinning_disable_and_check()) {
+ 			printk_safe_exit_irqrestore(flags);
+-			return;
++			goto out;
+ 		}
+ 
+ 		printk_safe_exit_irqrestore(flags);
+@@ -2430,6 +2430,7 @@ void console_unlock(void)
+ 	if (retry && console_trylock())
+ 		goto again;
+ 
++out:
+ 	if (wake_klogd)
+ 		wake_up_klogd();
+ }
+-- 
+2.13.6
