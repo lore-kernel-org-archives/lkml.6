@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeBZNGf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:06:35 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51002 "EHLO
+        id S1753212AbeBZNGZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:06:25 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51008 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753121AbeBZNGF (ORCPT
+        by vger.kernel.org with ESMTP id S1753122AbeBZNGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:06:05 -0500
+        Mon, 26 Feb 2018 08:06:06 -0500
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=rf@opensource.cirrus.com
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
@@ -15,9 +15,9 @@ To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
 CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH v8 4/9] mfd: madera: Register map tables for Cirrus Logic CS47L35
-Date: Mon, 26 Feb 2018 13:05:53 +0000
-Message-ID: <20180226130558.7634-5-rf@opensource.cirrus.com>
+Subject: [PATCH v8 6/9] mfd: madera: Register map tables for Cirrus Logic CS47L90/91
+Date: Mon, 26 Feb 2018 13:05:55 +0000
+Message-ID: <20180226130558.7634-7-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180226130558.7634-1-rf@opensource.cirrus.com>
 References: <20180226130558.7634-1-rf@opensource.cirrus.com>
@@ -32,60 +32,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Regmap configuration tables for Cirrus Logic CS47L35 codecs.
+Regmap configuration tables for Cirrus Logic CS47L90 and CS47L91 codecs.
 
-Signed-off-by: Piotr Stankiewicz <piotrs@opensource.cirrus.com>
+Signed-off-by: Nikesh Oswal <nikesh@opensource.cirrus.com>
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
  drivers/mfd/Kconfig          |    7 +
  drivers/mfd/Makefile         |    3 +
- drivers/mfd/cs47l35-tables.c | 1609 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1619 insertions(+)
- create mode 100644 drivers/mfd/cs47l35-tables.c
+ drivers/mfd/cs47l90-tables.c | 2674 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 2684 insertions(+)
+ create mode 100644 drivers/mfd/cs47l90-tables.c
 
 diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f5ca392f8bc2..da595d71671d 100644
+index 92d555ca21e2..2db1c1c48700 100644
 --- a/drivers/mfd/Kconfig
 +++ b/drivers/mfd/Kconfig
-@@ -261,6 +261,13 @@ config MFD_MADERA_SPI
- 	  Support for the Cirrus Logic Madera platform audio SoC
- 	  core functionality controlled via SPI.
+@@ -275,6 +275,13 @@ config MFD_CS47L85
+ 	help
+ 	  Support for Cirrus Logic CS47L85 Smart Codec
  
-+config MFD_CS47L35
-+	bool "Cirrus Logic CS47L35"
-+	select PINCTRL_CS47L35
++config MFD_CS47L90
++	bool "Cirrus Logic CS47L90/91"
++	select PINCTRL_CS47L90
 +	depends on MFD_MADERA
 +	help
-+	  Support for Cirrus Logic CS47L35 Smart Codec
++	  Support for Cirrus Logic CS47L90 and CS47L91 Smart Codecs
 +
  config MFD_ASIC3
  	bool "Compaq ASIC3"
  	depends on GPIOLIB && ARM
 diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 0a89a6a6d793..fd33ea301b3c 100644
+index 8c0328c47ab5..4d0dfd065706 100644
 --- a/drivers/mfd/Makefile
 +++ b/drivers/mfd/Makefile
-@@ -74,6 +74,9 @@ obj-$(CONFIG_MFD_WM8994)	+= wm8994.o
- obj-$(CONFIG_MFD_WM97xx)	+= wm97xx-core.o
- 
- madera-objs			:= madera-core.o
-+ifeq ($(CONFIG_MFD_CS47L35),y)
-+madera-objs			+= cs47l35-tables.o
+@@ -80,6 +80,9 @@ endif
+ ifeq ($(CONFIG_MFD_CS47L85),y)
+ madera-objs			+= cs47l85-tables.o
+ endif
++ifeq ($(CONFIG_MFD_CS47L90),y)
++madera-objs			+= cs47l90-tables.o
 +endif
  obj-$(CONFIG_MFD_MADERA)	+= madera.o
  obj-$(CONFIG_MFD_MADERA_I2C)	+= madera-i2c.o
  obj-$(CONFIG_MFD_MADERA_SPI)	+= madera-spi.o
-diff --git a/drivers/mfd/cs47l35-tables.c b/drivers/mfd/cs47l35-tables.c
+diff --git a/drivers/mfd/cs47l90-tables.c b/drivers/mfd/cs47l90-tables.c
 new file mode 100644
-index 000000000000..604c9dd14df5
+index 000000000000..77207d98f0cc
 --- /dev/null
-+++ b/drivers/mfd/cs47l35-tables.c
-@@ -0,0 +1,1609 @@
++++ b/drivers/mfd/cs47l90-tables.c
+@@ -0,0 +1,2674 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Regmap tables for CS47L35 codec
++ * Regmap tables for CS47L90 codec
 + *
 + * Copyright (C) 2015-2017 Cirrus Logic
 + *
@@ -103,54 +103,61 @@ index 000000000000..604c9dd14df5
 +
 +#include "madera.h"
 +
-+static const struct reg_sequence cs47l35_reva_16_patch[] = {
-+	{ 0x460, 0x0c40 },
-+	{ 0x461, 0xcd1a },
-+	{ 0x462, 0x0c40 },
-+	{ 0x463, 0xb53b },
-+	{ 0x464, 0x0c40 },
-+	{ 0x465, 0x7503 },
-+	{ 0x466, 0x0c40 },
-+	{ 0x467, 0x4a41 },
-+	{ 0x468, 0x0041 },
-+	{ 0x469, 0x3491 },
-+	{ 0x46a, 0x0841 },
-+	{ 0x46b, 0x1f50 },
-+	{ 0x46c, 0x0446 },
-+	{ 0x46d, 0x14ed },
-+	{ 0x46e, 0x0446 },
-+	{ 0x46f, 0x1455 },
-+	{ 0x470, 0x04c6 },
-+	{ 0x471, 0x1220 },
-+	{ 0x472, 0x04c6 },
-+	{ 0x473, 0x040f },
-+	{ 0x474, 0x04ce },
-+	{ 0x475, 0x0339 },
-+	{ 0x476, 0x05df },
-+	{ 0x477, 0x028f },
-+	{ 0x478, 0x05df },
-+	{ 0x479, 0x0209 },
-+	{ 0x47a, 0x05df },
-+	{ 0x47b, 0x00cf },
-+	{ 0x47c, 0x05df },
-+	{ 0x47d, 0x0001 },
-+	{ 0x47e, 0x07ff },
++static const struct reg_sequence cs47l90_reva_16_patch[] = {
++	{ 0x8A,   0x5555 },
++	{ 0x8A,   0xAAAA },
++	{ 0x4CF,  0x0700 },
++	{ 0x171,  0x0003 },
++	{ 0x101,  0x0444 },
++	{ 0x159,  0x0002 },
++	{ 0x120,  0x0444 },
++	{ 0x1D1,  0x0004 },
++	{ 0x1E0,  0xC084 },
++	{ 0x159,  0x0000 },
++	{ 0x120,  0x0404 },
++	{ 0x101,  0x0404 },
++	{ 0x171,  0x0002 },
++	{ 0x17A,  0x2906 },
++	{ 0x19A,  0x2906 },
++	{ 0x441,  0xC750 },
++	{ 0x340,  0x0001 },
++	{ 0x112,  0x0405 },
++	{ 0x124,  0x0C49 },
++	{ 0x1300, 0x050E },
++	{ 0x1302, 0x0101 },
++	{ 0x1380, 0x0425 },
++	{ 0x1381, 0xF6D8 },
++	{ 0x1382, 0x0632 },
++	{ 0x1383, 0xFEC8 },
++	{ 0x1390, 0x042F },
++	{ 0x1391, 0xF6CA },
++	{ 0x1392, 0x0637 },
++	{ 0x1393, 0xFEC8 },
++	{ 0x281,  0x0000 },
++	{ 0x282,  0x0000 },
++	{ 0x4EA,  0x0100 },
++	{ 0x8A,   0xCCCC },
++	{ 0x8A,   0x3333 },
 +};
 +
-+int cs47l35_patch(struct madera *madera)
++int cs47l90_patch(struct madera *madera)
 +{
 +	int ret;
 +
-+	ret = regmap_register_patch(madera->regmap, cs47l35_reva_16_patch,
-+				    ARRAY_SIZE(cs47l35_reva_16_patch));
-+	if (ret < 0)
-+		dev_err(madera->dev, "Error applying patch: %d\n", ret);
++	ret = regmap_register_patch(madera->regmap,
++				    cs47l90_reva_16_patch,
++				    ARRAY_SIZE(cs47l90_reva_16_patch));
++	if (ret < 0) {
++		dev_err(madera->dev,
++			"Error in applying 16-bit patch: %d\n", ret);
++		return ret;
++	}
 +
-+	return ret;
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(cs47l35_patch);
++EXPORT_SYMBOL_GPL(cs47l90_patch);
 +
-+static const struct reg_default cs47l35_reg_default[] = {
++static const struct reg_default cs47l90_reg_default[] = {
 +	{ 0x00000020, 0x0000 }, /* R32 (0x20) - Tone Generator 1 */
 +	{ 0x00000021, 0x1000 }, /* R33 (0x21) - Tone Generator 2 */
 +	{ 0x00000022, 0x0000 }, /* R34 (0x22) - Tone Generator 3 */
@@ -162,9 +169,9 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000061, 0x01ff }, /* R97 (0x61) - Sample Rate Sequence Select 1 */
 +	{ 0x00000062, 0x01ff }, /* R98 (0x62) - Sample Rate Sequence Select 2 */
 +	{ 0x00000063, 0x01ff }, /* R99 (0x63) - Sample Rate Sequence Select 3 */
-+	{ 0x00000064, 0x01ff }, /* R100 (0x64) - Sample Rate Sequence Select 4*/
-+	{ 0x00000066, 0x01ff }, /* R102 (0x66) - Always On Triggers Sequence Select 1*/
-+	{ 0x00000067, 0x01ff }, /* R103 (0x67) - Always On Triggers Sequence Select 2*/
++	{ 0x00000064, 0x01ff }, /* R100 (0x64) - Sample Rate Sequence Select 4 */
++	{ 0x00000066, 0x01ff }, /* R102 (0x66) - Always On Triggers Sequence Select 1 */
++	{ 0x00000067, 0x01ff }, /* R103 (0x67) - Always On Triggers Sequence Select 2 */
 +	{ 0x00000090, 0x0000 }, /* R144 (0x90) - Haptics Control 1 */
 +	{ 0x00000091, 0x7fff }, /* R145 (0x91) - Haptics Control 2 */
 +	{ 0x00000092, 0x0000 }, /* R146 (0x92) - Haptics phase 1 intensity */
@@ -173,13 +180,16 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000095, 0x0000 }, /* R149 (0x95) - Haptics phase 2 duration */
 +	{ 0x00000096, 0x0000 }, /* R150 (0x96) - Haptics phase 3 intensity */
 +	{ 0x00000097, 0x0000 }, /* R151 (0x97) - Haptics phase 3 duration */
-+	{ 0x000000A0, 0x0000 }, /* R160 (0xa0) - Comfort Noise Generator */
++	{ 0x000000a0, 0x0000 }, /* R160 (0xa0) - Comfort Noise Generator */
 +	{ 0x00000100, 0x0002 }, /* R256 (0x100) - Clock 32k 1 */
 +	{ 0x00000101, 0x0404 }, /* R257 (0x101) - System Clock 1 */
 +	{ 0x00000102, 0x0011 }, /* R258 (0x102) - Sample rate 1 */
 +	{ 0x00000103, 0x0011 }, /* R259 (0x103) - Sample rate 2 */
 +	{ 0x00000104, 0x0011 }, /* R260 (0x104) - Sample rate 3 */
-+	{ 0x00000120, 0x0305 }, /* R288 (0x120) - DSP Clock 1 */
++	{ 0x00000112, 0x0405 }, /* R274 (0x112) - Async clock 1 */
++	{ 0x00000113, 0x0011 }, /* R275 (0x113) - Async sample rate 1 */
++	{ 0x00000114, 0x0011 }, /* R276 (0x114) - Async sample rate 2 */
++	{ 0x00000120, 0x0404 }, /* R288 (0x120) - DSP Clock 1 */
 +	{ 0x00000122, 0x0000 }, /* R290 (0x122) - DSP Clock 2 */
 +	{ 0x00000149, 0x0000 }, /* R329 (0x149) - Output system clock */
 +	{ 0x0000014a, 0x0000 }, /* R330 (0x14a) - Output async clock */
@@ -196,79 +206,154 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000176, 0x0000 }, /* R374 (0x176) - FLL1 Control 6 */
 +	{ 0x00000177, 0x0281 }, /* R375 (0x177) - FLL1 Loop Filter Test 1 */
 +	{ 0x00000179, 0x0000 }, /* R377 (0x179) - FLL1 Control 7 */
-+	{ 0x0000017a, 0x0b06 }, /* R378 (0x17a) - FLL1 EFS2 */
-+	{ 0x0000017f, 0x0000 }, /* R383 (0x17f) - FLL1 Synchroniser 1 */
-+	{ 0x00000180, 0x0000 }, /* R384 (0x180) - FLL1 Synchroniser 2 */
-+	{ 0x00000181, 0x0000 }, /* R385 (0x181) - FLL1 Synchroniser 3 */
-+	{ 0x00000182, 0x0000 }, /* R386 (0x182) - FLL1 Synchroniser 4 */
-+	{ 0x00000183, 0x0000 }, /* R387 (0x183) - FLL1 Synchroniser 5 */
-+	{ 0x00000184, 0x0000 }, /* R388 (0x184) - FLL1 Synchroniser 6 */
-+	{ 0x00000185, 0x0001 }, /* R389 (0x185) - FLL1 Synchroniser 7 */
-+	{ 0x00000187, 0x0000 }, /* R391 (0x187) - FLL1 Spread Spectrum */
-+	{ 0x00000188, 0x000c }, /* R392 (0x188) - FLL1 GPIO Clock */
++	{ 0x0000017a, 0x2906 }, /* R377 (0x17a) - FLL1 Efs 2 */
++	{ 0x00000181, 0x0000 }, /* R385 (0x181) - FLL1 Synchroniser 1 */
++	{ 0x00000182, 0x0000 }, /* R386 (0x182) - FLL1 Synchroniser 2 */
++	{ 0x00000183, 0x0000 }, /* R387 (0x183) - FLL1 Synchroniser 3 */
++	{ 0x00000184, 0x0000 }, /* R388 (0x184) - FLL1 Synchroniser 4 */
++	{ 0x00000185, 0x0000 }, /* R389 (0x185) - FLL1 Synchroniser 5 */
++	{ 0x00000186, 0x0000 }, /* R390 (0x186) - FLL1 Synchroniser 6 */
++	{ 0x00000187, 0x0001 }, /* R391 (0x187) - FLL1 Synchroniser 7 */
++	{ 0x00000189, 0x0000 }, /* R393 (0x189) - FLL1 Spread Spectrum */
++	{ 0x0000018a, 0x0004 }, /* R394 (0x18a) - FLL1 GPIO Clock */
++	{ 0x00000191, 0x0002 }, /* R401 (0x191) - FLL2 Control 1 */
++	{ 0x00000192, 0x0008 }, /* R402 (0x192) - FLL2 Control 2 */
++	{ 0x00000193, 0x0018 }, /* R403 (0x193) - FLL2 Control 3 */
++	{ 0x00000194, 0x007d }, /* R404 (0x194) - FLL2 Control 4 */
++	{ 0x00000195, 0x0000 }, /* R405 (0x195) - FLL2 Control 5 */
++	{ 0x00000196, 0x0000 }, /* R406 (0x196) - FLL2 Control 6 */
++	{ 0x00000197, 0x0281 }, /* R407 (0x197) - FLL2 Loop Filter Test 1 */
++	{ 0x00000199, 0x0000 }, /* R409 (0x199) - FLL2 Control 7 */
++	{ 0x0000019a, 0x2906 }, /* R410 (0x19a) - FLL2 Efs 2 */
++	{ 0x000001a1, 0x0000 }, /* R417 (0x1a1) - FLL2 Synchroniser 1 */
++	{ 0x000001a2, 0x0000 }, /* R418 (0x1a2) - FLL2 Synchroniser 2 */
++	{ 0x000001a3, 0x0000 }, /* R419 (0x1a3) - FLL2 Synchroniser 3 */
++	{ 0x000001a4, 0x0000 }, /* R420 (0x1a4) - FLL2 Synchroniser 4 */
++	{ 0x000001a5, 0x0000 }, /* R421 (0x1a5) - FLL2 Synchroniser 5 */
++	{ 0x000001a6, 0x0000 }, /* R422 (0x1a6) - FLL2 Synchroniser 6 */
++	{ 0x000001a7, 0x0001 }, /* R423 (0x1a7) - FLL2 Synchroniser 7 */
++	{ 0x000001a9, 0x0000 }, /* R425 (0x1a9) - FLL2 Spread Spectrum */
++	{ 0x000001aa, 0x0004 }, /* R426 (0x1aa) - FLL2 GPIO Clock */
++	{ 0x000001d1, 0x0004 }, /* R465 (0x1d1) - FLLAO_CONTROL_1 */
++	{ 0x000001d2, 0x0004 }, /* R466 (0x1d2) - FLLAO_CONTROL_2 */
++	{ 0x000001d3, 0x0000 }, /* R467 (0x1d3) - FLLAO_CONTROL_3 */
++	{ 0x000001d4, 0x0000 }, /* R468 (0x1d4) - FLLAO_CONTROL_4 */
++	{ 0x000001d5, 0x0001 }, /* R469 (0x1d5) - FLLAO_CONTROL_5 */
++	{ 0x000001d6, 0x8004 }, /* R470 (0x1d6) - FLLAO_CONTROL_6 */
++	{ 0x000001d8, 0x0000 }, /* R472 (0x1d8) - FLLAO_CONTROL_7 */
++	{ 0x000001da, 0x0070 }, /* R474 (0x1da) - FLLAO_CONTROL_8 */
++	{ 0x000001db, 0x0000 }, /* R475 (0x1db) - FLLAO_CONTROL_9 */
++	{ 0x000001dc, 0x06da }, /* R476 (0x1dc) - FLLAO_CONTROL_10 */
++	{ 0x000001dd, 0x0011 }, /* R477 (0x1dd) - FLLAO_CONTROL_11 */
 +	{ 0x00000200, 0x0006 }, /* R512 (0x200) - Mic Charge Pump 1 */
-+	{ 0x0000020b, 0x0400 }, /* R523 (0x20b) - HP Charge Pump 8 */
 +	{ 0x00000213, 0x03e4 }, /* R531 (0x213) - LDO2 Control 1 */
 +	{ 0x00000218, 0x00e6 }, /* R536 (0x218) - Mic Bias Ctrl 1 */
 +	{ 0x00000219, 0x00e6 }, /* R537 (0x219) - Mic Bias Ctrl 2 */
-+	{ 0x0000021c, 0x0022 }, /* R540 (0x21c) - Mic Bias Ctrl 5 */
-+	{ 0x0000021e, 0x0022 }, /* R542 (0x21e) - Mic Bias Ctrl 6 */
++	{ 0x0000021c, 0x2222 }, /* R540 (0x21c) - Mic Bias Ctrl 5 */
++	{ 0x0000021e, 0x2222 }, /* R542 (0x21e) - Mic Bias Ctrl 6 */
 +	{ 0x0000027e, 0x0000 }, /* R638 (0x27e) - EDRE HP stereo control */
 +	{ 0x00000293, 0x0080 }, /* R659 (0x293) - Accessory Detect Mode 1 */
++	{ 0x00000299, 0x0000 }, /* R665 (0x299) - Headphone Detect 0 */
 +	{ 0x0000029b, 0x0000 }, /* R667 (0x29b) - Headphone Detect 1 */
-+	{ 0x000002a3, 0x1102 }, /* R675 (0x2a3) - Mic Detect Control 1 */
-+	{ 0x000002a4, 0x009f }, /* R676 (0x2a4) - Mic Detect Control 2 */
-+	{ 0x000002a6, 0x3d3d }, /* R678 (0x2a6) - Mic Detect Level 1 */
-+	{ 0x000002a7, 0x3d3d }, /* R679 (0x2a7) - Mic Detect Level 2 */
-+	{ 0x000002a8, 0x333d }, /* R680 (0x2a8) - Mic Detect Level 3 */
-+	{ 0x000002a9, 0x202d }, /* R681 (0x2a9) - Mic Detect Level 4 */
-+	{ 0x000002c6, 0x0010 }, /* R710 (0x2c5) - Mic Clamp control */
++	{ 0x000002a2, 0x0010 }, /* R674 (0x2a2) - Mic Detect 1 Control 0 */
++	{ 0x000002a3, 0x1102 }, /* R675 (0x2a3) - Mic Detect 1 Control 1 */
++	{ 0x000002a4, 0x009f }, /* R676 (0x2a4) - Mic Detect 1 Control 2 */
++	{ 0x000002a6, 0x3d3d }, /* R678 (0x2a6) - Mic Detect 1 Level 1 */
++	{ 0x000002a7, 0x3d3d }, /* R679 (0x2a7) - Mic Detect 1 Level 2 */
++	{ 0x000002a8, 0x333d }, /* R680 (0x2a8) - Mic Detect 1 Level 3 */
++	{ 0x000002a9, 0x202d }, /* R681 (0x2a9) - Mic Detect 1 Level 4 */
++	{ 0x000002b2, 0x0010 }, /* R690 (0x2b2) - Mic Detect 2 Control 0 */
++	{ 0x000002b3, 0x1102 }, /* R691 (0x2b3) - Mic Detect 2 Control 1 */
++	{ 0x000002b4, 0x009f }, /* R692 (0x2b4) - Mic Detect 2 Control 2 */
++	{ 0x000002b6, 0x3d3d }, /* R694 (0x2b6) - Mic Detect 2 Level 1 */
++	{ 0x000002b7, 0x3d3d }, /* R695 (0x2b7) - Mic Detect 2 Level 2 */
++	{ 0x000002b8, 0x333d }, /* R696 (0x2b8) - Mic Detect 2 Level 3 */
++	{ 0x000002b9, 0x202d }, /* R697 (0x2b9) - Mic Detect 2 Level 4 */
++	{ 0x000002c6, 0x0010 }, /* R710 (0x2c6) - Mic Clamp control */
 +	{ 0x000002c8, 0x0000 }, /* R712 (0x2c8) - GP switch 1 */
 +	{ 0x000002d3, 0x0000 }, /* R723 (0x2d3) - Jack detect analogue */
 +	{ 0x00000300, 0x0000 }, /* R768 (0x300) - Input Enables */
-+	{ 0x00000308, 0x0000 }, /* R776 (0x308) - Input Rate */
++	{ 0x00000308, 0x0400 }, /* R776 (0x308) - Input Rate */
 +	{ 0x00000309, 0x0022 }, /* R777 (0x309) - Input Volume Ramp */
-+	{ 0x0000030c, 0x0002 }, /* R780 (0x30c) - HPF Control */
++	{ 0x0000030c, 0x0002 }, /* R780 (0x30C) - HPF Control */
 +	{ 0x00000310, 0x0080 }, /* R784 (0x310) - IN1L Control */
 +	{ 0x00000311, 0x0180 }, /* R785 (0x311) - ADC Digital Volume 1L */
 +	{ 0x00000312, 0x0500 }, /* R786 (0x312) - DMIC1L Control */
++	{ 0x00000313, 0x0000 }, /* R787 (0x313) - IN1L Rate Control */
 +	{ 0x00000314, 0x0080 }, /* R788 (0x314) - IN1R Control */
 +	{ 0x00000315, 0x0180 }, /* R789 (0x315) - ADC Digital Volume 1R */
 +	{ 0x00000316, 0x0000 }, /* R790 (0x316) - DMIC1R Control */
++	{ 0x00000317, 0x0000 }, /* R791 (0x317) - IN1R Rate Control */
 +	{ 0x00000318, 0x0080 }, /* R792 (0x318) - IN2L Control */
 +	{ 0x00000319, 0x0180 }, /* R793 (0x319) - ADC Digital Volume 2L */
 +	{ 0x0000031a, 0x0500 }, /* R794 (0x31a) - DMIC2L Control */
++	{ 0x0000031b, 0x0000 }, /* R795 (0x31b) - IN2L Rate Control */
 +	{ 0x0000031c, 0x0080 }, /* R796 (0x31c) - IN2R Control */
 +	{ 0x0000031d, 0x0180 }, /* R797 (0x31d) - ADC Digital Volume 2R */
 +	{ 0x0000031e, 0x0000 }, /* R798 (0x31e) - DMIC2R Control */
++	{ 0x0000031f, 0x0000 }, /* R799 (0x31f) - IN2R Rate Control */
++	{ 0x00000320, 0x0000 }, /* R800 (0x320) - IN3L Control */
++	{ 0x00000321, 0x0180 }, /* R801 (0x321) - ADC Digital Volume 3L */
++	{ 0x00000322, 0x0500 }, /* R802 (0x322) - DMIC3L Control */
++	{ 0x00000323, 0x0000 }, /* R803 (0x323) - IN3L Rate Control */
++	{ 0x00000324, 0x0000 }, /* R804 (0x324) - IN3R Control */
++	{ 0x00000325, 0x0180 }, /* R805 (0x325) - ADC Digital Volume 3R */
++	{ 0x00000326, 0x0000 }, /* R806 (0x326) - DMIC3R Control */
++	{ 0x00000327, 0x0000 }, /* R807 (0x327) - IN3R Rate Control */
++	{ 0x00000328, 0x0000 }, /* R808 (0x328) - IN4 Control */
++	{ 0x00000329, 0x0180 }, /* R809 (0x329) - ADC Digital Volume 4L */
++	{ 0x0000032a, 0x0500 }, /* R810 (0x32a) - DMIC4L Control */
++	{ 0x0000032b, 0x0000 }, /* R811 (0x32b) - IN4L Rate Control */
++	{ 0x0000032c, 0x0000 }, /* R812 (0x32c) - IN4R Control */
++	{ 0x0000032d, 0x0180 }, /* R813 (0x32d) - ADC Digital Volume 4R */
++	{ 0x0000032e, 0x0000 }, /* R814 (0x32e) - DMIC4R Control */
++	{ 0x0000032f, 0x0000 }, /* R815 (0x32f) - IN4R Rate Control */
++	{ 0x00000330, 0x0000 }, /* R816 (0x330) - IN5L Control */
++	{ 0x00000331, 0x0180 }, /* R817 (0x331) - ADC Digital Volume 5L */
++	{ 0x00000332, 0x0500 }, /* R818 (0x332) - DMIC5L Control */
++	{ 0x00000333, 0x0000 }, /* R819 (0x333) - IN5L Rate Control */
++	{ 0x00000334, 0x0000 }, /* R820 (0x334) - IN5R Control */
++	{ 0x00000335, 0x0180 }, /* R821 (0x335) - ADC Digital Volume 5R */
++	{ 0x00000336, 0x0000 }, /* R822 (0x336) - DMIC5R Control */
++	{ 0x00000337, 0x0000 }, /* R823 (0x337) - IN5R Rate Control */
 +	{ 0x00000400, 0x0000 }, /* R1024 (0x400) - Output Enables 1 */
 +	{ 0x00000408, 0x0000 }, /* R1032 (0x408) - Output Rate 1 */
 +	{ 0x00000409, 0x0022 }, /* R1033 (0x409) - Output Volume Ramp */
 +	{ 0x00000410, 0x0080 }, /* R1040 (0x410) - Output Path Config 1L */
 +	{ 0x00000411, 0x0180 }, /* R1041 (0x411) - DAC Digital Volume 1L */
++	{ 0x00000412, 0x0000 }, /* R1042 (0x412) - Output Path Config 1 */
 +	{ 0x00000413, 0x0001 }, /* R1043 (0x413) - Noise Gate Select 1L */
 +	{ 0x00000414, 0x0080 }, /* R1044 (0x414) - Output Path Config 1R */
 +	{ 0x00000415, 0x0180 }, /* R1045 (0x415) - DAC Digital Volume 1R */
 +	{ 0x00000417, 0x0002 }, /* R1047 (0x417) - Noise Gate Select 1R */
-+	{ 0x00000428, 0x0000 }, /* R1064 (0x428) - Output Path Config 4L */
-+	{ 0x00000429, 0x0180 }, /* R1065 (0x429) - DAC Digital Volume 4L */
-+	{ 0x0000042b, 0x0040 }, /* R1067 (0x42b) - Noise Gate Select 4L */
++	{ 0x00000418, 0x0080 }, /* R1048 (0x418) - Output Path Config 2L */
++	{ 0x00000419, 0x0180 }, /* R1049 (0x419) - DAC Digital Volume 2L */
++	{ 0x0000041a, 0x0002 }, /* R1050 (0x41a) - Output Path Config 2 */
++	{ 0x0000041b, 0x0004 }, /* R1051 (0x41b) - Noise Gate Select 2L */
++	{ 0x0000041c, 0x0080 }, /* R1052 (0x41c) - Output Path Config 2R */
++	{ 0x0000041d, 0x0180 }, /* R1053 (0x41d) - DAC Digital Volume 2R */
++	{ 0x0000041f, 0x0008 }, /* R1055 (0x41f) - Noise Gate Select 2R */
++	{ 0x00000420, 0x0080 }, /* R1056 (0x420) - Output Path Config 3L */
++	{ 0x00000421, 0x0180 }, /* R1057 (0x421) - DAC Digital Volume 3L */
++	{ 0x00000423, 0x0010 }, /* R1059 (0x423) - Noise Gate Select 3L */
++	{ 0x00000424, 0x0080 }, /* R1060 (0x424) - Output Path Config 3R */
++	{ 0x00000425, 0x0180 }, /* R1061 (0x425) - DAC Digital Volume 3R */
++	{ 0x00000427, 0x0020 }, /* R1063 (0x427) - Noise Gate Select 3R */
 +	{ 0x00000430, 0x0000 }, /* R1072 (0x430) - Output Path Config 5L */
 +	{ 0x00000431, 0x0180 }, /* R1073 (0x431) - DAC Digital Volume 5L */
 +	{ 0x00000433, 0x0100 }, /* R1075 (0x433) - Noise Gate Select 5L */
 +	{ 0x00000434, 0x0000 }, /* R1076 (0x434) - Output Path Config 5R */
 +	{ 0x00000435, 0x0180 }, /* R1077 (0x435) - DAC Digital Volume 5R */
 +	{ 0x00000437, 0x0200 }, /* R1079 (0x437) - Noise Gate Select 5R */
-+	{ 0x00000440, 0x0003 }, /* R1088 (0x440) - DRE Enable */
-+	{ 0x00000448, 0x0a83 }, /* R1096 (0x448) - eDRE Enable */
-+	{ 0x0000044a, 0x0000 }, /* R1098 (0x44a) - eDRE Manual */
++	{ 0x00000440, 0x003f }, /* R1088 (0x440) - DRE Enable */
++	{ 0x00000448, 0x003f }, /* R1096 (0x448) - eDRE Enable */
 +	{ 0x00000450, 0x0000 }, /* R1104 (0x450) - DAC AEC Control 1 */
 +	{ 0x00000458, 0x0000 }, /* R1112 (0x458) - Noise Gate Control */
 +	{ 0x00000490, 0x0069 }, /* R1168 (0x490) - PDM SPK1 CTRL 1 */
 +	{ 0x00000491, 0x0000 }, /* R1169 (0x491) - PDM SPK1 CTRL 2 */
 +	{ 0x000004a0, 0x3080 }, /* R1184 (0x4a0) - HP1 Short Circuit Ctrl */
-+	{ 0x000004a8, 0x7120 }, /* R1192 (0x4a8) - HP Test Ctrl 5 */
-+	{ 0x000004a9, 0x7120 }, /* R1193 (0x4a9) - HP Test Ctrl 6 */
++	{ 0x000004a1, 0x3000 }, /* R1185 (0x4a1) - HP2 Short Circuit Ctrl */
++	{ 0x000004a2, 0x3000 }, /* R1186 (0x4a2) - HP3 Short Circuit Ctrl */
 +	{ 0x00000500, 0x000c }, /* R1280 (0x500) - AIF1 BCLK Ctrl */
 +	{ 0x00000501, 0x0000 }, /* R1281 (0x501) - AIF1 Tx Pin Ctrl */
 +	{ 0x00000502, 0x0000 }, /* R1282 (0x502) - AIF1 Rx Pin Ctrl */
@@ -283,12 +368,16 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000050c, 0x0003 }, /* R1292 (0x50c) - AIF1 Frame Ctrl 6 */
 +	{ 0x0000050d, 0x0004 }, /* R1293 (0x50d) - AIF1 Frame Ctrl 7 */
 +	{ 0x0000050e, 0x0005 }, /* R1294 (0x50e) - AIF1 Frame Ctrl 8 */
++	{ 0x0000050f, 0x0006 }, /* R1295 (0x50f) - AIF1 Frame Ctrl 9 */
++	{ 0x00000510, 0x0007 }, /* R1296 (0x510) - AIF1 Frame Ctrl 10 */
 +	{ 0x00000511, 0x0000 }, /* R1297 (0x511) - AIF1 Frame Ctrl 11 */
 +	{ 0x00000512, 0x0001 }, /* R1298 (0x512) - AIF1 Frame Ctrl 12 */
 +	{ 0x00000513, 0x0002 }, /* R1299 (0x513) - AIF1 Frame Ctrl 13 */
 +	{ 0x00000514, 0x0003 }, /* R1300 (0x514) - AIF1 Frame Ctrl 14 */
 +	{ 0x00000515, 0x0004 }, /* R1301 (0x515) - AIF1 Frame Ctrl 15 */
 +	{ 0x00000516, 0x0005 }, /* R1302 (0x516) - AIF1 Frame Ctrl 16 */
++	{ 0x00000517, 0x0006 }, /* R1303 (0x517) - AIF1 Frame Ctrl 17 */
++	{ 0x00000518, 0x0007 }, /* R1304 (0x518) - AIF1 Frame Ctrl 18 */
 +	{ 0x00000519, 0x0000 }, /* R1305 (0x519) - AIF1 Tx Enables */
 +	{ 0x0000051a, 0x0000 }, /* R1306 (0x51a) - AIF1 Rx Enables */
 +	{ 0x00000540, 0x000c }, /* R1344 (0x540) - AIF2 BCLK Ctrl */
@@ -301,8 +390,20 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000548, 0x1818 }, /* R1352 (0x548) - AIF2 Frame Ctrl 2 */
 +	{ 0x00000549, 0x0000 }, /* R1353 (0x549) - AIF2 Frame Ctrl 3 */
 +	{ 0x0000054a, 0x0001 }, /* R1354 (0x54a) - AIF2 Frame Ctrl 4 */
++	{ 0x0000054b, 0x0002 }, /* R1355 (0x54b) - AIF2 Frame Ctrl 5 */
++	{ 0x0000054c, 0x0003 }, /* R1356 (0x54c) - AIF2 Frame Ctrl 6 */
++	{ 0x0000054d, 0x0004 }, /* R1357 (0x54d) - AIF2 Frame Ctrl 7 */
++	{ 0x0000054e, 0x0005 }, /* R1358 (0x54e) - AIF2 Frame Ctrl 8 */
++	{ 0x0000054f, 0x0006 }, /* R1359 (0x54f) - AIF2 Frame Ctrl 9 */
++	{ 0x00000550, 0x0007 }, /* R1360 (0x550) - AIF2 Frame Ctrl 10 */
 +	{ 0x00000551, 0x0000 }, /* R1361 (0x551) - AIF2 Frame Ctrl 11 */
 +	{ 0x00000552, 0x0001 }, /* R1362 (0x552) - AIF2 Frame Ctrl 12 */
++	{ 0x00000553, 0x0002 }, /* R1363 (0x553) - AIF2 Frame Ctrl 13 */
++	{ 0x00000554, 0x0003 }, /* R1364 (0x554) - AIF2 Frame Ctrl 14 */
++	{ 0x00000555, 0x0004 }, /* R1365 (0x555) - AIF2 Frame Ctrl 15 */
++	{ 0x00000556, 0x0005 }, /* R1366 (0x556) - AIF2 Frame Ctrl 16 */
++	{ 0x00000557, 0x0006 }, /* R1367 (0x557) - AIF2 Frame Ctrl 17 */
++	{ 0x00000558, 0x0007 }, /* R1368 (0x558) - AIF2 Frame Ctrl 18 */
 +	{ 0x00000559, 0x0000 }, /* R1369 (0x559) - AIF2 Tx Enables */
 +	{ 0x0000055a, 0x0000 }, /* R1370 (0x55a) - AIF2 Rx Enables */
 +	{ 0x00000580, 0x000c }, /* R1408 (0x580) - AIF3 BCLK Ctrl */
@@ -319,16 +420,32 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000592, 0x0001 }, /* R1426 (0x592) - AIF3 Frame Ctrl 12 */
 +	{ 0x00000599, 0x0000 }, /* R1433 (0x599) - AIF3 Tx Enables */
 +	{ 0x0000059a, 0x0000 }, /* R1434 (0x59a) - AIF3 Rx Enables */
++	{ 0x000005a0, 0x000c }, /* R1440 (0x5a0) - AIF4 BCLK Ctrl */
++	{ 0x000005a1, 0x0000 }, /* R1441 (0x5a1) - AIF4 Tx Pin Ctrl */
++	{ 0x000005a2, 0x0000 }, /* R1442 (0x5a2) - AIF4 Rx Pin Ctrl */
++	{ 0x000005a3, 0x0000 }, /* R1443 (0x5a3) - AIF4 Rate Ctrl */
++	{ 0x000005a4, 0x0000 }, /* R1444 (0x5a4) - AIF4 Format */
++	{ 0x000005a6, 0x0040 }, /* R1446 (0x5a6) - AIF4 Rx BCLK Rate */
++	{ 0x000005a7, 0x1818 }, /* R1447 (0x5a7) - AIF4 Frame Ctrl 1 */
++	{ 0x000005a8, 0x1818 }, /* R1448 (0x5a8) - AIF4 Frame Ctrl 2 */
++	{ 0x000005a9, 0x0000 }, /* R1449 (0x5a9) - AIF4 Frame Ctrl 3 */
++	{ 0x000005aa, 0x0001 }, /* R1450 (0x5aa) - AIF4 Frame Ctrl 4 */
++	{ 0x000005b1, 0x0000 }, /* R1457 (0x5b1) - AIF4 Frame Ctrl 11 */
++	{ 0x000005b2, 0x0001 }, /* R1458 (0x5b2) - AIF4 Frame Ctrl 12 */
++	{ 0x000005b9, 0x0000 }, /* R1465 (0x5b9) - AIF4 Tx Enables */
++	{ 0x000005ba, 0x0000 }, /* R1466 (0x5ba) - AIF4 Rx Enables */
 +	{ 0x000005c2, 0x0000 }, /* R1474 (0x5c2) - SPD1 TX Control */
 +	{ 0x000005e3, 0x0000 }, /* R1507 (0x5e3) - SLIMbus Framer Ref Gear */
 +	{ 0x000005e5, 0x0000 }, /* R1509 (0x5e5) - SLIMbus Rates 1 */
 +	{ 0x000005e6, 0x0000 }, /* R1510 (0x5e6) - SLIMbus Rates 2 */
 +	{ 0x000005e7, 0x0000 }, /* R1511 (0x5e7) - SLIMbus Rates 3 */
++	{ 0x000005e8, 0x0000 }, /* R1512 (0x5e8) - SLIMbus Rates 4 */
 +	{ 0x000005e9, 0x0000 }, /* R1513 (0x5e9) - SLIMbus Rates 5 */
 +	{ 0x000005ea, 0x0000 }, /* R1514 (0x5ea) - SLIMbus Rates 6 */
 +	{ 0x000005eb, 0x0000 }, /* R1515 (0x5eb) - SLIMbus Rates 7 */
++	{ 0x000005ec, 0x0000 }, /* R1516 (0x5ec) - SLIMbus Rates 8 */
 +	{ 0x000005f5, 0x0000 }, /* R1525 (0x5f5) - SLIMbus RX Channel Enable */
-+	{ 0x000005f6, 0x0000 }, /* R1526 (0x5f6) - SLIMbus TX Channel Enable */
++	{ 0x000005f6, 0x0000 }, /* R1526 (0x5F6) - SLIMbus TX Channel Enable */
 +	{ 0x00000640, 0x0000 }, /* R1600 (0x640) - PWM1MIX Input 1 Source */
 +	{ 0x00000641, 0x0080 }, /* R1601 (0x641) - PWM1MIX Input 1 Volume */
 +	{ 0x00000642, 0x0000 }, /* R1602 (0x642) - PWM1MIX Input 2 Source */
@@ -361,14 +478,38 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000068d, 0x0080 }, /* R1673 (0x68d) - OUT1RMIX Input 3 Volume */
 +	{ 0x0000068e, 0x0000 }, /* R1674 (0x68e) - OUT1RMIX Input 4 Source */
 +	{ 0x0000068f, 0x0080 }, /* R1675 (0x68f) - OUT1RMIX Input 4 Volume */
-+	{ 0x000006b0, 0x0000 }, /* R1712 (0x6b0) - OUT4LMIX Input 1 Source */
-+	{ 0x000006b1, 0x0080 }, /* R1713 (0x6b1) - OUT4LMIX Input 1 Volume */
-+	{ 0x000006b2, 0x0000 }, /* R1714 (0x6b2) - OUT4LMIX Input 2 Source */
-+	{ 0x000006b3, 0x0080 }, /* R1715 (0x6b3) - OUT4LMIX Input 2 Volume */
-+	{ 0x000006b4, 0x0000 }, /* R1716 (0x6b4) - OUT4LMIX Input 3 Source */
-+	{ 0x000006b5, 0x0080 }, /* R1717 (0x6b5) - OUT4LMIX Input 3 Volume */
-+	{ 0x000006b6, 0x0000 }, /* R1718 (0x6b6) - OUT4LMIX Input 4 Source */
-+	{ 0x000006b7, 0x0080 }, /* R1719 (0x6b7) - OUT4LMIX Input 4 Volume */
++	{ 0x00000690, 0x0000 }, /* R1680 (0x690) - OUT2LMIX Input 1 Source */
++	{ 0x00000691, 0x0080 }, /* R1681 (0x691) - OUT2LMIX Input 1 Volume */
++	{ 0x00000692, 0x0000 }, /* R1682 (0x692) - OUT2LMIX Input 2 Source */
++	{ 0x00000693, 0x0080 }, /* R1683 (0x693) - OUT2LMIX Input 2 Volume */
++	{ 0x00000694, 0x0000 }, /* R1684 (0x694) - OUT2LMIX Input 3 Source */
++	{ 0x00000695, 0x0080 }, /* R1685 (0x695) - OUT2LMIX Input 3 Volume */
++	{ 0x00000696, 0x0000 }, /* R1686 (0x696) - OUT2LMIX Input 4 Source */
++	{ 0x00000697, 0x0080 }, /* R1687 (0x697) - OUT2LMIX Input 4 Volume */
++	{ 0x00000698, 0x0000 }, /* R1688 (0x698) - OUT2RMIX Input 1 Source */
++	{ 0x00000699, 0x0080 }, /* R1689 (0x699) - OUT2RMIX Input 1 Volume */
++	{ 0x0000069a, 0x0000 }, /* R1690 (0x69a) - OUT2RMIX Input 2 Source */
++	{ 0x0000069b, 0x0080 }, /* R1691 (0x69b) - OUT2RMIX Input 2 Volume */
++	{ 0x0000069c, 0x0000 }, /* R1692 (0x69c) - OUT2RMIX Input 3 Source */
++	{ 0x0000069d, 0x0080 }, /* R1693 (0x69d) - OUT2RMIX Input 3 Volume */
++	{ 0x0000069e, 0x0000 }, /* R1694 (0x69e) - OUT2RMIX Input 4 Source */
++	{ 0x0000069f, 0x0080 }, /* R1695 (0x69f) - OUT2RMIX Input 4 Volume */
++	{ 0x000006a0, 0x0000 }, /* R1696 (0x6a0) - OUT3LMIX Input 1 Source */
++	{ 0x000006a1, 0x0080 }, /* R1697 (0x6a1) - OUT3LMIX Input 1 Volume */
++	{ 0x000006a2, 0x0000 }, /* R1698 (0x6a2) - OUT3LMIX Input 2 Source */
++	{ 0x000006a3, 0x0080 }, /* R1699 (0x6a3) - OUT3LMIX Input 2 Volume */
++	{ 0x000006a4, 0x0000 }, /* R1700 (0x6a4) - OUT3LMIX Input 3 Source */
++	{ 0x000006a5, 0x0080 }, /* R1701 (0x6a5) - OUT3LMIX Input 3 Volume */
++	{ 0x000006a6, 0x0000 }, /* R1702 (0x6a6) - OUT3LMIX Input 4 Source */
++	{ 0x000006a7, 0x0080 }, /* R1703 (0x6a7) - OUT3LMIX Input 4 Volume */
++	{ 0x000006a8, 0x0000 }, /* R1704 (0x6a8) - OUT3RMIX Input 1 Source */
++	{ 0x000006a9, 0x0080 }, /* R1705 (0x6a9) - OUT3RMIX Input 1 Volume */
++	{ 0x000006aa, 0x0000 }, /* R1706 (0x6aa) - OUT3RMIX Input 2 Source */
++	{ 0x000006ab, 0x0080 }, /* R1707 (0x6ab) - OUT3RMIX Input 2 Volume */
++	{ 0x000006ac, 0x0000 }, /* R1708 (0x6ac) - OUT3RMIX Input 3 Source */
++	{ 0x000006ad, 0x0080 }, /* R1709 (0x6ad) - OUT3RMIX Input 3 Volume */
++	{ 0x000006ae, 0x0000 }, /* R1710 (0x6ae) - OUT3RMIX Input 4 Source */
++	{ 0x000006af, 0x0080 }, /* R1711 (0x6af) - OUT3RMIX Input 4 Volume */
 +	{ 0x000006c0, 0x0000 }, /* R1728 (0x6c0) - OUT5LMIX Input 1 Source */
 +	{ 0x000006c1, 0x0080 }, /* R1729 (0x6c1) - OUT5LMIX Input 1 Volume */
 +	{ 0x000006c2, 0x0000 }, /* R1730 (0x6c2) - OUT5LMIX Input 2 Source */
@@ -433,6 +574,22 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000072d, 0x0080 }, /* R1837 (0x72d) - AIF1TX6MIX Input 3 Volume */
 +	{ 0x0000072e, 0x0000 }, /* R1838 (0x72e) - AIF1TX6MIX Input 4 Source */
 +	{ 0x0000072f, 0x0080 }, /* R1839 (0x72f) - AIF1TX6MIX Input 4 Volume */
++	{ 0x00000730, 0x0000 }, /* R1840 (0x730) - AIF1TX7MIX Input 1 Source */
++	{ 0x00000731, 0x0080 }, /* R1841 (0x731) - AIF1TX7MIX Input 1 Volume */
++	{ 0x00000732, 0x0000 }, /* R1842 (0x732) - AIF1TX7MIX Input 2 Source */
++	{ 0x00000733, 0x0080 }, /* R1843 (0x733) - AIF1TX7MIX Input 2 Volume */
++	{ 0x00000734, 0x0000 }, /* R1844 (0x734) - AIF1TX7MIX Input 3 Source */
++	{ 0x00000735, 0x0080 }, /* R1845 (0x735) - AIF1TX7MIX Input 3 Volume */
++	{ 0x00000736, 0x0000 }, /* R1846 (0x736) - AIF1TX7MIX Input 4 Source */
++	{ 0x00000737, 0x0080 }, /* R1847 (0x737) - AIF1TX7MIX Input 4 Volume */
++	{ 0x00000738, 0x0000 }, /* R1848 (0x738) - AIF1TX8MIX Input 1 Source */
++	{ 0x00000739, 0x0080 }, /* R1849 (0x739) - AIF1TX8MIX Input 1 Volume */
++	{ 0x0000073a, 0x0000 }, /* R1850 (0x73a) - AIF1TX8MIX Input 2 Source */
++	{ 0x0000073b, 0x0080 }, /* R1851 (0x73b) - AIF1TX8MIX Input 2 Volume */
++	{ 0x0000073c, 0x0000 }, /* R1852 (0x73c) - AIF1TX8MIX Input 3 Source */
++	{ 0x0000073d, 0x0080 }, /* R1853 (0x73d) - AIF1TX8MIX Input 3 Volume */
++	{ 0x0000073e, 0x0000 }, /* R1854 (0x73e) - AIF1TX8MIX Input 4 Source */
++	{ 0x0000073f, 0x0080 }, /* R1855 (0x73f) - AIF1TX8MIX Input 4 Volume */
 +	{ 0x00000740, 0x0000 }, /* R1856 (0x740) - AIF2TX1MIX Input 1 Source */
 +	{ 0x00000741, 0x0080 }, /* R1857 (0x741) - AIF2TX1MIX Input 1 Volume */
 +	{ 0x00000742, 0x0000 }, /* R1858 (0x742) - AIF2TX1MIX Input 2 Source */
@@ -449,6 +606,54 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000074d, 0x0080 }, /* R1869 (0x74d) - AIF2TX2MIX Input 3 Volume */
 +	{ 0x0000074e, 0x0000 }, /* R1870 (0x74e) - AIF2TX2MIX Input 4 Source */
 +	{ 0x0000074f, 0x0080 }, /* R1871 (0x74f) - AIF2TX2MIX Input 4 Volume */
++	{ 0x00000750, 0x0000 }, /* R1872 (0x750) - AIF2TX3MIX Input 1 Source */
++	{ 0x00000751, 0x0080 }, /* R1873 (0x751) - AIF2TX3MIX Input 1 Volume */
++	{ 0x00000752, 0x0000 }, /* R1874 (0x752) - AIF2TX3MIX Input 2 Source */
++	{ 0x00000753, 0x0080 }, /* R1875 (0x753) - AIF2TX3MIX Input 2 Volume */
++	{ 0x00000754, 0x0000 }, /* R1876 (0x754) - AIF2TX3MIX Input 3 Source */
++	{ 0x00000755, 0x0080 }, /* R1877 (0x755) - AIF2TX3MIX Input 3 Volume */
++	{ 0x00000756, 0x0000 }, /* R1878 (0x756) - AIF2TX3MIX Input 4 Source */
++	{ 0x00000757, 0x0080 }, /* R1879 (0x757) - AIF2TX3MIX Input 4 Volume */
++	{ 0x00000758, 0x0000 }, /* R1880 (0x758) - AIF2TX4MIX Input 1 Source */
++	{ 0x00000759, 0x0080 }, /* R1881 (0x759) - AIF2TX4MIX Input 1 Volume */
++	{ 0x0000075a, 0x0000 }, /* R1882 (0x75a) - AIF2TX4MIX Input 2 Source */
++	{ 0x0000075b, 0x0080 }, /* R1883 (0x75b) - AIF2TX4MIX Input 2 Volume */
++	{ 0x0000075c, 0x0000 }, /* R1884 (0x75c) - AIF2TX4MIX Input 3 Source */
++	{ 0x0000075d, 0x0080 }, /* R1885 (0x75d) - AIF2TX4MIX Input 3 Volume */
++	{ 0x0000075e, 0x0000 }, /* R1886 (0x75e) - AIF2TX4MIX Input 4 Source */
++	{ 0x0000075f, 0x0080 }, /* R1887 (0x75f) - AIF2TX4MIX Input 4 Volume */
++	{ 0x00000760, 0x0000 }, /* R1888 (0x760) - AIF2TX5MIX Input 1 Source */
++	{ 0x00000761, 0x0080 }, /* R1889 (0x761) - AIF2TX5MIX Input 1 Volume */
++	{ 0x00000762, 0x0000 }, /* R1890 (0x762) - AIF2TX5MIX Input 2 Source */
++	{ 0x00000763, 0x0080 }, /* R1891 (0x763) - AIF2TX5MIX Input 2 Volume */
++	{ 0x00000764, 0x0000 }, /* R1892 (0x764) - AIF2TX5MIX Input 3 Source */
++	{ 0x00000765, 0x0080 }, /* R1893 (0x765) - AIF2TX5MIX Input 3 Volume */
++	{ 0x00000766, 0x0000 }, /* R1894 (0x766) - AIF2TX5MIX Input 4 Source */
++	{ 0x00000767, 0x0080 }, /* R1895 (0x767) - AIF2TX5MIX Input 4 Volume */
++	{ 0x00000768, 0x0000 }, /* R1896 (0x768) - AIF2TX6MIX Input 1 Source */
++	{ 0x00000769, 0x0080 }, /* R1897 (0x769) - AIF2TX6MIX Input 1 Volume */
++	{ 0x0000076a, 0x0000 }, /* R1898 (0x76a) - AIF2TX6MIX Input 2 Source */
++	{ 0x0000076b, 0x0080 }, /* R1899 (0x76b) - AIF2TX6MIX Input 2 Volume */
++	{ 0x0000076c, 0x0000 }, /* R1900 (0x76c) - AIF2TX6MIX Input 3 Source */
++	{ 0x0000076d, 0x0080 }, /* R1901 (0x76d) - AIF2TX6MIX Input 3 Volume */
++	{ 0x0000076e, 0x0000 }, /* R1902 (0x76e) - AIF2TX6MIX Input 4 Source */
++	{ 0x0000076f, 0x0080 }, /* R1903 (0x76f) - AIF2TX6MIX Input 4 Volume */
++	{ 0x00000770, 0x0000 }, /* R1904 (0x770) - AIF2TX7MIX Input 1 Source */
++	{ 0x00000771, 0x0080 }, /* R1905 (0x771) - AIF2TX7MIX Input 1 Volume */
++	{ 0x00000772, 0x0000 }, /* R1906 (0x772) - AIF2TX7MIX Input 2 Source */
++	{ 0x00000773, 0x0080 }, /* R1907 (0x773) - AIF2TX7MIX Input 2 Volume */
++	{ 0x00000774, 0x0000 }, /* R1908 (0x774) - AIF2TX7MIX Input 3 Source */
++	{ 0x00000775, 0x0080 }, /* R1909 (0x775) - AIF2TX7MIX Input 3 Volume */
++	{ 0x00000776, 0x0000 }, /* R1910 (0x776) - AIF2TX7MIX Input 4 Source */
++	{ 0x00000777, 0x0080 }, /* R1911 (0x777) - AIF2TX7MIX Input 4 Volume */
++	{ 0x00000778, 0x0000 }, /* R1912 (0x778) - AIF2TX8MIX Input 1 Source */
++	{ 0x00000779, 0x0080 }, /* R1913 (0x779) - AIF2TX8MIX Input 1 Volume */
++	{ 0x0000077a, 0x0000 }, /* R1914 (0x77a) - AIF2TX8MIX Input 2 Source */
++	{ 0x0000077b, 0x0080 }, /* R1915 (0x77b) - AIF2TX8MIX Input 2 Volume */
++	{ 0x0000077c, 0x0000 }, /* R1916 (0x77c) - AIF2TX8MIX Input 3 Source */
++	{ 0x0000077d, 0x0080 }, /* R1917 (0x77d) - AIF2TX8MIX Input 3 Volume */
++	{ 0x0000077e, 0x0000 }, /* R1918 (0x77e) - AIF2TX8MIX Input 4 Source */
++	{ 0x0000077f, 0x0080 }, /* R1919 (0x77f) - AIF2TX8MIX Input 4 Volume */
 +	{ 0x00000780, 0x0000 }, /* R1920 (0x780) - AIF3TX1MIX Input 1 Source */
 +	{ 0x00000781, 0x0080 }, /* R1921 (0x781) - AIF3TX1MIX Input 1 Volume */
 +	{ 0x00000782, 0x0000 }, /* R1922 (0x782) - AIF3TX1MIX Input 2 Source */
@@ -465,6 +670,22 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000078d, 0x0080 }, /* R1933 (0x78d) - AIF3TX2MIX Input 3 Volume */
 +	{ 0x0000078e, 0x0000 }, /* R1934 (0x78e) - AIF3TX2MIX Input 4 Source */
 +	{ 0x0000078f, 0x0080 }, /* R1935 (0x78f) - AIF3TX2MIX Input 4 Volume */
++	{ 0x000007a0, 0x0000 }, /* R1952 (0x7a0) - AIF4TX1MIX Input 1 Source */
++	{ 0x000007a1, 0x0080 }, /* R1953 (0x7a1) - AIF4TX1MIX Input 1 Volume */
++	{ 0x000007a2, 0x0000 }, /* R1954 (0x7a2) - AIF4TX1MIX Input 2 Source */
++	{ 0x000007a3, 0x0080 }, /* R1955 (0x7a3) - AIF4TX1MIX Input 2 Volume */
++	{ 0x000007a4, 0x0000 }, /* R1956 (0x7a4) - AIF4TX1MIX Input 3 Source */
++	{ 0x000007a5, 0x0080 }, /* R1957 (0x7a5) - AIF4TX1MIX Input 3 Volume */
++	{ 0x000007a6, 0x0000 }, /* R1958 (0x7a6) - AIF4TX1MIX Input 4 Source */
++	{ 0x000007a7, 0x0080 }, /* R1959 (0x7a7) - AIF4TX1MIX Input 4 Volume */
++	{ 0x000007a8, 0x0000 }, /* R1960 (0x7a8) - AIF4TX2MIX Input 1 Source */
++	{ 0x000007a9, 0x0080 }, /* R1961 (0x7a9) - AIF4TX2MIX Input 1 Volume */
++	{ 0x000007aa, 0x0000 }, /* R1962 (0x7aa) - AIF4TX2MIX Input 2 Source */
++	{ 0x000007ab, 0x0080 }, /* R1963 (0x7ab) - AIF4TX2MIX Input 2 Volume */
++	{ 0x000007ac, 0x0000 }, /* R1964 (0x7ac) - AIF4TX2MIX Input 3 Source */
++	{ 0x000007ad, 0x0080 }, /* R1965 (0x7ad) - AIF4TX2MIX Input 3 Volume */
++	{ 0x000007ae, 0x0000 }, /* R1966 (0x7ae) - AIF4TX2MIX Input 4 Source */
++	{ 0x000007af, 0x0080 }, /* R1967 (0x7af) - AIF4TX2MIX Input 4 Volume */
 +	{ 0x000007c0, 0x0000 }, /* R1984 (0x7c0) - SLIMTX1MIX Input 1 Source */
 +	{ 0x000007c1, 0x0080 }, /* R1985 (0x7c1) - SLIMTX1MIX Input 1 Volume */
 +	{ 0x000007c2, 0x0000 }, /* R1986 (0x7c2) - SLIMTX1MIX Input 2 Source */
@@ -513,10 +734,26 @@ index 000000000000..604c9dd14df5
 +	{ 0x000007ed, 0x0080 }, /* R2029 (0x7ed) - SLIMTX6MIX Input 3 Volume */
 +	{ 0x000007ee, 0x0000 }, /* R2030 (0x7ee) - SLIMTX6MIX Input 4 Source */
 +	{ 0x000007ef, 0x0080 }, /* R2031 (0x7ef) - SLIMTX6MIX Input 4 Volume */
-+	{ 0x00000800, 0x0000 }, /* R2048 (0x800) - SPDIF1TX1MIX Input 1 Source*/
-+	{ 0x00000801, 0x0080 }, /* R2049 (0x801) - SPDIF1TX1MIX Input 1 Volume*/
-+	{ 0x00000808, 0x0000 }, /* R2056 (0x808) - SPDIF1TX2MIX Input 1 Source*/
-+	{ 0x00000809, 0x0080 }, /* R2057 (0x809) - SPDIF1TX2MIX Input 1 Volume*/
++	{ 0x000007f0, 0x0000 }, /* R2032 (0x7f0) - SLIMTX7MIX Input 1 Source */
++	{ 0x000007f1, 0x0080 }, /* R2033 (0x7f1) - SLIMTX7MIX Input 1 Volume */
++	{ 0x000007f2, 0x0000 }, /* R2034 (0x7f2) - SLIMTX7MIX Input 2 Source */
++	{ 0x000007f3, 0x0080 }, /* R2035 (0x7f3) - SLIMTX7MIX Input 2 Volume */
++	{ 0x000007f4, 0x0000 }, /* R2036 (0x7f4) - SLIMTX7MIX Input 3 Source */
++	{ 0x000007f5, 0x0080 }, /* R2037 (0x7f5) - SLIMTX7MIX Input 3 Volume */
++	{ 0x000007f6, 0x0000 }, /* R2038 (0x7f6) - SLIMTX7MIX Input 4 Source */
++	{ 0x000007f7, 0x0080 }, /* R2039 (0x7f7) - SLIMTX7MIX Input 4 Volume */
++	{ 0x000007f8, 0x0000 }, /* R2040 (0x7f8) - SLIMTX8MIX Input 1 Source */
++	{ 0x000007f9, 0x0080 }, /* R2041 (0x7f9) - SLIMTX8MIX Input 1 Volume */
++	{ 0x000007fa, 0x0000 }, /* R2042 (0x7fa) - SLIMTX8MIX Input 2 Source */
++	{ 0x000007fb, 0x0080 }, /* R2043 (0x7fb) - SLIMTX8MIX Input 2 Volume */
++	{ 0x000007fc, 0x0000 }, /* R2044 (0x7fc) - SLIMTX8MIX Input 3 Source */
++	{ 0x000007fd, 0x0080 }, /* R2045 (0x7fd) - SLIMTX8MIX Input 3 Volume */
++	{ 0x000007fe, 0x0000 }, /* R2046 (0x7fe) - SLIMTX8MIX Input 4 Source */
++	{ 0x000007ff, 0x0080 }, /* R2047 (0x7ff) - SLIMTX8MIX Input 4 Volume */
++	{ 0x00000800, 0x0000 }, /* R2048 (0x800) - SPDIF1TX1MIX Input 1 Source */
++	{ 0x00000801, 0x0080 }, /* R2049 (0x801) - SPDIF1TX1MIX Input 1 Volume */
++	{ 0x00000808, 0x0000 }, /* R2056 (0x808) - SPDIF1TX2MIX Input 1 Source */
++	{ 0x00000809, 0x0080 }, /* R2057 (0x809) - SPDIF1TX2MIX Input 1 Volume */
 +	{ 0x00000880, 0x0000 }, /* R2176 (0x880) - EQ1MIX Input 1 Source */
 +	{ 0x00000881, 0x0080 }, /* R2177 (0x881) - EQ1MIX Input 1 Volume */
 +	{ 0x00000882, 0x0000 }, /* R2178 (0x882) - EQ1MIX Input 2 Source */
@@ -679,6 +916,58 @@ index 000000000000..604c9dd14df5
 +	{ 0x000009e8, 0x0000 }, /* R2536 (0x9e8) - DSP3AUX4MIX Input 1 Source */
 +	{ 0x000009f0, 0x0000 }, /* R2544 (0x9f0) - DSP3AUX5MIX Input 1 Source */
 +	{ 0x000009f8, 0x0000 }, /* R2552 (0x9f8) - DSP3AUX6MIX Input 1 Source */
++	{ 0x00000a00, 0x0000 }, /* R2560 (0xa00) - DSP4LMIX Input 1 Source */
++	{ 0x00000a01, 0x0080 }, /* R2561 (0xa01) - DSP4LMIX Input 1 Volume */
++	{ 0x00000a02, 0x0000 }, /* R2562 (0xa02) - DSP4LMIX Input 2 Source */
++	{ 0x00000a03, 0x0080 }, /* R2563 (0xa03) - DSP4LMIX Input 2 Volume */
++	{ 0x00000a04, 0x0000 }, /* R2564 (0xa04) - DSP4LMIX Input 3 Source */
++	{ 0x00000a05, 0x0080 }, /* R2565 (0xa05) - DSP4LMIX Input 3 Volume */
++	{ 0x00000a06, 0x0000 }, /* R2566 (0xa06) - DSP4LMIX Input 4 Source */
++	{ 0x00000a07, 0x0080 }, /* R2567 (0xa07) - DSP4LMIX Input 4 Volume */
++	{ 0x00000a08, 0x0000 }, /* R2568 (0xa08) - DSP4RMIX Input 1 Source */
++	{ 0x00000a09, 0x0080 }, /* R2569 (0xa09) - DSP4RMIX Input 1 Volume */
++	{ 0x00000a0a, 0x0000 }, /* R2570 (0xa0a) - DSP4RMIX Input 2 Source */
++	{ 0x00000a0b, 0x0080 }, /* R2571 (0xa0b) - DSP4RMIX Input 2 Volume */
++	{ 0x00000a0c, 0x0000 }, /* R2572 (0xa0c) - DSP4RMIX Input 3 Source */
++	{ 0x00000a0d, 0x0080 }, /* R2573 (0xa0d) - DSP4RMIX Input 3 Volume */
++	{ 0x00000a0e, 0x0000 }, /* R2574 (0xa0e) - DSP4RMIX Input 4 Source */
++	{ 0x00000a0f, 0x0080 }, /* R2575 (0xa0f) - DSP4RMIX Input 4 Volume */
++	{ 0x00000a10, 0x0000 }, /* R2576 (0xa10) - DSP4AUX1MIX Input 1 Source */
++	{ 0x00000a18, 0x0000 }, /* R2584 (0xa18) - DSP4AUX2MIX Input 1 Source */
++	{ 0x00000a20, 0x0000 }, /* R2592 (0xa20) - DSP4AUX3MIX Input 1 Source */
++	{ 0x00000a28, 0x0000 }, /* R2600 (0xa28) - DSP4AUX4MIX Input 1 Source */
++	{ 0x00000a30, 0x0000 }, /* R2608 (0xa30) - DSP4AUX5MIX Input 1 Source */
++	{ 0x00000a38, 0x0000 }, /* R2616 (0xa38) - DSP4AUX6MIX Input 1 Source */
++	{ 0x00000a40, 0x0000 }, /* R2624 (0xa40) - DSP5LMIX Input 1 Source */
++	{ 0x00000a41, 0x0080 }, /* R2625 (0xa41) - DSP5LMIX Input 1 Volume */
++	{ 0x00000a42, 0x0000 }, /* R2626 (0xa42) - DSP5LMIX Input 2 Source */
++	{ 0x00000a43, 0x0080 }, /* R2627 (0xa43) - DSP5LMIX Input 2 Volume */
++	{ 0x00000a44, 0x0000 }, /* R2628 (0xa44) - DSP5LMIX Input 3 Source */
++	{ 0x00000a45, 0x0080 }, /* R2629 (0xa45) - DSP5LMIX Input 3 Volume */
++	{ 0x00000a46, 0x0000 }, /* R2630 (0xa46) - DSP5LMIX Input 4 Source */
++	{ 0x00000a47, 0x0080 }, /* R2631 (0xa47) - DSP5LMIX Input 4 Volume */
++	{ 0x00000a48, 0x0000 }, /* R2632 (0xa48) - DSP5RMIX Input 1 Source */
++	{ 0x00000a49, 0x0080 }, /* R2633 (0xa49) - DSP5RMIX Input 1 Volume */
++	{ 0x00000a4a, 0x0000 }, /* R2634 (0xa4a) - DSP5RMIX Input 2 Source */
++	{ 0x00000a4b, 0x0080 }, /* R2635 (0xa4b) - DSP5RMIX Input 2 Volume */
++	{ 0x00000a4c, 0x0000 }, /* R2636 (0xa4c) - DSP5RMIX Input 3 Source */
++	{ 0x00000a4d, 0x0080 }, /* R2637 (0xa4d) - DSP5RMIX Input 3 Volume */
++	{ 0x00000a4e, 0x0000 }, /* R2638 (0xa4e) - DSP5RMIX Input 4 Source */
++	{ 0x00000a4f, 0x0080 }, /* R2639 (0xa4f) - DSP5RMIX Input 4 Volume */
++	{ 0x00000a50, 0x0000 }, /* R2640 (0xa50) - DSP5AUX1MIX Input 1 Source */
++	{ 0x00000a58, 0x0000 }, /* R2658 (0xa58) - DSP5AUX2MIX Input 1 Source */
++	{ 0x00000a60, 0x0000 }, /* R2656 (0xa60) - DSP5AUX3MIX Input 1 Source */
++	{ 0x00000a68, 0x0000 }, /* R2664 (0xa68) - DSP5AUX4MIX Input 1 Source */
++	{ 0x00000a70, 0x0000 }, /* R2672 (0xa70) - DSP5AUX5MIX Input 1 Source */
++	{ 0x00000a78, 0x0000 }, /* R2680 (0xa78) - DSP5AUX6MIX Input 1 Source */
++	{ 0x00000a80, 0x0000 }, /* R2688 (0xa80) - ASRC1_1LMIX Input 1 Source */
++	{ 0x00000a88, 0x0000 }, /* R2696 (0xa88) - ASRC1_1RMIX Input 1 Source */
++	{ 0x00000a90, 0x0000 }, /* R2704 (0xa90) - ASRC1_2LMIX Input 1 Source */
++	{ 0x00000a98, 0x0000 }, /* R2712 (0xa98) - ASRC1_2RMIX Input 1 Source */
++	{ 0x00000aa0, 0x0000 }, /* R2720 (0xaa0) - ASRC2_1LMIX Input 1 Source */
++	{ 0x00000aa8, 0x0000 }, /* R2728 (0xaa8) - ASRC2_1RMIX Input 1 Source */
++	{ 0x00000ab0, 0x0000 }, /* R2736 (0xab0) - ASRC2_2LMIX Input 1 Source */
++	{ 0x00000ab8, 0x0000 }, /* R2744 (0xab8) - ASRC2_2RMIX Input 1 Source */
 +	{ 0x00000b00, 0x0000 }, /* R2816 (0xb00) - ISRC1DEC1MIX Input 1 Source*/
 +	{ 0x00000b08, 0x0000 }, /* R2824 (0xb08) - ISRC1DEC2MIX Input 1 Source*/
 +	{ 0x00000b10, 0x0000 }, /* R2832 (0xb10) - ISRC1DEC3MIX Input 1 Source*/
@@ -695,7 +984,67 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000b68, 0x0000 }, /* R2920 (0xb68) - ISRC2INT2MIX Input 1 Source*/
 +	{ 0x00000b70, 0x0000 }, /* R2928 (0xb70) - ISRC2INT3MIX Input 1 Source*/
 +	{ 0x00000b78, 0x0000 }, /* R2936 (0xb78) - ISRC2INT4MIX Input 1 Source*/
-+	{ 0x00000e00, 0x0000 }, /* R3584 (0xe00) - FX Ctrl1 */
++	{ 0x00000b80, 0x0000 }, /* R2944 (0xb80) - ISRC3DEC1MIX Input 1 Source*/
++	{ 0x00000b88, 0x0000 }, /* R2952 (0xb88) - ISRC3DEC2MIX Input 1 Source*/
++	{ 0x00000ba0, 0x0000 }, /* R2976 (0xb80) - ISRC3INT1MIX Input 1 Source*/
++	{ 0x00000ba8, 0x0000 }, /* R2984 (0xb88) - ISRC3INT2MIX Input 1 Source*/
++	{ 0x00000bc0, 0x0000 }, /* R3008 (0xbc0) - ISRC4DEC1MIX Input 1 Source */
++	{ 0x00000bc8, 0x0000 }, /* R3016 (0xbc8) - ISRC4DEC2MIX Input 1 Source */
++	{ 0x00000be0, 0x0000 }, /* R3040 (0xbe0) - ISRC4INT1MIX Input 1 Source */
++	{ 0x00000be8, 0x0000 }, /* R3048 (0xbe8) - ISRC4INT2MIX Input 1 Source */
++	{ 0x00000c00, 0x0000 }, /* R3072 (0xc00) - DSP6LMIX Input 1 Source */
++	{ 0x00000c01, 0x0080 }, /* R3073 (0xc01) - DSP6LMIX Input 1 Volume */
++	{ 0x00000c02, 0x0000 }, /* R3074 (0xc02) - DSP6LMIX Input 2 Source */
++	{ 0x00000c03, 0x0080 }, /* R3075 (0xc03) - DSP6LMIX Input 2 Volume */
++	{ 0x00000c04, 0x0000 }, /* R3076 (0xc04) - DSP6LMIX Input 3 Source */
++	{ 0x00000c05, 0x0080 }, /* R3077 (0xc05) - DSP6LMIX Input 3 Volume */
++	{ 0x00000c06, 0x0000 }, /* R3078 (0xc06) - DSP6LMIX Input 4 Source */
++	{ 0x00000c07, 0x0080 }, /* R3079 (0xc07) - DSP6LMIX Input 4 Volume */
++	{ 0x00000c08, 0x0000 }, /* R3080 (0xc08) - DSP6RMIX Input 1 Source */
++	{ 0x00000c09, 0x0080 }, /* R3081 (0xc09) - DSP6RMIX Input 1 Volume */
++	{ 0x00000c0a, 0x0000 }, /* R3082 (0xc0a) - DSP6RMIX Input 2 Source */
++	{ 0x00000c0b, 0x0080 }, /* R3083 (0xc0b) - DSP6RMIX Input 2 Volume */
++	{ 0x00000c0c, 0x0000 }, /* R3084 (0xc0c) - DSP6RMIX Input 3 Source */
++	{ 0x00000c0d, 0x0080 }, /* R3085 (0xc0d) - DSP6RMIX Input 3 Volume */
++	{ 0x00000c0e, 0x0000 }, /* R3086 (0xc0e) - DSP6RMIX Input 4 Source */
++	{ 0x00000c0f, 0x0080 }, /* R3087 (0xc0f) - DSP6RMIX Input 4 Volume */
++	{ 0x00000c10, 0x0000 }, /* R3088 (0xc10) - DSP6AUX1MIX Input 1 Source */
++	{ 0x00000c18, 0x0000 }, /* R3088 (0xc18) - DSP6AUX2MIX Input 1 Source */
++	{ 0x00000c20, 0x0000 }, /* R3088 (0xc20) - DSP6AUX3MIX Input 1 Source */
++	{ 0x00000c28, 0x0000 }, /* R3088 (0xc28) - DSP6AUX4MIX Input 1 Source */
++	{ 0x00000c30, 0x0000 }, /* R3088 (0xc30) - DSP6AUX5MIX Input 1 Source */
++	{ 0x00000c38, 0x0000 }, /* R3088 (0xc38) - DSP6AUX6MIX Input 1 Source */
++	{ 0x00000c40, 0x0000 }, /* R3136 (0xc40) - DSP7LMIX Input 1 Source */
++	{ 0x00000c41, 0x0080 }, /* R3137 (0xc41) - DSP7LMIX Input 1 Volume */
++	{ 0x00000c42, 0x0000 }, /* R3138 (0xc42) - DSP7LMIX Input 2 Source */
++	{ 0x00000c43, 0x0080 }, /* R3139 (0xc43) - DSP7LMIX Input 2 Volume */
++	{ 0x00000c44, 0x0000 }, /* R3140 (0xc44) - DSP7LMIX Input 3 Source */
++	{ 0x00000c45, 0x0080 }, /* R3141 (0xc45) - DSP7lMIX Input 3 Volume */
++	{ 0x00000c46, 0x0000 }, /* R3142 (0xc46) - DSP7lMIX Input 4 Source */
++	{ 0x00000c47, 0x0080 }, /* R3143 (0xc47) - DSP7LMIX Input 4 Volume */
++	{ 0x00000c48, 0x0000 }, /* R3144 (0xc48) - DSP7RMIX Input 1 Source */
++	{ 0x00000c49, 0x0080 }, /* R3145 (0xc49) - DSP7RMIX Input 1 Volume */
++	{ 0x00000c4a, 0x0000 }, /* R3146 (0xc4a) - DSP7RMIX Input 2 Source */
++	{ 0x00000c4b, 0x0080 }, /* R3147 (0xc4b) - DSP7RMIX Input 2 Volume */
++	{ 0x00000c4c, 0x0000 }, /* R3148 (0xc4c) - DSP7RMIX Input 3 Source */
++	{ 0x00000c4d, 0x0080 }, /* R3159 (0xc4d) - DSP7RMIX Input 3 Volume */
++	{ 0x00000c4e, 0x0000 }, /* R3150 (0xc4e) - DSP7RMIX Input 4 Source */
++	{ 0x00000c4f, 0x0080 }, /* R3151 (0xc4f) - DSP7RMIX Input 4 Volume */
++	{ 0x00000c50, 0x0000 }, /* R3152 (0xc50) - DSP7AUX1MIX Input 1 Source */
++	{ 0x00000c58, 0x0000 }, /* R3160 (0xc58) - DSP7AUX2MIX Input 1 Source */
++	{ 0x00000c60, 0x0000 }, /* R3168 (0xc60) - DSP7AUX3MIX Input 1 Source */
++	{ 0x00000c68, 0x0000 }, /* R3176 (0xc68) - DSP7AUX4MIX Input 1 Source */
++	{ 0x00000c70, 0x0000 }, /* R3184 (0xc70) - DSP7AUX5MIX Input 1 Source */
++	{ 0x00000c78, 0x0000 }, /* R3192 (0xc78) - DSP7AUX6MIX Input 1 Source */
++	{ 0x00000dc0, 0x0000 }, /* R3520 (0xdc0) - DFC1MIX Input 1 Source */
++	{ 0x00000dc8, 0x0000 }, /* R3528 (0xdc8) - DFC2MIX Input 1 Source */
++	{ 0x00000dd0, 0x0000 }, /* R3536 (0xdd0) - DFC3MIX Input 1 Source */
++	{ 0x00000dd8, 0x0000 }, /* R3544 (0xdd8) - DFC4MIX Input 1 Source */
++	{ 0x00000de0, 0x0000 }, /* R3552 (0xde0) - DFC5MIX Input 1 Source */
++	{ 0x00000de8, 0x0000 }, /* R3560 (0xde8) - DFC6MIX Input 1 Source */
++	{ 0x00000df0, 0x0000 }, /* R3568 (0xdf0) - DFC7MIX Input 1 Source */
++	{ 0x00000df8, 0x0000 }, /* R3576 (0xdf8) - DFC8MIX Input 1 Source */
++	{ 0x00000e00, 0x0000 }, /* R3584 (0xe00) - FX_Ctrl1 */
 +	{ 0x00000e10, 0x6318 }, /* R3600 (0xe10) - EQ1_1 */
 +	{ 0x00000e11, 0x6300 }, /* R3601 (0xe11) - EQ1_2 */
 +	{ 0x00000e12, 0x0fc8 }, /* R3602 (0xe12) - EQ1_3 */
@@ -798,38 +1147,267 @@ index 000000000000..604c9dd14df5
 +	{ 0x00000ec9, 0x0000 }, /* R3785 (0xec9) - HPLPF3_2 */
 +	{ 0x00000ecc, 0x0000 }, /* R3788 (0xecc) - HPLPF4_1 */
 +	{ 0x00000ecd, 0x0000 }, /* R3789 (0xecd) - HPLPF4_2 */
++	{ 0x00000ed0, 0x0000 }, /* R3792 (0xed0) - ASRC2_ENABLE */
++	{ 0x00000ed2, 0x0000 }, /* R3794 (0xed2) - ASRC2_RATE1 */
++	{ 0x00000ed3, 0x4000 }, /* R3795 (0xed3) - ASRC2_RATE2 */
++	{ 0x00000ee0, 0x0000 }, /* R3808 (0xee0) - ASRC1_ENABLE */
++	{ 0x00000ee2, 0x0000 }, /* R3810 (0xee2) - ASRC1_RATE1 */
++	{ 0x00000ee3, 0x4000 }, /* R3811 (0xee3) - ASRC1_RATE2 */
 +	{ 0x00000ef0, 0x0000 }, /* R3824 (0xef0) - ISRC 1 CTRL 1 */
 +	{ 0x00000ef1, 0x0001 }, /* R3825 (0xef1) - ISRC 1 CTRL 2 */
 +	{ 0x00000ef2, 0x0000 }, /* R3826 (0xef2) - ISRC 1 CTRL 3 */
 +	{ 0x00000ef3, 0x0000 }, /* R3827 (0xef3) - ISRC 2 CTRL 1 */
 +	{ 0x00000ef4, 0x0001 }, /* R3828 (0xef4) - ISRC 2 CTRL 2 */
 +	{ 0x00000ef5, 0x0000 }, /* R3829 (0xef5) - ISRC 2 CTRL 3 */
-+	{ 0x00001300, 0x0000 }, /* R4864 (0x1300) - DAC Comp 1 */
-+	{ 0x00001302, 0x0000 }, /* R4866 (0x1302) - DAC Comp 2 */
-+	{ 0x00001380, 0x0000 }, /* R4992 (0x1380) - FRF Coefficient 1L 1 */
-+	{ 0x00001381, 0x0000 }, /* R4993 (0x1381) - FRF Coefficient 1L 2 */
-+	{ 0x00001382, 0x0000 }, /* R4994 (0x1382) - FRF Coefficient 1L 3 */
-+	{ 0x00001383, 0x0000 }, /* R4995 (0x1383) - FRF Coefficient 1L 4 */
-+	{ 0x00001390, 0x0000 }, /* R5008 (0x1390) - FRF Coefficient 1R 1 */
-+	{ 0x00001391, 0x0000 }, /* R5009 (0x1391) - FRF Coefficient 1R 2 */
-+	{ 0x00001392, 0x0000 }, /* R5010 (0x1392) - FRF Coefficient 1R 3 */
-+	{ 0x00001393, 0x0000 }, /* R5011 (0x1393) - FRF Coefficient 1R 4 */
-+	{ 0x000013a0, 0x0000 }, /* R5024 (0x13a0) - FRF Coefficient 4L 1 */
-+	{ 0x000013a1, 0x0000 }, /* R5025 (0x13a1) - FRF Coefficient 4L 2 */
-+	{ 0x000013a2, 0x0000 }, /* R5026 (0x13a2) - FRF Coefficient 4L 3 */
-+	{ 0x000013a3, 0x0000 }, /* R5027 (0x13a3) - FRF Coefficient 4L 4 */
-+	{ 0x000013b0, 0x0000 }, /* R5040 (0x13b0) - FRF Coefficient 5L 1 */
-+	{ 0x000013b1, 0x0000 }, /* R5041 (0x13b1) - FRF Coefficient 5L 2 */
-+	{ 0x000013b2, 0x0000 }, /* R5042 (0x13b2) - FRF Coefficient 5L 3 */
-+	{ 0x000013b3, 0x0000 }, /* R5043 (0x13b3) - FRF Coefficient 5L 4 */
-+	{ 0x000013c0, 0x0000 }, /* R5040 (0x13c0) - FRF Coefficient 5R 1 */
-+	{ 0x000013c1, 0x0000 }, /* R5041 (0x13c1) - FRF Coefficient 5R 2 */
-+	{ 0x000013c2, 0x0000 }, /* R5042 (0x13c2) - FRF Coefficient 5R 3 */
-+	{ 0x000013c3, 0x0000 }, /* R5043 (0x13c3) - FRF Coefficient 5R 4 */
++	{ 0x00000ef6, 0x0000 }, /* R3830 (0xef6) - ISRC 3 CTRL 1 */
++	{ 0x00000ef7, 0x0001 }, /* R3831 (0xef7) - ISRC 3 CTRL 2 */
++	{ 0x00000ef8, 0x0000 }, /* R3832 (0xef8) - ISRC 3 CTRL 3 */
++	{ 0x00000ef9, 0x0000 }, /* R3833 (0xef9) - ISRC 4 CTRL 1 */
++	{ 0x00000efa, 0x0001 }, /* R3834 (0xefa) - ISRC 4 CTRL 2 */
++	{ 0x00000efb, 0x0000 }, /* R3835 (0xefb) - ISRC 4 CTRL 3 */
++	{ 0x00000f01, 0x0000 }, /* R3841 (0xf01) - ANC_SRC */
++	{ 0x00000f02, 0x0000 }, /* R3842 (0xf02) - DSP Status */
++	{ 0x00000f08, 0x001c }, /* R3848 (0xf08) - ANC Coefficient */
++	{ 0x00000f09, 0x0000 }, /* R3849 (0xf09) - ANC Coefficient */
++	{ 0x00000f0a, 0x0000 }, /* R3850 (0xf0a) - ANC Coefficient */
++	{ 0x00000f0b, 0x0000 }, /* R3851 (0xf0b) - ANC Coefficient */
++	{ 0x00000f0c, 0x0000 }, /* R3852 (0xf0c) - ANC Coefficient */
++	{ 0x00000f0d, 0x0000 }, /* R3853 (0xf0d) - ANC Coefficient */
++	{ 0x00000f0e, 0x0000 }, /* R3854 (0xf0e) - ANC Coefficient */
++	{ 0x00000f0f, 0x0000 }, /* R3855 (0xf0f) - ANC Coefficient */
++	{ 0x00000f10, 0x0000 }, /* R3856 (0xf10) - ANC Coefficient */
++	{ 0x00000f11, 0x0000 }, /* R3857 (0xf11) - ANC Coefficient */
++	{ 0x00000f12, 0x0000 }, /* R3858 (0xf12) - ANC Coefficient */
++	{ 0x00000f15, 0x0000 }, /* R3861 (0xf15) - FCL Filter Control */
++	{ 0x00000f17, 0x0004 }, /* R3863 (0xf17) - FCL ADC Reformatter Control */
++	{ 0x00000f18, 0x0004 }, /* R3864 (0xf18) - ANC Coefficient */
++	{ 0x00000f19, 0x0002 }, /* R3865 (0xf19) - ANC Coefficient */
++	{ 0x00000f1a, 0x0000 }, /* R3866 (0xf1a) - ANC Coefficient */
++	{ 0x00000f1b, 0x0010 }, /* R3867 (0xf1b) - ANC Coefficient */
++	{ 0x00000f1c, 0x0000 }, /* R3868 (0xf1c) - ANC Coefficient */
++	{ 0x00000f1d, 0x0000 }, /* R3869 (0xf1d) - ANC Coefficient */
++	{ 0x00000f1e, 0x0000 }, /* R3870 (0xf1e) - ANC Coefficient */
++	{ 0x00000f1f, 0x0000 }, /* R3871 (0xf1f) - ANC Coefficient */
++	{ 0x00000f20, 0x0000 }, /* R3872 (0xf20) - ANC Coefficient */
++	{ 0x00000f21, 0x0000 }, /* R3873 (0xf21) - ANC Coefficient */
++	{ 0x00000f22, 0x0000 }, /* R3874 (0xf22) - ANC Coefficient */
++	{ 0x00000f23, 0x0000 }, /* R3875 (0xf23) - ANC Coefficient */
++	{ 0x00000f24, 0x0000 }, /* R3876 (0xf24) - ANC Coefficient */
++	{ 0x00000f25, 0x0000 }, /* R3877 (0xf25) - ANC Coefficient */
++	{ 0x00000f26, 0x0000 }, /* R3878 (0xf26) - ANC Coefficient */
++	{ 0x00000f27, 0x0000 }, /* R3879 (0xf27) - ANC Coefficient */
++	{ 0x00000f28, 0x0000 }, /* R3880 (0xf28) - ANC Coefficient */
++	{ 0x00000f29, 0x0000 }, /* R3881 (0xf29) - ANC Coefficient */
++	{ 0x00000f2a, 0x0000 }, /* R3882 (0xf2a) - ANC Coefficient */
++	{ 0x00000f2b, 0x0000 }, /* R3883 (0xf2b) - ANC Coefficient */
++	{ 0x00000f2c, 0x0000 }, /* R3884 (0xf2c) - ANC Coefficient */
++	{ 0x00000f2d, 0x0000 }, /* R3885 (0xf2d) - ANC Coefficient */
++	{ 0x00000f2e, 0x0000 }, /* R3886 (0xf2e) - ANC Coefficient */
++	{ 0x00000f2f, 0x0000 }, /* R3887 (0xf2f) - ANC Coefficient */
++	{ 0x00000f30, 0x0000 }, /* R3888 (0xf30) - ANC Coefficient */
++	{ 0x00000f31, 0x0000 }, /* R3889 (0xf31) - ANC Coefficient */
++	{ 0x00000f32, 0x0000 }, /* R3890 (0xf32) - ANC Coefficient */
++	{ 0x00000f33, 0x0000 }, /* R3891 (0xf33) - ANC Coefficient */
++	{ 0x00000f34, 0x0000 }, /* R3892 (0xf34) - ANC Coefficient */
++	{ 0x00000f35, 0x0000 }, /* R3893 (0xf35) - ANC Coefficient */
++	{ 0x00000f36, 0x0000 }, /* R3894 (0xf36) - ANC Coefficient */
++	{ 0x00000f37, 0x0000 }, /* R3895 (0xf37) - ANC Coefficient */
++	{ 0x00000f38, 0x0000 }, /* R3896 (0xf38) - ANC Coefficient */
++	{ 0x00000f39, 0x0000 }, /* R3897 (0xf39) - ANC Coefficient */
++	{ 0x00000f3a, 0x0000 }, /* R3898 (0xf3a) - ANC Coefficient */
++	{ 0x00000f3b, 0x0000 }, /* R3899 (0xf3b) - ANC Coefficient */
++	{ 0x00000f3c, 0x0000 }, /* R3900 (0xf3c) - ANC Coefficient */
++	{ 0x00000f3d, 0x0000 }, /* R3901 (0xf3d) - ANC Coefficient */
++	{ 0x00000f3e, 0x0000 }, /* R3902 (0xf3e) - ANC Coefficient */
++	{ 0x00000f3f, 0x0000 }, /* R3903 (0xf3f) - ANC Coefficient */
++	{ 0x00000f40, 0x0000 }, /* R3904 (0xf40) - ANC Coefficient */
++	{ 0x00000f41, 0x0000 }, /* R3905 (0xf41) - ANC Coefficient */
++	{ 0x00000f42, 0x0000 }, /* R3906 (0xf42) - ANC Coefficient */
++	{ 0x00000f43, 0x0000 }, /* R3907 (0xf43) - ANC Coefficient */
++	{ 0x00000f44, 0x0000 }, /* R3908 (0xf44) - ANC Coefficient */
++	{ 0x00000f45, 0x0000 }, /* R3909 (0xf45) - ANC Coefficient */
++	{ 0x00000f46, 0x0000 }, /* R3910 (0xf46) - ANC Coefficient */
++	{ 0x00000f47, 0x0000 }, /* R3911 (0xf47) - ANC Coefficient */
++	{ 0x00000f48, 0x0000 }, /* R3912 (0xf48) - ANC Coefficient */
++	{ 0x00000f49, 0x0000 }, /* R3913 (0xf49) - ANC Coefficient */
++	{ 0x00000f4a, 0x0000 }, /* R3914 (0xf4a) - ANC Coefficient */
++	{ 0x00000f4b, 0x0000 }, /* R3915 (0xf4b) - ANC Coefficient */
++	{ 0x00000f4c, 0x0000 }, /* R3916 (0xf4c) - ANC Coefficient */
++	{ 0x00000f4d, 0x0000 }, /* R3917 (0xf4d) - ANC Coefficient */
++	{ 0x00000f4e, 0x0000 }, /* R3918 (0xf4e) - ANC Coefficient */
++	{ 0x00000f4f, 0x0000 }, /* R3919 (0xf4f) - ANC Coefficient */
++	{ 0x00000f50, 0x0000 }, /* R3920 (0xf50) - ANC Coefficient */
++	{ 0x00000f51, 0x0000 }, /* R3921 (0xf51) - ANC Coefficient */
++	{ 0x00000f52, 0x0000 }, /* R3922 (0xf52) - ANC Coefficient */
++	{ 0x00000f53, 0x0000 }, /* R3923 (0xf53) - ANC Coefficient */
++	{ 0x00000f54, 0x0000 }, /* R3924 (0xf54) - ANC Coefficient */
++	{ 0x00000f55, 0x0000 }, /* R3925 (0xf55) - ANC Coefficient */
++	{ 0x00000f56, 0x0000 }, /* R3926 (0xf56) - ANC Coefficient */
++	{ 0x00000f57, 0x0000 }, /* R3927 (0xf57) - ANC Coefficient */
++	{ 0x00000f58, 0x0000 }, /* R3928 (0xf58) - ANC Coefficient */
++	{ 0x00000f59, 0x0000 }, /* R3929 (0xf59) - ANC Coefficient */
++	{ 0x00000f5a, 0x0000 }, /* R3930 (0xf5a) - ANC Coefficient */
++	{ 0x00000f5b, 0x0000 }, /* R3931 (0xf5b) - ANC Coefficient */
++	{ 0x00000f5c, 0x0000 }, /* R3932 (0xf5c) - ANC Coefficient */
++	{ 0x00000f5d, 0x0000 }, /* R3933 (0xf5d) - ANC Coefficient */
++	{ 0x00000f5e, 0x0000 }, /* R3934 (0xf5e) - ANC Coefficient */
++	{ 0x00000f5f, 0x0000 }, /* R3935 (0xf5f) - ANC Coefficient */
++	{ 0x00000f60, 0x0000 }, /* R3936 (0xf60) - ANC Coefficient */
++	{ 0x00000f61, 0x0000 }, /* R3937 (0xf61) - ANC Coefficient */
++	{ 0x00000f62, 0x0000 }, /* R3938 (0xf62) - ANC Coefficient */
++	{ 0x00000f63, 0x0000 }, /* R3939 (0xf63) - ANC Coefficient */
++	{ 0x00000f64, 0x0000 }, /* R3940 (0xf64) - ANC Coefficient */
++	{ 0x00000f65, 0x0000 }, /* R3941 (0xf65) - ANC Coefficient */
++	{ 0x00000f66, 0x0000 }, /* R3942 (0xf66) - ANC Coefficient */
++	{ 0x00000f67, 0x0000 }, /* R3943 (0xf67) - ANC Coefficient */
++	{ 0x00000f68, 0x0000 }, /* R3944 (0xf68) - ANC Coefficient */
++	{ 0x00000f69, 0x0000 }, /* R3945 (0xf69) - ANC Coefficient */
++	{ 0x00000f71, 0x0000 }, /* R3953 (0xf71) - FCR Filter Control */
++	{ 0x00000f73, 0x0004 }, /* R3955 (0xf73) - FCR ADC Reformatter Control */
++	{ 0x00000f74, 0x0004 }, /* R3956 (0xf74) - ANC Coefficient */
++	{ 0x00000f75, 0x0002 }, /* R3957 (0xf75) - ANC Coefficient */
++	{ 0x00000f76, 0x0000 }, /* R3958 (0xf76) - ANC Coefficient */
++	{ 0x00000f77, 0x0010 }, /* R3959 (0xf77) - ANC Coefficient */
++	{ 0x00000f78, 0x0000 }, /* R3960 (0xf78) - ANC Coefficient */
++	{ 0x00000f79, 0x0000 }, /* R3961 (0xf79) - ANC Coefficient */
++	{ 0x00000f7a, 0x0000 }, /* R3962 (0xf7a) - ANC Coefficient */
++	{ 0x00000f7b, 0x0000 }, /* R3963 (0xf7b) - ANC Coefficient */
++	{ 0x00000f7c, 0x0000 }, /* R3964 (0xf7c) - ANC Coefficient */
++	{ 0x00000f7d, 0x0000 }, /* R3965 (0xf7d) - ANC Coefficient */
++	{ 0x00000f7e, 0x0000 }, /* R3966 (0xf7e) - ANC Coefficient */
++	{ 0x00000f7f, 0x0000 }, /* R3967 (0xf7f) - ANC Coefficient */
++	{ 0x00000f80, 0x0000 }, /* R3968 (0xf80) - ANC Coefficient */
++	{ 0x00000f81, 0x0000 }, /* R3969 (0xf81) - ANC Coefficient */
++	{ 0x00000f82, 0x0000 }, /* R3970 (0xf82) - ANC Coefficient */
++	{ 0x00000f83, 0x0000 }, /* R3971 (0xf83) - ANC Coefficient */
++	{ 0x00000f84, 0x0000 }, /* R3972 (0xf84) - ANC Coefficient */
++	{ 0x00000f85, 0x0000 }, /* R3973 (0xf85) - ANC Coefficient */
++	{ 0x00000f86, 0x0000 }, /* R3974 (0xf86) - ANC Coefficient */
++	{ 0x00000f87, 0x0000 }, /* R3975 (0xf87) - ANC Coefficient */
++	{ 0x00000f88, 0x0000 }, /* R3976 (0xf88) - ANC Coefficient */
++	{ 0x00000f89, 0x0000 }, /* R3977 (0xf89) - ANC Coefficient */
++	{ 0x00000f8a, 0x0000 }, /* R3978 (0xf8a) - ANC Coefficient */
++	{ 0x00000f8b, 0x0000 }, /* R3979 (0xf8b) - ANC Coefficient */
++	{ 0x00000f8c, 0x0000 }, /* R3980 (0xf8c) - ANC Coefficient */
++	{ 0x00000f8d, 0x0000 }, /* R3981 (0xf8d) - ANC Coefficient */
++	{ 0x00000f8e, 0x0000 }, /* R3982 (0xf8e) - ANC Coefficient */
++	{ 0x00000f8f, 0x0000 }, /* R3983 (0xf8f) - ANC Coefficient */
++	{ 0x00000f90, 0x0000 }, /* R3984 (0xf90) - ANC Coefficient */
++	{ 0x00000f91, 0x0000 }, /* R3985 (0xf91) - ANC Coefficient */
++	{ 0x00000f92, 0x0000 }, /* R3986 (0xf92) - ANC Coefficient */
++	{ 0x00000f93, 0x0000 }, /* R3987 (0xf93) - ANC Coefficient */
++	{ 0x00000f94, 0x0000 }, /* R3988 (0xf94) - ANC Coefficient */
++	{ 0x00000f95, 0x0000 }, /* R3989 (0xf95) - ANC Coefficient */
++	{ 0x00000f96, 0x0000 }, /* R3990 (0xf96) - ANC Coefficient */
++	{ 0x00000f97, 0x0000 }, /* R3991 (0xf97) - ANC Coefficient */
++	{ 0x00000f98, 0x0000 }, /* R3992 (0xf98) - ANC Coefficient */
++	{ 0x00000f99, 0x0000 }, /* R3993 (0xf99) - ANC Coefficient */
++	{ 0x00000f9a, 0x0000 }, /* R3994 (0xf9a) - ANC Coefficient */
++	{ 0x00000f9b, 0x0000 }, /* R3995 (0xf9b) - ANC Coefficient */
++	{ 0x00000f9c, 0x0000 }, /* R3996 (0xf9c) - ANC Coefficient */
++	{ 0x00000f9d, 0x0000 }, /* R3997 (0xf9d) - ANC Coefficient */
++	{ 0x00000f9e, 0x0000 }, /* R3998 (0xf9e) - ANC Coefficient */
++	{ 0x00000f9f, 0x0000 }, /* R3999 (0xf9f) - ANC Coefficient */
++	{ 0x00000fa0, 0x0000 }, /* R4000 (0xfa0) - ANC Coefficient */
++	{ 0x00000fa1, 0x0000 }, /* R4001 (0xfa1) - ANC Coefficient */
++	{ 0x00000fa2, 0x0000 }, /* R4002 (0xfa2) - ANC Coefficient */
++	{ 0x00000fa3, 0x0000 }, /* R4003 (0xfa3) - ANC Coefficient */
++	{ 0x00000fa4, 0x0000 }, /* R4004 (0xfa4) - ANC Coefficient */
++	{ 0x00000fa5, 0x0000 }, /* R4005 (0xfa5) - ANC Coefficient */
++	{ 0x00000fa6, 0x0000 }, /* R4006 (0xfa6) - ANC Coefficient */
++	{ 0x00000fa7, 0x0000 }, /* R4007 (0xfa7) - ANC Coefficient */
++	{ 0x00000fa8, 0x0000 }, /* R4008 (0xfa8) - ANC Coefficient */
++	{ 0x00000fa9, 0x0000 }, /* R4009 (0xfa9) - ANC Coefficient */
++	{ 0x00000faa, 0x0000 }, /* R4010 (0xfaa) - ANC Coefficient */
++	{ 0x00000fab, 0x0000 }, /* R4011 (0xfab) - ANC Coefficient */
++	{ 0x00000fac, 0x0000 }, /* R4012 (0xfac) - ANC Coefficient */
++	{ 0x00000fad, 0x0000 }, /* R4013 (0xfad) - ANC Coefficient */
++	{ 0x00000fae, 0x0000 }, /* R4014 (0xfae) - ANC Coefficient */
++	{ 0x00000faf, 0x0000 }, /* R4015 (0xfaf) - ANC Coefficient */
++	{ 0x00000fb0, 0x0000 }, /* R4016 (0xfb0) - ANC Coefficient */
++	{ 0x00000fb1, 0x0000 }, /* R4017 (0xfb1) - ANC Coefficient */
++	{ 0x00000fb2, 0x0000 }, /* R4018 (0xfb2) - ANC Coefficient */
++	{ 0x00000fb3, 0x0000 }, /* R4019 (0xfb3) - ANC Coefficient */
++	{ 0x00000fb4, 0x0000 }, /* R4020 (0xfb4) - ANC Coefficient */
++	{ 0x00000fb5, 0x0000 }, /* R4021 (0xfb5) - ANC Coefficient */
++	{ 0x00000fb6, 0x0000 }, /* R4022 (0xfb6) - ANC Coefficient */
++	{ 0x00000fb7, 0x0000 }, /* R4023 (0xfb7) - ANC Coefficient */
++	{ 0x00000fb8, 0x0000 }, /* R4024 (0xfb8) - ANC Coefficient */
++	{ 0x00000fb9, 0x0000 }, /* R4025 (0xfb9) - ANC Coefficient */
++	{ 0x00000fba, 0x0000 }, /* R4026 (0xfba) - ANC Coefficient */
++	{ 0x00000fbb, 0x0000 }, /* R4027 (0xfbb) - ANC Coefficient */
++	{ 0x00000fbc, 0x0000 }, /* R4028 (0xfbc) - ANC Coefficient */
++	{ 0x00000fbd, 0x0000 }, /* R4029 (0xfbd) - ANC Coefficient */
++	{ 0x00000fbe, 0x0000 }, /* R4030 (0xfbe) - ANC Coefficient */
++	{ 0x00000fbf, 0x0000 }, /* R4031 (0xfbf) - ANC Coefficient */
++	{ 0x00000fc0, 0x0000 }, /* R4032 (0xfc0) - ANC Coefficient */
++	{ 0x00000fc1, 0x0000 }, /* R4033 (0xfc1) - ANC Coefficient */
++	{ 0x00000fc2, 0x0000 }, /* R4034 (0xfc2) - ANC Coefficient */
++	{ 0x00000fc3, 0x0000 }, /* R4035 (0xfc3) - ANC Coefficient */
++	{ 0x00000fc4, 0x0000 }, /* R4036 (0xfc4) - ANC Coefficient */
++	{ 0x00000fc5, 0x0000 }, /* R4037 (0xfc5) - ANC Coefficient */
++	{ 0x00001300, 0x050E }, /* R4864 (0x1300) - DAC Comp 1 */
++	{ 0x00001302, 0x0101 }, /* R4866 (0x1302) - DAC Comp 2 */
++	{ 0x00001380, 0x0425 }, /* R4992 (0x1380) - FRF Coefficient 1L 1 */
++	{ 0x00001381, 0xF6D8 }, /* R4993 (0x1381) - FRF Coefficient 1L 2 */
++	{ 0x00001382, 0x0632 }, /* R4994 (0x1382) - FRF Coefficient 1L 3 */
++	{ 0x00001383, 0xFEC8 }, /* R4995 (0x1383) - FRF Coefficient 1L 4 */
++	{ 0x00001390, 0x042F }, /* R5008 (0x1390) - FRF Coefficient 1R 1 */
++	{ 0x00001391, 0xF6CA }, /* R5009 (0x1391) - FRF Coefficient 1R 2 */
++	{ 0x00001392, 0x0637 }, /* R5010 (0x1392) - FRF Coefficient 1R 3 */
++	{ 0x00001393, 0xFEC8 }, /* R5011 (0x1393) - FRF Coefficient 1R 4 */
++	{ 0x000013a0, 0x0000 }, /* R5024 (0x13a0) - FRF Coefficient 2L 1 */
++	{ 0x000013a1, 0x0000 }, /* R5025 (0x13a1) - FRF Coefficient 2L 2 */
++	{ 0x000013a2, 0x0000 }, /* R5026 (0x13a2) - FRF Coefficient 2L 3 */
++	{ 0x000013a3, 0x0000 }, /* R5027 (0x13a3) - FRF Coefficient 2L 4 */
++	{ 0x000013b0, 0x0000 }, /* R5040 (0x13b0) - FRF Coefficient 2R 1 */
++	{ 0x000013b1, 0x0000 }, /* R5041 (0x13b1) - FRF Coefficient 2R 2 */
++	{ 0x000013b2, 0x0000 }, /* R5042 (0x13b2) - FRF Coefficient 2R 3 */
++	{ 0x000013b3, 0x0000 }, /* R5043 (0x13b3) - FRF Coefficient 2R 4 */
++	{ 0x000013c0, 0x0000 }, /* R5040 (0x13c0) - FRF Coefficient 3L 1 */
++	{ 0x000013c1, 0x0000 }, /* R5041 (0x13c1) - FRF Coefficient 3L 2 */
++	{ 0x000013c2, 0x0000 }, /* R5042 (0x13c2) - FRF Coefficient 3L 3 */
++	{ 0x000013c3, 0x0000 }, /* R5043 (0x13c3) - FRF Coefficient 3L 4 */
++	{ 0x000013d0, 0x0000 }, /* R5072 (0x13d0) - FRF Coefficient 3R 1 */
++	{ 0x000013d1, 0x0000 }, /* R5073 (0x13d1) - FRF Coefficient 3R 2 */
++	{ 0x000013d2, 0x0000 }, /* R5074 (0x13d2) - FRF Coefficient 3R 3 */
++	{ 0x000013d3, 0x0000 }, /* R5075 (0x13d3) - FRF Coefficient 3R 4 */
++	{ 0x00001400, 0x0000 }, /* R5120 (0x1400) - FRF Coefficient 5L 1 */
++	{ 0x00001401, 0x0000 }, /* R5121 (0x1401) - FRF Coefficient 5L 2 */
++	{ 0x00001402, 0x0000 }, /* R5122 (0x1402) - FRF Coefficient 5L 3 */
++	{ 0x00001403, 0x0000 }, /* R5123 (0x1403) - FRF Coefficient 5L 4 */
++	{ 0x00001410, 0x0000 }, /* R5136 (0x1410) - FRF Coefficient 5R 1 */
++	{ 0x00001411, 0x0000 }, /* R5137 (0x1411) - FRF Coefficient 5R 2 */
++	{ 0x00001412, 0x0000 }, /* R5138 (0x1412) - FRF Coefficient 5R 3 */
++	{ 0x00001413, 0x0000 }, /* R5139 (0x1413) - FRF Coefficient 5R 4 */
++	{ 0x00001480, 0x0000 }, /* R5248 (0x1480) - DFC1_CTRL */
++	{ 0x00001482, 0x1f00 }, /* R5250 (0x1482) - DFC1_RX */
++	{ 0x00001484, 0x1f00 }, /* R5252 (0x1486) - DFC1_TX */
++	{ 0x00001486, 0x0000 }, /* R5254 (0x1486) - DFC2_CTRL */
++	{ 0x00001488, 0x1f00 }, /* R5256 (0x1488) - DFC2_RX */
++	{ 0x0000148a, 0x1f00 }, /* R5258 (0x148a) - DFC2_TX */
++	{ 0x0000148c, 0x0000 }, /* R5260 (0x148c) - DFC3_CTRL */
++	{ 0x0000148e, 0x1f00 }, /* R5262 (0x148e) - DFC3_RX */
++	{ 0x00001490, 0x1f00 }, /* R5264 (0x1490) - DFC3_TX */
++	{ 0x00001492, 0x0000 }, /* R5266 (0x1492) - DFC4_CTRL */
++	{ 0x00001494, 0x1f00 }, /* R5268 (0x1494) - DFC4_RX */
++	{ 0x00001496, 0x1f00 }, /* R5270 (0x1496) - DFC4_TX */
++	{ 0x00001498, 0x0000 }, /* R5272 (0x1498) - DFC5_CTRL */
++	{ 0x0000149a, 0x1f00 }, /* R5274 (0x149a) - DFC5_RX */
++	{ 0x0000149c, 0x1f00 }, /* R5276 (0x149c) - DFC5_TX */
++	{ 0x0000149e, 0x0000 }, /* R5278 (0x149e) - DFC6_CTRL */
++	{ 0x000014a0, 0x1f00 }, /* R5280 (0x14a0) - DFC6_RX */
++	{ 0x000014a2, 0x1f00 }, /* R5282 (0x14a2) - DFC6_TX */
++	{ 0x000014a4, 0x0000 }, /* R5284 (0x14a4) - DFC7_CTRL */
++	{ 0x000014a6, 0x1f00 }, /* R5286 (0x14a6) - DFC7_RX */
++	{ 0x000014a8, 0x1f00 }, /* R5288 (0x14a8) - DFC7_TX */
++	{ 0x000014aa, 0x0000 }, /* R5290 (0x14aa) - DFC8_CTRL */
++	{ 0x000014ac, 0x1f00 }, /* R5292 (0x14ac) - DFC8_RX */
++	{ 0x000014ae, 0x1f00 }, /* R5294 (0x14ae) - DFC8_TX */
 +	{ 0x00001700, 0x2001 }, /* R5888 (0x1700) - GPIO1 Control 1 */
 +	{ 0x00001701, 0xf000 }, /* R5889 (0x1701) - GPIO1 Control 2 */
 +	{ 0x00001702, 0x2001 }, /* R5890 (0x1702) - GPIO2 Control 1 */
-+	{ 0x00001703, 0xf000 }, /* R5891 (0x1703) - GPIO2 Control 2 */
++	{ 0x00001703, 0xf000 }, /* R5891 (0x1702) - GPIO2 Control 2 */
 +	{ 0x00001704, 0x2001 }, /* R5892 (0x1704) - GPIO3 Control 1 */
 +	{ 0x00001705, 0xf000 }, /* R5893 (0x1705) - GPIO3 Control 2 */
 +	{ 0x00001706, 0x2001 }, /* R5894 (0x1706) - GPIO4 Control 1 */
@@ -858,6 +1436,50 @@ index 000000000000..604c9dd14df5
 +	{ 0x0000171d, 0xf000 }, /* R5917 (0x171d) - GPIO15 Control 2 */
 +	{ 0x0000171e, 0x2001 }, /* R5918 (0x171e) - GPIO16 Control 1 */
 +	{ 0x0000171f, 0xf000 }, /* R5919 (0x171f) - GPIO16 Control 2 */
++	{ 0x00001720, 0x2001 }, /* R5920 (0x1720) - GPIO17 Control 1 */
++	{ 0x00001721, 0xf000 }, /* R5921 (0x1721) - GPIO17 Control 2 */
++	{ 0x00001722, 0x2001 }, /* R5922 (0x1722) - GPIO18 Control 1 */
++	{ 0x00001723, 0xf000 }, /* R5923 (0x1723) - GPIO18 Control 2 */
++	{ 0x00001724, 0x2001 }, /* R5924 (0x1724) - GPIO19 Control 1 */
++	{ 0x00001725, 0xf000 }, /* R5925 (0x1725) - GPIO19 Control 2 */
++	{ 0x00001726, 0x2001 }, /* R5926 (0x1726) - GPIO20 Control 1 */
++	{ 0x00001727, 0xf000 }, /* R5927 (0x1727) - GPIO20 Control 2 */
++	{ 0x00001728, 0x2001 }, /* R5928 (0x1728) - GPIO21 Control 1 */
++	{ 0x00001729, 0xf000 }, /* R5929 (0x1729) - GPIO21 Control 2 */
++	{ 0x0000172a, 0x2001 }, /* R5930 (0x172a) - GPIO22 Control 1 */
++	{ 0x0000172b, 0xf000 }, /* R5931 (0x172b) - GPIO22 Control 2 */
++	{ 0x0000172c, 0x2001 }, /* R5932 (0x172c) - GPIO23 Control 1 */
++	{ 0x0000172d, 0xf000 }, /* R5933 (0x172d) - GPIO23 Control 2 */
++	{ 0x0000172e, 0x2001 }, /* R5934 (0x172e) - GPIO24 Control 1 */
++	{ 0x0000172f, 0xf000 }, /* R5935 (0x172f) - GPIO24 Control 2 */
++	{ 0x00001730, 0x2001 }, /* R5936 (0x1730) - GPIO25 Control 1 */
++	{ 0x00001731, 0xf000 }, /* R5937 (0x1731) - GPIO25 Control 2 */
++	{ 0x00001732, 0x2001 }, /* R5938 (0x1732) - GPIO26 Control 1 */
++	{ 0x00001733, 0xf000 }, /* R5939 (0x1733) - GPIO26 Control 2 */
++	{ 0x00001734, 0x2001 }, /* R5940 (0x1734) - GPIO27 Control 1 */
++	{ 0x00001735, 0xf000 }, /* R5941 (0x1735) - GPIO27 Control 2 */
++	{ 0x00001736, 0x2001 }, /* R5942 (0x1736) - GPIO28 Control 1 */
++	{ 0x00001737, 0xf000 }, /* R5943 (0x1737) - GPIO28 Control 2 */
++	{ 0x00001738, 0x2001 }, /* R5944 (0x1738) - GPIO29 Control 1 */
++	{ 0x00001739, 0xf000 }, /* R5945 (0x1739) - GPIO29 Control 2 */
++	{ 0x0000173a, 0x2001 }, /* R5946 (0x173a) - GPIO30 Control 1 */
++	{ 0x0000173b, 0xf000 }, /* R5947 (0x173b) - GPIO30 Control 2 */
++	{ 0x0000173c, 0x2001 }, /* R5948 (0x173c) - GPIO31 Control 1 */
++	{ 0x0000173d, 0xf000 }, /* R5949 (0x173d) - GPIO31 Control 2 */
++	{ 0x0000173e, 0x2001 }, /* R5950 (0x173e) - GPIO32 Control 1 */
++	{ 0x0000173f, 0xf000 }, /* R5951 (0x173f) - GPIO32 Control 2 */
++	{ 0x00001740, 0x2001 }, /* R5952 (0x1740) - GPIO33 Control 1 */
++	{ 0x00001741, 0xf000 }, /* R5953 (0x1741) - GPIO33 Control 2 */
++	{ 0x00001742, 0x2001 }, /* R5954 (0x1742) - GPIO34 Control 1 */
++	{ 0x00001743, 0xf000 }, /* R5955 (0x1743) - GPIO34 Control 2 */
++	{ 0x00001744, 0x2001 }, /* R5956 (0x1744) - GPIO35 Control 1 */
++	{ 0x00001745, 0xf000 }, /* R5957 (0x1745) - GPIO35 Control 2 */
++	{ 0x00001746, 0x2001 }, /* R5958 (0x1746) - GPIO36 Control 1 */
++	{ 0x00001747, 0xf000 }, /* R5959 (0x1747) - GPIO36 Control 2 */
++	{ 0x00001748, 0x2001 }, /* R5960 (0x1748) - GPIO37 Control 1 */
++	{ 0x00001749, 0xf000 }, /* R5961 (0x1749) - GPIO37 Control 2 */
++	{ 0x0000174a, 0x2001 }, /* R5962 (0x174a) - GPIO38 Control 1 */
++	{ 0x0000174b, 0xf000 }, /* R5963 (0x174b) - GPIO38 Control 2 */
 +	{ 0x00001840, 0xffff }, /* R6208 (0x1840) - IRQ1 Mask 1 */
 +	{ 0x00001841, 0xffff }, /* R6209 (0x1841) - IRQ1 Mask 2 */
 +	{ 0x00001842, 0xffff }, /* R6210 (0x1842) - IRQ1 Mask 3 */
@@ -895,12 +1517,12 @@ index 000000000000..604c9dd14df5
 +	{ 0x00001a80, 0x4400 }, /* R6784 (0x1a80) - IRQ1 CTRL */
 +};
 +
-+static bool cs47l35_is_adsp_memory(unsigned int reg)
++static bool cs47l90_is_adsp_memory(unsigned int reg)
 +{
 +	switch (reg) {
-+	case 0x080000 ... 0x085ffe:
-+	case 0x0a0000 ... 0x0a7ffe:
-+	case 0x0c0000 ... 0x0c1ffe:
++	case 0x080000 ... 0x088ffe:
++	case 0x0a0000 ... 0x0a9ffe:
++	case 0x0c0000 ... 0x0c3ffe:
 +	case 0x0e0000 ... 0x0e1ffe:
 +	case 0x100000 ... 0x10effe:
 +	case 0x120000 ... 0x12bffe:
@@ -912,13 +1534,29 @@ index 000000000000..604c9dd14df5
 +	case 0x1b6000 ... 0x1b7ffe:
 +	case 0x1c0000 ... 0x1cbffe:
 +	case 0x1e0000 ... 0x1e1ffe:
++	case 0x200000 ... 0x208ffe:
++	case 0x220000 ... 0x229ffe:
++	case 0x240000 ... 0x243ffe:
++	case 0x260000 ... 0x261ffe:
++	case 0x280000 ... 0x288ffe:
++	case 0x2a0000 ... 0x2a9ffe:
++	case 0x2c0000 ... 0x2c3ffe:
++	case 0x2e0000 ... 0x2e1ffe:
++	case 0x300000 ... 0x308ffe:
++	case 0x320000 ... 0x333ffe:
++	case 0x340000 ... 0x353ffe:
++	case 0x360000 ... 0x361ffe:
++	case 0x380000 ... 0x388ffe:
++	case 0x3a0000 ... 0x3b3ffe:
++	case 0x3c0000 ... 0x3d3ffe:
++	case 0x3e0000 ... 0x3e1ffe:
 +		return true;
 +	default:
 +		return false;
 +	}
 +}
 +
-+static bool cs47l35_16bit_readable_register(struct device *dev,
++static bool cs47l90_16bit_readable_register(struct device *dev,
 +					    unsigned int reg)
 +{
 +	switch (reg) {
@@ -959,6 +1597,11 @@ index 000000000000..604c9dd14df5
 +	case MADERA_SAMPLE_RATE_1_STATUS:
 +	case MADERA_SAMPLE_RATE_2_STATUS:
 +	case MADERA_SAMPLE_RATE_3_STATUS:
++	case MADERA_ASYNC_CLOCK_1:
++	case MADERA_ASYNC_SAMPLE_RATE_1:
++	case MADERA_ASYNC_SAMPLE_RATE_1_STATUS:
++	case MADERA_ASYNC_SAMPLE_RATE_2:
++	case MADERA_ASYNC_SAMPLE_RATE_2_STATUS:
 +	case MADERA_DSP_CLOCK_1:
 +	case MADERA_DSP_CLOCK_2:
 +	case MADERA_OUTPUT_SYSTEM_CLOCK:
@@ -977,17 +1620,45 @@ index 000000000000..604c9dd14df5
 +	case MADERA_FLL1_CONTROL_7:
 +	case MADERA_FLL1_EFS_2:
 +	case MADERA_FLL1_LOOP_FILTER_TEST_1:
-+	case CS47L35_FLL1_SYNCHRONISER_1:
-+	case CS47L35_FLL1_SYNCHRONISER_2:
-+	case CS47L35_FLL1_SYNCHRONISER_3:
-+	case CS47L35_FLL1_SYNCHRONISER_4:
-+	case CS47L35_FLL1_SYNCHRONISER_5:
-+	case CS47L35_FLL1_SYNCHRONISER_6:
-+	case CS47L35_FLL1_SYNCHRONISER_7:
-+	case CS47L35_FLL1_SPREAD_SPECTRUM:
-+	case CS47L35_FLL1_GPIO_CLOCK:
++	case MADERA_FLL1_SYNCHRONISER_1:
++	case MADERA_FLL1_SYNCHRONISER_2:
++	case MADERA_FLL1_SYNCHRONISER_3:
++	case MADERA_FLL1_SYNCHRONISER_4:
++	case MADERA_FLL1_SYNCHRONISER_5:
++	case MADERA_FLL1_SYNCHRONISER_6:
++	case MADERA_FLL1_SYNCHRONISER_7:
++	case MADERA_FLL1_SPREAD_SPECTRUM:
++	case MADERA_FLL1_GPIO_CLOCK:
++	case MADERA_FLL2_CONTROL_1:
++	case MADERA_FLL2_CONTROL_2:
++	case MADERA_FLL2_CONTROL_3:
++	case MADERA_FLL2_CONTROL_4:
++	case MADERA_FLL2_CONTROL_5:
++	case MADERA_FLL2_CONTROL_6:
++	case MADERA_FLL2_CONTROL_7:
++	case MADERA_FLL2_EFS_2:
++	case MADERA_FLL2_LOOP_FILTER_TEST_1:
++	case MADERA_FLL2_SYNCHRONISER_1:
++	case MADERA_FLL2_SYNCHRONISER_2:
++	case MADERA_FLL2_SYNCHRONISER_3:
++	case MADERA_FLL2_SYNCHRONISER_4:
++	case MADERA_FLL2_SYNCHRONISER_5:
++	case MADERA_FLL2_SYNCHRONISER_6:
++	case MADERA_FLL2_SYNCHRONISER_7:
++	case MADERA_FLL2_SPREAD_SPECTRUM:
++	case MADERA_FLL2_GPIO_CLOCK:
++	case MADERA_FLLAO_CONTROL_1:
++	case MADERA_FLLAO_CONTROL_2:
++	case MADERA_FLLAO_CONTROL_3:
++	case MADERA_FLLAO_CONTROL_4:
++	case MADERA_FLLAO_CONTROL_5:
++	case MADERA_FLLAO_CONTROL_6:
++	case MADERA_FLLAO_CONTROL_7:
++	case MADERA_FLLAO_CONTROL_8:
++	case MADERA_FLLAO_CONTROL_9:
++	case MADERA_FLLAO_CONTROL_10:
++	case MADERA_FLLAO_CONTROL_11:
 +	case MADERA_MIC_CHARGE_PUMP_1:
-+	case MADERA_HP_CHARGE_PUMP_8:
 +	case MADERA_LDO2_CONTROL_1:
 +	case MADERA_MIC_BIAS_CTRL_1:
 +	case MADERA_MIC_BIAS_CTRL_2:
@@ -995,15 +1666,19 @@ index 000000000000..604c9dd14df5
 +	case MADERA_MIC_BIAS_CTRL_6:
 +	case MADERA_HP_CTRL_1L:
 +	case MADERA_HP_CTRL_1R:
-+	case MADERA_DCS_HP1L_CONTROL:
-+	case MADERA_DCS_HP1R_CONTROL:
++	case MADERA_HP_CTRL_2L:
++	case MADERA_HP_CTRL_2R:
++	case MADERA_HP_CTRL_3L:
++	case MADERA_HP_CTRL_3R:
 +	case MADERA_EDRE_HP_STEREO_CONTROL:
 +	case MADERA_ACCESSORY_DETECT_MODE_1:
++	case MADERA_HEADPHONE_DETECT_0:
 +	case MADERA_HEADPHONE_DETECT_1:
 +	case MADERA_HEADPHONE_DETECT_2:
 +	case MADERA_HEADPHONE_DETECT_3:
 +	case MADERA_HEADPHONE_DETECT_5:
 +	case MADERA_MICD_CLAMP_CONTROL:
++	case MADERA_MIC_DETECT_1_CONTROL_0:
 +	case MADERA_MIC_DETECT_1_CONTROL_1:
 +	case MADERA_MIC_DETECT_1_CONTROL_2:
 +	case MADERA_MIC_DETECT_1_CONTROL_3:
@@ -1012,6 +1687,15 @@ index 000000000000..604c9dd14df5
 +	case MADERA_MIC_DETECT_1_LEVEL_3:
 +	case MADERA_MIC_DETECT_1_LEVEL_4:
 +	case MADERA_MIC_DETECT_1_CONTROL_4:
++	case MADERA_MIC_DETECT_2_CONTROL_0:
++	case MADERA_MIC_DETECT_2_CONTROL_1:
++	case MADERA_MIC_DETECT_2_CONTROL_2:
++	case MADERA_MIC_DETECT_2_CONTROL_3:
++	case MADERA_MIC_DETECT_2_LEVEL_1:
++	case MADERA_MIC_DETECT_2_LEVEL_2:
++	case MADERA_MIC_DETECT_2_LEVEL_3:
++	case MADERA_MIC_DETECT_2_LEVEL_4:
++	case MADERA_MIC_DETECT_2_CONTROL_4:
 +	case MADERA_GP_SWITCH_1:
 +	case MADERA_JACK_DETECT_ANALOGUE:
 +	case MADERA_INPUT_ENABLES:
@@ -1022,15 +1706,43 @@ index 000000000000..604c9dd14df5
 +	case MADERA_IN1L_CONTROL:
 +	case MADERA_ADC_DIGITAL_VOLUME_1L:
 +	case MADERA_DMIC1L_CONTROL:
++	case MADERA_IN1L_RATE_CONTROL:
 +	case MADERA_IN1R_CONTROL:
 +	case MADERA_ADC_DIGITAL_VOLUME_1R:
 +	case MADERA_DMIC1R_CONTROL:
++	case MADERA_IN1R_RATE_CONTROL:
 +	case MADERA_IN2L_CONTROL:
 +	case MADERA_ADC_DIGITAL_VOLUME_2L:
 +	case MADERA_DMIC2L_CONTROL:
++	case MADERA_IN2L_RATE_CONTROL:
 +	case MADERA_IN2R_CONTROL:
 +	case MADERA_ADC_DIGITAL_VOLUME_2R:
 +	case MADERA_DMIC2R_CONTROL:
++	case MADERA_IN2R_RATE_CONTROL:
++	case MADERA_IN3L_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_3L:
++	case MADERA_DMIC3L_CONTROL:
++	case MADERA_IN3L_RATE_CONTROL:
++	case MADERA_IN3R_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_3R:
++	case MADERA_DMIC3R_CONTROL:
++	case MADERA_IN3R_RATE_CONTROL:
++	case MADERA_IN4L_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_4L:
++	case MADERA_DMIC4L_CONTROL:
++	case MADERA_IN4L_RATE_CONTROL:
++	case MADERA_IN4R_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_4R:
++	case MADERA_DMIC4R_CONTROL:
++	case MADERA_IN4R_RATE_CONTROL:
++	case MADERA_IN5L_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_5L:
++	case MADERA_DMIC5L_CONTROL:
++	case MADERA_IN5L_RATE_CONTROL:
++	case MADERA_IN5R_CONTROL:
++	case MADERA_ADC_DIGITAL_VOLUME_5R:
++	case MADERA_DMIC5R_CONTROL:
++	case MADERA_IN5R_RATE_CONTROL:
 +	case MADERA_OUTPUT_ENABLES_1:
 +	case MADERA_OUTPUT_STATUS_1:
 +	case MADERA_RAW_OUTPUT_STATUS_1:
@@ -1038,13 +1750,24 @@ index 000000000000..604c9dd14df5
 +	case MADERA_OUTPUT_VOLUME_RAMP:
 +	case MADERA_OUTPUT_PATH_CONFIG_1L:
 +	case MADERA_DAC_DIGITAL_VOLUME_1L:
++	case MADERA_OUTPUT_PATH_CONFIG_1:
 +	case MADERA_NOISE_GATE_SELECT_1L:
 +	case MADERA_OUTPUT_PATH_CONFIG_1R:
 +	case MADERA_DAC_DIGITAL_VOLUME_1R:
 +	case MADERA_NOISE_GATE_SELECT_1R:
-+	case MADERA_OUTPUT_PATH_CONFIG_4L:
-+	case MADERA_DAC_DIGITAL_VOLUME_4L:
-+	case MADERA_NOISE_GATE_SELECT_4L:
++	case MADERA_OUTPUT_PATH_CONFIG_2L:
++	case MADERA_DAC_DIGITAL_VOLUME_2L:
++	case MADERA_OUTPUT_PATH_CONFIG_2:
++	case MADERA_NOISE_GATE_SELECT_2L:
++	case MADERA_OUTPUT_PATH_CONFIG_2R:
++	case MADERA_DAC_DIGITAL_VOLUME_2R:
++	case MADERA_NOISE_GATE_SELECT_2R:
++	case MADERA_OUTPUT_PATH_CONFIG_3L:
++	case MADERA_DAC_DIGITAL_VOLUME_3L:
++	case MADERA_NOISE_GATE_SELECT_3L:
++	case MADERA_OUTPUT_PATH_CONFIG_3R:
++	case MADERA_DAC_DIGITAL_VOLUME_3R:
++	case MADERA_NOISE_GATE_SELECT_3R:
 +	case MADERA_OUTPUT_PATH_CONFIG_5L:
 +	case MADERA_DAC_DIGITAL_VOLUME_5L:
 +	case MADERA_NOISE_GATE_SELECT_5L:
@@ -1053,14 +1776,13 @@ index 000000000000..604c9dd14df5
 +	case MADERA_NOISE_GATE_SELECT_5R:
 +	case MADERA_DRE_ENABLE:
 +	case MADERA_EDRE_ENABLE:
-+	case MADERA_EDRE_MANUAL:
 +	case MADERA_DAC_AEC_CONTROL_1:
 +	case MADERA_NOISE_GATE_CONTROL:
 +	case MADERA_PDM_SPK1_CTRL_1:
 +	case MADERA_PDM_SPK1_CTRL_2:
 +	case MADERA_HP1_SHORT_CIRCUIT_CTRL:
-+	case MADERA_HP_TEST_CTRL_5:
-+	case MADERA_HP_TEST_CTRL_6:
++	case MADERA_HP2_SHORT_CIRCUIT_CTRL:
++	case MADERA_HP3_SHORT_CIRCUIT_CTRL:
 +	case MADERA_AIF1_BCLK_CTRL:
 +	case MADERA_AIF1_TX_PIN_CTRL:
 +	case MADERA_AIF1_RX_PIN_CTRL:
@@ -1075,12 +1797,16 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF1_FRAME_CTRL_6:
 +	case MADERA_AIF1_FRAME_CTRL_7:
 +	case MADERA_AIF1_FRAME_CTRL_8:
++	case MADERA_AIF1_FRAME_CTRL_9:
++	case MADERA_AIF1_FRAME_CTRL_10:
 +	case MADERA_AIF1_FRAME_CTRL_11:
 +	case MADERA_AIF1_FRAME_CTRL_12:
 +	case MADERA_AIF1_FRAME_CTRL_13:
 +	case MADERA_AIF1_FRAME_CTRL_14:
 +	case MADERA_AIF1_FRAME_CTRL_15:
 +	case MADERA_AIF1_FRAME_CTRL_16:
++	case MADERA_AIF1_FRAME_CTRL_17:
++	case MADERA_AIF1_FRAME_CTRL_18:
 +	case MADERA_AIF1_TX_ENABLES:
 +	case MADERA_AIF1_RX_ENABLES:
 +	case MADERA_AIF2_BCLK_CTRL:
@@ -1093,8 +1819,20 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF2_FRAME_CTRL_2:
 +	case MADERA_AIF2_FRAME_CTRL_3:
 +	case MADERA_AIF2_FRAME_CTRL_4:
++	case MADERA_AIF2_FRAME_CTRL_5:
++	case MADERA_AIF2_FRAME_CTRL_6:
++	case MADERA_AIF2_FRAME_CTRL_7:
++	case MADERA_AIF2_FRAME_CTRL_8:
++	case MADERA_AIF2_FRAME_CTRL_9:
++	case MADERA_AIF2_FRAME_CTRL_10:
 +	case MADERA_AIF2_FRAME_CTRL_11:
 +	case MADERA_AIF2_FRAME_CTRL_12:
++	case MADERA_AIF2_FRAME_CTRL_13:
++	case MADERA_AIF2_FRAME_CTRL_14:
++	case MADERA_AIF2_FRAME_CTRL_15:
++	case MADERA_AIF2_FRAME_CTRL_16:
++	case MADERA_AIF2_FRAME_CTRL_17:
++	case MADERA_AIF2_FRAME_CTRL_18:
 +	case MADERA_AIF2_TX_ENABLES:
 +	case MADERA_AIF2_RX_ENABLES:
 +	case MADERA_AIF3_BCLK_CTRL:
@@ -1111,6 +1849,20 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF3_FRAME_CTRL_12:
 +	case MADERA_AIF3_TX_ENABLES:
 +	case MADERA_AIF3_RX_ENABLES:
++	case MADERA_AIF4_BCLK_CTRL:
++	case MADERA_AIF4_TX_PIN_CTRL:
++	case MADERA_AIF4_RX_PIN_CTRL:
++	case MADERA_AIF4_RATE_CTRL:
++	case MADERA_AIF4_FORMAT:
++	case MADERA_AIF4_RX_BCLK_RATE:
++	case MADERA_AIF4_FRAME_CTRL_1:
++	case MADERA_AIF4_FRAME_CTRL_2:
++	case MADERA_AIF4_FRAME_CTRL_3:
++	case MADERA_AIF4_FRAME_CTRL_4:
++	case MADERA_AIF4_FRAME_CTRL_11:
++	case MADERA_AIF4_FRAME_CTRL_12:
++	case MADERA_AIF4_TX_ENABLES:
++	case MADERA_AIF4_RX_ENABLES:
 +	case MADERA_SPD1_TX_CONTROL:
 +	case MADERA_SPD1_TX_CHANNEL_STATUS_1:
 +	case MADERA_SPD1_TX_CHANNEL_STATUS_2:
@@ -1119,9 +1871,11 @@ index 000000000000..604c9dd14df5
 +	case MADERA_SLIMBUS_RATES_1:
 +	case MADERA_SLIMBUS_RATES_2:
 +	case MADERA_SLIMBUS_RATES_3:
++	case MADERA_SLIMBUS_RATES_4:
 +	case MADERA_SLIMBUS_RATES_5:
 +	case MADERA_SLIMBUS_RATES_6:
 +	case MADERA_SLIMBUS_RATES_7:
++	case MADERA_SLIMBUS_RATES_8:
 +	case MADERA_SLIMBUS_RX_CHANNEL_ENABLE:
 +	case MADERA_SLIMBUS_TX_CHANNEL_ENABLE:
 +	case MADERA_SLIMBUS_RX_PORT_STATUS:
@@ -1158,14 +1912,38 @@ index 000000000000..604c9dd14df5
 +	case MADERA_OUT1RMIX_INPUT_3_VOLUME:
 +	case MADERA_OUT1RMIX_INPUT_4_SOURCE:
 +	case MADERA_OUT1RMIX_INPUT_4_VOLUME:
-+	case MADERA_OUT4LMIX_INPUT_1_SOURCE:
-+	case MADERA_OUT4LMIX_INPUT_1_VOLUME:
-+	case MADERA_OUT4LMIX_INPUT_2_SOURCE:
-+	case MADERA_OUT4LMIX_INPUT_2_VOLUME:
-+	case MADERA_OUT4LMIX_INPUT_3_SOURCE:
-+	case MADERA_OUT4LMIX_INPUT_3_VOLUME:
-+	case MADERA_OUT4LMIX_INPUT_4_SOURCE:
-+	case MADERA_OUT4LMIX_INPUT_4_VOLUME:
++	case MADERA_OUT2LMIX_INPUT_1_SOURCE:
++	case MADERA_OUT2LMIX_INPUT_1_VOLUME:
++	case MADERA_OUT2LMIX_INPUT_2_SOURCE:
++	case MADERA_OUT2LMIX_INPUT_2_VOLUME:
++	case MADERA_OUT2LMIX_INPUT_3_SOURCE:
++	case MADERA_OUT2LMIX_INPUT_3_VOLUME:
++	case MADERA_OUT2LMIX_INPUT_4_SOURCE:
++	case MADERA_OUT2LMIX_INPUT_4_VOLUME:
++	case MADERA_OUT2RMIX_INPUT_1_SOURCE:
++	case MADERA_OUT2RMIX_INPUT_1_VOLUME:
++	case MADERA_OUT2RMIX_INPUT_2_SOURCE:
++	case MADERA_OUT2RMIX_INPUT_2_VOLUME:
++	case MADERA_OUT2RMIX_INPUT_3_SOURCE:
++	case MADERA_OUT2RMIX_INPUT_3_VOLUME:
++	case MADERA_OUT2RMIX_INPUT_4_SOURCE:
++	case MADERA_OUT2RMIX_INPUT_4_VOLUME:
++	case MADERA_OUT3LMIX_INPUT_1_SOURCE:
++	case MADERA_OUT3LMIX_INPUT_1_VOLUME:
++	case MADERA_OUT3LMIX_INPUT_2_SOURCE:
++	case MADERA_OUT3LMIX_INPUT_2_VOLUME:
++	case MADERA_OUT3LMIX_INPUT_3_SOURCE:
++	case MADERA_OUT3LMIX_INPUT_3_VOLUME:
++	case MADERA_OUT3LMIX_INPUT_4_SOURCE:
++	case MADERA_OUT3LMIX_INPUT_4_VOLUME:
++	case MADERA_OUT3RMIX_INPUT_1_SOURCE:
++	case MADERA_OUT3RMIX_INPUT_1_VOLUME:
++	case MADERA_OUT3RMIX_INPUT_2_SOURCE:
++	case MADERA_OUT3RMIX_INPUT_2_VOLUME:
++	case MADERA_OUT3RMIX_INPUT_3_SOURCE:
++	case MADERA_OUT3RMIX_INPUT_3_VOLUME:
++	case MADERA_OUT3RMIX_INPUT_4_SOURCE:
++	case MADERA_OUT3RMIX_INPUT_4_VOLUME:
 +	case MADERA_OUT5LMIX_INPUT_1_SOURCE:
 +	case MADERA_OUT5LMIX_INPUT_1_VOLUME:
 +	case MADERA_OUT5LMIX_INPUT_2_SOURCE:
@@ -1230,6 +2008,22 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF1TX6MIX_INPUT_3_VOLUME:
 +	case MADERA_AIF1TX6MIX_INPUT_4_SOURCE:
 +	case MADERA_AIF1TX6MIX_INPUT_4_VOLUME:
++	case MADERA_AIF1TX7MIX_INPUT_1_SOURCE:
++	case MADERA_AIF1TX7MIX_INPUT_1_VOLUME:
++	case MADERA_AIF1TX7MIX_INPUT_2_SOURCE:
++	case MADERA_AIF1TX7MIX_INPUT_2_VOLUME:
++	case MADERA_AIF1TX7MIX_INPUT_3_SOURCE:
++	case MADERA_AIF1TX7MIX_INPUT_3_VOLUME:
++	case MADERA_AIF1TX7MIX_INPUT_4_SOURCE:
++	case MADERA_AIF1TX7MIX_INPUT_4_VOLUME:
++	case MADERA_AIF1TX8MIX_INPUT_1_SOURCE:
++	case MADERA_AIF1TX8MIX_INPUT_1_VOLUME:
++	case MADERA_AIF1TX8MIX_INPUT_2_SOURCE:
++	case MADERA_AIF1TX8MIX_INPUT_2_VOLUME:
++	case MADERA_AIF1TX8MIX_INPUT_3_SOURCE:
++	case MADERA_AIF1TX8MIX_INPUT_3_VOLUME:
++	case MADERA_AIF1TX8MIX_INPUT_4_SOURCE:
++	case MADERA_AIF1TX8MIX_INPUT_4_VOLUME:
 +	case MADERA_AIF2TX1MIX_INPUT_1_SOURCE:
 +	case MADERA_AIF2TX1MIX_INPUT_1_VOLUME:
 +	case MADERA_AIF2TX1MIX_INPUT_2_SOURCE:
@@ -1246,6 +2040,54 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF2TX2MIX_INPUT_3_VOLUME:
 +	case MADERA_AIF2TX2MIX_INPUT_4_SOURCE:
 +	case MADERA_AIF2TX2MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX3MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX3MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX3MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX3MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX3MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX3MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX3MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX3MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX4MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX4MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX4MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX4MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX4MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX4MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX4MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX4MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX5MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX5MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX5MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX5MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX5MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX5MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX5MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX5MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX6MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX6MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX6MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX6MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX6MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX6MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX6MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX6MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX7MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX7MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX7MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX7MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX7MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX7MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX7MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX7MIX_INPUT_4_VOLUME:
++	case MADERA_AIF2TX8MIX_INPUT_1_SOURCE:
++	case MADERA_AIF2TX8MIX_INPUT_1_VOLUME:
++	case MADERA_AIF2TX8MIX_INPUT_2_SOURCE:
++	case MADERA_AIF2TX8MIX_INPUT_2_VOLUME:
++	case MADERA_AIF2TX8MIX_INPUT_3_SOURCE:
++	case MADERA_AIF2TX8MIX_INPUT_3_VOLUME:
++	case MADERA_AIF2TX8MIX_INPUT_4_SOURCE:
++	case MADERA_AIF2TX8MIX_INPUT_4_VOLUME:
 +	case MADERA_AIF3TX1MIX_INPUT_1_SOURCE:
 +	case MADERA_AIF3TX1MIX_INPUT_1_VOLUME:
 +	case MADERA_AIF3TX1MIX_INPUT_2_SOURCE:
@@ -1262,6 +2104,22 @@ index 000000000000..604c9dd14df5
 +	case MADERA_AIF3TX2MIX_INPUT_3_VOLUME:
 +	case MADERA_AIF3TX2MIX_INPUT_4_SOURCE:
 +	case MADERA_AIF3TX2MIX_INPUT_4_VOLUME:
++	case MADERA_AIF4TX1MIX_INPUT_1_SOURCE:
++	case MADERA_AIF4TX1MIX_INPUT_1_VOLUME:
++	case MADERA_AIF4TX1MIX_INPUT_2_SOURCE:
++	case MADERA_AIF4TX1MIX_INPUT_2_VOLUME:
++	case MADERA_AIF4TX1MIX_INPUT_3_SOURCE:
++	case MADERA_AIF4TX1MIX_INPUT_3_VOLUME:
++	case MADERA_AIF4TX1MIX_INPUT_4_SOURCE:
++	case MADERA_AIF4TX1MIX_INPUT_4_VOLUME:
++	case MADERA_AIF4TX2MIX_INPUT_1_SOURCE:
++	case MADERA_AIF4TX2MIX_INPUT_1_VOLUME:
++	case MADERA_AIF4TX2MIX_INPUT_2_SOURCE:
++	case MADERA_AIF4TX2MIX_INPUT_2_VOLUME:
++	case MADERA_AIF4TX2MIX_INPUT_3_SOURCE:
++	case MADERA_AIF4TX2MIX_INPUT_3_VOLUME:
++	case MADERA_AIF4TX2MIX_INPUT_4_SOURCE:
++	case MADERA_AIF4TX2MIX_INPUT_4_VOLUME:
 +	case MADERA_SLIMTX1MIX_INPUT_1_SOURCE:
 +	case MADERA_SLIMTX1MIX_INPUT_1_VOLUME:
 +	case MADERA_SLIMTX1MIX_INPUT_2_SOURCE:
@@ -1310,6 +2168,22 @@ index 000000000000..604c9dd14df5
 +	case MADERA_SLIMTX6MIX_INPUT_3_VOLUME:
 +	case MADERA_SLIMTX6MIX_INPUT_4_SOURCE:
 +	case MADERA_SLIMTX6MIX_INPUT_4_VOLUME:
++	case MADERA_SLIMTX7MIX_INPUT_1_SOURCE:
++	case MADERA_SLIMTX7MIX_INPUT_1_VOLUME:
++	case MADERA_SLIMTX7MIX_INPUT_2_SOURCE:
++	case MADERA_SLIMTX7MIX_INPUT_2_VOLUME:
++	case MADERA_SLIMTX7MIX_INPUT_3_SOURCE:
++	case MADERA_SLIMTX7MIX_INPUT_3_VOLUME:
++	case MADERA_SLIMTX7MIX_INPUT_4_SOURCE:
++	case MADERA_SLIMTX7MIX_INPUT_4_VOLUME:
++	case MADERA_SLIMTX8MIX_INPUT_1_SOURCE:
++	case MADERA_SLIMTX8MIX_INPUT_1_VOLUME:
++	case MADERA_SLIMTX8MIX_INPUT_2_SOURCE:
++	case MADERA_SLIMTX8MIX_INPUT_2_VOLUME:
++	case MADERA_SLIMTX8MIX_INPUT_3_SOURCE:
++	case MADERA_SLIMTX8MIX_INPUT_3_VOLUME:
++	case MADERA_SLIMTX8MIX_INPUT_4_SOURCE:
++	case MADERA_SLIMTX8MIX_INPUT_4_VOLUME:
 +	case MADERA_SPDIF1TX1MIX_INPUT_1_SOURCE:
 +	case MADERA_SPDIF1TX1MIX_INPUT_1_VOLUME:
 +	case MADERA_SPDIF1TX2MIX_INPUT_1_SOURCE:
@@ -1476,6 +2350,58 @@ index 000000000000..604c9dd14df5
 +	case MADERA_DSP3AUX4MIX_INPUT_1_SOURCE:
 +	case MADERA_DSP3AUX5MIX_INPUT_1_SOURCE:
 +	case MADERA_DSP3AUX6MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4LMIX_INPUT_1_SOURCE:
++	case MADERA_DSP4LMIX_INPUT_1_VOLUME:
++	case MADERA_DSP4LMIX_INPUT_2_SOURCE:
++	case MADERA_DSP4LMIX_INPUT_2_VOLUME:
++	case MADERA_DSP4LMIX_INPUT_3_SOURCE:
++	case MADERA_DSP4LMIX_INPUT_3_VOLUME:
++	case MADERA_DSP4LMIX_INPUT_4_SOURCE:
++	case MADERA_DSP4LMIX_INPUT_4_VOLUME:
++	case MADERA_DSP4RMIX_INPUT_1_SOURCE:
++	case MADERA_DSP4RMIX_INPUT_1_VOLUME:
++	case MADERA_DSP4RMIX_INPUT_2_SOURCE:
++	case MADERA_DSP4RMIX_INPUT_2_VOLUME:
++	case MADERA_DSP4RMIX_INPUT_3_SOURCE:
++	case MADERA_DSP4RMIX_INPUT_3_VOLUME:
++	case MADERA_DSP4RMIX_INPUT_4_SOURCE:
++	case MADERA_DSP4RMIX_INPUT_4_VOLUME:
++	case MADERA_DSP4AUX1MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4AUX2MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4AUX3MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4AUX4MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4AUX5MIX_INPUT_1_SOURCE:
++	case MADERA_DSP4AUX6MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5LMIX_INPUT_1_SOURCE:
++	case MADERA_DSP5LMIX_INPUT_1_VOLUME:
++	case MADERA_DSP5LMIX_INPUT_2_SOURCE:
++	case MADERA_DSP5LMIX_INPUT_2_VOLUME:
++	case MADERA_DSP5LMIX_INPUT_3_SOURCE:
++	case MADERA_DSP5LMIX_INPUT_3_VOLUME:
++	case MADERA_DSP5LMIX_INPUT_4_SOURCE:
++	case MADERA_DSP5LMIX_INPUT_4_VOLUME:
++	case MADERA_DSP5RMIX_INPUT_1_SOURCE:
++	case MADERA_DSP5RMIX_INPUT_1_VOLUME:
++	case MADERA_DSP5RMIX_INPUT_2_SOURCE:
++	case MADERA_DSP5RMIX_INPUT_2_VOLUME:
++	case MADERA_DSP5RMIX_INPUT_3_SOURCE:
++	case MADERA_DSP5RMIX_INPUT_3_VOLUME:
++	case MADERA_DSP5RMIX_INPUT_4_SOURCE:
++	case MADERA_DSP5RMIX_INPUT_4_VOLUME:
++	case MADERA_DSP5AUX1MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5AUX2MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5AUX3MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5AUX4MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5AUX5MIX_INPUT_1_SOURCE:
++	case MADERA_DSP5AUX6MIX_INPUT_1_SOURCE:
++	case MADERA_ASRC1_1LMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC1_1RMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC1_2LMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC1_2RMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC2_1LMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC2_1RMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC2_2LMIX_INPUT_1_SOURCE:
++	case MADERA_ASRC2_2RMIX_INPUT_1_SOURCE:
 +	case MADERA_ISRC1DEC1MIX_INPUT_1_SOURCE:
 +	case MADERA_ISRC1DEC2MIX_INPUT_1_SOURCE:
 +	case MADERA_ISRC1DEC3MIX_INPUT_1_SOURCE:
@@ -1492,6 +2418,66 @@ index 000000000000..604c9dd14df5
 +	case MADERA_ISRC2INT2MIX_INPUT_1_SOURCE:
 +	case MADERA_ISRC2INT3MIX_INPUT_1_SOURCE:
 +	case MADERA_ISRC2INT4MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC3DEC1MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC3DEC2MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC3INT1MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC3INT2MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC4DEC1MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC4DEC2MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC4INT1MIX_INPUT_1_SOURCE:
++	case MADERA_ISRC4INT2MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6LMIX_INPUT_1_SOURCE:
++	case MADERA_DSP6LMIX_INPUT_1_VOLUME:
++	case MADERA_DSP6LMIX_INPUT_2_SOURCE:
++	case MADERA_DSP6LMIX_INPUT_2_VOLUME:
++	case MADERA_DSP6LMIX_INPUT_3_SOURCE:
++	case MADERA_DSP6LMIX_INPUT_3_VOLUME:
++	case MADERA_DSP6LMIX_INPUT_4_SOURCE:
++	case MADERA_DSP6LMIX_INPUT_4_VOLUME:
++	case MADERA_DSP6RMIX_INPUT_1_SOURCE:
++	case MADERA_DSP6RMIX_INPUT_1_VOLUME:
++	case MADERA_DSP6RMIX_INPUT_2_SOURCE:
++	case MADERA_DSP6RMIX_INPUT_2_VOLUME:
++	case MADERA_DSP6RMIX_INPUT_3_SOURCE:
++	case MADERA_DSP6RMIX_INPUT_3_VOLUME:
++	case MADERA_DSP6RMIX_INPUT_4_SOURCE:
++	case MADERA_DSP6RMIX_INPUT_4_VOLUME:
++	case MADERA_DSP6AUX1MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6AUX2MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6AUX3MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6AUX4MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6AUX5MIX_INPUT_1_SOURCE:
++	case MADERA_DSP6AUX6MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7LMIX_INPUT_1_SOURCE:
++	case MADERA_DSP7LMIX_INPUT_1_VOLUME:
++	case MADERA_DSP7LMIX_INPUT_2_SOURCE:
++	case MADERA_DSP7LMIX_INPUT_2_VOLUME:
++	case MADERA_DSP7LMIX_INPUT_3_SOURCE:
++	case MADERA_DSP7LMIX_INPUT_3_VOLUME:
++	case MADERA_DSP7LMIX_INPUT_4_SOURCE:
++	case MADERA_DSP7LMIX_INPUT_4_VOLUME:
++	case MADERA_DSP7RMIX_INPUT_1_SOURCE:
++	case MADERA_DSP7RMIX_INPUT_1_VOLUME:
++	case MADERA_DSP7RMIX_INPUT_2_SOURCE:
++	case MADERA_DSP7RMIX_INPUT_2_VOLUME:
++	case MADERA_DSP7RMIX_INPUT_3_SOURCE:
++	case MADERA_DSP7RMIX_INPUT_3_VOLUME:
++	case MADERA_DSP7RMIX_INPUT_4_SOURCE:
++	case MADERA_DSP7RMIX_INPUT_4_VOLUME:
++	case MADERA_DSP7AUX1MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7AUX2MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7AUX3MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7AUX4MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7AUX5MIX_INPUT_1_SOURCE:
++	case MADERA_DSP7AUX6MIX_INPUT_1_SOURCE:
++	case MADERA_DFC1MIX_INPUT_1_SOURCE:
++	case MADERA_DFC2MIX_INPUT_1_SOURCE:
++	case MADERA_DFC3MIX_INPUT_1_SOURCE:
++	case MADERA_DFC4MIX_INPUT_1_SOURCE:
++	case MADERA_DFC5MIX_INPUT_1_SOURCE:
++	case MADERA_DFC6MIX_INPUT_1_SOURCE:
++	case MADERA_DFC7MIX_INPUT_1_SOURCE:
++	case MADERA_DFC8MIX_INPUT_1_SOURCE:
 +	case MADERA_FX_CTRL1:
 +	case MADERA_FX_CTRL2:
 +	case MADERA_EQ1_1 ... MADERA_EQ1_21:
@@ -1516,12 +2502,36 @@ index 000000000000..604c9dd14df5
 +	case MADERA_HPLPF3_2:
 +	case MADERA_HPLPF4_1:
 +	case MADERA_HPLPF4_2:
++	case MADERA_ASRC1_ENABLE:
++	case MADERA_ASRC1_STATUS:
++	case MADERA_ASRC1_RATE1:
++	case MADERA_ASRC1_RATE2:
++	case MADERA_ASRC2_ENABLE:
++	case MADERA_ASRC2_STATUS:
++	case MADERA_ASRC2_RATE1:
++	case MADERA_ASRC2_RATE2:
 +	case MADERA_ISRC_1_CTRL_1:
 +	case MADERA_ISRC_1_CTRL_2:
 +	case MADERA_ISRC_1_CTRL_3:
 +	case MADERA_ISRC_2_CTRL_1:
 +	case MADERA_ISRC_2_CTRL_2:
 +	case MADERA_ISRC_2_CTRL_3:
++	case MADERA_ISRC_3_CTRL_1:
++	case MADERA_ISRC_3_CTRL_2:
++	case MADERA_ISRC_3_CTRL_3:
++	case MADERA_ISRC_4_CTRL_1:
++	case MADERA_ISRC_4_CTRL_2:
++	case MADERA_ISRC_4_CTRL_3:
++	case MADERA_CLOCK_CONTROL:
++	case MADERA_ANC_SRC:
++	case MADERA_DSP_STATUS:
++	case MADERA_ANC_COEFF_START ... MADERA_ANC_COEFF_END:
++	case MADERA_FCL_FILTER_CONTROL:
++	case MADERA_FCL_ADC_REFORMATTER_CONTROL:
++	case MADERA_FCL_COEFF_START ... MADERA_FCL_COEFF_END:
++	case MADERA_FCR_FILTER_CONTROL:
++	case MADERA_FCR_ADC_REFORMATTER_CONTROL:
++	case MADERA_FCR_COEFF_START ... MADERA_FCR_COEFF_END:
 +	case MADERA_DAC_COMP_1:
 +	case MADERA_DAC_COMP_2:
 +	case MADERA_FRF_COEFFICIENT_1L_1:
@@ -1532,19 +2542,56 @@ index 000000000000..604c9dd14df5
 +	case MADERA_FRF_COEFFICIENT_1R_2:
 +	case MADERA_FRF_COEFFICIENT_1R_3:
 +	case MADERA_FRF_COEFFICIENT_1R_4:
-+	case CS47L35_FRF_COEFFICIENT_4L_1:
-+	case CS47L35_FRF_COEFFICIENT_4L_2:
-+	case CS47L35_FRF_COEFFICIENT_4L_3:
-+	case CS47L35_FRF_COEFFICIENT_4L_4:
-+	case CS47L35_FRF_COEFFICIENT_5L_1:
-+	case CS47L35_FRF_COEFFICIENT_5L_2:
-+	case CS47L35_FRF_COEFFICIENT_5L_3:
-+	case CS47L35_FRF_COEFFICIENT_5L_4:
-+	case CS47L35_FRF_COEFFICIENT_5R_1:
-+	case CS47L35_FRF_COEFFICIENT_5R_2:
-+	case CS47L35_FRF_COEFFICIENT_5R_3:
-+	case CS47L35_FRF_COEFFICIENT_5R_4:
-+	case MADERA_GPIO1_CTRL_1 ... MADERA_GPIO16_CTRL_2:
++	case MADERA_FRF_COEFFICIENT_2L_1:
++	case MADERA_FRF_COEFFICIENT_2L_2:
++	case MADERA_FRF_COEFFICIENT_2L_3:
++	case MADERA_FRF_COEFFICIENT_2L_4:
++	case MADERA_FRF_COEFFICIENT_2R_1:
++	case MADERA_FRF_COEFFICIENT_2R_2:
++	case MADERA_FRF_COEFFICIENT_2R_3:
++	case MADERA_FRF_COEFFICIENT_2R_4:
++	case MADERA_FRF_COEFFICIENT_3L_1:
++	case MADERA_FRF_COEFFICIENT_3L_2:
++	case MADERA_FRF_COEFFICIENT_3L_3:
++	case MADERA_FRF_COEFFICIENT_3L_4:
++	case MADERA_FRF_COEFFICIENT_3R_1:
++	case MADERA_FRF_COEFFICIENT_3R_2:
++	case MADERA_FRF_COEFFICIENT_3R_3:
++	case MADERA_FRF_COEFFICIENT_3R_4:
++	case MADERA_FRF_COEFFICIENT_5L_1:
++	case MADERA_FRF_COEFFICIENT_5L_2:
++	case MADERA_FRF_COEFFICIENT_5L_3:
++	case MADERA_FRF_COEFFICIENT_5L_4:
++	case MADERA_FRF_COEFFICIENT_5R_1:
++	case MADERA_FRF_COEFFICIENT_5R_2:
++	case MADERA_FRF_COEFFICIENT_5R_3:
++	case MADERA_FRF_COEFFICIENT_5R_4:
++	case MADERA_DFC1_CTRL:
++	case MADERA_DFC1_RX:
++	case MADERA_DFC1_TX:
++	case MADERA_DFC2_CTRL:
++	case MADERA_DFC2_RX:
++	case MADERA_DFC2_TX:
++	case MADERA_DFC3_CTRL:
++	case MADERA_DFC3_RX:
++	case MADERA_DFC3_TX:
++	case MADERA_DFC4_CTRL:
++	case MADERA_DFC4_RX:
++	case MADERA_DFC4_TX:
++	case MADERA_DFC5_CTRL:
++	case MADERA_DFC5_RX:
++	case MADERA_DFC5_TX:
++	case MADERA_DFC6_CTRL:
++	case MADERA_DFC6_RX:
++	case MADERA_DFC6_TX:
++	case MADERA_DFC7_CTRL:
++	case MADERA_DFC7_RX:
++	case MADERA_DFC7_TX:
++	case MADERA_DFC8_CTRL:
++	case MADERA_DFC8_RX:
++	case MADERA_DFC8_TX:
++	case MADERA_DFC_STATUS:
++	case MADERA_GPIO1_CTRL_1 ... MADERA_GPIO38_CTRL_2:
 +	case MADERA_IRQ1_STATUS_1 ... MADERA_IRQ1_STATUS_33:
 +	case MADERA_IRQ1_MASK_1 ... MADERA_IRQ1_MASK_33:
 +	case MADERA_IRQ1_RAW_STATUS_1 ... MADERA_IRQ1_RAW_STATUS_33:
@@ -1556,7 +2603,7 @@ index 000000000000..604c9dd14df5
 +	}
 +}
 +
-+static bool cs47l35_16bit_volatile_register(struct device *dev,
++static bool cs47l90_16bit_volatile_register(struct device *dev,
 +					    unsigned int reg)
 +{
 +	switch (reg) {
@@ -1569,12 +2616,18 @@ index 000000000000..604c9dd14df5
 +	case MADERA_SAMPLE_RATE_1_STATUS:
 +	case MADERA_SAMPLE_RATE_2_STATUS:
 +	case MADERA_SAMPLE_RATE_3_STATUS:
++	case MADERA_ASYNC_SAMPLE_RATE_1_STATUS:
++	case MADERA_ASYNC_SAMPLE_RATE_2_STATUS:
 +	case MADERA_HP_CTRL_1L:
 +	case MADERA_HP_CTRL_1R:
-+	case MADERA_DCS_HP1L_CONTROL:
-+	case MADERA_DCS_HP1R_CONTROL:
++	case MADERA_HP_CTRL_2L:
++	case MADERA_HP_CTRL_2R:
++	case MADERA_HP_CTRL_3L:
++	case MADERA_HP_CTRL_3R:
 +	case MADERA_MIC_DETECT_1_CONTROL_3:
 +	case MADERA_MIC_DETECT_1_CONTROL_4:
++	case MADERA_MIC_DETECT_2_CONTROL_3:
++	case MADERA_MIC_DETECT_2_CONTROL_4:
 +	case MADERA_HEADPHONE_DETECT_2:
 +	case MADERA_HEADPHONE_DETECT_3:
 +	case MADERA_HEADPHONE_DETECT_5:
@@ -1587,6 +2640,10 @@ index 000000000000..604c9dd14df5
 +	case MADERA_SLIMBUS_RX_PORT_STATUS:
 +	case MADERA_SLIMBUS_TX_PORT_STATUS:
 +	case MADERA_FX_CTRL2:
++	case MADERA_ASRC2_STATUS:
++	case MADERA_ASRC1_STATUS:
++	case MADERA_CLOCK_CONTROL:
++	case MADERA_DFC_STATUS:
 +	case MADERA_IRQ1_STATUS_1 ... MADERA_IRQ1_STATUS_33:
 +	case MADERA_IRQ1_RAW_STATUS_1 ... MADERA_IRQ1_RAW_STATUS_33:
 +		return true;
@@ -1595,73 +2652,81 @@ index 000000000000..604c9dd14df5
 +	}
 +}
 +
-+static bool cs47l35_32bit_readable_register(struct device *dev,
++static bool cs47l90_32bit_readable_register(struct device *dev,
 +					    unsigned int reg)
 +{
 +	switch (reg) {
-+	case MADERA_WSEQ_SEQUENCE_1 ... MADERA_WSEQ_SEQUENCE_252:
-+	case CS47L35_OTP_HPDET_CAL_1 ... CS47L35_OTP_HPDET_CAL_2:
-+	case MADERA_DSP1_CONFIG_1 ... MADERA_DSP1_SCRATCH_2:
-+	case MADERA_DSP2_CONFIG_1 ... MADERA_DSP2_SCRATCH_2:
-+	case MADERA_DSP3_CONFIG_1 ... MADERA_DSP3_SCRATCH_2:
++	case MADERA_WSEQ_SEQUENCE_1 ... MADERA_WSEQ_SEQUENCE_508:
++	case MADERA_OTP_HPDET_CAL_1 ... MADERA_OTP_HPDET_CAL_2:
++	case MADERA_DSP1_CONFIG_1 ... MADERA_DSP1_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP2_CONFIG_1 ... MADERA_DSP2_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP3_CONFIG_1 ... MADERA_DSP3_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP4_CONFIG_1 ... MADERA_DSP4_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP5_CONFIG_1 ... MADERA_DSP5_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP6_CONFIG_1 ... MADERA_DSP6_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP7_CONFIG_1 ... MADERA_DSP7_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
 +		return true;
 +	default:
-+		return cs47l35_is_adsp_memory(reg);
++		return cs47l90_is_adsp_memory(reg);
 +	}
 +}
 +
-+static bool cs47l35_32bit_volatile_register(struct device *dev,
++static bool cs47l90_32bit_volatile_register(struct device *dev,
 +					    unsigned int reg)
 +{
 +	switch (reg) {
-+	case MADERA_WSEQ_SEQUENCE_1 ... MADERA_WSEQ_SEQUENCE_252:
-+	case CS47L35_OTP_HPDET_CAL_1 ... CS47L35_OTP_HPDET_CAL_2:
-+	case MADERA_DSP1_CONFIG_1 ... MADERA_DSP1_SCRATCH_2:
-+	case MADERA_DSP2_CONFIG_1 ... MADERA_DSP2_SCRATCH_2:
-+	case MADERA_DSP3_CONFIG_1 ... MADERA_DSP3_SCRATCH_2:
++	case MADERA_WSEQ_SEQUENCE_1 ... MADERA_WSEQ_SEQUENCE_508:
++	case MADERA_OTP_HPDET_CAL_1 ... MADERA_OTP_HPDET_CAL_2:
++	case MADERA_DSP1_CONFIG_1 ... MADERA_DSP1_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP2_CONFIG_1 ... MADERA_DSP2_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP3_CONFIG_1 ... MADERA_DSP3_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP4_CONFIG_1 ... MADERA_DSP4_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP5_CONFIG_1 ... MADERA_DSP5_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP6_CONFIG_1 ... MADERA_DSP6_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
++	case MADERA_DSP7_CONFIG_1 ... MADERA_DSP7_PMEM_ERR_ADDR___XMEM_ERR_ADDR:
 +		return true;
 +	default:
-+		return cs47l35_is_adsp_memory(reg);
++		return cs47l90_is_adsp_memory(reg);
 +	}
 +}
 +
-+const struct regmap_config cs47l35_16bit_spi_regmap = {
-+	.name = "cs47l35_16bit",
++const struct regmap_config cs47l90_16bit_spi_regmap = {
++	.name = "cs47l90_16bit",
 +	.reg_bits = 32,
 +	.pad_bits = 16,
 +	.val_bits = 16,
 +	.reg_format_endian = REGMAP_ENDIAN_BIG,
 +	.val_format_endian = REGMAP_ENDIAN_BIG,
 +
-+	.max_register = 0x1b00,
-+	.readable_reg = cs47l35_16bit_readable_register,
-+	.volatile_reg = cs47l35_16bit_volatile_register,
++	.max_register = MADERA_INTERRUPT_RAW_STATUS_1,
++	.readable_reg = cs47l90_16bit_readable_register,
++	.volatile_reg = cs47l90_16bit_volatile_register,
 +
 +	.cache_type = REGCACHE_RBTREE,
-+	.reg_defaults = cs47l35_reg_default,
-+	.num_reg_defaults = ARRAY_SIZE(cs47l35_reg_default),
++	.reg_defaults = cs47l90_reg_default,
++	.num_reg_defaults = ARRAY_SIZE(cs47l90_reg_default),
 +};
-+EXPORT_SYMBOL_GPL(cs47l35_16bit_spi_regmap);
++EXPORT_SYMBOL_GPL(cs47l90_16bit_spi_regmap);
 +
-+const struct regmap_config cs47l35_16bit_i2c_regmap = {
-+	.name = "cs47l35_16bit",
++const struct regmap_config cs47l90_16bit_i2c_regmap = {
++	.name = "cs47l90_16bit",
 +	.reg_bits = 32,
 +	.val_bits = 16,
 +	.reg_format_endian = REGMAP_ENDIAN_BIG,
 +	.val_format_endian = REGMAP_ENDIAN_BIG,
 +
-+	.max_register = 0x1b00,
-+	.readable_reg = cs47l35_16bit_readable_register,
-+	.volatile_reg = cs47l35_16bit_volatile_register,
++	.max_register = MADERA_INTERRUPT_RAW_STATUS_1,
++	.readable_reg = cs47l90_16bit_readable_register,
++	.volatile_reg = cs47l90_16bit_volatile_register,
 +
 +	.cache_type = REGCACHE_RBTREE,
-+	.reg_defaults = cs47l35_reg_default,
-+	.num_reg_defaults = ARRAY_SIZE(cs47l35_reg_default),
++	.reg_defaults = cs47l90_reg_default,
++	.num_reg_defaults = ARRAY_SIZE(cs47l90_reg_default),
 +};
-+EXPORT_SYMBOL_GPL(cs47l35_16bit_i2c_regmap);
++EXPORT_SYMBOL_GPL(cs47l90_16bit_i2c_regmap);
 +
-+const struct regmap_config cs47l35_32bit_spi_regmap = {
-+	.name = "cs47l35_32bit",
++const struct regmap_config cs47l90_32bit_spi_regmap = {
++	.name = "cs47l90_32bit",
 +	.reg_bits = 32,
 +	.reg_stride = 2,
 +	.pad_bits = 16,
@@ -1669,28 +2734,28 @@ index 000000000000..604c9dd14df5
 +	.reg_format_endian = REGMAP_ENDIAN_BIG,
 +	.val_format_endian = REGMAP_ENDIAN_BIG,
 +
-+	.max_register = MADERA_DSP3_SCRATCH_2,
-+	.readable_reg = cs47l35_32bit_readable_register,
-+	.volatile_reg = cs47l35_32bit_volatile_register,
++	.max_register = MADERA_DSP7_PMEM_ERR_ADDR___XMEM_ERR_ADDR,
++	.readable_reg = cs47l90_32bit_readable_register,
++	.volatile_reg = cs47l90_32bit_volatile_register,
 +
 +	.cache_type = REGCACHE_RBTREE,
 +};
-+EXPORT_SYMBOL_GPL(cs47l35_32bit_spi_regmap);
++EXPORT_SYMBOL_GPL(cs47l90_32bit_spi_regmap);
 +
-+const struct regmap_config cs47l35_32bit_i2c_regmap = {
-+	.name = "cs47l35_32bit",
++const struct regmap_config cs47l90_32bit_i2c_regmap = {
++	.name = "cs47l90_32bit",
 +	.reg_bits = 32,
 +	.reg_stride = 2,
 +	.val_bits = 32,
 +	.reg_format_endian = REGMAP_ENDIAN_BIG,
 +	.val_format_endian = REGMAP_ENDIAN_BIG,
 +
-+	.max_register = MADERA_DSP3_SCRATCH_2,
-+	.readable_reg = cs47l35_32bit_readable_register,
-+	.volatile_reg = cs47l35_32bit_volatile_register,
++	.max_register = MADERA_DSP7_PMEM_ERR_ADDR___XMEM_ERR_ADDR,
++	.readable_reg = cs47l90_32bit_readable_register,
++	.volatile_reg = cs47l90_32bit_volatile_register,
 +
 +	.cache_type = REGCACHE_RBTREE,
 +};
-+EXPORT_SYMBOL_GPL(cs47l35_32bit_i2c_regmap);
++EXPORT_SYMBOL_GPL(cs47l90_32bit_i2c_regmap);
 -- 
 2.11.0
