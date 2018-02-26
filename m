@@ -1,47 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeBZIfZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:35:25 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42240 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751570AbeBZIed (ORCPT
+        id S1752374AbeBZIfj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:35:39 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40179 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752010AbeBZIfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:34:33 -0500
-X-Google-Smtp-Source: AG47ELtIjRoeiWZ7HCc3c/GMTzCoMWX/Pbw0nxeOXbXbFB+Kw/Uw6wDp+7XWlUbp8JST4sSjx37AgQ==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: arnd@arndb.de, broonie@kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, baolin.wang@linaro.org,
-        alexandre.belloni@free-electrons.com
-Subject: [RESEND PATCH 1/3] rtc: Use time64_t to save range_max of RTC
-Date: Mon, 26 Feb 2018 16:33:56 +0800
-Message-Id: <b8a475beaa4739032e3346572af2e412ebccb787.1519633350.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Mon, 26 Feb 2018 03:35:32 -0500
+X-Google-Smtp-Source: AG47ELtkSFl0v4jEk7ulIhnW/cHMi0ADFwyRyCi3///DRbEQN5ijsmAe/VNlYmTykWwnDlfxPKL5PBOhqBgTAwEpMF8=
+MIME-Version: 1.0
+In-Reply-To: <20180225235432.31209-3-rabel@robertabel.eu>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 09:35:31 +0100
+X-Google-Sender-Auth: C64o_GcIDMrOw3bKPD3QYTZ22T0
+Message-ID: <CAMuHMdUzdH6qEvWg1ocku-1TMSnbsKBZjeYw_Yv=Mi14eSmBjQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] auxdisplay: charlcd: name x/y address struct
+To: Robert Abel <rabel@robertabel.eu>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Willy Tarreau <w@1wt.eu>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need use rtc->range_max to valid if the time values are valid,
-and the time values are saved by time64_t type. So change the
-rtc->range_max to time64_t type for comparison correctly.
+On Mon, Feb 26, 2018 at 12:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> Signed-off-by: Robert Abel <rabel@robertabel.eu>
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- include/linux/rtc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-diff --git a/include/linux/rtc.h b/include/linux/rtc.h
-index bdfc0c4..8560282 100644
---- a/include/linux/rtc.h
-+++ b/include/linux/rtc.h
-@@ -152,7 +152,7 @@ struct rtc_device {
- 	struct bin_attribute *nvram;
- 
- 	time64_t range_min;
--	timeu64_t range_max;
-+	time64_t range_max;
- 
- #ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
- 	struct work_struct uie_task;
--- 
-1.7.9.5
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
