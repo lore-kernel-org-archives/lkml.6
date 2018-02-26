@@ -1,76 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeBZNq4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:46:56 -0500
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:32846 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753053AbeBZNqx (ORCPT
+        id S1753190AbeBZNrr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:47:47 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50520 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753154AbeBZNrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:46:53 -0500
-X-Google-Smtp-Source: AG47ELuPhZCK2I+t/IiJjozbIcvGWdmpbzysmSu50k18fjCCx8QlOri7VTF8wHT3lvsDCbKVPShOa3ENbNpJXb3t4gQ=
+        Mon, 26 Feb 2018 08:47:46 -0500
+Date: Mon, 26 Feb 2018 14:47:41 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
+        Nandor Han <nandor.han@ge.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv4 1/2] ARM: imx53: add secure-reg-access support for PMU
+Message-ID: <20180226134741.neqkpge33zo3pfzt@earth.universe>
+References: <20180212123945.15732-1-sebastian.reichel@collabora.co.uk>
+ <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
+ <20180224074543.GF3217@dragon>
 MIME-Version: 1.0
-In-Reply-To: <20180226130558.7634-2-rf@opensource.cirrus.com>
-References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-2-rf@opensource.cirrus.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 26 Feb 2018 15:46:50 +0200
-Message-ID: <CAHp75VdTdtT8D0OmPo1DPZfjEogSJcBRJBuesHDPrB+bD9CVgA@mail.gmail.com>
-Subject: Re: [PATCH v8 1/9] mfd: madera: Add register definitions for Cirrus
- Logic Madera codecs
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lccsnu2jsz373qn3"
+Content-Disposition: inline
+In-Reply-To: <20180224074543.GF3217@dragon>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
-> This patch adds a header file of register definitions for Cirrus
-> Logic "Madera" class codecs. These codecs are all based off a common
-> set of hardware IP so have a common register map (with a few minor
-> device-to-device variations).
->
-> The registers.h file is tool-generated directly from the hardware design
-> but has been manually stripped down to reduce size (full register
-> map is >44000 lines). All names are kept the same as datasheet names
-> so that they can be cross-referenced between source and datasheet without
-> confusion.
->
-> The register map layout is kept fully-defined rather than factored into
-> macros and/or block-indexing code. The major reasons for this are:
->
->  - #1 is that it makes the source highly greppable, which is important.
->    "What does the driver do with register bits XYZ" or "Where does it use
->    register bits XYZ" are commonly types of questions. These can be quickly
->    answered by a grep. Squashing definitions into generator macros or block-
->    indexing code is a way of defeating grep.
->
->  - most of the register definitions are used in tables, so a constant value
->    is required. Using generator macros make the table definition clunky and
->    obscure.
->
->  - the code is clearer when it's there in the source exactly what register
->    and field it is using
->
->  - it is easier to diff the register map of a new (unsupported) codec against
->    what is already supported and merge in differences
->
->  - it makes the register map available in source for maintenance/debugging
->    instead of having to refer back to the datasheet for a register map
 
-...
+--lccsnu2jsz373qn3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +#define MADERA_OTP_HPDET_GRADIENT_1X_MASK          0x0000FF00
+Hi Shawn,
 
-> +#define MADERA_OTP_HPDET_GRADIENT_0X_MASK          0x000000FF
+On Sat, Feb 24, 2018 at 03:45:44PM +0800, Shawn Guo wrote:
+> On Mon, Feb 12, 2018 at 01:39:44PM +0100, Sebastian Reichel wrote:
+> > On i.MX53 it is necessary to set the DBG_EN bit in the
+> > platform GPC register to enable access to PMU counters
+> > other than the cycle counter.
+> >=20
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > ---
+> >  arch/arm/mach-imx/mach-imx53.c | 39 ++++++++++++++++++++++++++++++++++=
+++++-
+> >  1 file changed, 38 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/arm/mach-imx/mach-imx53.c b/arch/arm/mach-imx/mach-im=
+x53.c
+> > index 07c2e8dca494..658e28604dca 100644
+> > --- a/arch/arm/mach-imx/mach-imx53.c
+> > +++ b/arch/arm/mach-imx/mach-imx53.c
+> > @@ -28,10 +28,47 @@ static void __init imx53_init_early(void)
+> >  	mxc_set_cpu_type(MXC_CPU_MX53);
+> >  }
+> > =20
+> > +#define MXC_CORTEXA8_PLAT_GPC 0x63fa0004
+>=20
+> The base address should be retrieved from device tree.
 
-GENMASK() for all masks?
+DT has no entry for 0x63fa0000-0x63fa3fff. iMX53 TRM lists it as "ARM Platf=
+orm"
+with 8 platform specific 32 bit registers. Do you think it's worth the trou=
+ble
+adding a new binding? Do you have a suggestion for a compatible value?
 
--- 
-With Best Regards,
-Andy Shevchenko
+-- Sebastian
+
+>=20
+> Shawn
+>=20
+> > +#define GPC_DBG_EN BIT(16)
+> > +
+> > +/*
+> > + * This enables the DBGEN bit in ARM_GPC register, which is
+> > + * required for accessing some performance counter features.
+> > + * Technically it is only required while perf is used, but to
+> > + * keep the source code simple we just enable it all the time
+> > + * when the kernel configuration allows using the feature.
+> > + */
+> > +static void imx53_pmu_init(void)
+> > +{
+> > +	void __iomem *gpc_reg;
+> > +	struct device_node *node;
+> > +	u32 gpc;
+> > +
+> > +	if (!IS_ENABLED(CONFIG_ARM_PMU))
+> > +		return;
+> > +
+> > +	node =3D of_find_compatible_node(NULL, NULL, "arm,cortex-a8-pmu");
+> > +	if (!node)
+> > +		return;
+> > +
+> > +	if (!of_property_read_bool(node, "secure-reg-access"))
+> > +		return;
+> > +
+> > +	gpc_reg =3D ioremap(MXC_CORTEXA8_PLAT_GPC, 4);
+> > +	if (!gpc_reg) {
+> > +		pr_warning("unable to map GPC to enable perf\n");
+> > +		return;
+> > +	}
+> > +
+> > +	gpc =3D readl_relaxed(gpc_reg);
+> > +	gpc |=3D GPC_DBG_EN;
+> > +	writel_relaxed(gpc, gpc_reg);
+> > +}
+> > +
+> >  static void __init imx53_dt_init(void)
+> >  {
+> >  	imx_src_init();
+> > -
+> > +	imx53_pmu_init();
+> >  	imx_aips_allow_unprivileged_access("fsl,imx53-aipstz");
+> >  }
+> > =20
+> > --=20
+> > 2.15.1
+> >=20
+
+--lccsnu2jsz373qn3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqUD/oACgkQ2O7X88g7
++poZuQ//UROH93H5dL56QeigAdwkRZWcCGJsrHTraC0xNsr6Qh6bF0OwluFqrmQb
+m17Ozdwoy7JFmlPvkaad26Vbwwp4Z7hEyuKJEjtEzVA3km3DDyom5eAFLwYHo9Xf
+k56ECq4wkGjC8+aNezlO5GMuTQOCUjSDjAXX+USr9uKOoJEJj+2lRgVKvGdZ338z
+Yt51tzDvRVgMgC8t3NBAWw6WWnAxhJ8FWBYgUKGuWdfh1I6JmvWOxS9A1g9SMDNm
+luKSr2psJmJsOu3mxJa7mCArboCEypzOdh05wLqgth9HlI/twGbigdDeHbsOuIR5
+YRIWm1950h+fsiWojQEGZgG/bdk5RzxpCRmYixhoMYkGmJjpnkzpI0wmVi39aKcl
+HvISNF1E9qeankAQWJ44EOwDNSNH1+g5K0Ap1mixkMkFsomZToziyEwieynUEBFb
+QHeibjwaZFphpdZdejOqx8Imy9encDld6hdJPBtRJXxZjrESSdE+28TBilKgv9SH
+vy3Kw8x/4DYXuUIodwZwHQBw2DAwVIW2/C3yfEPE8dDh/9OCn9oiqSfVCNQwOA5V
+zSc8A2MLbZFT9y2tn7XkNbU7lx87po+sS22h/g4OpcOKVh/0mir66qjGHqPCVHav
+OQ2McIOwVynVfkBqG2jRlVeRvm36fdD8TagnpGMQpJNPUosJrcI=
+=0tXm
+-----END PGP SIGNATURE-----
+
+--lccsnu2jsz373qn3--
