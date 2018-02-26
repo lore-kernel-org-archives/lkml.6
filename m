@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeBZJ3W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:29:22 -0500
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:40704 "EHLO smtp2.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751022AbeBZJ3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:29:20 -0500
-Date: Mon, 26 Feb 2018 11:29:17 +0200 (EET)
-From: Meelis Roos <mroos@linux.ee>
-To: Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: 4.15-rc9 new insecure W+X mapping warning
-In-Reply-To: <alpine.LRH.2.21.1801242127140.27627@math.ut.ee>
-Message-ID: <alpine.LRH.2.21.1802261127370.4893@math.ut.ee>
-References: <alpine.LRH.2.21.1801242127140.27627@math.ut.ee>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1752174AbeBZJaE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:30:04 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35983 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeBZJ37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:29:59 -0500
+X-Google-Smtp-Source: AG47ELvDino77b5K9wF/zsgCFHgLXO2/BHJ6OlYPJdQvQ4S7Zgwp9YWWcqOE6PxcA4lrURQCwdukfbi+aSw/Rieaw0Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1519565039.10722.145.camel@linux.intel.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+ <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com> <1519565039.10722.145.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 26 Feb 2018 10:29:58 +0100
+X-Google-Sender-Auth: gBey5OOhu6CukSLWm-RGKbMUmxU
+Message-ID: <CAJZ5v0hK3fvgL42qowQFBbcG5JABec42R781vBbia0Z2MQy31w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This is Intel SE7520JR22S mainboard with 2 64-bit P4 xeons. Earlier 
-> kernels up to 4.14 have had W+X checking on but found nothing. Now I 
-> tried 4.15.0-rc9-00023-g1f07476ec143 and it gives a new W+X warning. 
+On Sun, Feb 25, 2018 at 2:23 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Fri, 2018-02-23 at 15:35 -0600, Bjorn Helgaas wrote:
+>> On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
+>> > It's used in several places and more users may come.
+>> > By using this helper they may create a slightly cleaner code.
+>> >
+>> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> > ---
+>> >  include/linux/dmi.h | 7 +++++++
+>> >  1 file changed, 7 insertions(+)
+>> >
+>> > diff --git a/include/linux/dmi.h b/include/linux/dmi.h
+>> > index 46e151172d95..241c27008c70 100644
+>> > --- a/include/linux/dmi.h
+>> > +++ b/include/linux/dmi.h
+>> > @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
+>> >
+>> >  #endif
+>> >
+>> > +static inline int dmi_get_bios_year(void)
+>> > +{
+>> > +   int year;
+>> > +   dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
+>> > +   return year;
+>> > +}
+>>
+>> I don't really care personally, and I assume this series will go via a
+>> non-PCI tree, but making this inline looks similar to this, which
+>> wasn't well-received:
+>>
+>> https://lkml.kernel.org/r/CA+55aFypU331cQy-
+>> 6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
+>
+> "Yes, that header file is already full of random inline functions, but
+> they are generally wrapper functions that don't really do anything, ..."
+>
+> I think the function above is exactly from the "wrapper that doesn't
+> really do anything" category.
 
-This still happens in 4.15 and 4.16-rc2+.
+Yes, but honestly does it need to be inline even so?
 
-What can I do to help resolving it?
-
-> [   10.880663] ------------[ cut here ]------------
-> [   10.880755] x86/mm: Found insecure W+X mapping at address 00000000d051fb08/0xffff880000000000
-> [   10.880900] WARNING: CPU: 2 PID: 1 at arch/x86/mm/dump_pagetables.c:266 note_page+0x718/0xb89
-> [   10.881035] Modules linked in:
-> [   10.881128] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc9-00023-g1f07476ec143 #104
-> [   10.881264] Hardware name: Intel                                  /SE7520JR22S, BIOS SE7520JR22.86B.P.10.00.0087.120820051348 12/08/2005
-> [   10.881405] RIP: 0010:note_page+0x718/0xb89
-> [   10.881491] RSP: 0000:ffffc90000013e48 EFLAGS: 00010296
-> [   10.881578] RAX: 0000000000000051 RBX: ffffc90000013ec8 RCX: ffffffff8164f938
-> [   10.881666] RDX: 0000000000000001 RSI: 0000000000000092 RDI: ffffffff82b468cc
-> [   10.881756] RBP: 0000000000000061 R08: 0000000000000177 R09: 00000000000001d7
-> [   10.881844] R10: 0720072007200720 R11: 0720072007200720 R12: 0000000000000000
-> [   10.881932] R13: 0000000000000000 R14: 0000000000000001 R15: 8800000990000000
-> [   10.882022] FS:  0000000000000000(0000) GS:ffff88003fc80000(0000) knlGS:0000000000000000
-> [   10.882156] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   10.882243] CR2: 0000000000000000 CR3: 000000000200a000 CR4: 00000000000006e0
-> [   10.882331] Call Trace:
-> [   10.882423]  ptdump_walk_pgd_level_core+0x367/0x3a5
-> [   10.882511]  ptdump_walk_pgd_level_checkwx+0x10/0x3e
-> [   10.882602]  kernel_init+0x2e/0x10f
-> [   10.882688]  ? rest_init+0xb9/0xb9
-> [   10.882775]  ret_from_fork+0x35/0x40
-> [   10.882861] Code: fb ff ff 41 f7 c7 00 10 00 00 0f 85 e2 fe ff ff e9 36 fd ff ff c6 05 7d 45 6f 01 01 48 89 f2 48 c7 c7 08 5b ee 81 e8 4b d6 00 00 <0f> ff 48 8b 73 10 e9 bc f9 ff ff 4d 85 ed 0f 84 b9 01 00 00 41 
-> [   10.883103] ---[ end trace bc3e2cf1a1adfa39 ]---
-> [   10.896336] x86/mm: Checked W+X mappings: FAILED, 266243 W+X pages found.
-> [   10.896430] x86/mm: Checking user space page tables
-> [   10.909522] x86/mm: Checked W+X mappings: FAILED, 56 W+X pages found.
-
--- 
-Meelis Roos (mroos@linux.ee)
+Why don't you simply put the wrapper into dmi_scan.c and export it?
