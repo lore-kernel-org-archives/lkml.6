@@ -1,232 +1,386 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeBZAl7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 19:41:59 -0500
-Received: from ozlabs.org ([103.22.144.67]:37885 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751904AbeBZAl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 19:41:56 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 26 Feb 2018 11:41:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <20180226114147.2ab5c647@canb.auug.org.au>
+        id S1751988AbeBZAoM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 19:44:12 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46453 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751904AbeBZAoH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 19:44:07 -0500
+X-Google-Smtp-Source: AG47ELtVHWSphsbQCCMUKPyi5uoZZ5040MOtIOcRoC9DQzoM7Azn0JubEghKE3ca0E8uXKKoF8EF6Q==
+Date: Sun, 25 Feb 2018 16:44:05 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com, mingo@kernel.org,
+        marcus.folkesson@gmail.com
+Subject: Re: [v4,05/10] watchdog/hpwdt: Modify to use watchdog core.
+Message-ID: <20180226004405.GA14827@roeck-us.net>
+References: <20180225213259.2861-6-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NJbGbTCk46_9_4Ko+KU8SuB"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180225213259.2861-6-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NJbGbTCk46_9_4Ko+KU8SuB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Feb 25, 2018 at 02:32:54PM -0700, Jerry Hoemann wrote:
+> Follow Documentation/watchdog/convert_drivers_to_kernel_api.txt to
+> convert hpwdt from legacy watchdog driver to use the watchdog core.
+> 
+> Removed functions: hpwdt_open, hpwdt_release, hpwdt_write, hpwdt_ioctl
+> Removed data structures: hpwdt_fops, hpwdt_miscdev, watchdog_device
+> Modified functions: hpwdt_start, hpwdt_stop, hpwdt_ping, hpwdt_gettimeleft
+> Added functions: hpwdt_settimeout
+> Added structures: watchdog_device
+> 
+> Update Kconfig file to show that hpwdt now selects WATCHDOG_CORE.
+> 
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-Hi all,
+Nitpicks only.
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+Guenter
 
-  tools/testing/selftests/bpf/test_verifier.c
+> ---
+>  drivers/watchdog/Kconfig |   1 +
+>  drivers/watchdog/hpwdt.c | 216 +++++++++++------------------------------------
+>  2 files changed, 49 insertions(+), 168 deletions(-)
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 37460cd6cabb..e873522fca2d 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1118,6 +1118,7 @@ config IT87_WDT
+>  
+>  config HP_WATCHDOG
+>  	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
+> +	select WATCHDOG_CORE
+>  	depends on X86 && PCI
+>  	help
+>  	  A software monitoring watchdog and NMI sourcing driver. This driver
+> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> index 44c3038cc531..1a18326bc99d 100644
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -16,17 +16,13 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/device.h>
+> -#include <linux/fs.h>
+>  #include <linux/io.h>
+> -#include <linux/bitops.h>
+>  #include <linux/kernel.h>
+> -#include <linux/miscdevice.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci_ids.h>
+>  #include <linux/types.h>
+> -#include <linux/uaccess.h>
+>  #include <linux/watchdog.h>
+>  #include <asm/nmi.h>
+>  
+> @@ -42,8 +38,6 @@ static bool nowayout = WATCHDOG_NOWAYOUT;
+>  #ifdef CONFIG_HPWDT_NMI_DECODING
+>  static unsigned int allow_kdump = 1;
+>  #endif
+> -static char expect_release;
+> -static unsigned long hpwdt_is_open;
+>  
+>  static void __iomem *pci_mem_addr;		/* the PCI-memory address */
+>  static unsigned long __iomem *hpwdt_nmistat;
+> @@ -61,11 +55,14 @@ MODULE_DEVICE_TABLE(pci, hpwdt_devices);
+>  /*
+>   *	Watchdog operations
+>   */
+> -static void hpwdt_start(void)
+> +static int hpwdt_start(struct watchdog_device *wdd)
+>  {
+> -	reload = SECS_TO_TICKS(soft_margin);
+> +	reload = SECS_TO_TICKS(wdd->timeout);
+> +
+>  	iowrite16(reload, hpwdt_timer_reg);
+>  	iowrite8(0x85, hpwdt_timer_con);
+> +
+> +	return 0;
+>  }
+>  
+>  static void hpwdt_stop(void)
+> @@ -77,31 +74,33 @@ static void hpwdt_stop(void)
+>  	iowrite8(data, hpwdt_timer_con);
+>  }
+>  
+> -static void hpwdt_ping(void)
+> +static int hpwdt_stop_core(struct watchdog_device *wdd)
+>  {
+> -	iowrite16(reload, hpwdt_timer_reg);
+> +	hpwdt_stop();
+> +
+> +	return 0;
+>  }
+>  
+> -static int hpwdt_change_timer(int new_margin)
+> +static int hpwdt_ping(struct watchdog_device *wdd)
+>  {
+> -	if (new_margin < 1 || new_margin > HPWDT_MAX_TIMER) {
+> -		pr_warn("New value passed in is invalid: %d seconds\n",
+> -			new_margin);
+> -		return -EINVAL;
+> -	}
+> -
+> -	soft_margin = new_margin;
+> -	pr_debug("New timer passed in is %d seconds\n", new_margin);
+> -	reload = SECS_TO_TICKS(soft_margin);
+> -
+> +	iowrite16(reload, hpwdt_timer_reg);
+>  	return 0;
+>  }
+>  
+> -static int hpwdt_time_left(void)
+> +
 
-between commit:
+Please no double empty lines.
 
-  ca36960211eb ("bpf: allow xadd only on aligned memory")
+> +static unsigned int hpwdt_gettimeleft(struct watchdog_device *wdd)
+>  {
+>  	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
+>  }
+>  
+> +static int hpwdt_settimeout(struct watchdog_device *wdd, unsigned int val)
+> +{
+> +	wdd->timeout = val;
+> +	hpwdt_ping(wdd);
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_HPWDT_NMI_DECODING
+>  static int hpwdt_my_nmi(void)
+>  {
+> @@ -135,68 +134,6 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+>  }
+>  #endif /* CONFIG_HPWDT_NMI_DECODING */
+>  
+> -/*
+> - *	/dev/watchdog handling
+> - */
+> -static int hpwdt_open(struct inode *inode, struct file *file)
+> -{
+> -	/* /dev/watchdog can only be opened once */
+> -	if (test_and_set_bit(0, &hpwdt_is_open))
+> -		return -EBUSY;
+> -
+> -	/* Start the watchdog */
+> -	hpwdt_start();
+> -	hpwdt_ping();
+> -
+> -	return nonseekable_open(inode, file);
+> -}
+> -
+> -static int hpwdt_release(struct inode *inode, struct file *file)
+> -{
+> -	/* Stop the watchdog */
+> -	if (expect_release == 42) {
+> -		hpwdt_stop();
+> -	} else {
+> -		pr_crit("Unexpected close, not stopping watchdog!\n");
+> -		hpwdt_ping();
+> -	}
+> -
+> -	expect_release = 0;
+> -
+> -	/* /dev/watchdog is being closed, make sure it can be re-opened */
+> -	clear_bit(0, &hpwdt_is_open);
+> -
+> -	return 0;
+> -}
+> -
+> -static ssize_t hpwdt_write(struct file *file, const char __user *data,
+> -	size_t len, loff_t *ppos)
+> -{
+> -	/* See if we got the magic character 'V' and reload the timer */
+> -	if (len) {
+> -		if (!nowayout) {
+> -			size_t i;
+> -
+> -			/* note: just in case someone wrote the magic character
+> -			 * five months ago... */
+> -			expect_release = 0;
+> -
+> -			/* scan to see whether or not we got the magic char. */
+> -			for (i = 0; i != len; i++) {
+> -				char c;
+> -				if (get_user(c, data + i))
+> -					return -EFAULT;
+> -				if (c == 'V')
+> -					expect_release = 42;
+> -			}
+> -		}
+> -
+> -		/* someone wrote to us, we should reload the timer */
+> -		hpwdt_ping();
+> -	}
+> -
+> -	return len;
+> -}
+>  
+>  static const struct watchdog_info ident = {
+>  	.options = WDIOF_SETTIMEOUT |
+> @@ -205,85 +142,28 @@ static const struct watchdog_info ident = {
+>  	.identity = "HPE iLO2+ HW Watchdog Timer",
+>  };
+>  
+> -static long hpwdt_ioctl(struct file *file, unsigned int cmd,
+> -	unsigned long arg)
+> -{
+> -	void __user *argp = (void __user *)arg;
+> -	int __user *p = argp;
+> -	int new_margin, options;
+> -	int ret = -ENOTTY;
+> -
+> -	switch (cmd) {
+> -	case WDIOC_GETSUPPORT:
+> -		ret = 0;
+> -		if (copy_to_user(argp, &ident, sizeof(ident)))
+> -			ret = -EFAULT;
+> -		break;
+> -
+> -	case WDIOC_GETSTATUS:
+> -	case WDIOC_GETBOOTSTATUS:
+> -		ret = put_user(0, p);
+> -		break;
+> -
+> -	case WDIOC_KEEPALIVE:
+> -		hpwdt_ping();
+> -		ret = 0;
+> -		break;
+> -
+> -	case WDIOC_SETOPTIONS:
+> -		ret = get_user(options, p);
+> -		if (ret)
+> -			break;
+> -
+> -		if (options & WDIOS_DISABLECARD)
+> -			hpwdt_stop();
+> -
+> -		if (options & WDIOS_ENABLECARD) {
+> -			hpwdt_start();
+> -			hpwdt_ping();
+> -		}
+> -		break;
+> -
+> -	case WDIOC_SETTIMEOUT:
+> -		ret = get_user(new_margin, p);
+> -		if (ret)
+> -			break;
+> -
+> -		ret = hpwdt_change_timer(new_margin);
+> -		if (ret)
+> -			break;
+> -
+> -		hpwdt_ping();
+> -		/* Fall */
+> -	case WDIOC_GETTIMEOUT:
+> -		ret = put_user(soft_margin, p);
+> -		break;
+> -
+> -	case WDIOC_GETTIMELEFT:
+> -		ret = put_user(hpwdt_time_left(), p);
+> -		break;
+> -	}
+> -	return ret;
+> -}
+> -
+>  /*
+>   *	Kernel interfaces
+>   */
+> -static const struct file_operations hpwdt_fops = {
+> -	.owner = THIS_MODULE,
+> -	.llseek = no_llseek,
+> -	.write = hpwdt_write,
+> -	.unlocked_ioctl = hpwdt_ioctl,
+> -	.open = hpwdt_open,
+> -	.release = hpwdt_release,
+> +
+> +static const struct watchdog_ops hpwdt_ops = {
+> +	.owner		= THIS_MODULE,
+> +	.start		= hpwdt_start,
+> +	.stop		= hpwdt_stop_core,
+> +	.ping		= hpwdt_ping,
+> +	.set_timeout	= hpwdt_settimeout,
+> +	.get_timeleft	= hpwdt_gettimeleft,
+>  };
+>  
+> -static struct miscdevice hpwdt_miscdev = {
+> -	.minor = WATCHDOG_MINOR,
+> -	.name = "watchdog",
+> -	.fops = &hpwdt_fops,
+> +static struct watchdog_device hpwdt_dev = {
+> +	.info		= &ident,
+> +	.ops		= &hpwdt_ops,
+> +	.min_timeout	= 1,
+> +	.max_timeout	= HPWDT_MAX_TIMER,
+> +	.timeout	= DEFAULT_MARGIN,
+>  };
+>  
+> +
 
-from the bpf tree and commit:
+Please no double empty lines.
 
-  23d191a82c13 ("bpf: add various jit test cases")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/bpf/test_verifier.c
-index 437c0b1c9d21,c987d3a2426f..000000000000
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@@ -11163,64 -11140,95 +11166,153 @@@ static struct bpf_test tests[] =3D=20
-  		.result =3D REJECT,
-  		.prog_type =3D BPF_PROG_TYPE_TRACEPOINT,
-  	},
- +	{
- +		"xadd/w check unaligned stack",
- +		.insns =3D {
- +			BPF_MOV64_IMM(BPF_REG_0, 1),
- +			BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_0, -8),
- +			BPF_STX_XADD(BPF_W, BPF_REG_10, BPF_REG_0, -7),
- +			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_10, -8),
- +			BPF_EXIT_INSN(),
- +		},
- +		.result =3D REJECT,
- +		.errstr =3D "misaligned stack access off",
- +		.prog_type =3D BPF_PROG_TYPE_SCHED_CLS,
- +	},
- +	{
- +		"xadd/w check unaligned map",
- +		.insns =3D {
- +			BPF_ST_MEM(BPF_DW, BPF_REG_10, -8, 0),
- +			BPF_MOV64_REG(BPF_REG_2, BPF_REG_10),
- +			BPF_ALU64_IMM(BPF_ADD, BPF_REG_2, -8),
- +			BPF_LD_MAP_FD(BPF_REG_1, 0),
- +			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
- +				     BPF_FUNC_map_lookup_elem),
- +			BPF_JMP_IMM(BPF_JNE, BPF_REG_0, 0, 1),
- +			BPF_EXIT_INSN(),
- +			BPF_MOV64_IMM(BPF_REG_1, 1),
- +			BPF_STX_XADD(BPF_W, BPF_REG_0, BPF_REG_1, 3),
- +			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 3),
- +			BPF_EXIT_INSN(),
- +		},
- +		.fixup_map1 =3D { 3 },
- +		.result =3D REJECT,
- +		.errstr =3D "misaligned value access off",
- +		.prog_type =3D BPF_PROG_TYPE_SCHED_CLS,
- +	},
- +	{
- +		"xadd/w check unaligned pkt",
- +		.insns =3D {
- +			BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1,
- +				    offsetof(struct xdp_md, data)),
- +			BPF_LDX_MEM(BPF_W, BPF_REG_3, BPF_REG_1,
- +				    offsetof(struct xdp_md, data_end)),
- +			BPF_MOV64_REG(BPF_REG_1, BPF_REG_2),
- +			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 8),
- +			BPF_JMP_REG(BPF_JLT, BPF_REG_1, BPF_REG_3, 2),
- +			BPF_MOV64_IMM(BPF_REG_0, 99),
- +			BPF_JMP_IMM(BPF_JA, 0, 0, 6),
- +			BPF_MOV64_IMM(BPF_REG_0, 1),
- +			BPF_ST_MEM(BPF_W, BPF_REG_2, 0, 0),
- +			BPF_ST_MEM(BPF_W, BPF_REG_2, 3, 0),
- +			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 1),
- +			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 2),
- +			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_2, 1),
- +			BPF_EXIT_INSN(),
- +		},
- +		.result =3D REJECT,
- +		.errstr =3D "BPF_XADD stores into R2 packet",
- +		.prog_type =3D BPF_PROG_TYPE_XDP,
- +	},
-+ 	{
-+ 		"jit: lsh, rsh, arsh by 1",
-+ 		.insns =3D {
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_MOV64_IMM(BPF_REG_1, 0xff),
-+ 			BPF_ALU64_IMM(BPF_LSH, BPF_REG_1, 1),
-+ 			BPF_ALU32_IMM(BPF_LSH, BPF_REG_1, 1),
-+ 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0x3fc, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_ALU64_IMM(BPF_RSH, BPF_REG_1, 1),
-+ 			BPF_ALU32_IMM(BPF_RSH, BPF_REG_1, 1),
-+ 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0xff, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_ALU64_IMM(BPF_ARSH, BPF_REG_1, 1),
-+ 			BPF_JMP_IMM(BPF_JEQ, BPF_REG_1, 0x7f, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 2),
-+ 			BPF_EXIT_INSN(),
-+ 		},
-+ 		.result =3D ACCEPT,
-+ 		.retval =3D 2,
-+ 	},
-+ 	{
-+ 		"jit: mov32 for ldimm64, 1",
-+ 		.insns =3D {
-+ 			BPF_MOV64_IMM(BPF_REG_0, 2),
-+ 			BPF_LD_IMM64(BPF_REG_1, 0xfeffffffffffffffULL),
-+ 			BPF_ALU64_IMM(BPF_RSH, BPF_REG_1, 32),
-+ 			BPF_LD_IMM64(BPF_REG_2, 0xfeffffffULL),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_1, BPF_REG_2, 1),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 		},
-+ 		.result =3D ACCEPT,
-+ 		.retval =3D 2,
-+ 	},
-+ 	{
-+ 		"jit: mov32 for ldimm64, 2",
-+ 		.insns =3D {
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_LD_IMM64(BPF_REG_1, 0x1ffffffffULL),
-+ 			BPF_LD_IMM64(BPF_REG_2, 0xffffffffULL),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_1, BPF_REG_2, 1),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 2),
-+ 			BPF_EXIT_INSN(),
-+ 		},
-+ 		.result =3D ACCEPT,
-+ 		.retval =3D 2,
-+ 	},
-+ 	{
-+ 		"jit: various mul tests",
-+ 		.insns =3D {
-+ 			BPF_LD_IMM64(BPF_REG_2, 0xeeff0d413122ULL),
-+ 			BPF_LD_IMM64(BPF_REG_0, 0xfefefeULL),
-+ 			BPF_LD_IMM64(BPF_REG_1, 0xefefefULL),
-+ 			BPF_ALU64_REG(BPF_MUL, BPF_REG_0, BPF_REG_1),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_2, 2),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_LD_IMM64(BPF_REG_3, 0xfefefeULL),
-+ 			BPF_ALU64_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_3, BPF_REG_2, 2),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_MOV32_REG(BPF_REG_2, BPF_REG_2),
-+ 			BPF_LD_IMM64(BPF_REG_0, 0xfefefeULL),
-+ 			BPF_ALU32_REG(BPF_MUL, BPF_REG_0, BPF_REG_1),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_0, BPF_REG_2, 2),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_LD_IMM64(BPF_REG_3, 0xfefefeULL),
-+ 			BPF_ALU32_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_3, BPF_REG_2, 2),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_LD_IMM64(BPF_REG_0, 0x952a7bbcULL),
-+ 			BPF_LD_IMM64(BPF_REG_1, 0xfefefeULL),
-+ 			BPF_LD_IMM64(BPF_REG_2, 0xeeff0d413122ULL),
-+ 			BPF_ALU32_REG(BPF_MUL, BPF_REG_2, BPF_REG_1),
-+ 			BPF_JMP_REG(BPF_JEQ, BPF_REG_2, BPF_REG_0, 2),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
-+ 			BPF_EXIT_INSN(),
-+ 			BPF_MOV64_IMM(BPF_REG_0, 2),
-+ 			BPF_EXIT_INSN(),
-+ 		},
-+ 		.result =3D ACCEPT,
-+ 		.retval =3D 2,
-+ 	},
-+=20
-  };
- =20
-  static int probe_filter_length(const struct bpf_insn *fp)
-
---Sig_/NJbGbTCk46_9_4Ko+KU8SuB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqTV8sACgkQAVBC80lX
-0Gxr0gf+IQlx4HqcMMxfTuakdRa4pBDX2U13K1AC07rSuisndsgR0axRzEjHSUQD
-ixR4YIjzQ8X55x1uG+4e2KPY+iBrHTgTGzxJN7/oB9vagsm3zw/rQRoFfGozeALE
-qaK2VguJWVL2nAbDOjvuCll0mbPzNG0rvtBhN18c7EksuagcaAq3Mcl3p5PlaA70
-nLHGHZ1Y3tHSeGb/VK6Ye8ZqPqPRDLQ/EPiofvIajBmGnTPdRV3jvLQVwg2zKM+g
-MRh3eFQJ08hV8bCpPjw1wIJN+fHvKDUVLtc3m98mFxb4mOlYdrWZKWCCIC+af+o+
-yXwsyeQByIfwySZx+7wKNMVgH0kWIQ==
-=xAZi
------END PGP SIGNATURE-----
-
---Sig_/NJbGbTCk46_9_4Ko+KU8SuB--
+>  /*
+>   *	Init & Exit
+>   */
+> @@ -379,29 +259,29 @@ static int hpwdt_init_one(struct pci_dev *dev,
+>  	/* Make sure that timer is disabled until /dev/watchdog is opened */
+>  	hpwdt_stop();
+>  
+> -	/* Make sure that we have a valid soft_margin */
+> -	if (hpwdt_change_timer(soft_margin))
+> -		hpwdt_change_timer(DEFAULT_MARGIN);
+> -
+>  	/* Initialize NMI Decoding functionality */
+>  	retval = hpwdt_init_nmi_decoding(dev);
+>  	if (retval != 0)
+>  		goto error_init_nmi_decoding;
+>  
+> -	retval = misc_register(&hpwdt_miscdev);
+> +	watchdog_set_nowayout(&hpwdt_dev, nowayout);
+> +	if (watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL))
+> +		dev_warn(&dev->dev, "Invalid soft_margin: %d.\n", soft_margin);
+> +
+> +	hpwdt_dev.parent = &dev->dev;
+> +	retval = watchdog_register_device(&hpwdt_dev);
+>  	if (retval < 0) {
+> -		dev_warn(&dev->dev,
+> -			"Unable to register miscdev on minor=%d (err=%d).\n",
+> -			WATCHDOG_MINOR, retval);
+> -		goto error_misc_register;
+> +		dev_err(&dev->dev, "watchdog register failed: %d.\n", retval);
+> +		goto error_wd_register;
+>  	}
+>  
+>  	dev_info(&dev->dev, "HPE Watchdog Timer Driver: %s"
+>  			", timer margin: %d seconds (nowayout=%d).\n",
+> -			HPWDT_VERSION, soft_margin, nowayout);
+> +			HPWDT_VERSION, hpwdt_dev.timeout, nowayout);
+> +
+>  	return 0;
+>  
+> -error_misc_register:
+> +error_wd_register:
+>  	hpwdt_exit_nmi_decoding();
+>  error_init_nmi_decoding:
+>  	pci_iounmap(dev, pci_mem_addr);
+> @@ -415,7 +295,7 @@ static void hpwdt_exit(struct pci_dev *dev)
+>  	if (!nowayout)
+>  		hpwdt_stop();
+>  
+> -	misc_deregister(&hpwdt_miscdev);
+> +	watchdog_unregister_device(&hpwdt_dev);
+>  	hpwdt_exit_nmi_decoding();
+>  	pci_iounmap(dev, pci_mem_addr);
+>  	pci_disable_device(dev);
