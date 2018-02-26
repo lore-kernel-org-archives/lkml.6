@@ -1,109 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751712AbeBZWbo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:31:44 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:42441 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeBZWbn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:31:43 -0500
-X-Google-Smtp-Source: AG47ELsx+7WfyMWn6pvg3yNkKm37oSDKKOYLeU3s9h1LHelDz3Ee1qO2SWJDfAMNcfHoqQAbSbQGTp4mS2i4K/NyhAY=
+        id S1751737AbeBZWcw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:32:52 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751245AbeBZWcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 17:32:50 -0500
+Date: Tue, 27 Feb 2018 00:32:47 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Mark Rustad <mark.d.rustad@intel.com>, virtio-dev@lists.oasis-open.org,
+        Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, "Daly, Dan" <dan.daly@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>, MRustad@gmail.com
+Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
+ virtio_pci devices
+Message-ID: <20180227003123-mutt-send-email-mst@kernel.org>
+References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+ <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180226175532.70556-1-andriy.shevchenko@linux.intel.com>
-References: <20180226175532.70556-1-andriy.shevchenko@linux.intel.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 26 Feb 2018 23:31:21 +0100
-Message-ID: <CANiq72nsPasAxZBkHW0fNcTMj3Vp_QdT3VABs9-mHKe4RHS9KA@mail.gmail.com>
-Subject: Re: [PATCH v1] kernel.h: Update comment about simple_strto<foo>() functions
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Willy Tarreau <w@1wt.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 6:55 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> There were discussions in the past about use cases for
-> simple_strto<foo>() functions and in some rare cases they have a benefit
-> on kstrto<foo>() ones.
->
-> Update a comment to reduce confusing about special use cases.
->
-> Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+On Mon, Feb 26, 2018 at 07:26:14AM -0800, Alexander Duyck wrote:
+> On Sun, Feb 25, 2018 at 8:48 PM, Mark Rustad <mark.d.rustad@intel.com> wrote:
+> > Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> > patch enables its use. The device in question is an upcoming Intel
+> > NIC that implements both a virtio_net PF and virtio_net VFs. These
+> > are hardware realizations of what has been up to now been a software
+> > interface.
+> >
+> > The device in question has the following 4-part PCI IDs:
+> >
+> > PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> > VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+> >
+> > The patch needs no check for device ID, because the callback will
+> > never be made for devices that do not assert the capability or
+> > when run on a platform incapable of SR-IOV.
+> >
+> > One reason for this patch is because the hardware requires the
+> > vendor ID of a VF to be the same as the vendor ID of the PF that
+> > created it. So it seemed logical to simply have a fully-functioning
+> > virtio_net PF create the VFs. This patch makes that possible.
+> >
+> > Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> > Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> 
+> Mark,
+> 
+> In the future please don't put my "Reviewed-by" on a patch that I
+> haven't reviewed. I believe I reviewed one of the earlier patches, but
+> I hadn't reviewed this version.
+> 
+> Also, after thinking about it over the weekend we may want to look at
+> just coming up with a truly "generic" solution that is applied to
+> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
+> on them. That would allow us to handle the uio, vfio, pci-stub, and
+> virtio cases all in one fell swoop. I think us going though and
+> modifying one patch at a time to do this kind of thing isn't going to
+> scale.
 
-I am not sure we should just go back to the old ones, though. Maybe it
-is better to create a new set of kstrto*_inplace() or some other name,
-safer than the old ones and following kstrto*()'s interface regarding
-returned errors, overflow checking, etc. There are two variations that
-can be useful:
+uio really can't support VFs properly - without proper IOMMU
+support any MSIs can corrupt kernel memory, and VFs are
+limited to MSIs.
 
-  * A strict version taking a (start, end) range or (start, size) pair
-which contains the number to be converted. If there is any problem
-parsing it (e.g. invalid characters, extra characters, ...), fail.
-
-  * A less strict version taking an extra end pointer (or size
-parameter) which is not allowed to be surpassed, and any non-digit
-character means successful stop.
-
-The old behavior (simple_*()) can still be achieved (almost) with the
-second version with an "infinite" end pointer if one really needs it.
-
-In any case, if you want to go forward with the old ones, we would
-also have to change the comments inside lib/vsprintf.c and possibly
-checkpatch :-)
-
-Cheers,
-Miguel
-
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  include/linux/kernel.h | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 207b0702fad1..07ad6f36b17d 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -326,8 +326,7 @@ int __must_check kstrtoll(const char *s, unsigned int base, long long *res);
->   * @res: Where to write the result of the conversion on success.
->   *
->   * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
-> - * Used as a replacement for the obsolete simple_strtoull. Return code must
-> - * be checked.
-> + * Used as a replacement for the simple_strtoull. Return code must be checked.
->  */
->  static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
->  {
-> @@ -355,8 +354,7 @@ static inline int __must_check kstrtoul(const char *s, unsigned int base, unsign
->   * @res: Where to write the result of the conversion on success.
->   *
->   * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
-> - * Used as a replacement for the obsolete simple_strtoull. Return code must
-> - * be checked.
-> + * Used as a replacement for the simple_strtoull. Return code must be checked.
->   */
->  static inline int __must_check kstrtol(const char *s, unsigned int base, long *res)
->  {
-> @@ -432,7 +430,15 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t
->         return kstrtoint_from_user(s, count, base, res);
->  }
->
-> -/* Obsolete, do not use.  Use kstrto<foo> instead */
-> +/*
-> + * Use kstrto<foo> instead.
-> + *
-> + * NOTE: The simple_strto<foo> do not check for overflow and depending
-> + *       on the input may give interesting results.
-> + *
-> + * Use these functions if and only if the code will need in place
-> + * conversion and otherwise looks very ugly. Keep in mind above caveat.
-> + */
->
->  extern unsigned long simple_strtoul(const char *,char **,unsigned int);
->  extern long simple_strtol(const char *,char **,unsigned int);
-> --
-> 2.16.1
->
+> I'll try to do some digging and find the VFIO approach we had been
+> working on. I think with a couple tweaks we can probably make that
+> truly generic and ready for submission.
+> 
+> Thanks.
+> 
+> - Alex
+> 
+> > ---
+> > Changes in V4:
+> > - V3 was a mis-send, this has what was intended
+> > - Move most code to new helpers in pci/iov.c, pci_sriov_configure_generic
+> >   and pci_sriov_disable_generic
+> > - Correct mislabeling of vendor and device IDs
+> > - Other minor changelog fixes
+> > - Rebased to pci/master, since most changes are in that area now
+> > - No new ifdefs with this approach (yay)
+> > Changes in V3:
+> > - Missent patch, please disregard
+> > Changes in V2:
+> > - Simplified logic from previous version, removed added driver variable
+> > - Disable SR-IOV on driver removal except when VFs are assigned
+> > - Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
+> > ---
+> >  drivers/pci/iov.c                  |   50 ++++++++++++++++++++++++++++++++++++
+> >  drivers/virtio/virtio_pci_common.c |    2 +
+> >  include/linux/pci.h                |   10 +++++++
+> >  3 files changed, 62 insertions(+)
+> >
+> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> > index 677924ae0350..4b110e169b7c 100644
+> > --- a/drivers/pci/iov.c
+> > +++ b/drivers/pci/iov.c
+> > @@ -367,6 +367,56 @@ static void sriov_disable(struct pci_dev *dev)
+> >         pci_iov_set_numvfs(dev, 0);
+> >  }
+> >
+> > +/**
+> > + * pci_sriov_disable_generic - standard helper to disable SR-IOV
+> > + * @dev:the PCI PF device whose VFs are to be disabled
+> > + */
+> > +int pci_sriov_disable_generic(struct pci_dev *dev)
+> > +{
+> > +       /*
+> > +        * If vfs are assigned we cannot shut down SR-IOV without causing
+> > +        * issues, so just leave the hardware available.
+> > +        */
+> > +       if (pci_vfs_assigned(dev)) {
+> > +               pci_warn(dev,
+> > +                        "Cannot disable SR-IOV while VFs are assigned - VFs will not be deallocated\n");
+> > +               return -EPERM;
+> > +       }
+> > +       pci_disable_sriov(dev);
+> > +       return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(pci_sriov_disable_generic);
+> > +
+> > +static int pci_sriov_enable(struct pci_dev *dev, int num_vfs)
+> > +{
+> > +       int rc;
+> > +
+> > +       if (pci_num_vf(dev))
+> > +               return -EINVAL;
+> > +
+> > +       rc = pci_enable_sriov(dev, num_vfs);
+> > +       if (rc) {
+> > +               pci_warn(dev, "Failed to enable PCI sriov: %d\n", rc);
+> > +               return rc;
+> > +       }
+> > +       pci_info(dev, "SR-IOV enabled with %d VFs\n", num_vfs);
+> > +       return num_vfs;
+> > +}
+> > +
+> > +/**
+> > + * pci_sriov_configure_generic - standard helper to configure SR-IOV
+> > + * @dev: the PCI PF device that is configuring SR-IOV
+> > + */
+> > +int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
+> > +{
+> > +       if (num_vfs)
+> > +               return pci_sriov_enable(dev, num_vfs);
+> > +       if (!pci_num_vf(dev))
+> > +               return -EINVAL;
+> > +       return pci_sriov_disable_generic(dev);
+> > +}
+> > +EXPORT_SYMBOL_GPL(pci_sriov_configure_generic);
+> > +
+> >  static int sriov_init(struct pci_dev *dev, int pos)
+> >  {
+> >         int i, bar64;
+> > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> > index 48d4d1cf1cb6..d7679377131f 100644
+> > --- a/drivers/virtio/virtio_pci_common.c
+> > +++ b/drivers/virtio/virtio_pci_common.c
+> > @@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+> >         else
+> >                 virtio_pci_modern_remove(vp_dev);
+> >
+> > +       pci_sriov_disable_generic(pci_dev);
+> >         pci_disable_device(pci_dev);
+> >         put_device(dev);
+> >  }
+> > @@ -596,6 +597,7 @@ static struct pci_driver virtio_pci_driver = {
+> >  #ifdef CONFIG_PM_SLEEP
+> >         .driver.pm      = &virtio_pci_pm_ops,
+> >  #endif
+> > +       .sriov_configure = pci_sriov_configure_generic,
+> >  };
+> >
+> >  module_pci_driver(virtio_pci_driver);
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 024a1beda008..937124d4e098 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -1947,6 +1947,8 @@ int pci_iov_virtfn_devfn(struct pci_dev *dev, int id);
+> >
+> >  int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
+> >  void pci_disable_sriov(struct pci_dev *dev);
+> > +int pci_sriov_disable_generic(struct pci_dev *dev);
+> > +int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs);
+> >  int pci_iov_add_virtfn(struct pci_dev *dev, int id);
+> >  void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
+> >  int pci_num_vf(struct pci_dev *dev);
+> > @@ -1973,6 +1975,14 @@ static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+> >  static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
+> >                                          int id) { }
+> >  static inline void pci_disable_sriov(struct pci_dev *dev) { }
+> > +static inline int pci_sriov_disable_generic(struct pci_dev *dev)
+> > +{
+> > +       return -ENODEV;
+> > +}
+> > +static inline int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
+> > +{
+> > +       return -ENODEV;
+> > +}
+> >  static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
+> >  static inline int pci_vfs_assigned(struct pci_dev *dev)
+> >  { return 0; }
+> >
