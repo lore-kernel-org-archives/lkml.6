@@ -1,107 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753338AbeBZNIB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:08:01 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:50480 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752557AbeBZNGK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:06:10 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
-CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH v8 0/9] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
-Date: Mon, 26 Feb 2018 13:05:49 +0000
-Message-ID: <20180226130558.7634-1-rf@opensource.cirrus.com>
+        id S1753198AbeBZNLN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:11:13 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49886 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752547AbeBZNLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:11:12 -0500
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v2] cpufreq: scpi: invoke frequency-invariance setter function
+Date: Mon, 26 Feb 2018 13:11:03 +0000
+Message-Id: <20180226131103.5951-1-dietmar.eggemann@arm.com>
 X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=523 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802260174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NOTE: Compared to older versions of this chain I have removed patches at the
-end of the chain that were being ignored until the earlier patches had been
-merged - an impossible circular dependency. There were too many moving targets
-to keep the whole chain up-to-date and so patches that were already acked were
-getting stale. The subset of patches here are all acked or close-to-acked, and
-can be built and used as they are to produce a working pinctrl and gpio.
+Commit 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+changed the cpufreq driver on juno from arm_big_little to scpi.
 
-The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
-devices. In addition to the core audio capability they have onboard GPIO,
-regulators, DSPs and interrupt controller and a large register map space
-accessed over SPI or I2C. This family of codecs is based around common IP
-blocks and they are managed by a set of common drivers referred to as "Madera".
+The scpi set_target function does not call the frequency-invariance
+setter function arch_set_freq_scale() like the arm_big_little set_target
+function does. As a result the task scheduler load and utilization
+signals are not frequency-invariant on this platform anymore.
 
-Richard Fitzgerald (9):
-  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
-  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-  mfd: madera: Add common support for Cirrus Logic Madera codecs
-  mfd: madera: Register map tables for Cirrus Logic CS47L35
-  mfd: madera: Register map tables for Cirrus Logic CS47L85
-  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
-  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
-  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
-  gpio: madera: Support Cirrus Logic Madera class codecs
+Fix this by adding a call to arch_set_freq_scale() into
+scpi_cpufreq_set_target().
 
- Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
- .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
- MAINTAINERS                                        |   16 +
- drivers/gpio/Kconfig                               |    6 +
- drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-madera.c                         |  203 +
- drivers/mfd/Kconfig                                |   50 +
- drivers/mfd/Makefile                               |   14 +
- drivers/mfd/cs47l35-tables.c                       | 1609 ++++++++
- drivers/mfd/cs47l85-tables.c                       | 3009 +++++++++++++++
- drivers/mfd/cs47l90-tables.c                       | 2674 +++++++++++++
- drivers/mfd/madera-core.c                          |  602 +++
- drivers/mfd/madera-i2c.c                           |  141 +
- drivers/mfd/madera-spi.c                           |  140 +
- drivers/mfd/madera.h                               |   44 +
- drivers/pinctrl/Kconfig                            |    1 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/cirrus/Kconfig                     |   15 +
- drivers/pinctrl/cirrus/Makefile                    |   13 +
- drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   45 +
- drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   59 +
- drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   57 +
- drivers/pinctrl/cirrus/pinctrl-madera-core.c       | 1074 ++++++
- drivers/pinctrl/cirrus/pinctrl-madera.h            |   41 +
- include/linux/mfd/madera/core.h                    |  190 +
- include/linux/mfd/madera/pdata.h                   |   62 +
- include/linux/mfd/madera/registers.h               | 3917 ++++++++++++++++++++
- 27 files changed, 14185 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
- create mode 100644 drivers/gpio/gpio-madera.c
- create mode 100644 drivers/mfd/cs47l35-tables.c
- create mode 100644 drivers/mfd/cs47l85-tables.c
- create mode 100644 drivers/mfd/cs47l90-tables.c
- create mode 100644 drivers/mfd/madera-core.c
- create mode 100644 drivers/mfd/madera-i2c.c
- create mode 100644 drivers/mfd/madera-spi.c
- create mode 100644 drivers/mfd/madera.h
- create mode 100644 drivers/pinctrl/cirrus/Kconfig
- create mode 100644 drivers/pinctrl/cirrus/Makefile
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera-core.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
- create mode 100644 include/linux/mfd/madera/core.h
- create mode 100644 include/linux/mfd/madera/pdata.h
- create mode 100644 include/linux/mfd/madera/registers.h
+Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/scpi-cpufreq.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+index c32a833e1b00..d300a163945f 100644
+--- a/drivers/cpufreq/scpi-cpufreq.c
++++ b/drivers/cpufreq/scpi-cpufreq.c
+@@ -51,15 +51,23 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
+ static int
+ scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+ {
++	unsigned long freq = policy->freq_table[index].frequency;
+ 	struct scpi_data *priv = policy->driver_data;
+-	u64 rate = policy->freq_table[index].frequency * 1000;
++	u64 rate = freq * 1000;
+ 	int ret;
+ 
+ 	ret = clk_set_rate(priv->clk, rate);
+-	if (!ret && (clk_get_rate(priv->clk) != rate))
+-		ret = -EIO;
+ 
+-	return ret;
++	if (ret)
++		return ret;
++
++	if (clk_get_rate(priv->clk) != rate)
++		return -EIO;
++
++	arch_set_freq_scale(policy->related_cpus, freq,
++			    policy->cpuinfo.max_freq);
++
++	return 0;
+ }
+ 
+ static int
 -- 
 2.11.0
