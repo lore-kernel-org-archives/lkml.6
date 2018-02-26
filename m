@@ -1,146 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeBZNrr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 08:47:47 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50520 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeBZNrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 08:47:46 -0500
-Date: Mon, 26 Feb 2018 14:47:41 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
-        Nandor Han <nandor.han@ge.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv4 1/2] ARM: imx53: add secure-reg-access support for PMU
-Message-ID: <20180226134741.neqkpge33zo3pfzt@earth.universe>
-References: <20180212123945.15732-1-sebastian.reichel@collabora.co.uk>
- <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
- <20180224074543.GF3217@dragon>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lccsnu2jsz373qn3"
-Content-Disposition: inline
-In-Reply-To: <20180224074543.GF3217@dragon>
-User-Agent: NeoMutt/20171215
+        id S1752709AbeBZNt4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 08:49:56 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:58252 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751745AbeBZNtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:49:55 -0500
+From: Borislav Petkov <bp@alien8.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] locking/lockdep: Show unadorned pointers
+Date: Mon, 26 Feb 2018 14:49:26 +0100
+Message-Id: <20180226134926.23069-1-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Borislav Petkov <bp@suse.de>
 
---lccsnu2jsz373qn3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Show unadorned pointers in lockdep reports - lockdep is a debugging
+facility and hashing pointers there doesn't make a whole lotta sense.
 
-Hi Shawn,
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ kernel/locking/lockdep.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-On Sat, Feb 24, 2018 at 03:45:44PM +0800, Shawn Guo wrote:
-> On Mon, Feb 12, 2018 at 01:39:44PM +0100, Sebastian Reichel wrote:
-> > On i.MX53 it is necessary to set the DBG_EN bit in the
-> > platform GPC register to enable access to PMU counters
-> > other than the cycle counter.
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > ---
-> >  arch/arm/mach-imx/mach-imx53.c | 39 ++++++++++++++++++++++++++++++++++=
-++++-
-> >  1 file changed, 38 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/mach-imx/mach-imx53.c b/arch/arm/mach-imx/mach-im=
-x53.c
-> > index 07c2e8dca494..658e28604dca 100644
-> > --- a/arch/arm/mach-imx/mach-imx53.c
-> > +++ b/arch/arm/mach-imx/mach-imx53.c
-> > @@ -28,10 +28,47 @@ static void __init imx53_init_early(void)
-> >  	mxc_set_cpu_type(MXC_CPU_MX53);
-> >  }
-> > =20
-> > +#define MXC_CORTEXA8_PLAT_GPC 0x63fa0004
->=20
-> The base address should be retrieved from device tree.
-
-DT has no entry for 0x63fa0000-0x63fa3fff. iMX53 TRM lists it as "ARM Platf=
-orm"
-with 8 platform specific 32 bit registers. Do you think it's worth the trou=
-ble
-adding a new binding? Do you have a suggestion for a compatible value?
-
--- Sebastian
-
->=20
-> Shawn
->=20
-> > +#define GPC_DBG_EN BIT(16)
-> > +
-> > +/*
-> > + * This enables the DBGEN bit in ARM_GPC register, which is
-> > + * required for accessing some performance counter features.
-> > + * Technically it is only required while perf is used, but to
-> > + * keep the source code simple we just enable it all the time
-> > + * when the kernel configuration allows using the feature.
-> > + */
-> > +static void imx53_pmu_init(void)
-> > +{
-> > +	void __iomem *gpc_reg;
-> > +	struct device_node *node;
-> > +	u32 gpc;
-> > +
-> > +	if (!IS_ENABLED(CONFIG_ARM_PMU))
-> > +		return;
-> > +
-> > +	node =3D of_find_compatible_node(NULL, NULL, "arm,cortex-a8-pmu");
-> > +	if (!node)
-> > +		return;
-> > +
-> > +	if (!of_property_read_bool(node, "secure-reg-access"))
-> > +		return;
-> > +
-> > +	gpc_reg =3D ioremap(MXC_CORTEXA8_PLAT_GPC, 4);
-> > +	if (!gpc_reg) {
-> > +		pr_warning("unable to map GPC to enable perf\n");
-> > +		return;
-> > +	}
-> > +
-> > +	gpc =3D readl_relaxed(gpc_reg);
-> > +	gpc |=3D GPC_DBG_EN;
-> > +	writel_relaxed(gpc, gpc_reg);
-> > +}
-> > +
-> >  static void __init imx53_dt_init(void)
-> >  {
-> >  	imx_src_init();
-> > -
-> > +	imx53_pmu_init();
-> >  	imx_aips_allow_unprivileged_access("fsl,imx53-aipstz");
-> >  }
-> > =20
-> > --=20
-> > 2.15.1
-> >=20
-
---lccsnu2jsz373qn3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqUD/oACgkQ2O7X88g7
-+poZuQ//UROH93H5dL56QeigAdwkRZWcCGJsrHTraC0xNsr6Qh6bF0OwluFqrmQb
-m17Ozdwoy7JFmlPvkaad26Vbwwp4Z7hEyuKJEjtEzVA3km3DDyom5eAFLwYHo9Xf
-k56ECq4wkGjC8+aNezlO5GMuTQOCUjSDjAXX+USr9uKOoJEJj+2lRgVKvGdZ338z
-Yt51tzDvRVgMgC8t3NBAWw6WWnAxhJ8FWBYgUKGuWdfh1I6JmvWOxS9A1g9SMDNm
-luKSr2psJmJsOu3mxJa7mCArboCEypzOdh05wLqgth9HlI/twGbigdDeHbsOuIR5
-YRIWm1950h+fsiWojQEGZgG/bdk5RzxpCRmYixhoMYkGmJjpnkzpI0wmVi39aKcl
-HvISNF1E9qeankAQWJ44EOwDNSNH1+g5K0Ap1mixkMkFsomZToziyEwieynUEBFb
-QHeibjwaZFphpdZdejOqx8Imy9encDld6hdJPBtRJXxZjrESSdE+28TBilKgv9SH
-vy3Kw8x/4DYXuUIodwZwHQBw2DAwVIW2/C3yfEPE8dDh/9OCn9oiqSfVCNQwOA5V
-zSc8A2MLbZFT9y2tn7XkNbU7lx87po+sS22h/g4OpcOKVh/0mir66qjGHqPCVHav
-OQ2McIOwVynVfkBqG2jRlVeRvm36fdD8TagnpGMQpJNPUosJrcI=
-=0tXm
------END PGP SIGNATURE-----
-
---lccsnu2jsz373qn3--
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 89b5f83f1969..12a2805dd64a 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -557,7 +557,7 @@ static void print_lock(struct held_lock *hlock)
+ 	}
+ 
+ 	print_lock_name(lock_classes + class_idx - 1);
+-	printk(KERN_CONT ", at: [<%p>] %pS\n",
++	printk(KERN_CONT ", at: [<%px>] %pS\n",
+ 		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
+ }
+ 
+@@ -808,7 +808,7 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 	if (verbose(class)) {
+ 		graph_unlock();
+ 
+-		printk("\nnew class %p: %s", class->key, class->name);
++		printk("\nnew class %px: %s", class->key, class->name);
+ 		if (class->name_version > 1)
+ 			printk(KERN_CONT "#%d", class->name_version);
+ 		printk(KERN_CONT "\n");
+@@ -1407,7 +1407,7 @@ static void print_lock_class_header(struct lock_class *class, int depth)
+ 	}
+ 	printk("%*s }\n", depth, "");
+ 
+-	printk("%*s ... key      at: [<%p>] %pS\n",
++	printk("%*s ... key      at: [<%px>] %pS\n",
+ 		depth, "", class->key, class->key);
+ }
+ 
+@@ -2340,7 +2340,7 @@ static inline int lookup_chain_cache_add(struct task_struct *curr,
+ 
+ 		if (very_verbose(class)) {
+ 			printk("\nhash chain already cached, key: "
+-					"%016Lx tail class: [%p] %s\n",
++					"%016Lx tail class: [%px] %s\n",
+ 					(unsigned long long)chain_key,
+ 					class->key, class->name);
+ 		}
+@@ -2349,7 +2349,7 @@ static inline int lookup_chain_cache_add(struct task_struct *curr,
+ 	}
+ 
+ 	if (very_verbose(class)) {
+-		printk("\nnew hash chain, key: %016Lx tail class: [%p] %s\n",
++		printk("\nnew hash chain, key: %016Lx tail class: [%px] %s\n",
+ 			(unsigned long long)chain_key, class->key, class->name);
+ 	}
+ 
+@@ -2676,16 +2676,16 @@ check_usage_backwards(struct task_struct *curr, struct held_lock *this,
+ void print_irqtrace_events(struct task_struct *curr)
+ {
+ 	printk("irq event stamp: %u\n", curr->irq_events);
+-	printk("hardirqs last  enabled at (%u): [<%p>] %pS\n",
++	printk("hardirqs last  enabled at (%u): [<%px>] %pS\n",
+ 		curr->hardirq_enable_event, (void *)curr->hardirq_enable_ip,
+ 		(void *)curr->hardirq_enable_ip);
+-	printk("hardirqs last disabled at (%u): [<%p>] %pS\n",
++	printk("hardirqs last disabled at (%u): [<%px>] %pS\n",
+ 		curr->hardirq_disable_event, (void *)curr->hardirq_disable_ip,
+ 		(void *)curr->hardirq_disable_ip);
+-	printk("softirqs last  enabled at (%u): [<%p>] %pS\n",
++	printk("softirqs last  enabled at (%u): [<%px>] %pS\n",
+ 		curr->softirq_enable_event, (void *)curr->softirq_enable_ip,
+ 		(void *)curr->softirq_enable_ip);
+-	printk("softirqs last disabled at (%u): [<%p>] %pS\n",
++	printk("softirqs last disabled at (%u): [<%px>] %pS\n",
+ 		curr->softirq_disable_event, (void *)curr->softirq_disable_ip,
+ 		(void *)curr->softirq_disable_ip);
+ }
+@@ -3207,7 +3207,7 @@ static void __lockdep_init_map(struct lockdep_map *lock, const char *name,
+ 	 * Sanity check, the lock-class key must be persistent:
+ 	 */
+ 	if (!static_obj(key)) {
+-		printk("BUG: key %p not in .data!\n", key);
++		printk("BUG: key %px not in .data!\n", key);
+ 		/*
+ 		 * What it says above ^^^^^, I suggest you read it.
+ 		 */
+@@ -3322,7 +3322,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	}
+ 	atomic_inc((atomic_t *)&class->ops);
+ 	if (very_verbose(class)) {
+-		printk("\nacquire class [%p] %s", class->key, class->name);
++		printk("\nacquire class [%px] %s", class->key, class->name);
+ 		if (class->name_version > 1)
+ 			printk(KERN_CONT "#%d", class->name_version);
+ 		printk(KERN_CONT "\n");
+@@ -4376,7 +4376,7 @@ print_freed_lock_bug(struct task_struct *curr, const void *mem_from,
+ 	pr_warn("WARNING: held lock freed!\n");
+ 	print_kernel_ident();
+ 	pr_warn("-------------------------\n");
+-	pr_warn("%s/%d is freeing memory %p-%p, with a lock still held there!\n",
++	pr_warn("%s/%d is freeing memory %px-%px, with a lock still held there!\n",
+ 		curr->comm, task_pid_nr(curr), mem_from, mem_to-1);
+ 	print_lock(hlock);
+ 	lockdep_print_held_locks(curr);
+-- 
+2.13.0
