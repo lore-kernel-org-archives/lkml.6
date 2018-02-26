@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsnLeFtUJB+AVQ7MhIFwV+T8od3Q6o86jnuh7jdaD0L2vfw0EAzU6nSAN/UGhwRyp2A9aKH
-ARC-Seal: i=1; a=rsa-sha256; t=1519676829; cv=none;
+X-Google-Smtp-Source: AH8x224Xrszi5hWkxicbqN4exDI0EWTsFUGZoaHk1YCXW7fANhmMIPD34j4Wkt1eD/fCoDuaiY9O
+ARC-Seal: i=1; a=rsa-sha256; t=1519676826; cv=none;
         d=google.com; s=arc-20160816;
-        b=yQfCn8bOUOA1HXbm7ejBYArfGOT9AmG1bIdW8aJEAYuaj9pdZ7O3p/Dfvt9lY3RxmM
-         imyn72dHVKWmzKTxKoAurtZQEGH2lot2OQSJmvi0Nu2S+etVtUoFo/4Iv+Tl97pkT+cQ
-         MbitjrauLKvBZubypd5dACDGv8n0Zhq/JkezGuI71zYIMRPcuaZ44Qre+AbgeNgcMGKq
-         y/NUb/Z2ui94vxk+CbnYjGEX8vwq2cMkj7bVfWWS8kcEOF86OWnopogHcnXQqvqG7nE2
-         ijbcw2mJvipPsJRqKfXjg9sD/awMSs6wGMk/SX0gosMj8EauOka6gv7dBn6DUuYUxSaH
-         35tA==
+        b=jQwGYvUKNEfXC3ZURUzN935YT0WFMlq4R0AFh+g7awj6yh7Y+T70efr2wFidDMGp23
+         K6e63+4QRemg3iBdSOMvMSPbcTF21m9u06Hzgh5UrAxT0Er/7iFq1SSkCEBm+ILXjy2J
+         YFkqTfq1aQmqgcHIGdY5MmJpoFGVr4yaY2b+N1nD2P1oYzqIfLUZZeiUKw8LV9EUtBnj
+         /gIQpOF3K2FswLLIKosde1U0mRmxgcz/pTwZonTvZji68CfcrvMq5jvb1KIBPRFlHtYn
+         BIydDmHfymxrklIteBXoxQI3nI/MwMF0qJi1jnGPTK0Y5643+FoytQDK9YB9jia8hM7H
+         7K+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=O8HXuaisIAo+trrkGYx/d0JXH3YCvGFIqWS6/pzt+aI=;
-        b=sdKZBFTu/wh92gJqJytOgpWviL5f+yWR/9Q4PhxljBo9BlxSofeTnOrBRPO1MSaZVj
-         g6mr8LoLLRCUToYGW9v6Lczud7hOrU2wO22qcRGu9Oz90wdJVaL1cCw3tKpbSNXJ8MV8
-         3vqlzfr0RNoEMxmJbkn6rebt6xbDbWYW5GAvBbP6QYYZ9Qrv3iPMmBJ00hwOw+oSLd4v
-         SBvhQZMYRRdDSZzRVXZY/6rklBHIJla7zowDHKcxhCEI9+wQlTZLb+7cNJBIBiJiRYyf
-         ulo5GHTFIszeTYRBlsEn8qHdgvS1akpuyYx20hIsEJALy2i3W1Lc9pOJIL+1z/zgpEAu
-         jxpQ==
+        bh=dO4mQlhlrChXh2ZkZrW+l0q4sGlSkK17/gAv5KA+shQ=;
+        b=MVCT4cKcdujWsj+d9FPUT4aqDn6D34hHd4GH6lbvLJfDoaTY2vA5N7scM8o6q8RIJz
+         WnaCdyWLuI3ULbH4jQnyfhNV1esefNBRzRMEIMNRBzRa4APWCg0uwNjpjkslHNWEBm3C
+         XYXsMx0sKn+z9c9Aci7+iJZOnwWcBK2X2QSX+XV+uAZuJS68M6VHTOZ9iKSj0+3hXbfY
+         DaQLASWPseAzJOcpCeitKlb0KpTvPQabyCTRxS4FpvUCZQhSFonx2/X9DKV/b1cZTHgk
+         6UqP2oO9vQOaBn6rfpPq3E4SBnd7Pnl5ylLv2qILvvh0jDGBKE/uS33UnOlVXfVSyqG7
+         EMOw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jessica Yu <jeyu@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Martin Sebor <msebor@gcc.gnu.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Robert Richter <rric@kernel.org>,
+	Yuriy Vostrikov <delamonpansie@gmail.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	oprofile-list@lists.sf.net,
+	Peter Zijlstra <peterz@infradead.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 28/64] x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-Date: Mon, 26 Feb 2018 21:22:05 +0100
-Message-Id: <20180226202154.656148557@linuxfoundation.org>
+Subject: [PATCH 4.15 27/64] x86/apic/vector: Handle vector release on CPU unplug correctly
+Date: Mon, 26 Feb 2018 21:22:04 +0100
+Message-Id: <20180226202154.620009713@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495973889701786?=
-X-GMAIL-MSGID: =?utf-8?q?1593496651181518327?=
+X-GMAIL-THRID: =?utf-8?q?1593496647326652148?=
+X-GMAIL-MSGID: =?utf-8?q?1593496647326652148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,66 +52,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
+commit e84cf6aa501c58bf4bf451f1e425192ec090aed2 upstream.
 
-GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
-data from CPU 0 to all other CPUs, which when building a non-SMP
-kernel turns into a memcpy() with identical source and destination
-pointers:
+When a irq vector is replaced, then the previous vector is normally
+released when the first interrupt happens on the new vector. If the target
+CPU of the previous vector is already offline when the new vector is
+installed, then the previous vector is silently discarded, which leads to
+accounting issues causing suspend failures and other problems.
 
- arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
- arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          per_cpu(cpu_msrs, 0).multiplex,
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          sizeof(struct op_msr) * model->num_virt_counters);
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
- arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
- arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+Adjust the logic so that the previous vector is freed in the underlying
+matrix allocator to ensure that the accounting stays correct.
 
-I have analyzed a number of such warnings now: some are valid and the
-GCC warning is welcome. Others turned out to be false-positives, and
-GCC was changed to not warn about those any more. This is a corner case
-that is a false-positive but the GCC developers feel it's better to keep
-warning about it.
-
-In this case, it seems best to work around it by telling GCC
-a little more clearly that this code path is never hit with
-an IS_ENABLED() configuration check.
-
-Cc:stable as we also want old kernels to build cleanly with GCC-8.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Sebor <msebor@gcc.gnu.org>
+Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
+Reported-by: Yuriy Vostrikov <delamonpansie@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Yuriy Vostrikov <delamonpansie@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: oprofile-list@lists.sf.net
+Cc: Randy Dunlap <rdunlap@infradead.org>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
+Link: https://lkml.kernel.org/r/20180222112316.930791749@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/oprofile/nmi_int.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/vector.c |   25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
---- a/arch/x86/oprofile/nmi_int.c
-+++ b/arch/x86/oprofile/nmi_int.c
-@@ -460,7 +460,7 @@ static int nmi_setup(void)
- 		goto fail;
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -134,21 +134,40 @@ static void apic_update_vector(struct ir
+ {
+ 	struct apic_chip_data *apicd = apic_chip_data(irqd);
+ 	struct irq_desc *desc = irq_data_to_desc(irqd);
++	bool managed = irqd_affinity_is_managed(irqd);
  
- 	for_each_possible_cpu(cpu) {
--		if (!cpu)
-+		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
- 			continue;
+ 	lockdep_assert_held(&vector_lock);
  
- 		memcpy(per_cpu(cpu_msrs, cpu).counters,
+ 	trace_vector_update(irqd->irq, newvec, newcpu, apicd->vector,
+ 			    apicd->cpu);
+ 
+-	/* Setup the vector move, if required  */
+-	if (apicd->vector && cpu_online(apicd->cpu)) {
++	/*
++	 * If there is no vector associated or if the associated vector is
++	 * the shutdown vector, which is associated to make PCI/MSI
++	 * shutdown mode work, then there is nothing to release. Clear out
++	 * prev_vector for this and the offlined target case.
++	 */
++	apicd->prev_vector = 0;
++	if (!apicd->vector || apicd->vector == MANAGED_IRQ_SHUTDOWN_VECTOR)
++		goto setnew;
++	/*
++	 * If the target CPU of the previous vector is online, then mark
++	 * the vector as move in progress and store it for cleanup when the
++	 * first interrupt on the new vector arrives. If the target CPU is
++	 * offline then the regular release mechanism via the cleanup
++	 * vector is not possible and the vector can be immediately freed
++	 * in the underlying matrix allocator.
++	 */
++	if (cpu_online(apicd->cpu)) {
+ 		apicd->move_in_progress = true;
+ 		apicd->prev_vector = apicd->vector;
+ 		apicd->prev_cpu = apicd->cpu;
+ 	} else {
+-		apicd->prev_vector = 0;
++		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
++				managed);
+ 	}
+ 
++setnew:
+ 	apicd->vector = newvec;
+ 	apicd->cpu = newcpu;
+ 	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
