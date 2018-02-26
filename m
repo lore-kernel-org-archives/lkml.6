@@ -1,73 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBZQ5P (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:57:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49830 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750941AbeBZQ5O (ORCPT
+        id S1751568AbeBZQ5i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:57:38 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33918 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbeBZQ5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:57:14 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Dave Young <dyoung@redhat.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH 01/11] kexec_file: Silence compile warnings
-Date: Mon, 26 Feb 2018 16:16:10 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        Mon, 26 Feb 2018 11:57:36 -0500
+X-Google-Smtp-Source: AG47ELuWsKmMLXXo+cN33O6cB2PjT1iHQlpJGOuigXwWgixY//Le+g7g11XcKyY80pCchGEvgIQYw+f4crWL4BjklmY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022615-0016-0000-0000-00000529FF97
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022615-0017-0000-0000-0000286627E1
-Message-Id: <20180226151620.20970-2-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802260202
+In-Reply-To: <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu> <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu> <20180225235432.31209-4-rabel@robertabel.eu>
+ <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Feb 2018 17:57:15 +0100
+Message-ID: <CANiq72njsuu5PF5ML5T__1Mmcw3zeb2u7MQc5+BBj0inVaxJDw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
+To: Robert Abel <rabel@robertabel.eu>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building the kernel with CONFIG_KEXEC_FILE enabled gcc prints a
-compile warning multiple times.
+On Mon, Feb 26, 2018 at 5:49 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Mon, Feb 26, 2018 at 12:54 AM, Robert Abel <rabel@robertabel.eu> wrote:
+>> NUL-terminate each individual number to be parsed.
+>> To do this, the next command character and a pointer to its argument
+>> are found and stored. The command character is then overwritten by NUL
+>> before kstr* functions are called on the buffer.
+>
+> It would be useful to have this description in the code itself as a comment.
+>
+>>
+>> Signed-off-by: Robert Abel <rabel@robertabel.eu>
+>> ---
+>>  drivers/auxdisplay/charlcd.c | 53 ++++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 44 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+>> index a3d364e6c666..24cabe88c7f0 100644
+>> --- a/drivers/auxdisplay/charlcd.c
+>> +++ b/drivers/auxdisplay/charlcd.c
+>> @@ -471,28 +471,63 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+>>                 break;
+>>         }
+>>         case 'x':       /* gotoxy : LxXXX[yYYY]; */
+>> -       case 'y':       /* gotoxy : LyYYY[xXXX]; */
+>> +       case 'y': {     /* gotoxy : LyYYY[xXXX]; */
+>> +
+>
+> Extra empty line.
+>
+>> +               char* nxt_esc;
+>> +               char  nxt_cmd;
+>
+> I think skipping the "e" in the names do not buy us much :)
+>
+>> +               char  cmd;
+>> +               struct charlcd_priv_addr tmp_addr;
+>> +
+>>                 if (!strchr(esc, ';'))
+>>                         break;
+>>
+>> -               while (*esc) {
+>> -                       if (*esc == 'x') {
+>> -                               esc++;
+>> -                               if (kstrtoul(esc, 10, &priv->addr.x) < 0)
+>> +               /* sequence is processed whether legal or illegal */
+>> +               processed = 1;
+>> +
+>> +               /* copy current address to temporary buffer */
+>> +               tmp_addr = priv->addr;
+>> +
+>> +               nxt_cmd = *esc++;
+>> +               nxt_esc = esc;
+>> +
+>> +               while ('\0' != *esc) {
+>
+> Please do not change the style of the code w.r.t to the rest of the
+> file, which writes tests with the non-lvalue on the right-hand side
+> and do not compare against '\0'. Same for the rest.
+>
+>> +
+>
+> Extra empty line.
+>
+>> +                       cmd = nxt_cmd;
+>> +                       esc = nxt_esc;
+>> +                       nxt_esc = strpbrk(esc, "xy;");
+>> +                       if (NULL != nxt_esc) {
+>> +                               nxt_cmd = *nxt_esc;
+>> +                               /* terminate current sequence with NUL */
+>> +                               *nxt_esc++ = '\0';
+>> +                       }
+>> +
+>> +                       if ('x' == cmd) {
+>> +                               if (kstrtoul(esc, 10, &tmp_addr.x) < 0)
+>>                                         break;
+>> -                       } else if (*esc == 'y') {
+>> -                               esc++;
+>> -                               if (kstrtoul(esc, 10, &priv->addr.y) < 0)
+>> +                       } else if ('y' == cmd) {
+>> +                               if (kstrtoul(esc, 10, &tmp_addr.y) < 0)
+>>                                         break;
+>>                         } else {
+>> +                               /* break on unknown command or ';' */
+>>                                 break;
+>>                         }
+>
+> { } not needed (your patch doesn't touch this -- just pointing it out).
 
-In file included from <path>/linux/init/initramfs.c:526:0:
-<path>/include/linux/kexec.h:120:9: warning: ‘struct kimage’ declared inside parameter list [enabled by default]
-         unsigned long cmdline_len);
-         ^
-This is because the typedefs for kexec_file_load uses struct kimage before
-it is declared. Fix this by simply forward declaring struct kimage.
+Disregard this one, just checked and coding-style.rst specifies one
+must use braces if the other branches need to use them.
 
-Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
----
- include/linux/kexec.h | 2 ++
- 1 file changed, 2 insertions(+)
+Cheers,
+Miguel
 
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index f16f6ceb3875..7bae5e87bf0d 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -114,6 +114,8 @@ struct purgatory_info {
- 	unsigned long purgatory_load_addr;
- };
- 
-+struct kimage;
-+
- typedef int (kexec_probe_t)(const char *kernel_buf, unsigned long kernel_size);
- typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
- 			     unsigned long kernel_len, char *initrd,
--- 
-2.13.5
+>
+>> +
+>>                 }
+>>
+>> +               /* unknown commands in sequence will be followed by at least ';' */
+>> +               if ('\0' != *esc)
+>> +                       break;
+>> +
+>> +               /* clamp new x/y coordinates */
+>> +               if (tmp_addr.x >= lcd->width)
+>> +                       tmp_addr.x = lcd->width - 1;
+>
+> tmp_addr.x = min(tmp_addr.x, lcd->width - 1);
+>
+>> +               tmp_addr.y %= lcd->height;
+>> +
+>> +               priv->addr = tmp_addr;
+>>                 charlcd_gotoxy(lcd);
+>> -               processed = 1;
+>>                 break;
+>>         }
+>> +       }
+>
+> On a general note, the code seems a bit convoluted for what it does,
+> specially without the comment written in the commit message :-) Isn't
+> it simpler to use a tiny array in the stack and put the numbers to be
+> converted instead of modifying the input sequence and dancing with
+> pointers?
+>
+> Thanks for the patch!
+>
+> Cheers,
+> Miguel
+>
+>>
+>>         /* TODO: This indent party here got ugly, clean it! */
+>>         /* Check whether one flag was changed */
+>> --
+>> 2.11.0
+>>
