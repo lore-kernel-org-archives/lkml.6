@@ -1,161 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeBZDiC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:38:02 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5667 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751958AbeBZDiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:38:01 -0500
-Subject: Re: [PATCH] f2fs: allocate buffer for decrypting filename to avoid
- panic
-To: Eric Biggers <ebiggers3@gmail.com>,
-        Yunlong Song <yunlong.song@huawei.com>
-CC: <jaegeuk@kernel.org>, <chao@kernel.org>, <yunlong.song@icloud.com>,
-        <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <20180224183230.GA933@zzz.localdomain>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <e1e07be3-2291-ada6-da67-47aa7f73f1df@huawei.com>
-Date: Mon, 26 Feb 2018 11:42:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752181AbeBZDpx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:45:53 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36159 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751959AbeBZDpt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:45:49 -0500
+X-Google-Smtp-Source: AG47ELv0EvwfaiTLFuS7FXJBnS3xcOrBWRItKWD8Kmx0QJhGALjAZexAndYWUjmEV27F0eaxHVhRnonKQNAbWYKGfaA=
 MIME-Version: 1.0
-In-Reply-To: <20180224183230.GA933@zzz.localdomain>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <61e56a69-5722-138e-481e-44473a79b388@linaro.org>
+References: <20180103200114.23922-1-andrew.smirnov@gmail.com>
+ <CAMRc=Mct60LMcr-CGJue1dTK+XNwz=dmkm2arTGeN1czeN9JoA@mail.gmail.com> <61e56a69-5722-138e-481e-44473a79b388@linaro.org>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Sun, 25 Feb 2018 19:45:48 -0800
+Message-ID: <CAHQ1cqGp3jPvb1FNd9SoP_t-hzAHZazAOobrgM2yustrZ5ja6w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/22] Verbatim device names and devm_nvmem_(un)register()
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Heiko Stuebner <heiko@sntech.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric, Yunlong,
+On Thu, Jan 25, 2018 at 1:17 AM, Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+>
+> On 24/01/18 11:13, Bartosz Golaszewski wrote:
+>>>
+>>>
+>> Hi Srinivas,
+>>
+>> I don't see this series in next - is it going to miss this merge window?
+>>
+>
+> Thanks for your patience.
+>
+> In general, I pick stuff which are sent before rc5-rc6 and send it to Greg
+> KH for inclusion in char-misc tree.
+>
+> These patches will be queued for next release cycle..
+>
 
-On 2018/2/25 2:32, Eric Biggers wrote:
-> Hi Yunlong,
-> 
-> On Sat, Feb 24, 2018 at 05:14:58PM +0800, Yunlong Song wrote:
->> In some platforms (such as arm), high memory is used, then the
->> decrypting filename will cause panic, the reason see commit
->> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
->> for decrypting filename"):
->>
->>  We got dentry pages from high_mem, and its address space directly goes into the
->>  decryption path via f2fs_fname_disk_to_usr.
->>  But, sg_init_one assumes the address is not from high_mem, so we can get this
->>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
->>
->>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>  ...
->>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
->>
->> Howerver, later patches:
->> commit 922ec355f86365388203672119b5bca346a45085 ("f2fs crypto: avoid
->> unneeded memory allocation when {en/de}crypting symlink")
->> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
->> unneeded memory allocation in ->readdir")
->>
->> reverts the codes, which causes panic again in arm, so let's add the old
->> patch again.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/dir.c   |  7 +++++++
->>  fs/f2fs/namei.c | 10 +++++++++-
->>  2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index f00b5ed..c0cf3e7b 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>  			int save_len = fstr->len;
->>  			int err;
->>  
->> +			de_name.name = kmalloc(de_name.len, GFP_NOFS);
->> +			if (!de_name.name)
->> +				return -ENOMEM;
->> +
->> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
->> +
->>  			err = fscrypt_fname_disk_to_usr(d->inode,
->>  						(u32)de->hash_code, 0,
->>  						&de_name, fstr);
->> +			kfree(de_name.name);
->>  			if (err)
->>  				return err;
->>  
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index c4c94c7..2cb70c1 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -1170,8 +1170,13 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  
->>  	/* Symlink is encrypted */
->>  	sd = (struct fscrypt_symlink_data *)caddr;
->> -	cstr.name = sd->encrypted_path;
->>  	cstr.len = le16_to_cpu(sd->len);
->> +	cstr.name = kmalloc(cstr.len, GFP_NOFS);
->> +	if (!cstr.name) {
->> +		res = -ENOMEM;
->> +		goto errout;
->> +	}
->> +	memcpy(cstr.name, sd->encrypted_path, cstr.len);
->>  
->>  	/* this is broken symlink case */
->>  	if (unlikely(cstr.len == 0)) {
->> @@ -1198,6 +1203,8 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  		goto errout;
->>  	}
->>  
->> +	kfree(cstr.name);
->> +
->>  	paddr = pstr.name;
->>  
->>  	/* Null-terminate the name */
->> @@ -1207,6 +1214,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  	set_delayed_call(done, kfree_link, paddr);
->>  	return paddr;
->>  errout:
->> +	kfree(cstr.name);
->>  	fscrypt_fname_free_buffer(&pstr);
->>  	put_page(cpage);
->>  	return ERR_PTR(res);
->> -- 
->> 1.8.5.2
->>
-> 
-> The pagecache for symlinks in f2fs already uses lowmem only, so the change to
-> ->get_link() isn't needed.  Also that part of the patch doesn't apply to
-> upstream.
-> 
-> For directories we may need your fix.  Note: kmalloc + memcpy should be replaced
-> with kmemdup.  But alternatively, directory pages could be restricted to lowmem
+Srinivas:
 
-I'd like to suggest to use f2fs_kmalloc, so that we can deploy memory allocation
-failure injection functionality in all places of f2fs, which can help to check
-error handling in those places.
+Correct me if I am wrong, but doesn't seem like these patches made it
+to char-misc tree yet. I was recently rebasing them on top of Linus'
+master and ended up having to resolve a couple of merge conflicts, so
+would you like me to re-spin v4 on top of 4.16-rc1 (or any other
+version) and re-submit the series?
 
 Thanks,
-
-> which would match ext4.
-> 
-> Eric
-> 
-> .
-> 
+Andrey Smirnov
