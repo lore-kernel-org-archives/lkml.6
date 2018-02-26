@@ -1,91 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeBZQYn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 11:24:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52686 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751735AbeBZQY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:24:26 -0500
-Date: Mon, 26 Feb 2018 16:24:27 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luc Maranget <luc.maranget@inria.fr>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>, Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-Message-ID: <20180226162426.GB17158@arm.com>
-References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
- <20180222134004.GN25181@hirez.programming.kicks-ass.net>
- <20180222141249.GA14033@andrea>
- <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
- <20180222181317.GI2855@linux.vnet.ibm.com>
- <20180222182717.GS25181@hirez.programming.kicks-ass.net>
- <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
- <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
- <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
+        id S1752083AbeBZQ0L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 11:26:11 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:38320 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751813AbeBZQ0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 11:26:09 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+Date: Mon, 26 Feb 2018 17:16:44 +0100
+Message-ID: <2676311.2IEVhXnSIE@jernej-laptop>
+In-Reply-To: <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 08:06:59AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 26, 2018 at 6:21 AM, Luc Maranget <luc.maranget@inria.fr> wrote:
-> >
-> > That is, locks are not implemented from more basic primitive but are specified.
-> > The specification can be described as behaving that way:
-> >   - A lock behaves as a read-modify-write. the read behaving as a read-acquire
-> 
-> This is wrong, or perhaps just misleading.
-> 
-> The *whole* r-m-w acts as an acquire. Not just the read part. The
-> write is very much part of it.
-> 
-> Maybe that's what you meant, but it read to me as "just the read part
-> of the rmw behaves as a read-acquire".
-> 
-> Because it is very important that the _write_ part of the rmw is also
-> ordered wrt everything that is inside the spinlock.
-> 
-> So doing a spinlock as
-> 
->  (a) read-locked-acquire
->    modify
->  (c) write-conditional
-> 
-> would be wrong, because the accesses inside the spinlock are ordered
-> not just wrt the read-acquire, they have to be ordered wrt the write
-> too.
-> 
-> So it is closer to say that it's the _write_ of the r-m-w sequence
-> that has the acquire semantics, not the read.
+Hi Julian,
 
-Strictly speaking, that's not what we've got implemented on arm64: only
-the read part of the RmW has Acquire semantics, but there is a total
-order on the lock/unlock operations for the lock. For example, if one
-CPU does:
+Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby napisal(a):
+> Hi Jernej,
+> 
+> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Enable HDMI output on all boards which have HDMI connector.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts        
+> >   | 25 ++++++++++++++++++++++
+> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts         
+> >   | 25 ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts  
+> >         | 25 ++++++++++++++++++++++
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts      
+> >   | 24 +++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts  
+> >        | 25 ++++++++++++++++++++++ 8 files changed, 199 insertions(+)
+> 
+> As I understand it, the H2+ is just a slightly trimmed down H3. In
+> terms of HDMI support, the difference is that the H2+ can't output 4k.
+> If this code is compatible with the H2+, could you please add the
+> necessary bits and pieces to the h2-plus DTSs too?
 
-spin_lock(&lock);
-WRITE_ONCE(foo, 42);
+There are only 3 H2+ boards in kernel and none of them has HDMI connector, so 
+there's nothing to do actually. But if such board is added to kernel, it would 
+be trivially add proper nodes, since all H2+ boards include H3 DTSI.
 
-then another CPU could do:
-
-if (smp_load_acquire(&foo) == 42)
-	BUG_ON(!spin_is_locked(&lock));
-
-and that could fire. Is that relied on somewhere?
-
-Will
+Best regards,
+Jernej
