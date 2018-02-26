@@ -1,159 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752692AbeBZLJc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:09:32 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51944 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752343AbeBZLJb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:09:31 -0500
-X-Google-Smtp-Source: AG47ELvJF3AoO+dTa7Ui1Hn8aeZpMab0ci7IJicUcmjayhE2tx71iSMNPFytiVUOc3ciOJUkUMRRVhZUMo4UoL/myKg=
-MIME-Version: 1.0
-In-Reply-To: <f0a6a635-0b0f-01d1-bc64-3d3d95b5de0b@arm.com>
-References: <20180213141118.3092-1-ard.biesheuvel@linaro.org> <f0a6a635-0b0f-01d1-bc64-3d3d95b5de0b@arm.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 26 Feb 2018 11:09:30 +0000
-Message-ID: <CAKv+Gu_Em_QFpGeRWra0uBxOm7rbhc12waxhCRd5tmRyqt1yrg@mail.gmail.com>
-Subject: Re: [RFC PATCH] irqchip/gic-v3-its: apply ACPI device based quirks
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752578AbeBZLL2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:11:28 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:41400 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752296AbeBZLLY (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:3:1>);
+        Mon, 26 Feb 2018 06:11:24 -0500
+Message-Id: <5A93F96902000078001ABAC8@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 26 Feb 2018 04:11:21 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86-64/entry: add instruction suffix
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 February 2018 at 10:18, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Hi Ard,
->
-> On 13/02/18 14:11, Ard Biesheuvel wrote:
->> Reapply the SynQuacer quirk for ITS frames that are matched by 'SCX0005'
->> based ACPI devices, replacing the dummy fwnode with the one populated by
->> the ACPI device core.
->>
->> This allows the SynQuacer ACPI tables to publish a device node such
->> as
->>
->>     Device (ITS0) {
->>       Name (_HID, "SCX0005")
->>       Name (_ADR, 0x30020000)
->>       Name (_DSD, Package ()  // _DSD: Device-Specific Data
->>       {
->>         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->>         Package () {
->>           Package (2) {
->>             "socionext,synquacer-pre-its",
->>             Package () { 0x58000000, 0x200000 }
->>           },
->>         }
->>       })
->>     }
->>
->> which will trigger the existing quirk that replaces the doorbell
->> address with the appropriate address in the pre-ITS frame.
->>
->> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> ---
->> Marc, Lorenzo,
->>
->> I am aware that this patch may be seen as controversial, but I would like to
->> propose it nonetheless. The reason is that this is the only thing standing in
->> the way of full ACPI support in Socionext SynQuacer based platforms.
->>
->> The pre-ITS is a monstrosity, but as it turns out, Socionext had help from
->> ARM designing it, and the reason we need DT/ACPI based quirks in the first
->> place is that the IIDR of this GICv3 implementation is simply the ARM Ltd.
->> one (as they designed the IP)
->
-> That's odd. A bit of archaeology shows that ARM indeed designed a
-> pre-ITS, but that one doesn't break isolation at all (it still has a
-> single doorbell). So whatever creative changes Socionext applied to that
-> piece of IP (assuming this is the same IP), they didn't really
-> understand the far reaching impact it has.
->
+Omitting suffixes from instructions in AT&T mode is bad practice when
+operand size cannot be determined by the assembler from register
+operands, and is likely going to be warned about by upstream gas in the
+future (mine does already). Add the single missing suffix here.
 
-OK, thanks for digging that up. All the information I have on this
-topic is second hand, and I had no reason to assume their account of
-the history was inaccurate.
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+---
+ arch/x86/entry/entry_64.S     |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>
->> Please take this into consideration when reviewing this patch,
->>
->> Thanks,
->> Ard.
->>
->>  drivers/irqchip/irq-gic-v3-its.c | 39 ++++++++++++++++++++
->>  1 file changed, 39 insertions(+)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index 06f025fd5726..a63973baf08a 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -3517,3 +3517,42 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->>
->>       return 0;
->>  }
->> +
->> +#if defined(CONFIG_SOCIONEXT_SYNQUACER_PREITS) && defined(CONFIG_ACPI)
->> +static acpi_status __init acpi_its_device_probe (acpi_handle handle,
->> +                                              u32 depth, void *context,
->> +                                              void **ret)
->> +{
->> +     struct acpi_device *adev;
->> +     unsigned long long phys_base;
->> +     struct its_node *its;
->> +     acpi_status status;
->> +     int err;
->> +
->> +     err = acpi_bus_get_device(handle, &adev);
->> +     if (err)
->> +             return AE_CTRL_TERMINATE;
->> +
->> +     status = acpi_evaluate_integer(handle, "_ADR", NULL, &phys_base);
->> +     if (ACPI_FAILURE(status))
->> +             return status;
->> +
->> +     list_for_each_entry(its, &its_nodes, entry)
->> +             if (its->phys_base == phys_base) {
->> +                     irq_domain_free_fwnode(its->fwnode_handle);
->
-> That line scares me. What about irq domains that are hold a pointer to
-> this handle? its_init_domain() uses it to construct the LPI domain, and
-> it is now pointing to some free memory.
->
-> You'd need to reassign all the domains that match this fwnode before
-> freeing it.
->
-
-OK, I can iterate over the domains using irq_find_matching_fwspec()
-and update the handles one by one. Not pretty, but that is a lost
-cause anyway for this patch.
-
->> +                     its->fwnode_handle = &adev->fwnode;
->> +                     its_enable_quirk_socionext_synquacer(its);
->> +                     break;
->> +             }
->> +
->> +     return AE_CTRL_TERMINATE;
->> +}
->> +
->> +static int __init acpi_its_device_probe_init(void)
->> +{
->> +     if (!acpi_disabled)
->> +             acpi_get_devices("SCX0005", acpi_its_device_probe, NULL, NULL);
->> +     return 0;
->> +}
->> +subsys_initcall_sync(acpi_its_device_probe_init);
->> +#endif
->>
->
-> Is there any chance that MSIs could be allocated before this kicks in?
-> If that happens, we're in trouble...
-
-This SoC does not have any MSI capable platform devices, so the only
-consumers are PCI devices, and PCI drivers are registered as a
-device_initcal().
+--- 4.16-rc3/arch/x86/entry/entry_64.S
++++ 4.16-rc3-x86-insn-suffixes/arch/x86/entry/entry_64.S
+@@ -55,7 +55,7 @@ END(native_usergs_sysret64)
+ 
+ .macro TRACE_IRQS_FLAGS flags:req
+ #ifdef CONFIG_TRACE_IRQFLAGS
+-	bt	$9, \flags		/* interrupts off? */
++	btl	$9, \flags		/* interrupts off? */
+ 	jnc	1f
+ 	TRACE_IRQS_ON
+ 1:
