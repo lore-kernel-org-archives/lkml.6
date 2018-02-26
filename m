@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtv/KplVLC8CQNe+Vq5cJImxXjTywHpbu4nWWglFYy4Buf6mOH6oEZyyNRNi1tfd6KA5rH3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676663; cv=none;
+X-Google-Smtp-Source: AG47ELvPsVyx3q9PPHg7ntUuHcMmKVJPR9aoHL8tGj+yBm/yGDXDGByiNdyoj2qxU6ycVzp7Q+XC
+ARC-Seal: i=1; a=rsa-sha256; t=1519676660; cv=none;
         d=google.com; s=arc-20160816;
-        b=raL9zSOBPXk9prrIGzY2cw4EMBjYlJy4eSEeZjkZwSodl6HKMGXW1joCTA3qILBLaV
-         JH5PMQZD+UPqZjdsinlkk2OnqRIFpHSSpfUmyWKYOWFcII8MyQIeO01Qqq68dy1RrUjq
-         T6h+B/3oyWlvBXsZZ15ItP0yZkNLFC9pVq5t65pp/ZNswG29gTShN0bZfgNGtpWVDkoH
-         I45mWPghsixwR+qm+JevkrIutl06vkEFW9s8mp07z+yDf6Q1EfQrha26IoLXd32l/p9S
-         1yIYfqbi8skx1iBoVcMWcHxatwyGuyIGhri6PYPLv4UdJFWVV59usTF2B2SdBAAej8+2
-         TjqA==
+        b=VRp/QYi7vn274LMrM1czR7V+BNy4S5dAKmj11DTQlo8bqihxE0kTNR2QKqEnSwqAvM
+         HNNlYfj0BIXYcYkU/mAIWtDVkhRqLNaqsJQngriXj9QJvey121sMETFLzsKiwoi7HuZH
+         8HQKbAX0YVZSj/e64rTeWeNtVOF8wvZrmZCTx7zcm8Vr3FUlA2mRq8wYLERHbmfryBlP
+         BuVpthThEUmYa3CwLwb4x22KY+kTJn329NYrgi9uEkj423v9QKS2r21nVxpxj06T5wWs
+         fItqHf5FS3zah/+iiCQ7NHyiQnLZcPZMpF2//YJW7vMevXOs6tA80tbJI8dJW2g2lhk+
+         zkfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OzFsR65ffzHt7To8tyOyFuuuyT36neiPijR28UKXoSM=;
-        b=R1PuTRyzkOE3djNDBMNC/xYZL5yZ7T/8c2lokeQjhecM8awMe+zoGf83aWFR/tZQyh
-         WArPA1G4+K7C+sByiG2fMl2E+W6+iF5L5F7y4qtMBr60eQkR+jfLaqPm3UiVL/BKd0Gj
-         M+HClQ7vvOo4mOMCs2uK4bRspCmJ8U0daS/0C8W7Gb3W8xMC9Hxejb4LXxs+Wdrbf3y2
-         cYp91ztHuY8xTBYQbS1vsAsauY6vzXmClnSCXQA4P0Ab2RgrpFlGxNcKyfNgzsYfBO1S
-         atC7NLuxG6Wrp7wLXEnknodV1qbnDnncMegJomauDzk2WEIeqcMMz3rWq4FVYvnWFRGi
-         gAJw==
+        bh=yV6O+AJOhdKDGNjk/JGcnb8wHHzAgM6hwEkAIiISzN4=;
+        b=yJqtC/FPg2l7B5Vd7oLJtB/Va6tjPe8cQX/Wc5fOXuD/7lml8o+w6l/1RjXjNAE/sQ
+         muoI7r6zmIdpMTPGMgIKUtCSEHT2crJJcpROc47IARoWRmbIAueCIUev1TIZ11DHLxZX
+         LqyiUTPhxm1jtyhP4VWdZyc7+LbCUt0YdgsUx4ID9ZrrVZv18MJYcMuKilGu+ICZuDOa
+         H9vMWvRdBhA0g0I3t0zHuYxIv67njUR/Y5Eskzppd1nMSHN3q5zRyesPUPaJlIF0STbd
+         GwZIVoTr9ozMgTo/N7hiPVuLEKJ+6vQa5BS9QxrznXI03H2xXwY5xFV+OE7Ybo6JnoUh
+         N9rQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Patrick McLean <chutzpah@gentoo.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 03/54] kconfig.h: Include compiler types to avoid missed struct attributes
-Date: Mon, 26 Feb 2018 21:21:40 +0100
-Message-Id: <20180226202144.541380019@linuxfoundation.org>
+	Matt Redfearn <matt.redfearn@mips.com>,
+	Paul Burton <paul.burton@mips.com>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 29/54] irqchip/mips-gic: Avoid spuriously handling masked interrupts
+Date: Mon, 26 Feb 2018 21:22:06 +0100
+Message-Id: <20180226202145.841357438@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496476457815622?=
-X-GMAIL-MSGID: =?utf-8?q?1593496476457815622?=
+X-GMAIL-THRID: =?utf-8?q?1593496473140760275?=
+X-GMAIL-MSGID: =?utf-8?q?1593496473140760275?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit 28128c61e08eaeced9cc8ec0e6b5d677b5b94690 upstream.
+commit 285cb4f62319737e6538252cf1a67ce9da5cf3d5 upstream.
 
-The header files for some structures could get included in such a way
-that struct attributes (specifically __randomize_layout from path.h) would
-be parsed as variable names instead of attributes. This could lead to
-some instances of a structure being unrandomized, causing nasty GPFs, etc.
+Commit 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading
+GIC_SH_MASK*") removed the read of the hardware mask register when
+handling shared interrupts, instead using the driver's shadow pcpu_masks
+entry as the effective mask. Unfortunately this did not take account of
+the write to pcpu_masks during gic_shared_irq_domain_map, which
+effectively unmasks the interrupt early. If an interrupt is asserted,
+gic_handle_shared_int decodes and processes the interrupt even though it
+has not yet been unmasked via gic_unmask_irq, which also sets the
+appropriate bit in pcpu_masks.
 
-This patch makes sure the compiler_types.h header is included in
-kconfig.h so that we've always got types and struct attributes defined,
-since kconfig.h is included from the compiler command line.
+On the MIPS Boston board, when a console command line of
+"console=ttyS0,115200n8r" is passed, the modem status IRQ is enabled in
+the UART, which is immediately raised to the GIC. The interrupt has been
+mapped, but no handler has yet been registered, nor is it expected to be
+unmasked. However, the write to pcpu_masks in gic_shared_irq_domain_map
+has effectively unmasked it, resulting in endless reports of:
 
-Reported-by: Patrick McLean <chutzpah@gentoo.org>
-Root-caused-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: 3859a271a003 ("randstruct: Mark various structs for randomization")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[    5.058454] irq 13, desc: ffffffff80a7ad80, depth: 1, count: 0, unhandled: 0
+[    5.062057] ->handle_irq():  ffffffff801b1838,
+[    5.062175] handle_bad_irq+0x0/0x2c0
+
+Where IRQ 13 is the UART interrupt.
+
+To fix this, just remove the write to pcpu_masks in
+gic_shared_irq_domain_map. The existing write in gic_unmask_irq is the
+correct place for what is now the effective unmasking.
+
+Cc: stable@vger.kernel.org
+Fixes: 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading GIC_SH_MASK*")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Reviewed-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/kconfig.h |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-mips-gic.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/include/linux/kconfig.h
-+++ b/include/linux/kconfig.h
-@@ -64,4 +64,7 @@
-  */
- #define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -427,8 +427,6 @@ static int gic_shared_irq_domain_map(str
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	write_gic_map_pin(intr, GIC_MAP_PIN_MAP_TO_PIN | gic_cpu_pin);
+ 	write_gic_map_vp(intr, BIT(mips_cm_vp_id(cpu)));
+-	gic_clear_pcpu_masks(intr);
+-	set_bit(intr, per_cpu_ptr(pcpu_masks, cpu));
+ 	irq_data_update_effective_affinity(data, cpumask_of(cpu));
+ 	spin_unlock_irqrestore(&gic_lock, flags);
  
-+/* Make sure we always have all types and struct attributes defined. */
-+#include <linux/compiler_types.h>
-+
- #endif /* __LINUX_KCONFIG_H */
