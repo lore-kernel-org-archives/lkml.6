@@ -1,80 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeBZP0G (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:26:06 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48131 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751881AbeBZP0E (ORCPT
+        id S1752064AbeBZP0U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:26:20 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:32988 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBZP0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:26:04 -0500
-Subject: Re: [PATCH v2 2/2] pinctrl: stm32: Optimizes and enhances stm32gpio
- irqchip
-To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
-From: Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <83f7cbec-05f6-a937-a848-bd533bb1001a@st.com>
-Date: Mon, 26 Feb 2018 16:25:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 26 Feb 2018 10:26:17 -0500
+X-Google-Smtp-Source: AG47ELuuvT7y0V8IgaL26ebByYcEPurzZChSSxNvMEE8gX7Qd/7YhajTJAeIyHu7BoXh2MeyNJGaFkWhoddfxPTKVjA=
 MIME-Version: 1.0
-In-Reply-To: <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_05:,,
- signatures=0
+In-Reply-To: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 26 Feb 2018 07:26:14 -0800
+Message-ID: <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
+Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for virtio_pci devices
+To: Mark Rustad <mark.d.rustad@intel.com>
+Cc: virtio-dev@lists.oasis-open.org, Netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        "Daly, Dan" <dan.daly@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>, MRustad@gmail.com,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Radoslaw
+On Sun, Feb 25, 2018 at 8:48 PM, Mark Rustad <mark.d.rustad@intel.com> wrote:
+> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> patch enables its use. The device in question is an upcoming Intel
+> NIC that implements both a virtio_net PF and virtio_net VFs. These
+> are hardware realizations of what has been up to now been a software
+> interface.
+>
+> The device in question has the following 4-part PCI IDs:
+>
+> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+>
+> The patch needs no check for device ID, because the callback will
+> never be made for devices that do not assert the capability or
+> when run on a platform incapable of SR-IOV.
+>
+> One reason for this patch is because the hardware requires the
+> vendor ID of a VF to be the same as the vendor ID of the PF that
+> created it. So it seemed logical to simply have a fully-functioning
+> virtio_net PF create the VFs. This patch makes that possible.
+>
+> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
 
-Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
-Tested-by: Ludovic Barre <ludovic.barre@st.com>
+Mark,
 
-BR
-Ludo
+In the future please don't put my "Reviewed-by" on a patch that I
+haven't reviewed. I believe I reviewed one of the earlier patches, but
+I hadn't reviewed this version.
 
-On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
-> - removes unneeded irq_chip.irq_eoi callback
-> - adds irq_chip.irq_set_wake callback for possible
-> in the future GPIO wakeup
-> - adds irq_chip.irq_ack callback
-> 
-> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+Also, after thinking about it over the weekend we may want to look at
+just coming up with a truly "generic" solution that is applied to
+SR-IOV capable devices that don't have a SR-IOV capable driver loaded
+on them. That would allow us to handle the uio, vfio, pci-stub, and
+virtio cases all in one fell swoop. I think us going though and
+modifying one patch at a time to do this kind of thing isn't going to
+scale.
+
+I'll try to do some digging and find the VFIO approach we had been
+working on. I think with a couple tweaks we can probably make that
+truly generic and ready for submission.
+
+Thanks.
+
+- Alex
+
 > ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index 617df16..6cbcff4 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -268,10 +268,11 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
->   
->   static struct irq_chip stm32_gpio_irq_chip = {
->   	.name           = "stm32gpio",
-> -	.irq_eoi	= irq_chip_eoi_parent,
-> +	.irq_ack       = irq_chip_ack_parent,
->   	.irq_mask       = irq_chip_mask_parent,
->   	.irq_unmask     = irq_chip_unmask_parent,
->   	.irq_set_type   = irq_chip_set_type_parent,
-> +	.irq_set_wake   = irq_chip_set_wake_parent,
->   	.irq_request_resources = stm32_gpio_irq_request_resources,
->   	.irq_release_resources = stm32_gpio_irq_release_resources,
->   };
-> 
+> Changes in V4:
+> - V3 was a mis-send, this has what was intended
+> - Move most code to new helpers in pci/iov.c, pci_sriov_configure_generic
+>   and pci_sriov_disable_generic
+> - Correct mislabeling of vendor and device IDs
+> - Other minor changelog fixes
+> - Rebased to pci/master, since most changes are in that area now
+> - No new ifdefs with this approach (yay)
+> Changes in V3:
+> - Missent patch, please disregard
+> Changes in V2:
+> - Simplified logic from previous version, removed added driver variable
+> - Disable SR-IOV on driver removal except when VFs are assigned
+> - Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
+> ---
+>  drivers/pci/iov.c                  |   50 ++++++++++++++++++++++++++++++++++++
+>  drivers/virtio/virtio_pci_common.c |    2 +
+>  include/linux/pci.h                |   10 +++++++
+>  3 files changed, 62 insertions(+)
+>
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index 677924ae0350..4b110e169b7c 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -367,6 +367,56 @@ static void sriov_disable(struct pci_dev *dev)
+>         pci_iov_set_numvfs(dev, 0);
+>  }
+>
+> +/**
+> + * pci_sriov_disable_generic - standard helper to disable SR-IOV
+> + * @dev:the PCI PF device whose VFs are to be disabled
+> + */
+> +int pci_sriov_disable_generic(struct pci_dev *dev)
+> +{
+> +       /*
+> +        * If vfs are assigned we cannot shut down SR-IOV without causing
+> +        * issues, so just leave the hardware available.
+> +        */
+> +       if (pci_vfs_assigned(dev)) {
+> +               pci_warn(dev,
+> +                        "Cannot disable SR-IOV while VFs are assigned - VFs will not be deallocated\n");
+> +               return -EPERM;
+> +       }
+> +       pci_disable_sriov(dev);
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_sriov_disable_generic);
+> +
+> +static int pci_sriov_enable(struct pci_dev *dev, int num_vfs)
+> +{
+> +       int rc;
+> +
+> +       if (pci_num_vf(dev))
+> +               return -EINVAL;
+> +
+> +       rc = pci_enable_sriov(dev, num_vfs);
+> +       if (rc) {
+> +               pci_warn(dev, "Failed to enable PCI sriov: %d\n", rc);
+> +               return rc;
+> +       }
+> +       pci_info(dev, "SR-IOV enabled with %d VFs\n", num_vfs);
+> +       return num_vfs;
+> +}
+> +
+> +/**
+> + * pci_sriov_configure_generic - standard helper to configure SR-IOV
+> + * @dev: the PCI PF device that is configuring SR-IOV
+> + */
+> +int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
+> +{
+> +       if (num_vfs)
+> +               return pci_sriov_enable(dev, num_vfs);
+> +       if (!pci_num_vf(dev))
+> +               return -EINVAL;
+> +       return pci_sriov_disable_generic(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(pci_sriov_configure_generic);
+> +
+>  static int sriov_init(struct pci_dev *dev, int pos)
+>  {
+>         int i, bar64;
+> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> index 48d4d1cf1cb6..d7679377131f 100644
+> --- a/drivers/virtio/virtio_pci_common.c
+> +++ b/drivers/virtio/virtio_pci_common.c
+> @@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+>         else
+>                 virtio_pci_modern_remove(vp_dev);
+>
+> +       pci_sriov_disable_generic(pci_dev);
+>         pci_disable_device(pci_dev);
+>         put_device(dev);
+>  }
+> @@ -596,6 +597,7 @@ static struct pci_driver virtio_pci_driver = {
+>  #ifdef CONFIG_PM_SLEEP
+>         .driver.pm      = &virtio_pci_pm_ops,
+>  #endif
+> +       .sriov_configure = pci_sriov_configure_generic,
+>  };
+>
+>  module_pci_driver(virtio_pci_driver);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 024a1beda008..937124d4e098 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1947,6 +1947,8 @@ int pci_iov_virtfn_devfn(struct pci_dev *dev, int id);
+>
+>  int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
+>  void pci_disable_sriov(struct pci_dev *dev);
+> +int pci_sriov_disable_generic(struct pci_dev *dev);
+> +int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs);
+>  int pci_iov_add_virtfn(struct pci_dev *dev, int id);
+>  void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
+>  int pci_num_vf(struct pci_dev *dev);
+> @@ -1973,6 +1975,14 @@ static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+>  static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
+>                                          int id) { }
+>  static inline void pci_disable_sriov(struct pci_dev *dev) { }
+> +static inline int pci_sriov_disable_generic(struct pci_dev *dev)
+> +{
+> +       return -ENODEV;
+> +}
+> +static inline int pci_sriov_configure_generic(struct pci_dev *dev, int num_vfs)
+> +{
+> +       return -ENODEV;
+> +}
+>  static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
+>  static inline int pci_vfs_assigned(struct pci_dev *dev)
+>  { return 0; }
+>
