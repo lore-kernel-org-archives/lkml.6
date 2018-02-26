@@ -1,74 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeBZK2C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:28:02 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48338 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752601AbeBZK0R (ORCPT
+        id S1752601AbeBZK2h (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:28:37 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45938 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752024AbeBZK2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 05:26:17 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as a subdevice.
-Date: Mon, 26 Feb 2018 11:26:02 +0100
-Message-Id: <20180226102606.15093-5-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180226102606.15093-1-enric.balletbo@collabora.com>
-References: <20180226102606.15093-1-enric.balletbo@collabora.com>
+        Mon, 26 Feb 2018 05:28:33 -0500
+X-Google-Smtp-Source: AG47ELs0oAUwJy2epaGd30ukzFwhq7fiyUTOXvTlx1dOLBHsRj5kFN0z0UiTkRFPSBulLhelNdDpdoidxiia9BT2cUs=
+MIME-Version: 1.0
+In-Reply-To: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Feb 2018 11:28:32 +0100
+Message-ID: <CACRpkdbZ30G1wBOpLR7JxLjBKU1ozd8d8upVbymfiEb0q-ibqA@mail.gmail.com>
+Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check whether this EC instance has RTC host command support and instatiate
-the RTC driver as a subdevice in such case.
+On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
+<mail@maciej.szmigiero.name> wrote:
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
+> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
+>
+> Now that the patch series changing ISA_BUS_API dependency to selection
+> was merged this reversion will do the same for gpio-winbond driver to
+> make it consistent with other ISA bus gpio drivers.
+>
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-Changes in v3:
-- [4/8] Add the Reviewed-by Andy Shevchenko.
+Patch applied.
 
-Changes in v2:
-- [4/8] Add the Reviewed-by Gwendal.
-
- drivers/mfd/cros_ec_dev.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index f98e5beffca6..33fe1b439ee2 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -389,6 +389,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
-+static const struct mfd_cell cros_ec_rtc_cell = {
-+	.name = "cros-ec-rtc",
-+};
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -437,6 +441,16 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
-+	/* check whether this EC instance has RTC host command support */
-+	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
-+		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+					 &cros_ec_rtc_cell, 1, NULL, 0, NULL);
-+		if (retval)
-+			dev_err(ec->dev,
-+				"failed to add cros-ec-rtc device: %d\n",
-+				retval);
-+	}
-+
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
--- 
-2.16.1
+Yours,
+Linus Walleij
