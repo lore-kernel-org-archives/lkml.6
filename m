@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuu2j4J0lULiQfWoHZ62g2L7dt8LAG1PXNcnkdo2q9s+FoCXDDP6WfUMGzNC+wWUmQy8xZh
-ARC-Seal: i=1; a=rsa-sha256; t=1519676736; cv=none;
+X-Google-Smtp-Source: AH8x226ytSCO8BsvQ0TmBFIeIaga/OWW46kSDVxZeekUpTsujE1vO7w6zCVE7OOxwtla830OQzp3
+ARC-Seal: i=1; a=rsa-sha256; t=1519676733; cv=none;
         d=google.com; s=arc-20160816;
-        b=hAEUpIi2Lwpk/FBCShcuo15rZ61izCYL3wnRWb/9ZlresocnlD1JACZGWA+d6icezk
-         zEAeA5zkjJuNMSpAMZDgg+SWQN5ZmbnbTaNo3ElQjAlNAS1Chray3YTqsDBMk8Qqc76Y
-         ZaELod3ga9PAGHWp/JDVr+bhRc1WUk2AR3KDiIt8xQYoZX4z0JLVNXg8mzopg3EPSHeL
-         SkaZNOEdzhywcnzB9gjKJt1XuulaL8LSz4X6hbw8dYdP7Oid/6vA4svzrDYPXxeKM2hD
-         /Yow2OxJirIVjGLuX/DzkkGb9YiJkZ1jkCIdiHPzB9HueKDdEbwM6gz0sasMfPVGcvg1
-         UMpg==
+        b=TwIlhMKau6kE/9e9n1zGvIOje7jjZ3smalMUgLAHvSR4+4VIF79BR7QLnsk89gKZk6
+         bzm1cuerliNwVuG1ThTzmi30rGj9aCPRZUDhceJK/sbSW7LFVkYShZNcDSeLRc7WJZ/p
+         70/fjq0qX0HMUR3CQ64dIjOVg2ateCVEcFgbO9bkRgMoGoxQoWq5PI6I94j0hHyiW+Am
+         7btsmEtOvF3oQUSTovLEJCnNG2tgxDNy8NBsepydHY/3x7M8Fl2l71PSeL/CO+GfALuX
+         QOCvHo9jIVmYZymL5dr8DuwSDbTGHzoWD1LsW+SEjBgN7GpQiFgwB6CKiMMS8LnrROKB
+         MbJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3mIrBXEndz43gsHFVh5qGHayZahYsD3+qFQ05TSDQh8=;
-        b=ipmOrRdowUgbz0dXTv3vERIwiI9N4rRkmOl8Naada29N/swKCYXZB7V14j4ai7YmPY
-         oZDh10k2GoSQln7Vx6u4nrMm/eB7qG43BUFoXTZ3V/Wr/B+RsZhPdTZtxntWP5lPxPT7
-         f30j2Wy2biJYXrCmz/wQXmGw8GMwVpPWuN6aDWEQdHkIMECGVnWkOQlv88FSb8Yz1f6u
-         il+8uOnPSLz0NAfgenDVAVpY6ZrLpf1yNWYDHcue5YtkcWXDXh2w9D1HIaFkYbhj2bAA
-         CqnhMiDxlTnlrjchifvahYqOWkhSFP3hV2lRdHf4PzHpf+lGsZSD8LcUImgBLUSjOfR/
-         1VXA==
+        bh=tYGvNq8xlguW6kboZoXhBs6qgVhyjPZsEd5ZFMWpDHE=;
+        b=BxXC1B6vR8RT9M1D6EEeNLfBR5yPXIcM1G30hTEexWFXFW4x9TOOZuccMhGUDwKhyr
+         isctTvtTcqhUfG3U5LgTqqtJuz0kjv+Wf6KyKJDOxmu3P0jLXtrpa8iwO5I8nuNVrUFi
+         nHD8b54HkzxdsMogBkAC6JTEa97ms8CQT7ivaAOJh4V4J61aszsnr3Z3mc+rwA/PCb3k
+         sJcC0HF9kcX9NnjaddndCNcLm2uZiFpEK6bfqfVx6lDpSjQ3ZK9tBsh1Sz4MepeU0zX0
+         fI1ZmrDv55jqWytCDZpPgFkTgjl38d0hP0B+Zs77c/FKxAIvA8qR36vW2CaPTmAWGh2S
+         1Kpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.14 54/54] drm/i915/breadcrumbs: Ignore unsubmitted signalers
-Date: Mon, 26 Feb 2018 21:22:31 +0100
-Message-Id: <20180226202147.506513200@linuxfoundation.org>
+	Jack Stocker <jackstocker.93@gmail.com>
+Subject: [PATCH 4.14 36/54] Add delay-init quirk for Corsair K70 RGB keyboards
+Date: Mon, 26 Feb 2018 21:22:13 +0100
+Message-Id: <20180226202146.176577559@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -43,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496553533576741?=
-X-GMAIL-MSGID: =?utf-8?q?1593496553533576741?=
+X-GMAIL-THRID: =?utf-8?q?1593496000178812018?=
+X-GMAIL-MSGID: =?utf-8?q?1593496550282213889?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,82 +48,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Jack Stocker <jackstocker.93@gmail.com>
 
-commit 117172c8f9d40ba1de8cb35c6e614422faa03330 upstream.
+commit 7a1646d922577b5b48c0d222e03831141664bb59 upstream.
 
-When a request is preempted, it is unsubmitted from the HW queue and
-removed from the active list of breadcrumbs. In the process, this
-however triggers the signaler and it may see the clear rbtree with the
-old, and still valid, seqno, or it may match the cleared seqno with the
-now zero rq->global_seqno. This confuses the signaler into action and
-signaling the fence.
+Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
+Corsair K70 RGB keyboards also require the DELAY_INIT quirk to
+start correctly at boot.
 
-Fixes: d6a2289d9d6b ("drm/i915: Remove the preempted request from the execution queue")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.12+
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180206094633.30181-1-chris@chris-wilson.co.uk
-(cherry picked from commit fd10e2ce9905030d922e179a8047a4d50daffd8e)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180213090154.17373-1-chris@chris-wilson.co.uk
+Device ids found here:
+usb 3-3: New USB device found, idVendor=1b1c, idProduct=1b13
+usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 3-3: Product: Corsair K70 RGB Gaming Keyboard
+
+Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_breadcrumbs.c |   29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_breadcrumbs.c
-+++ b/drivers/gpu/drm/i915/intel_breadcrumbs.c
-@@ -541,29 +541,16 @@ void intel_engine_remove_wait(struct int
- 	spin_unlock_irq(&b->rb_lock);
- }
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -225,6 +225,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
  
--static bool signal_valid(const struct drm_i915_gem_request *request)
--{
--	return intel_wait_check_request(&request->signaling.wait, request);
--}
--
- static bool signal_complete(const struct drm_i915_gem_request *request)
- {
- 	if (!request)
- 		return false;
- 
--	/* If another process served as the bottom-half it may have already
--	 * signalled that this wait is already completed.
--	 */
--	if (intel_wait_complete(&request->signaling.wait))
--		return signal_valid(request);
--
--	/* Carefully check if the request is complete, giving time for the
-+	/*
-+	 * Carefully check if the request is complete, giving time for the
- 	 * seqno to be visible or if the GPU hung.
- 	 */
--	if (__i915_request_irq_complete(request))
--		return true;
--
--	return false;
-+	return __i915_request_irq_complete(request);
- }
- 
- static struct drm_i915_gem_request *to_signaler(struct rb_node *rb)
-@@ -606,9 +593,13 @@ static int intel_breadcrumbs_signaler(vo
- 			request = i915_gem_request_get_rcu(request);
- 		rcu_read_unlock();
- 		if (signal_complete(request)) {
--			local_bh_disable();
--			dma_fence_signal(&request->fence);
--			local_bh_enable(); /* kick start the tasklets */
-+			if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT,
-+				      &request->fence.flags)) {
-+				local_bh_disable();
-+				dma_fence_signal(&request->fence);
-+				GEM_BUG_ON(!i915_gem_request_completed(request));
-+				local_bh_enable(); /* kick start the tasklets */
-+			}
- 
- 			spin_lock_irq(&b->rb_lock);
++	/* Corsair K70 RGB */
++	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Corsair Strafe RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
  
