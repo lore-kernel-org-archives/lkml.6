@@ -1,66 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3709765-1519676782-2-6853210614904572089
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676782; b=JQ5ekU55IYAtRzfqeauRF6PpqknunSOR/XhDFQasTrIPJDc
-    krceI5W4ddSybejCowAVIuTOemvASZn0oVULdgIOlD04pt1fUsIHYsawD0bUGdhs
-    5Aolgtwt595k4MJOCX5x6biJDY0aq6FkU+og6tIkrSmHkcZOgLh0hs+261McSwuP
-    916S5No8uGoN13dW9YY05ig0IZRJoUFfHoJA2wpLtXSiJLMIIsql8IUQmUQCTxnQ
-    bVX8fZquLaIlt2YTYNEU9SMs/M+xzgY7xTfdR2Gdbw+bptSVhneX56VqOHIUS/de
-    oqLthk5qQmzJgETxA0USUO7zytw3zFaSoo3uuTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676782; bh=4AQMnCr2waf20oaeK3AyCqVCPq
-    GMX00vnFrEzPf/tDI=; b=Z9iyozMFNtW06N5uLATsP4AqFPgNHttNDyfujf6CTC
-    OXtf1AaIwvWbtQmGKnywI4agKip30YQDwYmllI6oc2OpqZRldks55NbQcNSoUFui
-    8mZqviDKr/MAeodQsGT5ika7DedVwUkQWjOFxMEGjiXTrnB3Uart/rlrSWhAFqDW
-    lLLXvdfZBM8czW33JMhO0xAuUNHikXk11i0Zg5syxViI03csIuuY0xjcADS4RsEE
-    XSKpmZ/3oxyYtGVfuXfuxALs3dUC7g4B74GoTb9tA8ViSL+vny73zBeAhH4Q7iCk
-    RxD2UeY7XEPanWzgxULgE8MGHJvN3hJK25IlSP8WcwOA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeBZU0Q (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:26:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35668 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753340AbeBZU0O (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:26:14 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsZBOcbA5APxMH+PrQfJ8L0BhVOEzPzxszlxH7SOkiSDFzStGfZqI+hBSF7PRH7sF7f4GJs
+ARC-Seal: i=1; a=rsa-sha256; t=1519676778; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v7Y3dOfUwE77OC+aRTDyW/ghWcUF21R8pAv8Yks7NqC+Auw6vFPpdvHKvMOFBC7EUW
+         Noq2tx+uEb2kwG9+ZorOdqWFhLKAozO7PottJk72v8lbzZJs/SwZUCgbc/Bu7AsrcqG3
+         E8bCsFSrdTkyByrhumIndGiXXo2wtiZLxMtCNj+4byem550moEVPWkkcYqShnGKccNM0
+         /cfwdAmXVOlHC0I48Gq3IKYqor5ok2g21YCMcSx4aSOTm4zZqmVyZG+kW49mQIzT4b22
+         a+UKvpRqdCJsjYyx+A5TX734LVPd0LjrXN1BZrpf3n0B0iSNIhYLk6tmUVUQZQy8WFQ0
+         UWhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JcqhGjhFBfaV2iGptlbmuBR3jGUGK06L19gejat8cFY=;
+        b=uKUny4tNWSeI3ebBBAwGs4s8yKQ2S/F/ITdSrvKRPJw53WLveNTh+32ZFRpCK90Jfn
+         meYPokoqlXObaID87WWpXUPXvAQ6aD12G23M35QsOx0AFQITPvX+wpW0/Jz3duLzh7NE
+         0HGKsBsuuqJSwvf+xd8EQ96kfs0m3B3VW8s7lbfFQsSTdpPRwEDN1QO3Dfv5jg80DOyZ
+         datqYb4r6dckemrMFqrESLayHDRT79H2sYm5VEQaniXMdX4XV94LJvLeiT3QuM3z2nZb
+         37yGTKV5CD2lnoHaL44s8l3SXsShMTXsJRJCIDJN8kBMUPiY8kVTc8Y523QWbcF3XWe9
+         iEUw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.15 12/64] X.509: fix NULL dereference when restricting key with unsupported_sig
-Date: Mon, 26 Feb 2018 21:21:49 +0100
-Message-Id: <20180226202153.962932820@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Biggers <ebiggers@google.com>,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.15 13/64] PKCS#7: fix certificate chain verification
+Date: Mon, 26 Feb 2018 21:21:50 +0100
+Message-Id: <20180226202154.014220555@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -68,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593496371074574553?=
+X-GMAIL-MSGID: =?utf-8?q?1593496597301323513?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,90 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 4b34968e77ad09628cfb3c4a7daf2adc2cefc6e8 upstream.
+commit 971b42c038dc83e3327872d294fe7131bab152fc upstream.
 
-The asymmetric key type allows an X.509 certificate to be added even if
-its signature's hash algorithm is not available in the crypto API.  In
-that case 'payload.data[asym_auth]' will be NULL.  But the key
-restriction code failed to check for this case before trying to use the
-signature, resulting in a NULL pointer dereference in
-key_or_keyring_common() or in restrict_link_by_signature().
+When pkcs7_verify_sig_chain() is building the certificate chain for a
+SignerInfo using the certificates in the PKCS#7 message, it is passing
+the wrong arguments to public_key_verify_signature().  Consequently,
+when the next certificate is supposed to be used to verify the previous
+certificate, the next certificate is actually used to verify itself.
 
-Fix this by returning -ENOPKG when the signature is unsupported.
+An attacker can use this bug to create a bogus certificate chain that
+has no cryptographic relationship between the beginning and end.
 
-Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled and
-keyctl has support for the 'restrict_keyring' command:
+Fortunately I couldn't quite find a way to use this to bypass the
+overall signature verification, though it comes very close.  Here's the
+reasoning: due to the bug, every certificate in the chain beyond the
+first actually has to be self-signed (where "self-signed" here refers to
+the actual key and signature; an attacker might still manipulate the
+certificate fields such that the self_signed flag doesn't actually get
+set, and thus the chain doesn't end immediately).  But to pass trust
+validation (pkcs7_validate_trust()), either the SignerInfo or one of the
+certificates has to actually be signed by a trusted key.  Since only
+self-signed certificates can be added to the chain, the only way for an
+attacker to introduce a trusted signature is to include a self-signed
+trusted certificate.
 
-    keyctl new_session
-    keyctl restrict_keyring @s asymmetric builtin_trusted
-    openssl req -new -sha512 -x509 -batch -nodes -outform der \
-        | keyctl padd asymmetric desc @s
+But, when pkcs7_validate_trust_one() reaches that certificate, instead
+of trying to verify the signature on that certificate, it will actually
+look up the corresponding trusted key, which will succeed, and then try
+to verify the *previous* certificate, which will fail.  Thus, disaster
+is narrowly averted (as far as I could tell).
 
-Fixes: a511e1af8b12 ("KEYS: Move the point of trust determination to __key_link()")
+Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
 Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/asymmetric_keys/restrict.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ crypto/asymmetric_keys/pkcs7_verify.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/asymmetric_keys/restrict.c
-+++ b/crypto/asymmetric_keys/restrict.c
-@@ -67,8 +67,9 @@ __setup("ca_keys=", ca_keys_setup);
-  *
-  * Returns 0 if the new certificate was accepted, -ENOKEY if we couldn't find a
-  * matching parent certificate in the trusted list, -EKEYREJECTED if the
-- * signature check fails or the key is blacklisted and some other error if
-- * there is a matching certificate but the signature check cannot be performed.
-+ * signature check fails or the key is blacklisted, -ENOPKG if the signature
-+ * uses unsupported crypto, or some other error if there is a matching
-+ * certificate but the signature check cannot be performed.
-  */
- int restrict_link_by_signature(struct key *dest_keyring,
- 			       const struct key_type *type,
-@@ -88,6 +89,8 @@ int restrict_link_by_signature(struct ke
- 		return -EOPNOTSUPP;
- 
- 	sig = payload->data[asym_auth];
-+	if (!sig)
-+		return -ENOPKG;
- 	if (!sig->auth_ids[0] && !sig->auth_ids[1])
- 		return -ENOKEY;
- 
-@@ -139,6 +142,8 @@ static int key_or_keyring_common(struct
- 		return -EOPNOTSUPP;
- 
- 	sig = payload->data[asym_auth];
-+	if (!sig)
-+		return -ENOPKG;
- 	if (!sig->auth_ids[0] && !sig->auth_ids[1])
- 		return -ENOKEY;
- 
-@@ -222,9 +227,9 @@ static int key_or_keyring_common(struct
-  *
-  * Returns 0 if the new certificate was accepted, -ENOKEY if we
-  * couldn't find a matching parent certificate in the trusted list,
-- * -EKEYREJECTED if the signature check fails, and some other error if
-- * there is a matching certificate but the signature check cannot be
-- * performed.
-+ * -EKEYREJECTED if the signature check fails, -ENOPKG if the signature uses
-+ * unsupported crypto, or some other error if there is a matching certificate
-+ * but the signature check cannot be performed.
-  */
- int restrict_link_by_key_or_keyring(struct key *dest_keyring,
- 				    const struct key_type *type,
-@@ -249,9 +254,9 @@ int restrict_link_by_key_or_keyring(stru
-  *
-  * Returns 0 if the new certificate was accepted, -ENOKEY if we
-  * couldn't find a matching parent certificate in the trusted list,
-- * -EKEYREJECTED if the signature check fails, and some other error if
-- * there is a matching certificate but the signature check cannot be
-- * performed.
-+ * -EKEYREJECTED if the signature check fails, -ENOPKG if the signature uses
-+ * unsupported crypto, or some other error if there is a matching certificate
-+ * but the signature check cannot be performed.
-  */
- int restrict_link_by_key_or_keyring_chain(struct key *dest_keyring,
- 					  const struct key_type *type,
+--- a/crypto/asymmetric_keys/pkcs7_verify.c
++++ b/crypto/asymmetric_keys/pkcs7_verify.c
+@@ -270,7 +270,7 @@ static int pkcs7_verify_sig_chain(struct
+ 				sinfo->index);
+ 			return 0;
+ 		}
+-		ret = public_key_verify_signature(p->pub, p->sig);
++		ret = public_key_verify_signature(p->pub, x509->sig);
+ 		if (ret < 0)
+ 			return ret;
+ 		x509->signer = p;
