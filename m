@@ -1,55 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752350AbeBZJcQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 04:32:16 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41177 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751926AbeBZJcP (ORCPT
+        id S1752124AbeBZJgF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 04:36:05 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39130 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeBZJgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 04:32:15 -0500
-X-Google-Smtp-Source: AG47ELsTNhhrQY+R2l6WxZ+U/HyialAA7+cByM4c0eHqqZZ3AZFa7bCHqpuxCRzZVnEN8kTiXrBDINECuSOkXxkOawY=
+        Mon, 26 Feb 2018 04:36:01 -0500
+X-Google-Smtp-Source: AG47ELt1Eiv76S4fVDOL+MPa8gBlPKLQYF+wTxbKJ/sMTk5Kp4ufJbgirRAVjNEqh/3GHEC/uLzVM9F3XD3RBGdM80M=
 MIME-Version: 1.0
-In-Reply-To: <23dba70b-aa83-4a21-a33d-733bec215264@arm.com>
-References: <20180220111057.14756-1-dietmar.eggemann@arm.com>
- <CAJZ5v0hB+Uk8SNVqUH3fr1y0SXbY1Rd26b84P-8PPV8FiPbnWw@mail.gmail.com> <23dba70b-aa83-4a21-a33d-733bec215264@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Feb 2018 10:32:14 +0100
-X-Google-Sender-Auth: YUPSLfMAGP6lLLJRxeQHz1H47f8
-Message-ID: <CAJZ5v0iYdR84O-z99yNBeK3kd7fE7AZYDKWH+oDFN77Ai_a6xw@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: scpi: invoke frequency-invariance setter function
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Feb 2018 10:36:00 +0100
+Message-ID: <CACRpkdYGQUynZJu+4-Bj=TzL5=C4qt2cYav__9aHSnwD2NERDA@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v4.16
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 8:49 AM, Dietmar Eggemann
-<dietmar.eggemann@arm.com> wrote:
-> On 02/22/2018 11:27 PM, Rafael J. Wysocki wrote:
->> On Tue, Feb 20, 2018 at 12:10 PM, Dietmar Eggemann
->> <dietmar.eggemann@arm.com> wrote:
->
-> [...]
->
->>> Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
->>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->>> Cc: Sudeep Holla <sudeep.holla@arm.com>
->>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
->>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->>
->> This is really minor, but I would reorder this slightly.
->
-> Tried to figure out what would be the better order. Not sure since I saw
-> different examples. Can you tell what would be the best tag order?
+Hi Linus,
 
-I was talking about the patch, not about tags, sorry for the confusion.
+two fixes to GPIO, both by nice colleagues fixing my mistakes.
+Please pull it in!
 
-Frankly, I don't care about the ordering of the tags. :-)
+Linus Walleij
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.16-2
+
+for you to fetch changes up to c2b3eec47c1b2161adbc70676f1422e6f56aaa32:
+
+  gpio: Handle deferred probing in of_find_gpio() properly (2018-02-21
+09:37:34 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for the v4.16 kernel:
+
+- Two patches fixing up my mistakes with device tree properties
+  compatible for SPI and regulators. Nice to smoke this out for
+  v4.16 though, when we actually use it in v4.17 it will be
+  in nice shape.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      gpio: Handle deferred probing in of_find_gpio() properly
+
+Maxime Ripard (1):
+      gpiolib: Keep returning EPROBE_DEFER when we should
+
+ drivers/gpio/gpiolib-of.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
