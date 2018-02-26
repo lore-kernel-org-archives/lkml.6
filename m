@@ -1,88 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeBZHtn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 02:49:43 -0500
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:45076 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbeBZHtl (ORCPT
+        id S1752213AbeBZHug (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 02:50:36 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35431 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeBZHub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 02:49:41 -0500
-X-Google-Smtp-Source: AG47ELvbm4/IzLcd718We5PqFgxeLjS8PmzeZZfk1KI8E8YmDFoP7yN2yYC2B2LwNK3gj9xDvS4mGMAHHO1++dsSTYM=
+        Mon, 26 Feb 2018 02:50:31 -0500
+X-Google-Smtp-Source: AG47ELtdUsl9Q9phKfDs+4jU6JQ1lXIUNd4SMfDUsNxBYpY/ENuTjxbZII0K86yne07bN/vRasrLgg==
+Date: Mon, 26 Feb 2018 08:50:27 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Borislav Petkov <bp@suse.de>, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180226075027.r5n5j6jvfum5o3z6@gmail.com>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+ <20180226073552.xabt55ukp24inut5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <55d52f37-c24d-c2da-43c6-73a55403d3b6@c-s.fr>
-References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-6-malat@debian.org>
- <55d52f37-c24d-c2da-43c6-73a55403d3b6@c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Mon, 26 Feb 2018 08:49:20 +0100
-X-Google-Sender-Auth: np-Qa_as9v6m6xUmNe1MiuRMqbI
-Message-ID: <CA+7wUszvNAD-j5PkA3wYBF7oYfu3+L7vCXtyyhiOBdwyVnH9cQ@mail.gmail.com>
-Subject: Re: [PATCH 05/21] powerpc: Avoid comparison of unsigned long >= 0 in pfn_valid
-To: Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226073552.xabt55ukp24inut5@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1Q7nlSN011420
 
-On Mon, Feb 26, 2018 at 7:32 AM, Christophe LEROY
-<christophe.leroy@c-s.fr> wrote:
->
->
-> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
->>
->> Rewrite comparison since all values compared are of type `unsigned long`.
->>
->> Fix a warning (treated as error in W=1):
->>
->>    CC      arch/powerpc/kernel/irq.o
->> In file included from ./include/linux/bug.h:5:0,
->>                   from ./include/linux/cpumask.h:13,
->>                   from ./include/linux/smp.h:13,
->>                   from ./include/linux/kernel_stat.h:5,
->>                   from arch/powerpc/kernel/irq.c:35:
->> ./include/linux/dma-mapping.h: In function ‘dma_map_resource’:
->> ./arch/powerpc/include/asm/page.h:129:32: error: comparison of unsigned
->> expression >= 0 is always true [-Werror=type-limits]
->>   #define pfn_valid(pfn)  ((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
->>                                  ^
->> Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->> ---
->>   arch/powerpc/include/asm/page.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/powerpc/include/asm/page.h
->> b/arch/powerpc/include/asm/page.h
->> index 8da5d4c1cab2..19dea64e7ed2 100644
->> --- a/arch/powerpc/include/asm/page.h
->> +++ b/arch/powerpc/include/asm/page.h
->> @@ -126,7 +126,8 @@ extern long long virt_phys_offset;
->>     #ifdef CONFIG_FLATMEM
->>   #define ARCH_PFN_OFFSET               ((unsigned long)(MEMORY_START >>
->> PAGE_SHIFT))
->> -#define pfn_valid(pfn)         ((pfn) >= ARCH_PFN_OFFSET && (pfn) <
->> max_mapnr)
->> +#define pfn_valid(pfn) \
->> +               (((pfn) - ARCH_PFN_OFFSET) < (max_mapnr -
->> ARCH_PFN_OFFSET))
->
->
-> What will happen when ARCH_PFN_OFFSET is not nul and pfn is lower than
-> ARCH_PFN_OFFSET ?
 
-I assumed that normal unsigned integers modulo would make the test
-fail. But for some particular value of max_mapnr the two are indeed
-not equivalent.
+* Ingo Molnar <mingo@kernel.org> wrote:
 
-> Christophe
->
->
->>   #endif
->>     #define virt_to_pfn(kaddr)  (__pa(kaddr) >> PAGE_SHIFT)
->>
->
+> We need to re-do this as we have now run into _exactly_ the kind of difficult to 
+> debug bug that I was worried about when I insisted on the many iterations of 
+> this patch-set...
+
+Ok, so I rebased tip:x86/mm and removed these two commits:
+
+adf9ca9c69a2: x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
+
+ arch/x86/boot/compressed/head_64.S | 127 ++++++++++++++++++++++++++-----------
+ 1 file changed, 89 insertions(+), 38 deletions(-)
+
+b91993a87aff: x86/boot/compressed/64: Prepare trampoline memory
+
+ arch/x86/boot/compressed/head_64.S    | 24 ++++++++++-
+ arch/x86/boot/compressed/pgtable.h    | 18 ++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 79 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 120 insertions(+), 1 deletion(-)
+
+The other 5-level paging related commits tested out fine and are properly 
+fine-grained.
+
+Please split these two patches up - the first patch can probably be split up into 
+5 parts or so. Let's start with no more than 5 patches per iteration, ok?
+
+Thanks,
+
+	Ingo
