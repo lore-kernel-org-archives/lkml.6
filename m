@@ -1,69 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751814AbeBZWjA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:39:00 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:58344 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeBZWi5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:38:57 -0500
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 77.7.26.24) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>
-References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
- <20180225235432.31209-1-rabel@robertabel.eu>
- <20180225235432.31209-2-rabel@robertabel.eu>
- <20180225235432.31209-3-rabel@robertabel.eu>
- <20180225235432.31209-4-rabel@robertabel.eu>
- <CAHp75Vcrx2rLDsJduWx75Wa57yTRqtQ1dqZMkCGv64K0bOYLiQ@mail.gmail.com>
-From: Robert Abel <rabel@robertabel.eu>
-Message-ID: <48023798-595d-2a09-6f0c-2834ebefdd68@robertabel.eu>
-Date: Mon, 26 Feb 2018 23:38:54 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751835AbeBZWjS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:39:18 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48700 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751233AbeBZWjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 17:39:16 -0500
+Date: Tue, 27 Feb 2018 00:39:14 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Mark Rustad <mark.d.rustad@intel.com>, virtio-dev@lists.oasis-open.org,
+        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, "Daly, Dan" <dan.daly@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mark Rustad <MRustad@gmail.com>
+Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
+ virtio_pci devices
+Message-ID: <20180227003852-mutt-send-email-mst@kernel.org>
+References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+ <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
+ <20180227003123-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfGsQbONBWpoHmT4pM8gxonjovuD0BWraeA9D7q1SCtaw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcrx2rLDsJduWx75Wa57yTRqtQ1dqZMkCGv64K0bOYLiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <20180226223856.9684.27533@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UfGsQbONBWpoHmT4pM8gxonjovuD0BWraeA9D7q1SCtaw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy, Hi Miguel,
+On Mon, Feb 26, 2018 at 02:38:01PM -0800, Alexander Duyck wrote:
+> On Mon, Feb 26, 2018 at 2:32 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Mon, Feb 26, 2018 at 07:26:14AM -0800, Alexander Duyck wrote:
+> >> On Sun, Feb 25, 2018 at 8:48 PM, Mark Rustad <mark.d.rustad@intel.com> wrote:
+> >> > Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> >> > patch enables its use. The device in question is an upcoming Intel
+> >> > NIC that implements both a virtio_net PF and virtio_net VFs. These
+> >> > are hardware realizations of what has been up to now been a software
+> >> > interface.
+> >> >
+> >> > The device in question has the following 4-part PCI IDs:
+> >> >
+> >> > PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> >> > VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+> >> >
+> >> > The patch needs no check for device ID, because the callback will
+> >> > never be made for devices that do not assert the capability or
+> >> > when run on a platform incapable of SR-IOV.
+> >> >
+> >> > One reason for this patch is because the hardware requires the
+> >> > vendor ID of a VF to be the same as the vendor ID of the PF that
+> >> > created it. So it seemed logical to simply have a fully-functioning
+> >> > virtio_net PF create the VFs. This patch makes that possible.
+> >> >
+> >> > Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> >> > Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> >>
+> >> Mark,
+> >>
+> >> In the future please don't put my "Reviewed-by" on a patch that I
+> >> haven't reviewed. I believe I reviewed one of the earlier patches, but
+> >> I hadn't reviewed this version.
+> >>
+> >> Also, after thinking about it over the weekend we may want to look at
+> >> just coming up with a truly "generic" solution that is applied to
+> >> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
+> >> on them. That would allow us to handle the uio, vfio, pci-stub, and
+> >> virtio cases all in one fell swoop. I think us going though and
+> >> modifying one patch at a time to do this kind of thing isn't going to
+> >> scale.
+> >
+> > uio really can't support VFs properly - without proper IOMMU
+> > support any MSIs can corrupt kernel memory, and VFs are
+> > limited to MSIs.
+> 
+> UIO wasn't being run on the VFs, it was just running the PF.
 
-On 26 Feb 2018 12:44, Andy Shevchenko wrote:
-> Can we avoid yoda style of programming?
-On 26 Feb 2018 17:49, Miguel Ojeda wrote:
-> Please do not change the style of the code w.r.t to the rest of the
-> file, which writes tests with the non-lvalue on the right-hand side
-> and do not compare against '\0'. Same for the rest.
+I see. That's fine then.
 
-I am actually a fan of yoda-style programming, although its value is
-diminished with modern IDEs, which we all use, right?
-
-On 26 Feb 2018 17:54, Miguel Ojeda wrote:
-> On Mon, Feb 26, 2018 at 12:44 PM, Andy Shevchenko
->> Perhaps instead of dancing around kstrtox() better to switch to
->> simple_strtoul() ?
->
-> It seems deprecated:
->
-> /* Obsolete, do not use.  Use kstrto<foo> instead */
-> extern unsigned long simple_strtoul(const char *,char **,unsigned int);
-
-I thought the whole point was that simple_strtoul is deprecated and on
-the kill list? Isn't that kind of against the whole argument of
-re-inventing the wheel?
-If using simple_strtoul is an option, it might be best to bring it back
-and not touch the buffer at all.
-
-Regards,
-
-Robert
+> The point
+> is that there have been about 4 attempts, including this one, to add
+> SR-IOV support to drivers that don't actually do any VF management
+> internally. They were just being used as a shim so that they could add
+> the sriov_configure function to a driver that would load on the PF.
+> 
+> If we make the solution generic I think it should turn out pretty
+> clean. Most of the work just needs to happen in the sysfs function for
+> storing the value that is written to sriov_numvfs. I'm working with
+> Mark and a few other people now to get this addressed and I hope that
+> we can have a patch available shortly.
+> 
+> Thanks.
+> 
+> - Alex
