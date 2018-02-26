@@ -1,131 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751604AbeBZRue (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 12:50:34 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:35953 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750876AbeBZRud (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:50:33 -0500
-X-Google-Smtp-Source: AG47ELsJEPqVn9hcpAVGjBGv7g3uSwmcqYdFI7RoYRlJKPFecQYlJ3s6W+E17UJKWS6FqXOWqIa8pNO87zhbbDNdbG0=
+        id S1751786AbeBZRup convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 12:50:45 -0500
+Received: from mga09.intel.com ([134.134.136.24]:35663 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751704AbeBZRun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:50:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,397,1515484800";
+   d="scan'208";a="29888371"
+From: "Rustad, Mark D" <mark.d.rustad@intel.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "MRustad@gmail.com" <MRustad@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
+ virtio_pci devices
+Thread-Topic: [RFC PATCH V4] pci: virtio_pci: Add SR-IOV support for
+ virtio_pci devices
+Thread-Index: AQHTrxYr0v8hXKkJ4k2CFRm3mzXHzqO3e+MA
+Date: Mon, 26 Feb 2018 17:48:15 +0000
+Message-ID: <E8D91EBA-F75D-4FF9-BDE8-FCE3A4B4B007@intel.com>
+References: <20180226044837.19543.12267.stgit@mdrustad-mac04.local>
+ <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
+In-Reply-To: <CAKgT0UcMth9Jxovoj7xo0q2t+MuY0K1Upf+Mqs3zgXdriui-tA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.233.81.5]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3EF8EE341FE89847A02E31C769C6A168@intel.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com>
-References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-7-malat@debian.org>
- <8862c1e1-d161-3410-1b2a-502ad06cef57@c-s.fr> <6cba215c-127e-f3eb-b525-773b6aed0eb7@c-s.fr>
- <CA+7wUswNE1ydgeESpG8Dqtz4SGFjZZJJiPp+SHN8Z1qtBtPLLQ@mail.gmail.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Mon, 26 Feb 2018 18:50:11 +0100
-X-Google-Sender-Auth: o1fSPYWGg_5ZZsiYprS_6JompWI
-Message-ID: <CA+7wUsx047shRJ92PJ+cvg24HNhMnYzM0t5zUdEOaSE00sXkSg@mail.gmail.com>
-Subject: Re: [PATCH 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-To: Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QHoexR010872
 
-On Mon, Feb 26, 2018 at 8:44 AM, Mathieu Malaterre <malat@debian.org> wrote:
-> On Mon, Feb 26, 2018 at 7:50 AM, Christophe LEROY
-> <christophe.leroy@c-s.fr> wrote:
->>
->>
->> Le 26/02/2018 à 07:34, Christophe LEROY a écrit :
->>>
->>>
->>>
->>> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
->>>>
->>>> Rewrite check size - 1 <= Y as size < Y since `size` is unsigned value.
->>>> Fix warning (treated as error in W=1):
->>>>
->>>>    CC      arch/powerpc/kernel/signal_32.o
->>>> In file included from ./include/linux/uaccess.h:14:0,
->>>>                   from ./include/asm-generic/termios-base.h:8,
->>>>                   from ./arch/powerpc/include/asm/termios.h:20,
->>>>                   from ./include/uapi/linux/termios.h:6,
->>>>                   from ./include/linux/tty.h:7,
->>>>                   from arch/powerpc/kernel/signal_32.c:36:
->>>> ./include/asm-generic/termios-base.h: In function
->>>> ‘user_termio_to_kernel_termios’:
->>>> ./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned
->>>> expression >= 0 is always true [-Werror=type-limits]
->>>>     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
->>>>                                     ^
->>>> ./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro
->>>> ‘__access_ok’
->>>>     __access_ok((__force unsigned long)(addr), (size), get_fs()))
->>>>     ^~~~~~~~~~~
->>>> ./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro
->>>> ‘access_ok’
->>>>    if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
->>>>        ^~~~~~~~~
->>>> ./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro
->>>> ‘__get_user_check’
->>>>    __get_user_check((x), (ptr), sizeof(*(ptr)))
->>>>    ^~~~~~~~~~~~~~~~
->>>> ./include/asm-generic/termios-base.h:36:6: note: in expansion of macro
->>>> ‘get_user’
->>>>    if (get_user(termios->c_line, &termio->c_line) < 0)
->>>>        ^~~~~~~~
->>>> [...]
->>>> cc1: all warnings being treated as errors
->>>>
->>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>>> ---
->>>>   arch/powerpc/include/asm/uaccess.h | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/powerpc/include/asm/uaccess.h
->>>> b/arch/powerpc/include/asm/uaccess.h
->>>> index 51bfeb8777f0..fadc406bd39d 100644
->>>> --- a/arch/powerpc/include/asm/uaccess.h
->>>> +++ b/arch/powerpc/include/asm/uaccess.h
->>>> @@ -49,7 +49,7 @@
->>>>   #define __access_ok(addr, size, segment)    \
->>>>       (((addr) <= (segment).seg) &&        \
->>>> -     (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
->>>> +     (((size) == 0) || ((size) < ((segment).seg - (addr)))))
->>>
->>>
->>> IIUC, ((2 - 1) <= 1) is the same as (2 < 1) ?????
->>
->
-> The whole series was pretty mediocre, but this one was actually pretty
-> destructive. Thanks for catching this.
->
->>
->> Note that I already try to submit a fix for this warning 3 years ago
->> (https://patchwork.ozlabs.org/patch/418075/) and it was rejected with the
->> following comment:
+Alex,
 
-Tested again today with gcc 6.3.0 and gcc is still producing the
-original warning (treated as error).
+> On Feb 26, 2018, at 7:26 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
+> 
+> Mark,
+> 
+> In the future please don't put my "Reviewed-by" on a patch that I
+> haven't reviewed. I believe I reviewed one of the earlier patches, but
+> I hadn't reviewed this version.
 
->> Again, I don't think Linux enables this warning.  What did you do to
->> produce this?  In any case, it's a bad warning that doesn't take macros
->> into account, and the answer is not to make the code less clear by hiding
->> the fact that zero is a special case.
->
-> Right. I'll try to see how to make W=1 run without error with an
-> alternate solution.
+I'm very sorry. I completely spaced doing something about that. I think yours was the first Reviewed-by I ever had in this way. In the future I will remove such things from my changelog right after sending. Thanks for alerting me to what I had failed to do.
 
-So the other alternative is to update a bunch of ppc32 defconfig(s)
-with: CONFIG_PPC_DISABLE_WERROR=y.
+> Also, after thinking about it over the weekend we may want to look at
+> just coming up with a truly "generic" solution that is applied to
+> SR-IOV capable devices that don't have a SR-IOV capable driver loaded
+> on them. That would allow us to handle the uio, vfio, pci-stub, and
+> virtio cases all in one fell swoop. I think us going though and
+> modifying one patch at a time to do this kind of thing isn't going to
+> scale.
 
-Would that be preferable ?
+The notion of that kind of troubles me - at least pci-stub does. Having worked on ixgbe a bit, I have to wonder what kind of havoc would ensue if an ixgbe device were assigned to a guest, and an attempt was made to allocate VFs by the pci-stub. The guest could be running any version of the ixgbe driver, possibly even an old one that didn't support SR-IOV. Even if it did support SR-IOV, I don't know how it would respond to mailbox messages when it doesn't think it has VFs.
 
->> Christophe
->>
->>
->>>
->>> Christophe
->>>
->>>>   #endif
->>>>
->>
+> I'll try to do some digging and find the VFIO approach we had been
+> working on. I think with a couple tweaks we can probably make that
+> truly generic and ready for submission.
+
+I'd like to know more about you are thinking about.
+
+-- 
+Mark Rustad, Networking Division, Intel Corporation
