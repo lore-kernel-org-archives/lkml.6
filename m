@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtP/mQi/whUNmVI7rE4sPCJD1Nz57FaKPyUWDQq+CXax9hbfC37vSiXeRr5dDsnbJrmKIj/
-ARC-Seal: i=1; a=rsa-sha256; t=1519676569; cv=none;
+X-Google-Smtp-Source: AH8x225VuAGYtchH4E+mmzksLmEtJQ8V1KdhBSU67qR+ryXGrxN0qcmKJJ/iqJnR/csbTJ0V1MLL
+ARC-Seal: i=1; a=rsa-sha256; t=1519676565; cv=none;
         d=google.com; s=arc-20160816;
-        b=GU8otIl8/CWZ3qhkxwsir1/1RLZ72XhX0IIc2HHm33FOGeR4naNFpnWIe96r879OFk
-         nECGRX4btGDJEsAZcEy7FMVYx5a+fwW1GN61YRGVEL3OpH2DpgSo3WH2bURRxJTTXwGS
-         pTx86JCRCvS9B2IARIEggrWE8MuEZvUPbGihvKazVGdSiaTZm+pz8hR/wjMudjyUeOQf
-         Jg+ABe1PrKSjdEnjQtk+8ZsJWtdfGYHS8cTvCbnq3qhcAwWLKMNHZYPUuHfRtGC7sWCU
-         bM8JanDct40qTWTnxnSl8+Qf8KJrliLSsDxFDvPSttMacSNiCIIcdXSG3uxnjbN1EhC8
-         4Y/g==
+        b=z0V1Gq+cvrZmfVSYz6E3EP+GCduro/zRwEHuRO/QFu1AZp61z7rULxH9ch9h4+jM3t
+         DLSoLrvllve5zB6LNphCJXUC2vth9wXdTfQ0sH/9xc3MBTuy5B9nQwbLY2letIXSbKf6
+         S/qzwk6n2soj0U6Z2LZcJTj0nsGH6SVOtMOapbW+4kxbseizOenCQuPz1CuP6d/q9hyR
+         UhxNLdnNuG0OfIegbQsvHLJN6G+hSgzk/wtArjCsae3AB1b1C7T956ZC8I+vqrUTe/0q
+         fpnYel4WJSV3utG9FuAqz7gEPqARdGYxIF1wxlT0XGZwwLf2bO8qA/VmTyfr2lakiXVU
+         qjSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CNc5RtQf+jf9V6AALc/Xiti2eexPaIHh0fS9xxF+itE=;
-        b=SCpF8F9Z0NDpglNAznNn8KDG999Z2Na218QhC/ONeO/grt+fqrtoZR88yCqOOkLWP8
-         sV3PiBkMhemp7LP0zWK+9oMEVOM/jQMCr6rjAjDXagiUPUBUwSuWRVAadxGf5waLNAg6
-         z26GKq3JU6Jt5O85XfbLaCelsTC7wQAmyHmLYQQjEsgFKs9YssXHFT65i8FRnTfY1Vdz
-         FAI26LE3+k0R8soUWCucVmpUElMp753fDWhenK8uIlBiU7BdfxB+tnAczZd3cJa3spW0
-         W0oSxrkjOKqRx+Tw3rdFAPx4+uoOZkUtGyoTQW7L/3874sL5XVbmiQOlaB2aRj21p1TU
-         JFjA==
+        bh=OR7E/F5NUAvnhNA8aQoeCNFggVVFtv88bZR+gi9qDx8=;
+        b=nB+is8K4lpASXpJjWPeyTeh75oIOy1SqJPjPZxZJxD6nOdXCU7afTZnquZ2fbaO8yo
+         bsZxBKgiGvST0gPBWSuud2eGbDztfJbdFkc6IMABcJyIqA2kBUi6zXbChIX+c/Nr2Ltc
+         PoCfBKYatqtB2IRSfQ0+XlltZZg6aiL9teVYQHVe0MXAOrCanNfnfQ9j9EAmZPr3P4J2
+         6spZhdy9bIq2GLx5ODBprqx9efaI1cOPtxASrkBd2s0MASTO8cY4xOiPElHwEWAetXmP
+         e8G04YJmlth4lK/szTIz6NGJHC5SCoxRXGN8nhU2u0hkPri6Vlr2451/KrKg6/heRuLm
+         3b/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.9 08/39] iio: buffer: check if a buffer has been set up when poll is called
-Date: Mon, 26 Feb 2018 21:20:29 +0100
-Message-Id: <20180226201644.041990353@linuxfoundation.org>
+	syzkaller <syzkaller@googlegroups.com>,
+	Noa Osherovich <noaos@mellanox.com>,
+	Matan Barak <matanb@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 07/39] RDMA/uverbs: Protect from command mask overflow
+Date: Mon, 26 Feb 2018 21:20:28 +0100
+Message-Id: <20180226201643.999219782@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495967737475956?=
-X-GMAIL-MSGID: =?utf-8?q?1593496378463371142?=
+X-GMAIL-THRID: =?utf-8?q?1593496374764769683?=
+X-GMAIL-MSGID: =?utf-8?q?1593496374764769683?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +52,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 4cd140bda6494543f1c1b0ccceceaa44b676eef6 upstream.
+commit 3f802b162dbf4a558ff98986449eddc717826209 upstream.
 
-If no iio buffer has been set up and poll is called return 0.
-Without this check there will be a null pointer dereference when
-calling poll on a iio driver without an iio buffer.
+The command number is not bounds checked against the command mask before it
+is shifted, resulting in an ubsan hit. This does not cause malfunction since
+the command number is eventually bounds checked, but we can make this ubsan
+clean by moving the bounds check to before the mask check.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+================================================================================
+UBSAN: Undefined behaviour in
+drivers/infiniband/core/uverbs_main.c:647:21
+shift exponent 207 is too large for 64-bit type 'long long unsigned int'
+CPU: 0 PID: 446 Comm: syz-executor3 Not tainted 4.15.0-rc2+ #61
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+dump_stack+0xde/0x164
+? dma_virt_map_sg+0x22c/0x22c
+ubsan_epilogue+0xe/0x81
+__ubsan_handle_shift_out_of_bounds+0x293/0x2f7
+? debug_check_no_locks_freed+0x340/0x340
+? __ubsan_handle_load_invalid_value+0x19b/0x19b
+? lock_acquire+0x440/0x440
+? lock_acquire+0x19d/0x440
+? __might_fault+0xf4/0x240
+? ib_uverbs_write+0x68d/0xe20
+ib_uverbs_write+0x68d/0xe20
+? __lock_acquire+0xcf7/0x3940
+? uverbs_devnode+0x110/0x110
+? cyc2ns_read_end+0x10/0x10
+? sched_clock_cpu+0x18/0x200
+? sched_clock_cpu+0x18/0x200
+__vfs_write+0x10d/0x700
+? uverbs_devnode+0x110/0x110
+? kernel_read+0x170/0x170
+? __fget+0x35b/0x5d0
+? security_file_permission+0x93/0x260
+vfs_write+0x1b0/0x550
+SyS_write+0xc7/0x1a0
+? SyS_read+0x1a0/0x1a0
+? trace_hardirqs_on_thunk+0x1a/0x1c
+entry_SYSCALL_64_fastpath+0x18/0x85
+RIP: 0033:0x448e29
+RSP: 002b:00007f033f567c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f033f5686bc RCX: 0000000000448e29
+RDX: 0000000000000060 RSI: 0000000020001000 RDI: 0000000000000012
+RBP: 000000000070bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000056a0 R14: 00000000006e8740 R15: 0000000000000000
+================================================================================
+
+Cc: syzkaller <syzkaller@googlegroups.com>
+Cc: <stable@vger.kernel.org> # 4.5
+Fixes: 2dbd5186a39c ("IB/core: IB/core: Allow legacy verbs through extended interfaces")
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Reviewed-by: Matan Barak <matanb@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/industrialio-buffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_main.c |   27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -174,7 +174,7 @@ unsigned int iio_buffer_poll(struct file
- 	struct iio_dev *indio_dev = filp->private_data;
- 	struct iio_buffer *rb = indio_dev->buffer;
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@ -735,12 +735,21 @@ static int verify_command_mask(struct ib
+ 	return -1;
+ }
  
--	if (!indio_dev->info)
-+	if (!indio_dev->info || rb == NULL)
- 		return 0;
++static bool verify_command_idx(u32 command, bool extended)
++{
++	if (extended)
++		return command < ARRAY_SIZE(uverbs_ex_cmd_table);
++
++	return command < ARRAY_SIZE(uverbs_cmd_table);
++}
++
+ static ssize_t ib_uverbs_write(struct file *filp, const char __user *buf,
+ 			     size_t count, loff_t *pos)
+ {
+ 	struct ib_uverbs_file *file = filp->private_data;
+ 	struct ib_device *ib_dev;
+ 	struct ib_uverbs_cmd_hdr hdr;
++	bool extended_command;
+ 	__u32 command;
+ 	__u32 flags;
+ 	int srcu_key;
+@@ -770,6 +779,15 @@ static ssize_t ib_uverbs_write(struct fi
+ 	}
  
- 	poll_wait(filp, &rb->pollq, wait);
+ 	command = hdr.command & IB_USER_VERBS_CMD_COMMAND_MASK;
++	flags = (hdr.command &
++		 IB_USER_VERBS_CMD_FLAGS_MASK) >> IB_USER_VERBS_CMD_FLAGS_SHIFT;
++
++	extended_command = flags & IB_USER_VERBS_CMD_FLAG_EXTENDED;
++	if (!verify_command_idx(command, extended_command)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	if (verify_command_mask(ib_dev, command)) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
+@@ -781,12 +799,8 @@ static ssize_t ib_uverbs_write(struct fi
+ 		goto out;
+ 	}
+ 
+-	flags = (hdr.command &
+-		 IB_USER_VERBS_CMD_FLAGS_MASK) >> IB_USER_VERBS_CMD_FLAGS_SHIFT;
+-
+ 	if (!flags) {
+-		if (command >= ARRAY_SIZE(uverbs_cmd_table) ||
+-		    !uverbs_cmd_table[command]) {
++		if (!uverbs_cmd_table[command]) {
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+@@ -807,8 +821,7 @@ static ssize_t ib_uverbs_write(struct fi
+ 		struct ib_udata uhw;
+ 		size_t written_count = count;
+ 
+-		if (command >= ARRAY_SIZE(uverbs_ex_cmd_table) ||
+-		    !uverbs_ex_cmd_table[command]) {
++		if (!uverbs_ex_cmd_table[command]) {
+ 			ret = -ENOSYS;
+ 			goto out;
+ 		}
