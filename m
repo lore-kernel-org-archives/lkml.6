@@ -1,38 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtK4PnzZgDF6rsUob0y9dBr1FHHdYQKOpfD1wDub+8v4IXiUlaStG9p4Bni3WVNvHwFJTN3
-ARC-Seal: i=1; a=rsa-sha256; t=1519676632; cv=none;
+X-Google-Smtp-Source: AG47ELsi2aTm6C1Ol5nUnLmtoO5VMIDtiiAHKRHtwTm7D7/6ZXq0xDPBy2bC81+FnqilELil7+ND
+ARC-Seal: i=1; a=rsa-sha256; t=1519676629; cv=none;
         d=google.com; s=arc-20160816;
-        b=WtdkjFLmlLpbkV6pBHKUJ56ylSIgEDFgad8+w0XuU5Vai+WkKj6ns5g0nCHHmppWQB
-         sR/uiQzb8IaYdk88q9Y49GJfViiRwDvhPwLWb37oJvzOcxfbxkIOwJ9JwMYObNSfDQni
-         CXyyQ1W6XgpFYInHj5NdNGokBawiSDxTZDjZNpCAteDMBbaw/9RtzW0fsY5asFjNoBkO
-         pvCeg06PqkfRqlf1vRkDajd5bsDECaN9Rq1RsDGbF3xNC5GykmZj63/LIWIrzs6z76IQ
-         M/V26tQBTAjuezuNGXRCAMFseBUcdIgqSEtWmS09GnFA+w7w+rBLzfqsxmP3dCh1xd1j
-         z5PA==
+        b=IotYIA3bMixsFUizqEew92AFiVelX8fUUFKIkf9R3XlFAokUNvV5ZJKzZflVv5GM9F
+         Om67WqMGy2qwkpTXrmtomnvPrm4fVHLjsbG6/m1SaECc0Jj42MWMR4m8cm9iYVtFyPr5
+         XPVCPXdcALW//QjCpkZhrPYngky/1NYsJeSUYfiICT97xgxzJ9nxTvnQrNnn9jPpRgE2
+         G7vfoB0J13rCIVO3k57bCkJe1IhIB8X+P2NVVFl1nKtz/c2kW/HOfoqWJViuL8IhRoiW
+         +ibCGaeJsbwyOl+uSrwlnSthOH9FQSBDqS29Vg8OTxKZzyNz/oU+B/OkA/Zfc9wgTZW+
+         cUfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lcC4ijvY6sk+U19S1u6FTxfkrNW3D8gkIE9ljD8NjzU=;
-        b=ujUt2Y/N6Su40AG0x3RaRjAHgOZ6bsWa2mtE9LNm8CH53dsKXNpWeATZvfX5cg0iDJ
-         fKb/bb35ZVLrqSDIsabWsA4Yhe5CyREHN8mhcL3Mtgoy1Du51pJhvMGNS37re6bFj0p4
-         keyeKXCv4fGMGtflC3PmcaurvdrjCTzgiuHY+SYKspesCAZVj4K4NVyTsi5cCL0QTrG/
-         OiUj7HpUzZRUI6D5blaVLzs9oPmT43yUvvqc9SoljROchy6nhn2Lc7axf989QUK5Rcu/
-         XlaKU2sVpSW0DgtWBDMiN3X/He7MPOLRn9EzwYTRgv+wR61dbWSpQfgdFx48HeD+Am2c
-         Ox8w==
+        bh=yNTVGHdBPsWZBoF7Cy3KS0aD8K73X91BxU5KgE4+ZEo=;
+        b=TLlcj/AwskkfDNwmIysIc6ZgUkKeKHoKRi1W8JPvYZQ3NxEiT/5nwXHTQ6QyezJzLv
+         ny4vyYXq+PO/YZuROuDTOpo7Pm/5gB4+d8EYvRlfa1KhJ+y1gWlLKjXr0M+NVB6g55Ov
+         uWSI5Gb1ax0d50znNTV22VtHGH3XtRv2xizjdXdInTtX0Twd0fmmGYDwZG7p592B2sd2
+         aPdi4UIC9ytYcpM9HgS+fiyviFn5n5Z5S+j5Kl733jZbN3je4SNqY0Yyr0SVxcKxLGLo
+         YXC4MKyAs97kNdrcMtqDPVDwViuJeVnnOzhcU7Bmf5Q09cdKMIQuPqzqZD/EnOx+X6U6
+         zlGA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzkaller <syzkaller@googlegroups.com>,
-	Noa Osherovich <noaos@mellanox.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 20/54] RDMA/uverbs: Sanitize user entered port numbers prior to access it
-Date: Mon, 26 Feb 2018 21:21:57 +0100
-Message-Id: <20180226202145.395642961@linuxfoundation.org>
+	Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 02/54] arm64: mm: dont write garbage into TTBR1_EL1 register
+Date: Mon, 26 Feb 2018 21:21:39 +0100
+Message-Id: <20180226202144.483348512@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496444917005663?=
-X-GMAIL-MSGID: =?utf-8?q?1593496444917005663?=
+X-GMAIL-THRID: =?utf-8?q?1593496441412121999?=
+X-GMAIL-MSGID: =?utf-8?q?1593496441412121999?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,131 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 5d4c05c3ee36f67ddc107ab5ea0898af01a62cc1 upstream.
+Stable backport commit 173358a49173 ("arm64: kpti: Add ->enable callback
+to remap swapper using nG mappings") of upstream commit f992b4dfd58b did
+not survive the backporting process unscathed, and ends up writing garbage
+into the TTBR1_EL1 register, rather than pointing it to the zero page to
+disable translations. Fix that.
 
-==================================================================
-BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs+0x6f2/0x8c0
-Read of size 4 at addr ffff88006476a198 by task syzkaller697701/265
-
-CPU: 0 PID: 265 Comm: syzkaller697701 Not tainted 4.15.0+ #90
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-Call Trace:
- dump_stack+0xde/0x164
- ? dma_virt_map_sg+0x22c/0x22c
- ? show_regs_print_info+0x17/0x17
- ? lock_contended+0x11a0/0x11a0
- print_address_description+0x83/0x3e0
- kasan_report+0x18c/0x4b0
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? lookup_get_idr_uobject+0x120/0x200
- ? copy_ah_attr_from_uverbs+0x6f2/0x8c0
- copy_ah_attr_from_uverbs+0x6f2/0x8c0
- ? modify_qp+0xd0e/0x1350
- modify_qp+0xd0e/0x1350
- ib_uverbs_modify_qp+0xf9/0x170
- ? ib_uverbs_query_qp+0xa70/0xa70
- ib_uverbs_write+0x7f9/0xef0
- ? attach_entity_load_avg+0x8b0/0x8b0
- ? ib_uverbs_query_qp+0xa70/0xa70
- ? uverbs_devnode+0x110/0x110
- ? cyc2ns_read_end+0x10/0x10
- ? print_irqtrace_events+0x280/0x280
- ? sched_clock_cpu+0x18/0x200
- ? _raw_spin_unlock_irq+0x29/0x40
- ? _raw_spin_unlock_irq+0x29/0x40
- ? _raw_spin_unlock_irq+0x29/0x40
- ? time_hardirqs_on+0x27/0x670
- __vfs_write+0x10d/0x700
- ? uverbs_devnode+0x110/0x110
- ? kernel_read+0x170/0x170
- ? _raw_spin_unlock_irq+0x29/0x40
- ? finish_task_switch+0x1bd/0x7a0
- ? finish_task_switch+0x194/0x7a0
- ? prandom_u32_state+0xe/0x180
- ? rcu_read_unlock+0x80/0x80
- ? security_file_permission+0x93/0x260
- vfs_write+0x1b0/0x550
- SyS_write+0xc7/0x1a0
- ? SyS_read+0x1a0/0x1a0
- ? trace_hardirqs_on_thunk+0x1a/0x1c
- entry_SYSCALL_64_fastpath+0x1e/0x8b
-RIP: 0033:0x433c29
-RSP: 002b:00007ffcf2be82a8 EFLAGS: 00000217
-
-Allocated by task 62:
- kasan_kmalloc+0xa0/0xd0
- kmem_cache_alloc+0x141/0x480
- dup_fd+0x101/0xcc0
- copy_process.part.62+0x166f/0x4390
- _do_fork+0x1cb/0xe90
- kernel_thread+0x34/0x40
- call_usermodehelper_exec_work+0x112/0x260
- process_one_work+0x929/0x1aa0
- worker_thread+0x5c6/0x12a0
- kthread+0x346/0x510
- ret_from_fork+0x3a/0x50
-
-Freed by task 259:
- kasan_slab_free+0x71/0xc0
- kmem_cache_free+0xf3/0x4c0
- put_files_struct+0x225/0x2c0
- exit_files+0x88/0xc0
- do_exit+0x67c/0x1520
- do_group_exit+0xe8/0x380
- SyS_exit_group+0x1e/0x20
- entry_SYSCALL_64_fastpath+0x1e/0x8b
-
-The buggy address belongs to the object at ffff88006476a000
- which belongs to the cache files_cache of size 832
-The buggy address is located 408 bytes inside of
- 832-byte region [ffff88006476a000, ffff88006476a340)
-The buggy address belongs to the page:
-page:ffffea000191da80 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
-flags: 0x4000000000008100(slab|head)
-raw: 4000000000008100 0000000000000000 0000000000000000 0000000100080008
-raw: 0000000000000000 0000000100000001 ffff88006bcf7a80 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88006476a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88006476a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88006476a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff88006476a200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88006476a280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-Cc: syzkaller <syzkaller@googlegroups.com>
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
-Reported-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org> #v4.14
+Reported-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/core/uverbs_cmd.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/mm/proc.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -1981,8 +1981,15 @@ static int modify_qp(struct ib_uverbs_fi
- 		goto release_qp;
- 	}
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -155,7 +155,7 @@ ENDPROC(cpu_do_switch_mm)
  
-+	if ((cmd->base.attr_mask & IB_QP_AV) &&
-+	    !rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
-+		ret = -EINVAL;
-+		goto release_qp;
-+	}
-+
- 	if ((cmd->base.attr_mask & IB_QP_ALT_PATH) &&
--	    !rdma_is_port_valid(qp->device, cmd->base.alt_port_num)) {
-+	    (!rdma_is_port_valid(qp->device, cmd->base.alt_port_num) ||
-+	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num))) {
- 		ret = -EINVAL;
- 		goto release_qp;
- 	}
+ .macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
+ 	adrp	\tmp1, empty_zero_page
+-	msr	ttbr1_el1, \tmp2
++	msr	ttbr1_el1, \tmp1
+ 	isb
+ 	tlbi	vmalle1
+ 	dsb	nsh
