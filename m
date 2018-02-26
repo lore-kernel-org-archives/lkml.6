@@ -1,80 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeBZKy3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 05:54:29 -0500
-Received: from prv-mh.provo.novell.com ([137.65.248.74]:47374 "EHLO
-        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbeBZKy1 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:11:1>);
-        Mon, 26 Feb 2018 05:54:27 -0500
-Message-Id: <5A93F56E02000078001ABA78@prv-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Mon, 26 Feb 2018 03:54:22 -0700
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Andrey Ryabinin" <aryabinin@virtuozzo.com>
-Cc: <bp@alien8.de>, <brgerst@gmail.com>, <dvyukov@google.com>,
-        <glider@google.com>, <peterz@infradead.org>, <luto@kernel.org>,
-        <mingo@kernel.org>, <tglx@linutronix.de>,
-        <torvalds@linux-foundation.org>, <boris.ostrovsky@oracle.com>,
-        <dvlasenk@redhat.com>, <jpoimboe@redhat.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tip-commits@vger.kernel.org>, <hpa@zytor.com>
-Subject: Re: [tip:x86/mm] x86/mm: Consider effective protection
- attributes in W+X check
-References: <5A8FDE8902000078001AABBB@prv-mh.provo.novell.com>
- <tip-672c0ae09b33a11d8f31fc61526632e96301164c@git.kernel.org>
- <cd48304c-4317-6b5a-bde3-113645df8f81@virtuozzo.com>
- <5A93EABD02000078001AB9EC@prv-mh.provo.novell.com>
- <702b0f08-57a6-0ee0-d2e1-1310c00351e6@virtuozzo.com>
-In-Reply-To: <702b0f08-57a6-0ee0-d2e1-1310c00351e6@virtuozzo.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1752677AbeBZKzJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 05:55:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57964 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752328AbeBZKzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 05:55:05 -0500
+Date: Mon, 26 Feb 2018 11:54:40 +0100
+From: Borislav Petkov <bp@suse.de>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Ingo Molnar <mingo@kernel.org>, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180226105440.GB14140@pd.tnic>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+ <20180224214818.GD29374@pd.tnic>
+ <20180225105205.xicklkl3n5azdw2j@node.shutemov.name>
+ <20180226073552.xabt55ukp24inut5@gmail.com>
+ <20180226080256.j7jzuxyokx42uytd@node.shutemov.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180226080256.j7jzuxyokx42uytd@node.shutemov.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 26.02.18 at 11:47, <aryabinin@virtuozzo.com> wrote:
-
+On Mon, Feb 26, 2018 at 11:02:56AM +0300, Kirill A. Shutemov wrote:
+> Yeah, good idea.
 > 
-> On 02/26/2018 01:08 PM, Jan Beulich wrote:
->>>>> On 26.02.18 at 11:00, <aryabinin@virtuozzo.com> wrote:
->>> On 02/26/2018 11:48 AM, tip-bot for Jan Beulich wrote:
->>>> @@ -351,7 +362,7 @@ static inline bool kasan_page_table(struct seq_file *m, 
-> struct pg_state *st,
->>>>  	    (pgtable_l5_enabled && __pa(pt) == __pa(kasan_zero_p4d)) ||
->>>>  	    __pa(pt) == __pa(kasan_zero_pud)) {
->>>>  		pgprotval_t prot = pte_flags(kasan_zero_pte[0]);
->>>> -		note_page(m, st, __pgprot(prot), 5);
->>>> +		note_page(m, st, __pgprot(prot), 0, 5);
->>>
->>> Isn't this disables W+X check for kasan page table?
->>> Methinks it should be 'prot' here.
->> 
->> Might well be - I actually did ask the question before sending v3,
->> but didn't get any answer (yet). The kasan_zero_p?d names
->> suggested to me that this is a shortcut for mappings which
->> otherwise would be non-present anyway, but that was merely a
->> guess. 
-> 
-> kasan_zero_p?? are used to map kasan_zero_page. That's it.
+> Borislav, could you check this?
 
-Ah, thanks for explaining.
+No joy with:
 
->> As to W+X checks - I can't see how the result could be
->> any better if the protections of kasan_zero_pte[0] would be
->> used: Those can't possibly be applicable independent of VA.
-> 
-> I'm not sure I understand what do you mean.
-> If we somehow screw up and accidentally make kasan_zero_pte writable and executable,
-> note_page() should report this. With your patch, it won't work. 
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index dad5da7b4c1a..4c382409b740 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -32,6 +32,7 @@ struct paging_config paging_prepare(void)
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+ 		paging_config.l5_required = 1;
+ 
++#if 0
+ 	/*
+ 	 * Find a suitable spot for the trampoline.
+ 	 * This code is based on reserve_bios_regions().
+@@ -49,6 +50,9 @@ struct paging_config paging_prepare(void)
+ 	/* Place the trampoline just below the end of low memory, aligned to 4k */
+ 	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
+ 	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
++#else
++	paging_config.trampoline_start = 0x40000;
++#endif
+ 
+ 	trampoline = (unsigned long *)paging_config.trampoline_start;
+---
+-- 
+Regards/Gruss,
+    Boris.
 
-If this is a case to care about, simply passing "prot" won't be right
-though - the callers accumulated effective protections would then
-need passing in here, and merging with prot.
-
-Before I do this for a possible v4, I'd like to seek clarification
-though whether this really is a case to care about.
-
-Jan
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
