@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvzSMISEqJyIoXTaOwW1yTuAADCW2xy7izPs633Zd1zuY4++oAVBO6mDbTQ+E86D2x3TMrl
-ARC-Seal: i=1; a=rsa-sha256; t=1519676553; cv=none;
+X-Google-Smtp-Source: AH8x227jKBOz2xYVJpn5NU0zlWVCV4NmErGStR1MewBD1DMpIZfqAfHx/n+/Nwl4Ewbum+2El3wu
+ARC-Seal: i=1; a=rsa-sha256; t=1519676550; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRO8tUEcRfN48ZhckdLA/FN20wokf/IjdzTYhss/WMYvTUZiNYIi4gns4CNT2cc3jG
-         ZMPQYqtumCoRWFScpWU5/LhNuA999HySjhtZHxMf8BOpLnwpBfawfy5HcCWVjTF1I34l
-         ZG2Qi+T1SBqAgd5OFqrSRo6qInVyS/ssRyclt8FyIMml5vS9v7NDOYZNLDX7PdSvKBc1
-         Z456c69wNYSDExZGZx2d+mgFjUf4SV3AhYteMuEXw7oytlyGUME0lOUjJOtRk/8BLw67
-         cgFHbWC7oklyGQhteEhdRykNnXP2ujI4gzmAwavwJujI11tssybgWu19xxxeE9kYGjYk
-         GX5w==
+        b=ZSqhr07OFUt9qVaG6e/WtMgSeKcFUpxxrrx+Id4c+En4q5zUrODFwcl2233kmHJa47
+         B6cxUPeKXrutJuhwSai//eAfdsgUNmE51EjeiH4akzLVaZA7gs7ip20p3vCqAljpwlO5
+         nM5C4ooBPXMinsvLQaYOMOcQWctsx6A+ot9RN1hnXnMU7FuyvMRwZpzF5xiVxnFSlYHq
+         9DJj3XOFULyNIJMDlcXnTFkWSfXKSEEtdNFHb+p6GhWLYOgUEgBBE/6IrObXjk2Bh2Ey
+         xFCdpq01/eOju/xhzxWBPgu6f3m5od6BcjeEsQbBco06RQfpVeESKsogI18lW1yMHYdM
+         UVIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9sHTptGW45hGlek0bBvKOjs4P6AIGWtd8UblJkJZH8s=;
-        b=EmMRfDKFo0gpTzAmLX2yQqD3D9UjtR9UK2hht2L1jVxccfhebkLq5FWZ7zxbA9iVzd
-         jkP9KOaHxKslvb8ZEpmHYJ+nJmGXL1IVR25Q7bofnbcu5dv+xezPeLIor4ndGT/xKdrZ
-         Oft36yjAm0smV4UxB16mSzeWYsi0PIxBuEUoMbEmyWaKFPLXnphPI2tviRoG5q2Sbd2F
-         l5J5ok+YPE6Tn7bDYk3NNYwB4SeoNmZi+DtYBMTGB1ZmGuUvSiuDhDkBp2WRIjdLiXvF
-         f6/R5Xm2s3Ooxh0jhTEbXlL1dvWknopxu+h8WHq2UFUAfvKN6fY47+9ckr8ubKbJaQZA
-         MO4g==
+        bh=9QxHbkx3ZnQZXyTpFmoXourNltnTpuUT4ZiH0SF8OrQ=;
+        b=VgRBF0/1K+fqyrItnoR/vRBmoCLTfp1ZUn/v8am3TL43PDa4vsnKEvTREKAgjpfP3K
+         4zJ0WQ1HKsbKXLNwLeu4BdHcTH/70L45DWgiIlbylceSUdSBY5G8OUkqB/jYXWZ1cwAt
+         fE2+uo3ruB3iylvdm5lRCSlNygsVhHxXuYVf4Lc5Cv61a6mCjaynno36P6rdxf5qWSwT
+         GFBst2qFa3G4ineVsz3i72NIkOSlvhtrJ2LwhlKhD+UPMSxwhb5YpxI2UgllD2CVymty
+         9YCTJU6Nr4hgY75AxWwFVcIfZn/CubLLWJH9l8y7mwEcw5+n3abAI95DgxK6wrz2N3vV
+         lJLg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,16 +27,16 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Dan Williams <dan.j.williams@intel.com>,
-	Jan Kara <jack@suse.cz>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Christoph Hellwig <hch@lst.de>,
 	Doug Ledford <dledford@redhat.com>,
 	Hal Rosenstock <hal.rosenstock@gmail.com>,
 	Inki Dae <inki.dae@samsung.com>,
+	Jan Kara <jack@suse.cz>,
 	Jason Gunthorpe <jgg@mellanox.com>,
 	Jeff Moyer <jmoyer@redhat.com>,
 	Joonyoung Shim <jy0922.shim@samsung.com>,
 	Kyungmin Park <kyungmin.park@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Mel Gorman <mgorman@suse.de>,
 	Ross Zwisler <ross.zwisler@linux.intel.com>,
 	Sean Hefty <sean.hefty@intel.com>,
@@ -44,9 +44,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 34/39] v4l2: disable filesystem-dax mapping support
-Date: Mon, 26 Feb 2018 21:20:55 +0100
-Message-Id: <20180226201645.165288395@linuxfoundation.org>
+Subject: [PATCH 4.9 33/39] mm: introduce get_user_pages_longterm
+Date: Mon, 26 Feb 2018 21:20:54 +0100
+Message-Id: <20180226201645.125678735@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -56,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496361019199994?=
-X-GMAIL-MSGID: =?utf-8?q?1593496361019199994?=
+X-GMAIL-THRID: =?utf-8?q?1593496358725399672?=
+X-GMAIL-MSGID: =?utf-8?q?1593496358725399672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,34 +67,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit b70131de648c2b997d22f4653934438013f407a1 upstream.
+commit 2bb6d2837083de722bfdc369cb0d76ce188dd9b4 upstream.
 
-V4L2 memory registrations are incompatible with filesystem-dax that
-needs the ability to revoke dma access to a mapping at will, or
-otherwise allow the kernel to wait for completion of DMA.  The
-filesystem-dax implementation breaks the traditional solution of
-truncate of active file backed mappings since there is no page-cache
-page we can orphan to sustain ongoing DMA.
+Patch series "introduce get_user_pages_longterm()", v2.
 
-If v4l2 wants to support long lived DMA mappings it needs to arrange to
-hold a file lease or use some other mechanism so that the kernel can
-coordinate revoking DMA access when the filesystem needs to truncate
-mappings.
+Here is a new get_user_pages api for cases where a driver intends to
+keep an elevated page count indefinitely.  This is distinct from usages
+like iov_iter_get_pages where the elevated page counts are transient.
+The iov_iter_get_pages cases immediately turn around and submit the
+pages to a device driver which will put_page when the i/o operation
+completes (under kernel control).
 
-Link: http://lkml.kernel.org/r/151068940499.7446.12846708245365671207.stgit@dwillia2-desk3.amr.corp.intel.com
+In the longterm case userspace is responsible for dropping the page
+reference at some undefined point in the future.  This is untenable for
+filesystem-dax case where the filesystem is in control of the lifetime
+of the block / page and needs reasonable limits on how long it can wait
+for pages in a mapping to become idle.
+
+Fixing filesystems to actually wait for dax pages to be idle before
+blocks from a truncate/hole-punch operation are repurposed is saved for
+a later patch series.
+
+Also, allowing longterm registration of dax mappings is a future patch
+series that introduces a "map with lease" semantic where the kernel can
+revoke a lease and force userspace to drop its page references.
+
+I have also tagged these for -stable to purposely break cases that might
+assume that longterm memory registrations for filesystem-dax mappings
+were supported by the kernel.  The behavior regression this policy
+change implies is one of the reasons we maintain the "dax enabled.
+Warning: EXPERIMENTAL, use at your own risk" notification when mounting
+a filesystem in dax mode.
+
+It is worth noting the device-dax interface does not suffer the same
+constraints since it does not support file space management operations
+like hole-punch.
+
+This patch (of 4):
+
+Until there is a solution to the dma-to-dax vs truncate problem it is
+not safe to allow long standing memory registrations against
+filesytem-dax vmas.  Device-dax vmas do not have this problem and are
+explicitly allowed.
+
+This is temporary until a "memory registration with layout-lease"
+mechanism can be implemented for the affected sub-systems (RDMA and
+V4L2).
+
+[akpm@linux-foundation.org: use kcalloc()]
+Link: http://lkml.kernel.org/r/151068939435.7446.13560129395419350737.stgit@dwillia2-desk3.amr.corp.intel.com
 Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Cc: Doug Ledford <dledford@redhat.com>
 Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
 Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Jan Kara <jack@suse.cz>
 Cc: Jason Gunthorpe <jgg@mellanox.com>
 Cc: Jeff Moyer <jmoyer@redhat.com>
 Cc: Joonyoung Shim <jy0922.shim@samsung.com>
 Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Mel Gorman <mgorman@suse.de>
 Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
 Cc: Sean Hefty <sean.hefty@intel.com>
@@ -105,24 +138,154 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/videobuf-dma-sg.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/dax.h |    5 ----
+ include/linux/fs.h  |   20 ++++++++++++++++
+ include/linux/mm.h  |   13 ++++++++++
+ mm/gup.c            |   64 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 97 insertions(+), 5 deletions(-)
 
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -185,12 +185,13 @@ static int videobuf_dma_init_user_locked
- 	dprintk(1, "init user [0x%lx+0x%lx => %d pages]\n",
- 		data, size, dma->nr_pages);
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -61,11 +61,6 @@ static inline int dax_pmd_fault(struct v
+ int dax_pfn_mkwrite(struct vm_area_struct *, struct vm_fault *);
+ #define dax_mkwrite(vma, vmf, gb)	dax_fault(vma, vmf, gb)
  
--	err = get_user_pages(data & PAGE_MASK, dma->nr_pages,
-+	err = get_user_pages_longterm(data & PAGE_MASK, dma->nr_pages,
- 			     flags, dma->pages, NULL);
+-static inline bool vma_is_dax(struct vm_area_struct *vma)
+-{
+-	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
+-}
+-
+ static inline bool dax_mapping(struct address_space *mapping)
+ {
+ 	return mapping->host && IS_DAX(mapping->host);
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -18,6 +18,7 @@
+ #include <linux/bug.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
++#include <linux/mm_types.h>
+ #include <linux/capability.h>
+ #include <linux/semaphore.h>
+ #include <linux/fiemap.h>
+@@ -3033,6 +3034,25 @@ static inline bool io_is_direct(struct f
+ 	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
+ }
  
- 	if (err != dma->nr_pages) {
- 		dma->nr_pages = (err >= 0) ? err : 0;
--		dprintk(1, "get_user_pages: err=%d [%d]\n", err, dma->nr_pages);
-+		dprintk(1, "get_user_pages_longterm: err=%d [%d]\n", err,
-+			dma->nr_pages);
- 		return err < 0 ? err : -EINVAL;
- 	}
- 	return 0;
++static inline bool vma_is_dax(struct vm_area_struct *vma)
++{
++	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
++}
++
++static inline bool vma_is_fsdax(struct vm_area_struct *vma)
++{
++	struct inode *inode;
++
++	if (!vma->vm_file)
++		return false;
++	if (!vma_is_dax(vma))
++		return false;
++	inode = file_inode(vma->vm_file);
++	if (inode->i_mode == S_IFCHR)
++		return false; /* device-dax */
++	return true;
++}
++
+ static inline int iocb_flags(struct file *file)
+ {
+ 	int res = 0;
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1288,6 +1288,19 @@ long __get_user_pages_unlocked(struct ta
+ 			       struct page **pages, unsigned int gup_flags);
+ long get_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
+ 		    struct page **pages, unsigned int gup_flags);
++#ifdef CONFIG_FS_DAX
++long get_user_pages_longterm(unsigned long start, unsigned long nr_pages,
++			    unsigned int gup_flags, struct page **pages,
++			    struct vm_area_struct **vmas);
++#else
++static inline long get_user_pages_longterm(unsigned long start,
++		unsigned long nr_pages, unsigned int gup_flags,
++		struct page **pages, struct vm_area_struct **vmas)
++{
++	return get_user_pages(start, nr_pages, gup_flags, pages, vmas);
++}
++#endif /* CONFIG_FS_DAX */
++
+ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 			struct page **pages);
+ 
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -982,6 +982,70 @@ long get_user_pages(unsigned long start,
+ }
+ EXPORT_SYMBOL(get_user_pages);
+ 
++#ifdef CONFIG_FS_DAX
++/*
++ * This is the same as get_user_pages() in that it assumes we are
++ * operating on the current task's mm, but it goes further to validate
++ * that the vmas associated with the address range are suitable for
++ * longterm elevated page reference counts. For example, filesystem-dax
++ * mappings are subject to the lifetime enforced by the filesystem and
++ * we need guarantees that longterm users like RDMA and V4L2 only
++ * establish mappings that have a kernel enforced revocation mechanism.
++ *
++ * "longterm" == userspace controlled elevated page count lifetime.
++ * Contrast this to iov_iter_get_pages() usages which are transient.
++ */
++long get_user_pages_longterm(unsigned long start, unsigned long nr_pages,
++		unsigned int gup_flags, struct page **pages,
++		struct vm_area_struct **vmas_arg)
++{
++	struct vm_area_struct **vmas = vmas_arg;
++	struct vm_area_struct *vma_prev = NULL;
++	long rc, i;
++
++	if (!pages)
++		return -EINVAL;
++
++	if (!vmas) {
++		vmas = kcalloc(nr_pages, sizeof(struct vm_area_struct *),
++			       GFP_KERNEL);
++		if (!vmas)
++			return -ENOMEM;
++	}
++
++	rc = get_user_pages(start, nr_pages, gup_flags, pages, vmas);
++
++	for (i = 0; i < rc; i++) {
++		struct vm_area_struct *vma = vmas[i];
++
++		if (vma == vma_prev)
++			continue;
++
++		vma_prev = vma;
++
++		if (vma_is_fsdax(vma))
++			break;
++	}
++
++	/*
++	 * Either get_user_pages() failed, or the vma validation
++	 * succeeded, in either case we don't need to put_page() before
++	 * returning.
++	 */
++	if (i >= rc)
++		goto out;
++
++	for (i = 0; i < rc; i++)
++		put_page(pages[i]);
++	rc = -EOPNOTSUPP;
++out:
++	if (vmas != vmas_arg)
++		kfree(vmas);
++	return rc;
++}
++EXPORT_SYMBOL(get_user_pages_longterm);
++#endif /* CONFIG_FS_DAX */
++
+ /**
+  * populate_vma_page_range() -  populate a range of pages in the vma.
+  * @vma:   target vma
