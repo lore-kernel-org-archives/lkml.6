@@ -1,80 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751972AbeBZBfC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 20:35:02 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51272 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751918AbeBZBe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 20:34:59 -0500
-Subject: Re: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
-To: Andrew Morton <akpm@linux-foundation.org>
-References: <5A7D3C08.7020309@huawei.com> <5A90D23F.5070601@huawei.com>
-CC: <v9fs-developer@lists.sourceforge.net>, <viro@zeniv.linux.org.uk>,
-        <ericvh@gmail.com>, <rminnich@sandia.gov>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>, "Greg Kurz" <groug@kaod.org>
-From: jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5A936439.9040700@huawei.com>
-Date: Mon, 26 Feb 2018 09:34:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1751989AbeBZBhI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 20:37:08 -0500
+Received: from mga05.intel.com ([192.55.52.43]:37648 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751918AbeBZBhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 20:37:05 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,395,1515484800";
+   d="scan'208";a="20249928"
+Date: Mon, 26 Feb 2018 09:36:42 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: kbuild-all@01.org, Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, kernel@collabora.com,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        linux-omap@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCHv5 2/5] ASoC: codec: cpcap: new codec
+Message-ID: <201802260921.u5yCEY8U%fengguang.wu@intel.com>
+References: <20180223200254.25685-3-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <5A90D23F.5070601@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223200254.25685-3-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/24 10:47, jiangyiwen wrote:
-> On 2018/2/9 14:13, jiangyiwen wrote:
->> User use some syscall, for example mmap(v9fs_file_mmap), it will not
->> update atime even if user's mnt_flags have MNT_NOATIME, because
->> v9fs default set SB_NOATIME in v9fs_set_super.
->>
->> For supporting access time is updated when user mount with relatime,
->> we should clear SB_NOATIME by default.
->>
->> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
->> ---
->>  fs/9p/vfs_super.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
->> index af03c2a..48ce504 100644
->> --- a/fs/9p/vfs_super.c
->> +++ b/fs/9p/vfs_super.c
->> @@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
->>  	if (v9ses->cache)
->>  		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
->>
->> -	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
->> +	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
->>  	if (!v9ses->cache)
->>  		sb->s_flags |= SB_SYNCHRONOUS;
->>
-> Hi Alexander Viro and Eric,
-> 
-> My patch has already sent two weeks, but nobody help me
-> to review, I have a question about now who is the v9fs's
-> maintainer? Or who can help me review the patch?
-> 
-> I hope v9fs's maintainer can give me some advices or
-> merge into the mainline if it has no problem.
-> 
-> Thanks,
-> Yiwen.
-> 
-Hi Andrew,
+Hi Sebastian,
 
-My patch has already sent more than two weeks, but nobody
-help me to review, I have a question about now who is the
-v9fs's maintainer? Or who can help me review the patch?
+I love your patch! Perhaps something to improve:
 
-I hope v9fs's maintainer can give me some advices or
-merge into the mainline if it has no problem.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.16-rc2 next-20180223]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Thanks,
-Yiwen.
+url:    https://github.com/0day-ci/linux/commits/Sebastian-Reichel/Motorola-Droid-4-Audio-Support/20180226-063007
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> sound/soc/codecs/cpcap.c:1406:54: sparse: restricted snd_pcm_format_t degrades to integer
+
+vim +1406 sound/soc/codecs/cpcap.c
+
+  1396	
+  1397	static struct snd_soc_dai_driver cpcap_dai[] = {
+  1398	{
+  1399		.id = 0,
+  1400		.name = "cpcap-hifi",
+  1401		.playback = {
+  1402			.stream_name = "HiFi Playback",
+  1403			.channels_min = 2,
+  1404			.channels_max = 2,
+  1405			.rates = SNDRV_PCM_RATE_8000_48000,
+> 1406			.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_S24_LE,
+  1407		},
+  1408		.ops = &cpcap_dai_hifi_ops,
+  1409	},
+  1410	{
+  1411		.id = 1,
+  1412		.name = "cpcap-voice",
+  1413		.playback = {
+  1414			.stream_name = "Voice Playback",
+  1415			.channels_min = 1,
+  1416			.channels_max = 1,
+  1417			.rates = SNDRV_PCM_RATE_8000_48000,
+  1418			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+  1419		},
+  1420		.capture = {
+  1421			.stream_name = "Voice Capture",
+  1422			.channels_min = 1,
+  1423			.channels_max = 2,
+  1424			.rates = SNDRV_PCM_RATE_8000_48000,
+  1425			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+  1426		},
+  1427		.ops = &cpcap_dai_voice_ops,
+  1428	},
+  1429	};
+  1430	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
