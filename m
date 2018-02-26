@@ -1,103 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752549AbeBZLYY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 06:24:24 -0500
-Received: from mail-it0-f52.google.com ([209.85.214.52]:54598 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751877AbeBZLYW (ORCPT
+        id S1752745AbeBZLZT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 06:25:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34462 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752131AbeBZLZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 06:24:22 -0500
-X-Google-Smtp-Source: AG47ELt/rhC9mkYCnbqXSADkI5kyo2t1/+KF8Y4NXEU2qOzWiAtu5YdHfOm4P7pcE+dUHvRpSow+L5ON9/EBYACp8G0=
+        Mon, 26 Feb 2018 06:25:16 -0500
+Date: Mon, 26 Feb 2018 12:25:05 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Dave Young <dyoung@redhat.com>, herbert@gondor.apana.org.au,
+        bhe@redhat.com, ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
+        julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        dhowells@redhat.com, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
+        bauerman@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        davem@davemloft.net, vgoyal@redhat.com
+Subject: Re: [PATCH v8 03/13] kexec_file,x86,powerpc: factor out
+ kexec_file_ops functions
+In-Reply-To: <20180226100138.GC6019@linaro.org>
+References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+        <20180222111732.23051-4-takahiro.akashi@linaro.org>
+        <20180223092459.GC4433@dhcp-128-65.nay.redhat.com>
+        <20180226100138.GC6019@linaro.org>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAO-hwJ+PDkR4v5r93KJBCqxfm3FTCkrzaOd-K=HxLMwhoAomXQ@mail.gmail.com>
-References: <20180225185250.10759-1-rodrigorivascosta@gmail.com> <CAO-hwJ+PDkR4v5r93KJBCqxfm3FTCkrzaOd-K=HxLMwhoAomXQ@mail.gmail.com>
-From: =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>
-Date: Mon, 26 Feb 2018 12:24:21 +0100
-Message-ID: <CAM4jgCpX1OOBqCEvqtyx=ftvnuk3zg_jMsFkxFZXxEfZD-ak5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] new driver for Valve Steam Controller
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Cameron Gutman <aicommander@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022611-0020-0000-0000-000003FBF026
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022611-0021-0000-0000-0000429010A2
+Message-Id: <20180226122505.3d999efc@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802260155
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1QBPHBM023938
 
-2018-02-26 10:50 GMT+01:00 Benjamin Tissoires <benjamin.tissoires@redhat.com>:
-> Hi Rodrigo,
->
-> On Sun, Feb 25, 2018 at 7:52 PM, Rodrigo Rivas Costa
-> <rodrigorivascosta@gmail.com> wrote:
->> This patchset implements a driver for Valve Steam Controller, based on a
->> reverse analysis by myself.
->
-> To me, the code looks OK now. I haven't got the time to do a better
-> review, so giving my:
-> Acked-by: Bnejamin Tissoires <benjamin.tissoires@redhat.com>
->
-> However, before we include it, I'd like to have the ACK from
-> Pierre-Loup and Clément. They should be more qualified than me to say
-> if this will interfere with the official Steam client (I think we are
-> good now, but that's just my opinion).
+On Mon, 26 Feb 2018 19:01:39 +0900
+AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
 
-I am not qualified to speak about the steam client, it has been a long
-time since I have a look at how it uses the controller and I think it
-changed a lot.
+> On Fri, Feb 23, 2018 at 05:24:59PM +0800, Dave Young wrote:
+> > Hi AKASHI,
+> > 
+> > On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:  
+> > > As arch_kexec_kernel_*_{probe,load}(), arch_kimage_file_post_load_cleanup()
+> > > and arch_kexec_kernel_verify_sg can be parameterized with a kexec_file_ops
+> > > array and now duplicated among some architectures, let's factor them out.
+> > > 
+> > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > > Cc: Baoquan He <bhe@redhat.com>
+> > > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > > Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> > > ---
+> > >  arch/powerpc/include/asm/kexec.h            |  2 +-
+> > >  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
+> > >  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++------------------
+> > >  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
+> > >  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
+> > >  arch/x86/kernel/machine_kexec_64.c          | 45 +----------------------
+> > >  include/linux/kexec.h                       | 15 ++++----
+> > >  kernel/kexec_file.c                         | 57 +++++++++++++++++++++++++++--
+> > >  8 files changed, 70 insertions(+), 94 deletions(-)
+> > >   
+> > 
+> > [snip]
+> >   
+> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > index 990adae52151..a6d14a768b3e 100644
+> > > --- a/kernel/kexec_file.c
+> > > +++ b/kernel/kexec_file.c
+> > > @@ -26,34 +26,83 @@
+> > >  #include <linux/vmalloc.h>
+> > >  #include "kexec_internal.h"
+> > >  
+> > > +const __weak struct kexec_file_ops * const kexec_file_loaders[] = {NULL};
+> > > +
+> > >  #ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
+> > >  static int kexec_calculate_store_digests(struct kimage *image);
+> > >  #else
+> > >  static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
+> > >  #endif
+> > >  
+> > > +int _kexec_kernel_image_probe(struct kimage *image, void *buf,
+> > > +			     unsigned long buf_len)
+> > > +{
+> > > +	const struct kexec_file_ops * const *fops;
+> > > +	int ret = -ENOEXEC;
+> > > +
+> > > +	for (fops = &kexec_file_loaders[0]; *fops && (*fops)->probe; ++fops) {
+> > > +		ret = (*fops)->probe(buf, buf_len);
+> > > +		if (!ret) {
+> > > +			image->fops = *fops;
+> > > +			return ret;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > >  /* Architectures can provide this probe function */
+> > >  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
+> > >  					 unsigned long buf_len)
+> > >  {
+> > > -	return -ENOEXEC;
+> > > +	return _kexec_kernel_image_probe(image, buf, buf_len);  
+> > 
+> > 
+> > I vaguely remember previously I suggest split the _kexec_kernel_image_probe
+> > because arch code can call them, and common code also use it like above.
+> > But in your new series I do not find where else calls this function
+> > except the common code arch_kexec_kernel_image_probe.  If nobody use
+> > them then it is not worth to split them out, it is better to just embed
+> > them in the __weak functions.  
+> 
+> Powerpc's arch_kexec_kernel_image_probe() uses
+> _kexec_kekrnel_image_probe() as it needs an extra check to rule out
+> crash dump for now.
 
-I checked the code and I think you are not handling wireless
-connection correctly. If a wireless controller is already connected
-when the driver is loaded, you will not receive a connection event and
-forget to register the controller. You can send a 0xb4 request with
-empty parameters (0xb4, 0x00, ... ) to force the receiver to send its
-connection status (as the type 3 event you are already parsing). Since
-user-space program may also send this request, you should make sure
-the driver works if it receives a (dis)connected event when it is
-already (dis)connected.
+s390 has to use it too. We have to write to a fixed address in the buffer. So
+we need to check if the buffer is large enough to write to that address.
 
->
-> Cheers,
-> Benjamin
->
->>
->> This is reroll v3, codenamed "lazy lizard". Changes from v2:
->>  * Use RCU to do the dynamic connec/disconnect of wireless devices. Please,
->>    to anybody that knows their way around RCU, review.
->>  * Remove entries in hid-quirks.c as they are no longer needed. This allows
->>    this module to be blacklisted without side effects.
->>  * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
->>    existing use cases (lizard mode). A user-space tool to do that is
->>    linked.
->>  * Fully separated axes for joystick and left-pad. As it happens, there are
->>    people with too many fingers.
->>  * Add fuzz values for left/right pad axes, they are a little wiggly.
->>
->> Notable changes from patchset v1:
->>  * Remove references to USB. Now the interesting interfaces are selected by
->>    looking for the ones with feature reports.
->>  * Feature reports buffers are allocated with hid_alloc_report_buf().
->>  * Feature report length is checked, to avoid overflows in case of
->>    corrupt/malicius USB devices.
->>  * Resolution added to the ABS axes.
->>  * A lot of minor cleanups.
->>
->> Rodrigo Rivas Costa (3):
->>   HID: add driver for Valve Steam Controller
->>   HID: steam: add serial number information.
->>   HID: steam: add battery device.
->>
->>  drivers/hid/Kconfig     |   8 +
->>  drivers/hid/Makefile    |   1 +
->>  drivers/hid/hid-ids.h   |   4 +
->>  drivers/hid/hid-steam.c | 777 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 790 insertions(+)
->>  create mode 100644 drivers/hid/hid-steam.c
->>
->> --
->> 2.16.2
->>
+Philipp
+ 
+> Thanks,
+> -Takahiro AKASHI
+> 
+> 
+> > Ditto for other similar functions.
+> > 
+> > [snip]
+> > 
+> > Thanks
+> > Dave  
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
