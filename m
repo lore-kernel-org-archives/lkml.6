@@ -1,174 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeBZDPz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 22:15:55 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751958AbeBZDPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 22:15:50 -0500
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
-Date: Mon, 26 Feb 2018 11:15:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752121AbeBZDTP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 22:19:15 -0500
+Received: from mga11.intel.com ([192.55.52.93]:33155 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751958AbeBZDTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 22:19:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,395,1515484800";
+   d="scan'208";a="20265594"
+Subject: [RFC PATCH V3] virtio_pci: Add SR-IOV support
+To: virtio-dev@lists.oasis-open.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+From: Mark Rustad <mark.d.rustad@intel.com>
+Cc: dan.daly@intel.com, alex.williamson@redhat.com, MRustad@gmail.com,
+        alexander.duyck@gmail.com, mst@redhat.com
+Date: Sun, 25 Feb 2018 19:19:11 -0800
+Message-ID: <20180226031911.18980.80488.stgit@mdrustad-mac04.local>
+User-Agent: StGit/0.15
 MIME-Version: 1.0
-In-Reply-To: <1519607771-20613-1-git-send-email-mst@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hardware-realized virtio-pci devices can implement SR-IOV, so this
+patch enables its use. The device in question is an upcoming Intel
+NIC that implements both a virtio-net PF and virtio-net VFs. These
+are hardware realizations of what has been up to now been a software
+interface.
 
+The device in question has the following 4-part PCI IDs:
 
-On 2018年02月26日 09:17, Michael S. Tsirkin wrote:
-> So pointer rings work fine, but they have a problem: make them too small
-> and not enough entries fit.  Make them too large and you start flushing
-> your cache and running out of memory.
->
-> This is a new idea of mine: a ring backed by a linked list. Once you run
-> out of ring entries, instead of a drop you fall back on a list with a
-> common lock.
->
-> Should work well for the case where the ring is typically sized
-> correctly, but will help address the fact that some user try to set e.g.
-> tx queue length to 1000000.
->
-> In other words, the idea is that if a user sets a really huge TX queue
-> length, we allocate a ptr_ring which is smaller, and use the backup
-> linked list when necessary to provide the requested TX queue length
-> legitimately.
->
-> My hope this will move us closer to direction where e.g. fw codel can
-> use ptr rings without locking at all.  The API is still very rough, and
-> I really need to take a hard look at lock nesting.
->
-> Compiled only, sending for early feedback/flames.
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->
-> changes from v1:
-> - added clarifications by DaveM in the commit log
-> - build fixes
->
->   include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
->   1 file changed, 61 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-> index d72b2e7..8aa8882 100644
-> --- a/include/linux/ptr_ring.h
-> +++ b/include/linux/ptr_ring.h
-> @@ -31,11 +31,18 @@
->   #include <asm/errno.h>
->   #endif
->   
-> +/* entries must start with the following structure */
-> +struct plist {
-> +	struct plist *next;
-> +	struct plist *last; /* only valid in the 1st entry */
-> +};
+PF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 15fe
+VF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 05fe
 
-So I wonder whether or not it's better to do this in e.g skb_array 
-implementation. Then it can use its own prev/next field.
+The patch needs no check for device ID, because the callback will
+never be made for devices that do not assert the capability or
+when run on a platform incapable of SR-IOV.
 
-> +
->   struct ptr_ring {
->   	int producer ____cacheline_aligned_in_smp;
->   	spinlock_t producer_lock;
->   	int consumer_head ____cacheline_aligned_in_smp; /* next valid entry */
->   	int consumer_tail; /* next entry to invalidate */
-> +	struct plist *consumer_list;
->   	spinlock_t consumer_lock;
->   	/* Shared consumer/producer data */
->   	/* Read-only by both the producer and the consumer */
-> @@ -120,10 +127,40 @@ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
->   }
->   
->   /*
-> - * Note: resize (below) nests producer lock within consumer lock, so if you
-> - * consume in interrupt or BH context, you must disable interrupts/BH when
-> - * calling this.
-> + * Note: resize API with the _fallback should be used when calling this.
->    */
-> +static inline int ptr_ring_produce_fallback(struct ptr_ring *r, void *ptr)
-> +{
-> +	int ret;
-> +	unsigned long flags;
-> +	struct plist *p = ptr;
-> +
-> +	p->next = NULL;
-> +	p->last = p;
-> +
-> +	spin_lock_irqsave(&r->producer_lock, flags);
-> +	ret = __ptr_ring_produce(r, ptr);
-> +	if (ret) {
-> +		spin_lock(&r->consumer_lock);
-> +		ret = __ptr_ring_produce(r, ptr);
-> +		if (ret) {
-> +			int producer = r->producer ? r->producer - 1 :
-> +				r->size - 1;
-> +			struct plist *first = r->queue[producer];
-> +
-> +			BUG_ON(!first);
-> +
-> +			first->last->next = p;
-> +			first->last = p;
+One reason for this patch is because the hardware requires the
+vendor ID of a VF to be the same as the vendor ID of the PF that
+created it. So it seemed logical to simply have a fully-functioning
+virtio-net PF create the VFs. This patch makes that possible.
 
-I believe we still need a limitation on the total size of the queue.
+Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+---
+Changes in V3:
+- Move most code to a new helper in pci/iov.c, pci_sriov_configure
+Changes in V2:
+- Simplified logic from previous version, removed added driver variable
+- Disable SR-IOV on driver removal excapt when VFs are assigned
+- Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
+---
+ drivers/pci/iov.c                  |   48 ++++++++++++++++++++++++++++++++++++
+ drivers/virtio/virtio_pci_common.c |    2 ++
+ include/linux/pci.h                |   10 ++++++++
+ 3 files changed, 60 insertions(+)
 
-Thanks
-
-> +		}
-> +		spin_unlock(&r->consumer_lock);
-> +	}
-> +
-> +	spin_unlock_irqrestore(&r->producer_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
->   static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
->   {
->   	int ret;
-> @@ -135,6 +172,7 @@ static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
->   	return ret;
->   }
->   
-> +
->   static inline int ptr_ring_produce_irq(struct ptr_ring *r, void *ptr)
->   {
->   	int ret;
-> @@ -359,6 +397,26 @@ static inline void *ptr_ring_consume_bh(struct ptr_ring *r)
->   	return ptr;
->   }
->   
-> +static inline void *ptr_ring_consume_fallback(struct ptr_ring *r)
-> +{
-> +	unsigned long flags;
-> +	struct plist *ptr;
-> +
-> +	spin_lock_irqsave(&r->consumer_lock, flags);
-> +	if (r->consumer_list) {
-> +		ptr = r->consumer_list;
-> +		r->consumer_list = ptr->next;
-> +	} else {
-> +		ptr = __ptr_ring_consume(r);
-> +		if (ptr) {
-> +			r->consumer_list = ptr->next;
-> +		}
-> +	}
-> +	spin_unlock_irqrestore(&r->consumer_lock, flags);
-> +
-> +	return ptr;
-> +}
-> +
->   static inline int ptr_ring_consume_batched(struct ptr_ring *r,
->   					   void **array, int n)
->   {
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 677924ae0350..ddd44a9d93ec 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -367,6 +367,54 @@ static void sriov_disable(struct pci_dev *dev)
+ 	pci_iov_set_numvfs(dev, 0);
+ }
+ 
++/**
++ * pci_sriov_disable - standard helper to disable SR-IOV
++ * @dev:the PCI PF device whose VFs are to be disabled
++ */
++int pci_sriov_disable(struct pci_dev *dev)
++{
++	/*
++	 * If vfs are assigned we cannot shut down SR-IOV without causing
++	 * issues, so just leave the hardware available.
++	 */
++	if (pci_vfs_assigned(dev)) {
++		pci_warn(&dev->dev,
++			 "Cannot disable SR-IOV while VFs are assigned - VFs will not be deallocated\n");
++		return -EPERM;
++	}
++	pci_disable_sriov(dev);
++	return 0;
++}
++
++static int pci_sriov_enable(struct pci_dev *dev, int num_vfs)
++{
++	int rc;
++
++	if (pci_num_vf(dev))
++		return -EINVAL;
++
++	rc = pci_enable_sriov(dev, num_vfs);
++	if (rc) {
++		pci_warn(dev, "Failed to enable PCI sriov: %d\n", rc);
++		return rc;
++	}
++	dev_info(dev, "SR-IOV enabled with %d VFs\n", num_vfs);
++	return num_vfs;
++}
++
++/**
++ * pci_sriov_configure - standard helper to configure SR-IOV
++ * @dev: the PCI PF device that is configuring SR-IOV
++ */
++int pci_sriov_configure(struct pci_dev *dev, int num_vfs)
++{
++	if (num_vfs)
++		return pci_sriov_enable(dev, num_vfs);
++	if (!pci_num_vf(dev))
++		return -EINVAL;
++	return pci_sriov_disable(dev);
++}
++
+ static int sriov_init(struct pci_dev *dev, int pos)
+ {
+ 	int i, bar64;
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..37e353c4f8b4 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	else
+ 		virtio_pci_modern_remove(vp_dev);
+ 
++	pci_sriov_disable(pci_dev);
+ 	pci_disable_device(pci_dev);
+ 	put_device(dev);
+ }
+@@ -596,6 +597,7 @@ static struct pci_driver virtio_pci_driver = {
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
++	.sriov_configure = pci_sriov_configure,
+ };
+ 
+ module_pci_driver(virtio_pci_driver);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 024a1beda008..ef6b359afefd 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1947,6 +1947,8 @@ int pci_iov_virtfn_devfn(struct pci_dev *dev, int id);
+ 
+ int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
+ void pci_disable_sriov(struct pci_dev *dev);
++int pci_sriov_disable(struct pci_dev *dev);
++int pci_sriov_configure(struct pci_dev *dev, int num_vfs);
+ int pci_iov_add_virtfn(struct pci_dev *dev, int id);
+ void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
+ int pci_num_vf(struct pci_dev *dev);
+@@ -1973,6 +1975,14 @@ static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+ static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
+ 					 int id) { }
+ static inline void pci_disable_sriov(struct pci_dev *dev) { }
++static inline int pci_sriov_disable(struct pci_dev *dev)
++{
++	return -ENODEV;
++}
++static inline int pci_sriov_configure(struct pci_dev *dev, int num_vfs)
++{
++	return -ENODEV;
++}
+ static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
+ static inline int pci_vfs_assigned(struct pci_dev *dev)
+ { return 0; }
