@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752518AbeBZIeY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:34:24 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34518 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751890AbeBZIeR (ORCPT
+        id S1752422AbeBZIgJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:36:09 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:52554 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752317AbeBZIeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:34:17 -0500
-X-UUID: ecc02bf6e9e240048eb6d56b745ea502-20180226
+        Mon, 26 Feb 2018 03:34:20 -0500
+X-UUID: 9ca0451c52ce46c98f422f34805bd640-20180226
 From: Zhiyong Tao <zhiyong.tao@mediatek.com>
 To: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
         <mark.rutland@arm.com>, <matthias.bgg@gmail.com>
@@ -19,9 +19,9 @@ CC: <srv_heupstream@mediatek.com>, <liguo.zhang@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
         Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v2 1/4] arm64: dts: mt2712: add pintcrl file
-Date: Mon, 26 Feb 2018 16:33:59 +0800
-Message-ID: <1519634042-12063-2-git-send-email-zhiyong.tao@mediatek.com>
+Subject: [PATCH v2 3/4] pinctrl: add mt2712 pinctrl driver
+Date: Mon, 26 Feb 2018 16:34:01 +0800
+Message-ID: <1519634042-12063-4-git-send-email-zhiyong.tao@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
 References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
@@ -32,20 +32,699 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds pinctrl file for mt2712.
+The commit includes mt2712 pinctrl driver.
 
 Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h | 1129 +++++++++++++++++++++++++
- 1 file changed, 1129 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt2712.c     |  639 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h | 1973 +++++++++++++++++++++++++
+ 4 files changed, 2620 insertions(+)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt2712.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h b/arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index 3e59874..b24bc76 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -32,6 +32,13 @@ config PINCTRL_MT8127
+ 	select PINCTRL_MTK
+ 
+ # For ARMv8 SoCs
++config PINCTRL_MT2712
++	bool "Mediatek MT2712 pin control"
++	depends on OF
++	depends on ARM64 || COMPILE_TEST
++	default ARM64 && ARCH_MEDIATEK
++	select PINCTRL_MTK
++
+ config PINCTRL_MT7622
+ 	bool "MediaTek MT7622 pin control"
+ 	depends on OF
+diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
+index ed7d2b2..7959e77 100644
+--- a/drivers/pinctrl/mediatek/Makefile
++++ b/drivers/pinctrl/mediatek/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_PINCTRL_MTK)	+= pinctrl-mtk-common.o
+ 
+ # SoC Drivers
+ obj-$(CONFIG_PINCTRL_MT2701)	+= pinctrl-mt2701.o
++obj-$(CONFIG_PINCTRL_MT2712)	+= pinctrl-mt2712.o
+ obj-$(CONFIG_PINCTRL_MT8135)	+= pinctrl-mt8135.o
+ obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
+ obj-$(CONFIG_PINCTRL_MT7622)	+= pinctrl-mt7622.o
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2712.c b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
 new file mode 100644
-index 0000000..44f8ca2
+index 0000000..b6ae71b
 --- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h
-@@ -0,0 +1,1129 @@
++++ b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
+@@ -0,0 +1,639 @@
++/*
++ * Copyright (c) 2014-2015 MediaTek Inc.
++ * Author: Hongzhou.Yang <hongzhou.yang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/regmap.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <dt-bindings/pinctrl/mt65xx.h>
++
++#include "pinctrl-mtk-common.h"
++#include "pinctrl-mtk-mt2712.h"
++
++static const struct mtk_pin_spec_pupd_set_samereg mt2712_spec_pupd[] = {
++	MTK_PIN_PUPD_SPEC_SR(18, 0xe50, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(19, 0xe60, 12, 11, 10),
++	MTK_PIN_PUPD_SPEC_SR(20, 0xe50, 5, 4, 3),
++	MTK_PIN_PUPD_SPEC_SR(21, 0xe60, 15, 14, 13),
++	MTK_PIN_PUPD_SPEC_SR(22, 0xe50, 8, 7, 6),
++	MTK_PIN_PUPD_SPEC_SR(23, 0xe70, 2, 1, 0),
++
++	MTK_PIN_PUPD_SPEC_SR(30, 0xf30, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(31, 0xf30, 6, 5, 4),
++	MTK_PIN_PUPD_SPEC_SR(32, 0xf30, 10, 9, 8),
++	MTK_PIN_PUPD_SPEC_SR(33, 0xf30, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(34, 0xf40, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(35, 0xf40, 6, 5, 4),
++	MTK_PIN_PUPD_SPEC_SR(36, 0xf40, 10, 9, 8),
++	MTK_PIN_PUPD_SPEC_SR(37, 0xc40, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(38, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(39, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(40, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(41, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(42, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(43, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(44, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(45, 0xc60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(46, 0xc50, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(47, 0xda0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(48, 0xd90, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(49, 0xdf0, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(50, 0xdf0, 10, 9, 8),
++	MTK_PIN_PUPD_SPEC_SR(51, 0xdf0, 6, 5, 4),
++	MTK_PIN_PUPD_SPEC_SR(52, 0xdf0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(53, 0xd50, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(54, 0xd80, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(55, 0xe00, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(56, 0xd40, 2, 1, 0),
++
++	MTK_PIN_PUPD_SPEC_SR(63, 0xc80, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(64, 0xdb0, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(65, 0xdb0, 6, 5, 4),
++	MTK_PIN_PUPD_SPEC_SR(66, 0xdb0, 10, 9, 8),
++	MTK_PIN_PUPD_SPEC_SR(67, 0xcd0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(68, 0xdb0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(69, 0xc90, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(70, 0xcc0, 2, 1, 0),
++
++	MTK_PIN_PUPD_SPEC_SR(89, 0xce0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(90, 0xdd0, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(91, 0xdd0, 10, 9, 8),
++	MTK_PIN_PUPD_SPEC_SR(92, 0xdd0, 6, 5, 4),
++	MTK_PIN_PUPD_SPEC_SR(93, 0xdd0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(94, 0xd20, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(95, 0xcf0, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(96, 0xd30, 2, 1, 0),
++
++	MTK_PIN_PUPD_SPEC_SR(135, 0xe50, 11, 10, 9),
++	MTK_PIN_PUPD_SPEC_SR(136, 0xe50, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(137, 0xe70, 5, 4, 3),
++	MTK_PIN_PUPD_SPEC_SR(138, 0xe70, 8, 7, 6),
++	MTK_PIN_PUPD_SPEC_SR(139, 0xe70, 11, 10, 9),
++	MTK_PIN_PUPD_SPEC_SR(140, 0xe70, 14, 13, 12),
++	MTK_PIN_PUPD_SPEC_SR(141, 0xe60, 2, 1, 0),
++	MTK_PIN_PUPD_SPEC_SR(142, 0xe60, 5, 4, 3)
++};
++
++static int mt2712_spec_pull_set(struct regmap *regmap, unsigned int pin,
++		unsigned char align, bool isup, unsigned int r1r0)
++{
++	return mtk_pctrl_spec_pull_set_samereg(regmap, mt2712_spec_pupd,
++		ARRAY_SIZE(mt2712_spec_pupd), pin, align, isup, r1r0);
++}
++
++static const struct mtk_pin_ies_smt_set mt2712_smt_set[] = {
++	MTK_PIN_IES_SMT_SPEC(0, 3, 0x900, 2),
++	MTK_PIN_IES_SMT_SPEC(4, 7, 0x900, 0),
++	MTK_PIN_IES_SMT_SPEC(8, 11, 0x900, 1),
++	MTK_PIN_IES_SMT_SPEC(12, 12, 0x8d0, 6),
++	MTK_PIN_IES_SMT_SPEC(13, 13, 0x8d0, 7),
++	MTK_PIN_IES_SMT_SPEC(14, 14, 0x8d0, 6),
++	MTK_PIN_IES_SMT_SPEC(15, 15, 0x8d0, 7),
++	MTK_PIN_IES_SMT_SPEC(18, 23, 0x8d0, 1),
++	MTK_PIN_IES_SMT_SPEC(24, 25, 0x8d0, 2),
++	MTK_PIN_IES_SMT_SPEC(26, 26, 0x8d0, 3),
++	MTK_PIN_IES_SMT_SPEC(27, 27, 0x8d0, 4),
++	MTK_PIN_IES_SMT_SPEC(28, 29, 0x8d0, 3),
++	MTK_PIN_IES_SMT_SPEC(30, 36, 0xf50, 13),
++	MTK_PIN_IES_SMT_SPEC(37, 37, 0xc40, 13),
++	MTK_PIN_IES_SMT_SPEC(38, 45, 0xc60, 13),
++	MTK_PIN_IES_SMT_SPEC(46, 46, 0xc50, 13),
++	MTK_PIN_IES_SMT_SPEC(47, 47, 0xda0, 13),
++	MTK_PIN_IES_SMT_SPEC(48, 48, 0xd90, 13),
++	MTK_PIN_IES_SMT_SPEC(49, 52, 0xd60, 13),
++	MTK_PIN_IES_SMT_SPEC(53, 53, 0xd50, 13),
++	MTK_PIN_IES_SMT_SPEC(54, 54, 0xd80, 13),
++	MTK_PIN_IES_SMT_SPEC(55, 55, 0xe00, 13),
++	MTK_PIN_IES_SMT_SPEC(56, 56, 0xd40, 13),
++	MTK_PIN_IES_SMT_SPEC(57, 62, 0x900, 3),
++	MTK_PIN_IES_SMT_SPEC(63, 63, 0xc80, 13),
++	MTK_PIN_IES_SMT_SPEC(64, 66, 0xca0, 13),
++	MTK_PIN_IES_SMT_SPEC(67, 67, 0xc80, 13),
++	MTK_PIN_IES_SMT_SPEC(68, 68, 0xca0, 13),
++	MTK_PIN_IES_SMT_SPEC(69, 69, 0xc90, 13),
++	MTK_PIN_IES_SMT_SPEC(70, 70, 0xc80, 13),
++	MTK_PIN_IES_SMT_SPEC(71, 74, 0x8d0, 8),
++	MTK_PIN_IES_SMT_SPEC(75, 77, 0x8d0, 9),
++	MTK_PIN_IES_SMT_SPEC(78, 81, 0x8d0, 10),
++	MTK_PIN_IES_SMT_SPEC(82, 88, 0x8d0, 9),
++	MTK_PIN_IES_SMT_SPEC(89, 89, 0xce0, 13),
++	MTK_PIN_IES_SMT_SPEC(90, 93, 0xd00, 13),
++	MTK_PIN_IES_SMT_SPEC(94, 94, 0xce0, 13),
++	MTK_PIN_IES_SMT_SPEC(95, 96, 0xcf0, 13),
++	MTK_PIN_IES_SMT_SPEC(97, 100, 0x8d0, 11),
++	MTK_PIN_IES_SMT_SPEC(101, 104, 0x8d0, 12),
++	MTK_PIN_IES_SMT_SPEC(105, 105, 0x8d0, 13),
++	MTK_PIN_IES_SMT_SPEC(106, 106, 0x8d0, 14),
++	MTK_PIN_IES_SMT_SPEC(107, 107, 0x8d0, 15),
++	MTK_PIN_IES_SMT_SPEC(108, 108, 0x8e0, 0),
++	MTK_PIN_IES_SMT_SPEC(109, 109, 0x8e0, 1),
++	MTK_PIN_IES_SMT_SPEC(110, 110, 0x8e0, 2),
++	MTK_PIN_IES_SMT_SPEC(111, 111, 0x8d0, 13),
++	MTK_PIN_IES_SMT_SPEC(112, 112, 0x8d0, 14),
++	MTK_PIN_IES_SMT_SPEC(113, 113, 0x8d0, 15),
++	MTK_PIN_IES_SMT_SPEC(114, 114, 0x8e0, 0),
++	MTK_PIN_IES_SMT_SPEC(115, 115, 0x8e0, 1),
++	MTK_PIN_IES_SMT_SPEC(116, 116, 0x8e0, 2),
++	MTK_PIN_IES_SMT_SPEC(117, 117, 0x8e0, 3),
++	MTK_PIN_IES_SMT_SPEC(118, 118, 0x8e0, 4),
++	MTK_PIN_IES_SMT_SPEC(119, 119, 0x8e0, 5),
++	MTK_PIN_IES_SMT_SPEC(120, 120, 0x8e0, 3),
++	MTK_PIN_IES_SMT_SPEC(121, 121, 0x8e0, 4),
++	MTK_PIN_IES_SMT_SPEC(122, 122, 0x8e0, 5),
++	MTK_PIN_IES_SMT_SPEC(123, 126, 0x8e0, 6),
++	MTK_PIN_IES_SMT_SPEC(127, 130, 0x8e0, 7),
++	MTK_PIN_IES_SMT_SPEC(131, 134, 0x8e0, 8),
++	MTK_PIN_IES_SMT_SPEC(135, 142, 0x8d0, 1),
++	MTK_PIN_IES_SMT_SPEC(143, 147, 0x8e0, 9),
++	MTK_PIN_IES_SMT_SPEC(148, 152, 0x8e0, 10),
++	MTK_PIN_IES_SMT_SPEC(153, 156, 0x8e0, 11),
++	MTK_PIN_IES_SMT_SPEC(157, 160, 0x8e0, 12),
++	MTK_PIN_IES_SMT_SPEC(161, 164, 0x8e0, 13),
++	MTK_PIN_IES_SMT_SPEC(165, 168, 0x8e0, 14),
++	MTK_PIN_IES_SMT_SPEC(169, 170, 0x8e0, 15),
++	MTK_PIN_IES_SMT_SPEC(171, 172, 0x8f0, 0),
++	MTK_PIN_IES_SMT_SPEC(173, 173, 0x8f0, 1),
++	MTK_PIN_IES_SMT_SPEC(174, 175, 0x8f0, 2),
++	MTK_PIN_IES_SMT_SPEC(176, 176, 0x8f0, 1),
++	MTK_PIN_IES_SMT_SPEC(177, 177, 0x8f0, 3),
++	MTK_PIN_IES_SMT_SPEC(178, 178, 0x8f0, 4),
++	MTK_PIN_IES_SMT_SPEC(179, 179, 0x8f0, 3),
++	MTK_PIN_IES_SMT_SPEC(180, 180, 0x8f0, 4),
++	MTK_PIN_IES_SMT_SPEC(181, 181, 0x8f0, 5),
++	MTK_PIN_IES_SMT_SPEC(182, 182, 0x8f0, 6),
++	MTK_PIN_IES_SMT_SPEC(183, 183, 0x8f0, 5),
++	MTK_PIN_IES_SMT_SPEC(184, 184, 0x8f0, 6),
++	MTK_PIN_IES_SMT_SPEC(185, 186, 0x8f0, 7),
++	MTK_PIN_IES_SMT_SPEC(187, 187, 0x8f0, 8),
++	MTK_PIN_IES_SMT_SPEC(188, 188, 0x8f0, 9),
++	MTK_PIN_IES_SMT_SPEC(189, 189, 0x8f0, 8),
++	MTK_PIN_IES_SMT_SPEC(190, 190, 0x8f0, 9),
++	MTK_PIN_IES_SMT_SPEC(191, 191, 0x8f0, 10),
++	MTK_PIN_IES_SMT_SPEC(192, 192, 0x8f0, 11),
++	MTK_PIN_IES_SMT_SPEC(193, 194, 0x8f0, 10),
++	MTK_PIN_IES_SMT_SPEC(195, 195, 0x8f0, 11),
++	MTK_PIN_IES_SMT_SPEC(196, 199, 0x8f0, 12),
++	MTK_PIN_IES_SMT_SPEC(200, 203, 0x8f0, 13),
++	MTK_PIN_IES_SMT_SPEC(204, 206, 0x8f0, 14),
++	MTK_PIN_IES_SMT_SPEC(207, 209, 0x8f0, 15)
++};
++
++static const struct mtk_pin_ies_smt_set mt2712_ies_set[] = {
++	MTK_PIN_IES_SMT_SPEC(0, 3, 0x8c0, 2),
++	MTK_PIN_IES_SMT_SPEC(4, 7, 0x8c0, 0),
++	MTK_PIN_IES_SMT_SPEC(8, 9, 0x8c0, 1),
++	MTK_PIN_IES_SMT_SPEC(10, 11, 0x8c0, 4),
++	MTK_PIN_IES_SMT_SPEC(12, 12, 0x890, 6),
++	MTK_PIN_IES_SMT_SPEC(13, 13, 0x890, 7),
++	MTK_PIN_IES_SMT_SPEC(14, 14, 0x890, 6),
++	MTK_PIN_IES_SMT_SPEC(15, 15, 0x890, 7),
++	MTK_PIN_IES_SMT_SPEC(18, 23, 0x890, 1),
++	MTK_PIN_IES_SMT_SPEC(24, 25, 0x890, 2),
++	MTK_PIN_IES_SMT_SPEC(26, 26, 0x890, 3),
++	MTK_PIN_IES_SMT_SPEC(27, 27, 0x890, 4),
++	MTK_PIN_IES_SMT_SPEC(28, 29, 0x890, 3),
++	MTK_PIN_IES_SMT_SPEC(30, 36, 0xf50, 14),
++	MTK_PIN_IES_SMT_SPEC(37, 37, 0xc40, 14),
++	MTK_PIN_IES_SMT_SPEC(38, 45, 0xc60, 14),
++	MTK_PIN_IES_SMT_SPEC(46, 46, 0xc50, 14),
++	MTK_PIN_IES_SMT_SPEC(47, 47, 0xda0, 14),
++	MTK_PIN_IES_SMT_SPEC(48, 48, 0xd90, 14),
++	MTK_PIN_IES_SMT_SPEC(49, 52, 0xd60, 14),
++	MTK_PIN_IES_SMT_SPEC(53, 53, 0xd50, 14),
++	MTK_PIN_IES_SMT_SPEC(54, 54, 0xd80, 14),
++	MTK_PIN_IES_SMT_SPEC(55, 55, 0xe00, 14),
++	MTK_PIN_IES_SMT_SPEC(56, 56, 0xd40, 14),
++	MTK_PIN_IES_SMT_SPEC(57, 62, 0x8c0, 3),
++	MTK_PIN_IES_SMT_SPEC(63, 63, 0xc80, 14),
++	MTK_PIN_IES_SMT_SPEC(64, 66, 0xca0, 14),
++	MTK_PIN_IES_SMT_SPEC(67, 68, 0xc80, 14),
++	MTK_PIN_IES_SMT_SPEC(69, 69, 0xc90, 14),
++	MTK_PIN_IES_SMT_SPEC(70, 70, 0xc80, 14),
++	MTK_PIN_IES_SMT_SPEC(71, 74, 0x890, 8),
++	MTK_PIN_IES_SMT_SPEC(75, 77, 0x890, 9),
++	MTK_PIN_IES_SMT_SPEC(78, 81, 0x890, 10),
++	MTK_PIN_IES_SMT_SPEC(82, 88, 0x890, 9),
++	MTK_PIN_IES_SMT_SPEC(89, 89, 0xce0, 14),
++	MTK_PIN_IES_SMT_SPEC(90, 93, 0xd00, 14),
++	MTK_PIN_IES_SMT_SPEC(94, 94, 0xce0, 14),
++	MTK_PIN_IES_SMT_SPEC(95, 96, 0xcf0, 14),
++	MTK_PIN_IES_SMT_SPEC(97, 100, 0x890, 11),
++	MTK_PIN_IES_SMT_SPEC(101, 104, 0x890, 12),
++	MTK_PIN_IES_SMT_SPEC(105, 105, 0x890, 13),
++	MTK_PIN_IES_SMT_SPEC(106, 106, 0x890, 14),
++	MTK_PIN_IES_SMT_SPEC(107, 107, 0x890, 15),
++	MTK_PIN_IES_SMT_SPEC(108, 108, 0x8a0, 0),
++	MTK_PIN_IES_SMT_SPEC(109, 109, 0x8a0, 1),
++	MTK_PIN_IES_SMT_SPEC(110, 110, 0x8a0, 2),
++	MTK_PIN_IES_SMT_SPEC(111, 111, 0x890, 13),
++	MTK_PIN_IES_SMT_SPEC(112, 112, 0x890, 14),
++	MTK_PIN_IES_SMT_SPEC(113, 113, 0x890, 15),
++	MTK_PIN_IES_SMT_SPEC(114, 114, 0x8a0, 0),
++	MTK_PIN_IES_SMT_SPEC(115, 115, 0x8a0, 1),
++	MTK_PIN_IES_SMT_SPEC(116, 116, 0x8a0, 2),
++	MTK_PIN_IES_SMT_SPEC(117, 117, 0x8a0, 3),
++	MTK_PIN_IES_SMT_SPEC(118, 118, 0x8a0, 4),
++	MTK_PIN_IES_SMT_SPEC(119, 119, 0x8a0, 5),
++	MTK_PIN_IES_SMT_SPEC(120, 120, 0x8a0, 3),
++	MTK_PIN_IES_SMT_SPEC(121, 121, 0x8a0, 4),
++	MTK_PIN_IES_SMT_SPEC(122, 122, 0x8a0, 5),
++	MTK_PIN_IES_SMT_SPEC(123, 126, 0x8a0, 6),
++	MTK_PIN_IES_SMT_SPEC(127, 130, 0x8a0, 7),
++	MTK_PIN_IES_SMT_SPEC(131, 135, 0x8a0, 8),
++	MTK_PIN_IES_SMT_SPEC(136, 142, 0x890, 1),
++	MTK_PIN_IES_SMT_SPEC(143, 147, 0x8a0, 9),
++	MTK_PIN_IES_SMT_SPEC(148, 152, 0x8a0, 10),
++	MTK_PIN_IES_SMT_SPEC(153, 156, 0x8a0, 11),
++	MTK_PIN_IES_SMT_SPEC(157, 160, 0x8a0, 12),
++	MTK_PIN_IES_SMT_SPEC(161, 164, 0x8a0, 13),
++	MTK_PIN_IES_SMT_SPEC(165, 168, 0x8a0, 14),
++	MTK_PIN_IES_SMT_SPEC(169, 170, 0x8a0, 15),
++	MTK_PIN_IES_SMT_SPEC(171, 172, 0x8b0, 0),
++	MTK_PIN_IES_SMT_SPEC(173, 173, 0x8b0, 1),
++	MTK_PIN_IES_SMT_SPEC(174, 175, 0x8b0, 2),
++	MTK_PIN_IES_SMT_SPEC(176, 176, 0x8b0, 1),
++	MTK_PIN_IES_SMT_SPEC(177, 177, 0x8b0, 3),
++	MTK_PIN_IES_SMT_SPEC(178, 178, 0x8b0, 4),
++	MTK_PIN_IES_SMT_SPEC(179, 179, 0x8b0, 3),
++	MTK_PIN_IES_SMT_SPEC(180, 180, 0x8b0, 4),
++	MTK_PIN_IES_SMT_SPEC(181, 181, 0x8b0, 5),
++	MTK_PIN_IES_SMT_SPEC(182, 182, 0x8b0, 6),
++	MTK_PIN_IES_SMT_SPEC(183, 183, 0x8b0, 5),
++	MTK_PIN_IES_SMT_SPEC(184, 184, 0x8b0, 6),
++	MTK_PIN_IES_SMT_SPEC(185, 186, 0x8b0, 7),
++	MTK_PIN_IES_SMT_SPEC(187, 187, 0x8b0, 8),
++	MTK_PIN_IES_SMT_SPEC(188, 188, 0x8b0, 9),
++	MTK_PIN_IES_SMT_SPEC(189, 189, 0x8b0, 8),
++	MTK_PIN_IES_SMT_SPEC(190, 190, 0x8b0, 9),
++	MTK_PIN_IES_SMT_SPEC(191, 191, 0x8b0, 10),
++	MTK_PIN_IES_SMT_SPEC(192, 192, 0x8b0, 11),
++	MTK_PIN_IES_SMT_SPEC(193, 194, 0x8b0, 10),
++	MTK_PIN_IES_SMT_SPEC(195, 195, 0x8b0, 11),
++	MTK_PIN_IES_SMT_SPEC(196, 199, 0x8b0, 12),
++	MTK_PIN_IES_SMT_SPEC(200, 203, 0x8b0, 13),
++	MTK_PIN_IES_SMT_SPEC(204, 206, 0x8b0, 14),
++	MTK_PIN_IES_SMT_SPEC(207, 209, 0x8b0, 15)
++};
++
++static int mt2712_ies_smt_set(struct regmap *regmap, unsigned int pin,
++		unsigned char align, int value, enum pin_config_param arg)
++{
++	if (arg == PIN_CONFIG_INPUT_ENABLE)
++		return mtk_pconf_spec_set_ies_smt_range(regmap, mt2712_ies_set,
++			ARRAY_SIZE(mt2712_ies_set), pin, align, value);
++	if (arg == PIN_CONFIG_INPUT_SCHMITT_ENABLE)
++		return mtk_pconf_spec_set_ies_smt_range(regmap, mt2712_smt_set,
++			ARRAY_SIZE(mt2712_smt_set), pin, align, value);
++	return -EINVAL;
++}
++
++static const struct mtk_drv_group_desc mt2712_drv_grp[] =  {
++	/* 0E4E8SR 4/8/12/16 */
++	MTK_DRV_GRP(4, 16, 1, 2, 4),
++	/* 0E2E4SR  2/4/6/8 */
++	MTK_DRV_GRP(2, 8, 1, 2, 2),
++	/* E8E4E2  2/4/6/8/10/12/14/16 */
++	MTK_DRV_GRP(2, 16, 0, 2, 2)
++};
++
++static const struct mtk_pin_drv_grp mt2712_pin_drv[] = {
++	MTK_PIN_DRV_GRP(0, 0xc10, 4, 0),
++	MTK_PIN_DRV_GRP(1, 0xc10, 4, 0),
++	MTK_PIN_DRV_GRP(2, 0xc10, 4, 0),
++	MTK_PIN_DRV_GRP(3, 0xc10, 4, 0),
++
++	MTK_PIN_DRV_GRP(4, 0xc00, 12, 0),
++	MTK_PIN_DRV_GRP(5, 0xc00, 12, 0),
++	MTK_PIN_DRV_GRP(6, 0xc00, 12, 0),
++	MTK_PIN_DRV_GRP(7, 0xc00, 12, 0),
++
++	MTK_PIN_DRV_GRP(8, 0xc10, 0, 0),
++	MTK_PIN_DRV_GRP(9, 0xc10, 0, 0),
++	MTK_PIN_DRV_GRP(10, 0xc10, 0, 0),
++	MTK_PIN_DRV_GRP(11, 0xc10, 0, 0),
++
++	MTK_PIN_DRV_GRP(12, 0xb60, 0, 0),
++
++	MTK_PIN_DRV_GRP(13, 0xb60, 4, 0),
++
++	MTK_PIN_DRV_GRP(14, 0xb60, 0, 0),
++
++	MTK_PIN_DRV_GRP(15, 0xb60, 4, 0),
++
++	MTK_PIN_DRV_GRP(18, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(19, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(20, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(21, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(22, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(23, 0xb40, 0, 1),
++
++	MTK_PIN_DRV_GRP(24, 0xb40, 4, 0),
++
++	MTK_PIN_DRV_GRP(25, 0xb40, 8, 0),
++
++	MTK_PIN_DRV_GRP(26, 0xb40, 12, 0),
++
++	MTK_PIN_DRV_GRP(27, 0xb50, 0, 0),
++
++	MTK_PIN_DRV_GRP(28, 0xb40, 12, 0),
++	MTK_PIN_DRV_GRP(29, 0xb40, 12, 0),
++
++	MTK_PIN_DRV_GRP(30, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(31, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(32, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(33, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(34, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(35, 0xf50, 8, 2),
++	MTK_PIN_DRV_GRP(36, 0xf50, 8, 2),
++
++
++	MTK_PIN_DRV_GRP(37, 0xc40, 8, 2),
++
++	MTK_PIN_DRV_GRP(38, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(39, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(40, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(41, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(42, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(43, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(44, 0xc60, 8, 2),
++	MTK_PIN_DRV_GRP(45, 0xc60, 8, 2),
++
++	MTK_PIN_DRV_GRP(46, 0xc50, 8, 2),
++
++	MTK_PIN_DRV_GRP(47, 0xda0, 8, 2),
++
++	MTK_PIN_DRV_GRP(48, 0xd90, 8, 2),
++
++	MTK_PIN_DRV_GRP(49, 0xd60, 8, 2),
++	MTK_PIN_DRV_GRP(50, 0xd60, 8, 2),
++	MTK_PIN_DRV_GRP(51, 0xd60, 8, 2),
++	MTK_PIN_DRV_GRP(52, 0xd60, 8, 2),
++
++	MTK_PIN_DRV_GRP(53, 0xd50, 8, 2),
++
++	MTK_PIN_DRV_GRP(54, 0xd80, 8, 2),
++
++	MTK_PIN_DRV_GRP(55, 0xe00, 8, 2),
++
++	MTK_PIN_DRV_GRP(56, 0xd40, 8, 2),
++
++	MTK_PIN_DRV_GRP(63, 0xc80, 8, 2),
++
++	MTK_PIN_DRV_GRP(64, 0xca0, 8, 2),
++	MTK_PIN_DRV_GRP(65, 0xca0, 8, 2),
++	MTK_PIN_DRV_GRP(66, 0xca0, 8, 2),
++
++	MTK_PIN_DRV_GRP(67, 0xcd0, 8, 2),
++
++	MTK_PIN_DRV_GRP(68, 0xca0, 8, 2),
++
++	MTK_PIN_DRV_GRP(69, 0xc90, 8, 2),
++
++	MTK_PIN_DRV_GRP(70, 0xcc0, 8, 2),
++
++	MTK_PIN_DRV_GRP(71, 0xb60, 8, 1),
++	MTK_PIN_DRV_GRP(72, 0xb60, 8, 1),
++	MTK_PIN_DRV_GRP(73, 0xb60, 8, 1),
++	MTK_PIN_DRV_GRP(74, 0xb60, 8, 1),
++
++
++	MTK_PIN_DRV_GRP(75, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(76, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(77, 0xb60, 12, 1),
++
++	MTK_PIN_DRV_GRP(78, 0xb70, 0, 1),
++	MTK_PIN_DRV_GRP(79, 0xb70, 0, 1),
++	MTK_PIN_DRV_GRP(80, 0xb70, 0, 1),
++	MTK_PIN_DRV_GRP(81, 0xb70, 0, 1),
++
++	MTK_PIN_DRV_GRP(82, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(83, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(84, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(85, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(86, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(87, 0xb60, 12, 1),
++	MTK_PIN_DRV_GRP(88, 0xb60, 12, 1),
++
++	MTK_PIN_DRV_GRP(89, 0xce0, 8, 2),
++
++	MTK_PIN_DRV_GRP(90, 0xd00, 8, 2),
++	MTK_PIN_DRV_GRP(91, 0xd00, 8, 2),
++	MTK_PIN_DRV_GRP(92, 0xd00, 8, 2),
++	MTK_PIN_DRV_GRP(93, 0xd00, 8, 2),
++
++	MTK_PIN_DRV_GRP(94, 0xd20, 8, 2),
++
++	MTK_PIN_DRV_GRP(95, 0xcf0, 8, 2),
++
++	MTK_PIN_DRV_GRP(96, 0xd30, 8, 2),
++
++	MTK_PIN_DRV_GRP(97, 0xb70, 4, 0),
++	MTK_PIN_DRV_GRP(98, 0xb70, 4, 0),
++	MTK_PIN_DRV_GRP(99, 0xb70, 4, 0),
++	MTK_PIN_DRV_GRP(100, 0xb70, 4, 0),
++
++	MTK_PIN_DRV_GRP(101, 0xb70, 8, 0),
++	MTK_PIN_DRV_GRP(102, 0xb70, 8, 0),
++	MTK_PIN_DRV_GRP(103, 0xb70, 8, 0),
++	MTK_PIN_DRV_GRP(104, 0xb70, 8, 0),
++
++	MTK_PIN_DRV_GRP(135, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(136, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(137, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(138, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(139, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(140, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(141, 0xb40, 0, 1),
++	MTK_PIN_DRV_GRP(142, 0xb40, 0, 1),
++
++	MTK_PIN_DRV_GRP(143, 0xba0, 12, 0),
++	MTK_PIN_DRV_GRP(144, 0xba0, 12, 0),
++	MTK_PIN_DRV_GRP(145, 0xba0, 12, 0),
++	MTK_PIN_DRV_GRP(146, 0xba0, 12, 0),
++	MTK_PIN_DRV_GRP(147, 0xba0, 12, 0),
++
++	MTK_PIN_DRV_GRP(148, 0xbb0, 0, 0),
++	MTK_PIN_DRV_GRP(149, 0xbb0, 0, 0),
++	MTK_PIN_DRV_GRP(150, 0xbb0, 0, 0),
++	MTK_PIN_DRV_GRP(151, 0xbb0, 0, 0),
++	MTK_PIN_DRV_GRP(152, 0xbb0, 0, 0),
++
++	MTK_PIN_DRV_GRP(153, 0xbb0, 4, 0),
++	MTK_PIN_DRV_GRP(154, 0xbb0, 4, 0),
++	MTK_PIN_DRV_GRP(155, 0xbb0, 4, 0),
++	MTK_PIN_DRV_GRP(156, 0xbb0, 4, 0),
++
++	MTK_PIN_DRV_GRP(157, 0xbb0, 8, 0),
++	MTK_PIN_DRV_GRP(158, 0xbb0, 8, 0),
++	MTK_PIN_DRV_GRP(159, 0xbb0, 8, 0),
++	MTK_PIN_DRV_GRP(160, 0xbb0, 8, 0),
++
++	MTK_PIN_DRV_GRP(161, 0xbb0, 12, 0),
++	MTK_PIN_DRV_GRP(162, 0xbb0, 12, 0),
++	MTK_PIN_DRV_GRP(163, 0xbb0, 12, 0),
++	MTK_PIN_DRV_GRP(164, 0xbb0, 12, 0),
++
++	MTK_PIN_DRV_GRP(165, 0xbc0, 0, 0),
++	MTK_PIN_DRV_GRP(166, 0xbc0, 0, 0),
++	MTK_PIN_DRV_GRP(167, 0xbc0, 0, 0),
++	MTK_PIN_DRV_GRP(168, 0xbc0, 0, 0),
++
++	MTK_PIN_DRV_GRP(169, 0xbc0, 4, 0),
++	MTK_PIN_DRV_GRP(170, 0xbc0, 4, 0),
++
++	MTK_PIN_DRV_GRP(171, 0xbc0, 8, 0),
++	MTK_PIN_DRV_GRP(172, 0xbc0, 8, 0),
++
++	MTK_PIN_DRV_GRP(173, 0xbc0, 12, 0),
++
++	MTK_PIN_DRV_GRP(174, 0xbd0, 0, 0),
++	MTK_PIN_DRV_GRP(175, 0xbd0, 0, 0),
++
++	MTK_PIN_DRV_GRP(176, 0xbc0, 12, 0),
++
++	MTK_PIN_DRV_GRP(177, 0xbd0, 4, 0),
++
++	MTK_PIN_DRV_GRP(178, 0xbd0, 8, 0),
++
++	MTK_PIN_DRV_GRP(179, 0xbd0, 4, 0),
++
++	MTK_PIN_DRV_GRP(180, 0xbd0, 8, 0),
++
++	MTK_PIN_DRV_GRP(181, 0xbd0, 12, 0),
++
++	MTK_PIN_DRV_GRP(182, 0xbe0, 0, 0),
++
++	MTK_PIN_DRV_GRP(183, 0xbd0, 12, 0),
++
++	MTK_PIN_DRV_GRP(184, 0xbe0, 0, 0),
++
++	MTK_PIN_DRV_GRP(185, 0xbe0, 4, 0),
++
++	MTK_PIN_DRV_GRP(186, 0xbe0, 8, 0),
++
++	MTK_PIN_DRV_GRP(187, 0xbe0, 12, 0),
++
++	MTK_PIN_DRV_GRP(188, 0xbf0, 0, 0),
++
++	MTK_PIN_DRV_GRP(189, 0xbe0, 12, 0),
++
++	MTK_PIN_DRV_GRP(190, 0xbf0, 0, 0),
++
++	MTK_PIN_DRV_GRP(191, 0xbf0, 4, 0),
++
++	MTK_PIN_DRV_GRP(192, 0xbf0, 8, 0),
++
++	MTK_PIN_DRV_GRP(193, 0xbf0, 4, 0),
++	MTK_PIN_DRV_GRP(194, 0xbf0, 4, 0),
++
++	MTK_PIN_DRV_GRP(195, 0xbf0, 8, 0),
++
++	MTK_PIN_DRV_GRP(196, 0xbf0, 12, 0),
++	MTK_PIN_DRV_GRP(197, 0xbf0, 12, 0),
++	MTK_PIN_DRV_GRP(198, 0xbf0, 12, 0),
++	MTK_PIN_DRV_GRP(199, 0xbf0, 12, 0),
++
++	MTK_PIN_DRV_GRP(200, 0xc00, 0, 0),
++	MTK_PIN_DRV_GRP(201, 0xc00, 0, 0),
++	MTK_PIN_DRV_GRP(202, 0xc00, 0, 0),
++	MTK_PIN_DRV_GRP(203, 0xc00, 0, 0),
++
++	MTK_PIN_DRV_GRP(204, 0xc00, 4, 0),
++	MTK_PIN_DRV_GRP(205, 0xc00, 4, 0),
++	MTK_PIN_DRV_GRP(206, 0xc00, 4, 0),
++
++	MTK_PIN_DRV_GRP(207, 0xc00, 8, 0),
++	MTK_PIN_DRV_GRP(208, 0xc00, 8, 0),
++	MTK_PIN_DRV_GRP(209, 0xc00, 8, 0),
++};
++
++static const struct mtk_pinctrl_devdata mt2712_pinctrl_data = {
++	.pins = mtk_pins_mt2712,
++	.npins = ARRAY_SIZE(mtk_pins_mt2712),
++	.grp_desc = mt2712_drv_grp,
++	.n_grp_cls = ARRAY_SIZE(mt2712_drv_grp),
++	.pin_drv_grp = mt2712_pin_drv,
++	.n_pin_drv_grps = ARRAY_SIZE(mt2712_pin_drv),
++	.spec_pull_set = mt2712_spec_pull_set,
++	.spec_ies_smt_set = mt2712_ies_smt_set,
++	.dir_offset = 0x0000,
++	.pullen_offset = 0x0100,
++	.pullsel_offset = 0x0200,
++	.dout_offset = 0x0300,
++	.din_offset = 0x0400,
++	.pinmux_offset = 0x0500,
++	.type1_start = 210,
++	.type1_end = 210,
++	.port_shf = 4,
++	.port_mask = 0xf,
++	.port_align = 4,
++	.eint_offsets = {
++		.name = "mt2712_eint",
++		.stat      = 0x000,
++		.ack       = 0x040,
++		.mask      = 0x080,
++		.mask_set  = 0x0c0,
++		.mask_clr  = 0x100,
++		.sens      = 0x140,
++		.sens_set  = 0x180,
++		.sens_clr  = 0x1c0,
++		.soft      = 0x200,
++		.soft_set  = 0x240,
++		.soft_clr  = 0x280,
++		.pol       = 0x300,
++		.pol_set   = 0x340,
++		.pol_clr   = 0x380,
++		.dom_en    = 0x400,
++		.dbnc_ctrl = 0x500,
++		.dbnc_set  = 0x600,
++		.dbnc_clr  = 0x700,
++		.port_mask = 0xf,
++		.ports     = 8,
++	},
++	.ap_num = 229,
++	.db_cnt = 40,
++};
++
++static int mt2712_pinctrl_probe(struct platform_device *pdev)
++{
++	return mtk_pctrl_init(pdev, &mt2712_pinctrl_data, NULL);
++}
++
++static const struct of_device_id mt2712_pctrl_match[] = {
++	{
++		.compatible = "mediatek,mt2712-pinctrl",
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, mt2712_pctrl_match);
++
++static struct platform_driver mtk_pinctrl_driver = {
++	.probe = mt2712_pinctrl_probe,
++	.driver = {
++		.name = "mediatek-mt2712-pinctrl",
++		.of_match_table = mt2712_pctrl_match,
++		.pm = &mtk_eint_pm_ops,
++	},
++};
++
++static int __init mtk_pinctrl_init(void)
++{
++	return platform_driver_register(&mtk_pinctrl_driver);
++}
++
++arch_initcall(mtk_pinctrl_init);
++
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
+new file mode 100644
+index 0000000..71f4190
+--- /dev/null
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
+@@ -0,0 +1,1973 @@
 +/*
 + * Copyright (C) 2015 MediaTek Inc.
 + *
@@ -58,1122 +737,1966 @@ index 0000000..44f8ca2
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 + * GNU General Public License for more details.
 + */
-+#ifndef __DTS_MT2712_PINFUNC_H
-+#define __DTS_MT2712_PINFUNC_H
-+
-+#include <dt-bindings/pinctrl/mt65xx.h>
-+
-+#define MT2712_PIN_0_EINT0__FUNC_GPIO0 (MTK_PIN_NO(0) | 0)
-+#define MT2712_PIN_0_EINT0__FUNC_EINT0 (MTK_PIN_NO(0) | 1)
-+#define MT2712_PIN_0_EINT0__FUNC_MBIST_DIAG_SCANOUT (MTK_PIN_NO(0) | 2)
-+#define MT2712_PIN_0_EINT0__FUNC_DSIA_TE (MTK_PIN_NO(0) | 3)
-+#define MT2712_PIN_0_EINT0__FUNC_DSIC_TE (MTK_PIN_NO(0) | 4)
-+#define MT2712_PIN_0_EINT0__FUNC_DIN_D3 (MTK_PIN_NO(0) | 5)
-+#define MT2712_PIN_0_EINT0__FUNC_PURE_HW_PROTECT (MTK_PIN_NO(0) | 6)
-+
-+#define MT2712_PIN_1_EINT1__FUNC_GPIO1 (MTK_PIN_NO(1) | 0)
-+#define MT2712_PIN_1_EINT1__FUNC_EINT1 (MTK_PIN_NO(1) | 1)
-+#define MT2712_PIN_1_EINT1__FUNC_IR_IN (MTK_PIN_NO(1) | 2)
-+#define MT2712_PIN_1_EINT1__FUNC_DSIB_TE (MTK_PIN_NO(1) | 3)
-+#define MT2712_PIN_1_EINT1__FUNC_DSID_TE (MTK_PIN_NO(1) | 4)
-+#define MT2712_PIN_1_EINT1__FUNC_DIN_D4 (MTK_PIN_NO(1) | 5)
-+
-+#define MT2712_PIN_2_EINT2__FUNC_GPIO2 (MTK_PIN_NO(2) | 0)
-+#define MT2712_PIN_2_EINT2__FUNC_EINT2 (MTK_PIN_NO(2) | 1)
-+#define MT2712_PIN_2_EINT2__FUNC_IR_IN (MTK_PIN_NO(2) | 2)
-+#define MT2712_PIN_2_EINT2__FUNC_LCM_RST1 (MTK_PIN_NO(2) | 3)
-+#define MT2712_PIN_2_EINT2__FUNC_DIN_D5 (MTK_PIN_NO(2) | 5)
-+
-+#define MT2712_PIN_3_EINT3__FUNC_GPIO3 (MTK_PIN_NO(3) | 0)
-+#define MT2712_PIN_3_EINT3__FUNC_EINT3 (MTK_PIN_NO(3) | 1)
-+#define MT2712_PIN_3_EINT3__FUNC_IR_IN (MTK_PIN_NO(3) | 2)
-+#define MT2712_PIN_3_EINT3__FUNC_LCM_RST0 (MTK_PIN_NO(3) | 3)
-+#define MT2712_PIN_3_EINT3__FUNC_DIN_D6 (MTK_PIN_NO(3) | 5)
-+
-+#define MT2712_PIN_4_PWM0__FUNC_GPIO4 (MTK_PIN_NO(4) | 0)
-+#define MT2712_PIN_4_PWM0__FUNC_PWM0 (MTK_PIN_NO(4) | 1)
-+#define MT2712_PIN_4_PWM0__FUNC_DISP0_PWM (MTK_PIN_NO(4) | 2)
-+#define MT2712_PIN_4_PWM0__FUNC_DISP1_PWM (MTK_PIN_NO(4) | 3)
-+#define MT2712_PIN_4_PWM0__FUNC_DIN_CLK (MTK_PIN_NO(4) | 5)
-+
-+#define MT2712_PIN_5_PWM1__FUNC_GPIO5 (MTK_PIN_NO(5) | 0)
-+#define MT2712_PIN_5_PWM1__FUNC_PWM1 (MTK_PIN_NO(5) | 1)
-+#define MT2712_PIN_5_PWM1__FUNC_DISP1_PWM (MTK_PIN_NO(5) | 2)
-+#define MT2712_PIN_5_PWM1__FUNC_DISP0_PWM (MTK_PIN_NO(5) | 3)
-+#define MT2712_PIN_5_PWM1__FUNC_DIN_VSYNC (MTK_PIN_NO(5) | 5)
-+
-+#define MT2712_PIN_6_PWM2__FUNC_GPIO6 (MTK_PIN_NO(6) | 0)
-+#define MT2712_PIN_6_PWM2__FUNC_PWM2 (MTK_PIN_NO(6) | 1)
-+#define MT2712_PIN_6_PWM2__FUNC_DISP0_PWM (MTK_PIN_NO(6) | 2)
-+#define MT2712_PIN_6_PWM2__FUNC_DISP1_PWM (MTK_PIN_NO(6) | 3)
-+#define MT2712_PIN_6_PWM2__FUNC_DISP2_PWM (MTK_PIN_NO(6) | 4)
-+#define MT2712_PIN_6_PWM2__FUNC_DIN_HSYNC (MTK_PIN_NO(6) | 5)
-+
-+#define MT2712_PIN_7_PWM3__FUNC_GPIO7 (MTK_PIN_NO(7) | 0)
-+#define MT2712_PIN_7_PWM3__FUNC_PWM3 (MTK_PIN_NO(7) | 1)
-+#define MT2712_PIN_7_PWM3__FUNC_DISP1_PWM (MTK_PIN_NO(7) | 2)
-+#define MT2712_PIN_7_PWM3__FUNC_DISP0_PWM (MTK_PIN_NO(7) | 3)
-+#define MT2712_PIN_7_PWM3__FUNC_LCM_RST2 (MTK_PIN_NO(7) | 4)
-+#define MT2712_PIN_7_PWM3__FUNC_DIN_D0 (MTK_PIN_NO(7) | 5)
-+
-+#define MT2712_PIN_8_PWM4__FUNC_GPIO8 (MTK_PIN_NO(8) | 0)
-+#define MT2712_PIN_8_PWM4__FUNC_PWM4 (MTK_PIN_NO(8) | 1)
-+#define MT2712_PIN_8_PWM4__FUNC_DISP0_PWM (MTK_PIN_NO(8) | 2)
-+#define MT2712_PIN_8_PWM4__FUNC_DISP1_PWM (MTK_PIN_NO(8) | 3)
-+#define MT2712_PIN_8_PWM4__FUNC_DSIA_TE (MTK_PIN_NO(8) | 4)
-+#define MT2712_PIN_8_PWM4__FUNC_DIN_D1 (MTK_PIN_NO(8) | 5)
-+
-+#define MT2712_PIN_9_PWM5__FUNC_GPIO9 (MTK_PIN_NO(9) | 0)
-+#define MT2712_PIN_9_PWM5__FUNC_PWM5 (MTK_PIN_NO(9) | 1)
-+#define MT2712_PIN_9_PWM5__FUNC_DISP1_PWM (MTK_PIN_NO(9) | 2)
-+#define MT2712_PIN_9_PWM5__FUNC_DISP0_PWM (MTK_PIN_NO(9) | 3)
-+#define MT2712_PIN_9_PWM5__FUNC_DSIB_TE (MTK_PIN_NO(9) | 4)
-+#define MT2712_PIN_9_PWM5__FUNC_DIN_D2 (MTK_PIN_NO(9) | 5)
-+
-+#define MT2712_PIN_10_PWM6__FUNC_GPIO10 (MTK_PIN_NO(10) | 0)
-+#define MT2712_PIN_10_PWM6__FUNC_PWM6 (MTK_PIN_NO(10) | 1)
-+#define MT2712_PIN_10_PWM6__FUNC_DISP0_PWM (MTK_PIN_NO(10) | 2)
-+#define MT2712_PIN_10_PWM6__FUNC_DISP1_PWM (MTK_PIN_NO(10) | 3)
-+#define MT2712_PIN_10_PWM6__FUNC_LCM_RST0 (MTK_PIN_NO(10) | 4)
-+
-+#define MT2712_PIN_11_PWM7__FUNC_GPIO11 (MTK_PIN_NO(11) | 0)
-+#define MT2712_PIN_11_PWM7__FUNC_PWM7 (MTK_PIN_NO(11) | 1)
-+#define MT2712_PIN_11_PWM7__FUNC_DISP1_PWM (MTK_PIN_NO(11) | 2)
-+#define MT2712_PIN_11_PWM7__FUNC_DISP0_PWM (MTK_PIN_NO(11) | 3)
-+#define MT2712_PIN_11_PWM7__FUNC_LCM_RST1 (MTK_PIN_NO(11) | 4)
-+
-+#define MT2712_PIN_12_IDDIG_P0__FUNC_GPIO12 (MTK_PIN_NO(12) | 0)
-+#define MT2712_PIN_12_IDDIG_P0__FUNC_IDDIG_A (MTK_PIN_NO(12) | 1)
-+#define MT2712_PIN_12_IDDIG_P0__FUNC_DIN_D7 (MTK_PIN_NO(12) | 5)
-+
-+#define MT2712_PIN_13_DRV_VBUS_P0__FUNC_GPIO13 (MTK_PIN_NO(13) | 0)
-+#define MT2712_PIN_13_DRV_VBUS_P0__FUNC_DRV_VBUS_A (MTK_PIN_NO(13) | 1)
-+
-+#define MT2712_PIN_14_IDDIG_P1__FUNC_GPIO14 (MTK_PIN_NO(14) | 0)
-+#define MT2712_PIN_14_IDDIG_P1__FUNC_IDDIG_B (MTK_PIN_NO(14) | 1)
-+
-+#define MT2712_PIN_15_DRV_VBUS_P1__FUNC_GPIO15 (MTK_PIN_NO(15) | 0)
-+#define MT2712_PIN_15_DRV_VBUS_P1__FUNC_DRV_VBUS_B (MTK_PIN_NO(15) | 1)
-+
-+#define MT2712_PIN_16_DRV_VBUS_P2__FUNC_GPIO16 (MTK_PIN_NO(16) | 0)
-+#define MT2712_PIN_16_DRV_VBUS_P2__FUNC_DRV_VBUS_C (MTK_PIN_NO(16) | 1)
-+
-+#define MT2712_PIN_17_DRV_VBUS_P3__FUNC_GPIO17 (MTK_PIN_NO(17) | 0)
-+#define MT2712_PIN_17_DRV_VBUS_P3__FUNC_DRV_VBUS_D (MTK_PIN_NO(17) | 1)
-+
-+#define MT2712_PIN_18_KPROW0__FUNC_GPIO18 (MTK_PIN_NO(18) | 0)
-+#define MT2712_PIN_18_KPROW0__FUNC_KROW0 (MTK_PIN_NO(18) | 1)
-+
-+#define MT2712_PIN_19_KPCOL0__FUNC_GPIO19 (MTK_PIN_NO(19) | 0)
-+#define MT2712_PIN_19_KPCOL0__FUNC_KCOL0 (MTK_PIN_NO(19) | 1)
-+
-+#define MT2712_PIN_20_KPROW1__FUNC_GPIO20 (MTK_PIN_NO(20) | 0)
-+#define MT2712_PIN_20_KPROW1__FUNC_KROW1 (MTK_PIN_NO(20) | 1)
-+
-+#define MT2712_PIN_21_KPCOL1__FUNC_GPIO21 (MTK_PIN_NO(21) | 0)
-+#define MT2712_PIN_21_KPCOL1__FUNC_KCOL1 (MTK_PIN_NO(21) | 1)
-+
-+#define MT2712_PIN_22_KPROW2__FUNC_GPIO22 (MTK_PIN_NO(22) | 0)
-+#define MT2712_PIN_22_KPROW2__FUNC_KROW2 (MTK_PIN_NO(22) | 1)
-+#define MT2712_PIN_22_KPROW2__FUNC_DISP1_PWM (MTK_PIN_NO(22) | 2)
-+
-+#define MT2712_PIN_23_KPCOL2__FUNC_GPIO23 (MTK_PIN_NO(23) | 0)
-+#define MT2712_PIN_23_KPCOL2__FUNC_KCOL2 (MTK_PIN_NO(23) | 1)
-+#define MT2712_PIN_23_KPCOL2__FUNC_DISP0_PWM (MTK_PIN_NO(23) | 2)
-+
-+#define MT2712_PIN_24_CMMCLK__FUNC_GPIO24 (MTK_PIN_NO(24) | 0)
-+#define MT2712_PIN_24_CMMCLK__FUNC_CMMCLK (MTK_PIN_NO(24) | 1)
-+#define MT2712_PIN_24_CMMCLK__FUNC_DBG_MON_A_1_ (MTK_PIN_NO(24) | 7)
-+
-+#define MT2712_PIN_25_CM2MCLK__FUNC_GPIO25 (MTK_PIN_NO(25) | 0)
-+#define MT2712_PIN_25_CM2MCLK__FUNC_CM2MCLK (MTK_PIN_NO(25) | 1)
-+#define MT2712_PIN_25_CM2MCLK__FUNC_DBG_MON_A_2_ (MTK_PIN_NO(25) | 7)
-+
-+#define MT2712_PIN_26_PCM_TX__FUNC_GPIO26 (MTK_PIN_NO(26) | 0)
-+#define MT2712_PIN_26_PCM_TX__FUNC_PCM1_DO (MTK_PIN_NO(26) | 1)
-+#define MT2712_PIN_26_PCM_TX__FUNC_MRG_TX (MTK_PIN_NO(26) | 2)
-+#define MT2712_PIN_26_PCM_TX__FUNC_DAI_TX (MTK_PIN_NO(26) | 3)
-+#define MT2712_PIN_26_PCM_TX__FUNC_MRG_RX (MTK_PIN_NO(26) | 4)
-+#define MT2712_PIN_26_PCM_TX__FUNC_DAI_RX (MTK_PIN_NO(26) | 5)
-+#define MT2712_PIN_26_PCM_TX__FUNC_PCM1_DI (MTK_PIN_NO(26) | 6)
-+#define MT2712_PIN_26_PCM_TX__FUNC_DBG_MON_A_3_ (MTK_PIN_NO(26) | 7)
-+
-+#define MT2712_PIN_27_PCM_CLK__FUNC_GPIO27 (MTK_PIN_NO(27) | 0)
-+#define MT2712_PIN_27_PCM_CLK__FUNC_PCM1_CLK (MTK_PIN_NO(27) | 1)
-+#define MT2712_PIN_27_PCM_CLK__FUNC_MRG_CLK (MTK_PIN_NO(27) | 2)
-+#define MT2712_PIN_27_PCM_CLK__FUNC_DAI_CLK (MTK_PIN_NO(27) | 3)
-+#define MT2712_PIN_27_PCM_CLK__FUNC_DBG_MON_A_4_ (MTK_PIN_NO(27) | 7)
-+
-+#define MT2712_PIN_28_PCM_RX__FUNC_GPIO28 (MTK_PIN_NO(28) | 0)
-+#define MT2712_PIN_28_PCM_RX__FUNC_PCM1_DI (MTK_PIN_NO(28) | 1)
-+#define MT2712_PIN_28_PCM_RX__FUNC_MRG_RX (MTK_PIN_NO(28) | 2)
-+#define MT2712_PIN_28_PCM_RX__FUNC_DAI_RX (MTK_PIN_NO(28) | 3)
-+#define MT2712_PIN_28_PCM_RX__FUNC_MRG_TX (MTK_PIN_NO(28) | 4)
-+#define MT2712_PIN_28_PCM_RX__FUNC_DAI_TX (MTK_PIN_NO(28) | 5)
-+#define MT2712_PIN_28_PCM_RX__FUNC_PCM1_DO (MTK_PIN_NO(28) | 6)
-+#define MT2712_PIN_28_PCM_RX__FUNC_DBG_MON_A_5_ (MTK_PIN_NO(28) | 7)
-+
-+#define MT2712_PIN_29_PCM_SYNC__FUNC_GPIO29 (MTK_PIN_NO(29) | 0)
-+#define MT2712_PIN_29_PCM_SYNC__FUNC_PCM1_SYNC (MTK_PIN_NO(29) | 1)
-+#define MT2712_PIN_29_PCM_SYNC__FUNC_MRG_SYNC (MTK_PIN_NO(29) | 2)
-+#define MT2712_PIN_29_PCM_SYNC__FUNC_DAI_SYNC (MTK_PIN_NO(29) | 3)
-+#define MT2712_PIN_29_PCM_SYNC__FUNC_DBG_MON_A_6_ (MTK_PIN_NO(29) | 7)
-+
-+#define MT2712_PIN_30_NCEB0__FUNC_GPIO30 (MTK_PIN_NO(30) | 0)
-+#define MT2712_PIN_30_NCEB0__FUNC_NCEB0 (MTK_PIN_NO(30) | 1)
-+#define MT2712_PIN_30_NCEB0__FUNC_USB0_FT_SDA (MTK_PIN_NO(30) | 2)
-+#define MT2712_PIN_30_NCEB0__FUNC_DBG_MON_A_7_ (MTK_PIN_NO(30) | 7)
-+
-+#define MT2712_PIN_31_NCEB1__FUNC_GPIO31 (MTK_PIN_NO(31) | 0)
-+#define MT2712_PIN_31_NCEB1__FUNC_NCEB1 (MTK_PIN_NO(31) | 1)
-+#define MT2712_PIN_31_NCEB1__FUNC_USB1_FT_SCL (MTK_PIN_NO(31) | 2)
-+#define MT2712_PIN_31_NCEB1__FUNC_DBG_MON_A_8_ (MTK_PIN_NO(31) | 7)
-+
-+#define MT2712_PIN_32_NF_DQS__FUNC_GPIO32 (MTK_PIN_NO(32) | 0)
-+#define MT2712_PIN_32_NF_DQS__FUNC_NF_DQS (MTK_PIN_NO(32) | 1)
-+#define MT2712_PIN_32_NF_DQS__FUNC_USB1_FT_SDA (MTK_PIN_NO(32) | 2)
-+#define MT2712_PIN_32_NF_DQS__FUNC_DBG_MON_A_9_ (MTK_PIN_NO(32) | 7)
-+
-+#define MT2712_PIN_33_NWEB__FUNC_GPIO33 (MTK_PIN_NO(33) | 0)
-+#define MT2712_PIN_33_NWEB__FUNC_NWEB (MTK_PIN_NO(33) | 1)
-+#define MT2712_PIN_33_NWEB__FUNC_USB2_FT_SCL (MTK_PIN_NO(33) | 2)
-+#define MT2712_PIN_33_NWEB__FUNC_DBG_MON_A_10_ (MTK_PIN_NO(33) | 7)
-+
-+#define MT2712_PIN_34_NREB__FUNC_GPIO34 (MTK_PIN_NO(34) | 0)
-+#define MT2712_PIN_34_NREB__FUNC_NREB (MTK_PIN_NO(34) | 1)
-+#define MT2712_PIN_34_NREB__FUNC_USB2_FT_SDA (MTK_PIN_NO(34) | 2)
-+#define MT2712_PIN_34_NREB__FUNC_DBG_MON_A_11_ (MTK_PIN_NO(34) | 7)
-+
-+#define MT2712_PIN_35_NCLE__FUNC_GPIO35 (MTK_PIN_NO(35) | 0)
-+#define MT2712_PIN_35_NCLE__FUNC_NCLE (MTK_PIN_NO(35) | 1)
-+#define MT2712_PIN_35_NCLE__FUNC_USB3_FT_SCL (MTK_PIN_NO(35) | 2)
-+#define MT2712_PIN_35_NCLE__FUNC_DBG_MON_A_12_ (MTK_PIN_NO(35) | 7)
-+
-+#define MT2712_PIN_36_NALE__FUNC_GPIO36 (MTK_PIN_NO(36) | 0)
-+#define MT2712_PIN_36_NALE__FUNC_NALE (MTK_PIN_NO(36) | 1)
-+#define MT2712_PIN_36_NALE__FUNC_USB3_FT_SDA (MTK_PIN_NO(36) | 2)
-+#define MT2712_PIN_36_NALE__FUNC_DBG_MON_A_13_ (MTK_PIN_NO(36) | 7)
-+
-+#define MT2712_PIN_37_MSDC0E_CLK__FUNC_GPIO37 (MTK_PIN_NO(37) | 0)
-+#define MT2712_PIN_37_MSDC0E_CLK__FUNC_MSDC0_CLK (MTK_PIN_NO(37) | 1)
-+#define MT2712_PIN_37_MSDC0E_CLK__FUNC_USB0_FT_SCL (MTK_PIN_NO(37) | 2)
-+#define MT2712_PIN_37_MSDC0E_CLK__FUNC_DBG_MON_A_0_ (MTK_PIN_NO(37) | 7)
-+
-+#define MT2712_PIN_38_MSDC0E_DAT7__FUNC_GPIO38 (MTK_PIN_NO(38) | 0)
-+#define MT2712_PIN_38_MSDC0E_DAT7__FUNC_MSDC0_DAT7 (MTK_PIN_NO(38) | 1)
-+#define MT2712_PIN_38_MSDC0E_DAT7__FUNC_NAND_ND7 (MTK_PIN_NO(38) | 2)
-+#define MT2712_PIN_38_MSDC0E_DAT7__FUNC_DBG_MON_A_14_ (MTK_PIN_NO(38) | 7)
-+
-+#define MT2712_PIN_39_MSDC0E_DAT6__FUNC_GPIO39 (MTK_PIN_NO(39) | 0)
-+#define MT2712_PIN_39_MSDC0E_DAT6__FUNC_MSDC0_DAT6 (MTK_PIN_NO(39) | 1)
-+#define MT2712_PIN_39_MSDC0E_DAT6__FUNC_NAND_ND6 (MTK_PIN_NO(39) | 2)
-+#define MT2712_PIN_39_MSDC0E_DAT6__FUNC_DBG_MON_A_15_ (MTK_PIN_NO(39) | 7)
-+
-+#define MT2712_PIN_40_MSDC0E_DAT5__FUNC_GPIO40 (MTK_PIN_NO(40) | 0)
-+#define MT2712_PIN_40_MSDC0E_DAT5__FUNC_MSDC0_DAT5 (MTK_PIN_NO(40) | 1)
-+#define MT2712_PIN_40_MSDC0E_DAT5__FUNC_NAND_ND5 (MTK_PIN_NO(40) | 2)
-+#define MT2712_PIN_40_MSDC0E_DAT5__FUNC_DBG_MON_A_16_ (MTK_PIN_NO(40) | 7)
-+
-+#define MT2712_PIN_41_MSDC0E_DAT4__FUNC_GPIO41 (MTK_PIN_NO(41) | 0)
-+#define MT2712_PIN_41_MSDC0E_DAT4__FUNC_MSDC0_DAT4 (MTK_PIN_NO(41) | 1)
-+#define MT2712_PIN_41_MSDC0E_DAT4__FUNC_NAND_ND4 (MTK_PIN_NO(41) | 2)
-+#define MT2712_PIN_41_MSDC0E_DAT4__FUNC_DBG_MON_A_17_ (MTK_PIN_NO(41) | 7)
-+
-+#define MT2712_PIN_42_MSDC0E_DAT3__FUNC_GPIO42 (MTK_PIN_NO(42) | 0)
-+#define MT2712_PIN_42_MSDC0E_DAT3__FUNC_MSDC0_DAT3 (MTK_PIN_NO(42) | 1)
-+#define MT2712_PIN_42_MSDC0E_DAT3__FUNC_NAND_ND3 (MTK_PIN_NO(42) | 2)
-+#define MT2712_PIN_42_MSDC0E_DAT3__FUNC_DBG_MON_A_18_ (MTK_PIN_NO(42) | 7)
-+
-+#define MT2712_PIN_43_MSDC0E_DAT2__FUNC_GPIO43 (MTK_PIN_NO(43) | 0)
-+#define MT2712_PIN_43_MSDC0E_DAT2__FUNC_MSDC0_DAT2 (MTK_PIN_NO(43) | 1)
-+#define MT2712_PIN_43_MSDC0E_DAT2__FUNC_NAND_ND2 (MTK_PIN_NO(43) | 2)
-+#define MT2712_PIN_43_MSDC0E_DAT2__FUNC_DBG_MON_A_19_ (MTK_PIN_NO(43) | 7)
-+
-+#define MT2712_PIN_44_MSDC0E_DAT1__FUNC_GPIO44 (MTK_PIN_NO(44) | 0)
-+#define MT2712_PIN_44_MSDC0E_DAT1__FUNC_MSDC0_DAT1 (MTK_PIN_NO(44) | 1)
-+#define MT2712_PIN_44_MSDC0E_DAT1__FUNC_NAND_ND1 (MTK_PIN_NO(44) | 2)
-+#define MT2712_PIN_44_MSDC0E_DAT1__FUNC_DBG_MON_A_20_ (MTK_PIN_NO(44) | 7)
-+
-+#define MT2712_PIN_45_MSDC0E_DAT0__FUNC_GPIO45 (MTK_PIN_NO(45) | 0)
-+#define MT2712_PIN_45_MSDC0E_DAT0__FUNC_MSDC0_DAT0 (MTK_PIN_NO(45) | 1)
-+#define MT2712_PIN_45_MSDC0E_DAT0__FUNC_NAND_ND0 (MTK_PIN_NO(45) | 2)
-+#define MT2712_PIN_45_MSDC0E_DAT0__FUNC_DBG_MON_A_21_ (MTK_PIN_NO(45) | 7)
-+
-+#define MT2712_PIN_46_MSDC0E_CMD__FUNC_GPIO46 (MTK_PIN_NO(46) | 0)
-+#define MT2712_PIN_46_MSDC0E_CMD__FUNC_MSDC0_CMD (MTK_PIN_NO(46) | 1)
-+#define MT2712_PIN_46_MSDC0E_CMD__FUNC_NAND_NRNB (MTK_PIN_NO(46) | 2)
-+#define MT2712_PIN_46_MSDC0E_CMD__FUNC_DBG_MON_A_22_ (MTK_PIN_NO(46) | 7)
-+
-+#define MT2712_PIN_47_MSDC0E_DSL__FUNC_GPIO47 (MTK_PIN_NO(47) | 0)
-+#define MT2712_PIN_47_MSDC0E_DSL__FUNC_MSDC0_DSL (MTK_PIN_NO(47) | 1)
-+#define MT2712_PIN_47_MSDC0E_DSL__FUNC_DBG_MON_A_23_ (MTK_PIN_NO(47) | 7)
-+
-+#define MT2712_PIN_48_MSDC0E_RSTB__FUNC_GPIO48 (MTK_PIN_NO(48) | 0)
-+#define MT2712_PIN_48_MSDC0E_RSTB__FUNC_MSDC0_RSTB (MTK_PIN_NO(48) | 1)
-+#define MT2712_PIN_48_MSDC0E_RSTB__FUNC_DBG_MON_A_24_ (MTK_PIN_NO(48) | 7)
-+
-+#define MT2712_PIN_49_MSDC3_DAT3__FUNC_GPIO49 (MTK_PIN_NO(49) | 0)
-+#define MT2712_PIN_49_MSDC3_DAT3__FUNC_MSDC3_DAT3 (MTK_PIN_NO(49) | 1)
-+#define MT2712_PIN_49_MSDC3_DAT3__FUNC_DBG_MON_A_25_ (MTK_PIN_NO(49) | 7)
-+
-+#define MT2712_PIN_50_MSDC3_DAT2__FUNC_GPIO50 (MTK_PIN_NO(50) | 0)
-+#define MT2712_PIN_50_MSDC3_DAT2__FUNC_MSDC3_DAT2 (MTK_PIN_NO(50) | 1)
-+#define MT2712_PIN_50_MSDC3_DAT2__FUNC_DBG_MON_A_26_ (MTK_PIN_NO(50) | 7)
-+
-+#define MT2712_PIN_51_MSDC3_DAT1__FUNC_GPIO51 (MTK_PIN_NO(51) | 0)
-+#define MT2712_PIN_51_MSDC3_DAT1__FUNC_MSDC3_DAT1 (MTK_PIN_NO(51) | 1)
-+#define MT2712_PIN_51_MSDC3_DAT1__FUNC_DBG_MON_A_27_ (MTK_PIN_NO(51) | 7)
-+
-+#define MT2712_PIN_52_MSDC3_DAT0__FUNC_GPIO52 (MTK_PIN_NO(52) | 0)
-+#define MT2712_PIN_52_MSDC3_DAT0__FUNC_MSDC3_DAT0 (MTK_PIN_NO(52) | 1)
-+#define MT2712_PIN_52_MSDC3_DAT0__FUNC_DBG_MON_A_28_ (MTK_PIN_NO(52) | 7)
-+
-+#define MT2712_PIN_53_MSDC3_CMD__FUNC_GPIO53 (MTK_PIN_NO(53) | 0)
-+#define MT2712_PIN_53_MSDC3_CMD__FUNC_MSDC3_CMD (MTK_PIN_NO(53) | 1)
-+#define MT2712_PIN_53_MSDC3_CMD__FUNC_DBG_MON_A_29_ (MTK_PIN_NO(53) | 7)
-+
-+#define MT2712_PIN_54_MSDC3_INS__FUNC_GPIO54 (MTK_PIN_NO(54) | 0)
-+#define MT2712_PIN_54_MSDC3_INS__FUNC_MSDC3_INS (MTK_PIN_NO(54) | 1)
-+#define MT2712_PIN_54_MSDC3_INS__FUNC_DBG_MON_A_30_ (MTK_PIN_NO(54) | 7)
-+
-+#define MT2712_PIN_55_MSDC3_DSL__FUNC_GPIO55 (MTK_PIN_NO(55) | 0)
-+#define MT2712_PIN_55_MSDC3_DSL__FUNC_MSDC3_DSL (MTK_PIN_NO(55) | 1)
-+#define MT2712_PIN_55_MSDC3_DSL__FUNC_DBG_MON_A_31_ (MTK_PIN_NO(55) | 7)
-+
-+#define MT2712_PIN_56_MSDC3_CLK__FUNC_GPIO56 (MTK_PIN_NO(56) | 0)
-+#define MT2712_PIN_56_MSDC3_CLK__FUNC_MSDC3_CLK (MTK_PIN_NO(56) | 1)
-+#define MT2712_PIN_56_MSDC3_CLK__FUNC_DBG_MON_A_32_ (MTK_PIN_NO(56) | 7)
-+
-+#define MT2712_PIN_57_NOR_CS__FUNC_GPIO57 (MTK_PIN_NO(57) | 0)
-+#define MT2712_PIN_57_NOR_CS__FUNC_NOR_CS (MTK_PIN_NO(57) | 1)
-+
-+#define MT2712_PIN_58_NOR_CK__FUNC_GPIO58 (MTK_PIN_NO(58) | 0)
-+#define MT2712_PIN_58_NOR_CK__FUNC_NOR_CK (MTK_PIN_NO(58) | 1)
-+
-+#define MT2712_PIN_59_NOR_IO0__FUNC_GPIO59 (MTK_PIN_NO(59) | 0)
-+#define MT2712_PIN_59_NOR_IO0__FUNC_NOR_IO0 (MTK_PIN_NO(59) | 1)
-+
-+#define MT2712_PIN_60_NOR_IO1__FUNC_GPIO60 (MTK_PIN_NO(60) | 0)
-+#define MT2712_PIN_60_NOR_IO1__FUNC_NOR_IO1 (MTK_PIN_NO(60) | 1)
-+
-+#define MT2712_PIN_61_NOR_IO2__FUNC_GPIO61 (MTK_PIN_NO(61) | 0)
-+#define MT2712_PIN_61_NOR_IO2__FUNC_NOR_IO2 (MTK_PIN_NO(61) | 1)
-+
-+#define MT2712_PIN_62_NOR_IO3__FUNC_GPIO62 (MTK_PIN_NO(62) | 0)
-+#define MT2712_PIN_62_NOR_IO3__FUNC_NOR_IO3 (MTK_PIN_NO(62) | 1)
-+
-+#define MT2712_PIN_63_MSDC1_CLK__FUNC_GPIO63 (MTK_PIN_NO(63) | 0)
-+#define MT2712_PIN_63_MSDC1_CLK__FUNC_MSDC1_CLK (MTK_PIN_NO(63) | 1)
-+#define MT2712_PIN_63_MSDC1_CLK__FUNC_UDI_TCK (MTK_PIN_NO(63) | 2)
-+
-+#define MT2712_PIN_64_MSDC1_DAT3__FUNC_GPIO64 (MTK_PIN_NO(64) | 0)
-+#define MT2712_PIN_64_MSDC1_DAT3__FUNC_MSDC1_DAT3 (MTK_PIN_NO(64) | 1)
-+#define MT2712_PIN_64_MSDC1_DAT3__FUNC_UDI_TDI (MTK_PIN_NO(64) | 2)
-+
-+#define MT2712_PIN_65_MSDC1_DAT1__FUNC_GPIO65 (MTK_PIN_NO(65) | 0)
-+#define MT2712_PIN_65_MSDC1_DAT1__FUNC_MSDC1_DAT1 (MTK_PIN_NO(65) | 1)
-+#define MT2712_PIN_65_MSDC1_DAT1__FUNC_UDI_TMS (MTK_PIN_NO(65) | 2)
-+
-+#define MT2712_PIN_66_MSDC1_DAT2__FUNC_GPIO66 (MTK_PIN_NO(66) | 0)
-+#define MT2712_PIN_66_MSDC1_DAT2__FUNC_MSDC1_DAT2 (MTK_PIN_NO(66) | 1)
-+#define MT2712_PIN_66_MSDC1_DAT2__FUNC_UDI_TDO (MTK_PIN_NO(66) | 2)
-+
-+#define MT2712_PIN_67_MSDC1_PSW__FUNC_GPIO67 (MTK_PIN_NO(67) | 0)
-+#define MT2712_PIN_67_MSDC1_PSW__FUNC_UDI_NTRST (MTK_PIN_NO(67) | 2)
-+
-+#define MT2712_PIN_68_MSDC1_DAT0__FUNC_GPIO68 (MTK_PIN_NO(68) | 0)
-+#define MT2712_PIN_68_MSDC1_DAT0__FUNC_MSDC1_DAT0 (MTK_PIN_NO(68) | 1)
-+
-+#define MT2712_PIN_69_MSDC1_CMD__FUNC_GPIO69 (MTK_PIN_NO(69) | 0)
-+#define MT2712_PIN_69_MSDC1_CMD__FUNC_MSDC1_CMD (MTK_PIN_NO(69) | 1)
-+
-+#define MT2712_PIN_70_MSDC1_INS__FUNC_GPIO70 (MTK_PIN_NO(70) | 0)
-+
-+#define MT2712_PIN_71_GBE_TXD3__FUNC_GPIO71 (MTK_PIN_NO(71) | 0)
-+#define MT2712_PIN_71_GBE_TXD3__FUNC_GBE_TXD3 (MTK_PIN_NO(71) | 1)
-+#define MT2712_PIN_71_GBE_TXD3__FUNC_DBG_MON_B_0_ (MTK_PIN_NO(71) | 7)
-+
-+#define MT2712_PIN_72_GBE_TXD2__FUNC_GPIO72 (MTK_PIN_NO(72) | 0)
-+#define MT2712_PIN_72_GBE_TXD2__FUNC_GBE_TXD2 (MTK_PIN_NO(72) | 1)
-+#define MT2712_PIN_72_GBE_TXD2__FUNC_DBG_MON_B_1_ (MTK_PIN_NO(72) | 7)
-+
-+#define MT2712_PIN_73_GBE_TXD1__FUNC_GPIO73 (MTK_PIN_NO(73) | 0)
-+#define MT2712_PIN_73_GBE_TXD1__FUNC_GBE_TXD1 (MTK_PIN_NO(73) | 1)
-+#define MT2712_PIN_73_GBE_TXD1__FUNC_DBG_MON_B_2_ (MTK_PIN_NO(73) | 7)
-+
-+#define MT2712_PIN_74_GBE_TXD0__FUNC_GPIO74 (MTK_PIN_NO(74) | 0)
-+#define MT2712_PIN_74_GBE_TXD0__FUNC_GBE_TXD0 (MTK_PIN_NO(74) | 1)
-+#define MT2712_PIN_74_GBE_TXD0__FUNC_DBG_MON_B_3_ (MTK_PIN_NO(74) | 7)
-+
-+#define MT2712_PIN_75_GBE_TXC__FUNC_GPIO75 (MTK_PIN_NO(75) | 0)
-+#define MT2712_PIN_75_GBE_TXC__FUNC_GBE_TXC (MTK_PIN_NO(75) | 1)
-+#define MT2712_PIN_75_GBE_TXC__FUNC_DBG_MON_B_4_ (MTK_PIN_NO(75) | 7)
-+
-+#define MT2712_PIN_76_GBE_TXEN__FUNC_GPIO76 (MTK_PIN_NO(76) | 0)
-+#define MT2712_PIN_76_GBE_TXEN__FUNC_GBE_TXEN (MTK_PIN_NO(76) | 1)
-+#define MT2712_PIN_76_GBE_TXEN__FUNC_DBG_MON_B_5_ (MTK_PIN_NO(76) | 7)
-+
-+#define MT2712_PIN_77_GBE_TXER__FUNC_GPIO77 (MTK_PIN_NO(77) | 0)
-+#define MT2712_PIN_77_GBE_TXER__FUNC_GBE_TXER (MTK_PIN_NO(77) | 1)
-+#define MT2712_PIN_77_GBE_TXER__FUNC_DBG_MON_B_6_ (MTK_PIN_NO(77) | 7)
-+
-+#define MT2712_PIN_78_GBE_RXD3__FUNC_GPIO78 (MTK_PIN_NO(78) | 0)
-+#define MT2712_PIN_78_GBE_RXD3__FUNC_GBE_RXD3 (MTK_PIN_NO(78) | 1)
-+#define MT2712_PIN_78_GBE_RXD3__FUNC_DBG_MON_B_7_ (MTK_PIN_NO(78) | 7)
-+
-+#define MT2712_PIN_79_GBE_RXD2__FUNC_GPIO79 (MTK_PIN_NO(79) | 0)
-+#define MT2712_PIN_79_GBE_RXD2__FUNC_GBE_RXD2 (MTK_PIN_NO(79) | 1)
-+#define MT2712_PIN_79_GBE_RXD2__FUNC_DBG_MON_B_8_ (MTK_PIN_NO(79) | 7)
-+
-+#define MT2712_PIN_80_GBE_RXD1__FUNC_GPIO80 (MTK_PIN_NO(80) | 0)
-+#define MT2712_PIN_80_GBE_RXD1__FUNC_GBE_RXD1 (MTK_PIN_NO(80) | 1)
-+#define MT2712_PIN_80_GBE_RXD1__FUNC_DBG_MON_B_9_ (MTK_PIN_NO(80) | 7)
-+
-+#define MT2712_PIN_81_GBE_RXD0__FUNC_GPIO81 (MTK_PIN_NO(81) | 0)
-+#define MT2712_PIN_81_GBE_RXD0__FUNC_GBE_RXD0 (MTK_PIN_NO(81) | 1)
-+#define MT2712_PIN_81_GBE_RXD0__FUNC_DBG_MON_B_10_ (MTK_PIN_NO(81) | 7)
-+
-+#define MT2712_PIN_82_GBE_RXDV__FUNC_GPIO82 (MTK_PIN_NO(82) | 0)
-+#define MT2712_PIN_82_GBE_RXDV__FUNC_GBE_RXDV (MTK_PIN_NO(82) | 1)
-+#define MT2712_PIN_82_GBE_RXDV__FUNC_DBG_MON_B_11_ (MTK_PIN_NO(82) | 7)
-+
-+#define MT2712_PIN_83_GBE_RXER__FUNC_GPIO83 (MTK_PIN_NO(83) | 0)
-+#define MT2712_PIN_83_GBE_RXER__FUNC_GBE_RXER (MTK_PIN_NO(83) | 1)
-+#define MT2712_PIN_83_GBE_RXER__FUNC_DBG_MON_B_12_ (MTK_PIN_NO(83) | 7)
-+
-+#define MT2712_PIN_84_GBE_RXC__FUNC_GPIO84 (MTK_PIN_NO(84) | 0)
-+#define MT2712_PIN_84_GBE_RXC__FUNC_GBE_RXC (MTK_PIN_NO(84) | 1)
-+#define MT2712_PIN_84_GBE_RXC__FUNC_DBG_MON_B_13_ (MTK_PIN_NO(84) | 7)
-+
-+#define MT2712_PIN_85_GBE_MDC__FUNC_GPIO85 (MTK_PIN_NO(85) | 0)
-+#define MT2712_PIN_85_GBE_MDC__FUNC_GBE_MDC (MTK_PIN_NO(85) | 1)
-+#define MT2712_PIN_85_GBE_MDC__FUNC_DBG_MON_B_14_ (MTK_PIN_NO(85) | 7)
-+
-+#define MT2712_PIN_86_GBE_MDIO__FUNC_GPIO86 (MTK_PIN_NO(86) | 0)
-+#define MT2712_PIN_86_GBE_MDIO__FUNC_GBE_MDIO (MTK_PIN_NO(86) | 1)
-+#define MT2712_PIN_86_GBE_MDIO__FUNC_DBG_MON_B_15_ (MTK_PIN_NO(86) | 7)
-+
-+#define MT2712_PIN_87_GBE_COL__FUNC_GPIO87 (MTK_PIN_NO(87) | 0)
-+#define MT2712_PIN_87_GBE_COL__FUNC_GBE_COL (MTK_PIN_NO(87) | 1)
-+#define MT2712_PIN_87_GBE_COL__FUNC_DBG_MON_B_16_ (MTK_PIN_NO(87) | 7)
-+
-+#define MT2712_PIN_88_GBE_INTR__FUNC_GPIO88 (MTK_PIN_NO(88) | 0)
-+#define MT2712_PIN_88_GBE_INTR__FUNC_GBE_INTR (MTK_PIN_NO(88) | 1)
-+#define MT2712_PIN_88_GBE_INTR__FUNC_GBE_CRS (MTK_PIN_NO(88) | 2)
-+#define MT2712_PIN_88_GBE_INTR__FUNC_DBG_MON_B_17_ (MTK_PIN_NO(88) | 7)
-+
-+#define MT2712_PIN_89_MSDC2_CLK__FUNC_GPIO89 (MTK_PIN_NO(89) | 0)
-+#define MT2712_PIN_89_MSDC2_CLK__FUNC_MSDC2_CLK (MTK_PIN_NO(89) | 1)
-+#define MT2712_PIN_89_MSDC2_CLK__FUNC_DBG_MON_B_18_ (MTK_PIN_NO(89) | 7)
-+
-+#define MT2712_PIN_90_MSDC2_DAT3__FUNC_GPIO90 (MTK_PIN_NO(90) | 0)
-+#define MT2712_PIN_90_MSDC2_DAT3__FUNC_MSDC2_DAT3 (MTK_PIN_NO(90) | 1)
-+#define MT2712_PIN_90_MSDC2_DAT3__FUNC_DBG_MON_B_19_ (MTK_PIN_NO(90) | 7)
-+
-+#define MT2712_PIN_91_MSDC2_DAT2__FUNC_GPIO91 (MTK_PIN_NO(91) | 0)
-+#define MT2712_PIN_91_MSDC2_DAT2__FUNC_MSDC2_DAT2 (MTK_PIN_NO(91) | 1)
-+#define MT2712_PIN_91_MSDC2_DAT2__FUNC_DBG_MON_B_20_ (MTK_PIN_NO(91) | 7)
-+
-+#define MT2712_PIN_92_MSDC2_DAT1__FUNC_GPIO92 (MTK_PIN_NO(92) | 0)
-+#define MT2712_PIN_92_MSDC2_DAT1__FUNC_MSDC2_DAT1 (MTK_PIN_NO(92) | 1)
-+#define MT2712_PIN_92_MSDC2_DAT1__FUNC_DBG_MON_B_21_ (MTK_PIN_NO(92) | 7)
-+
-+#define MT2712_PIN_93_MSDC2_DAT0__FUNC_GPIO93 (MTK_PIN_NO(93) | 0)
-+#define MT2712_PIN_93_MSDC2_DAT0__FUNC_MSDC2_DAT0 (MTK_PIN_NO(93) | 1)
-+#define MT2712_PIN_93_MSDC2_DAT0__FUNC_DBG_MON_B_22_ (MTK_PIN_NO(93) | 7)
-+
-+#define MT2712_PIN_94_MSDC2_INS__FUNC_GPIO94 (MTK_PIN_NO(94) | 0)
-+#define MT2712_PIN_94_MSDC2_INS__FUNC_DBG_MON_B_23_ (MTK_PIN_NO(94) | 7)
-+
-+#define MT2712_PIN_95_MSDC2_CMD__FUNC_GPIO95 (MTK_PIN_NO(95) | 0)
-+#define MT2712_PIN_95_MSDC2_CMD__FUNC_MSDC2_CMD (MTK_PIN_NO(95) | 1)
-+#define MT2712_PIN_95_MSDC2_CMD__FUNC_DBG_MON_B_24_ (MTK_PIN_NO(95) | 7)
-+
-+#define MT2712_PIN_96_MSDC2_PSW__FUNC_GPIO96 (MTK_PIN_NO(96) | 0)
-+#define MT2712_PIN_96_MSDC2_PSW__FUNC_DBG_MON_B_25_ (MTK_PIN_NO(96) | 7)
-+
-+#define MT2712_PIN_97_URXD4__FUNC_GPIO97 (MTK_PIN_NO(97) | 0)
-+#define MT2712_PIN_97_URXD4__FUNC_URXD4 (MTK_PIN_NO(97) | 1)
-+#define MT2712_PIN_97_URXD4__FUNC_UTXD4 (MTK_PIN_NO(97) | 2)
-+#define MT2712_PIN_97_URXD4__FUNC_MRG_CLK (MTK_PIN_NO(97) | 3)
-+#define MT2712_PIN_97_URXD4__FUNC_PCM1_CLK (MTK_PIN_NO(97) | 4)
-+#define MT2712_PIN_97_URXD4__FUNC_I2S_IQ2_SDQB (MTK_PIN_NO(97) | 5)
-+#define MT2712_PIN_97_URXD4__FUNC_I2SO1_WS (MTK_PIN_NO(97) | 6)
-+#define MT2712_PIN_97_URXD4__FUNC_DBG_MON_B_26_ (MTK_PIN_NO(97) | 7)
-+
-+#define MT2712_PIN_98_URTS4__FUNC_GPIO98 (MTK_PIN_NO(98) | 0)
-+#define MT2712_PIN_98_URTS4__FUNC_URTS4 (MTK_PIN_NO(98) | 1)
-+#define MT2712_PIN_98_URTS4__FUNC_UCTS4 (MTK_PIN_NO(98) | 2)
-+#define MT2712_PIN_98_URTS4__FUNC_MRG_RX (MTK_PIN_NO(98) | 3)
-+#define MT2712_PIN_98_URTS4__FUNC_PCM1_DI (MTK_PIN_NO(98) | 4)
-+#define MT2712_PIN_98_URTS4__FUNC_I2S_IQ1_SDIB (MTK_PIN_NO(98) | 5)
-+#define MT2712_PIN_98_URTS4__FUNC_I2SO1_MCK (MTK_PIN_NO(98) | 6)
-+#define MT2712_PIN_98_URTS4__FUNC_DBG_MON_B_27_ (MTK_PIN_NO(98) | 7)
-+
-+#define MT2712_PIN_99_UTXD4__FUNC_GPIO99 (MTK_PIN_NO(99) | 0)
-+#define MT2712_PIN_99_UTXD4__FUNC_UTXD4 (MTK_PIN_NO(99) | 1)
-+#define MT2712_PIN_99_UTXD4__FUNC_URXD4 (MTK_PIN_NO(99) | 2)
-+#define MT2712_PIN_99_UTXD4__FUNC_MRG_SYNC (MTK_PIN_NO(99) | 3)
-+#define MT2712_PIN_99_UTXD4__FUNC_PCM1_SYNC (MTK_PIN_NO(99) | 4)
-+#define MT2712_PIN_99_UTXD4__FUNC_I2S_IQ0_SDQB (MTK_PIN_NO(99) | 5)
-+#define MT2712_PIN_99_UTXD4__FUNC_I2SO1_BCK (MTK_PIN_NO(99) | 6)
-+#define MT2712_PIN_99_UTXD4__FUNC_DBG_MON_B_28_ (MTK_PIN_NO(99) | 7)
-+
-+#define MT2712_PIN_100_UCTS4__FUNC_GPIO100 (MTK_PIN_NO(100) | 0)
-+#define MT2712_PIN_100_UCTS4__FUNC_UCTS4 (MTK_PIN_NO(100) | 1)
-+#define MT2712_PIN_100_UCTS4__FUNC_URTS4 (MTK_PIN_NO(100) | 2)
-+#define MT2712_PIN_100_UCTS4__FUNC_MRG_TX (MTK_PIN_NO(100) | 3)
-+#define MT2712_PIN_100_UCTS4__FUNC_PCM1_DO (MTK_PIN_NO(100) | 4)
-+#define MT2712_PIN_100_UCTS4__FUNC_I2S_IQ0_SDIB (MTK_PIN_NO(100) | 5)
-+#define MT2712_PIN_100_UCTS4__FUNC_I2SO1_DO (MTK_PIN_NO(100) | 6)
-+#define MT2712_PIN_100_UCTS4__FUNC_DBG_MON_B_29_ (MTK_PIN_NO(100) | 7)
-+
-+#define MT2712_PIN_101_URXD5__FUNC_GPIO101 (MTK_PIN_NO(101) | 0)
-+#define MT2712_PIN_101_URXD5__FUNC_URXD5 (MTK_PIN_NO(101) | 1)
-+#define MT2712_PIN_101_URXD5__FUNC_UTXD5 (MTK_PIN_NO(101) | 2)
-+#define MT2712_PIN_101_URXD5__FUNC_I2SO3_WS (MTK_PIN_NO(101) | 3)
-+#define MT2712_PIN_101_URXD5__FUNC_TDMIN_LRCK (MTK_PIN_NO(101) | 4)
-+#define MT2712_PIN_101_URXD5__FUNC_I2SO0_WS (MTK_PIN_NO(101) | 6)
-+#define MT2712_PIN_101_URXD5__FUNC_DBG_MON_B_30_ (MTK_PIN_NO(101) | 7)
-+
-+#define MT2712_PIN_102_URTS5__FUNC_GPIO102 (MTK_PIN_NO(102) | 0)
-+#define MT2712_PIN_102_URTS5__FUNC_URTS5 (MTK_PIN_NO(102) | 1)
-+#define MT2712_PIN_102_URTS5__FUNC_UCTS5 (MTK_PIN_NO(102) | 2)
-+#define MT2712_PIN_102_URTS5__FUNC_I2SO3_MCK (MTK_PIN_NO(102) | 3)
-+#define MT2712_PIN_102_URTS5__FUNC_TDMIN_MCLK (MTK_PIN_NO(102) | 4)
-+#define MT2712_PIN_102_URTS5__FUNC_IR_IN (MTK_PIN_NO(102) | 5)
-+#define MT2712_PIN_102_URTS5__FUNC_I2SO0_MCK (MTK_PIN_NO(102) | 6)
-+#define MT2712_PIN_102_URTS5__FUNC_DBG_MON_B_31_ (MTK_PIN_NO(102) | 7)
-+
-+#define MT2712_PIN_103_UTXD5__FUNC_GPIO103 (MTK_PIN_NO(103) | 0)
-+#define MT2712_PIN_103_UTXD5__FUNC_UTXD5 (MTK_PIN_NO(103) | 1)
-+#define MT2712_PIN_103_UTXD5__FUNC_URXD5 (MTK_PIN_NO(103) | 2)
-+#define MT2712_PIN_103_UTXD5__FUNC_I2SO3_BCK (MTK_PIN_NO(103) | 3)
-+#define MT2712_PIN_103_UTXD5__FUNC_TDMIN_BCK (MTK_PIN_NO(103) | 4)
-+#define MT2712_PIN_103_UTXD5__FUNC_I2SO0_BCK (MTK_PIN_NO(103) | 6)
-+#define MT2712_PIN_103_UTXD5__FUNC_DBG_MON_B_32_ (MTK_PIN_NO(103) | 7)
-+
-+#define MT2712_PIN_104_UCTS5__FUNC_GPIO104 (MTK_PIN_NO(104) | 0)
-+#define MT2712_PIN_104_UCTS5__FUNC_UCTS5 (MTK_PIN_NO(104) | 1)
-+#define MT2712_PIN_104_UCTS5__FUNC_URTS5 (MTK_PIN_NO(104) | 2)
-+#define MT2712_PIN_104_UCTS5__FUNC_I2SO0_DO1 (MTK_PIN_NO(104) | 3)
-+#define MT2712_PIN_104_UCTS5__FUNC_TDMIN_DI (MTK_PIN_NO(104) | 4)
-+#define MT2712_PIN_104_UCTS5__FUNC_IR_IN (MTK_PIN_NO(104) | 5)
-+#define MT2712_PIN_104_UCTS5__FUNC_I2SO0_DO0 (MTK_PIN_NO(104) | 6)
-+
-+#define MT2712_PIN_105_I2C_SDA0__FUNC_GPIO105 (MTK_PIN_NO(105) | 0)
-+#define MT2712_PIN_105_I2C_SDA0__FUNC_SDA0 (MTK_PIN_NO(105) | 1)
-+
-+#define MT2712_PIN_106_I2C_SDA1__FUNC_GPIO106 (MTK_PIN_NO(106) | 0)
-+#define MT2712_PIN_106_I2C_SDA1__FUNC_SDA1 (MTK_PIN_NO(106) | 1)
-+
-+#define MT2712_PIN_107_I2C_SDA2__FUNC_GPIO107 (MTK_PIN_NO(107) | 0)
-+#define MT2712_PIN_107_I2C_SDA2__FUNC_SDA2 (MTK_PIN_NO(107) | 1)
-+
-+#define MT2712_PIN_108_I2C_SDA3__FUNC_GPIO108 (MTK_PIN_NO(108) | 0)
-+#define MT2712_PIN_108_I2C_SDA3__FUNC_SDA3 (MTK_PIN_NO(108) | 1)
-+
-+#define MT2712_PIN_109_I2C_SDA4__FUNC_GPIO109 (MTK_PIN_NO(109) | 0)
-+#define MT2712_PIN_109_I2C_SDA4__FUNC_SDA4 (MTK_PIN_NO(109) | 1)
-+
-+#define MT2712_PIN_110_I2C_SDA5__FUNC_GPIO110 (MTK_PIN_NO(110) | 0)
-+#define MT2712_PIN_110_I2C_SDA5__FUNC_SDA5 (MTK_PIN_NO(110) | 1)
-+
-+#define MT2712_PIN_111_I2C_SCL0__FUNC_GPIO111 (MTK_PIN_NO(111) | 0)
-+#define MT2712_PIN_111_I2C_SCL0__FUNC_SCL0 (MTK_PIN_NO(111) | 1)
-+
-+#define MT2712_PIN_112_I2C_SCL1__FUNC_GPIO112 (MTK_PIN_NO(112) | 0)
-+#define MT2712_PIN_112_I2C_SCL1__FUNC_SCL1 (MTK_PIN_NO(112) | 1)
-+
-+#define MT2712_PIN_113_I2C_SCL2__FUNC_GPIO113 (MTK_PIN_NO(113) | 0)
-+#define MT2712_PIN_113_I2C_SCL2__FUNC_SCL2 (MTK_PIN_NO(113) | 1)
-+
-+#define MT2712_PIN_114_I2C_SCL3__FUNC_GPIO114 (MTK_PIN_NO(114) | 0)
-+#define MT2712_PIN_114_I2C_SCL3__FUNC_SCL3 (MTK_PIN_NO(114) | 1)
-+
-+#define MT2712_PIN_115_I2C_SCL4__FUNC_GPIO115 (MTK_PIN_NO(115) | 0)
-+#define MT2712_PIN_115_I2C_SCL4__FUNC_SCL4 (MTK_PIN_NO(115) | 1)
-+
-+#define MT2712_PIN_116_I2C_SCL5__FUNC_GPIO116 (MTK_PIN_NO(116) | 0)
-+#define MT2712_PIN_116_I2C_SCL5__FUNC_SCL5 (MTK_PIN_NO(116) | 1)
-+
-+#define MT2712_PIN_117_URXD0__FUNC_GPIO117 (MTK_PIN_NO(117) | 0)
-+#define MT2712_PIN_117_URXD0__FUNC_URXD0 (MTK_PIN_NO(117) | 1)
-+#define MT2712_PIN_117_URXD0__FUNC_UTXD0 (MTK_PIN_NO(117) | 2)
-+
-+#define MT2712_PIN_118_URXD1__FUNC_GPIO118 (MTK_PIN_NO(118) | 0)
-+#define MT2712_PIN_118_URXD1__FUNC_URXD1 (MTK_PIN_NO(118) | 1)
-+#define MT2712_PIN_118_URXD1__FUNC_UTXD1 (MTK_PIN_NO(118) | 2)
-+
-+#define MT2712_PIN_119_URXD2__FUNC_GPIO119 (MTK_PIN_NO(119) | 0)
-+#define MT2712_PIN_119_URXD2__FUNC_URXD2 (MTK_PIN_NO(119) | 1)
-+#define MT2712_PIN_119_URXD2__FUNC_UTXD2 (MTK_PIN_NO(119) | 2)
-+
-+#define MT2712_PIN_120_UTXD0__FUNC_GPIO120 (MTK_PIN_NO(120) | 0)
-+#define MT2712_PIN_120_UTXD0__FUNC_UTXD0 (MTK_PIN_NO(120) | 1)
-+#define MT2712_PIN_120_UTXD0__FUNC_URXD0 (MTK_PIN_NO(120) | 2)
-+
-+#define MT2712_PIN_121_UTXD1__FUNC_GPIO121 (MTK_PIN_NO(121) | 0)
-+#define MT2712_PIN_121_UTXD1__FUNC_UTXD1 (MTK_PIN_NO(121) | 1)
-+#define MT2712_PIN_121_UTXD1__FUNC_URXD1 (MTK_PIN_NO(121) | 2)
-+
-+#define MT2712_PIN_122_UTXD2__FUNC_GPIO122 (MTK_PIN_NO(122) | 0)
-+#define MT2712_PIN_122_UTXD2__FUNC_UTXD2 (MTK_PIN_NO(122) | 1)
-+#define MT2712_PIN_122_UTXD2__FUNC_URXD2 (MTK_PIN_NO(122) | 2)
-+
-+#define MT2712_PIN_123_URXD3__FUNC_GPIO123 (MTK_PIN_NO(123) | 0)
-+#define MT2712_PIN_123_URXD3__FUNC_URXD3 (MTK_PIN_NO(123) | 1)
-+#define MT2712_PIN_123_URXD3__FUNC_UTXD3 (MTK_PIN_NO(123) | 2)
-+#define MT2712_PIN_123_URXD3__FUNC_PURE_HW_PROTECT (MTK_PIN_NO(123) | 3)
-+
-+#define MT2712_PIN_124_UTXD3__FUNC_GPIO124 (MTK_PIN_NO(124) | 0)
-+#define MT2712_PIN_124_UTXD3__FUNC_UTXD3 (MTK_PIN_NO(124) | 1)
-+#define MT2712_PIN_124_UTXD3__FUNC_URXD3 (MTK_PIN_NO(124) | 2)
-+#define MT2712_PIN_124_UTXD3__FUNC_PURE_HW_PROTECT (MTK_PIN_NO(124) | 3)
-+
-+#define MT2712_PIN_125_URTS3__FUNC_GPIO125 (MTK_PIN_NO(125) | 0)
-+#define MT2712_PIN_125_URTS3__FUNC_URTS3 (MTK_PIN_NO(125) | 1)
-+#define MT2712_PIN_125_URTS3__FUNC_UCTS3 (MTK_PIN_NO(125) | 2)
-+#define MT2712_PIN_125_URTS3__FUNC_WATCH_DOG (MTK_PIN_NO(125) | 3)
-+
-+#define MT2712_PIN_126_UCTS3__FUNC_GPIO126 (MTK_PIN_NO(126) | 0)
-+#define MT2712_PIN_126_UCTS3__FUNC_UCTS3 (MTK_PIN_NO(126) | 1)
-+#define MT2712_PIN_126_UCTS3__FUNC_URTS3 (MTK_PIN_NO(126) | 2)
-+#define MT2712_PIN_126_UCTS3__FUNC_SRCLKENA0 (MTK_PIN_NO(126) | 3)
-+
-+#define MT2712_PIN_127_SPI2_CSN__FUNC_GPIO127 (MTK_PIN_NO(127) | 0)
-+#define MT2712_PIN_127_SPI2_CSN__FUNC_SPI_CS_2_ (MTK_PIN_NO(127) | 1)
-+#define MT2712_PIN_127_SPI2_CSN__FUNC_SPI_CS_1_ (MTK_PIN_NO(127) | 2)
-+
-+#define MT2712_PIN_128_SPI2_MO__FUNC_GPIO128 (MTK_PIN_NO(128) | 0)
-+#define MT2712_PIN_128_SPI2_MO__FUNC_SPI_MO_2_ (MTK_PIN_NO(128) | 1)
-+#define MT2712_PIN_128_SPI2_MO__FUNC_SPI_SO_1_ (MTK_PIN_NO(128) | 2)
-+
-+#define MT2712_PIN_129_SPI2_MI__FUNC_GPIO129 (MTK_PIN_NO(129) | 0)
-+#define MT2712_PIN_129_SPI2_MI__FUNC_SPI_MI_2_ (MTK_PIN_NO(129) | 1)
-+#define MT2712_PIN_129_SPI2_MI__FUNC_SPI_SI_1_ (MTK_PIN_NO(129) | 2)
-+
-+#define MT2712_PIN_130_SPI2_CK__FUNC_GPIO130 (MTK_PIN_NO(130) | 0)
-+#define MT2712_PIN_130_SPI2_CK__FUNC_SPI_CK_2_ (MTK_PIN_NO(130) | 1)
-+#define MT2712_PIN_130_SPI2_CK__FUNC_SPI_CK_1_ (MTK_PIN_NO(130) | 2)
-+
-+#define MT2712_PIN_131_SPI3_CSN__FUNC_GPIO131 (MTK_PIN_NO(131) | 0)
-+#define MT2712_PIN_131_SPI3_CSN__FUNC_SPI_CS_3_ (MTK_PIN_NO(131) | 1)
-+
-+#define MT2712_PIN_132_SPI3_MO__FUNC_GPIO132 (MTK_PIN_NO(132) | 0)
-+#define MT2712_PIN_132_SPI3_MO__FUNC_SPI_MO_3_ (MTK_PIN_NO(132) | 1)
-+
-+#define MT2712_PIN_133_SPI3_MI__FUNC_GPIO133 (MTK_PIN_NO(133) | 0)
-+#define MT2712_PIN_133_SPI3_MI__FUNC_SPI_MI_3_ (MTK_PIN_NO(133) | 1)
-+
-+#define MT2712_PIN_134_SPI3_CK__FUNC_GPIO134 (MTK_PIN_NO(134) | 0)
-+#define MT2712_PIN_134_SPI3_CK__FUNC_SPI_CK_3_ (MTK_PIN_NO(134) | 1)
-+
-+#define MT2712_PIN_135_KPROW3__FUNC_GPIO135 (MTK_PIN_NO(135) | 0)
-+#define MT2712_PIN_135_KPROW3__FUNC_KROW3 (MTK_PIN_NO(135) | 1)
-+#define MT2712_PIN_135_KPROW3__FUNC_DSIC_TE (MTK_PIN_NO(135) | 2)
-+
-+#define MT2712_PIN_136_KPROW4__FUNC_GPIO136 (MTK_PIN_NO(136) | 0)
-+#define MT2712_PIN_136_KPROW4__FUNC_KROW4 (MTK_PIN_NO(136) | 1)
-+#define MT2712_PIN_136_KPROW4__FUNC_DSID_TE (MTK_PIN_NO(136) | 2)
-+
-+#define MT2712_PIN_137_KPCOL3__FUNC_GPIO137 (MTK_PIN_NO(137) | 0)
-+#define MT2712_PIN_137_KPCOL3__FUNC_KCOL3 (MTK_PIN_NO(137) | 1)
-+#define MT2712_PIN_137_KPCOL3__FUNC_DISP2_PWM (MTK_PIN_NO(137) | 2)
-+
-+#define MT2712_PIN_138_KPCOL4__FUNC_GPIO138 (MTK_PIN_NO(138) | 0)
-+#define MT2712_PIN_138_KPCOL4__FUNC_KCOL4 (MTK_PIN_NO(138) | 1)
-+#define MT2712_PIN_138_KPCOL4__FUNC_LCM_RST2 (MTK_PIN_NO(138) | 2)
-+
-+#define MT2712_PIN_139_KPCOL5__FUNC_GPIO139 (MTK_PIN_NO(139) | 0)
-+#define MT2712_PIN_139_KPCOL5__FUNC_KCOL5 (MTK_PIN_NO(139) | 1)
-+#define MT2712_PIN_139_KPCOL5__FUNC_DSIA_TE (MTK_PIN_NO(139) | 3)
-+#define MT2712_PIN_139_KPCOL5__FUNC_PURE_HW_PROTECT (MTK_PIN_NO(139) | 4)
-+
-+#define MT2712_PIN_140_KPCOL6__FUNC_GPIO140 (MTK_PIN_NO(140) | 0)
-+#define MT2712_PIN_140_KPCOL6__FUNC_KCOL6 (MTK_PIN_NO(140) | 1)
-+#define MT2712_PIN_140_KPCOL6__FUNC_WATCH_DOG (MTK_PIN_NO(140) | 2)
-+#define MT2712_PIN_140_KPCOL6__FUNC_LCM_RST1 (MTK_PIN_NO(140) | 3)
-+
-+#define MT2712_PIN_141_KPROW5__FUNC_GPIO141 (MTK_PIN_NO(141) | 0)
-+#define MT2712_PIN_141_KPROW5__FUNC_KROW5 (MTK_PIN_NO(141) | 1)
-+#define MT2712_PIN_141_KPROW5__FUNC_LCM_RST0 (MTK_PIN_NO(141) | 3)
-+#define MT2712_PIN_141_KPROW5__FUNC_PURE_HW_PROTECT (MTK_PIN_NO(141) | 4)
-+
-+#define MT2712_PIN_142_KPROW6__FUNC_GPIO142 (MTK_PIN_NO(142) | 0)
-+#define MT2712_PIN_142_KPROW6__FUNC_KROW6 (MTK_PIN_NO(142) | 1)
-+#define MT2712_PIN_142_KPROW6__FUNC_SRCLKENA0 (MTK_PIN_NO(142) | 2)
-+#define MT2712_PIN_142_KPROW6__FUNC_DSIB_TE (MTK_PIN_NO(142) | 3)
-+
-+#define MT2712_PIN_143_JTDO_ICE__FUNC_GPIO143 (MTK_PIN_NO(143) | 0)
-+#define MT2712_PIN_143_JTDO_ICE__FUNC_JTDO_ICE (MTK_PIN_NO(143) | 1)
-+#define MT2712_PIN_143_JTDO_ICE__FUNC_DFD_TDO (MTK_PIN_NO(143) | 3)
-+
-+#define MT2712_PIN_144_JTCK_ICE__FUNC_GPIO144 (MTK_PIN_NO(144) | 0)
-+#define MT2712_PIN_144_JTCK_ICE__FUNC_JTCK_ICE (MTK_PIN_NO(144) | 1)
-+#define MT2712_PIN_144_JTCK_ICE__FUNC_DFD_TCK (MTK_PIN_NO(144) | 3)
-+
-+#define MT2712_PIN_145_JTDI_ICE__FUNC_GPIO145 (MTK_PIN_NO(145) | 0)
-+#define MT2712_PIN_145_JTDI_ICE__FUNC_JTDI_ICE (MTK_PIN_NO(145) | 1)
-+#define MT2712_PIN_145_JTDI_ICE__FUNC_DFD_TDI (MTK_PIN_NO(145) | 3)
-+
-+#define MT2712_PIN_146_JTMS_ICE__FUNC_GPIO146 (MTK_PIN_NO(146) | 0)
-+#define MT2712_PIN_146_JTMS_ICE__FUNC_JTMS_ICE (MTK_PIN_NO(146) | 1)
-+#define MT2712_PIN_146_JTMS_ICE__FUNC_DFD_TMS (MTK_PIN_NO(146) | 3)
-+
-+#define MT2712_PIN_147_JTRSTB_ICE__FUNC_GPIO147 (MTK_PIN_NO(147) | 0)
-+#define MT2712_PIN_147_JTRSTB_ICE__FUNC_JTRST_B_ICE (MTK_PIN_NO(147) | 1)
-+#define MT2712_PIN_147_JTRSTB_ICE__FUNC_DFD_NTRST (MTK_PIN_NO(147) | 3)
-+
-+#define MT2712_PIN_148_GPIO148__FUNC_GPIO148 (MTK_PIN_NO(148) | 0)
-+#define MT2712_PIN_148_GPIO148__FUNC_JTRSTB_CM4 (MTK_PIN_NO(148) | 1)
-+#define MT2712_PIN_148_GPIO148__FUNC_DFD_NTRST (MTK_PIN_NO(148) | 3)
-+
-+#define MT2712_PIN_149_GPIO149__FUNC_GPIO149 (MTK_PIN_NO(149) | 0)
-+#define MT2712_PIN_149_GPIO149__FUNC_JTCK_CM4 (MTK_PIN_NO(149) | 1)
-+#define MT2712_PIN_149_GPIO149__FUNC_DFD_TCK (MTK_PIN_NO(149) | 3)
-+
-+#define MT2712_PIN_150_GPIO150__FUNC_GPIO150 (MTK_PIN_NO(150) | 0)
-+#define MT2712_PIN_150_GPIO150__FUNC_JTMS_CM4 (MTK_PIN_NO(150) | 1)
-+#define MT2712_PIN_150_GPIO150__FUNC_DFD_TMS (MTK_PIN_NO(150) | 3)
-+
-+#define MT2712_PIN_151_GPIO151__FUNC_GPIO151 (MTK_PIN_NO(151) | 0)
-+#define MT2712_PIN_151_GPIO151__FUNC_JTDI_CM4 (MTK_PIN_NO(151) | 1)
-+#define MT2712_PIN_151_GPIO151__FUNC_DFD_TDI (MTK_PIN_NO(151) | 3)
-+
-+#define MT2712_PIN_152_GPIO152__FUNC_GPIO152 (MTK_PIN_NO(152) | 0)
-+#define MT2712_PIN_152_GPIO152__FUNC_JTDO_CM4 (MTK_PIN_NO(152) | 1)
-+#define MT2712_PIN_152_GPIO152__FUNC_DFD_TDO (MTK_PIN_NO(152) | 3)
-+
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_GPIO153 (MTK_PIN_NO(153) | 0)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_SPI_CS_0_ (MTK_PIN_NO(153) | 1)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_SRCLKENA0 (MTK_PIN_NO(153) | 2)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_UTXD0 (MTK_PIN_NO(153) | 3)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_I2SO0_DO1 (MTK_PIN_NO(153) | 4)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_TDMO0_DATA1 (MTK_PIN_NO(153) | 6)
-+#define MT2712_PIN_153_SPI0_CSN__FUNC_I2S_IQ2_SDQB (MTK_PIN_NO(153) | 7)
-+
-+#define MT2712_PIN_154_SPI0_MI__FUNC_GPIO154 (MTK_PIN_NO(154) | 0)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_SPI_MI_0_ (MTK_PIN_NO(154) | 1)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_SRCLKENA0 (MTK_PIN_NO(154) | 2)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_URXD0 (MTK_PIN_NO(154) | 3)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_I2SO0_DO0 (MTK_PIN_NO(154) | 4)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_I2SO1_DO (MTK_PIN_NO(154) | 5)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_TDMO0_DATA (MTK_PIN_NO(154) | 6)
-+#define MT2712_PIN_154_SPI0_MI__FUNC_I2S_IQ1_SDIB (MTK_PIN_NO(154) | 7)
-+
-+#define MT2712_PIN_155_SPI0_CK__FUNC_GPIO155 (MTK_PIN_NO(155) | 0)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_SPI_CK_0_ (MTK_PIN_NO(155) | 1)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_SC_APBIAS_OFF (MTK_PIN_NO(155) | 2)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_UTXD1 (MTK_PIN_NO(155) | 3)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_I2SO0_BCK (MTK_PIN_NO(155) | 4)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_I2SO1_BCK (MTK_PIN_NO(155) | 5)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_TDMO0_BCK (MTK_PIN_NO(155) | 6)
-+#define MT2712_PIN_155_SPI0_CK__FUNC_I2S_IQ0_SDQB (MTK_PIN_NO(155) | 7)
-+
-+#define MT2712_PIN_156_SPI0_MO__FUNC_GPIO156 (MTK_PIN_NO(156) | 0)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_SPI_MO_0_ (MTK_PIN_NO(156) | 1)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_SC_APBIAS_OFF (MTK_PIN_NO(156) | 2)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_URXD1 (MTK_PIN_NO(156) | 3)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_I2SO0_WS (MTK_PIN_NO(156) | 4)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_I2SO1_WS (MTK_PIN_NO(156) | 5)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_TDMO0_LRCK (MTK_PIN_NO(156) | 6)
-+#define MT2712_PIN_156_SPI0_MO__FUNC_I2S_IQ0_SDIB (MTK_PIN_NO(156) | 7)
-+
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_GPIO157 (MTK_PIN_NO(157) | 0)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_SPI_CS_5_ (MTK_PIN_NO(157) | 1)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_LCM_RST0 (MTK_PIN_NO(157) | 2)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_UTXD2 (MTK_PIN_NO(157) | 3)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_I2SO0_MCK (MTK_PIN_NO(157) | 4)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_I2SO1_MCK (MTK_PIN_NO(157) | 5)
-+#define MT2712_PIN_157_SPI5_CSN__FUNC_TDMO0_MCLK (MTK_PIN_NO(157) | 6)
-+
-+#define MT2712_PIN_158_SPI5_MI__FUNC_GPIO158 (MTK_PIN_NO(158) | 0)
-+#define MT2712_PIN_158_SPI5_MI__FUNC_SPI_MI_5_ (MTK_PIN_NO(158) | 1)
-+#define MT2712_PIN_158_SPI5_MI__FUNC_DSIA_TE (MTK_PIN_NO(158) | 2)
-+#define MT2712_PIN_158_SPI5_MI__FUNC_URXD2 (MTK_PIN_NO(158) | 3)
-+
-+#define MT2712_PIN_159_SPI5_MO__FUNC_GPIO159 (MTK_PIN_NO(159) | 0)
-+#define MT2712_PIN_159_SPI5_MO__FUNC_SPI_MO_5_ (MTK_PIN_NO(159) | 1)
-+#define MT2712_PIN_159_SPI5_MO__FUNC_DSIB_TE (MTK_PIN_NO(159) | 2)
-+#define MT2712_PIN_159_SPI5_MO__FUNC_UTXD3 (MTK_PIN_NO(159) | 3)
-+
-+#define MT2712_PIN_160_SPI5_CK__FUNC_GPIO160 (MTK_PIN_NO(160) | 0)
-+#define MT2712_PIN_160_SPI5_CK__FUNC_SPI_CK_5_ (MTK_PIN_NO(160) | 1)
-+#define MT2712_PIN_160_SPI5_CK__FUNC_LCM_RST1 (MTK_PIN_NO(160) | 2)
-+#define MT2712_PIN_160_SPI5_CK__FUNC_URXD3 (MTK_PIN_NO(160) | 3)
-+
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_GPIO161 (MTK_PIN_NO(161) | 0)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_SPI_CS_1_ (MTK_PIN_NO(161) | 1)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_SPI_CS_4_ (MTK_PIN_NO(161) | 2)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_I2S_IQ2_SDQB (MTK_PIN_NO(161) | 4)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_I2SO2_DO (MTK_PIN_NO(161) | 5)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_TDMO0_DATA1 (MTK_PIN_NO(161) | 6)
-+#define MT2712_PIN_161_SPI1_CSN__FUNC_I2SO0_DO1 (MTK_PIN_NO(161) | 7)
-+
-+#define MT2712_PIN_162_SPI1_SI__FUNC_GPIO162 (MTK_PIN_NO(162) | 0)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_SPI_SI_1_ (MTK_PIN_NO(162) | 1)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_SPI_MI_4_ (MTK_PIN_NO(162) | 2)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_I2S_IQ1_SDIB (MTK_PIN_NO(162) | 4)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_I2SO2_BCK (MTK_PIN_NO(162) | 5)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_TDMO0_DATA (MTK_PIN_NO(162) | 6)
-+#define MT2712_PIN_162_SPI1_SI__FUNC_I2SO0_DO0 (MTK_PIN_NO(162) | 7)
-+
-+#define MT2712_PIN_163_SPI1_CK__FUNC_GPIO163 (MTK_PIN_NO(163) | 0)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_SPI_CK_1_ (MTK_PIN_NO(163) | 1)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_SPI_CK_4_ (MTK_PIN_NO(163) | 2)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_I2S_IQ0_SDQB (MTK_PIN_NO(163) | 4)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_I2SO2_WS (MTK_PIN_NO(163) | 5)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_TDMO0_BCK (MTK_PIN_NO(163) | 6)
-+#define MT2712_PIN_163_SPI1_CK__FUNC_I2SO0_BCK (MTK_PIN_NO(163) | 7)
-+
-+#define MT2712_PIN_164_SPI1_SO__FUNC_GPIO164 (MTK_PIN_NO(164) | 0)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_SPI_SO_1_ (MTK_PIN_NO(164) | 1)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_SPI_MO_4_ (MTK_PIN_NO(164) | 2)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_I2S_IQ0_SDIB (MTK_PIN_NO(164) | 4)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_I2SO2_MCK (MTK_PIN_NO(164) | 5)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_TDMO0_LRCK (MTK_PIN_NO(164) | 6)
-+#define MT2712_PIN_164_SPI1_SO__FUNC_I2SO0_WS (MTK_PIN_NO(164) | 7)
-+
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_GPIO165 (MTK_PIN_NO(165) | 0)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_SPI_CS_4_ (MTK_PIN_NO(165) | 1)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_LCM_RST0 (MTK_PIN_NO(165) | 2)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_SPI_CS_1_ (MTK_PIN_NO(165) | 3)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_UTXD4 (MTK_PIN_NO(165) | 4)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_I2SO1_DO (MTK_PIN_NO(165) | 5)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_TDMO0_MCLK (MTK_PIN_NO(165) | 6)
-+#define MT2712_PIN_165_SPI4_CSN__FUNC_I2SO0_MCK (MTK_PIN_NO(165) | 7)
-+
-+#define MT2712_PIN_166_SPI4_MI__FUNC_GPIO166 (MTK_PIN_NO(166) | 0)
-+#define MT2712_PIN_166_SPI4_MI__FUNC_SPI_MI_4_ (MTK_PIN_NO(166) | 1)
-+#define MT2712_PIN_166_SPI4_MI__FUNC_DSIA_TE (MTK_PIN_NO(166) | 2)
-+#define MT2712_PIN_166_SPI4_MI__FUNC_SPI_SI_1_ (MTK_PIN_NO(166) | 3)
-+#define MT2712_PIN_166_SPI4_MI__FUNC_URXD4 (MTK_PIN_NO(166) | 4)
-+#define MT2712_PIN_166_SPI4_MI__FUNC_I2SO1_BCK (MTK_PIN_NO(166) | 5)
-+
-+#define MT2712_PIN_167_SPI4_MO__FUNC_GPIO167 (MTK_PIN_NO(167) | 0)
-+#define MT2712_PIN_167_SPI4_MO__FUNC_SPI_MO_4_ (MTK_PIN_NO(167) | 1)
-+#define MT2712_PIN_167_SPI4_MO__FUNC_DSIB_TE (MTK_PIN_NO(167) | 2)
-+#define MT2712_PIN_167_SPI4_MO__FUNC_SPI_SO_1_ (MTK_PIN_NO(167) | 3)
-+#define MT2712_PIN_167_SPI4_MO__FUNC_UTXD5 (MTK_PIN_NO(167) | 4)
-+#define MT2712_PIN_167_SPI4_MO__FUNC_I2SO1_WS (MTK_PIN_NO(167) | 5)
-+
-+#define MT2712_PIN_168_SPI4_CK__FUNC_GPIO168 (MTK_PIN_NO(168) | 0)
-+#define MT2712_PIN_168_SPI4_CK__FUNC_SPI_CK_4_ (MTK_PIN_NO(168) | 1)
-+#define MT2712_PIN_168_SPI4_CK__FUNC_LCM_RST1 (MTK_PIN_NO(168) | 2)
-+#define MT2712_PIN_168_SPI4_CK__FUNC_SPI_CK_1_ (MTK_PIN_NO(168) | 3)
-+#define MT2712_PIN_168_SPI4_CK__FUNC_URXD5 (MTK_PIN_NO(168) | 4)
-+#define MT2712_PIN_168_SPI4_CK__FUNC_I2SO1_MCK (MTK_PIN_NO(168) | 5)
-+
-+#define MT2712_PIN_169_I2SI0_DATA__FUNC_GPIO169 (MTK_PIN_NO(169) | 0)
-+#define MT2712_PIN_169_I2SI0_DATA__FUNC_I2SI0_DI (MTK_PIN_NO(169) | 1)
-+#define MT2712_PIN_169_I2SI0_DATA__FUNC_I2SI1_DI (MTK_PIN_NO(169) | 2)
-+#define MT2712_PIN_169_I2SI0_DATA__FUNC_I2SI2_DI (MTK_PIN_NO(169) | 3)
-+#define MT2712_PIN_169_I2SI0_DATA__FUNC_TDMIN_DI (MTK_PIN_NO(169) | 4)
-+
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_GPIO170 (MTK_PIN_NO(170) | 0)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_I2SI0_WS (MTK_PIN_NO(170) | 1)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_I2SI1_WS (MTK_PIN_NO(170) | 2)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_I2SI2_WS (MTK_PIN_NO(170) | 3)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_TDMIN_LRCK (MTK_PIN_NO(170) | 4)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_TDMO0_DATA3 (MTK_PIN_NO(170) | 5)
-+#define MT2712_PIN_170_I2SI0_LRCK__FUNC_TDMO1_DATA3 (MTK_PIN_NO(170) | 6)
-+
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_GPIO171 (MTK_PIN_NO(171) | 0)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_I2SI0_MCK (MTK_PIN_NO(171) | 1)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_I2SI1_MCK (MTK_PIN_NO(171) | 2)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_I2SI2_MCK (MTK_PIN_NO(171) | 3)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_TDMIN_MCLK (MTK_PIN_NO(171) | 4)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_TDMO0_DATA2 (MTK_PIN_NO(171) | 5)
-+#define MT2712_PIN_171_I2SI0_MCLK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(171) | 6)
-+
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_GPIO172 (MTK_PIN_NO(172) | 0)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_I2SI0_BCK (MTK_PIN_NO(172) | 1)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_I2SI1_BCK (MTK_PIN_NO(172) | 2)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_I2SI2_BCK (MTK_PIN_NO(172) | 3)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_TDMIN_BCK (MTK_PIN_NO(172) | 4)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_TDMO0_DATA1 (MTK_PIN_NO(172) | 5)
-+#define MT2712_PIN_172_I2SI0_BCK__FUNC_TDMO1_DATA1 (MTK_PIN_NO(172) | 6)
-+
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_GPIO173 (MTK_PIN_NO(173) | 0)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_I2SI2_DI (MTK_PIN_NO(173) | 1)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_I2SI0_DI (MTK_PIN_NO(173) | 2)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_I2SI1_DI (MTK_PIN_NO(173) | 3)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_PCM1_DI (MTK_PIN_NO(173) | 4)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_TDMIN_DI (MTK_PIN_NO(173) | 5)
-+#define MT2712_PIN_173_I2SI2_DATA__FUNC_PCM1_DO (MTK_PIN_NO(173) | 6)
-+
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_GPIO174 (MTK_PIN_NO(174) | 0)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_I2SI2_MCK (MTK_PIN_NO(174) | 1)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_I2SI0_MCK (MTK_PIN_NO(174) | 2)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_I2SI1_MCK (MTK_PIN_NO(174) | 3)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_PCM1_DO (MTK_PIN_NO(174) | 4)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_TDMIN_MCLK (MTK_PIN_NO(174) | 5)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_PCM1_DI (MTK_PIN_NO(174) | 6)
-+#define MT2712_PIN_174_I2SI2_MCLK__FUNC_I2S_IQ2_SDQB (MTK_PIN_NO(174) | 7)
-+
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_GPIO175 (MTK_PIN_NO(175) | 0)
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_I2SI2_BCK (MTK_PIN_NO(175) | 1)
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_I2SI0_BCK (MTK_PIN_NO(175) | 2)
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_I2SI1_BCK (MTK_PIN_NO(175) | 3)
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_PCM1_CLK (MTK_PIN_NO(175) | 4)
-+#define MT2712_PIN_175_I2SI2_BCK__FUNC_TDMIN_BCK (MTK_PIN_NO(175) | 5)
-+
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_GPIO176 (MTK_PIN_NO(176) | 0)
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_I2SI2_WS (MTK_PIN_NO(176) | 1)
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_I2SI0_WS (MTK_PIN_NO(176) | 2)
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_I2SI1_WS (MTK_PIN_NO(176) | 3)
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_PCM1_SYNC (MTK_PIN_NO(176) | 4)
-+#define MT2712_PIN_176_I2SI2_LRCK__FUNC_TDMIN_LRCK (MTK_PIN_NO(176) | 5)
-+
-+#define MT2712_PIN_177_I2SI1_DATA__FUNC_GPIO177 (MTK_PIN_NO(177) | 0)
-+#define MT2712_PIN_177_I2SI1_DATA__FUNC_I2SI1_DI (MTK_PIN_NO(177) | 1)
-+#define MT2712_PIN_177_I2SI1_DATA__FUNC_I2SI0_DI (MTK_PIN_NO(177) | 2)
-+#define MT2712_PIN_177_I2SI1_DATA__FUNC_I2SI2_DI (MTK_PIN_NO(177) | 3)
-+#define MT2712_PIN_177_I2SI1_DATA__FUNC_TDMIN_DI (MTK_PIN_NO(177) | 4)
-+
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_GPIO178 (MTK_PIN_NO(178) | 0)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_I2SI1_BCK (MTK_PIN_NO(178) | 1)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_I2SI0_BCK (MTK_PIN_NO(178) | 2)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_I2SI2_BCK (MTK_PIN_NO(178) | 3)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_TDMIN_BCK (MTK_PIN_NO(178) | 4)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_TDMO0_DATA3 (MTK_PIN_NO(178) | 5)
-+#define MT2712_PIN_178_I2SI1_BCK__FUNC_TDMO1_DATA3 (MTK_PIN_NO(178) | 6)
-+
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_GPIO179 (MTK_PIN_NO(179) | 0)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_I2SI1_WS (MTK_PIN_NO(179) | 1)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_I2SI0_WS (MTK_PIN_NO(179) | 2)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_I2SI2_WS (MTK_PIN_NO(179) | 3)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_TDMIN_LRCK (MTK_PIN_NO(179) | 4)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_TDMO0_DATA2 (MTK_PIN_NO(179) | 5)
-+#define MT2712_PIN_179_I2SI1_LRCK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(179) | 6)
-+
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_GPIO180 (MTK_PIN_NO(180) | 0)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_I2SI1_MCK (MTK_PIN_NO(180) | 1)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_I2SI0_MCK (MTK_PIN_NO(180) | 2)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_I2SI2_MCK (MTK_PIN_NO(180) | 3)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_TDMIN_MCLK (MTK_PIN_NO(180) | 4)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_TDMO0_DATA1 (MTK_PIN_NO(180) | 5)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_TDMO1_DATA1 (MTK_PIN_NO(180) | 6)
-+#define MT2712_PIN_180_I2SI1_MCLK__FUNC_I2S_IQ2_SDIB (MTK_PIN_NO(180) | 7)
-+
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_GPIO181 (MTK_PIN_NO(181) | 0)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_I2SO1_DO (MTK_PIN_NO(181) | 1)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_I2SO0_DO0 (MTK_PIN_NO(181) | 2)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_I2SO2_DO (MTK_PIN_NO(181) | 3)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_DAI_TX (MTK_PIN_NO(181) | 4)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_TDMIN_MCLK (MTK_PIN_NO(181) | 5)
-+#define MT2712_PIN_181_I2SO1_DATA0__FUNC_I2S_IQ2_SDIA (MTK_PIN_NO(181) | 7)
-+
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_GPIO182 (MTK_PIN_NO(182) | 0)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_I2SO1_BCK (MTK_PIN_NO(182) | 1)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_I2SO0_BCK (MTK_PIN_NO(182) | 2)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_I2SO2_BCK (MTK_PIN_NO(182) | 3)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_DAI_SYNC (MTK_PIN_NO(182) | 4)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_TDMIN_BCK (MTK_PIN_NO(182) | 5)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_TDMO0_DATA3 (MTK_PIN_NO(182) | 6)
-+#define MT2712_PIN_182_I2SO1_BCK__FUNC_I2S_IQ2_BCK (MTK_PIN_NO(182) | 7)
-+
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_GPIO183 (MTK_PIN_NO(183) | 0)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_I2SO1_WS (MTK_PIN_NO(183) | 1)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_I2SO0_WS (MTK_PIN_NO(183) | 2)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_I2SO2_WS (MTK_PIN_NO(183) | 3)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_DAI_CLK (MTK_PIN_NO(183) | 4)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_TDMIN_DI (MTK_PIN_NO(183) | 5)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_TDMO0_DATA2 (MTK_PIN_NO(183) | 6)
-+#define MT2712_PIN_183_I2SO1_LRCK__FUNC_I2S_IQ2_WS (MTK_PIN_NO(183) | 7)
-+
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_GPIO184 (MTK_PIN_NO(184) | 0)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_I2SO1_MCK (MTK_PIN_NO(184) | 1)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_I2SO0_MCK (MTK_PIN_NO(184) | 2)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_I2SO2_MCK (MTK_PIN_NO(184) | 3)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_DAI_RX (MTK_PIN_NO(184) | 4)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_TDMIN_LRCK (MTK_PIN_NO(184) | 5)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_TDMO0_DATA1 (MTK_PIN_NO(184) | 6)
-+#define MT2712_PIN_184_I2SO1_MCLK__FUNC_I2S_IQ2_SDQA (MTK_PIN_NO(184) | 7)
-+
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_GPIO185 (MTK_PIN_NO(185) | 0)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_AUD_EXT_CK2 (MTK_PIN_NO(185) | 1)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_AUD_EXT_CK1 (MTK_PIN_NO(185) | 2)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_I2SO1_DO (MTK_PIN_NO(185) | 3)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_I2SI2_DI (MTK_PIN_NO(185) | 4)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_MRG_RX (MTK_PIN_NO(185) | 5)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_PCM1_DI (MTK_PIN_NO(185) | 6)
-+#define MT2712_PIN_185_AUD_EXT_CK2__FUNC_I2S_IQ0_SDQB (MTK_PIN_NO(185) | 7)
-+
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_GPIO186 (MTK_PIN_NO(186) | 0)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_AUD_EXT_CK1 (MTK_PIN_NO(186) | 1)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_AUD_EXT_CK2 (MTK_PIN_NO(186) | 2)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_I2SO0_DO1 (MTK_PIN_NO(186) | 3)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_I2SI1_DI (MTK_PIN_NO(186) | 4)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_MRG_TX (MTK_PIN_NO(186) | 5)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_PCM1_DO (MTK_PIN_NO(186) | 6)
-+#define MT2712_PIN_186_AUD_EXT_CK1__FUNC_I2S_IQ0_SDIB (MTK_PIN_NO(186) | 7)
-+
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_GPIO187 (MTK_PIN_NO(187) | 0)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_I2SO2_BCK (MTK_PIN_NO(187) | 1)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_I2SO0_BCK (MTK_PIN_NO(187) | 2)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_I2SO1_BCK (MTK_PIN_NO(187) | 3)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_PCM1_CLK (MTK_PIN_NO(187) | 4)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_MRG_SYNC (MTK_PIN_NO(187) | 5)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_TDMO1_DATA3 (MTK_PIN_NO(187) | 6)
-+#define MT2712_PIN_187_I2SO2_BCK__FUNC_I2S_IQ0_BCK (MTK_PIN_NO(187) | 7)
-+
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_GPIO188 (MTK_PIN_NO(188) | 0)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_I2SO2_WS (MTK_PIN_NO(188) | 1)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_I2SO0_WS (MTK_PIN_NO(188) | 2)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_I2SO1_WS (MTK_PIN_NO(188) | 3)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_PCM1_SYNC (MTK_PIN_NO(188) | 4)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_MRG_CLK (MTK_PIN_NO(188) | 5)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(188) | 6)
-+#define MT2712_PIN_188_I2SO2_LRCK__FUNC_I2S_IQ0_WS (MTK_PIN_NO(188) | 7)
-+
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_GPIO189 (MTK_PIN_NO(189) | 0)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_I2SO2_MCK (MTK_PIN_NO(189) | 1)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_I2SO0_MCK (MTK_PIN_NO(189) | 2)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_I2SO1_MCK (MTK_PIN_NO(189) | 3)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_PCM1_DO (MTK_PIN_NO(189) | 4)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_MRG_RX (MTK_PIN_NO(189) | 5)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_TDMO1_DATA1 (MTK_PIN_NO(189) | 6)
-+#define MT2712_PIN_189_I2SO2_MCLK__FUNC_I2S_IQ0_SDQA (MTK_PIN_NO(189) | 7)
-+
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_GPIO190 (MTK_PIN_NO(190) | 0)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_I2SO2_DO (MTK_PIN_NO(190) | 1)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_I2SO0_DO0 (MTK_PIN_NO(190) | 2)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_I2SO1_DO (MTK_PIN_NO(190) | 3)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_PCM1_DI (MTK_PIN_NO(190) | 4)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_MRG_TX (MTK_PIN_NO(190) | 5)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_PCM1_DO (MTK_PIN_NO(190) | 6)
-+#define MT2712_PIN_190_I2SO2_DATA0__FUNC_I2S_IQ0_SDIA (MTK_PIN_NO(190) | 7)
-+
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_GPIO191 (MTK_PIN_NO(191) | 0)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2SO0_DO1 (MTK_PIN_NO(191) | 1)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2SI0_DI (MTK_PIN_NO(191) | 2)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2SI1_DI (MTK_PIN_NO(191) | 3)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2SI2_DI (MTK_PIN_NO(191) | 4)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_DAI_TX (MTK_PIN_NO(191) | 5)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2S_IQ0_SDQB (MTK_PIN_NO(191) | 6)
-+#define MT2712_PIN_191_I2SO0_DATA1__FUNC_I2S_IQ1_SDQB (MTK_PIN_NO(191) | 7)
-+
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_GPIO192 (MTK_PIN_NO(192) | 0)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_I2SO0_MCK (MTK_PIN_NO(192) | 1)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_I2SO1_MCK (MTK_PIN_NO(192) | 2)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_I2SO2_MCK (MTK_PIN_NO(192) | 3)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_USB4_FT_SCL (MTK_PIN_NO(192) | 4)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_TDMO1_DATA3 (MTK_PIN_NO(192) | 5)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_I2S_IQ0_SDIB (MTK_PIN_NO(192) | 6)
-+#define MT2712_PIN_192_I2SO0_MCLK__FUNC_I2S_IQ1_SDQA (MTK_PIN_NO(192) | 7)
-+
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_GPIO193 (MTK_PIN_NO(193) | 0)
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_I2SO0_DO0 (MTK_PIN_NO(193) | 1)
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_I2SO1_DO (MTK_PIN_NO(193) | 2)
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_I2SO2_DO (MTK_PIN_NO(193) | 3)
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_USB4_FT_SDA (MTK_PIN_NO(193) | 4)
-+#define MT2712_PIN_193_I2SO0_DATA0__FUNC_I2S_IQ1_SDIA (MTK_PIN_NO(193) | 7)
-+
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_GPIO194 (MTK_PIN_NO(194) | 0)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_I2SO0_WS (MTK_PIN_NO(194) | 1)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_I2SO1_WS (MTK_PIN_NO(194) | 2)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_I2SO2_WS (MTK_PIN_NO(194) | 3)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_USB5_FT_SCL (MTK_PIN_NO(194) | 4)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(194) | 5)
-+#define MT2712_PIN_194_I2SO0_LRCK__FUNC_I2S_IQ1_WS (MTK_PIN_NO(194) | 7)
-+
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_GPIO195 (MTK_PIN_NO(195) | 0)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_I2SO0_BCK (MTK_PIN_NO(195) | 1)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_I2SO1_BCK (MTK_PIN_NO(195) | 2)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_I2SO2_BCK (MTK_PIN_NO(195) | 3)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_USB5_FT_SDA (MTK_PIN_NO(195) | 4)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_TDMO1_DATA1 (MTK_PIN_NO(195) | 5)
-+#define MT2712_PIN_195_I2SO0_BCK__FUNC_I2S_IQ1_BCK (MTK_PIN_NO(195) | 7)
-+
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_GPIO196 (MTK_PIN_NO(196) | 0)
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_TDMO1_MCLK (MTK_PIN_NO(196) | 1)
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_TDMO0_MCLK (MTK_PIN_NO(196) | 2)
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_TDMIN_MCLK (MTK_PIN_NO(196) | 3)
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_I2SO0_DO1 (MTK_PIN_NO(196) | 6)
-+#define MT2712_PIN_196_TDMO1_MCLK__FUNC_I2S_IQ1_SDIB (MTK_PIN_NO(196) | 7)
-+
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_GPIO197 (MTK_PIN_NO(197) | 0)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMO1_LRCK (MTK_PIN_NO(197) | 1)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMO0_LRCK (MTK_PIN_NO(197) | 2)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMIN_LRCK (MTK_PIN_NO(197) | 3)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMO0_DATA3 (MTK_PIN_NO(197) | 4)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMO1_DATA3 (MTK_PIN_NO(197) | 5)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_I2SO3_MCK (MTK_PIN_NO(197) | 6)
-+#define MT2712_PIN_197_TDMO1_LRCK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(197) | 7)
-+
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_GPIO198 (MTK_PIN_NO(198) | 0)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMO1_BCK (MTK_PIN_NO(198) | 1)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMO0_BCK (MTK_PIN_NO(198) | 2)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMIN_BCK (MTK_PIN_NO(198) | 3)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMO0_DATA2 (MTK_PIN_NO(198) | 4)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMO1_DATA2 (MTK_PIN_NO(198) | 5)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_I2SO3_BCK (MTK_PIN_NO(198) | 6)
-+#define MT2712_PIN_198_TDMO1_BCK__FUNC_TDMO1_DATA1 (MTK_PIN_NO(198) | 7)
-+
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_GPIO199 (MTK_PIN_NO(199) | 0)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_TDMO1_DATA (MTK_PIN_NO(199) | 1)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_TDMO0_DATA (MTK_PIN_NO(199) | 2)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_TDMIN_DI (MTK_PIN_NO(199) | 3)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_TDMO0_DATA1 (MTK_PIN_NO(199) | 4)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_TDMO1_DATA1 (MTK_PIN_NO(199) | 5)
-+#define MT2712_PIN_199_TDMO1_DATA__FUNC_I2SO3_WS (MTK_PIN_NO(199) | 6)
-+
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_GPIO200 (MTK_PIN_NO(200) | 0)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_TDMO0_MCLK0 (MTK_PIN_NO(200) | 1)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_TDMO1_MCLK0 (MTK_PIN_NO(200) | 2)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_PCM1_DI (MTK_PIN_NO(200) | 3)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_TDMO0_MCLK1 (MTK_PIN_NO(200) | 4)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_TDMO1_MCLK1 (MTK_PIN_NO(200) | 5)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_MRG_TX (MTK_PIN_NO(200) | 6)
-+#define MT2712_PIN_200_TDMO0_MCLK__FUNC_I2SO2_MCK (MTK_PIN_NO(200) | 7)
-+
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_GPIO201 (MTK_PIN_NO(201) | 0)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_TDMO0_LRCK0 (MTK_PIN_NO(201) | 1)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_TDMO1_LRCK0 (MTK_PIN_NO(201) | 2)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_PCM1_SYNC (MTK_PIN_NO(201) | 3)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_TDMO0_LRCK1 (MTK_PIN_NO(201) | 4)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_TDMO1_LRCK1 (MTK_PIN_NO(201) | 5)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_MRG_RX (MTK_PIN_NO(201) | 6)
-+#define MT2712_PIN_201_TDMO0_LRCK__FUNC_I2SO2_WS (MTK_PIN_NO(201) | 7)
-+
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_GPIO202 (MTK_PIN_NO(202) | 0)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_TDMO0_BCK0 (MTK_PIN_NO(202) | 1)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_TDMO1_BCK0 (MTK_PIN_NO(202) | 2)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_PCM1_CLK (MTK_PIN_NO(202) | 3)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_TDMO0_BCK1 (MTK_PIN_NO(202) | 4)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_TDMO1_BCK1 (MTK_PIN_NO(202) | 5)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_MRG_SYNC (MTK_PIN_NO(202) | 6)
-+#define MT2712_PIN_202_TDMO0_BCK__FUNC_I2SO2_BCK (MTK_PIN_NO(202) | 7)
-+
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_GPIO203 (MTK_PIN_NO(203) | 0)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_TDMO0_DATA0 (MTK_PIN_NO(203) | 1)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_TDMO1_DATA0 (MTK_PIN_NO(203) | 2)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_PCM1_DO (MTK_PIN_NO(203) | 3)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_TDMO0_DATA1 (MTK_PIN_NO(203) | 4)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_TDMO1_DATA1 (MTK_PIN_NO(203) | 5)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_MRG_CLK (MTK_PIN_NO(203) | 6)
-+#define MT2712_PIN_203_TDMO0_DATA__FUNC_I2SO2_DO (MTK_PIN_NO(203) | 7)
-+
-+#define MT2712_PIN_204_PERSTB_P0__FUNC_GPIO204 (MTK_PIN_NO(204) | 0)
-+#define MT2712_PIN_204_PERSTB_P0__FUNC_PERST_B_P0 (MTK_PIN_NO(204) | 1)
-+
-+#define MT2712_PIN_205_CLKREQN_P0__FUNC_GPIO205 (MTK_PIN_NO(205) | 0)
-+#define MT2712_PIN_205_CLKREQN_P0__FUNC_CLKREQ_N_P0 (MTK_PIN_NO(205) | 1)
-+
-+#define MT2712_PIN_206_WAKEEN_P0__FUNC_GPIO206 (MTK_PIN_NO(206) | 0)
-+#define MT2712_PIN_206_WAKEEN_P0__FUNC_WAKE_EN_P0 (MTK_PIN_NO(206) | 1)
-+
-+#define MT2712_PIN_207_PERSTB_P1__FUNC_GPIO207 (MTK_PIN_NO(207) | 0)
-+#define MT2712_PIN_207_PERSTB_P1__FUNC_PERST_B_P1 (MTK_PIN_NO(207) | 1)
-+
-+#define MT2712_PIN_208_CLKREQN_P1__FUNC_GPIO208 (MTK_PIN_NO(208) | 0)
-+#define MT2712_PIN_208_CLKREQN_P1__FUNC_CLKREQ_N_P1 (MTK_PIN_NO(208) | 1)
-+
-+#define MT2712_PIN_209_WAKEEN_P1__FUNC_GPIO209 (MTK_PIN_NO(209) | 0)
-+#define MT2712_PIN_209_WAKEEN_P1__FUNC_WAKE_EN_P1 (MTK_PIN_NO(209) | 1)
-+
-+#endif /* __DTS_MT2712_PINFUNC_H */
++#ifndef PINCTRL_MTK_MT2712_H
++#define PINCTRL_MTK_MT2712_H
++
++#include <linux/pinctrl/pinctrl.h>
++#include "pinctrl-mtk-common.h"
++
++static const struct mtk_desc_pin mtk_pins_mt2712[] = {
++	MTK_PIN(
++		PINCTRL_PIN(0, "EINT0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 6),
++		MTK_FUNCTION(0, "GPIO0"),
++		MTK_FUNCTION(1, "EINT0"),
++		MTK_FUNCTION(2, "MBIST_DIAG_SCANOUT"),
++		MTK_FUNCTION(3, "DSIA_TE"),
++		MTK_FUNCTION(4, "DSIC_TE"),
++		MTK_FUNCTION(5, "DIN_D3"),
++		MTK_FUNCTION(6, "PURE_HW_PROTECT")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(1, "EINT1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 7),
++		MTK_FUNCTION(0, "GPIO1"),
++		MTK_FUNCTION(1, "EINT1"),
++		MTK_FUNCTION(2, "IR_IN"),
++		MTK_FUNCTION(3, "DSIB_TE"),
++		MTK_FUNCTION(4, "DSID_TE"),
++		MTK_FUNCTION(5, "DIN_D4")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(2, "EINT2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 8),
++		MTK_FUNCTION(0, "GPIO2"),
++		MTK_FUNCTION(1, "EINT2"),
++		MTK_FUNCTION(2, "IR_IN"),
++		MTK_FUNCTION(3, "LCM_RST1"),
++		MTK_FUNCTION(5, "DIN_D5")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(3, "EINT3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 9),
++		MTK_FUNCTION(0, "GPIO3"),
++		MTK_FUNCTION(1, "EINT3"),
++		MTK_FUNCTION(2, "IR_IN"),
++		MTK_FUNCTION(3, "LCM_RST0"),
++		MTK_FUNCTION(5, "DIN_D6")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(4, "PWM0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 10),
++		MTK_FUNCTION(0, "GPIO4"),
++		MTK_FUNCTION(1, "PWM0"),
++		MTK_FUNCTION(2, "DISP0_PWM"),
++		MTK_FUNCTION(3, "DISP1_PWM"),
++		MTK_FUNCTION(5, "DIN_CLK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(5, "PWM1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 11),
++		MTK_FUNCTION(0, "GPIO5"),
++		MTK_FUNCTION(1, "PWM1"),
++		MTK_FUNCTION(2, "DISP1_PWM"),
++		MTK_FUNCTION(3, "DISP0_PWM"),
++		MTK_FUNCTION(5, "DIN_VSYNC")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(6, "PWM2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 12),
++		MTK_FUNCTION(0, "GPIO6"),
++		MTK_FUNCTION(1, "PWM2"),
++		MTK_FUNCTION(2, "DISP0_PWM"),
++		MTK_FUNCTION(3, "DISP1_PWM"),
++		MTK_FUNCTION(4, "DISP2_PWM"),
++		MTK_FUNCTION(5, "DIN_HSYNC")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(7, "PWM3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 13),
++		MTK_FUNCTION(0, "GPIO7"),
++		MTK_FUNCTION(1, "PWM3"),
++		MTK_FUNCTION(2, "DISP1_PWM"),
++		MTK_FUNCTION(3, "DISP0_PWM"),
++		MTK_FUNCTION(4, "LCM_RST2"),
++		MTK_FUNCTION(5, "DIN_D0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(8, "PWM4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 14),
++		MTK_FUNCTION(0, "GPIO8"),
++		MTK_FUNCTION(1, "PWM4"),
++		MTK_FUNCTION(2, "DISP0_PWM"),
++		MTK_FUNCTION(3, "DISP1_PWM"),
++		MTK_FUNCTION(4, "DSIA_TE"),
++		MTK_FUNCTION(5, "DIN_D1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(9, "PWM5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 15),
++		MTK_FUNCTION(0, "GPIO9"),
++		MTK_FUNCTION(1, "PWM5"),
++		MTK_FUNCTION(2, "DISP1_PWM"),
++		MTK_FUNCTION(3, "DISP0_PWM"),
++		MTK_FUNCTION(4, "DSIB_TE"),
++		MTK_FUNCTION(5, "DIN_D2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(10, "PWM6"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 16),
++		MTK_FUNCTION(0, "GPIO10"),
++		MTK_FUNCTION(1, "PWM6"),
++		MTK_FUNCTION(2, "DISP0_PWM"),
++		MTK_FUNCTION(3, "DISP1_PWM"),
++		MTK_FUNCTION(4, "LCM_RST0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(11, "PWM7"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 17),
++		MTK_FUNCTION(0, "GPIO11"),
++		MTK_FUNCTION(1, "PWM7"),
++		MTK_FUNCTION(2, "DISP1_PWM"),
++		MTK_FUNCTION(3, "DISP0_PWM"),
++		MTK_FUNCTION(4, "LCM_RST1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(12, "IDDIG_P0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(1, 22),
++		MTK_FUNCTION(0, "GPIO12"),
++		MTK_FUNCTION(1, "IDDIG_A"),
++		MTK_FUNCTION(5, "DIN_D7")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(13, "DRV_VBUS_P0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 43),
++		MTK_FUNCTION(0, "GPIO13"),
++		MTK_FUNCTION(1, "DRV_VBUS_A")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(14, "IDDIG_P1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(1, 44),
++		MTK_FUNCTION(0, "GPIO14"),
++		MTK_FUNCTION(1, "IDDIG_B")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(15, "DRV_VBUS_P1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 45),
++		MTK_FUNCTION(0, "GPIO15"),
++		MTK_FUNCTION(1, "DRV_VBUS_B")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(16, "DRV_VBUS_P2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 46),
++		MTK_FUNCTION(0, "GPIO16"),
++		MTK_FUNCTION(1, "DRV_VBUS_C")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(17, "DRV_VBUS_P3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 47),
++		MTK_FUNCTION(0, "GPIO17"),
++		MTK_FUNCTION(1, "DRV_VBUS_D")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(18, "KPROW0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 18),
++		MTK_FUNCTION(0, "GPIO18"),
++		MTK_FUNCTION(1, "KROW0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(19, "KPCOL0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 19),
++		MTK_FUNCTION(0, "GPIO19"),
++		MTK_FUNCTION(1, "KCOL0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(20, "KPROW1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 48),
++		MTK_FUNCTION(0, "GPIO20"),
++		MTK_FUNCTION(1, "KROW1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(21, "KPCOL1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 49),
++		MTK_FUNCTION(0, "GPIO21"),
++		MTK_FUNCTION(1, "KCOL1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(22, "KPROW2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 50),
++		MTK_FUNCTION(0, "GPIO22"),
++		MTK_FUNCTION(1, "KROW2"),
++		MTK_FUNCTION(2, "DISP1_PWM")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(23, "KPCOL2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 51),
++		MTK_FUNCTION(0, "GPIO23"),
++		MTK_FUNCTION(1, "KCOL2"),
++		MTK_FUNCTION(2, "DISP0_PWM")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(24, "CMMCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 52),
++		MTK_FUNCTION(0, "GPIO24"),
++		MTK_FUNCTION(1, "CMMCLK"),
++		MTK_FUNCTION(7, "DBG_MON_A_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(25, "CM2MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 53),
++		MTK_FUNCTION(0, "GPIO25"),
++		MTK_FUNCTION(1, "CM2MCLK"),
++		MTK_FUNCTION(7, "DBG_MON_A_2_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(26, "PCM_TX"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 54),
++		MTK_FUNCTION(0, "GPIO26"),
++		MTK_FUNCTION(1, "PCM1_DO"),
++		MTK_FUNCTION(2, "MRG_TX"),
++		MTK_FUNCTION(3, "DAI_TX"),
++		MTK_FUNCTION(4, "MRG_RX"),
++		MTK_FUNCTION(5, "DAI_RX"),
++		MTK_FUNCTION(6, "PCM1_DI"),
++		MTK_FUNCTION(7, "DBG_MON_A_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(27, "PCM_CLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 55),
++		MTK_FUNCTION(0, "GPIO27"),
++		MTK_FUNCTION(1, "PCM1_CLK"),
++		MTK_FUNCTION(2, "MRG_CLK"),
++		MTK_FUNCTION(3, "DAI_CLK"),
++		MTK_FUNCTION(7, "DBG_MON_A_4_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(28, "PCM_RX"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 56),
++		MTK_FUNCTION(0, "GPIO28"),
++		MTK_FUNCTION(1, "PCM1_DI"),
++		MTK_FUNCTION(2, "MRG_RX"),
++		MTK_FUNCTION(3, "DAI_RX"),
++		MTK_FUNCTION(4, "MRG_TX"),
++		MTK_FUNCTION(5, "DAI_TX"),
++		MTK_FUNCTION(6, "PCM1_DO"),
++		MTK_FUNCTION(7, "DBG_MON_A_5_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(29, "PCM_SYNC"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 57),
++		MTK_FUNCTION(0, "GPIO29"),
++		MTK_FUNCTION(1, "PCM1_SYNC"),
++		MTK_FUNCTION(2, "MRG_SYNC"),
++		MTK_FUNCTION(3, "DAI_SYNC"),
++		MTK_FUNCTION(7, "DBG_MON_A_6_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(30, "NCEB0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 58),
++		MTK_FUNCTION(0, "GPIO30"),
++		MTK_FUNCTION(1, "NCEB0"),
++		MTK_FUNCTION(2, "USB0_FT_SDA"),
++		MTK_FUNCTION(7, "DBG_MON_A_7_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(31, "NCEB1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 59),
++		MTK_FUNCTION(0, "GPIO31"),
++		MTK_FUNCTION(1, "NCEB1"),
++		MTK_FUNCTION(2, "USB1_FT_SCL"),
++		MTK_FUNCTION(7, "DBG_MON_A_8_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(32, "NF_DQS"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 60),
++		MTK_FUNCTION(0, "GPIO32"),
++		MTK_FUNCTION(1, "NF_DQS"),
++		MTK_FUNCTION(2, "USB1_FT_SDA"),
++		MTK_FUNCTION(7, "DBG_MON_A_9_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(33, "NWEB"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 61),
++		MTK_FUNCTION(0, "GPIO33"),
++		MTK_FUNCTION(1, "NWEB"),
++		MTK_FUNCTION(2, "USB2_FT_SCL"),
++		MTK_FUNCTION(7, "DBG_MON_A_10_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(34, "NREB"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 62),
++		MTK_FUNCTION(0, "GPIO34"),
++		MTK_FUNCTION(1, "NREB"),
++		MTK_FUNCTION(2, "USB2_FT_SDA"),
++		MTK_FUNCTION(7, "DBG_MON_A_11_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(35, "NCLE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 63),
++		MTK_FUNCTION(0, "GPIO35"),
++		MTK_FUNCTION(1, "NCLE"),
++		MTK_FUNCTION(2, "USB3_FT_SCL"),
++		MTK_FUNCTION(7, "DBG_MON_A_12_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(36, "NALE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 64),
++		MTK_FUNCTION(0, "GPIO36"),
++		MTK_FUNCTION(1, "NALE"),
++		MTK_FUNCTION(2, "USB3_FT_SDA"),
++		MTK_FUNCTION(7, "DBG_MON_A_13_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(37, "MSDC0E_CLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO37"),
++		MTK_FUNCTION(1, "MSDC0_CLK"),
++		MTK_FUNCTION(2, "USB0_FT_SCL"),
++		MTK_FUNCTION(7, "DBG_MON_A_0_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(38, "MSDC0E_DAT7"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO38"),
++		MTK_FUNCTION(1, "MSDC0_DAT7"),
++		MTK_FUNCTION(2, "NAND_ND7"),
++		MTK_FUNCTION(7, "DBG_MON_A_14_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(39, "MSDC0E_DAT6"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO39"),
++		MTK_FUNCTION(1, "MSDC0_DAT6"),
++		MTK_FUNCTION(2, "NAND_ND6"),
++		MTK_FUNCTION(7, "DBG_MON_A_15_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(40, "MSDC0E_DAT5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO40"),
++		MTK_FUNCTION(1, "MSDC0_DAT5"),
++		MTK_FUNCTION(2, "NAND_ND5"),
++		MTK_FUNCTION(7, "DBG_MON_A_16_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(41, "MSDC0E_DAT4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO41"),
++		MTK_FUNCTION(1, "MSDC0_DAT4"),
++		MTK_FUNCTION(2, "NAND_ND4"),
++		MTK_FUNCTION(7, "DBG_MON_A_17_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(42, "MSDC0E_DAT3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO42"),
++		MTK_FUNCTION(1, "MSDC0_DAT3"),
++		MTK_FUNCTION(2, "NAND_ND3"),
++		MTK_FUNCTION(7, "DBG_MON_A_18_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(43, "MSDC0E_DAT2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO43"),
++		MTK_FUNCTION(1, "MSDC0_DAT2"),
++		MTK_FUNCTION(2, "NAND_ND2"),
++		MTK_FUNCTION(7, "DBG_MON_A_19_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(44, "MSDC0E_DAT1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO44"),
++		MTK_FUNCTION(1, "MSDC0_DAT1"),
++		MTK_FUNCTION(2, "NAND_ND1"),
++		MTK_FUNCTION(7, "DBG_MON_A_20_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(45, "MSDC0E_DAT0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO45"),
++		MTK_FUNCTION(1, "MSDC0_DAT0"),
++		MTK_FUNCTION(2, "NAND_ND0"),
++		MTK_FUNCTION(7, "DBG_MON_A_21_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(46, "MSDC0E_CMD"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO46"),
++		MTK_FUNCTION(1, "MSDC0_CMD"),
++		MTK_FUNCTION(2, "NAND_NRNB"),
++		MTK_FUNCTION(7, "DBG_MON_A_22_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(47, "MSDC0E_DSL"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO47"),
++		MTK_FUNCTION(1, "MSDC0_DSL"),
++		MTK_FUNCTION(7, "DBG_MON_A_23_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(48, "MSDC0E_RSTB"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 142),
++		MTK_FUNCTION(0, "GPIO48"),
++		MTK_FUNCTION(1, "MSDC0_RSTB"),
++		MTK_FUNCTION(7, "DBG_MON_A_24_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(49, "MSDC3_DAT3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 65),
++		MTK_FUNCTION(0, "GPIO49"),
++		MTK_FUNCTION(1, "MSDC3_DAT3"),
++		MTK_FUNCTION(7, "DBG_MON_A_25_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(50, "MSDC3_DAT2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 66),
++		MTK_FUNCTION(0, "GPIO50"),
++		MTK_FUNCTION(1, "MSDC3_DAT2"),
++		MTK_FUNCTION(7, "DBG_MON_A_26_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(51, "MSDC3_DAT1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 67),
++		MTK_FUNCTION(0, "GPIO51"),
++		MTK_FUNCTION(1, "MSDC3_DAT1"),
++		MTK_FUNCTION(7, "DBG_MON_A_27_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(52, "MSDC3_DAT0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 68),
++		MTK_FUNCTION(0, "GPIO52"),
++		MTK_FUNCTION(1, "MSDC3_DAT0"),
++		MTK_FUNCTION(7, "DBG_MON_A_28_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(53, "MSDC3_CMD"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 69),
++		MTK_FUNCTION(0, "GPIO53"),
++		MTK_FUNCTION(1, "MSDC3_CMD"),
++		MTK_FUNCTION(7, "DBG_MON_A_29_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(54, "MSDC3_INS"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 20),
++		MTK_FUNCTION(0, "GPIO54"),
++		MTK_FUNCTION(1, "MSDC3_INS"),
++		MTK_FUNCTION(7, "DBG_MON_A_30_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(55, "MSDC3_DSL"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 70),
++		MTK_FUNCTION(0, "GPIO55"),
++		MTK_FUNCTION(1, "MSDC3_DSL"),
++		MTK_FUNCTION(7, "DBG_MON_A_31_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(56, "MSDC3_CLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 71),
++		MTK_FUNCTION(0, "GPIO56"),
++		MTK_FUNCTION(1, "MSDC3_CLK"),
++		MTK_FUNCTION(7, "DBG_MON_A_32_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(57, "NOR_CS"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 72),
++		MTK_FUNCTION(0, "GPIO57"),
++		MTK_FUNCTION(1, "NOR_CS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(58, "NOR_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 73),
++		MTK_FUNCTION(0, "GPIO58"),
++		MTK_FUNCTION(1, "NOR_CK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(59, "NOR_IO0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 74),
++		MTK_FUNCTION(0, "GPIO59"),
++		MTK_FUNCTION(1, "NOR_IO0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(60, "NOR_IO1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 75),
++		MTK_FUNCTION(0, "GPIO60"),
++		MTK_FUNCTION(1, "NOR_IO1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(61, "NOR_IO2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 76),
++		MTK_FUNCTION(0, "GPIO61"),
++		MTK_FUNCTION(1, "NOR_IO2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(62, "NOR_IO3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 77),
++		MTK_FUNCTION(0, "GPIO62"),
++		MTK_FUNCTION(1, "NOR_IO3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(63, "MSDC1_CLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 78),
++		MTK_FUNCTION(0, "GPIO63"),
++		MTK_FUNCTION(1, "MSDC1_CLK"),
++		MTK_FUNCTION(2, "UDI_TCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(64, "MSDC1_DAT3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 79),
++		MTK_FUNCTION(0, "GPIO64"),
++		MTK_FUNCTION(1, "MSDC1_DAT3"),
++		MTK_FUNCTION(2, "UDI_TDI")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(65, "MSDC1_DAT1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 80),
++		MTK_FUNCTION(0, "GPIO65"),
++		MTK_FUNCTION(1, "MSDC1_DAT1"),
++		MTK_FUNCTION(2, "UDI_TMS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(66, "MSDC1_DAT2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 81),
++		MTK_FUNCTION(0, "GPIO66"),
++		MTK_FUNCTION(1, "MSDC1_DAT2"),
++		MTK_FUNCTION(2, "UDI_TDO")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(67, "MSDC1_PSW"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 82),
++		MTK_FUNCTION(0, "GPIO67"),
++		MTK_FUNCTION(2, "UDI_NTRST")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(68, "MSDC1_DAT0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 83),
++		MTK_FUNCTION(0, "GPIO68"),
++		MTK_FUNCTION(1, "MSDC1_DAT0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(69, "MSDC1_CMD"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 84),
++		MTK_FUNCTION(0, "GPIO69"),
++		MTK_FUNCTION(1, "MSDC1_CMD")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(70, "MSDC1_INS"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 85),
++		MTK_FUNCTION(0, "GPIO70")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(71, "GBE_TXD3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 86),
++		MTK_FUNCTION(0, "GPIO71"),
++		MTK_FUNCTION(1, "GBE_TXD3"),
++		MTK_FUNCTION(7, "DBG_MON_B_0_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(72, "GBE_TXD2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 87),
++		MTK_FUNCTION(0, "GPIO72"),
++		MTK_FUNCTION(1, "GBE_TXD2"),
++		MTK_FUNCTION(7, "DBG_MON_B_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(73, "GBE_TXD1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 88),
++		MTK_FUNCTION(0, "GPIO73"),
++		MTK_FUNCTION(1, "GBE_TXD1"),
++		MTK_FUNCTION(7, "DBG_MON_B_2_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(74, "GBE_TXD0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 89),
++		MTK_FUNCTION(0, "GPIO74"),
++		MTK_FUNCTION(1, "GBE_TXD0"),
++		MTK_FUNCTION(7, "DBG_MON_B_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(75, "GBE_TXC"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 90),
++		MTK_FUNCTION(0, "GPIO75"),
++		MTK_FUNCTION(1, "GBE_TXC"),
++		MTK_FUNCTION(7, "DBG_MON_B_4_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(76, "GBE_TXEN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 91),
++		MTK_FUNCTION(0, "GPIO76"),
++		MTK_FUNCTION(1, "GBE_TXEN"),
++		MTK_FUNCTION(7, "DBG_MON_B_5_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(77, "GBE_TXER"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 92),
++		MTK_FUNCTION(0, "GPIO77"),
++		MTK_FUNCTION(1, "GBE_TXER"),
++		MTK_FUNCTION(7, "DBG_MON_B_6_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(78, "GBE_RXD3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 93),
++		MTK_FUNCTION(0, "GPIO78"),
++		MTK_FUNCTION(1, "GBE_RXD3"),
++		MTK_FUNCTION(7, "DBG_MON_B_7_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(79, "GBE_RXD2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 94),
++		MTK_FUNCTION(0, "GPIO79"),
++		MTK_FUNCTION(1, "GBE_RXD2"),
++		MTK_FUNCTION(7, "DBG_MON_B_8_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(80, "GBE_RXD1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 95),
++		MTK_FUNCTION(0, "GPIO80"),
++		MTK_FUNCTION(1, "GBE_RXD1"),
++		MTK_FUNCTION(7, "DBG_MON_B_9_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(81, "GBE_RXD0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 96),
++		MTK_FUNCTION(0, "GPIO81"),
++		MTK_FUNCTION(1, "GBE_RXD0"),
++		MTK_FUNCTION(7, "DBG_MON_B_10_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(82, "GBE_RXDV"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 97),
++		MTK_FUNCTION(0, "GPIO82"),
++		MTK_FUNCTION(1, "GBE_RXDV"),
++		MTK_FUNCTION(7, "DBG_MON_B_11_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(83, "GBE_RXER"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 98),
++		MTK_FUNCTION(0, "GPIO83"),
++		MTK_FUNCTION(1, "GBE_RXER"),
++		MTK_FUNCTION(7, "DBG_MON_B_12_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(84, "GBE_RXC"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 99),
++		MTK_FUNCTION(0, "GPIO84"),
++		MTK_FUNCTION(1, "GBE_RXC"),
++		MTK_FUNCTION(7, "DBG_MON_B_13_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(85, "GBE_MDC"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 100),
++		MTK_FUNCTION(0, "GPIO85"),
++		MTK_FUNCTION(1, "GBE_MDC"),
++		MTK_FUNCTION(7, "DBG_MON_B_14_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(86, "GBE_MDIO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 101),
++		MTK_FUNCTION(0, "GPIO86"),
++		MTK_FUNCTION(1, "GBE_MDIO"),
++		MTK_FUNCTION(7, "DBG_MON_B_15_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(87, "GBE_COL"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 102),
++		MTK_FUNCTION(0, "GPIO87"),
++		MTK_FUNCTION(1, "GBE_COL"),
++		MTK_FUNCTION(7, "DBG_MON_B_16_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(88, "GBE_INTR"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 21),
++		MTK_FUNCTION(0, "GPIO88"),
++		MTK_FUNCTION(1, "GBE_INTR"),
++		MTK_FUNCTION(2, "GBE_CRS"),
++		MTK_FUNCTION(7, "DBG_MON_B_17_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(89, "MSDC2_CLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 103),
++		MTK_FUNCTION(0, "GPIO89"),
++		MTK_FUNCTION(1, "MSDC2_CLK"),
++		MTK_FUNCTION(7, "DBG_MON_B_18_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(90, "MSDC2_DAT3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 104),
++		MTK_FUNCTION(0, "GPIO90"),
++		MTK_FUNCTION(1, "MSDC2_DAT3"),
++		MTK_FUNCTION(7, "DBG_MON_B_19_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(91, "MSDC2_DAT2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 105),
++		MTK_FUNCTION(0, "GPIO91"),
++		MTK_FUNCTION(1, "MSDC2_DAT2"),
++		MTK_FUNCTION(7, "DBG_MON_B_20_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(92, "MSDC2_DAT1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 106),
++		MTK_FUNCTION(0, "GPIO92"),
++		MTK_FUNCTION(1, "MSDC2_DAT1"),
++		MTK_FUNCTION(7, "DBG_MON_B_21_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(93, "MSDC2_DAT0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 107),
++		MTK_FUNCTION(0, "GPIO93"),
++		MTK_FUNCTION(1, "MSDC2_DAT0"),
++		MTK_FUNCTION(7, "DBG_MON_B_22_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(94, "MSDC2_INS"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 108),
++		MTK_FUNCTION(0, "GPIO94"),
++		MTK_FUNCTION(7, "DBG_MON_B_23_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(95, "MSDC2_CMD"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 109),
++		MTK_FUNCTION(0, "GPIO95"),
++		MTK_FUNCTION(1, "MSDC2_CMD"),
++		MTK_FUNCTION(7, "DBG_MON_B_24_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(96, "MSDC2_PSW"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 110),
++		MTK_FUNCTION(0, "GPIO96"),
++		MTK_FUNCTION(7, "DBG_MON_B_25_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(97, "URXD4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 111),
++		MTK_FUNCTION(0, "GPIO97"),
++		MTK_FUNCTION(1, "URXD4"),
++		MTK_FUNCTION(2, "UTXD4"),
++		MTK_FUNCTION(3, "MRG_CLK"),
++		MTK_FUNCTION(4, "PCM1_CLK"),
++		MTK_FUNCTION(5, "I2S_IQ2_SDQB"),
++		MTK_FUNCTION(6, "I2SO1_WS"),
++		MTK_FUNCTION(7, "DBG_MON_B_26_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(98, "URTS4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 112),
++		MTK_FUNCTION(0, "GPIO98"),
++		MTK_FUNCTION(1, "URTS4"),
++		MTK_FUNCTION(2, "UCTS4"),
++		MTK_FUNCTION(3, "MRG_RX"),
++		MTK_FUNCTION(4, "PCM1_DI"),
++		MTK_FUNCTION(5, "I2S_IQ1_SDIB"),
++		MTK_FUNCTION(6, "I2SO1_MCK"),
++		MTK_FUNCTION(7, "DBG_MON_B_27_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(99, "UTXD4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 113),
++		MTK_FUNCTION(0, "GPIO99"),
++		MTK_FUNCTION(1, "UTXD4"),
++		MTK_FUNCTION(2, "URXD4"),
++		MTK_FUNCTION(3, "MRG_SYNC"),
++		MTK_FUNCTION(4, "PCM1_SYNC"),
++		MTK_FUNCTION(5, "I2S_IQ0_SDQB"),
++		MTK_FUNCTION(6, "I2SO1_BCK"),
++		MTK_FUNCTION(7, "DBG_MON_B_28_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(100, "UCTS4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 114),
++		MTK_FUNCTION(0, "GPIO100"),
++		MTK_FUNCTION(1, "UCTS4"),
++		MTK_FUNCTION(2, "URTS4"),
++		MTK_FUNCTION(3, "MRG_TX"),
++		MTK_FUNCTION(4, "PCM1_DO"),
++		MTK_FUNCTION(5, "I2S_IQ0_SDIB"),
++		MTK_FUNCTION(6, "I2SO1_DO"),
++		MTK_FUNCTION(7, "DBG_MON_B_29_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(101, "URXD5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 30),
++		MTK_FUNCTION(0, "GPIO101"),
++		MTK_FUNCTION(1, "URXD5"),
++		MTK_FUNCTION(2, "UTXD5"),
++		MTK_FUNCTION(3, "I2SO3_WS"),
++		MTK_FUNCTION(4, "TDMIN_LRCK"),
++		MTK_FUNCTION(6, "I2SO0_WS"),
++		MTK_FUNCTION(7, "DBG_MON_B_30_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(102, "URTS5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 31),
++		MTK_FUNCTION(0, "GPIO102"),
++		MTK_FUNCTION(1, "URTS5"),
++		MTK_FUNCTION(2, "UCTS5"),
++		MTK_FUNCTION(3, "I2SO3_MCK"),
++		MTK_FUNCTION(4, "TDMIN_MCLK"),
++		MTK_FUNCTION(5, "IR_IN"),
++		MTK_FUNCTION(6, "I2SO0_MCK"),
++		MTK_FUNCTION(7, "DBG_MON_B_31_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(103, "UTXD5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 32),
++		MTK_FUNCTION(0, "GPIO103"),
++		MTK_FUNCTION(1, "UTXD5"),
++		MTK_FUNCTION(2, "URXD5"),
++		MTK_FUNCTION(3, "I2SO3_BCK"),
++		MTK_FUNCTION(4, "TDMIN_BCK"),
++		MTK_FUNCTION(6, "I2SO0_BCK"),
++		MTK_FUNCTION(7, "DBG_MON_B_32_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(104, "UCTS5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 33),
++		MTK_FUNCTION(0, "GPIO104"),
++		MTK_FUNCTION(1, "UCTS5"),
++		MTK_FUNCTION(2, "URTS5"),
++		MTK_FUNCTION(3, "I2SO0_DO1"),
++		MTK_FUNCTION(4, "TDMIN_DI"),
++		MTK_FUNCTION(5, "IR_IN"),
++		MTK_FUNCTION(6, "I2SO0_DO0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(105, "I2C_SDA0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 115),
++		MTK_FUNCTION(0, "GPIO105"),
++		MTK_FUNCTION(1, "SDA0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(106, "I2C_SDA1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 116),
++		MTK_FUNCTION(0, "GPIO106"),
++		MTK_FUNCTION(1, "SDA1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(107, "I2C_SDA2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 117),
++		MTK_FUNCTION(0, "GPIO107"),
++		MTK_FUNCTION(1, "SDA2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(108, "I2C_SDA3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 118),
++		MTK_FUNCTION(0, "GPIO108"),
++		MTK_FUNCTION(1, "SDA3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(109, "I2C_SDA4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 119),
++		MTK_FUNCTION(0, "GPIO109"),
++		MTK_FUNCTION(1, "SDA4")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(110, "I2C_SDA5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 34),
++		MTK_FUNCTION(0, "GPIO110"),
++		MTK_FUNCTION(1, "SDA5")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(111, "I2C_SCL0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 120),
++		MTK_FUNCTION(0, "GPIO111"),
++		MTK_FUNCTION(1, "SCL0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(112, "I2C_SCL1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 121),
++		MTK_FUNCTION(0, "GPIO112"),
++		MTK_FUNCTION(1, "SCL1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(113, "I2C_SCL2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 122),
++		MTK_FUNCTION(0, "GPIO113"),
++		MTK_FUNCTION(1, "SCL2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(114, "I2C_SCL3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 123),
++		MTK_FUNCTION(0, "GPIO114"),
++		MTK_FUNCTION(1, "SCL3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(115, "I2C_SCL4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 124),
++		MTK_FUNCTION(0, "GPIO115"),
++		MTK_FUNCTION(1, "SCL4")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(116, "I2C_SCL5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 35),
++		MTK_FUNCTION(0, "GPIO116"),
++		MTK_FUNCTION(1, "SCL5")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(117, "URXD0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 125),
++		MTK_FUNCTION(0, "GPIO117"),
++		MTK_FUNCTION(1, "URXD0"),
++		MTK_FUNCTION(2, "UTXD0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(118, "URXD1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 126),
++		MTK_FUNCTION(0, "GPIO118"),
++		MTK_FUNCTION(1, "URXD1"),
++		MTK_FUNCTION(2, "UTXD1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(119, "URXD2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 127),
++		MTK_FUNCTION(0, "GPIO119"),
++		MTK_FUNCTION(1, "URXD2"),
++		MTK_FUNCTION(2, "UTXD2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(120, "UTXD0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 128),
++		MTK_FUNCTION(0, "GPIO120"),
++		MTK_FUNCTION(1, "UTXD0"),
++		MTK_FUNCTION(2, "URXD0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(121, "UTXD1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 129),
++		MTK_FUNCTION(0, "GPIO121"),
++		MTK_FUNCTION(1, "UTXD1"),
++		MTK_FUNCTION(2, "URXD1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(122, "UTXD2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 130),
++		MTK_FUNCTION(0, "GPIO122"),
++		MTK_FUNCTION(1, "UTXD2"),
++		MTK_FUNCTION(2, "URXD2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(123, "URXD3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 131),
++		MTK_FUNCTION(0, "GPIO123"),
++		MTK_FUNCTION(1, "URXD3"),
++		MTK_FUNCTION(2, "UTXD3"),
++		MTK_FUNCTION(3, "PURE_HW_PROTECT")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(124, "UTXD3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 132),
++		MTK_FUNCTION(0, "GPIO124"),
++		MTK_FUNCTION(1, "UTXD3"),
++		MTK_FUNCTION(2, "URXD3"),
++		MTK_FUNCTION(3, "PURE_HW_PROTECT")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(125, "URTS3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 133),
++		MTK_FUNCTION(0, "GPIO125"),
++		MTK_FUNCTION(1, "URTS3"),
++		MTK_FUNCTION(2, "UCTS3"),
++		MTK_FUNCTION(3, "WATCH_DOG")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(126, "UCTS3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 134),
++		MTK_FUNCTION(0, "GPIO126"),
++		MTK_FUNCTION(1, "UCTS3"),
++		MTK_FUNCTION(2, "URTS3"),
++		MTK_FUNCTION(3, "SRCLKENA0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(127, "SPI2_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 135),
++		MTK_FUNCTION(0, "GPIO127"),
++		MTK_FUNCTION(1, "SPI_CS_2_"),
++		MTK_FUNCTION(2, "SPI_CS_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(128, "SPI2_MO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 136),
++		MTK_FUNCTION(0, "GPIO128"),
++		MTK_FUNCTION(1, "SPI_MO_2_"),
++		MTK_FUNCTION(2, "SPI_SO_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(129, "SPI2_MI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 137),
++		MTK_FUNCTION(0, "GPIO129"),
++		MTK_FUNCTION(1, "SPI_MI_2_"),
++		MTK_FUNCTION(2, "SPI_SI_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(130, "SPI2_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 138),
++		MTK_FUNCTION(0, "GPIO130"),
++		MTK_FUNCTION(1, "SPI_CK_2_"),
++		MTK_FUNCTION(2, "SPI_CK_1_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(131, "SPI3_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 139),
++		MTK_FUNCTION(0, "GPIO131"),
++		MTK_FUNCTION(1, "SPI_CS_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(132, "SPI3_MO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 143),
++		MTK_FUNCTION(0, "GPIO132"),
++		MTK_FUNCTION(1, "SPI_MO_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(133, "SPI3_MI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 144),
++		MTK_FUNCTION(0, "GPIO133"),
++		MTK_FUNCTION(1, "SPI_MI_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(134, "SPI3_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 145),
++		MTK_FUNCTION(0, "GPIO134"),
++		MTK_FUNCTION(1, "SPI_CK_3_")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(135, "KPROW3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 146),
++		MTK_FUNCTION(0, "GPIO135"),
++		MTK_FUNCTION(1, "KROW3"),
++		MTK_FUNCTION(2, "DSIC_TE")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(136, "KPROW4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 36),
++		MTK_FUNCTION(0, "GPIO136"),
++		MTK_FUNCTION(1, "KROW4"),
++		MTK_FUNCTION(2, "DSID_TE")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(137, "KPCOL3"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 147),
++		MTK_FUNCTION(0, "GPIO137"),
++		MTK_FUNCTION(1, "KCOL3"),
++		MTK_FUNCTION(2, "DISP2_PWM")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(138, "KPCOL4"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 37),
++		MTK_FUNCTION(0, "GPIO138"),
++		MTK_FUNCTION(1, "KCOL4"),
++		MTK_FUNCTION(2, "LCM_RST2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(139, "KPCOL5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 38),
++		MTK_FUNCTION(0, "GPIO139"),
++		MTK_FUNCTION(1, "KCOL5"),
++		MTK_FUNCTION(3, "DSIA_TE"),
++		MTK_FUNCTION(4, "PURE_HW_PROTECT")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(140, "KPCOL6"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 39),
++		MTK_FUNCTION(0, "GPIO140"),
++		MTK_FUNCTION(1, "KCOL6"),
++		MTK_FUNCTION(2, "WATCH_DOG"),
++		MTK_FUNCTION(3, "LCM_RST1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(141, "KPROW5"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 40),
++		MTK_FUNCTION(0, "GPIO141"),
++		MTK_FUNCTION(1, "KROW5"),
++		MTK_FUNCTION(3, "LCM_RST0"),
++		MTK_FUNCTION(4, "PURE_HW_PROTECT")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(142, "KPROW6"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 41),
++		MTK_FUNCTION(0, "GPIO142"),
++		MTK_FUNCTION(1, "KROW6"),
++		MTK_FUNCTION(2, "SRCLKENA0"),
++		MTK_FUNCTION(3, "DSIB_TE")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(143, "JTDO_ICE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 148),
++		MTK_FUNCTION(0, "GPIO143"),
++		MTK_FUNCTION(1, "JTDO_ICE"),
++		MTK_FUNCTION(3, "DFD_TDO")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(144, "JTCK_ICE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 149),
++		MTK_FUNCTION(0, "GPIO144"),
++		MTK_FUNCTION(1, "JTCK_ICE"),
++		MTK_FUNCTION(3, "DFD_TCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(145, "JTDI_ICE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 150),
++		MTK_FUNCTION(0, "GPIO145"),
++		MTK_FUNCTION(1, "JTDI_ICE"),
++		MTK_FUNCTION(3, "DFD_TDI")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(146, "JTMS_ICE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 151),
++		MTK_FUNCTION(0, "GPIO146"),
++		MTK_FUNCTION(1, "JTMS_ICE"),
++		MTK_FUNCTION(3, "DFD_TMS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(147, "JTRSTB_ICE"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 152),
++		MTK_FUNCTION(0, "GPIO147"),
++		MTK_FUNCTION(1, "JTRST_B_ICE"),
++		MTK_FUNCTION(3, "DFD_NTRST")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(148, "GPIO148"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 153),
++		MTK_FUNCTION(0, "GPIO148"),
++		MTK_FUNCTION(1, "JTRSTB_CM4"),
++		MTK_FUNCTION(3, "DFD_NTRST")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(149, "GPIO149"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 154),
++		MTK_FUNCTION(0, "GPIO149"),
++		MTK_FUNCTION(1, "JTCK_CM4"),
++		MTK_FUNCTION(3, "DFD_TCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(150, "GPIO150"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 155),
++		MTK_FUNCTION(0, "GPIO150"),
++		MTK_FUNCTION(1, "JTMS_CM4"),
++		MTK_FUNCTION(3, "DFD_TMS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(151, "GPIO151"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 156),
++		MTK_FUNCTION(0, "GPIO151"),
++		MTK_FUNCTION(1, "JTDI_CM4"),
++		MTK_FUNCTION(3, "DFD_TDI")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(152, "GPIO152"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 157),
++		MTK_FUNCTION(0, "GPIO152"),
++		MTK_FUNCTION(1, "JTDO_CM4"),
++		MTK_FUNCTION(3, "DFD_TDO")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(153, "SPI0_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 158),
++		MTK_FUNCTION(0, "GPIO153"),
++		MTK_FUNCTION(1, "SPI_CS_0_"),
++		MTK_FUNCTION(2, "SRCLKENA0"),
++		MTK_FUNCTION(3, "UTXD0"),
++		MTK_FUNCTION(4, "I2SO0_DO1"),
++		MTK_FUNCTION(6, "TDMO0_DATA1"),
++		MTK_FUNCTION(7, "I2S_IQ2_SDQB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(154, "SPI0_MI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 159),
++		MTK_FUNCTION(0, "GPIO154"),
++		MTK_FUNCTION(1, "SPI_MI_0_"),
++		MTK_FUNCTION(2, "SRCLKENA0"),
++		MTK_FUNCTION(3, "URXD0"),
++		MTK_FUNCTION(4, "I2SO0_DO0"),
++		MTK_FUNCTION(5, "I2SO1_DO"),
++		MTK_FUNCTION(6, "TDMO0_DATA"),
++		MTK_FUNCTION(7, "I2S_IQ1_SDIB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(155, "SPI0_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 160),
++		MTK_FUNCTION(0, "GPIO155"),
++		MTK_FUNCTION(1, "SPI_CK_0_"),
++		MTK_FUNCTION(2, "SC_APBIAS_OFF"),
++		MTK_FUNCTION(3, "UTXD1"),
++		MTK_FUNCTION(4, "I2SO0_BCK"),
++		MTK_FUNCTION(5, "I2SO1_BCK"),
++		MTK_FUNCTION(6, "TDMO0_BCK"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDQB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(156, "SPI0_MO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 161),
++		MTK_FUNCTION(0, "GPIO156"),
++		MTK_FUNCTION(1, "SPI_MO_0_"),
++		MTK_FUNCTION(2, "SC_APBIAS_OFF"),
++		MTK_FUNCTION(3, "URXD1"),
++		MTK_FUNCTION(4, "I2SO0_WS"),
++		MTK_FUNCTION(5, "I2SO1_WS"),
++		MTK_FUNCTION(6, "TDMO0_LRCK"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDIB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(157, "SPI5_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 162),
++		MTK_FUNCTION(0, "GPIO157"),
++		MTK_FUNCTION(1, "SPI_CS_5_"),
++		MTK_FUNCTION(2, "LCM_RST0"),
++		MTK_FUNCTION(3, "UTXD2"),
++		MTK_FUNCTION(4, "I2SO0_MCK"),
++		MTK_FUNCTION(5, "I2SO1_MCK"),
++		MTK_FUNCTION(6, "TDMO0_MCLK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(158, "SPI5_MI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 163),
++		MTK_FUNCTION(0, "GPIO158"),
++		MTK_FUNCTION(1, "SPI_MI_5_"),
++		MTK_FUNCTION(2, "DSIA_TE"),
++		MTK_FUNCTION(3, "URXD2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(159, "SPI5_MO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 164),
++		MTK_FUNCTION(0, "GPIO159"),
++		MTK_FUNCTION(1, "SPI_MO_5_"),
++		MTK_FUNCTION(2, "DSIB_TE"),
++		MTK_FUNCTION(3, "UTXD3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(160, "SPI5_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 165),
++		MTK_FUNCTION(0, "GPIO160"),
++		MTK_FUNCTION(1, "SPI_CK_5_"),
++		MTK_FUNCTION(2, "LCM_RST1"),
++		MTK_FUNCTION(3, "URXD3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(161, "SPI1_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 166),
++		MTK_FUNCTION(0, "GPIO161"),
++		MTK_FUNCTION(1, "SPI_CS_1_"),
++		MTK_FUNCTION(2, "SPI_CS_4_"),
++		MTK_FUNCTION(4, "I2S_IQ2_SDQB"),
++		MTK_FUNCTION(5, "I2SO2_DO"),
++		MTK_FUNCTION(6, "TDMO0_DATA1"),
++		MTK_FUNCTION(7, "I2SO0_DO1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(162, "SPI1_SI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 167),
++		MTK_FUNCTION(0, "GPIO162"),
++		MTK_FUNCTION(1, "SPI_SI_1_"),
++		MTK_FUNCTION(2, "SPI_MI_4_"),
++		MTK_FUNCTION(4, "I2S_IQ1_SDIB"),
++		MTK_FUNCTION(5, "I2SO2_BCK"),
++		MTK_FUNCTION(6, "TDMO0_DATA"),
++		MTK_FUNCTION(7, "I2SO0_DO0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(163, "SPI1_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 168),
++		MTK_FUNCTION(0, "GPIO163"),
++		MTK_FUNCTION(1, "SPI_CK_1_"),
++		MTK_FUNCTION(2, "SPI_CK_4_"),
++		MTK_FUNCTION(4, "I2S_IQ0_SDQB"),
++		MTK_FUNCTION(5, "I2SO2_WS"),
++		MTK_FUNCTION(6, "TDMO0_BCK"),
++		MTK_FUNCTION(7, "I2SO0_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(164, "SPI1_SO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 169),
++		MTK_FUNCTION(0, "GPIO164"),
++		MTK_FUNCTION(1, "SPI_SO_1_"),
++		MTK_FUNCTION(2, "SPI_MO_4_"),
++		MTK_FUNCTION(4, "I2S_IQ0_SDIB"),
++		MTK_FUNCTION(5, "I2SO2_MCK"),
++		MTK_FUNCTION(6, "TDMO0_LRCK"),
++		MTK_FUNCTION(7, "I2SO0_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(165, "SPI4_CSN"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 170),
++		MTK_FUNCTION(0, "GPIO165"),
++		MTK_FUNCTION(1, "SPI_CS_4_"),
++		MTK_FUNCTION(2, "LCM_RST0"),
++		MTK_FUNCTION(3, "SPI_CS_1_"),
++		MTK_FUNCTION(4, "UTXD4"),
++		MTK_FUNCTION(5, "I2SO1_DO"),
++		MTK_FUNCTION(6, "TDMO0_MCLK"),
++		MTK_FUNCTION(7, "I2SO0_MCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(166, "SPI4_MI"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 171),
++		MTK_FUNCTION(0, "GPIO166"),
++		MTK_FUNCTION(1, "SPI_MI_4_"),
++		MTK_FUNCTION(2, "DSIA_TE"),
++		MTK_FUNCTION(3, "SPI_SI_1_"),
++		MTK_FUNCTION(4, "URXD4"),
++		MTK_FUNCTION(5, "I2SO1_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(167, "SPI4_MO"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 172),
++		MTK_FUNCTION(0, "GPIO167"),
++		MTK_FUNCTION(1, "SPI_MO_4_"),
++		MTK_FUNCTION(2, "DSIB_TE"),
++		MTK_FUNCTION(3, "SPI_SO_1_"),
++		MTK_FUNCTION(4, "UTXD5"),
++		MTK_FUNCTION(5, "I2SO1_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(168, "SPI4_CK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 173),
++		MTK_FUNCTION(0, "GPIO168"),
++		MTK_FUNCTION(1, "SPI_CK_4_"),
++		MTK_FUNCTION(2, "LCM_RST1"),
++		MTK_FUNCTION(3, "SPI_CK_1_"),
++		MTK_FUNCTION(4, "URXD5"),
++		MTK_FUNCTION(5, "I2SO1_MCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(169, "I2SI0_DATA"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 174),
++		MTK_FUNCTION(0, "GPIO169"),
++		MTK_FUNCTION(1, "I2SI0_DI"),
++		MTK_FUNCTION(2, "I2SI1_DI"),
++		MTK_FUNCTION(3, "I2SI2_DI"),
++		MTK_FUNCTION(4, "TDMIN_DI")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(170, "I2SI0_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 175),
++		MTK_FUNCTION(0, "GPIO170"),
++		MTK_FUNCTION(1, "I2SI0_WS"),
++		MTK_FUNCTION(2, "I2SI1_WS"),
++		MTK_FUNCTION(3, "I2SI2_WS"),
++		MTK_FUNCTION(4, "TDMIN_LRCK"),
++		MTK_FUNCTION(5, "TDMO0_DATA3"),
++		MTK_FUNCTION(6, "TDMO1_DATA3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(171, "I2SI0_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 176),
++		MTK_FUNCTION(0, "GPIO171"),
++		MTK_FUNCTION(1, "I2SI0_MCK"),
++		MTK_FUNCTION(2, "I2SI1_MCK"),
++		MTK_FUNCTION(3, "I2SI2_MCK"),
++		MTK_FUNCTION(4, "TDMIN_MCLK"),
++		MTK_FUNCTION(5, "TDMO0_DATA2"),
++		MTK_FUNCTION(6, "TDMO1_DATA2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(172, "I2SI0_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 177),
++		MTK_FUNCTION(0, "GPIO172"),
++		MTK_FUNCTION(1, "I2SI0_BCK"),
++		MTK_FUNCTION(2, "I2SI1_BCK"),
++		MTK_FUNCTION(3, "I2SI2_BCK"),
++		MTK_FUNCTION(4, "TDMIN_BCK"),
++		MTK_FUNCTION(5, "TDMO0_DATA1"),
++		MTK_FUNCTION(6, "TDMO1_DATA1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(173, "I2SI2_DATA"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 178),
++		MTK_FUNCTION(0, "GPIO173"),
++		MTK_FUNCTION(1, "I2SI2_DI"),
++		MTK_FUNCTION(2, "I2SI0_DI"),
++		MTK_FUNCTION(3, "I2SI1_DI"),
++		MTK_FUNCTION(4, "PCM1_DI"),
++		MTK_FUNCTION(5, "TDMIN_DI"),
++		MTK_FUNCTION(6, "PCM1_DO")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(174, "I2SI2_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 179),
++		MTK_FUNCTION(0, "GPIO174"),
++		MTK_FUNCTION(1, "I2SI2_MCK"),
++		MTK_FUNCTION(2, "I2SI0_MCK"),
++		MTK_FUNCTION(3, "I2SI1_MCK"),
++		MTK_FUNCTION(4, "PCM1_DO"),
++		MTK_FUNCTION(5, "TDMIN_MCLK"),
++		MTK_FUNCTION(6, "PCM1_DI"),
++		MTK_FUNCTION(7, "I2S_IQ2_SDQB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(175, "I2SI2_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 180),
++		MTK_FUNCTION(0, "GPIO175"),
++		MTK_FUNCTION(1, "I2SI2_BCK"),
++		MTK_FUNCTION(2, "I2SI0_BCK"),
++		MTK_FUNCTION(3, "I2SI1_BCK"),
++		MTK_FUNCTION(4, "PCM1_CLK"),
++		MTK_FUNCTION(5, "TDMIN_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(176, "I2SI2_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 181),
++		MTK_FUNCTION(0, "GPIO176"),
++		MTK_FUNCTION(1, "I2SI2_WS"),
++		MTK_FUNCTION(2, "I2SI0_WS"),
++		MTK_FUNCTION(3, "I2SI1_WS"),
++		MTK_FUNCTION(4, "PCM1_SYNC"),
++		MTK_FUNCTION(5, "TDMIN_LRCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(177, "I2SI1_DATA"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 182),
++		MTK_FUNCTION(0, "GPIO177"),
++		MTK_FUNCTION(1, "I2SI1_DI"),
++		MTK_FUNCTION(2, "I2SI0_DI"),
++		MTK_FUNCTION(3, "I2SI2_DI"),
++		MTK_FUNCTION(4, "TDMIN_DI")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(178, "I2SI1_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 183),
++		MTK_FUNCTION(0, "GPIO178"),
++		MTK_FUNCTION(1, "I2SI1_BCK"),
++		MTK_FUNCTION(2, "I2SI0_BCK"),
++		MTK_FUNCTION(3, "I2SI2_BCK"),
++		MTK_FUNCTION(4, "TDMIN_BCK"),
++		MTK_FUNCTION(5, "TDMO0_DATA3"),
++		MTK_FUNCTION(6, "TDMO1_DATA3")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(179, "I2SI1_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 184),
++		MTK_FUNCTION(0, "GPIO179"),
++		MTK_FUNCTION(1, "I2SI1_WS"),
++		MTK_FUNCTION(2, "I2SI0_WS"),
++		MTK_FUNCTION(3, "I2SI2_WS"),
++		MTK_FUNCTION(4, "TDMIN_LRCK"),
++		MTK_FUNCTION(5, "TDMO0_DATA2"),
++		MTK_FUNCTION(6, "TDMO1_DATA2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(180, "I2SI1_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 185),
++		MTK_FUNCTION(0, "GPIO180"),
++		MTK_FUNCTION(1, "I2SI1_MCK"),
++		MTK_FUNCTION(2, "I2SI0_MCK"),
++		MTK_FUNCTION(3, "I2SI2_MCK"),
++		MTK_FUNCTION(4, "TDMIN_MCLK"),
++		MTK_FUNCTION(5, "TDMO0_DATA1"),
++		MTK_FUNCTION(6, "TDMO1_DATA1"),
++		MTK_FUNCTION(7, "I2S_IQ2_SDIB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(181, "I2SO1_DATA0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 186),
++		MTK_FUNCTION(0, "GPIO181"),
++		MTK_FUNCTION(1, "I2SO1_DO"),
++		MTK_FUNCTION(2, "I2SO0_DO0"),
++		MTK_FUNCTION(3, "I2SO2_DO"),
++		MTK_FUNCTION(4, "DAI_TX"),
++		MTK_FUNCTION(5, "TDMIN_MCLK"),
++		MTK_FUNCTION(7, "I2S_IQ2_SDIA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(182, "I2SO1_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 187),
++		MTK_FUNCTION(0, "GPIO182"),
++		MTK_FUNCTION(1, "I2SO1_BCK"),
++		MTK_FUNCTION(2, "I2SO0_BCK"),
++		MTK_FUNCTION(3, "I2SO2_BCK"),
++		MTK_FUNCTION(4, "DAI_SYNC"),
++		MTK_FUNCTION(5, "TDMIN_BCK"),
++		MTK_FUNCTION(6, "TDMO0_DATA3"),
++		MTK_FUNCTION(7, "I2S_IQ2_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(183, "I2SO1_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 188),
++		MTK_FUNCTION(0, "GPIO183"),
++		MTK_FUNCTION(1, "I2SO1_WS"),
++		MTK_FUNCTION(2, "I2SO0_WS"),
++		MTK_FUNCTION(3, "I2SO2_WS"),
++		MTK_FUNCTION(4, "DAI_CLK"),
++		MTK_FUNCTION(5, "TDMIN_DI"),
++		MTK_FUNCTION(6, "TDMO0_DATA2"),
++		MTK_FUNCTION(7, "I2S_IQ2_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(184, "I2SO1_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 189),
++		MTK_FUNCTION(0, "GPIO184"),
++		MTK_FUNCTION(1, "I2SO1_MCK"),
++		MTK_FUNCTION(2, "I2SO0_MCK"),
++		MTK_FUNCTION(3, "I2SO2_MCK"),
++		MTK_FUNCTION(4, "DAI_RX"),
++		MTK_FUNCTION(5, "TDMIN_LRCK"),
++		MTK_FUNCTION(6, "TDMO0_DATA1"),
++		MTK_FUNCTION(7, "I2S_IQ2_SDQA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(185, "AUD_EXT_CK2"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 190),
++		MTK_FUNCTION(0, "GPIO185"),
++		MTK_FUNCTION(1, "AUD_EXT_CK2"),
++		MTK_FUNCTION(2, "AUD_EXT_CK1"),
++		MTK_FUNCTION(3, "I2SO1_DO"),
++		MTK_FUNCTION(4, "I2SI2_DI"),
++		MTK_FUNCTION(5, "MRG_RX"),
++		MTK_FUNCTION(6, "PCM1_DI"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDQB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(186, "AUD_EXT_CK1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 191),
++		MTK_FUNCTION(0, "GPIO186"),
++		MTK_FUNCTION(1, "AUD_EXT_CK1"),
++		MTK_FUNCTION(2, "AUD_EXT_CK2"),
++		MTK_FUNCTION(3, "I2SO0_DO1"),
++		MTK_FUNCTION(4, "I2SI1_DI"),
++		MTK_FUNCTION(5, "MRG_TX"),
++		MTK_FUNCTION(6, "PCM1_DO"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDIB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(187, "I2SO2_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 192),
++		MTK_FUNCTION(0, "GPIO187"),
++		MTK_FUNCTION(1, "I2SO2_BCK"),
++		MTK_FUNCTION(2, "I2SO0_BCK"),
++		MTK_FUNCTION(3, "I2SO1_BCK"),
++		MTK_FUNCTION(4, "PCM1_CLK"),
++		MTK_FUNCTION(5, "MRG_SYNC"),
++		MTK_FUNCTION(6, "TDMO1_DATA3"),
++		MTK_FUNCTION(7, "I2S_IQ0_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(188, "I2SO2_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 193),
++		MTK_FUNCTION(0, "GPIO188"),
++		MTK_FUNCTION(1, "I2SO2_WS"),
++		MTK_FUNCTION(2, "I2SO0_WS"),
++		MTK_FUNCTION(3, "I2SO1_WS"),
++		MTK_FUNCTION(4, "PCM1_SYNC"),
++		MTK_FUNCTION(5, "MRG_CLK"),
++		MTK_FUNCTION(6, "TDMO1_DATA2"),
++		MTK_FUNCTION(7, "I2S_IQ0_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(189, "I2SO2_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 194),
++		MTK_FUNCTION(0, "GPIO189"),
++		MTK_FUNCTION(1, "I2SO2_MCK"),
++		MTK_FUNCTION(2, "I2SO0_MCK"),
++		MTK_FUNCTION(3, "I2SO1_MCK"),
++		MTK_FUNCTION(4, "PCM1_DO"),
++		MTK_FUNCTION(5, "MRG_RX"),
++		MTK_FUNCTION(6, "TDMO1_DATA1"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDQA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(190, "I2SO2_DATA0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 195),
++		MTK_FUNCTION(0, "GPIO190"),
++		MTK_FUNCTION(1, "I2SO2_DO"),
++		MTK_FUNCTION(2, "I2SO0_DO0"),
++		MTK_FUNCTION(3, "I2SO1_DO"),
++		MTK_FUNCTION(4, "PCM1_DI"),
++		MTK_FUNCTION(5, "MRG_TX"),
++		MTK_FUNCTION(6, "PCM1_DO"),
++		MTK_FUNCTION(7, "I2S_IQ0_SDIA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(191, "I2SO0_DATA1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 196),
++		MTK_FUNCTION(0, "GPIO191"),
++		MTK_FUNCTION(1, "I2SO0_DO1"),
++		MTK_FUNCTION(2, "I2SI0_DI"),
++		MTK_FUNCTION(3, "I2SI1_DI"),
++		MTK_FUNCTION(4, "I2SI2_DI"),
++		MTK_FUNCTION(5, "DAI_TX"),
++		MTK_FUNCTION(6, "I2S_IQ0_SDQB"),
++		MTK_FUNCTION(7, "I2S_IQ1_SDQB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(192, "I2SO0_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 197),
++		MTK_FUNCTION(0, "GPIO192"),
++		MTK_FUNCTION(1, "I2SO0_MCK"),
++		MTK_FUNCTION(2, "I2SO1_MCK"),
++		MTK_FUNCTION(3, "I2SO2_MCK"),
++		MTK_FUNCTION(4, "USB4_FT_SCL"),
++		MTK_FUNCTION(5, "TDMO1_DATA3"),
++		MTK_FUNCTION(6, "I2S_IQ0_SDIB"),
++		MTK_FUNCTION(7, "I2S_IQ1_SDQA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(193, "I2SO0_DATA0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 198),
++		MTK_FUNCTION(0, "GPIO193"),
++		MTK_FUNCTION(1, "I2SO0_DO0"),
++		MTK_FUNCTION(2, "I2SO1_DO"),
++		MTK_FUNCTION(3, "I2SO2_DO"),
++		MTK_FUNCTION(4, "USB4_FT_SDA"),
++		MTK_FUNCTION(7, "I2S_IQ1_SDIA")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(194, "I2SO0_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 199),
++		MTK_FUNCTION(0, "GPIO194"),
++		MTK_FUNCTION(1, "I2SO0_WS"),
++		MTK_FUNCTION(2, "I2SO1_WS"),
++		MTK_FUNCTION(3, "I2SO2_WS"),
++		MTK_FUNCTION(4, "USB5_FT_SCL"),
++		MTK_FUNCTION(5, "TDMO1_DATA2"),
++		MTK_FUNCTION(7, "I2S_IQ1_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(195, "I2SO0_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 200),
++		MTK_FUNCTION(0, "GPIO195"),
++		MTK_FUNCTION(1, "I2SO0_BCK"),
++		MTK_FUNCTION(2, "I2SO1_BCK"),
++		MTK_FUNCTION(3, "I2SO2_BCK"),
++		MTK_FUNCTION(4, "USB5_FT_SDA"),
++		MTK_FUNCTION(5, "TDMO1_DATA1"),
++		MTK_FUNCTION(7, "I2S_IQ1_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(196, "TDMO1_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 201),
++		MTK_FUNCTION(0, "GPIO196"),
++		MTK_FUNCTION(1, "TDMO1_MCLK"),
++		MTK_FUNCTION(2, "TDMO0_MCLK"),
++		MTK_FUNCTION(3, "TDMIN_MCLK"),
++		MTK_FUNCTION(6, "I2SO0_DO1"),
++		MTK_FUNCTION(7, "I2S_IQ1_SDIB")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(197, "TDMO1_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 202),
++		MTK_FUNCTION(0, "GPIO197"),
++		MTK_FUNCTION(1, "TDMO1_LRCK"),
++		MTK_FUNCTION(2, "TDMO0_LRCK"),
++		MTK_FUNCTION(3, "TDMIN_LRCK"),
++		MTK_FUNCTION(4, "TDMO0_DATA3"),
++		MTK_FUNCTION(5, "TDMO1_DATA3"),
++		MTK_FUNCTION(6, "I2SO3_MCK"),
++		MTK_FUNCTION(7, "TDMO1_DATA2")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(198, "TDMO1_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 203),
++		MTK_FUNCTION(0, "GPIO198"),
++		MTK_FUNCTION(1, "TDMO1_BCK"),
++		MTK_FUNCTION(2, "TDMO0_BCK"),
++		MTK_FUNCTION(3, "TDMIN_BCK"),
++		MTK_FUNCTION(4, "TDMO0_DATA2"),
++		MTK_FUNCTION(5, "TDMO1_DATA2"),
++		MTK_FUNCTION(6, "I2SO3_BCK"),
++		MTK_FUNCTION(7, "TDMO1_DATA1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(199, "TDMO1_DATA"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 204),
++		MTK_FUNCTION(0, "GPIO199"),
++		MTK_FUNCTION(1, "TDMO1_DATA"),
++		MTK_FUNCTION(2, "TDMO0_DATA"),
++		MTK_FUNCTION(3, "TDMIN_DI"),
++		MTK_FUNCTION(4, "TDMO0_DATA1"),
++		MTK_FUNCTION(5, "TDMO1_DATA1"),
++		MTK_FUNCTION(6, "I2SO3_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(200, "TDMO0_MCLK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 205),
++		MTK_FUNCTION(0, "GPIO200"),
++		MTK_FUNCTION(1, "TDMO0_MCLK"),
++		MTK_FUNCTION(2, "TDMO1_MCLK"),
++		MTK_FUNCTION(3, "PCM1_DI"),
++		MTK_FUNCTION(4, "TDMO0_MCLK"),
++		MTK_FUNCTION(5, "TDMO1_MCLK"),
++		MTK_FUNCTION(6, "MRG_TX"),
++		MTK_FUNCTION(7, "I2SO2_MCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(201, "TDMO0_LRCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 206),
++		MTK_FUNCTION(0, "GPIO201"),
++		MTK_FUNCTION(1, "TDMO0_LRCK"),
++		MTK_FUNCTION(2, "TDMO1_LRCK"),
++		MTK_FUNCTION(3, "PCM1_SYNC"),
++		MTK_FUNCTION(4, "TDMO0_LRCK"),
++		MTK_FUNCTION(5, "TDMO1_LRCK"),
++		MTK_FUNCTION(6, "MRG_RX"),
++		MTK_FUNCTION(7, "I2SO2_WS")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(202, "TDMO0_BCK"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 207),
++		MTK_FUNCTION(0, "GPIO202"),
++		MTK_FUNCTION(1, "TDMO0_BCK"),
++		MTK_FUNCTION(2, "TDMO1_BCK"),
++		MTK_FUNCTION(3, "PCM1_CLK"),
++		MTK_FUNCTION(4, "TDMO0_BCK"),
++		MTK_FUNCTION(5, "TDMO1_BCK"),
++		MTK_FUNCTION(6, "MRG_SYNC"),
++		MTK_FUNCTION(7, "I2SO2_BCK")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(203, "TDMO0_DATA"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 208),
++		MTK_FUNCTION(0, "GPIO203"),
++		MTK_FUNCTION(1, "TDMO0_DATA"),
++		MTK_FUNCTION(2, "TDMO1_DATA"),
++		MTK_FUNCTION(3, "PCM1_DO"),
++		MTK_FUNCTION(4, "TDMO0_DATA"),
++		MTK_FUNCTION(5, "TDMO1_DATA"),
++		MTK_FUNCTION(6, "MRG_CLK"),
++		MTK_FUNCTION(7, "I2SO2_DO")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(204, "PERSTB_P0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 209),
++		MTK_FUNCTION(0, "GPIO204"),
++		MTK_FUNCTION(1, "PERST_B_P0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(205, "CLKREQN_P0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 210),
++		MTK_FUNCTION(0, "GPIO205"),
++		MTK_FUNCTION(1, "CLKREQ_N_P0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(206, "WAKEEN_P0"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 211),
++		MTK_FUNCTION(0, "GPIO206"),
++		MTK_FUNCTION(1, "WAKE_EN_P0")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(207, "PERSTB_P1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 212),
++		MTK_FUNCTION(0, "GPIO207"),
++		MTK_FUNCTION(1, "PERST_B_P1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(208, "CLKREQN_P1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 213),
++		MTK_FUNCTION(0, "GPIO208"),
++		MTK_FUNCTION(1, "CLKREQ_N_P1")
++	),
++	MTK_PIN(
++		PINCTRL_PIN(209, "WAKEEN_P1"),
++		NULL, "mt2712",
++		MTK_EINT_FUNCTION(0, 214),
++		MTK_FUNCTION(0, "GPIO209"),
++		MTK_FUNCTION(1, "WAKE_EN_P1")
++	),
++};
++
++#endif /* __PINCTRL_MTK_MT2712_H */
 -- 
 1.9.1
