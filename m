@@ -1,347 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeBZItB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 03:49:01 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46581 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751561AbeBZIs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 03:48:56 -0500
-Date: Mon, 26 Feb 2018 00:48:10 -0800
-From: tip-bot for Jan Beulich <tipbot@zytor.com>
-Message-ID: <tip-672c0ae09b33a11d8f31fc61526632e96301164c@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, JBeulich@suse.com,
-        glider@google.com, luto@kernel.org, mingo@kernel.org, bp@alien8.de,
-        peterz@infradead.org, aryabinin@virtuozzo.com, jbeulich@suse.com,
-        dvyukov@google.com, boris.ostrovsky@oracle.com, brgerst@gmail.com,
-        jgross@suse.com, tglx@linutronix.de, jpoimboe@redhat.com,
-        torvalds@linux-foundation.org, dvlasenk@redhat.com
-Reply-To: jpoimboe@redhat.com, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de, jgross@suse.com,
-        aryabinin@virtuozzo.com, peterz@infradead.org, bp@alien8.de,
-        mingo@kernel.org, brgerst@gmail.com, boris.ostrovsky@oracle.com,
-        jbeulich@suse.com, dvyukov@google.com, hpa@zytor.com,
-        glider@google.com, luto@kernel.org, linux-kernel@vger.kernel.org,
-        JBeulich@suse.com
-In-Reply-To: <5A8FDE8902000078001AABBB@prv-mh.provo.novell.com>
-References: <5A8FDE8902000078001AABBB@prv-mh.provo.novell.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm: Consider effective protection attributes in
- W+X check
-Git-Commit-ID: 672c0ae09b33a11d8f31fc61526632e96301164c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752290AbeBZIte (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 03:49:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40174 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751740AbeBZItb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 03:49:31 -0500
+Date: Mon, 26 Feb 2018 09:49:19 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: hao_zhang <hao5781286@gmail.com>
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 2/4] ARM: dtsi: add pwm node for sun8i.
+Message-ID: <20180226084919.wt2yljq3nxr5g2vu@flea.lan>
+References: <20180225135134.GA14529@arx-s1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fexov7z6xzyq67m7"
 Content-Disposition: inline
+In-Reply-To: <20180225135134.GA14529@arx-s1>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  672c0ae09b33a11d8f31fc61526632e96301164c
-Gitweb:     https://git.kernel.org/tip/672c0ae09b33a11d8f31fc61526632e96301164c
-Author:     Jan Beulich <JBeulich@suse.com>
-AuthorDate: Fri, 23 Feb 2018 01:27:37 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 26 Feb 2018 08:43:21 +0100
 
-x86/mm: Consider effective protection attributes in W+X check
+--fexov7z6xzyq67m7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Using just the leaf page table entry flags would cause a false warning
-in case _PAGE_RW is clear or _PAGE_NX is set in a higher level entry.
-Hand through both the current entry's flags as well as the accumulated
-effective value (the latter as pgprotval_t instead of pgprot_t, as it's
-not an actual entry's value).
+On Sun, Feb 25, 2018 at 09:51:34PM +0800, hao_zhang wrote:
+> This patch adds pwm node for sun8i.
+>=20
+> Signed-off-by: hao_zhang <hao5781286@gmail.com>
+> ---
+>  arch/arm/boot/dts/sun8i-r40.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r=
+40.dtsi
+> index 173dcc1..99a0261 100644
+> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> @@ -295,6 +295,11 @@
+>  				bias-pull-up;
+>  			};
+> =20
+> +			pwm_ch0_pin: pwm-ch0-pin {
+> +				pins =3D "PB2";
+> +				function =3D "pwm";
+> +			};
+> +
+>  			uart0_pb_pins: uart0-pb-pins {
+>  				pins =3D "PB22", "PB23";
+>  				function =3D "uart0";
+> @@ -306,6 +311,14 @@
+>  			reg =3D <0x01c20c90 0x10>;
+>  		};
+> =20
+> +		pwm: pwm@1c23400 {
+> +			     compatible =3D "allwinner,sun8i-r40-pwm";
+> +			     reg =3D <0x01c23400 0x154>;
 
-This in particular eliminates the false W+X warning when running under
-Xen, as commit:
+The size must be the size of the whole memory block allocated to the
+controller, so that would be 0x400 in this case.
 
-  2cc42bac1c ("x86-64/Xen: eliminate W+X mappings")
+Maxime
 
-had to make the necessary adjustment in L2 rather than L1 (the reason is
-explained there). I.e. _PAGE_RW is clear there in L1, but _PAGE_NX is
-set in L2.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/5A8FDE8902000078001AABBB@prv-mh.provo.novell.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/dump_pagetables.c | 94 ++++++++++++++++++++++++++-----------------
- 1 file changed, 58 insertions(+), 36 deletions(-)
+--fexov7z6xzyq67m7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 0d6d67d18ad6..62a7e9f65dec 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -29,6 +29,7 @@
- struct pg_state {
- 	int level;
- 	pgprot_t current_prot;
-+	pgprotval_t effective_prot;
- 	unsigned long start_address;
- 	unsigned long current_address;
- 	const struct addr_marker *marker;
-@@ -235,9 +236,9 @@ static unsigned long normalize_addr(unsigned long u)
-  * print what we collected so far.
-  */
- static void note_page(struct seq_file *m, struct pg_state *st,
--		      pgprot_t new_prot, int level)
-+		      pgprot_t new_prot, pgprotval_t new_eff, int level)
- {
--	pgprotval_t prot, cur;
-+	pgprotval_t prot, cur, eff;
- 	static const char units[] = "BKMGTPE";
- 
- 	/*
-@@ -247,23 +248,24 @@ static void note_page(struct seq_file *m, struct pg_state *st,
- 	 */
- 	prot = pgprot_val(new_prot);
- 	cur = pgprot_val(st->current_prot);
-+	eff = st->effective_prot;
- 
- 	if (!st->level) {
- 		/* First entry */
- 		st->current_prot = new_prot;
-+		st->effective_prot = new_eff;
- 		st->level = level;
- 		st->marker = address_markers;
- 		st->lines = 0;
- 		pt_dump_seq_printf(m, st->to_dmesg, "---[ %s ]---\n",
- 				   st->marker->name);
--	} else if (prot != cur || level != st->level ||
-+	} else if (prot != cur || new_eff != eff || level != st->level ||
- 		   st->current_address >= st->marker[1].start_address) {
- 		const char *unit = units;
- 		unsigned long delta;
- 		int width = sizeof(unsigned long) * 2;
--		pgprotval_t pr = pgprot_val(st->current_prot);
- 
--		if (st->check_wx && (pr & _PAGE_RW) && !(pr & _PAGE_NX)) {
-+		if (st->check_wx && (eff & _PAGE_RW) && !(eff & _PAGE_NX)) {
- 			WARN_ONCE(1,
- 				  "x86/mm: Found insecure W+X mapping at address %p/%pS\n",
- 				  (void *)st->start_address,
-@@ -317,21 +319,30 @@ static void note_page(struct seq_file *m, struct pg_state *st,
- 
- 		st->start_address = st->current_address;
- 		st->current_prot = new_prot;
-+		st->effective_prot = new_eff;
- 		st->level = level;
- 	}
- }
- 
--static void walk_pte_level(struct seq_file *m, struct pg_state *st, pmd_t addr, unsigned long P)
-+static inline pgprotval_t effective_prot(pgprotval_t prot1, pgprotval_t prot2)
-+{
-+	return (prot1 & prot2 & (_PAGE_USER | _PAGE_RW)) |
-+	       ((prot1 | prot2) & _PAGE_NX);
-+}
-+
-+static void walk_pte_level(struct seq_file *m, struct pg_state *st, pmd_t addr,
-+			   pgprotval_t eff_in, unsigned long P)
- {
- 	int i;
- 	pte_t *start;
--	pgprotval_t prot;
-+	pgprotval_t prot, eff;
- 
- 	start = (pte_t *)pmd_page_vaddr(addr);
- 	for (i = 0; i < PTRS_PER_PTE; i++) {
- 		prot = pte_flags(*start);
-+		eff = effective_prot(eff_in, prot);
- 		st->current_address = normalize_addr(P + i * PTE_LEVEL_MULT);
--		note_page(m, st, __pgprot(prot), 5);
-+		note_page(m, st, __pgprot(prot), eff, 5);
- 		start++;
- 	}
- }
-@@ -351,7 +362,7 @@ static inline bool kasan_page_table(struct seq_file *m, struct pg_state *st,
- 	    (pgtable_l5_enabled && __pa(pt) == __pa(kasan_zero_p4d)) ||
- 	    __pa(pt) == __pa(kasan_zero_pud)) {
- 		pgprotval_t prot = pte_flags(kasan_zero_pte[0]);
--		note_page(m, st, __pgprot(prot), 5);
-+		note_page(m, st, __pgprot(prot), 0, 5);
- 		return true;
- 	}
- 	return false;
-@@ -366,42 +377,45 @@ static inline bool kasan_page_table(struct seq_file *m, struct pg_state *st,
- 
- #if PTRS_PER_PMD > 1
- 
--static void walk_pmd_level(struct seq_file *m, struct pg_state *st, pud_t addr, unsigned long P)
-+static void walk_pmd_level(struct seq_file *m, struct pg_state *st, pud_t addr,
-+			   pgprotval_t eff_in, unsigned long P)
- {
- 	int i;
- 	pmd_t *start, *pmd_start;
--	pgprotval_t prot;
-+	pgprotval_t prot, eff;
- 
- 	pmd_start = start = (pmd_t *)pud_page_vaddr(addr);
- 	for (i = 0; i < PTRS_PER_PMD; i++) {
- 		st->current_address = normalize_addr(P + i * PMD_LEVEL_MULT);
- 		if (!pmd_none(*start)) {
-+			prot = pmd_flags(*start);
-+			eff = effective_prot(eff_in, prot);
- 			if (pmd_large(*start) || !pmd_present(*start)) {
--				prot = pmd_flags(*start);
--				note_page(m, st, __pgprot(prot), 4);
-+				note_page(m, st, __pgprot(prot), eff, 4);
- 			} else if (!kasan_page_table(m, st, pmd_start)) {
--				walk_pte_level(m, st, *start,
-+				walk_pte_level(m, st, *start, eff,
- 					       P + i * PMD_LEVEL_MULT);
- 			}
- 		} else
--			note_page(m, st, __pgprot(0), 4);
-+			note_page(m, st, __pgprot(0), 0, 4);
- 		start++;
- 	}
- }
- 
- #else
--#define walk_pmd_level(m,s,a,p) walk_pte_level(m,s,__pmd(pud_val(a)),p)
-+#define walk_pmd_level(m,s,a,e,p) walk_pte_level(m,s,__pmd(pud_val(a)),e,p)
- #define pud_large(a) pmd_large(__pmd(pud_val(a)))
- #define pud_none(a)  pmd_none(__pmd(pud_val(a)))
- #endif
- 
- #if PTRS_PER_PUD > 1
- 
--static void walk_pud_level(struct seq_file *m, struct pg_state *st, p4d_t addr, unsigned long P)
-+static void walk_pud_level(struct seq_file *m, struct pg_state *st, p4d_t addr,
-+			   pgprotval_t eff_in, unsigned long P)
- {
- 	int i;
- 	pud_t *start, *pud_start;
--	pgprotval_t prot;
-+	pgprotval_t prot, eff;
- 	pud_t *prev_pud = NULL;
- 
- 	pud_start = start = (pud_t *)p4d_page_vaddr(addr);
-@@ -409,15 +423,16 @@ static void walk_pud_level(struct seq_file *m, struct pg_state *st, p4d_t addr,
- 	for (i = 0; i < PTRS_PER_PUD; i++) {
- 		st->current_address = normalize_addr(P + i * PUD_LEVEL_MULT);
- 		if (!pud_none(*start)) {
-+			prot = pud_flags(*start);
-+			eff = effective_prot(eff_in, prot);
- 			if (pud_large(*start) || !pud_present(*start)) {
--				prot = pud_flags(*start);
--				note_page(m, st, __pgprot(prot), 3);
-+				note_page(m, st, __pgprot(prot), eff, 3);
- 			} else if (!kasan_page_table(m, st, pud_start)) {
--				walk_pmd_level(m, st, *start,
-+				walk_pmd_level(m, st, *start, eff,
- 					       P + i * PUD_LEVEL_MULT);
- 			}
- 		} else
--			note_page(m, st, __pgprot(0), 3);
-+			note_page(m, st, __pgprot(0), 0, 3);
- 
- 		prev_pud = start;
- 		start++;
-@@ -425,34 +440,36 @@ static void walk_pud_level(struct seq_file *m, struct pg_state *st, p4d_t addr,
- }
- 
- #else
--#define walk_pud_level(m,s,a,p) walk_pmd_level(m,s,__pud(p4d_val(a)),p)
-+#define walk_pud_level(m,s,a,e,p) walk_pmd_level(m,s,__pud(p4d_val(a)),e,p)
- #define p4d_large(a) pud_large(__pud(p4d_val(a)))
- #define p4d_none(a)  pud_none(__pud(p4d_val(a)))
- #endif
- 
--static void walk_p4d_level(struct seq_file *m, struct pg_state *st, pgd_t addr, unsigned long P)
-+static void walk_p4d_level(struct seq_file *m, struct pg_state *st, pgd_t addr,
-+			   pgprotval_t eff_in, unsigned long P)
- {
- 	int i;
- 	p4d_t *start, *p4d_start;
--	pgprotval_t prot;
-+	pgprotval_t prot, eff;
- 
- 	if (PTRS_PER_P4D == 1)
--		return walk_pud_level(m, st, __p4d(pgd_val(addr)), P);
-+		return walk_pud_level(m, st, __p4d(pgd_val(addr)), eff_in, P);
- 
- 	p4d_start = start = (p4d_t *)pgd_page_vaddr(addr);
- 
- 	for (i = 0; i < PTRS_PER_P4D; i++) {
- 		st->current_address = normalize_addr(P + i * P4D_LEVEL_MULT);
- 		if (!p4d_none(*start)) {
-+			prot = p4d_flags(*start);
-+			eff = effective_prot(eff_in, prot);
- 			if (p4d_large(*start) || !p4d_present(*start)) {
--				prot = p4d_flags(*start);
--				note_page(m, st, __pgprot(prot), 2);
-+				note_page(m, st, __pgprot(prot), eff, 2);
- 			} else if (!kasan_page_table(m, st, p4d_start)) {
--				walk_pud_level(m, st, *start,
-+				walk_pud_level(m, st, *start, eff,
- 					       P + i * P4D_LEVEL_MULT);
- 			}
- 		} else
--			note_page(m, st, __pgprot(0), 2);
-+			note_page(m, st, __pgprot(0), 0, 2);
- 
- 		start++;
- 	}
-@@ -483,7 +500,7 @@ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
- #else
- 	pgd_t *start = swapper_pg_dir;
- #endif
--	pgprotval_t prot;
-+	pgprotval_t prot, eff;
- 	int i;
- 	struct pg_state st = {};
- 
-@@ -499,15 +516,20 @@ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
- 	for (i = 0; i < PTRS_PER_PGD; i++) {
- 		st.current_address = normalize_addr(i * PGD_LEVEL_MULT);
- 		if (!pgd_none(*start) && !is_hypervisor_range(i)) {
-+			prot = pgd_flags(*start);
-+#ifdef CONFIG_X86_PAE
-+			eff = _PAGE_USER | _PAGE_RW;
-+#else
-+			eff = prot;
-+#endif
- 			if (pgd_large(*start) || !pgd_present(*start)) {
--				prot = pgd_flags(*start);
--				note_page(m, &st, __pgprot(prot), 1);
-+				note_page(m, &st, __pgprot(prot), eff, 1);
- 			} else {
--				walk_p4d_level(m, &st, *start,
-+				walk_p4d_level(m, &st, *start, eff,
- 					       i * PGD_LEVEL_MULT);
- 			}
- 		} else
--			note_page(m, &st, __pgprot(0), 1);
-+			note_page(m, &st, __pgprot(0), 0, 1);
- 
- 		cond_resched();
- 		start++;
-@@ -515,7 +537,7 @@ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
- 
- 	/* Flush out the last page */
- 	st.current_address = normalize_addr(PTRS_PER_PGD*PGD_LEVEL_MULT);
--	note_page(m, &st, __pgprot(0), 0);
-+	note_page(m, &st, __pgprot(0), 0, 0);
- 	if (!checkwx)
- 		return;
- 	if (st.wx_pages)
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTyg4ACgkQ0rTAlCFN
+r3Rkig/9GI/xqfLzW6iT4OlKaSseYWJWJ6rvEt1oY8o7bkVa4mMLV7POVS12FbCc
+fGQeq9vDI4ohMwW6Wgu7PARNXRTMaVUkt2CKVewaniGiWoFshUTvmw8UiEWKtshK
+Nu8P9DfhfTIEU1SPWBTy3y6LcPwbCTVMbNzqFthNCI5/ac3yzHPP4UrYhwFPQh3M
+JYVfG5c+pard1iSIt4+kX3P9AEnmDuX3SY2QHxsDTwYG2v6GT/ExazLidBb1JeFn
+scMeZvXmpK7X+XmNaAMECU59m41W6exkbPAYu5o1XqQFKvrkjpbVB1rEaCdc6RWH
+T7dh+G6KJi/1J+PE9MScYFkJIiEXugnVygKGhq7La3lrXDuv5QmnasBTVJvUlf2L
+lUpe7OMy8+WfqUaR4n7smhCU2/IFWODp6UxHg0ZpXjjlQjWN7n+iyQYLfHti8iVk
+2EoB1EhOTtB6dcxHN53MirTw3jy4XtHYuRthODDkMmdC+qBJJgI9VSqtBHkrznnT
+uc5V6lRfpyIiqI3Mhzqfyvs2mqZrZO1P/m2iFF37ngN1uHDvzej/bNPiuWb4rNxO
+Eqg9TLroJfnaKw/f+asfdF3JmIrHUHl7fmL4RqPYFMFJaVDgqHM63o4vlecMO8zD
+uby9ebszip4put0K3SMa/egmkkCdrRlagMSsiJyasAoldZBb9CY=
+=ZRzc
+-----END PGP SIGNATURE-----
+
+--fexov7z6xzyq67m7--
