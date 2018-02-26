@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753929AbeBZOP2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:15:28 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50776 "EHLO mail.bootlin.com"
+        id S1753754AbeBZOPZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:15:25 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50778 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753858AbeBZOPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:15:13 -0500
+        id S1753862AbeBZOPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 09:15:14 -0500
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: davem@davemloft.net
-Cc: Yan Markman <ymarkman@marvell.com>, mw@semihalf.com,
-        stefanc@marvell.com, thomas.petazzoni@free-electrons.com,
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, mw@semihalf.com,
+        stefanc@marvell.com, ymarkman@marvell.com,
+        thomas.petazzoni@free-electrons.com,
         gregory.clement@free-electrons.com, miquel.raynal@free-electrons.com,
         nadavh@marvell.com, maxime.chevallier@bootlin.com,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/3] net: mvpp2: adjust gso stop wake thresholds
-Date: Mon, 26 Feb 2018 15:14:26 +0100
-Message-Id: <20180226141427.31536-2-antoine.tenart@bootlin.com>
+Subject: [PATCH net-next 3/3] net: mvpp2: align the ethtool ops definition
+Date: Mon, 26 Feb 2018 15:14:27 +0100
+Message-Id: <20180226141427.31536-3-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180226141427.31536-1-antoine.tenart@bootlin.com>
 References: <20180226141427.31536-1-antoine.tenart@bootlin.com>
@@ -23,37 +24,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan Markman <ymarkman@marvell.com>
+Cosmetic patch to align the ethtool functions to ops definitions. This
+patch does not change in any way the driver's behaviour.
 
-Adjust MVPP2_MAX_TSO_SEGS and stop_threshold/wake_threshold
-for better TXQ utilization and performance.
-
-Signed-off-by: Yan Markman <ymarkman@marvell.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 55300b1fe6c0..1a893ef70eab 100644
+index 1a893ef70eab..babbb1ceba2a 100644
 --- a/drivers/net/ethernet/marvell/mvpp2.c
 +++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -498,7 +498,7 @@
-  * skb. As we need a maxium of two descriptors per fragments (1 header, 1 data),
-  * multiply this value by two to count the maximum number of skb descs needed.
-  */
--#define MVPP2_MAX_TSO_SEGS		300
-+#define MVPP2_MAX_TSO_SEGS		100
- #define MVPP2_MAX_SKB_DESCS		(MVPP2_MAX_TSO_SEGS * 2 + MAX_SKB_FRAGS)
+@@ -7435,18 +7435,18 @@ static const struct net_device_ops mvpp2_netdev_ops = {
+ };
  
- /* Dfault number of RXQs in use */
-@@ -5810,7 +5810,7 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
- 		txq_pcpu->tso_headers = NULL;
+ static const struct ethtool_ops mvpp2_eth_tool_ops = {
+-	.nway_reset	= phy_ethtool_nway_reset,
+-	.get_link	= ethtool_op_get_link,
+-	.set_coalesce	= mvpp2_ethtool_set_coalesce,
+-	.get_coalesce	= mvpp2_ethtool_get_coalesce,
+-	.get_drvinfo	= mvpp2_ethtool_get_drvinfo,
+-	.get_ringparam	= mvpp2_ethtool_get_ringparam,
+-	.set_ringparam	= mvpp2_ethtool_set_ringparam,
+-	.get_strings	= mvpp2_ethtool_get_strings,
+-	.get_ethtool_stats = mvpp2_ethtool_get_stats,
+-	.get_sset_count	= mvpp2_ethtool_get_sset_count,
+-	.get_link_ksettings = phy_ethtool_get_link_ksettings,
+-	.set_link_ksettings = phy_ethtool_set_link_ksettings,
++	.nway_reset		= phy_ethtool_nway_reset,
++	.get_link		= ethtool_op_get_link,
++	.set_coalesce		= mvpp2_ethtool_set_coalesce,
++	.get_coalesce		= mvpp2_ethtool_get_coalesce,
++	.get_drvinfo		= mvpp2_ethtool_get_drvinfo,
++	.get_ringparam		= mvpp2_ethtool_get_ringparam,
++	.set_ringparam		= mvpp2_ethtool_set_ringparam,
++	.get_strings		= mvpp2_ethtool_get_strings,
++	.get_ethtool_stats	= mvpp2_ethtool_get_stats,
++	.get_sset_count		= mvpp2_ethtool_get_sset_count,
++	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
++	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
+ };
  
- 		txq_pcpu->stop_threshold = txq->size - MVPP2_MAX_SKB_DESCS;
--		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold / 2;
-+		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold - 100;
- 
- 		txq_pcpu->tso_headers =
- 			dma_alloc_coherent(port->dev->dev.parent,
+ /* Used for PPv2.1, or PPv2.2 with the old Device Tree binding that
 -- 
 2.14.3
