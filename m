@@ -1,91 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751732AbeBZWNI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 17:13:08 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39930 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751634AbeBZWNG (ORCPT
+        id S1751798AbeBZWNP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 17:13:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751745AbeBZWNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 17:13:06 -0500
-Date: Mon, 26 Feb 2018 17:13:00 -0500
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, g@char.us.oracle.com
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
- userspace
-Message-ID: <20180226221300.GK22024@char.us.oracle.com>
-References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
+        Mon, 26 Feb 2018 17:13:11 -0500
+Date: Mon, 26 Feb 2018 14:13:34 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Next batch of LKMM patches
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802260279
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022622-0052-0000-0000-000002BEB030
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00995536; UDB=6.00506037; IPR=6.00774865;
+ MB=3.00019751; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-26 22:13:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022622-0053-0000-0000-00005BD26960
+Message-Id: <20180226221334.GA1849@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802260278
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 01:52:26AM +0100, Paolo Bonzini wrote:
-> Use the new MSR feature framework to expose the ARCH_CAPABILITIES MSR to
-> userspace.  This way, userspace can access the capabilities even if it
-> does not have the permissions to read MSRs.
+Hello!
 
-... That is good but could you expand a bit of why it would want this?
+The following set of LKMM patches in -rcu look to me to be ready to
+send off.  If you disagree, please do let me know so that we can fix
+whatever problems that there might be.  If I do not hear otherwise,
+I will send them off this coming Friday.
 
-I am 99% sure it is due to the lovely spectre_v2 mitigation but
-could you include that in the commit message so that in say a year
-folks would know what this is?
+							Thanx, Paul
 
-Also what branch is this based on? I am not seeing this vmx_get_msr_feature
-in kvm/master or kvm/linux-next ?
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/vmx.c | 12 +++++++++++-
->  arch/x86/kvm/x86.c |  1 +
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 130fca0ea1bf..99689061e11e 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -3228,7 +3228,17 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
->  
->  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->  {
-> -	return 1;
-> +	switch (msr->index) {
-> +	case MSR_IA32_ARCH_CAPABILITIES:
-> +		if (!boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
-> +			return 1;
-> +		rdmsrl(msr->index, msr->data);
-> +		break;
-> +	default:
-> +		return 1;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  /*
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 54b4ed55945b..e9a8cc9e3b2b 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1054,6 +1054,7 @@ bool kvm_rdpmc(struct kvm_vcpu *vcpu)
->   * can be used by a hypervisor to validate requested CPU features.
->   */
->  static u32 msr_based_features[] = {
-> +	MSR_IA32_ARCH_CAPABILITIES,
->  	MSR_F10H_DECFG,
->  };
->  
-> -- 
-> 1.8.3.1
-> 
+------------------------------------------------------------------------
+
+5bb25a486ccb "memory-barriers: More text to de-emphasize smp_read_barrier_depends()"
+b59fd89b465f "tools/memory-model: Remove mention of docker/gentoo image"
+d5e6bc0a0ed4 "tools/memory-order: Add documentation of new litmus test
+3eab67f3c41b "tools/memory-model: Update: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference"
