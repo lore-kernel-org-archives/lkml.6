@@ -1,119 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeBZGiL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 01:38:11 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38755 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750793AbeBZGiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 01:38:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,396,1515484800";
-   d="scan'208";a="32798725"
-From: "Huang\, Ying" <ying.huang@intel.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
-        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] mm: Fix races between address_space dereference and free in page_evicatable
-References: <20180212081227.1940-1-ying.huang@intel.com>
-        <20180218092245.GA52741@rodete-laptop-imager.corp.google.com>
-        <20180219105735.32iplpsmnigwf75j@quack2.suse.cz>
-        <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
-Date: Mon, 26 Feb 2018 14:38:04 +0800
-In-Reply-To: <20180226052009.GB112402@rodete-desktop-imager.corp.google.com>
-        (Minchan Kim's message of "Mon, 26 Feb 2018 14:20:09 +0900")
-Message-ID: <874lm4tfw3.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752105AbeBZGrq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 01:47:46 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39723 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeBZGrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 01:47:45 -0500
+X-Google-Smtp-Source: AG47ELtOFz0ZrwQrEtXik9q4qTz/OTZGlkViZbx1MqnXNoNhH4JzVtLhRnWNuQUWOHMAf5qjXxTS7ByGnYOtxAqr8dw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <20180223024320.GA321@shlinux2>
+References: <20180115092735.20969-1-peng.fan@nxp.com> <20180223024320.GA321@shlinux2>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Mon, 26 Feb 2018 07:47:43 +0100
+Message-ID: <CAHUa44EdO1MRmKjp-s=uJ6eNcHEZyEhnt4kVhBURLNS6GiDohw@mail.gmail.com>
+Subject: Re: [PATCH] tee: correct max value for id allocation
+To: Peng Fan <van.freenix@gmail.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-imx@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minchan Kim <minchan@kernel.org> writes:
-
-> Hi Jan,
+On Fri, Feb 23, 2018 at 3:43 AM, Peng Fan <van.freenix@gmail.com> wrote:
+> Hi Jens,
 >
-> On Mon, Feb 19, 2018 at 11:57:35AM +0100, Jan Kara wrote:
->> Hi Minchan,
->> 
->> On Sun 18-02-18 18:22:45, Minchan Kim wrote:
->> > On Mon, Feb 12, 2018 at 04:12:27PM +0800, Huang, Ying wrote:
->> > > From: Huang Ying <ying.huang@intel.com>
->> > > 
->> > > When page_mapping() is called and the mapping is dereferenced in
->> > > page_evicatable() through shrink_active_list(), it is possible for the
->> > > inode to be truncated and the embedded address space to be freed at
->> > > the same time.  This may lead to the following race.
->> > > 
->> > > CPU1                                                CPU2
->> > > 
->> > > truncate(inode)                                     shrink_active_list()
->> > >   ...                                                 page_evictable(page)
->> > >   truncate_inode_page(mapping, page);
->> > >     delete_from_page_cache(page)
->> > >       spin_lock_irqsave(&mapping->tree_lock, flags);
->> > >         __delete_from_page_cache(page, NULL)
->> > >           page_cache_tree_delete(..)
->> > >             ...                                         mapping = page_mapping(page);
->> > >             page->mapping = NULL;
->> > >             ...
->> > >       spin_unlock_irqrestore(&mapping->tree_lock, flags);
->> > >       page_cache_free_page(mapping, page)
->> > >         put_page(page)
->> > >           if (put_page_testzero(page)) -> false
->> > > - inode now has no pages and can be freed including embedded address_space
->> > > 
->> > >                                                         mapping_unevictable(mapping)
->> > > 							  test_bit(AS_UNEVICTABLE, &mapping->flags);
->> > > - we've dereferenced mapping which is potentially already free.
->> > > 
->> > > Similar race exists between swap cache freeing and page_evicatable() too.
->> > > 
->> > > The address_space in inode and swap cache will be freed after a RCU
->> > > grace period.  So the races are fixed via enclosing the page_mapping()
->> > > and address_space usage in rcu_read_lock/unlock().  Some comments are
->> > > added in code to make it clear what is protected by the RCU read lock.
->> > 
->> > Is it always true for every FSes, even upcoming FSes?
->> > IOW, do we have any strict rule FS folks must use RCU(i.e., call_rcu)
->> > to destroy inode?
->> > 
->> > Let's cc linux-fs.
->> 
->> That's actually a good question. Pathname lookup relies on inodes being
->> protected by RCU so "normal" filesystems definitely need to use RCU freeing
->> of inodes. OTOH a filesystem could in theory refuse any attempt for RCU
->> pathname walk (in its .d_revalidate/.d_compare callback) and then get away
->> with freeing its inodes normally AFAICT. I don't see that happening
->> anywhere in the tree but in theory it is possible with some effort... But
->> frankly I don't see a good reason for that so all we should do is to
->> document that .destroy_inode needs to free the inode structure through RCU
->> if it uses page cache? Al?
+> Any comments on this patch?
 >
-> Yub, it would be much better. However, how does this patch fix the problem?
-> Although it can make only page_evictable safe, we could go with the page
-> further and finally uses page->mapping, again.
-> For instance,
+> Thanks,
+> Peng
+
+Sorry, forgot about this one. Looks good to me, I'll pick it up.
+
+Thanks,
+Jens
+
+> On Mon, Jan 15, 2018 at 05:27:35PM +0800, Peng Fan wrote:
+>>The privileged dev id range is [TEE_NUM_DEVICES / 2, TEE_NUM_DEVICES).
+>>The non-privileged dev id range is [0, TEE_NUM_DEVICES / 2).
+>>
+>>So when finding a slot for them, need to use different max value.
+>>
+>>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>>Cc: Jens Wiklander <jens.wiklander@linaro.org>
+>>---
+>> drivers/tee/tee_core.c | 14 +++++++++-----
+>> 1 file changed, 9 insertions(+), 5 deletions(-)
+>>
+>>diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+>>index 3d49ac2e3c84..d1f4ecdbc8cc 100644
+>>--- a/drivers/tee/tee_core.c
+>>+++ b/drivers/tee/tee_core.c
+>>@@ -701,7 +701,7 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+>> {
+>>       struct tee_device *teedev;
+>>       void *ret;
+>>-      int rc;
+>>+      int rc, max_id;
+>>       int offs = 0;
+>>
+>>       if (!teedesc || !teedesc->name || !teedesc->ops ||
+>>@@ -715,16 +715,20 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+>>               goto err;
+>>       }
+>>
+>>-      if (teedesc->flags & TEE_DESC_PRIVILEGED)
+>>+      max_id = TEE_NUM_DEVICES / 2;
+>>+
+>>+      if (teedesc->flags & TEE_DESC_PRIVILEGED) {
+>>               offs = TEE_NUM_DEVICES / 2;
+>>+              max_id = TEE_NUM_DEVICES;
+>>+      }
+>>
+>>       spin_lock(&driver_lock);
+>>-      teedev->id = find_next_zero_bit(dev_mask, TEE_NUM_DEVICES, offs);
+>>-      if (teedev->id < TEE_NUM_DEVICES)
+>>+      teedev->id = find_next_zero_bit(dev_mask, max_id, offs);
+>>+      if (teedev->id < max_id)
+>>               set_bit(teedev->id, dev_mask);
+>>       spin_unlock(&driver_lock);
+>>
+>>-      if (teedev->id >= TEE_NUM_DEVICES) {
+>>+      if (teedev->id >= max_id) {
+>>               ret = ERR_PTR(-ENOMEM);
+>>               goto err;
+>>       }
+>>--
+>>2.14.1
+>>
 >
-> shrink_active_list
-> 	page_evictable();
-> 	..
-> 	page_referened()
-> 		page_rmapping
-> 			page->mapping
-
-This only checks the value of page->mapping, not deference
-page->mapping.  So it should be safe.
-
-Best Regards,
-Huang, Ying
-
-> I think caller should lock the page to protect entire operation, which
-> have been used more widely to pin a address_space.
->
-> Thanks.
+> --
