@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Wj7nyJoIDmiOpxTGCw/KehQxm7+Zbqs46Mw2oCYMUnqHPVmdxFgwqEvUGiUE+1La68jHk
+X-Google-Smtp-Source: AG47ELtaZyfEnqlCP6mm+v8e0YGP5/tPcZRJf6J1ovEGd68/STqQ0hhjThioI9eRJ7MSfFZ0Kk9d
 ARC-Seal: i=1; a=rsa-sha256; t=1519676531; cv=none;
         d=google.com; s=arc-20160816;
-        b=BGoHirLj/Q4H3wAbnYlpC3CUjNJKpyIEOLVHtmDY+mHsQf6czESUoFxydxZPhnWsc6
-         52tz+fd+AKGtapoB6TTQL5Hmuohp/vURBFMNuNBsH7fZfeYDZCuZfoOelVaS+fzqdbs1
-         Ddf5kx/Tuw2x9wnTSyCunY/gIdpMPknhosdQzJMhQLBYk5U7Pa9uCGB75FXXRFmPw1as
-         fK8RCDiicKa8wuw71Nvf29Gged/T67E7NEwJacBa1udX7WvXi0HBpIQ3urhLeip6DdzO
-         0QpeMa2qdi8UxFzAULvP7kazAMut5WNmAI2Mh8nPfXwhmvdLCKKKSljroL/3/9NgayQW
-         eH7w==
+        b=dWO72uKI/1ujKdPNyQgX2V8PSzKg9LkyvVP/6lElj7+uRXI0GrwDaiI4g7k6rLxbXR
+         Vz7kD/a/y7hpVyAsTnQFKsw12RN00QuAGiNgBBQalsL6zaRihTKuu8NLljpDSmwq59O0
+         bJW83zFh4YqRoY8KruSyHrK+UxfBVQkphr7PHa53HTlp/sYYUvjzhDU/+8iFGriuIZKj
+         4s12vCFjQkP2N1y5dQXHlJmJ/E5DJUC9PkMLuEDGLH/lKgKKLhRbB1LnpXV6uZaTzkmk
+         l4CI4eaVxnRbMQEQQtIOuNa+q7tjiOlu3sM+rZcyeeqod20rOe6lDqZEjREfj3OAHbuu
+         Gc0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tvF/8jF88M9ij+1fDQWY3cP9znXrBcU0sZLmYlJzFoE=;
-        b=nN2Q+Dsd+JOvpYhi1ewo49bD3KkKee/83OSPGGNe7QpyOOBCDx3S2LciwxJ0LiVl5+
-         9m/KjmLzJC6xpLNU0yeYNBVbMG7y4Pm5nfynZ74Avb9t2z7CxiFRoPJ3TKgc0K7jXs+C
-         eyouw72nk2As4t8qLGtSBbELLSHTpF2NYbMK+kWwMChg4sPdoQGpIXvh3Cv5jjj2g/DA
-         XyLo0yxDOK3PJGSlMJrAg86zm646Z3gxEbMuYdoIDchdpuDI8GTdRhYYhQYi7mZWcjFi
-         FQLi9X7D62jmnUU2oYbL5YaBCBB6buCclM9geR2oFocCCWAevCfWmoqfcizRSv+pUBm3
-         o8NQ==
+        bh=zcgU2s50g4OEhbwYlrygutvt2AHbdpvrVM/DRCaYGZw=;
+        b=C3rvEIuvvHMWRkh5aLPR3+GjxY/4YDOLu59KFuWYpodNUlaQ6GtlW8otBjeStrkhqF
+         qVPItf7H2nZGjpgbQv6ugPlLiXZluWMw0Ui+qFXZ0BMrmTQ/r5SwUAsqX9hIMm/YuHYx
+         9yY1M2y3bL+ixqI5wj/sZt4CCtiUc65ME8CIzYm/YiwzDa8ZFETBN507MIPCUISKl/xv
+         FyhKgHb1gEf/ngmkX6Pt0FdX+HwXxAzcrVgCgWL79dCtKCXsXxW+cjICy9baq9t8KmnC
+         fDGih96gVgd5Ifrm8C4La1zS1Qcvyqth76MqLrkg/x1R/BF1y/fNM2BRHuYEWekFTw5E
+         1k1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
 	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 25/39] drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
-Date: Mon, 26 Feb 2018 21:20:46 +0100
-Message-Id: <20180226201644.773192877@linuxfoundation.org>
+Subject: [PATCH 4.9 26/39] drm/amdgpu: add new device to use atpx quirk
+Date: Mon, 26 Feb 2018 21:20:47 +0100
+Message-Id: <20180226201644.816387018@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201643.660109883@linuxfoundation.org>
 References: <20180226201643.660109883@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496025366379001?=
-X-GMAIL-MSGID: =?utf-8?q?1593496338359185411?=
+X-GMAIL-THRID: =?utf-8?q?1593496338608308970?=
+X-GMAIL-MSGID: =?utf-8?q?1593496338608308970?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 458d876eb869d5a88b53074c6c271b8b9adc0f07 upstream.
+commit 6e59de2048eb375a9bfcd39461ef841cd2a78962 upstream.
 
-We only support vga_switcheroo and runtime pm on PX/HG systems
-so forcing runpm to 1 doesn't do anything useful anyway.
+The affected system (0x0813) is pretty similar to another one (0x0812),
+it also needs to use ATPX power control.
 
-Only call vga_switcheroo_init_domain_pm_ops() for PX/HG so
-that the cleanup path is correct as well.  This mirrors what
-radeon does as well.
-
-v2: rework the patch originally sent by Lukas (Alex)
-
-Acked-by: Lukas Wunner <lukas@wunner.de>
-Reported-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de> (v1)
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1678,8 +1678,6 @@ int amdgpu_device_init(struct amdgpu_dev
- 	 * ignore it */
- 	vga_client_register(adev->pdev, adev, NULL, amdgpu_vga_set_decode);
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+@@ -568,6 +568,7 @@ static const struct amdgpu_px_quirk amdg
+ 	/* HG _PR3 doesn't seem to work on this A+A weston board */
+ 	{ 0x1002, 0x6900, 0x1002, 0x0124, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
++	{ 0x1002, 0x6900, 0x1028, 0x0813, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0, 0, 0, 0, 0 },
+ };
  
--	if (amdgpu_runtime_pm == 1)
--		runtime = true;
- 	if (amdgpu_device_is_px(ddev))
- 		runtime = true;
- 	vga_switcheroo_register_client(adev->pdev, &amdgpu_switcheroo_ops, runtime);
