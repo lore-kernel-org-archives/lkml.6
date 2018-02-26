@@ -1,483 +1,171 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2252317-1519633320-2-14694184088788548684
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3286258-1519662517-2-5714797182210031503
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enca,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519633318; b=HiFz1xhsCyReRceN1kwcKjDf18a61uGrcCGm1ysMbsnML9m
-    djHtaDeoPOyAECniVfXPSUvCfT9Jcz9tfCg5q9lvJ5xRd2vrBgnec60y5vgmgG0c
-    /4zbibFVRVZAJntTQa8DoMU4bolgPZ6Hadb7gPLgkbh2AAov2h8kiCw4fi+Q5AL9
-    NGwe7WJblDkahQbrBDaL20AGpv2tJlECIz59KTdI2tHwFJ1dab+fGTbz/JH4tCDK
-    jL7XgYF3LZbENCShcB0SudjZT4S5a9MOXRdoaRHR/py0A03z/fXFetWdcABGXKga
-    EAJ0tMdS4WCT/vTZ5ChVOMDjxb5Q3v7BtSUoOOg==
+    t=1519662517; b=cPLp4EvyYRPG1Q/00qSMjEEXHZDydrk9Pq8+WPKuoKTr5Xw
+    OYaLFL9QYvY7MqNZhj7z+hpHQupcDaPX9hzVDDqpYkfBkD7sD7lfkQImDciFjYav
+    L7zP1HbsY5ySAdYS9wK50Q/6uMxUxukJsg9CRSPvKOzzSVny5eQjgZzNOaSQReLP
+    jmiOHop2vDw7a8ED8EwMHscI3L6Tin5p1q+UHcHMu8Mf7+YfdbaDQ2CWtl2PHYXy
+    GTon3SqCIuhe/jSmGXxf2vZW9TM6I2dhJ3a5yYN4+iZ96djAVWG9xBBV1PfRReGh
+    yyr3UqHya83xlz6XGiqMIp04P2Lu+GT8iNIMNeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519633318;
-    bh=DuN6SyTg5l99yxUh5yRn/aUeDXw1S1qe26nBS+h01No=; b=fRFaJZs4kJFb
-    puacBIwOWCjtaqZ3PKfKeWdsOSjZiwUsXWSpdRKs6cd9RFhh3SdhyCP7BV+oSKya
-    kv3pUYFloAYcimFdrN1i/guZ5UWC355MF0i8mJvPT/vhNlVkl6ujmeMPK0xZ18Ex
-    QlxmwAhydzpxI92h6fx0Ax2ovzczhRtPm5MKvquII/+Jiw9f3xHquuFpVCmzX36N
-    n/uBu/1mCk1fseMmIRQb0sXfD1QMr/UFMuzoIbMWOUQ0aB5WAPZx3wFkjniEiady
-    K/Kgn2DjRHdCS4Jz4G5f+0/ze7lZ5LWWTpkNZEWQU+LOr5ZkSMbc8APIdao9YRSj
-    10RsEaZJsg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=AigfDg1D x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519662517; bh=G
+    xsB3i1Jja5bsK+w2xqyrKnDY44VIYtzyjQILh3b5zA=; b=MJUZIE4IK3HdjlOSq
+    v9XWFLLH2uR0YEp7ZZJW0qEWs5oHoABTApkEhMDewKcxs4uE/LyGQWTX3/lyg+N5
+    keIqLgmz6lGS3VIax72hmNUxsEZKe9HGYLKyTOIVcAqEG3yj8N5KQROzSAiS+Mi5
+    WpYNa0qdbn5izEcibYH2xXefm54bL565IS8V5VuJHolP1INPc4u2xmiPdJ2W8r3d
+    ZqyHJwzoUnQ03f+Y+w+xrgF5C6JWraiFypKmZWR65lzpAMWWOkLokwPDeNiGdrWj
+    1fSDLuLjaZST2/0VOsX8x1XRtXvp5vjFmArJ0eIiAxI4AHs10M/ULI30ERRXOmBq
+    T6U4Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=Vflltvu5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ohjEmsph;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=AigfDg1D x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=Vflltvu5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ohjEmsph;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752341AbeBZIVz (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 03:21:55 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40481 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752333AbeBZIVv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 03:21:51 -0500
-X-Google-Smtp-Source: AG47ELuFaupml7VtkqhSF7TqYvoYd8nsBieEupwNy2BEqhxlcfxVqFoilB4BcM+XIWaoupXNW0BUyA==
-From: Alex Shi <alex.shi@linaro.org>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        stable@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Cc: James Morse <james.morse@arm.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 06/52] arm64: Factor out PAN enabling/disabling into separate uaccess_* macros
-Date: Mon, 26 Feb 2018 16:19:40 +0800
-Message-Id: <1519633227-29832-7-git-send-email-alex.shi@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
-References: <1519633227-29832-1-git-send-email-alex.shi@linaro.org>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ruxandra.radulescu@nxp.com;
+From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH 0/4] staging: fsl-mc/dpio,
+ fsl-dpaa2/eth: Enable multi-arch compile
+Date: Mon, 26 Feb 2018 10:28:03 -0600
+Message-Id: <20180226162807.20649-1-ruxandra.radulescu@nxp.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+X-Originating-IP: [192.88.168.1]
+X-ClientProxiedBy: DM5PR10CA0018.namprd10.prod.outlook.com (2603:10b6:4:2::28)
+ To DB6PR0402MB2696.eurprd04.prod.outlook.com
+ (2603:10a6:4:94::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 44124485-e905-4b3b-0f11-08d57d35f54e
+X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);
+ SRVR:DB6PR0402MB2696;
+X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
+ 3:6PIv5uWa5KON5X9Tvh4UDNcQ7DWn1k1Dogx35h5WaNX3rxKV9YRMvJxBwxDzHCZcNk48keyddKBZMsM1I4PGWwP2pzX+6am/PSTNpW7E59dHNHYfRhMD0irAECMpcsGOYnTnRDUdNw6G3M9IR1mOMUvDCSpWvPbRw7cZU0vlLv7ALYA3Em7eeDKtgDyPK7zsHM7TrAqfioc5XMF9JojGkSFKTX/q+QV630MFCux+wC6lBFCCcmaPHzTRKX10YnmV;
+ 25:J1DIQI1zRLeQbodq8jTHdzIbfpL1nImVhGpBWfr1MkSNEoQBBfAbkryvFATNyM+zYHCT+LyuRUR37QUB0VwVkutJDgsk9MejFDQHv6JLZoK1LQlu/OpQHy6V21VTJEfzSQ/4RLO0wESzhHInoC7NGjivddDD9762AcAKtdWgONXST4Y4jzstFVJvivm0cF2mZuK5JgLvSI9+9YMlWSlVcJ0JEB9woPFVcR6EOPrWl2tX5Z39oiDC0ZI9A6xvx4qzbzTnGj/315CRhtumkjvw+NA/99nD0xKA+Za/sdrQzlLj0u91SS6venSykWGoO5KVvwKjs+bUp9a3J66r0vsSdg==;
+ 31:oSZR9hw4C16o4LEbvJSljdlvzneA5qMXIRKX8qSuxHvYp5RajGX18nmATwFQKjslcZd5I6QyUbnDtO3LIA3AyH/N3ZdeADAaYW0ATVKgS/lQdP1yFVAvaWLz8FFgfrw1mNkC5xxh9Q49agn7o0d5bJgF881RGmubEly2HdSlYpVNkCVr2/667aXYYisUk4KgZLTYD7ZU37knjZUVrQ8fFAF4QvchZum0ITxxRqUH4WY=
+X-MS-TrafficTypeDiagnostic: DB6PR0402MB2696:
+X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
+ 20:VzNHsz0XnjbgwaNa35VjgjO025j38mvm500Nx/RTTGVjZNeEnNA/P3x8GAb06R6U3GC0OThdlj4EKLfv7woHM7RNODuEZL4aBw5bnqdqRaDw8cneBaQXGhW9FXBJQgRYD0mXWQ6WWmxeAchc4B4efrYxDiZxthcRz5H4anzCeaqlmPQyLizQtB42rB5nNoxOZGkFXp5h8UUCCM+uA95ONlHO6wdIRVLwzA1LTOFiLUyD/zJOdYjQDy3fUJLd+vlZl4cwRBnKz0V/6rgXv575lKYxGcBCCeJb/m3zzhJOpfhAAMIAK8wBVrs3sRsos+TrlTfcLfaFDdNTeiutQfJm1Qw0D+5/bU849fdfW0NgFyFzxhLH/WsKy3rblYLCwuK2S6ttvHpeg+HR1w4C8vdPrtqItn5W12IWiJ525PctnFCrcU9zM38MQoGbDxIkGNXbes0iDBl8paD2pr92N0Mb4LldauNgdPI8RzfdmiI8ns53xQac6GjNI/NJAyJRrINr;
+ 4:/sg9gkc/HDhYf2az1sJ1jsLiVUMKaL+Qtjbqz7FJKROZGXy1gtU+OAnx/Fb5ZR8o5ZjRU3ynoBLflPFpVYXIvaJnDks3yABjxYiir4lVB2rPUMddLO2wQAZi+03WnEl4YnYz7N3YdYYCb4PBtpkmHOqnN1UavYFm/OyeFEF2445a1IRn2+ewmXgQzFg0w01iqb0nBIJTNZiUoyFIcZOhXoPDSTqa1MCOkf09toH9nsGPZC/7kOqT8yesrr9zdT1cqrbVtabTNNfD2k5ORA7F6g==
+X-Microsoft-Antispam-PRVS: <DB6PR0402MB269659E6EB3B4152E3BE546194C10@DB6PR0402MB2696.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
+ RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501161)(6055026)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);
+ SRVR:DB6PR0402MB2696; BCL:0; PCL:0; RULEID:; SRVR:DB6PR0402MB2696;
+X-Forefront-PRVS: 05954A7C45
+X-Forefront-Antispam-Report: SFV:NSPM;
+ SFS:(10009020)(396003)(39860400002)(346002)(366004)(39380400002)(376002)(199004)(189003)(2361001)(51416003)(106356001)(50466002)(26005)(16526019)(478600001)(316002)(186003)(105586002)(52116002)(305945005)(7736002)(16586007)(81166006)(25786009)(97736004)(5660300001)(2351001)(86362001)(2906002)(8676002)(6666003)(66066001)(36756003)(4326008)(6486002)(47776003)(6916009)(53936002)(48376002)(81156014)(59450400001)(68736007)(6512007)(8936002)(386003)(6506007)(50226002)(1076002)(6116002)(3846002);
+ DIR:OUT; SFP:1101; SCL:1; SRVR:DB6PR0402MB2696; H:rhuath.am.freescale.net;
+ FPR:; SPF:None; PTR:InfoNoRecords; A:1; MX:1; LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; DB6PR0402MB2696;
+ 23:Gh7ly/R9Kv75/XCezZ2fn72dV5/UYFQdvL0icDi?=
+ =?us-ascii?Q?DKU7bxTJCveHn6sgBfL/temrCbrI9pgUu5usJOIUDlwthONvR5rPpcwc3exu?=
+ =?us-ascii?Q?DkrwhsRs/Ir2hY/h/EO04wEtnIYx6lQkMCsA+LiCltQY2RokIC0SgPpgJ0rj?=
+ =?us-ascii?Q?vhY6kMqDSWVvb60TDTXwu1QwNNMORZ2kfUR22oFt5EuDHOFGC+Bb+PWpMXOy?=
+ =?us-ascii?Q?a0l6zBoYhzbrM2Jd6AiRn1EPyhCQwl9y2z/KNnIqUsRDGUwLLDilfgLNOHeH?=
+ =?us-ascii?Q?HcTqcokKh6V8cOS+W0ForiOy0nFuLctFaOcbE7rgOKiY3xlkxINjEJ7SaJEs?=
+ =?us-ascii?Q?wTA2M4JrM381Vz5HYp6gV3dskDCs3E0plAYVUywQ4JQ1HIB96MmtDM6b09mZ?=
+ =?us-ascii?Q?pKtKr0UIDHoF0mUdAm7ePJpY0ST3KfyZTq7yQ3CNFgkPujrT8G6CwdnsoNl/?=
+ =?us-ascii?Q?c8PK0EgI6su9baYIWfV4WjLcYcYHPko6Cxy5mDqMaB8vHRhc0rOxZYYHvvae?=
+ =?us-ascii?Q?FAN/EKz/B9qBrzMROQP3C4bimjiNLnFn86NoJ+W9xyBO5L/hwUWMZ5FYnh00?=
+ =?us-ascii?Q?nZ/No5qLVdoBz6djW2QokNDCsPtKM3jz0C/Nyd+fHW8ZIHC7LdJpMaFmGEBV?=
+ =?us-ascii?Q?Ds8SLBPmp94uOlhnbmyrwmUJd/rOYV5igP5cjMj7CezS9y17DNLd3Vsy5EXW?=
+ =?us-ascii?Q?xBYICdzF1O6yiOtIXAwfG2TBh0D5WiFX3iLwGpXoPf3TY7tr7B1/AhoO8UpD?=
+ =?us-ascii?Q?+cvOdTqniOX42eYB5hm6fyvyWqgaeCrAe7iaqvmD7rj+e0xNvrMcgoPO2Nvm?=
+ =?us-ascii?Q?kc/1VxvgSQlNW+4CVV0mKEuQSkWagO95hDJ28aNUNhBh7au4wNjMTtEsoQq9?=
+ =?us-ascii?Q?XH7nWisqw7k2be9K4MkffL86eTnRD7kGGoGP/w1cwdZZqMFhaZHvrfUUCyfL?=
+ =?us-ascii?Q?vKj24h4gPhI8aSoW3sPNu7P4f2NcfPw5KtJLY5k459nB3+vdZszA8ly8deoi?=
+ =?us-ascii?Q?g/lnGnFXBPZeAu2NGbSmavF9HWMlmismqXak8EpkPzRzbM1w2L0f954VCVuZ?=
+ =?us-ascii?Q?UysJBQYGPxfkuxrQ8nkiV+lOiKhEllZajTL9EMT+rVnNXszhVti33pc4T2l3?=
+ =?us-ascii?Q?LakilvO99NfiTPwC5dZHTSAzClHeIzVet?=
+X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
+ 6:a+7svTXVkm4b02goLwdGbx9svk7nnjgD7YdR2AyyzE9u+ToaQJS71jw20M3juuwwNlAsQhICxobITS7otLtWoRvS/cS1N8vYPyygp6qlu3fvBT58lOV9VIi37K/E2AfmWQRC/zTU3cb2z0qOPz3ZQqpUGLm72MSMjzP3yvVNCMs30aBa7OgrjStdoQ36YsVIjkC6gZzC6f0sdMr3j286jpZ/iYnucxmHV8ZmRPYTI1pfnJW43q+lRrwPTeXkQeIElvbYhpYzge0tuKnwVcgcH5zs/bDmyEFd0BE7pIr+JtfUzv+GpMdfnYyIS0DhME7PDcPcohNWMxoxcrm6Vvp11w63AYILHoYDRyRc3iKsfv4=;
+ 5:8VIXFsSgKhvlZfmxqezkST2gvW6zrP0ovRXvvkUD2VYuSqeG5f+8c+KexpWwiz3MCyszqes3DRHRG34GhFzZ6gOLDw+B2J/Ztva3D/5Ux3bbGSJYx7eqHnUu30KKqDYhTHufBVtchISc6JRwZz1V9O3VO+QvhCO9U4g25YbPUUg=;
+ 24:YY8sbJDUKdxbBIlISJzpyDxPrZUsdnQV+4dAiaD4v/3Dj4JC+4XvXI7iyJVUtj8ySyzpCx4w8Zq+8Rg/hqiP6Z86H16tqPOLGjunUAv2sTo=;
+ 7:yUszswxzQmCWWDQpBeJiYrNSGeL0pGBkr0P3zFRNU8YGfUqAAPKP2tSVLFnz0P/tYIIjurEpJW6JYTur8jKL/V2tpQS6prfvzpzq0BnIKS7UpnLUNxxvFfJMBuioHKNR1nSHWIi1k/Dsf7lDvZY8TSJCIZEjqTSORCxn4MXtoCSRzO0m1LRBALyhQ0M/DfDk6kSQD6DfHnHYukQ6acW+e5zrAjt0OIFvSuj/tM1k9KtMnkMwe5+P+0YnOF1fPppM
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2018 16:28:23.2877 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44124485-e905-4b3b-0f11-08d57d35f54e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2696
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, roy.pledge@nxp.com, bogdan.purcareata@nxp.com,
+ linux-kernel@vger.kernel.org, laurentiu.tudor@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+The DPAA2 DPIO and Ethernet drivers need only a couple of small
+fixes in order to compile correctly for 32b platforms.
 
-commit bd38967d406 upstream.
+Update the drivers and remove ARCH_LAYERSCAPE from their Kconfig
+dependencies.
 
-This patch moves the directly coded alternatives for turning PAN on/off
-into separate uaccess_{enable,disable} macros or functions. The asm
-macros take a few arguments which will be used in subsequent patches.
+Ioana Radulescu (4):
+  staging: fsl-mc/dpio: Fix incorrect casts
+  staging: fsl-mc/dpio: allow the driver to compile multi-arch
+  staging: fsl-dpaa2/eth: Fix incorrect casts
+  staging: fsl-dpaa2/eth: allow the driver to compile multi-arch
 
-Note that any (unlikely) access that the compiler might generate between
-uaccess_enable() and uaccess_disable(), other than those explicitly
-specified by the user access code, will not be protected by PAN.
+ drivers/staging/fsl-dpaa2/Kconfig              | 2 +-
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c | 6 +++---
+ drivers/staging/fsl-mc/bus/Kconfig             | 2 +-
+ drivers/staging/fsl-mc/bus/dpio/dpio-service.c | 4 ++--
+ drivers/staging/fsl-mc/bus/dpio/qbman-portal.c | 4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Kees Cook <keescook@chromium.org>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Alex Shi <alex.shi@linaro.org>
----
- arch/arm64/include/asm/futex.h       | 17 ++++----
- arch/arm64/include/asm/uaccess.h     | 79 +++++++++++++++++++++++++++++++-----
- arch/arm64/kernel/armv8_deprecated.c | 11 +++--
- arch/arm64/lib/clear_user.S          | 11 ++---
- arch/arm64/lib/copy_from_user.S      | 11 ++---
- arch/arm64/lib/copy_in_user.S        | 11 ++---
- arch/arm64/lib/copy_to_user.S        | 11 ++---
- 7 files changed, 93 insertions(+), 58 deletions(-)
-
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index f2585cd..85c4a89 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -21,15 +21,12 @@
- #include <linux/futex.h>
- #include <linux/uaccess.h>
- 
--#include <asm/alternative.h>
--#include <asm/cpufeature.h>
- #include <asm/errno.h>
--#include <asm/sysreg.h>
- 
- #define __futex_atomic_op(insn, ret, oldval, uaddr, tmp, oparg)		\
-+do {									\
-+	uaccess_enable();						\
- 	asm volatile(							\
--	ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN,		\
--		    CONFIG_ARM64_PAN)					\
- "	prfm	pstl1strm, %2\n"					\
- "1:	ldxr	%w1, %2\n"						\
- 	insn "\n"							\
-@@ -44,11 +41,11 @@
- "	.popsection\n"							\
- 	_ASM_EXTABLE(1b, 4b)						\
- 	_ASM_EXTABLE(2b, 4b)						\
--	ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_HAS_PAN,		\
--		    CONFIG_ARM64_PAN)					\
- 	: "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp)	\
- 	: "r" (oparg), "Ir" (-EFAULT)					\
--	: "memory")
-+	: "memory");							\
-+	uaccess_disable();						\
-+} while (0)
- 
- static inline int
- futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-@@ -118,8 +115,8 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
- 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
- 		return -EFAULT;
- 
-+	uaccess_enable();
- 	asm volatile("// futex_atomic_cmpxchg_inatomic\n"
--ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN, CONFIG_ARM64_PAN)
- "	prfm	pstl1strm, %2\n"
- "1:	ldxr	%w1, %2\n"
- "	sub	%w3, %w1, %w4\n"
-@@ -134,10 +131,10 @@ ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN, CONFIG_ARM64_PAN)
- "	.popsection\n"
- 	_ASM_EXTABLE(1b, 4b)
- 	_ASM_EXTABLE(2b, 4b)
--ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_HAS_PAN, CONFIG_ARM64_PAN)
- 	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp)
- 	: "r" (oldval), "r" (newval), "Ir" (-EFAULT)
- 	: "memory");
-+	uaccess_disable();
- 
- 	*uval = val;
- 	return ret;
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 811cf16..94e1457 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -18,6 +18,11 @@
- #ifndef __ASM_UACCESS_H
- #define __ASM_UACCESS_H
- 
-+#include <asm/alternative.h>
-+#include <asm/sysreg.h>
-+
-+#ifndef __ASSEMBLY__
-+
- /*
-  * User space memory access functions
-  */
-@@ -26,10 +31,8 @@
- #include <linux/string.h>
- #include <linux/thread_info.h>
- 
--#include <asm/alternative.h>
- #include <asm/cpufeature.h>
- #include <asm/ptrace.h>
--#include <asm/sysreg.h>
- #include <asm/errno.h>
- #include <asm/memory.h>
- #include <asm/compiler.h>
-@@ -121,6 +124,44 @@ static inline void set_fs(mm_segment_t fs)
- 	"	.popsection\n"
- 
- /*
-+ * User access enabling/disabling.
-+ */
-+#define __uaccess_disable(alt)						\
-+do {									\
-+	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(1), alt,			\
-+			CONFIG_ARM64_PAN));				\
-+} while (0)
-+
-+#define __uaccess_enable(alt)						\
-+do {									\
-+	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(0), alt,			\
-+			CONFIG_ARM64_PAN));				\
-+} while (0)
-+
-+static inline void uaccess_disable(void)
-+{
-+	__uaccess_disable(ARM64_HAS_PAN);
-+}
-+
-+static inline void uaccess_enable(void)
-+{
-+	__uaccess_enable(ARM64_HAS_PAN);
-+}
-+
-+/*
-+ * These functions are no-ops when UAO is present.
-+ */
-+static inline void uaccess_disable_not_uao(void)
-+{
-+	__uaccess_disable(ARM64_ALT_PAN_NOT_UAO);
-+}
-+
-+static inline void uaccess_enable_not_uao(void)
-+{
-+	__uaccess_enable(ARM64_ALT_PAN_NOT_UAO);
-+}
-+
-+/*
-  * The "__xxx" versions of the user access functions do not verify the address
-  * space - it must have been done previously with a separate "access_ok()"
-  * call.
-@@ -147,8 +188,7 @@ static inline void set_fs(mm_segment_t fs)
- do {									\
- 	unsigned long __gu_val;						\
- 	__chk_user_ptr(ptr);						\
--	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_ALT_PAN_NOT_UAO,\
--			CONFIG_ARM64_PAN));				\
-+	uaccess_enable_not_uao();					\
- 	switch (sizeof(*(ptr))) {					\
- 	case 1:								\
- 		__get_user_asm("ldrb", "ldtrb", "%w", __gu_val, (ptr),  \
-@@ -169,9 +209,8 @@ do {									\
- 	default:							\
- 		BUILD_BUG();						\
- 	}								\
-+	uaccess_disable_not_uao();					\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
--	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_ALT_PAN_NOT_UAO,\
--			CONFIG_ARM64_PAN));				\
- } while (0)
- 
- #define __get_user(x, ptr)						\
-@@ -216,8 +255,7 @@ do {									\
- do {									\
- 	__typeof__(*(ptr)) __pu_val = (x);				\
- 	__chk_user_ptr(ptr);						\
--	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_ALT_PAN_NOT_UAO,\
--			CONFIG_ARM64_PAN));				\
-+	uaccess_enable_not_uao();					\
- 	switch (sizeof(*(ptr))) {					\
- 	case 1:								\
- 		__put_user_asm("strb", "sttrb", "%w", __pu_val, (ptr),	\
-@@ -238,8 +276,7 @@ do {									\
- 	default:							\
- 		BUILD_BUG();						\
- 	}								\
--	asm(ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_ALT_PAN_NOT_UAO,\
--			CONFIG_ARM64_PAN));				\
-+	uaccess_disable_not_uao();					\
- } while (0)
- 
- #define __put_user(x, ptr)						\
-@@ -332,4 +369,26 @@ extern long strncpy_from_user(char *dest, const char __user *src, long count);
- extern __must_check long strlen_user(const char __user *str);
- extern __must_check long strnlen_user(const char __user *str, long n);
- 
-+#else	/* __ASSEMBLY__ */
-+
-+#include <asm/assembler.h>
-+
-+/*
-+ * User access enabling/disabling macros. These are no-ops when UAO is
-+ * present.
-+ */
-+	.macro	uaccess_disable_not_uao, tmp1
-+alternative_if ARM64_ALT_PAN_NOT_UAO
-+	SET_PSTATE_PAN(1)
-+alternative_else_nop_endif
-+	.endm
-+
-+	.macro	uaccess_enable_not_uao, tmp1, tmp2
-+alternative_if ARM64_ALT_PAN_NOT_UAO
-+	SET_PSTATE_PAN(0)
-+alternative_else_nop_endif
-+	.endm
-+
-+#endif	/* __ASSEMBLY__ */
-+
- #endif /* __ASM_UACCESS_H */
-diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
-index c0ede23..29d2ad8 100644
---- a/arch/arm64/kernel/armv8_deprecated.c
-+++ b/arch/arm64/kernel/armv8_deprecated.c
-@@ -14,7 +14,6 @@
- #include <linux/slab.h>
- #include <linux/sysctl.h>
- 
--#include <asm/alternative.h>
- #include <asm/cpufeature.h>
- #include <asm/insn.h>
- #include <asm/opcodes.h>
-@@ -285,10 +284,10 @@ static void __init register_insn_emulation_sysctl(struct ctl_table *table)
- #define __SWP_LL_SC_LOOPS	4
- 
- #define __user_swpX_asm(data, addr, res, temp, temp2, B)	\
-+do {								\
-+	uaccess_enable();					\
- 	__asm__ __volatile__(					\
- 	"	mov		%w3, %w7\n"			\
--	ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN,	\
--		    CONFIG_ARM64_PAN)				\
- 	"0:	ldxr"B"		%w2, [%4]\n"			\
- 	"1:	stxr"B"		%w0, %w1, [%4]\n"		\
- 	"	cbz		%w0, 2f\n"			\
-@@ -306,13 +305,13 @@ static void __init register_insn_emulation_sysctl(struct ctl_table *table)
- 	"	.popsection"					\
- 	_ASM_EXTABLE(0b, 4b)					\
- 	_ASM_EXTABLE(1b, 4b)					\
--	ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_HAS_PAN,	\
--		CONFIG_ARM64_PAN)				\
- 	: "=&r" (res), "+r" (data), "=&r" (temp), "=&r" (temp2)	\
- 	: "r" ((unsigned long)addr), "i" (-EAGAIN),		\
- 	  "i" (-EFAULT),					\
- 	  "i" (__SWP_LL_SC_LOOPS)				\
--	: "memory")
-+	: "memory");						\
-+	uaccess_disable();					\
-+} while (0)
- 
- #define __user_swp_asm(data, addr, res, temp, temp2) \
- 	__user_swpX_asm(data, addr, res, temp, temp2, "")
-diff --git a/arch/arm64/lib/clear_user.S b/arch/arm64/lib/clear_user.S
-index 5d1cad3..d7150e3 100644
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -17,10 +17,7 @@
-  */
- #include <linux/linkage.h>
- 
--#include <asm/alternative.h>
--#include <asm/assembler.h>
--#include <asm/cpufeature.h>
--#include <asm/sysreg.h>
-+#include <asm/uaccess.h>
- 
- 	.text
- 
-@@ -33,8 +30,7 @@
-  * Alignment fixed up by hardware.
-  */
- ENTRY(__clear_user)
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(0)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_enable_not_uao x2, x3
- 	mov	x2, x1			// save the size for fixup return
- 	subs	x1, x1, #8
- 	b.mi	2f
-@@ -54,8 +50,7 @@ uao_user_alternative 9f, strh, sttrh, wzr, x0, 2
- 	b.mi	5f
- uao_user_alternative 9f, strb, sttrb, wzr, x0, 0
- 5:	mov	x0, #0
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_disable_not_uao x2
- 	ret
- ENDPROC(__clear_user)
- 
-diff --git a/arch/arm64/lib/copy_from_user.S b/arch/arm64/lib/copy_from_user.S
-index 4fd67ea..cfe1339 100644
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -16,11 +16,8 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/alternative.h>
--#include <asm/assembler.h>
- #include <asm/cache.h>
--#include <asm/cpufeature.h>
--#include <asm/sysreg.h>
-+#include <asm/uaccess.h>
- 
- /*
-  * Copy from user space to a kernel buffer (alignment handled by the hardware)
-@@ -67,12 +64,10 @@
- 
- end	.req	x5
- ENTRY(__arch_copy_from_user)
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(0)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_enable_not_uao x3, x4
- 	add	end, x0, x2
- #include "copy_template.S"
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_disable_not_uao x3
- 	mov	x0, #0				// Nothing to copy
- 	ret
- ENDPROC(__arch_copy_from_user)
-diff --git a/arch/arm64/lib/copy_in_user.S b/arch/arm64/lib/copy_in_user.S
-index f7292dd0..718b1c4 100644
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -18,11 +18,8 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/alternative.h>
--#include <asm/assembler.h>
- #include <asm/cache.h>
--#include <asm/cpufeature.h>
--#include <asm/sysreg.h>
-+#include <asm/uaccess.h>
- 
- /*
-  * Copy from user space to user space (alignment handled by the hardware)
-@@ -68,12 +65,10 @@
- 
- end	.req	x5
- ENTRY(__copy_in_user)
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(0)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_enable_not_uao x3, x4
- 	add	end, x0, x2
- #include "copy_template.S"
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_disable_not_uao x3
- 	mov	x0, #0
- 	ret
- ENDPROC(__copy_in_user)
-diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
-index 7a7efe2..e99e31c 100644
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -16,11 +16,8 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/alternative.h>
--#include <asm/assembler.h>
- #include <asm/cache.h>
--#include <asm/cpufeature.h>
--#include <asm/sysreg.h>
-+#include <asm/uaccess.h>
- 
- /*
-  * Copy to user space from a kernel buffer (alignment handled by the hardware)
-@@ -66,12 +63,10 @@
- 
- end	.req	x5
- ENTRY(__arch_copy_to_user)
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(0)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_enable_not_uao x3, x4
- 	add	end, x0, x2
- #include "copy_template.S"
--ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_ALT_PAN_NOT_UAO, \
--	    CONFIG_ARM64_PAN)
-+	uaccess_disable_not_uao x3
- 	mov	x0, #0
- 	ret
- ENDPROC(__arch_copy_to_user)
 -- 
 2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
