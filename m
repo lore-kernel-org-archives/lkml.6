@@ -1,46 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754038AbeBZOx7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 09:53:59 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55894 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753379AbeBZOx5 (ORCPT
+        id S1754012AbeBZO4i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 09:56:38 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:47249 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753379AbeBZO4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:53:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2562C60390
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [next] wil6210: fix spelling mistake: "preperation"->
- "preparation"
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180130192737.8986-1-colin.king@canonical.com>
-References: <20180130192737.8986-1-colin.king@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org,
-        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180226145353.1DECA60592@smtp.codeaurora.org>
-Date: Mon, 26 Feb 2018 14:53:53 +0000 (UTC)
+        Mon, 26 Feb 2018 09:56:35 -0500
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: dmaengine@vger.kernel.org
+Cc: linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 0/2] Introduce DW AXI DMAC driver
+Date: Mon, 26 Feb 2018 17:56:26 +0300
+Message-Id: <20180226145628.11892-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.9.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+This patch series add support for the DW AXI DMAC controller.
 
-> Trivial fix to spelling mistake in debug error message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+DW AXI DMAC is a part of HSDK development board from Synopsys.
 
-Patch applied to ath-next branch of ath.git, thanks.
+In this driver implementation only DMA_MEMCPY transfers
+are supported.
 
-77b83829ebf6 wil6210: fix spelling mistake: "preperation"-> "preparation"
+Changes v1->v2 (suggested by Andy Shevchenko):
+ * Use SPDX licence identifier.
+ * Refactor axi_chan_get_xfer_width function.
+ * Fix timeout calculation in dma_chan_pause.
+ * Add record to MAINTAINERS in correct alphabetical order.
+
+Eugeniy Paltsev (2):
+  dmaengine: Introduce DW AXI DMAC driver
+  dt-bindings: Document the Synopsys DW AXI DMA bindings
+
+ .../devicetree/bindings/dma/snps,dw-axi-dmac.txt   |   41 +
+ MAINTAINERS                                        |    6 +
+ drivers/dma/Kconfig                                |   10 +
+ drivers/dma/Makefile                               |    1 +
+ drivers/dma/dw-axi-dmac/Makefile                   |    1 +
+ drivers/dma/dw-axi-dmac/axi_dma_platform.c         | 1010 ++++++++++++++++++++
+ drivers/dma/dw-axi-dmac/axi_dma_platform.h         |  342 +++++++
+ 7 files changed, 1411 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
+ create mode 100644 drivers/dma/dw-axi-dmac/Makefile
+ create mode 100644 drivers/dma/dw-axi-dmac/axi_dma_platform.c
+ create mode 100644 drivers/dma/dw-axi-dmac/axi_dma_platform.h
 
 -- 
-https://patchwork.kernel.org/patch/10192357/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.9.3
