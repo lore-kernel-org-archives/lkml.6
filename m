@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225bJU5vYx2MdEfKKe7rKqwvC9o7rsdI5/1mn7Y2gB0r7efCsAFWW8wsJDfZpRl3U8VfGObq
-ARC-Seal: i=1; a=rsa-sha256; t=1519676642; cv=none;
+X-Google-Smtp-Source: AG47ELtPUG/H+JH9+NtoIieTpZoLiwqFjm9Su8hh1o4eIr3Rha4C9SUFskU91J4yZ7PfaJXgSB/A
+ARC-Seal: i=1; a=rsa-sha256; t=1519676639; cv=none;
         d=google.com; s=arc-20160816;
-        b=KNIy1zEoF2YxDxcsfJ3NEy36jgMu+/aw858WQ8T3WyFEzb4+RXH9uHs6fhC721Pi6x
-         KDL2eOg04lps+exVLrSjWLbS+/zgc0iCdQbRrz3rZ0aCaj2X7WBLUccoc3aP+DWYxpK+
-         8jeuyrGH5p/w3djHm728rAaiRQasc61MqwS/Tc2Ky1VKin6IhKkg+VVZJ354akFA9bM+
-         y1nc2QbsaBdXWayHdNHrzksyHz9UWjUpDrj9QJAlUhrcjUjplySx+Z9+ksbd7A9U/w93
-         KohpH1c4rX6lF1DipSm6OCbJPexxCFiO9ylcm0NZL2RPbM5lqEXRHTdBQG2pI4BzYhAO
-         Vq7g==
+        b=PttVR+xzBPscbAPJ1AIP0JV2GxQwF8YYzvxbB1p2ahEiNoDLWWBa/uysKSeYtMhDvz
+         +Lm3epgXSgo8QzBcdLaXrRjxbspG0byWrkbVJxubGJKDcjSLvsIhkwoHHdDeDtdLxhNj
+         UyG5RQtsYwJ5b7LK456Y8KR2FSJWZFb2wBlzyspDcEA2bn8LgVxEbmEyg3/d4+x+3ReB
+         ++ReH+XML7H6sjYF7rnwfQLnTWGLkkXqVY8/tBRXH69UqZOP9EqEX8OAKggqgxcqQNUU
+         /BA/cfzh5Zq8CLaL4eawe4Yq0IyBx4M9U90Gnyna9zfv422hveJKeUo/7Zbcm3WIEM6Q
+         u8qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AM0qu0UXdB6jLQ+Y+sCYWOo3uF7c2bpVT+g6+v+hddk=;
-        b=dx6Rrm7FqxBkAbc0zVZ49zbxtwv5vThk2yrgsov2/SdSLqIZS+AWnLPzkRn7l7gXej
-         eo5ereYejCtg6rjXKOB+2gfkAa3eeCmccmzuFLAUm/leSbFZ0veU/rppI47vL8WHCBVG
-         N9sFN+0wUWDuWozQQhNYwuWs02qaUbtcRfoHmC7F9ZcVFDmMtiG/q8X3IrKEMqTrabuD
-         Um7JYHc6RUaUsc7qiw6t0PU64aBLc66BadXWLjxXJEmt17kWH5rkRRYmAb34Bf+sndXs
-         oyv0iA4JKcPUXHdFcmzzlOAStl2YYy/blnIc/nLofjXIP3NPJw5mALP/IDZ6/g/xR9TT
-         /DUA==
+        bh=uWI2vw/POnd8uEMDfiiZ52/TIP2AzWg70CHt+fq93/A=;
+        b=x3Gc3f2kXcg9/rp7+peqdbB/FXiIYmRlKEtI9vqNDNeD7tgZfnnAufaPeLtfu0x8E1
+         nZjpb7GL05YpQcHJrJTBuzYmLGfa0L60baRHwjVAynwJinRacZvPHdwQxkMi+DCqIjwy
+         k9jbuN1gSo5TtXMKGX/VmM4yKdBhk94fXtWWgtcmGAxMD9AQtGfRWjX0L4SjLLvCe9Hr
+         x0QyOtEOZ34v30qmEjd/BIXmS2BrKu4uDQ31LHhM/PPhSUk9DIkUlhWc7RNFssBYodbD
+         vGKdTxamwpnOGiput3ldXPkEUT6rp+piHKcejs4ZmCiIN22IoLA2V5QCyCP5jdqFWJpf
+         AfWQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>,
+	Andreas Klinger <ak@it-klinger.de>,
+	Stable@vger.kernel.org,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 23/54] iio: buffer: check if a buffer has been set up when poll is called
-Date: Mon, 26 Feb 2018 21:22:00 +0100
-Message-Id: <20180226202145.551142113@linuxfoundation.org>
+Subject: [PATCH 4.14 22/54] iio: srf08: fix link error "devm_iio_triggered_buffer_setup" undefined
+Date: Mon, 26 Feb 2018 21:21:59 +0100
+Message-Id: <20180226202145.509731478@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495967737475956?=
-X-GMAIL-MSGID: =?utf-8?q?1593496454372710984?=
+X-GMAIL-THRID: =?utf-8?q?1593496451515173902?=
+X-GMAIL-MSGID: =?utf-8?q?1593496451515173902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
+From: Andreas Klinger <ak@it-klinger.de>
 
-commit 4cd140bda6494543f1c1b0ccceceaa44b676eef6 upstream.
+commit 511051d509ec54642dd6d30fdf2caa33c23619cc upstream.
 
-If no iio buffer has been set up and poll is called return 0.
-Without this check there will be a null pointer dereference when
-calling poll on a iio driver without an iio buffer.
+Functions for triggered buffer support are needed by this module.
+If they are not defined accidentally by another driver, there's an error
+thrown out while linking.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
+Add a select of IIO_BUFFER and IIO_TRIGGERED_BUFFER in the Kconfig file.
+
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Fixes: a83195937151 ("iio: srf08: add triggered buffer support")
+Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/industrialio-buffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/proximity/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -175,7 +175,7 @@ unsigned int iio_buffer_poll(struct file
- 	struct iio_dev *indio_dev = filp->private_data;
- 	struct iio_buffer *rb = indio_dev->buffer;
+--- a/drivers/iio/proximity/Kconfig
++++ b/drivers/iio/proximity/Kconfig
+@@ -58,6 +58,8 @@ config SX9500
  
--	if (!indio_dev->info)
-+	if (!indio_dev->info || rb == NULL)
- 		return 0;
- 
- 	poll_wait(filp, &rb->pollq, wait);
+ config SRF08
+ 	tristate "Devantech SRF02/SRF08/SRF10 ultrasonic ranger sensor"
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
+ 	depends on I2C
+ 	help
+ 	  Say Y here to build a driver for Devantech SRF02/SRF08/SRF10
