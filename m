@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu5RZMBpUJBPRwixOQUPG3z3FBYPd0EOEKHdE6uDig/ewXT+E85fd7KkBEwl6k3+39fEocy
-ARC-Seal: i=1; a=rsa-sha256; t=1519676945; cv=none;
+X-Google-Smtp-Source: AG47ELtHWoL7PQABtY/UvZ+Fn/KLYo8SrtfQm1ucpUDOoi0LTIEnhX2HRBoeL7FnGISUL6U4YSM2
+ARC-Seal: i=1; a=rsa-sha256; t=1519676942; cv=none;
         d=google.com; s=arc-20160816;
-        b=H1SOsfBst9C7ohWUyHoY7Mo07w7x7duCKFU+5JvndNV9lJmwwdg+KQRz7PNk/cNimA
-         IvE0SP+067sCUK6bqDo4A11uUT8jE/d/VN7TrT6mDjy+pnVAhW4p3dB0vrQUuTMxghDY
-         6+VCRMXGr/k4FoUd7VlhEYb15IDtyWwZnrI/PODN9M2i0CKogH1SthNmDN9K68TkTNrd
-         u9g1zd6aHQsO8PjdEGnQgskAZ4WOLAcC1J37bQ9B0X5pfztcYlGa7ACihCEUXUGxOTFY
-         yLn4MreuX1dtp2PRPDzpA1Ov2ANlT0KJX4QqL2yGcUlT/nDwvx9K1Y+X3Amr4Ib7xxb0
-         aXPw==
+        b=j6bUPmt3PvOvpjrSR6vOqyQryrL+/QfKjGntXb0KvwVLoSycODafi1EiUkzILnwnfa
+         jhDgAXYd+DG2pf0V9M6dMeoPEkqimiE74iIR3CT9uV4guCZ/IKCu/wpZ2YO9lD4GFk5t
+         aVAdvbeBz9M3b96ZlXmKapHNv0lPuq31LppBVu7oEctc4QneYozDwKLFMUKZBgkmcHj8
+         QKMTrSyy1zirpyQMYe9kIQbtuEr5309mhKCLBLmoov+5HZAEH7Nu52sNERNe3F4gl+AB
+         7uJ2SJFRWxiFb1Baq+Md2CNsSRTpMBtwzPKbJjWC9IkIMgmbjeOFUKLVkwGBiCs1xiHd
+         OL7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BwJiDmuLOCG2F26acHK6FSArWsqiwoE9eHAQe5teb8I=;
-        b=lRSE6VsPWFo3DRlyc0nfchjum9Omfdp8Yy3T4XPvzWxoryzBskARHAwPyST/lLyLwr
-         A9SeZSR8uQsDE2VRh6UmFaH4OWWuN9IYzHGzsi8hLgUsQXBhVYjZvC3n5dZ9SkzWXV7F
-         9R9YsNXqFuLqcNX5MQHJ1ATzb4wjE5ZCZuImxqbXWzD2Dm03Z5DV9g6b4gAQaVP2LY9C
-         2RouFg+JGahDEjaZ32GgwwqSNahyQxbr2z7I/YIgtwtTq9NPARrMi34iesgrVYhTPhLH
-         RV+C+kQlQ8oyv8BvG9ZdEcTX60UWgZ1KgqeW81bpK/mD7XiSKAgbDMxmhI7Spn9Cxiij
-         54XQ==
+        bh=kYvuiOrEF6EEj3qJfhf4TOqsUuwzyN4qY5QtHQ8uoTw=;
+        b=be23/HHA006mhhImL41idAX8mbhJeApSjWbHVmN3ujLLEJJmTWAcmX0CmmNFfTUl7A
+         4m+2hANGzVWcsL4bbxRNAzqH4ic7A6uliDedpgu+Tgqu/50vxptNvOuY1HAI9mwurS/k
+         DaQN0UoeLmp/9grzyT/abfQ0G95zQnuVXegQ5uAR9ELGWf2gN/a0zdLa6aMewg3GzVSk
+         4HoDnP48oKsTYOymaKohfA1CYRK5VNrUVMna4x+JJERRn2c9V4bIhFXzCvMl5STWwJtC
+         TNCVYw3mDqFm1ZxvOA4NVzqyVzvKqL/tYPgE2CSmQHIeTXHpAB0ySO8RorDnl9crnIc+
+         D7FA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Casey Leedom <leedom@chelsio.com>,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 34/64] PCI/cxgb4: Extend T3 PCI quirk to T4+ devices
-Date: Mon, 26 Feb 2018 21:22:11 +0100
-Message-Id: <20180226202154.914241746@linuxfoundation.org>
+	Matt Redfearn <matt.redfearn@mips.com>,
+	Paul Burton <paul.burton@mips.com>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.15 33/64] irqchip/mips-gic: Avoid spuriously handling masked interrupts
+Date: Mon, 26 Feb 2018 21:22:10 +0100
+Message-Id: <20180226202154.875616039@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202153.453363333@linuxfoundation.org>
 References: <20180226202153.453363333@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496284533740690?=
-X-GMAIL-MSGID: =?utf-8?q?1593496773715718599?=
+X-GMAIL-THRID: =?utf-8?q?1593496473140760275?=
+X-GMAIL-MSGID: =?utf-8?q?1593496769390880953?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,110 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Casey Leedom <leedom@chelsio.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit 7dcf688d4c78a18ba9538b2bf1b11dc7a43fe9be upstream.
+commit 285cb4f62319737e6538252cf1a67ce9da5cf3d5 upstream.
 
-We've run into a problem where our device is attached
-to a Virtual Machine and the use of the new pci_set_vpd_size()
-API doesn't help.  The VM kernel has been informed that
-the accesses are okay, but all of the actual VPD Capability
-Accesses are trapped down into the KVM Hypervisor where it
-goes ahead and imposes the silent denials.
+Commit 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading
+GIC_SH_MASK*") removed the read of the hardware mask register when
+handling shared interrupts, instead using the driver's shadow pcpu_masks
+entry as the effective mask. Unfortunately this did not take account of
+the write to pcpu_masks during gic_shared_irq_domain_map, which
+effectively unmasks the interrupt early. If an interrupt is asserted,
+gic_handle_shared_int decodes and processes the interrupt even though it
+has not yet been unmasked via gic_unmask_irq, which also sets the
+appropriate bit in pcpu_masks.
 
-The right idea is to follow the kernel.org
-commit 1c7de2b4ff88 ("PCI: Enable access to non-standard VPD for
-Chelsio devices (cxgb3)") which Alexey Kardashevskiy authored
-to establish a PCI Quirk for our T3-based adapters. This commit
-extends that PCI Quirk to cover Chelsio T4 devices and later.
+On the MIPS Boston board, when a console command line of
+"console=ttyS0,115200n8r" is passed, the modem status IRQ is enabled in
+the UART, which is immediately raised to the GIC. The interrupt has been
+mapped, but no handler has yet been registered, nor is it expected to be
+unmasked. However, the write to pcpu_masks in gic_shared_irq_domain_map
+has effectively unmasked it, resulting in endless reports of:
 
-The advantage of this approach is that the VPD Size gets set early
-in the Base OS/Hypervisor Boot and doesn't require that the cxgb4
-driver even be available in the Base OS/Hypervisor.  Thus PF4 can
-be exported to a Virtual Machine and everything should work.
+[    5.058454] irq 13, desc: ffffffff80a7ad80, depth: 1, count: 0, unhandled: 0
+[    5.062057] ->handle_irq():  ffffffff801b1838,
+[    5.062175] handle_bad_irq+0x0/0x2c0
 
-Fixes: 67e658794ca1 ("cxgb4: Set VPD size so we can read both VPD structures")
-Cc: <stable@vger.kernel.org>  # v4.9+
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Where IRQ 13 is the UART interrupt.
+
+To fix this, just remove the write to pcpu_masks in
+gic_shared_irq_domain_map. The existing write in gic_unmask_irq is the
+correct place for what is now the effective unmasking.
+
+Cc: stable@vger.kernel.org
+Fixes: 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading GIC_SH_MASK*")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Reviewed-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   10 --------
- drivers/pci/quirks.c                       |   35 +++++++++++++++++------------
- 2 files changed, 21 insertions(+), 24 deletions(-)
+ drivers/irqchip/irq-mips-gic.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -2632,7 +2632,6 @@ void t4_get_regs(struct adapter *adap, v
- }
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -424,8 +424,6 @@ static int gic_shared_irq_domain_map(str
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	write_gic_map_pin(intr, GIC_MAP_PIN_MAP_TO_PIN | gic_cpu_pin);
+ 	write_gic_map_vp(intr, BIT(mips_cm_vp_id(cpu)));
+-	gic_clear_pcpu_masks(intr);
+-	set_bit(intr, per_cpu_ptr(pcpu_masks, cpu));
+ 	irq_data_update_effective_affinity(data, cpumask_of(cpu));
+ 	spin_unlock_irqrestore(&gic_lock, flags);
  
- #define EEPROM_STAT_ADDR   0x7bfc
--#define VPD_SIZE           0x800
- #define VPD_BASE           0x400
- #define VPD_BASE_OLD       0
- #define VPD_LEN            1024
-@@ -2699,15 +2698,6 @@ int t4_get_raw_vpd_params(struct adapter
- 	if (!vpd)
- 		return -ENOMEM;
- 
--	/* We have two VPD data structures stored in the adapter VPD area.
--	 * By default, Linux calculates the size of the VPD area by traversing
--	 * the first VPD area at offset 0x0, so we need to tell the OS what
--	 * our real VPD size is.
--	 */
--	ret = pci_set_vpd_size(adapter->pdev, VPD_SIZE);
--	if (ret < 0)
--		goto out;
--
- 	/* Card information normally starts at VPD_BASE but early cards had
- 	 * it at 0.
- 	 */
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3419,22 +3419,29 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
- 
- static void quirk_chelsio_extend_vpd(struct pci_dev *dev)
- {
--	pci_set_vpd_size(dev, 8192);
-+	int chip = (dev->device & 0xf000) >> 12;
-+	int func = (dev->device & 0x0f00) >>  8;
-+	int prod = (dev->device & 0x00ff) >>  0;
-+
-+	/*
-+	 * If this is a T3-based adapter, there's a 1KB VPD area at offset
-+	 * 0xc00 which contains the preferred VPD values.  If this is a T4 or
-+	 * later based adapter, the special VPD is at offset 0x400 for the
-+	 * Physical Functions (the SR-IOV Virtual Functions have no VPD
-+	 * Capabilities).  The PCI VPD Access core routines will normally
-+	 * compute the size of the VPD by parsing the VPD Data Structure at
-+	 * offset 0x000.  This will result in silent failures when attempting
-+	 * to accesses these other VPD areas which are beyond those computed
-+	 * limits.
-+	 */
-+	if (chip == 0x0 && prod >= 0x20)
-+		pci_set_vpd_size(dev, 8192);
-+	else if (chip >= 0x4 && func < 0x8)
-+		pci_set_vpd_size(dev, 2048);
- }
- 
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x20, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x21, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x22, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x23, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x24, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x25, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x26, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x30, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x31, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x32, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x35, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x36, quirk_chelsio_extend_vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x37, quirk_chelsio_extend_vpd);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, PCI_ANY_ID,
-+			quirk_chelsio_extend_vpd);
- 
- #ifdef CONFIG_ACPI
- /*
