@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3726165-1519676296-2-17832660773580645348
+X-Cyrus-Session-Id: sloti22d1t05-3709765-1519676275-2-8064755683471922203
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519676295; b=YukGNaWkzxcUYoJJAaIfu/gQ3c5n6tKX30q5Uwn63UQn6Kj
-    wXF95AunefJRNMRaImtNzYuRgAL5PfGdlF9czeuUTMWIo3wcmKn8bEyDOEIdlUrG
-    lFIJOs0M4ANljvImozXTJfMlLt+a4Ep5joend3/C+WMbssgebzkl/n5Sc3Wq/ULp
-    Sl5cB44d6swrYd634CG+LfibKFQcUY0aRkfda+Yk6VKS84E6/RNlosyS4PlVO3bz
-    FVfn12i+SJ/1AUAvsNqGpolAzjd+ZpfF3+JwMlf2E4osQlIH71OT52bAWqfgF2oG
-    uR109Ec2lWYMZctUzB58jedBtIB3XEoi1qpkSdg==
+    t=1519676275; b=uYG+OktuWk4EekELnZ2JOwCM5qgpvjeUHOp5vMPG4JTtXhL
+    rxzPP8ERrpzQRqUliX5nsH6RRVFGuPhbP/SCAWVtY30lUc3XFgcyPnnO2Ettn9kD
+    BHtnEB9M+A20o72ITep1gztKfuvbBRukQIC0qV2A+M8r5jKwlgiPJxAGz9lSg93l
+    cLEycP3uKwTWhmYXeCrzh3/Lm3CutthYXfeyPEsCGLbnaif1HOSLs4yngrs8zFnH
+    bltFfLCFbNSjsJWLgT0pV7zvxVqOq2E6C65l31HyEa8jeo0Z314LOeQQlSZpnTH4
+    uHqleiYlo/scpuCpwh3UnCV+lqdzcmGH231EfiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519676295; bh=MgTuFTrL6cLp+dualxDrvnHGKH
-    7dgsijZbkuNtACgTY=; b=opzEZwAjG/M5v3HnNHa4nwaZ4wvdJ9iUFPZb+q4dhU
-    KwiPCj/DHvUK8GRlObL4QriMFzaVM78ESEPDB6ybazZ6GUgv0xF5VzUQNc+ZVRtH
-    oaLdsXi38ZcmOmBU0ht4Tu/68QeW7UEv0IJxA1oTSOxGesRz+/FhrSxoFQVDEdLq
-    Ihzie1MoHMCc/4XT0pJWT2A3CP6hz2WRh8F/QmFSKeNHYu32DBo1sFUzlkvYyqPj
-    8aYwe0JsH5hknGgDry03qtvIunm2obGN/pfvXsHEYdpEfhyZaSOd3UusmytgVTNb
-    nAbbvbB+AKjH8RKoNFnjpUBk2eEpW3c5mqkr3N3hWUYw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519676275; bh=QtF4qS33JlHgs2Xov4g3KBZGk4
+    fZCeEUPB9ySh7Zpu8=; b=pABjwq/HYufSW50P5zMPDH1BxOAdgLc8yCO5reqvA3
+    jNLCNgaKJQ1O+uBihkFnP3/c4MeA460nlxeVsPJsMnNPzXdYLfAXn9cpsEl95IjC
+    ovnaE2GCc6fzMDSaTigrGDMQZCk9C/LRxNjwoG4w/7DJ0xQk45kOULNNDDHZ6p6A
+    e8wfVV5i9CNY9jQLv9Xu8lhYf6QkPvNGKBFcnl5PDhJByBJPbzLkLuyaVX7dRL1X
+    HuuZqNDi0ypUlkYru39YcPAf2J52vFBkEDGjs9NQW8SCQZ1mPymBDyogplO8Zq+H
+    QcMYMyi6nWcZn6s3Ch6TkK0LRlpmSvTB14ICvDLHjC3A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeBZURe (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 15:17:34 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59924 "EHLO
+        id S1752265AbeBZURk (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 15:17:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59932 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeBZURd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:33 -0500
+        with ESMTP id S1751856AbeBZURg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 15:17:36 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 08/22] cfg80211: fix cfg80211_beacon_dup
-Date: Mon, 26 Feb 2018 21:16:08 +0100
-Message-Id: <20180226201559.107810108@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.4 09/22] iio: buffer: check if a buffer has been set up when poll is called
+Date: Mon, 26 Feb 2018 21:16:09 +0100
+Message-Id: <20180226201559.147172835@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
 References: <20180226201558.681421374@linuxfoundation.org>
@@ -78,36 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
 
-commit bee92d06157fc39d5d7836a061c7d41289a55797 upstream.
+commit 4cd140bda6494543f1c1b0ccceceaa44b676eef6 upstream.
 
-gcc-8 warns about some obviously incorrect code:
-
-net/mac80211/cfg.c: In function 'cfg80211_beacon_dup':
-net/mac80211/cfg.c:2896:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-
->From the context, I conclude that we want to copy from beacon into
-new_beacon, as we do in the rest of the function.
+If no iio buffer has been set up and poll is called return 0.
+Without this check there will be a null pointer dereference when
+calling poll on a iio driver without an iio buffer.
 
 Cc: stable@vger.kernel.org
-Fixes: 73da7d5bab79 ("mac80211: add channel switch command and beacon callbacks")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    2 +-
+ drivers/iio/industrialio-buffer.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2877,7 +2877,7 @@ cfg80211_beacon_dup(struct cfg80211_beac
- 	}
- 	if (beacon->probe_resp_len) {
- 		new_beacon->probe_resp_len = beacon->probe_resp_len;
--		beacon->probe_resp = pos;
-+		new_beacon->probe_resp = pos;
- 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
- 		pos += beacon->probe_resp_len;
- 	}
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -174,7 +174,7 @@ unsigned int iio_buffer_poll(struct file
+ 	struct iio_dev *indio_dev = filp->private_data;
+ 	struct iio_buffer *rb = indio_dev->buffer;
+ 
+-	if (!indio_dev->info)
++	if (!indio_dev->info || rb == NULL)
+ 		return 0;
+ 
+ 	poll_wait(filp, &rb->pollq, wait);
