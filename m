@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2242xGNsncXWQAMyxtqmobMSpCcjXeFj1aAGg83lQ2P0/TN7p/2A+38xfeDCOcFsvyG8gBLI
+X-Google-Smtp-Source: AH8x226SUm7B3c4V+c0D2WKZQ8/NTYiGtJtVrZrdLh7KB8wd1P2TcK3wZtgfXp5zpR8qN2AWKuD9
 ARC-Seal: i=1; a=rsa-sha256; t=1519676175; cv=none;
         d=google.com; s=arc-20160816;
-        b=A2g/+Y0ollkCKrVoM3lmDF8y1Y+5JMT2ykQuy1pntT0/oPpm6WaZACwwfZlMVtkJS4
-         rhdTTM+2BBqH8HIHi8C1Qor3M9k8gYcpdUQVpSBKo0L1twR/h2BMzu1DCCbquyL9iz+S
-         jy/9u1tEZ9w7xTab9zQTNnzZ07KKm8EsKbAqOkjTmv93VhlJhQxs4r/Iv88reLZ5ds0R
-         VbMPlAt/gvjaBVtoVsZ2vwXrlIkE5w0wxQ8EodTsYihNAlFx9QvQ7N4aSUM4L4MWmZdd
-         QO6MoPuao4tImIs2LQsy+f1C7GQqVILAg7nLU8CkPYrIg3IyTEAFv9p3DTFRz7A3x3wB
-         yqQQ==
+        b=rtCYGqP91O9+GZOxQM9l3RVJoZB514NYd/LQHYjC6HgrJHg7+bFYw+o4lEvew8bAgP
+         zvN/jwWhNgiUbMWGIffv2mZD9Fil0Xf/CqbwPBS21UbG524yiDBFe59d8rC7g+dOq19f
+         gjQK2a2dBpHmbUQodvBYR+swD4OasWn8SXU60pWiUf+H3yWZFm+jGD4+J1UqE/U/AaPg
+         RDobcbcESxwYeJxRHJ+tYTjTyUYwjLghv3yAZtXbgF390FTZsPRZJ/QfQGFYG6uMviaT
+         jqdW3mUP4SS3y8yeR2AeC/AX2R93VuAJnSGPPAP1sbZtGONkshvGwM8AEUXXOs6P8qZg
+         zNNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HdccgPruOTz22p5FU+KhF7rhJGRvchwMmq+A8s/pa7A=;
-        b=qE5mK0wSjI8Q/MJxosMFO1+TZnTgY8Z7YGBYRn0xmrOpm/xKjreEzyp9G2vd2N/yPX
-         IOWBQqEFIoKeaJj1JnrqqzKPe/hkye1SMmDA52tDgaSpbmOqXtYJbFmZ5cb0kXiwM0U9
-         Q3bRziHg9yjRPbvDidJSTJGFEp79Im5I6lezK7oGb31Zo2Zq0z8ZNXF2JlxYRjEyVBbn
-         TLUPgdGRx5rZ5z0MjDX648/Z/IeBQklbIrS94ktar9kstsfATso00SwpBsxa3Drsnvwk
-         8yQT59ROM3eRc3SheAvRrxnjB9VVm5bPM/8q6akjyk9jjdsUpGXAEJrXA/Pq7+k8zkGZ
-         62zQ==
+        bh=2xmKLvhqyX+kiXphx3WNZ9na+DL56v5xBGZfyY1pcmg=;
+        b=f3pOLCZZVu2JrBX0BiXXFE1grFjkLCzRNcK0IrquJtHVkZun558vWfzxhtFo1xLJNh
+         PYvj+R8BfnqoPSazt/V7BNK3De3+d+AZY1NuCYTVsvlLvwtxhbfniJfdSXzC8UOpdSaR
+         mo5F2CCnp94QISivIKVOITDT15fJJQgSsBOXTIfOE6uhy/2HCMn5/7WKUCRhOt18IknF
+         kELetcN0V7ZRwbzeITtauOUew0sDLsa3L68Jy80DOIvA8qSUR2SOSaf4qCPkdQLz87ev
+         Xjh3nBaRpkl9jimxLhm9Sk6mnZ8Su1yBBQgr4XdfhD/J9AzanbxTVhKfYjUJfVWloINo
+         kRVg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 3.18 03/13] xtensa: fix high memory/reserved memory collision
-Date: Mon, 26 Feb 2018 21:15:31 +0100
-Message-Id: <20180226201527.397042375@linuxfoundation.org>
+	Alexander Potapenko <glider@google.com>,
+	Eric Biggers <ebiggers@google.com>,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH 3.18 13/13] ASN.1: fix out-of-bounds read when parsing indefinite length item
+Date: Mon, 26 Feb 2018 21:15:41 +0100
+Message-Id: <20180226201527.813245634@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
 References: <20180226201527.242286068@linuxfoundation.org>
@@ -39,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495966162056282?=
-X-GMAIL-MSGID: =?utf-8?q?1593495966162056282?=
+X-GMAIL-THRID: =?utf-8?q?1593495964796880297?=
+X-GMAIL-MSGID: =?utf-8?q?1593495964796880297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,131 +50,129 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 6ac5a11dc674bc5016ea716e8082fff61f524dc1 upstream.
+From: Eric Biggers <ebiggers@google.com>
 
-Xtensa memory initialization code frees high memory pages without
-checking whether they are in the reserved memory regions or not. That
-results in invalid value of totalram_pages and duplicate page usage by
-CMA and highmem. It produces a bunch of BUGs at startup looking like
-this:
+commit e0058f3a874ebb48b25be7ff79bc3b4e59929f90 upstream.
 
-BUG: Bad page state in process swapper  pfn:70800
-page:be60c000 count:0 mapcount:-127 mapping:  (null) index:0x1
-flags: 0x80000000()
-raw: 80000000 00000000 00000001 ffffff80 00000000 be60c014 be60c014 0000000a
-page dumped because: nonzero mapcount
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Tainted: G    B            4.16.0-rc1-00015-g7928b2cbe55b-dirty #23
-Stack:
- bd839d33 00000000 00000018 ba97b64c a106578c bd839d70 be60c000 00000000
- a1378054 bd86a000 00000003 ba97b64c a1066166 bd839da0 be60c000 ffe00000
- a1066b58 bd839dc0 be504000 00000000 000002f4 bd838000 00000000 0000001e
-Call Trace:
- [<a1065734>] bad_page+0xac/0xd0
- [<a106578c>] free_pages_check_bad+0x34/0x4c
- [<a1066166>] __free_pages_ok+0xae/0x14c
- [<a1066b58>] __free_pages+0x30/0x64
- [<a1365de5>] init_cma_reserved_pageblock+0x35/0x44
- [<a13682dc>] cma_init_reserved_areas+0xf4/0x148
- [<a10034b8>] do_one_initcall+0x80/0xf8
- [<a1361c16>] kernel_init_freeable+0xda/0x13c
- [<a125b59d>] kernel_init+0x9/0xd0
- [<a1004304>] ret_from_kernel_thread+0xc/0x18
+In asn1_ber_decoder(), indefinitely-sized ASN.1 items were being passed
+to the action functions before their lengths had been computed, using
+the bogus length of 0x80 (ASN1_INDEFINITE_LENGTH).  This resulted in
+reading data past the end of the input buffer, when given a specially
+crafted message.
 
-Only free high memory pages that are not reserved.
+Fix it by rearranging the code so that the indefinite length is resolved
+before the action is called.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+This bug was originally found by fuzzing the X.509 parser in userspace
+using libFuzzer from the LLVM project.
+
+KASAN report (cleaned up slightly):
+
+    BUG: KASAN: slab-out-of-bounds in memcpy ./include/linux/string.h:341 [inline]
+    BUG: KASAN: slab-out-of-bounds in x509_fabricate_name.constprop.1+0x1a4/0x940 crypto/asymmetric_keys/x509_cert_parser.c:366
+    Read of size 128 at addr ffff880035dd9eaf by task keyctl/195
+
+    CPU: 1 PID: 195 Comm: keyctl Not tainted 4.14.0-09238-g1d3b78bbc6e9 #26
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+    Call Trace:
+     __dump_stack lib/dump_stack.c:17 [inline]
+     dump_stack+0xd1/0x175 lib/dump_stack.c:53
+     print_address_description+0x78/0x260 mm/kasan/report.c:252
+     kasan_report_error mm/kasan/report.c:351 [inline]
+     kasan_report+0x23f/0x350 mm/kasan/report.c:409
+     memcpy+0x1f/0x50 mm/kasan/kasan.c:302
+     memcpy ./include/linux/string.h:341 [inline]
+     x509_fabricate_name.constprop.1+0x1a4/0x940 crypto/asymmetric_keys/x509_cert_parser.c:366
+     asn1_ber_decoder+0xb4a/0x1fd0 lib/asn1_decoder.c:447
+     x509_cert_parse+0x1c7/0x620 crypto/asymmetric_keys/x509_cert_parser.c:89
+     x509_key_preparse+0x61/0x750 crypto/asymmetric_keys/x509_public_key.c:174
+     asymmetric_key_preparse+0xa4/0x150 crypto/asymmetric_keys/asymmetric_type.c:388
+     key_create_or_update+0x4d4/0x10a0 security/keys/key.c:850
+     SYSC_add_key security/keys/keyctl.c:122 [inline]
+     SyS_add_key+0xe8/0x290 security/keys/keyctl.c:62
+     entry_SYSCALL_64_fastpath+0x1f/0x96
+
+    Allocated by task 195:
+     __do_kmalloc_node mm/slab.c:3675 [inline]
+     __kmalloc_node+0x47/0x60 mm/slab.c:3682
+     kvmalloc ./include/linux/mm.h:540 [inline]
+     SYSC_add_key security/keys/keyctl.c:104 [inline]
+     SyS_add_key+0x19e/0x290 security/keys/keyctl.c:62
+     entry_SYSCALL_64_fastpath+0x1f/0x96
+
+Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
+Reported-by: Alexander Potapenko <glider@google.com>
+Cc: <stable@vger.kernel.org> # v3.7+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/xtensa/mm/init.c |   70 +++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 63 insertions(+), 7 deletions(-)
+ lib/asn1_decoder.c |   43 ++++++++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
---- a/arch/xtensa/mm/init.c
-+++ b/arch/xtensa/mm/init.c
-@@ -307,19 +307,75 @@ void __init zones_init(void)
- 	free_area_init_node(0, zones_size, ARCH_PFN_OFFSET, NULL);
- }
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -305,38 +305,43 @@ next_op:
  
-+#ifdef CONFIG_HIGHMEM
-+static void __init free_area_high(unsigned long pfn, unsigned long end)
-+{
-+	for (; pfn < end; pfn++)
-+		free_highmem_page(pfn_to_page(pfn));
-+}
+ 	/* Decide how to handle the operation */
+ 	switch (op) {
+-	case ASN1_OP_MATCH_ANY_ACT:
+-	case ASN1_OP_COND_MATCH_ANY_ACT:
+-		ret = actions[machine[pc + 1]](context, hdr, tag, data + dp, len);
+-		if (ret < 0)
+-			return ret;
+-		goto skip_data;
+-
+-	case ASN1_OP_MATCH_ACT:
+-	case ASN1_OP_MATCH_ACT_OR_SKIP:
+-	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
+-		ret = actions[machine[pc + 2]](context, hdr, tag, data + dp, len);
+-		if (ret < 0)
+-			return ret;
+-		goto skip_data;
+-
+ 	case ASN1_OP_MATCH:
+ 	case ASN1_OP_MATCH_OR_SKIP:
++	case ASN1_OP_MATCH_ACT:
++	case ASN1_OP_MATCH_ACT_OR_SKIP:
+ 	case ASN1_OP_MATCH_ANY:
++	case ASN1_OP_MATCH_ANY_ACT:
+ 	case ASN1_OP_COND_MATCH_OR_SKIP:
++	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
+ 	case ASN1_OP_COND_MATCH_ANY:
+-	skip_data:
++	case ASN1_OP_COND_MATCH_ANY_ACT:
 +
-+static void __init free_highpages(void)
-+{
-+	unsigned long max_low = max_low_pfn;
-+	struct memblock_region *mem, *res;
+ 		if (!(flags & FLAG_CONS)) {
+ 			if (flags & FLAG_INDEFINITE_LENGTH) {
++				size_t tmp = dp;
 +
-+	reset_all_zones_managed_pages();
-+	/* set highmem page free */
-+	for_each_memblock(memory, mem) {
-+		unsigned long start = memblock_region_memory_base_pfn(mem);
-+		unsigned long end = memblock_region_memory_end_pfn(mem);
+ 				ret = asn1_find_indefinite_length(
+-					data, datalen, &dp, &len, &errmsg);
++					data, datalen, &tmp, &len, &errmsg);
+ 				if (ret < 0)
+ 					goto error;
+-			} else {
+-				dp += len;
+ 			}
+ 			pr_debug("- LEAF: %zu\n", len);
+ 		}
 +
-+		/* Ignore complete lowmem entries */
-+		if (end <= max_low)
-+			continue;
++		if (op & ASN1_OP_MATCH__ACT) {
++			unsigned char act;
 +
-+		if (memblock_is_nomap(mem))
-+			continue;
-+
-+		/* Truncate partial highmem entries */
-+		if (start < max_low)
-+			start = max_low;
-+
-+		/* Find and exclude any reserved regions */
-+		for_each_memblock(reserved, res) {
-+			unsigned long res_start, res_end;
-+
-+			res_start = memblock_region_reserved_base_pfn(res);
-+			res_end = memblock_region_reserved_end_pfn(res);
-+
-+			if (res_end < start)
-+				continue;
-+			if (res_start < start)
-+				res_start = start;
-+			if (res_start > end)
-+				res_start = end;
-+			if (res_end > end)
-+				res_end = end;
-+			if (res_start != start)
-+				free_area_high(start, res_start);
-+			start = res_end;
-+			if (start == end)
-+				break;
++			if (op & ASN1_OP_MATCH__ANY)
++				act = machine[pc + 1];
++			else
++				act = machine[pc + 2];
++			ret = actions[act](context, hdr, tag, data + dp, len);
++			if (ret < 0)
++				return ret;
 +		}
 +
-+		/* And now free anything which remains */
-+		if (start < end)
-+			free_area_high(start, end);
-+	}
-+}
-+#else
-+static void __init free_highpages(void)
-+{
-+}
-+#endif
-+
- /*
-  * Initialize memory pages.
-  */
++		if (!(flags & FLAG_CONS))
++			dp += len;
+ 		pc += asn1_op_lengths[op];
+ 		goto next_op;
  
- void __init mem_init(void)
- {
--#ifdef CONFIG_HIGHMEM
--	unsigned long tmp;
--
--	reset_all_zones_managed_pages();
--	for (tmp = max_low_pfn; tmp < max_pfn; tmp++)
--		free_highmem_page(pfn_to_page(tmp));
--#endif
-+	free_highpages();
- 
- 	max_mapnr = max_pfn - ARCH_PFN_OFFSET;
- 	high_memory = (void *)__va(max_low_pfn << PAGE_SHIFT);
