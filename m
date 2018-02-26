@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3WENXqQn3XSP6oAxUmAJmRjsDhlXqWHEirG5uSArpQTyo8pOHlq+x3bx1eUg5uJG2Mks5
-ARC-Seal: i=1; a=rsa-sha256; t=1519676619; cv=none;
+X-Google-Smtp-Source: AH8x227NmZuWnzwxe1KCrcHcXilwNGzc2Gr5cKFJElqPO4dF+sOU9y7pinEB/qxl3Spmh59b469z
+ARC-Seal: i=1; a=rsa-sha256; t=1519676617; cv=none;
         d=google.com; s=arc-20160816;
-        b=i7PS0grmxLABvw5+HUV1Ul/y7f20f4x4HynfYDb+gvy8AKqwd0cnkfVk9d66/pABaH
-         5xzX6K/LI0Y6GgNdWaHxMvKKDFHqp1oPr5Ts6qdcv4A/k0Kws8X3qdx3hVCyuGrgQcfR
-         o7YFBMqi79l0N2xBQqSy5oG2u7IjqFoCKannYW5EwcEdpg4N0AV9wM629kmwVVrkH2WA
-         Uw5JxSiw3e8ERonTa6yVdJdrsInP82gSxACzxsKC0KgUAF7O1xaSmDws6XnrVxTZPZdM
-         BL3LTTSzvRGmfQg77ZxHbfMsCI7VsxbXaDtnr5i6/fEU+qQ65NjaiN38BtaqqnzUyyCR
-         gV8g==
+        b=bs9uMZvM3TuAJzmkKH+5Q2f/PfRGiwA/DaZDWtElvBfM6E5ZOMhREClBcubHy2Vz9d
+         +ZXu3FSYejjP5OEEgixATVPvbb7ThLbjiDL1Uv4pwiAznH/+/eNwIxWeJymEJJsFuXwD
+         1j231jyPiGCLwpdf9UCB7dRBb74S0V78acU/OVEMtiYqNh2iJZdzYbBey4rekvFVzdPu
+         WfUKwTq47ALAKPvgaBpNpdEOLDCDulDK5F8V7F+9FfJzCAOV3rOnbjgPRQjmWqMBLvyk
+         nXUIy1o3p5SLdpH919XgdgOmunyirBna9412aij5FjM+OPK9Gh13WdwdebtwMYegnIe/
+         M12g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ju60a/asJwSgtKwfx2cMeNllLJ7FIzQG3yf1I1dmV4I=;
-        b=odx76bEbLmd5CDKOWvjs8cSHpYHWc9q5AWwifnIkQzfwN9DlJbdBwualfhEdsS/lMS
-         MNJP8NNbwvf5qgpNUvnMSlEjWcHk3IIqfCjVC0PoWPLpc7hrYACKQmTyLj20Q5QpGGyh
-         h7TWTn2YHwm0R5vla+r6BazwDyR62PP7Iud6YPdEdgO7kww/0NGGe9C5NDsczIKtss2A
-         EcCdMEiJthm5wmXw56MXdw3CbJJYjrK3yltznEY4JxEkTVORujIBQwF8UaEYfxKKsbTy
-         NK/tw8LY/cAoRcJ542uUvhAgNY4POsH4n/pO0rymXBIwwkLanME4+6CVtH1ttn9YP8WG
-         gM8g==
+        bh=OuAjyPJBUY9VHpyJJVjUk2IlxnxO5m00t16sTy8Qu0Y=;
+        b=rpWUNdXpZmdh7exKakl1CudBtbjtxRzLX2y4ZzgvQ7405zVlDgrfpkjObaUvBCPMOe
+         mzGDMseSI5aZ0yAM+lBEq2VWREXaFH65x4mrn+2lbkJDS6vK5YkWKdt9O8bVmjfVRwGI
+         DBv3dIknT2IR5ZON0EfaXBNySzq3eWgOo9aHq8QJp8jB9onaY+zywfR0BtEX80TXxyv8
+         aWX7rKy5ASBcPG0cBkCCTGBv9H9Cy7RIlv7bq238G5PInJkk8H4Mn07ab8SKn0Iy5t7F
+         DlN7M28OeSK+Gxdu5RrO0EzEyZjtESgTHvPm07h1Vp6RnIvvBcj76MlDPJaSJ5yf4yRl
+         jsYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,12 +28,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	syzkaller <syzkaller@googlegroups.com>,
 	Noa Osherovich <noaos@mellanox.com>,
-	Matan Barak <matanb@mellanox.com>,
 	Leon Romanovsky <leonro@mellanox.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 17/54] RDMA/uverbs: Protect from command mask overflow
-Date: Mon, 26 Feb 2018 21:21:54 +0100
-Message-Id: <20180226202145.232133681@linuxfoundation.org>
+Subject: [PATCH 4.14 16/54] RDMA/uverbs: Protect from races between lookup and destroy of uobjects
+Date: Mon, 26 Feb 2018 21:21:53 +0100
+Message-Id: <20180226202145.182820006@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496374764769683?=
-X-GMAIL-MSGID: =?utf-8?q?1593496431610792758?=
+X-GMAIL-THRID: =?utf-8?q?1593496428888877297?=
+X-GMAIL-MSGID: =?utf-8?q?1593496428888877297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,130 +53,157 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 3f802b162dbf4a558ff98986449eddc717826209 upstream.
+commit 6623e3e3cd78020016d3fa42555763178e94ab64 upstream.
 
-The command number is not bounds checked against the command mask before it
-is shifted, resulting in an ubsan hit. This does not cause malfunction since
-the command number is eventually bounds checked, but we can make this ubsan
-clean by moving the bounds check to before the mask check.
+The race is between lookup_get_idr_uobject and
+uverbs_idr_remove_uobj -> uverbs_uobject_put.
 
-================================================================================
-UBSAN: Undefined behaviour in
-drivers/infiniband/core/uverbs_main.c:647:21
-shift exponent 207 is too large for 64-bit type 'long long unsigned int'
-CPU: 0 PID: 446 Comm: syz-executor3 Not tainted 4.15.0-rc2+ #61
+We deliberately do not call sychronize_rcu after the idr_remove in
+uverbs_idr_remove_uobj for performance reasons, instead we call
+kfree_rcu() during uverbs_uobject_put.
+
+However, this means we can obtain pointers to uobj's that have
+already been released and must protect against krefing them
+using kref_get_unless_zero.
+
+==================================================================
+BUG: KASAN: use-after-free in copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
+Read of size 4 at addr ffff88005fda1ac8 by task syz-executor2/441
+
+CPU: 1 PID: 441 Comm: syz-executor2 Not tainted 4.15.0-rc2+ #56
 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
 rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
 Call Trace:
-dump_stack+0xde/0x164
-? dma_virt_map_sg+0x22c/0x22c
-ubsan_epilogue+0xe/0x81
-__ubsan_handle_shift_out_of_bounds+0x293/0x2f7
-? debug_check_no_locks_freed+0x340/0x340
-? __ubsan_handle_load_invalid_value+0x19b/0x19b
-? lock_acquire+0x440/0x440
-? lock_acquire+0x19d/0x440
-? __might_fault+0xf4/0x240
-? ib_uverbs_write+0x68d/0xe20
-ib_uverbs_write+0x68d/0xe20
-? __lock_acquire+0xcf7/0x3940
-? uverbs_devnode+0x110/0x110
-? cyc2ns_read_end+0x10/0x10
-? sched_clock_cpu+0x18/0x200
-? sched_clock_cpu+0x18/0x200
-__vfs_write+0x10d/0x700
-? uverbs_devnode+0x110/0x110
-? kernel_read+0x170/0x170
-? __fget+0x35b/0x5d0
-? security_file_permission+0x93/0x260
-vfs_write+0x1b0/0x550
+dump_stack+0x8d/0xd4
+print_address_description+0x73/0x290
+kasan_report+0x25c/0x370
+? copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
+copy_ah_attr_from_uverbs.isra.2+0x860/0xa00
+? uverbs_try_lock_object+0x68/0xc0
+? modify_qp.isra.7+0xdc4/0x10e0
+modify_qp.isra.7+0xdc4/0x10e0
+ib_uverbs_modify_qp+0xfe/0x170
+? ib_uverbs_query_qp+0x970/0x970
+? __lock_acquire+0xa11/0x1da0
+ib_uverbs_write+0x55a/0xad0
+? ib_uverbs_query_qp+0x970/0x970
+? ib_uverbs_query_qp+0x970/0x970
+? ib_uverbs_open+0x760/0x760
+? futex_wake+0x147/0x410
+? sched_clock_cpu+0x18/0x180
+? check_prev_add+0x1680/0x1680
+? do_futex+0x3b6/0xa30
+? sched_clock_cpu+0x18/0x180
+__vfs_write+0xf7/0x5c0
+? ib_uverbs_open+0x760/0x760
+? kernel_read+0x110/0x110
+? lock_acquire+0x370/0x370
+? __fget+0x264/0x3b0
+vfs_write+0x18a/0x460
 SyS_write+0xc7/0x1a0
 ? SyS_read+0x1a0/0x1a0
 ? trace_hardirqs_on_thunk+0x1a/0x1c
 entry_SYSCALL_64_fastpath+0x18/0x85
 RIP: 0033:0x448e29
-RSP: 002b:00007f033f567c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f033f5686bc RCX: 0000000000448e29
-RDX: 0000000000000060 RSI: 0000000020001000 RDI: 0000000000000012
+RSP: 002b:00007f443fee0c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f443fee16bc RCX: 0000000000448e29
+RDX: 0000000000000078 RSI: 00000000209f8000 RDI: 0000000000000012
 RBP: 000000000070bea0 R08: 0000000000000000 R09: 0000000000000000
 R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000056a0 R14: 00000000006e8740 R15: 0000000000000000
-================================================================================
+R13: 0000000000008e98 R14: 00000000006ebf38 R15: 0000000000000000
+
+Allocated by task 1:
+kmem_cache_alloc_trace+0x16c/0x2f0
+mlx5_alloc_cmd_msg+0x12e/0x670
+cmd_exec+0x419/0x1810
+mlx5_cmd_exec+0x40/0x70
+mlx5_core_mad_ifc+0x187/0x220
+mlx5_MAD_IFC+0xd7/0x1b0
+mlx5_query_mad_ifc_gids+0x1f3/0x650
+mlx5_ib_query_gid+0xa4/0xc0
+ib_query_gid+0x152/0x1a0
+ib_query_port+0x21e/0x290
+mlx5_port_immutable+0x30f/0x490
+ib_register_device+0x5dd/0x1130
+mlx5_ib_add+0x3e7/0x700
+mlx5_add_device+0x124/0x510
+mlx5_register_interface+0x11f/0x1c0
+mlx5_ib_init+0x56/0x61
+do_one_initcall+0xa3/0x250
+kernel_init_freeable+0x309/0x3b8
+kernel_init+0x14/0x180
+ret_from_fork+0x24/0x30
+
+Freed by task 1:
+kfree+0xeb/0x2f0
+mlx5_free_cmd_msg+0xcd/0x140
+cmd_exec+0xeba/0x1810
+mlx5_cmd_exec+0x40/0x70
+mlx5_core_mad_ifc+0x187/0x220
+mlx5_MAD_IFC+0xd7/0x1b0
+mlx5_query_mad_ifc_gids+0x1f3/0x650
+mlx5_ib_query_gid+0xa4/0xc0
+ib_query_gid+0x152/0x1a0
+ib_query_port+0x21e/0x290
+mlx5_port_immutable+0x30f/0x490
+ib_register_device+0x5dd/0x1130
+mlx5_ib_add+0x3e7/0x700
+mlx5_add_device+0x124/0x510
+mlx5_register_interface+0x11f/0x1c0
+mlx5_ib_init+0x56/0x61
+do_one_initcall+0xa3/0x250
+kernel_init_freeable+0x309/0x3b8
+kernel_init+0x14/0x180
+ret_from_fork+0x24/0x30
+
+The buggy address belongs to the object at ffff88005fda1ab0
+which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 24 bytes inside of
+32-byte region [ffff88005fda1ab0, ffff88005fda1ad0)
+The buggy address belongs to the page:
+page:00000000d5655c19 count:1 mapcount:0 mapping: (null)
+index:0xffff88005fda1fc0
+flags: 0x4000000000000100(slab)
+raw: 4000000000000100 0000000000000000 ffff88005fda1fc0 0000000180550008
+raw: ffffea00017f6780 0000000400000004 ffff88006c803980 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ffff88005fda1980: fc fc fb fb fb fb fc fc fb fb fb fb fc fc fb fb
+ffff88005fda1a00: fb fb fc fc fb fb fb fb fc fc 00 00 00 00 fc fc
+ffff88005fda1a80: fb fb fb fb fc fc fb fb fb fb fc fc fb fb fb fb
+ffff88005fda1b00: fc fc 00 00 00 00 fc fc fb fb fb fb fc fc fb fb
+ffff88005fda1b80: fb fb fc fc fb fb fb fb fc fc fb fb fb fb fc fc
+==================================================================@
 
 Cc: syzkaller <syzkaller@googlegroups.com>
-Cc: <stable@vger.kernel.org> # 4.5
-Fixes: 2dbd5186a39c ("IB/core: IB/core: Allow legacy verbs through extended interfaces")
+Cc: <stable@vger.kernel.org> # 4.11
+Fixes: 3832125624b7 ("IB/core: Add support for idr types")
 Reported-by: Noa Osherovich <noaos@mellanox.com>
-Reviewed-by: Matan Barak <matanb@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_main.c |   27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/infiniband/core/rdma_core.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -647,12 +647,21 @@ static int verify_command_mask(struct ib
- 	return -1;
- }
- 
-+static bool verify_command_idx(u32 command, bool extended)
-+{
-+	if (extended)
-+		return command < ARRAY_SIZE(uverbs_ex_cmd_table);
-+
-+	return command < ARRAY_SIZE(uverbs_cmd_table);
-+}
-+
- static ssize_t ib_uverbs_write(struct file *filp, const char __user *buf,
- 			     size_t count, loff_t *pos)
- {
- 	struct ib_uverbs_file *file = filp->private_data;
- 	struct ib_device *ib_dev;
- 	struct ib_uverbs_cmd_hdr hdr;
-+	bool extended_command;
- 	__u32 command;
- 	__u32 flags;
- 	int srcu_key;
-@@ -685,6 +694,15 @@ static ssize_t ib_uverbs_write(struct fi
+--- a/drivers/infiniband/core/rdma_core.c
++++ b/drivers/infiniband/core/rdma_core.c
+@@ -196,7 +196,15 @@ static struct ib_uobject *lookup_get_idr
+ 		goto free;
  	}
  
- 	command = hdr.command & IB_USER_VERBS_CMD_COMMAND_MASK;
-+	flags = (hdr.command &
-+		 IB_USER_VERBS_CMD_FLAGS_MASK) >> IB_USER_VERBS_CMD_FLAGS_SHIFT;
+-	uverbs_uobject_get(uobj);
++	/*
++	 * The idr_find is guaranteed to return a pointer to something that
++	 * isn't freed yet, or NULL, as the free after idr_remove goes through
++	 * kfree_rcu(). However the object may still have been released and
++	 * kfree() could be called at any time.
++	 */
++	if (!kref_get_unless_zero(&uobj->ref))
++		uobj = ERR_PTR(-ENOENT);
 +
-+	extended_command = flags & IB_USER_VERBS_CMD_FLAG_EXTENDED;
-+	if (!verify_command_idx(command, extended_command)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (verify_command_mask(ib_dev, command)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
-@@ -696,12 +714,8 @@ static ssize_t ib_uverbs_write(struct fi
- 		goto out;
- 	}
- 
--	flags = (hdr.command &
--		 IB_USER_VERBS_CMD_FLAGS_MASK) >> IB_USER_VERBS_CMD_FLAGS_SHIFT;
--
- 	if (!flags) {
--		if (command >= ARRAY_SIZE(uverbs_cmd_table) ||
--		    !uverbs_cmd_table[command]) {
-+		if (!uverbs_cmd_table[command]) {
- 			ret = -EINVAL;
- 			goto out;
- 		}
-@@ -722,8 +736,7 @@ static ssize_t ib_uverbs_write(struct fi
- 		struct ib_udata uhw;
- 		size_t written_count = count;
- 
--		if (command >= ARRAY_SIZE(uverbs_ex_cmd_table) ||
--		    !uverbs_ex_cmd_table[command]) {
-+		if (!uverbs_ex_cmd_table[command]) {
- 			ret = -ENOSYS;
- 			goto out;
- 		}
+ free:
+ 	rcu_read_unlock();
+ 	return uobj;
