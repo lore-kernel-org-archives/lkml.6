@@ -1,88 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeBZC6l (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Feb 2018 21:58:41 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37472 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751945AbeBZC6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Feb 2018 21:58:40 -0500
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: allocate buffer for decrypting filename to avoid panic
-Date: Mon, 26 Feb 2018 10:57:55 +0800
-Message-ID: <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+        id S1752130AbeBZC7D (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Feb 2018 21:59:03 -0500
+Received: from mga09.intel.com ([134.134.136.24]:7891 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751945AbeBZC7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Feb 2018 21:59:02 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,395,1515484800";
+   d="scan'208";a="206919856"
+Date: Mon, 26 Feb 2018 10:57:28 +0800
+From: Ye Xiaolong <xiaolong.ye@intel.com>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Balbir Singh <bsingharora@gmail.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Jan Kara <jack@suse.cz>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>, Mel Gorman <mgorman@suse.de>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Subject: Re: [lkp-robot] [mm, mlock, vmscan] 9c4e6b1a70:
+ stress-ng.hdd.ops_per_sec -7.9% regression
+Message-ID: <20180226025728.GA8942@yexl-desktop>
+References: <20180225144421.GB7144@yexl-desktop>
+ <CALvZod7=kgWDMPbrDUGXznoJgv47fq-PUa97onVhS8x73TR+6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.107.193.250]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod7=kgWDMPbrDUGXznoJgv47fq-PUa97onVhS8x73TR+6g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some platforms (such as arm), high memory is used, then the
-decrypting filename will cause panic, the reason see commit
-569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
-for decrypting filename"):
+Hi, Shakeel 
 
- We got dentry pages from high_mem, and its address space directly goes into the
- decryption path via f2fs_fname_disk_to_usr.
- But, sg_init_one assumes the address is not from high_mem, so we can get this
- panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+On 02/25, Shakeel Butt wrote:
+>On Sun, Feb 25, 2018 at 6:44 AM, kernel test robot
+><xiaolong.ye@intel.com> wrote:
+>>
+>> Greeting,
+>>
+>> FYI, we noticed a -7.9% regression of stress-ng.hdd.ops_per_sec due to commit:
+>>
+>>
+>> commit: 9c4e6b1a7027f102990c0395296015a812525f4d ("mm, mlock, vmscan: no more skipping pagevecs")
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>>
+>> in testcase: stress-ng
+>> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 128G memory
+>> with following parameters:
+>>
+>
+>Hi Xiaolong,
+>
+>Is there a way I can get the output of "perf record -a -g" running in
+>parallel to the actual test on this machine. As I have mentioned
+>before I am not able to reproduce this issue. However I am trying to
+>repro on a VM with 4 vcpus and 4 GiB memory and I don't see any
+>difference. I am suspecting that it may repro on a larger machine but
+>I don't have access to one.
+>
 
- kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
- Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
- ...
-  (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
-  (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
-  (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
-  (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
-  (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
-  (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
-  (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
-  (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
-  (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
-  (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
-  (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+perf.data attached. It was generated via `perf record -q -ag --realtime=1 -m 256`
 
-Howerver, later patches:
-commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
-unneeded memory allocation in ->readdir")
+Thanks,
+Xiaolong
 
-reverts the codes, which causes panic again in arm, so let's add part of
-the old patch again for dentry page.
-
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/dir.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f00b5ed..23fff48 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -825,9 +825,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			int save_len = fstr->len;
- 			int err;
- 
-+			de_name.name = kmemdup(d->filename[bit_pos],
-+				de_name.len, GFP_NOFS);
-+			if (!de_name.name)
-+				return -ENOMEM;
-+
- 			err = fscrypt_fname_disk_to_usr(d->inode,
- 						(u32)de->hash_code, 0,
- 						&de_name, fstr);
-+			kfree(de_name.name);
- 			if (err)
- 				return err;
- 
--- 
-1.8.5.2
+>thanks,
+>Shakeel
