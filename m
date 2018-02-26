@@ -1,73 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754212AbeBZPJL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 10:09:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51324 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754033AbeBZPGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:06:21 -0500
-Date: Mon, 26 Feb 2018 15:06:17 +0000
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] sched/fair: Avoid unnecessary balancing of
- asymmetric capacity groups
-Message-ID: <20180226150617.GF4589@e105550-lin.cambridge.arm.com>
-References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
- <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
- <20180219151011.GI25181@hirez.programming.kicks-ass.net>
- <20180220163352.GD4589@e105550-lin.cambridge.arm.com>
- <20180220182605.GI25201@hirez.programming.kicks-ass.net>
- <20180223163806.GE4589@e105550-lin.cambridge.arm.com>
- <20180223164752.GW25181@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223164752.GW25181@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1754374AbeBZPIW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 10:08:22 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32809 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754311AbeBZPHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:07:54 -0500
+X-Google-Smtp-Source: AH8x224LzhuhCuAgbGRb/ANuUJmfJgVvmwQHNE5FYjB2+dRxAe+fp4uKumAr7DTe+1B/4zAQIslbhw==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 2/3] mfd: rave-sp: Convert print_hex_dump() to print_hex_dump_debug()
+Date: Mon, 26 Feb 2018 07:07:38 -0800
+Message-Id: <20180226150739.13457-2-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180226150739.13457-1-andrew.smirnov@gmail.com>
+References: <20180226150739.13457-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 05:47:52PM +0100, Peter Zijlstra wrote:
-> On Fri, Feb 23, 2018 at 04:38:06PM +0000, Morten Rasmussen wrote:
-> > > Or am I now terminally confused again?
-> > 
-> > No, I think you are right, or I'm equally confused.
-> 
-> :-)
-> 
-> Would it make sense to also track max_capacity, but then based on the
-> value before RT scaling ?
-> 
-> That should readily be able to distinguish between big and little
-> clusters, although then DynamiQ would still completely ruin things.
+Convert print_hex_dump() to print_hex_dump_debug() to be able to
+leverage CONFIG_DYNAMIC_DEBUG.
 
-IIRC, I did actually track max_capacity to begin with for the wake_cap()
-stuff, but someone suggested to use min_capacity instead to factor in
-the RT scaling as it could potentially help some use-cases.
+Cc: linux-kernel@vger.kernel.org
+Cc: cphealy@gmail.com
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/mfd/rave-sp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I can add unscaled max_capacity tracking and use that as this is
-primarily a solution for asymmetric cpu capacity system.
-
-Whether we track max or min shouldn't really matter if it is based on
-original capacity, unless you have a DynamiQ system. For DynamiQ system
-it depends on how it is configured. If it is a single DynamiQ cluster we
-will have just on sched_domain with per-cpu sched_groups, so we don't
-have balancing between mixed groups. If we have multiple DynamiQ
-clusters, we can have mixed groups, homogeneous groups, or both
-depending on the system configuration. Homogeneous groups should be
-okay, mixed groups could work okay, I think, as long as all group have
-the same mix, a mix of mixed groups is going to be a challenge. Most
-likely we would have to treat all these groups as one and ignore cache
-boundaries for scheduling decisions.
-
-We are slowly getting into the mess of which capacity should be used for
-various conditions. Is it the original capacity (unscaled and at the
-highest frequency), do we subtract the RT utilization, and what if the
-thermal framework has disabled some of the higher frequencies?
-
-Particularly, the fact that constraints impose by RT and thermal are not
-permanent and might change depending on the use-case and how we place
-the tasks. But that is a longer discussion to be had.
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 9e4c83ff2aec..cec1e309b31f 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -311,8 +311,8 @@ static int rave_sp_write(struct rave_sp *sp, const u8 *data, u8 data_size)
+ 
+ 	length = dest - frame;
+ 
+-	print_hex_dump(KERN_DEBUG, "rave-sp tx: ", DUMP_PREFIX_NONE,
+-		       16, 1, frame, length, false);
++	print_hex_dump_debug("rave-sp tx: ", DUMP_PREFIX_NONE,
++			     16, 1, frame, length, false);
+ 
+ 	return serdev_device_write(sp->serdev, frame, length, HZ);
+ }
+@@ -453,8 +453,8 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
+ 	struct device *dev           = &sp->serdev->dev;
+ 	u8 crc_calculated[checksum_length];
+ 
+-	print_hex_dump(KERN_DEBUG, "rave-sp rx: ", DUMP_PREFIX_NONE,
+-		       16, 1, data, length, false);
++	print_hex_dump_debug("rave-sp rx: ", DUMP_PREFIX_NONE,
++			     16, 1, data, length, false);
+ 
+ 	if (unlikely(length <= checksum_length)) {
+ 		dev_warn(dev, "Dropping short frame\n");
+-- 
+2.14.3
