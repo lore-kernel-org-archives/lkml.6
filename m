@@ -1,646 +1,583 @@
-Return-Path: <Vitor.Soares@synopsys.com>
-X-Google-Smtp-Source: AH8x227dVLFCHb0PEJh1B4Iy9nUTMTumj/0HldpoCH0bNZC9Y9tL2bFgKpNtxBlhDS49hc0L3GcM
-ARC-Seal: i=1; a=rsa-sha256; t=1519747448; cv=none;
+Return-Path: <psroka@cadence.com>
+X-Google-Smtp-Source: AH8x227zeLJ29FYzUqhp7BS6nfZDTuxxyUBhm7aoRUdFL8rJkl/8CuNY0A6yLV5z5KGvjAuIUvAG
+ARC-Seal: i=1; a=rsa-sha256; t=1519749811; cv=none;
         d=google.com; s=arc-20160816;
-        b=K7Fz9yVsAwyyWjPZnth9m0BpEYhVtXI6XKGCDci+tu+c2yVPuBuS+NGzkJiq9xB3RH
-         rYtzCJmZljhcxYM29BEiT5mU0QPX5dnRDPELayUKoRv1Fu/XW8655yoz2j8zd0MLFz26
-         AQ8TdgSluTmNEnFL/7Nu9TAuy74avlLwDtduutzxRJx58Hjsk0iOB4sm+3CBiDhimHZZ
-         MCpwUjl6OnjrhochhJpK2RBa716OT/WguoO36/v8ipmu6yOFOMkE5fzCuaZiEsvKUGXc
-         FwLymuBTh3VP89uHk7EvTiXIUGEguRFZ62Ni6cS9KIoOn8E2gH3xLeWAxvGCdn5o+8/E
-         9MWg==
+        b=EDr81zXtbpkV6lBKhvjYdPsg9dAB7Hoi+jENcZHi3NzlA4/5O7unBuGK+3gN0W4zQw
+         AnZOuT7rdXB0yH9I9OAEFARhyvuh20geaZjxVJ6uYnDd9E4C4e1kRGc7GYKtbELLNM+/
+         n7WJqvyRBfFl0qM4hxoPqsW+0Ay4gv1+aFUTra5XcI2c6/EVVFNWP+XiQ2sEMERJj7Tb
+         kc9Q3sN5kNz2VFUJ22tfrEETDKKjyHUM0DircevA+fG9fQ7qjwzCuHA27QwlZk6Zsg7T
+         SS24u5yzKmOhAHPQpNqpYP228IX+tEJ3tXCq70nxRZW4sYLOEBND/7klNHQNcn9Qw4J1
+         ssAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=JCZogMdxyHMRDxYnN5vCR1cq/Rv5UmGsKyLTE8I5cpM=;
-        b=iI92TNS+oOIl7Q28m4sT49iaTXGHCReqLP83ADQzJnOVOR1BzuwGXjNnvjpgZDxY4W
-         9L6ZYcFCFlo9N8NQEqPkYzPqjljAeBOwp7Ho9Y7S40ZkhI2TryPPbbRE3w2iWoFiTkim
-         hPc4u4soBwOtKyTSiqwUO/r+pGIiErAt/HmizgH3NCH3kU7v8c3+8JCL4qsm/UOaq9h1
-         XhBZge3W6VSKAcM7kOKcWRow7iErDRI1TvOEKEu8f1IssvzwAgEZtk3D91y88axDd976
-         PxNhTr1126ICNhx9BkVEeYY4/bZf2Sok4WDs031HQ+piG5erHY6op6iLrtUVZia0YxOt
-         H0HQ==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=CcvFSSUMxx7hn+cWrAP2cKPXj01e/mirBgkG50xNwt0=;
+        b=q+Nn0WDi+yvqD+c0OnKFxSgZzwdL6Vd+okvsdqnqkABJCQtpp6xgpfnQ9pzgky+9Re
+         vS6+glZ/77ktIaGqzR40g7PoWDSjbsAhUbx4NiZma+vWqZ/RalpTJ3eTYgZuu4RqgmRx
+         Go3+jCyAy9XFXZ2snzGA3IWFUiVyBQPSa+JiaHhs0/goubTkTkmm+CPkuhnBELF1fHfW
+         B0c0vCSp8ILZ58rgdruYYm3XDIrXiZIMa4d1+ZodOfELa6FqGNmJMUpZErvx9fU35jxb
+         1wjbemgEN0POqRw1wWOKJhYYpEtiKducfVERHyyGO2uTvtTZvTGMuiKv4zdm0wn7rD85
+         rnFw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of vitor.soares@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=Vitor.Soares@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
+       dkim=pass header.i=@cadence.com header.s=selector1 header.b=ELIlea5F;
+       spf=pass (google.com: domain of psroka@cadence.com designates 104.47.40.72 as permitted sender) smtp.mailfrom=psroka@cadence.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cadence.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of vitor.soares@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=Vitor.Soares@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
-Subject: Re: [PATCH v2 2/7] i3c: Add core I3C infrastructure
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Vitor Soares
-	<Vitor.Soares@synopsys.com>
+       dkim=pass header.i=@cadence.com header.s=selector1 header.b=ELIlea5F;
+       spf=pass (google.com: domain of psroka@cadence.com designates 104.47.40.72 as permitted sender) smtp.mailfrom=psroka@cadence.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cadence.com
+From: Przemyslaw Sroka <psroka@cadence.com>
+To: Vitor Soares <Vitor.Soares@synopsys.com>, Boris Brezillon
+	<boris.brezillon@bootlin.com>
 CC: Boris Brezillon <boris.brezillon@free-electrons.com>, Wolfram Sang
-	<wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>, <linux-doc@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka
-	<psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas
-	<adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos
-	<dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, "Cyprian
- Wronka" <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Thomas
+	<wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Arkadiusz Golec <agolec@cadence.com>, Alan
+ Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian
+ Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian
+ Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Thomas
  Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>,
 	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark
  Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "Geert Uytterhoeven" <geert@linux-m68k.org>,
+	Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
 	Linus Walleij <linus.walleij@linaro.org>
+Subject: RE: [PATCH v2 2/7] i3c: Add core I3C infrastructure
+Thread-Topic: [PATCH v2 2/7] i3c: Add core I3C infrastructure
+Thread-Index: AQHTdO6AxszKxo1J0Uumo+/8HJ1DX6OypJAAgAA7ugCABJ1cgIAAG1iAgAFGSwCAAAVdwA==
+Date: Tue, 27 Feb 2018 16:43:27 +0000
+Message-ID: <MWHPR07MB27833F0CAD2597BFDD37CE6CCAC00@MWHPR07MB2783.namprd07.prod.outlook.com>
 References: <20171214151610.19153-1-boris.brezillon@free-electrons.com>
  <20171214151610.19153-3-boris.brezillon@free-electrons.com>
  <b39f9016-b2ff-6d8d-96b3-945f32ab2b67@synopsys.com>
  <20180223213000.407461d2@bbrezillon>
  <1b8fe82f-079b-6f55-0e59-5773027faa8e@synopsys.com>
  <20180226213607.7161bb0a@bbrezillon>
-From: Vitor Soares <Vitor.Soares@synopsys.com>
-Message-ID: <b9c057ad-47a0-fa35-0f30-8d465d40b6f0@synopsys.com>
-Date: Tue, 27 Feb 2018 16:03:58 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180226213607.7161bb0a@bbrezillon>
+ <b9c057ad-47a0-fa35-0f30-8d465d40b6f0@synopsys.com>
+In-Reply-To: <b9c057ad-47a0-fa35-0f30-8d465d40b6f0@synopsys.com>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHNyb2thXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNWY0MDljNmUtMWJkZC0xMWU4LTg2ZTktY2MyZjcxNmRjMjFhXGFtZS10ZXN0XDVmNDA5YzZmLTFiZGQtMTFlOC04NmU5LWNjMmY3MTZkYzIxYWJvZHkudHh0IiBzej0iMjc2ODAiIHQ9IjEzMTY0MjIzNDI0NTE4OTcwNCIgaD0iUmZHcTdFNEFRcVF5d3ZSVnVhRFJBYVRydk5rPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=psroka@cadence.com;
+x-originating-ip: [213.131.238.28]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR07MB2911;7:TXI4CRFhBkgdiEJOIf71Li+oqC7wZwjRqTMigf6YYDckM0oUzS69Rz0qmzj6G0RF7XFQgzsCdeQ43ZLN1wXX49XApWmYF6UTG3K399vbdroRmQRMfpP22NEZgJDV6SqpTeXK/BU3HJYJCGOMPV5RuRnVAHF4sFTvlfchM2uRJrvpd16XKqudjBxLCFPoS88msKSFIBAU4XTtzJYl10o2/fl9CVN09JoddrFqAZ4QgmjxOvnId3c7sQsR3cHoDOKm;20:yd8/7WbDZLo68V4+LAp19Em8V8BDaeh9zlXoF6mp4oHk2/+WtG4ejITX72T6yz5JAFrMuZkR3CRAflfetVjQXFJmV1w1IBsfzvCaXo0qabeaTP1n9x6AXOSKqKheB37F33i11d6aSBJJ3pfLUQUtdNe20ID8uPwWYjYpMaswO3oAcdCXGy7MbOrJmfbTt3SI1KzUzW6mzCDIwvCRL9pst3lttfksR0tG4cj/T/NBjgs9Q/UsKJPqo3Rx5zBqM0nw
+x-ms-office365-filtering-correlation-id: fd9bffc9-0ce0-47b0-3597-08d57e013a4a
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:MWHPR07MB2911;
+x-ms-traffictypediagnostic: MWHPR07MB2911:
+x-microsoft-antispam-prvs: <MWHPR07MB291134FF48A3377B37126177CAC00@MWHPR07MB2911.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(244540007438412)(31051911155226)(278428928389397)(9452136761055)(58145275503218)(72806322054110);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501161)(52105095)(6041288)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR07MB2911;BCL:0;PCL:0;RULEID:;SRVR:MWHPR07MB2911;
+x-forefront-prvs: 05961EBAFC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(39380400002)(396003)(376002)(13464003)(52314003)(189003)(36092001)(199004)(26005)(77096007)(3846002)(186003)(3280700002)(54906003)(76176011)(110136005)(99286004)(68736007)(478600001)(105586002)(345774005)(66066001)(8936002)(102836004)(97736004)(8676002)(14454004)(3660700001)(229853002)(53546011)(6506007)(7696005)(316002)(81166006)(5660300001)(59450400001)(93886005)(86362001)(9686003)(33656002)(55016002)(551934003)(7416002)(53946003)(53936002)(2900100001)(81156014)(2906002)(74316002)(106356001)(305945005)(5890100001)(6436002)(6246003)(6116002)(2950100002)(7736002)(25786009)(4326008)(21314002)(559001)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB2911;H:MWHPR07MB2783.namprd07.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: ZpWkJ5uoFk2NJe11qa5OOBiqy0EfV3/mIAMzGq109sunYxrAZTIEhWn5lHFXvvtsXHly5L5bgVNZ7I1pKBS0Ttju+RIw0I7bqjA30EFZUvbOQ2eSsNIy0H5zUU1RHlQrAx0/+1Ote9vFpUwpzbADfmnf/PlhSPDxA1exNUZ+sWU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: pt-PT
-X-Originating-IP: [10.107.19.101]
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd9bffc9-0ce0-47b0-3597-08d57e013a4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 16:43:27.9070
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB2911
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1586772916728163872?=
-X-GMAIL-MSGID: =?utf-8?q?1593570700378235923?=
+X-GMAIL-MSGID: =?utf-8?q?1593573178642974832?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Boris
-
-
-Às 8:36 PM de 2/26/2018, Boris Brezillon escreveu:
-> Hi Vitor,
->
-> On Mon, 26 Feb 2018 18:58:15 +0000
-> Vitor Soares <Vitor.Soares@synopsys.com> wrote:
->
->>>>> +/**
->>>>> + * i3c_device_do_priv_xfers() - do I3C SDR private transfers directed to a
->>>>> + *				specific device
->>>>> + *
->>>>> + * @dev: device with which the transfers should be done
->>>>> + * @xfers: array of transfers
->>>>> + * @nxfers: number of transfers
->>>>> + *
->>>>> + * Initiate one or several private SDR transfers with @dev.
->>>>> + *
->>>>> + * This function can sleep and thus cannot be called in atomic context.
->>>>> + *
->>>>> + * Return: 0 in case of success, a negative error core otherwise.
->>>>> + */
->>>>> +int i3c_device_do_priv_xfers(struct i3c_device *dev,
->>>>> +			     struct i3c_priv_xfer *xfers,
->>>>> +			     int nxfers)
->>>>> +{
->>>>> +	struct i3c_master_controller *master;
->>>>> +	int i, ret;
->>>>> +
->>>>> +	master = i3c_device_get_master(dev);
->>>>> +	if (!master)
->>>>> +		return -EINVAL;
->>>>> +
->>>>> +	i3c_bus_normaluse_lock(master->bus);
->>>>> +	for (i = 0; i < nxfers; i++)
->>>>> +		xfers[i].addr = dev->info.dyn_addr;
->>>>> +
->>>>> +	ret = i3c_master_do_priv_xfers_locked(master, xfers, nxfers);
->>>>> +	i3c_bus_normaluse_unlock(master->bus);
->>>>> +
->>>>> +	return ret;
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(i3c_device_do_priv_xfers);    
->>>>  The controller should know the speed mode for each xfer. The SDR0 mode 
->>>> is used by default but if any device have read or write speed 
->>>> limitations the controller can use SDRx.  
->>> I might be wrong, but that's not my understanding of the spec. A device
->>> can express a speed limitation for SDR priv transfers, but this
->>> limitation applies to all SDR transfers.
->>>
->>> The speed R/W speed limitation is encoded in the device object, so, if
->>> the controller has to configure that on a per-transfer basis, one
->>> solution would be to pass the device to the ->priv_xfers().  
->> The speed R/W limitation is only for private transfers. Also the device can have
->> a limitation to write and not for read data.
->> This information is obtained with the command GETMXDS which returns the Maximum
->> Sustained Data Rate for non-CCC messages.
-> And that's exactly what I expose in i3c_device_info, which is embedded
-> in i3c_device, so you should have all the information you need to
-> determine the speed in the controller driver if ->priv_xfer() is passed
-> the device attached to those transfers. Would that be okay if we pass an
-> i3c_device object to ->priv_xfers()?
-
-If you pass the i3c_device to ->priv_xfer(), then you won't need the address too.
-
-Maybe someone else can give other point of view.
-
->>>  
->>>> This could be also applied to i2c transfers.  
->>> Not really. The max SCL frequency is something that applies to the
->>> whole bus, because all I2C devices have to decode the address when
->>> messages are sent on the bus to determine if they should ignore or
->>> process the message.
->>>  
->>>>> +#endif /* I3C_INTERNAL_H */
->>>>> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
->>>>> new file mode 100644
->>>>> index 000000000000..1c85abac08d5
->>>>> --- /dev/null
->>>>> +++ b/drivers/i3c/master.c
->>>>> @@ -0,0 +1,1433 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>> +/*
->>>>> + * Copyright (C) 2017 Cadence Design Systems Inc.
->>>>> + *
->>>>> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
->>>>> + */
->>>>> +
->>>>> +#include <linux/slab.h>
->>>>> +
->>>>> +#include "internals.h"
->>>>> +
->>>>> +/**
->>>>> + * i3c_master_entdaa_locked() - start a DAA (Dynamic Address Assignment)
->>>>> + *				procedure
->>>>> + * @master: master used to send frames on the bus
->>>>> + *
->>>>> + * Send a ENTDAA CCC command to start a DAA procedure.
->>>>> + *
->>>>> + * Note that this function only sends the ENTDAA CCC command, all the logic
->>>>> + * behind dynamic address assignment has to be handled in the I3C master
->>>>> + * driver.
->>>>> + *
->>>>> + * This function must be called with the bus lock held in write mode.
->>>>> + *
->>>>> + * Return: 0 in case of success, a negative error code otherwise.
->>>>> + */
->>>>> +int i3c_master_entdaa_locked(struct i3c_master_controller *master)
->>>>> +{
->>>>> +	struct i3c_ccc_cmd_dest dest = { };
->>>>> +	struct i3c_ccc_cmd cmd = { };
->>>>> +	int ret;
->>>>> +
->>>>> +	dest.addr = I3C_BROADCAST_ADDR;
->>>>> +	cmd.dests = &dest;
->>>>> +	cmd.ndests = 1;
->>>>> +	cmd.rnw = false;
->>>>> +	cmd.id = I3C_CCC_ENTDAA;
->>>>> +
->>>>> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
->>>>> +	if (ret)
->>>>> +		return ret;
->>>>> +
->>>>> +	return 0;
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(i3c_master_entdaa_locked);    
->>>>  can you explain the process?  
->>> Not sure what you mean. The ENTDAA is just a CCC command that is used
->>> to trigger a DAA procedure. What the master controller does when it
->>> sends such a command is likely to be controller dependent, and it might
->>> even be possible that you don't need to call this function in your
->>> controller driver to trigger a DAA. If you want more details about the
->>> bus initialization steps and how the ENTDAA CCC command fits into it I
->>> recommend reading section "5.1.4 Bus Initialization and Dynamic Address
->>> Assignment Mode"
->>>  
->>>> the command is only execute once, what if 
->>>> there is more devices on the bus?  
->>> Again, I'm not sure what you mean. The ENTDAA command is sent every
->>> time a controller wants to discover new devices on the bus, that can be
->>> when initializing the bus, after a Hot Join event or simply triggered
->>> by the user (the last case is not supported yet though).
->>>
->>> Now, if you're interested in what happens after an ENTDAA CCC is sent,
->>> the controller will keep sending RepeatedStart until there's no more
->>> devices acking the request. You can have a look at "B.3 Error Types in
->>> Dynamic Address Arbitration" for more details.  
->> My understanding is this command shall be executed once, this mean that only one
->> slave will assign the dynamic address (cmd.ndests = 1) and not trigger the whole
->> process of DAA.
-> No, that's not what happens. The master controller is supposed to
-> continue until no one replies with an Ack on the bus, and by continue I
-> don't mean resend an ENTDAA, but issue a RepeatedStart followed by the
-> broadcast address (0x7e).
-
-I am sorry, you have point here. I misunderstood that the cmd.ndests = 1 is for
-broadcast commands.
-
->> Either important is the SETDASA for declared I3C devices. So the DAA process
->> should start by send an SETDASA and them ENTDAA CCC command.
-> My understanding was that SETDASA was not mandatory, and was only useful
-> when one wants to assign a specific dynamic address to a slave that has
-> a static address (which is again not mandatory).
-> I've tested it, and even devices with a static address participate to
-> the DAA procedure if they've not been assigned a dynamic address yet,
-> so I don't see the need for this SETDASA step if you don't need to
-> assign a particular dynamic address to the device.
->
-> Could you tell me why you think SETDASA is required?
-
-Yes, you are right... But in my opinion it is required as it does part of DAA
-process.
-
->>>>> +static u32 i3c_master_i2c_functionalities(struct i2c_adapter *adap)
->>>>> +{
->>>>> +	return I2C_FUNC_SMBUS_EMUL | I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR;
->>>>> +}    
->>>>  Is I2C_FUNC_10BIT_ADDR allowed ?  
->>> According to "Table 4 I 2 C Features Allowed in I3C Slaves", yes (at
->>> least that my understanding). And the Cadence controller supports it.  
->> The table say the oposite. The I2C extended address feature is not used on I3C
->> bus, thus this feature shall be disable.
-> Actually, I was wrong when initially mentioning this table: it's about
-> I2C features supported on I3C slaves, so not really what we're looking
-> for. Here, we're wondering if I2C-only devices can have 10-bit
-> addresses. The Cadence controller supports that, so there's probably
-> nothing preventing use of 10-bit addresses for I2C transfers, but maybe
-> not all I3C master controllers support that, so we should probably
-> let the I3C master driver implement this method.
-
-The spec says that is "not used" so it will not interface with I3C bus.
-
->> BTW it is optional on I2C devices.
-> You mean I2C controllers? When an I2C device has a 10bit address, the
-> controller has to support this mode to communicate with the device, at
-> least that's my understanding. But we're digressing a bit. The
-> question is not whether I2C devices can optionally use a 10 bit
-> address, but whether I3C master controller can support this mode for
-> I2C transfers to I2C-only devices.
-
-By the i2c spec the 10-bit address is optional, however the 7-bit address is
-mandatory.
-
->>>  
->>>>  > diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
->>>>> new file mode 100644
->>>>> index 000000000000..e69de29bb2d1
->>>>> diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
->>>>> new file mode 100644
->>>>> index 000000000000..e69de29bb2d1
->>>>> diff --git a/include/linux/i3c/ccc.h b/include/linux/i3c/ccc.h
->>>>> new file mode 100644
->>>>> index 000000000000..ff3e1a3e2c4c
->>>>> --- /dev/null
->>>>> +++ b/include/linux/i3c/ccc.h
->>>>> @@ -0,0 +1,380 @@
->>>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>>> +/*
->>>>> + * Copyright (C) 2017 Cadence Design Systems Inc.
->>>>> + *
->>>>> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
->>>>> + */
->>>>> +
->>>>> +
->>>>> +/**
->>>>> + * enum i3c_ccc_test_mode - enum listing all available test modes
->>>>> + *
->>>>> + * @I3C_CCC_EXIT_TEST_MODE: exit test mode
->>>>> + * @I3C_CCC_VENDOR_TEST_MODE: enter vendor test mode
->>>>> + */
->>>>> +enum i3c_ccc_test_mode {
->>>>> +	I3C_CCC_EXIT_TEST_MODE,
->>>>> +	I3C_CCC_VENDOR_TEST_MODE,
->>>>> +};
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_ccc_enttm - payload passed to ENTTM CCC
->>>>> + *
->>>>> + * @mode: one of the &enum i3c_ccc_test_mode modes
->>>>> + *
->>>>> + * Information passed to the ENTTM CCC to instruct an I3C device to enter a
->>>>> + * specific test mode.
->>>>> + */
->>>>> +struct i3c_ccc_enttm {
->>>>> +	u8 mode;
->>>>> +} __packed;
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_ccc_setda - payload passed to ENTTM CCC
->>>>> + *
->>>>> + * @mode: one of the &enum i3c_ccc_test_mode modes
->>>>> + *
->>>>> + * Information passed to the ENTTM CCC to instruct an I3C device to enter a
->>>>> + * specific test mode.
->>>>> + */
->>>>> +struct i3c_ccc_setda {
->>>>> +	u8 addr;
->>>>> +} __packed;    
->>>>  what do you mean with struct? Maybe setdasa? if so, what is the addr?  
->> Do you have the function to use this structure? Because one command use the
->> static address and the other use the dynamic address.
->>
->>>>  
->>>>  > +/**
->>>>> + * enum i3c_sdr_max_data_rate - max data rate values for private SDR transfers
->>>>> + */
->>>>> +enum i3c_sdr_max_data_rate {
->>>>> +	I3C_SDR_DR_FSCL_MAX,
->>>>> +	I3C_SDR_DR_FSCL_8MHZ,
->>>>> +	I3C_SDR_DR_FSCL_6MHZ,
->>>>> +	I3C_SDR_DR_FSCL_4MHZ,
->>>>> +	I3C_SDR_DR_FSCL_2MHZ,
->>>>> +};    
->>>> Can you change the names to:
->>>>
->>>> I3C_SDR0_FSCL_MAX,
->>>> I3C_SDR1_FSCL_8MHZ,
->>>> I3C_SDR2_FSCL_6MHZ,
->>>> I3C_SDR3_FSCL_4MHZ,
->>>> I3C_SDR4_FSCL_2MHZ,
->>>>
->>>> thus the data rate isn't repeated.  
->>> What's the problem with the name I use? Moreover, I see no mention to
->>> the SDR0,1,2,3,4 modes in the public spec.  
->> When you get the GETMXDS information, the maxWr and maxRd came from 0 to 4, so
->> in my opinion I think in this way is easier to have a relationship.
-> It's an emum, and there's no mention of the SDRX modes you're using
-> here in the I3C spec. I guess it's named this way in your I3C
-> controller datasheet. I personally don't see a good reason to add SDRX
-> in the name, but if you insist...
-
-The idea is to say that it is SDR mode and the value that GETMXDS command
-return. It is what makes sense to me.
-
->>>>> +
->>>>> +#endif /* I3C_CCC_H */
->>>>> diff --git a/include/linux/i3c/device.h b/include/linux/i3c/device.h
->>>>> new file mode 100644
->>>>> index 000000000000..83958d3a02e2
->>>>> --- /dev/null
->>>>> +++ b/include/linux/i3c/device.h
->>>>> @@ -0,0 +1,321 @@
->>>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>>> +/*
->>>>> + * Copyright (C) 2017 Cadence Design Systems Inc.
->>>>> + *
->>>>> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
->>>>> + */
->>>>> +
->>>>> +#ifndef I3C_DEV_H
->>>>> +#define I3C_DEV_H
->>>>> +
->>>>> +#include <linux/device.h>
->>>>> +#include <linux/i2c.h>
->>>>> +#include <linux/mod_devicetable.h>
->>>>> +#include <linux/module.h>
->>>>> +
->>>>> +/**
->>>>> + * enum i3c_hdr_mode - HDR mode ids
->>>>> + * @I3C_HDR_DDR: DDR mode
->>>>> + * @I3C_HDR_TSP: TSP mode
->>>>> + * @I3C_HDR_TSL: TSL mode
->>>>> + */
->>>>> +enum i3c_hdr_mode {
->>>>> +	I3C_HDR_DDR,
->>>>> +	I3C_HDR_TSP,
->>>>> +	I3C_HDR_TSL,
->>>>> +};
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_hdr_cmd - I3C HDR command
->>>>> + * @mode: HDR mode selected for this command
->>>>> + * @code: command opcode
->>>>> + * @addr: I3C dynamic address
->>>>> + * @ndatawords: number of data words (a word is 16bits wide)
->>>>> + * @data: input/output buffer
->>>>> + */
->>>>> +struct i3c_hdr_cmd {
->>>>> +	enum i3c_hdr_mode mode;
->>>>> +	u8 code;
->>>>> +	u8 addr;
->>>>> +	int ndatawords;
->>>>> +	union {
->>>>> +		u16 *in;
->>>>> +		const u16 *out;
->>>>> +	} data;
->>>>> +};  
->> Please mention that the @code is what will define if the transfer is read or write.
-> Well, I think it's pretty clear in the definition you'll find in the
-> ccc.h file, but I can add a comment here too if you like.
-
-I don't find it in ccc.h file. Anyway is not good to put this definition there
-because is not related.
-
->>>>> +
->>>>> +/* Private SDR read transfer */
->>>>> +#define I3C_PRIV_XFER_READ		BIT(0)
->>>>> +/*
->>>>> + * Instruct the controller to issue a STOP after a specific transfer instead
->>>>> + * of a REPEATED START.
->>>>> + */
->>>>> +#define I3C_PRIV_XFER_STOP		BIT(1)
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_priv_xfer - I3C SDR private transfer
->>>>> + * @addr: I3C dynamic address
->>>>> + * @len: transfer length in bytes of the transfer
->>>>> + * @flags: combination of I3C_PRIV_XFER_xxx flags
->>>>> + * @data: input/output buffer
->>>>> + */
->>>>> +struct i3c_priv_xfer {
->>>>> +	u8 addr;
->>>>> +	u16 len;
->>>>> +	u32 flags;
->>>>> +	struct {
->>>>> +		void *in;
->>>>> +		const void *out;
->>>>> +	} data;
->>>>> +};    
->>>>  Same as above, i3c_sdr_max_data_rate to change the bus scl.  
->>> If I'm understanding the spec correctly, that's not something you want
->>> to change on a per-transfer basis. The constraint is on the device
->>> itself and should IMO not be part of the i3c_priv_xfer struct.  
->> As mention before this is important.
->> You can do the same as for struct i3c_hdr_cmd and add a enum i3c_sdr_max_data_rate.
->>
->> The @flag only have 2 bits of load, is the rest opened?
-> If by open you mean that we can add more flags if we need to, then yes.
->
->>>  
->>>>  > +
->>>>> +/**
->>>>> + * enum i3c_dcr - I3C DCR values
->>>>> + * @I3C_DCR_GENERIC_DEVICE: generic I3C device
->>>>> + */
->>>>> +enum i3c_dcr {
->>>>> +	I3C_DCR_GENERIC_DEVICE = 0,
->>>>> +};
->>>>> +
->>>>> +#define I3C_PID_MANUF_ID(pid)		(((pid) & GENMASK_ULL(47, 33)) >> 33)
->>>>> +#define I3C_PID_RND_LOWER_32BITS(pid)	(!!((pid) & BIT_ULL(32)))
->>>>> +#define I3C_PID_RND_VAL(pid)		((pid) & GENMASK_ULL(31, 0))
->>>>> +#define I3C_PID_PART_ID(pid)		(((pid) & GENMASK_ULL(31, 16)) >> 16)
->>>>> +#define I3C_PID_INSTANCE_ID(pid)	(((pid) & GENMASK_ULL(15, 12)) >> 12)
->>>>> +#define I3C_PID_EXTRA_INFO(pid)		((pid) & GENMASK_ULL(11, 0))
->>>>> +
->>>>> +#define I3C_BCR_DEVICE_ROLE(bcr)	((bcr) & GENMASK(7, 6))
->>>>> +#define I3C_BCR_I3C_SLAVE		(0 << 6)
->>>>> +#define I3C_BCR_I3C_MASTER		(1 << 6)
->>>>> +#define I3C_BCR_HDR_CAP			BIT(5)
->>>>> +#define I3C_BCR_BRIDGE			BIT(4)
->>>>> +#define I3C_BCR_OFFLINE_CAP		BIT(3)
->>>>> +#define I3C_BCR_IBI_PAYLOAD		BIT(2)
->>>>> +#define I3C_BCR_IBI_REQ_CAP		BIT(1)
->>>>> +#define I3C_BCR_MAX_DATA_SPEED_LIM	BIT(0)
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_device_info - I3C device information
->>>>> + * @pid: Provisional ID
->>>>> + * @bcr: Bus Characteristic Register
->>>>> + * @dcr: Device Characteristic Register
->>>>> + * @static_addr: static/I2C address
->>>>> + * @dyn_addr: dynamic address
->>>>> + * @hdr_cap: supported HDR modes
->>>>> + * @max_read_ds: max read speed information
->>>>> + * @max_write_ds: max write speed information
->>>>> + * @max_ibi_len: max IBI payload length
->>>>> + * @max_read_turnaround: max read turn-around time in micro-seconds
->>>>> + * @max_read_len: max private SDR read length in bytes
->>>>> + * @max_write_len: max private SDR write length in bytes
->>>>> + *
->>>>> + * These are all basic information that should be advertised by an I3C device.
->>>>> + * Some of them are optional depending on the device type and device
->>>>> + * capabilities.
->>>>> + * For each I3C slave attached to a master with
->>>>> + * i3c_master_add_i3c_dev_locked(), the core will send the relevant CCC command
->>>>> + * to retrieve these data.
->>>>> + */
->>>>> +struct i3c_device_info {
->>>>> +	u64 pid;
->>>>> +	u8 bcr;
->>>>> +	u8 dcr;
->>>>> +	u8 static_addr;
->>>>> +	u8 dyn_addr;
->>>>> +	u8 hdr_cap;
->>>>> +	u8 max_read_ds;
->>>>> +	u8 max_write_ds;
->>>>> +	u8 max_ibi_len;
->>>>> +	u32 max_read_turnaround;
->>>>> +	u16 max_read_len;
->>>>> +	u16 max_write_len;
->>>>> +};
->>>>> +    
->>>>  is this information filled with data provided from CCC commands?  
->>> Yes, they are.  
->> Ok, them the intention is to do this on bus_init(), right?
-> Not only, it can be after a Hot-Join, or after the user has triggered a
-> new DAA. Anyway, these information are retrieved anytime you add a
-> device with i3c_master_add_i3c_dev_locked(), and the core uses CCC
-> commands to do that.
->
->>>>> +
->>>>> +/**
->>>>> + * struct i3c_master_controller_ops - I3C master methods
->>>>> + * @bus_init: hook responsible for the I3C bus initialization. This
->>>>> + *	      initialization should follow the steps described in the I3C
->>>>> + *	      specification. This hook is called with the bus lock held in
->>>>> + *	      write mode, which means all _locked() helpers can safely be
->>>>> + *	      called from there
->>>>> + * @bus_cleanup: cleanup everything done in
->>>>> + *		 &i3c_master_controller_ops->bus_init(). This function is
->>>>> + *		 optional and should only be implemented if
->>>>> + *		 &i3c_master_controller_ops->bus_init() attached private data
->>>>> + *		 to I3C/I2C devices. This hook is called with the bus lock
->>>>> + *		 held in write mode, which means all _locked() helpers can
->>>>> + *		 safely be called from there
->>>>> + * @supports_ccc_cmd: should return true if the CCC command is supported, false
->>>>> + *		      otherwise
->>>>> + * @send_ccc_cmd: send a CCC command
->>>>> + * @send_hdr_cmds: send one or several HDR commands. If there is more than one
->>>>> + *		   command, they should ideally be sent in the same HDR
->>>>> + *		   transaction
->>>>> + * @priv_xfers: do one or several private I3C SDR transfers
->>>>> + * @i2c_xfers: do one or several I2C transfers
->>>>> + * @request_ibi: attach an IBI handler to an I3C device. This implies defining
->>>>> + *		 an IBI handler and the constraints of the IBI (maximum payload
->>>>> + *		 length and number of pre-allocated slots).
->>>>> + *		 Some controllers support less IBI-capable devices than regular
->>>>> + *		 devices, so this method might return -%EBUSY if there's no
->>>>> + *		 more space for an extra IBI registration
->>>>> + * @free_ibi: free an IBI previously requested with ->request_ibi(). The IBI
->>>>> + *	      should have been disabled with ->disable_irq() prior to that
->>>>> + * @enable_ibi: enable the IBI. Only valid if ->request_ibi() has been called
->>>>> + *		prior to ->enable_ibi(). The controller should first enable
->>>>> + *		the IBI on the controller end (for example, unmask the hardware
->>>>> + *		IRQ) and then send the ENEC CCC command (with the IBI flag set)
->>>>> + *		to the I3C device
->>>>> + * @disable_ibi: disable an IBI. First send the DISEC CCC command with the IBI
->>>>> + *		 flag set and then deactivate the hardware IRQ on the
->>>>> + *		 controller end
->>>>> + * @recycle_ibi_slot: recycle an IBI slot. Called every time an IBI has been
->>>>> + *		      processed by its handler. The IBI slot should be put back
->>>>> + *		      in the IBI slot pool so that the controller can re-use it
->>>>> + *		      for a future IBI
->>>>> + *
->>>>> + * One of the most important hooks in these ops is
->>>>> + * &i3c_master_controller_ops->bus_init(). Here is a non-exhaustive list of
->>>>> + * things that should be done in &i3c_master_controller_ops->bus_init():
->>>>> + *
->>>>> + * 1) call i3c_master_set_info() with all information describing the master
->>>>> + * 2) ask all slaves to drop their dynamic address by sending the RSTDAA CCC
->>>>> + *    with i3c_master_rstdaa_locked()
->>>>> + * 3) ask all slaves to disable IBIs using i3c_master_disec_locked()
->>>>> + * 4) start a DDA procedure by sending the ENTDAA CCC with
->>>>> + *    i3c_master_entdaa_locked(), or using the internal DAA logic provided by
->>>>> + *    your controller    
->>>> You mean SETDASA CCC command?  
->>> No, I really mean ENTDAA and DAA. By internal DAA logic I mean that
->>> some controllers are probably automating the whole DAA procedure, while
->>> others may let the SW control every step.  
->> My understanding is that i3c_master_entdaa_locked() will trigger the DAA process
->> and DAA can be done by SETDASA, ENTDAA and later after the bus initialization
->> with SETNEWDA.
-> No. Only ENTDAA can trigger a DAA procedure. SETDASA is here to assign
-> a single dynamic address to a device that already has a static address
-> but no dynamic address yet, and SETNEWDA is here to modify the dynamic
-> address of a device that already has one.
-
->> I think the DAA process should be more generic, right now is only made through
->> the ENTDAA command with (cmd.ndests = 1).
->> I mean, shouldn't this be made by the core? First doing DAA for the devices
->> declared and them try do discover the rest of devices on the bus.
-> Can you detail a bit more? If the only part you're complaining about is
-> pre-assignment of dynamic addresses with SETDASA when a device is
-> declared in the DT with a reg and dynamic-address property, then yes, I
-> think I can provide an helper for that. But this helper would still have
-> to be called from the master controller driver (from ->bus_init() or
-> after a Hot-Join).
->
-> Now, if the question is, is there a way we can automate things even more
-> and completely implement DAA from the core? I doubt it, because the way
-> the core will trigger DAA, expose discovered devices or allow you to
-> declare manually assigned addresses is likely to be
-> controller-dependent.
-
-Please refer to figure 90 of public specification. As you can see the DAA
-process should start with SETDASA command.
-
-With the current flow of this patch the DAA process is limited to ENTDAA command
-only.
-
-> When I designed the framework I took the decision to base my work on the
-> spec rather than focusing on the I3C master controller I had to support
-> (Cadence). This is the reason I decided to keep the interface as simple
-> as possible at the risk of encouraging code-duplication (at first)
-> rather than coming up with an interface that is designed with a single
-> controller in mind and having to break things every time a new
-> controller comes out.
->
-> Thank you for you comments, but I'd like to know if some of my design
-> choices are blocking you to support your controller. What I've seen so
-> far is a collection of things that might be relevant to fix (though
-> most of them are subject to interpretation and/or a matter of taste),
-> but nothing that should really block you.
->
-> Can you clarify that, and maybe come back with a list of things that you
-> think are preventing you from properly supporting the Synopsys
-> controller?
->
-> Thanks,
->
-> Boris 
-
-As you can check from my  comments my concerns are about the i3c specification
-without the controller in mind.
-
-Best regards,
-Vitor Soares
+SGkgQm9yaXMgYW5kIFZpdG9yDQoNCkZpbmQgYmVsb3cgbXkgY29tbWVudCBvbiBEQUEgcHJvY2Vk
+dXJlLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpdG9yIFNvYXJl
+cyBbbWFpbHRvOlZpdG9yLlNvYXJlc0BzeW5vcHN5cy5jb21dDQo+IFNlbnQ6IFR1ZXNkYXksIEZl
+YnJ1YXJ5IDI3LCAyMDE4IDU6MDQgUE0NCj4gVG86IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJl
+emlsbG9uQGJvb3RsaW4uY29tPjsgVml0b3IgU29hcmVzDQo+IDxWaXRvci5Tb2FyZXNAc3lub3Bz
+eXMuY29tPg0KPiBDYzogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVj
+dHJvbnMuY29tPjsgV29sZnJhbSBTYW5nDQo+IDx3c2FAdGhlLWRyZWFtcy5kZT47IGxpbnV4LWky
+Y0B2Z2VyLmtlcm5lbC5vcmc7IEpvbmF0aGFuIENvcmJldA0KPiA8Y29yYmV0QGx3bi5uZXQ+OyBs
+aW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBHcmVnIEtyb2FoLUhhcnRtYW4NCj4gPGdyZWdraEBs
+aW51eGZvdW5kYXRpb24ub3JnPjsgQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT47DQo+IFBy
+emVteXNsYXcgU3Jva2EgPHBzcm9rYUBjYWRlbmNlLmNvbT47IEFya2FkaXVzeiBHb2xlYw0KPiA8
+YWdvbGVjQGNhZGVuY2UuY29tPjsgQWxhbiBEb3VnbGFzIDxhZG91Z2xhc0BjYWRlbmNlLmNvbT47
+IEJhcnRvc3oNCj4gRm9sdGEgPGJmb2x0YUBjYWRlbmNlLmNvbT47IERhbWlhbiBLb3MgPGRrb3NA
+Y2FkZW5jZS5jb20+OyBBbGljamENCj4gSnVyYXNpay1VcmJhbmlhayA8YWxpY2phQGNhZGVuY2Uu
+Y29tPjsgQ3lwcmlhbiBXcm9ua2ENCj4gPGN3cm9ua2FAY2FkZW5jZS5jb20+OyBTdXJlc2ggUHVu
+bm9vc2UgPHN1cmVzaHBAY2FkZW5jZS5jb20+Ow0KPiBUaG9tYXMgUGV0YXp6b25pIDx0aG9tYXMu
+cGV0YXp6b25pQGZyZWUtZWxlY3Ryb25zLmNvbT47IE5pc2hhbnRoDQo+IE1lbm9uIDxubUB0aS5j
+b20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPjsgUGF3ZWwgTW9sbA0KPiA8cGF3
+ZWwubW9sbEBhcm0uY29tPjsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IElh
+bg0KPiBDYW1wYmVsbCA8aWpjK2RldmljZXRyZWVAaGVsbGlvbi5vcmcudWs+OyBLdW1hciBHYWxh
+DQo+IDxnYWxha0Bjb2RlYXVyb3JhLm9yZz47IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVy
+dEBsaW51eC1tNjhrLm9yZz47IExpbnVzDQo+IFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJv
+Lm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAyLzddIGkzYzogQWRkIGNvcmUgSTNDIGlu
+ZnJhc3RydWN0dXJlDQo+IA0KPiBFWFRFUk5BTCBNQUlMDQo+IA0KPiANCj4gSGkgQm9yaXMNCj4g
+DQo+IA0KPiDDgHMgODozNiBQTSBkZSAyLzI2LzIwMTgsIEJvcmlzIEJyZXppbGxvbiBlc2NyZXZl
+dToNCj4gPiBIaSBWaXRvciwNCj4gPg0KPiA+IE9uIE1vbiwgMjYgRmViIDIwMTggMTg6NTg6MTUg
+KzAwMDANCj4gPiBWaXRvciBTb2FyZXMgPFZpdG9yLlNvYXJlc0BzeW5vcHN5cy5jb20+IHdyb3Rl
+Og0KPiA+DQo+ID4+Pj4+ICsvKioNCj4gPj4+Pj4gKyAqIGkzY19kZXZpY2VfZG9fcHJpdl94ZmVy
+cygpIC0gZG8gSTNDIFNEUiBwcml2YXRlIHRyYW5zZmVycyBkaXJlY3RlZA0KPiB0byBhDQo+ID4+
+Pj4+ICsgKgkJCQlzcGVjaWZpYyBkZXZpY2UNCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBAZGV2
+OiBkZXZpY2Ugd2l0aCB3aGljaCB0aGUgdHJhbnNmZXJzIHNob3VsZCBiZSBkb25lDQo+ID4+Pj4+
+ICsgKiBAeGZlcnM6IGFycmF5IG9mIHRyYW5zZmVycw0KPiA+Pj4+PiArICogQG54ZmVyczogbnVt
+YmVyIG9mIHRyYW5zZmVycw0KPiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIEluaXRpYXRlIG9uZSBv
+ciBzZXZlcmFsIHByaXZhdGUgU0RSIHRyYW5zZmVycyB3aXRoIEBkZXYuDQo+ID4+Pj4+ICsgKg0K
+PiA+Pj4+PiArICogVGhpcyBmdW5jdGlvbiBjYW4gc2xlZXAgYW5kIHRodXMgY2Fubm90IGJlIGNh
+bGxlZCBpbiBhdG9taWMNCj4gY29udGV4dC4NCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBSZXR1
+cm46IDAgaW4gY2FzZSBvZiBzdWNjZXNzLCBhIG5lZ2F0aXZlIGVycm9yIGNvcmUgb3RoZXJ3aXNl
+Lg0KPiA+Pj4+PiArICovDQo+ID4+Pj4+ICtpbnQgaTNjX2RldmljZV9kb19wcml2X3hmZXJzKHN0
+cnVjdCBpM2NfZGV2aWNlICpkZXYsDQo+ID4+Pj4+ICsJCQkgICAgIHN0cnVjdCBpM2NfcHJpdl94
+ZmVyICp4ZmVycywNCj4gPj4+Pj4gKwkJCSAgICAgaW50IG54ZmVycykNCj4gPj4+Pj4gK3sNCj4g
+Pj4+Pj4gKwlzdHJ1Y3QgaTNjX21hc3Rlcl9jb250cm9sbGVyICptYXN0ZXI7DQo+ID4+Pj4+ICsJ
+aW50IGksIHJldDsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArCW1hc3RlciA9IGkzY19kZXZpY2VfZ2V0
+X21hc3RlcihkZXYpOw0KPiA+Pj4+PiArCWlmICghbWFzdGVyKQ0KPiA+Pj4+PiArCQlyZXR1cm4g
+LUVJTlZBTDsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArCWkzY19idXNfbm9ybWFsdXNlX2xvY2sobWFz
+dGVyLT5idXMpOw0KPiA+Pj4+PiArCWZvciAoaSA9IDA7IGkgPCBueGZlcnM7IGkrKykNCj4gPj4+
+Pj4gKwkJeGZlcnNbaV0uYWRkciA9IGRldi0+aW5mby5keW5fYWRkcjsNCj4gPj4+Pj4gKw0KPiA+
+Pj4+PiArCXJldCA9IGkzY19tYXN0ZXJfZG9fcHJpdl94ZmVyc19sb2NrZWQobWFzdGVyLCB4ZmVy
+cywNCj4gbnhmZXJzKTsNCj4gPj4+Pj4gKwlpM2NfYnVzX25vcm1hbHVzZV91bmxvY2sobWFzdGVy
+LT5idXMpOw0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsJcmV0dXJuIHJldDsNCj4gPj4+Pj4gK30NCj4g
+Pj4+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGkzY19kZXZpY2VfZG9fcHJpdl94ZmVycyk7DQo+ID4+
+Pj4gwqBUaGUgY29udHJvbGxlciBzaG91bGQga25vdyB0aGUgc3BlZWQgbW9kZSBmb3IgZWFjaCB4
+ZmVyLiBUaGUgU0RSMA0KPiA+Pj4+IG1vZGUgaXMgdXNlZCBieSBkZWZhdWx0IGJ1dCBpZiBhbnkg
+ZGV2aWNlIGhhdmUgcmVhZCBvciB3cml0ZSBzcGVlZA0KPiA+Pj4+IGxpbWl0YXRpb25zIHRoZSBj
+b250cm9sbGVyIGNhbiB1c2UgU0RSeC4NCj4gPj4+IEkgbWlnaHQgYmUgd3JvbmcsIGJ1dCB0aGF0
+J3Mgbm90IG15IHVuZGVyc3RhbmRpbmcgb2YgdGhlIHNwZWMuIEENCj4gPj4+IGRldmljZSBjYW4g
+ZXhwcmVzcyBhIHNwZWVkIGxpbWl0YXRpb24gZm9yIFNEUiBwcml2IHRyYW5zZmVycywgYnV0DQo+
+ID4+PiB0aGlzIGxpbWl0YXRpb24gYXBwbGllcyB0byBhbGwgU0RSIHRyYW5zZmVycy4NCj4gPj4+
+DQo+ID4+PiBUaGUgc3BlZWQgUi9XIHNwZWVkIGxpbWl0YXRpb24gaXMgZW5jb2RlZCBpbiB0aGUg
+ZGV2aWNlIG9iamVjdCwgc28sDQo+ID4+PiBpZiB0aGUgY29udHJvbGxlciBoYXMgdG8gY29uZmln
+dXJlIHRoYXQgb24gYSBwZXItdHJhbnNmZXIgYmFzaXMsIG9uZQ0KPiA+Pj4gc29sdXRpb24gd291
+bGQgYmUgdG8gcGFzcyB0aGUgZGV2aWNlIHRvIHRoZSAtPnByaXZfeGZlcnMoKS4NCj4gPj4gVGhl
+IHNwZWVkIFIvVyBsaW1pdGF0aW9uIGlzIG9ubHkgZm9yIHByaXZhdGUgdHJhbnNmZXJzLiBBbHNv
+IHRoZQ0KPiA+PiBkZXZpY2UgY2FuIGhhdmUgYSBsaW1pdGF0aW9uIHRvIHdyaXRlIGFuZCBub3Qg
+Zm9yIHJlYWQgZGF0YS4NCj4gPj4gVGhpcyBpbmZvcm1hdGlvbiBpcyBvYnRhaW5lZCB3aXRoIHRo
+ZSBjb21tYW5kIEdFVE1YRFMgd2hpY2ggcmV0dXJucw0KPiA+PiB0aGUgTWF4aW11bSBTdXN0YWlu
+ZWQgRGF0YSBSYXRlIGZvciBub24tQ0NDIG1lc3NhZ2VzLg0KPiA+IEFuZCB0aGF0J3MgZXhhY3Rs
+eSB3aGF0IEkgZXhwb3NlIGluIGkzY19kZXZpY2VfaW5mbywgd2hpY2ggaXMgZW1iZWRkZWQNCj4g
+PiBpbiBpM2NfZGV2aWNlLCBzbyB5b3Ugc2hvdWxkIGhhdmUgYWxsIHRoZSBpbmZvcm1hdGlvbiB5
+b3UgbmVlZCB0bw0KPiA+IGRldGVybWluZSB0aGUgc3BlZWQgaW4gdGhlIGNvbnRyb2xsZXIgZHJp
+dmVyIGlmIC0+cHJpdl94ZmVyKCkgaXMNCj4gPiBwYXNzZWQgdGhlIGRldmljZSBhdHRhY2hlZCB0
+byB0aG9zZSB0cmFuc2ZlcnMuIFdvdWxkIHRoYXQgYmUgb2theSBpZg0KPiA+IHdlIHBhc3MgYW4g
+aTNjX2RldmljZSBvYmplY3QgdG8gLT5wcml2X3hmZXJzKCk/DQo+IA0KPiBJZiB5b3UgcGFzcyB0
+aGUgaTNjX2RldmljZSB0byAtPnByaXZfeGZlcigpLCB0aGVuIHlvdSB3b24ndCBuZWVkIHRoZSBh
+ZGRyZXNzDQo+IHRvby4NCj4gDQo+IE1heWJlIHNvbWVvbmUgZWxzZSBjYW4gZ2l2ZSBvdGhlciBw
+b2ludCBvZiB2aWV3Lg0KPiANCj4gPj4+DQo+ID4+Pj4gVGhpcyBjb3VsZCBiZSBhbHNvIGFwcGxp
+ZWQgdG8gaTJjIHRyYW5zZmVycy4NCj4gPj4+IE5vdCByZWFsbHkuIFRoZSBtYXggU0NMIGZyZXF1
+ZW5jeSBpcyBzb21ldGhpbmcgdGhhdCBhcHBsaWVzIHRvIHRoZQ0KPiA+Pj4gd2hvbGUgYnVzLCBi
+ZWNhdXNlIGFsbCBJMkMgZGV2aWNlcyBoYXZlIHRvIGRlY29kZSB0aGUgYWRkcmVzcyB3aGVuDQo+
+ID4+PiBtZXNzYWdlcyBhcmUgc2VudCBvbiB0aGUgYnVzIHRvIGRldGVybWluZSBpZiB0aGV5IHNo
+b3VsZCBpZ25vcmUgb3INCj4gPj4+IHByb2Nlc3MgdGhlIG1lc3NhZ2UuDQo+ID4+Pg0KPiA+Pj4+
+PiArI2VuZGlmIC8qIEkzQ19JTlRFUk5BTF9IICovDQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2kzYy9tYXN0ZXIuYyBiL2RyaXZlcnMvaTNjL21hc3Rlci5jIG5ldyBmaWxlDQo+ID4+Pj4+
+IG1vZGUgMTAwNjQ0IGluZGV4IDAwMDAwMDAwMDAwMC4uMWM4NWFiYWMwOGQ1DQo+ID4+Pj4+IC0t
+LSAvZGV2L251bGwNCj4gPj4+Pj4gKysrIGIvZHJpdmVycy9pM2MvbWFzdGVyLmMNCj4gPj4+Pj4g
+QEAgLTAsMCArMSwxNDMzIEBADQo+ID4+Pj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
+R1BMLTIuMA0KPiA+Pj4+PiArLyoNCj4gPj4+Pj4gKyAqIENvcHlyaWdodCAoQykgMjAxNyBDYWRl
+bmNlIERlc2lnbiBTeXN0ZW1zIEluYy4NCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBBdXRob3I6
+IEJvcmlzIEJyZXppbGxvbjxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPg0KPiA+
+Pj4+PiArICovDQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+
+ID4+Pj4+ICsNCj4gPj4+Pj4gKyNpbmNsdWRlICJpbnRlcm5hbHMuaCINCj4gPj4+Pj4gKw0KPiA+
+Pj4+PiArLyoqDQo+ID4+Pj4+ICsgKiBpM2NfbWFzdGVyX2VudGRhYV9sb2NrZWQoKSAtIHN0YXJ0
+IGEgREFBIChEeW5hbWljIEFkZHJlc3MNCj4gQXNzaWdubWVudCkNCj4gPj4+Pj4gKyAqCQkJCXBy
+b2NlZHVyZQ0KPiA+Pj4+PiArICogQG1hc3RlcjogbWFzdGVyIHVzZWQgdG8gc2VuZCBmcmFtZXMg
+b24gdGhlIGJ1cw0KPiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIFNlbmQgYSBFTlREQUEgQ0NDIGNv
+bW1hbmQgdG8gc3RhcnQgYSBEQUEgcHJvY2VkdXJlLg0KPiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAq
+IE5vdGUgdGhhdCB0aGlzIGZ1bmN0aW9uIG9ubHkgc2VuZHMgdGhlIEVOVERBQSBDQ0MgY29tbWFu
+ZCwgYWxsDQo+ID4+Pj4+ICt0aGUgbG9naWMNCj4gPj4+Pj4gKyAqIGJlaGluZCBkeW5hbWljIGFk
+ZHJlc3MgYXNzaWdubWVudCBoYXMgdG8gYmUgaGFuZGxlZCBpbiB0aGUgSTNDDQo+ID4+Pj4+ICtt
+YXN0ZXINCj4gPj4+Pj4gKyAqIGRyaXZlci4NCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBUaGlz
+IGZ1bmN0aW9uIG11c3QgYmUgY2FsbGVkIHdpdGggdGhlIGJ1cyBsb2NrIGhlbGQgaW4gd3JpdGUN
+Cj4gbW9kZS4NCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBSZXR1cm46IDAgaW4gY2FzZSBvZiBz
+dWNjZXNzLCBhIG5lZ2F0aXZlIGVycm9yIGNvZGUgb3RoZXJ3aXNlLg0KPiA+Pj4+PiArICovDQo+
+ID4+Pj4+ICtpbnQgaTNjX21hc3Rlcl9lbnRkYWFfbG9ja2VkKHN0cnVjdCBpM2NfbWFzdGVyX2Nv
+bnRyb2xsZXINCj4gPj4+Pj4gKyptYXN0ZXIpIHsNCj4gPj4+Pj4gKwlzdHJ1Y3QgaTNjX2NjY19j
+bWRfZGVzdCBkZXN0ID0geyB9Ow0KPiA+Pj4+PiArCXN0cnVjdCBpM2NfY2NjX2NtZCBjbWQgPSB7
+IH07DQo+ID4+Pj4+ICsJaW50IHJldDsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArCWRlc3QuYWRkciA9
+IEkzQ19CUk9BRENBU1RfQUREUjsNCj4gPj4+Pj4gKwljbWQuZGVzdHMgPSAmZGVzdDsNCj4gPj4+
+Pj4gKwljbWQubmRlc3RzID0gMTsNCj4gPj4+Pj4gKwljbWQucm53ID0gZmFsc2U7DQo+ID4+Pj4+
+ICsJY21kLmlkID0gSTNDX0NDQ19FTlREQUE7DQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKwlyZXQgPSBp
+M2NfbWFzdGVyX3NlbmRfY2NjX2NtZF9sb2NrZWQobWFzdGVyLCAmY21kKTsNCj4gPj4+Pj4gKwlp
+ZiAocmV0KQ0KPiA+Pj4+PiArCQlyZXR1cm4gcmV0Ow0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsJcmV0
+dXJuIDA7DQo+ID4+Pj4+ICt9DQo+ID4+Pj4+ICtFWFBPUlRfU1lNQk9MX0dQTChpM2NfbWFzdGVy
+X2VudGRhYV9sb2NrZWQpOw0KPiA+Pj4+IMKgY2FuIHlvdSBleHBsYWluIHRoZSBwcm9jZXNzPw0K
+PiA+Pj4gTm90IHN1cmUgd2hhdCB5b3UgbWVhbi4gVGhlIEVOVERBQSBpcyBqdXN0IGEgQ0NDIGNv
+bW1hbmQgdGhhdCBpcw0KPiA+Pj4gdXNlZCB0byB0cmlnZ2VyIGEgREFBIHByb2NlZHVyZS4gV2hh
+dCB0aGUgbWFzdGVyIGNvbnRyb2xsZXIgZG9lcw0KPiA+Pj4gd2hlbiBpdCBzZW5kcyBzdWNoIGEg
+Y29tbWFuZCBpcyBsaWtlbHkgdG8gYmUgY29udHJvbGxlciBkZXBlbmRlbnQsDQo+ID4+PiBhbmQg
+aXQgbWlnaHQgZXZlbiBiZSBwb3NzaWJsZSB0aGF0IHlvdSBkb24ndCBuZWVkIHRvIGNhbGwgdGhp
+cw0KPiA+Pj4gZnVuY3Rpb24gaW4geW91ciBjb250cm9sbGVyIGRyaXZlciB0byB0cmlnZ2VyIGEg
+REFBLiBJZiB5b3Ugd2FudA0KPiA+Pj4gbW9yZSBkZXRhaWxzIGFib3V0IHRoZSBidXMgaW5pdGlh
+bGl6YXRpb24gc3RlcHMgYW5kIGhvdyB0aGUgRU5UREFBDQo+ID4+PiBDQ0MgY29tbWFuZCBmaXRz
+IGludG8gaXQgSSByZWNvbW1lbmQgcmVhZGluZyBzZWN0aW9uICI1LjEuNCBCdXMNCj4gPj4+IElu
+aXRpYWxpemF0aW9uIGFuZCBEeW5hbWljIEFkZHJlc3MgQXNzaWdubWVudCBNb2RlIg0KPiA+Pj4N
+Cj4gPj4+PiB0aGUgY29tbWFuZCBpcyBvbmx5IGV4ZWN1dGUgb25jZSwgd2hhdCBpZiB0aGVyZSBp
+cyBtb3JlIGRldmljZXMgb24NCj4gPj4+PiB0aGUgYnVzPw0KPiA+Pj4gQWdhaW4sIEknbSBub3Qg
+c3VyZSB3aGF0IHlvdSBtZWFuLiBUaGUgRU5UREFBIGNvbW1hbmQgaXMgc2VudA0KPiBldmVyeQ0K
+PiA+Pj4gdGltZSBhIGNvbnRyb2xsZXIgd2FudHMgdG8gZGlzY292ZXIgbmV3IGRldmljZXMgb24g
+dGhlIGJ1cywgdGhhdCBjYW4NCj4gPj4+IGJlIHdoZW4gaW5pdGlhbGl6aW5nIHRoZSBidXMsIGFm
+dGVyIGEgSG90IEpvaW4gZXZlbnQgb3Igc2ltcGx5DQo+ID4+PiB0cmlnZ2VyZWQgYnkgdGhlIHVz
+ZXIgKHRoZSBsYXN0IGNhc2UgaXMgbm90IHN1cHBvcnRlZCB5ZXQgdGhvdWdoKS4NCj4gPj4+DQo+
+ID4+PiBOb3csIGlmIHlvdSdyZSBpbnRlcmVzdGVkIGluIHdoYXQgaGFwcGVucyBhZnRlciBhbiBF
+TlREQUEgQ0NDIGlzDQo+ID4+PiBzZW50LCB0aGUgY29udHJvbGxlciB3aWxsIGtlZXAgc2VuZGlu
+ZyBSZXBlYXRlZFN0YXJ0IHVudGlsIHRoZXJlJ3MNCj4gPj4+IG5vIG1vcmUgZGV2aWNlcyBhY2tp
+bmcgdGhlIHJlcXVlc3QuIFlvdSBjYW4gaGF2ZSBhIGxvb2sgYXQgIkIuMw0KPiA+Pj4gRXJyb3Ig
+VHlwZXMgaW4gRHluYW1pYyBBZGRyZXNzIEFyYml0cmF0aW9uIiBmb3IgbW9yZSBkZXRhaWxzLg0K
+PiA+PiBNeSB1bmRlcnN0YW5kaW5nIGlzIHRoaXMgY29tbWFuZCBzaGFsbCBiZSBleGVjdXRlZCBv
+bmNlLCB0aGlzIG1lYW4NCj4gPj4gdGhhdCBvbmx5IG9uZSBzbGF2ZSB3aWxsIGFzc2lnbiB0aGUg
+ZHluYW1pYyBhZGRyZXNzIChjbWQubmRlc3RzID0gMSkNCj4gPj4gYW5kIG5vdCB0cmlnZ2VyIHRo
+ZSB3aG9sZSBwcm9jZXNzIG9mIERBQS4NCj4gPiBObywgdGhhdCdzIG5vdCB3aGF0IGhhcHBlbnMu
+IFRoZSBtYXN0ZXIgY29udHJvbGxlciBpcyBzdXBwb3NlZCB0bw0KPiA+IGNvbnRpbnVlIHVudGls
+IG5vIG9uZSByZXBsaWVzIHdpdGggYW4gQWNrIG9uIHRoZSBidXMsIGFuZCBieSBjb250aW51ZQ0K
+PiA+IEkgZG9uJ3QgbWVhbiByZXNlbmQgYW4gRU5UREFBLCBidXQgaXNzdWUgYSBSZXBlYXRlZFN0
+YXJ0IGZvbGxvd2VkIGJ5DQo+ID4gdGhlIGJyb2FkY2FzdCBhZGRyZXNzICgweDdlKS4NCj4gDQo+
+IEkgYW0gc29ycnksIHlvdSBoYXZlIHBvaW50IGhlcmUuIEkgbWlzdW5kZXJzdG9vZCB0aGF0IHRo
+ZSBjbWQubmRlc3RzID0gMSBpcw0KPiBmb3IgYnJvYWRjYXN0IGNvbW1hbmRzLg0KPiANCj4gPj4g
+RWl0aGVyIGltcG9ydGFudCBpcyB0aGUgU0VUREFTQSBmb3IgZGVjbGFyZWQgSTNDIGRldmljZXMu
+IFNvIHRoZSBEQUENCj4gPj4gcHJvY2VzcyBzaG91bGQgc3RhcnQgYnkgc2VuZCBhbiBTRVREQVNB
+IGFuZCB0aGVtIEVOVERBQSBDQ0MNCj4gY29tbWFuZC4NCj4gPiBNeSB1bmRlcnN0YW5kaW5nIHdh
+cyB0aGF0IFNFVERBU0Egd2FzIG5vdCBtYW5kYXRvcnksIGFuZCB3YXMgb25seQ0KPiA+IHVzZWZ1
+bCB3aGVuIG9uZSB3YW50cyB0byBhc3NpZ24gYSBzcGVjaWZpYyBkeW5hbWljIGFkZHJlc3MgdG8g
+YSBzbGF2ZQ0KPiA+IHRoYXQgaGFzIGEgc3RhdGljIGFkZHJlc3MgKHdoaWNoIGlzIGFnYWluIG5v
+dCBtYW5kYXRvcnkpLg0KPiA+IEkndmUgdGVzdGVkIGl0LCBhbmQgZXZlbiBkZXZpY2VzIHdpdGgg
+YSBzdGF0aWMgYWRkcmVzcyBwYXJ0aWNpcGF0ZSB0bw0KPiA+IHRoZSBEQUEgcHJvY2VkdXJlIGlm
+IHRoZXkndmUgbm90IGJlZW4gYXNzaWduZWQgYSBkeW5hbWljIGFkZHJlc3MgeWV0LA0KPiA+IHNv
+IEkgZG9uJ3Qgc2VlIHRoZSBuZWVkIGZvciB0aGlzIFNFVERBU0Egc3RlcCBpZiB5b3UgZG9uJ3Qg
+bmVlZCB0bw0KPiA+IGFzc2lnbiBhIHBhcnRpY3VsYXIgZHluYW1pYyBhZGRyZXNzIHRvIHRoZSBk
+ZXZpY2UuDQo+ID4NCj4gPiBDb3VsZCB5b3UgdGVsbCBtZSB3aHkgeW91IHRoaW5rIFNFVERBU0Eg
+aXMgcmVxdWlyZWQ/DQo+IA0KPiBZZXMsIHlvdSBhcmUgcmlnaHQuLi4gQnV0IGluIG15IG9waW5p
+b24gaXQgaXMgcmVxdWlyZWQgYXMgaXQgZG9lcyBwYXJ0IG9mIERBQQ0KPiBwcm9jZXNzLg0KDQpT
+RVREQVNBIGlzIHNpbXBseSBmYXN0ZXIgdGhhbiBFTlREQUEsIGJ1dCBvbmx5IGlmIHRoZXJlIGlz
+IG5vIG5lZWQgdG8NCmNvbGxlY3QgQkNSL0RDUi9QSUQgb2Ygc3VjaCBkZXZpY2VzLiBJIHRoaW5r
+IG1vc3QgYXBwbGljYXRpb25zIHdvdWxkDQpsaWtlIHRvIGhhdmUgdGhlbSBhcyBhbiBzdGF0dXMg
+aW5mb3JtYXRpb24gc28gIGFmdGVyIGFsbCBFTlREQUEgY2FuIA0KYmUgcmVnYXJkZWQgYXMgYW4g
+Z2VuZXJpYyBhcHByb2FjaCAodW5sZXNzIEknbSBtaXN0YWtlbikuDQoNCj4gDQo+ID4+Pj4+ICtz
+dGF0aWMgdTMyIGkzY19tYXN0ZXJfaTJjX2Z1bmN0aW9uYWxpdGllcyhzdHJ1Y3QgaTJjX2FkYXB0
+ZXINCj4gPj4+Pj4gKyphZGFwKSB7DQo+ID4+Pj4+ICsJcmV0dXJuIEkyQ19GVU5DX1NNQlVTX0VN
+VUwgfCBJMkNfRlVOQ19JMkMgfA0KPiBJMkNfRlVOQ18xMEJJVF9BRERSOw0KPiA+Pj4+PiArfQ0K
+PiA+Pj4+IMKgSXMgSTJDX0ZVTkNfMTBCSVRfQUREUiBhbGxvd2VkID8NCj4gPj4+IEFjY29yZGlu
+ZyB0byAiVGFibGUgNCBJIDIgQyBGZWF0dXJlcyBBbGxvd2VkIGluIEkzQyBTbGF2ZXMiLCB5ZXMg
+KGF0DQo+ID4+PiBsZWFzdCB0aGF0IG15IHVuZGVyc3RhbmRpbmcpLiBBbmQgdGhlIENhZGVuY2Ug
+Y29udHJvbGxlciBzdXBwb3J0cyBpdC4NCj4gPj4gVGhlIHRhYmxlIHNheSB0aGUgb3Bvc2l0ZS4g
+VGhlIEkyQyBleHRlbmRlZCBhZGRyZXNzIGZlYXR1cmUgaXMgbm90DQo+ID4+IHVzZWQgb24gSTND
+IGJ1cywgdGh1cyB0aGlzIGZlYXR1cmUgc2hhbGwgYmUgZGlzYWJsZS4NCj4gPiBBY3R1YWxseSwg
+SSB3YXMgd3Jvbmcgd2hlbiBpbml0aWFsbHkgbWVudGlvbmluZyB0aGlzIHRhYmxlOiBpdCdzIGFi
+b3V0DQo+ID4gSTJDIGZlYXR1cmVzIHN1cHBvcnRlZCBvbiBJM0Mgc2xhdmVzLCBzbyBub3QgcmVh
+bGx5IHdoYXQgd2UncmUgbG9va2luZw0KPiA+IGZvci4gSGVyZSwgd2UncmUgd29uZGVyaW5nIGlm
+IEkyQy1vbmx5IGRldmljZXMgY2FuIGhhdmUgMTAtYml0DQo+ID4gYWRkcmVzc2VzLiBUaGUgQ2Fk
+ZW5jZSBjb250cm9sbGVyIHN1cHBvcnRzIHRoYXQsIHNvIHRoZXJlJ3MgcHJvYmFibHkNCj4gPiBu
+b3RoaW5nIHByZXZlbnRpbmcgdXNlIG9mIDEwLWJpdCBhZGRyZXNzZXMgZm9yIEkyQyB0cmFuc2Zl
+cnMsIGJ1dA0KPiA+IG1heWJlIG5vdCBhbGwgSTNDIG1hc3RlciBjb250cm9sbGVycyBzdXBwb3J0
+IHRoYXQsIHNvIHdlIHNob3VsZA0KPiA+IHByb2JhYmx5IGxldCB0aGUgSTNDIG1hc3RlciBkcml2
+ZXIgaW1wbGVtZW50IHRoaXMgbWV0aG9kLg0KPiANCj4gVGhlIHNwZWMgc2F5cyB0aGF0IGlzICJu
+b3QgdXNlZCIgc28gaXQgd2lsbCBub3QgaW50ZXJmYWNlIHdpdGggSTNDIGJ1cy4NCj4gDQo+ID4+
+IEJUVyBpdCBpcyBvcHRpb25hbCBvbiBJMkMgZGV2aWNlcy4NCj4gPiBZb3UgbWVhbiBJMkMgY29u
+dHJvbGxlcnM/IFdoZW4gYW4gSTJDIGRldmljZSBoYXMgYSAxMGJpdCBhZGRyZXNzLCB0aGUNCj4g
+PiBjb250cm9sbGVyIGhhcyB0byBzdXBwb3J0IHRoaXMgbW9kZSB0byBjb21tdW5pY2F0ZSB3aXRo
+IHRoZSBkZXZpY2UsIGF0DQo+ID4gbGVhc3QgdGhhdCdzIG15IHVuZGVyc3RhbmRpbmcuIEJ1dCB3
+ZSdyZSBkaWdyZXNzaW5nIGEgYml0LiBUaGUNCj4gPiBxdWVzdGlvbiBpcyBub3Qgd2hldGhlciBJ
+MkMgZGV2aWNlcyBjYW4gb3B0aW9uYWxseSB1c2UgYSAxMCBiaXQNCj4gPiBhZGRyZXNzLCBidXQg
+d2hldGhlciBJM0MgbWFzdGVyIGNvbnRyb2xsZXIgY2FuIHN1cHBvcnQgdGhpcyBtb2RlIGZvcg0K
+PiA+IEkyQyB0cmFuc2ZlcnMgdG8gSTJDLW9ubHkgZGV2aWNlcy4NCj4gDQo+IEJ5IHRoZSBpMmMg
+c3BlYyB0aGUgMTAtYml0IGFkZHJlc3MgaXMgb3B0aW9uYWwsIGhvd2V2ZXIgdGhlIDctYml0IGFk
+ZHJlc3MgaXMNCj4gbWFuZGF0b3J5Lg0KPiANCj4gPj4+DQo+ID4+Pj4gwqA+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2kzYy9tYXN0ZXIvS2NvbmZpZw0KPiA+Pj4+IGIvZHJpdmVycy9pM2MvbWFzdGVy
+L0tjb25maWcNCj4gPj4+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPj4+Pj4gaW5kZXggMDAw
+MDAwMDAwMDAwLi5lNjlkZTI5YmIyZDENCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTNj
+L21hc3Rlci9NYWtlZmlsZQ0KPiA+Pj4+PiBiL2RyaXZlcnMvaTNjL21hc3Rlci9NYWtlZmlsZSBu
+ZXcgZmlsZSBtb2RlIDEwMDY0NCBpbmRleA0KPiA+Pj4+PiAwMDAwMDAwMDAwMDAuLmU2OWRlMjli
+YjJkMSBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9pM2MvY2NjLmgNCj4gPj4+Pj4gYi9pbmNs
+dWRlL2xpbnV4L2kzYy9jY2MuaCBuZXcgZmlsZSBtb2RlIDEwMDY0NCBpbmRleA0KPiA+Pj4+PiAw
+MDAwMDAwMDAwMDAuLmZmM2UxYTNlMmM0Yw0KPiA+Pj4+PiAtLS0gL2Rldi9udWxsDQo+ID4+Pj4+
+ICsrKyBiL2luY2x1ZGUvbGludXgvaTNjL2NjYy5oDQo+ID4+Pj4+IEBAIC0wLDAgKzEsMzgwIEBA
+DQo+ID4+Pj4+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLw0KPiA+Pj4+
+PiArLyoNCj4gPj4+Pj4gKyAqIENvcHlyaWdodCAoQykgMjAxNyBDYWRlbmNlIERlc2lnbiBTeXN0
+ZW1zIEluYy4NCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBBdXRob3I6IEJvcmlzIEJyZXppbGxv
+bjxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPg0KPiA+Pj4+PiArICovDQo+ID4+
+Pj4+ICsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArLyoqDQo+ID4+Pj4+ICsgKiBlbnVtIGkzY19jY2Nf
+dGVzdF9tb2RlIC0gZW51bSBsaXN0aW5nIGFsbCBhdmFpbGFibGUgdGVzdCBtb2Rlcw0KPiA+Pj4+
+PiArICoNCj4gPj4+Pj4gKyAqIEBJM0NfQ0NDX0VYSVRfVEVTVF9NT0RFOiBleGl0IHRlc3QgbW9k
+ZQ0KPiA+Pj4+PiArICogQEkzQ19DQ0NfVkVORE9SX1RFU1RfTU9ERTogZW50ZXIgdmVuZG9yIHRl
+c3QgbW9kZSAgKi8NCj4gZW51bQ0KPiA+Pj4+PiAraTNjX2NjY190ZXN0X21vZGUgew0KPiA+Pj4+
+PiArCUkzQ19DQ0NfRVhJVF9URVNUX01PREUsDQo+ID4+Pj4+ICsJSTNDX0NDQ19WRU5ET1JfVEVT
+VF9NT0RFLA0KPiA+Pj4+PiArfTsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArLyoqDQo+ID4+Pj4+ICsg
+KiBzdHJ1Y3QgaTNjX2NjY19lbnR0bSAtIHBheWxvYWQgcGFzc2VkIHRvIEVOVFRNIENDQw0KPiA+
+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIEBtb2RlOiBvbmUgb2YgdGhlICZlbnVtIGkzY19jY2NfdGVz
+dF9tb2RlIG1vZGVzDQo+ID4+Pj4+ICsgKg0KPiA+Pj4+PiArICogSW5mb3JtYXRpb24gcGFzc2Vk
+IHRvIHRoZSBFTlRUTSBDQ0MgdG8gaW5zdHJ1Y3QgYW4gSTNDIGRldmljZQ0KPiA+Pj4+PiArdG8g
+ZW50ZXIgYQ0KPiA+Pj4+PiArICogc3BlY2lmaWMgdGVzdCBtb2RlLg0KPiA+Pj4+PiArICovDQo+
+ID4+Pj4+ICtzdHJ1Y3QgaTNjX2NjY19lbnR0bSB7DQo+ID4+Pj4+ICsJdTggbW9kZTsNCj4gPj4+
+Pj4gK30gX19wYWNrZWQ7DQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKy8qKg0KPiA+Pj4+PiArICogc3Ry
+dWN0IGkzY19jY2Nfc2V0ZGEgLSBwYXlsb2FkIHBhc3NlZCB0byBFTlRUTSBDQ0MNCj4gPj4+Pj4g
+KyAqDQo+ID4+Pj4+ICsgKiBAbW9kZTogb25lIG9mIHRoZSAmZW51bSBpM2NfY2NjX3Rlc3RfbW9k
+ZSBtb2Rlcw0KPiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIEluZm9ybWF0aW9uIHBhc3NlZCB0byB0
+aGUgRU5UVE0gQ0NDIHRvIGluc3RydWN0IGFuIEkzQyBkZXZpY2UNCj4gPj4+Pj4gK3RvIGVudGVy
+IGENCj4gPj4+Pj4gKyAqIHNwZWNpZmljIHRlc3QgbW9kZS4NCj4gPj4+Pj4gKyAqLw0KPiA+Pj4+
+PiArc3RydWN0IGkzY19jY2Nfc2V0ZGEgew0KPiA+Pj4+PiArCXU4IGFkZHI7DQo+ID4+Pj4+ICt9
+IF9fcGFja2VkOw0KPiA+Pj4+IMKgd2hhdCBkbyB5b3UgbWVhbiB3aXRoIHN0cnVjdD8gTWF5YmUg
+c2V0ZGFzYT8gaWYgc28sIHdoYXQgaXMgdGhlDQo+IGFkZHI/DQo+ID4+IERvIHlvdSBoYXZlIHRo
+ZSBmdW5jdGlvbiB0byB1c2UgdGhpcyBzdHJ1Y3R1cmU/IEJlY2F1c2Ugb25lIGNvbW1hbmQNCj4g
+Pj4gdXNlIHRoZSBzdGF0aWMgYWRkcmVzcyBhbmQgdGhlIG90aGVyIHVzZSB0aGUgZHluYW1pYyBh
+ZGRyZXNzLg0KPiA+Pg0KPiA+Pj4+DQo+ID4+Pj4gwqA+ICsvKioNCj4gPj4+Pj4gKyAqIGVudW0g
+aTNjX3Nkcl9tYXhfZGF0YV9yYXRlIC0gbWF4IGRhdGEgcmF0ZSB2YWx1ZXMgZm9yIHByaXZhdGUN
+Cj4gPj4+Pj4gK1NEUiB0cmFuc2ZlcnMgICovIGVudW0gaTNjX3Nkcl9tYXhfZGF0YV9yYXRlIHsN
+Cj4gPj4+Pj4gKwlJM0NfU0RSX0RSX0ZTQ0xfTUFYLA0KPiA+Pj4+PiArCUkzQ19TRFJfRFJfRlND
+TF84TUhaLA0KPiA+Pj4+PiArCUkzQ19TRFJfRFJfRlNDTF82TUhaLA0KPiA+Pj4+PiArCUkzQ19T
+RFJfRFJfRlNDTF80TUhaLA0KPiA+Pj4+PiArCUkzQ19TRFJfRFJfRlNDTF8yTUhaLA0KPiA+Pj4+
+PiArfTsNCj4gPj4+PiBDYW4geW91IGNoYW5nZSB0aGUgbmFtZXMgdG86DQo+ID4+Pj4NCj4gPj4+
+PiBJM0NfU0RSMF9GU0NMX01BWCwNCj4gPj4+PiBJM0NfU0RSMV9GU0NMXzhNSFosDQo+ID4+Pj4g
+STNDX1NEUjJfRlNDTF82TUhaLA0KPiA+Pj4+IEkzQ19TRFIzX0ZTQ0xfNE1IWiwNCj4gPj4+PiBJ
+M0NfU0RSNF9GU0NMXzJNSFosDQo+ID4+Pj4NCj4gPj4+PiB0aHVzIHRoZSBkYXRhIHJhdGUgaXNu
+J3QgcmVwZWF0ZWQuDQo+ID4+PiBXaGF0J3MgdGhlIHByb2JsZW0gd2l0aCB0aGUgbmFtZSBJIHVz
+ZT8gTW9yZW92ZXIsIEkgc2VlIG5vIG1lbnRpb24NCj4gPj4+IHRvIHRoZSBTRFIwLDEsMiwzLDQg
+bW9kZXMgaW4gdGhlIHB1YmxpYyBzcGVjLg0KPiA+PiBXaGVuIHlvdSBnZXQgdGhlIEdFVE1YRFMg
+aW5mb3JtYXRpb24sIHRoZSBtYXhXciBhbmQgbWF4UmQgY2FtZQ0KPiBmcm9tIDANCj4gPj4gdG8g
+NCwgc28gaW4gbXkgb3BpbmlvbiBJIHRoaW5rIGluIHRoaXMgd2F5IGlzIGVhc2llciB0byBoYXZl
+IGEgcmVsYXRpb25zaGlwLg0KPiA+IEl0J3MgYW4gZW11bSwgYW5kIHRoZXJlJ3Mgbm8gbWVudGlv
+biBvZiB0aGUgU0RSWCBtb2RlcyB5b3UncmUgdXNpbmcNCj4gPiBoZXJlIGluIHRoZSBJM0Mgc3Bl
+Yy4gSSBndWVzcyBpdCdzIG5hbWVkIHRoaXMgd2F5IGluIHlvdXIgSTNDDQo+ID4gY29udHJvbGxl
+ciBkYXRhc2hlZXQuIEkgcGVyc29uYWxseSBkb24ndCBzZWUgYSBnb29kIHJlYXNvbiB0byBhZGQg
+U0RSWA0KPiA+IGluIHRoZSBuYW1lLCBidXQgaWYgeW91IGluc2lzdC4uLg0KPiANCj4gVGhlIGlk
+ZWEgaXMgdG8gc2F5IHRoYXQgaXQgaXMgU0RSIG1vZGUgYW5kIHRoZSB2YWx1ZSB0aGF0IEdFVE1Y
+RFMNCj4gY29tbWFuZCByZXR1cm4uIEl0IGlzIHdoYXQgbWFrZXMgc2Vuc2UgdG8gbWUuDQo+IA0K
+PiA+Pj4+PiArDQo+ID4+Pj4+ICsjZW5kaWYgLyogSTNDX0NDQ19IICovDQo+ID4+Pj4+IGRpZmYg
+LS1naXQgYS9pbmNsdWRlL2xpbnV4L2kzYy9kZXZpY2UuaA0KPiA+Pj4+PiBiL2luY2x1ZGUvbGlu
+dXgvaTNjL2RldmljZS5oIG5ldyBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4DQo+ID4+Pj4+IDAwMDAw
+MDAwMDAwMC4uODM5NThkM2EwMmUyDQo+ID4+Pj4+IC0tLSAvZGV2L251bGwNCj4gPj4+Pj4gKysr
+IGIvaW5jbHVkZS9saW51eC9pM2MvZGV2aWNlLmgNCj4gPj4+Pj4gQEAgLTAsMCArMSwzMjEgQEAN
+Cj4gPj4+Pj4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovDQo+ID4+Pj4+
+ICsvKg0KPiA+Pj4+PiArICogQ29weXJpZ2h0IChDKSAyMDE3IENhZGVuY2UgRGVzaWduIFN5c3Rl
+bXMgSW5jLg0KPiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIEF1dGhvcjogQm9yaXMgQnJlemlsbG9u
+PGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5jb20+DQo+ID4+Pj4+ICsgKi8NCj4gPj4+
+Pj4gKw0KPiA+Pj4+PiArI2lmbmRlZiBJM0NfREVWX0gNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX0RF
+Vl9IDQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKyNpbmNsdWRlIDxsaW51eC9kZXZpY2UuaD4NCj4gPj4+
+Pj4gKyNpbmNsdWRlIDxsaW51eC9pMmMuaD4NCj4gPj4+Pj4gKyNpbmNsdWRlIDxsaW51eC9tb2Rf
+ZGV2aWNldGFibGUuaD4gI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiA+Pj4+PiArDQo+ID4+
+Pj4+ICsvKioNCj4gPj4+Pj4gKyAqIGVudW0gaTNjX2hkcl9tb2RlIC0gSERSIG1vZGUgaWRzDQo+
+ID4+Pj4+ICsgKiBASTNDX0hEUl9ERFI6IEREUiBtb2RlDQo+ID4+Pj4+ICsgKiBASTNDX0hEUl9U
+U1A6IFRTUCBtb2RlDQo+ID4+Pj4+ICsgKiBASTNDX0hEUl9UU0w6IFRTTCBtb2RlDQo+ID4+Pj4+
+ICsgKi8NCj4gPj4+Pj4gK2VudW0gaTNjX2hkcl9tb2RlIHsNCj4gPj4+Pj4gKwlJM0NfSERSX0RE
+UiwNCj4gPj4+Pj4gKwlJM0NfSERSX1RTUCwNCj4gPj4+Pj4gKwlJM0NfSERSX1RTTCwNCj4gPj4+
+Pj4gK307DQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKy8qKg0KPiA+Pj4+PiArICogc3RydWN0IGkzY19o
+ZHJfY21kIC0gSTNDIEhEUiBjb21tYW5kDQo+ID4+Pj4+ICsgKiBAbW9kZTogSERSIG1vZGUgc2Vs
+ZWN0ZWQgZm9yIHRoaXMgY29tbWFuZA0KPiA+Pj4+PiArICogQGNvZGU6IGNvbW1hbmQgb3Bjb2Rl
+DQo+ID4+Pj4+ICsgKiBAYWRkcjogSTNDIGR5bmFtaWMgYWRkcmVzcw0KPiA+Pj4+PiArICogQG5k
+YXRhd29yZHM6IG51bWJlciBvZiBkYXRhIHdvcmRzIChhIHdvcmQgaXMgMTZiaXRzIHdpZGUpDQo+
+ID4+Pj4+ICsgKiBAZGF0YTogaW5wdXQvb3V0cHV0IGJ1ZmZlcg0KPiA+Pj4+PiArICovDQo+ID4+
+Pj4+ICtzdHJ1Y3QgaTNjX2hkcl9jbWQgew0KPiA+Pj4+PiArCWVudW0gaTNjX2hkcl9tb2RlIG1v
+ZGU7DQo+ID4+Pj4+ICsJdTggY29kZTsNCj4gPj4+Pj4gKwl1OCBhZGRyOw0KPiA+Pj4+PiArCWlu
+dCBuZGF0YXdvcmRzOw0KPiA+Pj4+PiArCXVuaW9uIHsNCj4gPj4+Pj4gKwkJdTE2ICppbjsNCj4g
+Pj4+Pj4gKwkJY29uc3QgdTE2ICpvdXQ7DQo+ID4+Pj4+ICsJfSBkYXRhOw0KPiA+Pj4+PiArfTsN
+Cj4gPj4gUGxlYXNlIG1lbnRpb24gdGhhdCB0aGUgQGNvZGUgaXMgd2hhdCB3aWxsIGRlZmluZSBp
+ZiB0aGUgdHJhbnNmZXIgaXMgcmVhZA0KPiBvciB3cml0ZS4NCj4gPiBXZWxsLCBJIHRoaW5rIGl0
+J3MgcHJldHR5IGNsZWFyIGluIHRoZSBkZWZpbml0aW9uIHlvdSdsbCBmaW5kIGluIHRoZQ0KPiA+
+IGNjYy5oIGZpbGUsIGJ1dCBJIGNhbiBhZGQgYSBjb21tZW50IGhlcmUgdG9vIGlmIHlvdSBsaWtl
+Lg0KPiANCj4gSSBkb24ndCBmaW5kIGl0IGluIGNjYy5oIGZpbGUuIEFueXdheSBpcyBub3QgZ29v
+ZCB0byBwdXQgdGhpcyBkZWZpbml0aW9uIHRoZXJlDQo+IGJlY2F1c2UgaXMgbm90IHJlbGF0ZWQu
+DQo+IA0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsvKiBQcml2YXRlIFNEUiByZWFkIHRyYW5zZmVyICov
+DQo+ID4+Pj4+ICsjZGVmaW5lIEkzQ19QUklWX1hGRVJfUkVBRAkJQklUKDApDQo+ID4+Pj4+ICsv
+Kg0KPiA+Pj4+PiArICogSW5zdHJ1Y3QgdGhlIGNvbnRyb2xsZXIgdG8gaXNzdWUgYSBTVE9QIGFm
+dGVyIGEgc3BlY2lmaWMNCj4gPj4+Pj4gK3RyYW5zZmVyIGluc3RlYWQNCj4gPj4+Pj4gKyAqIG9m
+IGEgUkVQRUFURUQgU1RBUlQuDQo+ID4+Pj4+ICsgKi8NCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX1BS
+SVZfWEZFUl9TVE9QCQlCSVQoMSkNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArLyoqDQo+ID4+Pj4+ICsg
+KiBzdHJ1Y3QgaTNjX3ByaXZfeGZlciAtIEkzQyBTRFIgcHJpdmF0ZSB0cmFuc2Zlcg0KPiA+Pj4+
+PiArICogQGFkZHI6IEkzQyBkeW5hbWljIGFkZHJlc3MNCj4gPj4+Pj4gKyAqIEBsZW46IHRyYW5z
+ZmVyIGxlbmd0aCBpbiBieXRlcyBvZiB0aGUgdHJhbnNmZXINCj4gPj4+Pj4gKyAqIEBmbGFnczog
+Y29tYmluYXRpb24gb2YgSTNDX1BSSVZfWEZFUl94eHggZmxhZ3MNCj4gPj4+Pj4gKyAqIEBkYXRh
+OiBpbnB1dC9vdXRwdXQgYnVmZmVyDQo+ID4+Pj4+ICsgKi8NCj4gPj4+Pj4gK3N0cnVjdCBpM2Nf
+cHJpdl94ZmVyIHsNCj4gPj4+Pj4gKwl1OCBhZGRyOw0KPiA+Pj4+PiArCXUxNiBsZW47DQo+ID4+
+Pj4+ICsJdTMyIGZsYWdzOw0KPiA+Pj4+PiArCXN0cnVjdCB7DQo+ID4+Pj4+ICsJCXZvaWQgKmlu
+Ow0KPiA+Pj4+PiArCQljb25zdCB2b2lkICpvdXQ7DQo+ID4+Pj4+ICsJfSBkYXRhOw0KPiA+Pj4+
+PiArfTsNCj4gPj4+PiDCoFNhbWUgYXMgYWJvdmUsIGkzY19zZHJfbWF4X2RhdGFfcmF0ZSB0byBj
+aGFuZ2UgdGhlIGJ1cyBzY2wuDQo+ID4+PiBJZiBJJ20gdW5kZXJzdGFuZGluZyB0aGUgc3BlYyBj
+b3JyZWN0bHksIHRoYXQncyBub3Qgc29tZXRoaW5nIHlvdQ0KPiA+Pj4gd2FudCB0byBjaGFuZ2Ug
+b24gYSBwZXItdHJhbnNmZXIgYmFzaXMuIFRoZSBjb25zdHJhaW50IGlzIG9uIHRoZQ0KPiA+Pj4g
+ZGV2aWNlIGl0c2VsZiBhbmQgc2hvdWxkIElNTyBub3QgYmUgcGFydCBvZiB0aGUgaTNjX3ByaXZf
+eGZlciBzdHJ1Y3QuDQo+ID4+IEFzIG1lbnRpb24gYmVmb3JlIHRoaXMgaXMgaW1wb3J0YW50Lg0K
+PiA+PiBZb3UgY2FuIGRvIHRoZSBzYW1lIGFzIGZvciBzdHJ1Y3QgaTNjX2hkcl9jbWQgYW5kIGFk
+ZCBhIGVudW0NCj4gaTNjX3Nkcl9tYXhfZGF0YV9yYXRlLg0KPiA+Pg0KPiA+PiBUaGUgQGZsYWcg
+b25seSBoYXZlIDIgYml0cyBvZiBsb2FkLCBpcyB0aGUgcmVzdCBvcGVuZWQ/DQo+ID4gSWYgYnkg
+b3BlbiB5b3UgbWVhbiB0aGF0IHdlIGNhbiBhZGQgbW9yZSBmbGFncyBpZiB3ZSBuZWVkIHRvLCB0
+aGVuIHllcy4NCj4gPg0KPiA+Pj4NCj4gPj4+PiDCoD4gKw0KPiA+Pj4+PiArLyoqDQo+ID4+Pj4+
+ICsgKiBlbnVtIGkzY19kY3IgLSBJM0MgRENSIHZhbHVlcw0KPiA+Pj4+PiArICogQEkzQ19EQ1Jf
+R0VORVJJQ19ERVZJQ0U6IGdlbmVyaWMgSTNDIGRldmljZSAgKi8gZW51bSBpM2NfZGNyDQo+IHsN
+Cj4gPj4+Pj4gKwlJM0NfRENSX0dFTkVSSUNfREVWSUNFID0gMCwNCj4gPj4+Pj4gK307DQo+ID4+
+Pj4+ICsNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX1BJRF9NQU5VRl9JRChwaWQpCQkoKChwaWQpICYN
+Cj4gR0VOTUFTS19VTEwoNDcsIDMzKSkgPj4gMzMpDQo+ID4+Pj4+ICsjZGVmaW5lIEkzQ19QSURf
+Uk5EX0xPV0VSXzMyQklUUyhwaWQpCSghISgocGlkKSAmDQo+IEJJVF9VTEwoMzIpKSkNCj4gPj4+
+Pj4gKyNkZWZpbmUgSTNDX1BJRF9STkRfVkFMKHBpZCkJCSgocGlkKSAmIEdFTk1BU0tfVUxMKDMx
+LA0KPiAwKSkNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX1BJRF9QQVJUX0lEKHBpZCkJCSgoKHBpZCkg
+JiBHRU5NQVNLX1VMTCgzMSwNCj4gMTYpKSA+PiAxNikNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX1BJ
+RF9JTlNUQU5DRV9JRChwaWQpCSgoKHBpZCkgJiBHRU5NQVNLX1VMTCgxNSwNCj4gMTIpKSA+PiAx
+MikNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX1BJRF9FWFRSQV9JTkZPKHBpZCkJCSgocGlkKSAmDQo+
+IEdFTk1BU0tfVUxMKDExLCAwKSkNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArI2RlZmluZSBJM0NfQkNS
+X0RFVklDRV9ST0xFKGJjcikJKChiY3IpICYgR0VOTUFTSyg3LCA2KSkNCj4gPj4+Pj4gKyNkZWZp
+bmUgSTNDX0JDUl9JM0NfU0xBVkUJCSgwIDw8IDYpDQo+ID4+Pj4+ICsjZGVmaW5lIEkzQ19CQ1Jf
+STNDX01BU1RFUgkJKDEgPDwgNikNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX0JDUl9IRFJfQ0FQCQkJ
+QklUKDUpDQo+ID4+Pj4+ICsjZGVmaW5lIEkzQ19CQ1JfQlJJREdFCQkJQklUKDQpDQo+ID4+Pj4+
+ICsjZGVmaW5lIEkzQ19CQ1JfT0ZGTElORV9DQVAJCUJJVCgzKQ0KPiA+Pj4+PiArI2RlZmluZSBJ
+M0NfQkNSX0lCSV9QQVlMT0FECQlCSVQoMikNCj4gPj4+Pj4gKyNkZWZpbmUgSTNDX0JDUl9JQklf
+UkVRX0NBUAkJQklUKDEpDQo+ID4+Pj4+ICsjZGVmaW5lIEkzQ19CQ1JfTUFYX0RBVEFfU1BFRURf
+TElNCUJJVCgwKQ0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsvKioNCj4gPj4+Pj4gKyAqIHN0cnVjdCBp
+M2NfZGV2aWNlX2luZm8gLSBJM0MgZGV2aWNlIGluZm9ybWF0aW9uDQo+ID4+Pj4+ICsgKiBAcGlk
+OiBQcm92aXNpb25hbCBJRA0KPiA+Pj4+PiArICogQGJjcjogQnVzIENoYXJhY3RlcmlzdGljIFJl
+Z2lzdGVyDQo+ID4+Pj4+ICsgKiBAZGNyOiBEZXZpY2UgQ2hhcmFjdGVyaXN0aWMgUmVnaXN0ZXIN
+Cj4gPj4+Pj4gKyAqIEBzdGF0aWNfYWRkcjogc3RhdGljL0kyQyBhZGRyZXNzDQo+ID4+Pj4+ICsg
+KiBAZHluX2FkZHI6IGR5bmFtaWMgYWRkcmVzcw0KPiA+Pj4+PiArICogQGhkcl9jYXA6IHN1cHBv
+cnRlZCBIRFIgbW9kZXMNCj4gPj4+Pj4gKyAqIEBtYXhfcmVhZF9kczogbWF4IHJlYWQgc3BlZWQg
+aW5mb3JtYXRpb24NCj4gPj4+Pj4gKyAqIEBtYXhfd3JpdGVfZHM6IG1heCB3cml0ZSBzcGVlZCBp
+bmZvcm1hdGlvbg0KPiA+Pj4+PiArICogQG1heF9pYmlfbGVuOiBtYXggSUJJIHBheWxvYWQgbGVu
+Z3RoDQo+ID4+Pj4+ICsgKiBAbWF4X3JlYWRfdHVybmFyb3VuZDogbWF4IHJlYWQgdHVybi1hcm91
+bmQgdGltZSBpbg0KPiA+Pj4+PiArbWljcm8tc2Vjb25kcw0KPiA+Pj4+PiArICogQG1heF9yZWFk
+X2xlbjogbWF4IHByaXZhdGUgU0RSIHJlYWQgbGVuZ3RoIGluIGJ5dGVzDQo+ID4+Pj4+ICsgKiBA
+bWF4X3dyaXRlX2xlbjogbWF4IHByaXZhdGUgU0RSIHdyaXRlIGxlbmd0aCBpbiBieXRlcw0KPiA+
+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIFRoZXNlIGFyZSBhbGwgYmFzaWMgaW5mb3JtYXRpb24gdGhh
+dCBzaG91bGQgYmUgYWR2ZXJ0aXNlZCBieSBhbg0KPiBJM0MgZGV2aWNlLg0KPiA+Pj4+PiArICog
+U29tZSBvZiB0aGVtIGFyZSBvcHRpb25hbCBkZXBlbmRpbmcgb24gdGhlIGRldmljZSB0eXBlIGFu
+ZA0KPiA+Pj4+PiArZGV2aWNlDQo+ID4+Pj4+ICsgKiBjYXBhYmlsaXRpZXMuDQo+ID4+Pj4+ICsg
+KiBGb3IgZWFjaCBJM0Mgc2xhdmUgYXR0YWNoZWQgdG8gYSBtYXN0ZXIgd2l0aA0KPiA+Pj4+PiAr
+ICogaTNjX21hc3Rlcl9hZGRfaTNjX2Rldl9sb2NrZWQoKSwgdGhlIGNvcmUgd2lsbCBzZW5kIHRo
+ZQ0KPiA+Pj4+PiArcmVsZXZhbnQgQ0NDIGNvbW1hbmQNCj4gPj4+Pj4gKyAqIHRvIHJldHJpZXZl
+IHRoZXNlIGRhdGEuDQo+ID4+Pj4+ICsgKi8NCj4gPj4+Pj4gK3N0cnVjdCBpM2NfZGV2aWNlX2lu
+Zm8gew0KPiA+Pj4+PiArCXU2NCBwaWQ7DQo+ID4+Pj4+ICsJdTggYmNyOw0KPiA+Pj4+PiArCXU4
+IGRjcjsNCj4gPj4+Pj4gKwl1OCBzdGF0aWNfYWRkcjsNCj4gPj4+Pj4gKwl1OCBkeW5fYWRkcjsN
+Cj4gPj4+Pj4gKwl1OCBoZHJfY2FwOw0KPiA+Pj4+PiArCXU4IG1heF9yZWFkX2RzOw0KPiA+Pj4+
+PiArCXU4IG1heF93cml0ZV9kczsNCj4gPj4+Pj4gKwl1OCBtYXhfaWJpX2xlbjsNCj4gPj4+Pj4g
+Kwl1MzIgbWF4X3JlYWRfdHVybmFyb3VuZDsNCj4gPj4+Pj4gKwl1MTYgbWF4X3JlYWRfbGVuOw0K
+PiA+Pj4+PiArCXUxNiBtYXhfd3JpdGVfbGVuOw0KPiA+Pj4+PiArfTsNCj4gPj4+Pj4gKw0KPiA+
+Pj4+IMKgaXMgdGhpcyBpbmZvcm1hdGlvbiBmaWxsZWQgd2l0aCBkYXRhIHByb3ZpZGVkIGZyb20g
+Q0NDIGNvbW1hbmRzPw0KPiA+Pj4gWWVzLCB0aGV5IGFyZS4NCj4gPj4gT2ssIHRoZW0gdGhlIGlu
+dGVudGlvbiBpcyB0byBkbyB0aGlzIG9uIGJ1c19pbml0KCksIHJpZ2h0Pw0KPiA+IE5vdCBvbmx5
+LCBpdCBjYW4gYmUgYWZ0ZXIgYSBIb3QtSm9pbiwgb3IgYWZ0ZXIgdGhlIHVzZXIgaGFzIHRyaWdn
+ZXJlZA0KPiA+IGEgbmV3IERBQS4gQW55d2F5LCB0aGVzZSBpbmZvcm1hdGlvbiBhcmUgcmV0cmll
+dmVkIGFueXRpbWUgeW91IGFkZCBhDQo+ID4gZGV2aWNlIHdpdGggaTNjX21hc3Rlcl9hZGRfaTNj
+X2Rldl9sb2NrZWQoKSwgYW5kIHRoZSBjb3JlIHVzZXMgQ0NDDQo+ID4gY29tbWFuZHMgdG8gZG8g
+dGhhdC4NCj4gPg0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsvKioNCj4gPj4+Pj4gKyAqIHN0cnVjdCBp
+M2NfbWFzdGVyX2NvbnRyb2xsZXJfb3BzIC0gSTNDIG1hc3RlciBtZXRob2RzDQo+ID4+Pj4+ICsg
+KiBAYnVzX2luaXQ6IGhvb2sgcmVzcG9uc2libGUgZm9yIHRoZSBJM0MgYnVzIGluaXRpYWxpemF0
+aW9uLiBUaGlzDQo+ID4+Pj4+ICsgKgkgICAgICBpbml0aWFsaXphdGlvbiBzaG91bGQgZm9sbG93
+IHRoZSBzdGVwcyBkZXNjcmliZWQgaW4gdGhlIEkzQw0KPiA+Pj4+PiArICoJICAgICAgc3BlY2lm
+aWNhdGlvbi4gVGhpcyBob29rIGlzIGNhbGxlZCB3aXRoIHRoZSBidXMgbG9jayBoZWxkDQo+IGlu
+DQo+ID4+Pj4+ICsgKgkgICAgICB3cml0ZSBtb2RlLCB3aGljaCBtZWFucyBhbGwgX2xvY2tlZCgp
+IGhlbHBlcnMgY2FuIHNhZmVseQ0KPiBiZQ0KPiA+Pj4+PiArICoJICAgICAgY2FsbGVkIGZyb20g
+dGhlcmUNCj4gPj4+Pj4gKyAqIEBidXNfY2xlYW51cDogY2xlYW51cCBldmVyeXRoaW5nIGRvbmUg
+aW4NCj4gPj4+Pj4gKyAqCQkgJmkzY19tYXN0ZXJfY29udHJvbGxlcl9vcHMtPmJ1c19pbml0KCku
+IFRoaXMNCj4gZnVuY3Rpb24gaXMNCj4gPj4+Pj4gKyAqCQkgb3B0aW9uYWwgYW5kIHNob3VsZCBv
+bmx5IGJlIGltcGxlbWVudGVkIGlmDQo+ID4+Pj4+ICsgKgkJICZpM2NfbWFzdGVyX2NvbnRyb2xs
+ZXJfb3BzLT5idXNfaW5pdCgpIGF0dGFjaGVkDQo+IHByaXZhdGUgZGF0YQ0KPiA+Pj4+PiArICoJ
+CSB0byBJM0MvSTJDIGRldmljZXMuIFRoaXMgaG9vayBpcyBjYWxsZWQgd2l0aCB0aGUgYnVzDQo+
+IGxvY2sNCj4gPj4+Pj4gKyAqCQkgaGVsZCBpbiB3cml0ZSBtb2RlLCB3aGljaCBtZWFucyBhbGwg
+X2xvY2tlZCgpDQo+IGhlbHBlcnMgY2FuDQo+ID4+Pj4+ICsgKgkJIHNhZmVseSBiZSBjYWxsZWQg
+ZnJvbSB0aGVyZQ0KPiA+Pj4+PiArICogQHN1cHBvcnRzX2NjY19jbWQ6IHNob3VsZCByZXR1cm4g
+dHJ1ZSBpZiB0aGUgQ0NDIGNvbW1hbmQgaXMNCj4gc3VwcG9ydGVkLCBmYWxzZQ0KPiA+Pj4+PiAr
+ICoJCSAgICAgIG90aGVyd2lzZQ0KPiA+Pj4+PiArICogQHNlbmRfY2NjX2NtZDogc2VuZCBhIEND
+QyBjb21tYW5kDQo+ID4+Pj4+ICsgKiBAc2VuZF9oZHJfY21kczogc2VuZCBvbmUgb3Igc2V2ZXJh
+bCBIRFIgY29tbWFuZHMuIElmIHRoZXJlIGlzDQo+IG1vcmUgdGhhbiBvbmUNCj4gPj4+Pj4gKyAq
+CQkgICBjb21tYW5kLCB0aGV5IHNob3VsZCBpZGVhbGx5IGJlIHNlbnQgaW4gdGhlIHNhbWUNCj4g
+SERSDQo+ID4+Pj4+ICsgKgkJICAgdHJhbnNhY3Rpb24NCj4gPj4+Pj4gKyAqIEBwcml2X3hmZXJz
+OiBkbyBvbmUgb3Igc2V2ZXJhbCBwcml2YXRlIEkzQyBTRFIgdHJhbnNmZXJzDQo+ID4+Pj4+ICsg
+KiBAaTJjX3hmZXJzOiBkbyBvbmUgb3Igc2V2ZXJhbCBJMkMgdHJhbnNmZXJzDQo+ID4+Pj4+ICsg
+KiBAcmVxdWVzdF9pYmk6IGF0dGFjaCBhbiBJQkkgaGFuZGxlciB0byBhbiBJM0MgZGV2aWNlLiBU
+aGlzIGltcGxpZXMNCj4gZGVmaW5pbmcNCj4gPj4+Pj4gKyAqCQkgYW4gSUJJIGhhbmRsZXIgYW5k
+IHRoZSBjb25zdHJhaW50cyBvZiB0aGUgSUJJDQo+IChtYXhpbXVtIHBheWxvYWQNCj4gPj4+Pj4g
+KyAqCQkgbGVuZ3RoIGFuZCBudW1iZXIgb2YgcHJlLWFsbG9jYXRlZCBzbG90cykuDQo+ID4+Pj4+
+ICsgKgkJIFNvbWUgY29udHJvbGxlcnMgc3VwcG9ydCBsZXNzIElCSS1jYXBhYmxlIGRldmljZXMN
+Cj4gdGhhbiByZWd1bGFyDQo+ID4+Pj4+ICsgKgkJIGRldmljZXMsIHNvIHRoaXMgbWV0aG9kIG1p
+Z2h0IHJldHVybiAtJUVCVVNZIGlmDQo+IHRoZXJlJ3Mgbm8NCj4gPj4+Pj4gKyAqCQkgbW9yZSBz
+cGFjZSBmb3IgYW4gZXh0cmEgSUJJIHJlZ2lzdHJhdGlvbg0KPiA+Pj4+PiArICogQGZyZWVfaWJp
+OiBmcmVlIGFuIElCSSBwcmV2aW91c2x5IHJlcXVlc3RlZCB3aXRoIC0+cmVxdWVzdF9pYmkoKS4N
+Cj4gVGhlIElCSQ0KPiA+Pj4+PiArICoJICAgICAgc2hvdWxkIGhhdmUgYmVlbiBkaXNhYmxlZCB3
+aXRoIC0+ZGlzYWJsZV9pcnEoKSBwcmlvciB0bw0KPiB0aGF0DQo+ID4+Pj4+ICsgKiBAZW5hYmxl
+X2liaTogZW5hYmxlIHRoZSBJQkkuIE9ubHkgdmFsaWQgaWYgLT5yZXF1ZXN0X2liaSgpIGhhcyBi
+ZWVuDQo+IGNhbGxlZA0KPiA+Pj4+PiArICoJCXByaW9yIHRvIC0+ZW5hYmxlX2liaSgpLiBUaGUg
+Y29udHJvbGxlciBzaG91bGQgZmlyc3QNCj4gZW5hYmxlDQo+ID4+Pj4+ICsgKgkJdGhlIElCSSBv
+biB0aGUgY29udHJvbGxlciBlbmQgKGZvciBleGFtcGxlLCB1bm1hc2sNCj4gdGhlIGhhcmR3YXJl
+DQo+ID4+Pj4+ICsgKgkJSVJRKSBhbmQgdGhlbiBzZW5kIHRoZSBFTkVDIENDQyBjb21tYW5kICh3
+aXRoDQo+IHRoZSBJQkkgZmxhZyBzZXQpDQo+ID4+Pj4+ICsgKgkJdG8gdGhlIEkzQyBkZXZpY2UN
+Cj4gPj4+Pj4gKyAqIEBkaXNhYmxlX2liaTogZGlzYWJsZSBhbiBJQkkuIEZpcnN0IHNlbmQgdGhl
+IERJU0VDIENDQyBjb21tYW5kDQo+IHdpdGggdGhlIElCSQ0KPiA+Pj4+PiArICoJCSBmbGFnIHNl
+dCBhbmQgdGhlbiBkZWFjdGl2YXRlIHRoZSBoYXJkd2FyZSBJUlEgb24NCj4gdGhlDQo+ID4+Pj4+
+ICsgKgkJIGNvbnRyb2xsZXIgZW5kDQo+ID4+Pj4+ICsgKiBAcmVjeWNsZV9pYmlfc2xvdDogcmVj
+eWNsZSBhbiBJQkkgc2xvdC4gQ2FsbGVkIGV2ZXJ5IHRpbWUgYW4gSUJJIGhhcw0KPiBiZWVuDQo+
+ID4+Pj4+ICsgKgkJICAgICAgcHJvY2Vzc2VkIGJ5IGl0cyBoYW5kbGVyLiBUaGUgSUJJIHNsb3Qg
+c2hvdWxkIGJlDQo+IHB1dCBiYWNrDQo+ID4+Pj4+ICsgKgkJICAgICAgaW4gdGhlIElCSSBzbG90
+IHBvb2wgc28gdGhhdCB0aGUgY29udHJvbGxlciBjYW4gcmUtDQo+IHVzZSBpdA0KPiA+Pj4+PiAr
+ICoJCSAgICAgIGZvciBhIGZ1dHVyZSBJQkkNCj4gPj4+Pj4gKyAqDQo+ID4+Pj4+ICsgKiBPbmUg
+b2YgdGhlIG1vc3QgaW1wb3J0YW50IGhvb2tzIGluIHRoZXNlIG9wcyBpcw0KPiA+Pj4+PiArICog
+JmkzY19tYXN0ZXJfY29udHJvbGxlcl9vcHMtPmJ1c19pbml0KCkuIEhlcmUgaXMgYQ0KPiA+Pj4+
+PiArbm9uLWV4aGF1c3RpdmUgbGlzdCBvZg0KPiA+Pj4+PiArICogdGhpbmdzIHRoYXQgc2hvdWxk
+IGJlIGRvbmUgaW4gJmkzY19tYXN0ZXJfY29udHJvbGxlcl9vcHMtDQo+ID5idXNfaW5pdCgpOg0K
+PiA+Pj4+PiArICoNCj4gPj4+Pj4gKyAqIDEpIGNhbGwgaTNjX21hc3Rlcl9zZXRfaW5mbygpIHdp
+dGggYWxsIGluZm9ybWF0aW9uIGRlc2NyaWJpbmcNCj4gPj4+Pj4gK3RoZSBtYXN0ZXINCj4gPj4+
+Pj4gKyAqIDIpIGFzayBhbGwgc2xhdmVzIHRvIGRyb3AgdGhlaXIgZHluYW1pYyBhZGRyZXNzIGJ5
+IHNlbmRpbmcgdGhlDQo+IFJTVERBQSBDQ0MNCj4gPj4+Pj4gKyAqICAgIHdpdGggaTNjX21hc3Rl
+cl9yc3RkYWFfbG9ja2VkKCkNCj4gPj4+Pj4gKyAqIDMpIGFzayBhbGwgc2xhdmVzIHRvIGRpc2Fi
+bGUgSUJJcyB1c2luZw0KPiA+Pj4+PiAraTNjX21hc3Rlcl9kaXNlY19sb2NrZWQoKQ0KPiA+Pj4+
+PiArICogNCkgc3RhcnQgYSBEREEgcHJvY2VkdXJlIGJ5IHNlbmRpbmcgdGhlIEVOVERBQSBDQ0Mg
+d2l0aA0KPiA+Pj4+PiArICogICAgaTNjX21hc3Rlcl9lbnRkYWFfbG9ja2VkKCksIG9yIHVzaW5n
+IHRoZSBpbnRlcm5hbCBEQUEgbG9naWMNCj4gcHJvdmlkZWQgYnkNCj4gPj4+Pj4gKyAqICAgIHlv
+dXIgY29udHJvbGxlcg0KPiA+Pj4+IFlvdSBtZWFuIFNFVERBU0EgQ0NDIGNvbW1hbmQ/DQo+ID4+
+PiBObywgSSByZWFsbHkgbWVhbiBFTlREQUEgYW5kIERBQS4gQnkgaW50ZXJuYWwgREFBIGxvZ2lj
+IEkgbWVhbiB0aGF0DQo+ID4+PiBzb21lIGNvbnRyb2xsZXJzIGFyZSBwcm9iYWJseSBhdXRvbWF0
+aW5nIHRoZSB3aG9sZSBEQUEgcHJvY2VkdXJlLA0KPiA+Pj4gd2hpbGUgb3RoZXJzIG1heSBsZXQg
+dGhlIFNXIGNvbnRyb2wgZXZlcnkgc3RlcC4NCj4gPj4gTXkgdW5kZXJzdGFuZGluZyBpcyB0aGF0
+IGkzY19tYXN0ZXJfZW50ZGFhX2xvY2tlZCgpIHdpbGwgdHJpZ2dlciB0aGUNCj4gPj4gREFBIHBy
+b2Nlc3MgYW5kIERBQSBjYW4gYmUgZG9uZSBieSBTRVREQVNBLCBFTlREQUEgYW5kIGxhdGVyIGFm
+dGVyDQo+ID4+IHRoZSBidXMgaW5pdGlhbGl6YXRpb24gd2l0aCBTRVRORVdEQS4NCj4gPiBOby4g
+T25seSBFTlREQUEgY2FuIHRyaWdnZXIgYSBEQUEgcHJvY2VkdXJlLiBTRVREQVNBIGlzIGhlcmUg
+dG8gYXNzaWduDQo+ID4gYSBzaW5nbGUgZHluYW1pYyBhZGRyZXNzIHRvIGEgZGV2aWNlIHRoYXQg
+YWxyZWFkeSBoYXMgYSBzdGF0aWMgYWRkcmVzcw0KPiA+IGJ1dCBubyBkeW5hbWljIGFkZHJlc3Mg
+eWV0LCBhbmQgU0VUTkVXREEgaXMgaGVyZSB0byBtb2RpZnkgdGhlDQo+IGR5bmFtaWMNCj4gPiBh
+ZGRyZXNzIG9mIGEgZGV2aWNlIHRoYXQgYWxyZWFkeSBoYXMgb25lLg0KPiANCj4gPj4gSSB0aGlu
+ayB0aGUgREFBIHByb2Nlc3Mgc2hvdWxkIGJlIG1vcmUgZ2VuZXJpYywgcmlnaHQgbm93IGlzIG9u
+bHkNCj4gPj4gbWFkZSB0aHJvdWdoIHRoZSBFTlREQUEgY29tbWFuZCB3aXRoIChjbWQubmRlc3Rz
+ID0gMSkuDQo+ID4+IEkgbWVhbiwgc2hvdWxkbid0IHRoaXMgYmUgbWFkZSBieSB0aGUgY29yZT8g
+Rmlyc3QgZG9pbmcgREFBIGZvciB0aGUNCj4gPj4gZGV2aWNlcyBkZWNsYXJlZCBhbmQgdGhlbSB0
+cnkgZG8gZGlzY292ZXIgdGhlIHJlc3Qgb2YgZGV2aWNlcyBvbiB0aGUgYnVzLg0KPiA+IENhbiB5
+b3UgZGV0YWlsIGEgYml0IG1vcmU/IElmIHRoZSBvbmx5IHBhcnQgeW91J3JlIGNvbXBsYWluaW5n
+IGFib3V0DQo+ID4gaXMgcHJlLWFzc2lnbm1lbnQgb2YgZHluYW1pYyBhZGRyZXNzZXMgd2l0aCBT
+RVREQVNBIHdoZW4gYSBkZXZpY2UgaXMNCj4gPiBkZWNsYXJlZCBpbiB0aGUgRFQgd2l0aCBhIHJl
+ZyBhbmQgZHluYW1pYy1hZGRyZXNzIHByb3BlcnR5LCB0aGVuIHllcywNCj4gPiBJIHRoaW5rIEkg
+Y2FuIHByb3ZpZGUgYW4gaGVscGVyIGZvciB0aGF0LiBCdXQgdGhpcyBoZWxwZXIgd291bGQgc3Rp
+bGwNCj4gPiBoYXZlIHRvIGJlIGNhbGxlZCBmcm9tIHRoZSBtYXN0ZXIgY29udHJvbGxlciBkcml2
+ZXIgKGZyb20gLT5idXNfaW5pdCgpDQo+ID4gb3IgYWZ0ZXIgYSBIb3QtSm9pbikuDQo+ID4NCj4g
+PiBOb3csIGlmIHRoZSBxdWVzdGlvbiBpcywgaXMgdGhlcmUgYSB3YXkgd2UgY2FuIGF1dG9tYXRl
+IHRoaW5ncyBldmVuDQo+ID4gbW9yZSBhbmQgY29tcGxldGVseSBpbXBsZW1lbnQgREFBIGZyb20g
+dGhlIGNvcmU/IEkgZG91YnQgaXQsIGJlY2F1c2UNCj4gPiB0aGUgd2F5IHRoZSBjb3JlIHdpbGwg
+dHJpZ2dlciBEQUEsIGV4cG9zZSBkaXNjb3ZlcmVkIGRldmljZXMgb3IgYWxsb3cNCj4gPiB5b3Ug
+dG8gZGVjbGFyZSBtYW51YWxseSBhc3NpZ25lZCBhZGRyZXNzZXMgaXMgbGlrZWx5IHRvIGJlDQo+
+ID4gY29udHJvbGxlci1kZXBlbmRlbnQuDQo+IA0KPiBQbGVhc2UgcmVmZXIgdG8gZmlndXJlIDkw
+IG9mIHB1YmxpYyBzcGVjaWZpY2F0aW9uLiBBcyB5b3UgY2FuIHNlZSB0aGUgREFBDQo+IHByb2Nl
+c3Mgc2hvdWxkIHN0YXJ0IHdpdGggU0VUREFTQSBjb21tYW5kLg0KPiANCj4gV2l0aCB0aGUgY3Vy
+cmVudCBmbG93IG9mIHRoaXMgcGF0Y2ggdGhlIERBQSBwcm9jZXNzIGlzIGxpbWl0ZWQgdG8gRU5U
+REFBDQo+IGNvbW1hbmQgb25seS4NCj4gDQo+ID4gV2hlbiBJIGRlc2lnbmVkIHRoZSBmcmFtZXdv
+cmsgSSB0b29rIHRoZSBkZWNpc2lvbiB0byBiYXNlIG15IHdvcmsgb24NCj4gPiB0aGUgc3BlYyBy
+YXRoZXIgdGhhbiBmb2N1c2luZyBvbiB0aGUgSTNDIG1hc3RlciBjb250cm9sbGVyIEkgaGFkIHRv
+DQo+ID4gc3VwcG9ydCAoQ2FkZW5jZSkuIFRoaXMgaXMgdGhlIHJlYXNvbiBJIGRlY2lkZWQgdG8g
+a2VlcCB0aGUgaW50ZXJmYWNlDQo+ID4gYXMgc2ltcGxlIGFzIHBvc3NpYmxlIGF0IHRoZSByaXNr
+IG9mIGVuY291cmFnaW5nIGNvZGUtZHVwbGljYXRpb24gKGF0DQo+ID4gZmlyc3QpIHJhdGhlciB0
+aGFuIGNvbWluZyB1cCB3aXRoIGFuIGludGVyZmFjZSB0aGF0IGlzIGRlc2lnbmVkIHdpdGggYQ0K
+PiA+IHNpbmdsZSBjb250cm9sbGVyIGluIG1pbmQgYW5kIGhhdmluZyB0byBicmVhayB0aGluZ3Mg
+ZXZlcnkgdGltZSBhIG5ldw0KPiA+IGNvbnRyb2xsZXIgY29tZXMgb3V0Lg0KPiA+DQo+ID4gVGhh
+bmsgeW91IGZvciB5b3UgY29tbWVudHMsIGJ1dCBJJ2QgbGlrZSB0byBrbm93IGlmIHNvbWUgb2Yg
+bXkgZGVzaWduDQo+ID4gY2hvaWNlcyBhcmUgYmxvY2tpbmcgeW91IHRvIHN1cHBvcnQgeW91ciBj
+b250cm9sbGVyLiBXaGF0IEkndmUgc2VlbiBzbw0KPiA+IGZhciBpcyBhIGNvbGxlY3Rpb24gb2Yg
+dGhpbmdzIHRoYXQgbWlnaHQgYmUgcmVsZXZhbnQgdG8gZml4ICh0aG91Z2gNCj4gPiBtb3N0IG9m
+IHRoZW0gYXJlIHN1YmplY3QgdG8gaW50ZXJwcmV0YXRpb24gYW5kL29yIGEgbWF0dGVyIG9mIHRh
+c3RlKSwNCj4gPiBidXQgbm90aGluZyB0aGF0IHNob3VsZCByZWFsbHkgYmxvY2sgeW91Lg0KPiA+
+DQo+ID4gQ2FuIHlvdSBjbGFyaWZ5IHRoYXQsIGFuZCBtYXliZSBjb21lIGJhY2sgd2l0aCBhIGxp
+c3Qgb2YgdGhpbmdzIHRoYXQNCj4gPiB5b3UgdGhpbmsgYXJlIHByZXZlbnRpbmcgeW91IGZyb20g
+cHJvcGVybHkgc3VwcG9ydGluZyB0aGUgU3lub3BzeXMNCj4gPiBjb250cm9sbGVyPw0KPiA+DQo+
+ID4gVGhhbmtzLA0KPiA+DQo+ID4gQm9yaXMNCj4gDQo+IEFzIHlvdSBjYW4gY2hlY2sgZnJvbSBt
+ecKgIGNvbW1lbnRzIG15IGNvbmNlcm5zIGFyZSBhYm91dCB0aGUgaTNjDQo+IHNwZWNpZmljYXRp
+b24gd2l0aG91dCB0aGUgY29udHJvbGxlciBpbiBtaW5kLg0KPiANCj4gQmVzdCByZWdhcmRzLA0K
+PiBWaXRvciBTb2FyZXMNCj4gDQoNCg==
