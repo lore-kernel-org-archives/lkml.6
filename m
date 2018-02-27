@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754073AbeB0PRT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:17:19 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:43612 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752573AbeB0PRR (ORCPT
+        id S1754145AbeB0PSo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:18:44 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:42150 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753995AbeB0PSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:17:17 -0500
-X-Google-Smtp-Source: AG47ELs+idRr5mTycsQSl/zZS+WN22BqQX0GNn9nh04drYkd0x5I+h7N5+wyBvEgaQ5nWn6c+y0uwA==
-Message-ID: <1519744633.1116.10.camel@ndufresne.ca>
+        Tue, 27 Feb 2018 10:18:42 -0500
+X-Google-Smtp-Source: AG47ELvhn4FASbumGP+YguZ4Awx5SWXZLai9GDGfBkivPJnex9DtnRDk2KDRiF8XTz1xutDQbz+lpA==
+Message-ID: <1519744718.1116.11.camel@ndufresne.ca>
 Subject: Re: [Patch v8 12/12] Documention: v4l: Documentation for HEVC CIDs
 From: Nicolas Dufresne <nicolas@ndufresne.ca>
 To: Smitha T Murthy <smitha.t@samsung.com>,
@@ -17,13 +17,13 @@ To: Smitha T Murthy <smitha.t@samsung.com>,
 Cc: kyungmin.park@samsung.com, kamil@wypas.org, jtp.park@samsung.com,
         a.hajda@samsung.com, mchehab@kernel.org, pankaj.dubey@samsung.com,
         krzk@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Date: Tue, 27 Feb 2018 10:17:13 -0500
+Date: Tue, 27 Feb 2018 10:18:38 -0500
 In-Reply-To: <1517574348-22111-13-git-send-email-smitha.t@samsung.com>
 References: <1517574348-22111-1-git-send-email-smitha.t@samsung.com>
          <CGME20180202125020epcas2p2052bfe072a33069cffd3d9bfe7856ae5@epcas2p2.samsung.com>
          <1517574348-22111-13-git-send-email-smitha.t@samsung.com>
 Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-ORUq8FiJZwnUrkkOCokg"
+        boundary="=-DD1nREBSczfLhoS/z4rp"
 X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -31,7 +31,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-ORUq8FiJZwnUrkkOCokg
+--=-DD1nREBSczfLhoS/z4rp
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -202,11 +202,11 @@ Le vendredi 02 f=C3=A9vrier 2018 =C3=A0 17:55 +0530, Smitha T Murthy a =C3=
 > +    * - ``V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_STILL_PICTURE``
 > +      - Main still picture profile.
 > +    * - ``V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN10``
+
+Just a nit pick, but we have in AVC HIGH_10, to be consistent should be
+name this one MAIN_10 ?
+
 > +      - Main 10 profile.
-
-This is the profiles from v1, shouldn't we add the other (20+)
-extensions that came in v2, v3 and v4 ?
-
 > +
 > +.. raw:: latex
 > +
@@ -526,16 +526,16 @@ extensions that came in v2, v3 and v4 ?
 >  .. _camera-controls:
 > =20
 >  Camera Control Reference
---=-ORUq8FiJZwnUrkkOCokg
+--=-DD1nREBSczfLhoS/z4rp
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCWpV2eQAKCRBxUwItrAao
-HEfYAJ4jNygTcBACB7Fys9kazzL2AWYDcACePT/UB4HKNR3UMRykvc+M4gsg4pU=
-=ayyO
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCWpV2zwAKCRBxUwItrAao
+HGxCAKCuQe94Gu0FSwCwOFL5icq01Z+eywCdEwwNzj50ogNc/crZVXWxowHP9To=
+=l/4d
 -----END PGP SIGNATURE-----
 
---=-ORUq8FiJZwnUrkkOCokg--
+--=-DD1nREBSczfLhoS/z4rp--
