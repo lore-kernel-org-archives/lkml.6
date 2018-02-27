@@ -1,109 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754014AbeB0O4c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:56:32 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:23506 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753897AbeB0O4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:56:30 -0500
-X-IronPort-AV: E=Sophos;i="5.47,401,1515427200";
-   d="scan'208";a="72922503"
-From: Alex Lemberg <Alex.Lemberg@wdc.com>
-To: Harish Jenny K N <harish_kandiga@mentor.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in
- /proc/partitions
-Thread-Topic: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in
- /proc/partitions
-Thread-Index: AQHTr77gTAsg8icfe0GBsxZvuBdg+qO4eGEA
-Date: Tue, 27 Feb 2018 14:56:26 +0000
-Message-ID: <CB89C150-B842-475C-A53A-C6FE7E8A710A@wdc.com>
-References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-In-Reply-To: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.9.0.180116
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alex.Lemberg@wdc.com;
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN3PR0401MB1638;7:uTUWpbe8O2nI4umF3WzMi9s1hOec0dBSLxsyvgbCW1E2xWPzgENcA+WF67m2N0xNE//lIZg5C5wkB9ujFKjU1Thk0tC/l7kzTr633ukUGY94gVk5hhdD6iBI9l+iKNIbfoZxrfVaT81Upb2gW6opiz7chriCluLa2Y1qeBnYfOBCH9rvakyJccXkHtj7yb54WjJvV4O/DemTPmgay4QjscG7xIS2tKRMUOrUlqmFl7l3zGjbmqJdadE8NQD+DQF5;20:5o2Mfr0u7BYJISRuk02yduxmXM5bOyQYD6yveSEJBE3xM7g5UA7+ytMsNRyFDTLDNzLMOGCt1wriBDpeabuh0tr4uI3stK+6AXqzBP+aMUVI02iaATJiPn+jV2rJsdvRqtm+N/LldVP6oJ9y6pFjqXKmGhTzocVwmt8E6XRyVNY=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1d7f1e6d-fcd5-4685-0e42-08d57df246cf
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BN3PR0401MB1638;
-x-ms-traffictypediagnostic: BN3PR0401MB1638:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BN3PR0401MB16381B89A2F9A0CC80587DCB8DC00@BN3PR0401MB1638.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231220)(944501198)(3002001)(6055026)(6041288)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:BN3PR0401MB1638;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0401MB1638;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(39380400002)(366004)(189003)(199004)(53936002)(68736007)(2950100002)(66066001)(14454004)(3846002)(97736004)(6116002)(36756003)(82746002)(8676002)(5660300001)(106356001)(81166006)(81156014)(8936002)(26005)(86362001)(2906002)(102836004)(966005)(7736002)(59450400001)(110136005)(2501003)(105586002)(54906003)(5250100002)(229853002)(6246003)(316002)(6506007)(305945005)(2900100001)(58126008)(6436002)(4326008)(2201001)(3280700002)(6486002)(83716003)(76176011)(6306002)(99286004)(478600001)(25786009)(33656002)(3660700001)(72206003)(6512007)(186003)(422495003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN3PR0401MB1638;H:BN3PR0401MB1235.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: MboWVAAw35py7PGYyI0bw+8fwFQujzFwHD1eSJ3uvgdBlKRLfWbkenMeXsw5Z1676msJHIeGsJucK7dXH0Fzae1wIBT4SfMtFGbaf5VBkj3nAaW7h7uVGoXS9jiGfKCO9K25aj7YEO71DNH4JVEI2R+mFsdTrqfn5gdSWSqeSmo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EABF50BC22CD074793560B5B7445C1DD@namprd04.prod.outlook.com>
+        id S1754037AbeB0O6V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:58:21 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40664 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754002AbeB0O6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:58:19 -0500
+Date: Tue, 27 Feb 2018 15:58:10 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v2 00/15] s390: vfio-ap: guest dedicated crypto adapters
+Message-ID: <20180227155810.0a4acda9.cohuck@redhat.com>
+In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d7f1e6d-fcd5-4685-0e42-08d57df246cf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 14:56:26.5388
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0401MB1638
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1REufOP002863
 
-While RPMB partition requires special IOCTL
+On Tue, 27 Feb 2018 09:27:58 -0500
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Thanks,
-Alex 
-﻿On 2/27/18, 1:34 PM, "linux-mmc-owner@vger.kernel.org on behalf of Harish Jenny K N" <linux-mmc-owner@vger.kernel.org on behalf of harish_kandiga@mentor.com> wrote:
+> On s390, we have cryptographic coprocessor cards, which are modeled on
+> Linux as devices on the AP bus. Each card can be partitioned into domains
+> which can be thought of as a set of hardware registers for processing 
+> crypto commands. Crypto commands are sent to a specific domain within a
+> card is via a queue which is identified as a (card,domain) tuple. We model 
+> this something like the following (assuming we have access to cards 3 and 
+> 4 and domains 1 and 2):
+> 
+> AP -> card3 -> queue (3,1)
+>             -> queue (3,2)
+>    -> card4 -> queue (4,1)
+>             -> queue (4,2)  
+> 
+> If we want to virtualize this, we can use a feature provided by the
+> hardware. We basically attach a satellite control block to our main
+> hardware virtualization control block and the hardware takes care of
+> most of the rest.
+> 
+> For this control block, we don't specify explicit tuples, but a list of
+> cards and a list of domains. The guest will get access to the cross
+> product.
+> 
+> Because of this, we need to take care that the lists provided to
+> different guests don't overlap; i.e., we need to enforce sane
+> configurations. Otherwise, one guest may get access to things like
+> secret keys for another guest.
+> 
+> The idea of this patch set is to introduce a new device, the matrix
+> device. This matrix device hangs off a different root and acts as the
+> parent node for mdev devices.
+> 
+> If you now want to give the tuples (4,1) and (4,2), you need to do the
+> following:
+> 
+> - Unbind the (4,1) and (4,2) tuples from their ap bus driver.
+> - Bind the (4,1) and (4,2) tuples to the vfio_ap driver.
+> - Create the mediated device.
+> - Assign card 4 and domains 1 and 2 to the mediated device
+> 
+> QEMU will now simply consume the mediated device and things should work.
+> 
+> For a complete description of the architecture and concepts underlying the 
+> design, see the Documentation/s390/vfio-ap.txt file included with this
+> patch set.
+> 
+> v1 => v2 Change log:
+> ===================
 
-    From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-    
-    Since RPMB area is accessible via special ioctl only and boot areas
-    are unlikely to contain any partitions, exclude them all from listing
-    in /proc/partitions. This will hide them from various user-level
-    software (e.g. fdisk), thus avoiding unnecessary access attempts.
-    
-    Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-    Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
-    ---
-     drivers/mmc/core/block.c | 3 ++-
-     1 file changed, 2 insertions(+), 1 deletion(-)
-    
-    diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-    index 20135a5..376e47e 100644
-    --- a/drivers/mmc/core/block.c
-    +++ b/drivers/mmc/core/block.c
-    @@ -2341,7 +2341,8 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
-     	set_disk_ro(md->disk, md->read_only || default_ro);
-     	md->disk->flags = GENHD_FL_EXT_DEVT;
-     	if (area_type & (MMC_BLK_DATA_AREA_RPMB | MMC_BLK_DATA_AREA_BOOT))
-    -		md->disk->flags |= GENHD_FL_NO_PART_SCAN;
-    +		md->disk->flags |= GENHD_FL_NO_PART_SCAN
-    +				   | GENHD_FL_SUPPRESS_PARTITION_INFO;
-     
-     	/*
-     	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
-    -- 
-    1.9.1
-    
-    --
-    To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-    the body of a message to majordomo@vger.kernel.org
-    More majordomo info at  http://vger.kernel.org/majordomo-info.html
-    
+Uh, this is very long... It seems most of the changes are not related
+to the basic approach, but concerned with details? The general
+structure was fine last time IIRC.
+
+> * Added documentation vfio-ap.txt
+> * Renamed vfio_ap_matrix module and device driver to vfio_ap
+> * Use device core device list instead of maintaining list of matrix
+>   devices in driver
+> * Added VSIE support for AP
+> * Create matrix device before registering VFIO AP device driver with the
+>   AP bus
+> * Renamed the following files in drivers/s390/crypto:
+>   * vfio_ap_matrix.drv -> vfio_ap_drv
+>   * vfio_ap_matrix_private.h -> vfio_ap_private.h
+>   * vfio_ap_matrix_ops.c -> vfio_ap_ops.c
+> * arch/s390/include/asm/kvm/ap-matrix-config.h
+>   * Renamed to kvm-ap.h
+>   * Changed the data type of the bit mask fields for the matrix structure
+>     to unsigned long and create them with DECLARE_BITMAP 
+>   * Changed #define prefixes from AP_MATRIX to KVM_AP
+>   * Changed function and structure prefixes from ap_matrix to kvm_ap
+>   * Added function interface to check if AP Extended Addressing (APXA)
+>     facility is installedCRYCB_FORMAT_MASK
+>   * Added function interface to get the maximum ID for AP mask type
+>   * Added function interface to set the AP execution mode
+> * arch/s390/kvm/ap-matrix-config.c
+>   * Renamed to kvm-ap.c
+>   * Changed function prefixes from ap_matrix to kvm_ap
+>   * Added function to check if AP Extended Addressing (APXA) facility is
+>     installed
+>   * Added function to get the maximum ID for AP mask type
+>   * Added function to set the AP execution mode
+>   * Added a boolean parameter to the functions that retrieve the APM, AQM
+>     and ADM bit mask fields from the CRYCB. If true, then the function
+>     will clear the bits in the mask before returning a reference to it
+>   * Added validation to verify that APM, AQM and ADM bits that are set do
+>     not exceed the maximum ID value allowed
+>   * 
+> * arch/s390/include/asm/kvm_host.h
+>   * Changed defined for ECA_AP to ECA_APIE - interpretive execution mode
+>   * Added a flag to struct kvm_s390_crypto to indicate whether the 
+>     KVM_S390_VM_CPU_FEAT_AP CPU model feature for AP facilities is set
+>   * Added two CPU facilities features to set STFLE.12 and STFLE.15
+> * arch/s390/kvm/kvm-s390.c
+>   * Added initialization for new KVM_S390_VM_CPU_FEAT_AP CPU model feature
+>   * Removed kvm_s390_apxa_installed() function
+>   * Changed call to kvm_s390_apxa_installed() which has been removed to a
+>     call to new kvm_ap_apxa_installed() function.
+>   * Added code to kvm_s390_vcpu_crypto_setup() to set the new CPU model 
+>     feature flag in the kvm_s390_crypto structure 
+>   * Added CRYCB_FORMAT_MASK to mask CRYCBD
+> * arch/s390/tools/gen_facilities.c
+>   * Added STFLE.12 and STFLE.15 to struct facility _def
+> * drivers/s390/crypto/vfio_ap_matrix_private.h
+>   * Changed name of file to vfio_ap.private.h
+>   * Changed #define prefixes from VFIO_AP_MATRIX to VFIO_AP
+>   * struct ap_matrix: removed list fields and locks
+>   * struct vfio_ap_queue: removed list field
+>   * Renamed functions ap_matrix_mdev_register and ap_matrix_mdev_unregister
+>     to vfio_ap_mdev_register and vfio_ap_mdev_unregister respectively
+> * drivers/s390/crypto/vfio_ap_matrix_drv.c
+>   * Renamed file to drivers/s390/crypto/vfio_ap_drv.c
+>   * Changed all #define, structure and function prefixes to vfio_ap
+>   * probe function
+>     * Changed root device name for the matrix device to vfio_ap:
+>       i.e., /sys/devices/vfio_ap/matrix
+>     * No longer storing the AP queue device in a list, it is retrievable 
+>       via the device core
+>     * Removed unnecessary check whether matrix device exists
+>     * Store the vfio_ap_queue structure in the private field of the 
+>       ap_queue structure rather than using list interface
+>   * remove function
+>     * Retrieve vfio_ap_queue structure from the struct ap_queue private 
+>       data rather than from a list
+>   * Removed unnecessary check 
+> * drivers/s390/crypto/vfio_ap_matrix_ops.c
+>   * Renamed file to vfio_ap_ops.c
+>   * Changed #define prefixes from AP_MATRIX to VFIO_AP
+>   * Changed function name prefixes from ap_matrix to vfio_ap
+>   * Removed ioctl to configure the CRYCB
+>   * create function
+>     * Removed ap_matrix_mdev_find_by_uuid() function - function is provided
+>       by mdev core
+>     * Removed available_instances verification, provided by mdev core
+>     * Removed check to see if mediated device exists, handled by mdev core
+>   * notifier function
+>     * Configuring matrix here instead of via ioctl
+>     * Set interpretive execution mode for all VCPUs
+>    * Removed R/O attributes to display adapters and domains
+>    * Added an R/O attribute to display the matrix
+>   * assign_control_domain mdev attribute:
+>     * Removed check to see if the domain is installed on the linux host
+>     * Added check to verify the control domain ID does not exceed the max 
+>       value
+>   * assign_adapter mdev attribute:
+>     * Added check to verify the adapter ID does not exceed the max 
+>       value
+>     * If any APQNs configured for the mediated matrix device that
+>       have an APID matching the adapter ID being assigned are not
+>       bound to the vfio_ap device driver then it is assumed that the APQN 
+>       is bound to another driver and assignment will fail
+>   * assign_domain mdev attribute:
+>     * Added check to verify the domain ID does not exceed the max 
+>       value
+>     * If any APQNs configured for the mediated matrix device that
+>       have an APQI matching the domain ID being assigned are not
+>       bound to the vfio_ap device driver then it is assumed that the APQN 
+>       is bound to another driver and assignment will fail
+> * tools/arch/s390/include/uapi/asm/kvm.h
+>   * removed  KVM_S390_VM_CPU_FEAT_AP feature definition
+> 
+> Tony Krowiak (15):
+>   KVM: s390: refactor crypto initialization
+>   s390: vsie: implement AP support for second level guest
+>   s390: zcrypt: externalize AP instructions available function
+>   KVM: s390: CPU model support for AP virtualization
+>   s390: vfio-ap: base implementation of VFIO AP device driver
+>   s390: vfio-ap: register matrix device with VFIO mdev framework
+>   KVM: s390: Interfaces to configure/deconfigure guest's AP matrix
+>   KVM: s390: interface to enable AP execution mode
+>   s390: vfio-ap: sysfs interfaces to configure adapters
+>   s390: vfio-ap: sysfs interfaces to configure domains
+>   s390: vfio-ap: sysfs interfaces to configure control domains
+>   s390: vfio-ap: sysfs interface to view matrix mdev matrix
+>   KVM: s390: Configure the guest's CRYCB
+>   s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+>   s390: doc: detailed specifications for AP virtualization
+> 
+>  Documentation/s390/vfio-ap.txt          |  514 ++++++++++++++++++
+>  MAINTAINERS                             |   14 +
+>  arch/s390/Kconfig                       |    8 +
+>  arch/s390/configs/default_defconfig     |    3 +
+>  arch/s390/configs/gcov_defconfig        |    3 +
+>  arch/s390/configs/performance_defconfig |    3 +
+>  arch/s390/defconfig                     |    3 +
+>  arch/s390/include/asm/ap.h              |    7 +
+>  arch/s390/include/asm/kvm-ap.h          |   59 +++
+>  arch/s390/include/asm/kvm_host.h        |    2 +
+>  arch/s390/include/uapi/asm/kvm.h        |    1 +
+>  arch/s390/kvm/Makefile                  |    2 +-
+>  arch/s390/kvm/kvm-ap.c                  |  336 ++++++++++++
+>  arch/s390/kvm/kvm-s390.c                |   66 +--
+>  arch/s390/kvm/kvm-s390.h                |    1 +
+>  arch/s390/kvm/vsie.c                    |   71 +++-
+>  arch/s390/tools/gen_facilities.c        |    2 +
+>  drivers/s390/crypto/Makefile            |    4 +
+>  drivers/s390/crypto/ap_bus.c            |    6 +
+>  drivers/s390/crypto/vfio_ap_drv.c       |  143 +++++
+>  drivers/s390/crypto/vfio_ap_ops.c       |  868 +++++++++++++++++++++++++++++++
+>  drivers/s390/crypto/vfio_ap_private.h   |   45 ++
+>  include/uapi/linux/vfio.h               |    2 +
+>  23 files changed, 2096 insertions(+), 67 deletions(-)
+>  create mode 100644 Documentation/s390/vfio-ap.txt
+>  create mode 100644 arch/s390/include/asm/kvm-ap.h
+>  create mode 100644 arch/s390/kvm/kvm-ap.c
+>  create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+>  create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>  create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+> 
