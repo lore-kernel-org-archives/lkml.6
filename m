@@ -1,169 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeB0MUG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 07:20:06 -0500
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:37588 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752397AbeB0MUE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 07:20:04 -0500
-X-Google-Smtp-Source: AH8x226Fg50DMsEhuhPe79F5WujpmD3coIFcJ4N8FnOPJn8AtcpU2Ao9Kr3y3KH+hBYatcUWqlLFzm3fZckYhv/cBjg=
-MIME-Version: 1.0
-In-Reply-To: <001a1147c53824d6970566309e4e@google.com>
-References: <001a1147c53824d6970566309e4e@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 27 Feb 2018 13:19:42 +0100
-Message-ID: <CACT4Y+bm5uPQej+DU7cHrbBKkdfZ3x18DZo=X3cdebi8R4Tu1Q@mail.gmail.com>
-Subject: Re: general protection fault in hrtimer_active (2)
-To: syzbot <syzbot+fb7a33a4b6c35007a72b@syzkaller.appspotmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753025AbeB0MXy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 07:23:54 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43134 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752107AbeB0MXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 07:23:52 -0500
+Message-ID: <1519734229.2699.6.camel@redhat.com>
+Subject: Re: WARNING in smc_unhash_sk
+From: Davide Caratti <dcaratti@redhat.com>
+To: syzbot <syzbot+3a0748c8f2f210c0ef9b@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.vnet.ibm.com
+In-Reply-To: <001a114fa99028d2a10565e33df4@google.com>
+References: <001a114fa99028d2a10565e33df4@google.com>
+Organization: red hat
+Content-Type: multipart/mixed; boundary="=-UQZW0R4usRki+zH1OxSq"
+Date: Tue, 27 Feb 2018 13:23:49 +0100
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 1:18 PM, syzbot
-<syzbot+fb7a33a4b6c35007a72b@syzkaller.appspotmail.com> wrote:
+
+--=-UQZW0R4usRki+zH1OxSq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+On Fri, 2018-02-23 at 07:59 -0800, syzbot wrote:
 > Hello,
->
+> 
 > syzbot hit the following crash on upstream commit
-> 6f70eb2b00eb416146247c65003d31f4df983ce0 (Mon Feb 26 21:22:45 2018 +0000)
-> Merge branch 'idr-2018-02-06' of
-> git://git.infradead.org/users/willy/linux-dax
->
-> So far this crash happened 867 times on upstream.
-> Unfortunately, I don't have any reproducer for this crash yet.
+> af3e79d29555b97dd096e2f8e36a0f50213808a8 (Tue Feb 20 18:05:02 2018 +0000)
+> Merge tag 'leds_for-4.16-rc3' of  
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds
+> 
+> So far this crash happened 27 times on  
+> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/master,  
+> net-next, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
 > Raw console output is attached.
 > compiler: gcc (GCC) 7.1.1 20170620
 > .config is attached.
-
-
-Paulo,
-
-This started happening on syzbot with threatening frequency, and it
-looks like it may be related to your recent "KVM: x86: move LAPIC
-initialization after VMCS creation".
-
-
+> 
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+fb7a33a4b6c35007a72b@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
+> Reported-by: syzbot+3a0748c8f2f210c0ef9b@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for  
 > details.
 > If you forward the report, please keep this part and the footer.
->
-> 8021q: adding VLAN 0 to HW filter on device bond0
-> IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
-> 8021q: adding VLAN 0 to HW filter on device bond0
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-> CPU: 1 PID: 5486 Comm: syz-executor1 Not tainted 4.16.0-rc3+ #331
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> 
+> WARNING: CPU: 1 PID: 9921 at ./include/net/sock.h:638 sk_del_node_init  
+> include/net/sock.h:638 [inline]
+> WARNING: CPU: 1 PID: 9921 at ./include/net/sock.h:638  
+> smc_unhash_sk+0x335/0x450 net/smc/af_smc.c:90
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 1 PID: 9921 Comm: syzkaller089677 Not tainted 4.16.0-rc2+ #324
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 > Google 01/01/2011
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:hrtimer_active+0x1da/0x3c0 kernel/time/hrtimer.c:1277
-> RSP: 0018:ffff8801b4ebf3c0 EFLAGS: 00010202
-> RAX: 0000000000000008 RBX: 1ffff100369d7ea5 RCX: ffffffff81610225
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-> RDX: 0000000000010000 RSI: ffffc90001e1b000 RDI: 0000000000000010
-> RBP: ffff8801b4ebf500 R08: 0000000000002c02 R09: 0000000000000000
-> R10: 0000000000000011 R11: ffffed00365cb078 R12: 0000000000000010
-> R13: 0000000000000000 R14: ffffed00369d7e83 R15: dffffc0000000000
-> FS:  00007f8f8c80b700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f8f8c7ea000 CR3: 00000001b4577003 CR4: 00000000001626e0
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->  hrtimer_try_to_cancel+0x91/0x5b0 kernel/time/hrtimer.c:1128
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->  hrtimer_cancel+0x22/0x40 kernel/time/hrtimer.c:1154
->  kvm_lapic_reset+0x93/0xf40 arch/x86/kvm/lapic.c:2015
->  kvm_arch_vcpu_setup+0x31/0x50 arch/x86/kvm/x86.c:7978
->  kvm_vm_ioctl_create_vcpu arch/x86/kvm/../../../virt/kvm/kvm_main.c:2459
-> [inline]
->  kvm_vm_ioctl+0x52d/0x1cf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2949
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
->  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> RIP: 0033:0x453d69
-> RSP: 002b:00007f8f8c80ac68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f8f8c80b6d4 RCX: 0000000000453d69
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> RDX: 0000000000000000 RSI: 000000000000ae41 RDI: 0000000000000014
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 000000000000020e R14: 00000000006f31f0 R15: 0000000000000000
-> Code:
-> kasan: CONFIG_KASAN_INLINE enabled
-> ff ff 48 8d 85 18 ff ff ff 48 c1
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> e8 03 4e 8d 34 38 e8 1b f2 0f 00 48 8b 85 f0 fe ff ff c6 00 00 48 8b 85 d8
-> fe ff ff 48 c1 e8 03 <42> 80 3c 38 00 0f 85 c2 01 00 00 48 8b 85 e8 fe ff ff
-> 48 8b 58
-> RIP: __read_once_size include/linux/compiler.h:188 [inline] RSP:
-> ffff8801b4ebf3c0
-> RIP: hrtimer_active+0x1da/0x3c0 kernel/time/hrtimer.c:1277 RSP:
-> ffff8801b4ebf3c0
-> general protection fault: 0000 [#2] SMP KASAN
-> ---[ end trace a73097188f35aad4 ]---
+>   __dump_stack lib/dump_stack.c:17 [inline]
+>   dump_stack+0x194/0x24d lib/dump_stack.c:53
+>   panic+0x1e4/0x41c kernel/panic.c:183
+>   __warn+0x1dc/0x200 kernel/panic.c:547
+>   report_bug+0x211/0x2d0 lib/bug.c:184
+>   fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>   fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>   do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>   do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>   invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
+> RIP: 0010:sk_del_node_init include/net/sock.h:638 [inline]
+> RIP: 0010:smc_unhash_sk+0x335/0x450 net/smc/af_smc.c:90
+> RSP: 0018:ffff8801b639f198 EFLAGS: 00010293
+> RAX: ffff8801b684a340 RBX: 1ffff10036c73e37 RCX: ffffffff85a3f1f5
+> RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 1ffff10036c73e3b
+> RBP: ffff8801b639f280 R08: dffffc0000000000 R09: 0000000000000004
+> R10: ffff8801b639f050 R11: 0000000000000004 R12: ffff8801b639f258
+> R13: ffffffff87669b40 R14: ffff8801c08d57c0 R15: 1ffff10036c73e3b
+>   smc_release+0x321/0x580 net/smc/af_smc.c:148
+>   sock_release+0x8d/0x1e0 net/socket.c:595
+>   sock_close+0x16/0x20 net/socket.c:1149
+>   __fput+0x327/0x7e0 fs/file_table.c:209
+>   ____fput+0x15/0x20 fs/file_table.c:243
+>   task_work_run+0x199/0x270 kernel/task_work.c:113
+>   exit_task_work include/linux/task_work.h:22 [inline]
+>   do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+>   do_group_exit+0x149/0x400 kernel/exit.c:968
+>   get_signal+0x73a/0x16d0 kernel/signal.c:2469
+>   do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
+>   exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
+>   prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>   do_syscall_64+0x6e5/0x940 arch/x86/entry/common.c:292
+>   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x44cad9
+> RSP: 002b:00007fbf24687ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000007
+> RAX: 0000000000000001 RBX: 0000000000700024 RCX: 000000000044cad9
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000020000080
+> RBP: 0000000000700020 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000080ef3f R14: 00007fbf246889c0 R15: 0000000000000005
 > Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
->
->
+>     (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
+> 
 > ---
 > This bug is generated by a dumb bot. It may contain errors.
 > See https://goo.gl/tpsmEJ for details.
 > Direct all questions to syzkaller@googlegroups.com.
->
+> 
 > syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
+> If you forgot to add the Reported-by tag, once the fix for this bug is  
 > merged
 > into any tree, please reply to this email with:
 > #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
 > To mark this as a duplicate of another syzbot report, please reply with:
 > #syz dup: exact-subject-of-another-report
 > If it's a one-off invalid bug report, please reply with:
 > #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
+> Note: if the crash happens again, it will cause creation of a new bug  
 > report.
 > Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/001a1147c53824d6970566309e4e%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+
+--=-UQZW0R4usRki+zH1OxSq
+Content-Disposition: attachment;
+	filename*0=0001-af_smc-fix-NULL-pointer-dereference-on-sock_create_k.pat;
+	filename*1=ch
+Content-Type: text/x-patch;
+	name="0001-af_smc-fix-NULL-pointer-dereference-on-sock_create_k.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RnJvbSBjMjU4YmYzYWQwNzk4NWVhZjRlMDdkNzY2N2I3ODgyY2I5YTI2NjFiIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8YzI1OGJmM2FkMDc5ODVlYWY0ZTA3ZDc2NjdiNzg4
+MmNiOWEyNjYxYi4xNTE5NzMyNTQ1LmdpdC5kY2FyYXR0aUByZWRoYXQuY29tPgpGcm9tOiBEYXZp
+ZGUgQ2FyYXR0aSA8ZGNhcmF0dGlAcmVkaGF0LmNvbT4KRGF0ZTogVHVlLCAyNyBGZWIgMjAxOCAx
+Mjo0NToxMSArMDEwMApTdWJqZWN0OiBbUEFUQ0ggbmV0XSBhZl9zbWM6IGZpeCBOVUxMIHBvaW50
+ZXIgZGVyZWZlcmVuY2Ugb24KIHNvY2tfY3JlYXRlX2tlcm4oKSBlcnJvciBwYXRoCgp3aGVuIHNv
+Y2tfY3JlYXRlX2tlcm4oLi4uLCBhKSByZXR1cm5zIGFuIGVycm9yLCAnYScgbWlnaHQgbm90IGJl
+IGEgdmFsaWQKcG9pbnRlciwgc28gaXQgc2hvdWxkbid0IGJlIGRlcmVmZXJlbmNlZCB0byByZWFk
+IGEtPnNrLT5za19zbmRidWYgYW5kCmFuZCBhLT5zay0+c2tfcmN2YnVmLgoKRml4ZXM6IGNkNjg1
+MWYzMDM4NiBzbWM6IHJlbW90ZSBtZW1vcnkgYnVmZmVycyAoUk1CcykKUmVwb3J0ZWQtYnk6IHN5
+emJvdCszYTA3NDhjOGYyZjIxMGMwZWY5YkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25l
+ZC1vZmYtYnk6IERhdmlkZSBDYXJhdHRpIDxkY2FyYXR0aUByZWRoYXQuY29tPgotLS0KIG5ldC9z
+bWMvYWZfc21jLmMgfCA0ICsrKy0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9uZXQvc21jL2FmX3NtYy5jIGIvbmV0L3NtYy9hZl9z
+bWMuYwppbmRleCAzOGFlMjJiNjVlNzcuLjI3ZTdkMGI1OWRhOSAxMDA2NDQKLS0tIGEvbmV0L3Nt
+Yy9hZl9zbWMuYworKysgYi9uZXQvc21jL2FmX3NtYy5jCkBAIC0xNDA1LDggKzE0MDUsMTAgQEAg
+c3RhdGljIGludCBzbWNfY3JlYXRlKHN0cnVjdCBuZXQgKm5ldCwgc3RydWN0IHNvY2tldCAqc29j
+aywgaW50IHByb3RvY29sLAogCXNtYy0+dXNlX2ZhbGxiYWNrID0gZmFsc2U7IC8qIGFzc3VtZSBy
+ZG1hIGNhcGFiaWxpdHkgZmlyc3QgKi8KIAlyYyA9IHNvY2tfY3JlYXRlX2tlcm4obmV0LCBQRl9J
+TkVULCBTT0NLX1NUUkVBTSwKIAkJCSAgICAgIElQUFJPVE9fVENQLCAmc21jLT5jbGNzb2NrKTsK
+LQlpZiAocmMpCisJaWYgKHJjKSB7CiAJCXNrX2NvbW1vbl9yZWxlYXNlKHNrKTsKKwkJZ290byBv
+dXQ7CisJfQogCXNtYy0+c2suc2tfc25kYnVmID0gbWF4KHNtYy0+Y2xjc29jay0+c2stPnNrX3Nu
+ZGJ1ZiwgU01DX0JVRl9NSU5fU0laRSk7CiAJc21jLT5zay5za19yY3ZidWYgPSBtYXgoc21jLT5j
+bGNzb2NrLT5zay0+c2tfcmN2YnVmLCBTTUNfQlVGX01JTl9TSVpFKTsKIAotLSAKMi4xNC4zCgo=
+
+
+--=-UQZW0R4usRki+zH1OxSq--
