@@ -1,41 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeB0QtC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:49:02 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:46684 "EHLO
+        id S1752016AbeB0QtF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:49:05 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46687 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750997AbeB0QtB (ORCPT
+        with ESMTP id S1751893AbeB0QtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:49:01 -0500
+        Tue, 27 Feb 2018 11:49:02 -0500
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: mingo@kernel.org
 Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
-        Julia Cartwright <juliac@eso.teric.us>
-Subject: [PATCH v3 00/02] Consolidate tasklet + tasklet-hi code
-Date: Tue, 27 Feb 2018 17:48:06 +0100
-Message-Id: <20180227164808.10093-1-bigeasy@linutronix.de>
+        Julia Cartwright <juliac@eso.teric.us>, Ingo Molnar <mingo@elte.hu>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 2/2] kernel/sofirq: consolidate common code in tasklet_action() + tasklet_hi_action()
+Date: Tue, 27 Feb 2018 17:48:08 +0100
+Message-Id: <20180227164808.10093-3-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180227164808.10093-1-bigeasy@linutronix.de>
+References: <20180227164808.10093-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo made a RT patch a few years back called "tasklet: Prevent tasklets
-from going into infinite spin in RT" [0]. I ripped the non-RT pieces out
-of it and here they are. I kept him as the original Author.
+From: Ingo Molnar <mingo@elte.hu>
 
-v1…v3: in v1 I had this_cpu_ptr(&tasklet_hi_vec) without disabling
-       interrupts and was objected by Steven. There are (indeed) some
-       users which use this outside if of the interrupt.
-       So in v2 I moved this but then Julia suggested pass just the
-       __percpu pointer and use this_cpu_ptr() once interrupts are
-       disabled.
-       This is all 1/2. 2/2 is unchanged because tasklet_action() /
-       tasklet_hi_action() run always in BH and can't migrate to another
-       CPU between this_cpu_() access and disabling interrupts.
+tasklet_action() + tasklet_hi_action() are almost identical.
+Move the common code from both function into __tasklet_schedule_common()
+and let both functions invoke it with different arguments.
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/tasklet-rt-prevent-tasklets-from-going-into-infinite-spin-in-rt.patch?h=linux-4.14.y-rt-patches
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bigeasy: splitted out from RT's "tasklet: Prevent tasklets from going
+into infinite spin in RT" and added commit message]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/softirq.c | 54 +++++++++++++++-------------------------------------=
+--
+ 1 file changed, 15 insertions(+), 39 deletions(-)
 
-Sebastian
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 2394b009994f..177de3640c78 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -490,14 +490,16 @@ void __tasklet_hi_schedule(struct tasklet_struct *t)
+ }
+ EXPORT_SYMBOL(__tasklet_hi_schedule);
+=20
+-static __latent_entropy void tasklet_action(struct softirq_action *a)
++static void tasklet_action_common(struct softirq_action *a,
++				  struct tasklet_head *tl_head,
++				  unsigned int softirq_nr)
+ {
+ 	struct tasklet_struct *list;
+=20
+ 	local_irq_disable();
+-	list =3D __this_cpu_read(tasklet_vec.head);
+-	__this_cpu_write(tasklet_vec.head, NULL);
+-	__this_cpu_write(tasklet_vec.tail, this_cpu_ptr(&tasklet_vec.head));
++	list =3D tl_head->head;
++	tl_head->head =3D NULL;
++	tl_head->tail =3D &tl_head->head;
+ 	local_irq_enable();
+=20
+ 	while (list) {
+@@ -519,47 +521,21 @@ static __latent_entropy void tasklet_action(struct so=
+ftirq_action *a)
+=20
+ 		local_irq_disable();
+ 		t->next =3D NULL;
+-		*__this_cpu_read(tasklet_vec.tail) =3D t;
+-		__this_cpu_write(tasklet_vec.tail, &(t->next));
+-		__raise_softirq_irqoff(TASKLET_SOFTIRQ);
++		*tl_head->tail =3D t;
++		tl_head->tail =3D &t->next;
++		__raise_softirq_irqoff(softirq_nr);
+ 		local_irq_enable();
+ 	}
+ }
+=20
++static __latent_entropy void tasklet_action(struct softirq_action *a)
++{
++	tasklet_action_common(a, this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
++}
++
+ static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
+ {
+-	struct tasklet_struct *list;
+-
+-	local_irq_disable();
+-	list =3D __this_cpu_read(tasklet_hi_vec.head);
+-	__this_cpu_write(tasklet_hi_vec.head, NULL);
+-	__this_cpu_write(tasklet_hi_vec.tail, this_cpu_ptr(&tasklet_hi_vec.head));
+-	local_irq_enable();
+-
+-	while (list) {
+-		struct tasklet_struct *t =3D list;
+-
+-		list =3D list->next;
+-
+-		if (tasklet_trylock(t)) {
+-			if (!atomic_read(&t->count)) {
+-				if (!test_and_clear_bit(TASKLET_STATE_SCHED,
+-							&t->state))
+-					BUG();
+-				t->func(t->data);
+-				tasklet_unlock(t);
+-				continue;
+-			}
+-			tasklet_unlock(t);
+-		}
+-
+-		local_irq_disable();
+-		t->next =3D NULL;
+-		*__this_cpu_read(tasklet_hi_vec.tail) =3D t;
+-		__this_cpu_write(tasklet_hi_vec.tail, &(t->next));
+-		__raise_softirq_irqoff(HI_SOFTIRQ);
+-		local_irq_enable();
+-	}
++	tasklet_action_common(a, this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
+ }
+=20
+ void tasklet_init(struct tasklet_struct *t,
+--=20
+2.16.2
