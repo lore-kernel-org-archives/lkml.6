@@ -1,134 +1,141 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1988021-1519750852-2-5358992488444448427
+X-Cyrus-Session-Id: sloti22d1t05-351074-1519705946-2-6365248406300968744
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='cz',
-  MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519750852; b=XkAnEbnFcCzuHwm9c2YIgjcoy3Xz1JJyFZkWksFS/qijlDR
-    jG87/MVwSbeoyKXuPwjxyYfyHNZBQLmYWYylNgCoaSg/nKOOdT8jLCzPLbVk/is7
-    Uy5M9JbeovUdNvtHGACtbKAyy32jym2tQnsS6PwWYePmZSYjVeI4aY5dEKhKRUL2
-    i0EYrLYlenqHDlR1jYSO7ak6F7JuYt1KUYtRwTPdq14epc4Vh4LXsg2fRUJgnwz9
-    UJHv0pLinKJ7z34YeaOsSA2Y2R7C7afsTJfk1JLu3qWFWxF+l9hYd8QNrLBBgEBG
-    rbxNjpE/EnCTQr3qyWceH+pgdmfMq47U5gqWxpA==
+    t=1519705945; b=fr9t33Zg+k9N1GnGWU6758OlaG/mo+esYVMHxSBqCOvAw25
+    trbPmVQBF8dSR8fNZN2nlGA4vTxpZDUXGTQA0XOt+XbyQauSbW7yGkrEb+wqo9mn
+    tYQt8SOGCp4hGVKN7vupo+Fw/SeC4Z7G+7OO6MF43NxYNO67QVwHnm5H0shSa0EU
+    ubbDFHuGDobifM/BzYcYbjo3K1hJ0l9r5WcTmun8INbK4/nMKVYj62GLPCJ08VDs
+    Doi4KxO81UVw69DNubRKiAzT1hQuGXiiXug+4sgbq5Hu+ugCcNTelH+cy9GVWJOw
+    SIpbChxP7JM9UiuegzkeWZZ5wlN9Rw0fynABEFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519750852; bh=ZCVFn7pMEdUucKz3KJh5ngUMzX
-    aOoji44lDRhDp5psE=; b=L3saWzRr8xs4uOBbekNVLxUP/igtxuwNtLCL+hSyA/
-    sBuNCk9sSx8RqlZeFaKqBW25ord7QuXB1pgylAoLICJqoFdP8I8u6P6zbwFsgz2k
-    eCccjZilO3AiR4ym60vgEIwQt0UfbSnQOhBCT6Kuo+mBWZg0v0fiXCnoXMAqE62A
-    dEqz4BT+LM8Z3AxCZsxoYY/zAFf1x3Rap8jlXd7VdPFRGsf9uIuign0aS1e0jeq2
-    w7801dzPoIJnSyuvWemUe78lovHBqMCU2kFHLiUbAUJ8suR7QVj8IisXURH5ZqiI
-    YnxOL8TkMf6dUTuYppYOpfpb2/KdRYC4SvRFgABQ6DVA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519705945; bh=7UCf6spm4yGXGg8DrN1jP+pfwOFMv+Ae1bAjGSHmVbk=; b=k
+    RhOlkoSUpi0+fAh3wYzy1i3Omwg2xPy7pwGlirbp9t7UI802LNs9U8fsvWk6VO+r
+    OsAeJY4iDpRMSQ1hQhSatjzh/2HXfbk4AlVLY7fCxIotoFe1CiNQUb7ZxsYIHKJN
+    uw0TyfovzNW/RgdoLqVgx3yij30h6qiS59sgVB+TF9D8K+ik64pxGX4S1AoXimPC
+    I1+8nLz9PH/F1hNLlTRV7mPD5PLDSPUSoFjIBs2PiYUMKhvp9CgAekar3xdziEvb
+    OLJzQtg83tTLnJNTH9GxsRT7B5FkPr+0HdSwf0GsBSw2+vrBiC/auaUF9AW89FOe
+    A/RZuipMkt/DX1IRj6a1A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeB0RAf (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 12:00:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47230 "EHLO mx2.suse.de"
+        id S1751819AbeB0E3N (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 23:29:13 -0500
+Received: from mga04.intel.com ([192.55.52.120]:32552 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751735AbeB0RAe (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:00:34 -0500
-Date: Tue, 27 Feb 2018 18:00:31 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Jan Kara <jack@suse.com>
-Subject: Re: [PATCH v4 03/12] ext2, dax: finish implementing dax_sem helpers
-Message-ID: <20180227170031.lgf5tc3vt3umrwbb@quack2.suse.cz>
+        id S1751591AbeB0E3L (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 26 Feb 2018 23:29:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="33879271"
+Subject: [PATCH v4 02/12] dax: introduce IS_DEVDAX() and IS_FSDAX()
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "supporter:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        linux-mm@kvack.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>
+Date: Mon, 26 Feb 2018 20:20:05 -0800
+Message-ID: <151970520551.26729.12707678649514382892.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151970521121.26729.7741760690622342144.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151970521121.26729.7741760690622342144.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon 26-02-18 20:20:11, Dan Williams wrote:
-> dax_sem_{up,down}_write_sem() allow the ext2 dax semaphore to be compiled
-> out in the CONFIG_FS_DAX=n case. However there are still some open coded
-> uses of the semaphore. Add dax_sem_{up_read,down_read,_is_locked}()
-> helpers and convert all open-coded usages of the semaphore to the
-> helpers.
+The current IS_DAX() helper that checks the S_DAX inode flag is
+ambiguous, and currently has the broken assumption that the S_DAX flag
+is only non-zero in the CONFIG_FS_DAX=y case. In preparation for
+defining S_DAX to non-zero in the  CONFIG_FS_DAX=n + CONFIG_DEV_DAX=y
+case, introduce two explicit helpers to replace IS_DAX().
 
-Just one nit below. With that fixed you can add:
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org (supporter:XFS FILESYSTEM)
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
+Reported-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/fs.h |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-> Cc: Jan Kara <jack@suse.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  fs/ext2/ext2.h  |    6 ++++++
->  fs/ext2/file.c  |    5 ++---
->  fs/ext2/inode.c |    4 +---
->  3 files changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index 032295e1d386..7ceb29733cdb 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -711,9 +711,15 @@ struct ext2_inode_info {
->  #ifdef CONFIG_FS_DAX
->  #define dax_sem_down_write(ext2_inode)	down_write(&(ext2_inode)->dax_sem)
->  #define dax_sem_up_write(ext2_inode)	up_write(&(ext2_inode)->dax_sem)
-> +#define dax_sem_is_locked(ext2_inode)	rwsem_is_locked(&(ext2_inode)->dax_sem)
-> +#define dax_sem_down_read(ext2_inode)	down_read(&(ext2_inode)->dax_sem)
-> +#define dax_sem_up_read(ext2_inode)	up_read(&(ext2_inode)->dax_sem)
->  #else
->  #define dax_sem_down_write(ext2_inode)
->  #define dax_sem_up_write(ext2_inode)
-> +#define dax_sem_is_locked(ext2_inode)	(true)
-
-This is a bit dangerous as depending on the use of dax_sem_is_locked()
-you'd need this to return true or false. E.g. assume we'd have a place
-where we'd like to do:
-
-	WARN_ON(dax_sem_is_locked(inode));
-
-or just
-
-	if (dax_sem_is_locked(inode))
-		bail out due to congestion...
-
-How I'd solve this is that I'd define:
-
-#define assert_dax_sem_locked(ext2_inode) WARN_ON(rwsem_is_locked(&(ext2_inode)->dax_sem)
-
-and just as do {} while (0) for !CONFIG_FS_DAX.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 79c413985305..bd0c46880572 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1909,6 +1909,28 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
+ 
++static inline bool IS_DEVDAX(struct inode *inode)
++{
++	if (!IS_ENABLED(CONFIG_DEV_DAX))
++		return false;
++	if ((inode->i_flags & S_DAX) == 0)
++		return false;
++	if (!S_ISCHR(inode->i_mode))
++		return false;
++	return true;
++}
++
++static inline bool IS_FSDAX(struct inode *inode)
++{
++	if (!IS_ENABLED(CONFIG_FS_DAX))
++		return false;
++	if ((inode->i_flags & S_DAX) == 0)
++		return false;
++	if (S_ISCHR(inode->i_mode))
++		return false;
++	return true;
++}
++
+ static inline bool HAS_UNMAPPED_ID(struct inode *inode)
+ {
+ 	return !uid_valid(inode->i_uid) || !gid_valid(inode->i_gid);
