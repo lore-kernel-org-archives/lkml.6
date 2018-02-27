@@ -1,81 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752693AbeB0QPK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:15:10 -0500
-Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:26750 "EHLO
-        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752130AbeB0QPI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:15:08 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HTAABWg5Vah8mZ6EReGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQmgQAoCoNKmCGCAoEWhyGPHgqFMgIagjJXFQECAQEBAQEBAgE?=
- =?us-ascii?q?CEAEBAQoLCQgoL4I4IoJKAQEBAQMjEUUMBAIBCBEEAQEBAgIjAwICAh8lAQgIA?=
- =?us-ascii?q?gQOBQiEdQMVqzuCJ4czDYEwghQBAQEBAQEBAQEBAQEBAQEBAQEBH4EPhjuDPYM?=
- =?us-ascii?q?tgmqCPhAjEoJBgmIFmh4wCY04gzCOfYozhx2BLjSBdHCDEoJAEwyBe3eLO4EXA?=
- =?us-ascii?q?QEB?=
-X-IPAS-Result: =?us-ascii?q?A2HTAABWg5Vah8mZ6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?mgQAoCoNKmCGCAoEWhyGPHgqFMgIagjJXFQECAQEBAQEBAgECEAEBAQoLCQgoL?=
- =?us-ascii?q?4I4IoJKAQEBAQMjEUUMBAIBCBEEAQEBAgIjAwICAh8lAQgIAgQOBQiEdQMVqzu?=
- =?us-ascii?q?CJ4czDYEwghQBAQEBAQEBAQEBAQEBAQEBAQEBH4EPhjuDPYMtgmqCPhAjEoJBg?=
- =?us-ascii?q?mIFmh4wCY04gzCOfYozhx2BLjSBdHCDEoJAEwyBe3eLO4EXAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.47,401,1515477600";
-   d="scan'208";a="220318912"
-X-DLP: DLP_GlobalPCIDSS
-To: <andy.shevchenko@gmail.com>
-CC: <dvhart@infradead.org>, <pali.rohar@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH 1/3] platform/x86: dell-smbios: Correct some style
- warnings
-Thread-Topic: [PATCH 1/3] platform/x86: dell-smbios: Correct some style
- warnings
-Thread-Index: AQHTr+UtT1WLSfvhjkKlO8GzrUNc7aO4bGQQ
-Date: Tue, 27 Feb 2018 16:15:04 +0000
-Message-ID: <a7bb6d4240f04d7ba5b1f07a1087ee64@ausx13mpc124.AMER.DELL.COM>
-References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VfS4vif1_S1Z=z2jAZfERmsiqG0h0j5k6zrmjiQwPGekA@mail.gmail.com>
-In-Reply-To: <CAHp75VfS4vif1_S1Z=z2jAZfERmsiqG0h0j5k6zrmjiQwPGekA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        id S1752745AbeB0QQD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:16:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60324 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751756AbeB0QQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 11:16:02 -0500
+Date: Tue, 27 Feb 2018 17:15:50 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] MIPS: defconfigs: add a defconfig for Microsemi
+ SoCs
+Message-ID: <20180227161550.GC15333@piout.net>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-8-alexandre.belloni@free-electrons.com>
+ <20180214170342.GF3986@saruman>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214170342.GF3986@saruman>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RGFHI7000910
 
-> -----Original Message-----
-> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
-> owner@vger.kernel.org] On Behalf Of Andy Shevchenko
-> Sent: Tuesday, February 27, 2018 10:04 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Darren Hart <dvhart@infradead.org>; Pali Rohár <pali.rohar@gmail.com>;
-> LKML <linux-kernel@vger.kernel.org>; Platform Driver <platform-driver-
-> x86@vger.kernel.org>
-> Subject: Re: [PATCH 1/3] platform/x86: dell-smbios: Correct some style warnings
+On 14/02/2018 at 17:03:43 +0000, James Hogan wrote:
+> On Tue, Jan 16, 2018 at 11:12:39AM +0100, Alexandre Belloni wrote:
+> > +# CONFIG_EARLY_PRINTK is not set
 > 
-> On Tue, Feb 27, 2018 at 5:56 PM, Mario Limonciello
-> <mario.limonciello@dell.com> wrote:
+> Only Loongson1b/1c explicitly disable early printk. Do you disable it
+> for a particular reason?
 > 
-> >         /* 4 bytes of table header, plus 7 bytes of Dell header, plus at least
-> > -          6 bytes of entry */
-> > +        * 6 bytes of entry
-> > +        */
-> 
-> I would prefer not to mix with net style, since you are fixing this, perhaps
-> 
-> /*
->  * 4 ...
->  * 6 ...
->  */
-> 
-> ?
-> 
-Thanks, will adjust again when I resubmit with changes for 3/3.
+
+Well, it is so late that it is not really useful and I don't find that
+particularly interesting to have it on by default.
+
+But I don't have a strong opinion, I certainly can let it enabled.
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
