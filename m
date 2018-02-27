@@ -1,58 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751903AbeB0VK2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:10:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50140 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeB0VK1 (ORCPT
+        id S1751898AbeB0VMv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:12:51 -0500
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:39602 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeB0VMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:10:27 -0500
-Date: Tue, 27 Feb 2018 13:10:22 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 1/5] sysctl: Add kdoc comments to
- do_proc_do{u}intvec_minmax_conv_param
-Message-ID: <20180227211022.GB29918@bombadil.infradead.org>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-2-git-send-email-longman@redhat.com>
+        Tue, 27 Feb 2018 16:12:50 -0500
+X-Google-Smtp-Source: AG47ELvpUCZRIxpUL1pmncz4PyIxqaASPNPy1lTidn5eTREW1906Cnp96c5mztlAQQe2c6V3HIsEyGNyJkHFyCZzxcs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519764591-27456-2-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAHp75VctsM0F4Ldf1zr4CJ2gF3ku3ejTHPYrUQKQ-rJVeX2Wog@mail.gmail.com>
+References: <20180227193118.n33bkbrqxybfhgdc@gmail.com> <CAHp75VctsM0F4Ldf1zr4CJ2gF3ku3ejTHPYrUQKQ-rJVeX2Wog@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 27 Feb 2018 22:12:29 +0100
+Message-ID: <CANiq72nxBSXXq1KbKVExTNTpo8kS_-dso429dzGHwzVD+5dLtw@mail.gmail.com>
+Subject: Re: [PATCH RFC] auxdisplay: charlcd: Fix and clean up handling of x/y commands
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Robert Abel <rabel@robertabel.eu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 03:49:47PM -0500, Waiman Long wrote:
-> +/**
-> + * DOC: do_proc_dointvec_minmax_conv_param
-> + *
-> + * The do_proc_dointvec_minmax_conv_param structure provides the
-> + * minimum and maximum values for doing range checking for those sysctl
-> + * parameters that use the proc_dointvec_minmax() handler. The error
-> + * code -EINVAL will be returned if the range check fails.
-> + *
-> + *  min: ptr to minimum allowable value
-> + *  max: ptr to maximum allowable value
-> + */
+On Tue, Feb 27, 2018 at 9:52 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Feb 27, 2018 at 9:32 PM, Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>> The current version is not parsing multiple x/y commands as the code
+>> originally intended. On top of that, kstrtoul() expects
+>> NULL-terminated strings. Finally, the code had to do two passes over
+>> the string, while now only one is done.
+>>
+>> Some explanations about the supported syntax are added as well.
+>
+> Something like this would work, but see my comments below.
+>
+>> +/*
+>> + * Parses a base 10 number from a string, until a non-digit number is found or
+>> + * until PARSE_N_MAX_SIZE digits.
+>> + *
+>> + * See kstrtoul() for the meaning of the return value.
+>> + * It also returns the next character in the string, i.e. the first non-digit.
+>> + */
+>> +#define PARSE_N_MAX_SIZE (3)
+>> +static unsigned long parse_n(const char *s, unsigned long *res,
+>> +       const char **next_s)
+>
+> static int parse_n(const char *s, unsigned long *res, const char **next_s)
 
-This isn't how to document a struct; see Documentation/doc-guide/kernel-doc.rst
+Oops, thanks!
 
-/**
- * struct do_proc_dointvec_minmax_conv_param - Range checking for sysctls
- * @min: Pointer to minimum allowable value.
- * @max: Pointer to maximum allowable value.
- *
- * Provides the minimum and maximum values allowed for a parameter.  A
- * pointer to this structure should be passed to proc_dointvec_minmax().
- */
+>
+>> +{
+>> +       char tmp[PARSE_N_MAX_SIZE + 1];
+>> +       int i;
+>> +
+>
+> First of all you need
+>
+> unsigned int i = 0;
+>
+> while (s[i] == '0')
+>  i++;
 
-Also, it's inappropriate to document the return value from
-proc_dointvec_minmax() here; that should be in the kernel-doc for the
-function.
+Why?
+
+>
+>> +       for (i = 0; ; ++i) {
+>> +               if (!isdigit(s[i]))
+>> +                       break;
+>> +               if (i >= PARSE_N_MAX_SIZE)
+>> +                       return -EINVAL;
+>> +               tmp[i] = s[i];
+>> +       }
+>
+> And here you partially open coded what simple_strto*() does.
+>
+>> +
+>> +       tmp[i] = 0;
+>> +       *next_s = &s[i];
+>> +       return kstrtoul(tmp, 10, res);
+>> +}
+>
+> It's over engineered. Just simple use simple_strto*() and that's all.
+> Do you really care about overflows? Is those numbers somehow critical?
+> What will go wrong?
+
+We shouldn't use simple_strto*() since it is deprecated. So parse_n()
+can be either this wrapper to call kstrto*() (which indeed is
+overengineered, but easier to understand than Robert's patch that
+modified the original sequence, and can be replaced by an inplace
+version whenever we have one) or we just put a simple loop for the
+moment (like the one Willy coded in 2008). Both are fine with me.
+
+Cheers,
+Miguel
+
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
