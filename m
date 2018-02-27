@@ -1,113 +1,269 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1199706-1519728115-2-14981936365445939315
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519728115; b=gRPxQFDrtBjjg0o9ttO6PhZ4vi34S0OPhQqYLCZnyn21kHo
-    Ki/qylt+FS2Jme/C6Xq2B3O8BsAQ2zs98yk23A7fWBEBxixBH+72V8hbctxBxbzh
-    87NgOfYZg42qqeSkzv6lX0ySpZhGwHFOa53mfoKL69UUDXUrl1WBVwOL3Div45t0
-    ZCFw4G5Kwmq+DUPSevNwf2RIQG+o8lTjyFRcoFtxwv1z9WDkr0IhcUylCRxTfJnW
-    nF4VLuAsmrkL1Wgpq4JwIy5X/uKMr5fzDSbOvsA448qhZARCLmFXjRFVIerqaQYq
-    js1WCBYLWLvItQnyT6vGz0tbBnpnLXL1bkM8c/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1519728115; bh=+j4bfFqKYWSwB7GFXIHNd2WGI+svyzWHlj3yVJCvYo0=; b=t
-    i4DS2qI8oqpYh2lZFMtwZkSf564n2sm3T8m4Tj2swNFSxd90+ccL/TfTpXPyX9N4
-    +PRzqyLziNprY5XsVJylN/sW/5PwodK/DxKcWRgT8mRYlOQ0HJc2MxfmbNPo0Ct+
-    +0gI4igsVtBLHzL+kAbNFT0W53PyZYMt5+yp5D/v3OIneq1UAF1dsiIlYaVdMi77
-    zdrUHmeVMHF/8YVpIK0/K+UM7XW6gCSiiPw6Q/TNvIdPBsbA2/mjzrcSemqBX+96
-    PuqRXA2pg7C6Jn2Hp77nQpgY2RDqQbJH9gTSGqoROEh170FusxptW4vQSXNSo2xr
-    FNNmacwqO2LFh4A4Uiguw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l4PaEu/n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l4PaEu/n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeB0Klw (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 05:41:52 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:9077 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752676AbeB0Klv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 05:41:51 -0500
-From: Roger Quadros <rogerq@ti.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <mgautam@codeaurora.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roger Quadros <rogerq@ti.com>,
-        "# v4 . 12+" <stable@vger.kernel.org>
-Subject: [PATCH] usb: dwc3: Fix lock-up on ID change during system suspend/resume
-Date: Tue, 27 Feb 2018 12:41:41 +0200
-Message-ID: <1519728101-15324-1-git-send-email-rogerq@ti.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <idgar@virtualoco.com>
+X-Google-Smtp-Source: AG47ELsARh+nfqRTqkNNvahm8ejOf6ns/vcdDEpzJDdwP5xp+IhabaDIEd/DLp+C3vqaLLwKieGV
+ARC-Seal: i=1; a=rsa-sha256; t=1519727792; cv=none;
+        d=google.com; s=arc-20160816;
+        b=g7gIrTj9+qax4moH5H6INmGTo6Gn4PZiL/OnmwvIL4iH8V9m09pNZOAIIzHqGjTZJM
+         jzqJFlRXBUKRPjBYAqcvGm1FK9Ir64/h/hoWc7+XpYc+HpXzGm5sJewPvDKAE4i6Cgb7
+         xFQmU8gRiXFHEYjRyoGNCoXX7WJNC1J4zvqCEBxu+rNh4QPfj8UxwRZt+aqLB5DpP9f7
+         yNrKoSjdKeYSc9ypQgkjXTcFDP0Rpvh2DH4JUEH9u74EzZwUCc6zWuq90X075HCvQkiu
+         ZKGmnHvM8Q5BKxrfeThZcy/cBs6lVqsmOIqXnyrpIeBvsJvKKst9nI1L7iS56OQ6bUfg
+         Rong==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=PzNHuwhxqFiuM4IrEbUq26gNczhe2o5fr5NLKRvIs3M=;
+        b=t/9djfWPVlT7jxyWe8pCTIcEABZcVWw8sB/fuGDWigpE2Bly2r9OOW+4o6x9YYu9f8
+         UAXHIu8Ok0eFFmdZ36AHnvCmEpKtuAJmsIwoywQq8zUHNucn07+/en8RsrlvrdtZpKLk
+         2Iwr5T/PaG74lRakinb1K63BF7TBIOkBq9WH+IM43ZDDVJ+8HNeoMpGPZ7p9M+Ldd4Pb
+         IdpVgK18s1hy3WJ/WeoR4SQkL8vCKuLfuA+BbX5ub+laOcg/h4ceKljitHGAIt4FbcMc
+         lC3yKAGiUcS9+s4Y/spBJK8Bt+wsPTmDwYlBh1UzxnA5S/l+n2o9waD5eORhiE+XfCb6
+         57WQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=cJmVMyow;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=cJmVMyow;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+From: Or Idgar <idgar@virtualoco.com>
+To: linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: oidgar@redhat.com,
+	idgar@virtualoco.com,
+	ghammer@redhat.com,
+	Or Idgar <oridgar@gmail.com>
+Subject: [PATCH v4] drivers/misc: vm_gen_counter: initial driver implementation
+Date: Tue, 27 Feb 2018 12:36:03 +0200
+Message-Id: <20180227103603.13656-1-idgar@virtualoco.com>
+X-Mailer: git-send-email 2.14.3
+X-ZohoMailClient: External
+X-ZohoMail: Z_638866495 SPT_1 Z_638866494 SPT_1 SLF_D
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593550089836509896?=
+X-GMAIL-MSGID: =?utf-8?q?1593550089836509896?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-To reproduce the lock up do the following
-- connect otg host adapter and a USB device to the dual-role port
-so that it is in host mode.
-- suspend to mem.
-- disconnect otg adapter.
-- resume the system.
+From: Or Idgar <oridgar@gmail.com>
 
-If we call dwc3_host_exit() before tasks are thawed
-xhci_plat_remove() seems to lock up at the second usb_remove_hcd() call.
+This patch is a driver which expose the Virtual Machine Generation ID
+via sysfs. The ID is a UUID value used to differentiate between virtual
+machines.
 
-To work around this we queue the _dwc3_set_mode() work on
-the system_freezable_wq.
+The VM-Generation ID is a feature defined by Microsoft (paper:
+http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
+hypervisor vendors.
 
-Fixes: 41ce1456e1db ("usb: dwc3: core: make dwc3_set_mode() work properly")
-Cc: <stable@vger.kernel.org> # v4.12+
-Suggested-by: Manu Gautam <mgautam@codeaurora.org>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Or Idgar <oridgar@gmail.com>
 ---
- drivers/usb/dwc3/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index f1d838a..e94bf91 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -175,7 +175,7 @@ void dwc3_set_mode(struct dwc3 *dwc, u32 mode)
- 	dwc->desired_dr_role = mode;
- 	spin_unlock_irqrestore(&dwc->lock, flags);
+Changes in v4:
+- variable phy_addr changed to phys_addr (nit)
+- using iomem functions to support arch portability
+
+ Documentation/ABI/testing/sysfs-hypervisor |  13 +++
+ drivers/misc/Kconfig                       |   6 ++
+ drivers/misc/Makefile                      |   1 +
+ drivers/misc/vmgenid.c                     | 142 +++++++++++++++++++++++++++++
+ 4 files changed, 162 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
+ create mode 100644 drivers/misc/vmgenid.c
+
+diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
+new file mode 100644
+index 000000000000..2f9a7b8eab70
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-hypervisor
+@@ -0,0 +1,13 @@
++What:		/sys/hypervisor/vm_gen_counter
++Date:		February 2018
++Contact:	Or Idgar <idgar@virtualoco.com>
++		Gal Hammer <ghammer@redhat.com>
++Description:	Expose the virtual machine generation ID. The directory
++		contains two files: "generation_id" and "raw". Both files
++		represent the same information.
++
++		"generation_id" file is a UUID string
++		representation.
++
++		"raw" file is a 128-bit integer
++		representation (binary).
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 03605f8fc0dc..5a74802bdfb4 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -500,6 +500,12 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
  
--	queue_work(system_power_efficient_wq, &dwc->drd_work);
-+	queue_work(system_freezable_wq, &dwc->drd_work);
- }
++config VMGENID
++	tristate "Virtual Machine Generation ID driver"
++	help
++	  This is a Virtual Machine Generation ID driver which provides
++	  a virtual machine unique identifier.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index c3c8624f4d95..067aa666bb6a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_VMGENID)		+= vmgenid.o
  
- u32 dwc3_core_fifo_space(struct dwc3_ep *dep, u8 type)
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
+diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
+new file mode 100644
+index 000000000000..6c8d8fe75335
+--- /dev/null
++++ b/drivers/misc/vmgenid.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Virtual Machine Generation ID driver
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
++ *	Authors:
++ *	  Or Idgar <oridgar@gmail.com>
++ *	  Gal Hammer <ghammer@redhat.com>
++ *
++ */
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/kobject.h>
++#include <linux/acpi.h>
++#include <linux/uuid.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
++MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
++MODULE_DESCRIPTION("Virtual Machine Generation ID");
++MODULE_VERSION("0.1");
++
++ACPI_MODULE_NAME("vmgenid");
++
++static u64 phys_addr;
++
++static ssize_t generation_id_show(struct device *_d,
++			      struct device_attribute *attr, char *buf)
++{
++	void __iomem *uuid_map;
++	uuid_t uuid;
++	ssize_t result;
++
++	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
++	if (!uuid_map)
++		return -EFAULT;
++
++	memcpy_fromio(&uuid, uuid_map, sizeof(uuid_t));
++	result = sprintf(buf, "%pUl\n", &uuid);
++	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
++	return result;
++}
++static DEVICE_ATTR_RO(generation_id);
++
++static ssize_t raw_show(struct device *_d,
++			struct device_attribute *attr,
++			      char *buf)
++{
++	void __iomem *uuid_map;
++
++	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
++	if (!uuid_map)
++		return -EFAULT;
++	memcpy_fromio(buf, uuid_map, sizeof(uuid_t));
++	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
++	return sizeof(uuid_t);
++}
++static DEVICE_ATTR_RO(raw);
++
++static struct attribute *vmgenid_attrs[] = {
++	&dev_attr_generation_id.attr,
++	&dev_attr_raw.attr,
++	NULL,
++};
++static const struct attribute_group vmgenid_group = {
++	.name = "vm_gen_counter",
++	.attrs = vmgenid_attrs,
++};
++
++static int get_vmgenid(acpi_handle handle)
++{
++	int i;
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	acpi_status status;
++	union acpi_object *pss;
++	union acpi_object *element;
++
++	status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
++	if (ACPI_FAILURE(status)) {
++		ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
++		return -ENODEV;
++	}
++	pss = buffer.pointer;
++	if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
++		return -EFAULT;
++
++	phys_addr = 0;
++	for (i = 0; i < pss->package.count; i++) {
++		element = &(pss->package.elements[i]);
++		if (element->type != ACPI_TYPE_INTEGER)
++			return -EFAULT;
++		phys_addr |= element->integer.value << i*32;
++	}
++	return 0;
++}
++
++static int acpi_vmgenid_add(struct acpi_device *device)
++{
++	int retval;
++
++	if (!device)
++		return -EINVAL;
++	retval = get_vmgenid(device->handle);
++	if (retval < 0)
++		return retval;
++	return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
++}
++
++static int acpi_vmgenid_remove(struct acpi_device *device)
++{
++	sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
++	return 0;
++}
++
++static const struct acpi_device_id vmgenid_ids[] = {
++	{"QEMUVGID", 0},
++	{"", 0},
++};
++
++static struct acpi_driver acpi_vmgenid_driver = {
++	.name = "vm_gen_counter",
++	.ids = vmgenid_ids,
++	.owner = THIS_MODULE,
++	.ops = {
++		.add = acpi_vmgenid_add,
++		.remove = acpi_vmgenid_remove,
++	}
++};
++
++static int __init vmgenid_init(void)
++{
++	return acpi_bus_register_driver(&acpi_vmgenid_driver);
++}
++
++static void __exit vmgenid_exit(void)
++{
++	acpi_bus_unregister_driver(&acpi_vmgenid_driver);
++}
++
++module_init(vmgenid_init);
++module_exit(vmgenid_exit);
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.14.3
