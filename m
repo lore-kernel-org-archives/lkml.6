@@ -1,77 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeB0JE5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:04:57 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16376 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752336AbeB0JEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:04:55 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
-   d="scan'208";a="207373257"
-Date: Tue, 27 Feb 2018 17:03:20 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH RFC 2/2] vhost: packed ring support
-Message-ID: <20180227090319.h7hxmxp5rpozrb5s@debian>
-References: <1518575829-1431-1-git-send-email-jasowang@redhat.com>
- <1518575829-1431-3-git-send-email-jasowang@redhat.com>
+        id S1752534AbeB0JFG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:05:06 -0500
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:37270 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752519AbeB0JFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:05:01 -0500
+X-Google-Smtp-Source: AH8x224eAaH27obVKrZXZ+6UUk4oEqKZcU/F0n0Ji/cbqgUU7ey8eLUXCOJTcwyl1f9G0GrivKzbig==
+Date: Tue, 27 Feb 2018 19:04:40 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC REBASED 3/5] powerpc/mm/slice: implement
+ slice_check_range_fits
+Message-ID: <20180227190440.45ce8641@roar.ozlabs.ibm.com>
+In-Reply-To: <87k1uy7vbr.fsf@linux.vnet.ibm.com>
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+        <caa9d52e0a8ef15719bafe8002a4ad2dc359c634.1518382747.git.christophe.leroy@c-s.fr>
+        <87k1uy7vbr.fsf@linux.vnet.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1518575829-1431-3-git-send-email-jasowang@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 10:37:09AM +0800, Jason Wang wrote:
-[...]
-> +static void set_desc_used(struct vhost_virtqueue *vq,
-> +			  struct vring_desc_packed *desc, bool wrap_counter)
-> +{
-> +	__virtio16 flags = desc->flags;
-> +
-> +	if (wrap_counter) {
-> +		desc->flags |= cpu_to_vhost16(vq, DESC_AVAIL);
-> +		desc->flags |= cpu_to_vhost16(vq, DESC_USED);
-> +	} else {
-> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_AVAIL);
-> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_USED);
-> +	}
-> +
-> +	desc->flags = flags;
+On Tue, 27 Feb 2018 12:50:08 +0530
+"Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
 
-The `desc->flags` is restored after the change.
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>  +	if ((start + len) > SLICE_LOW_TOP) {
+> > +		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
+> > +		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
+> > +		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
+> > +		unsigned long i;
+> >  
+> > -	slice_bitmap_and(result, mask->high_slices, available->high_slices,
+> > -			 slice_count);
+> > +		for (i = start_index; i < start_index + count; i++) {
+> > +			if (!test_bit(i, available->high_slices))
+> > +				return false;
+> > +		}
+> > +	}  
+> 
+> why not bitmap_equal here instead of test_bit in loop?
 
-> +}
-> +
-> +static int vhost_get_vq_desc_packed(struct vhost_virtqueue *vq,
-> +				    struct iovec iov[], unsigned int iov_size,
-> +				    unsigned int *out_num, unsigned int *in_num,
-> +				    struct vhost_log *log,
-> +				    unsigned int *log_num)
-> +{
-> +	struct vring_desc_packed desc;
-> +	int ret, access, i;
-> +	u16 avail_idx = vq->last_avail_idx;
-> +
-> +	/* When we start there are none of either input nor output. */
-> +	*out_num = *in_num = 0;
-> +	if (unlikely(log))
-> +		*log_num = 0;
-> +
-> +	do {
-> +		unsigned int iov_count = *in_num + *out_num;
-> +
-> +		i = vq->last_avail_idx & (vq->num - 1);
+Because we only have the available bitmap now. If we see large ranges
+here we could use some bitmap operation like find_next_zero_bit perhaps.
 
-The queue size may not be a power of 2 in packed ring.
-
-Best regards,
-Tiwei Bie
+Thanks,
+Nick
