@@ -1,53 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeB0QqQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:46:16 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44396 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751004AbeB0QqO (ORCPT
+        id S1751973AbeB0QtC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:49:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46684 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeB0QtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:46:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E44E760271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 27 Feb 2018 11:49:01 -0500
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
+        Julia Cartwright <juliac@eso.teric.us>
+Subject: [PATCH v3 00/02] Consolidate tasklet + tasklet-hi code
+Date: Tue, 27 Feb 2018 17:48:06 +0100
+Message-Id: <20180227164808.10093-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: ath5k: remove duplicated re-assignment to pointer 'tq'
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180201180327.23435-1-colin.king@canonical.com>
-References: <20180201180327.23435-1-colin.king@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@do-not-panic.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180227164614.323FE60285@smtp.codeaurora.org>
-Date: Tue, 27 Feb 2018 16:46:14 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+Ingo made a RT patch a few years back called "tasklet: Prevent tasklets
+from going into infinite spin in RT" [0]. I ripped the non-RT pieces out
+of it and here they are. I kept him as the original Author.
 
-> Pointer tq is initialized with &ah->ah_txq[queue] and then a few
-> lines later is re-assigned the same value, hence this duplicate
-> assignment is redundant and can be removed.
-> 
-> Cleans up clang warning:
-> drivers/net/wireless/ath/ath5k/qcu.c:326:25: warning: Value stored
-> to 'tq' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+v1…v3: in v1 I had this_cpu_ptr(&tasklet_hi_vec) without disabling
+       interrupts and was objected by Steven. There are (indeed) some
+       users which use this outside if of the interrupt.
+       So in v2 I moved this but then Julia suggested pass just the
+       __percpu pointer and use this_cpu_ptr() once interrupts are
+       disabled.
+       This is all 1/2. 2/2 is unchanged because tasklet_action() /
+       tasklet_hi_action() run always in BH and can't migrate to another
+       CPU between this_cpu_() access and disabling interrupts.
 
-Patch applied to ath-next branch of ath.git, thanks.
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/tasklet-rt-prevent-tasklets-from-going-into-infinite-spin-in-rt.patch?h=linux-4.14.y-rt-patches
 
-2571c081cb43 ath5k: remove duplicated re-assignment to pointer 'tq'
-
--- 
-https://patchwork.kernel.org/patch/10195805/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Sebastian
