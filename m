@@ -1,112 +1,134 @@
-Return-Path: <mhocko@kernel.org>
-X-Google-Smtp-Source: AH8x226BIyqy1lfTj6O4rKwpt9A4h/QtksOQKNkKws44kqqDXXzsh7L+zzJdawFrGgZa4dGdPtt4
-ARC-Seal: i=1; a=rsa-sha256; t=1519721850; cv=none;
+Return-Path: <blackzert@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519738051; cv=none;
         d=google.com; s=arc-20160816;
-        b=rTc7IPNCQXyKrrh6yinBJIeOPXxiYSvPvo5ryQnoMScdA+9ZfF7R1OpOygU1uyV/wF
-         IAjuGVUO8at8oEqxzqXHKZzwVC2nBaEbd/L3xqI0aZspN2D3d8DtdgGoznS3MUk/ye0X
-         +GTZz20xMQYk+ALoGuL675VQfUAZD5rCOsXiSuBiddZYb4LzhqC4JomLVn8BDMc6gsbW
-         NcTiPWQ+sKVIGL5qJeCGYnUOLkpn/M7kX90ggSjYHVue3llNCtXGh7WG6CsXIBSMCoYu
-         KQ5GAPvMSXH7usAi/KIwK/8ZdnfWJPqnviaKtdaePxalCWxldIV2wzH7PJL41oBWPvYq
-         l6ZQ==
+        b=MQ0ww/Dee2xSErF4z5Kj7SwV1LvkDWVtTfKga54amlrRW9BDsAKr9sqIHU2QykStMV
+         OUdfCLdWanWjdhqGlyBS6q19faO3Wde2XdGI/uF4j3ZZmahDRcGmKdJCYvEVnuen9sWU
+         l+VAwv//tQzWm2RzvPdPnTofViWssnNz3DAT66mCTjdsk6/DQwI7k7+jMoJLIV3jL3N6
+         zsmgeVY2xlZ5HFPmAImte+wOMDQ2yc3PWH8Hph7qYkyFZ3khAJ7P2NzyyEFaIPlp+KP3
+         nYotxUbrWE2llR/QnHNl2pzHr8Wn/1BwPDtNzi6pymCKpD4V8vRWfWhZvnjUIxytKKXo
+         rHKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=2+/7LowXRF9jcurzYLnBsEzcKIvVGzAZHz7mV7zCWI0=;
-        b=leBc6QLJH1zaXlN6OLHxnRNZKVtsjKpkv4Trlr/aItqFAwyHyEik5zSyel3p6KmCko
-         lPyJi6q8wbcnXh0/Q1q/k3kmjXIgHmYU+ZeTBQCYA7sgjiWk2HveCEAY5TbOxJR0pkt+
-         vzMIwhB+ytT9/zFfOIyrzRSjO0Wc9DEs+1R92gsNu21abvKJCHMdQGzJOc1EcP223ynP
-         334vivdMm7tDf9WUSFqHYlg3FWeIncSS1mstUGVzBN4eW0NqXbtRfWylqyYpzIAslMUV
-         OFhZnF17Jcumt5pyyORDhNh6ac46D1koSfKjIMice6dqZERaMm9F3OXE66/bhvqhV9n1
-         QNRA==
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=qA+qlnepS59F3sVnKSg+EAXUhVpHV514cIJWLmw0WQE=;
+        b=jtHG1mPpBPP2tyZ+OmncK+ZtsODfP73GSw1kFsVto9RoZ4uvv5TXssJxGtwJIr/MUo
+         VjYMY6OllR3w6KWRPYkpozNQj7s0pWFoCQdROdEq7llFPqss5kG2L4jkQ8ZPHXTCDzUT
+         qqrvxys9nwosv9sHEsQDB91qm8J5+rXNgmxaVVtlY0SMN4kNj9KQl/GVHDWMS+BGxdJC
+         Fe+sLQPe5Axn5tkZ9Ixj2U3ywerZYs53Ln/d1IKa9MQSFA6G2KGYuNZPhMWdocqb5M39
+         3SFVPkmC4NH3P8INoVVBLWjmDXkXVPCIuaRW5JoIYWu0Y7DGCA9pER5bWcRvIXj0utI6
+         7kOg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eiE2iWDz;
+       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
-Date: Tue, 27 Feb 2018 09:57:27 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Ilya Smith <blackzert@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-	kirill.shutemov@linux.intel.com, dsafonov@virtuozzo.com,
-	hughd@google.com, gregkh@linuxfoundation.org, craigb@google.com,
-	oleg@redhat.com, linux-kernel@vger.kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eiE2iWDz;
+       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225effmrqsrhq5ceqEoxB58ifem62b0puht2yB/EpHLTrQgiGh6rGe+06NR3d5BXaa39tnVlRg==
+Content-Type: text/plain;
+	charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: [RFC PATCH] Take mmap_min_addr into account while choosing
  unmapped address for x86-64.
-Message-ID: <20180227085726.GC15357@dhcp22.suse.cz>
+From: Ilya Smith <blackzert@gmail.com>
+In-Reply-To: <20180227085726.GC15357@dhcp22.suse.cz>
+Date: Tue, 27 Feb 2018 16:27:29 +0300
+Cc: tglx@linutronix.de,
+ mingo@redhat.com,
+ hpa@zytor.com,
+ x86@kernel.org,
+ kirill.shutemov@linux.intel.com,
+ dsafonov@virtuozzo.com,
+ hughd@google.com,
+ gregkh@linuxfoundation.org,
+ craigb@google.com,
+ oleg@redhat.com,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B6A5E9B0-4986-4CD4-B01A-B6218D859579@gmail.com>
 References: <20180226211257.63067-1-blackzert@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226211257.63067-1-blackzert@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+ <20180227085726.GC15357@dhcp22.suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593499619093217840?=
-X-GMAIL-MSGID: =?utf-8?q?1593543859366419546?=
+X-GMAIL-MSGID: =?utf-8?q?1593560847066776267?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 27-02-18 00:12:57, Ilya Smith wrote:
-[...]
-> diff --git a/arch/x86/kernel/sys_x86_64.c b/arch/x86/kernel/sys_x86_64.c
-> index 676774b9bb8d..1752fe5cb735 100644
-> --- a/arch/x86/kernel/sys_x86_64.c
-> +++ b/arch/x86/kernel/sys_x86_64.c
-> @@ -17,6 +17,7 @@
->  #include <linux/random.h>
->  #include <linux/uaccess.h>
->  #include <linux/elf.h>
-> +#include <linux/security.h>
->  
->  #include <asm/elf.h>
->  #include <asm/compat.h>
-> @@ -185,7 +186,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
->  		return addr;
->  
->  	/* requested length too big for entire address space */
-> -	if (len > TASK_SIZE)
-> +	if (len > TASK_SIZE - mmap_min_addr)
->  		return -ENOMEM;
->  
->  	/* No address checking. See comment at mmap_address_hint_valid() */
-> @@ -210,7 +211,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
->  
->  	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
->  	info.length = len;
-> -	info.low_limit = PAGE_SIZE;
-> +	info.low_limit = max(PAGE_SIZE, mmap_min_addr);
->  	info.high_limit = get_mmap_base(0);
->  
->  	/*
+>=20
+> mmap_min_addr handling is a bit mess... As you say, we would return
+> EPERM rather than ENOMEM which can be confusing but depleting the
+> address space like that is quite unlikely on 64b unless I am missing.
+> It is good to be in sync here with the generic implementation though,
+> IMO.
+>=20
 
-mmap_min_addr handling is a bit mess... As you say, we would return
-EPERM rather than ENOMEM which can be confusing but depleting the
-address space like that is quite unlikely on 64b unless I am missing.
-It is good to be in sync here with the generic implementation though,
-IMO.
+If we take a look on mm/mmap.c:
+#ifndef HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
+unsigned long
+arch_get_unmapped_area_topdown(
+=E2=80=A6
+	if (len > TASK_SIZE - mmap_min_addr)
+		return -ENOMEM;
+=E2=80=A6
+	info.low_limit =3D max(PAGE_SIZE, mmap_min_addr);
 
-> diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-> index 155ecbac9e28..b6d0c317639e 100644
-> --- a/arch/x86/mm/mmap.c
-> +++ b/arch/x86/mm/mmap.c
-> @@ -31,6 +31,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/sched/mm.h>
->  #include <linux/compat.h>
-> +#include <linux/security.h>
->  #include <asm/elf.h>
->  
->  #include "physaddr.h"
-> @@ -220,6 +221,9 @@ bool mmap_address_hint_valid(unsigned long addr, unsigned long len)
->  	if (TASK_SIZE - len < addr)
->  		return false;
->  
-> +	if (addr < mmap_min_addr)
-> +		return false;
-> +
->  	return (addr > DEFAULT_MAP_WINDOW) == (addr + len > DEFAULT_MAP_WINDOW);
+And this one looks like a generic implementation.
+But for many other architectures like arch/parisc/kernel/sys_parisc.c=20
+or arch/x86/kernel/sys_x86_64.c
 
-But is this one necessary? We do sanitze hint address before going to
-get_unmapped_address AFAIR.
+	info.low_limit =3D PAGE_SIZE;
 
--- 
-Michal Hocko
-SUSE Labs
+What is looks like an issue for me.
+
+Here is C code could be used as test-case:
+
+#include <errno.h>
+#include <stdio.h>
+#include <sys/mman.h>
+
+int main() {
+  char buffer[1024];
+
+  unsigned long len =3D 1ULL << 46;
+  while(len) {
+    void *ptr =3D mmap(4096, len, 0, MAP_PRIVATE | MAP_ANONYMOUS , -1, =
+0);
+    if (ptr =3D=3D MAP_FAILED) {
+      if (errno =3D=3D EPERM)
+        break;
+      if (errno =3D=3D ENOMEM) {
+        len >>=3D 1;
+        continue;
+      }
+      return -1;
+    }
+  }
+  if (errno =3D=3D EPERM) {
+    printf("Test failed, you have wrong ret code EPERM\n");
+    sprintf(buffer, "cat /proc/%d/maps", getpid());
+    system(buffer);
+    return -1;
+  }
+  return 0;
+}
+
+
+>>=20
+>> +	if (addr < mmap_min_addr)
+>> +		return false;
+>> +
+>> 	return (addr > DEFAULT_MAP_WINDOW) =3D=3D (addr + len > =
+DEFAULT_MAP_WINDOW);
+>=20
+> But is this one necessary? We do sanitze hint address before going to
+> get_unmapped_address AFAIR.
+>=20
+I=E2=80=99m agree, looks like I was trying to fix something that already =
+fine.
+
+Thanks,
+Ilya
