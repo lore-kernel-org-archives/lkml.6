@@ -1,191 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753513AbeB0O2j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:28:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42042 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752573AbeB0O2f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:28:35 -0500
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Subject: [PATCH v2 02/15] s390: vsie: implement AP support for second level guest
-Date: Tue, 27 Feb 2018 09:28:00 -0500
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18022714-0008-0000-0000-000009621B77
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995862; UDB=6.00506230; IPR=6.00775186;
- MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022714-0009-0000-0000-00004631077D
-Message-Id: <1519741693-17440-3-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802270181
+        id S1753538AbeB0O24 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:28:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43050 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752573AbeB0O2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:28:54 -0500
+Reply-To: jtoppins@redhat.com
+Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: prarit@redhat.com, Jon Masters <jcm@redhat.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        astone@redhat.com, James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
+ <CAKv+Gu9FVD18v6WA8MMG5LFX9GPObq_79hFuYv6j+S98a5Ej6w@mail.gmail.com>
+From: Jonathan Toppins <jtoppins@redhat.com>
+Organization: Red Hat
+Message-ID: <1454e833-e3b9-780b-c5db-a6f73e799352@redhat.com>
+Date: Tue, 27 Feb 2018 09:28:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu9FVD18v6WA8MMG5LFX9GPObq_79hFuYv6j+S98a5Ej6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set effective masks and CRYCB format in the shadow copy of the
-guest level 2 CRYCB.
+On 02/27/2018 02:22 AM, Ard Biesheuvel wrote:
+> Hi Jonathan,
+> 
+> On 27 February 2018 at 06:05, Jonathan Toppins <jtoppins@redhat.com> wrote:
+>> This patch allows a user to configure ACPI to be preferred over
+>> device-tree.
+>>
+> 
+> This comes up once a year or so, and the consensus has been so far
+> that it is not up to the kernel to reason about whether DT or ACPI
+> should be preferred if both are supplied, Instead, it is up to the
+> firmware to ensure that only one of those is provided, and we added a
+> generic driver to EDK2 that implements this.
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
----
- arch/s390/include/asm/kvm-ap.h |    2 +
- arch/s390/kvm/kvm-ap.c         |    5 +++
- arch/s390/kvm/vsie.c           |   71 +++++++++++++++++++++++++++++++++-------
- 3 files changed, 66 insertions(+), 12 deletions(-)
+I am assuming EDK2 is some sort of firmware code base, not that I have
+ever heard of it before. This logic compared with the implementation in
+the kernel seems divergent. The kernel is clearly making a choice about
+which boot table (DT vs ACPI) to configure with. So to claim it is not
+the kernel's job to reason about which to use is clearly incorrect. The
+only thing this patch is doing is making it easier for distributions to
+configure which preference the kernel has.
 
-diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-index 4e43117..ef749e7 100644
---- a/arch/s390/include/asm/kvm-ap.h
-+++ b/arch/s390/include/asm/kvm-ap.h
-@@ -13,4 +13,6 @@
- 
- void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd);
- 
-+int kvm_ap_get_crycb_format(struct kvm *kvm);
-+
- #endif /* _ASM_KVM_AP */
-diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-index 5305f4c..bafe63b 100644
---- a/arch/s390/kvm/kvm-ap.c
-+++ b/arch/s390/kvm/kvm-ap.c
-@@ -11,6 +11,11 @@
- 
- #include "kvm-s390.h"
- 
-+int kvm_ap_get_crycb_format(struct kvm *kvm)
-+{
-+	return kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
-+}
-+
- static int kvm_ap_apxa_installed(void)
- {
- 	int ret;
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index 8961e39..93076ba 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -18,6 +18,7 @@
- #include <asm/sclp.h>
- #include <asm/nmi.h>
- #include <asm/dis.h>
-+#include <asm/kvm-ap.h>
- #include "kvm-s390.h"
- #include "gaccess.h"
- 
-@@ -137,12 +138,56 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- }
- 
- /*
-+ * Set up the effective masks for the shadow copy of the crycb. The effective
-+ * masks for guest 3 are set by performing a logical bitwise AND of the guest 3
-+ * masks with the guest 2 masks.
-+ */
-+static void set_crycb_emasks(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
-+{
-+	int fmt = kvm_ap_get_crycb_format(vcpu->kvm);
-+	unsigned long *mask1, *mask2;
-+
-+	switch (fmt) {
-+	case CRYCB_FORMAT1:
-+	case CRYCB_FORMAT2:
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb1.apm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.apm;
-+		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
-+
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb1.aqm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.aqm;
-+		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
-+
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb1.adm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.adm;
-+		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
-+		break;
-+	default:
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb0.apm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.apm;
-+		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
-+
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb0.aqm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.aqm;
-+		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
-+
-+		mask1 = (unsigned long *)vsie_page->crycb.apcb0.adm;
-+		mask2 = (unsigned long *)
-+			vcpu->kvm->arch.crypto.crycb->apcb1.adm;
-+		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
-+		break;
-+	}
-+}
-+
-+/*
-  * Create a shadow copy of the crycb block and setup key wrapping, if
-  * requested for guest 3 and enabled for guest 2.
-  *
-- * We only accept format-1 (no AP in g2), but convert it into format-2
-- * There is nothing to do for format-0.
-- *
-  * Returns: - 0 if shadowed or nothing to do
-  *          - > 0 if control has to be given to guest 2
-  */
-@@ -155,9 +200,17 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- 	unsigned long *b1, *b2;
- 	u8 ecb3_flags;
- 
--	scb_s->crycbd = 0;
--	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
--		return 0;
-+	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb);
-+	kvm_ap_set_crycb_format(vcpu->kvm, &scb_s->crycbd);
-+
-+	/* copy the crycb */
-+	if (read_guest_real(vcpu, crycb_addr, &vsie_page->crycb,
-+			    sizeof(vsie_page->crycb)))
-+		return set_validity_icpt(scb_s, 0x0035U);
-+
-+	/* set up the effective masks */
-+	set_crycb_emasks(vcpu, vsie_page);
-+
- 	/* format-1 is supported with message-security-assist extension 3 */
- 	if (!test_kvm_facility(vcpu->kvm, 76))
- 		return 0;
-@@ -172,13 +225,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- 	else if (!crycb_addr)
- 		return set_validity_icpt(scb_s, 0x0039U);
- 
--	/* copy only the wrapping keys */
--	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
--		return set_validity_icpt(scb_s, 0x0035U);
--
- 	scb_s->ecb3 |= ecb3_flags;
--	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
--			CRYCB_FORMAT2;
- 
- 	/* xor both blocks in one run */
- 	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
--- 
-1.7.1
+> 
+>> Currently for ACPI to be used a user either has to set acpi=on on the
+>> kernel command line or make sure any device tree passed to the kernel
+>> is empty. If the dtb passed to the kernel is non-empty then device-tree
+>> will be chosen as the boot method of choice even if it is not correct.
+> 
+> Your firmware is terminally broken if it provides an incorrect DT, and
+> we should not be fixing it in the kernel.
+
+This logic would seem akin to me asking Bjorn to remove all PCI quirks
+from the kernel, because the systems that use them are "terminally
+broken" or "don't follow the standard". This doesn't seem like a valid
+reason to deny a change that would allow the kernel to boot on more
+hardware. Further it seems rather rigid to effectively say that we only
+run on perfect firmware.
+
+> 
+>> To prevent this situation where a system is only intended to be booted
+>> via ACPI a user can set this kernel configuration so it ignores
+>> device-tree settings unless ACPI table checks fail.
+>>
+> 
+> 'only intended to be booted via ACPI' is a property of the system, not
+> of the OS. If you need this functionality for development, you can
+> append 'acpi=on' to the kernel command line via kconfig.
+
+This is not for development this is for production rate shipping firmware.
