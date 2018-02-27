@@ -1,72 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeB0KEC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:04:02 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5676 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751900AbeB0KEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:04:00 -0500
-Subject: Re: [PATCH v2 00/11] perf events patches for improved ARM64 support
-To: Jiri Olsa <jolsa@redhat.com>
-References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
- <20180227095028.GG21033@krava>
-CC: <ak@linux.intel.com>, <peterz@infradead.org>, <mingo@redhat.com>,
-        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
-        <namhyung@kernel.org>, <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <zhangshaokun@hisilicon.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <057da936-8a4b-050a-6eb7-029965b8f6aa@huawei.com>
-Date: Tue, 27 Feb 2018 10:03:33 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180227095028.GG21033@krava>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1752503AbeB0KHb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:07:31 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33625 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751998AbeB0KH3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 05:07:29 -0500
+X-Google-Smtp-Source: AG47ELvBykaYpwTh+Uddak6MC6bs5fsTGRh5F3bojKQ3ra3ZE19eIlp2H5xXZQybpKmaIJtPU2qZtA==
+From: Sebastian Panceac <sebastian@resin.io>
+To: andy.shevchenko@gmail.com
+Cc: Sebastian Panceac <sebastian@resin.io>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] x86: Fix Intel Edison module stuck reboot
+Date: Tue, 27 Feb 2018 12:07:00 +0200
+Message-Id: <1519726020-24442-1-git-send-email-sebastian@resin.io>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAHp75VfEc0a_Fff1znWVos3rPzCGsvGLGX7NgH_bH96egree7A@mail.gmail.com>
+References: <CAHp75VfEc0a_Fff1znWVos3rPzCGsvGLGX7NgH_bH96egree7A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2018 09:50, Jiri Olsa wrote:
-> On Sat, Feb 24, 2018 at 12:05:21AM +0800, John Garry wrote:
->> This patchset adds support for some perf events features,
->> targeted at ARM64, implemented in a generic fashion.
->>
->> The two main features are as follows:
->> - support for arch/vendor/platform pmu events directory structure
->>    - to support this, topic subdirectory support needs to be dropped
->> - support for parsing standard architecture pmu events
->>
->> On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
->> and HiSilicon hip08 JSONs are relocated/added/updated.
->>
->> In addition, there is a patch to drop mutli-mapfile.csv support and
->> also a bugfix in jevents.c for an error code value.
->>
->> Differences to v1:
->> - Address coding issues from Jiri Olsa in adding arch std event
->>    support (https://lkml.org/lkml/2018/2/6/501)
->> - add patch to drop topic subdirectory support
->> - add patch for bug fix in json_events()
->> - add review tags from Jiri Olsa
->
-> can't tell if those json file changes are ok, but for all the code changes:
->
+Hi Andy,
 
-OK, I need Ganapatrao, William, and ARM64 kernel team/experts to check 
-the JSONS.
+I fixed the commit description according to your suggestions and used git send-email.
 
-Thanks very much,
-John
+Regards!
 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
->
-> thanks,
-> jirka
->
-> .
->
+When powering Intel Edison module with 3.3V,
+the "reboot" command makes the module stuck.
+If the module is powered at a greater voltage,
+like 4.4V(as the Edison Mini Breakout board does), reboot works OK.
+
+This patch copies the behaviour from the official Intel Edison BSP,
+where "IPCMSG_COLD_RESET" message
+was sent to SCU by default at reboot time.
+
+In the official BSP, sending the "IPCMSG_COLD_BOOT" message instead
+of "IPCMSG_COLD_RESET" was possible,
+by using a kernel command line parameter.
+
+Signed-off-by: Sebastian Panceac <sebastian@resin.io>
+---
+ arch/x86/platform/intel-mid/intel-mid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
+index 2c67bae..fb1df94 100644
+--- a/arch/x86/platform/intel-mid/intel-mid.c
++++ b/arch/x86/platform/intel-mid/intel-mid.c
+@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
+ 
+ static void intel_mid_reboot(void)
+ {
+-	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
++	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
+ }
+ 
+ static unsigned long __init intel_mid_calibrate_tsc(void)
+-- 
+2.7.4
