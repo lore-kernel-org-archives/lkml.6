@@ -1,59 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeB0IOt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:14:49 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35399 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751949AbeB0IOr (ORCPT
+        id S1752184AbeB0IQ0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:16:26 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:31275 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751952AbeB0IQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:14:47 -0500
-X-Google-Smtp-Source: AG47ELuFBnuW1/bBZ+Qe7WM/R7hBFwJXkBz62Ke74OCKaFIQItXtzQLd6HUO/Qzomd4UxXWOuHfbQg==
-Date: Tue, 27 Feb 2018 11:14:37 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Borislav Petkov <bp@suse.de>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Andi Kleen <ak@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] x86/boot/compressed/64: Find a place for 32-bit
- trampoline
-Message-ID: <20180227081437.epg5tmhg7gfzunwp@node.shutemov.name>
-References: <20180226180451.86788-1-kirill.shutemov@linux.intel.com>
- <20180226180451.86788-3-kirill.shutemov@linux.intel.com>
- <20180226223038.GI14140@pd.tnic>
+        Tue, 27 Feb 2018 03:16:25 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37290301"
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+To: <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <michal.lkml@markovi.net>, <yamada.masahiro@socionext.com>
+Subject: [PATCH] kbuild/kallsyms: trivial typo fix
+Date: Tue, 27 Feb 2018 16:16:19 +0800
+Message-ID: <20180227081619.23935-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226223038.GI14140@pd.tnic>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 2E26D48AE766.AC7BB
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 11:30:38PM +0100, Borislav Petkov wrote:
-> On Mon, Feb 26, 2018 at 09:04:48PM +0300, Kirill A. Shutemov wrote:
-> > +++ b/arch/x86/boot/compressed/pgtable.h
-> > @@ -0,0 +1,11 @@
-> > +#ifndef BOOT_COMPRESSED_PAGETABLE_H
-> > +#define BOOT_COMPRESSED_PAGETABLE_H
-> > +
-> > +#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
-> > +
-> > +#ifndef __ASSEMBLER__
-> 
-> x86 uses __ASSEMBLY__ everywhere and I see
-> 
-> arch/x86/boot/compressed/Makefile:41:KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
-> 
-> so it should work here too.
-> 
-> Even though __ASSEMBLER__ is gcc predefined.
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+I guess this belongs to kbuild though get_maintainer.pl doesn't tell me that.
 
-Okay, I'll fix this.
+ scripts/kallsyms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+index 9ee9bf7fd1a2..65792650c630 100644
+--- a/scripts/kallsyms.c
++++ b/scripts/kallsyms.c
+@@ -595,7 +595,7 @@ static void optimize_result(void)
+ 		 * original char code */
+ 		if (!best_table_len[i]) {
+ 
+-			/* find the token with the breates profit value */
++			/* find the token with the best profit value */
+ 			best = find_best_token();
+ 			if (token_profit[best] == 0)
+ 				break;
 -- 
- Kirill A. Shutemov
+2.14.3
