@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-613114-1519715558-2-942700995883338235
+X-Cyrus-Session-Id: sloti22d1t05-757978-1519715601-2-17123806370274481538
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -14,32 +14,33 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519715558; b=nD8QAM3A+2pINtup6TuvPapdiIp2LQgL8kUkUUi5XnLKtSe
-    KmPfdaL+Rbybg3bnCR5WhK5NiGeQX8zzwccdsogk60i5ph3g+VdMBLY8qSqebxKg
-    keNIDF9NoJpE8IpzIsp0iZNO2orxjQqAdAxBUTgLe1vI40OrBnRVsaUCtbiGO3N3
-    h/qak/tg66GrdRU9bkJ5sH/gO0H+N26aGYXIryOGOpfUDyG6VfM0E5Wjoe1z10Y8
-    cEOfSPu0Otjko0Ij6Xff8QZ7PfPA2G79zkeFJAa75kP4FN0nUqnLugiYULP8Y7zl
-    K8yhAFJA1x2ylaPtu+6e3idJ/PfvPXDQN9RA66A==
+    t=1519715600; b=Ks7JeqRUNY1Uk/ER1OzNqKt0J15E2KN+KrwGYRWAGGVWSXN
+    TlTcCofuAw3Ncm2z98G01q4r8CQPPiMIf16bsNZsZac7ZT/rLvCutOaxaW5rHr/J
+    Oz3bhTb6dMvoUpK06ztSo1TY1zKkuvSUzlslXuxscg9rfu2w/oSpbL6RraIT7VhC
+    A+oADzB1RDe97kDnyPbNuJ53ouhUb9x9mo7nwf5523QW+GKQ5HDx1KkfBmvce8BS
+    xdCrqZXjvotdcz/xiV7paIf4pQ14pRXduB12i4eM2tjei+CbGLVIbK/p1/xRmR3Q
+    BwJZ6DHcLsmv4q7GBC5MG+xGMBWX64uQxfMBxaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:sender:list-id; s=arctest; t=1519715558; bh=lSX8KKmw
-    NZSHHOFpjVv2mMgJAgzSb0QLAx8xz8/DYNs=; b=DpGcWXNmjxaezu+E5TX86wRd
-    xovVVLH7N+gwkqQwebQOL+C3zRYJKtgX0B5bzyV7Q8SJwzdtANGS/g198QD2X4tF
-    LCYEoaYQ5PbOsLqlo4wYCA/4NKBswlKb3sk5MEedNNovZsxPolgQrUAiL0/VssQ6
-    fT3aw0IaxZz4GiNoIMP72syfx4CWrekTS91FiUgwg0kEQGG22Iu9RJPpdU8c2A9s
-    /KcZnCgqGTe+HBlz6KHY8Tp77GZE5UxKD69/ovcGIaahcjHeapzdBoGtQDo8ldGD
-    FWsJX7xXRFMaFvLbimSfyjctjyxqomwSfQMzZbZMuzw1yU827fc9gO1xA9aREQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=lxn4DR3N x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519715600;
+    bh=eTulijaJsYo03elKUDebtbop9tcUoRehCcTWLyU4sZE=; b=enp2RvUSl1P4
+    V54xcyHZkVbeg6n7fMMDFKhIW68SpZ8fiHJvVxc6tFALCNBEkHrkNK7GIOW5bgTs
+    J9b4LsQ+t16dLs6J6UOuQFtoi81Y5hte/a2w7du3UCUCcTKOyJD9FX7GAPLMPDk4
+    R2B+uAmO0fTI+1Km1ArbxvOhwzM4Mvzbvbm6jBFATfi5pjUJczOTyctEpYc7VCWy
+    MLbnpxVWkKekd2/Ebz2uWG44SOpgIDAqxOZVJOEAME+SIDq8AFP3c3ay8rmR9p8p
+    +yi5sEhyxC+r16ENrSoy/ryYOH5I1083xRklO5Bf1QzYtPyZRh/HI2EC9Fi/qZDn
+    XrC2kx/ENw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=VEzlrA/o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=lxn4DR3N x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=VEzlrA/o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -47,20 +48,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752182AbeB0HLr (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 02:11:47 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50086 "EHLO
+        id S1752299AbeB0HMj (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 02:12:39 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50130 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeB0HLm (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 27 Feb 2018 02:11:42 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180227071140euoutp026051319b22c035abc37c69f6095fbafe~XHTIWrGd82547425474euoutp02y
-X-AuditID: cbfec7f2-1c1ff70000011644-af-5a9504aaa476
+        with ESMTP id S1752154AbeB0HLq (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 27 Feb 2018 02:11:46 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180227071143euoutp0226ccdca888e87c6e04841bf87e98ef17~XHTLpKdCh2547425474euoutp020
+X-AuditID: cbfec7f4-6f9ff700000043e4-85-5a9504ae17ac
 From: Andrzej Hajda <a.hajda@samsung.com>
 To: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
+Cc: Maciej Purski <m.purski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,88 +72,226 @@ Cc: Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH v5 0/6] dt-bindings: add bindings for USB physical connector
-Date: Tue, 27 Feb 2018 08:11:28 +0100
-Message-id: <20180227071134.28063-1-a.hajda@samsung.com>
+Subject: [PATCH v5 6/6] drm/bridge/sii8620: use micro-USB cable detection
+ logic to detect MHL
+Date: Tue, 27 Feb 2018 08:11:34 +0100
+Message-id: <20180227071134.28063-7-a.hajda@samsung.com>
 X-Mailer: git-send-email 2.16.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djP87qrWKZGGVy8b2Bxa905Voumjres
+In-reply-to: <20180227071134.28063-1-a.hajda@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7djPc7rrWKZGGVzfpWRxa905Voumjres
         FhtnrGe1uP7lOavF/CNAsStf37NZTLo/gcXi/PkN7BadE5ewW2x6fI3V4vKuOWwWM87vY7JY
-        tKyV2WLtkbvsFkuvX2SyaN17hN1BwGPNvDWMHpf7epk8ZnfMZPXYtKqTzeN+93Emj81L6j36
-        tqxi9Pi8SS6AI4rLJiU1J7MstUjfLoEr49ui/6wFU3krmp/6NzBu4Opi5OSQEDCRuLnyDlsX
-        IxeHkMAKRokXX1uYIJzPjBIzmu4yw1Qte9wDlVjGKLFs714WCOc/o8S+RWtYQKrYBDQl/m6+
-        yQZiiwjESry7tIsZpIhZ4AKLxIXTr9hBEsICPhIdP96DjWURUJW48GM6K4jNK2AhMevaNah1
-        8hILz14Fa5YQOMAmsbSlhQUi4SLxZu0yqCJhiVfHt7BD2DISnR0HmSAauhklTu3rhOqewihx
-        /tVlJogqa4nDxy+CrWMW4JOYtG06UBEHUJxXoqNNCKLEQ+Ly1qtQQx0lOq49AFsmBPTO1O9X
-        2ScwSi5gZFjFKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRGPmn/x3/tIPx66WkQ4wCHIxK
-        PLwz5KZECbEmlhVX5h5ilOBgVhLhXbl4cpQQb0piZVVqUX58UWlOavEhRmkOFiVx3jiNuigh
-        gfTEktTs1NSC1CKYLBMHp1QDY3pAgm3ydZHixoaqb4li7j3TfbcYhKvMnnFf/MnSKTy2H42k
-        JyoIW168c5DZrmhPyK7vHTEXmH8t/VdXeGypv5+BwYaaHtUdb09cWsYmPvdd38PzK75b3nkw
-        yfnw6fUuTR/6H7o/TU+/8lJmjqbLlo1O/WsDdiTPrThXeFE9rWDaZhcxlymZi5RYijMSDbWY
-        i4oTAT6QgJ/4AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t/xy7orWaZGGbw8aGVxa905Voumjres
+        tKyV2WLBy1ssFmuP3GW3WHr9IpNF694j7A6CHmvmrWH0uNzXy+Qxu2Mmq8emVZ1sHve7jzN5
+        bF5S79G3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZR9buYC5oV694MvEOSwPjPIUuRk4OCQET
+        ic2nbjB2MXJxCAmsYJS4u2I3G4TzmVGi+cE+FpiqN8cuQyWWMUpcPfOFHcL5zyixZfsedpAq
+        NgFNib+bb7KB2CICsRLvLu1iBiliFvjGIjFv1nwmkISwQLzE993vGUFsFgFViU2XGsAaeAUs
+        JM5dncMMsU5eYuHZq2A2p4ClxP5pZ8BWSwg8ZpM4s+4MVJGLxL4zi6FsYYlXx7ewQ9gyEp0d
+        B5kgGroZJU7t62SGcKYwSpx/dZkJospa4vDxi6wgNrMAn8SkbdOBijiA4rwSHW1CECUeEuc2
+        PWWHCDtKnD8TDRIWEugBhtLJuAmMUgsYGVYxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIE
+        pobT/45/2cG460/SIUYBDkYlHl4HmSlRQqyJZcWVuYcYJTiYlUR4Vy6eHCXEm5JYWZValB9f
+        VJqTWnyIUZqDRUmcN06jLkpIID2xJDU7NbUgtQgmy8TBKdXAmG915UdXx5OidcxaT4/O+yKe
+        HJXx07XNvPVDa4qC99ZajQUPZZYbs1XGCuo95S+Myjc/fVE041qCCkP+pR/mGTynj/Btrpoa
+        9LjyjdCfh9y7Nx9gnKql9NyL/UKoyq9XJtvOH81edapv95yOvPB5sgfErfjLDnOWHy58c9bi
+        96Rgy01PFwfaKLEUZyQaajEXFScCAOuOtmAJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsVy+t/xy7prWaZGGVy/amNxa905Voumjres
         FhtnrGe1uP7lOavF/CNAsStf37NZTLo/gcXi/PkN7BadE5ewW2x6fI3V4vKuOWwWM87vY7JY
-        tKyV2WLtkbvsFkuvX2SyaN17hN1BwGPNvDWMHpf7epk8ZnfMZPXYtKqTzeN+93Emj81L6j36
-        tqxi9Pi8SS6AI4rLJiU1J7MstUjfLoEr49ui/6wFU3krmp/6NzBu4Opi5OSQEDCRWPa4h6mL
-        kYtDSGAJo8SvDYugnEYmidbfOxlBqtgENCX+br7JBmKLCMRKvD31mRmkiFngAovE74kz2UES
-        wgI+Eh0/3jOD2CwCqhIXfkxnBbF5BSwkZl27xgyxTl5i4dmrzBMYuRYwMqxiFEktLc5Nzy02
-        1CtOzC0uzUvXS87P3cQIDMFtx35u3sF4aWPwIUYBDkYlHt4ZclOihFgTy4orcw8xSnAwK4nw
-        rlw8OUqINyWxsiq1KD++qDQntfgQozQHi5I473mDyighgfTEktTs1NSC1CKYLBMHp1QDo7xS
-        sYLtJB7RxcVXUrkalLZ31Tc7TtJ2cLt3u6U1rvw8V7O4iFWkm0S6kqew5cQOgbtR03OPsdxs
-        X/RYVf2Q6P3QPo/AzfWmPZ9ke4z7fn4xkevqUKl5sOzxYnfbLRaFnZx1lvrCG1u9Zm30dvTa
-        kXpNeWrY/u9t/7f9EBLpO3AmZVLLXgklluKMREMt5qLiRADFsnekPQIAAA==
-X-CMS-MailID: 20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e
+        tKyV2WLBy1ssFmuP3GW3WHr9IpNF694j7A6CHmvmrWH0uNzXy+Qxu2Mmq8emVZ1sHve7jzN5
+        bF5S79G3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZR9buYC5oV694MvEOSwPjPIUuRk4OCQET
+        iTfHLrOB2EICSxglLv9U7GLkArIbmSTetc1nBEmwCWhK/N18E6xIRCBW4u2pz8wgRcwCP1gk
+        rp/cCZTg4BAWiJe41OgOUsMioCqx6VIDWD2vgIXEuatzmCGWyUssPHsVzOYUsJTYP+0M1GIL
+        ifudx1gnMPIsYGRYxSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERi624793LyD8dLG4EOMAhyM
+        Sjy8M+SmRAmxJpYVV+YeYpTgYFYS4V25eHKUEG9KYmVValF+fFFpTmrxIUZpDhYlcd7zBpVR
+        QgLpiSWp2ampBalFMFkmDk6pBsaShstzDqh7GH3gC5XXeHNb7K7Y1Qyh/hf9f70kNn17GfEr
+        3qDyYbhA5MP8I5f8eTK75h/8kMyq6tzg/eWJeV+129XZ+xkOnbF5qpgodZv7UT6j0dKtGTtO
+        POhcfJfP8P62rvrJ5t4vJmR2Pdi1PbTBKe718wk3bW9fvLIz+vDkogmswp9PydxRYinOSDTU
+        Yi4qTgQAEoG0sFkCAAA=
+X-CMS-MailID: 20180227071142eucas1p10203dac2558db034a4a3287220213601
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e
-X-RootMTR: 20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e
-References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180227071142eucas1p10203dac2558db034a4a3287220213601
+X-RootMTR: 20180227071142eucas1p10203dac2558db034a4a3287220213601
+References: <20180227071134.28063-1-a.hajda@samsung.com>
+        <CGME20180227071142eucas1p10203dac2558db034a4a3287220213601@eucas1p1.samsung.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: Maciej Purski <m.purski@samsung.com>
 
-Thanks for reviews of previous iterations.
+Currently MHL chip must be turned on permanently to detect MHL cable. It
+duplicates micro-USB controller's (MUIC) functionality and consumes
+unnecessary power. Lets use extcon attached to MUIC to enable MHL chip
+only if it detects MHL cable.
 
-This patchset introduces USB physical connector bindings, together with
-working example.
-I have removed RFC prefix - the patchset seems to be heading
-to a happy end :)
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+v5: updated extcon API
 
-v5: fixed extra parenthesis in dts, renamed extcon function.
-v4: improved binding descriptions, added missing reg in dts.
-v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
-    example.
-v2: I have addressed comments by Rob and Laurent, thanks 
+This is rework of the patch by Maciej with following changes:
+- use micro-USB port bindings to get extcon, instead of extcon property,
+- fixed remove sequence,
+- fixed extcon get state logic.
 
-Changes in datail are described in the patches.
+Code finding extcon node is hacky IMO, I guess ultimately it should be done
+via some framework (maybe even extcon), or at least via helper, I hope it
+can stay as is until the proper solution will be merged.
 
-Regards
-Andrzej
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/bridge/sil-sii8620.c | 97 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 94 insertions(+), 3 deletions(-)
 
-
-Andrzej Hajda (5):
-  dt-bindings: add bindings for USB physical connector
-  dt-bindings: add bindings for Samsung micro-USB 11-pin connector
-  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
-  arm64: dts: exynos: add OF graph between MHL and USB connector
-  extcon: add possibility to get extcon device by OF node
-
-Maciej Purski (1):
-  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
-
- .../connector/samsung,usb-connector-11pin.txt      | 49 +++++++++++
- .../bindings/connector/usb-connector.txt           | 75 +++++++++++++++++
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 38 ++++++++-
- drivers/extcon/extcon.c                            | 44 +++++++---
- drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
- include/linux/extcon.h                             |  6 ++
- 6 files changed, 293 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-
+diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+index 9e785b8e0ea2..62b0adabcac2 100644
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/extcon.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+@@ -25,6 +26,7 @@
+ #include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+@@ -81,6 +83,10 @@ struct sii8620 {
+ 	struct edid *edid;
+ 	unsigned int gen2_write_burst:1;
+ 	enum sii8620_mt_state mt_state;
++	struct extcon_dev *extcon;
++	struct notifier_block extcon_nb;
++	struct work_struct extcon_wq;
++	int cable_state;
+ 	struct list_head mt_queue;
+ 	struct {
+ 		int r_size;
+@@ -2175,6 +2181,77 @@ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
+ 	ctx->rc_dev = rc_dev;
+ }
+ 
++static void sii8620_cable_out(struct sii8620 *ctx)
++{
++	disable_irq(to_i2c_client(ctx->dev)->irq);
++	sii8620_hw_off(ctx);
++}
++
++static void sii8620_extcon_work(struct work_struct *work)
++{
++	struct sii8620 *ctx =
++		container_of(work, struct sii8620, extcon_wq);
++	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
++
++	if (state == ctx->cable_state)
++		return;
++
++	ctx->cable_state = state;
++
++	if (state > 0)
++		sii8620_cable_in(ctx);
++	else
++		sii8620_cable_out(ctx);
++}
++
++static int sii8620_extcon_notifier(struct notifier_block *self,
++			unsigned long event, void *ptr)
++{
++	struct sii8620 *ctx =
++		container_of(self, struct sii8620, extcon_nb);
++
++	schedule_work(&ctx->extcon_wq);
++
++	return NOTIFY_DONE;
++}
++
++static int sii8620_extcon_init(struct sii8620 *ctx)
++{
++	struct extcon_dev *edev;
++	struct device_node *musb, *muic;
++	int ret;
++
++	/* get micro-USB connector node */
++	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
++	/* next get micro-USB Interface Controller node */
++	muic = of_get_next_parent(musb);
++
++	if (!muic) {
++		dev_info(ctx->dev, "no extcon found, switching to 'always on' mode\n");
++		return 0;
++	}
++
++	edev = extcon_find_edev_by_node(muic);
++	of_node_put(muic);
++	if (IS_ERR(edev)) {
++		if (PTR_ERR(edev) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		dev_err(ctx->dev, "Invalid or missing extcon\n");
++		return PTR_ERR(edev);
++	}
++
++	ctx->extcon = edev;
++	ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
++	INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
++	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
++	if (ret) {
++		dev_err(ctx->dev, "failed to register notifier for MHL\n");
++		return ret;
++	}
++
++	return 0;
++}
++
+ static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
+ {
+ 	return container_of(bridge, struct sii8620, bridge);
+@@ -2307,13 +2384,20 @@ static int sii8620_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
++	ret = sii8620_extcon_init(ctx);
++	if (ret < 0) {
++		dev_err(ctx->dev, "failed to initialize EXTCON\n");
++		return ret;
++	}
++
+ 	i2c_set_clientdata(client, ctx);
+ 
+ 	ctx->bridge.funcs = &sii8620_bridge_funcs;
+ 	ctx->bridge.of_node = dev->of_node;
+ 	drm_bridge_add(&ctx->bridge);
+ 
+-	sii8620_cable_in(ctx);
++	if (!ctx->extcon)
++		sii8620_cable_in(ctx);
+ 
+ 	return 0;
+ }
+@@ -2322,8 +2406,15 @@ static int sii8620_remove(struct i2c_client *client)
+ {
+ 	struct sii8620 *ctx = i2c_get_clientdata(client);
+ 
+-	disable_irq(to_i2c_client(ctx->dev)->irq);
+-	sii8620_hw_off(ctx);
++	if (ctx->extcon) {
++		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
++					   &ctx->extcon_nb);
++		flush_work(&ctx->extcon_wq);
++		if (ctx->cable_state > 0)
++			sii8620_cable_out(ctx);
++	} else {
++		sii8620_cable_out(ctx);
++	}
+ 	drm_bridge_remove(&ctx->bridge);
+ 
+ 	return 0;
 -- 
 2.16.2
 
