@@ -1,129 +1,326 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeB0Rq6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:46:58 -0500
-Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:7663
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750952AbeB0Rq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:46:56 -0500
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Borislav Petkov <bp@suse.de>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
- Structure
-Thread-Topic: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
- Structure
-Thread-Index: AQHTrzm07vsANP0WAkKVOn1mh2z8gqO4TzGAgAANYECAAB8DgIAABrBw
-Date: Tue, 27 Feb 2018 17:46:54 +0000
-Message-ID: <DM5PR12MB1916D78FE4EEF146EE1D8612F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-4-Yazen.Ghannam@amd.com>
- <20180227142531.GF26382@pd.tnic>
- <DM5PR12MB191637C1857C5D9499D08D66F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180227170423.GK26382@pd.tnic>
-In-Reply-To: <20180227170423.GK26382@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-x-originating-ip: [165.204.84.17]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB2342;7:jHou5crlzbQVmYBV9JsnNfghhY79qzmeXu/42HZbPBWA/kalU0q9PY0bDRnkmwqOlLONMxuqY3VdnRZKTbxyDPFLpRC5J0r9aNh1ZfMcT9gGHuqnhFx5xXxYtUKGmsilwo2/K37BULfwotKdv0uEQqjDUJjg7dvPXBwwEr2/d/SOHGwhIx3g7x1fPNceo7QVEXrRmGpgYfwwQT02NrNHmC0a6txDFZsXTY66oZ73X/JXxxdn1X6N1tFPPN5U8dKO;20:PhQhZ59EIVt62E9aLlAZ5ZZ3Pis+5hEH8wVC1tRlmyRHbMZ648oST9lIAOjjfSYqvIEroJPJUvyjJpA9wD1fdLyafFH0sLowAAjtvaxFqus/CX/4ZQLNmyXFdNHUvJgKcWYzhlwaltSFmcaz2FdoSdUqGDSBVePAayr5j4Yc0twWRdB2fA0Z1+VVGINnkfYiSZD+39aAbdeg2/TGgE3DwEVJH+N60GEJTZBsoUjgYoQF5Ump72lTdv9xR+GVpqIK
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 08a9c346-5369-45f3-1455-08d57e0a16fa
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB2342;
-x-ms-traffictypediagnostic: DM5PR12MB2342:
-x-microsoft-antispam-prvs: <DM5PR12MB2342137C454CFAA2CC7D13B2F8C00@DM5PR12MB2342.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3231220)(944501161)(52105095)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB2342;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2342;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39380400002)(39860400002)(396003)(13464003)(189003)(199004)(6506007)(106356001)(102836004)(3280700002)(53546011)(2906002)(105586002)(186003)(86362001)(74316002)(93886005)(6116002)(3846002)(5660300001)(3660700001)(14454004)(7696005)(229853002)(25786009)(26005)(72206003)(2900100001)(7736002)(305945005)(478600001)(76176011)(99286004)(2950100002)(66066001)(4326008)(54906003)(8936002)(316002)(81166006)(6436002)(6916009)(55016002)(33656002)(68736007)(6246003)(81156014)(9686003)(8676002)(53936002)(97736004)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2342;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: X2uC/kCOfDzBNKPGuOSS5r+hj69SciTsDNEkU7K/rd1RqiLmxUfQhXHeLsxjw9f7RVoHN1XDq41WV1dUeHIN+GbSkaFYV1MYy6GXAhNUj6BDJ8A6cfsOO7UgGbf2RbMt+xRLgvYQuhb/AJpcgnmdTps9LGEFvSNwoynFGJQEXuY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751956AbeB0RsO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:48:14 -0500
+Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:55035 "EHLO
+        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751518AbeB0RsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 12:48:09 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GLAABxmZVah8mZ6EReGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYUmKINUmCGDGIchjQmCFQqFMgKCTFYWAQIBAQEBAQECAQIQAQE?=
+ =?us-ascii?q?BCgsJCCgvgjgkAYJIAwMjBAsBRhAlAhgOAgIhNgYBEoR9AxWsCIFtOoczDYEwg?=
+ =?us-ascii?q?hYBAQEBBgEBAQEBI4EPhjuBV4FmhheFRIJiBYgVB4ZKRopyMAmCC4stgzkCjnK?=
+ =?us-ascii?q?KM4cdgS4lDoF1cIMSgkMQDBaCBFiMUgEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2GLAABxmZVah8mZ6EReGQEBAQEBAQEBAQEBAQcBAQEBAYU?=
+ =?us-ascii?q?mKINUmCGDGIchjQmCFQqFMgKCTFYWAQIBAQEBAQECAQIQAQEBCgsJCCgvgjgkA?=
+ =?us-ascii?q?YJIAwMjBAsBRhAlAhgOAgIhNgYBEoR9AxWsCIFtOoczDYEwghYBAQEBBgEBAQE?=
+ =?us-ascii?q?BI4EPhjuBV4FmhheFRIJiBYgVB4ZKRopyMAmCC4stgzkCjnKKM4cdgS4lDoF1c?=
+ =?us-ascii?q?IMSgkMQDBaCBFiMUgEBAQ?=
+X-LoopCount0: from 10.208.86.39
+X-IronPort-AV: E=Sophos;i="5.47,401,1515477600";
+   d="scan'208";a="140744583"
+X-DLP: DLP_GlobalPCIDSS
+From: Mario Limonciello <mario.limonciello@dell.com>
+To: dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: pali.rohar@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH v2 3/3] platform/x86: dell-smbios: Link all dell-smbios-* modules together
+Date: Tue, 27 Feb 2018 11:47:39 -0600
+Message-Id: <1519753659-3376-3-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519753659-3376-1-git-send-email-mario.limonciello@dell.com>
+References: <1519753659-3376-1-git-send-email-mario.limonciello@dell.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08a9c346-5369-45f3-1455-08d57e0a16fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 17:46:54.1647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2342
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RHl4eq001581
 
-> -----Original Message-----
-> From: Borislav Petkov [mailto:bp@suse.de]
-> Sent: Tuesday, February 27, 2018 12:04 PM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: linux-efi@vger.kernel.org; linux-kernel@vger.kernel.org;
-> ard.biesheuvel@linaro.org; x86@kernel.org
-> Subject: Re: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
-> Structure
-> 
-> On Tue, Feb 27, 2018 at 03:25:06PM +0000, Ghannam, Yazen wrote:
-> > This is the same as the other CPER code.
-> 
-> Dude, turn on brain!
-> 
-> So if it is in the other CPER code, we should copy it, no matter how
-> dumb it is?!?
-> 
+Some race conditions were raised due to dell-smbios and its backends
+not being ready by the time that a consumer would call one of the
+exported methods.
 
-I think there's value in following the conventions in a subsystem.
+To avoid this problem, guarantee that all initialization has been
+done by linking them all together and running init for them all.
 
-I can change this if you give a reason besides "it's dumb". This could apply
-to the other CPER code also.
+As part of this change the Kconfig needs to be adjusted so that
+CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+rather than modules.
 
-> > Also, the spec allows platform-defined GUIDs. So we should always print
-> this
-> > even if the GUID is not defined by the spec.
-> 
-> We need to have a way to map the GUID to a hw part. Dumb numbers mean
-> shit
-> because the error record is worthless.
-> 
+CONFIG_DELL_SMBIOS is a visually selectable option again and both
+CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
 
-We do map the spec-defined GUIDs in patch 4 of this set. I don't know if there's
-a central place where all vendor-defined GUIDs are listed. I can look into this.
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+changes from v1:
+ * Move #ifdefs into dell-smbios.h and use static inline functions
+ drivers/platform/x86/Kconfig            | 11 ++++++++---
+ drivers/platform/x86/Makefile           |  6 +++---
+ drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
+ drivers/platform/x86/dell-smbios-smm.c  | 19 ++++++-------------
+ drivers/platform/x86/dell-smbios-wmi.c  | 16 ++++++----------
+ drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
+ 6 files changed, 69 insertions(+), 31 deletions(-)
 
-> > The Check Information will be decoded further in another patch.
-> >
-> > I don't think there's much else to decode for the ID fields.
-> 
-> Again, those numbers can't help decoding the error, no need to dump
-> them. Or we find a way to make sense out of that info.
-> 
-
-Which numbers? The Check Information? Like I said, that's decoded in another
-patch, patches 5, 6, and 7.
-
-And the raw value should still be printed because
-1) It may represent a type that we can't decode. Maybe a type that's not part of
-the spec.
-2) It's good to have the raw value for reference. We do this with MCA_STATUS
-where we print the raw value followed by the decoding.
-
-> > Other tables may have the same fields but the offsets are usually different.
-> > So it may be more trouble than it's worth trying to unify the different
-> tables.
-> 
-> If the structs are the same, you can use generic functions for dumping -
-> the offsets are meaningless then.
-> 
-
-The structs are all different even though some fields may be the same.
-
-Thanks,
-Yazen
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 9a8f964..0c0897e 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -106,10 +106,15 @@ config ASUS_LAPTOP
+ 	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+ 
+ config DELL_SMBIOS
+-	tristate
++	tristate "Dell SMBIOS driver"
++	---help---
++	This provides support for the Dell SMBIOS calling interface.
++	If you have a Dell computer you should enable this option.
++
++	Be sure to select at least one backend for it to work properly.
+ 
+ config DELL_SMBIOS_WMI
+-	tristate "Dell SMBIOS calling interface (WMI implementation)"
++	bool "Dell SMBIOS driver WMI support"
+ 	depends on ACPI_WMI
+ 	select DELL_WMI_DESCRIPTOR
+ 	select DELL_SMBIOS
+@@ -122,7 +127,7 @@ config DELL_SMBIOS_WMI
+ 	it just won't load.
+ 
+ config DELL_SMBIOS_SMM
+-	tristate "Dell SMBIOS calling interface (SMM implementation)"
++	bool "Dell SMBIOS driver SMM support"
+ 	depends on DCDBAS
+ 	select DELL_SMBIOS
+ 	---help---
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 940b118..0e242bd 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -13,9 +13,9 @@ obj-$(CONFIG_MSI_LAPTOP)	+= msi-laptop.o
+ obj-$(CONFIG_ACPI_CMPC)		+= classmate-laptop.o
+ obj-$(CONFIG_COMPAL_LAPTOP)	+= compal-laptop.o
+ obj-$(CONFIG_DELL_SMBIOS)	+= dell-smbios.o
+-dell-smbios-objs		:= dell-smbios-base.o
+-obj-$(CONFIG_DELL_SMBIOS_WMI)	+= dell-smbios-wmi.o
+-obj-$(CONFIG_DELL_SMBIOS_SMM)	+= dell-smbios-smm.o
++dell-smbios-objs		:= dell-smbios-base.o	\
++				   dell-smbios-smm.o	\
++				   dell-smbios-wmi.o
+ obj-$(CONFIG_DELL_LAPTOP)	+= dell-laptop.o
+ obj-$(CONFIG_DELL_WMI)		+= dell-wmi.o
+ obj-$(CONFIG_DELL_WMI_DESCRIPTOR)	+= dell-wmi-descriptor.o
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 76b9d75..5bcf8a1 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -556,7 +556,7 @@ static void free_group(struct platform_device *pdev)
+ static int __init dell_smbios_init(void)
+ {
+ 	const struct dmi_device *valid;
+-	int ret;
++	int ret, wmi, smm;
+ 
+ 	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
+ 	if (!valid) {
+@@ -591,8 +591,24 @@ static int __init dell_smbios_init(void)
+ 	if (ret)
+ 		goto fail_create_group;
+ 
++	/* register backends */
++	wmi = init_dell_smbios_wmi();
++	if (wmi)
++		pr_debug("Failed to initialize WMI backend: %d\n", wmi);
++	smm = init_dell_smbios_smm();
++	if (smm)
++		pr_debug("Failed to initialize SMM backend: %d\n", smm);
++	if (wmi && smm) {
++		pr_err("No SMBIOS backends available (wmi: %d, smm: %d)\n",
++			wmi, smm);
++		goto fail_sysfs;
++	}
++
+ 	return 0;
+ 
++fail_sysfs:
++	free_group(platform_device);
++
+ fail_create_group:
+ 	platform_device_del(platform_device);
+ 
+@@ -609,6 +625,8 @@ static int __init dell_smbios_init(void)
+ 
+ static void __exit dell_smbios_exit(void)
+ {
++	exit_dell_smbios_wmi();
++	exit_dell_smbios_smm();
+ 	mutex_lock(&smbios_mutex);
+ 	if (platform_device) {
+ 		free_group(platform_device);
+@@ -625,5 +643,6 @@ module_exit(dell_smbios_exit);
+ MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
+ MODULE_AUTHOR("Gabriele Mazzotta <gabriele.mzt@gmail.com>");
+ MODULE_AUTHOR("Pali Rohár <pali.rohar@gmail.com>");
++MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+ MODULE_DESCRIPTION("Common functions for kernel modules using Dell SMBIOS");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/platform/x86/dell-smbios-smm.c b/drivers/platform/x86/dell-smbios-smm.c
+index 89f65c4..6a0140c 100644
+--- a/drivers/platform/x86/dell-smbios-smm.c
++++ b/drivers/platform/x86/dell-smbios-smm.c
+@@ -21,6 +21,7 @@
+ #include "../../firmware/dcdbas.h"
+ #include "dell-smbios.h"
+ 
++#ifdef CONFIG_DELL_SMBIOS_SMM
+ static int da_command_address;
+ static int da_command_code;
+ static struct calling_interface_buffer *buffer;
+@@ -58,7 +59,7 @@ static const struct dmi_system_id dell_device_table[] __initconst = {
+ };
+ MODULE_DEVICE_TABLE(dmi, dell_device_table);
+ 
+-static void __init parse_da_table(const struct dmi_header *dm)
++static void parse_da_table(const struct dmi_header *dm)
+ {
+ 	struct calling_interface_structure *table =
+ 		container_of(dm, struct calling_interface_structure, header);
+@@ -73,7 +74,7 @@ static void __init parse_da_table(const struct dmi_header *dm)
+ 	da_command_code = table->cmdIOCode;
+ }
+ 
+-static void __init find_cmd_address(const struct dmi_header *dm, void *dummy)
++static void find_cmd_address(const struct dmi_header *dm, void *dummy)
+ {
+ 	switch (dm->type) {
+ 	case 0xda: /* Calling interface */
+@@ -128,7 +129,7 @@ static bool test_wsmt_enabled(void)
+ 	return false;
+ }
+ 
+-static int __init dell_smbios_smm_init(void)
++int init_dell_smbios_smm(void)
+ {
+ 	int ret;
+ 	/*
+@@ -176,7 +177,7 @@ static int __init dell_smbios_smm_init(void)
+ 	return ret;
+ }
+ 
+-static void __exit dell_smbios_smm_exit(void)
++void exit_dell_smbios_smm(void)
+ {
+ 	if (platform_device) {
+ 		dell_smbios_unregister_device(&platform_device->dev);
+@@ -185,12 +186,4 @@ static void __exit dell_smbios_smm_exit(void)
+ 	}
+ }
+ 
+-subsys_initcall(dell_smbios_smm_init);
+-module_exit(dell_smbios_smm_exit);
+-
+-MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
+-MODULE_AUTHOR("Gabriele Mazzotta <gabriele.mzt@gmail.com>");
+-MODULE_AUTHOR("Pali Rohár <pali.rohar@gmail.com>");
+-MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+-MODULE_DESCRIPTION("Dell SMBIOS communications over SMI");
+-MODULE_LICENSE("GPL");
++#endif /* CONFIG_DELL_SMBIOS_SMM */
+diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+index 609557a..ef7dbcc 100644
+--- a/drivers/platform/x86/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell-smbios-wmi.c
+@@ -18,6 +18,7 @@
+ #include "dell-smbios.h"
+ #include "dell-wmi-descriptor.h"
+ 
++#ifdef CONFIG_DELL_SMBIOS_WMI
+ static DEFINE_MUTEX(call_mutex);
+ static DEFINE_MUTEX(list_mutex);
+ static int wmi_supported;
+@@ -228,7 +229,7 @@ static const struct wmi_device_id dell_smbios_wmi_id_table[] = {
+ 	{ },
+ };
+ 
+-static void __init parse_b1_table(const struct dmi_header *dm)
++static void parse_b1_table(const struct dmi_header *dm)
+ {
+ 	struct misc_bios_flags_structure *flags =
+ 	container_of(dm, struct misc_bios_flags_structure, header);
+@@ -242,7 +243,7 @@ static void __init parse_b1_table(const struct dmi_header *dm)
+ 		wmi_supported = 1;
+ }
+ 
+-static void __init find_b1(const struct dmi_header *dm, void *dummy)
++static void find_b1(const struct dmi_header *dm, void *dummy)
+ {
+ 	switch (dm->type) {
+ 	case 0xb1: /* misc bios flags */
+@@ -261,7 +262,7 @@ static struct wmi_driver dell_smbios_wmi_driver = {
+ 	.filter_callback = dell_smbios_wmi_filter,
+ };
+ 
+-static int __init init_dell_smbios_wmi(void)
++int init_dell_smbios_wmi(void)
+ {
+ 	dmi_walk(find_b1, NULL);
+ 
+@@ -271,15 +272,10 @@ static int __init init_dell_smbios_wmi(void)
+ 	return wmi_driver_register(&dell_smbios_wmi_driver);
+ }
+ 
+-static void __exit exit_dell_smbios_wmi(void)
++void exit_dell_smbios_wmi(void)
+ {
+ 	wmi_driver_unregister(&dell_smbios_wmi_driver);
+ }
+ 
+-module_init(init_dell_smbios_wmi);
+-module_exit(exit_dell_smbios_wmi);
+-
+ MODULE_ALIAS("wmi:" DELL_WMI_SMBIOS_GUID);
+-MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+-MODULE_DESCRIPTION("Dell SMBIOS communications over WMI");
+-MODULE_LICENSE("GPL");
++#endif /* CONFIG_DELL_SMBIOS_WMI */
+diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
+index 138d478..d8adaf9 100644
+--- a/drivers/platform/x86/dell-smbios.h
++++ b/drivers/platform/x86/dell-smbios.h
+@@ -75,4 +75,29 @@ int dell_laptop_register_notifier(struct notifier_block *nb);
+ int dell_laptop_unregister_notifier(struct notifier_block *nb);
+ void dell_laptop_call_notifier(unsigned long action, void *data);
+ 
+-#endif
++/* for the supported backends */
++#ifdef CONFIG_DELL_SMBIOS_WMI
++int init_dell_smbios_wmi(void);
++void exit_dell_smbios_wmi(void);
++#else /* CONFIG_DELL_SMBIOS_WMI */
++static inline int init_dell_smbios_wmi(void)
++{
++	return -ENODEV;
++}
++static inline void exit_dell_smbios_wmi(void)
++{}
++#endif /* CONFIG_DELL_SMBIOS_WMI */
++
++#ifdef CONFIG_DELL_SMBIOS_SMM
++int init_dell_smbios_smm(void);
++void exit_dell_smbios_smm(void);
++#else /* CONFIG_DELL_SMBIOS_SMM */
++static inline int init_dell_smbios_smm(void)
++{
++	return -ENODEV;
++}
++static inline void exit_dell_smbios_smm(void)
++{}
++#endif /* CONFIG_DELL_SMBIOS_SMM */
++
++#endif /* _DELL_SMBIOS_H_ */
+-- 
+2.7.4
