@@ -1,52 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751847AbeB0Vlp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:41:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751568AbeB0Vln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:41:43 -0500
-Date: Tue, 27 Feb 2018 15:41:42 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Robin Jarry <robin.jarry@6wind.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2 3/3] objtool: use global host flags for compilation
-Message-ID: <20180227214142.4nrt22uita5qrm35@treble>
-References: <cover.1519393674.git.robin.jarry@6wind.com>
- <cover.1519668832.git.robin.jarry@6wind.com>
- <2fa138b613417581eca23afd8741aaf75fbf966a.1519668832.git.robin.jarry@6wind.com>
- <20180227174932.e4pbucnwhducv7xr@treble>
- <20180227205523.cvzium5loc4km4qh@6wind.com>
+        id S1751793AbeB0Vok (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:44:40 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:47996 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751675AbeB0Voj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:44:39 -0500
+Subject: Re: [PATCH] pvcalls-front: 64-bit align flags
+To: Stefano Stabellini <sstabellini@kernel.org>
+Cc: jgross@suse.com, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.10.1802271150020.4239@sstabellini-ThinkPad-X260>
+ <b7ec592a-bbd1-48d3-1a1f-92a8ed4a1e48@oracle.com>
+ <alpine.DEB.2.10.1802271328140.4239@sstabellini-ThinkPad-X260>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <b5a80b70-30b4-2fe3-5fc2-347ce58573f1@oracle.com>
+Date: Tue, 27 Feb 2018 16:45:08 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.10.1802271328140.4239@sstabellini-ThinkPad-X260>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180227205523.cvzium5loc4km4qh@6wind.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802270268
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 09:55:23PM +0100, Robin Jarry wrote:
-> 2018-02-27, Josh Poimboeuf:
-> > On Mon, Feb 26, 2018 at 07:41:48PM +0100, Robin Jarry wrote:
-> [snip]
-> > >  ifdef CONFIG_STACK_VALIDATION
-> > >    has_libelf := $(call try-run,\
-> > > -		echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -,1,0)
-> > > +	echo "int main() {}" | $(HOSTCC) $(HOSTLDFLAGS) -xc -o /dev/null -lelf -,1,0)
-> > 
-> > This should probably also have HOSTCFLAGS, since the objtool makefile
-> > uses it as well.
-> 
-> I had intentionally omitted HOSTCFLAGS since the compiled code does not
-> contain any #include statements (only -lelf). But adding them cannot
-> hurt.
+On 02/27/2018 04:32 PM, Stefano Stabellini wrote:
+> On Tue, 27 Feb 2018, Boris Ostrovsky wrote:
+>> On 02/27/2018 02:54 PM, Stefano Stabellini wrote:
+>>> We are using test_and_* operations on the status and flag fields of
+>>> struct sock_mapping. However, these functions require the operand to be
+>>> 64-bit aligned on arm64. Currently, only status is 64-bit aligned.
+>>>
+>>> Make flags 64-bit aligned by introducing an explicit padding field.
+>>>
+>>> Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
+>>>
+>>> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+>>> index ca5b773..aa07b2a 100644
+>>> --- a/drivers/xen/pvcalls-front.c
+>>> +++ b/drivers/xen/pvcalls-front.c
+>>> @@ -78,6 +78,7 @@ struct sock_mapping {
+>>>  #define PVCALLS_STATUS_BIND          1
+>>>  #define PVCALLS_STATUS_LISTEN        2
+>>>  			uint8_t status;
+>>> +			uint8_t pad[7];
+>> Does this guarantee alignment (for either status or flag)?
+> Yes: status is part of a struct and a union. Unions and structs have the
+> alignment of their most aligned type. In this case they are 64-bit
+> aligned, as some of the fields are pointers.
+>
+> The padding makes sure that flags is 1+7 bytes from it.
 
-Ah, right.  The point of this check is to see if it can find libelf, so
-I guess using HOSTCFLAGS wouldn't have a point here.  So it's fine the
-way it is.
+OK.
 
--- 
-Josh
+What about adding  __attribute__((aligned(8))) to both (with a comment
+explaining reasoning)?
+
+-boris
+
+
+>
+>  
+>>>  		/*
+>>>  		 * Internal state-machine flags.
+>>>  		 * Only one accept operation can be inflight for a socket.
