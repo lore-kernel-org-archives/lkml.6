@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeB0BzR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:55:17 -0500
-Received: from mga14.intel.com ([192.55.52.115]:29588 "EHLO mga14.intel.com"
+        id S1751728AbeB0CAC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:00:02 -0500
+Received: from mga14.intel.com ([192.55.52.115]:29726 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751463AbeB0BzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:55:16 -0500
+        id S1751634AbeB0CAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 21:00:01 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
-   d="scan'208";a="21287066"
-Date: Tue, 27 Feb 2018 09:56:13 +0800
+   d="scan'208";a="178307447"
+Date: Tue, 27 Feb 2018 10:00:58 +0800
 From: Aaron Lu <aaron.lu@intel.com>
 To: David Rientjes <rientjes@google.com>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -23,67 +23,77 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Vlastimil Babka <vbabka@suse.cz>,
         Mel Gorman <mgorman@techsingularity.net>,
         Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 1/3] mm/free_pcppages_bulk: update pcp->count inside
-Message-ID: <20180227015613.GA9141@intel.com>
+Subject: Re: [PATCH v3 2/3] mm/free_pcppages_bulk: do not hold lock when
+ picking pages to free
+Message-ID: <20180227020058.GB9141@intel.com>
 References: <20180226135346.7208-1-aaron.lu@intel.com>
- <20180226135346.7208-2-aaron.lu@intel.com>
- <alpine.DEB.2.20.1802261345550.135844@chino.kir.corp.google.com>
+ <20180226135346.7208-3-aaron.lu@intel.com>
+ <alpine.DEB.2.20.1802261352160.135844@chino.kir.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802261345550.135844@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.20.1802261352160.135844@chino.kir.corp.google.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:48:14PM -0800, David Rientjes wrote:
+On Mon, Feb 26, 2018 at 01:53:10PM -0800, David Rientjes wrote:
 > On Mon, 26 Feb 2018, Aaron Lu wrote:
 > 
-> > Matthew Wilcox found that all callers of free_pcppages_bulk() currently
-> > update pcp->count immediately after so it's natural to do it inside
-> > free_pcppages_bulk().
-> > 
-> > No functionality or performance change is expected from this patch.
-> > 
-> > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> > ---
-> >  mm/page_alloc.c | 10 +++-------
-> >  1 file changed, 3 insertions(+), 7 deletions(-)
-> > 
 > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index cb416723538f..3154859cccd6 100644
+> > index 3154859cccd6..35576da0a6c9 100644
 > > --- a/mm/page_alloc.c
 > > +++ b/mm/page_alloc.c
-> > @@ -1117,6 +1117,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> > @@ -1116,13 +1116,11 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  	int migratetype = 0;
 > >  	int batch_free = 0;
 > >  	bool isolated_pageblocks;
+> > +	struct page *page, *tmp;
+> > +	LIST_HEAD(head);
 > >  
-> > +	pcp->count -= count;
-> >  	spin_lock(&zone->lock);
-> >  	isolated_pageblocks = has_isolate_pageblock(zone);
+> >  	pcp->count -= count;
+> > -	spin_lock(&zone->lock);
+> > -	isolated_pageblocks = has_isolate_pageblock(zone);
+> > -
+> >  	while (count) {
+> > -		struct page *page;
+> >  		struct list_head *list;
 > >  
+> >  		/*
+> > @@ -1144,26 +1142,31 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  			batch_free = count;
+> >  
+> >  		do {
+> > -			int mt;	/* migratetype of the to-be-freed page */
+> > -
+> >  			page = list_last_entry(list, struct page, lru);
+> >  			/* must delete as __free_one_page list manipulates */
 > 
-> Why modify pcp->count before the pages have actually been freed?
+> Looks good in general, but I'm not sure how I reconcile this comment with 
+> the new implementation that later links page->lru again.
 
-When count is still count and not zero after pages have actually been
-freed :-)
+Thanks for pointing this out.
+
+I think the comment is useless now since there is a list_add_tail right
+below so it's obvious we need to take the page off its original list.
+I'll remove the comment in an update.
 
 > 
-> I doubt that it matters too much, but at least /proc/zoneinfo uses 
-> zone->lock.  I think it should be done after the lock is dropped.
-
-Agree that it looks a bit weird to do it beforehand and I just want to
-avoid adding one more local variable here.
-
-pcp->count is not protected by zone->lock though so even we do it after
-dropping the lock, it could still happen that zoneinfo shows a wrong
-value of pcp->count while it should be zero(this isn't a problem since
-zoneinfo doesn't need to be precise).
-
-Anyway, I'll follow your suggestion here to avoid confusion.
- 
-> Otherwise, looks good.
-
-Thanks for taking a look at this.
+> >  			list_del(&page->lru);
+> >  
+> > -			mt = get_pcppage_migratetype(page);
+> > -			/* MIGRATE_ISOLATE page should not go to pcplists */
+> > -			VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
+> > -			/* Pageblock could have been isolated meanwhile */
+> > -			if (unlikely(isolated_pageblocks))
+> > -				mt = get_pageblock_migratetype(page);
+> > -
+> >  			if (bulkfree_pcp_prepare(page))
+> >  				continue;
+> >  
+> > -			__free_one_page(page, page_to_pfn(page), zone, 0, mt);
+> > -			trace_mm_page_pcpu_drain(page, 0, mt);
+> > +			list_add_tail(&page->lru, &head);
+> >  		} while (--count && --batch_free && !list_empty(list));
+> >  	}
