@@ -1,98 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeB0DI1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 22:08:27 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:10870 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeB0DIZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 22:08:25 -0500
-X-IronPort-AV: E=Sophos;i="5.47,398,1515427200";
-   d="scan'208";a="175334758"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-Subject: Re: [PATCH] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-Thread-Topic: [PATCH] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-Thread-Index: AQHTrtem1a0bta5mG0WCj1M6MC3kX6O3kr4A
-Date: Tue, 27 Feb 2018 03:08:19 +0000
-Message-ID: <1519700898.3120.3.camel@wdc.com>
-References: <1519631932-1730-1-git-send-email-jianchao.w.wang@oracle.com>
-In-Reply-To: <1519631932-1730-1-git-send-email-jianchao.w.wang@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [76.103.131.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR0401MB1356;7:DsEZUsySDHatzHSL5i+nLyTbZYpcC1WR+DC+nlaVL2DChEwMArW2ZOzCXITo85jxYcfBgbjCCKIF+e2+HF2AwPvheqIcQBqwDE3GZBXk7a7C6kdmqQBjWoibD1JRi+qg5bEiopYCh+cnqAWiH0HYdPxHAQbRtIVNJyGJyTLI6e/pNnqLWqD3pVl1LIFhmJH34tpJf7+4mlaHJGBhFWHX7KYj5tv686fDNzwgcZlmx5lXlta4SL5wb/XDuGUHDufy;20:IX4DhMwtMXhfzqZXglxm07aIsWIYNG6wvaBhn1mhLyivu/J1q3QbNL9quW1AlHbSIdSv+I4YLjIjGf1rvphy7q8mEeuClw+DY/hUTD+ZM9qLl63bRsA331kLXBKxfqboOc/ehSOZkLsDXI1XSadnPUKPUb0dhgMSPMQ0VB2g14o=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c26db955-e38f-4d51-9b24-08d57d8f5a87
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:CY1PR0401MB1356;
-x-ms-traffictypediagnostic: CY1PR0401MB1356:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <CY1PR0401MB1356D1EB2C46D7FF164044A698C00@CY1PR0401MB1356.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231220)(944501161)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:CY1PR0401MB1356;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0401MB1356;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(366004)(376002)(396003)(377424004)(199004)(189003)(3846002)(6116002)(81166006)(81156014)(8676002)(6486002)(2201001)(2501003)(8936002)(6506007)(186003)(6246003)(36756003)(4326008)(102836004)(478600001)(2906002)(59450400001)(77096007)(5660300001)(25786009)(26005)(3660700001)(3280700002)(68736007)(76176011)(2900100001)(53936002)(2950100002)(97736004)(54906003)(110136005)(305945005)(316002)(7736002)(6436002)(105586002)(6512007)(66066001)(72206003)(86362001)(14454004)(99286004)(229853002)(106356001)(103116003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR0401MB1356;H:CY1PR0401MB1536.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: YV5AL+S+iGM3xUR92veINLtjN8dotsJZUII/IYl/UHnsUNQ7EaOwwyem/HkLDOzVpddnVtgT23Z0Eux22KJBQ5qeTATdTmWWl7qsu5MrDPdYNrd4DuzqvXqqRTSgC/91zwp5a1mG85qYovnnc189VRAYYXt6RPPtnvLEgtaIAHo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2C7A9CF06C4305409D8B56C96812A786@namprd04.prod.outlook.com>
+        id S1751632AbeB0DLs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 22:11:48 -0500
+Received: from mga14.intel.com ([192.55.52.115]:32670 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751487AbeB0DLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 22:11:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="37702756"
+Date: Tue, 27 Feb 2018 11:12:44 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: David Rientjes <rientjes@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/3] mm/free_pcppages_bulk: update pcp->count inside
+Message-ID: <20180227031244.GA28977@intel.com>
+References: <20180226135346.7208-1-aaron.lu@intel.com>
+ <20180226135346.7208-2-aaron.lu@intel.com>
+ <alpine.DEB.2.20.1802261345550.135844@chino.kir.corp.google.com>
+ <20180227015613.GA9141@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c26db955-e38f-4d51-9b24-08d57d8f5a87
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 03:08:19.4331
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0401MB1356
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180227015613.GA9141@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1R38Yi8011933
 
-On Mon, 2018-02-26 at 15:58 +0800, Jianchao Wang wrote:
-> In scsi core, __scsi_queue_insert should just put request back on
-> the queue and retry using the same command as before. However, for
-> blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
-> the request. To align with the semantics of __scsi_queue_insert,
-> just use blk_mq_requeue_request with kick_requeue_list == true.
+On Tue, Feb 27, 2018 at 09:56:13AM +0800, Aaron Lu wrote:
+> On Mon, Feb 26, 2018 at 01:48:14PM -0800, David Rientjes wrote:
+> > On Mon, 26 Feb 2018, Aaron Lu wrote:
+> > 
+> > > Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+> > > update pcp->count immediately after so it's natural to do it inside
+> > > free_pcppages_bulk().
+> > > 
+> > > No functionality or performance change is expected from this patch.
+> > > 
+> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> > > ---
+> > >  mm/page_alloc.c | 10 +++-------
+> > >  1 file changed, 3 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > index cb416723538f..3154859cccd6 100644
+> > > --- a/mm/page_alloc.c
+> > > +++ b/mm/page_alloc.c
+> > > @@ -1117,6 +1117,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> > >  	int batch_free = 0;
+> > >  	bool isolated_pageblocks;
+> > >  
+> > > +	pcp->count -= count;
+> > >  	spin_lock(&zone->lock);
+> > >  	isolated_pageblocks = has_isolate_pageblock(zone);
+> > >  
+> > 
+> > Why modify pcp->count before the pages have actually been freed?
 > 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
->  drivers/scsi/scsi_lib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> When count is still count and not zero after pages have actually been
+> freed :-)
 > 
-> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-> index a86df9c..06d8110 100644
-> --- a/drivers/scsi/scsi_lib.c
-> +++ b/drivers/scsi/scsi_lib.c
-> @@ -191,7 +191,7 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
->  	 */
->  	cmd->result = 0;
->  	if (q->mq_ops) {
-> -		scsi_mq_requeue_cmd(cmd);
-> +		blk_mq_requeue_request(cmd->request, true);
->  		return;
->  	}
->  	spin_lock_irqsave(q->queue_lock, flags);
+> > 
+> > I doubt that it matters too much, but at least /proc/zoneinfo uses 
+> > zone->lock.  I think it should be done after the lock is dropped.
+> 
+> Agree that it looks a bit weird to do it beforehand and I just want to
+> avoid adding one more local variable here.
+> 
+> pcp->count is not protected by zone->lock though so even we do it after
+> dropping the lock, it could still happen that zoneinfo shows a wrong
+> value of pcp->count while it should be zero(this isn't a problem since
+> zoneinfo doesn't need to be precise).
+> 
+> Anyway, I'll follow your suggestion here to avoid confusion.
 
-I think this patch will break the code in the aacraid driver that iterates
-over sdev->cmd_list because commands are added to and removed from that
-list in the prep / unprep code.
+What about this: update pcp->count when page is dropped off pcp list.
 
-Bart.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb416723538f..faa33eac1635 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 			page = list_last_entry(list, struct page, lru);
+ 			/* must delete as __free_one_page list manipulates */
+ 			list_del(&page->lru);
++			pcp->count--;
+ 
+ 			mt = get_pcppage_migratetype(page);
+ 			/* MIGRATE_ISOLATE page should not go to pcplists */
+@@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+ 	local_irq_save(flags);
+ 	batch = READ_ONCE(pcp->batch);
+ 	to_drain = min(pcp->count, batch);
+-	if (to_drain > 0) {
++	if (to_drain > 0)
+ 		free_pcppages_bulk(zone, to_drain, pcp);
+-		pcp->count -= to_drain;
+-	}
+ 	local_irq_restore(flags);
+ }
+ #endif
+@@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+ 	pset = per_cpu_ptr(zone->pageset, cpu);
+ 
+ 	pcp = &pset->pcp;
+-	if (pcp->count) {
++	if (pcp->count)
+ 		free_pcppages_bulk(zone, pcp->count, pcp);
+-		pcp->count = 0;
+-	}
+ 	local_irq_restore(flags);
+ }
+ 
+@@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
+ 	if (pcp->count >= pcp->high) {
+ 		unsigned long batch = READ_ONCE(pcp->batch);
+ 		free_pcppages_bulk(zone, batch, pcp);
+-		pcp->count -= batch;
+ 	}
+ }
