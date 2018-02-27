@@ -1,315 +1,72 @@
-Date: Wed, 28 Feb 2018 10:57:18 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.97
-Message-ID: <20180228095718.GB6207@kroah.com>
-References: <20180228095714.GA6207@kroah.com>
+Return-Path: <colin.king@canonical.com>
+X-Google-Smtp-Source: AG47ELuvHDnks61j3FmytiyboS4h/yf6wiOwm6Eh9LtSbt4MUReDmITjSiY6EEyIlaFZ3NB/PJSM
+ARC-Seal: i=1; a=rsa-sha256; t=1519748470; cv=none;
+        d=google.com; s=arc-20160816;
+        b=QW1sCIB3RP1FILCffh3jWQ5wwHnFc5VWZCvIBhcCxh1YplSsfCCugnIBarao0Kvc3B
+         s/SJ2yVfEOGiPcjwZgWsB133FNa2XkfaNXD6D2ZIvYJ/kJCUHQ8wNh3dpJmLOfmzuksN
+         jYarEHA/mxukeXdIEUd//ngMLycOB+rZbvOaszvDnKNW+4JEarsbc3NRWQWAqBOO1ou5
+         /T59ygQVk/tr4+fuFnIrgk9I+MlyBK2qp7MkxJ0hiClmNxWySjjNneqMleymfGJhQN+W
+         k30YTAaP5/l/sSJ8U/MSUZEh7B/2y4Rvn5LI7sFWo7JN9T7XInRVjIIAbNI+zVb69EC0
+         QDNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=LgpltOIsQIPWMW6zUIyLb/nKsY9La0C7qRjXvaDV95Y=;
+        b=PSpv/W0mxjSXYoE7NWlWPAmXvJSQTiY0/rAbBzteK741EEqlQ9pEMWifNkpWa02WTx
+         e7m9GSrBHE2XBtf+wxa4jXG2m4BDsszq/6iU+kDO2In5Qk2wsORwWsgRaNqAD7jRg+Mn
+         qqb1XdFlUk43iN8Iuv6defBMEREoYj37YrJxPbum3Iq7tUT4pNA93FYldUOAgDV44XAO
+         HwUOMUj36vQc9q3gYFmYT4bnHz7Gaa3iA4W1jdLzK1uT5WOOF1GzEPVJyumJomgeN/Ry
+         imm23V5+Nf65yROdJ0yOf2p0IEcDekdELdyKL22Z+KujgncSYsOzS8V/FrRIUgrQ0W58
+         uG0Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+From: Colin King <colin.king@canonical.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mei: remove dev_err message on an unsupported ioctl
+Date: Tue, 27 Feb 2018 16:21:05 +0000
+Message-Id: <20180227162105.14113-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228095714.GA6207@kroah.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593571772960941030?=
+X-GMAIL-MSGID: =?utf-8?q?1593571772960941030?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index aa45be375d8f..7781ca4f1ca2 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 96
-+SUBLEVEL = 97
- EXTRAVERSION =
- NAME = Diseased Newt
- 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 27a2637543ff..1a1436c481ef 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -45,7 +45,7 @@ static const char *handler[]= {
- 	"Error"
- };
- 
--int show_unhandled_signals = 1;
-+int show_unhandled_signals = 0;
- 
- /*
-  * Dump out the contents of some memory nicely...
-diff --git a/arch/x86/oprofile/nmi_int.c b/arch/x86/oprofile/nmi_int.c
-index 1d2e6392f5fa..f24bd7249536 100644
---- a/arch/x86/oprofile/nmi_int.c
-+++ b/arch/x86/oprofile/nmi_int.c
-@@ -471,7 +471,7 @@ static int nmi_setup(void)
- 		goto fail;
- 
- 	for_each_possible_cpu(cpu) {
--		if (!cpu)
-+		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
- 			continue;
- 
- 		memcpy(per_cpu(cpu_msrs, cpu).counters,
-diff --git a/drivers/iio/imu/adis_trigger.c b/drivers/iio/imu/adis_trigger.c
-index f53e9a803a0e..93b99bd93738 100644
---- a/drivers/iio/imu/adis_trigger.c
-+++ b/drivers/iio/imu/adis_trigger.c
-@@ -47,6 +47,10 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
- 	if (adis->trig == NULL)
- 		return -ENOMEM;
- 
-+	adis->trig->dev.parent = &adis->spi->dev;
-+	adis->trig->ops = &adis_trigger_ops;
-+	iio_trigger_set_drvdata(adis->trig, adis);
-+
- 	ret = request_irq(adis->spi->irq,
- 			  &iio_trigger_generic_data_rdy_poll,
- 			  IRQF_TRIGGER_RISING,
-@@ -55,9 +59,6 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
- 	if (ret)
- 		goto error_free_trig;
- 
--	adis->trig->dev.parent = &adis->spi->dev;
--	adis->trig->ops = &adis_trigger_ops;
--	iio_trigger_set_drvdata(adis->trig, adis);
- 	ret = iio_trigger_register(adis->trig);
- 
- 	indio_dev->trig = iio_trigger_get(adis->trig);
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 25c68de393ad..1f64457cc6ba 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -92,7 +92,7 @@ unsigned int iio_buffer_poll(struct file *filp,
- 	struct iio_dev *indio_dev = filp->private_data;
- 	struct iio_buffer *rb = indio_dev->buffer;
- 
--	if (!indio_dev->info)
-+	if (!indio_dev->info || rb == NULL)
- 		return 0;
- 
- 	poll_wait(filp, &rb->pollq, wait);
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index ac897f051863..30b93dd1e612 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -503,7 +503,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
- 	 * Ensure that stores to Normal memory are visible to the
- 	 * other CPUs before issuing the IPI.
- 	 */
--	smp_wmb();
-+	wmb();
- 
- 	for_each_cpu_mask(cpu, *mask) {
- 		u64 cluster_id = cpu_logical_map(cpu) & ~0xffUL;
-diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-index 1b893bc8b842..1e934b7e0139 100644
---- a/drivers/pci/host/pci-keystone.c
-+++ b/drivers/pci/host/pci-keystone.c
-@@ -179,14 +179,16 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
- 	}
- 
- 	/* interrupt controller is in a child node */
--	*np_temp = of_find_node_by_name(np_pcie, controller);
-+	*np_temp = of_get_child_by_name(np_pcie, controller);
- 	if (!(*np_temp)) {
- 		dev_err(dev, "Node for %s is absent\n", controller);
- 		goto out;
- 	}
- 	temp = of_irq_count(*np_temp);
--	if (!temp)
-+	if (!temp) {
-+		of_node_put(*np_temp);
- 		goto out;
-+	}
- 	if (temp > max_host_irqs)
- 		dev_warn(dev, "Too many %s interrupts defined %u\n",
- 			(legacy ? "legacy" : "MSI"), temp);
-@@ -200,6 +202,9 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
- 		if (host_irqs[temp] < 0)
- 			break;
- 	}
-+
-+	of_node_put(*np_temp);
-+
- 	if (temp) {
- 		*num_irqs = temp;
- 		ret = 0;
-diff --git a/drivers/scsi/ibmvscsi/ibmvfc.h b/drivers/scsi/ibmvscsi/ibmvfc.h
-index 8fae03215a85..543c10266984 100644
---- a/drivers/scsi/ibmvscsi/ibmvfc.h
-+++ b/drivers/scsi/ibmvscsi/ibmvfc.h
-@@ -366,7 +366,7 @@ enum ibmvfc_fcp_rsp_info_codes {
- };
- 
- struct ibmvfc_fcp_rsp_info {
--	__be16 reserved;
-+	u8 reserved[3];
- 	u8 rsp_code;
- 	u8 reserved2[4];
- }__attribute__((packed, aligned (2)));
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 6ce78e3ca7c6..a1ab83769191 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2345,6 +2345,8 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently the driver spams the kernel log on unsupported ioctls which is
+unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
+I suspect this was originally for debugging purposes but it really is not
+required so remove it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/misc/mei/main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
+index 758dc73602d5..7bb013644aeb 100644
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
  		break;
+ 
+ 	default:
+-		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
+ 		rets = -ENOIOCTLCMD;
  	}
  
-+	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
-+
- 	/* Enable USB2 LPM Capability */
- 
- 	if ((dwc->revision > DWC3_REVISION_194A)
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index 88aa287f10ea..62d2a8b41bc4 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -2727,10 +2727,8 @@ static int _ffs_func_bind(struct usb_configuration *c,
- 	struct ffs_data *ffs = func->ffs;
- 
- 	const int full = !!func->ffs->fs_descs_count;
--	const int high = gadget_is_dualspeed(func->gadget) &&
--		func->ffs->hs_descs_count;
--	const int super = gadget_is_superspeed(func->gadget) &&
--		func->ffs->ss_descs_count;
-+	const int high = !!func->ffs->hs_descs_count;
-+	const int super = !!func->ffs->ss_descs_count;
- 
- 	int fs_len, hs_len, ss_len, ret, i;
- 
-diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
-index 7f453b6ff0d0..c3a768ae1a40 100644
---- a/lib/asn1_decoder.c
-+++ b/lib/asn1_decoder.c
-@@ -305,38 +305,43 @@ next_op:
- 
- 	/* Decide how to handle the operation */
- 	switch (op) {
--	case ASN1_OP_MATCH_ANY_ACT:
--	case ASN1_OP_COND_MATCH_ANY_ACT:
--		ret = actions[machine[pc + 1]](context, hdr, tag, data + dp, len);
--		if (ret < 0)
--			return ret;
--		goto skip_data;
--
--	case ASN1_OP_MATCH_ACT:
--	case ASN1_OP_MATCH_ACT_OR_SKIP:
--	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
--		ret = actions[machine[pc + 2]](context, hdr, tag, data + dp, len);
--		if (ret < 0)
--			return ret;
--		goto skip_data;
--
- 	case ASN1_OP_MATCH:
- 	case ASN1_OP_MATCH_OR_SKIP:
-+	case ASN1_OP_MATCH_ACT:
-+	case ASN1_OP_MATCH_ACT_OR_SKIP:
- 	case ASN1_OP_MATCH_ANY:
-+	case ASN1_OP_MATCH_ANY_ACT:
- 	case ASN1_OP_COND_MATCH_OR_SKIP:
-+	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
- 	case ASN1_OP_COND_MATCH_ANY:
--	skip_data:
-+	case ASN1_OP_COND_MATCH_ANY_ACT:
-+
- 		if (!(flags & FLAG_CONS)) {
- 			if (flags & FLAG_INDEFINITE_LENGTH) {
-+				size_t tmp = dp;
-+
- 				ret = asn1_find_indefinite_length(
--					data, datalen, &dp, &len, &errmsg);
-+					data, datalen, &tmp, &len, &errmsg);
- 				if (ret < 0)
- 					goto error;
--			} else {
--				dp += len;
- 			}
- 			pr_debug("- LEAF: %zu\n", len);
- 		}
-+
-+		if (op & ASN1_OP_MATCH__ACT) {
-+			unsigned char act;
-+
-+			if (op & ASN1_OP_MATCH__ANY)
-+				act = machine[pc + 1];
-+			else
-+				act = machine[pc + 2];
-+			ret = actions[act](context, hdr, tag, data + dp, len);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		if (!(flags & FLAG_CONS))
-+			dp += len;
- 		pc += asn1_op_lengths[op];
- 		goto next_op;
- 
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index 043cd43109ae..30b08bfc1dde 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1375,10 +1375,7 @@ int ip_getsockopt(struct sock *sk, int level,
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
-@@ -1410,9 +1407,7 @@ int compat_ip_getsockopt(struct sock *sk, int level, int optname,
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
- 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
--		release_sock(sk);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
-diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-index c31f8be7fe66..d0d7112bb7c9 100644
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -1314,10 +1314,7 @@ int ipv6_getsockopt(struct sock *sk, int level, int optname,
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET6, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
-@@ -1356,10 +1353,7 @@ int compat_ipv6_getsockopt(struct sock *sk, int level, int optname,
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = compat_nf_getsockopt(sk, PF_INET6,
--					   optname, optval, &len);
--		release_sock(sk);
-+		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 095e3958d83c..d061814d1ae1 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2769,7 +2769,7 @@ cfg80211_beacon_dup(struct cfg80211_beacon_data *beacon)
- 	}
- 	if (beacon->probe_resp_len) {
- 		new_beacon->probe_resp_len = beacon->probe_resp_len;
--		beacon->probe_resp = pos;
-+		new_beacon->probe_resp = pos;
- 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
- 		pos += beacon->probe_resp_len;
- 	}
+-- 
+2.15.1
