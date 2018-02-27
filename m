@@ -1,37 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751863AbeB0WXG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:23:06 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40987 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751778AbeB0WXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:23:05 -0500
-Date: Tue, 27 Feb 2018 23:23:00 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: geert@linux-m68k.org, andy.shevchenko@gmail.com, rabel@robertabel.eu,
+        id S1751901AbeB0WYU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:24:20 -0500
+Received: from mail-io0-f179.google.com ([209.85.223.179]:36449 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751836AbeB0WYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:24:17 -0500
+X-Google-Smtp-Source: AG47ELsCAUQ/jt9v8+I9s6LkxEwMUM4GRu1tmPnAgSmVZEpkWCEmEQglZ9BJmTMTnC/WNMamr88J3g==
+Date: Tue, 27 Feb 2018 16:24:15 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3] auxdisplay: charlcd: Fix and clean up handling of
- x/y commands
-Message-ID: <20180227222300.GA27591@1wt.eu>
-References: <20180227220952.57wc3wpc26b2fdyq@gmail.com>
+Subject: Re: [PATCH 01/12] i2c: qup: fixed releasing dma without flush
+ operation completion
+Message-ID: <20180227222415.GB20901@hector.attlocal.net>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180227220952.57wc3wpc26b2fdyq@gmail.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 11:09:52PM +0100, Miguel Ojeda wrote:
-> The current version is not parsing multiple x/y commands as the code
-> originally intended. On top of that, kstrtoul() expects
-> NULL-terminated strings. Finally, the code does two passes over
-> the string.
+On Sat, Feb 03, 2018 at 01:28:06PM +0530, Abhishek Sahu wrote:
+> The QUP BSLP BAM generates the following error sometimes if the
+> current I2C DMA transfer fails and the flush operation has been
+> scheduled
 > 
-> Some explanations about the supported syntax are added as well.
+>     “bam-dma-engine 7884000.dma: Cannot free busy channel”
+> 
+> If any I2C error comes during BAM DMA transfer, then the QUP I2C
+> interrupt will be generated and the flush operation will be
+> carried out to make i2c consume all scheduled DMA transfer.
+> Currently, the same completion structure is being used for BAM
+> transfer which has already completed without reinit. It will make
+> flush operation wait_for_completion_timeout completed immediately
+> and will proceed for freeing the DMA resources where the
+> descriptors are still in process.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 
-Looks much better, thank you ;-)
-
-Willy
+Reviewed-by: Andy Gross <andy.gross@linaro.org>
