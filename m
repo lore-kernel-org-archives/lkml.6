@@ -1,72 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeB0LW7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 06:22:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44051 "EHLO mx2.suse.de"
+        id S1752741AbeB0LZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 06:25:59 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:17287 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752185AbeB0LW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 06:22:57 -0500
-Date: Tue, 27 Feb 2018 12:22:34 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, x86@kernel.org
-Subject: Re: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
-Message-ID: <20180227112234.GE26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-3-Yazen.Ghannam@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226193904.20532-3-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1752130AbeB0LZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 06:25:57 -0500
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/8xx: fix cpm_cascade() dual end of interrupt
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
+        Vitaly Bordug <vitb@kernel.crashing.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Message-Id: <20180227112555.DEBCE6E8BA@po15720vm.idsi0.si.c-s.fr>
+Date: Tue, 27 Feb 2018 12:25:55 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:38:58PM -0600, Yazen Ghannam wrote:
-> + * We don't need a "CPER_IA" prefix since these are all locally defined.
-> + * This will save us a lot of line space.
-> + */
-> +#define VALID_LAPIC_ID			BIT_ULL(0)
-> +#define VALID_CPUID_INFO		BIT_ULL(1)
-> +
-> +void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
-> +{
-> +	printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
+cpm_cascade() doesn't have to call eoi() as it is already called
+by handle_fasteoi_irq()
 
-Ok, so this...
+And cpm_get_irq() will always return an unsigned int so the test
+is useless
 
-> +
-> +	if (proc->validation_bits & VALID_LAPIC_ID)
-> +		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
-> +
-> +	if (proc->validation_bits & VALID_CPUID_INFO) {
-> +		printk("%sCPUID Info:\n", pfx);
-> +		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
-> +			       sizeof(proc->cpuid), 0);
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/platforms/8xx/m8xx_setup.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-... and this are semi-decoded information bits which I'd have to go open
-the spec and continue decoding.
-
-Can we please change the whole approach of not simply dumping such
-fields but decode them fully. We want that error information to be
-helpful to the user and she should be able to immediately understand
-what type of error it is.
-
-Validation Bits and a CPUID hexdump simply makes you go look at the spec
-again and such dumps are only useful as a debugging aid but nothing
-more.
-
-The APIC ID dump is how this should be done - properly and fully decoded
-error info which can be used immediately for diagnosing the error.
-
-Thx.
-
+diff --git a/arch/powerpc/platforms/8xx/m8xx_setup.c b/arch/powerpc/platforms/8xx/m8xx_setup.c
+index e1274db53d48..2188d691a40f 100644
+--- a/arch/powerpc/platforms/8xx/m8xx_setup.c
++++ b/arch/powerpc/platforms/8xx/m8xx_setup.c
+@@ -217,13 +217,7 @@ void __noreturn mpc8xx_restart(char *cmd)
+ 
+ static void cpm_cascade(struct irq_desc *desc)
+ {
+-	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	int cascade_irq = cpm_get_irq();
+-
+-	if (cascade_irq >= 0)
+-		generic_handle_irq(cascade_irq);
+-
+-	chip->irq_eoi(&desc->irq_data);
++	generic_handle_irq(cpm_get_irq());
+ }
+ 
+ /* Initialize the internal interrupt controllers.  The number of
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+2.13.3
