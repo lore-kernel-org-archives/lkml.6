@@ -1,109 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeB0JuK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:50:10 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33287 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752560AbeB0Jsr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:48:47 -0500
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [RESEND PATCH v1 1/6] i2c: i2c-stm32f7: Add 10-bit address support
-Date: Tue, 27 Feb 2018 10:48:09 +0100
-Message-ID: <1519724894-21363-2-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519724894-21363-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1519724894-21363-1-git-send-email-pierre-yves.mordret@st.com>
+        id S1752700AbeB0Jue (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:50:34 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752210AbeB0Juc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:50:32 -0500
+Date: Tue, 27 Feb 2018 10:50:28 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: John Garry <john.garry@huawei.com>
+Cc: ak@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, wcohen@redhat.com, will.deacon@arm.com,
+        ganapatrao.kulkarni@cavium.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        zhangshaokun@hisilicon.com
+Subject: Re: [PATCH v2 00/11] perf events patches for improved ARM64 support
+Message-ID: <20180227095028.GG21033@krava>
+References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for 10-bit device address for STM32F7 I2C
+On Sat, Feb 24, 2018 at 12:05:21AM +0800, John Garry wrote:
+> This patchset adds support for some perf events features,
+> targeted at ARM64, implemented in a generic fashion.
+> 
+> The two main features are as follows:
+> - support for arch/vendor/platform pmu events directory structure
+>    - to support this, topic subdirectory support needs to be dropped
+> - support for parsing standard architecture pmu events
+> 
+> On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
+> and HiSilicon hip08 JSONs are relocated/added/updated.
+> 
+> In addition, there is a patch to drop mutli-mapfile.csv support and
+> also a bugfix in jevents.c for an error code value.
+> 
+> Differences to v1:
+> - Address coding issues from Jiri Olsa in adding arch std event
+>    support (https://lkml.org/lkml/2018/2/6/501)
+> - add patch to drop topic subdirectory support
+> - add patch for bug fix in json_events() 
+> - add review tags from Jiri Olsa
 
-Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-     v1:
-        * Initial
----
----
- drivers/i2c/busses/i2c-stm32f7.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+can't tell if those json file changes are ok, but for all the code changes:
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 16c7d77..31bfa00 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -65,7 +65,12 @@
- #define STM32F7_I2C_CR2_NACK			BIT(15)
- #define STM32F7_I2C_CR2_STOP			BIT(14)
- #define STM32F7_I2C_CR2_START			BIT(13)
-+#define STM32F7_I2C_CR2_HEAD10R			BIT(12)
-+#define STM32F7_I2C_CR2_ADD10			BIT(11)
- #define STM32F7_I2C_CR2_RD_WRN			BIT(10)
-+#define STM32F7_I2C_CR2_SADD10_MASK		GENMASK(9, 0)
-+#define STM32F7_I2C_CR2_SADD10(n)		(((n) & \
-+						STM32F7_I2C_CR2_SADD10_MASK))
- #define STM32F7_I2C_CR2_SADD7_MASK		GENMASK(7, 1)
- #define STM32F7_I2C_CR2_SADD7(n)		(((n) & 0x7f) << 1)
- 
-@@ -176,14 +181,14 @@ struct stm32f7_i2c_timings {
- 
- /**
-  * struct stm32f7_i2c_msg - client specific data
-- * @addr: 8-bit slave addr, including r/w bit
-+ * @addr: 8-bit or 10-bit slave addr, including r/w bit
-  * @count: number of bytes to be transferred
-  * @buf: data buffer
-  * @result: result of the transfer
-  * @stop: last I2C msg to be sent, i.e. STOP to be generated
-  */
- struct stm32f7_i2c_msg {
--	u8 addr;
-+	u16 addr;
- 	u32 count;
- 	u8 *buf;
- 	int result;
-@@ -629,8 +634,15 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
- 		cr2 |= STM32F7_I2C_CR2_RD_WRN;
- 
- 	/* Set slave address */
--	cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
--	cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
-+	cr2 &= ~(STM32F7_I2C_CR2_HEAD10R | STM32F7_I2C_CR2_ADD10);
-+	if (msg->flags & I2C_M_TEN) {
-+		cr2 &= ~STM32F7_I2C_CR2_SADD10_MASK;
-+		cr2 |= STM32F7_I2C_CR2_SADD10(f7_msg->addr);
-+		cr2 |= STM32F7_I2C_CR2_ADD10;
-+	} else {
-+		cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
-+		cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
-+	}
- 
- 	/* Set nb bytes to transfer and reload if needed */
- 	cr2 &= ~(STM32F7_I2C_CR2_NBYTES_MASK | STM32F7_I2C_CR2_RELOAD);
-@@ -798,7 +810,7 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
- 
- static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
- {
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
- }
- 
- static struct i2c_algorithm stm32f7_i2c_algo = {
--- 
-2.7.4
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
