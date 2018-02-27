@@ -1,101 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752477AbeB0Iz1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:55:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752392AbeB0IzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:55:05 -0500
-Date: Tue, 27 Feb 2018 09:54:58 +0100
-From: Jens Freimann <jfreimann@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jasowang@redhat.com, wexu@redhat.com
-Subject: Re: [PATCH RFC 1/2] virtio: introduce packed ring defines
-Message-ID: <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
-References: <20180223111801.15240-1-tiwei.bie@intel.com>
- <20180223111801.15240-2-tiwei.bie@intel.com>
+        id S1752272AbeB0I6C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:58:02 -0500
+Received: from mail-it0-f53.google.com ([209.85.214.53]:35133 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeB0I6A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 03:58:00 -0500
+X-Google-Smtp-Source: AG47ELsWImZ0FTEdpcZDCk257C4JMdsDdWGQTyESaDWTbNZPGb9DxXKxqIC8v9OVlqwWJryVxQ2TBYRcE+z1yj7nmGA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180223111801.15240-2-tiwei.bie@intel.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
+References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
+ <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
+ <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com> <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
+ <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com> <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Feb 2018 09:57:58 +0100
+Message-ID: <CACRpkdaWyV2VPFBsFAjt-a8t6f3F6XwonHxfR3HfUJ=C13uuWw@mail.gmail.com>
+Subject: Re: [PATCH V15 06/22] mmc: block: Add blk-mq support
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Dong Aisheng <dongas86@gmail.com>,
+        Das Asutosh <asutoshd@codeaurora.org>,
+        Zhangfei Gao <zhangfei.gao@gmail.com>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 07:18:00PM +0800, Tiwei Bie wrote:
->Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->---
-> include/uapi/linux/virtio_config.h | 18 +++++++++-
-> include/uapi/linux/virtio_ring.h   | 68 ++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 85 insertions(+), 1 deletion(-)
->
->diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
->index 308e2096291f..e3d077ef5207 100644
->--- a/include/uapi/linux/virtio_config.h
->+++ b/include/uapi/linux/virtio_config.h
->@@ -49,7 +49,7 @@
->  * transport being used (eg. virtio_ring), the rest are per-device feature
->  * bits. */
-> #define VIRTIO_TRANSPORT_F_START	28
->-#define VIRTIO_TRANSPORT_F_END		34
->+#define VIRTIO_TRANSPORT_F_END		37
->
-> #ifndef VIRTIO_CONFIG_NO_LEGACY
-> /* Do we get callbacks when the ring is completely used, even if we've
->@@ -71,4 +71,20 @@
->  * this is for compatibility with legacy systems.
->  */
-> #define VIRTIO_F_IOMMU_PLATFORM		33
->+
->+/* This feature indicates support for the packed virtqueue layout. */
->+#define VIRTIO_F_RING_PACKED		34
+On Mon, Feb 26, 2018 at 10:48 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+> On 22.02.2018 20:54, Dmitry Osipenko wrote:
+>> On 22.02.2018 10:42, Adrian Hunter wrote:
 
-Spec says VIRTIO_F_PACKED_RING not RING_PACKED
->+
->+/*
->+ * This feature indicates that all buffers are used by the device
->+ * in the same order in which they have been made available.
->+ */
->+#define VIRTIO_F_IN_ORDER		35
->+
->+/*
->+ * This feature indicates that drivers pass extra data (besides
->+ * identifying the Virtqueue) in their device notifications.
->+ */
->+#define VIRTIO_F_NOTIFICATION_DATA	36
->+
-> #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
->diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
->index 6d5d5faa989b..77b1d4aeef72 100644
->--- a/include/uapi/linux/virtio_ring.h
->+++ b/include/uapi/linux/virtio_ring.h
->@@ -44,6 +44,9 @@
-> /* This means the buffer contains a list of buffer descriptors. */
-> #define VRING_DESC_F_INDIRECT	4
+>>> SDIO (unless it is a combo card) should be unaffected by changes to the
+>>> block driver.
 >
->+#define VRING_DESC_F_AVAIL(b)	((b) << 7)
->+#define VRING_DESC_F_USED(b)	((b) << 15)
->+
-> /* The Host uses this in used->flags to advise the Guest: don't kick me when
->  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
->  * will still kick if it's out of buffers. */
->@@ -104,6 +107,36 @@ struct vring {
-> 	struct vring_used *used;
-> };
->
->+struct vring_packed_desc_event {
->+	/* Descriptor Event Offset */
->+	__virtio16 desc_event_off   : 15,
->+	/* Descriptor Event Wrap Counter */
->+		   desc_event_wrap  : 1;
->+	/* Descriptor Event Flags */
->+	__virtio16 desc_event_flags : 2;
->+};
+> I don't know whether it's a combo card or not. Where I can find info about that?
+> Is it mentioned in sysfs somewhere?
 
-Where would the virtqueue number go in driver notifications?
+Combo cards were used with very old (2000s) PDAs which had only
+one SD card slot which they wanted to use for WiFi and storage
+at the same time.
 
-regards,
-Jens 
+They are very uncommon and I haven't been able to locate any
+even for testing.
+
+It is very unlikely that you have one.
+
+However you would notice it from seeing a partition attachment
+message (like with an ordinary SD card) when you plug in your
+card.
+
+Yours,
+Linus Walleij
