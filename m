@@ -1,70 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeB0KDE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:03:04 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:60541 "EHLO
+        id S1752524AbeB0KDB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:03:01 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:48357 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752390AbeB0KDC (ORCPT
+        with ESMTP id S1751908AbeB0KC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:03:02 -0500
+        Tue, 27 Feb 2018 05:02:59 -0500
 From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
 To: kishon@ti.com
 Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com,
         linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         andy.shevchenko@gmail.com,
         Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-Subject: [PATCH v3 2/2] pci: endpoint: Fix kernel panic after put_device()
-Date: Tue, 27 Feb 2018 11:02:30 +0100
-Message-Id: <20180227100231.22561-3-embedded24@evers-fischer.de>
+Subject: [PATCH v3 1/2] pci: endpoint: Simplify name allocation for epf device
+Date: Tue, 27 Feb 2018 11:02:29 +0100
+Message-Id: <20180227100231.22561-2-embedded24@evers-fischer.de>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180227100231.22561-1-embedded24@evers-fischer.de>
 References: <20180227100231.22561-1-embedded24@evers-fischer.de>
-X-Provags-ID: V03:K0:UkEkvuL7T4/iDg71VNKRWW2nurAMPSmRaBSb/yoyOnkCMc9fsat
- N73McjlE5JL3eEye8g7dBX6jp4aYRSoO7bpJ21TTpHCtP8jbv7iUP1o39JR9ymSGPFwbGj0
- caeA7DTwSNcjyWXhcgQMbRB+8prVWNHbwN/PQSLXsC+mE8vs+RBpRLEdlaPZXL/bpGg0BXH
- OTqxbKUPTUvlnjMtjBieA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gOQl3g50Vz4=:pR1dZVOlj90mD4n67xnB+Z
- /fUybbmPYDPE51vLhNs+nw4pf++gnbYT91lYXWxoLvWRLuPwmne5jAz4aHswOHM0wg/szh5Yz
- pBQ+4wGG1xa0YbMqIhCxe8ogJRclalbUr2IG5g8uZ17zULpi1Ysk9LOOf0c15eWlpv1cjpxSS
- q4ZUcXBhjt1dzBf9IBU48EwZ0RgurN4aT9Sm2SgzuOM+5qVAcz8uqf6WjPs5Gy0/GqeZdlFpS
- Nr8m04mwAv193a2GKjgFITshs86VzN7/vp0nVr7yrVsBhTkQ4cR5BaXCMiFSsyrweAFhDYM7p
- KG4DTXtyq7bBaqz0zv+zu4Ki2yYYB82UQ4+zJsN6F8VFWCeG4ASH04Qeymfq+qZu94BnPWPXc
- F4DFRgACRQyNUeP2hk3oZB8PgUI2rxUShYefOx+WRFriLi9y9HOqTM0IJhydgk1W3TfYo/ZmV
- Hnd04qdQpjfoUGg45QAChhdsTvsNGya5MMbWLuocw1onK4VubhwJVJzOMO61N9OHiMQsnDobv
- Lwmf5XidkImJsuy7yNFGakIJHJJS1Ey43X2O+qi1C1XLy/rZ4iJLfYkb3V8Is0OJzwl+PU5QR
- P04gB0+QdPOMMlbvxpil2mHXFPQCb38oEvvcJLco05rf5A4MhDOfuYSL2t1ov9yJSlGQKPBv6
- DjNJMyF+vAbCOQZkXvG6m+IKZ7NdObzsLJP53AquahHzwq4b9l22xd/AuBCdoA/HUryiO95Yo
- 77ram7/NKuOCUD206/iMqCCaGjHYwnlcHWKLTQ==
+X-Provags-ID: V03:K0:SbaB3svq6W235Ds0c3wdWDBY/YqkMBmwDkqZAffAF8vUgCwTsMy
+ VLK39rjvAu2xsX4Sqg/iXF+CHewfagsjX2rhYga6UCRGQW2ViJbw1CRdDuAAE1ffmh6Tgk2
+ emTc9PbKd239gLdMvDk9cOFUzaK8Ik07zPShBxzwaJ4QLaSPPj/7jdQjjSqzdzA8aWtfOFO
+ k8uYra+wkcE4Jx914qmgA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WPb25tUCObI=:vTsCSmHZ5oUcd8O1BdF3pF
+ f9gue//OAbBiTPle8BjTXxQbVY706nR71t1j/2FzvACf+nmSBff00/K4WAsBCTiT38hInm1Wc
+ xcl6hZIanIJD/CiRmErgN1lM4Zt2cPEzWWUggB9SaQZzWslUzhcPUvumvO2kLHDaNL5YF7tgc
+ +zUFLHsw3Vb/NhRWwr3pZSK5Cf7XahrNS6ErrV9wsRUEQPtHVJS+I6m+RYPTwwIcS7GViQxGB
+ pMYDLOqI3prQhGXjb4KtTwBWSDYe4Wp8GdLVElyVByBrVCy6ROk8/cf4YVn0MW1qGnJGqvrMI
+ 1arAEaMsXVmYRMBDbFKvs6lI6AzplticQmDdeQe+rjqL2zfmkpUyUI+7bld5rJDE6e8HkBPkv
+ FWoTSQPK1Ap5y0nfHRiEh8Zw8kjWdneMe5kY0hZoRv/u8mdV6862K6yUBrmHFGuE0K/lFKTva
+ baJYisP3dVGT7HtlZTZuwwa5KXOOIexEnNSfaiDQV6A3GUbpcqVwcZpbTmaBsR3IJLb9NsTTI
+ OoeJzeTqBnn7a6b7DsjAhkapOwwi5pYpXScd+3ueIo7cvpaI41DufgKmYXsDcFq7DaUBps4lo
+ N5SKv9pTkU1AuTcIh3ohoTDmQo7Jn2bEMTYmWBGeNeZxYR7ubiKw1XUdYxlxx0fDe0dcmv/5n
+ sIJSVYgMS+fWptL9nelWvk2z+M0aT4osdpBvw9CvHAtymFyXE6UE5Zfs2c4pHs4/cZ+cg/iyC
+ e/ZbMO90kxRbOnCXxjuxKgupO5jhFk04RAuHoQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
 
-'put_device()' calls the relase function 'pci_epf_dev_release()',
-which already frees 'epf->name' and 'epf'.
+This commit replaces allocating and freeing the intermediate
+'buf'/'func_name' with a combination of 'kstrndup()' and 'len'.
 
-Therefore we must not free them again after 'put_device()'.
-
-Fixes: 5e8cb4033807 ("PCI: endpoint: Add EP core layer to enable EP controller and EP functions")
+'len' is the required length of 'epf->name'.
+'epf->name' should be either the first part of 'name' preceding the '.'
+or the complete 'name', if there is no '.' in the name.
 
 Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
 ---
- drivers/pci/endpoint/pci-epf-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/endpoint/pci-epf-core.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 1f2506f32bb9..1878a6776519 100644
+index 766ce1dca2ec..1f2506f32bb9 100644
 --- a/drivers/pci/endpoint/pci-epf-core.c
 +++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -232,7 +232,7 @@ struct pci_epf *pci_epf_create(const char *name)
+@@ -200,8 +200,7 @@ struct pci_epf *pci_epf_create(const char *name)
+ 	int ret;
+ 	struct pci_epf *epf;
+ 	struct device *dev;
+-	char *func_name;
+-	char *buf;
++	int len;
+ 
+ 	epf = kzalloc(sizeof(*epf), GFP_KERNEL);
+ 	if (!epf) {
+@@ -209,20 +208,11 @@ struct pci_epf *pci_epf_create(const char *name)
+ 		goto err_ret;
+ 	}
+ 
+-	buf = kstrdup(name, GFP_KERNEL);
+-	if (!buf) {
+-		ret = -ENOMEM;
+-		goto free_epf;
+-	}
+-
+-	func_name = buf;
+-	buf = strchrnul(buf, '.');
+-	*buf = '\0';
+-
+-	epf->name = kstrdup(func_name, GFP_KERNEL);
++	len = strchrnul(name, '.') - name;
++	epf->name = kstrndup(name, len, GFP_KERNEL);
+ 	if (!epf->name) {
+ 		ret = -ENOMEM;
+-		goto free_func_name;
++		goto free_epf;
+ 	}
+ 
+ 	dev = &epf->dev;
+@@ -238,16 +228,12 @@ struct pci_epf *pci_epf_create(const char *name)
+ 	if (ret)
+ 		goto put_dev;
+ 
+-	kfree(func_name);
+ 	return epf;
  
  put_dev:
  	put_device(dev);
--	kfree(epf->name);
-+	return ERR_PTR(ret);
+ 	kfree(epf->name);
  
+-free_func_name:
+-	kfree(func_name);
+-
  free_epf:
  	kfree(epf);
+ 
 -- 
 2.16.2
