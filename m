@@ -1,129 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752120AbeB0HHz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 02:07:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43686 "EHLO mail.bootlin.com"
+        id S1752334AbeB0HMs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 02:12:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43830 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751974AbeB0HHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 02:07:54 -0500
-Date: Tue, 27 Feb 2018 08:07:35 +0100
+        id S1752314AbeB0HMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 02:12:43 -0500
+Date: Tue, 27 Feb 2018 08:12:11 +0100
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: jernej.skrabec@siol.net, linux-sunxi <linux-sunxi@googlegroups.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
- output on H3 boards
-Message-ID: <20180227070735.ml3mc4nr4vpge57u@flea>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
- <2676311.2IEVhXnSIE@jernej-laptop>
- <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
- <2342395.9m6rrqTry7@jernej-laptop>
- <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, davem@davemloft.net,
+        arnd@arndb.de, mchehab@kernel.org, clabbe.montjoie@gmail.com,
+        rask@formelder.dk, krzk@kernel.org, sean@mess.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [RFC PATCH] ARM: configs: sunxi: Set ondemand govenor as default
+Message-ID: <20180227071211.4c5okbwcp5qjx4ok@flea>
+References: <20180217142235.28541-1-embed3d@gmail.com>
+ <20180219081050.vvfhnbw4foved2fb@flea.lan>
+ <15992664-76be-2584-0f8d-424eadc23925@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hvvzilz5wqazdv4s"
+        protocol="application/pgp-signature"; boundary="2xqif3dc46ew3mkr"
 Content-Disposition: inline
-In-Reply-To: <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
+In-Reply-To: <15992664-76be-2584-0f8d-424eadc23925@gmail.com>
 User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---hvvzilz5wqazdv4s
-Content-Type: text/plain; charset=utf-8
+--2xqif3dc46ew3mkr
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 27, 2018 at 01:29:27PM +1100, Julian Calaby wrote:
-> Hi Jernej,
+On Mon, Feb 26, 2018 at 10:29:29PM +0100, Philipp Rossak wrote:
 >=20
-> On Tue, Feb 27, 2018 at 3:27 AM, Jernej =C5=A0krabec <jernej.skrabec@siol=
-=2Enet> wrote:
-> > Hi,
-> >
-> > Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napis=
-al(a):
-> >> =E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
-=8812:16:44, "Jernej =C5=A0krabec"
-> > <jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
-> >> >Hi Julian,
-> >> >
-> >> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
-> >> >
-> >> >napisal(a):
-> >> >> Hi Jernej,
-> >> >>
-> >> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
-> >> >
-> >> ><jernej.skrabec@siol.net>
-> >> >
-> >> >wrote:
-> >> >> > Enable HDMI output on all boards which have HDMI connector.
-> >> >> >
-> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> >> > ---
-> >> >> >
-> >> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
-> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-> >> >> >
-> >> >> >   | 25 ++++++++++++++++++++++
-> >> >> >
-> >> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
-> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-> >> >> >
-> >> >> >   | 25 ++++++++++++++++++++++
-> >> >
-> >> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-> >> >
-> >> >> >         | 25 ++++++++++++++++++++++
-> >> >> >
-> >> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
-> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.d=
-ts
-> >> >> >
-> >> >> >   | 24 +++++++++++++++++++++
-> >> >
-> >> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-> >> >
-> >> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
-> >> >
-> >> >insertions(+)
-> >> >
-> >> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
-> >> >> terms of HDMI support, the difference is that the H2+ can't output
-> >> >
-> >> >4k.
-> >> >
-> >> >> If this code is compatible with the H2+, could you please add the
-> >> >> necessary bits and pieces to the h2-plus DTSs too?
-> >> >
-> >> >There are only 3 H2+ boards in kernel and none of them has HDMI
-> >> >connector, so
-> >>
-> >> BPi M2 Zero has miniHDMI connector.
-> >
-> > Ah, sorry, I missed that one. Since I don't have it (or any other board=
- with
-> > H2+) I'm not really comfortable including such patch. If anyone will te=
-st it,
-> > I can include it in next revision.
 >=20
-> I have one of those (this is why I'm interested in this patchset) so
-> I'm willing to test, however I can't guarantee I'll get to it quickly.
+> On 19.02.2018 09:10, Maxime Ripard wrote:
+> > On Sat, Feb 17, 2018 at 03:22:35PM +0100, Philipp Rossak wrote:
+> > > Right now the performance govenor is the default frequency govenor on
+> > > sunxi devices. This causes some general problems.
+> > > When the cpu is idle the cpu runs with its maximum frequency.
+> > > This causes a higher cpu temperature in the idle state. When the cpu =
+is
+> > > now under load the cpu gets with that higher idle temperature now fas=
+ter
+> > > to its thermal limits.
+> > > An other big problem of the performace govenor is the missing
+> > > thermal throttling. Some tests with cpuburn resulted in a system crash
+> > > when the soc reached its thermal limits since no thermal throttling
+> > > occurred.
+> >=20
+> > This won't change anything with cpuburn. While cpuburn will be
+> > running, ondemand will increase the frequency of the cores to the
+> > maximum frequency, putting yourself in the exact same situation.
+>
+> I see here a totally different behavior on the hardware (Bananapi M2, A31=
+s).
+> First ondemand increases the cpu frequency, when the maximum temperature =
+is
+> reached, then it throttles down the cpu step by step to its minimum.
 
-Then I guess the best way forward will be to keep the current patch as
-is, and you'll send a patch whenever you have the time to test it.
+This is the thermal throttling, not the cpufreq governor.
 
-Thanks!
 Maxime
 
 --=20
@@ -131,24 +72,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---hvvzilz5wqazdv4s
+--2xqif3dc46ew3mkr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVA6gACgkQ0rTAlCFN
-r3Q6vg/9Fm4ScE+f0ZUY+8HUDprDlD6ldpEISEpdTAjAJWM79FS1uGjliUeykw3r
-+W2ILskyTqcyI4vWoV7IfGfdj5AdHYgu4Kl11jgk692Xsli8Tcmj1j1HSeFVGShq
-Zi5uRUDRbWegypGTCqFKp7xpZaMpv+9h3cQ02hdqOzxieu/On9hWWK+2siI7L9Uo
-Og0DPCvyNTnEMFvi+7UHHlKSHVmIrNdx5D8Ey2rk8hC2Y4R4cA4FPFRzGp4sYzor
-GEtKGM/cbB1xFgtCNaUjs4I+pEi8ZGowc7UZ0mVdKHsH7IhkEj1kC+LJRP2r5mMf
-nfLESFP/0ovvg6wTPrwZkLWGnYoEEIH1YgodzwO//2IOZHxrFh+ZL1bGrfQg9mUV
-tqiOP5aRaWCMYZy9NN5MQZ8jajPmQrxBsrrEoB8/B5DDaWRb7vnbNjqhNUVgmTh6
-2C/pHxFZbgMLSXR1Hkj0Ph50AZaQeqO381JsrI6SM5xXnGUrg4K4C7i/xtxyhdWU
-XZXw/rm4kLSCbBHQvNicrILn0PZh0fAKvsmClmFmxv6bMeXPAlRimM+uQjzaR7o/
-vCq253+Ne61sOPSRjgyJl2tqjEof2CIUTYwS8+U+57DYcgg678e2Qv8Br2cdYENX
-kJVUbQ8vbEYm4VMGApRBsWAsakQwgnK0QVuCJ53nhNp4Nu5c5wM=
-=8IBn
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVBMoACgkQ0rTAlCFN
+r3S6ig//Yu36CVGyfUqGk2hGDK218HKJIjUxE1fCX4CyZuYfcK5CEH88sEd+70oM
+mIr/JSAi5mWymOUO8CrIE5/0ajQDbjo2x/lVsZdG6GuU/MpJUK8zc5wFuGKhg9wd
+YZsx6foZAGRvz47fhHb4YCdQLy+qtfqlOaKL8saHI8qzwff1iiFwhX+T1ZKBD3F2
+QlN7gKESCzo+N94uOIzC8mFNWtXRtmJ2vaPd5yOCDFbHl+jZs70L0n46I1/OhAl6
+Th5ks5kL+G+8Zn3PYfhC2VVZzgG2nIP9FWSsz5x4npGLd3UWMekOITOrj7aQHScy
+8dvlc5MqPNThZDp3YN9UUO1Ju22csKgmiw9fF8A4smGokNTYLlfdexsVf/FhZYe0
+zxrszPhEdckmcj+UBvy8eh9QVVBZGrvhdrJS8o+nniS6CWdC0OkoP8DKebpFF/Se
+JIQ0/98lwFWhHuTxCY4d5kH01RhJlr8CZL7nk7xzt4vUCXjhSWDoe94LJIdz49eJ
+eBMR9pkHgV4DgqI7oe1CblmPBJXvRITMeCDsnBPlARm03nOASbzkBDC7kH2bM+90
+fHDn/qy5kL0bRGn/+WjCuLJ/zwIi9XsQEbE1WowOJh4JjBcO8mSBXM7lhVOmhLw5
+3TCpdwMZSI4HYsEX2AIzcTYpbbwXmmknXsi+o+NgANDZyg57pQI=
+=gRQ4
 -----END PGP SIGNATURE-----
 
---hvvzilz5wqazdv4s--
+--2xqif3dc46ew3mkr--
