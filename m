@@ -1,67 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932198AbeB0PsH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:48:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58940 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932177AbeB0PsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:48:05 -0500
-Date: Tue, 27 Feb 2018 16:47:54 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] MIPS: mscc: add ocelot dtsi
-Message-ID: <20180227154754.GA15333@piout.net>
-References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
- <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
- <20180214165743.GD3986@saruman>
+        id S1753831AbeB0Psi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:48:38 -0500
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:33638 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753312AbeB0Psh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 10:48:37 -0500
+X-Google-Smtp-Source: AG47ELtM7dl/EzrwjqHq+ubDGe4Mz6Dago4DfD8XUgi9D0CkYKK/eUQ94asCOVAfK8hM802EscVytqZ4680FifS3jjQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214165743.GD3986@saruman>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <17710852-a221-c707-0438-44031666028e@siemens.com>
+References: <cover.1516601570.git.jan.kiszka@siemens.com> <66bfcfc6dc1832baa3fbd8e4879764d36aa9c1e7.1516601570.git.jan.kiszka@siemens.com>
+ <CAHp75VcssoPE8ZCiHOt8-BKcponpr3xpzn42KZGx=Y+nMmZjYw@mail.gmail.com> <17710852-a221-c707-0438-44031666028e@siemens.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 17:48:35 +0200
+Message-ID: <CAHp75Vc+DpKPwm7us+1kDYU3e5UMF25MjmqLBfghdih8_FSWtw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] pci: Scan all functions when probing while running
+ over Jailhouse
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Benedikt Spranger <b.spranger@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2018 at 16:57:43 +0000, James Hogan wrote:
-> On Tue, Jan 16, 2018 at 11:12:37AM +0100, Alexandre Belloni wrote:
-> > Add a device tree include file for the Microsemi Ocelot SoC.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> 
-> May I suggest Cc'ing the DT folk on this patch.
-> 
+On Tue, Feb 27, 2018 at 9:22 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> On 2018-02-23 14:23, Andy Shevchenko wrote:
+>> On Mon, Jan 22, 2018 at 8:12 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-I can do that but I think that while they care about the bindings
-themselves, they usually don't review the device trees.
+>>>  #include <linux/acpi.h>
+>>>  #include <linux/irqdomain.h>
+>>>  #include <linux/pm_runtime.h>
+>>> +#include <linux/hypervisor.h>
+>>
+>> Ditto.
+>>
+>
+> Despite the context suggesting it, this file has no ordering.
 
-So I wouldn't expect any review from Rob on such a patch, especially
-since he reviewed the bndings.
-
-> > diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
-> > new file mode 100644
-> > index 000000000000..f0a155a74e02
-> > --- /dev/null
-> > +++ b/arch/mips/boot/dts/mscc/Makefile
-> > @@ -0,0 +1,4 @@
-> > +obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-> > +
-> > +# Force kbuild to make empty built-in.o if necessary
-> > +obj-				+= dummy.o
-> 
-> I don't think you need this since f7adc3124da0 ("kbuild: create
-> built-in.o automatically if parent directory wants it"). It was removed
-> from other places in bf070bb0e6c6 ("kbuild: remove all dummy assignments
-> to obj-").
-> 
-> Cheers
-> James
-
-
+At least you might not increase disordering by putting the line after acpi.h.
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
