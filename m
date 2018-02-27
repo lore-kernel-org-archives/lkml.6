@@ -1,129 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeB0BVU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:21:20 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34268 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751445AbeB0BVS (ORCPT
+        id S1751544AbeB0B0D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 20:26:03 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58037 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751094AbeB0B0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:21:18 -0500
-X-Google-Smtp-Source: AG47ELsKMxw5Jnj8IA8UrKlZCMgK7r5jC8URWnz2X+u49TjcZw692I3Z18QDjIuEXxoizAndbr5Xzqi5m3qLQ8eC9Mc=
+        Mon, 26 Feb 2018 20:26:01 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SyYNSrF_1519694753;
+Subject: Re: [RFC PATCH 0/4 v2] Define killable version for access_remote_vm()
+ and use it in fs/proc
+To: David Rientjes <rientjes@google.com>
+Cc: akpm@linux-foundation.org, mingo@kernel.org, adobriyan@gmail.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1519691151-101999-1-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.DEB.2.20.1802261656490.16999@chino.kir.corp.google.com>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <4ec32e5b-af63-f412-2213-e52bdbcc9585@linux.alibaba.com>
+Date: Mon, 26 Feb 2018 17:25:52 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <469812b9-d003-249a-d6d3-de74c24e4146@redhat.com>
-References: <1519640239-4428-1-git-send-email-wanpengli@tencent.com> <469812b9-d003-249a-d6d3-de74c24e4146@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 27 Feb 2018 09:21:17 +0800
-Message-ID: <CANRm+CyULfiYLkqibxxRwJUETBLruB2=Rrd_g4OSZ2QcmaYVVA@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: X86: Allow userspace to define the microcode version
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.20.1802261656490.16999@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R1LOZl007620
 
-2018-02-26 19:42 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 26/02/2018 11:17, Wanpeng Li wrote:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> Linux (among the others) has checks to make sure that certain features
->> aren't enabled on a certain family/model/stepping if the microcode version
->> isn't greater than or equal to a known good version.
->>
->> By exposing the real microcode version, we're preventing buggy guests that
->> don't check that they are running virtualized (i.e., they should trust the
->> hypervisor) from disabling features that are effectively not buggy.
->>
->> Suggested-by: Filippo Sironi <sironi@amazon.de>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: Liran Alon <liran.alon@oracle.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> ---
->> v1 -> v2:
->>  * add MSR_IA32_UCODE_REV to emulated_msrs
->>
->>  arch/x86/include/asm/kvm_host.h | 1 +
->>  arch/x86/kvm/x86.c              | 9 +++++++--
->>  2 files changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index 938d453..6e13f2f 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
->>       u64 smi_count;
->>       bool tpr_access_reporting;
->>       u64 ia32_xss;
->> +     u32 microcode_version;
->>
->>       /*
->>        * Paging state of the vcpu
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index 1a3ed81..4ae9517 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -1047,6 +1047,7 @@ static u32 emulated_msrs[] = {
->>       MSR_SMI_COUNT,
->>       MSR_PLATFORM_INFO,
->>       MSR_MISC_FEATURES_ENABLES,
->> +     MSR_IA32_UCODE_REV,
->>  };
->>
->>  static unsigned num_emulated_msrs;
->> @@ -2247,7 +2248,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>
->>       switch (msr) {
->>       case MSR_AMD64_NB_CFG:
->> -     case MSR_IA32_UCODE_REV:
->>       case MSR_IA32_UCODE_WRITE:
->>       case MSR_VM_HSAVE_PA:
->>       case MSR_AMD64_PATCH_LOADER:
->> @@ -2255,6 +2255,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>       case MSR_AMD64_DC_CFG:
->>               break;
->>
->> +     case MSR_IA32_UCODE_REV:
->> +             if (msr_info->host_initiated)
->> +                     vcpu->arch.microcode_version = data >> 32;
+
+
+On 2/26/18 5:02 PM, David Rientjes wrote:
+> On Tue, 27 Feb 2018, Yang Shi wrote:
 >
-> Please remove the shifts, and add the MSR_IA32_UCODE_REV version to the
-> "feature MSRs" recently added by Tom Lendacky.
+>> Background:
+>> When running vm-scalability with large memory (> 300GB), the below hung
+>> task issue happens occasionally.
+>>
+>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>   ps              D    0 14018      1 0x00000004
+>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>   Call Trace:
+>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>    [<ffffffff817159e6>] schedule+0x36/0x80
+>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>    [<ffffffff81717db0>] down_read+0x20/0x40
+>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>    [<ffffffff81242266>] vfs_read+0x96/0x130
+>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>>
+>> When manipulating a large mapping, the process may hold the mmap_sem for
+>> long time, so reading /proc/<pid>/cmdline may be blocked in
+>> uninterruptible state for long time.
+>> We already have killable version APIs for semaphore, here use down_read_killable()
+>> to improve the responsiveness.
+>>
+> Rather than killable, we have patches that introduce down_read_unfair()
+> variants for the files you've modified (cmdline and environ) as well as
+> others (maps, numa_maps, smaps).
 
-Do it in v3, thanks for the review. :)
-
-Regards,
-Wanpeng Li
+You mean you have such functionality used by google internally?
 
 >
-> Thanks,
+> When another thread is holding down_read() and there are queued
+> down_write()'s, down_read_unfair() allows for grabbing the rwsem without
+> queueing for it.  Additionally, when another thread is holding
+> down_write(), down_read_unfair() allows for queueing in front of other
+> threads trying to grab it for write as well.
+
+It sounds the __unfair variant make the caller have chance to jump the 
+gun to grab the semaphore before other waiters, right? But when a 
+process holds the semaphore, i.e. mmap_sem, for a long time, it still 
+has to sleep in uninterruptible state, right?
+
+But, it seems __unfair variant may not be very helpful in this usecase. 
+Reading /proc might be not that important to require any special care to 
+grab the semaphore before other waiters. I just hope it doesn't sleep in 
+uninterruptible state for a long time. If the user is not patient enough 
+due to some reason, they can have a chance to abort.
+
 >
-> Paolo
+> Ingo would know more about whether a variant like that in upstream Linux
+> would be acceptable.
 >
->> +             break;
->>       case MSR_EFER:
->>               return set_efer(vcpu, data);
->>       case MSR_K7_HWCR:
->> @@ -2550,7 +2554,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>               msr_info->data = 0;
->>               break;
->>       case MSR_IA32_UCODE_REV:
->> -             msr_info->data = 0x100000000ULL;
->> +             msr_info->data = (u64)vcpu->arch.microcode_version << 32;
->>               break;
->>       case MSR_MTRRcap:
->>       case 0x200 ... 0x2ff:
->> @@ -8232,6 +8236,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->>       vcpu->arch.regs_dirty = ~0;
->>
->>       vcpu->arch.ia32_xss = 0;
->> +     vcpu->arch.microcode_version = 0x1;
->>
->>       kvm_x86_ops->vcpu_reset(vcpu, init_event);
->>  }
->>
->
+> Would you be interested in unfair variants instead of only addressing
+> killable?
+
+Yes, I'm although it still looks overkilling to me for reading /proc.
+
+Thanks,
+Yang
