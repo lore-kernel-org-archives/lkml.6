@@ -1,80 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeB0GFh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 01:05:37 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38146 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750770AbeB0GFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 01:05:36 -0500
-From: Jonathan Toppins <jtoppins@redhat.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: jtoppins@redhat.com, astone@redhat.com, jcm@redhat.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        rafael.j.wysocki@intel.com, mingo@kernel.org, prarit@redhat.com,
-        james.morse@arm.com, andriy.shevchenko@linux.intel.com,
-        bhsharma@redhat.com, linux-kernel@vger.kernel.org,
-        rhkernel-list@redhat.com
-Subject: [PATCH] arm64/acpi: make ACPI boot preference configurable
-Date: Tue, 27 Feb 2018 01:05:32 -0500
-Message-Id: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
+        id S1751886AbeB0G0V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 01:26:21 -0500
+Received: from mx58.baidu.com ([61.135.168.58]:43381 "EHLO
+        tc-sys-mailedm03.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750770AbeB0G0U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 01:26:20 -0500
+From: Li RongQing <lirongqing@baidu.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: fenghua.yu@intel.com, tglx@linutronix.de
+Subject: [PATCH] Documentation: fix the wrong path in intel_rdt_ui.txt
+Date: Tue, 27 Feb 2018 14:17:51 +0800
+Message-Id: <1519712271-8802-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows a user to configure ACPI to be preferred over
-device-tree.
+the note says "Move the cpus 4-7 over to p1", but echo command
+writes f0 to p0/cpus
 
-Currently for ACPI to be used a user either has to set acpi=on on the
-kernel command line or make sure any device tree passed to the kernel
-is empty. If the dtb passed to the kernel is non-empty then device-tree
-will be chosen as the boot method of choice even if it is not correct.
-To prevent this situation where a system is only intended to be booted
-via ACPI a user can set this kernel configuration so it ignores
-device-tree settings unless ACPI table checks fail.
-
-Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
 ---
+ Documentation/x86/intel_rdt_ui.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/Kconfig       | 13 +++++++++++++
- arch/arm64/kernel/acpi.c |  2 +-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7381eeb7ef8e..da8d9ab62825 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1170,6 +1170,19 @@ config ARM64_ACPI_PARKING_PROTOCOL
- 	  protocol even if the corresponding data is present in the ACPI
- 	  MADT table.
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index 756fd76b78a6..71c30984e94d 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -671,7 +671,7 @@ occupancy of the real time threads on these cores.
+ # mkdir p1
  
-+config ARM64_PREFER_ACPI
-+	bool "Prefer usage of ACPI boot tables over device-tree"
-+	depends on ACPI
-+	help
-+	  Normally device-tree is preferred over ACPI on arm64 unless
-+	  explicitly preferred via kernel command line, something like: acpi=on
-+	  This configuration changes this default behaviour by pretending
-+	  the user set acpi=on on the command line. This configuration still
-+	  allows the user to turn acpi table parsing off via acpi=off. If
-+	  for some reason the table checks fail the system will still fall
-+	  back to using device-tree unless the user explicitly sets acpi=force
-+	  on the command line.
-+
- config CMDLINE
- 	string "Default kernel command string"
- 	default ""
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index 7b09487ff8fb..315b001c45f1 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -44,7 +44,7 @@ int acpi_pci_disabled = 1;	/* skip ACPI PCI scan and IRQ initialization */
- EXPORT_SYMBOL(acpi_pci_disabled);
+ Move the cpus 4-7 over to p1
+-# echo f0 > p0/cpus
++# echo f0 > p1/cpus
  
- static bool param_acpi_off __initdata;
--static bool param_acpi_on __initdata;
-+static bool param_acpi_on __initdata = IS_ENABLED(CONFIG_ARM64_PREFER_ACPI);
- static bool param_acpi_force __initdata;
+ View the llc occupancy snapshot
  
- static int __init parse_acpi(char *arg)
 -- 
-2.13.6
+2.11.0
