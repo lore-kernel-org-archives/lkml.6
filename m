@@ -1,126 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeB0Kfe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:35:34 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46035 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752680AbeB0Kfc (ORCPT
+        id S1752850AbeB0Kgu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:36:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45950 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752680AbeB0Kgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:35:32 -0500
-X-Google-Smtp-Source: AH8x226WNXDrgovtbP7V7bc9pggQlw6QLweIDBM8LcmRQHcf24ZZLfJi+94DkI7S2WSNsikhVOLTsFcZ02BRkTWAHeI=
+        Tue, 27 Feb 2018 05:36:48 -0500
+Date: Tue, 27 Feb 2018 11:36:52 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
+ pseudo-locking core
+In-Reply-To: <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
+Message-ID: <alpine.DEB.2.21.1802271109300.1886@nanos.tec.linutronix.de>
+References: <cover.1518443616.git.reinette.chatre@intel.com> <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de> <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180227070735.ml3mc4nr4vpge57u@flea>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
- <2676311.2IEVhXnSIE@jernej-laptop> <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
- <2342395.9m6rrqTry7@jernej-laptop> <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
- <20180227070735.ml3mc4nr4vpge57u@flea>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Tue, 27 Feb 2018 21:35:09 +1100
-Message-ID: <CAGRGNgU0_zxejYfTzk5qeNhp5saCtTLy4Ra+oG97anhJwL+qOA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
- output on H3 boards
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: jernej.skrabec@siol.net, linux-sunxi <linux-sunxi@googlegroups.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RAZd0t027027
 
-Hi Maxime,
+Reinette,
 
-On Tue, Feb 27, 2018 at 6:07 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Tue, Feb 27, 2018 at 01:29:27PM +1100, Julian Calaby wrote:
->> Hi Jernej,
->>
->> On Tue, Feb 27, 2018 at 3:27 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->> > Hi,
->> >
->> > Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napisal(a):
->> >> 于 2018年2月27日 GMT+08:00 上午12:16:44, "Jernej Škrabec"
->> > <jernej.skrabec@siol.net> 写到:
->> >> >Hi Julian,
->> >> >
->> >> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
->> >> >
->> >> >napisal(a):
->> >> >> Hi Jernej,
->> >> >>
->> >> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
->> >> >
->> >> ><jernej.skrabec@siol.net>
->> >> >
->> >> >wrote:
->> >> >> > Enable HDMI output on all boards which have HDMI connector.
->> >> >> >
->> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >> >> > ---
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
->> >> >> >
->> >> >> >   | 25 ++++++++++++++++++++++
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
->> >> >> >
->> >> >> >   | 25 ++++++++++++++++++++++
->> >> >
->> >> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
->> >> >
->> >> >> >         | 25 ++++++++++++++++++++++
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
->> >> >> >
->> >> >> >   | 24 +++++++++++++++++++++
->> >> >
->> >> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->> >> >
->> >> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
->> >> >
->> >> >insertions(+)
->> >> >
->> >> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
->> >> >> terms of HDMI support, the difference is that the H2+ can't output
->> >> >
->> >> >4k.
->> >> >
->> >> >> If this code is compatible with the H2+, could you please add the
->> >> >> necessary bits and pieces to the h2-plus DTSs too?
->> >> >
->> >> >There are only 3 H2+ boards in kernel and none of them has HDMI
->> >> >connector, so
->> >>
->> >> BPi M2 Zero has miniHDMI connector.
->> >
->> > Ah, sorry, I missed that one. Since I don't have it (or any other board with
->> > H2+) I'm not really comfortable including such patch. If anyone will test it,
->> > I can include it in next revision.
->>
->> I have one of those (this is why I'm interested in this patchset) so
->> I'm willing to test, however I can't guarantee I'll get to it quickly.
->
-> Then I guess the best way forward will be to keep the current patch as
-> is, and you'll send a patch whenever you have the time to test it.
+On Mon, 26 Feb 2018, Reinette Chatre wrote:
+> I started looking at how this implementation may look and would like to
+> confirm with you that your intentions behind the new "exclusive" and
+> "locked" modes can be maintained. I also have a few questions.
 
-Fair enough, I'll do that then. =)
+Phew :)
+
+> Focusing on CAT a resource group represents a closid across all domains
+> (cache instances) of all resources (cache layers) on the system. A full
+> schemata reflecting the active bitmask associated with this closid for
+> each domain of each resource is maintained. The current implementation
+> supports partial writes to the schemata, with the assumption that only
+> the changed values need to be updated, the others remain as is. For the
+> current implementation this works well since what is shown by schemata
+> reflects current hardware settings and what is written to schemata will
+> change current hardware settings. This is done irrespective of any
+> overlap between bitmasks of different closids (the "shareable" mode).
+
+Right.
+
+> A change to start us off with could be to initialize the schemata with
+> all the shareable and unused bits set for all domains when a new
+> resource group is created.
+
+The new resource group initialization is the least of my worries. The
+current mode is to use the default group setting, right?
+
+> Moving to "exclusive" mode it appears that, when enabled for a resource
+> group, all domains of all resources are forced to have an "exclusive"
+> region associated with this resource group (closid). This is because the
+> schemata reflects the hardware settings of all resources and their
+> domains and the hardware does not accept a "zero" bitmask. A user thus
+> cannot just specify a single region of a particular cache instance as
+> "exclusive". Does this match your intention wrt "exclusive"?
+
+Interesting question. I really did not think about that yet. 
+
+> Moving on to the "locked" mode. We cannot support different
+> pseudo-locked regions across multiple resources (eg. L2 and L3). In
+> fact, if we would at some point in the future then a pseudo-locked
+> region on one resource could implicitly span a second resource.
+> Additionally, we would like to enable a user to enable a single
+> pseudo-locked region on a single cache instance.
+> 
+> From the above it follows that "locked" mode cannot just simply build on
+> top of "exclusive" mode rules (as I expressed them above) since it
+> cannot enforce a locked region on each domain of each resource.
+> 
+> We would like to support something like (as you also have in your example):
+> 
+> mkdir group
+> echo "L2:1=0x3" > schemata
+> echo locked > mode
+> 
+> The above should only pseudo-lock the indicated region and not touch any
+> other domain. The problem is that the schemata always contain non-zero
+> bitmasks for all domains so at the time "locked" is written it is not
+> known which cache region needs to be locked. I am currently unable to
+> see a simple way to build on top of the current schemata design to
+> support the "locked" mode as you intended. It does seem as though the
+> user's intention to create a pseudo-locked region needs to be
+> communicated before the schemata is written, but from what I understand
+> this does not seem to be supported by the mode/schemata combination.
+> Please do correct me where I am wrong.
+
+You could make it:
+
+echo locksetup > mode
+echo $CONF > schemata
+echo locked > mode
+
+Or something like that.
+
+> To continue, when we overcome the above obstacle:
+> A scenario could be where a single resource group will contain all the
+> pseudo-locked regions (to avoid wasting closids). It is not clear to me
+> how to easily support such a usage though since the way writes to the
+> schemata is done is "changes only". If for example, two pseudo-locked
+> regions exists:
+> 
+> # mkdir group
+> # echo "L2:1=0x3" > schemata
+> # echo locked > mode
+> # cat schemata
+> L2:1=0x3
+> # echo "L2:0=0xf" > schemata
+> # cat schemata
+> L2:0=0xf;1=0x3
+> 
+> How can the user remove one of the pseudo-locked regions without
+> affecting the other? Could we perhaps allow zero bitmask writes when a
+> region is locked?
+
+That might work. Though it looks hacky.
+
+> Another point I would like to highlight is that when we talked about
+> keeping the closid associated with the pseudo-locked region I mentioned
+> that some resources may have few closids (for example, 4). As discussed
+> this seems ok when there are only 8 bits in the bitmask. What I did not
+> highlight at that time is that the closids are limited to the smallest
+> number supported by all resources. So, if this same platform has a
+> second resource (with more bits in a bitmask) with more closids, they
+> would also be limited to 4. In this case it does seem removing a closid
+> from service would have bigger impact.
+
+Is that a real issue or just an academic exercise? Let's assume its real,
+so you could do the following:
+
+mkdir group		<- acquires closid
+echo locksetup > mode	<- Creates 'lockarea' file
+echo L2:0 > lockarea
+echo 'L2:0=0xf' > schemata
+echo locked > mode	<- locks down all files, does the lock setup
+     	      		   and drops closid
+
+That would solve quite some of the other issues as well. Hmm?
 
 Thanks,
 
--- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+	tglx
