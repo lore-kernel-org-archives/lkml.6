@@ -1,60 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751827AbeB0R6C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:58:02 -0500
-Received: from foss.arm.com ([217.140.101.70]:39298 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750952AbeB0R6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:58:01 -0500
-Date: Tue, 27 Feb 2018 17:57:56 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: kishon@ti.com, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-Subject: Re: [PATCH v3 2/2] pci: endpoint: Fix kernel panic after put_device()
-Message-ID: <20180227175756.GB12756@e107981-ln.cambridge.arm.com>
-References: <20180227100231.22561-1-embedded24@evers-fischer.de>
- <20180227100231.22561-3-embedded24@evers-fischer.de>
+        id S1751886AbeB0SCK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 13:02:10 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33988 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbeB0SCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 13:02:08 -0500
+X-Google-Smtp-Source: AG47ELtiPJx3nqQ287gZW1r3EOkkw+JUldLeFqsruSShFlESg5FGlYTUod16I3BWIe02g8efjjJ8hjQRO5qeCE+Tt+8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180227100231.22561-3-embedded24@evers-fischer.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1519753659-3376-3-git-send-email-mario.limonciello@dell.com>
+References: <1519753659-3376-1-git-send-email-mario.limonciello@dell.com> <1519753659-3376-3-git-send-email-mario.limonciello@dell.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 20:02:06 +0200
+Message-ID: <CAHp75VcpkO8=iF=pXhbyaR_kP+kPhmr1AEQM-CwGuL78Z7T1Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 11:02:30AM +0100, Rolf Evers-Fischer wrote:
-> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-> 
-> 'put_device()' calls the relase function 'pci_epf_dev_release()',
-> which already frees 'epf->name' and 'epf'.
-> 
-> Therefore we must not free them again after 'put_device()'.
-> 
-> Fixes: 5e8cb4033807 ("PCI: endpoint: Add EP core layer to enable EP controller and EP functions")
-> 
-> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index 1f2506f32bb9..1878a6776519 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -232,7 +232,7 @@ struct pci_epf *pci_epf_create(const char *name)
->  
->  put_dev:
->  	put_device(dev);
-> -	kfree(epf->name);
-> +	return ERR_PTR(ret);
+On Tue, Feb 27, 2018 at 7:47 PM, Mario Limonciello
+<mario.limonciello@dell.com> wrote:
+> Some race conditions were raised due to dell-smbios and its backends
+> not being ready by the time that a consumer would call one of the
+> exported methods.
+>
+> To avoid this problem, guarantee that all initialization has been
+> done by linking them all together and running init for them all.
+>
+> As part of this change the Kconfig needs to be adjusted so that
+> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+> rather than modules.
+>
+> CONFIG_DELL_SMBIOS is a visually selectable option again and both
+> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
 
-Another thing you could do, which would get rid of these multiple return
-statements (yes there is another one) would consist in removing the goto
-labels completely and handle the errors at the respective call site and
-just return instead of jumping around.
+> changes from v1:
+>  * Move #ifdefs into dell-smbios.h and use static inline functions
 
-Thanks,
-Lorenzo
+> --- a/drivers/platform/x86/dell-smbios-smm.c
+> +++ b/drivers/platform/x86/dell-smbios-smm.c
+
+> +#ifdef CONFIG_DELL_SMBIOS_SMM
+
+Hmm... It's still here.
+
+Hint: in Makefile you need something like
+
+obj-$(CONFIG_DELL_SMBIOS_SMM) += dell-smbios-smm.o
+
+> +#endif /* CONFIG_DELL_SMBIOS_SMM */
+
+> --- a/drivers/platform/x86/dell-smbios-wmi.c
+> +++ b/drivers/platform/x86/dell-smbios-wmi.c
+
+> +#ifdef CONFIG_DELL_SMBIOS_WMI
+
+Ditto.
+
+> +#endif /* CONFIG_DELL_SMBIOS_WMI */
+
+
+> +#ifdef CONFIG_DELL_SMBIOS_WMI
+> +int init_dell_smbios_wmi(void);
+> +void exit_dell_smbios_wmi(void);
+> +#else /* CONFIG_DELL_SMBIOS_WMI */
+> +static inline int init_dell_smbios_wmi(void)
+> +{
+> +       return -ENODEV;
+> +}
+
+> +static inline void exit_dell_smbios_wmi(void)
+> +{}
+
+One line, please.
+
+> +#endif /* CONFIG_DELL_SMBIOS_WMI */
+> +
+> +#ifdef CONFIG_DELL_SMBIOS_SMM
+> +int init_dell_smbios_smm(void);
+> +void exit_dell_smbios_smm(void);
+> +#else /* CONFIG_DELL_SMBIOS_SMM */
+> +static inline int init_dell_smbios_smm(void)
+> +{
+> +       return -ENODEV;
+> +}
+
+> +static inline void exit_dell_smbios_smm(void)
+> +{}
+
+Ditto.
+
+> +#endif /* CONFIG_DELL_SMBIOS_SMM */
+
+-- 
+With Best Regards,
+Andy Shevchenko
