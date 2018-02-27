@@ -1,437 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeB0W3b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:29:31 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:60770 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751934AbeB0W2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:28:04 -0500
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 15/16] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-Date: Tue, 27 Feb 2018 23:27:00 +0100
-Message-Id: <20180227222701.9716-16-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+        id S1751961AbeB0W3n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:29:43 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34220 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752210AbeB0W3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:29:40 -0500
+X-Google-Smtp-Source: AG47ELvX84Rg0+WQrirkA6SIUNilzMH7fEIS6x93DpqP0W/0Wkw+akQOH7QxjaYNjhKgLh6I2aOcBA==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
+        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hernan@vanguardiasur.com.ar
+Subject: [PATCH] emulex/benet: Constify *be_misconfig_evt_port_state[]
+Date: Tue, 27 Feb 2018 19:29:23 -0300
+Message-Id: <1519770563-20603-1-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable HDMI output on all boards which have HDMI connector.
+Note: This is compile only tested as I have no access to the hw.
+No benefit gained except for some self-documenting.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+add/remove: 0/0 grow/shrink: 0/0 up/down: 0/0 (0)
+Function                                     old     new   delta
+Total: Before=2757703, After=2757703, chg +0.00%
+
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
 ---
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25 ++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        | 24 +++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         | 25 ++++++++++++++++++++++
- 8 files changed, 199 insertions(+)
+ drivers/net/ethernet/emulex/benet/be_cmds.c | 2 +-
+ drivers/net/ethernet/emulex/benet/be_cmds.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-index 9c1bc472fb1c..30540dc8e0c5 100644
---- a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
+index 1a49297..ff92ab1 100644
+--- a/drivers/net/ethernet/emulex/benet/be_cmds.c
++++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
+@@ -19,7 +19,7 @@
+ #include "be.h"
+ #include "be_cmds.h"
  
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -100,6 +111,10 @@
- 	};
- };
+-char *be_misconfig_evt_port_state[] = {
++const char * const be_misconfig_evt_port_state[] = {
+ 	"Physical Link is functional",
+ 	"Optics faulted/incorrectly installed/not installed - Reseat optics. If issue not resolved, replace.",
+ 	"Optics of two types installed – Remove one optic or install matching pair of optics.",
+diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.h b/drivers/net/ethernet/emulex/benet/be_cmds.h
+index 09da2d8..e8b43cf 100644
+--- a/drivers/net/ethernet/emulex/benet/be_cmds.h
++++ b/drivers/net/ethernet/emulex/benet/be_cmds.h
+@@ -201,7 +201,7 @@ enum {
+ 			 phy_state == BE_PHY_UNQUALIFIED ||	\
+ 			 phy_state == BE_PHY_UNCERTIFIED)
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -129,6 +144,16 @@
- 	};
- };
+-extern  char *be_misconfig_evt_port_state[];
++extern const  char * const be_misconfig_evt_port_state[];
  
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-index 870aabcbb2d8..cf1f970b0c6f 100644
---- a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -100,6 +111,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -108,6 +123,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-index d0d41eb86cb4..b20a710da7bc 100644
---- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-@@ -23,6 +23,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -120,6 +131,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -143,6 +158,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-index c77fbca4f227..9412668bb888 100644
---- a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-@@ -49,6 +49,21 @@
- 	aliases {
- 		ethernet0 = &emac;
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci1 {
-@@ -66,6 +81,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-index 7569bd05e249..f1fc6bdca8be 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-@@ -62,6 +62,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -114,6 +125,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -125,6 +140,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-index 2e59fd296717..476ae8e387ca 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -91,6 +102,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -99,6 +114,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-index c1a8cd93c463..3328fe583c9b 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -90,6 +101,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -102,9 +117,18 @@
- 	phy-handle = <&int_mii_phy>;
- 	phy-mode = "mii";
- 	allwinner,leds-active-low;
-+};
-+
-+&hdmi {
- 	status = "okay";
- };
- 
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_vcc3v3>;
- 	bus-width = <4>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-index 537227b85935..cea4d647ecbf 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -98,6 +109,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -121,6 +136,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
+ /* async event indicating misconfigured port */
+ struct be_async_event_misconfig_port {
 -- 
-2.16.2
+2.7.4
