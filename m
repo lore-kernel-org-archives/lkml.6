@@ -1,80 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754213AbeB0Pys (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:54:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:60262 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753644AbeB0Pyq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:54:46 -0500
-Subject: Re: [PATCH] ARM: dts: stm32: Add leds support to stm32f469 Discovery
- board
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-References: <20180117094005.20728-1-benjamin.gaignard@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <f269a49a-b25b-7946-030c-f59c4447f2a0@st.com>
-Date: Tue, 27 Feb 2018 16:54:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754222AbeB0Py5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:54:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59068 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753548AbeB0Py4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 10:54:56 -0500
+Date: Tue, 27 Feb 2018 16:54:44 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/8] MIPS: mscc: add ocelot PCB123 device tree
+Message-ID: <20180227155444.GB15333@piout.net>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-7-alexandre.belloni@free-electrons.com>
+ <20180214170042.GE3986@saruman>
 MIME-Version: 1.0
-In-Reply-To: <20180117094005.20728-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214170042.GE3986@saruman>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 01/17/2018 10:40 AM, Benjamin Gaignard wrote:
-> Add nodes for the four user leds.
+On 14/02/2018 at 17:00:42 +0000, James Hogan wrote:
+> On Tue, Jan 16, 2018 at 11:12:38AM +0100, Alexandre Belloni wrote:
+> > Add a device tree for the Microsemi Ocelot PCB123 evaluation board.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 > 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->   arch/arm/boot/dts/stm32f469-disco.dts | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
-> index c18acbe4cf4e..5e9994840a24 100644
-> --- a/arch/arm/boot/dts/stm32f469-disco.dts
-> +++ b/arch/arm/boot/dts/stm32f469-disco.dts
-> @@ -70,6 +70,22 @@
->   		dma-ranges = <0xc0000000 0x0 0x10000000>;
->   	};
->   
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		green {
-> +			gpios = <&gpiog 6 1>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +		orange {
-> +			gpios = <&gpiod 4 1>;
-> +		};
-> +		red {
-> +			gpios = <&gpiod 5 1>;
-> +		};
-> +		blue {
-> +			gpios = <&gpiok 3 1>;
-> +	};
-> +
->   	/* This turns on vbus for otg for host mode (dwc2) */
->   	vcc5v_otg: vcc5v-otg-regulator {
->   		compatible = "regulator-fixed";
+> Please Cc DT folk.
 > 
 
-Applied on stm32-next.
+I can do but again, I don't think they care.
 
-thanks
-alex
+> > diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+> > new file mode 100644
+> > index 000000000000..42bd404471f6
+> > --- /dev/null
+> > +++ b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+> > @@ -0,0 +1,27 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> > +/* Copyright (c) 2017 Microsemi Corporation */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "ocelot.dtsi"
+> > +
+> > +/ {
+> > +	compatible = "mscc,ocelot-pcb123", "mscc,ocelot";
+> 
+> Should mscc,ocelot-pcb123 be added to the mscc DT binding documentation
+> in the other patch?
+> 
+
+On ARM at least, we don't document the board compatibles because this
+will be a huge list without much benefit as they are mostly unused.
+Still, it is nice to have in case something specific needs to be done
+for a particular board (and hopefully this never happens).
+
+also, I don't think any other MIPS boards are documented bu if you
+insist, I can either add it in
+Documentation/devicetree/bindings/mips/mscc.txt or create a new file to
+list all the mips board compatibles.
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
