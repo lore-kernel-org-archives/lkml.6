@@ -1,101 +1,333 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeB0WGK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:06:10 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:43039 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeB0WGI (ORCPT
+        id S1751890AbeB0WGn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:06:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46714 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeB0WGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:06:08 -0500
-X-Google-Smtp-Source: AG47ELvPu4K2j62ytg/yZf0Egr3WolRMwXq05Uir4oB4rCRR1w4xePL/cw/53+yAASYykv3dbvRVwA==
-From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-To: dennis.dalessandro@intel.com, mike.marciniszyn@intel.com,
-        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hernan@vanguardiasur.com.ar
-Subject: [PATCH 2/2] IB/qib: Move char *qib_sdma_state_names[] and constify while there.
-Date: Tue, 27 Feb 2018 19:05:43 -0300
-Message-Id: <1519769143-20000-2-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519769143-20000-1-git-send-email-hernan@vanguardiasur.com.ar>
-References: <1519769143-20000-1-git-send-email-hernan@vanguardiasur.com.ar>
+        Tue, 27 Feb 2018 17:06:41 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E5F2601CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=austinwc@codeaurora.org
+Subject: Re: [PATCH 09/12] i2c: qup: fix buffer overflow for multiple msg of
+ maximum xfer len
+To: Abhishek Sahu <absahu@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: David Brown <david.brown@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-10-git-send-email-absahu@codeaurora.org>
+From: "Christ, Austin" <austinwc@codeaurora.org>
+Message-ID: <99d007e0-7983-f0bf-1ca0-d37f2ea4d8fa@codeaurora.org>
+Date: Tue, 27 Feb 2018 15:06:37 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1517644697-30806-10-git-send-email-absahu@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Note: This is compile only tested as I have no access to the hw.
-This variable was not used in qib_sdma.c but in qib_iba7322.c. Declaring it
-there, as static, saves 56 bytes.
+Hey Abhishek,
 
-add/remove: 0/2 grow/shrink: 0/0 up/down: 0/-144 (-144)
-Function                                     old     new   delta
-qib_sdma_state_names                          56       -     -56
-qib_sdma_event_names                          88       -     -88
-Total: Before=2874565, After=2874421, chg -0.01%
 
-Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
----
- drivers/infiniband/hw/qib/qib.h         |  2 --
- drivers/infiniband/hw/qib/qib_iba7322.c | 10 ++++++++++
- drivers/infiniband/hw/qib/qib_sdma.c    | 10 ----------
- 3 files changed, 10 insertions(+), 12 deletions(-)
+On 2/3/2018 12:58 AM, Abhishek Sahu wrote:
+> The BAM mode requires buffer for start tag data and tx, rx SG
+> list. Currently, this is being taken for maximum transfer length
+> (65K). But an I2C transfer can have multiple messages and each
+> message can be of this maximum length so the buffer overflow will
+> happen in this case. Since increasing buffer length won’t be
+> feasible since an I2C transfer can contain any number of messages
+> so this patch does following changes to make i2c transfers working
+> for multiple messages case.
+> 
+> 1. Calculate the required buffers for 2 maximum length messages
+>     (65K * 2).
+> 2. Split the descriptor formation and descriptor scheduling.
+>     The idea is to fit as many messages in one DMA transfers for 65K
+>     threshold value (max_xfer_sg_len). Whenever the sg_cnt is
+>     crossing this, then schedule the BAM transfer and subsequent
+>     transfer will again start from zero.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>   drivers/i2c/busses/i2c-qup.c | 199 +++++++++++++++++++++++++------------------
+>   1 file changed, 118 insertions(+), 81 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> index 6df65ea..ba717bb 100644
+> --- a/drivers/i2c/busses/i2c-qup.c
+> +++ b/drivers/i2c/busses/i2c-qup.c
+> @@ -155,6 +155,7 @@ struct qup_i2c_bam {
+>   	struct	qup_i2c_tag tag;
+>   	struct	dma_chan *dma;
+>   	struct	scatterlist *sg;
+> +	unsigned int sg_cnt;
+>   };
+>   
+>   struct qup_i2c_dev {
+> @@ -195,6 +196,8 @@ struct qup_i2c_dev {
+>   	bool			use_dma;
+>   	/* The threshold length above which DMA will be used */
+>   	unsigned int		dma_threshold;
+> +	unsigned int		max_xfer_sg_len;
+> +	unsigned int		tag_buf_pos;
+>   	struct			dma_pool *dpool;
+>   	struct			qup_i2c_tag start_tag;
+>   	struct			qup_i2c_bam brx;
+> @@ -699,86 +702,86 @@ static int qup_i2c_req_dma(struct qup_i2c_dev *qup)
+>   	return 0;
+>   }
+>   
+> -static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+> -			       int num)
+> +static int qup_i2c_bam_make_desc(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+> +{
+> +	int ret = 0, limit = QUP_READ_LIMIT;
+> +	u32 len = 0, blocks, rem;
+> +	u32 i = 0, tlen, tx_len = 0;
+> +	u8 *tags;
+> +
+> +	qup_i2c_set_blk_data(qup, msg);
+> +
+> +	blocks = qup->blk.count;
+> +	rem = msg->len - (blocks - 1) * limit;
+> +
+> +	if (msg->flags & I2C_M_RD) {
+> +		while (qup->blk.pos < blocks) {
+> +			tlen = (i == (blocks - 1)) ? rem : limit;
+> +			tags = &qup->start_tag.start[qup->tag_buf_pos + len];
+> +			len += qup_i2c_set_tags(tags, qup, msg);
+> +			qup->blk.data_len -= tlen;
+> +
+> +			/* scratch buf to read the start and len tags */
+> +			ret = qup_sg_set_buf(&qup->brx.sg[qup->brx.sg_cnt++],
+> +					     &qup->brx.tag.start[0],
+> +					     2, qup, DMA_FROM_DEVICE);
+> +
+> +			if (ret)
+> +				return ret;
+> +
+> +			ret = qup_sg_set_buf(&qup->brx.sg[qup->brx.sg_cnt++],
+> +					     &msg->buf[limit * i],
+> +					     tlen, qup,
+> +					     DMA_FROM_DEVICE);
+> +			if (ret)
+> +				return ret;
+> +
+> +			i++;
+> +			qup->blk.pos = i;
+> +		}
+> +		ret = qup_sg_set_buf(&qup->btx.sg[qup->btx.sg_cnt++],
+> +				     &qup->start_tag.start[qup->tag_buf_pos],
+> +				     len, qup, DMA_TO_DEVICE);
+> +		if (ret)
+> +			return ret;
+> +
+> +		qup->tag_buf_pos += len;
+> +	} else {
+> +		while (qup->blk.pos < blocks) {
+> +			tlen = (i == (blocks - 1)) ? rem : limit;
+> +			tags = &qup->start_tag.start[qup->tag_buf_pos + tx_len];
+> +			len = qup_i2c_set_tags(tags, qup, msg);
+> +			qup->blk.data_len -= tlen;
+> +
+> +			ret = qup_sg_set_buf(&qup->btx.sg[qup->btx.sg_cnt++],
+> +					     tags, len,
+> +					     qup, DMA_TO_DEVICE);
+> +			if (ret)
+> +				return ret;
+> +
+> +			tx_len += len;
+> +			ret = qup_sg_set_buf(&qup->btx.sg[qup->btx.sg_cnt++],
+> +					     &msg->buf[limit * i],
+> +					     tlen, qup, DMA_TO_DEVICE);
+> +			if (ret)
+> +				return ret;
+> +			i++;
+> +			qup->blk.pos = i;
+> +		}
+> +
+> +		qup->tag_buf_pos += tx_len;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qup_i2c_bam_schedule_desc(struct qup_i2c_dev *qup)
+>   {
+>   	struct dma_async_tx_descriptor *txd, *rxd = NULL;
+> -	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
+> +	int ret = 0;
+>   	dma_cookie_t cookie_rx, cookie_tx;
+> -	u32 len, blocks, rem;
+> -	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
+> -	u8 *tags;
+> -
+> -	while (idx < num) {
+> -		tx_len = 0, len = 0, i = 0;
+> -
+> -		qup->is_last = (idx == (num - 1));
+> -
+> -		qup_i2c_set_blk_data(qup, msg);
+> -
+> -		blocks = qup->blk.count;
+> -		rem = msg->len - (blocks - 1) * limit;
+> -
+> -		if (msg->flags & I2C_M_RD) {
+> -			while (qup->blk.pos < blocks) {
+> -				tlen = (i == (blocks - 1)) ? rem : limit;
+> -				tags = &qup->start_tag.start[off + len];
+> -				len += qup_i2c_set_tags(tags, qup, msg);
+> -				qup->blk.data_len -= tlen;
+> -
+> -				/* scratch buf to read the start and len tags */
+> -				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
+> -						     &qup->brx.tag.start[0],
+> -						     2, qup, DMA_FROM_DEVICE);
+> -
+> -				if (ret)
+> -					return ret;
+> -
+> -				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
+> -						     &msg->buf[limit * i],
+> -						     tlen, qup,
+> -						     DMA_FROM_DEVICE);
+> -				if (ret)
+> -					return ret;
+> -
+> -				i++;
+> -				qup->blk.pos = i;
+> -			}
+> -			ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
+> -					     &qup->start_tag.start[off],
+> -					     len, qup, DMA_TO_DEVICE);
+> -			if (ret)
+> -				return ret;
+> -
+> -			off += len;
+> -		} else {
+> -			while (qup->blk.pos < blocks) {
+> -				tlen = (i == (blocks - 1)) ? rem : limit;
+> -				tags = &qup->start_tag.start[off + tx_len];
+> -				len = qup_i2c_set_tags(tags, qup, msg);
+> -				qup->blk.data_len -= tlen;
+> -
+> -				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
+> -						     tags, len,
+> -						     qup, DMA_TO_DEVICE);
+> -				if (ret)
+> -					return ret;
+> -
+> -				tx_len += len;
+> -				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
+> -						     &msg->buf[limit * i],
+> -						     tlen, qup, DMA_TO_DEVICE);
+> -				if (ret)
+> -					return ret;
+> -				i++;
+> -				qup->blk.pos = i;
+> -			}
+> -			off += tx_len;
+> -
+> -		}
+> -		idx++;
+> -		msg++;
+> -	}
+> +	u32 len = 0;
+> +	u32 tx_buf = qup->btx.sg_cnt, rx_buf = qup->brx.sg_cnt;
+>   
+>   	/* schedule the EOT and FLUSH I2C tags */
+>   	len = 1;
+> @@ -878,11 +881,19 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>   	return ret;
+>   }
+>   
+> +static void qup_i2c_bam_clear_tag_buffers(struct qup_i2c_dev *qup)
+> +{
+> +	qup->btx.sg_cnt = 0;
+> +	qup->brx.sg_cnt = 0;
+> +	qup->tag_buf_pos = 0;
+> +}
+> +
+>   static int qup_i2c_bam_xfer(struct i2c_adapter *adap, struct i2c_msg *msg,
+>   			    int num)
+>   {
+>   	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+>   	int ret = 0;
+> +	int idx = 0;
+>   
+>   	enable_irq(qup->irq);
+>   	ret = qup_i2c_req_dma(qup);
+> @@ -905,9 +916,34 @@ static int qup_i2c_bam_xfer(struct i2c_adapter *adap, struct i2c_msg *msg,
+>   		goto out;
+>   
+>   	writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
+> +	qup_i2c_bam_clear_tag_buffers(qup);
+> +
+> +	for (idx = 0; idx < num; idx++) {
+> +		qup->msg = msg + idx;
+> +		qup->is_last = idx == (num - 1);
+> +
+> +		ret = qup_i2c_bam_make_desc(qup, qup->msg);
+> +		if (ret)
+> +			break;
+> +
+> +		/*
+> +		 * Make DMA descriptor and schedule the BAM transfer if its
+> +		 * already crossed the maximum length. Since the memory for all
+> +		 * tags buffers have been taken for 2 maximum possible
+> +		 * transfers length so it will never cross the buffer actual
+> +		 * length.
+> +		 */
+> +		if (qup->btx.sg_cnt > qup->max_xfer_sg_len ||
+> +		    qup->brx.sg_cnt > qup->max_xfer_sg_len ||
+> +		    qup->is_last) {
+> +			ret = qup_i2c_bam_schedule_desc(qup);
+> +			if (ret)
+> +				break;
+> +
+> +			qup_i2c_bam_clear_tag_buffers(qup);
+> +		}
+> +	}
+>   
+> -	qup->msg = msg;
+> -	ret = qup_i2c_bam_do_xfer(qup, qup->msg, num);
+>   out:
+>   	disable_irq(qup->irq);
+>   
+> @@ -1459,7 +1495,8 @@ static int qup_i2c_probe(struct platform_device *pdev)
+>   		else if (ret != 0)
+>   			goto nodma;
+>   
+> -		blocks = (MX_BLOCKS << 1) + 1;
+> +		qup->max_xfer_sg_len = (MX_BLOCKS << 1);
+> +		blocks = 2 * qup->max_xfer_sg_len + 1;
+>   		qup->btx.sg = devm_kzalloc(&pdev->dev,
+>   					   sizeof(*qup->btx.sg) * blocks,
+>   					   GFP_KERNEL);
+> @@ -1603,7 +1640,7 @@ static int qup_i2c_probe(struct platform_device *pdev)
+>   	one_bit_t = (USEC_PER_SEC / clk_freq) + 1;
+>   	qup->one_byte_t = one_bit_t * 9;
+>   	qup->xfer_timeout = TOUT_MIN * HZ +
+> -			    usecs_to_jiffies(MX_TX_RX_LEN * qup->one_byte_t);
+> +		usecs_to_jiffies(2 * MX_TX_RX_LEN * qup->one_byte_t);
 
-diff --git a/drivers/infiniband/hw/qib/qib.h b/drivers/infiniband/hw/qib/qib.h
-index b709ebd..4607245 100644
---- a/drivers/infiniband/hw/qib/qib.h
-+++ b/drivers/infiniband/hw/qib/qib.h
-@@ -472,8 +472,6 @@ enum qib_sdma_events {
- 	qib_sdma_event_e90_timer_tick,
- };
- 
--extern char *qib_sdma_state_names[];
--
- struct sdma_set_state_action {
- 	unsigned op_enable:1;
- 	unsigned op_intenable:1;
-diff --git a/drivers/infiniband/hw/qib/qib_iba7322.c b/drivers/infiniband/hw/qib/qib_iba7322.c
-index 6265dac..8414ae4 100644
---- a/drivers/infiniband/hw/qib/qib_iba7322.c
-+++ b/drivers/infiniband/hw/qib/qib_iba7322.c
-@@ -463,6 +463,16 @@ static u8 ib_rate_to_delay[IB_RATE_120_GBPS + 1] = {
- 	[IB_RATE_40_GBPS] = 1
- };
- 
-+static const char * const qib_sdma_state_names[] = {
-+	[qib_sdma_state_s00_hw_down]          = "s00_HwDown",
-+	[qib_sdma_state_s10_hw_start_up_wait] = "s10_HwStartUpWait",
-+	[qib_sdma_state_s20_idle]             = "s20_Idle",
-+	[qib_sdma_state_s30_sw_clean_up_wait] = "s30_SwCleanUpWait",
-+	[qib_sdma_state_s40_hw_clean_up_wait] = "s40_HwCleanUpWait",
-+	[qib_sdma_state_s50_hw_halt_wait]     = "s50_HwHaltWait",
-+	[qib_sdma_state_s99_running]          = "s99_Running",
-+};
-+
- #define IBA7322_LINKSPEED_SHIFT SYM_LSB(IBCStatusA_0, LinkSpeedActive)
- #define IBA7322_LINKWIDTH_SHIFT SYM_LSB(IBCStatusA_0, LinkWidthActive)
- 
-diff --git a/drivers/infiniband/hw/qib/qib_sdma.c b/drivers/infiniband/hw/qib/qib_sdma.c
-index 1f2d7a0..d0723d4 100644
---- a/drivers/infiniband/hw/qib/qib_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_sdma.c
-@@ -54,16 +54,6 @@ MODULE_PARM_DESC(sdma_descq_cnt, "Number of SDMA descq entries");
- #define SDMA_DESC_COUNT_LSB     16
- #define SDMA_DESC_GEN_LSB       30
- 
--char *qib_sdma_state_names[] = {
--	[qib_sdma_state_s00_hw_down]          = "s00_HwDown",
--	[qib_sdma_state_s10_hw_start_up_wait] = "s10_HwStartUpWait",
--	[qib_sdma_state_s20_idle]             = "s20_Idle",
--	[qib_sdma_state_s30_sw_clean_up_wait] = "s30_SwCleanUpWait",
--	[qib_sdma_state_s40_hw_clean_up_wait] = "s40_HwCleanUpWait",
--	[qib_sdma_state_s50_hw_halt_wait]     = "s50_HwHaltWait",
--	[qib_sdma_state_s99_running]          = "s99_Running",
--};
--
- /* declare all statics here rather than keep sorting */
- static int alloc_sdma(struct qib_pportdata *);
- static void sdma_complete(struct kref *);
+Maybe it would make sense to add a comment here explaining why the magic 
+number 2 has been added.
+>   
+>   	dev_dbg(qup->dev, "IN:block:%d, fifo:%d, OUT:block:%d, fifo:%d\n",
+>   		qup->in_blk_sz, qup->in_fifo_sz,
+> 
+
 -- 
-2.7.4
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
