@@ -1,87 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeB0CLr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:11:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51810 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751448AbeB0CLq (ORCPT
+        id S1751735AbeB0COB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:14:01 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37038 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbeB0COA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:11:46 -0500
+        Mon, 26 Feb 2018 21:14:00 -0500
+X-Google-Smtp-Source: AG47ELuT/sJbuUCH5Mr323996F3gRbyw984tnrdgOuqhRP5cyhamZMjSC3MEFhZBla/w186Yts7J1Q==
+Subject: Re: [PATCH] mm: Provide consistent declaration for num_poisoned_pages
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
+References: <1519686565-8224-1-git-send-email-linux@roeck-us.net>
+ <alpine.DEB.2.20.1802261556420.236524@chino.kir.corp.google.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <262450c2-778a-fb12-1af3-aa52d03121c8@roeck-us.net>
+Date: Mon, 26 Feb 2018 18:13:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <alpine.DEB.2.20.1802261556420.236524@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Mon, 26 Feb 2018 18:11:45 -0800
-From: skannan@codeaurora.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        avilaj@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] perf/core: Add support for PMUs that can be read
- from any CPU
-In-Reply-To: <20180225143802.denbkubqjg2dc7af@salmiak>
-References: <1519431578-11995-1-git-send-email-skannan@codeaurora.org>
- <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
- <20180225143802.denbkubqjg2dc7af@salmiak>
-Message-ID: <90e7ff7d7dc1054db356fb1740ddb990@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-25 06:38, Mark Rutland wrote:
-> On Fri, Feb 23, 2018 at 04:19:38PM -0800, Saravana Kannan wrote:
->> Some PMUs events can be read from any CPU. So allow the PMU to mark
->> events as such. For these events, we don't need to reject reads or
->> make smp calls to the event's CPU and cause unnecessary wake ups.
->> 
->> Good examples of such events would be events from caches shared across
->> all CPUs.
+On 02/26/2018 03:57 PM, David Rientjes wrote:
+> On Mon, 26 Feb 2018, Guenter Roeck wrote:
 > 
-> I think that if we need to generalize PERF_EV_CAP_READ_ACTIVE_PKG, it 
-> would be
-> better to give events a pointer to a cpumask. That could then cover all 
-> cases
-> quite trivially:
+>> clang reports the following compile warning.
+>>
+>> In file included from mm/vmscan.c:56:
+>> ./include/linux/swapops.h:327:22: warning:
+>> 	section attribute is specified on redeclared variable [-Wsection]
+>> extern atomic_long_t num_poisoned_pages __read_mostly;
+>>                       ^
+>> ./include/linux/mm.h:2585:22: note: previous declaration is here
+>> extern atomic_long_t num_poisoned_pages;
+>>                       ^
+>>
+>> Let's use __read_mostly everywhere.
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> Cc: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>>   include/linux/mm.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index ad06d42adb1a..bd4bd59f02c1 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
+>>   extern int sysctl_memory_failure_early_kill;
+>>   extern int sysctl_memory_failure_recovery;
+>>   extern void shake_page(struct page *p, int access);
+>> -extern atomic_long_t num_poisoned_pages;
+>> +extern atomic_long_t num_poisoned_pages __read_mostly;
+>>   extern int soft_offline_page(struct page *page, int flags);
+>>   
+>>   
 > 
-> static int __perf_event_read_cpu(struct perf_event *event, int 
-> event_cpu)
-> {
-> 	int local_cpu = smp_processor_id();
-> 
-> 	if (event->read_mask &&
-> 	    cpumask_test_cpu(local_cpu, event->read_mask))
-> 		event_cpu = local_cpu;
-> 
-> 	return event_cpu;
-> }
+> No objection to the patch, of course, but I'm wondering if it's (1) the
+> only such clang compile warning for mm/, and (2) if the re-declaration in
+
+It is the only one I recall seeing in mm/ while testing the clang/retpoline
+changes with ToT clang 7.0.0, but then I didn't pay too close attention.
+
+> mm.h could be avoided by including swapops.h?
 > 
 
-This is a good improvement on my attempt. If I send a patch for this, is 
-that something you'd be willing to incorporate into your patch set and 
-make sure the DSU pmu driver handles it correctly?
+Another alternative would be to remove the extern fom swapops.h and have
+swapops.h include mm.h instead. I chose the least invasive change since
+I didn't want to risk breaking some other build (after all, maybe there
+was a reason for declaring num_poisoned_pages in two include files).
 
-> ... in the PERF_EV_CAP_READ_ACTIVE_PKG case, we can use the exiting(?) 
-> package
-> masks, and more generally we can re-use the PMU's affinit mask if it 
-> has one.
-> 
-> That said, I see that many pmu::read() implementations have 
-> side-effects on
-> hwc->prev_count, and event->count, so I worry that this won't be sfe in 
-> general
-> (e.g. if we race with the IRQ handler on another CPU).
-> 
-
-Yeah, this doesn't have to be mandatory. It can be an optional mask the 
-PMU can set up during perf event init.
-
-Peter,
-
-Is this something that's acceptable to you?
-
-Thanks,
-Saravana
+Guenter
