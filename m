@@ -1,113 +1,62 @@
-Return-Path: <jthumshirn@suse.de>
-X-Google-Smtp-Source: AH8x2252BK+jI+/GkIpeLO3qXvxFfE5vooY/P7VkW4yQTBhtB3/lyqO/Dccf75DfWE6L6lK5MY0c
-ARC-Seal: i=1; a=rsa-sha256; t=1519738227; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519745552; cv=none;
         d=google.com; s=arc-20160816;
-        b=v0NvAE4OE7+VtQJ4+n8vNuNORw+Raxh8YiTRSABkXsFHxvwrV3gJSFoiO1/OX58YPT
-         V4KLlVLq76ZMQn2KCjoIosCLUJeKocZPHsnhS68eq3MGb/+YQ6olblmRg7BMT6J3HPq8
-         1gkdG2mSufJR9xJFAZauwDnM9Op5WSjtQF57YadM1EtpPcg3rVxKmBeyIkP0LhcCNTqx
-         S+0pD7aHLVCQbDD32LvpndDV6sGf6BqKiGHLfMGatluxQleCSeAtzBUDqwQLWbfAuZDQ
-         07XeKQutwtBSeb3h0Tp3ioFcsFIfszSYkagBVSUkCW+GHYNa+XozVAlxAFH1rxMWSjSf
-         czXQ==
+        b=M0RlPvk2DZ8uIE/GLm+QrJbDT/FGCqtoDNI+FCBk8OPlJUzbhxDegPIOE39j4tD7Rh
+         f/Q3+vImO9OmPk6lWfj4RFf5Hw/EGfidCkmohoKcDfQWkYPhJ63wMW0P1sxdBNMH/vB7
+         YZj0QRUCt7B0RDDusZYca8oEOXY51hpoXM9clB2hTaNy6SJA+b2ocxzhwKvWyNrZVIyw
+         /HVTtQVMuS9L+w0GpSt5ch2inM77vahtGSpu7cVlTSFFo6ubyN9X8EMGtTKRqMLVlDnv
+         gG/N/mi3lVlqkoxlp7IxR/KYLtUMUQoD42lEfP/Ta2puzkvkQvJTu1B9Q33Dmvo4pVss
+         a0Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=R/FJk99qdgDZMHGpype2z+l0phwtR+vJPUsdhwl6Reo=;
-        b=Z917sXEF+8QDFRFJT5XltA5/gJZ1wMmTlL/BrjZy88PBXUSn1huqm88TE8+tCQ/nqX
-         SWQaMq4ZIdsJ2Ftf2oq+epCV3qSQO2O4P8hyYqZGvhl1xNWXV5XQe0gyz/rZfoc95dzn
-         WuOWJ8Y/nR+I9PH8jDp8W1x77QjFyWQxePQ/hOrXvVfQ4vSjtKmrKuOtnJ58Ub9wyd3J
-         kyWPOwMFiTM88/68yu9qO5x21mth/ajZAN5aGZfbnlNNZBNwl9Gf3uY47r37Vwz/gArn
-         fXzV3JKiKoz53IT+vloLEaG9rDrjxBrHrJPeI5ABqtJYmD7lqTcyxZHdU88zxTJSCuu6
-         vJlw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=rX6YZnbI8SLlVPsthqY98TdXwR4gzr6iNNnN7YKo43Q=;
+        b=fS6WAer5vUbGR1Sp0rTiDnrvW/L1g/6Y5Jiv4u4pXhuV/An9sqPnXkm4R/ij+vBqG6
+         QMPkDg8gujD3lhG4qh8jNUAU1azi88QwV2csHcvCjHPr4rBaNLYMz0+eyMNzQy+PNGM2
+         4jzyB7Fax2alY8kRFlwQFSIHgTTGNC5IASzp5JpLBSU9iFA5Lq19NNID6CAFv6hpbGuz
+         q0oANlPL+7xcOBcKYNue+hi3TMOA1lTqYvr1LVaGqkXTSoYMw5hm5oRaIDKigvLr6r9K
+         L55S9ljN4VZVxqHz7ll9BlSIqeKb3ApSvWkSSmPvEmGDzStYSM5RUBcA3/C7s5no6kME
+         PgQw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9G3PXNO;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-	Michael Moese <mmoese@suse.de>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Eli Billauer <eli.billauer@gmail.com>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9G3PXNO;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELtH216zXlgpMgNyn7h5Awl5lSyi4wGvpf+Ifxj/kDfMa4KIksgVam10cSJkJsXeyDyo226YAEmE3EOdciLFfsk=
+MIME-Version: 1.0
+In-Reply-To: <20180227133018.7732-2-jthumshirn@suse.de>
+References: <20180227133018.7732-1-jthumshirn@suse.de> <20180227133018.7732-2-jthumshirn@suse.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 17:32:30 +0200
+Message-ID: <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PCI: add vendor id for Altera
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Michael Moese <mmoese@suse.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Eli Billauer <eli.billauer@gmail.com>,
 	Anatolij Gustschin <agust@denx.de>
-Subject: [PATCH 1/2] PCI: add vendor id for Altera
-Date: Tue, 27 Feb 2018 14:30:17 +0100
-Message-Id: <20180227133018.7732-2-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180227133018.7732-1-jthumshirn@suse.de>
-References: <20180227133018.7732-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593561031161649636?=
-X-GMAIL-MSGID: =?utf-8?q?1593561031161649636?=
+X-GMAIL-MSGID: =?utf-8?q?1593568712221926028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add the Altera PCI Vendor id to pci_ids.h and remove the private
-definitions from xillybus_pcie.c and altera-cvp.c.
+On Tue, Feb 27, 2018 at 3:30 PM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
+> Add the Altera PCI Vendor id to pci_ids.h and remove the private
+> definitions from xillybus_pcie.c and altera-cvp.c.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Eli Billauer <eli.billauer@gmail.com>
-Cc: Anatolij Gustschin <agust@denx.de>
----
- drivers/char/xillybus/xillybus_pcie.c | 2 +-
- drivers/fpga/altera-cvp.c             | 3 +--
- include/linux/pci_ids.h               | 2 ++
- 3 files changed, 4 insertions(+), 3 deletions(-)
+>  #include <linux/pci.h>
+> +#include <linux/pci_ids.h>
 
-diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
-index dff2d1538164..b888f7c44a09 100644
---- a/drivers/char/xillybus/xillybus_pcie.c
-+++ b/drivers/char/xillybus/xillybus_pcie.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/pci-aspm.h>
-+#include <linux/pci_ids.h>
- #include <linux/slab.h>
- #include "xillybus.h"
- 
-@@ -24,7 +25,6 @@ MODULE_LICENSE("GPL v2");
- 
- #define PCI_DEVICE_ID_XILLYBUS		0xebeb
- 
--#define PCI_VENDOR_ID_ALTERA		0x1172
- #define PCI_VENDOR_ID_ACTEL		0x11aa
- #define PCI_VENDOR_ID_LATTICE		0x1204
- 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 00e73d28077c..53ee426d425f 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -23,6 +23,7 @@
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/pci_ids.h>
- #include <linux/sizes.h>
- 
- #define CVP_BAR		0	/* BAR used for data transfer in memory mode */
-@@ -384,8 +385,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *dev_id);
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
--#define PCI_VENDOR_ID_ALTERA	0x1172
--
- static struct pci_device_id altera_cvp_id_tbl[] = {
- 	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
- 	{ }
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index a6b30667a331..6a96a70fb462 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1561,6 +1561,8 @@
- #define PCI_DEVICE_ID_SERVERWORKS_CSB6LPC 0x0227
- #define PCI_DEVICE_ID_SERVERWORKS_HT1100LD 0x0408
- 
-+#define PCI_VENDOR_ID_ALTERA		0x1172
-+
- #define PCI_VENDOR_ID_SBE		0x1176
- #define PCI_DEVICE_ID_SBE_WANXL100	0x0301
- #define PCI_DEVICE_ID_SBE_WANXL200	0x0302
+>  #include <linux/pci.h>
+> +#include <linux/pci_ids.h>
+
+Isn't pci.h includes pci_ids.h ?
+
 -- 
-2.13.6
+With Best Regards,
+Andy Shevchenko
