@@ -1,176 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751777AbeB0Vy3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:54:29 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35268 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeB0Vy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:54:27 -0500
-X-Google-Smtp-Source: AH8x224r7iP3ndY6C8FbKMxSQiKGqb28SzGuRLo5o7Jt1wEltTV7HAqK5zN6QvwVsYkQJAeTu52WIA==
-Date: Tue, 27 Feb 2018 22:53:51 +0100
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To: w@1wt.eu, geert@linux-m68k.org, andy.shevchenko@gmail.com,
-        rabel@robertabel.eu, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC v2] auxdisplay: charlcd: Fix and clean up handling of x/y
- commands
-Message-ID: <20180227215351.eaqbmwf3h2v3mnka@gmail.com>
+        id S1751836AbeB0V4d convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:56:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40118 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751554AbeB0V4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:56:31 -0500
+Date: Tue, 27 Feb 2018 22:56:29 +0100
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v1 2/4] ASoC: codecs: pcm179x: Add support for PCM1789
+Message-ID: <20180227225629.5cc4e802@windsurf.lan>
+In-Reply-To: <20180227212433.2189-3-mylene.josserand@bootlin.com>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-3-mylene.josserand@bootlin.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current version is not parsing multiple x/y commands as the code
-originally intended. On top of that, kstrtoul() expects
-NULL-terminated strings. Finally, the code does two passes over
-the string.
+Hello,
 
-Some explanations about the supported syntax are added as well.
+On Tue, 27 Feb 2018 22:24:31 +0100, Mylène Josserand wrote:
 
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Robert Abel <rabel@robertabel.eu>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- drivers/auxdisplay/charlcd.c | 101 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 83 insertions(+), 18 deletions(-)
+> diff --git a/sound/soc/codecs/pcm179x-i2c.c b/sound/soc/codecs/pcm179x-i2c.c
+> index 795a0657c097..83a2e1508df8 100644
+> --- a/sound/soc/codecs/pcm179x-i2c.c
+> +++ b/sound/soc/codecs/pcm179x-i2c.c
+> @@ -26,10 +26,13 @@
+>  static int pcm179x_i2c_probe(struct i2c_client *client,
+>  			      const struct i2c_device_id *id)
+>  {
+> -	struct regmap *regmap;
+> +	struct regmap *regmap = NULL;
 
-diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
-index 642afd88870b..cad18ed01515 100644
---- a/drivers/auxdisplay/charlcd.c
-+++ b/drivers/auxdisplay/charlcd.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/atomic.h>
-+#include <linux/ctype.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
-@@ -292,13 +293,90 @@ static int charlcd_init_display(struct charlcd *lcd)
- 	return 0;
- }
- 
-+/*
-+ * Parses an unsigned integer from a string, until a non-digit character
-+ * is found. The empty string is not accepted. No overflow checks are done.
-+ *
-+ * Returns whether the parsing was successful. Only in that case
-+ * the output parameters are written to.
-+ *
-+ * TODO: If the kernel adds an inplace version of kstrtoul(), this function
-+ * could be easily replaced by that.
-+ */
-+static bool parse_n(const char *s, unsigned long *res, const char **next_s)
-+{
-+	unsigned long result = 0;
-+	bool empty = true;
-+
-+	for (;;) {
-+		if (!*s)
-+			return false;
-+
-+		if (!isdigit(*s)) {
-+			if (empty)
-+				return false;
-+
-+			*res = result;
-+			*next_s = s;
-+			return true;
-+		}
-+
-+		result = result*10 + (*s - '0');
-+		empty = false;
-+		++s;
-+	}
-+}
-+
-+/*
-+ * Parses a movement command of the form "(.*);", where the group can be
-+ * any number of subcommands of the form "(x|y)[0-9]+".
-+ *
-+ * Returns whether the command is valid. The position arguments are
-+ * only written if the parsing was successful.
-+ *
-+ * For instance:
-+ *   - ";"          returns (<original x>, <original y>).
-+ *   - "x1;"        returns (1, <original y>).
-+ *   - "y2x1;"      returns (1, 2).
-+ *   - "x12y34x56;" returns (56, 34).
-+ *   - "x1"         fails.
-+ *   - "xy12;"      fails.
-+ *   - "x12yy12;"   fails.
-+ */
-+static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
-+{
-+	unsigned long new_x = *x;
-+	unsigned long new_y = *y;
-+
-+	for (;;) {
-+		if (!*s)
-+			return false;
-+
-+		if (*s == ';')
-+			break;
-+
-+		if (*s == 'x') {
-+			if (!parse_n(s + 1, &new_x, &s))
-+				return false;
-+		} else if (*s == 'y') {
-+			if (!parse_n(s + 1, &new_y, &s))
-+				return false;
-+		} else {
-+			return false;
-+		}
-+	}
-+
-+	*x = new_x;
-+	*y = new_y;
-+	return true;
-+}
-+
- /*
-  * These are the file operation function for user access to /dev/lcd
-  * This function can also be called from inside the kernel, by
-  * setting file and ppos to NULL.
-  *
-  */
--
- static inline int handle_lcd_special_code(struct charlcd *lcd)
- {
- 	struct charlcd_priv *priv = to_priv(lcd);
-@@ -469,24 +547,11 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
- 	}
- 	case 'x':	/* gotoxy : LxXXX[yYYY]; */
- 	case 'y':	/* gotoxy : LyYYY[xXXX]; */
--		if (!strchr(esc, ';'))
--			break;
--
--		while (*esc) {
--			if (*esc == 'x') {
--				esc++;
--				if (kstrtoul(esc, 10, &priv->addr.x) < 0)
--					break;
--			} else if (*esc == 'y') {
--				esc++;
--				if (kstrtoul(esc, 10, &priv->addr.y) < 0)
--					break;
--			} else {
--				break;
--			}
--		}
-+		/* If the command is valid, move to the new address */
-+		if (parse_xy(esc, &priv->addr.x, &priv->addr.y))
-+			charlcd_gotoxy(lcd);
- 
--		charlcd_gotoxy(lcd);
-+		/* Regardless of its validity, mark as processed */
- 		processed = 1;
- 		break;
- 	}
+I don't think this change is useful, since regmap is always initialized
+below anyway.
+
+
+> +	if (mute)
+> +		val = ~(PCM1789_MUTE_L_EN | PCM1789_MUTE_R_EN);
+
+That's not really useful with regmap_update_bits() which already does
+the masking, no?
+
+> +	else
+> +		val = PCM1789_MUTE_L_EN | PCM1789_MUTE_R_EN;
+> +	ret = regmap_update_bits(priv->regmap, PCM1789_SOFT_MUTE,
+> +				 PCM1789_MUTE_MASK, val);
+
+Couldn't this be:
+
+	if (mute)
+		val = 0;
+	else
+		val = PCM1789_MUTE_MASK;
+
+	ret = regmap_update_bits(priv->regmap, PCM1789_SOFT_MUTE,
+				 PCM1789_MUTE_MASK, val);
+
+
+> +static struct snd_soc_dai_driver pcm1789_dai = {
+> +	.name = "pcm1789-hifi",
+> +	.playback = {
+> +		.stream_name = "Playback",
+> +		.channels_min = 2,
+> +		.channels_max = 2,
+> +		.rates = SNDRV_PCM_RATE_CONTINUOUS,
+> +		.rate_min = 10000,
+> +		.rate_max = 200000,
+> +		.formats = PCM1792A_FORMATS, },
+
+Nit: the closing curly brace should be on a separate line.
+
+
+> +	if (type == PCM1789)
+> +		return devm_snd_soc_register_component(dev,
+> +						       &soc_component_dev_pcm1789,
+> +						       &pcm1789_dai, 1);
+> +
+
+Perhaps a "else" here ?
+
+>  	return devm_snd_soc_register_component(dev,
+>  			&soc_component_dev_pcm179x, &pcm179x_dai, 1);
+
+Thanks!
+
+Thomas
 -- 
-2.14.1
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
