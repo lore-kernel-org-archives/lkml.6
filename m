@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeB0F5c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 00:57:32 -0500
+        id S1752015AbeB0F5o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 00:57:44 -0500
 Received: from relmlor3.renesas.com ([210.160.252.173]:58033 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750770AbeB0F53 (ORCPT
+        by vger.kernel.org with ESMTP id S1751037AbeB0F5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 00:57:29 -0500
+        Tue, 27 Feb 2018 00:57:31 -0500
 X-IronPort-AV: E=Sophos;i="5.47,398,1515423600";
-   d="scan'208";a="273581851"
+   d="scan'208";a="273581852"
 Authentication-Results: spf=none (sender IP is ) smtp.mailfrom=<>; 
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] phy rcar-gen3-usb[23]: Add support for r8a77965
-Date: Tue, 27 Feb 2018 14:52:25 +0900
-Message-Id: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] phy: rcar-gen3-usb2: Add support for r8a77965
+Date: Tue, 27 Feb 2018 14:52:26 +0900
+Message-Id: <1519710747-26435-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [211.11.155.138]
@@ -27,42 +29,43 @@ X-ClientProxiedBy: OSBPR01CA0043.jpnprd01.prod.outlook.com
  (2a01:111:e400:5213::23)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6f555504-dd46-4a7d-7a7d-08d57da6f8e8
+X-MS-Office365-Filtering-Correlation-Id: f1a258a2-e0b5-4321-718b-08d57da6f9e0
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(8559017)(2017052603307)(7153060)(7193020);SRVR:SG2PR06MB0981;
-X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;3:t2jFJsQaty/siq3ej6MoLfMRsmkAmnGR5F3nOfejhE4k19ROeo+vfvYhBBNFvhLcLCB7LtrzGcl8TwXnasLiWFb/Jd4LjNMYIYL73lyGrGxpt3u/LQtdy8oDn2R+T3RG9uMmTEAhSVkKh8F9M3zydb+YpCFwz8o2nAny9KHLDbPdiVuDwWRafzzXmNcxwO6OonNU43wjjg94f+EpOqTvIfW6SpCY91e6lwq7TST+70zCR+FKE0HSbh7ZihpK9y2j;25:bi8d8MZsMZBC2JsqhvtEUJHy0NhwpZBZf0Y7sQre0lY/myea4lDuVwSTk9adgj35dZ9po4qdkWqDHWdDIHXHp7ilTZ0xi33QbI+mQzTG1Xemq58IpnGmik6mHej14SdowPupjybVM30wo+o7+nP8FyNWY27NKUyefx028TZzEpmuMVR3PP1XcLTDxi6rqHm+2KtFepN+J7fqmYoGzE2aExAcF4IX00Tp7hgGTa9oUYD3z8vldEDye/3DZ04OjCAAs/fjo85UL7ayRbnGnHPQsRTwB/dv/Vif6s7aXAX2SmcWuZbyHeL+OWOeMm56OCD8lvtGY7gsPD1+0Z8FgU5Vmg==;31:jNyjflPHT8pgMMZC59cuI74P/hInMzR/s4uGOTNG6bvnL5y8ZblH0zvclvQYo1mIG3ErlST4DSo+YOL1Oc5u/d0WHd3tOlOEM0ZTHeICiN1D+Y50F8HkFcDf6GcEQkFWjeGiSY2I4FlpCxWDWhaGZ+5fgFYQi4fTudrGPHY1PkJfzb3yokpYUJAeCQ2cKSKYaqgQdBKX6UV2reCiAYsxtNONsWDil1OrvhW4sGFmoQg=
+X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;3:EV2e60Cn+moob76suqVDUB8RNP+PW2Yq32Vdl5S1wjTU/cquegykqTo3HqG6blGz40n1CW8PUACgYXtyIIWBP8bLa1ifOGGApsoDdEyHGd0tZu4c0rgjSTl9aAhdciS5JTxCVAW1QN1fRon6/+q6Y/kmq+L8a90XnewLWlk2L2hnNAVOoCsW2eGzKET8lAhEAl76b4myNKbpZ3vos51GNfgfSngbcUP61k0+64B79tI7nI6mHlJ5H2neOugZPTL3;25:zcmvHi1Pgm3kgpVPDA6kxkIRAZz1ivcI0moh4tw8eMGBtKKvMmDxwanZVe+vzbU6U7VZE2dREQWlGoKQu0JPk0mmy7u6KHR+N9zmRx8AYC1j+qyqqPMSwCFDn2NBAq/C4JqpWGXKRKsyYd1eemzbrG3EvmKYVdMmXBbhaAN8GiwowtsA6Y6ssUBhUoLGTrNGSFbDFiGbxLZ1pYzoUT/unmt0FuZ0FN7mim60JpuvavVsMVColgzslbL1C5qFH3iBt3gO4Y2mXxIFX7LFhU3VMIq30r/SXdszaVuHvvs/NYBnJA2Q3vPEtXaZLpI4igzioXPoJ80/qHQsaJRA6Lw+zA==;31:Nhm+iEE4w+1iwjV4rkE/yj6cJa8hm+NbbeX5WxOfSTZnRB7gQDUPGo2Rev6sAb9dVy6KTUnWlZwfnQBWHWVFh+r3kbHYcxnWWtBeJjBMWzA30siO61RO/hPDKvnhYAZ5hIy721HGbpgp1DN/b/sGd7EOhXJ+e/AQD6KCK+Zz4OhN2KAIuy10RBojx7k0B4LlbqQCFK9mtBVi0Aus1QXSOoQSj3GDHq7dXdysCIP56Ow=
 X-MS-TrafficTypeDiagnostic: SG2PR06MB0981:
-X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;20:NmwwfI4wmhT6ZAgLf1sDtjm7VL70whrR8xM72pnf/I2603AYzPBV4thC5Qc8wr4SlkSmTvIgyXk0XU6w9NG3xbBkxt7TDrzjAsZUqC8foIl5k4O3ns9U0PIOTqFWTGR1VgPof1Xe0tWJjyO7aFUZC7LINMfewLgHEqFXw1h27IL9lxFWWZFkXvywhsH3sewx3V/7cAjYX+OQEkSkD0fVnkidRm50pO1eBSNmtWrwmJRmN0LBnL8UNH6TPglXKEJIf+VG4k4BbHbKp5LvjjdXMnaCa86Wjf7CRN5pxCC8IIWqsNQcv9MGb3UxJ9sd/8ZYYyNIC/AaxM868QmiwYdZd0e13pn0+cBlp9Dk1A7vW+d6HQN2S6XwZxdb/0AJw7B/TSnXCQ9Q0QlnL/HThGRYAPls937lMc1ytB1Pyh/H0ZySjyIGsjnifwtpS6iaA1NOx+dVGs+oNJvAT3dCSr4oZ6OdRh1X+QDOQoULRmKs444pj7eb1d164D+12dgAEmuM;4:XTjQrmOVVVhI00S9sTwybzZUoXIKwyh3sxmgHIJmkHljCNNQ9pA678VhGdr4dKNxpZUtSRdyI6Bxbex9K0spTLookxjJXeM0+jdUVWipaNbICbjrxkGNPZLgpoQzU4ZUx1LhNHtjQWgaP5/Yb7XExhaEY1y4e5eL28Q4MyB2lr+ee6UOSGWXe41ytwRgmiVa3z/F+yo7oQbY/kSrX+so/4VG8SeNywszLiytjq4jWdvca9xBAPEuZipgr70W66UZxUDNIBptXGsvZdbp+E3Gaw==
-X-Microsoft-Antispam-PRVS: <SG2PR06MB09815EA0ABE40F2CF115B26EB8C00@SG2PR06MB0981.apcprd06.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;20:G55dIa7L/sDVAumcLt3flqLBNKCs9UgyIymNw1E1Df/OdjLSxwmAMpZ3HmPjwIO9t1TZof5ADw1hv8BX7Temx7D+DJ4eBMvSmhe5P1Aqg+11EJfbXLPO7j+qvBH/z/KBc5Qk2boBuXI/D25NKnf8BEWSfESIwSvP9rToZx3ldAbDRNCfkOOr9kWNHMojLGo4ZN9YeA7yer/HitCQTMuWSTuX5R+004FzXhjHIVMOOErnfLe6QEyxNBn0LxoFHW10M5v7TnMqdHnvj2YsfOhQl/5mhBp81HL/VlBHt7r7spxcqWByem/TVV47tm1OrKWvJdP25uvp9uE8daHjUi7TRuSHtr7tpIMNAlKho1u/N9zRk5U79JvVWZ1r22WklCDluSui2v1bLNpRwsM9TsyeQgMESst1/ce+cHFr1dbkzFu6DRkfSTkk/sbKwWRoUzfVdrzsyrFIPubtGy5BxapmDfJPXXQXRiOnK+mNYoCczxRwEeQAAkqp2olG4zk82EyM;4:Dna0s0KvqADoyIsP0atPnyLIZdzfQ/LQcxa9VF36ohBhm4/Db4m7u5f3ocguCraHTL5U0DIdnxHrotRUJ5Jehs4vk1j1qhEexZT405wetZicQIwQLGkqVUQ1cAl2uP1wCzLUp5EMwsiXNxJvW2U2BqW8cE58/HUyfDQlWeHi2T84IUychSvckNDGO7SnS+WwSQNhaUYEzjP3GVoM4N0fskLhMSEIxCDjiionM25XG+/eYApJsK0irMXhhhkPRAYwVfuEOh0SDFBgphNh7SwOvQ==
+X-Microsoft-Antispam-PRVS: <SG2PR06MB098116648387DD19F98A4E02B8C00@SG2PR06MB0981.apcprd06.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(3231220)(944501198)(52105095)(93006095)(10201501046)(6055026)(6041288)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(6072148)(201708071742011);SRVR:SG2PR06MB0981;BCL:0;PCL:0;RULEID:;SRVR:SG2PR06MB0981;
 X-Forefront-PRVS: 05961EBAFC
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(346002)(376002)(39380400002)(39860400002)(396003)(199004)(189003)(106356001)(8676002)(386003)(6506007)(3846002)(26005)(42882006)(16586007)(316002)(66066001)(6486002)(52116002)(68736007)(47776003)(53936002)(6512007)(50466002)(51416003)(48376002)(498600001)(8936002)(97736004)(36756003)(7736002)(107886003)(25786009)(50226002)(78352004)(305945005)(105586002)(4326008)(2906002)(6116002)(81156014)(81166006)(16526019)(5660300001)(3720700003);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2PR06MB0981;H:localhost.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;A:0;MX:0;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SG2PR06MB0981;23:q8t/sC9G98qtbPtjneI1ZBqUd9fDxh14Blb51g5p2?=
- =?us-ascii?Q?Q/HDWiisbrNfrvldFLsOUmE6UXYjjCa/1zyzB8v5xfqdnoLJGX9Iqh2KuqQ/?=
- =?us-ascii?Q?7TQ3ZH+ETr4fHBygL9L2UU+K5RLlz2wO1Pd9SRPciYoHTnxiSB04hVLClBn5?=
- =?us-ascii?Q?YS5us0UQ28VubOVkeeK24M8Y4ruJfcH1pCycCSnkXjQS5RpvUZtER1fH5uwM?=
- =?us-ascii?Q?sIrJnTeCZNGjNJDoXcXo1gs3Z/kqQGoWd6lF8uCPrcgeM8XAhTe/lVNCFfGh?=
- =?us-ascii?Q?ivh7pyydIIkbj/OBuOX4XF+PP0yMHvneNohrumcMKjBsyNCBOdd3Xwb4i1j0?=
- =?us-ascii?Q?0QyGbDD+La4JmAKSLe9R5AAQkS9GvkLJcWgqWQrFPBiv1D2n7fUUVQv+2oyl?=
- =?us-ascii?Q?JMc5UUeShnJVPE/gW6AT3KmdILSh7AFIklZdZn5l3nCO4r76mk923LhKhr3w?=
- =?us-ascii?Q?afx/ukBRCMeu4zTcemCOrpiJTYGRul4in0IRQdCAw7YY6AFSgmxzx7voAVsO?=
- =?us-ascii?Q?DhayfPpr7Og6EWfNvUtgB8Elxu4sC84XPCFL14jKr7urO4TEyydQ4Sk+XC/M?=
- =?us-ascii?Q?tn+W+XwaDDFnVAaoXs+bOyZYTGn6UkFJbq1unDkLaFFvTZGc4fPXkdAu2YBa?=
- =?us-ascii?Q?Px2hFNVrpCPMflDMXovHbxP2TimYXWdL5xUh1HRsVxjxlT0bK6Uc4JyEQ86X?=
- =?us-ascii?Q?tsGQ/Y1gH577GPaHD6yOs3UqdNAtheGUlE0pzNu/UEg7PPN+wZGJKllO07jS?=
- =?us-ascii?Q?s0r5zeHgd2fTT7nh1a96d+XOEAb3oQw9WpAEpMxmOvNLwMWe7wOFksiqOFq8?=
- =?us-ascii?Q?dFvWnUa2p/w9poJgTSZMsCXXbmfnSEk+3JwL2WYuTBqhIYAWZaIJ8/WBerGH?=
- =?us-ascii?Q?jc2+1+J+OM33bBU1oHOjfS7Ms1ifn3Lq9xKt0o30PLlam7shcyUBFG6C0GXF?=
- =?us-ascii?Q?8B5aoOfNoTgph/rmPBYjHo4eeilj8tGLYucfqRRy2fHhNQ37041isePCxDJr?=
- =?us-ascii?Q?iw+5TNrOakxgEh/UVDlKbGltb8DaIYmrcqo7S9TEZG460bPLM0mIHrxhMst6?=
- =?us-ascii?Q?lJRL/Nd6lZIN72KudEkYuRLX7OV?=
-X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;6:JRYDyAF0kF6xk3NAEpDhXlOdqGLgFzWR7HJ876Z0EcuDxYU3aPP727LhBzzoQzqiO80/Tz2bBcaDwhExtzwTnrEuWDFjatEa1Af3paJUxISTLK64Vs/u98NSmfTEkEX8abPBrE2Wvo0X7CZZ2XS83J62KPZxkAuQoZE02hoKDPNH1+GfCw6lr6ugQDsXQjKz/ug1qZca93MsN0B3Te3OUaYY8LuGRFUo7U0H8HEw+kGQ1enFXrlsJeWwhrCSk+YcRi0LrOKTZ2SekU/B1dvWt3bjJnvD2Dv36LbHx4QD0lNZ/EaOgv5C8fHmQSyhL1vJfhADpgtGcfDGCMqlSD5FsklgSWXOr2C6raFmVngYoOQ=;5:hT16KewVLEATenKuhm81VgTlBRUSfzcm1S3vRM23x50TCR3uA32FjwEk/1YUmYXzply36gSWF8TBFz0yfas8EUDho6pRI7Luj4Dgws9b7N07wIDFJ5qxx81DHQ8SeV/FbipuUpsAyNDpt28Z05WjGBbgJQz1sa0uxZw29H3nGxI=;24:OYMomNeBQ0CC8EXoGx7bToDEZgaUAu66yWxZVZOU1SeetniXwjuGw3HRaost/8okU4sl0xICSEdKGdOMdYPlHdAK2zlAQrkGhKKXEWHmdPM=;7:IKw5kL+biyUbWcLuckOmViUKlzP//4tbU0lRY4ZxO2MbhOQQadp2w1Syg74rCJGuZme+wofxylfmgTJUxFhNYp+JYQLJL4erX2dy5I22t9AYDmAlTk6f0dLO9obXSmLMzKKXu/Mgl8fX4E24N9Hudwf6/qQVQy0kPxZJFyRtBCnFK4kijV/OYGUPxkdRloWDlpl0pAlvNrNxzy4jIqPtuhlbn8iHV0AS1MQIuMVq5PyxdiE+GUnrMG4ExyrqQgLA
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(346002)(376002)(39380400002)(39860400002)(396003)(199004)(189003)(2950100002)(106356001)(8676002)(386003)(6506007)(3846002)(26005)(76176011)(42882006)(16586007)(316002)(66066001)(6486002)(52116002)(68736007)(47776003)(53936002)(6512007)(50466002)(51416003)(48376002)(498600001)(8936002)(97736004)(36756003)(7736002)(107886003)(25786009)(50226002)(78352004)(305945005)(105586002)(4326008)(2906002)(6116002)(81156014)(81166006)(16526019)(5660300001)(3720700003);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2PR06MB0981;H:localhost.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;A:0;MX:0;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SG2PR06MB0981;23:18ytKpN74Y5I3T1xl08NJUXoYCYEITiTW8ngmFTD/?=
+ =?us-ascii?Q?xxV/Ikv+eFmFTK1+xafDUsJPQPFYEBosnSjZ24WCepxg00+51CTyp7OZR9H/?=
+ =?us-ascii?Q?v1yJ6z5tkZ6DuDvFIDzKHE8oLd44b4GIPhdl1yHaqEMQWq4mlXrviDZeKf1Q?=
+ =?us-ascii?Q?uR8VKKbqzkYEUfcJbNe0G2wfyisRabqLSyJB7l7/LRTV+Rw+8e0gzEXUf/9z?=
+ =?us-ascii?Q?nJUtsRl3VgK/4BDamWK2ifkODVhws6Rb8YyLSbn+6Q6Ys0xCeMlFc/YTrrpc?=
+ =?us-ascii?Q?c37XAdJQTzGz2ebXmIOIxq/yXpLfr1iuLRqoYgZkl9gnvf741dvgbkSDhkvC?=
+ =?us-ascii?Q?JokMN3iAyK3fp/qbpHHUOtzxHJ6dLsvYypCrrpFDsfmoii89ZkIsKVp8Rm7q?=
+ =?us-ascii?Q?AZXBWgH7VHd9XNJhBmKQ7PI/X2vft1ysJz7tn9i6/K4O76CnDDUl6oTSyMVH?=
+ =?us-ascii?Q?8KOIKSv/zWKz/pjBwBGW7OEaVQTxvSBvPBfZvgR9e4NSX6abeCQBCuk8sPmt?=
+ =?us-ascii?Q?aBsvXRzg36bqfUKskdlFXUKx9SKYwinHFXXKuHkPq/Epj9J/Asl2M5hZ/+4T?=
+ =?us-ascii?Q?WpvnmsqFK6MIllnlWooS4BQwiQtB6ouf0wCxZ8HpFSPTYHSlN0STGJkjDsME?=
+ =?us-ascii?Q?UZMZzSD5ybEP//2KjH0WE4oWLgX6O4GMo9E8F6Ww1OB0QHalSpszb0mgGTPE?=
+ =?us-ascii?Q?Qfb65BBEcaax56pTfGO4tjc0eyJZ9T7PngtvaJjBdvT1Aa6/g+oFnZ8Swbs6?=
+ =?us-ascii?Q?UVRDJs32m7j1NBGe3pEE1LJnb9PnuYAmD2NvFcvoxSxsNWmoJw/3mpXzFuEk?=
+ =?us-ascii?Q?CjSLPXLHgnJZoBhtniKBG7abb9dw358J9yZjiQ1LP7MeXD7ZTGDdxw7BgbGR?=
+ =?us-ascii?Q?aWi7yG9BW4QIZim3seFLnQsGYdzK68bqcygzgbaJvQ1LcSr5QU5MI4GngfzF?=
+ =?us-ascii?Q?8FV8aiG9cL8Vbz/2QIoB7swvs4ii1M5d8FnLf/sy7X6sdNTbBe8SsiPopMYq?=
+ =?us-ascii?Q?dNbjcl27WUUuEOhq+9pYDgIWjoMszl/vhKwEzy82NEa4lc+OUrEPzVXmF5iZ?=
+ =?us-ascii?Q?gDcDfdu0DDr/jwGrneTiIHSnvrl0Seqp2jquRdAwZIG7RgAojj83jKOePDDj?=
+ =?us-ascii?Q?OV/uu7lQ80B7zWn1Duna+SoUdoeR9Yk?=
+X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;6:jaixc/xzkHQZHdY79qR0Zpyfd9BYqCD0MRs0V3QgpDwMNeGMsIs72N+7iR1HCbjkkNy8S6uhPfdUhJMRKIUDJCVRJ0DIkh7Dg9Oo7DdDyIj+wuirwnHBH1/92obP2xQ18lSQ9Qd9C7VWZD4QuaFO+jYOivh3/6L1rbgJxt9tZfjaqNynLuFAz2MG5VlXK1oHMr94AMt5VbgcKmWxk2bDpLh0wMkAdY6YCcS8iKzJFFMGMY5EdCkbQJ1y1e3zuuUvUICh9o/h5VMp7cX1sLFFLBzRdhrClt/vSH/x7s8tXBHeuo7GbkgbXBWrQmgDwqGP02KR1F8AdydpkV08DdQwCyjdcKzkSYp1M4ytdzdADZI=;5:zZAvd/fg0EGavXY0wl6sj796ppuKjRYmx0rPLVSuLsiHL1+2P0fPsAk8wFlpIw/y2xs6oCVEpOdiMQaeHRZSTPlQPTmZde+Mp7VwsIQwqLaEvEFtZpnAV/mbY1s5WOAWh3mW/5hWRh7qYb01v9pzgUhHALWXOClCtF+Kpd894Ek=;24:spjK9/05tyD4lpfj7OJvUuNiCeuZH7ElkdMNyE5unnyxQsAQbXpIfhc7NyVHOcvZdNN9nMD51A0Rsfp65bznVYMiJgG/0wuW2ogdX+tPQGw=;7:XK619oVHAU1JVMXRog7ObI2tCPdMTmmWAng7lITX5t68IYDoZ3lKXgtwDSj5WUn6c0NSa3RnCRZp89Cw9kYURCGmUriRc6BcOwUSdnXSSg+VS0hhDyS16JdSEqSl1mMbNtVa8qikyJ8ZJmcWkKNJYNbhiFZXkUrbYil11dqtAefGNarRbjU2VF1GDMkwBinAAThT693m3TY08RcoJ/eK+0rVVKwAPzZyADvQWra7JIsBlpErgHghr08qvnlbS+b9
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;20:qFWlbJr4z5UuRXyjVi9G21VHWev5zn1Q0jtM3157Wyu2QngBk6+lhCqNoJcRcHFfua0d7fXNDJWlK6TmskZzBG5JimQHPLMYT6zI9kQElyT+z7TprPk8XFjhEAqzFFSvXVYLk3Myes+66vOOrOR9e9HFH34oyhEycHpSuxFOTEc=
+X-Microsoft-Exchange-Diagnostics: 1;SG2PR06MB0981;20:AIkHrHrovSAE1D2p/IBb3mYJ993wuc/DpZ2+wpuWS4CJu9dtm4R55Av0iyWF78L4HoSQgLJNCB6zei+127kcJv6iqqOKCLuzpUzljp8HHMqGPdpRH1oTDrA4f8z6VLwwt7mZf590WfgWYXgq+CTob/wM7dAX/ccOBN3CKk6H5OA=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2018 05:57:22.8696 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f555504-dd46-4a7d-7a7d-08d57da6f8e8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2018 05:57:24.4790 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1a258a2-e0b5-4321-718b-08d57da6f9e0
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB0981
@@ -70,17 +73,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set adds R-Car Gen3 USB 2.0 and 3.0 support for R8A77965.
+This patch adds support for r8a77965 (R-Car M3-N). This SoC has
+dedicated pins.
 
-
-Yoshihiro Shimoda (2):
-  phy: rcar-gen3-usb2: Add support for r8a77965
-  phy: rcar-gen3-usb3: Add binding for r8a77965
-
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
  drivers/phy/renesas/phy-rcar-gen3-usb2.c                     | 4 ++++
- 3 files changed, 8 insertions(+)
+ 2 files changed, 6 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index 99b651b..dbd137c 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -8,6 +8,8 @@ Required properties:
+ 	      SoC.
+ 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
+ 	      SoC.
++	      "renesas,usb2-phy-r8a77965" if the device is a part of an
++	      R8A77965 SoC.
+ 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
+ 	      R8A77995 SoC.
+ 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 9c90e7d..fb8f05e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -397,6 +397,10 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
+ 	},
+ 	{
++		.compatible = "renesas,usb2-phy-r8a77965",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
+ 		.compatible = "renesas,rcar-gen3-usb2-phy",
+ 	},
+ 	{ }
 -- 
 1.9.1
