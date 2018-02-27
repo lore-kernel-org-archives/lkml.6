@@ -1,49 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeB0Oqm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:46:42 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47338 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753441AbeB0Oqk (ORCPT
+        id S1753972AbeB0OsC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:48:02 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39973 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753381AbeB0OsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:46:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCEF56024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 27 Feb 2018 09:48:00 -0500
+X-Google-Smtp-Source: AG47ELuMCuLHz+kkYk+P3IV8YnKvwVGC8u30B07IHM2AqO/uORjTP5l7JuYVrjS2iWhWs+eqtRxvcQ==
+Date: Tue, 27 Feb 2018 11:47:55 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio:magnetometer: Replace magic number 0 by IIO_CHAN_INFO_RAW
+Message-ID: <20180227144755.ifbzn5gekm345nk5@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [3/3] btmrvl: support sysfs initiated firmware coredump
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
-References: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, linux-wireless@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180227144639.DB9426070A@smtp.codeaurora.org>
-Date: Tue, 27 Feb 2018 14:46:39 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arend Van Spriel <arend.vanspriel@broadcom.com> wrote:
+The function magn_3d_read_raw has a switch statement handling multiple
+cases per channel. The first case statement uses the magic number 0,
+which means IIO_CHAN_INFO_RAW. Additionally, the iio_chan_spec for
+magn_3d_channels is configured to be IIO_CHAN_INFO_RAW. Therefore, this
+patch replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW.
 
-> Since commit 3c47d19ff4dc ("drivers: base: add coredump driver ops")
-> it is possible to initiate a device coredump from user-space. This
-> patch adds support for it in btmrvl_sdio adding the .coredump()
-> driver callback. This makes dump through debugfs obsolete so removing
-> it.
-> 
-> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is for bluetooth tree, dropping from my queue.
-
-Patch set to Not Applicable.
-
+diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+index a1fd9d591818..d55c4885211a 100644
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -167,7 +167,7 @@ static int magn_3d_read_raw(struct iio_dev *indio_dev,
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
+ 		report_id =
+ 			magn_state->magn[chan->address].report_id;
 -- 
-https://patchwork.kernel.org/patch/10231923/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.16.2
