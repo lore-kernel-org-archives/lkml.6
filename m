@@ -1,62 +1,84 @@
-Return-Path: <andy.shevchenko@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519745552; cv=none;
+Return-Path: <jthumshirn@suse.de>
+X-Google-Smtp-Source: AH8x22429rYEdZieZoWN8CA+ZMGe6O/cxSSeoCsDNGjU43p19wx9NwfrrWrS8U/AWpBoslxZQf+S
+ARC-Seal: i=1; a=rsa-sha256; t=1519746128; cv=none;
         d=google.com; s=arc-20160816;
-        b=M0RlPvk2DZ8uIE/GLm+QrJbDT/FGCqtoDNI+FCBk8OPlJUzbhxDegPIOE39j4tD7Rh
-         f/Q3+vImO9OmPk6lWfj4RFf5Hw/EGfidCkmohoKcDfQWkYPhJ63wMW0P1sxdBNMH/vB7
-         YZj0QRUCt7B0RDDusZYca8oEOXY51hpoXM9clB2hTaNy6SJA+b2ocxzhwKvWyNrZVIyw
-         /HVTtQVMuS9L+w0GpSt5ch2inM77vahtGSpu7cVlTSFFo6ubyN9X8EMGtTKRqMLVlDnv
-         gG/N/mi3lVlqkoxlp7IxR/KYLtUMUQoD42lEfP/Ta2puzkvkQvJTu1B9Q33Dmvo4pVss
-         a0Dw==
+        b=u1PoBuHSucV8YBM266afBukYPrwa/1nBD5hC1zduoFC1jB1/dxtwi0iQLopxUYaf+i
+         p3oVJnJgcdx5C0G7lZ+apOSr8/hfIV01f0NIwaXSjWfHpLCCO7ru1WDzbQsEdjssTZZo
+         14zJtGzrGTxSK6PBEji55y2caNIsIqGaDlRBz8TcnW+URfVs14ZJvfnSZf2fptvWV5br
+         qyzxwjMqrFSorD3NuGl40QPypSmqpo+3gzfUul/w/dODbe6EIfP4PPUqBEY1uAQ/rFge
+         tizb1umqLsxjuxDG3/hKaIsLCQh6w/+ckdOk76VsrRxyhSceLGSTCcCNTLac115khvXb
+         A4zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=rX6YZnbI8SLlVPsthqY98TdXwR4gzr6iNNnN7YKo43Q=;
-        b=fS6WAer5vUbGR1Sp0rTiDnrvW/L1g/6Y5Jiv4u4pXhuV/An9sqPnXkm4R/ij+vBqG6
-         QMPkDg8gujD3lhG4qh8jNUAU1azi88QwV2csHcvCjHPr4rBaNLYMz0+eyMNzQy+PNGM2
-         4jzyB7Fax2alY8kRFlwQFSIHgTTGNC5IASzp5JpLBSU9iFA5Lq19NNID6CAFv6hpbGuz
-         q0oANlPL+7xcOBcKYNue+hi3TMOA1lTqYvr1LVaGqkXTSoYMw5hm5oRaIDKigvLr6r9K
-         L55S9ljN4VZVxqHz7ll9BlSIqeKb3ApSvWkSSmPvEmGDzStYSM5RUBcA3/C7s5no6kME
-         PgQw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=6V4GhHXhsrGCzqJL3+lzfLqHyuITmBwDbtyOxwe0WoQ=;
+        b=v7jYScRxLh6gwZwBUN8L03+/W77CSmbLtXW3DcmA9BcC0VRpAvDllKpYeFnjf5PYTE
+         9OdLj42WmDrg4oQ36EgoKPeZKWxVbvsFdJuk3d3suzgoHX4AAGEeczBwOW/4ZD3S3rS1
+         C14uYPl9mbbOnX9FeIyPKVNN+8sshGZYxsw5d7krYb2kXITXhMXLkP8278+thssWCAzn
+         DhtLK5DsfcooIkmlKN4PELx1vu9zu5se3xgHpdJ3qOwF0f1xJfY0w3NiR9fI2svBU43s
+         9pbCAcHj7eV2I56vaprk6Ljao4pOpBKNp39Jpcz4nr8CbW/VAGOoUwvNhksNkUVht1XV
+         PP+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9G3PXNO;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C9G3PXNO;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELtH216zXlgpMgNyn7h5Awl5lSyi4wGvpf+Ifxj/kDfMa4KIksgVam10cSJkJsXeyDyo226YAEmE3EOdciLFfsk=
-MIME-Version: 1.0
-In-Reply-To: <20180227133018.7732-2-jthumshirn@suse.de>
-References: <20180227133018.7732-1-jthumshirn@suse.de> <20180227133018.7732-2-jthumshirn@suse.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 17:32:30 +0200
-Message-ID: <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
+       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
+Message-ID: <1519746127.25526.25.camel@suse.de>
 Subject: Re: [PATCH 1/2] PCI: add vendor id for Altera
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, Michael Moese <mmoese@suse.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Eli Billauer <eli.billauer@gmail.com>,
-	Anatolij Gustschin <agust@denx.de>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Linux Kernel Mailinglist
+ <linux-kernel@vger.kernel.org>, Michael Moese <mmoese@suse.de>, Bjorn
+ Helgaas <bhelgaas@google.com>, Eli Billauer <eli.billauer@gmail.com>,
+ Anatolij Gustschin <agust@denx.de>
+Date: Tue, 27 Feb 2018 16:42:07 +0100
+In-Reply-To: <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
+References: <20180227133018.7732-1-jthumshirn@suse.de>
+	 <20180227133018.7732-2-jthumshirn@suse.de>
+	 <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593561031161649636?=
-X-GMAIL-MSGID: =?utf-8?q?1593568712221926028?=
+X-GMAIL-MSGID: =?utf-8?q?1593569316456963824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 3:30 PM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
-> Add the Altera PCI Vendor id to pci_ids.h and remove the private
-> definitions from xillybus_pcie.c and altera-cvp.c.
+On Tue, 2018-02-27 at 17:32 +0200, Andy Shevchenko wrote:
+> On Tue, Feb 27, 2018 at 3:30 PM, Johannes Thumshirn <jthumshirn@suse.de>
+> wrote:
+> > 
+> > Add the Altera PCI Vendor id to pci_ids.h and remove the private
+> > definitions from xillybus_pcie.c and altera-cvp.c.
+> 
+> > 
+> >  #include <linux/pci.h>
+> > +#include <linux/pci_ids.h>
+> 
+> > 
+> >  #include <linux/pci.h>
+> > +#include <linux/pci_ids.h>
+> 
+> Isn't pci.h includes pci_ids.h ?
 
->  #include <linux/pci.h>
-> +#include <linux/pci_ids.h>
+It indeed is, but it won't do any harm and it's not quite clear what the
+general policy (regarding pci_ids.h) is, some drivers include it (even in
+the drivers/pci/) some don't.
 
->  #include <linux/pci.h>
-> +#include <linux/pci_ids.h>
+Bjorn, any guidance from your side?
 
-Isn't pci.h includes pci_ids.h ?
+Byte,
+	Johannes
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Johannes Thumshirn                                          Storage
+jthumshi
+rn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH,
+Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham
+Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600
+D0D0 0393 969D 2D76 0850
