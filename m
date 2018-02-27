@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeB0MDf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 07:03:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35592 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752130AbeB0MDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 07:03:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
-   d="scan'208";a="37803009"
-Date: Tue, 27 Feb 2018 20:01:59 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jens Freimann <jfreimann@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jasowang@redhat.com, wexu@redhat.com
-Subject: Re: [PATCH RFC 1/2] virtio: introduce packed ring defines
-Message-ID: <20180227120159.g47rtazm3uhoht6f@debian>
-References: <20180223111801.15240-1-tiwei.bie@intel.com>
- <20180223111801.15240-2-tiwei.bie@intel.com>
- <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
+        id S1752972AbeB0MEF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 07:04:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34518 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752880AbeB0MED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 07:04:03 -0500
+Date: Tue, 27 Feb 2018 12:03:59 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-ext4@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>
+Subject: Re: v4.16-rc2: virtio-block + ext4 lockdep splats / sleeping from
+ invalid context
+Message-ID: <20180227120358.6x5pnhgv7o2z62iz@lakrids.cambridge.arm.com>
+References: <20180223154735.x4ezmpjbjm6o6duw@lakrids.cambridge.arm.com>
+ <20180226105256.jagidoki6vsrvzb4@quack2.suse.cz>
+ <20180226113818.v544mmjsavc4x5q2@lakrids.cambridge.arm.com>
+ <20180226124455.rkp3xfn3cqplzh4p@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
+In-Reply-To: <20180226124455.rkp3xfn3cqplzh4p@quack2.suse.cz>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 09:54:58AM +0100, Jens Freimann wrote:
-> On Fri, Feb 23, 2018 at 07:18:00PM +0800, Tiwei Bie wrote:
-[...]
+On Mon, Feb 26, 2018 at 01:44:55PM +0100, Jan Kara wrote:
+> On Mon 26-02-18 11:38:19, Mark Rutland wrote:
+> > That seems to be it!
 > > 
-> > +struct vring_packed_desc_event {
-> > +	/* Descriptor Event Offset */
-> > +	__virtio16 desc_event_off   : 15,
-> > +	/* Descriptor Event Wrap Counter */
-> > +		   desc_event_wrap  : 1;
-> > +	/* Descriptor Event Flags */
-> > +	__virtio16 desc_event_flags : 2;
-> > +};
+> > With the below patch applied, I can't trigger the bug after ~10 minutes,
+> > whereas prior to the patch I can trigger it in ~10 seconds. I'll leave
+> > that running for a while just in case there's another part to the
+> > problem, but FWIW:
+> > 
+> > Tested-by: Mark Rutland <mark.rutland@arm.com>
 > 
-> Where would the virtqueue number go in driver notifications?
+> Thanks for testing! Sent the patch to Jens for inclusion.
 
-This structure is for event suppression instead of notification.
+Cheers!
 
-You could refer to the "Event Suppression Structure Format"
-section of the spec for more details:
+FWIW, I left my test case running for a day with no issue, so this looks
+rock solid.
 
-https://github.com/oasis-tcs/virtio-docs/blob/master/virtio-v1.1-packed-wd08.pdf
-
-Best regards,
-Tiwei Bie
+Mark.
