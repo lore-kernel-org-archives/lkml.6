@@ -1,68 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeB0QHQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:07:16 -0500
-Received: from [195.159.176.226] ([195.159.176.226]:43157 "EHLO
-        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeB0QHP (ORCPT
+        id S1751996AbeB0QI6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:08:58 -0500
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:38523 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeB0QI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:07:15 -0500
-X-Injected-Via-Gmane: http://gmane.org/
-To: linux-kernel@vger.kernel.org
-From: Abdullah Ramazanoglu <ar018@yahoo.com>
-Subject: Re: The White man: who he is - People been taking this spoken word
- video down for truth about white society
-Date: Tue, 27 Feb 2018 19:05:30 +0300
-Message-ID: <20180227190530.3d1680bc@torik>
-References: <cef77b48277016dfdd30285053b7562d@firemail.cc>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Complaints-To: usenet@blaine.gmane.org
-In-Reply-To: <cef77b48277016dfdd30285053b7562d@firemail.cc>
-X-Newsreader: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Cc: debian-user@lists.debian.org, oss-security@lists.openwall.com
+        Tue, 27 Feb 2018 11:08:56 -0500
+X-Google-Smtp-Source: AG47ELuh2JBkZQTVNRDD+PhUmSuTsNC6yXtqhM5YhmWGjkhmqj5rbzBc6Q5QajciHs5MxLjLZ2TELMt18pfd1YHhxm4=
+MIME-Version: 1.0
+In-Reply-To: <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
+References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com> <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 18:08:54 +0200
+Message-ID: <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Feb 2018 20:06:55 +0000
-thatwhichistrueamongstus@firemail.cc wrote:
+On Tue, Feb 27, 2018 at 5:56 PM, Mario Limonciello
+<mario.limonciello@dell.com> wrote:
+> Some race conditions were raised due to dell-smbios and its backends
+> not being ready by the time that a consumer would call one of the
+> exported methods.
+>
+> To avoid this problem, guarantee that all initialization has been
+> done by linking them all together and running init for them all.
+>
+> As part of this change the Kconfig needs to be adjusted so that
+> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+> rather than modules.
+>
+> CONFIG_DELL_SMBIOS is a visually selectable option again and both
+> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
 
-> People been taking this spoken word video down for truth about white 
-> society. Squelching the truth.
-> 
-> http://vimeo.com/257562406
-> 
-> Alot of folks have been wondering: why are things they way that they 
-> are? Many have been pondering this notion. All things have roots:
-> you, me, we all do, but when we are cut from those roots we feel
-> adrift in this world. Like this world is not our own. In the past
-> many of us have been forcefully cut from those roots through no fault
-> of our own nor of our ancestors.
-> 
-> To know why things are; you must know Who the people that do them,
-> are. What makes them do these things. Here's some straight truth from
-> someone who has been in the game for some time
-> 
-> The white man - Just Who, who really, he is (and why he do what he
-> does)
-> 
-> 
-> (Don't let these
-> words be silenced, those against the truth try to cast it into
-> darkness; and with it - what with that which what makes us human)
-> 
-> http://vimeo.com/257562406
-> 
 
-I don't do multimedia on internet. Could you please provide a link to
-some text about it? Any text format (even .docx) is acceptable, so long
-as it is not audio / video.
+> --- a/drivers/platform/x86/dell-smbios-smm.c
+> +++ b/drivers/platform/x86/dell-smbios-smm.c
 
-P.S. Posting from gmane.linux.debian.user newsgroup, so please include
-debian.user in your reply, or you can directly post to my email address.
+> +#ifdef CONFIG_DELL_SMBIOS_SMM
 
-Thank you.
+> +#else /* CONFIG_DELL_SMBIOS_SMM */
+> +int init_dell_smbios_smm(void)
+> +{
+> +       return -ENODEV;
+> +}
+
+> +void exit_dell_smbios_smm(void)
+> +{}
+> +#endif /* CONFIG_DELL_SMBIOS_SMM */
+
+> --- a/drivers/platform/x86/dell-smbios-wmi.c
+> +++ b/drivers/platform/x86/dell-smbios-wmi.c
+
+> +#ifdef CONFIG_DELL_SMBIOS_WMI
+
+> +#else /* CONFIG_DELL_SMBIOS_WMI */
+> +int init_dell_smbios_wmi(void)
+> +{
+> +       return -ENODEV;
+> +}
+> +
+> +void exit_dell_smbios_wmi(void)
+> +{}
+> +#endif /* CONFIG_DELL_SMBIOS_WMI */
+
+It's rather strange to see above in *.c and not in *.h where it's
+usually supposed to be...
+
+> --- a/drivers/platform/x86/dell-smbios.h
+> +++ b/drivers/platform/x86/dell-smbios.h
+> @@ -75,4 +75,10 @@ int dell_laptop_register_notifier(struct notifier_block *nb);
+>  int dell_laptop_unregister_notifier(struct notifier_block *nb);
+>  void dell_laptop_call_notifier(unsigned long action, void *data);
+>
+> +/* for the supported backends */
+> +int init_dell_smbios_wmi(void);
+> +void exit_dell_smbios_wmi(void);
+> +int init_dell_smbios_smm(void);
+> +void exit_dell_smbios_smm(void);
+> +
+
+...here...
+
+>  #endif
+
 -- 
-Abdullah Ramazanoglu
+With Best Regards,
+Andy Shevchenko
