@@ -1,100 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeB0W1b (ORCPT <rfc822;w@1wt.eu>);
+        id S1752081AbeB0W1j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:27:39 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:60355 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751795AbeB0W1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Feb 2018 17:27:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37580 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeB0W12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:27:28 -0500
-Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
- <20180222231736.GA628@mini-rhel.redhat.com>
- <20180226102029.GG27191@lahna.fi.intel.com>
- <20180226133802.GR27191@lahna.fi.intel.com>
- <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
- <20180226194645.GA3774@lahna.fi.intel.com>
- <6560a597-0075-549e-f723-1bc5eb54c7bc@redhat.com>
- <20180227092627.GD2424@lahna.fi.intel.com>
-From: Jeremy McNicoll <jmcnicol@redhat.com>
-Organization: Red Hat
-Message-ID: <9a0ba004-1420-daa8-3ad1-299faf5ed5a8@redhat.com>
-Date: Tue, 27 Feb 2018 14:27:26 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180227092627.GD2424@lahna.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 02/16] clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
+Date: Tue, 27 Feb 2018 23:26:47 +0100
+Message-Id: <20180227222701.9716-3-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-27 1:26 AM, Mika Westerberg wrote:
-> On Mon, Feb 26, 2018 at 12:15:28PM -0800, Jeremy McNicoll wrote:
->> On 2018-02-26 11:46 AM, Mika Westerberg wrote:
->>> On Mon, Feb 26, 2018 at 11:28:16AM -0800, Jeremy McNicoll wrote:
->>>> On 2018-02-26 5:38 AM, Mika Westerberg wrote:
->>>>> On Mon, Feb 26, 2018 at 12:20:29PM +0200, Mika Westerberg wrote:
->>>>>> On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
->>>>>>>> +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
->>>>>>>> +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
->>>>>>>> +			link, depth);
->>>>>>>
->>>>>>> This kind of condition sounds more like an error instead of info.
->>>>>>> Please bump this up to tb_WARN/tb_warn ideally tb_err().
->>>>>>
->>>>>> No, this is not an error.
->>>>>
->>>>> To be more clear, it is totally fine to have the firmware to reject some
->>>>> devices. For example in case of the new usbonly security level the
->>>>> firmware rejects other devices but the first.
->>>>>
->>>>
->>>> Ok. Is that kind of information available to the kernel?  What security
->>>> mode we are in?
->>>>
->>>> ie) if (LINK_REJECTED && !USB_SECURITY)
->>>>          print "Error switch %u was rejected since its not usbonly"
->>>>       endif
->>>>
->>>> I am sure something like that simplified pseudo code above would
->>>> be somewhat useful to users when debugging.
->>>
->>> That's why it is on info level so it goes to dmesg but does not scare
->>> the user :-)
->>>
->>
->> The point I am trying to make is that it would be nice to be able to
->> know WHY the link was rejected and not just that it was rejected.
-> 
-> Fair enough. In practice (since we ask the firmware to accept any
-> device) the only reason for rejection is that the topology limit is
-> exceeded (too many devices in the chain).
-> 
-> I'm thinking to change the message to something like:
-> 
-> 	tb_info(tb, "switch at %u.%u was rejected by ICM firmware because topology limit exceeded\n",
-> 		link, depth);
-> 
-> And do the same for Titan Ridge in patch [18/18].
-> 
-> Security level can be read directly from "security" sysfs attribute of
-> the domain so that information does not need to be duplicated IMHO.
-> 
-> Does that work for you?
-> 
+Although user manuals for H3 and H5 SoCs state that minimal rate
+supported by video PLL is around 30 MHz, it seems that in reality
+minimal rate is around 192 MHz.
 
+Experiments showed that any rate below 96 MHz doesn't produce any video
+output at all. Even at this frequency, stable output depends on right
+factors. For example, when N = 4 and M = 1, output is stable and when N
+= 8 and M = 2, it's not.
 
-Sounds good to me.
+BSP clock driver suggest that minimum stable frequency is 192 MHz. That
+would also be in line with A64 SoC, which has similar periphery.
 
+Set minimal video PLL rate for H3/H5 to 192 MHz.
 
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
--jeremy
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 29bc0566b776..b9f39078c0b2 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -69,17 +69,18 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				       BIT(28),	/* lock */
+ 				       CLK_SET_RATE_UNGATE);
+ 
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+-					"osc24M", 0x0010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video_clk, "pll-video",
++					    "osc24M", 0x0010,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x0018,
+-- 
+2.16.2
