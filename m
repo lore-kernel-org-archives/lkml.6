@@ -1,56 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752882AbeB0QQu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:16:50 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35372 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752369AbeB0QQs (ORCPT
+        id S932136AbeB0QRF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:17:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52938 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752161AbeB0QRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:16:48 -0500
-X-Google-Smtp-Source: AG47ELtaWXWNfdEGs7MRbTnMnESAsUV5xFgpoDoRs+tfuSw7vkbIBalQVMLSyhl7LF1I1/zmngBIXktvA8NThf4uFCM=
+        Tue, 27 Feb 2018 11:17:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 853E160285
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <92c22f39a7df439a9e18cb975eec086e@ausx13mpc124.AMER.DELL.COM>
-References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com>
- <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
- <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com> <92c22f39a7df439a9e18cb975eec086e@ausx13mpc124.AMER.DELL.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 18:16:46 +0200
-Message-ID: <CAHp75VchPrF8ndHck9pzjOOScTS627x9TFLsnr+LWxiwTgck9w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-To: Mario Limonciello <Mario.Limonciello@dell.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: wireless: zd1211rw: remove redundant assignment of pointer 'q'
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180130182537.5580-1-colin.king@canonical.com>
+References: <20180130182537.5580-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Daniel Drake <dsd@gentoo.org>, Ulrich Kunitz <kune@deine-taler.de>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180227161702.81FE4607E5@smtp.codeaurora.org>
+Date: Tue, 27 Feb 2018 16:17:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 6:13 PM,  <Mario.Limonciello@dell.com> wrote:
+Colin Ian King <colin.king@canonical.com> wrote:
 
->> > --- a/drivers/platform/x86/dell-smbios.h
->> > +++ b/drivers/platform/x86/dell-smbios.h
->> > @@ -75,4 +75,10 @@ int dell_laptop_register_notifier(struct notifier_block
->> *nb);
->> >  int dell_laptop_unregister_notifier(struct notifier_block *nb);
->> >  void dell_laptop_call_notifier(unsigned long action, void *data);
->> >
->> > +/* for the supported backends */
->> > +int init_dell_smbios_wmi(void);
->> > +void exit_dell_smbios_wmi(void);
->> > +int init_dell_smbios_smm(void);
->> > +void exit_dell_smbios_smm(void);
->> > +
->>
->> ...here...
->
-> So do you mean you would rather see inline functions in header
-> file for the #else case then?
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer q is initialized and then almost immediately afterwards being
+> re-assigned the same value. Remove the second redundant assignment.
+> 
+> Cleans up clang warning:
+> drivers/net/wireless/zydas/zd1211rw/zd_mac.c:503:23: warning: Value
+> stored to 'q' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-At least is sounds as a standard practice to me.
+Patch applied to wireless-drivers-next.git, thanks.
+
+76d1f95983a0 wireless: zd1211rw: remove redundant assignment of pointer 'q'
 
 -- 
-With Best Regards,
-Andy Shevchenko
+https://patchwork.kernel.org/patch/10192195/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
