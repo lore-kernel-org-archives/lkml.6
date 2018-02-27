@@ -1,235 +1,201 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1993284-1519751042-2-16376027547048134830
+X-Cyrus-Session-Id: sloti22d1t05-351074-1519705891-2-12448402696686386226
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='cz',
-  MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519751041; b=fQ0UMXeTNa9itPhxPAMFkVYiPqWXPp3mkuhOGEztbsPBHpe
-    Z4xj7Po05B2GRl5FhY/zuWFTVPWBMrRk9wQ1imDswJVMrXT3xRf3QEN7K71NCfGD
-    Ij9GYfCLAeV6XWRRXA0UQTMZeKfxgyJJjoTSWR2cWdUGjwFJZxPXcLd9fG6ipJ2F
-    z8u/sBAS2LZZUTw4h7gmdDvlIE0HMfboZZBkezlOJSOqwI9M9mN+OypBdasXdAJy
-    ZH7Xb83BQOPbVXMPyH9ANGlwPLG4Rzj3ARYTajGJi29xoJKPULYlxXUkmmM+drRE
-    2QBa5Rs6FnDfU3iroypYkU0dVCsINK3hsYQ1Vig==
+    t=1519705890; b=ookLBFsHgLTTUzvRDpRIkxEqAgQ2UUNQyyCwIaq9O6eKZ2f
+    HTCLohSXact/R7UF3W0l/ms9WorEvHzLH3AlfJ4TsXyFwIOW5V+AqNr0HBCRyUo5
+    jsMMWIomUMK3j9Vc1naBJ2DZMBWz/bjw/dybbU8d2IWWSOU0B4h311hfs0/79n2L
+    tIxbmF1Z2SOiGJRQcCjCwu5OIo41E+MjRqWLY/oD8kzNUvb9Wj7hOFu1AKZLtSMi
+    3i7vNQRTB4wj16Uyp7mLvxLS1zgAYU+t4FZCZvTyCssINwvOL13wXutmjblmVYvy
+    QD9yBkNBvJdxiRz5PjWxUgZy37TDMiFYaVmzR3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519751041; bh=BxsdjqlR7WawGBG6oJBnEMALB9
-    aDPA9dkYDf0ZPO04s=; b=dUQMc64UyM2HOhiOfvqg7vIX+E7MQ3n/KqgBY+/8dw
-    aDJ0pc/bSpyaKUPBSU6l6CptAxD4Ux7JL7Zu7+KQ+YpYv+34D7oT0CdGzPAuYGFj
-    r9kMcBiqqnlVgx0lBfl8IwEiykDC47kZi5APvNngYeC5vdDc0RJ8mpgk8EzvwNZz
-    sLIkhmNlmeACrOXVvomYyypqsarjJQAXJsyWpeZ1msIC3wzqXNA//yWGRuNMiVs3
-    wLM7EfnkHhz1pcsW9cUXd4+RiUXm4mLjDXXIohP8YA1S2bs/VHIOA+B4eTdUjARa
-    G0OFQ8Wf+ofi9JZKH6+sxPCBS5wcM5c3WBFBKPZNj9Zg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519705890; bh=I/WGU4os+GWZFtH61ePOMT8rAy6eu1o17pe5Z+WvDwg=; b=c
+    g1WuFom4RVrrOmtBCxAZgDsukrhnmKF1M4mEApcqzndreDBG66UbpXbsJ+Tlxsbc
+    7coaXr9u3XGFDqjQjpmJO/p0wDovdkyKqMhFfBH9qEBXNfABt9mylYqan9nN2ube
+    duNvwGm1QMpY25GvxHjwcyF7Cb4mXFugKq9Db1XlRsqqVhAOcCgfcJ8/9tDvxG/y
+    +1xRiyU9f7DUmMDBHaEnaIEwToWgFxLqJBbHe0LaxglrUtRrf4GxENiZBYkso8zR
+    AIl974lXr/VuKqKDFiqJeKKd7iicc/GO90gXFyGVmzaeevGRTm9qDWgksZutCR6b
+    1+n7KI0pFv3zoZpfRR+wg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeB0RDn (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 12:03:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47490 "EHLO mx2.suse.de"
+        id S1752072AbeB0E3j (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 23:29:39 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63183 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbeB0RDm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:03:42 -0500
-Date: Tue, 27 Feb 2018 18:03:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        id S1751663AbeB0E3h (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 26 Feb 2018 23:29:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="21310247"
+Subject: [PATCH v4 07/12] ext4, dax: replace IS_DAX() with IS_FSDAX()
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-mm@kvack.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
         Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [PATCH v4 08/12] xfs, dax: replace IS_DAX() with IS_FSDAX()
-Message-ID: <20180227170340.yzaxfiuso6mjsedv@quack2.suse.cz>
+Date: Mon, 26 Feb 2018 20:20:32 -0800
+Message-ID: <151970523209.26729.7690806551692959424.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151970523724.26729.2708434307206092584.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151970523724.26729.2708434307206092584.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon 26-02-18 20:20:37, Dan Williams wrote:
-> In preparation for fixing the broken definition of S_DAX in the
-> CONFIG_FS_DAX=n + CONFIG_DEV_DAX=y case, convert all IS_DAX() usages to
-> use explicit tests for FSDAX since DAX is ambiguous.
-> 
-> Cc: Jan Kara <jack@suse.com>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+In preparation for fixing the broken definition of S_DAX in the
+CONFIG_FS_DAX=n + CONFIG_DEV_DAX=y case, convert all IS_DAX() usages to
+use explicit tests for FSDAX since DAX is ambiguous.
 
-Looks good. You can add:
+Cc: Jan Kara <jack@suse.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/ext4/file.c  |   12 +++++-------
+ fs/ext4/inode.c |    4 ++--
+ fs/ext4/ioctl.c |    2 +-
+ fs/ext4/super.c |    2 +-
+ 4 files changed, 9 insertions(+), 11 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/xfs/xfs_file.c    |   14 +++++++-------
->  fs/xfs/xfs_ioctl.c   |    4 ++--
->  fs/xfs/xfs_iomap.c   |    6 +++---
->  fs/xfs/xfs_reflink.c |    2 +-
->  4 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 9ea08326f876..46a098b90fd0 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -288,7 +288,7 @@ xfs_file_read_iter(
->  	if (XFS_FORCED_SHUTDOWN(mp))
->  		return -EIO;
->  
-> -	if (IS_DAX(inode))
-> +	if (IS_FSDAX(inode))
->  		ret = xfs_file_dax_read(iocb, to);
->  	else if (iocb->ki_flags & IOCB_DIRECT)
->  		ret = xfs_file_dio_aio_read(iocb, to);
-> @@ -726,7 +726,7 @@ xfs_file_write_iter(
->  	if (XFS_FORCED_SHUTDOWN(ip->i_mount))
->  		return -EIO;
->  
-> -	if (IS_DAX(inode))
-> +	if (IS_FSDAX(inode))
->  		ret = xfs_file_dax_write(iocb, from);
->  	else if (iocb->ki_flags & IOCB_DIRECT) {
->  		/*
-> @@ -1045,7 +1045,7 @@ __xfs_filemap_fault(
->  	}
->  
->  	xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> -	if (IS_DAX(inode)) {
-> +	if (IS_FSDAX(inode)) {
->  		pfn_t pfn;
->  
->  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL, &xfs_iomap_ops);
-> @@ -1070,7 +1070,7 @@ xfs_filemap_fault(
->  {
->  	/* DAX can shortcut the normal fault path on write faults! */
->  	return __xfs_filemap_fault(vmf, PE_SIZE_PTE,
-> -			IS_DAX(file_inode(vmf->vma->vm_file)) &&
-> +			IS_FSDAX(file_inode(vmf->vma->vm_file)) &&
->  			(vmf->flags & FAULT_FLAG_WRITE));
->  }
->  
-> @@ -1079,7 +1079,7 @@ xfs_filemap_huge_fault(
->  	struct vm_fault		*vmf,
->  	enum page_entry_size	pe_size)
->  {
-> -	if (!IS_DAX(file_inode(vmf->vma->vm_file)))
-> +	if (!IS_FSDAX(file_inode(vmf->vma->vm_file)))
->  		return VM_FAULT_FALLBACK;
->  
->  	/* DAX can shortcut the normal fault path on write faults! */
-> @@ -1124,12 +1124,12 @@ xfs_file_mmap(
->  	 * We don't support synchronous mappings for non-DAX files. At least
->  	 * until someone comes with a sensible use case.
->  	 */
-> -	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
-> +	if (!IS_FSDAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
->  		return -EOPNOTSUPP;
->  
->  	file_accessed(filp);
->  	vma->vm_ops = &xfs_file_vm_ops;
-> -	if (IS_DAX(file_inode(filp)))
-> +	if (IS_FSDAX(file_inode(filp)))
->  		vma->vm_flags |= VM_MIXEDMAP | VM_HUGEPAGE;
->  	return 0;
->  }
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 89fb1eb80aae..234279ff66ce 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1108,9 +1108,9 @@ xfs_ioctl_setattr_dax_invalidate(
->  	}
->  
->  	/* If the DAX state is not changing, we have nothing to do here. */
-> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) && IS_DAX(inode))
-> +	if ((fa->fsx_xflags & FS_XFLAG_DAX) && IS_FSDAX(inode))
->  		return 0;
-> -	if (!(fa->fsx_xflags & FS_XFLAG_DAX) && !IS_DAX(inode))
-> +	if (!(fa->fsx_xflags & FS_XFLAG_DAX) && !IS_FSDAX(inode))
->  		return 0;
->  
->  	/* lock, flush and invalidate mapping in preparation for flag change */
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 66e1edbfb2b2..cf794d429aec 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -241,7 +241,7 @@ xfs_iomap_write_direct(
->  	 * the reserve block pool for bmbt block allocation if there is no space
->  	 * left but we need to do unwritten extent conversion.
->  	 */
-> -	if (IS_DAX(VFS_I(ip))) {
-> +	if (IS_FSDAX(VFS_I(ip))) {
->  		bmapi_flags = XFS_BMAPI_CONVERT | XFS_BMAPI_ZERO;
->  		if (imap->br_state == XFS_EXT_UNWRITTEN) {
->  			tflags |= XFS_TRANS_RESERVE;
-> @@ -952,7 +952,7 @@ static inline bool imap_needs_alloc(struct inode *inode,
->  	return !nimaps ||
->  		imap->br_startblock == HOLESTARTBLOCK ||
->  		imap->br_startblock == DELAYSTARTBLOCK ||
-> -		(IS_DAX(inode) && imap->br_state == XFS_EXT_UNWRITTEN);
-> +		(IS_FSDAX(inode) && imap->br_state == XFS_EXT_UNWRITTEN);
->  }
->  
->  static inline bool need_excl_ilock(struct xfs_inode *ip, unsigned flags)
-> @@ -988,7 +988,7 @@ xfs_file_iomap_begin(
->  		return -EIO;
->  
->  	if (((flags & (IOMAP_WRITE | IOMAP_DIRECT)) == IOMAP_WRITE) &&
-> -			!IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
-> +			!IS_FSDAX(inode) && !xfs_get_extsz_hint(ip)) {
->  		/* Reserve delalloc blocks for regular writeback. */
->  		return xfs_file_iomap_begin_delay(inode, offset, length, iomap);
->  	}
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index 270246943a06..a126e00e05e3 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -1351,7 +1351,7 @@ xfs_reflink_remap_range(
->  		goto out_unlock;
->  
->  	/* Don't share DAX file data for now. */
-> -	if (IS_DAX(inode_in) || IS_DAX(inode_out))
-> +	if (IS_FSDAX(inode_in) || IS_FSDAX(inode_out))
->  		goto out_unlock;
->  
->  	ret = vfs_clone_file_prep_inodes(inode_in, pos_in, inode_out, pos_out,
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 51854e7608f0..561ea843b458 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -48,7 +48,7 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	 * Recheck under inode lock - at this point we are sure it cannot
+ 	 * change anymore
+ 	 */
+-	if (!IS_DAX(inode)) {
++	if (!IS_FSDAX(inode)) {
+ 		inode_unlock_shared(inode);
+ 		/* Fallback to buffered IO in case we cannot support DAX */
+ 		return generic_file_read_iter(iocb, to);
+@@ -68,7 +68,7 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
+ 
+-	if (IS_DAX(file_inode(iocb->ki_filp)))
++	if (IS_FSDAX(file_inode(iocb->ki_filp)))
+ 		return ext4_dax_read_iter(iocb, to);
+ 	return generic_file_read_iter(iocb, to);
+ }
+@@ -216,10 +216,8 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+ 		return -EIO;
+ 
+-#ifdef CONFIG_FS_DAX
+-	if (IS_DAX(inode))
++	if (IS_FSDAX(inode))
+ 		return ext4_dax_write_iter(iocb, from);
+-#endif
+ 	if (!o_direct && (iocb->ki_flags & IOCB_NOWAIT))
+ 		return -EOPNOTSUPP;
+ 
+@@ -361,11 +359,11 @@ static int ext4_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	 * We don't support synchronous mappings for non-DAX files. At least
+ 	 * until someone comes with a sensible use case.
+ 	 */
+-	if (!IS_DAX(file_inode(file)) && (vma->vm_flags & VM_SYNC))
++	if (!IS_FSDAX(file_inode(file)) && (vma->vm_flags & VM_SYNC))
+ 		return -EOPNOTSUPP;
+ 
+ 	file_accessed(file);
+-	if (IS_DAX(file_inode(file))) {
++	if (IS_FSDAX(file_inode(file))) {
+ 		vma->vm_ops = &ext4_dax_vm_ops;
+ 		vma->vm_flags |= VM_MIXEDMAP | VM_HUGEPAGE;
+ 	} else {
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index c94780075b04..1879b33aa391 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3858,7 +3858,7 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		return 0;
+ 
+ 	/* DAX uses iomap path now */
+-	if (WARN_ON_ONCE(IS_DAX(inode)))
++	if (WARN_ON_ONCE(IS_FSDAX(inode)))
+ 		return 0;
+ 
+ 	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+@@ -4076,7 +4076,7 @@ static int ext4_block_zero_page_range(handle_t *handle,
+ 	if (length > max || length < 0)
+ 		length = max;
+ 
+-	if (IS_DAX(inode)) {
++	if (IS_FSDAX(inode)) {
+ 		return iomap_zero_range(inode, from, length, NULL,
+ 					&ext4_iomap_ops);
+ 	}
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 7e99ad02f1ba..040fc6570ddb 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -790,7 +790,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 				 "Online defrag not supported with bigalloc");
+ 			err = -EOPNOTSUPP;
+ 			goto mext_out;
+-		} else if (IS_DAX(inode)) {
++		} else if (IS_FSDAX(inode)) {
+ 			ext4_msg(sb, KERN_ERR,
+ 				 "Online defrag not supported with DAX");
+ 			err = -EOPNOTSUPP;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 39bf464c35f1..933e12940181 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1161,7 +1161,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+ 	if (inode->i_ino == EXT4_ROOT_INO)
+ 		return -EPERM;
+ 
+-	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
++	if (WARN_ON_ONCE(IS_FSDAX(inode) && i_size_read(inode)))
+ 		return -EINVAL;
+ 
+ 	res = ext4_convert_inline_data(inode);
