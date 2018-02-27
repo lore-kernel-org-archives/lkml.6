@@ -1,84 +1,95 @@
-Return-Path: <jthumshirn@suse.de>
-X-Google-Smtp-Source: AH8x22429rYEdZieZoWN8CA+ZMGe6O/cxSSeoCsDNGjU43p19wx9NwfrrWrS8U/AWpBoslxZQf+S
-ARC-Seal: i=1; a=rsa-sha256; t=1519746128; cv=none;
+Return-Path: <eli.billauer@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519761197; cv=none;
         d=google.com; s=arc-20160816;
-        b=u1PoBuHSucV8YBM266afBukYPrwa/1nBD5hC1zduoFC1jB1/dxtwi0iQLopxUYaf+i
-         p3oVJnJgcdx5C0G7lZ+apOSr8/hfIV01f0NIwaXSjWfHpLCCO7ru1WDzbQsEdjssTZZo
-         14zJtGzrGTxSK6PBEji55y2caNIsIqGaDlRBz8TcnW+URfVs14ZJvfnSZf2fptvWV5br
-         qyzxwjMqrFSorD3NuGl40QPypSmqpo+3gzfUul/w/dODbe6EIfP4PPUqBEY1uAQ/rFge
-         tizb1umqLsxjuxDG3/hKaIsLCQh6w/+ckdOk76VsrRxyhSceLGSTCcCNTLac115khvXb
-         A4zA==
+        b=xiCv24JYax69kKL4ouZIW8sl0AtgnUvY59cOHryslABOe4jFkXj9am71Ehp1j05Mud
+         8EYX7TZ/qMf+PAdcF6rMvtbWVQ8ELUWYyqreyyoETKwwv0sjPexNVJLGrS23aCwgNbtq
+         ltneYsDj/u0+UsXhHXU3jali3C5ml0Zy5vf/+ztKW+buJ144X+Kj1Ujuu6T2CikupMBW
+         M+OrCEhIIA6Gd6TWKD8ntlbrNq4RA07uhmPiXV43CZdhAYkICBKgh6axXPXRJwu3fMPF
+         QL4ohYPbEpDUbFWLj3IRJptLeYhUa4ttFpCuE0EbB7nZq6ZBhw/JSznGwgNGtZRLU0/J
+         /cBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=6V4GhHXhsrGCzqJL3+lzfLqHyuITmBwDbtyOxwe0WoQ=;
-        b=v7jYScRxLh6gwZwBUN8L03+/W77CSmbLtXW3DcmA9BcC0VRpAvDllKpYeFnjf5PYTE
-         9OdLj42WmDrg4oQ36EgoKPeZKWxVbvsFdJuk3d3suzgoHX4AAGEeczBwOW/4ZD3S3rS1
-         C14uYPl9mbbOnX9FeIyPKVNN+8sshGZYxsw5d7krYb2kXITXhMXLkP8278+thssWCAzn
-         DhtLK5DsfcooIkmlKN4PELx1vu9zu5se3xgHpdJ3qOwF0f1xJfY0w3NiR9fI2svBU43s
-         9pbCAcHj7eV2I56vaprk6Ljao4pOpBKNp39Jpcz4nr8CbW/VAGOoUwvNhksNkUVht1XV
-         PP+g==
+        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
+         :mime-version:user-agent:from:date:message-id:dkim-signature
+         :arc-authentication-results;
+        bh=fLAmkOp8Bbm2m1I98KnPs3UwAL74ERS4qeQu8TQCSi8=;
+        b=nbrcN48xHu55ZePR/b+lo83dJumqJdVsUaoq/fXn+ls7PSHUYxERFpaiAHZ4aMLZJ+
+         UeL/Pp8aQcrSR0Ml8OQY9mRaPu/mcagtdLi9RDOLkMz/6v+/f9u7SYu28BFTTbrySv/u
+         nkaTLoCGrHD2P9mdu7fEWQmKyUb3KnzW41TrW9a+kODpm5XZOzKnr5jkvcdBmAy1Vn/x
+         gztzbiotIFCJIkKyaYPRQXtBaEnylqHQuEANsVdZFNc2TcyjISmvq9ktks0R840pSAEM
+         t8r3dRQDaFm0CCW+2bNGsLOB4eIYqrvu2uJX+bnAIJGk/5y/cl9RmrgxNlphm6XeGjbR
+         gUkg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L72nxDtL;
+       spf=pass (google.com: domain of eli.billauer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=eli.billauer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
-Message-ID: <1519746127.25526.25.camel@suse.de>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L72nxDtL;
+       spf=pass (google.com: domain of eli.billauer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=eli.billauer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x22719PQlWc5gRkJTBs/y17LVlFxkntuByygZtGddnfu1TkLm7H7DvxzQT5h9uVbnShVnUr5DIw==
+Message-ID: <5A95B6EF.1030305@gmail.com>
+Date: Tue, 27 Feb 2018 21:52:15 +0200
+From: Eli Billauer <eli.billauer@gmail.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
+MIME-Version: 1.0
+To: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+ Michael Moese <mmoese@suse.de>,
+ Bjorn Helgaas <bhelgaas@google.com>, Anatolij Gustschin <agust@denx.de>
 Subject: Re: [PATCH 1/2] PCI: add vendor id for Altera
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Linux Kernel Mailinglist
- <linux-kernel@vger.kernel.org>, Michael Moese <mmoese@suse.de>, Bjorn
- Helgaas <bhelgaas@google.com>, Eli Billauer <eli.billauer@gmail.com>,
- Anatolij Gustschin <agust@denx.de>
-Date: Tue, 27 Feb 2018 16:42:07 +0100
-In-Reply-To: <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
-References: <20180227133018.7732-1-jthumshirn@suse.de>
-	 <20180227133018.7732-2-jthumshirn@suse.de>
-	 <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180227133018.7732-1-jthumshirn@suse.de> <20180227133018.7732-2-jthumshirn@suse.de> <CAHp75VdwHZxCzppayKaLdGJ++QKTKnZWwfHXOJ_bhMVHOJCu1A@mail.gmail.com> <1519746127.25526.25.camel@suse.de>
+In-Reply-To: <1519746127.25526.25.camel@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593561031161649636?=
-X-GMAIL-MSGID: =?utf-8?q?1593569316456963824?=
+X-GMAIL-MSGID: =?utf-8?q?1593585117859547060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-02-27 at 17:32 +0200, Andy Shevchenko wrote:
-> On Tue, Feb 27, 2018 at 3:30 PM, Johannes Thumshirn <jthumshirn@suse.de>
-> wrote:
-> > 
-> > Add the Altera PCI Vendor id to pci_ids.h and remove the private
-> > definitions from xillybus_pcie.c and altera-cvp.c.
-> 
-> > 
-> >  #include <linux/pci.h>
-> > +#include <linux/pci_ids.h>
-> 
-> > 
-> >  #include <linux/pci.h>
-> > +#include <linux/pci_ids.h>
-> 
-> Isn't pci.h includes pci_ids.h ?
+Hello Johannes,
 
-It indeed is, but it won't do any harm and it's not quite clear what the
-general policy (regarding pci_ids.h) is, some drivers include it (even in
-the drivers/pci/) some don't.
+Thanks for the patch.
 
-Bjorn, any guidance from your side?
+I can confirm that xillybus_pcie.c compiles well with and without 
+including pci_ids.h. As a matter of fact, it already used 
+PCI_VENDOR_ID_XILINX, which is defined in pci_ids.h, without including 
+it directly. Hence moving PCI_VENDOR_ID_ALTERA didn't change much in 
+terms of the dependency on pci_ids.h.
 
-Byte,
-	Johannes
+This is a matter of convention -- I'm fine either way.
 
--- 
-Johannes Thumshirn                                          Storage
-jthumshi
-rn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH,
-Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham
-Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600
-D0D0 0393 969D 2D76 0850
+Regards,
+    Eli
+
+On 27/02/18 17:42, Johannes Thumshirn wrote:
+> On Tue, 2018-02-27 at 17:32 +0200, Andy Shevchenko wrote:
+>    
+>> On Tue, Feb 27, 2018 at 3:30 PM, Johannes Thumshirn<jthumshirn@suse.de>
+>> wrote:
+>>      
+>>> Add the Altera PCI Vendor id to pci_ids.h and remove the private
+>>> definitions from xillybus_pcie.c and altera-cvp.c.
+>>>        
+>>      
+>>>   #include<linux/pci.h>
+>>> +#include<linux/pci_ids.h>
+>>>        
+>>      
+>>>   #include<linux/pci.h>
+>>> +#include<linux/pci_ids.h>
+>>>        
+>> Isn't pci.h includes pci_ids.h ?
+>>      
+> It indeed is, but it won't do any harm and it's not quite clear what the
+> general policy (regarding pci_ids.h) is, some drivers include it (even in
+> the drivers/pci/) some don't.
+>
+> Bjorn, any guidance from your side?
+>
+> Byte,
+> 	Johannes
+>
+>    
