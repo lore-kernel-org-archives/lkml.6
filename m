@@ -1,55 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751793AbeB0RjK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:39:10 -0500
-Received: from muru.com ([72.249.23.125]:58506 "EHLO muru.com"
+        id S1751643AbeB0RpL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:45:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50413 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751463AbeB0RjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:39:09 -0500
-Date: Tue, 27 Feb 2018 09:39:06 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Cc: Dave Gerlach <d-gerlach@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Keerthy J <j-keerthy@ti.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH v5 0/4] ARM: OMAP2+: AM33XX/AM43XX: Add suspend-resume
- support
-Message-ID: <20180227173906.GC5448@atomide.com>
-References: <20180223154357.23504-1-d-gerlach@ti.com>
- <a56830af-cf81-3603-ba58-2a2c65c49f34@oracle.com>
- <20180226212650.GB16043@atomide.com>
- <58006020-85d9-9681-f80a-2f9eda1e863a@oracle.com>
+        id S1750746AbeB0RpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 12:45:10 -0500
+Date: Tue, 27 Feb 2018 18:44:46 +0100
+From: Borislav Petkov <bp@suse.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
+Message-ID: <20180227174446.GN26382@pd.tnic>
+References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
+ <20180226193904.20532-3-Yazen.Ghannam@amd.com>
+ <20180227112234.GE26382@pd.tnic>
+ <DM5PR12MB1916B6AEE434A345E78BE234F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+ <20180227170034.GJ26382@pd.tnic>
+ <DM5PR12MB1916F8C7DF93C1C9402AE3ECF8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <58006020-85d9-9681-f80a-2f9eda1e863a@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM5PR12MB1916F8C7DF93C1C9402AE3ECF8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* santosh.shilimkar@oracle.com <santosh.shilimkar@oracle.com> [180227 00:19]:
-> On 2/26/18 1:26 PM, Tony Lindgren wrote:
-> > * Santosh Shilimkar <santosh.shilimkar@oracle.com> [180225 23:36]:
-> > > > Dave Gerlach (4):
-> > > >     ARM: OMAP2+: Introduce low-level suspend code for AM33XX
-> > > >     ARM: OMAP2+: Introduce low-level suspend code for AM43XX
-> > > >     ARM: OMAP2+: pm33xx-core: Add platform code needed for PM
-> > > >     soc: ti: Add pm33xx driver for basic suspend support
-> > > > 
-> > > Are you going to pickup this series ?
-> > 
-> > Yes planning to apply it today or tomorrow.
-> > 
-> Sounds good.
+On Tue, Feb 27, 2018 at 05:27:39PM +0000, Ghannam, Yazen wrote:
+> Sure, we can print the fields unconditionally if Ard is okay with that.
 > 
-> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> The issue is that the x86 behavior will be different from all the others, so that
+> might be confusing.
 
-Applied and pushed out into omap-for-v4.17/ampm.
+Confusing for whom?
 
-Thanks,
+Are we sharing tools with other arches or what am I missing?
 
-Tony
+> This set does decode everything fully so that people can read the error.
+
+No, it doesn't. It dumps
+
+        printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
+
+        printk("%sError Structure Type: %pUl\n", newpfx,
+                &err_info->err_type);
+
+        printk("%sCheck Information: 0x%016llx\n", newpfx,
+                 err_info->check_info);
+
+and so on which are half-baked.
+
+Think of it this way: if you look at the error record and you still need
+to look at the spec to decode it, then it is still not good enough.
+
+Users don't care about validation bits, or unreadable GUIDs or WTF is
+"Check Information" even?
+
+"This section details the layout of the Processor Error Information
+Structure and the detailed check information which is contained within."
+
+And that "Check Information" thing is mentioned only twice in the whole
+spec.
+
+StructureErrorType only there in the table.
+
+Very informative that.
+
+So no, users don't care about any of that internal crap - they wanna
+know what is wrong with their box and that should be written in plain
+english.
+
+> I already mentioned in the Context info patch that there could be
+> further decoding which we can do in the future.
+
+Then decode only those pieces fully now which you can do now and when
+you add something in the future, add it then with the full decoding
+functionality. No fields which need additional decoding with the spec
+opened on one side.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
