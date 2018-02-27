@@ -1,79 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeB0NvV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 08:51:21 -0500
-Received: from lucky1.263xmail.com ([211.157.147.131]:43626 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752621AbeB0NvT (ORCPT
+        id S1753388AbeB0Nvu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 08:51:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44336 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbeB0Nvs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 08:51:19 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 220.200.5.149
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <c963d4f8e25be6df144a33a763e06b26>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in
- /proc/partitions
-To: Harish Jenny K N <harish_kandiga@mentor.com>, adrian.hunter@intel.com
-References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <2994915e-18ff-1589-53b2-e726aa3fd872@rock-chips.com>
-Date: Tue, 27 Feb 2018 21:51:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 08:51:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31AEE607EF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [v2,1/6] wl1251: Update wl->nvs_len after wl->nvs is valid
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1510270708-14377-2-git-send-email-pali.rohar@gmail.com>
+References: <1510270708-14377-2-git-send-email-pali.rohar@gmail.com>
+To: =?utf-8?q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Ming Lei <ming.lei@canonical.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Gnedt <david.gnedt@davizone.at>,
+        Michal Kazior <michal.kazior@tieto.com>,
+        Daniel Wagner <wagi@monom.org>, Tony Lindgren <tony@atomide.com>,
+        Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Grazvydas Ignotas <notasas@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180227135148.07B0E60F6D@smtp.codeaurora.org>
+Date: Tue, 27 Feb 2018 13:51:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-‘⁄ 2018/2/27 19:33, Harish Jenny K N –¥µ¿:
-> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> 
-> Since RPMB area is accessible via special ioctl only and boot areas
-> are unlikely to contain any partitions, exclude them all from listing
-> in /proc/partitions. This will hide them from various user-level
-> software (e.g. fdisk), thus avoiding unnecessary access attempts.
-> 
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
-> ---
->   drivers/mmc/core/block.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 20135a5..376e47e 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -2341,7 +2341,8 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
->   	set_disk_ro(md->disk, md->read_only || default_ro);
->   	md->disk->flags = GENHD_FL_EXT_DEVT;
->   	if (area_type & (MMC_BLK_DATA_AREA_RPMB | MMC_BLK_DATA_AREA_BOOT))
-> -		md->disk->flags |= GENHD_FL_NO_PART_SCAN;
-> +		md->disk->flags |= GENHD_FL_NO_PART_SCAN
-> +				   | GENHD_FL_SUPPRESS_PARTITION_INFO;
+Pali Roh√°r wrote:
 
-I would prefer using GENHD_FL_HIDDEN instead of adding all these two
-flags.
-
->   
->   	/*
->   	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
+> If kmemdup fails, then wl->nvs_len will contain invalid non-zero size.
 > 
+> Signed-off-by: Pali Roh√°r <pali.rohar@gmail.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
+4 patches applied to wireless-drivers-next.git, thanks.
+
+f63b4c971f5f wl1251: Update wl->nvs_len after wl->nvs is valid
+562da3a39cb7 wl1251: Generate random MAC address only if driver does not have valid
+4f507d588d08 wl1251: Parse and use MAC address from supplied NVS data
+3142467fc15b wl1251: Set generated MAC address back to NVS data
 
 -- 
-Best Regards
-Shawn Lin
+https://patchwork.kernel.org/patch/10052101/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
