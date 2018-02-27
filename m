@@ -1,114 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752085AbeB0QJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:09:27 -0500
-Received: from verein.lst.de ([213.95.11.211]:49343 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbeB0QJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:09:25 -0500
-Date: Tue, 27 Feb 2018 17:09:24 +0100
-From: Torsten Duwe <duwe@lst.de>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
-        Balbir Singh <bsingharora@gmail.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org
-Subject: [PATCH 2/2] ppc64le save_stack_trace_tsk_reliable (Was:
-        HAVE_RELIABLE_STACKTRACE)
-Message-ID: <20180227160924.GA19111@lst.de>
-References: <20171004152516.25803-1-kamalesh@linux.vnet.ibm.com> <20171005124313.GA25100@lst.de> <9f388c9a-8d74-865a-b113-f77322918b39@linux.vnet.ibm.com> <20171017144733.GB2136@lst.de> <95e6f942-88b7-0208-0eb0-2f5462aec410@linux.vnet.ibm.com> <20171020120739.GA20306@lst.de> <1508547548.5662.2.camel@gmail.com> <39bb7180-1adf-4df6-c9ba-c6f92754767f@linux.vnet.ibm.com> <20171212113912.GA1907@lst.de> <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
+        id S1752177AbeB0QKC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:10:02 -0500
+Received: from mail-by2nam03on0073.outbound.protection.outlook.com ([104.47.42.73]:6020
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751004AbeB0QKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 11:10:01 -0500
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: =?utf-8?B?SmF2aWVyIEdvbnrDoWxleg==?= <jg@lightnvm.io>
+CC: "mb@lightnvm.io" <mb@lightnvm.io>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lightnvm: simplify geometry structure.
+Thread-Topic: [PATCH] lightnvm: simplify geometry structure.
+Thread-Index: AQHTr+O4TLRIu8wXYUyKRbyBMvBmjKO4aw1f
+Date: Tue, 27 Feb 2018 16:09:59 +0000
+Message-ID: <A1101358-5262-4AE5-B486-83344B99A7AD@cnexlabs.com>
+References: <1519747032-25704-1-git-send-email-javier@cnexlabs.com>,<1519747032-25704-2-git-send-email-javier@cnexlabs.com>
+In-Reply-To: <1519747032-25704-2-git-send-email-javier@cnexlabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.106.164.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR06MB3505;6:WiE3hVYSyS1uWm628TZrpxeau7S+lwucio6WgIv/22QQuVeBSqagCxQE+r9mSzZhCmh+EaHt0XuJXQcKiD9tnZ3RIgCNaiSjNypCHoyN3YYOQ2a9gqjU/C+dXqtxKRvzcJPYU7yJpnqtpVHGgXSekEVEhq2lxrqpApsHEC2Y2HI4sur1blFYs2ngpU8o5HM/xVLmkdPM7wKGHO6eogdAn5WcS7fu6qoHyevc4CKueZm8xq4jsZGqGan5QoHiiHYOhDLnAwHHD3e7llqAKmHHGtcJLi+1CIMyT9N7JvMPRA1+lCA0cdGZdxVFS71fEEMzGVHSJW/vO4nAa2Z/bS5HhwFAMxH43Fxb+ghxwQ3IASud2DDjWLoTNxGAEgZ9kNd0;5:G/G9FDYuLb71r54WbBX7/znYrmLNUGRTCmAf1VhkTqnQ0c+tHi8q5itb/1gcc7ersVKqawNCsVmyLKcqWfGdJt5fXDwYcY7p1dn+UwBbiah7Emw1DB0SHQBQ0P+Gx4CH9QtFHE6iQL5DJOpsuLr/SmRaFOlsH+m6GowwLR6c3JE=;24:b+mLdLWqDgR5+O6wmpZSSOlepwrgsJ9PMahAFUiPNF6KxkyXacvDglej/+gA+XO0a40gzYs41EeR4dmCw9foE4b0yeld7VX0rSUekVFtsyc=;7:0IZAxqbjRRx/bkQYUM64HsJ0LCEFQFrpQKLEnc3Clkr9P2O/9zS6Jh6pricWYf3W39xI0nwSHtNhTpF8yePRsn2E+jEeJEbt7JUfSK0XeTKZAUorvbWXSmiFiCgaPgPOeBraML7F/EfNTy2/cq2ekZOx4CoDEv1Vyzvy5cy/b1855gJZH2RcNssNUNFEll5JaY4TbhjK2fV6qGn2d80z84NIaW2X8X4OEj3QmflpCgHQoRp7pOxWo0SNaT09mhFO
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 72b05afb-4901-44ce-033a-08d57dfc8cf9
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BN6PR06MB3505;
+x-ms-traffictypediagnostic: BN6PR06MB3505:
+x-microsoft-antispam-prvs: <BN6PR06MB3505A263F9A65478E186824BBAC00@BN6PR06MB3505.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3231220)(944501198)(93006095)(93001095)(3002001)(6041288)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR06MB3505;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB3505;
+x-forefront-prvs: 05961EBAFC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39840400004)(366004)(346002)(39380400002)(396003)(199004)(189003)(26005)(77096007)(186003)(6346003)(97736004)(102836004)(86362001)(66066001)(6506007)(105586002)(83716003)(82746002)(33656002)(2950100002)(2900100001)(6916009)(106356001)(6512007)(6246003)(7736002)(305945005)(5660300001)(229853002)(2906002)(3280700002)(6486002)(6116002)(25786009)(3660700001)(4326008)(81166006)(3846002)(36756003)(8676002)(478600001)(316002)(6436002)(54906003)(68736007)(81156014)(8936002)(14454004)(76176011)(99286004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB3505;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com;
+x-microsoft-antispam-message-info: dk1fw5XhXtxnzcwN4JlilCf51+yUE6DXjanWfqskwuzGj7B+Hy0JLQsU+gluG/WYzbd+UaZGaaspATmX8O/snHEI5m+tEC8NNBzXhvES2Fe+d21/j4GjM3RtdRxjIXsI1rssigwxi6Bl9yXf3ibBnWfFbI8uYV2+DYJqsHXCdUA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72b05afb-4901-44ce-033a-08d57dfc8cf9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 16:09:59.2684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB3505
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RGA9i6031392
 
-On Tue, Dec 12, 2017 at 01:12:37PM +0100, Miroslav Benes wrote:
+
+> On 27 Feb 2018, at 16.57, Javier González <jg@lightnvm.io> wrote:
 > 
-> I think that this is not enough. You need to also implement 
-> save_stack_trace_tsk_reliable() for powerpc defined as __weak in 
-> kernel/stacktrace.c.
+> Currently, the device geometry is stored redundantly in the nvm_id and
+> nvm_geo structures at a device level. Moreover, when instantiating
+> targets on a specific number of LUNs, these structures are replicated
+> and manually modified to fit the instance channel and LUN partitioning.
+> 
+> Instead, create a generic geometry around nvm_geo, which can be used by
+> (i) the underlying device to describe the geometry of the whole device,
+> and (ii) instances to describe their geometry independently.
+> 
+> Since these share a big part of the geometry, create a nvm_common_geo
+> structure that keeps the static geoometry values that are shared across
+> instances.
+> 
+> As we introduce support for 2.0, these structures allow to abstract
+> spec. specific values and present a common geometry to targets.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+> 
 
-So here is my initial proposal. I'd really like to get the successful
-exit stricter, i.e. hit the initial stack value exactly instead of just
-a window. Also, the check for kernel code looks clumsy IMHO. IOW:
-Comments more than welcome!
+Please ignore this commit message for now. It’s not updated...
 
-Most of it is Copy&Waste, nonetheless:
-
-Signed-off-by: Torsten Duwe <duwe@suse.de>
-
-
-diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
-index d534ed901538..e08af49e71d0 100644
---- a/arch/powerpc/kernel/stacktrace.c
-+++ b/arch/powerpc/kernel/stacktrace.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <linux/sched.h>
- #include <linux/sched/debug.h>
-+#include <linux/sched/task_stack.h>
- #include <linux/stacktrace.h>
- #include <asm/ptrace.h>
- #include <asm/processor.h>
-@@ -76,3 +77,58 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
- 	save_context_stack(trace, regs->gpr[1], current, 0);
- }
- EXPORT_SYMBOL_GPL(save_stack_trace_regs);
-+
-+#ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
-+int
-+save_stack_trace_tsk_reliable(struct task_struct *tsk,
-+                              struct stack_trace *trace)
-+{
-+	unsigned long sp;
-+	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
-+	/* the last frame (unwinding first) may not yet have saved its LR onto the stack. */
-+	int firstframe = 1;
-+
-+	if (tsk == current)
-+		sp = current_stack_pointer();
-+	else
-+		sp = tsk->thread.ksp;
-+
-+	if (sp < stack_page + sizeof(struct thread_struct)
-+	    || sp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
-+		return 1;
-+	
-+	for (;;) {
-+		unsigned long *stack = (unsigned long *) sp;
-+		unsigned long newsp, ip;
-+
-+		newsp = stack[0];
-+		/* Stack grows downwards; unwinder may only go up */
-+		if (newsp <= sp)
-+			return 1;
-+
-+		if (newsp >= stack_page + THREAD_SIZE)
-+			return 1; /* invalid backlink, too far up! */
-+
-+		/* Examine the saved LR: it must point into kernel code. */
-+		ip = stack[STACK_FRAME_LR_SAVE];
-+		if ( (ip & 0xEFFF000000000000) != CONFIG_KERNEL_START
-+		     && !firstframe)
-+			return 1;
-+		firstframe = 0;
-+
-+		if (!trace->skip)
-+			trace->entries[trace->nr_entries++] = ip;
-+		else
-+			trace->skip--;
-+
-+		if (newsp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
-+			break; /* hit the window for last frame */
-+
-+		if (trace->nr_entries >= trace->max_entries)
-+			return -E2BIG;
-+
-+		sp = newsp;
-+	}
-+	return 0;
-+}
-+#endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
+Javier
