@@ -1,55 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeB0USd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 15:18:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34520 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751754AbeB0USc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 15:18:32 -0500
-Subject: Re: [PATCH] sparse doesn't support indirect_branch attribute
-To: Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20180227194828.GA29918@bombadil.infradead.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5a85a7cf-c59c-f338-2087-c9de799adbe8@infradead.org>
-Date: Tue, 27 Feb 2018 12:18:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751974AbeB0U0Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 15:26:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751628AbeB0U0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 15:26:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075CD21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 27 Feb 2018 14:26:22 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI/ASPM: Use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180227202621.GC127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180213165948.GA14035@embeddedor.com>
+ <CAHp75VfdDUooc=zy2rk8ep0PdsEsD1TGbaD9nm8DBB1NmYYTTw@mail.gmail.com>
+ <20180213130550.Horde.JMezTfF5lIykmPMB49PKEwG@gator4166.hostgator.com>
 MIME-Version: 1.0
-In-Reply-To: <20180227194828.GA29918@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180213130550.Horde.JMezTfF5lIykmPMB49PKEwG@gator4166.hostgator.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 11:48 AM, Matthew Wilcox wrote:
+On Tue, Feb 13, 2018 at 01:05:50PM -0600, Gustavo A. R. Silva wrote:
+> Hi Andy,
 > 
-> Don't use __attribute__((indirect_branch)) if we're compiling with
-> sparse.
+> Quoting Andy Shevchenko <andy.shevchenko@gmail.com>:
 > 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> > On Tue, Feb 13, 2018 at 6:59 PM, Gustavo A. R. Silva
+> > <garsilva@embeddedor.com> wrote:
+> > > Add suffix ULL to constant 1000 in order to give the compiler complete
+> > > information about the proper arithmetic to use. Notice that this
+> > > constant is used in a context that expects an expression of type
+> > > u64 (64 bits, unsigned).
+> > > 
+> > > The expression threshold_us * 1000 is currently being evaluated
+> > > using 32-bit arithmetic.
+> > 
+> > > -       u64 threshold_ns = threshold_us * 1000;
+> > > +       u64 threshold_ns = threshold_us * 1000ULL;
+> > 
+> > Shouldn't be other way around, i.e.
+> > 
+> > (u64)threshold_us ?
+> > 
 > 
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index e2c7f4369eff..b6be4cc25e9d 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -93,7 +93,7 @@
->  #define __weak		__attribute__((weak))
->  #define __alias(symbol)	__attribute__((alias(#symbol)))
->  
-> -#ifdef RETPOLINE
-> +#if defined(RETPOLINE) && !defined(__CHECKER__)
->  #define __noretpoline __attribute__((indirect_branch("keep")))
->  #endif
->  
+> Either way works. The thing is that casting threshold_us to u64 may imply
+> that there is something wrong with threshold_us, which does not seem to be
+> the case. So adding the suffix ULL to the constant 1000 is good enough to
+> make the expression be evaluated using 64-bit arithmetic instead of 32-bit.
 > 
+> But, again, either way works.
+> 
+> > But still the question. have you checked all callers? Does it even makes
+> > sense?
+> > 
+> 
+> The proposed patch was due to fact that currently threshold_ns is of type
+> u64. But based on the following piece of code (which is the only piece of
+> code from where encode_l12_threshold is being called):
+> 
+>          * Based on PCIe r3.1, sec 5.5.3.3.1, Figures 5-16 and 5-17, and
+>          * Table 5-11.  T(POWER_OFF) is at most 2us and T(L1.2) is at
+>          * least 4us.
+>          */
+>         l1_2_threshold = 2 + 4 + t_common_mode + t_power_on;
+>         encode_l12_threshold(l1_2_threshold, &scale, &value);
+> 
+> It seems to me that it makes no sense for threshold_ns to be of type u64,
+> because the expression threshold_us * 1000 will never exceed the 32-bit
+> limits. So if you agree I can send a patch to change its type to u32
+> instead.
 
-I don't mind the patch, but I did send a patch for this attribute on Feb. 13, 2018,
-to the sparse mailing list.
+Changing it to u32 sounds good to me.  I can't remember why I chose
+u64 to begin with, but it doesn't look necessary.
 
--- 
-~Randy
+Thanks for cleaning this up!
