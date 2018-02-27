@@ -1,122 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeB0NVz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 08:21:55 -0500
-Received: from mga07.intel.com ([134.134.136.100]:37759 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753081AbeB0NVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 08:21:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
-   d="asc'?scan'208";a="31016967"
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: HRTimer causing rtctest to fail
-Date: Tue, 27 Feb 2018 15:20:58 +0200
-Message-ID: <87vaei601x.fsf@linux.intel.com>
+        id S1753289AbeB0N0T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 08:26:19 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:26358 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752573AbeB0N0R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 08:26:17 -0500
+Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
+To: <patrice.chotard@st.com>, Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c4f78733-2544-6cef-97e5-fedcc23de404@st.com>
+Date: Tue, 27 Feb 2018 14:25:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Patrice,
 
+On 01/18/2018 03:34 PM, patrice.chotard@st.com wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+> 
+> This series reworks patches submitted one year ago by Andrea Merello [1]
+> but without succeed to merged it.
+> 
+> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
+> PL18x SD host controller, for which the mmci driver exists.
+> This series adds support for these SoCs to the mmci driver.
+> 
+> As other variants, this one need some specific quirks, that this
+> series address.
+> 
+> This series has been tested on following boards :
+> 	_ stm32f429-eval
+> 	_ stm32f469-disco
+> 	_ stm32f746-eval
+> 	_ stm32f769-disco
+> 
+> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
+> will be sent later to avoid conflict with pending stm32f7 series [1] which
+> is not yet merged on kernel mainline.
+> 
+> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
+> [2] https://patchwork.kernel.org/patch/10104447/
+>
+...
 
-Hi folks,
+Patches 6 to 13 (DT/SoC/configs) applied on stm32-next.
 
-I'm facing an odd problem with v4.16-rc2 (also reproducible on v4.15
-final) where rtctest fails sometimes which PIE coming too late with
-frequencies >=3D 1024 Hz.
-
-I've modified rtctest.c a bit so that it continues running even after
-first failure just so I could get a glimpse of how many times it fails.
-
-Here are the results:
-
-Error 1024Hz i 17/20 diff 1089/976
-
-Error 2048Hz i 2/20 diff 538/488
-Error 2048Hz i 9/20 diff 558/488
-Error 2048Hz i 16/20 diff 560/488
-
-Error 4096Hz i 2/20 diff 305/244
-Error 4096Hz i 7/20 diff 288/244
-Error 4096Hz i 9/20 diff 285/244
-Error 4096Hz i 11/20 diff 310/244
-Error 4096Hz i 16/20 diff 284/244
-Error 4096Hz i 20/20 diff 317/244
-
-
-I added a few trace_printk() calls around rtc_dev_read() (and some other
-functions) and captured the time for entry and exit of that function. I
-noticed that HRTimer fires way too late and also way too early
-sometimes. On the order of 100+ us.
-
-For example with iterations 17 of 1024 Hz (seen above) and 18 (also of
-1024 Hz) I captured the following time stamps (all in uS):
-
-|    Start |      End | Expected End | Diff |
-|----------+----------+--------------+------|
-| 35900626 | 35901711 |     35901603 | -108 | (too late)
-| 35901826 | 35902628 |     35902803 |  174 | (too early)
-
-I can't come up with a proper explanation as to why HRTimer is firing at
-such wildly odd extremes. On most of the measurements, HRTimer executes
-within 5 uS of scheduled time and I can't convince myself that
-scheduling latency would get so high all of a sudden. Specially
-considering I'm testing with a 4 core machine and there's nothing else
-running on it. It's mostly idle.
-
-Any hints as to how to track down this problem further? Also, do folks
-agree that rtctest's 10% slack should also be considered for too early
-firing times? I mean:
-
-diff --git a/tools/testing/selftests/timers/rtctest.c b/tools/testing/selft=
-ests/timers/rtctest.c
-index 411eff625e66..99aa46fc556c 100644
-=2D-- a/tools/testing/selftests/timers/rtctest.c
-+++ b/tools/testing/selftests/timers/rtctest.c
-@@ -317,7 +317,8 @@ int main(int argc, char **argv)
-                        gettimeofday(&end, NULL);
-                        timersub(&end, &start, &diff);
-                        if (diff.tv_sec > 0 ||
-=2D                           diff.tv_usec > ((1000000L / tmp) * 1.10)) {
-+                           diff.tv_usec > ((1000000L / tmp) * 1.10) ||
-+                           diff.tv_usec < ((1000000L / tmp) * 0.9)) {
-                                fprintf(stderr, "\nPIE delta error: %ld.%06=
-ld should be close to 0.%06ld\n",
-                                       diff.tv_sec, diff.tv_usec,
-                                       (1000000L / tmp));
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqVWzwACgkQzL64meEa
-mQazKw/+NoEqe2xY6+Cs21C5icYpntTss2D5HP0WE1YPKeU5EjuHQBlzISY8OLc9
-7lByfyqdoghbtLRzU8DzC23ZWzow06TQf1sDd4BRm0RkYIWC634yXiYpAi9nQ9Bf
-4pfHnCYzjEZDEWwBsYi0ieZxfZZuCpn1hoog45WDx/b7BDeD37yiFFk37D4kqb1E
-/q1YfnCLjD//C8iwSsneS537dR63QZ4O3TEIk5zEorwfS05VqqrRg9fp2icqwktW
-JCD42hXRHszCSB24TnwGu2kHHvR8obyQRMNxNFdDtFbeN4YBJRYyciTMUgNVnjsn
-oedVddN+gn4g9nSqqhQJ13zfe4IuPz9FMar9Q7qP0DDSB7hA9GRF59ozo/cqXLUr
-inOrAfT+cGOXKd9YIgllFf6Vi9/0XzSAT0g1ITIDQmszmgagZ+NCEFCuURey9D8L
-ES5l/JDX34NR7NuhQidGLKPxCGgOdmDkad0FtXIz4MlNbuAenBWoWUwOcwKuBgCs
-doorihntGElgijWAW4KI2v/9w0u9wilNOmrCsdOQggzq1wWUBMLRL3qVc5taLENl
-CLzjfmynC7Ph8KxXbye5J7XxNBEsZiIu6+fOa6f6EpjLL06mAhno3DoaCePdP4JF
-6tplIf04myrL2JVeA2tZOxC2vniPyH82MpJGYYhwmYyqVhJqFs8=
-=vem4
------END PGP SIGNATURE-----
---=-=-=--
+Thanks
+Alex
