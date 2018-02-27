@@ -1,137 +1,409 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753715AbeB0OdZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:33:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753497AbeB0ObY (ORCPT
+        id S1753818AbeB0Odh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:33:37 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:44811 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753743AbeB0Odf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:31:24 -0500
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Subject: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
-Date: Tue, 27 Feb 2018 09:28:06 -0500
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18022714-0008-0000-0000-000009621B82
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995862; UDB=6.00506230; IPR=6.00775186;
- MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022714-0009-0000-0000-000046310791
-Message-Id: <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802270183
+        Tue, 27 Feb 2018 09:33:35 -0500
+Subject: Re: [PATCH] drm/tinydrm: Allocate dummy SPI RX buffer if needed
+To: David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+References: <1519082461-32405-1-git-send-email-david@lechnology.com>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <470d5309-3414-74b8-1329-577037528a8e@tronnes.org>
+Date: Tue, 27 Feb 2018 15:33:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519082461-32405-1-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduces a new interface to enable AP interpretive
-execution (IE) mode for the KVM guest. When running
-with IE mode enabled, AP instructions executed on the
-KVM guest will be interpreted by the firmware and
-passed directly through to an AP device installed on
-the system. The CPU model feature for AP must
-be enabled for the KVM guest in order to enable
-interpretive execution mode.
 
-This interface will be used in a subsequent patch
-by the VFIO AP device driver.
+Den 20.02.2018 00.21, skrev David Lechner:
+> This adds a new feature to allocate a dummy RX buffer for SPI controllers
+> that require an RX buffer even when not receiving. If an RX buffer is not
+> supplied, the SPI controller will reallocate a new buffer on each
+> transfer.
+>
+> On systems with limited memory (e.g. 64MB and CONFIG_SWAP=n), this
+> reallocation will occasionally fail, which causes the display to stop
+> working. By allocating this buffer once and reusing it, we can prevent
+> this problem.
+>
+> This patch also introduces some helper functions for calculating the
+> size of this buffer, so these functions are re-used where possible
+> (e.g. in mipi_dbi_init()).
+>
+> Cc: Noralf Trønnes <noralf@tronnes.org>
+> Suggested-by: Noralf Trønnes <noralf@tronnes.org>
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>
+> This is a follow up from the mail thread "tinydrm: page allocation failure" [1].
+> I actually got an allocation failure a few times even when I had swap enabled,
+> so I think this change is needed.
+>
+> [1]: https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg203657.html
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
----
- arch/s390/include/asm/kvm-ap.h   |    2 ++
- arch/s390/include/asm/kvm_host.h |    1 +
- arch/s390/kvm/kvm-ap.c           |   27 +++++++++++++++++++++++++++
- arch/s390/kvm/kvm-s390.h         |    1 +
- 4 files changed, 31 insertions(+), 0 deletions(-)
+I was hoping that we could avoid touching drivers with this change.
 
-diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-index 46e7c5b..6bd6bfb 100644
---- a/arch/s390/include/asm/kvm-ap.h
-+++ b/arch/s390/include/asm/kvm-ap.h
-@@ -51,4 +51,6 @@ struct kvm_ap_matrix {
- 
- void kvm_ap_deconfigure_matrix(struct kvm *kvm);
- 
-+int kvm_ap_enable_ie_mode(struct kvm *kvm);
-+
- #endif /* _ASM_KVM_AP */
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index a4c77d3..1eebdd6 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -186,6 +186,7 @@ struct kvm_s390_sie_block {
- #define ECA_AIV		0x00200000
- #define ECA_VX		0x00020000
- #define ECA_PROTEXCI	0x00002000
-+#define ECA_APIE	0x00000008
- #define ECA_SII		0x00000001
- 	__u32	eca;			/* 0x004c */
- #define ICPT_INST	0x04
-diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-index bb29045..862e54b 100644
---- a/arch/s390/kvm/kvm-ap.c
-+++ b/arch/s390/kvm/kvm-ap.c
-@@ -307,3 +307,30 @@ void kvm_ap_deconfigure_matrix(struct kvm *kvm)
- 	kvm_ap_clear_crycb_masks(kvm);
- }
- EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
-+
-+/**
-+ * kvm_ap_enable_ie_mode
-+ *
-+ * Enable interpretrive execution of AP instructions for the guest. When
-+ * enabled, AP instructions executed on the guest will be interpreted and
-+ * passed through to an AP installed on the host system.
-+ *
-+ * Returns 0 if interpretrive execution is enabled. Returns -EOPNOTSUPP
-+ * if AP facilities are not installed for the guest.
-+ *
-+ * @kvm: the guest's kvm structure
-+ */
-+int kvm_ap_enable_ie_mode(struct kvm *kvm)
-+{
-+	int i;
-+	struct kvm_vcpu *vcpu;
-+
-+	if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
-+		return -EOPNOTSUPP;
-+
-+	kvm_for_each_vcpu(i, vcpu, kvm)
-+		vcpu->arch.sie_block->eca |= ECA_APIE;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
-diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-index 1b5621f..3142541 100644
---- a/arch/s390/kvm/kvm-s390.h
-+++ b/arch/s390/kvm/kvm-s390.h
-@@ -18,6 +18,7 @@
- #include <asm/facility.h>
- #include <asm/processor.h>
- #include <asm/sclp.h>
-+#include <asm/ap.h>
- 
- /* Transactional Memory Execution related macros */
- #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
--- 
-1.7.1
+In the current situation it would be enough to allocate a buffer the size
+of what tinydrm_spi_max_transfer_size() returns, because that's the
+maximun transfers length used in tinydrm_spi_transfer().
+
+However Meghana is trying to remove the transfer buffer splitting [1],
+so I think we should wait and see the outcome of that first.
+
+If in the end we do send the entire buffer, maybe we can defer
+allocating the rx buffer until the first time it is used so we can
+know the buffer size without asking the drivers.
+
+If we add this and set it in mipi_dbi_init():
+
+  struct mipi_dbi {
+     u16 *tx_buf;
++    size_t tx_len;
+  };
+
+We can now allocate the rx buffer in mipi_dbi_typec3_command():
+
+static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
+                    u8 *par, size_t num)
+{
+
++    if (!mipi->rx_buf && spi->controller->flags & SPI_CONTROLLER_MUST_RX) {
++        mipi->rx_buf = devm_kmalloc(dev, mipi->tx_len, GFP_KERNEL);
++        if (!mipi->rx_buf)
++            return -ENOMEM;
++    }
+
+}
+
+Option 1 has it's own transfer buffer and size:
+
+static int mipi_dbi_typec1_command(struct mipi_dbi *mipi, u8 cmd,
+                    u8 *parameters, size_t num)
+{
+
++        mipi->rx_buf = devm_kmalloc(dev, mipi->tx_buf9_len, GFP_KERNEL);
+
+}
+
+
+Hopefully before summer I have switched to vmalloc backing for the
+framebuffers (which means we can PRIME import from GPU's with shmem
+buffers). This means that we can just use vmalloc transfer buffers as
+well. The SPI core can dma map vmalloc buffers (spi_map_buf), it just
+makes an SG table with an entry per PAGE.
+
+[1]: [PATCH v2 0/2] Chunk splitting of spi transfers
+https://lists.freedesktop.org/archives/dri-devel/2018-February/167181.html
+
+Noralf.
+
+>   drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c |  9 ++++++++-
+>   drivers/gpu/drm/tinydrm/ili9225.c              |  8 +++++---
+>   drivers/gpu/drm/tinydrm/mi0283qt.c             |  3 ++-
+>   drivers/gpu/drm/tinydrm/mipi-dbi.c             | 20 ++++++++++++++++----
+>   drivers/gpu/drm/tinydrm/st7586.c               | 13 +++++++++++--
+>   drivers/gpu/drm/tinydrm/st7735r.c              |  3 ++-
+>   include/drm/tinydrm/mipi-dbi.h                 | 16 +++++++++++++++-
+>   include/drm/tinydrm/tinydrm-helpers.h          |  2 +-
+>   8 files changed, 60 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c b/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
+> index bf96072..f5c175e 100644
+> --- a/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
+> +++ b/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
+> @@ -434,6 +434,7 @@ EXPORT_SYMBOL(_tinydrm_dbg_spi_message);
+>    * @header: Optional header transfer
+>    * @bpw: Bits per word
+>    * @buf: Buffer to transfer
+> + * @rx_buf: Optional dummy buffer
+>    * @len: Buffer length
+>    *
+>    * This SPI transfer helper breaks up the transfer of @buf into chunks which
+> @@ -442,16 +443,22 @@ EXPORT_SYMBOL(_tinydrm_dbg_spi_message);
+>    * does a 8-bit transfer.
+>    * If @header is set, it is prepended to each SPI message.
+>    *
+> + * Some SPI controllers need an RX buffer even though we are not receiving
+> + * anything useful. @rx_buf can be provided so that the SPI controller does not
+> + * have to reallocate this buffer on each transfer. This is useful for large
+> + * transfers, e.g. when updating the GRAM.
+> + *
+>    * Returns:
+>    * Zero on success, negative error code on failure.
+>    */
+>   int tinydrm_spi_transfer(struct spi_device *spi, u32 speed_hz,
+>   			 struct spi_transfer *header, u8 bpw, const void *buf,
+> -			 size_t len)
+> +			 void *rx_buf, size_t len)
+>   {
+>   	struct spi_transfer tr = {
+>   		.bits_per_word = bpw,
+>   		.speed_hz = speed_hz,
+> +		.rx_buf = rx_buf,
+>   	};
+>   	struct spi_message m;
+>   	u16 *swap_buf = NULL;
+> diff --git a/drivers/gpu/drm/tinydrm/ili9225.c b/drivers/gpu/drm/tinydrm/ili9225.c
+> index a075950..c15f49a 100644
+> --- a/drivers/gpu/drm/tinydrm/ili9225.c
+> +++ b/drivers/gpu/drm/tinydrm/ili9225.c
+> @@ -300,7 +300,7 @@ static int ili9225_dbi_command(struct mipi_dbi *mipi, u8 cmd, u8 *par,
+>   
+>   	gpiod_set_value_cansleep(mipi->dc, 0);
+>   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, 1);
+> -	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, 1);
+> +	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, NULL, 1);
+>   	if (ret || !num)
+>   		return ret;
+>   
+> @@ -310,7 +310,8 @@ static int ili9225_dbi_command(struct mipi_dbi *mipi, u8 cmd, u8 *par,
+>   	gpiod_set_value_cansleep(mipi->dc, 1);
+>   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, num);
+>   
+> -	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, num);
+> +	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, mipi->rx_buf,
+> +				    num);
+>   }
+>   
+>   static const u32 ili9225_formats[] = {
+> @@ -400,6 +401,7 @@ MODULE_DEVICE_TABLE(spi, ili9225_id);
+>   
+>   static int ili9225_probe(struct spi_device *spi)
+>   {
+> +	size_t bufsize = mipi_dbi_max_buf_size(&ili9225_mode);
+>   	struct device *dev = &spi->dev;
+>   	struct mipi_dbi *mipi;
+>   	struct gpio_desc *rs;
+> @@ -424,7 +426,7 @@ static int ili9225_probe(struct spi_device *spi)
+>   
+>   	device_property_read_u32(dev, "rotation", &rotation);
+>   
+> -	ret = mipi_dbi_spi_init(spi, mipi, rs);
+> +	ret = mipi_dbi_spi_init(spi, mipi, rs, bufsize);
+>   	if (ret)
+>   		return ret;
+>   
+> diff --git a/drivers/gpu/drm/tinydrm/mi0283qt.c b/drivers/gpu/drm/tinydrm/mi0283qt.c
+> index 79cb5af..c3fa682 100644
+> --- a/drivers/gpu/drm/tinydrm/mi0283qt.c
+> +++ b/drivers/gpu/drm/tinydrm/mi0283qt.c
+> @@ -169,6 +169,7 @@ MODULE_DEVICE_TABLE(spi, mi0283qt_id);
+>   
+>   static int mi0283qt_probe(struct spi_device *spi)
+>   {
+> +	size_t bufsize = mipi_dbi_max_buf_size(&mi0283qt_mode);
+>   	struct device *dev = &spi->dev;
+>   	struct mipi_dbi *mipi;
+>   	struct gpio_desc *dc;
+> @@ -201,7 +202,7 @@ static int mi0283qt_probe(struct spi_device *spi)
+>   
+>   	device_property_read_u32(dev, "rotation", &rotation);
+>   
+> -	ret = mipi_dbi_spi_init(spi, mipi, dc);
+> +	ret = mipi_dbi_spi_init(spi, mipi, dc, bufsize);
+>   	if (ret)
+>   		return ret;
+>   
+> diff --git a/drivers/gpu/drm/tinydrm/mipi-dbi.c b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> index 75dd65c..16bee06 100644
+> --- a/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> +++ b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> @@ -364,7 +364,7 @@ int mipi_dbi_init(struct device *dev, struct mipi_dbi *mipi,
+>   		  struct drm_driver *driver,
+>   		  const struct drm_display_mode *mode, unsigned int rotation)
+>   {
+> -	size_t bufsize = mode->vdisplay * mode->hdisplay * sizeof(u16);
+> +	size_t bufsize = mipi_dbi_max_buf_size(mode);
+>   	struct tinydrm_device *tdev = &mipi->tinydrm;
+>   	int ret;
+>   
+> @@ -848,7 +848,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
+>   
+>   	gpiod_set_value_cansleep(mipi->dc, 0);
+>   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, 1);
+> -	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, 1);
+> +	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, NULL, 1);
+>   	if (ret || !num)
+>   		return ret;
+>   
+> @@ -858,7 +858,8 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
+>   	gpiod_set_value_cansleep(mipi->dc, 1);
+>   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, num);
+>   
+> -	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, num);
+> +	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, mipi->rx_buf,
+> +				    num);
+>   }
+>   
+>   /**
+> @@ -866,6 +867,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
+>    * @spi: SPI device
+>    * @mipi: &mipi_dbi structure to initialize
+>    * @dc: D/C gpio (optional)
+> + * @max_size: Maximum TX buffer size needed by the caller
+>    *
+>    * This function sets &mipi_dbi->command, enables &mipi->read_commands for the
+>    * usual read commands. It should be followed by a call to mipi_dbi_init() or
+> @@ -884,7 +886,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
+>    * Zero on success, negative error code on failure.
+>    */
+>   int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
+> -		      struct gpio_desc *dc)
+> +		      struct gpio_desc *dc, size_t max_size)
+>   {
+>   	size_t tx_size = tinydrm_spi_max_transfer_size(spi, 0);
+>   	struct device *dev = &spi->dev;
+> @@ -930,6 +932,16 @@ int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
+>   			return -ENOMEM;
+>   	}
+>   
+> +	/*
+> +	 * Allocate a dummy RX buffer if needed, otherwise the SPI controller
+> +	 * will have to reallocate a new buffer on each transfer.
+> +	 */
+> +	if (spi->controller->flags & SPI_CONTROLLER_MUST_RX) {
+> +		mipi->rx_buf = devm_kmalloc(dev, max_size, GFP_KERNEL);
+> +		if (!mipi->rx_buf)
+> +			return -ENOMEM;
+> +	}
+> +
+>   	DRM_DEBUG_DRIVER("SPI speed: %uMHz\n", spi->max_speed_hz / 1000000);
+>   
+>   	return 0;
+> diff --git a/drivers/gpu/drm/tinydrm/st7586.c b/drivers/gpu/drm/tinydrm/st7586.c
+> index a6396ef..bb0d55d 100644
+> --- a/drivers/gpu/drm/tinydrm/st7586.c
+> +++ b/drivers/gpu/drm/tinydrm/st7586.c
+> @@ -42,6 +42,14 @@
+>   #define ST7586_DISP_CTRL_MX	BIT(6)
+>   #define ST7586_DISP_CTRL_MY	BIT(7)
+>   
+> +static inline size_t st7586_buf_max_size(const struct drm_display_mode *mode)
+> +{
+> +	size_t width = (mode->hdisplay + 2) / 3; /* 3 pixels per byte */
+> +	size_t height = mode->vdisplay;
+> +
+> +	return width * height;
+> +}
+> +
+>   /*
+>    * The ST7586 controller has an unusual pixel format where 2bpp grayscale is
+>    * packed 3 pixels per byte with the first two pixels using 3 bits and the 3rd
+> @@ -263,7 +271,7 @@ static int st7586_init(struct device *dev, struct mipi_dbi *mipi,
+>   		struct drm_driver *driver, const struct drm_display_mode *mode,
+>   		unsigned int rotation)
+>   {
+> -	size_t bufsize = (mode->vdisplay + 2) / 3 * mode->hdisplay;
+> +	size_t bufsize = st7586_buf_max_size(mode);
+>   	struct tinydrm_device *tdev = &mipi->tinydrm;
+>   	int ret;
+>   
+> @@ -337,6 +345,7 @@ MODULE_DEVICE_TABLE(spi, st7586_id);
+>   
+>   static int st7586_probe(struct spi_device *spi)
+>   {
+> +	size_t bufsize = st7586_buf_max_size(&st7586_mode);
+>   	struct device *dev = &spi->dev;
+>   	struct mipi_dbi *mipi;
+>   	struct gpio_desc *a0;
+> @@ -361,7 +370,7 @@ static int st7586_probe(struct spi_device *spi)
+>   
+>   	device_property_read_u32(dev, "rotation", &rotation);
+>   
+> -	ret = mipi_dbi_spi_init(spi, mipi, a0);
+> +	ret = mipi_dbi_spi_init(spi, mipi, a0, bufsize);
+>   	if (ret)
+>   		return ret;
+>   
+> diff --git a/drivers/gpu/drm/tinydrm/st7735r.c b/drivers/gpu/drm/tinydrm/st7735r.c
+> index 08b4fb1..c047bac 100644
+> --- a/drivers/gpu/drm/tinydrm/st7735r.c
+> +++ b/drivers/gpu/drm/tinydrm/st7735r.c
+> @@ -141,6 +141,7 @@ MODULE_DEVICE_TABLE(spi, st7735r_id);
+>   
+>   static int st7735r_probe(struct spi_device *spi)
+>   {
+> +	size_t bufsize = mipi_dbi_max_buf_size(&jd_t18003_t01_mode);
+>   	struct device *dev = &spi->dev;
+>   	struct mipi_dbi *mipi;
+>   	struct gpio_desc *dc;
+> @@ -169,7 +170,7 @@ static int st7735r_probe(struct spi_device *spi)
+>   
+>   	device_property_read_u32(dev, "rotation", &rotation);
+>   
+> -	ret = mipi_dbi_spi_init(spi, mipi, dc);
+> +	ret = mipi_dbi_spi_init(spi, mipi, dc, bufsize);
+>   	if (ret)
+>   		return ret;
+>   
+> diff --git a/include/drm/tinydrm/mipi-dbi.h b/include/drm/tinydrm/mipi-dbi.h
+> index 44e824a..deee862 100644
+> --- a/include/drm/tinydrm/mipi-dbi.h
+> +++ b/include/drm/tinydrm/mipi-dbi.h
+> @@ -31,6 +31,7 @@ struct regulator;
+>    * @tx_buf: Buffer used for transfer (copy clip rect area)
+>    * @tx_buf9: Buffer used for Option 1 9-bit conversion
+>    * @tx_buf9_len: Size of tx_buf9.
+> + * @rx_buf: Optional dummy RX buffer.
+>    * @swap_bytes: Swap bytes in buffer before transfer
+>    * @reset: Optional reset gpio
+>    * @rotation: initial rotation in degrees Counter Clock Wise
+> @@ -48,6 +49,7 @@ struct mipi_dbi {
+>   	u16 *tx_buf;
+>   	void *tx_buf9;
+>   	size_t tx_buf9_len;
+> +	void *rx_buf;
+>   	bool swap_bytes;
+>   	struct gpio_desc *reset;
+>   	unsigned int rotation;
+> @@ -62,7 +64,7 @@ mipi_dbi_from_tinydrm(struct tinydrm_device *tdev)
+>   }
+>   
+>   int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
+> -		      struct gpio_desc *dc);
+> +		      struct gpio_desc *dc, size_t max_size);
+>   int mipi_dbi_init(struct device *dev, struct mipi_dbi *mipi,
+>   		  const struct drm_simple_display_pipe_funcs *pipe_funcs,
+>   		  struct drm_driver *driver,
+> @@ -79,6 +81,18 @@ int mipi_dbi_command_read(struct mipi_dbi *mipi, u8 cmd, u8 *val);
+>   int mipi_dbi_command_buf(struct mipi_dbi *mipi, u8 cmd, u8 *data, size_t len);
+>   int mipi_dbi_buf_copy(void *dst, struct drm_framebuffer *fb,
+>   		      struct drm_clip_rect *clip, bool swap);
+> +
+> +/**
+> + * mipi_dbi_max_buf_size - Get the maximum required framebuffer memory size
+> + * @mode: The display mode data
+> + *
+> + * Computes the maximum buffer size needed for a 2 byte per pixel display.
+> + */
+> +static inline size_t mipi_dbi_max_buf_size(const struct drm_display_mode *mode)
+> +{
+> +	return mode->hdisplay * mode->vdisplay * sizeof(u16);
+> +}
+> +
+>   /**
+>    * mipi_dbi_command - MIPI DCS command with optional parameter(s)
+>    * @mipi: MIPI structure
+> diff --git a/include/drm/tinydrm/tinydrm-helpers.h b/include/drm/tinydrm/tinydrm-helpers.h
+> index d554ded..e5e8f59 100644
+> --- a/include/drm/tinydrm/tinydrm-helpers.h
+> +++ b/include/drm/tinydrm/tinydrm-helpers.h
+> @@ -54,7 +54,7 @@ size_t tinydrm_spi_max_transfer_size(struct spi_device *spi, size_t max_len);
+>   bool tinydrm_spi_bpw_supported(struct spi_device *spi, u8 bpw);
+>   int tinydrm_spi_transfer(struct spi_device *spi, u32 speed_hz,
+>   			 struct spi_transfer *header, u8 bpw, const void *buf,
+> -			 size_t len);
+> +			 void *rx_buf, size_t len);
+>   void _tinydrm_dbg_spi_message(struct spi_device *spi, struct spi_message *m);
+>   
+>   #ifdef DEBUG
