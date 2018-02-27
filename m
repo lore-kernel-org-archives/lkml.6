@@ -1,109 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754138AbeB0PHA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:07:00 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33192 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753996AbeB0PF7 (ORCPT
+        id S1754146AbeB0PHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:07:14 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:48152 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753896AbeB0PHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:05:59 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: niklas.soderlund@ragnatech.se,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/3] media: i2c: adv748x: Add missing CBUS page
-Date: Tue, 27 Feb 2018 15:05:49 +0000
-Message-Id: <1519743950-28346-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Tue, 27 Feb 2018 10:07:11 -0500
+Subject: Re: [PATCH v2] x86/xen: add tty0 and hvc0 as preferred consoles for
+ dom0
+To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc: jbeulich@suse.com
+References: <20180227101922.15701-1-jgross@suse.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <26b96ce9-b462-c4e3-b939-4c152040255d@oracle.com>
+Date: Tue, 27 Feb 2018 10:07:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180227101922.15701-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=638
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802270190
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On 02/27/2018 05:19 AM, Juergen Gross wrote:
+> Today the tty0 and hvc0 consoles are added as a preferred consoles for
+> pv domUs only. As this requires a boot parameter for getting dom0
+> messages per default, add them for dom0, too.
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-The ADV748x has 12 pages mapped onto I2C addresses.
-
-In the existing implementation only 11 are mapped correctly in the page
-enumerations, which causes an off-by-one fault on pages above the
-infoframe definition due to a missing 'CBUS' page.
-
-This causes the address for the CEC, SDP, TXA, and TXB to be incorrectly
-programmed during the iterations in adv748x_initialise_clients().
-
-Until now this has gone un-noticed due to the fact that following the
-creation of the clients - the device is reset and the addresses are
-reprogrammed in manually by the call to "adv748x_write_regs(state,
-adv748x_set_slave_address);"
-
-As part of moving to dynamic i2c address allocations repair this by
-providing the missing CBUS page definition.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2
- - Remove period from commit title.
- - Collect Niklas' RB tag.
-
-
- drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
- drivers/media/i2c/adv748x/adv748x.h      | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index faf73949962b..9dcaadaca217 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -52,6 +52,7 @@ static const struct regmap_config adv748x_regmap_cnf[] = {
- 	ADV748X_REGMAP_CONF("edid"),
- 	ADV748X_REGMAP_CONF("repeater"),
- 	ADV748X_REGMAP_CONF("infoframe"),
-+	ADV748X_REGMAP_CONF("cbus"),
- 	ADV748X_REGMAP_CONF("cec"),
- 	ADV748X_REGMAP_CONF("sdp"),
- 	ADV748X_REGMAP_CONF("txa"),
-@@ -89,6 +90,7 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
- 	ADV748X_I2C_EDID,
- 	ADV748X_I2C_REPEATER,
- 	ADV748X_I2C_INFOFRAME,
-+	ADV748X_I2C_CBUS,
- 	ADV748X_I2C_CEC,
- 	ADV748X_I2C_SDP,
- 	ADV748X_I2C_TXB,
-@@ -352,6 +354,7 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
- 	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
- 	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
- 	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
-+	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
- 	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
- 	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
- 	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 6789e2f3bc8c..725662edc4b8 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -35,6 +35,7 @@
- #define ADV748X_I2C_EDID		0x36	/* EDID Map */
- #define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
- #define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
-+#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
- #define ADV748X_I2C_CEC			0x41	/* CEC Map */
- #define ADV748X_I2C_SDP			0x79	/* SDP Map */
- #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
-@@ -48,6 +49,7 @@ enum adv748x_page {
- 	ADV748X_PAGE_EDID,
- 	ADV748X_PAGE_REPEATER,
- 	ADV748X_PAGE_INFOFRAME,
-+	ADV748X_PAGE_CBUS,
- 	ADV748X_PAGE_CEC,
- 	ADV748X_PAGE_SDP,
- 	ADV748X_PAGE_TXB,
--- 
-2.7.4
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
