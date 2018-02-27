@@ -1,98 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751553AbeB0B24 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:28:56 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33714 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeB0B2z (ORCPT
+        id S1751723AbeB0BbE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 20:31:04 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45230 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeB0BbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:28:55 -0500
-X-Google-Smtp-Source: AH8x227vb50ewSXSXy+T7RHxaydDdyK/EpWz6dsuHs0OVWMl92yBNxI4JTzwLGajXTCXM3ydXzVbXg==
-Date: Mon, 26 Feb 2018 17:28:53 -0800 (PST)
-X-Google-Original-Date: Mon, 26 Feb 2018 17:28:25 PST (-0800)
-Subject: Re: [PATCH RFC] riscv/barrier: Define __smp_{mb,rmb,wmb}
-In-Reply-To: <20180226103552.GA9138@andrea>
-CC: albert@sifive.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: parri.andrea@gmail.com
-Message-ID: <mhng-48f70f62-ce5a-4093-914b-626c204b493e@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Feb 2018 20:31:02 -0500
+X-Google-Smtp-Source: AH8x224rYEQMs+sEqlQG4F1WlblYmV1aIPsoR3ZF0ZsUiN5DktPoNWBUyeAo+DAyHksZjiEZFb6oqA==
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v3] KVM: X86: Allow userspace to define the microcode
+ version
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <1519694331-16368-1-git-send-email-wanpengli@tencent.com>
+Date: Mon, 26 Feb 2018 17:30:59 -0800
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Message-Id: <F68C9207-03D2-437F-981D-63FE9D5AA61A@gmail.com>
+References: <1519694331-16368-1-git-send-email-wanpengli@tencent.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R1VBM6010631
 
-On Mon, 26 Feb 2018 02:35:52 PST (-0800), parri.andrea@gmail.com wrote:
-> On Thu, Feb 22, 2018 at 03:14:52PM -0800, Palmer Dabbelt wrote:
->> On Tue, 20 Feb 2018 02:17:28 PST (-0800), parri.andrea@gmail.com wrote:
->> >Introduce __smp_{mb,rmb,wmb}, and rely on the generic definitions
->> >for smp_{mb,rmb,wmb}. A first consequence is that smp_{mb,rmb,wmb}
->> >map to a compiler barrier on !SMP (while their definition remains
->> >unchanged on SMP). As a further consequence, smp_load_acquire and
->> >smp_store_release have "fence rw,rw" instead of "fence iorw,iorw".
->> >
->> >Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
->> >---
->> > arch/riscv/include/asm/barrier.h | 6 +++---
->> > 1 file changed, 3 insertions(+), 3 deletions(-)
->> >
->> >diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
->> >index c0319cbf1eec5..5510366d169ae 100644
->> >--- a/arch/riscv/include/asm/barrier.h
->> >+++ b/arch/riscv/include/asm/barrier.h
->> >@@ -34,9 +34,9 @@
->> > #define wmb()		RISCV_FENCE(ow,ow)
->> >
->> > /* These barriers do not need to enforce ordering on devices, just memory. */
->> >-#define smp_mb()	RISCV_FENCE(rw,rw)
->> >-#define smp_rmb()	RISCV_FENCE(r,r)
->> >-#define smp_wmb()	RISCV_FENCE(w,w)
->> >+#define __smp_mb()	RISCV_FENCE(rw,rw)
->> >+#define __smp_rmb()	RISCV_FENCE(r,r)
->> >+#define __smp_wmb()	RISCV_FENCE(w,w)
->> >
->> > /*
->> >  * This is a very specific barrier: it's currently only used in two places in
->>
->> Thanks!  I'm going to take this for the next RC.
->
-> Thank you, Palmer.  I'm planning to post more changes to the file,
-> but I'd like to build on top of this change: could you point me to
-> the appropriate branch/repo for this?
+Wanpeng Li <kernellwp@gmail.com> wrote:
 
-Here's the canonical RISC-V Linux git repo
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Linux (among the others) has checks to make sure that certain features 
+> aren't enabled on a certain family/model/stepping if the microcode version 
+> isn't greater than or equal to a known good version.
+> 
+> By exposing the real microcode version, we're preventing buggy guests that
+> don't check that they are running virtualized (i.e., they should trust the
+> hypervisor) from disabling features that are effectively not buggy.
+> 
+> Suggested-by: Filippo Sironi <sironi@amazon.de>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Liran Alon <liran.alon@oracle.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v2 -> v3:
+> * remove the shifts
+> * add the MSR_IA32_UCODE_REV version to the "feature MSRs"
+> v1 -> v2:
+> * add MSR_IA32_UCODE_REV to emulated_msrs
+> 
+> arch/x86/include/asm/kvm_host.h |  1 +
+> arch/x86/kvm/x86.c              | 19 +++++++++++++++----
+> 2 files changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 938d453..6e13f2f 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
+> 	u64 smi_count;
+> 	bool tpr_access_reporting;
+> 	u64 ia32_xss;
+> +	u32 microcode_version;
+> 
+> 	/*
+> 	 * Paging state of the vcpu
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index d4985a9..00af28e 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1058,6 +1058,7 @@ static unsigned num_emulated_msrs;
+> static u32 msr_based_features[] = {
+> 	MSR_IA32_ARCH_CAPABILITIES,
+> 	MSR_F10H_DECFG,
+> +	MSR_IA32_UCODE_REV,
+> };
+> 
+> static unsigned int num_msr_based_features;
+> @@ -1067,8 +1068,14 @@ static int do_get_msr_feature(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
+> 	struct kvm_msr_entry msr;
+> 
+> 	msr.index = index;
+> -	if (kvm_x86_ops->get_msr_feature(&msr))
+> -		return 1;
+> +	switch (msr.index) {
+> +	case MSR_IA32_UCODE_REV:
+> +		rdmsrl(msr.index, msr.data);
+> +		break;
+> +	default:
+> +		if (kvm_x86_ops->get_msr_feature(&msr))
+> +			return 1;
+> +	}
+> 
+> 	*data = msr.data;
+> 
+> @@ -2248,7 +2255,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> 
+> 	switch (msr) {
+> 	case MSR_AMD64_NB_CFG:
+> -	case MSR_IA32_UCODE_REV:
+> 	case MSR_IA32_UCODE_WRITE:
+> 	case MSR_VM_HSAVE_PA:
+> 	case MSR_AMD64_PATCH_LOADER:
+> @@ -2256,6 +2262,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> 	case MSR_AMD64_DC_CFG:
+> 		break;
+> 
+> +	case MSR_IA32_UCODE_REV:
+> +		if (msr_info->host_initiated)
+> +			vcpu->arch.microcode_version = data;
+> +		break;
+> 	case MSR_EFER:
+> 		return set_efer(vcpu, data);
+> 	case MSR_K7_HWCR:
+> @@ -2551,7 +2561,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> 		msr_info->data = 0;
+> 		break;
+> 	case MSR_IA32_UCODE_REV:
+> -		msr_info->data = 0x100000000ULL;
+> +		msr_info->data = (u64)vcpu->arch.microcode_version;
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git/
-
-Your branch is now the HEAD of the "for-linus" branch, which means it'll be 
-sent to Linus the next time I send patches.  I generate and tag "for-linus" on 
-Monday mornings and then send it out on Wednesday mornings, just to make sure 
-everything has time to bake.
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git/
-
-Additionally, I mantain a "for-next" branch that contains everything that's 
-been sufficiently reviewed to be made part of Linux, but that is being staged 
-for a bit longer than what's in for-linus for one reason or another (usually 
-it's just not RC material and is targeted for the next merge window).  There is 
-also a RISC-V integration branch named "riscv-all" that contains all our work 
-in progress patches.  This is likely to be unstable, but it's best to check 
-there to see if anything interesting is going on related to what you're working 
-on to avoid duplicating work.
-
-These branches are all generated from my personal git tree
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/linux.git/
-
-There's a bunch of branches in here tracking each change set (yours is called 
-"fix-smp_mb", to indicate it can go in during an RC) that's still in flight.  
-There's some scripts to generate some of these branches, but the commits I 
-actually send upstream are merged by hand
-
-    https://github.com/riscv/riscv-linux-infra
-
-"for-next" and "riscv-all" are rebased regularly, so it's probably best to 
-track commits back to their original WIP branch and work from there to avoid 
-major headaches.
+I think that the shifts are missing here (the version should be on the high
+bits according to intel_get_microcode_revision() ).
