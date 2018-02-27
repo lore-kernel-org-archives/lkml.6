@@ -1,88 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753261AbeB0NKn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 08:10:43 -0500
-Received: from relmlor3.renesas.com ([210.160.252.173]:16192 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752867AbeB0NKl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 08:10:41 -0500
-X-IronPort-AV: E=Sophos;i="5.47,401,1515423600";
-   d="scan'208";a="272283174"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: RE: [PATCH 0/2] arm: Support for Renesas RZ/N1D (R9A06G032)
-Thread-Topic: [PATCH 0/2] arm: Support for Renesas RZ/N1D (R9A06G032)
-Thread-Index: AQHTrvxk7a3Lhb7hvUiYYFIpKimyqqO4N7gQ
-Date: Tue, 27 Feb 2018 13:10:36 +0000
-Message-ID: <HK2PR0601MB1393B2D7E0C96590482C3726F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1519647518-15579-1-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1519647518-15579-1-git-send-email-michel.pollet@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR0601MB1427;7:N8omq6h9f9CMouOk0/8usBHZeWDGXyASc1ecD6YAm30F8uMM1Ni98l7jfSsFJB5FGReO6XBLKmfvnV8vXFwHJ1fUz2v8IRRBthrsqC1fAMuZVt/t3PG5i/kH/R9KDSntb7m1rfFhuJhxxq8QXlMohj65tQZJK9bGTCNlTPi25wHthhNW9UkiOLIT1dL9igSZkrM0Uvmpkfi19aSpO5iPHWLqBcEGEfbM5HTH3Kok+RvzXpv6cQ/NQx4I5LtQ0POc;20:RMM1x1OiEH5RtEhasqbqFDrcqDNUP1QeTP14zLvxEtzraQhqrS3K6vUVV63a4pLan5WIgluC0OsQcgzB+6zI7b0P8RTKR1gR9jluQXU1Fu/1tJA/xRN8/F59BbPev+TSduqEIZY6SBq/nidLcOUxKWUwOy2RXcRfdYEG+dyEtbE=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d0a2cf22-c921-435a-ef3f-08d57de37e12
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:HK2PR0601MB1427;
-x-ms-traffictypediagnostic: HK2PR0601MB1427:
-x-microsoft-antispam-prvs: <HK2PR0601MB1427662F3CF8A4430BCF72ADF5C00@HK2PR0601MB1427.apcprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501161)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041288)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:HK2PR0601MB1427;BCL:0;PCL:0;RULEID:;SRVR:HK2PR0601MB1427;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(396003)(39860400002)(346002)(199004)(189003)(76176011)(55016002)(66066001)(2900100001)(316002)(5660300001)(7736002)(305945005)(229853002)(53936002)(6506007)(86362001)(74316002)(59450400001)(102836004)(9686003)(2501003)(26005)(186003)(14454004)(5250100002)(2950100002)(6436002)(8676002)(81166006)(6246003)(8936002)(478600001)(3846002)(81156014)(25786009)(7696005)(33656002)(2906002)(105586002)(3280700002)(107886003)(110136005)(68736007)(106356001)(97736004)(54906003)(3660700001)(99286004)(4326008)(39060400002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR0601MB1427;H:HK2PR0601MB1393.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: Kixm1klYmbpb/ejl36U93zFq5OzZdmZNSSFwpHiAyAf/4sAi6bXKuiunSh2OeYU20i0/ai3EqBDniuaRMrq8UTsZSFnmc9ummGdXJOkG1j/xDJB8UXIMUm3/RrMRYmts+4nrCu468MhPVXa5l1AY3KMzhKS5MMHeb4YpgMkzDrk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1753209AbeB0NVz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 08:21:55 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37759 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753081AbeB0NVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 08:21:53 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
+   d="asc'?scan'208";a="31016967"
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: HRTimer causing rtctest to fail
+Date: Tue, 27 Feb 2018 15:20:58 +0200
+Message-ID: <87vaei601x.fsf@linux.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0a2cf22-c921-435a-ef3f-08d57de37e12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 13:10:36.6889
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR0601MB1427
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RDAmp6025187
 
-Hi Simon,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 26 February 2018, Michel Pollet wrote:
-> 
-> This series adds the plain basic support for booting a bare
-> kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
-> minimum as a 'base', further patches that will add the
-> rest of the support, pinctrl, clock architecture and quite
-> a few others.
-I spoke to Magnus about helping to get the RZ/N1 patches upstream.
-We're trying to sort out making the device manual and board schematics
-available, hopefully it won't take too long. We're also trying to sort out
-access to a board... that might take a bit longer.
 
-btw, what do you want to do about shmobile_defconfig? Should we add
-any changes needed for RZ/N1 to it? Note that only one IP block is the
-same as R-Car.
+Hi folks,
 
-Thanks
-Phil
+I'm facing an odd problem with v4.16-rc2 (also reproducible on v4.15
+final) where rtctest fails sometimes which PIE coming too late with
+frequencies >=3D 1024 Hz.
+
+I've modified rtctest.c a bit so that it continues running even after
+first failure just so I could get a glimpse of how many times it fails.
+
+Here are the results:
+
+Error 1024Hz i 17/20 diff 1089/976
+
+Error 2048Hz i 2/20 diff 538/488
+Error 2048Hz i 9/20 diff 558/488
+Error 2048Hz i 16/20 diff 560/488
+
+Error 4096Hz i 2/20 diff 305/244
+Error 4096Hz i 7/20 diff 288/244
+Error 4096Hz i 9/20 diff 285/244
+Error 4096Hz i 11/20 diff 310/244
+Error 4096Hz i 16/20 diff 284/244
+Error 4096Hz i 20/20 diff 317/244
+
+
+I added a few trace_printk() calls around rtc_dev_read() (and some other
+functions) and captured the time for entry and exit of that function. I
+noticed that HRTimer fires way too late and also way too early
+sometimes. On the order of 100+ us.
+
+For example with iterations 17 of 1024 Hz (seen above) and 18 (also of
+1024 Hz) I captured the following time stamps (all in uS):
+
+|    Start |      End | Expected End | Diff |
+|----------+----------+--------------+------|
+| 35900626 | 35901711 |     35901603 | -108 | (too late)
+| 35901826 | 35902628 |     35902803 |  174 | (too early)
+
+I can't come up with a proper explanation as to why HRTimer is firing at
+such wildly odd extremes. On most of the measurements, HRTimer executes
+within 5 uS of scheduled time and I can't convince myself that
+scheduling latency would get so high all of a sudden. Specially
+considering I'm testing with a 4 core machine and there's nothing else
+running on it. It's mostly idle.
+
+Any hints as to how to track down this problem further? Also, do folks
+agree that rtctest's 10% slack should also be considered for too early
+firing times? I mean:
+
+diff --git a/tools/testing/selftests/timers/rtctest.c b/tools/testing/selft=
+ests/timers/rtctest.c
+index 411eff625e66..99aa46fc556c 100644
+=2D-- a/tools/testing/selftests/timers/rtctest.c
++++ b/tools/testing/selftests/timers/rtctest.c
+@@ -317,7 +317,8 @@ int main(int argc, char **argv)
+                        gettimeofday(&end, NULL);
+                        timersub(&end, &start, &diff);
+                        if (diff.tv_sec > 0 ||
+=2D                           diff.tv_usec > ((1000000L / tmp) * 1.10)) {
++                           diff.tv_usec > ((1000000L / tmp) * 1.10) ||
++                           diff.tv_usec < ((1000000L / tmp) * 0.9)) {
+                                fprintf(stderr, "\nPIE delta error: %ld.%06=
+ld should be close to 0.%06ld\n",
+                                       diff.tv_sec, diff.tv_usec,
+                                       (1000000L / tmp));
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqVWzwACgkQzL64meEa
+mQazKw/+NoEqe2xY6+Cs21C5icYpntTss2D5HP0WE1YPKeU5EjuHQBlzISY8OLc9
+7lByfyqdoghbtLRzU8DzC23ZWzow06TQf1sDd4BRm0RkYIWC634yXiYpAi9nQ9Bf
+4pfHnCYzjEZDEWwBsYi0ieZxfZZuCpn1hoog45WDx/b7BDeD37yiFFk37D4kqb1E
+/q1YfnCLjD//C8iwSsneS537dR63QZ4O3TEIk5zEorwfS05VqqrRg9fp2icqwktW
+JCD42hXRHszCSB24TnwGu2kHHvR8obyQRMNxNFdDtFbeN4YBJRYyciTMUgNVnjsn
+oedVddN+gn4g9nSqqhQJ13zfe4IuPz9FMar9Q7qP0DDSB7hA9GRF59ozo/cqXLUr
+inOrAfT+cGOXKd9YIgllFf6Vi9/0XzSAT0g1ITIDQmszmgagZ+NCEFCuURey9D8L
+ES5l/JDX34NR7NuhQidGLKPxCGgOdmDkad0FtXIz4MlNbuAenBWoWUwOcwKuBgCs
+doorihntGElgijWAW4KI2v/9w0u9wilNOmrCsdOQggzq1wWUBMLRL3qVc5taLENl
+CLzjfmynC7Ph8KxXbye5J7XxNBEsZiIu6+fOa6f6EpjLL06mAhno3DoaCePdP4JF
+6tplIf04myrL2JVeA2tZOxC2vniPyH82MpJGYYhwmYyqVhJqFs8=
+=vem4
+-----END PGP SIGNATURE-----
+--=-=-=--
