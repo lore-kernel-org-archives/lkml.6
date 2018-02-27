@@ -1,65 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751838AbeB0VwP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:52:15 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42338 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751455AbeB0VwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:52:14 -0500
-Subject: Re: [PATCH v2 1/5] sysctl: Add kdoc comments to
- do_proc_do{u}intvec_minmax_conv_param
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-2-git-send-email-longman@redhat.com>
- <20180227211022.GB29918@bombadil.infradead.org>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <14cad206-114f-3320-8818-8799fad4e10e@redhat.com>
-Date: Tue, 27 Feb 2018 16:52:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751777AbeB0Vy3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:54:29 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35268 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbeB0Vy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:54:27 -0500
+X-Google-Smtp-Source: AH8x224r7iP3ndY6C8FbKMxSQiKGqb28SzGuRLo5o7Jt1wEltTV7HAqK5zN6QvwVsYkQJAeTu52WIA==
+Date: Tue, 27 Feb 2018 22:53:51 +0100
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To: w@1wt.eu, geert@linux-m68k.org, andy.shevchenko@gmail.com,
+        rabel@robertabel.eu, linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2] auxdisplay: charlcd: Fix and clean up handling of x/y
+ commands
+Message-ID: <20180227215351.eaqbmwf3h2v3mnka@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180227211022.GB29918@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 04:10 PM, Matthew Wilcox wrote:
-> On Tue, Feb 27, 2018 at 03:49:47PM -0500, Waiman Long wrote:
->> +/**
->> + * DOC: do_proc_dointvec_minmax_conv_param
->> + *
->> + * The do_proc_dointvec_minmax_conv_param structure provides the
->> + * minimum and maximum values for doing range checking for those sysctl
->> + * parameters that use the proc_dointvec_minmax() handler. The error
->> + * code -EINVAL will be returned if the range check fails.
->> + *
->> + *  min: ptr to minimum allowable value
->> + *  max: ptr to maximum allowable value
->> + */
-> This isn't how to document a struct; see Documentation/doc-guide/kernel-doc.rst
->
-> /**
->  * struct do_proc_dointvec_minmax_conv_param - Range checking for sysctls
->  * @min: Pointer to minimum allowable value.
->  * @max: Pointer to maximum allowable value.
->  *
->  * Provides the minimum and maximum values allowed for a parameter.  A
->  * pointer to this structure should be passed to proc_dointvec_minmax().
->  */
->
-> Also, it's inappropriate to document the return value from
-> proc_dointvec_minmax() here; that should be in the kernel-doc for the
-> function.
->
-Thanks for the advice. I will change the comments in the v3 patch.
+The current version is not parsing multiple x/y commands as the code
+originally intended. On top of that, kstrtoul() expects
+NULL-terminated strings. Finally, the code does two passes over
+the string.
 
--Longman
+Some explanations about the supported syntax are added as well.
+
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Robert Abel <rabel@robertabel.eu>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ drivers/auxdisplay/charlcd.c | 101 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 83 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+index 642afd88870b..cad18ed01515 100644
+--- a/drivers/auxdisplay/charlcd.c
++++ b/drivers/auxdisplay/charlcd.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/atomic.h>
++#include <linux/ctype.h>
+ #include <linux/delay.h>
+ #include <linux/fs.h>
+ #include <linux/miscdevice.h>
+@@ -292,13 +293,90 @@ static int charlcd_init_display(struct charlcd *lcd)
+ 	return 0;
+ }
+ 
++/*
++ * Parses an unsigned integer from a string, until a non-digit character
++ * is found. The empty string is not accepted. No overflow checks are done.
++ *
++ * Returns whether the parsing was successful. Only in that case
++ * the output parameters are written to.
++ *
++ * TODO: If the kernel adds an inplace version of kstrtoul(), this function
++ * could be easily replaced by that.
++ */
++static bool parse_n(const char *s, unsigned long *res, const char **next_s)
++{
++	unsigned long result = 0;
++	bool empty = true;
++
++	for (;;) {
++		if (!*s)
++			return false;
++
++		if (!isdigit(*s)) {
++			if (empty)
++				return false;
++
++			*res = result;
++			*next_s = s;
++			return true;
++		}
++
++		result = result*10 + (*s - '0');
++		empty = false;
++		++s;
++	}
++}
++
++/*
++ * Parses a movement command of the form "(.*);", where the group can be
++ * any number of subcommands of the form "(x|y)[0-9]+".
++ *
++ * Returns whether the command is valid. The position arguments are
++ * only written if the parsing was successful.
++ *
++ * For instance:
++ *   - ";"          returns (<original x>, <original y>).
++ *   - "x1;"        returns (1, <original y>).
++ *   - "y2x1;"      returns (1, 2).
++ *   - "x12y34x56;" returns (56, 34).
++ *   - "x1"         fails.
++ *   - "xy12;"      fails.
++ *   - "x12yy12;"   fails.
++ */
++static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
++{
++	unsigned long new_x = *x;
++	unsigned long new_y = *y;
++
++	for (;;) {
++		if (!*s)
++			return false;
++
++		if (*s == ';')
++			break;
++
++		if (*s == 'x') {
++			if (!parse_n(s + 1, &new_x, &s))
++				return false;
++		} else if (*s == 'y') {
++			if (!parse_n(s + 1, &new_y, &s))
++				return false;
++		} else {
++			return false;
++		}
++	}
++
++	*x = new_x;
++	*y = new_y;
++	return true;
++}
++
+ /*
+  * These are the file operation function for user access to /dev/lcd
+  * This function can also be called from inside the kernel, by
+  * setting file and ppos to NULL.
+  *
+  */
+-
+ static inline int handle_lcd_special_code(struct charlcd *lcd)
+ {
+ 	struct charlcd_priv *priv = to_priv(lcd);
+@@ -469,24 +547,11 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+ 	}
+ 	case 'x':	/* gotoxy : LxXXX[yYYY]; */
+ 	case 'y':	/* gotoxy : LyYYY[xXXX]; */
+-		if (!strchr(esc, ';'))
+-			break;
+-
+-		while (*esc) {
+-			if (*esc == 'x') {
+-				esc++;
+-				if (kstrtoul(esc, 10, &priv->addr.x) < 0)
+-					break;
+-			} else if (*esc == 'y') {
+-				esc++;
+-				if (kstrtoul(esc, 10, &priv->addr.y) < 0)
+-					break;
+-			} else {
+-				break;
+-			}
+-		}
++		/* If the command is valid, move to the new address */
++		if (parse_xy(esc, &priv->addr.x, &priv->addr.y))
++			charlcd_gotoxy(lcd);
+ 
+-		charlcd_gotoxy(lcd);
++		/* Regardless of its validity, mark as processed */
+ 		processed = 1;
+ 		break;
+ 	}
+-- 
+2.14.1
