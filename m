@@ -1,73 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeB0XjZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:39:25 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:35076 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751117AbeB0XjY (ORCPT
+        id S1751742AbeB0Xkm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:40:42 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33933 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751676AbeB0Xkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:39:24 -0500
-X-Google-Smtp-Source: AG47ELv6MydhnME+qcKI7UOQnMmWUgSBEhTS7PEAN1YExFrNERRaje/nEB7MKnGV6FxjATjhM8hUoAy3dAI4P/Pw8Ys=
+        Tue, 27 Feb 2018 18:40:41 -0500
+X-Google-Smtp-Source: AG47ELvQsv+Ec8KXW2tGnZjpn8ghlgM9L9MZQ2hfuhoTdozfLsJv55ibXdTyDjLDsyFv1Vr7mcORE4vsQqQEXx10OxA=
 MIME-Version: 1.0
-In-Reply-To: <20180227233156.29826-1-danilokrummrich@dk-develop.de>
-References: <20180227233156.29826-1-danilokrummrich@dk-develop.de>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Feb 2018 15:39:22 -0800
-X-Google-Sender-Auth: F7EXXKBvnoxIJtY47cpHDsPUL1U
-Message-ID: <CAGXu5jLL8GP7uVRqfnMKf5G=WYE1YZ14cdBMfqwP9+iT2A1bNw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fs/sysctl: fix potential page fault while
- unregistering sysctl table
-To: Danilo Krummrich <danilokrummrich@dk-develop.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <68c24a6f-3a48-3672-8b16-0b46d880d0e3@robertabel.eu>
+References: <20180227220952.57wc3wpc26b2fdyq@gmail.com> <68c24a6f-3a48-3672-8b16-0b46d880d0e3@robertabel.eu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 28 Feb 2018 00:40:20 +0100
+Message-ID: <CANiq72mkVbwmc1g=p87bqefYu1mwH5h4n9x4XfTjPZPe-OTRFA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3] auxdisplay: charlcd: Fix and clean up handling of
+ x/y commands
+To: Robert Abel <rabel@robertabel.eu>
+Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 3:31 PM, Danilo Krummrich
-<danilokrummrich@dk-develop.de> wrote:
-> proc_sys_link_fill_cache() does not take currently unregistering
-> sysctl tables into account, which might result into a page fault in
-> sysctl_follow_link() - add a check to fix it.
+On Wed, Feb 28, 2018 at 12:23 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> On 27 Feb 2018 23:09, Miguel Ojeda wrote:> @@ -469,24 +543,11 @@ static
+> inline int handle_lcd_special_code(struct charlcd *lcd)
+>>       }
+>>       case 'x':       /* gotoxy : LxXXX[yYYY]; */
+>>       case 'y':       /* gotoxy : LyYYY[xXXX]; */
+>> -             if (!strchr(esc, ';'))
+>> -                     break;
 >
-> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+> Might want to keep this. It's in line with all other cases and prevents
+> calling parse_xy with input that has no chance of being correct due to
+> missing final ';'.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+I agree performance is not that critical here and the string would
+probably be in cache anyway, but I would say it is better to fix
+parse_xy() if it is not doing what it specifies.
 
-> ---
-> v2: removed empty line between between sysctl_head_grab and IS_ERR
-
-Thanks!
-
--Kees
-
-> ---
->  fs/proc/proc_sysctl.c | 3 +++
->  1 file changed, 3 insertions(+)
 >
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index c5cbbdff3c3d..82ac5f682b73 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -707,7 +707,10 @@ static bool proc_sys_link_fill_cache(struct file *file,
->                                     struct ctl_table *table)
->  {
->         bool ret = true;
-> +
->         head = sysctl_head_grab(head);
-> +       if (IS_ERR(head))
-> +               return false;
+>> +             /* If the command is valid, move to the new address */
+>> +             if (parse_xy(esc, &priv->addr.x, &priv->addr.y))
+>> +                     charlcd_gotoxy(lcd);
 >
->         if (S_ISLNK(table->mode)) {
->                 /* It is not an error if we can not follow the link ignore it */
-> --
-> 2.14.1
+> While not in the original code, the inputs are now not clamped to width
+> and height.
+> That means for a two-line display ^[[Ly02; will actually end up on line
+> y = 1, not y = 2 % 2 = 0, because the four-line display logic bumps the
+> address up.
+> The same goes for going over lcd->width/lcd->bwidth in the x coordinate.
+> For four-line displays that ends up going to the line y + 2, because the
+> buffer is split in the middle.
+> The distinction between lcd->width and lcd->bwidth depends on whether it
+> makes sense to put the cursor outside the visible area or not.
+
+Don't worry, the RFC patch is meant to agree on a fix for the multiple
+x/y command code. The clamping and other stuff can still go in in
+another patch of yours :)
+
+Cheers,
+Miguel
+
 >
-
-
-
--- 
-Kees Cook
-Pixel Security
+> Regards,
+>
+> Robert
