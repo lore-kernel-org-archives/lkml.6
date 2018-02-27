@@ -1,222 +1,159 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-757978-1519715455-2-385192023643363177
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519715454; b=aBKngnMp1jYpuKG5rjuRO1DI7ITCSsNBco2AiFy/F3vJNyQ
-    StkEJuJIBziEGtKeXYJdgZt0PFMMuPH2aFvT//S17DCQSpiWhkvaE9lZzYufCb/X
-    qZ6WLheStEK1pxgbjN9yGjO2gEzPnHd2iYo6BqcbZ6EiPZMiuIn+AEyxLY0x9BPk
-    0HTRCkgQe4NIL7cqVOgDBUYztLKW7p+1O8JjPgAgYpu0e0vdk8NBartyx3RVwhHQ
-    mEh0z9wd/PoqVtCBQxq650CU0WGotybJ0avnzY23AtiV5fq+GCp2sD7pzFPQy56Q
-    TS1k8yFWHknn/vPE62F2+fWkkmkBSOsKUfcWy0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519715454; bh=kw/AXNr3cQIwPtKrs1g+nuRXUcY8x34WPRH1+eq+png=; b=w
-    vYOGmgpbK3oJ1IWDHmzANtuYfCZob0E/V7D0IpjxBl4kk1pauj7LJURXf9eMPYLT
-    03ADaBo36L7o4dcnjR6F7bQjZ+7nn7T9nZaw2E7Wg/f4S4mWzA4odfwxDFkUiLoX
-    L9GhcXIQt3N6+uyyhNNUwMSpQxoFjRooO6FLCKge0DDZPo2d66PMo8/66SlovAYz
-    h38R7Q9rlsoqPs08l3mqgDNPbuUPoMNTaDZIEPTVxghi8IMzKscZ1KFPEAio30oj
-    kxEkJCBAjd8p01oXyROmFdLlFJp9Ombn3ErXEc+i5jEH7X+ElPU3gCdYD9daqTSh
-    oKaA6gK6mObstE3lghjYA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=CRdnQDn9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uQUCAbrb;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=CRdnQDn9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uQUCAbrb;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752023AbeB0HK0 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 02:10:26 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40594 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeB0HKZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 02:10:25 -0500
-X-Google-Smtp-Source: AG47ELtksXIf7c42PA/AI6RtXkZkKeu8DEowvBftXIHw46dxg/AKIInQalxUMAh4qX5d2IkeqWsxaACCaUSqprEZ5Lc=
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519714686; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pc7tB3jfrE2PFVEcsR9zwTMCBgRMLZYlWP2vLNGvJLHn/6nV8iLY4HKrg4sfSHWZWp
+         ukIv1wrLALehSiAkYr/4tKvgH7tJHrn6EQ6FnSiAh1j1oB0S3mOH3KR2W2A6v3nZfagF
+         QDahODytdsSX0cu5GGS/4Qioj4I9Mt1GEOAJxdI8isusduahTuxD59u2m6qb40d6m6qd
+         IJILuJdyzNJHeRG+qeKK8uAmEcshzatlO2OVAkhMJLVKdecDi8yaSQH6J7qzzhxEevhc
+         n3AyR9O8YV8m5btBEy+yKnWhc6zT5V+NRr95gCUD6zab5WBiRbZyYvmzXAouqdLDgg4C
+         pxjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=YRlpIrjxMcQUImaRFsbI+Nr8kauxKB6H5l0YVf0AIZA=;
+        b=oO/MeqU1LqGupBnjZg6J/S8wXM331kN5YFuiHAcyanuXY5b194iA9xumcsafKLP7at
+         dA/IM9QQtbOrYw1GQHDEs+3ROTe8phnQE2pJGS/EMGV2oRkoI//Mqbetr+HQFD8Z8ymf
+         ARhUkct/8hS3hS5PTzBvrvQzVaFsJlFaiGEoKUC2xPC5A8py8NDxt6umIqX/hx4BfcLx
+         kWgE6pFcT2kKoBNUTVE39BTFDD+YgIbyJa4BJOdkNbMaeXEWCuaAe7NbjX7LQj/nEKtk
+         hWBkmoJA2tp8JuGt9gDlzN/qBdJBThQtYODDTaJ127nnhJ0R7PCybHUJMnjzISc1aA3Z
+         8Jxw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AH8x225e7Uf8cQnA01d1iRliQgPLgCVHZOcsJy+nNiQ5DcAeMlQSKgQqvOyH9pabxsI7TlChskiRdQ==
+Message-ID: <5a95017d.ddd4500a.6e7f.1940@mx.google.com>
+Date: Mon, 26 Feb 2018 22:58:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Kernel: v4.14.22-55-g5e118d0b219c
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
 In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
 References: <20180226202144.375869933@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 27 Feb 2018 12:40:22 +0530
-Message-ID: <CA+G9fYtwBz2xV3k+PGq1QpAy4W+3LC2GUbYFVdjq8WnO9553Lw@mail.gmail.com>
 Subject: Re: [PATCH 4.14 00/54] 4.14.23-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593496512090917624?=
+X-GMAIL-MSGID: =?utf-8?q?1593536346907025934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 27 February 2018 at 01:51, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.14.23 release.
-> There are 54 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Feb 28 20:21:22 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.23-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+stable-rc/linux-4.14.y boot: 105 boots: 0 failed, 36 passed with 62 offline=
+, 7 untried/unknown (v4.14.22-55-g5e118d0b219c)
 
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.22-55-g5e118d0b219c/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.22-55-g5e118d0b219c/
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.22-55-g5e118d0b219c
+Git Commit: 5e118d0b219c87128794e0734ec357f68d2846cb
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 59 unique boards, 22 SoC families, 15 builds out of 185
 
-Summary
-------------------------------------------------------------------------
+Offline Platforms:
 
-kernel: 4.14.23-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 5e118d0b219c87128794e0734ec357f68d2846cb
-git describe: v4.14.22-55-g5e118d0b219c
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.22-55-g5e118d0b219c
+arm:
 
+    sama5_defconfig:
+        at91-sama5d4_xplained: 1 offline lab
 
-No regressions (compared to build v4.14.22)
+    davinci_all_defconfig:
+        da850-lcdk: 1 offline lab
+        dm365evm,legacy: 1 offline lab
 
-Boards, architectures and test suites:
--------------------------------------
+    sunxi_defconfig:
+        sun4i-a10-cubieboard: 1 offline lab
+        sun7i-a20-bananapi: 1 offline lab
+        sun7i-a20-cubietruck: 1 offline lab
 
-hi6220-hikey - arm64
-* boot - pass: 20,
-* kselftest - pass: 48, skip: 17
-* libhugetlbfs - pass: 90, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 21, skip: 1
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 10, skip: 4
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 999, skip: 151
-* ltp-timers-tests - pass: 12, skip: 1
+    qcom_defconfig:
+        qcom-apq8064-cm-qs600: 1 offline lab
+        qcom-apq8064-ifc6410: 1 offline lab
 
-juno-r2 - arm64
-* boot - pass: 20,
-* kselftest - pass: 48, skip: 17
-* libhugetlbfs - pass: 90, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 10, skip: 4
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1001, skip: 149
-* ltp-timers-tests - pass: 12, skip: 1
+    multi_v7_defconfig:
+        alpine-db: 1 offline lab
+        am335x-boneblack: 1 offline lab
+        armada-xp-openblocks-ax3-4: 1 offline lab
+        at91-sama5d4_xplained: 1 offline lab
+        exynos5250-arndale: 1 offline lab
+        exynos5410-odroidxu: 1 offline lab
+        exynos5420-arndale-octa: 1 offline lab
+        exynos5422-odroidxu3: 1 offline lab
+        imx6dl-wandboard_dual: 1 offline lab
+        imx6dl-wandboard_solo: 1 offline lab
+        meson8b-odroidc1: 1 offline lab
+        mt7623n-bananapi-bpi-r2: 1 offline lab
+        omap3-beagle: 1 offline lab
+        omap3-beagle-xm: 1 offline lab
+        omap4-panda: 1 offline lab
+        qcom-apq8064-cm-qs600: 1 offline lab
+        qcom-apq8064-ifc6410: 1 offline lab
+        socfpga_cyclone5_de0_sockit: 1 offline lab
+        stih410-b2120: 1 offline lab
+        stih410-b2120_rootfs:nfs: 1 offline lab
+        sun4i-a10-cubieboard: 1 offline lab
+        sun7i-a20-bananapi: 1 offline lab
+        sun7i-a20-cubietruck: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
+        tegra20-iris-512: 1 offline lab
+        tegra30-beaver: 1 offline lab
+        vf610-colibri-eval-v3: 1 offline lab
+        zynq-zc702: 1 offline lab
 
-x15 - arm
-* boot - pass: 20,
-* kselftest - pass: 45, skip: 19
-* libhugetlbfs - pass: 87, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 20, skip: 2
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 13, skip: 1
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1053, skip: 97
-* ltp-timers-tests - pass: 12, skip: 1
+    imx_v6_v7_defconfig:
+        imx6dl-wandboard_dual: 1 offline lab
+        imx6dl-wandboard_solo: 1 offline lab
+        vf610-colibri-eval-v3: 1 offline lab
 
-x86_64
-* boot - pass: 20,
-* kselftest - pass: 61, skip: 19
-* libhugetlbfs - pass: 90, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 62, skip: 1
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 9, skip: 5
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1031, skip: 119
-* ltp-timers-tests - pass: 12, skip: 1
+    mvebu_v7_defconfig:
+        armada-xp-openblocks-ax3-4: 1 offline lab
 
---
-Linaro QA (beta)
-https://qa-reports.linaro.org
+    exynos_defconfig:
+        exynos5250-arndale: 1 offline lab
+        exynos5410-odroidxu: 1 offline lab
+        exynos5420-arndale-octa: 1 offline lab
+        exynos5422-odroidxu3: 1 offline lab
+
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
+
+    omap2plus_defconfig:
+        am335x-boneblack: 1 offline lab
+        omap3-beagle: 1 offline lab
+        omap3-beagle-xm: 1 offline lab
+        omap4-panda: 1 offline lab
+
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
+        tegra20-iris-512: 1 offline lab
+        tegra30-beaver: 1 offline lab
+
+arm64:
+
+    defconfig:
+        apq8016-sbc: 1 offline lab
+        juno-r2: 1 offline lab
+        meson-gxbb-odroidc2: 1 offline lab
+        meson-gxbb-p200: 1 offline lab
+        meson-gxl-s905d-p230: 1 offline lab
+        meson-gxl-s905x-khadas-vim: 1 offline lab
+        meson-gxl-s905x-nexbox-a95x: 1 offline lab
+        meson-gxl-s905x-p212: 1 offline lab
+        rk3399-firefly: 1 offline lab
+        sun50i-a64-pine64-plus: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
