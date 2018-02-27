@@ -1,166 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752539AbeB0J0b (ORCPT <rfc822;w@1wt.eu>);
+        id S1752565AbeB0J0i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:26:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:29423 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752546AbeB0J0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Feb 2018 04:26:31 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36571 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbeB0J01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:26:27 -0500
-X-Google-Smtp-Source: AG47ELvmOEWvveWQ3H2+yWdM25S/xcxaE7FJPVQhf2Qzgx0+7dS7SqfWhYAP6nZRdzM3okZSazTEzzR1YfxUgFEC0Ww=
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
+   d="scan'208";a="30970032"
+Date: Tue, 27 Feb 2018 11:26:27 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Jeremy McNicoll <jmcnicol@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>
+Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
+Message-ID: <20180227092627.GD2424@lahna.fi.intel.com>
+References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
+ <20180222231736.GA628@mini-rhel.redhat.com>
+ <20180226102029.GG27191@lahna.fi.intel.com>
+ <20180226133802.GR27191@lahna.fi.intel.com>
+ <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
+ <20180226194645.GA3774@lahna.fi.intel.com>
+ <6560a597-0075-549e-f723-1bc5eb54c7bc@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <b6051971-04a5-09e7-d11f-3689369292fe@redhat.com>
-References: <1519698910-4272-1-git-send-email-wanpengli@tencent.com> <b6051971-04a5-09e7-d11f-3689369292fe@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 27 Feb 2018 17:26:26 +0800
-Message-ID: <CANRm+CzvN5ypz=Y2moJQph36O5tpDbqzJtB2N_8Hm3guqWXYSg@mail.gmail.com>
-Subject: Re: [PATCH v4] KVM: X86: Allow userspace to define the microcode version
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>, Nadav Amit <nadav.amit@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6560a597-0075-549e-f723-1bc5eb54c7bc@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R9Qchp001138
 
-2018-02-27 16:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 27/02/2018 03:35, Wanpeng Li wrote:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> Linux (among the others) has checks to make sure that certain features
->> aren't enabled on a certain family/model/stepping if the microcode version
->> isn't greater than or equal to a known good version.
->>
->> By exposing the real microcode version, we're preventing buggy guests that
->> don't check that they are running virtualized (i.e., they should trust the
->> hypervisor) from disabling features that are effectively not buggy.
->>
->> Suggested-by: Filippo Sironi <sironi@amazon.de>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: Liran Alon <liran.alon@oracle.com>
->> Cc: Nadav Amit <nadav.amit@gmail.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> ---
->> v3 -> v4:
->>  * add the shifts back
->
-> Please wait for a review instead of pushing new versions continuously.
-> Leaving the shifts means that MSR_IA32_UCODE_REV's bits 0-31 are zeroed
-> even if KVM_SET_MSRS makes them nonzero.
+On Mon, Feb 26, 2018 at 12:15:28PM -0800, Jeremy McNicoll wrote:
+> On 2018-02-26 11:46 AM, Mika Westerberg wrote:
+> > On Mon, Feb 26, 2018 at 11:28:16AM -0800, Jeremy McNicoll wrote:
+> > > On 2018-02-26 5:38 AM, Mika Westerberg wrote:
+> > > > On Mon, Feb 26, 2018 at 12:20:29PM +0200, Mika Westerberg wrote:
+> > > > > On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
+> > > > > > > +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+> > > > > > > +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
+> > > > > > > +			link, depth);
+> > > > > > 
+> > > > > > This kind of condition sounds more like an error instead of info.
+> > > > > > Please bump this up to tb_WARN/tb_warn ideally tb_err().
+> > > > > 
+> > > > > No, this is not an error.
+> > > > 
+> > > > To be more clear, it is totally fine to have the firmware to reject some
+> > > > devices. For example in case of the new usbonly security level the
+> > > > firmware rejects other devices but the first.
+> > > > 
+> > > 
+> > > Ok. Is that kind of information available to the kernel?  What security
+> > > mode we are in?
+> > > 
+> > > ie) if (LINK_REJECTED && !USB_SECURITY)
+> > >         print "Error switch %u was rejected since its not usbonly"
+> > >      endif
+> > > 
+> > > I am sure something like that simplified pseudo code above would
+> > > be somewhat useful to users when debugging.
+> > 
+> > That's why it is on info level so it goes to dmesg but does not scare
+> > the user :-)
+> > 
+> 
+> The point I am trying to make is that it would be nice to be able to
+> know WHY the link was rejected and not just that it was rejected.
 
-How about something like this?
+Fair enough. In practice (since we ask the firmware to accept any
+device) the only reason for rejection is that the topology limit is
+exceeded (too many devices in the chain).
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 938d453..df6720f 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
-  u64 smi_count;
-  bool tpr_access_reporting;
-  u64 ia32_xss;
-+ u64 microcode_version;
+I'm thinking to change the message to something like:
 
-  /*
-  * Paging state of the vcpu
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f874798..312f33f 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1907,6 +1907,7 @@ static void svm_vcpu_reset(struct kvm_vcpu
-*vcpu, bool init_event)
-  u32 dummy;
-  u32 eax = 1;
+	tb_info(tb, "switch at %u.%u was rejected by ICM firmware because topology limit exceeded\n",
+		link, depth);
 
-+ vcpu->arch.microcode_version = 0x01000065;
-  svm->spec_ctrl = 0;
+And do the same for Titan Ridge in patch [18/18]. 
 
-  if (!init_event) {
-@@ -3962,9 +3963,6 @@ static int svm_get_msr(struct kvm_vcpu *vcpu,
-struct msr_data *msr_info)
+Security level can be read directly from "security" sysfs attribute of
+the domain so that information does not need to be duplicated IMHO.
 
-  msr_info->data = svm->spec_ctrl;
-  break;
-- case MSR_IA32_UCODE_REV:
-- msr_info->data = 0x01000065;
-- break;
-  case MSR_F15H_IC_CFG: {
-
-  int family, model;
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 9968906..2cdbea7 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5781,6 +5781,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu
-*vcpu, bool init_event)
-  vmx->rmode.vm86_active = 0;
-  vmx->spec_ctrl = 0;
-
-+ vcpu->arch.microcode_version = 0x100000000ULL;
-  vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
-  kvm_set_cr8(vcpu, 0);
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d4985a9..7afffd3 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1058,6 +1058,7 @@ static unsigned num_emulated_msrs;
- static u32 msr_based_features[] = {
-  MSR_IA32_ARCH_CAPABILITIES,
-  MSR_F10H_DECFG,
-+ MSR_IA32_UCODE_REV,
- };
-
- static unsigned int num_msr_based_features;
-@@ -1067,8 +1068,14 @@ static int do_get_msr_feature(struct kvm_vcpu
-*vcpu, unsigned index, u64 *data)
-  struct kvm_msr_entry msr;
-
-  msr.index = index;
-- if (kvm_x86_ops->get_msr_feature(&msr))
-- return 1;
-+ switch (msr.index) {
-+ case MSR_IA32_UCODE_REV:
-+ rdmsrl(msr.index, msr.data);
-+ break;
-+ default:
-+ if (kvm_x86_ops->get_msr_feature(&msr))
-+ return 1;
-+ }
-
-  *data = msr.data;
-
-@@ -2248,7 +2255,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
-struct msr_data *msr_info)
-
-  switch (msr) {
-  case MSR_AMD64_NB_CFG:
-- case MSR_IA32_UCODE_REV:
-  case MSR_IA32_UCODE_WRITE:
-  case MSR_VM_HSAVE_PA:
-  case MSR_AMD64_PATCH_LOADER:
-@@ -2256,6 +2262,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
-struct msr_data *msr_info)
-  case MSR_AMD64_DC_CFG:
-  break;
-
-+ case MSR_IA32_UCODE_REV:
-+ if (msr_info->host_initiated)
-+ vcpu->arch.microcode_version = data;
-+ break;
-  case MSR_EFER:
-  return set_efer(vcpu, data);
-  case MSR_K7_HWCR:
-@@ -2551,7 +2561,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu,
-struct msr_data *msr_info)
-  msr_info->data = 0;
-  break;
-  case MSR_IA32_UCODE_REV:
-- msr_info->data = 0x100000000ULL;
-+ msr_info->data = vcpu->arch.microcode_version;
-  break;
-  case MSR_MTRRcap:
-  case 0x200 ... 0x2ff:
+Does that work for you?
