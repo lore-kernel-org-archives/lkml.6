@@ -1,31 +1,31 @@
 Return-Path: <benjamin.gaignard@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519740584; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1519740582; cv=none;
         d=google.com; s=arc-20160816;
-        b=A5hDod8HUXmx60pNp5pJLlM28lcm8rbg/EqhlV1as5znOLNB2ifhJYKmQUg1oOQA+8
-         2zxLCDluszRtJQKti7B5BikTAX2PSrvu1himQOkK12wFEfx+mGT1zXRffUENetQp64rh
-         6ghFS77pveUuDgJZgfT+C8/2nTVgz2hQoAPh/WM7JfCdhiEnJiw/2rF9/yVEvnJy2zrb
-         6unbQGl1STk5bX2NqRbFIlNxZr2YtiCACrv8r9Z+ts9JSY/JzXkAfFndm/Jn0EEaigxj
-         4VJx6I19UBJ7Nofa0+lezzxpLcXrqUIOIJQUqaCjvFomuj1WlPoNvMr0gBDqsBXDpCt/
-         YGGA==
+        b=Kh0X7gDO5DuWBtz5de2ULZZL8O4ql19sMwjG1AlArqjTZiIcij+LxQOIY0q3imaC08
+         7Yv5OH2RTvSocnQaHLR5bM1Cnv3NF0uGJgrErFmpKgtpc3WuKzbZnaVsoV9nHuoZHT80
+         pfs5pM0hRBFioJpPKwsoiA7Sakey0e+RoKKK1Px4TEw9MngkuRIszyYj2BQqeM4RsVrI
+         i7etxqxVmnYKxl/EBTywPfcKNXP9K2fsDIifWi2YJfomUWdfF6vimRh0kWptMRaaHDQj
+         MS9o5P4VfrVJX+gj0ubS16sCzjv5588FqURy0GcoOBPXBV5fbQDkxXcLn7s0C90zAwis
+         sskg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=pXfACuIkE0tumvZyUY0pIlpeWKLMZLhqTYTRETC8BFg=;
-        b=I3UPNOnUbbJ1nRU+AUBH8nYz0jTai2+l4kyhI8ab24HBhMdQsr7V9VLozmqQI8bL5m
-         rnEKTD+Sv2M8dJQOkygFfdrxZW2GJOY0GILFmlrkrbMRZ/fBFzV5dxg7HRTsyvRvUOwh
-         vxcbAGJETRBoNYBzS2c4UsWnib43yVK8FTAnmLlMCTyX1My4oy8cjyITcwqbwxrIRszH
-         IYS/FjWxqKkXPJ/NNO0SnzStCRmQ1UVQPlo/NJGxinj3DthfjQl8P1YID/ntbIMqLf8l
-         zmdyJmnq8fzDNX/FPspzwXC8Xnk5jlL6JYjNTKRs3BfvxQabO5LURwd4Sq91ERFb4yi7
-         ZkMA==
+        bh=+qPp2gLc0zJ8QDezJSeSnIvB+cVCQ5fMNsIOfQ1z91Q=;
+        b=Z8jO9LP/UY+exbch+XOwjf8Kd/3uyXlH3ksFONLACURPSUcKoX7SNXD2nzYzO6+Ei/
+         uk5exjNjro+fbZUNIks0GkC5ixEJ/EvmzA0RtXGcPJjjrBsyo/aFG9NeubPBEMLQ+s1X
+         eF9vYvVgxOJPZYGwmxnLYIKzr87VH2SGO1wIW9EVgL7PE2A/RQCCpg1m8MaHuDwYvSJP
+         Sg4n/V4WJjxKnk1zdxKb65hOINoYkf7DmP51q9CbENeg4CEo425SWztPhsGICED3zGiD
+         SfXQ1aAuXGdWxhqF/BDHLKH/G4tDtuE+1IPs6Sxx91l3cJDkQmnUUTfwtUCLSMO5FZqQ
+         TUZg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=cxu9l47q;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Ods7cilq;
        spf=pass (google.com: domain of benjamin.gaignard@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=benjamin.gaignard@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=cxu9l47q;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Ods7cilq;
        spf=pass (google.com: domain of benjamin.gaignard@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=benjamin.gaignard@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtQb0doiYC4Ev6czpcKFzBLZ2LdYMS8lrV4kx1PE0OAbbv5w+MvD4iVOGORlFx+Y0KTvcKepg==
+X-Google-Smtp-Source: AG47ELvn5PUSlAl3q1WfwH5Rzx/P9opWmWNd9L8+Xv9RLpH2YIhVTd586RsbyEbMGWofDVW/Kn8lQA==
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
 To: gregkh@linuxfoundation.org,
@@ -37,45 +37,46 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH 2/3] dt-bindings: stm32: Add bindings for Extended TrustZone Protection
-Date: Tue, 27 Feb 2018 15:09:25 +0100
-Message-Id: <20180227140926.22996-3-benjamin.gaignard@st.com>
+Subject: [PATCH 1/3] driver core: check notifier_call_chain return value
+Date: Tue, 27 Feb 2018 15:09:24 +0100
+Message-Id: <20180227140926.22996-2-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20180227140926.22996-1-benjamin.gaignard@st.com>
 References: <20180227140926.22996-1-benjamin.gaignard@st.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593563503379166103?=
-X-GMAIL-MSGID: =?utf-8?q?1593563503379166103?=
+X-GMAIL-THRID: =?utf-8?q?1593563501482605185?=
+X-GMAIL-MSGID: =?utf-8?q?1593563501482605185?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Extended TrustZone Protection driver is very basic and only needs
-to know where are the registers (no clock, no interrupt)
+When being notified that a driver is about to be bind a listener
+could return NOTIFY_BAD.
+Check the return to be sure that the driver could be bind.
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- .../devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt     | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
+ drivers/base/dd.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt b/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
-new file mode 100644
-index 000000000000..6db093847a13
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
-@@ -0,0 +1,13 @@
-+STMicroelectronics STM32 Extended TrustZone Protection driver
-+
-+Required properties:
-+ - compatible : value should be "st,stm32mp1-etzpc"
-+ - reg : physical base address of the IP registers and length of memory
-+	 mapped region.
-+
-+Example for stm32mp1:
-+
-+etzpc: etzpc@5c007000 {
-+	compatible = "st,stm32mp1-etzpc";
-+	reg = <0x5c007000 0x400>;
-+};
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index de6fd092bf2f..9275f2c0fed2 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -304,9 +304,12 @@ static int driver_sysfs_add(struct device *dev)
+ {
+ 	int ret;
+ 
+-	if (dev->bus)
+-		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+-					     BUS_NOTIFY_BIND_DRIVER, dev);
++	if (dev->bus) {
++		if (blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
++						 BUS_NOTIFY_BIND_DRIVER, dev) ==
++						 NOTIFY_BAD)
++			return -EINVAL;
++	}
+ 
+ 	ret = sysfs_create_link(&dev->driver->p->kobj, &dev->kobj,
+ 				kobject_name(&dev->kobj));
 -- 
 2.15.0
