@@ -1,70 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeB0Vu3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751737AbeB0Vu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:50:28 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90E4321784
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
-Date: Tue, 27 Feb 2018 13:50:27 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>, jgross@suse.com,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pvcalls-front: 64-bit align flags
-In-Reply-To: <b5a80b70-30b4-2fe3-5fc2-347ce58573f1@oracle.com>
-Message-ID: <alpine.DEB.2.10.1802271349280.4239@sstabellini-ThinkPad-X260>
-References: <alpine.DEB.2.10.1802271150020.4239@sstabellini-ThinkPad-X260> <b7ec592a-bbd1-48d3-1a1f-92a8ed4a1e48@oracle.com> <alpine.DEB.2.10.1802271328140.4239@sstabellini-ThinkPad-X260> <b5a80b70-30b4-2fe3-5fc2-347ce58573f1@oracle.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S1751935AbeB0Vun (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:50:43 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:49356 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751706AbeB0Vum (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:50:42 -0500
+To: peterz@infradead.org, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 (RESEND)] lockdep: Fix fs_reclaim warning.
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20180129102746.GQ2269@hirez.programming.kicks-ass.net>
+        <201801292047.EHC05241.OHSQOJOVtFMFLF@I-love.SAKURA.ne.jp>
+        <20180129135547.GR2269@hirez.programming.kicks-ass.net>
+        <201802012036.FEE78102.HOMFFOtJVFOSQL@I-love.SAKURA.ne.jp>
+        <201802082043.FFJ39503.SVQFFFOJMHLOtO@I-love.SAKURA.ne.jp>
+In-Reply-To: <201802082043.FFJ39503.SVQFFFOJMHLOtO@I-love.SAKURA.ne.jp>
+Message-Id: <201802280650.FJC73911.FOSOMLJVFFQtHO@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 28 Feb 2018 06:50:02 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Feb 2018, Boris Ostrovsky wrote:
-> On 02/27/2018 04:32 PM, Stefano Stabellini wrote:
-> > On Tue, 27 Feb 2018, Boris Ostrovsky wrote:
-> >> On 02/27/2018 02:54 PM, Stefano Stabellini wrote:
-> >>> We are using test_and_* operations on the status and flag fields of
-> >>> struct sock_mapping. However, these functions require the operand to be
-> >>> 64-bit aligned on arm64. Currently, only status is 64-bit aligned.
-> >>>
-> >>> Make flags 64-bit aligned by introducing an explicit padding field.
-> >>>
-> >>> Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
-> >>>
-> >>> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-> >>> index ca5b773..aa07b2a 100644
-> >>> --- a/drivers/xen/pvcalls-front.c
-> >>> +++ b/drivers/xen/pvcalls-front.c
-> >>> @@ -78,6 +78,7 @@ struct sock_mapping {
-> >>>  #define PVCALLS_STATUS_BIND          1
-> >>>  #define PVCALLS_STATUS_LISTEN        2
-> >>>  			uint8_t status;
-> >>> +			uint8_t pad[7];
-> >> Does this guarantee alignment (for either status or flag)?
-> > Yes: status is part of a struct and a union. Unions and structs have the
-> > alignment of their most aligned type. In this case they are 64-bit
-> > aligned, as some of the fields are pointers.
-> >
-> > The padding makes sure that flags is 1+7 bytes from it.
-> 
-> OK.
-> 
-> What about adding  __attribute__((aligned(8))) to both (with a comment
-> explaining reasoning)?
+>From 361d37a7d36978020dfb4c11ec1f4800937ccb68 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Thu, 8 Feb 2018 10:35:35 +0900
+Subject: [PATCH v2] lockdep: Fix fs_reclaim warning.
 
-That's fine by me
+Dave Jones reported fs_reclaim lockdep warnings.
 
+  ============================================
+  WARNING: possible recursive locking detected
+  4.15.0-rc9-backup-debug+ #1 Not tainted
+  --------------------------------------------
+  sshd/24800 is trying to acquire lock:
+   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
 
-> >
-> >  
-> >>>  		/*
-> >>>  		 * Internal state-machine flags.
-> >>>  		 * Only one accept operation can be inflight for a socket.
-> 
+  but task is already holding lock:
+   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
+
+         CPU0
+         ----
+    lock(fs_reclaim);
+    lock(fs_reclaim);
+
+   *** DEADLOCK ***
+
+   May be due to missing lock nesting notation
+
+  2 locks held by sshd/24800:
+   #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000001a069652>] tcp_sendmsg+0x19/0x40
+   #1:  (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+
+  stack backtrace:
+  CPU: 3 PID: 24800 Comm: sshd Not tainted 4.15.0-rc9-backup-debug+ #1
+  Call Trace:
+   dump_stack+0xbc/0x13f
+   __lock_acquire+0xa09/0x2040
+   lock_acquire+0x12e/0x350
+   fs_reclaim_acquire.part.102+0x29/0x30
+   kmem_cache_alloc+0x3d/0x2c0
+   alloc_extent_state+0xa7/0x410
+   __clear_extent_bit+0x3ea/0x570
+   try_release_extent_mapping+0x21a/0x260
+   __btrfs_releasepage+0xb0/0x1c0
+   btrfs_releasepage+0x161/0x170
+   try_to_release_page+0x162/0x1c0
+   shrink_page_list+0x1d5a/0x2fb0
+   shrink_inactive_list+0x451/0x940
+   shrink_node_memcg.constprop.88+0x4c9/0x5e0
+   shrink_node+0x12d/0x260
+   try_to_free_pages+0x418/0xaf0
+   __alloc_pages_slowpath+0x976/0x1790
+   __alloc_pages_nodemask+0x52c/0x5c0
+   new_slab+0x374/0x3f0
+   ___slab_alloc.constprop.81+0x47e/0x5a0
+   __slab_alloc.constprop.80+0x32/0x60
+   __kmalloc_track_caller+0x267/0x310
+   __kmalloc_reserve.isra.40+0x29/0x80
+   __alloc_skb+0xee/0x390
+   sk_stream_alloc_skb+0xb8/0x340
+   tcp_sendmsg_locked+0x8e6/0x1d30
+   tcp_sendmsg+0x27/0x40
+   inet_sendmsg+0xd0/0x310
+   sock_write_iter+0x17a/0x240
+   __vfs_write+0x2ab/0x380
+   vfs_write+0xfb/0x260
+   SyS_write+0xb6/0x140
+   do_syscall_64+0x1e5/0xc05
+   entry_SYSCALL64_slow_path+0x25/0x25
+
+This warning is caused by commit d92a8cfcb37ecd13 ("locking/lockdep: Rework
+FS_RECLAIM annotation") which replaced lockdep_set_current_reclaim_state()/
+lockdep_clear_current_reclaim_state() in __perform_reclaim() and
+lockdep_trace_alloc() in slab_pre_alloc_hook() with fs_reclaim_acquire()/
+fs_reclaim_release(). Since __kmalloc_reserve() from __alloc_skb() adds
+__GFP_NOMEMALLOC | __GFP_NOWARN to gfp_mask, and all reclaim path simply
+propagates __GFP_NOMEMALLOC, fs_reclaim_acquire() in slab_pre_alloc_hook()
+is trying to grab the 'fake' lock again when __perform_reclaim() already
+grabbed the 'fake' lock.
+
+The
+
+  /* this guy won't enter reclaim */
+  if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
+          return false;
+
+test which causes slab_pre_alloc_hook() to try to grab the 'fake' lock
+was added by commit cf40bd16fdad42c0 ("lockdep: annotate reclaim context
+(__GFP_NOFS)"). But that test is outdated because PF_MEMALLOC thread won't
+enter reclaim regardless of __GFP_NOMEMALLOC after commit 341ce06f69abfafa
+("page allocator: calculate the alloc_flags for allocation only once")
+added the PF_MEMALLOC safeguard (
+
+  /* Avoid recursion of direct reclaim */
+  if (p->flags & PF_MEMALLOC)
+          goto nopage;
+
+in __alloc_pages_slowpath()).
+
+Thus, let's fix outdated test by removing __GFP_NOMEMALLOC test and allow
+__need_fs_reclaim() to return false.
+
+Reported-and-tested-by: Dave Jones <davej@codemonkey.org.uk>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nick Piggin <npiggin@gmail.com>
+---
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 81e18ce..19fb76b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3590,7 +3590,7 @@ static bool __need_fs_reclaim(gfp_t gfp_mask)
+ 		return false;
+ 
+ 	/* this guy won't enter reclaim */
+-	if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
++	if (current->flags & PF_MEMALLOC)
+ 		return false;
+ 
+ 	/* We're only interested __GFP_FS allocations for now */
+-- 
+1.8.3.1
