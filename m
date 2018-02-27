@@ -1,135 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeB0CUQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:20:16 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:51403 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeB0CUO (ORCPT
+        id S1751882AbeB0CWj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:22:39 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35433 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751514AbeB0CWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:20:14 -0500
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Helge Deller <deller@gmx.de>
-Cc: linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        John David Anglin <dave.anglin@bell.net>, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-References: <87373b6ghs.fsf@xmission.com>
-        <20180112005940.23279-4-ebiederm@xmission.com>
-        <20180112222944.GA22642@ls3530.fritz.box>
-        <87fu5s4l4b.fsf@xmission.com>
-        <68641c9e-99c6-34d3-83aa-1241bddef33c@gmx.de>
-Date: Mon, 26 Feb 2018 20:19:35 -0600
-In-Reply-To: <68641c9e-99c6-34d3-83aa-1241bddef33c@gmx.de> (Helge Deller's
-        message of "Sun, 25 Feb 2018 20:49:41 +0100")
-Message-ID: <87r2p7uqbs.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 26 Feb 2018 21:22:37 -0500
+X-Google-Smtp-Source: AG47ELt/FA6m4T+RT63XcwpmrEvKn+JNJBZN2LNxVe7np4wW46iysUelFTf0LEPHjWAZxW4CjC4NtWOhryVMEnRB5HI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1eqUsA-0005BQ-JK;;;mid=<87r2p7uqbs.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX181MjbviIBrqFbPh2c7uCFcTV5bYgFfU+Q=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Helge Deller <deller@gmx.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 271 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.8 (1.0%), b_tie_ro: 1.96 (0.7%), parse: 1.08 (0.4%),
-        extract_message_metadata: 15 (5.5%), get_uri_detail_list: 2.4 (0.9%),
-        tests_pri_-1000: 8 (3.0%), tests_pri_-950: 1.14 (0.4%), tests_pri_-900: 0.98
-        (0.4%), tests_pri_-400: 24 (8.8%), check_bayes: 23 (8.5%), b_tokenize: 8
-        (2.8%), b_tok_get_all: 8 (3.0%), b_comp_prob: 2.5 (0.9%), b_tok_touch_all:
-        2.8 (1.0%), b_finish: 0.60 (0.2%), tests_pri_0: 210 (77.4%),
-        check_dkim_signature: 0.67 (0.2%), check_dkim_adsp: 2.4 (0.9%),
-        tests_pri_500: 6 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 04/11] signal/parisc: Document a conflict with SI_USER with SIGFPE
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <F68C9207-03D2-437F-981D-63FE9D5AA61A@gmail.com>
+References: <1519694331-16368-1-git-send-email-wanpengli@tencent.com> <F68C9207-03D2-437F-981D-63FE9D5AA61A@gmail.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 27 Feb 2018 10:22:36 +0800
+Message-ID: <CANRm+CwC-Zk4Uq7pYjD9vBW_J9EL0hntFCMtd5sUuYn=ztMRXg@mail.gmail.com>
+Subject: Re: [PATCH v3] KVM: X86: Allow userspace to define the microcode version
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R2Mi63029443
 
-Helge Deller <deller@gmx.de> writes:
-
-> On 23.02.2018 01:15, Eric W. Biederman wrote:
->> Helge Deller <deller@gmx.de> writes:
->> 
->>> * Eric W. Biederman <ebiederm@xmission.com>:
->>>> Setting si_code to 0 results in a userspace seeing an si_code of 0.
->>>> This is the same si_code as SI_USER.  Posix and common sense requires
->>>> that SI_USER not be a signal specific si_code.  As such this use of 0
->>>> for the si_code is a pretty horribly broken ABI.
->>>>
->>>> Further use of si_code == 0 guaranteed that copy_siginfo_to_user saw a
->>>> value of __SI_KILL and now sees a value of SIL_KILL with the result
->>>> that uid and pid fields are copied and which might copying the si_addr
->>>> field by accident but certainly not by design.  Making this a very
->>>> flakey implementation.
->>>>
->>>> Utilizing FPE_FIXME siginfo_layout will now return SIL_FAULT and the
->>>> appropriate fields will reliably be copied.
->>>>
->>>> This bug is 13 years old and parsic machines are no longer being built
->>>> so I don't know if it possible or worth fixing it.  But it is at least
->>>> worth documenting this so other architectures don't make the same
->>>> mistake.
->>>
->>>
->>> I think we should fix it, even if we now break the ABI.
->>>
->>> It's about a "conditional trap" which needs to be handled by userspace.
->>> I doubt there is any Linux code out which is utilizing this
->>> parisc-specific trap.
->>>
->>> I'd suggest to add a new FPE trap si_code (e.g. FPE_CONDTRAP).
->>> While at it, maybe we should include the already existing FPE_MDAOVF
->>> from the frv architecture, so that arch/frv/include/uapi/asm/siginfo.h
->>> can go completely.
->>>
->>> Suggested patch is below.
->>>
->>> I'm willing to test the patch below on the parisc architecture for a few
->>> weeks. And it will break arch/x86/kernel/signal_compat.c which needs
->>> looking at then too.
->> 
->> Have you managed to test this change?
+2018-02-27 9:30 GMT+08:00 Nadav Amit <nadav.amit@gmail.com>:
+> Wanpeng Li <kernellwp@gmail.com> wrote:
 >
-> Sadly I haven't done any further testing yet.
-
-So at this point for purposed of testing I don't think it matters which
-number FPE_CONDTRAP gets as long as it is non-zero.
->  
->> I am sitting looking at another new FPE si_code and if this has been tested
->> I figure FPE_CONDTRAP should get the next available FPE si_code and the
->> other change should get the one that follows.
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> Linux (among the others) has checks to make sure that certain features
+>> aren't enabled on a certain family/model/stepping if the microcode version
+>> isn't greater than or equal to a known good version.
+>>
+>> By exposing the real microcode version, we're preventing buggy guests that
+>> don't check that they are running virtualized (i.e., they should trust the
+>> hypervisor) from disabling features that are effectively not buggy.
+>>
+>> Suggested-by: Filippo Sironi <sironi@amazon.de>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Liran Alon <liran.alon@oracle.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>> v2 -> v3:
+>> * remove the shifts
+>> * add the MSR_IA32_UCODE_REV version to the "feature MSRs"
+>> v1 -> v2:
+>> * add MSR_IA32_UCODE_REV to emulated_msrs
+>>
+>> arch/x86/include/asm/kvm_host.h |  1 +
+>> arch/x86/kvm/x86.c              | 19 +++++++++++++++----
+>> 2 files changed, 16 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index 938d453..6e13f2f 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
+>>       u64 smi_count;
+>>       bool tpr_access_reporting;
+>>       u64 ia32_xss;
+>> +     u32 microcode_version;
+>>
+>>       /*
+>>        * Paging state of the vcpu
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index d4985a9..00af28e 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -1058,6 +1058,7 @@ static unsigned num_emulated_msrs;
+>> static u32 msr_based_features[] = {
+>>       MSR_IA32_ARCH_CAPABILITIES,
+>>       MSR_F10H_DECFG,
+>> +     MSR_IA32_UCODE_REV,
+>> };
+>>
+>> static unsigned int num_msr_based_features;
+>> @@ -1067,8 +1068,14 @@ static int do_get_msr_feature(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
+>>       struct kvm_msr_entry msr;
+>>
+>>       msr.index = index;
+>> -     if (kvm_x86_ops->get_msr_feature(&msr))
+>> -             return 1;
+>> +     switch (msr.index) {
+>> +     case MSR_IA32_UCODE_REV:
+>> +             rdmsrl(msr.index, msr.data);
+>> +             break;
+>> +     default:
+>> +             if (kvm_x86_ops->get_msr_feature(&msr))
+>> +                     return 1;
+>> +     }
+>>
+>>       *data = msr.data;
+>>
+>> @@ -2248,7 +2255,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>
+>>       switch (msr) {
+>>       case MSR_AMD64_NB_CFG:
+>> -     case MSR_IA32_UCODE_REV:
+>>       case MSR_IA32_UCODE_WRITE:
+>>       case MSR_VM_HSAVE_PA:
+>>       case MSR_AMD64_PATCH_LOADER:
+>> @@ -2256,6 +2262,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>       case MSR_AMD64_DC_CFG:
+>>               break;
+>>
+>> +     case MSR_IA32_UCODE_REV:
+>> +             if (msr_info->host_initiated)
+>> +                     vcpu->arch.microcode_version = data;
+>> +             break;
+>>       case MSR_EFER:
+>>               return set_efer(vcpu, data);
+>>       case MSR_K7_HWCR:
+>> @@ -2551,7 +2561,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>               msr_info->data = 0;
+>>               break;
+>>       case MSR_IA32_UCODE_REV:
+>> -             msr_info->data = 0x100000000ULL;
+>> +             msr_info->data = (u64)vcpu->arch.microcode_version;
 >
-> I'm fine either way. Do you have a git tree I can pull which includes
-> all your patches? I can then start testing.
+> I think that the shifts are missing here (the version should be on the high
+> bits according to intel_get_microcode_revision() ).
 
-Everything finalized is in Linus's tree.  There is a patch pending
-review on linux-arch that defines FPE_FLTUNK that looks to be useful
-on several architectures.
+You are right, it seems that we all miss it before.
 
-I had probably misread our earlier exchange.  I had hoped you had tested
-that FPE_CONDTRAP did not cause problems.
-
-If that level of testing was complete I would have given FPE_CONDTRAP
-the next FPE number and FPE_FLTUNK the one after.
-
-As it sounds like FPE_CONDTRAP hasn't been tested enough to know if it
-causes problems I will encourage the patches to be merged in the other
-order.
-
-Eric
+Regards,
+Wanpeng Li
