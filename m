@@ -1,224 +1,240 @@
-Return-Path: <kernel-hardening-return-12020-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtSYOZO6NDEP6MOlxY3PnD0dfPYjp8zJJaF6c1TY2M6KMKg58majrUEG1LI4FNAMym+TMsM
-ARC-Seal: i=1; a=rsa-sha256; t=1519769998; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OFEyDagHphfMbqLeD3S2gUtyEL8SAkaw0jii5a1fdJbQQ9K0lYvqeAa0xliQidMucD
-         IVLac5fow1TFPUQW+oHaBOzFSa0wDK4kuHV7AGU+y387qe6bIUzv46Cqa4nlixk1q9o4
-         uUdDIhBsiEptAOAqYB6vTQGk6XLbFuePlJk0PInPSuiqyK4LES2Qx+1IIeAoP0IHiuwW
-         ql6hMJcaSlK+0P7ubcNOnKzrHGE+erhsg5Ck+k9EajpRqFmxlUGIPkHr9f5YxJJZBo/+
-         ovPGycDJAX5OwvBfVQ5HVFVzYiFlejEIMRLU13mfEUyeBhT7E/GqUGsTkH2q4f7zmk96
-         y5UA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:mime-version:user-agent:date:message-id:from:references
-         :cc:to:subject:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=1KZOG6+LxL/tbUh9OW0+2vYqoUeYDroujv6MhHGqO78=;
-        b=qNnPctLyZrYLUZ3TJUlwhn5cGrlJKXvARyAJM23ObOcs7xXOeuETjM6T/BHeXF0YFP
-         WRkdYIMxMuYh+2ljk+zXuL+UJtd0KW03meWQ+0bNgrKrlvVwV4QEBuVx49kaN2yAE7Cq
-         dlpUBWqRjsI+HXiGFqE6NAIDtiLmVJSU0YMvl/YDjOX2KKhjWanCESNRHxOyhbvFnakQ
-         BFiEJ+mjR3OBt+NZxWLITl5SjiA2oxjKyoJjPymURaKdbEa1RM0AnJoEiKjexaTCpiCY
-         OWC9QQylmEP9Bcr5/JOvmQwkl7kIgdlEIOQNvUjGs9/Yn6wK5Z/k5Ow3jQmtvqqeNgtU
-         ElbQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12020-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12020-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12020-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12020-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH bpf-next v8 08/11] landlock: Add ptrace restrictions
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-452929-1519706267-2-12623965985572837529
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: to='UTF-8', plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519706266; b=jFSF1wSJ1nLikgR6CJyDO35NLqfiCWtcRoBLIIeEbDGEOfS
+    /mTfb9OEQi7ZMSdjBeluLBzENuyI7qQtdpBvyYrqzG/zTeM8KOjujF92msUtzSUL
+    83HA78ezJVhvz3uk9FL4BB5BkGZ7OO7waRX9S4tV71CuMDTKTEUd2wnqhmIl6Y5T
+    tI0DqQqoIr77XEnBcCNwgM5Fa330dH0qBJ7DfiJn3eADN3elDvBUk8B4arlIiDcQ
+    B7TyuqDvHZOuc11y7JbRLvfjGJ0J/cd9SaihaGFeUJ76J8skXhYCxXOzEZptF2e/
+    +U/eOxcsDg3aVKb3OYntOlHg3vYLCEMV3GIrRCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519706266; bh=yvoUsMYcrr65QcbkHfV90rneQRpZ/hzcRXbrj3RnKpE=; b=C
+    wMAcpSCuerYpZ2uwzkPoja+Vctqz5BU7VNjZ+kFRz8xoZNMhf8utj5hd2v7sq2MR
+    bC1b3eDToyFVIXmfrrzmaGeKzPenAD0qCCrXig4AJN7IyXF8BiEw9n2pTLMVLgV1
+    szA8jpKyt8AUy6yxqIcv1SuL1IYijIG5WGxLDWQ3efMY8/9gGd4zmRkixXDhHI+v
+    22K8s7or+eIldEOn0vVTsl9LJQnNo3AdlJuB0Mlq1Hx6k9e8zymc7zP4hImBlLRF
+    At9IUCxHflaE6kO0RrjLxAGsJT4W5x8cmKa4h79p1asgTmegL1+VjjEoZ6Wk0Jlj
+    sAb0Yg0VgYCiJMuoV5tng==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=XTeJzoef x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qyBF9m+t;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=XTeJzoef x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qyBF9m+t;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751656AbeB0EhV (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 26 Feb 2018 23:37:21 -0500
+Received: from mail-io0-f177.google.com ([209.85.223.177]:33838 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751540AbeB0EhT (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 26 Feb 2018 23:37:19 -0500
+X-Google-Smtp-Source: AG47ELtxBrMBf94RSsPbmRwx2xfVrOKDQPG7hDR2NRWYg4wMHFDuWB5DMOi4QBznc2x1o3InWaLiRNrmi+ObDbO7CDc=
+MIME-Version: 1.0
+In-Reply-To: <20180227004121.3633-1-mic@digikod.net>
+References: <20180227004121.3633-1-mic@digikod.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Tue, 27 Feb 2018 04:36:58 +0000
+Message-ID: <CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged sandboxing
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale
- <drysdale@google.com>,
+        David Drysdale <drysdale@google.com>,
         "David S . Miller" <davem@davemloft.net>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <james.l.morris@oracle.com>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <james.l.morris@oracle.com>,
+        Jann Horn <jann@thejh.net>, Jonathan Corbet <corbet@lwn.net>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
         Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Thomas Graf <tgraf@suug.ch>,
-        Tycho Andersen <tycho@tycho.ws>, Will Drewry <wad@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Linux API <linux-api@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Network Development <netdev@vger.kernel.org>
-References: <20180227004121.3633-1-mic@digikod.net>
- <20180227004121.3633-9-mic@digikod.net>
- <CALCETrUpDbusLPyZijR6MpZd5-0x0d9KuQHBaavqP1_GZ2tjfg@mail.gmail.com>
-From: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <6509ae4f-cf7e-da71-adb3-d4cf2cb7bc55@digikod.net>
-Date: Tue, 27 Feb 2018 23:18:21 +0100
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <CALCETrUpDbusLPyZijR6MpZd5-0x0d9KuQHBaavqP1_GZ2tjfg@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="i6YhnamGBZf9NUggMtTjX8wcInMCaoJov"
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593512859761492731?=
-X-GMAIL-MSGID: =?utf-8?q?1593594345921642902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---i6YhnamGBZf9NUggMtTjX8wcInMCaoJov
-Content-Type: multipart/mixed; boundary="aMdpPijkWkxWbd6h5LYqQVqvB23HviTFP";
- protected-headers="v1"
-From: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Daniel Borkmann <daniel@iogearbox.net>, David Drysdale
- <drysdale@google.com>, "David S . Miller" <davem@davemloft.net>,
- "Eric W . Biederman" <ebiederm@xmission.com>,
- James Morris <james.l.morris@oracle.com>, Jann Horn <jann@thejh.net>,
- Jonathan Corbet <corbet@lwn.net>, Michael Kerrisk <mtk.manpages@gmail.com>,
- Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
- Sargun Dhillon <sargun@sargun.me>, "Serge E . Hallyn" <serge@hallyn.com>,
- Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
- Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
- Will Drewry <wad@chromium.org>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>,
- Linux API <linux-api@vger.kernel.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>
-Message-ID: <6509ae4f-cf7e-da71-adb3-d4cf2cb7bc55@digikod.net>
-Subject: Re: [PATCH bpf-next v8 08/11] landlock: Add ptrace restrictions
-References: <20180227004121.3633-1-mic@digikod.net>
- <20180227004121.3633-9-mic@digikod.net>
- <CALCETrUpDbusLPyZijR6MpZd5-0x0d9KuQHBaavqP1_GZ2tjfg@mail.gmail.com>
-In-Reply-To: <CALCETrUpDbusLPyZijR6MpZd5-0x0d9KuQHBaavqP1_GZ2tjfg@mail.gmail.com>
+On Tue, Feb 27, 2018 at 12:41 AM, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net=
+> wrote:
+> Hi,
+>
+> This eight series is a major revamp of the Landlock design compared to
+> the previous series [1]. This enables more flexibility and granularity
+> of access control with file paths. It is now possible to enforce an
+> access control according to a file hierarchy. Landlock uses the concept
+> of inode and path to identify such hierarchy. In a way, it brings tools
+> to program what is a file hierarchy.
+>
+> There is now three types of Landlock hooks: FS_WALK, FS_PICK and FS_GET.
+> Each of them accepts a dedicated eBPF program, called a Landlock
+> program.  They can be chained to enforce a full access control according
+> to a list of directories or files. The set of actions on a file is well
+> defined (e.g. read, write, ioctl, append, lock, mount...) taking
+> inspiration from the major Linux LSMs and some other access-controls
+> like Capsicum.  These program types are designed to be cache-friendly,
+> which give room for optimizations in the future.
+>
+> The documentation patch contains some kernel documentation and
+> explanations on how to use Landlock.  The compiled documentation and
+> a talk I gave at FOSDEM can be found here: https://landlock.io
+> This patch series can be found in the branch landlock-v8 in this repo:
+> https://github.com/landlock-lsm/linux
+>
+> There is still some minor issues with this patch series but it should
+> demonstrate how powerful this design may be. One of these issues is that
+> it is not a stackable LSM anymore, but the infrastructure management of
+> security blobs should allow to stack it with other LSM [4].
+>
+> This is the first step of the roadmap discussed at LPC [2].  While the
+> intended final goal is to allow unprivileged users to use Landlock, this
+> series allows only a process with global CAP_SYS_ADMIN to load and
+> enforce a rule.  This may help to get feedback and avoid unexpected
+> behaviors.
+>
+> This series can be applied on top of bpf-next, commit 7d72637eb39f
+> ("Merge branch 'x86-jit'").  This can be tested with
+> CONFIG_SECCOMP_FILTER and CONFIG_SECURITY_LANDLOCK.  I would really
+> appreciate constructive comments on the design and the code.
+>
+>
+> # Landlock LSM
+>
+> The goal of this new Linux Security Module (LSM) called Landlock is to
+> allow any process, including unprivileged ones, to create powerful
+> security sandboxes comparable to XNU Sandbox or OpenBSD Pledge. This
+> kind of sandbox is expected to help mitigate the security impact of bugs
+> or unexpected/malicious behaviors in user-space applications.
+>
+> The approach taken is to add the minimum amount of code while still
+> allowing the user-space application to create quite complex access
+> rules.  A dedicated security policy language such as the one used by
+> SELinux, AppArmor and other major LSMs involves a lot of code and is
+> usually permitted to only a trusted user (i.e. root).  On the contrary,
+> eBPF programs already exist and are designed to be safely loaded by
+> unprivileged user-space.
+>
+> This design does not seem too intrusive but is flexible enough to allow
+> a powerful sandbox mechanism accessible by any process on Linux. The use
+> of seccomp and Landlock is more suitable with the help of a user-space
+> library (e.g.  libseccomp) that could help to specify a high-level
+> language to express a security policy instead of raw eBPF programs.
+> Moreover, thanks to the LLVM front-end, it is quite easy to write an
+> eBPF program with a subset of the C language.
+>
+>
+> # Frequently asked questions
+>
+> ## Why is seccomp-bpf not enough?
+>
+> A seccomp filter can access only raw syscall arguments (i.e. the
+> register values) which means that it is not possible to filter according
+> to the value pointed to by an argument, such as a file pathname. As an
+> embryonic Landlock version demonstrated, filtering at the syscall level
+> is complicated (e.g. need to take care of race conditions). This is
+> mainly because the access control checkpoints of the kernel are not at
+> this high-level but more underneath, at the LSM-hook level. The LSM
+> hooks are designed to handle this kind of checks.  Landlock abstracts
+> this approach to leverage the ability of unprivileged users to limit
+> themselves.
+>
+> Cf. section "What it isn't?" in Documentation/prctl/seccomp_filter.txt
+>
+>
+> ## Why use the seccomp(2) syscall?
+>
+> Landlock use the same semantic as seccomp to apply access rule
+> restrictions. It add a new layer of security for the current process
+> which is inherited by its children. It makes sense to use an unique
+> access-restricting syscall (that should be allowed by seccomp filters)
+> which can only drop privileges. Moreover, a Landlock rule could come
+> from outside a process (e.g.  passed through a UNIX socket). It is then
+> useful to differentiate the creation/load of Landlock eBPF programs via
+> bpf(2), from rule enforcement via seccomp(2).
 
---aMdpPijkWkxWbd6h5LYqQVqvB23HviTFP
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+This seems like a weak argument to me.  Sure, this is a bit different
+from seccomp(), and maybe shoving it into the seccomp() multiplexer is
+awkward, but surely the bpf() multiplexer is even less applicable.
 
+But I think that you have more in common with seccomp() than you're
+giving it credit for.  With seccomp, you need to either prevent
+ptrace() of any more-privileged task or you need to filter to make
+sure you can't trace a more privileged program.  With landlock, you
+need exactly the same thing.  You have basically the same no_new_privs
+considerations, etc.
 
+Also, looking forward, I think you're going to want a bunch of the
+stuff that's under consideration as new seccomp features.  Tycho is
+working on a "user notifier" feature for seccomp where, in addition to
+accepting, rejecting, or kicking to ptrace, you can send a message to
+the creator of the filter and wait for a reply.  I think that Landlock
+will want exactly the same feature.
 
-On 27/02/2018 05:17, Andy Lutomirski wrote:
-> On Tue, Feb 27, 2018 at 12:41 AM, Micka=C3=ABl Sala=C3=BCn <mic@digikod=
-=2Enet> wrote:
->> A landlocked process has less privileges than a non-landlocked process=
+In other words, it really seems to be that you should extend seccomp()
+with the ability to attach filters to things that aren't syscall
+entry, e.g. file open.
 
->> and must then be subject to additional restrictions when manipulating
->> processes. To be allowed to use ptrace(2) and related syscalls on a
->> target process, a landlocked process must have a subset of the target
->> process' rules.
->>
->> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Andy Lutomirski <luto@amacapital.net>
->> Cc: Daniel Borkmann <daniel@iogearbox.net>
->> Cc: David S. Miller <davem@davemloft.net>
->> Cc: James Morris <james.l.morris@oracle.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Serge E. Hallyn <serge@hallyn.com>
->> ---
->>
->> Changes since v6:
->> * factor out ptrace check
->> * constify pointers
->> * cleanup headers
->> * use the new security_add_hooks()
->> ---
->>  security/landlock/Makefile       |   2 +-
->>  security/landlock/hooks_ptrace.c | 124 ++++++++++++++++++++++++++++++=
-+++++++++
->>  security/landlock/hooks_ptrace.h |  11 ++++
->>  security/landlock/init.c         |   2 +
->>  4 files changed, 138 insertions(+), 1 deletion(-)
->>  create mode 100644 security/landlock/hooks_ptrace.c
->>  create mode 100644 security/landlock/hooks_ptrace.h
->>
->> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
->> index d0f532a93b4e..605504d852d3 100644
->> --- a/security/landlock/Makefile
->> +++ b/security/landlock/Makefile
->> @@ -3,4 +3,4 @@ obj-$(CONFIG_SECURITY_LANDLOCK) :=3D landlock.o
->>  landlock-y :=3D init.o chain.o task.o \
->>         tag.o tag_fs.o \
->>         enforce.o enforce_seccomp.o \
->> -       hooks.o hooks_cred.o hooks_fs.o
->> +       hooks.o hooks_cred.o hooks_fs.o hooks_ptrace.o
->> diff --git a/security/landlock/hooks_ptrace.c b/security/landlock/hook=
-s_ptrace.c
->> new file mode 100644
->> index 000000000000..f1b977b9c808
->> --- /dev/null
->> +++ b/security/landlock/hooks_ptrace.c
->> @@ -0,0 +1,124 @@
->> +/*
->> + * Landlock LSM - ptrace hooks
->> + *
->> + * Copyright =C2=A9 2017 Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
->> + *
->> + * This program is free software; you can redistribute it and/or modi=
-fy
->> + * it under the terms of the GNU General Public License version 2, as=
+I would also seriously consider doing a scaled-back Landlock variant
+first, with the intent of getting the main mechanism into the kernel.
+In particular, there are two big sources of complexity in Landlock.
+You need to deal with the API for managing bpf programs that filter
+various actions beyond just syscall entry, and you need to deal with
+giving those filters a way to deal with inodes, paths, etc.  But you
+can do the former without the latter.  For example, you could start
+with some Landlock-style filters on things that have nothing to do
+with files.  For example, you could allow a filter for connecting to
+an abstract-namespace unix socket.  Or you could have a hook for
+file_receive.  (You couldn't meaningfully filter based on the *path*
+of the fd being received without adding all the path infrastructure,
+but you could fitler on the *type* of the fd being received.)  Both of
+these add new sandboxing abilities that don't currently exist.  In
+particular, you can't write a seccomp rule that prevents receiving an
+fd using recvmsg() right now unless you block cmsg entirely.  And you
+can't write a filter that allows connecting to unix sockets by path
+without allowing abstract namespace sockets either.
 
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <asm/current.h>
->> +#include <linux/errno.h>
->> +#include <linux/kernel.h> /* ARRAY_SIZE */
->> +#include <linux/lsm_hooks.h>
->> +#include <linux/sched.h> /* struct task_struct */
->> +#include <linux/seccomp.h>
->> +
->> +#include "common.h" /* struct landlock_prog_set */
->> +#include "hooks.h" /* landlocked() */
->> +#include "hooks_ptrace.h"
->> +
->> +static bool progs_are_subset(const struct landlock_prog_set *parent,
->> +               const struct landlock_prog_set *child)
->> +{
->> +       size_t i;
->> +
->> +       if (!parent || !child)
->> +               return false;
->> +       if (parent =3D=3D child)
->> +               return true;
->> +
->> +       for (i =3D 0; i < ARRAY_SIZE(child->programs); i++) {
->=20
-> ARRAY_SIZE(child->programs) seems misleading.  Is there no define
-> NUM_LANDLOCK_PROG_TYPES or similar?
+If you split up Landlock like this then, once you got all the
+installation and management of filters down, you could submit patches
+to add all the path stuff and deal with that review separately.
 
-Yes, there is _LANDLOCK_HOOK_LAST, but this code seems more readable
-exactly because it does not require the developer (or the code checking
-tools) to know about this static value.
-
-
---aMdpPijkWkxWbd6h5LYqQVqvB23HviTFP--
-
---i6YhnamGBZf9NUggMtTjX8wcInMCaoJov
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEUysCyY8er9Axt7hqIt7+33O9apUFAlqV2S0ACgkQIt7+33O9
-apXu7wgAn36DDjmFXW49DSrMteDmxiTQryn8MAANheqMD6r22H9Curl5yh07VW9Z
-4+L+NAmz6Uceefy7IVs6IXJy0nk8h04zjmXamXyJqdgFirjOX12ZjKJn8pT+JRik
-chuWr9L/0NOgGkGUrhwInhFOtIxc/fwnZQg3bbOFEkU1XzIWzBy46c99ec5WiS7v
-3KubJis1teJUeAuP+L46kCfDVpClD5eA51fWaQHrC8dN2seNyygVidzuHJtCIs0e
-T8wTEYurpkYsVkDU95nN5/9Q0tfnKQlsWcAt3dM75BHayoZOXgCfXmhtemdhtM9q
-gV+gB05VGqTepFX3Cs5nhK3AgZ4pwA==
-=x1YA
------END PGP SIGNATURE-----
-
---i6YhnamGBZf9NUggMtTjX8wcInMCaoJov--
+What do you all think?
