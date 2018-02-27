@@ -1,100 +1,282 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeB0S7t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 13:59:49 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46656 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeB0S7T (ORCPT
+        id S1751791AbeB0THA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 14:07:00 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36442 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbeB0TG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 13:59:19 -0500
-X-Google-Smtp-Source: AG47ELsQWaxJk5sG9gkDGD1z8g908jloQqH1XdpZQEqATjoaLpJrzgO6COD2sUBVo011Ypz5rghpFUn4lLQIGsEh4sk=
+        Tue, 27 Feb 2018 14:06:58 -0500
+X-Google-Smtp-Source: AG47ELs3tSu3StE6D90cbdlzX3eCLEZTuAhfteoKKY/7WvIKW9/v2tnAgKQo0tfy1RpLz2pKXTn2Aw==
+Subject: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+From: Alexander Duyck <alexander.duyck@gmail.com>
+To: bhelgaas@google.com, linux-pci@vger.kernel.org
+Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, mheyne@amazon.de,
+        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
+        dwmw@amazon.co.uk
+Date: Tue, 27 Feb 2018 11:06:54 -0800
+Message-ID: <20180227190520.3273.79728.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
-References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
- <CACi5LpM9hn17o7i7R3GUjQYy=6DFtCFKSbDUN7A7MGBTuf7=xw@mail.gmail.com> <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
-From: Bhupesh Sharma <bhsharma@redhat.com>
-Date: Wed, 28 Feb 2018 00:29:16 +0530
-Message-ID: <CACi5LpMv_LB3wi7qn33b6mysdK_weki0YYsG0EkqPhR8FvFq5w@mail.gmail.com>
-Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
-To: Jonathan Toppins <jtoppins@redhat.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        astone@redhat.com, Jonathan Masters <jcm@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, rafael.j.wysocki@intel.com,
-        Ingo Molnar <mingo@kernel.org>, Prarit Bhargava <prarit@redhat.com>,
-        James Morse <james.morse@arm.com>, andriy.shevchenko@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 8:14 PM, Jonathan Toppins <jtoppins@redhat.com> wrote:
-> On 02/27/2018 07:40 AM, Bhupesh Sharma wrote:
->> Hi,
->>
->> On Tue, Feb 27, 2018 at 11:35 AM, Jonathan Toppins <jtoppins@redhat.com> wrote:
->>> This patch allows a user to configure ACPI to be preferred over
->>> device-tree.
->>>
->>> Currently for ACPI to be used a user either has to set acpi=on on the
->>> kernel command line or make sure any device tree passed to the kernel
->>> is empty. If the dtb passed to the kernel is non-empty then device-tree
->>> will be chosen as the boot method of choice even if it is not correct.
->>
->> Hmm. Not sure if I correctly understand what you mean here by the term
->> 'incorrect device tree'. Do you mean a corrupted device tree blob (but
->> normally we can catch those cases via the device tree header) or a
->> deliberate (or a broken) firmware attempt to pass an incorrect device
->> tree blob to the OS.
->
-> I mean a device tree that doesn't list all devices in the SOC. So it is
-> more incomplete than incorrect. It could also be incorrect in that it
-> doesn't list proper timings, memory/pci/etc.
->
->>
->> If its the later, I think the onus should be on the firmware (u-boot
->> or UEFI or others.. ) to fix the problems. I know we carry a lot of
->> fixes in the kernel for x86 firmware quirks but then we have several
->> broken x86 machines on which kernel has been running since several
->> years now.
->>
->> IMO, if we have a known firmware quirk (to fix the broken DTB being
->> passed from the firmware), we can look at adding it in the early arm64
->> kernel code (similar to the quirk handling we do in the x86 early
->> kernel code for broken firmware), rather than forcing ACPI as the boot
->> method.
->>
->>> To prevent this situation where a system is only intended to be booted
->>> via ACPI a user can set this kernel configuration so it ignores
->>> device-tree settings unless ACPI table checks fail.
->>
->> Or, if decide to depreciate DTB as the boot method for such boards,
->> can we look at setting 'acpi=force' in the bootagrs always to make
->> sure that ACPI (and no fallback on DTB) is forced as the boot method
->> for such arm64 machines.
->
-> For arm64 DT is suppose to *not* be the preferred method, yet still DT
-> is preferred if the firmware provides both tables to the kernel.
+From: Alexander Duyck <alexander.h.duyck@intel.com>
 
-That is true mainly for arm64 systems which are compliant to SBSA/SBBR
-specifications and are mainly targeted for server markets.
+This patch is meant to add support for SR-IOV on devices when the VFs are
+not managed by the kernel. Examples of recent patches attempting to do this
+include:
+virto - https://patchwork.kernel.org/patch/10241225/
+pci-stub - https://patchwork.kernel.org/patch/10109935/
+vfio - https://patchwork.kernel.org/patch/10103353/
+uio - https://patchwork.kernel.org/patch/9974031/
 
-However several arm64 products in embedded applications are still not
-SBSA/SBBR compliant (and I have worked on a couple of such
-implementations earlier) and still use bootloaders like u-boot (and
-also closed-source implementations) which have no support for ACPI
-currently and still rely on a DT to pass the system hardware
-information to the kernel.
+Since this is quickly blowing up into a multi-driver problem it is probably
+best to implement this solution in one spot.
 
-So far only open source implementation of a ACPI compliant firmware is
-EDK2/UEFI which supports ACPI as the preferred boot method and I am
-not sure if all u-boot/in-house firmware implementations are planned
-to be ported over to EDK2/UEFI for embedded applications.
+This patch is an attempt to do that. What we do with this patch is provide
+a generic call to enable SR-IOV in the case that the PF driver is either
+not present, or the PF driver doesn't support configuring SR-IOV.
 
-Even if they do, it would be safe to assume that to maintain backward
-compatibility they will still look to support boot via DT as the
-default boot method rather than ACPI.
+A new sysfs value called sriov_unmanaged_autoprobe has been added. This
+value is used as the drivers_autoprobe setting of the VFs when they are
+being managed by an external entity such as userspace or device firmware
+instead of being managed by the kernel.
 
-Regards,
-Bhupesh
+One side effect of this change is that the sriov_drivers_autoprobe and
+sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
+disabled. Attempts to update them when SR-IOV is in use will only update
+the local value and will not update sriov->autoprobe.
+
+I based my patch set originally on the patch by Mark Rustad but there isn't
+much left after going through and cleaning out the bits that were no longer
+needed, and after incorporating the feedback from David Miller.
+
+I have included the authors of the original 4 patches above in the Cc here.
+My hope is to get feedback and/or review on if this works for their use
+cases.
+
+Cc: Mark Rustad <mark.d.rustad@intel.com>
+Cc: Maximilian Heyne <mheyne@amazon.de>
+Cc: Liang-Min Wang <liang-min.wang@intel.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+---
+ drivers/pci/iov.c        |   27 +++++++++++++++++++-
+ drivers/pci/pci-driver.c |    2 +
+ drivers/pci/pci-sysfs.c  |   62 +++++++++++++++++++++++++++++++++++++++++-----
+ drivers/pci/pci.h        |    4 ++-
+ include/linux/pci.h      |    1 +
+ 5 files changed, 86 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 677924ae0350..7b8858bd8d03 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -446,6 +446,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+ 	pci_read_config_word(dev, pos + PCI_SRIOV_VF_DID, &iov->vf_device);
+ 	iov->pgsz = pgsz;
+ 	iov->self = dev;
++	iov->autoprobe = true;
+ 	iov->drivers_autoprobe = true;
+ 	pci_read_config_dword(dev, pos + PCI_SRIOV_CAP, &iov->cap);
+ 	pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
+@@ -643,8 +644,11 @@ void pci_restore_iov_state(struct pci_dev *dev)
+  */
+ void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool auto_probe)
+ {
+-	if (dev->is_physfn)
++	if (dev->is_physfn) {
+ 		dev->sriov->drivers_autoprobe = auto_probe;
++		if (!dev->sriov->num_VFs)
++			dev->sriov->autoprobe = auto_probe;
++	}
+ }
+ 
+ /**
+@@ -703,6 +707,27 @@ void pci_disable_sriov(struct pci_dev *dev)
+ EXPORT_SYMBOL_GPL(pci_disable_sriov);
+ 
+ /**
++ * pci_sriov_configure_unmanaged - helper to configure unmanaged SR-IOV
++ * @dev: the PCI device
++ * @nr_virtfn: number of virtual functions to enable, 0 to disable
++ *
++ * Used to provide generic enable/disable SR-IOV option for devices
++ * that do not manage the VFs generated by their driver, or have no
++ * driver present.
++ */
++int pci_sriov_configure_unmanaged(struct pci_dev *dev, int nr_virtfn)
++{
++	int rc = 0;
++
++	if (!nr_virtfn)
++		pci_disable_sriov(dev);
++	else
++		rc = pci_enable_sriov(dev, nr_virtfn);
++
++	return rc ? rc : nr_virtfn;
++}
++
++/**
+  * pci_num_vf - return number of VFs associated with a PF device_release_driver
+  * @dev: the PCI device
+  *
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 3bed6beda051..2cc68dff6130 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -398,7 +398,7 @@ void __weak pcibios_free_irq(struct pci_dev *dev)
+ #ifdef CONFIG_PCI_IOV
+ static inline bool pci_device_can_probe(struct pci_dev *pdev)
+ {
+-	return (!pdev->is_virtfn || pdev->physfn->sriov->drivers_autoprobe);
++	return (!pdev->is_virtfn || pdev->physfn->sriov->autoprobe);
+ }
+ #else
+ static inline bool pci_device_can_probe(struct pci_dev *pdev)
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index eb6bee8724cc..e701b6dbc267 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -605,6 +605,7 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+ 				  struct device_attribute *attr,
+ 				  const char *buf, size_t count)
+ {
++	int (*sriov_configure)(struct pci_dev *dev, int num_vfs);
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	int ret;
+ 	u16 num_vfs;
+@@ -622,15 +623,20 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+ 		goto exit;
+ 
+ 	/* is PF driver loaded w/callback */
+-	if (!pdev->driver || !pdev->driver->sriov_configure) {
+-		pci_info(pdev, "Driver doesn't support SRIOV configuration via sysfs\n");
+-		ret = -ENOENT;
+-		goto exit;
+-	}
++	if (pdev->driver && pdev->driver->sriov_configure)
++		sriov_configure = pdev->driver->sriov_configure;
++	else
++		sriov_configure = pci_sriov_configure_unmanaged;
+ 
+ 	if (num_vfs == 0) {
+ 		/* disable VFs */
+-		ret = pdev->driver->sriov_configure(pdev, 0);
++		ret = sriov_configure(pdev, 0);
++
++		/*
++		 * Fall back to drivers_autoprobe in case legacy driver
++		 * decides to enable SR-IOV on load.
++		 */
++		pdev->sriov->autoprobe = pdev->sriov->drivers_autoprobe;
+ 		goto exit;
+ 	}
+ 
+@@ -642,7 +648,14 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+ 		goto exit;
+ 	}
+ 
+-	ret = pdev->driver->sriov_configure(pdev, num_vfs);
++	/*
++	 * Update autoprobe based on unmanaged_autoprobe settings if PF
++	 * driver is not managing the SR-IOV configuration for this device.
++	 */
++	if (!pdev->driver || !pdev->driver->sriov_configure)
++		pdev->sriov->autoprobe = pdev->sriov->unmanaged_autoprobe;
++
++	ret = sriov_configure(pdev, num_vfs);
+ 	if (ret < 0)
+ 		goto exit;
+ 
+@@ -705,7 +718,37 @@ static ssize_t sriov_drivers_autoprobe_store(struct device *dev,
+ 	if (kstrtobool(buf, &drivers_autoprobe) < 0)
+ 		return -EINVAL;
+ 
++	device_lock(&pdev->dev);
++
+ 	pdev->sriov->drivers_autoprobe = drivers_autoprobe;
++	if (!pdev->sriov->num_VFs)
++		pdev->sriov->autoprobe = drivers_autoprobe;
++
++	device_unlock(&pdev->dev);
++
++	return count;
++}
++
++static ssize_t sriov_unmanaged_autoprobe_show(struct device *dev,
++					      struct device_attribute *attr,
++					      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return sprintf(buf, "%u\n", pdev->sriov->unmanaged_autoprobe);
++}
++
++static ssize_t sriov_unmanaged_autoprobe_store(struct device *dev,
++					       struct device_attribute *attr,
++					       const char *buf, size_t count)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	bool unmanaged_autoprobe;
++
++	if (kstrtobool(buf, &unmanaged_autoprobe) < 0)
++		return -EINVAL;
++
++	pdev->sriov->unmanaged_autoprobe = unmanaged_autoprobe;
+ 
+ 	return count;
+ }
+@@ -720,6 +763,10 @@ static ssize_t sriov_drivers_autoprobe_store(struct device *dev,
+ static struct device_attribute sriov_drivers_autoprobe_attr =
+ 		__ATTR(sriov_drivers_autoprobe, (S_IRUGO|S_IWUSR|S_IWGRP),
+ 		       sriov_drivers_autoprobe_show, sriov_drivers_autoprobe_store);
++static struct device_attribute sriov_unmanaged_autoprobe_attr =
++		__ATTR(sriov_unmanaged_autoprobe, (S_IRUGO|S_IWUSR|S_IWGRP),
++		       sriov_unmanaged_autoprobe_show,
++		       sriov_unmanaged_autoprobe_store);
+ #endif /* CONFIG_PCI_IOV */
+ 
+ static ssize_t driver_override_store(struct device *dev,
+@@ -1789,6 +1836,7 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
+ 	&sriov_stride_attr.attr,
+ 	&sriov_vf_device_attr.attr,
+ 	&sriov_drivers_autoprobe_attr.attr,
++	&sriov_unmanaged_autoprobe_attr.attr,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index fcd81911b127..b5f8b034f02d 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -272,7 +272,9 @@ struct pci_sriov {
+ 	struct pci_dev	*dev;		/* Lowest numbered PF */
+ 	struct pci_dev	*self;		/* This PF */
+ 	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
+-	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
++	bool		autoprobe;	/* Auto probing of VFs by VF driver */
++	bool		drivers_autoprobe;	/* "" managed by PF driver */
++	bool		unmanaged_autoprobe;	/* "" unmanaged by kernel */
+ };
+ 
+ /* pci_dev priv_flags */
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 024a1beda008..0d2b10aeadfa 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1947,6 +1947,7 @@ static inline void pci_mmcfg_late_init(void) { }
+ 
+ int pci_enable_sriov(struct pci_dev *dev, int nr_virtfn);
+ void pci_disable_sriov(struct pci_dev *dev);
++int pci_sriov_configure_unmanaged(struct pci_dev *dev, int num_vfs);
+ int pci_iov_add_virtfn(struct pci_dev *dev, int id);
+ void pci_iov_remove_virtfn(struct pci_dev *dev, int id);
+ int pci_num_vf(struct pci_dev *dev);
