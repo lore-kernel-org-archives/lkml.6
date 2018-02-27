@@ -1,152 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753414AbeB0OZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:25:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33021 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753117AbeB0OZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:25:56 -0500
-Date: Tue, 27 Feb 2018 15:25:31 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, x86@kernel.org
-Subject: Re: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
- Structure
-Message-ID: <20180227142531.GF26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-4-Yazen.Ghannam@amd.com>
+        id S1753516AbeB0O0N (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:26:13 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34727 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753117AbeB0O0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:26:11 -0500
+X-Google-Smtp-Source: AG47ELu1vBydsGRqQs2N4IM5VIufPH3b8ee2BtWAshNrU3CVY4SD3ho0X00o+1skOavZSC8BpSpvzmXm9j2ji+I2mKs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226193904.20532-4-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 27 Feb 2018 16:26:09 +0200
+Message-ID: <CAEnQRZD4RcZbQgOC-Zj2io0piYCHywKVUmgF1AptxxfWxtXmWw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] iio:dummy: Rework Kconfig
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Daniel Baluta <daniel.baluta@nxp.com>, kernel-janitors@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:38:59PM -0600, Yazen Ghannam wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> Print the fields in the IA32/X64 Processor Error Info Structure.
-> 
-> Based on UEFI 2.7 Table 256. IA32/X64 Processor Error Information
-> Structure.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
-> Link:
-> https://lkml.kernel.org/r/20180223200333.6410-4-Yazen.Ghannam@amd.com
-> 
-> v1->v2:
-> * Add parantheses around "bits" expression in macro.
-> * Fix indentation on multi-line statements.
-> 
->  drivers/firmware/efi/cper-x86.c | 53 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
-> index 9da0d981178f..417bd4e500a7 100644
-> --- a/drivers/firmware/efi/cper-x86.c
-> +++ b/drivers/firmware/efi/cper-x86.c
-> @@ -3,15 +3,28 @@
->  
->  #include <linux/cper.h>
->  
-> +#define INDENT_SP	" "
+On Tue, Feb 27, 2018 at 3:46 PM, Rodrigo Siqueira
+<rodrigosiqueiramelo@gmail.com> wrote:
+> This series adds extra documentation inside iio/dummy/Kconfig, and
+> applies the coding-style to it.
+>
+> Changes v2:
+> - Separates single patch in a short series.
+>
+> Rodrigo Siqueira (2):
+>   iio: dummy: Add correct tabs and spaces to Kconfig
+>   iio:dummy: Add extra paragraphs on Kconfig
 
-That's just silly.
-
-> +
->  /*
->   * We don't need a "CPER_IA" prefix since these are all locally defined.
->   * This will save us a lot of line space.
->   */
->  #define VALID_LAPIC_ID			BIT_ULL(0)
->  #define VALID_CPUID_INFO		BIT_ULL(1)
-> +#define VALID_PROC_ERR_INFO_NUM(bits)	(((bits) & GENMASK_ULL(7, 2)) >> 2)
-> +
-> +#define INFO_VALID_CHECK_INFO		BIT_ULL(0)
-> +#define INFO_VALID_TARGET_ID		BIT_ULL(1)
-> +#define INFO_VALID_REQUESTOR_ID		BIT_ULL(2)
-> +#define INFO_VALID_RESPONDER_ID		BIT_ULL(3)
-> +#define INFO_VALID_IP			BIT_ULL(4)
->  
->  void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
->  {
-> +	int i;
-> +	struct cper_ia_err_info *err_info;
-> +	char newpfx[64];
-> +
->  	printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
->  
->  	if (proc->validation_bits & VALID_LAPIC_ID)
-> @@ -22,4 +35,44 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
->  		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
->  			       sizeof(proc->cpuid), 0);
->  	}
-> +
-> +	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-> +
-> +	err_info = (struct cper_ia_err_info *)(proc + 1);
-> +	for (i = 0; i < VALID_PROC_ERR_INFO_NUM(proc->validation_bits); i++) {
-> +		printk("%sError Information Structure %d:\n", pfx, i);
-> +
-> +		printk("%sError Structure Type: %pUl\n", newpfx,
-> +		       &err_info->err_type);
-
-That dumps a GUID - how do I find out what type that GUID refers to?
-
-> +
-> +		printk("%sValidation Bits: 0x%016llx\n",
-> +		       newpfx, err_info->validation_bits);
-
-As before, no need for those.
-
-> +
-> +		if (err_info->validation_bits & INFO_VALID_CHECK_INFO) {
-> +			printk("%sCheck Information: 0x%016llx\n", newpfx,
-> +			       err_info->check_info);
-> +		}
-> +
-> +		if (err_info->validation_bits & INFO_VALID_TARGET_ID) {
-> +			printk("%sTarget Identifier: 0x%016llx\n",
-> +			       newpfx, err_info->target_id);
-> +		}
-> +
-> +		if (err_info->validation_bits & INFO_VALID_REQUESTOR_ID) {
-> +			printk("%sRequestor Identifier: 0x%016llx\n",
-> +			       newpfx, err_info->requestor_id);
-> +		}
-> +
-> +		if (err_info->validation_bits & INFO_VALID_RESPONDER_ID) {
-> +			printk("%sResponder Identifier: 0x%016llx\n",
-> +			       newpfx, err_info->responder_id);
-> +		}
-
-Those look like would need an additional decoding. Can we do that here
-too?
-
-> +
-> +		if (err_info->validation_bits & INFO_VALID_IP) {
-> +			printk("%sInstruction Pointer: 0x%016llx\n",
-> +			       newpfx, err_info->ip);
-
-The only thing that makes sense so far.
-
-> +		}
-> +
-> +		err_info++;
-> +	}
-
-Also, it is worth checking how much duplication there is with
-drivers/firmware/efi/cper-arm.c and unifying the common pieces into
-functions in cper-common.c or so.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
