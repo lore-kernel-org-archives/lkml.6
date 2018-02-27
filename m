@@ -1,77 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753138AbeB0Mpk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 07:45:40 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45178 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752193AbeB0Mpi (ORCPT
+        id S1752857AbeB0Myq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 07:54:46 -0500
+Received: from mail-io0-f173.google.com ([209.85.223.173]:33594 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752107AbeB0Myp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 07:45:38 -0500
-X-Google-Smtp-Source: AH8x2241rXtO4PTNfMsYZtVqx2utWCqFsozzdCqE0MoS05/suM6DhDoQMRCGe6h2KAWCTuFaxWvvzw==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 1/1] Additional strict check on ELF file. Checks segments
- are followed in order of 'p_vaddr ' value ascending. It fixes erorr in
- total_mapping_size with computation total size. This error happens if
- segments in ELF file are not in order.
-From: Ilya Smith <blackzert@gmail.com>
-In-Reply-To: <16811dde-abb3-1504-003c-475d40610f9f@infradead.org>
-Date: Tue, 27 Feb 2018 15:45:34 +0300
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <AD3CF79A-0AFC-4447-BBC7-8EA5F036B623@gmail.com>
-References: <20180226154659.10218-1-blackzert@gmail.com>
- <20180226154659.10218-2-blackzert@gmail.com>
- <16811dde-abb3-1504-003c-475d40610f9f@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 27 Feb 2018 07:54:45 -0500
+X-Google-Smtp-Source: AG47ELtHIYVQZTgTACF9sxTOEXAp1r0I6UeIt4g57sSq0sejAIZNoXC7YDC2cYw5+jga0DGzh0mnsErkhhHpTyauM5Y=
+MIME-Version: 1.0
+From: Woody Suwalski <terraluna977@gmail.com>
+Date: Tue, 27 Feb 2018 07:54:44 -0500
+Message-ID: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com>
+Subject: 4.16 regression: s2ram broken on non-PAE i686
+To: Linux Kernel List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        William Grant <william.grant@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RCjmpr013962
 
-Thanks for that, I will fix it in next patch. Any other feedback?
+There is a problem with s2ram on 4.16, and it has now been propagated
+to 4.15 and 4.14 stable updates.
 
-Thanks,
-Ilya
+It originates from
 
-> 26 февр. 2018 г., в 20:48, Randy Dunlap <rdunlap@infradead.org> написал(а):
-> 
-> On 02/26/2018 07:46 AM, Ilya Smith wrote:
->> Signed-off-by: Ilya Smith <blackzert@gmail.com>
->> ---
->> fs/binfmt_elf.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
->> 1 file changed, 51 insertions(+)
->> 
->> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->> index bdb201230bae..970b42044240 100644
->> --- a/fs/binfmt_elf.c
->> +++ b/fs/binfmt_elf.c
->> @@ -524,6 +524,52 @@ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
->> 
->> #endif /* !CONFIG_ARCH_BINFMT_ELF_STATE */
->> 
->> +/**
->> + * elf_check_phdr() - common check ELF program header.
->> + * @phdr: The program header to check
->> + * @phdr_num: Count of program headers in @phdr from elf header.
->> + *
->> + * Checks ELF binary meets specification.
->> + *
->> + * Return: Zero to proceed with ELF load, non-zero to faile the ELF load
-> 
->                                                         fail
-> 
->> + *		   with that return code.
->> + */
->> +static int elf_check_phdr(struct elf_phdr *phdr, unsigned long phdr_num)
->> +{
-> 
-> And it would be nicer/better to have all of the "intro" text in the body of this
-> message instead of in another email.
-> 
-> thanks,
-> -- 
-> ~Randy
+commit 62c00e6122a6b5aa7b1350023967a2d7a12b54c9
+Author: William Grant <william.grant@canonical.com
+<mailto:william.grant@canonical.com>>
+Date:   Tue Jan 30 22:22:55 2018 +1100
+
+    x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
+
+s2ram works OK on PAE kernels, breaks badly on non-PAE. I do not think
+that the problem can be duplicated in VMPlayer, but it is 100%
+reproducible on a "real" hardware.
+System goes to sleep OK, but when woken - it reboots the PC.
+
+The issue is tracked in Bugzilla bug 198763
+[https://bugzilla.kernel.org/show_bug.cgi?id=198763]
+
+Thanks, Woody
