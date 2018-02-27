@@ -1,300 +1,103 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtc8PD17m3m40fH+EFD3XUtLZD9Ew00M47qCc6WEBlV5PigPK/rc5kzDIOzntjoSZZuDVjR
-ARC-Seal: i=1; a=rsa-sha256; t=1519676696; cv=none;
-        d=google.com; s=arc-20160816;
-        b=K1M+WXsiI9SnycwfiuV3QI34nrtzLOK83p8P2TWelaRDLO3OIxsOsipDxDKZhul8om
-         IM8BaeVItpPyvgo5zXZfr/v0bpIqXEOUhXyeH04GEb+uALcE9PvKWKPrtNNxJo+YlGAX
-         vjy7urEcT2fJikDQf4q43R/aNlbdAz4I5S6IEEHJ1+QJ/vuIecKNkDKfWCoiXG4w4sYp
-         5nBtApL1tS3fCA9NUf5grOCnl3MqL5Va7JrOOItz7R08g700gNsmOPKirmlpP+iKAUUv
-         OXwRYzbSKyJGZxAbjBmC7UgU+yVR3dCGHXo6aMZ7popIG2I14A4oShB74CCjDsTLjqDH
-         NCGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=TRhE1raSQZ1/w0na2wh/M8c0Te7bT0a5DN14KHbOpt4=;
-        b=o+vLhVdUi29Vs1dY2cOguulSF9Mcy97G12rtyO51deOHSKbsI3slKoozI+ZnSBnLEu
-         za77aJCHbLroN3JHRNjkG2d0MnbtA31fZfJ8SyHti3KmPNaWkHdkZM5BdJKxs5kUhkbb
-         296S0kMgYFLJKHbIG8SKv+nzLrX2cO3nSBVQWRTXpyKpbUtUPNxG72MKY5jKubdt1NpY
-         UE/Fb5MsC2vNAVPpNPKzifsy9OwRFhzrUaaUxTo09a8I4UWjmu+OQE0b6oO58egfnaRo
-         xkYHJQiwJQloDlD+1HGyDZmjctWHN/Sl4BHQEq105/FWWoO10YecoTYX5YLIpVZbTjbl
-         rhdQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuahkh@osg.samsung.com,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.14 00/54] 4.14.23-stable review
-Date: Mon, 26 Feb 2018 21:21:37 +0100
-Message-Id: <20180226202144.375869933@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.23-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.23-rc1
-X-KernelTest-Deadline: 2018-02-28T20:21+00:00
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1199706-1519729186-2-16362238786660714117
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519729185; b=k3Zh0kz6C/bjZ577mSXFx9en+Mk4Cr0v9C7OgTUGyS7uvvB
+    5w9ARcNvyKpxcM6Sq8HdWpZk8S2Vt2nqqq7w047w0OCspTFK5nPxT9ZbsYYmsn39
+    fRFOdh6ZBe31si2pqRspnIEZE8T311jnt3Wq89r17sBslyuzRLYtsGfof83/cfxo
+    zt4cg6C2b/P0Kjk50Ftd50mXrO7qWUpVSAaKUAJE0SiPBjDw/p84X7GTVD3XD0hZ
+    F8p6O/12bSxJmyPZrBCqTLJvkE4lxNY1qaXWMxkBnlNEWSq4uD6DpLdEkBp7c4KJ
+    Z+KIsbn4S44GuqClhROAn5rn7iOMsI4zE7UJ9kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519729185; bh=Ji9aDe75ByJtiRt81ty2iR1881hq57ij9bzabFMA62A=; b=T
+    U/Dby8j77sFd/hY8USVbOaC5HHk1+Ujzb7YHyoIWzmTXNOH34wKapmMAuK5HF07A
+    sWV+aHrzKFg7XZcli45yB39mDDu8rw8ua1kGAeEA9i8U3Rpp3n+zWp4/Y1q+CVAb
+    jVycHQlHPcjT7594rHVbP43o8klNM0nbaJAQk0+xJxuPVZY9llpT23X3np2N45iN
+    vnT+A7j1UdKLzYke3zhIvOzyBchDOhc3CExmRLtJM0Q+9FNwvQgt6fskOylavjin
+    9hCWipNY0HeV53gba3DDZO7rxFSiffxRHp5apeh5TYaMA73fVka7dAURUFLj6snN
+    nushNiPXdKYN1e7iACn8Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=SPBAUvEX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NB8njlTt;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=SPBAUvEX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NB8njlTt;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752012AbeB0K7n (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 05:59:43 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45361 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752101AbeB0K7m (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 05:59:42 -0500
+X-Google-Smtp-Source: AH8x225lG0ZmGAEXWD0Z+vxTZ2PyDVB0OWvucRWEV8CGlcTKU22ddoWabEMrAZw3GcaW54kFMjLsug==
+Subject: Re: [PATCH 4.14 00/54] 4.14.23-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180226202144.375869933@linuxfoundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <d4f09175-d9f0-6251-ef34-14934fce5186@roeck-us.net>
+Date: Tue, 27 Feb 2018 02:59:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593496512090917624?=
-X-GMAIL-MSGID: =?utf-8?q?1593496512090917624?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.14.23 release.
-There are 54 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed Feb 28 20:21:22 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.23-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.23-rc1
-
-Chris Wilson <chris@chris-wilson.co.uk>
-    drm/i915/breadcrumbs: Ignore unsubmitted signalers
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    drm/amdgpu: add new device to use atpx quirk
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: add atpx quirk handling (v2)
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: only check mmBIF_IOV_FUNC_IDENTIFIER on tonga/fiji
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: Add dpm quirk for Jet PRO (v2)
-
-Huang Rui <ray.huang@amd.com>
-    drm/amdgpu: disable MMHUB power gating on raven
-
-Chris Wilson <chris@chris-wilson.co.uk>
-    drm: Handle unexpected holes in color-eviction
-
-Daniel Vetter <daniel.vetter@ffwll.ch>
-    drm/cirrus: Load lut in crtc_commit
-
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-
-Jack Pham <jackp@codeaurora.org>
-    usb: gadget: f_fs: Use config_ep_by_speed()
-
-Jack Pham <jackp@codeaurora.org>
-    usb: gadget: f_fs: Process all descriptors during bind
-
-Bin Liu <b-liu@ti.com>
-    Revert "usb: musb: host: don't start next rx urb if current one failed"
-
-Karsten Koop <kkoop@ld-didactic.de>
-    usb: ldusb: add PIDs for new CASSY devices supported by this driver
-
-Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-    usb: dwc3: ep0: Reset TRB counter for ep0 IN
-
-Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-    usb: dwc3: gadget: Set maxpacket size for ep0 IN
-
-Peter Chen <hzpeterchen@gmail.com>
-    usb: host: ehci: use correct device pointer for dma ops
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
-
-Jack Stocker <jackstocker.93@gmail.com>
-    Add delay-init quirk for Corsair K70 RGB keyboards
-
-Will Deacon <will.deacon@arm.com>
-    arm64: cpufeature: Fix CTR_EL0 field definitions
-
-Michael Weiser <michael.weiser@gmx.de>
-    arm64: Disable unhandled signal log messages by default
-
-Michael Weiser <michael.weiser@gmx.de>
-    arm64: Remove unimplemented syscall log message
-
-AMAN DEEP <aman.deep@samsung.com>
-    usb: ohci: Proper handling of ed_rm_list to handle race condition between usb_kill_urb() and finish_unlinks()
-
-Shigeru Yoshida <shigeru.yoshida@windriver.com>
-    ohci-hcd: Fix race condition caused by ohci_urb_enqueue() and io_watchdog_func()
-
-Casey Leedom <leedom@chelsio.com>
-    PCI/cxgb4: Extend T3 PCI quirk to T4+ devices
-
-Matt Redfearn <matt.redfearn@mips.com>
-    irqchip/mips-gic: Avoid spuriously handling masked interrupts
-
-Shanker Donthineni <shankerd@codeaurora.org>
-    irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-
-Huang Ying <huang.ying.caritas@gmail.com>
-    mm, swap, frontswap: fix THP swap if frontswap enabled
-
-Arnd Bergmann <arnd@arndb.de>
-    x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-
-Arnd Bergmann <arnd@arndb.de>
-    Kbuild: always define endianess in kconfig.h
-
-Lars-Peter Clausen <lars@metafoo.de>
-    iio: adis_lib: Initialize trigger before requesting interrupt
-
-Stefan Windfeldt-Prytz <stefan.windfeldt@axis.com>
-    iio: buffer: check if a buffer has been set up when poll is called
-
-Andreas Klinger <ak@it-klinger.de>
-    iio: srf08: fix link error "devm_iio_triggered_buffer_setup" undefined
-
-Fabrice Gasnier <fabrice.gasnier@st.com>
-    iio: adc: stm32: fix stm32h7_adc_enable error handling
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/uverbs: Sanitize user entered port numbers prior to access it
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/uverbs: Fix circular locking dependency
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/uverbs: Fix bad unlock balance in ib_uverbs_close_xrcd
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/uverbs: Protect from command mask overflow
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/uverbs: Protect from races between lookup and destroy of uobjects
-
-Hans de Goede <hdegoede@redhat.com>
-    extcon: int3496: process id-pin first so that we start with the right status
-
-Eric Biggers <ebiggers@google.com>
-    PKCS#7: fix certificate blacklisting
-
-Eric Biggers <ebiggers@google.com>
-    PKCS#7: fix certificate chain verification
-
-Eric Biggers <ebiggers@google.com>
-    X.509: fix NULL dereference when restricting key with unsupported_sig
-
-Eric Biggers <ebiggers@google.com>
-    X.509: fix BUG_ON() when hash algorithm is unsupported
-
-Eric Anholt <eric@anholt.net>
-    i2c: bcm2835: Set up the rising/falling edge delays
-
-Ben Gardner <gardner.ben@gmail.com>
-    i2c: designware: must wait for enable
-
-Arnd Bergmann <arnd@arndb.de>
-    cfg80211: fix cfg80211_beacon_dup
-
-James Hogan <jhogan@kernel.org>
-    MIPS: Drop spurious __unused in struct compat_flock
-
-Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-    scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
-
-Max Filippov <jcmvbkbc@gmail.com>
-    xtensa: fix high memory/reserved memory collision
-
-Kees Cook <keescook@chromium.org>
-    MIPS: boot: Define __ASSEMBLY__ for its.S build
-
-Kees Cook <keescook@chromium.org>
-    kconfig.h: Include compiler types to avoid missed struct attributes
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    arm64: mm: don't write garbage into TTBR1_EL1 register
-
-Paolo Abeni <pabeni@redhat.com>
-    netfilter: drop outermost socket lock in getsockopt()
-
-
--------------
-
-Diffstat:
-
- Makefile                                         |  4 +-
- arch/arm64/kernel/cpufeature.c                   |  6 +-
- arch/arm64/kernel/traps.c                        | 10 +---
- arch/arm64/mm/proc.S                             |  2 +-
- arch/mips/boot/Makefile                          |  1 +
- arch/mips/include/asm/compat.h                   |  1 -
- arch/x86/oprofile/nmi_int.c                      |  2 +-
- arch/xtensa/mm/init.c                            | 70 +++++++++++++++++++++---
- crypto/asymmetric_keys/pkcs7_verify.c            | 12 ++--
- crypto/asymmetric_keys/public_key.c              |  4 +-
- crypto/asymmetric_keys/restrict.c                | 21 ++++---
- drivers/extcon/extcon-intel-int3496.c            |  3 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | 58 +++++++++++++++++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       |  2 -
- drivers/gpu/drm/amd/amdgpu/si_dpm.c              |  5 ++
- drivers/gpu/drm/amd/amdgpu/soc15.c               |  4 +-
- drivers/gpu/drm/amd/amdgpu/vi.c                  | 21 ++++---
- drivers/gpu/drm/cirrus/cirrus_mode.c             | 40 ++++++++------
- drivers/gpu/drm/drm_edid.c                       |  3 +
- drivers/gpu/drm/drm_mm.c                         | 21 ++++++-
- drivers/gpu/drm/i915/intel_breadcrumbs.c         | 29 ++++------
- drivers/hid/hid-core.c                           |  3 +
- drivers/hid/hid-ids.h                            |  3 +
- drivers/i2c/busses/i2c-bcm2835.c                 | 21 ++++++-
- drivers/i2c/busses/i2c-designware-master.c       |  2 +-
- drivers/iio/adc/stm32-adc.c                      |  7 ++-
- drivers/iio/imu/adis_trigger.c                   |  7 ++-
- drivers/iio/industrialio-buffer.c                |  2 +-
- drivers/iio/proximity/Kconfig                    |  2 +
- drivers/infiniband/core/rdma_core.c              | 10 +++-
- drivers/infiniband/core/uverbs_cmd.c             | 16 ++++--
- drivers/infiniband/core/uverbs_main.c            | 27 ++++++---
- drivers/irqchip/irq-gic-v3.c                     |  2 +-
- drivers/irqchip/irq-mips-gic.c                   |  2 -
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c       | 10 ----
- drivers/pci/quirks.c                             | 39 +++++++------
- drivers/scsi/ibmvscsi/ibmvfc.h                   |  2 +-
- drivers/usb/core/quirks.c                        |  3 +
- drivers/usb/dwc3/ep0.c                           |  7 ++-
- drivers/usb/dwc3/gadget.c                        |  2 +
- drivers/usb/gadget/function/f_fs.c               | 44 +++------------
- drivers/usb/host/ehci-hub.c                      |  4 +-
- drivers/usb/host/ohci-hcd.c                      | 10 +++-
- drivers/usb/host/ohci-hub.c                      |  4 +-
- drivers/usb/host/ohci-q.c                        | 17 +++---
- drivers/usb/misc/ldusb.c                         |  6 ++
- drivers/usb/musb/musb_host.c                     |  8 +--
- drivers/usb/renesas_usbhs/fifo.c                 |  5 ++
- drivers/xen/tmem.c                               |  4 ++
- include/linux/kconfig.h                          |  9 +++
- mm/zswap.c                                       |  6 ++
- net/ipv4/ip_sockglue.c                           |  7 +--
- net/ipv6/ipv6_sockglue.c                         | 10 +---
- net/mac80211/cfg.c                               |  2 +-
- 54 files changed, 403 insertions(+), 219 deletions(-)
+On 02/26/2018 12:21 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.23 release.
+> There are 54 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb 28 20:21:22 UTC 2018.
+> Anything received after that time might be too late.
+> 
+
+microblaze, m32r:
+
+include/linux/byteorder/big_endian.h:8:2: warning: #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN [-Wcpp]
+  #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN
+   ^~~~~~~
+/opt/buildbot/slave/stable-queue-4.14/build/lib/find_bit.c:176:15: error: redefinition of ‘find_next_zero_bit_le’
+
+v4.15 is also affected (m32r builds in v4.15, though, for some reason).
+
+Guenter
