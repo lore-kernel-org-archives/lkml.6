@@ -1,59 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754005AbeB0Pm3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:42:29 -0500
-Received: from mga04.intel.com ([192.55.52.120]:60587 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753923AbeB0Pm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:42:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
-   d="scan'208";a="34019963"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        id S1754184AbeB0PnY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:43:24 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:51780 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753942AbeB0PnU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 10:43:20 -0500
+X-Google-Smtp-Source: AG47ELu2xmJhfd0kQeh9EYL+oa9DqUsuKDe9d74OJ2QOuyyl4QqF/auvsBCidOdTbvJCGsiSVIbu3A==
+Date: Tue, 27 Feb 2018 18:43:09 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 0/5] x86/boot/compressed/64: Prepare trampoline memory
-Date: Tue, 27 Feb 2018 18:42:12 +0300
-Message-Id: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
+Subject: Re: [PATCH] x86/mm/sme: Disable stack protection for
+ mem_encrypt_identity.c
+Message-ID: <20180227154309.3gt2tylttsnt2en2@node.shutemov.name>
+References: <20180226232554.14108.16881.stgit@tlendack-t1.amdoffice.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226232554.14108.16881.stgit@tlendack-t1.amdoffice.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's re-split of the patch that prepares trampoline memory, but doesn't
-actually uses it yet. The original patch turned out to be problematic.
+On Mon, Feb 26, 2018 at 05:25:54PM -0600, Tom Lendacky wrote:
+> Stack protection is not compatible with early boot code.  All of the early
+> SME boot code is now isolated in a separate file, mem_encrypt_identity.c,
+> so arch/x86/mm/Makefile can be updated to turn off stack protection for
+> the entire file.  This eliminates the need to worry about other functions
+> within the file being instrumented with stack protection (as was seen
+> when a newer version of GCC instrumented sme_encrypt_kernel() where an
+> older version hadn't).  It also allows removal of the __nostackprotector
+> attribute from individual functions.
+> 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-The functionality should match the original patch (although I've moved a
-bit more into C).
+Looks good to me.
 
-Please review and consider applying.
-
-v2:
- - Add Tested-by from Borislav
- - s/__ASSEMBLER__/__ASSEMBLY__/
-
-Kirill A. Shutemov (5):
-  x86/boot/compressed/64: Describe the logic behind LA57 check
-  x86/boot/compressed/64: Find a place for 32-bit trampoline
-  x86/boot/compressed/64: Save and restore trampoline memory
-  x86/boot/compressed/64: Set up trampoline memory
-  x86/boot/compressed/64: Prepare new top-level page table for
-    trampoline
-
- arch/x86/boot/compressed/head_64.S    |  13 +++-
- arch/x86/boot/compressed/misc.c       |   4 +
- arch/x86/boot/compressed/pgtable.h    |  20 +++++
- arch/x86/boot/compressed/pgtable_64.c | 133 +++++++++++++++++++++++++++++++++-
- 4 files changed, 166 insertions(+), 4 deletions(-)
- create mode 100644 arch/x86/boot/compressed/pgtable.h
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
-2.16.1
+ Kirill A. Shutemov
