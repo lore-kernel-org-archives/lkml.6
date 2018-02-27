@@ -1,123 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeB0IVs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:21:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37445 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752069AbeB0IVq (ORCPT
+        id S1752504AbeB0IV5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:21:57 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37845 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751993AbeB0IVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:21:46 -0500
-Subject: Re: [PATCH 5/7] iio: adc: stm32-dfsdm: misc style improvements and
- fixes
-To: Jonathan Cameron <jic23@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>,
-        <arnaud.pouliquen@st.com>
-References: <1519390261-25453-1-git-send-email-fabrice.gasnier@st.com>
- <1519390261-25453-6-git-send-email-fabrice.gasnier@st.com>
- <20180224130309.7129e79f@archlinux>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <62c19775-b013-a721-6f14-a8af88984b4b@st.com>
-Date: Tue, 27 Feb 2018 09:21:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 03:21:53 -0500
+X-Google-Smtp-Source: AH8x226SSdCdDvKWyt7sQ/j3GzogUlx8fYl30S0jM+Wzju1ZUie0gLEa43YmjRpXu3Q6pA7CCvo+6Q==
+Date: Tue, 27 Feb 2018 11:21:42 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: kernel test robot <fengguang.wu@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKP <lkp@01.org>, linux-pm@vger.kernel.org, linux-efi@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, wfg@linux.intel.com
+Subject: Re: 91f606a8fa ("x86/mm: Replace compile-time checks for 5-level
+ .."): BUG: kernel reboot-without-warning in boot stage
+Message-ID: <20180227082142.7qxtlcx3hkb22abn@node.shutemov.name>
+References: <5a94243e.XdjEw/cR1zAcoW8q%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180224130309.7129e79f@archlinux>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a94243e.XdjEw/cR1zAcoW8q%fengguang.wu@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/24/2018 02:03 PM, Jonathan Cameron wrote:
-> On Fri, 23 Feb 2018 13:50:59 +0100
-> Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+On Mon, Feb 26, 2018 at 11:14:06PM +0800, kernel test robot wrote:
+> Greetings,
 > 
->> Misc fixes & style improvements:
->> - checkpatch warns about line over 80 characters.
->> - remove extra spaces and a blank line (e.g. checkpatch --strict)
->> - remove bad error message always printed in probe routine.
->>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> I'd have preferred this as 3 patches doing one type fo fix each.
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
+> 
+> commit 91f606a8fa68264224cbc76888fa8649cdbe9990
+> Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> AuthorDate: Wed Feb 14 21:25:41 2018 +0300
+> Commit:     Ingo Molnar <mingo@kernel.org>
+> CommitDate: Fri Feb 16 10:48:49 2018 +0100
+> 
+>     x86/mm: Replace compile-time checks for 5-level paging with runtime-time checks
+>     
+>     This patch converts the of CONFIG_X86_5LEVEL check to runtime checks for
+>     p4d folding.
+>     
+>     Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>     Cc: Andy Lutomirski <luto@kernel.org>
+>     Cc: Arjan van de Ven <arjan@linux.intel.com>
+>     Cc: Borislav Petkov <bp@suse.de>
+>     Cc: Dan Williams <dan.j.williams@intel.com>
+>     Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>     Cc: David Woodhouse <dwmw2@infradead.org>
+>     Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>     Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: Thomas Gleixner <tglx@linutronix.de>
+>     Cc: linux-mm@kvack.org
+>     Link: http://lkml.kernel.org/r/20180214182542.69302-9-kirill.shutemov@linux.intel.com
+>     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> 
+> 98219dda2a  x86/mm: Fold p4d page table layer at runtime
+> 91f606a8fa  x86/mm: Replace compile-time checks for 5-level paging with runtime-time checks
+> 1ea4fe8497  Merge branch 'x86/boot' into x86/mm, to unify branches
+> 94991480c2  Merge branch 'x86/pti'
+> f1753f6424  Add linux-next specific files for 20180226
 
-Hi Jonathan,
+Patch below should help. Please check.
 
-I was wondering about this as well. Do you wish I send a new series with
-this patch, split into (3 or maybe 4) separate patches ?
-
-In this case, do I need also resend two last patches of this series ?
-
-Please let me know.
-Many thanks,
-Fabrice
-> 
-> Anyhow, I'll need to hold this until the fixes have made there
-> way upstream.  Give me a poke if I seem to have forgotten
-> and the dependencies have made it back to my togreg branch.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
->> ---
->>  drivers/iio/adc/stm32-dfsdm-adc.c | 9 ++++-----
->>  1 file changed, 4 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
->> index 01422d1..57bcb45 100644
->> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
->> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
->> @@ -253,7 +253,8 @@ static int stm32_dfsdm_start_filter(struct stm32_dfsdm *dfsdm,
->>  				  DFSDM_CR1_RSWSTART(1));
->>  }
->>  
->> -static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm, unsigned int fl_id)
->> +static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm,
->> +				    unsigned int fl_id)
->>  {
->>  	/* Disable conversion */
->>  	regmap_update_bits(dfsdm->regmap, DFSDM_CR1(fl_id),
->> @@ -337,7 +338,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
->>  					    "st,adc-channel-types", chan_idx,
->>  					    &of_str);
->>  	if (!ret) {
->> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
->> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
->>  		if (val < 0)
->>  			return val;
->>  	} else {
->> @@ -349,7 +350,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
->>  					    "st,adc-channel-clk-src", chan_idx,
->>  					    &of_str);
->>  	if (!ret) {
->> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
->> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
->>  		if (val < 0)
->>  			return val;
->>  	} else {
->> @@ -1093,7 +1094,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
->>  	char *name;
->>  	int ret, irq, val;
->>  
->> -
->>  	dev_data = of_device_get_match_data(dev);
->>  	iio = devm_iio_device_alloc(dev, sizeof(*adc));
->>  	if (!iio) {
->> @@ -1161,7 +1161,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
->>  	if (ret < 0)
->>  		goto err_cleanup;
->>  
->> -	dev_err(dev, "of_platform_populate\n");
->>  	if (dev_data->type == DFSDM_AUDIO) {
->>  		ret = of_platform_populate(np, NULL, NULL, dev);
->>  		if (ret < 0) {
-> 
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 81dda8d1d0bd..163e01a0631d 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -224,9 +224,9 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ 		return;
+ 	}
+ 
+-	pgd = native_make_pgd(p4d_val(p4d));
++	pgd = native_make_pgd(native_p4d_val(p4d));
+ 	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
+-	*p4dp = native_make_p4d(pgd_val(pgd));
++	*p4dp = native_make_p4d(native_pgd_val(pgd));
+ }
+ 
+ static inline void native_p4d_clear(p4d_t *p4d)
+-- 
+ Kirill A. Shutemov
