@@ -1,409 +1,489 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753818AbeB0Odh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:33:37 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:44811 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753743AbeB0Odf (ORCPT
+        id S1753948AbeB0OeC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:34:02 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50886 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753477AbeB0Od5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:33:35 -0500
-Subject: Re: [PATCH] drm/tinydrm: Allocate dummy SPI RX buffer if needed
-To: David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-References: <1519082461-32405-1-git-send-email-david@lechnology.com>
-From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <470d5309-3414-74b8-1329-577037528a8e@tronnes.org>
-Date: Tue, 27 Feb 2018 15:33:28 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519082461-32405-1-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 27 Feb 2018 09:33:57 -0500
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Subject: [PATCH v2 07/15] KVM: s390: Interfaces to configure/deconfigure guest's AP matrix
+Date: Tue, 27 Feb 2018 09:28:05 -0500
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18022714-8235-0000-0000-00000D149E25
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00995862; UDB=6.00506230; IPR=6.00775186;
+ MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022714-8236-0000-0000-00003FD9857C
+Message-Id: <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802270183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Provides interfaces to assign AP adapters, usage domains
+and control domains to a KVM guest.
 
-Den 20.02.2018 00.21, skrev David Lechner:
-> This adds a new feature to allocate a dummy RX buffer for SPI controllers
-> that require an RX buffer even when not receiving. If an RX buffer is not
-> supplied, the SPI controller will reallocate a new buffer on each
-> transfer.
->
-> On systems with limited memory (e.g. 64MB and CONFIG_SWAP=n), this
-> reallocation will occasionally fail, which causes the display to stop
-> working. By allocating this buffer once and reusing it, we can prevent
-> this problem.
->
-> This patch also introduces some helper functions for calculating the
-> size of this buffer, so these functions are re-used where possible
-> (e.g. in mipi_dbi_init()).
->
-> Cc: Noralf Trønnes <noralf@tronnes.org>
-> Suggested-by: Noralf Trønnes <noralf@tronnes.org>
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->
-> This is a follow up from the mail thread "tinydrm: page allocation failure" [1].
-> I actually got an allocation failure a few times even when I had swap enabled,
-> so I think this change is needed.
->
-> [1]: https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg203657.html
+A KVM guest is started by executing the Start Interpretive Execution (SIE)
+instruction. The SIE state description is a control block that contains the
+state information for a KVM guest and is supplied as input to the SIE
+instruction. The SIE state description has a satellite structure called the
+Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
+identifying the adapters, queues (domains) and control domains assigned to
+the KVM guest:
 
-I was hoping that we could avoid touching drivers with this change.
+* The AP Adapter Mask (APM) field identifies the AP adapters assigned to
+  the KVM guest
 
-In the current situation it would be enough to allocate a buffer the size
-of what tinydrm_spi_max_transfer_size() returns, because that's the
-maximun transfers length used in tinydrm_spi_transfer().
+* The AP Queue Mask (AQM) field identifies the AP queues assigned to
+  the KVM guest. Each AP queue is connected to a usage domain within
+  an AP adapter.
 
-However Meghana is trying to remove the transfer buffer splitting [1],
-so I think we should wait and see the outcome of that first.
+* The AP Domain Mask (ADM) field identifies the control domains
+  assigned to the KVM guest.
 
-If in the end we do send the entire buffer, maybe we can defer
-allocating the rx buffer until the first time it is used so we can
-know the buffer size without asking the drivers.
+Each adapter, queue (usage domain) and control domain are identified by
+a number from 0 to 255. The bits in each mask, from most significant to
+least significant bit, correspond to the numbers 0-255. When a bit is
+set, the corresponding adapter, queue (usage domain) or control domain
+is assigned to the KVM guest.
 
-If we add this and set it in mipi_dbi_init():
+This patch will set the bits in the APM, AQM and ADM fields of the
+CRYCB referenced by the KVM guest's SIE state description. The process
+used is:
 
-  struct mipi_dbi {
-     u16 *tx_buf;
-+    size_t tx_len;
-  };
+1. Verify that the bits to be set do not exceed the maximum bit
+   number for the given mask.
 
-We can now allocate the rx buffer in mipi_dbi_typec3_command():
+2. Verify that the APQNs that can be derived from the intersection
+   of the bits set in the APM and AQM fields of the KVM guest's CRYCB
+   are not assigned to any other KVM guest running on the same linux
+   host.
 
-static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
-                    u8 *par, size_t num)
-{
+3. Set the APM, AQM and ADM in the CRYCB according to the matrix
+   configured for the mediated matrix device via its sysfs
+   adapter, domain and control domain attribute files respectively.
 
-+    if (!mipi->rx_buf && spi->controller->flags & SPI_CONTROLLER_MUST_RX) {
-+        mipi->rx_buf = devm_kmalloc(dev, mipi->tx_len, GFP_KERNEL);
-+        if (!mipi->rx_buf)
-+            return -ENOMEM;
-+    }
+Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+---
+ arch/s390/include/asm/kvm-ap.h        |   36 +++++
+ arch/s390/kvm/kvm-ap.c                |  257 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_ops.c     |   19 +++
+ drivers/s390/crypto/vfio_ap_private.h |    4 +
+ 4 files changed, 316 insertions(+), 0 deletions(-)
 
-}
-
-Option 1 has it's own transfer buffer and size:
-
-static int mipi_dbi_typec1_command(struct mipi_dbi *mipi, u8 cmd,
-                    u8 *parameters, size_t num)
-{
-
-+        mipi->rx_buf = devm_kmalloc(dev, mipi->tx_buf9_len, GFP_KERNEL);
-
-}
-
-
-Hopefully before summer I have switched to vmalloc backing for the
-framebuffers (which means we can PRIME import from GPU's with shmem
-buffers). This means that we can just use vmalloc transfer buffers as
-well. The SPI core can dma map vmalloc buffers (spi_map_buf), it just
-makes an SG table with an entry per PAGE.
-
-[1]: [PATCH v2 0/2] Chunk splitting of spi transfers
-https://lists.freedesktop.org/archives/dri-devel/2018-February/167181.html
-
-Noralf.
-
->   drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c |  9 ++++++++-
->   drivers/gpu/drm/tinydrm/ili9225.c              |  8 +++++---
->   drivers/gpu/drm/tinydrm/mi0283qt.c             |  3 ++-
->   drivers/gpu/drm/tinydrm/mipi-dbi.c             | 20 ++++++++++++++++----
->   drivers/gpu/drm/tinydrm/st7586.c               | 13 +++++++++++--
->   drivers/gpu/drm/tinydrm/st7735r.c              |  3 ++-
->   include/drm/tinydrm/mipi-dbi.h                 | 16 +++++++++++++++-
->   include/drm/tinydrm/tinydrm-helpers.h          |  2 +-
->   8 files changed, 60 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c b/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
-> index bf96072..f5c175e 100644
-> --- a/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
-> +++ b/drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c
-> @@ -434,6 +434,7 @@ EXPORT_SYMBOL(_tinydrm_dbg_spi_message);
->    * @header: Optional header transfer
->    * @bpw: Bits per word
->    * @buf: Buffer to transfer
-> + * @rx_buf: Optional dummy buffer
->    * @len: Buffer length
->    *
->    * This SPI transfer helper breaks up the transfer of @buf into chunks which
-> @@ -442,16 +443,22 @@ EXPORT_SYMBOL(_tinydrm_dbg_spi_message);
->    * does a 8-bit transfer.
->    * If @header is set, it is prepended to each SPI message.
->    *
-> + * Some SPI controllers need an RX buffer even though we are not receiving
-> + * anything useful. @rx_buf can be provided so that the SPI controller does not
-> + * have to reallocate this buffer on each transfer. This is useful for large
-> + * transfers, e.g. when updating the GRAM.
-> + *
->    * Returns:
->    * Zero on success, negative error code on failure.
->    */
->   int tinydrm_spi_transfer(struct spi_device *spi, u32 speed_hz,
->   			 struct spi_transfer *header, u8 bpw, const void *buf,
-> -			 size_t len)
-> +			 void *rx_buf, size_t len)
->   {
->   	struct spi_transfer tr = {
->   		.bits_per_word = bpw,
->   		.speed_hz = speed_hz,
-> +		.rx_buf = rx_buf,
->   	};
->   	struct spi_message m;
->   	u16 *swap_buf = NULL;
-> diff --git a/drivers/gpu/drm/tinydrm/ili9225.c b/drivers/gpu/drm/tinydrm/ili9225.c
-> index a075950..c15f49a 100644
-> --- a/drivers/gpu/drm/tinydrm/ili9225.c
-> +++ b/drivers/gpu/drm/tinydrm/ili9225.c
-> @@ -300,7 +300,7 @@ static int ili9225_dbi_command(struct mipi_dbi *mipi, u8 cmd, u8 *par,
->   
->   	gpiod_set_value_cansleep(mipi->dc, 0);
->   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, 1);
-> -	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, 1);
-> +	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, NULL, 1);
->   	if (ret || !num)
->   		return ret;
->   
-> @@ -310,7 +310,8 @@ static int ili9225_dbi_command(struct mipi_dbi *mipi, u8 cmd, u8 *par,
->   	gpiod_set_value_cansleep(mipi->dc, 1);
->   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, num);
->   
-> -	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, num);
-> +	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, mipi->rx_buf,
-> +				    num);
->   }
->   
->   static const u32 ili9225_formats[] = {
-> @@ -400,6 +401,7 @@ MODULE_DEVICE_TABLE(spi, ili9225_id);
->   
->   static int ili9225_probe(struct spi_device *spi)
->   {
-> +	size_t bufsize = mipi_dbi_max_buf_size(&ili9225_mode);
->   	struct device *dev = &spi->dev;
->   	struct mipi_dbi *mipi;
->   	struct gpio_desc *rs;
-> @@ -424,7 +426,7 @@ static int ili9225_probe(struct spi_device *spi)
->   
->   	device_property_read_u32(dev, "rotation", &rotation);
->   
-> -	ret = mipi_dbi_spi_init(spi, mipi, rs);
-> +	ret = mipi_dbi_spi_init(spi, mipi, rs, bufsize);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/drivers/gpu/drm/tinydrm/mi0283qt.c b/drivers/gpu/drm/tinydrm/mi0283qt.c
-> index 79cb5af..c3fa682 100644
-> --- a/drivers/gpu/drm/tinydrm/mi0283qt.c
-> +++ b/drivers/gpu/drm/tinydrm/mi0283qt.c
-> @@ -169,6 +169,7 @@ MODULE_DEVICE_TABLE(spi, mi0283qt_id);
->   
->   static int mi0283qt_probe(struct spi_device *spi)
->   {
-> +	size_t bufsize = mipi_dbi_max_buf_size(&mi0283qt_mode);
->   	struct device *dev = &spi->dev;
->   	struct mipi_dbi *mipi;
->   	struct gpio_desc *dc;
-> @@ -201,7 +202,7 @@ static int mi0283qt_probe(struct spi_device *spi)
->   
->   	device_property_read_u32(dev, "rotation", &rotation);
->   
-> -	ret = mipi_dbi_spi_init(spi, mipi, dc);
-> +	ret = mipi_dbi_spi_init(spi, mipi, dc, bufsize);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/drivers/gpu/drm/tinydrm/mipi-dbi.c b/drivers/gpu/drm/tinydrm/mipi-dbi.c
-> index 75dd65c..16bee06 100644
-> --- a/drivers/gpu/drm/tinydrm/mipi-dbi.c
-> +++ b/drivers/gpu/drm/tinydrm/mipi-dbi.c
-> @@ -364,7 +364,7 @@ int mipi_dbi_init(struct device *dev, struct mipi_dbi *mipi,
->   		  struct drm_driver *driver,
->   		  const struct drm_display_mode *mode, unsigned int rotation)
->   {
-> -	size_t bufsize = mode->vdisplay * mode->hdisplay * sizeof(u16);
-> +	size_t bufsize = mipi_dbi_max_buf_size(mode);
->   	struct tinydrm_device *tdev = &mipi->tinydrm;
->   	int ret;
->   
-> @@ -848,7 +848,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
->   
->   	gpiod_set_value_cansleep(mipi->dc, 0);
->   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, 1);
-> -	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, 1);
-> +	ret = tinydrm_spi_transfer(spi, speed_hz, NULL, 8, &cmd, NULL, 1);
->   	if (ret || !num)
->   		return ret;
->   
-> @@ -858,7 +858,8 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
->   	gpiod_set_value_cansleep(mipi->dc, 1);
->   	speed_hz = mipi_dbi_spi_cmd_max_speed(spi, num);
->   
-> -	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, num);
-> +	return tinydrm_spi_transfer(spi, speed_hz, NULL, bpw, par, mipi->rx_buf,
-> +				    num);
->   }
->   
->   /**
-> @@ -866,6 +867,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
->    * @spi: SPI device
->    * @mipi: &mipi_dbi structure to initialize
->    * @dc: D/C gpio (optional)
-> + * @max_size: Maximum TX buffer size needed by the caller
->    *
->    * This function sets &mipi_dbi->command, enables &mipi->read_commands for the
->    * usual read commands. It should be followed by a call to mipi_dbi_init() or
-> @@ -884,7 +886,7 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *mipi, u8 cmd,
->    * Zero on success, negative error code on failure.
->    */
->   int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
-> -		      struct gpio_desc *dc)
-> +		      struct gpio_desc *dc, size_t max_size)
->   {
->   	size_t tx_size = tinydrm_spi_max_transfer_size(spi, 0);
->   	struct device *dev = &spi->dev;
-> @@ -930,6 +932,16 @@ int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
->   			return -ENOMEM;
->   	}
->   
-> +	/*
-> +	 * Allocate a dummy RX buffer if needed, otherwise the SPI controller
-> +	 * will have to reallocate a new buffer on each transfer.
-> +	 */
-> +	if (spi->controller->flags & SPI_CONTROLLER_MUST_RX) {
-> +		mipi->rx_buf = devm_kmalloc(dev, max_size, GFP_KERNEL);
-> +		if (!mipi->rx_buf)
-> +			return -ENOMEM;
-> +	}
-> +
->   	DRM_DEBUG_DRIVER("SPI speed: %uMHz\n", spi->max_speed_hz / 1000000);
->   
->   	return 0;
-> diff --git a/drivers/gpu/drm/tinydrm/st7586.c b/drivers/gpu/drm/tinydrm/st7586.c
-> index a6396ef..bb0d55d 100644
-> --- a/drivers/gpu/drm/tinydrm/st7586.c
-> +++ b/drivers/gpu/drm/tinydrm/st7586.c
-> @@ -42,6 +42,14 @@
->   #define ST7586_DISP_CTRL_MX	BIT(6)
->   #define ST7586_DISP_CTRL_MY	BIT(7)
->   
-> +static inline size_t st7586_buf_max_size(const struct drm_display_mode *mode)
-> +{
-> +	size_t width = (mode->hdisplay + 2) / 3; /* 3 pixels per byte */
-> +	size_t height = mode->vdisplay;
-> +
-> +	return width * height;
-> +}
-> +
->   /*
->    * The ST7586 controller has an unusual pixel format where 2bpp grayscale is
->    * packed 3 pixels per byte with the first two pixels using 3 bits and the 3rd
-> @@ -263,7 +271,7 @@ static int st7586_init(struct device *dev, struct mipi_dbi *mipi,
->   		struct drm_driver *driver, const struct drm_display_mode *mode,
->   		unsigned int rotation)
->   {
-> -	size_t bufsize = (mode->vdisplay + 2) / 3 * mode->hdisplay;
-> +	size_t bufsize = st7586_buf_max_size(mode);
->   	struct tinydrm_device *tdev = &mipi->tinydrm;
->   	int ret;
->   
-> @@ -337,6 +345,7 @@ MODULE_DEVICE_TABLE(spi, st7586_id);
->   
->   static int st7586_probe(struct spi_device *spi)
->   {
-> +	size_t bufsize = st7586_buf_max_size(&st7586_mode);
->   	struct device *dev = &spi->dev;
->   	struct mipi_dbi *mipi;
->   	struct gpio_desc *a0;
-> @@ -361,7 +370,7 @@ static int st7586_probe(struct spi_device *spi)
->   
->   	device_property_read_u32(dev, "rotation", &rotation);
->   
-> -	ret = mipi_dbi_spi_init(spi, mipi, a0);
-> +	ret = mipi_dbi_spi_init(spi, mipi, a0, bufsize);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/drivers/gpu/drm/tinydrm/st7735r.c b/drivers/gpu/drm/tinydrm/st7735r.c
-> index 08b4fb1..c047bac 100644
-> --- a/drivers/gpu/drm/tinydrm/st7735r.c
-> +++ b/drivers/gpu/drm/tinydrm/st7735r.c
-> @@ -141,6 +141,7 @@ MODULE_DEVICE_TABLE(spi, st7735r_id);
->   
->   static int st7735r_probe(struct spi_device *spi)
->   {
-> +	size_t bufsize = mipi_dbi_max_buf_size(&jd_t18003_t01_mode);
->   	struct device *dev = &spi->dev;
->   	struct mipi_dbi *mipi;
->   	struct gpio_desc *dc;
-> @@ -169,7 +170,7 @@ static int st7735r_probe(struct spi_device *spi)
->   
->   	device_property_read_u32(dev, "rotation", &rotation);
->   
-> -	ret = mipi_dbi_spi_init(spi, mipi, dc);
-> +	ret = mipi_dbi_spi_init(spi, mipi, dc, bufsize);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/include/drm/tinydrm/mipi-dbi.h b/include/drm/tinydrm/mipi-dbi.h
-> index 44e824a..deee862 100644
-> --- a/include/drm/tinydrm/mipi-dbi.h
-> +++ b/include/drm/tinydrm/mipi-dbi.h
-> @@ -31,6 +31,7 @@ struct regulator;
->    * @tx_buf: Buffer used for transfer (copy clip rect area)
->    * @tx_buf9: Buffer used for Option 1 9-bit conversion
->    * @tx_buf9_len: Size of tx_buf9.
-> + * @rx_buf: Optional dummy RX buffer.
->    * @swap_bytes: Swap bytes in buffer before transfer
->    * @reset: Optional reset gpio
->    * @rotation: initial rotation in degrees Counter Clock Wise
-> @@ -48,6 +49,7 @@ struct mipi_dbi {
->   	u16 *tx_buf;
->   	void *tx_buf9;
->   	size_t tx_buf9_len;
-> +	void *rx_buf;
->   	bool swap_bytes;
->   	struct gpio_desc *reset;
->   	unsigned int rotation;
-> @@ -62,7 +64,7 @@ mipi_dbi_from_tinydrm(struct tinydrm_device *tdev)
->   }
->   
->   int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *mipi,
-> -		      struct gpio_desc *dc);
-> +		      struct gpio_desc *dc, size_t max_size);
->   int mipi_dbi_init(struct device *dev, struct mipi_dbi *mipi,
->   		  const struct drm_simple_display_pipe_funcs *pipe_funcs,
->   		  struct drm_driver *driver,
-> @@ -79,6 +81,18 @@ int mipi_dbi_command_read(struct mipi_dbi *mipi, u8 cmd, u8 *val);
->   int mipi_dbi_command_buf(struct mipi_dbi *mipi, u8 cmd, u8 *data, size_t len);
->   int mipi_dbi_buf_copy(void *dst, struct drm_framebuffer *fb,
->   		      struct drm_clip_rect *clip, bool swap);
-> +
-> +/**
-> + * mipi_dbi_max_buf_size - Get the maximum required framebuffer memory size
-> + * @mode: The display mode data
-> + *
-> + * Computes the maximum buffer size needed for a 2 byte per pixel display.
-> + */
-> +static inline size_t mipi_dbi_max_buf_size(const struct drm_display_mode *mode)
-> +{
-> +	return mode->hdisplay * mode->vdisplay * sizeof(u16);
-> +}
-> +
->   /**
->    * mipi_dbi_command - MIPI DCS command with optional parameter(s)
->    * @mipi: MIPI structure
-> diff --git a/include/drm/tinydrm/tinydrm-helpers.h b/include/drm/tinydrm/tinydrm-helpers.h
-> index d554ded..e5e8f59 100644
-> --- a/include/drm/tinydrm/tinydrm-helpers.h
-> +++ b/include/drm/tinydrm/tinydrm-helpers.h
-> @@ -54,7 +54,7 @@ size_t tinydrm_spi_max_transfer_size(struct spi_device *spi, size_t max_len);
->   bool tinydrm_spi_bpw_supported(struct spi_device *spi, u8 bpw);
->   int tinydrm_spi_transfer(struct spi_device *spi, u32 speed_hz,
->   			 struct spi_transfer *header, u8 bpw, const void *buf,
-> -			 size_t len);
-> +			 void *rx_buf, size_t len);
->   void _tinydrm_dbg_spi_message(struct spi_device *spi, struct spi_message *m);
->   
->   #ifdef DEBUG
+diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+index ef749e7..46e7c5b 100644
+--- a/arch/s390/include/asm/kvm-ap.h
++++ b/arch/s390/include/asm/kvm-ap.h
+@@ -10,9 +10,45 @@
+ #define _ASM_KVM_AP
+ #include <linux/types.h>
+ #include <linux/kvm_host.h>
++#include <linux/types.h>
++#include <linux/kvm_host.h>
++#include <linux/bitops.h>
++
++#define KVM_AP_MASK_BYTES(n)(n / BITS_PER_BYTE)
++
++/**
++ * The AP matrix is comprised of three bit masks identifying the adapters,
++ * queues (domains) and control domains that belong to an AP matrix. The bits in
++ * each mask, from least significant to most significant bit, correspond to IDs
++ * 0 to the maximum ID allowed for a given mask. When a bit is set, the
++ * corresponding ID belongs to the matrix.
++ *
++ * @apm_max: max number of bits in @apm
++ * @apm identifies the AP adapters in the matrix
++ * @aqm_max: max number of bits in @aqm
++ * @aqm identifies the AP queues (domains) in the matrix
++ * @adm_max: max number of bits in @adm
++ * @adm identifies the AP control domains in the matrix
++ */
++struct kvm_ap_matrix {
++	int apm_max;
++	unsigned long *apm;
++	int aqm_max;
++	unsigned long *aqm;
++	int adm_max;
++	unsigned long *adm;
++};
+ 
+ void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd);
+ 
+ int kvm_ap_get_crycb_format(struct kvm *kvm);
+ 
++int kvm_ap_matrix_create(struct kvm_ap_matrix **ap_matrix);
++
++void kvm_ap_matrix_destroy(struct kvm_ap_matrix *ap_matrix);
++
++int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix *matrix);
++
++void kvm_ap_deconfigure_matrix(struct kvm *kvm);
++
+ #endif /* _ASM_KVM_AP */
+diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+index bafe63b..bb29045 100644
+--- a/arch/s390/kvm/kvm-ap.c
++++ b/arch/s390/kvm/kvm-ap.c
+@@ -8,6 +8,7 @@
+ 
+ #include <asm/kvm-ap.h>
+ #include <asm/ap.h>
++#include <linux/bitops.h>
+ 
+ #include "kvm-s390.h"
+ 
+@@ -16,6 +17,125 @@ int kvm_ap_get_crycb_format(struct kvm *kvm)
+ 	return kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
+ }
+ 
++static inline void kvm_ap_clear_crycb_masks(struct kvm *kvm)
++{
++	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
++
++	if (crycb_fmt == CRYCB_FORMAT2)
++		memset(&kvm->arch.crypto.crycb->apcb1, 0,
++		       sizeof(kvm->arch.crypto.crycb->apcb1));
++	else
++		memset(&kvm->arch.crypto.crycb->apcb0, 0,
++		       sizeof(kvm->arch.crypto.crycb->apcb0));
++}
++
++static inline unsigned long *kvm_ap_get_crycb_apm(struct kvm *kvm)
++{
++	unsigned long *apm;
++	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
++
++	if (crycb_fmt == CRYCB_FORMAT2)
++		apm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.apm;
++	else
++		apm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.apm;
++
++	return apm;
++}
++
++static inline unsigned long *kvm_ap_get_crycb_aqm(struct kvm *kvm)
++{
++	unsigned long *aqm;
++	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
++
++	if (crycb_fmt == CRYCB_FORMAT2)
++		aqm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.aqm;
++	else
++		aqm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.aqm;
++
++	return aqm;
++}
++
++static inline unsigned long *kvm_ap_get_crycb_adm(struct kvm *kvm)
++{
++	unsigned long *adm;
++	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
++
++	if (crycb_fmt == CRYCB_FORMAT2)
++		adm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.adm;
++	else
++		adm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.adm;
++
++	return adm;
++}
++
++static void kvm_ap_set_crycb_masks(struct kvm *kvm,
++				   struct kvm_ap_matrix *matrix)
++{
++	unsigned long *apm = kvm_ap_get_crycb_apm(kvm);
++	unsigned long *aqm = kvm_ap_get_crycb_aqm(kvm);
++	unsigned long *adm = kvm_ap_get_crycb_adm(kvm);
++
++	kvm_ap_clear_crycb_masks(kvm);
++	memcpy(apm, matrix->apm, KVM_AP_MASK_BYTES(matrix->apm_max));
++	memcpy(aqm, matrix->aqm, KVM_AP_MASK_BYTES(matrix->aqm_max));
++
++	/*
++	 * Merge the AQM and ADM since the ADM is a superset of the
++	 * AQM by architectural convention.
++	 */
++	bitmap_or(adm, adm, aqm, matrix->adm_max);
++}
++
++static void kvm_ap_log_sharing_err(struct kvm *kvm, unsigned long apid,
++				   unsigned long apqi)
++{
++	pr_err("%s: AP queue %02lx.%04lx is registered to guest %s", __func__,
++	       apid, apqi, kvm->arch.dbf->name);
++}
++
++/**
++ * kvm_ap_validate_queue_sharing
++ *
++ * Verifies that the APQNs derived from the intersection of the AP adapter IDs
++ * and AP queue indexes comprising the AP matrix are not configured for
++ * another guest. AP queue sharing is not allowed.
++ *
++ * @kvm: the KVM guest
++ * @matrix: the AP matrix
++ *
++ * Returns 0 if the APQNs are valid, otherwise; returns -EBUSY.
++ */
++static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
++					 struct kvm_ap_matrix *matrix)
++{
++	struct kvm *vm;
++	unsigned long *apm, *aqm;
++	unsigned long apid, apqi;
++
++
++	/* No other VM may share an AP Queue with the input VM */
++	list_for_each_entry(vm, &vm_list, vm_list) {
++		if (kvm == vm)
++			continue;
++
++		apm = kvm_ap_get_crycb_apm(vm);
++		if (!bitmap_and(apm, apm, matrix->apm, matrix->apm_max))
++			continue;
++
++		aqm = kvm_ap_get_crycb_aqm(vm);
++		if (!bitmap_and(aqm, aqm, matrix->aqm, matrix->aqm_max))
++			continue;
++
++		for_each_set_bit_inv(apid, apm, matrix->apm_max)
++			for_each_set_bit_inv(apqi, aqm, matrix->aqm_max)
++				kvm_ap_log_sharing_err(kvm, apid, apqi);
++
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
+ static int kvm_ap_apxa_installed(void)
+ {
+ 	int ret;
+@@ -50,3 +170,140 @@ void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd)
+ 			*crycbd |= CRYCB_FORMAT1;
+ 	}
+ }
++
++static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
++{
++	if (apxa)
++		ap_matrix->apm_max = 256;
++	else
++		ap_matrix->apm_max = 64;
++
++	ap_matrix->apm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->apm_max),
++				 GFP_KERNEL);
++	if (!ap_matrix->apm)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int kvm_ap_matrix_aqm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
++{
++	if (apxa)
++		ap_matrix->aqm_max = 256;
++	else
++		ap_matrix->aqm_max = 16;
++
++	ap_matrix->aqm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->aqm_max),
++				 GFP_KERNEL);
++	if (!ap_matrix->aqm)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int kvm_ap_matrix_adm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
++{
++	if (apxa)
++		ap_matrix->adm_max = 256;
++	else
++		ap_matrix->adm_max = 16;
++
++	ap_matrix->adm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->adm_max),
++				 GFP_KERNEL);
++	if (!ap_matrix->adm)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void kvm_ap_matrix_masks_destroy(struct kvm_ap_matrix *ap_matrix)
++{
++	kfree(ap_matrix->apm);
++	kfree(ap_matrix->aqm);
++	kfree(ap_matrix->adm);
++}
++
++int kvm_ap_matrix_create(struct kvm_ap_matrix **ap_matrix)
++{
++	int ret;
++	int apxa = kvm_ap_apxa_installed();
++	struct kvm_ap_matrix *matrix;
++
++	matrix = kzalloc(sizeof(*matrix), GFP_KERNEL);
++	if (!matrix)
++		return -ENOMEM;
++
++	ret = kvm_ap_matrix_apm_create(matrix, apxa);
++	if (ret)
++		goto mask_create_err;
++
++	ret = kvm_ap_matrix_aqm_create(matrix, apxa);
++	if (ret)
++		goto mask_create_err;
++
++	ret = kvm_ap_matrix_adm_create(matrix, apxa);
++	if (ret)
++		goto mask_create_err;
++
++	*ap_matrix = matrix;
++
++	return 0;
++
++mask_create_err:
++	kvm_ap_matrix_masks_destroy(matrix);
++	kfree(matrix);
++	return ret;
++}
++EXPORT_SYMBOL(kvm_ap_matrix_create);
++
++void kvm_ap_matrix_destroy(struct kvm_ap_matrix *ap_matrix)
++{
++	kvm_ap_matrix_masks_destroy(ap_matrix);
++	kfree(ap_matrix);
++}
++EXPORT_SYMBOL(kvm_ap_matrix_destroy);
++
++/**
++ * kvm_ap_configure_matrix
++ *
++ * Configure the AP matrix for a KVM guest.
++ *
++ * @kvm:		 the KVM guest
++ * @matrix:		 the matrix configuration information
++ *
++ * Returns 0 if the APQNs derived from the intersection of the set of adapter
++ * IDs (APM) and queue indexes (AQM) in @matrix are not configured for any
++ * other KVM guest running on the same linux host. Otherwise returns an error
++ * code.
++ */
++int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix *matrix)
++{
++	int ret = 0;
++
++	mutex_lock(&kvm->lock);
++
++	ret = kvm_ap_validate_queue_sharing(kvm, matrix);
++	if (ret)
++		return ret;
++
++	kvm_ap_set_crycb_masks(kvm, matrix);
++
++	mutex_unlock(&kvm->lock);
++
++	return 0;
++}
++EXPORT_SYMBOL(kvm_ap_configure_matrix);
++
++/**
++ * kvm_ap_deconfigure_matrix
++ *
++ * Deconfigure the AP matrix for a KVM guest. Clears all of the bits in the
++ * APM, AQM and ADM in the guest's CRYCB.
++ *
++ * @kvm: the KVM guest
++ */
++void kvm_ap_deconfigure_matrix(struct kvm *kvm)
++{
++	kvm_ap_clear_crycb_masks(kvm);
++}
++EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+index 4292a5e..4fda44e 100644
+--- a/drivers/s390/crypto/vfio_ap_ops.c
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -10,6 +10,7 @@
+ #include <linux/device.h>
+ #include <linux/list.h>
+ #include <linux/ctype.h>
++#include <asm/kvm-ap.h>
+ 
+ #include "vfio_ap_private.h"
+ 
+@@ -18,8 +19,23 @@
+ 
+ static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+ {
++	int ret;
++	struct ap_matrix_mdev *matrix_mdev;
+ 	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
++	struct kvm_ap_matrix *matrix;
++
++	ret = kvm_ap_matrix_create(&matrix);
++	if (ret)
++		return ret;
++
++	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
++	if (!matrix_mdev) {
++		kvm_ap_matrix_destroy(matrix);
++		return -ENOMEM;
++	}
+ 
++	matrix_mdev->matrix = matrix;
++	mdev_set_drvdata(mdev, matrix_mdev);
+ 	ap_matrix->available_instances--;
+ 
+ 	return 0;
+@@ -28,7 +44,10 @@ static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+ static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+ {
+ 	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
++	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+ 
++	kvm_ap_matrix_destroy(matrix_mdev->matrix);
++	kfree(matrix_mdev);
+ 	ap_matrix->available_instances++;
+ 
+ 	return 0;
+diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+index c264415..522564e 100644
+--- a/drivers/s390/crypto/vfio_ap_private.h
++++ b/drivers/s390/crypto/vfio_ap_private.h
+@@ -27,6 +27,10 @@ struct ap_matrix {
+ 	int available_instances;
+ };
+ 
++struct ap_matrix_mdev {
++	struct kvm_ap_matrix *matrix;
++};
++
+ static inline struct ap_matrix *to_ap_matrix(struct device *dev)
+ {
+ 	return container_of(dev, struct ap_matrix, device);
+-- 
+1.7.1
