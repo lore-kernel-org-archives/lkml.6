@@ -1,70 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeB0Cyu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:54:50 -0500
-Received: from regular1.263xmail.com ([211.150.99.136]:57300 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeB0Cys (ORCPT
+        id S1751737AbeB0DET (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 22:04:19 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:53851 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751514AbeB0DES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:54:48 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: briannorris@chromium.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <2a346683acf009163456946dbae3b298>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A94C863.5060504@rock-chips.com>
-Date: Tue, 27 Feb 2018 10:54:27 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
-MIME-Version: 1.0
-To: Brian Norris <briannorris@chromium.org>
-CC: linux-kernel@vger.kernel.org, zyw@rock-chips.com,
-        briannorris@google.com, dianders@google.com, jwerner@chromium.org,
-        linux-rtc@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>
-Subject: Re: [PATCH] rtc: cros-ec: return -ETIME when refused to set alarms
- in the past
-References: <20180225081802.8965-1-jeffy.chen@rock-chips.com> <20180226183727.GC225858@rodete-desktop-imager.corp.google.com>
-In-Reply-To: <20180226183727.GC225858@rodete-desktop-imager.corp.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Feb 2018 22:04:18 -0500
+X-ME-Sender: <xms:scqUWjHki3Cb8FgfJcXgSepS8LTvAoxQVqh4oDAVyG5hPqknu37Zbg>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] checkpatch: warn for use of %px
+Date: Tue, 27 Feb 2018 14:04:04 +1100
+Message-Id: <1519700648-23108-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
+Hi Andrew,
 
-Thanks for your reply.
+This is a resurrection of a patch set from last December.  There was
+some confusion (on my behalf) as to how patches to checkpatch got into
+the mainline.  Are you willing (and able) to take patches to
+checkpatch.pl?
 
-On 02/27/2018 02:37 AM, Brian Norris wrote:
->> >+	/* Don't set an alarm in the past. */
->> >+	if ((u32)alarm_time <= current_time)
->> >+		return -ETIME;
->> >+
->> >  	if (!alrm->enabled) {
->> >  		/*
->> >  		 * If the alarm is being disabled, send an alarm
->> >@@ -196,11 +200,7 @@ static int cros_ec_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->> >  		alarm_offset = EC_RTC_ALARM_CLEAR;
->> >  		cros_ec_rtc->saved_alarm = (u32)alarm_time;
->> >  	} else {
->> >-		/* Don't set an alarm in the past. */
->> >-		if ((u32)alarm_time < current_time)
-> It's probably worth noting in the commit message that you're also fixing
-> the case where 'alarm_time == current_time'; in the current driver
-> source, it*looks*  like you're setting a 0-second alarm. But in fact, 0
-> means EC_RTC_ALARM_CLEAR, which would disable the alarm. So you are
-> (correctly) returning -ETIME in that case.
-Right, i'll rewrite the commit message, and move the check back here:)
+Patch 1 through 3 are cleanup/refactoring patches.
 
->
-> Brian
->
+Patch 3 makes checkpatch emit a warning for usage of specifier %px.
+
+You may remember that the initial idea for this was from yourself, v1
+requested permission to use 'Suggested-by' tag.  I didn't get comment on
+that so v2 removed the tag.  (I'm not totally across when one should add
+the 'Suggested-by' tag.)
+
+v3 was an Epic fail, not testing final patch series before submission.
+
+Joe, I removed your 'Acked-by' tag because the patch you originally
+acked is different after rebasing.  I kept the Co-Developed-by tag
+because the code you wrote is still there I just had to massage it a bit
+since the check for deprecated %p[Ff] has been added since we did v2.
+
+(Sorry about the noise with v3, I hacked that version together as a
+RESEND, a v1, and then finally decided on a v3 and failed to test it
+after rebase :( And now I am going to violate the 1 version per day
+rule to boot. 
+
+
+thanks for your patience,
+Tobin.
+
+
+Tested on a bunch of old patches and a hand rolled printk test module
+to stress test printk %p extensions.
+
+v4:
+ - actually rebase the patch set properly
+ - remove 'Acked-by' tag for Joe
+
+v3:
+ - rebase onto 4.16-rc3
+ - separate 'remove unused variable' into it's own patch
+
+v2:
+ - change new sub name stat_real() -> get_stat_real()
+ - add new sub get_stat_here()
+ - move the addition of new sub routines into separate patches
+ - add 'Acked-by' tag for Joe
+ - remove 'Suggested-by' tag for Andrew Morton
+
+Tobin C. Harding (4):
+  checkpatch: add sub routine get_stat_real()
+  checkpatch: remove unused variable declarations
+  checkpatch: add sub routine get_stat_here()
+  checkpatch: warn for use of %px
+
+ scripts/checkpatch.pl | 130 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 66 insertions(+), 64 deletions(-)
+
+-- 
+2.7.4
