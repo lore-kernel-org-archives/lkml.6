@@ -1,102 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751544AbeB0B0D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:26:03 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58037 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751094AbeB0B0B (ORCPT
+        id S1751553AbeB0B24 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 20:28:56 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33714 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeB0B2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:26:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SyYNSrF_1519694753;
-Subject: Re: [RFC PATCH 0/4 v2] Define killable version for access_remote_vm()
- and use it in fs/proc
-To: David Rientjes <rientjes@google.com>
-Cc: akpm@linux-foundation.org, mingo@kernel.org, adobriyan@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1519691151-101999-1-git-send-email-yang.shi@linux.alibaba.com>
- <alpine.DEB.2.20.1802261656490.16999@chino.kir.corp.google.com>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <4ec32e5b-af63-f412-2213-e52bdbcc9585@linux.alibaba.com>
-Date: Mon, 26 Feb 2018 17:25:52 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1802261656490.16999@chino.kir.corp.google.com>
+        Mon, 26 Feb 2018 20:28:55 -0500
+X-Google-Smtp-Source: AH8x227vb50ewSXSXy+T7RHxaydDdyK/EpWz6dsuHs0OVWMl92yBNxI4JTzwLGajXTCXM3ydXzVbXg==
+Date: Mon, 26 Feb 2018 17:28:53 -0800 (PST)
+X-Google-Original-Date: Mon, 26 Feb 2018 17:28:25 PST (-0800)
+Subject: Re: [PATCH RFC] riscv/barrier: Define __smp_{mb,rmb,wmb}
+In-Reply-To: <20180226103552.GA9138@andrea>
+CC: albert@sifive.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: parri.andrea@gmail.com
+Message-ID: <mhng-48f70f62-ce5a-4093-914b-626c204b493e@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/26/18 5:02 PM, David Rientjes wrote:
-> On Tue, 27 Feb 2018, Yang Shi wrote:
->
->> Background:
->> When running vm-scalability with large memory (> 300GB), the below hung
->> task issue happens occasionally.
+On Mon, 26 Feb 2018 02:35:52 PST (-0800), parri.andrea@gmail.com wrote:
+> On Thu, Feb 22, 2018 at 03:14:52PM -0800, Palmer Dabbelt wrote:
+>> On Tue, 20 Feb 2018 02:17:28 PST (-0800), parri.andrea@gmail.com wrote:
+>> >Introduce __smp_{mb,rmb,wmb}, and rely on the generic definitions
+>> >for smp_{mb,rmb,wmb}. A first consequence is that smp_{mb,rmb,wmb}
+>> >map to a compiler barrier on !SMP (while their definition remains
+>> >unchanged on SMP). As a further consequence, smp_load_acquire and
+>> >smp_store_release have "fence rw,rw" instead of "fence iorw,iorw".
+>> >
+>> >Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>> >---
+>> > arch/riscv/include/asm/barrier.h | 6 +++---
+>> > 1 file changed, 3 insertions(+), 3 deletions(-)
+>> >
+>> >diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
+>> >index c0319cbf1eec5..5510366d169ae 100644
+>> >--- a/arch/riscv/include/asm/barrier.h
+>> >+++ b/arch/riscv/include/asm/barrier.h
+>> >@@ -34,9 +34,9 @@
+>> > #define wmb()		RISCV_FENCE(ow,ow)
+>> >
+>> > /* These barriers do not need to enforce ordering on devices, just memory. */
+>> >-#define smp_mb()	RISCV_FENCE(rw,rw)
+>> >-#define smp_rmb()	RISCV_FENCE(r,r)
+>> >-#define smp_wmb()	RISCV_FENCE(w,w)
+>> >+#define __smp_mb()	RISCV_FENCE(rw,rw)
+>> >+#define __smp_rmb()	RISCV_FENCE(r,r)
+>> >+#define __smp_wmb()	RISCV_FENCE(w,w)
+>> >
+>> > /*
+>> >  * This is a very specific barrier: it's currently only used in two places in
 >>
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>
->> When manipulating a large mapping, the process may hold the mmap_sem for
->> long time, so reading /proc/<pid>/cmdline may be blocked in
->> uninterruptible state for long time.
->> We already have killable version APIs for semaphore, here use down_read_killable()
->> to improve the responsiveness.
->>
-> Rather than killable, we have patches that introduce down_read_unfair()
-> variants for the files you've modified (cmdline and environ) as well as
-> others (maps, numa_maps, smaps).
-
-You mean you have such functionality used by google internally?
-
+>> Thanks!  I'm going to take this for the next RC.
 >
-> When another thread is holding down_read() and there are queued
-> down_write()'s, down_read_unfair() allows for grabbing the rwsem without
-> queueing for it.  Additionally, when another thread is holding
-> down_write(), down_read_unfair() allows for queueing in front of other
-> threads trying to grab it for write as well.
+> Thank you, Palmer.  I'm planning to post more changes to the file,
+> but I'd like to build on top of this change: could you point me to
+> the appropriate branch/repo for this?
 
-It sounds the __unfair variant make the caller have chance to jump the 
-gun to grab the semaphore before other waiters, right? But when a 
-process holds the semaphore, i.e. mmap_sem, for a long time, it still 
-has to sleep in uninterruptible state, right?
+Here's the canonical RISC-V Linux git repo
 
-But, it seems __unfair variant may not be very helpful in this usecase. 
-Reading /proc might be not that important to require any special care to 
-grab the semaphore before other waiters. I just hope it doesn't sleep in 
-uninterruptible state for a long time. If the user is not patient enough 
-due to some reason, they can have a chance to abort.
+    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git/
 
->
-> Ingo would know more about whether a variant like that in upstream Linux
-> would be acceptable.
->
-> Would you be interested in unfair variants instead of only addressing
-> killable?
+Your branch is now the HEAD of the "for-linus" branch, which means it'll be 
+sent to Linus the next time I send patches.  I generate and tag "for-linus" on 
+Monday mornings and then send it out on Wednesday mornings, just to make sure 
+everything has time to bake.
 
-Yes, I'm although it still looks overkilling to me for reading /proc.
+    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git/
 
-Thanks,
-Yang
+Additionally, I mantain a "for-next" branch that contains everything that's 
+been sufficiently reviewed to be made part of Linux, but that is being staged 
+for a bit longer than what's in for-linus for one reason or another (usually 
+it's just not RC material and is targeted for the next merge window).  There is 
+also a RISC-V integration branch named "riscv-all" that contains all our work 
+in progress patches.  This is likely to be unstable, but it's best to check 
+there to see if anything interesting is going on related to what you're working 
+on to avoid duplicating work.
+
+These branches are all generated from my personal git tree
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/palmer/linux.git/
+
+There's a bunch of branches in here tracking each change set (yours is called 
+"fix-smp_mb", to indicate it can go in during an RC) that's still in flight.  
+There's some scripts to generate some of these branches, but the commits I 
+actually send upstream are merged by hand
+
+    https://github.com/riscv/riscv-linux-infra
+
+"for-next" and "riscv-all" are rebased regularly, so it's probably best to 
+track commits back to their original WIP branch and work from there to avoid 
+major headaches.
