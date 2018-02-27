@@ -1,385 +1,132 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225x5F6cudGKBZ8REkJ66OsH6JT1CfvmFLBXpQ/Xmk+HlH7yZCdq6CBvxn1gtM9VHfrn5wLm
-ARC-Seal: i=1; a=rsa-sha256; t=1519410771; cv=none;
+Return-Path: <borntraeger@de.ibm.com>
+X-Google-Smtp-Source: AG47ELvtnnZyEdFJfgw8rbRPFtcbSEOlTskGEul+pteImzRXWlAHibCavKSaLH9lVJhxRYtFU//Z
+ARC-Seal: i=1; a=rsa-sha256; t=1519723422; cv=none;
         d=google.com; s=arc-20160816;
-        b=hFz/GXrn1yPzDbOXRtZZhiSHOFxEAcxu5vlBqGCuIeUmKyb1CCks09xuS/pmEi2hzx
-         mlmxf4jC7aak4KYHP+rA8IjR2RSgiyTClYEWaWGGSnk6FMy0TBSZwdPPZ/CQcg2gymAQ
-         V0PTPnWnNDUSCrIkU3fmRTgE9UHqgzxLmsdKEoQgIQ/IAs90jTaoOU8ZcFgQeIjTnM++
-         gPxES4C+WCLCxYB/qMGfl5WJzQDx2m6ieqzwQ0fbRTRDQUYh9yy26qDWRzWINfXK5tZb
-         lOR58nZpv2U3I8nbC7yW2ZQZS+EejDk0jxScpaiqSgeMjeQTNRzc/AfyEHfNS+Oud2U/
-         yutw==
+        b=NR027luvti4yIPSsNZo4d9dQawx1igBUHjm9ywdq2nzRR3nvCH/zHf/WH16jTEhw1F
+         /soRGrzVc7bSgXoTbMKotKZ+vqjktTlUtVE3GPmPN6bPyJVSgDuO5TuDk9XHlZf53uz/
+         oiRFAGtwpvQUToJZT2vCf6q9CRLBvZYovV+tAzX56Ht3AeFCra6svRyyHK1isGWVqrui
+         E1nN5vy2Ci0FYrel0LxM/xvCYfAgdMuOGAOreYdZdwMOiUDn9fwhltaJ0DRU0N9uiPe2
+         jCktAQifDj7zqC5yFmEX+xkbeVeYbcJ7IoxdxhWWC2MNksaOnH2NlZQpazCubxJhXyb4
+         BgTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=jcFRP/7liJp1sR76Y4+1Dc8yia+CBeviJNiMq+7opdg=;
-        b=THaipU1r/mWqv/eXqkMFwkK3KOHdDJYjRK2T33No0q5cbl89loEgqozj2p5owNi59T
-         HHg3Ta/wMLH5tSe9MY5F8P1JImXNcLGa8fUNqkJb6N5Ga5yh4LEpb3Z75o+5TXm0DmPB
-         wZ5g+ouVmbPDHUpdutPixtKFdutXhvXLKtgE7mHtRZdWbnZcI68Y3xex1nJUVXCIJaqa
-         kWJPgvOaEHmyMY5ssdKbuOXrfOWk/3mWaAgUUvd5uWJPWEyTjfnfU7uk2VV9i0AvxDR+
-         918XS+BS7cay7alySFml/IzrA0lSKtViw91P7SrZk53/6c+CQFlfYYTQbSi/NSPpLeuO
-         fQ/w==
+        h=message-id:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=n4IKBWEW+sBvOA1rJmtuzs77KNsdO6Cnezaqu+v2iS4=;
+        b=oj+SoUQvCA2irJQCWA5iPKZPe4EypKRnKJbj2pwQBby4iOpt2BLUTyOFvxiPRCdHl0
+         NMv8IjnYKALQqdrepskInRCYQGR5BqfIH+hwXCieVUI1SVRwOQIwnCWQpprdId0JlJt7
+         8jdhBzcXdUvZf+E+lCfLCrBGCWUuiQWsunYcbCktJrEBxw0i6g8fNMTsTYcPrqXDBMTg
+         ar61z9aW0R/CCAEn6n8a2gFOSszRnXhZ828ewmCWYLPhQK+udcxql8OO2G0Wma3GMz3a
+         prGGxGl/aFkIMz+9HYZqSfRlSSBe4wJ+X/9cynUf/ajjXUufdOQ2tpyueXF+7HV6Lyau
+         8FRg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Manoj Boopathi Raj <manojboopathi@google.com>
-Subject: [PATCH 4.4 001/193] net: add dst_cache support
-Date: Fri, 23 Feb 2018 19:23:54 +0100
-Message-Id: <20180223170326.200577903@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
-References: <20180223170325.997716448@linuxfoundation.org>
-User-Agent: quilt/0.65
+       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Subject: Re: [PATCH v4 3/3] s390/setup : enable display support for KVM guest
+To: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: thuth@redhat.com, cohuck@redhat.com, tomi.valkeinen@ti.com,
+        b.zolnierkie@samsung.com, geert@linux-m68k.org
+References: <cover.1519315352.git.alifm@linux.vnet.ibm.com>
+ <e23b61f4f599ba23881727a1e8880e9d60cc6a48.1519315352.git.alifm@linux.vnet.ibm.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Tue, 27 Feb 2018 10:23:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <e23b61f4f599ba23881727a1e8880e9d60cc6a48.1519315352.git.alifm@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022709-0008-0000-0000-000004D4F66E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022709-0009-0000-0000-00001E681580
+Message-Id: <0b58aec3-7434-e059-386d-2dacebdf39aa@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802270114
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217669490499628?=
-X-GMAIL-MSGID: =?utf-8?q?1593217669490499628?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1593545507009882603?=
+X-GMAIL-MSGID: =?utf-8?q?1593545507009882603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Greg FYI, I plan to carry this patch via the s390/kvm tree.
+As it drivers/tty/Kconfig, can you give an ack for this part?
 
-------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
-
-commit 911362c70df5b766c243dc297fadeaced786ffd8 upstream.
-
-This patch add a generic, lockless dst cache implementation.
-The need for lock is avoided updating the dst cache fields
-only in per cpu scope, and requiring that the cache manipulation
-functions are invoked with the local bh disabled.
-
-The refresh_ts and reset_ts fields are used to ensure the cache
-consistency in case of cuncurrent cache update (dst_cache_set*) and
-reset operation (dst_cache_reset).
-
-Consider the following scenario:
-
-CPU1:                                   	CPU2:
-  <cache lookup with emtpy cache: it fails>
-  <get dst via uncached route lookup>
-						<related configuration changes>
-                                        	dst_cache_reset()
-  dst_cache_set()
-
-The dst entry set passed to dst_cache_set() should not be used
-for later dst cache lookup, because it's obtained using old
-configuration values.
-
-Since the refresh_ts is updated only on dst_cache lookup, the
-cached value in the above scenario will be discarded on the next
-lookup.
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Suggested-and-acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Manoj Boopathi Raj <manojboopathi@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- include/net/dst_cache.h |   97 +++++++++++++++++++++++++++
- net/Kconfig             |    4 +
- net/core/Makefile       |    1 
- net/core/dst_cache.c    |  168 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 270 insertions(+)
-
---- /dev/null
-+++ b/include/net/dst_cache.h
-@@ -0,0 +1,97 @@
-+#ifndef _NET_DST_CACHE_H
-+#define _NET_DST_CACHE_H
-+
-+#include <linux/jiffies.h>
-+#include <net/dst.h>
-+#if IS_ENABLED(CONFIG_IPV6)
-+#include <net/ip6_fib.h>
-+#endif
-+
-+struct dst_cache {
-+	struct dst_cache_pcpu __percpu *cache;
-+	unsigned long reset_ts;
-+};
-+
-+/**
-+ *	dst_cache_get - perform cache lookup
-+ *	@dst_cache: the cache
-+ *
-+ *	The caller should use dst_cache_get_ip4() if it need to retrieve the
-+ *	source address to be used when xmitting to the cached dst.
-+ *	local BH must be disabled.
-+ */
-+struct dst_entry *dst_cache_get(struct dst_cache *dst_cache);
-+
-+/**
-+ *	dst_cache_get_ip4 - perform cache lookup and fetch ipv4 source address
-+ *	@dst_cache: the cache
-+ *	@saddr: return value for the retrieved source address
-+ *
-+ *	local BH must be disabled.
-+ */
-+struct rtable *dst_cache_get_ip4(struct dst_cache *dst_cache, __be32 *saddr);
-+
-+/**
-+ *	dst_cache_set_ip4 - store the ipv4 dst into the cache
-+ *	@dst_cache: the cache
-+ *	@dst: the entry to be cached
-+ *	@saddr: the source address to be stored inside the cache
-+ *
-+ *	local BH must be disabled.
-+ */
-+void dst_cache_set_ip4(struct dst_cache *dst_cache, struct dst_entry *dst,
-+		       __be32 saddr);
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+
-+/**
-+ *	dst_cache_set_ip6 - store the ipv6 dst into the cache
-+ *	@dst_cache: the cache
-+ *	@dst: the entry to be cached
-+ *	@saddr: the source address to be stored inside the cache
-+ *
-+ *	local BH must be disabled.
-+ */
-+void dst_cache_set_ip6(struct dst_cache *dst_cache, struct dst_entry *dst,
-+		       const struct in6_addr *addr);
-+
-+/**
-+ *	dst_cache_get_ip6 - perform cache lookup and fetch ipv6 source address
-+ *	@dst_cache: the cache
-+ *	@saddr: return value for the retrieved source address
-+ *
-+ *	local BH must be disabled.
-+ */
-+struct dst_entry *dst_cache_get_ip6(struct dst_cache *dst_cache,
-+				    struct in6_addr *saddr);
-+#endif
-+
-+/**
-+ *	dst_cache_reset - invalidate the cache contents
-+ *	@dst_cache: the cache
-+ *
-+ *	This do not free the cached dst to avoid races and contentions.
-+ *	the dst will be freed on later cache lookup.
-+ */
-+static inline void dst_cache_reset(struct dst_cache *dst_cache)
-+{
-+	dst_cache->reset_ts = jiffies;
-+}
-+
-+/**
-+ *	dst_cache_init - initialize the cache, allocating the required storage
-+ *	@dst_cache: the cache
-+ *	@gfp: allocation flags
-+ */
-+int dst_cache_init(struct dst_cache *dst_cache, gfp_t gfp);
-+
-+/**
-+ *	dst_cache_destroy - empty the cache and free the allocated storage
-+ *	@dst_cache: the cache
-+ *
-+ *	No synchronization is enforced: it must be called only when the cache
-+ *	is unsed.
-+ */
-+void dst_cache_destroy(struct dst_cache *dst_cache);
-+
-+#endif
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@ -383,6 +383,10 @@ config LWTUNNEL
- 	  weight tunnel endpoint. Tunnel encapsulation parameters are stored
- 	  with light weight tunnel state associated with fib routes.
- 
-+config DST_CACHE
-+	bool "dst cache"
-+	default n
-+
- endif   # if NET
- 
- # Used by archs to tell that they support BPF_JIT
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_NET_PTP_CLASSIFY) += ptp_cl
- obj-$(CONFIG_CGROUP_NET_PRIO) += netprio_cgroup.o
- obj-$(CONFIG_CGROUP_NET_CLASSID) += netclassid_cgroup.o
- obj-$(CONFIG_LWTUNNEL) += lwtunnel.o
-+obj-$(CONFIG_DST_CACHE) += dst_cache.o
---- /dev/null
-+++ b/net/core/dst_cache.c
-@@ -0,0 +1,168 @@
-+/*
-+ * net/core/dst_cache.c - dst entry cache
-+ *
-+ * Copyright (c) 2016 Paolo Abeni <pabeni@redhat.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/percpu.h>
-+#include <net/dst_cache.h>
-+#include <net/route.h>
-+#if IS_ENABLED(CONFIG_IPV6)
-+#include <net/ip6_fib.h>
-+#endif
-+#include <uapi/linux/in.h>
-+
-+struct dst_cache_pcpu {
-+	unsigned long refresh_ts;
-+	struct dst_entry *dst;
-+	u32 cookie;
-+	union {
-+		struct in_addr in_saddr;
-+		struct in6_addr in6_saddr;
-+	};
-+};
-+
-+void dst_cache_per_cpu_dst_set(struct dst_cache_pcpu *dst_cache,
-+			       struct dst_entry *dst, u32 cookie)
-+{
-+	dst_release(dst_cache->dst);
-+	if (dst)
-+		dst_hold(dst);
-+
-+	dst_cache->cookie = cookie;
-+	dst_cache->dst = dst;
-+}
-+
-+struct dst_entry *dst_cache_per_cpu_get(struct dst_cache *dst_cache,
-+					struct dst_cache_pcpu *idst)
-+{
-+	struct dst_entry *dst;
-+
-+	dst = idst->dst;
-+	if (!dst)
-+		goto fail;
-+
-+	/* the cache already hold a dst reference; it can't go away */
-+	dst_hold(dst);
-+
-+	if (unlikely(!time_after(idst->refresh_ts, dst_cache->reset_ts) ||
-+		     (dst->obsolete && !dst->ops->check(dst, idst->cookie)))) {
-+		dst_cache_per_cpu_dst_set(idst, NULL, 0);
-+		dst_release(dst);
-+		goto fail;
-+	}
-+	return dst;
-+
-+fail:
-+	idst->refresh_ts = jiffies;
-+	return NULL;
-+}
-+
-+struct dst_entry *dst_cache_get(struct dst_cache *dst_cache)
-+{
-+	if (!dst_cache->cache)
-+		return NULL;
-+
-+	return dst_cache_per_cpu_get(dst_cache, this_cpu_ptr(dst_cache->cache));
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_get);
-+
-+struct rtable *dst_cache_get_ip4(struct dst_cache *dst_cache, __be32 *saddr)
-+{
-+	struct dst_cache_pcpu *idst;
-+	struct dst_entry *dst;
-+
-+	if (!dst_cache->cache)
-+		return NULL;
-+
-+	idst = this_cpu_ptr(dst_cache->cache);
-+	dst = dst_cache_per_cpu_get(dst_cache, idst);
-+	if (!dst)
-+		return NULL;
-+
-+	*saddr = idst->in_saddr.s_addr;
-+	return container_of(dst, struct rtable, dst);
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_get_ip4);
-+
-+void dst_cache_set_ip4(struct dst_cache *dst_cache, struct dst_entry *dst,
-+		       __be32 saddr)
-+{
-+	struct dst_cache_pcpu *idst;
-+
-+	if (!dst_cache->cache)
-+		return;
-+
-+	idst = this_cpu_ptr(dst_cache->cache);
-+	dst_cache_per_cpu_dst_set(idst, dst, 0);
-+	idst->in_saddr.s_addr = saddr;
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_set_ip4);
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+void dst_cache_set_ip6(struct dst_cache *dst_cache, struct dst_entry *dst,
-+		       const struct in6_addr *addr)
-+{
-+	struct dst_cache_pcpu *idst;
-+
-+	if (!dst_cache->cache)
-+		return;
-+
-+	idst = this_cpu_ptr(dst_cache->cache);
-+	dst_cache_per_cpu_dst_set(this_cpu_ptr(dst_cache->cache), dst,
-+				  rt6_get_cookie((struct rt6_info *)dst));
-+	idst->in6_saddr = *addr;
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_set_ip6);
-+
-+struct dst_entry *dst_cache_get_ip6(struct dst_cache *dst_cache,
-+				    struct in6_addr *saddr)
-+{
-+	struct dst_cache_pcpu *idst;
-+	struct dst_entry *dst;
-+
-+	if (!dst_cache->cache)
-+		return NULL;
-+
-+	idst = this_cpu_ptr(dst_cache->cache);
-+	dst = dst_cache_per_cpu_get(dst_cache, idst);
-+	if (!dst)
-+		return NULL;
-+
-+	*saddr = idst->in6_saddr;
-+	return dst;
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_get_ip6);
-+#endif
-+
-+int dst_cache_init(struct dst_cache *dst_cache, gfp_t gfp)
-+{
-+	dst_cache->cache = alloc_percpu_gfp(struct dst_cache_pcpu,
-+					    gfp | __GFP_ZERO);
-+	if (!dst_cache->cache)
-+		return -ENOMEM;
-+
-+	dst_cache_reset(dst_cache);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_init);
-+
-+void dst_cache_destroy(struct dst_cache *dst_cache)
-+{
-+	int i;
-+
-+	if (!dst_cache->cache)
-+		return;
-+
-+	for_each_possible_cpu(i)
-+		dst_release(per_cpu_ptr(dst_cache->cache, i)->dst);
-+
-+	free_percpu(dst_cache->cache);
-+}
-+EXPORT_SYMBOL_GPL(dst_cache_destroy);
+On 02/22/2018 05:22 PM, Farhan Ali wrote:
+> The S390 architecture does not support any graphics hardware,
+> but with the latest support for Virtio GPU in Linux and Virtio
+> GPU emulation in QEMU, it's possible to enable graphics for
+> S390 using the Virtio GPU device.
+> 
+> To enable display we need to enable the Linux Virtual Terminal (VT)
+> layer for S390. But the VT subsystem initializes quite early
+> at boot so we need a dummy console driver till the Virtio GPU
+> driver is initialized and we can run the framebuffer console.
+> 
+> The framebuffer console over a Virtio GPU device can be run
+> in combination with the serial SCLP console (default on S390).
+> The SCLP console can still be accessed by management applications
+> (eg: via Libvirt's virsh console).
+> 
+> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Thomas Huth <thuth@redhat.com>
+> ---
+>  arch/s390/kernel/setup.c      | 2 ++
+>  drivers/tty/Kconfig           | 2 +-
+>  drivers/video/console/Kconfig | 2 +-
+>  3 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+> index a6a91f0..f98a0f3 100644
+> --- a/arch/s390/kernel/setup.c
+> +++ b/arch/s390/kernel/setup.c
+> @@ -221,6 +221,8 @@ static void __init conmode_default(void)
+>  		SET_CONSOLE_SCLP;
+>  #endif
+>  	}
+> +	if (IS_ENABLED(CONFIG_VT) && IS_ENABLED(CONFIG_DUMMY_CONSOLE))
+> +		conswitchp = &dummy_con;
+>  }
+> 
+>  #ifdef CONFIG_CRASH_DUMP
+> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> index b811442..5ca53fa 100644
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -11,7 +11,7 @@ if TTY
+> 
+>  config VT
+>  	bool "Virtual terminal" if EXPERT
+> -	depends on !S390 && !UML
+> +	depends on !UML
+>  	select INPUT
+>  	default y
+>  	---help---
+> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+> index 9485857..b9c2c91 100644
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@ -9,7 +9,7 @@ config VGA_CONSOLE
+>  	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
+>  		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
+>  		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
+> -		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && HAS_IOMEM
+> +		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && HAS_IOMEM && !S390
+>  	default y
+>  	help
+>  	  Saying Y here will allow you to use Linux in text mode through a
+> 
