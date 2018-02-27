@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753666AbeB0OIs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:08:48 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55340 "EHLO
+        id S1753873AbeB0OL6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:11:58 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54894 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753609AbeB0OIo (ORCPT
+        with ESMTP id S1753432AbeB0OIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:08:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99D9160F71
+        Tue, 27 Feb 2018 09:08:34 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B5D360F6D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,9 +19,9 @@ To: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, robh@kernel.org, sricharan@codeaurora.org,
         linux@arm.linux.org.uk
-Subject: [PATCH v8 11/15] clk: qcom: Add Krait clock controller driver
-Date: Tue, 27 Feb 2018 19:36:58 +0530
-Message-Id: <1519740422-3835-12-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v8 09/15] clk: qcom: Add KPSS ACC/GCC driver
+Date: Tue, 27 Feb 2018 19:36:56 +0530
+Message-Id: <1519740422-3835-10-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
 References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
@@ -31,55 +31,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-The Krait CPU clocks are made up of a primary mux and secondary
-mux for each CPU and the L2, controlled via cp15 accessors. For
-Kraits within KPSSv1 each secondary mux accepts a different aux
-source, but on KPSSv2 each secondary mux accepts the same aux
-source.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. For CPUfreq
+purposes probe these devices and expose a mux clock that chooses
+between PXO and PLL8.
 
 Cc: <devicetree@vger.kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/qcom/Kconfig    |   8 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/krait-cc.c | 341 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 350 insertions(+)
- create mode 100644 drivers/clk/qcom/krait-cc.c
+ drivers/clk/qcom/Kconfig    |  8 +++++
+ drivers/clk/qcom/Makefile   |  1 +
+ drivers/clk/qcom/kpss-xcc.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
 
 diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 8fca65d..73cb840 100644
+index bf14f56..8fca65d 100644
 --- a/drivers/clk/qcom/Kconfig
 +++ b/drivers/clk/qcom/Kconfig
-@@ -243,6 +243,14 @@ config KPSS_XCC
- 	  if you want to support CPU frequency scaling on devices such
- 	  as MSM8960, APQ8064, etc.
+@@ -235,6 +235,14 @@ config QCOM_HFPLL
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
  
-+config KRAITCC
-+	tristate "Krait Clock Controller"
-+	depends on COMMON_CLK_QCOM && ARM
-+	select KRAIT_CLOCKS
++config KPSS_XCC
++	tristate "KPSS Clock Controller"
++	depends on COMMON_CLK_QCOM
 +	help
-+	  Support for the Krait CPU clocks on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling.
++	  Support for the Krait ACC and GCC clock controllers. Say Y
++	  if you want to support CPU frequency scaling on devices such
++	  as MSM8960, APQ8064, etc.
 +
  config KRAIT_CLOCKS
  	bool
  	select KRAIT_L2_ACCESSORS
 diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 24e598a..cd99c7b 100644
+index e1e96f6..24e598a 100644
 --- a/drivers/clk/qcom/Makefile
 +++ b/drivers/clk/qcom/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+@@ -40,4 +40,5 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
++obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
  obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-+obj-$(CONFIG_KRAITCC) += krait-cc.o
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
 new file mode 100644
-index 0000000..7c9dfb0
+index 0000000..8590b5e
 --- /dev/null
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -0,0 +1,341 @@
++++ b/drivers/clk/qcom/kpss-xcc.c
+@@ -0,0 +1,87 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
@@ -93,333 +93,79 @@ index 0000000..7c9dfb0
 +#include <linux/of_device.h>
 +#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/slab.h>
 +
-+#include "clk-krait.h"
++static const char *aux_parents[] = {
++	"pll8_vote",
++	"pxo",
++};
 +
-+static unsigned int sec_mux_map[] = {
-+	2,
++static unsigned int aux_parent_map[] = {
++	3,
 +	0,
 +};
 +
-+static unsigned int pri_mux_map[] = {
-+	1,
-+	2,
-+	0,
-+};
-+
-+static int
-+krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
-+{
-+	struct krait_div2_clk *div;
-+	struct clk_init_data init = {
-+		.num_parents = 1,
-+		.ops = &krait_div2_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	const char *p_names[1];
-+	struct clk *clk;
-+
-+	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return -ENOMEM;
-+
-+	div->width = 2;
-+	div->shift = 6;
-+	div->lpl = id >= 0;
-+	div->offset = offset;
-+	div->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
-+	if (!init.name)
-+		return -ENOMEM;
-+
-+	init.parent_names = p_names;
-+	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!p_names[0]) {
-+		kfree(init.name);
-+		return -ENOMEM;
-+	}
-+
-+	clk = devm_clk_register(dev, &div->hw);
-+	kfree(p_names[0]);
-+	kfree(init.name);
-+
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static int
-+krait_add_sec_mux(struct device *dev, int id, const char *s,
-+		  unsigned int offset, bool unique_aux)
-+{
-+	struct krait_mux_clk *mux;
-+	static const char *sec_mux_list[] = {
-+		"acpu_aux",
-+		"qsb",
-+	};
-+	struct clk_init_data init = {
-+		.parent_names = sec_mux_list,
-+		.num_parents = ARRAY_SIZE(sec_mux_list),
-+		.ops = &krait_mux_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	struct clk *clk;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return -ENOMEM;
-+
-+	mux->offset = offset;
-+	mux->lpl = id >= 0;
-+	mux->mask = 0x3;
-+	mux->shift = 2;
-+	mux->parent_map = sec_mux_map;
-+	mux->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
-+	if (!init.name)
-+		return -ENOMEM;
-+
-+	if (unique_aux) {
-+		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
-+		if (!sec_mux_list[0]) {
-+			clk = ERR_PTR(-ENOMEM);
-+			goto err_aux;
-+		}
-+	}
-+
-+	clk = devm_clk_register(dev, &mux->hw);
-+
-+	if (unique_aux)
-+		kfree(sec_mux_list[0]);
-+err_aux:
-+	kfree(init.name);
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static struct clk *
-+krait_add_pri_mux(struct device *dev, int id, const char *s,
-+		  unsigned int offset)
-+{
-+	struct krait_mux_clk *mux;
-+	const char *p_names[3];
-+	struct clk_init_data init = {
-+		.parent_names = p_names,
-+		.num_parents = ARRAY_SIZE(p_names),
-+		.ops = &krait_mux_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	struct clk *clk;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mux->mask = 0x3;
-+	mux->shift = 0;
-+	mux->offset = offset;
-+	mux->lpl = id >= 0;
-+	mux->parent_map = pri_mux_map;
-+	mux->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
-+	if (!init.name)
-+		return ERR_PTR(-ENOMEM);
-+
-+	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!p_names[0]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p0;
-+	}
-+
-+	p_names[1] = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
-+	if (!p_names[1]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p1;
-+	}
-+
-+	p_names[2] = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
-+	if (!p_names[2]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p2;
-+	}
-+
-+	clk = devm_clk_register(dev, &mux->hw);
-+
-+	kfree(p_names[2]);
-+err_p2:
-+	kfree(p_names[1]);
-+err_p1:
-+	kfree(p_names[0]);
-+err_p0:
-+	kfree(init.name);
-+	return clk;
-+}
-+
-+/* id < 0 for L2, otherwise id == physical CPU number */
-+static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
-+{
-+	int ret;
-+	unsigned int offset;
-+	void *p = NULL;
-+	const char *s;
-+	struct clk *clk;
-+
-+	if (id >= 0) {
-+		offset = 0x4501 + (0x1000 * id);
-+		s = p = kasprintf(GFP_KERNEL, "%d", id);
-+		if (!s)
-+			return ERR_PTR(-ENOMEM);
-+	} else {
-+		offset = 0x500;
-+		s = "_l2";
-+	}
-+
-+	ret = krait_add_div(dev, id, s, offset);
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err;
-+	}
-+
-+	ret = krait_add_sec_mux(dev, id, s, offset, unique_aux);
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err;
-+	}
-+
-+	clk = krait_add_pri_mux(dev, id, s, offset);
-+err:
-+	kfree(p);
-+	return clk;
-+}
-+
-+static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	unsigned int idx = clkspec->args[0];
-+	struct clk **clks = data;
-+
-+	if (idx >= 5) {
-+		pr_err("%s: invalid clock index %d\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return clks[idx] ? : ERR_PTR(-ENODEV);
-+}
-+
-+static const struct of_device_id krait_cc_match_table[] = {
-+	{ .compatible = "qcom,krait-cc-v1", (void *)1UL },
-+	{ .compatible = "qcom,krait-cc-v2" },
++static const struct of_device_id kpss_xcc_match_table[] = {
++	{ .compatible = "qcom,kpss-acc-v1", .data = (void *)1UL },
++	{ .compatible = "qcom,kpss-gcc" },
 +	{}
 +};
-+MODULE_DEVICE_TABLE(of, krait_cc_match_table);
++MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
 +
-+static int krait_cc_probe(struct platform_device *pdev)
++static int kpss_xcc_driver_probe(struct platform_device *pdev)
 +{
-+	struct device *dev = &pdev->dev;
 +	const struct of_device_id *id;
-+	unsigned long cur_rate, aux_rate;
-+	int cpu;
 +	struct clk *clk;
-+	struct clk **clks;
-+	struct clk *l2_pri_mux_clk;
++	struct resource *res;
++	void __iomem *base;
++	const char *name;
 +
-+	id = of_match_device(krait_cc_match_table, dev);
++	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
 +	if (!id)
 +		return -ENODEV;
 +
-+	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
-+	clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+	if (!id->data) {
-+		clk = clk_register_fixed_factor(dev, "acpu_aux",
-+						"gpll0_vote", 0, 1, 2);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
++	if (id->data) {
++		if (of_property_read_string_index(pdev->dev.of_node,
++						  "clock-output-names",
++						  0, &name))
++			return -ENODEV;
++		base += 0x14;
++	} else {
++		name = "acpu_l2_aux";
++		base += 0x28;
 +	}
 +
-+	/* Krait configurations have at most 4 CPUs and one L2 */
-+	clks = devm_kcalloc(dev, 5, sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
++	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
++				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
++				     0, aux_parent_map, NULL);
 +
-+	for_each_possible_cpu(cpu) {
-+		clk = krait_add_clks(dev, cpu, id->data);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+		clks[cpu] = clk;
-+	}
++	platform_set_drvdata(pdev, clk);
 +
-+	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
-+	if (IS_ERR(l2_pri_mux_clk))
-+		return PTR_ERR(l2_pri_mux_clk);
-+	clks[4] = l2_pri_mux_clk;
++	return PTR_ERR_OR_ZERO(clk);
++}
 +
-+	/*
-+	 * We don't want the CPU or L2 clocks to be turned off at late init
-+	 * if CPUFREQ or HOTPLUG configs are disabled. So, bump up the
-+	 * refcount of these clocks. Any cpufreq/hotplug manager can assume
-+	 * that the clocks have already been prepared and enabled by the time
-+	 * they take over.
-+	 */
-+	for_each_online_cpu(cpu) {
-+		clk_prepare_enable(l2_pri_mux_clk);
-+		WARN(clk_prepare_enable(clks[cpu]),
-+		     "Unable to turn on CPU%d clock", cpu);
-+	}
-+
-+	/*
-+	 * Force reinit of HFPLLs and muxes to overwrite any potential
-+	 * incorrect configuration of HFPLLs and muxes by the bootloader.
-+	 * While at it, also make sure the cores are running at known rates
-+	 * and print the current rate.
-+	 *
-+	 * The clocks are set to aux clock rate first to make sure the
-+	 * secondary mux is not sourcing off of QSB. The rate is then set to
-+	 * two different rates to force a HFPLL reinit under all
-+	 * circumstances.
-+	 */
-+	cur_rate = clk_get_rate(l2_pri_mux_clk);
-+	aux_rate = 384000000;
-+	if (cur_rate == 1) {
-+		pr_info("L2 @ QSB rate. Forcing new rate.\n");
-+		cur_rate = aux_rate;
-+	}
-+	clk_set_rate(l2_pri_mux_clk, aux_rate);
-+	clk_set_rate(l2_pri_mux_clk, 2);
-+	clk_set_rate(l2_pri_mux_clk, cur_rate);
-+	pr_info("L2 @ %lu KHz\n", clk_get_rate(l2_pri_mux_clk) / 1000);
-+	for_each_possible_cpu(cpu) {
-+		clk = clks[cpu];
-+		cur_rate = clk_get_rate(clk);
-+		if (cur_rate == 1) {
-+			pr_info("CPU%d @ QSB rate. Forcing new rate.\n", cpu);
-+			cur_rate = aux_rate;
-+		}
-+
-+		clk_set_rate(clk, aux_rate);
-+		clk_set_rate(clk, 2);
-+		clk_set_rate(clk, cur_rate);
-+		pr_info("CPU%d @ %lu KHz\n", cpu, clk_get_rate(clk) / 1000);
-+	}
-+
-+	of_clk_add_provider(dev->of_node, krait_of_get, clks);
-+
++static int kpss_xcc_driver_remove(struct platform_device *pdev)
++{
++	clk_unregister_mux(platform_get_drvdata(pdev));
 +	return 0;
 +}
 +
-+static struct platform_driver krait_cc_driver = {
-+	.probe = krait_cc_probe,
++static struct platform_driver kpss_xcc_driver = {
++	.probe = kpss_xcc_driver_probe,
++	.remove = kpss_xcc_driver_remove,
 +	.driver = {
-+		.name = "krait-cc",
-+		.of_match_table = krait_cc_match_table,
++		.name = "kpss-xcc",
++		.of_match_table = kpss_xcc_match_table,
 +	},
 +};
-+module_platform_driver(krait_cc_driver);
++module_platform_driver(kpss_xcc_driver);
 +
-+MODULE_DESCRIPTION("Krait CPU Clock Driver");
++MODULE_DESCRIPTION("Krait Processor Sub System (KPSS) Clock Driver");
 +MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:krait-cc");
++MODULE_ALIAS("platform:kpss-xcc");
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
