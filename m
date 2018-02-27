@@ -1,75 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754244AbeB0PzI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:55:08 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56790 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754229AbeB0PzG (ORCPT
+        id S932203AbeB0P4K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:56:10 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44626 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932174AbeB0P4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:55:06 -0500
-Subject: Re: [PATCH] ARM: dts: stm32: Add leds support to stm32f769 Discovery
- board
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-References: <20180117094005.20728-1-benjamin.gaignard@st.com>
- <20180117094005.20728-2-benjamin.gaignard@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <58d38d05-5b78-356a-b563-839e2844d1f5@st.com>
-Date: Tue, 27 Feb 2018 16:54:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 10:56:08 -0500
+X-IronPort-AV: E=Sophos;i="5.47,401,1515456000";
+   d="scan'208";a="668545261"
+From: Amit Shah <aams@amazon.com>
+To: <xen-devel@lists.xenproject.org>
+CC: <linux-kernel@vger.kernel.org>, Amit Shah <aams@amazon.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        "Juergen Gross" <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Liu Shuo <shuo.a.liu@intel.com>, Anoob Soman <anoob.soman@citrix.com>
+Subject: [PATCH v2 0/2] xen: fix bugs in error conditions
+Date: Tue, 27 Feb 2018 15:55:56 +0000
+Message-ID: <1519746958-52077-1-git-send-email-aams@amazon.com>
+X-Mailer: git-send-email 2.7.3.AMZN
 MIME-Version: 1.0
-In-Reply-To: <20180117094005.20728-2-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RFuHJt026970
 
-Hi
+Hello,
 
-On 01/17/2018 10:40 AM, Benjamin Gaignard wrote:
-> Add nodes for the two user leds.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->   arch/arm/boot/dts/stm32f769-disco.dts | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32f769-disco.dts b/arch/arm/boot/dts/stm32f769-disco.dts
-> index 4463ca13a740..25a4b71f0317 100644
-> --- a/arch/arm/boot/dts/stm32f769-disco.dts
-> +++ b/arch/arm/boot/dts/stm32f769-disco.dts
-> @@ -61,6 +61,16 @@
->   		serial0 = &usart1;
->   	};
->   
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		green {
-> +			gpios = <&gpioj 5 0>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +		red {
-> +			gpios = <&gpioj 13 0>;
-> +		};
-> +	};
->   };
->   
->   &cec {
-> 
+These bugs were found during code review.  Details in the commits.
 
-Applied on stm32-next.
+Please review and apply.
 
-thanks
-alex
+v2:
+ - fix up patch 2 properly (Roger Pau Monné)
+
+CC: Roger Pau Monné <roger.pau@citrix.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Eduardo Valentin <eduval@amazon.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: "K. Y. Srinivasan" <kys@microsoft.com>
+CC: Liu Shuo <shuo.a.liu@intel.com>
+CC: Anoob Soman <anoob.soman@citrix.com>
+
+Amit Shah (2):
+  xen: fix out-of-bounds irq unbind for MSI message groups
+  xen: events: free irqs in error condition
+
+ drivers/xen/events/events_base.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+-- 
+2.7.3.AMZN
+
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
