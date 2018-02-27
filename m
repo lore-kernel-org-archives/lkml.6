@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752605AbeB0Jst (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:48:49 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52543 "EHLO
+        id S1752668AbeB0JtC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:49:02 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:10321 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752072AbeB0Jsp (ORCPT
+        by vger.kernel.org with ESMTP id S1752621AbeB0Js5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:48:45 -0500
+        Tue, 27 Feb 2018 04:48:57 -0500
 From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To: Wolfram Sang <wsa@the-dreams.de>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -14,16 +14,16 @@ To: Wolfram Sang <wsa@the-dreams.de>,
         <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [RESEND PATCH v1 4/6] i2c: i2c-stm32: Add generic DMA API
-Date: Tue, 27 Feb 2018 10:48:12 +0100
-Message-ID: <1519724894-21363-5-git-send-email-pierre-yves.mordret@st.com>
+Subject: [RESEND PATCH v1 2/6] i2c: i2c-stm32f7: Add slave support
+Date: Tue, 27 Feb 2018 10:48:10 +0100
+Message-ID: <1519724894-21363-3-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519724894-21363-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1519724894-21363-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG5NODE2.st.com
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
  signatures=0
@@ -31,233 +31,608 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a generic DMA API to implement DMA support for i2c-stm32fx
-drivers
+This patch adds slave support for I2C controller embedded in STM32F7 SoC
 
 Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
   Version history:
-    v1:
-       * Initial
+     v1:
+        * Initial
 ---
 ---
- drivers/i2c/busses/i2c-stm32.c | 153 +++++++++++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-stm32.h |  37 ++++++++++
- 2 files changed, 190 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-stm32.c
+ drivers/i2c/busses/Kconfig       |   1 +
+ drivers/i2c/busses/i2c-stm32f7.c | 434 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 429 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
-new file mode 100644
-index 0000000..d75fbcb
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-stm32.c
-@@ -0,0 +1,153 @@
-+/*
-+ * i2c-stm32.c
-+ *
-+ * Copyright (C) M'boumba Cedric Madianga 2017
-+ * Author: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
-+ *
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index a9805c7..08f1490 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -962,6 +962,7 @@ config I2C_STM32F4
+ config I2C_STM32F7
+ 	tristate "STMicroelectronics STM32F7 I2C support"
+ 	depends on ARCH_STM32 || COMPILE_TEST
++	select I2C_SLAVE
+ 	help
+ 	  Enable this option to add support for STM32 I2C controller embedded
+ 	  in STM32F7 SoCs.
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 31bfa00..aff1750 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -35,6 +35,8 @@
+ /* STM32F7 I2C registers */
+ #define STM32F7_I2C_CR1				0x00
+ #define STM32F7_I2C_CR2				0x04
++#define STM32F7_I2C_OAR1			0x08
++#define STM32F7_I2C_OAR2			0x0C
+ #define STM32F7_I2C_TIMINGR			0x10
+ #define STM32F7_I2C_ISR				0x18
+ #define STM32F7_I2C_ICR				0x1C
+@@ -42,6 +44,7 @@
+ #define STM32F7_I2C_TXDR			0x28
+ 
+ /* STM32F7 I2C control 1 */
++#define STM32F7_I2C_CR1_SBC			BIT(16)
+ #define STM32F7_I2C_CR1_ANFOFF			BIT(12)
+ #define STM32F7_I2C_CR1_ERRIE			BIT(7)
+ #define STM32F7_I2C_CR1_TCIE			BIT(6)
+@@ -57,6 +60,11 @@
+ 						| STM32F7_I2C_CR1_NACKIE \
+ 						| STM32F7_I2C_CR1_RXIE \
+ 						| STM32F7_I2C_CR1_TXIE)
++#define STM32F7_I2C_XFER_IRQ_MASK		(STM32F7_I2C_CR1_TCIE \
++						| STM32F7_I2C_CR1_STOPIE \
++						| STM32F7_I2C_CR1_NACKIE \
++						| STM32F7_I2C_CR1_RXIE \
++						| STM32F7_I2C_CR1_TXIE)
+ 
+ /* STM32F7 I2C control 2 */
+ #define STM32F7_I2C_CR2_RELOAD			BIT(24)
+@@ -74,7 +82,34 @@
+ #define STM32F7_I2C_CR2_SADD7_MASK		GENMASK(7, 1)
+ #define STM32F7_I2C_CR2_SADD7(n)		(((n) & 0x7f) << 1)
+ 
++/* STM32F7 I2C Own Address 1 */
++#define STM32F7_I2C_OAR1_OA1EN			BIT(15)
++#define STM32F7_I2C_OAR1_OA1MODE		BIT(10)
++#define STM32F7_I2C_OAR1_OA1_10_MASK		GENMASK(9, 0)
++#define STM32F7_I2C_OAR1_OA1_10(n)		(((n) & \
++						STM32F7_I2C_OAR1_OA1_10_MASK))
++#define STM32F7_I2C_OAR1_OA1_7_MASK		GENMASK(7, 1)
++#define STM32F7_I2C_OAR1_OA1_7(n)		(((n) & 0x7f) << 1)
++#define STM32F7_I2C_OAR1_MASK			(STM32F7_I2C_OAR1_OA1_7_MASK \
++						| STM32F7_I2C_OAR1_OA1_10_MASK \
++						| STM32F7_I2C_OAR1_OA1EN \
++						| STM32F7_I2C_OAR1_OA1MODE)
 +
-+#include "i2c-stm32.h"
++/* STM32F7 I2C Own Address 2 */
++#define STM32F7_I2C_OAR2_OA2EN			BIT(15)
++#define STM32F7_I2C_OAR2_OA2MSK_MASK		GENMASK(10, 8)
++#define STM32F7_I2C_OAR2_OA2MSK(n)		(((n) & 0x7) << 8)
++#define STM32F7_I2C_OAR2_OA2_7_MASK		GENMASK(7, 1)
++#define STM32F7_I2C_OAR2_OA2_7(n)		(((n) & 0x7f) << 1)
++#define STM32F7_I2C_OAR2_MASK			(STM32F7_I2C_OAR2_OA2MSK_MASK \
++						| STM32F7_I2C_OAR2_OA2_7_MASK \
++						| STM32F7_I2C_OAR2_OA2EN)
 +
-+/* Functions for DMA support */
-+struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
-+					    dma_addr_t phy_addr,
-+					    u32 txdr_offset,
-+					    u32 rxdr_offset)
+ /* STM32F7 I2C Interrupt Status */
++#define STM32F7_I2C_ISR_ADDCODE_MASK		GENMASK(23, 17)
++#define STM32F7_I2C_ISR_ADDCODE_GET(n) \
++				(((n) & STM32F7_I2C_ISR_ADDCODE_MASK) >> 17)
++#define STM32F7_I2C_ISR_DIR			BIT(16)
+ #define STM32F7_I2C_ISR_BUSY			BIT(15)
+ #define STM32F7_I2C_ISR_ARLO			BIT(9)
+ #define STM32F7_I2C_ISR_BERR			BIT(8)
+@@ -82,14 +117,17 @@
+ #define STM32F7_I2C_ISR_TC			BIT(6)
+ #define STM32F7_I2C_ISR_STOPF			BIT(5)
+ #define STM32F7_I2C_ISR_NACKF			BIT(4)
++#define STM32F7_I2C_ISR_ADDR			BIT(3)
+ #define STM32F7_I2C_ISR_RXNE			BIT(2)
+ #define STM32F7_I2C_ISR_TXIS			BIT(1)
++#define STM32F7_I2C_ISR_TXE			BIT(0)
+ 
+ /* STM32F7 I2C Interrupt Clear */
+ #define STM32F7_I2C_ICR_ARLOCF			BIT(9)
+ #define STM32F7_I2C_ICR_BERRCF			BIT(8)
+ #define STM32F7_I2C_ICR_STOPCF			BIT(5)
+ #define STM32F7_I2C_ICR_NACKCF			BIT(4)
++#define STM32F7_I2C_ICR_ADDRCF			BIT(3)
+ 
+ /* STM32F7 I2C Timing */
+ #define STM32F7_I2C_TIMINGR_PRESC(n)		(((n) & 0xf) << 28)
+@@ -99,6 +137,7 @@
+ #define STM32F7_I2C_TIMINGR_SCLL(n)		((n) & 0xff)
+ 
+ #define STM32F7_I2C_MAX_LEN			0xff
++#define STM32F7_I2C_MAX_SLAVE			0x2
+ 
+ #define STM32F7_I2C_DNF_DEFAULT			0
+ #define STM32F7_I2C_DNF_MAX			16
+@@ -209,6 +248,11 @@ struct stm32f7_i2c_msg {
+  * @f7_msg: customized i2c msg for driver usage
+  * @setup: I2C timing input setup
+  * @timing: I2C computed timings
++ * @slave: list of slave devices registered on the I2C bus
++ * @slave_running: slave device currently used
++ * @slave_dir: transfer direction for the current slave device
++ * @master_mode: boolean to know in which mode the I2C is running (master or
++ * slave)
+  */
+ struct stm32f7_i2c_dev {
+ 	struct i2c_adapter adap;
+@@ -223,6 +267,10 @@ struct stm32f7_i2c_dev {
+ 	struct stm32f7_i2c_msg f7_msg;
+ 	struct stm32f7_i2c_setup setup;
+ 	struct stm32f7_i2c_timings timing;
++	struct i2c_client *slave[STM32F7_I2C_MAX_SLAVE];
++	struct i2c_client *slave_running;
++	u32 slave_dir;
++	bool master_mode;
+ };
+ 
+ /**
+@@ -288,6 +336,11 @@ static inline void stm32f7_i2c_clr_bits(void __iomem *reg, u32 mask)
+ 	writel_relaxed(readl_relaxed(reg) & ~mask, reg);
+ }
+ 
++static void stm32f7_i2c_disable_irq(struct stm32f7_i2c_dev *i2c_dev, u32 mask)
 +{
-+	struct stm32_i2c_dma *dma;
-+	struct dma_slave_config dma_sconfig;
-+	int ret;
-+
-+	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
-+	if (!dma)
-+		return NULL;
-+
-+	/* Request and configure I2C TX dma channel */
-+	dma->chan_tx = dma_request_slave_channel(dev, "tx");
-+	if (!dma->chan_tx) {
-+		dev_dbg(dev, "can't request DMA tx channel\n");
-+		ret = -EINVAL;
-+		goto fail_al;
-+	}
-+
-+	memset(&dma_sconfig, 0, sizeof(dma_sconfig));
-+	dma_sconfig.dst_addr = phy_addr + txdr_offset;
-+	dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconfig.dst_maxburst = 1;
-+	dma_sconfig.direction = DMA_MEM_TO_DEV;
-+	ret = dmaengine_slave_config(dma->chan_tx, &dma_sconfig);
-+	if (ret < 0) {
-+		dev_err(dev, "can't configure tx channel\n");
-+		goto fail_tx;
-+	}
-+
-+	/* Request and configure I2C RX dma channel */
-+	dma->chan_rx = dma_request_slave_channel(dev, "rx");
-+	if (!dma->chan_rx) {
-+		dev_err(dev, "can't request DMA rx channel\n");
-+		ret = -EINVAL;
-+		goto fail_tx;
-+	}
-+
-+	memset(&dma_sconfig, 0, sizeof(dma_sconfig));
-+	dma_sconfig.src_addr = phy_addr + rxdr_offset;
-+	dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconfig.src_maxburst = 1;
-+	dma_sconfig.direction = DMA_DEV_TO_MEM;
-+	ret = dmaengine_slave_config(dma->chan_rx, &dma_sconfig);
-+	if (ret < 0) {
-+		dev_err(dev, "can't configure rx channel\n");
-+		goto fail_rx;
-+	}
-+
-+	init_completion(&dma->dma_complete);
-+
-+	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
-+		 dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
-+
-+	return dma;
-+
-+fail_rx:
-+	dma_release_channel(dma->chan_rx);
-+fail_tx:
-+	dma_release_channel(dma->chan_tx);
-+fail_al:
-+	devm_kfree(dev, dma);
-+	dev_info(dev, "can't use DMA\n");
-+
-+	return NULL;
++	stm32f7_i2c_clr_bits(i2c_dev->base + STM32F7_I2C_CR1, mask);
 +}
 +
-+void stm32_i2c_dma_free(struct stm32_i2c_dma *dma)
-+{
-+	dma->dma_buf = 0;
-+	dma->dma_len = 0;
-+
-+	dma_release_channel(dma->chan_tx);
-+	dma->chan_tx = NULL;
-+
-+	dma_release_channel(dma->chan_rx);
-+	dma->chan_rx = NULL;
-+
-+	dma->chan_using = NULL;
-+}
-+
-+int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
-+			    bool rd_wr, u32 len, u8 *buf,
-+			    dma_async_tx_callback callback,
-+			    void *dma_async_param)
-+{
-+	struct dma_async_tx_descriptor *txdesc;
-+	struct device *chan_dev;
-+	int ret;
-+
-+	if (rd_wr) {
-+		dma->chan_using = dma->chan_rx;
-+		dma->dma_transfer_dir = DMA_DEV_TO_MEM;
-+		dma->dma_data_dir = DMA_FROM_DEVICE;
+ static int stm32f7_i2c_compute_timing(struct stm32f7_i2c_dev *i2c_dev,
+ 				      struct stm32f7_i2c_setup *setup,
+ 				      struct stm32f7_i2c_timings *output)
+@@ -572,6 +625,9 @@ static void stm32f7_i2c_read_rx_data(struct stm32f7_i2c_dev *i2c_dev)
+ 	if (f7_msg->count) {
+ 		*f7_msg->buf++ = readb_relaxed(base + STM32F7_I2C_RXDR);
+ 		f7_msg->count--;
 +	} else {
-+		dma->chan_using = dma->chan_tx;
-+		dma->dma_transfer_dir = DMA_MEM_TO_DEV;
-+		dma->dma_data_dir = DMA_TO_DEVICE;
++		/* Flush RX buffer has no data is expected */
++		readb_relaxed(base + STM32F7_I2C_RXDR);
+ 	}
+ }
+ 
+@@ -669,14 +725,250 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
+ 	/* Configure Start/Repeated Start */
+ 	cr2 |= STM32F7_I2C_CR2_START;
+ 
++	i2c_dev->master_mode = true;
++
+ 	/* Write configurations registers */
+ 	writel_relaxed(cr1, base + STM32F7_I2C_CR1);
+ 	writel_relaxed(cr2, base + STM32F7_I2C_CR2);
+ }
+ 
+-static void stm32f7_i2c_disable_irq(struct stm32f7_i2c_dev *i2c_dev, u32 mask)
++static bool stm32f7_i2c_is_addr_match(struct i2c_client *slave, u32 addcode)
+ {
+-	stm32f7_i2c_clr_bits(i2c_dev->base + STM32F7_I2C_CR1, mask);
++	u32 addr;
++
++	if (!slave)
++		return false;
++
++	if (slave->flags & I2C_CLIENT_TEN) {
++		/*
++		 * For 10-bit addr, addcode = 11110XY with
++		 * X = Bit 9 of slave address
++		 * Y = Bit 8 of slave address
++		 */
++		addr = slave->addr >> 8;
++		addr |= 0x78;
++		if (addr == addcode)
++			return true;
++	} else {
++		addr = slave->addr & 0x7f;
++		if (addr == addcode)
++			return true;
 +	}
 +
-+	dma->dma_len = len;
-+	chan_dev = dma->chan_using->device->dev;
++	return false;
++}
 +
-+	dma->dma_buf = dma_map_single(chan_dev, buf, dma->dma_len,
-+				      dma->dma_data_dir);
-+	if (dma_mapping_error(chan_dev, dma->dma_buf)) {
-+		dev_err(dev, "DMA mapping failed\n");
++static void stm32f7_i2c_slave_start(struct stm32f7_i2c_dev *i2c_dev)
++{
++	struct i2c_client *slave = i2c_dev->slave_running;
++	void __iomem *base = i2c_dev->base;
++	u32 mask;
++	u8 value = 0;
++
++	if (i2c_dev->slave_dir) {
++		/* Notify i2c slave that new read transfer is starting */
++		i2c_slave_event(slave, I2C_SLAVE_READ_REQUESTED, &value);
++
++		/*
++		 * Disable slave TX config in case of I2C combined message
++		 * (I2C Write followed by I2C Read)
++		 */
++		mask = STM32F7_I2C_CR2_RELOAD;
++		stm32f7_i2c_clr_bits(base + STM32F7_I2C_CR2, mask);
++		mask = STM32F7_I2C_CR1_SBC | STM32F7_I2C_CR1_RXIE |
++		       STM32F7_I2C_CR1_TCIE;
++		stm32f7_i2c_clr_bits(base + STM32F7_I2C_CR1, mask);
++
++		/* Enable TX empty, STOP, NACK interrupts */
++		mask =  STM32F7_I2C_CR1_STOPIE | STM32F7_I2C_CR1_NACKIE |
++			STM32F7_I2C_CR1_TXIE;
++		stm32f7_i2c_set_bits(base + STM32F7_I2C_CR1, mask);
++
++	} else {
++		/* Notify i2c slave that new write transfer is starting */
++		i2c_slave_event(slave, I2C_SLAVE_WRITE_REQUESTED, &value);
++
++		/* Set reload mode to be able to ACK/NACK each received byte */
++		mask = STM32F7_I2C_CR2_RELOAD;
++		stm32f7_i2c_set_bits(base + STM32F7_I2C_CR2, mask);
++
++		/*
++		 * Set STOP, NACK, RX empty and transfer complete interrupts.*
++		 * Set Slave Byte Control to be able to ACK/NACK each data
++		 * byte received
++		 */
++		mask =  STM32F7_I2C_CR1_STOPIE | STM32F7_I2C_CR1_NACKIE |
++			STM32F7_I2C_CR1_SBC | STM32F7_I2C_CR1_RXIE |
++			STM32F7_I2C_CR1_TCIE;
++		stm32f7_i2c_set_bits(base + STM32F7_I2C_CR1, mask);
++	}
++}
++
++static void stm32f7_i2c_slave_addr(struct stm32f7_i2c_dev *i2c_dev)
++{
++	void __iomem *base = i2c_dev->base;
++	u32 isr, addcode, dir, mask;
++	int i;
++
++	isr = readl_relaxed(i2c_dev->base + STM32F7_I2C_ISR);
++	addcode = STM32F7_I2C_ISR_ADDCODE_GET(isr);
++	dir = isr & STM32F7_I2C_ISR_DIR;
++
++	for (i = 0; i < STM32F7_I2C_MAX_SLAVE; i++) {
++		if (stm32f7_i2c_is_addr_match(i2c_dev->slave[i], addcode)) {
++			i2c_dev->slave_running = i2c_dev->slave[i];
++			i2c_dev->slave_dir = dir;
++
++			/* Start I2C slave processing */
++			stm32f7_i2c_slave_start(i2c_dev);
++
++			/* Clear ADDR flag */
++			mask = STM32F7_I2C_ICR_ADDRCF;
++			writel_relaxed(mask, base + STM32F7_I2C_ICR);
++			break;
++		}
++	}
++}
++
++static int stm32f7_i2c_get_slave_id(struct stm32f7_i2c_dev *i2c_dev,
++				    struct i2c_client *slave, int *id)
++{
++	int i;
++
++	for (i = 0; i < STM32F7_I2C_MAX_SLAVE; i++) {
++		if (i2c_dev->slave[i] == slave) {
++			*id = i;
++			return 0;
++		}
++	}
++
++	dev_err(i2c_dev->dev, "Slave 0x%x not registered\n", slave->addr);
++
++	return -ENODEV;
++}
++
++static int stm32f7_i2c_get_free_slave_id(struct stm32f7_i2c_dev *i2c_dev,
++					 struct i2c_client *slave, int *id)
++{
++	struct device *dev = i2c_dev->dev;
++	int i;
++
++	/*
++	 * slave[0] supports 7-bit and 10-bit slave address
++	 * slave[1] supports 7-bit slave address only
++	 */
++	for (i = 0; i < STM32F7_I2C_MAX_SLAVE; i++) {
++		if (i == 1 && (slave->flags & I2C_CLIENT_PEC))
++			continue;
++		if (!i2c_dev->slave[i]) {
++			*id = i;
++			return 0;
++		}
++	}
++
++	dev_err(dev, "Slave 0x%x could not be registered\n", slave->addr);
++
++	return -EINVAL;
++}
++
++static bool stm32f7_i2c_is_slave_registered(struct stm32f7_i2c_dev *i2c_dev)
++{
++	int i;
++
++	for (i = 0; i < STM32F7_I2C_MAX_SLAVE; i++) {
++		if (i2c_dev->slave[i])
++			return true;
++	}
++
++	return false;
++}
++
++static bool stm32f7_i2c_is_slave_busy(struct stm32f7_i2c_dev *i2c_dev)
++{
++	int i, busy;
++
++	busy = 0;
++	for (i = 0; i < STM32F7_I2C_MAX_SLAVE; i++) {
++		if (i2c_dev->slave[i])
++			busy++;
++	}
++
++	return i == busy;
++}
++
++static irqreturn_t stm32f7_i2c_slave_isr_event(struct stm32f7_i2c_dev *i2c_dev)
++{
++	void __iomem *base = i2c_dev->base;
++	u32 cr2, status, mask;
++	u8 val;
++	int ret;
++
++	status = readl_relaxed(i2c_dev->base + STM32F7_I2C_ISR);
++
++	/* Slave transmitter mode */
++	if (status & STM32F7_I2C_ISR_TXIS) {
++		i2c_slave_event(i2c_dev->slave_running,
++				I2C_SLAVE_READ_PROCESSED,
++				&val);
++
++		/* Write data byte */
++		writel_relaxed(val, base + STM32F7_I2C_TXDR);
++	}
++
++	/* Transfer Complete Reload for Slave receiver mode */
++	if (status & STM32F7_I2C_ISR_TCR || status & STM32F7_I2C_ISR_RXNE) {
++		/*
++		 * Read data byte then set NBYTES to receive next byte or NACK
++		 * the current received byte
++		 */
++		val = readb_relaxed(i2c_dev->base + STM32F7_I2C_RXDR);
++		ret = i2c_slave_event(i2c_dev->slave_running,
++				      I2C_SLAVE_WRITE_RECEIVED,
++				      &val);
++		if (!ret) {
++			cr2 = readl_relaxed(i2c_dev->base + STM32F7_I2C_CR2);
++			cr2 |= STM32F7_I2C_CR2_NBYTES(1);
++			writel_relaxed(cr2, i2c_dev->base + STM32F7_I2C_CR2);
++		} else {
++			mask = STM32F7_I2C_CR2_NACK;
++			stm32f7_i2c_set_bits(base + STM32F7_I2C_CR2, mask);
++		}
++	}
++
++	/* NACK received */
++	if (status & STM32F7_I2C_ISR_NACKF) {
++		dev_dbg(i2c_dev->dev, "<%s>: Receive NACK\n", __func__);
++		writel_relaxed(STM32F7_I2C_ICR_NACKCF, base + STM32F7_I2C_ICR);
++	}
++
++	/* STOP received */
++	if (status & STM32F7_I2C_ISR_STOPF) {
++		/* Disable interrupts */
++		stm32f7_i2c_disable_irq(i2c_dev, STM32F7_I2C_XFER_IRQ_MASK);
++
++		if (i2c_dev->slave_dir) {
++			/*
++			 * Flush TX buffer in order to not used the byte in
++			 * TXDR for the next transfer
++			 */
++			mask = STM32F7_I2C_ISR_TXE;
++			stm32f7_i2c_set_bits(base + STM32F7_I2C_ISR, mask);
++		}
++
++		/* Clear STOP flag */
++		writel_relaxed(STM32F7_I2C_ICR_STOPCF, base + STM32F7_I2C_ICR);
++
++		/* Notify i2c slave that a STOP flag has been detected */
++		i2c_slave_event(i2c_dev->slave_running, I2C_SLAVE_STOP, &val);
++
++		i2c_dev->slave_running = NULL;
++	}
++
++	/* Address match received */
++	if (status & STM32F7_I2C_ISR_ADDR)
++		stm32f7_i2c_slave_addr(i2c_dev);
++
++	return IRQ_HANDLED;
+ }
+ 
+ static irqreturn_t stm32f7_i2c_isr_event(int irq, void *data)
+@@ -685,6 +977,13 @@ static irqreturn_t stm32f7_i2c_isr_event(int irq, void *data)
+ 	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
+ 	void __iomem *base = i2c_dev->base;
+ 	u32 status, mask;
++	int ret;
++
++	/* Check if the interrupt if for a slave device */
++	if (!i2c_dev->master_mode) {
++		ret = stm32f7_i2c_slave_isr_event(i2c_dev);
++		return ret;
++	}
+ 
+ 	status = readl_relaxed(i2c_dev->base + STM32F7_I2C_ISR);
+ 
+@@ -706,11 +1005,16 @@ static irqreturn_t stm32f7_i2c_isr_event(int irq, void *data)
+ 	/* STOP detection flag */
+ 	if (status & STM32F7_I2C_ISR_STOPF) {
+ 		/* Disable interrupts */
+-		stm32f7_i2c_disable_irq(i2c_dev, STM32F7_I2C_ALL_IRQ_MASK);
++		if (stm32f7_i2c_is_slave_registered(i2c_dev))
++			mask = STM32F7_I2C_XFER_IRQ_MASK;
++		else
++			mask = STM32F7_I2C_ALL_IRQ_MASK;
++		stm32f7_i2c_disable_irq(i2c_dev, mask);
+ 
+ 		/* Clear STOP flag */
+ 		writel_relaxed(STM32F7_I2C_ICR_STOPCF, base + STM32F7_I2C_ICR);
+ 
++		i2c_dev->master_mode = false;
+ 		complete(&i2c_dev->complete);
+ 	}
+ 
+@@ -743,7 +1047,7 @@ static irqreturn_t stm32f7_i2c_isr_error(int irq, void *data)
+ 	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
+ 	void __iomem *base = i2c_dev->base;
+ 	struct device *dev = i2c_dev->dev;
+-	u32 status;
++	u32 mask, status;
+ 
+ 	status = readl_relaxed(i2c_dev->base + STM32F7_I2C_ISR);
+ 
+@@ -761,8 +1065,14 @@ static irqreturn_t stm32f7_i2c_isr_error(int irq, void *data)
+ 		f7_msg->result = -EAGAIN;
+ 	}
+ 
+-	stm32f7_i2c_disable_irq(i2c_dev, STM32F7_I2C_ALL_IRQ_MASK);
++	/* Disable interrupts */
++	if (stm32f7_i2c_is_slave_registered(i2c_dev))
++		mask = STM32F7_I2C_XFER_IRQ_MASK;
++	else
++		mask = STM32F7_I2C_ALL_IRQ_MASK;
++	stm32f7_i2c_disable_irq(i2c_dev, mask);
+ 
++	i2c_dev->master_mode = false;
+ 	complete(&i2c_dev->complete);
+ 
+ 	return IRQ_HANDLED;
+@@ -808,14 +1118,126 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 	return (ret < 0) ? ret : num;
+ }
+ 
++static int stm32f7_i2c_reg_slave(struct i2c_client *slave)
++{
++	struct stm32f7_i2c_dev *i2c_dev = i2c_get_adapdata(slave->adapter);
++	void __iomem *base = i2c_dev->base;
++	struct device *dev = i2c_dev->dev;
++	u32 oar1, oar2, mask;
++	int id, ret;
++
++	if (slave->flags & I2C_CLIENT_PEC) {
++		dev_err(dev, "SMBus PEC not supported in slave mode\n");
 +		return -EINVAL;
 +	}
 +
-+	txdesc = dmaengine_prep_slave_single(dma->chan_using, dma->dma_buf,
-+					     dma->dma_len,
-+					     dma->dma_transfer_dir,
-+					     DMA_PREP_INTERRUPT);
-+	if (!txdesc) {
-+		dev_err(dev, "Not able to get desc for DMA xfer\n");
-+		ret = -EINVAL;
-+		goto err;
++	if (stm32f7_i2c_is_slave_busy(i2c_dev)) {
++		dev_err(dev, "Too much slave registered\n");
++		return -EBUSY;
 +	}
 +
-+	reinit_completion(&dma->dma_complete);
++	ret = stm32f7_i2c_get_free_slave_id(i2c_dev, slave, &id);
++	if (ret)
++		return ret;
 +
-+	txdesc->callback = callback;
-+	txdesc->callback_param = dma_async_param;
-+	ret = dma_submit_error(dmaengine_submit(txdesc));
-+	if (ret < 0) {
-+		dev_err(dev, "DMA submit failed\n");
-+		goto err;
++	if (!(stm32f7_i2c_is_slave_registered(i2c_dev))) {
++		ret = clk_enable(i2c_dev->clk);
++		if (ret) {
++			dev_err(dev, "Failed to enable clock\n");
++			return ret;
++		}
 +	}
 +
-+	dma_async_issue_pending(dma->chan_using);
++	if (id == 0) {
++		/* Configure Own Address 1 */
++		oar1 = readl_relaxed(i2c_dev->base + STM32F7_I2C_OAR1);
++		oar1 &= ~STM32F7_I2C_OAR1_MASK;
++		if (slave->flags & I2C_CLIENT_TEN) {
++			oar1 |= STM32F7_I2C_OAR1_OA1_10(slave->addr);
++			oar1 |= STM32F7_I2C_OAR1_OA1MODE;
++		} else {
++			oar1 |= STM32F7_I2C_OAR1_OA1_7(slave->addr);
++		}
++		oar1 |= STM32F7_I2C_OAR1_OA1EN;
++		i2c_dev->slave[id] = slave;
++		writel_relaxed(oar1, i2c_dev->base + STM32F7_I2C_OAR1);
++	} else if (id == 1) {
++		/* Configure Own Address 2 */
++		oar2 = readl_relaxed(i2c_dev->base + STM32F7_I2C_OAR2);
++		oar2 &= ~STM32F7_I2C_OAR2_MASK;
++		if (slave->flags & I2C_CLIENT_TEN) {
++			ret = -EOPNOTSUPP;
++			goto exit;
++		}
++
++		oar2 |= STM32F7_I2C_OAR2_OA2_7(slave->addr);
++		oar2 |= STM32F7_I2C_OAR2_OA2EN;
++		i2c_dev->slave[id] = slave;
++		writel_relaxed(oar2, i2c_dev->base + STM32F7_I2C_OAR2);
++	} else {
++		ret = -ENODEV;
++		goto exit;
++	}
++
++	/* Enable ACK */
++	stm32f7_i2c_clr_bits(base + STM32F7_I2C_CR2, STM32F7_I2C_CR2_NACK);
++
++	/* Enable Address match interrupt, error interrupt and enable I2C  */
++	mask = STM32F7_I2C_CR1_ADDRIE | STM32F7_I2C_CR1_ERRIE |
++		STM32F7_I2C_CR1_PE;
++	stm32f7_i2c_set_bits(base + STM32F7_I2C_CR1, mask);
 +
 +	return 0;
 +
-+err:
-+	dma_unmap_single(chan_dev, dma->dma_buf, dma->dma_len,
-+			 dma->dma_data_dir);
++exit:
++	if (!(stm32f7_i2c_is_slave_registered(i2c_dev)))
++		clk_disable(i2c_dev->clk);
++
 +	return ret;
 +}
-diff --git a/drivers/i2c/busses/i2c-stm32.h b/drivers/i2c/busses/i2c-stm32.h
-index d4f9cef..868755f 100644
---- a/drivers/i2c/busses/i2c-stm32.h
-+++ b/drivers/i2c/busses/i2c-stm32.h
-@@ -11,6 +11,10 @@
- #ifndef _I2C_STM32_H
- #define _I2C_STM32_H
- 
-+#include <linux/dma-direction.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
 +
- enum stm32_i2c_speed {
- 	STM32_I2C_SPEED_STANDARD, /* 100 kHz */
- 	STM32_I2C_SPEED_FAST, /* 400 kHz */
-@@ -18,4 +22,37 @@ enum stm32_i2c_speed {
- 	STM32_I2C_SPEED_END,
++static int stm32f7_i2c_unreg_slave(struct i2c_client *slave)
++{
++	struct stm32f7_i2c_dev *i2c_dev = i2c_get_adapdata(slave->adapter);
++	void __iomem *base = i2c_dev->base;
++	u32 mask;
++	int id, ret;
++
++	ret = stm32f7_i2c_get_slave_id(i2c_dev, slave, &id);
++	if (ret)
++		return ret;
++
++	WARN_ON(!i2c_dev->slave[id]);
++
++	if (id == 0) {
++		mask = STM32F7_I2C_OAR1_OA1EN;
++		stm32f7_i2c_clr_bits(base + STM32F7_I2C_OAR1, mask);
++	} else {
++		mask = STM32F7_I2C_OAR2_OA2EN;
++		stm32f7_i2c_clr_bits(base + STM32F7_I2C_OAR2, mask);
++	}
++
++	i2c_dev->slave[id] = NULL;
++
++	if (!(stm32f7_i2c_is_slave_registered(i2c_dev))) {
++		stm32f7_i2c_disable_irq(i2c_dev, STM32F7_I2C_ALL_IRQ_MASK);
++		clk_disable(i2c_dev->clk);
++	}
++
++	return 0;
++}
++
+ static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
++		I2C_FUNC_SLAVE;
+ }
+ 
+ static struct i2c_algorithm stm32f7_i2c_algo = {
+ 	.master_xfer = stm32f7_i2c_xfer,
+ 	.functionality = stm32f7_i2c_func,
++	.reg_slave = stm32f7_i2c_reg_slave,
++	.unreg_slave = stm32f7_i2c_unreg_slave,
  };
  
-+/**
-+ * struct stm32_i2c_dma - DMA specific data
-+ * @chan_tx: dma channel for TX transfer
-+ * @chan_rx: dma channel for RX transfer
-+ * @chan_using: dma channel used for the current transfer (TX or RX)
-+ * @dma_buf: dma buffer
-+ * @dma_len: dma buffer len
-+ * @dma_transfer_dir: dma transfer direction indicator
-+ * @dma_data_dir: dma transfer mode indicator
-+ * @dma_complete: dma transfer completion
-+ */
-+struct stm32_i2c_dma {
-+	struct dma_chan *chan_tx;
-+	struct dma_chan *chan_rx;
-+	struct dma_chan *chan_using;
-+	dma_addr_t dma_buf;
-+	unsigned int dma_len;
-+	enum dma_transfer_direction dma_transfer_dir;
-+	enum dma_data_direction dma_data_dir;
-+	struct completion dma_complete;
-+};
-+
-+struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
-+					    dma_addr_t phy_addr,
-+					    u32 txdr_offset, u32 rxdr_offset);
-+
-+void stm32_i2c_dma_free(struct stm32_i2c_dma *dma);
-+
-+int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
-+			    bool rd_wr, u32 len, u8 *buf,
-+			    dma_async_tx_callback callback,
-+			    void *dma_async_param);
-+
- #endif /* _I2C_STM32_H */
+ static int stm32f7_i2c_probe(struct platform_device *pdev)
 -- 
 2.7.4
