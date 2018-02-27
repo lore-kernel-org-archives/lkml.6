@@ -1,52 +1,57 @@
-Return-Path: <marcel@holtmann.org>
-X-Google-Smtp-Source: AH8x227+lSv4ShK8o5nSrcE8A++PrcYa5lLPGwf/YQQGViirVO3dx4puAP0EDL0zG8uxQ1GayDjd
-ARC-Seal: i=1; a=rsa-sha256; t=1519755964; cv=none;
+Return-Path: <kvalo@codeaurora.org>
+X-Google-Smtp-Source: AH8x226EKwWAWiDGKO8OUSj9nzyECG1xGsRJpEOuyTkUQCvPJM3cxh1Zyl7wUB6Y9Y8F51eyy54y
+ARC-Seal: i=1; a=rsa-sha256; t=1519742800; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lze9ykTZzW/JjJkNwoJ7TE6LZOIrz1JULW694V0hxS92JUqD7lVJQgr73E/TjxeBc+
-         Pw8hkLbs5Khly3mf2/UtU5y1uA2PMyeFreWpYPwGs3zivEO25pbN4z8LAt2OGkkF7CwG
-         9F82ZQhYt24iVmN/JhWHe64RO+LWaD9a8haL9xzDZ5YbP/XqgEFLv6MEFTNbrTGUXT4+
-         b3XSUm58Amds9F4tf5whm0S6xQlyAi5xUViem0Ik9SW4h5HSRRNOakbkYuX3PTZIzuG1
-         qHsNhsmr4Wq1qy3sC8fSH3VieFzYR+jFOFt1y6bmzfqyCvvlZl/Tx+POLS84RPhlrUdf
-         hn8Q==
+        b=Wz12f61Kt0IwJPnjlzp/HFBF1kOsKl1W/bj032yAk7hCvYv7UhGB+/GGb8eeRklfSz
+         nDNCyGCaca0NF7dpNboHxEHvz3k+l0BkfptzOZk2Ir1z0w68j8nceAtYmje1pQ//pzCT
+         cI2lYC8Kyuxxu9IkZRwrXpoMbdv6zilzosgNbUxye83U9h9C+wfwAzr/wzrZkBkoj+Z8
+         U6bGZdZkiT2SBtzeRRUJ3M80/Siq/hdkwQYqBANNs/ySe3g+XO14W7OHWlGtJk8J8aCM
+         OgdhKrktu5MNAIm0DYGnIbyB64I+/Snn97rIGf8UkBHIG0HxKQnzkGLxDEUGjgDFqkRp
+         41rA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:arc-authentication-results;
-        bh=H0AmjNCysQTRBq+bGwjFGwWc/3uKzWC3nNuT5SjgBPU=;
-        b=T32vxnulhY2j5mj9BKdq8mlJ01/CYIly5Cpexz4mPeEQO03buqtAcr9DnQBUbUJLz5
-         mQb6GzCHZZr6zJuNqXsLReKaHTYcjPGJWhWQzzwskCTNzVUWAvnTHBSmd8Ml3GXYo7A+
-         bFq5UYRn1KdJrWEwlD5Xuvw5NN87a+e5iQfzAVacKaTXBLaW3SYsZZLpYErKEQMlcxmx
-         aJzJ1snsB9H8gRhAKqiKaw4SFHqkeEYI0jcOcMtpN7qMu9/N2zhBL1HFdABesVnEYY1Z
-         mCAvmNgYH1fWffp+/XhOLEB0YfiX6X+xsXlEY62PzXvkAUBno83zJvOfrXVrwDsDJHMT
-         /BSQ==
+        h=date:message-id:user-agent:cc:to:references:in-reply-to:from
+         :subject:content-transfer-encoding:mime-version:dmarc-filter
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=LBNVixYMbve7SCSaSpcLHlPlNaBGr0+ixAWCwMEHDd8=;
+        b=KgyExPnoGCQbN+zeW0XkhXmI8dAkF1JmpE+DBWchscJVFsINoyjHC9GJz/F6GGZh85
+         QV3OsO9D4OZhQZfiZlwNjJ6R7lV2Zq1s8g7HVcNdbhdoEXob5PvL4JiVo8kuIX680GqW
+         lLmtXbAMRdN+exm5owjQKyIXydn//N63bdT+0oR0JRZXoMHU9iJEAs5BXTtdBm+Kg+T1
+         HOvD2YMjh8QbzCDJVntGNkdwyDmgdnRNLpHOR97xeLltiet/n06stumdxmSgwXBs8wzU
+         ObcluWufgITUan00o31mWA4TunURt+kIMgQ6rntF2zOgVfviIT5vt4e+V1WaXisngb4e
+         EN7w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of marcel@holtmann.org designates 212.227.132.17 as permitted sender) smtp.mailfrom=marcel@holtmann.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=evDuliJC;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=ZR8FZ5lq;
+       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of marcel@holtmann.org designates 212.227.132.17 as permitted sender) smtp.mailfrom=marcel@holtmann.org
-Content-Type: text/plain;
-	charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 3/3] btmrvl: support sysfs initiated firmware coredump
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
-Date: Tue, 27 Feb 2018 19:26:02 +0100
-Cc: Kalle Valo <kvalo@codeaurora.org>,
- linux-wireless@vger.kernel.org,
- Bluez mailing list <linux-bluetooth@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=evDuliJC;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=ZR8FZ5lq;
+       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCEF56024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <F1346A83-77FD-42B9-8F36-ACA45381CF03@holtmann.org>
-References: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
- <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+Subject: Re: [3/3] btmrvl: support sysfs initiated firmware coredump
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
+References: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, linux-wireless@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arend van Spriel <arend.vanspriel@broadcom.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180227144640.0BEE26024C@smtp.codeaurora.org>
+Date: Tue, 27 Feb 2018 14:46:39 +0000 (UTC)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593007399539898108?=
-X-GMAIL-MSGID: =?utf-8?q?1593579630085976353?=
+X-GMAIL-MSGID: =?utf-8?q?1593565826328697506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Arend,
+Arend Van Spriel <arend.vanspriel@broadcom.com> wrote:
 
 > Since commit 3c47d19ff4dc ("drivers: base: add coredump driver ops")
 > it is possible to initiate a device coredump from user-space. This
@@ -55,15 +60,12 @@ Hi Arend,
 > it.
 > 
 > Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> ---
-> drivers/bluetooth/btmrvl_debugfs.c | 31 -------------------------------
-> drivers/bluetooth/btmrvl_drv.h     |  2 --
-> drivers/bluetooth/btmrvl_main.c    |  6 ------
-> drivers/bluetooth/btmrvl_sdio.c    | 18 ++++++++++++------
-> 4 files changed, 12 insertions(+), 45 deletions(-)
 
-patch has been applied to bluetooth-next tree.
+This is for bluetooth tree, dropping from my queue.
 
-Regards
+Patch set to Not Applicable.
 
-Marcel
+-- 
+https://patchwork.kernel.org/patch/10231923/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
