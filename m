@@ -1,36 +1,31 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519715057; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AG47ELvJKTdZQEO4vVP5geb/5xQ8BHabcJPRfnEyU8hMFmMBvxcJoIs91KZzKrd3kRjll2mOzvMg
+ARC-Seal: i=1; a=rsa-sha256; t=1519756707; cv=none;
         d=google.com; s=arc-20160816;
-        b=KzohXimFXeJYyN0yqeMmuU+4ZVFofVUdB3RDHiDKD2Lw5vIhMBIIfYKvKukPv/oyNK
-         76dGbra8Dz+Eil6EnPMyIk3OYMlfY/sAMhRtFxVUaKOnC9vkPBlpZxWBG1l596k/NrAu
-         R4jEG2aC8yzAIINBPcL54RDAxrlWy0BQSYixkxTL7g59h5BdPREWN9C+CfJKWNOIy3pv
-         n2Ujgj4teWloD8+8qzAD4+vF2lwKxqZ6VuG4LbIZA8TUiqwI5OAvH2qpDG/p8ZpvOI/k
-         Xg++jKhbwmYjK54aCUxvjDtNgMJySy4zPQX/cA5O1CaxZQXpkAhrSX54tv2en81mnk0u
-         UCBA==
+        b=SyjC0sLMf1FdA93rAe9zVWskDirFKf5fPDgzGYrZLFSQmtzi97ROTK5r8SZlzODDmX
+         APZParUpN3gwhHDNjKvhMLzAT5CYZyaoaeu3bazSBZzGghU6cZ6U8NTrFN5Q4rIHuIrM
+         xJQuDX9VjEknTpKIjJQsIvTeJPbl0kZzUJjwRv42F4sIsK+TAr6I2y/ZwYVG+LZZgCqL
+         1XdeqjUGlcTV6MoWE1F69zjwC3AWMWYyX+jpC4At544FeSRZ1FWI+BzsGyFxR3eZgbhO
+         HSjqNU1AThus1w0TJRkT4SrlCqm8PYnv2YseOeodu7+DCLU5afTCKS7MP7E2i4C+PvX5
+         HBXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=kFy6x7ArzeMpbWDRmUo6gWP2WSZ6+qhyb5BzjX0f96w=;
-        b=B0BSDCrHR79pdmF/AOQYV46QBiTq1e/B8R1XvGYRp/GdZD5AIA/bcbFgXCG3X7lJYe
-         cI8y3rz1jWzxjsFGN5LUBFXiLSZ9keH0wSDFOWjf0YgU1EMeLjy3WtlO+mjijRmxyudM
-         O0RyeA39y0ijBQfjeJK8cKgE+eZuxv75mSgCuBcrTDfr310la4aRZNzCjQSK54998+PK
-         MSwGruRqjZms163Yk8oP2ge2dNWUodWnrSCVqUgOuk6gfmalneHZ778CfncOmpGVOSTq
-         itYAZYXv668OFROw17SUnbiJ/TpCFXYkwnEN/8T+3gMl7DRKq9tyZvURuiKkO3U1vUKA
-         9qLA==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=Ocjv6WHaT47C3dzbkQ9xVMwmZvTu1/r9EfglDpqC0/c=;
+        b=saCRfudU4o/MvjGr6+UvKKHdjaTVlh99KSBjpWJFEXLp4IHataSE0/spm0WuhyY6Ho
+         0fmORce6hsZ0e3pWOsiyHC/cyWL+KOEI1RAf4VsPD/dqGlTxXFDDKAmXU/PTkvKoRYJ0
+         zQpKNY0bMCO9F6kwRd8vASueaWxrZf0TZ9tLSWJQMgKbNvlo0726hfUVBpVnJvQbwXCE
+         9OIBaRAvb+EsRcCfEuG02pYHyv+4ryrbcBhvjh06hDYCs2OLAdOLoRd1weGRd3mYBOFW
+         +jK5kw72MdL1Eggvj4cDuWRK8rq20EztBaO/mlg6k4ljXMYtlDpwoiVzLVflK+CT0XX+
+         sSFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gwNoV91C;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gwNoV91C;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AG47ELs5+RZ+4iwhdNvBQ5Y0h42SihfjLRgdkm4Fqug91eRwFVWb3PermSUF4p6vMdZPKk7zUb9ZFQ==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Tue, 27 Feb 2018 08:04:15 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Johan Hovold <johan@kernel.org>,
-	"H. Nikolaus Schaller" <hns@goldelico.com>,
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Tue, 27 Feb 2018 19:38:26 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Johan Hovold <johan@kernel.org>
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	DTML <devicetree@vger.kernel.org>,
 	Thierry Reding <treding@nvidia.com>,
@@ -49,7 +44,7 @@ Cc: Johan Hovold <johan@kernel.org>,
 	Linux ARM <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [Letux-kernel] [PATCH v5 3/5] misc serdev: Add w2sg0004 (gps
  receiver) power control driver
-Message-ID: <20180227070415.GB18666@localhost>
+Message-ID: <20180227183826.GA32473@amd>
 References: <cover.1512114576.git.hns@goldelico.com>
  <5494ad34b39a6c62601e3747440268dfb3be7d5a.1512114576.git.hns@goldelico.com>
  <20171222124427.GI3374@localhost>
@@ -57,49 +52,61 @@ References: <cover.1512114576.git.hns@goldelico.com>
  <90F9A8E4-035A-4A9E-8AAB-757491D63E69@goldelico.com>
  <20180112153903.GB5992@localhost>
  <20180212152618.GC13962@amd>
+ <20180227070415.GB18666@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
 Content-Disposition: inline
-In-Reply-To: <20180212152618.GC13962@amd>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180227070415.GB18666@localhost>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1584169666984958099?=
-X-GMAIL-MSGID: =?utf-8?q?1593536736221967617?=
+X-GMAIL-MSGID: =?utf-8?q?1593580408819774125?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 04:26:18PM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > > Let's restart this discussion and focus on the main roadblock (others
-> > > are minor details which can be sorted out later).
-> > > 
-> > > If it feels like a hack, the key issue seems to me to be the choice of
-> > > the API to present the GPS data to user space. Right?
-> > 
-> > Or even more fundamentally, does this belong in the kernel at all?
-> 
-> Yes, it does.
 
-But not necessarily in its current form.
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Now, if we'd ever have a proper GPS framework that handled everything in
-> > kernel space (i.e. no more gpsd) then we would be able to write kernel
-> > drivers that also take care of PM. But perhaps that's unlikely to ever
-> > be realised given the state of things (proprietary protocols, numerous
-> > quirky implementations, etc).
-> 
-> That is what needs to happen.
-> 
-> > The kernel is probably not the place to be working around issues like
-> > that, even if serdev at least allows for such hacks to be fairly
-> > isolated in drivers (unlike some of the earlier proposals touching core
-> > code).
-> 
-> Oh, kernel is indeed right place to provide hardware abstraction --
-> and that includes bug workarounds.
+Hi!
 
-Right, at least when such hacks can be confined to a driver and not be
-spread all over the place.
+> > > > Let's restart this discussion and focus on the main roadblock (othe=
+rs
+> > > > are minor details which can be sorted out later).
+> > > >=20
+> > > > If it feels like a hack, the key issue seems to me to be the choice=
+ of
+> > > > the API to present the GPS data to user space. Right?
+> > >=20
+> > > Or even more fundamentally, does this belong in the kernel at all?
+> >=20
+> > Yes, it does.
+>=20
+> But not necessarily in its current form.
 
-Johan
+Not necessarily, no. OTOH this hack was not too bad IIRC and we
+usually do present NMEA to userspace at the moment. We'll need proper
+GPS subsystem one day, but I'm afraid that will take some time...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqVpaIACgkQMOfwapXb+vLVKACcCK9CCeKVQ3hMNwRNIJJgsPv1
+XuAAnRVH+t7hwwDq1BgR1dcqpRfgd2e4
+=XIu1
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
