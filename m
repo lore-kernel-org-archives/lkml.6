@@ -1,85 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeB0U0Z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 15:26:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751628AbeB0U0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 15:26:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075CD21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 27 Feb 2018 14:26:22 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI/ASPM: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180227202621.GC127842@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180213165948.GA14035@embeddedor.com>
- <CAHp75VfdDUooc=zy2rk8ep0PdsEsD1TGbaD9nm8DBB1NmYYTTw@mail.gmail.com>
- <20180213130550.Horde.JMezTfF5lIykmPMB49PKEwG@gator4166.hostgator.com>
+        id S1751934AbeB0U2V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 15:28:21 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43378 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751628AbeB0U2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 15:28:19 -0500
+Date: Tue, 27 Feb 2018 22:28:18 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jens Freimann <jfreimann@redhat.com>
+Cc: Tiwei Bie <tiwei.bie@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jasowang@redhat.com, wexu@redhat.com
+Subject: Re: [PATCH RFC 1/2] virtio: introduce packed ring defines
+Message-ID: <20180227222806-mutt-send-email-mst@kernel.org>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-2-tiwei.bie@intel.com>
+ <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180213130550.Horde.JMezTfF5lIykmPMB49PKEwG@gator4166.hostgator.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 01:05:50PM -0600, Gustavo A. R. Silva wrote:
-> Hi Andy,
-> 
-> Quoting Andy Shevchenko <andy.shevchenko@gmail.com>:
-> 
-> > On Tue, Feb 13, 2018 at 6:59 PM, Gustavo A. R. Silva
-> > <garsilva@embeddedor.com> wrote:
-> > > Add suffix ULL to constant 1000 in order to give the compiler complete
-> > > information about the proper arithmetic to use. Notice that this
-> > > constant is used in a context that expects an expression of type
-> > > u64 (64 bits, unsigned).
-> > > 
-> > > The expression threshold_us * 1000 is currently being evaluated
-> > > using 32-bit arithmetic.
+On Tue, Feb 27, 2018 at 09:54:58AM +0100, Jens Freimann wrote:
+> On Fri, Feb 23, 2018 at 07:18:00PM +0800, Tiwei Bie wrote:
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> > include/uapi/linux/virtio_config.h | 18 +++++++++-
+> > include/uapi/linux/virtio_ring.h   | 68 ++++++++++++++++++++++++++++++++++++++
+> > 2 files changed, 85 insertions(+), 1 deletion(-)
 > > 
-> > > -       u64 threshold_ns = threshold_us * 1000;
-> > > +       u64 threshold_ns = threshold_us * 1000ULL;
+> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > index 308e2096291f..e3d077ef5207 100644
+> > --- a/include/uapi/linux/virtio_config.h
+> > +++ b/include/uapi/linux/virtio_config.h
+> > @@ -49,7 +49,7 @@
+> >  * transport being used (eg. virtio_ring), the rest are per-device feature
+> >  * bits. */
+> > #define VIRTIO_TRANSPORT_F_START	28
+> > -#define VIRTIO_TRANSPORT_F_END		34
+> > +#define VIRTIO_TRANSPORT_F_END		37
 > > 
-> > Shouldn't be other way around, i.e.
-> > 
-> > (u64)threshold_us ?
-> > 
+> > #ifndef VIRTIO_CONFIG_NO_LEGACY
+> > /* Do we get callbacks when the ring is completely used, even if we've
+> > @@ -71,4 +71,20 @@
+> >  * this is for compatibility with legacy systems.
+> >  */
+> > #define VIRTIO_F_IOMMU_PLATFORM		33
+> > +
+> > +/* This feature indicates support for the packed virtqueue layout. */
+> > +#define VIRTIO_F_RING_PACKED		34
 > 
-> Either way works. The thing is that casting threshold_us to u64 may imply
-> that there is something wrong with threshold_us, which does not seem to be
-> the case. So adding the suffix ULL to the constant 1000 is good enough to
-> make the expression be evaluated using 64-bit arithmetic instead of 32-bit.
-> 
-> But, again, either way works.
-> 
-> > But still the question. have you checked all callers? Does it even makes
-> > sense?
-> > 
-> 
-> The proposed patch was due to fact that currently threshold_ns is of type
-> u64. But based on the following piece of code (which is the only piece of
-> code from where encode_l12_threshold is being called):
-> 
->          * Based on PCIe r3.1, sec 5.5.3.3.1, Figures 5-16 and 5-17, and
->          * Table 5-11.  T(POWER_OFF) is at most 2us and T(L1.2) is at
->          * least 4us.
->          */
->         l1_2_threshold = 2 + 4 + t_common_mode + t_power_on;
->         encode_l12_threshold(l1_2_threshold, &scale, &value);
-> 
-> It seems to me that it makes no sense for threshold_ns to be of type u64,
-> because the expression threshold_us * 1000 will never exceed the 32-bit
-> limits. So if you agree I can send a patch to change its type to u32
-> instead.
+> Spec says VIRTIO_F_PACKED_RING not RING_PACKED
 
-Changing it to u32 sounds good to me.  I can't remember why I chose
-u64 to begin with, but it doesn't look necessary.
+I changed that now :)
 
-Thanks for cleaning this up!
+> > +
+> > +/*
+> > + * This feature indicates that all buffers are used by the device
+> > + * in the same order in which they have been made available.
+> > + */
+> > +#define VIRTIO_F_IN_ORDER		35
+> > +
+> > +/*
+> > + * This feature indicates that drivers pass extra data (besides
+> > + * identifying the Virtqueue) in their device notifications.
+> > + */
+> > +#define VIRTIO_F_NOTIFICATION_DATA	36
+> > +
+> > #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+> > diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+> > index 6d5d5faa989b..77b1d4aeef72 100644
+> > --- a/include/uapi/linux/virtio_ring.h
+> > +++ b/include/uapi/linux/virtio_ring.h
+> > @@ -44,6 +44,9 @@
+> > /* This means the buffer contains a list of buffer descriptors. */
+> > #define VRING_DESC_F_INDIRECT	4
+> > 
+> > +#define VRING_DESC_F_AVAIL(b)	((b) << 7)
+> > +#define VRING_DESC_F_USED(b)	((b) << 15)
+> > +
+> > /* The Host uses this in used->flags to advise the Guest: don't kick me when
+> >  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
+> >  * will still kick if it's out of buffers. */
+> > @@ -104,6 +107,36 @@ struct vring {
+> > 	struct vring_used *used;
+> > };
+> > 
+> > +struct vring_packed_desc_event {
+> > +	/* Descriptor Event Offset */
+> > +	__virtio16 desc_event_off   : 15,
+> > +	/* Descriptor Event Wrap Counter */
+> > +		   desc_event_wrap  : 1;
+> > +	/* Descriptor Event Flags */
+> > +	__virtio16 desc_event_flags : 2;
+> > +};
+> 
+> Where would the virtqueue number go in driver notifications?
+> 
+> regards,
+> Jens
