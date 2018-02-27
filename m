@@ -1,74 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeB0RCJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:02:09 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53098 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750997AbeB0RCI (ORCPT
+        id S1752121AbeB0REh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:04:37 -0500
+Received: from mail-io0-f175.google.com ([209.85.223.175]:32914 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbeB0REe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:02:08 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <perex@perex.cz>, <tiwai@suse.com>, <o-takashi@sakamocchi.jp>
-CC: <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH] ALSA: control: Fix memory corruption risk in snd_ctl_elem_read
-Date: Tue, 27 Feb 2018 17:01:18 +0000
-Message-ID: <20180227170118.23197-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 27 Feb 2018 12:04:34 -0500
+X-Google-Smtp-Source: AG47ELuMzcxTupi1i1GKoDoCwEyfnHWQfTTqdJlBamXndJU/o+z83R5tFQXCk5nuQUm3iaTvjPKoGh8LCjdkjcYR6jY=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=842 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802270211
+In-Reply-To: <666.1519738993@warthog.procyon.org.uk>
+References: <20180225150505.GD7144@yexl-desktop> <1519573271.4702.10.camel@redhat.com>
+ <20180226083807.GE8942@yexl-desktop> <1519645434.4443.15.camel@redhat.com>
+ <1519648433.4443.18.camel@redhat.com> <8b48844f-7f9a-a9d7-b5bc-3bc403e0fa78@intel.com>
+ <1519738149.4300.45.camel@redhat.com> <666.1519738993@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 27 Feb 2018 09:04:32 -0800
+X-Google-Sender-Auth: P_TnJGTGLnryeqR1yuNUXNvtclY
+Message-ID: <CA+55aFx+oUB_H4KFTkuT+goMRABkjbdS211Zy2fG96RHuqbhBA@mail.gmail.com>
+Subject: Re: [LKP] [lkp-robot] [iversion] c0cef30e4f: aim7.jobs-per-min -18.0% regression
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@redhat.com>, kemi <kemi.wang@intel.com>,
+        Ye Xiaolong <xiaolong.ye@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RH4fCx020640
 
-The patch "ALSA: control: code refactoring for ELEM_READ/ELEM_WRITE
-operations" introduced a potential for kernel memory corruption due
-to an incorrect if statement allowing non-readable controls to fall
-through and call the get function. For TLV controls a driver can omit
-SNDRV_CTL_ELEM_ACCESS_READ to ensure that only the TLV get function
-can be called. Instead the normal get() can be invoked unexpectedly
-and as the driver expects that this will only be called for controls
-<= 512 bytes, potentially try to copy >512 bytes into the 512 byte
-return array, so corrupting kernel memory.
+On Tue, Feb 27, 2018 at 5:43 AM, David Howells <dhowells@redhat.com> wrote:
+> Is it possible there's a stall between the load of RCX and the subsequent
+> instructions because they all have to wait for RCX to become available?
 
-The problem is an attempt to refactor the snd_ctl_elem_read function
-to invert the logic so that it conditionally aborted if the control
-is unreadable instead of conditionally executing. But the if statement
-wasn't inverted correctly.
+No. Modern Intel big-core CPU's simply aren't that fragile. All these
+instructions should do OoO fine for trivial sequences like this, and
+as far as I can tell, the new code sequence should be better.
 
-The correct inversion of
+And even if it were worse for some odd reason, it would be worse by a cycle.
 
-    if (a && !b)
+This kind of 18% change is something else, it is definitely not about
+instruction scheduling.
 
-is
-    if (!a || b)
+Now, if the change to inode_cmp_iversion() causes some actual
+_behavioral_ changes, and we get more IO, that's more like it. But the
+code really does seem to be equivalent. In both cases it is simply
+comparing 63 bits: the high 63 bits of 0x150(%rbp) - inode->i_version
+- with the low 63 bits of 0x20(%rax) - iint->version.
 
-Fixes: becf9e5d553c2 ("ALSA: control: code refactoring for ELEM_READ/ELEM_WRITE operations")
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- sound/core/control.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The only issue would be if the high bit of 0x20(%rax) was somehow set.
+The new code doesn't shift that bit away an more, but it should never
+be set since it comes from
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 0b3026d937b1..8a77620a3854 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -889,7 +889,7 @@ static int snd_ctl_elem_read(struct snd_card *card,
- 
- 	index_offset = snd_ctl_get_ioff(kctl, &control->id);
- 	vd = &kctl->vd[index_offset];
--	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) && kctl->get == NULL)
-+	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) || kctl->get == NULL)
- 		return -EPERM;
- 
- 	snd_ctl_build_ioff(&control->id, kctl, index_offset);
--- 
-2.11.0
+        i_version = inode_query_iversion(inode);
+...
+        iint->version = i_version;
+
+and that inode_query_iversion() will have done the version shift.
+
+> The interleaving between operating on RSI and RCX in the older code might
+> alleviate that.
+>
+> In addition, the load if the 20(%rax) value is now done in the CMP instruction
+> rather than earlier, so it might not get speculatively loaded in time, whereas
+> the earlier code explicitly loads it up front.
+
+No again, OoO cores will generally hide details like that.
+
+You can see effects of it, but it's hard, and it can go both ways.
+
+Anyway, I think the _real_ change has nothing to with instruction
+scheduling, and everything to do with this:
+
+    107.62 ± 37%    +139.1%     257.38 ± 16%  vmstat.io.bo
+     48740 ± 36%    +191.4%     142047 ± 16%  proc-vmstat.pgpgout
+
+(There's fairly big variation in those numbers, but the changes are
+even bigger) or this:
+
+    258.12          -100.0%       0.00        turbostat.Avg_MHz
+     21.48           -21.5        0.00        turbostat.Busy%
+
+or this:
+
+     27397 ±194%  +43598.3%   11972338 ±139%
+latency_stats.max.io_schedule.nfs_lock_and_join_requests.nfs_updatepage.nfs_write_end.generic_perform_write.nfs_file_write.__vfs_write.vfs_write.SyS_write.entry_SYSCALL_64_fastpath
+     27942 ±189%  +96489.5%   26989044 ±139%
+latency_stats.sum.io_schedule.nfs_lock_and_join_requests.nfs_updatepage.nfs_write_end.generic_perform_write.nfs_file_write.__vfs_write.vfs_write.SyS_write.entry_SYSCALL_64_fastpath
+
+but those all sound like something changed in the setup, not in the kernel.
+
+Odd.
+
+            Linus
