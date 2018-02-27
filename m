@@ -1,78 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeB0Ate (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 19:49:34 -0500
-Received: from mail-vk0-f43.google.com ([209.85.213.43]:45081 "EHLO
-        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbeB0At0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 19:49:26 -0500
-X-Google-Smtp-Source: AG47ELt9vnxVuxlCU5MteIh/e3EAwAaWGDQjoRWzWxC2gZJSWpBoumcvKlojb2xVzR5/HciwgLnjBrYX6BizjqthI+A=
+        id S1751522AbeB0AxQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 19:53:16 -0500
+Received: from mga14.intel.com ([192.55.52.115]:26783 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750941AbeB0AxP (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 19:53:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="20570365"
+Subject: Re: [PATCH] perf stat: Ignore error thread when enabling system-wide
+ --per-thread
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1516117388-10120-1-git-send-email-yao.jin@linux.intel.com>
+ <20180116125132.GD26643@krava>
+ <1189ec53-0d3b-c59c-63f0-4c4ad0d72405@linux.intel.com>
+ <20180116131743.GA17752@krava>
+ <a1ee430a-34ab-345d-71c5-c03862092aa8@linux.intel.com>
+ <20180123141945.GC15155@krava>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <d8184ad9-8426-595f-76c2-0c5a6826a493@linux.intel.com>
+Date: Tue, 27 Feb 2018 08:53:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
-References: <20180204104946.25559-1-tycho@tycho.ws> <20180204104946.25559-2-tycho@tycho.ws>
- <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com>
- <20180214152958.cjgwh2k52zji2jxk@cisco> <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 26 Feb 2018 16:49:21 -0800
-X-Google-Sender-Auth: wgPSZq4vC2fSPk2M7Bb26eObKY8
-Message-ID: <CAGXu5jKBmej+fXhEc+Jy7Guy+vXEZkHnc=4LNm1NNEsc1=DFVA@mail.gmail.com>
-Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Tycho Andersen <tycho@tycho.ws>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Sargun Dhillon <sargun@sargun.me>, Paul Moore <pmoore@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180123141945.GC15155@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 9:19 AM, Andy Lutomirski <luto@amacapital.net> wrote:
-> On Wed, Feb 14, 2018 at 3:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->> On Tue, Feb 13, 2018 at 01:09:20PM -0800, Kees Cook wrote:
->>> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
->>> I wonder if this communication should be netlink, which gives a more
->>> well-structured way to describe what's on the wire? The reason I ask
->>> is because if we ever change the seccomp_data structure, we'll now
->>> have two places where we need to deal with it (the first being within
->>> the BPF itself). My initial idea was to prefix the communication with
->>> a size field, then send the structure, and then I had nightmares, and
->>> realized this was basically netlink reinvented.
+
+
+On 1/23/2018 10:19 PM, Jiri Olsa wrote:
+> On Mon, Jan 22, 2018 at 01:10:31PM +0800, Jin, Yao wrote:
 >>
->> I suggested netlink in LA, and everyone (especially Andy) groaned very
->> loudly :). I'm happy to switch it to netlink if you like, although i
->> think memcpy() of structs should be safe here, since the return value
->> from read or write can indicate the size of things.
->
-> I could easily get on board with "netlink" (i.e. NLA) messages sent
-> over an fd.  I will object strongly to the use of netlink *sockets*.
-
-Yeah, I was thinking NLA over the fd; not a netlink socket.
-
->>> An ERRNO filter would block a USER_NOTIF because it's unconditional.
->>> TRACE could be either, USER_NOTIF could be either.
+>>
+>> On 1/16/2018 9:17 PM, Jiri Olsa wrote:
+>>> On Tue, Jan 16, 2018 at 09:06:09PM +0800, Jin, Yao wrote:
+>>>> Just tested. But looks it's not OK for '--per-thread' case.
 >>>
->>> This means TRACE rules would be bumped by a USER_NOTIF... hmm.
+>>> yea, I haven't tested much.. might need soem tweaking,
+>>> but my point was that it could be doable on one place
+>>> instead of introducing another if possible
+>>>
+>>> jirka
+>>>
 >>
->> Yes, I didn't exactly know what to do here. ERRNO, TRAP, and KILL all
->> seemed more important than USER_NOTIF, but TRACE didn't. I don't have
->> a strong opinion about what to do here, because users can adjust their
->> filters accordingly. Let me know what you prefer.
->
-> If we switched to eBPF functions, this whole issue goes away.
+>> Hi Jiri,
+>>
+>> I ever considered to move the operation of removing error thread to
+>> perf_evsel__fallback(). The perf_evsel__fallback() is common code and it's
+>> shared by perf report, perf stat and perf top.
+>>
+>> While finally I think it'd better let the caller decide to remove error
+>> thread and try again, or just return the warning message.
+>> perf_evsel__fallback() probably doesn't know what the caller want to do.
+>>
+>> That's my current thinking. Maybe there will be a better fix...
+> 
+> ok, can't think of better fix atm.. looks good ;-)
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> thanks,
+> jirka
+> 
 
-Yeah, though we'd still need some kind of "wait for answer" eBPF
-function. It feels wrong to re-use maps for that...
+Hi Arnaldo,
 
--Kees
+Could this fix be accepted?
 
--- 
-Kees Cook
-Pixel Security
+Thanks
+Jin Yao
