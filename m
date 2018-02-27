@@ -1,71 +1,298 @@
-Return-Path: <bp@alien8.de>
-X-Google-Smtp-Source: AG47ELuGeedkQqEkYwIcwFMm4c6dEWBtq61hmmQIwoV75vrSJak8zsjeBq3CVbz9DwxRP/C6NRKP
-ARC-Seal: i=1; a=rsa-sha256; t=1519382576; cv=none;
+Return-Path: <kernel-hardening-return-12001-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELual3C4F/11vHuO9G3BZ/oaGa6WnEvCvg6iMP19bWa6AyJUg1uYLFT9HFgi+JR/Ro8ngzjd
+ARC-Seal: i=1; a=rsa-sha256; t=1519729229; cv=none;
         d=google.com; s=arc-20160816;
-        b=IjBe8NYC47F7Akqacm8KhDhl+yRmKZAS8QnDvRuq3l17VrIYMouVpMAcbNgG5YcxT3
-         pnNy5CpZm0g3355TwcZ6wmygHNQsIQolqhg8fDYhAvflkVVxli/b9sd1uX1gF79ts6uU
-         41bSAFvxk78PM6nCSlUu60pWB5ppeJmGoNLJuwkRJMWHAVrTZghOWszoXfSHXQfAVpGV
-         yJQ6fNeDzh6MI4BbgL6sS1/Tq6ncFVxNzTamSY0mzDRc46lZlRqz0JGUltRaKPsLZijC
-         8HyFeYY5cISfXfYz103zT3rlVrdjbO89d0wpSG9kVPRNSgznFHZLXx9U7kzPOzoZwC2I
-         d0UA==
+        b=HJw7I9OQaFnb+uH+81xVc7amUYZtg5ad6P0gRfSmwHQfSsJm5etvCkm/LFO+yBFTum
+         I6u7yw/hq9dHSVIOXaH8ESo0tjfoeqSkf4I8qlHCtrQNtCIXQ72/cIh4bGw5sxYlQ/jA
+         5WsNKXMlzk/EL+gcp+bljZ8rTYarPpdtpIXmxOaksQR5kEoF+1h1Rl/irLVCq3A0a1sa
+         hZDLkcu23zNb4PMQtiC+2D0+Vz1hFe9CO6MfsjzFOoyJapoB5Nf9rXmWf/zlOTUt0uye
+         RaOYMpIxYcvOx+hYioBzSlnth0y7wbe/mdrtaVitkKezc8J/HRbTfowDyxFD98E4FNvQ
+         xLCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=oWcaLhcjluvqO3fwhAQJd0XBJhR0/O+CrMNoShwaDUw=;
-        b=nbNKuaB/KYmDxrbcwzKEZw5SZfabH56xm8FHeTWWS2koPMjxCZs0zznb5nVy8UkwdY
-         bUC3G7pv1cIUk37rfUttWVoCWgXlGIudwh48P6Sj3dgDcgDK8Zs8NXaWW5GN2EK14Gro
-         TVeJc1HEtr6+ovCpFcHStXRXiqqu50keyZ1IsUKw1og8RgYz+FaRWe+YDZ7vaBgKD3t1
-         xlT+yBmI4IcDQxHhGi01U/oCD+qGiUye9cDHt8mmu7aGZ7bty61UbeU2NCjTEvZQe1LU
-         FZOjWEh1Vuqo24G8FU2sA6SdwQCCSyp73b8s2KvZQ5zXaPSOmwBs7msOPZbrVv+XZTfj
-         J3CQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=u6GWceNK7tZYE1+dNpwq6sGf/SwAjDQpQh59O+KT/dE=;
+        b=m0Ld7zyDsDMMwR3h9XfhSDeEZ9YfiBh1bvYSTJ1O/dOSxbTNsrB/iTqXhhjNndj3iV
+         4ZjE/JZ0skV/vaMkvfp5C+oQ4kJiiMnnORWYuQdIILZ3TWpaR6zSoVuUkRZk5T6IdDta
+         /CWtvsnghJtp0Pfq+cWagd7snIwsLqTZgfJMbgaMVsM/35yJj25qZUBHhSq9tfgHb5tr
+         gDoKjIhvjM6H921/EXFzJQ3Fyy0P/mZGBDbuBE+14vaTt86rGQRNtXpFEqJb7FRmD7Uw
+         FHceu2Sq/n9Waj57oekl0k5NCgbNgfxAwN9AqFs7sQUrTxXiV6bE96UjwVYwWMBOwa9H
+         bPJw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nnaLC78g;
+       spf=pass (google.com: domain of kernel-hardening-return-12001-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12001-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
-Date: Fri, 23 Feb 2018 11:42:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Seunghun Han <kkamagui@gmail.com>, Tony Luck <tony.luck@intel.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] x86: mce: fix kernel panic when check_interval is changed
-Message-ID: <20180223104239.GA4981@pd.tnic>
-References: <20180223101350.8344-1-kkamagui@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180223101350.8344-1-kkamagui@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nnaLC78g;
+       spf=pass (google.com: domain of kernel-hardening-return-12001-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12001-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	linux-fsdevel@vger.kernel.org,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+	Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Ian Campbell <ijc@hellion.org.uk>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Pavel Vasilyev <dixlor@gmail.com>,
+	Solar Designer <solar@openwall.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"Tobin C. Harding" <me@tobin.cc>
+Subject: [PATCH v4] Protected FIFOs and regular files
+Date: Tue, 27 Feb 2018 12:00:00 +0100
+Message-Id: <1519729200-16056-1-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
-X-GMAIL-MSGID: =?utf-8?q?1593188104653677420?=
+X-GMAIL-THRID: =?utf-8?q?1593551596949260408?=
+X-GMAIL-MSGID: =?utf-8?q?1593551596949260408?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 07:13:50PM +0900, Seunghun Han wrote:
-> I am Seunghun Han and a senior security researcher at National Security
-> Research Institute of South Korea.
-> 
-> I found a critical security issue which can make kernel panic in userspace.
-> After analyzing the issue carefully, I found that MCE driver in the kernel
-> has a problem which can be occurred in SMP environment.
-> 
-> The check_interval file in
-> /sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
-> global timer value for MCE polling. If it is changed by one CPU, MCE driver
-> in kernel calls mce_restart() function and broadcasts the event to other
+Disallows open of FIFOs or regular files not owned by the user in world
+writable sticky directories, unless the owner is the same as that of
+the directory or the file is opened without the O_CREAT flag.
+The purpose is to make data spoofing attacks harder.
+This protection can be turned on and off separately for FIFOs and regular
+files via sysctl, just like the symlinks/hardlinks protection.
+This patch is based on Openwall's "HARDEN_FIFO" feature by Solar
+Designer.
 
-Right, so I'm thinking that doing that per-CPU configuration doesn't
-make a whole lot of sense. It is not something that needs to happen very
-often and it is done globally anyway.
+This is a brief list of old vulnerabilities that could have been prevented
+by this feature, some of them even allow for privilege escalation:
+CVE-2000-1134
+CVE-2007-3852
+CVE-2008-0525
+CVE-2009-0416
+CVE-2011-4834
+CVE-2015-1838
+CVE-2015-7442
+CVE-2016-7489
 
-So what we should do here, IMO, is make mce_restart() grab a mutex and
-thus serialize all those sysfs writes. It will naturally also slow down
-any hammering from userspace which we should not allow anyway.
+This list is not meant to be complete. It's difficult to track down
+all vulnerabilities of this kind because they were often reported
+without any mention of this particular attack vector.
+In fact, before hardlinks/symlinks restrictions, fifos/regular
+files weren't the favorite vehicle to exploit them.
 
-Tony, what do you think?
+Suggested-by: Solar Designer <solar@openwall.com>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+---
 
+Notes:
+    Changes in v3:
+    	- Fixed format string for uid_t that is unsigned
+    	  (suggested by Jann Horn).
+    Changes in v4:
+    	- Some English fixes (suggested by Tobin C. Harding).
+    	- The original patchset has been split to help this part
+    	  land upstream (suggested by Solar Designer).
+
+ Documentation/sysctl/fs.txt | 36 ++++++++++++++++++++++++++
+ fs/namei.c                  | 61 ++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h          |  2 ++
+ kernel/sysctl.c             | 18 +++++++++++++
+ 4 files changed, 114 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
+index 6c00c1e..819caf8 100644
+--- a/Documentation/sysctl/fs.txt
++++ b/Documentation/sysctl/fs.txt
+@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/fs:
+ - overflowgid
+ - pipe-user-pages-hard
+ - pipe-user-pages-soft
++- protected_fifos
+ - protected_hardlinks
++- protected_regular
+ - protected_symlinks
+ - suid_dumpable
+ - super-max
+@@ -182,6 +184,24 @@ applied.
+ 
+ ==============================================================
+ 
++protected_fifos:
++
++The intent of this protection is to avoid unintentional writes to
++an attacker-controlled FIFO, where a program expected to create a regular
++file.
++
++When set to "0", writing to FIFOs is unrestricted.
++
++When set to "1" don't allow O_CREAT open on FIFOs that we don't own
++in world writable sticky directories, unless they are owned by the
++owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++This protection is based on the restrictions in Openwall.
++
++==============================================================
++
+ protected_hardlinks:
+ 
+ A long-standing class of security issues is the hardlink-based
+@@ -202,6 +222,22 @@ This protection is based on the restrictions in Openwall and grsecurity.
+ 
+ ==============================================================
+ 
++protected_regular:
++
++This protection is similar to protected_fifos, but it
++avoids writes to an attacker-controlled regular file, where a program
++expected to create one.
++
++When set to "0", writing to regular files is unrestricted.
++
++When set to "1" don't allow O_CREAT open on regular files that we
++don't own in world writable sticky directories, unless they are
++owned by the owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++==============================================================
++
+ protected_symlinks:
+ 
+ A long-standing class of security issues is the symlink-based
+diff --git a/fs/namei.c b/fs/namei.c
+index 921ae32..eaab668 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -883,6 +883,8 @@ static inline void put_link(struct nameidata *nd)
+ 
+ int sysctl_protected_symlinks __read_mostly = 0;
+ int sysctl_protected_hardlinks __read_mostly = 0;
++int sysctl_protected_fifos __read_mostly;
++int sysctl_protected_regular __read_mostly;
+ 
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+@@ -996,6 +998,54 @@ static int may_linkat(struct path *link)
+ 	return -EPERM;
+ }
+ 
++/**
++ * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
++ *			  should be allowed, or not, on files that already
++ *			  exist.
++ * @dir: the sticky parent directory
++ * @name: the file name
++ * @inode: the inode of the file to open
++ *
++ * Block an O_CREAT open of a FIFO (or a regular file) when:
++ *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
++ *   - the file already exists
++ *   - we are in a sticky directory
++ *   - we don't own the file
++ *   - the owner of the directory doesn't own the file
++ *   - the directory is world writable
++ * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
++ * the directory doesn't have to be world writable: being group writable will
++ * be enough.
++ *
++ * Returns 0 if the open is allowed, -ve on error.
++ */
++static int may_create_in_sticky(struct dentry * const dir,
++				const unsigned char * const name,
++				struct inode * const inode)
++{
++	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
++	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
++	    likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
++	    uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
++	    uid_eq(current_fsuid(), inode->i_uid))
++		return 0;
++
++	if (likely(dir->d_inode->i_mode & 0002) ||
++	    (dir->d_inode->i_mode & 0020 &&
++	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
++	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
++		pr_notice_ratelimited("denied writing in '%s' of %u.%u in a sticky directory by UID %u, EUID %u, process %s:%d.\n",
++				      name,
++				      from_kuid(&init_user_ns, inode->i_uid),
++				      from_kgid(&init_user_ns, inode->i_gid),
++				      from_kuid(&init_user_ns, current_uid()),
++				      from_kuid(&init_user_ns, current_euid()),
++				      current->comm, current->pid);
++		return -EACCES;
++	}
++	return 0;
++}
++
+ static __always_inline
+ const char *get_link(struct nameidata *nd)
+ {
+@@ -3355,9 +3405,14 @@ static int do_last(struct nameidata *nd,
+ 	if (error)
+ 		return error;
+ 	audit_inode(nd->name, nd->path.dentry, 0);
+-	error = -EISDIR;
+-	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
+-		goto out;
++	if (open_flag & O_CREAT) {
++		error = -EISDIR;
++		if (d_is_dir(nd->path.dentry))
++			goto out;
++		error = may_create_in_sticky(dir, nd->last.name, inode);
++		if (unlikely(error))
++			goto out;
++	}
+ 	error = -ENOTDIR;
+ 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
+ 		goto out;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2a81556..9bf4e5c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -72,6 +72,8 @@
+ extern int leases_enable, lease_break_time;
+ extern int sysctl_protected_symlinks;
+ extern int sysctl_protected_hardlinks;
++extern int sysctl_protected_fifos;
++extern int sysctl_protected_regular;
+ 
+ typedef __kernel_rwf_t rwf_t;
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index f98f28c..295f528 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1794,6 +1794,24 @@ static int sysrq_sysctl_handler(struct ctl_table *table, int write,
+ 		.extra2		= &one,
+ 	},
+ 	{
++		.procname	= "protected_fifos",
++		.data		= &sysctl_protected_fifos,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
++		.procname	= "protected_regular",
++		.data		= &sysctl_protected_regular,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
+ 		.procname	= "suid_dumpable",
+ 		.data		= &suid_dumpable,
+ 		.maxlen		= sizeof(int),
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+1.9.1
