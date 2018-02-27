@@ -1,40 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeB0Wib (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:38:31 -0500
-Received: from mail-io0-f173.google.com ([209.85.223.173]:41221 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbeB0Wi1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:38:27 -0500
-X-Google-Smtp-Source: AH8x227xG/t0g3ohxQOgD2gw1FgdTzbF3S3vqO4KxEgL1gSE6VxfcEww6nf2KF3VYg9wsst9VLyYlA==
-Date: Tue, 27 Feb 2018 16:38:25 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        id S1751974AbeB0Wnl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751754AbeB0Wnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:43:40 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9657C21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 27 Feb 2018 17:43:37 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: corbet@lwn.net, mingo@kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/12] i2c: qup: fix the transfer length for BAM rx EOT
- FLUSH tags
-Message-ID: <20180227223825.GF20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-6-git-send-email-absahu@codeaurora.org>
+Subject: Re: [PATCH 00/17] Include linux trace docs to Sphinx TOC tree
+Message-ID: <20180227174337.37ecb348@vmware.local.home>
+In-Reply-To: <20180227093421.yd674oaklthaljgh@intel.com>
+References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
+        <20180227093421.yd674oaklthaljgh@intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517644697-30806-6-git-send-email-absahu@codeaurora.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 01:28:10PM +0530, Abhishek Sahu wrote:
-> In case of FLUSH operation, BAM copies INPUT EOT FLUSH (0x94)
-> instead of normal EOT (0x93) tag in input data stream when an
-> input EOT tag is received during flush operation. So only one tag
-> will be written instead of 2 separate tags.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+On Tue, 27 Feb 2018 17:34:22 +0800
+"Du, Changbin" <changbin.du@intel.com> wrote:
 
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
+> Hello Steven and Corbet,
+> Ten days past, will you accept this serias? Thank you!
+> 
+> On Sat, Feb 17, 2018 at 01:39:33PM +0800, changbin.du@intel.com wrote:
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > Hi All,
+> > The linux tracers are so useful that I want to make the docs better. The kernel
+> > now uses Sphinx to generate intelligent and beautiful documentation from
+> > reStructuredText files. I converted most of the Linux trace docs to rst format
+> > in this serias.
+> > 
+> > For you to preview, please visit below url:
+> > http://docservice.askxiong.com/linux-kernel/trace/index.html
+> > 
+> > Thank you!
+
+Currently I'm very overloaded with other code that needs to get done
+ASAP, and I need to balance what is critical and what is not. I don't
+have time to review this, as this isn't critical, and can wait.
+
+If Jon can review it to make sure that it doesn't change the
+readability of the text, then I'll trust his judgment. 
+
+-- Steve
