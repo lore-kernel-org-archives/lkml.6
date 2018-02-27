@@ -1,85 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeB0HSM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 02:18:12 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35011 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752079AbeB0HSL (ORCPT
+        id S1752325AbeB0HUP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 02:20:15 -0500
+Received: from goliath.siemens.de ([192.35.17.28]:54151 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeB0HUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 02:18:11 -0500
-X-Google-Smtp-Source: AG47ELtjU1IIkIgK4oLFOw9GY24JLtUgx8Utt4u4zW3a2s0mB08ZAnVr40j9d41t4YK8xiH5oNxQeQ==
-From: Leo Yan <leo.yan@linaro.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH] perf machine: Fix load kernel symbol with '-k' option
-Date: Tue, 27 Feb 2018 15:17:52 +0800
-Message-Id: <1519715872-31050-1-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 27 Feb 2018 02:20:14 -0500
+Subject: Re: [PATCH 4/6] x86: Consolidate PCI_MMCONFIG configs
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <cover.1516601570.git.jan.kiszka@siemens.com>
+ <5dcaec50bb59140c1cb63c35ce566ccc02188bcb.1516601570.git.jan.kiszka@siemens.com>
+ <CAHp75Vd3AsdOayA0FSaug6L4K+Xx5pk=Eeh4F5mZQsKiV3RxwA@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <45f0d934-c4cf-fdc7-d7ca-17373c01e733@siemens.com>
+Date: Tue, 27 Feb 2018 08:19:55 +0100
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vd3AsdOayA0FSaug6L4K+Xx5pk=Eeh4F5mZQsKiV3RxwA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Hikey arm64 octa A53 platform, when use command './perf report -v
--k vmlinux --stdio' it outputs below error info, and it skips to load
-kernel symbol and doesn't print symbol for event:
-Failed to open [kernel.kallsyms]_text, continuing without symbols.
+On 2018-01-28 18:26, Andy Shevchenko wrote:
+> On Mon, Jan 22, 2018 at 8:12 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> Not sure if those two worked by design or just by chance so far. In any
+>> case, it's at least cleaner and clearer to express this in a single
+>> config statement.
+> 
+> Congrats! You found by the way a bug in
+> 
+> commit e279b6c1d329e50b766bce96aacc197eae8a053b
+> Author: Sam Ravnborg <sam@ravnborg.org>
+> Date:   Tue Nov 6 20:41:05 2007 +0100
+> 
+>    x86: start unification of arch/x86/Kconfig.*
+> 
+> ...and proper fix seems to split PCI stuff to common + X86_32 only + X86_64 only
+> 
 
-The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
-kernel mmap name into struct machine"), which changes the logic for
-machine mmap_name by removing function machine__mmap_name() and always
-use 'machine->mmap_name'.  Comparing difference between
-machine__mmap_name() and 'machine->mmap_name', the later one includes
-the string for specified kernel vmlinux string with option '-k' in
-command, but the old function machine__mmap_name() ignores vmlinux
-path string.  As result, event's mmap file name doesn't match with
-machine mmap file name anymore and it skips to load kernel symbol from
-vmlinux file.
+Hmm, is that a change request on this patch?
 
-To resolve this issue, this patch adds extra checking for
-'machine->mmap_name', when its start char is not '[' then we can know
-it includes vmlinux path string specified for option '-k'. For this
-case it sets 'is_kernel_mmap = true' and run into flow to load kernel
-symbol from vmlinux.
+Jan
 
-This patch has been verified with two commands: './perf report -v
--k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
--k vmlinux'.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/util/machine.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 12b7427..ffd709d 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 	else
- 		kernel_type = DSO_TYPE_GUEST_KERNEL;
- 
--	is_kernel_mmap = memcmp(event->mmap.filename,
--				machine->mmap_name,
--				strlen(machine->mmap_name) - 1) == 0;
-+	/*
-+	 * If machine mmap_name doesn't start with char '[', it includes
-+	 * the specified kernel vmlinux name with option '-k'.  So set
-+	 * is_kernel_mmap as true to create machine symbol map.
-+	 */
-+	if (machine->mmap_name[0] != '[')
-+		is_kernel_mmap = true;
-+	else
-+		is_kernel_mmap = memcmp(event->mmap.filename,
-+					machine->mmap_name,
-+					strlen(machine->mmap_name) - 1) == 0;
-+
- 	if (event->mmap.filename[0] == '/' ||
- 	    (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
- 		map = machine__findnew_module_map(machine, event->mmap.start,
 -- 
-2.7.4
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
