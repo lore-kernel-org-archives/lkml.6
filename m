@@ -1,266 +1,297 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x2277+NTmwfyy+N7H6SRRh46JHHs51OfJresQvj6JHpnts0f/aVN1CHgtfiSqSK1aAabpeOBQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519852238; cv=none;
+Return-Path: <kernel-hardening-return-12004-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtg6MoBSO4Ot9Fv59jWfx9W3JDE5qXSrW+6ql5lLYD7ZBPI9+1ZbdRhJMxHAIJ/KDzTFcgO
+ARC-Seal: i=1; a=rsa-sha256; t=1519737452; cv=none;
         d=google.com; s=arc-20160816;
-        b=HgKNxmBrhZsI+fAMr9N1R4JmO0yBdjwxgQmVbSbL5XbbGesniKYvdTr7swnc2fBEyn
-         i/d9Buhb4hDItDIMQ7V3F0Db8qvqZGx7orhlWkaOzZe6xlwQQGC0H6oWz9i7S/gaFX6M
-         kPT3Not+8f8nmupyTXAlFQhdIlUIX293qs5q9fgObRA6WUYXFRDRCG8gU5RxxL1i/epP
-         MmBtoG1C6s3j9mu2yKHDM3qpzyraaNkQv0Ecwwsz/JOA5FsEp1C0ztnxM8SklPGR/8BK
-         2GvIjn1cdw7jM0HSECaPpAZ2XQ8Z8Yhpl8UI5KIYYpk/BudcsAnHxtmhGAPrZTYC61C6
-         fDjA==
+        b=aEL8YIEfQVBwFBfPmsLjJ63SVFIPZXWTGLcdMvQ5bKsopAJ3g5/pvcr4qIrZ038+Db
+         SvdvYYgyR0dBO/eJfm/ULkgD1PoKF79JYm4hXqEPDpVe8TN1pUHGGq/SyT0iXZRznGqS
+         0/j9ewYn7XKGORLH8Ya6nOTZ2kvYSysmEKGTEwRYtbmgKMnuL4hsy1dr9BlCfFfS7yKh
+         Ea5rP5bGVdPgKL1Z5sWZXP4xeXt5kNBwquCNf6Ll3Zeh13+JjsY7pGDJX7O7eft/sjib
+         huSlMK0rDvX1QFytOa9hFSBA0bUXqvQ2imibOiaP/f10KrVP4goFNJA8pQ45pAT4zmUh
+         rOIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-language:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:arc-authentication-results;
-        bh=lvRPuDiQQtRIRXuaVqTvXGTiczJct8wAwJmVW20HYKo=;
-        b=w9fvATjl/w0cS/JJRv8hdZM7/3/hO484QqUfda/RfZUiSTebuSKhN0Irh0Jc5n/CAb
-         PdCmiYG1m1OK/GEu4zCWjLQRubMWWv/cW0GBiWNW2T09bAbY3fMvFGRdOHCwaL4K+Xmx
-         Z5UAxQXC9449mK8d/DGgqFlYfrPaGBPdqKqAhK+m04u2J2vjBft9I63ydZak0P8iwRLD
-         Wt1bXiXSG+GO0PRIyD8y68Yt7J4jL+QeK81WFke36j1Te5NA/IVR0mpVelgPflzxTcnU
-         YwoMApxD+NYJLXUSTAy1kk47iEjGgcIZoLHqOqFf8GEXmvgHg4PYbthzJfWWLGgwnSnW
-         LV3w==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=tQbEFfJcOkGoLMhcZejkPYa+MAVPx5XPROZbbXWUjkE=;
+        b=RMuYs1gwS0WLqLHE0rkkKzN5GsoeGgR4bDOfR4RuzFMWmj38tF7kEQStpJg48Okjzu
+         cnRaBcKJ09UgAtjCOF2kthcn+tydt8N82bh6+K6CWrnBUez8h+MUDT8rmKsU9m//TM2B
+         PamqFw4hOQQkOitNuhpG0ZtWPNRGivQBj0JOlKCGSNgvHsJe0fbeimWCttZa/vBHZIXa
+         S/e3hjjdcodUxoEea+qqCF0Ag+Ts3b5pTRL+c4/mnaqrv0pD8FFeabXDxYqy7uF+B4Oi
+         t4kyclwVSHjAqh7HJKC0YH9wXJOZjfizjYtJV/GsNkm49h/362JmdxCe0Wh8gD4bnW9P
+         ohJg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XxJAsUo3;
+       spf=pass (google.com: domain of kernel-hardening-return-12004-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12004-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932904AbeB1VKi (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 28 Feb 2018 16:10:38 -0500
-Received: from osg.samsung.com ([64.30.133.232]:40431 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932400AbeB1VKh (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:10:37 -0500
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuah@kernel.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [GIT PULL] kselftest fixes update for 4.16-rc4
-Message-ID: <9f1d717e-f968-feb6-5fe7-9bfb7c304743@osg.samsung.com>
-Date: Wed, 28 Feb 2018 14:10:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------4471A8F75628C17655391D4D"
-Content-Language: en-US
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XxJAsUo3;
+       spf=pass (google.com: domain of kernel-hardening-return-12004-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12004-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Ilya Smith <blackzert@gmail.com>
+To: akpm@linux-foundation.org,
+	dan.j.williams@intel.com,
+	mhocko@suse.com,
+	kirill.shutemov@linux.intel.com,
+	jack@suse.cz,
+	jglisse@redhat.com,
+	hughd@google.com,
+	willy@infradead.org,
+	deller@gmx.de,
+	aarcange@redhat.com,
+	oleg@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Cc: Ilya Smith <blackzert@gmail.com>
+Subject: [RFC PATCH] Randomization of address chosen by mmap.
+Date: Tue, 27 Feb 2018 16:13:38 +0300
+Message-Id: <20180227131338.3699-1-blackzert@gmail.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593680580705761943?=
-X-GMAIL-MSGID: =?utf-8?q?1593680580705761943?=
+X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
+X-GMAIL-MSGID: =?utf-8?q?1593560218941631465?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------4471A8F75628C17655391D4D
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+This is more proof of concept. Current implementation doesn't randomize
+address returned by mmap. All the entropy ends with choosing mmap_base_addr
+at the process creation. After that mmap build very predictable layout
+of address space. It allows to bypass ASLR in many cases.
+This patch make randomization of address on any mmap call.
+It works good on 64 bit system, but usage under 32 bit systems is not
+recommended. This approach uses current implementation to simplify search
+of address.
 
-Hi Linus,
+Here I would like to discuss this approach.
 
-Please pull the following Kselftest update for 4.16-rc4.
+Signed-off-by: Ilya Smith <blackzert@gmail.com>
+---
+ include/linux/mm.h |   4 ++
+ mm/mmap.c          | 171 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 175 insertions(+)
 
-This kselftest fixes update for 4.16-rc4 consists of of fixes for
-various problems in test output, compile errors, and missing configs.
-
-Diff for the update is attached.
-
-thanks,
--- Shuah
-
------------------------------------------------------------------------------------
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-4.16-rc4
-
-for you to fetch changes up to f6869826de700bce59e2cef14974f99836e34e4f:
-
-  selftests: vm: update .gitignore with new test (2018-02-26 16:09:50 -0700)
-
-----------------------------------------------------------------
-linux-kselftest-4.16-rc4
-
-This kselftest fixes update for 4.16-rc4 consists of of fixes for
-various problems in test output, compile errors, and missing configs.
-
-----------------------------------------------------------------
-Anders Roxell (2):
-      selftests: sync: missing CFLAGS while compiling
-      selftests: memfd: add config fragment for fuse
-
-Daniel Díaz (2):
-      selftests/android: Fix line continuation in Makefile
-      selftests/futex: Fix line continuation in Makefile
-
-Dominik Brodowski (1):
-      selftest/vDSO: fix O=
-
-Naresh Kamboju (1):
-      selftests: pstore: Adding config fragment CONFIG_PSTORE_RAM=m
-
-Shuah Khan (2):
-      selftests: memory-hotplug: silence test command echo
-      selftests: vm: update .gitignore with new test
-
- tools/testing/selftests/android/Makefile        |  8 ++++----
- tools/testing/selftests/futex/Makefile          |  6 +++---
- tools/testing/selftests/memfd/config            |  1 +
- tools/testing/selftests/memory-hotplug/Makefile |  2 +-
- tools/testing/selftests/pstore/config           |  1 +
- tools/testing/selftests/sync/Makefile           |  2 +-
- tools/testing/selftests/vDSO/Makefile           | 14 +++++++-------
- tools/testing/selftests/vm/.gitignore           |  1 +
- 8 files changed, 19 insertions(+), 16 deletions(-)
- create mode 100644 tools/testing/selftests/memfd/config
------------------------------------------------------------------------------------
-
-
---------------4471A8F75628C17655391D4D
-Content-Type: text/x-patch;
- name="linux-kselftest-4.16-rc4.diff"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="linux-kselftest-4.16-rc4.diff"
-
-diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/sel=
-ftests/android/Makefile
-index 1a7492268993..f6304d2be90c 100644
---- a/tools/testing/selftests/android/Makefile
-+++ b/tools/testing/selftests/android/Makefile
-@@ -11,11 +11,11 @@ all:
- 		BUILD_TARGET=3D$(OUTPUT)/$$DIR;	\
- 		mkdir $$BUILD_TARGET  -p;	\
- 		make OUTPUT=3D$$BUILD_TARGET -C $$DIR $@;\
--		#SUBDIR test prog name should be in the form: SUBDIR_test.sh
-+		#SUBDIR test prog name should be in the form: SUBDIR_test.sh \
- 		TEST=3D$$DIR"_test.sh"; \
--		if [ -e $$DIR/$$TEST ]; then
--			rsync -a $$DIR/$$TEST $$BUILD_TARGET/;
--		fi
-+		if [ -e $$DIR/$$TEST ]; then \
-+			rsync -a $$DIR/$$TEST $$BUILD_TARGET/; \
-+		fi \
- 	done
-=20
- override define RUN_TESTS
-diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selft=
-ests/futex/Makefile
-index cea4adcd42b8..a63e8453984d 100644
---- a/tools/testing/selftests/futex/Makefile
-+++ b/tools/testing/selftests/futex/Makefile
-@@ -12,9 +12,9 @@ all:
- 		BUILD_TARGET=3D$(OUTPUT)/$$DIR;	\
- 		mkdir $$BUILD_TARGET  -p;	\
- 		make OUTPUT=3D$$BUILD_TARGET -C $$DIR $@;\
--		if [ -e $$DIR/$(TEST_PROGS) ]; then
--			rsync -a $$DIR/$(TEST_PROGS) $$BUILD_TARGET/;
--		fi
-+		if [ -e $$DIR/$(TEST_PROGS) ]; then \
-+			rsync -a $$DIR/$(TEST_PROGS) $$BUILD_TARGET/; \
-+		fi \
- 	done
-=20
- override define RUN_TESTS
-diff --git a/tools/testing/selftests/memfd/config b/tools/testing/selftes=
-ts/memfd/config
-new file mode 100644
-index 000000000000..835c7f4dadcd
---- /dev/null
-+++ b/tools/testing/selftests/memfd/config
-@@ -0,0 +1 @@
-+CONFIG_FUSE_FS=3Dm
-diff --git a/tools/testing/selftests/memory-hotplug/Makefile b/tools/test=
-ing/selftests/memory-hotplug/Makefile
-index 86636d207adf..183b46883875 100644
---- a/tools/testing/selftests/memory-hotplug/Makefile
-+++ b/tools/testing/selftests/memory-hotplug/Makefile
-@@ -4,7 +4,7 @@ all:
- include ../lib.mk
-=20
- TEST_PROGS :=3D mem-on-off-test.sh
--override RUN_TESTS :=3D ./mem-on-off-test.sh -r 2 && echo "selftests: me=
-mory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
-+override RUN_TESTS :=3D @./mem-on-off-test.sh -r 2 && echo "selftests: m=
-emory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
- override EMIT_TESTS :=3D echo "$(RUN_TESTS)"
-=20
- run_full_test:
-diff --git a/tools/testing/selftests/pstore/config b/tools/testing/selfte=
-sts/pstore/config
-index 6a8e5a9bfc10..d148f9f89fb6 100644
---- a/tools/testing/selftests/pstore/config
-+++ b/tools/testing/selftests/pstore/config
-@@ -2,3 +2,4 @@ CONFIG_MISC_FILESYSTEMS=3Dy
- CONFIG_PSTORE=3Dy
- CONFIG_PSTORE_PMSG=3Dy
- CONFIG_PSTORE_CONSOLE=3Dy
-+CONFIG_PSTORE_RAM=3Dm
-diff --git a/tools/testing/selftests/sync/Makefile b/tools/testing/selfte=
-sts/sync/Makefile
-index b3c8ba3cb668..d0121a8a3523 100644
---- a/tools/testing/selftests/sync/Makefile
-+++ b/tools/testing/selftests/sync/Makefile
-@@ -30,7 +30,7 @@ $(TEST_CUSTOM_PROGS): $(TESTS) $(OBJS)
- 	$(CC) -o $(TEST_CUSTOM_PROGS) $(OBJS) $(TESTS) $(CFLAGS) $(LDFLAGS)
-=20
- $(OBJS): $(OUTPUT)/%.o: %.c
--	$(CC) -c $^ -o $@
-+	$(CC) -c $^ -o $@ $(CFLAGS)
-=20
- $(TESTS): $(OUTPUT)/%.o: %.c
- 	$(CC) -c $^ -o $@
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selfte=
-sts/vDSO/Makefile
-index 3d5a62ff7d31..f5d7a7851e21 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,4 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
-+include ../lib.mk
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..f81b6c8a0bc5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -25,6 +25,7 @@
+ #include <linux/err.h>
+ #include <linux/page_ref.h>
+ #include <linux/memremap.h>
++#include <linux/sched.h>
+ 
+ struct mempolicy;
+ struct anon_vma;
+@@ -2253,6 +2254,7 @@ struct vm_unmapped_area_info {
+ 	unsigned long align_offset;
+ };
+ 
++extern unsigned long unmapped_area_random(struct vm_unmapped_area_info *info);
+ extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
+ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+ 
+@@ -2268,6 +2270,8 @@ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+ static inline unsigned long
+ vm_unmapped_area(struct vm_unmapped_area_info *info)
+ {
++	if (current->flags & PF_RANDOMIZE)
++		return unmapped_area_random(info);
+ 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
+ 		return unmapped_area_topdown(info);
+ 	else
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 9efdc021ad22..58110e065417 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -45,6 +45,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/pkeys.h>
+ #include <linux/oom.h>
++#include <linux/random.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/cacheflush.h>
+@@ -1780,6 +1781,176 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	return error;
+ }
+ 
++unsigned long unmapped_area_random(struct vm_unmapped_area_info *info)
++{
++	// first lets find right border with unmapped_area_topdown
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma;
++	struct vm_area_struct *right_vma = 0;
++	unsigned long entropy;
++	unsigned int entropy_count;
++	unsigned long length, low_limit, high_limit, gap_start, gap_end;
++	unsigned long addr, low, high;
 +
- ifndef CROSS_COMPILE
- CFLAGS :=3D -std=3Dgnu99
- CFLAGS_vdso_standalone_test_x86 :=3D -nostdlib -fno-asynchronous-unwind-=
-tables -fno-stack-protector
-@@ -6,16 +8,14 @@ ifeq ($(CONFIG_X86_32),y)
- LDLIBS +=3D -lgcc_s
- endif
-=20
--TEST_PROGS :=3D vdso_test vdso_standalone_test_x86
-+TEST_PROGS :=3D $(OUTPUT)/vdso_test $(OUTPUT)/vdso_standalone_test_x86
-=20
- all: $(TEST_PROGS)
--vdso_test: parse_vdso.c vdso_test.c
--vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
-+$(OUTPUT)/vdso_test: parse_vdso.c vdso_test.c
-+$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vds=
-o.c
- 	$(CC) $(CFLAGS) $(CFLAGS_vdso_standalone_test_x86) \
- 		vdso_standalone_test_x86.c parse_vdso.c \
--		-o vdso_standalone_test_x86
-+		-o $@
-=20
--include ../lib.mk
--clean:
--	rm -fr $(TEST_PROGS)
-+EXTRA_CLEAN :=3D $(TEST_PROGS)
- endif
-diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selfte=
-sts/vm/.gitignore
-index 63c94d776e89..342c7bc9dc8c 100644
---- a/tools/testing/selftests/vm/.gitignore
-+++ b/tools/testing/selftests/vm/.gitignore
-@@ -11,3 +11,4 @@ mlock-intersect-test
- mlock-random-test
- virtual_address_range
- gup_benchmark
-+va_128TBswitch
-
---------------4471A8F75628C17655391D4D--
++	/* Adjust search length to account for worst case alignment overhead */
++	length = info->length + info->align_mask;
++	if (length < info->length)
++		return -ENOMEM;
++
++	/*
++	 * Adjust search limits by the desired length.
++	 * See implementation comment at top of unmapped_area().
++	 */
++	gap_end = info->high_limit;
++	if (gap_end < length)
++		return -ENOMEM;
++	high_limit = gap_end - length;
++
++	info->low_limit = 0x10000;
++	if (info->low_limit > high_limit)
++		return -ENOMEM;
++	low_limit = info->low_limit + length;
++
++	/* Check highest gap, which does not precede any rbtree node */
++	gap_start = mm->highest_vm_end;
++	if (gap_start <= high_limit)
++		goto found;
++
++	/* Check if rbtree root looks promising */
++	if (RB_EMPTY_ROOT(&mm->mm_rb))
++		return -ENOMEM;
++	vma = rb_entry(mm->mm_rb.rb_node, struct vm_area_struct, vm_rb);
++	if (vma->rb_subtree_gap < length)
++		return -ENOMEM;
++
++	while (true) {
++		/* Visit right subtree if it looks promising */
++		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0;
++		if (gap_start <= high_limit && vma->vm_rb.rb_right) {
++			struct vm_area_struct *right =
++				rb_entry(vma->vm_rb.rb_right,
++					 struct vm_area_struct, vm_rb);
++			if (right->rb_subtree_gap >= length) {
++				vma = right;
++				continue;
++			}
++		}
++
++check_current_down:
++		/* Check if current node has a suitable gap */
++		gap_end = vm_start_gap(vma);
++		if (gap_end < low_limit)
++			return -ENOMEM;
++		if (gap_start <= high_limit &&
++		    gap_end > gap_start && gap_end - gap_start >= length)
++			goto found;
++
++		/* Visit left subtree if it looks promising */
++		if (vma->vm_rb.rb_left) {
++			struct vm_area_struct *left =
++				rb_entry(vma->vm_rb.rb_left,
++					 struct vm_area_struct, vm_rb);
++			if (left->rb_subtree_gap >= length) {
++				vma = left;
++				continue;
++			}
++		}
++
++		/* Go back up the rbtree to find next candidate node */
++		while (true) {
++			struct rb_node *prev = &vma->vm_rb;
++
++			if (!rb_parent(prev))
++				return -ENOMEM;
++			vma = rb_entry(rb_parent(prev),
++				       struct vm_area_struct, vm_rb);
++			if (prev == vma->vm_rb.rb_right) {
++				gap_start = vma->vm_prev ?
++					vm_end_gap(vma->vm_prev) : 0;
++				goto check_current_down;
++			}
++		}
++	}
++
++found:
++	right_vma = vma;
++	low = gap_start;
++	high = gap_end - length;
++
++	entropy = get_random_long();
++	entropy_count = 0;
++
++	// from left node to right we check if node is fine and
++	// randomly select it.
++	vma = mm->mmap;
++	while (vma != right_vma) {
++		/* Visit left subtree if it looks promising */
++		gap_end = vm_start_gap(vma);
++		if (gap_end >= low_limit && vma->vm_rb.rb_left) {
++			struct vm_area_struct *left =
++				rb_entry(vma->vm_rb.rb_left,
++					 struct vm_area_struct, vm_rb);
++			if (left->rb_subtree_gap >= length) {
++				vma = left;
++				continue;
++			}
++		}
++
++		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : low_limit;
++check_current_up:
++		/* Check if current node has a suitable gap */
++		if (gap_start > high_limit)
++			break;
++		if (gap_end >= low_limit &&
++		    gap_end > gap_start && gap_end - gap_start >= length) {
++			if (entropy & 1) {
++				low = gap_start;
++				high = gap_end - length;
++			}
++			entropy >>= 1;
++			if (++entropy_count == 64) {
++				entropy = get_random_long();
++				entropy_count = 0;
++			}
++		}
++
++		/* Visit right subtree if it looks promising */
++		if (vma->vm_rb.rb_right) {
++			struct vm_area_struct *right =
++				rb_entry(vma->vm_rb.rb_right,
++					 struct vm_area_struct, vm_rb);
++			if (right->rb_subtree_gap >= length) {
++				vma = right;
++				continue;
++			}
++		}
++
++		/* Go back up the rbtree to find next candidate node */
++		while (true) {
++			struct rb_node *prev = &vma->vm_rb;
++
++			if (!rb_parent(prev))
++				BUG(); // this should not happen
++			vma = rb_entry(rb_parent(prev),
++				       struct vm_area_struct, vm_rb);
++			if (prev == vma->vm_rb.rb_left) {
++				gap_start = vm_end_gap(vma->vm_prev);
++				gap_end = vm_start_gap(vma);
++				if (vma == right_vma)
++					break;
++				goto check_current_up;
++			}
++		}
++	}
++
++	if (high == low)
++		return low;
++
++	addr = get_random_long() % ((high - low) >> PAGE_SHIFT);
++	addr = low + (addr << PAGE_SHIFT);
++	return addr;
++}
++
+ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
+ {
+ 	/*
+-- 
+2.14.1
