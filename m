@@ -1,162 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753338AbeB0Nhw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 08:37:52 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54778 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752107AbeB0Nhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 08:37:50 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] ARM: reorder mach-*/Kconfig inclusions
-Date: Tue, 27 Feb 2018 14:37:47 +0100
-Message-Id: <20180227133747.23517-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S1753287AbeB0NnS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 08:43:18 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753177AbeB0NnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 08:43:16 -0500
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1519738149.4300.45.camel@redhat.com>
+References: <1519738149.4300.45.camel@redhat.com> <20180225150505.GD7144@yexl-desktop> <1519573271.4702.10.camel@redhat.com> <20180226083807.GE8942@yexl-desktop> <1519645434.4443.15.camel@redhat.com> <1519648433.4443.18.camel@redhat.com> <8b48844f-7f9a-a9d7-b5bc-3bc403e0fa78@intel.com>
+To: Jeff Layton <jlayton@redhat.com>
+Cc: dhowells@redhat.com, kemi <kemi.wang@intel.com>,
+        Ye Xiaolong <xiaolong.ye@intel.com>, lkp@01.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [lkp-robot] [iversion] c0cef30e4f: aim7.jobs-per-min -18.0% regression
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <665.1519738993.1@warthog.procyon.org.uk>
+Date: Tue, 27 Feb 2018 13:43:13 +0000
+Message-ID: <666.1519738993@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorder the mach-* inclusions so the comment about them being ordered
-alphabetically ends up being true.
+Jeff Layton <jlayton@redhat.com> wrote:
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/arm/Kconfig | 52 ++++++++++++++++++++++++++--------------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+>    0xffffffff813ae828 <+136>:	je     0xffffffff813ae83a <ima_file_free+154>
+>    0xffffffff813ae82a <+138>:	mov    0x150(%rbp),%rcx
+>    0xffffffff813ae831 <+145>:	shr    %rcx
+>    0xffffffff813ae834 <+148>:	cmp    %rcx,0x20(%rax)
+>    0xffffffff813ae838 <+152>:	je     0xffffffff813ae862 <ima_file_free+194>
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d53575486..d868983faf20 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -709,8 +709,6 @@ config ARCH_VIRT
- # Kconfigs may be included either alphabetically (according to the
- # plat- suffix) or along side the corresponding mach-* source.
- #
--source "arch/arm/mach-mvebu/Kconfig"
--
- source "arch/arm/mach-actions/Kconfig"
- 
- source "arch/arm/mach-alpine/Kconfig"
-@@ -719,6 +717,8 @@ source "arch/arm/mach-artpec/Kconfig"
- 
- source "arch/arm/mach-asm9260/Kconfig"
- 
-+source "arch/arm/mach-aspeed/Kconfig"
-+
- source "arch/arm/mach-at91/Kconfig"
- 
- source "arch/arm/mach-axxia/Kconfig"
-@@ -739,6 +739,9 @@ source "arch/arm/mach-dove/Kconfig"
- 
- source "arch/arm/mach-ep93xx/Kconfig"
- 
-+source "arch/arm/mach-exynos/Kconfig"
-+source "arch/arm/plat-samsung/Kconfig"
-+
- source "arch/arm/mach-footbridge/Kconfig"
- 
- source "arch/arm/mach-gemini/Kconfig"
-@@ -747,31 +750,33 @@ source "arch/arm/mach-highbank/Kconfig"
- 
- source "arch/arm/mach-hisi/Kconfig"
- 
-+source "arch/arm/mach-imx/Kconfig"
-+
- source "arch/arm/mach-integrator/Kconfig"
- 
-+source "arch/arm/mach-iop13xx/Kconfig"
-+
- source "arch/arm/mach-iop32x/Kconfig"
- 
- source "arch/arm/mach-iop33x/Kconfig"
- 
--source "arch/arm/mach-iop13xx/Kconfig"
--
- source "arch/arm/mach-ixp4xx/Kconfig"
- 
- source "arch/arm/mach-keystone/Kconfig"
- 
- source "arch/arm/mach-ks8695/Kconfig"
- 
-+source "arch/arm/mach-mediatek/Kconfig"
-+
- source "arch/arm/mach-meson/Kconfig"
- 
--source "arch/arm/mach-moxart/Kconfig"
-+source "arch/arm/mach-mmp/Kconfig"
- 
--source "arch/arm/mach-aspeed/Kconfig"
-+source "arch/arm/mach-moxart/Kconfig"
- 
- source "arch/arm/mach-mv78xx0/Kconfig"
- 
--source "arch/arm/mach-imx/Kconfig"
--
--source "arch/arm/mach-mediatek/Kconfig"
-+source "arch/arm/mach-mvebu/Kconfig"
- 
- source "arch/arm/mach-mxs/Kconfig"
- 
-@@ -789,23 +794,31 @@ source "arch/arm/mach-omap2/Kconfig"
- 
- source "arch/arm/mach-orion5x/Kconfig"
- 
-+source "arch/arm/mach-oxnas/Kconfig"
-+
- source "arch/arm/mach-picoxcell/Kconfig"
- 
-+source "arch/arm/mach-prima2/Kconfig"
-+
- source "arch/arm/mach-pxa/Kconfig"
- source "arch/arm/plat-pxa/Kconfig"
- 
--source "arch/arm/mach-mmp/Kconfig"
--
--source "arch/arm/mach-oxnas/Kconfig"
--
- source "arch/arm/mach-qcom/Kconfig"
- 
- source "arch/arm/mach-realview/Kconfig"
- 
- source "arch/arm/mach-rockchip/Kconfig"
- 
-+source "arch/arm/mach-s3c24xx/Kconfig"
-+
-+source "arch/arm/mach-s3c64xx/Kconfig"
-+
-+source "arch/arm/mach-s5pv210/Kconfig"
-+
- source "arch/arm/mach-sa1100/Kconfig"
- 
-+source "arch/arm/mach-shmobile/Kconfig"
-+
- source "arch/arm/mach-socfpga/Kconfig"
- 
- source "arch/arm/mach-spear/Kconfig"
-@@ -814,21 +827,8 @@ source "arch/arm/mach-sti/Kconfig"
- 
- source "arch/arm/mach-stm32/Kconfig"
- 
--source "arch/arm/mach-s3c24xx/Kconfig"
--
--source "arch/arm/mach-s3c64xx/Kconfig"
--
--source "arch/arm/mach-s5pv210/Kconfig"
--
--source "arch/arm/mach-exynos/Kconfig"
--source "arch/arm/plat-samsung/Kconfig"
--
--source "arch/arm/mach-shmobile/Kconfig"
--
- source "arch/arm/mach-sunxi/Kconfig"
- 
--source "arch/arm/mach-prima2/Kconfig"
--
- source "arch/arm/mach-tango/Kconfig"
- 
- source "arch/arm/mach-tegra/Kconfig"
--- 
-2.16.2
+Is it possible there's a stall between the load of RCX and the subsequent
+instructions because they all have to wait for RCX to become available?
+
+The interleaving between operating on RSI and RCX in the older code might
+alleviate that.
+
+In addition, the load if the 20(%rax) value is now done in the CMP instruction
+rather than earlier, so it might not get speculatively loaded in time, whereas
+the earlier code explicitly loads it up front.
+
+David
