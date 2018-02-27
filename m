@@ -1,100 +1,80 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AG47ELuI7O5udHR2Px2M8IBaeITKwTS6PQsCThgzFYDpFexcyqJQsjPk18d35FR8Cd4SHC2UAXaE
-ARC-Seal: i=1; a=rsa-sha256; t=1519752682; cv=none;
+Return-Path: <tomas.winkler@intel.com>
+X-Google-Smtp-Source: AH8x225cFnfD2AzBO/QkKTBepJV6PFL68JieVH86gj0BGmZJPVpr/wVqO+rVrEDxalPsa92K7TK+
+ARC-Seal: i=1; a=rsa-sha256; t=1519768075; cv=none;
         d=google.com; s=arc-20160816;
-        b=RKSF8kepwbr8KBX6IbQoJTGtvnYobKUl3sQ6fDdod1PpefSsjuiDjfnaYfSJY71Yp9
-         +vyL8+m9YoBsUpJl0/z2Td5sG89du0zMTrgWLuCpk3zl1qhbHY/Lkjv8i4L9kiBqolcX
-         TUfyiYg2nP+U9IFcFfqgqMVA7qcmfYQFyA574UCBK57cvOzsiru91UxvGqlceSsGnGS/
-         K3DC3pu/Xc55beh3O3XDs5hd1KLjjYszAEyEYFEyRVdKnJl85+N/2/On5aeCduS8A+HN
-         S9skdsqopm2F1LLfvwJuTPa3YsdKMx59XO/zSxYiaLmzJNchzqU2uwtslBcg4e3xhvG8
-         foyA==
+        b=xFrWLiu0KK0xKYQAXWaL6iblvgwDcvLdnA0finVaVlOfjUGWAbcronGywUSSWah7V4
+         XPbRUlZlx/sWHBHwIFJpSc/k5+wqMbIZfWcvT+1gsG+nYGd1cuvSOaIrqFYIq8J2u/X7
+         m2f5hiKMAH5A00XZ9kRZ5dS/ueBDEJlt7ef9EuVXCD4iHSqRjgTjGOaiTbEPwKeR1GgS
+         NA2LwxjRbD2cwQwaNQQjhXG+Skcm7QiNyFcJFEBK8k8reH2hr5crNx/pjAxktkU6EJRi
+         vUc+IiFIwTmrn8c0gp3Vts0t3ijyW7hWrNSzHtfcTC93knVIcGxQLHplX1sCVg1v+MRb
+         tmFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
+         :dlp-product:content-language:accept-language:in-reply-to:references
+         :message-id:date:thread-index:thread-topic:subject:cc:to:from
          :arc-authentication-results;
-        bh=yFKXEO4qXsz0L3LgyRaowhnb6wqvbWSMyo2cxzHWBcI=;
-        b=z/UqOSdCj6IPwrLJIvyWkpBD+LbO9kUJklyN5EUkwZCWmLA2BALmhghY1dL5EtMpcd
-         fUCTevd7BmuAtqBDDR0mV7LqBCqbZ3ElBIBXnAMh9hFyfO820O7sHL53cZM2J+bBr3yR
-         puIh6ZZNGS2Rhe60BOHshLeOkOFMBLsGVASLK3/RzGuXG6Uoi4i9j+33f7lVASLvsQyt
-         dHI2Q1FNkrUrw5/KgK3zdeEFBYNR637krUMBh94tnSrFvKzf6O74V/+FIE3kV1myXMGf
-         usRtkf0Np6tKiqC0AxtNkrB4eY4f8PE6MsMotSRm2mi4vHIv6eg3G9V3KL096LQR+EYS
-         3Uog==
+        bh=Wh/y0FLEGe1dzmgpiuksLW13eRWnLrTsSesAHyhGRp8=;
+        b=viGCdR0VoEZZ84EsiL31r9pYkPQMvZ9xROa/P+G0/OS9dcEY5a7SrXBhBVvTDosJ2X
+         enSUiBebago+/7LBusgwhfrxeQeFsEG/uZmk7XXEgIdGMmaQphcnA80wvU03xCwaz4i6
+         eDbvmfHtMquBc1r8U3C6yCDJRkXz1Nptte16C1rqm93yDNTM8Ex6ZBRmnZKwjOSGqD/I
+         cAWWoKPb5FkKKUiD0Up8WQ7dO1GbtjwHmOGnsxRmrVFvqiYphAWc+frAdlZjOvI1PBrJ
+         Nb0yncfk/8AsQ2fVHVZL9hOSOldcklAcsCmdjcp4VN/MQsjPYT7xQRvz5PknN5JHC+1W
+         Dutg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       spf=pass (google.com: domain of tomas.winkler@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=tomas.winkler@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-Subject: Re: [PATCH] mei: remove dev_err message on an unsupported ioctl
-To: "Winkler, Tomas" <tomas.winkler@intel.com>, Arnd Bergmann
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+       spf=pass (google.com: domain of tomas.winkler@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=tomas.winkler@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,402,1515484800";
+   d="scan'208";a="20659706"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Colin Ian King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] mei: remove dev_err message on an unsupported ioctl
+Thread-Topic: [PATCH] mei: remove dev_err message on an unsupported ioctl
+Thread-Index: AQHTr+cBWLhVLGez8kOOfhAUJlAh/6O4fpMA///hpYCAAGj7UA==
+Date: Tue, 27 Feb 2018 21:47:51 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422A748@hasmsx108.ger.corp.intel.com>
 References: <20180227162105.14113-1-colin.king@canonical.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9422A4CC@hasmsx108.ger.corp.intel.com>
-From: Colin Ian King <colin.king@canonical.com>
-Message-ID: <42c81e25-52be-a80e-f304-765c9a71b328@canonical.com>
-Date: Tue, 27 Feb 2018 17:31:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422A4CC@hasmsx108.ger.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
+ <42c81e25-52be-a80e-f304-765c9a71b328@canonical.com>
+In-Reply-To: <42c81e25-52be-a80e-f304-765c9a71b328@canonical.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDc1ZmU0MDMtZTNmNS00YTU2LWFlMTUtYTcwZmEyNzRlNTMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJRbXhsU1dzZUlwaXJldU9NS2JnU1wvMXNtVG1JVXg2YW56ZXpXcTMzSW5yTWh1Q3lSOXhvWEdCd2JrM3dEd1BnNyJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.252.4.156]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593571772960941030?=
-X-GMAIL-MSGID: =?utf-8?q?1593576188568331915?=
+X-GMAIL-MSGID: =?utf-8?q?1593592329590167960?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 27/02/18 17:26, Winkler, Tomas wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the driver spams the kernel log on unsupported ioctls which is
->> unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
->> I suspect this was originally for debugging purposes but it really is not
->> required so remove it.
->>
-> 
-> This is rather strange as most of the legimit applications are using one IOCTL from kernel 3.0
-> Do you have any reference where this call is originated from, frankly this is the first time I got such complain.
-
-I hit this while stressing the kernel with my stress-ng kernel stressing
-tool; this was not using the legitimate ioctls (to see if things
-explode) and I got a rather full kernel log. So it was being abused
-somewhat ;-)
-
-> 
-> In any case it would be maybe better to change it a warn once call.
-
-Probably so, I can fix that up if that is preferred.
-
-Colin
-
->  
-> Thanks
-> Tomas
-> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/misc/mei/main.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c index
->> 758dc73602d5..7bb013644aeb 100644
->> --- a/drivers/misc/mei/main.c
->> +++ b/drivers/misc/mei/main.c
->> @@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file, unsigned int
->> cmd, unsigned long data)
->>  		break;
->>
->>  	default:
->> -		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
->>  		rets = -ENOIOCTLCMD;
->>  	}
->>
->> --
->> 2.15.1
-> 
+DQo+IE9uIDI3LzAyLzE4IDE3OjI2LCBXaW5rbGVyLCBUb21hcyB3cm90ZToNCj4gPj4NCj4gPj4g
+RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gPj4NCj4g
+Pj4gQ3VycmVudGx5IHRoZSBkcml2ZXIgc3BhbXMgdGhlIGtlcm5lbCBsb2cgb24gdW5zdXBwb3J0
+ZWQgaW9jdGxzIHdoaWNoDQo+ID4+IGlzIHVubmVjZXNzYXJ5IGFzIHRoZSBpb2N0bCByZXR1cm5z
+IC1FTk9JT0NUTENNRCB0byBpbmRpY2F0ZSB0aGlzDQo+IGFueXdheS4NCj4gPj4gSSBzdXNwZWN0
+IHRoaXMgd2FzIG9yaWdpbmFsbHkgZm9yIGRlYnVnZ2luZyBwdXJwb3NlcyBidXQgaXQgcmVhbGx5
+IGlzDQo+ID4+IG5vdCByZXF1aXJlZCBzbyByZW1vdmUgaXQuDQo+ID4+DQo+ID4NCj4gPiBUaGlz
+IGlzIHJhdGhlciBzdHJhbmdlIGFzIG1vc3Qgb2YgdGhlIGxlZ2ltaXQgYXBwbGljYXRpb25zIGFy
+ZSB1c2luZw0KPiA+IG9uZSBJT0NUTCBmcm9tIGtlcm5lbCAzLjAgRG8geW91IGhhdmUgYW55IHJl
+ZmVyZW5jZSB3aGVyZSB0aGlzIGNhbGwgaXMNCj4gb3JpZ2luYXRlZCBmcm9tLCBmcmFua2x5IHRo
+aXMgaXMgdGhlIGZpcnN0IHRpbWUgSSBnb3Qgc3VjaCBjb21wbGFpbi4NCj4gDQo+IEkgaGl0IHRo
+aXMgd2hpbGUgc3RyZXNzaW5nIHRoZSBrZXJuZWwgd2l0aCBteSBzdHJlc3Mtbmcga2VybmVsIHN0
+cmVzc2luZyB0b29sOw0KPiB0aGlzIHdhcyBub3QgdXNpbmcgdGhlIGxlZ2l0aW1hdGUgaW9jdGxz
+ICh0byBzZWUgaWYgdGhpbmdzDQo+IGV4cGxvZGUpIGFuZCBJIGdvdCBhIHJhdGhlciBmdWxsIGtl
+cm5lbCBsb2cuIFNvIGl0IHdhcyBiZWluZyBhYnVzZWQgc29tZXdoYXQNCj4gOy0pDQoNCk9rYXks
+IHRoYW5rcyBmb3IgdGhlIGluZm8uDQoNCg==
