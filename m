@@ -1,125 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeB0I0p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:26:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37114 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751530AbeB0I0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:26:43 -0500
-Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-To: Alex Williamson <alex.williamson@redhat.com>
-References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
- <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
- <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
- <20180226161310.061ce3a8@w520.home>
-Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        pmorel@linux.vnet.ibm.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-        john.garry@huawei.com, xuwei5@hisilicon.com,
-        Robin Murphy <robin.murphy@arm.com>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
-Date: Tue, 27 Feb 2018 09:26:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1752215AbeB0I2x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:28:53 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34942 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751900AbeB0I2v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 03:28:51 -0500
+Date: Tue, 27 Feb 2018 09:28:38 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/8] R-Car M3-N: Enable EtherAVB device node
+Message-ID: <20180227082838.GA23738@w540>
+References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXwxhT7MP5xs3HLP3oFX+V9rhCM5jQycXUiCyBOKOUg1Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180226161310.061ce3a8@w520.home>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXwxhT7MP5xs3HLP3oFX+V9rhCM5jQycXUiCyBOKOUg1Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 27/02/18 00:13, Alex Williamson wrote:
-> On Mon, 26 Feb 2018 23:05:43 +0100
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Shameer,
->>
->> [Adding Robin in CC]
->> On 21/02/18 13:22, Shameer Kolothum wrote:
->>> This checks and rejects any dma map request outside valid iova
->>> range.
->>>
->>> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
->>> ---
->>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
->>>
->>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
->>> index a80884e..3049393 100644
->>> --- a/drivers/vfio/vfio_iommu_type1.c
->>> +++ b/drivers/vfio/vfio_iommu_type1.c
->>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
->>>  	return ret;
->>>  }
->>>  
->>> +/*
->>> + * Check dma map request is within a valid iova range
->>> + */
->>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
->>> +				dma_addr_t start, dma_addr_t end)
->>> +{
->>> +	struct list_head *iova = &iommu->iova_list;
->>> +	struct vfio_iova *node;
->>> +
->>> +	list_for_each_entry(node, iova, list) {
->>> +		if ((start >= node->start) && (end <= node->end))
->>> +			return true;  
->> I am now confused by the fact this change will prevent existing QEMU
->> from working with this series on some platforms. For instance QEMU virt
->> machine GPA space collides with Seattle PCI host bridge windows. On ARM
->> the smmu and smmuv3 drivers report the PCI host bridge windows as
->> reserved regions which does not seem to be the case on other platforms.
->> The change happened in commit 273df9635385b2156851c7ee49f40658d7bcb29d
->> (iommu/dma: Make PCI window reservation generic).
->>
->> For background, we already discussed the topic after LPC 2016. See
->> https://www.spinics.net/lists/kernel/msg2379607.html.
->>
->> So is it the right choice to expose PCI host bridge windows as reserved
->> regions? If yes shouldn't we make a difference between those and MSI
->> windows in this series and do not reject any user space DMA_MAP attempt
->> within PCI host bridge windows.
-> 
-> If the QEMU machine GPA collides with a reserved region today, then
-> either:
-> 
-> a) The mapping through the IOMMU works and the reserved region is wrong
-> 
-> or
-> 
-> b) The mapping doesn't actually work, QEMU is at risk of data loss by
-> being told that it worked, and we're justified in changing that
-> behavior.
-> 
-> Without knowing the specifics of SMMU, it doesn't particularly make
-> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
-> unless perhaps the IOMMU is incapable of translating those IOVAs.
-to me the limitation does not come from the smmu itself, which is a
-separate HW block sitting between the root complex and the interconnect.
-If ACS is not enforced by the PCIe subsystem, the transaction will never
-reach the IOMMU.
+Hi Geert,
 
-In the case of such overlap, shouldn't we just warn the end-user that
-this situation is dangerous instead of forbidding the use case which
-worked "in most cases" until now.
+On Mon, Feb 26, 2018 at 07:28:47PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> >   as discussed with you Sergei and Geert, in order to enable EtherAVB for
+> > R8A77965 we first wanted to make the phy-mode "rgmii-txid" a board specific
+> > property for all other SoCs.
+>
+> Thanks for your series!
+>
+> > This series adds  the phy-mode property to salvator-common.dtsi and reset the
+> > one for R8A77965/R8A7796/R8A77995 to "rgmii".
+>
+> I forgot that r8a7795.dtsi and r8a7796.dtsi are used for the ULCB boards, too.
+> So to avoid regressions, you need to make a similar change to ulcb.dtsi like you
+> made for salvator-common.dtsi.
+>
+> In addition, r8a77995.dtsi is only used for the Draak board.
+> So you have to update r8a7795-draak.dtsi first, too.
 
-> Are we trying to prevent untranslated p2p with this reserved range?
-> That's not necessarily a terrible idea, but it seems that doing it for
-> that purpose would need to be a lot smarter, taking into account ACS
-> and precisely selecting ranges within the peer address space that would
-> be untranslated.  Perhaps only populated MMIO within non-ACS
-> hierarchies.  Thanks,
+Of course! I forgot about ULCB (and had a patch for Draak I lost while
+rebasing :/ )
+>
+> > Then, in order to enable EtherAVB for R-Car M3-N, iommu nodes had to be added
+> > as they are referenced by the "avb" device node (CC the iommu list for the
+> > series for that reason).
+>
+> I don't think we need the iommu properties and nodes at this early stage.
+> Ethernet works fine without them. Simon, do you agree?
 
-Indeed taking into account the ACS capability would refine the
-situations where a risk exists.
+I'll wait for Simon reply and then resend, possibly without iommu and
+ULCB and Draak patches!
 
 Thanks
+   j
 
-Eric
-> 
-> Alex
-> 
+>
+> P.S. scripts/dtc/dtx_diff is a great tool to compare DTBs before and after your
+>       changes. It would have revealed the changes for ULCB and Draak.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
