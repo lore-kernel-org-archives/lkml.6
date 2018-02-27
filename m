@@ -1,106 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeB0Pnp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:43:45 -0500
-Received: from mga09.intel.com ([134.134.136.24]:32963 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753927AbeB0Pm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:42:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
-   d="scan'208";a="23605214"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 3/5] x86/boot/compressed/64: Save and restore trampoline memory
-Date: Tue, 27 Feb 2018 18:42:15 +0300
-Message-Id: <20180227154217.69347-4-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
-References: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
+        id S1754142AbeB0PnC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:43:02 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33768 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754118AbeB0Pm7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 10:42:59 -0500
+X-Google-Smtp-Source: AH8x227CGah2mK0MVJtFSW350J43aLJ3lnXsbOsyF6nHRsUypmt24/y9QrHu9jc5yNYHbKiQ4mwDXQ==
+From: Jan Glauber <jglauber@cavium.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Glauber <jglauber@cavium.com>
+Subject: [PATCH] i2c: octeon: Prevent error message on bus error
+Date: Tue, 27 Feb 2018 16:42:13 +0100
+Message-Id: <20180227154213.3023-1-jglauber@cavium.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memory area we found for trampoline shouldn't contain anything
-useful. But let's preserve the data anyway. Just to be on safe side.
+The error message:
 
-paging_prepare() would save the data into a buffer.
+[Fri Feb 16 13:42:13 2018] i2c-thunderx 0000:01:09.4: unhandled state: 0
 
-cleanup_trampoline() would restore it back once we are done with the
-trampoline.
+is mis-leading as state 0 (bus error) is not an unknown state.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Tested-by: Borislav Petkov <bp@suse.de>
+Return -EIO as before but avoid printing the message. Also rename
+STAT_ERROR to STATE_BUS_ERROR.
+
+Signed-off-by: Jan Glauber <jglauber@cavium.com>
 ---
- arch/x86/boot/compressed/head_64.S    | 10 ++++++++++
- arch/x86/boot/compressed/pgtable_64.c | 13 +++++++++++++
- 2 files changed, 23 insertions(+)
+ drivers/i2c/busses/i2c-octeon-core.c | 1 +
+ drivers/i2c/busses/i2c-octeon-core.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index d598d65db32c..8ba0582c65d5 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -355,6 +355,16 @@ ENTRY(startup_64)
- 	lretq
- lvl5:
+diff --git a/drivers/i2c/busses/i2c-octeon-core.c b/drivers/i2c/busses/i2c-octeon-core.c
+index 1d8775799056..d9607905dc2f 100644
+--- a/drivers/i2c/busses/i2c-octeon-core.c
++++ b/drivers/i2c/busses/i2c-octeon-core.c
+@@ -233,6 +233,7 @@ static int octeon_i2c_check_status(struct octeon_i2c *i2c, int final_read)
+ 		return -EOPNOTSUPP;
  
-+	/*
-+	 * cleanup_trampoline() would restore trampoline memory.
-+	 *
-+	 * RSI holds real mode data and needs to be preserved across
-+	 * this function call.
-+	 */
-+	pushq	%rsi
-+	call	cleanup_trampoline
-+	popq	%rsi
-+
- 	/* Zero EFLAGS */
- 	pushq	$0
- 	popfq
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 21d5cc1cd5fa..01d08d3e3e43 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -1,5 +1,6 @@
- #include <asm/processor.h>
- #include "pgtable.h"
-+#include "../string.h"
+ 	case STAT_TXDATA_NAK:
++	case STAT_BUS_ERROR:
+ 		return -EIO;
+ 	case STAT_TXADDR_NAK:
+ 	case STAT_RXADDR_NAK:
+diff --git a/drivers/i2c/busses/i2c-octeon-core.h b/drivers/i2c/busses/i2c-octeon-core.h
+index a7ef19855bb8..9bb9f64fdda0 100644
+--- a/drivers/i2c/busses/i2c-octeon-core.h
++++ b/drivers/i2c/busses/i2c-octeon-core.h
+@@ -43,7 +43,7 @@
+ #define TWSI_CTL_AAK		0x04	/* Assert ACK */
  
- /*
-  * __force_order is used by special_insns.h asm code to force instruction
-@@ -18,6 +19,9 @@ struct paging_config {
- 	unsigned long l5_required;
- };
- 
-+/* Buffer to preserve trampoline memory */
-+static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
-+
- /*
-  * Trampoline address will be printed by extract_kernel() for debugging
-  * purposes.
-@@ -69,5 +73,14 @@ struct paging_config paging_prepare(void)
- 
- 	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
- 
-+	/* Preserve trampoline memory */
-+	memcpy(trampoline_save, trampoline_32bit, TRAMPOLINE_32BIT_SIZE);
-+
- 	return paging_config;
- }
-+
-+void cleanup_trampoline(void)
-+{
-+	/* Restore trampoline memory */
-+	memcpy(trampoline_32bit, trampoline_save, TRAMPOLINE_32BIT_SIZE);
-+}
+ /* Status values */
+-#define STAT_ERROR		0x00
++#define STAT_BUS_ERROR		0x00
+ #define STAT_START		0x08
+ #define STAT_REP_START		0x10
+ #define STAT_TXADDR_ACK		0x18
 -- 
-2.16.1
+2.16.2
