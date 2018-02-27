@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeB0QtF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:49:05 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:46687 "EHLO
+        id S1752060AbeB0Qte (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:49:34 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46686 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeB0QtC (ORCPT
+        with ESMTP id S1751735AbeB0QtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Feb 2018 11:49:02 -0500
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -12,9 +12,9 @@ To: mingo@kernel.org
 Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
         Julia Cartwright <juliac@eso.teric.us>, Ingo Molnar <mingo@elte.hu>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/2] kernel/sofirq: consolidate common code in tasklet_action() + tasklet_hi_action()
-Date: Tue, 27 Feb 2018 17:48:08 +0100
-Message-Id: <20180227164808.10093-3-bigeasy@linutronix.de>
+Subject: [PATCH 1/2] kernel/sofirq: consolidate common code in __tasklet_schedule() + _hi_
+Date: Tue, 27 Feb 2018 17:48:07 +0100
+Message-Id: <20180227164808.10093-2-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180227164808.10093-1-bigeasy@linutronix.de>
 References: <20180227164808.10093-1-bigeasy@linutronix.de>
@@ -26,7 +26,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ingo Molnar <mingo@elte.hu>
 
-tasklet_action() + tasklet_hi_action() are almost identical.
+__tasklet_schedule() and __tasklet_hi_schedule() are almost identical.
 Move the common code from both function into __tasklet_schedule_common()
 and let both functions invoke it with different arguments.
 
@@ -34,95 +34,63 @@ Signed-off-by: Ingo Molnar <mingo@elte.hu>
 Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 [bigeasy: splitted out from RT's "tasklet: Prevent tasklets from going
-into infinite spin in RT" and added commit message]
+into infinite spin in RT" and added commit message. Do
+this_cpu_ptr(headp) in __tasklet_schedule_common() as suggested by Julia
+Cartwright]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/softirq.c | 54 +++++++++++++++-------------------------------------=
---
- 1 file changed, 15 insertions(+), 39 deletions(-)
+ kernel/softirq.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 2394b009994f..177de3640c78 100644
+index 24d243ef8e71..2394b009994f 100644
 --- a/kernel/softirq.c
 +++ b/kernel/softirq.c
-@@ -490,14 +490,16 @@ void __tasklet_hi_schedule(struct tasklet_struct *t)
+@@ -460,29 +460,33 @@ struct tasklet_head {
+ static DEFINE_PER_CPU(struct tasklet_head, tasklet_vec);
+ static DEFINE_PER_CPU(struct tasklet_head, tasklet_hi_vec);
+=20
+-void __tasklet_schedule(struct tasklet_struct *t)
++static void __tasklet_schedule_common(struct tasklet_struct *t,
++				      struct tasklet_head __percpu *headp,
++				      unsigned int softirq_nr)
+ {
++	struct tasklet_head *head;
+ 	unsigned long flags;
+=20
+ 	local_irq_save(flags);
++	head =3D this_cpu_ptr(headp);
+ 	t->next =3D NULL;
+-	*__this_cpu_read(tasklet_vec.tail) =3D t;
+-	__this_cpu_write(tasklet_vec.tail, &(t->next));
+-	raise_softirq_irqoff(TASKLET_SOFTIRQ);
++	*head->tail =3D t;
++	head->tail =3D &(t->next);
++	raise_softirq_irqoff(softirq_nr);
+ 	local_irq_restore(flags);
+ }
++
++void __tasklet_schedule(struct tasklet_struct *t)
++{
++	__tasklet_schedule_common(t, &tasklet_vec,
++				  TASKLET_SOFTIRQ);
++}
+ EXPORT_SYMBOL(__tasklet_schedule);
+=20
+ void __tasklet_hi_schedule(struct tasklet_struct *t)
+ {
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	t->next =3D NULL;
+-	*__this_cpu_read(tasklet_hi_vec.tail) =3D t;
+-	__this_cpu_write(tasklet_hi_vec.tail,  &(t->next));
+-	raise_softirq_irqoff(HI_SOFTIRQ);
+-	local_irq_restore(flags);
++	__tasklet_schedule_common(t, &tasklet_hi_vec,
++				  HI_SOFTIRQ);
  }
  EXPORT_SYMBOL(__tasklet_hi_schedule);
 =20
--static __latent_entropy void tasklet_action(struct softirq_action *a)
-+static void tasklet_action_common(struct softirq_action *a,
-+				  struct tasklet_head *tl_head,
-+				  unsigned int softirq_nr)
- {
- 	struct tasklet_struct *list;
-=20
- 	local_irq_disable();
--	list =3D __this_cpu_read(tasklet_vec.head);
--	__this_cpu_write(tasklet_vec.head, NULL);
--	__this_cpu_write(tasklet_vec.tail, this_cpu_ptr(&tasklet_vec.head));
-+	list =3D tl_head->head;
-+	tl_head->head =3D NULL;
-+	tl_head->tail =3D &tl_head->head;
- 	local_irq_enable();
-=20
- 	while (list) {
-@@ -519,47 +521,21 @@ static __latent_entropy void tasklet_action(struct so=
-ftirq_action *a)
-=20
- 		local_irq_disable();
- 		t->next =3D NULL;
--		*__this_cpu_read(tasklet_vec.tail) =3D t;
--		__this_cpu_write(tasklet_vec.tail, &(t->next));
--		__raise_softirq_irqoff(TASKLET_SOFTIRQ);
-+		*tl_head->tail =3D t;
-+		tl_head->tail =3D &t->next;
-+		__raise_softirq_irqoff(softirq_nr);
- 		local_irq_enable();
- 	}
- }
-=20
-+static __latent_entropy void tasklet_action(struct softirq_action *a)
-+{
-+	tasklet_action_common(a, this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
-+}
-+
- static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
- {
--	struct tasklet_struct *list;
--
--	local_irq_disable();
--	list =3D __this_cpu_read(tasklet_hi_vec.head);
--	__this_cpu_write(tasklet_hi_vec.head, NULL);
--	__this_cpu_write(tasklet_hi_vec.tail, this_cpu_ptr(&tasklet_hi_vec.head));
--	local_irq_enable();
--
--	while (list) {
--		struct tasklet_struct *t =3D list;
--
--		list =3D list->next;
--
--		if (tasklet_trylock(t)) {
--			if (!atomic_read(&t->count)) {
--				if (!test_and_clear_bit(TASKLET_STATE_SCHED,
--							&t->state))
--					BUG();
--				t->func(t->data);
--				tasklet_unlock(t);
--				continue;
--			}
--			tasklet_unlock(t);
--		}
--
--		local_irq_disable();
--		t->next =3D NULL;
--		*__this_cpu_read(tasklet_hi_vec.tail) =3D t;
--		__this_cpu_write(tasklet_hi_vec.tail, &(t->next));
--		__raise_softirq_irqoff(HI_SOFTIRQ);
--		local_irq_enable();
--	}
-+	tasklet_action_common(a, this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
- }
-=20
- void tasklet_init(struct tasklet_struct *t,
 --=20
 2.16.2
