@@ -1,94 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeB0VB7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:01:59 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38507 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeB0VB6 (ORCPT
+        id S1751903AbeB0VK2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:10:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50140 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeB0VK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:01:58 -0500
-X-Google-Smtp-Source: AG47ELtijRn3Xf+F9YFn4+4Eacy/PwV2I4fm2ZsxYg1UkEMlUG6sAW3zqWtkIYgeOFP8WBnhwyzK5Z1NCbrD8oF9Wzs=
+        Tue, 27 Feb 2018 16:10:27 -0500
+Date: Tue, 27 Feb 2018 13:10:22 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2 1/5] sysctl: Add kdoc comments to
+ do_proc_do{u}intvec_minmax_conv_param
+Message-ID: <20180227211022.GB29918@bombadil.infradead.org>
+References: <1519764591-27456-1-git-send-email-longman@redhat.com>
+ <1519764591-27456-2-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
-References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com> <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 27 Feb 2018 22:01:37 +0100
-Message-ID: <CAOiHx=n5bekhgaA_-teYZzJQCErfb2Vg1X9fTaq073B=kpWnTA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] MIPS: mscc: add ocelot dtsi
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        MIPS Mailing List <linux-mips@linux-mips.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519764591-27456-2-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 January 2018 at 11:12, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> Add a device tree include file for the Microsemi Ocelot SoC.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
->  arch/mips/boot/dts/Makefile         |   1 +
->  arch/mips/boot/dts/mscc/Makefile    |   4 ++
->  arch/mips/boot/dts/mscc/ocelot.dtsi | 110 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 115 insertions(+)
->  create mode 100644 arch/mips/boot/dts/mscc/Makefile
->  create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
->
-> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
-> index e2c6f131c8eb..1e79cab8e269 100644
-> --- a/arch/mips/boot/dts/Makefile
-> +++ b/arch/mips/boot/dts/Makefile
-> @@ -4,6 +4,7 @@ subdir-y        += cavium-octeon
->  subdir-y       += img
->  subdir-y       += ingenic
->  subdir-y       += lantiq
-> +subdir-y       += mscc
->  subdir-y       += mti
->  subdir-y       += netlogic
->  subdir-y       += ni
-> diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
-> new file mode 100644
-> index 000000000000..f0a155a74e02
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/mscc/Makefile
-> @@ -0,0 +1,4 @@
-> +obj-y                          += $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-> +
-> +# Force kbuild to make empty built-in.o if necessary
-> +obj-                           += dummy.o
-> diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> new file mode 100644
-> index 000000000000..b2f936e1fbb9
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> @@ -0,0 +1,110 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/* Copyright (c) 2017 Microsemi Corporation */
-> +
-> +/ {
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
-> +       compatible = "mscc,ocelot";
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               mips-hpt-frequency = <250000000>;
-> +
-> +               cpu@0 {
-> +                       compatible = "mscc,ocelot";
+On Tue, Feb 27, 2018 at 03:49:47PM -0500, Waiman Long wrote:
+> +/**
+> + * DOC: do_proc_dointvec_minmax_conv_param
+> + *
+> + * The do_proc_dointvec_minmax_conv_param structure provides the
+> + * minimum and maximum values for doing range checking for those sysctl
+> + * parameters that use the proc_dointvec_minmax() handler. The error
+> + * code -EINVAL will be returned if the range check fails.
+> + *
+> + *  min: ptr to minimum allowable value
+> + *  max: ptr to maximum allowable value
+> + */
 
-You are using the same compatible string for the whole chip as well as
-the cpu core of it, this doesn't seem right.
+This isn't how to document a struct; see Documentation/doc-guide/kernel-doc.rst
 
-Also is this really a custom cpu core? Your product brief suggests
-this is a "normal" 24KEc MIPS CPU, at least for ocelot-10 (VSC7514).
-So something like "mips,mips24KEc" might be more appropriate here.
+/**
+ * struct do_proc_dointvec_minmax_conv_param - Range checking for sysctls
+ * @min: Pointer to minimum allowable value.
+ * @max: Pointer to maximum allowable value.
+ *
+ * Provides the minimum and maximum values allowed for a parameter.  A
+ * pointer to this structure should be passed to proc_dointvec_minmax().
+ */
 
-
-Regards
-Jonas
+Also, it's inappropriate to document the return value from
+proc_dointvec_minmax() here; that should be in the kernel-doc for the
+function.
