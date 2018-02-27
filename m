@@ -1,71 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752272AbeB0I6C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:58:02 -0500
-Received: from mail-it0-f53.google.com ([209.85.214.53]:35133 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeB0I6A (ORCPT
+        id S1752312AbeB0JA2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:00:28 -0500
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:42444 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752090AbeB0JA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:58:00 -0500
-X-Google-Smtp-Source: AG47ELsWImZ0FTEdpcZDCk257C4JMdsDdWGQTyESaDWTbNZPGb9DxXKxqIC8v9OVlqwWJryVxQ2TBYRcE+z1yj7nmGA=
+        Tue, 27 Feb 2018 04:00:26 -0500
+X-Google-Smtp-Source: AG47ELvb4Kcx2XMzCFgDlOpZegmzdkNJpFnHt9V2qTjr4N1moQFe+F6JJazwDddpGKaWHGKnJh5fRvOFMzm1WlK46SM=
 MIME-Version: 1.0
-In-Reply-To: <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
-References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
- <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
- <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com> <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
- <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com> <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Feb 2018 09:57:58 +0100
-Message-ID: <CACRpkdaWyV2VPFBsFAjt-a8t6f3F6XwonHxfR3HfUJ=C13uuWw@mail.gmail.com>
-Subject: Re: [PATCH V15 06/22] mmc: block: Add blk-mq support
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>
+In-Reply-To: <20180226235302.12708-5-ebiederm@xmission.com>
+References: <87po4rz4ui.fsf_-_@xmission.com> <20180226235302.12708-5-ebiederm@xmission.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 27 Feb 2018 10:00:25 +0100
+Message-ID: <CAOssrKeWvYpgj4_cgsRBL_kTOHyRS-9_mfO9JHP-JahgqFnfHQ@mail.gmail.com>
+Subject: Re: [PATCH v7 5/7] fuse: Simplfiy the posix acl handling logic.
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 10:48 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
-> On 22.02.2018 20:54, Dmitry Osipenko wrote:
->> On 22.02.2018 10:42, Adrian Hunter wrote:
-
->>> SDIO (unless it is a combo card) should be unaffected by changes to the
->>> block driver.
+On Tue, Feb 27, 2018 at 12:53 AM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Rename the fuse connection flag posix_acl to cached_posix_acl as that
+> is what it actually means.  That fuse will cache and operate on the
+> cached value of the posix acl.
 >
-> I don't know whether it's a combo card or not. Where I can find info about that?
-> Is it mentioned in sysfs somewhere?
+> When fc->cached_posix_acl is not set, set ACL_DONT_CACHE on the inode
+> so that get_acl and friends won't cache the acl values even if they
+> are called.
+>
+> Replace forget_all_cached_acls with fuse_forget_cached_acls.  This
+> wrapper only takes effect when cached_posix_acl is true to prevent
+> losing the nocache or noxattr status in when posix acls are not
+> cached.
 
-Combo cards were used with very old (2000s) PDAs which had only
-one SD card slot which they wanted to use for WiFi and storage
-at the same time.
+Shouldn't forget_cached_acl() be taught about ACL_DONT_CACHE?  I think
+it makes sense to generally not clear ACL_DONT_CACHE, since it's not
+an actual acl value that needs forgetting.
 
-They are very uncommon and I haven't been able to locate any
-even for testing.
-
-It is very unlikely that you have one.
-
-However you would notice it from seeing a partition attachment
-message (like with an ordinary SD card) when you plug in your
-card.
-
-Yours,
-Linus Walleij
+Thanks,
+Miklos
