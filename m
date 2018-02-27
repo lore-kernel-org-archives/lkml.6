@@ -1,357 +1,267 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-893183-1519719612-2-9411522319501356116
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519719611; b=H7vzyRyaqul46cQQdsozaqvh3NEz1wkDGiPxBMvuEqYc/FR
-    XNwqabQDknTKzXp/6/NZ8Pwry1SDytPi4bOD5Z4UwfkL6wAIpyNX1OJezs31TJEp
-    QRVS0N3f6StTmQaZXHTOZl37w46bg7RSnzXs8qsnRfqmErh0uuKqfShN91aUpRE+
-    +RJuAwPc9t9tE7RaAMQOrxVWpQ6JfGpPjHju7tHJ5yKvrqPFKfaBZXvnq37pMSxJ
-    QPIAWctLfKDyVEr/upGLYwol0krNj1gr4PrXuEJs6ruI9BR4IcKLbRk6xpSG/jv2
-    Op7A+SLoYrIBKQyprMLkMRBnxB2XdYUc8iFzu9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=arctest; t=1519719611;
-    bh=rMC0kG58nnAV9rplj+jHavnPQUSy0gsbM9pEjKfhkKk=; b=M+nLfJ40a5NO
-    AurkZC7Ck/6SURbktkoDdVCndcmmHIiDZ+I7jTTiZskb7D6seldDDMnuQGqbBHuZ
-    uaKgLzPDafhcUxz3vEdkHqB+N+lR8AAJkHvUq56TmswQM6aZhjatUWf761LeNQ+4
-    6XtRQQ+XMRPzOTXvOcWj5gjKHguxe+WG04JLGx5XzJc1O6Vv3O/zNmpeyCSH64ug
-    A5CxQUPZ4gyzbKNep/QTV4l5onhzaELxfKBuMj1vx5FTSCoFehyX/rOWIZlI2a+i
-    SJ7vuM/UzhOFX3KMihtkdquUq8rcBjHQW7yTy6XkMbrYzK2HYK/CV51I9FA7CT28
-    E4nuaJ6uXw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeB0IUJ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 03:20:09 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751952AbeB0IUG (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 27 Feb 2018 03:20:06 -0500
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, crml <criu@openvz.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 2/3] userfaultfd: non-cooperative: generalize wake key structure
-Date: Tue, 27 Feb 2018 10:19:51 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519719592-22668-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1519719592-22668-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18022708-0016-0000-0000-0000052A4335
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022708-0017-0000-0000-000028666E74
-Message-Id: <1519719592-22668-3-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802270100
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Return-Path: <mmoese@suse.de>
+X-Google-Smtp-Source: AH8x225oooX6k8AhaYKjIWomG/Qkmpz5T8/pzaN6ZlTRKZ+n87Yax3NAxnygmlVMwn0xoVLRrc6o
+ARC-Seal: i=1; a=rsa-sha256; t=1519745488; cv=none;
+        d=google.com; s=arc-20160816;
+        b=IPEEDVlpti+ZL6y4vbN7qg9X6CX0+DlmW5TlRKN5i25myFyoZcct9ySl5gap0Qr1Vz
+         gVc2rbnaoN5nAJFzRlkU3NV2/fv2Ont6XN7ndyplJxx7eEF0vbSLUt/NZqfrwJweEAHJ
+         qgloh6DcPh/3sZc2kKtvByLBXUg6EIHF7FDJ0FhV/EREh+MVfP4lMl4utwAl0m75idLW
+         STXU2PrYKn6XOqhYuuEnGvqxuibh7C0UvLoGftaJZolK23pS0daPRJAKGl/cHuN4Jqti
+         xgbGWFZISLKznGNZGml+Mt/0BBqd4bz9plrRWQoPKej+sUf6dWS+pShHcQ2uOdpLlxo4
+         wr+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=/rzYIdUwNgCQMUPGFdx4Jo4TH1w1UqNZZleh9KVIxms=;
+        b=fZCbRzgrdxlAj0kY7z3dKw78MtSMnE0800RKVbomYIdOKeAprbfr7ux74/Yl4LGPmB
+         vUCYc/9YWUKK/KRMgrymiz757BAHgC1eJGWYdsLI90WHU6t+yltNG1AeF/lCX3Ibgug5
+         QabVzQIrlbxeRGRPEod5EOFabNErhiSVHv8HQCloDrpW0AX4VRxC5zxhNL2fsH1c9vj9
+         shMJ4EhY/zws5vnhyp/4TB9h58lg0KZTJhdqifhNXv+l5sga1sQqINeIH5kdqdfS+8Sn
+         6NnpYjgJoBPoqBO6O3YRdKN6kkMTNvNG5YtcC5lzVmRlWXRyP1U8u45jhYMalQOhyneJ
+         GZxQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
+From: Michael Moese <mmoese@suse.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	Michael Moese <mmoese@suse.de>,
+	Andreas Geissler <andreas.geissler@men.de>,
+	Ben Turner <ben.turner@21net.com>
+Subject: [PATCH] 8250-men-mcb: add support for 16z025 and 16z057
+Date: Tue, 27 Feb 2018 16:31:06 +0100
+Message-Id: <20180227153106.3224-1-mmoese@suse.de>
+X-Mailer: git-send-email 2.13.6
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593568644699224821?=
+X-GMAIL-MSGID: =?utf-8?q?1593568644699224821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Upcoming support for synchronous non-page-fault events will require
-userfaultfd_wake_function to be able to differentiate between the event
-types. Depending on the event type, different parameters will define if the
-wait queue element should be awaken. This requires more general structure
-than userfaultfd_wake_range to be used as the "key" parameter for
-userfaultfd_wake_function.
-This patch introduces userfaultfd_wake_key that is used for waking up
-threads waiting on page-fault and non-cooperative events.
+Add support for two MEN UARTs (16z025 and 16z057) to the
+8250_men_mcb driver.
+The 16z025 consists of up to four ports, the 16z057 has
+exactly four ports. Apart from that, all of them share the
+Port settings.
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Michael Moese <mmoese@suse.de>
+Reported-by: Ben Turner <ben.turner@21net.com>
+Tested-by: Ben Turner <ben.turner@21net.com>
 ---
- fs/userfaultfd.c | 114 +++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 72 insertions(+), 42 deletions(-)
+ drivers/tty/serial/8250/8250_men_mcb.c | 132 ++++++++++++++++++++++++---------
+ drivers/tty/serial/8250/Kconfig        |   5 +-
+ 2 files changed, 100 insertions(+), 37 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index b32c7aaeca6b..d9f74b389706 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -91,21 +91,44 @@ struct userfaultfd_wake_range {
- 	unsigned long len;
- };
+diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
+index 308977807994..47abcb8d834f 100644
+--- a/drivers/tty/serial/8250/8250_men_mcb.c
++++ b/drivers/tty/serial/8250/8250_men_mcb.c
+@@ -7,6 +7,12 @@
+ #include <linux/serial_8250.h>
+ #include <uapi/linux/serial_core.h>
  
-+struct userfaultfd_wake_key {
-+	u8 event;
-+	union {
-+		struct userfaultfd_wake_range range;
-+	} arg;
-+};
++#define MEN_UART_ID_Z025 0x19
++#define MEN_UART_ID_Z057 0x39
++#define MEN_UART_ID_Z125 0x7d
 +
-+static bool userfaultfd_should_wake(struct userfaultfd_wait_queue *uwq,
-+				    struct userfaultfd_wake_key *key)
-+{
-+	/* key->event == 0 means wake all */
-+	if (key->event && key->event != uwq->msg.event)
-+		return false;
++#define MEN_UART_MEM_SIZE 0x10
 +
-+	if (key->event == UFFD_EVENT_PAGEFAULT) {
-+		unsigned long start, len, address;
+ struct serial_8250_men_mcb_data {
+ 	struct uart_8250_port uart;
+ 	int line;
+@@ -18,7 +24,7 @@ struct serial_8250_men_mcb_data {
+  * parameter in order to really set the correct baudrate, and
+  * do so if possible without user interaction
+  */
+-static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
++static u32 men_lookup_uartclk(struct mcb_device *mdev)
+ {
+ 	/* use default value if board is not available below */
+ 	u32 clkval = 1041666;
+@@ -28,10 +34,12 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
+ 		mdev->bus->name);
+ 	if  (strncmp(mdev->bus->name, "F075", 4) == 0)
+ 		clkval = 1041666;
+-	else if  (strncmp(mdev->bus->name, "F216", 4) == 0)
++	else if (strncmp(mdev->bus->name, "F216", 4) == 0)
+ 		clkval = 1843200;
+ 	else if (strncmp(mdev->bus->name, "G215", 4) == 0)
+ 		clkval = 1843200;
++	else if (strncmp(mdev->bus->name, "F210", 4) == 0)
++		clkval = 115200;
+ 	else
+ 		dev_info(&mdev->dev,
+ 			 "board not detected, using default uartclk\n");
+@@ -46,57 +54,109 @@ static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
+ {
+ 	struct serial_8250_men_mcb_data *data;
+ 	struct resource *mem;
++	unsigned int num_ports;
++	unsigned int i;
++	void __iomem *membase;
 +
-+		/* len == 0 means wake all threads waiting on page fault */
-+		address = uwq->msg.arg.pagefault.address;
-+		start = key->arg.range.start;
-+		len = key->arg.range.len;
-+		if (len && (start > address || start + len <= address))
-+			return false;
++	mem = mcb_get_resource(mdev, IORESOURCE_MEM);
++	if (mem == NULL)
++		return -ENXIO;
+ 
+-	data = devm_kzalloc(&mdev->dev,
++	membase = devm_ioremap_resource(&mdev->dev, mem);
++	if (IS_ERR(membase))
++		return PTR_ERR_OR_ZERO(membase);
++
++	switch (mdev->id) {
++	case MEN_UART_ID_Z125:
++		num_ports = 1U;
++		break;
++	case MEN_UART_ID_Z025:
++		num_ports = readb(membase) >> 4;
++		break;
++	case MEN_UART_ID_Z057:
++		num_ports = 4U;
++		break;
++	default:
++		dev_err(&mdev->dev, "no supported device!\n");
++		return -ENODEV;
++	}
++	dev_dbg(&mdev->dev, "found a 16z%03u with %u ports\n",
++		mdev->id, num_ports);
++
++	if (num_ports == 0 || num_ports > 4) {
++		dev_err(&mdev->dev, "unexpected number of ports: %u\n",
++			num_ports);
++		return -ENODEV;
 +	}
 +
-+	return true;
-+}
++	data = devm_kcalloc(&mdev->dev, num_ports,
+ 			    sizeof(struct serial_8250_men_mcb_data),
+ 			    GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+ 	mcb_set_drvdata(mdev, data);
+-	data->uart.port.dev = mdev->dma_dev;
+-	spin_lock_init(&data->uart.port.lock);
+-
+-	data->uart.port.type = PORT_16550;
+-	data->uart.port.flags = UPF_SKIP_TEST | UPF_SHARE_IRQ | UPF_FIXED_TYPE;
+-	data->uart.port.iotype = UPIO_MEM;
+-	data->uart.port.uartclk = men_z125_lookup_uartclk(mdev);
+-	data->uart.port.regshift = 0;
+-	data->uart.port.fifosize = 60;
+-
+-	mem = mcb_get_resource(mdev, IORESOURCE_MEM);
+-	if (mem == NULL)
+-		return -ENXIO;
+-
+-	data->uart.port.irq = mcb_get_irq(mdev);
+ 
+-	data->uart.port.membase = devm_ioremap_resource(&mdev->dev, mem);
+-	if (IS_ERR(data->uart.port.membase))
+-		return PTR_ERR_OR_ZERO(data->uart.port.membase);
+-
+-	data->uart.port.mapbase = (unsigned long) mem->start;
+-	data->uart.port.iobase = data->uart.port.mapbase;
+-
+-	/* ok, register the port */
+-	data->line = serial8250_register_8250_port(&data->uart);
+-	if (data->line < 0)
+-		return data->line;
+-
+-	dev_info(&mdev->dev, "found 16Z125 UART: ttyS%d\n", data->line);
++	for (i = 0; i < num_ports; i++) {
++		data[i].uart.port.dev = mdev->dma_dev;
++		spin_lock_init(&data[i].uart.port.lock);
 +
- static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
--				     int wake_flags, void *key)
-+				     int wake_flags, void *_key)
- {
--	struct userfaultfd_wake_range *range = key;
-+	struct userfaultfd_wake_key *key = _key;
- 	int ret;
- 	struct userfaultfd_wait_queue *uwq;
--	unsigned long start, len;
- 
- 	uwq = container_of(wq, struct userfaultfd_wait_queue, wq);
- 	ret = 0;
--	/* len == 0 means wake all */
--	start = range->start;
--	len = range->len;
--	if (len && (start > uwq->msg.arg.pagefault.address ||
--		    start + len <= uwq->msg.arg.pagefault.address))
-+	if (!userfaultfd_should_wake(uwq, key))
- 		goto out;
- 	WRITE_ONCE(uwq->waken, true);
- 	/*
-@@ -585,7 +608,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- 		goto out;
- 
- 	ewq->ctx = ctx;
--	init_waitqueue_entry(&ewq->wq, current);
-+	userfaultfd_init_waitqueue(ctx, ewq);
- 	release_new_ctx = NULL;
- 
- 	spin_lock(&ctx->event_wqh.lock);
-@@ -596,7 +619,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- 	__add_wait_queue(&ctx->event_wqh, &ewq->wq);
- 	for (;;) {
- 		set_current_state(TASK_KILLABLE);
--		if (ewq->msg.event == 0)
-+		if (READ_ONCE(ewq->waken))
- 			break;
- 		if (READ_ONCE(ctx->released) ||
- 		    fatal_signal_pending(current)) {
-@@ -653,9 +676,10 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- static void userfaultfd_event_complete(struct userfaultfd_ctx *ctx,
- 				       struct userfaultfd_wait_queue *ewq)
- {
--	ewq->msg.event = 0;
--	wake_up_locked(&ctx->event_wqh);
--	__remove_wait_queue(&ctx->event_wqh, &ewq->wq);
-+	struct userfaultfd_wake_key key = { 0 };
++		data[i].uart.port.type = PORT_16550;
++		data[i].uart.port.flags = UPF_SKIP_TEST | UPF_SHARE_IRQ
++					  | UPF_FIXED_TYPE;
++		data[i].uart.port.iotype = UPIO_MEM;
++		data[i].uart.port.uartclk = men_lookup_uartclk(mdev);
++		data[i].uart.port.regshift = 0;
++		data[i].uart.port.irq = mcb_get_irq(mdev);
++		data[i].uart.port.membase = membase;
++		data[i].uart.port.fifosize = 60;
++		data[i].uart.port.mapbase = (unsigned long) mem->start
++					    + (i * MEN_UART_MEM_SIZE);
++		data[i].uart.port.iobase = data[i].uart.port.mapbase;
 +
-+	key.event = ewq->msg.event;
-+	 __wake_up_locked_key(&ctx->event_wqh, TASK_NORMAL, &key);
++		/* ok, register the port */
++		data[i].line = serial8250_register_8250_port(&data[i].uart);
++		if (data[i].line < 0) {
++			dev_err(&mdev->dev, "unable to register UART port\n");
++			return data[i].line;
++		}
++		dev_info(&mdev->dev, "found MCB UART: ttyS%d\n", data[i].line);
++	}
+ 
+ 	return 0;
  }
  
- int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
-@@ -854,8 +878,10 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
- 	struct userfaultfd_ctx *ctx = file->private_data;
- 	struct mm_struct *mm = ctx->mm;
- 	struct vm_area_struct *vma, *prev;
--	/* len == 0 means wake all */
--	struct userfaultfd_wake_range range = { .len = 0, };
-+	/* event == 0 means wake all */
-+	struct userfaultfd_wake_key key = {
-+		.event = 0,
-+	};
- 	unsigned long new_flags;
- 
- 	WRITE_ONCE(ctx->released, true);
-@@ -903,12 +929,12 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
- 	 * the fault_*wqh.
- 	 */
- 	spin_lock(&ctx->fault_pending_wqh.lock);
--	__wake_up_locked_key(&ctx->fault_pending_wqh, TASK_NORMAL, &range);
--	__wake_up_locked_key(&ctx->fault_wqh, TASK_NORMAL, &range);
-+	__wake_up_locked_key(&ctx->fault_pending_wqh, TASK_NORMAL, &key);
-+	__wake_up_locked_key(&ctx->fault_wqh, TASK_NORMAL, &key);
- 	spin_unlock(&ctx->fault_pending_wqh.lock);
- 
- 	/* Flush pending events that may still wait on event_wqh */
--	wake_up_all(&ctx->event_wqh);
-+	__wake_up(&ctx->event_wqh, TASK_NORMAL, 0, &key);
- 
- 	wake_up_poll(&ctx->fd_wqh, EPOLLHUP);
- 	userfaultfd_ctx_put(ctx);
-@@ -1201,20 +1227,20 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- }
- 
- static void __wake_userfault(struct userfaultfd_ctx *ctx,
--			     struct userfaultfd_wake_range *range)
-+			     struct userfaultfd_wake_key *key)
+ static void serial_8250_men_mcb_remove(struct mcb_device *mdev)
  {
- 	spin_lock(&ctx->fault_pending_wqh.lock);
- 	/* wake all in the range and autoremove */
- 	if (waitqueue_active(&ctx->fault_pending_wqh))
- 		__wake_up_locked_key(&ctx->fault_pending_wqh, TASK_NORMAL,
--				     range);
-+				     key);
- 	if (waitqueue_active(&ctx->fault_wqh))
--		__wake_up_locked_key(&ctx->fault_wqh, TASK_NORMAL, range);
-+		__wake_up_locked_key(&ctx->fault_wqh, TASK_NORMAL, key);
- 	spin_unlock(&ctx->fault_pending_wqh.lock);
++	unsigned int num_ports, i;
+ 	struct serial_8250_men_mcb_data *data = mcb_get_drvdata(mdev);
+ 
+-	if (data)
+-		serial8250_unregister_port(data->line);
++	if (!data)
++		return;
++
++	switch (mdev->id) {
++	case MEN_UART_ID_Z125:
++		num_ports = 1U;
++		break;
++	case MEN_UART_ID_Z025:
++		num_ports = readb(data[0].uart.port.membase) >> 4;
++		break;
++	case MEN_UART_ID_Z057:
++		num_ports = 4U;
++		break;
++	default:
++		dev_err(&mdev->dev, "no supported device!\n");
++		return;
++	}
++
++	for (i = 0; i < num_ports; i++)
++		serial8250_unregister_port(data[i].line);
  }
  
- static __always_inline void wake_userfault(struct userfaultfd_ctx *ctx,
--					   struct userfaultfd_wake_range *range)
-+					   struct userfaultfd_wake_key *key)
- {
- 	unsigned seq;
- 	bool need_wakeup;
-@@ -1241,7 +1267,7 @@ static __always_inline void wake_userfault(struct userfaultfd_ctx *ctx,
- 		cond_resched();
- 	} while (read_seqcount_retry(&ctx->refile_seq, seq));
- 	if (need_wakeup)
--		__wake_userfault(ctx, range);
-+		__wake_userfault(ctx, key);
- }
+ static const struct mcb_device_id serial_8250_men_mcb_ids[] = {
+-	{ .device = 0x7d },
++	{ .device = MEN_UART_ID_Z025 },
++	{ .device = MEN_UART_ID_Z057 },
++	{ .device = MEN_UART_ID_Z125 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(mcb, serial_8250_men_mcb_ids);
+@@ -113,6 +173,8 @@ static struct mcb_driver mcb_driver = {
+ module_mcb_driver(mcb_driver);
  
- static __always_inline int validate_range(struct mm_struct *mm,
-@@ -1567,10 +1593,11 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 			 * permanently and it avoids userland to call
- 			 * UFFDIO_WAKE explicitly.
- 			 */
--			struct userfaultfd_wake_range range;
--			range.start = start;
--			range.len = vma_end - start;
--			wake_userfault(vma->vm_userfaultfd_ctx.ctx, &range);
-+			struct userfaultfd_wake_key key;
-+			key.event = UFFD_EVENT_PAGEFAULT;
-+			key.arg.range.start = start;
-+			key.arg.range.len = vma_end - start;
-+			wake_userfault(vma->vm_userfaultfd_ctx.ctx, &key);
- 		}
+ MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("MEN 16z125 8250 UART driver");
++MODULE_DESCRIPTION("MEN 8250 UART driver");
+ MODULE_AUTHOR("Michael Moese <michael.moese@men.de");
+ MODULE_ALIAS("mcb:16z125");
++MODULE_ALIAS("mcb:16z025");
++MODULE_ALIAS("mcb:16z057");
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 16b1496e6105..f005eaf8bc57 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -157,11 +157,12 @@ config SERIAL_8250_CS
+ 	  If unsure, say N.
  
- 		new_flags = vma->vm_flags & ~(VM_UFFD_MISSING | VM_UFFD_WP);
-@@ -1622,7 +1649,7 @@ static int userfaultfd_wake(struct userfaultfd_ctx *ctx,
- {
- 	int ret;
- 	struct uffdio_range uffdio_wake;
--	struct userfaultfd_wake_range range;
-+	struct userfaultfd_wake_key key;
- 	const void __user *buf = (void __user *)arg;
+ config SERIAL_8250_MEN_MCB
+-	tristate "MEN Z125 UART device support"
++	tristate "MEN MCB UART device support"
+ 	depends on MCB && SERIAL_8250
+ 	help
+ 	  This enables support for FPGA based UARTs found on many MEN
+-	  boards. This driver enables support for the Z125 UARTs.
++	  boards. This driver enables support for the 16z025, 16z057
++	  and 16z125 UARTs.
  
- 	ret = -EFAULT;
-@@ -1633,16 +1660,17 @@ static int userfaultfd_wake(struct userfaultfd_ctx *ctx,
- 	if (ret)
- 		goto out;
- 
--	range.start = uffdio_wake.start;
--	range.len = uffdio_wake.len;
-+	key.event = UFFD_EVENT_PAGEFAULT;
-+	key.arg.range.start = uffdio_wake.start;
-+	key.arg.range.len = uffdio_wake.len;
- 
- 	/*
- 	 * len == 0 means wake all and we don't want to wake all here,
- 	 * so check it again to be sure.
- 	 */
--	VM_BUG_ON(!range.len);
-+	VM_BUG_ON(!key.arg.range.len);
- 
--	wake_userfault(ctx, &range);
-+	wake_userfault(ctx, &key);
- 	ret = 0;
- 
- out:
-@@ -1655,7 +1683,7 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 	__s64 ret;
- 	struct uffdio_copy uffdio_copy;
- 	struct uffdio_copy __user *user_uffdio_copy;
--	struct userfaultfd_wake_range range;
-+	struct userfaultfd_wake_key key;
- 
- 	user_uffdio_copy = (struct uffdio_copy __user *) arg;
- 
-@@ -1691,12 +1719,13 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 		goto out;
- 	BUG_ON(!ret);
- 	/* len == 0 would wake all */
--	range.len = ret;
-+	key.event = UFFD_EVENT_PAGEFAULT;
-+	key.arg.range.len = ret;
- 	if (!(uffdio_copy.mode & UFFDIO_COPY_MODE_DONTWAKE)) {
--		range.start = uffdio_copy.dst;
--		wake_userfault(ctx, &range);
-+		key.arg.range.start = uffdio_copy.dst;
-+		wake_userfault(ctx, &key);
- 	}
--	ret = range.len == uffdio_copy.len ? 0 : -EAGAIN;
-+	ret = key.arg.range.len == uffdio_copy.len ? 0 : -EAGAIN;
- out:
- 	return ret;
- }
-@@ -1707,7 +1736,7 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 	__s64 ret;
- 	struct uffdio_zeropage uffdio_zeropage;
- 	struct uffdio_zeropage __user *user_uffdio_zeropage;
--	struct userfaultfd_wake_range range;
-+	struct userfaultfd_wake_key key;
- 
- 	user_uffdio_zeropage = (struct uffdio_zeropage __user *) arg;
- 
-@@ -1738,12 +1767,13 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 		goto out;
- 	/* len == 0 would wake all */
- 	BUG_ON(!ret);
--	range.len = ret;
-+	key.event = UFFD_EVENT_PAGEFAULT;
-+	key.arg.range.len = ret;
- 	if (!(uffdio_zeropage.mode & UFFDIO_ZEROPAGE_MODE_DONTWAKE)) {
--		range.start = uffdio_zeropage.range.start;
--		wake_userfault(ctx, &range);
-+		key.arg.range.start = uffdio_zeropage.range.start;
-+		wake_userfault(ctx, &key);
- 	}
--	ret = range.len == uffdio_zeropage.range.len ? 0 : -EAGAIN;
-+	ret = key.arg.range.len == uffdio_zeropage.range.len ? 0 : -EAGAIN;
- out:
- 	return ret;
- }
+ 	  To compile this driver as a module, chose M here: the
+ 	  module will be called 8250_men_mcb.
 -- 
-2.7.4
-
+2.13.6
