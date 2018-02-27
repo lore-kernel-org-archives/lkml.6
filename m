@@ -1,78 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeB0ME7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 07:04:59 -0500
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:41171 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeB0ME5 (ORCPT
+        id S1752916AbeB0MMK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 07:12:10 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:43921 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752309AbeB0MMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 07:04:57 -0500
-X-Google-Smtp-Source: AG47ELuxTShImfxgsGJMQPP+lTB3dk7EyUf4elauq/FmwIx9xFjDbdAZt1B9nHazCDQHAMxQ0zKKrA==
-Subject: Re: [PATCH V15 06/22] mmc: block: Add blk-mq support
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>
-References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
- <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
- <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
- <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
- <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
- <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
- <CACRpkdaWyV2VPFBsFAjt-a8t6f3F6XwonHxfR3HfUJ=C13uuWw@mail.gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a15e8905-6ca8-d078-d891-58dc2f30f463@gmail.com>
-Date: Tue, 27 Feb 2018 15:04:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 07:12:09 -0500
+Date: Tue, 27 Feb 2018 13:11:57 +0100 (CET)
+From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+X-X-Sender: rolf@5HSWXM1.fritz.box
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+cc: Rolf Evers-Fischer <embedded24@evers-fischer.de>, kishon@ti.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
+Subject: Re: [PATCH v3 0/2] pci: endpoint: Fix double free in
+ pci_epf_create()
+In-Reply-To: <20180227102030.GB26238@e107981-ln.cambridge.arm.com>
+Message-ID: <alpine.LNX.2.20.1802271257030.23086@5HSWXM1.fritz.box>
+References: <20180227100231.22561-1-embedded24@evers-fischer.de> <20180227102030.GB26238@e107981-ln.cambridge.arm.com>
+User-Agent: Alpine 2.20 (LNX 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaWyV2VPFBsFAjt-a8t6f3F6XwonHxfR3HfUJ=C13uuWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K0:bQkVowVh6YOvH8EaB07TVqbYTUG5gjugSiXK/u05J4mKTSHhjWb
+ SdObO6RLpCkGzhIZVwSoSdVLgJSiqUO8P2hrCEePpwtuxCpM1IURvtNnVNH844LNeRLZZvw
+ rHQlPB+VT/ExfF46ftAvWnMVO8Zbl7MPParcjoc82qjkCfCIZ+fHbR1ULW6mJLc27hTNP0S
+ x/6pr90AWULfTj1/67odA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6YPkXytaio4=:me/ZrUe5GEGMvk+RIK5V7z
+ FJWaTfi+ZnYfsq7211hVh0tQDbkXAk7yGEsMycC9arIC2YtY4B5rDp9s+EwG4QayAJ6I0uLYM
+ pdXafMWBXemsvzyL0TbLg/+yoXZykk6d60sy1Iv7Kx9rqOHFyeFxOF9g6YSHdD/YmkZBM5ba2
+ buU1B+URuZisW9Ah1jV7qYS+L7kPM/LpYWV9G+4H6DB9mhaJC5d3S2rQ3tX2AsTfMGO5a+Uwe
+ MswAmmKN3JPrF4Ifjx8SFmVJgJHJ1WpKUgVLlswr0lNI1oeUzWUzVNtdb0jm0q8hMbEQAGUoi
+ EL6hZ0ObYLzicsLnWkjcopyW4qxWlamG0pn5muucS5/k/G29/Dz4GVLmqAQTr0oOfkExIErjD
+ j50fUJHiUFsHfQ2xUBE2jccBSOR2NJczHyCxTsZiGYnViXOHZ/vSy/z7emUU6lzByC4KXR4Db
+ a+O9yC8NLkiumJKchOX32KPE9R44hNxPqiAmDt+Glsjgh4UE6g3MawK60dOnnIU4zDoiqoJOO
+ JHbNtlFLymJQaC7gDpS68dD1u3/qky9YQnfaKMejY9hxlfb4JUHf+9vbKRbem3/ad1HwxBKEn
+ lSuhORT/gTk02nRoVCTI9qtbew2GAWkqHLkHIelXx08REqj6h63K5dPWCD62BqdMgna1bpD3p
+ J1p6f9o1mwP65cwOyj7wKh6xhmRE4ZYheWruffMi+1XfT+c70vFzgC0lxem6bOHmdzFOVtg2V
+ QpMaPGqwhvc4VNNrrlp0E/vcU5IiR4x2ZSKVWUROAKojPe8SGRFWYUZ8bwY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.02.2018 11:57, Linus Walleij wrote:
-> On Mon, Feb 26, 2018 at 10:48 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
->> On 22.02.2018 20:54, Dmitry Osipenko wrote:
->>> On 22.02.2018 10:42, Adrian Hunter wrote:
-> 
->>>> SDIO (unless it is a combo card) should be unaffected by changes to the
->>>> block driver.
->>
->> I don't know whether it's a combo card or not. Where I can find info about that?
->> Is it mentioned in sysfs somewhere?
-> 
-> Combo cards were used with very old (2000s) PDAs which had only
-> one SD card slot which they wanted to use for WiFi and storage
-> at the same time.
-> 
-> They are very uncommon and I haven't been able to locate any
-> even for testing.
-> 
-> It is very unlikely that you have one.
-> 
-> However you would notice it from seeing a partition attachment
-> message (like with an ordinary SD card) when you plug in your
-> card.
+Hello Lorenzo,
 
-Thank you very much for the explanation. It's not a combo card.
+On Tue, 27 Feb 2018, Lorenzo Pieralisi wrote:
+
+> On Tue, Feb 27, 2018 at 11:02:28AM +0100, Rolf Evers-Fischer wrote:
+> > This is version 3 of a patchset to avoid double free in function
+> > 'pci_epf_create()'.
+> > 
+> > When I accidentally created a new endpoint device with an empty name,
+> > the kernel warned about "attempted to be registered with empty name!"
+> > and crashed afterwards.
+> > 
+> > It turned out that the crash was not caused by the 'device_add()'
+> > function itself, but by a double kfree of 'epf->name' and 'epf'.
+> > 
+> > The first patch just simplifies the code, while the second patch
+> > fixes the problem.
+> > 
+> > Changes in v3:
+> > - Matched to other pending pci endpoint commits (thanks, Bjorn!)
+> > - Added "Fixes" tag in patch 2 (thanks, Andy!)
+> > 
+> > Changes in v2:
+> > - Based on feedback from Lorenzo, Andy and Kishon (thanks!)
+> > - Change IDs removed
+> > - First patch completely reworked in order to eliminate the
+> >   need for the second 'kstrdup' allocation and the 'kfree' of
+> >   the first allocation.
+> >   It was tested with name="pci_epf_test.0" and name="pci_epb":
+> >   The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
+> > 
+> > Rolf Evers-Fischer (2):
+> >   pci: endpoint: Simplify name allocation for epf device
+> >   pci: endpoint: Fix kernel panic after put_device()
+>     ^^^
+> 
+> s/pci/PCI
+> 
+> Bjorn pointed that out too, I can do it when merging the patches myself
+> just a hint in case you have to respin it again, no problem.
+> 
+
+thank you for pointing this out. I haven't recognized this detail. I 
+thought that Bjorn wanted me to rebase my patch series upon the latest 
+unmerged PCI endpoint patches - and I was surprised that there was no 
+change.
+
+Thank you for your kind offer to fix it when merging the patches.
+
+Best regards,
+ Rolf
