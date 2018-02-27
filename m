@@ -1,49 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeB0WgO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:36:14 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:34344 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751641AbeB0Wf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:35:58 -0500
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 13/16] drm/sun4i: Allow building on arm64
-Date: Tue, 27 Feb 2018 23:26:58 +0100
-Message-Id: <20180227222701.9716-14-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+        id S1752210AbeB0Wg7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:36:59 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53507 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751990AbeB0Wg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:36:56 -0500
+X-Google-Smtp-Source: AG47ELuH9PInCoA2xs9TP5Q+y68IsxFO2qk0edcH+kspJCUgH/KVkmpCw30ux/YhD2iAoaJJIxpWvQ==
+Date: Tue, 27 Feb 2018 16:36:54 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] i2c: qup: schedule EOT and FLUSH tags at the end
+ of transfer
+Message-ID: <20180227223654.GE20901@hector.attlocal.net>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
-is compatible to 32-bit SoCs, so allow building DRM driver for
-arm64 architecture.
+On Sat, Feb 03, 2018 at 01:28:09PM +0530, Abhishek Sahu wrote:
+> A single BAM transfer can have multiple read and write messages.
+> The EOT and FLUSH tags should be scheduled at the end of BAM HW
+> descriptors. Since the READ and WRITE can be present in any order
+> so for some of the cases, these tags are not being written
+> correctly.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/i2c/busses/i2c-qup.c | 54 ++++++++++++++++++++------------------------
+>  1 file changed, 24 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> index bb83a2967..6357aff 100644
+> --- a/drivers/i2c/busses/i2c-qup.c
+> +++ b/drivers/i2c/busses/i2c-qup.c
+> @@ -560,7 +560,7 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 *tags, struct qup_i2c_dev *qup,
+>  }
+>  
+>  static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+> -			    struct i2c_msg *msg,  int is_dma)
+> +			    struct i2c_msg *msg)
+>  {
+>  	u16 addr = i2c_8bit_addr_from_msg(msg);
+>  	int len = 0;
+> @@ -601,11 +601,6 @@ static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+>  	else
+>  		tags[len++] = data_len;
+>  
+> -	if ((msg->flags & I2C_M_RD) && last && is_dma) {
+> -		tags[len++] = QUP_BAM_INPUT_EOT;
+> -		tags[len++] = QUP_BAM_FLUSH_STOP;
+> -	}
+> -
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So lets say you have multiple read and 1 write message.  These changes will send
+a EOT/FLUSH for all reads.  I think the intent here was that the last read
+message (not the last message) would have the EOT+FLUSH.  Can there be an issue
+with sending EOT/FLUSH for all reads?  And how does this mesh up with the BAM
+signaling?
 
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index 7327da3bc94f..eee6bc0eaf97 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_SUN4I
- 	tristate "DRM Support for Allwinner A10 Display Engine"
--	depends on DRM && ARM && COMMON_CLK
-+	depends on DRM && (ARM || ARM64) && COMMON_CLK
- 	depends on ARCH_SUNXI || COMPILE_TEST
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_HELPER
--- 
-2.16.2
+
+Regards,
+
+Andy
