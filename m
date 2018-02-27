@@ -1,104 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751898AbeB0VMv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:12:51 -0500
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:39602 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeB0VMu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:12:50 -0500
-X-Google-Smtp-Source: AG47ELvpUCZRIxpUL1pmncz4PyIxqaASPNPy1lTidn5eTREW1906Cnp96c5mztlAQQe2c6V3HIsEyGNyJkHFyCZzxcs=
+        id S1751960AbeB0VM5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:12:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751550AbeB0VMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:12:55 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B890021771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 27 Feb 2018 16:12:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alan Kao <alankao@andestech.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        <sw-dev@groups.riscv.org>, <linux-kernel@vger.kernel.org>,
+        <greentime@andestech.com>, <zong@andestech.com>
+Subject: Re: ftrace: Proposal for an Alternative RecordMcount framework
+Message-ID: <20180227161252.25162d81@vmware.local.home>
+In-Reply-To: <20180227100425.GB20904@andestech.com>
+References: <20180227100425.GB20904@andestech.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VctsM0F4Ldf1zr4CJ2gF3ku3ejTHPYrUQKQ-rJVeX2Wog@mail.gmail.com>
-References: <20180227193118.n33bkbrqxybfhgdc@gmail.com> <CAHp75VctsM0F4Ldf1zr4CJ2gF3ku3ejTHPYrUQKQ-rJVeX2Wog@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 27 Feb 2018 22:12:29 +0100
-Message-ID: <CANiq72nxBSXXq1KbKVExTNTpo8kS_-dso429dzGHwzVD+5dLtw@mail.gmail.com>
-Subject: Re: [PATCH RFC] auxdisplay: charlcd: Fix and clean up handling of x/y commands
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Robert Abel <rabel@robertabel.eu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 9:52 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Feb 27, 2018 at 9:32 PM, Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
->> The current version is not parsing multiple x/y commands as the code
->> originally intended. On top of that, kstrtoul() expects
->> NULL-terminated strings. Finally, the code had to do two passes over
->> the string, while now only one is done.
->>
->> Some explanations about the supported syntax are added as well.
->
-> Something like this would work, but see my comments below.
->
->> +/*
->> + * Parses a base 10 number from a string, until a non-digit number is found or
->> + * until PARSE_N_MAX_SIZE digits.
->> + *
->> + * See kstrtoul() for the meaning of the return value.
->> + * It also returns the next character in the string, i.e. the first non-digit.
->> + */
->> +#define PARSE_N_MAX_SIZE (3)
->> +static unsigned long parse_n(const char *s, unsigned long *res,
->> +       const char **next_s)
->
-> static int parse_n(const char *s, unsigned long *res, const char **next_s)
+On Tue, 27 Feb 2018 18:04:26 +0800
+Alan Kao <alankao@andestech.com> wrote:
+ 
+> 1. During the final linking stages, do "objdump vmlinux.o | grep ..." [2]
 
-Oops, thanks!
+Note, doing it at that stage takes the longest time. It makes small
+changes much longer to compile. That said...
 
->
->> +{
->> +       char tmp[PARSE_N_MAX_SIZE + 1];
->> +       int i;
->> +
->
-> First of all you need
->
-> unsigned int i = 0;
->
-> while (s[i] == '0')
->  i++;
+> 2. Form the output as an ELF objecj
+> 3. Link the object to __mcount_loc_start symbol
+> 4. Done
+> 
+> With the similar reason as the patch [3], we should mark _mcount to be
+> a weak symbol to prevent it from being relaxed later.
+> 
+> We would like to know your opinion and comments on this.
+> Thanks!
 
-Why?
+What about just having your arch use recordmcount.c instead? It doesn't
+do any grepping. It is an elf reader and modifier and modifies the .o
+file directly.
 
->
->> +       for (i = 0; ; ++i) {
->> +               if (!isdigit(s[i]))
->> +                       break;
->> +               if (i >= PARSE_N_MAX_SIZE)
->> +                       return -EINVAL;
->> +               tmp[i] = s[i];
->> +       }
->
-> And here you partially open coded what simple_strto*() does.
->
->> +
->> +       tmp[i] = 0;
->> +       *next_s = &s[i];
->> +       return kstrtoul(tmp, 10, res);
->> +}
->
-> It's over engineered. Just simple use simple_strto*() and that's all.
-> Do you really care about overflows? Is those numbers somehow critical?
-> What will go wrong?
+Note, I will be rewriting that code in the near future too, to
+consolidate it with objtool.
 
-We shouldn't use simple_strto*() since it is deprecated. So parse_n()
-can be either this wrapper to call kstrto*() (which indeed is
-overengineered, but easier to understand than Robert's patch that
-modified the original sequence, and can be replaced by an inplace
-version whenever we have one) or we just put a simple loop for the
-moment (like the one Willy coded in 2008). Both are fine with me.
-
-Cheers,
-Miguel
-
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+-- Steve
