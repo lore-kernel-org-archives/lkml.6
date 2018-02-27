@@ -1,282 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753925AbeB0Obv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:31:51 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753901AbeB0Obt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753902AbeB0Obt (ORCPT <rfc822;w@1wt.eu>);
         Tue, 27 Feb 2018 09:31:49 -0500
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Subject: [PATCH v2 06/15] s390: vfio-ap: register matrix device with VFIO mdev framework
-Date: Tue, 27 Feb 2018 09:28:04 -0500
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18022714-0020-0000-0000-00000D840AD4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995862; UDB=6.00506230; IPR=6.00775186;
- MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022714-0021-0000-0000-0000604AA621
-Message-Id: <1519741693-17440-7-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802270183
+Received: from relmlor3.renesas.com ([210.160.252.173]:50130 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753357AbeB0Obm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:31:42 -0500
+X-IronPort-AV: E=Sophos;i="5.47,401,1515423600";
+   d="scan'208";a="273636983"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
+Thread-Topic: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
+Thread-Index: AQHTr9Kltqdm2PoG7E68/YC+voS9LqO4TqAAgAAAiOA=
+Date: Tue, 27 Feb 2018 14:31:36 +0000
+Message-ID: <HK2PR0601MB1393B39958A128DCB8CA0E44F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+References: <1519739731-27920-1-git-send-email-phil.edworthy@renesas.com>
+ <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
+In-Reply-To: <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2SPR00MB03;7:hMGOCZ8HQy0liWB+W82EEs6kXFkfKxHkRx51G0ppZg9isMxqjF4WhRBFgMTr4btEr8vRNnM+7ezTwxecVCkxWHVIUGeUM0Duh2hhPZCryuocyH0JmwEZ4bya+AR0D5VFWGINzgQczRR2hRdjIFOkjJQ1iKS9rR8Lrx0Ah5aDmlGpYQqncs96bJyib91OxK/aez1MzXZ2dOpxYBbxHgh6tUIOqHr9DiGOQmnDPJ2Fv3A9r3cCjCDXkwAirw9pVzMK;20:xZVDJ2lNT3+oviQk7I2UaQW0j68d2TqC/XM0sKWvcR2GN3CsyQkLQU10PMyyARbwMnSMNP4x8MsNLlLS2hPWzBE4EYnN3rKAv83hvKmn6JNXChs87B0/jiRcRb9cnGySMcV9R7pP96FXo49JzqcyJUEgH8DADVDQaz55JttwrK4=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 3b6cdd8d-9fc2-4463-c86a-08d57deeced7
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:HK2SPR00MB03;
+x-ms-traffictypediagnostic: HK2SPR00MB03:
+x-microsoft-antispam-prvs: <HK2SPR00MB0340A0F34C6CEB60C7E2A7F5C00@HK2SPR00MB03.apcprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231220)(944501161)(52105095)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:HK2SPR00MB03;BCL:0;PCL:0;RULEID:;SRVR:HK2SPR00MB03;
+x-forefront-prvs: 05961EBAFC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(346002)(396003)(39380400002)(376002)(189003)(199004)(4326008)(6436002)(8666007)(14454004)(305945005)(53936002)(9686003)(2900100001)(33656002)(6246003)(7736002)(966005)(478600001)(25786009)(66066001)(81166006)(105586002)(6306002)(2906002)(76176011)(3660700001)(229853002)(186003)(6916009)(2950100002)(26005)(59450400001)(55016002)(6506007)(102836004)(53546011)(86362001)(74316002)(8676002)(97736004)(68736007)(54906003)(3280700002)(5660300001)(316002)(99286004)(8936002)(81156014)(6116002)(3846002)(106356001)(5250100002)(8656006)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2SPR00MB03;H:HK2PR0601MB1393.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: /uW5pXiUw5nKkbfUFteI+lfjAIo3YmP4LyNtlqcEw2V7rgXxaW1rEBv8PBZLgQ+c1Au02UqK6WL2GIIrEd7xNFUKEbc2bVfowYxR5YoMosnc2iG6ZCjWx1eCJKHxWh8ZibDJaILjSl1va2XNcNd+LMyjckSg8XUlWpqedHMiPqw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-2022-jp"
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b6cdd8d-9fc2-4463-c86a-08d57deeced7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 14:31:36.7208
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2SPR00MB03
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1REWBKq022934
 
-Registers the matrix device created by the VFIO AP device
-driver with the VFIO mediated device framework.
-Registering the matrix device will create the sysfs
-structures needed to create mediated matrix devices
-each of which will be used to configure the AP matrix
-for a guest and connect it to the VFIO AP device driver.
+Hi Shawn,
 
-Registering the matrix device with the VFIO mediated device
-framework will create the following sysfs structures:
+On 27 February 2018 14:28, Shawn Lin wrote:
+> 在 2018/2/27 21:55, Phil Edworthy 写道:
+> > Since the controller does not support the end-of-busy IRQ, don't use it.
+> > Otherwise, on older SD cards you will get lots of these messages:
+> > "mmc0: Got data interrupt 0x00000002 even though no data operation was
+> in progress"
+> >
+> 
+> I'm afraid you have to explain which version of arasan's IP suffer from this
+> and what does the "older SD cards" mean?
+Ok, I'll try to find out the IP version...
+For "older SD cards", I can provide a list of a few cards that exhibit this problem
+and others that don't, is that enough info?
 
-/sys/devices/vfio_ap
-... [matrix]
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ create
+Thanks
+Phil
 
-To create a mediated device for the AP matrix device, write a UUID
-to the create file:
-
-	uuidgen > create
-
-A symbolic link to the mediated device's directory will be created in the
-devices subdirectory named after the generated $uuid:
-
-/sys/devices/vfio_ap
-... [matrix]
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ [devices]
-............... [$uuid]
-
-Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
----
- MAINTAINERS                           |    1 +
- drivers/s390/crypto/Makefile          |    2 +-
- drivers/s390/crypto/vfio_ap_drv.c     |    9 +++
- drivers/s390/crypto/vfio_ap_ops.c     |  105 +++++++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_private.h |   18 ++++++
- 5 files changed, 134 insertions(+), 1 deletions(-)
- create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a2f232d..fb9e0d4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11886,6 +11886,7 @@ F:	arch/s390/include/asm/kvm/kvm-ap.h
- F:	arch/s390/kvm/kvm-ap.c
- F:	drivers/s390/crypto/vfio_ap_drv.c
- F:	drivers/s390/crypto/vfio_ap_private.h
-+F:	drivers/s390/crypto/vfio_ap_ops.c
- 
- S390 ZFCP DRIVER
- M:	Steffen Maier <maier@linux.vnet.ibm.com>
-diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
-index 48e466e..8d36b05 100644
---- a/drivers/s390/crypto/Makefile
-+++ b/drivers/s390/crypto/Makefile
-@@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
- obj-$(CONFIG_PKEY) += pkey.o
- 
- # adjunct processor matrix
--vfio_ap-objs := vfio_ap_drv.o
-+vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
- obj-$(CONFIG_VFIO_AP) += vfio_ap.o
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index 8bb72af..f45f83b 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -121,11 +121,20 @@ int __init vfio_ap_init(void)
- 		return ret;
- 	}
- 
-+	ret = vfio_ap_mdev_register(ap_matrix);
-+	if (ret) {
-+		ap_driver_unregister(&vfio_ap_drv);
-+		vfio_ap_matrix_dev_destroy(ap_matrix);
-+
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
- void __exit vfio_ap_exit(void)
- {
-+	vfio_ap_mdev_unregister(ap_matrix);
- 	ap_driver_unregister(&vfio_ap_drv);
- 	vfio_ap_matrix_dev_destroy(ap_matrix);
- }
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-new file mode 100644
-index 0000000..4292a5e
---- /dev/null
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -0,0 +1,105 @@
-+/*
-+ * Adjunct processor matrix VFIO device driver callbacks.
-+ *
-+ * Copyright IBM Corp. 2017
-+ * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-+ *
-+ */
-+#include <linux/string.h>
-+#include <linux/vfio.h>
-+#include <linux/device.h>
-+#include <linux/list.h>
-+#include <linux/ctype.h>
-+
-+#include "vfio_ap_private.h"
-+
-+#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
-+#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
-+
-+static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-+{
-+	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-+
-+	ap_matrix->available_instances--;
-+
-+	return 0;
-+}
-+
-+static int vfio_ap_mdev_remove(struct mdev_device *mdev)
-+{
-+	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-+
-+	ap_matrix->available_instances++;
-+
-+	return 0;
-+}
-+
-+static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
-+{
-+	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
-+}
-+
-+MDEV_TYPE_ATTR_RO(name);
-+
-+static ssize_t available_instances_show(struct kobject *kobj,
-+					struct device *dev, char *buf)
-+{
-+	struct ap_matrix *ap_matrix;
-+
-+	ap_matrix = to_ap_matrix(dev);
-+
-+	return sprintf(buf, "%d\n", ap_matrix->available_instances);
-+}
-+
-+MDEV_TYPE_ATTR_RO(available_instances);
-+
-+static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-+			       char *buf)
-+{
-+	return sprintf(buf, "%s\n", VFIO_DEVICE_API_AP_STRING);
-+}
-+
-+MDEV_TYPE_ATTR_RO(device_api);
-+
-+static struct attribute *vfio_ap_mdev_type_attrs[] = {
-+	&mdev_type_attr_name.attr,
-+	&mdev_type_attr_device_api.attr,
-+	&mdev_type_attr_available_instances.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group vfio_ap_mdev_hwvirt_type_group = {
-+	.name = VFOP_AP_MDEV_TYPE_HWVIRT,
-+	.attrs = vfio_ap_mdev_type_attrs,
-+};
-+
-+static struct attribute_group *vfio_ap_mdev_type_groups[] = {
-+	&vfio_ap_mdev_hwvirt_type_group,
-+	NULL,
-+};
-+
-+static const struct mdev_parent_ops vfio_ap_matrix_ops = {
-+	.owner			= THIS_MODULE,
-+	.supported_type_groups	= vfio_ap_mdev_type_groups,
-+	.create			= vfio_ap_mdev_create,
-+	.remove			= vfio_ap_mdev_remove,
-+};
-+
-+int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
-+{
-+	int ret;
-+
-+	ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
-+	if (ret)
-+		return ret;
-+
-+	ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
-+
-+	return 0;
-+}
-+
-+void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
-+{
-+	ap_matrix->available_instances--;
-+	mdev_unregister_device(&ap_matrix->device);
-+}
-diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-index 3505947..c264415 100644
---- a/drivers/s390/crypto/vfio_ap_private.h
-+++ b/drivers/s390/crypto/vfio_ap_private.h
-@@ -9,12 +9,30 @@
- #define _VFIO_AP_PRIVATE_H_
- 
- #include <linux/types.h>
-+#include <linux/mdev.h>
-+#include "ap_bus.h"
- 
- #define VFIO_AP_MODULE_NAME "vfio_ap"
- #define VFIO_AP_DRV_NAME "vfio_ap"
-+#define VFIO_AP_MATRIX_MODULE_NAME "vfio_ap_matrix"
-+/**
-+ * There must be one mediated matrix device per guest. If every APQN is assigned
-+ * to a guest, then the maximum number of guests with a unique APQN assigned
-+ * would be 255 adapters x 255 domains = 72351 guests.
-+ */
-+#define AP_MATRIX_MAX_AVAILABLE_INSTANCES 72351
- 
- struct ap_matrix {
- 	struct device device;
-+	int available_instances;
- };
- 
-+static inline struct ap_matrix *to_ap_matrix(struct device *dev)
-+{
-+	return container_of(dev, struct ap_matrix, device);
-+}
-+
-+extern int vfio_ap_mdev_register(struct ap_matrix *ap_matrix);
-+extern void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix);
-+
- #endif /* _VFIO_AP_PRIVATE_H_ */
--- 
-1.7.1
+> > This has been reported on Xilinx devices that also use the Arasan IP.
+> > See https://patchwork.kernel.org/patch/8062871/
+> >
+> > This has been tested on the Renesas RZ/ND-DB board with the RZ/N1 SoC.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > ---
+> >   drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-of-arasan.c
+> > b/drivers/mmc/host/sdhci-of-arasan.c
+> > index c33a5f7..ab66e32 100644
+> > --- a/drivers/mmc/host/sdhci-of-arasan.c
+> > +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> > @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data
+> sdhci_arasan_pdata = {
+> >   	.ops = &sdhci_arasan_ops,
+> >   	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> >   	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> > -			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
+> > +			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
+> > +			SDHCI_QUIRK2_STOP_WITH_TC,
+> >   };
+> >
+> >   static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32
+> > intmask)
+> >
+> 
+> 
+> --
+> Best Regards
+> Shawn Lin
