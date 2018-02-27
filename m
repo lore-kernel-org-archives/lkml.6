@@ -1,225 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeB0Wfp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:35:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45452 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbeB0WfP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:35:15 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54B7060849
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
-From: Agustin Vega-Frias <agustinv@codeaurora.org>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: timur@codeaurora.org, agustinv@codeaurora.org
-Subject: [RFC 2/3] perf, tools: Display pmu name when printing unmerged events in stat
-Date: Tue, 27 Feb 2018 17:34:07 -0500
-Message-Id: <1519770848-26738-3-git-send-email-agustinv@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
-References: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
+        id S1752122AbeB0Wf7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:35:59 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:34341 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751554AbeB0Wf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:35:58 -0500
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 05/16] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
+Date: Tue, 27 Feb 2018 23:26:50 +0100
+Message-Id: <20180227222701.9716-6-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting on v4.12 event parsing code for dynamic pmu events supports
-prefix-based matching of multiple pmus when creating dynamic events.
-E.g., in a system with the following dynamic pmus:
+Add missing compatibles for H3 HDMI pipeline. These compatibles can also
+be used with H5 SoC.
 
-    l3cache_0_0
-    l3cache_0_1
-    l3cache_0_2
-    l3cache_0_3
-
-passing l3cache/<config>/ as an event spec will result in the creation
-of the event in all of the pmus. When this functionality is used in
-stat the command will by default merge the event counts and display
-a single value. E.g.:
-
-    ./perf stat -a -e l3cache/read-miss/ ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                   328      l3cache/read-miss/
-
-           0.001661809 seconds time elapsed
-
-JSON-based alias events behave in the same way:
-
-    $ ./perf stat -a -e l3cache_read_miss ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                   229      l3cache_read_miss
-
-           0.001656099 seconds time elapsed
-
-This behavior can be disabled by the --no-merge option but the real
-pmu name is lost and it's not possible to see which count corresponds
-to which pmu:
-
-    $ ./perf stat -a -e l3cache/read-miss/ --no-merge ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                    67      l3cache/read-miss/
-                    67      l3cache/read-miss/
-                    63      l3cache/read-miss/
-                    60      l3cache/read-miss/
-
-           0.001675706 seconds time elapsed
-
-This is also the case for alias events, e.g.:
-
-    $ ./perf stat -a -e l3cache_read_miss --no-merge ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                    12      l3cache_read_miss
-                    17      l3cache_read_miss
-                    10      l3cache_read_miss
-                     8      l3cache_read_miss
-
-           0.001661305 seconds time elapsed
-
-This change adds the original pmu name to the event. For dynamic pmu
-events the pmu name is restored in the event name:
-
-    $ ./perf stat -a -e l3cache/read-miss/ --no-merge ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                    63      l3cache_0_3/read-miss/
-                    74      l3cache_0_1/read-miss/
-                    64      l3cache_0_2/read-miss/
-                    74      l3cache_0_0/read-miss/
-
-           0.001675706 seconds time elapsed
-
-For alias events the name is added after the event name:
-
-    $ ./perf stat -a -e l3cache_read_miss --no-merge ls > /dev/null
-
-     Performance counter stats for 'system wide':
-
-                    10      l3cache_read_miss [l3cache_0_3]
-                    12      l3cache_read_miss [l3cache_0_1]
-                    10      l3cache_read_miss [l3cache_0_2]
-                    17      l3cache_read_miss [l3cache_0_0]
-
-           0.001661305 seconds time elapsed
-
-Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- tools/perf/builtin-stat.c      | 29 ++++++++++++++++++++++++++++-
- tools/perf/util/evsel.c        |  1 +
- tools/perf/util/evsel.h        |  1 +
- tools/perf/util/parse-events.c |  8 +++++++-
- 4 files changed, 37 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 98bf9d3..d196972 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1225,6 +1225,31 @@ static void aggr_update_shadow(void)
- 	}
- }
-
-+static void uniquify_event_name(struct perf_evsel *counter)
-+{
-+	char *new_name;
-+	char *config;
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b995bfee734a..8bdef4920edc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -102,6 +102,7 @@ DWC HDMI PHY
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-hdmi-phy
++    * allwinner,sun8i-h3-hdmi-phy
+   - reg: base address and size of memory-mapped region
+   - clocks: phandles to the clocks feeding the HDMI PHY
+     * bus: the HDMI PHY interface clock
+@@ -110,6 +111,9 @@ Required properties:
+   - resets: phandle to the reset controller driving the PHY
+   - reset-names: must be "phy"
+ 
++H3 HDMI PHY requires additional clock:
++  - pll-0: parent of phy clock
 +
-+	if (!counter->pmu_name || !strncmp(counter->name, counter->pmu_name,
-+					   strlen(counter->pmu_name)))
-+		return;
-+
-+	config = strchr(counter->name, '/');
-+	if (config) {
-+		if (asprintf(&new_name,
-+			     "%s%s", counter->pmu_name, config) > 0) {
-+			free(counter->name);
-+			counter->name = new_name;
-+		}
-+	} else {
-+		if (asprintf(&new_name,
-+			     "%s [%s]", counter->name, counter->pmu_name) > 0) {
-+			free(counter->name);
-+			counter->name = new_name;
-+		}
-+	}
-+}
-+
- static void collect_all_aliases(struct perf_evsel *counter,
- 			    void (*cb)(struct perf_evsel *counter, void *data,
- 				       bool first),
-@@ -1253,7 +1278,9 @@ static bool collect_data(struct perf_evsel *counter,
- 	if (counter->merged_stat)
- 		return false;
- 	cb(counter, data, true);
--	if (!no_merge && counter->auto_merge_stats)
-+	if (no_merge)
-+		uniquify_event_name(counter);
-+	else if (counter->auto_merge_stats)
- 		collect_all_aliases(counter, cb, data);
- 	return true;
- }
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ef35168..4841000 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -244,6 +244,7 @@ void perf_evsel__init(struct perf_evsel *evsel,
- 	evsel->metric_name   = NULL;
- 	evsel->metric_events = NULL;
- 	evsel->collect_stat  = false;
-+	evsel->pmu_name      = NULL;
- }
-
- struct perf_evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index a7487c6..c2ac16a 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -142,6 +142,7 @@ struct perf_evsel {
- 	struct perf_evsel	**metric_events;
- 	bool			collect_stat;
- 	bool			weak_group;
-+	const char		*pmu_name;
- };
-
- union u64_swap {
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 34589c4..bafc91e 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1247,7 +1247,12 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
- 	if (!head_config) {
- 		attr.type = pmu->type;
- 		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL, auto_merge_stats);
--		return evsel ? 0 : -ENOMEM;
-+		if (evsel) {
-+			evsel->pmu_name = name;
-+			return 0;
-+		} else {
-+			return -ENOMEM;
-+		}
- 	}
-
- 	if (perf_pmu__check_alias(pmu, head_config, &info))
-@@ -1276,6 +1281,7 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
- 		evsel->snapshot = info.snapshot;
- 		evsel->metric_expr = info.metric_expr;
- 		evsel->metric_name = info.metric_name;
-+		evsel->pmu_name = name;
- 	}
-
- 	return evsel ? 0 : -ENOMEM;
---
-2.7.4
+ TV Encoder
+ ----------
+ 
+@@ -275,6 +279,7 @@ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
++    * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -305,6 +310,7 @@ Required properties:
+     * allwinner,sun7i-a20-display-engine
+     * allwinner,sun8i-a33-display-engine
+     * allwinner,sun8i-a83t-display-engine
++    * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-- 
+2.16.2
