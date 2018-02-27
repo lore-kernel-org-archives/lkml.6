@@ -1,84 +1,113 @@
-Return-Path: <cantabile.desu@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519852733; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AH8x224lNQsD01s/+kIAf/eu2KseJxjNqFzfdbJwoyweOOvkR5dkxbc0R0IU6YXV6W9kexXxtgrr
+ARC-Seal: i=1; a=rsa-sha256; t=1519773668; cv=none;
         d=google.com; s=arc-20160816;
-        b=RRniqU4dyNh3o8CDngCb++c0wWPHG++IEVo5M46fY0ZCYZxgby98J4HODbxAn0cvjo
-         ykHZ6w2QeHqoD/e7ZpzLZUHz8vt2y0GhlGqvp/3/8XqxloEaLB3VnPiPXC5D11UdtgOu
-         sqv1niz6krBMyIikW3bvZdwcEiOgQDXfQge3dt8KRBtidfM6fv8069ar2MNVQmIK7NGx
-         tN+eX2CXnSEtZZySKylP1os/jNcSqL8ZDkkAWMvRXxZVtZlwZq30M+DJvkF9HvTQboht
-         9D/6U7mg+/CX5SHA/NcOdLLNyZ9q3bvt/LMDU6Dj7xt/x3oIOQAihDNn3LN1iZs/FXk9
-         qcAg==
+        b=wG1BZqspWSTRqwcSmiHTB74tXyLqsluBQrErr7TcM1i2jNxNagSvRRNDqoaHN4vu95
+         KAaNcp7tkkGt4uYMc5zESD+X9LoniCGtC/U0rlokhT6g5e/3gLI/+wSp0Wr2hZiifVJF
+         RvLQLWQVayM5fayKdj1T1RzBLKDZ7hvydACGxO+gQSygE5RBDHs+LiLsxvDtVZ90MCPl
+         VJ0k8MYEASzwEH6nsceqhw6CFmclO0heRC9ZpzuNSb5yO2AQ/RxSP/TpHiLHcKQWvyDp
+         DIwLUz1xQoOl1+jPCsZF8nFtQX2B/vGUmHD1GnRKEAOxDxct/mMGxYVMvnCU9UYnvTww
+         uefw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=ZaD8I87Dq5F7zGZcADGimQENvH2KLimsBcMZZ/vfbHc=;
-        b=sD7F1RwZ3MIq/pJ9mZC3gP1jJQKi1MdRsEaAgv7RVh9tQ3q5hJ7M32cu1IzFrnD4Ty
-         O4rpEwc1OBODQqNHxRO2F1LsxUhBMykOp1vuQFnELojqQAj3UyqI58svKvRLbmIl4JjL
-         tWp4DxSqLNf3oI013wBIAJPj591irGbxRWZU+G7riFsvunRS4VzWcBkMZfB0E24E54EG
-         zV3nZ6iK14cvLtG/qlnSoD1JAp6FvPcXaC9MAXdqbAzQLbHBrme5l+01M6b/M8Kxa6du
-         kh3z/J5LVdThqNnqDwyAa8GbDMq0/O39D0WqVKGLCUo12Cs8SVAGPt00otxlcTH/K77S
-         UvqA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=jlB+M3zFO+R0GiAMpiMEPvtZfRQ02/v9XPmH/lU9U38=;
+        b=z1kSpc7AefTWHFN0bC/2+e2+BXiPj24L/WK7xi/o6mnaormkdSHeBdoauEDWbjQXRs
+         ODw5IphAdikPSKFH/0+ccWAH2w4uX2SsNeNl3Vt1rylijCyfXrdFIwOut1jt41Vou6/S
+         /pCXhRzHC7jp6xJPj1BXSqtYrKCDA0ShyZ7G1r97Ln3wNCp/4QDnxTf+OWk1qxi5tND1
+         cjsm8lt5nswSO7L1kGc2zFXw036N8Hqi4VvQyEEDsRe8IQg6CoetMuQG/YBSNFtL9eXf
+         q13vRdu2Q/ml+ZDysnLTQiRQELg4+rbk1xjI3guxn5hRb7dN8qyzwPWMUV6uFl9kzBA5
+         bucA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PHygXKmw;
-       spf=pass (google.com: domain of cantabile.desu@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=cantabile.desu@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PHygXKmw;
-       spf=pass (google.com: domain of cantabile.desu@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=cantabile.desu@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELv2LQZ3YjS3k9lAVoXcp4ut5OLMLmdVABEf/YOWoT9ni/uPNfik7NYaXKhLwXAMisI1PYVnKQ==
-Subject: Re: [RFT 0/7] firmware: enable caching of firmware for reboot
- optimization
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: kubakici@wp.pl, gregkh@linuxfoundation.org, akpm@linux-foundation.org,
- linux-wireless@vger.kernel.org, keescook@chromium.org, shuah@kernel.org,
- mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com, dhowells@redhat.com,
- pali.rohar@gmail.com, tiwai@suse.de, arend.vanspriel@broadcom.com,
- zajec5@gmail.com, nbroeking@me.com, markivx@codeaurora.org,
- stephen.boyd@linaro.org, broonie@kernel.org, dmitry.torokhov@gmail.com,
- dwmw2@infradead.org, torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
- bjorn.andersson@linaro.org, jewalt@lgsinnovations.com, oneukum@suse.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03CAE217AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: cantabile.desu@gmail.com
+Cc: kubakici@wp.pl,
+	gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org,
+	linux-wireless@vger.kernel.org,
+	keescook@chromium.org,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	zohar@linux.vnet.ibm.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	stephen.boyd@linaro.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	bjorn.andersson@linaro.org,
+	jewalt@lgsinnovations.com,
+	oneukum@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [RFT 1/7] rename: _request_firmware_load() fw_load_sysfs_fallback()
+Date: Tue, 27 Feb 2018 15:20:55 -0800
+Message-Id: <20180227232101.20786-2-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
+In-Reply-To: <20180227232101.20786-1-mcgrof@kernel.org>
 References: <20180227232101.20786-1-mcgrof@kernel.org>
- <49e9d9c3-1352-e204-ff95-5cf10f14bd35@gmail.com>
- <20180228184531.GK14069@wotan.suse.de>
-From: cantabile <cantabile.desu@gmail.com>
-Message-ID: <b2f7e5b2-d937-528e-c4f8-58e275f60733@gmail.com>
-Date: Wed, 28 Feb 2018 23:18:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180228184531.GK14069@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593598192477821921?=
-X-GMAIL-MSGID: =?utf-8?q?1593681100307760606?=
+X-GMAIL-THRID: =?utf-8?q?1593598193855582168?=
+X-GMAIL-MSGID: =?utf-8?q?1593598193855582168?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 28/02/18 20:45, Luis R. Rodriguez wrote:
-> On Wed, Feb 28, 2018 at 08:03:26PM +0200, cantabile wrote:
->> On 28/02/18 01:20, Luis R. Rodriguez wrote:
->>> Cantabile, please give these patches a spin and let me know if it fixes
->>> your reported issue. They depend on other pending patches I have in line
->>> waiting to be merged so the easiest I thing I think is for you to test my
->>> 20180227-firmware-cache branch [0], based on Linus' tree. To get that
->>> tree, cd into your Linus git tree and do:
->>>
->>> git remote add mcgrof https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git
->>> git checkout -b 20180227-firmware-cache mcgrof/20180227-firmware-cache
->>>
->>> Please let me know if this resolves your issue and thanks for your report.
->>>
->>
->> I confirmed that request_firmware_cache is called, and the firmware is
->> loaded from the cache when resuming from hibernation. The bug is fixed.
-> 
-> Great, thanks for testing.
-> 
-> Curious, is it also called if you suspend to RAM instead of just using hibernation?
-> 
+This reflects much clearer what is being done.
 
-request_firmware_cache is called when resuming from suspend to RAM.
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ Documentation/driver-api/firmware/fallback-mechanisms.rst | 2 +-
+ drivers/base/firmware_fallback.c                          | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+index 4055ac76b288..f353783ae0be 100644
+--- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
++++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+@@ -112,7 +112,7 @@ Since a device is created for the sysfs interface to help load firmware as a
+ fallback mechanism userspace can be informed of the addition of the device by
+ relying on kobject uevents. The addition of the device into the device
+ hierarchy means the fallback mechanism for firmware loading has been initiated.
+-For details of implementation refer to _request_firmware_load(), in particular
++For details of implementation refer to fw_load_sysfs_fallback(), in particular
+ on the use of dev_set_uevent_suppress() and kobject_uevent().
+ 
+ The kernel's kobject uevent mechanism is implemented in lib/kobject_uevent.c,
+diff --git a/drivers/base/firmware_fallback.c b/drivers/base/firmware_fallback.c
+index 13fa5ff2b46c..ce7ccfe82c69 100644
+--- a/drivers/base/firmware_fallback.c
++++ b/drivers/base/firmware_fallback.c
+@@ -536,7 +536,7 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+ }
+ 
+ /* load a firmware via user helper */
+-static int _request_firmware_load(struct fw_sysfs *fw_sysfs,
++static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+ 				  unsigned int opt_flags, long timeout)
+ {
+ 	int retval = 0;
+@@ -621,7 +621,7 @@ static int fw_load_from_user_helper(struct firmware *firmware,
+ 	}
+ 
+ 	fw_sysfs->fw_priv = firmware->priv;
+-	ret = _request_firmware_load(fw_sysfs, opt_flags, timeout);
++	ret = fw_load_sysfs_fallback(fw_sysfs, opt_flags, timeout);
+ 
+ 	if (!ret)
+ 		ret = assign_fw(firmware, device, opt_flags);
+-- 
+2.16.2
