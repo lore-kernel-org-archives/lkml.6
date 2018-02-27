@@ -1,49 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeB0RHT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:07:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47808 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752093AbeB0RHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:07:16 -0500
-Date: Tue, 27 Feb 2018 18:06:54 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 5/8] efi: Decode IA32/X64 Cache, TLB, and Bus Check
- structures
-Message-ID: <20180227170654.GL26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-6-Yazen.Ghannam@amd.com>
- <20180227150356.GH26382@pd.tnic>
- <DM5PR12MB1916C11E8B578EBA43CE2B82F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+        id S1752044AbeB0RMI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:12:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751836AbeB0RMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 12:12:06 -0500
+Date: Tue, 27 Feb 2018 19:12:05 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+Message-ID: <20180227190703-mutt-send-email-mst@kernel.org>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+ <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+ <20180226223252-mutt-send-email-mst@kernel.org>
+ <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM5PR12MB1916C11E8B578EBA43CE2B82F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 03:33:44PM +0000, Ghannam, Yazen wrote:
-> I agree which is why I've included the Validation Bits. A user can then
-> check the Validation Bits for any field that is of interest but missing.
+On Tue, Feb 27, 2018 at 10:29:26AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年02月27日 04:34, Michael S. Tsirkin wrote:
+> > On Mon, Feb 26, 2018 at 11:15:42AM +0800, Jason Wang wrote:
+> > > On 2018年02月26日 09:17, Michael S. Tsirkin wrote:
+> > > > So pointer rings work fine, but they have a problem: make them too small
+> > > > and not enough entries fit.  Make them too large and you start flushing
+> > > > your cache and running out of memory.
+> > > > 
+> > > > This is a new idea of mine: a ring backed by a linked list. Once you run
+> > > > out of ring entries, instead of a drop you fall back on a list with a
+> > > > common lock.
+> > > > 
+> > > > Should work well for the case where the ring is typically sized
+> > > > correctly, but will help address the fact that some user try to set e.g.
+> > > > tx queue length to 1000000.
+> > > > 
+> > > > In other words, the idea is that if a user sets a really huge TX queue
+> > > > length, we allocate a ptr_ring which is smaller, and use the backup
+> > > > linked list when necessary to provide the requested TX queue length
+> > > > legitimately.
+> > > > 
+> > > > My hope this will move us closer to direction where e.g. fw codel can
+> > > > use ptr rings without locking at all.  The API is still very rough, and
+> > > > I really need to take a hard look at lock nesting.
+> > > > 
+> > > > Compiled only, sending for early feedback/flames.
+> > > > 
+> > > > Signed-off-by: Michael S. Tsirkin<mst@redhat.com>
+> > > > ---
+> > > > 
+> > > > changes from v1:
+> > > > - added clarifications by DaveM in the commit log
+> > > > - build fixes
+> > > > 
+> > > >    include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
+> > > >    1 file changed, 61 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> > > > index d72b2e7..8aa8882 100644
+> > > > --- a/include/linux/ptr_ring.h
+> > > > +++ b/include/linux/ptr_ring.h
+> > > > @@ -31,11 +31,18 @@
+> > > >    #include <asm/errno.h>
+> > > >    #endif
+> > > > +/* entries must start with the following structure */
+> > > > +struct plist {
+> > > > +	struct plist *next;
+> > > > +	struct plist *last; /* only valid in the 1st entry */
+> > > > +};
+> > > So I wonder whether or not it's better to do this in e.g skb_array
+> > > implementation. Then it can use its own prev/next field.
+> > XDP uses ptr ring directly, doesn't it?
+> > 
+> 
+> Well I believe the main user for this is qdisc, which use skb array. And we
+> can not use what implemented in this patch directly for sk_buff without some
+> changes on the data structure.
 
-No, no half-baked fields.
+Why not? skb has next and prev pointers at 1st two fields:
 
-So you know drivers/edac/mce_amd.c, right? And you know the lengths we
-go to make an error record as readable as possible?
+struct sk_buff {
+        union { 
+                struct {
+                        /* These two members must be first. */
+                        struct sk_buff          *next;
+                        struct sk_buff          *prev;
+...
+}
 
-So please apply the same logic and intent here too.
+so it's just a question of casting to struct plist.
 
--- 
-Regards/Gruss,
-    Boris.
+Or we can add plist to a union:
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+
+struct sk_buff {
+        union { 
+                struct {
+                        /* These two members must be first. */
+                        struct sk_buff          *next;
+                        struct sk_buff          *prev;
+                        
+                        union { 
+                                struct net_device       *dev;
+                                /* Some protocols might use this space to store information,
+                                 * while device pointer would be NULL.
+                                 * UDP receive path is one user.
+                                 */
+                                unsigned long           dev_scratch;
+                        };
+                };
+                struct rb_node  rbnode; /* used in netem & tcp stack */
++		struct plist plist; /* For use with ptr_ring */
+        };
+
+
+
+> For XDP, we need to embed plist in struct xdp_buff too,
+
+Right - that's pretty straightforward, isn't it?
+
+> so it looks to me
+> that the better approach is to have separated function for ptr ring and skb
+> array.
+> 
+> Thanks
