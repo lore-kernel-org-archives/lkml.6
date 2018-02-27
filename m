@@ -1,128 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeB0Reo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:34:44 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:56100 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751735AbeB0Ren (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:34:43 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <perex@perex.cz>, <tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH] ALSA: control: Fix a bunch of whitespace errors
-Date: Tue, 27 Feb 2018 17:29:54 +0000
-Message-ID: <20180227172954.24819-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802270217
+        id S1751730AbeB0Rg4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:36:56 -0500
+Received: from mga11.intel.com ([192.55.52.93]:28578 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751117AbeB0Rgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 12:36:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
+   d="scan'208";a="178506180"
+Message-ID: <1519752950.10722.231.camel@linux.intel.com>
+Subject: Re: [PATCH v2 8/9] lib/vsprintf: Remove useless NULL checks
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Date: Tue, 27 Feb 2018 19:35:50 +0200
+In-Reply-To: <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+         <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+         <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove a bunch of trailing whitespace errors. They are
-fairly annoying if you have your editor set to strip trailing
-whitespace because you find you've introduced more changes
-than you were trying to make.
+On Tue, 2018-02-27 at 16:50 +0100, Petr Mladek wrote:
+> On Fri 2018-02-16 23:07:10, Andy Shevchenko wrote:
+> > The pointer can't be NULL since it's first what has been done in the
+> > pointer().
+> > 
+> > Remove useless checks.
+> > 
+> > Note we leave check for !CONFIG_HAVE_CLK to make compiler
+> > to optimize code away when possible.
+> > 
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  lib/vsprintf.c | 13 +------------
+> >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > 
+> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> > index 97be2d07297a..a49da00b79e7 100644
+> > --- a/lib/vsprintf.c
+> > +++ b/lib/vsprintf.c
+> > @@ -819,10 +819,6 @@ char *hex_string(char *buf, char *end, u8
+> > *addr, struct printf_spec spec,
+> >  		/* nothing to print */
+> >  		return buf;
+> >  
+> > -	if (ZERO_OR_NULL_PTR(addr))
+> 
+> This macro matches also values <= 16.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- sound/core/control.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Yes, I know.
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 8a77620a3854..69734b0eafd0 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -105,7 +105,7 @@ static void snd_ctl_empty_read_queue(struct snd_ctl_file * ctl)
- {
- 	unsigned long flags;
- 	struct snd_kctl_event *cread;
--	
-+
- 	spin_lock_irqsave(&ctl->read_lock, flags);
- 	while (!list_empty(&ctl->events)) {
- 		cread = snd_kctl_event(ctl->events.next);
-@@ -159,7 +159,7 @@ void snd_ctl_notify(struct snd_card *card, unsigned int mask,
- 	unsigned long flags;
- 	struct snd_ctl_file *ctl;
- 	struct snd_kctl_event *ev;
--	
-+
- 	if (snd_BUG_ON(!card || !id))
- 		return;
- 	if (card->shutdown)
-@@ -213,7 +213,7 @@ static int snd_ctl_new(struct snd_kcontrol **kctl, unsigned int count,
- {
- 	unsigned int size;
- 	unsigned int idx;
--	
-+
- 	if (count == 0 || count > MAX_CONTROL_COUNT)
- 		return -EINVAL;
+This had been discussed with Rasmus and we agreed that printing a result
+of kmalloc(0) is rather weird.
+
+Moreover, in couple of cases I added these checks.
  
-@@ -238,7 +238,7 @@ static int snd_ctl_new(struct snd_kcontrol **kctl, unsigned int count,
-  * @ncontrol: the initialization record
-  * @private_data: the private data to set
-  *
-- * Allocates a new struct snd_kcontrol instance and initialize from the given 
-+ * Allocates a new struct snd_kcontrol instance and initialize from the given
-  * template.  When the access field of ncontrol is 0, it's assumed as
-  * READWRITE access. When the count field is 0, it's assumes as one.
-  *
-@@ -251,7 +251,7 @@ struct snd_kcontrol *snd_ctl_new1(const struct snd_kcontrol_new *ncontrol,
- 	unsigned int count;
- 	unsigned int access;
- 	int err;
--	
-+
- 	if (snd_BUG_ON(!ncontrol || !ncontrol->info))
- 		return NULL;
- 
-@@ -753,7 +753,7 @@ static int snd_ctl_elem_list(struct snd_card *card,
- 	struct snd_ctl_elem_id id;
- 	unsigned int offset, space, jidx;
- 	int err = 0;
--	
-+
- 	if (copy_from_user(&list, _list, sizeof(list)))
- 		return -EFAULT;
- 	offset = list.offset;
-@@ -827,7 +827,7 @@ static int snd_ctl_elem_info(struct snd_ctl_file *ctl,
- 	struct snd_kcontrol_volatile *vd;
- 	unsigned int index_offset;
- 	int result;
--	
-+
- 	down_read(&card->controls_rwsem);
- 	kctl = snd_ctl_find_id(card, &info->id);
- 	if (kctl == NULL) {
-@@ -992,7 +992,7 @@ static int snd_ctl_elem_lock(struct snd_ctl_file *file,
- 	struct snd_kcontrol *kctl;
- 	struct snd_kcontrol_volatile *vd;
- 	int result;
--	
-+
- 	if (copy_from_user(&id, _id, sizeof(id)))
- 		return -EFAULT;
- 	down_write(&card->controls_rwsem);
-@@ -1020,7 +1020,7 @@ static int snd_ctl_elem_unlock(struct snd_ctl_file *file,
- 	struct snd_kcontrol *kctl;
- 	struct snd_kcontrol_volatile *vd;
- 	int result;
--	
-+
- 	if (copy_from_user(&id, _id, sizeof(id)))
- 		return -EFAULT;
- 	down_write(&card->controls_rwsem);
+> >  	switch (fmt[1]) {
+> > @@ -1580,9 +1572,6 @@ char *device_node_string(char *buf, char *end,
+> > struct device_node *dn,
+> >  	if (!IS_ENABLED(CONFIG_OF))
+> >  		return string(buf, end, "(!OF)", spec);
+> >  
+> > -	if ((unsigned long)dn < PAGE_SIZE)
+> > -		return string(buf, end, "(null)", spec);
+> 
+> In this case, "null" was printed for ptr < PAGE_SIZE. The same check
+> is also in string() function.
+
+Do we have a uses cases when invalid (non-NULL) pointer is supplied to
+print function?
+
+Those call sites have to be fixed.
+
+> Note that it is not only about the printed value. The pointer is later
+> derefecend. We will start crashing on dn > 0 && dn < PAGE_SIZE.
+
+Yes.
+So, fix the call sites!
+
+> To be honest, I do not feel experienced enough to decide
+> about the preferred behavior. On one hand, it is bad when
+> printk() would crash the kernel. On the other hand, hiding wide
+> range of values under "(null)" string might confuse people.
+
+> Would it make sense to survive and write different strings for
+> difference intervals? For example?
+> 
+>     "(null)"     for ptr == 0
+>     "(null-16)"  for ptr > 0 && ptr <= 16
+>     "(null-pg)"  for prt > 16 && ptr <= PAGE_SIZE
+> 
+> In each case, this patch changes the behavior and it should
+> be documented in the commit message.
+
+Personally I strongly disagree with blowing code up in such places for
+little or none benefit.
+
 -- 
-2.11.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
