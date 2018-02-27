@@ -1,61 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751885AbeB0W7A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:59:00 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:42680 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeB0W66 (ORCPT
+        id S1751953AbeB0W7g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:59:36 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:45401 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751813AbeB0W7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:58:58 -0500
-X-Google-Smtp-Source: AH8x226aEGzP1YDOar946WVRxhz1STRAbQft/7WQX7gDV0DDdK+QqcWuo8IIbtzqzfywesvNjjWuUQ==
-Date: Tue, 27 Feb 2018 16:58:56 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/12] i2c: qup: proper error handling for i2c error in
- BAM mode
-Message-ID: <20180227225856.GG20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-7-git-send-email-absahu@codeaurora.org>
+        Tue, 27 Feb 2018 17:59:34 -0500
+X-Google-Smtp-Source: AG47ELu7qJrsLq9QGIaq9XnX9r8yYJTZJjYkve5jRaSHhnP0lJjHqhHPgyB+iQbEENELn7pSJYdnDlv7eao6lg2Tqco=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517644697-30806-7-git-send-email-absahu@codeaurora.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20180227224358.12672-2-danilokrummrich@dk-develop.de>
+References: <20180227224358.12672-1-danilokrummrich@dk-develop.de> <20180227224358.12672-2-danilokrummrich@dk-develop.de>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Feb 2018 14:59:33 -0800
+X-Google-Sender-Auth: qOjt6uQjPknF1zSKXzmSKbL6QeQ
+Message-ID: <CAGXu5jKpmw2qEqL7dnELS5h45pq9AZf=0nEXox52qEbP6pz4CA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs/sysctl: remove redundant link check in proc_sys_link_fill_cache()
+To: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 01:28:11PM +0530, Abhishek Sahu wrote:
+On Tue, Feb 27, 2018 at 2:43 PM, Danilo Krummrich
+<danilokrummrich@dk-develop.de> wrote:
+> proc_sys_link_fill_cache() does not need to check whether we're
+> called for a link - it's already done by scan().
+>
+> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+> ---
+>  fs/proc/proc_sysctl.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index a0b6c647835e..7e7d9facb842 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -707,17 +707,16 @@ static bool proc_sys_link_fill_cache(struct file *file,
+>                                     struct ctl_table *table)
+>  {
+>         bool ret = true;
+> +       int err = 0;
+>         head = sysctl_head_grab(head);
+>
+>         if (IS_ERR(head))
+>                 return false;
+>
+> -       if (S_ISLNK(table->mode)) {
+> -               /* It is not an error if we can not follow the link ignore it */
+> -               int err = sysctl_follow_link(&head, &table);
+> -               if (err)
+> -                       goto out;
+> -       }
+> +       /* It is not an error if we can not follow the link ignore it */
+> +       sysctl_follow_link(&head, &table);
 
-<snip>
+Shouldn't this be err = sysctl_follow_link... ? Otherwise I don't see
+where err is used.
 
-> @@ -841,20 +856,12 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->  			goto desc_err;
->  		}
->  
-> -		if (rx_buf)
-> -			writel(QUP_BAM_INPUT_EOT,
-> -			       qup->base + QUP_OUT_FIFO_BASE);
-> -
-> -		writel(QUP_BAM_FLUSH_STOP, qup->base + QUP_OUT_FIFO_BASE);
-> -
->  		qup_i2c_flush(qup);
->  
->  		/* wait for remaining interrupts to occur */
->  		if (!wait_for_completion_timeout(&qup->xfer, HZ))
->  			dev_err(qup->dev, "flush timed out\n");
->  
-> -		qup_i2c_rel_dma(qup);
-> -
+-Kees
 
-So this really only works due to the previous patch that adds the flush/eot tags
-to all of the read messages.  If the answer to the previous question is that
-only the last read message gets the eot/flush, then this code needs to remain in
-place.  Otherwise, it's fine.
+> +       if (err)
+> +               goto out;
+>
+>         ret = proc_sys_fill_cache(file, ctx, head, table);
+>  out:
+> --
+> 2.14.1
+>
 
 
-Andy
+
+-- 
+Kees Cook
+Pixel Security
