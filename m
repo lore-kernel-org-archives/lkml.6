@@ -1,50 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752769AbeB0LBS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 06:01:18 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34645 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbeB0LBQ (ORCPT
+        id S1752841AbeB0LDa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 06:03:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45172 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752692AbeB0LD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 06:01:16 -0500
-X-Google-Smtp-Source: AG47ELvEOnCCOx2RRIgJIWDDBE3577BdPDThzizHalLKDzvedRa0yRE6OdDLvFFCt1sWudhjy6mdvw==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        jassisinghbrar@gmail.com, andy.shevchenko@gmail.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v3 0/2] add support for Socionext SynQuacer I2C controller
-Date: Tue, 27 Feb 2018 11:01:05 +0000
-Message-Id: <20180227110107.30259-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.11.0
+        Tue, 27 Feb 2018 06:03:28 -0500
+Date: Tue, 27 Feb 2018 11:03:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 2/5] ASoC: codec: cpcap: new codec
+Message-ID: <20180227110315.GB11822@sirena.org.uk>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+ <20180223200254.25685-3-sebastian.reichel@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
+In-Reply-To: <20180223200254.25685-3-sebastian.reichel@collabora.co.uk>
+X-Cookie: I owe, I owe,
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
-SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
 
-v3:
-- incorporate more of Andy's review comments (#2), especially regarding the
-  bus speed and clock source handling for ACPI
-- patch #1 unchanged.
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-v2:
-- incorporate Andy's review comments (#2)
-- patch #1 unchanged.
+On Fri, Feb 23, 2018 at 09:02:51PM +0100, Sebastian Reichel wrote:
 
-Ard Biesheuvel (2):
-  dt-bindings: i2c: add binding for Socionext SynQuacer I2C
-  i2c: add support for Socionext SynQuacer I2C controller
+> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+> +	case SND_SOC_DAIFMT_I2S:
+> +		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS0);
+> +		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS1);
+> +		break;
+> +	default:
+> +		/* 01 - 4 slots network mode */
+> +		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS0);
+> +		val &= ~BIT(CPCAP_BIT_ST_DIG_AUD_FS1);
+> +		/* L on slot 1 */
+> +		val |= BIT(CPCAP_BIT_ST_L_TIMESLOT0);
+> +		break;
+> +	}
 
- Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
- drivers/i2c/busses/Kconfig                              |  10 +
- drivers/i2c/busses/Makefile                             |   1 +
- drivers/i2c/busses/i2c-synquacer.c                      | 787 ++++++++++++++++++++
- 4 files changed, 827 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
- create mode 100644 drivers/i2c/busses/i2c-synquacer.c
+The default case here is really one specific mode, it looks like it's
+either DSP_A or DSP_B.  Most likely DSP_A but you should check.
+Otherwise this looks good so I'll apply it, please send a followup patch
+fixing this to match only the specific mode that's actually supported.
 
--- 
-2.11.0
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqVOvIACgkQJNaLcl1U
+h9DYbwf7BcnQly6YhUxqDK9VVhh77y0p1LW+LHXuIKaGjAzvy7b2LIvkkgSwOvEM
+zvKR7VU+wC22mEBj8WVBeGv4/tVTziH8N4/8q5n2vrg+TKSkvsGdniiifw2080hA
+IV2fkLXQRyoZLuACBXSQzapwsFdI+UoRDERJ9HDuENitog1sddFMGgV+spzT/gZO
+LSkEpODQBp5MRvgFZY+kdplq+z1Mi1tDiZ2ZYFRsEtcStVr5zgwCE4gDw5tJxIxT
+01NWyKtlvDq6+OHdstA5qGuxTtFEY7Xccjezbyg4Yn1LWrrdsXXM7mLjTjnX7g04
+k3RpsBb5rjLLTJ0QSj4WxOFzrsdATQ==
+=YQU8
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
