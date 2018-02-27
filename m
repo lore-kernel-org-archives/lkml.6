@@ -1,128 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751723AbeB0BbE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:31:04 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45230 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbeB0BbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:31:02 -0500
-X-Google-Smtp-Source: AH8x224rYEQMs+sEqlQG4F1WlblYmV1aIPsoR3ZF0ZsUiN5DktPoNWBUyeAo+DAyHksZjiEZFb6oqA==
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v3] KVM: X86: Allow userspace to define the microcode
- version
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <1519694331-16368-1-git-send-email-wanpengli@tencent.com>
-Date: Mon, 26 Feb 2018 17:30:59 -0800
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Message-Id: <F68C9207-03D2-437F-981D-63FE9D5AA61A@gmail.com>
-References: <1519694331-16368-1-git-send-email-wanpengli@tencent.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        id S1751515AbeB0BnZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 20:43:25 -0500
+Received: from mga02.intel.com ([134.134.136.20]:25081 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeB0BnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 20:43:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
+   d="scan'208";a="20578500"
+Message-ID: <1519695367.58658.141.camel@intel.com>
+Subject: [PATCH] x86: devicetree: enable multiprocessing and interrupt
+ setting in DT
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+Date: Mon, 26 Feb 2018 17:36:07 -0800
+Organization: Intel Corporation
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R1VBM6010631
 
-Wanpeng Li <kernellwp@gmail.com> wrote:
+The x86-specific Device Tree implementation only supported single CPU,
+and IRQ allocation from DT parameters was broken in recent versions.
 
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Linux (among the others) has checks to make sure that certain features 
-> aren't enabled on a certain family/model/stepping if the microcode version 
-> isn't greater than or equal to a known good version.
-> 
-> By exposing the real microcode version, we're preventing buggy guests that
-> don't check that they are running virtualized (i.e., they should trust the
-> hypervisor) from disabling features that are effectively not buggy.
-> 
-> Suggested-by: Filippo Sironi <sironi@amazon.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v2 -> v3:
-> * remove the shifts
-> * add the MSR_IA32_UCODE_REV version to the "feature MSRs"
-> v1 -> v2:
-> * add MSR_IA32_UCODE_REV to emulated_msrs
-> 
-> arch/x86/include/asm/kvm_host.h |  1 +
-> arch/x86/kvm/x86.c              | 19 +++++++++++++++----
-> 2 files changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 938d453..6e13f2f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
-> 	u64 smi_count;
-> 	bool tpr_access_reporting;
-> 	u64 ia32_xss;
-> +	u32 microcode_version;
-> 
-> 	/*
-> 	 * Paging state of the vcpu
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index d4985a9..00af28e 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1058,6 +1058,7 @@ static unsigned num_emulated_msrs;
-> static u32 msr_based_features[] = {
-> 	MSR_IA32_ARCH_CAPABILITIES,
-> 	MSR_F10H_DECFG,
-> +	MSR_IA32_UCODE_REV,
-> };
-> 
-> static unsigned int num_msr_based_features;
-> @@ -1067,8 +1068,14 @@ static int do_get_msr_feature(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
-> 	struct kvm_msr_entry msr;
-> 
-> 	msr.index = index;
-> -	if (kvm_x86_ops->get_msr_feature(&msr))
-> -		return 1;
-> +	switch (msr.index) {
-> +	case MSR_IA32_UCODE_REV:
-> +		rdmsrl(msr.index, msr.data);
-> +		break;
-> +	default:
-> +		if (kvm_x86_ops->get_msr_feature(&msr))
-> +			return 1;
-> +	}
-> 
-> 	*data = msr.data;
-> 
-> @@ -2248,7 +2255,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> 
-> 	switch (msr) {
-> 	case MSR_AMD64_NB_CFG:
-> -	case MSR_IA32_UCODE_REV:
-> 	case MSR_IA32_UCODE_WRITE:
-> 	case MSR_VM_HSAVE_PA:
-> 	case MSR_AMD64_PATCH_LOADER:
-> @@ -2256,6 +2262,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> 	case MSR_AMD64_DC_CFG:
-> 		break;
-> 
-> +	case MSR_IA32_UCODE_REV:
-> +		if (msr_info->host_initiated)
-> +			vcpu->arch.microcode_version = data;
-> +		break;
-> 	case MSR_EFER:
-> 		return set_efer(vcpu, data);
-> 	case MSR_K7_HWCR:
-> @@ -2551,7 +2561,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> 		msr_info->data = 0;
-> 		break;
-> 	case MSR_IA32_UCODE_REV:
-> -		msr_info->data = 0x100000000ULL;
-> +		msr_info->data = (u64)vcpu->arch.microcode_version;
+This change enables multiprocessing and fixes broken IRQ allocation.
 
-I think that the shifts are missing here (the version should be on the high
-bits according to intel_get_microcode_revision() ).
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+---
+ arch/x86/kernel/devicetree.c | 41 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 34 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+index 25de5f6..f885eab 100644
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -130,6 +130,29 @@ static void __init dtb_setup_hpet(void)
+ #endif
+ }
+ 
++static void __init dtb_cpu_setup(void)
++{
++	struct device_node *dn;
++	struct resource r;
++	const void *prop;
++	int apic_id, version;
++	int ret;
++
++	version = GET_APIC_VERSION(apic_read(APIC_LVR));
++	for_each_node_by_type(dn, "cpu") {
++		prop = of_get_property(dn, "intel,apic-id", NULL);
++		if (prop) {
++			apic_id = be32_to_cpup(prop);
++		} else {
++			ret = of_address_to_resource(dn, 0, &r);
++			if (WARN_ON(ret))
++				continue;
++			apic_id = r.start;
++		}
++		generic_processor_info(apic_id, version);
++	}
++}
++
+ static void __init dtb_lapic_setup(void)
+ {
+ #ifdef CONFIG_X86_LOCAL_APIC
+@@ -153,8 +176,6 @@ static void __init dtb_lapic_setup(void)
+ 	smp_found_config = 1;
+ 	pic_mode = 1;
+ 	register_lapic_address(r.start);
+-	generic_processor_info(boot_cpu_physical_apicid,
+-			       GET_APIC_VERSION(apic_read(APIC_LVR)));
+ #endif
+ }
+ 
+@@ -194,19 +215,22 @@ static struct of_ioapic_type of_ioapic_type[] =
+ static int dt_irqdomain_alloc(struct irq_domain *domain, unsigned int virq,
+ 			      unsigned int nr_irqs, void *arg)
+ {
+-	struct of_phandle_args *irq_data = (void *)arg;
++	struct irq_fwspec *fwspec = (struct irq_fwspec *)arg;
+ 	struct of_ioapic_type *it;
+ 	struct irq_alloc_info tmp;
++	int type_index;
+ 
+-	if (WARN_ON(irq_data->args_count < 2))
++	if (WARN_ON(fwspec->param_count < 2))
+ 		return -EINVAL;
+-	if (irq_data->args[1] >= ARRAY_SIZE(of_ioapic_type))
++
++	type_index = fwspec->param[1];
++	if (type_index >= ARRAY_SIZE(of_ioapic_type))
+ 		return -EINVAL;
+ 
+-	it = &of_ioapic_type[irq_data->args[1]];
++	it = &of_ioapic_type[type_index];
+ 	ioapic_set_alloc_attr(&tmp, NUMA_NO_NODE, it->trigger, it->polarity);
+ 	tmp.ioapic_id = mpc_ioapic_id(mp_irqdomain_ioapic_idx(domain));
+-	tmp.ioapic_pin = irq_data->args[0];
++	tmp.ioapic_pin = fwspec->param[0];
+ 
+ 	return mp_irqdomain_alloc(domain, virq, nr_irqs, &tmp);
+ }
+@@ -256,6 +280,7 @@ static void __init dtb_ioapic_setup(void) {}
+ static void __init dtb_apic_setup(void)
+ {
+ 	dtb_lapic_setup();
++	dtb_cpu_setup();
+ 	dtb_ioapic_setup();
+ }
+ 
+@@ -278,6 +303,8 @@ static void __init x86_flattree_get_config(void)
+ 		map_len = size;
+ 	}
+ 
++	early_init_dt_verify(dt);
++
+ 	unflatten_and_copy_device_tree();
+ 	early_memunmap(dt, map_len);
+ }
+-- 
+2.7.4
