@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeB0RFA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 12:05:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47605 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752003AbeB0REp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 12:04:45 -0500
-Date: Tue, 27 Feb 2018 18:04:23 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
- Structure
-Message-ID: <20180227170423.GK26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-4-Yazen.Ghannam@amd.com>
- <20180227142531.GF26382@pd.tnic>
- <DM5PR12MB191637C1857C5D9499D08D66F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+        id S1752226AbeB0RFZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 12:05:25 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38748 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750938AbeB0RFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 12:05:24 -0500
+Date: Tue, 27 Feb 2018 17:05:19 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jonathan Toppins <jtoppins@redhat.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, Jonathan Masters <jcm@redhat.com>,
+        rafael.j.wysocki@intel.com, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, astone@redhat.com,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        andriy.shevchenko@linux.intel.com, Ingo Molnar <mingo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
+Message-ID: <20180227170518.56tvxkdh5fiochdd@lakrids.cambridge.arm.com>
+References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
+ <CACi5LpM9hn17o7i7R3GUjQYy=6DFtCFKSbDUN7A7MGBTuf7=xw@mail.gmail.com>
+ <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM5PR12MB191637C1857C5D9499D08D66F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 03:25:06PM +0000, Ghannam, Yazen wrote:
-> This is the same as the other CPER code.
+On Tue, Feb 27, 2018 at 09:44:09AM -0500, Jonathan Toppins wrote:
+> For arm64 DT is suppose to *not* be the preferred method, 
 
-Dude, turn on brain!
+This has never been the upstream position.
 
-So if it is in the other CPER code, we should copy it, no matter how
-dumb it is?!?
+DT has been the default since day one, and changing this would be a
+regression, as has been stated several times in the past.
 
-> Also, the spec allows platform-defined GUIDs. So we should always print this
-> even if the GUID is not defined by the spec.
+If *the system vendor* intends that the system only uses ACPI, they
+would not provide a DT.
 
-We need to have a way to map the GUID to a hw part. Dumb numbers mean shit
-because the error record is worthless.
+If *you* prefer to use ACPI, feel free to alter your kernel command
+line.
 
-> The Check Information will be decoded further in another patch.
-> 
-> I don't think there's much else to decode for the ID fields.
-
-Again, those numbers can't help decoding the error, no need to dump
-them. Or we find a way to make sense out of that info.
-
-> Other tables may have the same fields but the offsets are usually different.
-> So it may be more trouble than it's worth trying to unify the different tables.
-
-If the structs are the same, you can use generic functions for dumping -
-the offsets are meaningless then.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Thanks,
+Mark.
