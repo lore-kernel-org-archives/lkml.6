@@ -1,41 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeB0XRn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:17:43 -0500
-Received: from mail-it0-f49.google.com ([209.85.214.49]:37322 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeB0XRk (ORCPT
+        id S1751964AbeB0XT5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:19:57 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.100]:22974 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751779AbeB0XT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:17:40 -0500
-X-Google-Smtp-Source: AG47ELsuv4tF8nJoM46yFL57Ean+UVkMj4RYgTGo9quBYMG/XKW13+izlhwix5Gyep78x40cu/bRpQ==
-Date: Tue, 27 Feb 2018 17:17:39 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] i2c: qup: send NACK for last read sub transfers
-Message-ID: <20180227231739.GK20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-11-git-send-email-absahu@codeaurora.org>
+        Tue, 27 Feb 2018 18:19:56 -0500
+Date: Tue, 27 Feb 2018 17:19:52 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] PCI/ASPM: Change type of threshold_ns variable to u32
+Message-ID: <20180227231952.GA9001@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1517644697-30806-11-git-send-email-absahu@codeaurora.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.175.32
+X-Source-L: No
+X-Exim-ID: 1eqoXK-001Bxn-M1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.175.32]:55808
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 01:28:15PM +0530, Abhishek Sahu wrote:
-> According to I2c specification, “If a master-receiver sends a
-> repeated START condition, it sends a not-acknowledge (A) just
-> before the repeated START condition”. QUP v2 supports sending
-> of NACK without stop with QUP_TAG_V2_DATARD_NACK so added the
-> same.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+It seems that the expression threshold_us * 1000 will never exceed the
+32-bit limits [1]. So changing the type of threshold_ns from u64 to u32
+seems sensible [2].
 
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
+[1] https://marc.info/?l=linux-kernel&m=151855021100725&w=2
+[2] https://marc.info/?l=linux-kernel&m=151976318924615&w=2
+
+Addresses-Coverity-ID: 1462501
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ drivers/pci/pcie/aspm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 57feef2..8633fc4 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -322,7 +322,7 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
+ 
+ static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
+ {
+-	u64 threshold_ns = threshold_us * 1000;
++	u32 threshold_ns = threshold_us * 1000;
+ 
+ 	/* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
+ 	if (threshold_ns < 32) {
+-- 
+2.7.4
