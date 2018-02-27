@@ -1,58 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932167AbeB0Pre (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:47:34 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41584 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932096AbeB0Prc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:47:32 -0500
-X-Google-Smtp-Source: AG47ELv0wCe0hdkkkb9u1zGyHEPoUF2Z8hofEBdyjZleRgJMTXaJYRKwiJB5VqhDUoYqAnGB5KbRmsJr2bsWHye137E=
+        id S932198AbeB0PsH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:48:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58940 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932177AbeB0PsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 10:48:05 -0500
+Date: Tue, 27 Feb 2018 16:47:54 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] MIPS: mscc: add ocelot dtsi
+Message-ID: <20180227154754.GA15333@piout.net>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
+ <20180214165743.GD3986@saruman>
 MIME-Version: 1.0
-In-Reply-To: <45f0d934-c4cf-fdc7-d7ca-17373c01e733@siemens.com>
-References: <cover.1516601570.git.jan.kiszka@siemens.com> <5dcaec50bb59140c1cb63c35ce566ccc02188bcb.1516601570.git.jan.kiszka@siemens.com>
- <CAHp75Vd3AsdOayA0FSaug6L4K+Xx5pk=Eeh4F5mZQsKiV3RxwA@mail.gmail.com> <45f0d934-c4cf-fdc7-d7ca-17373c01e733@siemens.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 17:47:31 +0200
-Message-ID: <CAHp75VecYSVwFii3MCYSs0VyTF=d_mF1cbu4samLKN6=i2L13A@mail.gmail.com>
-Subject: Re: [PATCH 4/6] x86: Consolidate PCI_MMCONFIG configs
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214165743.GD3986@saruman>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 9:19 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2018-01-28 18:26, Andy Shevchenko wrote:
->> On Mon, Jan 22, 2018 at 8:12 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>
->>> Not sure if those two worked by design or just by chance so far. In any
->>> case, it's at least cleaner and clearer to express this in a single
->>> config statement.
->>
->> Congrats! You found by the way a bug in
->>
->> commit e279b6c1d329e50b766bce96aacc197eae8a053b
->> Author: Sam Ravnborg <sam@ravnborg.org>
->> Date:   Tue Nov 6 20:41:05 2007 +0100
->>
->>    x86: start unification of arch/x86/Kconfig.*
->>
->> ...and proper fix seems to split PCI stuff to common + X86_32 only + X86_64 only
->>
->
-> Hmm, is that a change request on this patch?
+On 14/02/2018 at 16:57:43 +0000, James Hogan wrote:
+> On Tue, Jan 16, 2018 at 11:12:37AM +0100, Alexandre Belloni wrote:
+> > Add a device tree include file for the Microsemi Ocelot SoC.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> 
+> May I suggest Cc'ing the DT folk on this patch.
+> 
 
->From my side it's a suggestion.
-Better wait for the answer from x86 maintainers.
+I can do that but I think that while they care about the bindings
+themselves, they usually don't review the device trees.
+
+So I wouldn't expect any review from Rob on such a patch, especially
+since he reviewed the bndings.
+
+> > diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
+> > new file mode 100644
+> > index 000000000000..f0a155a74e02
+> > --- /dev/null
+> > +++ b/arch/mips/boot/dts/mscc/Makefile
+> > @@ -0,0 +1,4 @@
+> > +obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> > +
+> > +# Force kbuild to make empty built-in.o if necessary
+> > +obj-				+= dummy.o
+> 
+> I don't think you need this since f7adc3124da0 ("kbuild: create
+> built-in.o automatically if parent directory wants it"). It was removed
+> from other places in bf070bb0e6c6 ("kbuild: remove all dummy assignments
+> to obj-").
+> 
+> Cheers
+> James
+
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
