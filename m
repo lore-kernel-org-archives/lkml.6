@@ -1,65 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752029AbeB0WpX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:45:23 -0500
-Received: from mga14.intel.com ([192.55.52.115]:22314 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751754AbeB0WpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:45:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,402,1515484800";
-   d="scan'208";a="31142962"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: David Miller <davem@davemloft.net>
-CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "MRustad@gmail.com" <MRustad@gmail.com>,
-        "alexander.duyck@gmail.com" <alexander.duyck@gmail.com>,
-        "mst@redhat.com" <mst@redhat.com>
-Subject: Re: [RFC PATCH V3] virtio_pci: Add SR-IOV support
-Thread-Topic: [RFC PATCH V3] virtio_pci: Add SR-IOV support
-Thread-Index: AQHTr+CjaZB1K0bLWEeVRRLgaujMr6O5X6SA
-Date: Tue, 27 Feb 2018 22:45:19 +0000
-Message-ID: <CABB6175-4FC3-4742-9C54-FCDEE3E5A608@intel.com>
-References: <20180226031911.18980.80488.stgit@mdrustad-mac04.local>
- <20180227.103502.2160088807348773566.davem@davemloft.net>
-In-Reply-To: <20180227.103502.2160088807348773566.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.81.61]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AB59E9BAE7B06A408C67D7E856C619DF@intel.com>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1752015AbeB0WuE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:50:04 -0500
+Received: from hs01.dk-develop.de ([213.136.71.231]:41808 "EHLO
+        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbeB0WuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:50:02 -0500
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
+To: mcgrof@kernel.org, keescook@chromium.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Danilo Krummrich <danilokrummrich@dk-develop.de>
+Subject: [PATCH 2/2] fs/sysctl: remove redundant link check in proc_sys_link_fill_cache()
+Date: Tue, 27 Feb 2018 23:43:58 +0100
+Message-Id: <20180227224358.12672-2-danilokrummrich@dk-develop.de>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180227224358.12672-1-danilokrummrich@dk-develop.de>
+References: <20180227224358.12672-1-danilokrummrich@dk-develop.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Feb 27, 2018, at 7:35 AM, David Miller <davem@davemloft.net> wrote:
-> 
-> I don't like these helpers on many different levels.
+proc_sys_link_fill_cache() does not need to check whether we're
+called for a link - it's already done by scan().
 
-<snip much embarrassment>
+Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+---
+ fs/proc/proc_sysctl.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> So kill off pci_sriov_enable() helper completely, it is unnecessary,
-> and rename the disable helper so that it says something meaningful to
-> the reader.
-
-Yes. Once pointed out, I completely agree with your comments and wish that I had seen those things myself.
-
-> Thanks.
-
-V3 was junk, but your comments apply to V4 as well, so please ignore it.
-
-Thank you for your valuable review.
-
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index a0b6c647835e..7e7d9facb842 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -707,17 +707,16 @@ static bool proc_sys_link_fill_cache(struct file *file,
+ 				    struct ctl_table *table)
+ {
+ 	bool ret = true;
++	int err = 0;
+ 	head = sysctl_head_grab(head);
+ 
+ 	if (IS_ERR(head))
+ 		return false;
+ 
+-	if (S_ISLNK(table->mode)) {
+-		/* It is not an error if we can not follow the link ignore it */
+-		int err = sysctl_follow_link(&head, &table);
+-		if (err)
+-			goto out;
+-	}
++	/* It is not an error if we can not follow the link ignore it */
++	sysctl_follow_link(&head, &table);
++	if (err)
++		goto out;
+ 
+ 	ret = proc_sys_fill_cache(file, ctx, head, table);
+ out:
 -- 
-Mark Rustad, Networking Division, Intel Corporation
+2.14.1
