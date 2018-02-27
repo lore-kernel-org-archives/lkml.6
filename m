@@ -1,71 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeB0KUg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:20:36 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32804 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752090AbeB0KUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:20:35 -0500
-Date: Tue, 27 Feb 2018 10:20:30 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: kishon@ti.com, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 0/2] pci: endpoint: Fix double free in pci_epf_create()
-Message-ID: <20180227102030.GB26238@e107981-ln.cambridge.arm.com>
-References: <20180227100231.22561-1-embedded24@evers-fischer.de>
+        id S1752719AbeB0KWh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:22:37 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751752AbeB0KWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 05:22:35 -0500
+Subject: Re: [PATCH v4] KVM: X86: Allow userspace to define the microcode
+ version
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>, Nadav Amit <nadav.amit@gmail.com>
+References: <1519698910-4272-1-git-send-email-wanpengli@tencent.com>
+ <b6051971-04a5-09e7-d11f-3689369292fe@redhat.com>
+ <CANRm+CzvN5ypz=Y2moJQph36O5tpDbqzJtB2N_8Hm3guqWXYSg@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <c44a08d1-a532-879f-79dd-81c8ea175365@redhat.com>
+Date: Tue, 27 Feb 2018 11:22:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180227100231.22561-1-embedded24@evers-fischer.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CANRm+CzvN5ypz=Y2moJQph36O5tpDbqzJtB2N_8Hm3guqWXYSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 11:02:28AM +0100, Rolf Evers-Fischer wrote:
-> This is version 3 of a patchset to avoid double free in function
-> 'pci_epf_create()'.
+On 27/02/2018 10:26, Wanpeng Li wrote:
+> 2018-02-27 16:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
+>> On 27/02/2018 03:35, Wanpeng Li wrote:
+>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>
+>>> Linux (among the others) has checks to make sure that certain features
+>>> aren't enabled on a certain family/model/stepping if the microcode version
+>>> isn't greater than or equal to a known good version.
+>>>
+>>> By exposing the real microcode version, we're preventing buggy guests that
+>>> don't check that they are running virtualized (i.e., they should trust the
+>>> hypervisor) from disabling features that are effectively not buggy.
+>>>
+>>> Suggested-by: Filippo Sironi <sironi@amazon.de>
+>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>> Cc: Liran Alon <liran.alon@oracle.com>
+>>> Cc: Nadav Amit <nadav.amit@gmail.com>
+>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>>> ---
+>>> v3 -> v4:
+>>>  * add the shifts back
+>>
+>> Please wait for a review instead of pushing new versions continuously.
+>> Leaving the shifts means that MSR_IA32_UCODE_REV's bits 0-31 are zeroed
+>> even if KVM_SET_MSRS makes them nonzero.
 > 
-> When I accidentally created a new endpoint device with an empty name,
-> the kernel warned about "attempted to be registered with empty name!"
-> and crashed afterwards.
-> 
-> It turned out that the crash was not caused by the 'device_add()'
-> function itself, but by a double kfree of 'epf->name' and 'epf'.
-> 
-> The first patch just simplifies the code, while the second patch
-> fixes the problem.
-> 
-> Changes in v3:
-> - Matched to other pending pci endpoint commits (thanks, Bjorn!)
-> - Added "Fixes" tag in patch 2 (thanks, Andy!)
-> 
-> Changes in v2:
-> - Based on feedback from Lorenzo, Andy and Kishon (thanks!)
-> - Change IDs removed
-> - First patch completely reworked in order to eliminate the
->   need for the second 'kstrdup' allocation and the 'kfree' of
->   the first allocation.
->   It was tested with name="pci_epf_test.0" and name="pci_epb":
->   The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
-> 
-> Rolf Evers-Fischer (2):
->   pci: endpoint: Simplify name allocation for epf device
->   pci: endpoint: Fix kernel panic after put_device()
-    ^^^
+> How about something like this?
 
-s/pci/PCI
+Yes, that's okay.
 
-Bjorn pointed that out too, I can do it when merging the patches myself
-just a hint in case you have to respin it again, no problem.
-
-Thanks,
-Lorenzo
-
->  drivers/pci/endpoint/pci-epf-core.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.16.2
-> 
+Paolo
