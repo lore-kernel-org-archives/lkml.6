@@ -1,70 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeB0QNM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:13:12 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:57730 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbeB0QNI (ORCPT
+        id S1752503AbeB0QNT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:13:19 -0500
+Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:55032 "EHLO
+        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752281AbeB0QNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:13:08 -0500
-Date: Tue, 27 Feb 2018 11:13:06 -0500 (EST)
-Message-Id: <20180227.111306.790069240486489244.davem@davemloft.net>
-To: antoine.tenart@bootlin.com
-Cc: ymarkman@marvell.com, mw@semihalf.com, stefanc@marvell.com,
-        thomas.petazzoni@free-electrons.com,
-        gregory.clement@free-electrons.com, miquel.raynal@free-electrons.com,
-        nadavh@marvell.com, maxime.chevallier@bootlin.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] net: mvpp2: adjust gso stop wake
- thresholds
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180226141427.31536-2-antoine.tenart@bootlin.com>
-References: <20180226141427.31536-1-antoine.tenart@bootlin.com>
-        <20180226141427.31536-2-antoine.tenart@bootlin.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Feb 2018 11:13:14 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HVAADVgpVah2Oa6EReGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQmEHAoCoNKmCGCAoEWhyGNCYFTQgolhQ0CGoIyVhYBAgEBAQE?=
+ =?us-ascii?q?BAQIBAhABAQEKCwkIKC+COCINBEsqLwEBAQEBAQEBAQEBAQEBARoCDV0BAQEBA?=
+ =?us-ascii?q?yMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCBA4FCIR1AxUQqzKCJ4czDYEwghQ?=
+ =?us-ascii?q?BAQEBAQEBAQEBAQEBAQEBAQEBAQEYBYEPhjuDPYMtgmpEAgKBdhAjEoJBgmIFm?=
+ =?us-ascii?q?h4wCYZQhmiDMI59iXo5hx2BLiUEgX9wgxKCQxAMFoFld4s7gRcBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2HVAADVgpVah2Oa6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?mEHAoCoNKmCGCAoEWhyGNCYFTQgolhQ0CGoIyVhYBAgEBAQEBAQIBAhABAQEKC?=
+ =?us-ascii?q?wkIKC+COCINBEsqLwEBAQEBAQEBAQEBAQEBARoCDV0BAQEBAyMRRQwEAgEIEQQ?=
+ =?us-ascii?q?BAQECAiMDAgICHyUBCAgCBA4FCIR1AxUQqzKCJ4czDYEwghQBAQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQEBAQEBAQEYBYEPhjuDPYMtgmpEAgKBdhAjEoJBgmIFmh4wCYZQhmiDMI5?=
+ =?us-ascii?q?9iXo5hx2BLiUEgX9wgxKCQxAMFoFld4s7gRcBAQE?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.198
+X-IronPort-AV: E=Sophos;i="5.47,401,1515477600";
+   d="scan'208";a="1221590566"
+X-DLP: DLP_GlobalPCIDSS
+To: <andy.shevchenko@gmail.com>
+CC: <dvhart@infradead.org>, <pali.rohar@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
+Subject: RE: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+Thread-Topic: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+Thread-Index: AQHTr+VUitA7yqQUn0mRpGoyYCsa26O4avDg
+Date: Tue, 27 Feb 2018 16:13:11 +0000
+Message-ID: <92c22f39a7df439a9e18cb975eec086e@ausx13mpc124.AMER.DELL.COM>
+References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com>
+ <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
+ <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com>
+In-Reply-To: <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RGDQcW032630
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-Date: Mon, 26 Feb 2018 15:14:26 +0100
-
-> From: Yan Markman <ymarkman@marvell.com>
+> -----Original Message-----
+> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
+> Sent: Tuesday, February 27, 2018 10:09 AM
+> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
+> Cc: Darren Hart <dvhart@infradead.org>; Pali Rohár <pali.rohar@gmail.com>;
+> LKML <linux-kernel@vger.kernel.org>; Platform Driver <platform-driver-
+> x86@vger.kernel.org>
+> Subject: Re: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-* modules
+> together
 > 
-> Adjust MVPP2_MAX_TSO_SEGS and stop_threshold/wake_threshold
-> for better TXQ utilization and performance.
+> On Tue, Feb 27, 2018 at 5:56 PM, Mario Limonciello
+> <mario.limonciello@dell.com> wrote:
+> > Some race conditions were raised due to dell-smbios and its backends
+> > not being ready by the time that a consumer would call one of the
+> > exported methods.
+> >
+> > To avoid this problem, guarantee that all initialization has been
+> > done by linking them all together and running init for them all.
+> >
+> > As part of this change the Kconfig needs to be adjusted so that
+> > CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+> > rather than modules.
+> >
+> > CONFIG_DELL_SMBIOS is a visually selectable option again and both
+> > CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
 > 
-> Signed-off-by: Yan Markman <ymarkman@marvell.com>
-> ---
->  drivers/net/ethernet/marvell/mvpp2.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-> index 55300b1fe6c0..1a893ef70eab 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2.c
-> @@ -498,7 +498,7 @@
->   * skb. As we need a maxium of two descriptors per fragments (1 header, 1 data),
->   * multiply this value by two to count the maximum number of skb descs needed.
->   */
-> -#define MVPP2_MAX_TSO_SEGS		300
-> +#define MVPP2_MAX_TSO_SEGS		100
->  #define MVPP2_MAX_SKB_DESCS		(MVPP2_MAX_TSO_SEGS * 2 + MAX_SKB_FRAGS)
->  
->  /* Dfault number of RXQs in use */
-> @@ -5810,7 +5810,7 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
->  		txq_pcpu->tso_headers = NULL;
->  
->  		txq_pcpu->stop_threshold = txq->size - MVPP2_MAX_SKB_DESCS;
-> -		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold / 2;
-> +		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold - 100;
->  
+> > --- a/drivers/platform/x86/dell-smbios-smm.c
+> > +++ b/drivers/platform/x86/dell-smbios-smm.c
+> 
+> > +#ifdef CONFIG_DELL_SMBIOS_SMM
+> 
+> > +#else /* CONFIG_DELL_SMBIOS_SMM */
+> > +int init_dell_smbios_smm(void)
+> > +{
+> > +       return -ENODEV;
+> > +}
+> 
+> > +void exit_dell_smbios_smm(void)
+> > +{}
+> > +#endif /* CONFIG_DELL_SMBIOS_SMM */
+> 
+> > --- a/drivers/platform/x86/dell-smbios-wmi.c
+> > +++ b/drivers/platform/x86/dell-smbios-wmi.c
+> 
+> > +#ifdef CONFIG_DELL_SMBIOS_WMI
+> 
+> > +#else /* CONFIG_DELL_SMBIOS_WMI */
+> > +int init_dell_smbios_wmi(void)
+> > +{
+> > +       return -ENODEV;
+> > +}
+> > +
+> > +void exit_dell_smbios_wmi(void)
+> > +{}
+> > +#endif /* CONFIG_DELL_SMBIOS_WMI */
+> 
+> It's rather strange to see above in *.c and not in *.h where it's
+> usually supposed to be...
 
-This number 100 is a magic constant.  If it is related to
-MVPP2_MAX_TSO_SEGS, please use that define.  Otherwise
-define a new one which is descriptive.
+Thanks that was my original thought too, but I was following
+the style that I had seen in drivers/input/mouse which is 
+used for psmouse/synaptics.
+Eg: https://github.com/torvalds/linux/blob/master/drivers/input/mouse/synaptics.c#L1692
 
-Thank you.
+> 
+> > --- a/drivers/platform/x86/dell-smbios.h
+> > +++ b/drivers/platform/x86/dell-smbios.h
+> > @@ -75,4 +75,10 @@ int dell_laptop_register_notifier(struct notifier_block
+> *nb);
+> >  int dell_laptop_unregister_notifier(struct notifier_block *nb);
+> >  void dell_laptop_call_notifier(unsigned long action, void *data);
+> >
+> > +/* for the supported backends */
+> > +int init_dell_smbios_wmi(void);
+> > +void exit_dell_smbios_wmi(void);
+> > +int init_dell_smbios_smm(void);
+> > +void exit_dell_smbios_smm(void);
+> > +
+> 
+> ...here...
+
+So do you mean you would rather see inline functions in header
+file for the #else case then?
