@@ -1,50 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752184AbeB0IQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:16:26 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:31275 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751952AbeB0IQZ (ORCPT
+        id S1752481AbeB0IVs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:21:48 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37445 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752069AbeB0IVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:16:25 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37290301"
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-To: <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <michal.lkml@markovi.net>, <yamada.masahiro@socionext.com>
-Subject: [PATCH] kbuild/kallsyms: trivial typo fix
-Date: Tue, 27 Feb 2018 16:16:19 +0800
-Message-ID: <20180227081619.23935-1-caoj.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 27 Feb 2018 03:21:46 -0500
+Subject: Re: [PATCH 5/7] iio: adc: stm32-dfsdm: misc style improvements and
+ fixes
+To: Jonathan Cameron <jic23@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>,
+        <arnaud.pouliquen@st.com>
+References: <1519390261-25453-1-git-send-email-fabrice.gasnier@st.com>
+ <1519390261-25453-6-git-send-email-fabrice.gasnier@st.com>
+ <20180224130309.7129e79f@archlinux>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <62c19775-b013-a721-6f14-a8af88984b4b@st.com>
+Date: Tue, 27 Feb 2018 09:21:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: 2E26D48AE766.AC7BB
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+In-Reply-To: <20180224130309.7129e79f@archlinux>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
----
-I guess this belongs to kbuild though get_maintainer.pl doesn't tell me that.
+On 02/24/2018 02:03 PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2018 13:50:59 +0100
+> Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+> 
+>> Misc fixes & style improvements:
+>> - checkpatch warns about line over 80 characters.
+>> - remove extra spaces and a blank line (e.g. checkpatch --strict)
+>> - remove bad error message always printed in probe routine.
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> I'd have preferred this as 3 patches doing one type fo fix each.
 
- scripts/kallsyms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Jonathan,
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 9ee9bf7fd1a2..65792650c630 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -595,7 +595,7 @@ static void optimize_result(void)
- 		 * original char code */
- 		if (!best_table_len[i]) {
- 
--			/* find the token with the breates profit value */
-+			/* find the token with the best profit value */
- 			best = find_best_token();
- 			if (token_profit[best] == 0)
- 				break;
--- 
-2.14.3
+I was wondering about this as well. Do you wish I send a new series with
+this patch, split into (3 or maybe 4) separate patches ?
+
+In this case, do I need also resend two last patches of this series ?
+
+Please let me know.
+Many thanks,
+Fabrice
+> 
+> Anyhow, I'll need to hold this until the fixes have made there
+> way upstream.  Give me a poke if I seem to have forgotten
+> and the dependencies have made it back to my togreg branch.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+>> ---
+>>  drivers/iio/adc/stm32-dfsdm-adc.c | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+>> index 01422d1..57bcb45 100644
+>> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+>> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+>> @@ -253,7 +253,8 @@ static int stm32_dfsdm_start_filter(struct stm32_dfsdm *dfsdm,
+>>  				  DFSDM_CR1_RSWSTART(1));
+>>  }
+>>  
+>> -static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm, unsigned int fl_id)
+>> +static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm,
+>> +				    unsigned int fl_id)
+>>  {
+>>  	/* Disable conversion */
+>>  	regmap_update_bits(dfsdm->regmap, DFSDM_CR1(fl_id),
+>> @@ -337,7 +338,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>>  					    "st,adc-channel-types", chan_idx,
+>>  					    &of_str);
+>>  	if (!ret) {
+>> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+>> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+>>  		if (val < 0)
+>>  			return val;
+>>  	} else {
+>> @@ -349,7 +350,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>>  					    "st,adc-channel-clk-src", chan_idx,
+>>  					    &of_str);
+>>  	if (!ret) {
+>> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+>> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+>>  		if (val < 0)
+>>  			return val;
+>>  	} else {
+>> @@ -1093,7 +1094,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+>>  	char *name;
+>>  	int ret, irq, val;
+>>  
+>> -
+>>  	dev_data = of_device_get_match_data(dev);
+>>  	iio = devm_iio_device_alloc(dev, sizeof(*adc));
+>>  	if (!iio) {
+>> @@ -1161,7 +1161,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+>>  	if (ret < 0)
+>>  		goto err_cleanup;
+>>  
+>> -	dev_err(dev, "of_platform_populate\n");
+>>  	if (dev_data->type == DFSDM_AUDIO) {
+>>  		ret = of_platform_populate(np, NULL, NULL, dev);
+>>  		if (ret < 0) {
+> 
