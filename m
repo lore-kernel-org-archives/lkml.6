@@ -1,87 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753538AbeB0O24 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:28:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43050 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752573AbeB0O2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:28:54 -0500
-Reply-To: jtoppins@redhat.com
-Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: prarit@redhat.com, Jon Masters <jcm@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        astone@redhat.com, James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
- <CAKv+Gu9FVD18v6WA8MMG5LFX9GPObq_79hFuYv6j+S98a5Ej6w@mail.gmail.com>
-From: Jonathan Toppins <jtoppins@redhat.com>
-Organization: Red Hat
-Message-ID: <1454e833-e3b9-780b-c5db-a6f73e799352@redhat.com>
-Date: Tue, 27 Feb 2018 09:28:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9FVD18v6WA8MMG5LFX9GPObq_79hFuYv6j+S98a5Ej6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753549AbeB0O34 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:29:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752331AbeB0O3x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:29:53 -0500
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Subject: [PATCH v2 00/15] s390: vfio-ap: guest dedicated crypto adapters
+Date: Tue, 27 Feb 2018 09:27:58 -0500
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18022714-0004-0000-0000-000013B9CD5B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00995861; UDB=6.00506230; IPR=6.00775185;
+ MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022714-0005-0000-0000-000086426EE0
+Message-Id: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802270183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 02:22 AM, Ard Biesheuvel wrote:
-> Hi Jonathan,
-> 
-> On 27 February 2018 at 06:05, Jonathan Toppins <jtoppins@redhat.com> wrote:
->> This patch allows a user to configure ACPI to be preferred over
->> device-tree.
->>
-> 
-> This comes up once a year or so, and the consensus has been so far
-> that it is not up to the kernel to reason about whether DT or ACPI
-> should be preferred if both are supplied, Instead, it is up to the
-> firmware to ensure that only one of those is provided, and we added a
-> generic driver to EDK2 that implements this.
+On s390, we have cryptographic coprocessor cards, which are modeled on
+Linux as devices on the AP bus. Each card can be partitioned into domains
+which can be thought of as a set of hardware registers for processing 
+crypto commands. Crypto commands are sent to a specific domain within a
+card is via a queue which is identified as a (card,domain) tuple. We model 
+this something like the following (assuming we have access to cards 3 and 
+4 and domains 1 and 2):
 
-I am assuming EDK2 is some sort of firmware code base, not that I have
-ever heard of it before. This logic compared with the implementation in
-the kernel seems divergent. The kernel is clearly making a choice about
-which boot table (DT vs ACPI) to configure with. So to claim it is not
-the kernel's job to reason about which to use is clearly incorrect. The
-only thing this patch is doing is making it easier for distributions to
-configure which preference the kernel has.
+AP -> card3 -> queue (3,1)
+            -> queue (3,2)
+   -> card4 -> queue (4,1)
+            -> queue (4,2)
 
-> 
->> Currently for ACPI to be used a user either has to set acpi=on on the
->> kernel command line or make sure any device tree passed to the kernel
->> is empty. If the dtb passed to the kernel is non-empty then device-tree
->> will be chosen as the boot method of choice even if it is not correct.
-> 
-> Your firmware is terminally broken if it provides an incorrect DT, and
-> we should not be fixing it in the kernel.
+If we want to virtualize this, we can use a feature provided by the
+hardware. We basically attach a satellite control block to our main
+hardware virtualization control block and the hardware takes care of
+most of the rest.
 
-This logic would seem akin to me asking Bjorn to remove all PCI quirks
-from the kernel, because the systems that use them are "terminally
-broken" or "don't follow the standard". This doesn't seem like a valid
-reason to deny a change that would allow the kernel to boot on more
-hardware. Further it seems rather rigid to effectively say that we only
-run on perfect firmware.
+For this control block, we don't specify explicit tuples, but a list of
+cards and a list of domains. The guest will get access to the cross
+product.
 
-> 
->> To prevent this situation where a system is only intended to be booted
->> via ACPI a user can set this kernel configuration so it ignores
->> device-tree settings unless ACPI table checks fail.
->>
-> 
-> 'only intended to be booted via ACPI' is a property of the system, not
-> of the OS. If you need this functionality for development, you can
-> append 'acpi=on' to the kernel command line via kconfig.
+Because of this, we need to take care that the lists provided to
+different guests don't overlap; i.e., we need to enforce sane
+configurations. Otherwise, one guest may get access to things like
+secret keys for another guest.
 
-This is not for development this is for production rate shipping firmware.
+The idea of this patch set is to introduce a new device, the matrix
+device. This matrix device hangs off a different root and acts as the
+parent node for mdev devices.
+
+If you now want to give the tuples (4,1) and (4,2), you need to do the
+following:
+
+- Unbind the (4,1) and (4,2) tuples from their ap bus driver.
+- Bind the (4,1) and (4,2) tuples to the vfio_ap driver.
+- Create the mediated device.
+- Assign card 4 and domains 1 and 2 to the mediated device
+
+QEMU will now simply consume the mediated device and things should work.
+
+For a complete description of the architecture and concepts underlying the 
+design, see the Documentation/s390/vfio-ap.txt file included with this
+patch set.
+
+v1 => v2 Change log:
+===================
+* Added documentation vfio-ap.txt
+* Renamed vfio_ap_matrix module and device driver to vfio_ap
+* Use device core device list instead of maintaining list of matrix
+  devices in driver
+* Added VSIE support for AP
+* Create matrix device before registering VFIO AP device driver with the
+  AP bus
+* Renamed the following files in drivers/s390/crypto:
+  * vfio_ap_matrix.drv -> vfio_ap_drv
+  * vfio_ap_matrix_private.h -> vfio_ap_private.h
+  * vfio_ap_matrix_ops.c -> vfio_ap_ops.c
+* arch/s390/include/asm/kvm/ap-matrix-config.h
+  * Renamed to kvm-ap.h
+  * Changed the data type of the bit mask fields for the matrix structure
+    to unsigned long and create them with DECLARE_BITMAP 
+  * Changed #define prefixes from AP_MATRIX to KVM_AP
+  * Changed function and structure prefixes from ap_matrix to kvm_ap
+  * Added function interface to check if AP Extended Addressing (APXA)
+    facility is installedCRYCB_FORMAT_MASK
+  * Added function interface to get the maximum ID for AP mask type
+  * Added function interface to set the AP execution mode
+* arch/s390/kvm/ap-matrix-config.c
+  * Renamed to kvm-ap.c
+  * Changed function prefixes from ap_matrix to kvm_ap
+  * Added function to check if AP Extended Addressing (APXA) facility is
+    installed
+  * Added function to get the maximum ID for AP mask type
+  * Added function to set the AP execution mode
+  * Added a boolean parameter to the functions that retrieve the APM, AQM
+    and ADM bit mask fields from the CRYCB. If true, then the function
+    will clear the bits in the mask before returning a reference to it
+  * Added validation to verify that APM, AQM and ADM bits that are set do
+    not exceed the maximum ID value allowed
+  * 
+* arch/s390/include/asm/kvm_host.h
+  * Changed defined for ECA_AP to ECA_APIE - interpretive execution mode
+  * Added a flag to struct kvm_s390_crypto to indicate whether the 
+    KVM_S390_VM_CPU_FEAT_AP CPU model feature for AP facilities is set
+  * Added two CPU facilities features to set STFLE.12 and STFLE.15
+* arch/s390/kvm/kvm-s390.c
+  * Added initialization for new KVM_S390_VM_CPU_FEAT_AP CPU model feature
+  * Removed kvm_s390_apxa_installed() function
+  * Changed call to kvm_s390_apxa_installed() which has been removed to a
+    call to new kvm_ap_apxa_installed() function.
+  * Added code to kvm_s390_vcpu_crypto_setup() to set the new CPU model 
+    feature flag in the kvm_s390_crypto structure 
+  * Added CRYCB_FORMAT_MASK to mask CRYCBD
+* arch/s390/tools/gen_facilities.c
+  * Added STFLE.12 and STFLE.15 to struct facility _def
+* drivers/s390/crypto/vfio_ap_matrix_private.h
+  * Changed name of file to vfio_ap.private.h
+  * Changed #define prefixes from VFIO_AP_MATRIX to VFIO_AP
+  * struct ap_matrix: removed list fields and locks
+  * struct vfio_ap_queue: removed list field
+  * Renamed functions ap_matrix_mdev_register and ap_matrix_mdev_unregister
+    to vfio_ap_mdev_register and vfio_ap_mdev_unregister respectively
+* drivers/s390/crypto/vfio_ap_matrix_drv.c
+  * Renamed file to drivers/s390/crypto/vfio_ap_drv.c
+  * Changed all #define, structure and function prefixes to vfio_ap
+  * probe function
+    * Changed root device name for the matrix device to vfio_ap:
+      i.e., /sys/devices/vfio_ap/matrix
+    * No longer storing the AP queue device in a list, it is retrievable 
+      via the device core
+    * Removed unnecessary check whether matrix device exists
+    * Store the vfio_ap_queue structure in the private field of the 
+      ap_queue structure rather than using list interface
+  * remove function
+    * Retrieve vfio_ap_queue structure from the struct ap_queue private 
+      data rather than from a list
+  * Removed unnecessary check 
+* drivers/s390/crypto/vfio_ap_matrix_ops.c
+  * Renamed file to vfio_ap_ops.c
+  * Changed #define prefixes from AP_MATRIX to VFIO_AP
+  * Changed function name prefixes from ap_matrix to vfio_ap
+  * Removed ioctl to configure the CRYCB
+  * create function
+    * Removed ap_matrix_mdev_find_by_uuid() function - function is provided
+      by mdev core
+    * Removed available_instances verification, provided by mdev core
+    * Removed check to see if mediated device exists, handled by mdev core
+  * notifier function
+    * Configuring matrix here instead of via ioctl
+    * Set interpretive execution mode for all VCPUs
+   * Removed R/O attributes to display adapters and domains
+   * Added an R/O attribute to display the matrix
+  * assign_control_domain mdev attribute:
+    * Removed check to see if the domain is installed on the linux host
+    * Added check to verify the control domain ID does not exceed the max 
+      value
+  * assign_adapter mdev attribute:
+    * Added check to verify the adapter ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APID matching the adapter ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN 
+      is bound to another driver and assignment will fail
+  * assign_domain mdev attribute:
+    * Added check to verify the domain ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APQI matching the domain ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN 
+      is bound to another driver and assignment will fail
+* tools/arch/s390/include/uapi/asm/kvm.h
+  * removed  KVM_S390_VM_CPU_FEAT_AP feature definition
+
+Tony Krowiak (15):
+  KVM: s390: refactor crypto initialization
+  s390: vsie: implement AP support for second level guest
+  s390: zcrypt: externalize AP instructions available function
+  KVM: s390: CPU model support for AP virtualization
+  s390: vfio-ap: base implementation of VFIO AP device driver
+  s390: vfio-ap: register matrix device with VFIO mdev framework
+  KVM: s390: Interfaces to configure/deconfigure guest's AP matrix
+  KVM: s390: interface to enable AP execution mode
+  s390: vfio-ap: sysfs interfaces to configure adapters
+  s390: vfio-ap: sysfs interfaces to configure domains
+  s390: vfio-ap: sysfs interfaces to configure control domains
+  s390: vfio-ap: sysfs interface to view matrix mdev matrix
+  KVM: s390: Configure the guest's CRYCB
+  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+  s390: doc: detailed specifications for AP virtualization
+
+ Documentation/s390/vfio-ap.txt          |  514 ++++++++++++++++++
+ MAINTAINERS                             |   14 +
+ arch/s390/Kconfig                       |    8 +
+ arch/s390/configs/default_defconfig     |    3 +
+ arch/s390/configs/gcov_defconfig        |    3 +
+ arch/s390/configs/performance_defconfig |    3 +
+ arch/s390/defconfig                     |    3 +
+ arch/s390/include/asm/ap.h              |    7 +
+ arch/s390/include/asm/kvm-ap.h          |   59 +++
+ arch/s390/include/asm/kvm_host.h        |    2 +
+ arch/s390/include/uapi/asm/kvm.h        |    1 +
+ arch/s390/kvm/Makefile                  |    2 +-
+ arch/s390/kvm/kvm-ap.c                  |  336 ++++++++++++
+ arch/s390/kvm/kvm-s390.c                |   66 +--
+ arch/s390/kvm/kvm-s390.h                |    1 +
+ arch/s390/kvm/vsie.c                    |   71 +++-
+ arch/s390/tools/gen_facilities.c        |    2 +
+ drivers/s390/crypto/Makefile            |    4 +
+ drivers/s390/crypto/ap_bus.c            |    6 +
+ drivers/s390/crypto/vfio_ap_drv.c       |  143 +++++
+ drivers/s390/crypto/vfio_ap_ops.c       |  868 +++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h   |   45 ++
+ include/uapi/linux/vfio.h               |    2 +
+ 23 files changed, 2096 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
+ create mode 100644 arch/s390/include/asm/kvm-ap.h
+ create mode 100644 arch/s390/kvm/kvm-ap.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
