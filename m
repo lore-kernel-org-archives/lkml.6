@@ -1,724 +1,294 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeB0TuJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 14:50:09 -0500
-Received: from mail-it0-f48.google.com ([209.85.214.48]:38360 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeB0TuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 14:50:07 -0500
-X-Google-Smtp-Source: AH8x225VT4TP5J9i2a+Zs0+c7aebnnWOD4NVAyg7uF2Ucjljm2cwIN1P72c0yivIrj4FpTz4sSBftw==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <5AE7F4CA-DBDF-4A67-A04F-4760D8E729B5@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_D6526EAC-F639-46AF-B84B-BA6806B24E5D";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 17/19] lightnvm: pblk: implement get log report chunk
-Date: Tue, 27 Feb 2018 20:50:00 +0100
-In-Reply-To: <1883698b-8812-6c7a-cd59-dd24bde49f54@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1519651038-16845-1-git-send-email-javier@cnexlabs.com>
- <1519651038-16845-18-git-send-email-javier@cnexlabs.com>
- <7f82b801-acee-dc07-7604-e0c1c726516e@lightnvm.io>
- <FD411B5E-2A53-4FEE-B568-ABD8876FA38D@javigon.com>
- <1883698b-8812-6c7a-cd59-dd24bde49f54@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1751940AbeB0TwT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 14:52:19 -0500
+Received: from mga07.intel.com ([134.134.136.100]:57022 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751716AbeB0TwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 14:52:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,402,1515484800";
+   d="scan'208";a="20636805"
+Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
+ pseudo-locking core
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+ <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
+ <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
+ <alpine.DEB.2.21.1802271109300.1886@nanos.tec.linutronix.de>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <69ed85f2-b9c5-30d1-8437-45f20be3e95e@intel.com>
+Date: Tue, 27 Feb 2018 11:52:15 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1802271109300.1886@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Thomas,
 
---Apple-Mail=_D6526EAC-F639-46AF-B84B-BA6806B24E5D
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+On 2/27/2018 2:36 AM, Thomas Gleixner wrote:
+> On Mon, 26 Feb 2018, Reinette Chatre wrote:
+>> A change to start us off with could be to initialize the schemata with
+>> all the shareable and unused bits set for all domains when a new
+>> resource group is created.
+> 
+> The new resource group initialization is the least of my worries. The
+> current mode is to use the default group setting, right?
 
+No. When a new group is created a closid is assigned to it. The schemata
+it is initialized with is the schemata the previous group with the same
+closid had. At the beginning, yes, it is the default, but later you get
+something like this:
 
-> On 27 Feb 2018, at 19.46, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 02/27/2018 03:40 PM, Javier Gonz=C3=A1lez wrote:
->>> On 26 Feb 2018, at 20.04, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
-> <snip>
->>> Can you help me understand why you want to use The
->>> NVM_CHK_ST_HOST_USE? Why would I care if the chunk state is =
-HOST_USE?
->>> A target instance should not be able to see states from other chunks
->>> it doesn't own. and in that case, why have a separate state?
->> The motivation for this state is that pblk does not maintain a per
->> block/chunk state. On the first disk pass however, the state of the
->> chunks is unknown,
->=20
-> I don't understand this. Why is the state unknown? If assuming 1.2
-> drive, one can do a scan of first page of each block. If the block
-> returns success (it is in use), if 0x42ff, the block is empty, and if
-> reading and it returns 0x4281, it is open.
->=20
-> thus we need to check for each one individually;
+# mkdir asd
+# cat asd/schemata
+L2:0=ff;1=ff
+# echo 'L2:0=0xf;1=0xfc' > asd/schemata
+# cat asd/schemata
+L2:0=0f;1=fc
+# rmdir asd
+# mkdir qwe
+# cat qwe/schemata
+L2:0=0f;1=fc
 
-Yes, we could do this on init - this is actually how we do recovery
-after all..
+The reason why I suggested this initialization is to have the defaults
+work on resource group creation. I assume a new resource group would be
+created with "shareable" mode so its schemata should not overlap with
+any "exclusive" or "locked". Since the bitmasks used by the previous
+group with this closid may not be shareable I considered it safer to
+initialize with "shareable" mode with known shareable/unused bitmasks. A
+potential issue with this idea is that the creation of a group may now
+result in the programming of the hardware with settings these defaults.
 
->> after that, we know that good chunks need to be erased. Having this
->> extra chunk state, frees us from maintaining this unnecessary =
-intra-line
->> state. Also, at the point I wrote this code, we did not have the =
-report
->> chunk on the erase path, so updating the chunk metadata would be
->> something periodic.
->> I have taken a look at this again and I solved it in a different way =
--
->> basically, only maintaining free/closed states, which is not much =
-more
->> expensive. It is included in the next version.
->>>> +		}
->>>> +
->>>> +		WARN_ONCE(state & NVM_CHK_ST_OPEN,
->>>> +				"pblk: open chunk in new line: %d\n",
->>>> +				line->id);
->>>> +	}
->>>> +
->>>> +	return blk_to_erase;
->>>> +}
->>>> +
->>>>  static int pblk_line_prepare(struct pblk *pblk, struct pblk_line =
-*line)
->>>>  {
->>>>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> -	int blk_in_line =3D atomic_read(&line->blk_in_line);
->>>> +	int blk_to_erase;
->>>>    	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, =
-GFP_ATOMIC);
->>>>  	if (!line->map_bitmap)
->>>> @@ -1110,7 +1184,21 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>>>  		return -ENOMEM;
->>>>  	}
->>>>  +	/* Bad blocks do not need to be erased */
->>>> +	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
-lm->blk_per_line);
->>>> +
->>>>  	spin_lock(&line->lock);
->>>> +
->>>> +	/* If we have not written to this line, we need to mark up free =
-chunks
->>>> +	 * as already erased
->>>> +	 */
->>>> +	if (line->state =3D=3D PBLK_LINESTATE_NEW) {
->>>> +		blk_to_erase =3D pblk_prepare_new_line(pblk, line);
->>>> +		line->state =3D PBLK_LINESTATE_FREE;
->>>> +	} else {
->>>> +		blk_to_erase =3D atomic_read(&line->blk_in_line);
->>>> +	}
->>>> +
->>>>  	if (line->state !=3D PBLK_LINESTATE_FREE) {
->>>>  		kfree(line->map_bitmap);
->>>>  		kfree(line->invalid_bitmap);
->>>> @@ -1122,15 +1210,12 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>>>    	line->state =3D PBLK_LINESTATE_OPEN;
->>>>  -	atomic_set(&line->left_eblks, blk_in_line);
->>>> -	atomic_set(&line->left_seblks, blk_in_line);
->>>> +	atomic_set(&line->left_eblks, blk_to_erase);
->>>> +	atomic_set(&line->left_seblks, blk_to_erase);
->>>>    	line->meta_distance =3D lm->meta_distance;
->>>>  	spin_unlock(&line->lock);
->>>>  -	/* Bad blocks do not need to be erased */
->>>> -	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
-lm->blk_per_line);
->>>> -
->>>>  	kref_init(&line->ref);
->>>>    	return 0;
->>>> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->>>> index ec39800eea42..cf4f49d48aed 100644
->>>> --- a/drivers/lightnvm/pblk-init.c
->>>> +++ b/drivers/lightnvm/pblk-init.c
->>>> @@ -401,6 +401,7 @@ static void pblk_line_meta_free(struct =
-pblk_line *line)
->>>>  {
->>>>  	kfree(line->blk_bitmap);
->>>>  	kfree(line->erase_bitmap);
->>>> +	kfree(line->chks);
->>>>  }
->>>>    static void pblk_lines_free(struct pblk *pblk)
->>>> @@ -440,54 +441,44 @@ static int pblk_bb_get_tbl(struct nvm_tgt_dev =
-*dev, struct pblk_lun *rlun,
->>>>  	return 0;
->>>>  }
->>>>  -static void *pblk_bb_get_log(struct pblk *pblk)
->>>> +static void *pblk_bb_get_meta(struct pblk *pblk)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>> -	u8 *log;
->>>> +	u8 *meta;
->>>>  	int i, nr_blks, blk_per_lun;
->>>>  	int ret;
->>>>    	blk_per_lun =3D geo->c.num_chk * geo->c.pln_mode;
->>>>  	nr_blks =3D blk_per_lun * geo->all_luns;
->>>>  -	log =3D kmalloc(nr_blks, GFP_KERNEL);
->>>> -	if (!log)
->>>> +	meta =3D kmalloc(nr_blks, GFP_KERNEL);
->>>> +	if (!meta)
->>>>  		return ERR_PTR(-ENOMEM);
->>>>    	for (i =3D 0; i < geo->all_luns; i++) {
->>>>  		struct pblk_lun *rlun =3D &pblk->luns[i];
->>>> -		u8 *log_pos =3D log + i * blk_per_lun;
->>>> +		u8 *meta_pos =3D meta + i * blk_per_lun;
->>>>  -		ret =3D pblk_bb_get_tbl(dev, rlun, log_pos, =
-blk_per_lun);
->>>> +		ret =3D pblk_bb_get_tbl(dev, rlun, meta_pos, =
-blk_per_lun);
->>>>  		if (ret) {
->>>> -			kfree(log);
->>>> +			kfree(meta);
->>>>  			return ERR_PTR(-EIO);
->>>>  		}
->>>>  	}
->>>>  -	return log;
->>>> +	return meta;
->>>>  }
->>>>  -static int pblk_bb_line(struct pblk *pblk, struct pblk_line =
-*line,
->>>> -			u8 *bb_log, int blk_per_line)
->>>> +static void *pblk_chunk_get_meta(struct pblk *pblk)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>> -	int i, bb_cnt =3D 0;
->>>>  -	for (i =3D 0; i < blk_per_line; i++) {
->>>> -		struct pblk_lun *rlun =3D &pblk->luns[i];
->>>> -		u8 *lun_bb_log =3D bb_log + i * blk_per_line;
->>>> -
->>>> -		if (lun_bb_log[line->id] =3D=3D NVM_BLK_T_FREE)
->>>> -			continue;
->>>> -
->>>> -		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), =
-line->blk_bitmap);
->>>> -		bb_cnt++;
->>>> -	}
->>>> -
->>>> -	return bb_cnt;
->>>> +	if (geo->c.version =3D=3D NVM_OCSSD_SPEC_12)
->>>> +		return pblk_bb_get_meta(pblk);
->>>> +	else
->>>> +		return pblk_chunk_get_info(pblk);
->>>=20
->>> This 1.2 or 2.0 would be nice to have inside the lightnvm core. A
->>> target should not care weather it is a 1.2 or 2.0 device.
->> It is not an easy thing to do since the bad block format and chunk
->> report return completely different formats. As I explained in a
->> different thread, doing this in core would force 1.2 to understand =
-fake
->> chunk formats, which are not meaningful. It is better to leave the =
-logic
->> at the target level, where we know what to do with the format.
->=20
-> What if the core layer exported a generic "chunk meta" interface, and
-> then filled it as is done in pblk. In the core, it will then fill out
-> what it can fill out, and leave the rest of the fields untouched. The
-> pblk code can then if () in certain places if for example wp attribute
-> can,'t be used?
->=20
+>> Moving to "exclusive" mode it appears that, when enabled for a resource
+>> group, all domains of all resources are forced to have an "exclusive"
+>> region associated with this resource group (closid). This is because the
+>> schemata reflects the hardware settings of all resources and their
+>> domains and the hardware does not accept a "zero" bitmask. A user thus
+>> cannot just specify a single region of a particular cache instance as
+>> "exclusive". Does this match your intention wrt "exclusive"?
+> 
+> Interesting question. I really did not think about that yet. 
 
-It is basically what we do in pblk now.
+I pasted your second email responding to this at the bottom of this email.
 
-It is easy to abstract in core; I'm just concerned that hiding the chunk
-metadata will end up making the pblk code more complex - in the end
-doing a check on the version is meaningful for the reader.
+>> Moving on to the "locked" mode. We cannot support different
+>> pseudo-locked regions across multiple resources (eg. L2 and L3). In
+>> fact, if we would at some point in the future then a pseudo-locked
+>> region on one resource could implicitly span a second resource.
+>> Additionally, we would like to enable a user to enable a single
+>> pseudo-locked region on a single cache instance.
+>>
+>> From the above it follows that "locked" mode cannot just simply build on
+>> top of "exclusive" mode rules (as I expressed them above) since it
+>> cannot enforce a locked region on each domain of each resource.
+>>
+>> We would like to support something like (as you also have in your example):
+>>
+>> mkdir group
+>> echo "L2:1=0x3" > schemata
+>> echo locked > mode
+>>
+>> The above should only pseudo-lock the indicated region and not touch any
+>> other domain. The problem is that the schemata always contain non-zero
+>> bitmasks for all domains so at the time "locked" is written it is not
+>> known which cache region needs to be locked. I am currently unable to
+>> see a simple way to build on top of the current schemata design to
+>> support the "locked" mode as you intended. It does seem as though the
+>> user's intention to create a pseudo-locked region needs to be
+>> communicated before the schemata is written, but from what I understand
+>> this does not seem to be supported by the mode/schemata combination.
+>> Please do correct me where I am wrong.
+> 
+> You could make it:
+> 
+> echo locksetup > mode
+> echo $CONF > schemata
+> echo locked > mode
+> 
+> Or something like that.
 
+Indeed ... the final command may perhaps not be needed? Since the user
+expressed intent to create pseudo-locked region by writing "locksetup"
+the pseudo-locking can be done when the schemata is written. I think it
+would be simpler to act when the schemata is written since we know
+exactly at that point which regions should be pseudo-locked. After the
+schemata is stored the user's choice is just merged with the larger
+schemata representing all resources/domains. We could set mode to
+"locked" on success, it can remain as "locksetup" on failure of creating
+the pseudo-locked region. We could perhaps also consider a name change
+"locksetup" -> "lockrsv" since after the first pseudo-locked region is
+created on a domain then all the other domains associated with this
+class of service need to have some special state since no task will ever
+run on them with that class of service so we would not want their bits
+(which will not be zero) to be taken into account when checking for
+"shareable" or "exclusive".
 
-> In the interest of time, and to get this moving, we can ignore it for =
-now.
+This could also support multiple pseudo-locked regions.
 
-Ok. Let's do it this way now and we can see how to abstract it when we
-start implementing features based on these fields. The first one will be
-wear levelling, which I expect to have for next window.
+For example:
+# #Create first pseudo-locked region
+# echo locksetup > mode
+# echo L2:0=0xf > schemata
+# echo $?
+0
+# cat mode
+locked # will be locksetup on failure
+# cat schemata
+L2:0=0xf #only show pseudo-locked regions
+# #Create second pseudo-locked region
+# # Not necessary to write "locksetup" again
+# echo L2:1=0xf > schemata #will trigger the pseudo-locking of new region
+# echo $?
+1 # just for example, this could succeed also
+# cat mode
+locked
+# cat schemata
+L2:0=0xf
 
->>>>  }
->>>>    static int pblk_luns_init(struct pblk *pblk, struct ppa_addr =
-*luns)
->>>> @@ -516,6 +507,7 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>>>    		rlun =3D &pblk->luns[i];
->>>>  		rlun->bppa =3D luns[lunid];
->>>> +		rlun->chunk_bppa =3D luns[i];
->>>>    		sema_init(&rlun->wr_sem, 1);
->>>>  	}
->>>> @@ -695,8 +687,125 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>>>  	return -ENOMEM;
->>>>  }
->>>>  -static int pblk_setup_line_meta(struct pblk *pblk, struct =
-pblk_line *line,
->>>> -				void *chunk_log, long *nr_bad_blks)
->>>> +static int pblk_setup_line_meta_12(struct pblk *pblk, struct =
-pblk_line *line,
->>>> +				   void *chunk_meta)
->>>> +{
->>>> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>> +	struct nvm_geo *geo =3D &dev->geo;
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +	int i, chk_per_lun, nr_bad_chks =3D 0;
->>>> +
->>>> +	chk_per_lun =3D geo->c.num_chk * geo->c.pln_mode;
->>>> +
->>>> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->>>> +		struct pblk_chunk *chunk =3D &line->chks[i];
->>>> +		struct pblk_lun *rlun =3D &pblk->luns[i];
->>>> +		u8 *lun_bb_meta =3D chunk_meta + i * chk_per_lun;
->>>> +
->>>> +		/*
->>>> +		 * In 1.2 spec. chunk state is not persisted by the =
-device. Thus
->>>> +		 * some of the values are reset each time pblk is =
-instantiated.
->>>> +		 */
->>>> +		if (lun_bb_meta[line->id] =3D=3D NVM_BLK_T_FREE)
->>>> +			chunk->state =3D  NVM_CHK_ST_HOST_USE;
->>>> +		else
->>>> +			chunk->state =3D NVM_CHK_ST_OFFLINE;
->>>> +
->>>> +		chunk->type =3D NVM_CHK_TP_W_SEQ;
->>>> +		chunk->wi =3D 0;
->>>> +		chunk->slba =3D -1;
->>>> +		chunk->cnlb =3D geo->c.clba;
->>>> +		chunk->wp =3D 0;
->>>> +
->>>> +		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
->>>> +			continue;
->>>> +
->>>> +		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), =
-line->blk_bitmap);
->>>> +		nr_bad_chks++;
->>>> +	}
->>>> +
->>>> +	return nr_bad_chks;
->>>> +}
->>>> +
->>>> +static int pblk_setup_line_meta_20(struct pblk *pblk, struct =
-pblk_line *line,
->>>> +				   struct nvm_chk_meta *meta)
->>>> +{
->>>> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>> +	struct nvm_geo *geo =3D &dev->geo;
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +	int i, nr_bad_chks =3D 0;
->>>> +
->>>> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->>>> +		struct pblk_chunk *chunk =3D &line->chks[i];
->>>> +		struct pblk_lun *rlun =3D &pblk->luns[i];
->>>> +		struct nvm_chk_meta *chunk_meta;
->>>> +		struct ppa_addr ppa;
->>>> +
->>>> +		ppa =3D rlun->chunk_bppa;
->>>> +		ppa.m.chk =3D line->id;
->>>> +		chunk_meta =3D pblk_chunk_get_off(pblk, meta, ppa);
->>>> +
->>>> +		chunk->state =3D chunk_meta->state;
->>>> +		chunk->type =3D chunk_meta->type;
->>>> +		chunk->wi =3D chunk_meta->wi;
->>>> +		chunk->slba =3D chunk_meta->slba;
->>>> +		chunk->cnlb =3D chunk_meta->cnlb;
->>>> +		chunk->wp =3D chunk_meta->wp;
->>>> +
->>>> +		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
->>>> +			continue;
->>>> +
->>>> +		if (chunk->type & NVM_CHK_TP_SZ_SPEC) {
->>>> +			WARN_ONCE(1, "pblk: custom-sized chunks =
-unsupported\n");
->>>> +			continue;
->>>> +		}
->>>> +
->>>> +		set_bit(pblk_ppa_to_pos(geo, rlun->chunk_bppa),
->>>> +							=
-line->blk_bitmap);
->>>> +		nr_bad_chks++;
->>>> +	}
->>>> +
->>>> +	return nr_bad_chks;
->>>> +}
->>>> +
->>>> +static long pblk_setup_line_meta(struct pblk *pblk, struct =
-pblk_line *line,
->>>> +				 void *chunk_meta, int line_id)
->>>> +{
->>>> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>> +	struct nvm_geo *geo =3D &dev->geo;
->>>> +	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +	long nr_bad_chks, chk_in_line;
->>>> +
->>>> +	line->pblk =3D pblk;
->>>> +	line->id =3D line_id;
->>>> +	line->type =3D PBLK_LINETYPE_FREE;
->>>> +	line->state =3D PBLK_LINESTATE_NEW;
->>>> +	line->gc_group =3D PBLK_LINEGC_NONE;
->>>> +	line->vsc =3D &l_mg->vsc_list[line_id];
->>>> +	spin_lock_init(&line->lock);
->>>> +
->>>> +	if (geo->c.version =3D=3D NVM_OCSSD_SPEC_12)
->>>> +		nr_bad_chks =3D pblk_setup_line_meta_12(pblk, line, =
-chunk_meta);
->>>> +	else
->>>> +		nr_bad_chks =3D pblk_setup_line_meta_20(pblk, line, =
-chunk_meta);
->>>> +
->>>> +	chk_in_line =3D lm->blk_per_line - nr_bad_chks;
->>>> +	if (nr_bad_chks < 0 || nr_bad_chks > lm->blk_per_line ||
->>>> +					chk_in_line < lm->min_blk_line) =
-{
->>>> +		line->state =3D PBLK_LINESTATE_BAD;
->>>> +		list_add_tail(&line->list, &l_mg->bad_list);
->>>> +		return 0;
->>>> +	}
->>>> +
->>>> +	atomic_set(&line->blk_in_line, chk_in_line);
->>>> +	list_add_tail(&line->list, &l_mg->free_list);
->>>> +	l_mg->nr_free_lines++;
->>>> +
->>>> +	return chk_in_line;
->>>> +}
->>>> +
->>>> +static int pblk_alloc_line_meta(struct pblk *pblk, struct =
-pblk_line *line)
->>>>  {
->>>>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>>>  @@ -710,7 +819,13 @@ static int pblk_setup_line_meta(struct pblk =
-*pblk, struct pblk_line *line,
->>>>  		return -ENOMEM;
->>>>  	}
->>>>  -	*nr_bad_blks =3D pblk_bb_line(pblk, line, chunk_log, =
-lm->blk_per_line);
->>>> +	line->chks =3D kmalloc(lm->blk_per_line * sizeof(struct =
-pblk_chunk),
->>>> +								=
-GFP_KERNEL);
->>>> +	if (!line->chks) {
->>>> +		kfree(line->erase_bitmap);
->>>> +		kfree(line->blk_bitmap);
->>>> +		return -ENOMEM;
->>>> +	}
->>>>    	return 0;
->>>>  }
->>>> @@ -722,9 +837,9 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>  	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>>>  	struct pblk_line *line;
->>>> -	void *chunk_log;
->>>> +	void *chunk_meta;
->>>>  	unsigned int smeta_len, emeta_len;
->>>> -	long nr_bad_blks =3D 0, nr_free_blks =3D 0;
->>>> +	long nr_free_chks =3D 0;
->>>>  	int bb_distance, max_write_ppas;
->>>>  	int i, ret;
->>>>  @@ -743,6 +858,7 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>  	l_mg->log_line =3D l_mg->data_line =3D NULL;
->>>>  	l_mg->l_seq_nr =3D l_mg->d_seq_nr =3D 0;
->>>>  	l_mg->nr_free_lines =3D 0;
->>>> +	atomic_set(&l_mg->sysfs_line_state, -1);
->>>>  	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
->>>>    	lm->sec_per_line =3D geo->c.clba * geo->all_luns;
->>>> @@ -841,53 +957,31 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>  		goto fail_free_bb_aux;
->>>>  	}
->>>>  -	chunk_log =3D pblk_bb_get_log(pblk);
->>>> -	if (IS_ERR(chunk_log)) {
->>>> -		pr_err("pblk: could not get bad block log (%lu)\n",
->>>> -							=
-PTR_ERR(chunk_log));
->>>> -		ret =3D PTR_ERR(chunk_log);
->>>> +	chunk_meta =3D pblk_chunk_get_meta(pblk);
->>>> +	if (IS_ERR(chunk_meta)) {
->>>> +		pr_err("pblk: could not get chunk log (%lu)\n",
->>>> +							=
-PTR_ERR(chunk_meta));
->>>> +		ret =3D PTR_ERR(chunk_meta);
->>>>  		goto fail_free_lines;
->>>>  	}
->>>>    	for (i =3D 0; i < l_mg->nr_lines; i++) {
->>>> -		int chk_in_line;
->>>> -
->>>>  		line =3D &pblk->lines[i];
->>>>  -		line->pblk =3D pblk;
->>>> -		line->id =3D i;
->>>> -		line->type =3D PBLK_LINETYPE_FREE;
->>>> -		line->state =3D PBLK_LINESTATE_FREE;
->>>> -		line->gc_group =3D PBLK_LINEGC_NONE;
->>>> -		line->vsc =3D &l_mg->vsc_list[i];
->>>> -		spin_lock_init(&line->lock);
->>>> -
->>>> -		ret =3D pblk_setup_line_meta(pblk, line, chunk_log, =
-&nr_bad_blks);
->>>> +		ret =3D pblk_alloc_line_meta(pblk, line);
->>>>  		if (ret)
->>>> -			goto fail_free_chunk_log;
->>>> +			goto fail_free_chunk_meta;
->>>>  -		chk_in_line =3D lm->blk_per_line - nr_bad_blks;
->>>> -		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
->>>> -					chk_in_line < lm->min_blk_line) =
-{
->>>> -			line->state =3D PBLK_LINESTATE_BAD;
->>>> -			list_add_tail(&line->list, &l_mg->bad_list);
->>>> -			continue;
->>>> -		}
->>>> -
->>>> -		nr_free_blks +=3D chk_in_line;
->>>> -		atomic_set(&line->blk_in_line, chk_in_line);
->>>> -
->>>> -		l_mg->nr_free_lines++;
->>>> -		list_add_tail(&line->list, &l_mg->free_list);
->>>> +		nr_free_chks +=3D pblk_setup_line_meta(pblk, line, =
-chunk_meta, i);
->>>>  	}
->>>>  -	pblk_set_provision(pblk, nr_free_blks);
->>>> +	pblk_set_provision(pblk, nr_free_chks);
->>>>  -	kfree(chunk_log);
->>>> +	kfree(chunk_meta);
->>>>  	return 0;
->>>>  -fail_free_chunk_log:
->>>> -	kfree(chunk_log);
->>>> +fail_free_chunk_meta:
->>>> +	kfree(chunk_meta);
->>>>  	while (--i >=3D 0)
->>>>  		pblk_line_meta_free(&pblk->lines[i]);
->>>>  fail_free_lines:
->>>> diff --git a/drivers/lightnvm/pblk-sysfs.c =
-b/drivers/lightnvm/pblk-sysfs.c
->>>> index ccfb3abd2773..1ce5b956c622 100644
->>>> --- a/drivers/lightnvm/pblk-sysfs.c
->>>> +++ b/drivers/lightnvm/pblk-sysfs.c
->>>> @@ -142,6 +142,40 @@ static ssize_t pblk_sysfs_ppaf(struct pblk =
-*pblk, char *page)
->>>>  	return sz;
->>>>  }
->>>>  +static ssize_t pblk_sysfs_line_state_show(struct pblk *pblk, char =
-*page)
->>>> +{
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>> +	struct pblk_line *line;
->>>> +	int line_id =3D atomic_read(&l_mg->sysfs_line_state);
->>>> +	ssize_t sz =3D 0;
->>>> +	int i;
->>>> +
->>>> +	if (line_id < 0 || line_id >=3D l_mg->nr_lines)
->>>> +		return 0;
->>>> +
->>>> +	sz =3D snprintf(page, PAGE_SIZE,
->>>> +		=
-"line\tchunk\tstate\ttype\twear-index\tslba\t\tcnlb\twp\n");
->>>> +
->>>> +	line =3D &pblk->lines[line_id];
->>>> +
->>>> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->>>> +		struct pblk_chunk *chunk =3D &line->chks[i];
->>>> +
->>>> +		sz +=3D snprintf(page + sz, PAGE_SIZE - sz,
->>>> +				=
-"%d\t%d\t%d\t%d\t%d\t\t%llu\t\t%llu\t%llu\n",
->>>> +				line->id, i,
->>>> +				chunk->state,
->>>> +				chunk->type,
->>>> +				chunk->wi,
->>>> +				chunk->slba,
->>>> +				chunk->cnlb,
->>>> +				chunk->wp);
->>>> +	}
->>>> +
->>>> +	return sz;
->>>> +}
->>>> +
->>>>  static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>> @@ -398,6 +432,29 @@ static ssize_t pblk_sysfs_stats_debug(struct =
-pblk *pblk, char *page)
->>>>  }
->>>>  #endif
->>>>  +
->>>> +static ssize_t pblk_sysfs_line_state_store(struct pblk *pblk, =
-const char *page,
->>>> +					   size_t len)
->>>> +{
->>>> +	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>> +	size_t c_len;
->>>> +	int line_id;
->>>> +
->>>> +	c_len =3D strcspn(page, "\n");
->>>> +	if (c_len >=3D len)
->>>> +		return -EINVAL;
->>>> +
->>>> +	if (kstrtouint(page, 0, &line_id))
->>>> +		return -EINVAL;
->>>> +
->>>> +	if (line_id < 0 || line_id >=3D l_mg->nr_lines)
->>>> +		return -EINVAL;
->>>> +
->>>> +	atomic_set(&l_mg->sysfs_line_state, line_id);
->>>> +
->>>> +	return len;
->>>> +}
->>>> +
->>>>  static ssize_t pblk_sysfs_gc_force(struct pblk *pblk, const char =
-*page,
->>>>  				   size_t len)
->>>>  {
->>>> @@ -529,6 +586,11 @@ static struct attribute sys_lines_info_attr =3D =
-{
->>>>  	.mode =3D 0444,
->>>>  };
->>>>  +static struct attribute sys_line_state_attr =3D {
->>>> +	.name =3D "line_state",
->>>> +	.mode =3D 0644,
->>>> +};
->>>> +
->>>>  static struct attribute sys_gc_force =3D {
->>>>  	.name =3D "gc_force",
->>>>  	.mode =3D 0200,
->>>> @@ -572,6 +634,7 @@ static struct attribute *pblk_attrs[] =3D {
->>>>  	&sys_stats_ppaf_attr,
->>>>  	&sys_lines_attr,
->>>>  	&sys_lines_info_attr,
->>>> +	&sys_line_state_attr,
->>>>  	&sys_write_amp_mileage,
->>>>  	&sys_write_amp_trip,
->>>>  	&sys_padding_dist,
->>>> @@ -602,6 +665,8 @@ static ssize_t pblk_sysfs_show(struct kobject =
-*kobj, struct attribute *attr,
->>>>  		return pblk_sysfs_lines(pblk, buf);
->>>>  	else if (strcmp(attr->name, "lines_info") =3D=3D 0)
->>>>  		return pblk_sysfs_lines_info(pblk, buf);
->>>> +	else if (strcmp(attr->name, "line_state") =3D=3D 0)
->>>> +		return pblk_sysfs_line_state_show(pblk, buf);
->>>>  	else if (strcmp(attr->name, "max_sec_per_write") =3D=3D 0)
->>>>  		return pblk_sysfs_get_sec_per_write(pblk, buf);
->>>>  	else if (strcmp(attr->name, "write_amp_mileage") =3D=3D 0)
->>>> @@ -628,6 +693,8 @@ static ssize_t pblk_sysfs_store(struct kobject =
-*kobj, struct attribute *attr,
->>>>  		return pblk_sysfs_set_sec_per_write(pblk, buf, len);
->>>>  	else if (strcmp(attr->name, "write_amp_trip") =3D=3D 0)
->>>>  		return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
->>>> +	else if (strcmp(attr->name, "line_state") =3D=3D 0)
->>>> +		return pblk_sysfs_line_state_store(pblk, buf, len);
->>>>  	else if (strcmp(attr->name, "padding_dist") =3D=3D 0)
->>>>  		return pblk_sysfs_set_padding_dist(pblk, buf, len);
->>>>  	return 0;
->>>> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->>>> index 6e1fcd1a538a..bc31c67b725f 100644
->>>> --- a/drivers/lightnvm/pblk.h
->>>> +++ b/drivers/lightnvm/pblk.h
->>>> @@ -201,6 +201,8 @@ struct pblk_rb {
->>>>    struct pblk_lun {
->>>>  	struct ppa_addr bppa;
->>>> +	struct ppa_addr chunk_bppa;
->>>> +
->>>>  	struct semaphore wr_sem;
->>>>  };
->>>>  @@ -297,6 +299,7 @@ enum {
->>>>  	PBLK_LINETYPE_DATA =3D 2,
->>>>    	/* Line state */
->>>> +	PBLK_LINESTATE_NEW =3D 9,
->>>>  	PBLK_LINESTATE_FREE =3D 10,
->>>>  	PBLK_LINESTATE_OPEN =3D 11,
->>>>  	PBLK_LINESTATE_CLOSED =3D 12,
->>>> @@ -412,6 +415,15 @@ struct pblk_smeta {
->>>>  	struct line_smeta *buf;		/* smeta buffer in persistent =
-format */
->>>>  };
->>>>  +struct pblk_chunk {
->>>> +	int state;
->>>> +	int type;
->>>> +	int wi;
->>>> +	u64 slba;
->>>> +	u64 cnlb;
->>>> +	u64 wp;
->>>> +};
->>>> +
->>>=20
->>> How come the code replicate the nvm_chk_meta data structure?
->> There is no need to maintain the chunk reserved bits in nvm_chk_meta =
-and
->> waste memory in the process, as these are alive for the whole life of
->> the pblk instance. This structure only maintains the necessary bits.
->=20
-> nvm_chk_meta is 32 bytes:
->=20
-> struct nvm_chk_meta {
-> 	u8                         state;                /* 0     1 */
-> 	u8                         type;                 /* 1     1 */
-> 	u8                         wli;                  /* 2     1 */
-> 	u8                         rsvd[5];              /* 3     5 */
-> 	u64                        slba;                 /* 8     8 */
-> 	u64                        cnlb;                 /* 16     8 */
-> 	u64                        wp;                   /* 24     8 */
->=20
-> 	/* size: 32, cachelines: 1, members: 7 */
-> 	/* last cacheline: 32 bytes */
-> };
->=20
-> pblk_chunk is 40 bytes:
->=20
-> struct pblk_chunk {
-> 	int                        state;                /*  0     4 */
-> 	int                        type;                 /*  4     4 */
-> 	int                        wi;                   /*  8     4 */
->=20
-> 	/* XXX 4 bytes hole, try to pack */
->=20
-> 	u64                        slba;                 /*  16     8 */
-> 	u64                        cnlb;                 /*  24     8 */
-> 	u64                        wp;                   /*  32     8 */
->=20
-> 	/* size: 40, cachelines: 1, members: 6 */
-> 	/* sum members: 36, holes: 1, sum holes: 4 */
-> 	/* last cacheline: 40 bytes */
-> };
->=20
-> If assuming 64K chunks, pblk chunk uses 2560KB (and requires an extra
-> traversal when the chunk meta information is returned to copy over the
-> data to the new data structure), while nvm_chk_meta uses 2048KB.
-> Granted, the nvm_chk_meta state/type/wli fields will be slightly
-> slower to access due to the bit shifting, but I think it is worth it.
-> One can measure and see if there is any performance difference.
->=20
+Schemata shown to user would be only the pseudo-locked region(s), unless
+there is none, then nothing will be returned.
 
-Ok. This is not in the fast path now. We can look into it if it gets
-there at some point.
+I'll think about this more, but if we do go the route of releasing
+closids as suggested below it may change a lot.
 
-I'll fix in the next version.
+>> To continue, when we overcome the above obstacle:
+>> A scenario could be where a single resource group will contain all the
+>> pseudo-locked regions (to avoid wasting closids). It is not clear to me
+>> how to easily support such a usage though since the way writes to the
+>> schemata is done is "changes only". If for example, two pseudo-locked
+>> regions exists:
+>>
+>> # mkdir group
+>> # echo "L2:1=0x3" > schemata
+>> # echo locked > mode
+>> # cat schemata
+>> L2:1=0x3
+>> # echo "L2:0=0xf" > schemata
+>> # cat schemata
+>> L2:0=0xf;1=0x3
+>>
+>> How can the user remove one of the pseudo-locked regions without
+>> affecting the other? Could we perhaps allow zero bitmask writes when a
+>> region is locked?
+> 
+> That might work. Though it looks hacky.
 
-Javier
+Could it work to create another mode?
+For example,
 
---Apple-Mail=_D6526EAC-F639-46AF-B84B-BA6806B24E5D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+# echo lockremove > mode
+# echo $SCHEMATATOREMOVE > schemata
+# echo $?
+0
+# cat mode
+#locked if more pseudo-locked regions remain, or locksetup/lockrsv if no
+pseudo-locked regions remain
 
------BEGIN PGP SIGNATURE-----
+> 
+>> Another point I would like to highlight is that when we talked about
+>> keeping the closid associated with the pseudo-locked region I mentioned
+>> that some resources may have few closids (for example, 4). As discussed
+>> this seems ok when there are only 8 bits in the bitmask. What I did not
+>> highlight at that time is that the closids are limited to the smallest
+>> number supported by all resources. So, if this same platform has a
+>> second resource (with more bits in a bitmask) with more closids, they
+>> would also be limited to 4. In this case it does seem removing a closid
+>> from service would have bigger impact.
+> 
+> Is that a real issue or just an academic exercise?
 
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlqVtmgACgkQPEYBfS0l
-eOALDw/9FkMn4r//lni6ysItj3Kry/WaHfbVv0IxO2xwyLGNKHzN3hZQvgasvZqg
-cYwZLiPh3weev8tAbIhoEq/14o6HcaeULc8+7NnF0h+eA3OUDHSHpFADXLUZEpyg
-sciIHXC2nSQmEY0AhS/VzXi9mh2vhOJwo7pZqbsoFkNX9rWLpO9Xb76bcro1Y8kI
-iij1b/bX8LWmQArJuCxUG3kj45bZMg1lU4aKbYpx3lRGfjD9qBkG+zb14tg6OEpS
-Wuy60RHXcn2x/jGZ5O+kbi+JQO3ciGKP2sXej12rIVPFXSbh10FPRKL5EcGnHeAB
-9HpteXQDWyYZpcFvtYnLFOgRfoSnaLEOd4lEqLBWJEcx7a0xuarTcs3BmEBYapfS
-IwhQdRri31vuOP6OnrcfMD5IDYByDrkmMFhKsZqI1q1RqSKIWHiCaWa6dYQNonxi
-NGyIEWYtJdhq1wkOiKCGMbbTznLdzIhpsGEJazOedBgc/u3pHAnoyC00hdOqtEJW
-lB0EdPpjRkmWLNGVDP1jNVaAeDXJzzqiawF8t6kxg+RFfVVN+l7N9Szjd3rVXXdg
-+FL1n7eNtrWpC010wDH3ZzBTjmBcA1aJBEo5/G1ZGkts4LHZRJ9Eh1DGfKV4y3OJ
-DxLGUrJrncgZ+KZaNdcwRQNjDL4HnZVxz6Uc1d92lxqWBfa9V44=
-=6hiW
------END PGP SIGNATURE-----
+This is a real issue. The pros and cons of using a global CLOSID across
+all resources are documented in the comments preceding:
+arch/x86/kernel/cpu/intel_rdt_rdtgroup.c:closid_init()
 
---Apple-Mail=_D6526EAC-F639-46AF-B84B-BA6806B24E5D--
+The issue I mention was foreseen, to quote from there "Our choices on
+how to configure each resource become progressively more limited as the
+number of resources grows".
+
+> Let's assume its real,
+> so you could do the following:
+> 
+> mkdir group		<- acquires closid
+> echo locksetup > mode	<- Creates 'lockarea' file
+> echo L2:0 > lockarea
+> echo 'L2:0=0xf' > schemata
+> echo locked > mode	<- locks down all files, does the lock setup
+>      	      		   and drops closid
+> 
+> That would solve quite some of the other issues as well. Hmm?
+
+At this time the resource group, represented by a resctrl directory, is
+tightly associated with the closid. I'll take a closer look at what it
+will take to separate them.
+
+Could you please elaborate on the purpose of the "lockarea" file? It
+does seem to duplicate the information in the schemata written in the
+subsequent line.
+
+If we do go this route then it seems that there would be one
+pseudo-locked region per resource group, not multiple ones as I had in
+my examples above.
+
+An alternative to the hardware programming on creation of resource group
+could also be to reset the bitmasks of the closid to be shareable/unused
+bits at the time the closid is released.
+
+> On Tue, 27 Feb 2018, Thomas Gleixner wrote:
+>> On Mon, 26 Feb 2018, Reinette Chatre wrote:
+>>> Moving to "exclusive" mode it appears that, when enabled for a resource
+>>> group, all domains of all resources are forced to have an "exclusive"
+>>> region associated with this resource group (closid). This is because the
+>>> schemata reflects the hardware settings of all resources and their
+>>> domains and the hardware does not accept a "zero" bitmask. A user thus
+>>> cannot just specify a single region of a particular cache instance as
+>>> "exclusive". Does this match your intention wrt "exclusive"?
+>>
+>> Interesting question. I really did not think about that yet. 
+> 
+> Actually we could solve that problem similar to the locked one and share
+> most of the functionality:
+> 
+> mkdir group
+> echo exclusive > mode
+> echo L3:0 > restrict
+> 
+> and for locked:
+> 
+> mkdir group
+> echo locksetup > mode
+> echo L2:0 > restrict
+> echo 'L2:0=0xf' > schemata
+> echo locked > mode
+> 
+> The 'restrict' file (feel free to come up with a better name) is only
+> available/writeable in exclusive and locksetup mode. In case of exclusive
+> mode it can contain several domains/resources, but in locked mode its only
+> allowed to contain a single domain/resource.
+> 
+> A write to schemata for exclusive or locksetup mode will apply the
+> exclusiveness restrictions only to the resources/domains selected in the
+> 'restrict' file. 
+
+I think I understand for the exclusive case. Here the introduction of
+the restrict file helps. I will run through a few examples to ensure I
+understand it. For the pseudo-locking cases I do have the questions and
+comments above. Here I likely may be missing something but I'll keep
+dissecting how this would work to clear up my understanding.
+
+Thank you very much for your guidance
+
+Reinette
