@@ -1,150 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeB0Kgu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:36:50 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45950 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752680AbeB0Kgs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:36:48 -0500
-Date: Tue, 27 Feb 2018 11:36:52 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
-In-Reply-To: <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
-Message-ID: <alpine.DEB.2.21.1802271109300.1886@nanos.tec.linutronix.de>
-References: <cover.1518443616.git.reinette.chatre@intel.com> <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de> <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752882AbeB0KhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:37:01 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5712 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752680AbeB0KhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 05:37:00 -0500
+Subject: Re: [PATCH v2] f2fs: allocate buffer for decrypting filename to avoid
+ panic
+To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <6dae7b72-3ce4-1b5b-37ff-821d15de7101@huawei.com>
+Date: Tue, 27 Feb 2018 18:40:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reinette,
-
-On Mon, 26 Feb 2018, Reinette Chatre wrote:
-> I started looking at how this implementation may look and would like to
-> confirm with you that your intentions behind the new "exclusive" and
-> "locked" modes can be maintained. I also have a few questions.
-
-Phew :)
-
-> Focusing on CAT a resource group represents a closid across all domains
-> (cache instances) of all resources (cache layers) on the system. A full
-> schemata reflecting the active bitmask associated with this closid for
-> each domain of each resource is maintained. The current implementation
-> supports partial writes to the schemata, with the assumption that only
-> the changed values need to be updated, the others remain as is. For the
-> current implementation this works well since what is shown by schemata
-> reflects current hardware settings and what is written to schemata will
-> change current hardware settings. This is done irrespective of any
-> overlap between bitmasks of different closids (the "shareable" mode).
-
-Right.
-
-> A change to start us off with could be to initialize the schemata with
-> all the shareable and unused bits set for all domains when a new
-> resource group is created.
-
-The new resource group initialization is the least of my worries. The
-current mode is to use the default group setting, right?
-
-> Moving to "exclusive" mode it appears that, when enabled for a resource
-> group, all domains of all resources are forced to have an "exclusive"
-> region associated with this resource group (closid). This is because the
-> schemata reflects the hardware settings of all resources and their
-> domains and the hardware does not accept a "zero" bitmask. A user thus
-> cannot just specify a single region of a particular cache instance as
-> "exclusive". Does this match your intention wrt "exclusive"?
-
-Interesting question. I really did not think about that yet. 
-
-> Moving on to the "locked" mode. We cannot support different
-> pseudo-locked regions across multiple resources (eg. L2 and L3). In
-> fact, if we would at some point in the future then a pseudo-locked
-> region on one resource could implicitly span a second resource.
-> Additionally, we would like to enable a user to enable a single
-> pseudo-locked region on a single cache instance.
+On 2018/2/26 10:57, Yunlong Song wrote:
+> In some platforms (such as arm), high memory is used, then the
+> decrypting filename will cause panic, the reason see commit
+> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+> for decrypting filename"):
 > 
-> From the above it follows that "locked" mode cannot just simply build on
-> top of "exclusive" mode rules (as I expressed them above) since it
-> cannot enforce a locked region on each domain of each resource.
+>  We got dentry pages from high_mem, and its address space directly goes into the
+>  decryption path via f2fs_fname_disk_to_usr.
+>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
 > 
-> We would like to support something like (as you also have in your example):
+>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>  ...
+>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
 > 
-> mkdir group
-> echo "L2:1=0x3" > schemata
-> echo locked > mode
+> Howerver, later patches:
+> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
+> unneeded memory allocation in ->readdir")
 > 
-> The above should only pseudo-lock the indicated region and not touch any
-> other domain. The problem is that the schemata always contain non-zero
-> bitmasks for all domains so at the time "locked" is written it is not
-> known which cache region needs to be locked. I am currently unable to
-> see a simple way to build on top of the current schemata design to
-> support the "locked" mode as you intended. It does seem as though the
-> user's intention to create a pseudo-locked region needs to be
-> communicated before the schemata is written, but from what I understand
-> this does not seem to be supported by the mode/schemata combination.
-> Please do correct me where I am wrong.
-
-You could make it:
-
-echo locksetup > mode
-echo $CONF > schemata
-echo locked > mode
-
-Or something like that.
-
-> To continue, when we overcome the above obstacle:
-> A scenario could be where a single resource group will contain all the
-> pseudo-locked regions (to avoid wasting closids). It is not clear to me
-> how to easily support such a usage though since the way writes to the
-> schemata is done is "changes only". If for example, two pseudo-locked
-> regions exists:
+> reverts the codes, which causes panic again in arm, so let's add part of
+> the old patch again for dentry page.
 > 
-> # mkdir group
-> # echo "L2:1=0x3" > schemata
-> # echo locked > mode
-> # cat schemata
-> L2:1=0x3
-> # echo "L2:0=0xf" > schemata
-> # cat schemata
-> L2:0=0xf;1=0x3
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/dir.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> How can the user remove one of the pseudo-locked regions without
-> affecting the other? Could we perhaps allow zero bitmask writes when a
-> region is locked?
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index f00b5ed..23fff48 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -825,9 +825,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>  			int save_len = fstr->len;
+>  			int err;
+>  
+> +			de_name.name = kmemdup(d->filename[bit_pos],
 
-That might work. Though it looks hacky.
-
-> Another point I would like to highlight is that when we talked about
-> keeping the closid associated with the pseudo-locked region I mentioned
-> that some resources may have few closids (for example, 4). As discussed
-> this seems ok when there are only 8 bits in the bitmask. What I did not
-> highlight at that time is that the closids are limited to the smallest
-> number supported by all resources. So, if this same platform has a
-> second resource (with more bits in a bitmask) with more closids, they
-> would also be limited to 4. In this case it does seem removing a closid
-> from service would have bigger impact.
-
-Is that a real issue or just an academic exercise? Let's assume its real,
-so you could do the following:
-
-mkdir group		<- acquires closid
-echo locksetup > mode	<- Creates 'lockarea' file
-echo L2:0 > lockarea
-echo 'L2:0=0xf' > schemata
-echo locked > mode	<- locks down all files, does the lock setup
-     	      		   and drops closid
-
-That would solve quite some of the other issues as well. Hmm?
+How about using f2fs_kmalloc + memcpy here?
 
 Thanks,
 
-	tglx
+> +				de_name.len, GFP_NOFS);
+> +			if (!de_name.name)
+> +				return -ENOMEM;
+> +
+>  			err = fscrypt_fname_disk_to_usr(d->inode,
+>  						(u32)de->hash_code, 0,
+>  						&de_name, fstr);
+> +			kfree(de_name.name);
+>  			if (err)
+>  				return err;
+>  
+> 
