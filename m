@@ -1,59 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeB0BNy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 20:13:54 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46847 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeB0BNx (ORCPT
+        id S1751664AbeB0BOD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 20:14:03 -0500
+Received: from mail-io0-f173.google.com ([209.85.223.173]:39934 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751604AbeB0BOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 20:13:53 -0500
-X-Google-Smtp-Source: AH8x225AkW1+ROLctUa5Pu4QZKLd8AYZg0HKea5FqExaaBSMoKOS33i4fQwl8bQLnQBrQT1fCnaTVA==
-Date: Mon, 26 Feb 2018 17:13:50 -0800
-From: Kees Cook <keescook@chromium.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [GIT PULL] seccomp update for v4.16-rc4
-Message-ID: <20180227011350.GA5122@beast>
+        Mon, 26 Feb 2018 20:14:00 -0500
+X-Google-Smtp-Source: AG47ELvImKWRZ03z2jpoLpjKyWFoUc0M+oW7bAjjHMFAHA4G86K1GMZxvtS89XAmqq0z4MBPtQ/e0XCTH3+MKlZteXY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20180226235302.12708-3-ebiederm@xmission.com>
+References: <87po4rz4ui.fsf_-_@xmission.com> <20180226235302.12708-3-ebiederm@xmission.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 26 Feb 2018 17:13:59 -0800
+X-Google-Sender-Auth: u-_feA-tkg-0c-ZQyAtif2kqLrQ
+Message-ID: <CA+55aFySgJyR6JLcS9HLC9wEpWU1isdyTkchHxZHbJWsh7HFpg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] fs/posix_acl: Document that get_acl respects ACL_DONT_CACHE
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Mon, Feb 26, 2018 at 3:52 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Additionaly update the comment above the call to get_acl itself and
+> remove the wrong information that an implementation of get_acl can
+> prevent caching by calling forget_cached_acl.
 
-Please pull this seccomp change for v4.16-rc4. This disables the seccomp
-samples when cross compiling. We're seen too many build issues here, so
-it's best to just disable it, especially since they're just the samples.
+This part is just confusing.
 
-Thanks!
+First off, that comment is correct: a filesystem _can_ prevent the
+returning of cached data by just calling forget_cached_acl().
 
--Kees
+Note that there are two different cases: saying that you _never_ want
+to cache things (ACL_DONT_CACHE) and saying that there _currently_ is
+no cached data (ACL_NOT_CACHED).
 
-The following changes since commit d057dc4e35e16050befa3dda943876dab39cbf80:
+forget_cached_acl() just removes the current cache.
 
-  seccomp: add a selftest for get_metadata (2018-02-21 16:56:03 -0800)
+You're just replacing one case of "no cached" information with the other.
 
-are available in the git repository at:
+Just explain the two cases, don't try to muddy the waters even more..
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-v4.16-rc4
+PLUS you are just confusing things entirely. That whole new comment of yours:
 
-for you to fetch changes up to 6275ecbcd3ae3aaf47c3bc1e46343a50f16b2577:
++        * ACL_DONT_CACHE is treated as another task updating the acl and
++        * remains set.
 
-  samples/seccomp: do not compile when cross compiled (2018-02-22 09:31:43 -0800)
+is just garbage.
 
-----------------------------------------------------------------
-- do not build samples when cross compiling (Michal Hocko)
+The code is very clear - it will only replace a ACL_NOT_CACHED entry.
+The code is clear:
 
-----------------------------------------------------------------
-Michal Hocko (1):
-      samples/seccomp: do not compile when cross compiled
+        if (cmpxchg(p, ACL_NOT_CACHED, sentinel) != ACL_NOT_CACHED)
+                /* fall through */ ;
 
- samples/seccomp/Makefile | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+this is basically just an atomic "if *p == ACL_NOT_CACHED then replace
+it with 'sentinel'".
 
--- 
-Kees Cook
-Pixel Security
+Your comment does not add any clarity at all, and only confuses
+things. It has nothing to do with "treated as another task updating
+the acl".
+
+The fact is, ACL_DONT_CACHE is treated as if the cache is simply
+already filled - it's just filled with "no cache".
+
+So the only thing special is ACL_NOT_CACHED, which is the only thing
+we will try to _replace_.
+
+So NAK on this patch entirely. It's just adding confusion, not adding
+clarifications.
+
+                Linus
