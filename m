@@ -1,97 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeB0D2s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 22:28:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55524 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbeB0D2r (ORCPT
+        id S1751634AbeB0Dgw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 22:36:52 -0500
+Received: from mail-io0-f176.google.com ([209.85.223.176]:38989 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeB0Dgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 22:28:47 -0500
-Subject: Re: [PATCH] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-References: <1519631932-1730-1-git-send-email-jianchao.w.wang@oracle.com>
- <1519700898.3120.3.camel@wdc.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <3b6ca136-ba62-3eca-6eca-d191490b7754@oracle.com>
-Date: Tue, 27 Feb 2018 11:28:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Feb 2018 22:36:50 -0500
+X-Google-Smtp-Source: AG47ELss/jICzcTMfWgH1va6UXoodvmaQC35/GRudKUeA2YcQPImtfSiKeJWxd2owRZ/fEY6mVXzYE0ZmlsIiOpMfkA=
 MIME-Version: 1.0
-In-Reply-To: <1519700898.3120.3.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802270036
+In-Reply-To: <87r2p7rvn5.fsf@xmission.com>
+References: <87po4rz4ui.fsf_-_@xmission.com> <20180226235302.12708-3-ebiederm@xmission.com>
+ <CA+55aFySgJyR6JLcS9HLC9wEpWU1isdyTkchHxZHbJWsh7HFpg@mail.gmail.com> <87r2p7rvn5.fsf@xmission.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 26 Feb 2018 19:36:48 -0800
+X-Google-Sender-Auth: -nKnweAw8x76Ioyruwq9CyN5L1A
+Message-ID: <CA+55aFz+=zyuAcM3J5PfNNXqErf2x595eP=7tY_-p_L2ryr0rg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] fs/posix_acl: Document that get_acl respects ACL_DONT_CACHE
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
+On Mon, Feb 26, 2018 at 6:53 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> So the purpose for having a patch in the first place is that
+> 2a3a2a3f3524 ("ovl: don't cache acl on overlay layer")
+> which addded ACL_DONT_CACHED did not result in any comment updates
+> to get_acl.
 
-Thanks for your kindly response.
+I'm not opposed to just updating the comments.
 
-On 02/27/2018 11:08 AM, Bart Van Assche wrote:
-> On Mon, 2018-02-26 at 15:58 +0800, Jianchao Wang wrote:
->> In scsi core, __scsi_queue_insert should just put request back on
->> the queue and retry using the same command as before. However, for
->> blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
->> the request. To align with the semantics of __scsi_queue_insert,
->> just use blk_mq_requeue_request with kick_requeue_list == true.
->>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->> ---
->>  drivers/scsi/scsi_lib.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
->> index a86df9c..06d8110 100644
->> --- a/drivers/scsi/scsi_lib.c
->> +++ b/drivers/scsi/scsi_lib.c
->> @@ -191,7 +191,7 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
->>  	 */
->>  	cmd->result = 0;
->>  	if (q->mq_ops) {
->> -		scsi_mq_requeue_cmd(cmd);
->> +		blk_mq_requeue_request(cmd->request, true);
->>  		return;
->>  	}
->>  	spin_lock_irqsave(q->queue_lock, flags);
-> 
-> I think this patch will break the code in the aacraid driver that iterates
-> over sdev->cmd_list because commands are added to and removed from that
-> list in the prep / unprep code.
+I just think your updates were somewhat misleading.
 
-If that is true, what if aacraid driver uses block legacy instead of blk-mq ?
-w/ blk-mq disabled, __scsi_queue_insert just requeue the request with blk_requeue_request.
+> Which mean that if you read the comments in get_acl() that you
+> don't even think of ACL_DONT_CACHED.
 
-__scsi_queue_insert
-...
-	if (q->mq_ops) {
-		scsi_mq_requeue_cmd(cmd);
-		return;
-	}
-	spin_lock_irqsave(q->queue_lock, flags);
-	blk_requeue_request(q, cmd->request);
-	kblockd_schedule_work(&device->requeue_work);
-	spin_unlock_irqrestore(q->queue_lock, flags);
-...
+Right. By all means add a comment about ACL_DONT_CACHE disabling the
+cache entirely.
 
-no prep/unprep code there for block legacy code.
+But don't _remove_ the other valid way to flush the cache, and don't
+make that comment above cmpxchg() be even more confusing than the code
+is.
 
-Thanks
-Jianchao
+> Does this look better as a comment updating patch?
+>
+> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> index 2fd0fde16fe1..5453094b8828 100644
+> --- a/fs/posix_acl.c
+> +++ b/fs/posix_acl.c
+> @@ -98,6 +98,11 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+>         struct posix_acl **p;
+>         struct posix_acl *acl;
+>
+> +       /*
+> +        * To avoid caching the result of ->get_acl
+> +        * set inode->i_acl = inode->i_default_acl = ACL_DONT_CACHE;
+> +        */
+> +
+>         /*
+>          * The sentinel is used to detect when another operation like
+>          * set_cached_acl() or forget_cached_acl() races with get_acl().
+> @@ -126,9 +131,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+>                 /* fall through */ ;
+>
+>         /*
+> -        * Normally, the ACL returned by ->get_acl will be cached.
+> -        * A filesystem can prevent that by calling
+> -        * forget_cached_acl(inode, type) in ->get_acl.
+> +        * The ACL returned by ->get_acl will be cached.
 
-> 
-> Bart.
-> 
+Why do you hate forget_cached_acl()?
+
+It's perfectly valid too. Don't remove that comment. Maybe reword it
+to talk not about "preventing", but about "invalidating the cache".
+
+But the old comment that you remove isn't _wrong_, it's just that the
+"preventing" from returning the cached state with forget_cached_acl()
+is just a one-time thing.
+
+So forget_cached_acl() exists, and it works, and it does exactly what
+its name says. It is a perfectly valid way to prevent the current
+entry from being used in the future.
+
+See? I object to you removing that, and trying to make it be like
+ACL_DONT_CACHE is the *onyl* way to not cache something.
+
+Because honestly, that's what your comment updates do. They take the
+comments about _one_ case, and switch it over to be about the _othger_
+case.
+
+But dammit, there are _two_ ways to not cache things.
+
+"Fixing" the comment to talk about one and removing the other isn't a
+fix. It's just a stupid change that now has the problem the other way
+around!
+
+So fix the comment to really just talk about both things.
+
+First: talk about how to avoid caching entirely (ACL_DONT_CACHE).
+Then, talk about how to invalidate the cache once it has been
+instantiated (forget_cached_acl()).
+
+Don't do this idiotic "remove the valid comment just because you
+happened to care about the _other_ case"
+
+
+              Linus
