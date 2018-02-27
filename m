@@ -1,125 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeB0FQh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 00:16:37 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45299 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbeB0FQe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 00:16:34 -0500
-From: John Ogness <john.ogness@linutronix.de>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: dcache: remove trylock loops (was Re: [BUG] lock_parent() breakage when used from shrink_dentry_list())
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
-        <20180222235025.28662-7-john.ogness@linutronix.de>
-        <20180223035814.GZ30522@ZenIV.linux.org.uk>
-        <20180223040814.GA30522@ZenIV.linux.org.uk>
-        <87h8q7erlo.fsf@linutronix.de>
-        <20180223150928.GC30522@ZenIV.linux.org.uk>
-        <20180223174216.GD30522@ZenIV.linux.org.uk>
-        <20180223201317.GG30522@ZenIV.linux.org.uk>
-        <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
-        <20180224002248.GH30522@ZenIV.linux.org.uk>
-        <20180225073950.GI30522@ZenIV.linux.org.uk>
-Date: Tue, 27 Feb 2018 06:16:28 +0100
-In-Reply-To: <20180225073950.GI30522@ZenIV.linux.org.uk> (Al Viro's message of
-        "Sun, 25 Feb 2018 07:40:05 +0000")
-Message-ID: <87bmgbnhar.fsf_-_@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        id S1751947AbeB0FTL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 00:19:11 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40939 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751037AbeB0FTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 00:19:10 -0500
+Date: Tue, 27 Feb 2018 06:19:05 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Robert Abel <rabel@robertabel.eu>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
+Message-ID: <20180227051905.GA26781@1wt.eu>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu>
+ <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu>
+ <20180225235432.31209-4-rabel@robertabel.eu>
+ <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
+ <50a2fd51-8bdb-d2b7-c2b3-7df638fdedde@robertabel.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50a2fd51-8bdb-d2b7-c2b3-7df638fdedde@robertabel.eu>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-25, Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> I'll play with cleaning up and reordering tomorrow after I get some
-> sleep.  In the meanwhile, the current state of that set is at
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.dcache
+On Mon, Feb 26, 2018 at 11:43:36PM +0100, Robert Abel wrote:
+> On 26 Feb 2018 17:49, Miguel Ojeda wrote:
+> > On a general note, the code seems a bit convoluted for what it does,
+> > specially without the comment written in the commit message :-) Isn't
+> > it simpler to use a tiny array in the stack and put the numbers to be
+> > converted instead of modifying the input sequence and dancing with
+> > pointers?
+> 
+> That's what I felt at first, too. If we can drop the backwards
+> compatibility of repeated xy commands, the whole affair gets much
+> easier, but will unfortunately break existing use.
+> 
+> Ex. ^[[Lx004y002x006; --> x6y2, because repeats of x would just
+> overwrite earlier values. That's what the while loop allowed in the
+> first place.
+> 
+> I suspect the while loop to parse was just a clever way of parsing y
+> followed by x and x followed by y using the same code and the
+> overwriting behavior is actually an unaccounted-for side-effect.
 
-I have one comment on your new dentry_kill()...
+Well actually I don't see a problem there at all. The principle is simply
+to accept any sequence assigning x or y or both. If you write x4y2x6, it
+simply means that you changed your mind regarding x and that the last
+value (6) is the one you want. Just as if you wrote "^[[Lx4;^[[y2;^[[x6;".
+The while loop doesn't even try to do anything clever, it simply parses
+everything matching x and y followed by digits. I think the only reason
+for having both x and y processed in the same loop was to call
+charlcd_gotoxy() only once for both axes.
 
-> From e77db95d1ad189c76bcda7b90ac2225e98d776a2 Mon Sep 17 00:00:00 2001
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> Date: Fri, 23 Feb 2018 21:25:42 -0500
-> Subject: [PATCH] get rid of trylock loop around dentry_kill()
->
-> In case when trylock in there fails, deal with it directly in
-> dentry_kill().  Note that in cases when we drop and retake
-> ->d_lock, we need to recheck whether to retain the dentry.
-> Another thing is that dropping/retaking ->d_lock might have
-> ended up with negative dentry turning into positive; that,
-> of course, can happen only once...
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/dcache.c | 34 +++++++++++++++++++++++++++-------
->  1 file changed, 27 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 449c1a5..c1f082d 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -657,23 +657,43 @@ static struct dentry *dentry_kill(struct dentry *dentry)
->  	struct dentry *parent = NULL;
->  
->  	if (inode && unlikely(!spin_trylock(&inode->i_lock)))
-> -		goto failed;
-> +		goto slow_positive;
->  
->  	if (!IS_ROOT(dentry)) {
->  		parent = dentry->d_parent;
->  		if (unlikely(!spin_trylock(&parent->d_lock))) {
-> -			if (inode)
-> -				spin_unlock(&inode->i_lock);
-> -			goto failed;
-> +			parent = __lock_parent(dentry);
-> +			if (likely(inode || !dentry->d_inode))
-> +				goto got_locks;
-> +			/* negative that became positive */
-> +			if (parent)
-> +				spin_unlock(&parent->d_lock);
-> +			inode = dentry->d_inode;
-> +			goto slow_positive;
->  		}
->  	}
-> -
->  	__dentry_kill(dentry);
->  	return parent;
->  
-> -failed:
-> +slow_positive:
-> +	spin_unlock(&dentry->d_lock);
-> +	spin_lock(&inode->i_lock);
-> +	spin_lock(&dentry->d_lock);
-> +	parent = lock_parent(dentry);
-> +got_locks:
-> +	if (likely(dentry->d_lockref.count == 1 && !retain_dentry(dentry))) {
-> +		__dentry_kill(dentry);
-> +		return parent;
-> +	}
-> +	/* we are keeping it, after all */
-> +	if (inode)
-> +		spin_unlock(&inode->i_lock);
-> +	if (parent)
-> +		spin_unlock(&parent->d_lock);
-
-If someone else has grabbed a reference, it shouldn't be added to the
-lru list. Only decremented.
-
-if (entry->d_lockref.count == 1)
-
-> +	dentry_lru_add(dentry);
-> +	dentry->d_lockref.count--;
->  	spin_unlock(&dentry->d_lock);
-> -	return dentry; /* try again with same dentry */
-> +	return NULL;
->  }
->  
->  /*
+Regards,
+Willy
