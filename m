@@ -1,61 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeB0WaQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:30:16 -0500
-Received: from mail-ot0-f172.google.com ([74.125.82.172]:42000 "EHLO
-        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbeB0WaM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:30:12 -0500
-X-Google-Smtp-Source: AG47ELvtl1gTmsAjo3uwQFa7E6v60im+QBcwdJL2XyJ7tMYu6sOs2qbBrAWDQptcYW5Tsab8HmnGq3XsXvH7MmpubO8=
-MIME-Version: 1.0
-In-Reply-To: <20180227212433.2189-4-mylene.josserand@bootlin.com>
-References: <20180227212433.2189-1-mylene.josserand@bootlin.com> <20180227212433.2189-4-mylene.josserand@bootlin.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 27 Feb 2018 19:30:11 -0300
-Message-ID: <CAOMZO5C+Ub2R6srR+2jv2pY8zwjwkPSecpO1gbXvmXMTTnhU8Q@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] ASoC: codecs: pcm179x: Add reset gpio
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        alexandre.belloni@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752171AbeB0W15 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:27:57 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:60681 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751894AbeB0W1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:27:54 -0500
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 11/16] drm/sun4i: Move and expand DW HDMI PHY register macros
+Date: Tue, 27 Feb 2018 23:26:56 +0100
+Message-Id: <20180227222701.9716-12-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RMULKu014181
 
-On Tue, Feb 27, 2018 at 6:24 PM, Mylène Josserand
-<mylene.josserand@bootlin.com> wrote:
+DW HDMI PHY macros are moved to header file and expanded with the
+registers present on newer SoCs like H3 and H5.
 
-> +       pcm179x->reset = of_get_named_gpio(np, "reset-gpios", 0);
-> +       if (gpio_is_valid(pcm179x->reset)) {
-> +               ret = devm_gpio_request_one(dev, pcm179x->reset,
-> +                                           GPIOF_OUT_INIT_LOW,
-> +                                           "pcm179x reset");
-> +               if (ret) {
-> +                       dev_err(dev,
-> +                               "Failed to request GPIO %d as reset pin, error %d\n",
-> +                               pcm179x->reset, ret);
-> +                       return ret;
-> +               }
-> +
-> +               gpio_set_value(pcm179x->reset, 1);
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 131 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |  17 -----
+ 2 files changed, 131 insertions(+), 17 deletions(-)
 
-It would be better to use the gpiod API, which takes the GPIO polarity
-into account.
-
-There may be systems that have an inverter connected to this pin, and
-this can be changed in dts via GPIO_ACTIVE_HIGH.
-
-Also, as the reset pin can be connected to an I2C expander, for
-example, so it is safer to use the cansleep variant:
-
-gpiod_set_value_cansleep(pcm179x->reset, 0);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 1e9eb6072615..49161326ea5a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,6 +12,137 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ 
++#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
++#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
++
++#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
++#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
++
++#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
++#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
++
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
++
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG	0x0020
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SWI		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWEND	BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWENC	BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_CALSW	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVRCAL(x)	((x) << 26)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVBH(x)	((x) << 24)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMP_OPT		BIT(23)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMP_OPT		BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMPCK_OPT	BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMPCK_OPT	BIT(20)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENRCAL		BIT(19)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENCALOG		BIT(18)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SCKTMDS	BIT(17)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TMDSCLK_EN	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK	GENMASK(15, 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_ALL	(0xf << 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDSCLK	BIT(11)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS2	BIT(10)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS1	BIT(9)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS0	BIT(8)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDSCLK	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS2	BIT(6)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS1	BIT(5)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS0	BIT(4)
++#define SUN8I_HDMI_PHY_ANA_CFG1_CKEN		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG1_LDOEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENVBS		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENBI		BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG	0x0024
++#define SUN8I_HDMI_PHY_ANA_CFG2_M_EN		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG2_PLLDBEN		BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG2_SEN		BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDPD	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDEN	BIT(27)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLRCK	BIT(26)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLR(x)	((x) << 23)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DENCK	BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DEN		BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CD(x)	((x) << 19)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CKSS(x)	((x) << 17)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSWCK	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSW	BIT(15)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CSMPS(x)	((x) << 13)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_SLV(x)	((x) << 10)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOSTCK(x)	((x) << 8)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOST(x)	((x) << 6)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_RESDI(x)	((x) << 0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG	0x0028
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOWCK(x)	((x) << 30)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOW(x)	((x) << 28)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_WIRE(x)	((x) << 18)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMPCK(x)	((x) << 14)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMPCK(x)	((x) << 11)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMP(x)	((x) << 4)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAPD		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLPD		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLEN		BIT(0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG	0x002c
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD1		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD		BIT(30)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
++#define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
++#define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLDBEN		BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CS		BIT(18)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CP_S(x)		((x) << 13)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CNT_INT(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_PLL_CFG1_BWS		BIT(6)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_MSK	GENMASK(5, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_SHIFT	0
++
++#define SUN8I_HDMI_PHY_PLL_CFG2_REG	0x0030
++#define SUN8I_HDMI_PHY_PLL_CFG2_SV_H		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PDCLKSEL(x)	((x) << 29)
++#define SUN8I_HDMI_PHY_PLL_CFG2_CLKSTEP(x)	((x) << 27)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PSET(x)		((x) << 24)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PCLK_SEL	BIT(23)
++#define SUN8I_HDMI_PHY_PLL_CFG2_AUTOSYNC_DIS	BIT(22)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG2_OUT_EN	BIT(21)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG1_OUT_EN	BIT(20)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN_EN	BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN(x)	((x) << 16)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_S(x)	((x) << 12)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_RST_IN	BIT(11)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SINT_FRAC	BIT(10)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SDIV2		BIT(9)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S(x)		((x) << 6)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S6P25_7P5	BIT(5)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S5_7		BIT(4)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK	GENMASK(3, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT	0
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(x)	(((x) - 1) << 0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG3_REG	0x0034
++#define SUN8I_HDMI_PHY_PLL_CFG3_SOUT_DIV2	BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_STS_REG	0x0038
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_SHIFT	11
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_MSK	GENMASK(16, 11)
++#define SUN8I_HDMI_PHY_ANA_STS_RCALEND2D	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_STS_RCAL_MASK	GENMASK(5, 0)
++
++#define SUN8I_HDMI_PHY_CEC_REG		0x003c
++
+ struct sun8i_hdmi_phy;
+ 
+ struct sun8i_hdmi_phy_variant {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 17aada64bafd..16889bc0c62d 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -7,23 +7,6 @@
+ 
+ #include "sun8i_dw_hdmi.h"
+ 
+-#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+-#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
+-
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
+-
+-#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
+-#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
+-
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
+-
+ /*
+  * Address can be actually any value. Here is set to same value as
+  * it is set in BSP driver.
+-- 
+2.16.2
