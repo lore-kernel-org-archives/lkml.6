@@ -1,122 +1,121 @@
-Return-Path: <yong.deng@magewell.com>
-X-Google-Smtp-Source: AH8x2249JQy4WAwK+u99LrxJifZ9hlFi5KUnkg50pkH2UenO9BZtaxuXf8VsIlaYuWmZ/Nfw3H5e
-ARC-Seal: i=1; a=rsa-sha256; t=1519720274; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0qcdrSj/s7crs3ONi4VEAtPp6SYbKh2im/86loYNPVdqImGtVCYSM9ib2TJ+DBMHwd
-         NmHbTdexmPCKaFtTxWYFxvJoRZbZrfhuhxA2cg0MAlrnngUAYyeqgWl/Kg8E0XFqxwdK
-         yXmpjNWC0Omj5+K3FsBHGeX/k7gobFXoAssHm+3E6Lm0F97/cqthz2C1FF6A6gaGJdUl
-         kPe3mc3Fe+AJMp3RcPsDYmTiPUzL1OKsQwXhGMH3V0042/n+VsWFxCOSnb5175TMEHlP
-         LoY+Mk9anCNoibNej2m/MPvBKISPMSzQi7mADaIG9e+WXTBjmiElP+mafREUAOanA4MV
-         +iKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=wOszgjMTKg9YED7AW9E0v9xpUdVL/4DK+hsVvkTilds=;
-        b=h901yntaL02EcuWl8P9HKhV6NOkEXnUV9U/Vd1uGyKDnj29+N/wzxQdrC6F5jcyVCW
-         9GjRlz1rskxy/DJvwgM/wr1SyANjjdiFM4arw1Wvwm+R7az6vWmmvBJpF+20n/VsTDHz
-         yp7fEqqPxkg6GGQRsFiEqBPeEoGedxmTLEKu/vmipvekSRRznTj017NUtEeflz5/ADNg
-         94xD1D1L6W1HpxGeyb70H2FLO7yYxm6fn6BL3pegXxeqvZUFbaUQ5dOxdMvf2YMKMpOX
-         no88pXD7Kj+4t57pnQ2l3WEA7I4Tfk+e08uUdjeWURdPubKrpT75RwNkCbEL+W7f+3g2
-         FKRw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.13 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.13 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1035927|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.B6AfdjB_1519720260;
-Date: Tue, 27 Feb 2018 16:31:00 +0800
-From: Yong <yong.deng@magewell.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, "David S. Miller"
- <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap
- <rdunlap@infradead.org>, Hans Verkuil <hans.verkuil@cisco.com>, Stanimir
- Varbanov <stanimir.varbanov@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Ramesh
- Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Yannick Fertre
- <yannick.fertre@st.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Todor
- Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v8 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-Message-Id: <20180227163100.af7828ff4930b91cda54fd46@magewell.com>
-In-Reply-To: <1519719639.3402.2.camel@pengutronix.de>
-References: <1519697256-32472-1-git-send-email-yong.deng@magewell.com>
-	<1519719639.3402.2.camel@pengutronix.de>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.30; i686-pc-mingw32)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-757978-1519717680-2-15366722043852578221
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519717679; b=bm1tlZ0/s7xrCw4orq0frkzxC3yh7MhdB0rndmw2N6JyliR
+    pYYd3nyyf5Y89Gjb0tmrGG8QSeTXShqC+nJbojnJKCSJWHpRy9yvPd0OoLw/A70l
+    dJ7a8fr4DVxPvgMxfZ45DZz/13DgErXKyH293Ts1iysqiKK+h4y+upkLt8JC2gwt
+    MKeo2DZ9LHTH1WkEpPU7xws8i6aeZPgljrDZa2o8v8JQZDZU3Z3t7eq9L79ohuYt
+    nKoqVi5slLQdUj8imnwqyHwl/4JHKh4nLTNELT5kGvsO6Dcyn1xvlS+FW0NNNmM8
+    d/tayh1Z2LUArQ9ZoinGpl8nxckQWgEFOpU1eOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:cc:subject:date:message-id
+    :mime-version:content-type:to:sender:list-id; s=arctest; t=
+    1519717679; bh=+UX6bdqp1OgqfHQPVinqBPd5Gn3j+xvd4iRYD7MQI64=; b=r
+    agsgG/oVtaokzO2AMcm1G5eldvKYPRXOyThO6kp6J1b/WvisFqwhtt7Wn0TDXLNk
+    UllEAXHHsLP6/nSqPM2oUh5kozGEZ3jkvHkbFuPC7loRWUqQvvs+7rAxuhFqVd7n
+    +lGC3g5Ykq3qbKVGt0AcOLGfvSD6ttWKggqEFB0+CfpndkjVsIz9lNlV/NWgODDb
+    fXYC0ICRLdc25/MkdSC4XQODJqZ6XfJ64D3oNdOB0pAaNY/4WoQUnL41+1WD+MVm
+    /biGnN6Kvdz0WT0PurI4OffK+VoBIJxNHzhRk2Fya6r/Mm4VrTvgtN6YCgDyGegx
+    TzW+HXLaAGsCe/IJoZ6Ag==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=ngx3ZoOj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=ngx3ZoOj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751974AbeB0Hr4 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 02:47:56 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:2617 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeB0Hr4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 02:47:56 -0500
+X-IronPort-AV: E=Sophos;i="5.47,398,1515456000";
+   d="scan'208";a="709712310"
+From: Norbert Manthey <nmanthey@amazon.de>
+CC: Norbert Manthey <nmanthey@amazon.de>,
+        Michael Tautschnig <tautschn@amazon.co.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH] sched: label attributes require a ';'
+Date: Tue, 27 Feb 2018 08:47:40 +0100
+Message-ID: <1519717660-16157-1-git-send-email-nmanthey@amazon.de>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+To: unlisted-recipients:; (no To-header on input)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593518132578299122?=
-X-GMAIL-MSGID: =?utf-8?q?1593542206587189457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 27 Feb 2018 09:20:39 +0100
-Philipp Zabel <p.zabel@pengutronix.de> wrote:
+Due to using gcc defines for configuration, some labels might be unused in
+certain configurations. While adding a __maybe_unused to the label is
+fine in general, the line has to be terminated with ';'. This is also
+reflected in the gcc documentation, but gcc parsed the previous variant
+without an error message.
 
-> On Tue, 2018-02-27 at 10:07 +0800, Yong Deng wrote:
-> > Add binding documentation for Allwinner V3s CSI.
-> > 
-> > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > ---
-> >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 ++++++++++++++++++++++
-> >  1 file changed, 59 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > new file mode 100644
-> > index 000000000000..2ff47a9507a6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > @@ -0,0 +1,59 @@
-> > +Allwinner V3s Camera Sensor Interface
-> > +-------------------------------------
-> > +
-> > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > +interface and CSI1 is used for parallel interface.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > +  - reg: base address and size of the memory-mapped region.
-> > +  - interrupts: interrupt associated to this IP
-> > +  - clocks: phandles to the clocks feeding the CSI
-> > +    * bus: the CSI interface clock
-> > +    * mod: the CSI module clock
-> > +    * ram: the CSI DRAM clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandles to the reset line driving the CSI
-> > +
-> > +Each CSI node should contain one 'port' child node with one child 'endpoint'
-> > +node, according to the bindings defined in
-> > +Documentation/devicetree/bindings/media/video-interfaces.txt. As mentioned
-> > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel or
-> > +Bt656 for CSI1.
-> > +
-> > +Endpoint node properties for CSI1
-> > +---------------------------------
-> > +
-> > +- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
-> > +			   node
-> > +- bus-width:		: (required) must be 8, 10, 12 or 16
-> > +- pclk-sample		: (optional) (default: sample on falling edge)
-> 
-> It would be helpful to state that 1 is rising edge and 0 is falling
-> edge, see for example ov5640.txt
+This has been spotted while compiling with goto-cc, the compiler for the
+CPROVER tool suite.
 
-I think this is already documented at 
-Documentation/devicetree/bindings/media/video-interfaces.txt.
+Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
+Signed-off-by: Michael Tautschnig <tautschn@amazon.co.uk>
 
-> 
-> regards
-> Philipp
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 26a71eb..3af8fb6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6716,7 +6716,7 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+ 
+ 	p = task_of(se);
+ 
+-done: __maybe_unused
++done: __maybe_unused;
+ #ifdef CONFIG_SMP
+ 	/*
+ 	 * Move the next running task to the front of
+-- 
+2.7.4
 
-Thanks,
-Yong
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
