@@ -1,52 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeB0WaI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:30:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53412 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752008AbeB0WaG (ORCPT
+        id S1752007AbeB0WaQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:30:16 -0500
+Received: from mail-ot0-f172.google.com ([74.125.82.172]:42000 "EHLO
+        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbeB0WaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:30:06 -0500
-Subject: Re: [PATCH] sparse doesn't support indirect_branch attribute
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180227194828.GA29918@bombadil.infradead.org>
- <5a85a7cf-c59c-f338-2087-c9de799adbe8@infradead.org>
- <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a9b65d60-a3c0-f46a-c10e-5d649e75d9ce@infradead.org>
-Date: Tue, 27 Feb 2018 14:30:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 17:30:12 -0500
+X-Google-Smtp-Source: AG47ELvtl1gTmsAjo3uwQFa7E6v60im+QBcwdJL2XyJ7tMYu6sOs2qbBrAWDQptcYW5Tsab8HmnGq3XsXvH7MmpubO8=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180227212433.2189-4-mylene.josserand@bootlin.com>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com> <20180227212433.2189-4-mylene.josserand@bootlin.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 27 Feb 2018 19:30:11 -0300
+Message-ID: <CAOMZO5C+Ub2R6srR+2jv2pY8zwjwkPSecpO1gbXvmXMTTnhU8Q@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] ASoC: codecs: pcm179x: Add reset gpio
+To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        alexandre.belloni@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RMULKu014181
 
-On 02/27/2018 02:12 PM, Linus Torvalds wrote:
-> On Tue, Feb 27, 2018 at 12:18 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> I don't mind the patch, but I did send a patch for this attribute on Feb. 13, 2018,
->> to the sparse mailing list.
-> 
-> I think the sparse plan is to just stop warning about unknown
-> attributes, because it doesn't really help users (at most it's a note
-> to a sparse developer).
+On Tue, Feb 27, 2018 at 6:24 PM, Mylène Josserand
+<mylene.josserand@bootlin.com> wrote:
 
-Yes, there are sparse discussions about that.
+> +       pcm179x->reset = of_get_named_gpio(np, "reset-gpios", 0);
+> +       if (gpio_is_valid(pcm179x->reset)) {
+> +               ret = devm_gpio_request_one(dev, pcm179x->reset,
+> +                                           GPIOF_OUT_INIT_LOW,
+> +                                           "pcm179x reset");
+> +               if (ret) {
+> +                       dev_err(dev,
+> +                               "Failed to request GPIO %d as reset pin, error %d\n",
+> +                               pcm179x->reset, ret);
+> +                       return ret;
+> +               }
+> +
+> +               gpio_set_value(pcm179x->reset, 1);
 
-There is also a kernel kbuild patch from Luc that Masahiro has also merged that
-does -Wno-unknown-attributes (or however that is spelled).
+It would be better to use the gpiod API, which takes the GPIO polarity
+into account.
 
-> But sparse doesn't have the same regular releases the kernel has. Oh well.
+There may be systems that have an inverter connected to this pin, and
+this can be changed in dts via GPIO_ACTIVE_HIGH.
 
-Right.
+Also, as the reset pin can be connected to an I2C expander, for
+example, so it is safer to use the cansleep variant:
 
-
--- 
-~Randy
+gpiod_set_value_cansleep(pcm179x->reset, 0);
