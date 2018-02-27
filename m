@@ -1,93 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeB0J0i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:26:38 -0500
-Received: from mga07.intel.com ([134.134.136.100]:29423 "EHLO mga07.intel.com"
+        id S1752577AbeB0J0q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:26:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33743 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752546AbeB0J0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:26:31 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
-   d="scan'208";a="30970032"
-Date: Tue, 27 Feb 2018 11:26:27 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Jeremy McNicoll <jmcnicol@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
-Message-ID: <20180227092627.GD2424@lahna.fi.intel.com>
-References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
- <20180222231736.GA628@mini-rhel.redhat.com>
- <20180226102029.GG27191@lahna.fi.intel.com>
- <20180226133802.GR27191@lahna.fi.intel.com>
- <a3eaf2cd-5820-4ef5-a799-d17a3dc84907@redhat.com>
- <20180226194645.GA3774@lahna.fi.intel.com>
- <6560a597-0075-549e-f723-1bc5eb54c7bc@redhat.com>
+        id S1752049AbeB0J0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:26:44 -0500
+Subject: Re: [PATCH] xen: use hvc console for dom0
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Cc: jbeulich@suse.com
+References: <20180226110822.13787-1-jgross@suse.com>
+ <16e21e9e-35d5-81f2-0f90-df5f8ac72446@oracle.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <0bee63f6-6681-5cb1-b763-66cf8304ae84@suse.com>
+Date: Tue, 27 Feb 2018 10:26:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6560a597-0075-549e-f723-1bc5eb54c7bc@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <16e21e9e-35d5-81f2-0f90-df5f8ac72446@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 12:15:28PM -0800, Jeremy McNicoll wrote:
-> On 2018-02-26 11:46 AM, Mika Westerberg wrote:
-> > On Mon, Feb 26, 2018 at 11:28:16AM -0800, Jeremy McNicoll wrote:
-> > > On 2018-02-26 5:38 AM, Mika Westerberg wrote:
-> > > > On Mon, Feb 26, 2018 at 12:20:29PM +0200, Mika Westerberg wrote:
-> > > > > On Thu, Feb 22, 2018 at 03:17:38PM -0800, Jeremy McNicoll wrote:
-> > > > > > > +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
-> > > > > > > +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
-> > > > > > > +			link, depth);
-> > > > > > 
-> > > > > > This kind of condition sounds more like an error instead of info.
-> > > > > > Please bump this up to tb_WARN/tb_warn ideally tb_err().
-> > > > > 
-> > > > > No, this is not an error.
-> > > > 
-> > > > To be more clear, it is totally fine to have the firmware to reject some
-> > > > devices. For example in case of the new usbonly security level the
-> > > > firmware rejects other devices but the first.
-> > > > 
-> > > 
-> > > Ok. Is that kind of information available to the kernel?  What security
-> > > mode we are in?
-> > > 
-> > > ie) if (LINK_REJECTED && !USB_SECURITY)
-> > >         print "Error switch %u was rejected since its not usbonly"
-> > >      endif
-> > > 
-> > > I am sure something like that simplified pseudo code above would
-> > > be somewhat useful to users when debugging.
-> > 
-> > That's why it is on info level so it goes to dmesg but does not scare
-> > the user :-)
-> > 
+On 26/02/18 20:02, Boris Ostrovsky wrote:
+> On 02/26/2018 06:08 AM, Juergen Gross wrote:
+>> Today the hvc console is added as a preferred console for pv domUs
+>> only. As this requires a boot parameter for getting dom0 messages per
+>> default add it for dom0, too.
+>>
+>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>> ---
+>>  arch/x86/xen/enlighten_pv.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+>> index c047f42552e1..d27740a80c5e 100644
+>> --- a/arch/x86/xen/enlighten_pv.c
+>> +++ b/arch/x86/xen/enlighten_pv.c
+>> @@ -1377,7 +1377,6 @@ asmlinkage __visible void __init xen_start_kernel(void)
+>>  	if (!xen_initial_domain()) {
+>>  		add_preferred_console("xenboot", 0, NULL);
+>>  		add_preferred_console("tty", 0, NULL);
+>> -		add_preferred_console("hvc", 0, NULL);
+>>  		if (pci_xen)
+>>  			x86_init.pci.arch_init = pci_xen_init;
+>>  	} else {
+>> @@ -1410,6 +1409,9 @@ asmlinkage __visible void __init xen_start_kernel(void)
+>>  
+>>  		xen_boot_params_init_edd();
+>>  	}
+>> +
+>> +	add_preferred_console("hvc", 0, NULL);
+>> +
 > 
-> The point I am trying to make is that it would be nice to be able to
-> know WHY the link was rejected and not just that it was rejected.
+> Won't this prevent dom0 output from showing up on vga console by default?
 
-Fair enough. In practice (since we ask the firmware to accept any
-device) the only reason for rejection is that the topology limit is
-exceeded (too many devices in the chain).
+Right, we need to add "tty", too.
 
-I'm thinking to change the message to something like:
+Will send V2.
 
-	tb_info(tb, "switch at %u.%u was rejected by ICM firmware because topology limit exceeded\n",
-		link, depth);
 
-And do the same for Titan Ridge in patch [18/18]. 
-
-Security level can be read directly from "security" sysfs attribute of
-the domain so that information does not need to be duplicated IMHO.
-
-Does that work for you?
+Juergen
