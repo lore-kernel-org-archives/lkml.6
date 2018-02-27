@@ -1,211 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeB0AE4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 19:04:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53972 "EHLO mx1.redhat.com"
+        id S1751737AbeB0AG2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 19:06:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36992 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751797AbeB0AEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 19:04:54 -0500
-Date: Tue, 27 Feb 2018 02:04:49 +0200
+        id S1751575AbeB0AG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 19:06:27 -0500
+Date: Tue, 27 Feb 2018 02:06:22 +0200
 From: "Michael S. Tsirkin" <mst@redhat.com>
 To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
 Cc: linux-kernel@vger.kernel.org, slp@redhat.com, bhe@redhat.com,
         somlo@cmu.edu, xiaolong.ye@intel.com
-Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
-Message-ID: <20180227020104-mutt-send-email-mst@kernel.org>
+Subject: Re: [PATCH v15 02/11] fw_cfg: add a public uapi header
+Message-ID: <20180227020549-mutt-send-email-mst@kernel.org>
 References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-12-marcandre.lureau@redhat.com>
+ <20180215213312.29234-3-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180215213312.29234-12-marcandre.lureau@redhat.com>
+In-Reply-To: <20180215213312.29234-3-marcandre.lureau@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-André Lureau wrote:
-> Modify fw_cfg_read_blob() to use DMA if the device supports it.
-> Return errors, because the operation may fail.
+On Thu, Feb 15, 2018 at 10:33:03PM +0100, Marc-André Lureau wrote:
+> Create a common header file for well-known values and structures to be
+> shared by the Linux kernel with qemu or other projects.
 > 
-> So far, only one call in fw_cfg_register_dir_entries() is using
-> kmalloc'ed buf and is thus clearly eligible to DMA read.
+> It is based from qemu/docs/specs/fw_cfg.txt which references
+> qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
+> authoritative list" & vmcoreinfo.txt. Those files don't have an
+> explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
+> Michael S. Tsirkin suggested to use the same license.
 > 
-> Initially, I didn't implement DMA read to speed up boot time, but as a
-> first step before introducing DMA write (since read operations were
-> already presents). Even more, I didn't realize fw-cfg entries were
-> being read by the kernel during boot by default. But actally fw-cfg
-> entries are being populated during module probe. I knew DMA improved a
-> lot bios boot time (the main reason the DMA interface was added
-> afaik). Let see the time it would take to read the whole ACPI
-> tables (128kb allocated)
+> The patch intentionally left out DMA & vmcoreinfo structures &
+> defines, which are added in the commits making usage of it.
 > 
->  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
->   - with DMA: sys 0m0.003s
->   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
-> 
-> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
-> boot to populate sysfs qemu_fw_cfg directory, and it is quite
-> small (1-2kb). Since it does not expose itself, in order to measure
-> the time it takes to read such small file, I took a comparable sized
-> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
-> modified read_raw enabling DMA)
-> 
->  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
->   - with DMA:
->           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
->   - without DMA:
->           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
-> 
-> That's a few msec saved during boot by enabling DMA read (the gain
-> would be more substantial if other & bigger fw-cfg entries are read by
-> others from sysfs, unfortunately, it's not clear if we can always
-> enable DMA there)
-> 
+> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
 > Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-> ---
->  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
->  1 file changed, 50 insertions(+), 11 deletions(-)
 > 
+> ---
+> 
+> The related qemu patch making use of it, to be submitted:
+> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
+> ---
+>  MAINTAINERS                    |  1 +
+>  drivers/firmware/qemu_fw_cfg.c | 22 ++------------
+>  include/uapi/linux/fw_cfg.h    | 66 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 69 insertions(+), 20 deletions(-)
+>  create mode 100644 include/uapi/linux/fw_cfg.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3bdc260e36b7..a66b65f62811 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11352,6 +11352,7 @@ M:	"Michael S. Tsirkin" <mst@redhat.com>
+>  L:	qemu-devel@nongnu.org
+>  S:	Maintained
+>  F:	drivers/firmware/qemu_fw_cfg.c
+> +F:	include/uapi/linux/fw_cfg.h
+>  
+>  QIB DRIVER
+>  M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
+
+Why fw_cfg.h and not qemu_fw_cfg.h ? fw_cfg.h seems too generic.
+
 > diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> index 3015e77aebca..94df57e9be66 100644
+> index a41b572eeeb1..42601a3eaed5 100644
 > --- a/drivers/firmware/qemu_fw_cfg.c
 > +++ b/drivers/firmware/qemu_fw_cfg.c
-> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
->  	return ret;
->  }
+> @@ -32,30 +32,12 @@
+>  #include <linux/slab.h>
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+> +#include <uapi/linux/fw_cfg.h>
 >  
-> +/* with acpi & dev locks taken */
-> +static ssize_t fw_cfg_read_blob_dma(u16 key,
-> +				void *buf, loff_t pos, size_t count)
-> +{
-> +	ssize_t ret;
+>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>  MODULE_LICENSE("GPL");
+>  
+> -/* selector key values for "well-known" fw_cfg entries */
+> -#define FW_CFG_SIGNATURE  0x00
+> -#define FW_CFG_ID         0x01
+> -#define FW_CFG_FILE_DIR   0x19
+> -
+> -/* size in bytes of fw_cfg signature */
+> -#define FW_CFG_SIG_SIZE 4
+> -
+> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+> -#define FW_CFG_MAX_FILE_PATH 56
+> -
+> -/* fw_cfg file directory entry type */
+> -struct fw_cfg_file {
+> -	u32 size;
+> -	u16 select;
+> -	u16 reserved;
+> -	char name[FW_CFG_MAX_FILE_PATH];
+> -};
+> -
+>  /* fw_cfg device i/o register addresses */
+>  static bool fw_cfg_is_mmio;
+>  static phys_addr_t fw_cfg_p_base;
+> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+>  
+>  #ifdef CONFIG_ACPI
+>  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
+> -	{ "QEMU0002", },
+> +	{ FW_CFG_ACPI_DEVICE_ID, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
+> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
+> new file mode 100644
+> index 000000000000..c698ac3812f6
+> --- /dev/null
+> +++ b/include/uapi/linux/fw_cfg.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause */
+> +#ifndef _LINUX_FW_CFG_H
+> +#define _LINUX_FW_CFG_H
 > +
-> +	if (pos == 0) {
-> +		ret = fw_cfg_dma_transfer(buf, count, key << 16
-> +					| FW_CFG_DMA_CTL_SELECT
-> +					| FW_CFG_DMA_CTL_READ);
-> +	} else {
-> +		fw_cfg_sel_endianness(key);
-> +		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
-> +		if (ret < 0)
-> +			return ret;
-> +		ret = fw_cfg_dma_transfer(buf, count,
-> +					FW_CFG_DMA_CTL_READ);
-> +	}
+> +#include <linux/types.h>
 > +
-> +	return ret;
-> +}
+> +#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
 > +
-> +/* with acpi & dev locks taken */
-> +static ssize_t fw_cfg_read_blob_io(u16 key,
-> +				void *buf, loff_t pos, size_t count)
-> +{
-> +	fw_cfg_sel_endianness(key);
-> +	while (pos-- > 0)
-> +		ioread8(fw_cfg_reg_data);
-> +	ioread8_rep(fw_cfg_reg_data, buf, count);
-> +	return count;
-> +}
+> +/* selector key values for "well-known" fw_cfg entries */
+> +#define FW_CFG_SIGNATURE	0x00
+> +#define FW_CFG_ID		0x01
+> +#define FW_CFG_UUID		0x02
+> +#define FW_CFG_RAM_SIZE		0x03
+> +#define FW_CFG_NOGRAPHIC	0x04
+> +#define FW_CFG_NB_CPUS		0x05
+> +#define FW_CFG_MACHINE_ID	0x06
+> +#define FW_CFG_KERNEL_ADDR	0x07
+> +#define FW_CFG_KERNEL_SIZE	0x08
+> +#define FW_CFG_KERNEL_CMDLINE	0x09
+> +#define FW_CFG_INITRD_ADDR	0x0a
+> +#define FW_CFG_INITRD_SIZE	0x0b
+> +#define FW_CFG_BOOT_DEVICE	0x0c
+> +#define FW_CFG_NUMA		0x0d
+> +#define FW_CFG_BOOT_MENU	0x0e
+> +#define FW_CFG_MAX_CPUS		0x0f
+> +#define FW_CFG_KERNEL_ENTRY	0x10
+> +#define FW_CFG_KERNEL_DATA	0x11
+> +#define FW_CFG_INITRD_DATA	0x12
+> +#define FW_CFG_CMDLINE_ADDR	0x13
+> +#define FW_CFG_CMDLINE_SIZE	0x14
+> +#define FW_CFG_CMDLINE_DATA	0x15
+> +#define FW_CFG_SETUP_ADDR	0x16
+> +#define FW_CFG_SETUP_SIZE	0x17
+> +#define FW_CFG_SETUP_DATA	0x18
+> +#define FW_CFG_FILE_DIR		0x19
 > +
->  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
->  static ssize_t fw_cfg_read_blob(u16 key,
-> -				void *buf, loff_t pos, size_t count)
-> +				void *buf, loff_t pos, size_t count,
-> +				bool dma)
->  {
->  	u32 glk = -1U;
->  	acpi_status status;
-> +	ssize_t ret;
->  
->  	/* If we have ACPI, ensure mutual exclusion against any potential
->  	 * device access by the firmware, e.g. via AML methods:
-
-so this adds a dma flag to fw_cfg_read_blob.
-
-
-
-> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
->  	}
->  
->  	mutex_lock(&fw_cfg_dev_lock);
-> -	fw_cfg_sel_endianness(key);
-> -	while (pos-- > 0)
-> -		ioread8(fw_cfg_reg_data);
-> -	ioread8_rep(fw_cfg_reg_data, buf, count);
-> +	if (dma && fw_cfg_dma_enabled()) {
-> +		ret = fw_cfg_read_blob_dma(key, buf, pos, count);
-> +	} else {
-> +		ret = fw_cfg_read_blob_io(key, buf, pos, count);
-> +	}
+> +#define FW_CFG_FILE_FIRST	0x20
+> +#define FW_CFG_FILE_SLOTS_MIN	0x10
 > +
->  	mutex_unlock(&fw_cfg_dev_lock);
->  
->  	acpi_release_global_lock(glk);
-> -	return count;
+> +#define FW_CFG_WRITE_CHANNEL	0x4000
+> +#define FW_CFG_ARCH_LOCAL	0x8000
+> +#define FW_CFG_ENTRY_MASK	(~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
 > +
-> +	return ret;
->  }
->  
->  #ifdef CONFIG_CRASH_CORE
-
-If set to false it does io, if set to true it does dma.
-
-I would prefer passing an accessor function pointer
-since that's clearer than true/false.
-
-
-> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
->  
->  	/* verify fw_cfg device signature */
->  	if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
-> -				0, FW_CFG_SIG_SIZE) < 0 ||
-> +				0, FW_CFG_SIG_SIZE, false) < 0 ||
->  		memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
->  		fw_cfg_io_cleanup();
->  		return -ENODEV;
-> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
->  	if (count > entry->size - pos)
->  		count = entry->size - pos;
->  
-> -	return fw_cfg_read_blob(entry->select, buf, pos, count);
-> +	/* do not use DMA, virt_to_phys(buf) might not be ok */
-> +	return fw_cfg_read_blob(entry->select, buf, pos, count, false);
->  }
->  
->  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
-> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
->  	size_t dir_size;
->  
->  	ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
-> -			0, sizeof(files_count));
-> +			0, sizeof(files_count), false);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
->  		return -ENOMEM;
->  
->  	ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
-> -			sizeof(files_count), dir_size);
-> +			sizeof(files_count), dir_size, false);
->  	if (ret < 0)
->  		goto end;
->  
-> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->  		goto err_probe;
->  
->  	/* get revision number, add matching top-level attribute */
-> -	err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> +	err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
->  	if (err < 0)
->  		goto err_probe;
-
-
-Looks like all callers pass in false as parameter.
-Given this, how can this speed up any operations?
-
-Are you sure you tested this properly?
-
+> +#define FW_CFG_INVALID		0xffff
+> +
+> +/* width in bytes of fw_cfg control register */
+> +#define FW_CFG_CTL_SIZE		0x02
+> +
+> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+> +#define FW_CFG_MAX_FILE_PATH	56
+> +
+> +/* size in bytes of fw_cfg signature */
+> +#define FW_CFG_SIG_SIZE 4
+> +
+> +/* FW_CFG_ID bits */
+> +#define FW_CFG_VERSION		0x01
+> +
+> +/* fw_cfg file directory entry type */
+> +struct fw_cfg_file {
+> +	__be32 size;
+> +	__be16 select;
+> +	__u16 reserved;
+> +	char name[FW_CFG_MAX_FILE_PATH];
+> +};
+> +
+> +#endif
 > -- 
 > 2.16.1.73.g5832b7e9f2
