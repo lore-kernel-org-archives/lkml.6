@@ -1,79 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeB0IrV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:47:21 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:55296 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752140AbeB0IrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:47:20 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-pci: assign separate irq vectors for adminq and ioq0
-Date: Tue, 27 Feb 2018 16:46:17 +0800
-Message-Id: <1519721177-2099-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802270107
+        id S1752477AbeB0Iz1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:55:27 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42972 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752392AbeB0IzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 03:55:05 -0500
+Date: Tue, 27 Feb 2018 09:54:58 +0100
+From: Jens Freimann <jfreimann@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jasowang@redhat.com, wexu@redhat.com
+Subject: Re: [PATCH RFC 1/2] virtio: introduce packed ring defines
+Message-ID: <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-2-tiwei.bie@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180223111801.15240-2-tiwei.bie@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, adminq and ioq0 share the same irq vector. This is
-unfair for both amdinq and ioq0.
- - For adminq, its completion irq has to be bound on cpu0.
- - For ioq0, when the irq fires for io completion, the adminq irq
-   action has to be checked also.
+On Fri, Feb 23, 2018 at 07:18:00PM +0800, Tiwei Bie wrote:
+>Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>---
+> include/uapi/linux/virtio_config.h | 18 +++++++++-
+> include/uapi/linux/virtio_ring.h   | 68 ++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 85 insertions(+), 1 deletion(-)
+>
+>diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+>index 308e2096291f..e3d077ef5207 100644
+>--- a/include/uapi/linux/virtio_config.h
+>+++ b/include/uapi/linux/virtio_config.h
+>@@ -49,7 +49,7 @@
+>  * transport being used (eg. virtio_ring), the rest are per-device feature
+>  * bits. */
+> #define VIRTIO_TRANSPORT_F_START	28
+>-#define VIRTIO_TRANSPORT_F_END		34
+>+#define VIRTIO_TRANSPORT_F_END		37
+>
+> #ifndef VIRTIO_CONFIG_NO_LEGACY
+> /* Do we get callbacks when the ring is completely used, even if we've
+>@@ -71,4 +71,20 @@
+>  * this is for compatibility with legacy systems.
+>  */
+> #define VIRTIO_F_IOMMU_PLATFORM		33
+>+
+>+/* This feature indicates support for the packed virtqueue layout. */
+>+#define VIRTIO_F_RING_PACKED		34
 
-To improve this, allocate separate irq vectors for adminq and
-ioq0, and not set irq affinity for adminq one.
+Spec says VIRTIO_F_PACKED_RING not RING_PACKED
+>+
+>+/*
+>+ * This feature indicates that all buffers are used by the device
+>+ * in the same order in which they have been made available.
+>+ */
+>+#define VIRTIO_F_IN_ORDER		35
+>+
+>+/*
+>+ * This feature indicates that drivers pass extra data (besides
+>+ * identifying the Virtqueue) in their device notifications.
+>+ */
+>+#define VIRTIO_F_NOTIFICATION_DATA	36
+>+
+> #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+>diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+>index 6d5d5faa989b..77b1d4aeef72 100644
+>--- a/include/uapi/linux/virtio_ring.h
+>+++ b/include/uapi/linux/virtio_ring.h
+>@@ -44,6 +44,9 @@
+> /* This means the buffer contains a list of buffer descriptors. */
+> #define VRING_DESC_F_INDIRECT	4
+>
+>+#define VRING_DESC_F_AVAIL(b)	((b) << 7)
+>+#define VRING_DESC_F_USED(b)	((b) << 15)
+>+
+> /* The Host uses this in used->flags to advise the Guest: don't kick me when
+>  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
+>  * will still kick if it's out of buffers. */
+>@@ -104,6 +107,36 @@ struct vring {
+> 	struct vring_used *used;
+> };
+>
+>+struct vring_packed_desc_event {
+>+	/* Descriptor Event Offset */
+>+	__virtio16 desc_event_off   : 15,
+>+	/* Descriptor Event Wrap Counter */
+>+		   desc_event_wrap  : 1;
+>+	/* Descriptor Event Flags */
+>+	__virtio16 desc_event_flags : 2;
+>+};
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/pci.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Where would the virtqueue number go in driver notifications?
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 73036d2..7f421b7 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1456,7 +1456,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 		nvmeq->sq_cmds_io = dev->cmb + offset;
- 	}
- 
--	nvmeq->cq_vector = qid - 1;
-+	nvmeq->cq_vector = qid;
- 	result = adapter_alloc_cq(dev, qid, nvmeq);
- 	if (result < 0)
- 		return result;
-@@ -1909,6 +1909,8 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 	int result, nr_io_queues;
- 	unsigned long size;
-+	struct irq_affinity affd = {.pre_vectors = 1};
-+	int ret;
- 
- 	nr_io_queues = num_present_cpus();
- 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
-@@ -1945,11 +1947,11 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	 * setting up the full range we need.
- 	 */
- 	pci_free_irq_vectors(pdev);
--	nr_io_queues = pci_alloc_irq_vectors(pdev, 1, nr_io_queues,
--			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY);
--	if (nr_io_queues <= 0)
-+	ret = pci_alloc_irq_vectors_affinity(pdev, 1, (nr_io_queues + 1),
-+			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
-+	if (ret <= 0)
- 		return -EIO;
--	dev->max_qid = nr_io_queues;
-+	dev->max_qid = ret - 1;
- 
- 	/*
- 	 * Should investigate if there's a performance win from allocating
--- 
-2.7.4
+regards,
+Jens 
