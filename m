@@ -1,83 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeB0XEc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:04:32 -0500
-Received: from gateway23.websitewelcome.com ([192.185.48.104]:15890 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751853AbeB0XEb (ORCPT
+        id S1751988AbeB0XFr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:05:47 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40220 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbeB0XFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:04:31 -0500
-Subject: Re: [PATCH] nbd: fix return value in error handling path
-To: Omar Sandoval <osandov@osandov.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Josef Bacik <jbacik@fb.com>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-kernel@vger.kernel.org
-References: <20180212171450.GA31668@embeddedgus>
- <20180226230133.GA12208@vader.DHCP.thefacebook.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <5abe2722-6f74-04cb-d417-fc960cb1997f@embeddedor.com>
-Date: Tue, 27 Feb 2018 15:43:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 18:05:44 -0500
+X-Google-Smtp-Source: AH8x2258geUNsUwAIDFNwbRqEkoZlQZh0xwE6VU/EgCDpWFp0p/nOlCL5G5f40djCPPojXF6+GeaRA==
+Date: Tue, 27 Feb 2018 17:05:43 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Sricharan R <sricharan@codeaurora.org>,
+        Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/12] i2c: qup: change completion timeout according to
+ transfer length
+Message-ID: <20180227230543.GI20901@hector.attlocal.net>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-9-git-send-email-absahu@codeaurora.org>
+ <7dcbac1f-edaf-aecf-8e58-04d243384758@codeaurora.org>
+ <6a1983c0ca81afce908f622a53abd563@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180226230133.GA12208@vader.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.175.32
-X-Source-L: No
-X-Exim-ID: 1eqn1f-003s81-Bo
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.75]) [189.152.175.32]:46932
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a1983c0ca81afce908f622a53abd563@codeaurora.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 19, 2018 at 04:26:18PM +0530, Abhishek Sahu wrote:
+> On 2018-02-16 10:18, Sricharan R wrote:
+> >On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
+> >>Currently the completion timeout is being taken according to
+> >>maximum transfer length which is too high if SCL is operating in
+> >>high frequency. This patch calculates timeout on the basis of
+> >>one-byte transfer time and uses the same for completion timeout.
+> >>
+> >>Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >>---
+> >> drivers/i2c/busses/i2c-qup.c | 9 ++++++---
+> >> 1 file changed, 6 insertions(+), 3 deletions(-)
+> >>
+> >>diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> >>index a91fc70..6df65ea 100644
+> >>--- a/drivers/i2c/busses/i2c-qup.c
+> >>+++ b/drivers/i2c/busses/i2c-qup.c
+> >>@@ -130,8 +130,8 @@
+> >> #define MX_TX_RX_LEN			SZ_64K
+> >> #define MX_BLOCKS			(MX_TX_RX_LEN / QUP_READ_LIMIT)
+> >>
+> >>-/* Max timeout in ms for 32k bytes */
+> >>-#define TOUT_MAX			300
+> >>+/* Min timeout for i2c transfers */
+> >>+#define TOUT_MIN			2
+> >>
+> >
+> > may be you can mention, why is this 2 ?
+> >
+> 
+>  This 2 seconds is timeout which I am adding on the top of maximum
+>  xfer time calculated from bus speed to compensate the interrupt
+>  latency and other factors. It will make xfer timeout minimum as
+>  2 seconds.
+> 
+>  I will update the comment to explain it in more detail.
 
+Once you do that add:
 
-On 02/26/2018 05:01 PM, Omar Sandoval wrote:
-> On Mon, Feb 12, 2018 at 11:14:55AM -0600, Gustavo A. R. Silva wrote:
->> It seems that the proper value to return in this particular case is the
->> one contained into variable new_index instead of ret.
->>
->> Addresses-Coverity-ID: 1465148 ("Copy-paste error")
->> Fixes: e46c7287b1c2 ("nbd: add a basic netlink interface")
-> Reviewed-by: Omar Sandoval <osandov@fb.com>
-
-Thanks, Omar.
---
-Gustavo
-
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/block/nbd.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
->> index 5f2a424..86258b0 100644
->> --- a/drivers/block/nbd.c
->> +++ b/drivers/block/nbd.c
->> @@ -1591,7 +1591,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
->>   			if (new_index < 0) {
->>   				mutex_unlock(&nbd_index_mutex);
->>   				printk(KERN_ERR "nbd: failed to add new device\n");
->> -				return ret;
->> +				return new_index;
->>   			}
->>   			nbd = idr_find(&nbd_index_idr, new_index);
->>   		}
->> -- 
->> 2.7.4
->>
+Reviewed-by: Andy Gross <andy.gross@linaro.org>
