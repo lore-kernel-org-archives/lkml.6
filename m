@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeB0FWP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 00:22:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38400 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeB0FWN (ORCPT
+        id S1751664AbeB0Fxn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 00:53:43 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:12405 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeB0Fxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 00:22:13 -0500
+        Tue, 27 Feb 2018 00:53:41 -0500
+Subject: Re: [PATCH] ARM: omap2: set CONFIG_LIRC=y in defconfig
+To: Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>
+CC: Sekhar Nori <nsekhar@ti.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sean Young <sean@mess.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180226204105.2858838-1-arnd@arndb.de>
+From: Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <6f0e6593-27c3-2df4-b0ef-f3d3e77c81de@ti.com>
+Date: Tue, 27 Feb 2018 11:22:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180226204105.2858838-1-arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Tue, 27 Feb 2018 13:22:11 +0800
-From: cang@codeaurora.org
-To: Rob Herring <robh@kernel.org>
-Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        Gilad Broner <gbroner@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Noa Rubens <noag@codeaurora.org>,
-        Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scsi: ufs-qcom: add number of lanes per direction
-In-Reply-To: <20180209022915.2kki7avsia2k7tjp@rob-hp-laptop>
-References: <20180205121021.11012-1-cang@codeaurora.org>
- <20180209022915.2kki7avsia2k7tjp@rob-hp-laptop>
-Message-ID: <f52a0ca12ca45b41467959ee7b5601fe@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-09 10:29, Rob Herring wrote:
-> On Mon, Feb 05, 2018 at 08:02:07PM +0800, Can Guo wrote:
->> From: Gilad Broner <gbroner@codeaurora.org>
->> 
->> Different platforms may have different number of lanes for the UFS 
->> link.
->> Add parameter to device tree specifying how many lanes should be
->> configured for the UFS link. And don't print err message for clocks
->> that are optional, this leads to unnecessary confusion about failure.
->> 
->> Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> 
->> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt 
->> b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> index 5357919..4cee3f9 100644
->> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> @@ -31,6 +31,9 @@ Optional properties:
->>  			  defined or a value in the array is "0" then it is assumed
->>  			  that the frequency is set by the parent clock or a
->>  			  fixed rate clock source.
->> +- lanes-per-direction:	number of lanes available per direction - 
->> either 1 or 2.
->> +			Note that it is assume same number of lanes is used both 
->> directions at once.
+
+
+On Tuesday 27 February 2018 02:10 AM, Arnd Bergmann wrote:
+> The CONFIG_LIRC symbol has changed from 'tristate' to 'bool, so we now
+> get a warning for omap2plus_defconfig:
 > 
-> Seems reasonable until someone does not make things symmetrical. We
-> should design for that case.
+> arch/arm/configs/omap2plus_defconfig:322:warning: symbol value 'm' invalid for LIRC
 > 
-You are right, I will make changes like using lanes-tx and lanes-rx for 
-Tx/Rx links for asymmetrial senarios and upload V2 patch
->> +			If not specified, default is 2 lanes per direction.
->> 
->>  Note: If above properties are not defined it can be assumed that the 
->> supply
->>  regulators or clocks are always on.
+> This changes the file to mark the symbol as built-in to get rid of the
+> warning.
+> 
+> Fixes: a60d64b15c20 ("media: lirc: lirc interface should not be a raw decoder")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
+
+Thank and regards,
+Lokesh
+
+> ---
+>  arch/arm/configs/omap2plus_defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+> index 2f145c4af93a..92674f247a12 100644
+> --- a/arch/arm/configs/omap2plus_defconfig
+> +++ b/arch/arm/configs/omap2plus_defconfig
+> @@ -319,7 +319,7 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
+>  CONFIG_RC_CORE=m
+>  CONFIG_MEDIA_CONTROLLER=y
+>  CONFIG_VIDEO_V4L2_SUBDEV_API=y
+> -CONFIG_LIRC=m
+> +CONFIG_LIRC=y
+>  CONFIG_RC_DEVICES=y
+>  CONFIG_IR_RX51=m
+>  CONFIG_V4L_PLATFORM_DRIVERS=y
+> 
