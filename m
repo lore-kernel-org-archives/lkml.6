@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-757978-1519715634-2-16401621644961458388
+X-Cyrus-Session-Id: sloti22d1t05-757978-1519715552-2-18051982809370913142
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,33 +14,33 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519715633; b=rMGGMZkgIbV5ppEcF/svcHegfn+lgfPiIdjHllBzRTKAEwM
-    hKu3yfIxDV1I4zmUwCDb0u17Wxim9ewNL/Xxk2eT/scosiZjHeAn13zYKD2QsGRT
-    U04ovhEWwj5XLOQIhiDwRyKI0xDV0By2hLJ/pQuKp96TmDXz9RqbIC49HRT0F2H5
-    aAAsbZlkNpbZk5++qULyOcaEFvLCNOOaH6gx+hM7F4ZDlHEjHlZbJojKP2GkCq5s
-    WQPktgSA4DC5XTsZ0EkwAle8KkrdV/SVLh7zjQhc3S0PuC0COI2AXYRScw9+5V6u
-    7f2lN3+KUu4eZnEImj3fMMR3jatj5J+mkUMDb3Q==
+    t=1519715551; b=AYUsZhg4YjW5KM72/Adz09fo/yJJ4gdQB0mL/k3MVrbHpA6
+    Hbz0y7D0LeEg41vZNdV5fFbltR4JBny01EYaRSscffeeYOPRCuxw1pz8gPiANPWN
+    j8zMXw+2ZZNvblvbpR+jIVQpYuU7bCt4iAZiFXOvuRF6ws+iV4rfFpWTrOa56gOO
+    01BOUGLAgkSVF42eo5Vv/10t6ubeC4Eqm1ZvEsI2iPRrcngFsX5neQUh1Bt38PjI
+    nV1pcx7kELgSIuWPH8ABX+oyw+WP/SM2KTXbL6AqizxEJyhlZM7y2hyVwptBfo0r
+    VCHJilDUaw7IC1WugeTIZm/g0pl8C0bTcaE8Opg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519715633;
-    bh=5qsZQc0SYybPM6MtEJSNIW1Af2AK4oEOFaPMrjFqEAM=; b=s/KAdlCkL/uH
-    VmARzWDxIk1K+KyONxq5NEeklronC32x6x3OXDtpgwwNav87tRQrB/TZx1tRC20p
-    MXbtGXEIrDlwIpN86VSO2Upx7rQjTEfvFnYY4pt9UzfxgOedNN63XPZT7IfQgoqv
-    ERTDy46wj8VfPI+YOEX0muSw1ujni9ofx86/ytca5M80LuJ9WGcroky1Tmzd5K3f
-    FH3qpHoGdr2OmdYcmpe/f1kYsBGd7D5+Xriyt4zFbtYC8j8TtuDjMzrqYOC5O5Yr
-    GPnan/+XJE1TbUuNWTCSYsy4sZv9nv5j7vXyZqqjjM2qEHJFh4RL3BEeg2ltqnCI
-    umObuN9zVQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=jrnSo/xY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519715551;
+    bh=HYTFpnnrxMgBZr13U4GqwMNeDo25NiytmEMSwtL/aq8=; b=SLe5U7WIOjg6
+    zXcH9skM2es+F5J/NG/2hEGs0prDsxiGyv4yAKZs07GNzeXprgiwr7R1i9IBFWr4
+    qnVI7bxr1gjK2AUrJ+FDTcJMqN/SCvWuZpFeD6to7amf1TMkhL11B3Y5CpDFyHb/
+    i/p8vArAe9TAYwnDUTf6wN4SCYKtI+tE04ba/kVpwDzuK5Q7VEnAJEimSWyjn5qK
+    UlsiZ00+49kx7mWlREtTMfYlFyaiygXovjhgANemn/8JYDBHw1vXEpWzjR7zFcgr
+    Lt1wbu3PREQAPDrYWLvt4qbtZm2fFj0TEkQBsaHiokm/2W7BTJCek2ZBWCwT2qy2
+    kYTcvXRlpA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=rVbLmePd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=jrnSo/xY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=rVbLmePd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,14 +48,14 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752160AbeB0HLp (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 02:11:45 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50094 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752042AbeB0HLm (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 27 Feb 2018 02:11:42 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180227071140euoutp02a1cc559a1720ce2aa2a758dba0ee81db~XHTIqJeUi2532325323euoutp02H
-X-AuditID: cbfec7f5-b45ff700000028a9-ae-5a9504ab6a8f
+        id S1752193AbeB0HLt (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 02:11:49 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47729 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752107AbeB0HLn (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 27 Feb 2018 02:11:43 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180227071140euoutp01e0f71a589e1ed776ce441ef3d6075269~XHTI9iYIA2121721217euoutp015
+X-AuditID: cbfec7f4-713ff700000043e4-7c-5a9504abf5ee
 From: Andrzej Hajda <a.hajda@samsung.com>
 To: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
@@ -71,159 +71,115 @@ Cc: Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH v5 1/6] dt-bindings: add bindings for USB physical connector
-Date: Tue, 27 Feb 2018 08:11:29 +0100
-Message-id: <20180227071134.28063-2-a.hajda@samsung.com>
+Subject: [PATCH v5 2/6] dt-bindings: add bindings for Samsung micro-USB
+ 11-pin connector
+Date: Tue, 27 Feb 2018 08:11:30 +0100
+Message-id: <20180227071134.28063-3-a.hajda@samsung.com>
 X-Mailer: git-send-email 2.16.2
 In-reply-to: <20180227071134.28063-1-a.hajda@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTURzHO7uP3a0Wl830YJowCjLKSgWPJGUhcYmgiIJYlN3yoqJT2Xyk
-        ZMlw4pv5SA2f+Ri1VuocIzQVbDhQc7NpoiYaEolZUdNQ0cx513+/7/l+fuf3/R0OhUl/4b5U
-        fFIqp0piE+WkGLcMro+eeIk/UZxaa5Sh6dejBNLkfydQZ007gSZXvhKo0bpzNr76k0Tlczoc
-        2e0dQlRQ1ipEpoWPBHJ215Goxt4nQM16LYZeWWeFqG1yTIC0vVZhJM0YG4yAcZaWCJja/KcE
-        YzIUkMxckU3AdLU+ZkrNBsC4TIeuUgpxRAyXGJ/OqU6evSuO67cbsBSN/4Om5nqQA0p8CgFF
-        QToU5pUfKARiSko/B9D5px7nhQvAnt48QSEQ7UKbrg2PoQfwk3aM4MU2gMudy7sUSQfCra4p
-        0l170bfhjw/dmBvCaAcOHcNLQrchoy/D2m/TmLvG6SOwtGwWc+eQ0AjmTHvz0wLgs/cTu4iI
-        Dof9VSOk+x5Iz5BQk6fBeCgKfq5Y8cSTwSWbWcjXftBZUYTzDUUADvUVYLyoBNC+5PR0nIHv
-        bO4dRDvx9sNySzXGv4YE5udJeYSB89sbHvw8rB0r9KxcDGDL2xahDvg2gT0G4MOlqZWxnDok
-        icsIUrNKdVpSbND9ZKUJ7HyE4b+21Tegb/PeAKApIN8nifSrVEgJNl2dqRwAkMLkXpIXLRUK
-        qSSGzcziVMnRqrRETj0ADlK43Edy5+gjhZSOZVO5BI5L4VT/XQEl8s0BxozfcyNW3Yx38eKF
-        kmv+ocr29RbXfF1Yw6pDYc4el2HGvQE9FolWlyG+NLgeBarPWesirGvRRp3Irh/QTMxkO7QX
-        b+QeX2gjw1yJs0NXQiy3TKaH4VWj1Vi9nn4WfDiyjFhtS+iYMucGBw7f/KJkQXTW9c3tjdjt
-        rcX0MDmujmNPH8NUavYfIMBbgQQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsVy+t/xy7qrWKZGGcybrGZxa905Voumjres
-        FhtnrGe1uP7lOavF/CNAsStf37NZTLo/gcXi/PkN7BadE5ewW2x6fI3V4vKuOWwWM87vY7JY
-        tKyV2WLtkbvsFkuvX2SyaN17hN1BwGPNvDWMHpf7epk8ZnfMZPXYtKqTzeN+93Emj81L6j36
-        tqxi9Pi8SS6AI4rLJiU1J7MstUjfLoErY//5VcwFTbIVCxbNZWxg7BXvYuTkkBAwkfjz+RcL
-        iC0ksIRR4sss9y5GLiC7kUnixruD7CAJNgFNib+bb7KB2CICsRJvT31mBiliFrjAIvF74kyw
-        ImEBH4nZr28xg9gsAqoSfRPvAtkcHLwCFhINt8QglslLLDx7FayEU8BSYv+0M2wQiy0k7nce
-        Y53AyLOAkWEVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYMBuO/Zzyw7GrnfBhxgFOBiVeHhn
-        yE2JEmJNLCuuzD3EKMHBrCTCu3Lx5Cgh3pTEyqrUovz4otKc1OJDjNIcLErivOcNKqOEBNIT
-        S1KzU1MLUotgskwcnFINjH0c8yX3HLoWqHmw3/SHQ5PtDZGpDJlPpY2FXKL3OG89nXLsn6S7
-        4qegNDX22HN/j+fPbWTz/7vo+Xu9vYzd+7PNzkocC7mXI8GVOF/Qu/PTnNCotJytPH/ypReG
-        O918pBB2le3W1XmVZRecFzxtTg1e+F98Dtv/eqln1QUb3m/6psdaFOO9WImlOCPRUIu5qDgR
-        AO9WhdhUAgAA
-X-CMS-MailID: 20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfyyUcRzHfZ9f95Crp4fNd6i2s35oS2rZnkYls/XMX22l1jPJlWdHuWP3
+        IGz50cack/lxStMPOVTnSh3TYRHJtcTRVRJmE2PXuIpalpLz8N/7/Xm/Pj/++JAo/R3zJuNV
+        ybxaJU+QEW5Yc8+idU89Vs4F6vuCmM+P+3Hmav4szjytaMCZoYVpnLnbvVJ7/9NBMKXjxRhj
+        tT6RMJqSGglj+vIRZ2yttwimwtqOMNV1uSjzqHtMwtQODSJM7vNuSSjFGu8YAWsruoawlfk3
+        cdZk0BDsuNaCsI01WWxRkwGw86atx0nOLSSWT4hP5dV7D8e4xQ0XTmNJnXSauV+DZ4OGTQXA
+        lYTUATj1tQMUADeSph4AWNY7s2bmATRrx8A6VTKlI8SgDsCZnGpcNMsAPiufQ50UQfnDv43D
+        hFN7Umfh3LtW1Amh1AAGB3rtEmfgQXFwtK0WKQAkiVHb4egnzFmWUgx8rZ9ExW3b4L2+D6va
+        lToIO66/Xd0MqXEC1rVXIiIUDgf+TGGi9oB2S5NE1L7QVqbFxAYtgG/aNahodABa7ba17mD4
+        0jKIOzVKbYSlzTdQ50WQksL8PFpEWOgY/rY29Ch8NftiFaepQgBLjZnFwLsKuBiAF58iKBW8
+        sF/FXw4Q5EohRaUIuJCoNIGVR+j9Z1kwg9al812AIoHMXRrqq+NoXJ4qpCu7ACRRmaf0ob6M
+        o6Wx8vQMXp14Tp2SwAtdwIfEZF7S6F2ZHE0p5Mn8JZ5P4tXrKUK6emeDZL8TxmJTT15GyMUY
+        wWXzMd1gu+JKlFUZlDnh+HUq0sVsaJ3tzJj9YdH+7jtir69ZPjTisxg2HjbZwtnb5v0twWmp
+        EaCwaix0S9pJQ5Yn14OMRDRVmkqrIndEB4bXuuuXohw56G1JefNOP1VCzMIZusojeMPEfb3u
+        tCYuoLJFhglx8n27UbUg/w+XQ6H9BAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsVy+t/xy7qrWaZGGXQ8ELC4te4cq0VTx1tW
+        i40z1rNaXP/ynNVi/hGg2JWv79ksJt2fwGJx/vwGdovOiUvYLTY9vsZqcXnXHDaLGef3MVks
+        WtbKbLH2yF12i6XXLzJZtO49wu4g4LFm3hpGj8t9vUwesztmsnpsWtXJ5nG/+ziTx+Yl9R59
+        W1YxenzeJBfAEcVlk5Kak1mWWqRvl8CVcbPnOUvBQaGKHec6WRsY1/N3MXJySAiYSEx8OoWt
+        i5GLQ0hgCaPEtI5PUE4jk8SkE9uZQarYBDQl/m6+yQZiiwjESrw99ZkZpIhZ4AKLxO+JM9lB
+        EsICURIHnixh6WLk4GARUJW4c4MFJMwrYCFxYvETZoht8hILz14FszkFLCX2TzsDNlMIqOZ+
+        5zHWCYw8CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgSG7LZjP7fsYOx6F3yIUYCDUYmH
+        d4bclCgh1sSy4srcQ4wSHMxKIrwrF0+OEuJNSaysSi3Kjy8qzUktPsQozcGiJM573qAySkgg
+        PbEkNTs1tSC1CCbLxMEp1cCot0G8MGDrj2ufY4r9ig5mv5QuuD/dzkTpZGKip3PJmqT3KwPn
+        HuxgnStXd3JD1vHfq4tf2yt6HY3+274lJ8RXxnbNR51TruFbDfM/tq5W+f/qiN5lkU/d7c03
+        uS6ebb+cvlLDy9+18cd9Xwf1RV0z7bLWPLJefjlpnlW6av+rL9uUty8+9POrEktxRqKhFnNR
+        cSIAOCf0+lUCAAA=
+X-CMS-MailID: 20180227071139eucas1p125ee35ada221fbed1dc85b7fc250f9ca
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f
-X-RootMTR: 20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f
+X-CMS-RootMailID: 20180227071139eucas1p125ee35ada221fbed1dc85b7fc250f9ca
+X-RootMTR: 20180227071139eucas1p125ee35ada221fbed1dc85b7fc250f9ca
 References: <20180227071134.28063-1-a.hajda@samsung.com>
-        <CGME20180227071138eucas1p17e1e16f13f6d3e3b15a57dc93eb8cf3f@eucas1p1.samsung.com>
+        <CGME20180227071139eucas1p125ee35ada221fbed1dc85b7fc250f9ca@eucas1p1.samsung.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These bindings allow to describe most known standard USB connectors
-and it should be possible to extend it if necessary.
-USB connectors, beside USB can be used to route other protocols,
-for example UART, Audio, MHL. In such case every device passing data
-through the connector should have appropriate graph bindings.
+Samsung micro-USB 11-pin connector beside standard micro-USB pins,
+has pins dedicated to route MHL traffic.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v4:
-- improved 'type' description (Rob),
-- improved description of 2nd example (Rob).
-v3:
-- removed MHL port (samsung connector will have separate bindings),
-- added 2nd example for USB-C,
-- improved formatting.
-v2:
-- moved connector type(A,B,C) to compatible string (Rob),
-- renamed size property to type (Rob),
-- changed type description to be less confusing (Laurent),
-- removed vendor specific compatibles (implied by graph port number),
-- added requirement of connector being a child of IC (Rob),
-- removed max-mode (subtly suggested by Rob, it should be detected anyway
-  by USB Controller in runtime, downside is that device is not able to
-  report its real capabilities, maybe better would be to make it optional(?)),
-- assigned port numbers to data buses (Rob).
-
-Regards
-Andrzej
+- removed description of property inherited from usb-connector (Rob),
+- fixed example description.
 ---
- .../bindings/connector/usb-connector.txt           | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
+ .../connector/samsung,usb-connector-11pin.txt      | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
 
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+diff --git a/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt b/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
 new file mode 100644
-index 000000000000..e1463f14af38
+index 000000000000..22256e295a7a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-@@ -0,0 +1,75 @@
-+USB Connector
-+=============
++++ b/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
+@@ -0,0 +1,49 @@
++Samsung micro-USB 11-pin connector
++==================================
 +
-+USB connector node represents physical USB connector. It should be
-+a child of USB interface controller.
++Samsung micro-USB 11-pin connector is an extension of micro-USB connector.
++It is present in multiple Samsung mobile devices.
++It has additional pins to route MHL traffic simultanously with USB.
++
++The bindings are superset of usb-connector bindings for micro-USB connector[1].
 +
 +Required properties:
-+- compatible: describes type of the connector, must be one of:
-+    "usb-a-connector",
-+    "usb-b-connector",
-+    "usb-c-connector".
-+
-+Optional properties:
-+- label: symbolic name for the connector,
-+- type: size of the connector, should be specified in case of USB-A, USB-B
-+  non-fullsize connectors: "mini", "micro".
++- compatible: must be: "samsung,usb-connector-11pin", "usb-b-connector",
++- type: must be "micro".
 +
 +Required nodes:
 +- any data bus to the connector should be modeled using the OF graph bindings
 +  specified in bindings/graph.txt, unless the bus is between parent node and
 +  the connector. Since single connector can have multpile data buses every bus
 +  has assigned OF graph port number as follows:
-+    0: High Speed (HS), present in all connectors,
-+    1: Super Speed (SS), present in SS capable connectors,
-+    2: Sideband use (SBU), present in USB-C.
++    0: High Speed (HS),
++    3: Mobile High-Definition Link (MHL), specific to 11-pin Samsung micro-USB.
 +
-+Examples
-+--------
++[1]: bindings/connector/usb-connector.txt
 +
-+1. Micro-USB connector with HS lines routed via controller (MUIC):
++Example
++-------
++
++Micro-USB connector with HS lines routed via controller (MUIC) and MHL lines
++connected to HDMI-MHL bridge (sii8620):
 +
 +muic-max77843@66 {
 +	...
 +	usb_con: connector {
-+		compatible = "usb-b-connector";
++		compatible = "samsung,usb-connector-11pin", "usb-b-connector";
 +		label = "micro-USB";
 +		type = "micro";
-+	};
-+};
-+
-+2. USB-C connector attached to CC controller (s2mm005), HS lines routed
-+to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
-+DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
-+
-+ccic: s2mm005@33 {
-+	...
-+	usb_con: connector {
-+		compatible = "usb-c-connector";
-+		label = "USB-C";
 +
 +		ports {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +
-+			port@0 {
-+				reg = <0>;
-+				usb_con_hs: endpoint {
-+					remote-endpoint = <&max77865_usbc_hs>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				usb_con_ss: endpoint {
-+					remote-endpoint = <&usbdrd_phy_ss>;
-+				};
-+			};
-+			port@2 {
-+				reg = <2>;
-+				usb_con_sbu: endpoint {
-+					remote-endpoint = <&dp_aux>;
++			port@3 {
++				reg = <3>;
++				usb_con_mhl: endpoint {
++					remote-endpoint = <&sii8620_mhl>;
 +				};
 +			};
 +		};
