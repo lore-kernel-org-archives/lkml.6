@@ -1,269 +1,137 @@
-Return-Path: <idgar@virtualoco.com>
-X-Google-Smtp-Source: AG47ELsARh+nfqRTqkNNvahm8ejOf6ns/vcdDEpzJDdwP5xp+IhabaDIEd/DLp+C3vqaLLwKieGV
-ARC-Seal: i=1; a=rsa-sha256; t=1519727792; cv=none;
+Return-Path: <yong.deng@magewell.com>
+X-Google-Smtp-Source: AH8x227+JxY72GsXU6RGYpGgqcDbkxdZbRDtORkMKM+fUP6s7XUwPuX6F0TvFYe9JENcM3r1tKt3
+ARC-Seal: i=1; a=rsa-sha256; t=1519697315; cv=none;
         d=google.com; s=arc-20160816;
-        b=g7gIrTj9+qax4moH5H6INmGTo6Gn4PZiL/OnmwvIL4iH8V9m09pNZOAIIzHqGjTZJM
-         jzqJFlRXBUKRPjBYAqcvGm1FK9Ir64/h/hoWc7+XpYc+HpXzGm5sJewPvDKAE4i6Cgb7
-         xFQmU8gRiXFHEYjRyoGNCoXX7WJNC1J4zvqCEBxu+rNh4QPfj8UxwRZt+aqLB5DpP9f7
-         yNrKoSjdKeYSc9ypQgkjXTcFDP0Rpvh2DH4JUEH9u74EzZwUCc6zWuq90X075HCvQkiu
-         ZKGmnHvM8Q5BKxrfeThZcy/cBs6lVqsmOIqXnyrpIeBvsJvKKst9nI1L7iS56OQ6bUfg
-         Rong==
+        b=j/LB1hTSYPZ1pxdBUGNdZYw6OeFI/GFXjBKAmRMye8+5fTVubwrIkkY1OUXoP3vquW
+         y7RFPd38+jjhSNstuVzhJyTyFC+BTyYFeOHZqKifs/IeSVctx30wMQV75tevYkualW3v
+         Gq62ArvUQlkgrXrzTb01PKQwUh00coUYe2Kbed3DDmwUng/wUcGYq2eBTkjNBlhTH4MW
+         6p/lfPUqlJI5SV3IaGvxIlxLh5+T9feYfVMxCwhjEOTuJz9737Kg3Mw65QxQQRiPASou
+         90pxzNdONfWCyMKPcFm12LGrQbDB3GejveJ+NxAq2B+vGKXLtf4OampQxHbUjWfgNJ2D
+         pFaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=PzNHuwhxqFiuM4IrEbUq26gNczhe2o5fr5NLKRvIs3M=;
-        b=t/9djfWPVlT7jxyWe8pCTIcEABZcVWw8sB/fuGDWigpE2Bly2r9OOW+4o6x9YYu9f8
-         UAXHIu8Ok0eFFmdZ36AHnvCmEpKtuAJmsIwoywQq8zUHNucn07+/en8RsrlvrdtZpKLk
-         2Iwr5T/PaG74lRakinb1K63BF7TBIOkBq9WH+IM43ZDDVJ+8HNeoMpGPZ7p9M+Ldd4Pb
-         IdpVgK18s1hy3WJ/WeoR4SQkL8vCKuLfuA+BbX5ub+laOcg/h4ceKljitHGAIt4FbcMc
-         lC3yKAGiUcS9+s4Y/spBJK8Bt+wsPTmDwYlBh1UzxnA5S/l+n2o9waD5eORhiE+XfCb6
-         57WQ==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=chUkxw7VsW6IncH2bbAQ6mNEUybhd+bOqXD2ypaFfcs=;
+        b=Mof0VziBuYzuugVza52zYGdBz4UXOaRnZujsMIPahVJA4pN0bzydmClE/b30FxPEGa
+         AHvKYeC3NnBzlGTB0CP9H6+32YHJnlEJpLbqUyV/Lqu6jbvggvMJ26Mg8tKeUXN79jV/
+         ytAA7yPifdtKCxbNmy7GcGY349y3NRO3hwO4ZvMsgNQmim5JXHix6BiymyskdOUvZiCk
+         4BeNUMg22/801y8bnAbLj0JSSmwhXeH5J2q4v1Xhevrn1adYxecWIGqUhrCsdVVnkR+h
+         qongZppAF9/9HRO67FItZfxMvVkbz9iWMGOPq0oO1+8GGytDlLHpfdLw09w5KnAZcYXu
+         C/ow==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@virtualoco.com header.s=it header.b=cJmVMyow;
-       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.14 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@virtualoco.com header.s=it header.b=cJmVMyow;
-       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
-From: Or Idgar <idgar@virtualoco.com>
-To: linux-kernel@vger.kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: oidgar@redhat.com,
-	idgar@virtualoco.com,
-	ghammer@redhat.com,
-	Or Idgar <oridgar@gmail.com>
-Subject: [PATCH v4] drivers/misc: vm_gen_counter: initial driver implementation
-Date: Tue, 27 Feb 2018 12:36:03 +0200
-Message-Id: <20180227103603.13656-1-idgar@virtualoco.com>
-X-Mailer: git-send-email 2.14.3
-X-ZohoMailClient: External
-X-ZohoMail: Z_638866495 SPT_1 Z_638866494 SPT_1 SLF_D
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.14 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09593186|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04463;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.B5xnA9r_1519697302;
+From: Yong Deng <yong.deng@magewell.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Todor Tomov <todor.tomov@linaro.org>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Yong Deng <yong.deng@magewell.com>
+Subject: [PATCH v8 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
+Date: Tue, 27 Feb 2018 10:07:36 +0800
+Message-Id: <1519697256-32472-1-git-send-email-yong.deng@magewell.com>
+X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593550089836509896?=
-X-GMAIL-MSGID: =?utf-8?q?1593550089836509896?=
+X-GMAIL-THRID: =?utf-8?q?1593518132578299122?=
+X-GMAIL-MSGID: =?utf-8?q?1593518132578299122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Or Idgar <oridgar@gmail.com>
+Add binding documentation for Allwinner V3s CSI.
 
-This patch is a driver which expose the Virtual Machine Generation ID
-via sysfs. The ID is a UUID value used to differentiate between virtual
-machines.
-
-The VM-Generation ID is a feature defined by Microsoft (paper:
-http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
-hypervisor vendors.
-
-Signed-off-by: Or Idgar <oridgar@gmail.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yong Deng <yong.deng@magewell.com>
 ---
+ .../devicetree/bindings/media/sun6i-csi.txt        | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
 
-Changes in v4:
-- variable phy_addr changed to phys_addr (nit)
-- using iomem functions to support arch portability
-
- Documentation/ABI/testing/sysfs-hypervisor |  13 +++
- drivers/misc/Kconfig                       |   6 ++
- drivers/misc/Makefile                      |   1 +
- drivers/misc/vmgenid.c                     | 142 +++++++++++++++++++++++++++++
- 4 files changed, 162 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
- create mode 100644 drivers/misc/vmgenid.c
-
-diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
+diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
 new file mode 100644
-index 000000000000..2f9a7b8eab70
+index 000000000000..2ff47a9507a6
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-hypervisor
-@@ -0,0 +1,13 @@
-+What:		/sys/hypervisor/vm_gen_counter
-+Date:		February 2018
-+Contact:	Or Idgar <idgar@virtualoco.com>
-+		Gal Hammer <ghammer@redhat.com>
-+Description:	Expose the virtual machine generation ID. The directory
-+		contains two files: "generation_id" and "raw". Both files
-+		represent the same information.
++++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+@@ -0,0 +1,59 @@
++Allwinner V3s Camera Sensor Interface
++-------------------------------------
 +
-+		"generation_id" file is a UUID string
-+		representation.
++Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
++interface and CSI1 is used for parallel interface.
 +
-+		"raw" file is a 128-bit integer
-+		representation (binary).
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 03605f8fc0dc..5a74802bdfb4 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -500,6 +500,12 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
- 
-+config VMGENID
-+	tristate "Virtual Machine Generation ID driver"
-+	help
-+	  This is a Virtual Machine Generation ID driver which provides
-+	  a virtual machine unique identifier.
++Required properties:
++  - compatible: value must be "allwinner,sun8i-v3s-csi"
++  - reg: base address and size of the memory-mapped region.
++  - interrupts: interrupt associated to this IP
++  - clocks: phandles to the clocks feeding the CSI
++    * bus: the CSI interface clock
++    * mod: the CSI module clock
++    * ram: the CSI DRAM clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset line driving the CSI
 +
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index c3c8624f4d95..067aa666bb6a 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-$(CONFIG_MISC_RTSX)		+= cardreader/
-+obj-$(CONFIG_VMGENID)		+= vmgenid.o
- 
- lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
- lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
-diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
-new file mode 100644
-index 000000000000..6c8d8fe75335
---- /dev/null
-+++ b/drivers/misc/vmgenid.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Virtual Machine Generation ID driver
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
-+ *	Authors:
-+ *	  Or Idgar <oridgar@gmail.com>
-+ *	  Gal Hammer <ghammer@redhat.com>
-+ *
-+ */
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/kobject.h>
-+#include <linux/acpi.h>
-+#include <linux/uuid.h>
++Each CSI node should contain one 'port' child node with one child 'endpoint'
++node, according to the bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt. As mentioned
++above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel or
++Bt656 for CSI1.
 +
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
-+MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
-+MODULE_DESCRIPTION("Virtual Machine Generation ID");
-+MODULE_VERSION("0.1");
++Endpoint node properties for CSI1
++---------------------------------
 +
-+ACPI_MODULE_NAME("vmgenid");
++- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
++			   node
++- bus-width:		: (required) must be 8, 10, 12 or 16
++- pclk-sample		: (optional) (default: sample on falling edge)
++- hsync-active		: (only required for parallel)
++- vsync-active		: (only required for parallel)
 +
-+static u64 phys_addr;
++Example:
 +
-+static ssize_t generation_id_show(struct device *_d,
-+			      struct device_attribute *attr, char *buf)
-+{
-+	void __iomem *uuid_map;
-+	uuid_t uuid;
-+	ssize_t result;
++csi1: csi@1cb4000 {
++	compatible = "allwinner,sun8i-v3s-csi";
++	reg = <0x01cb4000 0x1000>;
++	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_CSI>,
++		 <&ccu CLK_CSI1_SCLK>,
++		 <&ccu CLK_DRAM_CSI>;
++	clock-names = "bus", "mod", "ram";
++	resets = <&ccu RST_BUS_CSI>;
 +
-+	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
-+	if (!uuid_map)
-+		return -EFAULT;
++	port {
++		/* Parallel bus endpoint */
++		csi1_ep: endpoint {
++			remote-endpoint = <&adv7611_ep>;
++			bus-width = <16>;
 +
-+	memcpy_fromio(&uuid, uuid_map, sizeof(uuid_t));
-+	result = sprintf(buf, "%pUl\n", &uuid);
-+	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
-+	return result;
-+}
-+static DEVICE_ATTR_RO(generation_id);
-+
-+static ssize_t raw_show(struct device *_d,
-+			struct device_attribute *attr,
-+			      char *buf)
-+{
-+	void __iomem *uuid_map;
-+
-+	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
-+	if (!uuid_map)
-+		return -EFAULT;
-+	memcpy_fromio(buf, uuid_map, sizeof(uuid_t));
-+	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
-+	return sizeof(uuid_t);
-+}
-+static DEVICE_ATTR_RO(raw);
-+
-+static struct attribute *vmgenid_attrs[] = {
-+	&dev_attr_generation_id.attr,
-+	&dev_attr_raw.attr,
-+	NULL,
++			/* If hsync-active/vsync-active are missing,
++			   embedded BT.656 sync is used */
++			hsync-active = <0>; /* Active low */
++			vsync-active = <0>; /* Active low */
++			pclk-sample = <1>;  /* Rising */
++		};
++	};
 +};
-+static const struct attribute_group vmgenid_group = {
-+	.name = "vm_gen_counter",
-+	.attrs = vmgenid_attrs,
-+};
-+
-+static int get_vmgenid(acpi_handle handle)
-+{
-+	int i;
-+	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-+	acpi_status status;
-+	union acpi_object *pss;
-+	union acpi_object *element;
-+
-+	status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
-+	if (ACPI_FAILURE(status)) {
-+		ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
-+		return -ENODEV;
-+	}
-+	pss = buffer.pointer;
-+	if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
-+		return -EFAULT;
-+
-+	phys_addr = 0;
-+	for (i = 0; i < pss->package.count; i++) {
-+		element = &(pss->package.elements[i]);
-+		if (element->type != ACPI_TYPE_INTEGER)
-+			return -EFAULT;
-+		phys_addr |= element->integer.value << i*32;
-+	}
-+	return 0;
-+}
-+
-+static int acpi_vmgenid_add(struct acpi_device *device)
-+{
-+	int retval;
-+
-+	if (!device)
-+		return -EINVAL;
-+	retval = get_vmgenid(device->handle);
-+	if (retval < 0)
-+		return retval;
-+	return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
-+}
-+
-+static int acpi_vmgenid_remove(struct acpi_device *device)
-+{
-+	sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
-+	return 0;
-+}
-+
-+static const struct acpi_device_id vmgenid_ids[] = {
-+	{"QEMUVGID", 0},
-+	{"", 0},
-+};
-+
-+static struct acpi_driver acpi_vmgenid_driver = {
-+	.name = "vm_gen_counter",
-+	.ids = vmgenid_ids,
-+	.owner = THIS_MODULE,
-+	.ops = {
-+		.add = acpi_vmgenid_add,
-+		.remove = acpi_vmgenid_remove,
-+	}
-+};
-+
-+static int __init vmgenid_init(void)
-+{
-+	return acpi_bus_register_driver(&acpi_vmgenid_driver);
-+}
-+
-+static void __exit vmgenid_exit(void)
-+{
-+	acpi_bus_unregister_driver(&acpi_vmgenid_driver);
-+}
-+
-+module_init(vmgenid_init);
-+module_exit(vmgenid_exit);
 -- 
-2.14.3
+1.8.3.1
