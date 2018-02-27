@@ -1,98 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752097AbeB0CaM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:30:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751927AbeB0CaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:30:10 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47F321748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=tempfail smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 26 Feb 2018 21:29:20 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
- cond_resched_rcu_qs() in favor of cond_resched()
-Message-ID: <20180226212920.43e25d6e@vmware.local.home>
-In-Reply-To: <20180225183944.GA8840@linux.vnet.ibm.com>
-References: <20171201192122.GA19301@linux.vnet.ibm.com>
-        <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
-        <20180224151240.0d63a059@vmware.local.home>
-        <20180225174927.GC2855@linux.vnet.ibm.com>
-        <20180225181730.GA3963@linux.vnet.ibm.com>
-        <20180225183944.GA8840@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752070AbeB0CfD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:35:03 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:44120 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeB0CfB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 21:35:01 -0500
+X-Google-Smtp-Source: AG47ELt9mIFOqF1W1+u3LWvp03l2y7niEH0B5s2deQAg14m/RKNYOPHSPk6N5eoKVjNRlrludM1jRuJ7r3YQ259Qumc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAHp75VeJiqp74LrsETHTwxd5iaOObRX5bdYXz=rYeHm-4KbgHA@mail.gmail.com>
+References: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
+ <f4a2fefb4c3179e7598dbc8141a661833200b922.1519468782.git.baolin.wang@linaro.org>
+ <CAHp75VdvLDEmNs-YUFYf+Og18kaU6j6zAxXc1w31X2vw26ACHQ@mail.gmail.com>
+ <CAMz4kuJ+BmWnSFFvE91Ric-Wm6tzxs_a5UWMx82tPj_ZVvC4tw@mail.gmail.com> <CAHp75VeJiqp74LrsETHTwxd5iaOObRX5bdYXz=rYeHm-4KbgHA@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Tue, 27 Feb 2018 10:35:00 +0800
+Message-ID: <CAMz4kuJYEfwLHexq-KA6d9+u4+Cx2M9TAeEkHbbU4GJ-Sz50gg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] gpio: Add Spreadtrum PMIC EIC driver support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 25 Feb 2018 10:39:44 -0800
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On 26 February 2018 at 20:02, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> On Mon, Feb 26, 2018 at 5:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> On 25 February 2018 at 20:19, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>> On Sat, Feb 24, 2018 at 12:44 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>
+>>>> +static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
+>>>> +                                        unsigned int offset)
+>>>> +{
+>>>> +       /* EICs are always input, nothing need to do here. */
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
+>>>> +                             int value)
+>>>> +{
+>>>> +       /* EICs are always input, nothing need to do here. */
+>>>> +}
+>>>
+>>> Remove both.
+>>>
+>>> Look at what GPIO core does.
+>>
+>> I've checked the GPIO core, we need the
+>> sprd_pmic_eic_direction_input() returns 0, since user can set GPIOD_IN
+>> flag when requesting one GPIO, otherwise it will return errors.
+>
+> Right. I thought it depends on presence of direction_output().
+>
+>> We also need one dummy sprd_pmic_eic_set() when setting debounce for
+>> one GPIO, otherwise it will return errors.
+>
+> This is pretty much a "feature" of GPIO framework. It shouldn't
+> require ->set() by logic if there is no output facility.
+> OK.
+>
+>>>> +       for (n = 0; n < chip->ngpio; n++) {
+>>>> +               if (!(BIT(n) & val))
+>>>
+>>> for_each_set_bit().
+>>>
+>>> At some point you may need just to go across lib/ in the kernel and
+>>> see what we have there.
+>>
+>> I've considered the for_each_set_bit(), it need one 'unsigned long'
+>> type parameter, but we get the value from regmap is 'u32' type. So we
+>> need one extra conversion from 'u32' to 'unsigned long' like:
+>>
+>> unsigned long reg = val;
+>>
+>> for_each_set_bit(n, &reg, chip->ngpio) {
+>>         .......
+>> }
+>>
+>> If you like this conversion, then I can change to use
+>> for_each_set_bit(). Thanks.
+>
+> Wouldn't it work like
+>
+> unsigned long val;
+>
+> ...regmap_read(..., &val);
+>
+> ?
 
-> > Hmmm...  Grasping at straws...  Could we make cond_resched() be something
-> > like a tracepoint and instrument them with cond_resched_rcu_qs() if the
-> > current RCU-tasks grace period ran for more that (say) a minute of its
-> > ten-minute stall-warning span?  
-> 
-> On the other hand, you noted in your other email that the tracepoint
-> benchmark should not be enabled on production systems.  So how about
-> the following (again untested) patch?  The "defined(CONFIG_TASKS_RCU)"
-> might need to change, especially if RCU-tasks is used in production
-> kernels, but perhaps a starting point.
+It can not work, regmap_read() expects 'unsigned int *'. But I can
+convert it like this:
 
-RCU tasks are used in production systems if PREEMPT is enabled (it
-allows for optimizations with ftrace, perf and kprobes).
+for_each_set_bit(n, (unsigned long *)&val, chip->ngpio) {
+         .......
+}
 
-But the tracepoint is not used.
-
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index b161ef8a902e..316c29c5e506 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1589,6 +1589,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
->   */
->  #ifndef CONFIG_PREEMPT
->  extern int _cond_resched(void);
-> +#elif defined(CONFIG_TASKS_RCU)
-> +static inline int _cond_resched(void)
-> +{
-> +	rcu_note_voluntary_context_switch(current);
-> +	return 0;
-> +}
->  #else
->  static inline int _cond_resched(void) { return 0; }
->  #endif
-
-
-This does work, but so does the below, without causing cond_resched()
-from being something other than a nop of CONFIG_PREEMPT.
-
--- Steve
-
-diff --git a/kernel/trace/trace_benchmark.c b/kernel/trace/trace_benchmark.c
-index 22fee766081b..82d83bb4874b 100644
---- a/kernel/trace/trace_benchmark.c
-+++ b/kernel/trace/trace_benchmark.c
-@@ -166,6 +166,7 @@ static int benchmark_event_kthread(void *arg)
- 		 * block synchronize_rcu_tasks() indefinitely.
- 		 */
- 		cond_resched();
-+		rcu_note_voluntary_context_switch(current);
- 	}
- 
- 	return 0;
+-- 
+Baolin.wang
+Best Regards
