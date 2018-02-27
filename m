@@ -1,61 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeB0I0D (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 03:26:03 -0500
-Received: from LGEAMRELO11.lge.com ([156.147.23.51]:58378 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeB0I0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:26:02 -0500
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.184
-X-Original-MAILFROM: byungchul.park@lge.com
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-team@lge.com, LKML <linux-kernel@vger.kernel.org>
-From: Byungchul Park <byungchul.park@lge.com>
-Subject: [QUESTION] Bringing cross-release back to be alive
-Message-ID: <8c535191-e24d-6465-e809-81ae9e9b23e0@lge.com>
-Date: Tue, 27 Feb 2018 17:26:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752231AbeB0I0p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 03:26:45 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751530AbeB0I0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 03:26:43 -0500
+Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+To: Alex Williamson <alex.williamson@redhat.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+ <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+ <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+ <20180226161310.061ce3a8@w520.home>
+Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        pmorel@linux.vnet.ibm.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        john.garry@huawei.com, xuwei5@hisilicon.com,
+        Robin Murphy <robin.murphy@arm.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+Date: Tue, 27 Feb 2018 09:26:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180226161310.061ce3a8@w520.home>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
+On 27/02/18 00:13, Alex Williamson wrote:
+> On Mon, 26 Feb 2018 23:05:43 +0100
+> Auger Eric <eric.auger@redhat.com> wrote:
+> 
+>> Hi Shameer,
+>>
+>> [Adding Robin in CC]
+>> On 21/02/18 13:22, Shameer Kolothum wrote:
+>>> This checks and rejects any dma map request outside valid iova
+>>> range.
+>>>
+>>> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+>>> ---
+>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
+>>>  1 file changed, 22 insertions(+)
+>>>
+>>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>>> index a80884e..3049393 100644
+>>> --- a/drivers/vfio/vfio_iommu_type1.c
+>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+>>>  	return ret;
+>>>  }
+>>>  
+>>> +/*
+>>> + * Check dma map request is within a valid iova range
+>>> + */
+>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+>>> +				dma_addr_t start, dma_addr_t end)
+>>> +{
+>>> +	struct list_head *iova = &iommu->iova_list;
+>>> +	struct vfio_iova *node;
+>>> +
+>>> +	list_for_each_entry(node, iova, list) {
+>>> +		if ((start >= node->start) && (end <= node->end))
+>>> +			return true;  
+>> I am now confused by the fact this change will prevent existing QEMU
+>> from working with this series on some platforms. For instance QEMU virt
+>> machine GPA space collides with Seattle PCI host bridge windows. On ARM
+>> the smmu and smmuv3 drivers report the PCI host bridge windows as
+>> reserved regions which does not seem to be the case on other platforms.
+>> The change happened in commit 273df9635385b2156851c7ee49f40658d7bcb29d
+>> (iommu/dma: Make PCI window reservation generic).
+>>
+>> For background, we already discussed the topic after LPC 2016. See
+>> https://www.spinics.net/lists/kernel/msg2379607.html.
+>>
+>> So is it the right choice to expose PCI host bridge windows as reserved
+>> regions? If yes shouldn't we make a difference between those and MSI
+>> windows in this series and do not reject any user space DMA_MAP attempt
+>> within PCI host bridge windows.
+> 
+> If the QEMU machine GPA collides with a reserved region today, then
+> either:
+> 
+> a) The mapping through the IOMMU works and the reserved region is wrong
+> 
+> or
+> 
+> b) The mapping doesn't actually work, QEMU is at risk of data loss by
+> being told that it worked, and we're justified in changing that
+> behavior.
+> 
+> Without knowing the specifics of SMMU, it doesn't particularly make
+> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
+> unless perhaps the IOMMU is incapable of translating those IOVAs.
+to me the limitation does not come from the smmu itself, which is a
+separate HW block sitting between the root complex and the interconnect.
+If ACS is not enforced by the PCIe subsystem, the transaction will never
+reach the IOMMU.
 
-Cross-release introduced a false positive in some fs configs,
-which was too hard to solve fundamentally - which requires to
-distinguish between all dynamic instances.
+In the case of such overlap, shouldn't we just warn the end-user that
+this situation is dangerous instead of forbidding the use case which
+worked "in most cases" until now.
 
-I also think it better be removed than making fs developers
-disable whole lockdep. But I believe that it's still helpful
-in the rest of the configs.
+> Are we trying to prevent untranslated p2p with this reserved range?
+> That's not necessarily a terrible idea, but it seems that doing it for
+> that purpose would need to be a lot smarter, taking into account ACS
+> and precisely selecting ranges within the peer address space that would
+> be untranslated.  Perhaps only populated MMIO within non-ACS
+> hierarchies.  Thanks,
 
-Therefore, I want to bring it back after preventing bothering
-them. I think we can achieve it by invalidating problematic
-waiters at the moment producing a false positive and letting
-them worked out finely later.
+Indeed taking into account the ACS capability would refine the
+situations where a risk exists.
 
-For example, in the case where we got trouble in, we can
-initialize the completion in submit_bio_wait() with no-map
-version. That way, we can achieve our goal easily for all
-problems caused by cross-release in the future.
+Thanks
 
-Of course, it would be the best if we solve the problems in a
-right way later, but just leaving them invalidated would be
-also fine because the cases are exactly same as before
-applying cross-release.
-
-I'm curious about what you think about that. If you say yes,
-then I will re-summit after adding the work I mentioned above.
-
--- 
-Thanks,
-Byungchul
+Eric
+> 
+> Alex
+> 
