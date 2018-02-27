@@ -1,162 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932080AbeB0QQT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:16:19 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:55858 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752374AbeB0QQD (ORCPT
+        id S1752835AbeB0QQf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:16:35 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:34018 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752603AbeB0QQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:16:03 -0500
-X-IronPort-AV: E=Sophos;i="5.47,401,1515481200";
-   d="scan'208";a="11824784"
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-To: Daniel Thompson <daniel.thompson@linaro.org>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, <thierry.reding@gmail.com>,
-        <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <joonas.lahtinen@linux.intel.com>,
-        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
-        <b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
-        <dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
-        <sean@mess.org>, <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
-        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
- <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
- <20180227105444.lo4pee7vh4we3foq@oak.lan>
- <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
- <20180227153812.txt2vsdygfnobo33@oak.lan>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <66059303-3a17-d534-3581-9c03cc05a909@microchip.com>
-Date: Tue, 27 Feb 2018 18:15:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 11:16:18 -0500
+Date: Tue, 27 Feb 2018 09:53:33 -0600
+From: Julia Cartwright <julia@ni.com>
+To: <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>,
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Carsten Emde" <C.Emde@osadl.org>, John Kacur <jkacur@redhat.com>,
+        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Alex Shi <alex.shi@linaro.org>
+Subject: [ANNOUNCE] 4.9.84-rt62
+Message-ID: <20180227155333.GV951@jcartwri.amer.corp.natinst.com>
 MIME-Version: 1.0
-In-Reply-To: <20180227153812.txt2vsdygfnobo33@oak.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
+ priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=550 adultscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1802270199
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello RT Folks!
 
+I'm pleased to announce the 4.9.84-rt62 stable release.
 
-On 27.02.2018 17:38, Daniel Thompson wrote:
-> On Tue, Feb 27, 2018 at 01:40:58PM +0200, Claudiu Beznea wrote:
->> On 27.02.2018 12:54, Daniel Thompson wrote:
->>> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
->>>> On 26.02.2018 11:57, Jani Nikula wrote:
->>>>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
->>>>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->>>>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->>>>>>> were adapted to this change.
->>>>>>>
->>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->>>>>>> ---
->>>>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>>>>>>  drivers/bus/ts-nbus.c                |  2 +-
->>>>>>>  drivers/clk/clk-pwm.c                |  3 ++-
->>>>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>>>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
->>>>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
->>>>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>>>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
->>>>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>>>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>>>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>>>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>>>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>>>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>>>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>>>>>>  include/linux/pwm.h                  |  6 ++++--
->>>>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
->>>>>>> index 2030a6b77a09..696fa25dafd2 100644
->>>>>>> --- a/drivers/video/backlight/lm3630a_bl.c
->>>>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
->>>>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
->>>>>>>  {
->>>>>>>  	unsigned int period = pchip->pdata->pwm_period;
->>>>>>>  	unsigned int duty = br * period / br_max;
->>>>>>> +	struct pwm_caps caps = { };
->>>>>>>  
->>>>>>> -	pwm_config(pchip->pwmd, duty, period);
->>>>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
->>>>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
->>>>>>
->>>>>> Well... I admit I've only really looked at the patches that impact 
->>>>>> backlight but dispersing this really odd looking bit twiddling 
->>>>>> throughout the kernel doesn't strike me a great API design.
->>>>>>
->>>>>> IMHO callers should not be required to find the first set bit in
->>>>>> some specially crafted set of capability bits simply to get sane 
->>>>>> default behaviour.
->>>>>
->>>>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
->>>>> error prone.
->>>>
->>>> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
->>>> from your side?
->>>>
->>>> Or, what about using a function like pwm_mode_first() to get the first supported
->>>> mode by PWM channel?
->>>>
->>>> Or, would you prefer to solve this inside pwm_config() function, let's say, in
->>>> case an invalid mode is passed as argument, to let pwm_config() to choose the
->>>> first available PWM mode for PWM channel passed as argument?
->>>
->>> What is it that actually needs solving?
->>>
->>> If a driver requests normal mode and the PWM driver cannot support it
->>> why not just return an error an move on.
->> Because, simply, I wasn't aware of what these PWM client drivers needs for.
-> 
-> I'm afraid you have confused me here.
-> 
-> Didn't you just *add* the whole concept of PWM caps with your patches?
-> How could any existing call site expect anything except normal mode.
-> Until now there has been no possiblity to request anything else.
-Agree. And agree I was confusing in previous email, sorry about that. And
-agree that there was nothing before and everything should work with PWM
-normal mode.
+This release is just an update to the new stable 4.9.84 version
+and no RT specific changes have been made.
 
-When I choose to have BIT(ffs(caps.modes)) instead of PWM_MODE(NORMAL) I
-was thinking at having these pwm_config() calls working all the time having
-in mind that in future the PWM controllers that these drivers use, might
-change in terms of PWM supported modes.
+You can get this release via the git tree at:
 
-Thank you,
-Claudiu Beznea
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-> 
-> 
->>> Put another way, what is the use case for secretly adopting a mode the
->>> caller didn't want? Under what circumstances is this a good thing?
->> No one... But I wasn't aware of what the PWM clients needs for from their PWM
->> controllers. At this moment having BIT(ffs(caps.modes)) instead of
->> PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
->> registered PWM caps will use PWM normal mode.
->>
->> I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
->> your side.
->>
->> Thank you,
->> Claudiu Beznea
->>>
->>>
->>> Daniel.
->>>
-> 
+  branch: v4.9-rt
+  Head SHA1: be42cd02846a611af533103a3f4b6a7d8c592f49
+
+Or to build 4.9.84-rt62 directly, the following patches should be applied:
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.tar.xz
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.9.84.xz
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/4.9/patch-4.9.84-rt62.patch.xz
+
+Enjoy!
+    Julia
