@@ -1,53 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753972AbeB0OsC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:48:02 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39973 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753381AbeB0OsA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:48:00 -0500
-X-Google-Smtp-Source: AG47ELuMCuLHz+kkYk+P3IV8YnKvwVGC8u30B07IHM2AqO/uORjTP5l7JuYVrjS2iWhWs+eqtRxvcQ==
-Date: Tue, 27 Feb 2018 11:47:55 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio:magnetometer: Replace magic number 0 by IIO_CHAN_INFO_RAW
-Message-ID: <20180227144755.ifbzn5gekm345nk5@smtp.gmail.com>
+        id S1753963AbeB0Owf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:52:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753206AbeB0Owd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:52:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36ABC20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 27 Feb 2018 08:52:31 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Rolf Evers-Fischer <embedded24@evers-fischer.de>, kishon@ti.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
+Subject: Re: [PATCH v3 0/2] pci: endpoint: Fix double free in pci_epf_create()
+Message-ID: <20180227145231.GC112033@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180227100231.22561-1-embedded24@evers-fischer.de>
+ <20180227102030.GB26238@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180227102030.GB26238@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function magn_3d_read_raw has a switch statement handling multiple
-cases per channel. The first case statement uses the magic number 0,
-which means IIO_CHAN_INFO_RAW. Additionally, the iio_chan_spec for
-magn_3d_channels is configured to be IIO_CHAN_INFO_RAW. Therefore, this
-patch replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW.
+On Tue, Feb 27, 2018 at 10:20:30AM +0000, Lorenzo Pieralisi wrote:
+> On Tue, Feb 27, 2018 at 11:02:28AM +0100, Rolf Evers-Fischer wrote:
+> > This is version 3 of a patchset to avoid double free in function
+> > 'pci_epf_create()'.
+> > 
+> > When I accidentally created a new endpoint device with an empty name,
+> > the kernel warned about "attempted to be registered with empty name!"
+> > and crashed afterwards.
+> > 
+> > It turned out that the crash was not caused by the 'device_add()'
+> > function itself, but by a double kfree of 'epf->name' and 'epf'.
+> > 
+> > The first patch just simplifies the code, while the second patch
+> > fixes the problem.
+> > 
+> > Changes in v3:
+> > - Matched to other pending pci endpoint commits (thanks, Bjorn!)
+> > - Added "Fixes" tag in patch 2 (thanks, Andy!)
+> > 
+> > Changes in v2:
+> > - Based on feedback from Lorenzo, Andy and Kishon (thanks!)
+> > - Change IDs removed
+> > - First patch completely reworked in order to eliminate the
+> >   need for the second 'kstrdup' allocation and the 'kfree' of
+> >   the first allocation.
+> >   It was tested with name="pci_epf_test.0" and name="pci_epb":
+> >   The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
+> > 
+> > Rolf Evers-Fischer (2):
+> >   pci: endpoint: Simplify name allocation for epf device
+> >   pci: endpoint: Fix kernel panic after put_device()
+>     ^^^
+> 
+> s/pci/PCI
+> 
+> Bjorn pointed that out too, I can do it when merging the patches myself
+> just a hint in case you have to respin it again, no problem.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/iio/magnetometer/hid-sensor-magn-3d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I wonder if Rolf posted the wrong version accidentally, since he
+mentioned making these match, but I don't see anything different in
+this posting.  Oh, never mind, I see the response about rebasing.
+I should have been more clear about what I was looking for.
 
-diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-index a1fd9d591818..d55c4885211a 100644
---- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-+++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-@@ -167,7 +167,7 @@ static int magn_3d_read_raw(struct iio_dev *indio_dev,
- 	*val = 0;
- 	*val2 = 0;
- 	switch (mask) {
--	case 0:
-+	case IIO_CHAN_INFO_RAW:
- 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
- 		report_id =
- 			magn_state->magn[chan->address].report_id;
--- 
-2.16.2
+Also s/epf/EPF/, since "epf" isn't a real word.
