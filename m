@@ -1,60 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeB0QQf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:16:35 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:34018 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752603AbeB0QQS (ORCPT
+        id S1752882AbeB0QQu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:16:50 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35372 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752369AbeB0QQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:16:18 -0500
-Date: Tue, 27 Feb 2018 09:53:33 -0600
-From: Julia Cartwright <julia@ni.com>
-To: <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Carsten Emde" <C.Emde@osadl.org>, John Kacur <jkacur@redhat.com>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Alex Shi <alex.shi@linaro.org>
-Subject: [ANNOUNCE] 4.9.84-rt62
-Message-ID: <20180227155333.GV951@jcartwri.amer.corp.natinst.com>
+        Tue, 27 Feb 2018 11:16:48 -0500
+X-Google-Smtp-Source: AG47ELtaWXWNfdEGs7MRbTnMnESAsUV5xFgpoDoRs+tfuSw7vkbIBalQVMLSyhl7LF1I1/zmngBIXktvA8NThf4uFCM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=550 adultscore=0 classifier=spam adjust=30 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1802270199
+In-Reply-To: <92c22f39a7df439a9e18cb975eec086e@ausx13mpc124.AMER.DELL.COM>
+References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com>
+ <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
+ <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com> <92c22f39a7df439a9e18cb975eec086e@ausx13mpc124.AMER.DELL.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 18:16:46 +0200
+Message-ID: <CAHp75VchPrF8ndHck9pzjOOScTS627x9TFLsnr+LWxiwTgck9w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+To: Mario Limonciello <Mario.Limonciello@dell.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+On Tue, Feb 27, 2018 at 6:13 PM,  <Mario.Limonciello@dell.com> wrote:
 
-I'm pleased to announce the 4.9.84-rt62 stable release.
+>> > --- a/drivers/platform/x86/dell-smbios.h
+>> > +++ b/drivers/platform/x86/dell-smbios.h
+>> > @@ -75,4 +75,10 @@ int dell_laptop_register_notifier(struct notifier_block
+>> *nb);
+>> >  int dell_laptop_unregister_notifier(struct notifier_block *nb);
+>> >  void dell_laptop_call_notifier(unsigned long action, void *data);
+>> >
+>> > +/* for the supported backends */
+>> > +int init_dell_smbios_wmi(void);
+>> > +void exit_dell_smbios_wmi(void);
+>> > +int init_dell_smbios_smm(void);
+>> > +void exit_dell_smbios_smm(void);
+>> > +
+>>
+>> ...here...
+>
+> So do you mean you would rather see inline functions in header
+> file for the #else case then?
 
-This release is just an update to the new stable 4.9.84 version
-and no RT specific changes have been made.
+At least is sounds as a standard practice to me.
 
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v4.9-rt
-  Head SHA1: be42cd02846a611af533103a3f4b6a7d8c592f49
-
-Or to build 4.9.84-rt62 directly, the following patches should be applied:
-
-  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.tar.xz
-
-  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.9.84.xz
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/4.9/patch-4.9.84-rt62.patch.xz
-
-Enjoy!
-    Julia
+-- 
+With Best Regards,
+Andy Shevchenko
