@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeB0QNF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:13:05 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:39526 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751004AbeB0QND (ORCPT
+        id S1752425AbeB0QNM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:13:12 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:57730 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbeB0QNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:13:03 -0500
-X-Google-Smtp-Source: AG47ELuLNaShWzunRzyNDUKO2JH8u6kkyMfInaJFJngZs6GvR/ZF2kJqc7h2JV3BtFkBuxoQmkHgsW5ad3hREWjICKk=
-MIME-Version: 1.0
-In-Reply-To: <20180227100231.22561-1-embedded24@evers-fischer.de>
-References: <20180227100231.22561-1-embedded24@evers-fischer.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 18:13:02 +0200
-Message-ID: <CAHp75Vfbv-BpFS39jeN0ZapP1dg=4HfEOL75cQ11QR5iRpqFpA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] pci: endpoint: Fix double free in pci_epf_create()
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 27 Feb 2018 11:13:08 -0500
+Date: Tue, 27 Feb 2018 11:13:06 -0500 (EST)
+Message-Id: <20180227.111306.790069240486489244.davem@davemloft.net>
+To: antoine.tenart@bootlin.com
+Cc: ymarkman@marvell.com, mw@semihalf.com, stefanc@marvell.com,
+        thomas.petazzoni@free-electrons.com,
+        gregory.clement@free-electrons.com, miquel.raynal@free-electrons.com,
+        nadavh@marvell.com, maxime.chevallier@bootlin.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] net: mvpp2: adjust gso stop wake
+ thresholds
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180226141427.31536-2-antoine.tenart@bootlin.com>
+References: <20180226141427.31536-1-antoine.tenart@bootlin.com>
+        <20180226141427.31536-2-antoine.tenart@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 12:02 PM, Rolf Evers-Fischer
-<embedded24@evers-fischer.de> wrote:
-> This is version 3 of a patchset to avoid double free in function
-> 'pci_epf_create()'.
->
-> When I accidentally created a new endpoint device with an empty name,
-> the kernel warned about "attempted to be registered with empty name!"
-> and crashed afterwards.
->
-> It turned out that the crash was not caused by the 'device_add()'
-> function itself, but by a double kfree of 'epf->name' and 'epf'.
->
-> The first patch just simplifies the code, while the second patch
-> fixes the problem.
->
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Mon, 26 Feb 2018 15:14:26 +0100
 
-After addressing Bjorn's comments, FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> From: Yan Markman <ymarkman@marvell.com>
+> 
+> Adjust MVPP2_MAX_TSO_SEGS and stop_threshold/wake_threshold
+> for better TXQ utilization and performance.
+> 
+> Signed-off-by: Yan Markman <ymarkman@marvell.com>
+> ---
+>  drivers/net/ethernet/marvell/mvpp2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+> index 55300b1fe6c0..1a893ef70eab 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2.c
+> @@ -498,7 +498,7 @@
+>   * skb. As we need a maxium of two descriptors per fragments (1 header, 1 data),
+>   * multiply this value by two to count the maximum number of skb descs needed.
+>   */
+> -#define MVPP2_MAX_TSO_SEGS		300
+> +#define MVPP2_MAX_TSO_SEGS		100
+>  #define MVPP2_MAX_SKB_DESCS		(MVPP2_MAX_TSO_SEGS * 2 + MAX_SKB_FRAGS)
+>  
+>  /* Dfault number of RXQs in use */
+> @@ -5810,7 +5810,7 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
+>  		txq_pcpu->tso_headers = NULL;
+>  
+>  		txq_pcpu->stop_threshold = txq->size - MVPP2_MAX_SKB_DESCS;
+> -		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold / 2;
+> +		txq_pcpu->wake_threshold = txq_pcpu->stop_threshold - 100;
+>  
 
-> Changes in v3:
-> - Matched to other pending pci endpoint commits (thanks, Bjorn!)
-> - Added "Fixes" tag in patch 2 (thanks, Andy!)
->
-> Changes in v2:
-> - Based on feedback from Lorenzo, Andy and Kishon (thanks!)
-> - Change IDs removed
-> - First patch completely reworked in order to eliminate the
->   need for the second 'kstrdup' allocation and the 'kfree' of
->   the first allocation.
->   It was tested with name="pci_epf_test.0" and name="pci_epb":
->   The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
->
-> Rolf Evers-Fischer (2):
->   pci: endpoint: Simplify name allocation for epf device
->   pci: endpoint: Fix kernel panic after put_device()
->
->  drivers/pci/endpoint/pci-epf-core.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
->
-> --
-> 2.16.2
->
+This number 100 is a magic constant.  If it is related to
+MVPP2_MAX_TSO_SEGS, please use that define.  Otherwise
+define a new one which is descriptive.
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thank you.
