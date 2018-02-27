@@ -1,66 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751554AbeBZX5g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 18:57:36 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:44313 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeBZX5f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:57:35 -0500
-X-Google-Smtp-Source: AG47ELvX3Wu4cx2aHJvLq2W06C15ox4sA2+5wWW1ap10xGHQIu1uRFy7XV0aEB/xxSSKsAcUrKyK9A==
-Date: Mon, 26 Feb 2018 15:57:32 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Guenter Roeck <linux@roeck-us.net>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH] mm: Provide consistent declaration for
- num_poisoned_pages
-In-Reply-To: <1519686565-8224-1-git-send-email-linux@roeck-us.net>
-Message-ID: <alpine.DEB.2.20.1802261556420.236524@chino.kir.corp.google.com>
-References: <1519686565-8224-1-git-send-email-linux@roeck-us.net>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1751818AbeB0AE4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 19:04:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53972 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751797AbeB0AEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 19:04:54 -0500
+Date: Tue, 27 Feb 2018 02:04:49 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
+Cc: linux-kernel@vger.kernel.org, slp@redhat.com, bhe@redhat.com,
+        somlo@cmu.edu, xiaolong.ye@intel.com
+Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
+Message-ID: <20180227020104-mutt-send-email-mst@kernel.org>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+ <20180215213312.29234-12-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180215213312.29234-12-marcandre.lureau@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Feb 2018, Guenter Roeck wrote:
-
-> clang reports the following compile warning.
+On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-André Lureau wrote:
+> Modify fw_cfg_read_blob() to use DMA if the device supports it.
+> Return errors, because the operation may fail.
 > 
-> In file included from mm/vmscan.c:56:
-> ./include/linux/swapops.h:327:22: warning:
-> 	section attribute is specified on redeclared variable [-Wsection]
-> extern atomic_long_t num_poisoned_pages __read_mostly;
->                      ^
-> ./include/linux/mm.h:2585:22: note: previous declaration is here
-> extern atomic_long_t num_poisoned_pages;
->                      ^
+> So far, only one call in fw_cfg_register_dir_entries() is using
+> kmalloc'ed buf and is thus clearly eligible to DMA read.
 > 
-> Let's use __read_mostly everywhere.
+> Initially, I didn't implement DMA read to speed up boot time, but as a
+> first step before introducing DMA write (since read operations were
+> already presents). Even more, I didn't realize fw-cfg entries were
+> being read by the kernel during boot by default. But actally fw-cfg
+> entries are being populated during module probe. I knew DMA improved a
+> lot bios boot time (the main reason the DMA interface was added
+> afaik). Let see the time it would take to read the whole ACPI
+> tables (128kb allocated)
 > 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> Cc: Matthias Kaehlcke <mka@chromium.org>
+>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
+>   - with DMA: sys 0m0.003s
+>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
+> 
+> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
+> boot to populate sysfs qemu_fw_cfg directory, and it is quite
+> small (1-2kb). Since it does not expose itself, in order to measure
+> the time it takes to read such small file, I took a comparable sized
+> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
+> modified read_raw enabling DMA)
+> 
+>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
+>   - with DMA:
+>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
+>   - without DMA:
+>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
+> 
+> That's a few msec saved during boot by enabling DMA read (the gain
+> would be more substantial if other & bigger fw-cfg entries are read by
+> others from sysfs, unfortunately, it's not clear if we can always
+> enable DMA there)
+> 
+> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
 > ---
->  include/linux/mm.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 50 insertions(+), 11 deletions(-)
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ad06d42adb1a..bd4bd59f02c1 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
->  extern int sysctl_memory_failure_early_kill;
->  extern int sysctl_memory_failure_recovery;
->  extern void shake_page(struct page *p, int access);
-> -extern atomic_long_t num_poisoned_pages;
-> +extern atomic_long_t num_poisoned_pages __read_mostly;
->  extern int soft_offline_page(struct page *page, int flags);
+> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+> index 3015e77aebca..94df57e9be66 100644
+> --- a/drivers/firmware/qemu_fw_cfg.c
+> +++ b/drivers/firmware/qemu_fw_cfg.c
+> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
+>  	return ret;
+>  }
 >  
+> +/* with acpi & dev locks taken */
+> +static ssize_t fw_cfg_read_blob_dma(u16 key,
+> +				void *buf, loff_t pos, size_t count)
+> +{
+> +	ssize_t ret;
+> +
+> +	if (pos == 0) {
+> +		ret = fw_cfg_dma_transfer(buf, count, key << 16
+> +					| FW_CFG_DMA_CTL_SELECT
+> +					| FW_CFG_DMA_CTL_READ);
+> +	} else {
+> +		fw_cfg_sel_endianness(key);
+> +		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
+> +		if (ret < 0)
+> +			return ret;
+> +		ret = fw_cfg_dma_transfer(buf, count,
+> +					FW_CFG_DMA_CTL_READ);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/* with acpi & dev locks taken */
+> +static ssize_t fw_cfg_read_blob_io(u16 key,
+> +				void *buf, loff_t pos, size_t count)
+> +{
+> +	fw_cfg_sel_endianness(key);
+> +	while (pos-- > 0)
+> +		ioread8(fw_cfg_reg_data);
+> +	ioread8_rep(fw_cfg_reg_data, buf, count);
+> +	return count;
+> +}
+> +
+>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>  static ssize_t fw_cfg_read_blob(u16 key,
+> -				void *buf, loff_t pos, size_t count)
+> +				void *buf, loff_t pos, size_t count,
+> +				bool dma)
+>  {
+>  	u32 glk = -1U;
+>  	acpi_status status;
+> +	ssize_t ret;
 >  
+>  	/* If we have ACPI, ensure mutual exclusion against any potential
+>  	 * device access by the firmware, e.g. via AML methods:
 
-No objection to the patch, of course, but I'm wondering if it's (1) the 
-only such clang compile warning for mm/, and (2) if the re-declaration in 
-mm.h could be avoided by including swapops.h?
+so this adds a dma flag to fw_cfg_read_blob.
+
+
+
+> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
+>  	}
+>  
+>  	mutex_lock(&fw_cfg_dev_lock);
+> -	fw_cfg_sel_endianness(key);
+> -	while (pos-- > 0)
+> -		ioread8(fw_cfg_reg_data);
+> -	ioread8_rep(fw_cfg_reg_data, buf, count);
+> +	if (dma && fw_cfg_dma_enabled()) {
+> +		ret = fw_cfg_read_blob_dma(key, buf, pos, count);
+> +	} else {
+> +		ret = fw_cfg_read_blob_io(key, buf, pos, count);
+> +	}
+> +
+>  	mutex_unlock(&fw_cfg_dev_lock);
+>  
+>  	acpi_release_global_lock(glk);
+> -	return count;
+> +
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_CRASH_CORE
+
+If set to false it does io, if set to true it does dma.
+
+I would prefer passing an accessor function pointer
+since that's clearer than true/false.
+
+
+> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>  
+>  	/* verify fw_cfg device signature */
+>  	if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
+> -				0, FW_CFG_SIG_SIZE) < 0 ||
+> +				0, FW_CFG_SIG_SIZE, false) < 0 ||
+>  		memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>  		fw_cfg_io_cleanup();
+>  		return -ENODEV;
+> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+>  	if (count > entry->size - pos)
+>  		count = entry->size - pos;
+>  
+> -	return fw_cfg_read_blob(entry->select, buf, pos, count);
+> +	/* do not use DMA, virt_to_phys(buf) might not be ok */
+> +	return fw_cfg_read_blob(entry->select, buf, pos, count, false);
+>  }
+>  
+>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
+> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
+>  	size_t dir_size;
+>  
+>  	ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
+> -			0, sizeof(files_count));
+> +			0, sizeof(files_count), false);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
+>  		return -ENOMEM;
+>  
+>  	ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
+> -			sizeof(files_count), dir_size);
+> +			sizeof(files_count), dir_size, false);
+>  	if (ret < 0)
+>  		goto end;
+>  
+> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+>  		goto err_probe;
+>  
+>  	/* get revision number, add matching top-level attribute */
+> -	err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
+> +	err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
+>  	if (err < 0)
+>  		goto err_probe;
+
+
+Looks like all callers pass in false as parameter.
+Given this, how can this speed up any operations?
+
+Are you sure you tested this properly?
+
+> -- 
+> 2.16.1.73.g5832b7e9f2
