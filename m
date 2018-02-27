@@ -1,44 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeB0G0V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 01:26:21 -0500
-Received: from mx58.baidu.com ([61.135.168.58]:43381 "EHLO
-        tc-sys-mailedm03.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750770AbeB0G0U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 01:26:20 -0500
-From: Li RongQing <lirongqing@baidu.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: fenghua.yu@intel.com, tglx@linutronix.de
-Subject: [PATCH] Documentation: fix the wrong path in intel_rdt_ui.txt
-Date: Tue, 27 Feb 2018 14:17:51 +0800
-Message-Id: <1519712271-8802-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.10.1
+        id S1751940AbeB0Gr2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 01:47:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59052 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751098AbeB0Gr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 01:47:27 -0500
+Date: Tue, 27 Feb 2018 07:47:25 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/7] drm/virtio: Checkpatch cleanup for virtio
+Message-ID: <20180227064725.maggczdurwe7sqh3@sirius.home.kraxel.org>
+References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the note says "Move the cpus 4-7 over to p1", but echo command
-writes f0 to p0/cpus
+On Thu, Feb 22, 2018 at 08:59:33PM -0300, Rodrigo Siqueira wrote:
+> This patchset fixes warnings and errors found by checkpatch.pl in the
+> drm/virtio:
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
----
- Documentation/x86/intel_rdt_ui.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Added to drm-qemu queue, will land in drm-misc soon.
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index 756fd76b78a6..71c30984e94d 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -671,7 +671,7 @@ occupancy of the real time threads on these cores.
- # mkdir p1
- 
- Move the cpus 4-7 over to p1
--# echo f0 > p0/cpus
-+# echo f0 > p1/cpus
- 
- View the llc occupancy snapshot
- 
--- 
-2.11.0
+thanks,
+  Gerd
