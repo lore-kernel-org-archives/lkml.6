@@ -1,71 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeB0Xkm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:40:42 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33933 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751676AbeB0Xkl (ORCPT
+        id S1751851AbeB0Xlo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:41:44 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33132 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751811AbeB0Xlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:40:41 -0500
-X-Google-Smtp-Source: AG47ELvQsv+Ec8KXW2tGnZjpn8ghlgM9L9MZQ2hfuhoTdozfLsJv55ibXdTyDjLDsyFv1Vr7mcORE4vsQqQEXx10OxA=
+        Tue, 27 Feb 2018 18:41:42 -0500
+X-Google-Smtp-Source: AG47ELvm4NZfWYt2jKckDfwvHcr2qn5AnxaDAhXBnKVQbfhlNJlNA9BpMm2emORKltx8t6rtjNQ12La3WLwf/3rcxDk=
 MIME-Version: 1.0
-In-Reply-To: <68c24a6f-3a48-3672-8b16-0b46d880d0e3@robertabel.eu>
-References: <20180227220952.57wc3wpc26b2fdyq@gmail.com> <68c24a6f-3a48-3672-8b16-0b46d880d0e3@robertabel.eu>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 28 Feb 2018 00:40:20 +0100
-Message-ID: <CANiq72mkVbwmc1g=p87bqefYu1mwH5h4n9x4XfTjPZPe-OTRFA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3] auxdisplay: charlcd: Fix and clean up handling of
- x/y commands
-To: Robert Abel <rabel@robertabel.eu>
-Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180227233156.29826-2-danilokrummrich@dk-develop.de>
+References: <20180227233156.29826-1-danilokrummrich@dk-develop.de> <20180227233156.29826-2-danilokrummrich@dk-develop.de>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Feb 2018 15:41:40 -0800
+X-Google-Sender-Auth: C1oJux1kjRdyHwnt1WbU2UfdjE0
+Message-ID: <CAGXu5jLs2Fu+0yUNE4v6+xkfLXdEBs2QY=HctVFGfd__vNPW1g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fs/sysctl: remove redundant link check in proc_sys_link_fill_cache()
+To: Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 12:23 AM, Robert Abel <rabel@robertabel.eu> wrote:
-> On 27 Feb 2018 23:09, Miguel Ojeda wrote:> @@ -469,24 +543,11 @@ static
-> inline int handle_lcd_special_code(struct charlcd *lcd)
->>       }
->>       case 'x':       /* gotoxy : LxXXX[yYYY]; */
->>       case 'y':       /* gotoxy : LyYYY[xXXX]; */
->> -             if (!strchr(esc, ';'))
->> -                     break;
+On Tue, Feb 27, 2018 at 3:31 PM, Danilo Krummrich
+<danilokrummrich@dk-develop.de> wrote:
+> proc_sys_link_fill_cache() does not need to check whether we're
+> called for a link - it's already done by scan().
 >
-> Might want to keep this. It's in line with all other cases and prevents
-> calling parse_xy with input that has no chance of being correct due to
-> missing final ';'.
+> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
-I agree performance is not that critical here and the string would
-probably be in cache anyway, but I would say it is better to fix
-parse_xy() if it is not doing what it specifies.
+Acked-by: Kees Cook <keescook@chromium.org>
 
+> ---
+> v2: removed 'err' as it's only used for sysctl_follow_link()
+
+Thanks :)
+
+Luis, do you have a tree for sysctl, or should these just go via -mm?
+
+-Kees
+
+> ---
+>  fs/proc/proc_sysctl.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 >
->> +             /* If the command is valid, move to the new address */
->> +             if (parse_xy(esc, &priv->addr.x, &priv->addr.y))
->> +                     charlcd_gotoxy(lcd);
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 82ac5f682b73..d36ef667c0a8 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -712,12 +712,9 @@ static bool proc_sys_link_fill_cache(struct file *file,
+>         if (IS_ERR(head))
+>                 return false;
 >
-> While not in the original code, the inputs are now not clamped to width
-> and height.
-> That means for a two-line display ^[[Ly02; will actually end up on line
-> y = 1, not y = 2 % 2 = 0, because the four-line display logic bumps the
-> address up.
-> The same goes for going over lcd->width/lcd->bwidth in the x coordinate.
-> For four-line displays that ends up going to the line y + 2, because the
-> buffer is split in the middle.
-> The distinction between lcd->width and lcd->bwidth depends on whether it
-> makes sense to put the cursor outside the visible area or not.
-
-Don't worry, the RFC patch is meant to agree on a fix for the multiple
-x/y command code. The clamping and other stuff can still go in in
-another patch of yours :)
-
-Cheers,
-Miguel
-
+> -       if (S_ISLNK(table->mode)) {
+> -               /* It is not an error if we can not follow the link ignore it */
+> -               int err = sysctl_follow_link(&head, &table);
+> -               if (err)
+> -                       goto out;
+> -       }
+> +       /* It is not an error if we can not follow the link ignore it */
+> +       if (sysctl_follow_link(&head, &table))
+> +               goto out;
 >
-> Regards,
+>         ret = proc_sys_fill_cache(file, ctx, head, table);
+>  out:
+> --
+> 2.14.1
 >
-> Robert
+
+
+
+-- 
+Kees Cook
+Pixel Security
