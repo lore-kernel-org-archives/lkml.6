@@ -1,76 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751948AbeB0XCf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:02:35 -0500
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:32943 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeB0XCd (ORCPT
+        id S1751943AbeB0XEc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:04:32 -0500
+Received: from gateway23.websitewelcome.com ([192.185.48.104]:15890 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751853AbeB0XEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:02:33 -0500
-X-Google-Smtp-Source: AG47ELvZ7Ye+AvGxBxPUiY6OClKiErqTr4Fu+rMdf8yWk90GIH4dNd4trXoUnKk1qu/CL7UoJVJ7lX+ckfqyMgorqfA=
+        Tue, 27 Feb 2018 18:04:31 -0500
+Subject: Re: [PATCH] nbd: fix return value in error handling path
+To: Omar Sandoval <osandov@osandov.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Josef Bacik <jbacik@fb.com>, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linux-kernel@vger.kernel.org
+References: <20180212171450.GA31668@embeddedgus>
+ <20180226230133.GA12208@vader.DHCP.thefacebook.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <5abe2722-6f74-04cb-d417-fc960cb1997f@embeddedor.com>
+Date: Tue, 27 Feb 2018 15:43:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180227224358.12672-1-danilokrummrich@dk-develop.de>
-References: <20180227224358.12672-1-danilokrummrich@dk-develop.de>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Feb 2018 15:02:32 -0800
-X-Google-Sender-Auth: 26Zb3ZA6sAJZ5X8wP1zC5ue7VCo
-Message-ID: <CAGXu5j+geUKNMu8W-+CYUD0_d_LBv+78TE5QbKx2EBeCx_oP9A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/sysctl: fix potential page fault while
- unregistering sysctl table
-To: Danilo Krummrich <danilokrummrich@dk-develop.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180226230133.GA12208@vader.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.175.32
+X-Source-L: No
+X-Exim-ID: 1eqn1f-003s81-Bo
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.75]) [189.152.175.32]:46932
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 2:43 PM, Danilo Krummrich
-<danilokrummrich@dk-develop.de> wrote:
-> proc_sys_link_fill_cache() does not take currently unregistering
-> sysctl tables into account, which might result into a page fault in
-> sysctl_follow_link() - add a check to fix it.
->
-> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
-> ---
->  fs/proc/proc_sysctl.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index c5cbbdff3c3d..a0b6c647835e 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -709,6 +709,9 @@ static bool proc_sys_link_fill_cache(struct file *file,
->         bool ret = true;
-
-Nothing appears to actually change "ret" in this function. It should
-likely be dropped too.
-
->         head = sysctl_head_grab(head);
->
-> +       if (IS_ERR(head))
-> +               return false;
-> +
-
-This looks sensible. I'd drop the blank line between sysctl_head_grab
-and the IS_ERR, though.
-
-How are you testing this change?
-
-Thanks!
-
--Kees
-
->         if (S_ISLNK(table->mode)) {
->                 /* It is not an error if we can not follow the link ignore it */
->                 int err = sysctl_follow_link(&head, &table);
-> --
-> 2.14.1
->
 
 
+On 02/26/2018 05:01 PM, Omar Sandoval wrote:
+> On Mon, Feb 12, 2018 at 11:14:55AM -0600, Gustavo A. R. Silva wrote:
+>> It seems that the proper value to return in this particular case is the
+>> one contained into variable new_index instead of ret.
+>>
+>> Addresses-Coverity-ID: 1465148 ("Copy-paste error")
+>> Fixes: e46c7287b1c2 ("nbd: add a basic netlink interface")
+> Reviewed-by: Omar Sandoval <osandov@fb.com>
 
--- 
-Kees Cook
-Pixel Security
+Thanks, Omar.
+--
+Gustavo
+
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/block/nbd.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+>> index 5f2a424..86258b0 100644
+>> --- a/drivers/block/nbd.c
+>> +++ b/drivers/block/nbd.c
+>> @@ -1591,7 +1591,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+>>   			if (new_index < 0) {
+>>   				mutex_unlock(&nbd_index_mutex);
+>>   				printk(KERN_ERR "nbd: failed to add new device\n");
+>> -				return ret;
+>> +				return new_index;
+>>   			}
+>>   			nbd = idr_find(&nbd_index_idr, new_index);
+>>   		}
+>> -- 
+>> 2.7.4
+>>
