@@ -1,89 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeB0JO3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:14:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32966 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752094AbeB0JO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:14:26 -0500
-Date: Tue, 27 Feb 2018 10:14:22 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
-Message-ID: <20180227101422.7c0efb40@endymion>
-In-Reply-To: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1752451AbeB0JSI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:18:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52110 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751956AbeB0JSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:18:05 -0500
+Date: Tue, 27 Feb 2018 10:18:00 +0100
+From: Jens Freimann <jfreimann@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jasowang@redhat.com, wexu@redhat.com
+Subject: Re: [PATCH RFC 1/2] virtio: introduce packed ring defines
+Message-ID: <20180227091800.n45ng3xgraoqi24u@dhcp-192-241.str.redhat.com>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-2-tiwei.bie@intel.com>
+ <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180227085458.h5dytkwaeczrrijr@dhcp-192-241.str.redhat.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, Feb 27, 2018 at 09:54:58AM +0100, Jens Freimann wrote:
+>On Fri, Feb 23, 2018 at 07:18:00PM +0800, Tiwei Bie wrote:
+>>Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>---
+>>include/uapi/linux/virtio_config.h | 18 +++++++++-
+>>include/uapi/linux/virtio_ring.h   | 68 ++++++++++++++++++++++++++++++++++++++
+>>2 files changed, 85 insertions(+), 1 deletion(-)
+>>
+>>diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+>>index 308e2096291f..e3d077ef5207 100644
+>>--- a/include/uapi/linux/virtio_config.h
+>>+++ b/include/uapi/linux/virtio_config.h
+>>@@ -49,7 +49,7 @@
+>> * transport being used (eg. virtio_ring), the rest are per-device feature
+>> * bits. */
+>>#define VIRTIO_TRANSPORT_F_START	28
+>>-#define VIRTIO_TRANSPORT_F_END		34
+>>+#define VIRTIO_TRANSPORT_F_END		37
+>>
+>>#ifndef VIRTIO_CONFIG_NO_LEGACY
+>>/* Do we get callbacks when the ring is completely used, even if we've
+>>@@ -71,4 +71,20 @@
+>> * this is for compatibility with legacy systems.
+>> */
+>>#define VIRTIO_F_IOMMU_PLATFORM		33
+>>+
+>>+/* This feature indicates support for the packed virtqueue layout. */
+>>+#define VIRTIO_F_RING_PACKED		34
+>
+>Spec says VIRTIO_F_PACKED_RING not RING_PACKED
 
-On Thu, 22 Feb 2018 14:59:20 +0200, Andy Shevchenko wrote:
-> It's used in several places and more users may come.
-> By using this helper they may create a slightly cleaner code.
+Ignore this. Seems to have changed.
 
-In general I'm not a big fan of arbitrary API shortcuts. I won't object
-if you think it's a good one to have, however I'm a bit concerned about
-the silent handling of the "error case", which could cause unexpected
-default decisions as seen in patch 2/4 of this series. The fact that
-dmi_get_bios_year() returns 0 if there is no DMI BIOS date provided
-should at least be documented, to limit the risk.
-
-I also wonder if dmi_get_date() itself couldn't be optimized a bit if
-it turns out that most callers are only interested in the year.
-Currently it will parse the whole string even if the caller isn't
-interested in the month and day.
-
-The fact that dmi_get_date() returns true even if it couldn't parse the
-date string at all is also strange, although unrelated with your
-current work.
-
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  include/linux/dmi.h | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/include/linux/dmi.h b/include/linux/dmi.h
-> index 46e151172d95..241c27008c70 100644
-> --- a/include/linux/dmi.h
-> +++ b/include/linux/dmi.h
-> @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
->  
->  #endif
->  
-> +static inline int dmi_get_bios_year(void)
-> +{
-> +	int year;
-> +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-> +	return year;
-> +}
-
-checkpatch complains:
-
-WARNING: Missing a blank line after declarations
-#61: FILE: include/linux/dmi.h:153:
-+	int year;
-+	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-
-And I would tend to agree. Just because it is an inline function in a
-header file doesn't mean we don't stick to the usual coding style
-policy.
-
-> +
->  #endif	/* __DMI_H__ */
-
--- 
-Jean Delvare
-SUSE L3 Support
+regards,
+Jens 
