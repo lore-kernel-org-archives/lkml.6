@@ -1,80 +1,115 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AH8x227EQJKdi9B2topT0/YTY08QCTadXaNUrzeEa3klLyDfkOBFBzTG9SYPNkQmaN3mq2bVpepR
-ARC-Seal: i=1; a=rsa-sha256; t=1519780813; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AH8x224ShbIeTOCHDG/co7w1qy6Ikn1R0AYmdo+qgKuusDaCnPB8DXmOk/VyKLhbjljUkvwvUgKc
+ARC-Seal: i=1; a=rsa-sha256; t=1519773669; cv=none;
         d=google.com; s=arc-20160816;
-        b=U5TdyZ09SMER0WWvziv2FJVzJLE6ycnsbUPIym4JY5wUFSOcZK8Pa940jkfSYmBuQQ
-         E3wI2Bf6J+nT8RavsAUcXx1rB3Zhg/qAgPQWtdKI027SvUy5IplTBr+dNskzTn3SVCGx
-         kNDAIKWifXL5q3ZodqLKcpxcIdytvLSY6h9/P2FVUn5rouCOWEj+F5R+da69RSI4yrA5
-         aNnDngTaTLT+2xIfBhAkFMHSbe4zEVM8MqJQefzF/x//ydQ91T65bu855A1xxkdF19gP
-         vy1/BoExe1EbMxf54O91BdJyUnnrr4CpgCQnIcYGWCWqs8LARfl/P99/n62HmmThpGMH
-         tn3g==
+        b=Hce3GYqW9R/p0lcrHHYmTdQLl84pXImWSABKr8mFTE5c5LGuXpVjOThgThNxKC8uum
+         iXyb0HCTZ/9iUsVF4rY2OWsevhIwDAUDL6R0OFNJw4M4Aj98F+vhHz1gN0bSiWLrHfK/
+         VvjikfIQkmOHZj4lQ+oK+++l0hGiaPjDD52yNfa8qi68ncnHq3T777NGLwBsGtZqDnvg
+         389a7G04xVaBtK+dZVMZyV8kWXpXHA3xWP1vlXGwVVeBz9B8eZ4YTH7iJC3XMHy8FVb9
+         mg5IozLthJZixz8fMgPUdxUhX88sHd5o5+ebcTVrjSTAxD5ZQDtHolVCXfLKKEZ41Rib
+         HX/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=D+WIQIiZ1t2MoCN/rhk7YQ3Sk4hNrdybf37rYAI1ick=;
-        b=OYlsO9ucGIPenr1CVipnQU+5EyHLXIxDhgqokw+XGT+9mAmDIWaD54Vyt9+kZUQpO6
-         g/zJdZZFOdhmAqZ8CWpeP/xLPChZVPqMSE0VrDjavhGdDZ1Jz/3K/8LX5D6Yob6wXEoK
-         QGcnNWA7GvMTy1TYy42uBmdYs6w/eqMHxFFYdyYXuO5CxdFcVHtiJzcL5xN6M6YgjE1f
-         UKk8DqEcUlHcyzwRMHA8u8gIQhnxqELmyeDkCA3EX4rip32kpUD8022novDP1KZKWzfb
-         RRPUiSlRq9SrKkKqloUn8q8jtdItOAwML1XgBXzsGr/sDueoWpNU0yZI1l9V5eBkhTHK
-         E4sg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=E8KELWP5irWohYAvjSZAy+bLEx3tTsmWyrtCg+LAyHw=;
+        b=XdJImv4F6X0nXrW/w4B2DkXbgoJHu/fS7Z/8r/C6Cqn6tvg3M9FdVfETt1My3LkIUy
+         h7Kw46LrrY9BfE1C/Dja/DfMGMSnX/L8mjz6DTuNFdz+cMj2Yv2eT6WX7f4w9GAK+xUb
+         3ZyRUKfAfwozKyh+c/7Orz3bqBs+qzyZsK5IOoR/qBDB3IphplIht+w37U0y3ACjcbrd
+         N7XtYl6zm4d2mFW+M0VQt1ifroqcJe3Y9/h/8PjbLC43uDRnKFQlkz+ev/bHvp+VhbfM
+         7hlLBsY4er5JFTt/6PppMtri/L5GfRBlReBvIc9z5VLuSQT9Slz+Hcf9snMuiGn8FZun
+         LWEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Wed, 28 Feb 2018 01:20:12 +0000
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3107D217B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, cantabile.desu@gmail.com,
-	Jakub Kicinski <kubakici@wp.pl>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Shuah Khan <shuah@kernel.org>, Martin Fuzzey <mfuzzey@parkeon.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	David Howells <dhowells@redhat.com>, pali.rohar@gmail.com,
-	Takashi Iwai <tiwai@suse.de>, arend.vanspriel@broadcom.com,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	nbroeking@me.com, Vikram Mulukutla <markivx@codeaurora.org>,
-	Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Abhay_Salunke@dell.com, bjorn.andersson@linaro.org,
-	jewalt@lgsinnovations.com, oneukum@suse.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFT 3/7] firmware: make fw_add_devm_name() return 0 if cache
- present
-Message-ID: <20180228012012.GE14069@wotan.suse.de>
+To: cantabile.desu@gmail.com
+Cc: kubakici@wp.pl,
+	gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org,
+	linux-wireless@vger.kernel.org,
+	keescook@chromium.org,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	zohar@linux.vnet.ibm.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	stephen.boyd@linaro.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	bjorn.andersson@linaro.org,
+	jewalt@lgsinnovations.com,
+	oneukum@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [RFT 2/7] firmware: fix checking for return values for fw_add_devm_name()
+Date: Tue, 27 Feb 2018 15:20:56 -0800
+Message-Id: <20180227232101.20786-3-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
+In-Reply-To: <20180227232101.20786-1-mcgrof@kernel.org>
 References: <20180227232101.20786-1-mcgrof@kernel.org>
- <20180227232101.20786-4-mcgrof@kernel.org>
- <CAGXu5jL1mrZ6LqV0WKBY=w_kZzzcSrUD6Z5YqToSS2qmNaS4Fw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jL1mrZ6LqV0WKBY=w_kZzzcSrUD6Z5YqToSS2qmNaS4Fw@mail.gmail.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593598196329346880?=
-X-GMAIL-MSGID: =?utf-8?q?1593605686772358649?=
+X-GMAIL-THRID: =?utf-8?q?1593598195211276133?=
+X-GMAIL-MSGID: =?utf-8?q?1593598195211276133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 03:31:11PM -0800, Kees Cook wrote:
-> On Tue, Feb 27, 2018 at 3:20 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > Currently fw_add_devm_name() returns 1 if the firmware cache
-> > was already set. This makes it complicated for us to check for
-> > correctness. It is actually non-fatal if the firmware cache
-> > is already setup, so just return 0, and simplify the checkers.
-> >
-> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> 
-> That'll teach me to read all the patches first. ;)
-> 
-> Honestly, I'd just fold this into the prior patch: there's only one
-> caller and it's exactly about checking the return value.
+fw_add_devm_name() adds device's name onto the devres for the
+device so that prior to suspend we cache the firmware onto memory,
+so that on resume the firmware is reliably available. We never
+were checking for success for this call though, meaning in some
+really rare cases we my have never setup the firmware cache for
+a device, which could in turn make resume fail.
 
-Sounds good.
+This is all theoretical, no known issues have been reported.
+This small issue has been present way since the addition of the
+devres firmware cache names on v3.7.
 
-  Luis
+Fixes: f531f05ae9437 ("firmware loader: store firmware name into devres list")
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/firmware_loader.c b/drivers/base/firmware_loader.c
+index 21dd31ef08ae..48932581c70c 100644
+--- a/drivers/base/firmware_loader.c
++++ b/drivers/base/firmware_loader.c
+@@ -431,6 +431,7 @@ int assign_fw(struct firmware *fw, struct device *device,
+ 	      unsigned int opt_flags)
+ {
+ 	struct fw_priv *fw_priv = fw->priv;
++	int ret;
+ 
+ 	mutex_lock(&fw_lock);
+ 	if (!fw_priv->size || fw_state_is_aborted(fw_priv)) {
+@@ -447,8 +448,13 @@ int assign_fw(struct firmware *fw, struct device *device,
+ 	 */
+ 	/* don't cache firmware handled without uevent */
+ 	if (device && (opt_flags & FW_OPT_UEVENT) &&
+-	    !(opt_flags & FW_OPT_NOCACHE))
+-		fw_add_devm_name(device, fw_priv->fw_name);
++	    !(opt_flags & FW_OPT_NOCACHE)) {
++		ret = fw_add_devm_name(device, fw_priv->fw_name);
++		if (ret && ret != 1) {
++			mutex_unlock(&fw_lock);
++			return ret;
++		}
++	}
+ 
+ 	/*
+ 	 * After caching firmware image is started, let it piggyback
+-- 
+2.16.2
