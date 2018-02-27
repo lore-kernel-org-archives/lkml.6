@@ -1,297 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752035AbeB0E4Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 23:56:16 -0500
-Received: from mail-it0-f44.google.com ([209.85.214.44]:52355 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751552AbeB0E4O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 23:56:14 -0500
-X-Google-Smtp-Source: AG47ELtIJbAWxvdxcDhq+mSslUfUwWqpEi2QFcPp1wPkXdMZ0SBWcevr/rHqa13X7ah2mxpKe1xX2A==
-Date: Tue, 27 Feb 2018 13:56:17 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        julien.thierry@arm.com
-Cc: kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/13] arm64: kexec: add kexec_file_load() support
-Message-ID: <20180227045616.GF6019@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        julien.thierry@arm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+        id S1750938AbeB0FA4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 00:00:56 -0500
+Received: from mail-cys01nam02on0073.outbound.protection.outlook.com ([104.47.37.73]:41643
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750746AbeB0FAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 00:00:54 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com;
+Subject: Re: [PATCH 4/4] i2c: xlp9xx: Check for Bus state after every transfer
+To: Wolfram Sang <wsa@the-dreams.de>,
+        George Cherian <george.cherian@cavium.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com>
+ <1516253964-4615-4-git-send-email-george.cherian@cavium.com>
+ <20180226202248.ej3bt5o7sam6qljv@ninjato>
+From: George Cherian <gcherian@caviumnetworks.com>
+Message-ID: <a96c4bb2-fbc5-3e21-f6b5-4da75fac3c01@caviumnetworks.com>
+Date: Tue, 27 Feb 2018 10:30:31 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222111732.23051-1-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180226202248.ej3bt5o7sam6qljv@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [111.93.218.67]
+X-ClientProxiedBy: BM1PR0101CA0019.INDPRD01.PROD.OUTLOOK.COM (10.174.220.29)
+ To SN1PR07MB2334.namprd07.prod.outlook.com (10.169.127.12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3dcac22b-2c1e-4eaf-2c07-08d57d9f1331
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:SN1PR07MB2334;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2334;3:lBZ8Hs2l9VWSpU//h5x77ByVAsczAOEcO2ajlPZQKYUU2AKoUUs6ax3ovTPZ4nstPsxIfxP+9WhbqVnDtf3L24rtOQ8+Z+VBd4Y01HcBaoJJ7ecCzcivw8G2hmj62dekFvivgEQJTylbt+78mkdzCtINgiWirOIctgLlOfoBypSiDUU9gn8q66NBIYW1WdQQaqe/bVgjBZkWqKjy9mudIzlwCu1eUWr260Wv2kDkJXcgAkquMN3t0aMZtKVMPfbR;25:4Cy4Ns6pdISYKrM8bIJUPnr6AxU8KYXpfJV8yG5oSVwVB3Aelu5OMUbXV4I+REebAWg2NlVmzaoiTcfReWz2HG7/nzi36L7PWmOi+8XxgGcBzyMnRN1Ofsbw+Swq0nWlExRLE8+2FuKk3FH1BEzw8B4qxvVNnAydDGtMlNEjyqMMHI79NXKdf4WRR7XFL8eccynmxosj75qS8oNrp03Ij5aIuF3lFqCR+eSI7YPWuGPOqsftJZgmZ4YKE6/pf3t7ZfAoUnUqKu+0+tpPk4oDZQGlVGRlHb05AEHmGk/bZtXDe4AnkdVo3vy/9P86lYEmfoztRaVfrXAWbeVaL6Mf9Q==;31:yoYqZ9fbkn3/cHhbpaK9hKBowsH6hHkIJuHxL+Ju3Txhey+BYnVMC3EvvAAEFzGasFktOqnjwWknvpZSc0ZvWbkfvA2Ng9JZyKZjR+0B1edFowqGJE4dxok7O22/c3WYYAX2EMh7oqbl7wyP2lJla2XxbGOi0FZmAipWs5Umi8U5mAGrwOWFD1Havv/MyHFzst9fQRS0Ql9bYAMoK494PVG84bYFURnqD+nM559HBAk=
+X-MS-TrafficTypeDiagnostic: SN1PR07MB2334:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2334;20:0mQQTrC/Zp3wIuYX8BkQ3jFvW1r1PJAPaW5vMri1QGbYy2+IoCIv2GDBO/I0EE8z/4y1lROLionejV4KE3zyarhOeDhmCR6B5g6iGQUf6UfLj/Y1M4tgWjeF1NtEVWLTKMUTbnmcKbA4Vt3PGUB0aOsLybZMd0m9AsnOelkc3v3+O91VvZUEOoEEYCqB9pgBoYNO92mzmLIk9co8eBFyqjeeOjsemUnlpZ1HhCaeOZhfIeY9Ib3qzs/wD8gGv+DJprJZeVniA6Q/K47gw+8dYT5HBULKUT2a6q/T9cVMIqf00qmV0iESQAM9//CJumGGOFtOp9vpIykFVWoIZTey0KJDoh6V489A8WUwab+7K0CtVpoYsbe3MnPrpkFtL2TmFyiolUBzhf1QYOFvfS1E1/EzWLn37Qg1TALsLb6z3Uk2ofpmWsEt/AbzxS0Nnn8H0udrFVP+wOEIEcPRZWzOk0aZZFy6qT5oAwi/I6Jzaj7UmRoZ2GyGPpZJU+hhl9EiGpBDyXp7aglFtxnxcBmMXIng9q9MBn9Boe0s0a3uci5CYtmUiuV2uN+rt1Z6eJkL4pNyWCx+ddhUS2Ttj5iBl0wlYxVcM4VC5KfOd9RVmk0=;4:KrVY+82tEHv+AXPdKU5Dm/nWxTMo3wJNHhfovNhFL6c92ifnyTCXiNByZwYGCHFw//5O3GlJBpDBJZWr9HJJd0yrB4IjZeaCC2jb6bxksRoBAfBa97rtEe/E5+QtnKx1eDkYYLBYsBi/BtsJlTVGx6MSXYYNt+zWtlZg6ud45tEzgGpyCsIAEfTCvTmLZfuLkqb0sxRVPfCopcnDKcV4JvBO7JLTxajaLOhGPZsD3T7tyA5bpn96SFpE9UP0amFfJbhJSo891gNp18x89J3j/A==
+X-Microsoft-Antispam-PRVS: <SN1PR07MB2334D5495CD23984BA06B8B3F9C00@SN1PR07MB2334.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231220)(944501161)(52105095)(93006095)(3002001)(6041288)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:SN1PR07MB2334;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB2334;
+X-Forefront-PRVS: 05961EBAFC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(6049001)(39860400002)(396003)(346002)(376002)(366004)(39380400002)(51914003)(199004)(189003)(77096007)(3846002)(6116002)(53546011)(5009440100003)(386003)(58126008)(68736007)(36756003)(67846002)(31686004)(230700001)(478600001)(31696002)(16526019)(72206003)(186003)(2906002)(305945005)(7736002)(26005)(81156014)(8936002)(551934003)(105586002)(81166006)(6666003)(64126003)(47776003)(8676002)(316002)(50466002)(5660300001)(23746002)(6246003)(16576012)(97736004)(53936002)(229853002)(90366009)(106356001)(4326008)(52116002)(2950100002)(66066001)(65806001)(65956001)(110136005)(25786009)(42882006)(65826007)(6486002)(76176011)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB2334;H:[10.167.103.249];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN1PR07MB2334;23:M81Z4OS96YoScl/AQ4Dxi86Uh7zeiao9Mp/jQ?=
+ =?Windows-1252?Q?tFnnK19jQofbA0Rll80rFyLKUFj57t/NWCI852sBShCnR0e41n6oCEAE?=
+ =?Windows-1252?Q?cOLb3I0kAlbjalHGEsOY4h+RQSCZgxkMR+f3OcPESa7xTO0Mgl+DVU09?=
+ =?Windows-1252?Q?FtuDh38lmlIYsc4S1/1cBPfTqiJoR8BnoTtC+aKd2gq2bKX3nAhPgzvS?=
+ =?Windows-1252?Q?qx1Tid+apjF9XZzC0o70oaFHHvE/npQB27ziBOCtD9290d6hy+nPZ6Dx?=
+ =?Windows-1252?Q?jeDDuEwkbxbup4xktmkIs2y3wseK970u7H0u1s5lakrIVyq6ORc59tw1?=
+ =?Windows-1252?Q?nO7hL5/NkBQgBYMbO4wrGJzvu9r3ePzEBXl5j6uw40Yq1pARLS4a01/O?=
+ =?Windows-1252?Q?YH7HjSQZyxlEBgJpxlHxcOJSJ6W9+yUEGyxKixqoX4Odx9JSK1zf/Bj1?=
+ =?Windows-1252?Q?4DNXaO01pTj0QZYzBkEfc6p/hZkzwC//XFd0leL1tCqZckbqL0cDV6UU?=
+ =?Windows-1252?Q?iQ2qOfPmPmztH+A7CMcCIMQ+s4WZOzdvglmOZyvcQnzyoDEMZWrunPXa?=
+ =?Windows-1252?Q?Vgy1HMAw41Um+0w/dvYSBXakLqgKRD+3bEtey3BCZDXbkm1O56Uuk2An?=
+ =?Windows-1252?Q?DfLJKgmlpMePO76ftyYtFI/zI11RWRHoEE4fKp2qfOPXJkhzoGlOtaRy?=
+ =?Windows-1252?Q?slrNKpk1/zXlchbpR5jdLljLAZjaQYFX2AszEduozv2rnrg3uamUeYxJ?=
+ =?Windows-1252?Q?8d1A5YM9cSK3zNqm/eFaWfgx5MpxLYsnCnv60U6d3PRuv0q039VBs4xB?=
+ =?Windows-1252?Q?/YuZnz9vGRXK4BYnfeuaDzn5G62X2OYnSlkvctl/2ahxwiWPGbtDyyDh?=
+ =?Windows-1252?Q?rq9GAVRD94r/louON3qyM8Zf/mpQaOfvO0camiaxFWdM0Rl9kDfpF1qK?=
+ =?Windows-1252?Q?1XbtAOF/K+DEJKC8XhIFRhWYrq9UPluvgn1mmIY1EXeLkwaKBAbMH6xH?=
+ =?Windows-1252?Q?eIK5fYzC0Fs6clGcQrFWUp5aswY7l+GGhcjcB54C3qDWIDIK73Wqcn1V?=
+ =?Windows-1252?Q?vFLV12x8/BIT1OFYBceUptfXjuAeqMwISy5/qMs8k5R7TFvEJzhaZfx/?=
+ =?Windows-1252?Q?TaQSKYfYfGbvs3KqdvCWCklLHRw7GHoA5rGlSiwIe4NBDnVKRUtMNNAu?=
+ =?Windows-1252?Q?aKoShycUyUyqkQi/mGCVCWK/N7RawfWCA5K43FQzbnQJq3mkarwNdu9h?=
+ =?Windows-1252?Q?uGpvuUfmuGbT9uyHTAqOP6pie9ngobEQUAgxvon4A6oBc7O/smJqzrib?=
+ =?Windows-1252?Q?wgKopuCiX2FVCH0K/8TGE7U5RwtYO3ooPdZrZPhu4mDzGmfyRfQ4XV1S?=
+ =?Windows-1252?Q?aqROnyzpOJg/MWIl3nZVXxs8y13RtxgN8y4ui2If0Yx5FDlzH2LvdkOe?=
+ =?Windows-1252?Q?/hXo7LFozyaUF44bRnFxCKFpdOQ3c8gJ/bdo7XrAnF82t1KPwlcglUDt?=
+ =?Windows-1252?Q?fw0wyw2gvlKUA7Ru0zkEz8Y2FKW/WA6OVZhyj6kKfpgo/1u/avJQkcJS?=
+ =?Windows-1252?Q?q9eZcVPxlKLt0NaEQLi7nK/Jlo7SlHIxkh5kE0yKKqfrSwjovg49dDOL?=
+ =?Windows-1252?Q?s5piAS3GhPKp7nJRcujlU7d9Ql+qTZ+lJkog5LjKnyv?=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2334;6:EcpEI5Bl8LHukRf5Y0K8qsYrcspbwpJlB6hOjHCFrzseVSQLxCwzMVcCbNNe/WeDPlDqHk6kuu3RwTC/N7p4BZ4389Wpk6HlDgu+aV9+OdMlRXeZ5uweQfquyyv4zDWNoeIwKwycDVNdWId2TOtTk8v6FLKLk5yMsY3ud46GDLukK8TZwMr8cez1Id/pNtiSK1/TL5EP9c87EOqrVXodb2jFuhL/ww/U6xjVbXjLNOOt+AzF2gcQvVjURnxIcLqJVxQ0K3NcgnuEffzdML0QaCXL9+fz0OzgJ7YK9pCMhf4dhR/khaJxko2pWEexmMGZKWNnxIJDXOuWCUOyxT45a8LVEHCPQKSo+pBuVW7VxMA=;5:4NGUpqKcSjRRQ7LykiR8W7qOI8iORx9P7+AquJpJiUsNhePVRuq0OuGJLI1qbNL2ssCje6/9SNz+uOHxkrHvAwano2VOeq9QjpHS6Wy0k+AGfzid+GnFO8R+qq4Obcy5m16QaJkZFVBJQdPaXK/IzrlvddgPQs7u8nZuApBpPRA=;24:Q29GE8vWrQXxzZbYljENZMkjZxife1DtqTYXRuZchiZt+pbPh2h9L8PkTxX8hzpGsbn5GmBfCbEBw3uXIvUCWIjX8IUNbjrHm8Eo3DPDw8k=;7:QLlxrBaPHFa+KRNDV2TzZj6zNbb1Un3FgmLTR65xrzsEX5nuadi6mqjC8OFtti12vV/PSqo1KQ2OtT2nnRUYg6W7fX3oT6lvmQZEc5jrkFGssgq0GSUS1O7uVooubHzwzmV0/XqWOK23iKyM+BdEt7k9UP0mhLHbn5MEQZaCZ13y4Ek+WV9CZuGTtll5jr2UyeCWCTEO8RL4+DyAgRkPtS9LgcmlLVuuIcv0SvCnhGRYc5xxQpM9J1j/gLBfonIV
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2018 05:00:50.0085 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcac22b-2c1e-4eaf-2c07-08d57d9f1331
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB2334
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now my patch#2 to #5 were extracted from this patch set and put
-into another separate one. Please see
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/562195.htmlk
+Hi Wolfram,
 
-Thanks,
--Takahiro AKASHI
+Thanks for the review.
 
-On Thu, Feb 22, 2018 at 08:17:19PM +0900, AKASHI Takahiro wrote:
-> This is the eighth round of implementing kexec_file_load() support
-> on arm64.[1]
-> Most of the code is based on kexec-tools (along with some kernel code
-> from x86, which also came from kexec-tools).
+On 02/27/2018 01:52 AM, Wolfram Sang wrote:
 > 
+> On Thu, Jan 18, 2018 at 05:39:24AM +0000, George Cherian wrote:
+>> I2C bus enters the STOP condition after the DATA_DONE interrupt is raised.
+>> Essentially the driver should be checking the bus state before sending
+>> the next transaction.
 > 
-> This patch series enables us to
->   * load the kernel by specifying its file descriptor, instead of user-
->     filled buffer, at kexec_file_load() system call, and
->   * optionally verify its signature at load time for trusted boot.
+> Yes.
 > 
-> Contrary to kexec_load() system call, as we discussed a long time ago,
-> users may not be allowed to provide a device tree to the 2nd kernel
-> explicitly, hence enforcing a dt blob of the first kernel to be re-used
-> internally.
+>> In case the next transaction is initiated while the
+>> bus is busy, the prior transactions stop condition is not achieved.
 > 
-> To use kexec_file_load() system call, instead of kexec_load(), at kexec
-> command, '-s' option must be specified. See [2] for a necessary patch for
-> kexec-tools.
+> I didn't fully get why you can't check the BUSY bit and wait a little
+> just before you push out the next message?
+Yes, I am checking for the BUSY bit and looping.
+Here for reference
+
++	while (last_msg && busy_timeout) {
++		status = xlp9xx_read_i2c_reg(priv, XLP9XX_I2C_STATUS);
++		if ((status & XLP9XX_I2C_STATUS_BUSY) == 0)
++			break;
++
++		busy_timeout--;
++		udelay(1);
++	}
++
++	if (!busy_timeout) {
++		dev_dbg(priv->dev, "i2c bus busy for too long after transfer\n");
++		return -EIO;
++	}
+
+Did you mean to eliminate the udelay and use msleep?
+In any case I will re-post another version of the patch, since
+I have found some more issues and need to be fixed.
+
 > 
-> To anaylize a generated crash dump file, use the latest master branch of
-> crash utility[3] for v4.16-rc kernel. I always try to submit patches to
-> fix any inconsistencies introduced in the latest kernel.
-> 
-> Regarding a kernel image verification, a signature must be presented
-> along with the binary itself. A signature is basically a hash value
-> calculated against the whole binary data and encrypted by a key which
-> will be authenticated by one of the system's trusted certificates.
-> Any attempt to read and load a to-be-kexec-ed kernel image through
-> a system call will be checked and blocked if the binary's hash value
-> doesn't match its associated signature.
-> 
-> There are two methods available now:
-> 1. implementing arch-specific verification hook of kexec_file_load()
-> 2. utilizing IMA(Integrity Measurement Architecture)[4] appraisal framework
-> 
-> Before my v7, I believed that my patch only supports (1) but am now
-> confident that (2) comes free if IMA is enabled and properly configured.
-> 
-> 
-> (1) Arch-specific verification hook
-> If CONFIG_KEXEC_VERIFY_SIG is enabled, kexec_file_load() invokes an arch-
-> defined (and hence file-format-specific) hook function to check for the
-> validity of kernel binary.
-> 
-> On x86, a signature is embedded into a PE file (Microsoft's format) header
-> of binary. Since arm64's "Image" can also be seen as a PE file as far as
-> CONFIG_EFI is enabled, we adopt this format for kernel signing.  
-> 
-> As in the case of UEFI applications, we can create a signed kernel image:
->     $ sbsign --key ${KEY} --cert ${CERT} Image
-> 
-> You may want to use certs/signing_key.pem, which is intended to be used
-> for module sigining (CONFIG_MODULE_SIG), as ${KEY} and ${CERT} for test
-> purpose.
-> 
-> 
-> (2) IMA appraisal-based
-> IMA was first introduced in linux in order to meet TCG (Trusted Computing
-> Group) requirement that all the sensitive files be *measured* before
-> reading/executing them to detect any untrusted changes/modification.
-> Then appraisal feature, which allows us to ensure the integrity of
-> files and even prevent them from reading/executing, was added later.
-> 
-> Meanwhile, kexec_file_load() has been merged since v3.17 and evolved to
-> enable IMA-appraisal type verification by the commit b804defe4297 ("kexec:
-> replace call to copy_file_from_fd() with kernel version").
-> 
-> In this scheme, a signature will be stored in a extended file attribute,
-> "security.ima" while a decryption key is hold in a dedicated keyring,
-> ".ima" or "_ima".  All the necessary process of verification is confined
-> in a secure API, kernel_read_file_from_fd(), called by kexec_file_load().
-> 
->     Please note that powerpc is one of the two architectures now
->     supporting KEXEC_FILE, and that it wishes to exntend IMA,
->     where a signature may be appended to "vmlinux" file[5], like module
->     signing, instead of using an extended file attribute.
-> 
-> While IMA meant to be used with TPM (Trusted Platform Module) on secure
-> platform, IMA is still usable without TPM. Here is an example procedure
-> about how we can give it a try to run the feature using a self-signed
-> root ca for demo/test purposes:
-> 
->  1) Generate needed keys and certificates, following "Generate trusted
->     keys" section in README of ima-evm-utils[6].
-> 
->  2) Build the kernel with the following kernel configurations, specifying
->     "ima-local-ca.pem" for CONFIG_SYSTEM_TRUSTED_KEYS:
-> 	CONFIG_EXT4_FS_SECURITY
-> 	CONFIG_INTEGRITY_SIGNATURE
-> 	CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-> 	CONFIG_INTEGRITY_TRUSTED_KEYRING
-> 	CONFIG_IMA
-> 	CONFIG_IMA_WRITE_POLICY
-> 	CONFIG_IMA_READ_POLICY
-> 	CONFIG_IMA_APPRAISE
-> 	CONFIG_IMA_APPRAISE_BOOTPARAM
-> 	CONFIG_SYSTEM_TRUSTED_KEYS
->     Please note that CONFIG_KEXEC_VERIFY_SIG is not, actually should
->     not be, enabled.
-> 
->  3) Sign(label) a kernel image binary to be kexec-ed on target filesystem:
->     $ evmctl ima_sign --key /path/to/private_key.pem /your/Image
-> 
->  4) Add a command line parameter and boot the kernel:
->     ima_appraise=enforce
-> 
->  On live system,
->  5) Set a security policy:
->     $ mount -t securityfs none /sys/kernel/security
->     $ echo "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig" \
->       > /sys/kernel/security/ima/policy
-> 
->  6) Add a key for ima:
->     $ keyctl padd asymmetric my_ima_key %:.ima < /path/to/x509_ima.der
->     (or evmctl import /path/to/x509_ima.der <ima_keyring_id>)
-> 
->  7) Then try kexec as normal.
-> 
-> 
-> Concerns(or future works):
-> * Even if the kernel is configured with CONFIG_RANDOMIZE_BASE, the 2nd
->   kernel won't be placed at a randomized address. We will have to
->   add some boot code similar to efi-stub to implement the randomization.
-> for approach (1),
-> * While big-endian kernel can support kernel signing, I'm not sure that
->   Image can be recognized as in PE format because x86 standard only
->   defines little-endian-based format.
-> * vmlinux support
-> 
->   [1] http://git.linaro.org/people/takahiro.akashi/linux-aarch64.git
-> 	branch:arm64/kexec_file
->   [2] http://git.linaro.org/people/takahiro.akashi/kexec-tools.git
-> 	branch:arm64/kexec_file
->   [3] http://github.com/crash-utility/crash.git
->   [4] https://sourceforge.net/p/linux-ima/wiki/Home/
->   [5] http://lkml.iu.edu//hypermail/linux/kernel/1707.0/03669.html
->   [6] https://sourceforge.net/p/linux-ima/ima-evm-utils/ci/master/tree/
-> 
-> 
-> Changes in v8 (Feb 22, 2018)
-> * introduce ARCH_HAS_KEXEC_PURGATORY so that arm64 will be able to skip
->   purgatory
-> * remove "ifdef CONFIG_X86_64" stuffs from a re-factored function,
->   prepare_elf64_headers(), making its interface more generic
->   (The original patch was split into two for easier reviews.)
-> * modify cpu_soft_restart() so as to let the 2nd kernel jump into its entry
->   code directly without requiring purgatory in case of kexec_file_load
-> * remove CONFIG_KEXEC_FILE_IMAGE_FMT and introduce
->   CONFIG_KEXEC_IMAGE_VERIFY_SIG, much similar to x86 but quite redundant
->   for now.
-> * In addition, update/modify dependencies of KEXEC_IMAGE_VERIFY_SIG
-> 
-> Changes in v7 (Dec 4, 2017)
-> * rebased to v4.15-rc2
-> * re-organize the patch set to separate KEXEC_FILE_VERIFY_SIG-related
->   code from the others
-> * revamp factored-out code in kernel/kexec_file.c due to the changes
->   in original x86 code
-> * redefine walk_sys_ram_res_rev() prototype due to change of callback
->   type in the counterpart, walk_sys_ram_res()
-> * make KEXEC_FILE_IMAGE_FMT defaut on if KEXEC_FILE selected
-> 
-> Changes in v6 (Oct 24, 2017)
-> * fix a for-loop bug in _kexec_kernel_image_probe() per Julien
-> 
-> Changes in v5 (Oct 10, 2017)
-> * fix kbuild errors around patch #3
-> per Julien's comments,
-> * fix a bug in walk_system_ram_res_rev() with some cleanup
-> * modify fdt_setprop_range() to use vmalloc()
-> * modify fill_property() to use memset()
-> 
-> Changes in v4 (Oct 2, 2017)
-> * reinstate x86's arch_kexec_kernel_image_load()
-> * rename weak arch_kexec_kernel_xxx() to _kexec_kernel_xxx() for
->   better re-use
-> * constify kexec_file_loaders[]
-> 
-> Changes in v3 (Sep 15, 2017)
-> * fix kbuild test error
-> * factor out arch_kexec_kernel_*() & arch_kimage_file_post_load_cleanup()
-> * remove CONFIG_CRASH_CORE guard from kexec_file.c
-> * add vmapped kernel region to vmcore for gdb backtracing
->   (see prepare_elf64_headers())
-> * merge asm/kexec_file.h into asm/kexec.h
-> * and some cleanups
-> 
-> Changes in v2 (Sep 8, 2017)
-> * move core-header-related functions from crash_core.c to kexec_file.c
-> * drop hash-check code from purgatory
-> * modify purgatory asm to remove arch_kexec_apply_relocations_add()
-> * drop older kernel support
-> * drop vmlinux support (at least, for this series)
-> 
-> 
-> Patch #1 to #10 are essential part for KEXEC_FILE support
-> (additionally allowing for IMA-based verification):
->   Patch #1 to #6 are all preparatory patches on generic side.
->   Patch #7 to #11 are to enable kexec_file_load on arm64.
-> 
-> Patch #12 to #13 are for KEXEC_VERIFY_SIG (arch-specific verification)
-> support
-> 
-> AKASHI Takahiro (13):
->   resource: add walk_system_ram_res_rev()
->   kexec_file: make an use of purgatory optional
->   kexec_file,x86,powerpc: factor out kexec_file_ops functions
->   x86: kexec_file: factor out elf core header related functions
->   kexec_file, x86: move re-factored code to generic side
->   asm-generic: add kexec_file_load system call to unistd.h
->   arm64: kexec_file: invoke the kernel without purgatory
->   arm64: kexec_file: load initrd and device-tree
->   arm64: kexec_file: add crash dump support
->   arm64: kexec_file: add Image format support
->   arm64: kexec_file: enable KEXEC_FILE config
->   include: pe.h: remove message[] from mz header definition
->   arm64: kexec_file: enable KEXEC_VERIFY_SIG for Image
-> 
->  arch/arm64/Kconfig                          |  34 +++
->  arch/arm64/include/asm/kexec.h              |  90 +++++++
->  arch/arm64/kernel/Makefile                  |   3 +-
->  arch/arm64/kernel/cpu-reset.S               |   6 +-
->  arch/arm64/kernel/kexec_image.c             | 105 ++++++++
->  arch/arm64/kernel/machine_kexec.c           |  11 +-
->  arch/arm64/kernel/machine_kexec_file.c      | 401 ++++++++++++++++++++++++++++
->  arch/arm64/kernel/relocate_kernel.S         |   3 +-
->  arch/powerpc/Kconfig                        |   3 +
->  arch/powerpc/include/asm/kexec.h            |   2 +-
->  arch/powerpc/kernel/kexec_elf_64.c          |   2 +-
->  arch/powerpc/kernel/machine_kexec_file_64.c |  39 +--
->  arch/x86/Kconfig                            |   3 +
->  arch/x86/include/asm/kexec-bzimage64.h      |   2 +-
->  arch/x86/kernel/crash.c                     | 332 +++++------------------
->  arch/x86/kernel/kexec-bzimage64.c           |   2 +-
->  arch/x86/kernel/machine_kexec_64.c          |  45 +---
->  include/linux/ioport.h                      |   3 +
->  include/linux/kexec.h                       |  34 ++-
->  include/linux/pe.h                          |   2 +-
->  include/uapi/asm-generic/unistd.h           |   4 +-
->  kernel/kexec_file.c                         | 238 ++++++++++++++++-
->  kernel/resource.c                           |  57 ++++
->  23 files changed, 1046 insertions(+), 375 deletions(-)
->  create mode 100644 arch/arm64/kernel/kexec_image.c
->  create mode 100644 arch/arm64/kernel/machine_kexec_file.c
-> 
-> -- 
-> 2.16.2
-> 
+>> Add the check to make sure the bus is not busy before next transaction.
+>>
+
+Regards,
+-George
