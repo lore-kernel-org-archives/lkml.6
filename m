@@ -1,119 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753902AbeB0Obt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:31:49 -0500
-Received: from relmlor3.renesas.com ([210.160.252.173]:50130 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753357AbeB0Obm (ORCPT
+        id S1753932AbeB0OcO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:32:14 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753179AbeB0OcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:31:42 -0500
-X-IronPort-AV: E=Sophos;i="5.47,401,1515423600";
-   d="scan'208";a="273636983"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
-Thread-Topic: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
-Thread-Index: AQHTr9Kltqdm2PoG7E68/YC+voS9LqO4TqAAgAAAiOA=
-Date: Tue, 27 Feb 2018 14:31:36 +0000
-Message-ID: <HK2PR0601MB1393B39958A128DCB8CA0E44F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1519739731-27920-1-git-send-email-phil.edworthy@renesas.com>
- <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
-In-Reply-To: <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2SPR00MB03;7:hMGOCZ8HQy0liWB+W82EEs6kXFkfKxHkRx51G0ppZg9isMxqjF4WhRBFgMTr4btEr8vRNnM+7ezTwxecVCkxWHVIUGeUM0Duh2hhPZCryuocyH0JmwEZ4bya+AR0D5VFWGINzgQczRR2hRdjIFOkjJQ1iKS9rR8Lrx0Ah5aDmlGpYQqncs96bJyib91OxK/aez1MzXZ2dOpxYBbxHgh6tUIOqHr9DiGOQmnDPJ2Fv3A9r3cCjCDXkwAirw9pVzMK;20:xZVDJ2lNT3+oviQk7I2UaQW0j68d2TqC/XM0sKWvcR2GN3CsyQkLQU10PMyyARbwMnSMNP4x8MsNLlLS2hPWzBE4EYnN3rKAv83hvKmn6JNXChs87B0/jiRcRb9cnGySMcV9R7pP96FXo49JzqcyJUEgH8DADVDQaz55JttwrK4=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3b6cdd8d-9fc2-4463-c86a-08d57deeced7
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:HK2SPR00MB03;
-x-ms-traffictypediagnostic: HK2SPR00MB03:
-x-microsoft-antispam-prvs: <HK2SPR00MB0340A0F34C6CEB60C7E2A7F5C00@HK2SPR00MB03.apcprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231220)(944501161)(52105095)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:HK2SPR00MB03;BCL:0;PCL:0;RULEID:;SRVR:HK2SPR00MB03;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(346002)(396003)(39380400002)(376002)(189003)(199004)(4326008)(6436002)(8666007)(14454004)(305945005)(53936002)(9686003)(2900100001)(33656002)(6246003)(7736002)(966005)(478600001)(25786009)(66066001)(81166006)(105586002)(6306002)(2906002)(76176011)(3660700001)(229853002)(186003)(6916009)(2950100002)(26005)(59450400001)(55016002)(6506007)(102836004)(53546011)(86362001)(74316002)(8676002)(97736004)(68736007)(54906003)(3280700002)(5660300001)(316002)(99286004)(8936002)(81156014)(6116002)(3846002)(106356001)(5250100002)(8656006)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2SPR00MB03;H:HK2PR0601MB1393.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: /uW5pXiUw5nKkbfUFteI+lfjAIo3YmP4LyNtlqcEw2V7rgXxaW1rEBv8PBZLgQ+c1Au02UqK6WL2GIIrEd7xNFUKEbc2bVfowYxR5YoMosnc2iG6ZCjWx1eCJKHxWh8ZibDJaILjSl1va2XNcNd+LMyjckSg8XUlWpqedHMiPqw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-2022-jp"
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b6cdd8d-9fc2-4463-c86a-08d57deeced7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 14:31:36.7208
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2SPR00MB03
+        Tue, 27 Feb 2018 09:32:12 -0500
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Subject: [PATCH v2 04/15] KVM: s390: CPU model support for AP virtualization
+Date: Tue, 27 Feb 2018 09:28:02 -0500
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18022714-0008-0000-0000-000009621B7C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00995862; UDB=6.00506230; IPR=6.00775186;
+ MB=3.00019761; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 14:28:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022714-0009-0000-0000-00004631078A
+Message-Id: <1519741693-17440-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802270183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1REWBKq022934
 
-Hi Shawn,
+Introduces a new CPU model feature and two CPU model
+facilities to support AP virtualization for KVM guests.
 
-On 27 February 2018 14:28, Shawn Lin wrote:
-> 在 2018/2/27 21:55, Phil Edworthy 写道:
-> > Since the controller does not support the end-of-busy IRQ, don't use it.
-> > Otherwise, on older SD cards you will get lots of these messages:
-> > "mmc0: Got data interrupt 0x00000002 even though no data operation was
-> in progress"
-> >
-> 
-> I'm afraid you have to explain which version of arasan's IP suffer from this
-> and what does the "older SD cards" mean?
-Ok, I'll try to find out the IP version...
-For "older SD cards", I can provide a list of a few cards that exhibit this problem
-and others that don't, is that enough info?
+CPU model feature:
 
-Thanks
-Phil
+The KVM_S390_VM_CPU_FEAT_AP feature indicates that the
+AP facilities are installed on the KVM guest. This
+feature will be enabled by the kernel only if the AP
+facilities are installed on the linux host. This feature
+must be specifically turned on for the KVM guest from
+userspace to allow guest access to AP devices installed
+on the linux host.
 
-> > This has been reported on Xilinx devices that also use the Arasan IP.
-> > See https://patchwork.kernel.org/patch/8062871/
-> >
-> > This has been tested on the Renesas RZ/ND-DB board with the RZ/N1 SoC.
-> >
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > ---
-> >   drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-of-arasan.c
-> > b/drivers/mmc/host/sdhci-of-arasan.c
-> > index c33a5f7..ab66e32 100644
-> > --- a/drivers/mmc/host/sdhci-of-arasan.c
-> > +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> > @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data
-> sdhci_arasan_pdata = {
-> >   	.ops = &sdhci_arasan_ops,
-> >   	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> >   	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> > -			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> > +			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
-> > +			SDHCI_QUIRK2_STOP_WITH_TC,
-> >   };
-> >
-> >   static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32
-> > intmask)
-> >
-> 
-> 
-> --
-> Best Regards
-> Shawn Lin
+CPU model facilities:
+
+1. AP Query Configuration Information (QCI) facility is installed.
+
+   This is indicated by setting facilities bit 12 for
+   the guest. The kernel will not enable this facility
+   for the guest if it is not set on the host. This facility
+   must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+   feature is not installed.
+
+2. AP Facilities Test facility (APFT) is installed.
+
+   This is indicated by setting facilities bit 15 for
+   the guest. The kernel will not enable this facility for
+   the guest if it is not set on the host. This facility
+   must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+   feature is not installed.
+
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+---
+ arch/s390/include/uapi/asm/kvm.h |    1 +
+ arch/s390/kvm/kvm-s390.c         |    4 ++++
+ arch/s390/tools/gen_facilities.c |    2 ++
+ 3 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
+index 4cdaa55..a580dec 100644
+--- a/arch/s390/include/uapi/asm/kvm.h
++++ b/arch/s390/include/uapi/asm/kvm.h
+@@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
+ #define KVM_S390_VM_CPU_FEAT_PFMFI	11
+ #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
+ #define KVM_S390_VM_CPU_FEAT_KSS	13
++#define KVM_S390_VM_CPU_FEAT_AP		14
+ struct kvm_s390_vm_cpu_feat {
+ 	__u64 feat[16];
+ };
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index de1e299..c68ca86 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -347,6 +347,10 @@ static void kvm_s390_cpu_feat_init(void)
+ 
+ 	if (MACHINE_HAS_ESOP)
+ 		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
++
++	if (ap_instructions_installed()) /* AP instructions installed on host */
++		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
++
+ 	/*
+ 	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+ 	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+index 90a8c9e..a52290b 100644
+--- a/arch/s390/tools/gen_facilities.c
++++ b/arch/s390/tools/gen_facilities.c
+@@ -106,6 +106,8 @@ struct facility_def {
+ 
+ 		.name = "FACILITIES_KVM_CPUMODEL",
+ 		.bits = (int[]){
++			12, /* AP Query Configuration Information */
++			15, /* AP Facilities Test */
+ 			-1  /* END */
+ 		}
+ 	},
+-- 
+1.7.1
