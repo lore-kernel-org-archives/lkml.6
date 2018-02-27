@@ -1,99 +1,113 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3025739-1519656039-2-11857340884765739156
+X-Cyrus-Session-Id: sloti22d1t05-1199706-1519728115-2-14981936365445939315
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519656038; b=ZFUK2gaPwoDq9zo+Ur+k6wCxp8QrRmTrHy7KdLVmEJ/8iaJ
-    AnLg/lTTNJ75Z7FN9vCvlB0+byw0Vm2f8BFYVMTJTkaMX9lOOCYGswcBQ62Vwavk
-    6fV6y6rRHN+cQPE1YGZgwgxgHgFH6IxPISXQXTgI1yJTxSTdYjC5vbwO0FHDXLet
-    XTLTzsWQixhhpq7rlbSzHoQf7CftLYe05gLoUF8QzA2hAkYxEO/Nd9y9+gTXL+9m
-    C7O66W+FmhAQhmtbfd/ZlNYJdO+1Bl3QePjU+DEnaIMF/dBmXU+PAjb46vHj7N17
-    QRVywOpw9TbDNV7uMRzGftOJ6xk+f8YV5R+iXEA==
+    t=1519728115; b=gRPxQFDrtBjjg0o9ttO6PhZ4vi34S0OPhQqYLCZnyn21kHo
+    Ki/qylt+FS2Jme/C6Xq2B3O8BsAQ2zs98yk23A7fWBEBxixBH+72V8hbctxBxbzh
+    87NgOfYZg42qqeSkzv6lX0ySpZhGwHFOa53mfoKL69UUDXUrl1WBVwOL3Div45t0
+    ZCFw4G5Kwmq+DUPSevNwf2RIQG+o8lTjyFRcoFtxwv1z9WDkr0IhcUylCRxTfJnW
+    nF4VLuAsmrkL1Wgpq4JwIy5X/uKMr5fzDSbOvsA448qhZARCLmFXjRFVIerqaQYq
+    js1WCBYLWLvItQnyT6vGz0tbBnpnLXL1bkM8c/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519656038; bh=x7Jrs745mCdXtuVchbKMxnLHAA6YHDRnaNULy4
-    wz3SU=; b=o+KZYykJX/MeJCT0L2Y4zcBPdG344srX5ev93/a/evi5vQcSRQ4CY2
-    e/1AyzPLpDx3jPnvgNkNsrBF9Aec058I08+nadhiprJ7bQJy+kqr/FePjflKObhe
-    J+7GdFeju8+5IRwOojFL7K/HhLBl59uI46hDiPlyKB8dZ/0gNkh0qHw3RUlVoGbb
-    VQ0l73V09RGKI1KlL+lBjb4o88g/+VXzjPI7gkTq+K0AY02NrAVGv8vQ39JhB1nh
-    pPY4fE57BGlBGOAmElLp2aBwVxStbLcFGmFDzGYf1xEjXrzMke2nohJQLyy8k0Kg
-    4W8lTeS1Gpwu44cQucsvqA+Z58LSBd0Q==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1519728115; bh=+j4bfFqKYWSwB7GFXIHNd2WGI+svyzWHlj3yVJCvYo0=; b=t
+    i4DS2qI8oqpYh2lZFMtwZkSf564n2sm3T8m4Tj2swNFSxd90+ccL/TfTpXPyX9N4
+    +PRzqyLziNprY5XsVJylN/sW/5PwodK/DxKcWRgT8mRYlOQ0HJc2MxfmbNPo0Ct+
+    +0gI4igsVtBLHzL+kAbNFT0W53PyZYMt5+yp5D/v3OIneq1UAF1dsiIlYaVdMi77
+    zdrUHmeVMHF/8YVpIK0/K+UM7XW6gCSiiPw6Q/TNvIdPBsbA2/mjzrcSemqBX+96
+    PuqRXA2pg7C6Jn2Hp77nQpgY2RDqQbJH9gTSGqoROEh170FusxptW4vQSXNSo2xr
+    FNNmacwqO2LFh4A4Uiguw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LDjlgihF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l4PaEu/n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=k+Vz9sN2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LDjlgihF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l4PaEu/n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=k+Vz9sN2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753477AbeBZOkh (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 09:40:37 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:36086 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753298AbeBZOkg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Feb 2018 09:40:36 -0500
-X-Google-Smtp-Source: AG47ELuJUuxEdV/z0Xx8O3oeZjpZH7mLadcxa4rHyiS+6WwCnzHTuV2EhNNMlC2PWzgOTckuBKelwcu2GAsJlwHICq8=
+        id S1752680AbeB0Klw (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 05:41:52 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:9077 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752676AbeB0Klv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 05:41:51 -0500
+From: Roger Quadros <rogerq@ti.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <mgautam@codeaurora.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>,
+        "# v4 . 12+" <stable@vger.kernel.org>
+Subject: [PATCH] usb: dwc3: Fix lock-up on ID change during system suspend/resume
+Date: Tue, 27 Feb 2018 12:41:41 +0200
+Message-ID: <1519728101-15324-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
-References: <20180226143413.44134-1-Evgeniy.Didin@synopsys.com> <20180226143413.44134-2-Evgeniy.Didin@synopsys.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 26 Feb 2018 16:40:34 +0200
-Message-ID: <CAHp75Vepn=nS9=WRpKhPLQ04EJEpL0tcne-DfV6ip-ELH9ggRA@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v3] mmc: dw_mmc: Fix the DTO timeout overflow
- calculation for 32-bit systems
-To: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-Cc: linux-mmc@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        Stable <stable@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 4:34 PM, Evgeniy Didin
-<Evgeniy.Didin@synopsys.com> wrote:
-> In commit 9d9491a7da2a ("mmc: dw_mmc: Fix the DTO timeout calculation") have been made
-> changes which cause multiply overflow for 32-bit systems.
-> The broken timeout calculations caused false interrupt latency warnings
-> and stacktrace splat (such as below) when accessing the SD Card.
+To reproduce the lock up do the following
+- connect otg host adapter and a USB device to the dual-role port
+so that it is in host mode.
+- suspend to mem.
+- disconnect otg adapter.
+- resume the system.
 
-> +       drto_ms = DIV_ROUND_UP((u64)MSEC_PER_SEC * drto_clks * drto_div,
->                                host->bus_hz);
+If we call dwc3_host_exit() before tasks are thawed
+xhci_plat_remove() seems to lock up at the second usb_remove_hcd() call.
 
-Same as per patch 2.
+To work around this we queue the _dwc3_set_mode() work on
+the system_freezable_wq.
 
+Fixes: 41ce1456e1db ("usb: dwc3: core: make dwc3_set_mode() work properly")
+Cc: <stable@vger.kernel.org> # v4.12+
+Suggested-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/dwc3/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index f1d838a..e94bf91 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -175,7 +175,7 @@ void dwc3_set_mode(struct dwc3 *dwc, u32 mode)
+ 	dwc->desired_dr_role = mode;
+ 	spin_unlock_irqrestore(&dwc->lock, flags);
+ 
+-	queue_work(system_power_efficient_wq, &dwc->drd_work);
++	queue_work(system_freezable_wq, &dwc->drd_work);
+ }
+ 
+ u32 dwc3_core_fifo_space(struct dwc3_ep *dep, u8 type)
 -- 
-With Best Regards,
-Andy Shevchenko
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
