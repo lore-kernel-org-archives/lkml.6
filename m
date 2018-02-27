@@ -1,137 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751847AbeB0Seo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 13:34:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54156 "EHLO mx2.suse.de"
+        id S1751804AbeB0SjL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 13:39:11 -0500
+Received: from muru.com ([72.249.23.125]:58618 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751748AbeB0Sem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 13:34:42 -0500
-Date: Tue, 27 Feb 2018 19:34:17 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
-Message-ID: <20180227183417.GP26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-3-Yazen.Ghannam@amd.com>
- <20180227112234.GE26382@pd.tnic>
- <DM5PR12MB1916B6AEE434A345E78BE234F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180227170034.GJ26382@pd.tnic>
- <DM5PR12MB1916F8C7DF93C1C9402AE3ECF8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180227174446.GN26382@pd.tnic>
- <DM5PR12MB1916C280DA5B51FE9666EE21F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+        id S1751518AbeB0SjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 13:39:10 -0500
+Date: Tue, 27 Feb 2018 10:39:08 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: Re: [PATCH] regmap: irq: fix ack-invert
+Message-ID: <20180227183908.GF5448@atomide.com>
+References: <1519747558-17257-1-git-send-email-tharvey@gateworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM5PR12MB1916C280DA5B51FE9666EE21F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+In-Reply-To: <1519747558-17257-1-git-send-email-tharvey@gateworks.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 06:06:21PM +0000, Ghannam, Yazen wrote:
-> It's not just about arches but record types. A single platform can report
-> using arch-specific records, memory records, PCIe records, etc.
+* Tim Harvey <tharvey@gateworks.com> [180227 16:07]:
+> When acking irqs we need to take into account the ack-invert case. Without
+> this chips that require 0's to ACK interrupts will never clear the interrupt.
 > 
-> So all the other record types only show fields with a valid bit set and this
-> has always been the case. There may be users or tools who expect that
-> same behavior.
+> I am working on an mfd driver that will use ack-invert and discovered
+> this issue. The only user of ack_invert currently appears to be the
+> motorola-cpcap driver. I'm not clear why that driver doesn't appear affected
+> so I'm cc'ing those involved with that driver for review and testing.
 
-You know we have this thing called tracepoints for that, don't you?
+I gave this a quick try and it fails with cpcap. So yeah, you're right,
+it seems we still have the cpcap config wrong.
 
-You define one tracepoint which regurgitates an error record and then
-all arches which have the same table, share them.
+Things do work with the following patch and your patch for cpcap. So
+they should both be applied together as a single patch.
 
-> Please see the other patches where these are decoded further. As I
-> mentioned the cover letter, the decoding is applied incrementally rather
-> than having one large patch.
+Care to fold in the following change and then repost your patch?
 
-Here's what needs to go:
+Otherwise we might end up breaking things easily for booting or
+bisect or stable. Or else the patch below needs to be applied first
+to avoid breaking things.
 
-All the validation bits crap:
+Regards,
 
-	printk("%sValidation Bits: 0x%04x\n", pfx, validation_bits);
+Tony
 
-Instead, you simply dump all entries unconditionally and say whether
-they're valid or not. This way you have the same format for each error
-record - much easier to work with.
-
-	printk("%sCPUID Info:\n", pfx);
-        print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
-                       sizeof(proc->cpuid), 0);
-
-Frankly, I have no clue why we should even dump CPUID for *every* error.
-It is completely sufficient to dump family/model/stepping like we do in
-mce_amd.c. Besides, when debugging, you collect much more info from the
-system - CPUID only is not enough.
-
-	printk("%sError Structure Type: %pUl\n", newpfx,
-               &err_info->err_type);
-
-Unreadable GUIDs.
-
-What are those even:
-
-                if (err_info->validation_bits & INFO_VALID_TARGET_ID) {
-                        printk("%sTarget Identifier: 0x%016llx\n",
-                               newpfx, err_info->target_id);
-                }
-
-                if (err_info->validation_bits & INFO_VALID_REQUESTOR_ID) {
-                        printk("%sRequestor Identifier: 0x%016llx\n",
-                               newpfx, err_info->requestor_id);
-                }
-
-                if (err_info->validation_bits & INFO_VALID_RESPONDER_ID) {
-                        printk("%sResponder Identifier: 0x%016llx\n",
-                               newpfx, err_info->responder_id);
-                }
-
-some 8-byte ids? Who knows... Either remove them or make them
-human-readable, *explaining* what the requestor is and the target is and
-so on.
-
-                printk("%sRegister Array Size: 0x%04x\n", newpfx,
-                       ctx_info->reg_arr_size);
-
-I have no clue what that is for.
-
-                if (ctx_info->reg_ctx_type == CTX_TYPE_MSR) {
-                        groupsize = 8; /* MSRs are 8 bytes wide. */
-                        printk("%sMSR Address: 0x%08x\n", newpfx,
-                               ctx_info->msr_addr);
-                }
-
-What do I need the MSR *addresses* for?
-
-                if (ctx_info->reg_ctx_type == CTX_TYPE_MMREG) {
-                        printk("%sMM Register Address: 0x%016llx\n", newpfx,
-                               ctx_info->mm_reg_addr);
-                }
-
-memory mapped registers?!?!
-
-> Also, like I said in another thread, we should always print the raw value
-> followed by the decoding. That way the raw info is there in case a user
-> wants to send the data to the vendor or other expert party.
-
-By that logic we shouldn't be decoding at all - we should be dumping a
-fat hex blob.
-
-Again, there's this thing called tracepoints which have exactly that,
-you know. You can dump human readable info to dmesg and dump a whole raw
-record into the tracepoint.
-
-When the error is critical and we're about to die, the tracepoint
-contents goes to dmesg too.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+8< -------
+--- a/drivers/mfd/motorola-cpcap.c
++++ b/drivers/mfd/motorola-cpcap.c
+@@ -100,7 +100,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_MI1,
+ 		.mask_base = CPCAP_REG_MIM1,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ 	{
+ 		.name = "cpcap-m2",
+@@ -109,7 +108,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_MI2,
+ 		.mask_base = CPCAP_REG_MIM2,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ 	{
+ 		.name = "cpcap1-4",
+@@ -118,7 +116,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_INT1,
+ 		.mask_base = CPCAP_REG_INTM1,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ };
+ 
