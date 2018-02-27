@@ -1,65 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeB0KDz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:03:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37354 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751900AbeB0KDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:03:53 -0500
-Date: Tue, 27 Feb 2018 11:03:51 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Dave Young <dyoung@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v2] printk: move dump stack related code to
- lib/dump_stack.c
-Message-ID: <20180227100351.k7ijt7zvpf5hzk66@pathway.suse.cz>
-References: <20180213072834.GA24784@dhcp-128-65.nay.redhat.com>
- <20180213083505.GA1953@jagdpanzerIV>
+        id S1752653AbeB0KEC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:04:02 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5676 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751900AbeB0KEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 05:04:00 -0500
+Subject: Re: [PATCH v2 00/11] perf events patches for improved ARM64 support
+To: Jiri Olsa <jolsa@redhat.com>
+References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+ <20180227095028.GG21033@krava>
+CC: <ak@linux.intel.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <namhyung@kernel.org>, <wcohen@redhat.com>, <will.deacon@arm.com>,
+        <ganapatrao.kulkarni@cavium.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <057da936-8a4b-050a-6eb7-029965b8f6aa@huawei.com>
+Date: Tue, 27 Feb 2018 10:03:33 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180213083505.GA1953@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180227095028.GG21033@krava>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-02-13 17:35:05, Sergey Senozhatsky wrote:
-> On (02/13/18 15:28), Dave Young wrote:
-> > 
-> > dump_stack related stuff should belong to lib/dump_stack.c thus move them
-> > there. Also conditionally compile lib/dump_stack.c since dump_stack code
-> > does not make sense if printk is disabled.
-> > 
-> > Signed-off-by: Dave Young <dyoung@redhat.com>
-> > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> > Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-> 
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+On 27/02/2018 09:50, Jiri Olsa wrote:
+> On Sat, Feb 24, 2018 at 12:05:21AM +0800, John Garry wrote:
+>> This patchset adds support for some perf events features,
+>> targeted at ARM64, implemented in a generic fashion.
+>>
+>> The two main features are as follows:
+>> - support for arch/vendor/platform pmu events directory structure
+>>    - to support this, topic subdirectory support needs to be dropped
+>> - support for parsing standard architecture pmu events
+>>
+>> On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
+>> and HiSilicon hip08 JSONs are relocated/added/updated.
+>>
+>> In addition, there is a patch to drop mutli-mapfile.csv support and
+>> also a bugfix in jevents.c for an error code value.
+>>
+>> Differences to v1:
+>> - Address coding issues from Jiri Olsa in adding arch std event
+>>    support (https://lkml.org/lkml/2018/2/6/501)
+>> - add patch to drop topic subdirectory support
+>> - add patch for bug fix in json_events()
+>> - add review tags from Jiri Olsa
+>
+> can't tell if those json file changes are ok, but for all the code changes:
+>
 
-Looks OK to me as well.
+OK, I need Ganapatrao, William, and ARM64 kernel team/experts to check 
+the JSONS.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Thanks very much,
+John
 
-I have pushed it into printk.git, branch for-4.17.
-
-
-> The patch also saves us some additional memory on !PRINTK configs.
-> For example things like this
-> 
-> 	if (kobj->state_initialized) {
-> 		/* do not error out as sometimes we can recover */
-> 		printk(KERN_ERR "kobject (%p): tried to init an initialized "
-> 		       "object, something is seriously wrong.\n", kobj);
-> 		dump_stack();
-> 	}
-> 
-> now we won't have that dump_stack() call, which does not seems to be doing
-> anything useful anyway when printk() is not available.
-
-Yup.
-
-Best Regards,
-Petr
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>
+> thanks,
+> jirka
+>
+> .
+>
