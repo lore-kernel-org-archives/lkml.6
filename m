@@ -1,78 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752875AbeB0Kre (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:47:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41521 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752674AbeB0Krc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:47:32 -0500
-Date: Tue, 27 Feb 2018 11:47:08 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/8] efi: Fix IA32/X64 Processor Error Record
- definition
-Message-ID: <20180227104708.GC26382@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-2-Yazen.Ghannam@amd.com>
+        id S1753029AbeB0Kyz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:54:55 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45308 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752950AbeB0Kyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 05:54:50 -0500
+X-Google-Smtp-Source: AH8x227OcK1b0WGQQAiEikdwb8x2WcGmh8RnRqtGHHe9FOIrWMeetzX6StCJPFXKG9pCEkGOdJhF4w==
+Date: Tue, 27 Feb 2018 10:54:44 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, thierry.reding@gmail.com,
+        shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
+        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
+        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
+        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Message-ID: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+ <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226193904.20532-2-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:38:57PM -0600, Yazen Ghannam wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+> On 26.02.2018 11:57, Jani Nikula wrote:
+> > On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+> >> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+> >>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+> >>> were adapted to this change.
+> >>>
+> >>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >>> ---
+> >>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+> >>>  drivers/bus/ts-nbus.c                |  2 +-
+> >>>  drivers/clk/clk-pwm.c                |  3 ++-
+> >>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+> >>>  drivers/hwmon/pwm-fan.c              |  2 +-
+> >>>  drivers/input/misc/max77693-haptic.c |  2 +-
+> >>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+> >>>  drivers/leds/leds-pwm.c              |  5 ++++-
+> >>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+> >>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+> >>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+> >>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+> >>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+> >>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+> >>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+> >>>  include/linux/pwm.h                  |  6 ++++--
+> >>>  16 files changed, 70 insertions(+), 21 deletions(-)
+> >>>
+> >>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> >>> index 2030a6b77a09..696fa25dafd2 100644
+> >>> --- a/drivers/video/backlight/lm3630a_bl.c
+> >>> +++ b/drivers/video/backlight/lm3630a_bl.c
+> >>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+> >>>  {
+> >>>  	unsigned int period = pchip->pdata->pwm_period;
+> >>>  	unsigned int duty = br * period / br_max;
+> >>> +	struct pwm_caps caps = { };
+> >>>  
+> >>> -	pwm_config(pchip->pwmd, duty, period);
+> >>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+> >>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+> >>
+> >> Well... I admit I've only really looked at the patches that impact 
+> >> backlight but dispersing this really odd looking bit twiddling 
+> >> throughout the kernel doesn't strike me a great API design.
+> >>
+> >> IMHO callers should not be required to find the first set bit in
+> >> some specially crafted set of capability bits simply to get sane 
+> >> default behaviour.
+> > 
+> > Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+> > error prone.
 > 
-> Based on UEFI 2.7 Table 255. Processor Error Record, the "Local APIC_ID"
-
-My pdf says this is table 252.
-
-> field is 8 bytes but Linux defines this field as 1 byte.
+> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+> from your side?
+>
+> Or, what about using a function like pwm_mode_first() to get the first supported
+> mode by PWM channel?
 > 
-> Fix this in the struct cper_sec_proc_ia definition.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
-> Link:
-> https://lkml.kernel.org/r/20180223200333.6410-2-Yazen.Ghannam@amd.com
-> 
-> v1->v2:
-> * No changes.
-> 
->  include/linux/cper.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/cper.h b/include/linux/cper.h
-> index d14ef4e77c8a..4b5f8459b403 100644
-> --- a/include/linux/cper.h
-> +++ b/include/linux/cper.h
-> @@ -381,7 +381,7 @@ struct cper_sec_proc_generic {
->  /* IA32/X64 Processor Error Section */
->  struct cper_sec_proc_ia {
->  	__u64	validation_bits;
-> -	__u8	lapic_id;
-> +	__u64	lapic_id;
->  	__u8	cpuid[48];
+> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+> case an invalid mode is passed as argument, to let pwm_config() to choose the
+> first available PWM mode for PWM channel passed as argument?
 
-Ok, that processor error record has a variable length structure at byte
-offset 64 and we don't have it in this struct.
+What is it that actually needs solving?
 
-I guess I'll see it in the following patches but right now it looks
-like that "Processor Error Info" thing is simply situated after that
-Processor Error Record so we are supposed to simply find the info at
-offset 64...
+If a driver requests normal mode and the PWM driver cannot support it
+why not just return an error an move on.
 
-/me continues reading...
+Put another way, what is the use case for secretly adopting a mode the
+caller didn't want? Under what circumstances is this a good thing?
 
--- 
-Regards/Gruss,
-    Boris.
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Daniel.
