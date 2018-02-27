@@ -1,225 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753521AbeB0OS1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:18:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41760 "EHLO mail.kernel.org"
+        id S1753414AbeB0OZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:25:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33021 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753488AbeB0OS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:18:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8F520856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
- <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
-Date: Tue, 27 Feb 2018 22:16:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753117AbeB0OZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:25:56 -0500
+Date: Tue, 27 Feb 2018 15:25:31 +0100
+From: Borislav Petkov <bp@suse.de>
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, x86@kernel.org
+Subject: Re: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
+ Structure
+Message-ID: <20180227142531.GF26382@pd.tnic>
+References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
+ <20180226193904.20532-4-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180226193904.20532-4-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping,
+On Mon, Feb 26, 2018 at 01:38:59PM -0600, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> Print the fields in the IA32/X64 Processor Error Info Structure.
+> 
+> Based on UEFI 2.7 Table 256. IA32/X64 Processor Error Information
+> Structure.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+> Link:
+> https://lkml.kernel.org/r/20180223200333.6410-4-Yazen.Ghannam@amd.com
+> 
+> v1->v2:
+> * Add parantheses around "bits" expression in macro.
+> * Fix indentation on multi-line statements.
+> 
+>  drivers/firmware/efi/cper-x86.c | 53 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+> 
+> diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+> index 9da0d981178f..417bd4e500a7 100644
+> --- a/drivers/firmware/efi/cper-x86.c
+> +++ b/drivers/firmware/efi/cper-x86.c
+> @@ -3,15 +3,28 @@
+>  
+>  #include <linux/cper.h>
+>  
+> +#define INDENT_SP	" "
 
-On 2018/2/13 15:34, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2018/2/10 10:52, Chao Yu wrote:
->> On 2018/2/10 9:41, Jaegeuk Kim wrote:
->>> On 02/01, Chao Yu wrote:
->>>>
->>>>
->>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
->>>>> On 01/31, Chao Yu wrote:
->>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
->>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
->>>>>>> to add a new feature flag at every time? How about adding a layout value instead
->>>>>>
->>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
->>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
->>>>>> valid range of extended area in node block, but we don't know which
->>>>>> fields/features are valid/enabled or not.
->>>>>>
->>>>>> One more thing is that if we can add one feature flag for each field, we got one
->>>>>> more chance to disable it dynamically.
->>>>>>
->>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
->>>>>>>
->>>>>>>
->>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
->>>>>>
->>>>>> Yes, using raw 1017 is not appropriate here.
->>>>>>
->>>>>>> entries. Like this?
->>>>>>> 		union {
->>>>>>> 			struct node_v1;
->>>>>>> 			struct node_v2;
->>>>>>> 			struct node_v3;
->>>>>>> 			...
->>>>>>> 			struct direct_node dn;
->>>>>>> 			struct indirect_node in;
->>>>>>> 		};
->>>>>>> 	};
->>>>>>>
->>>>>>> 	struct node_v1 {
->>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>>>>>> 		__le32 node_checksum;
->>>>>>> 	}
->>>>>>>
->>>>>>> 	struct node_v2 {
->>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
->>>>>>
->>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
->>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
->>>>>>
->>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
->>>>>> fields, node version count can be a large number, it results in complicated
->>>>>> version recognization and handling.
->>>>>>
->>>>>> One more question is how can we control which fields are valid or not in
->>>>>> comp[Vx_NSIZE]?
->>>>>>
->>>>>>
->>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
->>>>>> the one used by f2fs_inode:
->>>>>>
->>>>>> struct f2fs_node {
->>>>>> 	union {
->>>>>> 		struct f2fs_inode i;
->>>>>> 		union {
->>>>>> 			struct {
->>>>>> 				__le32 node_checksum;
->>>>>> 				__le32 feature_field_1;
->>>>>> 				__le32 feature_field_2;
->>>>>> 				....
->>>>>> 				__le32 addr[];
->>>>>> 				
->>>>>> 			};
->>>>>> 			struct direct_node dn;
->>>>>> 			struct indirect_node in;
->>>>>> 		};
->>>>>> 	};
->>>>>> 	struct node_footer footer;
->>>>>> } __packed;
->>>>>>
->>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
->>>>>> macro to indicate actual size of addr.
->>>>>
->>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
->>>>
->>>> OK, I think we need more discussion.. ;)
->>>>
->>>>> can't set each of features individually. Like the second entry should have
->>>>
->>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
->>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
->>>> example:
->>>>
->>>> #define F2FS_NODE_CHECKSUM	0x0001
->>>> #define F2FS_NODE_FIELD1	0x0002
->>>> #define F2FS_NODE_FIELD2	0x0004
->>>>
->>>> 	union {
->>>> 		struct {
->>>> 			__le32 node_checksum;
->>>> 			__le32 field_1;
->>>> 			__le32 field_2;
->>>> 			....
->>>> 			__le32 addr[];
->>>> 		};
->>>> 		struct direct_node dn;
->>>> 		struct indirect_node in;
->>>> 	};
->>>>
->>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
->>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
->>>>
->>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
->>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
->>>
->>> So, that's why I thought we may need a sort of each formats.
->>
->> Hmm.. if we have two new added fields, there are (2 << 2) combinations
->> of all formats, as:
->>
->> struct original {
->> 	__le32 data[DEF_ADDRS_PER_BLOCK];
->> }
->>
->> struct node_v1 {
->> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->> 	__le32 field_1;
->> }
->>
->> struct node_v2 {
->> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
->> 	__le32 field_2;
->> }
->>
->> struct node_v2 {
->> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
->> 	__le32 field_1;
->> 	__le32 field_2;
->> }
->>
->> If we add more new fields, the node version will increase sharply due
->> to there is (n << 2) combination with n fields. Right? Any thoughts to
->> reduce maintaining overhead on those node versions structures?
-> 
-> Do you have time to explain more about the design of multiple version structure
-> for node block, I'm still be confused about two things:
-> 1. what will we do if we want to add one new field in node structure.
-> 2. how can we recognize which fields are valid and which ones are invalid.
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Any thoughts?
->>>>
->>>> Thanks,
->>>>
->>>>> enabled node_checksum, which we may not want to do.
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>> 		__le32 comp[V2_NSIZE];
->>>>>>> 	}
->>>>>>> 	...
->>>>>>>
->>>>>>>> +			};
->>>>>>>> +			struct direct_node dn;
->>>>>>>> +			struct indirect_node in;
->>>>>>>> +		};
->>>>>>>>  	};
->>>>>>>>  	struct node_footer footer;
->>>>>>>>  } __packed;
->>>>>>>> -- 
->>>>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>>>
->>>>>>> .
->>>>>>>
->>
->> .
->>
-> 
+That's just silly.
+
+> +
+>  /*
+>   * We don't need a "CPER_IA" prefix since these are all locally defined.
+>   * This will save us a lot of line space.
+>   */
+>  #define VALID_LAPIC_ID			BIT_ULL(0)
+>  #define VALID_CPUID_INFO		BIT_ULL(1)
+> +#define VALID_PROC_ERR_INFO_NUM(bits)	(((bits) & GENMASK_ULL(7, 2)) >> 2)
+> +
+> +#define INFO_VALID_CHECK_INFO		BIT_ULL(0)
+> +#define INFO_VALID_TARGET_ID		BIT_ULL(1)
+> +#define INFO_VALID_REQUESTOR_ID		BIT_ULL(2)
+> +#define INFO_VALID_RESPONDER_ID		BIT_ULL(3)
+> +#define INFO_VALID_IP			BIT_ULL(4)
+>  
+>  void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
+>  {
+> +	int i;
+> +	struct cper_ia_err_info *err_info;
+> +	char newpfx[64];
+> +
+>  	printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
+>  
+>  	if (proc->validation_bits & VALID_LAPIC_ID)
+> @@ -22,4 +35,44 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
+>  		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
+>  			       sizeof(proc->cpuid), 0);
+>  	}
+> +
+> +	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
+> +
+> +	err_info = (struct cper_ia_err_info *)(proc + 1);
+> +	for (i = 0; i < VALID_PROC_ERR_INFO_NUM(proc->validation_bits); i++) {
+> +		printk("%sError Information Structure %d:\n", pfx, i);
+> +
+> +		printk("%sError Structure Type: %pUl\n", newpfx,
+> +		       &err_info->err_type);
+
+That dumps a GUID - how do I find out what type that GUID refers to?
+
+> +
+> +		printk("%sValidation Bits: 0x%016llx\n",
+> +		       newpfx, err_info->validation_bits);
+
+As before, no need for those.
+
+> +
+> +		if (err_info->validation_bits & INFO_VALID_CHECK_INFO) {
+> +			printk("%sCheck Information: 0x%016llx\n", newpfx,
+> +			       err_info->check_info);
+> +		}
+> +
+> +		if (err_info->validation_bits & INFO_VALID_TARGET_ID) {
+> +			printk("%sTarget Identifier: 0x%016llx\n",
+> +			       newpfx, err_info->target_id);
+> +		}
+> +
+> +		if (err_info->validation_bits & INFO_VALID_REQUESTOR_ID) {
+> +			printk("%sRequestor Identifier: 0x%016llx\n",
+> +			       newpfx, err_info->requestor_id);
+> +		}
+> +
+> +		if (err_info->validation_bits & INFO_VALID_RESPONDER_ID) {
+> +			printk("%sResponder Identifier: 0x%016llx\n",
+> +			       newpfx, err_info->responder_id);
+> +		}
+
+Those look like would need an additional decoding. Can we do that here
+too?
+
+> +
+> +		if (err_info->validation_bits & INFO_VALID_IP) {
+> +			printk("%sInstruction Pointer: 0x%016llx\n",
+> +			       newpfx, err_info->ip);
+
+The only thing that makes sense so far.
+
+> +		}
+> +
+> +		err_info++;
+> +	}
+
+Also, it is worth checking how much duplication there is with
+drivers/firmware/efi/cper-arm.c and unifying the common pieces into
+functions in cper-common.c or so.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
