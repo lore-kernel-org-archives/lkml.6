@@ -1,122 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753814AbeB0Ph5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:37:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753561AbeB0Phz (ORCPT
+        id S1753981AbeB0PiX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:38:23 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43202 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753881AbeB0PiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:37:55 -0500
-Date: Tue, 27 Feb 2018 07:36:46 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
- cond_resched_rcu_qs() in favor of cond_resched()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20171201192122.GA19301@linux.vnet.ibm.com>
- <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180224151240.0d63a059@vmware.local.home>
- <20180225174927.GC2855@linux.vnet.ibm.com>
- <20180225181730.GA3963@linux.vnet.ibm.com>
- <20180225183944.GA8840@linux.vnet.ibm.com>
- <20180226212920.43e25d6e@vmware.local.home>
+        Tue, 27 Feb 2018 10:38:18 -0500
+X-Google-Smtp-Source: AG47ELv3gPghCBD+yt6J8PK3gfs+TOyp4haQadPCeGNz3UL1UdsvOR3pAb/qIPNyoxP3kkaV7ys+/w==
+Date: Tue, 27 Feb 2018 15:38:12 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, thierry.reding@gmail.com,
+        shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
+        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
+        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
+        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Message-ID: <20180227153812.txt2vsdygfnobo33@oak.lan>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+ <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+ <20180227105444.lo4pee7vh4we3foq@oak.lan>
+ <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180226212920.43e25d6e@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022715-0036-0000-0000-000002C75105
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00995884; UDB=6.00506244; IPR=6.00775209;
- MB=3.00019762; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-27 15:36:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022715-0037-0000-0000-0000437AC651
-Message-Id: <20180227153646.GD3777@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802270196
+In-Reply-To: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 09:29:20PM -0500, Steven Rostedt wrote:
-> On Sun, 25 Feb 2018 10:39:44 -0800
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > > Hmmm...  Grasping at straws...  Could we make cond_resched() be something
-> > > like a tracepoint and instrument them with cond_resched_rcu_qs() if the
-> > > current RCU-tasks grace period ran for more that (say) a minute of its
-> > > ten-minute stall-warning span?  
+On Tue, Feb 27, 2018 at 01:40:58PM +0200, Claudiu Beznea wrote:
+> On 27.02.2018 12:54, Daniel Thompson wrote:
+> > On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+> >> On 26.02.2018 11:57, Jani Nikula wrote:
+> >>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+> >>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+> >>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+> >>>>> were adapted to this change.
+> >>>>>
+> >>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >>>>> ---
+> >>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+> >>>>>  drivers/bus/ts-nbus.c                |  2 +-
+> >>>>>  drivers/clk/clk-pwm.c                |  3 ++-
+> >>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+> >>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+> >>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+> >>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+> >>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+> >>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+> >>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+> >>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+> >>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+> >>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+> >>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+> >>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+> >>>>>  include/linux/pwm.h                  |  6 ++++--
+> >>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> >>>>> index 2030a6b77a09..696fa25dafd2 100644
+> >>>>> --- a/drivers/video/backlight/lm3630a_bl.c
+> >>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+> >>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+> >>>>>  {
+> >>>>>  	unsigned int period = pchip->pdata->pwm_period;
+> >>>>>  	unsigned int duty = br * period / br_max;
+> >>>>> +	struct pwm_caps caps = { };
+> >>>>>  
+> >>>>> -	pwm_config(pchip->pwmd, duty, period);
+> >>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+> >>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+> >>>>
+> >>>> Well... I admit I've only really looked at the patches that impact 
+> >>>> backlight but dispersing this really odd looking bit twiddling 
+> >>>> throughout the kernel doesn't strike me a great API design.
+> >>>>
+> >>>> IMHO callers should not be required to find the first set bit in
+> >>>> some specially crafted set of capability bits simply to get sane 
+> >>>> default behaviour.
+> >>>
+> >>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+> >>> error prone.
+> >>
+> >> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+> >> from your side?
+> >>
+> >> Or, what about using a function like pwm_mode_first() to get the first supported
+> >> mode by PWM channel?
+> >>
+> >> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+> >> case an invalid mode is passed as argument, to let pwm_config() to choose the
+> >> first available PWM mode for PWM channel passed as argument?
 > > 
-> > On the other hand, you noted in your other email that the tracepoint
-> > benchmark should not be enabled on production systems.  So how about
-> > the following (again untested) patch?  The "defined(CONFIG_TASKS_RCU)"
-> > might need to change, especially if RCU-tasks is used in production
-> > kernels, but perhaps a starting point.
-> 
-> RCU tasks are used in production systems if PREEMPT is enabled (it
-> allows for optimizations with ftrace, perf and kprobes).
-> 
-> But the tracepoint is not used.
-
-Right, so I should use defined(CONFIG_TRACEPOINT_BENCHMARK) instead of
-defined(CONFIG_TASKS_RCU).
-
-Or am I misinterpreting the code in kernel/trace?
-
-> > ------------------------------------------------------------------------
+> > What is it that actually needs solving?
 > > 
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index b161ef8a902e..316c29c5e506 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -1589,6 +1589,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
-> >   */
-> >  #ifndef CONFIG_PREEMPT
-> >  extern int _cond_resched(void);
-> > +#elif defined(CONFIG_TASKS_RCU)
-> > +static inline int _cond_resched(void)
-> > +{
-> > +	rcu_note_voluntary_context_switch(current);
-> > +	return 0;
-> > +}
-> >  #else
-> >  static inline int _cond_resched(void) { return 0; }
-> >  #endif
-> 
-> 
-> This does work, but so does the below, without causing cond_resched()
-> from being something other than a nop of CONFIG_PREEMPT.
+> > If a driver requests normal mode and the PWM driver cannot support it
+> > why not just return an error an move on.
+> Because, simply, I wasn't aware of what these PWM client drivers needs for.
 
-True, but based on the cond_resched_rcu_qs() experience, I bet that
-trace_benchmark.c won't be the only place needing help.
+I'm afraid you have confused me here.
 
-							Thanx, Paul
+Didn't you just *add* the whole concept of PWM caps with your patches?
+How could any existing call site expect anything except normal mode.
+Until now there has been no possiblity to request anything else.
 
-> -- Steve
+
+> > Put another way, what is the use case for secretly adopting a mode the
+> > caller didn't want? Under what circumstances is this a good thing?
+> No one... But I wasn't aware of what the PWM clients needs for from their PWM
+> controllers. At this moment having BIT(ffs(caps.modes)) instead of
+> PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
+> registered PWM caps will use PWM normal mode.
 > 
-> diff --git a/kernel/trace/trace_benchmark.c b/kernel/trace/trace_benchmark.c
-> index 22fee766081b..82d83bb4874b 100644
-> --- a/kernel/trace/trace_benchmark.c
-> +++ b/kernel/trace/trace_benchmark.c
-> @@ -166,6 +166,7 @@ static int benchmark_event_kthread(void *arg)
->  		 * block synchronize_rcu_tasks() indefinitely.
->  		 */
->  		cond_resched();
-> +		rcu_note_voluntary_context_switch(current);
->  	}
+> I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
+> your side.
 > 
->  	return 0;
-> 
+> Thank you,
+> Claudiu Beznea
+> > 
+> > 
+> > Daniel.
+> > 
