@@ -1,175 +1,277 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x22706QEkKttP+Bkz9Sj4yeA+pGfIKvUJEyJh1IdnRhl3/OjiTLGF8Vn0Efxf3XQuVO7LVpu1
-ARC-Seal: i=1; a=rsa-sha256; t=1519450187; cv=none;
+Return-Path: <yong.deng@magewell.com>
+X-Google-Smtp-Source: AH8x225zVh039YRGVfTWyKsIKhOAdRvUn3dJ0NY8ernBwOmK3iNBrVf8eGjtUgRfudlN8qxjTsyK
+ARC-Seal: i=1; a=rsa-sha256; t=1519697171; cv=none;
         d=google.com; s=arc-20160816;
-        b=cZFgWovZX2hLOqjDqw7Esi8tl0fFyiVwRC6m3iCn561YJ8ENjIxjSGbjf87hdCW0QM
-         9xqayOmKh17lLz6PbARrTCmdnfmSPYtPdl+syBPfbUdtNe9OlEXSKdQL/uK3nepKRg7X
-         cqxag5TVHj2OGIHLBcFFneJvY0f5BDkenbCMzv2fBY8wdeT6BnxvGO+O07GAGJUjnAg9
-         BEDYrXz9xOotGI2UOe5S/8rpIUx2M0bhFFLBQcNTIoMlUsfhQRJZExMHai1M/HcEAxnE
-         fSECH/GrW1SIatHG4y7AOz0nvkMnpF3lgwaflHOAVqusRRXChMs2drmzDju9xnENjs8L
-         iHGg==
+        b=ZsevUD/wJlpo0jhMhvDindstCQDHiZc09yaoLIPlv3w0KFxFR2E/kBV2+lPC48Cw3m
+         aKbbZSxTcL/BbU3jvOQcQBSYUk3dAB7fH6nMUsH4gKAVEF2Lx/4DN9pP5NL4/LQbbvhy
+         9vkCkCBCkd2ms5EEmdj/0mkET9TB5HNv/qz03EIVzBQS92eHUurNFYRPngYnw5JPqIs2
+         oTapU65TSj5W4D9ryis/kVZ+9dCxUeubOaOqqyXsXjrzVgzaJ9q5SpvbLsQ2dT5cqDBB
+         /bomuw5hpp1wOQhMWVatiLOVn6JyDryQQKTyDoFe+rqLE1v7M/zIC8ZMPAYzVbrCwE0O
+         NCkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dmarc-filter:arc-authentication-results;
-        bh=My0Y7cjct5gMcofuRdT/TMuxdaCuuwcOCok22TdhQvA=;
-        b=f+c0+2uHT9Urvo4dIDRCINlpUp98AL9LpbkNlIuLZXSN5Q3vk9vvtWXm3S7fHg7Ubm
-         l9rJThSQYgiW18nqa3JbDUmJZ02prMoW06g8E4B/6ViVUNXFk0u+BYmbjKsGWXaG9hly
-         1YvQwiI76uJscMESZvCllsyLG27VkwheSZmguao+RUO6x0+e6PjwSvM+Z39yG9mxQdQH
-         3PO36A9bYStouJ6BEOjSCGr0TvGU2FGGmYH3rrGIqRPb3reN9T+h2gCGndVNglFnT6yW
-         l+iM8Zl/SJfjnPuFfsQmfC89I5FN3PJmb/I+QldfxB9cZWCkM4ahVi6NnEla36AGVwhz
-         4ysw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=woVJRRug8r1FRIatbwljDFnk6mujiYYtb6749xW50do=;
+        b=bgarM2fAApHY2W9UwZJzvfCnN02urWjtFgBnsaGzOaqRMVCgY2CdomTSgczgtTM2mD
+         +3Q9M+ntnO0jNeI45omvVNv1v+VVTIC9fWpiQvWis9MQMIJNQFXLcuWzoqa7YHYm9ceY
+         O4UXNmUOGcQPRngdqhPpRCgbhrWmEROfesPgOmiqF8s8UFDsXCHfcvtp0x7GFKxk14LY
+         HGLURoniWwFwQfN4f+sy457qMg3K4ZWtwkr5Or2JrLuQPpxebyqI9GOlgrVnKGx9ankp
+         IWOOI6F0gCd5H9M5seJ5773bUiSzSoDSifcOcgcYCgmmBNNUeBrve7QTiCH20Z7QeViC
+         ZaKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.62 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751597AbeBXF3q (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 24 Feb 2018 00:29:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751584AbeBXF3p (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 24 Feb 2018 00:29:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2BCF21741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: [PATCH v3 02/18] selftests: ftrace: Add probe event argument syntax testcase
-Date: Sat, 24 Feb 2018 14:29:21 +0900
-Message-Id: <151945016181.27508.3999524130112838660.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <151945010287.27508.6226184958678620828.stgit@devbox>
-References: <151945010287.27508.6226184958678620828.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.62 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07444317|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.B5xeX75_1519697157;
+From: Yong Deng <yong.deng@magewell.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Todor Tomov <todor.tomov@linaro.org>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Yong Deng <yong.deng@magewell.com>
+Subject: [PATCH v8 0/2] Initial Allwinner V3s CSI Support
+Date: Tue, 27 Feb 2018 10:05:13 +0800
+Message-Id: <1519697113-32202-1-git-send-email-yong.deng@magewell.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593258999265547236?=
-X-GMAIL-MSGID: =?utf-8?q?1593258999265547236?=
+X-GMAIL-THRID: =?utf-8?q?1593517981596193271?=
+X-GMAIL-MSGID: =?utf-8?q?1593517981596193271?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a testcase for probe event argument syntax which
-ensures the kprobe_events interface correctly parses
-given event arguments.
+This patchset add initial support for Allwinner V3s CSI.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |   97 ++++++++++++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+interface and CSI1 is used for parallel interface. This is not
+documented in datasheet but by test and guess.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-new file mode 100644
-index 000000000000..231bcd2c4eb5
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -0,0 +1,97 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event argument syntax
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+PROBEFUNC="vfs_read"
-+GOODREG=
-+BADREG=
-+GOODSYM="_sdata"
-+if ! grep -qw ${GOODSYM} /proc/kallsyms ; then
-+  GOODSYM=$PROBEFUNC
-+fi
-+BADSYM="deaqswdefr"
-+SYMADDR=0x`grep -w ${GOODSYM} /proc/kallsyms | cut -f 1 -d " "`
-+GOODTYPE="x16"
-+BADTYPE="y16"
-+
-+case `uname -m` in
-+x86_64|i[3456]86)
-+  GOODREG=%ax
-+  BADREG=%ex
-+;;
-+aarch64)
-+  GOODREG=%x0
-+  BADREG=%ax
-+;;
-+arm*)
-+  GOODREG=%r0
-+  BADREG=%ax
-+;;
-+esac
-+
-+test_goodarg() # Good-args
-+{
-+  while [ "$1" ]; do
-+    echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+test_badarg() # Bad-args
-+{
-+  while [ "$1" ]; do
-+    ! echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+echo > kprobe_events
-+
-+: "Register access"
-+test_goodarg ${GOODREG}
-+test_badarg ${BADREG}
-+
-+: "Symbol access"
-+test_goodarg "@${GOODSYM}" "@${SYMADDR}" "@${GOODSYM}+10" "@${GOODSYM}-10"
-+test_badarg "@" "@${BADSYM}" "@${GOODSYM}*10" "@${GOODSYM}/10" \
-+	    "@${GOODSYM}%10" "@${GOODSYM}&10" "@${GOODSYM}|10"
-+
-+: "Stack access"
-+test_goodarg "\$stack" "\$stack0" "\$stack1"
-+test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
-+
-+: "Retval access"
-+echo "r ${PROBEFUNC} \$retval" > kprobe_events
-+! echo "p ${PROBEFUNC} \$retval" > kprobe_events
-+
-+: "Comm access"
-+test_goodarg "\$comm"
-+
-+: "Indirect memory access"
-+test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
-+	"+0(\$stack1)" "+10(@${GOODSYM}-10)" "+0(+10(+20(\$stack)))"
-+test_badarg "+(${GOODREG})" "(${GOODREG}+10)" "-(${GOODREG})" "(${GOODREG})" \
-+	"+10(\$comm)" "+0(${GOODREG})+10"
-+
-+: "Name assignment"
-+test_goodarg "varname=${GOODREG}"
-+test_badarg "varname=varname2=${GOODREG}"
-+
-+: "Type syntax"
-+test_goodarg "${GOODREG}:${GOODTYPE}"
-+test_badarg "${GOODREG}::${GOODTYPE}" "${GOODREG}:${BADTYPE}" \
-+	"${GOODTYPE}:${GOODREG}"
-+
-+: "Combination check"
-+
-+test_goodarg "\$comm:string" "+0(\$stack):string"
-+test_badarg "\$comm:x64" "\$stack:string" "${GOODREG}:string"
-+
-+echo > kprobe_events
+This patchset implement a v4l2 framework driver and add a binding 
+documentation for it. 
 
+Currently, the driver only support the parallel interface. And has been
+tested with a BT1120 signal which generating from FPGA. The following
+fetures are not support with this patchset:
+  - ISP 
+  - MIPI-CSI2
+  - Master clock for camera sensor
+  - Power regulator for the front end IC
+
+Changes in v8:
+  * Revert to v6 and add 'hack' for PHYS_OFFSET.
+
+Changes in v7:
+  * Add 'depends on ARM' in Kconfig to avoid built with non-ARM arch.
+
+Changes in v6:
+  * Add Rob Herring's review tag.
+  * Fix a NULL pointer dereference by picking Maxime Ripard's patch.
+  * Add Maxime Ripard's test tag.
+
+Changes in v5:
+  * Using the new SPDX tags.
+  * Fix MODULE_LICENSE.
+  * Add many default cases and warning messages.
+  * Detail the parallel bus properties
+  * Fix some spelling and syntax mistakes.
+
+Changes in v4:
+  * Deal with the CSI 'INNER QUEUE'.
+    CSI will lookup the next dma buffer for next frame before the
+    the current frame done IRQ triggered. This is not documented
+    but reported by Ondřej Jirman.
+    The BSP code has workaround for this too. It skip to mark the
+    first buffer as frame done for VB2 and pass the second buffer
+    to CSI in the first frame done ISR call. Then in second frame
+    done ISR call, it mark the first buffer as frame done for VB2
+    and pass the third buffer to CSI. And so on. The bad thing is
+    that the first buffer will be written twice and the first frame
+    is dropped even the queued buffer is sufficient.
+    So, I make some improvement here. Pass the next buffer to CSI
+    just follow starting the CSI. In this case, the first frame
+    will be stored in first buffer, second frame in second buffer.
+    This mothed is used to avoid dropping the first frame, it
+    would also drop frame when lacking of queued buffer.
+  * Fix: using a wrong mbus_code when getting the supported formats
+  * Change all fourcc to pixformat
+  * Change some function names
+
+Changes in v3:
+  * Get rid of struct sun6i_csi_ops
+  * Move sun6i-csi to new directory drivers/media/platform/sunxi
+  * Merge sun6i_csi.c and sun6i_csi_v3s.c into sun6i_csi.c
+  * Use generic fwnode endpoints parser
+  * Only support a single subdev to make things simple
+  * Many complaintion fix
+
+Changes in v2: 
+  * Change sunxi-csi to sun6i-csi
+  * Rebase to media_tree master branch 
+
+Following is the 'v4l2-compliance -s -f' output, I have test this
+with both interlaced and progressive signal:
+
+# ./v4l2-compliance -s -f
+v4l2-compliance SHA   : 6049ea8bd64f9d78ef87ef0c2b3dc9b5de1ca4a1
+
+Driver Info:
+        Driver name   : sun6i-video
+        Card type     : sun6i-csi
+        Bus info      : platform:csi
+        Driver version: 4.15.0
+        Capabilities  : 0x84200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps   : 0x04200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+
+Compliance test for device /dev/video0 (not using libv4l2):
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second video open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Test input 0:
+
+        Control ioctls:
+                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+                test VIDIOC_QUERYCTRL: OK (Not Supported)
+                test VIDIOC_G/S_CTRL: OK (Not Supported)
+                test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+                Standard Controls: 0 Private Controls: 0
+
+        Format ioctls:
+                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+                test VIDIOC_G/S_PARM: OK (Not Supported)
+                test VIDIOC_G_FBUF: OK (Not Supported)
+                test VIDIOC_G_FMT: OK
+                test VIDIOC_TRY_FMT: OK
+                test VIDIOC_S_FMT: OK
+                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+                test Cropping: OK (Not Supported)
+                test Composing: OK (Not Supported)
+                test Scaling: OK (Not Supported)
+
+        Codec ioctls:
+                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+        Buffer ioctls:
+                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+                test VIDIOC_EXPBUF: OK
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test MMAP: OK                                     
+        test USERPTR: OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Stream using all formats:
+        test MMAP for Format HM12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV21, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format YU12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format YV12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV16, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+        test MMAP for Format NV61, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+        test MMAP for Format 422P, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+
+Total: 54, Succeeded: 54, Failed: 0, Warnings: 0
+
+Yong Deng (2):
+  dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
+  media: V3s: Add support for Allwinner CSI.
+
+ .../devicetree/bindings/media/sun6i-csi.txt        |  59 ++
+ MAINTAINERS                                        |   8 +
+ drivers/media/platform/Kconfig                     |   1 +
+ drivers/media/platform/Makefile                    |   2 +
+ drivers/media/platform/sunxi/sun6i-csi/Kconfig     |   9 +
+ drivers/media/platform/sunxi/sun6i-csi/Makefile    |   3 +
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 911 +++++++++++++++++++++
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h | 143 ++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h | 196 +++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.c   | 753 +++++++++++++++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.h   |  53 ++
+ 11 files changed, 2138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Kconfig
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Makefile
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
+
+-- 
+1.8.3.1
