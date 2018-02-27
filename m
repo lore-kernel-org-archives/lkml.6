@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeB0Wnl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49872 "EHLO mail.kernel.org"
+        id S1752029AbeB0WpX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:45:23 -0500
+Received: from mga14.intel.com ([192.55.52.115]:22314 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751754AbeB0Wnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:43:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9657C21771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 27 Feb 2018 17:43:37 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: corbet@lwn.net, mingo@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/17] Include linux trace docs to Sphinx TOC tree
-Message-ID: <20180227174337.37ecb348@vmware.local.home>
-In-Reply-To: <20180227093421.yd674oaklthaljgh@intel.com>
-References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
-        <20180227093421.yd674oaklthaljgh@intel.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751754AbeB0WpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:45:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,402,1515484800";
+   d="scan'208";a="31142962"
+From: "Rustad, Mark D" <mark.d.rustad@intel.com>
+To: David Miller <davem@davemloft.net>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "MRustad@gmail.com" <MRustad@gmail.com>,
+        "alexander.duyck@gmail.com" <alexander.duyck@gmail.com>,
+        "mst@redhat.com" <mst@redhat.com>
+Subject: Re: [RFC PATCH V3] virtio_pci: Add SR-IOV support
+Thread-Topic: [RFC PATCH V3] virtio_pci: Add SR-IOV support
+Thread-Index: AQHTr+CjaZB1K0bLWEeVRRLgaujMr6O5X6SA
+Date: Tue, 27 Feb 2018 22:45:19 +0000
+Message-ID: <CABB6175-4FC3-4742-9C54-FCDEE3E5A608@intel.com>
+References: <20180226031911.18980.80488.stgit@mdrustad-mac04.local>
+ <20180227.103502.2160088807348773566.davem@davemloft.net>
+In-Reply-To: <20180227.103502.2160088807348773566.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.233.81.61]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <AB59E9BAE7B06A408C67D7E856C619DF@intel.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Feb 2018 17:34:22 +0800
-"Du, Changbin" <changbin.du@intel.com> wrote:
-
-> Hello Steven and Corbet,
-> Ten days past, will you accept this serias? Thank you!
+> On Feb 27, 2018, at 7:35 AM, David Miller <davem@davemloft.net> wrote:
 > 
-> On Sat, Feb 17, 2018 at 01:39:33PM +0800, changbin.du@intel.com wrote:
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > Hi All,
-> > The linux tracers are so useful that I want to make the docs better. The kernel
-> > now uses Sphinx to generate intelligent and beautiful documentation from
-> > reStructuredText files. I converted most of the Linux trace docs to rst format
-> > in this serias.
-> > 
-> > For you to preview, please visit below url:
-> > http://docservice.askxiong.com/linux-kernel/trace/index.html
-> > 
-> > Thank you!
+> I don't like these helpers on many different levels.
 
-Currently I'm very overloaded with other code that needs to get done
-ASAP, and I need to balance what is critical and what is not. I don't
-have time to review this, as this isn't critical, and can wait.
+<snip much embarrassment>
 
-If Jon can review it to make sure that it doesn't change the
-readability of the text, then I'll trust his judgment. 
+> So kill off pci_sriov_enable() helper completely, it is unnecessary,
+> and rename the disable helper so that it says something meaningful to
+> the reader.
 
--- Steve
+Yes. Once pointed out, I completely agree with your comments and wish that I had seen those things myself.
+
+> Thanks.
+
+V3 was junk, but your comments apply to V4 as well, so please ignore it.
+
+Thank you for your valuable review.
+
+-- 
+Mark Rustad, Networking Division, Intel Corporation
