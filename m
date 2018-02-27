@@ -1,86 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752691AbeB0Lk4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 06:40:56 -0500
-Received: from mga07.intel.com ([134.134.136.100]:34250 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752056AbeB0Lky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 06:40:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
-   d="scan'208";a="30072843"
-Message-ID: <1519731651.10722.224.camel@linux.intel.com>
-Subject: Re: [PATCH v1] kernel.h: Update comment about simple_strto<foo>()
- functions
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Willy Tarreau <w@1wt.eu>
-Date: Tue, 27 Feb 2018 13:40:51 +0200
-In-Reply-To: <CANiq72nsPasAxZBkHW0fNcTMj3Vp_QdT3VABs9-mHKe4RHS9KA@mail.gmail.com>
-References: <20180226175532.70556-1-andriy.shevchenko@linux.intel.com>
-         <CANiq72nsPasAxZBkHW0fNcTMj3Vp_QdT3VABs9-mHKe4RHS9KA@mail.gmail.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+        id S1753126AbeB0LlP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 06:41:15 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:10478 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752972AbeB0LlL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 06:41:11 -0500
+X-IronPort-AV: E=Sophos;i="5.47,400,1515481200";
+   d="scan'208";a="11899759"
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Daniel Thompson <daniel.thompson@linaro.org>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, <thierry.reding@gmail.com>,
+        <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
+        <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
+        <b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+        <dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
+        <sean@mess.org>, <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
+        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+ <20180227105444.lo4pee7vh4we3foq@oak.lan>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
+Date: Tue, 27 Feb 2018 13:40:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-26 at 23:31 +0100, Miguel Ojeda wrote:
-> On Mon, Feb 26, 2018 at 6:55 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > There were discussions in the past about use cases for
-> > simple_strto<foo>() functions and in some rare cases they have a
-> > benefit
-> > on kstrto<foo>() ones.
-> > 
-> > Update a comment to reduce confusing about special use cases.
-> > 
-> > Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+
+
+On 27.02.2018 12:54, Daniel Thompson wrote:
+> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+>> On 26.02.2018 11:57, Jani Nikula wrote:
+>>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>>>>> were adapted to this change.
+>>>>>
+>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>>>> ---
+>>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>>>>  drivers/bus/ts-nbus.c                |  2 +-
+>>>>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>>>>  include/linux/pwm.h                  |  6 ++++--
+>>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>>>>> index 2030a6b77a09..696fa25dafd2 100644
+>>>>> --- a/drivers/video/backlight/lm3630a_bl.c
+>>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>>>>  {
+>>>>>  	unsigned int period = pchip->pdata->pwm_period;
+>>>>>  	unsigned int duty = br * period / br_max;
+>>>>> +	struct pwm_caps caps = { };
+>>>>>  
+>>>>> -	pwm_config(pchip->pwmd, duty, period);
+>>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+>>>>
+>>>> Well... I admit I've only really looked at the patches that impact 
+>>>> backlight but dispersing this really odd looking bit twiddling 
+>>>> throughout the kernel doesn't strike me a great API design.
+>>>>
+>>>> IMHO callers should not be required to find the first set bit in
+>>>> some specially crafted set of capability bits simply to get sane 
+>>>> default behaviour.
+>>>
+>>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+>>> error prone.
+>>
+>> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+>> from your side?
+>>
+>> Or, what about using a function like pwm_mode_first() to get the first supported
+>> mode by PWM channel?
+>>
+>> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+>> case an invalid mode is passed as argument, to let pwm_config() to choose the
+>> first available PWM mode for PWM channel passed as argument?
 > 
-> I am not sure we should just go back to the old ones, though.
-
-I didn't tell that we should.
-The niche of kstrto*() and simple_strto*() is different.
-
->  Maybe it
-> is better to create a new set of kstrto*_inplace() or some other name,
-> safer than the old ones and following kstrto*()'s interface regarding
-> returned errors, overflow checking, etc. There are two variations that
-> can be useful:
+> What is it that actually needs solving?
 > 
->   * A strict version taking a (start, end) range or (start, size) pair
-> which contains the number to be converted. If there is any problem
-> parsing it (e.g. invalid characters, extra characters, ...), fail.
+> If a driver requests normal mode and the PWM driver cannot support it
+> why not just return an error an move on.
+Because, simply, I wasn't aware of what these PWM client drivers needs for.
+
 > 
->   * A less strict version taking an extra end pointer (or size
-> parameter) which is not allowed to be surpassed, and any non-digit
-> character means successful stop.
+> Put another way, what is the use case for secretly adopting a mode the
+> caller didn't want? Under what circumstances is this a good thing?
+No one... But I wasn't aware of what the PWM clients needs for from their PWM
+controllers. At this moment having BIT(ffs(caps.modes)) instead of
+PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
+registered PWM caps will use PWM normal mode.
 
-Send a patch, we will discuss that for sure.
+I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
+your side.
 
-> The old behavior (simple_*()) can still be achieved (almost) with the
-> second version with an "infinite" end pointer if one really needs it.
-
-> In any case, if you want to go forward with the old ones, we would
-> also have to change the comments inside lib/vsprintf.c and possibly
-> checkpatch :-)
-
-Feel free to amend.
-
-I actually didn't get your position here. You rather going to keep ugly
-code in your subsystem because of "official" comment than do it in more
-cleaner, but old fashion way.
-
-Btw, you can still weakly (based on power of base) detect an overflow by
-checking a returned pointer from simple_strto*().
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Thank you,
+Claudiu Beznea
+> 
+> 
+> Daniel.
+> 
