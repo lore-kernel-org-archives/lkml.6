@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754048AbeB0Pma (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:42:30 -0500
-Received: from mga06.intel.com ([134.134.136.31]:57348 "EHLO mga06.intel.com"
+        id S1752798AbeB0Pnp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:43:45 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32963 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753924AbeB0Pm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753927AbeB0Pm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Feb 2018 10:42:28 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,401,1515484800";
-   d="scan'208";a="33220319"
+   d="scan'208";a="23605214"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
@@ -20,9 +20,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 1/5] x86/boot/compressed/64: Describe the logic behind LA57 check
-Date: Tue, 27 Feb 2018 18:42:13 +0300
-Message-Id: <20180227154217.69347-2-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 3/5] x86/boot/compressed/64: Save and restore trampoline memory
+Date: Tue, 27 Feb 2018 18:42:15 +0300
+Message-Id: <20180227154217.69347-4-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
 References: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
@@ -30,42 +30,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch explains the LA57 check in more details.
+The memory area we found for trampoline shouldn't contain anything
+useful. But let's preserve the data anyway. Just to be on safe side.
+
+paging_prepare() would save the data into a buffer.
+
+cleanup_trampoline() would restore it back once we are done with the
+trampoline.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Tested-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/boot/compressed/pgtable_64.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ arch/x86/boot/compressed/head_64.S    | 10 ++++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 13 +++++++++++++
+ 2 files changed, 23 insertions(+)
 
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index d598d65db32c..8ba0582c65d5 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -355,6 +355,16 @@ ENTRY(startup_64)
+ 	lretq
+ lvl5:
+ 
++	/*
++	 * cleanup_trampoline() would restore trampoline memory.
++	 *
++	 * RSI holds real mode data and needs to be preserved across
++	 * this function call.
++	 */
++	pushq	%rsi
++	call	cleanup_trampoline
++	popq	%rsi
++
+ 	/* Zero EFLAGS */
+ 	pushq	$0
+ 	popfq
 diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 3f1697fcc7a8..45c76eff2718 100644
+index 21d5cc1cd5fa..01d08d3e3e43 100644
 --- a/arch/x86/boot/compressed/pgtable_64.c
 +++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -18,10 +18,22 @@ struct paging_config paging_prepare(void)
- {
- 	struct paging_config paging_config = {};
+@@ -1,5 +1,6 @@
+ #include <asm/processor.h>
+ #include "pgtable.h"
++#include "../string.h"
  
--	/* Check if LA57 is desired and supported */
--	if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
--			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
-+	/*
-+	 * Check if LA57 is desired and supported.
-+	 *
-+	 * There are two parts to the check:
-+	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
-+	 *   - if the machine supports 5-level paging:
-+	 *     + CPUID leaf 7 is supported
-+	 *     + the leaf has the feature bit set
-+	 *
-+	 * That's substitute for boot_cpu_has() in early boot code.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
-+			native_cpuid_eax(0) >= 7 &&
-+			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
- 		paging_config.l5_required = 1;
-+	}
+ /*
+  * __force_order is used by special_insns.h asm code to force instruction
+@@ -18,6 +19,9 @@ struct paging_config {
+ 	unsigned long l5_required;
+ };
  
++/* Buffer to preserve trampoline memory */
++static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
++
+ /*
+  * Trampoline address will be printed by extract_kernel() for debugging
+  * purposes.
+@@ -69,5 +73,14 @@ struct paging_config paging_prepare(void)
+ 
+ 	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
+ 
++	/* Preserve trampoline memory */
++	memcpy(trampoline_save, trampoline_32bit, TRAMPOLINE_32BIT_SIZE);
++
  	return paging_config;
  }
++
++void cleanup_trampoline(void)
++{
++	/* Restore trampoline memory */
++	memcpy(trampoline_32bit, trampoline_save, TRAMPOLINE_32BIT_SIZE);
++}
 -- 
 2.16.1
