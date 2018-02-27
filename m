@@ -1,283 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeB0J3x (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:29:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:45139 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752300AbeB0J3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:29:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
-   d="scan'208";a="207296947"
-Subject: Re: [PATCH V15 06/22] mmc: block: Add blk-mq support
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-ext4@vger.kernel.org
-References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
- <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
- <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
- <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
- <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
- <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8876217f-ede6-fc81-2e05-b4fc976b3235@intel.com>
-Date: Tue, 27 Feb 2018 11:28:54 +0200
+        id S1752340AbeB0JcY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:32:24 -0500
+Received: from mail-bn3nam01on0057.outbound.protection.outlook.com ([104.47.33.57]:20275
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751367AbeB0JcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:32:18 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com;
+Subject: Re: [PATCH 4/4] i2c: xlp9xx: Check for Bus state after every transfer
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: George Cherian <george.cherian@cavium.com>,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com>
+ <1516253964-4615-4-git-send-email-george.cherian@cavium.com>
+ <20180226202248.ej3bt5o7sam6qljv@ninjato>
+ <a96c4bb2-fbc5-3e21-f6b5-4da75fac3c01@caviumnetworks.com>
+ <20180227090416.gxgof6fyzdeshtmf@katana>
+From: George Cherian <gcherian@caviumnetworks.com>
+Message-ID: <b3f7a353-7d04-bdb9-0d68-176c38a0b9a3@caviumnetworks.com>
+Date: Tue, 27 Feb 2018 15:02:01 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180227090416.gxgof6fyzdeshtmf@katana>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [111.93.218.67]
+X-ClientProxiedBy: PN1PR0101CA0050.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:d::12) To SN1PR07MB2336.namprd07.prod.outlook.com
+ (2a01:111:e400:7a46::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c1fdfbec-c815-4048-70b0-08d57dc4fd51
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:SN1PR07MB2336;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2336;3:kcKxQIMWQwz9WAg1bSjQNTx58qXD8izaImJgpImObDZoyy3iH75EEilskTGqDeGGscwbho7WnofFB5LRmpHCMVXts4J/2DxWQK2C7zygTtSmPP4JGuE6Gm3WgSBCCRjgnfq1kzrNVOchm4KqDewpOlpnl2JSH7Wgfmu9GgQ+vWceIAhIu3RHbE5fvrBng0M35LWX34wghdObk+Y7/WyL7GjYrk0nUZxifRcOxeEXUtnn2baRfHNsbPJAh15K9k32;25:hUzCgTqozUx6TzFId26eL9bc/Xaxo4FdA0Ctkx96RZoNbw9HTwYTv6YIVdiOeefbkSzT4qP12e4a+cuYKtt+q19/IVH2p7+zS/UlLjXIUOL7jGF4odRSdLxy37g/DwD8MUc8jV/q/vpKh8C4Cog6zKPpzQDfbyKbhqcZhYkspCVLLBmd54/Gozz5TSHlf52yHwwDiOOLa2xzg/Ap2xvDRTPJyatOsrD9Oy4lfm2OPblOGILE8OF+oTlujjINQtmpUeazkdQ/D9F0uUB5iuoTVyJTebOkEM726C22nLmW4yjB4GhDRiDPhm/eJ212G1zynho/dwdobl9ooTDlLRi5Zw==;31:iJuK+TqImcjpJw444RmZTt9Uh+rCsea3uES0wrR34TtBP66g+2vi5nKTY+DSoYOUCg+pPP/EW5oaZiEqob3DfgNY/hYdeuJ9BxJ2RKC6C4teI0kXh5/+BSMcTV3khT+JUFooklGI7LOT8Nj+bK+uiQcL9NCoNmKT/ft22mxLD/ONy/4k/79TpZP+g9U9odN9XIaaRJMOisfFvtbc3ykpibN3TOyTxYywB7E1uE6SHd0=
+X-MS-TrafficTypeDiagnostic: SN1PR07MB2336:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2336;20:ZCZHV6DXpnYzyNFpouUdqhPh86IyJh1Cc0E4c3UeYW+6Xuz3JSTS0BKhCuwyurIQnKwcIlnNTb1OyrX+jnDvDXSHO4uLVzJjcfhmfYcHb6waIeCh9hUsrc7uv2DTsnoJ6Yt6uYSfXRUgRRHYWWYlIsZUzFhDaUnWsFx/BIPPkuaq8SRjhGEkKicvdGoBvWTYAEK0br3+53NHG/u0/sSi0QgoLMNz16wqYVqwjcJzxrqZAx1/EcCH2w7S5ps1Hhd0E5UB9ZS7s3SFVE9Uj128Rpmq3YgriJActRINL42McdQy5VCr3HlF6sNw4NQeHS69M21E9ZS2FT794xdg6mGrrI8x3rQZVL31HpFIZfK8uQEUD180NSRhMzvtPELVXVUqisHwdXmxGfKue3/L0Bx+k0R33Z+ctqq5/CADLZV9Vu0ndum2tv5iANSjGQKZR/KmQZUUWA9smX4qkRqc9dRBDNSnXiUcaLhxIj/HUM3sXOnqFnnxWm56AHsr5pL16cZgH8EUoaNG2dDJQr4mqCd+pSkX7WnpWI1aHCXQOfaIQ69LKvVuBEC3MPfdoxeI5MaUz8T5AS95+YB5/H3qU0TTANTPsVJsUndw4BNScN7reeM=;4:LZ+OxSEEcdoLBDt5gI78fgR68Cz0ANOZBuNQe3xYKX4J3FwtrS0jn17ok9IG/6zdJ6DH+ltpJFGDtE9gcR/syQcND2SK+gnCkH9ZQB8nsd+mX3fJd1opeFEYkOr0lEaw6vbf+Y1MXu/kDmgtcGT9uJ/rOLpvSM+Jgf89a/RvU5ghgNduaCYocqwGgrFlDbf+58mKrjjYr4djlwt/6Qjs+vSQN0j212IUeQc3I+cPnoPNoILVMUwSAp99BKz4qz9MLK+chP08cYqYoYP+TAHa9w==
+X-Microsoft-Antispam-PRVS: <SN1PR07MB2336BF23533265C7271AEF62F9C00@SN1PR07MB2336.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(3231220)(944501161)(52105095)(3002001)(6041288)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:SN1PR07MB2336;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB2336;
+X-Forefront-PRVS: 05961EBAFC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(6049001)(396003)(376002)(366004)(346002)(39380400002)(39860400002)(51914003)(199004)(189003)(16526019)(6916009)(6666003)(186003)(47776003)(6246003)(105586002)(65806001)(2906002)(53936002)(66066001)(93886005)(6116002)(31696002)(3846002)(229853002)(23746002)(5660300001)(67846002)(52116002)(76176011)(5009440100003)(106356001)(16576012)(72206003)(65956001)(50466002)(65826007)(7736002)(97736004)(316002)(64126003)(478600001)(305945005)(31686004)(551934003)(4326008)(81166006)(81156014)(386003)(53546011)(6486002)(230700001)(36756003)(68736007)(26005)(8936002)(8676002)(42882006)(2950100002)(77096007)(25786009)(58126008)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB2336;H:[10.167.103.249];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN1PR07MB2336;23:B3tjIaIm+jqBkSdQPEPWZPIbfRO9WDjL0ZfNU?=
+ =?Windows-1252?Q?xHE2cbasd1ewtCsqxpO5sQ9LmczkNEeF079E/tWJfyoB1OZ0vtBnpabN?=
+ =?Windows-1252?Q?GDbFhGCSi1/7djeifdJ7dhetd46tSYscZJA3Y3zfoJvO1YR6u/Ef9LKw?=
+ =?Windows-1252?Q?k6TUhlhHzNmB0wlNm5FKycV/Qwep6jOP3nPHgM8voODK8LujIKglMUEt?=
+ =?Windows-1252?Q?wAiwHbWg1yNeZQhCoEFYQjsX7cgbhQbrowD1hHU4as/1Ullg2SknjQye?=
+ =?Windows-1252?Q?0lOaCKeFTHNf9SIBi0Yro/7g6NfJASf1um8rOoLC7xjbuTUzTbTj3cUJ?=
+ =?Windows-1252?Q?bCkFq4wx0JLJzn3lTczaVWA8GfcHqeRE9iGlVPuQ9t/NGV8PaQ1qeROm?=
+ =?Windows-1252?Q?/da+xk4GLzNy3675OAGWbn9Gmsbv2OAOVtagzN6Ht+nXhZuRcVQZuZwB?=
+ =?Windows-1252?Q?Mt8YX/bwqaXE6GOajULHsBK6wwL7NB96uGaIMud3Nj5+GKL3zOHFheiy?=
+ =?Windows-1252?Q?O+dj6J40PoFjogb1VYcycUqQrKKLfuXl+MpIAyfphaTUuWu22I16LPUM?=
+ =?Windows-1252?Q?lkZbSd+Hy7cB/k1NUsqnWN0GAnLGrLduLrZqpmRcClSDzBFCzVTN+LXk?=
+ =?Windows-1252?Q?wfvETzrlySXtykK8SLnq4gCtIdOIw+GdJY/D6pffy6MlZTAcRfL15Kf+?=
+ =?Windows-1252?Q?LjQAPm1u/a1Q4FPmS7HltF2qPWOljYQWKkI8NztFXEbE98DtU1CfqkEl?=
+ =?Windows-1252?Q?qxlR+/cyHJhL7/vjNirYWcqtMiPnwyZIHoO3m4g+2RD/QOQqUXI3P4un?=
+ =?Windows-1252?Q?1teGIiQJ2yDzgjIhaUS+M8b9oRkfjyeJvhD8sp212laJ9/Ii3Et0Cl/h?=
+ =?Windows-1252?Q?Yf3wOoEPjScjJa1v+CkMkzcs3J6mBgeYJ6LAXEhFeJDd0IB18yhHvveT?=
+ =?Windows-1252?Q?WXXIVXjvAaA00L37sgWER62qC5PoExbeWcT8cDKGwfnpAg/wsHoyhMar?=
+ =?Windows-1252?Q?kBCNTYQ7/DnXlDFeWzXSnOF8HgOViMq98FlSmddl3QI4f3kPT1fzoy8T?=
+ =?Windows-1252?Q?aARfXZ1stlXb1qo5iPQHPdSKZ6cZG1DcUTMnae2KdmvIMtXQVoyTFWnj?=
+ =?Windows-1252?Q?eyhR4ttFukmy0b/zU/z7ZuqCmknXHc5DktivtUVmWBVl9iU2QtzGy3cN?=
+ =?Windows-1252?Q?Mn02p+5kGlFB416ggPuDqCw8+ZlpRYs88nvJzt1BoIHkh6F9dCIo85DT?=
+ =?Windows-1252?Q?sctRNYmOJO8gIQ16bkQl+O1fBPHZItUei8OHffNJpO9IdLlmJCE00uEg?=
+ =?Windows-1252?Q?2FBVv/qO4fmJtf6gOj/LBCV/VayLhZer1sn4jRI+TjrRl++0T5gOTQnu?=
+ =?Windows-1252?Q?z14ujohWnTosgkQfXp3sUpnfp1NlnWMXecq4frqnEIEZXYyEo1ngVCAu?=
+ =?Windows-1252?Q?kcmry1VZyh6wBTOPqN2j1kgKtvPxuHvh6LnjtObZzuzNmG4+SpsvHnLk?=
+ =?Windows-1252?Q?GkOepkQkNkOF2twYHKBvJ4Mv1iAH8Zyua6dZAd3KkuUUQPGITCbZL/v7?=
+ =?Windows-1252?Q?3jNicysKw1VeQlmWNBUyittCopDgeLspeKnZr1o7BZt6ePUE+ToxliPE?=
+ =?Windows-1252?Q?+tl7x9Gzu+Gqwxm/5/qiMa/WejXx1ptZDdxAlaVDrVA?=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2336;6:uo0BzdZOpm/GyR334TZrHo0O3+yTIHbe8uK4DNH1u3PP/ZhI9ZFhRI9xi3yVlS3RPv9TXI91CCi/D/P9DHz5NDrPe4pRsAJbzDFR+wEH91ACDPwCrkAgNvKbCI09o0Bktv+M+acjVas5Y1hsC5Kp5fmF5sbkzH/g9eGxi0uaPlL1mSIJIn1dU/ZXXZPc1RoyKQv8lEHnvVIJVctP6DwBGpMDvo4Lu4RMnXtV4OuCqvR7to/g72OrOemQz6mDQym1luy0P7BVn77Un2xuN0yatKL6MO0cx44AI/4vefh2DJ1YI6m+qVizaETAZcRyETGa3mMV9P+fVmbEFpQHJN1V8+jYgRG8FqZNWVVD2/yHBmc=;5:VHnvxvJ9Hq3yxz1gabkYafXM9CZEDolQ4/QfvUhVtyJdYePnJPmdH/mKX5wtRcFuIuk2bc4Z4W3XeJku2uIUOroYryM2syXo9p+PXKcyVBjuCszVfLVUPM9FSrlwH7i/GJba/oZNfmjzw/g+KbI4xw2vlCQio+vZPqoTMm5VH9o=;24:wpTKCBDJ5aREnYx3ri8dHu+G6jpgxo+ppvh5MXYP2IiMPzxHd6c22gmnvJllfcN5hGgpSG3E51rBEcqfnuNROYIFltweoSQSB/Uo+xaMRr4=;7:G8UXDXLibfKbNS7XNQCKAnTdcTk9LTZndz1PqTcTB/dyMk5S14LIiAjM8ov3t6vckQbOL8VjM3c7NoqbrkE1skVarF7WptQLZTChfrgqiQu3j7SqlSuu4RWoexMKHr8QDqL+lrilneRwTSnm7Pqm7jB9YJ1RKDMpS34d/BC9pQbLHREbFQ7o7O+OyZwr30aKIFxWU4Y8nBr10JsNXkXEKOC76cDKvaeoJRxo59q+1WZ1Q3lhZXmJkCuropnnoIQN
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2018 09:32:14.2483 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1fdfbec-c815-4048-70b0-08d57dc4fd51
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB2336
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/18 23:48, Dmitry Osipenko wrote:
-> On 22.02.2018 20:54, Dmitry Osipenko wrote:
->> On 22.02.2018 10:42, Adrian Hunter wrote:
->>> On 21/02/18 22:50, Dmitry Osipenko wrote:
->>>> On 29.11.2017 16:41, Adrian Hunter wrote:
->>>>> Define and use a blk-mq queue. Discards and flushes are processed
->>>>> synchronously, but reads and writes asynchronously. In order to support
->>>>> slow DMA unmapping, DMA unmapping is not done until after the next request
->>>>> is started. That means the request is not completed until then. If there is
->>>>> no next request then the completion is done by queued work.
->>>>
->>>> Hello,
->>>>
->>>> I'm using (running linux-next and doing some upstream development for) some old
->>>> NVIDIA Tegra tablet that has built-in (internal) and external MMC's and with the
->>>> blk-mq being enabled I'm observing a soft lockup. The lockup seems is
->>>> reproducible quite reliably by running fsck on any MMC partition, sometimes
->>>> kernels lockups on boot during probing partitions table (weirdly only when both
->>>> SDHCI's are present, i.e. internal storage enabled in DT and external SD is
->>>> inserted/enabled) and it also lockups pretty quickly in a case of just a general
->>>> use. Reverting mmc/ commits up to 1bec43a3b18 ("Remove option not to use
->>>> blk-mq") and disabling CONFIG_MMC_MQ_DEFAULT makes everything working fine
->>>> again. There is also a third SDHCI populated with built-in WiFi/Bluetooth SDIO
->>>> and I'm observing odd MMC timeouts with the blk-mq enabled, disabling
->>>> CONFIG_MMC_MQ_DEFAULT fixes these timeouts as well.
->>>>
->>>> Any thoughts?
->>>
->>> SDIO (unless it is a combo card) should be unaffected by changes to the
->>> block driver.
-> 
-> I don't know whether it's a combo card or not. Where I can find info about that?
-> Is it mentioned in sysfs somewhere? Alternatively you may take a brief look at
-> what brcmfmac driver does, maybe it will tell you immediately whether blk-mq
-> affects it or not. And if it's not affected, then it could be that there is some
-> other issue that is masked by a properly working block driver.
+Hi Wolfram,
 
-As linus wrote, if you had a combo card it would also show up as a block
-device i.e. for mmc2 it would probably be /dev/mmcblk2 if it existed.
-
-> 
->>> I don't have any ideas.  Adding more NVIDIA people.
->>>>
->>>> WiFi issue
->>>> ========================
->>>>
->>>> [   38.247006] mmc2: Timeout waiting for hardware interrupt.
->>>> [   38.247027] brcmfmac: brcmf_escan_timeout: timer expired
->>>> [   38.247036] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
->>>> [   38.247047] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000001
->>>> [   38.247055] mmc2: sdhci: Blk size:  0x00007008 | Blk cnt:  0x00000000
->>>> [   38.247062] mmc2: sdhci: Argument:  0x21000008 | Trn mode: 0x00000013
->>>> [   38.247070] mmc2: sdhci: Present:   0x01d70000 | Host ctl: 0x00000013
->>>> [   38.247077] mmc2: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
->>>> [   38.247084] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
->>>> [   38.247091] mmc2: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
->>>> [   38.247098] mmc2: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02fc000b
->>>> [   38.247105] mmc2: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
->>>> [   38.247112] mmc2: sdhci: Caps:      0x61ff30b0 | Caps_1:   0x00000000
->>>> [   38.247119] mmc2: sdhci: Cmd:       0x0000353a | Max curr: 0x00000001
->>>> [   38.247126] mmc2: sdhci: Resp[0]:   0x00001800 | Resp[1]:  0x08002db5
->>>> [   38.247133] mmc2: sdhci: Resp[2]:   0x16da8000 | Resp[3]:  0x00000400
->>>> [   38.247139] mmc2: sdhci: Host ctl2: 0x00000000
->>>> [   38.247146] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x17c47200
->>>> [   38.247152] mmc2: sdhci: ============================================
->>>> [   38.247250] brcmfmac: brcmf_sdio_readframes: read 520 bytes from channel 1
->>>> failed: -84
->>>> [   38.247274] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
->>>> [   40.807019] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
->>>> [   40.807042] brcmfmac: brcmf_notify_escan_complete: Scan abort failed
->>>> [   48.487007] mmc2: Timeout waiting for hardware interrupt.
->>>> [   48.487057] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
->>>> [   48.487096] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000001
->>>> [   48.487128] mmc2: sdhci: Blk size:  0x00007040 | Blk cnt:  0x00000001
->>>> [   48.487160] mmc2: sdhci: Argument:  0x21000040 | Trn mode: 0x00000013
->>>> [   48.487191] mmc2: sdhci: Present:   0x01d70000 | Host ctl: 0x00000013
->>>> [   48.487221] mmc2: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
->>>> [   48.487251] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
->>>> [   48.487281] mmc2: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
->>>> [   48.487313] mmc2: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02fc000b
->>>> [   48.487343] mmc2: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
->>>> [   48.487374] mmc2: sdhci: Caps:      0x61ff30b0 | Caps_1:   0x00000000
->>>> [   48.487404] mmc2: sdhci: Cmd:       0x0000353a | Max curr: 0x00000001
->>>> [   48.487435] mmc2: sdhci: Resp[0]:   0x00001000 | Resp[1]:  0x08002db5
->>>> [   48.487466] mmc2: sdhci: Resp[2]:   0x16da8000 | Resp[3]:  0x00000400
->>>> [   48.487493] mmc2: sdhci: Host ctl2: 0x00000000
->>>> [   48.487525] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x17c47200
->>>> [   48.487552] mmc2: sdhci: ============================================
->>>> [   48.487749] brcmfmac: brcmf_sdio_readframes: read 480 bytes from channel 1
->>>> failed: -84
->>>> [   48.487822] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
->>>>
->>>>
->>>> Soft lockup issue
->>>> ========================
->>>>
->>>> # fsck -f /dev/disk/by-uuid/6768309f-3545-49d5-9ac7-d5be24d35ef2
->>>> fsck из util-linux 2.30.2
->>>> e2fsck 1.43.9 (8-Feb-2018)
->>>> Проход 1: Проверка inodes, блокs, а также размеров
->>>> Pass 2: Checking каталог structure
->>>> Pass 3: Checking каталог connectivity
->>>> Pass 4: Checking reference counts
->>>> Pass 5: Checking группа summary information
->>>> ....
->>>>
->>>> [  125.925436] INFO: task kworker/0:3H:263 blocked for more than 60 seconds.
->>>> [  125.925496]       Not tainted
->>>> 4.16.0-rc2-next-20180220-00101-gaefde91c3955-dirty #2041
->>>> [  125.925530] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>>> message.
->>>> [  125.925562] kworker/0:3H    D    0   263      2 0x00000000
->>>> [  125.925653] Workqueue: kblockd mmc_blk_mq_complete_work
->>>> [  125.925747] [<c0b991cc>] (__schedule) from [<c0b998f0>] (schedule+0x60/0xcc)
->>>> [  125.925805] [<c0b998f0>] (schedule) from [<c086c870>]
->>>> (__mmc_claim_host+0xdc/0x24c)
->>>> [  125.925849] [<c086c870>] (__mmc_claim_host) from [<c08750bc>]
->>>
->>> That claim host should not be there.  Here is a fix for that:
->>>
->>> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
->>> index 908e4db03535..62049f95116b 100644
->>> --- a/drivers/mmc/core/mmc_ops.c
->>> +++ b/drivers/mmc/core/mmc_ops.c
->>> @@ -932,9 +932,7 @@ static int mmc_read_bkops_status(struct mmc_card *card)
->>>  	int err;
->>>  	u8 *ext_csd;
->>>
->>> -	mmc_claim_host(card->host);
->>>  	err = mmc_get_ext_csd(card, &ext_csd);
->>> -	mmc_release_host(card->host);
->>>  	if (err)
->>>  		return err;
+On 02/27/2018 02:34 PM, Wolfram Sang wrote:
+> On Tue, Feb 27, 2018 at 10:30:31AM +0530, George Cherian wrote:
+>> Hi Wolfram,
 >>
->> Looks like this patch fixes all the problems. I'll keep testing it for a couple
->> of days and then report back the final result. Thank you very much.
+>> Thanks for the review.
+>>
+>> On 02/27/2018 01:52 AM, Wolfram Sang wrote:
+>>>
+>>> On Thu, Jan 18, 2018 at 05:39:24AM +0000, George Cherian wrote:
+>>>> I2C bus enters the STOP condition after the DATA_DONE interrupt is raised.
+>>>> Essentially the driver should be checking the bus state before sending
+>>>> the next transaction.
+>>>
+>>> Yes.
+>>>
+>>>> In case the next transaction is initiated while the
+>>>> bus is busy, the prior transactions stop condition is not achieved.
+>>>
+>>> I didn't fully get why you can't check the BUSY bit and wait a little
+>>> just before you push out the next message?
+>> Yes, I am checking for the BUSY bit and looping.
 > 
-> This patch fixes the lockup (and WiFi MMC timeouts), for that:
-> 
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> 
-> But still something is wrong... I've been getting occasional EXT4 Ooops's, like
-> the one below, and __wait_on_bit() is always figuring in the stacktrace. It
-> never happened with blk-mq disabled, though it could be a coincidence and
-> actually unrelated to blk-mq patches.
+> Yes, but *after* the STOP, not *before* the next message. I haven't
+> fully understood why you don't do this before the next message is about
+> to be sent. That might save you some busy looping, or?
+Yes, Thanks for the clarification. You are right It is better to
+check before next message. I will make required changes and post the patch.
+>
 
-I can't think how an IO driver could cause that.
-
-cc'ing ext4 mailing list for more advice.
-
-> 
-> 
-> [ 6625.992337] Unable to handle kernel NULL pointer dereference at virtual
-> address 0000001c
-> [ 6625.993004] pgd = 00b30c03
-> [ 6625.993257] [0000001c] *pgd=00000000
-> [ 6625.993594] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> [ 6625.994022] Modules linked in:
-> [ 6625.994326] CPU: 1 PID: 19355 Comm: dpkg Not tainted
-> 4.16.0-rc2-next-20180220-00095-ge9c9f5689a84-dirty #2090
-> [ 6625.995078] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [ 6625.995595] PC is at dx_probe+0x68/0x684
-> [ 6625.995947] LR is at __wait_on_bit+0xac/0xc8
-> [ 6625.996307] pc : [<c033b960>]    lr : [<c0bfbfd4>]    psr: 800f0013
-> [ 6625.996806] sp : d55e3df0  ip : c0170e88  fp : d55e3e44
-> [ 6625.997227] r10: d55e3f4c  r9 : d55e3e70  r8 : 00000000
-> [ 6625.997650] r7 : c4e13240  r6 : 00000000  r5 : d657db18  r4 : d55e3e8c
-> [ 6625.998165] r3 : 0000007b  r2 : d5830800  r1 : d5831000  r0 : c4e13240
-> [ 6625.998686] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [ 6625.999246] Control: 10c5387d  Table: 0a63004a  DAC: 00000051
-> [ 6625.999710] Process dpkg (pid: 19355, stack limit = 0x139a48b6)
-> [ 6626.000184] Stack: (0xd55e3df0 to 0xd55e4000)
-> [ 6626.000560] 3de0:                                     000002e9 d55e3e00
-> c0c01964 c0278c70
-> [ 6626.001209] 3e00: d55e3e24 014000c0 c04f3580 c0c01958 d55e3e90 801a001a
-> d55e3e3c 00000012
-> [ 6626.001854] 3e20: d5830800 00000000 d657db18 c24b0000 d55e3e70 d55e3f4c
-> d55e3edc d55e3e48
-> [ 6626.002502] 3e40: c033d568 c033b904 00000000 600f0013 c029e640 d6cf3540
-> ffffe000 00000000
-> [ 6626.003150] 3e60: 00076e99 d55e3ef4 d55e3e8c d5830800 d409c440 d409c454
-> 00000012 c029e640
-> [ 6626.003795] 3e80: d55e3ec4 d55e3e90 c02797b4 c4e13240 00000000 00000000
-> 00000000 00000000
-> [ 6626.004442] 3ea0: 00000000 00000000 00000000 00000000 d409c428 d409c428
-> d657db18 d409c428
-> [ 6626.005088] 3ec0: 00000000 c24b0000 ffffff9c d55e3f4c d55e3f14 d55e3ee0
-> c033d7b0 c033d1b8
-> [ 6626.005732] 3ee0: c0c01964 c0180050 d55e3f14 d55e3ef8 c029e870 00000000
-> d409c428 d6546558
-> [ 6626.006382] 3f00: d55e3f58 00000000 d55e3f34 d55e3f18 c0291f04 c033d764
-> 00000000 00000001
-> [ 6626.007032] 3f20: 00000000 d55e3f58 d55e3f94 d55e3f38 c0293d70 c0291ea0
-> d55e3f58 d55e3f4c
-> [ 6626.007679] 3f40: 00000000 0090abb0 d5467800 00000000 d6dd0110 d6546558
-> f3bc423c 00000012
-> [ 6626.008326] 3f60: c24b0019 80808080 00000000 015ce1b0 0090abb0 00d8d670
-> 00000028 c01011e4
-> [ 6626.008971] 3f80: d55e2000 00000000 d55e3fa4 d55e3f98 c0294544 c0293c44
-> 00000000 d55e3fa8
-> [ 6626.009620] 3fa0: c0101000 c0294530 015ce1b0 0090abb0 0090abb0 000002a8
-> 7d5a8800 7d5a8800
-> [ 6626.010264] 3fc0: 015ce1b0 0090abb0 00d8d670 00000028 0048eb80 00487344
-> 015eb160 004a6c10
-> [ 6626.010912] 3fe0: 004a6c8c bede3c0c 0048149d b6ecc6b8 600f0030 0090abb0
-> 00000000 00000000
-> [ 6626.011577] [<c033b960>] (dx_probe) from [<c033d568>]
-> (ext4_find_entry+0x3bc/0x5ac)
-> [ 6626.012198] [<c033d568>] (ext4_find_entry) from [<c033d7b0>]
-> (ext4_lookup+0x58/0x1f4)
-> [ 6626.012844] [<c033d7b0>] (ext4_lookup) from [<c0291f04>]
-> (__lookup_hash+0x70/0x9c)
-> [ 6626.013468] [<c0291f04>] (__lookup_hash) from [<c0293d70>] (do_rmdir+0x138/0x1b8)
-> [ 6626.014071] [<c0293d70>] (do_rmdir) from [<c0294544>] (SyS_rmdir+0x20/0x24)
-> [ 6626.014642] [<c0294544>] (SyS_rmdir) from [<c0101000>]
-> (ret_fast_syscall+0x0/0x54)
-> [ 6626.015231] Exception stack(0xd55e3fa8 to 0xd55e3ff0)
-> [ 6626.015656] 3fa0:                   015ce1b0 0090abb0 0090abb0 000002a8
-> 7d5a8800 7d5a8800
-> [ 6626.016302] 3fc0: 015ce1b0 0090abb0 00d8d670 00000028 0048eb80 00487344
-> 015eb160 004a6c10
-> [ 6626.035930] 3fe0: 004a6c8c bede3c0c 0048149d b6ecc6b8
-> [ 6626.055341] Code: e1a07000 e5840000 8a000078 e590601c (e5d6301c)
-> [ 6626.075632] ---[ end trace 034f3552437a92bc ]---
-> 
+Regards
+-George
