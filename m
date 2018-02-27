@@ -1,159 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751960AbeB0VvR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:51:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41774 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeB0VvO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:51:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01B5160390
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=austinwc@codeaurora.org
-Subject: Re: [PATCH 03/12] i2c: qup: remove redundant variables for BAM SG
- count
-To: Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-4-git-send-email-absahu@codeaurora.org>
-From: "Christ, Austin" <austinwc@codeaurora.org>
-Message-ID: <80caf699-0680-7dbc-ef63-0cacd21ee607@codeaurora.org>
-Date: Tue, 27 Feb 2018 14:51:12 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751972AbeB0Vvo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:51:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40032 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751590AbeB0Vvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 16:51:43 -0500
+Date: Tue, 27 Feb 2018 22:51:40 +0100
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v1 1/4] ASoC: codecs: pcm179x: Add PCM1789 id
+Message-ID: <20180227225140.6f9902b8@windsurf.lan>
+In-Reply-To: <20180227212433.2189-2-mylene.josserand@bootlin.com>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-2-mylene.josserand@bootlin.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1517644697-30806-4-git-send-email-absahu@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I agree with Sricharan's comments about naming, otherwise looks good.
+Hello,
 
-Tested on Centriq 2400
-
-Reviewed-by: Austin Christ <austinwc@codeaurora.org>
-
-On 2/3/2018 12:58 AM, Abhishek Sahu wrote:
-> The rx_nents and tx_nents are redundant. rx_buf and tx_buf can
-> be used for total number of SG entries.
+On Tue, 27 Feb 2018 22:24:30 +0100, Mylène Josserand wrote:
+> To prepare the support for the PCM1789, add a new compatible
+> and use the i2c_id to handle, later, the differences between
+> these two DACs even if they are pretty similar.
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 > ---
->   drivers/i2c/busses/i2c-qup.c | 26 ++++++++++----------------
->   1 file changed, 10 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> index c68f433..bb83a2967 100644
-> --- a/drivers/i2c/busses/i2c-qup.c
-> +++ b/drivers/i2c/busses/i2c-qup.c
-> @@ -692,7 +692,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   	struct dma_async_tx_descriptor *txd, *rxd = NULL;
->   	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
->   	dma_cookie_t cookie_rx, cookie_tx;
-> -	u32 rx_nents = 0, tx_nents = 0, len, blocks, rem;
-> +	u32 len, blocks, rem;
->   	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
->   	u8 *tags;
->   
-> @@ -707,9 +707,6 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   		rem = msg->len - (blocks - 1) * limit;
->   
->   		if (msg->flags & I2C_M_RD) {
-> -			rx_nents += (blocks * 2) + 1;
-> -			tx_nents += 1;
-> -
->   			while (qup->blk.pos < blocks) {
->   				tlen = (i == (blocks - 1)) ? rem : limit;
->   				tags = &qup->start_tag.start[off + len];
-> @@ -748,8 +745,6 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   			if (ret)
->   				return ret;
->   		} else {
-> -			tx_nents += (blocks * 2);
-> -
->   			while (qup->blk.pos < blocks) {
->   				tlen = (i == (blocks - 1)) ? rem : limit;
->   				tags = &qup->start_tag.start[off + tx_len];
-> @@ -775,7 +770,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   
->   			if (idx == (num - 1)) {
->   				len = 1;
-> -				if (rx_nents) {
-> +				if (rx_buf) {
->   					qup->btx.tag.start[0] =
->   							QUP_BAM_INPUT_EOT;
->   					len++;
-> @@ -787,14 +782,13 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   						     len, qup, DMA_TO_DEVICE);
->   				if (ret)
->   					return ret;
-> -				tx_nents += 1;
->   			}
->   		}
->   		idx++;
->   		msg++;
->   	}
->   
-> -	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_nents,
-> +	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_buf,
->   				      DMA_MEM_TO_DEV,
->   				      DMA_PREP_INTERRUPT | DMA_PREP_FENCE);
->   	if (!txd) {
-> @@ -803,7 +797,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   		goto desc_err;
->   	}
->   
-> -	if (!rx_nents) {
-> +	if (!rx_buf) {
->   		txd->callback = qup_i2c_bam_cb;
->   		txd->callback_param = qup;
->   	}
-> @@ -816,9 +810,9 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   
->   	dma_async_issue_pending(qup->btx.dma);
->   
-> -	if (rx_nents) {
-> +	if (rx_buf) {
->   		rxd = dmaengine_prep_slave_sg(qup->brx.dma, qup->brx.sg,
-> -					      rx_nents, DMA_DEV_TO_MEM,
-> +					      rx_buf, DMA_DEV_TO_MEM,
->   					      DMA_PREP_INTERRUPT);
->   		if (!rxd) {
->   			dev_err(qup->dev, "failed to get rx desc\n");
-> @@ -853,7 +847,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   			goto desc_err;
->   		}
->   
-> -		if (rx_nents)
-> +		if (rx_buf)
->   			writel(QUP_BAM_INPUT_EOT,
->   			       qup->base + QUP_OUT_FIFO_BASE);
->   
-> @@ -871,10 +865,10 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->   	}
->   
->   desc_err:
-> -	dma_unmap_sg(qup->dev, qup->btx.sg, tx_nents, DMA_TO_DEVICE);
-> +	dma_unmap_sg(qup->dev, qup->btx.sg, tx_buf, DMA_TO_DEVICE);
->   
-> -	if (rx_nents)
-> -		dma_unmap_sg(qup->dev, qup->brx.sg, rx_nents,
-> +	if (rx_buf)
-> +		dma_unmap_sg(qup->dev, qup->brx.sg, rx_buf,
->   			     DMA_FROM_DEVICE);
->   
->   	return ret;
-> 
+>  Documentation/devicetree/bindings/sound/pcm179x.txt | 2 +-
 
+The DT binding change should be in a separate patch.
+
+>  sound/soc/codecs/pcm179x-i2c.c                      | 6 ++++--
+>  sound/soc/codecs/pcm179x.c                          | 3 ++-
+>  sound/soc/codecs/pcm179x.h                          | 8 +++++++-
+
+And this should be together with the PCM1789 support patch. Otherwise
+your series is not bisectable: if we apply only PATCH 1/4, the driver
+supports the new compatible string, but it doesn't have the actual code
+to handle PCM1789. Am I missing something here ?
+
+> -	return pcm179x_common_init(&client->dev, regmap);
+> +	return pcm179x_common_init(&client->dev, regmap, id->driver_data);
+
+This can be done in a preparation patch.
+
+>  }
+>  
+>  static const struct of_device_id pcm179x_of_match[] = {
+>  	{ .compatible = "ti,pcm1792a", },
+> +	{ .compatible = "ti,pcm1789", },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, pcm179x_of_match);
+>  
+>  static const struct i2c_device_id pcm179x_i2c_ids[] = {
+> -	{ "pcm179x", 0 },
+> +	{ "pcm179x", PCM179X },
+
+And also this addition.
+
+> +	{ "pcm1789", PCM1789 },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, pcm179x_i2c_ids);
+> diff --git a/sound/soc/codecs/pcm179x.c b/sound/soc/codecs/pcm179x.c
+> index 4b311c06f97d..81cbf09319f6 100644
+> --- a/sound/soc/codecs/pcm179x.c
+> +++ b/sound/soc/codecs/pcm179x.c
+> @@ -218,7 +218,8 @@ static const struct snd_soc_component_driver soc_component_dev_pcm179x = {
+>  	.non_legacy_dai_naming	= 1,
+>  };
+>  
+> -int pcm179x_common_init(struct device *dev, struct regmap *regmap)
+> +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> +			enum pcm17xx_type type)
+
+And this done.
+
+>  {
+>  	struct pcm179x_private *pcm179x;
+>  
+> diff --git a/sound/soc/codecs/pcm179x.h b/sound/soc/codecs/pcm179x.h
+> index cf8681c9a373..8c08689e3b8b 100644
+> --- a/sound/soc/codecs/pcm179x.h
+> +++ b/sound/soc/codecs/pcm179x.h
+> @@ -17,11 +17,17 @@
+>  #ifndef __PCM179X_H__
+>  #define __PCM179X_H__
+>  
+> +enum pcm17xx_type {
+> +	PCM179X,
+
+And this one.
+
+> +	PCM1789,
+> +};
+> +
+>  #define PCM1792A_FORMATS (SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S24_LE | \
+>  			  SNDRV_PCM_FMTBIT_S16_LE)
+>  
+>  extern const struct regmap_config pcm179x_regmap_config;
+>  
+> -int pcm179x_common_init(struct device *dev, struct regmap *regmap);
+> +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> +			enum pcm17xx_type type);
+
+And this one. Just as a "preparation patch" to support multiple codecs
+in the existing pcm179x.c driver.
+
+Thanks!
+
+Thomas
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
