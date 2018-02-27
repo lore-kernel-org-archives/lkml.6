@@ -1,95 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeB0UvA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 15:51:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751889AbeB0UuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 15:50:01 -0500
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 4/5] ipc: Clamp msgmni and shmmni to the real IPCMNI limit
-Date: Tue, 27 Feb 2018 15:49:50 -0500
-Message-Id: <1519764591-27456-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1519764591-27456-1-git-send-email-longman@redhat.com>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
+        id S1751932AbeB0Uw1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 15:52:27 -0500
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:42226 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751754AbeB0Uw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 15:52:26 -0500
+X-Google-Smtp-Source: AG47ELt7rdUzVEiG4SOn8Kf3wdX/KC8aY4TozdLnAqjazakP+XEkahjM6W3hriTF435XMqyHiVdrb4U/ZM7mcL17lWQ=
+MIME-Version: 1.0
+In-Reply-To: <20180227193118.n33bkbrqxybfhgdc@gmail.com>
+References: <20180227193118.n33bkbrqxybfhgdc@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Feb 2018 22:52:24 +0200
+Message-ID: <CAHp75VctsM0F4Ldf1zr4CJ2gF3ku3ejTHPYrUQKQ-rJVeX2Wog@mail.gmail.com>
+Subject: Re: [PATCH RFC] auxdisplay: charlcd: Fix and clean up handling of x/y commands
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Robert Abel <rabel@robertabel.eu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A user can write arbitrary integer values to msgmni and shmmni sysctl
-parameters without getting error, but the actual limit is really
-IPCMNI (32k). This can mislead users as they think they can get a
-value that is not real.
+On Tue, Feb 27, 2018 at 9:32 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> The current version is not parsing multiple x/y commands as the code
+> originally intended. On top of that, kstrtoul() expects
+> NULL-terminated strings. Finally, the code had to do two passes over
+> the string, while now only one is done.
+>
+> Some explanations about the supported syntax are added as well.
 
-Enforcing the limit by failing the sysctl parameter write, however,
-can break existing user applications. Instead, the range clamping flag
-is set to enforce the limit without failing existing user code. Users
-can easily figure out if the sysctl parameter value is out of range
-by either reading back the parameter value or checking the kernel
-ring buffer for warning.
+Something like this would work, but see my comments below.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- ipc/ipc_sysctl.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+> +/*
+> + * Parses a base 10 number from a string, until a non-digit number is found or
+> + * until PARSE_N_MAX_SIZE digits.
+> + *
+> + * See kstrtoul() for the meaning of the return value.
+> + * It also returns the next character in the string, i.e. the first non-digit.
+> + */
+> +#define PARSE_N_MAX_SIZE (3)
+> +static unsigned long parse_n(const char *s, unsigned long *res,
+> +       const char **next_s)
 
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index 8ad93c2..e4ab272 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -41,12 +41,17 @@ static int proc_ipc_dointvec(struct ctl_table *table, int write,
- static int proc_ipc_dointvec_minmax(struct ctl_table *table, int write,
- 	void __user *buffer, size_t *lenp, loff_t *ppos)
- {
-+	int ret;
- 	struct ctl_table ipc_table;
- 
- 	memcpy(&ipc_table, table, sizeof(ipc_table));
- 	ipc_table.data = get_ipc(table);
- 
--	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
-+	ret = proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
-+
-+	table->flags |= ipc_table.flags; /* Copy back any change in flags */
-+
-+	return ret;
- }
- 
- static int proc_ipc_dointvec_minmax_orphans(struct ctl_table *table, int write,
-@@ -99,6 +104,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- static int zero;
- static int one = 1;
- static int int_max = INT_MAX;
-+static int ipc_mni = IPCMNI;
- 
- static struct ctl_table ipc_kern_table[] = {
- 	{
-@@ -120,7 +126,10 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.data		= &init_ipc_ns.shm_ctlmni,
- 		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
- 		.mode		= 0644,
--		.proc_handler	= proc_ipc_dointvec,
-+		.proc_handler	= proc_ipc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &ipc_mni,
-+		.flags		= CTL_FLAGS_CLAMP_RANGE,
- 	},
- 	{
- 		.procname	= "shm_rmid_forced",
-@@ -147,7 +156,8 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.mode		= 0644,
- 		.proc_handler	= proc_ipc_dointvec_minmax,
- 		.extra1		= &zero,
--		.extra2		= &int_max,
-+		.extra2		= &ipc_mni,
-+		.flags		= CTL_FLAGS_CLAMP_RANGE,
- 	},
- 	{
- 		.procname	= "auto_msgmni",
+static int parse_n(const char *s, unsigned long *res, const char **next_s)
+
+> +{
+> +       char tmp[PARSE_N_MAX_SIZE + 1];
+> +       int i;
+> +
+
+First of all you need
+
+unsigned int i = 0;
+
+while (s[i] == '0')
+ i++;
+
+> +       for (i = 0; ; ++i) {
+> +               if (!isdigit(s[i]))
+> +                       break;
+> +               if (i >= PARSE_N_MAX_SIZE)
+> +                       return -EINVAL;
+> +               tmp[i] = s[i];
+> +       }
+
+And here you partially open coded what simple_strto*() does.
+
+> +
+> +       tmp[i] = 0;
+> +       *next_s = &s[i];
+> +       return kstrtoul(tmp, 10, res);
+> +}
+
+It's over engineered. Just simple use simple_strto*() and that's all.
+Do you really care about overflows? Is those numbers somehow critical?
+What will go wrong?
+
 -- 
-1.8.3.1
+With Best Regards,
+Andy Shevchenko
