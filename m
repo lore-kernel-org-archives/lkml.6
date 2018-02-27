@@ -1,78 +1,76 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-124878-1519696130-2-8966771230793635794
+X-Cyrus-Session-Id: sloti22d1t05-1718758-1519744008-2-13472986315376731359
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519696129; b=VJG8/WOhqQfvGB+w7YuVOkFx7TtEtNbHAuaC9xXWBiXnG6L
-    tzNu31NDV+9KCf+WHd9HsepZI/UXKeifhBPI55FxOegBjs/qYR+eRjOAU1duyGTJ
-    +ebjq6dY8uvZBFyjkCREc/OSXLmm4LKS1ToMxQXXARC4s8O4c7YAFsvNpsUNyfI6
-    IwT6jvVri8i37x7Xt0Y6UiNem+mli59MHllFMVt2BRqHp1xh0Lz9CMa6RgrOf5Kl
-    g0yu4tNg0Zy/7h9bBchDd3R7ogXQEGfrbfBOzyKMHtrlcDFLNJgnkDlK6Fw8u05/
-    r2jUm/0m7Q+++Rmxnfrm62ieMUTTFVQ//7ZkVYQ==
+    t=1519744007; b=sJvbFijvbG7g+DvR89Xnmt5x95BYg2VMsyeZQlgdS4SRCUL
+    06r0mTCjY2vwL9JfXOfgkbbyW7s63oqiXj3sisNqMmoeV2cci8nFIBZkFmmD3bct
+    ddssXcY5T1XhyUcIL0MvNyCGJlBk9HMuey4sa95DGmwHuspK7PjPgpZ1wZAEU3N0
+    mkPufKhSV3vITBrdoRQDScU8DKKVXd3X/OCuJ4oFc0dJxFgDDJJdrBPnIMg5WSUS
+    inynNFkWJo75kp6How2a3fR3nVnCIpaXm8JPP41DADNVKYNaQ4RCxKwiNF9VPVhf
+    AS+9ed7WTR3JBG8x6pfdjW8lqhEPTpmNdRAU1LQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:references:from:message-id
     :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe
-    :content-transfer-encoding:content-type:sender; s=arctest; t=
-    1519696129; bh=KhYkGrfMFSul3sTStCMhn4aKzysVeD3GXSnmjTCm4GY=; b=n
-    aS1/beRn8j0CCxAxQJwg/MfhAHHJUBthBzqE/HLboYLqdeawZwV4ywge03iqj7oM
-    TH3KG/Ij+3Cf91gT5HnmEDBGm/+VGt5NF3WNIiQuPn2Hd7sQ1mE7zzgM/gXanVF7
-    5mPUcxRnb27q2q4jESzZw96hTAFdOAL9BZlSg2ICBvlle07GmJA+pXEK31ks77vU
-    L0C/gxt8HKmV/1Uan0fXSLIBoLwR3u+2fHyiank+UWPMb/rwbR3Z5Kw3qbMW0GsX
-    vNcnaBXiGhlZLEL81F0dkcRPPJXDWdFLecFNH4FU/Y27opjiKFSi7RfPuwe/xsFV
-    +5mtlE/INHEMMs+6wtbxw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519744007; bh=+
+    AQaegm20Y89h1LxoZCDuKI8w2j/Dtl51H854ztSIPg=; b=TZaD0TrMdTZbjq7FT
+    Wrb4/usYaMeNNMBlFKUQ8h02HPt4Y8oIcRNboU7vaaFF6bL8CPJyzfFphh2ZP26S
+    PmMu1gDpsYE8eskfCZ1yXsBBYohYTjm8JCgmGS49Cfcax7UDLmQDXLr3GjH5vJLr
+    q+/oc1FuH3Bw0uM59XVqGLI5TCRVtRn8shyvgc0oXFgfousijo58IVati03xnipO
+    hjYSFdKO1AdPJnu+BCreoqROe8UnX4B6+ThQSt1rnOJyLt7OS09/mwawWnUKg9TD
+    FeAVheZ6izwlPbcBi93IvguuWTomwtizIgE5P/xKEWRXk2yxUXB3pmAF2sFDPLjR
+    poq3g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IyxYukgj;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IyxYukgj;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELu8FnjkgCsTqftMy5b4wWmGARUjhAYsmG/aj9kc+NZizOFVw1pugRaqBeJjaY6swq61eVt+dw==
 Subject: Re: [PATCH 2/2] selftests: ion: Add simple test with the vgem driver
-To: shuah@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Liam Mark <lmark@codeaurora.org>, linux-kselftest@vger.kernel.org,
- Shuah Khan <shuahkh@osg.samsung.com>
+To: Laura Abbott <labbott@redhat.com>, shuah@kernel.org,
+ Sumit Semwal <sumit.semwal@linaro.org>, devel@driverdev.osuosl.org,
+ Todd Kjos <tkjos@android.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Liam Mark <lmark@codeaurora.org>,
+ linux-kselftest@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 References: <20180216012445.17264-1-labbott@redhat.com>
  <20180216012445.17264-3-labbott@redhat.com>
  <20180219153143.GS22199@phenom.ffwll.local>
  <feb5e4c5-b5c2-e235-c952-70c38e185080@redhat.com>
  <20180219183333.GD22199@phenom.ffwll.local>
  <c16895d9-7285-b997-de68-19f9f09613db@kernel.org>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <f683f237-1725-b4fe-f522-0707c23b1947@redhat.com>
-Date: Mon, 26 Feb 2018 17:48:37 -0800
+ <f683f237-1725-b4fe-f522-0707c23b1947@redhat.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <aa605b8c-e750-de4e-04fe-f71ae96f2082@osg.samsung.com>
+Date: Tue, 27 Feb 2018 08:06:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c16895d9-7285-b997-de68-19f9f09613db@kernel.org>
+In-Reply-To: <f683f237-1725-b4fe-f522-0707c23b1947@redhat.com>
 Content-Language: en-US
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -84,235 +82,165 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/26/2018 09:07 AM, Shuah Khan wrote:
-> On 02/19/2018 11:33 AM, Daniel Vetter wrote:
->> On Mon, Feb 19, 2018 at 10:18:21AM -0800, Laura Abbott wrote:
->>> On 02/19/2018 07:31 AM, Daniel Vetter wrote:
->>>> On Thu, Feb 15, 2018 at 05:24:45PM -0800, Laura Abbott wrote:
->>>>> Ion is designed to be a framework used by other clients who perform
->>>>> operations on the buffer. Use the DRM vgem client as a simple consumer.
->>>>> In conjunction with the dma-buf sync ioctls, this tests the full attach/map
->>>>> path for the system heap.
->>>>>
->>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>>>> ---
->>>>>    tools/testing/selftests/android/ion/Makefile      |   3 +-
->>>>>    tools/testing/selftests/android/ion/config        |   1 +
->>>>>    tools/testing/selftests/android/ion/ionmap_test.c | 136 ++++++++++++++++++++++
->>>>>    3 files changed, 139 insertions(+), 1 deletion(-)
->>>>>    create mode 100644 tools/testing/selftests/android/ion/ionmap_test.c
->>>>>
->>>>> diff --git a/tools/testing/selftests/android/ion/Makefile b/tools/testing/selftests/android/ion/Makefile
->>>>> index 96e0c448b39d..d23b6d537d8b 100644
->>>>> --- a/tools/testing/selftests/android/ion/Makefile
->>>>> +++ b/tools/testing/selftests/android/ion/Makefile
->>>>> @@ -2,7 +2,7 @@
->>>>>    INCLUDEDIR := -I. -I../../../../../drivers/staging/android/uapi/
->>>>>    CFLAGS := $(CFLAGS) $(INCLUDEDIR) -Wall -O2 -g
->>>>> -TEST_GEN_FILES := ionapp_export ionapp_import
->>>>> +TEST_GEN_FILES := ionapp_export ionapp_import ionmap_test
->>>>>    all: $(TEST_GEN_FILES)
->>>>> @@ -14,3 +14,4 @@ include ../../lib.mk
->>>>>    $(OUTPUT)/ionapp_export: ionapp_export.c ipcsocket.c ionutils.c
->>>>>    $(OUTPUT)/ionapp_import: ionapp_import.c ipcsocket.c ionutils.c
->>>>> +$(OUTPUT)/ionmap_test: ionmap_test.c ionutils.c
->>>>> diff --git a/tools/testing/selftests/android/ion/config b/tools/testing/selftests/android/ion/config
->>>>> index 19db6ca9aa2b..b4ad748a9dd9 100644
->>>>> --- a/tools/testing/selftests/android/ion/config
->>>>> +++ b/tools/testing/selftests/android/ion/config
->>>>> @@ -2,3 +2,4 @@ CONFIG_ANDROID=y
->>>>>    CONFIG_STAGING=y
->>>>>    CONFIG_ION=y
->>>>>    CONFIG_ION_SYSTEM_HEAP=y
->>>>> +CONFIG_DRM_VGEM=y
->>>>> diff --git a/tools/testing/selftests/android/ion/ionmap_test.c b/tools/testing/selftests/android/ion/ionmap_test.c
->>>>> new file mode 100644
->>>>> index 000000000000..dab36b06b37d
->>>>> --- /dev/null
->>>>> +++ b/tools/testing/selftests/android/ion/ionmap_test.c
->>>>> @@ -0,0 +1,136 @@
->>>>> +#include <errno.h>
->>>>> +#include <fcntl.h>
->>>>> +#include <stdio.h>
->>>>> +#include <stdint.h>
->>>>> +#include <string.h>
->>>>> +#include <unistd.h>
->>>>> +
->>>>> +#include <sys/ioctl.h>
->>>>> +#include <sys/types.h>
->>>>> +#include <sys/stat.h>
->>>>> +
->>>>> +#include <linux/dma-buf.h>
->>>>> +
->>>>> +#include <drm/drm.h>
->>>>> +
->>>>> +#include "ion.h"
->>>>> +#include "ionutils.h"
->>>>> +
->>>>> +int check_vgem(int fd)
->>>>> +{
->>>>> +	drm_version_t version = { 0 };
->>>>> +	char name[5];
->>>>> +	int ret;
->>>>> +
->>>>> +	version.name_len = 4;
->>>>> +	version.name = name;
->>>>> +
->>>>> +	ret = ioctl(fd, DRM_IOCTL_VERSION, &version);
->>>>> +	if (ret)
->>>>> +		return 1;
->>>>> +
->>>>> +	return strcmp(name, "vgem");
->>>>> +}
->>>>> +
->>>>> +int open_vgem(void)
->>>>> +{
->>>>> +	int i, fd;
->>>>> +	const char *drmstr = "/dev/dri/card";
->>>>> +
->>>>> +	fd = -1;
->>>>> +	for (i = 0; i < 16; i++) {
->>>>> +		char name[80];
->>>>> +
->>>>> +		sprintf(name, "%s%u", drmstr, i);
->>>>> +
->>>>> +		fd = open(name, O_RDWR);
->>>>> +		if (fd < 0)
->>>>> +			continue;
->>>>> +
->>>>> +		if (check_vgem(fd)) {
->>>>> +			close(fd);
->>>>> +			continue;
->>>>> +		} else {
->>>>> +			break;
->>>>> +		}
->>>>> +
->>>>> +	}
->>>>> +	return fd;
->>>>> +}
->>>>> +
->>>>> +int import_vgem_fd(int vgem_fd, int dma_buf_fd, uint32_t *handle)
->>>>> +{
->>>>> +	struct drm_prime_handle import_handle = { 0 };
->>>>> +	int ret;
->>>>> +
->>>>> +	import_handle.fd = dma_buf_fd;
->>>>> +	import_handle.flags = 0;
->>>>> +	import_handle.handle = 0;
->>>>> +
->>>>> +	ret = ioctl(vgem_fd, DRM_IOCTL_PRIME_FD_TO_HANDLE, &import_handle);
->>>>> +	if (ret == 0)
->>>>> +		*handle = import_handle.handle;
->>>>> +	return ret;
->>>>> +}
->>>>> +
->>>>> +void close_handle(int vgem_fd, uint32_t handle)
->>>>> +{
->>>>> +	struct drm_gem_close close = { 0 };
->>>>> +
->>>>> +	close.handle = handle;
->>>>> +	ioctl(vgem_fd, DRM_IOCTL_GEM_CLOSE, &close);
->>>>> +}
->>>>> +
->>>>> +int main()
->>>>> +{
->>>>> +	int ret, vgem_fd;
->>>>> +	struct ion_buffer_info info;
->>>>> +	uint32_t handle = 0;
->>>>> +	struct dma_buf_sync sync = { 0 };
->>>>> +
->>>>> +	info.heap_type = ION_HEAP_TYPE_SYSTEM;
->>>>> +	info.heap_size = 4096;
->>>>> +	info.flag_type = ION_FLAG_CACHED;
->>>>> +
->>>>> +	ret = ion_export_buffer_fd(&info);
->>>>> +	if (ret < 0) {
->>>>> +		printf("ion buffer alloc failed\n");
->>>>> +		return -1;
->>>>> +	}
->>>>> +
->>>>> +	vgem_fd = open_vgem();
->>>>> +	if (vgem_fd < 0) {
->>>>> +		ret = vgem_fd;
->>>>> +		printf("Failed to open vgem\n");
->>>>> +		goto out_ion;
->>>>> +	}
->>>>> +
->>>>> +	ret = import_vgem_fd(vgem_fd, info.buffd, &handle);
->>>>> +
->>>>> +	if (ret < 0) {
->>>>> +		printf("Failed to import buffer\n");
->>>>> +		goto out_vgem;
->>>>> +	}
->>>>> +
->>>>> +	sync.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_RW;
->>>>> +	ret = ioctl(info.buffd, DMA_BUF_IOCTL_SYNC, &sync);
->>>>> +	if (ret)
->>>>> +		printf("sync start failed %d\n", errno);
->>>>> +
->>>>> +	memset(info.buffer, 0xff, 4096);
->>>>> +
->>>>> +	sync.flags = DMA_BUF_SYNC_END | DMA_BUF_SYNC_RW;
->>>>> +	ret = ioctl(info.buffd, DMA_BUF_IOCTL_SYNC, &sync);
->>>>> +	if (ret)
->>>>> +		printf("sync end failed %d\n", errno);
->>>>
->>>> At least in drm we require that userspace auto-restarts all ioctls when
->>>> they get interrupt. See
->>>>
->>>> https://cgit.freedesktop.org/drm/libdrm/tree/xf86drm.c#n186
->>>>
->>>> not really an issue with vgem (which can't wait for hw or anything else).
->>>> But good to make sure we don't spread bad copypastas.
->>>>
->>>> Actual use of the ioctls looks all good. With the drmIoctl wrapper added
->>>> and used this is:
->>>>
->>>> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->>>
->>> Thanks for the review. The reason I didn't use the standard drmIoctl was
->>> because I didn't want to introduce a dependency on libdrm. I don't see
->>> an example of another selftest having a dependency on an external
->>> library.
->>>
->>> Is adding a dependencies on fairly standard but still external userspace
->>> libraries okay for kernel self tests?
-> 
-> We have cases where external libraries are used. fuse test probably is one
-> example.
-> 
->>
->> Yeah adding a dependency isn't good, I'd just copypaste a local static
->> version into the test file. That's good enough, the point isn't to use the
->> libdrm one, but a wrapper that automatically restarts (every other
->> userspace for gfx has their own copy of it since it's so trivial).
-> 
-> Let's go ahead and use libdrm - It is important to keep them in sync. Maybe
-> we can check dependency in the ion Makefile and not compile the test. As long
-> as the rest of the tests run even when libdrm dependency isn't met, we should
-> be good.
-> 
-> thanks,
-> -- Shuah
-> 
-> 
-
-The example you gave with fuse doesn't compile if you don't have the
-fuse library installed. I don't think adding a dependency on libdrm
-is worth it for a simple wrapper ioctl, especially since Daniel mention
-it gets copied around anyway.
-
-Thanks,
-Laura
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+T24gMDIvMjYvMjAxOCAwNjo0OCBQTSwgTGF1cmEgQWJib3R0IHdyb3RlOgo+IE9uIDAyLzI2LzIw
+MTggMDk6MDcgQU0sIFNodWFoIEtoYW4gd3JvdGU6Cj4+IE9uIDAyLzE5LzIwMTggMTE6MzMgQU0s
+IERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4+PiBPbiBNb24sIEZlYiAxOSwgMjAxOCBhdCAxMDoxODoy
+MUFNIC0wODAwLCBMYXVyYSBBYmJvdHQgd3JvdGU6Cj4+Pj4gT24gMDIvMTkvMjAxOCAwNzozMSBB
+TSwgRGFuaWVsIFZldHRlciB3cm90ZToKPj4+Pj4gT24gVGh1LCBGZWIgMTUsIDIwMTggYXQgMDU6
+MjQ6NDVQTSAtMDgwMCwgTGF1cmEgQWJib3R0IHdyb3RlOgo+Pj4+Pj4gSW9uIGlzIGRlc2lnbmVk
+IHRvIGJlIGEgZnJhbWV3b3JrIHVzZWQgYnkgb3RoZXIgY2xpZW50cyB3aG8gcGVyZm9ybQo+Pj4+
+Pj4gb3BlcmF0aW9ucyBvbiB0aGUgYnVmZmVyLiBVc2UgdGhlIERSTSB2Z2VtIGNsaWVudCBhcyBh
+IHNpbXBsZSBjb25zdW1lci4KPj4+Pj4+IEluIGNvbmp1bmN0aW9uIHdpdGggdGhlIGRtYS1idWYg
+c3luYyBpb2N0bHMsIHRoaXMgdGVzdHMgdGhlIGZ1bGwgYXR0YWNoL21hcAo+Pj4+Pj4gcGF0aCBm
+b3IgdGhlIHN5c3RlbSBoZWFwLgo+Pj4+Pj4KPj4+Pj4+IFNpZ25lZC1vZmYtYnk6IExhdXJhIEFi
+Ym90dCA8bGFiYm90dEByZWRoYXQuY29tPgo+Pj4+Pj4gLS0tCj4+Pj4+PiDCoMKgIHRvb2xzL3Rl
+c3Rpbmcvc2VsZnRlc3RzL2FuZHJvaWQvaW9uL01ha2VmaWxlwqDCoMKgwqDCoCB8wqDCoCAzICst
+Cj4+Pj4+PiDCoMKgIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2FuZHJvaWQvaW9uL2NvbmZpZ8Kg
+wqDCoMKgwqDCoMKgIHzCoMKgIDEgKwo+Pj4+Pj4gwqDCoCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0
+cy9hbmRyb2lkL2lvbi9pb25tYXBfdGVzdC5jIHwgMTM2ICsrKysrKysrKysrKysrKysrKysrKysK
+Pj4+Pj4+IMKgwqAgMyBmaWxlcyBjaGFuZ2VkLCAxMzkgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
+bigtKQo+Pj4+Pj4gwqDCoCBjcmVhdGUgbW9kZSAxMDA2NDQgdG9vbHMvdGVzdGluZy9zZWxmdGVz
+dHMvYW5kcm9pZC9pb24vaW9ubWFwX3Rlc3QuYwo+Pj4+Pj4KPj4+Pj4+IGRpZmYgLS1naXQgYS90
+b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9hbmRyb2lkL2lvbi9NYWtlZmlsZSBiL3Rvb2xzL3Rlc3Rp
+bmcvc2VsZnRlc3RzL2FuZHJvaWQvaW9uL01ha2VmaWxlCj4+Pj4+PiBpbmRleCA5NmUwYzQ0OGIz
+OWQuLmQyM2I2ZDUzN2Q4YiAxMDA2NDQKPj4+Pj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRl
+c3RzL2FuZHJvaWQvaW9uL01ha2VmaWxlCj4+Pj4+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0
+ZXN0cy9hbmRyb2lkL2lvbi9NYWtlZmlsZQo+Pj4+Pj4gQEAgLTIsNyArMiw3IEBACj4+Pj4+PiDC
+oMKgIElOQ0xVREVESVIgOj0gLUkuIC1JLi4vLi4vLi4vLi4vLi4vZHJpdmVycy9zdGFnaW5nL2Fu
+ZHJvaWQvdWFwaS8KPj4+Pj4+IMKgwqAgQ0ZMQUdTIDo9ICQoQ0ZMQUdTKSAkKElOQ0xVREVESVIp
+IC1XYWxsIC1PMiAtZwo+Pj4+Pj4gLVRFU1RfR0VOX0ZJTEVTIDo9IGlvbmFwcF9leHBvcnQgaW9u
+YXBwX2ltcG9ydAo+Pj4+Pj4gK1RFU1RfR0VOX0ZJTEVTIDo9IGlvbmFwcF9leHBvcnQgaW9uYXBw
+X2ltcG9ydCBpb25tYXBfdGVzdAo+Pj4+Pj4gwqDCoCBhbGw6ICQoVEVTVF9HRU5fRklMRVMpCj4+
+Pj4+PiBAQCAtMTQsMyArMTQsNCBAQCBpbmNsdWRlIC4uLy4uL2xpYi5tawo+Pj4+Pj4gwqDCoCAk
+KE9VVFBVVCkvaW9uYXBwX2V4cG9ydDogaW9uYXBwX2V4cG9ydC5jIGlwY3NvY2tldC5jIGlvbnV0
+aWxzLmMKPj4+Pj4+IMKgwqAgJChPVVRQVVQpL2lvbmFwcF9pbXBvcnQ6IGlvbmFwcF9pbXBvcnQu
+YyBpcGNzb2NrZXQuYyBpb251dGlscy5jCj4+Pj4+PiArJChPVVRQVVQpL2lvbm1hcF90ZXN0OiBp
+b25tYXBfdGVzdC5jIGlvbnV0aWxzLmMKPj4+Pj4+IGRpZmYgLS1naXQgYS90b29scy90ZXN0aW5n
+L3NlbGZ0ZXN0cy9hbmRyb2lkL2lvbi9jb25maWcgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9h
+bmRyb2lkL2lvbi9jb25maWcKPj4+Pj4+IGluZGV4IDE5ZGI2Y2E5YWEyYi4uYjRhZDc0OGE5ZGQ5
+IDEwMDY0NAo+Pj4+Pj4gLS0tIGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYW5kcm9pZC9pb24v
+Y29uZmlnCj4+Pj4+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9hbmRyb2lkL2lvbi9j
+b25maWcKPj4+Pj4+IEBAIC0yLDMgKzIsNCBAQCBDT05GSUdfQU5EUk9JRD15Cj4+Pj4+PiDCoMKg
+IENPTkZJR19TVEFHSU5HPXkKPj4+Pj4+IMKgwqAgQ09ORklHX0lPTj15Cj4+Pj4+PiDCoMKgIENP
+TkZJR19JT05fU1lTVEVNX0hFQVA9eQo+Pj4+Pj4gK0NPTkZJR19EUk1fVkdFTT15Cj4+Pj4+PiBk
+aWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYW5kcm9pZC9pb24vaW9ubWFwX3Rl
+c3QuYyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2FuZHJvaWQvaW9uL2lvbm1hcF90ZXN0LmMK
+Pj4+Pj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+Pj4+PiBpbmRleCAwMDAwMDAwMDAwMDAuLmRh
+YjM2YjA2YjM3ZAo+Pj4+Pj4gLS0tIC9kZXYvbnVsbAo+Pj4+Pj4gKysrIGIvdG9vbHMvdGVzdGlu
+Zy9zZWxmdGVzdHMvYW5kcm9pZC9pb24vaW9ubWFwX3Rlc3QuYwo+Pj4+Pj4gQEAgLTAsMCArMSwx
+MzYgQEAKPj4+Pj4+ICsjaW5jbHVkZSA8ZXJybm8uaD4KPj4+Pj4+ICsjaW5jbHVkZSA8ZmNudGwu
+aD4KPj4+Pj4+ICsjaW5jbHVkZSA8c3RkaW8uaD4KPj4+Pj4+ICsjaW5jbHVkZSA8c3RkaW50Lmg+
+Cj4+Pj4+PiArI2luY2x1ZGUgPHN0cmluZy5oPgo+Pj4+Pj4gKyNpbmNsdWRlIDx1bmlzdGQuaD4K
+Pj4+Pj4+ICsKPj4+Pj4+ICsjaW5jbHVkZSA8c3lzL2lvY3RsLmg+Cj4+Pj4+PiArI2luY2x1ZGUg
+PHN5cy90eXBlcy5oPgo+Pj4+Pj4gKyNpbmNsdWRlIDxzeXMvc3RhdC5oPgo+Pj4+Pj4gKwo+Pj4+
+Pj4gKyNpbmNsdWRlIDxsaW51eC9kbWEtYnVmLmg+Cj4+Pj4+PiArCj4+Pj4+PiArI2luY2x1ZGUg
+PGRybS9kcm0uaD4KPj4+Pj4+ICsKPj4+Pj4+ICsjaW5jbHVkZSAiaW9uLmgiCj4+Pj4+PiArI2lu
+Y2x1ZGUgImlvbnV0aWxzLmgiCj4+Pj4+PiArCj4+Pj4+PiAraW50IGNoZWNrX3ZnZW0oaW50IGZk
+KQo+Pj4+Pj4gK3sKPj4+Pj4+ICvCoMKgwqAgZHJtX3ZlcnNpb25fdCB2ZXJzaW9uID0geyAwIH07
+Cj4+Pj4+PiArwqDCoMKgIGNoYXIgbmFtZVs1XTsKPj4+Pj4+ICvCoMKgwqAgaW50IHJldDsKPj4+
+Pj4+ICsKPj4+Pj4+ICvCoMKgwqAgdmVyc2lvbi5uYW1lX2xlbiA9IDQ7Cj4+Pj4+PiArwqDCoMKg
+IHZlcnNpb24ubmFtZSA9IG5hbWU7Cj4+Pj4+PiArCj4+Pj4+PiArwqDCoMKgIHJldCA9IGlvY3Rs
+KGZkLCBEUk1fSU9DVExfVkVSU0lPTiwgJnZlcnNpb24pOwo+Pj4+Pj4gK8KgwqDCoCBpZiAocmV0
+KQo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiAxOwo+Pj4+Pj4gKwo+Pj4+Pj4gK8KgwqDC
+oCByZXR1cm4gc3RyY21wKG5hbWUsICJ2Z2VtIik7Cj4+Pj4+PiArfQo+Pj4+Pj4gKwo+Pj4+Pj4g
+K2ludCBvcGVuX3ZnZW0odm9pZCkKPj4+Pj4+ICt7Cj4+Pj4+PiArwqDCoMKgIGludCBpLCBmZDsK
+Pj4+Pj4+ICvCoMKgwqAgY29uc3QgY2hhciAqZHJtc3RyID0gIi9kZXYvZHJpL2NhcmQiOwo+Pj4+
+Pj4gKwo+Pj4+Pj4gK8KgwqDCoCBmZCA9IC0xOwo+Pj4+Pj4gK8KgwqDCoCBmb3IgKGkgPSAwOyBp
+IDwgMTY7IGkrKykgewo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNoYXIgbmFtZVs4MF07Cj4+Pj4+
+PiArCj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgc3ByaW50ZihuYW1lLCAiJXMldSIsIGRybXN0ciwg
+aSk7Cj4+Pj4+PiArCj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgZmQgPSBvcGVuKG5hbWUsIE9fUkRX
+Uik7Cj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgaWYgKGZkIDwgMCkKPj4+Pj4+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGNvbnRpbnVlOwo+Pj4+Pj4gKwo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGlm
+IChjaGVja192Z2VtKGZkKSkgewo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvc2Uo
+ZmQpOwo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29udGludWU7Cj4+Pj4+PiArwqDC
+oMKgwqDCoMKgwqAgfSBlbHNlIHsKPj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFr
+Owo+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgIH0KPj4+Pj4+ICsKPj4+Pj4+ICvCoMKgwqAgfQo+Pj4+
+Pj4gK8KgwqDCoCByZXR1cm4gZmQ7Cj4+Pj4+PiArfQo+Pj4+Pj4gKwo+Pj4+Pj4gK2ludCBpbXBv
+cnRfdmdlbV9mZChpbnQgdmdlbV9mZCwgaW50IGRtYV9idWZfZmQsIHVpbnQzMl90ICpoYW5kbGUp
+Cj4+Pj4+PiArewo+Pj4+Pj4gK8KgwqDCoCBzdHJ1Y3QgZHJtX3ByaW1lX2hhbmRsZSBpbXBvcnRf
+aGFuZGxlID0geyAwIH07Cj4+Pj4+PiArwqDCoMKgIGludCByZXQ7Cj4+Pj4+PiArCj4+Pj4+PiAr
+wqDCoMKgIGltcG9ydF9oYW5kbGUuZmQgPSBkbWFfYnVmX2ZkOwo+Pj4+Pj4gK8KgwqDCoCBpbXBv
+cnRfaGFuZGxlLmZsYWdzID0gMDsKPj4+Pj4+ICvCoMKgwqAgaW1wb3J0X2hhbmRsZS5oYW5kbGUg
+PSAwOwo+Pj4+Pj4gKwo+Pj4+Pj4gK8KgwqDCoCByZXQgPSBpb2N0bCh2Z2VtX2ZkLCBEUk1fSU9D
+VExfUFJJTUVfRkRfVE9fSEFORExFLCAmaW1wb3J0X2hhbmRsZSk7Cj4+Pj4+PiArwqDCoMKgIGlm
+IChyZXQgPT0gMCkKPj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCAqaGFuZGxlID0gaW1wb3J0X2hhbmRs
+ZS5oYW5kbGU7Cj4+Pj4+PiArwqDCoMKgIHJldHVybiByZXQ7Cj4+Pj4+PiArfQo+Pj4+Pj4gKwo+
+Pj4+Pj4gK3ZvaWQgY2xvc2VfaGFuZGxlKGludCB2Z2VtX2ZkLCB1aW50MzJfdCBoYW5kbGUpCj4+
+Pj4+PiArewo+Pj4+Pj4gK8KgwqDCoCBzdHJ1Y3QgZHJtX2dlbV9jbG9zZSBjbG9zZSA9IHsgMCB9
+Owo+Pj4+Pj4gKwo+Pj4+Pj4gK8KgwqDCoCBjbG9zZS5oYW5kbGUgPSBoYW5kbGU7Cj4+Pj4+PiAr
+wqDCoMKgIGlvY3RsKHZnZW1fZmQsIERSTV9JT0NUTF9HRU1fQ0xPU0UsICZjbG9zZSk7Cj4+Pj4+
+PiArfQo+Pj4+Pj4gKwo+Pj4+Pj4gK2ludCBtYWluKCkKPj4+Pj4+ICt7Cj4+Pj4+PiArwqDCoMKg
+IGludCByZXQsIHZnZW1fZmQ7Cj4+Pj4+PiArwqDCoMKgIHN0cnVjdCBpb25fYnVmZmVyX2luZm8g
+aW5mbzsKPj4+Pj4+ICvCoMKgwqAgdWludDMyX3QgaGFuZGxlID0gMDsKPj4+Pj4+ICvCoMKgwqAg
+c3RydWN0IGRtYV9idWZfc3luYyBzeW5jID0geyAwIH07Cj4+Pj4+PiArCj4+Pj4+PiArwqDCoMKg
+IGluZm8uaGVhcF90eXBlID0gSU9OX0hFQVBfVFlQRV9TWVNURU07Cj4+Pj4+PiArwqDCoMKgIGlu
+Zm8uaGVhcF9zaXplID0gNDA5NjsKPj4+Pj4+ICvCoMKgwqAgaW5mby5mbGFnX3R5cGUgPSBJT05f
+RkxBR19DQUNIRUQ7Cj4+Pj4+PiArCj4+Pj4+PiArwqDCoMKgIHJldCA9IGlvbl9leHBvcnRfYnVm
+ZmVyX2ZkKCZpbmZvKTsKPj4+Pj4+ICvCoMKgwqAgaWYgKHJldCA8IDApIHsKPj4+Pj4+ICvCoMKg
+wqDCoMKgwqDCoCBwcmludGYoImlvbiBidWZmZXIgYWxsb2MgZmFpbGVkXG4iKTsKPj4+Pj4+ICvC
+oMKgwqDCoMKgwqDCoCByZXR1cm4gLTE7Cj4+Pj4+PiArwqDCoMKgIH0KPj4+Pj4+ICsKPj4+Pj4+
+ICvCoMKgwqAgdmdlbV9mZCA9IG9wZW5fdmdlbSgpOwo+Pj4+Pj4gK8KgwqDCoCBpZiAodmdlbV9m
+ZCA8IDApIHsKPj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCByZXQgPSB2Z2VtX2ZkOwo+Pj4+Pj4gK8Kg
+wqDCoMKgwqDCoMKgIHByaW50ZigiRmFpbGVkIHRvIG9wZW4gdmdlbVxuIik7Cj4+Pj4+PiArwqDC
+oMKgwqDCoMKgwqAgZ290byBvdXRfaW9uOwo+Pj4+Pj4gK8KgwqDCoCB9Cj4+Pj4+PiArCj4+Pj4+
+PiArwqDCoMKgIHJldCA9IGltcG9ydF92Z2VtX2ZkKHZnZW1fZmQsIGluZm8uYnVmZmQsICZoYW5k
+bGUpOwo+Pj4+Pj4gKwo+Pj4+Pj4gK8KgwqDCoCBpZiAocmV0IDwgMCkgewo+Pj4+Pj4gK8KgwqDC
+oMKgwqDCoMKgIHByaW50ZigiRmFpbGVkIHRvIGltcG9ydCBidWZmZXJcbiIpOwo+Pj4+Pj4gK8Kg
+wqDCoMKgwqDCoMKgIGdvdG8gb3V0X3ZnZW07Cj4+Pj4+PiArwqDCoMKgIH0KPj4+Pj4+ICsKPj4+
+Pj4+ICvCoMKgwqAgc3luYy5mbGFncyA9IERNQV9CVUZfU1lOQ19TVEFSVCB8IERNQV9CVUZfU1lO
+Q19SVzsKPj4+Pj4+ICvCoMKgwqAgcmV0ID0gaW9jdGwoaW5mby5idWZmZCwgRE1BX0JVRl9JT0NU
+TF9TWU5DLCAmc3luYyk7Cj4+Pj4+PiArwqDCoMKgIGlmIChyZXQpCj4+Pj4+PiArwqDCoMKgwqDC
+oMKgwqAgcHJpbnRmKCJzeW5jIHN0YXJ0IGZhaWxlZCAlZFxuIiwgZXJybm8pOwo+Pj4+Pj4gKwo+
+Pj4+Pj4gK8KgwqDCoCBtZW1zZXQoaW5mby5idWZmZXIsIDB4ZmYsIDQwOTYpOwo+Pj4+Pj4gKwo+
+Pj4+Pj4gK8KgwqDCoCBzeW5jLmZsYWdzID0gRE1BX0JVRl9TWU5DX0VORCB8IERNQV9CVUZfU1lO
+Q19SVzsKPj4+Pj4+ICvCoMKgwqAgcmV0ID0gaW9jdGwoaW5mby5idWZmZCwgRE1BX0JVRl9JT0NU
+TF9TWU5DLCAmc3luYyk7Cj4+Pj4+PiArwqDCoMKgIGlmIChyZXQpCj4+Pj4+PiArwqDCoMKgwqDC
+oMKgwqAgcHJpbnRmKCJzeW5jIGVuZCBmYWlsZWQgJWRcbiIsIGVycm5vKTsKPj4+Pj4KPj4+Pj4g
+QXQgbGVhc3QgaW4gZHJtIHdlIHJlcXVpcmUgdGhhdCB1c2Vyc3BhY2UgYXV0by1yZXN0YXJ0cyBh
+bGwgaW9jdGxzIHdoZW4KPj4+Pj4gdGhleSBnZXQgaW50ZXJydXB0LiBTZWUKPj4+Pj4KPj4+Pj4g
+aHR0cHM6Ly9jZ2l0LmZyZWVkZXNrdG9wLm9yZy9kcm0vbGliZHJtL3RyZWUveGY4NmRybS5jI24x
+ODYKPj4+Pj4KPj4+Pj4gbm90IHJlYWxseSBhbiBpc3N1ZSB3aXRoIHZnZW0gKHdoaWNoIGNhbid0
+IHdhaXQgZm9yIGh3IG9yIGFueXRoaW5nIGVsc2UpLgo+Pj4+PiBCdXQgZ29vZCB0byBtYWtlIHN1
+cmUgd2UgZG9uJ3Qgc3ByZWFkIGJhZCBjb3B5cGFzdGFzLgo+Pj4+Pgo+Pj4+PiBBY3R1YWwgdXNl
+IG9mIHRoZSBpb2N0bHMgbG9va3MgYWxsIGdvb2QuIFdpdGggdGhlIGRybUlvY3RsIHdyYXBwZXIg
+YWRkZWQKPj4+Pj4gYW5kIHVzZWQgdGhpcyBpczoKPj4+Pj4KPj4+Pj4gUmV2aWV3ZWQtYnk6IERh
+bmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Cj4+Pj4KPj4+PiBUaGFua3MgZm9y
+IHRoZSByZXZpZXcuIFRoZSByZWFzb24gSSBkaWRuJ3QgdXNlIHRoZSBzdGFuZGFyZCBkcm1Jb2N0
+bCB3YXMKPj4+PiBiZWNhdXNlIEkgZGlkbid0IHdhbnQgdG8gaW50cm9kdWNlIGEgZGVwZW5kZW5j
+eSBvbiBsaWJkcm0uIEkgZG9uJ3Qgc2VlCj4+Pj4gYW4gZXhhbXBsZSBvZiBhbm90aGVyIHNlbGZ0
+ZXN0IGhhdmluZyBhIGRlcGVuZGVuY3kgb24gYW4gZXh0ZXJuYWwKPj4+PiBsaWJyYXJ5Lgo+Pj4+
+Cj4+Pj4gSXMgYWRkaW5nIGEgZGVwZW5kZW5jaWVzIG9uIGZhaXJseSBzdGFuZGFyZCBidXQgc3Rp
+bGwgZXh0ZXJuYWwgdXNlcnNwYWNlCj4+Pj4gbGlicmFyaWVzIG9rYXkgZm9yIGtlcm5lbCBzZWxm
+IHRlc3RzPwo+Pgo+PiBXZSBoYXZlIGNhc2VzIHdoZXJlIGV4dGVybmFsIGxpYnJhcmllcyBhcmUg
+dXNlZC4gZnVzZSB0ZXN0IHByb2JhYmx5IGlzIG9uZQo+PiBleGFtcGxlLgo+Pgo+Pj4KPj4+IFll
+YWggYWRkaW5nIGEgZGVwZW5kZW5jeSBpc24ndCBnb29kLCBJJ2QganVzdCBjb3B5cGFzdGUgYSBs
+b2NhbCBzdGF0aWMKPj4+IHZlcnNpb24gaW50byB0aGUgdGVzdCBmaWxlLiBUaGF0J3MgZ29vZCBl
+bm91Z2gsIHRoZSBwb2ludCBpc24ndCB0byB1c2UgdGhlCj4+PiBsaWJkcm0gb25lLCBidXQgYSB3
+cmFwcGVyIHRoYXQgYXV0b21hdGljYWxseSByZXN0YXJ0cyAoZXZlcnkgb3RoZXIKPj4+IHVzZXJz
+cGFjZSBmb3IgZ2Z4IGhhcyB0aGVpciBvd24gY29weSBvZiBpdCBzaW5jZSBpdCdzIHNvIHRyaXZp
+YWwpLgo+Pgo+PiBMZXQncyBnbyBhaGVhZCBhbmQgdXNlIGxpYmRybSAtIEl0IGlzIGltcG9ydGFu
+dCB0byBrZWVwIHRoZW0gaW4gc3luYy4gTWF5YmUKPj4gd2UgY2FuIGNoZWNrIGRlcGVuZGVuY3kg
+aW4gdGhlIGlvbiBNYWtlZmlsZSBhbmQgbm90IGNvbXBpbGUgdGhlIHRlc3QuIEFzIGxvbmcKPj4g
+YXMgdGhlIHJlc3Qgb2YgdGhlIHRlc3RzIHJ1biBldmVuIHdoZW4gbGliZHJtIGRlcGVuZGVuY3kg
+aXNuJ3QgbWV0LCB3ZSBzaG91bGQKPj4gYmUgZ29vZC4KPj4KPj4gdGhhbmtzLAo+PiAtLSBTaHVh
+aAo+Pgo+Pgo+IAo+IFRoZSBleGFtcGxlIHlvdSBnYXZlIHdpdGggZnVzZSBkb2Vzbid0IGNvbXBp
+bGUgaWYgeW91IGRvbid0IGhhdmUgdGhlCj4gZnVzZSBsaWJyYXJ5IGluc3RhbGxlZC4gSSBkb24n
+dCB0aGluayBhZGRpbmcgYSBkZXBlbmRlbmN5IG9uIGxpYmRybQo+IGlzIHdvcnRoIGl0IGZvciBh
+IHNpbXBsZSB3cmFwcGVyIGlvY3RsLCBlc3BlY2lhbGx5IHNpbmNlIERhbmllbCBtZW50aW9uCj4g
+aXQgZ2V0cyBjb3BpZWQgYXJvdW5kIGFueXdheS4KPiAKPiBUaGFua3MsCj4gTGF1cmEKClJpZ2h0
+LiBJdCB3b24ndCBjb21waWxlIHdpdGhvdXQgdGhlIGxpYnJhcnkuIFRoZSB1cHNpZGUgaXMgdGhl
+cmUgaXMgbm8KZHVwbGljYXRlIGNvZGUuIFRoYXQgc2FpZCwgSSBoYXZlIG5vIHByb2JsZW1zIHRh
+a2luZyB0aGUgcGF0Y2ggZm9yIG5vdy4KSWYgSSBzdGFydCBzZWVpbmcgbW9yZSBhbmQgbW9yZSBk
+cm0gY29kZSwgSSBtaWdodCByZWNvbnNpZGVyIGFuZCBvcHQgdG8KYWRkIHRoZSBkZXBlbmRlbmN5
+LgoKCkkgd2lsbCBxdWV1ZSB0aGlzIHVwIGZvciA0LjE3LXJjMQoKdGhhbmtzLAotLSBTaHVhaApf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWls
+aW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2Lmxp
+bnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
