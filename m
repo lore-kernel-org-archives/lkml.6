@@ -1,100 +1,97 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227en/7gdrZ3fLr2gPu5XbMIxkGlYdHUC3tZrBg2HZXaGcx8zwMWUQDBcVfknDZeCb66k1qp
-ARC-Seal: i=1; a=rsa-sha256; t=1519772414; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ePJ+eMqviEF4HVs70JWSBLcEgdfECeDfgC9iY4mIJK2YEjNpftIM6getkGXWleClqN
-         kWjXzTB/dxJcr68zpFVmf6hl+M8lINdSu3RE7iqTIYPP8vmBsIetrfBRpVAwG0gL61H0
-         7+Z3CUgYMd4MpGUNwM4Y1f1hYi7GbWT+ctEY1lEwYX+H+Jk4l36M4Od2bwUWNwbvOYpr
-         h8cbRZldDbuJmuxNaNkZZ+XIs13+vkcY/Yv1CAm7cafJBbjzcInRQLcfKpzZ8Sytir4N
-         i491NNojHdmjTpRgARDsSRoNmnTni3APlYuW5HuOrwOW4h594kG9tWrD6fU+jn49SJQt
-         OkKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:in-reply-to
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=Em+jJfvDYtWrXqDLbYwnw38CyHkeIaTVOi+KfPUDZu8=;
-        b=p1AC0PIifpRlsOeVlRTjvIqUbNIHT5hFMenG3btufP13ty3oANw8mbmtbeVvxk0lz4
-         NdKZ02nRfkUqunRBBrvlIoLVOb9NPGP6aA2M2xVP37ibNpUsEh4PN3HEukNnYtXPtXdF
-         ehWCSCzE9jsS/3q4ODwaN4HYExbuVamkI1M9kT4DCNhARe+qg+RlHSZ9cJEWlztV9hES
-         QGLlXDgPcAhmoWvKtfZaYQChbaVzFERYtS2LiN6N2yip/q7YR+veglKoAjJgW/bFdrVm
-         /yaMlqaTnSsKP0R2EsB9nQWDwBpNh7fW/vuZgH2pnqsTry0jZbXWSmyOYj/raNz6qFrE
-         Y3TQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=gJ8kjJbW;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=gJ8kjJbW;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2581406-1519770283-2-13169411925093439172
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519770283; b=JOSYhQSjtvvl0VJltdejCIlR9x2nMsbMjnzhegle+CPKR9X
+    fcOxWplP38cf5VJH1s4mwrmGQB8bBUaZov7lIz91kym48oBcULw1v+NyJG1PlWxg
+    oZSfBKjyllkOHWALpOlLhME4cSqYCOy6Rb96l+FgIjolesF4CQ3X1edGOiUpCG2J
+    43m/Lu28GJ3tQY3grw+IHI1f32vyCJqWpozA+/glfhFncDRhQeRbn9V2jkmGIA6y
+    KQ0YJLZF7wM7m85rn26Tug5o9hDL+IObrDmfHQG8PeOn9+gGV1Kwu9qojDLM0TK8
+    eZnCrZicGsxBUXjFvlLO5azlaf36/y5TWkc4pXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519770283; bh=+GMYle+y/CREFdUzx5j62awnqL
+    RuVwEH0GIRk6AzeFE=; b=GYGsRgRazskhqD/fg0yzLGSK6Gx/kn2bN+f5hwaecp
+    Bgp7oU6QTSHSDVC/eCVZODJNCnHSTQa9/YheKrtUwy5yU3F+eLaenez/1lXYnSTs
+    9CwIwqq+1kwnMiOI1LlgNQa2p2o4WBvz8sCsRXhna/dpR83gLQIL5vN2vIhNgej3
+    fT6Og0tFyZqtGxNqcmqJfzdrBUocJ+GQlnICvwo59hxBTJO3RD3yBSeHbjnXbgWC
+    4vxx5UmM5+ciDFLBGtAh5WaPHJa/bDGkmHDGmZ+RifK7h+BjEVNUncXYAEwvqGHy
+    HWj36nsR8uTnN2wTX1i9IUZkBc1j/D+pQSgc/ksU+egQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751960AbeB0XAB (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 27 Feb 2018 18:00:01 -0500
-Received: from mail-io0-f181.google.com ([209.85.223.181]:39718 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbeB0W75 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:59:57 -0500
-Date: Tue, 27 Feb 2018 16:59:55 -0600
-From: Dan Rue <dan.rue@linaro.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Shuah Khan <shuah@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK"
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: selftests/x86/fsgsbase_64 test problem
-Message-ID: <20180227225955.s2vs4g7oc7tdi72i@xps>
-References: <CALCETrUi7Ub2TbFy3Cvj+j4VXZeYULPY+mgL7OX7bz9L8GO9ew@mail.gmail.com>
- <CALCETrWvkd68wPCxGwmzqgsLTr_59+=L9u8obwt+f+oUQwDY=w@mail.gmail.com>
- <CALCETrW5=K5wJqLRZACmJJ+LF8Nb+Yf3OJ1tTNwqiOCxHu3w1Q@mail.gmail.com>
- <CALCETrWq04AngUHkSv-bqDYXDSVH8N0bhXS_Nh63SpMmndexSA@mail.gmail.com>
- <CALCETrUcJ2dVkSXGhtRvQeYQZZhPca95VhjQB8j6dFN6hzceSQ@mail.gmail.com>
- <46328204-e363-e517-f30c-c8c94ac1442c@zytor.com>
- <CALCETrW6SY8ktqSA-r108WkNf15js4eu0grDds=JVbNtBdSGqA@mail.gmail.com>
- <624b9e67-14ee-6882-e55e-f337ec2471d3@zytor.com>
- <F6FCC323-841E-4337-B1E7-8F2E502552D6@amacapital.net>
- <0b0a3cea-d951-d3be-16de-a0e9d50cb2ba@zytor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b0a3cea-d951-d3be-16de-a0e9d50cb2ba@zytor.com>
-User-Agent: NeoMutt/20171215
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+        id S1751950AbeB0WYW (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 17:24:22 -0500
+Received: from osg.samsung.com ([64.30.133.232]:32873 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751898AbeB0WYU (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:24:20 -0500
+From: Shuah Khan <shuahkh@osg.samsung.com>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, yuyang.du@intel.com,
+        k.opasiak@samsung.com, nobuo.iwata@fujixerox.co.jp,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usbip: tools usbip_attach: Fix cryptic error messages
+Date: Tue, 27 Feb 2018 15:23:55 -0700
+Message-Id: <20180227222356.23245-1-shuahkh@osg.samsung.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590669876861238825?=
-X-GMAIL-MSGID: =?utf-8?q?1593596878883771098?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Jan 29, 2018 at 10:30:05AM -0800, H. Peter Anvin wrote:
-> On 01/29/18 10:26, Andy Lutomirski wrote:
-> >>>
-> >>> That will utterly suck on non-UMIP machines that have
-> >>> hypervisor-provided UMIP emulation.
-> >>
-> >> Is that a valid thing to optimize for, especially given that paranoid
-> >> entries aren't the most common anyway?
-> > 
-> > A bunch of people seem to care about NMI performance for perf.
-> >
-> 
-> That wasn't really the question...
-> 
-> > And the current patch set works without this trick.
-> 
-> But I believe the tricks it uses are fragile.
-> 
-> > FWIW, if we switch all entries to the entry text trampoline, we get direct percpu access for free.
-> 
-> That might be a better option.
+Attach device error message is cryptic and useless. Fix it to be
+informative.
 
-Has there been any conclusion to this thread? I can still reproduce the
-issue on mainline and next.
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+---
+ tools/usb/usbip/src/usbip_attach.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Dan
+diff --git a/tools/usb/usbip/src/usbip_attach.c b/tools/usb/usbip/src/usbip_attach.c
+index 7f07b2d50f59..f60738735398 100644
+--- a/tools/usb/usbip/src/usbip_attach.c
++++ b/tools/usb/usbip/src/usbip_attach.c
+@@ -195,7 +195,8 @@ static int attach_device(char *host, char *busid)
+ 
+ 	rhport = query_import_device(sockfd, busid);
+ 	if (rhport < 0) {
+-		err("query");
++		err("Attach request for Device %s. Is this device exported?",
++		    busid);
+ 		return -1;
+ 	}
+ 
+-- 
+2.14.1
+
