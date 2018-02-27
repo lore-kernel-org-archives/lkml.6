@@ -1,99 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751728AbeB0CAC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:00:02 -0500
-Received: from mga14.intel.com ([192.55.52.115]:29726 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751634AbeB0CAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:00:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
-   d="scan'208";a="178307447"
-Date: Tue, 27 Feb 2018 10:00:58 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: David Rientjes <rientjes@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 2/3] mm/free_pcppages_bulk: do not hold lock when
- picking pages to free
-Message-ID: <20180227020058.GB9141@intel.com>
-References: <20180226135346.7208-1-aaron.lu@intel.com>
- <20180226135346.7208-3-aaron.lu@intel.com>
- <alpine.DEB.2.20.1802261352160.135844@chino.kir.corp.google.com>
+        id S1751669AbeB0CDF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:03:05 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33380 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751396AbeB0CDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 21:03:03 -0500
+X-Google-Smtp-Source: AH8x225SsCd2MFBpTjZPMB4+MGzasljKQfH6qIiK0JurBIQpYcX5d8yPmqT9BMtmbJYEXmQTYwiqRw==
+Date: Tue, 27 Feb 2018 11:03:07 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        akpm@linux-foundation.org, mpe@ellerman.id.au, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        julien.thierry@arm.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 03/13] kexec_file, x86, powerpc: factor out
+ kexec_file_ops functions
+Message-ID: <20180227020304.GE6019@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Philipp Rudo <prudo@linux.vnet.ibm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, bauerman@linux.vnet.ibm.com,
+        dhowells@redhat.com, vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, akpm@linux-foundation.org, mpe@ellerman.id.au,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, julien.thierry@arm.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+ <20180222111732.23051-4-takahiro.akashi@linaro.org>
+ <20180226121718.3432bbd6@ThinkPad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802261352160.135844@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180226121718.3432bbd6@ThinkPad>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:53:10PM -0800, David Rientjes wrote:
-> On Mon, 26 Feb 2018, Aaron Lu wrote:
+On Mon, Feb 26, 2018 at 12:17:18PM +0100, Philipp Rudo wrote:
+> Hi AKASHI
 > 
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 3154859cccd6..35576da0a6c9 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -1116,13 +1116,11 @@ static void free_pcppages_bulk(struct zone *zone, int count,
-> >  	int migratetype = 0;
-> >  	int batch_free = 0;
-> >  	bool isolated_pageblocks;
-> > +	struct page *page, *tmp;
-> > +	LIST_HEAD(head);
-> >  
-> >  	pcp->count -= count;
-> > -	spin_lock(&zone->lock);
-> > -	isolated_pageblocks = has_isolate_pageblock(zone);
-> > -
-> >  	while (count) {
-> > -		struct page *page;
-> >  		struct list_head *list;
-> >  
-> >  		/*
-> > @@ -1144,26 +1142,31 @@ static void free_pcppages_bulk(struct zone *zone, int count,
-> >  			batch_free = count;
-> >  
-> >  		do {
-> > -			int mt;	/* migratetype of the to-be-freed page */
-> > -
-> >  			page = list_last_entry(list, struct page, lru);
-> >  			/* must delete as __free_one_page list manipulates */
+> On Thu, 22 Feb 2018 20:17:22 +0900
+> AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
 > 
-> Looks good in general, but I'm not sure how I reconcile this comment with 
-> the new implementation that later links page->lru again.
-
-Thanks for pointing this out.
-
-I think the comment is useless now since there is a list_add_tail right
-below so it's obvious we need to take the page off its original list.
-I'll remove the comment in an update.
-
+> [...]
 > 
-> >  			list_del(&page->lru);
-> >  
-> > -			mt = get_pcppage_migratetype(page);
-> > -			/* MIGRATE_ISOLATE page should not go to pcplists */
-> > -			VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
-> > -			/* Pageblock could have been isolated meanwhile */
-> > -			if (unlikely(isolated_pageblocks))
-> > -				mt = get_pageblock_migratetype(page);
-> > -
-> >  			if (bulkfree_pcp_prepare(page))
-> >  				continue;
-> >  
-> > -			__free_one_page(page, page_to_pfn(page), zone, 0, mt);
-> > -			trace_mm_page_pcpu_drain(page, 0, mt);
-> > +			list_add_tail(&page->lru, &head);
-> >  		} while (--count && --batch_free && !list_empty(list));
-> >  	}
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index 990adae52151..a6d14a768b3e 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -26,34 +26,83 @@
+> >  #include <linux/vmalloc.h>
+> >  #include "kexec_internal.h"
+> > 
+> > +const __weak struct kexec_file_ops * const kexec_file_loaders[] = {NULL};
+> > +
+> 
+> Having a weak definition of kexec_file_loaders causes trouble on s390 with 
+> gcc 4.8 (newer versions seem to work fine). For me it looks like that in this
+> version gcc doesn't recognize __weak but use the default value for
+> optimization. This leads to _kexec_kernel_image_probe to always return ENOEXEC
+> because the for-loop gets optimized out.
+
+I gave it a try to compile with gcc 4.9 (not 4.8) for arm64
+and didn't see any errors or warnings, but
+
+> The problem can easily be worked around by declaring kexec_file_loaders in
+> include/linux/kexec.h and defining it in arch code. In particular doing this
+> 
+> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> index 37e9dce518aa..fc0788540d90 100644
+> --- a/include/linux/kexec.h
+> +++ b/include/linux/kexec.h
+> @@ -139,6 +139,8 @@ struct kexec_file_ops {
+>  #endif
+>  };
+>  
+> +extern const struct kexec_file_ops * const kexec_file_loaders[];
+> +
+>  /**
+>   * struct kexec_buf - parameters for finding a place for a buffer in memory
+>   * @image:	kexec image in which memory to search.
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 17ba407d0e79..4e3d1e4bc7f6 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -31,8 +31,6 @@
+>  #include <linux/vmalloc.h>
+>  #include "kexec_internal.h"
+>  
+> -const __weak struct kexec_file_ops * const kexec_file_loaders[] = {NULL};
+> -
+>  #ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
+>  static int kexec_calculate_store_digests(struct kimage *image);
+>  #else
+
+Your change is just fine with me, too.
+I will incorporate it in my next version.
+
+Thanks,
+-Takahiro AKASHI
+
+> A nice side effect of this solution is, that a developer who forgets to define
+> kexec_file_loaders gets a linker error. So he directly knows what's missing
+> instead of first having to find out where/why an error gets returned.
+> 
+> Otherwise the series is fine for me.
+> 
+> Thanks
+> Philipp
+> 
+> >  #ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
+> >  static int kexec_calculate_store_digests(struct kimage *image);
+> >  #else
+> >  static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
+> >  #endif
+> > 
+> > +int _kexec_kernel_image_probe(struct kimage *image, void *buf,
+> > +			     unsigned long buf_len)
+> > +{
+> > +	const struct kexec_file_ops * const *fops;
+> > +	int ret = -ENOEXEC;
+> > +
+> > +	for (fops = &kexec_file_loaders[0]; *fops && (*fops)->probe; ++fops) {
+> > +		ret = (*fops)->probe(buf, buf_len);
+> > +		if (!ret) {
+> > +			image->fops = *fops;
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  /* Architectures can provide this probe function */
+> >  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
+> >  					 unsigned long buf_len)
+> >  {
+> > -	return -ENOEXEC;
+> > +	return _kexec_kernel_image_probe(image, buf, buf_len);
+> > +}
+> > +
+> > +void *_kexec_kernel_image_load(struct kimage *image)
+> > +{
+> > +	if (!image->fops || !image->fops->load)
+> > +		return ERR_PTR(-ENOEXEC);
+> > +
+> > +	return image->fops->load(image, image->kernel_buf,
+> > +				 image->kernel_buf_len, image->initrd_buf,
+> > +				 image->initrd_buf_len, image->cmdline_buf,
+> > +				 image->cmdline_buf_len);
+> >  }
+> > 
+> >  void * __weak arch_kexec_kernel_image_load(struct kimage *image)
+> >  {
+> > -	return ERR_PTR(-ENOEXEC);
+> > +	return _kexec_kernel_image_load(image);
+> > +}
+> > +
+> > +int _kimage_file_post_load_cleanup(struct kimage *image)
+> > +{
+> > +	if (!image->fops || !image->fops->cleanup)
+> > +		return 0;
+> > +
+> > +	return image->fops->cleanup(image->image_loader_data);
+> >  }
+> > 
+> >  int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+> >  {
+> > -	return -EINVAL;
+> > +	return _kimage_file_post_load_cleanup(image);
+> >  }
+> > 
+> >  #ifdef CONFIG_KEXEC_VERIFY_SIG
+> > +int _kexec_kernel_verify_sig(struct kimage *image, void *buf,
+> > +			    unsigned long buf_len)
+> > +{
+> > +	if (!image->fops || !image->fops->verify_sig) {
+> > +		pr_debug("kernel loader does not support signature verification.\n");
+> > +		return -EKEYREJECTED;
+> > +	}
+> > +
+> > +	return image->fops->verify_sig(buf, buf_len);
+> > +}
+> > +
+> >  int __weak arch_kexec_kernel_verify_sig(struct kimage *image, void *buf,
+> >  					unsigned long buf_len)
+> >  {
+> > -	return -EKEYREJECTED;
+> > +	return _kexec_kernel_verify_sig(image, buf, buf_len);
+> >  }
+> >  #endif
+> > 
+> 
