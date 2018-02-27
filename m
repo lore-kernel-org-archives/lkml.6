@@ -1,64 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeB0QE7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:04:59 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:30301 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751733AbeB0QE5 (ORCPT
+        id S1751996AbeB0QFY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:05:24 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46575 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751706AbeB0QFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:04:57 -0500
-Subject: Re: [PATCH v2 0/3] USB OTG on STM32H743
-To: Amelie Delaunay <amelie.delaunay@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1519029988-9261-1-git-send-email-amelie.delaunay@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <05b1ec7e-8db3-20df-fb1c-3a8853f99307@st.com>
-Date: Tue, 27 Feb 2018 17:04:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 11:05:22 -0500
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] sched: Remove TASK_ALL
+Date: Tue, 27 Feb 2018 17:05:10 +0100
+Message-Id: <20180227160510.10829-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <1519029988-9261-1-git-send-email-amelie.delaunay@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-27_05:,,
- signatures=0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amélie,
+From: Peter Zijlstra <peterz@infradead.org>
 
-On 02/19/2018 09:46 AM, Amelie Delaunay wrote:
-> This patchset adds support for USB OTG HS and FS on stm32h743 SoC.
-> It also enables USB OTG HS on stm32h743i-eval board in OTG (DRD) mode. It is
-> possible to use OTG HS in Peripheral or Host mode depending on the USB
-> connector.
-> 
-> ---
-> 
-> Changes in v2:
-> - Fix compatible string (https://patchwork.kernel.org/patch/10222153/)
-> 
-> Amelie Delaunay (3):
->    ARM: dts: stm32: add USB OTG HS support for STM32H743 SoC
->    ARM: dts: stm32: add USB OTG FS support for STM32H743 SoC
->    ARM: dts: stm32: enable USB OTG HS on stm32h743i-eval
-> 
->   arch/arm/boot/dts/stm32h743-pinctrl.dtsi | 20 ++++++++++++++++++++
->   arch/arm/boot/dts/stm32h743.dtsi         | 21 +++++++++++++++++++++
->   arch/arm/boot/dts/stm32h743i-eval.dts    | 16 ++++++++++++++++
->   3 files changed, 57 insertions(+)
-> 
+It's unused:
 
-I squashed patch 1&2 and applied series on stm32-next.
+$ git grep "\<TASK_ALL\>" | wc -l
+1
 
-Regards.
-Alex
+And dangerous, kill the bugger.
+
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/sched.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b161ef8a902e..21b1168da951 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -93,7 +93,6 @@ struct task_group;
+=20
+ /* Convenience macros for the sake of wake_up(): */
+ #define TASK_NORMAL			(TASK_INTERRUPTIBLE | TASK_UNINTERRUPTIBLE)
+-#define TASK_ALL			(TASK_NORMAL | __TASK_STOPPED | __TASK_TRACED)
+=20
+ /* get_task_state(): */
+ #define TASK_REPORT			(TASK_RUNNING | TASK_INTERRUPTIBLE | \
+--=20
+2.16.2
