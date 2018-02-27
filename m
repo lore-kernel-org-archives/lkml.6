@@ -1,67 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeB0KHh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 05:07:37 -0500
-Received: from exmail.andestech.com ([59.124.169.137]:59815 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbeB0KHd (ORCPT
+        id S1752662AbeB0KJt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 05:09:49 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:64451 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752384AbeB0KJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:07:33 -0500
-Date: Tue, 27 Feb 2018 18:04:26 +0800
-From: Alan Kao <alankao@andestech.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        <sw-dev@groups.riscv.org>, <linux-kernel@vger.kernel.org>
-CC: <greentime@andestech.com>, <zong@andestech.com>
-Subject: ftrace: Proposal for an Alternative RecordMcount framework
-Message-ID: <20180227100425.GB20904@andestech.com>
+        Tue, 27 Feb 2018 05:09:47 -0500
+Subject: Re: [PATCH v3 1/2] pci: endpoint: Simplify name allocation for epf
+ device
+To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+References: <20180227100231.22561-1-embedded24@evers-fischer.de>
+ <20180227100231.22561-2-embedded24@evers-fischer.de>
+CC: <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <andy.shevchenko@gmail.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <76904bbe-ebef-9b8f-5f30-e876f73b28fe@ti.com>
+Date: Tue, 27 Feb 2018 15:39:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w1RA4qfS073557
+In-Reply-To: <20180227100231.22561-2-embedded24@evers-fischer.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+Hi,
 
-Current recordmcount framework collects the mcount call-sites by grep'ing
-the relocation info in each *.o file right after it is compiled, and then
-puts them into the __mcount_loc_start array.  This works fine in many 
-architectures, but as mentioned in this riscv/ftrace patch[1], aggressive 
-relaxing optimizations corrupt the collected offsets, resulting in panics 
-due to wrong call-site patching in runtime.
+On Tuesday 27 February 2018 03:32 PM, Rolf Evers-Fischer wrote:
+> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> 
+> This commit replaces allocating and freeing the intermediate
+> 'buf'/'func_name' with a combination of 'kstrndup()' and 'len'.
+> 
+> 'len' is the required length of 'epf->name'.
+> 'epf->name' should be either the first part of 'name' preceding the '.'
+> or the complete 'name', if there is no '.' in the name.
+> 
+> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> ---
+>  drivers/pci/endpoint/pci-epf-core.c | 22 ++++------------------
+>  1 file changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index 766ce1dca2ec..1f2506f32bb9 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -200,8 +200,7 @@ struct pci_epf *pci_epf_create(const char *name)
+>  	int ret;
+>  	struct pci_epf *epf;
+>  	struct device *dev;
+> -	char *func_name;
+> -	char *buf;
+> +	int len;
+>  
+>  	epf = kzalloc(sizeof(*epf), GFP_KERNEL);
+>  	if (!epf) {
+> @@ -209,20 +208,11 @@ struct pci_epf *pci_epf_create(const char *name)
+>  		goto err_ret;
+>  	}
+>  
+> -	buf = kstrdup(name, GFP_KERNEL);
+> -	if (!buf) {
+> -		ret = -ENOMEM;
+> -		goto free_epf;
+> -	}
+> -
+> -	func_name = buf;
+> -	buf = strchrnul(buf, '.');
+> -	*buf = '\0';
+> -
+> -	epf->name = kstrdup(func_name, GFP_KERNEL);
+> +	len = strchrnul(name, '.') - name;
+> +	epf->name = kstrndup(name, len, GFP_KERNEL);
 
-Meanwhile, some architectures, such as RISC-V and the on-going nds32, highly 
-rely on linker relaxation as a link-time optimization to reduce code size 
-and improve performance.  It would be very undesirable to sacrifice them for
-ftrace only.  But, why can't we collect the call-sites after all of them 
-are fixed?
+shouldn't the string end with '\0'?
 
-We propose an alternative framework, for architectures that cannot
-properly record call-sites because of relaxing.  Here is the rough 
-procedure:
-
-1. During the final linking stages, do "objdump vmlinux.o | grep ..." [2]
-2. Form the output as an ELF objecj
-3. Link the object to __mcount_loc_start symbol
-4. Done
-
-With the similar reason as the patch [3], we should mark _mcount to be
-a weak symbol to prevent it from being relaxed later.
-
-We would like to know your opinion and comments on this.
-Thanks!
-
-Alan Kao
-
-[1] riscv/ftrace dynamic support [patch v4 1/6]: 
-    https://lkml.org/lkml/2018/2/13/12
-[2] This used to not collect some call-sites since their jumps has no
-    target symbol hint. It becomes possible after the fix in 2.30 release.
-    See https://github.com/riscv/riscv-binutils-gdb/issues/129 for more
-    details.
-[3] https://lkml.org/lkml/2016/5/14/101
+Thanks
+Kishon
