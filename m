@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeB0W13 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:27:29 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:60302 "EHLO mail.siol.net"
+        id S1752204AbeB0Wcp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:32:45 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:60337 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751795AbeB0W11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:27:27 -0500
+        id S1751876AbeB0W13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 17:27:29 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
@@ -14,81 +14,121 @@ Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v2 00/16] Implement H3/H5 HDMI driver
-Date: Tue, 27 Feb 2018 23:26:45 +0100
-Message-Id: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Subject: [PATCH v2 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Tue, 27 Feb 2018 23:26:46 +0100
+Message-Id: <20180227222701.9716-2-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
-OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-works well. Bug, which prevented correct operation for some resolutions,
-is also fixed.
+Some NM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-Code is based on linux-next, next-20180226 tag.
+Add support for that constrain.
 
-Best regards,
-Jernej
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
+ drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
-Changes from v1:
-- Fixed build warning on arm64
-- Fixed condition in determine_rate function in HDMI PHY clock driver
-- Added defines for polarity settings in HDMI PHY
-- Added patch to skip LVDS code path altogether if TCON doesn't support it.
-- round_rate for NM PLLs now rounds to minimal rate if requested rate is
-  lower.
-- set_rate for NM PLLs doesn't fail if requested rate is lower than minimal
-  (round_rate is called before which already guarantees that rate is not
-   lower than minimal).
-
-Jernej Skrabec (16):
-  clk: sunxi-ng: Add check for minimal rate to NM PLLs
-  clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-  clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-  clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-  dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
-  drm/sun4i: Don't process LVDS if TCON doesn't support it
-  drm/sun4i: Add support for H3 display engine
-  drm/sun4i: Add support for H3 mixer 0
-  drm/sun4i: Fix polarity configuration for DW HDMI PHY
-  drm/sun4i: Add support for variants to DW HDMI PHY
-  drm/sun4i: Move and expand DW HDMI PHY register macros
-  drm/sun4i: Add support for H3 HDMI PHY variant
-  drm/sun4i: Allow building on arm64
-  ARM: dts: sunxi: h3/h5: Add HDMI pipeline
-  ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-  ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
-
- .../bindings/display/sunxi/sun4i-drm.txt           |   6 +
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |  25 ++
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |  25 ++
- arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |  24 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  25 ++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 108 ++++++
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  |  25 ++
- .../dts/allwinner/sun50i-h5-orangepi-prime.dts     |  25 ++
- .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    |  25 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  32 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   4 +-
- drivers/clk/sunxi-ng/ccu_nm.c                      |  11 +-
- drivers/clk/sunxi-ng/ccu_nm.h                      |  27 ++
- drivers/gpu/drm/sun4i/Kconfig                      |   2 +-
- drivers/gpu/drm/sun4i/Makefile                     |   1 +
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 120 +++----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              | 157 ++++++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 369 ++++++++++++++++++---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c         | 132 ++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  12 +
- include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
- 26 files changed, 1129 insertions(+), 129 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a16de092bf94..7fc743c78c1b 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -20,7 +20,7 @@ struct _ccu_nm {
+ };
+ 
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+-			     struct _ccu_nm *nm)
++			     unsigned long min_rate, struct _ccu_nm *nm)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long best_n = 0, best_m = 0;
+@@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
+ 			unsigned long tmp_rate = parent * _n  / _m;
+ 
+-			if (tmp_rate > rate)
++			if (tmp_rate > rate || tmp_rate < min_rate)
+ 				continue;
+ 
+ 			if ((rate - tmp_rate) < (rate - best_rate)) {
+@@ -117,6 +117,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nm->fixed_post_div;
+ 
++	if (rate < nm->min_rate)
++		rate = nm->min_rate;
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 			rate /= nm->fixed_post_div;
+@@ -134,7 +137,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+-	ccu_nm_find_best(*parent_rate, rate, &_nm);
++	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
+ 	rate = *parent_rate * _nm.n / _nm.m;
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+@@ -186,7 +189,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 					   &_nm.m, &_nm.n);
+ 	} else {
+ 		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
+-		ccu_nm_find_best(parent_rate, rate, &_nm);
++		ccu_nm_find_best(parent_rate, rate, nm->min_rate, &_nm);
+ 	}
+ 
+ 	spin_lock_irqsave(nm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index eba586b4c7d0..1d8b459c50b7 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -37,6 +37,7 @@ struct ccu_nm {
+ 	struct ccu_sdm_internal		sdm;
+ 
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -88,6 +89,32 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
++					     _reg, _min_rate,		\
++					     _nshift, _nwidth,		\
++					     _mshift, _mwidth,		\
++					     _frac_en, _frac_sel,	\
++					     _frac_rate_0, _frac_rate_1,\
++					     _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
 -- 
 2.16.2
