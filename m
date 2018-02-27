@@ -1,83 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeB0D14 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 22:27:56 -0500
-Received: from mail-pl0-f51.google.com ([209.85.160.51]:39624 "EHLO
-        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbeB0D1z (ORCPT
+        id S1751853AbeB0D2s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 22:28:48 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:55524 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751463AbeB0D2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 22:27:55 -0500
-X-Google-Smtp-Source: AH8x226QJPq5L2CyT2MZR/93GV9qXD35ROJBM/EPzJ+gfuG8Sen8+SbpChn8/OeuR+erFiIe3WzvUQ==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
-From: Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15D60)
-In-Reply-To: <CAGXu5jKBmej+fXhEc+Jy7Guy+vXEZkHnc=4LNm1NNEsc1=DFVA@mail.gmail.com>
-Date: Mon, 26 Feb 2018 19:27:51 -0800
-Cc: Tycho Andersen <tycho@tycho.ws>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Sargun Dhillon <sargun@sargun.me>, Paul Moore <pmoore@redhat.com>,
-        ast@kernel.org
-Message-Id: <6314EDD9-2B0F-454C-9B99-E57694DC7AE1@amacapital.net>
-References: <20180204104946.25559-1-tycho@tycho.ws> <20180204104946.25559-2-tycho@tycho.ws> <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com> <20180214152958.cjgwh2k52zji2jxk@cisco> <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com> <CAGXu5jKBmej+fXhEc+Jy7Guy+vXEZkHnc=4LNm1NNEsc1=DFVA@mail.gmail.com>
-To: Kees Cook <keescook@chromium.org>
+        Mon, 26 Feb 2018 22:28:47 -0500
+Subject: Re: [PATCH] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>
+References: <1519631932-1730-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1519700898.3120.3.camel@wdc.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <3b6ca136-ba62-3eca-6eca-d191490b7754@oracle.com>
+Date: Tue, 27 Feb 2018 11:28:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519700898.3120.3.camel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802270036
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1R3S1He014050
 
+Hi Bart
 
+Thanks for your kindly response.
 
-> On Feb 26, 2018, at 4:49 PM, Kees Cook <keescook@chromium.org> wrote:
+On 02/27/2018 11:08 AM, Bart Van Assche wrote:
+> On Mon, 2018-02-26 at 15:58 +0800, Jianchao Wang wrote:
+>> In scsi core, __scsi_queue_insert should just put request back on
+>> the queue and retry using the same command as before. However, for
+>> blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
+>> the request. To align with the semantics of __scsi_queue_insert,
+>> just use blk_mq_requeue_request with kick_requeue_list == true.
+>>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+>> ---
+>>  drivers/scsi/scsi_lib.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+>> index a86df9c..06d8110 100644
+>> --- a/drivers/scsi/scsi_lib.c
+>> +++ b/drivers/scsi/scsi_lib.c
+>> @@ -191,7 +191,7 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+>>  	 */
+>>  	cmd->result = 0;
+>>  	if (q->mq_ops) {
+>> -		scsi_mq_requeue_cmd(cmd);
+>> +		blk_mq_requeue_request(cmd->request, true);
+>>  		return;
+>>  	}
+>>  	spin_lock_irqsave(q->queue_lock, flags);
 > 
->> On Wed, Feb 14, 2018 at 9:19 AM, Andy Lutomirski <luto@amacapital.net> wrote:
->>> On Wed, Feb 14, 2018 at 3:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->>>> On Tue, Feb 13, 2018 at 01:09:20PM -0800, Kees Cook wrote:
->>>> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
->>>> I wonder if this communication should be netlink, which gives a more
->>>> well-structured way to describe what's on the wire? The reason I ask
->>>> is because if we ever change the seccomp_data structure, we'll now
->>>> have two places where we need to deal with it (the first being within
->>>> the BPF itself). My initial idea was to prefix the communication with
->>>> a size field, then send the structure, and then I had nightmares, and
->>>> realized this was basically netlink reinvented.
->>> 
->>> I suggested netlink in LA, and everyone (especially Andy) groaned very
->>> loudly :). I'm happy to switch it to netlink if you like, although i
->>> think memcpy() of structs should be safe here, since the return value
->>> from read or write can indicate the size of things.
->> 
->> I could easily get on board with "netlink" (i.e. NLA) messages sent
->> over an fd.  I will object strongly to the use of netlink *sockets*.
-> 
-> Yeah, I was thinking NLA over the fd; not a netlink socket.
-> 
->>>> An ERRNO filter would block a USER_NOTIF because it's unconditional.
->>>> TRACE could be either, USER_NOTIF could be either.
->>>> 
->>>> This means TRACE rules would be bumped by a USER_NOTIF... hmm.
->>> 
->>> Yes, I didn't exactly know what to do here. ERRNO, TRAP, and KILL all
->>> seemed more important than USER_NOTIF, but TRACE didn't. I don't have
->>> a strong opinion about what to do here, because users can adjust their
->>> filters accordingly. Let me know what you prefer.
->> 
->> If we switched to eBPF functions, this whole issue goes away.
-> 
-> Yeah, though we'd still need some kind of "wait for answer" eBPF
-> function. It feels wrong to re-use maps for that...
-> 
+> I think this patch will break the code in the aacraid driver that iterates
+> over sdev->cmd_list because commands are added to and removed from that
+> list in the prep / unprep code.
 
-BPF_CALL.
+If that is true, what if aacraid driver uses block legacy instead of blk-mq ?
+w/ blk-mq disabled, __scsi_queue_insert just requeue the request with blk_requeue_request.
 
-Alexei, can we make it so that each bpf program type can easily limit which BPF_CALL helpers can be use and allow bpf program types to add their own helpers?c
+__scsi_queue_insert
+...
+	if (q->mq_ops) {
+		scsi_mq_requeue_cmd(cmd);
+		return;
+	}
+	spin_lock_irqsave(q->queue_lock, flags);
+	blk_requeue_request(q, cmd->request);
+	kblockd_schedule_work(&device->requeue_work);
+	spin_unlock_irqrestore(q->queue_lock, flags);
+...
+
+no prep/unprep code there for block legacy code.
+
+Thanks
+Jianchao
+
+> 
+> Bart.
+> 
