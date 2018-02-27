@@ -1,98 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeB0QI6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 11:08:58 -0500
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:38523 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750997AbeB0QI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:08:56 -0500
-X-Google-Smtp-Source: AG47ELuh2JBkZQTVNRDD+PhUmSuTsNC6yXtqhM5YhmWGjkhmqj5rbzBc6Q5QajciHs5MxLjLZ2TELMt18pfd1YHhxm4=
+        id S1752085AbeB0QJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 11:09:27 -0500
+Received: from verein.lst.de ([213.95.11.211]:49343 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751004AbeB0QJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 11:09:25 -0500
+Date: Tue, 27 Feb 2018 17:09:24 +0100
+From: Torsten Duwe <duwe@lst.de>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        Balbir Singh <bsingharora@gmail.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org
+Subject: [PATCH 2/2] ppc64le save_stack_trace_tsk_reliable (Was:
+        HAVE_RELIABLE_STACKTRACE)
+Message-ID: <20180227160924.GA19111@lst.de>
+References: <20171004152516.25803-1-kamalesh@linux.vnet.ibm.com> <20171005124313.GA25100@lst.de> <9f388c9a-8d74-865a-b113-f77322918b39@linux.vnet.ibm.com> <20171017144733.GB2136@lst.de> <95e6f942-88b7-0208-0eb0-2f5462aec410@linux.vnet.ibm.com> <20171020120739.GA20306@lst.de> <1508547548.5662.2.camel@gmail.com> <39bb7180-1adf-4df6-c9ba-c6f92754767f@linux.vnet.ibm.com> <20171212113912.GA1907@lst.de> <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
-References: <1519747014-17561-1-git-send-email-mario.limonciello@dell.com> <1519747014-17561-3-git-send-email-mario.limonciello@dell.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 18:08:54 +0200
-Message-ID: <CAHp75VcNWo0Mh8jYU0vV+RRt3ZudKns_ZStcp_7ueebJfwL_nQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-To: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 5:56 PM, Mario Limonciello
-<mario.limonciello@dell.com> wrote:
-> Some race conditions were raised due to dell-smbios and its backends
-> not being ready by the time that a consumer would call one of the
-> exported methods.
->
-> To avoid this problem, guarantee that all initialization has been
-> done by linking them all together and running init for them all.
->
-> As part of this change the Kconfig needs to be adjusted so that
-> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
-> rather than modules.
->
-> CONFIG_DELL_SMBIOS is a visually selectable option again and both
-> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
+On Tue, Dec 12, 2017 at 01:12:37PM +0100, Miroslav Benes wrote:
+> 
+> I think that this is not enough. You need to also implement 
+> save_stack_trace_tsk_reliable() for powerpc defined as __weak in 
+> kernel/stacktrace.c.
+
+So here is my initial proposal. I'd really like to get the successful
+exit stricter, i.e. hit the initial stack value exactly instead of just
+a window. Also, the check for kernel code looks clumsy IMHO. IOW:
+Comments more than welcome!
+
+Most of it is Copy&Waste, nonetheless:
+
+Signed-off-by: Torsten Duwe <duwe@suse.de>
 
 
-> --- a/drivers/platform/x86/dell-smbios-smm.c
-> +++ b/drivers/platform/x86/dell-smbios-smm.c
-
-> +#ifdef CONFIG_DELL_SMBIOS_SMM
-
-> +#else /* CONFIG_DELL_SMBIOS_SMM */
-> +int init_dell_smbios_smm(void)
-> +{
-> +       return -ENODEV;
-> +}
-
-> +void exit_dell_smbios_smm(void)
-> +{}
-> +#endif /* CONFIG_DELL_SMBIOS_SMM */
-
-> --- a/drivers/platform/x86/dell-smbios-wmi.c
-> +++ b/drivers/platform/x86/dell-smbios-wmi.c
-
-> +#ifdef CONFIG_DELL_SMBIOS_WMI
-
-> +#else /* CONFIG_DELL_SMBIOS_WMI */
-> +int init_dell_smbios_wmi(void)
-> +{
-> +       return -ENODEV;
-> +}
-> +
-> +void exit_dell_smbios_wmi(void)
-> +{}
-> +#endif /* CONFIG_DELL_SMBIOS_WMI */
-
-It's rather strange to see above in *.c and not in *.h where it's
-usually supposed to be...
-
-> --- a/drivers/platform/x86/dell-smbios.h
-> +++ b/drivers/platform/x86/dell-smbios.h
-> @@ -75,4 +75,10 @@ int dell_laptop_register_notifier(struct notifier_block *nb);
->  int dell_laptop_unregister_notifier(struct notifier_block *nb);
->  void dell_laptop_call_notifier(unsigned long action, void *data);
->
-> +/* for the supported backends */
-> +int init_dell_smbios_wmi(void);
-> +void exit_dell_smbios_wmi(void);
-> +int init_dell_smbios_smm(void);
-> +void exit_dell_smbios_smm(void);
-> +
-
-...here...
-
->  #endif
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index d534ed901538..e08af49e71d0 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -13,6 +13,7 @@
+ #include <linux/export.h>
+ #include <linux/sched.h>
+ #include <linux/sched/debug.h>
++#include <linux/sched/task_stack.h>
+ #include <linux/stacktrace.h>
+ #include <asm/ptrace.h>
+ #include <asm/processor.h>
+@@ -76,3 +77,58 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ 	save_context_stack(trace, regs->gpr[1], current, 0);
+ }
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
++
++#ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
++int
++save_stack_trace_tsk_reliable(struct task_struct *tsk,
++                              struct stack_trace *trace)
++{
++	unsigned long sp;
++	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
++	/* the last frame (unwinding first) may not yet have saved its LR onto the stack. */
++	int firstframe = 1;
++
++	if (tsk == current)
++		sp = current_stack_pointer();
++	else
++		sp = tsk->thread.ksp;
++
++	if (sp < stack_page + sizeof(struct thread_struct)
++	    || sp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
++		return 1;
++	
++	for (;;) {
++		unsigned long *stack = (unsigned long *) sp;
++		unsigned long newsp, ip;
++
++		newsp = stack[0];
++		/* Stack grows downwards; unwinder may only go up */
++		if (newsp <= sp)
++			return 1;
++
++		if (newsp >= stack_page + THREAD_SIZE)
++			return 1; /* invalid backlink, too far up! */
++
++		/* Examine the saved LR: it must point into kernel code. */
++		ip = stack[STACK_FRAME_LR_SAVE];
++		if ( (ip & 0xEFFF000000000000) != CONFIG_KERNEL_START
++		     && !firstframe)
++			return 1;
++		firstframe = 0;
++
++		if (!trace->skip)
++			trace->entries[trace->nr_entries++] = ip;
++		else
++			trace->skip--;
++
++		if (newsp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
++			break; /* hit the window for last frame */
++
++		if (trace->nr_entries >= trace->max_entries)
++			return -E2BIG;
++
++		sp = newsp;
++	}
++	return 0;
++}
++#endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
