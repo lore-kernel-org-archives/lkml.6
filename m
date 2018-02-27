@@ -1,62 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751304AbeB0FPX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 00:15:23 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:32900 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750789AbeB0FPW (ORCPT
+        id S1751943AbeB0FQh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 00:16:37 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45299 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeB0FQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 00:15:22 -0500
-Subject: Re: [PATCH] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-References: <1519631932-1730-1-git-send-email-jianchao.w.wang@oracle.com>
- <1519700898.3120.3.camel@wdc.com>
- <3b6ca136-ba62-3eca-6eca-d191490b7754@oracle.com>
- <1519702875.3120.7.camel@wdc.com>
- <db9c47e6-d8ea-1e9e-609a-ff1b1db3769c@oracle.com>
- <1519708355.3120.9.camel@wdc.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <478f40f1-d86c-ee5f-daaf-6332b67fe721@oracle.com>
-Date: Tue, 27 Feb 2018 13:15:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Feb 2018 00:16:34 -0500
+From: John Ogness <john.ogness@linutronix.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: dcache: remove trylock loops (was Re: [BUG] lock_parent() breakage when used from shrink_dentry_list())
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+        <20180222235025.28662-7-john.ogness@linutronix.de>
+        <20180223035814.GZ30522@ZenIV.linux.org.uk>
+        <20180223040814.GA30522@ZenIV.linux.org.uk>
+        <87h8q7erlo.fsf@linutronix.de>
+        <20180223150928.GC30522@ZenIV.linux.org.uk>
+        <20180223174216.GD30522@ZenIV.linux.org.uk>
+        <20180223201317.GG30522@ZenIV.linux.org.uk>
+        <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+        <20180224002248.GH30522@ZenIV.linux.org.uk>
+        <20180225073950.GI30522@ZenIV.linux.org.uk>
+Date: Tue, 27 Feb 2018 06:16:28 +0100
+In-Reply-To: <20180225073950.GI30522@ZenIV.linux.org.uk> (Al Viro's message of
+        "Sun, 25 Feb 2018 07:40:05 +0000")
+Message-ID: <87bmgbnhar.fsf_-_@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1519708355.3120.9.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=871
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802270057
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
+On 2018-02-25, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> I'll play with cleaning up and reordering tomorrow after I get some
+> sleep.  In the meanwhile, the current state of that set is at
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.dcache
 
-Thanks for your kindly response.
+I have one comment on your new dentry_kill()...
 
-On 02/27/2018 01:12 PM, Bart Van Assche wrote:
-> On Tue, 2018-02-27 at 12:00 +0800, jianchao.wang wrote:
->> On the other hand, this patch is to align the actions between blk-mq and block
->> legacy code in __scsi_queue_insert.
-> 
-> Hello Jianchao,
-> 
-> Since the legacy SCSI core unpreps an reprepares a request when requeuing it I
-> think your patch does not align the blk-mq and legacy block layer actions but
-> instead makes the behavior of the two code paths different.
-> 
+> From e77db95d1ad189c76bcda7b90ac2225e98d776a2 Mon Sep 17 00:00:00 2001
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> Date: Fri, 23 Feb 2018 21:25:42 -0500
+> Subject: [PATCH] get rid of trylock loop around dentry_kill()
+>
+> In case when trylock in there fails, deal with it directly in
+> dentry_kill().  Note that in cases when we drop and retake
+> ->d_lock, we need to recheck whether to retain the dentry.
+> Another thing is that dropping/retaking ->d_lock might have
+> ended up with negative dentry turning into positive; that,
+> of course, can happen only once...
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/dcache.c | 34 +++++++++++++++++++++++++++-------
+>  1 file changed, 27 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 449c1a5..c1f082d 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -657,23 +657,43 @@ static struct dentry *dentry_kill(struct dentry *dentry)
+>  	struct dentry *parent = NULL;
+>  
+>  	if (inode && unlikely(!spin_trylock(&inode->i_lock)))
+> -		goto failed;
+> +		goto slow_positive;
+>  
+>  	if (!IS_ROOT(dentry)) {
+>  		parent = dentry->d_parent;
+>  		if (unlikely(!spin_trylock(&parent->d_lock))) {
+> -			if (inode)
+> -				spin_unlock(&inode->i_lock);
+> -			goto failed;
+> +			parent = __lock_parent(dentry);
+> +			if (likely(inode || !dentry->d_inode))
+> +				goto got_locks;
+> +			/* negative that became positive */
+> +			if (parent)
+> +				spin_unlock(&parent->d_lock);
+> +			inode = dentry->d_inode;
+> +			goto slow_positive;
+>  		}
+>  	}
+> -
+>  	__dentry_kill(dentry);
+>  	return parent;
+>  
+> -failed:
+> +slow_positive:
+> +	spin_unlock(&dentry->d_lock);
+> +	spin_lock(&inode->i_lock);
+> +	spin_lock(&dentry->d_lock);
+> +	parent = lock_parent(dentry);
+> +got_locks:
+> +	if (likely(dentry->d_lockref.count == 1 && !retain_dentry(dentry))) {
+> +		__dentry_kill(dentry);
+> +		return parent;
+> +	}
+> +	/* we are keeping it, after all */
+> +	if (inode)
+> +		spin_unlock(&inode->i_lock);
+> +	if (parent)
+> +		spin_unlock(&parent->d_lock);
 
-Can you share more details about this ? 
+If someone else has grabbed a reference, it shouldn't be added to the
+lru list. Only decremented.
 
-Thanks 
-Jianchao 
+if (entry->d_lockref.count == 1)
+
+> +	dentry_lru_add(dentry);
+> +	dentry->d_lockref.count--;
+>  	spin_unlock(&dentry->d_lock);
+> -	return dentry; /* try again with same dentry */
+> +	return NULL;
+>  }
+>  
+>  /*
