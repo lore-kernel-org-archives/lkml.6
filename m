@@ -1,152 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753977AbeB0PFx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 10:05:53 -0500
-Received: from relmlor3.renesas.com ([210.160.252.173]:14417 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752573AbeB0PFu (ORCPT
+        id S1754092AbeB0PGW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 10:06:22 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33193 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753997AbeB0PGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:05:50 -0500
-X-IronPort-AV: E=Sophos;i="5.47,401,1515423600";
-   d="scan'208";a="272291789"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
-Thread-Topic: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
-Thread-Index: AQHTr9Kltqdm2PoG7E68/YC+voS9LqO4TqAAgAAAiOCAAAN1gIAABH5g
-Date: Tue, 27 Feb 2018 15:05:46 +0000
-Message-ID: <HK2PR0601MB139380F295EF5CE849288F91F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1519739731-27920-1-git-send-email-phil.edworthy@renesas.com>
- <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
- <HK2PR0601MB1393B39958A128DCB8CA0E44F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
- <b725dcf5-2f53-dab7-1e0c-85ea138f54a9@rock-chips.com>
-In-Reply-To: <b725dcf5-2f53-dab7-1e0c-85ea138f54a9@rock-chips.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR0601MB1873;7:D93x1FM9couwjHXpIy0dWdQaMHCjQW8vfHm7UazxfCVsD882wTrJue5fA/V7SRwHweRz5vwxgAvxXAmr4XbZ8Lxw5z0KPUxM8YcI+4sJnFuSnoMVyFj5A33BqY8SDZ9iie4W521KHdUUNf55hz9+t4+PtCM20QrCThIS7r9VgzYCz4S9TkHABJrtH/9R27+HUe7Xh9MFPaW5sOhejXZ87V7KptH3+wKyQhZcj/OtzhiUlMn0+nv5aHstShN/YgbD;20:n9ve5Az0tyzugHrryKZ/GQlITWuVYgDWI9IWyBFIqoT4kPMYZbHavBFwZF0qwUKRTvjNEXc8LJkrpCOgMagA+mL4zh9KUQm+KlsPNsGEIJd1i7lBJ4jZVsFEbxv/VXhcR21elPY+GPbIGsjOuF4MHKt5lxlHJ42WPltSPsN7f2c=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cfe82109-fb01-4542-e059-08d57df394d4
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:HK2PR0601MB1873;
-x-ms-traffictypediagnostic: HK2PR0601MB1873:
-x-microsoft-antispam-prvs: <HK2PR0601MB187374CF028D12F22107624AF5C00@HK2PR0601MB1873.apcprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3231220)(944501198)(52105095)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:HK2PR0601MB1873;BCL:0;PCL:0;RULEID:;SRVR:HK2PR0601MB1873;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(39380400002)(366004)(39860400002)(189003)(199004)(68736007)(86362001)(25786009)(5250100002)(4326008)(2900100001)(33656002)(66066001)(229853002)(5660300001)(74316002)(3660700001)(305945005)(7736002)(6916009)(2950100002)(8666007)(9686003)(55016002)(6306002)(8936002)(8676002)(93886005)(478600001)(8656006)(54906003)(6436002)(2906002)(106356001)(97736004)(53546011)(6246003)(76176011)(6506007)(3846002)(53936002)(14454004)(3280700002)(186003)(6116002)(99286004)(7696005)(316002)(102836004)(59450400001)(966005)(105586002)(26005)(6346003)(81166006)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR0601MB1873;H:HK2PR0601MB1393.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com;
-x-microsoft-antispam-message-info: vI45IffnMlkJh3v4yGTcwreIs9DKuYzuJWWhwV3W3I8GNduV10sJ9iSG4Cl09yF3GegkJ4qrAcdYqga/punfnPqRaFUxxXi19saO7kAxixCz1Fio/Hl29xzF195LF0o+qEIeIdYM9Qab7HNO+e8zJSmbR/sjwH5j2VJyOOvZuAw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-2022-jp"
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfe82109-fb01-4542-e059-08d57df394d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 15:05:46.9136
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR0601MB1873
+        Tue, 27 Feb 2018 10:06:00 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: niklas.soderlund@ragnatech.se,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 3/3] media: i2c: adv748x: Add support for i2c_new_secondary_device
+Date: Tue, 27 Feb 2018 15:05:50 +0000
+Message-Id: <1519743950-28346-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1RF6J83006366
 
-Hi Shawn,
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-On 27 February 2018 14:42, Shawn Lin wrote:
-> On 2018/2/27 22:31, Phil Edworthy wrote:
-> > Hi Shawn,
-> >
-> > On 27 February 2018 14:28, Shawn Lin wrote:
-> >> 在 2018/2/27 21:55, Phil Edworthy 写道:
-> >>> Since the controller does not support the end-of-busy IRQ, don't use it.
-> >>> Otherwise, on older SD cards you will get lots of these messages:
-> >>> "mmc0: Got data interrupt 0x00000002 even though no data operation
-> >>> was
-> >> in progress"
-> >>>
-> >>
-> >> I'm afraid you have to explain which version of arasan's IP suffer
-> >> from this and what does the "older SD cards" mean?
-> > Ok, I'll try to find out the IP version...
-> > For "older SD cards", I can provide a list of a few cards that exhibit
-> > this problem and others that don't, is that enough info?
-> 
-> What I meant is could you elaborate more about what kind of cards, e.g, are
-> them the  legacy SDSC cards or SDHC cards, or maybe they are only running
-> with defaut speed? or whatever, but not just with a vague "older" cards. :)
-Unfortunately, I have one SDHC card that works, one that doesn't. Both cards
-are running with a 50MHz SD clock. All I know is this:
+The ADV748x has twelve 256-byte maps that can be accessed via the main
+I2C ports. Each map has it own I2C address and acts as a standard slave
+device on the I2C bus.
 
-SD cards that report unexpected interrupts:
-2GB Sandisk Extreme III                     (e624 SD02G 1.89 GiB)
-8GB Sandisk (SDHC class 4)              (aaaa SU08G 7.40 GiB)
-8GB Sandisk Extreme III (SDHC class 6)    (bb4e SD08G 7.61 GiB)
+Allow a device tree node to override the default addresses so that
+address conflicts with other devices on the same bus may be resolved at
+the board description level.
 
-SD cards that work ok:
-16GB Samsung (microSDHC U1 class 10)          (0001 00000 14.6 GiB)
-16GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL16G 14.8 GiB)
-32GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL32G 29.7 GiB)
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ drivers/media/i2c/adv748x/adv748x-core.c | 77 +++++++++++++++-----------------
+ drivers/media/i2c/adv748x/adv748x.h      | 14 ------
+ 2 files changed, 36 insertions(+), 55 deletions(-)
 
-Thanks
-Phil
-
-> >>> This has been reported on Xilinx devices that also use the Arasan IP.
-> >>> See https://patchwork.kernel.org/patch/8062871/
-> >>>
-> >>> This has been tested on the Renesas RZ/ND-DB board with the RZ/N1
-> SoC.
-> >>>
-> >>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> >>> ---
-> >>>    drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
-> >>>    1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c
-> >>> b/drivers/mmc/host/sdhci-of-arasan.c
-> >>> index c33a5f7..ab66e32 100644
-> >>> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> >>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> >>> @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data
-> >> sdhci_arasan_pdata = {
-> >>>    	.ops = &sdhci_arasan_ops,
-> >>>    	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> >>>    	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> >>> -			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> >>> +			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
-> >>> +			SDHCI_QUIRK2_STOP_WITH_TC,
-> >>>    };
-> >>>
-> >>>    static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32
-> >>> intmask)
-> >>>
-> >>
-> >>
-> >> --
-> >> Best Regards
-> >> Shawn Lin
-> >
-> >
-> >
-> >
-> 
-> 
-> --
-> Best Regards
-> Shawn Lin
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index 9dcaadaca217..911ccf6eb68c 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -80,21 +80,24 @@ static int adv748x_configure_regmap(struct adv748x_state *state, int region)
+ 
+ 	return 0;
+ }
++struct adv748x_register_map {
++	const char *name;
++	u8 default_addr;
++};
+ 
+-/* Default addresses for the I2C pages */
+-static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
+-	ADV748X_I2C_IO,
+-	ADV748X_I2C_DPLL,
+-	ADV748X_I2C_CP,
+-	ADV748X_I2C_HDMI,
+-	ADV748X_I2C_EDID,
+-	ADV748X_I2C_REPEATER,
+-	ADV748X_I2C_INFOFRAME,
+-	ADV748X_I2C_CBUS,
+-	ADV748X_I2C_CEC,
+-	ADV748X_I2C_SDP,
+-	ADV748X_I2C_TXB,
+-	ADV748X_I2C_TXA,
++static const struct adv748x_register_map adv748x_default_addresses[] = {
++	[ADV748X_PAGE_IO] = { "main", 0x70 },
++	[ADV748X_PAGE_DPLL] = { "dpll", 0x26 },
++	[ADV748X_PAGE_CP] = { "cp", 0x22 },
++	[ADV748X_PAGE_HDMI] = { "hdmi", 0x34 },
++	[ADV748X_PAGE_EDID] = { "edid", 0x36 },
++	[ADV748X_PAGE_REPEATER] = { "repeater", 0x32 },
++	[ADV748X_PAGE_INFOFRAME] = { "infoframe", 0x31 },
++	[ADV748X_PAGE_CBUS] = { "cbus", 0x30 },
++	[ADV748X_PAGE_CEC] = { "cec", 0x41 },
++	[ADV748X_PAGE_SDP] = { "sdp", 0x79 },
++	[ADV748X_PAGE_TXB] = { "txb", 0x48 },
++	[ADV748X_PAGE_TXA] = { "txa", 0x4a },
+ };
+ 
+ static int adv748x_read_check(struct adv748x_state *state,
+@@ -143,15 +146,20 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
+ 	return regmap_raw_write(regmap, init_reg, val, val_len);
+ }
+ 
+-static struct i2c_client *adv748x_dummy_client(struct adv748x_state *state,
+-					       u8 addr, u8 io_reg)
++static int adv748x_set_slave_addresses(struct adv748x_state *state)
+ {
+-	struct i2c_client *client = state->client;
++	struct i2c_client *client;
++	unsigned int i;
++	u8 io_reg;
++
++	for (i = ADV748X_PAGE_DPLL; i < ADV748X_PAGE_MAX; ++i) {
++		io_reg = ADV748X_IO_SLAVE_ADDR_BASE + i;
++		client = state->i2c_clients[i];
+ 
+-	if (addr)
+-		io_write(state, io_reg, addr << 1);
++		io_write(state, io_reg, client->addr << 1);
++	}
+ 
+-	return i2c_new_dummy(client->adapter, io_read(state, io_reg) >> 1);
++	return 0;
+ }
+ 
+ static void adv748x_unregister_clients(struct adv748x_state *state)
+@@ -164,13 +172,15 @@ static void adv748x_unregister_clients(struct adv748x_state *state)
+ 
+ static int adv748x_initialise_clients(struct adv748x_state *state)
+ {
+-	int i;
++	unsigned int i;
+ 	int ret;
+ 
+ 	for (i = ADV748X_PAGE_DPLL; i < ADV748X_PAGE_MAX; ++i) {
+-		state->i2c_clients[i] =
+-			adv748x_dummy_client(state, adv748x_i2c_addresses[i],
+-					     ADV748X_IO_SLAVE_ADDR_BASE + i);
++		state->i2c_clients[i] = i2c_new_secondary_device(
++				state->client,
++				adv748x_default_addresses[i].name,
++				adv748x_default_addresses[i].default_addr);
++
+ 		if (state->i2c_clients[i] == NULL) {
+ 			adv_err(state, "failed to create i2c client %u\n", i);
+ 			return -ENOMEM;
+@@ -181,7 +191,7 @@ static int adv748x_initialise_clients(struct adv748x_state *state)
+ 			return ret;
+ 	}
+ 
+-	return 0;
++	return adv748x_set_slave_addresses(state);
+ }
+ 
+ /**
+@@ -347,21 +357,6 @@ static const struct adv748x_reg_value adv748x_sw_reset[] = {
+ 	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+ };
+ 
+-static const struct adv748x_reg_value adv748x_set_slave_address[] = {
+-	{ADV748X_PAGE_IO, 0xf3, ADV748X_I2C_DPLL << 1},
+-	{ADV748X_PAGE_IO, 0xf4, ADV748X_I2C_CP << 1},
+-	{ADV748X_PAGE_IO, 0xf5, ADV748X_I2C_HDMI << 1},
+-	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
+-	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
+-	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
+-	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
+-	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
+-	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
+-	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
+-	{ADV748X_PAGE_IO, 0xfd, ADV748X_I2C_TXA << 1},
+-	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+-};
+-
+ /* Supported Formats For Script Below */
+ /* - 01-29 HDMI to MIPI TxA CSI 4-Lane - RGB888: */
+ static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
+@@ -492,7 +487,7 @@ static int adv748x_reset(struct adv748x_state *state)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = adv748x_write_regs(state, adv748x_set_slave_address);
++	ret = adv748x_set_slave_addresses(state);
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 725662edc4b8..65f83741277e 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -27,20 +27,6 @@
+ #ifndef _ADV748X_H_
+ #define _ADV748X_H_
+ 
+-/* I2C slave addresses */
+-#define ADV748X_I2C_IO			0x70	/* IO Map */
+-#define ADV748X_I2C_DPLL		0x26	/* DPLL Map */
+-#define ADV748X_I2C_CP			0x22	/* CP Map */
+-#define ADV748X_I2C_HDMI		0x34	/* HDMI Map */
+-#define ADV748X_I2C_EDID		0x36	/* EDID Map */
+-#define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
+-#define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
+-#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
+-#define ADV748X_I2C_CEC			0x41	/* CEC Map */
+-#define ADV748X_I2C_SDP			0x79	/* SDP Map */
+-#define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
+-#define ADV748X_I2C_TXA			0x4a	/* CSI-TXA Map */
+-
+ enum adv748x_page {
+ 	ADV748X_PAGE_IO,
+ 	ADV748X_PAGE_DPLL,
+-- 
+2.7.4
