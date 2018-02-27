@@ -1,67 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeB0W3n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:29:43 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34220 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752210AbeB0W3k (ORCPT
+        id S1752229AbeB0WaI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:30:08 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53412 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752008AbeB0WaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:29:40 -0500
-X-Google-Smtp-Source: AG47ELvX84Rg0+WQrirkA6SIUNilzMH7fEIS6x93DpqP0W/0Wkw+akQOH7QxjaYNjhKgLh6I2aOcBA==
-From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-To: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hernan@vanguardiasur.com.ar
-Subject: [PATCH] emulex/benet: Constify *be_misconfig_evt_port_state[]
-Date: Tue, 27 Feb 2018 19:29:23 -0300
-Message-Id: <1519770563-20603-1-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: git-send-email 2.7.4
+        Tue, 27 Feb 2018 17:30:06 -0500
+Subject: Re: [PATCH] sparse doesn't support indirect_branch attribute
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180227194828.GA29918@bombadil.infradead.org>
+ <5a85a7cf-c59c-f338-2087-c9de799adbe8@infradead.org>
+ <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a9b65d60-a3c0-f46a-c10e-5d649e75d9ce@infradead.org>
+Date: Tue, 27 Feb 2018 14:30:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Note: This is compile only tested as I have no access to the hw.
-No benefit gained except for some self-documenting.
+On 02/27/2018 02:12 PM, Linus Torvalds wrote:
+> On Tue, Feb 27, 2018 at 12:18 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> I don't mind the patch, but I did send a patch for this attribute on Feb. 13, 2018,
+>> to the sparse mailing list.
+> 
+> I think the sparse plan is to just stop warning about unknown
+> attributes, because it doesn't really help users (at most it's a note
+> to a sparse developer).
 
-add/remove: 0/0 grow/shrink: 0/0 up/down: 0/0 (0)
-Function                                     old     new   delta
-Total: Before=2757703, After=2757703, chg +0.00%
+Yes, there are sparse discussions about that.
 
-Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
----
- drivers/net/ethernet/emulex/benet/be_cmds.c | 2 +-
- drivers/net/ethernet/emulex/benet/be_cmds.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+There is also a kernel kbuild patch from Luc that Masahiro has also merged that
+does -Wno-unknown-attributes (or however that is spelled).
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
-index 1a49297..ff92ab1 100644
---- a/drivers/net/ethernet/emulex/benet/be_cmds.c
-+++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
-@@ -19,7 +19,7 @@
- #include "be.h"
- #include "be_cmds.h"
- 
--char *be_misconfig_evt_port_state[] = {
-+const char * const be_misconfig_evt_port_state[] = {
- 	"Physical Link is functional",
- 	"Optics faulted/incorrectly installed/not installed - Reseat optics. If issue not resolved, replace.",
- 	"Optics of two types installed – Remove one optic or install matching pair of optics.",
-diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.h b/drivers/net/ethernet/emulex/benet/be_cmds.h
-index 09da2d8..e8b43cf 100644
---- a/drivers/net/ethernet/emulex/benet/be_cmds.h
-+++ b/drivers/net/ethernet/emulex/benet/be_cmds.h
-@@ -201,7 +201,7 @@ enum {
- 			 phy_state == BE_PHY_UNQUALIFIED ||	\
- 			 phy_state == BE_PHY_UNCERTIFIED)
- 
--extern  char *be_misconfig_evt_port_state[];
-+extern const  char * const be_misconfig_evt_port_state[];
- 
- /* async event indicating misconfigured port */
- struct be_async_event_misconfig_port {
+> But sparse doesn't have the same regular releases the kernel has. Oh well.
+
+Right.
+
+
 -- 
-2.7.4
+~Randy
