@@ -1,83 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeB0JEU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 04:04:20 -0500
-Received: from www.zeus03.de ([194.117.254.33]:42490 "EHLO mail.zeus03.de"
+        id S1752511AbeB0JE5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 04:04:57 -0500
+Received: from mga09.intel.com ([134.134.136.24]:16376 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752330AbeB0JER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:04:17 -0500
-Date: Tue, 27 Feb 2018 10:04:16 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: George Cherian <gcherian@caviumnetworks.com>
-Cc: George Cherian <george.cherian@cavium.com>,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 4/4] i2c: xlp9xx: Check for Bus state after every transfer
-Message-ID: <20180227090416.gxgof6fyzdeshtmf@katana>
-References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com>
- <1516253964-4615-4-git-send-email-george.cherian@cavium.com>
- <20180226202248.ej3bt5o7sam6qljv@ninjato>
- <a96c4bb2-fbc5-3e21-f6b5-4da75fac3c01@caviumnetworks.com>
+        id S1752336AbeB0JEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 04:04:55 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,400,1515484800";
+   d="scan'208";a="207373257"
+Date: Tue, 27 Feb 2018 17:03:20 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH RFC 2/2] vhost: packed ring support
+Message-ID: <20180227090319.h7hxmxp5rpozrb5s@debian>
+References: <1518575829-1431-1-git-send-email-jasowang@redhat.com>
+ <1518575829-1431-3-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="62qsndw2bhkctbqb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a96c4bb2-fbc5-3e21-f6b5-4da75fac3c01@caviumnetworks.com>
+In-Reply-To: <1518575829-1431-3-git-send-email-jasowang@redhat.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 14, 2018 at 10:37:09AM +0800, Jason Wang wrote:
+[...]
+> +static void set_desc_used(struct vhost_virtqueue *vq,
+> +			  struct vring_desc_packed *desc, bool wrap_counter)
+> +{
+> +	__virtio16 flags = desc->flags;
+> +
+> +	if (wrap_counter) {
+> +		desc->flags |= cpu_to_vhost16(vq, DESC_AVAIL);
+> +		desc->flags |= cpu_to_vhost16(vq, DESC_USED);
+> +	} else {
+> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_AVAIL);
+> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_USED);
+> +	}
+> +
+> +	desc->flags = flags;
 
---62qsndw2bhkctbqb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The `desc->flags` is restored after the change.
 
-On Tue, Feb 27, 2018 at 10:30:31AM +0530, George Cherian wrote:
-> Hi Wolfram,
->=20
-> Thanks for the review.
->=20
-> On 02/27/2018 01:52 AM, Wolfram Sang wrote:
-> >=20
-> > On Thu, Jan 18, 2018 at 05:39:24AM +0000, George Cherian wrote:
-> > > I2C bus enters the STOP condition after the DATA_DONE interrupt is ra=
-ised.
-> > > Essentially the driver should be checking the bus state before sending
-> > > the next transaction.
-> >=20
-> > Yes.
-> >=20
-> > > In case the next transaction is initiated while the
-> > > bus is busy, the prior transactions stop condition is not achieved.
-> >=20
-> > I didn't fully get why you can't check the BUSY bit and wait a little
-> > just before you push out the next message?
-> Yes, I am checking for the BUSY bit and looping.
+> +}
+> +
+> +static int vhost_get_vq_desc_packed(struct vhost_virtqueue *vq,
+> +				    struct iovec iov[], unsigned int iov_size,
+> +				    unsigned int *out_num, unsigned int *in_num,
+> +				    struct vhost_log *log,
+> +				    unsigned int *log_num)
+> +{
+> +	struct vring_desc_packed desc;
+> +	int ret, access, i;
+> +	u16 avail_idx = vq->last_avail_idx;
+> +
+> +	/* When we start there are none of either input nor output. */
+> +	*out_num = *in_num = 0;
+> +	if (unlikely(log))
+> +		*log_num = 0;
+> +
+> +	do {
+> +		unsigned int iov_count = *in_num + *out_num;
+> +
+> +		i = vq->last_avail_idx & (vq->num - 1);
 
-Yes, but *after* the STOP, not *before* the next message. I haven't
-fully understood why you don't do this before the next message is about
-to be sent. That might save you some busy looping, or?
+The queue size may not be a power of 2 in packed ring.
 
-
---62qsndw2bhkctbqb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqVHw8ACgkQFA3kzBSg
-KbZEog//QeyPOdwl0exgfBrWmyynZjc4DbREIDnMQzcQmOTUuWAB3zRdg/pKIXM8
-HwJAE4C8yvj7De3PjYiG3Wz0LLTtyZv8SdqYMv+vVKn63yJjotgL1K8DagBJQDg/
-EtQfk3Jq7ZsHb8JT8CUe5LPWTm/W80IBUWf4t0xdSsCtO6GsAwWnY/c2Cd1YUjtt
-x98Uet3ilkF6jDlb/Kp4307NFZmAzWMJujGhG5ivPcI9H53lQffHxu1GU/BXw/sA
-EdqlN9KKTwqDmTTtWZq5amTgoE2E+XoyeLwhXhWnasKYw/Fx7bzRjKuWUEPeCvqN
-UW4nRVIo2e0TdJDex6sG1kS+5QYt1VjqDJEH65sckE7gHmyCKLF2yqZcyIjHqLqY
-88cHlwroxNszpN7JPEYMjdXK5fBuv5Efd7NJVT3hlvtTpKICwtX66fy2zRmGFK3F
-cJ00MvfdfeWrzapZEymuhD6rBlw4eVIB2TCn7uqhPmAk9i7sRTS2bhBEAiH/7Bpu
-Ksd4Y7jMqMRxdqpfmz80Y68uMkaVRnb4RzeIPCMegTO4GyP188pbLKnitv9L8kEr
-whWNXbtcQFHskg+/SlgkiRciSRa6OKe37NuRsIA54Cwf4Z2qJ3tg6NkqoFEEFYni
-jVvup3G9TE64fnrzdwzg1kjZNKnQRwpHk3PPEPrKnQWqkmyDi3U=
-=SFGK
------END PGP SIGNATURE-----
-
---62qsndw2bhkctbqb--
+Best regards,
+Tiwei Bie
