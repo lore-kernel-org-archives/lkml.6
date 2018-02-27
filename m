@@ -1,148 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeB0SGZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 13:06:25 -0500
-Received: from mail-cys01nam02on0051.outbound.protection.outlook.com ([104.47.37.51]:50976
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751117AbeB0SGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 13:06:24 -0500
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Borislav Petkov <bp@suse.de>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
-Thread-Topic: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
-Thread-Index: AQHTrzm1EGCswNxnok6qbkQSpXWbnqO4HBMAgAA+gSCAAB/wgIAAAzCggAAJKACAAAG4MA==
-Date: Tue, 27 Feb 2018 18:06:21 +0000
-Message-ID: <DM5PR12MB1916C280DA5B51FE9666EE21F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180226193904.20532-3-Yazen.Ghannam@amd.com>
- <20180227112234.GE26382@pd.tnic>
- <DM5PR12MB1916B6AEE434A345E78BE234F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180227170034.GJ26382@pd.tnic>
- <DM5PR12MB1916F8C7DF93C1C9402AE3ECF8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180227174446.GN26382@pd.tnic>
-In-Reply-To: <20180227174446.GN26382@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-x-originating-ip: [165.204.84.17]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1514;7:LxTBEey77u7kh/H24n2tesjtTRwH4TBl6pM0unpVUWKVh0QBCXBDo6Rt/2gI3g1gI0KwJq9Rj5Qa6QDqJ6x2lRLDTeToj1nuoDm7smUeBA5tVEVHdze5wn6LLq6NFvZX/OlAQSe6lqMAbc35c7GIQS1jAvApm4RLQYSBeyyAhTXSKAwX2NO/RL9qCCU4uoxDag8XntVkkCoSNxbBIxgCA6mND/tkGTOOWzPQaOLie4sHNqmVWER7+7oW8ujNhxap;20:8ieYKxL4w9O+OH1o4Bi2H/Sjb5P6mLKcMgETHPJj94Qd/acg7pB0jmuzrr9ktZtmGSA2GW08n9xd1sXYsnoZdGrtL4Ruwmaae8lwkFwyB79Yf9K/CGjXSagZwrvwfZa8YiFzq/zcwUw4miYkx5WfFpIr7IMUelAUDx2mW6gTFOPuq3INth7oCtpbWsa7tLgHl2MCmPcvGHT31cRFPMOSia+YInZXLHQhCoxx1+pl7pg0HqDKaQTYlQlSBQGQEKtg
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 6b2a54ed-0281-4991-6b78-08d57e0cced7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1514;
-x-ms-traffictypediagnostic: DM5PR12MB1514:
-x-microsoft-antispam-prvs: <DM5PR12MB1514D26B7BDA2E68F51CED50F8C00@DM5PR12MB1514.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501161)(52105095)(6055026)(6041288)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB1514;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1514;
-x-forefront-prvs: 05961EBAFC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(346002)(39380400002)(376002)(13464003)(199004)(189003)(6246003)(86362001)(81156014)(72206003)(4326008)(53936002)(66066001)(8676002)(81166006)(3846002)(316002)(105586002)(54906003)(33656002)(478600001)(6436002)(7696005)(106356001)(3280700002)(3660700001)(9686003)(99286004)(55016002)(53546011)(229853002)(2900100001)(6506007)(7736002)(14454004)(25786009)(186003)(6116002)(102836004)(2950100002)(6916009)(2906002)(76176011)(305945005)(26005)(68736007)(97736004)(5250100002)(93886005)(8936002)(74316002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1514;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: uSOuQgDmU61J1A3CWjc//3P/1UI+T9UZDgIjFi5965tu9xRq+OUrkI2Ezeka2FmIoo0ehnhi3r5v9MQ4TNWRYIU6ZFekDDUUTb8tjrrs/lZ3i5ZTbJT/vRtxCSRLFKyyz1sY2GgZd8Qu/aKQsUYwYvgCJOJ/GaaAqIN8W9EdM/Q=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751732AbeB0SHh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 13:07:37 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44592 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeB0SHg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 13:07:36 -0500
+X-Google-Smtp-Source: AG47ELt8li7lFmqxkYqZVN5vWgxfUOOOlAgF9VTWlTbKl2BhkC5eec/IOgHqI7I3aadd4CYyLMkIb8qgAOsklQg6BCU=
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b2a54ed-0281-4991-6b78-08d57e0cced7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2018 18:06:21.6318
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1514
+In-Reply-To: <1519747811.3402.17.camel@pengutronix.de>
+References: <20180223113924.28957-1-brgl@bgdev.pl> <1519747811.3402.17.camel@pengutronix.de>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Tue, 27 Feb 2018 19:07:34 +0100
+Message-ID: <CAMpxmJUVNzv9iQ2VUzOdkvFoknfZWSdkgDViSuDq7Du6AG-igg@mail.gmail.com>
+Subject: Re: [PATCH v5] reset: add support for non-DT systems
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+        LKML <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        David Lechner <david@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1RI6Ufi010261
 
-> -----Original Message-----
-> From: Borislav Petkov [mailto:bp@suse.de]
-> Sent: Tuesday, February 27, 2018 12:45 PM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: linux-efi@vger.kernel.org; linux-kernel@vger.kernel.org;
-> ard.biesheuvel@linaro.org; x86@kernel.org
-> Subject: Re: [PATCH v2 2/8] efi: Decode IA32/X64 Processor Error Section
-> 
-> On Tue, Feb 27, 2018 at 05:27:39PM +0000, Ghannam, Yazen wrote:
-> > Sure, we can print the fields unconditionally if Ard is okay with that.
-> >
-> > The issue is that the x86 behavior will be different from all the others, so
-> that
-> > might be confusing.
-> 
-> Confusing for whom?
-> 
-> Are we sharing tools with other arches or what am I missing?
-> 
+2018-02-27 17:10 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> Hi Bartosz,
+>
+> thank you for the update.
+>
+> On Fri, 2018-02-23 at 12:39 +0100, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> The reset framework only supports device-tree. There are some platforms
+>> however, which need to use it even in legacy, board-file based mode.
+>>
+>> An example of such architecture is the DaVinci family of SoCs which
+>> supports both device tree and legacy boot modes and we don't want to
+>> introduce any regressions.
+>>
+>> We're currently working on converting the platform from its hand-crafted
+>> clock API to using the common clock framework. Part of the overhaul will
+>> be representing the chip's power sleep controller's reset lines using
+>> the reset framework.
+>>
+>> This changeset extends the core reset code with a new reset lookup
+>> entry structure. It contains data allowing the reset core to associate
+>> reset lines with devices by comparing the dev_id and con_id strings.
+>>
+>> It also provides a function allowing drivers to register lookup entries
+>> with the framework.
+>>
+>> The new lookup function is only called as a fallback in case the
+>> of_node field is NULL and doesn't change anything for current users.
+>>
+>> Tested with a dummy reset driver with several lookup entries.
+>>
+>> An example lookup table registration from a driver can be found below:
+>>
+>> static struct reset_control_lookup foobar_reset_lookup[] = {
+>>       RESET_LOOKUP("foo.0", "foo", 15),
+>>       RESET_LOOKUP("bar.0", NULL,   5),
+>> };
+>>
+>> foobar_probe()
+>> {
+>> ...
+>>
+>>         reset_controller_add_lookup(&rcdev, foobar_reset_lookup,
+>>                                     ARRAY_SIZE(foobar_reset_lookup));
+>>
+>> ...
+>> }
+>>
+>> Cc: Sekhar Nori <nsekhar@ti.com>
+>> Cc: Kevin Hilman <khilman@baylibre.com>
+>> Cc: David Lechner <david@lechnology.com>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>> v1 -> v2:
+>> - renamed the new function to __reset_control_get_from_lookup()
+>> - added a missing break; when a matching entry is found
+>> - rearranged the code in __reset_control_get() - we can no longer get to the
+>>   return at the bottom, so remove it and return from
+>>   __reset_control_get_from_lookup() if __of_reset_control_get() fails
+>> - return -ENOENT from reset_contol_get() if we can't find a matching entry,
+>>   prevously returned -EINVAL referred to the fact that we passed a device
+>>   without the of_node which is no longer an error condition
+>> - add a comment about needing a sentinel in the lookup table
+>>
+>> v2 -> v3:
+>> - added the reset id number field to the lookup struct so that we don't need
+>>   to rely on the array index
+>>
+>> v3 -> v4:
+>> - separated the driver and lookup table registration logic by adding a
+>>   function meant to be called by machine-specific code that adds a lookup
+>>   table to the internal list
+>> - the correct reset controller is now found by first finding the lookup
+>>   table associated with it, then finding the actual reset controller by
+>>   the associated device
+>>
+>> v4 -> v5:
+>> - since the first user of this will be the davinci clk driver and it
+>>   already registers clock lookup from within the driver code - allow
+>>   drivers to register lookups with the assumption that the code can be
+>>   extended to make it possible to register entries from machine code as
+>>   well
+>
+> How do you imagine this may be extended? By adding an rddev_devid field
+> to the lookup, similarly to the pwm_lookup?
+> I suppose reset_controller_add_lookup could then be called with a NULL
+> rcdev to register lookups by id.
+>
 
-It's not just about arches but record types. A single platform can report
-using arch-specific records, memory records, PCIe records, etc.
+Yes, this is what I was thinking about more or less.
 
-So all the other record types only show fields with a valid bit set and this
-has always been the case. There may be users or tools who expect that
-same behavior.
+>> - simplify the code - only expose a single lookup structure and a simply
+>>   registration function
+>> - add the RESET_LOOKUP macro for brevity
+>>
+>>  drivers/reset/core.c             | 65 +++++++++++++++++++++++++++++++++++++++-
+>>  include/linux/reset-controller.h | 28 +++++++++++++++++
+>>  2 files changed, 92 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+>> index da4292e9de97..75e54a05147a 100644
+>> --- a/drivers/reset/core.c
+>> +++ b/drivers/reset/core.c
+>> @@ -23,6 +23,9 @@
+>>  static DEFINE_MUTEX(reset_list_mutex);
+>>  static LIST_HEAD(reset_controller_list);
+>>
+>> +static DEFINE_MUTEX(reset_lookup_mutex);
+>> +static LIST_HEAD(reset_lookup_list);
+>> +
+>>  /**
+>>   * struct reset_control - a reset control
+>>   * @rcdev: a pointer to the reset controller device
+>> @@ -148,6 +151,30 @@ int devm_reset_controller_register(struct device *dev,
+>>  }
+>>  EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+>>
+>> +/**
+>> + * reset_controller_add_lookup - register a set of lookup entries
+>> + * @rcdev: initialized reset controller device owning the reset line
+>> + * @lookup: array of reset lookup entries
+>> + * @num_entries: number of entries in the lookup array
+>> + */
+>> +void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>> +                              struct reset_control_lookup *lookup,
+>> +                              unsigned int num_entries)
+>> +{
+>> +     struct reset_control_lookup *entry;
+>> +     unsigned int i;
+>> +
+>> +     mutex_lock(&reset_lookup_mutex);
+>> +     for (i = 0; i < num_entries; i++) {
+>> +             entry = &lookup[i];
+>> +
+>> +             entry->rcdev = rcdev;
+>> +             list_add_tail(&entry->list, &reset_lookup_list);
+>> +     }
+>> +     mutex_unlock(&reset_lookup_mutex);
+>> +}
+>> +EXPORT_SYMBOL_GPL(reset_controller_add_lookup);
+>> +
+>
+> What about reset_controller_remove_lookup?
 
-> > This set does decode everything fully so that people can read the error.
-> 
-> No, it doesn't. It dumps
-> 
->         printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
-> 
->         printk("%sError Structure Type: %pUl\n", newpfx,
->                 &err_info->err_type);
-> 
->         printk("%sCheck Information: 0x%016llx\n", newpfx,
->                  err_info->check_info);
-> 
-> and so on which are half-baked.
-> 
-> Think of it this way: if you look at the error record and you still need
-> to look at the spec to decode it, then it is still not good enough.
-> 
-> Users don't care about validation bits, or unreadable GUIDs or WTF is
-> "Check Information" even?
-> 
-> "This section details the layout of the Processor Error Information
-> Structure and the detailed check information which is contained within."
-> 
-> And that "Check Information" thing is mentioned only twice in the whole
-> spec.
-> 
-> StructureErrorType only there in the table.
-> 
-> Very informative that.
-> 
-> So no, users don't care about any of that internal crap - they wanna
-> know what is wrong with their box and that should be written in plain
-> english.
-> 
+While I understand that we have those for phy or gpio, I don't really
+think they're that useful. Not many users do it anyway. Can we add it
+once it's actually needed?
 
-Please see the other patches where these are decoded further. As I
-mentioned the cover letter, the decoding is applied incrementally rather
-than having one large patch.
+>
+>>  static inline struct reset_control_array *
+>>  rstc_to_array(struct reset_control *rstc) {
+>>       return container_of(rstc, struct reset_control_array, base);
+>> @@ -493,6 +520,42 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>>  }
+>>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+>>
+>> +static struct reset_control *
+>> +__reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>> +                             bool shared, bool optional)
+>> +{
+>> +     const struct reset_control_lookup *lookup;
+>> +     const char *dev_id = dev_name(dev);
+>> +     struct reset_control *rstc = NULL;
+>> +
+>> +     if (!dev)
+>> +             return ERR_PTR(-EINVAL);
+>> +
+>> +     mutex_lock(&reset_lookup_mutex);
+>> +
+>> +     list_for_each_entry(lookup, &reset_lookup_list, list) {
+>> +             if (strcmp(lookup->dev_id, dev_id))
+>
+> This will crash if (lookup->dev_id == NULL).
+>
 
-Also, like I said in another thread, we should always print the raw value
-followed by the decoding. That way the raw info is there in case a user
-wants to send the data to the vendor or other expert party. 
+We're stating explicitly that dev_id is required in the kernel doc but
+if you insist, I can add a check for that.
 
-> > I already mentioned in the Context info patch that there could be
-> > further decoding which we can do in the future.
-> 
-> Then decode only those pieces fully now which you can do now and when
-> you add something in the future, add it then with the full decoding
-> functionality. No fields which need additional decoding with the spec
-> opened on one side.
-> 
+>> +                     continue;
+>> +
+>> +             if ((!con_id && !lookup->con_id) ||
+>> +                 !strcmp(con_id, lookup->con_id)) {
+>
+> This will crash if only one of con_id or lookup->con_id is NULL.
+>
+> Call strcmp only if both strings are valid.
+>
 
-Okay.
+Indeed, will fix it.
+
+>> +                     mutex_lock(&reset_list_mutex);
+>> +                     rstc = __reset_control_get_internal(lookup->rcdev,
+>> +                                                         lookup->index,
+>> +                                                         shared);
+>> +                     mutex_unlock(&reset_list_mutex);
+>> +                     break;
+>> +             }
+>> +     }
+>> +
+>> +     mutex_unlock(&reset_lookup_mutex);
+>> +
+>> +     if (!rstc)
+>> +             return optional ? NULL : ERR_PTR(-ENOENT);
+>> +
+>> +     return rstc;
+>> +}
+>> +
+>>  struct reset_control *__reset_control_get(struct device *dev, const char *id,
+>>                                         int index, bool shared, bool optional)
+>>  {
+>> @@ -500,7 +563,7 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
+>>               return __of_reset_control_get(dev->of_node, id, index, shared,
+>>                                             optional);
+>>
+>> -     return optional ? NULL : ERR_PTR(-EINVAL);
+>> +     return __reset_control_get_from_lookup(dev, id, shared, optional);
+>>  }
+>>  EXPORT_SYMBOL_GPL(__reset_control_get);
+>>
+>> diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+>> index adb88f8cefbc..25698f6c1fae 100644
+>> --- a/include/linux/reset-controller.h
+>> +++ b/include/linux/reset-controller.h
+>> @@ -26,6 +26,30 @@ struct module;
+>>  struct device_node;
+>>  struct of_phandle_args;
+>>
+>> +/**
+>> + * struct reset_control_lookup - represents a single lookup entry
+>> + *
+>> + * @list: internal list of all reset lookup entries
+>> + * @rcdev: reset controller device controlling this reset line
+>> + * @index: ID of the reset controller in the reset controller device
+>> + * @dev_id: name of the device associated with this reset line
+>> + * @con_id name of the reset line (can be NULL)
+>> + */
+>> +struct reset_control_lookup {
+>> +     struct list_head list;
+>> +     struct reset_controller_dev *rcdev;
+>> +     unsigned int index;
+>> +     const char *dev_id;
+>> +     const char *con_id;
+>> +};
+>> +
+>> +#define RESET_LOOKUP(_dev_id, _con_id, _index)                               \
+>> +     {                                                               \
+>> +             .dev_id = _dev_id,                                      \
+>> +             .con_id = _con_id,                                      \
+>> +             .index = _index,                                        \
+>> +     }
+>> +
+>>  /**
+>>   * struct reset_controller_dev - reset controller entity that might
+>>   *                               provide multiple reset controls
+>> @@ -58,4 +82,8 @@ struct device;
+>>  int devm_reset_controller_register(struct device *dev,
+>>                                  struct reset_controller_dev *rcdev);
+>>
+>> +void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>> +                              struct reset_control_lookup *lookup,
+>> +                              unsigned int num_entries);
+>> +
+>>  #endif
+>
+> regards
+> Philipp
 
 Thanks,
-Yazen
+Bart
