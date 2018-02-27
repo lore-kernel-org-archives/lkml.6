@@ -1,150 +1,113 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1080557-1519333394-2-10772428815453651753
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519333393; b=KYHuX+yhc529JREV/Ig0zl4koVHaODOq5VQ93uSk1ANgoS0
-    W74sq3Ej194bqQMaenTPhM3WQD8JEvhVltl+OHhaU8XGX2fXc6HNVCMCNqfpddCi
-    hwRSV7ZOYar5J2x3SYCUePlMHntWK8pOC/dvPQ38c2kcKAUzc1kt1f3rRO/1voaC
-    lVx8S5TQFNYHohWF0ZhupMiyGXrN5xe67IKVcsZdqft/q1Swv61bGcu9bOVFkTNd
-    Ml7wt0tkGWKqOB1e+cNO67WmpCbfwOoOm38gwf0Q7gQ+5K57eXkabS1vYIb+ZIeZ
-    +abIINDBv58YVLSamIFh4cOmk1JXWKZnbZkSg9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519333393; bh=YXpjfyy/5Szcxgom5TVAYanhqcVcBDfDjDH02X
-    f6Nr0=; b=A04E1LhkoM+5YfL7SNuG6fkI8rovhb+WbSwckV/1qyvez+bWIyAn2c
-    b8yHD0vvHomIkdOMCRFsdgfzjC8SWIRF0eaMFTJlfbleozBFkfOBWBaZVO7U62SM
-    3JZlle6PTbqLjC3kceHcbA64xEcv0i8gQkluQO4YQB1TKoSMNEwSFBfZ7zXM4lbR
-    PksQ0Wo4H/C8RT5fqeDCvMUaYvUiQ58QPzCf/cWcOkm9rZo89QvTMb7bioEYYbD2
-    km5V6cxFxcHgR6jPbDGEXs07/70Fr2CVXpwBOHGppC4qw22iSrbYHY8uxaOcxm+p
-    TBD4dCw8l7TaY/0xf3gsv70rQueDB1hQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=aVW/UaUX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eWwccfwT;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=aVW/UaUX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eWwccfwT;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751296AbeBVVDA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 16:03:00 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33296 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751265AbeBVVC7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 22 Feb 2018 16:02:59 -0500
-X-Google-Smtp-Source: AG47ELsNgIAt3SJqfC6Ns09mBflYRpdKAihMYJgM+Zo2d18hGX599P0UZ6LTBvFMSq1WIhWyUFUp9rCPt5vjtYiYs1o=
-MIME-Version: 1.0
-In-Reply-To: <20180222134832.GA1400@kroah.com>
-References: <20180216190201.59572-1-joelaf@google.com> <20180222134832.GA1400@kroah.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Thu, 22 Feb 2018 13:02:57 -0800
-Message-ID: <CAJWu+or6oK--zi6uDUipHY42wf79aVHo3WuZXXUvzR-7Atod4A@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: android: ashmem: Fix lockdep issue during llseek
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Return-Path: <ghackmann@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519755363; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rcryRIoApuOKaB9YcnxcH2HUlu5CeU59uwOGNb7dyLCxbuKHkrN4kpSxEHiTxvjWQT
+         LIMlS/HHS7wgLllAfHxs/huikgVt1PRSYxxgLjMsTTvTomVny2vKBUdcwrpujuxM2nZH
+         gKJviOimeEZdeLVtH8LsWN9c0oLtAnbF1HDKN/FuJF73jTgSRU+vHE3WmxEmwPDGXGMj
+         lHEp3FciWNVmpHc5AwonuKhokeYrw/ekHJ6gQ4t5xmxu1piwjrHwSn1s0BEtjy61T59j
+         MGOvaiA2XvGKoAPfsFzYtvF49i7RiGqwiYuj7NsF813dFWxeGdT4EFKvczel8hBsddvz
+         wHtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=q1+tb5auK6ygaN43iQq0m2FE6+xm++j9R6f4Un/r+ZE=;
+        b=GO0Vldrjb4Vb8CWfe6HyBxeaPCFs0htuJD/POaAPK7dqG+hblL8EWp2DB1mr8+FwNC
+         Z6dm7gC966AhP5VeDC29lyuG14wyRV80VYylZgdniyZGJtA955Bt4m+eW0UjGq+jvybi
+         Ah+k3d0Y1aL3Ku7wPFJzvOlIEB01nzKxdttSuJEaspK3oLOtPlycMveTCmxrHP/mjXCx
+         Hc6Bg5zQokGmgf8OhMlMP48xXfba8xDwt0bMyuv+P6IurgcQquFoZnurXQDdcfkT6Yob
+         Tqzfhm1yMMsR8LAnNI0kxr5SZxcuDLs1LAOrC8u5Ho2dASJWIz/uJWH98GkmPnzk7+Uc
+         oTvA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=OLL2OKeU;
+       spf=pass (google.com: domain of ghackmann@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ghackmann@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=OLL2OKeU;
+       spf=pass (google.com: domain of ghackmann@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ghackmann@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AH8x2277LlcA1TUWvVr7cJw/psMJt93kEpEarvJeG/FJfIUzOLUppsLsd3kBfZ1dIndfJgEMMhICYg==
+Subject: Re: [PATCH v2] staging: android: ashmem: Fix lockdep issue during
+ llseek
+To: Joel Fernandes <joelaf@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Todd Kjos <tkjos@google.com>,
-        Arve Hjonnevag <arve@android.com>,
-        Greg Hackmann <ghackmann@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+ Arve Hjonnevag <arve@android.com>, stable@vger.kernel.org
+References: <20180216190201.59572-1-joelaf@google.com>
+ <20180222134832.GA1400@kroah.com>
+ <CAJWu+or6oK--zi6uDUipHY42wf79aVHo3WuZXXUvzR-7Atod4A@mail.gmail.com>
+From: Greg Hackmann <ghackmann@google.com>
+Message-ID: <8242bd71-4c84-73d4-81a1-01471024c338@google.com>
+Date: Tue, 27 Feb 2018 10:16:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAJWu+or6oK--zi6uDUipHY42wf79aVHo3WuZXXUvzR-7Atod4A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1593132500003855945?=
+X-GMAIL-MSGID: =?utf-8?q?1593579000282397422?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-(reposting in plain text, sorry for the previous HTML email, I should
-have not posted from the Phone)
-
-On Thu, Feb 22, 2018 at 5:48 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Fri, Feb 16, 2018 at 11:02:01AM -0800, Joel Fernandes wrote:
->> ashmem_mutex create a chain of dependencies like so:
+On 02/22/2018 01:02 PM, Joel Fernandes wrote:
+> (reposting in plain text, sorry for the previous HTML email, I should
+> have not posted from the Phone)
+> 
+> On Thu, Feb 22, 2018 at 5:48 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>> On Fri, Feb 16, 2018 at 11:02:01AM -0800, Joel Fernandes wrote:
+>>> ashmem_mutex create a chain of dependencies like so:
+>>>
+>>> (1)
+>>> mmap syscall ->
+>>>   mmap_sem ->  (acquired)
+>>>   ashmem_mmap
+>>>   ashmem_mutex (try to acquire)
+>>>   (block)
+>>>
+>>> (2)
+>>> llseek syscall ->
+>>>   ashmem_llseek ->
+>>>   ashmem_mutex ->  (acquired)
+>>>   inode_lock ->
+>>>   inode->i_rwsem (try to acquire)
+>>>   (block)
+>>>
+>>> (3)
+>>> getdents ->
+>>>   iterate_dir ->
+>>>   inode_lock ->
+>>>   inode->i_rwsem   (acquired)
+>>>   copy_to_user ->
+>>>   mmap_sem         (try to acquire)
+>>>
+>>> There is a lock ordering created between mmap_sem and inode->i_rwsem
+>>> causing a lockdep splat [2] during a syzcaller test, this patch fixes
+>>> the issue by unlocking the mutex earlier. Functionally that's Ok since
+>>> we don't need to protect vfs_llseek.
+>>>
+>>> [1] https://patchwork.kernel.org/patch/10185031/
+>>> [2] https://lkml.org/lkml/2018/1/10/48
+>>>
+>>> Cc: Todd Kjos <tkjos@google.com>
+>>> Cc: Arve Hjonnevag <arve@android.com>
+>>> Cc: Greg Hackmann <ghackmann@google.com>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: stable@vger.kernel.org
+>>> Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
+>>> Signed-off-by: Joel Fernandes <joelaf@google.com>
+>>> ---
+>>> Changes since first version:
+>>> Don't relock after vfs call since its not needed. Only reason we lock is
+>>> to protect races with asma->file.
+>>> https://patchwork.kernel.org/patch/10185031/
 >>
->> (1)
->> mmap syscall ->
->>   mmap_sem ->  (acquired)
->>   ashmem_mmap
->>   ashmem_mutex (try to acquire)
->>   (block)
->>
->> (2)
->> llseek syscall ->
->>   ashmem_llseek ->
->>   ashmem_mutex ->  (acquired)
->>   inode_lock ->
->>   inode->i_rwsem (try to acquire)
->>   (block)
->>
->> (3)
->> getdents ->
->>   iterate_dir ->
->>   inode_lock ->
->>   inode->i_rwsem   (acquired)
->>   copy_to_user ->
->>   mmap_sem         (try to acquire)
->>
->> There is a lock ordering created between mmap_sem and inode->i_rwsem
->> causing a lockdep splat [2] during a syzcaller test, this patch fixes
->> the issue by unlocking the mutex earlier. Functionally that's Ok since
->> we don't need to protect vfs_llseek.
->>
->> [1] https://patchwork.kernel.org/patch/10185031/
->> [2] https://lkml.org/lkml/2018/1/10/48
->>
->> Cc: Todd Kjos <tkjos@google.com>
->> Cc: Arve Hjonnevag <arve@android.com>
->> Cc: Greg Hackmann <ghackmann@google.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: stable@vger.kernel.org
->> Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
->> Signed-off-by: Joel Fernandes <joelaf@google.com>
->> ---
->> Changes since first version:
->> Don't relock after vfs call since its not needed. Only reason we lock is
->> to protect races with asma->file.
->> https://patchwork.kernel.org/patch/10185031/
->
-> I'd like some acks from others before I take this patch.
+>> I'd like some acks from others before I take this patch.
+> 
+> GregH, Todd, could you provide Acks?
 
-GregH, Todd, could you provide Acks?
-
->
-> Joel, did the original reporter say this patch solved their issue or
-> not?  For some reason I didn't think it worked properly...
-
-That's a different but similar issue:
-https://patchwork.kernel.org/patch/10202127/. That was related to
-RECLAIM_FS lockdep recursion. That was posted as an RFC unlike this
-one, and its still being investigated since Miles reported that the
-lockdep inode annotation doesn't fix the issue.
-
-This one on the other hand has a straightforward fix, and was verified
-by the syzbot.
-
-I can see why its easy to confuse the two issues.
-
-Thanks,
-
-- Joel
+Acked-by: Greg Hackmann <ghackmann@google.com>
