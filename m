@@ -1,105 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeB0SCK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 13:02:10 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33988 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbeB0SCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 13:02:08 -0500
-X-Google-Smtp-Source: AG47ELtiPJx3nqQ287gZW1r3EOkkw+JUldLeFqsruSShFlESg5FGlYTUod16I3BWIe02g8efjjJ8hjQRO5qeCE+Tt+8=
+        id S1751943AbeB0SC6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 13:02:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51956 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeB0SC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 13:02:56 -0500
+Date: Tue, 27 Feb 2018 19:02:31 +0100
+From: Borislav Petkov <bp@suse.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v2 3/8] efi: Decode IA32/X64 Processor Error Info
+ Structure
+Message-ID: <20180227180231.GO26382@pd.tnic>
+References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
+ <20180226193904.20532-4-Yazen.Ghannam@amd.com>
+ <20180227142531.GF26382@pd.tnic>
+ <DM5PR12MB191637C1857C5D9499D08D66F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+ <20180227170423.GK26382@pd.tnic>
+ <DM5PR12MB1916D78FE4EEF146EE1D8612F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <1519753659-3376-3-git-send-email-mario.limonciello@dell.com>
-References: <1519753659-3376-1-git-send-email-mario.limonciello@dell.com> <1519753659-3376-3-git-send-email-mario.limonciello@dell.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 27 Feb 2018 20:02:06 +0200
-Message-ID: <CAHp75VcpkO8=iF=pXhbyaR_kP+kPhmr1AEQM-CwGuL78Z7T1Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-To: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM5PR12MB1916D78FE4EEF146EE1D8612F8C00@DM5PR12MB1916.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 7:47 PM, Mario Limonciello
-<mario.limonciello@dell.com> wrote:
-> Some race conditions were raised due to dell-smbios and its backends
-> not being ready by the time that a consumer would call one of the
-> exported methods.
->
-> To avoid this problem, guarantee that all initialization has been
-> done by linking them all together and running init for them all.
->
-> As part of this change the Kconfig needs to be adjusted so that
-> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
-> rather than modules.
->
-> CONFIG_DELL_SMBIOS is a visually selectable option again and both
-> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
+On Tue, Feb 27, 2018 at 05:46:54PM +0000, Ghannam, Yazen wrote:
+> I think there's value in following the conventions in a subsystem.
 
-> changes from v1:
->  * Move #ifdefs into dell-smbios.h and use static inline functions
+"conventions in a subsystem" my ass. That's brainless copy-pasting.
 
-> --- a/drivers/platform/x86/dell-smbios-smm.c
-> +++ b/drivers/platform/x86/dell-smbios-smm.c
+It was added by
 
-> +#ifdef CONFIG_DELL_SMBIOS_SMM
+f6edea77c8c8 ("ACPI, APEI, CPER: Cleanup CPER memory error output format")
 
-Hmm... It's still here.
+and then replicated everywhere.
 
-Hint: in Makefile you need something like
+It is simply a dumb way of writing:
 
-obj-$(CONFIG_DELL_SMBIOS_SMM) += dell-smbios-smm.o
-
-> +#endif /* CONFIG_DELL_SMBIOS_SMM */
-
-> --- a/drivers/platform/x86/dell-smbios-wmi.c
-> +++ b/drivers/platform/x86/dell-smbios-wmi.c
-
-> +#ifdef CONFIG_DELL_SMBIOS_WMI
-
-Ditto.
-
-> +#endif /* CONFIG_DELL_SMBIOS_WMI */
+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
 
 
-> +#ifdef CONFIG_DELL_SMBIOS_WMI
-> +int init_dell_smbios_wmi(void);
-> +void exit_dell_smbios_wmi(void);
-> +#else /* CONFIG_DELL_SMBIOS_WMI */
-> +static inline int init_dell_smbios_wmi(void)
-> +{
-> +       return -ENODEV;
-> +}
+> I can change this if you give a reason besides "it's dumb".
 
-> +static inline void exit_dell_smbios_wmi(void)
-> +{}
+Two can play that game: you get to keep it if you give a good reason
+why.
 
-One line, please.
+> We do map the spec-defined GUIDs in patch 4 of this set. I don't know if there's
+> a central place where all vendor-defined GUIDs are listed. I can look into this.
 
-> +#endif /* CONFIG_DELL_SMBIOS_WMI */
-> +
-> +#ifdef CONFIG_DELL_SMBIOS_SMM
-> +int init_dell_smbios_smm(void);
-> +void exit_dell_smbios_smm(void);
-> +#else /* CONFIG_DELL_SMBIOS_SMM */
-> +static inline int init_dell_smbios_smm(void)
-> +{
-> +       return -ENODEV;
-> +}
+Yes, at least for the most prominent ones.
 
-> +static inline void exit_dell_smbios_smm(void)
-> +{}
+> And the raw value should still be printed because
+> 1) It may represent a type that we can't decode. Maybe a type that's not part of
+> the spec.
 
-Ditto.
+If we can't decode it, *then* you dump it:
 
-> +#endif /* CONFIG_DELL_SMBIOS_SMM */
+	"Unrecognized type: 0x%llx ..."
+
+> 2) It's good to have the raw value for reference. We do this with MCA_STATUS
+> where we print the raw value followed by the decoding.
+
+1. No one stares at the raw value if the bits are decoded
+2. MCA_STATUS is one register - this error record is huge.
+
+> The structs are all different even though some fields may be the same.
+
+Fair enough. Only if it makes sense.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
