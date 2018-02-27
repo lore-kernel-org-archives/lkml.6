@@ -1,187 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeB0AG2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 19:06:28 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751575AbeB0AG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 19:06:27 -0500
-Date: Tue, 27 Feb 2018 02:06:22 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
-Cc: linux-kernel@vger.kernel.org, slp@redhat.com, bhe@redhat.com,
-        somlo@cmu.edu, xiaolong.ye@intel.com
-Subject: Re: [PATCH v15 02/11] fw_cfg: add a public uapi header
-Message-ID: <20180227020549-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-3-marcandre.lureau@redhat.com>
+        id S1751617AbeB0ATV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 19:19:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35624 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeB0ATT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Feb 2018 19:19:19 -0500
+Subject: Re: [PATCH v5 0/4] ARM: OMAP2+: AM33XX/AM43XX: Add suspend-resume
+ support
+To: Tony Lindgren <tony@atomide.com>
+Cc: Dave Gerlach <d-gerlach@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keerthy J <j-keerthy@ti.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+References: <20180223154357.23504-1-d-gerlach@ti.com>
+ <a56830af-cf81-3603-ba58-2a2c65c49f34@oracle.com>
+ <20180226212650.GB16043@atomide.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <58006020-85d9-9681-f80a-2f9eda1e863a@oracle.com>
+Date: Mon, 26 Feb 2018 16:18:44 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180215213312.29234-3-marcandre.lureau@redhat.com>
+In-Reply-To: <20180226212650.GB16043@atomide.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8816 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802270002
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 10:33:03PM +0100, Marc-André Lureau wrote:
-> Create a common header file for well-known values and structures to be
-> shared by the Linux kernel with qemu or other projects.
+On 2/26/18 1:26 PM, Tony Lindgren wrote:
+> * Santosh Shilimkar <santosh.shilimkar@oracle.com> [180225 23:36]:
+>>> Dave Gerlach (4):
+>>>     ARM: OMAP2+: Introduce low-level suspend code for AM33XX
+>>>     ARM: OMAP2+: Introduce low-level suspend code for AM43XX
+>>>     ARM: OMAP2+: pm33xx-core: Add platform code needed for PM
+>>>     soc: ti: Add pm33xx driver for basic suspend support
+>>>
+>> Are you going to pickup this series ?
 > 
-> It is based from qemu/docs/specs/fw_cfg.txt which references
-> qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
-> authoritative list" & vmcoreinfo.txt. Those files don't have an
-> explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
-> Michael S. Tsirkin suggested to use the same license.
+> Yes planning to apply it today or tomorrow.
 > 
-> The patch intentionally left out DMA & vmcoreinfo structures &
-> defines, which are added in the commits making usage of it.
-> 
-> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-> 
-> ---
-> 
-> The related qemu patch making use of it, to be submitted:
-> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
-> ---
->  MAINTAINERS                    |  1 +
->  drivers/firmware/qemu_fw_cfg.c | 22 ++------------
->  include/uapi/linux/fw_cfg.h    | 66 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 69 insertions(+), 20 deletions(-)
->  create mode 100644 include/uapi/linux/fw_cfg.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3bdc260e36b7..a66b65f62811 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11352,6 +11352,7 @@ M:	"Michael S. Tsirkin" <mst@redhat.com>
->  L:	qemu-devel@nongnu.org
->  S:	Maintained
->  F:	drivers/firmware/qemu_fw_cfg.c
-> +F:	include/uapi/linux/fw_cfg.h
->  
->  QIB DRIVER
->  M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
+Sounds good.
 
-Why fw_cfg.h and not qemu_fw_cfg.h ? fw_cfg.h seems too generic.
-
-> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> index a41b572eeeb1..42601a3eaed5 100644
-> --- a/drivers/firmware/qemu_fw_cfg.c
-> +++ b/drivers/firmware/qemu_fw_cfg.c
-> @@ -32,30 +32,12 @@
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/ioport.h>
-> +#include <uapi/linux/fw_cfg.h>
->  
->  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
->  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
->  MODULE_LICENSE("GPL");
->  
-> -/* selector key values for "well-known" fw_cfg entries */
-> -#define FW_CFG_SIGNATURE  0x00
-> -#define FW_CFG_ID         0x01
-> -#define FW_CFG_FILE_DIR   0x19
-> -
-> -/* size in bytes of fw_cfg signature */
-> -#define FW_CFG_SIG_SIZE 4
-> -
-> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
-> -#define FW_CFG_MAX_FILE_PATH 56
-> -
-> -/* fw_cfg file directory entry type */
-> -struct fw_cfg_file {
-> -	u32 size;
-> -	u16 select;
-> -	u16 reserved;
-> -	char name[FW_CFG_MAX_FILE_PATH];
-> -};
-> -
->  /* fw_cfg device i/o register addresses */
->  static bool fw_cfg_is_mmio;
->  static phys_addr_t fw_cfg_p_base;
-> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
->  
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
-> -	{ "QEMU0002", },
-> +	{ FW_CFG_ACPI_DEVICE_ID, },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
-> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
-> new file mode 100644
-> index 000000000000..c698ac3812f6
-> --- /dev/null
-> +++ b/include/uapi/linux/fw_cfg.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause */
-> +#ifndef _LINUX_FW_CFG_H
-> +#define _LINUX_FW_CFG_H
-> +
-> +#include <linux/types.h>
-> +
-> +#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
-> +
-> +/* selector key values for "well-known" fw_cfg entries */
-> +#define FW_CFG_SIGNATURE	0x00
-> +#define FW_CFG_ID		0x01
-> +#define FW_CFG_UUID		0x02
-> +#define FW_CFG_RAM_SIZE		0x03
-> +#define FW_CFG_NOGRAPHIC	0x04
-> +#define FW_CFG_NB_CPUS		0x05
-> +#define FW_CFG_MACHINE_ID	0x06
-> +#define FW_CFG_KERNEL_ADDR	0x07
-> +#define FW_CFG_KERNEL_SIZE	0x08
-> +#define FW_CFG_KERNEL_CMDLINE	0x09
-> +#define FW_CFG_INITRD_ADDR	0x0a
-> +#define FW_CFG_INITRD_SIZE	0x0b
-> +#define FW_CFG_BOOT_DEVICE	0x0c
-> +#define FW_CFG_NUMA		0x0d
-> +#define FW_CFG_BOOT_MENU	0x0e
-> +#define FW_CFG_MAX_CPUS		0x0f
-> +#define FW_CFG_KERNEL_ENTRY	0x10
-> +#define FW_CFG_KERNEL_DATA	0x11
-> +#define FW_CFG_INITRD_DATA	0x12
-> +#define FW_CFG_CMDLINE_ADDR	0x13
-> +#define FW_CFG_CMDLINE_SIZE	0x14
-> +#define FW_CFG_CMDLINE_DATA	0x15
-> +#define FW_CFG_SETUP_ADDR	0x16
-> +#define FW_CFG_SETUP_SIZE	0x17
-> +#define FW_CFG_SETUP_DATA	0x18
-> +#define FW_CFG_FILE_DIR		0x19
-> +
-> +#define FW_CFG_FILE_FIRST	0x20
-> +#define FW_CFG_FILE_SLOTS_MIN	0x10
-> +
-> +#define FW_CFG_WRITE_CHANNEL	0x4000
-> +#define FW_CFG_ARCH_LOCAL	0x8000
-> +#define FW_CFG_ENTRY_MASK	(~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
-> +
-> +#define FW_CFG_INVALID		0xffff
-> +
-> +/* width in bytes of fw_cfg control register */
-> +#define FW_CFG_CTL_SIZE		0x02
-> +
-> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
-> +#define FW_CFG_MAX_FILE_PATH	56
-> +
-> +/* size in bytes of fw_cfg signature */
-> +#define FW_CFG_SIG_SIZE 4
-> +
-> +/* FW_CFG_ID bits */
-> +#define FW_CFG_VERSION		0x01
-> +
-> +/* fw_cfg file directory entry type */
-> +struct fw_cfg_file {
-> +	__be32 size;
-> +	__be16 select;
-> +	__u16 reserved;
-> +	char name[FW_CFG_MAX_FILE_PATH];
-> +};
-> +
-> +#endif
-> -- 
-> 2.16.1.73.g5832b7e9f2
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
