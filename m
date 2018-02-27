@@ -1,96 +1,101 @@
-Return-Path: <niklas.cassel@axis.com>
-X-Google-Smtp-Source: AG47ELvnr6W/Xitnlqde9VlnZk/QNf9wtsDPzQ6s0HQm+41Qejx8P0DCT7da+c1vMTi/tYzxeLs7
-ARC-Seal: i=1; a=rsa-sha256; t=1519732757; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PXKjK8hVkwqDTyliDZIrHtxe9Kj84RA4jFJ+D60sbDUbtQV2+lYvaANoj8ZQ7t97Q0
-         9UADXsTk3lq13k783/i3KoKVKuQEzcB8MXb39OxcC3asA7kO/xZMLby/JY79KepCiG0x
-         x65cfFGjVfqndJ/sJXyWs4zUoaCloqKB0U1fLbkhjT6KqB+sC8/nu04gnHFoBQuQb7fU
-         utvt++OaYcWzdgZ6h+tdRfHFoyMRcWsyUY+Ku5HuJPJ4RLLoNT6A17rougXEnKsguHd3
-         XUdLqJKEHC1YWiXuznSzOuIXiKUKRvFJm/jHnBleG8cGUPvK4nb4T8+wJMw28em8IHyY
-         BsQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=sC9jHMQ8OYMLr1jyDqY9b+kyuQOWpXMNQ75RKaA9+hM=;
-        b=GyRd/iFuQyvwb+9v1gbXUuxScnNPkQCaA4+ACsMOkN0eIZxObRUJSRozdBlffnAmlW
-         bsuwHpHgMQPEil5L16tX0EbIuXGv2AL5x/yzADIO6T/VJRWjgl6SSLeFf5jNKmKkp2Sc
-         YZlGTIvQdRj/742cePWpovxx89nLcQ+19CLfPXJ9IbjZd5q1g9E8/0X/LNgDmwXjUz8K
-         70tP4CwbL967pbnDVI4HPFtcPyVVysVsfBrDhoG66En26FYWw5I1mZpGpx4Nh/X3Wlif
-         PI/Uwg2/z/jCnkg0vxGWXB/AO2TjJLJ2unzqleh0uVpoGjI5ACjB//k4npbO5ftnKfg1
-         KB5A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] misc: pci_endpoint_test: Handle 64-bit BARs properly
-Date: Tue, 27 Feb 2018 12:59:06 +0100
-Message-Id: <20180227115908.14593-3-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180227115908.14593-1-niklas.cassel@axis.com>
-References: <20180227115908.14593-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1330738-1519730973-2-16858843162507346134
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519730973; b=Jle4sZIaykdESTF7ij1bvTRqzMY0kqo5b8gF9ShGW5HQtg+
+    3leYmTDlBB+ALfZugIkG66zn7I6aUTnRYJitCZYuMSTYbSKZfK3/HXTUt5VQlTuj
+    Qpf2SBNVhA3CtVQSXhFy1CbWnWTWTClAVeLvAGsMJsplBy6cX1Z2Tcbl2PS6gV8G
+    /tGLd1aubNfoyQQAnv486U+eKeYFbiUdNNxpkSCmoZgz9Ye54pRbQo1/UdG9JGxB
+    G3Vz2l6gSiqN9WQYH88+QuXwMUusIbrW13M1+kRk1ktnSUyhMnJjaP1Nnv02zBPt
+    EltyFzrZTR80ZBEzmrG37OuFWFtO53xUGtuBs+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1519730973; bh=O+L0eGnvLUpHqCI3Gl0sOmkaH4B0ug+zhQCTibdyUOc=; b=u
+    57PLDzI6KxMVKNd/zc2z1FDnN5jLqaIiSdWG0ooxCCQx1BUggYrCIZAzrp8darhU
+    nlNoKGLYNb3u15hePPpbeus/9ZmbCYhXReT5BuWyrDWS2XE2twYUzTArbrSwyCez
+    S7sVql3mlICyD3MAJ4fPwVaMZCf5hM+p1Frsw1Rx/7bkkF2sGpY6sa0f0x9gtDGI
+    Jp7T5wnl7NrS8txuwwWloJFZ1m/jCaiqbjkhylm+nGVSAW9fju59zDRMgY8LvxyZ
+    qGBzyIEu/P1J6dJ16LU8wshbnCdoKlzx6D38UAy7G4vjvmuqABJZL3UAFz5HxtIt
+    U24pa23muwxWRYKPl9uJg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=AWjg9Wmr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=AWjg9Wmr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752705AbeB0L3S (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 06:29:18 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:10556 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752130AbeB0L3R (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 27 Feb 2018 06:29:17 -0500
+From: Roger Quadros <rogerq@ti.com>
+To: <balbi@kernel.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>
+Subject: [PATCH v2 0/2] usb: dwc3: Add dual-role support using OTG core
+Date: Tue, 27 Feb 2018 13:29:10 +0200
+Message-ID: <1519730952-2102-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593555295925166358?=
-X-GMAIL-MSGID: =?utf-8?q?1593555295925166358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-A 64-bit BAR uses the succeeding BAR for the upper bits,
-so we cannot simply call pci_ioremap_bar() on every single BAR.
+Hi Felipe,
 
-BARs succeding a 64-bit BAR will not have the IORESOURCE_MEM resource
-flag set. Only call ioremap on BARs that have the IORESOURCE_MEM
-resource flag set.
+Some platforms (e.g. TI's AM437x) don't have USB ID pin state available
+over GPIO/extcon but need to rely on the DWC3 core's OTG block to
+get the ID pin state instead.
 
-pci 0000:01:00.0: BAR 4: assigned [mem 0xc0300000-0xc031ffff 64bit]
-pci 0000:01:00.0: BAR 2: assigned [mem 0xc0320000-0xc03203ff 64bit]
-pci 0000:01:00.0: BAR 0: assigned [mem 0xc0320400-0xc03204ff 64bit]
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 1: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR1
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 3: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR3
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 5: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR5
+This series implements simple dual-role functionality using DWC3's OTG block.
+Debugfs 'mode' override is also functional so user can switch
+between "otg", "host" or "device" modes for debug.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
-Changes since v2:
-Check (pci_resource_flags(pdev, bar) & IORESOURCE_MEM)
-rather than (pci_resource_len(pdev, bar) == 0), thanks Bjorn.
+Although system suspend/resume isn't working yet in mainline for AM437x,
+I've tested this series for system suspend/resume using a local tree.
 
- drivers/misc/pci_endpoint_test.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Roger Quadros (2):
+  usb: dwc3: core.h: add some register definitions
+  usb: dwc3: add dual role support using OTG block
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 320276f42653..fe8897e64635 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -534,12 +534,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	}
- 
- 	for (bar = BAR_0; bar <= BAR_5; bar++) {
--		base = pci_ioremap_bar(pdev, bar);
--		if (!base) {
--			dev_err(dev, "failed to read BAR%d\n", bar);
--			WARN_ON(bar == test_reg_bar);
-+		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
-+			base = pci_ioremap_bar(pdev, bar);
-+			if (!base) {
-+				dev_err(dev, "failed to read BAR%d\n", bar);
-+				WARN_ON(bar == test_reg_bar);
-+			}
-+			test->bar[bar] = base;
- 		}
--		test->bar[bar] = base;
- 	}
- 
- 	test->base = test->bar[test_reg_bar];
+ drivers/usb/dwc3/core.c |  67 ++++++-
+ drivers/usb/dwc3/core.h | 111 +++++++++++
+ drivers/usb/dwc3/drd.c  | 489 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 639 insertions(+), 28 deletions(-)
+
 -- 
-2.14.2
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
