@@ -1,121 +1,109 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-757978-1519717680-2-15366722043852578221
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519717679; b=bm1tlZ0/s7xrCw4orq0frkzxC3yh7MhdB0rndmw2N6JyliR
-    pYYd3nyyf5Y89Gjb0tmrGG8QSeTXShqC+nJbojnJKCSJWHpRy9yvPd0OoLw/A70l
-    dJ7a8fr4DVxPvgMxfZ45DZz/13DgErXKyH293Ts1iysqiKK+h4y+upkLt8JC2gwt
-    MKeo2DZ9LHTH1WkEpPU7xws8i6aeZPgljrDZa2o8v8JQZDZU3Z3t7eq9L79ohuYt
-    nKoqVi5slLQdUj8imnwqyHwl/4JHKh4nLTNELT5kGvsO6Dcyn1xvlS+FW0NNNmM8
-    d/tayh1Z2LUArQ9ZoinGpl8nxckQWgEFOpU1eOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:cc:subject:date:message-id
-    :mime-version:content-type:to:sender:list-id; s=arctest; t=
-    1519717679; bh=+UX6bdqp1OgqfHQPVinqBPd5Gn3j+xvd4iRYD7MQI64=; b=r
-    agsgG/oVtaokzO2AMcm1G5eldvKYPRXOyThO6kp6J1b/WvisFqwhtt7Wn0TDXLNk
-    UllEAXHHsLP6/nSqPM2oUh5kozGEZ3jkvHkbFuPC7loRWUqQvvs+7rAxuhFqVd7n
-    +lGC3g5Ykq3qbKVGt0AcOLGfvSD6ttWKggqEFB0+CfpndkjVsIz9lNlV/NWgODDb
-    fXYC0ICRLdc25/MkdSC4XQODJqZ6XfJ64D3oNdOB0pAaNY/4WoQUnL41+1WD+MVm
-    /biGnN6Kvdz0WT0PurI4OffK+VoBIJxNHzhRk2Fya6r/Mm4VrTvgtN6YCgDyGegx
-    TzW+HXLaAGsCe/IJoZ6Ag==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim-adsp=discard (ADSP policy from amazon.de);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=ngx3ZoOj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim-adsp=discard (ADSP policy from amazon.de);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=ngx3ZoOj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeB0Hr4 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 02:47:56 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:2617 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeB0Hr4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 02:47:56 -0500
-X-IronPort-AV: E=Sophos;i="5.47,398,1515456000";
-   d="scan'208";a="709712310"
-From: Norbert Manthey <nmanthey@amazon.de>
-CC: Norbert Manthey <nmanthey@amazon.de>,
-        Michael Tautschnig <tautschn@amazon.co.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH] sched: label attributes require a ';'
-Date: Tue, 27 Feb 2018 08:47:40 +0100
-Message-ID: <1519717660-16157-1-git-send-email-nmanthey@amazon.de>
-X-Mailer: git-send-email 2.7.4
+Return-Path: <maxime.ripard@bootlin.com>
+X-Google-Smtp-Source: AH8x225k6izo4mtZdk2vM4DpwPG6ERRd6pOanLDPqZ1tDZdjFdcsxnNjPimJtJsENvcPT1S/1ki6
+ARC-Seal: i=1; a=rsa-sha256; t=1519716326; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nzj9PYTiSiea1/vKYz1ekL3XhLSHBZHgXem+qJLmstzWgNSrqwhmgHc/zXos0NEWOy
+         hsI+TvYjfJ+XOViwSH8vciV16ZiQrlR1oRPoAJjfJBWcIuViPukk5BpJ0lPC//89CNMj
+         8D8jQRdpK3AuNlHzsTkqUMRLDYRRIevxN6ryah+BesXs230NcKoi9FyRbVDHnTz4LoHm
+         21CcNuZ20neZr3YrBjEU5P61jBLA4GIPI+Noa/yLtVVHGYU8SbUmY+F1i3Aieu7kEZwv
+         gGG3em2GWw4HXU8gn0aGsirjRQIBVgJ+IGdTE5+hsER4HZ4OEvVpbNqzSlgfCRFAxCcH
+         HM4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=JBS03H4uRLUR2EgOFHZmaNhSFlst2NLvvy3orFIKe38=;
+        b=Z/0BnKXrl1PIsCknzxM1LiiyBim8q+kjy4dYscFYt26+9gFYRLcfx0IZiL5nIhjte4
+         I6NXQbyzn3UVekkdThRrvRx2kiIAtmnL/2v1BHKctBWsxqX3u1xCaM61ciXv+4fQaP7v
+         hC60a0xh7EZYQwFct464FlQEgqw+a3aU1pMCRtfvs6/oeF9xM0dyjfUwsqfAyuIUmMYr
+         hvKbjT2e7dt2lRDpatUOXYd1gQd7UjNan9HO55NZDqMFiBKi1GdiD5dUpym3G8okBsTl
+         8CY3Wad7hYtaMtKu2YlXJel4rtAIza9pVlnE7B+Rjz+Fx0wjlN6t27RFxiRZiIcYlilF
+         QIww==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
+Date: Tue, 27 Feb 2018 08:25:24 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Yong Deng <yong.deng@magewell.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v8 2/2] media: V3s: Add support for Allwinner CSI.
+Message-ID: <20180227072524.5pjoxoo4yowfw43v@flea>
+References: <1519697566-32600-1-git-send-email-yong.deng@magewell.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: unlisted-recipients:; (no To-header on input)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fkl5txttwye7c5om"
+Content-Disposition: inline
+In-Reply-To: <1519697566-32600-1-git-send-email-yong.deng@magewell.com>
+User-Agent: NeoMutt/20180223
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590918123212414894?=
+X-GMAIL-MSGID: =?utf-8?q?1593538066585822307?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Due to using gcc defines for configuration, some labels might be unused in
-certain configurations. While adding a __maybe_unused to the label is
-fine in general, the line has to be terminated with ';'. This is also
-reflected in the gcc documentation, but gcc parsed the previous variant
-without an error message.
 
-This has been spotted while compiling with goto-cc, the compiler for the
-CPROVER tool suite.
+--fkl5txttwye7c5om
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
-Signed-off-by: Michael Tautschnig <tautschn@amazon.co.uk>
+On Tue, Feb 27, 2018 at 10:12:46AM +0800, Yong Deng wrote:
+> Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> interface and CSI1 is used for parallel interface. This is not
+> documented in datasheet but by test and guess.
+>=20
+> This patch implement a v4l2 framework driver for it.
+>=20
+> Currently, the driver only support the parallel interface. MIPI-CSI2,
+> ISP's support are not included in this patch.
+>=20
+> Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Yong Deng <yong.deng@magewell.com>
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 26a71eb..3af8fb6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6716,7 +6716,7 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
- 
- 	p = task_of(se);
- 
--done: __maybe_unused
-+done: __maybe_unused;
- #ifdef CONFIG_SMP
- 	/*
- 	 * Move the next running task to the front of
--- 
-2.7.4
+Maxime
 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fkl5txttwye7c5om
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVB+MACgkQ0rTAlCFN
+r3SN/g//bxWocMt6hu3dxRXkZ1oj77FTZkLTsoNzIlcd1zh+buI3HHSoWYilOeVU
+zLJj0nokWoF9FRuryNqiDXFjhOiRqLb3mgvu6HRRWVuQ7xwr1X3IN1ntG8aSy+5m
+zy5xCT89S24QkcZNalZ0YKCM/qs2i12AXw6LMLFdoABeNz9WygFI3tch1qIX/CwT
+IFQVh8ATY0RlYp275+A2OjzB5GSqbIeyMKjaPjWkIVP8iV3KkcuXvIjfMmnqm5Ok
+HvMDJopDYu+95krEEeue82nhFzMSa4npAdu7Vxq2cNS88txV6zj/3dURt7CWk/v6
+B/X2kKU3jH4HZ40BeNeuulSQdmSIlIPZEpYruiqimvurxqNKAQqBOnsiRGU+WWBh
+9HRhhB7/8rSkZj5Dq/Xbrm/4zP1+lAYDL7nHgQeuFBIdosvvQYbzwhnnrbBIN/oU
+qcwIrsjnz9wxzh5QbIMlEIXKLJBpFgmotgbc+A/QqUWzidoYp26JJScFeXcI68H7
+oNW3O3XMdP8q3Q3O8YyWklhHMvEFvo8UBiqf4Fo6J1cYwMxPnL8N/yFQwzNuxyLJ
+1j1tSxAepyrSHj6nvCq+HYMjmbODLCzxlS9Rk86PTM5vNAxNo6bQKxT+HVauwHfd
+JprB6jgC6mCJaqCugHCB+H14H8KdOdSOsL9f3UpfRoEkf5bgYJ8=
+=Kft4
+-----END PGP SIGNATURE-----
+
+--fkl5txttwye7c5om--
