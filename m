@@ -1,70 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeB0XT5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:19:57 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:22974 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751779AbeB0XT4 (ORCPT
+        id S1752095AbeB0XUZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:20:25 -0500
+Received: from hs01.dk-develop.de ([213.136.71.231]:53116 "EHLO
+        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbeB0XUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:19:56 -0500
-Date: Tue, 27 Feb 2018 17:19:52 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] PCI/ASPM: Change type of threshold_ns variable to u32
-Message-ID: <20180227231952.GA9001@embeddedor.com>
+        Tue, 27 Feb 2018 18:20:23 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.175.32
-X-Source-L: No
-X-Exim-ID: 1eqoXK-001Bxn-M1
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.175.32]:55808
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 28 Feb 2018 00:20:26 +0100
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
+To: Kees Cook <keescook@chromium.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        keescook@google.com
+Subject: Re: [PATCH 1/2] fs/sysctl: fix potential page fault while
+ unregistering sysctl table
+In-Reply-To: <CAGXu5j+geUKNMu8W-+CYUD0_d_LBv+78TE5QbKx2EBeCx_oP9A@mail.gmail.com>
+References: <20180227224358.12672-1-danilokrummrich@dk-develop.de>
+ <CAGXu5j+geUKNMu8W-+CYUD0_d_LBv+78TE5QbKx2EBeCx_oP9A@mail.gmail.com>
+Message-ID: <55ea6fc33aa0385c90ea5a640fa5ad9d@dk-develop.de>
+User-Agent: Roundcube Webmail/1.3.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that the expression threshold_us * 1000 will never exceed the
-32-bit limits [1]. So changing the type of threshold_ns from u64 to u32
-seems sensible [2].
-
-[1] https://marc.info/?l=linux-kernel&m=151855021100725&w=2
-[2] https://marc.info/?l=linux-kernel&m=151976318924615&w=2
-
-Addresses-Coverity-ID: 1462501
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/pci/pcie/aspm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 57feef2..8633fc4 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -322,7 +322,7 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
- 
- static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
- {
--	u64 threshold_ns = threshold_us * 1000;
-+	u32 threshold_ns = threshold_us * 1000;
- 
- 	/* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
- 	if (threshold_ns < 32) {
--- 
-2.7.4
+On 2018-02-28 00:02, Kees Cook wrote:
+> On Tue, Feb 27, 2018 at 2:43 PM, Danilo Krummrich
+> <danilokrummrich@dk-develop.de> wrote:
+>> proc_sys_link_fill_cache() does not take currently unregistering
+>> sysctl tables into account, which might result into a page fault in
+>> sysctl_follow_link() - add a check to fix it.
+>> 
+>> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+>> ---
+>>  fs/proc/proc_sysctl.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>> 
+>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>> index c5cbbdff3c3d..a0b6c647835e 100644
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -709,6 +709,9 @@ static bool proc_sys_link_fill_cache(struct file 
+>> *file,
+>>         bool ret = true;
+> 
+> Nothing appears to actually change "ret" in this function. It should
+> likely be dropped too.
+> 
+proc_sys_fill_cache() potentially changes "ret".
+>>         head = sysctl_head_grab(head);
+>> 
+>> +       if (IS_ERR(head))
+>> +               return false;
+>> +
+> 
+> This looks sensible. I'd drop the blank line between sysctl_head_grab
+> and the IS_ERR, though.
+> 
+I'll do that.
+> How are you testing this change?
+> 
+Honestly, not at all. Actually, I never run in such a page fault.
+I spotted it by accident while reading the code.
+> Thanks!
+> 
+> -Kees
+> 
+>>         if (S_ISLNK(table->mode)) {
+>>                 /* It is not an error if we can not follow the link 
+>> ignore it */
+>>                 int err = sysctl_follow_link(&head, &table);
+>> --
+>> 2.14.1
+>> 
