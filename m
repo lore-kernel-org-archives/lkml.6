@@ -1,59 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeB0CYc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Feb 2018 21:24:32 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54603 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751733AbeB0CYb (ORCPT
+        id S1751927AbeB0CYo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Feb 2018 21:24:44 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:44871 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751630AbeB0CYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:24:31 -0500
-X-Google-Smtp-Source: AH8x227tOIicvjWr5ziVxu6pSKNayU+5F00Y2Q+NeupKZ6B+xT1G0jQGGRU/3VwWa/qP8TiX8+WyoQ==
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH] riscv/barrier: Define __smp_{store_release,load_acquire}
-Date: Tue, 27 Feb 2018 03:24:11 +0100
-Message-Id: <1519698251-19272-1-git-send-email-parri.andrea@gmail.com>
+        Mon, 26 Feb 2018 21:24:42 -0500
+X-ME-Sender: <xms:acGUWuzZoPNUYO_lxVpviHuUQnt76NW7hAKJ_z4gOYWly5G1iI8hiA>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] checkpatch: warn for use of %px
+Date: Tue, 27 Feb 2018 13:24:19 +1100
+Message-Id: <1519698263-17783-1-git-send-email-me@tobin.cc>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce __smp_{store_release,load_acquire}, and rely on the generic
-definitions for smp_{store_release,load_acquire}. This avoids the use
-of full ("rw,rw") fences on SMP.
+Hi Andrew,
 
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
----
- arch/riscv/include/asm/barrier.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This is a resurrection of a patch set from last December.  There was
+some confusion (on my behalf) as to how patches to checkpatch got into
+the mainline.  Are you willing (and able) to take patches to
+checkpatch.pl?
 
-diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
-index 5510366d169ae..d4628e4b3a5ea 100644
---- a/arch/riscv/include/asm/barrier.h
-+++ b/arch/riscv/include/asm/barrier.h
-@@ -38,6 +38,21 @@
- #define __smp_rmb()	RISCV_FENCE(r,r)
- #define __smp_wmb()	RISCV_FENCE(w,w)
- 
-+#define __smp_store_release(p, v)					\
-+do {									\
-+	compiletime_assert_atomic_type(*p);				\
-+	RISCV_FENCE(rw,w);						\
-+	WRITE_ONCE(*p, v);						\
-+} while (0)
-+
-+#define __smp_load_acquire(p)						\
-+({									\
-+	typeof(*p) ___p1 = READ_ONCE(*p);				\
-+	compiletime_assert_atomic_type(*p);				\
-+	RISCV_FENCE(r,rw);						\
-+	___p1;								\
-+})
-+
- /*
-  * This is a very specific barrier: it's currently only used in two places in
-  * the kernel, both in the scheduler.  See include/linux/spinlock.h for the two
+Patch 1 through 3 are cleanup/refactoring patches.
+
+Patch 3 makes checkpatch emit a warning for usage of specifier %px.
+
+You may remember that the initial idea for this was from yourself, v1
+requested permission to use 'Suggested-by' tag.  I didn't get comment on
+that so v2 removed the tag.  (I'm not totally across when one should add
+the 'Suggested-by' tag.)
+
+
+thanks,
+Tobin.
+
+
+v3:
+ - rebase onto 4.16-rc3
+ - separate 'remove unused variable' into it's own patch
+
+v2:
+ - change new sub name stat_real() -> get_stat_real()
+ - add new sub get_stat_here()
+ - move the addition of new sub routines into separate patches
+ - add 'Acked-by' tag for Joe
+ - remove 'Suggested-by' tag for Andrew Morton
+
+Tobin C. Harding (4):
+  checkpatch: add sub routine get_stat_real()
+  checkpatch: remove unused variable declarations
+  checkpatch: add sub routine get_stat_here()
+  checkpatch: warn for use of %px
+
+ scripts/checkpatch.pl | 113 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 58 insertions(+), 55 deletions(-)
+
 -- 
 2.7.4
