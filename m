@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751988AbeB0XFr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 18:05:47 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40220 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751800AbeB0XFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 18:05:44 -0500
-X-Google-Smtp-Source: AH8x2258geUNsUwAIDFNwbRqEkoZlQZh0xwE6VU/EgCDpWFp0p/nOlCL5G5f40djCPPojXF6+GeaRA==
-Date: Tue, 27 Feb 2018 17:05:43 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Sricharan R <sricharan@codeaurora.org>,
-        Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] i2c: qup: change completion timeout according to
- transfer length
-Message-ID: <20180227230543.GI20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-9-git-send-email-absahu@codeaurora.org>
- <7dcbac1f-edaf-aecf-8e58-04d243384758@codeaurora.org>
- <6a1983c0ca81afce908f622a53abd563@codeaurora.org>
+        id S1752015AbeB0XF5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 18:05:57 -0500
+Received: from mga02.intel.com ([134.134.136.20]:21305 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751800AbeB0XF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 18:05:56 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,403,1515484800";
+   d="scan'208";a="20827546"
+Date: Tue, 27 Feb 2018 15:05:39 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Agustin Vega-Frias <agustinv@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        timur@codeaurora.org
+Subject: Re: [RFC 1/3] perf, tools: Support wildcards on pmu name in dynamic
+ pmu events
+Message-ID: <20180227230539.GF21543@tassilo.jf.intel.com>
+References: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
+ <1519770848-26738-2-git-send-email-agustinv@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a1983c0ca81afce908f622a53abd563@codeaurora.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <1519770848-26738-2-git-send-email-agustinv@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 04:26:18PM +0530, Abhishek Sahu wrote:
-> On 2018-02-16 10:18, Sricharan R wrote:
-> >On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
-> >>Currently the completion timeout is being taken according to
-> >>maximum transfer length which is too high if SCL is operating in
-> >>high frequency. This patch calculates timeout on the basis of
-> >>one-byte transfer time and uses the same for completion timeout.
-> >>
-> >>Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >>---
-> >> drivers/i2c/busses/i2c-qup.c | 9 ++++++---
-> >> 1 file changed, 6 insertions(+), 3 deletions(-)
-> >>
-> >>diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> >>index a91fc70..6df65ea 100644
-> >>--- a/drivers/i2c/busses/i2c-qup.c
-> >>+++ b/drivers/i2c/busses/i2c-qup.c
-> >>@@ -130,8 +130,8 @@
-> >> #define MX_TX_RX_LEN			SZ_64K
-> >> #define MX_BLOCKS			(MX_TX_RX_LEN / QUP_READ_LIMIT)
-> >>
-> >>-/* Max timeout in ms for 32k bytes */
-> >>-#define TOUT_MAX			300
-> >>+/* Min timeout for i2c transfers */
-> >>+#define TOUT_MIN			2
-> >>
-> >
-> > may be you can mention, why is this 2 ?
-> >
+On Tue, Feb 27, 2018 at 05:34:06PM -0500, Agustin Vega-Frias wrote:
+> Starting on v4.12 event parsing code for dynamic pmu events already
+> supports prefix-based matching of multiple pmus when creating dynamic
+> events. E.g., in a system with the following dynamic pmus:
 > 
->  This 2 seconds is timeout which I am adding on the top of maximum
->  xfer time calculated from bus speed to compensate the interrupt
->  latency and other factors. It will make xfer timeout minimum as
->  2 seconds.
+>     mypmu_0
+>     mypmu_1
+>     mypmu_2
+>     mypmu_4
 > 
->  I will update the comment to explain it in more detail.
+> passing mypmu/<config>/ as an event spec will result in the creation
+> of the event in all of the pmus. This change expands this matching
+> through the use of fnmatch so glob-like expressions can be used to
+> create events in multiple pmus. E.g., in the system described above
+> if a user only wants to create the event in mypmu_0 and mypmu_1,
+> mypmu_[01]/<config>/ can be passed.
 
-Once you do that add:
+Missing documentation for the globbing.
 
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
+The rest looked ok to me. 
+
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+
+-Andi
