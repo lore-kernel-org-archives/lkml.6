@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeB0WfT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 17:35:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45804 "EHLO
+        id S1752082AbeB0Wfp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 17:35:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45452 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751947AbeB0WfQ (ORCPT
+        with ESMTP id S1751641AbeB0WfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:35:16 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C868F60F91
+        Tue, 27 Feb 2018 17:35:15 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54B7060849
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
 From: Agustin Vega-Frias <agustinv@codeaurora.org>
@@ -19,9 +19,9 @@ To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
 Cc: timur@codeaurora.org, agustinv@codeaurora.org
-Subject: [RFC 3/3] perf pmu: Restore auto-merging of PMU events created by prefix match
-Date: Tue, 27 Feb 2018 17:34:08 -0500
-Message-Id: <1519770848-26738-4-git-send-email-agustinv@codeaurora.org>
+Subject: [RFC 2/3] perf, tools: Display pmu name when printing unmerged events in stat
+Date: Tue, 27 Feb 2018 17:34:07 -0500
+Message-Id: <1519770848-26738-3-git-send-email-agustinv@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
 References: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
@@ -29,88 +29,197 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This was disabled when auto-merging of non-alias events was disabled in
-commit 63ce844 (perf stat: Only auto-merge events that are PMU aliases).
+Starting on v4.12 event parsing code for dynamic pmu events supports
+prefix-based matching of multiple pmus when creating dynamic events.
+E.g., in a system with the following dynamic pmus:
+
+    l3cache_0_0
+    l3cache_0_1
+    l3cache_0_2
+    l3cache_0_3
+
+passing l3cache/<config>/ as an event spec will result in the creation
+of the event in all of the pmus. When this functionality is used in
+stat the command will by default merge the event counts and display
+a single value. E.g.:
+
+    ./perf stat -a -e l3cache/read-miss/ ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                   328      l3cache/read-miss/
+
+           0.001661809 seconds time elapsed
+
+JSON-based alias events behave in the same way:
+
+    $ ./perf stat -a -e l3cache_read_miss ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                   229      l3cache_read_miss
+
+           0.001656099 seconds time elapsed
+
+This behavior can be disabled by the --no-merge option but the real
+pmu name is lost and it's not possible to see which count corresponds
+to which pmu:
+
+    $ ./perf stat -a -e l3cache/read-miss/ --no-merge ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                    67      l3cache/read-miss/
+                    67      l3cache/read-miss/
+                    63      l3cache/read-miss/
+                    60      l3cache/read-miss/
+
+           0.001675706 seconds time elapsed
+
+This is also the case for alias events, e.g.:
+
+    $ ./perf stat -a -e l3cache_read_miss --no-merge ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                    12      l3cache_read_miss
+                    17      l3cache_read_miss
+                    10      l3cache_read_miss
+                     8      l3cache_read_miss
+
+           0.001661305 seconds time elapsed
+
+This change adds the original pmu name to the event. For dynamic pmu
+events the pmu name is restored in the event name:
+
+    $ ./perf stat -a -e l3cache/read-miss/ --no-merge ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                    63      l3cache_0_3/read-miss/
+                    74      l3cache_0_1/read-miss/
+                    64      l3cache_0_2/read-miss/
+                    74      l3cache_0_0/read-miss/
+
+           0.001675706 seconds time elapsed
+
+For alias events the name is added after the event name:
+
+    $ ./perf stat -a -e l3cache_read_miss --no-merge ls > /dev/null
+
+     Performance counter stats for 'system wide':
+
+                    10      l3cache_read_miss [l3cache_0_3]
+                    12      l3cache_read_miss [l3cache_0_1]
+                    10      l3cache_read_miss [l3cache_0_2]
+                    17      l3cache_read_miss [l3cache_0_0]
+
+           0.001661305 seconds time elapsed
 
 Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
 ---
- tools/perf/util/parse-events.c | 13 +++----------
- tools/perf/util/parse-events.h |  2 +-
- tools/perf/util/parse-events.y |  4 ++--
- 3 files changed, 6 insertions(+), 13 deletions(-)
+ tools/perf/builtin-stat.c      | 29 ++++++++++++++++++++++++++++-
+ tools/perf/util/evsel.c        |  1 +
+ tools/perf/util/evsel.h        |  1 +
+ tools/perf/util/parse-events.c |  8 +++++++-
+ 4 files changed, 37 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 98bf9d3..d196972 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1225,6 +1225,31 @@ static void aggr_update_shadow(void)
+ 	}
+ }
+
++static void uniquify_event_name(struct perf_evsel *counter)
++{
++	char *new_name;
++	char *config;
++
++	if (!counter->pmu_name || !strncmp(counter->name, counter->pmu_name,
++					   strlen(counter->pmu_name)))
++		return;
++
++	config = strchr(counter->name, '/');
++	if (config) {
++		if (asprintf(&new_name,
++			     "%s%s", counter->pmu_name, config) > 0) {
++			free(counter->name);
++			counter->name = new_name;
++		}
++	} else {
++		if (asprintf(&new_name,
++			     "%s [%s]", counter->name, counter->pmu_name) > 0) {
++			free(counter->name);
++			counter->name = new_name;
++		}
++	}
++}
++
+ static void collect_all_aliases(struct perf_evsel *counter,
+ 			    void (*cb)(struct perf_evsel *counter, void *data,
+ 				       bool first),
+@@ -1253,7 +1278,9 @@ static bool collect_data(struct perf_evsel *counter,
+ 	if (counter->merged_stat)
+ 		return false;
+ 	cb(counter, data, true);
+-	if (!no_merge && counter->auto_merge_stats)
++	if (no_merge)
++		uniquify_event_name(counter);
++	else if (counter->auto_merge_stats)
+ 		collect_all_aliases(counter, cb, data);
+ 	return true;
+ }
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ef35168..4841000 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -244,6 +244,7 @@ void perf_evsel__init(struct perf_evsel *evsel,
+ 	evsel->metric_name   = NULL;
+ 	evsel->metric_events = NULL;
+ 	evsel->collect_stat  = false;
++	evsel->pmu_name      = NULL;
+ }
+
+ struct perf_evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index a7487c6..c2ac16a 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -142,6 +142,7 @@ struct perf_evsel {
+ 	struct perf_evsel	**metric_events;
+ 	bool			collect_stat;
+ 	bool			weak_group;
++	const char		*pmu_name;
+ };
+
+ union u64_swap {
 diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index bafc91e..4e80ca3 100644
+index 34589c4..bafc91e 100644
 --- a/tools/perf/util/parse-events.c
 +++ b/tools/perf/util/parse-events.c
-@@ -1217,7 +1217,7 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
- 			 get_config_name(head_config), &config_terms);
- }
+@@ -1247,7 +1247,12 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
+ 	if (!head_config) {
+ 		attr.type = pmu->type;
+ 		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL, auto_merge_stats);
+-		return evsel ? 0 : -ENOMEM;
++		if (evsel) {
++			evsel->pmu_name = name;
++			return 0;
++		} else {
++			return -ENOMEM;
++		}
+ 	}
 
--static int __parse_events_add_pmu(struct parse_events_state *parse_state,
-+int parse_events_add_pmu(struct parse_events_state *parse_state,
- 			 struct list_head *list, char *name,
- 			 struct list_head *head_config, bool auto_merge_stats)
- {
-@@ -1287,13 +1287,6 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
+ 	if (perf_pmu__check_alias(pmu, head_config, &info))
+@@ -1276,6 +1281,7 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
+ 		evsel->snapshot = info.snapshot;
+ 		evsel->metric_expr = info.metric_expr;
+ 		evsel->metric_name = info.metric_name;
++		evsel->pmu_name = name;
+ 	}
+
  	return evsel ? 0 : -ENOMEM;
- }
-
--int parse_events_add_pmu(struct parse_events_state *parse_state,
--			 struct list_head *list, char *name,
--			 struct list_head *head_config)
--{
--	return __parse_events_add_pmu(parse_state, list, name, head_config, false);
--}
--
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			       char *str, struct list_head **listp)
- {
-@@ -1323,8 +1316,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 					return -1;
- 				list_add_tail(&term->list, head);
-
--				if (!__parse_events_add_pmu(parse_state, list,
--							    pmu->name, head, true)) {
-+				if (!parse_events_add_pmu(parse_state, list,
-+							  pmu->name, head, true)) {
- 					pr_debug("%s -> %s/%s/\n", str,
- 						 pmu->name, alias->str);
- 					ok++;
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index 88108cd..5015cfd 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -167,7 +167,7 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
- 				void *ptr, char *type, u64 len);
- int parse_events_add_pmu(struct parse_events_state *parse_state,
- 			 struct list_head *list, char *name,
--			 struct list_head *head_config);
-+			 struct list_head *head_config, bool auto_merge_stats);
-
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			       char *str,
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index c528469..b51278f 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -232,7 +232,7 @@ PE_NAME opt_event_config
- 		YYABORT;
-
- 	ALLOC_LIST(list);
--	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
-+	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
- 		struct perf_pmu *pmu = NULL;
- 		int ok = 0;
-
-@@ -245,7 +245,7 @@ PE_NAME opt_event_config
- 			if (!strncmp($1, name, strlen($1)) || !fnmatch($1, name, 0)) {
- 				if (parse_events_copy_term_list(orig_terms, &terms))
- 					YYABORT;
--				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
-+				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
- 					ok++;
- 				parse_events_terms__delete(terms);
- 			}
 --
 2.7.4
