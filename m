@@ -1,98 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754093AbeB0O6y convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 09:58:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57679 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754011AbeB0O6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 09:58:50 -0500
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, robh@kernel.org, linux@arm.linux.org.uk
-Subject: Re: [PATCH v8 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-        <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
-Date: Tue, 27 Feb 2018 15:58:47 +0100
-In-Reply-To: <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
-        (Sricharan R.'s message of "Tue, 27 Feb 2018 19:37:01 +0530")
-Message-ID: <87zi3ujx7c.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1754068AbeB0O6q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 09:58:46 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754055AbeB0O6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 09:58:42 -0500
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Subject: Re: [PATCH v0 2/3] livepatch: update documentation/samples for
+ callbacks
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+References: <1519421630-12025-1-git-send-email-joe.lawrence@redhat.com>
+ <1519421630-12025-3-git-send-email-joe.lawrence@redhat.com>
+ <alpine.LSU.2.21.1802271324370.19255@pobox.suse.cz>
+Organization: Red Hat
+Message-ID: <f87dbd4e-7262-5c90-0a5f-a54e4d0af20d@redhat.com>
+Date: Tue, 27 Feb 2018 09:58:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.LSU.2.21.1802271324370.19255@pobox.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sricharan,
- 
- On mar., févr. 27 2018, Sricharan R <sricharan@codeaurora.org> wrote:
+On 02/27/2018 07:36 AM, Miroslav Benes wrote:
+> On Fri, 23 Feb 2018, Joe Lawrence wrote:
+> 
+>> [ ... snip ... ]
+>>  
+>> +If a livepatch is replaced by a cumulative patch, then only the
+>> +callbacks belonging to the cumulative patch will be executed.  This
+>> +simplifies the livepatching core for it is the responsibility of the
+>> +cumulative patch to safely revert whatever needs to be reverted.  See
+>> +Documentation/livepatch/cumulative.txt for more information on such
+>> +patches.
+> 
+> s/cumulative/atomic replace/ almost everywhere?
+> 
+> 'Documentation/livepatch/cumulative.txt' should be 
+> 'Documentation/livepatch/cumulative-patches.txt' and we may rename it 
+> atomic-replace-patches.txt. I don't know. Cumulative patches forms a 
+> subset of atomic replace patches in my understanding. The feature itself 
+> is more general. Even if practically used for cumulative patches only. But 
+> it is for you and Petr to decide.
 
-> From: Stephen Boyd <sboyd@codeaurora.org>
->
-> Register a cpufreq-generic device whenever we detect that a
-> "qcom,krait" compatible CPU is present in DT.
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> [Sricharan: updated to use dev_pm_opp_set_prop_name and
-> 	    nvmem apis]
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  10 ++
->  drivers/cpufreq/Makefile             |   3 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
->  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
->  4 files changed, 201 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
->
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 3a88e33..826f9e7 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
->  	depends on ARCH_OMAP2PLUS
->  	default ARCH_OMAP2PLUS
->  
-> +config ARM_QCOM_CPUFREQ
-> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
-> +	depends on ARCH_QCOM
-> +	select PM_OPP
-> +	help
-> +	  This enables the CPUFreq driver for Qualcomm SoCs with
-> +	  KRAIT processors.
-> +
-> +	  If in doubt, say N.
-> +
->  config ARM_S3C_CPUFREQ
->  	bool
->  	help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index c60c1e1..21894f6 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
->  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
->  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+Hi Miroslav,
 
-These 2 following lines don't seem related to the commit log:
-> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
-> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
+Thanks for reviewing!
 
-Gregory
+I guess I'm a little confused about the distinction here.
 
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+I understood a "cumulative-patch" to mean that it would contain the sum
+of all changes.  So instead of this:
+
+  patch 1 = A
++ patch 2 =     B
++ patch 3 =         C
+-----------------------
+  net     = A + B + C
+
+We can group all of the changes together into a single cumulative-patch
+for the same net effect:
+
+  patch 1 = A               -replaced by-
+  patch 2 = A + B             -replaced by-
+  patch 3 = A + B + C
+
+I assumed this would also mean to include any reverted changes as well.
+So in the example above, if change C needed to be reverted, then:
+
+  patch 4 = A + B
+
+and that would still be considered a "cumulative-patch".
+
+In my mind, atomic replace is the mechanism that forces patching to be
+cumulative.  Perhaps this is too strict?  Are there other use-cases for
+atomic-replace?
+
+>>  Example Use-cases
+>>  =================
+>>
+>> [ ... snip ... ]
+>>
+>> +Test 11
+>> +-------
+>> +
+>> +A similar test as the previous one, except this time load the second
+>> +callback demo module as a cumulative (ie, replacement) patch.  The
+>> +livepatching core will only execute klp_object callbacks for the latest
+>> +cumulative patch on the patch stack.
+>> +
+>> +- load livepatch
+>> +- load second livepatch (atomic replace)
+>> +- disable livepatch
+> 
+> Not needed.
+
+Good catch.
+
+-- Joe
