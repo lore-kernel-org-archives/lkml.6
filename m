@@ -1,17 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751838AbeB0Vq6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 16:46:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40472 "EHLO
+        id S1751943AbeB0VsT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 16:48:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40958 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751689AbeB0Vq4 (ORCPT
+        with ESMTP id S1751139AbeB0VsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:46:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D51EA600C1
+        Tue, 27 Feb 2018 16:48:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E5F3600C1
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=austinwc@codeaurora.org
-Subject: Re: [PATCH 01/12] i2c: qup: fixed releasing dma without flush
- operation completion
+Subject: Re: [PATCH 02/12] i2c: qup: minor code reorganization for use_dma
 To: Abhishek Sahu <absahu@codeaurora.org>,
         Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
 Cc: David Brown <david.brown@linaro.org>,
@@ -19,17 +18,17 @@ Cc: David Brown <david.brown@linaro.org>,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-3-git-send-email-absahu@codeaurora.org>
 From: "Christ, Austin" <austinwc@codeaurora.org>
-Message-ID: <789b2136-da54-b1d5-385d-71b36b368247@codeaurora.org>
-Date: Tue, 27 Feb 2018 14:46:53 -0700
+Message-ID: <73c94c05-e4a8-cb02-1919-1f872aafd96a@codeaurora.org>
+Date: Tue, 27 Feb 2018 14:48:14 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1517644697-30806-3-git-send-email-absahu@codeaurora.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -39,46 +38,76 @@ Tested on Centriq 2400
 Reviewed-by: Austin Christ <austinwc@codeaurora.org>
 
 On 2/3/2018 12:58 AM, Abhishek Sahu wrote:
-> The QUP BSLP BAM generates the following error sometimes if the
-> current I2C DMA transfer fails and the flush operation has been
-> scheduled
-> 
->      “bam-dma-engine 7884000.dma: Cannot free busy channel”
-> 
-> If any I2C error comes during BAM DMA transfer, then the QUP I2C
-> interrupt will be generated and the flush operation will be
-> carried out to make i2c consume all scheduled DMA transfer.
-> Currently, the same completion structure is being used for BAM
-> transfer which has already completed without reinit. It will make
-> flush operation wait_for_completion_timeout completed immediately
-> and will proceed for freeing the DMA resources where the
-> descriptors are still in process.
+> 1. Assigns use_dma in qup_dev structure itself which will
+>     help in subsequent patches to determine the mode in IRQ handler.
+> 2. Does minor code reorganization for loops to reduce the
+>     unnecessary comparison and assignment.
 > 
 > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 > ---
->   drivers/i2c/busses/i2c-qup.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+>   drivers/i2c/busses/i2c-qup.c | 19 +++++++++++--------
+>   1 file changed, 11 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> index 08f8e01..9faa26c41a 100644
+> index 9faa26c41a..c68f433 100644
 > --- a/drivers/i2c/busses/i2c-qup.c
 > +++ b/drivers/i2c/busses/i2c-qup.c
-> @@ -1,5 +1,5 @@
->   /*
-> - * Copyright (c) 2009-2013, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2009-2013, 2016-2018, The Linux Foundation. All rights reserved.
->    * Copyright (c) 2014, Sony Mobile Communications AB.
->    *
->    *
-> @@ -844,6 +844,8 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+> @@ -190,6 +190,8 @@ struct qup_i2c_dev {
+>   
+>   	/* dma parameters */
+>   	bool			is_dma;
+> +	/* To check if the current transfer is using DMA */
+> +	bool			use_dma;
+>   	struct			dma_pool *dpool;
+>   	struct			qup_i2c_tag start_tag;
+>   	struct			qup_i2c_bam brx;
+> @@ -1297,7 +1299,7 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+>   			   int num)
+>   {
+>   	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+> -	int ret, len, idx = 0, use_dma = 0;
+> +	int ret, len, idx = 0;
+>   
+>   	qup->bus_err = 0;
+>   	qup->qup_err = 0;
+> @@ -1326,13 +1328,12 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+>   			len = (msgs[idx].len > qup->out_fifo_sz) ||
+>   			      (msgs[idx].len > qup->in_fifo_sz);
+>   
+> -			if ((!is_vmalloc_addr(msgs[idx].buf)) && len) {
+> -				use_dma = 1;
+> -			 } else {
+> -				use_dma = 0;
+> +			if (is_vmalloc_addr(msgs[idx].buf) || !len)
+>   				break;
+> -			}
+>   		}
+> +
+> +		if (idx == num)
+> +			qup->use_dma = true;
 >   	}
 >   
->   	if (ret || qup->bus_err || qup->qup_err) {
-> +		reinit_completion(&qup->xfer);
-> +
->   		if (qup_i2c_change_state(qup, QUP_RUN_STATE)) {
->   			dev_err(qup->dev, "change to run state timed out");
->   			goto desc_err;
+>   	idx = 0;
+> @@ -1356,15 +1357,17 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+>   
+>   		reinit_completion(&qup->xfer);
+>   
+> -		if (use_dma) {
+> +		if (qup->use_dma) {
+>   			ret = qup_i2c_bam_xfer(adap, &msgs[idx], num);
+> +			qup->use_dma = false;
+> +			break;
+>   		} else {
+>   			if (msgs[idx].flags & I2C_M_RD)
+>   				ret = qup_i2c_read_one_v2(qup, &msgs[idx]);
+>   			else
+>   				ret = qup_i2c_write_one_v2(qup, &msgs[idx]);
+>   		}
+> -	} while ((idx++ < (num - 1)) && !use_dma && !ret);
+> +	} while ((idx++ < (num - 1)) && !ret);
+>   
+>   	if (!ret)
+>   		ret = qup_i2c_change_state(qup, QUP_RESET_STATE);
 > 
 
 -- 
