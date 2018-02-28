@@ -1,189 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934128AbeB1UFI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 15:05:08 -0500
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:7317 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933981AbeB1UFF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:05:05 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2G8AACcCpdahz+a6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQmgQAoCoNKmBGCAoEWaoY3jR6CAQqFMAIagjxXFQECAQEBAQE?=
- =?us-ascii?q?BAgECEAEBAQoLCQgoL4I4IoJKAQEBAwEjEUUMBAIBCBEEAQEBAgIjAwICAh8lA?=
- =?us-ascii?q?QgIAgQOBQiEfAMNCKwBgieHLA2BMIIWAQEBAQEBAQMBAQEBAQEBAQEfgQ+EFII?=
- =?us-ascii?q?ngz2DLYJqghsEHxAjglOCYgWNcowwMAmNO4MwgW+HUYU+ijSHH4EuNIF1cE+CQ?=
- =?us-ascii?q?4JDEAyBe3eLJYEXAQEB?=
-X-IPAS-Result: =?us-ascii?q?A2G8AACcCpdahz+a6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?mgQAoCoNKmBGCAoEWaoY3jR6CAQqFMAIagjxXFQECAQEBAQEBAgECEAEBAQoLC?=
- =?us-ascii?q?QgoL4I4IoJKAQEBAwEjEUUMBAIBCBEEAQEBAgIjAwICAh8lAQgIAgQOBQiEfAM?=
- =?us-ascii?q?NCKwBgieHLA2BMIIWAQEBAQEBAQMBAQEBAQEBAQEfgQ+EFIIngz2DLYJqghsEH?=
- =?us-ascii?q?xAjglOCYgWNcowwMAmNO4MwgW+HUYU+ijSHH4EuNIF1cE+CQ4JDEAyBe3eLJYE?=
- =?us-ascii?q?XAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.198
-X-IronPort-AV: E=Sophos;i="5.47,406,1515477600";
-   d="scan'208";a="1222193538"
-X-DLP: DLP_GlobalPCIDSS
-To: <andy.shevchenko@gmail.com>
-CC: <rjw@rjwysocki.net>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Topic: [RFC] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Index: AQHTsLvZsEmrPWpV1EW9TBL1ic3Lf6O6giwA//+55sA=
-Date: Wed, 28 Feb 2018 20:05:03 +0000
-Message-ID: <ad15f3beb9f44c77b79f3038cb75b69c@ausx13mpc124.AMER.DELL.COM>
-References: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VcdsALCUBNoO4BoOj0rHuxurhr6B3GL2i7D79BxRL77kQ@mail.gmail.com>
-In-Reply-To: <CAHp75VcdsALCUBNoO4BoOj0rHuxurhr6B3GL2i7D79BxRL77kQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        id S934256AbeB1UFT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 15:05:19 -0500
+Received: from mga07.intel.com ([134.134.136.100]:62603 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933981AbeB1UFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 15:05:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="scan'208";a="34426778"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
+        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
+        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
+        daniel.thompson@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net,
+        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+In-Reply-To: <20180228194429.GD22932@mithrandir>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com> <20180228194429.GD22932@mithrandir>
+Date: Wed, 28 Feb 2018 22:04:52 +0200
+Message-ID: <87r2p4hod7.fsf@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1SK5EUF027759
 
+On Wed, 28 Feb 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
+> Anyone that needs something other than normal mode should use the new
+> atomic PWM API.
 
+At the risk of revealing my true ignorance, what is the new atomic PWM
+API? Where? Examples of how one would convert old code over to the new
+API?
 
-> -----Original Message-----
-> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> Sent: Wednesday, February 28, 2018 12:11 PM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Rafael J . Wysocki <rjw@rjwysocki.net>; ACPI Devel Maling List <linux-
-> acpi@vger.kernel.org>; LKML <linux-kernel@vger.kernel.org>
-> Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
-> 
-> On Wed, Feb 28, 2018 at 7:43 PM, Mario Limonciello
-> <mario.limonciello@dell.com> wrote:
-> > Currently the only way to specify a hibernate offset for a swap
-> > file is on the kernel command line.
-> >
-> > This makes some changes to improve:
-> > 1) Add a new /sys/power/disk_offset that lets userspace specify
-> > the offset and disk to use when initiating a hibernate cycle.
-> >
-> > 2) Adjust /sys/power/resume interpretation to also read in an
-> > offset.
-> 
-> Read is okay per se (not consistent though), showing is not.
-> It might break an ABI.
+BR,
+Jani.
 
-Right this is part of why I was proposing making a new attribute.
-
-The current RFC implementation I sent keeps the read output the
-same for /sys/power/resume.
-
-> 
-> > Actually klibc's /bin/resume has supported passing a hibernate
-> > offset in since 20695264e21dcbde309cd81f73cfe2cea42e779d.
-> >
-> > The kernel was just lobbing anything after the device specified
-> > off the string.  Instead parse that and populate hibernate offset
-> > with it.
-> 
-> > An alternative to introducing a new sysfs parameter may be to document
-> > setting these values via /sys/power/resume.  If the wrong signature is found
-> > on the swapfile/swap partition by the kernel it does show an error
-> > but it updates the values and they'll work when actually invoked later.
-> 
-> Don't you need to document new node?
-
-Yes, I wanted to get feedback before I reworked documentation and that's
-why I implemented both approaches right now.
-
-Maybe both even make sense.
-When I resubmit as a patch I'll make sure documentation is updated.
-
-> 
-> > +static int parse_device_input(const char *buf, size_t n)
-> >  {
-> > +       unsigned long long offset;
-> >         dev_t res;
-> >         int len = n;
-> >         char *name;
-> > +       char *last;
-> >
-> >         if (len && buf[len-1] == '\n')
-> >                 len--;
-> 
-> I'm not sure first part even needed, but okay, it's in original code.
-> 
-> >         name = kstrndup(buf, len, GFP_KERNEL);
-> >         if (!name)
-> >                 return -ENOMEM;
-> 
-> Side notes.
-> This whole dance b/c of high probability of '\n' at the end which
-> breaks _some_ kernel parsers.
-> It might make sense to do a wrapper and call the guts of this function
-> with or without memory allocation depending on presence of '\n'.
-> 
-
-OK.
-
-> > -
-> 
-> This is not needed to be removed.
-> 
-> > +       last = strrchr(name, ':');
-> 
-> > +       printk("%lu %s %s %d", last-name, name, last, len);
-> 
-> Ouch. I guess it's only for RFC.
-
-Yes I was having problems originally and it was debug, it won't
-be there when submitted for application.
-
-> 
-> > +       if (last != NULL &&
-> 
-> > +           (last-name) != len-1 &&
-> 
-> > +           sscanf(last+1, "%llu", &offset) == 1)
-> 
-> This is effectively
-> 
-> if (last && *(last+1)) {
->   int ret = kstrtoull(...&swsusp_resume_block...);
->   if (ret)
->    ...warn?..
-> }
-> 
-> ?
-
-I'll have to look more closely, but if this simplification
-works I'll switch over.
-
-> 
-> > +                swsusp_resume_block = offset;
-> 
-> > +       swsusp_resume_device = res;
-> > +
-> 
-> > +       return 1;
-> 
-> ???
-> Why not traditional 0?
-> 
-> > +}
-> 
-> > @@ -1125,7 +1161,6 @@ static int __init pm_disk_init(void)
-> >
-> >  core_initcall(pm_disk_init);
-> >
-> > -
-> 
-> This doesn't belong to the change.
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
+-- 
+Jani Nikula, Intel Open Source Technology Center
