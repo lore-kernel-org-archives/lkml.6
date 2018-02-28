@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835565-2-6965343406891787990
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835549-2-17475217031483135753
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835565; b=TKObXcGczg/BJuGiNqtJ+4KFxTfBY93OM7QpV23J7WCerg9
-    70NBUvYhEdWDFWWUlIYUi0lLXl2JEZ7ddth0H7LdzP/FnLnPOeqLF9HCC34d59IS
-    Tgr3uXRzAxO5dNSKkZoEBfVbFWXUQvgonYsAfi3rrkzBqt8TUl/Zj2NFd6/iKPHY
-    A3+RWjpINu+TNEcf60/zqy5FX7DiT6XFpzpb7/5MUQaBh9XlGd3Bawj0MJPdpdwC
-    2YJfDlo3JBZLFcDSlLU7G71lgqFYHHwP9sGQhrhGozM7kYBaWuLxGC73Ybyt43MP
-    KTlyj4SneZ1rsFlxaP4tuGKMAcupGsq1CLydFXw==
+    t=1519835549; b=hIZ8eqIkMptAvi6PdYm6qcA6xCSThcq86K6q6weFI3aoII/
+    A7Susm5922pURzRw4WRy9/lOOWO3tNe5YYwBmGypJB2UDiGTf7S6VaeP0zZvdNBp
+    1yirqo5UslmdW//7Aa4z4Zk8qGsA+GdM4x1RzskOB0OjuN8uNsZIx+lULXbirWmO
+    HcwB1o3GuDnIK+3Ye7lQTDxCpgtnovulRFxrRB2MmaZmP4AaPeWSiwoZXsSWH6AO
+    fuUwhtY09vtwb7GE4Tn+tAWqPDuVVBldvayKC+liEwtyAy/nmXg4jC9ZVzgQD979
+    kQC0XkaYEk4vHYUOWpcSCk9YbI83WBtg58H5tvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835565; bh=vjcLJ4WwDJcLUtVUosh
-    pz8+GnTFrJNI8A002V0peKrE=; b=XiSRmUZXdBKAg1hOtWtucYtQ7Had08l8Cac
-    G+KFZJpGQeEEvCg32D94/DlkRh5AvgJCbLhGTLRsL/VJRv0HTQ3fMiqCOLCvSRWQ
-    oWonrgHYIOjKuipcLKlsQkYSlpZ/NcK2XlP/4oFclwzuwPADnB2FdFlKH7r6/cjA
-    ACNGFoOEnd2GOCXjjikcXNr5geuC2US7FmeaEmFx6xzZuTCK+j8c5H95i0IYIjTE
-    KAxaMuIrIiyHpyYckTnNxAeRn/B2Fjbg8y23Wmjv+dKRKcFl8ufkpAphxz1SiHkI
-    C0sx0EDc0bK7ga5SYaNAwmCP/wiylIlYNBhja6XtT6wPcBmGNoQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835549; bh=RUAWTWZacs/+H+ITN6u
+    GJ23aZY0HZWYslFUVMDHo0fA=; b=KA3b9LrOa6J2dY1Y/0eDlZBPP/o3h7ApYyl
+    DFHT0liVHGlGiLiPhlv0nL66ssZfC3mc3o4ji5DJsHbnuBrB4oYF2LoN9mghf4vt
+    H4BQaqnEEdRdBxOX4tUHqj6i1S4OjKoAH6lAuTn5hijVFfg3DJVhHsOaglpDpFrv
+    Dk24uHYYM8o33fQB8orawvphI/lYcs4sHMD7qw820BACEuXtzFY0NrxQqy54QgvS
+    nUXLg0g84r5fW8pkLDQM8u3a78KA18YN9TbC5EOnfjog2hrxz7P9/v/A+yO1g+Hd
+    5XuWiuWaOSkKD+0Eg9/+VxAzJGlxeThgViw/OIxQJ9EbSrRiRrA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932732AbeB1Qc3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:32:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35109 "EHLO
+        id S1753278AbeB1QOY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:14:24 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35104 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753277AbeB1QOX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:14:23 -0500
+        by vger.kernel.org with ESMTP id S1753118AbeB1QOT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:14:19 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ralf Baechle" <ralf@linux-mips.org>,
-        linux-mips@linux-mips.org, "Maciej W. Rozycki" <macro@imgtec.com>
+CC: akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.721276832@decadent.org.uk>
+Message-ID: <lsq.1519831218.186100743@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 102/254] MIPS: ptrace: Fix FP context restoration
- FCSR regression
+Subject: [PATCH 3.16 240/254] media: v4l2-ioctl.c: don't copy back the
+ result for -ENOTTY
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,37 +81,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@imgtec.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 4249548454f7ba4581aeee26bd83f42b48a14d15 upstream.
+commit 181a4a2d5a0a7b43cab08a70710d727e7764ccdd upstream.
 
-Fix a floating-point context restoration regression introduced with
-commit 9b26616c8d9d ("MIPS: Respect the ISA level in FCSR handling")
-that causes a Floating Point exception and consequently a kernel oops
-with hard float configurations when one or more FCSR Enable and their
-corresponding Cause bits are set both at a time via a ptrace(2) call.
+If the ioctl returned -ENOTTY, then don't bother copying
+back the result as there is no point.
 
-To do so reinstate Cause bit masking originally introduced with commit
-b1442d39fac2 ("MIPS: Prevent user from setting FCSR cause bits") to
-address this exact problem and then inadvertently removed from the
-PTRACE_SETFPREGS request with the commit referred above.
-
-Signed-off-by: Maciej W. Rozycki <macro@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/13238/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/kernel/ptrace.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/v4l2-core/v4l2-ioctl.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -176,6 +176,7 @@ int ptrace_setfpregs(struct task_struct
- 	}
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 16bffd851bf9..e2f71def945a 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -2402,8 +2402,11 @@ video_usercopy(struct file *file, unsigned int cmd, unsigned long arg,
  
- 	__get_user(value, data + 64);
-+	value &= ~FPU_CSR_ALL_X;
- 	fcr31 = child->thread.fpu.fcr31;
- 	mask = boot_cpu_data.fpu_msk31;
- 	child->thread.fpu.fcr31 = (value & ~mask) | (fcr31 & mask);
+ 	/* Handles IOCTL */
+ 	err = func(file, cmd, parg);
+-	if (err == -ENOIOCTLCMD)
++	if (err == -ENOTTY || err == -ENOIOCTLCMD) {
+ 		err = -ENOTTY;
++		goto out;
++	}
++
+ 	if (err == 0) {
+ 		if (cmd == VIDIOC_DQBUF)
+ 			trace_v4l2_dqbuf(video_devdata(file)->minor, parg);
