@@ -1,128 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933617AbeB1PtQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:49:16 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57218 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932932AbeB1PtG (ORCPT
+        id S932850AbeB1Ptw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:49:52 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51699 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752847AbeB1Ptr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:49:06 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] nvme-pci: assign separate irq vectors for adminq and ioq0
-Date: Wed, 28 Feb 2018 23:48:41 +0800
-Message-Id: <1519832921-13915-1-git-send-email-jianchao.w.wang@oracle.com>
+        Wed, 28 Feb 2018 10:49:47 -0500
+X-Google-Smtp-Source: AH8x2275Hpjmsyh1H8/iGIZOI47qYLYBom8upHHJuzAdq0UFOKNoZ1vbMFPECeFoDhOUKzTdqmhLpA==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH V4 00/15] lightnvm: pblk: implement 2.0 support
+Date: Wed, 28 Feb 2018 16:49:20 +0100
+Message-Id: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=856
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802280192
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, adminq and ioq0 share the same irq vector. This is
-unfair for both amdinq and ioq0.
- - For adminq, its completion irq has to be bound on cpu0. It
-   just has only one hw queue, it is unreasonable to do this.
- - For ioq0, when the irq fires for io completion, the adminq irq
-   action on this irq vector will introduce an uncached access on
-   adminq cqe at least, even worse when adminq is busy.
+# Changes since V4
+ - Rebase on top of Matias' for-4.17/core
+ - Fix pblk's write buffer size when using mw_cuints
+ - Remove chunk information from pblk's sysfs. We intend to clean up
+   sysfs, as it is messy as it is now, and use trace points instead. So,
+   avoid an extra refactoring in the near future.
 
-To improve this, allocate separate irq vectors for adminq and
-ioq0, and not set irq affinity for adminq one. If just one irq
-vector, setup adminq + 1 ioq and let them share it. In addition
-add new helper interface nvme_ioq_vector to get ioq vector.
+>From Matias:
+ - Squash geometry patches
+ - Squash chunk support in lightnvm core
+ - Use core structure for chunk metadata
+ - Remove intermediate values for csecs and sos before disk
+   revalidation.
+ - Various renamings
 
-V1->V2
- - add case to handle the scenario where there is only one irq
-   vector
- - add nvme_ioq_vector to map ioq vector and qid
+# Changes since V3
+>From Matias:
+ - Remove nvm_common_geo
+ - Do appropriate renames when having a single geometry for device and
+     targets
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/pci.c | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+# Changes since V2:
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 73036d2..273b157 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -84,6 +84,7 @@ struct nvme_dev {
- 	struct dma_pool *prp_small_pool;
- 	unsigned online_queues;
- 	unsigned max_qid;
-+	unsigned int num_vecs;
- 	int q_depth;
- 	u32 db_stride;
- 	void __iomem *bar;
-@@ -139,6 +140,17 @@ static inline struct nvme_dev *to_nvme_dev(struct nvme_ctrl *ctrl)
- 	return container_of(ctrl, struct nvme_dev, ctrl);
- }
- 
-+static inline unsigned int nvme_ioq_vector(struct nvme_dev *dev,
-+		unsigned int qid)
-+{
-+	/*
-+	 * If controller has only legacy or single-message MSI, there will
-+	 * be only 1 irq vector. At the moment, we setup adminq + 1 ioq
-+	 * and let them share irq vector.
-+	 */
-+	return (dev->num_vecs == 1) ? 0 : qid;
-+}
-+
- /*
-  * An NVM Express queue.  Each device has at least two (one for admin
-  * commands and one for I/O commands).
-@@ -1456,7 +1468,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 		nvmeq->sq_cmds_io = dev->cmb + offset;
- 	}
- 
--	nvmeq->cq_vector = qid - 1;
-+	nvmeq->cq_vector = nvme_ioq_vector(dev, qid);
- 	result = adapter_alloc_cq(dev, qid, nvmeq);
- 	if (result < 0)
- 		return result;
-@@ -1626,9 +1638,9 @@ static int nvme_create_io_queues(struct nvme_dev *dev)
- 	int ret = 0;
- 
- 	for (i = dev->ctrl.queue_count; i <= dev->max_qid; i++) {
--		/* vector == qid - 1, match nvme_create_queue */
- 		if (nvme_alloc_queue(dev, i, dev->q_depth,
--		     pci_irq_get_node(to_pci_dev(dev->dev), i - 1))) {
-+		     pci_irq_get_node(to_pci_dev(dev->dev),
-+				 nvme_ioq_vector(dev, i)))) {
- 			ret = -ENOMEM;
- 			break;
- 		}
-@@ -1909,6 +1921,8 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 	int result, nr_io_queues;
- 	unsigned long size;
-+	struct irq_affinity affd = {.pre_vectors = 1};
-+	int ret;
- 
- 	nr_io_queues = num_present_cpus();
- 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
-@@ -1945,12 +1959,12 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	 * setting up the full range we need.
- 	 */
- 	pci_free_irq_vectors(pdev);
--	nr_io_queues = pci_alloc_irq_vectors(pdev, 1, nr_io_queues,
--			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY);
--	if (nr_io_queues <= 0)
-+	ret = pci_alloc_irq_vectors_affinity(pdev, 1, (nr_io_queues + 1),
-+			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
-+	if (ret <= 0)
- 		return -EIO;
--	dev->max_qid = nr_io_queues;
--
-+	dev->num_vecs = ret;
-+	dev->max_qid = (ret > 1) ? (ret - 1) : 1;
- 	/*
- 	 * Should investigate if there's a performance win from allocating
- 	 * more queues than interrupt vectors; it might allow the submission
+Apply Matias' feedback:
+ - Remove generic nvm_id identify structure.
+ - Do not remap capabilities (cap) to media and controlled capabilities
+   (mccap). Instead, add a comment to prevent confusion when
+   crosschecking with 2.0 spec.
+ - Change maxoc and maxocpu defaults from 1 block to the max number of
+   blocks.
+ - Re-implement the generic geometry to use nvm_geo on both device and
+   targets. Maintain nvm_common_geo to make it easier to copy the common
+   part of the geometry (without having to overwrite target-specific
+   fields, which is ugly and error prone). Matias, if you still want to
+   get rid of this, we can do it.
+ - Re-order patches with renaming to make them more meaningful. These
+   belong to the series, since the name changes are motivated by 2.0
+   inclusions. The only exception would be 36d10bfd3234, but I hope it
+   is OK I include it here.
+
+Also,
+ - Eliminate a dependency between luns and lines in the init/exit
+   refactoring.
+ - Use the global address format when possible to avoid defaulting on
+   the 1.2 path. This will safe headaches if the address format changes
+   at some point.
+
+I took out the patch allowing to do bit shifts on non power-of-2 media
+formats on pblk's mapping since it requires touching many places that
+are not 2.0 related. I'll submit this separately.
+
+# Changes since V1:
+
+Apply Matias' feedback:
+ - Rebase on top of Matias' latest patches.
+ - Use nvme_get_log_ext to submit report chunk and export it.
+ - Re-write report chunk based on Matias' suggestions. Here, I
+   maintained the lba interface, but it was necessary to redo the
+   address formatting to match the chunk log page format. For pblk,
+   this means a double address transformation, but it enables the
+   standard path to use lbas, plus, this is not in the fast path.
+ - Fold address format together with address transformations.
+ - Split the generic geometry patch in different patches.
+ - Remove refactoring of ligthnvm's core sysfs.
+
+Feedback not applied:
+ - Not letting pblk know about 1.2 and 2.0 bad block paths.
+   Since the interfaces for get/set bad block and report chunk are so
+   different, moving this logic to core adds assumptions on how the
+   targets would want to get the data back. A way of doing this is
+   creating a logical report chunk on the 1.2 path, but this would
+   mean that values like the wear-index are invalid, which requires
+   the target knowledge. I'm open to suggestions here.
+
+Also:
+ - Do some further renamings
+ - Create a generic address format to make it explicit where we share
+   1.2 and 2.0 fields to avoid address formatting in the fast path.
+ - Add new fields to sysfs to complete spec and show major/minor
+   versions (version and subversion to respect current interface).
+
+Implement 2.0 support in pblk. This includes the address formatting and
+mapping paths, as well as the sysfs entries for them.
+
+Javier
+
+
+Javier González (15):
+  lightnvm: simplify geometry structure.
+  lightnvm: add controller capabilities to 2.0
+  lightnvm: add minor version to generic geometry
+  lightnvm: add shorten OCSSD version in geo
+  lightnvm: complete geo structure with maxoc*
+  lightnvm: normalize geometry nomenclature
+  lightnvm: add support for 2.0 address format
+  lightnvm: make address conversions depend on generic device
+  lightnvm: implement get log report chunk helpers
+  lightnvm: pblk: check for supported version
+  lightnvm: pblk: rename ppaf* to addrf*
+  lightnvn: pblk: use generic address format
+  lightnvm: pblk: implement get log report chunk
+  lightnvm: pblk: refactor init/exit sequences
+  lightnvm: pblk: implement 2.0 support
+
+ drivers/lightnvm/core.c          | 178 ++++-----
+ drivers/lightnvm/pblk-core.c     | 169 ++++++--
+ drivers/lightnvm/pblk-gc.c       |   2 +-
+ drivers/lightnvm/pblk-init.c     | 838 +++++++++++++++++++++++----------------
+ drivers/lightnvm/pblk-map.c      |   4 +-
+ drivers/lightnvm/pblk-read.c     |   2 +-
+ drivers/lightnvm/pblk-recovery.c |  14 +-
+ drivers/lightnvm/pblk-rl.c       |   2 +-
+ drivers/lightnvm/pblk-sysfs.c    |  65 ++-
+ drivers/lightnvm/pblk-write.c    |   2 +-
+ drivers/lightnvm/pblk.h          | 242 +++++++----
+ drivers/nvme/host/core.c         |   6 +-
+ drivers/nvme/host/lightnvm.c     | 453 ++++++++++++++-------
+ drivers/nvme/host/nvme.h         |   3 +
+ include/linux/lightnvm.h         | 331 ++++++++++------
+ 15 files changed, 1479 insertions(+), 832 deletions(-)
+
 -- 
 2.7.4
