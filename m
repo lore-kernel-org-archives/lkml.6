@@ -1,48 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933741AbeB1TVj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:21:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43037 "EHLO mx2.suse.de"
+        id S933623AbeB1TVw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:21:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43077 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933424AbeB1TVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:21:32 -0500
-Subject: Re: [PATCH] xen-netfront: Fix hang on device removal
-To: Jason Andryuk <jandryuk@gmail.com>, xen-devel@lists.xenproject.org,
-        netdev@vger.kernel.org
-Cc: Eduardo Otubo <otubo@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180228122323.3914-1-jandryuk@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <d6411bf3-9edd-15a7-1f4e-a9f51869129d@suse.com>
-Date: Wed, 28 Feb 2018 20:21:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933426AbeB1TVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 14:21:48 -0500
+Date: Wed, 28 Feb 2018 20:21:44 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
+Message-ID: <20180228202144.2ae8149f@endymion>
+In-Reply-To: <CAJZ5v0hOvU25zWfVjBw-2iz5Y7V2FkSwoTZVZTpjEG9KOCQ6oQ@mail.gmail.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+        <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+        <20180226172832.7bf82336@endymion>
+        <1519813744.10722.258.camel@linux.intel.com>
+        <CAJZ5v0hOvU25zWfVjBw-2iz5Y7V2FkSwoTZVZTpjEG9KOCQ6oQ@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180228122323.3914-1-jandryuk@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/18 13:23, Jason Andryuk wrote:
-> A toolstack may delete the vif frontend and backend xenstore entries
-> while xen-netfront is in the removal code path.  In that case, the
-> checks for xenbus_read_driver_state would return XenbusStateUnknown, and
-> xennet_remove would hang indefinitely.  This hang prevents system
-> shutdown.
+On Wed, 28 Feb 2018 11:33:39 +0100, Rafael J. Wysocki wrote:
+> On Wed, Feb 28, 2018 at 11:29 AM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > I would assume that no BIOS date is related to prehistoric firmwares and
+> >  using _CRS would sound weird on them.  
 > 
-> xennet_remove must be able to handle XenbusStateUnknown, and
-> netback_changed must also wake up the wake_queue for that state as well.
+> Careful here.
 > 
-> Fixes: 5b5971df3bc2 ("xen-netfront: remove warning when unloading module")
-> 
-> Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
-> Cc: Eduardo Otubo <otubo@redhat.com>
+> You seem to be assuming that the DMI information is always valid
+> and/or complete which is know to not be the case sometimes.
 
-Committed to xen/tip for-linus-4.16a
+True. While the BIOS date is not the worst offender when it comes to
+broken DMI data, you must remember that the date comes as a string, and
+older SMBIOS specifications did not even recommend a specific format
+for that string. As a matter of fact, my collection of DMI tables
+includes a few creative samples like "Jul  7 2016" or "09-16-08" which
+the kernel fails to parse.
 
+So the default behavior at the driver level shouldn't be based on what
+older systems are most likely to enjoy. The default behavior must be
+the safest option, regardless of the age of the system.
 
-Juergen
+-- 
+Jean Delvare
+SUSE L3 Support
