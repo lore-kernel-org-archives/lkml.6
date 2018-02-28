@@ -1,110 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934904AbeB1VUF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:20:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52159 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933074AbeB1VUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:20:03 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: nvmem: allow registering the nvmem device before the rtc
-Date: Wed, 28 Feb 2018 22:19:58 +0100
-Message-Id: <20180228211958.10044-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S934936AbeB1VUU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:20:20 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49657 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933074AbeB1VUT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 16:20:19 -0500
+Date: Wed, 28 Feb 2018 22:20:16 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Woody Suwalski <terraluna977@gmail.com>
+cc: Linux Kernel List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        William Grant <william.grant@canonical.com>
+Subject: Re: 4.16 regression: s2ram broken on non-PAE i686
+In-Reply-To: <da61401a-5d97-c925-ef0b-fcd937c2712a@gmail.com>
+Message-ID: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
+References: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com> <alpine.DEB.2.21.1802280959180.1886@nanos.tec.linutronix.de> <da61401a-5d97-c925-ef0b-fcd937c2712a@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the parent of the nvmem device to the parent of the rtc device so it
-can be registered before the RTC.
+Woody,
 
-This is a small change in the ABI as the nvmem moves out of the
-/sys/class/rtc/rtcX folder to be under the parent device folder (that is
-where the previous nvram files where registered).
+On Wed, 28 Feb 2018, Woody Suwalski wrote:
+> Certainly. I understand you want dmesg output for kernels build with and
+> without PAE, not just PAE=n on the cmdline :-)
+> Here it is...
 
-However, it is still available under its correct location,
-/sys/bus/nvmem/devices which is the one that should be used by userspace
-applications.
+Thanks for providing the data. It did not pinpoint the issue but at least
+it gave me the hint to look into the right direction.
 
-The other benefit is that the nvmem device can stay registered even if the
-rtc registration fails. Or it is possible to not register the rtc if the
-nvmem registration failed.
+Does the patch below fix the issue for you? It's untested as I'm at home
+and have no access to a 32bit machine right now.
 
-Finally, it makes a lot of sense for devices that actually have different
-i2c or spi addresses for the RTC and the EEPROM. That is basically how it
-would end up when using MFD or even completely separate devices.
+Thanks,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+	tglx
+
+8<------------------
+Subject: x86/cpu_entry_area: Sync cpu_entry_area to initial_page_table
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Wed, 28 Feb 2018 21:14:26 +0100
+
+The separation of the cpu_entry_area from the fixmap missed the fact that
+on 32bit non-PAE kernels the cpu_entry_area mapping might not be covered in
+initial_page_table by the previous synchronizations.
+
+This results in suspend/resume failures because 32bit utilizes initial page
+table for resume. The absence of the cpu_entry_area mapping results in a
+triple fault, aka. insta reboot.
+
+Synchronize the initial page table after setting up the cpu entry
+area. Instead of adding yet another copy of the same code, move it to a
+function and invoke it from the various places.
+
+It needs to be investigated if the existing calls in setup_arch() and
+setup_per_cpu_areas() can be replaced by the later invocation from
+setup_cpu_entry_areas(), but that's beyond the scope of this fix.
+
+Fixes: 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
+Reported-by: Woody Suwalski <terraluna977@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
 ---
- Documentation/ABI/testing/sysfs-class-rtc | 8 --------
- drivers/rtc/class.c                       | 5 +++--
- drivers/rtc/nvmem.c                       | 2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/pgtable_32.h |    1 +
+ arch/x86/include/asm/pgtable_64.h |    1 +
+ arch/x86/kernel/setup.c           |   17 +++++------------
+ arch/x86/kernel/setup_percpu.c    |   17 ++++-------------
+ arch/x86/mm/cpu_entry_area.c      |    6 ++++++
+ arch/x86/mm/init_32.c             |   15 +++++++++++++++
+ 6 files changed, 32 insertions(+), 25 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-rtc b/Documentation/ABI/testing/sysfs-class-rtc
-index 65270d95873c..792a38300336 100644
---- a/Documentation/ABI/testing/sysfs-class-rtc
-+++ b/Documentation/ABI/testing/sysfs-class-rtc
-@@ -57,14 +57,6 @@ Contact:	linux-rtc@vger.kernel.org
- Description:
- 		(RO) RTC-provided time in 24-hour notation (hh:mm:ss)
+--- a/arch/x86/include/asm/pgtable_32.h
++++ b/arch/x86/include/asm/pgtable_32.h
+@@ -32,6 +32,7 @@ extern pmd_t initial_pg_pmd[];
+ static inline void pgtable_cache_init(void) { }
+ static inline void check_pgt_cache(void) { }
+ void paging_init(void);
++void sync_initial_page_table(void);
  
--What:		/sys/class/rtc/rtcX/*/nvmem
--Date:		July 2017
--KernelVersion:	4.13
--Contact:	linux-rtc@vger.kernel.org
--Description:
--		(RW) The non volatile storage exported as a raw file, as
--		described in Documentation/nvmem/nvmem.txt
+ /*
+  * Define this if things work differently on an i386 and an i486:
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -28,6 +28,7 @@ extern pgd_t init_top_pgt[];
+ #define swapper_pg_dir init_top_pgt
+ 
+ extern void paging_init(void);
++static inline void sync_initial_page_table(void) { }
+ 
+ #define pte_ERROR(e)					\
+ 	pr_err("%s:%d: bad pte %p(%016lx)\n",		\
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1204,20 +1204,13 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	kasan_init();
+ 
+-#ifdef CONFIG_X86_32
+-	/* sync back kernel address range */
+-	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			KERNEL_PGD_PTRS);
 -
- What:		/sys/class/rtc/rtcX/offset
- Date:		February 2016
- KernelVersion:	4.6
-diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-index 999ed039da0d..5a5ab4fa14f9 100644
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@ -293,8 +293,6 @@ EXPORT_SYMBOL_GPL(rtc_device_register);
-  */
- void rtc_device_unregister(struct rtc_device *rtc)
- {
--	rtc_nvmem_unregister(rtc);
--
- 	mutex_lock(&rtc->ops_lock);
  	/*
- 	 * Remove innards of this RTC, then disable it, before
-@@ -312,6 +310,7 @@ static void devm_rtc_device_release(struct device *dev, void *res)
- {
- 	struct rtc_device *rtc = *(struct rtc_device **)res;
+-	 * sync back low identity map too.  It is used for example
+-	 * in the 32-bit EFI stub.
++	 * Sync back kernel address range.
++	 *
++	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
++	 * this call?
+ 	 */
+-	clone_pgd_range(initial_page_table,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
+-#endif
++	sync_initial_page_table();
  
-+	rtc_nvmem_unregister(rtc);
- 	rtc_device_unregister(rtc);
+ 	tboot_probe();
+ 
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -287,24 +287,15 @@ void __init setup_per_cpu_areas(void)
+ 	/* Setup cpu initialized, callin, callout masks */
+ 	setup_cpu_local_masks();
+ 
+-#ifdef CONFIG_X86_32
+ 	/*
+ 	 * Sync back kernel address range again.  We already did this in
+ 	 * setup_arch(), but percpu data also needs to be available in
+ 	 * the smpboot asm.  We can't reliably pick up percpu mappings
+ 	 * using vmalloc_fault(), because exception dispatch needs
+ 	 * percpu data.
++	 *
++	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
++	 * this call?
+ 	 */
+-	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			KERNEL_PGD_PTRS);
+-
+-	/*
+-	 * sync back low identity map too.  It is used for example
+-	 * in the 32-bit EFI stub.
+-	 */
+-	clone_pgd_range(initial_page_table,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
+-#endif
++	sync_initial_page_table();
  }
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -163,4 +163,10 @@ void __init setup_cpu_entry_areas(void)
  
-@@ -382,6 +381,8 @@ static void devm_rtc_release_device(struct device *dev, void *res)
- {
- 	struct rtc_device *rtc = *(struct rtc_device **)res;
- 
-+	rtc_nvmem_unregister(rtc);
+ 	for_each_possible_cpu(cpu)
+ 		setup_cpu_entry_area(cpu);
 +
- 	if (rtc->registered)
- 		rtc_device_unregister(rtc);
- 	else
-diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
-index 3a02357eb783..17ec4c8d0fad 100644
---- a/drivers/rtc/nvmem.c
-+++ b/drivers/rtc/nvmem.c
-@@ -91,7 +91,7 @@ int rtc_nvmem_register(struct rtc_device *rtc,
- 	if (!nvmem_config)
- 		return -ENODEV;
++	/*
++	 * This is the last essential update to swapper_pgdir which needs
++	 * to be synchronized to initial_page_table on 32bit.
++	 */
++	sync_initial_page_table();
+ }
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -453,6 +453,21 @@ static inline void permanent_kmaps_init(
+ }
+ #endif /* CONFIG_HIGHMEM */
  
--	nvmem_config->dev = &rtc->dev;
-+	nvmem_config->dev = rtc->dev.parent;
- 	nvmem_config->owner = rtc->owner;
- 	rtc->nvmem = nvmem_register(nvmem_config);
- 	if (IS_ERR_OR_NULL(rtc->nvmem))
--- 
-2.16.2
++void __init sync_initial_page_table(void)
++{
++	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
++			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
++			KERNEL_PGD_PTRS);
++
++	/*
++	 * sync back low identity map too.  It is used for example
++	 * in the 32-bit EFI stub.
++	 */
++	clone_pgd_range(initial_page_table,
++			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
++			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
++}
++
+ void __init native_pagetable_init(void)
+ {
+ 	unsigned long pfn, va;
