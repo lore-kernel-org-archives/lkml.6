@@ -1,107 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933970AbeB1Tol (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:44:41 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36814 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932351AbeB1Toe (ORCPT
+        id S934001AbeB1To4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:44:56 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35457 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932351AbeB1Toy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:44:34 -0500
-X-Google-Smtp-Source: AG47ELv+4Urst3s+UnDuGK7RPrQsXDXJSx42pFc3AdnIsTB99c+JR4vC844tnJVrXOtA/avu8BbvPw==
-Date: Wed, 28 Feb 2018 20:44:30 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
-        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org,
-        b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net,
-        dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
-        sean@mess.org, lee.jones@linaro.org, daniel.thompson@linaro.org,
-        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Message-ID: <20180228194429.GD22932@mithrandir>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+        Wed, 28 Feb 2018 14:44:54 -0500
+X-Google-Smtp-Source: AH8x225zw3sCB30wWCIdjJ/59V9J8Clp79dBm/ALXaBsdy6whwDrO5WbU8l5LvFPXn3jG7FDuP75cQ==
+Subject: Re: [PATCH v4 1/2] of: cache phandle nodes to reduce cost of
+ of_find_node_by_phandle()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1519844656-16443-1-git-send-email-frowand.list@gmail.com>
+ <1519844656-16443-2-git-send-email-frowand.list@gmail.com>
+ <CAHp75VfD6Hi0NScdZrYozp9dAqmUUYjcLuPPyRwM31ezxNO2fw@mail.gmail.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <c5d81c10-8b92-0a5d-93c2-8b8377b1396f@gmail.com>
+Date: Wed, 28 Feb 2018 11:44:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
-Content-Disposition: inline
-In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAHp75VfD6Hi0NScdZrYozp9dAqmUUYjcLuPPyRwM31ezxNO2fw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/28/18 11:31, Andy Shevchenko wrote:
+> On Wed, Feb 28, 2018 at 9:04 PM,  <frowand.list@gmail.com> wrote:
+> 
+>> Create a cache of the nodes that contain a phandle property.  Use this
+>> cache to find the node for a given phandle value instead of scanning
+>> the devicetree to find the node.  If the phandle value is not found
+>> in the cache, of_find_node_by_phandle() will fall back to the tree
+>> scan algorithm.
+>>
+>> The cache is initialized in of_core_init().
+>>
+>> The cache is freed via a late_initcall_sync() if modules are not
+>> enabled.
+>>
+>> If the devicetree is created by the dtc compiler, with all phandle
+>> property values auto generated, then the size required by the cache
+>> could be 4 * (1 + number of phandles) bytes.  This results in an O(1)
+>> node lookup cost for a given phandle value.  Due to a concern that the
+>> phandle property values might not be consistent with what is generated
+>> by the dtc compiler, a mask has been added to the cache lookup algorithm.
+>> To maintain the O(1) node lookup cost, the size of the cache has been
+>> increased by rounding the number of entries up to the next power of
+>> two.
+>>
+>> The overhead of finding the devicetree node containing a given phandle
+>> value has been noted by several people in the recent past, in some cases
+>> with a patch to add a hashed index of devicetree nodes, based on the
+>> phandle value of the node.  One concern with this approach is the extra
+>> space added to each node.  This patch takes advantage of the phandle
+>> property values auto generated by the dtc compiler, which begin with
+>> one and monotonically increase by one, resulting in a range of 1..n
+>> for n phandle values.  This implementation should also provide a good
+>> reduction of overhead for any range of phandle values that are mostly
+>> in a monotonic range.
+>>
+>> Performance measurements by Chintan Pandya <cpandya@codeaurora.org>
+>> of several implementations of patches that are similar to this one
+>> suggest an expected reduction of boot time by ~400ms for his test
+>> system.  If the cache size was decreased to 64 entries, the boot
+>> time was reduced by ~340 ms.  The measurements were on a 4.9.73 kernel
+>> for arch/arm64/boot/dts/qcom/sda670-mtp.dts, contains 2371 nodes and
+>> 814 phandle values.
+> 
+> The question is why O(1) is so important? O(log(n)) wouldn't work?
 
---YToU2i3Vx8H2dn7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+O(1) is not critical.  It was just a nice side result.
 
-On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
-> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
-> were adapted to this change.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->  drivers/bus/ts-nbus.c                |  2 +-
->  drivers/clk/clk-pwm.c                |  3 ++-
->  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->  drivers/hwmon/pwm-fan.c              |  2 +-
->  drivers/input/misc/max77693-haptic.c |  2 +-
->  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->  drivers/leds/leds-pwm.c              |  5 ++++-
->  drivers/media/rc/ir-rx51.c           |  5 ++++-
->  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->  include/linux/pwm.h                  |  6 ++++--
->  16 files changed, 70 insertions(+), 21 deletions(-)
 
-I don't think it makes sense to leak mode support into the legacy API.
-The pwm_config() function is considered legacy and should eventually go
-away. As such it doesn't make sense to integrate a new feature such as
-PWM modes into it. All users of pwm_config() assume normal mode, and
-that's what pwm_config() should provide.
+> Using radix_tree() I suppose allows to dynamically extend or shrink
+> the cache which would work with DT overlays.
 
-Anyone that needs something other than normal mode should use the new
-atomic PWM API.
-
-Thierry
-
---YToU2i3Vx8H2dn7O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqXBpoACgkQ3SOs138+
-s6GLrhAAuRLaoghLArJWd7JYjdi7JlVWdIer5OiGaY3qO2G2OnJBxBWctd+VJ/t+
-uTtC29oNgm7jzgwf7JiGUm3yVMx/S2rW6+s0JbeVp0xXBO7Lhd6EMZbSzOC3BBHB
-0RyqgEGoZRfaI++4LM9L6sMvHQ5lEt0PimKAug9MsXsxWOW88slB4Ll9Z/APl/Wr
-mCWW1qN2fs2F1hQdFAhE3ujMogEfRuW0/KwFkHa223ud/i1LJNe0jkIMnEYgWsCX
-x1my31QvhyMRxYQwp1FA3eAqHGnWo3yTXZYOYGBc3nJdm0UVQL59XX0UXduCVVPo
-YDwxSRZn04DADA5nBXplNIpG7qsELxrLUXcnB84D6Jstz17m4NSDknnHh/XkHgS7
-Q0SM/+jDqLzHHlhnCWmAJ9SBbvvrUDnXlCoMzmDoTzGN7fp74wFT1flIXILA91Lh
-AF/x1TWs5HV78+fowFUWVK2Fhc0zyNGYmDd7wQ2jlKjxETDcmXH+IoRHn48bcuio
-FphZkj4Un2o5X9O7jSRi5vHuJcmlHT30NsWgMduK9dWzq0wXih6zH/TTQk8N2rHM
-2+eijd/BDQum2RuK8mg2klvye5jrXp7f+iT305hUYoz4fmmMddqFiybi1nUHkTkA
-UG05BweYZ6hjEkpavMW0zeGEvWuZWwZZNHzKaOpJ/aRseA7Jpb0=
-=zbqh
------END PGP SIGNATURE-----
-
---YToU2i3Vx8H2dn7O--
+The memory usage of the phandle cache in this patch is fairly small.
+The memory overhead of a radix_tree() would not be justified.
