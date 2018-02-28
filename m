@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834131-2-6927120914772756948
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834127-2-17104990845576021661
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834131; b=RPoC0WavWY3K4pXIFr7QNMOJjK1+sRORPezz+iDZps1CV+w
-    pXnoAM6qaBrwJJIE/u6Nct6hDIqT239Bid3cfFr4lJACfgj+U61FMB1GHhw6leU3
-    //RaS/XdHG9NAjdZyHkzbMgZdFt7H5/VEh6XljurqyBeGogU8gseQkzFvREmt/VY
-    tCMmtaEQGt39eeb/WxqQi5dSKVVZEhe6hxsHYDImG+76SsOQYccs97le+WdlbxD2
-    oKhXxekn4KDibuysSEREo/W52GOdRG0kIFhhhpbwylYs4Wz54CjRAM78ZdT31jCL
-    DZ3V7Ol/NjwliAh5BSEJ3DQs0r0jW+90UTfw5Pw==
+    t=1519834127; b=shZ22H6x4lgBLDwQGIpDjcaiiQPJcNj1N7sBXzjpRcP9g3F
+    kj+9pDhBAh1eCi+JZQ3uxqcKEAUXQup5XT59ImYZjGap6UjmEaViUPFIPRlE9Svn
+    p1rVDPrJ2uU2GLec7Z72lLM5gn7SB16J6KRT3pdsrka+l2Sti1a8u4Ek2HtmxMAU
+    jMspCdmxhbBcInoWFRFx61t517qgzAYyYan2B58NSkCSy1c5g/D4xXbKe8/CQlyi
+    IdkTZX4l8oXPEr0EAUHoFu+J2u2b2LwVxS0kcITJQj+6d5dqkZ9RlJwZ0otaCOYL
+    FuucV0Dc0AwRxTt9IwWXNXjQ611K5TgOleHZZiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834131; bh=Q3hP4S7Cb3EGv3wdxuJ
-    Y5qGFnNEBL1rw1z/u84ZBhQ8=; b=o3IeM23zH2AQUGqR2LxKYkUqazKozFlSLTG
-    DUUTiLqTGjY8se1jNllnMqhuZYjswbJ/dFYennMEVdXKjTj+j8vqiqTpqenTk6gZ
-    9CG8OplpqS6Oy1SsMPNI2EuvsTsNWhwIVxcVms+pO5CpQ8wb345pFgF1VBZFTV7c
-    PY7rxcGEdCxy55Oq/z+f6xXfSQiR7j3+EUDi5UdDwVzLDCGl/y5F8HLOJYqBtRIT
-    fN+E9hR34KAcpGutmGvrbbM9Hugs1sEvNcgEwmI5z2IG0Ef78+8rRL6h/k8oVz1K
-    9MNYGic3U0CGgb2BeYI/2bmcgtUfa0uw/0+PfrEU7n4/dpf1GTg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834127; bh=PilCS8QiKdKJKAqkkPM
+    XHIDOyjtYc1C1pTfn8IbQBY4=; b=pucM7vtVn/RXsRy2WoB2XShCyM75GH+B+LY
+    eE4tiiPmznEYtxscyZIE3lAIRKBO7+X4EKs87cEqL8rYV8FjJNWlvD3jqt56elY7
+    BaSFLl+mfPaO/K6EDJOIvNd8w+qJzSyz0pzyUwZPTjuj/gNfWeGwfUJlhiDcc44O
+    JpwB787TbMUJWww2GrEg4FbU7EaU1jvUGlX7SiJeA8WikojtE9skPjagz/OzZyWW
+    3+zxxjevMJaDBoQphhytf+kbfIptsPK4IkaF3RC7w0XM0qFpQBkCi2HVs4uR9D5U
+    KN0vgKHoBwSfoP74vW9WRbwQWVlApHVRn6UwCwtfKh6uNlsyf/A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,23 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934474AbeB1QIs (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:08:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34965 "EHLO
+        id S933238AbeB1QIp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:08:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34961 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934597AbeB1QIq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:08:46 -0500
+        by vger.kernel.org with ESMTP id S934474AbeB1QIo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:08:44 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org
+CC: akpm@linux-foundation.org,
+        "Christoffer Dall" <christoffer.dall@linaro.org>,
+        "Marc Zyngier" <marc.zyngier@arm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.453003938@decadent.org.uk>
+Message-ID: <lsq.1519831218.218667704@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 231/254] of: fdt: Fix return with value in void function
+Subject: [PATCH 3.16 208/254] arm64: KVM: Fix SMCCC handling of
+ unimplemented SMC/HVC calls
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -78,23 +81,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Commit 49e67dd17649 "of: fdt: add missing allocation-failure check"
-added a "return NULL" statement in __unflatten_device_tree().  When
-applied to the 3.16-stable branch, this introduced a compiler warning
-(not an error!) because the function returns void here.
+commit acfb3b883f6d6a4b5d27ad7fdded11f6a09ae6dd upstream.
 
+KVM doesn't follow the SMCCC when it comes to unimplemented calls,
+and inject an UNDEF instead of returning an error. Since firmware
+calls are now used for security mitigation, they are becoming more
+common, and the undef is counter productive.
+
+Instead, let's follow the SMCCC which states that -1 must be returned
+to the caller when getting an unknown function number.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+[bwh: Backported to 3.16: use vcpu_reg()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -381,7 +381,7 @@ static void __unflatten_device_tree(void
- 	/* Allocate memory for the expanded device tree */
- 	mem = dt_alloc(size + 4, __alignof__(struct device_node));
- 	if (!mem)
--		return NULL;
-+		return;
+ arch/arm64/kvm/handle_exit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/arm64/kvm/handle_exit.c
++++ b/arch/arm64/kvm/handle_exit.c
+@@ -34,7 +34,7 @@ static int handle_hvc(struct kvm_vcpu *v
  
- 	memset(mem, 0, size);
+ 	ret = kvm_psci_call(vcpu);
+ 	if (ret < 0) {
+-		kvm_inject_undefined(vcpu);
++		*vcpu_reg(vcpu, 0) = ~0UL;
+ 		return 1;
+ 	}
+ 
+@@ -43,7 +43,7 @@ static int handle_hvc(struct kvm_vcpu *v
+ 
+ static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ {
+-	kvm_inject_undefined(vcpu);
++	*vcpu_reg(vcpu, 0) = ~0UL;
+ 	return 1;
+ }
  
