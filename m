@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519839068-2-11619203105651090015
+X-Cyrus-Session-Id: sloti22d1t05-678564-1519839058-2-8504093222653644051
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839067; b=vrowKRwR3w+v95gohcn5IQsH9qen4IFDgxdlCsRceTYRZyP
-    TGFK3akwqeS/dycleIPY+DI7+YXfJyjRGx+Q/9EdSi1rqHJ/IE10vBOuh1o2Q5V3
-    VXlfHKLDiP+jgidN0v5LmXRbaDwWvcF1zRVQlrnI4/Y2QoO9lQi0EszVXAVlAaii
-    ZuYgwHXuOJt/vFiTdrNK2+3vrzEs58hhS90/FA1HuGPw6t1I4NuT3bd8Vv51levm
-    dYbDFInM4ThSJcyLFlsUHlvc7XTpbGJmJznt5v+KSmpZyKqWCi88zcoB1H+vOYBw
-    xtB1gDGZ8lpWxfm6ETQUTRBQ580pWGtPwfLrnDQ==
+    t=1519839057; b=gca1QVaq7b7dl+rnc+Wy2SLZxnhwVWyx7G9m313+zxN3GmH
+    X8OzyTGyMFPEv47G1HFs3K3luCFUV3c2Tc25ydfOOx1tUZME2hVf9i0fBRBzVzcF
+    AinWKkNDe+nosnhyeZABpptHhlR9iR5YfBDVKufFJJj1Rkyu4cV7l+Q8jixh4TLH
+    RT438GlTEwR9Wd3ny+XEb3seT/FVoCF3wcjyxvpTfEYww69yYtuVMrfpCIsYga36
+    GWMj+BmuZxrmbmclkq/CRTVkPzieWaVmL4os+3sKof/KCePJ4kMoNJ2kLCxf4PPm
+    ciUviT47hVemPxDywWI7zN4bcG0OicwIrbPHtYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839067; bh=qi5GjdV16RcPyW2SmPy
-    9LZ1bH3PArtWGn2HTIdmsAb4=; b=R6+a8MCEeORAN11xPinT/xK1+usEQUVvu85
-    1dA8aPeYwhc2YUORSnYO5vYwtuwZAdIcj81LJiP1f5OXmGWhLaCfKkj0fNKY7c82
-    ffJLifbXZPQLzJZjuJ1B9skWKh0N+HJuNUHIttIVi6AaSr8ges8ZUrlGqekxmtay
-    k1lBlPHVPXX/F/ssT6xBdf8Yl6AgWE3eutRv7frS8NtwOl07jfwjfUDnNjO6v0di
-    bCb2HtHWyeVoyKrUNEVkVGQjAumBzJXIFQMI4l6GCrjpazAnuJ0yU+eSO+4XFDc/
-    0JnWGFxvcZxIBIqRVneHe/zy+YQHvVJoXV1qT6MOxtaDTrfcl1Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839057; bh=Wk4CXV/4/2hndvrAxpS
+    w5MBMWEfe/uUxzmipXuO29ls=; b=bCkjCFFjwuF17cOKUt8RDWmDAK/WmVjcr4x
+    nybLPBGZ+2hyBF1J3NKlGuWBNlfjs8gjEFP7Ng+cVQEFC/5M8XcgJoDJ23f9sbia
+    aM7/qfjO52eebgJYMVJycpXDqcvo5nHNMHzVuadFtzz5QkzhWFRisgdL61i3kUfx
+    g4OuXqfkwupfGFYBubJb70f5pGcGIq8qlfzWYou7ioS7ua9awB/C1nEqoo26WfbS
+    ew993rwmfRWBGSHFeSLq6Awy+oFeCnW16KZlWnYecEuDahuVTXfDxEyAKSeZ6yIb
+    ip3zcWXExdWii6hXLi6WdTr0jqU1NZ9YLwdkSR0y2r3R9oV9BZQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933309AbeB1R3I (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:29:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33258 "EHLO
+        id S932589AbeB1R3J (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:29:09 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33230 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932594AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932585AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Joe Thornber" <thornber@redhat.com>,
-        "Monty Pavel" <monty_pavel@sina.com>,
-        "Mike Snitzer" <snitzer@redhat.com>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Johannes Berg" <johannes.berg@intel.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.188032977@decadent.org.uk>
+Message-ID: <lsq.1519831222.941880526@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 107/140] dm btree: fix serious bug in btree_split_beneath()
+Subject: [PATCH 3.2 111/140] cfg80211: fix station info handling bugs
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,69 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joe Thornber <thornber@redhat.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit bc68d0a43560e950850fc69b58f0f8254b28f6d6 upstream.
+commit 5762d7d3eda25c03cc2d9d45227be3f5ab6bec9e upstream.
 
-When inserting a new key/value pair into a btree we walk down the spine of
-btree nodes performing the following 2 operations:
+Fix two places where the structure isn't initialized to zero,
+and thus can't be filled properly by the driver.
 
-  i) space for a new entry
-  ii) adjusting the first key entry if the new key is lower than any in the node.
-
-If the _root_ node is full, the function btree_split_beneath() allocates 2 new
-nodes, and redistibutes the root nodes entries between them.  The root node is
-left with 2 entries corresponding to the 2 new nodes.
-
-btree_split_beneath() then adjusts the spine to point to one of the two new
-children.  This means the first key is never adjusted if the new key was lower,
-ie. operation (ii) gets missed out.  This can result in the new key being
-'lost' for a period; until another low valued key is inserted that will uncover
-it.
-
-This is a serious bug, and quite hard to make trigger in normal use.  A
-reproducing test case ("thin create devices-in-reverse-order") is
-available as part of the thin-provision-tools project:
-  https://github.com/jthornber/thin-provisioning-tools/blob/master/functional-tests/device-mapper/dm-tests.scm#L593
-
-Fix the issue by changing btree_split_beneath() so it no longer adjusts
-the spine.  Instead it unlocks both the new nodes, and lets the main
-loop in btree_insert_raw() relock the appropriate one and make any
-neccessary adjustments.
-
-Reported-by: Monty Pavel <monty_pavel@sina.com>
-Signed-off-by: Joe Thornber <thornber@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 4a4b8169501b ("cfg80211: Accept multiple RSSI thresholds for CQM")
+Fixes: 9930380f0bd8 ("cfg80211: implement IWRATE")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2:
+ - Drop change in cfg80211_cqm_rssi_update()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/persistent-data/dm-btree.c | 19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
-
---- a/drivers/md/persistent-data/dm-btree.c
-+++ b/drivers/md/persistent-data/dm-btree.c
-@@ -568,23 +568,8 @@ static int btree_split_beneath(struct sh
- 	pn->keys[1] = rn->keys[0];
- 	memcpy_disk(value_ptr(pn, 1, sizeof(__le64)), &val, sizeof(__le64));
- 
--	/*
--	 * rejig the spine.  This is ugly, since it knows too
--	 * much about the spine
--	 */
--	if (s->nodes[0] != new_parent) {
--		unlock_block(s->info, s->nodes[0]);
--		s->nodes[0] = new_parent;
--	}
--	if (key < le64_to_cpu(rn->keys[0])) {
--		unlock_block(s->info, right);
--		s->nodes[1] = left;
--	} else {
--		unlock_block(s->info, left);
--		s->nodes[1] = right;
--	}
--	s->count = 2;
--
-+	unlock_block(s->info, left);
-+	unlock_block(s->info, right);
- 	return 0;
- }
+--- a/net/wireless/wext-compat.c
++++ b/net/wireless/wext-compat.c
+@@ -1265,8 +1265,7 @@ static int cfg80211_wext_giwrate(struct
+ {
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	struct cfg80211_registered_device *rdev = wiphy_to_dev(wdev->wiphy);
+-	/* we are under RTNL - globally locked - so can use a static struct */
+-	static struct station_info sinfo;
++	struct station_info sinfo = {};
+ 	u8 addr[ETH_ALEN];
+ 	int err;
  
