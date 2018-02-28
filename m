@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965094AbeB1XgA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:36:00 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35890 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964962AbeB1Xf6 (ORCPT
+        id S965071AbeB1Xhc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:37:32 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:42498 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965002AbeB1Xhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:35:58 -0500
-X-Google-Smtp-Source: AG47ELvyUD0iXwDnOV6/nx1VYU7kMuEfc+ox9IuaCs05U2pcsZv49h4G3wcJ4/oVKpY9y0pHIhqCrg==
-Subject: Re: [GIT PULL 1/2] bcm2835-dt-next-2018-02-28
+        Wed, 28 Feb 2018 18:37:31 -0500
+X-Google-Smtp-Source: AG47ELvMipZr19RggmRx/9Wu2quIEYtmY7N6E2WCbocQ/VdwFfFixS6w3wbK1cMUffndT1g1aCsYTA==
+Subject: Re: [GIT PULL 2/2] bcm2835-defconfig-next-2018-02-28
 To: Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>
 Cc: linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com
 References: <20180228213945.6781-1-eric@anholt.net>
+ <20180228213945.6781-2-eric@anholt.net>
 From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <1c65dc88-901f-2ad7-0f45-5d2f53dc1048@gmail.com>
-Date: Wed, 28 Feb 2018 15:35:49 -0800
+Message-ID: <cf9c863a-8523-00da-4399-d4be641ad96d@gmail.com>
+Date: Wed, 28 Feb 2018 15:37:27 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228213945.6781-1-eric@anholt.net>
+In-Reply-To: <20180228213945.6781-2-eric@anholt.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -32,38 +33,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 02/28/2018 01:39 PM, Eric Anholt wrote:
 > Hi Florian,
 > 
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-> 
 >   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 > 
 > are available in the Git repository at:
 > 
->   git://github.com/anholt/linux tags/bcm2835-dt-next-2018-02-28
+>   git://github.com/anholt/linux tags/bcm2835-defconfig-next-2018-02-28
 > 
-> for you to fetch changes up to bcc76c4014dce4e3834dbd5b7f6593cbcfbfebe0:
+> for you to fetch changes up to bb9d91a4e5c87cabfa2c9d35761374aa11150c2d:
 > 
->   ARM: dts: bcm2835-rpi-zero-w: Enable OTG mode (2018-02-26 15:02:23 -0800)
-> 
-> ----------------------------------------------------------------
-> This pull request adds automatic BT probing to the Pi Zero W, OTG mode
-> for the Zero W, the GPIO expander on the Pi3, and fixes I2S probe
-> (which is disabled by default, but often used downstream)
+>   ARM: multi_v7_defconfig: Enable thermal driver for RPi 2/3 (2018-02-26 15:30:43 -0800)
 > 
 > ----------------------------------------------------------------
-> Baruch Siach (2):
->       ARM: dts: bcm2835: make the firmware node into a bus
->       ARM: dts: bcm2837-rpi-3-b: add GPIO expander
+> This pull request enables several recent drivers for the Raspberry Pi
+> family in the defconfigs (thermal, BT, aux serial).
 > 
-> Henry Zhang (1):
->       ARM: dts: bcm283x: Fix pin function of JTAG pins
+> ----------------------------------------------------------------
+> Stefan Wahren (2):
+>       ARM: bcm2385_defconfig: Enable BT support for BCM43438
+>       ARM: multi_v7_defconfig: Enable thermal driver for RPi 2/3
 > 
-> Stefan Wahren (5):
->       dt-bindings: bcm283x: Fix register ranges of bcm2835-i2s
->       ARM: dts: bcm283x: Fix probing of bcm2835-i2s
->       ARM: dts: bcm283x: Apply pull settings to Zero W relevant groups
->       ARM: dts: bcm2835-rpi-zero-w: Add bcm43438 serial slave
->       ARM: dts: bcm2835-rpi-zero-w: Enable OTG mode
+> Tuomas Tynkkynen (1):
+>       ARM: multi_v7_defconfig: Enable serial console on RPi 3
 
-Merged into devicetree/next, thanks Eric!
+Merged into defconfig/next, thanks Eric.
 -- 
 Florian
