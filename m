@@ -1,56 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964898AbeB1XIc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:08:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964867AbeB1XIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:08:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AFC214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 28 Feb 2018 17:08:29 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: dwmw2@infradead.org, sparclinux@vger.kernel.org, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] sparc: Use generic pci_mmap_resource_range()
-Message-ID: <20180228230828.GR127842@bhelgaas-glaptop.roam.corp.google.com>
-References: <1519045452-22645-1-git-send-email-dwmw@amazon.co.uk>
- <20180219.094951.2098243214524004486.davem@davemloft.net>
- <1519053858.7876.84.camel@infradead.org>
- <20180219.103025.1676484157305869188.davem@davemloft.net>
+        id S964843AbeB1XLb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:11:31 -0500
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:45563 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935599AbeB1XL3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 18:11:29 -0500
+X-Google-Smtp-Source: AG47ELsEX7e5gouDKG38USSOl4tYUyuI39E8HLqX3l6flvD0NA71T1VKdCrsCap+isLb1nCLJ0Rz+drfKw1zGJ1+7wY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180219.103025.1676484157305869188.davem@davemloft.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180228230747.GQ127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1519045353-22496-1-git-send-email-dwmw@amazon.co.uk> <20180228230747.GQ127842@bhelgaas-glaptop.roam.corp.google.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Wed, 28 Feb 2018 15:11:28 -0800
+Message-ID: <CAMo8Bf+P8Xfgg9Ww9EHRVVXud0OXW=3vtY94Gqz+BBLGEhxYyQ@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: Use generic pci_mmap_resource_range()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>, Chris Zankel <chris@zankel.net>,
+        linux-xtensa@linux-xtensa.org, Bjorn Helgaas <bhelgaas@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:30:25AM -0500, David Miller wrote:
-> From: David Woodhouse <dwmw2@infradead.org>
-> Date: Mon, 19 Feb 2018 15:24:18 +0000
-> 
-> >> For one, the sparc specific code allows mmap'ing any address range
-> >> within a PCI bus device.  The generic code does not allow that.
-> > 
-> > 
-> > You mean any address range in a given PCI bus even if there is no
-> > actual device with a BAR at the corresponding address?
-> > 
-> > Would I be right to assume this was only available through the legacy
-> > procfs API? I think it should be possible to accommodate it, and it
-> > does look like I'd missed this requirement the first time round; thanks
-> > for pointing it out.
-> 
-> It was probably the case that only procfs could do it.
-> 
-> It is the mechanism by which we were able to let the X server poke
-> around in VGA ISA space.  It does a bus I/O space map for the bus
-> device above the VGA card.
+Hi Bjorn,
 
-What's the bottom line?  Do we want this for sparc?  If so, do you
-want to take it, Dave M, or would you like me to?
+On Wed, Feb 28, 2018 at 3:07 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Mon, Feb 19, 2018 at 01:02:33PM +0000, David Woodhouse wrote:
+>> Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
+>> ARM64") added this generic function with the intent of using it
+>> everywhere and ultimately killing the old arch-specific implementations.
+>>
+>> Let's get on with that eradication...
+>>
+>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+>
+> Applied to pci/resource-mmap for v4.17, thanks!
+>
+> Xtensa folks, let me know if you have applied this or would like to, and
+> I'll drop it.
+
+Thank you, please keep it.
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+
+-- 
+Thanks.
+-- Max
