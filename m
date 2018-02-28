@@ -1,283 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932331AbeB1PHr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:07:47 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57908 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752856AbeB1PHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:07:07 -0500
-From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: arnd@arndb.de, bhe@redhat.com, slp@redhat.com, mst@redhat.com,
-        somlo@cmu.edu, xiaolong.ye@intel.com,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v16 10/11] fw_cfg: write vmcoreinfo details
-Date: Wed, 28 Feb 2018 16:06:14 +0100
-Message-Id: <20180228150615.17317-11-marcandre.lureau@redhat.com>
-In-Reply-To: <20180228150615.17317-1-marcandre.lureau@redhat.com>
-References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
+        id S932451AbeB1PIN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:08:13 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60315 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932422AbeB1PIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:08:06 -0500
+Date: Wed, 28 Feb 2018 07:07:38 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-1402fd8ed7e5bda1b3e7613b70780b0db392d1e6@git.kernel.org>
+Cc: peterz@infradead.org, mingo@kernel.org, jpoimboe@redhat.com,
+        arnd@arndb.de, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: arnd@arndb.de, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
+        jpoimboe@redhat.com
+In-Reply-To: <d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com>
+References: <d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] objtool: Fix another switch table detection issue
+Git-Commit-ID: 1402fd8ed7e5bda1b3e7613b70780b0db392d1e6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
-the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+Commit-ID:  1402fd8ed7e5bda1b3e7613b70780b0db392d1e6
+Gitweb:     https://git.kernel.org/tip/1402fd8ed7e5bda1b3e7613b70780b0db392d1e6
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Wed, 28 Feb 2018 07:19:21 -0600
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Feb 2018 16:03:19 +0100
 
-The DMA operation is expected to run synchronously with today qemu,
-but the specification states that it may become async, so we run
-"control" field check in a loop for eventual changes.
+objtool: Fix another switch table detection issue
 
-Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+Continue the switch table detection whack-a-mole.  Add a check to
+distinguish KASAN data reads from switch data reads.  The switch jump
+tables in .rodata have relocations associated with them.
+
+This fixes the following warning:
+
+  crypto/asymmetric_keys/x509_cert_parser.o: warning: objtool: x509_note_pkey_algo()+0xa4: sibling call from callable instruction with modified stack frame
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com
+
 ---
- drivers/firmware/qemu_fw_cfg.c   | 145 ++++++++++++++++++++++++++++++++++++++-
- include/uapi/linux/qemu_fw_cfg.h |  31 +++++++++
- 2 files changed, 173 insertions(+), 3 deletions(-)
+ tools/objtool/check.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index df028faa2d00..14fedbeca724 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -34,11 +34,17 @@
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <uapi/linux/qemu_fw_cfg.h>
-+#include <linux/delay.h>
-+#include <linux/crash_dump.h>
-+#include <linux/crash_core.h>
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 472e64e95891..46c1d239cc1b 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -925,7 +925,11 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		if (find_symbol_containing(file->rodata, text_rela->addend))
+ 			continue;
  
- MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
- MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
- MODULE_LICENSE("GPL");
+-		return find_rela_by_dest(file->rodata, text_rela->addend);
++		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
++		if (!rodata_rela)
++			continue;
++
++		return rodata_rela;
+ 	}
  
-+/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
-+static u32 fw_cfg_rev;
-+
- /* fw_cfg device i/o register addresses */
- static bool fw_cfg_is_mmio;
- static phys_addr_t fw_cfg_p_base;
-@@ -60,6 +66,66 @@ static void fw_cfg_sel_endianness(u16 key)
- 		iowrite16(key, fw_cfg_reg_ctrl);
- }
- 
-+#ifdef CONFIG_CRASH_CORE
-+static inline bool fw_cfg_dma_enabled(void)
-+{
-+	return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
-+}
-+
-+/* qemu fw_cfg device is sync today, but spec says it may become async */
-+static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
-+{
-+	for (;;) {
-+		u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
-+
-+		/* do not reorder the read to d->control */
-+		rmb();
-+		if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
-+			return;
-+
-+		cpu_relax();
-+	}
-+}
-+
-+static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
-+{
-+	phys_addr_t dma;
-+	struct fw_cfg_dma_access *d = NULL;
-+	ssize_t ret = length;
-+
-+	d = kmalloc(sizeof(*d), GFP_KERNEL);
-+	if (!d) {
-+		ret = -ENOMEM;
-+		goto end;
-+	}
-+
-+	/* fw_cfg device does not need IOMMU protection, so use physical addresses */
-+	*d = (struct fw_cfg_dma_access) {
-+		.address = cpu_to_be64(address ? virt_to_phys(address) : 0),
-+		.length = cpu_to_be32(length),
-+		.control = cpu_to_be32(control)
-+	};
-+
-+	dma = virt_to_phys(d);
-+
-+	iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
-+	/* force memory to sync before notifying device via MMIO */
-+	wmb();
-+	iowrite32be(dma, fw_cfg_reg_dma + 4);
-+
-+	fw_cfg_wait_for_control(d);
-+
-+	if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
-+		ret = -EIO;
-+	}
-+
-+end:
-+	kfree(d);
-+
-+	return ret;
-+}
-+#endif
-+
- /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
- static ssize_t fw_cfg_read_blob(u16 key,
- 				void *buf, loff_t pos, size_t count)
-@@ -89,6 +155,47 @@ static ssize_t fw_cfg_read_blob(u16 key,
- 	return count;
- }
- 
-+#ifdef CONFIG_CRASH_CORE
-+/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
-+static ssize_t fw_cfg_write_blob(u16 key,
-+				 void *buf, loff_t pos, size_t count)
-+{
-+	u32 glk = -1U;
-+	acpi_status status;
-+	ssize_t ret = count;
-+
-+	/* If we have ACPI, ensure mutual exclusion against any potential
-+	 * device access by the firmware, e.g. via AML methods:
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		/* Should never get here */
-+		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&fw_cfg_dev_lock);
-+	if (pos == 0) {
-+		ret = fw_cfg_dma_transfer(buf, count, key << 16
-+					  | FW_CFG_DMA_CTL_SELECT
-+					  | FW_CFG_DMA_CTL_WRITE);
-+	} else {
-+		fw_cfg_sel_endianness(key);
-+		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
-+		if (ret < 0)
-+			goto end;
-+		ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
-+	}
-+
-+end:
-+	mutex_unlock(&fw_cfg_dev_lock);
-+
-+	acpi_release_global_lock(glk);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* clean up fw_cfg device i/o */
- static void fw_cfg_io_cleanup(void)
- {
-@@ -188,9 +295,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
--static u32 fw_cfg_rev;
--
- static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
- {
- 	return sprintf(buf, "%u\n", fw_cfg_rev);
-@@ -213,6 +317,32 @@ struct fw_cfg_sysfs_entry {
- 	struct list_head list;
- };
- 
-+#ifdef CONFIG_CRASH_CORE
-+static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
-+{
-+	static struct fw_cfg_vmcoreinfo *data;
-+	ssize_t ret;
-+
-+	data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	*data = (struct fw_cfg_vmcoreinfo) {
-+		.guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
-+		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
-+		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-+	};
-+	/* spare ourself reading host format support for now since we
-+	 * don't know what else to format - host may ignore ours
-+	 */
-+	ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
-+				0, sizeof(struct fw_cfg_vmcoreinfo));
-+
-+	kfree(data);
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* get fw_cfg_sysfs_entry from kobject member */
- static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
- {
-@@ -452,6 +582,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
- 	int err;
- 	struct fw_cfg_sysfs_entry *entry;
- 
-+#ifdef CONFIG_CRASH_CORE
-+	if (fw_cfg_dma_enabled() &&
-+		strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
-+		!is_kdump_kernel()) {
-+		if (fw_cfg_write_vmcoreinfo(f) < 0)
-+			pr_warn("fw_cfg: failed to write vmcoreinfo");
-+	}
-+#endif
-+
- 	/* allocate new entry */
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
-diff --git a/include/uapi/linux/qemu_fw_cfg.h b/include/uapi/linux/qemu_fw_cfg.h
-index c698ac3812f6..e089c0159ec2 100644
---- a/include/uapi/linux/qemu_fw_cfg.h
-+++ b/include/uapi/linux/qemu_fw_cfg.h
-@@ -54,6 +54,7 @@
- 
- /* FW_CFG_ID bits */
- #define FW_CFG_VERSION		0x01
-+#define FW_CFG_VERSION_DMA	0x02
- 
- /* fw_cfg file directory entry type */
- struct fw_cfg_file {
-@@ -63,4 +64,34 @@ struct fw_cfg_file {
- 	char name[FW_CFG_MAX_FILE_PATH];
- };
- 
-+/* FW_CFG_DMA_CONTROL bits */
-+#define FW_CFG_DMA_CTL_ERROR	0x01
-+#define FW_CFG_DMA_CTL_READ	0x02
-+#define FW_CFG_DMA_CTL_SKIP	0x04
-+#define FW_CFG_DMA_CTL_SELECT	0x08
-+#define FW_CFG_DMA_CTL_WRITE	0x10
-+
-+#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
-+
-+/* Control as first field allows for different structures selected by this
-+ * field, which might be useful in the future
-+ */
-+struct fw_cfg_dma_access {
-+	__be32 control;
-+	__be32 length;
-+	__be64 address;
-+};
-+
-+#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
-+
-+#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
-+#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
-+
-+struct fw_cfg_vmcoreinfo {
-+	__le16 host_format;
-+	__le16 guest_format;
-+	__le32 size;
-+	__le64 paddr;
-+};
-+
- #endif
--- 
-2.16.1.73.g5832b7e9f2
+ 	return NULL;
