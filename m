@@ -1,223 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752490AbeB1M1E convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:27:04 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38493 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeB1M1D (ORCPT
+        id S1752517AbeB1MaP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:30:15 -0500
+Received: from mail-vk0-f42.google.com ([209.85.213.42]:38500 "EHLO
+        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752340AbeB1MaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:27:03 -0500
-X-Google-Smtp-Source: AG47ELtqmCyfVAnWtLFJFdiGgHSPSSu7DzL3omIlOvHewsULWPxDCwfxaBNwwaecY914hqZzkhZ6ierINzUPuIEKOuE=
+        Wed, 28 Feb 2018 07:30:13 -0500
+X-Google-Smtp-Source: AG47ELsacK4jPy8bFWzFM36uj1GWLmA1QAShKIZLjFa3hqHmCQZolVTxm0LocIhvws3n+pSCgldT4Q==
 MIME-Version: 1.0
-In-Reply-To: <20180227020104-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-12-marcandre.lureau@redhat.com> <20180227020104-mutt-send-email-mst@kernel.org>
-From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
-Date: Wed, 28 Feb 2018 13:27:02 +0100
-Message-ID: <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com>
-Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+In-Reply-To: <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com> <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 28 Feb 2018 21:29:50 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+Message-ID: <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Hi Geert,
 
-On Tue, Feb 27, 2018 at 1:04 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-André Lureau wrote:
->> Modify fw_cfg_read_blob() to use DMA if the device supports it.
->> Return errors, because the operation may fail.
->>
->> So far, only one call in fw_cfg_register_dir_entries() is using
->> kmalloc'ed buf and is thus clearly eligible to DMA read.
->>
->> Initially, I didn't implement DMA read to speed up boot time, but as a
->> first step before introducing DMA write (since read operations were
->> already presents). Even more, I didn't realize fw-cfg entries were
->> being read by the kernel during boot by default. But actally fw-cfg
->> entries are being populated during module probe. I knew DMA improved a
->> lot bios boot time (the main reason the DMA interface was added
->> afaik). Let see the time it would take to read the whole ACPI
->> tables (128kb allocated)
->>
->>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
->>   - with DMA: sys 0m0.003s
->>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
->>
->> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
->> boot to populate sysfs qemu_fw_cfg directory, and it is quite
->> small (1-2kb). Since it does not expose itself, in order to measure
->> the time it takes to read such small file, I took a comparable sized
->> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
->> modified read_raw enabling DMA)
->>
->>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
->>   - with DMA:
->>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
->>   - without DMA:
->>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
->>
->> That's a few msec saved during boot by enabling DMA read (the gain
->> would be more substantial if other & bigger fw-cfg entries are read by
->> others from sysfs, unfortunately, it's not clear if we can always
->> enable DMA there)
->>
->> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
->> ---
->>  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
->>  1 file changed, 50 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
->> index 3015e77aebca..94df57e9be66 100644
->> --- a/drivers/firmware/qemu_fw_cfg.c
->> +++ b/drivers/firmware/qemu_fw_cfg.c
->> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
->>       return ret;
->>  }
->>
->> +/* with acpi & dev locks taken */
->> +static ssize_t fw_cfg_read_blob_dma(u16 key,
->> +                             void *buf, loff_t pos, size_t count)
->> +{
->> +     ssize_t ret;
->> +
->> +     if (pos == 0) {
->> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
->> +                                     | FW_CFG_DMA_CTL_SELECT
->> +                                     | FW_CFG_DMA_CTL_READ);
->> +     } else {
->> +             fw_cfg_sel_endianness(key);
->> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
->> +             if (ret < 0)
->> +                     return ret;
->> +             ret = fw_cfg_dma_transfer(buf, count,
->> +                                     FW_CFG_DMA_CTL_READ);
->> +     }
->> +
->> +     return ret;
->> +}
->> +
->> +/* with acpi & dev locks taken */
->> +static ssize_t fw_cfg_read_blob_io(u16 key,
->> +                             void *buf, loff_t pos, size_t count)
->> +{
->> +     fw_cfg_sel_endianness(key);
->> +     while (pos-- > 0)
->> +             ioread8(fw_cfg_reg_data);
->> +     ioread8_rep(fw_cfg_reg_data, buf, count);
->> +     return count;
->> +}
->> +
->>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
->>  static ssize_t fw_cfg_read_blob(u16 key,
->> -                             void *buf, loff_t pos, size_t count)
->> +                             void *buf, loff_t pos, size_t count,
->> +                             bool dma)
->>  {
->>       u32 glk = -1U;
->>       acpi_status status;
->> +     ssize_t ret;
->>
->>       /* If we have ACPI, ensure mutual exclusion against any potential
->>        * device access by the firmware, e.g. via AML methods:
+On Wed, Feb 28, 2018 at 9:17 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Jeffy,
 >
-> so this adds a dma flag to fw_cfg_read_blob.
->
->
->
->> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
->>       }
+> On Wed, Feb 28, 2018 at 12:11 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>> Currently we are adding all of the attached devices' clocks as pm clocks
+>> and enable them when powering on the power domain.
 >>
->>       mutex_lock(&fw_cfg_dev_lock);
->> -     fw_cfg_sel_endianness(key);
->> -     while (pos-- > 0)
->> -             ioread8(fw_cfg_reg_data);
->> -     ioread8_rep(fw_cfg_reg_data, buf, count);
->> +     if (dma && fw_cfg_dma_enabled()) {
->> +             ret = fw_cfg_read_blob_dma(key, buf, pos, count);
->> +     } else {
->> +             ret = fw_cfg_read_blob_io(key, buf, pos, count);
->> +     }
->> +
->>       mutex_unlock(&fw_cfg_dev_lock);
+>> This seems unnecessary, because those clocks are already controlled in
+>> the devices' drivers with better error handling.
 >>
->>       acpi_release_global_lock(glk);
->> -     return count;
->> +
->> +     return ret;
->>  }
+>> Tested on my chromebook minnie(rk3288) and chromebook kevin(rk3399).
 >>
->>  #ifdef CONFIG_CRASH_CORE
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 >
-> If set to false it does io, if set to true it does dma.
+> Thanks for your patch!
 >
-> I would prefer passing an accessor function pointer
-> since that's clearer than true/false.
+> Just wondering: so you prefer to handle the clocks explicitly in all drivers,
+> instead of delegating this task to Runtime PM?
 
-ok
+Is it already possible to gate clocks immediately when the device
+idles, but defer turning the power domain off until time long enough
+to cover the power down and up latency elapses?
 
->
->> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
->>
->>       /* verify fw_cfg device signature */
->>       if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
->> -                             0, FW_CFG_SIG_SIZE) < 0 ||
->> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
->>               memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
->>               fw_cfg_io_cleanup();
->>               return -ENODEV;
->> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
->>       if (count > entry->size - pos)
->>               count = entry->size - pos;
->>
->> -     return fw_cfg_read_blob(entry->select, buf, pos, count);
->> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
->> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
->>  }
->>
->>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
->> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
->>       size_t dir_size;
->>
->>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
->> -                     0, sizeof(files_count));
->> +                     0, sizeof(files_count), false);
->>       if (ret < 0)
->>               return ret;
->>
->> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
->>               return -ENOMEM;
->>
->>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
->> -                     sizeof(files_count), dir_size);
->> +                     sizeof(files_count), dir_size, false);
->>       if (ret < 0)
->>               goto end;
->>
->> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->>               goto err_probe;
->>
->>       /* get revision number, add matching top-level attribute */
->> -     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
->> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
->>       if (err < 0)
->>               goto err_probe;
->
->
-> Looks like all callers pass in false as parameter.
-> Given this, how can this speed up any operations?
->
-> Are you sure you tested this properly?
+Also, how about systems where runtime PM is disabled? I think that's
+one of the reasons we control the clocks explicitly in the drivers
+anyway.
 
-
-I did modify read_raw to conduct testing ( the part "with a
-modified read_raw enabling DMA" should be before, updating commit message).
-
->
->> --
->> 2.16.1.73.g5832b7e9f2
+Best regards,
+Tomasz
