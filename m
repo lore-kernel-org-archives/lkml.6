@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834107-2-11856000436464902874
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834105-2-11996631285764790396
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834106; b=gkS+cfELBVvGS9jrarn0TtE8CPftMdgjBDWvbUstu8sAI2w
-    99IzvzyhL+BcquDif/jFrhDKa8bISF1xLP9e0FZZ0Tr3Pk9bO+rDFXkBdpKxSjHH
-    7AKcW/nRA/zPiXzJ+tdW/9i/kC6W8StN3AVdCqX0xAK/VweGb1yJn8vQYhUNR3u4
-    MUImATeX6PO6tWWQzsioIdFg3o1Oza2/30rU8p/zy/co4KZXD4Xa1QJ1VAAn21X5
-    BVstRb/u5U63me+zoynDCR0ricps3eu2DUOqN5XaEqnoX4RdHYE47WZdTtiwjmhi
-    dCeuXzoUC7P27FLKsYYcqk8LcnYQuWoor1OyYeg==
+    t=1519834104; b=bf36TsWqTXaCzBWA82Y6ykyYR504gW+2C6n5Q0BHn05f70N
+    KmlgWxUqhu8OoeftlqRV9DpJAooI7+IPhvelUWYIBw0LvBCpkckCiOxBV7ycJ5P8
+    H/Nyd/CHYlWiAd7J0NOPSpem91/fQgzly5YYU9QixAyuehOWsoZsR+OxF41Iv9S6
+    Z2jZ7zRoCkeGA62M/NCLUXkCXlAmNgYBlGb1zZni41wBQY1fBIeY600+HBppuvTG
+    DdQEiULXlTv2shjjQ8lU/XE8CuRvt1UrHvb+K49E9vrdbjwljNJRwWaeNSV5SbGn
+    J2ROgRplmP8/R8CfBVBLcrt/wyyNCHDvOhU6aeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834106; bh=RbxShw+iZEZ3UQYe/3K
-    t0AwjWgA1echt/S20FPe3yRw=; b=ay3io26XTJT3K+2dfYs/2No4LQ2U48dl5L4
-    kSxprfOdOH7t2gVTCcBCI+ZtvdSmG46CmtqF3Z9KmS5JoEE0ITxsEc68iVe0tDm+
-    u6K0fus13DrN/tnOKR6UnHObF2S1U3ioHeekXwp84iOW5XzAOL9Ud9dRj2ydVobF
-    i+61MqiIInFSjNk5kLkDE1khMlOEMi63Bc6v9Iz+/kBay8IADW3rqREUZrZd7fJL
-    CUkKdKaC+uAvJRwdPER3P3WoMp+3AJ8iQcP2DaAzdRvwwECyZXfdNuKji7o8QzPJ
-    AEWIBYSmM32zG00dngT20RJPCGqB59KmhU8cN+JpyjR4KTgtyfQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834104; bh=waET0nKPD0GHX9O9kCY
+    RLfb+Z1fYc8tBVnc2Q988Wzk=; b=tfEVn0dHiyn3pPNPoWOOw+eb4+Wf0b18pwE
+    kT6GajynVQEOZitITbdjoaM6YWx9sYoHQUEd546/8KVZhSW66r4OVQ4dtb1pcqGC
+    nm8ikREzH9cBsuSbYXr6fLZFGzHsq0TIWlzS1K0vTOuVLn4L/39oA5G0dRUluijG
+    z7uDnUGXOnkAXVo6DfjTig2zyOOzZlpPVLZz66mLIN6Zw9h7tpdT1P4r0cYbFBJp
+    mjTkPf8jHETjJPX5AUlYYqpoc20fnTGNbaYW8ny68PXHQ19sdS/0DXAvHFM/eEIL
+    JbjuFhtMl8PDD+TfFApjgY6MJMljfQQf8Yz9+bVW/vm/6zupO+A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,27 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753271AbeB1QFF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:05 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34859 "EHLO
+        id S932247AbeB1QII (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:08:08 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34860 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753114AbeB1QFD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:03 -0500
+        by vger.kernel.org with ESMTP id S1753135AbeB1QFF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:05 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "Daniele Palmas" <dnlplm@gmail.com>
+CC: akpm@linux-foundation.org,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+        "Hans Verkuil" <hans.verkuil@cisco.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.426237655@decadent.org.uk>
+Message-ID: <lsq.1519831218.80884505@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 116/254] USB: serial: option: add support for Telit
- ME910 PID 0x1101
+Subject: [PATCH 3.16 249/254] media: v4l2-compat-ioctl32.c: copy clip
+ list in put_v4l2_window32
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,47 +82,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 08933099e6404f588f81c2050bfec7313e06eeaf upstream.
+commit a751be5b142ef6bcbbb96d9899516f4d9c8d0ef4 upstream.
 
-This patch adds support for PID 0x1101 of Telit ME910.
+put_v4l2_window32() didn't copy back the clip list to userspace.
+Drivers can update the clip rectangles, so this should be done.
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/option.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 59 ++++++++++++++++++---------
+ 1 file changed, 40 insertions(+), 19 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -286,6 +286,7 @@ static void option_instat_callback(struc
- #define TELIT_PRODUCT_LE922_USBCFG3		0x1043
- #define TELIT_PRODUCT_LE922_USBCFG5		0x1045
- #define TELIT_PRODUCT_ME910			0x1100
-+#define TELIT_PRODUCT_ME910_DUAL_MODEM		0x1101
- #define TELIT_PRODUCT_LE920			0x1200
- #define TELIT_PRODUCT_LE910			0x1201
- #define TELIT_PRODUCT_LE910_USBCFG4		0x1206
-@@ -658,6 +659,11 @@ static const struct option_blacklist_inf
- 	.reserved = BIT(1) | BIT(3),
- };
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -50,6 +50,11 @@ struct v4l2_window32 {
  
-+static const struct option_blacklist_info telit_me910_dual_modem_blacklist = {
-+	.sendsetup = BIT(0),
-+	.reserved = BIT(3),
-+};
+ static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
++	struct v4l2_clip32 __user *uclips;
++	struct v4l2_clip __user *kclips;
++	compat_caddr_t p;
++	u32 n;
 +
- static const struct option_blacklist_info telit_le910_blacklist = {
- 	.sendsetup = BIT(0),
- 	.reserved = BIT(1) | BIT(2),
-@@ -1266,6 +1272,8 @@ static const struct usb_device_id option
- 		.driver_info = (kernel_ulong_t)&telit_le922_blacklist_usbcfg0 },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910),
- 		.driver_info = (kernel_ulong_t)&telit_me910_blacklist },
-+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910_DUAL_MODEM),
-+		.driver_info = (kernel_ulong_t)&telit_me910_dual_modem_blacklist },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910),
- 		.driver_info = (kernel_ulong_t)&telit_le910_blacklist },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
+ 	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
+ 	    get_user(kp->field, &up->field) ||
+@@ -59,38 +64,54 @@ static int get_v4l2_window32(struct v4l2
+ 		return -EFAULT;
+ 	if (kp->clipcount > 2048)
+ 		return -EINVAL;
+-	if (kp->clipcount) {
+-		struct v4l2_clip32 __user *uclips;
+-		struct v4l2_clip __user *kclips;
+-		int n = kp->clipcount;
+-		compat_caddr_t p;
++	if (!kp->clipcount) {
++		kp->clips = NULL;
++		return 0;
++	}
+ 
+-		if (get_user(p, &up->clips))
++	n = kp->clipcount;
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	kclips = compat_alloc_user_space(n * sizeof(*kclips));
++	kp->clips = kclips;
++	while (n--) {
++		if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+ 			return -EFAULT;
+-		uclips = compat_ptr(p);
+-		kclips = compat_alloc_user_space(n * sizeof(*kclips));
+-		kp->clips = kclips;
+-		while (--n >= 0) {
+-			if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+-				return -EFAULT;
+-			if (put_user(n ? kclips + 1 : NULL, &kclips->next))
+-				return -EFAULT;
+-			uclips += 1;
+-			kclips += 1;
+-		}
+-	} else
+-		kp->clips = NULL;
++		if (put_user(n ? kclips + 1 : NULL, &kclips->next))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
+ 	return 0;
+ }
+ 
+ static int put_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
++	struct v4l2_clip __user *kclips = kp->clips;
++	struct v4l2_clip32 __user *uclips;
++	u32 n = kp->clipcount;
++	compat_caddr_t p;
++
+ 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
+ 	    put_user(kp->field, &up->field) ||
+ 	    put_user(kp->chromakey, &up->chromakey) ||
+ 	    put_user(kp->clipcount, &up->clipcount) ||
+ 	    put_user(kp->global_alpha, &up->global_alpha))
+ 		return -EFAULT;
++
++	if (!kp->clipcount)
++		return 0;
++
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	while (n--) {
++		if (copy_in_user(&uclips->c, &kclips->c, sizeof(uclips->c)))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
+ 	return 0;
+ }
+ 
