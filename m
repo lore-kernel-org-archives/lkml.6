@@ -1,162 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeB1Kvn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:51:43 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:23568 "EHLO
+        id S1752471AbeB1Kvk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:51:40 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54770 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752284AbeB1Kvl (ORCPT
+        with ESMTP id S1752283AbeB1Kvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:51:41 -0500
+        Wed, 28 Feb 2018 05:51:39 -0500
 X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37332003"
+   d="scan'208";a="37332002"
 From: Chao Fan <fanc.fnst@cn.fujitsu.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
         <keescook@chromium.org>, <yasu.isimatu@gmail.com>
 CC: <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
         Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v9 1/5] x86/KASLR: Add kaslr_boot_mem=nn[KMG]@ss[KMG]
-Date: Wed, 28 Feb 2018 18:51:01 +0800
-Message-ID: <20180228105105.11487-2-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v9 0/5] x86/KASLR: Add parameter kaslr_boot_mem=nn[KMG]@ss[KMG]
+Date: Wed, 28 Feb 2018 18:51:00 +0800
+Message-ID: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
-References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-yoursite-MailScanner-ID: 8E65B4D0EFE6.AE112
+X-yoursite-MailScanner-ID: 977D94D0EFD9.AEA4A
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a new kernel parameter kaslr_boot_mem=nn[KMG]@ss[KMG] which is
-used by KASLR only during kernel decompression stage.
+Long time no reply, rebase the patchset, change the parameter name
+from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
 
-Users can use it to specify memory regions where kernel can be randomized
-into. E.g if movable_node specified in kernel cmdline, kernel could be
-extracted into those movable regions, this will make memory hotplug fail.
-With the help of 'kaslr_boot_mem=', limit kernel in those immovable regions
+***Background:
+People reported that kaslr may randomly chooses some positions
+which are located in movable memory regions. This will break memory
+hotplug feature.
+
+And also on kvm guest with 4GB meory, the good unfragmented 1GB could
+be occupied by randomized kernel. It will cause hugetlb failing to
+allocate 1GB page. While kernel with 'nokaslr' has not such issue.
+This causes regression. Please see the discussion mail:
+        https://lkml.org/lkml/2018/1/4/236
+
+***Solutions:
+Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
+specify the memory regions where kernel can be allowed to randomize
+safely.
+
+E.g if 'movable_node' is spedified, we can use 'kaslr_boot_mem=nn@ss' to
+tell KASLR where we can put kernel safely. Then KASLR code can avoid
+those movable regions and only choose those immovable regions
 specified.
 
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-Tested-by: Luiz Capitulino <lcapitulino@redhat.com>
-Acked-by: Baoquan He <bhe@redhat.com>
----
- arch/x86/boot/compressed/kaslr.c | 73 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 70 insertions(+), 3 deletions(-)
+For hugetlb case, users can always add 'kaslr_boot_mem=1G' in kernel
+cmdline since the 0~1G is always fragmented region because of BIOS
+reserved area. Surely users can specify regions more precisely if
+they know system memory very well.
 
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 66e42a098d70..e33e5cbf7244 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -114,6 +114,15 @@ enum mem_avoid_index {
- 
- static struct mem_vector mem_avoid[MEM_AVOID_MAX];
- 
-+/* Only support at most 4 usable memory regions specified for kaslr */
-+#define MAX_KASLR_MEM_USABLE	4
-+
-+/* Store the usable memory regions for kaslr */
-+static struct mem_vector mem_usable[MAX_KASLR_MEM_USABLE];
-+
-+/* The amount of usable regions for kaslr user specify, not more than 4 */
-+static int num_usable_region;
-+
- static bool mem_overlaps(struct mem_vector *one, struct mem_vector *two)
- {
- 	/* Item one is entirely before item two. */
-@@ -212,7 +221,62 @@ static void mem_avoid_memmap(char *str)
- 		memmap_too_large = true;
- }
- 
--static int handle_mem_memmap(void)
-+static int parse_kaslr_boot_mem(char *p,
-+				unsigned long long *start,
-+				unsigned long long *size)
-+{
-+	char *oldp;
-+
-+	if (!p)
-+		return -EINVAL;
-+
-+	oldp = p;
-+	*size = memparse(p, &p);
-+	if (p == oldp)
-+		return -EINVAL;
-+
-+	switch (*p) {
-+	case '@':
-+		*start = memparse(p + 1, &p);
-+		return 0;
-+	default:
-+		/*
-+		 * If w/o offset, only size specified, kaslr_boot_mem=nn[KMG]
-+		 * has the same behaviour as kaslr_boot_mem=nn[KMG]@0. It means
-+		 * the region starts from 0.
-+		 */
-+		*start = 0;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static void parse_kaslr_boot_mem_regions(char *str)
-+{
-+	static int i;
-+
-+	while (str && (i < MAX_KASLR_MEM_USABLE)) {
-+		int rc;
-+		unsigned long long start, size;
-+		char *k = strchr(str, ',');
-+
-+		if (k)
-+			*k++ = 0;
-+
-+		rc = parse_kaslr_boot_mem(str, &start, &size);
-+		if (rc < 0)
-+			break;
-+		str = k;
-+
-+		mem_usable[i].start = start;
-+		mem_usable[i].size = size;
-+		i++;
-+	}
-+	num_usable_region = i;
-+}
-+
-+static int handle_mem_filter(void)
- {
- 	char *args = (char *)get_cmd_line_ptr();
- 	size_t len = strlen((char *)args);
-@@ -220,7 +284,8 @@ static int handle_mem_memmap(void)
- 	char *param, *val;
- 	u64 mem_size;
- 
--	if (!strstr(args, "memmap=") && !strstr(args, "mem="))
-+	if (!strstr(args, "memmap=") && !strstr(args, "mem=") &&
-+	    !strstr(args, "kaslr_boot_mem="))
- 		return 0;
- 
- 	tmp_cmdline = malloc(len + 1);
-@@ -245,6 +310,8 @@ static int handle_mem_memmap(void)
- 
- 		if (!strcmp(param, "memmap")) {
- 			mem_avoid_memmap(val);
-+		} else if (!strcmp(param, "kaslr_boot_mem")) {
-+			parse_kaslr_boot_mem_regions(val);
- 		} else if (!strcmp(param, "mem")) {
- 			char *p = val;
- 
-@@ -384,7 +451,7 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
- 	/* We don't need to set a mapping for setup_data. */
- 
- 	/* Mark the memmap regions we need to avoid */
--	handle_mem_memmap();
-+	handle_mem_filter();
- 
- #ifdef CONFIG_X86_VERBOSE_BOOTUP
- 	/* Make sure video RAM can be used. */
+*** Issues need be discussed
+There are several issues I am not quite sure, please help review and
+give suggestions:
+
+1) Since there's already mem_avoid[] which stores the memory regions
+KASLR need avoid. For the regions KASLR can safely use, I name it as
+mem_usable[], not sure if it's appropriate. Or kaslr_boot_mem[] directly?
+
+2) In v6, I made 'kaslr_boot_mem=' as a kernel parameter which users can
+use to specify memory regions where kenrel can be extracted safely by
+'kaslr_boot_mem=nn@ss', or regions where we need avoid to extract kernel by
+'kaslr_boot_mem=nn!ss'. While later I rethink about it, seems
+'kaslr_boot_mem=nn@ss' can satisfy the current requirement, there's no need
+to introduce the 'kaslr_boot_mem=nn!ss'. So I just take that
+'kaslr_boot_mem=nn!ss' handling patch off, may add it later if anyone think
+it's necessary. Any suggestions?
+        https://www.spinics.net/lists/kernel/msg2698457.html
+
+***Test results:
+ - I did some tests for the memory hotplug issues. I specify the memory
+   region in one node, then I found every time the kernel will be
+   extracted to the memory of this node.
+ - Luiz tested this series with a 4GB KVM guest. With kaslr_boot_mem=1G,
+   got one 1GB page allocated 100% of the time in 85 boots. Without
+   kaslr_boot_mem=, got 3 failures in only 10 boots (that is, in 3 boots
+   no 1GB page allocated). So this series solves the 1GB page problem.
+
+***History
+v8->v9:
+ - Rebase in new version.
+ - Change the name of parameter from 'kaslr_mem' to 'kaslr_boot_mem'
+
+v7->v8:
+ - Just improve some comments.
+ - Change the wrong spelling.
+ - Add the Tested-by and Acked-by.
+
+v6->v7:
+ - Drop the unnecessary avoid part for now.
+ - Add document for the new parameter.
+
+v5->v6:
+ - Add the last patch to save the avoid memory regions.
+
+v4->v5:
+ - Change the problem reported by LKP
+Follow Dou's suggestion:
+ - Also return if match "movable_node" when parsing kernel commandline
+   in handle_mem_filter without define CONFIG_MEMORY_HOTPLUG
+
+v3->v4:
+Follow Kees's suggestion:
+ - Put the functions variables of immovable_mem to #ifdef
+   CONFIG_MEMORY_HOTPLUG and change some code place
+ - Change the name of "process_mem_region" to "slots_count"
+ - Reanme the new function "process_immovable_mem" to "process_mem_region"
+Follow Baoquan's suggestion:
+ - Fail KASLR if "movable_node" specified without "immovable_mem"
+ - Ajust the code place of handling mem_region directely if no
+   immovable_mem specified
+Follow Randy's suggestion:
+ - Change the mistake and add detailed description for the document.
+
+v2->v3:
+Follow Baoquan He's suggestion:
+ - Change names of several functions.
+ - Add a new parameter "immovable_mem" instead of extending mvoable_node
+ - Use the clamp to calculate the memory intersecting, which makes
+   logical more clear.
+ - Disable memory mirror if movable_node specified
+
+v1->v2:
+Follow Dou Liyang's suggestion:
+ - Add the parse for movable_node=nn[KMG] without @ss[KMG]
+ - Fix the bug for more than one "movable_node=" specified
+ - Drop useless variables and use mem_vector region directely
+ - Add more comments.
+
+Chao Fan (5):
+  x86/KASLR: Add kaslr_boot_mem=nn[KMG]@ss[KMG]
+  x86/KASLR: Handle the memory regions specified in kaslr_boot_mem
+  x86/KASLR: Give a warning if movable_node specified without
+    kaslr_boot_mem=
+  x86/KASLR: Skip memory mirror handling if movable_node specified
+  document: add document for kaslr_boot_mem
+
+ Documentation/admin-guide/kernel-parameters.txt |  10 ++
+ arch/x86/boot/compressed/kaslr.c                | 154 +++++++++++++++++++++---
+ 2 files changed, 150 insertions(+), 14 deletions(-)
+
 -- 
 2.14.3
