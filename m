@@ -1,108 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeB1RVE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:21:04 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44071 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752817AbeB1RUv (ORCPT
+        id S1753397AbeB1RWX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:22:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34361 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753101AbeB1RWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:20:51 -0500
-X-Google-Smtp-Source: AH8x225UCVAfLs7SYw3/dII7/dbu0ICPa+HWK0DBRm+1KQ8vNnnWSCgSu2Wb3Q+S3lc5Hxo76P90iw==
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
- <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
-Date: Wed, 28 Feb 2018 20:20:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Feb 2018 12:22:07 -0500
+Date: Wed, 28 Feb 2018 09:21:59 -0800
+From: tip-bot for Sebastian Panceac <tipbot@zytor.com>
+Message-ID: <tip-028091f82eefd5e84f81cef81a7673016ecbe78b@git.kernel.org>
+Cc: tglx@linutronix.de, hpa@zytor.com, sebastian@resin.io,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        andy.shevchenko@gmail.com
+Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+        andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org,
+        sebastian@resin.io
+In-Reply-To: <1519810849-15131-1-git-send-email-sebastian@resin.io>
+References: <1519810849-15131-1-git-send-email-sebastian@resin.io>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/platform/intel-mid: Handle Intel Edison reboot
+ correctly
+Git-Commit-ID: 028091f82eefd5e84f81cef81a7673016ecbe78b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.02.2018 17:14, Peter De Schrijver wrote:
-> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
->> On 28.02.2018 12:36, Peter De Schrijver wrote:
->>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>>>> which
->>>>>>> leaves it at some default rate of 500 kHz:
->>>>>>>
->>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>>>> pll_u
->>>>>>>        pll_u                  3        3        0      500000      
->>>>>>>     0
->>>>>>>
->>>>>>> Of course this won't quite work leading to the following messages:
->>>>>>>
->>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>>>> tegra-
->>>>>>> ehci
->>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>>>> tegra-
->>>>>>> ehci
->>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>>>> tegra-
->>>>>>> ehci
->>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>>>> tegra-
->>>>>>> ehci
->>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>>>
->>>>>>> Fix this by actually allowing the rate also being set from within
->>>>>>> the Linux kernel.
->>>
->>> I think the best solution to this problem would be to make pll_u a fixed
->>> clock and enable it and program the rate if it's not enabled at boot.
->>
->> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
->> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
->> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
->> there.
->>
-> 
-> AFAIK we only use one rate ever?
+Commit-ID:  028091f82eefd5e84f81cef81a7673016ecbe78b
+Gitweb:     https://git.kernel.org/tip/028091f82eefd5e84f81cef81a7673016ecbe78b
+Author:     Sebastian Panceac <sebastian@resin.io>
+AuthorDate: Wed, 28 Feb 2018 11:40:49 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Feb 2018 18:17:18 +0100
 
-IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
-setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
+x86/platform/intel-mid: Handle Intel Edison reboot correctly
 
->>> This is how it's done for Tegra210. The reason is that the USB IP blocks
->>> can control the pll_u state in hw. This means that if sw would disable
->>> and then re-enable the pll_u clock, but there is no USB activity, pll_u
->>> will still be disable and therefor not lock, causing an error. Today
->>> this is worked around by not polling the lock bit for pll_u, but a better
->>> solution would be to just remove all sw controls for pll_u.
->>
->> SW controls could be removed, but I don't think it is really necessary as in our
->> case SW is the PHY driver and we know what it does. Alternatively we can enable
->> PLL_U in the init table to keep it "always" enabled.
+When the Intel Edison module is powered with 3.3V, the reboot command makes
+the module stuck.  If the module is powered at a greater voltage, like 4.4V
+(as the Edison Mini Breakout board does), reboot works OK.
+
+The official Intel Edison BSP sends the IPCMSG_COLD_RESET message to the
+SCU by default. The IPCMSG_COLD_BOOT which is used by the upstream kernel
+is only sent when explicitely selected on the kernel command line.
+
+Use IPCMSG_COLD_RESET unconditionally which makes reboot work independent
+of the power supply voltage.
+
+[ tglx: Massaged changelog ]
+
+Fixes: bda7b072de99 ("x86/platform/intel-mid: Implement power off sequence")
+Signed-off-by: Sebastian Panceac <sebastian@resin.io>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1519810849-15131-1-git-send-email-sebastian@resin.io
+
+---
+ arch/x86/platform/intel-mid/intel-mid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
+index 2c67bae6bb53..fb1df9488e98 100644
+--- a/arch/x86/platform/intel-mid/intel-mid.c
++++ b/arch/x86/platform/intel-mid/intel-mid.c
+@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
+ 
+ static void intel_mid_reboot(void)
+ {
+-	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
++	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
+ }
+ 
+ static unsigned long __init intel_mid_calibrate_tsc(void)
