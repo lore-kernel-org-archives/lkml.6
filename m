@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932207AbeB1NoP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:44:15 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41360 "EHLO mx1.redhat.com"
+        id S1752716AbeB1NpD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:45:03 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35916 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932167AbeB1NoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:44:11 -0500
+        id S1752636AbeB1NoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:44:10 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -15,75 +15,96 @@ Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Andrey Smetanin <asmetanin@virtuozzo.com>,
         Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: [PATCH 3/3] x86/kvm/hyper-v: inject #GP only when invalid SINTx vector is unmasked
-Date: Wed, 28 Feb 2018 14:44:01 +0100
-Message-Id: <20180228134401.6544-4-vkuznets@redhat.com>
+Subject: [PATCH 2/3] x86/kvm/hyper-v: remove stale entries from vec_bitmap/auto_eoi_bitmap on vector change
+Date: Wed, 28 Feb 2018 14:44:00 +0100
+Message-Id: <20180228134401.6544-3-vkuznets@redhat.com>
 In-Reply-To: <20180228134401.6544-1-vkuznets@redhat.com>
 References: <20180228134401.6544-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hyper-V 2016 on KVM with SynIC enabled doesn't boot with the following
-trace:
-
-    kvm_entry:            vcpu 0
-    kvm_exit:             reason MSR_WRITE rip 0xfffff8000131c1e5 info 0 0
-    kvm_hv_synic_set_msr: vcpu_id 0 msr 0x40000090 data 0x10000 host 0
-    kvm_msr:              msr_write 40000090 = 0x10000 (#GP)
-    kvm_inj_exception:    #GP (0x0)
-
-KVM acts according to the following statement from TLFS:
-
-"
-11.8.4 SINTx Registers
-...
-Valid values for vector are 16-255 inclusive. Specifying an invalid
-vector number results in #GP.
-"
-
-However, I checked and genuine Hyper-V doesn't #GP when we write 0x10000
-to SINTx. I checked with Microsoft and they confirmed that if either the
-Masked bit (bit 16) or the Polling bit (bit 18) is set to 1, then they
-ignore the value of Vector. Make KVM act accordingly.
+When a new vector is written to SINx we update vec_bitmap/auto_eoi_bitmap
+but we forget to remove old vector from these masks (in case it is not
+present in some other SINTx).
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/include/uapi/asm/hyperv.h | 1 +
- arch/x86/kvm/hyperv.c              | 7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/include/uapi/asm/hyperv.h |  2 ++
+ arch/x86/kvm/hyperv.c              | 32 ++++++++++++++++++++++----------
+ 2 files changed, 24 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
-index 62c778a303a1..a492dc357bd7 100644
+index 197c2e6c7376..62c778a303a1 100644
 --- a/arch/x86/include/uapi/asm/hyperv.h
 +++ b/arch/x86/include/uapi/asm/hyperv.h
-@@ -326,6 +326,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
- #define HV_SYNIC_SIEFP_ENABLE		(1ULL << 0)
- #define HV_SYNIC_SINT_MASKED		(1ULL << 16)
- #define HV_SYNIC_SINT_AUTO_EOI		(1ULL << 17)
-+#define HV_SYNIC_SINT_POLLING		(1ULL << 18)
- #define HV_SYNIC_SINT_VECTOR_MASK	(0xFF)
+@@ -318,6 +318,8 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+ #define HV_SYNIC_SINT_COUNT		(16)
+ /* Define the expected SynIC version. */
+ #define HV_SYNIC_VERSION_1		(0x1)
++/* Valid SynIC vectors are 16-255. */
++#define HV_SYNIC_FIRST_VALID_VECTOR	(16)
  
- #define HV_SYNIC_STIMER_COUNT		(4)
+ #define HV_SYNIC_CONTROL_ENABLE		(1ULL << 0)
+ #define HV_SYNIC_SIMP_ENABLE		(1ULL << 0)
 diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 6d14f808145d..d3d866c32976 100644
+index 05f414525538..6d14f808145d 100644
 --- a/arch/x86/kvm/hyperv.c
 +++ b/arch/x86/kvm/hyperv.c
-@@ -95,9 +95,14 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
+@@ -74,13 +74,30 @@ static bool synic_has_vector_auto_eoi(struct kvm_vcpu_hv_synic *synic,
+ 	return false;
+ }
+ 
++static void synic_update_vector(struct kvm_vcpu_hv_synic *synic,
++				int vector)
++{
++	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
++		return;
++
++	if (synic_has_vector_connected(synic, vector))
++		__set_bit(vector, synic->vec_bitmap);
++	else
++		__clear_bit(vector, synic->vec_bitmap);
++
++	if (synic_has_vector_auto_eoi(synic, vector))
++		__set_bit(vector, synic->auto_eoi_bitmap);
++	else
++		__clear_bit(vector, synic->auto_eoi_bitmap);
++}
++
+ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
  			  u64 data, bool host)
  {
- 	int vector, old_vector;
-+	bool masked, polling;
+-	int vector;
++	int vector, old_vector;
  
  	vector = data & HV_SYNIC_SINT_VECTOR_MASK;
--	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
-+	masked = data & HV_SYNIC_SINT_MASKED;
-+	polling = data & HV_SYNIC_SINT_POLLING;
-+
-+	if (vector < HV_SYNIC_FIRST_VALID_VECTOR &&
-+	    !host && !masked && !polling)
+-	if (vector < 16 && !host)
++	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
  		return 1;
  	/*
  	 * Guest may configure multiple SINTs to use the same vector, so
+@@ -88,18 +105,13 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
+ 	 * bitmap of vectors with auto-eoi behavior.  The bitmaps are
+ 	 * updated here, and atomically queried on fast paths.
+ 	 */
++	old_vector = synic_read_sint(synic, sint) & HV_SYNIC_SINT_VECTOR_MASK;
+ 
+ 	atomic64_set(&synic->sint[sint], data);
+ 
+-	if (synic_has_vector_connected(synic, vector))
+-		__set_bit(vector, synic->vec_bitmap);
+-	else
+-		__clear_bit(vector, synic->vec_bitmap);
++	synic_update_vector(synic, old_vector);
+ 
+-	if (synic_has_vector_auto_eoi(synic, vector))
+-		__set_bit(vector, synic->auto_eoi_bitmap);
+-	else
+-		__clear_bit(vector, synic->auto_eoi_bitmap);
++	synic_update_vector(synic, vector);
+ 
+ 	/* Load SynIC vectors into EOI exit bitmap */
+ 	kvm_make_request(KVM_REQ_SCAN_IOAPIC, synic_to_vcpu(synic));
 -- 
 2.14.3
