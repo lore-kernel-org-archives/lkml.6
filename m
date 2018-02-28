@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeB1PGi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:06:38 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45202 "EHLO mx1.redhat.com"
+        id S932177AbeB1PGu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:06:50 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51740 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752250AbeB1PGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:06:36 -0500
+        id S932145AbeB1PGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:06:48 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: arnd@arndb.de, bhe@redhat.com, slp@redhat.com, mst@redhat.com,
         somlo@cmu.edu, xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v16 03/11] fw_cfg: fix sparse warning reading FW_CFG_ID
-Date: Wed, 28 Feb 2018 16:06:07 +0100
-Message-Id: <20180228150615.17317-4-marcandre.lureau@redhat.com>
+Subject: [PATCH v16 07/11] fw_cfg: add a public uapi header
+Date: Wed, 28 Feb 2018 16:06:11 +0100
+Message-Id: <20180228150615.17317-8-marcandre.lureau@redhat.com>
 In-Reply-To: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
@@ -23,37 +23,160 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a restricted type for reading FW_CFG_ID, fixing sparse warning:
+Create a common header file for well-known values and structures to be
+shared by the Linux kernel with qemu or other projects.
 
-drivers/firmware/qemu_fw_cfg.c:540:22: warning: cast to restricted __le32
+It is based from qemu/docs/specs/fw_cfg.txt which references
+qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
+authoritative list" & vmcoreinfo.txt. Those files don't have an
+explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
+Michael S. Tsirkin suggested to use the same license.
 
+The patch intentionally left out DMA & vmcoreinfo structures &
+defines, which are added in the commits making usage of it.
+
+Suggested-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
----
- drivers/firmware/qemu_fw_cfg.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
+---
+
+The related qemu patch making use of it, to be submitted:
+https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
+---
+ MAINTAINERS                      |  1 +
+ drivers/firmware/qemu_fw_cfg.c   | 22 ++------------
+ include/uapi/linux/qemu_fw_cfg.h | 66 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 69 insertions(+), 20 deletions(-)
+ create mode 100644 include/uapi/linux/qemu_fw_cfg.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93a12af4f180..0ce1b3e536fd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11353,6 +11353,7 @@ M:	"Michael S. Tsirkin" <mst@redhat.com>
+ L:	qemu-devel@nongnu.org
+ S:	Maintained
+ F:	drivers/firmware/qemu_fw_cfg.c
++F:	include/uapi/linux/qemu_fw_cfg.h
+ 
+ QIB DRIVER
+ M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
 diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 7978844f6b37..0eb155fdfb35 100644
+index 45bfc389b226..5de6bb406fb6 100644
 --- a/drivers/firmware/qemu_fw_cfg.c
 +++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -530,6 +530,7 @@ static inline void fw_cfg_kobj_cleanup(struct kobject *kobj)
- static int fw_cfg_sysfs_probe(struct platform_device *pdev)
- {
- 	int err;
-+	__le32 rev;
+@@ -32,30 +32,12 @@
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <uapi/linux/qemu_fw_cfg.h>
  
- 	/* NOTE: If we supported multiple fw_cfg devices, we'd first create
- 	 * a subdirectory named after e.g. pdev->id, then hang per-device
-@@ -555,8 +556,8 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
- 		goto err_probe;
+ MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+ MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+ MODULE_LICENSE("GPL");
  
- 	/* get revision number, add matching top-level attribute */
--	fw_cfg_read_blob(FW_CFG_ID, &fw_cfg_rev, 0, sizeof(fw_cfg_rev));
--	fw_cfg_rev = le32_to_cpu(fw_cfg_rev);
-+	fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-+	fw_cfg_rev = le32_to_cpu(rev);
- 	err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
- 	if (err)
- 		goto err_rev;
+-/* selector key values for "well-known" fw_cfg entries */
+-#define FW_CFG_SIGNATURE  0x00
+-#define FW_CFG_ID         0x01
+-#define FW_CFG_FILE_DIR   0x19
+-
+-/* size in bytes of fw_cfg signature */
+-#define FW_CFG_SIG_SIZE 4
+-
+-/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+-#define FW_CFG_MAX_FILE_PATH 56
+-
+-/* fw_cfg file directory entry type */
+-struct fw_cfg_file {
+-	u32 size;
+-	u16 select;
+-	u16 reserved;
+-	char name[FW_CFG_MAX_FILE_PATH];
+-};
+-
+ /* fw_cfg device i/o register addresses */
+ static bool fw_cfg_is_mmio;
+ static phys_addr_t fw_cfg_p_base;
+@@ -616,7 +598,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+ 
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
+-	{ "QEMU0002", },
++	{ FW_CFG_ACPI_DEVICE_ID, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
+diff --git a/include/uapi/linux/qemu_fw_cfg.h b/include/uapi/linux/qemu_fw_cfg.h
+new file mode 100644
+index 000000000000..c698ac3812f6
+--- /dev/null
++++ b/include/uapi/linux/qemu_fw_cfg.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
++#ifndef _LINUX_FW_CFG_H
++#define _LINUX_FW_CFG_H
++
++#include <linux/types.h>
++
++#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
++
++/* selector key values for "well-known" fw_cfg entries */
++#define FW_CFG_SIGNATURE	0x00
++#define FW_CFG_ID		0x01
++#define FW_CFG_UUID		0x02
++#define FW_CFG_RAM_SIZE		0x03
++#define FW_CFG_NOGRAPHIC	0x04
++#define FW_CFG_NB_CPUS		0x05
++#define FW_CFG_MACHINE_ID	0x06
++#define FW_CFG_KERNEL_ADDR	0x07
++#define FW_CFG_KERNEL_SIZE	0x08
++#define FW_CFG_KERNEL_CMDLINE	0x09
++#define FW_CFG_INITRD_ADDR	0x0a
++#define FW_CFG_INITRD_SIZE	0x0b
++#define FW_CFG_BOOT_DEVICE	0x0c
++#define FW_CFG_NUMA		0x0d
++#define FW_CFG_BOOT_MENU	0x0e
++#define FW_CFG_MAX_CPUS		0x0f
++#define FW_CFG_KERNEL_ENTRY	0x10
++#define FW_CFG_KERNEL_DATA	0x11
++#define FW_CFG_INITRD_DATA	0x12
++#define FW_CFG_CMDLINE_ADDR	0x13
++#define FW_CFG_CMDLINE_SIZE	0x14
++#define FW_CFG_CMDLINE_DATA	0x15
++#define FW_CFG_SETUP_ADDR	0x16
++#define FW_CFG_SETUP_SIZE	0x17
++#define FW_CFG_SETUP_DATA	0x18
++#define FW_CFG_FILE_DIR		0x19
++
++#define FW_CFG_FILE_FIRST	0x20
++#define FW_CFG_FILE_SLOTS_MIN	0x10
++
++#define FW_CFG_WRITE_CHANNEL	0x4000
++#define FW_CFG_ARCH_LOCAL	0x8000
++#define FW_CFG_ENTRY_MASK	(~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
++
++#define FW_CFG_INVALID		0xffff
++
++/* width in bytes of fw_cfg control register */
++#define FW_CFG_CTL_SIZE		0x02
++
++/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
++#define FW_CFG_MAX_FILE_PATH	56
++
++/* size in bytes of fw_cfg signature */
++#define FW_CFG_SIG_SIZE 4
++
++/* FW_CFG_ID bits */
++#define FW_CFG_VERSION		0x01
++
++/* fw_cfg file directory entry type */
++struct fw_cfg_file {
++	__be32 size;
++	__be16 select;
++	__u16 reserved;
++	char name[FW_CFG_MAX_FILE_PATH];
++};
++
++#endif
 -- 
 2.16.1.73.g5832b7e9f2
