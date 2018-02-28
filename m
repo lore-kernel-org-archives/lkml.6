@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790677-2-3727163227296623719
+X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790674-2-17078233500551254341
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roensk.us-ascii, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790676; b=eegwPvbLO/xHWvP7MSuIsXFZjAdFfrbejAhR01/Kq3i8FEq
-    v8dIss6qSVvr1jJJ2EUDiTPlEZUiGaKKbaxGoAwIl82mA/8oNDGVxaquQUHQudSo
-    Z+IBtzrOxC7yMBrSfiuNJ5odd9MTgwl5F9sQL1xkRqWEYEYxapu6qKz6rcPvSkN8
-    psMF6g8xWd3X8dsSlpuJ1VrxA3J3IUygAxJauyVgtXCl73FBTELNNeKbPi9ogZlo
-    9r7FcZ1u3t487su00e0glKGB+8EOZ1CvkXz2ZP81LGtg4sAzHguKOYCWmEPgMuZX
-    LqBAnm2NxX4SnvIt+fnKg/QgxhU/3CoF9Iya7PA==
+    t=1519790673; b=lncdWKwsSlq1TZJlEPhuLs5PmPflN0yAPkcwGF9oRZ/T1rQ
+    Gr09vZpRMJBtgCKYfzLPNruk46sQ0coxqLrPtUuDMtsl36JUTYFxgdzqqvjFsHFg
+    PkuwHtBrlPQp7vch0m/6wiKxQ7k37Df8y9R3+69rryT/1GDucB+8VS+vxCjA9yHE
+    P/ghZ8uFOBLQhMis2yFgrJ0nOa6YKDgGpMh1PBLaSz09D42Z0yoq/YA+n+af1kMz
+    OZQcbLuGwNJQDIflxbLVBEM3Pj2J+WpNuMOKZmYjMYEppktdCawLDeTBXKk5EekQ
+    00o7/r+CKtCQ6qn7qw0bJ+jtjS8KjSqfo8XFbgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790676;
-    bh=CnBAWrPsMy6/oPLDU3/iiTfetB2B2cU6YnCOS/tfJT8=; b=tWrG3XRawo/w
-    znqIfpxLguVnEEy0wiNv4suIIXW7LhOzEdc+StLREZFRq/2Nwso342fbutfu4HkI
-    tss0spnPrT3H7gU8WXaOAwWbks5R61wMjEjXPeJ3w/uG7QvUSKj63RRM3Uxco88Y
-    ooZX/HwaBdP/pJxx8dz0IMMySQ+905DF4Rb+Ui9JvPA/+uS7ZpE6wmj2vZv3oqHi
-    K7ic1838b6dao7y05VHZaAUXN5Z5MPIlon9ubOr/FO6sByoaHQ27Rd0YO6IkbSJl
-    a9FfI/ibWaDGKJ+oBfFPNhzfT+Xl9MeMLioxCDjXdq5kdveJNJBj4FURiV8senBc
-    xFU69BH62g==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790673;
+    bh=BbrhBHDEMFhCrPIdPhoFv8B5sSWqD0P7v6bm6++E2JU=; b=lsTd7KlRy+HU
+    HoE0ToFxZKHdQ6YMOGNyNFKgY2YUJgKmzUwlSYoCCJkj10t8+qBT1Faa6ZaouXKk
+    r9qSUw53n/zfM6VbbG2b3c31R7NiY6FT2nUr1RCe7hSPyyF7MPRahQ7UEi9RrIYg
+    /qO6O9trk6Vhydnwoxx69DaEZHr1S1tflGVwSuSzR2nCbpo3gXCCowoZegHd41F5
+    OiL+3MFQ8bfhOniJTdERMFmDFyFuaJsktlnRs8vNgEBoLPkw8bRaUt2BV7He70g6
+    jqAQVsw7mSheSvg3v/Ijof1ZfDVW2yVy3NN7FZ5J5/y8E8Z6VxtkzI3wDl5Kmy18
+    gze7yFzCzg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=h7zHUAXD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=d6218NBb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pZeyR1v2;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DGvfTV26;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=h7zHUAXD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=d6218NBb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pZeyR1v2;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DGvfTV26;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752005AbeB1D6I (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 22:58:08 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44052 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751981AbeB1D6G (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:06 -0500
-X-Google-Smtp-Source: AH8x227F1dSnjXMRA88Vt6JAODMuHBKSWux92ZhhgqDd0QuvLKDWH6wRr2fjgQo1KtKzALsca7cb6w==
+        id S1752046AbeB1D6R (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 22:58:17 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39205 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752045AbeB1D6P (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:15 -0500
+X-Google-Smtp-Source: AG47ELuR5P4fjDeodL4dKA+aJlaN8ja5A2IVtx7/5/ksdEAqBkM4egMxgtMORREiJ3ehCn3gOyIRoQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,10 +63,12 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 05/29] arm64: mm: Invalidate both kernel and user ASIDs when performing TLBI
-Date: Wed, 28 Feb 2018 11:56:27 +0800
-Message-Id: <1519790211-16582-6-git-send-email-alex.shi@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 06/29] arm64: factor out entry stack manipulation
+Date: Wed, 28 Feb 2018 11:56:28 +0800
+Message-Id: <1519790211-16582-7-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -76,86 +78,107 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Will Deacon <will.deacon@arm.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 9b0de864b5bc upstream.
+commit b11e5759bfac upstream.
 
-Since an mm has both a kernel and a user ASID, we need to ensure that
-broadcast TLB maintenance targets both address spaces so that things
-like CoW continue to work with the uaccess primitives in the kernel.
+In subsequent patches, we will detect stack overflow in our exception
+entry code, by verifying the SP after it has been decremented to make
+space for the exception regs.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+This verification code is small, and we can minimize its impact by
+placing it directly in the vectors. To avoid redundant modification of
+the SP, we also need to move the initial decrement of the SP into the
+vectors.
+
+As a preparatory step, this patch introduces kernel_ventry, which
+performs this decrement, and updates the entry code accordingly.
+Subsequent patches will fold SP verification into kernel_ventry.
+
+There should be no functional change as a result of this patch.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[Mark: turn into prep patch, expand commit msg]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Will Deacon <will.deacon@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/include/asm/tlbflush.h | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/entry.S | 47 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index deab523..ad6bd8b 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -23,6 +23,7 @@
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index b4c7db4..f5aa8f0 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -68,8 +68,13 @@
+ #define BAD_FIQ		2
+ #define BAD_ERROR	3
  
- #include <linux/sched.h>
- #include <asm/cputype.h>
-+#include <asm/mmu.h>
- 
- /*
-  * Raw TLBI operations.
-@@ -42,6 +43,11 @@
- 
- #define __tlbi(op, ...)		__TLBI_N(op, ##__VA_ARGS__, 1, 0)
- 
-+#define __tlbi_user(op, arg) do {						\
-+	if (arm64_kernel_unmapped_at_el0())					\
-+		__tlbi(op, (arg) | USER_ASID_FLAG);				\
-+} while (0)
+-	.macro	kernel_entry, el, regsize = 64
++	.macro kernel_ventry	label
++	.align 7
+ 	sub	sp, sp, #S_FRAME_SIZE
++	b	\label
++	.endm
 +
- /*
-  *	TLB Management
-  *	==============
-@@ -103,6 +109,7 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
++	.macro	kernel_entry, el, regsize = 64
+ 	.if	\regsize == 32
+ 	mov	w0, w0				// zero upper 32 bits of x0
+ 	.endif
+@@ -257,31 +262,31 @@ tsk	.req	x28		// current thread_info
  
- 	dsb(ishst);
- 	__tlbi(aside1is, asid);
-+	__tlbi_user(aside1is, asid);
- 	dsb(ish);
- }
+ 	.align	11
+ ENTRY(vectors)
+-	ventry	el1_sync_invalid		// Synchronous EL1t
+-	ventry	el1_irq_invalid			// IRQ EL1t
+-	ventry	el1_fiq_invalid			// FIQ EL1t
+-	ventry	el1_error_invalid		// Error EL1t
++	kernel_ventry	el1_sync_invalid		// Synchronous EL1t
++	kernel_ventry	el1_irq_invalid			// IRQ EL1t
++	kernel_ventry	el1_fiq_invalid			// FIQ EL1t
++	kernel_ventry	el1_error_invalid		// Error EL1t
  
-@@ -113,6 +120,7 @@ static inline void flush_tlb_page(struct vm_area_struct *vma,
+-	ventry	el1_sync			// Synchronous EL1h
+-	ventry	el1_irq				// IRQ EL1h
+-	ventry	el1_fiq_invalid			// FIQ EL1h
+-	ventry	el1_error_invalid		// Error EL1h
++	kernel_ventry	el1_sync			// Synchronous EL1h
++	kernel_ventry	el1_irq				// IRQ EL1h
++	kernel_ventry	el1_fiq_invalid			// FIQ EL1h
++	kernel_ventry	el1_error_invalid		// Error EL1h
  
- 	dsb(ishst);
- 	__tlbi(vale1is, addr);
-+	__tlbi_user(vale1is, addr);
- 	dsb(ish);
- }
+-	ventry	el0_sync			// Synchronous 64-bit EL0
+-	ventry	el0_irq				// IRQ 64-bit EL0
+-	ventry	el0_fiq_invalid			// FIQ 64-bit EL0
+-	ventry	el0_error_invalid		// Error 64-bit EL0
++	kernel_ventry	el0_sync			// Synchronous 64-bit EL0
++	kernel_ventry	el0_irq				// IRQ 64-bit EL0
++	kernel_ventry	el0_fiq_invalid			// FIQ 64-bit EL0
++	kernel_ventry	el0_error_invalid		// Error 64-bit EL0
  
-@@ -139,10 +147,13 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 
- 	dsb(ishst);
- 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
--		if (last_level)
-+		if (last_level) {
- 			__tlbi(vale1is, addr);
--		else
-+			__tlbi_user(vale1is, addr);
-+		} else {
- 			__tlbi(vae1is, addr);
-+			__tlbi_user(vae1is, addr);
-+		}
- 	}
- 	dsb(ish);
- }
-@@ -182,6 +193,7 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
- 	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
- 
- 	__tlbi(vae1is, addr);
-+	__tlbi_user(vae1is, addr);
- 	dsb(ish);
- }
+ #ifdef CONFIG_COMPAT
+-	ventry	el0_sync_compat			// Synchronous 32-bit EL0
+-	ventry	el0_irq_compat			// IRQ 32-bit EL0
+-	ventry	el0_fiq_invalid_compat		// FIQ 32-bit EL0
+-	ventry	el0_error_invalid_compat	// Error 32-bit EL0
++	kernel_ventry	el0_sync_compat			// Synchronous 32-bit EL0
++	kernel_ventry	el0_irq_compat			// IRQ 32-bit EL0
++	kernel_ventry	el0_fiq_invalid_compat		// FIQ 32-bit EL0
++	kernel_ventry	el0_error_invalid_compat	// Error 32-bit EL0
+ #else
+-	ventry	el0_sync_invalid		// Synchronous 32-bit EL0
+-	ventry	el0_irq_invalid			// IRQ 32-bit EL0
+-	ventry	el0_fiq_invalid			// FIQ 32-bit EL0
+-	ventry	el0_error_invalid		// Error 32-bit EL0
++	kernel_ventry	el0_sync_invalid		// Synchronous 32-bit EL0
++	kernel_ventry	el0_irq_invalid			// IRQ 32-bit EL0
++	kernel_ventry	el0_fiq_invalid			// FIQ 32-bit EL0
++	kernel_ventry	el0_error_invalid		// Error 32-bit EL0
+ #endif
+ END(vectors)
  
 -- 
 2.7.4
