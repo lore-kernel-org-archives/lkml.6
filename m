@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-620147-1519837046-2-5333916037779532086
+X-Cyrus-Session-Id: sloti22d1t05-617694-1519837023-2-13350324088763809960
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837045; b=gK7oiUsYGRGGrAJsk27y0s3FmNpJdQ+wUTS0FcrX8Fj1dhV
-    cwFjKgfA529GG8vJacF8jgOt5KEOhYmHDUjUbexPn0yfkgH+KFmcZfgk+LwIupzD
-    ExcnPTQA8LxtVJtLT/g6LW4nUejBRF0/5c9fj4dyJzdNms3rjRnneepkrE0xD5Bf
-    LRuti6KCFr6cw6GAQx8lYgkphTTDoNVewSwDeZBlijIhdyDVCSclq8oV27yZ5IqC
-    2woB5lzS5FLJg4HBj4bOthZcGDIDq6jJrgXPKmM625Ga5ar3oYCmmi3K8zN/dNUA
-    zStRD6USunmu9/wyJk968EaWTPGHHc54pqPAJWQ==
+    t=1519837022; b=Io+ZWOVOSl0cKAF0V+B7S/dgbyo2ITvLU242j+wN9oAmgMQ
+    vxU7jdT/3m6UiimbIZmQwTo/eI5Lg5WvC7uq6cMdBMwLcWI62W85aQItAd9zpHCA
+    wl11MSak8UMZCsEJ4zo2u7UbsOSA0BBXcFE8Di1mUUvVWftO6G2fQkQUODnWZHqT
+    1zsZq0gxWSxbHcB2M8wIUNfsecZl8EaWpn7FEWCgkNtXDwoeEJV3xTZ5lHPISw+m
+    bPyftHofYQw0HRXtdY9CtGtSCILmfy3ZMoKLdCqPuHFd9n24GxiLULEq92yUHl72
+    TEoeKoDrRiQtOFX6NFWb70Yt9sQSGNvtYF35BTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519837045; bh=uzTkk+v5BNcbyuUkVTO
-    24+ykuoDfyV3StWMLlozKgLI=; b=NoJM7thqMBCWJRmjs5RhTyeZT9kPyFXgdTR
-    e23XUMmXHxNsxmzjZxKjS85O0fnZOkLwz8GbGzkSukgBg1bl+cFecGy3B7R6OWvB
-    4MD7WP+sKSypPLtE49/R61SXtpJhhPiQyXKIEUQK5+1OCx0ctkFmJ8wcri24Dyss
-    WqbMOZIjZDAIUuwVNYwv96Dz+nEL0XZGUbzdbCzPmxfmb32YR7SLWlPXMvenrY0+
-    99r3GFh7v6uA7r+hlF5yjZc7dkeXqrDbEpmPxLtix4E2e3ueeNOaa4q0ZkoEk6cV
-    d3JP5D4WcEK+9EcwZbKKNVM1Ido1+jpFtMdAOO0IL1vk41hC71A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519837022; bh=EoeNZzqD/n+jtxLBbpz
+    j8WSuob1VOXCWTXyV4RowLl0=; b=DjuJPirBtHkUQyUVjzlAo9ard/GvmmFZqBv
+    yG/rgAdK35tXVy0H5rnBe+jmTPbCkxCPBjSKsB9hiPNlWPT5pJKJjc+QCgMKrUjC
+    5rqnfd5y0GSsLPC39c3aI1HSIvvt/CXwUR+gEpw++Mb39yL8baMKQlA0JDbpZwwT
+    5raoNmxC1lQzwJg143sjL/y2mIgUqSTldpLPJDnYDMFeusc+7Zo2gZraj1u62SOd
+    FYNt0sEfK3cZyDETKdAdr7e4Iyag0jYz1zhmTkaSS9KRtg3lKAkB+vcXOX+jjSyf
+    x2nYNWmIJtoAmC/mYoF3y4BZa+S6/sUiAXLzR0jkfCfugHG6EUA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933013AbeB1PxF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:53:05 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34431 "EHLO
+        id S932426AbeB1PxH (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:53:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34436 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932426AbeB1PxC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:53:02 -0500
+        by vger.kernel.org with ESMTP id S933947AbeB1PxG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:53:06 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Paul Burton" <paul.burton@imgtec.com>,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "Maciej W. Rozycki" <macro@imgtec.com>, linux-mips@linux-mips.org,
-        "James Hogan" <james.hogan@imgtec.com>
+CC: akpm@linux-foundation.org,
+        "Nikolay Aleksandrov" <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.57078937@decadent.org.uk>
+Message-ID: <lsq.1519831218.35900318@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 105/254] MIPS: Fix FCSR Cause bit handling for
- correct SIGFPE issue
+Subject: [PATCH 3.16 123/254] net: bridge: fix early call to
+ br_stp_change_bridge_id and plug newlink leaks
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,245 +81,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@imgtec.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 5a1aca4469fdccd5b74ba0b4e490173b2b447895 upstream.
+commit 84aeb437ab98a2bce3d4b2111c79723aedfceb33 upstream.
 
-Sanitize FCSR Cause bit handling, following a trail of past attempts:
+The early call to br_stp_change_bridge_id in bridge's newlink can cause
+a memory leak if an error occurs during the newlink because the fdb
+entries are not cleaned up if a different lladdr was specified, also
+another minor issue is that it generates fdb notifications with
+ifindex = 0. Another unrelated memory leak is the bridge sysfs entries
+which get added on NETDEV_REGISTER event, but are not cleaned up in the
+newlink error path. To remove this special case the call to
+br_stp_change_bridge_id is done after netdev register and we cleanup the
+bridge on changelink error via br_dev_delete to plug all leaks.
 
-* commit 4249548454f7 ("MIPS: ptrace: Fix FP context restoration FCSR
-regression"),
+This patch makes netlink bridge destruction on newlink error the same as
+dellink and ioctl del which is necessary since at that point we have a
+fully initialized bridge device.
 
-* commit 443c44032a54 ("MIPS: Always clear FCSR cause bits after
-emulation"),
+To reproduce the issue:
+$ ip l add br0 address 00:11:22:33:44:55 type bridge group_fwd_mask 1
+RTNETLINK answers: Invalid argument
 
-* commit 64bedffe4968 ("MIPS: Clear [MSA]FPE CSR.Cause after
-notify_die()"),
+$ rmmod bridge
+[ 1822.142525] =============================================================================
+[ 1822.143640] BUG bridge_fdb_cache (Tainted: G           O    ): Objects remaining in bridge_fdb_cache on __kmem_cache_shutdown()
+[ 1822.144821] -----------------------------------------------------------------------------
 
-* commit b1442d39fac2 ("MIPS: Prevent user from setting FCSR cause
-bits"),
+[ 1822.145990] Disabling lock debugging due to kernel taint
+[ 1822.146732] INFO: Slab 0x0000000092a844b2 objects=32 used=2 fp=0x00000000fef011b0 flags=0x1ffff8000000100
+[ 1822.147700] CPU: 2 PID: 13584 Comm: rmmod Tainted: G    B      O     4.15.0-rc2+ #87
+[ 1822.148578] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
+[ 1822.150008] Call Trace:
+[ 1822.150510]  dump_stack+0x78/0xa9
+[ 1822.151156]  slab_err+0xb1/0xd3
+[ 1822.151834]  ? __kmalloc+0x1bb/0x1ce
+[ 1822.152546]  __kmem_cache_shutdown+0x151/0x28b
+[ 1822.153395]  shutdown_cache+0x13/0x144
+[ 1822.154126]  kmem_cache_destroy+0x1c0/0x1fb
+[ 1822.154669]  SyS_delete_module+0x194/0x244
+[ 1822.155199]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+[ 1822.155773]  entry_SYSCALL_64_fastpath+0x23/0x9a
+[ 1822.156343] RIP: 0033:0x7f929bd38b17
+[ 1822.156859] RSP: 002b:00007ffd160e9a98 EFLAGS: 00000202 ORIG_RAX: 00000000000000b0
+[ 1822.157728] RAX: ffffffffffffffda RBX: 00005578316ba090 RCX: 00007f929bd38b17
+[ 1822.158422] RDX: 00007f929bd9ec60 RSI: 0000000000000800 RDI: 00005578316ba0f0
+[ 1822.159114] RBP: 0000000000000003 R08: 00007f929bff5f20 R09: 00007ffd160e8a11
+[ 1822.159808] R10: 00007ffd160e9860 R11: 0000000000000202 R12: 00007ffd160e8a80
+[ 1822.160513] R13: 0000000000000000 R14: 0000000000000000 R15: 00005578316ba090
+[ 1822.161278] INFO: Object 0x000000007645de29 @offset=0
+[ 1822.161666] INFO: Object 0x00000000d5df2ab5 @offset=128
 
-* commit b54d2901517d ("Properly handle branch delay slots in connection
-with signals.").
-
-Specifically do not mask these bits out in ptrace(2) processing and send
-a SIGFPE signal instead whenever a matching pair of an FCSR Cause and
-Enable bit is seen as execution of an affected context is about to
-resume.  Only then clear Cause bits, and even then do not clear any bits
-that are set but masked with the respective Enable bits.  Adjust Cause
-bit clearing throughout code likewise, except within the FPU emulator
-proper where they are set according to IEEE 754 exceptions raised as the
-operation emulated executed.  Do so so that any IEEE 754 exceptions
-subject to their default handling are recorded like with operations
-executed by FPU hardware.
-
-Signed-off-by: Maciej W. Rozycki <macro@imgtec.com>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: James Hogan <james.hogan@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/14460/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-[bwh: Backported to 3.16:
- - Drop changes in mips-r2-to-r6-emul and simulate_fp()
- - Add #include <asm/fpu.h> in <asm/switch_to.h>
- - Adjust context]
+Fixes: 30313a3d5794 ("bridge: Handle IFLA_ADDRESS correctly when creating bridge device")
+Fixes: 5b8d5429daa0 ("bridge: netlink: register netdevice before executing changelink")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: register_netdevice() was the last thing done in
+ br_dev_newlink(), so no extra cleanup is needed]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/mips/include/asm/fpu_emulator.h
-+++ b/arch/mips/include/asm/fpu_emulator.h
-@@ -65,6 +65,8 @@ extern int do_dsemulret(struct pt_regs *
- extern int fpu_emulator_cop1Handler(struct pt_regs *xcp,
- 				    struct mips_fpu_struct *ctx, int has_fpu,
- 				    void *__user *fault_addr);
-+void force_fcr31_sig(unsigned long fcr31, void __user *fault_addr,
-+		     struct task_struct *tsk);
- int process_fpemu_return(int sig, void __user *fault_addr,
- 			 unsigned long fcr31);
- int mm_isBranchInstr(struct pt_regs *regs, struct mm_decoded_insn dec_insn,
-@@ -91,4 +93,15 @@ static inline void fpu_emulator_init_fpu
- 		set_fpr64(&t->thread.fpu.fpr[i], 0, SIGNALLING_NAN);
- }
- 
-+/*
-+ * Mask the FCSR Cause bits according to the Enable bits, observing
-+ * that Unimplemented is always enabled.
-+ */
-+static inline unsigned long mask_fcr31_x(unsigned long fcr31)
-+{
-+	return fcr31 & (FPU_CSR_UNI_X |
-+			((fcr31 & FPU_CSR_ALL_E) <<
-+			 (ffs(FPU_CSR_ALL_X) - ffs(FPU_CSR_ALL_E))));
-+}
-+
- #endif /* _ASM_FPU_EMULATOR_H */
---- a/arch/mips/include/asm/switch_to.h
-+++ b/arch/mips/include/asm/switch_to.h
-@@ -17,6 +17,7 @@
- #include <asm/dsp.h>
- #include <asm/cop2.h>
- #include <asm/msa.h>
-+#include <asm/fpu.h>
- 
- struct task_struct;
- 
-@@ -80,11 +81,29 @@ do {									\
- 		ll_bit = 0;						\
- } while (0)
- 
-+/*
-+ * Check FCSR for any unmasked exceptions pending set with `ptrace',
-+ * clear them and send a signal.
-+ */
-+#define __sanitize_fcr31(next)						\
-+do {									\
-+	unsigned long fcr31 = mask_fcr31_x(next->thread.fpu.fcr31);	\
-+	void __user *pc;						\
-+									\
-+	if (unlikely(fcr31)) {						\
-+		pc = (void __user *)task_pt_regs(next)->cp0_epc;	\
-+		next->thread.fpu.fcr31 &= ~fcr31;			\
-+		force_fcr31_sig(fcr31, pc, next);			\
-+	}								\
-+} while (0)
-+
- #define switch_to(prev, next, last)					\
- do {									\
- 	u32 __c0_stat;							\
- 	s32 __fpsave = FP_SAVE_NONE;					\
- 	__mips_mt_fpaff_switch_to(prev);				\
-+	if (tsk_used_math(next))					\
-+		__sanitize_fcr31(next);					\
- 	if (cpu_has_dsp)						\
- 		__save_dsp(prev);					\
- 	if (cop2_present && (KSTK_STATUS(prev) & ST0_CU2)) {		\
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -79,16 +79,15 @@ void ptrace_disable(struct task_struct *
- }
- 
- /*
-- * Poke at FCSR according to its mask.  Don't set the cause bits as
-- * this is currently not handled correctly in FP context restoration
-- * and will cause an oops if a corresponding enable bit is set.
-+ * Poke at FCSR according to its mask.  Set the Cause bits even
-+ * if a corresponding Enable bit is set.  This will be noticed at
-+ * the time the thread is switched to and SIGFPE thrown accordingly.
-  */
- static void ptrace_setfcr31(struct task_struct *child, u32 value)
+--- a/net/bridge/br_netlink.c
++++ b/net/bridge/br_netlink.c
+@@ -452,6 +452,11 @@ static int br_dev_newlink(struct net *sr
+ 			  struct nlattr *tb[], struct nlattr *data[])
  {
- 	u32 fcr31;
- 	u32 mask;
+ 	struct net_bridge *br = netdev_priv(dev);
++	int err;
++
++	err = register_netdevice(dev);
++	if (err)
++		return err;
  
--	value &= ~FPU_CSR_ALL_X;
- 	fcr31 = child->thread.fpu.fcr31;
- 	mask = boot_cpu_data.fpu_msk31;
- 	child->thread.fpu.fcr31 = (value & ~mask) | (fcr31 & mask);
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -707,6 +707,32 @@ asmlinkage void do_ov(struct pt_regs *re
- 	exception_exit(prev_state);
+ 	if (tb[IFLA_ADDRESS]) {
+ 		spin_lock_bh(&br->lock);
+@@ -459,7 +464,7 @@ static int br_dev_newlink(struct net *sr
+ 		spin_unlock_bh(&br->lock);
+ 	}
+ 
+-	return register_netdevice(dev);
++	return 0;
  }
  
-+/*
-+ * Send SIGFPE according to FCSR Cause bits, which must have already
-+ * been masked against Enable bits.  This is impotant as Inexact can
-+ * happen together with Overflow or Underflow, and `ptrace' can set
-+ * any bits.
-+ */
-+void force_fcr31_sig(unsigned long fcr31, void __user *fault_addr,
-+		     struct task_struct *tsk)
-+{
-+	struct siginfo si = { .si_addr = fault_addr, .si_signo = SIGFPE };
-+
-+	if (fcr31 & FPU_CSR_INV_X)
-+		si.si_code = FPE_FLTINV;
-+	else if (fcr31 & FPU_CSR_DIV_X)
-+		si.si_code = FPE_FLTDIV;
-+	else if (fcr31 & FPU_CSR_OVF_X)
-+		si.si_code = FPE_FLTOVF;
-+	else if (fcr31 & FPU_CSR_UDF_X)
-+		si.si_code = FPE_FLTUND;
-+	else if (fcr31 & FPU_CSR_INE_X)
-+		si.si_code = FPE_FLTRES;
-+	else
-+		si.si_code = __SI_FAULT;
-+	force_sig_info(SIGFPE, &si, tsk);
-+}
-+
- int process_fpemu_return(int sig, void __user *fault_addr, unsigned long fcr31)
- {
- 	struct siginfo si = { 0 };
-@@ -716,27 +742,7 @@ int process_fpemu_return(int sig, void _
- 		return 0;
- 
- 	case SIGFPE:
--		si.si_addr = fault_addr;
--		si.si_signo = sig;
--		/*
--		 * Inexact can happen together with Overflow or Underflow.
--		 * Respect the mask to deliver the correct exception.
--		 */
--		fcr31 &= (fcr31 & FPU_CSR_ALL_E) <<
--			 (ffs(FPU_CSR_ALL_X) - ffs(FPU_CSR_ALL_E));
--		if (fcr31 & FPU_CSR_INV_X)
--			si.si_code = FPE_FLTINV;
--		else if (fcr31 & FPU_CSR_DIV_X)
--			si.si_code = FPE_FLTDIV;
--		else if (fcr31 & FPU_CSR_OVF_X)
--			si.si_code = FPE_FLTOVF;
--		else if (fcr31 & FPU_CSR_UDF_X)
--			si.si_code = FPE_FLTUND;
--		else if (fcr31 & FPU_CSR_INE_X)
--			si.si_code = FPE_FLTRES;
--		else
--			si.si_code = __SI_FAULT;
--		force_sig_info(sig, &si, current);
-+		force_fcr31_sig(fcr31, fault_addr, current);
- 		return 1;
- 
- 	case SIGBUS:
-@@ -779,7 +785,7 @@ asmlinkage void do_fpe(struct pt_regs *r
- 		goto out;
- 
- 	/* Clear FCSR.Cause before enabling interrupts */
--	write_32bit_cp1_register(CP1_STATUS, fcr31 & ~FPU_CSR_ALL_X);
-+	write_32bit_cp1_register(CP1_STATUS, fcr31 & ~mask_fcr31_x(fcr31));
- 	local_irq_enable();
- 
- 	die_if_kernel("FP exception in kernel code", regs);
-@@ -801,13 +807,13 @@ asmlinkage void do_fpe(struct pt_regs *r
- 		/* Run the emulator */
- 		sig = fpu_emulator_cop1Handler(regs, &current->thread.fpu, 1,
- 					       &fault_addr);
--		fcr31 = current->thread.fpu.fcr31;
- 
- 		/*
--		 * We can't allow the emulated instruction to leave any of
--		 * the cause bits set in $fcr31.
-+		 * We can't allow the emulated instruction to leave any
-+		 * enabled Cause bits set in $fcr31.
- 		 */
--		current->thread.fpu.fcr31 &= ~FPU_CSR_ALL_X;
-+		fcr31 = mask_fcr31_x(current->thread.fpu.fcr31);
-+		current->thread.fpu.fcr31 &= ~fcr31;
- 
- 		/* Restore the hardware register state */
- 		own_fpu(1);	/* Using the FPU again.	 */
-@@ -1302,13 +1308,13 @@ asmlinkage void do_cpu(struct pt_regs *r
- 
- 		sig = fpu_emulator_cop1Handler(regs, &current->thread.fpu, 0,
- 					       &fault_addr);
--		fcr31 = current->thread.fpu.fcr31;
- 
- 		/*
- 		 * We can't allow the emulated instruction to leave
--		 * any of the cause bits set in $fcr31.
-+		 * any enabled Cause bits set in $fcr31.
- 		 */
--		current->thread.fpu.fcr31 &= ~FPU_CSR_ALL_X;
-+		fcr31 = mask_fcr31_x(current->thread.fpu.fcr31);
-+		current->thread.fpu.fcr31 &= ~fcr31;
- 
- 		/* Send a signal if required.  */
- 		if (!process_fpemu_return(sig, fault_addr, fcr31) && !err)
+ static size_t br_get_link_af_size(const struct net_device *dev)
