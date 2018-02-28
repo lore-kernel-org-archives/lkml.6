@@ -1,155 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752005AbeB1Des (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 22:34:48 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37204 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeB1Deo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:34:44 -0500
-X-Google-Smtp-Source: AG47ELtPJg1wyT5fh4FgsXQb8iTa8tSGKF2Sj+lgbmY3LVSHqxzSi99PVkts9U8wO+uSa8aqFaoI3A==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>, Nadav Amit <nadav.amit@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v5 2/2] KVM: X86: Allow userspace to define the microcode version
-Date: Wed, 28 Feb 2018 11:34:34 +0800
-Message-Id: <1519788874-16561-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519788874-16561-1-git-send-email-wanpengli@tencent.com>
-References: <1519788874-16561-1-git-send-email-wanpengli@tencent.com>
+        id S1751926AbeB1Dj0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 22:39:26 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751605AbeB1DjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 22:39:25 -0500
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+From: Jason Wang <jasowang@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+ <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+ <20180226223252-mutt-send-email-mst@kernel.org>
+ <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
+ <20180227190703-mutt-send-email-mst@kernel.org>
+ <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
+Message-ID: <909327f0-52b8-5c3c-47fe-7b1b71dca196@redhat.com>
+Date: Wed, 28 Feb 2018 11:39:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
 
-Linux (among the others) has checks to make sure that certain features 
-aren't enabled on a certain family/model/stepping if the microcode version 
-isn't greater than or equal to a known good version.
 
-By exposing the real microcode version, we're preventing buggy guests that
-don't check that they are running virtualized (i.e., they should trust the
-hypervisor) from disabling features that are effectively not buggy.
+On 2018年02月28日 11:28, Jason Wang wrote:
+>>> Well I believe the main user for this is qdisc, which use skb array. 
+>>> And we
+>>> can not use what implemented in this patch directly for sk_buff 
+>>> without some
+>>> changes on the data structure.
+>> Why not? skb has next and prev pointers at 1st two fields:
+>>
+>> struct sk_buff {
+>>          union {
+>>                  struct {
+>>                          /* These two members must be first. */
+>>                          struct sk_buff          *next;
+>>                          struct sk_buff          *prev;
+>> ...
+>> }
+>>
+>> so it's just a question of casting to struct plist.
+>
+> Well, then the casting can only be done in skb_array implementation? 
 
-Suggested-by: Filippo Sironi <sironi@amazon.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v4 -> v5:
- * microcode_version be u64 and initialized suitable, remote hte shifts
-v3 -> v4:
- * add the shifts back
-v2 -> v3:
- * remove the shifts
- * add the MSR_IA32_UCODE_REV version to the "feature MSRs"
-v1 -> v2:
- * add MSR_IA32_UCODE_REV to emulated_msrs
+Ok, could be done in ptr ring. But still looks tricky, because of the 
+different meaning of prev and last.
 
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/svm.c              |  4 +---
- arch/x86/kvm/vmx.c              |  1 +
- arch/x86/kvm/x86.c              | 10 ++++++++--
- 4 files changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 938d453..df6720f 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
- 	u64 smi_count;
- 	bool tpr_access_reporting;
- 	u64 ia32_xss;
-+	u64 microcode_version;
- 
- 	/*
- 	 * Paging state of the vcpu
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f874798..312f33f 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1907,6 +1907,7 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	u32 dummy;
- 	u32 eax = 1;
- 
-+	vcpu->arch.microcode_version = 0x01000065;
- 	svm->spec_ctrl = 0;
- 
- 	if (!init_event) {
-@@ -3962,9 +3963,6 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 
- 		msr_info->data = svm->spec_ctrl;
- 		break;
--	case MSR_IA32_UCODE_REV:
--		msr_info->data = 0x01000065;
--		break;
- 	case MSR_F15H_IC_CFG: {
- 
- 		int family, model;
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 9968906..2cdbea7 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5781,6 +5781,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	vmx->rmode.vm86_active = 0;
- 	vmx->spec_ctrl = 0;
- 
-+	vcpu->arch.microcode_version = 0x100000000ULL;
- 	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
- 	kvm_set_cr8(vcpu, 0);
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index efc8554..52a09df 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1065,6 +1065,9 @@ static unsigned int num_msr_based_features;
- static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
- {
- 	switch (msr->index) {
-+	case MSR_IA32_UCODE_REV:
-+		rdmsrl(msr->index, msr->data);
-+		break;
- 	default:
- 		if (kvm_x86_ops->get_msr_feature(msr))
- 			return 1;
-@@ -2260,7 +2263,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 
- 	switch (msr) {
- 	case MSR_AMD64_NB_CFG:
--	case MSR_IA32_UCODE_REV:
- 	case MSR_IA32_UCODE_WRITE:
- 	case MSR_VM_HSAVE_PA:
- 	case MSR_AMD64_PATCH_LOADER:
-@@ -2268,6 +2270,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_AMD64_DC_CFG:
- 		break;
- 
-+	case MSR_IA32_UCODE_REV:
-+		if (msr_info->host_initiated)
-+			vcpu->arch.microcode_version = data;
-+		break;
- 	case MSR_EFER:
- 		return set_efer(vcpu, data);
- 	case MSR_K7_HWCR:
-@@ -2563,7 +2569,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		msr_info->data = 0;
- 		break;
- 	case MSR_IA32_UCODE_REV:
--		msr_info->data = 0x100000000ULL;
-+		msr_info->data = vcpu->arch.microcode_version;
- 		break;
- 	case MSR_MTRRcap:
- 	case 0x200 ... 0x2ff:
--- 
-2.7.4
+Thanks
