@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519839950-2-9429053345123324283
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519839885-2-3864031202464425499
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839949; b=fZxgIMf+dsMGr2KmBwd1LS3gg7u05xtXi3NAzcRZ3YWRV99
-    8k9KCMlQam9iveY/KoidFReN8TL92STOfTVIrbjgdv4FFUVQYgQyeoe0osYxtDQW
-    5QU0B9GynoHqX6NCJqC1TInz6KQRS32CjiUsxJGRD/Zyt+xhpTKnV877j5IXVaBG
-    CMEDh3Gwcs40jy9LCANR5oQ+RAtkiPfWFF7oVC4cg4RJ1rqx+yGRtOsc8em8BBpN
-    wKTmYxG5zp4O8PUUBIR7eJQW35dAlmIDAgvLiuxielRcR/7pGNoAo9NoF7kNZVBu
-    N8Ixbh0B8SNDAOVTxYF4/QZI/9kKr3n5umRiDdA==
+    t=1519839885; b=gZ227qxDuHsT3zbxRgPsXggU9W0HQxe3LOReo3rBiCr/XfS
+    C6/VCkOgzUHsoFniwh93+i4j8RvrT/DcJ6E9QFLMHzDRvYUDDI+jS7bhn/iUY56t
+    TiflrzDvgQr6fHmGURQtEdWqmLTb3W4Xltu/HJEnT9Ny5s6KSmnvw5ycf8LR4SRu
+    SrBv9/8TGG4wAYQF523ep5VKDrD3Ggd1K9wC0Me4gzd+D/KDgvEAcVDTf46awlht
+    zF70CqARZKa5QCzLJr9sk/wkn0HD5vB+gczJ9tHHjic4rCZ9Mtp2E72vS7iNnaok
+    3jSuLHvJi4hgjmiSuu1jP7A8J8yIFw8alPyBbHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839949; bh=HVaJ+axtu/STYdkBWbr
-    kGG7+FR6py6NkY2B2oEsejvQ=; b=afPs06N/IwCVYWX7WO5G2ElSBe479Aw00eM
-    +peU0RZu1H1Ee3V40j8W24auGnjkUoyzAd6PK5eLfjtCevNBzHwz8p2dxEgaegMJ
-    FxolCLYHIK5goaK13QuS6D+aLNihqJbEnSrbPb5IbZdWFNhAm2a7AeKhVPkk7H4I
-    NqxPpI9LHdIZIRZeFZb/Kj+PfBfbj6yRmS/NP6koDxZmxQRUzJby/FAnyJ3o/Wbn
-    Syl46VZtFr3OZ6Q36Ys5cw/QLdWAA9bPGAODip5SibP2bnfxeGLSNOXRFRjJDmWt
-    j/a8R5LXTw2KT/8Hzz9z2QmYwdg26DNorOZyzO6H95kN0XQsTlw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839885; bh=VN/6HTpl/QEbEGHc/6J
+    /NVMN3qyIUvSi6qqLfQX/hiU=; b=XL5o/kuu922cV0OY8V8YggafDYfEvOwwASV
+    nrltJCjuDLaakp/dt652gc+dxIvD+R+Snek0+fLi5RHWNkl9xl3/QGywCYPYp272
+    sTuKm47vio0GdIqPCcR2N/GMWXPro2ZaSyOTa4XQcvCme6bmJqrqcmxe2Zw4CsaL
+    J2Y+sc3mUAery8VLUVtOxeVCbUjbeRtnlmhDA9S+4Mgqkm5vmugw4Y0hTOsdOFzT
+    lK4Y3XjSsKhGvLoLKt4qgKj6JqWKyyIJ5ub/HkyKFl/L1PFL0vXUr2/3e7t3PObB
+    3M7mLSadqkkwT//3iHci9bfoSrKufcGyAovccuolEOk+Vb+ny1g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932164AbeB1Rpp (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:45:45 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33093 "EHLO
+        id S932318AbeB1Ron (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:44:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33115 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932457AbeB1PWM (ORCPT
+        by vger.kernel.org with ESMTP id S932481AbeB1PWM (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:12 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,12 +59,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
-        "Josef Bacik" <jbacik@fb.com>
-Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.449916705@decadent.org.uk>
+CC: akpm@linux-foundation.org,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Hans Verkuil" <hans.verkuil@cisco.com>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>
+Date: Wed, 28 Feb 2018 15:20:22 +0000
+Message-ID: <lsq.1519831222.739962224@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 005/140] btrfs: clear space cache inode generation always
+Subject: [PATCH 3.2 135/140] media: v4l2-compat-ioctl32.c: copy clip  list
+ in put_v4l2_window32
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,56 +82,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 8e138e0d92c6c9d3d481674fb14e3439b495be37 upstream.
+commit a751be5b142ef6bcbbb96d9899516f4d9c8d0ef4 upstream.
 
-We discovered a box that had double allocations, and suspected the space
-cache may be to blame.  While auditing the write out path I noticed that
-if we've already setup the space cache we will just carry on.  This
-means that any error we hit after cache_save_setup before we go to
-actually write the cache out we won't reset the inode generation, so
-whatever was already written will be considered correct, except it'll be
-stale.  Fix this by _always_ resetting the generation on the block group
-inode, this way we only ever have valid or invalid cache.
+put_v4l2_window32() didn't copy back the clip list to userspace.
+Drivers can update the clip rectangles, so this should be done.
 
-With this patch I was no longer able to reproduce cache corruption with
-dm-log-writes and my bpf error injection tool.
-
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/extent-tree.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/video/v4l2-compat-ioctl32.c | 59 +++++++++++++++++++++----------
+ 1 file changed, 40 insertions(+), 19 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -2759,13 +2759,6 @@ again:
- 		goto again;
- 	}
+--- a/drivers/media/video/v4l2-compat-ioctl32.c
++++ b/drivers/media/video/v4l2-compat-ioctl32.c
+@@ -51,6 +51,11 @@ struct v4l2_window32 {
  
--	/* We've already setup this transaction, go ahead and exit */
--	if (block_group->cache_generation == trans->transid &&
--	    i_size_read(inode)) {
--		dcs = BTRFS_DC_SETUP;
--		goto out_put;
--	}
--
- 	/*
- 	 * We want to set the generation to 0, that way if anything goes wrong
- 	 * from here on out we know not to trust this cache when we load up next
-@@ -2775,6 +2768,13 @@ again:
- 	ret = btrfs_update_inode(trans, root, inode);
- 	WARN_ON(ret);
- 
-+	/* We've already setup this transaction, go ahead and exit */
-+	if (block_group->cache_generation == trans->transid &&
-+	    i_size_read(inode)) {
-+		dcs = BTRFS_DC_SETUP;
-+		goto out_put;
-+	}
+ static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
++	struct v4l2_clip32 __user *uclips;
++	struct v4l2_clip __user *kclips;
++	compat_caddr_t p;
++	u32 n;
 +
- 	if (i_size_read(inode) > 0) {
- 		ret = btrfs_truncate_free_space_cache(root, trans, path,
- 						      inode);
+ 	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
+ 	    get_user(kp->field, &up->field) ||
+@@ -60,38 +65,54 @@ static int get_v4l2_window32(struct v4l2
+ 		return -EFAULT;
+ 	if (kp->clipcount > 2048)
+ 		return -EINVAL;
+-	if (kp->clipcount) {
+-		struct v4l2_clip32 __user *uclips;
+-		struct v4l2_clip __user *kclips;
+-		int n = kp->clipcount;
+-		compat_caddr_t p;
++	if (!kp->clipcount) {
++		kp->clips = NULL;
++		return 0;
++	}
+ 
+-		if (get_user(p, &up->clips))
++	n = kp->clipcount;
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	kclips = compat_alloc_user_space(n * sizeof(*kclips));
++	kp->clips = kclips;
++	while (n--) {
++		if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+ 			return -EFAULT;
+-		uclips = compat_ptr(p);
+-		kclips = compat_alloc_user_space(n * sizeof(*kclips));
+-		kp->clips = kclips;
+-		while (--n >= 0) {
+-			if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+-				return -EFAULT;
+-			if (put_user(n ? kclips + 1 : NULL, &kclips->next))
+-				return -EFAULT;
+-			uclips += 1;
+-			kclips += 1;
+-		}
+-	} else
+-		kp->clips = NULL;
++		if (put_user(n ? kclips + 1 : NULL, &kclips->next))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
+ 	return 0;
+ }
+ 
+ static int put_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
++	struct v4l2_clip __user *kclips = kp->clips;
++	struct v4l2_clip32 __user *uclips;
++	u32 n = kp->clipcount;
++	compat_caddr_t p;
++
+ 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
+ 	    put_user(kp->field, &up->field) ||
+ 	    put_user(kp->chromakey, &up->chromakey) ||
+ 	    put_user(kp->clipcount, &up->clipcount) ||
+ 	    put_user(kp->global_alpha, &up->global_alpha))
+ 		return -EFAULT;
++
++	if (!kp->clipcount)
++		return 0;
++
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	while (n--) {
++		if (copy_in_user(&uclips->c, &kclips->c, sizeof(uclips->c)))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
+ 	return 0;
+ }
+ 
