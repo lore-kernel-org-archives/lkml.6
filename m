@@ -1,85 +1,72 @@
-Return-Path: <rrajk@nvidia.com>
-X-Google-Smtp-Source: AH8x226bxMr9plAq/pnm6GwVmeX5HS4Dp2VbIb53+dDqTyPfPbGb1QVvhonNLNk5lplLdBOYANVk
-ARC-Seal: i=1; a=rsa-sha256; t=1519196370; cv=none;
+Return-Path: <jinb.park7@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519828156; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z0dTftShIX6wWmAOBsm88HtILzOW2xK6fV3CSe8a1Z8FUgwG4d7Zlg6xiTtaBAtg+3
-         fZfWNv44fNiljUZJXU9kEd4cffY/iJG9o+iYXpSBuQokHer/1u2WcvmRDLWW6aDAXzNR
-         2AuVSkYjX876xLl1hegRp7c4RltKOBGB2LA7L5Bueck6QYe9XmmIsYAjOHWI0WnATS0e
-         hgj39tmrWxg55bUnK/bzrXEz/8OfSVflx177w3GMtpze8Cssa+Dg8MIpYT56G7LjYZiC
-         dnQcA/feWyf6yx9mVJvayD+ehELWkXsWu9N18A+uVrYKRKVIAJbvlhPFwO/grfrXEhKm
-         0Ocw==
+        b=FF8MOwQp4usc+rdP3R/AurIiy5sN0eSzenduof16j1HHxsF0bspKcnoU3kWIgR+u7K
+         YXI4ehnxMilAZUypayCJOcxLqaB07tD8kerBIo15LPqu1F4DsHaF9EryxVKlH24DNfXe
+         yqvx6gFFzjmT5vNm2ut+Lar8zitHzYcjK1rofppMeVYGQ4hDZWl9RNq4RafGMR/+rwvM
+         WdqFUr3IeKR7y7Qsvw9h/E1YR42tFlcIJJ6kVrYsN4u0RR0O36MxHvc677q3HGTOM18/
+         Bb6x3uVEdkuUeBxjnyhzA9qP1YISqPyeKdEzr+pFBhBOBOX2mMThGrUcRLkycwpqaKcH
+         pgHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=7ogMPazthmwllAp7FzUqgI2texCeT7/jhmaE71noClo=;
-        b=h7pal9N/7U1L7DK9oMJHGl/Sxlbx3s96PqsMPf6S/sxKAI6ZKsEnhHPPrde2WeAEvF
-         AcluiV+C52GX4Sw+Hhh6iurR+nzjwfIp8NOAWU8Vb6iXt1yVZOQnTAWT2DRrGz1WmqeH
-         pBTlPNeUjWoxVqkSvzjvtypiG2t6/3KTsEu8gk7QDVp/jC2XgI/t80tVc5hXHWH8salQ
-         R7AIrtJSYF9/b6Zu4/JtzKyxEVMDqSuTEdmARm/WP4OmK0YSBxouWefjty9Ej5dfuXnJ
-         VarNHBrCf8nVsBEbzuHHBiZ3Ctx2SyWWt+jnt4orA4sC4C8a67hEzSa6Wnq+3c8x/R7D
-         ud4A==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=I5EOd8baM4xOCrqX0Jdbzj+xDF6hSR1De1lJ/u6E1Yo=;
+        b=jt1mRSmBpAKOtNPFZBuVO93pG1Ef3tTODPOkWAqbgiwY9nXHmXW+KM3QVNJ0Y6aHmz
+         wU4HAUPho1cq3VyrS6YEjcgg3N58yVSTCmAcaE/m7YJxqsps2DvgkOP5IhuFAGGMQK1b
+         /q+aplDPmd2fuVVZo9vCtxiomNANRZzqHm+AszaMq1b0vGPVz6Iinz1CCwaEDbDnoxru
+         h4xHdL6r2DhaugSNYdJjCnGTKRUK5NOq/Jp3Gkf/Gye1PKnAROekirsOU/VaBgraFDt3
+         N3jgWpAxTYPyMTSGbwDSKdRcllazjVTcMECn6mG64gRCw48/5ouGlsGeftIxIVU38pNn
+         0eBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jhdJtdjj;
+       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-X-PGP-Universal: processed;
-	by hqpgpgate101.nvidia.com on Tue, 20 Feb 2018 22:59:28 -0800
-From: Rajkumar Rampelli <rrajk@nvidia.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
-	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-	<kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
-	<pombredanne@nexb.com>, <mmaddireddy@nvidia.com>, <mperttunen@nvidia.com>,
-	<arnd@arndb.de>, <gregory.clement@free-electrons.com>,
-	<timur@codeaurora.org>, <andy.gross@linaro.org>, <xuwei5@hisilicon.com>,
-	<elder@linaro.org>, <heiko@sntech.de>, <krzk@kernel.org>,
-	<ard.biesheuvel@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
-	<rrajk@nvidia.com>
-Subject: [PATCH 01/10] pwm: core: Add support for PWM HW driver with pwm capture only
-Date: Wed, 21 Feb 2018 12:28:50 +0530
-Message-ID: <1519196339-9377-2-git-send-email-rrajk@nvidia.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
-References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jhdJtdjj;
+       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x224djG9NOR/9cV38TqUzs7tv69U6r933BaI2/QiVp8z6Tn2Urlnhykm92Ewt8yocz8r+3wdkZQ==
+Date: Wed, 28 Feb 2018 23:29:09 +0900
+From: Jinbum Park <jinb.park7@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Cc: pombredanne@nexb.co, gregkh@linuxfoundation.org, tglx@linutronix.de,
+	kstewart@linuxfoundation.org, luto@amacapital.net,
+	dsafonov@virtuozzo.com, keescook@chromium.org, will.deacon@arm.com,
+	mark.rutland@arm.com, danielmicay@gmail.com, arnd@arndb.de,
+	catalin.marinas@arm.com
+Subject: [kernel-hardening] [PATCH 0/2] arm: Add ARCH_HAS_FORTIFY_SOURCE
+Message-ID: <20180228142909.GA3113@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592992853007888587?=
-X-GMAIL-MSGID: =?utf-8?q?1592992853007888587?=
+X-GMAIL-THRID: =?utf-8?q?1593655329592806231?=
+X-GMAIL-MSGID: =?utf-8?q?1593655329592806231?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add support for pwm HW driver which has only capture functionality.
-This helps to implement the PWM based Tachometer driver which reads
-the PWM output signals from electronic fans.
+Hi,
 
-PWM Tachometer captures the period and duty cycle of the PWM signal
+This patch series are to select ARCH_HAS_FORTIFY_SOUCE on arm.
+A lot of architectures already select ARCH_HAS_FORTIFY_SOURCE
+to support CONFIG_FORTIFY_SOURCE that detects overflows at compile-time.
+(6974f0c4555e ("include/linux/string.h:
+add the option of fortified string.h functions)
+ARM can be built and run with CONFIG_FORTIFY_SOURCE.
 
-Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
----
- drivers/pwm/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Additionally, modify vdso.c to remove compile-error that happens
+when built arm kernel with CONFIG_FORTIFY_SOURCE.
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 1581f6a..87d14c9 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -246,6 +246,10 @@ static bool pwm_ops_check(const struct pwm_ops *ops)
- 	if (ops->apply)
- 		return true;
- 
-+	/* driver supports capture operation */
-+	if (ops->capture)
-+		return true;
-+
- 	return false;
- }
- 
+Jinbum Park (2):
+  arm: mm: Define vdso_start, vdso_end as array
+  arm: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE
+
+ arch/arm/Kconfig            |  1 +
+ arch/arm/include/asm/vdso.h |  2 --
+ arch/arm/kernel/vdso.c      | 12 +++++++-----
+ 3 files changed, 8 insertions(+), 7 deletions(-)
+
 -- 
-2.1.4
+1.9.1
