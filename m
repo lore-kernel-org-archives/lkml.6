@@ -1,84 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933669AbeB1TTq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:19:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52856 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933605AbeB1TTT (ORCPT
+        id S1752971AbeB1TVS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:21:18 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35127 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751990AbeB1TVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:19:19 -0500
-Date: Thu, 1 Mar 2018 00:49:03 +0530
-From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-To: Stewart Smith <stewart@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        npiggin@gmail.com
-Subject: Re: [PATCH] cpuidle/powernv : Restore different PSSCR for idle and
- hotplug
-References: <1519053500-31860-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
- <87vaekmk6n.fsf@linux.vnet.ibm.com>
+        Wed, 28 Feb 2018 14:21:16 -0500
+X-Google-Smtp-Source: AG47ELumsJYh7jUknTt83fLLHEXh8GrVima4qHKrlz9pSq16E3XsS9T1m+5g1EOw34XGli3aTsiEh7ERiklRHBHYGwA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87vaekmk6n.fsf@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170306 (1.8.0)
-X-TM-AS-GCONF: 00
-x-cbid: 18022819-0040-0000-0000-000004391ED5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022819-0041-0000-0000-000020DC1FFC
-Message-Id: <20180228191903.23jmawvfqzbcwi2r@aksadiga.ibm>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280235
+In-Reply-To: <20180228184322.29636-2-rodrigorivascosta@gmail.com>
+References: <20180228184322.29636-1-rodrigorivascosta@gmail.com> <20180228184322.29636-2-rodrigorivascosta@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 21:21:15 +0200
+Message-ID: <CAHp75VfPK=yAx9TLEX-W0SrK8xXQzrP4wAuFWS3zEjHGoPJRsw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] HID: add driver for Valve Steam Controller
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 03:47:12PM +1100, Stewart Smith wrote:
-> Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> writes:
-> > commit 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
-> > states via stop API.") uses stop-api provided by the firmware to restore
-> > PSSCR. PSSCR restore is required for handling special wakeup. When special
-> > wakeup is completed, the core enters stop state based on restored PSSCR.
-> >
-> > Currently PSSCR is restored to deepest available stop state, causing
-> > a idle cpu to enter deeper stop state on a special wakeup, which causes
-> > the cpu to hang on wakeup.
-> >
-> > A "sensors" command which reads temperature (through DTS sensors) on idle
-> > cpu can trigger special wakeup.
-> >
-> > Failed Scenario :
-> > Request restore of PSSCR with RL = 11
-> > cpu enters idle state (stop5)
-> >   user triggers "sensors" command
-> >    Assert special wakeup on cpu
-> >      Restores PSSCR with RL = 11  <---- Done by firmware
-> >       Read DTS sensor
-> >    Deassert special wakeup
-> >   cpu enters idle state (stop11) <-- Instead of stop5
-> >
-> > Cpu hang is caused because cpu ended up in a deeper state than it requested
-> >
-> > This patch fixes instability caused by special wakeup when stop11 is
-> > enabled. Requests restore of PSSCR to deepest stop state used by cpuidle.
-> > Only when offlining cpu, request restore of PSSCR to deepest stop state.
-> > On onlining cpu, request restore of PSSCR to deepest stop state used by
-> > cpuidle.
-> >
-> > Fixes : 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
-> > states via stop API.")
-> 
-> This should CC stable ?
-> 
-> We'll need this to enable stop11 in firmware and not break things, right?
+On Wed, Feb 28, 2018 at 8:43 PM, Rodrigo Rivas Costa
+<rodrigorivascosta@gmail.com> wrote:
+> There are two ways to connect the Steam Controller: directly to the USB
+> or with the USB wireless adapter.  Both methods are similar, but the
+> wireless adapter can connect up to 4 devices at the same time.
+>
+> The wired device will appear as 3 interfaces: a virtual mouse, a virtual
+> keyboard and a custom HID device.
+>
+> The wireless device will appear as 5 interfaces: a virtual keyboard and
+> 4 custom HID devices, that will remain silent until a device is actually
+> connected.
+>
+> The custom HID device has a report descriptor with all vendor specific
+> usages, so the hid-generic is not very useful. In a PC/SteamBox Valve
+> Steam Client provices a software translation by using direct USB access
+> and a creates a uinput virtual gamepad.
+>
+> This driver was reverse engineered to provide direct kernel support in
+> case you cannot, or do not want to, use Valve Steam Client. It disables
+> the virtual keyboard and mouse, as they are not so useful when you have
+> a working gamepad.
 
-Yes I will resend and CC it to stable.
-> 
-> -- 
-> Stewart Smith
-> OPAL Architect, IBM.
-> 
+
+> +// SPDX-License-Identifier: GPL-2.0
+
+> +MODULE_LICENSE("GPL");
+
+Not the same.
+
+> +static void steam_unregister(struct steam_device *steam)
+> +{
+> +       struct input_dev *input;
+> +
+> +       rcu_read_lock();
+> +       input = rcu_dereference(steam->input);
+> +       rcu_read_unlock();
+> +
+
+> +       if (input) {
+
+if (!input)
+ return;
+
+?
+
+> +               RCU_INIT_POINTER(steam->input, NULL);
+> +               synchronize_rcu();
+> +               hid_info(steam->hdev, "Steam Controller disconnected");
+> +               input_unregister_device(input);
+> +       }
+> +}
+
+> +static bool steam_is_valve_interface(struct hid_device *hdev)
+> +{
+> +       struct hid_report_enum *rep_enum;
+> +       struct hid_report *hreport;
+> +
+> +       /*
+> +        * The wired device creates 3 interfaces:
+> +        *  0: emulated mouse.
+> +        *  1: emulated keyboard.
+> +        *  2: the real game pad.
+> +        * The wireless device creates 5 interfaces:
+> +        *  0: emulated keyboard.
+> +        *  1-4: slots where up to 4 real game pads will be connected to.
+> +        * We know which one is the real gamepad interface because they are the
+> +        * only ones with a feature report.
+> +        */
+> +       rep_enum = &hdev->report_enum[HID_FEATURE_REPORT];
+
+> +       list_for_each_entry(hreport, &rep_enum->report_list, list) {
+> +               /* should we check hreport->id == 0? */
+> +               return true;
+> +       }
+> +       return false;
+
+So, for now it's just an equivalent of
+
+return !list_empty();
+
+?
+
+> +}
+
+> +       /*
+> +        * From this point on, if anything fails return 0 and ignores
+> +        * the error, so that the default HID devices are still bound.
+> +        */
+> +       steam = devm_kzalloc(&hdev->dev,
+> +                       sizeof(struct steam_device), GFP_KERNEL);
+
+sizeof(*steam) saves a line.
+
+> +       if (!steam) {
+> +               ret = -ENOMEM;
+> +               goto mem_fail;
+> +       }
+
+> +static void steam_remove(struct hid_device *hdev)
+> +{
+> +       struct steam_device *steam = hid_get_drvdata(hdev);
+> +
+> +       if (steam && (steam->quirks & STEAM_QUIRK_WIRELESS)) {
+> +               hid_info(hdev, "Steam wireless receiver disconnected");
+> +               hid_hw_close(hdev);
+> +       }
+> +
+> +       hid_hw_stop(hdev);
+> +
+> +       if (steam) {
+> +               cancel_work_sync(&steam->work_connect);
+> +               steam_unregister(steam);
+
+> +               hid_set_drvdata(hdev, NULL);
+
+Hmm.. Doesn't HID do this?
+
+> +       }
+
+if (steam) {
+...
+       hid_hw_stop(hdev);
+...
+} else {
+       hid_hw_stop(hdev);
+}
+
+?
+
+> +}
+
+> +static void steam_do_input_event(struct steam_device *steam,
+> +               struct input_dev *input, u8 *data)
+> +{
+> +       /* 24 bits of buttons */
+> +       u8 b8, b9, b10;
+> +       bool lpad_touched, lpad_and_joy;
+> +
+> +       b8 = data[8];
+> +       b9 = data[9];
+> +       b10 = data[10];
+> +
+> +       input_report_abs(input, ABS_Z, data[11]);
+> +       input_report_abs(input, ABS_RZ, data[12]);
+> +
+> +       /*
+> +        * These two bits tells how to interpret the values X and Y.
+> +        * lpad_and_joy tells that the joystick and the lpad are used at the
+> +        * same time.
+> +        * lpad_touched tells whether X/Y are to be read as lpad coord or
+> +        * joystick values.
+> +        * (lpad_touched || lpad_and_joy) tells if the lpad is really touched.
+> +        */
+
+> +       lpad_touched = b10 & 0x08;
+
+BIT(3) ?
+
+> +       lpad_and_joy = b10 & 0x80;
+
+BIT(7) ?
+
+> +       input_event(input, EV_KEY, BTN_TR2, !!(b8 & 0x01));
+> +       input_event(input, EV_KEY, BTN_TL2, !!(b8 & 0x02));
+> +       input_event(input, EV_KEY, BTN_TR, !!(b8 & 0x04));
+> +       input_event(input, EV_KEY, BTN_TL, !!(b8 & 0x08));
+> +       input_event(input, EV_KEY, BTN_Y, !!(b8 & 0x10));
+> +       input_event(input, EV_KEY, BTN_B, !!(b8 & 0x20));
+> +       input_event(input, EV_KEY, BTN_X, !!(b8 & 0x40));
+> +       input_event(input, EV_KEY, BTN_A, !!(b8 & 0x80));
+> +       input_event(input, EV_KEY, BTN_SELECT, !!(b9 & 0x10));
+> +       input_event(input, EV_KEY, BTN_MODE, !!(b9 & 0x20));
+> +       input_event(input, EV_KEY, BTN_START, !!(b9 & 0x40));
+> +       input_event(input, EV_KEY, BTN_GEAR_DOWN, !!(b9 & 0x80));
+> +       input_event(input, EV_KEY, BTN_GEAR_UP, !!(b10 & 0x01));
+> +       input_event(input, EV_KEY, BTN_THUMBR, !!(b10 & 0x04));
+> +       input_event(input, EV_KEY, BTN_THUMBL, !!(b10 & 0x40));
+> +       input_event(input, EV_KEY, BTN_THUMB, lpad_touched || lpad_and_joy);
+> +       input_event(input, EV_KEY, BTN_THUMB2, !!(b10 & 0x10));
+
+BIT(x) ?
+
+> +
+> +       input_report_abs(input, ABS_HAT0X,
+> +                       !!(b9 & 0x02) - !!(b9 & 0x04));
+> +       input_report_abs(input, ABS_HAT0Y,
+> +                       !!(b9 & 0x08) - !!(b9 & 0x01));
+
+BIT(x) ?
+
+> +}
+
+> +static int steam_raw_event(struct hid_device *hdev,
+> +                       struct hid_report *report, u8 *data,
+> +                       int size)
+> +{
+> +       struct steam_device *steam = hid_get_drvdata(hdev);
+> +       struct input_dev *input;
+> +
+
+> +       if (!steam)
+> +               return 0;
+
+When it's possible?
+
+> +       return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
