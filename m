@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeB1K3W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:29:22 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37112 "EHLO mail.skyhub.de"
+        id S1752573AbeB1K3q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:29:46 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37154 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752289AbeB1K3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:29:16 -0500
+        id S1752469AbeB1K3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:29:20 -0500
 From: Borislav Petkov <bp@alien8.de>
 To: X86 ML <x86@kernel.org>
 Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>,
         Ashok Raj <ashok.raj@intel.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/7] x86/microcode: Get rid of struct apply_microcode_ctx
-Date: Wed, 28 Feb 2018 11:28:40 +0100
-Message-Id: <20180228102846.13447-2-bp@alien8.de>
+Subject: [PATCH 7/7] x86/microcode: Synchronize late microcode loading
+Date: Wed, 28 Feb 2018 11:28:46 +0100
+Message-Id: <20180228102846.13447-8-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180228102846.13447-1-bp@alien8.de>
 References: <20180228102846.13447-1-bp@alien8.de>
@@ -22,56 +22,205 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Ashok Raj <ashok.raj@intel.com>
 
-It is a useless remnant from earlier times. Use the ucode_state enum
-directly.
+Original idea by Ashok, completely rewritten by Borislav.
 
-No functionality change.
+Before you read any further: the early loading method is still the
+preferred one and you should always do that. The following patch is
+improving the late loading mechanism for long running jobs and cloud use
+cases.
 
+Gather all cores and serialize the microcode update on them by doing it
+one-by-one to make the late update process as reliable as possible and
+avoid potential issues caused by the microcode update.
+
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+[Rewrite completely. ]
+Co-developed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/microcode/core.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c | 118 +++++++++++++++++++++++++++--------
+ 1 file changed, 92 insertions(+), 26 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index aa1b9a422f2b..63370651e376 100644
+index 5dd157d48606..70ecbc8099c9 100644
 --- a/arch/x86/kernel/cpu/microcode/core.c
 +++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -373,26 +373,23 @@ static int collect_cpu_info(int cpu)
- 	return ret;
+@@ -22,13 +22,16 @@
+ #define pr_fmt(fmt) "microcode: " fmt
+ 
+ #include <linux/platform_device.h>
++#include <linux/stop_machine.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/capability.h>
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
++#include <linux/delay.h>
+ #include <linux/mutex.h>
+ #include <linux/cpu.h>
++#include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ 
+@@ -64,6 +67,11 @@ LIST_HEAD(microcode_cache);
+  */
+ static DEFINE_MUTEX(microcode_mutex);
+ 
++/*
++ * Serialize late loading so that CPUs get updated one-by-one.
++ */
++static DEFINE_SPINLOCK(update_lock);
++
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
+ 
+ struct cpu_info_ctx {
+@@ -486,6 +494,19 @@ static void __exit microcode_dev_exit(void)
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
++/*
++ * Late loading dance. Why the heavy-handed stomp_machine effort?
++ *
++ * - HT siblings must be idle and not execute other code while the other sibling
++ *   is loading microcode in order to avoid any negative interactions caused by
++ *   the loading.
++ *
++ * - In addition, microcode update on the cores must be serialized until this
++ *   requirement can be relaxed in the future. Right now, this is conservative
++ *   and good.
++ */
++#define SPINUNIT 100 /* 100 nsec */
++
+ static int check_online_cpus(void)
+ {
+ 	if (num_online_cpus() == num_present_cpus())
+@@ -496,23 +517,85 @@ static int check_online_cpus(void)
+ 	return -EINVAL;
  }
  
--struct apply_microcode_ctx {
--	enum ucode_state err;
--};
--
- static void apply_microcode_local(void *arg)
+-static enum ucode_state reload_for_cpu(int cpu)
++static atomic_t late_cpus;
++
++/*
++ * Returns:
++ * < 0 - on error
++ *   0 - no update done
++ *   1 - microcode was updated
++ */
++static int __reload_late(void *info)
  {
--	struct apply_microcode_ctx *ctx = arg;
-+	enum ucode_state *err = arg;
- 
--	ctx->err = microcode_ops->apply_microcode(smp_processor_id());
-+	*err = microcode_ops->apply_microcode(smp_processor_id());
- }
- 
- static int apply_microcode_on_target(int cpu)
- {
--	struct apply_microcode_ctx ctx = { .err = 0 };
+-	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
++	unsigned int timeout = NSEC_PER_SEC;
++	int all_cpus = num_online_cpus();
++	int cpu = smp_processor_id();
 +	enum ucode_state err;
- 	int ret;
++	int ret = 0;
  
--	ret = smp_call_function_single(cpu, apply_microcode_local, &ctx, 1);
--	if (!ret)
--		ret = ctx.err;
--
-+	ret = smp_call_function_single(cpu, apply_microcode_local, &err, 1);
-+	if (!ret) {
-+		if (err == UCODE_ERROR)
-+			ret = 1;
+-	if (!uci->valid)
+-		return UCODE_OK;
++	atomic_dec(&late_cpus);
++
++	/*
++	 * Wait for all CPUs to arrive. A load will not be attempted unless all
++	 * CPUs show up.
++	 * */
++	while (atomic_read(&late_cpus)) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				atomic_read(&late_cpus));
++			return -1;
++		}
++
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
++
++		touch_nmi_watchdog();
 +	}
- 	return ret;
++
++	spin_lock(&update_lock);
++	apply_microcode_local(&err);
++	spin_unlock(&update_lock);
++
++	if (err > UCODE_NFOUND) {
++		pr_warn("Error reloading microcode on CPU %d\n", cpu);
++		ret = -1;
++	} else if (err == UCODE_UPDATED) {
++		ret = 1;
++	}
+ 
+-	return apply_microcode_on_target(cpu);
++	atomic_inc(&late_cpus);
++
++	while (atomic_read(&late_cpus) != all_cpus)
++		cpu_relax();
++
++	return ret;
++}
++
++/*
++ * Reload microcode late on all CPUs. Wait for a sec until they
++ * all gather together.
++ */
++static int microcode_reload_late(void)
++{
++	int ret;
++
++	atomic_set(&late_cpus, num_online_cpus());
++
++	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
++	if (ret < 0)
++		return ret;
++	else if (ret > 0)
++		microcode_check();
++
++	return ret;
  }
  
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
+-	int cpu, bsp = boot_cpu_data.cpu_index;
+ 	enum ucode_state tmp_ret = UCODE_OK;
+-	bool do_callback = false;
++	int bsp = boot_cpu_data.cpu_index;
+ 	unsigned long val;
+ 	ssize_t ret = 0;
+ 
+@@ -534,30 +617,13 @@ static ssize_t reload_store(struct device *dev,
+ 		goto put;
+ 
+ 	mutex_lock(&microcode_mutex);
+-
+-	for_each_online_cpu(cpu) {
+-		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret > UCODE_NFOUND) {
+-			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-
+-			/* set retval for the first encountered reload error */
+-			if (!ret)
+-				ret = -EINVAL;
+-		}
+-
+-		if (tmp_ret == UCODE_UPDATED)
+-			do_callback = true;
+-	}
+-
+-	if (!ret && do_callback)
+-		microcode_check();
+-
++	ret = microcode_reload_late();
+ 	mutex_unlock(&microcode_mutex);
+ 
+ put:
+ 	put_online_cpus();
+ 
+-	if (!ret)
++	if (ret >= 0)
+ 		ret = size;
+ 
+ 	return ret;
 -- 
 2.13.0
