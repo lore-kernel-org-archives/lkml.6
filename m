@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519835098-2-7167247391409509945
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519835085-2-151266471686666570
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835098; b=a2rXgX7Q07Oa1hMDAdxbJVSEgsBgReEglzE5W50mXf6ze2U
-    tVw8BF/gfnqUlZnG0eNCT9ZJsrFx7CvznWiEHfkvOff6Np9n80QcuHdCpwPRiNgG
-    oafJlML6oCrgszSQKcPsf40ZneBGOnpernvUwhdO5XSlCAcaxxDunOUjACR5bT/U
-    0OUXwrAWkH+zuJAcbMI/SXyvxBPwV7XIh14VCeWUuv2in4TcxipuJwbNkJ41jL5g
-    OvZCZsiJRaqIbPp1+N/BXWOdKzs3j31lzRtgIVWV5A72GT10n6iONyLSB9VNgiYd
-    2DjTB4uJN8Rfct3X7eQVYLyKoVfISy9LKM7pl8w==
+    t=1519835084; b=Tq9BfAIUvGhJluwSxGJt4Hc8QYy7sdOeBrgkAEOcFH7k+u+
+    UdEYM1Dr1DXafI3+tPOW/n0jxEJoRO61+IOUhqu5n7KT6jZegcTneYEVPAVrHBw+
+    n1JaZEDKNIhg4BJp1xBAoVAbKuYWc7qjeMCcLJr44Y4CeJRzySYz8RAMKl9GSqPW
+    je9huO5eP94sPgcW5sPiAHkzRnMLrA7DF30JhECTaclJURt6XdrldqNICwK4bV2C
+    /q0lf3X0kE3C30hluppUVgYGgxRQ9xZIblhu7I5WdTQ71DgOvDpTMbsW+xEZXsAB
+    knAn5VUYsnfTXFc8S2wtDD6Lpy4c++3Eg8Np45g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835098; bh=85qzP2yd8fv+1uk/gC8
-    YFpzQWJ9K0322Wl5vk86k6Dk=; b=QwH3uiEI5FuG3kqPZxIZxEeRmWhz+cXjMtd
-    7pRMvBCRoO53aOTENTTNimEwplPK3Ebtv02Jg1TEAzRvHWcRk6ywDsvOHuwTKHju
-    O02GOVJHEwi8l1mBeY1Ep07Xbq1+N6TeYPlD2R5yKHMzklo/jfBlw2JfFanzMdoX
-    CEM5EwsI/1brOtLms0n7ICys5j5GZkTepOaAVOaak2sdW0c54uCYw2Gc/y0yBasz
-    haxDcHQYckeMFsAGEPYHXXJRAVXAGG1b1YvZBdcdIVIcfNBWpnx0FEfoFpoKGtHU
-    6vyzgBcg/QNR4AbWISiQ54tPh4WXOtc7b1WLedOlh0yOKi3vMUQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835084; bh=7tQzegcagdvY5jy0fgx
+    1Gy+iiaVtos/iuBfRPqGs/zY=; b=gTwKhf5v9wdgaa/PR8JgQBo45Gb7NuvuMNk
+    Wch5gT9FeFDgnKwpiRvWSy7lC/5kw90wz2N4ActQprjsxJqu/c/1821FGfgcUNgO
+    njafRWVGCVe0Gea1eNIV2D4nbbSeO3q5rEblx0M+W4hFcoD1qgq+uhAhKmYSygWS
+    3m82iiRoTaNwYN96yBKU4YFsLup4/dtHvgQd00yGsbKiC5XTbEANFIz6EfdzYr80
+    NNhMtsuPWvygXx9aCXEP1AlQEzeH4u6sf9LYVnvnNxqo0S+oDTqKu0Tgd5wKVmxQ
+    S5igR4n8y6qc9dITIpz2bveYPjouJzI0+LBeZ6OlmAXD9S/QH3Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935163AbeB1QYr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:24:47 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35364 "EHLO
+        id S1752602AbeB1QY0 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:24:26 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35369 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935154AbeB1QUf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:35 -0500
+        by vger.kernel.org with ESMTP id S935171AbeB1QUh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:37 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Martin Kelly" <mkelly@xevo.com>,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>
+CC: akpm@linux-foundation.org,
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.167336652@decadent.org.uk>
+Message-ID: <lsq.1519831218.612805808@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 067/254] can: ems_usb: cancel urb on -EPIPE and -EPROTO
+Subject: [PATCH 3.16 178/254] sh_eth: fix SH7757 GEther initialization
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,33 +80,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit bd352e1adfe0d02d3ea7c8e3fb19183dc317e679 upstream.
+commit 5133550296d43236439494aa955bfb765a89f615 upstream.
 
-In mcba_usb, we have observed that when you unplug the device, the driver will
-endlessly resubmit failing URBs, which can cause CPU stalls. This issue
-is fixed in mcba_usb by catching the codes seen on device disconnect
-(-EPIPE and -EPROTO).
+Renesas  SH7757 has 2 Fast and 2 Gigabit Ether controllers, while the
+'sh_eth' driver can only reset and initialize TSU of the first controller
+pair. Shimoda-san tried to solve that adding the 'needs_init' member to the
+'struct sh_eth_plat_data', however the platform code still never sets this
+flag. I think  that we can infer this information from the 'devno' variable
+(set  to 'platform_device::id') and reset/init the Ether controller pair
+only for an even 'devno'; therefore 'sh_eth_plat_data::needs_init' can be
+removed...
 
-This driver also resubmits in the case of -EPIPE and -EPROTO, so fix it
-in the same way.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fixes: 150647fb2c31 ("net: sh_eth: change the condition of initialization")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/can/usb/ems_usb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
+ include/linux/sh_eth.h                | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/net/can/usb/ems_usb.c
-+++ b/drivers/net/can/usb/ems_usb.c
-@@ -290,6 +290,8 @@ static void ems_usb_read_interrupt_callb
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2902,8 +2902,8 @@ static int sh_eth_drv_probe(struct platf
+ 		ndev->features = NETIF_F_HW_VLAN_CTAG_FILTER;
+ 	}
  
- 	case -ECONNRESET: /* unlink */
- 	case -ENOENT:
-+	case -EPIPE:
-+	case -EPROTO:
- 	case -ESHUTDOWN:
- 		return;
+-	/* initialize first or needed device */
+-	if (!devno || pd->needs_init) {
++	/* Need to init only the first port of the two sharing a TSU */
++	if (devno % 2 == 0) {
+ 		if (mdp->cd->chip_reset)
+ 			mdp->cd->chip_reset(ndev);
  
+--- a/include/linux/sh_eth.h
++++ b/include/linux/sh_eth.h
+@@ -16,7 +16,6 @@ struct sh_eth_plat_data {
+ 	unsigned char mac_addr[ETH_ALEN];
+ 	unsigned no_ether_link:1;
+ 	unsigned ether_link_active_low:1;
+-	unsigned needs_init:1;
+ };
+ 
+ #endif
