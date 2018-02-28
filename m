@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834012-2-4029023510674896738
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519833999-2-17831886817223399942
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834012; b=ZjuxhBGDOJJA5CMsqJOgH8tMycm1Acjl+pd2Sju1y5QgR+B
-    t+abrfqZweraE29es5YR7jV/FBGvwq4z2kY3YeumvNoIa4e3LTjzX3788Wv48d9Y
-    UK39n+dBTOReVtd6xvtoefwEm8jQqzP6eoG4VPhopKXeVwkBxwMT+Xo/OzhIR3Yi
-    w8UHl4Tm68liEu7QHapq2os6HoDG3NXsdI6WfdtGU7A3roknCXkK3/brK1CW0AK4
-    92RyektgwN0XgFRa9bJS5StPOoAEj3z6VcaAYWggI/Rf7xBQGJCiQMgeqvFe2jR0
-    zgF/kaWkzS5F0qZqbgKm0ZfhDHPdiF2HRfscSQw==
+    t=1519833998; b=T+d9zBum1lLz8JKNF8zAnCTffASYNXaETuENtG0n5mllqT2
+    ftfOTNnjx5mH9cVm2Pf9VpD7bHSH1CftuVibPOJXXUTcIVd1r9JFSsCI6tExBPV7
+    rQvO5f/1Ie5QKpiWLy0I0FM8CfIS7255P0eyXG6Ie5IdB82K+5aFdWjNNezIbgeD
+    pkzQicUDSxAXggdySkf+9uEScdZqhRNL8ISbJnrgPInTlUHX/6kG27EKLEPpOiAb
+    GR+FD9QLRIW5a4xD3GuqdYPXQAJNckAdxNPIcYCB3T4rp/p1IP0MHZVu6XvPyrDf
+    h6SXpbjbVITHM93lOY5810pW/APmWkWl0yE8KQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834012; bh=sz4SFgNkwcbQsnLMVEe
-    oI3FkzgKMAObh8+Z2OM/WEto=; b=K9whoYlEhpG4vptYvcXvy4RuHNGSouLB+Rd
-    0X8jcDdMaCgW8DD9T3mj01X7RlE3PEMgBDkXlQxpjkze4KD97IxwRPbSPcrIwAPB
-    a4n6JzJGyKm+Up9kclWn9tOcc7YzgFZVGI0PpiQQHJlrzly1CXjbgjSLsuZpVeGn
-    2WxJwZtUmgOFWo+g2UpjTTVqqV+BDsl/k9G2+80t/hZrSt7N/ZfQBqfMyNic+xFq
-    Vzg0wQXiFkihSrGJ19+7qNAxxEzhjTbQ4poE7SiAruamn2FXR1Pp1LrXAzh0MLYI
-    Ed9AVdNnQEiGjrn5flSRyE3vcexNEaCORTOpHfH1mIpYXzcb+PQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833998; bh=EzTwYMe0yLuC7SBE/C4
+    2zhpcAbWM2FMOhovddtQKxj4=; b=H/amOkcWkoOmbj93n2R+Ezus0Jsz2e7aslU
+    Gsha/9Ko9T7ZArPeBJjTdh9GweBZFUxEOxuw/PSGWZIpGIss0l80Z5leV+Y/r3m4
+    jWTE2RcXuEHTP1MlRS+9orfXg0Dhr19yGyFEdfnhM598yVu2ysAZ2XjmMkObCC+2
+    siZAyK8IteXP19aYwjcdAav/sPmiDe2rXobyzBP0ngju2a0ZNyfdLIFivScfr7gB
+    jVwOpS68S2yLC6pVg0VQc+8nELe3EUT5wSnEELiueTCdsgJYRyQb/4Vd9wK2IPMS
+    D1bX9jckVKQE3Iwu6pQjuuHp4LUrRJtco1l0unZ8NoATmUBHfhg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934522AbeB1QFc (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:32 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34890 "EHLO
+        id S932709AbeB1QGV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:06:21 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34900 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934501AbeB1QFa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:30 -0500
+        by vger.kernel.org with ESMTP id S1752742AbeB1QFj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:39 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jerome Brunet" <jbrunet@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Arnaud Patard" <arnaud.patard@rtp-net.org>
+CC: akpm@linux-foundation.org, "Saeed Mahameed" <saeedm@mellanox.com>,
+        "Moshe Shemesh" <moshe@mellanox.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.831406354@decadent.org.uk>
+Message-ID: <lsq.1519831218.222830278@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 167/254] net: stmmac: enable EEE in MII, GMII or
- RGMII only
+Subject: [PATCH 3.16 135/254] net/mlx5: Stay in polling mode when command
+ EQ destroy fails
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,43 +80,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Moshe Shemesh <moshe@mellanox.com>
 
-commit 879626e3a52630316d817cbda7cec9a5446d1d82 upstream.
+commit a2fba188fd5eadd6061bef4f2f2577a43231ebf3 upstream.
 
-Note in the databook - Section 4.4 - EEE :
-" The EEE feature is not supported when the MAC is configured to use the
-TBI, RTBI, SMII, RMII or SGMII single PHY interface. Even if the MAC
-supports multiple PHY interfaces, you should activate the EEE mode only
-when the MAC is operating with GMII, MII, or RGMII interface."
+During unload, on mlx5_stop_eqs we move command interface from events
+mode to polling mode, but if command interface EQ destroy fail we move
+back to events mode.
+That's wrong since even if we fail to destroy command interface EQ, we
+do release its irq, so no interrupts will be received.
 
-Applying this restriction solves a stability issue observed on Amlogic
-gxl platforms operating with RMII interface and the internal PHY.
-
-Fixes: 83bf79b6bb64 ("stmmac: disable at run-time the EEE if not supported")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Arnaud Patard <arnaud.patard@rtp-net.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjst context]
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -275,8 +275,14 @@ static void stmmac_eee_ctrl_timer(unsign
-  */
- bool stmmac_eee_init(struct stmmac_priv *priv)
- {
-+	int interface = priv->plat->interface;
- 	bool ret = false;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -502,11 +502,9 @@ void mlx5_stop_eqs(struct mlx5_core_dev
+ 	mlx5_cmd_use_polling(dev);
  
-+	if ((interface != PHY_INTERFACE_MODE_MII) &&
-+	    (interface != PHY_INTERFACE_MODE_GMII) &&
-+	    !phy_interface_mode_is_rgmii(interface))
-+		goto out;
-+
- 	/* Using PCS we cannot dial with the phy registers at this stage
- 	 * so we do not support extra feature like EEE.
- 	 */
+ 	err = mlx5_destroy_unmap_eq(dev, &table->cmd_eq);
+-	if (err) {
++	if (err)
+ 		mlx5_core_err(dev, "failed to destroy command eq, err(%d)\n",
+ 			      err);
+-		mlx5_cmd_use_events(dev);
+-	}
+ }
+ 
+ int mlx5_core_eq_query(struct mlx5_core_dev *dev, struct mlx5_eq *eq,
