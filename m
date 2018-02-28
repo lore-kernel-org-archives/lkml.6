@@ -1,69 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeB1OIJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:08:09 -0500
-Received: from mail-vk0-f43.google.com ([209.85.213.43]:41425 "EHLO
-        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeB1OII (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:08:08 -0500
-X-Google-Smtp-Source: AG47ELthTVCFYG2mRsww5RMwajqLiZZh48JVdyUMpR/Rt34VKkc84g/eszQn9ZMRU3MGV4YDWtTOoQ==
+        id S1752703AbeB1OIS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:08:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50076 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752377AbeB1OIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:08:13 -0500
+Subject: Re: [Xen-devel] [PATCH 0/9] drm/xen-front: Add support for Xen PV
+ display frontend
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Wei Liu <wei.liu2@citrix.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <4c7e6f65-1787-3815-22b5-f9495e388c06@gmail.com>
+ <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <4628e34f-5e7d-c2e6-d132-c1f4c1c25efd@arm.com>
+Date: Wed, 28 Feb 2018 14:08:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
- <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
- <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
- <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
- <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com> <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 28 Feb 2018 23:07:44 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com>
-Message-ID: <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 10:11 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Tomasz,
->
-> On Wed, Feb 28, 2018 at 1:49 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->> On Wed, Feb 28, 2018 at 9:32 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> On Wed, Feb 28, 2018 at 1:29 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->>>> Also, how about systems where runtime PM is disabled? I think that's
->>>> one of the reasons we control the clocks explicitly in the drivers
->>>> anyway.
->>>
->>> On many platforms, Runtime PM is always enabled.
->>
->> Can we make such assumption? If so, could we just make an explicit
->> "select PM_RUNTIME" in Kconfig of the SoC?
->
-> Note that the PM_RUNTIME symbol was removed in commit 464ed18ebdb6236f
-> ("PM: Eliminate CONFIG_PM_RUNTIME"), in favor of plain PM.
->
-> The following already select PM unconditionally:
->   - ARCH_OMAP2PLUS_TYPICAL
->   - ARCH_RENESAS (except EMEV2)
->   - ARCH_TEGRA
->   - ARCH_VEXPRESS
+(+ Stefano and Wei)
 
-Thanks! Sounds like we might be able to simplify a lot of things with
-doing the same for Rockchip.
+Hi,
 
-Best regards,
-Tomasz
+On 02/27/2018 12:40 PM, Oleksandr Andrushchenko wrote:
+> Please find some more clarifications on VirtIO use with Xen
+> (I would like to thank Xen community for helping with this)
+> 
+> 1. Possible security issues - VirtIO devices are PCI bus masters, thus
+> allowing real device (running, for example, in untrusted driver domain)
+> to get control over guest's memory by writing to its memory
+> 
+> 2. VirtIO currently uses GFNs written into the shared ring, without Xen
+> grants support. This will require generic grant-mapping/sharing layer
+> to be added to VirtIO.
+> 
+> 3. VirtIO requires QEMU PCI emulation for setting up a device. Xen PV 
+> (and PVH)
+> domains don't use QEMU for platform emulation in order to reduce attack 
+> surface.
+> (PVH is in the process of gaining PCI config space emulation though, but 
+> it is
+> optional, not a requirement)
+I don't think the support of PCI configuration space emulation for PVH 
+would help there. The plan is to emulate in Xen, QEMU is still out of 
+the equation there.
+
+> 
+> 4. Most of the PV drivers a guest uses at the moment are Xen PV drivers, 
+> e.g. net,
+> block, console, so only virtio-gpu will require QEMU to run.
+> Although this use case would work on x86 it will require additional changes
+> to get this running on ARM, which is my target platform.
+
+All type of guests but x86 HVM are not using QEMU for device emulation.
+
+I would even be stronger here. Using QEMU would require a significant 
+amount of engineering to make it work and increase the cost of safety 
+certification for automotive use cases. So IHMO, the Xen PV display 
+solution is the best.
+
+The protocol was accepted and merged in Xen 4.9. This the standard way 
+to have para-virtualized display for guests on Xen. Having the driver 
+merged in Linux would help user to get out-of-box display in guest.
+
+Cheers,
+
+-- 
+Julien Grall
