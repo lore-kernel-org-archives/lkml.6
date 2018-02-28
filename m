@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeB1KQE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:16:04 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:57349 "EHLO
+        id S1752440AbeB1KQC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:16:02 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:57329 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752150AbeB1KQA (ORCPT
+        with ESMTP id S1752138AbeB1KQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 05:16:00 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1SAEVc0029479
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1SAEVbx029479
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,12 +18,10 @@ Cc: Sam Ravnborg <sam@ravnborg.org>, Randy Dunlap <rdunlap@infradead.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 2/2] kbuild: remove internally used LDFLAGS_vmlinux from kbuild.txt
-Date: Wed, 28 Feb 2018 19:14:24 +0900
-Message-Id: <1519812864-852-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 1/2] kbuild: remove command line interface LDFLAGS_MODULE from makefiles.txt
+Date: Wed, 28 Feb 2018 19:14:23 +0900
+Message-Id: <1519812864-852-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519812864-852-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1519812864-852-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -32,35 +30,46 @@ Documentation/kbuild/makefiles.txt lists variables used in Makefile
 whereas Documentation/kbuild/kbuild.txt describes user assignable
 parameters given via environments or the command line.
 
-The top Makefile and arch/*/Makefile accumulate proper linker flags to
-LDFLAGS_vmlinux.  So, users can not override it from the command line.
-Generally, per-file options are not supposed to be user-assignable.
-Remove the misleading entry from kbuild.txt.
+LDFLAGS_MODULE is a command line interface, so it should be dropped
+from makefiles.txt.
 
-If we need a way to append user-specific flags for linking the kernel,
-LDFLAGS_KERNEL would be a consistent choice because we already expose
-LDFLAGS_MODULE counter-part to users.
+Some lines below in this file, it is clearly explained that
+KBUILD_LDFLAGS_MODULE is the right one for the internal use:
+
+    KBUILD_LDFLAGS_MODULE   Options for $(LD) when linking modules
+
+        $(KBUILD_LDFLAGS_MODULE) is used to add arch-specific options
+        used when linking modules. This is often a linker script.
+        From commandline LDFLAGS_MODULE shall be used (see kbuild.txt).
+
+Then, kbuild.txt explains LDFLAGS_MODULE, like follows:
+
+    LDFLAGS_MODULE
+    --------------------------------------------------
+    Additional options used for $(LD) when linking modules.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Documentation/kbuild/kbuild.txt | 4 ----
- 1 file changed, 4 deletions(-)
+ Documentation/kbuild/makefiles.txt | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/Documentation/kbuild/kbuild.txt b/Documentation/kbuild/kbuild.txt
-index ac2363e..6c9c69e 100644
---- a/Documentation/kbuild/kbuild.txt
-+++ b/Documentation/kbuild/kbuild.txt
-@@ -50,10 +50,6 @@ LDFLAGS_MODULE
- --------------------------------------------------
- Additional options used for $(LD) when linking modules.
+diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
+index 667cd899..048fc39 100644
+--- a/Documentation/kbuild/makefiles.txt
++++ b/Documentation/kbuild/makefiles.txt
+@@ -837,12 +837,6 @@ When kbuild executes, the following steps are followed (roughly):
+ 	Note: ldflags-y can be used to further customise
+ 	the flags used. See chapter 3.7.
  
--LDFLAGS_vmlinux
----------------------------------------------------
--Additional options passed to final link of vmlinux.
+-    LDFLAGS_MODULE	Options for $(LD) when linking modules
 -
- KBUILD_VERBOSE
- --------------------------------------------------
- Set the kbuild verbosity. Can be assigned same values as "V=...".
+-	LDFLAGS_MODULE is used to set specific flags for $(LD) when
+-	linking the .ko files used for modules.
+-	Default is "-r", for relocatable output.
+-
+     LDFLAGS_vmlinux	Options for $(LD) when linking vmlinux
+ 
+ 	LDFLAGS_vmlinux is used to specify additional flags to pass to
 -- 
 2.7.4
