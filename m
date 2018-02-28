@@ -1,125 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932475AbeB1OqB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:46:01 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:32966 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeB1Op4 (ORCPT
+        id S932482AbeB1OqT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:46:19 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:40653 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932235AbeB1OqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:45:56 -0500
-X-Google-Smtp-Source: AH8x227iDVdSxoZQ9GaXbO+5KaTjQpug27oiBdwX/Qn1zLzRr54eOey5XxD53R26j6v6ZW82DY0zUQ==
-Subject: Re: [PATCH] hwmon: g762: handle cleanup with devm_add_action
-To: Peng Hao <peng.hao2@zte.com.cn>, jdelvare@suse.com
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1519833106-74874-1-git-send-email-peng.hao2@zte.com.cn>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <fa30c24f-f637-b800-59a3-8bcea3a3fbec@roeck-us.net>
-Date: Wed, 28 Feb 2018 06:45:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Feb 2018 09:46:17 -0500
+Date: Wed, 28 Feb 2018 15:46:04 +0100 (CET)
+From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+X-X-Sender: rolf@5HSWXM1.fritz.box
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+cc: Rolf Evers-Fischer <embedded24@evers-fischer.de>, kishon@ti.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: Re: [PATCH v4 3/3] PCI: endpoint: pci_epf_create: remove goto
+ labels
+In-Reply-To: <20180228133323.GB21854@e107981-ln.cambridge.arm.com>
+Message-ID: <alpine.LNX.2.20.1802281440001.31400@5HSWXM1.fritz.box>
+References: <20180228130719.31218-1-embedded24@evers-fischer.de> <20180228130719.31218-4-embedded24@evers-fischer.de> <20180228133323.GB21854@e107981-ln.cambridge.arm.com>
+User-Agent: Alpine 2.20 (LNX 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <1519833106-74874-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K0:pB8kHlunznSySrjjh5R5X8bB2YGnmDCc40YLsK+HjFSS3y591e/
+ kGZDJeWhxurPicaiNVtHbQ6J959YzCGXnrOkuuf2a4CIxuwvldX1LgaHvW5VsonanEM/vds
+ sHWyJZFKfe79pg4VfSfzCcCkNpzHt9RVrl/juZzyq+V3gIEBj+BPF5Z6egiMNLRdgHP26xb
+ j3t0+7yne2mYFndPFtPOQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:itIzN9eriDQ=:IvRgFKVuXm1kyXkxbuPJ0p
+ i1s3K8OHdFungfzZPc9invioHkr2Y0bUr2WUrZgVs3jDcc/ihXfmiOziiQVElbGqcK7Nx5Q4Y
+ UCDY1+8az030clvQ0eis5Qx+dg+6NbFIO5bJtwpoiiv2p6HwpefsFiZQSVuvIE+dl7RTBr6IT
+ qhIMReWfz+L6xsnC8tTtvuDGCCPRSUwWTV1nq0ANQrJqsmLZkh3gwZnIuA9o1S5q8nTyqRBxu
+ 0KNjkhReE31+kh8VjCsynx9inFZljYOA1ODCo/ePncLBOt6c6/+Nlvlx4RNa+HxphfaxWjXu8
+ MSThQofRZMIv0S7Dlb93nF8FO4dAE95Ao/LxZpU0WQAUoMs4W8BK2MXR3UF0fRfkiHr2hMXJq
+ WGwiAXhejmxZy9BNNWaLGMplXAtuYoxIMTk/jdjx9ulHcWB+NOGgGUsMqxxwaDKIqKgtVim4/
+ eVMYm3omcSmNfYEowG7zDSUkoUT3CHg2AQc0tzzOenI69ipad7ZYgO8iLac4inMg/++qPRhDj
+ qK4hBQS4S3JZ0dOk3BCWPBLiMEalVDEXAU7k3Uo6DLQ3ZnV144LGqscGHhfIVEr/4m9fntUud
+ AKCMex3Ti8grm8UkSbvz1S2/NeHB/mOpjPkNRsPV9ahYZy88kB/acR69jf7ndhTKMr6UFMW2G
+ 3mUpqHHNj+Mze3VbQEcWynHsebKVbYt2JMsV+borWx+eGMQiL6XnNA268MNy8jcyAkgSVcGax
+ Z1KRpYG5uNCYRMbsBfb40O+RYdhjayLdgrdVlTHJrYAocLB9IHwK1NilDgA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/2018 07:51 AM, Peng Hao wrote:
-> Simplify code and use devm_add_action() to handle cleanup.
+Hi Kishon and Lorenzo,
+
+On Wed, 28 Feb 2018, Lorenzo Pieralisi wrote:
+
+> On Wed, Feb 28, 2018 at 02:07:19PM +0100, Rolf Evers-Fischer wrote:
+> > From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > 
+> > Removes the goto labels completely, handles the errors at the
+> > respective call site and just returns instead of jumping around.
+> > 
+> > Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > ---
+> >  drivers/pci/endpoint/pci-epf-core.c | 30 +++++++++---------------------
+> >  1 file changed, 9 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> > index 1878a6776519..cf2c4f6590a0 100644
+> > --- a/drivers/pci/endpoint/pci-epf-core.c
+> > +++ b/drivers/pci/endpoint/pci-epf-core.c
+> > @@ -203,16 +203,14 @@ struct pci_epf *pci_epf_create(const char *name)
+> >  	int len;
+> >  
+> >  	epf = kzalloc(sizeof(*epf), GFP_KERNEL);
+> > -	if (!epf) {
+> > -		ret = -ENOMEM;
+> > -		goto err_ret;
+> > -	}
+> > +	if (!epf)
+> > +		return ERR_PTR(-ENOMEM);
+> >  
+> >  	len = strchrnul(name, '.') - name;
+> >  	epf->name = kstrndup(name, len, GFP_KERNEL);
+> >  	if (!epf->name) {
+> > -		ret = -ENOMEM;
+> > -		goto free_epf;
+> > +		kfree(epf);
+> > +		return ERR_PTR(-ENOMEM);
+> >  	}
+> >  
+> >  	dev = &epf->dev;
+> > @@ -221,24 +219,14 @@ struct pci_epf *pci_epf_create(const char *name)
+> >  	dev->type = &pci_epf_type;
+> >  
+> >  	ret = dev_set_name(dev, "%s", name);
+> > -	if (ret)
+> > -		goto put_dev;
+> > -
+> > -	ret = device_add(dev);
+> > -	if (ret)
+> > -		goto put_dev;
+> > -
+> > -	return epf;
+> > +	if (!ret) {
+> > +		ret = device_add(dev);
+> > +		if (!ret)
+> > +			return epf;
+> > +	}
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-
-Excellent idea. Some suggestions for improvements below.
-
-> ---
->   drivers/hwmon/g762.c | 30 ++++++++++++++----------------
->   1 file changed, 14 insertions(+), 16 deletions(-)
+> This is ugly, sorry. I should have been more explicit, I prefer
+> this construct:
 > 
-> diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
-> index 6d1208b..48e60d8 100644
-> --- a/drivers/hwmon/g762.c
-> +++ b/drivers/hwmon/g762.c
-> @@ -128,7 +128,6 @@ enum g762_regs {
->   			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
->   
->   struct g762_data {
-> -	struct device *hwmon_dev;
->   	struct i2c_client *client;
->   	struct clk *clk;
->   
-> @@ -1051,9 +1050,17 @@ static inline int g762_fan_init(struct device *dev)
->   					 data->fan_cmd1);
->   }
->   
-> +static void g762_remove(void *data)
-> +{
-> +	struct g762_data *g762 = data;
-> +	struct i2c_client *client = g762->client;
-> +
-> +	g762_of_clock_disable(client);
-> +}
+> ret = dev_set_name(dev, "%s", name);
+> if (ret) {
+> 	kfree(epf->name);
+> 	kfree(epf);
+> 	return ERR_PTR(ret);
+> }
+> 
+> ret = device_add(dev);
+> if (ret) {
+> 	put_device(dev);
+> 	return ERR_PTR(ret);
+> }
+> 
+> return epf;
+> 
+> Please send a v5 and let's be done with it.
+> 
 
-You could instead just modify the arguments of g762_of_clock_disable()
-and call it directly.
+Thank you for your feedback. I agree with you. Hiding the correct return 
+value under two levels of 'if' is not the best idea.
 
->   static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   {
->   	struct device *dev = &client->dev;
-> +	struct device *hwmon_dev;
->   	struct g762_data *data;
->   	int ret;
->   
-> @@ -1086,10 +1093,12 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   	if (ret)
->   		goto clock_dis;
->   
-> -	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
-> -							    data, g762_groups);
-> -	if (IS_ERR(data->hwmon_dev)) {
-> -		ret = PTR_ERR(data->hwmon_dev);
-> +	devm_add_action(dev, g762_remove, data);
+I will send a v5 containing the proposal from Lorenzo. There is only one
+difference: We must call 'put_device()' in both error cases, because
+we have already initialized the device before. We had also jumped into
+'put_dev:' in both situations before.
 
-Move this into g762_of_clock_enable(), just before the return, and the
-dummy cleanup function can be dropped. You can then also drop the clock_dis:
-label amd instead return immediately on errors.
+The modified code will then look like this:
 
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
-> +							   data, g762_groups);
-> +	if (IS_ERR(hwmon_dev)) {
-> +		ret = PTR_ERR(hwmon_dev);
->   		goto clock_dis;
+ ret = dev_set_name(dev, "%s", name);
+ if (ret) {
+ 	put_device(dev);
+ 	return ERR_PTR(ret);
+ }
 
-Either case this would now be wrong since the cleanup is handled automatically.
-This can be changed to
-	return PTR_ERR_OR_ZERO(hwmon_dev);
+ ret = device_add(dev);
+ if (ret) {
+ 	put_device(dev);
+ 	return ERR_PTR(ret);
+ }
 
->   	}
->   
-> @@ -1101,23 +1110,12 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   	return ret;
->   }
->   
-> -static int g762_remove(struct i2c_client *client)
-> -{
-> -	struct g762_data *data = i2c_get_clientdata(client);
-> -
-> -	hwmon_device_unregister(data->hwmon_dev);
-> -	g762_of_clock_disable(client);
-> -
-> -	return 0;
-> -}
-> -
->   static struct i2c_driver g762_driver = {
->   	.driver = {
->   		.name = DRVNAME,
->   		.of_match_table = of_match_ptr(g762_dt_match),
->   	},
->   	.probe	  = g762_probe,
-> -	.remove	  = g762_remove,
->   	.id_table = g762_id,
->   };
->   
+ return epf;
+
+Best regards,
+ Rolf
+
+> > -put_dev:
+> >  	put_device(dev);
+> >  	return ERR_PTR(ret);
+> > -
+> > -free_epf:
+> > -	kfree(epf);
+> > -
+> > -err_ret:
+> > -	return ERR_PTR(ret);
+> >  }
+> >  EXPORT_SYMBOL_GPL(pci_epf_create);
+> >  
+> > -- 
+> > 2.16.2
+> > 
 > 
