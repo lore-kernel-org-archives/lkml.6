@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsFVLJdmqw7tv0Wk7JfKxv1Nq14ZIZAF2GvCCykRREb+EZxzvosrCR8fvRLmKWCRPPRI6jc
-ARC-Seal: i=1; a=rsa-sha256; t=1519831340; cv=none;
+X-Google-Smtp-Source: AG47ELvtRj6ahRBwH+R482iPbMax59/gRkFve/zbnyCiooGI8rl/lClyPSwMc/IXUVNtFTN+/YXj
+ARC-Seal: i=1; a=rsa-sha256; t=1519831339; cv=none;
         d=google.com; s=arc-20160816;
-        b=T9kF3pWpTT8DGyDutHl083UAZUh+D9Ws561As81xg+xq4Jgr6CSGH5EV6hjJOSXKIN
-         TqSv+h0Xsmk1D5GsIQrp6q87xuIhWSlRjJRzUT+kUvFKtB/rGziOG+Git9NWrxavgj4j
-         0l6id+axAab89sOUrWtKW5ynzH66yPoFPkqpdhhWAMqrnofaBEY8Zbx2euqb4NhBm5xx
-         X6eIitZP5ACreEWgw8v+/5MJKJXGkrGdDumC+l5TnQBNB8NxCSeiFtgxM3PXmB2UXE1M
-         0QlOZjdJyc5It7vnfDgzreWUmFIseYfIEf+tTGxLZRiuQTnDzjiBw/w93GS7KQc+dKcq
-         7HpQ==
+        b=dL6qax3z56rsg5hN7nAUvBbOj0q/JmoWXziByPAEotEQO9sLGsC0xF+iXnE+kO7LXN
+         Aa09ehz3yz5x0id5WruWo00OjhdYKPBaMwR5YosqdL2CfVMHRWUalzcd76fSkcC4DRui
+         1cIxB9Jtfm7b3yUA60wJKSdQVzUUK5auTXC4fa3uI5VBGyaxvOx1Co3E41hPexeBU5Fd
+         a9WSusF1TbQ5/jNRM3pnzDKERHqyg0D79sulCFXOf5EvCkevAJGD4RCkX2UI5HRkDPPH
+         gItgR25zQDRDQAmyCMq+i8YyebV7OZXgtKKb0Jypsdg8UGxPXkO7fFbwL7Wpcg7clkuX
+         OZpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=ynJC4YipiN6sPp5+H79hiUFHmZ2Xko/qakkPc2KdBqQ=;
-        b=SqAbdhekCGGBSJC1E8tzSDyymo2riSzqyCx5jT/Rdp1kkVfY/JWUjNlFUJpNV4hkEY
-         Jp2Bn6+5aYKVrnXydFkqubS1DCZwnPM9WBuB8BjG+3puUATC6aA5oyP/v/QvZ4F41Lvl
-         eW+6NiH3va46HidLJ0fxsss8UyYZyxHHWE83Pl6Cgi8ged+p9T25ZizFh0DNUlE0hN6T
-         Cgb4nYCdHe8W5FhPi6jlcoDeiCDTOvgkcqZ8nJ6CWH0otVHzg9+q+6lvnHZss76nrdNC
-         A6OsLDGLxbWap+WK2Y2Ht9I1Dy5di5jOb97R12ql91CWFbx+dR+CFnT5lVg3qfo03xKS
-         AuOg==
+        bh=BFDx7kOwTlnYdl/K2bCcF4E0DXAsolOYCq7v0JAl0Dw=;
+        b=Vx6OR0CAyys8h0ZCeDfAcROSEdtFkXiWOfr9SZECk8FegwVZr/jjrhT9KEUadi2PL4
+         sUmj8dN64Qa6gqAHl+5MctJJl0AcHIEHDhsQLL1fYlmtx0IztBhQKBnFfMhjqu2RjCzW
+         OLVPOj8CYwgunKMozsTEFunZf3zvYatlqFXK2ZgvmWdX6rmKk5t/Mog5H8q/fXlrb/ly
+         9WawpA0jajlA5U6uBVVD741OHgh+Lm3UHo/RqWVeFNYb6Xq+l0YB7RLGRs99EF/Q7mTr
+         73I4YmY6dVodvb8Ixhn71pnjqp5Y11vuQT2n6OSAy9pzxUTEsWSrL2kooHtOvex8ogVw
+         ateg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,23 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>,
- "syzkaller" <syzkaller@googlegroups.com>,
- "Jiri Slaby" <jslaby@suse.com>,
+ "Mathias Nyman" <mathias.nyman@linux.intel.com>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.121669136@decadent.org.uk>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.196117579@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 064/140] n_tty: fix EXTPROC vs ICANON interaction with
- TIOCINQ (aka FIONREAD)
+Subject: [PATCH 3.2 038/140] xhci: Don't add a virt_dev to the devs array
+ before it's fully allocated
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658668272179572?=
-X-GMAIL-MSGID: =?utf-8?q?1593658668272179572?=
+X-GMAIL-THRID: =?utf-8?q?1593658666539369196?=
+X-GMAIL-MSGID: =?utf-8?q?1593658666539369196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,63 +51,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 966031f340185eddd05affcf72b740549f056348 upstream.
+commit 5d9b70f7d52eb14bb37861c663bae44de9521c35 upstream.
 
-We added support for EXTPROC back in 2010 in commit 26df6d13406d ("tty:
-Add EXTPROC support for LINEMODE") and the intent was to allow it to
-override some (all?) ICANON behavior.  Quoting from that original commit
-message:
+Avoid null pointer dereference if some function is walking through the
+devs array accessing members of a new virt_dev that is mid allocation.
 
-         There is a new bit in the termios local flag word, EXTPROC.
-         When this bit is set, several aspects of the terminal driver
-         are disabled.  Input line editing, character echo, and mapping
-         of signals are all disabled.  This allows the telnetd to turn
-         off these functions when in linemode, but still keep track of
-         what state the user wants the terminal to be in.
+Add the virt_dev to xhci->devs[i] _after_ the virt_device and all its
+members are properly allocated.
 
-but the problem turns out that "several aspects of the terminal driver
-are disabled" is a bit ambiguous, and you can really confuse the n_tty
-layer by setting EXTPROC and then causing some of the ICANON invariants
-to no longer be maintained.
+issue found by KASAN: null-ptr-deref in xhci_find_slot_id_by_port
 
-This fixes at least one such case (TIOCINQ) becoming unhappy because of
-the confusion over whether ICANON really means ICANON when EXTPROC is set.
+"Quick analysis suggests that xhci_alloc_virt_device() is not mutex
+protected. If so, there is a time frame where xhci->devs[slot_id] is set
+but not fully initialized. Specifically, xhci->devs[i]->udev can be NULL."
 
-This basically makes TIOCINQ match the case of read: if EXTPROC is set,
-we ignore ICANON.  Also, make sure to reset the ICANON state ie EXTPROC
-changes, not just if ICANON changes.
-
-Fixes: 26df6d13406d ("tty: Add EXTPROC support for LINEMODE")
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: adjust context]
+[bwh: Backported to 3.2: There is an extra failure path, so we may need to
+ free dev->eps[0].ring] 
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/n_tty.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -1459,7 +1459,7 @@ static void n_tty_set_termios(struct tty
- 	BUG_ON(!tty);
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -873,10 +873,9 @@ int xhci_alloc_virt_device(struct xhci_h
+ 		return 0;
+ 	}
  
- 	if (old)
--		canon_change = (old->c_lflag ^ tty->termios->c_lflag) & ICANON;
-+		canon_change = (old->c_lflag ^ tty->termios->c_lflag) & (ICANON | EXTPROC);
- 	if (canon_change) {
- 		memset(&tty->read_flags, 0, sizeof tty->read_flags);
- 		tty->canon_head = tty->read_tail;
-@@ -2096,7 +2096,7 @@ static int n_tty_ioctl(struct tty_struct
- 	case TIOCINQ:
- 		/* FIXME: Locking */
- 		retval = tty->read_cnt;
--		if (L_ICANON(tty))
-+		if (L_ICANON(tty) && !L_EXTPROC(tty))
- 			retval = inq_canon(tty);
- 		return put_user(retval, (unsigned int __user *) arg);
- 	default:
+-	xhci->devs[slot_id] = kzalloc(sizeof(*xhci->devs[slot_id]), flags);
+-	if (!xhci->devs[slot_id])
++	dev = kzalloc(sizeof(*dev), flags);
++	if (!dev)
+ 		return 0;
+-	dev = xhci->devs[slot_id];
+ 
+ 	/* Allocate the (output) device context that will be used in the HC. */
+ 	dev->out_ctx = xhci_alloc_container_ctx(xhci, XHCI_CTX_TYPE_DEVICE, flags);
+@@ -925,9 +924,19 @@ int xhci_alloc_virt_device(struct xhci_h
+ 		 &xhci->dcbaa->dev_context_ptrs[slot_id],
+ 		 le64_to_cpu(xhci->dcbaa->dev_context_ptrs[slot_id]));
+ 
++	xhci->devs[slot_id] = dev;
++
+ 	return 1;
+ fail:
+-	xhci_free_virt_device(xhci, slot_id);
++
++	if (dev->eps[0].ring)
++		xhci_ring_free(xhci, dev->eps[0].ring);
++	if (dev->in_ctx)
++		xhci_free_container_ctx(xhci, dev->in_ctx);
++	if (dev->out_ctx)
++		xhci_free_container_ctx(xhci, dev->out_ctx);
++	kfree(dev);
++
+ 	return 0;
+ }
+ 
