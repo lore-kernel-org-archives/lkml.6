@@ -1,378 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752460AbeB1McL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:32:11 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46311 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752226AbeB1McK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:32:10 -0500
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: don't put dentry page in pagecache into highmem
-Date: Wed, 28 Feb 2018 20:31:52 +0800
-Message-ID: <1519821112-137593-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
+        id S1752488AbeB1MdA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:33:00 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:34019 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbeB1Mc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:32:59 -0500
+X-Google-Smtp-Source: AG47ELtTj1VWd95ArHpiwLtwPhstzL4IXarJ2A/QsLpOzZrA8+iq7aLcBrZ2LpzWGCcU+OqMQsT/uZAp3NHNMN8uHjA=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
+ <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com> <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 13:32:57 +0100
+X-Google-Sender-Auth: 5SDOhlP9GF0AarcPmKdhfxRP-nw
+Message-ID: <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous dentry page uses highmem, which will cause panic in platforms
-using highmem (such as arm), since the address space of dentry pages
-from highmem directly goes into the decryption path via the function
-fscrypt_fname_disk_to_usr. But sg_init_one assumes the address is not
-from highmem, and then cause panic since it doesn't call kmap_high but
-kunmap_high is triggered at the end. To fix this problem in a simple
-way, this patch avoids to put dentry page in pagecache into highmem.
+Hi Tomasz,
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/dir.c           | 23 +++++------------------
- fs/f2fs/f2fs.h          |  6 ------
- fs/f2fs/inline.c        |  3 +--
- fs/f2fs/inode.c         |  2 +-
- fs/f2fs/namei.c         | 14 +-------------
- fs/f2fs/recovery.c      | 11 +++++------
- include/linux/f2fs_fs.h |  1 -
- 7 files changed, 13 insertions(+), 47 deletions(-)
+On Wed, Feb 28, 2018 at 1:29 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+> On Wed, Feb 28, 2018 at 9:17 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Feb 28, 2018 at 12:11 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>>> Currently we are adding all of the attached devices' clocks as pm clocks
+>>> and enable them when powering on the power domain.
+>>>
+>>> This seems unnecessary, because those clocks are already controlled in
+>>> the devices' drivers with better error handling.
+>>>
+>>> Tested on my chromebook minnie(rk3288) and chromebook kevin(rk3399).
+>>>
+>>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>>
+>> Thanks for your patch!
+>>
+>> Just wondering: so you prefer to handle the clocks explicitly in all drivers,
+>> instead of delegating this task to Runtime PM?
+>
+> Is it already possible to gate clocks immediately when the device
+> idles, but defer turning the power domain off until time long enough
+> to cover the power down and up latency elapses?
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f00b5ed..797eb05 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -94,14 +94,12 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
- 	struct f2fs_dir_entry *de;
- 	struct f2fs_dentry_ptr d;
- 
--	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
-+	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
- 
- 	make_dentry_ptr_block(NULL, &d, dentry_blk);
- 	de = find_target_dentry(fname, namehash, max_slots, &d);
- 	if (de)
- 		*res_page = dentry_page;
--	else
--		kunmap(dentry_page);
- 
- 	return de;
- }
-@@ -287,7 +285,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
- 	de = f2fs_find_entry(dir, qstr, page);
- 	if (de) {
- 		res = le32_to_cpu(de->ino);
--		f2fs_dentry_kunmap(dir, *page);
- 		f2fs_put_page(*page, 0);
- 	}
- 
-@@ -302,7 +299,6 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
- 	f2fs_wait_on_page_writeback(page, type, true);
- 	de->ino = cpu_to_le32(inode->i_ino);
- 	set_de_type(de, inode->i_mode);
--	f2fs_dentry_kunmap(dir, page);
- 	set_page_dirty(page);
- 
- 	dir->i_mtime = dir->i_ctime = current_time(dir);
-@@ -350,13 +346,11 @@ static int make_empty_dir(struct inode *inode,
- 	if (IS_ERR(dentry_page))
- 		return PTR_ERR(dentry_page);
- 
--	dentry_blk = kmap_atomic(dentry_page);
-+	dentry_blk = page_address(dentry_page);
- 
- 	make_dentry_ptr_block(NULL, &d, dentry_blk);
- 	do_make_empty_dir(inode, parent, &d);
- 
--	kunmap_atomic(dentry_blk);
--
- 	set_page_dirty(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
- 	return 0;
-@@ -547,13 +541,12 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 		if (IS_ERR(dentry_page))
- 			return PTR_ERR(dentry_page);
- 
--		dentry_blk = kmap(dentry_page);
-+		dentry_blk = page_address(dentry_page);
- 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
- 						slots, NR_DENTRY_IN_BLOCK);
- 		if (bit_pos < NR_DENTRY_IN_BLOCK)
- 			goto add_dentry;
- 
--		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
- 	}
- 
-@@ -588,7 +581,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 	if (inode)
- 		up_write(&F2FS_I(inode)->i_sem);
- 
--	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
- 
- 	return err;
-@@ -642,7 +634,6 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 		F2FS_I(dir)->task = NULL;
- 	}
- 	if (de) {
--		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
- 		err = -EEXIST;
- 	} else if (IS_ERR(page)) {
-@@ -730,7 +721,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
- 			NR_DENTRY_IN_BLOCK,
- 			0);
--	kunmap(page); /* kunmap - pair of f2fs_find_entry */
- 	set_page_dirty(page);
- 
- 	dir->i_ctime = dir->i_mtime = current_time(dir);
-@@ -775,7 +765,7 @@ bool f2fs_empty_dir(struct inode *dir)
- 				return false;
- 		}
- 
--		dentry_blk = kmap_atomic(dentry_page);
-+		dentry_blk = page_address(dentry_page);
- 		if (bidx == 0)
- 			bit_pos = 2;
- 		else
-@@ -783,7 +773,6 @@ bool f2fs_empty_dir(struct inode *dir)
- 		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
- 						NR_DENTRY_IN_BLOCK,
- 						bit_pos);
--		kunmap_atomic(dentry_blk);
- 
- 		f2fs_put_page(dentry_page, 1);
- 
-@@ -901,19 +890,17 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 			}
- 		}
- 
--		dentry_blk = kmap(dentry_page);
-+		dentry_blk = page_address(dentry_page);
- 
- 		make_dentry_ptr_block(inode, &d, dentry_blk);
- 
- 		err = f2fs_fill_dentries(ctx, &d,
- 				n * NR_DENTRY_IN_BLOCK, &fstr);
- 		if (err) {
--			kunmap(dentry_page);
- 			f2fs_put_page(dentry_page, 1);
- 			break;
- 		}
- 
--		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
- 	}
- out_free:
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dbe87c7..d57b7dd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2413,12 +2413,6 @@ static inline int f2fs_has_inline_dentry(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_INLINE_DENTRY);
- }
- 
--static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
--{
--	if (!f2fs_has_inline_dentry(dir))
--		kunmap(page);
--}
--
- static inline int is_file(struct inode *inode, int type)
- {
- 	return F2FS_I(inode)->i_advise & type;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 90e38d8..3b77d64 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -369,7 +369,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 	zero_user_segment(page, MAX_INLINE_DATA(dir), PAGE_SIZE);
- 
--	dentry_blk = kmap_atomic(page);
-+	dentry_blk = page_address(page);
- 
- 	make_dentry_ptr_inline(dir, &src, inline_dentry);
- 	make_dentry_ptr_block(dir, &dst, dentry_blk);
-@@ -386,7 +386,6 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
- 	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
- 
--	kunmap_atomic(dentry_blk);
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 	set_page_dirty(page);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 89c838b..10be247 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -328,7 +328,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &f2fs_dir_inode_operations;
- 		inode->i_fop = &f2fs_dir_operations;
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
--		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
-+		inode_nohighmem(inode);
- 	} else if (S_ISLNK(inode->i_mode)) {
- 		if (f2fs_encrypted_inode(inode))
- 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index c4c94c7..2754af7 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -317,7 +317,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 
- 	de = f2fs_find_entry(dir, &dot, &page);
- 	if (de) {
--		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
- 	} else if (IS_ERR(page)) {
- 		err = PTR_ERR(page);
-@@ -330,7 +329,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 
- 	de = f2fs_find_entry(dir, &dotdot, &page);
- 	if (de) {
--		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
- 	} else if (IS_ERR(page)) {
- 		err = PTR_ERR(page);
-@@ -377,7 +375,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
- 
- 	ino = le32_to_cpu(de->ino);
--	f2fs_dentry_kunmap(dir, page);
- 	f2fs_put_page(page, 0);
- 
- 	inode = f2fs_iget(dir->i_sb, ino);
-@@ -452,7 +449,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	err = acquire_orphan_inode(sbi);
- 	if (err) {
- 		f2fs_unlock_op(sbi);
--		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
- 		goto fail;
- 	}
-@@ -613,7 +609,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	inode->i_op = &f2fs_dir_inode_operations;
- 	inode->i_fop = &f2fs_dir_operations;
- 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
--	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
-+	inode_nohighmem(inode);
- 
- 	set_inode_flag(inode, FI_INC_LINK);
- 	f2fs_lock_op(sbi);
-@@ -931,7 +927,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			f2fs_set_link(old_inode, old_dir_entry,
- 						old_dir_page, new_dir);
- 		} else {
--			f2fs_dentry_kunmap(old_inode, old_dir_page);
- 			f2fs_put_page(old_dir_page, 0);
- 		}
- 		f2fs_i_links_write(old_dir, false);
-@@ -947,7 +942,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- put_out_dir:
- 	f2fs_unlock_op(sbi);
- 	if (new_page) {
--		f2fs_dentry_kunmap(new_dir, new_page);
- 		f2fs_put_page(new_page, 0);
- 	}
- out_whiteout:
-@@ -955,11 +949,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		iput(whiteout);
- out_dir:
- 	if (old_dir_entry) {
--		f2fs_dentry_kunmap(old_inode, old_dir_page);
- 		f2fs_put_page(old_dir_page, 0);
- 	}
- out_old:
--	f2fs_dentry_kunmap(old_dir, old_page);
- 	f2fs_put_page(old_page, 0);
- out:
- 	return err;
-@@ -1101,19 +1093,15 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	return 0;
- out_new_dir:
- 	if (new_dir_entry) {
--		f2fs_dentry_kunmap(new_inode, new_dir_page);
- 		f2fs_put_page(new_dir_page, 0);
- 	}
- out_old_dir:
- 	if (old_dir_entry) {
--		f2fs_dentry_kunmap(old_inode, old_dir_page);
- 		f2fs_put_page(old_dir_page, 0);
- 	}
- out_new:
--	f2fs_dentry_kunmap(new_dir, new_page);
- 	f2fs_put_page(new_page, 0);
- out_old:
--	f2fs_dentry_kunmap(old_dir, old_page);
- 	f2fs_put_page(old_page, 0);
- out:
- 	return err;
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 337f336..c5e5c45 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -144,7 +144,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- retry:
- 	de = __f2fs_find_entry(dir, &fname, &page);
- 	if (de && inode->i_ino == le32_to_cpu(de->ino))
--		goto out_unmap_put;
-+		goto out_put;
- 
- 	if (de) {
- 		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
-@@ -153,19 +153,19 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 			err = PTR_ERR(einode);
- 			if (err == -ENOENT)
- 				err = -EEXIST;
--			goto out_unmap_put;
-+			goto out_put;
- 		}
- 
- 		err = dquot_initialize(einode);
- 		if (err) {
- 			iput(einode);
--			goto out_unmap_put;
-+			goto out_put;
- 		}
- 
- 		err = acquire_orphan_inode(F2FS_I_SB(inode));
- 		if (err) {
- 			iput(einode);
--			goto out_unmap_put;
-+			goto out_put;
- 		}
- 		f2fs_delete_entry(de, page, dir, einode);
- 		iput(einode);
-@@ -180,8 +180,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 		goto retry;
- 	goto out;
- 
--out_unmap_put:
--	f2fs_dentry_kunmap(dir, page);
-+out_put:
- 	f2fs_put_page(page, 0);
- out:
- 	if (file_enc_name(inode))
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index f7f0990..96c9bdb 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -46,7 +46,6 @@
- 
- /* This flag is used by node and meta inodes, and by recovery */
- #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
--#define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
- 
- /*
-  * For further optimization on multi-head logs, on-disk layout supports maximum
--- 
-1.8.5.2
+I'm not 100% sure.
+Note that clocks are turned off when the device idles, while powering down
+the power domain requires all devices in the domain to be idle.
+
+> Also, how about systems where runtime PM is disabled? I think that's
+> one of the reasons we control the clocks explicitly in the drivers
+> anyway.
+
+On many platforms, Runtime PM is always enabled.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
