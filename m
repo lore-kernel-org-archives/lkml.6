@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834802-2-13374845561168746164
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834793-2-18022314810242598349
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834801; b=kPmWDNu5spMQ6Ij+ZP3kOl5gMxamAwOt7NhVlXb2G6zAzPw
-    /FgnU9WZMgTkmh0k8PZrlBWz3HqIHAnwCCS+INI42m3fSrcON9c6CFptxJiPcHk8
-    d3Oyy+eY59axzk6HcO1VMLbOx8A7rh/RQETPZXELUn64Z/z3L4ItP2JEJDGLlzM4
-    u/xY4ju1YeKyKhVg16mJhZ8xRM+icmou5ZfHuSv/pHiR9+9utSBxpsS1KtK59Rif
-    Du1gmPqcPl36BOrOF1l8hxptYTs49qW1HQw6gsHmh6Ba2s691KVzO6nUYFvJW8lA
-    jG6L7zRWSFKkLghbXL/+aLrMKsVJuynnntWVUqA==
+    t=1519834793; b=GBb4G7acOsNxMpH1r1bQ86LWsHpUJzoxavAWyBwIC/HslD8
+    WRQyK7VqTLiZ/bsc/ohR0wmVmzumCx7py61qYst/EFqFq5aqCfju7ifjH5wi4t7K
+    o9CDSQi/4Og/UjdM+8JtQNy5AxqOYOW0SegNTIga6vKpCPbW1buarObwue75xFWk
+    kQtw16NM7Uxvw8pzt5LNIlOXCug14/n0hVw2ObYRRzrbcYk1yRS+viX93Qk8tXHJ
+    yiTcSCtxiMn4LPcNMutbKL4AwJnZvVXm5OjHqALMtBjaAFBzEIGhTRn26yW9STmv
+    mqko0XtLOoAp4wFYtgQx0i5A1Xkn7kgbYbJjpYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834801; bh=8LYD2TqJnDcsSJp22Rs
-    0EecBQCYaliTsKiUaJlFN9u8=; b=Z3qxuylLQryyLbDUaKkf8RksySiVNINItUC
-    h8qiOdbaW4wtHKU75Ngibz8htDP9t6bKj2fjZcU3Gls5Stt3AZS3kuVNuFODByG5
-    V0y6QApCDe6WCuyE6wsooJAz9qdn8D3rhRMp+kKMWpbqdVcKj0kgC32kP7OrMWDU
-    AuJg60GhXKZntvD91IjZ2nk3VBBjfRp+KKBCfO/XJQM4tfuyA54hVyt0F6sbjjsX
-    V8NJ45orIvmtCcJe053kREUldqotYKVNxTP1SnvVwa38hzV/EDWSqVEZzGe1wjzh
-    HBlXBrl/bR1p5I7uqpGZfDIjCX30WSol3PkPYn/o29pXAAVLtgw==
+    :sender:list-id; s=arctest; t=1519834793; bh=vcT1ktBhZ4DPiB2J4HC
+    ovN1NuPYkVf1yT+dpVddR9wU=; b=qaILle/7SvrVv/k/f7XQ5al7JwnFbH2qwgF
+    9bWOqg2PQL2iEH04nIrfXDHqJ4I3yOaEYtphcjK45F+NabswMbXG/xx57qQtfHww
+    0DhUBKZvYFLZFuc5gMsQ9po/RStDHE8ijNAI6hPtaWyCRS0SZpiVvjge0a4HfZOU
+    Vmlvu+K3VRzuL/9B7s9mgCataHP572plCuPeyTDAWOzxxGCzVxzrH/VOzjCDyEX7
+    So7J4WzTXUX3paZQBRtb+WveBiaJnQ6iTzc7ri0WbIwoXHsWgJJ6ep0Fz1LSxk4C
+    t8dzbKgtV3qPJFkOqATyMKu3Xy//489FVQS/nkabreMbTJp9p2Q==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934711AbeB1QQI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:16:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35217 "EHLO
+        id S934525AbeB1QRm (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:17:42 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35261 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934923AbeB1QQG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:16:06 -0500
+        by vger.kernel.org with ESMTP id S932298AbeB1QRk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:17:40 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org,
+        "Johannes Berg" <johannes.berg@intel.com>,
+        syzbot+8dd9051ff19940290931@syzkaller.appspotmail.com
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.267517181@decadent.org.uk>
+Message-ID: <lsq.1519831218.184488353@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 201/254] ALSA: pcm: Remove yet superfluous WARN_ON()
+Subject: [PATCH 3.16 206/254] mac80211_hwsim: validate number of different
+ channels
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,35 +81,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 23b19b7b50fe1867da8d431eea9cd3e4b6328c2c upstream.
+commit 51a1aaa631c90223888d8beac4d649dc11d2ca55 upstream.
 
-muldiv32() contains a snd_BUG_ON() (which is morphed as WARN_ON() with
-debug option) for checking the case of 0 / 0.  This would be helpful
-if this happens only as a logical error; however, since the hw refine
-is performed with any data set provided by user, the inconsistent
-values that can trigger such a condition might be passed easily.
-Actually, syzbot caught this by passing some zero'ed old hw_params
-ioctl.
+When creating a new radio on the fly, hwsim allows this
+to be done with an arbitrary number of channels, but
+cfg80211 only supports a limited number of simultaneous
+channels, leading to a warning.
 
-So, having snd_BUG_ON() there is simply superfluous and rather
-harmful to give unnecessary confusions.  Let's get rid of it.
+Fix this by validating the number - this requires moving
+the define for the maximum out to a visible header file.
 
-Reported-by: syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: syzbot+8dd9051ff19940290931@syzkaller.appspotmail.com
+Fixes: b59ec8dd4394 ("mac80211_hwsim: fix number of channels in interface combinations")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[bwh: Backported to 3.16:
+ - Test chans intead of param.channels
+ - GENL_SET_ERR_MSG() is not available
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/pcm_lib.c | 1 -
- 1 file changed, 1 deletion(-)
-
---- a/sound/core/pcm_lib.c
-+++ b/sound/core/pcm_lib.c
-@@ -644,7 +644,6 @@ static inline unsigned int muldiv32(unsi
- {
- 	u_int64_t n = (u_int64_t) a * b;
- 	if (c == 0) {
--		snd_BUG_ON(!n);
- 		*r = 0;
- 		return UINT_MAX;
- 	}
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2439,6 +2439,9 @@ static int hwsim_create_radio_nl(struct
+ 	if (info->attrs[HWSIM_ATTR_CHANNELS])
+ 		chans = nla_get_u32(info->attrs[HWSIM_ATTR_CHANNELS]);
+ 
++	if (chans > CFG80211_MAX_NUM_DIFFERENT_CHANNELS)
++		return -EINVAL;
++
+ 	if (info->attrs[HWSIM_ATTR_USE_CHANCTX])
+ 		use_chanctx = true;
+ 	else
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -716,6 +716,8 @@ struct cfg80211_csa_settings {
+ 	u8 count;
+ };
+ 
++#define CFG80211_MAX_NUM_DIFFERENT_CHANNELS 10
++
+ /**
+  * enum station_parameters_apply_mask - station parameter values to apply
+  * @STATION_PARAM_APPLY_UAPSD: apply new uAPSD parameters (uapsd_queues, max_sp)
+--- a/net/wireless/core.h
++++ b/net/wireless/core.h
+@@ -456,8 +456,6 @@ void cfg80211_leave(struct cfg80211_regi
+ void cfg80211_stop_p2p_device(struct cfg80211_registered_device *rdev,
+ 			      struct wireless_dev *wdev);
+ 
+-#define CFG80211_MAX_NUM_DIFFERENT_CHANNELS 10
+-
+ #ifdef CONFIG_CFG80211_DEVELOPER_WARNINGS
+ #define CFG80211_DEV_WARN_ON(cond)	WARN_ON(cond)
+ #else
