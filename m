@@ -1,138 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934757AbeB1RzP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:55:15 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933542AbeB1RzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:55:11 -0500
-Subject: Re: [PATCH v2 3/5] sysctl: Warn when a clamped sysctl parameter is
- set out of range
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-4-git-send-email-longman@redhat.com>
- <20180228005746.GZ14069@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e58ac951-e3b7-da9c-a5f6-bf98cbb05175@redhat.com>
-Date: Wed, 28 Feb 2018 12:55:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180228005746.GZ14069@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S934562AbeB1Rzv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:55:51 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42524 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933691AbeB1Ruz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:50:55 -0500
+X-Google-Smtp-Source: AG47ELvSCZnQTYUVh2gn3b3hmlLeTvXvlLiIoiV3bkRbqsfBIzY5DSnbheR0FH8j3aUiqwkJrrA3ow==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 01/10] dt-bindings: pinctrl: Add bindings for Actions S900 SoC
+Date: Wed, 28 Feb 2018 23:18:57 +0530
+Message-Id: <20180228174906.22721-2-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
+References: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 07:57 PM, Luis R. Rodriguez wrote:
-> On Tue, Feb 27, 2018 at 03:49:49PM -0500, Waiman Long wrote:
->> Even with clamped sysctl parameters, it is still not that straight
->> forward to figure out the exact range of those parameters. One may
->> try to write extreme parameter values to see if they get clamped.
->> To make it easier, a warning with the expected range will now be
->> printed in the kernel ring buffer when a clamped sysctl parameter
->> receives an out of range value.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  include/linux/sysctl.h |  1 +
->>  kernel/sysctl.c        | 55 ++++++++++++++++++++++++++++++++++++++++++--------
->>  2 files changed, 48 insertions(+), 8 deletions(-)
->>
->> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->> index eceeaee..4e4f74a2 100644
->> --- a/include/linux/sysctl.h
->> +++ b/include/linux/sysctl.h
->> @@ -128,6 +128,7 @@ struct ctl_table
->>   * ctl_table flags (16 different flags, at most)
->>   */
->>  #define CTL_FLAGS_CLAMP_RANGE	(1 << 0) /* Clamp to min/max range */
->> +#define CTL_FLAGS_OOR_WARNED	(1 << 1) /* Out-of-range warning issued */
-> With the enum set you can then kdocify this too.
+Add pinctrl bindings for Actions Semi S900 SoC
 
-Yes, will do.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../bindings/pinctrl/actions,s900-pinctrl.txt      | 178 +++++++++++++++++++++
+ 1 file changed, 178 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
 
->>  struct ctl_node {
->>  	struct rb_node node;
->> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->> index 2b2b30c..f9f3373 100644
->> --- a/kernel/sysctl.c
->> +++ b/kernel/sysctl.c
->> @@ -2515,36 +2515,54 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
->>   *  min: ptr to minimum allowable value
->>   *  max: ptr to maximum allowable value
->>   *  flags: ptr to flags
->> + *  name: sysctl parameter name
->>   */
->>  struct do_proc_dointvec_minmax_conv_param {
->>  	int *min;
->>  	int *max;
->>  	uint16_t *flags;
->> +	const char *name;
->>  };
->>  
->>  static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
->>  					int *valp,
->>  					int write, void *data)
->>  {
->> +#define SYSCTL_WARN_MSG	\
->> +"Kernel parameter \"%s\" was set out of range [%d, %d], clamped to %d.\n"
-> Please loose this define. What about a proc_ctl_warn() which takes the
-> parameters and then does the checks?
-
-Yes, I think that is better.
-
->> +
->>  	struct do_proc_douintvec_minmax_conv_param *param = data;
->>  
->>  	if (write) {
->>  		unsigned int val = *lvalp;
->> +		bool clamped = false;
->>  		bool clamp = param->flags &&
->>  			   (*param->flags & CTL_FLAGS_CLAMP_RANGE);
->>  
->> @@ -2623,24 +2649,36 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
->>  			return -EINVAL;
->>  
->>  		if (param->min && *param->min > val) {
->> -			if (clamp)
->> +			if (clamp) {
->>  				val = *param->min;
->> -			else
->> +				clamped = true;
->> +			} else {
->>  				return -ERANGE;
->> +			}
->>  		}
->>  		if (param->max && *param->max < val) {
->> -			if (clamp)
->> +			if (clamp) {
->>  				val = *param->max;
->> -			else
->> +				clamped = true;
->> +			} else {
->>  				return -ERANGE;
->> +			}
->>  		}
->>  		*valp = val;
->> +		if (clamped && param->name &&
->> +		   !(*param->flags & CTL_FLAGS_OOR_WARNED)) {
->> +			pr_warn(SYSCTL_WARN_MSG, param->name,
->> +				param->min ? *param->min : 0,
->> +				param->max ? *param->max : UINT_MAX, val);
->> +			*param->flags |= CTL_FLAGS_OOR_WARNED;
-> Why not just use pr_warn_once()?
->
->   Luis
-
-Right, pr_warn_once can be used in this case.
-
-Cheers,
-Longman
+diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+new file mode 100644
+index 000000000000..fb87c7d74f2e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+@@ -0,0 +1,178 @@
++Actions Semi S900 Pin Controller
++
++This binding describes the pin controller found in the S900 SoC.
++
++Required Properties:
++
++- compatible:   Should be "actions,s900-pinctrl"
++- reg:          Should contain the register base address and size of
++                the pin controller.
++- clocks:       phandle of the clock feeding the pin controller
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
++
++The pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for a
++pin, a group, or a list of pins or groups. This configuration can include the
++mux function to select on those group(s), and various pin configuration
++parameters, such as pull-up, drive strength, etc.
++
++PIN CONFIGURATION NODES:
++
++The name of each subnode is not important; all subnodes should be enumerated
++and processed purely based on their content.
++
++Each subnode only affects those parameters that are explicitly listed. In
++other words, a subnode that lists a mux function but no pin configuration
++parameters implies no information about any pin configuration parameters.
++Similarly, a pin subnode that describes a pullup parameter implies no
++information about e.g. the mux function.
++
++Pinmux functions are available only for the pin groups while pinconf
++parameters are available for both pin groups and individual pins.
++
++The following generic properties as defined in pinctrl-bindings.txt are valid
++to specify in a pin configuration subnode:
++
++Required Properties:
++
++- pins:           An array of strings, each string containing the name of a pin.
++                  These pins are used for selecting the pull control and schmitt
++                  trigger parameters. The following are the list of pins
++                  available:
++
++                  eth_txd0, eth_txd1, eth_txen, eth_rxer, eth_crs_dv,
++                  eth_rxd1, eth_rxd0, eth_ref_clk, eth_mdc, eth_mdio,
++                  sirq0, sirq1, sirq2, i2s_d0, i2s_bclk0, i2s_lrclk0,
++                  i2s_mclk0, i2s_d1, i2s_bclk1, i2s_lrclk1, i2s_mclk1,
++                  pcm1_in, pcm1_clk, pcm1_sync, pcm1_out, eram_a5,
++                  eram_a6, eram_a7, eram_a8, eram_a9, eram_a10, eram_a11,
++                  lvds_oep, lvds_oen, lvds_odp, lvds_odn, lvds_ocp,
++                  lvds_ocn, lvds_obp, lvds_obn, lvds_oap, lvds_oan,
++                  lvds_eep, lvds_een, lvds_edp, lvds_edn, lvds_ecp,
++                  lvds_ecn, lvds_ebp, lvds_ebn, lvds_eap, lvds_ean,
++                  sd0_d0, sd0_d1, sd0_d2, sd0_d3, sd1_d0, sd1_d1,
++                  sd1_d2, sd1_d3, sd0_cmd, sd0_clk, sd1_cmd, sd1_clk,
++                  spi0_sclk, spi0_ss, spi0_miso, spi0_mosi, uart0_rx,
++                  uart0_tx, uart2_rx, uart2_tx, uart2_rtsb, uart2_ctsb,
++                  uart3_rx, uart3_tx, uart3_rtsb, uart3_ctsb, uart4_rx,
++                  uart4_tx, i2c0_sclk, i2c0_sdata, i2c1_sclk, i2c1_sdata,
++                  i2c2_sclk, i2c2_sdata, csi0_dn0, csi0_dp0, csi0_dn1,
++                  csi0_dp1, csi0_cn, csi0_cp, csi0_dn2, csi0_dp2, csi0_dn3,
++                  csi0_dp3, dsi_dp3, dsi_dn3, dsi_dp1, dsi_dn1, dsi_cp,
++                  dsi_cn, dsi_dp0, dsi_dn0, dsi_dp2, dsi_dn2, sensor0_pclk,
++                  csi1_dn0,csi1_dp0,csi1_dn1, csi1_dp1, csi1_cn, csi1_cp,
++                  sensor0_ckout, nand0_d0, nand0_d1, nand0_d2, nand0_d3,
++                  nand0_d4, nand0_d5, nand0_d6, nand0_d7, nand0_dqs,
++                  nand0_dqsn, nand0_ale, nand0_cle, nand0_ceb0, nand0_ceb1,
++                  nand0_ceb2, nand0_ceb3, nand1_d0, nand1_d1, nand1_d2,
++                  nand1_d3, nand1_d4, nand1_d5, nand1_d6, nand1_d7, nand1_dqs,
++                  nand1_dqsn, nand1_ale, nand1_cle, nand1_ceb0, nand1_ceb1,
++                  nand1_ceb2, nand1_ceb3, sgpio0, sgpio1, sgpio2, sgpio3
++
++- groups:         An array of strings, each string containing the name of a pin
++                  group. These pin groups are used for selecting the pinmux
++                  functions.
++
++                  lvds_oxx_uart4_mfp, rmii_mdc_mfp, rmii_mdio_mfp, sirq0_mfp,
++                  sirq1_mfp, rmii_txd0_mfp, rmii_txd1_mfp, rmii_txen_mfp,
++                  rmii_rxer_mfp, rmii_crs_dv_mfp, rmii_rxd1_mfp, rmii_rxd0_mfp,
++                  rmii_ref_clk_mfp, i2s_d0_mfp, i2s_d1_mfp, i2s_lr_m_clk0_mfp,
++                  i2s_bclk0_mfp, i2s_bclk1_mclk1_mfp, pcm1_in_out_mfp,
++                  pcm1_clk_mfp, pcm1_sync_mfp, eram_a5_mfp, eram_a6_mfp,
++                  eram_a7_mfp, eram_a8_mfp, eram_a9_mfp, eram_a10_mfp,
++                  eram_a11_mfp, lvds_oep_odn_mfp, lvds_ocp_obn_mfp,
++                  lvds_oap_oan_mfp, lvds_e_mfp, spi0_sclk_mosi_mfp, spi0_ss_mfp,
++                  spi0_miso_mfp, uart2_rtsb_mfp, uart2_ctsb_mfp, uart3_rtsb_mfp,
++                  uart3_ctsb_mfp, sd0_d0_mfp, sd0_d1_mfp, sd0_d2_d3_mfp,
++                  sd1_d0_d3_mfp, sd0_cmd_mfp, sd0_clk_mfp, sd1_cmd_clk_mfp,
++                  uart0_rx_mfp, nand0_d0_ceb3_mfp, uart0_tx_mfp, i2c0_mfp,
++                  csi0_cn_cp_mfp, csi0_dn0_dp3_mfp, csi1_dn0_cp_mfp,
++                  dsi_dp3_dn1_mfp, dsi_cp_dn0_mfp, dsi_dp2_dn2_mfp,
++                  nand1_d0_ceb1_mfp, nand1_ceb3_mfp, nand1_ceb0_mfp,
++                  csi1_dn0_dp0_mfp, uart4_rx_tx_mfp
++
++
++                  These pin groups are used for selecting the drive strength
++                  parameters.
++
++                  sgpio3_drv, sgpio2_drv, sgpio1_drv, sgpio0_drv,
++                  rmii_tx_d0_d1_drv, rmii_txen_rxer_drv, rmii_crs_dv_drv,
++                  rmii_rx_d1_d0_drv, rmii_ref_clk_drv, rmii_mdc_mdio_drv,
++                  sirq_0_1_drv, sirq2_drv, i2s_d0_d1_drv, i2s_lr_m_clk0_drv,
++                  i2s_blk1_mclk1_drv, pcm1_in_out_drv, lvds_oap_oan_drv,
++                  lvds_oep_odn_drv, lvds_ocp_obn_drv, lvds_e_drv, sd0_d3_d0_drv,
++                  sd1_d3_d0_drv, sd0_sd1_cmd_clk_drv, spi0_sclk_mosi_drv,
++                  spi0_ss_miso_drv, uart0_rx_tx_drv, uart4_rx_tx_drv, uart2_drv,
++                  uart3_drv, i2c0_drv, i2c1_drv, i2c2_drv, sensor0_drv
++
++                  These pin groups are used for selecting the slew rate
++                  parameters.
++
++                  sgpio3_sr, sgpio2_sr, sgpio1_sr, sgpio0_sr, rmii_tx_d0_d1_sr,
++                  rmii_txen_rxer_sr, rmii_crs_dv_sr, rmii_rx_d1_d0_sr,
++                  rmii_ref_clk_sr, rmii_mdc_mdio_sr, sirq_0_1_sr, sirq2_sr,
++                  i2s_do_d1_sr, i2s_lr_m_clk0_sr, i2s_bclk0_mclk1_sr,
++                  pcm1_in_out_sr, sd1_d3_d0_sr, sd0_sd1_clk_cmd_sr,
++                  spi0_sclk_mosi_sr, spi0_ss_miso_sr, uart0_rx_tx_sr,
++                  uart4_rx_tx_sr, uart2_sr, uart3_sr, i2c0_sr, i2c1_sr, i2c2_sr,
++                  sensor0_sr
++
++- function:       An array of strings, each string containing the name of the
++                  pinmux functions. These functions can only be selected by
++                  the corresponding pin groups. The following are the list of
++                  pinmux functions available:
++
++                  eram, eth_rmii, eth_smii, spi0, spi1, spi2, spi3, sens0,
++                  uart0, uart1, uart2, uart3, uart4, uart5, uart6, i2s0, i2s1,
++                  pcm0, pcm1, jtag, pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, sd0,
++                  sd1, sd2, sd3, i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, lvds,
++                  usb30, usb20, gpu, mipi_csi0, mipi_csi1, mipi_dsi, nand0,
++                  nand1, spdif, sirq0, sirq1, sirq2
++
++Optional Properties:
++
++- bias-bus-hold:  No arguments. The specified pins should retain the previous
++                  state value.
++- bias-high-impedance: No arguments. The specified pins should be configured
++                  as high impedance.
++- bias-pull-down: No arguments. The specified pins should be configured as
++                  pull down.
++- bias-pull-up:   No arguments. The specified pins should be configured as
++                  pull up.
++- input-schmitt-enable: No arguments: Enable schmitt trigger for the specified
++                  pins
++- input-schmitt-disable: No arguments: Disable schmitt trigger for the specified
++                  pins
++- slew-rate:      Integer. Sets slew rate for the specified pins.
++                  Valid values are:
++                  <0>  - Slow
++                  <1>  - Fast
++- drive-strength: Integer. Selects the drive strength for the specified
++                  pins in mA.
++                  Valid values are:
++                  <2>
++                  <4>
++                  <8>
++                  <12>
++
++Example:
++
++          pinctrl: pinctrl@e01b0000 {
++                  compatible = "actions,s900-pinctrl";
++                  reg = <0x0 0xe01b0000 0x0 0x1000>;
++                  clocks = <&cmu CLK_GPIO>;
++
++                  uart2-default: uart2-default {
++                          pinmux {
++                                  groups = "lvds_oep_odn_mfp";
++                                  function = "uart2";
++                          };
++                          pinconf {
++                                  groups = "lvds_oep_odn_drv";
++                                  drive-strength = <12>;
++                          };
++                  };
++          };
+-- 
+2.14.1
