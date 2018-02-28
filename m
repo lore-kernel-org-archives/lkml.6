@@ -1,65 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932117AbeB1Kat (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:30:49 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60070 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752096AbeB1Kar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:30:47 -0500
-Date: Wed, 28 Feb 2018 11:30:42 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] net: iucv: Free memory obtained by kzalloc
-Message-ID: <20180228113042.6a2f5177.cohuck@redhat.com>
-In-Reply-To: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
-References: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752502AbeB1K3T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:29:19 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37140 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752469AbeB1K3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:29:17 -0500
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/7] x86/microcode/intel: Writeback and invalidate caches before updating microcode
+Date: Wed, 28 Feb 2018 11:28:42 +0100
+Message-Id: <20180228102846.13447-4-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180228102846.13447-1-bp@alien8.de>
+References: <20180228102846.13447-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018 15:24:16 +0530
-Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+From: Ashok Raj <ashok.raj@intel.com>
 
-> Free memory, if afiucv_iucv_init is not successful and
-> removing a IUCV driver.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  net/iucv/af_iucv.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-> index 1e8cc7b..eb0995a 100644
-> --- a/net/iucv/af_iucv.c
-> +++ b/net/iucv/af_iucv.c
-> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
->  	af_iucv_dev->driver = &af_iucv_driver;
->  	err = device_register(af_iucv_dev);
->  	if (err)
-> -		goto out_driver;
-> +		goto out_iucv_dev;
->  	return 0;
->  
-> +out_iucv_dev:
-> +	kfree(af_iucv_dev);
->  out_driver:
->  	driver_unregister(&af_iucv_driver);
->  out_iucv:
-> @@ -2496,6 +2498,7 @@ static void __exit afiucv_exit(void)
->  {
->  	if (pr_iucv) {
->  		device_unregister(af_iucv_dev);
-> +		kfree(af_iucv_dev);
->  		driver_unregister(&af_iucv_driver);
->  		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
->  		symbol_put(iucv_if);
+Updating microcode is less error prone when caches have been flushed and
+depending on what exactly the microcode is updating. For example, some
+of the issues around certain Broadwell parts can be addressed by doing a
+full cache flush.
 
-No, you must not use kfree() after you called device_register() (even
-if it was not successful!) -- see the comment for device_register().
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Link: http://lkml.kernel.org/r/1519352533-15992-3-git-send-email-ashok.raj@intel.com
+[ Massage it and use native_wbinvd() in both cases. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/microcode/intel.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 87bd6dc94081..e2864bc2d575 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -600,6 +600,12 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
+ 		return UCODE_OK;
+ 	}
+ 
++	/*
++	 * Writeback and invalidate caches before updating microcode to avoid
++	 * internal issues depending on what the microcode is updating.
++	 */
++	native_wbinvd();
++
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -816,6 +822,12 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 		return UCODE_OK;
+ 	}
+ 
++	/*
++	 * Writeback and invalidate caches before updating microcode to avoid
++	 * internal issues depending on what the microcode is updating.
++	 */
++	native_wbinvd();
++
+ 	/* write microcode via MSR 0x79 */
+ 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+-- 
+2.13.0
