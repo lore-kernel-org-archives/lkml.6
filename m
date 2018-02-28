@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933033AbeB1Sn3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:43:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39617 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932311AbeB1Sn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:43:27 -0500
-Date: Wed, 28 Feb 2018 18:43:25 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 2/5] sysctl: Add flags to support min/max range
- clamping
-Message-ID: <20180228184325.GJ14069@wotan.suse.de>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-3-git-send-email-longman@redhat.com>
- <20180228004753.GY14069@wotan.suse.de>
- <23264b8f-e84d-48cf-0da0-eb328916b2aa@redhat.com>
+        id S933116AbeB1Snn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:43:43 -0500
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:42039 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932311AbeB1Snl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 13:43:41 -0500
+X-Google-Smtp-Source: AH8x227I2CAKdQOMOeDjjxliEBgLenFmUYg4mmkFFbHf97RyCR0gwktsjbcOnAQuVnGFxmdNh+5Z/g==
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20VUCHENER?= <clement.vuchener@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Subject: [PATCH v4 0/4] new driver for Valve Steam Controller
+Date: Wed, 28 Feb 2018 19:43:18 +0100
+Message-Id: <20180228184322.29636-1-rodrigorivascosta@gmail.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23264b8f-e84d-48cf-0da0-eb328916b2aa@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 12:53:40PM -0500, Waiman Long wrote:
-> On 02/27/2018 07:47 PM, Luis R. Rodriguez wrote:
-> > On Tue, Feb 27, 2018 at 03:49:48PM -0500, Waiman Long wrote:
-> >> When minimum/maximum values are specified for a sysctl parameter in
-> >> the ctl_table structure with proc_dointvec_minmax() handler,
-> > an
-> >
-> >> update
-> >> to that parameter will fail with error if the given value is outside
-> >> of the required range.
-> >>
-> >> There are use cases where it may be better to clamp the value of
-> >> the sysctl parameter to the given range without failing the update,
-> >> especially if the users are not aware of the actual range limits.
-> > Makes me wonder if we should add something which does let one query
-> > for the ranges. Then scripts can fetch that as well.
-> 
-> That will actually be better than printing out the range in the dmesg
-> log. However, I haven't figured out an easy way of doing that. If you
-> have any suggestion, please let me know about it.
+This patchset implements a driver for Valve Steam Controller, based on a
+reverse analysis by myself.
 
-I think a macro that also adds yet another proc read-only entry with a postfix
-"_range" with an internal handler which prints the range may suffice.
+This is reroll v4, changes since v3:
+ * Add command to check the wireless connection status on probe, without
+   waiting for a message (thanks to Clément Vuchener for the tip).
+ * Removed the error code on redundant connection/disconnection messages. That
+   was harmless but polluted dmesg.
+ * Added buttons for touching the left-pad and right-pad.
+ * Fixed a misplaced #include from 2/4 to 1/4.
 
-  Luis
+I've added the new command from the first point in a new commit, so now there
+are 4 parts. Feel free to merge that with the previous (or all of them) if you
+wish.
+
+About the new buttons, before I considered those unnecesary because I thought
+of the pads as a kind of flat joysticks, so when they are not touched they go
+back to the virtual center (0,0), and the touch/untouch events are not useful.
+But I've been proved short-sighted in this kind of decisions before, so I've
+added them, sure they are useful for somebody.
+
+Also, I've been running some tests, with the driver, the Steam Client and my
+stemctrl utility [1], and all works just fine. Even unloading and reloading
+the modules (with a UDEV rule to disable the lizard mode) while the Steam
+Client is running works without any issue.
+
+[1]: https://github.com/rodrigorc/steamctrl
+
+Rodrigo Rivas Costa (4):
+  HID: add driver for Valve Steam Controller
+  HID: steam: add serial number information.
+  HID: steam: command to check wireless connection
+  HID: steam: add battery device.
+
+ drivers/hid/Kconfig     |   8 +
+ drivers/hid/Makefile    |   1 +
+ drivers/hid/hid-ids.h   |   4 +
+ drivers/hid/hid-steam.c | 797 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 810 insertions(+)
+ create mode 100644 drivers/hid/hid-steam.c
+
+-- 
+2.16.2
