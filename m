@@ -1,70 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751838AbeB1Cpg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 21:45:36 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:40190 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751754AbeB1Cpe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 21:45:34 -0500
-X-Google-Smtp-Source: AG47ELsM3gPrqe/iM26UgaGd/X0Gc19HB1/nkuxfW+XO2rvvfxzQoCm4bgDz4G/O6av3G4z90DoFc9c7xUzhHUDyWXo=
+        id S1751863AbeB1CqG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 21:46:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46951 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751521AbeB1CqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 21:46:05 -0500
+Subject: Re: [PATCH v3] f2fs: allocate buffer for decrypting filename to avoid
+ panic
+To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <1519784380-83138-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <786c9ff4-2214-b980-8a94-184345cee3b8@huawei.com>
+Date: Wed, 28 Feb 2018 10:49:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-From: Rob Herring <robherring2@gmail.com>
-Date: Tue, 27 Feb 2018 20:45:12 -0600
-Message-ID: <CAL_JsqLUrhpY9wngZkU2pFxM+eqXebQjLw4QDe=kE8KsTaSmSw@mail.gmail.com>
-Subject: [GIT PULL] DeviceTree fixes for 4.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519784380-83138-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 2018/2/28 10:19, Yunlong Song wrote:
+> In some platforms (such as arm), high memory is used, then the
+> decrypting filename will cause panic, the reason see commit
+> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+> for decrypting filename"):
+> 
+>  We got dentry pages from high_mem, and its address space directly goes into the
+>  decryption path via f2fs_fname_disk_to_usr.
+>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+> 
+>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>  ...
+>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+> 
+> Howerver, later patches:
+> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
+> unneeded memory allocation in ->readdir")
+> 
+> reverts the codes, which causes panic again in arm, so let's add part of
+> the old patch again for dentry page.
+> 
 
-Please pull a couple of DT binding updates.
+Fixes: e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
 
-Rob
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Looks good to me, you can add:
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-are available in the git repository at:
+Minor, we can just use 'git revert' to generate patch, so that commit title can
+notice the patch are reverting buggy commit.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-tags/devicetree-fixes-for-4.16
-
-for you to fetch changes up to d40ade43e3cd55c6d83859dffc0f9d428a954c63:
-
-  dt-bindings: power: Fix "debounce-interval" property misspelling
-(2018-02-18 21:05:43 -0600)
-
-----------------------------------------------------------------
-DeviceTree fixes for 4.16:
-
-- Update i.MX thermal binding example to use current binding, not the
-  deprecated one
-
-- Move arm-charlcd to auxdisplay/
-
-- Fix misspelling of "debounce-interval"
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      auxdisplay: Move arm-charlcd binding to correct folder
-
-Dong Aisheng (1):
-      dt-bindings: thermal: imx: update the binding to new method
-
-Geert Uytterhoeven (1):
-      dt-bindings: power: Fix "debounce-interval" property misspelling
-
- .../bindings/{misc => auxdisplay}/arm-charlcd.txt  |  0
- .../devicetree/bindings/power/wakeup-source.txt    |  2 +-
- .../devicetree/bindings/thermal/imx-thermal.txt    | 25 ++++++++++++++++++++++
- 3 files changed, 26 insertions(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/{misc =>
-auxdisplay}/arm-charlcd.txt (100%)
+Thanks,
