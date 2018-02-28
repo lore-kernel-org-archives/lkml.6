@@ -1,70 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752150AbeB1D1Z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 22:27:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51712 "EHLO mx1.redhat.com"
+        id S1752231AbeB1D3F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 22:29:05 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51736 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751830AbeB1D1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:27:21 -0500
-From: Baoquan He <bhe@redhat.com>
-To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, pagupta@redhat.com
-Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
-        Baoquan He <bhe@redhat.com>
-Subject: [PATCH v3 3/4] mm/sparse: Add a new parameter 'data_unit_size' for alloc_usemap_and_memmap
-Date: Wed, 28 Feb 2018 11:26:56 +0800
-Message-Id: <20180228032657.32385-4-bhe@redhat.com>
-In-Reply-To: <20180228032657.32385-1-bhe@redhat.com>
-References: <20180228032657.32385-1-bhe@redhat.com>
+        id S1752058AbeB1D3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 22:29:03 -0500
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+ <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+ <20180226223252-mutt-send-email-mst@kernel.org>
+ <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
+ <20180227190703-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
+Date: Wed, 28 Feb 2018 11:28:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180227190703-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's used to pass the size of map data unit into alloc_usemap_and_memmap,
-and is preparation for next patch.
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- mm/sparse.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 5769a0a79dc1..e1aa2f44530d 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -528,10 +528,12 @@ void __weak __meminit vmemmap_populate_print_last(void)
- /**
-  *  alloc_usemap_and_memmap - memory alloction for pageblock flags and vmemmap
-  *  @map: usemap_map for pageblock flags or mmap_map for vmemmap
-+ *  @unit_size: size of map unit
-  */
- static void __init alloc_usemap_and_memmap(void (*alloc_func)
- 					(void *, unsigned long, unsigned long,
--					unsigned long, int), void *data)
-+					unsigned long, int), void *data,
-+					int data_unit_size)
- {
- 	unsigned long pnum;
- 	unsigned long map_count;
-@@ -608,7 +610,8 @@ void __init sparse_init(void)
- 	if (!usemap_map)
- 		panic("can not allocate usemap_map\n");
- 	alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
--							(void *)usemap_map);
-+				(void *)usemap_map,
-+				sizeof(usemap_map[0]));
- 
- #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
- 	size2 = sizeof(struct page *) * NR_MEM_SECTIONS;
-@@ -616,7 +619,8 @@ void __init sparse_init(void)
- 	if (!map_map)
- 		panic("can not allocate map_map\n");
- 	alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
--							(void *)map_map);
-+				(void *)map_map,
-+				sizeof(map_map[0]));
- #endif
- 
- 	for_each_present_section_nr(0, pnum) {
--- 
-2.13.6
+On 2018年02月28日 01:12, Michael S. Tsirkin wrote:
+> On Tue, Feb 27, 2018 at 10:29:26AM +0800, Jason Wang wrote:
+>>
+>> On 2018年02月27日 04:34, Michael S. Tsirkin wrote:
+>>> On Mon, Feb 26, 2018 at 11:15:42AM +0800, Jason Wang wrote:
+>>>> On 2018年02月26日 09:17, Michael S. Tsirkin wrote:
+>>>>> So pointer rings work fine, but they have a problem: make them too small
+>>>>> and not enough entries fit.  Make them too large and you start flushing
+>>>>> your cache and running out of memory.
+>>>>>
+>>>>> This is a new idea of mine: a ring backed by a linked list. Once you run
+>>>>> out of ring entries, instead of a drop you fall back on a list with a
+>>>>> common lock.
+>>>>>
+>>>>> Should work well for the case where the ring is typically sized
+>>>>> correctly, but will help address the fact that some user try to set e.g.
+>>>>> tx queue length to 1000000.
+>>>>>
+>>>>> In other words, the idea is that if a user sets a really huge TX queue
+>>>>> length, we allocate a ptr_ring which is smaller, and use the backup
+>>>>> linked list when necessary to provide the requested TX queue length
+>>>>> legitimately.
+>>>>>
+>>>>> My hope this will move us closer to direction where e.g. fw codel can
+>>>>> use ptr rings without locking at all.  The API is still very rough, and
+>>>>> I really need to take a hard look at lock nesting.
+>>>>>
+>>>>> Compiled only, sending for early feedback/flames.
+>>>>>
+>>>>> Signed-off-by: Michael S. Tsirkin<mst@redhat.com>
+>>>>> ---
+>>>>>
+>>>>> changes from v1:
+>>>>> - added clarifications by DaveM in the commit log
+>>>>> - build fixes
+>>>>>
+>>>>>     include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
+>>>>>     1 file changed, 61 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+>>>>> index d72b2e7..8aa8882 100644
+>>>>> --- a/include/linux/ptr_ring.h
+>>>>> +++ b/include/linux/ptr_ring.h
+>>>>> @@ -31,11 +31,18 @@
+>>>>>     #include <asm/errno.h>
+>>>>>     #endif
+>>>>> +/* entries must start with the following structure */
+>>>>> +struct plist {
+>>>>> +	struct plist *next;
+>>>>> +	struct plist *last; /* only valid in the 1st entry */
+>>>>> +};
+>>>> So I wonder whether or not it's better to do this in e.g skb_array
+>>>> implementation. Then it can use its own prev/next field.
+>>> XDP uses ptr ring directly, doesn't it?
+>>>
+>> Well I believe the main user for this is qdisc, which use skb array. And we
+>> can not use what implemented in this patch directly for sk_buff without some
+>> changes on the data structure.
+> Why not? skb has next and prev pointers at 1st two fields:
+>
+> struct sk_buff {
+>          union {
+>                  struct {
+>                          /* These two members must be first. */
+>                          struct sk_buff          *next;
+>                          struct sk_buff          *prev;
+> ...
+> }
+>
+> so it's just a question of casting to struct plist.
+
+Well, then the casting can only be done in skb_array implementation?
+
+>
+> Or we can add plist to a union:
+>
+>
+> struct sk_buff {
+>          union {
+>                  struct {
+>                          /* These two members must be first. */
+>                          struct sk_buff          *next;
+>                          struct sk_buff          *prev;
+>                          
+>                          union {
+>                                  struct net_device       *dev;
+>                                  /* Some protocols might use this space to store information,
+>                                   * while device pointer would be NULL.
+>                                   * UDP receive path is one user.
+>                                   */
+>                                  unsigned long           dev_scratch;
+>                          };
+>                  };
+>                  struct rb_node  rbnode; /* used in netem & tcp stack */
+> +		struct plist plist; /* For use with ptr_ring */
+>          };
+>
+
+This look ok.
+
+>
+>> For XDP, we need to embed plist in struct xdp_buff too,
+> Right - that's pretty straightforward, isn't it?
+
+Yes, it's not clear to me this is really needed for XDP consider the 
+lock contention it brings.
+
+Thanks
+
+>> so it looks to me
+>> that the better approach is to have separated function for ptr ring and skb
+>> array.
+>>
+>> Thanks
