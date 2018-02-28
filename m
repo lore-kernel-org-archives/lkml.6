@@ -1,100 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeB1OUp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:20:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752228AbeB1OUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:20:43 -0500
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
- <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
- <20180226223252-mutt-send-email-mst@kernel.org>
- <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
- <20180227190703-mutt-send-email-mst@kernel.org>
- <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
- <20180228060845-mutt-send-email-mst@kernel.org>
- <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
- <20180228155121-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <f5c4904f-4bf1-1dc3-a57f-766a5b120d85@redhat.com>
-Date: Wed, 28 Feb 2018 22:20:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752627AbeB1OVy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:21:54 -0500
+Received: from foss.arm.com ([217.140.101.70]:50266 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752157AbeB1OVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:21:53 -0500
+Date: Wed, 28 Feb 2018 14:21:48 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
+        Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Niklas Cassel <niklass@axis.com>, John Keeping <john@metanate.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] PCI: endpoint: Handle 64-bit BARs properly
+Message-ID: <20180228142148.GD21854@e107981-ln.cambridge.arm.com>
+References: <20180227115908.14593-1-niklas.cassel@axis.com>
+ <20180227115908.14593-2-niklas.cassel@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228155121-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180227115908.14593-2-niklas.cassel@axis.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 27, 2018 at 12:59:05PM +0100, Niklas Cassel wrote:
+> A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
+> we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
+> 
+> If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
 
+PCI_BASE_ADDRESS_MEM_TYPE_64 is detected through a sizeof(dma_addr_t).
 
-On 2018年02月28日 22:01, Michael S. Tsirkin wrote:
-> On Wed, Feb 28, 2018 at 02:28:21PM +0800, Jason Wang wrote:
->>
->> On 2018年02月28日 12:09, Michael S. Tsirkin wrote:
->>>>> Or we can add plist to a union:
->>>>>
->>>>>
->>>>> struct sk_buff {
->>>>>            union {
->>>>>                    struct {
->>>>>                            /* These two members must be first. */
->>>>>                            struct sk_buff          *next;
->>>>>                            struct sk_buff          *prev;
->>>>>                            union {
->>>>>                                    struct net_device       *dev;
->>>>>                                    /* Some protocols might use this space to store information,
->>>>>                                     * while device pointer would be NULL.
->>>>>                                     * UDP receive path is one user.
->>>>>                                     */
->>>>>                                    unsigned long           dev_scratch;
->>>>>                            };
->>>>>                    };
->>>>>                    struct rb_node  rbnode; /* used in netem & tcp stack */
->>>>> +		struct plist plist; /* For use with ptr_ring */
->>>>>            };
->>>>>
->>>> This look ok.
->>>>
->>>>>> For XDP, we need to embed plist in struct xdp_buff too,
->>>>> Right - that's pretty straightforward, isn't it?
->>>> Yes, it's not clear to me this is really needed for XDP consider the lock
->>>> contention it brings.
->>>>
->>>> Thanks
->>> The contention is only when the ring overflows into the list though.
->>>
->> Right, but there's usually a mismatch of speed between producer and
->> consumer. In case of a fast producer, we may get this contention very
->> frequently.
->>
->> Thanks
-> This is not true in my experiments.  In my experiments, ring size of 4k
-> bytes is enough to see packet drops in single %s of cases.
->
-> To you have workloads where rings are full most of the time?
+I thought we decided to describe the BARs not as dma_addr_t + size but
+as resources, which would allow you to have flags describing their
+actual size.
 
-E.g using xdp_redirect to redirect packets from ixgbe to tap. In my 
-test, ixgeb can produce ~8Mpps. But vhost can only consume ~3.5Mpps.
+Current code has a fixed BAR size defined by the dma_addr_t type size
+and I do not think that's what we really want.
 
->
-> One other nice side effect of this patch is that instead of dropping
-> packets quickly it slows down producer to match consumer speeds.
+How is (in HW I mean) actually the BAR size configured in a given EPF ?
 
-In some case, producer may not want to be slowed down, e.g in devmap 
-which can redirect packets into several different interfaces.
+Thanks,
+Lorenzo
 
-> IOW, it can go either way in theory, we will need to test and see the effect.
->
-
-Yes.
-
-Thanks
+> it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
+> (and BAR_mask[x] and BAR_mask[x+1]).
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 64d8a17f8094..ecbf6a7750dc 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  			if (bar == test_reg_bar)
+>  				return ret;
+>  		}
+> +		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
+> +			bar++;
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.14.2
+> 
