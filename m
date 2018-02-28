@@ -1,109 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933100AbeB1Pou (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:44:50 -0500
-Received: from foss.arm.com ([217.140.101.70]:52026 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932653AbeB1Poq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:44:46 -0500
-Date: Wed, 28 Feb 2018 15:44:44 +0000
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: DRI-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
- setting.
-Message-ID: <20180228154444.GA20827@e110455-lin.cambridge.arm.com>
-References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
- <20180228154041.GK5453@intel.com>
+        id S933407AbeB1Ppm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:45:42 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43105 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932642AbeB1Ppj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:45:39 -0500
+X-Google-Smtp-Source: AG47ELsI/7AhX2AzfBBVZZe7pSDe68sIFh5wTbFI7jtCn1h0pNaQZIgFPZ3wId+cSfGbB8q62egWA8A9+g49L486s2Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180228154041.GK5453@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <76a05abd818c89032161585ba130511a5bd673f0.1519799691.git.jan.kiszka@siemens.com>
+References: <cover.1519799691.git.jan.kiszka@siemens.com> <76a05abd818c89032161585ba130511a5bd673f0.1519799691.git.jan.kiszka@siemens.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 17:45:37 +0200
+Message-ID: <CAHp75Vf35N1Q0aVjKNwz5UMAVKR-q8PypoDhgr8bCbbiqVeSqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] x86: Consolidate PCI_MMCONFIG configs
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 05:40:41PM +0200, Ville Syrjälä wrote:
-> On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
-> > The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
-> > ioctl expects that any capability set by the client will have a value of 1.
-> > Make the check early so that we don't have to test the value for each
-> > capability.
-> 
-> What if we want a a non-boolean capability at some point?
+On Wed, Feb 28, 2018 at 8:34 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> Not sure if those two worked by design or just by chance so far. In any
+> case, it's at least cleaner and clearer to express this in a single
+> config statement.
 
-Well, I'm adding another boolean capability soon, so you will be going
-against the trend :)
+I would add a reference to the commit which brought that in the first place.
 
-I guess you will have 2 options: revert the patch or add a condition to
-the test.
+>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  arch/x86/Kconfig | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index eb7f43f23521..63e85e7da12e 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2641,8 +2641,9 @@ config PCI_DIRECT
+>         depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
+>
+>  config PCI_MMCONFIG
+> -       def_bool y
+> -       depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
+> +       bool "Support mmconfig PCI config space access" if X86_64
+> +       default y
+> +       depends on PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY || X86_64)
 
-I don't have strong feelings, just felt like too much copying when
-adding another capability so I thought to do some "cleanup".
+Looking to the above context I would rather put it like
 
-Best regards,
-Liviu
-
-> 
-> > 
-> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-> > ---
-> >  drivers/gpu/drm/drm_ioctl.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> > index af782911c505..02ffa0e8d77b 100644
-> > --- a/drivers/gpu/drm/drm_ioctl.c
-> > +++ b/drivers/gpu/drm/drm_ioctl.c
-> > @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
-> >  {
-> >  	struct drm_set_client_cap *req = data;
-> >  
-> > +	if (req->value > 1)
-> > +		return -EINVAL;
-> > +
-> >  	switch (req->capability) {
-> >  	case DRM_CLIENT_CAP_STEREO_3D:
-> > -		if (req->value > 1)
-> > -			return -EINVAL;
-> >  		file_priv->stereo_allowed = req->value;
-> >  		break;
-> >  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
-> > -		if (req->value > 1)
-> > -			return -EINVAL;
-> >  		file_priv->universal_planes = req->value;
-> >  		break;
-> >  	case DRM_CLIENT_CAP_ATOMIC:
-> >  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
-> >  			return -EINVAL;
-> > -		if (req->value > 1)
-> > -			return -EINVAL;
-> >  		file_priv->atomic = req->value;
-> >  		file_priv->universal_planes = req->value;
-> >  		break;
-> > -- 
-> > 2.16.2
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> -- 
-> Ville Syrjälä
-> Intel OTC
+depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY || PCI_GOMMCONFIG))
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+With Best Regards,
+Andy Shevchenko
