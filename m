@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834774-2-7066948130643223667
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834763-2-10663595566970897254
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834774; b=JQbbaAqA2gmaxl3U+my5SZ09rKogdjFQlcFMpdjTdsfWidT
-    GvYBxOPLRuYhQEOazY6erqUr6Rbk5ln5Y1jS+En2pv41f74wqWedoSyuHFIB8LXo
-    U2/eBzOy1gOJBJ89ojO8RdEHnwFRLVel4tysJtvKoJ98ta9Kp7YFPca5Y7FOJvUO
-    URvCRYAHMvzOdvTd3qJ8vkJBl4GTja0t3qERbegqYb/FC13G953+V9omQEotMQ+U
-    0yPMsHdlPbfaiO6cav3XLZvSdRzsRhYvNjECr8OQGvHQgh4tWLnb+UOVzMgajCxF
-    oCU5tmGYL2o2XfDCbos0SepSmQi9V4BJ49vO+QA==
+    t=1519834763; b=LO8uBkpZFe43Igmd2ubxUtjnNIPhvXa6CmSUEVCjtsE8ekh
+    YSe0QdplZatgUbZjo0hEn9T5JFao5umnvM3HPPCvkEYuoFU0kunfkHkCvJ7cupaK
+    9KKwZQphoD1BBqEL05oElOsN5WKH3pMCh39W30mMvcNb1LlPPy6WXEeN5Fh0CrMr
+    Cja0q0IrwHDBz9XdY1iI27rwSxI8TrvOI5V0sgqYkZ01wnClm8Zn8HNUc3Zd0Ir5
+    5NCktnsKb6lY5CYG+SU8w+TFYdQQk+ckmocsG5BjbksVIO1MDliopeSFEZIYJNPw
+    vUvZchkv1lWgjOYfI3GZowS1QqFtkoIW/Rhom4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834774; bh=jjJyrkUgZIVMgBi9FZ8
-    NPshcKIXhPOwcQHt790Qv4vY=; b=Rli4V7lpWXEAqrTu0fm7rqSUiGSkMpJTfmO
-    iF5NXXHT4BEU5JlnGX4yQLTzMTsBbmnPO0X7GmbDxQUXg3+tEq4QPQYCwuZAccuV
-    0pxnSo8Qur8q9r2oC28rsJ6zxs2A94MY02ULYsshlckvP8Q/KhvRMi686LKBiACn
-    EoGsYd4ATy/MdvfToRoirkvMmEIsuRbYMf8kI3miVPORNjm2kkk/pMcd9OVkcovD
-    3SLrTJDE/G1pu47cBWx4cj3RHRs6+hqOJ3v22ApraKTlLNS6RemRsPXc+EnQW6RH
-    GpTfsS29hLH5Ful/H8xVKM7icTt/cZzxVXP+iBcIhmHGuOIy9QA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834763; bh=UM7BHowCip/1HYZrkyT
+    NwaEkO+LQI/D5DyUenLim6r0=; b=NZ2MgzNObhoAi2Iett+UfNu6IlIMnhuv6Hi
+    aMCbD7lxb35X9dXzR8kiB0v6pSsxD3LeKCSgDD0VBHDxasycwhOsRhZ+L8yfzpiT
+    kOoHmD1OgahkCN/RGy6NtQIB7tM9hwZRP4rD6IBSb70ITKfllQRP4Zbw1KaD/cRd
+    HTvB1d3A91eXwdUqKPGbXMBOJnehKArjf3hRrU/CwWmUGyFjKiApS0K6qtn91pLf
+    rf7DHHiIyyEeMsGMBK69QoHnhv+QUnuPEPjtpFG/AlGQ9IW1GT+1RQ0BCO1VrpGR
+    DDvW/9vv4suG2WZaf+liiOOGr/0qu16ORgTv+wBo58aTa68oYbQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933267AbeB1QTX (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:19:23 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35276 "EHLO
+        id S933036AbeB1QR7 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:17:59 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35273 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932631AbeB1QR6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:17:58 -0500
+        by vger.kernel.org with ESMTP id S932298AbeB1QR5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:17:57 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "Christian Holl" <cyborgx1@gmail.com>
+CC: akpm@linux-foundation.org,
+        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.573551071@decadent.org.uk>
+Message-ID: <lsq.1519831218.44380173@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 161/254] USB: serial: cp210x: add new device ID ELV
- ALC 8xxx
+Subject: [PATCH 3.16 046/254] xhci: Don't show incorrect WARN message
+ about events for empty rings
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,27 +81,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian Holl <cyborgx1@gmail.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit d14ac576d10f865970bb1324d337e5e24d79aaf4 upstream.
+commit e4ec40ec4b260efcca15089de4285a0a3411259b upstream.
 
-This adds the ELV ALC 8xxx Battery Charging device
-to the list of USB IDs of drivers/usb/serial/cp210x.c
+xHC can generate two events for a short transfer if the short TRB and
+last TRB in the TD are not the same TRB.
 
-Signed-off-by: Christian Holl <cyborgx1@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+The driver will handle the TD after the first short event, and remove
+it from its internal list. Driver then incorrectly prints a warning
+for the second event:
+
+"WARN Event TRB for slot x ep y with no TDs queued"
+
+Fix this by not printing a warning if we get a event on a empty list
+if the previous event was a short event.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/cp210x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-ring.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -171,6 +171,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x1843, 0x0200) }, /* Vaisala USB Instrument Cable */
- 	{ USB_DEVICE(0x18EF, 0xE00F) }, /* ELV USB-I2C-Interface */
- 	{ USB_DEVICE(0x18EF, 0xE025) }, /* ELV Marble Sound Board 1 */
-+	{ USB_DEVICE(0x18EF, 0xE030) }, /* ELV ALC 8xxx Battery Charger */
- 	{ USB_DEVICE(0x18EF, 0xE032) }, /* ELV TFD500 Data Logger */
- 	{ USB_DEVICE(0x1901, 0x0190) }, /* GE B850 CP2105 Recorder interface */
- 	{ USB_DEVICE(0x1901, 0x0193) }, /* GE B650 CP2104 PMC interface */
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2442,12 +2442,16 @@ static int handle_tx_event(struct xhci_h
+ 		 */
+ 		if (list_empty(&ep_ring->td_list)) {
+ 			/*
+-			 * A stopped endpoint may generate an extra completion
+-			 * event if the device was suspended.  Don't print
+-			 * warnings.
++			 * Don't print wanings if it's due to a stopped endpoint
++			 * generating an extra completion event if the device
++			 * was suspended. Or, a event for the last TRB of a
++			 * short TD we already got a short event for.
++			 * The short TD is already removed from the TD list.
+ 			 */
++
+ 			if (!(trb_comp_code == COMP_STOP ||
+-						trb_comp_code == COMP_STOP_INVAL)) {
++			      trb_comp_code == COMP_STOP_INVAL ||
++			      ep_ring->last_td_was_short)) {
+ 				xhci_warn(xhci, "WARN Event TRB for slot %d ep %d with no TDs queued?\n",
+ 						TRB_TO_SLOT_ID(le32_to_cpu(event->flags)),
+ 						ep_index);
