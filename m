@@ -1,233 +1,319 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932750AbeB1SjP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:39:15 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752793AbeB1SjN (ORCPT
+        id S933046AbeB1Sjg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:39:36 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36522 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932851AbeB1Sjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:39:13 -0500
-Date: Wed, 28 Feb 2018 19:39:03 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
-In-Reply-To: <69ed85f2-b9c5-30d1-8437-45f20be3e95e@intel.com>
-Message-ID: <alpine.DEB.2.21.1802281924390.1392@nanos.tec.linutronix.de>
-References: <cover.1518443616.git.reinette.chatre@intel.com> <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de> <73fb98d2-ce93-0443-b909-fde75908cc1e@intel.com>
- <alpine.DEB.2.21.1802271109300.1886@nanos.tec.linutronix.de> <69ed85f2-b9c5-30d1-8437-45f20be3e95e@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Feb 2018 13:39:33 -0500
+X-Google-Smtp-Source: AG47ELvfgVKT+KCwhtThXuMLc3HsPu0iSDOhQZSXsz0R0jRLfWRvSRFSeOL2G8yMIk0rrnflVoO9RkWghTC+YeuTXbM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180228181432.26847-9-manivannan.sadhasivam@linaro.org>
+References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org> <20180228181432.26847-9-manivannan.sadhasivam@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 20:39:31 +0200
+Message-ID: <CAHp75VcA8G5gcdn+9_vU096xBa+8=8U0pJtUDObO-BrTiAbEwQ@mail.gmail.com>
+Subject: Re: [PATCH v3 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reinette,
+On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> controlling the gpio shares the same register range with pinctrl block.
+>
+> GPIO registers are organized as 6 banks and each bank controls the
+> maximum of 32 gpios.
+>
 
-On Tue, 27 Feb 2018, Reinette Chatre wrote:
-> On 2/27/2018 2:36 AM, Thomas Gleixner wrote:
-> > On Mon, 26 Feb 2018, Reinette Chatre wrote:
-> >> A change to start us off with could be to initialize the schemata with
-> >> all the shareable and unused bits set for all domains when a new
-> >> resource group is created.
-> > 
-> > The new resource group initialization is the least of my worries. The
-> > current mode is to use the default group setting, right?
-> 
-> No. When a new group is created a closid is assigned to it. The schemata
-> it is initialized with is the schemata the previous group with the same
-> closid had. At the beginning, yes, it is the default, but later you get
-> something like this:
-> 
-> # mkdir asd
-> # cat asd/schemata
-> L2:0=ff;1=ff
-> # echo 'L2:0=0xf;1=0xfc' > asd/schemata
-> # cat asd/schemata
-> L2:0=0f;1=fc
-> # rmdir asd
-> # mkdir qwe
-> # cat qwe/schemata
-> L2:0=0f;1=fc
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Ah, was not aware and did not bother to look into the code.
+P.S. Comma in terminator line is not needed.
 
-> The reason why I suggested this initialization is to have the defaults
-> work on resource group creation. I assume a new resource group would be
-> created with "shareable" mode so its schemata should not overlap with
-> any "exclusive" or "locked". Since the bitmasks used by the previous
-> group with this closid may not be shareable I considered it safer to
-> initialize with "shareable" mode with known shareable/unused bitmasks. A
-> potential issue with this idea is that the creation of a group may now
-> result in the programming of the hardware with settings these defaults.
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/gpio/Kconfig    |   8 ++
+>  drivers/gpio/Makefile   |   1 +
+>  drivers/gpio/gpio-owl.c | 218 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 227 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-owl.c
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 8dbb2280538d..09ceb98e2434 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -364,6 +364,14 @@ config GPIO_OMAP
+>         help
+>           Say yes here to enable GPIO support for TI OMAP SoCs.
+>
+> +config GPIO_OWL
+> +       tristate "Actions OWL GPIO support"
+> +       default ARCH_ACTIONS
+> +       depends on ARCH_ACTIONS || COMPILE_TEST
+> +       depends on OF_GPIO
+> +       help
+> +         Say yes here to enable GPIO support for Actions OWL SoCs.
+> +
+>  config GPIO_PL061
+>         bool "PrimeCell PL061 GPIO support"
+>         depends on ARM_AMBA
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index cccb0d40846c..b2bb11d4675f 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -91,6 +91,7 @@ obj-$(CONFIG_GPIO_MXC)                += gpio-mxc.o
+>  obj-$(CONFIG_GPIO_MXS)         += gpio-mxs.o
+>  obj-$(CONFIG_GPIO_OCTEON)      += gpio-octeon.o
+>  obj-$(CONFIG_GPIO_OMAP)                += gpio-omap.o
+> +obj-$(CONFIG_GPIO_OWL)         += gpio-owl.o
+>  obj-$(CONFIG_GPIO_PCA953X)     += gpio-pca953x.o
+>  obj-$(CONFIG_GPIO_PCF857X)     += gpio-pcf857x.o
+>  obj-$(CONFIG_GPIO_PCH)         += gpio-pch.o
+> diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
+> new file mode 100644
+> index 000000000000..98f2e98197bc
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-owl.c
+> @@ -0,0 +1,218 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * OWL SoC's GPIO driver
+> + *
+> + * Copyright (c) 2018 Linaro Ltd.
+> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#define GPIO_OUTEN     0x0000
+> +#define GPIO_INEN      0x0004
+> +#define GPIO_DAT       0x0008
+> +
+> +#define OWL_GPIO_PORT_A 0
+> +#define OWL_GPIO_PORT_B 1
+> +#define OWL_GPIO_PORT_C 2
+> +#define OWL_GPIO_PORT_D 3
+> +#define OWL_GPIO_PORT_E 4
+> +#define OWL_GPIO_PORT_F 5
+> +
+> +struct owl_gpio_port {
+> +       const char *name;
+> +       unsigned int offset;
+> +       unsigned int pins;
+> +};
+> +
+> +struct owl_gpio {
+> +       struct gpio_chip gpio;
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *base;
+> +       int id;
+> +};
+> +
+> +static void owl_gpio_set_reg(void __iomem *base, unsigned int pin, int flag)
+> +{
+> +       u32 val;
+> +
+> +       val = readl_relaxed(base);
+> +
+> +       if (flag)
+> +               val |= BIT(pin);
+> +       else
+> +               val &= ~BIT(pin);
+> +
+> +       writel_relaxed(val, base);
+> +}
+> +
+> +static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +
+> +       /*
+> +        * GPIOs have higher priority over other modules, so either setting
+> +        * them as OUT or IN is sufficient
+> +        */
+> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
+> +
+> +       return 0;
+> +}
+> +
+> +static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +
+> +       /* disable gpio output */
+> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
+> +
+> +       /* disable gpio input */
+> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
+> +}
+> +
+> +static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +       u32 val;
+> +
+> +       val = readl_relaxed(gpio_base + GPIO_DAT);
+> +
+> +       return !!(val & BIT(offset));
+> +}
+> +
+> +static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +       u32 val;
+> +
+> +       val = readl_relaxed(gpio_base + GPIO_DAT);
+> +
+> +       if (value)
+> +               val |= BIT(offset);
+> +       else
+> +               val &= ~BIT(offset);
+> +
+> +       writel_relaxed(val, gpio_base + GPIO_DAT);
+> +}
+> +
+> +static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +
+> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
+> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, true);
+> +
+> +       return 0;
+> +}
+> +
+> +static int owl_gpio_direction_output(struct gpio_chip *chip,
+> +                               unsigned int offset, int value)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       const struct owl_gpio_port *port = gpio->port;
+> +       void __iomem *gpio_base = gpio->base + port->offset;
+> +
+> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
+> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
+> +       owl_gpio_set(chip, offset, value);
+> +
+> +       return 0;
+> +}
+> +
+> +#define OWL_GPIO_PORT(port, base, count)               \
+> +       [OWL_GPIO_PORT_##port] = {                      \
+> +               .name = #port,                          \
+> +               .offset = base,                         \
+> +               .pins = count,                          \
+> +       }
+> +
+> +static const struct owl_gpio_port s900_gpio_ports[] = {
+> +       OWL_GPIO_PORT(A, 0x0000, 32),
+> +       OWL_GPIO_PORT(B, 0x000C, 32),
+> +       OWL_GPIO_PORT(C, 0x0018, 12),
+> +       OWL_GPIO_PORT(D, 0x0024, 30),
+> +       OWL_GPIO_PORT(E, 0x0030, 32),
+> +       OWL_GPIO_PORT(F, 0x00F0, 8),
+> +};
+> +
+> +static int owl_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct owl_gpio *gpio;
+> +       const struct owl_gpio_port *port;
+> +       int ret;
+> +
+> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> +       if (!gpio)
+> +               return -ENOMEM;
+> +
+> +       gpio->base = of_iomap(pdev->dev.of_node, 0);
+> +       if (IS_ERR(gpio->base))
+> +               return PTR_ERR(gpio->base);
+> +
+> +       gpio->id = of_alias_get_id(pdev->dev.of_node, "gpio");
+> +       if (gpio->id < 0)
+> +               return gpio->id;
+> +
+> +       port = &s900_gpio_ports[gpio->id];
+> +
+> +       gpio->gpio.request = owl_gpio_request;
+> +       gpio->gpio.free = owl_gpio_free;
+> +       gpio->gpio.get = owl_gpio_get;
+> +       gpio->gpio.set = owl_gpio_set;
+> +       gpio->gpio.direction_input = owl_gpio_direction_input;
+> +       gpio->gpio.direction_output = owl_gpio_direction_output;
+> +
+> +       gpio->gpio.base = -1;
+> +       gpio->gpio.parent = &pdev->dev;
+> +       gpio->gpio.label = port->name;
+> +       gpio->gpio.ngpio = port->pins;
+> +
+> +       gpio->port = port;
+> +
+> +       platform_set_drvdata(pdev, gpio);
+> +
+> +       ret = devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
+> +       if (ret < 0) {
+> +               dev_err(&pdev->dev, "Failed to register gpiochip\n");
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id owl_gpio_of_match[] = {
+> +       { .compatible = "actions,s900-gpio", },
+> +       { /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, owl_gpio_of_match);
+> +
+> +static struct platform_driver owl_gpio_driver = {
+> +       .driver         = {
+> +               .name   = "owl-gpio",
+> +               .of_match_table = owl_gpio_of_match,
+> +       },
+> +       .probe          = owl_gpio_probe,
+> +};
+> +module_platform_driver(owl_gpio_driver);
+> +
+> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
+> +MODULE_DESCRIPTION("Actions Semi OWL SoCs GPIO driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.14.1
+>
 
-Yes, setting it to 'default' group bits at creation (ID allocation) time
-makes sense.
 
-> >> Moving to "exclusive" mode it appears that, when enabled for a resource
-> >> group, all domains of all resources are forced to have an "exclusive"
-> >> region associated with this resource group (closid). This is because the
-> >> schemata reflects the hardware settings of all resources and their
-> >> domains and the hardware does not accept a "zero" bitmask. A user thus
-> >> cannot just specify a single region of a particular cache instance as
-> >> "exclusive". Does this match your intention wrt "exclusive"?
-> > 
-> > Interesting question. I really did not think about that yet.
 
-Second thoughts on that: I think for a start we can go the simple route and
-just say: exclusive covers all cache levels.
-
-> > You could make it:
-> > 
-> > echo locksetup > mode
-> > echo $CONF > schemata
-> > echo locked > mode
-> > 
-> > Or something like that.
-> 
-> Indeed ... the final command may perhaps not be needed? Since the user
-> expressed intent to create pseudo-locked region by writing "locksetup"
-> the pseudo-locking can be done when the schemata is written. I think it
-> would be simpler to act when the schemata is written since we know
-> exactly at that point which regions should be pseudo-locked. After the
-> schemata is stored the user's choice is just merged with the larger
-> schemata representing all resources/domains. We could set mode to
-> "locked" on success, it can remain as "locksetup" on failure of creating
-> the pseudo-locked region. We could perhaps also consider a name change
-> "locksetup" -> "lockrsv" since after the first pseudo-locked region is
-> created on a domain then all the other domains associated with this
-> class of service need to have some special state since no task will ever
-> run on them with that class of service so we would not want their bits
-> (which will not be zero) to be taken into account when checking for
-> "shareable" or "exclusive".
-
-Works for me.
-
-> This could also support multiple pseudo-locked regions.
-> For example:
-> # #Create first pseudo-locked region
-> # echo locksetup > mode
-> # echo L2:0=0xf > schemata
-> # echo $?
-> 0
-> # cat mode
-> locked # will be locksetup on failure
-> # cat schemata
-> L2:0=0xf #only show pseudo-locked regions
-> # #Create second pseudo-locked region
-> # # Not necessary to write "locksetup" again
-> # echo L2:1=0xf > schemata #will trigger the pseudo-locking of new region
-> # echo $?
-> 1 # just for example, this could succeed also
-> # cat mode
-> locked
-> # cat schemata
-> L2:0=0xf
-> 
-> Schemata shown to user would be only the pseudo-locked region(s), unless
-> there is none, then nothing will be returned.
-> 
-> I'll think about this more, but if we do go the route of releasing
-> closids as suggested below it may change a lot.
-
-I think dropping the closid makes sense. Once the thing is locked it's done
-and nothing can be changed anymore, except removal of course. That also
-gives you a 1:1 mapping between resource group and lockdevice.
-
-> This is a real issue. The pros and cons of using a global CLOSID across
-> all resources are documented in the comments preceding:
-> arch/x86/kernel/cpu/intel_rdt_rdtgroup.c:closid_init()
-> 
-> The issue I mention was foreseen, to quote from there "Our choices on
-> how to configure each resource become progressively more limited as the
-> number of resources grows".
-> 
-> > Let's assume its real,
-> > so you could do the following:
-> > 
-> > mkdir group		<- acquires closid
-> > echo locksetup > mode	<- Creates 'lockarea' file
-> > echo L2:0 > lockarea
-> > echo 'L2:0=0xf' > schemata
-> > echo locked > mode	<- locks down all files, does the lock setup
-> >      	      		   and drops closid
-> > 
-> > That would solve quite some of the other issues as well. Hmm?
-> 
-> At this time the resource group, represented by a resctrl directory, is
-> tightly associated with the closid. I'll take a closer look at what it
-> will take to separate them.
-
-Shouldn't be that hard.
-
-> Could you please elaborate on the purpose of the "lockarea" file? It
-> does seem to duplicate the information in the schemata written in the
-> subsequent line.
-
-No. The lockarea or restrict file (as I named it later, but feel free to
-come up with something more intuitive) is there to tell which part of the
-resource zoo should be made exclusive/locked. That makes the whole write to
-schemata file and validate whether this is really exclusive way simpler.
-
-> If we do go this route then it seems that there would be one
-> pseudo-locked region per resource group, not multiple ones as I had in
-> my examples above.
-
-Correct.
-
-> An alternative to the hardware programming on creation of resource group
-> could also be to reset the bitmasks of the closid to be shareable/unused
-> bits at the time the closid is released.
-
-That does not help because the default/shareable/unused bits can change
-between release of a CLOSID and reallocation.
-
-> > Actually we could solve that problem similar to the locked one and share
-> > most of the functionality:
-> > 
-> > mkdir group
-> > echo exclusive > mode
-> > echo L3:0 > restrict
-> > 
-> > and for locked:
-> > 
-> > mkdir group
-> > echo locksetup > mode
-> > echo L2:0 > restrict
-> > echo 'L2:0=0xf' > schemata
-> > echo locked > mode
-> > 
-> > The 'restrict' file (feel free to come up with a better name) is only
-> > available/writeable in exclusive and locksetup mode. In case of exclusive
-> > mode it can contain several domains/resources, but in locked mode its only
-> > allowed to contain a single domain/resource.
-> > 
-> > A write to schemata for exclusive or locksetup mode will apply the
-> > exclusiveness restrictions only to the resources/domains selected in the
-> > 'restrict' file. 
-> 
-> I think I understand for the exclusive case. Here the introduction of
-> the restrict file helps. I will run through a few examples to ensure I
-> understand it. For the pseudo-locking cases I do have the questions and
-> comments above. Here I likely may be missing something but I'll keep
-> dissecting how this would work to clear up my understanding.
-
-I came up with this under the assumptions:
-
-  1) One locked region per resource group
-  2) Drop closid after locking
-
-Then the restrict file makes a lot of sense because it would give a clear
-selection of the possible resource to lock.
-
-Thanks,
-
-	tglx
+-- 
+With Best Regards,
+Andy Shevchenko
