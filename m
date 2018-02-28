@@ -1,148 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeB1D3F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 22:29:05 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51736 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752058AbeB1D3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:29:03 -0500
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
- <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
- <20180226223252-mutt-send-email-mst@kernel.org>
- <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
- <20180227190703-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
-Date: Wed, 28 Feb 2018 11:28:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751948AbeB1Den (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 22:34:43 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45038 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbeB1Del (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 22:34:41 -0500
+X-Google-Smtp-Source: AH8x224Gx6KpngRkqnY1+1g7GMmXln+D4+Ym9SSVnWYMjh2ux/Pwk0XSSsWUEywGifhaUBxLUWlxhw==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>, Nadav Amit <nadav.amit@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH v5 1/2] KVM: X86: Introduce kvm_get_msr_feature()
+Date: Wed, 28 Feb 2018 11:34:33 +0800
+Message-Id: <1519788874-16561-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180227190703-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Wanpeng Li <wanpengli@tencent.com>
 
+Introduce kvm_get_msr_feature() to handle the msrs which are supported 
+by different vendors and sharing the same emulation logic.
 
-On 2018年02月28日 01:12, Michael S. Tsirkin wrote:
-> On Tue, Feb 27, 2018 at 10:29:26AM +0800, Jason Wang wrote:
->>
->> On 2018年02月27日 04:34, Michael S. Tsirkin wrote:
->>> On Mon, Feb 26, 2018 at 11:15:42AM +0800, Jason Wang wrote:
->>>> On 2018年02月26日 09:17, Michael S. Tsirkin wrote:
->>>>> So pointer rings work fine, but they have a problem: make them too small
->>>>> and not enough entries fit.  Make them too large and you start flushing
->>>>> your cache and running out of memory.
->>>>>
->>>>> This is a new idea of mine: a ring backed by a linked list. Once you run
->>>>> out of ring entries, instead of a drop you fall back on a list with a
->>>>> common lock.
->>>>>
->>>>> Should work well for the case where the ring is typically sized
->>>>> correctly, but will help address the fact that some user try to set e.g.
->>>>> tx queue length to 1000000.
->>>>>
->>>>> In other words, the idea is that if a user sets a really huge TX queue
->>>>> length, we allocate a ptr_ring which is smaller, and use the backup
->>>>> linked list when necessary to provide the requested TX queue length
->>>>> legitimately.
->>>>>
->>>>> My hope this will move us closer to direction where e.g. fw codel can
->>>>> use ptr rings without locking at all.  The API is still very rough, and
->>>>> I really need to take a hard look at lock nesting.
->>>>>
->>>>> Compiled only, sending for early feedback/flames.
->>>>>
->>>>> Signed-off-by: Michael S. Tsirkin<mst@redhat.com>
->>>>> ---
->>>>>
->>>>> changes from v1:
->>>>> - added clarifications by DaveM in the commit log
->>>>> - build fixes
->>>>>
->>>>>     include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
->>>>>     1 file changed, 61 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
->>>>> index d72b2e7..8aa8882 100644
->>>>> --- a/include/linux/ptr_ring.h
->>>>> +++ b/include/linux/ptr_ring.h
->>>>> @@ -31,11 +31,18 @@
->>>>>     #include <asm/errno.h>
->>>>>     #endif
->>>>> +/* entries must start with the following structure */
->>>>> +struct plist {
->>>>> +	struct plist *next;
->>>>> +	struct plist *last; /* only valid in the 1st entry */
->>>>> +};
->>>> So I wonder whether or not it's better to do this in e.g skb_array
->>>> implementation. Then it can use its own prev/next field.
->>> XDP uses ptr ring directly, doesn't it?
->>>
->> Well I believe the main user for this is qdisc, which use skb array. And we
->> can not use what implemented in this patch directly for sk_buff without some
->> changes on the data structure.
-> Why not? skb has next and prev pointers at 1st two fields:
->
-> struct sk_buff {
->          union {
->                  struct {
->                          /* These two members must be first. */
->                          struct sk_buff          *next;
->                          struct sk_buff          *prev;
-> ...
-> }
->
-> so it's just a question of casting to struct plist.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/x86.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-Well, then the casting can only be done in skb_array implementation?
-
->
-> Or we can add plist to a union:
->
->
-> struct sk_buff {
->          union {
->                  struct {
->                          /* These two members must be first. */
->                          struct sk_buff          *next;
->                          struct sk_buff          *prev;
->                          
->                          union {
->                                  struct net_device       *dev;
->                                  /* Some protocols might use this space to store information,
->                                   * while device pointer would be NULL.
->                                   * UDP receive path is one user.
->                                   */
->                                  unsigned long           dev_scratch;
->                          };
->                  };
->                  struct rb_node  rbnode; /* used in netem & tcp stack */
-> +		struct plist plist; /* For use with ptr_ring */
->          };
->
-
-This look ok.
-
->
->> For XDP, we need to embed plist in struct xdp_buff too,
-> Right - that's pretty straightforward, isn't it?
-
-Yes, it's not clear to me this is really needed for XDP consider the 
-lock contention it brings.
-
-Thanks
-
->> so it looks to me
->> that the better approach is to have separated function for ptr ring and skb
->> array.
->>
->> Thanks
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index d4985a9..efc8554 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1062,13 +1062,25 @@ static u32 msr_based_features[] = {
+ 
+ static unsigned int num_msr_based_features;
+ 
++static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
++{
++	switch (msr->index) {
++	default:
++		if (kvm_x86_ops->get_msr_feature(msr))
++			return 1;
++	}
++	return 0;
++}
++
+ static int do_get_msr_feature(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
+ {
+ 	struct kvm_msr_entry msr;
++	int r;
+ 
+ 	msr.index = index;
+-	if (kvm_x86_ops->get_msr_feature(&msr))
+-		return 1;
++	r = kvm_get_msr_feature(&msr);
++	if (r)
++		return r;
+ 
+ 	*data = msr.data;
+ 
+@@ -4538,7 +4550,7 @@ static void kvm_init_msr_list(void)
+ 		struct kvm_msr_entry msr;
+ 
+ 		msr.index = msr_based_features[i];
+-		if (kvm_x86_ops->get_msr_feature(&msr))
++		if (kvm_get_msr_feature(&msr))
+ 			continue;
+ 
+ 		if (j < i)
+-- 
+2.7.4
