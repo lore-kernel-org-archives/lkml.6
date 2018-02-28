@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934707AbeB1Uh7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 15:37:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934642AbeB1Uh5 (ORCPT
+        id S934720AbeB1UkH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 15:40:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49612 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934642AbeB1UkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:37:57 -0500
+        Wed, 28 Feb 2018 15:40:05 -0500
 Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
 To: David Hildenbrand <david@redhat.com>, linux-s390@vger.kernel.org,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org
@@ -19,25 +19,25 @@ Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
 References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
  <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
- <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
+ <532c0f98-83d0-c687-55d6-a6c5cb263360@redhat.com>
 From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 28 Feb 2018 15:37:49 -0500
+Date: Wed, 28 Feb 2018 15:39:55 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
+In-Reply-To: <532c0f98-83d0-c687-55d6-a6c5cb263360@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18022820-0008-0000-0000-000002DD2507
+x-cbid: 18022820-0048-0000-0000-0000024224A9
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008603; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00996463; UDB=6.00506589; IPR=6.00775785;
- MB=3.00019783; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-28 20:37:54
+ PH=3.00000004; SC=3.00000254; SDB=6.00996464; UDB=6.00506589; IPR=6.00775786;
+ MB=3.00019783; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-28 20:40:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022820-0009-0000-0000-0000386ACC08
-Message-Id: <47808b6f-9e6d-1f17-c26b-3e03d1f1e2ca@linux.vnet.ibm.com>
+x-cbparentid: 18022820-0049-0000-0000-00004449CA1B
+Message-Id: <ef401e32-4a33-2fe6-8695-f0eff139f9db@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -49,7 +49,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/2018 04:42 AM, David Hildenbrand wrote:
+On 02/28/2018 04:44 AM, David Hildenbrand wrote:
 > On 27.02.2018 15:28, Tony Krowiak wrote:
 >> Introduces a new interface to enable AP interpretive
 >> execution (IE) mode for the KVM guest. When running
@@ -142,8 +142,6 @@ On 02/28/2018 04:42 AM, David Hildenbrand wrote:
 >>   /* Transactional Memory Execution related macros */
 >>   #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
 >>
-> What about VSIE?
-That is a good question. I'm beginning to think introducing AP on second 
-level guests
-ought to be postponed for now. I'm going to look into this further.
+> And also, what about hot-plugged CPUs?
+I haven't considered that, do you have any suggestions?
 >
