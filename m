@@ -1,296 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeB1MWf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:22:35 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:38874 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeB1MWe (ORCPT
+        id S1752516AbeB1MYH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:24:07 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39480 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeB1MYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:22:34 -0500
-X-Google-Smtp-Source: AG47ELsaB8yjt8liRYpDPcL6q7lgk9H1zbtwFE721ArQ1g7tdFcJmC46e4dTM0qnoXLIFpmk8xH2ls9y/DkUSB/Rgh8=
-MIME-Version: 1.0
-In-Reply-To: <20180227022549-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-11-marcandre.lureau@redhat.com> <20180227022549-mutt-send-email-mst@kernel.org>
-From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
-Date: Wed, 28 Feb 2018 13:22:33 +0100
-Message-ID: <CAMxuvayngjrgQR-Z0iZ+LQZf7v-_EsNns3eFRvVZjUBeOmXibA@mail.gmail.com>
-Subject: Re: [PATCH v15 10/11] fw_cfg: write vmcoreinfo details
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Wed, 28 Feb 2018 07:24:05 -0500
+X-Google-Smtp-Source: AG47ELtqqSGRR6DTMIN8nULQ4e9tOk+2tt96LEi9Pc9FgIhSch9HY1ehibQ9JP7RmKKShwCADFYDGA==
+From: Jason Andryuk <jandryuk@gmail.com>
+To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org
+Cc: Jason Andryuk <jandryuk@gmail.com>, Eduardo Otubo <otubo@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] xen-netfront: Fix hang on device removal
+Date: Wed, 28 Feb 2018 07:23:23 -0500
+Message-Id: <20180228122323.3914-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+A toolstack may delete the vif frontend and backend xenstore entries
+while xen-netfront is in the removal code path.  In that case, the
+checks for xenbus_read_driver_state would return XenbusStateUnknown, and
+xennet_remove would hang indefinitely.  This hang prevents system
+shutdown.
 
-On Tue, Feb 27, 2018 at 1:28 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Thu, Feb 15, 2018 at 10:33:11PM +0100, Marc-André Lureau wrote:
->> If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
->> the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
->>
->> The DMA operation is expected to run synchronously with today qemu,
->> but the specification states that it may become async, so we run
->> "control" field check in a loop for eventual changes.
->>
->> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
->> ---
->>  drivers/firmware/qemu_fw_cfg.c | 143 ++++++++++++++++++++++++++++++++++++++++-
->>  include/uapi/linux/fw_cfg.h    |  31 +++++++++
->>  2 files changed, 171 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
->> index c28bec4b5663..3015e77aebca 100644
->> --- a/drivers/firmware/qemu_fw_cfg.c
->> +++ b/drivers/firmware/qemu_fw_cfg.c
->> @@ -34,11 +34,17 @@
->>  #include <linux/io.h>
->>  #include <linux/ioport.h>
->>  #include <uapi/linux/fw_cfg.h>
->> +#include <linux/delay.h>
->> +#include <linux/crash_dump.h>
->> +#include <linux/crash_core.h>
->>
->>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
->>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
->>  MODULE_LICENSE("GPL");
->>
->> +/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
->> +static u32 fw_cfg_rev;
->> +
->>  /* fw_cfg device i/o register addresses */
->>  static bool fw_cfg_is_mmio;
->>  static phys_addr_t fw_cfg_p_base;
->> @@ -60,6 +66,64 @@ static void fw_cfg_sel_endianness(u16 key)
->>               iowrite16(key, fw_cfg_reg_ctrl);
->>  }
->>
->> +static inline bool fw_cfg_dma_enabled(void)
->> +{
->> +     return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
->> +}
->> +
->> +/* qemu fw_cfg device is sync today, but spec says it may become async */
->> +static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
->> +{
->> +     for (;;) {
->> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
->> +
->> +             /* do not reorder the read to d->control */
->> +             rmb();
->> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
->> +                     return;
->> +
->> +             cpu_relax();
->> +     }
->> +}
->> +
->> +static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
->> +{
->> +     phys_addr_t dma;
->> +     struct fw_cfg_dma_access *d = NULL;
->> +     ssize_t ret = length;
->> +
->> +     d = kmalloc(sizeof(*d), GFP_KERNEL);
->> +     if (!d) {
->> +             ret = -ENOMEM;
->> +             goto end;
->> +     }
->> +
->> +     /* fw_cfg device does not need IOMMU protection, so use physical addresses */
->> +     *d = (struct fw_cfg_dma_access) {
->> +             .address = cpu_to_be64(address ? virt_to_phys(address) : 0),
->> +             .length = cpu_to_be32(length),
->> +             .control = cpu_to_be32(control)
->> +     };
->> +
->> +     dma = virt_to_phys(d);
->> +
->> +     iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
->> +     /* force memory to sync before notifying device via MMIO */
->> +     wmb();
->> +     iowrite32be(dma, fw_cfg_reg_dma + 4);
->> +
->> +     fw_cfg_wait_for_control(d);
->> +
->> +     if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
->> +             ret = -EIO;
->> +     }
->> +
->> +end:
->> +     kfree(d);
->> +
->> +     return ret;
->> +}
->> +
->>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
->>  static ssize_t fw_cfg_read_blob(u16 key,
->>                               void *buf, loff_t pos, size_t count)
->> @@ -89,6 +153,47 @@ static ssize_t fw_cfg_read_blob(u16 key,
->>       return count;
->>  }
->>
->> +#ifdef CONFIG_CRASH_CORE
->> +/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
->> +static ssize_t fw_cfg_write_blob(u16 key,
->> +                              void *buf, loff_t pos, size_t count)
->> +{
->> +     u32 glk = -1U;
->> +     acpi_status status;
->> +     ssize_t ret = count;
->> +
->> +     /* If we have ACPI, ensure mutual exclusion against any potential
->> +      * device access by the firmware, e.g. via AML methods:
->> +      */
->> +     status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
->> +     if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
->> +             /* Should never get here */
->> +             WARN(1, "%s: Failed to lock ACPI!\n", __func__);
->> +             return -EINVAL;
->> +     }
->> +
->> +     mutex_lock(&fw_cfg_dev_lock);
->> +     if (pos == 0) {
->> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
->> +                                       | FW_CFG_DMA_CTL_SELECT
->> +                                       | FW_CFG_DMA_CTL_WRITE);
->> +     } else {
->> +             fw_cfg_sel_endianness(key);
->> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
->> +             if (ret < 0)
->> +                     goto end;
->> +             ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
->> +     }
->> +
->> +end:
->> +     mutex_unlock(&fw_cfg_dev_lock);
->> +
->> +     acpi_release_global_lock(glk);
->> +
->> +     return ret;
->> +}
->> +#endif /* CONFIG_CRASH_CORE */
->> +
->>  /* clean up fw_cfg device i/o */
->>  static void fw_cfg_io_cleanup(void)
->>  {
->> @@ -188,9 +293,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
->>       return 0;
->>  }
->>
->> -/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
->> -static u32 fw_cfg_rev;
->> -
->>  static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
->>  {
->>       return sprintf(buf, "%u\n", fw_cfg_rev);
->> @@ -213,6 +315,32 @@ struct fw_cfg_sysfs_entry {
->>       struct list_head list;
->>  };
->>
->> +#ifdef CONFIG_CRASH_CORE
->> +static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
->> +{
->> +     static struct fw_cfg_vmcoreinfo *data;
->> +     ssize_t ret;
->> +
->> +     data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
->> +     if (!data)
->> +             return -ENOMEM;
->> +
->> +     *data = (struct fw_cfg_vmcoreinfo) {
->> +             .guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
->> +             .size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
->> +             .paddr = cpu_to_le64(paddr_vmcoreinfo_note())
->> +     };
->> +     /* spare ourself reading host format support for now since we
->> +      * don't know what else to format - host may ignore ours
->
->
-> qemu documentation probably should mention that it must.
->
+xennet_remove must be able to handle XenbusStateUnknown, and
+netback_changed must also wake up the wake_queue for that state as well.
 
-Can you be more explicit?
-thanks
+Fixes: 5b5971df3bc2 ("xen-netfront: remove warning when unloading module")
 
->> +      */
->> +     ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
->> +                             0, sizeof(struct fw_cfg_vmcoreinfo));
->> +
->> +     kfree(data);
->> +     return ret;
->> +}
->> +#endif /* CONFIG_CRASH_CORE */
->> +
->>  /* get fw_cfg_sysfs_entry from kobject member */
->>  static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
->>  {
->> @@ -452,6 +580,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
->>       int err;
->>       struct fw_cfg_sysfs_entry *entry;
->>
->> +#ifdef CONFIG_CRASH_CORE
->> +     if (fw_cfg_dma_enabled() &&
->> +             strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
->> +             !is_kdump_kernel()) {
->> +             if (fw_cfg_write_vmcoreinfo(f) < 0)
->> +                     pr_warn("fw_cfg: failed to write vmcoreinfo");
->> +     }
->> +#endif
->> +
->>       /* allocate new entry */
->>       entry = kzalloc(sizeof(*entry), GFP_KERNEL);
->>       if (!entry)
->> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
->> index c698ac3812f6..e089c0159ec2 100644
->> --- a/include/uapi/linux/fw_cfg.h
->> +++ b/include/uapi/linux/fw_cfg.h
->> @@ -54,6 +54,7 @@
->>
->>  /* FW_CFG_ID bits */
->>  #define FW_CFG_VERSION               0x01
->> +#define FW_CFG_VERSION_DMA   0x02
->>
->>  /* fw_cfg file directory entry type */
->>  struct fw_cfg_file {
->> @@ -63,4 +64,34 @@ struct fw_cfg_file {
->>       char name[FW_CFG_MAX_FILE_PATH];
->>  };
->>
->> +/* FW_CFG_DMA_CONTROL bits */
->> +#define FW_CFG_DMA_CTL_ERROR 0x01
->> +#define FW_CFG_DMA_CTL_READ  0x02
->> +#define FW_CFG_DMA_CTL_SKIP  0x04
->> +#define FW_CFG_DMA_CTL_SELECT        0x08
->> +#define FW_CFG_DMA_CTL_WRITE 0x10
->> +
->> +#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
->> +
->> +/* Control as first field allows for different structures selected by this
->> + * field, which might be useful in the future
->> + */
->> +struct fw_cfg_dma_access {
->> +     __be32 control;
->> +     __be32 length;
->> +     __be64 address;
->> +};
->> +
->> +#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
->> +
->> +#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
->> +#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
->> +
->> +struct fw_cfg_vmcoreinfo {
->> +     __le16 host_format;
->> +     __le16 guest_format;
->> +     __le32 size;
->> +     __le64 paddr;
->> +};
->> +
->>  #endif
->> --
->> 2.16.1.73.g5832b7e9f2
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Cc: Eduardo Otubo <otubo@redhat.com>
+---
+ drivers/net/xen-netfront.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 8328d395e332..3127bc8633ca 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -2005,7 +2005,10 @@ static void netback_changed(struct xenbus_device *dev,
+ 	case XenbusStateInitialised:
+ 	case XenbusStateReconfiguring:
+ 	case XenbusStateReconfigured:
++		break;
++
+ 	case XenbusStateUnknown:
++		wake_up_all(&module_unload_q);
+ 		break;
+ 
+ 	case XenbusStateInitWait:
+@@ -2136,7 +2139,9 @@ static int xennet_remove(struct xenbus_device *dev)
+ 		xenbus_switch_state(dev, XenbusStateClosing);
+ 		wait_event(module_unload_q,
+ 			   xenbus_read_driver_state(dev->otherend) ==
+-			   XenbusStateClosing);
++			   XenbusStateClosing ||
++			   xenbus_read_driver_state(dev->otherend) ==
++			   XenbusStateUnknown);
+ 
+ 		xenbus_switch_state(dev, XenbusStateClosed);
+ 		wait_event(module_unload_q,
+-- 
+2.14.3
