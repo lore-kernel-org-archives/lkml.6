@@ -1,23 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AG47ELvQgW1FfeMfP6RZqZPy71UmnIylHI1X/3IXtWEXQKOnBOrBVkfQYD6QGuw+Qn3E4Rh1/w8Y
-ARC-Seal: i=1; a=rsa-sha256; t=1519855644; cv=none;
+X-Google-Smtp-Source: AG47ELs1qxeNQtIpe+SeNTGe/DL4Z0QMB3k3RR44xgleKQX6LuZ52RnavspZZO38N7COJ+5V5Cpa
+ARC-Seal: i=1; a=rsa-sha256; t=1519855643; cv=none;
         d=google.com; s=arc-20160816;
-        b=CqgeCnHDnhLXmnX2dqVY5v4wwrS5R4hPOZ+ebsSCNp9NaGYuRv/M3jxwhUEBKo31XU
-         xBOJa5USvhqDdoVJxs6kOyWgwtCNW+AMfLPNAJGVNVGajWDc3gUU2Ootx7aCV+5YTCnH
-         yQpAgoQv4fuw4WAbiwVXuXnJNxC44zF+bzsDBAkY4rvl+RWF7jiasjvmIeZOj/MQrfu2
-         a9xt+XakW81Ufguf8Ndb5eeEdTt29EKUSsjlYvBhMU4i3aVvBc67Wbq13grVEkSXVpwt
-         fpPrOaQemwa75X+zUe8kMJHnFDV8V8IlD1NL3Q7kVFf2EO1XXhD46mHfC7D2DUHUMK20
-         aDsw==
+        b=npIrHff5l4kwLfSIQdtZhN2cxscD974zC7GJvKXDRzhSQPgxm7EdZX1KSMBXcKWZDX
+         7s6aZ52jA/J2YUovpO277rYn2UtlkHBagGJmngPjp7ajhfRth+XV8hMGbHj9gx4zP+gY
+         jnZZa6WIUxRA5nVIs5lUEmUH+1ZZcGAwEwh5u+IJ4q7vn9NgF5174ybglcIXQYsWMYj3
+         9XgvbcKEBcAPbuwdZIdI1gfZaXDFVDXikK1C2d0sdV1N2s+lUknLuElXeVWrdUA/3e4E
+         cLvMcCcjrbB6FisOFSPu62Bgj0zPw8n/c8Bj256o4RU6si/3IxSnK2qKQeCQ7w0Glvgi
+         QNFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=g48U7T9obHvyujG/MgRlNwxncW7fdznKGiUwChjx5Gc=;
-        b=hTngdWEKmCkw7/nocTwasoR3Ob7GJfrmovHpcxB/ghoSNzyXPa5hqiwUGPtzZUZ6dP
-         2v/Y+kFhoWyQVkACkZwBK3zdiWaBRM/ZffJKYdQhP3e9oDFJZpq7vRCmXxkP1iIfx3D4
-         glS9NHywjojZhOLr4MZoXXls2AS/kI5RmPdVgFgC2XoubfPuQq4tN5fJdv4T7N6vDylv
-         CBfQHTqaNU9QsJYLYtClJydVNXa1zFRNKrI3elqsHu7qWIXKof5aow8NvhVi0hYopx5Z
-         qyBu6JSmWqh3oh234aTrma0wN9st/yHFcPc/jD8vMn1CMdfQaGf+Ka906E2J4vOqpwOU
-         81TA==
+        bh=FrB7HgXlFWgsSuKF1xSmw8vLLH7A0luH2WsPNter7ng=;
+        b=UVACdWBMBwRitvamGMIHX+eArnKfx528Oi55UA9ATiSu1Pvngvc/VzsJE0yCgVanty
+         lL897nnKOSlm7EAifm8FGOqIEB+YueQdoFM30BrInIY8K+d/kpMAvmaT/fez7iqtC/WR
+         anpa2LrluZAjYGE0AVJEAKTYGN6shg+uXO7Yhn6n8rUH02vnmJY+hglMMu/ggt7g6P7S
+         y9EeJpAymf+s0pEqYuhFls4MLao52vzrGVfPcPa+kcMEfqcCQWzneHRurfWxj3MsqY4A
+         s4FzoyAT0k2cykcaVYldJ7+IHerIJznQRxYdLF7EG9MGLxZMHegP9/JntiNgQ1OSvkpG
+         Kd1g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -46,106 +46,65 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	austinwc@codeaurora.org,
 	tnowicki@caviumnetworks.com,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v7 07/13] drivers: base cacheinfo: Add support for ACPI based firmware tables
-Date: Wed, 28 Feb 2018 16:06:13 -0600
-Message-Id: <20180228220619.6992-8-jeremy.linton@arm.com>
+Subject: [PATCH v7 06/13] ACPI: Enable PPTT support on ARM64
+Date: Wed, 28 Feb 2018 16:06:12 -0600
+Message-Id: <20180228220619.6992-7-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180228220619.6992-1-jeremy.linton@arm.com>
 References: <20180228220619.6992-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593684152561134116?=
-X-GMAIL-MSGID: =?utf-8?q?1593684152561134116?=
+X-GMAIL-THRID: =?utf-8?q?1593684151159305303?=
+X-GMAIL-MSGID: =?utf-8?q?1593684151159305303?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call ACPI cache parsing routines from base cacheinfo code if ACPI
-is enable. Also stub out cache_setup_acpi() so that individual
-architectures can enable ACPI topology parsing.
+Now that we have a PPTT parser, in preparation for its use
+on arm64, lets build it.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- drivers/acpi/pptt.c       |  1 +
- drivers/base/cacheinfo.c  | 14 ++++++++++----
- include/linux/cacheinfo.h |  9 +++++++++
- 3 files changed, 20 insertions(+), 4 deletions(-)
+ arch/arm64/Kconfig    | 1 +
+ drivers/acpi/Kconfig  | 3 +++
+ drivers/acpi/Makefile | 1 +
+ 3 files changed, 5 insertions(+)
 
-diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-index 883e4318c6cd..c98f94ebd272 100644
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -343,6 +343,7 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
- {
- 	int valid_flags = 0;
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 7381eeb7ef8e..439684a71e18 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -7,6 +7,7 @@ config ARM64
+ 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+ 	select ACPI_MCFG if ACPI
+ 	select ACPI_SPCR_TABLE if ACPI
++	select ACPI_PPTT if ACPI
+ 	select ARCH_CLOCKSOURCE_DATA
+ 	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index f505e9a01b2d..55aa9789d474 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -534,6 +534,9 @@ config ACPI_CONFIGFS
  
-+	this_leaf->fw_token = cpu_node;
- 	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
- 		this_leaf->size = found_cache->size;
- 		valid_flags++;
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 597aacb233fc..2880e2ab01f5 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -206,7 +206,7 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
- 					   struct cacheinfo *sib_leaf)
- {
- 	/*
--	 * For non-DT systems, assume unique level 1 cache, system-wide
-+	 * For non-DT/ACPI systems, assume unique level 1 caches, system-wide
- 	 * shared caches for all other levels. This will be used only if
- 	 * arch specific code has not populated shared_cpu_map
- 	 */
-@@ -214,6 +214,11 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
- }
- #endif
- 
-+int __weak cache_setup_acpi(unsigned int cpu)
-+{
-+	return -ENOTSUPP;
-+}
+ if ARM64
+ source "drivers/acpi/arm64/Kconfig"
 +
- static int cache_shared_cpu_map_setup(unsigned int cpu)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-@@ -227,8 +232,8 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
- 	if (of_have_populated_dt())
- 		ret = cache_setup_of_node(cpu);
- 	else if (!acpi_disabled)
--		/* No cache property/hierarchy support yet in ACPI */
--		ret = -ENOTSUPP;
-+		ret = cache_setup_acpi(cpu);
-+
- 	if (ret)
- 		return ret;
++config ACPI_PPTT
++	bool
+ endif
  
-@@ -279,7 +284,8 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
- 			cpumask_clear_cpu(cpu, &sib_leaf->shared_cpu_map);
- 			cpumask_clear_cpu(sibling, &this_leaf->shared_cpu_map);
- 		}
--		of_node_put(this_leaf->fw_token);
-+		if (of_have_populated_dt())
-+			of_node_put(this_leaf->fw_token);
- 	}
- }
+ config TPS68470_PMIC_OPREGION
+diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+index 41954a601989..b6056b566df4 100644
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -87,6 +87,7 @@ obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
+ obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
+ obj-$(CONFIG_ACPI_SPCR_TABLE)	+= spcr.o
+ obj-$(CONFIG_ACPI_DEBUGGER_USER) += acpi_dbg.o
++obj-$(CONFIG_ACPI_PPTT) 	+= pptt.o
  
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index 0c6f658054d2..1446d3f053a2 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -97,6 +97,15 @@ int func(unsigned int cpu)					\
- struct cpu_cacheinfo *get_cpu_cacheinfo(unsigned int cpu);
- int init_cache_level(unsigned int cpu);
- int populate_cache_leaves(unsigned int cpu);
-+int cache_setup_acpi(unsigned int cpu);
-+int acpi_find_last_cache_level(unsigned int cpu);
-+#ifndef CONFIG_ACPI
-+int acpi_find_last_cache_level(unsigned int cpu)
-+{
-+	/* ACPI kernels should be built with PPTT support */
-+	return 0;
-+}
-+#endif
- 
- const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
- 
+ # processor has its own "processor." module_param namespace
+ processor-y			:= processor_driver.o
 -- 
 2.13.6
