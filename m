@@ -1,66 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753322AbeB1RDI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:03:08 -0500
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:55391 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933613AbeB1Pvt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:51:49 -0500
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: DRI-devel <dri-devel@lists.freedesktop.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH] drm/drm_ioctl.c: Test client capability value early when setting.
-Date: Wed, 28 Feb 2018 15:27:41 +0000
-Message-Id: <20180228152741.22507-1-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.16.2
+        id S933623AbeB1Pvj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:51:39 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52264 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933272AbeB1Pvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:51:36 -0500
+Subject: Re: [PATCH] arm64: dts: juno: fix size of GICv2m MSI frames
+To: Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+References: <20180207143255.17003-3-marc.zyngier@arm.com>
+ <1519832935-7338-1-git-send-email-sudeep.holla@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <36126393-ee37-40f1-9d5d-1c7f25c648dc@arm.com>
+Date: Wed, 28 Feb 2018 15:51:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519832935-7338-1-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
-ioctl expects that any capability set by the client will have a value of 1.
-Make the check early so that we don't have to test the value for each
-capability.
+Hi Sudeep,
 
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/drm_ioctl.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Cheers for sorting it out...
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index af782911c505..02ffa0e8d77b 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
- {
- 	struct drm_set_client_cap *req = data;
- 
-+	if (req->value > 1)
-+		return -EINVAL;
-+
- 	switch (req->capability) {
- 	case DRM_CLIENT_CAP_STEREO_3D:
--		if (req->value > 1)
--			return -EINVAL;
- 		file_priv->stereo_allowed = req->value;
- 		break;
- 	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
--		if (req->value > 1)
--			return -EINVAL;
- 		file_priv->universal_planes = req->value;
- 		break;
- 	case DRM_CLIENT_CAP_ATOMIC:
- 		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
- 			return -EINVAL;
--		if (req->value > 1)
--			return -EINVAL;
- 		file_priv->atomic = req->value;
- 		file_priv->universal_planes = req->value;
- 		break;
--- 
-2.16.2
+On 28/02/18 15:48, Sudeep Holla wrote:
+> Currently the size of GICv2m MSI frames are listed as 4kB while the
+> Juno TRM specifies 64kB for each of these MSI frames.
+> 
+> Though the devices connected themself might just use the first 4kB,
+
+s/themself/themselves/
+
+> to be consistent with the genaral practice of 64kB boundary alignment
+
+s/genaral/general/
+
+> to all the devices, lets keep the size as 64kB. This might also help
+> in avoiding any surprise when passing the device to a VM.
+> 
+> This patch increase the size of each GICv2m MSI frames from 4kB to 64kB
+> as per the specification.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   arch/arm64/boot/dts/arm/juno-base.dtsi | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> index f8088c45b060..eb749c50a736 100644
+> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> @@ -72,25 +72,25 @@
+>   		v2m_0: v2m@0 {
+>   			compatible = "arm,gic-v2m-frame";
+>   			msi-controller;
+> -			reg = <0 0 0 0x1000>;
+> +			reg = <0 0 0 0x10000>;
+>   		};
+>   
+>   		v2m@10000 {
+>   			compatible = "arm,gic-v2m-frame";
+>   			msi-controller;
+> -			reg = <0 0x10000 0 0x1000>;
+> +			reg = <0 0x10000 0 0x10000>;
+>   		};
+>   
+>   		v2m@20000 {
+>   			compatible = "arm,gic-v2m-frame";
+>   			msi-controller;
+> -			reg = <0 0x20000 0 0x1000>;
+> +			reg = <0 0x20000 0 0x10000>;
+>   		};
+>   
+>   		v2m@30000 {
+>   			compatible = "arm,gic-v2m-frame";
+>   			msi-controller;
+> -			reg = <0 0x30000 0 0x1000>;
+> +			reg = <0 0x30000 0 0x10000>;
+>   		};
+>   	};
+>   
+> 
