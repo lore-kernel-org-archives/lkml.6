@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835811-2-3320195955466827661
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835796-2-1672724613605302824
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835810; b=cap1ZI4hRZ/oc+uxjBPmEULrtgASKWWx5SBxBaaJyK0Nx7i
-    bjShL8m8EMCiGtpvMFJXX3IVbqq3TB1sf6C2mSLoXgN+YgapoVx4tEqVJQ1bSwC0
-    YYQVCkgJvmSRiW4bHMaJDEJlHZC1mSQwPpSnhSL44GdMtOpeszYeyY6GDCACKQ3H
-    2NU7R9B1dAGVZn+rB4FhWXdZsq7y2r5udsOv7EKJ9WTao25Zr+MC1VpOI6gZiaJ1
-    7yAKOC7H/EN0jgtlwHqRsxFd7DzV6hqXFBrYhdlKn0xvrqSo046+2UAl9NHxIZNb
-    SrsEcuGt1x+jEzRRYAvdcJAphtGURmfc72Cw/nA==
+    t=1519835796; b=DoBSRm5S4SXgjsPeq3hu9rxRmwRMGody2UewVpybIQKkkdG
+    OViL1uVjOBDrkcba+NIIN6KdcxraajdJKrtQoNBvs9MrEHl3/xR18gxvTwIhAJ8l
+    1IMyXldu26O0KKgHx2LQCdqMgfR3EgUbKtwKcL7+0xEgilfABwPd1iwqWnJSUhcx
+    zPgmfJsQJBMyIgJihEFmjF/gu+iuDt+EhYapTaQHGj1nbFfM+EB0MXSbfm6ndWl6
+    qm+m7wIyglttd1KQyGRQOilXwGKn6yomy4QvP1v2POpkMuGyfVHVmKwsm0V473H/
+    wwnV/1ca4m1wBVGRvdH2zgHDMjjrcsaORjdRTiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835810; bh=fXE6QcMBwJmfaaTpeEs
-    rsoGPnO9ScnOF/SgUqMe4i1Q=; b=A42uAexIu7zaSW4fMgfzXKw/taSpzYqHUst
-    GZ/EpZqx1q0/kj97ATfMOOdQCCabmxKfciPB/sbYCwtj1w8hnZpcHFuhNSerD5b0
-    9W1h5rN36jcibk9lq5e/LJoHZEtNNkVBTZmrQKH3Zi8yT8HgmJnCd7cQw22Q+bVT
-    pSIjcobdxrmTgErIvEJRZwNrVz3gfM+lbL1WuXvhANx1QlCfcyl+n2hrSFN8WlJj
-    1ooUgcJJyR43UsXL8bd+IY6WWznQktfN6bRpNn8YRWVr0AzRK6TRdawc159Hc5f9
-    R6dQ/0eFMwI3jz40BM4oQQSZQbgVeSD4z9pULNs1tqZ6zjHRL1g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835796; bh=JNtrIQmlBh8k/rLGZRw
+    KR7twjrWJji3qSBBxqWOhpkE=; b=Ws+srKngKGA0DyJskUNtmLVCjeD2P+MpVTC
+    rjsbh5MgqNFsPwI5TQ+ca+9XZWhIvbCkepyij5inBia1+LYrmSjEEiOnoS2GCxgm
+    2cqEwQNrtQaHz4jH9rrtOVlamJxrIi6WD3W2JusVYVnFO9zxlN2nqP9BJuIn0H2j
+    XMG3ga2z/SE2Qq8oxQZ47PQGjkeCdj5hnJUOtWgc4sJ1wlg+mC57RS+Q7ykVRBjz
+    1mWzWnoZYgIx1x5/QO9o1hCcilcJ605rLseDDUrOIR8T7ClXLuceCFIoEEP8kHXO
+    Cl0vCYdaxC/LJmsILaw4Mj7PYQTu8srj1zq9cVqHUsagibazNyQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932207AbeB1Qgd (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:36:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34847 "EHLO
+        id S934428AbeB1QEt (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:04:49 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34846 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932842AbeB1QEt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:49 -0500
+        by vger.kernel.org with ESMTP id S932702AbeB1QEs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:48 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ralf Baechle" <ralf@linux-mips.org>,
-        "Paul Burton" <paul.burton@imgtec.com>, linux-mips@linux-mips.org,
-        "James Hogan" <james.hogan@imgtec.com>
+CC: akpm@linux-foundation.org, "Andrew Lunn" <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Tobias Jordan" <Tobias.Jordan@elektrobit.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.593229193@decadent.org.uk>
+Message-ID: <lsq.1519831218.807064421@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 095/254] MIPS: lose_fpu(): Disable FPU when MSA enabled
+Subject: [PATCH 3.16 066/254] net: mvmdio: disable/unprepare clocks in
+ EPROBE_DEFER case
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,42 +81,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <james.hogan@imgtec.com>
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
 
-commit acaf6a97d623af123314c2f8ce4cf7254f6b2fc1 upstream.
+commit 589bf32f09852041fbd3b7ce1a9e703f95c230ba upstream.
 
-The lose_fpu() function only disables the FPU in CP0_Status.CU1 if the
-FPU is in use and MSA isn't enabled.
+add appropriate calls to clk_disable_unprepare() by jumping to out_mdio
+in case orion_mdio_probe() returns -EPROBE_DEFER.
 
-This isn't necessarily a problem because KSTK_STATUS(current), the
-version of CP0_Status stored on the kernel stack on entry from user
-mode, does always get updated and gets restored when returning to user
-mode, but I don't think it was intended, and it is inconsistent with the
-case of only the FPU being in use. Sometimes leaving the FPU enabled may
-also mask kernel bugs where FPU operations are executed when the FPU
-might not be enabled.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-So lets disable the FPU in the MSA case too.
-
-Fixes: 33c771ba5c5d ("MIPS: save/disable MSA in lose_fpu")
-Signed-off-by: James Hogan <james.hogan@imgtec.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/9323/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Fixes: 3d604da1e954 ("net: mvmdio: get and enable optional clock")
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/include/asm/fpu.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/marvell/mvmdio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/fpu.h
-+++ b/arch/mips/include/asm/fpu.h
-@@ -150,6 +150,7 @@ static inline void lose_fpu(int save)
- 		}
- 		disable_msa();
- 		clear_thread_flag(TIF_USEDMSA);
-+		__disable_fpu();
- 	} else if (is_fpu_owner()) {
- 		if (save)
- 			_save_fp(current);
+--- a/drivers/net/ethernet/marvell/mvmdio.c
++++ b/drivers/net/ethernet/marvell/mvmdio.c
+@@ -241,7 +241,8 @@ static int orion_mdio_probe(struct platf
+ 			dev->regs + MVMDIO_ERR_INT_MASK);
+ 
+ 	} else if (dev->err_interrupt == -EPROBE_DEFER) {
+-		return -EPROBE_DEFER;
++		ret = -EPROBE_DEFER;
++		goto out_mdio;
+ 	}
+ 
+ 	mutex_init(&dev->lock);
