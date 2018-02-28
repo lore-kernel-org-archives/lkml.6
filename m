@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835161-2-11028745762073865090
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835134-2-7489272006778962563
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835161; b=XN2uUfHxInlbnQ5pcvT0XetM3GxmL/wBc8/pKfXqtYgdd7e
-    3lKluH9hLieqVmNjDa3DnJk65tk9zmIsMhmJmBvIptGY68l3b8dHAnQ5P18Tkn+5
-    wR6YerXfPBRqgd25PgKtyOGwOgucXlY3kpoYOAFLRe1zMHWs4cEidG0eYA75MGMN
-    B4hGRK6AWHszZr/WxitBQVuTBvt9e2h8mu5B7dLnmoDTvXfi05NYjdHNYyTjF2Yl
-    ghlSmrvYtYfk7wf2AG5jw8czHnp+imZGqNhCYrYH9ie/k2UcsCGpVRkTy1WHSH9n
-    3sbk2rSb04oowTbaYsaotZ+6RF+4AE21iBYOZtA==
+    t=1519835133; b=fMt2dZmomjrZGKSDc7577k5/AguMr+zOq7kP3i6s3XksA9n
+    DRRJ3PUfBq53ut6BE5cVw8cJenlFFyChpN/7Paonn8axTLvWiC+TM9H037JChXTm
+    vLC046/HEngfW1Xg/X9u3IwQcSDvHw526+NyDdYB991ULV44RrYt8o0ox8tHlr8m
+    i+SRUuCfZCoeFiBtrdHj2nJaQi6U/iI5phV474CrlfhX/oEn5Uj7cnzv95DQbal7
+    p2x5wqU095WrvvouBL9PJwCwMcXRLH75tsy9yl6dnADDYQ3wmNwVI4u2+O4OIVEY
+    wEeeZTMbDvgGok932BG3U4QlrYR8FqbjrAR+gLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835161; bh=a0Xmm1Ddp7FLCce0fS8
-    uPV1WptdFjCrj4u7M5MmXNXg=; b=dq17xADRJgwCyGgrftHO0bcslSWcojMSq0c
-    hFSLoYlabyWMl7liaClid5aFF60SMwMwUeEz2vHTE+XeVBU3VG2Yyrne5SxdbE16
-    epKRoPwR5K4v27OO2mGg/JyS4SR9/sJHunsC4uKJs3aWKqmbd9Yer2AtodwPeBMZ
-    +MeoRnyLg11AlqC1vLyL+FQCSv1cjkbxSYB5J08XHl1AF4AWwxLE115nNSJUDN/L
-    cUvnt7fYLiZGcH2pS8BgktCTg4l9FQYPj/KMI+uKbJjiWCEeh41iKW5WGoxImnvt
-    4T0dxRnUIHpU99p6rE649B969IJACAP8nhFphJx07rGNnemPvlg==
+    :sender:list-id; s=arctest; t=1519835133; bh=J7KiIdM2io/aqi05fmC
+    6eWF/QbgnhCRPQP/INt+TbUI=; b=PhIvmkwJwhq2BUMSDKVINZYGz+RUG6o5laQ
+    16VkANW0RzUdQEKriUx1XoQKkPDV04bxHCUfeqnLEW36ON5HQs0tBSvIlviaZ6+Y
+    GbDDnSmGnyiEBFUDZux83lUMBsnSoAFmJzlfw+q3cuvP23YumBfDK/mILc+kOgCn
+    JgLm3UbDFS1VFDbSO9zCmDa73kbA46iJ2ra8Uc6bNCDNTxBSUnwcMopgbL8kbvUQ
+    phC0wyhhmHjKLTgiXe5E2/B0ceiu7FvA9YSES0B8oW60AaBiR7txSJu+bNniaWf6
+    TQ3SOuW2W9NWQ6NLaLFyvKR3GvAd7xtPq/HIHFTlwLRPb00FbFA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935084AbeB1QUT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:20:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35330 "EHLO
+        id S933432AbeB1QZa (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:25:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35346 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935024AbeB1QUR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:17 -0500
+        by vger.kernel.org with ESMTP id S935089AbeB1QUZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:25 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,12 +60,17 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Linux PCI" <linux-pci@vger.kernel.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.321355798@decadent.org.uk>
+Message-ID: <lsq.1519831218.329460370@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 196/254] SolutionEngine771x: fix Ether platform data
+Subject: [PATCH 3.16 059/254] x86/PCI: Make broadcom_postcore_init() check
+ acpi_disabled
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,61 +85,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-commit 195e2addbce09e5afbc766efc1e6567c9ce840d3 upstream.
+commit ddec3bdee05b06f1dda20ded003c3e10e4184cab upstream.
 
-The 'sh_eth' driver's probe() method would fail  on the SolutionEngine7710
-board and crash on SolutionEngine7712 board  as the platform code is
-hopelessly behind the driver's platform data --  it passes the PHY address
-instead of 'struct sh_eth_plat_data *'; pass the latter to the driver in
-order to fix the bug...
+acpi_os_get_root_pointer() may return a valid address even if acpi_disabled
+is set, but the host bridge information from the ACPI tables is not going
+to be used in that case and the Broadcom host bridge initialization should
+not be skipped then, So make broadcom_postcore_init() check acpi_disabled
+too to avoid this issue.
 
-Fixes: 71557a37adb5 ("[netdrvr] sh_eth: Add SH7619 support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6361d72b04d1 (x86/PCI: read Broadcom CNB20LE host bridge info before PCI scan)
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux PCI <linux-pci@vger.kernel.org>
+Link: https://lkml.kernel.org/r/3186627.pxZj1QbYNg@aspire.rjw.lan
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/sh/boards/mach-se/770x/setup.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/x86/pci/broadcom_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/sh/boards/mach-se/770x/setup.c
-+++ b/arch/sh/boards/mach-se/770x/setup.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/sh_eth.h>
- #include <mach-se/mach/se.h>
- #include <mach-se/mach/mrshpc.h>
- #include <asm/machvec.h>
-@@ -114,6 +115,11 @@ static struct platform_device heartbeat_
- #if defined(CONFIG_CPU_SUBTYPE_SH7710) ||\
- 	defined(CONFIG_CPU_SUBTYPE_SH7712)
- /* SH771X Ethernet driver */
-+static struct sh_eth_plat_data sh_eth_plat = {
-+	.phy = PHY_ID,
-+	.phy_interface = PHY_INTERFACE_MODE_MII,
-+};
-+
- static struct resource sh_eth0_resources[] = {
- 	[0] = {
- 		.start = SH_ETH0_BASE,
-@@ -131,7 +137,7 @@ static struct platform_device sh_eth0_de
- 	.name = "sh771x-ether",
- 	.id = 0,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth0_resources),
- 	.resource = sh_eth0_resources,
-@@ -154,7 +160,7 @@ static struct platform_device sh_eth1_de
- 	.name = "sh771x-ether",
- 	.id = 1,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth1_resources),
- 	.resource = sh_eth1_resources,
+--- a/arch/x86/pci/broadcom_bus.c
++++ b/arch/x86/pci/broadcom_bus.c
+@@ -97,7 +97,7 @@ static int __init broadcom_postcore_init
+ 	 * We should get host bridge information from ACPI unless the BIOS
+ 	 * doesn't support it.
+ 	 */
+-	if (acpi_os_get_root_pointer())
++	if (!acpi_disabled && acpi_os_get_root_pointer())
+ 		return 0;
+ #endif
+ 
