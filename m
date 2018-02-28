@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835125-2-6435251519681153892
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519835105-2-1020882370054217120
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835124; b=lUdO0GWDWb+lIPwUFfhEnnHy+ynpsZyl46MoFSrtbAZ4jnD
-    5UXzyS50JbgeylAlhKdGxbq69oPSt9NCYKYNwFaW2MPHdPrvLvdJF1lwGY0R25JJ
-    2ObEfcJ5/2GwMruPT9D26guH1AH5fNt1CGDN2/6LKektfF/3SxfUybL5vHqh9CHz
-    R64SD2yGj0ZIdt0KdFe31gsmblKSB8wOxNur0Emy8Bcfdzf81oIyReZK9S+k0acp
-    deDsupqo3xjUlojNse3jN3rirvivBOf9nPEhGZsirjOHSvQ4Mvx5ENkHArlNje54
-    UIcEbQlEpVv84isiTbNiHigZWtPOd+hGFdufViA==
+    t=1519835104; b=s/4+RMQJkBj7ze4xtlxmR6vdLhWpfbFxHPQJeae4Wip/ko7
+    EQEC90RRAHllTwSeAEIBCssP6p1dhcWxpDwF6bRgx0aXhB5LjFfqKqvK6Frto34Z
+    ugfvVZprKRRfX76uuuCKgSNbadKO76YmX0k1GPsTcM5ap5QM80HkeNsTOpKRq1p0
+    YyPQtBsc2y7cn35f2ihsy36Q9ufho5QCIwUNg4tFeQLHHxvE2R9/yQ7r5psHoF6e
+    16woAvAor/iiIBWHi1s613w/1B++xn1br+I+I5fZ05+9B6APc5mEV1eB5mly+hdA
+    MftfTRDoMR7bLLw4ztRzB05jIIn2a7fS4idNizQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835124; bh=Bf/szv837tqWIPmS05v
-    813WagDe8/xtJ7hhs8SbHbF0=; b=v42LqIuKjl+sgsGS6W7MOCl/Np7rLsS/Qa/
-    FK9ngrUYL8rPDula4R5Kxe44LjOnoVUVTLeGr03yh/jLWfFClYbS5K7TbGRRwfbi
-    2+usEo4ZJ1cW3MninFagfZZ3SFMlhtXiLThqDrC7M73eXOA9mrVhu1IUhUWGpU5A
-    Eo6/nAnxqQdW8riQepP3yqhv9mdISQgVYSv9wYeUY0nGwvWhQuVqWuxdKfcqdNVO
-    2ulZGnrGbn3yyq/Cd2KkxyWdqgUU+JBb9rIK1inRhdk2QcvQmxJ2Zgwogo+DlSUF
-    BX11wyn/qCQ5IAuEasLiXzsJxGa+fggWcsz33+EiNCOpKTYRaIA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835104; bh=GGjMI1Po8hVdqcF++wp
+    EqH7somvIVxjWAogVlJEzIyk=; b=k4Fos8aRcNzcTgP3WjViG5Yakoe5XqF8m6v
+    PpDwasQvHF2Y/VPQ7I4zafNrr3thrPKMzYZSQoVGAcEz7IwBwF8dWUwELUy80D9i
+    aGsI/NMGRavbUeWu6VgaTz9p4dt13V68u0U/6DS6FOAbkWx2f0d51NPqK0woaRSq
+    OOhMH1fa1toO5VKJu8KUrOv28iM0G7r+2nJ9X2j1CjGLAATfrx/lg7FXub+7wVzh
+    QakkOLNpkixjqaR3tzMGFiDpbrvlW3alzknIORVRf0hfh6s2TJxaJ4L3/90S0N/y
+    tXqKAdILIXFRmsdMb5hy+CCoKfX/8RgGmu2ekeVkWVKkaX9YE9A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,28 +47,29 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935131AbeB1QU3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:20:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35347 "EHLO
+        id S935156AbeB1QUe (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:20:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35359 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935024AbeB1QU0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:26 -0500
+        by vger.kernel.org with ESMTP id S935146AbeB1QUc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:32 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Dmitry Vyukov" <dvyukov@google.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "Lan Tianyu" <tianyu.lan@intel.com>
+CC: akpm@linux-foundation.org,
+        "Nikita Leshenko" <nikita.leshchenko@oracle.com>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Liran Alon" <liran.alon@oracle.com>,
+        "Wanpeng Li" <wanpeng.li@hotmail.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.16960132@decadent.org.uk>
+Message-ID: <lsq.1519831218.454718217@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 212/254] KVM/x86: Check input paging mode when cs.l
- is set
+Subject: [PATCH 3.16 005/254] KVM: x86: Don't re-execute instruction when
+ not passing CR2 value
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,95 +84,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lan Tianyu <tianyu.lan@intel.com>
+From: Liran Alon <liran.alon@oracle.com>
 
-commit f29810335965ac1f7bcb501ee2af5f039f792416 upstream.
+commit 9b8ae63798cb97e785a667ff27e43fa6220cb734 upstream.
 
-Reported by syzkaller:
-    WARNING: CPU: 0 PID: 27962 at arch/x86/kvm/emulate.c:5631 x86_emulate_insn+0x557/0x15f0 [kvm]
-    Modules linked in: kvm_intel kvm [last unloaded: kvm]
-    CPU: 0 PID: 27962 Comm: syz-executor Tainted: G    B   W        4.15.0-rc2-next-20171208+ #32
-    Hardware name: Intel Corporation S1200SP/S1200SP, BIOS S1200SP.86B.01.03.0006.040720161253 04/07/2016
-    RIP: 0010:x86_emulate_insn+0x557/0x15f0 [kvm]
-    RSP: 0018:ffff8807234476d0 EFLAGS: 00010282
-    RAX: 0000000000000000 RBX: ffff88072d0237a0 RCX: ffffffffa0065c4d
-    RDX: 1ffff100e5a046f9 RSI: 0000000000000003 RDI: ffff88072d0237c8
-    RBP: ffff880723447728 R08: ffff88072d020000 R09: ffffffffa008d240
-    R10: 0000000000000002 R11: ffffed00e7d87db3 R12: ffff88072d0237c8
-    R13: ffff88072d023870 R14: ffff88072d0238c2 R15: ffffffffa008d080
-    FS:  00007f8a68666700(0000) GS:ffff880802200000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: 000000002009506c CR3: 000000071fec4005 CR4: 00000000003626f0
-    Call Trace:
-     x86_emulate_instruction+0x3bc/0xb70 [kvm]
-     ? reexecute_instruction.part.162+0x130/0x130 [kvm]
-     vmx_handle_exit+0x46d/0x14f0 [kvm_intel]
-     ? trace_event_raw_event_kvm_entry+0xe7/0x150 [kvm]
-     ? handle_vmfunc+0x2f0/0x2f0 [kvm_intel]
-     ? wait_lapic_expire+0x25/0x270 [kvm]
-     vcpu_enter_guest+0x720/0x1ef0 [kvm]
-     ...
+In case of instruction-decode failure or emulation failure,
+x86_emulate_instruction() will call reexecute_instruction() which will
+attempt to use the cr2 value passed to x86_emulate_instruction().
+However, when x86_emulate_instruction() is called from
+emulate_instruction(), cr2 is not passed (passed as 0) and therefore
+it doesn't make sense to execute reexecute_instruction() logic at all.
 
-When CS.L is set, vcpu should run in the 64 bit paging mode.
-Current kvm set_sregs function doesn't have such check when
-userspace inputs sreg values. This will lead unexpected behavior.
-This patch is to add checks for CS.L, EFER.LME, EFER.LMA and
-CR4.PAE when get SREG inputs from userspace in order to avoid
-unexpected behavior.
+Fixes: 51d8b66199e9 ("KVM: cleanup emulate_instruction")
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jim Mattson <jmattson@google.com>
-Signed-off-by: Tianyu Lan <tianyu.lan@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/x86.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/x86/include/asm/kvm_host.h | 3 ++-
+ arch/x86/kvm/vmx.c              | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6579,6 +6579,29 @@ int kvm_task_switch(struct kvm_vcpu *vcp
- }
- EXPORT_SYMBOL_GPL(kvm_task_switch);
- 
-+int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
-+{
-+	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG_BIT)) {
-+		/*
-+		 * When EFER.LME and CR0.PG are set, the processor is in
-+		 * 64-bit mode (though maybe in a 32-bit code segment).
-+		 * CR4.PAE and EFER.LMA must be set.
-+		 */
-+		if (!(sregs->cr4 & X86_CR4_PAE_BIT)
-+		    || !(sregs->efer & EFER_LMA))
-+			return -EINVAL;
-+	} else {
-+		/*
-+		 * Not in 64-bit mode: EFER.LMA is clear and the code
-+		 * segment cannot be 64-bit.
-+		 */
-+		if (sregs->efer & EFER_LMA || sregs->cs.l)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
- 				  struct kvm_sregs *sregs)
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -847,7 +847,8 @@ int x86_emulate_instruction(struct kvm_v
+ static inline int emulate_instruction(struct kvm_vcpu *vcpu,
+ 			int emulation_type)
  {
-@@ -6590,6 +6613,9 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct
- 	if (!guest_cpuid_has_xsave(vcpu) && (sregs->cr4 & X86_CR4_OSXSAVE))
- 		return -EINVAL;
+-	return x86_emulate_instruction(vcpu, 0, emulation_type, NULL, 0);
++	return x86_emulate_instruction(vcpu, 0,
++			emulation_type | EMULTYPE_NO_REEXECUTE, NULL, 0);
+ }
  
-+	if (kvm_valid_sregs(vcpu, sregs))
-+		return -EINVAL;
-+
- 	dt.size = sregs->idt.limit;
- 	dt.address = sregs->idt.base;
- 	kvm_x86_ops->set_idt(vcpu, &dt);
+ void kvm_enable_efer_bits(u64);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -5659,7 +5659,7 @@ static int handle_invalid_guest_state(st
+ 		if (test_bit(KVM_REQ_EVENT, &vcpu->requests))
+ 			return 1;
+ 
+-		err = emulate_instruction(vcpu, EMULTYPE_NO_REEXECUTE);
++		err = emulate_instruction(vcpu, 0);
+ 
+ 		if (err == EMULATE_USER_EXIT) {
+ 			++vcpu->stat.mmio_exits;
