@@ -1,34 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752646AbeB1Mzw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:55:52 -0500
-Received: from enterprise03.smtp.diehl.com ([193.201.238.214]:20463 "EHLO
-        enterprise03.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752417AbeB1Mzp (ORCPT
+        id S932104AbeB1M4G convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:56:06 -0500
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:35782 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752622AbeB1Mzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:55:45 -0500
+        Wed, 28 Feb 2018 07:55:50 -0500
 X-$ESA-Groupmapping: true
 X-IronPort-AV: E=Sophos;i="5.47,405,1515452400";
-   d="scan'208";a="8594348"
+   d="scan'";a="45685405"
 From: Denis OSTERLAND <denis.osterland@diehl.com>
 To: "a.zummo@towertech.it" <a.zummo@towertech.it>,
         "alexandre.belloni@free-electrons.com"
         <alexandre.belloni@free-electrons.com>
 CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "mgr@pengutronix.de" <mgr@pengutronix.de>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux@roeck-us.net" <linux@roeck-us.net>,
         "jdelvare@suse.com" <jdelvare@suse.com>,
         "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Denis OSTERLAND <denis.osterland@diehl.com>
-Subject: [PATCH v2 4/4] rtc: isl1208: Add "evdet" interrupt source for
- isl1219.
-Thread-Topic: [PATCH v2 4/4] rtc: isl1208: Add "evdet" interrupt source for
- isl1219.
-Thread-Index: AQHTsJIOiqz8PPeI906Qv97HoY2S5Q==
+Subject: [PATCH v2 1/4] rtc: isl1208: enable interrupt after context
+ preparation
+Thread-Topic: [PATCH v2 1/4] rtc: isl1208: enable interrupt after context
+ preparation
+Thread-Index: AQHTsJIOlRXXklFeYk+7pIdbC4Mhpw==
 Date: Wed, 28 Feb 2018 12:45:47 +0000
-Message-ID: <1519821214-22379-5-git-send-email-Denis.Osterland@diehl.com>
+Message-ID: <1519821214-22379-2-git-send-email-Denis.Osterland@diehl.com>
 References: <1519821214-22379-1-git-send-email-Denis.Osterland@diehl.com>
 In-Reply-To: <1519821214-22379-1-git-send-email-Denis.Osterland@diehl.com>
 Accept-Language: de-DE, en-US
@@ -37,7 +38,7 @@ X-MS-TNEF-Correlator:
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.153.3.249]
 MIME-Version: 1.0
-X-GBS-PROC: byQFdw3ukCM+zy1/poiPc0CGI8Kj8nA1470zzstx6GxOZJaUnR4wS2jLMesKTORe
+X-GBS-PROC: PkB65aL1SqtESF35r/jQn9k356gkD1odrp1gEtdakkC6EsA+9AWzXKSEZWp+VRdu
 X-MIMETrack: Itemize by SMTP Server on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
  09, 2018) at 28.02.2018 13:45:48,
         Serialize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
@@ -55,78 +56,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Osterland <Denis.Osterland@diehl.com>
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-Add support for "evdet" named interrupt source.
+The interrupt handler got enabled very early. If the interrupt cause is
+triggering immediately before the context is fully prepared. This can
+lead to undefined behaviour. Therefor we move the interrupt enable code
+to the end of the probe function.
 
-The check if i2c client irq matches evdet irq is needed
-for the case that there is only one interrupt named "evdet".
-In this case i2c client code handles this like an unnamed
-interrupt souce and assigns the value.
-
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
-Reviewed-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 ---
- drivers/rtc/rtc-isl1208.c | 47 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 16 deletions(-)
+ drivers/rtc/rtc-isl1208.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index 164371b..f2f148b 100644
+index c8b4953..a13a4ba 100644
 --- a/drivers/rtc/rtc-isl1208.c
 +++ b/drivers/rtc/rtc-isl1208.c
-@@ -14,6 +14,7 @@
- #include <linux/i2c.h>
- #include <linux/bcd.h>
- #include <linux/rtc.h>
-+#include <linux/of_irq.h>
- 
- /* Register map */
- /* rtc section */
-@@ -79,6 +80,7 @@ enum {
- struct isl1208 {
- 	struct rtc_device *rtc;
- 	const struct attribute_group *sysfs_files;
-+	int evdet_irq;
- };
- 
- /* block read */
-@@ -730,6 +732,24 @@ static const struct attribute_group isl1219_rtc_sysfs_files = {
- 	.attrs	= isl1219_rtc_attrs,
- };
- 
-+static int isl1208_setup_irq(struct i2c_client *client, int irq)
-+{
-+	int rc = devm_request_threaded_irq(&client->dev, irq, NULL,
-+					isl1208_rtc_interrupt,
-+					IRQF_SHARED | IRQF_ONESHOT,
-+					isl1208_driver.driver.name,
-+					client);
-+	if (!rc) {
-+		device_init_wakeup(&client->dev, 1);
-+		enable_irq_wake(irq);
-+	} else {
-+		dev_err(&client->dev,
-+			"Unable to request irq %d, no alarm support\n",
-+			irq);
-+	}
-+	return rc;
-+}
-+
- static int
- isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- {
-@@ -772,6 +792,8 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 			return rc;
- 		}
- 		isl1208->sysfs_files = &isl1219_rtc_sysfs_files;
-+		isl1208->evdet_irq = of_irq_get_byname(client->dev.of_node,
-+								"evdet");
- 	} else {
- 		isl1208->sysfs_files = &isl1208_rtc_sysfs_files;
- 	}
-@@ -780,22 +802,15 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	if (rc)
- 		return rc;
+@@ -635,23 +635,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (isl1208_i2c_validate_client(client) < 0)
+ 		return -ENODEV;
  
 -	if (client->irq > 0) {
 -		rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
@@ -144,18 +93,34 @@ index 164371b..f2f148b 100644
 -			client->irq = 0;
 -		}
 -	}
-+	if (client->irq > 0)
-+		rc = isl1208_setup_irq(client, client->irq);
-+	if (rc)
-+		return rc;
-+
-+	if (isl1208->evdet_irq > 0 && isl1208->evdet_irq != client->irq)
-+		rc = isl1208_setup_irq(client, isl1208->evdet_irq);
-+	if (rc)
-+		return rc;
+-
+ 	rtc = devm_rtc_device_register(&client->dev, isl1208_driver.driver.name,
+ 				  &isl1208_rtc_ops,
+ 				  THIS_MODULE);
+@@ -674,6 +657,23 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (rc)
+ 		return rc;
  
- 	return rtc_register_device(isl1208->rtc);
++	if (client->irq > 0) {
++		rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					       isl1208_rtc_interrupt,
++					       IRQF_SHARED | IRQF_ONESHOT,
++					       isl1208_driver.driver.name,
++					       client);
++		if (!rc) {
++			device_init_wakeup(&client->dev, 1);
++			enable_irq_wake(client->irq);
++		} else {
++			dev_err(&client->dev,
++				"Unable to request irq %d, no alarm support\n",
++				client->irq);
++			client->irq = 0;
++		}
++	}
++
+ 	return 0;
  }
+ 
 -- 
 2.7.4
 
