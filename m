@@ -1,29 +1,29 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELu0Bjx3KGU9wjgNvCKa6/RuImE3va1zCHH0F7kAml6Jr9V45/EtcddizHINY1XPjdJiL6e6
-ARC-Seal: i=1; a=rsa-sha256; t=1519787011; cv=none;
+X-Google-Smtp-Source: AH8x226W8gf0NVabIfm1zHB8IrRRr08xxWlnbaO7zcElmnVHNjjupAVP8FcMGpxWbKZzbaEE5PoV
+ARC-Seal: i=1; a=rsa-sha256; t=1519787071; cv=none;
         d=google.com; s=arc-20160816;
-        b=DEagk5cjPENnY6Pn9Uv86vM5eJarJXpjoOnENq3s34h/LtikX9Ss+Il4i3z+vNe4Ar
-         nixrPEJW0YsjvBxLGyMS/JJRsj1U7rpnrDv8n1PqM/F6v/sNUaQIijdqZTNIBB9B2KL2
-         JdWBcCfRb+gfh4nkRJ/L/VQd4R+Ua8dwlVQk/HEVXoIn+z2HHkVrjEkqoYKfUNHzxZ2k
-         4QHpXB/XaILlNUBW0j/THrpYvyVBzk9iHyzVm0R0ENxl+0vojv3go2WQy4w6zh96f+YV
-         ZFBbvyTLV6RARB2IOgBwwhX89QRVsiMrdJcAV9xVqipTiTVrejo1m6XC93piyZICBJTm
-         i6+Q==
+        b=P7olacfkX8LFwU5mMVYVc4Crbf9GGFJCrh0lCmlqy6DGmOUMcC2J1NJUDMnNeV36gw
+         0HoUCbNA7ndu4uoPcZJMKsXRsx4Ey0rsOcgfdYYlnydd61PeVK0MWm5/c1LVxKG4jier
+         0vVF1ZTDRqlRRyU1ZPqrpmntql4MmDf6xeDjFMvVhAmUp72TV4unF8Vm1S2kRH2hiiO6
+         u5vu4F9si0NmIp2lSW9lQ+eDLEFzpGL7xdExyJLMjAaHCtUEIyfESBTPPBPYcYqaHVoX
+         2oYj1TOCq567HjcVxKETfp1fHIT7YugwMy602iZYSdP6hMh0SE8OnCmSqski6bKv3qRP
+         qZvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=ahhR1X13KhHU9hX320FszCz5w/ufXT2ZCOBwMjML0SU=;
-        b=tq8b7neL6pkgcL9o9+d8bcPkHSTzbjnACQ23nzHK64Y5GjyK+XYa7619thI1Xfor4q
-         2CG+mO/gUBb9+9ntaUKjzILMItZMpE2fu9yJCBa+F0VE3RdtlhFEtiYP+GCkT1rz1hE+
-         +Ai4osOGVvS8pcIK/pdVH0765lra1HEFpNPP4l/C6tJjPezYOILWOGzVw7oy+nd0JjAB
-         Cviu4CtdCDD029YFPwXT68BA7tHafWNGNx451yAdDXLWn2CN8QIRA69+QJjBq6iYo5Bc
-         Y0z02tpOlswtRUcjcfI3HVsPW8QJw6XWH9kJZAc0LVVaRav8hPwjEOgQiwfpcKY22OI3
-         BVXA==
+        h=references:in-reply-to:message-id:date:subject:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=hQHYPIVnOZUsy0WvDQICaa/+QkofvyLnQV5hRx/K5y4=;
+        b=YL+sKhQiVeda0sCpM3za12naakHCkMEkl6CPHLfmKd8LZneOG58ZKG6LF5mAZ933om
+         aFjgDFmsDFvH7MGosxUKktRmIBgmdvpUgkQHG0/FqcvWx7FtP0+tLYsUxWDYXkmm2Qs+
+         c4s8zgUUqwuRTKHUptCoN4uzsjsg2CQ35kiubAaSfXdtj855l6ByKLeUJJcIBKlJ0qyF
+         HzwI848INUl4PW4xn9ONZhYowpuJJKFvirBtPFkpkuOvRcIoopHqsixy7g/E7wbWiP/C
+         py2yWHQOAWU+8kXvTrbYvSkChf62UtctV2iOfcs/OLP9wfDc/N8Fr99TbosPchwtinQg
+         JcVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=lE07fO5z;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Z6oz4wtz;
        spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=lE07fO5z;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Z6oz4wtz;
        spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
@@ -34,107 +34,120 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
         bhe@redhat.com
-Subject: [v5 0/6] optimize memory hotplug
-Date: Tue, 27 Feb 2018 22:03:02 -0500
-Message-Id: <20180228030308.1116-1-pasha.tatashin@oracle.com>
+Subject: [v5 3/6] mm: add uninitialized struct page poisoning sanity checking
+Date: Tue, 27 Feb 2018 22:03:05 -0500
+Message-Id: <20180228030308.1116-4-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180228030308.1116-1-pasha.tatashin@oracle.com>
+References: <20180228030308.1116-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=798
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802280034
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593612185598129869?=
-X-GMAIL-MSGID: =?utf-8?q?1593612185598129869?=
+X-GMAIL-THRID: =?utf-8?q?1593612248407323654?=
+X-GMAIL-MSGID: =?utf-8?q?1593612248407323654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Changelog:
-	v5 - v4
-	- Addressed more comments from Ingo Molnar and Michal Hocko.
-	- In the patch "optimize memory hotplug" we are now using
-	  struct memory_block to hold node id as suggested by Michal.
-	- In the patch "don't read nid from struct page during hotplug"
-	  renamed register_new_memory() to hotplug_memory_register() as
-	  suggested by Ingo. Also, in this patch replaced the
-	  description with the one provided by Michal.
-	- Fixed other spelling issues found by Ingo.
+During boot we poison struct page memory in order to ensure that no one is
+accessing this memory until the struct pages are initialized in
+__init_single_page().
 
-	v3 - v4
-	Addressed comments from Ingo Molnar and from Michal Hocko
-	Split 4th patch into three patches
-	Instead of using section table to save node ids, saving node id in
-	the first page of every section.
+This patch adds more scrutiny to this checking by making sure that flags
+do not equal the poison pattern when they are accessed.  The pattern is all
+ones.
 
-	v2 - v3
-	Fixed two issues found during testing
-	Addressed Kbuild warning reports
+Since node id is also stored in struct page, and may be accessed quite
+early, we add this enforcement into page_to_nid() function as well.
+Note, this is applicable only when NODE_NOT_IN_PAGE_FLAGS=n
 
-	v1 - v2
-	Added struct page poisoning checking in order to verify that
-	struct pages are never accessed until initialized during memory
-	hotplug
-
-This patchset:
-- Improves hotplug performance by eliminating a number of
-struct page traverses during memory hotplug.
-
-- Fixes some issues with hotplugging, where boundaries
-were not properly checked. And on x86 block size was not properly aligned
-with end of memory
-
-- Also, potentially improves boot performance by eliminating condition from
-  __init_single_page().
-
-- Adds robustness by verifying that that struct pages are correctly
-  poisoned when flags are accessed.
-
-The following experiments were performed on Xeon(R)
-CPU E7-8895 v3 @ 2.60GHz with 1T RAM:
-
-booting in qemu with 960G of memory, time to initialize struct pages:
-
-no-kvm:
-	TRY1		TRY2
-BEFORE:	39.433668	39.39705
-AFTER:	36.903781	36.989329
-
-with-kvm:
-BEFORE:	10.977447	11.103164
-AFTER:	10.929072	10.751885
-
-Hotplug 896G memory:
-no-kvm:
-	TRY1		TRY2
-BEFORE: 848.740000	846.910000
-AFTER:  783.070000	786.560000
-
-with-kvm:
-	TRY1		TRY2
-BEFORE: 34.410000	33.57
-AFTER:	29.810000	29.580000
-
-Pavel Tatashin (6):
-  mm/memory_hotplug: enforce block size aligned range check
-  x86/mm/memory_hotplug: determine block size based on the end of boot
-    memory
-  mm: add uninitialized struct page poisoning sanity checking
-  mm/memory_hotplug: optimize probe routine
-  mm/memory_hotplug: don't read nid from struct page during hotplug
-  mm/memory_hotplug: optimize memory hotplug
-
- arch/x86/mm/init_64.c      | 33 +++++++++++++++++++++++++++++----
- drivers/base/memory.c      | 40 ++++++++++++++++++++++------------------
- drivers/base/node.c        | 24 +++++++++++++++++-------
- include/linux/memory.h     |  3 ++-
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
  include/linux/mm.h         |  4 +++-
- include/linux/node.h       |  4 ++--
  include/linux/page-flags.h | 22 +++++++++++++++++-----
  mm/memblock.c              |  2 +-
- mm/memory_hotplug.c        | 44 +++++++++++++++++---------------------------
- mm/page_alloc.c            | 28 ++++++++++------------------
- mm/sparse.c                |  8 +++++++-
- 11 files changed, 127 insertions(+), 85 deletions(-)
+ 3 files changed, 21 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..ad71136a6494 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -896,7 +896,9 @@ extern int page_to_nid(const struct page *page);
+ #else
+ static inline int page_to_nid(const struct page *page)
+ {
+-	return (page->flags >> NODES_PGSHIFT) & NODES_MASK;
++	struct page *p = (struct page *)page;
++
++	return (PF_POISONED_CHECK(p)->flags >> NODES_PGSHIFT) & NODES_MASK;
+ }
+ #endif
+ 
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 50c2b8786831..e34a27727b9a 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -156,9 +156,18 @@ static __always_inline int PageCompound(struct page *page)
+ 	return test_bit(PG_head, &page->flags) || PageTail(page);
+ }
+ 
++#define	PAGE_POISON_PATTERN	-1l
++static inline int PagePoisoned(const struct page *page)
++{
++	return page->flags == PAGE_POISON_PATTERN;
++}
++
+ /*
+  * Page flags policies wrt compound pages
+  *
++ * PF_POISONED_CHECK
++ *     check if this struct page poisoned/uninitialized
++ *
+  * PF_ANY:
+  *     the page flag is relevant for small, head and tail pages.
+  *
+@@ -176,17 +185,20 @@ static __always_inline int PageCompound(struct page *page)
+  * PF_NO_COMPOUND:
+  *     the page flag is not relevant for compound pages.
+  */
+-#define PF_ANY(page, enforce)	page
+-#define PF_HEAD(page, enforce)	compound_head(page)
++#define PF_POISONED_CHECK(page) ({					\
++		VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);		\
++		page; })
++#define PF_ANY(page, enforce)	PF_POISONED_CHECK(page)
++#define PF_HEAD(page, enforce)	PF_POISONED_CHECK(compound_head(page))
+ #define PF_ONLY_HEAD(page, enforce) ({					\
+ 		VM_BUG_ON_PGFLAGS(PageTail(page), page);		\
+-		page;})
++		PF_POISONED_CHECK(page); })
+ #define PF_NO_TAIL(page, enforce) ({					\
+ 		VM_BUG_ON_PGFLAGS(enforce && PageTail(page), page);	\
+-		compound_head(page);})
++		PF_POISONED_CHECK(compound_head(page)); })
+ #define PF_NO_COMPOUND(page, enforce) ({				\
+ 		VM_BUG_ON_PGFLAGS(enforce && PageCompound(page), page);	\
+-		page;})
++		PF_POISONED_CHECK(page); })
+ 
+ /*
+  * Macros to create function definitions for page flags
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 5a9ca2a1751b..d85c8754e0ce 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1373,7 +1373,7 @@ void * __init memblock_virt_alloc_try_nid_raw(
+ 					   min_addr, max_addr, nid);
+ #ifdef CONFIG_DEBUG_VM
+ 	if (ptr && size > 0)
+-		memset(ptr, 0xff, size);
++		memset(ptr, PAGE_POISON_PATTERN, size);
+ #endif
+ 	return ptr;
+ }
 -- 
 2.16.2
