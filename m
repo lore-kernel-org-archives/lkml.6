@@ -1,86 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934664AbeB1QOB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 11:14:01 -0500
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:35192 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932268AbeB1QN5 (ORCPT
+        id S932830AbeB1QP7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 11:15:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35196 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933001AbeB1QPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:13:57 -0500
-X-Google-Smtp-Source: AG47ELvYeFC3kd7mv20jUPWODAN6aQudi00ryJn4ELELFS3x7IFaHeicJFkoC3XDVWdRRddMd1fASNUgzhWtHnwA8Cc=
+        Wed, 28 Feb 2018 11:15:54 -0500
+Subject: Re: [PATCH v2 07/15] KVM: s390: Interfaces to configure/deconfigure
+ guest's AP matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 17:15:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180227211539.5708-7-kernel@kempniu.pl>
-References: <20180227211539.5708-1-kernel@kempniu.pl> <20180227211539.5708-7-kernel@kempniu.pl>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 28 Feb 2018 18:13:55 +0200
-Message-ID: <CAHp75VeANKg+L7GsA=onScQ6mBeWzhthd0cP6=36rFB4KHWr7w@mail.gmail.com>
-Subject: Re: [PATCH 6/7] platform/x86: fujitsu-laptop: More accurately
- represent the hotkey ring buffer managed by firmware
-To: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Jonathan Woithe <jwoithe@just42.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18022816-0040-0000-0000-000004190EE6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022816-0041-0000-0000-0000261C0F83
+Message-Id: <c06ad065-9f10-2d0d-f56f-faae813557d9@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280196
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1SGE4Xi003821
 
-On Tue, Feb 27, 2018 at 11:15 PM, Michał Kępień <kernel@kempniu.pl> wrote:
-> The MAX_HOTKEY_RINGBUFFER_SIZE constant is set to 100, which allows up
-> to 100 hotkey events to be drained from the firmware ring buffer upon
-> module load.  However, no known firmware is capable of holding more than
-> 16 hotkey events in its internal ring buffer:
+On 27/02/2018 15:28, Tony Krowiak wrote:
+> Provides interfaces to assign AP adapters, usage domains
+> and control domains to a KVM guest.
+>
+> A KVM guest is started by executing the Start Interpretive Execution (SIE)
+> instruction. The SIE state description is a control block that contains the
+> state information for a KVM guest and is supplied as input to the SIE
+> instruction. The SIE state description has a satellite structure called the
+> Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
+> identifying the adapters, queues (domains) and control domains assigned to
+> the KVM guest:
+>
+> * The AP Adapter Mask (APM) field identifies the AP adapters assigned to
+>    the KVM guest
+>
+> * The AP Queue Mask (AQM) field identifies the AP queues assigned to
+>    the KVM guest. Each AP queue is connected to a usage domain within
+>    an AP adapter.
+>
+> * The AP Domain Mask (ADM) field identifies the control domains
+>    assigned to the KVM guest.
+>
+> Each adapter, queue (usage domain) and control domain are identified by
+> a number from 0 to 255. The bits in each mask, from most significant to
+> least significant bit, correspond to the numbers 0-255. When a bit is
+> set, the corresponding adapter, queue (usage domain) or control domain
+> is assigned to the KVM guest.
 
-> The RINGBUFFERSIZE constant is set to 40, which allows the module to
-> queue up to 40 hotkey events for delivery to user space.  As this value
-> seems arbitrarily chosen and 16 should be more than enough for any
-> practical use case, merge the two aforementioned constants into one
-> (HOTKEY_RINGBUFFER_SIZE) in order to simplify code and more accurately
-> represent the underlying data structure.
+...snip...
 
-> +#define HOTKEY_RINGBUFFER_SIZE         16
+>   static int kvm_ap_apxa_installed(void)
+>   {
+>   	int ret;
+> @@ -50,3 +170,140 @@ void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd)
+>   			*crycbd |= CRYCB_FORMAT1;
+>   	}
+>   }
+> +
+> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->apm_max = 256;
 
-This need the comment or a
+AFAIK the number of possible bits in the masks for a system is not a 
+generic value but is
+returned by the QCI instruction.
+Is there a reason to use a fix value?
 
-BUILD_BUG_ON(!is_power_of_2(...));
+> +	else
+> +		ap_matrix->apm_max = 64;
+> +
+> +	ap_matrix->apm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->apm_max),
+> +				 GFP_KERNEL);
+> +	if (!ap_matrix->apm)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kvm_ap_matrix_aqm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->aqm_max = 256;
+
+same here
+
+> +	else
+> +		ap_matrix->aqm_max = 16;
+> +
+> +	ap_matrix->aqm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->aqm_max),
+> +				 GFP_KERNEL);
+> +	if (!ap_matrix->aqm)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kvm_ap_matrix_adm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->adm_max = 256;
+
+and here
 
 
-> -       ret = kfifo_alloc(&priv->fifo, RINGBUFFERSIZE * sizeof(int),
-> +       ret = kfifo_alloc(&priv->fifo, HOTKEY_RINGBUFFER_SIZE * sizeof(int),
->                           GFP_KERNEL);
-
->         while (call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
->                               0x0, 0x0) != 0 &&
-> -              i++ < MAX_HOTKEY_RINGBUFFER_SIZE)
-> +              i++ < HOTKEY_RINGBUFFER_SIZE)
->                 ; /* No action, result is discarded */
-
-This looks horrible.
-Can it be redone
-
-do {
- if (call...() == 0)
-  break;
-} while (i++ < ...);
-
-?
-
->         while ((irb = call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
->                                      0x0, 0x0)) != 0 &&
-> -              i++ < MAX_HOTKEY_RINGBUFFER_SIZE) {
-> +              i++ < HOTKEY_RINGBUFFER_SIZE) {
-
-Ditto.
-
->                 scancode = irb & 0x4ff;
->                 if (sparse_keymap_entry_from_scancode(priv->input, scancode))
->                         acpi_fujitsu_laptop_press(device, scancode);
-
+Pierre
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
