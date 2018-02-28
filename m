@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x227Bo1+Hb+pztquqQnDiAhP2Ubh3pKEu/LC5xSu5cP9la10jWKvPli0MLfc89yN3TA8J3BzN
-ARC-Seal: i=1; a=rsa-sha256; t=1519831357; cv=none;
+X-Google-Smtp-Source: AH8x224P+DWyNFgZIzqH4th7Hba0hgztbxBixtxfW+QJDvv4gy+U8el6E0ZqwHePlI1A0bG2LlsZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519831347; cv=none;
         d=google.com; s=arc-20160816;
-        b=KBBPm2B6RTD5BgqcaIllYm2j3vmQqQ8zGJRGacbg0KTmlOI50ZcGEVNLC/10yBBmN8
-         wugyGjWT8V2j5L2i1jFULknbmW6xtKWhrc907CrsqdQz4Ojllrd65DLF4KuIOBHQXjpS
-         VFEQKDy/8KqxEU0NpknsIqVVyEqtTiLDns3Wqr9h0pVoq9l02pfAF0zoVzHbtxEPUQ1W
-         gk7SQFbTQm9qtEQbNn+v9cKI14N6iUNlRE/QZGJLhcSKOaYXc96h/YyIUHIp7xKTriqE
-         yXSEFcHBH9M2Z1bUfJHOlNc+cY3S9v93URPPJk7Ax6DSCbjVKQCz4HYWIo3D+XOX2Uql
-         RNGQ==
+        b=WSSXLHiMuf4f3PGWMz9x//Lty5vtLXRo5be27CRdBVIHmjS5SPw/NN2U24Ytvp0duR
+         FH/6EjykSHbxcnl12E+QItTu+29V/CbjI3/Xtb669fjShwsZfDQMth4M+Zw2erdp8u9+
+         vkZmJCg/s3J8+TB5UgbtdkBGKrgbDchAGfurzszCn5vqwJdXbNTNfmELl9iggjIviaYO
+         LGcpWGRIYZFu76mcO1CGKdcJxGP30jq7d9AMrTeFi/99l8duD43obI+9NTLZWYPQr/a0
+         wu7q1rpf3XHFMGZZ04wM1HXZzgXhGzZm01tw/YDSl5iBGmt32tdTKZDa+FopNVaplT+P
+         1n5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=7KdVpCUxUntg/OwXRBuZWCkvsjlb+m9Hty6JQ5IyEic=;
-        b=UZPFRJUuTB6KFtFat8eqHjadWTQGKnrsngZzXe1O+Y1ciNkcFmdy8v9GXaXrLxQuHv
-         QBMKYpWFyJF28+QNHyMkbA3uRG5Xj6tAdxDv7tcmVBGJvq+sr7kDH/EMfkU+jlzjcCei
-         wyKogtZMfdm3PC5ROlxVfEVI1MQfz7zp9INuILN6XHDXganQ/9gEBQ+A1ShWPc8SWBh+
-         wajyCaqiiDcHLNU2RYlB8X6ztg6XMWGmPxU5fgf/j+R74wcmvy5IjF2diCkKnm+9IBgv
-         Mkv38vZTS/LgCnXBfc2BbbuX9tyiwpKm255Cwdh5IqG3Ac6uv7gkN+nQSDzpRRjzKlAz
-         FZsg==
+        bh=OPk4gRrI3wXxWkWp8ibnNJ3Mbvg2FDcRxXBsB3QVDco=;
+        b=wKB11uTesr4a2dxFIMlPnGEZcnIrex7RqsTJtCwVyhpCdkziqb06809VNDLel5akeK
+         Sks9Gxx4+daUSYfiFjAksWQZWMn2IMKefH/Qwr/rt2GqRENrc9vaKQvrOA31K7MGaLUh
+         mKJ5yNyJvD9JLT7+/zWawN3HWMj9zPpd97ZZdqkA1490FUmsVTUjtcQ6VUckptfiWLQw
+         SrPpmpH9xBsfTEpUR8mXwzRevjAbUpf+iDkP87L+1dTSd2T6Kjphulu5O91nzbBCvpks
+         SHulur+iWmttg9Kc32GHEiUvn1aROzA3CS0Dl5GsnxUcW3rPZmgOD919lzIyWa9ijbMl
+         kK3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Masakazu Mokuno" <masakazu.mokuno@gmail.com>,
+ "Shuah Khan" <shuahkh@osg.samsung.com>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.721969954@decadent.org.uk>
+Message-ID: <lsq.1519831218.569196534@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 023/254] USB: core: Add type-specific length check of
- BOS descriptors
+Subject: [PATCH 3.16 127/254] usbip: vhci: stop printing kernel pointer
+ addresses in messages
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658661964216527?=
-X-GMAIL-MSGID: =?utf-8?q?1593658685464178591?=
+X-GMAIL-THRID: =?utf-8?q?1593658666875750097?=
+X-GMAIL-MSGID: =?utf-8?q?1593658674346204441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,77 +51,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masakazu Mokuno <masakazu.mokuno@gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 81cf4a45360f70528f1f64ba018d61cb5767249a upstream.
+commit 8272d099d05f7ab2776cf56a2ab9f9443be18907 upstream.
 
-As most of BOS descriptors are longer in length than their header
-'struct usb_dev_cap_header', comparing solely with it is not sufficient
-to avoid out-of-bounds access to BOS descriptors.
+Remove and/or change debug, info. and error messages to not print
+kernel pointer addresses.
 
-This patch adds descriptor type specific length check in
-usb_get_bos_descriptor() to fix the issue.
-
-Signed-off-by: Masakazu Mokuno <masakazu.mokuno@gmail.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: drop handling of USB_PTM_CAP_TYPE and USB_SSP_CAP_TYPE]
+[bwh: Backported to 3.16: adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -871,6 +871,13 @@ void usb_release_bos_descriptor(struct u
- 	}
- }
+ drivers/staging/usbip/vhci_hcd.c | 10 ----------
+ drivers/staging/usbip/vhci_rx.c  | 23 +++++++++++------------
+ drivers/staging/usbip/vhci_tx.c  |  3 ++-
+ 3 files changed, 13 insertions(+), 23 deletions(-)
+
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -466,9 +466,6 @@ static int vhci_urb_enqueue(struct usb_h
+ 	int ret = 0;
+ 	struct vhci_device *vdev;
  
-+static const __u8 bos_desc_len[256] = {
-+	[USB_CAP_TYPE_WIRELESS_USB] = USB_DT_USB_WIRELESS_CAP_SIZE,
-+	[USB_CAP_TYPE_EXT]          = USB_DT_USB_EXT_CAP_SIZE,
-+	[USB_SS_CAP_TYPE]           = USB_DT_USB_SS_CAP_SIZE,
-+	[CONTAINER_ID_TYPE]         = USB_DT_USB_SS_CONTN_ID_SIZE,
-+};
-+
- /* Get BOS descriptor set */
- int usb_get_bos_descriptor(struct usb_device *dev)
- {
-@@ -879,6 +886,7 @@ int usb_get_bos_descriptor(struct usb_de
- 	struct usb_dev_cap_header *cap;
- 	unsigned char *buffer;
- 	int length, total_len, num, i;
-+	__u8 cap_type;
- 	int ret;
+-	usbip_dbg_vhci_hc("enter, usb_hcd %p urb %p mem_flags %d\n",
+-			  hcd, urb, mem_flags);
+-
+ 	/* patch to usb_sg_init() is in 2.5.60 */
+ 	BUG_ON(!urb->transfer_buffer && urb->transfer_buffer_length);
  
- 	bos = kzalloc(sizeof(struct usb_bos_descriptor), GFP_KERNEL);
-@@ -931,7 +939,13 @@ int usb_get_bos_descriptor(struct usb_de
- 			dev->bos->desc->bNumDeviceCaps = i;
+@@ -626,8 +623,6 @@ static int vhci_urb_dequeue(struct usb_h
+ 	struct vhci_priv *priv;
+ 	struct vhci_device *vdev;
+ 
+-	pr_info("dequeue a urb %p\n", urb);
+-
+ 	spin_lock(&the_controller->lock);
+ 
+ 	priv = urb->hcpriv;
+@@ -655,7 +650,6 @@ static int vhci_urb_dequeue(struct usb_h
+ 		/* tcp connection is closed */
+ 		spin_lock(&vdev->priv_lock);
+ 
+-		pr_info("device %p seems to be disconnected\n", vdev);
+ 		list_del(&priv->list);
+ 		kfree(priv);
+ 		urb->hcpriv = NULL;
+@@ -667,8 +661,6 @@ static int vhci_urb_dequeue(struct usb_h
+ 		 * vhci_rx will receive RET_UNLINK and give back the URB.
+ 		 * Otherwise, we give back it here.
+ 		 */
+-		pr_info("gives back urb %p\n", urb);
+-
+ 		usb_hcd_unlink_urb_from_ep(hcd, urb);
+ 
+ 		spin_unlock(&the_controller->lock);
+@@ -697,8 +689,6 @@ static int vhci_urb_dequeue(struct usb_h
+ 
+ 		unlink->unlink_seqnum = priv->seqnum;
+ 
+-		pr_info("device %p seems to be still connected\n", vdev);
+-
+ 		/* send cmd_unlink and try to cancel the pending URB in the
+ 		 * peer */
+ 		list_add_tail(&unlink->list, &vdev->unlink_tx);
+--- a/drivers/staging/usbip/vhci_rx.c
++++ b/drivers/staging/usbip/vhci_rx.c
+@@ -37,24 +37,23 @@ struct urb *pickup_urb_and_free_priv(str
+ 		urb = priv->urb;
+ 		status = urb->status;
+ 
+-		usbip_dbg_vhci_rx("find urb %p vurb %p seqnum %u\n",
+-				urb, priv, seqnum);
++		usbip_dbg_vhci_rx("find urb seqnum %u\n", seqnum);
+ 
+ 		switch (status) {
+ 		case -ENOENT:
+ 			/* fall through */
+ 		case -ECONNRESET:
+-			dev_info(&urb->dev->dev,
+-				 "urb %p was unlinked %ssynchronuously.\n", urb,
+-				 status == -ENOENT ? "" : "a");
++			dev_dbg(&urb->dev->dev,
++				 "urb seq# %u was unlinked %ssynchronuously\n",
++				 seqnum, status == -ENOENT ? "" : "a");
  			break;
- 		}
-+		cap_type = cap->bDevCapabilityType;
- 		length = cap->bLength;
-+		if (bos_desc_len[cap_type] && length < bos_desc_len[cap_type]) {
-+			dev->bos->desc->bNumDeviceCaps = i;
-+			break;
-+		}
-+
- 		total_len -= length;
- 
- 		if (cap->bDescriptorType != USB_DT_DEVICE_CAPABILITY) {
-@@ -939,7 +953,7 @@ int usb_get_bos_descriptor(struct usb_de
- 			continue;
- 		}
- 
--		switch (cap->bDevCapabilityType) {
-+		switch (cap_type) {
- 		case USB_CAP_TYPE_WIRELESS_USB:
- 			/* Wireless USB cap descriptor is handled by wusb */
+ 		case -EINPROGRESS:
+ 			/* no info output */
  			break;
---- a/include/uapi/linux/usb/ch9.h
-+++ b/include/uapi/linux/usb/ch9.h
-@@ -819,6 +819,8 @@ struct usb_wireless_cap_descriptor {	/*
- 	__u8  bReserved;
- } __attribute__((packed));
+ 		default:
+-			dev_info(&urb->dev->dev,
+-				 "urb %p may be in a error, status %d\n", urb,
+-				 status);
++			dev_dbg(&urb->dev->dev,
++				 "urb seq# %u may be in a error, status %d\n",
++				 seqnum, status);
+ 		}
  
-+#define USB_DT_USB_WIRELESS_CAP_SIZE	11
-+
- /* USB 2.0 Extension descriptor */
- #define	USB_CAP_TYPE_EXT		2
+ 		list_del(&priv->list);
+@@ -78,8 +77,8 @@ static void vhci_recv_ret_submit(struct
+ 	spin_unlock(&vdev->priv_lock);
  
+ 	if (!urb) {
+-		pr_err("cannot find a urb of seqnum %u\n", pdu->base.seqnum);
+-		pr_info("max seqnum %d\n",
++		pr_err("cannot find a urb of seqnum %u max seqnum %d\n",
++			pdu->base.seqnum,
+ 			atomic_read(&the_controller->seqnum));
+ 		usbip_event_add(ud, VDEV_EVENT_ERROR_TCP);
+ 		return;
+@@ -102,7 +101,7 @@ static void vhci_recv_ret_submit(struct
+ 	if (usbip_dbg_flag_vhci_rx)
+ 		usbip_dump_urb(urb);
+ 
+-	usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
++	usbip_dbg_vhci_rx("now giveback urb %u\n", pdu->base.seqnum);
+ 
+ 	spin_lock(&the_controller->lock);
+ 	usb_hcd_unlink_urb_from_ep(vhci_to_hcd(the_controller), urb);
+@@ -167,7 +166,7 @@ static void vhci_recv_ret_unlink(struct
+ 		pr_info("the urb (seqnum %d) was already given back\n",
+ 			pdu->base.seqnum);
+ 	} else {
+-		usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
++		usbip_dbg_vhci_rx("now giveback urb %d\n", pdu->base.seqnum);
+ 
+ 		/* If unlink is successful, status is -ECONNRESET */
+ 		urb->status = pdu->u.ret_unlink.status;
+--- a/drivers/staging/usbip/vhci_tx.c
++++ b/drivers/staging/usbip/vhci_tx.c
+@@ -82,7 +82,8 @@ static int vhci_send_cmd_submit(struct v
+ 		memset(&msg, 0, sizeof(msg));
+ 		memset(&iov, 0, sizeof(iov));
+ 
+-		usbip_dbg_vhci_tx("setup txdata urb %p\n", urb);
++		usbip_dbg_vhci_tx("setup txdata urb seqnum %lu\n",
++				  priv->seqnum);
+ 
+ 		/* 1. setup usbip_header */
+ 		setup_cmd_submit_pdu(&pdu_header, urb);
