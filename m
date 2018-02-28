@@ -1,66 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeB1NLz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:11:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60489 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752569AbeB1NLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:11:51 -0500
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        maxime.ripard@bootlin.com, wens@csie.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH 2/3] ARM: dts: sun8i: a711: set regulator for each cluster of CPUs
-Date: Wed, 28 Feb 2018 14:11:21 +0100
-Message-Id: <07883d44949420891c1ed2411ff15199d53075c0.1519823347.git-series.quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
+        id S1752747AbeB1NMD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:12:03 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40195 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752329AbeB1NMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:12:00 -0500
+X-ME-Sender: <xms:n6qWWjHqT6Nbe6T9MZpFryeNa6kUt-rqFh6aCZx3aRVGunE78fxBxw>
+Date: Wed, 28 Feb 2018 10:11:56 -0300
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/7] x86/microcode: Do not upload microcode if CPUs are
+ offline
+Message-ID: <20180228131156.i4y6la7besdflffd@khazad-dum.debian.net>
+References: <20180228102846.13447-1-bp@alien8.de>
+ <20180228102846.13447-5-bp@alien8.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228102846.13447-5-bp@alien8.de>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner A83T is a SoC with two clusters of 4 A7 which have a
-different clock and regulator.
+On Wed, 28 Feb 2018, Borislav Petkov wrote:
+> Avoid loading microcode if any of the CPUs are offline, and issue a
+> warning. Having different microcode revisions on the system at any time
+> is outright dangerous.
 
-Set the CPU regulator.
+Even if we update that microcode during CPU early bring-up, before we
+mark it on-line and start using it?
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts |  9 +++++++++
- 1 file changed, 9 insertions(+)
+AFAIK, late-loading or not, this is what should happen in the current
+code: APs that are brought up after a microcode update is loaded (either
+by the early or late driver, it doesn't matter) will be always
+*early-updated* to the new microcode.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index 1de362f..d65162c 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -128,6 +128,14 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
-+&cpu100 {
-+	cpu-supply = <&reg_dcdc3>;
-+};
-+
- &de {
- 	status = "okay";
- };
-@@ -136,6 +144,7 @@
-  * An USB-2 hub is connected here, which also means we don't need to
-  * enable the OHCI controller.
-  */
-+
- &ehci0 {
- 	status = "okay";
- };
+Is it dangerous to have an offline core at an older microcode revision
+than the online cores?
+
+I am not against the patch, mind you, but I am curious about why it is
+supposed to be dangerous if we're updating the CPUs before we start
+using them *anyway*.
+
+Also, if this is really dangerous, does it means safe CPU hotplug isn't
+possible?  AFAICT, the firmware would have to do it for us, but it
+*doesn't* have the up-to-date microcode (*we* had to update it)...
+
 -- 
-git-series 0.9.1
+  Henrique Holschuh
