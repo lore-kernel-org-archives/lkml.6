@@ -1,172 +1,394 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932984AbeB1Pc7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:32:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52800 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932170AbeB1Pc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:32:56 -0500
-Date: Wed, 28 Feb 2018 17:32:52 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@gmail.com>
-Cc: open list <linux-kernel@vger.kernel.org>, slp@redhat.com,
-        bhe@redhat.com, somlo@cmu.edu, xiaolong.ye@intel.com
-Subject: Re: [PATCH v15 08/11] fw_cfg: handle fw_cfg_read_blob() error
-Message-ID: <20180228173014-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-9-marcandre.lureau@redhat.com>
- <20180227021150-mutt-send-email-mst@kernel.org>
- <CAJ+F1CKwBjRDTxToDwOrPnnaiMHvF6EgK=dgSC-FW7n6UMDeKA@mail.gmail.com>
+        id S933006AbeB1Pdu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:33:50 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932230AbeB1Pdq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:33:46 -0500
+Subject: Re: [PATCH v2 05/15] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 16:33:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <1519741693-17440-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ+F1CKwBjRDTxToDwOrPnnaiMHvF6EgK=dgSC-FW7n6UMDeKA@mail.gmail.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18022815-0008-0000-0000-000004D60A94
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022815-0009-0000-0000-00001E690AFF
+Message-Id: <bdc22d47-afe6-a71a-615d-3beffd4ada3e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280189
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 12:49:35PM +0100, Marc-André Lureau wrote:
-> Hi
-> 
-> On Tue, Feb 27, 2018 at 1:20 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Thu, Feb 15, 2018 at 10:33:09PM +0100, Marc-André Lureau wrote:
-> >> fw_cfg_read_blob() may fail, but does not return error. This may lead
-> >> to undefined behaviours, such as a memcmp(sig, "QEMU") on uninitilized
-> >> memory.
-> >
-> > I don't think that's true - there's a memset there that
-> > will initialize the memory. probe is likely the only
-> > case where it returns a slightly incorrect data.
-> 
-> Right, I'll update the commit message.
-> 
-> >> Return an error if ACPI locking failed. Also, the following
-> >> DMA read/write extension will add more error paths that should be
-> >> handled appropriately.
-> >>
-> >> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-> >> ---
-> >>  drivers/firmware/qemu_fw_cfg.c | 32 ++++++++++++++++++++++----------
-> >>  1 file changed, 22 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> >> index f6f90bef604c..5e6e5ac71dab 100644
-> >> --- a/drivers/firmware/qemu_fw_cfg.c
-> >> +++ b/drivers/firmware/qemu_fw_cfg.c
-> >> @@ -59,8 +59,8 @@ static void fw_cfg_sel_endianness(u16 key)
-> >>  }
-> >>
-> >>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
-> >> -static void fw_cfg_read_blob(u16 key,
-> >> -                     void *buf, loff_t pos, size_t count)
-> >> +static ssize_t fw_cfg_read_blob(u16 key,
-> >> +                             void *buf, loff_t pos, size_t count)
-> >>  {
-> >>       u32 glk = -1U;
-> >>       acpi_status status;
-> >> @@ -73,7 +73,7 @@ static void fw_cfg_read_blob(u16 key,
-> >>               /* Should never get here */
-> >>               WARN(1, "fw_cfg_read_blob: Failed to lock ACPI!\n");
-> >>               memset(buf, 0, count);
-> >> -             return;
-> >> +             return -EINVAL;
-> >>       }
-> >>
-> >>       mutex_lock(&fw_cfg_dev_lock);
-> >
-> > Wouldn't something like -EBUSY be more appropriate?
-> 
-> In theory, it would be a general failure right? I don't think we want
-> the caller to retry. I think in EINVAL fits better, but I don't think
-> it matters much this or EBUSY.
-> 
-> >> @@ -84,6 +84,7 @@ static void fw_cfg_read_blob(u16 key,
-> >>       mutex_unlock(&fw_cfg_dev_lock);
-> >>
-> >>       acpi_release_global_lock(glk);
-> >> +     return count;
-> >>  }
-> >>
-> >>  /* clean up fw_cfg device i/o */
-> >> @@ -165,8 +166,9 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
-> >>       }
-> >>
-> >>       /* verify fw_cfg device signature */
-> >> -     fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
-> >> -     if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> >> +     if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
-> >> +                             0, FW_CFG_SIG_SIZE) < 0 ||
-> >> +             memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> >>               fw_cfg_io_cleanup();
-> >>               return -ENODEV;
-> >>       }
-> >> @@ -326,8 +328,7 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
-> >>       if (count > entry->size - pos)
-> >>               count = entry->size - pos;
-> >>
-> >> -     fw_cfg_read_blob(entry->select, buf, pos, count);
-> >> -     return count;
-> >> +     return fw_cfg_read_blob(entry->select, buf, pos, count);
-> >>  }
-> >>
-> >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
-> >> @@ -483,7 +484,11 @@ static int fw_cfg_register_dir_entries(void)
-> >>       struct fw_cfg_file *dir;
-> >>       size_t dir_size;
-> >>
-> >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count, 0, sizeof(files_count));
-> >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
-> >> +                     0, sizeof(files_count));
-> >> +     if (ret < 0)
-> >> +             return ret;
-> >> +
-> >>       count = be32_to_cpu(files_count);
-> >>       dir_size = count * sizeof(struct fw_cfg_file);
-> >>
-> >> @@ -491,7 +496,10 @@ static int fw_cfg_register_dir_entries(void)
-> >>       if (!dir)
-> >>               return -ENOMEM;
-> >>
-> >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files_count), dir_size);
-> >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
-> >> +                     sizeof(files_count), dir_size);
-> >> +     if (ret < 0)
-> >> +             goto end;
-> >>
-> >>       for (i = 0; i < count; i++) {
-> >>               ret = fw_cfg_register_file(&dir[i]);
-> >> @@ -499,6 +507,7 @@ static int fw_cfg_register_dir_entries(void)
-> >>                       break;
-> >>       }
-> >>
-> >> +end:
-> >>       kfree(dir);
-> >>       return ret;
-> >>  }
-> >> @@ -539,7 +548,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
-> >>               goto err_probe;
-> >>
-> >>       /* get revision number, add matching top-level attribute */
-> >> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> >> +     if (err < 0)
-> >> +             goto err_probe;
-> >> +
-> >>       fw_cfg_rev = le32_to_cpu(rev);
-> >>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
-> >>       if (err)
-> >
-> > I think that this is the only case where it's not doing the right thing right now in
-> > that it shows 0 as the revision to the users.  Is it worth failing probe
-> > here?  We could just skip the attribute, could we not?
-> 
-> I think it's best to fail the probe if we have a read failure at that time.
+On 27/02/2018 15:28, Tony Krowiak wrote:
+> Introduces a new AP device driver. This device driver
+> is built on the VFIO mediated device framework. The framework
+> provides sysfs interfaces that facilitate passthrough
+> access by guests to devices installed on the linux host.
+>
+> The VFIO AP device driver will serve two purposes:
+>
+> 1. Provide the interfaces to reserve AP devices for exclusive
+>     use by KVM guests. This is accomplished by unbinding the
+>     devices to be reserved for guest usage from the default AP
+>     device driver and binding them to the VFIO AP device driver.
+>
+> 2. Implements the functions, callbacks and sysfs attribute
+>     interfaces required to create one or more VFIO mediated
+>     devices each of which will be used to configure the AP
+>     matrix for a guest and serve as a file descriptor
+>     for facilitating communication between QEMU and the
+>     VFIO AP device driver.
+>
+> When the VFIO AP device driver is initialized:
+>
+> * It registers with the AP bus for control of type 10 (CEX4
+>    and newer) AP queue devices. The probe and remove callbacks
+>    will be provided to support the binding/unbinding of
+>    AP queue devices to/from the VFIO AP device driver.
+>
+> * Creates a /sys/devices/vfio-ap/matrix device to hold
+>    the APQNs of the AP devices bound to the VFIO
+>    AP device driver and serves as the parent of the
+>    mediated devices created for each guest.
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>   MAINTAINERS                             |    2 +
+>   arch/s390/Kconfig                       |    8 ++
+>   arch/s390/configs/default_defconfig     |    3 +
+>   arch/s390/configs/gcov_defconfig        |    3 +
+>   arch/s390/configs/performance_defconfig |    3 +
+>   arch/s390/defconfig                     |    3 +
+>   drivers/s390/crypto/Makefile            |    4 +
+>   drivers/s390/crypto/vfio_ap_drv.c       |  134 +++++++++++++++++++++++++++++++
+>   drivers/s390/crypto/vfio_ap_private.h   |   20 +++++
+>   include/uapi/linux/vfio.h               |    2 +
+>   10 files changed, 182 insertions(+), 0 deletions(-)
+>   create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+>   create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4acf7c2..a2f232d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11884,6 +11884,8 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+>   S:	Supported
+>   F:	arch/s390/include/asm/kvm/kvm-ap.h
+>   F:	arch/s390/kvm/kvm-ap.c
+> +F:	drivers/s390/crypto/vfio_ap_drv.c
+> +F:	drivers/s390/crypto/vfio_ap_private.h
+>
+>   S390 ZFCP DRIVER
+>   M:	Steffen Maier <maier@linux.vnet.ibm.com>
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index cbe1d97..9f23caf 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -771,6 +771,14 @@ config VFIO_CCW
+>   	  To compile this driver as a module, choose M here: the
+>   	  module will be called vfio_ccw.
+>
+> +config VFIO_AP
+> +	def_tristate m
+> +	prompt "Support for virtual Adjunct Processor device interface"
 
-I'd rather we just dropped this attribute completely.
-Why is it there?
-Does any userspace actually need it?
-Gabriel?
+The VFIO AP devices are not virtual.
+What about
+ Â Â Â  "VFIO support for AP devices"
 
-> -- 
-> Marc-André Lureau
+> +	depends on ZCRYPT && VFIO_MDEV_DEVICE
+> +	help
+> +		driver grants access to Adjunct Processor (AP) devices
+> +		via the VFIO mediated device interface.
+> +
+>   endmenu
+>
+>   menu "Dump support"
+> diff --git a/arch/s390/configs/default_defconfig b/arch/s390/configs/default_defconfig
+> index 5af8458..40fa3f6 100644
+> --- a/arch/s390/configs/default_defconfig
+> +++ b/arch/s390/configs/default_defconfig
+
+Not sure that this file belongs to this patch
+
+> @@ -719,3 +719,6 @@ CONFIG_APPLDATA_BASE=y
+>   CONFIG_KVM=m
+>   CONFIG_KVM_S390_UCONTROL=y
+>   CONFIG_VHOST_NET=m
+> +VFIO_MDEV=m
+> +VFIO_MDEV_DEVICE=m
+> +CONFIG_VFIO_AP=m
+
+What is your goal when modifying this three files?
+Could you add a comment in the commit message?
+
+
+> diff --git a/arch/s390/configs/gcov_defconfig b/arch/s390/configs/gcov_defconfig
+> index d52eafe..377d40f 100644
+> --- a/arch/s390/configs/gcov_defconfig
+> +++ b/arch/s390/configs/gcov_defconfig
+> @@ -659,3 +659,6 @@ CONFIG_APPLDATA_BASE=y
+>   CONFIG_KVM=m
+>   CONFIG_KVM_S390_UCONTROL=y
+>   CONFIG_VHOST_NET=m
+> +VFIO_MDEV=m
+> +VFIO_MDEV_DEVICE=m
+> +CONFIG_VFIO_AP=m
+> diff --git a/arch/s390/configs/performance_defconfig b/arch/s390/configs/performance_defconfig
+> index 20ed149..f0c52df 100644
+> --- a/arch/s390/configs/performance_defconfig
+> +++ b/arch/s390/configs/performance_defconfig
+> @@ -657,3 +657,6 @@ CONFIG_APPLDATA_BASE=y
+>   CONFIG_KVM=m
+>   CONFIG_KVM_S390_UCONTROL=y
+>   CONFIG_VHOST_NET=m
+> +VFIO_MDEV=m
+> +VFIO_MDEV_DEVICE=m
+> +CONFIG_VFIO_AP=m
+> diff --git a/arch/s390/defconfig b/arch/s390/defconfig
+> index 46a3178..0996eb7 100644
+> --- a/arch/s390/defconfig
+> +++ b/arch/s390/defconfig
+> @@ -239,3 +239,6 @@ CONFIG_CRC7=m
+>   # CONFIG_XZ_DEC_ARMTHUMB is not set
+>   # CONFIG_XZ_DEC_SPARC is not set
+>   CONFIG_CMM=m
+> +VFIO_MDEV=m
+> +VFIO_MDEV_DEVICE=m
+> +CONFIG_VFIO_AP=m
+> diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+> index b59af54..48e466e 100644
+> --- a/drivers/s390/crypto/Makefile
+> +++ b/drivers/s390/crypto/Makefile
+> @@ -15,3 +15,7 @@ obj-$(CONFIG_ZCRYPT) += zcrypt_pcixcc.o zcrypt_cex2a.o zcrypt_cex4.o
+>   # pkey kernel module
+>   pkey-objs := pkey_api.o
+>   obj-$(CONFIG_PKEY) += pkey.o
+> +
+> +# adjunct processor matrix
+> +vfio_ap-objs := vfio_ap_drv.o
+> +obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> new file mode 100644
+> index 0000000..8bb72af
+> --- /dev/null
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -0,0 +1,134 @@
+> +/*
+> + * VFIO based AP device driver
+> + *
+> + * Copyright IBM Corp. 2017
+> + *
+> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/slab.h>
+> +
+> +#include "ap_bus.h"
+
+Since you do it in a later patch, may be put this include of ap_bus.h in 
+ap_private.h now.
+
+> +#include "vfio_ap_private.h"
+> +
+> +#define VFIO_AP_ROOT_NAME "vfio_ap"
+> +#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
+> +#define VFIO_AP_DEV_NAME "matrix"
+> +
+> +MODULE_AUTHOR("IBM Corporation");
+> +MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2017");
+> +MODULE_LICENSE("GPL v2");
+> +
+> +static struct device *vfio_ap_root_device;
+> +
+> +static struct ap_driver vfio_ap_drv;
+> +
+> +static struct ap_matrix *ap_matrix;
+> +
+> +static struct device_type vfio_ap_dev_type = {
+> +	.name = VFIO_AP_DEV_TYPE_NAME,
+> +};
+> +
+> +/* Only type 10 adapters (CEX4 and later) are supported
+> + * by the AP matrix device driver
+> + */
+> +static struct ap_device_id ap_queue_ids[] = {
+> +	{ .dev_type = AP_DEVICE_TYPE_CEX4,
+> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+> +	{ .dev_type = AP_DEVICE_TYPE_CEX5,
+> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+> +	{ .dev_type = AP_DEVICE_TYPE_CEX6,
+> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+> +	{ /* end of sibling */ },
+> +};
+> +
+> +MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
+> +
+> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void vfio_ap_matrix_dev_release(struct device *dev)
+> +{
+> +	struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
+> +
+> +	kfree(ap_matrix);
+> +}
+> +
+> +static int vfio_ap_matrix_dev_create(void)
+> +{
+> +	int ret;
+> +
+> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+> +
+> +	ret = PTR_ERR_OR_ZERO(vfio_ap_root_device);
+
+IS_ERR() is enough, root_device_register() never return NULL.
+
+> +	if (ret)
+> +		goto done;
+> +
+> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+> +	if (!ap_matrix) {
+> +		ret = -ENOMEM;
+> +		goto matrix_alloc_err;
+> +	}
+> +
+> +	ap_matrix->device.type = &vfio_ap_dev_type;
+> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+> +	ap_matrix->device.parent = vfio_ap_root_device;
+> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+> +
+> +	ret = device_register(&ap_matrix->device);
+> +	if (ret)
+> +		goto matrix_reg_err;
+> +
+> +	goto done;
+> +
+> +matrix_reg_err:
+> +	put_device(&ap_matrix->device);
+> +	kfree(ap_matrix);
+> +
+> +matrix_alloc_err:
+> +	root_device_unregister(vfio_ap_root_device);
+> +
+> +done:
+> +	return ret;
+> +}
+> +
+> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
+> +{
+> +	device_unregister(&ap_matrix->device);
+> +	root_device_unregister(vfio_ap_root_device);
+> +}
+> +
+> +int __init vfio_ap_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = vfio_ap_matrix_dev_create();
+> +	if (ret)
+> +		return ret;
+> +
+> +	memset(&vfio_ap_drv, 0, sizeof(vfio_ap_drv));
+> +	vfio_ap_drv.probe = vfio_ap_queue_dev_probe;
+> +	vfio_ap_drv.ids = ap_queue_ids;
+> +
+> +	ret = ap_driver_register(&vfio_ap_drv, THIS_MODULE, VFIO_AP_DRV_NAME);
+> +	if (ret) {
+> +		vfio_ap_matrix_dev_destroy(ap_matrix);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void __exit vfio_ap_exit(void)
+> +{
+> +	ap_driver_unregister(&vfio_ap_drv);
+> +	vfio_ap_matrix_dev_destroy(ap_matrix);
+> +}
+> +
+> +module_init(vfio_ap_init);
+> +module_exit(vfio_ap_exit);
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> new file mode 100644
+> index 0000000..3505947
+> --- /dev/null
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -0,0 +1,20 @@
+> +/*
+> + * Private data and functions for adjunct processor VFIO matrix driver.
+> + *
+> + * Copyright IBM Corp. 2017
+> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> + */
+> +
+> +#ifndef _VFIO_AP_PRIVATE_H_
+> +#define _VFIO_AP_PRIVATE_H_
+> +
+> +#include <linux/types.h>
+> +
+> +#define VFIO_AP_MODULE_NAME "vfio_ap"
+> +#define VFIO_AP_DRV_NAME "vfio_ap"
+> +
+> +struct ap_matrix {
+> +	struct device device;
+> +};
+> +
+> +#endif /* _VFIO_AP_PRIVATE_H_ */
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index e3301db..cf2a5e9 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -200,6 +200,7 @@ struct vfio_device_info {
+>   #define VFIO_DEVICE_FLAGS_PLATFORM (1 << 2)	/* vfio-platform device */
+>   #define VFIO_DEVICE_FLAGS_AMBA  (1 << 3)	/* vfio-amba device */
+>   #define VFIO_DEVICE_FLAGS_CCW	(1 << 4)	/* vfio-ccw device */
+> +#define VFIO_DEVICE_FLAGS_AP	(1 << 5)	/* vfio-ap device */
+>   	__u32	num_regions;	/* Max region index + 1 */
+>   	__u32	num_irqs;	/* Max IRQ index + 1 */
+>   };
+> @@ -215,6 +216,7 @@ struct vfio_device_info {
+>   #define VFIO_DEVICE_API_PLATFORM_STRING		"vfio-platform"
+>   #define VFIO_DEVICE_API_AMBA_STRING		"vfio-amba"
+>   #define VFIO_DEVICE_API_CCW_STRING		"vfio-ccw"
+> +#define VFIO_DEVICE_API_AP_STRING		"vfio-ap"
+>
+>   /**
+>    * VFIO_DEVICE_GET_REGION_INFO - _IOWR(VFIO_TYPE, VFIO_BASE + 8,
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in BÃ¶blingen - Germany
