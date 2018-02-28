@@ -1,107 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeB1ONW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:13:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38057 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752417AbeB1ONV (ORCPT
+        id S1752689AbeB1OO4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:14:56 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11280 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752417AbeB1OOz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:13:21 -0500
-Date: Wed, 28 Feb 2018 06:13:12 -0800
-From: tip-bot for Dou Liyang <tipbot@zytor.com>
-Message-ID: <tip-ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1@git.kernel.org>
-Cc: andy.shevchenko@gmail.com, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        douly.fnst@cn.fujitsu.com
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        andy.shevchenko@gmail.com, douly.fnst@cn.fujitsu.com,
-        tglx@linutronix.de
-In-Reply-To: <20180226023957.22861-2-douly.fnst@cn.fujitsu.com>
-References: <20180226023957.22861-2-douly.fnst@cn.fujitsu.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/apic: Replace common tools with new ones
-Git-Commit-ID: ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Feb 2018 09:14:55 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 28 Feb 2018 06:14:54 -0800
+Date: Wed, 28 Feb 2018 16:14:48 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Message-ID: <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1
-Gitweb:     https://git.kernel.org/tip/ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1
-Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
-AuthorDate: Mon, 26 Feb 2018 10:39:57 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 15:09:11 +0100
+On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+> On 28.02.2018 12:36, Peter De Schrijver wrote:
+> > On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+> >> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> >>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+> >>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+> >>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+> >>>>> which
+> >>>>> leaves it at some default rate of 500 kHz:
+> >>>>>
+> >>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+> >>>>> pll_u
+> >>>>>        pll_u                  3        3        0      500000      
+> >>>>>     0
+> >>>>>
+> >>>>> Of course this won't quite work leading to the following messages:
+> >>>>>
+> >>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+> >>>>> tegra-
+> >>>>> ehci
+> >>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> >>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> >>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+> >>>>> tegra-
+> >>>>> ehci
+> >>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> >>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> >>>>> [   48.049658] usb usb2-port1: attempt power cycle
+> >>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+> >>>>> tegra-
+> >>>>> ehci
+> >>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> >>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+> >>>>> tegra-
+> >>>>> ehci
+> >>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> >>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+> >>>>>
+> >>>>> Fix this by actually allowing the rate also being set from within
+> >>>>> the Linux kernel.
+> > 
+> > I think the best solution to this problem would be to make pll_u a fixed
+> > clock and enable it and program the rate if it's not enabled at boot.
+> 
+> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+> there.
+> 
 
-x86/apic: Replace common tools with new ones
+AFAIK we only use one rate ever?
 
-The pending interrupt check code is old, update the following.
-
-  -Replace for-if pair with for_each_set_bit()
-  -Replace printk() with pr_err()
-
-Also merge the printk's code in one line and make curly braces balanced
-
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: bhe@redhat.com
-Cc: ebiederm@xmission.com
-Link: https://lkml.kernel.org/r/20180226023957.22861-2-douly.fnst@cn.fujitsu.com
-
----
- arch/x86/kernel/apic/apic.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 3fda9734db25..4704a3541b11 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1412,7 +1412,8 @@ static void apic_pending_intr_clear(void)
- {
- 	long long max_loops = cpu_khz ? cpu_khz : 1000000;
- 	unsigned long long tsc = 0, ntsc;
--	unsigned int value, queued;
-+	unsigned int queued;
-+	unsigned long value;
- 	int i, j, acked = 0;
- 
- 	if (boot_cpu_has(X86_FEATURE_TSC))
-@@ -1435,24 +1436,22 @@ static void apic_pending_intr_clear(void)
- 
- 		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
- 			value = apic_read(APIC_ISR + i*0x10);
--			for (j = 31; j >= 0; j--) {
--				if (value & (1<<j)) {
--					ack_APIC_irq();
--					acked++;
--				}
-+			for_each_set_bit(j, &value, 32) {
-+				ack_APIC_irq();
-+				acked++;
- 			}
- 		}
- 		if (acked > 256) {
--			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
--			       acked);
-+			pr_err("LAPIC pending interrupts after %d EOI\n", acked);
- 			break;
- 		}
- 		if (queued) {
- 			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
- 				ntsc = rdtsc();
- 				max_loops = (cpu_khz << 10) - (ntsc - tsc);
--			} else
-+			} else {
- 				max_loops--;
-+			}
- 		}
- 	} while (queued && max_loops > 0);
- 	WARN_ON(max_loops <= 0);
+> > This is how it's done for Tegra210. The reason is that the USB IP blocks
+> > can control the pll_u state in hw. This means that if sw would disable
+> > and then re-enable the pll_u clock, but there is no USB activity, pll_u
+> > will still be disable and therefor not lock, causing an error. Today
+> > this is worked around by not polling the lock bit for pll_u, but a better
+> > solution would be to just remove all sw controls for pll_u.
+> 
+> SW controls could be removed, but I don't think it is really necessary as in our
+> case SW is the PHY driver and we know what it does. Alternatively we can enable
+> PLL_U in the init table to keep it "always" enabled.
