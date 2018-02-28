@@ -1,76 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934876AbeB1QPs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 11:15:48 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:36158 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934499AbeB1QPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:15:44 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH] drm/sun4i: Handle DRM_BUS_FLAG_PIXDATA_*EDGE
-Date: Wed, 28 Feb 2018 17:14:52 +0100
-Message-Id: <1519834492-30559-1-git-send-email-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.7.4
+        id S934758AbeB1Q2F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 11:28:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56975 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933491AbeB1Q2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 11:28:03 -0500
+Date: Wed, 28 Feb 2018 17:28:00 +0100
+From: Jan Kara <jack@suse.cz>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jan Kara <jack@suse.com>, Dan Williams <dan.j.williams@intel.com>,
+        Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?=
+        <ernesto.mnd.fernandez@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Andreas Gruenbacher <agruenba@redhat.com>, Tejun Heo <tj@kernel.org>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext2: fix FS_IOMAP dependency
+Message-ID: <20180228162800.p2qxrqg7zw6olhfg@quack2.suse.cz>
+References: <20180228133659.1933887-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228133659.1933887-1-arnd@arndb.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Handle both positive and negative dclk polarity,
-according to bus_flags.
+On Wed 28-02-18 14:36:46, Arnd Bergmann wrote:
+> I ran into a randconfig link error on next-20180228 that appears to have
+> been caused by an older patch:
+> 
+> fs/ext2/inode.o: In function `ext2_setattr':
+> inode.c:(.text+0x19eb): undefined reference to `iomap_zero_range'
+> 
+> This adds a compile-time conditional around the code path so the
+> compiler can optimize out the reference in configurations that don't
+> need it anyway.
+> 
+> Fixes: 00697eed386d ("ext2: use iomap_zero_range() for zeroing truncated page in DAX path")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Thanks for the patch but Dan's patches [1] deal with a breakage like this
+in a more complete way so I'd prefer to go with his full series...
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index aaf911a..534e5ee 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -17,6 +17,7 @@
- #include <drm/drm_encoder.h>
- #include <drm/drm_modes.h>
- #include <drm/drm_of.h>
-+#include <drm/drm_panel.h>
- 
- #include <uapi/drm/drm_mode.h>
- 
-@@ -340,6 +341,9 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
- static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 				     const struct drm_display_mode *mode)
- {
-+	struct drm_panel *panel = tcon->panel;
-+	struct drm_connector *connector = panel->connector;
-+	struct drm_display_info display_info = connector->display_info;
- 	unsigned int bp, hsync, vsync;
- 	u8 clk_delay;
- 	u32 val = 0;
-@@ -395,8 +399,15 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
- 		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
- 
-+	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
-+		clk_set_phase(tcon->dclk, 240);
-+
-+	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
-+		clk_set_phase(tcon->dclk, 0);
-+
- 	regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
--			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE | SUN4I_TCON0_IO_POL_VSYNC_POSITIVE,
-+			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE |
-+			   SUN4I_TCON0_IO_POL_VSYNC_POSITIVE,
- 			   val);
- 
- 	/* Map output pins to channel 0 */
+								Honza
+
+[1] https://lkml.org/lkml/2018/2/26/1323
+
+> ---
+>  fs/ext2/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index 5d5e9f7b98d6..6e6db0ab3bd6 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -1296,7 +1296,7 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+>  
+>  	inode_dio_wait(inode);
+>  
+> -	if (IS_DAX(inode)) {
+> +	if (IS_ENABLED(CONFIG_FS_DAX) && IS_DAX(inode)) {
+>  		error = iomap_zero_range(inode, newsize,
+>  					 PAGE_ALIGN(newsize) - newsize, NULL,
+>  					 &ext2_iomap_ops);
+> -- 
+> 2.9.0
+> 
+> 
 -- 
-2.7.4
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
