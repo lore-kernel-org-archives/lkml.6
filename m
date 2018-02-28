@@ -1,78 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932591AbeB1PKA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:10:00 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:58608 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932121AbeB1PJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:09:54 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180228150951epoutp0314494f9f1c8fbdee991145ca0fabf076~Xhd73l55K0206802068epoutp03M
-X-AuditID: b6c32a45-3ebff70000001023-1b-5a96c63e2354
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Thomas Winischhofer <thomas@winischhofer.net>,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] console: Expand dummy functions for CFI
-Date: Wed, 28 Feb 2018 16:09:47 +0100
-Message-id: <1712993.EvPlpO244k@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <1519689860-7421-1-git-send-email-keescook@chromium.org>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7bCmha7dsWlRBrfbVS2ufH3PZtG8eD2b
-        xZnuXIsTfR9YLS7vmsNmsWhZK7PFp2f/2C2WrnjLarF65WN2B06P2Q0XWTwWbCr1uHNtD5vH
-        /rlr2D3udx9n8vi8Sc5jwYz/LAHsUVw2Kak5mWWpRfp2CVwZU/50MRVMYa44+eYIcwPjaaYu
-        Rk4OCQETiT+n9gLZXBxCAjsYJRqm7WaBcL4zShxr2MMOUzV3Yw8bRGI3o8SPR21QzldGibsL
-        bzGDVLEJWElMbF/FCGKLCKhKfL/UzAxSxCywhUniVM9bsISwgIPE3d2zwMayABVNO7gTzOYV
-        0JR4+Ok8K4gtKuAlsWVfO9iBnAKuEl3fF7FC1AhK/Jh8jwXEZhaQl9i3fyorhK0jcfbYOkaQ
-        ZRICt9kkbt34BXW3i8SLfRuZIWxhiVfHt0DFpSWerdoI1bCKUeLn1b9QzmZGic/Xv7JCVFlL
-        HD5+EWoFn0TH4b9A3RxAcV6JjjYhiBIPiUcdi9kgbEeJxkPboOEyg1HiVc93pgmMsrOQXD4L
-        yeWzkFy+gJF5FaNYakFxbnpqsVGBoV5xYm5xaV66XnJ+7iZGcELRct3BOOOczyFGAQ5GJR5e
-        h/3TooRYE8uKK3MPMUpwMCuJ8J7eDhTiTUmsrEotyo8vKs1JLT7EKM3BoiTO2xbgEiUkkJ5Y
-        kpqdmlqQWgSTZeLglGpgnD8xfYbzjsd/OIrX8gkueryJqWnKTK1FelP9Re+e+bj3/7d7r73S
-        bJnO7/4zVeBLwKlmnku2F3RyXnXMvv6i4sMdzdkB55yU7mQ2/+KXsDKSXHRJ4PoxkS3/9xyz
-        Xhmi+WXTBZbVjnG+bo2pknfzOW/vnzXJ90xG4xu3BIMZO/nMVifGTn0w87sSS3FGoqEWc1Fx
-        IgCcB3qnJAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t9jAV3bY9OiDLZsMLa48vU9m0Xz4vVs
-        Fme6cy1O9H1gtbi8aw6bxaJlrcwWn579Y7dYuuItq8XqlY/ZHTg9ZjdcZPFYsKnU4861PWwe
-        ++euYfe4332cyePzJjmPBTP+swSwR3HZpKTmZJalFunbJXBlTPnTxVQwhbni5JsjzA2Mp5m6
-        GDk5JARMJOZu7GHrYuTiEBLYyShx61U/E4TzlVHi4ZUesCo2ASuJie2rGEFsEQFVie+XmplB
-        ipgFtjFJtKybyQ6SEBZwkLi7exaYzQJUNO3gTjCbV0BT4uGn86wgtqiAl8SWfe1gQzkFXCW6
-        vi9ihdg2i1Hi5oZOJogGQYkfk++xgNjMAvIS+/ZPZYWwtSTW7zzONIGRfxaSsllIymYhKVvA
-        yLyKUTK1oDg3PbfYqMAoL7Vcrzgxt7g0L10vOT93EyMw/Lcd1urfwfh4SfwhRgEORiUeXof9
-        06KEWBPLiitzDzFKcDArifCe3g4U4k1JrKxKLcqPLyrNSS0+xCjNwaIkzsuffyxSSCA9sSQ1
-        OzW1ILUIJsvEwSnVwKhXfnHCJYOa4peb1qqpaL/IVoj9tzxE4IZD54uQDRJLlwV6fRMQzrNa
-        qsRmxrg+7eaLiBxegUXdE/Yue1Zu8tVx7tXfSxxe1F9gajlof/KggmfT7Ct1zl8yT+/dJMWZ
-        HP2p/EdMsn7usTesi4W8l+etvFQxT/XuP29lj9T+DxN4bhS8nzjh+FQlluKMREMt5qLiRABw
-        CfiwewIAAA==
-X-CMS-MailID: 20180228150949epcas2p437f68cb95b6c88e6857a538aca13f207
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180227000432epcas2p1408299421426381f05a548283953b064
-X-RootMTR: 20180227000432epcas2p1408299421426381f05a548283953b064
-References: <CGME20180227000432epcas2p1408299421426381f05a548283953b064@epcas2p1.samsung.com>
-        <1519689860-7421-1-git-send-email-keescook@chromium.org>
+        id S932512AbeB1PMP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:12:15 -0500
+Received: from mail-dm3nam03on0074.outbound.protection.outlook.com ([104.47.41.74]:37667
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752722AbeB1PML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:12:11 -0500
+From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To: Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH v2 0/8] Decode IA32/X64 CPER
+Thread-Topic: [PATCH v2 0/8] Decode IA32/X64 CPER
+Thread-Index: AQHTrzmGNIT5DEMr+0GLgvlHp3HCk6O5geyAgABgJNA=
+Date: Wed, 28 Feb 2018 15:12:09 +0000
+Message-ID: <DM5PR12MB1916B6CA08F0D423B3635EDDF8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
+References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
+ <20180228084321.GA2969@pd.tnic>
+In-Reply-To: <20180228084321.GA2969@pd.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com;
+x-originating-ip: [71.199.237.95]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1930;7:OcyAMvEIQhBLhyMPahuFRYYoG7n6Rboem1eRanqhaEN3cYASCDCuCaN+k9kNOOAVy62tRiKymv2uDN/ZbzF2XKRH2533j8V7lOKvVb2n03pXjX9Ac2ZHS9c+feFm9xSrIsf/OlfRWhpRnyYfXy/pNUB7dQyX66A/QLLnB1dbJYzNKPE8x+injeyd4d113Tahbz002+jdm4u06AHzWUPFEc1FL7SIlVjBuW+qNyoFQtozqY8OdiPdV6zbk/5XZjPp;20:Kh3kKNYZOrWukJ5RjUMvDVhSqfK6DoBMXRtghB5yPxP8GN14zbEtfNzlIvcqC5iqISUyt9/WquhH+sOfBCWykM+F++yFqaJIVRVVllP4PCpV8g4IC94LfMP1EY3QH0OC2FPb5qt6Lc9jC84zZUzEOQlS6IKCO2Xw9mjLwqVEG9J4HyzimQUPWfhxpB+fWu/CQo/XQr+S3aOsYjW8F6RM8QRFz7x8fCKwezMv4IUxR8SB/FAegSHGG6d0Z3TFhLe9
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 66f500ad-ab62-40da-43b3-08d57ebda38c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1930;
+x-ms-traffictypediagnostic: DM5PR12MB1930:
+x-microsoft-antispam-prvs: <DM5PR12MB19300C155A7D019CC0264107F8C70@DM5PR12MB1930.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(211171220733660)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231220)(944501217)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR12MB1930;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1930;
+x-forefront-prvs: 0597911EE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39380400002)(366004)(39860400002)(346002)(13464003)(189003)(199004)(3846002)(97736004)(2950100002)(2906002)(6436002)(316002)(8936002)(6506007)(59450400001)(186003)(3660700001)(110136005)(3280700002)(8676002)(229853002)(2900100001)(26005)(106356001)(53546011)(6116002)(25786009)(66066001)(81156014)(102836004)(81166006)(5250100002)(5660300001)(55016002)(9686003)(105586002)(54906003)(33656002)(99286004)(7736002)(4326008)(53936002)(86362001)(7696005)(74316002)(72206003)(6246003)(305945005)(14454004)(76176011)(478600001)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1930;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: DwgmjiYQqLRxKKg2uLCzN/xLY7Y+1ZYbMkefsHq0SOiAtOpHSdsX9BO1oJ7Ld0XBwRTa3l3ggrgdjySUGSJXPFz6K9RX8DT2pAnKKxnaJ8ygGoI4sT514oYByNTYzHxmaj/ikjA9t35EXMl4zXO7kIJ3BBLjvn3EF5JDICpCyug=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66f500ad-ab62-40da-43b3-08d57ebda38c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2018 15:12:09.9496
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1930
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1SFCM4G010433
 
-On Monday, February 26, 2018 04:04:17 PM Kees Cook wrote:
-> This is a small series that cleans up struct consw a bit and
-> prepares it for Control Flow Integrity checking (i.e. Clang's
-> -fsanitize=cfi).
+> -----Original Message-----
+> From: Borislav Petkov [mailto:bp@suse.de]
+> Sent: Wednesday, February 28, 2018 3:43 AM
+> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>; Tony Luck
+> <tony.luck@intel.com>
+> Cc: linux-efi@vger.kernel.org; linux-kernel@vger.kernel.org;
+> ard.biesheuvel@linaro.org; x86@kernel.org
+> Subject: Re: [PATCH v2 0/8] Decode IA32/X64 CPER
+> 
+> On Mon, Feb 26, 2018 at 01:38:56PM -0600, Yazen Ghannam wrote:
+> > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> >
+> > This series adds decoding for the IA32/X64 Common Platform Error Record.
+> 
+> One much more important thing I forgot about yesterday: how is
+> this thing playing into our RAS reporting, x86 decoding chain, etc
+> infrastructure?
+> 
 
-for drivers/video/ parts:
+It doesn't right now.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Is CPER bypassing it completely and the firmware is doing everything
+> now? I sure hope not.
+> 
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+CPER is the format used for BERT, etc. We'll only ever see a CPER if the
+firmware creates it. And it's up to firmware policy what is shared with
+the OS.
+
+This set adds decoding for the x86 CPER format which will mostly map to
+core MCA errors. There's a memory CPER format that DRAM ECC, etc. will
+use, so that's not covered here. In other words, common errors like
+corrected DRAM ECC won't be reported with this patch set.
+
+Most likely, we'll only see CPERs in BERT because BERT only uses CPERs.
+HEST has MCA structures that can be used. Meaning we won't see MCA
+errors reported through CPERs during runtime.
+
+So the most common scenario will probably be that the system resets,
+firmware found an MCA error during boot, and firmware populates BERT
+with a CPER. The error gets printed during OS boot. By the time userspace
+is up the error has already be printed. The error is printed as informational
+since there isn't any action for the OS or user to take.
+
+My main reason for printing all the info is that it may be too difficult or too
+late to gather that info after the fact. I think this is especially true for boot
+errors, though maybe there's another way that I don't know about
+(re-reading BERT later?).
+
+> If not, it needs to tie into our infrastructure and the errors need
+> to go into the decoding chain where different things look at them and
+> filter them.
+> 
+
+Right. I want to work on getting this more integrated with our existing
+x86 infrastructure. But I don't want to wait until we figure all that out
+before we have some sort of CPER decoding.
+
+> Tony, what are your plans here?
+> 
+> Perhaps we can finally get MCE decoding on Intel too :-)
+> 
+
+Thanks,
+Yazen
