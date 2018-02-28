@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519838524-2-9370161262522457683
+X-Cyrus-Session-Id: sloti22d1t05-667456-1519838514-2-17559903626271662152
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838523; b=PmtwdfRgiYmBKY4iaEiGi7P0lKScenOXPP2XaRvAFo6dH77
-    VoSt4YmIMWxoN003t9U2dJDvoaFEpf4X64EjzoFYzJJcqaXciljJBVW5R9NOsUvP
-    PaJlXMeChPikD6B4t68jleDUzBF1RXIGX0ysX9mr56uQuqmeMkMpz+Zpty9vUk8o
-    DHi52cwl/TwdncKLmHuoeGCTjGDzw5CWJRMHE4KUHiU7IVW1ub1G26580f+eV2Ho
-    0/C/4cSVAMVgLcUVEHPiqUkt8DpdwBWp//GAq+MvchFDAciRQ6BbQsFJM6BYg9/O
-    VSzoMpMul67l8mUGXA+BD5RofqYNwH8nVkn75Bw==
+    t=1519838514; b=pGMkpbjnbj7G62nFVXwG6qbR0k4hGYvn8cbPewvQz67tu1h
+    Sqo0GIMcgW59Q8C3nkJI3vjrUycH4pJwY9HBJ84aFsrnqMesZQmdTFgq9jr3Zi2J
+    ajHW7M4j5WGYfi6fccLxX53pV5DvKJMvL5asUb6ue3VUQ0d+JHESpKwALvfXIy5L
+    jI8w3KOI5ojJSpRCQUipGXCKF2nbg+M/wkS/P9YkXxGWmaLCBNGQhQ9H8IvnvipY
+    FKmdNpVvRKeNeu83NvFWcd3qT7NVPxdZNQen0edMvUOGkmwldnypWCiMv8E8fgS4
+    39JzzmZgc/iB+5vBBCjcnuLvTwKG1vBQYKrqJAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838523; bh=hQHRbEolDCENQr5A7IY
-    zWDw5rydTO6lRouWcap5IqN4=; b=UfHtBVmuEiM2ecz21/5/7HBI2xMcTSCdo2M
-    ER+jFvTWaGSZKP9j0SBN85BrGQlm0WdCBqe9uSCwOjM1UinebVJi57UPtx6nZ2fg
-    Ud3vu63jSmkqofv4ogTE3Oy5nOAvECY2I/NqHaq7k1V/u+clF5HKbkoYh3vkSY6V
-    aWfCXrfZy8xtAlhcYNBH7DeI2mUjQUVjnD8hPXpqUNI0Ex5kLO6nfnD/a9IEVJ4z
-    pWaXlr3iybTM3QXilwdB6h/sQnOKjL/FeYsSdOWxYbYMzQtKFLYjwbZFprJjUp5z
-    CHXKyjSa721z1+uKa2rv+U2QfpU7+q+gG+1d9/jpuL3XShTQDhQ==
+    :sender:list-id; s=arctest; t=1519838514; bh=75prT0ednPjhvWVxYDb
+    H8v7WYtxavgTxSonmt79WX4w=; b=l9EeFiygPP37XzwYGc+uXi6g7FwKO3nCRVU
+    gV8XdBqyqPMPHvykk3TkHqU1VlZ0TmbhPwi8Xs/afuwoTHjIk7yK3Zb/pUtXoSfs
+    2HXOr1w4BSfxFfNQJnDPaFr+GjPnslBcg9czg3crvGOrtB7f0AavK5ZJQacumNpa
+    0ksextflcSGTGtVDouYp3shJvjEVtxX9h6IbSce4CQoOWJQRZs/iliq8+pMILHVm
+    gcUxiEy5toc+sv1yf+YFa2ZAotupnhplJqqFv3XyEuatX0pjKtxl1hZh8KjhiQsV
+    KXtxhOZ+celP5Ol6pVJeNggB0diGZmUN9n+/K4EzDi8czdSHF5Q==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932663AbeB1Prk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:47:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33337 "EHLO
+        id S933202AbeB1Prl (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:47:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33333 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932633AbeB1PWQ (ORCPT
+        by vger.kernel.org with ESMTP id S932632AbeB1PWQ (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:16 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Steffen Klassert" <steffen.klassert@secunet.com>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Steffen Klassert" <steffen.klassert@secunet.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.194131703@decadent.org.uk>
+Message-ID: <lsq.1519831222.814512876@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 084/140] xfrm: Use __skb_queue_tail in xfrm_trans_queue
+Subject: [PATCH 3.2 088/140] xfrm: Return error on unknown encap_type in
+ init_state
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,30 +83,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit d16b46e4fd8bc6063624605f25b8c0835bb1fbe3 upstream.
+commit bcfd09f7837f5240c30fd2f52ee7293516641faa upstream.
 
-We do not need locking in xfrm_trans_queue because it is designed
-to use per-CPU buffers.  However, the original code incorrectly
-used skb_queue_tail which takes the lock.  This patch switches
-it to __skb_queue_tail instead.
+Currently esp will happily create an xfrm state with an unknown
+encap type for IPv4, without setting the necessary state parameters.
+This patch fixes it by returning -EINVAL.
 
-Reported-and-tested-by: Artem Savkov <asavkov@redhat.com>
-Fixes: acf568ee859f ("xfrm: Reinject transport-mode packets...")
+There is a similar problem in IPv6 where if the mode is unknown
+we will skip initialisation while returning zero.  However, this
+is harmless as the mode has already been checked further up the
+stack.  This patch removes this anomaly by aligning the IPv6
+behaviour with IPv4 and treating unknown modes (which cannot
+actually happen) as transport mode.
+
+Fixes: 38320c70d282 ("[IPSEC]: Use crypto_aead and authenc in ESP")
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/xfrm/xfrm_input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/esp4.c | 1 +
+ net/ipv6/esp6.c | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -324,7 +324,7 @@ int xfrm_trans_queue(struct sk_buff *skb
- 		return -ENOBUFS;
+--- a/net/ipv4/esp4.c
++++ b/net/ipv4/esp4.c
+@@ -658,6 +658,7 @@ static int esp_init_state(struct xfrm_st
  
- 	XFRM_TRANS_SKB_CB(skb)->finish = finish;
--	skb_queue_tail(&trans->queue, skb);
-+	__skb_queue_tail(&trans->queue, skb);
- 	tasklet_schedule(&trans->tasklet);
- 	return 0;
- }
+ 		switch (encap->encap_type) {
+ 		default:
++			err = -EINVAL;
+ 			goto error;
+ 		case UDP_ENCAP_ESPINUDP:
+ 			x->props.header_len += sizeof(struct udphdr);
+--- a/net/ipv6/esp6.c
++++ b/net/ipv6/esp6.c
+@@ -606,13 +606,12 @@ static int esp6_init_state(struct xfrm_s
+ 			x->props.header_len += IPV4_BEET_PHMAXLEN +
+ 				               (sizeof(struct ipv6hdr) - sizeof(struct iphdr));
+ 		break;
++	default:
+ 	case XFRM_MODE_TRANSPORT:
+ 		break;
+ 	case XFRM_MODE_TUNNEL:
+ 		x->props.header_len += sizeof(struct ipv6hdr);
+ 		break;
+-	default:
+-		goto error;
+ 	}
+ 
+ 	align = ALIGN(crypto_aead_blocksize(aead), 4);
