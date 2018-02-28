@@ -1,38 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934163AbeB1P5g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:57:36 -0500
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:39825 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbeB1P5e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:57:34 -0500
-X-Google-Smtp-Source: AH8x225dqPIbp/UvkyBP5rE8IsBruhmcuTZ9ipFNwnIMmRN6RDlhjRgwscULFUFKOD7WxbKFlUsshg==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH V2] lightnvm: pblk: remove unused variable
-Date: Wed, 28 Feb 2018 16:57:23 +0100
-Message-Id: <1519833444-28160-1-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752997AbeB1P6S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:58:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52428 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752516AbeB1P6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:58:15 -0500
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        Liviu Dudau <liviu.dudau@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH] arm64: dts: juno: fix size of GICv2m MSI frames
+To: Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180207143255.17003-3-marc.zyngier@arm.com>
+ <1519832935-7338-1-git-send-email-sudeep.holla@arm.com>
+ <36126393-ee37-40f1-9d5d-1c7f25c648dc@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <f4ce910b-f263-a4e1-710c-875ac152d4bf@arm.com>
+Date: Wed, 28 Feb 2018 15:58:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <36126393-ee37-40f1-9d5d-1c7f25c648dc@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-# Changes since V1:
- - Rebase on top of latest 2.0 changes
 
 
-Javier González (1):
-  lightnvm: pblk: remove unused variable
+On 28/02/18 15:51, Robin Murphy wrote:
+> Hi Sudeep,
+> 
+> Cheers for sorting it out...
+> 
+> On 28/02/18 15:48, Sudeep Holla wrote:
+>> Currently the size of GICv2m MSI frames are listed as 4kB while the
+>> Juno TRM specifies 64kB for each of these MSI frames.
+>>
+>> Though the devices connected themself might just use the first 4kB,
+> 
+> s/themself/themselves/
+> 
+>> to be consistent with the genaral practice of 64kB boundary alignment
+> 
+> s/genaral/general/
+> 
 
- drivers/lightnvm/pblk-core.c | 3 ---
- 1 file changed, 3 deletions(-)
+Fixed those now.
+
+>> to all the devices, lets keep the size as 64kB. This might also help
+>> in avoiding any surprise when passing the device to a VM.
+>>
+>> This patch increase the size of each GICv2m MSI frames from 4kB to 64kB
+>> as per the specification.
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> 
+
+Thanks.
 
 -- 
-2.7.4
+Regards,
+Sudeep
