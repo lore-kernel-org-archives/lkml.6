@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519836198-2-7373192851159570453
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519836192-2-16155754911602159944
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519836197; b=eRpkUXJLfht/HnRwuOx9mTMqdF/Nd5c+XgZgFfNu7kSTaf4
-    ssAxxhg0uNdX/OT7dF5RccM6J4UOP57WhYO0cEKnzFmk06SQ/scjaMOB2I+GxnoL
-    f8vCPKzJJV0aBe9PD7tbBeltvaLZgLFLTquZ36G0w/Ol5kTHbQ4a1rBqvGNFw05a
-    ucNI4ngea63nCFKK+Nnk1XCeLFnc08EB1ofKnP9PfPW5A7JdqLJdqv/KFzSwHcIi
-    EIFybn62vjQ271Sq1YO5/pjWgt1a2sa08CNqrwKtVmJ6wNyR16t/nrpXCkzkhU7Y
-    yw0qdRREd0muxm4a6n/u1NaFp+A7TBFkUEr0HOg==
+    t=1519836191; b=pDd55vXppLnajjofMpbtI3mwlVtUW/5JOCvTHS0/3kmOjN5
+    fDp0/PhX1oCJx5s2ghWjcrqWRGVTnkvdI2nAY4Ew/n/zJROW64NWCGB/B3P+qR7A
+    Cuw+pvUheAE4p6rh/z0pIHSLvsis07VmMM8s/m63IRBBEOrlCYD1f9JVphuRGOSJ
+    evMxat0fmYOXgRR4kYfpSpQP7FO44u3Yly7OimuUFuoS9/1EvHowy15N5Cq9+55W
+    wQEavkeUVByrZqTdkQ8ZnVLQdfD8Jt2zmlk4qn3Bg5HNOU4cJ7euv6DyYL2SmH14
+    TTVJW8QD2HAmvZrGgMXe8Q+QKgwAat36HfVY++w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519836197; bh=fRpbx7PvixszwGSjxHQ
-    Lo0cPyXrfW+B11lbgwG5xd7Q=; b=pqYZDEPT3Jr0j20ZFw4kRcxOqqERygvgfW0
-    TjPczUPt+/PBLBXvj9KYbPHKTtokZd4GRlthN0oQsljxzQephkYBoPPmSNYyeU8Y
-    ZXwy+AX0fkQQ0VnoytnOCDA3aai7G7rtQt4RHoUltXFCJ/uSKnCICn/SYagdBTIA
-    mmlCRPXToWQaHtUZQLGwZmcxgJEZcxbG2x++7G9PbWk1MbWwhFTahcKMI64sziiB
-    Y/6wQa5dk2Y7zs0PtdA/gK/ctN2DBqA0WgCFl8rN80ixePJMBG2+SH8Ysj38gPNO
-    u59W33EQTIhGa4xOdfCA97YIg8SV9x/S8+VF6j9CTUL5pZwzb8w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519836191; bh=OgkOgClNuPyCerLoX9e
+    PCgnYp2ErgzH6wmxRgRml0sU=; b=r79EwzchsGeXBqprsL/YJDXgb1r0GXxBw/n
+    T0cpNIZ2H1vUq8NSpjxHfT0GVV2hA3rwpbQTmPz+b1ZrkQHuF5ZrYu2YCn6aTQcw
+    2lZNMn8Xh7CKt9gxNGXlQdMLMJTAUtNyUJIi0ksQEy/mL+JlZzCl7i1PZIVs7KT/
+    4Tp32QX4fu6g64uOR1jTyiMBgteJ6D/yoYeNscnkX0H3cxwk5jTDih3a99Pb84jN
+    82WKPceC41iuoSjS/jOy2x8NQO8JdO1OMfs3cVHz+5uRk4UrpmzoLDnh1tP7fNAL
+    qEwtcS+6hpx5IA+tdeRE7GUUBSSyeXHbqvbpWJDCSabFoZBwzAw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932437AbeB1QDE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:03:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34737 "EHLO
+        id S932691AbeB1QDO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:03:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34745 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932224AbeB1QDB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:03:01 -0500
+        by vger.kernel.org with ESMTP id S932224AbeB1QDM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:03:12 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        "Felipe Balbi" <balbi@ti.com>,
-        "Peter Chen" <peter.chen@freescale.com>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Florian Fainelli" <f.fainelli@gmail.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.875210007@decadent.org.uk>
+Message-ID: <lsq.1519831218.738754130@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 191/254] usb: udc: core: add device_del() call to
- error pathway
+Subject: [PATCH 3.16 165/254] net: phy: Add phy_interface_is_rgmii helper
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,31 +79,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit c93e64e91248becd0edb8f01723dff9da890e2ab upstream.
+commit e463d88c36d42211aa72ed76d32fb8bf37820ef1 upstream.
 
-This patch fixes a bug in the error pathway of
-usb_add_gadget_udc_release() in udc-core.c.  If the udc registration
-fails, the gadget registration is not fully undone; there's a
-put_device(&gadget->dev) call but no device_del().
+RGMII interfaces come in 4 different flavors that the PHY library needs
+to care about: regular RGMII (no delays), RGMII with either RX or TX
+delay, and both. In order to avoid errors of checking only for one type
+of RGMII interface and miss the 3 others, introduce a convenience
+function which tests for all values.
 
-Acked-by: Peter Chen <peter.chen@freescale.com>
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Felipe Balbi <balbi@ti.com>
-[bwh: Backported to 3.16: adjust filename]
+Suggested-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/gadget/udc-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/phy.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/usb/gadget/udc-core.c
-+++ b/drivers/usb/gadget/udc-core.c
-@@ -252,6 +252,7 @@ err4:
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -630,6 +630,17 @@ static inline bool phy_is_internal(struc
+ }
  
- err3:
- 	put_device(&udc->dev);
-+	device_del(&gadget->dev);
- 
- err2:
- 	put_device(&gadget->dev);
+ /**
++ * phy_interface_is_rgmii - Convenience function for testing if a PHY interface
++ * is RGMII (all variants)
++ * @phydev: the phy_device struct
++ */
++static inline bool phy_interface_is_rgmii(struct phy_device *phydev)
++{
++	return phydev->interface >= PHY_INTERFACE_MODE_RGMII &&
++		phydev->interface <= PHY_INTERFACE_MODE_RGMII_TXID;
++}
++
++/**
+  * phy_write_mmd - Convenience function for writing a register
+  * on an MMD on a given PHY.
+  * @phydev: The phy_device struct
