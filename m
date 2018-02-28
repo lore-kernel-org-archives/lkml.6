@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519838838-2-8701672690319037059
+X-Cyrus-Session-Id: sloti22d1t05-667456-1519838836-2-13689354079186192695
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838838; b=YK+7oOuEpa8NH0CAljqnGsj6CdYpCdQFnuRE926uEqUawNZ
-    vDMR271gF5ZqME1fCxMZujZMQD9fTSGHzKBLZkS5DUtpPHrhQ2rElMODlfLw3wuH
-    hiOzDMqGAfYZ3QVF2uuufj9auU3qtSrW+edSpjF3JqqiqQslzYLkHAoQoQyFTImi
-    OGIadK5FbaPunteHYT9r/W7y8XA7arn0OvcT4iID2dahk1bE4ZqBe2Z3KU/XZwBl
-    ge7mL4gFzZE0CYsgOA3QuUUyUKWgduTl+ong4HusfOCHeFkW++ewKHtdOkv8GDu5
-    RVBYJS9tCNE7wQhyPGyvA7IZqoGtYVyZude5UFw==
+    t=1519838836; b=dWQu3yez0xUUqy/ayIDKgp1u5BZBc6vo9294EPAnItfEwBi
+    AGodIKdSN7LWeO2DpO1QXR16G7TWK1aq0TGxz81KAylp5ULntJoXl02LePhyqcT6
+    sjZNSPL3SdhwXGibIwwKTGiDQ8nmUwitta2E/NP7mWNyT7+hneh+Ct3ZosMgiqe8
+    7bJwU4GwgQMX0t0xc5d23f9dKhPVyQWKlzGaiKMceW+n7zmXnhNf7qtTQCZOwGGJ
+    CDXk/ttw81IwGe2LWFad3J8jvn235XYW4OP01qBp52yGbkSjhtu5o/8sgwiXKp3O
+    Dal8L4Hvqwpc6dmbGC3ziqY7IbYKWOrVxtCNkeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838838; bh=FZHj/2bFspll1XA9pvN
-    wzuNPHgIdNifVT+zHCJAaWdk=; b=TgGPhGSXlmLo1bIVnR7cjc7o7iJVD2T9Ayb
-    CoAMbZobFQA2suuQHHhMfowvdXIThi2zjx1ipJvC/4K5UmX4pLR2yZSGn6DTLCg2
-    03tkG7D6JPq6v7heZyyeaBVmgCv4gKUl/H78TDqNZqAtsxKumW4/F8J+akCPzH42
-    HtdD+5nKmzobAogevCbOst4BuW1JvtL46V7ctaLL7nTXF6kRng/RrA4D8jGoTt1i
-    M5XIrGVLb8GtjRfv9xPvtEtpzG9RIAi32iE+WFn4BWlYFf/wlGwSxaNO3mhH6kTI
-    VCffy3pDcpcY7ehx1CJ3l/2lZFYQ9qBhO84xYxEzKJXrYOnXSeQ==
+    :sender:list-id; s=arctest; t=1519838836; bh=CLwGaDJCg8J3g2FRmRT
+    Nt+q/7H3e5wx6uzE+WqoQgxM=; b=ExVYXccj3PP2oKErL7Jblf/BTea4AoaRqYd
+    64Irf8s3iF1SCoGG7CoAO8gd9qrm3o/A0sqKN+i6KP6GNVdT3HKNN/Y1uLUmkvoh
+    +yubvjcvqsX35ka1p9yLf7ldn/m0qvb7ZrjMbb99OnAwZcIRBSif45gsBkxihy/f
+    Z6xOBFoNwVLYeaANDlyV609iRYOBD8lx84Dy266kOd5nJmyaN4oKilN2Hg+JELM4
+    cEQJIXlgXLKW4w3q/coBNj6rrTlCocT+LpXf2UcXOpdycFiAwFHfhcVXHWL9p8Pr
+    f5QkrGvuXrEX4BspQTzWCYKLgmw83YC8jisE8wvdmQ8g6dJw6Mw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932361AbeB1RZI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:25:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33284 "EHLO
+        id S932400AbeB1RZJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:25:09 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33296 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932612AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932611AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,15 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Michal Hocko" <mhocko@suse.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Nicholas Piggin" <npiggin@gmail.com>,
-        "Anshuman Khandual" <khandual@linux.vnet.ibm.com>
+CC: akpm@linux-foundation.org, "Aaron Brown" <aaron.f.brown@intel.com>,
+        "Lennart Sorensen" <lsorense@csclub.uwaterloo.ca>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
+        "Benjamin Poirier" <bpoirier@suse.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.830079042@decadent.org.uk>
+Message-ID: <lsq.1519831222.711091898@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 082/140] mm/mprotect: add a cond_resched() inside
- change_pmd_range()
+Subject: [PATCH 3.2 076/140] e1000e: Separate signaling for link check/link up
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,73 +81,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-commit 4991c09c7c812dba13ea9be79a68b4565bb1fa4e upstream.
+commit 19110cfbb34d4af0cdfe14cd243f3b09dc95b013 upstream.
 
-While testing on a large CPU system, detected the following RCU stall
-many times over the span of the workload.  This problem is solved by
-adding a cond_resched() in the change_pmd_range() function.
+Lennart reported the following race condition:
 
-  INFO: rcu_sched detected stalls on CPUs/tasks:
-   154-....: (670 ticks this GP) idle=022/140000000000000/0 softirq=2825/2825 fqs=612
-   (detected by 955, t=6002 jiffies, g=4486, c=4485, q=90864)
-  Sending NMI from CPU 955 to CPUs 154:
-  NMI backtrace for cpu 154
-  CPU: 154 PID: 147071 Comm: workload Not tainted 4.15.0-rc3+ #3
-  NIP:  c0000000000b3f64 LR: c0000000000b33d4 CTR: 000000000000aa18
-  REGS: 00000000a4b0fb44 TRAP: 0501   Not tainted  (4.15.0-rc3+)
-  MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22422082  XER: 00000000
-  CFAR: 00000000006cf8f0 SOFTE: 1
-  GPR00: 0010000000000000 c00003ef9b1cb8c0 c0000000010cc600 0000000000000000
-  GPR04: 8e0000018c32b200 40017b3858fd6e00 8e0000018c32b208 40017b3858fd6e00
-  GPR08: 8e0000018c32b210 40017b3858fd6e00 8e0000018c32b218 40017b3858fd6e00
-  GPR12: ffffffffffffffff c00000000fb25100
-  NIP [c0000000000b3f64] plpar_hcall9+0x44/0x7c
-  LR [c0000000000b33d4] pSeries_lpar_flush_hash_range+0x384/0x420
-  Call Trace:
-    flush_hash_range+0x48/0x100
-    __flush_tlb_pending+0x44/0xd0
-    hpte_need_flush+0x408/0x470
-    change_protection_range+0xaac/0xf10
-    change_prot_numa+0x30/0xb0
-    task_numa_work+0x2d0/0x3e0
-    task_work_run+0x130/0x190
-    do_notify_resume+0x118/0x120
-    ret_from_except_lite+0x70/0x74
-  Instruction dump:
-  60000000 f8810028 7ca42b78 7cc53378 7ce63b78 7d074378 7d284b78 7d495378
-  e9410060 e9610068 e9810070 44000022 <7d806378> e9810028 f88c0000 f8ac0008
+\ e1000_watchdog_task
+    \ e1000e_has_link
+        \ hw->mac.ops.check_for_link() === e1000e_check_for_copper_link
+            /* link is up */
+            mac->get_link_status = false;
 
-Link: http://lkml.kernel.org/r/20171214140551.5794-1-khandual@linux.vnet.ibm.com
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Suggested-by: Nicholas Piggin <npiggin@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.2: adjust context]
+                            /* interrupt */
+                            \ e1000_msix_other
+                                hw->mac.get_link_status = true;
+
+        link_active = !hw->mac.get_link_status
+        /* link_active is false, wrongly */
+
+This problem arises because the single flag get_link_status is used to
+signal two different states: link status needs checking and link status is
+down.
+
+Avoid the problem by using the return value of .check_for_link to signal
+the link status to e1000e_has_link().
+
+Reported-by: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+[bwh: Backported to 3.2: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- mm/mprotect.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/e1000e/lib.c    | 11 ++++++++---
+ drivers/net/ethernet/intel/e1000e/netdev.c |  2 +-
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -92,13 +92,15 @@ static inline void change_pmd_range(stru
- 			if (next - addr != HPAGE_PMD_SIZE)
- 				split_huge_page_pmd(vma->vm_mm, pmd);
- 			else if (change_huge_pmd(vma, pmd, addr, newprot))
--				continue;
-+				goto next;
- 			/* fall through */
- 		}
- 		if (pmd_none_or_clear_bad(pmd))
--			continue;
-+			goto next;
- 		change_pte_range(vma->vm_mm, pmd, addr, next, newprot,
- 				 dirty_accountable);
-+next:
-+		cond_resched();
- 	} while (pmd++, addr = next, addr != end);
+--- a/drivers/net/ethernet/intel/e1000e/lib.c
++++ b/drivers/net/ethernet/intel/e1000e/lib.c
+@@ -435,6 +435,9 @@ void e1000e_clear_hw_cntrs_base(struct e
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
++ *
++ *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
++ *  up).
+  **/
+ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ {
+@@ -449,7 +452,7 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status)
+-		return 0;
++		return 1;
+ 
+ 	/*
+ 	 * First we want to see if the MII Status Register reports
+@@ -494,10 +497,12 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val)
++	if (ret_val) {
+ 		e_dbg("Error configuring flow control\n");
++		return ret_val;
++	}
+ 
+-	return ret_val;
++	return 1;
  }
  
+ /**
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4222,7 +4222,7 @@ static bool e1000e_has_link(struct e1000
+ 	case e1000_media_type_copper:
+ 		if (hw->mac.get_link_status) {
+ 			ret_val = hw->mac.ops.check_for_link(hw);
+-			link_active = !hw->mac.get_link_status;
++			link_active = ret_val > 0;
+ 		} else {
+ 			link_active = 1;
+ 		}
