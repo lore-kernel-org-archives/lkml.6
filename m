@@ -1,102 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeB1NKz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:10:55 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38713 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752206AbeB1NKy (ORCPT
+        id S1752473AbeB1NLQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:11:16 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39405 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752229AbeB1NLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:10:54 -0500
-Date: Wed, 28 Feb 2018 05:10:43 -0800
-From: tip-bot for Baolin Wang <tipbot@zytor.com>
-Message-ID: <tip-27263e8dc0f6fe27540a843611ec14a000591c41@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, baolin.wang@linaro.org, hpa@zytor.com,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, baolin.wang@linaro.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org
-In-Reply-To: <d80dccb981dc2461781ebb8d71a32ccdc1b0e6f9.1516167691.git.baolin.wang@linaro.org>
-References: <d80dccb981dc2461781ebb8d71a32ccdc1b0e6f9.1516167691.git.baolin.wang@linaro.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] clocksource: Use ATTRIBUTE_GROUPS
-Git-Commit-ID: 27263e8dc0f6fe27540a843611ec14a000591c41
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Feb 2018 08:11:14 -0500
+X-Google-Smtp-Source: AG47ELtveBXd9DhZ6g5sJ4/8Er7m/bfQrtUxZTStzyE4/QNbjUU9wgONHEViJm3xzgl0mfRHlfM+HEuZbgEqmLEyKpg=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
+ <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+ <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+ <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com> <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 14:11:13 +0100
+X-Google-Sender-Auth: dWLebLQHwGvnTWSgr6PVeunEj2M
+Message-ID: <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  27263e8dc0f6fe27540a843611ec14a000591c41
-Gitweb:     https://git.kernel.org/tip/27263e8dc0f6fe27540a843611ec14a000591c41
-Author:     Baolin Wang <baolin.wang@linaro.org>
-AuthorDate: Wed, 17 Jan 2018 14:01:30 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 14:05:07 +0100
+Hi Tomasz,
 
-clocksource: Use ATTRIBUTE_GROUPS
+On Wed, Feb 28, 2018 at 1:49 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+> On Wed, Feb 28, 2018 at 9:32 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Feb 28, 2018 at 1:29 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+>>> Also, how about systems where runtime PM is disabled? I think that's
+>>> one of the reasons we control the clocks explicitly in the drivers
+>>> anyway.
+>>
+>> On many platforms, Runtime PM is always enabled.
+>
+> Can we make such assumption? If so, could we just make an explicit
+> "select PM_RUNTIME" in Kconfig of the SoC?
 
-Use ATTRIBUTE_GROUPS instead of manually creating the individual device
-files.
+Note that the PM_RUNTIME symbol was removed in commit 464ed18ebdb6236f
+("PM: Eliminate CONFIG_PM_RUNTIME"), in favor of plain PM.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: arnd@arndb.de
-Cc: sboyd@codeaurora.org
-Cc: broonie@kernel.org
-Cc: john.stultz@linaro.org
-Link: https://lkml.kernel.org/r/d80dccb981dc2461781ebb8d71a32ccdc1b0e6f9.1516167691.git.baolin.wang@linaro.org
----
- kernel/time/clocksource.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+The following already select PM unconditionally:
+  - ARCH_OMAP2PLUS_TYPICAL
+  - ARCH_RENESAS (except EMEV2)
+  - ARCH_TEGRA
+  - ARCH_VEXPRESS
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 7ce53465782b..0e974cface0b 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -993,6 +993,14 @@ static ssize_t available_clocksource_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(available_clocksource);
- 
-+static struct attribute *clocksource_attrs[] = {
-+	&dev_attr_current_clocksource.attr,
-+	&dev_attr_unbind_clocksource.attr,
-+	&dev_attr_available_clocksource.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(clocksource);
-+
- static struct bus_type clocksource_subsys = {
- 	.name = "clocksource",
- 	.dev_name = "clocksource",
-@@ -1001,6 +1009,7 @@ static struct bus_type clocksource_subsys = {
- static struct device device_clocksource = {
- 	.id	= 0,
- 	.bus	= &clocksource_subsys,
-+	.groups	= clocksource_groups,
- };
- 
- static int __init init_clocksource_sysfs(void)
-@@ -1009,17 +1018,7 @@ static int __init init_clocksource_sysfs(void)
- 
- 	if (!error)
- 		error = device_register(&device_clocksource);
--	if (!error)
--		error = device_create_file(
--				&device_clocksource,
--				&dev_attr_current_clocksource);
--	if (!error)
--		error = device_create_file(&device_clocksource,
--					   &dev_attr_unbind_clocksource);
--	if (!error)
--		error = device_create_file(
--				&device_clocksource,
--				&dev_attr_available_clocksource);
-+
- 	return error;
- }
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
