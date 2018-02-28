@@ -1,109 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeB1O1G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:27:06 -0500
-Received: from mga04.intel.com ([192.55.52.120]:2653 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752505AbeB1O1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:27:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
-   d="scan'208";a="34307652"
-Message-ID: <1519828022.10722.299.camel@linux.intel.com>
-Subject: Re: [PATCH v1] extcon: int3496: Ignore incorrect IoRestriction for
- ID pin
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>
-Date: Wed, 28 Feb 2018 16:27:02 +0200
-In-Reply-To: <5A94D7AD.6020402@samsung.com>
-References: <CGME20180226193456epcas3p39565d818a6a57db386bd5e81aed20674@epcas3p3.samsung.com>
-         <20180226193444.69883-1-andriy.shevchenko@linux.intel.com>
-         <5A94D7AD.6020402@samsung.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+        id S1752726AbeB1O2K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:28:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36355 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeB1O2I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:28:08 -0500
+Date: Wed, 28 Feb 2018 06:27:46 -0800
+From: tip-bot for Tom Lendacky <tipbot@zytor.com>
+Message-ID: <tip-ae8d1d0061ad7996c2c5e769e809a593544fa145@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        thomas.lendacky@amd.com, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, bp@alien8.de, bp@suse.de,
+        mingo@kernel.org, torvalds@linux-foundation.org
+Reply-To: kirill.shutemov@linux.intel.com, bp@alien8.de, bp@suse.de,
+        mingo@kernel.org, torvalds@linux-foundation.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, hpa@zytor.com
+In-Reply-To: <20180226232554.14108.16881.stgit@tlendack-t1.amdoffice.net>
+References: <20180226232554.14108.16881.stgit@tlendack-t1.amdoffice.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/sme: Disable stack protection for
+ mem_encrypt_identity.c
+Git-Commit-ID: ae8d1d0061ad7996c2c5e769e809a593544fa145
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-27 at 12:59 +0900, Chanwoo Choi wrote:
-> Hi,
-> 
-> On 2018년 02월 27일 04:34, Andy Shevchenko wrote:
-> > The commit 70216fd937fe introduced a workaround for incorrect
-> 
-> You better to specify the commit id and patch name as following:
-> commit 70216fd937fe -> commit 70216fd937fe ("extcon: int3496: Set the
-> id pin to direction-input if necessary")
+Commit-ID:  ae8d1d0061ad7996c2c5e769e809a593544fa145
+Gitweb:     https://git.kernel.org/tip/ae8d1d0061ad7996c2c5e769e809a593544fa145
+Author:     Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate: Mon, 26 Feb 2018 17:25:54 -0600
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Feb 2018 15:24:12 +0100
 
-Will fix in v2.
+x86/mm/sme: Disable stack protection for mem_encrypt_identity.c
 
-> 
-> > IoRestriction mode in ACPI table.
-> > 
-> > Now, when GPIO ACPI library does it in generic way, just set
-> 
-> I recommend that you specify clearly which patch you mention
-> about GPIO ACPI library.
+Stack protection is not compatible with early boot code.  All of the early
+SME boot code is now isolated in a separate file, mem_encrypt_identity.c,
+so arch/x86/mm/Makefile can be updated to turn off stack protection for
+the entire file.  This eliminates the need to worry about other functions
+within the file being instrumented with stack protection (as was seen
+when a newer version of GCC instrumented sme_encrypt_kernel() where an
+older version hadn't).  It also allows removal of the __nostackprotector
+attribute from individual functions.
 
-Do you mean list all of them? It's a bit hard to choose one.
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/20180226232554.14108.16881.stgit@tlendack-t1.amdoffice.net
 
-> > an appropriate quirk flag instead.
-> > 
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  drivers/extcon/extcon-intel-int3496.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/extcon/extcon-intel-int3496.c
-> > b/drivers/extcon/extcon-intel-int3496.c
-> > index 191e99f06a9a..acaccb128fc4 100644
-> > --- a/drivers/extcon/extcon-intel-int3496.c
-> > +++ b/drivers/extcon/extcon-intel-int3496.c
-> > @@ -50,7 +50,11 @@ static const struct acpi_gpio_params vbus_gpios =
-> > { INT3496_GPIO_VBUS_EN, 0, fal
-> >  static const struct acpi_gpio_params mux_gpios = {
-> > INT3496_GPIO_USB_MUX, 0, false };
-> >  
-> >  static const struct acpi_gpio_mapping acpi_int3496_default_gpios[]
-> > = {
-> > -	{ "id-gpios", &id_gpios, 1 },
-> > +	/*
-> > +	 * Some platforms have a bug in ACPI GPIO description
-> > making IRQ
-> > +	 * GPIO to be output only. Ask the GPIO core to ignore this
-> > limit.
-> > +	 */
-> > +	{ "id-gpios", &id_gpios, 1,
-> > ACPI_GPIO_QUIRK_NO_IO_RESTRICTION },
-> >  	{ "vbus-gpios", &vbus_gpios, 1 },
-> >  	{ "mux-gpios", &mux_gpios, 1 },
-> >  	{ },
-> > @@ -112,9 +116,6 @@ static int int3496_probe(struct platform_device
-> > *pdev)
-> >  		ret = PTR_ERR(data->gpio_usb_id);
-> >  		dev_err(dev, "can't request USB ID GPIO: %d\n",
-> > ret);
-> >  		return ret;
-> > -	} else if (gpiod_get_direction(data->gpio_usb_id) !=
-> > GPIOF_DIR_IN) {
-> > -		dev_warn(dev, FW_BUG "USB ID GPIO not in input
-> > mode, fixing\n");
-> > -		gpiod_direction_input(data->gpio_usb_id);
-> >  	}
-> >  
-> >  	data->usb_id_irq = gpiod_to_irq(data->gpio_usb_id);
-> > 
-> 
-> 
+---
+ arch/x86/mm/Makefile               | 1 +
+ arch/x86/mm/mem_encrypt_identity.c | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index 03c6c8561623..4b101dd6e52f 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -19,6 +19,7 @@ obj-y	:=  init.o init_$(BITS).o fault.o ioremap.o extable.o pageattr.o mmap.o \
+ nostackp := $(call cc-option, -fno-stack-protector)
+ CFLAGS_physaddr.o		:= $(nostackp)
+ CFLAGS_setup_nx.o		:= $(nostackp)
++CFLAGS_mem_encrypt_identity.o	:= $(nostackp)
+ 
+ CFLAGS_fault.o := -I$(src)/../include/asm/trace
+ 
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index b4139c5ab972..1b2197d13832 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -266,7 +266,7 @@ static unsigned long __init sme_pgtable_calc(unsigned long len)
+ 	return entries + tables;
+ }
+ 
+-void __init __nostackprotector sme_encrypt_kernel(struct boot_params *bp)
++void __init sme_encrypt_kernel(struct boot_params *bp)
+ {
+ 	unsigned long workarea_start, workarea_end, workarea_len;
+ 	unsigned long execute_start, execute_end, execute_len;
+@@ -468,7 +468,7 @@ void __init __nostackprotector sme_encrypt_kernel(struct boot_params *bp)
+ 	native_write_cr3(__native_read_cr3());
+ }
+ 
+-void __init __nostackprotector sme_enable(struct boot_params *bp)
++void __init sme_enable(struct boot_params *bp)
+ {
+ 	const char *cmdline_ptr, *cmdline_arg, *cmdline_on, *cmdline_off;
+ 	unsigned int eax, ebx, ecx, edx;
