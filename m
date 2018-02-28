@@ -1,211 +1,712 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-40036-1519819754-2-5186524535415414836
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519819754; b=d3lKhM7oZmTZaaNj3oYk90Ni1b7oYajqesJmWrNgUZwygl2
-    pLGpwwtILT18XaB0K1NrLt9gzCm9NgnNKzEFGhZ2PIKALzvMY843UkeuNLz1TEYp
-    NJnIIcMWwE7maeX2GZSomPDzsY1NnnthK2YcFGZZo2MyNOr7ZrFJtw7Ftae2NsEz
-    O8AyK1va7HSC1OO8YKMput58cM2+vqSxp7V2QD2VduteoICYTzXNqBEeJQbDZm6l
-    Nn+Y0YrH1PCH/ba1A/GNJbZfvpdYRNcfayYHjnOA/0QPKTFDFOD2BaGA6hK+LZPU
-    ipz/y0TbfYYdHe+MTxL6i5td+npW6NGrSWYib5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1519819754; bh=ejTXv3kT5dXbnkfT7ZhqJIE+HllQ4dF05QUJ1ovEHXc=; b=v
-    OmbLNVQr894AG1yfywzrnARSxXa9SZ0sfIpdbUcbMEeqLqYsAetd4tKvDIqu6F0X
-    6lhOfvxg349xfqzfFVJBGPjHRH4k2SFlekOJ1Im/CqmBPnoEI7z/X67kmMpTLME0
-    Mm64WLd7nptAheVq8lsZUgI6dlyj8bgJo9BNOGnq/2hjDB5oeSHyNL+xzKNtG2Ee
-    94Nw+1e74aUamHK7Xq+oli99hAS51GbfsHbXvHjlQxIbHX1zZEiFp1XxR5GrooGd
-    Dmf8SW9dHX8iLjUtoxC111OQaoGuIRMRVGWVjkthy+U10Mdoz7Qw47a7QumP1TuY
-    4xKEbZUzhCUH6jMK9/gew==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeB1MJN (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 07:09:13 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752423AbeB1MJM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 07:09:12 -0500
-Date: Wed, 28 Feb 2018 13:09:13 +0100
+Date: Wed, 28 Feb 2018 13:09:18 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.4.119
-Message-ID: <20180228120913.GA10458@kroah.com>
+Subject: Re: Linux 4.4.119
+Message-ID: <20180228120918.GB10458@kroah.com>
+References: <20180228120913.GA10458@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180228120913.GA10458@kroah.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.4.119 kernel.
-
-All users of the 4.4 kernel series must upgrade.
-
-The updated 4.4.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.4.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                   |    2=20
- arch/arm64/kernel/traps.c                  |    2=20
- arch/powerpc/kernel/setup_64.c             |    2=20
- arch/x86/oprofile/nmi_int.c                |    2=20
- drivers/android/binder.c                   |    4 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    2=20
- drivers/gpu/drm/drm_edid.c                 |    3 +
- drivers/hid/hid-core.c                     |    3 +
- drivers/hid/hid-ids.h                      |    3 +
- drivers/iio/imu/adis_trigger.c             |    7 +-
- drivers/iio/industrialio-buffer.c          |    2=20
- drivers/irqchip/irq-gic-v3.c               |    2=20
- drivers/pci/host/pci-keystone.c            |    9 ++-
- drivers/scsi/ibmvscsi/ibmvfc.h             |    2=20
- drivers/usb/core/quirks.c                  |    3 +
- drivers/usb/dwc3/gadget.c                  |    2=20
- drivers/usb/gadget/function/f_fs.c         |    6 --
- drivers/usb/host/ohci-q.c                  |   17 +++---
- drivers/usb/misc/ldusb.c                   |    6 ++
- drivers/usb/renesas_usbhs/fifo.c           |    5 +
- include/net/ip_tunnels.h                   |    9 ---
- net/ipv4/Kconfig                           |    1=20
- net/ipv4/ip_sockglue.c                     |    7 --
- net/ipv4/ip_tunnel.c                       |   78 ++++--------------------=
------
- net/ipv6/ipv6_sockglue.c                   |   10 ---
- net/ipv6/sit.c                             |   17 +++---
- net/mac80211/cfg.c                         |    2=20
- 27 files changed, 87 insertions(+), 121 deletions(-)
-
-AMAN DEEP (1):
-      usb: ohci: Proper handling of ed_rm_list to handle race condition bet=
-ween usb_kill_urb() and finish_unlinks()
-
-Alex Deucher (1):
-      drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
-
-Arnd Bergmann (2):
-      cfg80211: fix cfg80211_beacon_dup
-      x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-
-Eric Biggers (1):
-      binder: add missing binder_unlock()
-
-Greg Kroah-Hartman (1):
-      Linux 4.4.119
-
-Jack Pham (1):
-      usb: gadget: f_fs: Process all descriptors during bind
-
-Jack Stocker (1):
-      Add delay-init quirk for Corsair K70 RGB keyboards
-
-Johan Hovold (1):
-      PCI: keystone: Fix interrupt-controller-node lookup
-
-Kai-Heng Feng (1):
-      drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
-
-Karsten Koop (1):
-      usb: ldusb: add PIDs for new CASSY devices supported by this driver
-
-Lars-Peter Clausen (1):
-      iio: adis_lib: Initialize trigger before requesting interrupt
-
-Michael Ellerman (1):
-      powerpc/64s: Fix RFI flush dependency on HARDLOCKUP_DETECTOR
-
-Michael Weiser (1):
-      arm64: Disable unhandled signal log messages by default
-
-Paolo Abeni (3):
-      netfilter: drop outermost socket lock in getsockopt()
-      ip_tunnel: replace dst_cache with generic implementation
-      ip_tunnel: fix preempt warning in ip tunnel creation/updating
-
-Shanker Donthineni (1):
-      irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-
-Stefan Windfeldt-Prytz (1):
-      iio: buffer: check if a buffer has been set up when poll is called
-
-Thinh Nguyen (1):
-      usb: dwc3: gadget: Set maxpacket size for ep0 IN
-
-Tyrel Datwyler (1):
-      scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
-
-Yoshihiro Shimoda (1):
-      usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqWm+UACgkQONu9yGCS
-aT6b8hAAy3mkZ8sK34eDSdtlX5h8iSS6XwOi1SZya/64Epy3BmG3FcRZbg53B/pR
-JzEuKcUUWS44S+gO89sRN3ktsBLbGG6NZzUt7/ie6qNySDL32C3h+YIBvtw4yiyJ
-ZHyWu6hw7o3ObJiV2FpxTAO8YFoeY7i9ecsZod+36cwSBYufs1TS1WN+z9jkp8Jd
-ex1KbjUECJ6Jkq3Jk9p4k2lVWgx5In3ycOQA/Y5DTcHV1kx8oMjW0PWxqrmAZJ4O
-K925z1zePslXFrdEsIoyZY/OoqbZODPINhDGNA/faV276mNQJpHq+yAskuWvi6e8
-Bvpg9ofpajxW2Uy9DfReKaHixMrB58ipRCXoQ5S7iELUWjtWgCYWCdRDZnDplLYd
-1RixqMROQ/jr+MZxbeyX7IU3e2W9E/hil/nsNApZpBdhl4uwEb/RaP0qzRDgb5kX
-lg3gr4cWO8MHCfY7nqKeXB7XdNdX86FsyX0cXQIUUGuGvT3H8AZcGg6W4SMJGOnI
-koZZxDpu3aisB/tnogsRIXxhl0my9HxFCRTwQibWm81lzHaRDdBsMCLmoFraa1g5
-ZBIXgN2gTyl0HvM6DjyedtWxUtnKoB9nPmQVuvtEoYRHr/AEQVwOo381mHmmV22p
-CO4+Pu6zPVrJNj0DW00+WO1pHR1sx2BDpVhbdYdhvTUJm2RvqqU=
-=kpNL
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+diff --git a/Makefile b/Makefile
+index 1e01148744f3..87f925192c77 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 4
+ PATCHLEVEL = 4
+-SUBLEVEL = 118
++SUBLEVEL = 119
+ EXTRAVERSION =
+ NAME = Blurry Fish Butt
+ 
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 9119722eb347..5d270ca76aec 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -49,7 +49,7 @@ static const char *handler[]= {
+ 	"Error"
+ };
+ 
+-int show_unhandled_signals = 1;
++int show_unhandled_signals = 0;
+ 
+ /*
+  * Dump out the contents of some memory nicely...
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index df4a87eb8da4..9eb469bed22b 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -835,6 +835,7 @@ static int __init disable_hardlockup_detector(void)
+ 	return 0;
+ }
+ early_initcall(disable_hardlockup_detector);
++#endif
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ static enum l1d_flush_type enabled_flush_types;
+@@ -973,4 +974,3 @@ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, cha
+ 	return sprintf(buf, "Vulnerable\n");
+ }
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+-#endif
+diff --git a/arch/x86/oprofile/nmi_int.c b/arch/x86/oprofile/nmi_int.c
+index 1d2e6392f5fa..f24bd7249536 100644
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -471,7 +471,7 @@ static int nmi_setup(void)
+ 		goto fail;
+ 
+ 	for_each_possible_cpu(cpu) {
+-		if (!cpu)
++		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
+ 			continue;
+ 
+ 		memcpy(per_cpu(cpu_msrs, cpu).counters,
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 55613f6f7c0e..260ce0e60187 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2622,8 +2622,10 @@ static unsigned int binder_poll(struct file *filp,
+ 	binder_lock(__func__);
+ 
+ 	thread = binder_get_thread(proc);
+-	if (!thread)
++	if (!thread) {
++		binder_unlock(__func__);
+ 		return POLLERR;
++	}
+ 
+ 	wait_for_proc_work = thread->transaction_stack == NULL &&
+ 		list_empty(&thread->todo) && thread->return_error == BR_OK;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index fc9f14747f70..a36230d1331c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1467,8 +1467,6 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 	 * ignore it */
+ 	vga_client_register(adev->pdev, adev, NULL, amdgpu_vga_set_decode);
+ 
+-	if (amdgpu_runtime_pm == 1)
+-		runtime = true;
+ 	if (amdgpu_device_is_px(ddev))
+ 		runtime = true;
+ 	vga_switcheroo_register_client(adev->pdev, &amdgpu_switcheroo_ops, runtime);
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index c0106fd9fae9..c641ed9470e1 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -106,6 +106,9 @@ static struct edid_quirk {
+ 	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
+ 	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
+ 
++	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
++	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
++
+ 	/* Belinea 10 15 55 */
+ 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
+ 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 6861b74e2b61..d07fb967f92b 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2386,6 +2386,9 @@ static const struct hid_device_id hid_ignore_list[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index b554d17c9156..b316ab7e8996 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -570,6 +570,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043
+ #define USB_DEVICE_ID_LD_JWM		0x1080
+ #define USB_DEVICE_ID_LD_DMMP		0x1081
+ #define USB_DEVICE_ID_LD_UMIP		0x1090
+diff --git a/drivers/iio/imu/adis_trigger.c b/drivers/iio/imu/adis_trigger.c
+index f53e9a803a0e..93b99bd93738 100644
+--- a/drivers/iio/imu/adis_trigger.c
++++ b/drivers/iio/imu/adis_trigger.c
+@@ -47,6 +47,10 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
+ 	if (adis->trig == NULL)
+ 		return -ENOMEM;
+ 
++	adis->trig->dev.parent = &adis->spi->dev;
++	adis->trig->ops = &adis_trigger_ops;
++	iio_trigger_set_drvdata(adis->trig, adis);
++
+ 	ret = request_irq(adis->spi->irq,
+ 			  &iio_trigger_generic_data_rdy_poll,
+ 			  IRQF_TRIGGER_RISING,
+@@ -55,9 +59,6 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
+ 	if (ret)
+ 		goto error_free_trig;
+ 
+-	adis->trig->dev.parent = &adis->spi->dev;
+-	adis->trig->ops = &adis_trigger_ops;
+-	iio_trigger_set_drvdata(adis->trig, adis);
+ 	ret = iio_trigger_register(adis->trig);
+ 
+ 	indio_dev->trig = iio_trigger_get(adis->trig);
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 32bb036069eb..961afb5588be 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -174,7 +174,7 @@ unsigned int iio_buffer_poll(struct file *filp,
+ 	struct iio_dev *indio_dev = filp->private_data;
+ 	struct iio_buffer *rb = indio_dev->buffer;
+ 
+-	if (!indio_dev->info)
++	if (!indio_dev->info || rb == NULL)
+ 		return 0;
+ 
+ 	poll_wait(filp, &rb->pollq, wait);
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 5a1490b046ac..3f1c4dea8866 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -604,7 +604,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ 	 * Ensure that stores to Normal memory are visible to the
+ 	 * other CPUs before issuing the IPI.
+ 	 */
+-	smp_wmb();
++	wmb();
+ 
+ 	for_each_cpu(cpu, mask) {
+ 		unsigned long cluster_id = cpu_logical_map(cpu) & ~0xffUL;
+diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
+index 0aa81bd3de12..fb682e8af74d 100644
+--- a/drivers/pci/host/pci-keystone.c
++++ b/drivers/pci/host/pci-keystone.c
+@@ -179,14 +179,16 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
+ 	}
+ 
+ 	/* interrupt controller is in a child node */
+-	*np_temp = of_find_node_by_name(np_pcie, controller);
++	*np_temp = of_get_child_by_name(np_pcie, controller);
+ 	if (!(*np_temp)) {
+ 		dev_err(dev, "Node for %s is absent\n", controller);
+ 		goto out;
+ 	}
+ 	temp = of_irq_count(*np_temp);
+-	if (!temp)
++	if (!temp) {
++		of_node_put(*np_temp);
+ 		goto out;
++	}
+ 	if (temp > max_host_irqs)
+ 		dev_warn(dev, "Too many %s interrupts defined %u\n",
+ 			(legacy ? "legacy" : "MSI"), temp);
+@@ -200,6 +202,9 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
+ 		if (!host_irqs[temp])
+ 			break;
+ 	}
++
++	of_node_put(*np_temp);
++
+ 	if (temp) {
+ 		*num_irqs = temp;
+ 		ret = 0;
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.h b/drivers/scsi/ibmvscsi/ibmvfc.h
+index 8fae03215a85..543c10266984 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -366,7 +366,7 @@ enum ibmvfc_fcp_rsp_info_codes {
+ };
+ 
+ struct ibmvfc_fcp_rsp_info {
+-	__be16 reserved;
++	u8 reserved[3];
+ 	u8 rsp_code;
+ 	u8 reserved2[4];
+ }__attribute__((packed, aligned (2)));
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index c05c4f877750..774c97bb1c08 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -225,6 +225,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
++	/* Corsair K70 RGB */
++	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Corsair Strafe RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
+ 
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index d3bd1afd6302..b6037a0ae829 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2393,6 +2393,8 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
+ 		break;
+ 	}
+ 
++	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
++
+ 	/* Enable USB2 LPM Capability */
+ 
+ 	if ((dwc->revision > DWC3_REVISION_194A)
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index eb298daf49c7..51c2b05b5dd9 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -2756,10 +2756,8 @@ static int _ffs_func_bind(struct usb_configuration *c,
+ 	struct ffs_data *ffs = func->ffs;
+ 
+ 	const int full = !!func->ffs->fs_descs_count;
+-	const int high = gadget_is_dualspeed(func->gadget) &&
+-		func->ffs->hs_descs_count;
+-	const int super = gadget_is_superspeed(func->gadget) &&
+-		func->ffs->ss_descs_count;
++	const int high = !!func->ffs->hs_descs_count;
++	const int super = !!func->ffs->ss_descs_count;
+ 
+ 	int fs_len, hs_len, ss_len, ret, i;
+ 	struct ffs_ep *eps_ptr;
+diff --git a/drivers/usb/host/ohci-q.c b/drivers/usb/host/ohci-q.c
+index 641fed609911..24edb7674710 100644
+--- a/drivers/usb/host/ohci-q.c
++++ b/drivers/usb/host/ohci-q.c
+@@ -1018,6 +1018,8 @@ skip_ed:
+ 		 * have modified this list.  normally it's just prepending
+ 		 * entries (which we'd ignore), but paranoia won't hurt.
+ 		 */
++		*last = ed->ed_next;
++		ed->ed_next = NULL;
+ 		modified = 0;
+ 
+ 		/* unlink urbs as requested, but rescan the list after
+@@ -1076,21 +1078,22 @@ rescan_this:
+ 			goto rescan_this;
+ 
+ 		/*
+-		 * If no TDs are queued, take ED off the ed_rm_list.
++		 * If no TDs are queued, ED is now idle.
+ 		 * Otherwise, if the HC is running, reschedule.
+-		 * If not, leave it on the list for further dequeues.
++		 * If the HC isn't running, add ED back to the
++		 * start of the list for later processing.
+ 		 */
+ 		if (list_empty(&ed->td_list)) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed->state = ED_IDLE;
+ 			list_del(&ed->in_use_list);
+ 		} else if (ohci->rh_state == OHCI_RH_RUNNING) {
+-			*last = ed->ed_next;
+-			ed->ed_next = NULL;
+ 			ed_schedule(ohci, ed);
+ 		} else {
+-			last = &ed->ed_next;
++			ed->ed_next = ohci->ed_rm_list;
++			ohci->ed_rm_list = ed;
++			/* Don't loop on the same ED */
++			if (last == &ohci->ed_rm_list)
++				last = &ed->ed_next;
+ 		}
+ 
+ 		if (modified)
+diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
+index cce22ff1c2eb..e9113238d9e3 100644
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -46,6 +46,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033	/* USB Product ID of Micro-CASSY Time (reserved) */
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035	/* USB Product ID of Micro-CASSY Temperature */
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038	/* USB Product ID of Micro-CASSY pH */
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040	/* USB Product ID of Power Analyser CASSY */
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042	/* USB Product ID of Converter Controller CASSY */
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043	/* USB Product ID of Machine Test CASSY */
+ #define USB_DEVICE_ID_LD_JWM		0x1080	/* USB Product ID of Joule and Wattmeter */
+ #define USB_DEVICE_ID_LD_DMMP		0x1081	/* USB Product ID of Digital Multimeter P (reserved) */
+ #define USB_DEVICE_ID_LD_UMIP		0x1090	/* USB Product ID of UMI P */
+@@ -88,6 +91,9 @@ static const struct usb_device_id ld_usb_table[] = {
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 8bb9367ada45..6f37966ea54b 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -999,6 +999,10 @@ static int usbhsf_dma_prepare_pop_with_usb_dmac(struct usbhs_pkt *pkt,
+ 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
+ 		goto usbhsf_pio_prepare_pop;
+ 
++	/* return at this time if the pipe is running */
++	if (usbhs_pipe_is_running(pipe))
++		return 0;
++
+ 	usbhs_pipe_config_change_bfre(pipe, 1);
+ 
+ 	ret = usbhsf_fifo_select(pipe, fifo, 0);
+@@ -1189,6 +1193,7 @@ static int usbhsf_dma_pop_done_with_usb_dmac(struct usbhs_pkt *pkt,
+ 	usbhsf_fifo_clear(pipe, fifo);
+ 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
+ 
++	usbhs_pipe_running(pipe, 0);
+ 	usbhsf_dma_stop(pipe, fifo);
+ 	usbhsf_dma_unmap(pkt);
+ 	usbhsf_fifo_unselect(pipe, pipe->fifo);
+diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
+index 86a7bdd61d1a..74bc08d82e14 100644
+--- a/include/net/ip_tunnels.h
++++ b/include/net/ip_tunnels.h
+@@ -13,6 +13,7 @@
+ #include <net/netns/generic.h>
+ #include <net/rtnetlink.h>
+ #include <net/lwtunnel.h>
++#include <net/dst_cache.h>
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
+ #include <net/ipv6.h>
+@@ -85,11 +86,6 @@ struct ip_tunnel_prl_entry {
+ 	struct rcu_head			rcu_head;
+ };
+ 
+-struct ip_tunnel_dst {
+-	struct dst_entry __rcu 		*dst;
+-	__be32				 saddr;
+-};
+-
+ struct metadata_dst;
+ 
+ struct ip_tunnel {
+@@ -108,7 +104,7 @@ struct ip_tunnel {
+ 	int		tun_hlen;	/* Precalculated header length */
+ 	int		mlink;
+ 
+-	struct ip_tunnel_dst __percpu *dst_cache;
++	struct dst_cache dst_cache;
+ 
+ 	struct ip_tunnel_parm parms;
+ 
+@@ -248,7 +244,6 @@ int ip_tunnel_changelink(struct net_device *dev, struct nlattr *tb[],
+ int ip_tunnel_newlink(struct net_device *dev, struct nlattr *tb[],
+ 		      struct ip_tunnel_parm *p);
+ void ip_tunnel_setup(struct net_device *dev, int net_id);
+-void ip_tunnel_dst_reset_all(struct ip_tunnel *t);
+ int ip_tunnel_encap_setup(struct ip_tunnel *t,
+ 			  struct ip_tunnel_encap *ipencap);
+ 
+diff --git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
+index 416dfa004cfb..93581bba8643 100644
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -186,6 +186,7 @@ config NET_IPGRE_DEMUX
+ 
+ config NET_IP_TUNNEL
+ 	tristate
++	select DST_CACHE
+ 	default n
+ 
+ config NET_IPGRE
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index 3a819d2cc04b..d35509212013 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1527,10 +1527,7 @@ int ip_getsockopt(struct sock *sk, int level,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+@@ -1562,9 +1559,7 @@ int compat_ip_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+ 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
+-		release_sock(sk);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index c18245e05d26..80e2d1b0c08c 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -69,61 +69,6 @@ static unsigned int ip_tunnel_hash(__be32 key, __be32 remote)
+ 			 IP_TNL_HASH_BITS);
+ }
+ 
+-static void __tunnel_dst_set(struct ip_tunnel_dst *idst,
+-			     struct dst_entry *dst, __be32 saddr)
+-{
+-	struct dst_entry *old_dst;
+-
+-	dst_clone(dst);
+-	old_dst = xchg((__force struct dst_entry **)&idst->dst, dst);
+-	dst_release(old_dst);
+-	idst->saddr = saddr;
+-}
+-
+-static noinline void tunnel_dst_set(struct ip_tunnel *t,
+-			   struct dst_entry *dst, __be32 saddr)
+-{
+-	__tunnel_dst_set(raw_cpu_ptr(t->dst_cache), dst, saddr);
+-}
+-
+-static void tunnel_dst_reset(struct ip_tunnel *t)
+-{
+-	tunnel_dst_set(t, NULL, 0);
+-}
+-
+-void ip_tunnel_dst_reset_all(struct ip_tunnel *t)
+-{
+-	int i;
+-
+-	for_each_possible_cpu(i)
+-		__tunnel_dst_set(per_cpu_ptr(t->dst_cache, i), NULL, 0);
+-}
+-EXPORT_SYMBOL(ip_tunnel_dst_reset_all);
+-
+-static struct rtable *tunnel_rtable_get(struct ip_tunnel *t,
+-					u32 cookie, __be32 *saddr)
+-{
+-	struct ip_tunnel_dst *idst;
+-	struct dst_entry *dst;
+-
+-	rcu_read_lock();
+-	idst = raw_cpu_ptr(t->dst_cache);
+-	dst = rcu_dereference(idst->dst);
+-	if (dst && !atomic_inc_not_zero(&dst->__refcnt))
+-		dst = NULL;
+-	if (dst) {
+-		if (!dst->obsolete || dst->ops->check(dst, cookie)) {
+-			*saddr = idst->saddr;
+-		} else {
+-			tunnel_dst_reset(t);
+-			dst_release(dst);
+-			dst = NULL;
+-		}
+-	}
+-	rcu_read_unlock();
+-	return (struct rtable *)dst;
+-}
+-
+ static bool ip_tunnel_key_match(const struct ip_tunnel_parm *p,
+ 				__be16 flags, __be32 key)
+ {
+@@ -382,11 +327,12 @@ static int ip_tunnel_bind_dev(struct net_device *dev)
+ 
+ 		if (!IS_ERR(rt)) {
+ 			tdev = rt->dst.dev;
+-			tunnel_dst_set(tunnel, &rt->dst, fl4.saddr);
+ 			ip_rt_put(rt);
+ 		}
+ 		if (dev->type != ARPHRD_ETHER)
+ 			dev->flags |= IFF_POINTOPOINT;
++
++		dst_cache_reset(&tunnel->dst_cache);
+ 	}
+ 
+ 	if (!tdev && tunnel->parms.link)
+@@ -733,7 +679,8 @@ void ip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
+ 	if (ip_tunnel_encap(skb, tunnel, &protocol, &fl4) < 0)
+ 		goto tx_error;
+ 
+-	rt = connected ? tunnel_rtable_get(tunnel, 0, &fl4.saddr) : NULL;
++	rt = connected ? dst_cache_get_ip4(&tunnel->dst_cache, &fl4.saddr) :
++			 NULL;
+ 
+ 	if (!rt) {
+ 		rt = ip_route_output_key(tunnel->net, &fl4);
+@@ -743,7 +690,8 @@ void ip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
+ 			goto tx_error;
+ 		}
+ 		if (connected)
+-			tunnel_dst_set(tunnel, &rt->dst, fl4.saddr);
++			dst_cache_set_ip4(&tunnel->dst_cache, &rt->dst,
++					  fl4.saddr);
+ 	}
+ 
+ 	if (rt->dst.dev == dev) {
+@@ -841,7 +789,7 @@ static void ip_tunnel_update(struct ip_tunnel_net *itn,
+ 		if (set_mtu)
+ 			dev->mtu = mtu;
+ 	}
+-	ip_tunnel_dst_reset_all(t);
++	dst_cache_reset(&t->dst_cache);
+ 	netdev_state_change(dev);
+ }
+ 
+@@ -980,7 +928,7 @@ static void ip_tunnel_dev_free(struct net_device *dev)
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
+ 
+ 	gro_cells_destroy(&tunnel->gro_cells);
+-	free_percpu(tunnel->dst_cache);
++	dst_cache_destroy(&tunnel->dst_cache);
+ 	free_percpu(dev->tstats);
+ 	free_netdev(dev);
+ }
+@@ -1174,15 +1122,15 @@ int ip_tunnel_init(struct net_device *dev)
+ 	if (!dev->tstats)
+ 		return -ENOMEM;
+ 
+-	tunnel->dst_cache = alloc_percpu(struct ip_tunnel_dst);
+-	if (!tunnel->dst_cache) {
++	err = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
++	if (err) {
+ 		free_percpu(dev->tstats);
+-		return -ENOMEM;
++		return err;
+ 	}
+ 
+ 	err = gro_cells_init(&tunnel->gro_cells, dev);
+ 	if (err) {
+-		free_percpu(tunnel->dst_cache);
++		dst_cache_destroy(&tunnel->dst_cache);
+ 		free_percpu(dev->tstats);
+ 		return err;
+ 	}
+@@ -1212,7 +1160,7 @@ void ip_tunnel_uninit(struct net_device *dev)
+ 	if (itn->fb_tunnel_dev != dev)
+ 		ip_tunnel_del(itn, netdev_priv(dev));
+ 
+-	ip_tunnel_dst_reset_all(tunnel);
++	dst_cache_reset(&tunnel->dst_cache);
+ }
+ EXPORT_SYMBOL_GPL(ip_tunnel_uninit);
+ 
+diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
+index ede9d0e20538..8d11a034ca3f 100644
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1340,10 +1340,7 @@ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET6, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+@@ -1382,10 +1379,7 @@ int compat_ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = compat_nf_getsockopt(sk, PF_INET6,
+-					   optname, optval, &len);
+-		release_sock(sk);
++		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
+index b7ea5eaa4fd1..d17d64edb718 100644
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -475,7 +475,7 @@ static void ipip6_tunnel_uninit(struct net_device *dev)
+ 		ipip6_tunnel_unlink(sitn, tunnel);
+ 		ipip6_tunnel_del_prl(tunnel, NULL);
+ 	}
+-	ip_tunnel_dst_reset_all(tunnel);
++	dst_cache_reset(&tunnel->dst_cache);
+ 	dev_put(dev);
+ }
+ 
+@@ -1098,7 +1098,7 @@ static void ipip6_tunnel_update(struct ip_tunnel *t, struct ip_tunnel_parm *p)
+ 		t->parms.link = p->link;
+ 		ipip6_tunnel_bind_dev(t->dev);
+ 	}
+-	ip_tunnel_dst_reset_all(t);
++	dst_cache_reset(&t->dst_cache);
+ 	netdev_state_change(t->dev);
+ }
+ 
+@@ -1129,7 +1129,7 @@ static int ipip6_tunnel_update_6rd(struct ip_tunnel *t,
+ 	t->ip6rd.relay_prefix = relay_prefix;
+ 	t->ip6rd.prefixlen = ip6rd->prefixlen;
+ 	t->ip6rd.relay_prefixlen = ip6rd->relay_prefixlen;
+-	ip_tunnel_dst_reset_all(t);
++	dst_cache_reset(&t->dst_cache);
+ 	netdev_state_change(t->dev);
+ 	return 0;
+ }
+@@ -1283,7 +1283,7 @@ ipip6_tunnel_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 			err = ipip6_tunnel_add_prl(t, &prl, cmd == SIOCCHGPRL);
+ 			break;
+ 		}
+-		ip_tunnel_dst_reset_all(t);
++		dst_cache_reset(&t->dst_cache);
+ 		netdev_state_change(dev);
+ 		break;
+ 
+@@ -1344,7 +1344,7 @@ static void ipip6_dev_free(struct net_device *dev)
+ {
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
+ 
+-	free_percpu(tunnel->dst_cache);
++	dst_cache_destroy(&tunnel->dst_cache);
+ 	free_percpu(dev->tstats);
+ 	free_netdev(dev);
+ }
+@@ -1377,6 +1377,7 @@ static void ipip6_tunnel_setup(struct net_device *dev)
+ static int ipip6_tunnel_init(struct net_device *dev)
+ {
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
++	int err;
+ 
+ 	tunnel->dev = dev;
+ 	tunnel->net = dev_net(dev);
+@@ -1387,11 +1388,11 @@ static int ipip6_tunnel_init(struct net_device *dev)
+ 	if (!dev->tstats)
+ 		return -ENOMEM;
+ 
+-	tunnel->dst_cache = alloc_percpu(struct ip_tunnel_dst);
+-	if (!tunnel->dst_cache) {
++	err = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
++	if (err) {
+ 		free_percpu(dev->tstats);
+ 		dev->tstats = NULL;
+-		return -ENOMEM;
++		return err;
+ 	}
+ 
+ 	return 0;
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 19322c047386..00a8cc572a22 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -2877,7 +2877,7 @@ cfg80211_beacon_dup(struct cfg80211_beacon_data *beacon)
+ 	}
+ 	if (beacon->probe_resp_len) {
+ 		new_beacon->probe_resp_len = beacon->probe_resp_len;
+-		beacon->probe_resp = pos;
++		new_beacon->probe_resp = pos;
+ 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
+ 		pos += beacon->probe_resp_len;
+ 	}
