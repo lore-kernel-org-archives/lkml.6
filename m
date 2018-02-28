@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834436-2-11599693492770901875
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834415-2-16936221617394154568
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834435; b=cUV46dWqAqf0ofT/OP2yW+nqmeFb4m5n/VMCiJhCBLBcjKS
-    tSi20ynMnExnqb+EG8suGtU1a0bLdEn0DcycNT9q1faiCj194yrdBPlFc1NoIrhB
-    Lgpt/mz9qQ48PsL+eYuqS99BqczClBa+iRq1eBzaPqlWn/hrvqrKrWlnSk8F1sA7
-    g8mrjTTZlGFrB/pkzO/PaeIGJSr3Uu7nqIOD4GyyYxyunLLYpb7fyCtsS3aWmhyd
-    0O+0POQbmbzYX/6LULKGnb3r9kR2F4NH6yMRybm0qN3zwFqCEL1UognVwdsjAVa2
-    7opaPMwjNZaPFoqGQhaPfsEjz6XrncsQ19FBD6A==
+    t=1519834414; b=h75oxrJ6O+PgyYRar98aYfcmGFyuzx2o64rpyNEPY8wYe+g
+    q8WwfXyGoA53v1rasCYT8G1W2wl1YrY4F1Y3oQ2o0kWImUeFY9B72cdPE3nhvaey
+    195ak7rAEKEaCSVMlmkz4KHxuR4CpjbyIkXGJedzC35GbC1TCOM3gHbcbsokZ/Kl
+    P+cr96oKpO4jx9Xu7jZJtW8NoyclvRv1z9bTlDz3aJ/vLcVTaKrxYPxTKmBqen43
+    xeGpIpRctWNYRZndZ1IEVJIYOnjVZItyIvGaQzrovEm/vbrGPTNTcraiQlpVB/ma
+    tdHIz5YkVAspbWg2EpywyxSLEepqbIIxYW+xnaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834435; bh=VZZut6chTjyUg+mhYC1
-    n+HwiFEwyrI8J9sfl8qwKY10=; b=d9YA5LD0FVNbuBqdKb0BsjSFeAvlnoE6Pu5
-    Y7oNKcC5SKlRLIJt953Z3Ib83tZPnlD2LS9evn/OfHmp7A/shDfSJMfEtk1N7R8k
-    UJkN0tNC4lQnpK0KxMWQims4BVOjqtQRua8901x8jDr0vt1aR9/j/hT4ez2MwT/c
-    PSjbeUJh3UPvQTFVoB6HoruGcoX/t8t8Mhyuup8xi6hexSwexPlUCcUO06cGi9w8
-    s7YAyCabqVRK5lQhY+RFYUfe9ClWFR7aScpr0HQ1qMpxd+YCsCZh3BuTOtTjiKFM
-    AyoYmabtc4zO0zZb0BgYGArPvWCbwQXeKILza1QfB9OL0TTOMRQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834414; bh=rLV8AqY9FLSdGEDWk5B
+    FiZ94pxTzLWYnFhpxEpetweM=; b=HLoC8OnbGR85ryUwKIlbb3381xxAYEgnEVz
+    WxF9JJMN6Gpu9r93YOWZtVehYnZdcjXLMm4YaFP0qOw46uxD9IwiD/JJGZ9LAm8b
+    AIyik4LW/jbr914G3Iq5WBDwBf9iUqxG79oapy0Yi95pPQZZ5KOYzr6soWNAZNP3
+    wWPw1aOUnLnwJBJ6XAk4vWHtGHFHoVxCHojBB9rjsRDgoI7Uqfq4LlPkDqH25+1g
+    i9CavbwBbig+iE5CRvmhMmfjZFiB0P54+c++79Oqnp85M71w8SklclNXR55N9k8k
+    AdOlWoHnPkhdEfBGofRNGFaP1c7Lnf0pTxwsLdIcyGwzJ1f2cdA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932298AbeB1QNw (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:13:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35071 "EHLO
+        id S932652AbeB1QNT (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:13:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35023 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932383AbeB1QNv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:13:51 -0500
+        by vger.kernel.org with ESMTP id S933272AbeB1QMA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:00 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,14 +60,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Tiffany Lin" <tiffany.lin@mediatek.com>,
-        "Mauro Carvalho Chehab" <mchehab@osg.samsung.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>
+        syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
+        "Johannes Berg" <johannes.berg@intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.112261708@decadent.org.uk>
+Message-ID: <lsq.1519831218.970834889@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 237/254] [media] media: v4l2-compat-ioctl32: fix
- missing reserved field copy in put_v4l2_create32
+Subject: [PATCH 3.16 207/254] cfg80211: check dev_set_name() return value
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,33 +80,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tiffany Lin <tiffany.lin@mediatek.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit baf43c6eace43868e490f18560287fa3481b2159 upstream.
+commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
 
-In v4l2-compliance utility, test VIDIOC_CREATE_BUFS will check whether reserved
-filed of v4l2_create_buffers filled with zero
-Reserved field is filled with zero in v4l_create_bufs.
-This patch copy reserved field of v4l2_create_buffer from kernel space to user
-space
+syzbot reported a warning from rfkill_alloc(), and after a while
+I think that the reason is that it was doing fault injection and
+the dev_set_name() failed, leaving the name NULL, and we didn't
+check the return value and got to rfkill_alloc() with a NULL name.
+Since we really don't want a NULL name, we ought to check the
+return value.
 
-Signed-off-by: Tiffany Lin <tiffany.lin@mediatek.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
+Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -259,7 +259,8 @@ static int put_v4l2_format32(struct v4l2
- static int put_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
- {
- 	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_create_buffers32)) ||
--	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format)))
-+	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format)) ||
-+	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
- 	return __put_v4l2_format32(&kp->format, &up->format);
- }
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -315,6 +315,7 @@ struct wiphy *wiphy_new(const struct cfg
+ 
+ 	struct cfg80211_registered_device *rdev;
+ 	int alloc_size;
++	int rv;
+ 
+ 	WARN_ON(ops->add_key && (!ops->del_key || !ops->set_default_key));
+ 	WARN_ON(ops->auth && (!ops->assoc || !ops->deauth || !ops->disassoc));
+@@ -346,7 +347,11 @@ struct wiphy *wiphy_new(const struct cfg
+ 	rdev->wiphy_idx--;
+ 
+ 	/* give it a proper name */
+-	dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++	rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++	if (rv < 0) {
++		kfree(rdev);
++		return NULL;
++	}
+ 
+ 	INIT_LIST_HEAD(&rdev->wdev_list);
+ 	INIT_LIST_HEAD(&rdev->beacon_registrations);
