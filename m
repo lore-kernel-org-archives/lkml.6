@@ -1,74 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932066AbeB1Lpd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 06:45:33 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54030 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeB1Lpb (ORCPT
+        id S1752248AbeB1Ltj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 06:49:39 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41116 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752147AbeB1Lti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 06:45:31 -0500
-X-Google-Smtp-Source: AG47ELvv+cLDUzi6bRqN6wH8pYGF39LP7alR9hit4EsT5MnBesCQfyIIY+lBqvgEZy2MHZ7ImT1HeA==
-Subject: Re: [PATCH] net: iucv: Free memory obtained by kzalloc
-To: Cornelia Huck <cohuck@redhat.com>
-References: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
- <20180228113042.6a2f5177.cohuck@redhat.com>
-Cc: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Message-ID: <e4784c9b-380f-4dad-6883-b6350a9e0614@gmail.com>
-Date: Wed, 28 Feb 2018 17:14:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Wed, 28 Feb 2018 06:49:38 -0500
+X-Google-Smtp-Source: AG47ELu87JonoRvbWwd5JpH10dwo+9XMKjgdUDdtwIDqNWJWPOU+yXiMkD4tCCjPtdSoyR/rZDhzQdCBrfOQ5D7ov1g=
 MIME-Version: 1.0
-In-Reply-To: <20180228113042.6a2f5177.cohuck@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180227021150-mutt-send-email-mst@kernel.org>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+ <20180215213312.29234-9-marcandre.lureau@redhat.com> <20180227021150-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@gmail.com>
+Date: Wed, 28 Feb 2018 12:49:35 +0100
+Message-ID: <CAJ+F1CKwBjRDTxToDwOrPnnaiMHvF6EgK=dgSC-FW7n6UMDeKA@mail.gmail.com>
+Subject: Re: [PATCH v15 08/11] fw_cfg: handle fw_cfg_read_blob() error
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: open list <linux-kernel@vger.kernel.org>, slp@redhat.com,
+        bhe@redhat.com, somlo@cmu.edu, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1SBnijR032030
 
+Hi
 
-
-On Wednesday 28 February 2018 04:00 PM, Cornelia Huck wrote:
-> On Wed, 28 Feb 2018 15:24:16 +0530
-> Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+On Tue, Feb 27, 2018 at 1:20 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Thu, Feb 15, 2018 at 10:33:09PM +0100, Marc-André Lureau wrote:
+>> fw_cfg_read_blob() may fail, but does not return error. This may lead
+>> to undefined behaviours, such as a memcmp(sig, "QEMU") on uninitilized
+>> memory.
 >
->> Free memory, if afiucv_iucv_init is not successful and
->> removing a IUCV driver.
+> I don't think that's true - there's a memset there that
+> will initialize the memory. probe is likely the only
+> case where it returns a slightly incorrect data.
+
+Right, I'll update the commit message.
+
+>> Return an error if ACPI locking failed. Also, the following
+>> DMA read/write extension will add more error paths that should be
+>> handled appropriately.
 >>
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
 >> ---
->>   net/iucv/af_iucv.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>  drivers/firmware/qemu_fw_cfg.c | 32 ++++++++++++++++++++++----------
+>>  1 file changed, 22 insertions(+), 10 deletions(-)
 >>
->> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
->> index 1e8cc7b..eb0995a 100644
->> --- a/net/iucv/af_iucv.c
->> +++ b/net/iucv/af_iucv.c
->> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
->>   	af_iucv_dev->driver = &af_iucv_driver;
->>   	err = device_register(af_iucv_dev);
->>   	if (err)
->> -		goto out_driver;
->> +		goto out_iucv_dev;
->>   	return 0;
->>   
->> +out_iucv_dev:
->> +	kfree(af_iucv_dev);
->>   out_driver:
->>   	driver_unregister(&af_iucv_driver);
->>   out_iucv:
->> @@ -2496,6 +2498,7 @@ static void __exit afiucv_exit(void)
->>   {
->>   	if (pr_iucv) {
->>   		device_unregister(af_iucv_dev);
->> +		kfree(af_iucv_dev);
->>   		driver_unregister(&af_iucv_driver);
->>   		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
->>   		symbol_put(iucv_if);
-> No, you must not use kfree() after you called device_register() (even
-> if it was not successful!) -- see the comment for device_register().
-Yes, Your are right. First we need to call put_device() then kfree().
-I will send updated patch.
-~arvind
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index f6f90bef604c..5e6e5ac71dab 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -59,8 +59,8 @@ static void fw_cfg_sel_endianness(u16 key)
+>>  }
+>>
+>>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>> -static void fw_cfg_read_blob(u16 key,
+>> -                     void *buf, loff_t pos, size_t count)
+>> +static ssize_t fw_cfg_read_blob(u16 key,
+>> +                             void *buf, loff_t pos, size_t count)
+>>  {
+>>       u32 glk = -1U;
+>>       acpi_status status;
+>> @@ -73,7 +73,7 @@ static void fw_cfg_read_blob(u16 key,
+>>               /* Should never get here */
+>>               WARN(1, "fw_cfg_read_blob: Failed to lock ACPI!\n");
+>>               memset(buf, 0, count);
+>> -             return;
+>> +             return -EINVAL;
+>>       }
+>>
+>>       mutex_lock(&fw_cfg_dev_lock);
+>
+> Wouldn't something like -EBUSY be more appropriate?
+
+In theory, it would be a general failure right? I don't think we want
+the caller to retry. I think in EINVAL fits better, but I don't think
+it matters much this or EBUSY.
+
+>> @@ -84,6 +84,7 @@ static void fw_cfg_read_blob(u16 key,
+>>       mutex_unlock(&fw_cfg_dev_lock);
+>>
+>>       acpi_release_global_lock(glk);
+>> +     return count;
+>>  }
+>>
+>>  /* clean up fw_cfg device i/o */
+>> @@ -165,8 +166,9 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>>       }
+>>
+>>       /* verify fw_cfg device signature */
+>> -     fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
+>> -     if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>> +     if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
+>> +                             0, FW_CFG_SIG_SIZE) < 0 ||
+>> +             memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>>               fw_cfg_io_cleanup();
+>>               return -ENODEV;
+>>       }
+>> @@ -326,8 +328,7 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+>>       if (count > entry->size - pos)
+>>               count = entry->size - pos;
+>>
+>> -     fw_cfg_read_blob(entry->select, buf, pos, count);
+>> -     return count;
+>> +     return fw_cfg_read_blob(entry->select, buf, pos, count);
+>>  }
+>>
+>>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
+>> @@ -483,7 +484,11 @@ static int fw_cfg_register_dir_entries(void)
+>>       struct fw_cfg_file *dir;
+>>       size_t dir_size;
+>>
+>> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count, 0, sizeof(files_count));
+>> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
+>> +                     0, sizeof(files_count));
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>>       count = be32_to_cpu(files_count);
+>>       dir_size = count * sizeof(struct fw_cfg_file);
+>>
+>> @@ -491,7 +496,10 @@ static int fw_cfg_register_dir_entries(void)
+>>       if (!dir)
+>>               return -ENOMEM;
+>>
+>> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files_count), dir_size);
+>> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
+>> +                     sizeof(files_count), dir_size);
+>> +     if (ret < 0)
+>> +             goto end;
+>>
+>>       for (i = 0; i < count; i++) {
+>>               ret = fw_cfg_register_file(&dir[i]);
+>> @@ -499,6 +507,7 @@ static int fw_cfg_register_dir_entries(void)
+>>                       break;
+>>       }
+>>
+>> +end:
+>>       kfree(dir);
+>>       return ret;
+>>  }
+>> @@ -539,7 +548,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+>>               goto err_probe;
+>>
+>>       /* get revision number, add matching top-level attribute */
+>> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
+>> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
+>> +     if (err < 0)
+>> +             goto err_probe;
+>> +
+>>       fw_cfg_rev = le32_to_cpu(rev);
+>>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
+>>       if (err)
+>
+> I think that this is the only case where it's not doing the right thing right now in
+> that it shows 0 as the revision to the users.  Is it worth failing probe
+> here?  We could just skip the attribute, could we not?
+
+I think it's best to fail the probe if we have a read failure at that time.
+
+-- 
+Marc-André Lureau
