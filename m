@@ -1,45 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752378AbeB1JaI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:30:08 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5685 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751707AbeB1JaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:30:06 -0500
-Subject: Re: [PATCH 1/5 v2] f2fs: add mount option for segment allocation
- policy
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180226174731.26679-1-jaegeuk@kernel.org>
- <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c0e41426-1116-8ded-0399-de9c8201b5a4@huawei.com>
-Date: Wed, 28 Feb 2018 17:33:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1752244AbeB1JdW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:33:22 -0500
+Received: from mx.socionext.com ([202.248.49.38]:25875 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751552AbeB1JdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:33:20 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: linux-arm-kernel@lists.infradead.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] arm64: dts: uniphier: add fixed regulators for audio codec
+Date: Wed, 28 Feb 2018 18:32:47 +0900
+Message-Id: <20180228093247.29648-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/28 13:09, Jaegeuk Kim wrote:
-> Change log from v1:
->  - add doc :)
-> 
-> This patch adds an mount option, "alloc_mode=%s" having two options, "default"
-> and "reuse".
-> 
-> In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
-> all the time to reassign segments. It'd be useful for small-sized eMMC parts.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+This patch adds regulators that have fixed voltage for audio codec
+on UniPhier LD11/20 Global boards. This patch fixes warnings about
+TAS57xx audio codec such as "tas571x 0-001b: 0-001b supply AVDD
+not found, using dummy regulator".
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ .../boot/dts/socionext/uniphier-ld11-global.dts     | 21 +++++++++++++++++++++
+ .../boot/dts/socionext/uniphier-ld20-global.dts     | 21 +++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-Thanks,
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+index 6bfd1ccd1f71..71eb46a5bd48 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+@@ -39,6 +39,20 @@
+ 		reg = <0 0x80000000 0 0x40000000>;
+ 	};
+ 
++	dvdd_reg: reg-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "DVDD";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
++	};
++
++	amp_vcc_reg: reg-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "AMP_VCC";
++                regulator-min-microvolt = <24000000>;
++                regulator-max-microvolt = <24000000>;
++	};
++
+ 	sound {
+ 		compatible = "audio-graph-card";
+ 		label = "UniPhier LD11";
+@@ -104,6 +118,13 @@
+ 		pdn-gpios = <&gpio UNIPHIER_GPIO_PORT(23, 5) GPIO_ACTIVE_LOW>;
+ 		#sound-dai-cells = <0>;
+ 
++		AVDD-supply = <&dvdd_reg>;
++		DVDD-supply = <&dvdd_reg>;
++		PVDD_A-supply = <&amp_vcc_reg>;
++		PVDD_B-supply = <&amp_vcc_reg>;
++		PVDD_C-supply = <&amp_vcc_reg>;
++		PVDD_D-supply = <&amp_vcc_reg>;
++
+ 		port@0 {
+ 			tas_speaker: endpoint {
+ 				remote-endpoint = <&i2s_hpcmout1>;
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+index 57b1e36b5eaf..eed6346497d2 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+@@ -39,6 +39,20 @@
+ 		reg = <0 0x80000000 0 0xc0000000>;
+ 	};
+ 
++	dvdd_reg: reg-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "DVDD";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
++	};
++
++	amp_vcc_reg: reg-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "AMP_VCC";
++                regulator-min-microvolt = <12000000>;
++                regulator-max-microvolt = <12000000>;
++	};
++
+ 	sound {
+ 		compatible = "audio-graph-card";
+ 		label = "UniPhier LD20";
+@@ -104,6 +118,13 @@
+ 		pdn-gpios = <&gpio UNIPHIER_GPIO_PORT(0, 1) GPIO_ACTIVE_LOW>;
+ 		#sound-dai-cells = <0>;
+ 
++		AVDD-supply = <&dvdd_reg>;
++		DVDD-supply = <&dvdd_reg>;
++		PVDD_A-supply = <&amp_vcc_reg>;
++		PVDD_B-supply = <&amp_vcc_reg>;
++		PVDD_C-supply = <&amp_vcc_reg>;
++		PVDD_D-supply = <&amp_vcc_reg>;
++
+ 		port@0 {
+ 			tas_speaker: endpoint {
+ 				remote-endpoint = <&i2s_hpcmout1>;
+-- 
+2.16.1
