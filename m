@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeB1Bff (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 20:35:35 -0500
-Received: from hs01.dk-develop.de ([213.136.71.231]:43619 "EHLO
-        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeB1BfO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 20:35:14 -0500
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: mcgrof@kernel.org, keescook@chromium.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>
-Subject: [PATCH v3 2/2] fs/sysctl: remove redundant link check in proc_sys_link_fill_cache()
-Date: Wed, 28 Feb 2018 02:35:06 +0100
-Message-Id: <20180228013506.4915-2-danilokrummrich@dk-develop.de>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180228013506.4915-1-danilokrummrich@dk-develop.de>
-References: <20180228013506.4915-1-danilokrummrich@dk-develop.de>
+        id S1751827AbeB1BmQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 20:42:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751654AbeB1BmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 20:42:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8EF2168D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Wed, 28 Feb 2018 09:41:49 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        Sascha Hauer <kernel@pengutronix.de>, devicetree@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Subject: Re: [PATCH v4 4/4] ARM: dts: imx7s: add CAAM device node
+Message-ID: <20180228014148.GA3217@dragon>
+References: <20180222142250.31348-1-rui.silva@linaro.org>
+ <20180222142250.31348-5-rui.silva@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180222142250.31348-5-rui.silva@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-proc_sys_link_fill_cache() does not need to check whether we're
-called for a link - it's already done by scan().
+On Thu, Feb 22, 2018 at 02:22:50PM +0000, Rui Miguel Silva wrote:
+> Add CAAM device node to the i.MX7s device tree.
+> 
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: "Horia Geantă" <horia.geanta@nxp.com>
+> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
----
-v2: removed 'err' as it's only used for sysctl_follow_link()
-v3: add ack
----
- fs/proc/proc_sysctl.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 82ac5f682b73..d36ef667c0a8 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -712,12 +712,9 @@ static bool proc_sys_link_fill_cache(struct file *file,
- 	if (IS_ERR(head))
- 		return false;
- 
--	if (S_ISLNK(table->mode)) {
--		/* It is not an error if we can not follow the link ignore it */
--		int err = sysctl_follow_link(&head, &table);
--		if (err)
--			goto out;
--	}
-+	/* It is not an error if we can not follow the link ignore it */
-+	if (sysctl_follow_link(&head, &table))
-+		goto out;
- 
- 	ret = proc_sys_fill_cache(file, ctx, head, table);
- out:
--- 
-2.14.1
+Applied this one and "clk: imx7d: add CAAM clock", thanks.
