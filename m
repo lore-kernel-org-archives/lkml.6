@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeB1Ol2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:41:28 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40500 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeB1Ol1 (ORCPT
+        id S1752839AbeB1Olb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:31 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34235 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeB1Ol3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:27 -0500
-X-Google-Smtp-Source: AH8x2256ldoN+uUMzT7rtjRb9ZLL/3ikgXaBxx15Grl8rC8TCQ7K4i5pyZQgviv0LlaVfuukT+em9w==
+        Wed, 28 Feb 2018 09:41:29 -0500
+X-Google-Smtp-Source: AH8x224LqJPB37WS8tvevvtk1Jzvh7SDZ3y9gTiWBXcQj80tDIZD+/HSzJeHyiJw7EK8oy/zw0ZcWg==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,98 +18,72 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 00/22] Verbatim device names and devm_nvmem_(un)register()
-Date: Wed, 28 Feb 2018 06:40:44 -0800
-Message-Id: <20180228144106.16363-1-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 02/22] nvmem: core: Allow specifying device name verbatim
+Date: Wed, 28 Feb 2018 06:40:46 -0800
+Message-Id: <20180228144106.16363-3-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
+References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Srinivas, all:
+Add code to allow avoid having nvmem core append a numeric suffix to
+the end of the name by passing config->id of -1.
 
-This patchset contains various small changes that I recently made to
-ppNVMEM, more specifically:
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: cphealy@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/nvmem/core.c           | 11 ++++++++---
+ include/linux/nvmem-provider.h |  3 +++
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
- - Patches 1 and 3 are two changes I am hoping are acceptable upstream
-
- - Patches 4 to 15 are a follow up to patch 2
-
- - Patches 16 to 22 are just trivial fixups and I am more than happy
-   to drop them if they seem to add more pointless churn rather then
-   value.
-
-Feedback is appreciated!
-
-Thanks,
-Andrey Smirnov
-
-Changes since [v3]:
-
- - Patchset rebased on post 4.16-rc1 master from Linus
-
-Changes since [v2]:
-
- - Added a patch with kerenl doc for struct nvmem_config as a
-   prerequsite for patch #2
-
- - Documented behaviour of nvmem_register() when id is set to -1
-
- - Added kernel doc for devm_nvmem_(un)register()
-
-
-Changes since [v1]:
-
- - Fixed a build break detected by kbuild test robot
-
- - Added a patch to unconditionally enable COMPILE_TEST for meson-efuse
-
- - Dropped Joachim Eastwood from CC list due to bouncing e-mail
-
-[v3] lkml.kernel.org/r/20180103200114.23922-1-andrew.smirnov@gmail.com
-[v2] lkml.kernel.org/r/20180101232310.30420-1-andrew.smirnov@gmail.com
-[v1] lkml.kernel.org/r/20171227225956.14442-1-andrew.smirnov@gmail.com
-
-Andrey Smirnov (22):
-  nvmem: Document struct nvmem_config
-  nvmem: core: Allow specifying device name verbatim
-  nvmem: Introduce devm_nvmem_(un)register()
-  nvmem: vf610-ocotp: Convert to use devm_nvmem_register()
-  nvmem: imx-ocotp: Convert to use devm_nvmem_register()
-  nvmem: uniphier-efuse: Convert to use devm_nvmem_register()
-  nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
-  nvmem: qfprom: Convert to use devm_nvmem_register()
-  nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
-  nvmem: mtk-efuse: Convert to use devm_nvmem_register()
-  nvmem: meson-mx-efuse: Convert to use devm_nvmem_register()
-  nvmem: meson-efuse: Convert to use devm_nvmem_register()
-  nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
-  nvmem: imx-iim: Convert to use devm_nvmem_register()
-  nvmem: bcm-ocotp: Convert to use devm_nvmem_register()
-  nvmem: meson-efuse: Do no gate COMPILE_TEST with MESON_SM
-  nvmem: snvs_lpgpr: Convert commas to semicolons
-  nvmem: rockchip-efuse: Make use of of_device_get_match_data()
-  nvmem: vf610-ocotp: Do not use "&pdev->dev" explicitly
-  nvmem: rockchip-efuse: Do not use "&pdev->dev" explicitly
-  nvmem: imx-iim: Do not use "&pdev->dev" explicitly
-  nvmem: bcm-ocotp: Do not use "&pdev->dev" explicitly
-
- drivers/nvmem/Kconfig          |  2 +-
- drivers/nvmem/bcm-ocotp.c      | 15 ++--------
- drivers/nvmem/core.c           | 68 ++++++++++++++++++++++++++++++++++++++++--
- drivers/nvmem/imx-iim.c        | 14 ++-------
- drivers/nvmem/imx-ocotp.c      | 12 +-------
- drivers/nvmem/lpc18xx_otp.c    | 12 +-------
- drivers/nvmem/meson-efuse.c    | 12 +-------
- drivers/nvmem/meson-mx-efuse.c | 12 +-------
- drivers/nvmem/mtk-efuse.c      | 12 +-------
- drivers/nvmem/qfprom.c         | 12 +-------
- drivers/nvmem/rockchip-efuse.c | 28 ++++++-----------
- drivers/nvmem/snvs_lpgpr.c     | 26 +++++-----------
- drivers/nvmem/uniphier-efuse.c | 12 +-------
- drivers/nvmem/vf610-ocotp.c    | 15 ++--------
- include/linux/nvmem-provider.h | 42 ++++++++++++++++++++++++++
- 15 files changed, 138 insertions(+), 156 deletions(-)
-
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 35a3dbeea324..99e04cfcc723 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -473,9 +473,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	nvmem->reg_read = config->reg_read;
+ 	nvmem->reg_write = config->reg_write;
+ 	nvmem->dev.of_node = config->dev->of_node;
+-	dev_set_name(&nvmem->dev, "%s%d",
+-		     config->name ? : "nvmem",
+-		     config->name ? config->id : nvmem->id);
++
++	if (config->id == -1 && config->name) {
++		dev_set_name(&nvmem->dev, "%s", config->name);
++	} else {
++		dev_set_name(&nvmem->dev, "%s%d",
++			     config->name ? : "nvmem",
++			     config->name ? config->id : nvmem->id);
++	}
+ 
+ 	nvmem->read_only = device_property_present(config->dev, "read-only") |
+ 			   config->read_only;
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index 27e599222ec1..4889a6c62a81 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -43,6 +43,9 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
+  * Note: A default "nvmem<id>" name will be assigned to the device if
+  * no name is specified in its configuration. In such case "<id>" is
+  * generated with ida_simple_get() and provided id field is ignored.
++ *
++ * Note: Specifying name and setting id to -1 implies a unique device
++ * whose name is provided as-is (kept unaltered).
+  */
+ struct nvmem_config {
+ 	struct device		*dev;
 -- 
 2.14.3
