@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519838949-2-3624119209124527165
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519838947-2-11010355838932286588
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838948; b=b0tLP9RoTccHBIfpM+Lr92xL1+E+JX8Us6ffmhyZ3DICbNc
-    +eorN5c0LKh8BB3pmlz343k1yeOziE4AjjYpyMLbwKRfkLHGf2JOPfocWLxCuHys
-    Fubg09OduNj9P5aVGOWNL5NERsmvzsLnGhClqEzuJj8Bg8zkf8ABrG++ZqCQU0tN
-    JRh7ryZ8FK2cH4HjeeqkSbsnwjQbvYEiyuyGYGrIaIdP+LZjxluTtrGu9i7SNubF
-    eKTfSWcmfTzPQ6VgO7ORFxbca+HOzIbSI+zaTKJSfXIhtGyd635YxbHR7+R4OjBJ
-    9jlZrZlAqxUyoZES9KgRY14im1BBAKjVQddJfkA==
+    t=1519838947; b=FO3KO8aAIbdctNSKXwTGD5qX7IhxNumpklZNqvzV1CdSJRu
+    gmMXdBPnYHa++4DDYLiHFM/gtsuCUxsXNl+eiYYJSwq6s9D8bPrKOkzDcb9FeBqe
+    YuQhgaB7HSLtyQHXwNs1mQ2Zs78Y9qgDMx1H0DNoUGD2+pMmpdTMoW2/k4E0MBHY
+    du8X7BWeQ8yme3/1cMf0jdYECFPmxh7Z1pWMEQsklBDJKtBZrQrgXpceWMF4w+uB
+    69V6/MCsbmXCcKd/0km/w7muOx18udxyVi7jLQPpoVZq1E1g4rc4udkcM9vcO/7y
+    xwLgQWZDI+96qUJq6f5FA7bwhvRwXdZkqYPG7uA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838948; bh=Oxk5Jk9AMWZS+73pn1q
-    P3rx3o4GYtUhSYPLCayCqikQ=; b=fPit/lzDTBcx5LX1PXNbYloauMQEGLYzOil
-    auKN4svo5SHO29aZ9oLM3pUNSq+BZuTX/WfBkmxwJmUnwB7JGBPGBxaT9+tIpedQ
-    /YooGTAN5Far6htcVrsa8nEdLPJdsLiTbyYpLN2jBB7rhj1vR8NMKd0PSCblC/dv
-    Ak9prKCxGqRsSFIhzsVR0pb84nq+EJ5L+zqUTZUOdQ6Zw3jTgib4Ovjf2f5USmoh
-    mX4Chgr2oWQiOkSkgD8Dvw4Dc+KaX6pl0p2vtr4t0uj8ILQISChiQzOPidkLGYE7
-    DPKDncOJLu6pyj5RBkNyaO9uVBEJ7JNQ7xgz1S+UooNz+cqJ97g==
+    :sender:list-id; s=arctest; t=1519838947; bh=Pe63J9NKsOmJVfOK3aw
+    +0/H82SLzbjKveU08K4McQhw=; b=bk/Hr3WhgVqhJdsiaZW+7BZLGHYHviwIGBu
+    c+XiOGwNSaomXhTfftEkcqj3PdujQLnW/H4V/8WgovGjlWEOUgETA/mY+BShsBCK
+    7wJZFKIW624yVYykEEGVcyGXWd9xmwLwOCgyp6GpZyQNO9/uS1CYGXKSRKTX4UNy
+    Nsxl1UgcpAadeYDVblyU1hcSLabKhYaKiUTow3/TzY+Eu/yNUxcbMVkA7XeP3Xbk
+    W/NLWpM8BKRdNNt777nN2wm+5X+n6h/2+AZrmZqEiqk9xq7vgXB+jC4kJkDDiijq
+    EAVQIjdgrK5Wc/P8lODfA55I+DOgYX1Y0W6ijKjQXQdRjOYBAMQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752977AbeB1R3G (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:29:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33241 "EHLO
+        id S932118AbeB1R1b (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:27:31 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33293 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932595AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932615AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,15 +59,16 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
-        "Neil Horman" <nhorman@tuxdriver.com>,
-        syzbot+ac6ea7baa4432811eb50@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, "Aaron Brown" <aaron.f.brown@intel.com>,
+        "Benjamin Poirier" <bpoirier@suse.com>,
+        "Gabriel C" <nix.or.die@gmail.com>,
+        "Christian Hesse" <list@eworm.de>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.104527282@decadent.org.uk>
+Message-ID: <lsq.1519831222.791522561@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 101/140] sctp: return error if the asoc has been
- peeled off in sctp_wait_for_sndbuf
+Subject: [PATCH 3.2 077/140] e1000e: Fix e1000_check_for_copper_link_ich8lan
+ return value.
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,85 +83,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-commit a0ff660058b88d12625a783ce9e5c1371c87951f upstream.
+commit 4110e02eb45ea447ec6f5459c9934de0a273fb91 upstream.
 
-After commit cea0cc80a677 ("sctp: use the right sk after waking up from
-wait_buf sleep"), it may change to lock another sk if the asoc has been
-peeled off in sctp_wait_for_sndbuf.
+e1000e_check_for_copper_link() and e1000_check_for_copper_link_ich8lan()
+are the two functions that may be assigned to mac.ops.check_for_link when
+phy.media_type == e1000_media_type_copper. Commit 19110cfbb34d ("e1000e:
+Separate signaling for link check/link up") changed the meaning of the
+return value of check_for_link for copper media but only adjusted the first
+function. This patch adjusts the second function likewise.
 
-However, the asoc's new sk could be already closed elsewhere, as it's in
-the sendmsg context of the old sk that can't avoid the new sk's closing.
-If the sk's last one refcnt is held by this asoc, later on after putting
-this asoc, the new sk will be freed, while under it's own lock.
-
-This patch is to revert that commit, but fix the old issue by returning
-error under the old sk's lock.
-
-Fixes: cea0cc80a677 ("sctp: use the right sk after waking up from wait_buf sleep")
-Reported-by: syzbot+ac6ea7baa4432811eb50@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2: adjust context]
+Reported-by: Christian Hesse <list@eworm.de>
+Reported-by: Gabriel C <nix.or.die@gmail.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198047
+Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Tested-by: Christian Hesse <list@eworm.de>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+[bwh: Backported to 3.2: e1000_check_for_copper_link() has a single return
+ statement for success and error cases, so set ret_val in the link-up
+ case instead of changing that statement.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sctp/socket.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/intel/e1000e/ich8lan.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -94,7 +94,7 @@
- static int sctp_writeable(struct sock *sk);
- static void sctp_wfree(struct sk_buff *skb);
- static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
--				size_t msg_len, struct sock **orig_sk);
-+				size_t msg_len);
- static int sctp_wait_for_packet(struct sock * sk, int *err, long *timeo_p);
- static int sctp_wait_for_connect(struct sctp_association *, long *timeo_p);
- static int sctp_wait_for_accept(struct sock *sk, long timeo);
-@@ -1912,7 +1912,7 @@ SCTP_STATIC int sctp_sendmsg(struct kioc
- 	timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- 	if (!sctp_wspace(asoc)) {
- 		/* sk can be changed by peel off when waiting for buf. */
--		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len, &sk);
-+		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len);
- 		if (err)
- 			goto out_free;
- 	}
-@@ -6465,12 +6465,12 @@ void sctp_sock_rfree(struct sk_buff *skb
- 
- /* Helper function to wait for space in the sndbuf.  */
- static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
--				size_t msg_len, struct sock **orig_sk)
-+				size_t msg_len)
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -657,6 +657,9 @@ out:
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
++ *
++ *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
++ *  up).
+  **/
+ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
  {
- 	struct sock *sk = asoc->base.sk;
--	int err = 0;
- 	long current_timeo = *timeo_p;
- 	DEFINE_WAIT(wait);
-+	int err = 0;
- 
- 	SCTP_DEBUG_PRINTK("wait_for_sndbuf: asoc=%p, timeo=%ld, msg_len=%zu\n",
- 			  asoc, (long)(*timeo_p), msg_len);
-@@ -6498,17 +6498,13 @@ static int sctp_wait_for_sndbuf(struct s
- 		sctp_release_sock(sk);
- 		current_timeo = schedule_timeout(current_timeo);
- 		sctp_lock_sock(sk);
--		if (sk != asoc->base.sk) {
--			release_sock(sk);
--			sk = asoc->base.sk;
--			lock_sock(sk);
--		}
-+		if (sk != asoc->base.sk)
-+			goto do_error;
- 
- 		*timeo_p = current_timeo;
+@@ -672,7 +675,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status) {
+-		ret_val = 0;
++		ret_val = 1;
+ 		goto out;
  	}
  
- out:
--	*orig_sk = sk;
- 	finish_wait(&asoc->wait, &wait);
+@@ -761,9 +764,12 @@ static s32 e1000_check_for_copper_link_i
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val)
++	if (ret_val) {
+ 		e_dbg("Error configuring flow control\n");
++		return ret_val;
++	}
  
- 	/* Release the association's refcnt.  */
++	ret_val = 1;
+ out:
+ 	return ret_val;
+ }
