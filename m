@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519838816-2-10427573943743252490
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519838708-2-18026970680501934829
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838815; b=GZbRN/hBFDVc3d4XTNDCqOCx8/d6cTrS87iKLfD4RBkNxl/
-    58pKAe3pzy8qDossa92vwrCtEWOu4OhdhOYCdQpyVlVIpnp0fg5Gy50yznhn1pBs
-    /Y6l1olhy5TRLhOG2y6IKdrnY7ua4T2H64HM1JUYAgmzv5tvaO8x5yIQF+I+ciWN
-    aIq5RJtGxtf7K3jN9KTJ5IjKq0GYIF44HQqIOBfDzuwosOWLQuMbs3G0opOsTWtI
-    54KgG/0Wxxi9ZXprdr3ZFd2+1SfQn9Z4jW+pvbVrcozx+Ox7fuzuuQdeOh5N/q66
-    9l/I3Sn1E1+ZhQ9r1QYA0jzo4DK52FHfhLjeveQ==
+    t=1519838707; b=VYYvC/PQowqbDQbjxuNRz8OLKH+GtC3uo0rj6ukQml8Oj5a
+    yC466DEGfSoGWoHC6zsRfYLLtKJhg5Hwp5bgxlNLDmChUB40TD7W4/DG0JAS05OK
+    +ZHBDb7FxaP4OvTZXwIaa2y9UIs+mIivG7MAUxjooegZ28IbP13rlTERZW0kYeBW
+    IbHJxjoTurFi0MMgPkC9m6jAoAQ1LIKwH8WxI/ut82Fc32TFxyFnxS5M2qGVdBVd
+    GLJ6KgEcahBdlW71k5IWPgeiklRIrvIi2vlgjT+jKrqGGo04rM9bchicGluVc+9O
+    JImBWyJBJUY3tjntyhtqZG3d/XenHLtsUMj+3oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838815; bh=RKNfpSKHI+Jzd7eC+QU
-    ZMRu/iv5IzAbDcHAHtkN+FkI=; b=wbRyNqPHbNOfxib4bzhEV/rfzVnSyg+q+uD
-    mgZWDCwbMI3KOdSOnZWBQYLGgo3ViasAzCPZ5LZ6Sq+m7p7u4wjWvi1w0fSA0J/i
-    o3qH9hQ3jFePir44iFesSQ5TC6pZDgeEaqY3GWm5eGV7jrsQOCmQThaZQSCEi06M
-    RRwqHyvKgp5f9Sd1zl2DDiXjDVtWlVBPN3fzuuedi95s4ZVwD7L7V6qkL6P+CrZM
-    u+EGZoJskY1C0KfMKe8qLzxb3gE7Ufa3TTvw2HAXwNadyiCc3T2vZffKZv6Lm0zi
-    IPH0Hndzf77h2LCc8RvdJtbZdlUpwUjQu3Hy5ST3tDcqERcnpiQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838707; bh=uJf8abSJ/DRF+iJEZ9z
+    PBOn29Om4lvz+Q9/VTC8dCmI=; b=IX3lTullR8QtASPVNjwS8l0KGYJcT4P2dJ5
+    5et3ail4SDOzPzcPqt9OGTg1f1CVeyP1Uzzm+RU52n3HYFwm5QZYGAwvO6GIfW8t
+    O5P2N00d4PVfqFAmu0oKcRK4D6ezZSQOZs0mFXniD9+JyfvBqnfCkbQVdiH4A1h7
+    urvrb2CkrXSx+K1hHCWA3QVS+kSghUCWHKee6wXNdibvi69xUdZtIYbi15Y4W4gJ
+    DYjVqpks9XysSrURcb/+3IJixECi5eGy0GzuoH4Hj4eS7QH7oHC7O5aLhw1SyvQs
+    PhUmD5r4akKADpF3O6RRtn6mlF6D1lLtJ9cUzl9Hpup+zlLTKsg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeB1RZL (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:25:11 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33268 "EHLO
+        id S1753361AbeB1RZF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:25:05 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33327 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932606AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932618AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,16 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Sebastian Gottschall" <s.gottschall@dd-wrt.com>,
-        "Felix Fietkau" <nbd@nbd.name>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Kevin Cernekee" <cernekee@chromium.org>
-Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.816157827@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Huacai Chen" <chenhc@lemote.com>,
+        "Christoph Hellwig" <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.512757025@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 114/140] net: igmp: fix source address check for
- IGMPv3 reports
+Subject: [PATCH 3.2 007/140] scsi: use dma_get_cache_alignment() as
+ minimum DMA alignment
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,38 +81,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit ad23b750933ea7bf962678972a286c78a8fa36aa upstream.
+commit 90addc6b3c9cda0146fbd62a08e234c2b224a80c upstream.
 
-Commit "net: igmp: Use correct source address on IGMPv3 reports"
-introduced a check to validate the source address of locally generated
-IGMPv3 packets.
-Instead of checking the local interface address directly, it uses
-inet_ifa_match(fl4->saddr, ifa), which checks if the address is on the
-local subnet (or equal to the point-to-point address if used).
+In non-coherent DMA mode, kernel uses cache flushing operations to
+maintain I/O coherency, so scsi's block queue should be aligned to the
+value returned by dma_get_cache_alignment().  Otherwise, If a DMA buffer
+and a kernel structure share a same cache line, and if the kernel
+structure has dirty data, cache_invalidate (no writeback) will cause
+data corruption.
 
-This breaks for point-to-point interfaces, so check against
-ifa->ifa_local directly.
-
-Cc: Kevin Cernekee <cernekee@chromium.org>
-Fixes: a46182b00290 ("net: igmp: Use correct source address on IGMPv3 reports")
-Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+[hch: rebased and updated the comment and changelog]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/igmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_lib.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -310,7 +310,7 @@ static __be32 igmpv3_get_srcaddr(struct
- 		return htonl(INADDR_ANY);
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1688,11 +1688,13 @@ struct request_queue *__scsi_alloc_queue
+ 		q->limits.cluster = 0;
  
- 	for_ifa(in_dev) {
--		if (inet_ifa_match(fl4->saddr, ifa))
-+		if (fl4->saddr == ifa->ifa_local)
- 			return fl4->saddr;
- 	} endfor_ifa(in_dev);
+ 	/*
+-	 * set a reasonable default alignment on word boundaries: the
+-	 * host and device may alter it using
+-	 * blk_queue_update_dma_alignment() later.
++	 * Set a reasonable default alignment:  The larger of 32-byte (dword),
++	 * which is a common minimum for HBAs, and the minimum DMA alignment,
++	 * which is set by the platform.
++	 *
++	 * Devices that require a bigger alignment can increase it later.
+ 	 */
+-	blk_queue_dma_alignment(q, 0x03);
++	blk_queue_dma_alignment(q, max(4, dma_get_cache_alignment()) - 1);
  
+ 	return q;
+ }
