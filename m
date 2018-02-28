@@ -1,47 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752477AbeB1J4P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:56:15 -0500
-Received: from nbd.name ([46.4.11.11]:41686 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752150AbeB1J4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:56:14 -0500
-From: Felix Fietkau <nbd@nbd.name>
-To: linux-kernel@vger.kernel.org
-Cc: daniel.lezcano@linaro.org, paul.burton@imgtec.com, tglx@linutronix.de
-Subject: [PATCH v2] clocksource: mips-gic-timer: fix clocksource counter width
-Date: Wed, 28 Feb 2018 10:56:10 +0100
-Message-Id: <20180228095610.50341-1-nbd@nbd.name>
-X-Mailer: git-send-email 2.14.2
+        id S1752447AbeB1KB2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:01:28 -0500
+Received: from goliath.siemens.de ([192.35.17.28]:35429 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeB1KB1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:01:27 -0500
+Subject: Re: [PATCH v2 2/6] PCI: Scan all functions when running over
+ Jailhouse
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Benedikt Spranger <b.spranger@linutronix.de>
+References: <cover.1519799691.git.jan.kiszka@siemens.com>
+ <021d3dde4276c9bf4325f7bdc37e3c47069e48fc.1519799691.git.jan.kiszka@siemens.com>
+ <alpine.DEB.2.21.1802280938380.1886@nanos.tec.linutronix.de>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <8adf7f98-3b05-2a76-48ec-111921219920@siemens.com>
+Date: Wed, 28 Feb 2018 11:01:05 +0100
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1802280938380.1886@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This code is trying to extract the GIC_CONFIG_COUNTBITS field from
-read_gic_config(), so it needs to shift count_width right by the index
-of the least significant bit (__ffs) instead of the most significant bit
-(__fls) of the field mask.
+On 2018-02-28 09:44, Thomas Gleixner wrote:
+> On Wed, 28 Feb 2018, Jan Kiszka wrote:
+> 
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
+>> have a function 0.  Therefore, Linux scans for devices at function 0
+>> (devfn 0/8/16/...) and only scans for other functions if function 0
+>> has its Multi-Function Device bit set or ARI or SR-IOV indicate
+>> there are more functions.
+>>
+>> The Jailhouse hypervisor may pass individual functions of a
+>> multi-function device to a guest without passing function 0, which
+>> means a Linux guest won't find them.
+>>
+>> Change Linux PCI probing so it scans all function numbers when
+>> running as a guest over Jailhouse.
+> 
+>>  void pcibios_scan_specific_bus(int busn)
+>>  {
+>> +	int stride = jailhouse_paravirt() ? 1 : 8;
+>>  	int devfn;
+>>  	u32 l;
+>>  
+>>  	if (pci_find_bus(0, busn))
+>>  		return;
+>>  
+>> -	for (devfn = 0; devfn < 256; devfn += 8) {
+>> +	for (devfn = 0; devfn < 256; devfn += stride) {
+>>  		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+>>  		    l != 0x0000 && l != 0xffff) {
+>>  			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
+> 
+> Shouldn't that take the situation into account where the MFD bit is set on
+> a regular devfn, i.e. (devfn % 8) == 0? In that case you'd scan the
+> subfunctions twice.
 
-Fixes: e07127a077c7 ("clocksource: mips-gic-timer: Use new GIC accessor functions")
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- drivers/clocksource/mips-gic-timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good point, and it also applies to pci_scan_child_bus_extend. Will add
+some filters.
 
-diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
-index a04808a21d4e..bf0eee78c6ef 100644
---- a/drivers/clocksource/mips-gic-timer.c
-+++ b/drivers/clocksource/mips-gic-timer.c
-@@ -166,7 +166,7 @@ static int __init __gic_clocksource_init(void)
- 
- 	/* Set clocksource mask. */
- 	count_width = read_gic_config() & GIC_CONFIG_COUNTBITS;
--	count_width >>= __fls(GIC_CONFIG_COUNTBITS);
-+	count_width >>= __ffs(GIC_CONFIG_COUNTBITS);
- 	count_width *= 4;
- 	count_width += 32;
- 	gic_clocksource.mask = CLOCKSOURCE_MASK(count_width);
+Jan
+
 -- 
-2.14.2
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
