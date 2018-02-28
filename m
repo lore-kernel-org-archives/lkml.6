@@ -1,238 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeB1KEC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:04:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60304 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752293AbeB1KEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:04:00 -0500
-Subject: Re: [PATCH v2 02/15] s390: vsie: implement AP support for second
- level guest
-To: David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1519741693-17440-3-git-send-email-akrowiak@linux.vnet.ibm.com>
- <0882e962-8ebb-2cea-0180-5cee9a0db1e4@redhat.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Wed, 28 Feb 2018 11:03:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752505AbeB1KEo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:04:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48883 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752332AbeB1KEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:04:42 -0500
+Date: Wed, 28 Feb 2018 11:04:37 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v2 8/9] lib/vsprintf: Remove useless NULL checks
+Message-ID: <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+ <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+ <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+ <1519752950.10722.231.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <0882e962-8ebb-2cea-0180-5cee9a0db1e4@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18022810-0008-0000-0000-000004D56A8D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022810-0009-0000-0000-00001E688E4F
-Message-Id: <a01ab1ab-889e-6c50-7e1b-0f259190a789@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280121
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519752950.10722.231.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/2018 10:39, David Hildenbrand wrote:
-> On 27.02.2018 15:28, Tony Krowiak wrote:
->> Set effective masks and CRYCB format in the shadow copy of the
->> guest level 2 CRYCB.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm-ap.h |    2 +
->>   arch/s390/kvm/kvm-ap.c         |    5 +++
->>   arch/s390/kvm/vsie.c           |   71 +++++++++++++++++++++++++++++++++-------
->>   3 files changed, 66 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
->> index 4e43117..ef749e7 100644
->> --- a/arch/s390/include/asm/kvm-ap.h
->> +++ b/arch/s390/include/asm/kvm-ap.h
->> @@ -13,4 +13,6 @@
->>   
->>   void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd);
->>   
->> +int kvm_ap_get_crycb_format(struct kvm *kvm);
->> +
->>   #endif /* _ASM_KVM_AP */
->> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
->> index 5305f4c..bafe63b 100644
->> --- a/arch/s390/kvm/kvm-ap.c
->> +++ b/arch/s390/kvm/kvm-ap.c
->> @@ -11,6 +11,11 @@
->>   
->>   #include "kvm-s390.h"
->>   
->> +int kvm_ap_get_crycb_format(struct kvm *kvm)
->> +{
->> +	return kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
->> +}
-> Why exactly do we need this function? If there are no other users, just
-> do it directly in the code below.
->
->> +
->>   static int kvm_ap_apxa_installed(void)
->>   {
->>   	int ret;
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 8961e39..93076ba 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -18,6 +18,7 @@
->>   #include <asm/sclp.h>
->>   #include <asm/nmi.h>
->>   #include <asm/dis.h>
->> +#include <asm/kvm-ap.h>
->>   #include "kvm-s390.h"
->>   #include "gaccess.h"
->>   
->> @@ -137,12 +138,56 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   }
->>   
->>   /*
->> + * Set up the effective masks for the shadow copy of the crycb. The effective
->> + * masks for guest 3 are set by performing a logical bitwise AND of the guest 3
->> + * masks with the guest 2 masks.
->> + */
->> +static void set_crycb_emasks(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->> +{
->> +	int fmt = kvm_ap_get_crycb_format(vcpu->kvm);
->> +	unsigned long *mask1, *mask2;
->> +
->> +	switch (fmt) {
->> +	case CRYCB_FORMAT1:
->> +	case CRYCB_FORMAT2:
-> Assume L2 gave us FORMAT0 and we are using FORMAT2. You would copy wrong
-> bits. See below, maybe we need conversion.
-+1
-and in the case we have FORTMAT1 in L2 and/or L3, you also copy them 
-from and/or to the wrong place.
+On Tue 2018-02-27 19:35:50, Andy Shevchenko wrote:
+> On Tue, 2018-02-27 at 16:50 +0100, Petr Mladek wrote:
+> > On Fri 2018-02-16 23:07:10, Andy Shevchenko wrote:
+> > > The pointer can't be NULL since it's first what has been done in the
+> > > pointer().
+> > > 
+> > > Remove useless checks.
+> > > 
+> > > Note we leave check for !CONFIG_HAVE_CLK to make compiler
+> > > to optimize code away when possible.
+> > > 
+> > > Cc: Petr Mladek <pmladek@suse.com>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > ---
+> > >  lib/vsprintf.c | 13 +------------
+> > >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > > 
+> > > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> > > index 97be2d07297a..a49da00b79e7 100644
+> > > --- a/lib/vsprintf.c
+> > > +++ b/lib/vsprintf.c
+> > > @@ -819,10 +819,6 @@ char *hex_string(char *buf, char *end, u8
+> > > *addr, struct printf_spec spec,
+> > >  		/* nothing to print */
+> > >  		return buf;
+> > >  
+> > > -	if (ZERO_OR_NULL_PTR(addr))
+> > 
+> > This macro matches also values <= 16.
+> 
+> Yes, I know.
+> 
+> This had been discussed with Rasmus and we agreed that printing a result
+> of kmalloc(0) is rather weird.
 
->
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb1.apm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.apm;
->> +		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
->> +
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb1.aqm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.aqm;
->> +		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
->> +
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb1.adm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.adm;
->> +		bitmap_and(mask1, mask1, mask2, APCB1_MASK_SIZE);
->> +		break;
->> +	default:
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb0.apm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.apm;
->> +		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
->> +
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb0.aqm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.aqm;
->> +		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
->> +
->> +		mask1 = (unsigned long *)vsie_page->crycb.apcb0.adm;
->> +		mask2 = (unsigned long *)
->> +			vcpu->kvm->arch.crypto.crycb->apcb1.adm;
->> +		bitmap_and(mask1, mask1, mask2, APCB0_MASK_SIZE);
->> +		break;
->> +	}
->> +}
->> +
->> +/*
->>    * Create a shadow copy of the crycb block and setup key wrapping, if
->>    * requested for guest 3 and enabled for guest 2.
->>    *
->> - * We only accept format-1 (no AP in g2), but convert it into format-2
->> - * There is nothing to do for format-0.
->> - *
->>    * Returns: - 0 if shadowed or nothing to do
->>    *          - > 0 if control has to be given to guest 2
->>    */
->> @@ -155,9 +200,17 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   	unsigned long *b1, *b2;
->>   	u8 ecb3_flags;
->>   
->> -	scb_s->crycbd = 0;
->> -	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
->> -		return 0;
->> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb);
->> +	kvm_ap_set_crycb_format(vcpu->kvm, &scb_s->crycbd);
->> +
->> +	/* copy the crycb */
->> +	if (read_guest_real(vcpu, crycb_addr, &vsie_page->crycb,
->> +			    sizeof(vsie_page->crycb)))
->> +		return set_validity_icpt(scb_s, 0x0035U);
-> This looks wrong. You are always copying from L2, although L2 might not
-> even set up a crycb for L3. You removed the important crycbd_o check.
->
-> Don't we need the following?
->
-> a) Determine the _allowed_ crycb format for L2 -> L3. (How can we tell
-> which format L2 is allowed to use for L3)
-> b) Determine the target crycb format. This is basically
-> vm_ap_set_crycb_format afaics.
-> c) Convert the given crycb to the target crycb format.
->
-> So importantly, can you clarify (as I don't have access to documentation):
->
-> - When is L2 allowed to use format-0? So when will the format not be
-> ignored but is actually used?
->
-> - When is L2 allowed to use fortma-2? So when will the format not be
-> ignored but is actually used?
->
-> - When does the SIE start interpreting AP instructions? So how can we
-> hinder it from doing so? Empty masks? crycb format?
->
->> +
->> +	/* set up the effective masks */
->> +	set_crycb_emasks(vcpu, vsie_page);
->> +
->>   	/* format-1 is supported with message-security-assist extension 3 */
->>   	if (!test_kvm_facility(vcpu->kvm, 76))
->>   		return 0;
-> You now already copied the wrapping keys. So they could be !0. Please
-> add a comment why we don't care.
->
-> /* wrapping keys are ignored without ECB3_AES / ECB3_DEA */
->
->> @@ -172,13 +225,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   	else if (!crycb_addr)
->>   		return set_validity_icpt(scb_s, 0x0039U);
->>   
->> -	/* copy only the wrapping keys */
->> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
->> -		return set_validity_icpt(scb_s, 0x0035U);
->> -
->>   	scb_s->ecb3 |= ecb3_flags;
->> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
->> -			CRYCB_FORMAT2;
->>   
->>   	/* xor both blocks in one run */
->>   	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
->>
->
+I see
+https://lkml.kernel.org/r/1500546142.29303.133.camel@linux.intel.com
+There you suggested to move this check into pointer(). But I do not
+see any agreement on this.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+
+> Moreover, in couple of cases I added these checks.
+>  
+> > >  	switch (fmt[1]) {
+> > > @@ -1580,9 +1572,6 @@ char *device_node_string(char *buf, char *end,
+> > > struct device_node *dn,
+> > >  	if (!IS_ENABLED(CONFIG_OF))
+> > >  		return string(buf, end, "(!OF)", spec);
+> > >  
+> > > -	if ((unsigned long)dn < PAGE_SIZE)
+> > > -		return string(buf, end, "(null)", spec);
+> > 
+> > In this case, "null" was printed for ptr < PAGE_SIZE. The same check
+> > is also in string() function.
+> 
+> Do we have a uses cases when invalid (non-NULL) pointer is supplied to
+> print function?
+> 
+> Those call sites have to be fixed.
+
+I am not aware of any. But this patch will make fixing such locations
+more complicated. The kernel would crash and might not show any message.
+Is this really what we want?
+
+Note that it will most likely crash in vprintk_emit() on the line
+
+   text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
+
+It will be with logbug_lock() taken. The nested printk() messages
+will be stored in per-CPU buffer thanks to printk_safe code.
+They might eventually be printed by printk_safe_flush_on_panic()
+but it is not guaranteed.
+
+
+> > Note that it is not only about the printed value. The pointer is later
+> > derefecend. We will start crashing on dn > 0 && dn < PAGE_SIZE.
+> 
+> Yes.
+> So, fix the call sites!
+
+It would be easier if printk() was able to show the message
+when hitting this place.
+
+I did some archaeology. The first check for PAGE_SIZE was added
+by the pre-git commit:
+
+commit 8bcb3ba1dec5749a7f1eed570cb69a20c2e4bd41
+Author: Andrew Morton <akpm@osdl.org>
+Date:   Tue Oct 21 18:22:28 2003 -0700
+
+    [PATCH] make printk more robust with "null" pointers
+    
+    Expand printk's traditional handling of null pointers so that anything in the
+    first page is considered a null pointer.
+    
+    This gives us better behaviour when someone (acpi..) accidentally prints a
+    string which is embedded in a struct, the pointer to which is null.
+
+
+IMHO, it would make sense to hanve this check also pointers that are
+being deferred.
+
+
+> > To be honest, I do not feel experienced enough to decide
+> > about the preferred behavior. On one hand, it is bad when
+> > printk() would crash the kernel. On the other hand, hiding wide
+> > range of values under "(null)" string might confuse people.
+> 
+> > Would it make sense to survive and write different strings for
+> > difference intervals? For example?
+> > 
+> >     "(null)"     for ptr == 0
+> >     "(null-16)"  for ptr > 0 && ptr <= 16
+> >     "(null-pg)"  for prt > 16 && ptr <= PAGE_SIZE
+> > 
+> > In each case, this patch changes the behavior and it should
+> > be documented in the commit message.
+> 
+> Personally I strongly disagree with blowing code up in such places for
+> little or none benefit.
+
+I do not have strong opinion here. I could imagine that this might
+save a day to some people. But I have never encountered such a bug
+myself.
+
+To make it clear. Your clean up work makes sense. I just want to point
+out that this patch is not as innocent as the commit message suggest.
+Also I think that it goes in the wrong direction regarding the
+ability to show useful information in a buggy situation.
+
+Best Regards,
+Petr
