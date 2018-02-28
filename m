@@ -1,71 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935629AbeB1XM5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:12:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935525AbeB1XM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:12:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D847214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 28 Feb 2018 18:12:52 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
- cond_resched_rcu_qs() in favor of cond_resched()
-Message-ID: <20180228181252.55e0590c@vmware.local.home>
-In-Reply-To: <20180227153646.GD3777@linux.vnet.ibm.com>
-References: <20171201192122.GA19301@linux.vnet.ibm.com>
-        <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
-        <20180224151240.0d63a059@vmware.local.home>
-        <20180225174927.GC2855@linux.vnet.ibm.com>
-        <20180225181730.GA3963@linux.vnet.ibm.com>
-        <20180225183944.GA8840@linux.vnet.ibm.com>
-        <20180226212920.43e25d6e@vmware.local.home>
-        <20180227153646.GD3777@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S964857AbeB1XQN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:16:13 -0500
+Received: from mail-eopbgr00073.outbound.protection.outlook.com ([40.107.0.73]:41139
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935525AbeB1XQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 18:16:10 -0500
+From: Anson Huang <anson.huang@nxp.com>
+To: Leonard Crestez <leonard.crestez@nxp.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC: dl-linux-imx <linux-imx@nxp.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        =?utf-8?B?TG90aGFyIFdhw59tYW5u?= <LW@KARO-electronics.de>
+Subject: RE: [PATCH V4 2/2] thermal: imx: add i.MX7 thermal sensor support
+Thread-Topic: [PATCH V4 2/2] thermal: imx: add i.MX7 thermal sensor support
+Thread-Index: AQHTrUaBbjGKNqDEgkmaGwseKeSN56O6F7eAgABg+NA=
+Date: Wed, 28 Feb 2018 23:16:07 +0000
+Message-ID: <AM3PR04MB131547CE6052FAA9CC07CCADF5C70@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1519459369-29083-1-git-send-email-Anson.Huang@nxp.com>
+         <1519459369-29083-2-git-send-email-Anson.Huang@nxp.com>
+ <1519838731.16494.8.camel@nxp.com>
+In-Reply-To: <1519838731.16494.8.camel@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [185.114.77.231]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB274;7:D5TCKP0rU1FO48lQZJpbV5dI9FXjGAd3kNP7umP0ZZNfRgOkNzFS+LgjVYx5v2bsvpEZYevZcX0GCeV37GfsGlJZMi39H4UOtzU6qS64BqcepNOr+hy/tMLFRlVkZoTYJ4BcEaUukL2LiPHve9sUxTthUbCdpq7oDQh5XKGAZVE6xz2tAdjUyCJLnabhJLh5+3KfrnHFVDetuN2Ip3fQ2K0dlv5Y0MASNrF2AIlNDjp6AY9yETu/CycLqE8tDU6N
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 750fa30a-8d61-4338-f59c-08d57f013f4e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM3PR04MB274;
+x-ms-traffictypediagnostic: AM3PR04MB274:
+x-microsoft-antispam-prvs: <AM3PR04MB274C0530933C063366025A9F5C70@AM3PR04MB274.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231220)(944501221)(52105095)(10201501046)(6055026)(6041288)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(6072148)(201708071742011);SRVR:AM3PR04MB274;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB274;
+x-forefront-prvs: 0597911EE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(396003)(376002)(39380400002)(199004)(189003)(13464003)(377424004)(2906002)(6116002)(39060400002)(68736007)(3846002)(59450400001)(106356001)(3660700001)(5660300001)(66066001)(2950100002)(76176011)(229853002)(316002)(86362001)(105586002)(81166006)(2201001)(478600001)(14454004)(81156014)(8676002)(53546011)(26005)(53936002)(33656002)(97736004)(55016002)(2900100001)(8936002)(3280700002)(6246003)(4326008)(6436002)(9686003)(2501003)(6506007)(305945005)(54906003)(5250100002)(7416002)(110136005)(7736002)(102836004)(74316002)(6346003)(7696005)(25786009)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB274;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+x-microsoft-antispam-message-info: jUchC62+5yzUprVcx2RxlKkwDKfXm1pUdKW6u2GQP87hcr8DFB5jOynqHPafBOi7cssFhliv9yc+U/qZLu1RzCZQuSO2NQnn/K+dK2Xg2nRu13vJjl0S7y+PZ39KJ8Hg2OpGa3GKC24OzAtZ0miHrzObyGNy4+y09WK2sjwrY7s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 750fa30a-8d61-4338-f59c-08d57f013f4e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2018 23:16:07.5689
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB274
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1SNGKme031157
 
-On Tue, 27 Feb 2018 07:36:46 -0800
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-> > > --- a/include/linux/sched.h
-> > > +++ b/include/linux/sched.h
-> > > @@ -1589,6 +1589,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
-> > >   */
-> > >  #ifndef CONFIG_PREEMPT
-> > >  extern int _cond_resched(void);
-> > > +#elif defined(CONFIG_TASKS_RCU)
-> > > +static inline int _cond_resched(void)
-> > > +{
-> > > +	rcu_note_voluntary_context_switch(current);
-> > > +	return 0;
-> > > +}
-> > >  #else
-> > >  static inline int _cond_resched(void) { return 0; }
-> > >  #endif  
-> > 
-> > 
-> > This does work, but so does the below, without causing cond_resched()
-> > from being something other than a nop of CONFIG_PREEMPT.  
+
+Anson Huang
+Best Regards!
+
+
+> -----Original Message-----
+> From: Leonard Crestez [mailto:leonard.crestez@nxp.com]
+> Sent: Thursday, March 1, 2018 1:26 AM
+> To: Anson Huang <anson.huang@nxp.com>; rui.zhang@intel.com;
+> edubezval@gmail.com; shawnguo@kernel.org
+> Cc: dl-linux-imx <linux-imx@nxp.com>; linux-pm@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; robh+dt@kernel.org; Mark Rutland
+> <mark.rutland@arm.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> linux@armlinux.org.uk; kernel@pengutronix.de; Lothar Waßmann
+> <LW@KARO-electronics.de>
+> Subject: Re: [PATCH V4 2/2] thermal: imx: add i.MX7 thermal sensor support
 > 
-> True, but based on the cond_resched_rcu_qs() experience, I bet that
-> trace_benchmark.c won't be the only place needing help.
+> On Sat, 2018-02-24 at 16:02 +0800, Anson Huang wrote:
+> > This patch adds i.MX7 thermal sensor support, most of the i.MX7
+> > thermal sensor functions are same with
+> > i.MX6 except the registers offset/layout, so we move those registers
+> > offset/layout definitions to soc data structure.
+> >
+> > i.MX7 uses single calibration data @25C, the calibration data is
+> > located at OCOTP offset 0x4F0, bit[17:9], the formula is as below:
+> >
+> > Tmeas = (Nmeas - n1) + 25; n1 is the fuse value for 25C.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> 
+> On imx7d (also 6sx and 6ul) OCOTP read will hang silently if the ocotp clk is not
+> enabled. For example this can happen if imx_thermal is built as a module or
+> probes after unused clocks are disabled.
+> 
+> This driver has support for reading ocotp values through the ocotp nvmem
+> driver (which handles clks properly). Since imx7d is a new compatible string for
+> upstream maybe you could just make new-style bindings mandatory and drop
+> the changes to imx_init_from_tempmon_data?
+> 
+> See commit 2067b757e972 ("ARM: dts: imx6ul: Add imx6ul-tempmon")
 
-Perhaps, still think this is a special case. That said, perhaps
-cond_resched isn't done in critical locations as it's a place that is
-explicitly stating that it's OK to schedule.
 
--- Steve
+It makes sense, I sent out V5 to drop the direct OCOTP register access support, all OCOTP reading will
+Be through ocotp nvmem driver on i.MX7D.
+
+Anson.
+
+> 
+> --
+> Regards,
+> Leonard
