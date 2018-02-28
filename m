@@ -1,91 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeB1I0u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 03:26:50 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44724 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751800AbeB1I0t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 03:26:49 -0500
-X-Google-Smtp-Source: AH8x227mnYt18nFoTEjriqKEwoLMESXV9aayBuFSmY5ht0wNqDa7X+RMzV/KefChl58rTCcS5vUinA==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot
- available
-To: Monk Liu <Monk.Liu@amd.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <1519800242-2442-1-git-send-email-Monk.Liu@amd.com>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <fa9f8ade-000f-a9b5-0bc9-0dd3f10d9722@gmail.com>
-Date: Wed, 28 Feb 2018 09:26:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752021AbeB1I2q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 03:28:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53348 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751126AbeB1I2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 03:28:45 -0500
+Date: Wed, 28 Feb 2018 09:28:43 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Samuel Holland <samuel@sholland.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/3] dt-bindings: Add a binding for the sunxi message box
+Message-ID: <20180228082843.fga47gfrv2g5kmiz@flea>
+References: <20180228022714.30068-1-samuel@sholland.org>
+ <20180228022714.30068-2-samuel@sholland.org>
 MIME-Version: 1.0
-In-Reply-To: <1519800242-2442-1-git-send-email-Monk.Liu@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5ct4qf4wlve2wiua"
+Content-Disposition: inline
+In-Reply-To: <20180228022714.30068-2-samuel@sholland.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 28.02.2018 um 07:44 schrieb Monk Liu:
-> under below scenario the obj->fence would refer to a wild pointer:
->
-> 1,call reservation_object_reserved_shared
-> 2,call reservation_object_add_shared_fence
-> 3,call reservation_object_reserved_shared
-> 4,call reservation_object_add_shared_fence
->
-> in step 1, staged is allocated,
->
-> in step 2, code path will go reservation_object_add_shared_replace()
-> and obj->fence would be assigned as staged (through RCU_INIT_POINTER)
->
-> in step 3, obj->staged will be freed(by simple kfree),
-> which make obj->fence point to a wild pointer...
 
+--5ct4qf4wlve2wiua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well that explanation is still nonsense. See 
-reservation_object_add_shared_fence:
->         obj->staged = NULL;
+Hi,
 
-Among the first things reservation_object_add_shared_fence() does is it 
-sets obj->staged to NULL.
-
-So step 3 will not free anything and we never have a wild pointer.
-
-Regards,
-Christian.
-
->
-> in step 4, code path will go reservation_object_add_shared_inplace()
-> and inside it the @fobj (which equals to @obj->staged, set by above steps)
-> is already a wild pointer
->
-> should remov the kfree on staged in reservation_object_reserve_shared()
->
-> Change-Id: If7c01f1b4be3d3d8a81efa90216841f79ab1fc1c
-> Signed-off-by: Monk Liu <Monk.Liu@amd.com>
+On Tue, Feb 27, 2018 at 08:27:12PM -0600, Samuel Holland wrote:
+> This mailbox hardware is present in several Allwinner sun8i and sun50i
+> SoCs. Add a device tree binding for it.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 > ---
->   drivers/dma-buf/reservation.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
-> index 375de41..b473ccc 100644
-> --- a/drivers/dma-buf/reservation.c
-> +++ b/drivers/dma-buf/reservation.c
-> @@ -74,12 +74,9 @@ int reservation_object_reserve_shared(struct reservation_object *obj)
->   	old = reservation_object_get_list(obj);
->   
->   	if (old && old->shared_max) {
-> -		if (old->shared_count < old->shared_max) {
-> -			/* perform an in-place update */
-> -			kfree(obj->staged);
-> -			obj->staged = NULL;
-> +		if (old->shared_count < old->shared_max)
->   			return 0;
-> -		} else
-> +		else
->   			max = old->shared_max * 2;
->   	} else
->   		max = 4;
+>  .../devicetree/bindings/mailbox/sunxi-msgbox.txt   | 40 ++++++++++++++++=
+++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/sunxi-msgbo=
+x.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.txt b=
+/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.txt
+> new file mode 100644
+> index 000000000000..3b3ed7f870a0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.txt
+> @@ -0,0 +1,40 @@
+> +Allwinner sunxi Message Box
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +
+> +The hardware message box on sunxi SoCs is a two-user mailbox controller
+> +containing 8 unidirectional FIFOs bonded into 4 bidirectional mailbox ch=
+annels.
+> +An interrupt is raised for received messages, but software must poll to =
+know
+> +when a transmitted message has been acknowledged by the remote user.
+> +
+> +Refer to ./mailbox.txt for generic information about mailbox device-tree
+> +bindings.
+> +
+> +Mailbox Device Node:
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be "allwinner,sunxi-msgbox".
+
+The IP change quite often in the Allwinner SoCs, so it would be better
+to use a more specific compatible there. IIRC that IP was introduced
+with the A31, so what about sun6i-a31-msgbox?
+
+> +- reg:			Contains the mailbox register address range (base
+> +			address and length).
+> +- clocks:		phandle for the clock controller and specifier.
+> +- clock-names:		Must be "bus".
+> +- resets:		phandle for the reset controller and specifier.
+> +- reset-names:		Must be "bus".
+> +- interrupts:		Contains interrupt information for the mailbox.
+> +- #mbox-cells		Must be 2 - the indexes of the transmit and receive
+> +			channels, respectively.
+
+That would prevent any unidirectional communication, wouldn't it?
+Other mailboxes driver seem to have two mbox channels, one for each
+direction, which also seem to mimic our DMA bindings (where we are in
+pretty much the same situation).
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--5ct4qf4wlve2wiua
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqWaDoACgkQ0rTAlCFN
+r3SAlw/+JVlP12hEQO3c+N9nXlJJaog946jybj40D0sQC2Oz1+ifJ5uqnl80EudG
+P7dWyZUvyhNPE7iM8UF2ntmZ0m07f8MysUScPmsbke7dIfjDkxEdnnMmXz4coXaX
+jlfJliXNke4EoPZOcVLU2omZl90MQoVUVyFcY+nWZHhIxD0YSEwIt63DV1q5BYLr
+ve2n7h7QIaMwwnU1+5UXv2MIh17f5Do7nesEipF6AYsiOtkuztZ4xMd7kFU1E8md
+BB8rcIyEJ6gVYp0avaIPoxTJlqSXnAoUQWHjGhsEmB3IZ3CL4GIkmSgYibzfyhbo
+B3Tgt98SbNZyKBuqOr8jo85gG3OxZ9vHcQtMf8QTTAzg/F/IegB3iRRKckkTUHeX
++++Sk/wkTonEXAKEatgneGmHtCmVGgRsf4sEiA+W8xaqYiEIwYOw7LSODzvvQ1e+
+SYI496k+rJ9jPLDCgSemBvpOJBRkMPeMOaRxNDP5ywdqlRYsJL4Udb/bz0L96Skh
+qMx2Eh9zXYBElNw89MlXLsp+nIWTfo+MTIp2A5RDkI+Igt+fsG4/Tm/UZB4ucGQE
+lofWAoiFgCwddyXbJZJzZ88pz6/5KHgo4GKWxulbraaqnZ380GiDS8Vchz/yj5C5
+2WVtzVy+ZvMGg/ZFbCJE4vCUoZSYjvdQarXPJGICSCKydhbORrw=
+=CxO8
+-----END PGP SIGNATURE-----
+
+--5ct4qf4wlve2wiua--
