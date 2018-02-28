@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932219AbeB1Olp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:41:45 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39711 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932140AbeB1Oll (ORCPT
+        id S932350AbeB1Ol7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:59 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37556 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932256AbeB1Olz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:41 -0500
-X-Google-Smtp-Source: AH8x225yqWqkQZ5/0ccIu8GWDuj7QuZFJo0tA4DNZ//Ayz5O4ve3n+5OutN/I4BcWPZ9srdkFC9G9g==
+        Wed, 28 Feb 2018 09:41:55 -0500
+X-Google-Smtp-Source: AG47ELuId7xHVvS1taQLn9S+cuiWWQducFlka9l8iPEFLVDKXLks5HkBIyAffeALTUD7gLKehZ4E/A==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 11/22] nvmem: meson-mx-efuse: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:55 -0800
-Message-Id: <20180228144106.16363-12-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 22/22] nvmem: bcm-ocotp: Do not use "&pdev->dev" explicitly
+Date: Wed, 28 Feb 2018 06:41:06 -0800
+Message-Id: <20180228144106.16363-23-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -28,8 +28,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop all of the code related to .remove hook and make use of
-devm_nvmem_register() instead.
+There's "dev" variable for this already. Use it.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -45,39 +44,22 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/meson-mx-efuse.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/nvmem/bcm-ocotp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
-index 41d3a3c1104e..db1e8b072034 100644
---- a/drivers/nvmem/meson-mx-efuse.c
-+++ b/drivers/nvmem/meson-mx-efuse.c
-@@ -233,25 +233,15 @@ static int meson_mx_efuse_probe(struct platform_device *pdev)
- 		return PTR_ERR(efuse->core_clk);
+diff --git a/drivers/nvmem/bcm-ocotp.c b/drivers/nvmem/bcm-ocotp.c
+index 24c30fa475cc..4159b3f41d79 100644
+--- a/drivers/nvmem/bcm-ocotp.c
++++ b/drivers/nvmem/bcm-ocotp.c
+@@ -262,8 +262,7 @@ static int bcm_otpc_probe(struct platform_device *pdev)
+ 	else if (of_device_is_compatible(dev->of_node, "brcm,ocotp-v2"))
+ 		priv->map = &otp_map_v2;
+ 	else {
+-		dev_err(&pdev->dev,
+-			"%s otpc config map not defined\n", __func__);
++		dev_err(dev, "%s otpc config map not defined\n", __func__);
+ 		return -EINVAL;
  	}
  
--	efuse->nvmem = nvmem_register(&efuse->config);
-+	efuse->nvmem = devm_nvmem_register(&pdev->dev, &efuse->config);
- 	if (IS_ERR(efuse->nvmem))
- 		return PTR_ERR(efuse->nvmem);
- 
--	platform_set_drvdata(pdev, efuse);
--
- 	return 0;
- }
- 
--static int meson_mx_efuse_remove(struct platform_device *pdev)
--{
--	struct meson_mx_efuse *efuse = platform_get_drvdata(pdev);
--
--	return nvmem_unregister(efuse->nvmem);
--}
--
- static struct platform_driver meson_mx_efuse_driver = {
- 	.probe = meson_mx_efuse_probe,
--	.remove = meson_mx_efuse_remove,
- 	.driver = {
- 		.name = "meson-mx-efuse",
- 		.of_match_table = meson_mx_efuse_match,
 -- 
 2.14.3
