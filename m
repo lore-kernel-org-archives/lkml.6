@@ -1,82 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeB1RWX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:22:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34361 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbeB1RWH (ORCPT
+        id S1753340AbeB1RWd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:22:33 -0500
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:34337 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753071AbeB1RWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:22:07 -0500
-Date: Wed, 28 Feb 2018 09:21:59 -0800
-From: tip-bot for Sebastian Panceac <tipbot@zytor.com>
-Message-ID: <tip-028091f82eefd5e84f81cef81a7673016ecbe78b@git.kernel.org>
-Cc: tglx@linutronix.de, hpa@zytor.com, sebastian@resin.io,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        andy.shevchenko@gmail.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org,
-        sebastian@resin.io
-In-Reply-To: <1519810849-15131-1-git-send-email-sebastian@resin.io>
-References: <1519810849-15131-1-git-send-email-sebastian@resin.io>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/platform/intel-mid: Handle Intel Edison reboot
- correctly
-Git-Commit-ID: 028091f82eefd5e84f81cef81a7673016ecbe78b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Feb 2018 12:22:30 -0500
+X-Google-Smtp-Source: AG47ELucTTieEMva7MFxbHpYXYLvvaE6IZSEAhxykbyK7HYrgUXqbFdwOuSVZ1yGD//eioB2XFfEsebDdxFyhQ9u3LQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180228191650-mutt-send-email-mst@kernel.org>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+ <20180215213312.29234-12-marcandre.lureau@redhat.com> <20180227020104-mutt-send-email-mst@kernel.org>
+ <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com>
+ <20180228173444-mutt-send-email-mst@kernel.org> <CAMxuvax37dKhY0jTqbOqjOxQORA=hdDZc3S33b8RFiAbcOLWTg@mail.gmail.com>
+ <20180228191650-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
+Date: Wed, 28 Feb 2018 18:22:29 +0100
+Message-ID: <CAMxuvayJD1O4gz-E0B--E1VMXqbb3u10D8W=CAtOaQPeoYuvuQ@mail.gmail.com>
+Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  028091f82eefd5e84f81cef81a7673016ecbe78b
-Gitweb:     https://git.kernel.org/tip/028091f82eefd5e84f81cef81a7673016ecbe78b
-Author:     Sebastian Panceac <sebastian@resin.io>
-AuthorDate: Wed, 28 Feb 2018 11:40:49 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 18:17:18 +0100
+Hi
 
-x86/platform/intel-mid: Handle Intel Edison reboot correctly
+On Wed, Feb 28, 2018 at 6:17 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 28, 2018 at 04:41:51PM +0100, Marc-André Lureau wrote:
+>> I don't know if it's always safe to enable dma in read_raw(), how
+>> could we know? Is there a check we could use to choose one or ther
+>> other (and thus avoiding explicit dma/readfn argument)?
+>
+> IMHO the way to go is not to try to do zero copy.
+> Allocate a buffer and DMA there, then copy.
 
-When the Intel Edison module is powered with 3.3V, the reboot command makes
-the module stuck.  If the module is powered at a greater voltage, like 4.4V
-(as the Edison Mini Breakout board does), reboot works OK.
+Sounds fine to me, I'll resend this patch separately if the rest from
+v16 is applied.
 
-The official Intel Edison BSP sends the IPCMSG_COLD_RESET message to the
-SCU by default. The IPCMSG_COLD_BOOT which is used by the upstream kernel
-is only sent when explicitely selected on the kernel command line.
-
-Use IPCMSG_COLD_RESET unconditionally which makes reboot work independent
-of the power supply voltage.
-
-[ tglx: Massaged changelog ]
-
-Fixes: bda7b072de99 ("x86/platform/intel-mid: Implement power off sequence")
-Signed-off-by: Sebastian Panceac <sebastian@resin.io>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1519810849-15131-1-git-send-email-sebastian@resin.io
-
----
- arch/x86/platform/intel-mid/intel-mid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
-index 2c67bae6bb53..fb1df9488e98 100644
---- a/arch/x86/platform/intel-mid/intel-mid.c
-+++ b/arch/x86/platform/intel-mid/intel-mid.c
-@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
- 
- static void intel_mid_reboot(void)
- {
--	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
-+	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
- }
- 
- static unsigned long __init intel_mid_calibrate_tsc(void)
+thanks
