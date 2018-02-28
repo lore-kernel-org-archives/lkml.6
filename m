@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsajrnqfGM8/cq+MtSzJH8KPjk3bz0uPGG8b2VAZArZv2zV710E0Zb/K0M2jqpKhGxtSkeI
-ARC-Seal: i=1; a=rsa-sha256; t=1519831334; cv=none;
+X-Google-Smtp-Source: AG47ELu4bnCKqSN5K62W5pnjeQ/NUPkjt0fv4tSil9OeeTERLrnzCtZiGnm6tuCVpF0iIo4viXDB
+ARC-Seal: i=1; a=rsa-sha256; t=1519831333; cv=none;
         d=google.com; s=arc-20160816;
-        b=BPYXbhGsCHItXBoH3mVBqWmUw6dZVzael0+vuXPZhrkrsnUtZqTdGNbrWaO+ugTTDn
-         xvicMji49DUErTq/4iZe8Vl2A/2NaMIydRPAR3rBiAPWHoknvrpU0U8bSbDwhmHDqvbE
-         1JO4YXAvzEiAzXfHu2Po/otZIFrVlny9RhXWFznX/V3Yb4Z5bq0RDJ0LTXig45C+vxOf
-         P89wuQSQbP2n2WEZm7aGqgTF/LLLVggRoKnsjwZQacDsU42VXwj3ru35W40jjJF5FfPa
-         je8ACdj/z+hnagZ1ciiAONNXY4lJS3Xn8xc86eIa5hfPAqx9kCbz88tLYdf9jMISbDpi
-         yb4Q==
+        b=r3ew0N43C8qDVLjUEo3rgN9Bi/CipyOUnv67v1DA/p5h5IxY0IdC9YbFHANtCV0vBp
+         Q+Snatuhpa6doVuXucEsViQxNo+2rYLOCirb5vEk7HJuYhuF1Qj5M3sbQzcDMH1sbJ28
+         8aIX3oS+OXc9J53v0BCzTkbkv917dIveHT2IxL2Vbcm7/d6Q3OP/FlMQVcdpZ/jple/I
+         +6l3eITQZVozCL7wzEUxwsGqUykc6SEpZWTZc4JZrJmvjHfZDDbdG3pvEb+Wmd0Z5opu
+         TNYm9p//IDtbfLFleVa3lLubqMwPvvsrDCbfolcM7K6iqs++SpqhyxI6IW9KVlai+yQA
+         0glA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=xh5+O2DqetIHMcvxVp/sRGrlOcoS6y0OPe5fNzhegOc=;
-        b=uQwG993obg6ggtzZjGIUsvc2jPXkk4ON3o26M0elPms49OFqtpvZRHkENTqQp0Ychc
-         U3PeSoprs67Ud0/Q9pQmz/llM9dMw5xoq96bXbrjgH+HoodmJK2EAaq5wV5i+eoP2FAW
-         jQ0MDHGao/+jjs8TH5VP1FZM2LAUDElaKRXihwzQWTHxzDagxZQFeMQAWWf0dKfpw9Pk
-         Jw5bjD0Y/eLY0pvtmzCMZ8U18Um47qzbcSZ53AnGjqiyndpBtBG6xMhzvt1O74ts33rq
-         eHbICw5kkOQ9Mf9I3jrAlOqzgA3olCfAW5Bwy5DjYVtbj3nIAcEm08Z/Rd5W+A0OMNAk
-         ySkA==
+        bh=8nhOJRiM7RqDQpQ8Go7VX8T1OweYQe9I+y7WaX/QJqA=;
+        b=bgg+AxpnBTKw2HgzBr5n7wC7u6ct4WD3YEH8NjyjJU03yFk/dpQRioIWfiSi87hd9Y
+         DUIBC01Nuq5Kdm3NHthhnXTntbT6q068RalCAuiDHXXhJanS1OcFqe++yuM82mf/kaVV
+         mr3Phtj3FiD5giXzup82VJDmbqIjPO0g6E67jcQ1R/NpkLafBruzoyKtHRGdoeJ+nBvb
+         aWuWT8virQ/XU/MBo46PotctZiL2v31RfkvyASdR89BttU60FvaMkR61t8gAagMXPafb
+         adIQyEFqvpib3WPEVUMt1vDMV037kJKVr38QaFV1NLVYa8owMPwDeKdRGVx9HA0PqTEx
+         O1xw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "" <syzbot+f9831b881b3e849829fc@syzkaller.appspotmail.com>,
+ "Wang Qize" <wang_qize@venustech.com.cn>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Pete Zaitcev" <zaitcev@redhat.com>
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.384663834@decadent.org.uk>
+Message-ID: <lsq.1519831222.921142917@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 091/140] USB: fix usbmon BUG trigger
+Subject: [PATCH 3.2 139/140] ACPI: sbshc: remove raw pointer from printk()
+ message
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658660846987394?=
-X-GMAIL-MSGID: =?utf-8?q?1593658660846987394?=
+X-GMAIL-THRID: =?utf-8?q?1593658659996295127?=
+X-GMAIL-MSGID: =?utf-8?q?1593658659996295127?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pete Zaitcev <zaitcev@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 46eb14a6e1585d99c1b9f58d0e7389082a5f466b upstream.
+commit 43cdd1b716b26f6af16da4e145b6578f98798bf6 upstream.
 
-Automated tests triggered this by opening usbmon and accessing the
-mmap while simultaneously resizing the buffers. This bug was with
-us since 2006, because typically applications only size the buffers
-once and thus avoid racing. Reported by Kirill A. Shutemov.
+There's no need to be printing a raw kernel pointer to the kernel log at
+every boot.  So just remove it, and change the whole message to use the
+correct dev_info() call at the same time.
 
-Reported-by: <syzbot+f9831b881b3e849829fc@syzkaller.appspotmail.com>
-Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
+Reported-by: Wang Qize <wang_qize@venustech.com.cn>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/mon/mon_bin.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/acpi/sbshc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/mon/mon_bin.c
-+++ b/drivers/usb/mon/mon_bin.c
-@@ -1000,7 +1000,9 @@ static long mon_bin_ioctl(struct file *f
- 		break;
+--- a/drivers/acpi/sbshc.c
++++ b/drivers/acpi/sbshc.c
+@@ -288,8 +288,8 @@ static int acpi_smbus_hc_add(struct acpi
+ 	device->driver_data = hc;
  
- 	case MON_IOCQ_RING_SIZE:
-+		mutex_lock(&rp->fetch_lock);
- 		ret = rp->b_size;
-+		mutex_unlock(&rp->fetch_lock);
- 		break;
+ 	acpi_ec_add_query_handler(hc->ec, hc->query_bit, NULL, smbus_alarm, hc);
+-	printk(KERN_INFO PREFIX "SBS HC: EC = 0x%p, offset = 0x%0x, query_bit = 0x%0x\n",
+-		hc->ec, hc->offset, hc->query_bit);
++	dev_info(&device->dev, "SBS HC: offset = 0x%0x, query_bit = 0x%0x\n",
++		 hc->offset, hc->query_bit);
  
- 	case MON_IOCT_RING_SIZE:
-@@ -1227,12 +1229,16 @@ static int mon_bin_vma_fault(struct vm_a
- 	unsigned long offset, chunk_idx;
- 	struct page *pageptr;
- 
-+	mutex_lock(&rp->fetch_lock);
- 	offset = vmf->pgoff << PAGE_SHIFT;
--	if (offset >= rp->b_size)
-+	if (offset >= rp->b_size) {
-+		mutex_unlock(&rp->fetch_lock);
- 		return VM_FAULT_SIGBUS;
-+	}
- 	chunk_idx = offset / CHUNK_SIZE;
- 	pageptr = rp->b_vec[chunk_idx].pg;
- 	get_page(pageptr);
-+	mutex_unlock(&rp->fetch_lock);
- 	vmf->page = pageptr;
  	return 0;
  }
