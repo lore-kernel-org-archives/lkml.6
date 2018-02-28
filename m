@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834415-2-16936221617394154568
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834391-2-6064155519628373725
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834414; b=h75oxrJ6O+PgyYRar98aYfcmGFyuzx2o64rpyNEPY8wYe+g
-    q8WwfXyGoA53v1rasCYT8G1W2wl1YrY4F1Y3oQ2o0kWImUeFY9B72cdPE3nhvaey
-    195ak7rAEKEaCSVMlmkz4KHxuR4CpjbyIkXGJedzC35GbC1TCOM3gHbcbsokZ/Kl
-    P+cr96oKpO4jx9Xu7jZJtW8NoyclvRv1z9bTlDz3aJ/vLcVTaKrxYPxTKmBqen43
-    xeGpIpRctWNYRZndZ1IEVJIYOnjVZItyIvGaQzrovEm/vbrGPTNTcraiQlpVB/ma
-    tdHIz5YkVAspbWg2EpywyxSLEepqbIIxYW+xnaA==
+    t=1519834390; b=hpQ145r2HJ1SGJHJBddu42egPAAJMTXOHMbE4QM/+u5qzrT
+    0QCPG9C7KqX2dI/Z8O0gXT/5DULrAgPJKgjKv6z6RRzQyBa1toRnDRilt/uK87BM
+    vq5QpPxASkchptU8NwGQmw5Qs79Rptiu+AlzUQa2jhwXhjqlNa82miEIOZ8gkCrb
+    xvw+r9LxE5QrFKeSHWSJK7meeAWFZJ45eIzrLC7lH1R9BiW/UtVxd5gPLk0vaV4F
+    oD3wf/6miiN30Z3e26DavQ1x0/c7vi3t5vk09vpI8s9vJ/CdAh7sv64qxtPkJMao
+    IjYLEXrSCuIt102DCGCeM0GEcHqj3mFLCuQdT3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834414; bh=rLV8AqY9FLSdGEDWk5B
-    FiZ94pxTzLWYnFhpxEpetweM=; b=HLoC8OnbGR85ryUwKIlbb3381xxAYEgnEVz
-    WxF9JJMN6Gpu9r93YOWZtVehYnZdcjXLMm4YaFP0qOw46uxD9IwiD/JJGZ9LAm8b
-    AIyik4LW/jbr914G3Iq5WBDwBf9iUqxG79oapy0Yi95pPQZZ5KOYzr6soWNAZNP3
-    wWPw1aOUnLnwJBJ6XAk4vWHtGHFHoVxCHojBB9rjsRDgoI7Uqfq4LlPkDqH25+1g
-    i9CavbwBbig+iE5CRvmhMmfjZFiB0P54+c++79Oqnp85M71w8SklclNXR55N9k8k
-    AdOlWoHnPkhdEfBGofRNGFaP1c7Lnf0pTxwsLdIcyGwzJ1f2cdA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834390; bh=8RZbtIXCFKPs21lQSgO
+    993claMK9sscSJdL80Y2Xl74=; b=j+viny54i9ApJugO+6HBvrYy1rG9B7VeEFu
+    m357EXmqcc6pzF3zStv7iSAXGg1NYciWtmeAo7H6bCyjWdbN5sB4BhUNJ6MwuXOj
+    VA3eok5OZRub2MqMry+fSkS95viR2YLwdU2aMSeD01rtzBQkif5SSZj+MinmRE0O
+    XcPG+aEZHxz9Bz816V2YmpZ6LeRdXzf2xARhsOiUBkp2Q+AGH4pf49m6frGt+3qZ
+    AIBp/T7kBaMh1F3Uo+3GjJCzeWC+PAjqXTDE1WEvfMOKRP0fTVqtLY2xlifHrSc/
+    INXxPrSv4v/KHOiQYW1pzLmD67E+r4n8H4liQYmpPlwyIJbmlfQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932652AbeB1QNT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:13:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35023 "EHLO
+        id S934462AbeB1QM0 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:12:26 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35040 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933272AbeB1QMA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:00 -0500
+        by vger.kernel.org with ESMTP id S932649AbeB1QMX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:23 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
-        "Johannes Berg" <johannes.berg@intel.com>
+CC: akpm@linux-foundation.org, "Cong Wang" <xiyou.wangcong@gmail.com>,
+        "Vlad Yasevich" <vyasevich@gmail.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Ben Hutchings" <ben.hutchings@codethink.co.uk>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.970834889@decadent.org.uk>
+Message-ID: <lsq.1519831218.860229307@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 207/254] cfg80211: check dev_set_name() return value
+Subject: [PATCH 3.16 200/254] 8021q: fix a memory leak for VLAN 0 device
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,43 +82,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
+commit 78bbb15f2239bc8e663aa20bbe1987c91a0b75f6 upstream.
 
-syzbot reported a warning from rfkill_alloc(), and after a while
-I think that the reason is that it was doing fault injection and
-the dev_set_name() failed, leaving the name NULL, and we didn't
-check the return value and got to rfkill_alloc() with a NULL name.
-Since we really don't want a NULL name, we ought to check the
-return value.
+A vlan device with vid 0 is allow to creat by not able to be fully
+cleaned up by unregister_vlan_dev() which checks for vlan_id!=0.
 
-Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
-Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-[bwh: Backported to 3.16: adjust context]
+Also, VLAN 0 is probably not a valid number and it is kinda
+"reserved" for HW accelerating devices, but it is probably too
+late to reject it from creation even if makes sense. Instead,
+just remove the check in unregister_vlan_dev().
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Fixes: ad1afb003939 ("vlan_dev: VLAN 0 should be treated as "no vlan tag" (802.1p packet)")
+Cc: Vlad Yasevich <vyasevich@gmail.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -315,6 +315,7 @@ struct wiphy *wiphy_new(const struct cfg
+ net/8021q/vlan.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+--- a/net/8021q/vlan.c
++++ b/net/8021q/vlan.c
+@@ -111,12 +111,7 @@ void unregister_vlan_dev(struct net_devi
+ 		vlan_gvrp_uninit_applicant(real_dev);
+ 	}
  
- 	struct cfg80211_registered_device *rdev;
- 	int alloc_size;
-+	int rv;
+-	/* Take it out of our own structures, but be sure to interlock with
+-	 * HW accelerating devices or SW vlan input packet processing if
+-	 * VLAN is not 0 (leave it there for 802.1p).
+-	 */
+-	if (vlan_id)
+-		vlan_vid_del(real_dev, vlan->vlan_proto, vlan_id);
++	vlan_vid_del(real_dev, vlan->vlan_proto, vlan_id);
  
- 	WARN_ON(ops->add_key && (!ops->del_key || !ops->set_default_key));
- 	WARN_ON(ops->auth && (!ops->assoc || !ops->deauth || !ops->disassoc));
-@@ -346,7 +347,11 @@ struct wiphy *wiphy_new(const struct cfg
- 	rdev->wiphy_idx--;
- 
- 	/* give it a proper name */
--	dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+	rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+	if (rv < 0) {
-+		kfree(rdev);
-+		return NULL;
-+	}
- 
- 	INIT_LIST_HEAD(&rdev->wdev_list);
- 	INIT_LIST_HEAD(&rdev->beacon_registrations);
+ 	/* Get rid of the vlan's reference to real_dev */
+ 	dev_put(real_dev);
