@@ -1,48 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752722AbeB1OBa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:01:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752679AbeB1OB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:01:28 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194921771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
-Date: Wed, 28 Feb 2018 22:01:20 +0800
-Message-Id: <20180228140120.8758-1-chao@kernel.org>
-X-Mailer: git-send-email 2.14.1.145.gb3622a4ee
+        id S932162AbeB1ODA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:03:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34318 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752213AbeB1OC7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:02:59 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        acourbot@chromium.org, kernel@collabora.com
+Subject: [PATCH] arm64: defconfig: Enable typec-phy and extcon-usbc-cros-ec for rk3399
+Date: Wed, 28 Feb 2018 15:02:51 +0100
+Message-Id: <20180228140251.22232-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+Enables typec phyter and extcon driver for cable detection that is used by
+USB 3.0 controller for Rockchip rk3399 SoCs.
 
-If we fail in ->remount_fs, it needs to restore old whint_mode as other
-mount options.
-
-Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- fs/f2fs/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 89abe4087e66..8a93f78efca2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		sbi->s_qf_names[i] = s_qf_names[i];
- 	}
- #endif
-+	sbi->whint_mode = old_whint_mode;
- 	sbi->mount_opt = org_mount_opt;
- 	sbi->active_logs = active_logs;
- 	sb->s_flags = old_sb_flags;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 78b47bc7dc54..d4c25aa55785 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -544,6 +544,7 @@ CONFIG_ARCH_TEGRA_132_SOC=y
+ CONFIG_ARCH_TEGRA_210_SOC=y
+ CONFIG_ARCH_TEGRA_186_SOC=y
+ CONFIG_EXTCON_USB_GPIO=y
++CONFIG_EXTCON_USBC_CROS_EC=y
+ CONFIG_IIO=y
+ CONFIG_EXYNOS_ADC=y
+ CONFIG_ROCKCHIP_SARADC=m
+@@ -564,6 +565,7 @@ CONFIG_PHY_MVEBU_CP110_COMPHY=y
+ CONFIG_PHY_ROCKCHIP_INNO_USB2=y
+ CONFIG_PHY_ROCKCHIP_EMMC=y
+ CONFIG_PHY_ROCKCHIP_PCIE=m
++CONFIG_PHY_ROCKCHIP_TYPEC=y
+ CONFIG_PHY_XGENE=y
+ CONFIG_PHY_TEGRA_XUSB=y
+ CONFIG_QCOM_L2_PMU=y
 -- 
-2.14.1.145.gb3622a4ee
+2.16.1
