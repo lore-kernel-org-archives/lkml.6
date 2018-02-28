@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519832663-2-17857522689576235722
+X-Cyrus-Session-Id: sloti22d1t05-449106-1519832543-2-7934053192151564879
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519832662; b=LiazYGsRhSpWuG75IqrEXzBjP3deEeamXkIv/8u/X9k2AqJ
-    mtWiolhWCAy+5FECBeOHLyAQ/W6Bt0OV/8vc75aXY4Bjx2/twCL3TGYoWrmpx78L
-    zpn5ycwUCHLaZs/ViO+30zmbpYsGo8Qn+dLLs3tpGr8qcWN1DORR1s71ky9sy8nP
-    JCkJssZRE6YKm5cQGiAFkUf2mmXHdGQZN4f2hLd+q+Gn+nwYHzFwY3VptvbMHfEV
-    hdF51TPYjHjEHzigp2GOSb/WHv5iJNp70IrhOjQHBI24y+R2p3+zDGYQ7y8QSJih
-    FCNQWv1F3OFpEOTCoyFs7ANdqUh54npAPxLXUKA==
+    t=1519832543; b=Ug15SgBnXi9m/FKOpNiy7e6jcnGb95UMkq4VDz+u6C+NdoA
+    NpSx0je+BMBqAB1MOsUPN6NQb/t+ARdDZu9M2wdaprHeowO2g66nSN9LSloV5Yiq
+    NGllCzkxrzknhaAB8VhiH686IDdylf34vYeJvYsWRrEFAqrWPgZDyahtVArIa18r
+    xdTq0a5mYnlHlQXAWZR+b1KlgSRSjbtP+xKlbampN/H2L1gVRrtKGXNVd7TcHHWh
+    JC3A41E2Vy7rqPSn1S9yTLQc5yJd2HdB7pF2EtKFBHSQq698Fgi2C5QhaSdZy48T
+    WizyxcJ1Vj1S5NKwxuro4RvqEDwVqx9JtFuVoLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519832662; bh=b+J3GpBkxDvcCphpRjG
-    aKvaF2qW0RyID5Fec1N4+XEE=; b=I3Q/AzziWTpY0plCjr8qXF40gpCCUNBB1RY
-    RUa6gy/Eksn+k3bdU7uUX2o+Oco7TjYoytYTzskMEIEulfNmR/UMLOGWTplGFPnk
-    dPGk/psTCMig5cA8WSb0dquqxNxxcPR3kYz2pFzn8m/fwgDVYMwkv+Gp3FBYHrwi
-    h42WdhM34HWgTMrQu+exFrR/fONS8D4zfDUqsX907FArntidSWj1Dge6aniAVJqr
-    1kZ8FrfG6oa/9xuW6vQ2hGtyWkLKHhw79RsHIoZ9IhI0McVBrp81BKg2dxV84fPk
-    CivSQGbhW8+P5hsJI7w/d4atx1Kr6Sjs2/cD530ZMvtIP9ulmeA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519832543; bh=kcD2uZ4nuHJ+KjXjoPX
+    0vwocOo0ItkiWfBS6mXxnTV4=; b=vOAdnj2sgruA99SD2lEHPiMFPiONolRmcx5
+    Niv3WWgk1Tknhlt9yxfqByymSWM9pm8PiGSGiJYxhe5fva9NXgvDlipIuzBZSp7L
+    9XRjKyln+Tn7cHx+tsKDy2kqMKAVN5jlsg9NAQGGMs0BR+Eut1e1wa/ETneRE6lP
+    or8JFFVbVLtPO/PtlqV8A+oRPVIkikqIVVOiBS+vLdQlR/tlUttdvvzbfVbJc5FO
+    Gp7XD2R/KKNbIoaXFbAleYMObRCCSWVleWhxoRJ/UiFfPbmHylRVHsbtegQ7G8Dp
+    JecYTxoN/ET33DU89C2MuQByvRhkRUtWPq9fbfR8QMWxGo278EQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,24 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933205AbeB1Pm7 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:42:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33400 "EHLO
+        id S932670AbeB1PWR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:22:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33087 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932654AbeB1PWQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:16 -0500
+        by vger.kernel.org with ESMTP id S932439AbeB1PWM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:12 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Steve Wise" <swise@opengridcomputing.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>
-Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.655828574@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Sebastian Sjoholm" <ssjoholm@mac.com>,
+        "Johan Hovold" <johan@kernel.org>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.559755416@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 065/140] iw_cxgb4: Only validate the MSN for
- successful completions
+Subject: [PATCH 3.2 011/140] USB: serial: option: add Quectel BG96 id
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,35 +79,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Sebastian Sjoholm <ssjoholm@mac.com>
 
-commit f55688c45442bc863f40ad678c638785b26cdce6 upstream.
+commit c654b21ede93845863597de9ad774fd30db5f2ab upstream.
 
-If the RECV CQE is in error, ignore the MSN check.  This was causing
-recvs that were flushed into the sw cq to be completed with the wrong
-status (BAD_MSN instead of FLUSHED).
+Quectel BG96 is an Qualcomm MDM9206 based IoT modem, supporting both
+CAT-M and NB-IoT. Tested hardware is BG96 mounted on Quectel
+development board (EVB). The USB id is added to option.c to allow
+DIAG,GPS,AT and modem communication with the BG96.
 
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-[bwh: Backported to 3.2: adjust context]
+Signed-off-by: Sebastian Sjoholm <ssjoholm@mac.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/hw/cxgb4/cq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/serial/option.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/hw/cxgb4/cq.c
-+++ b/drivers/infiniband/hw/cxgb4/cq.c
-@@ -484,10 +484,10 @@ static int poll_cq(struct t4_wq *wq, str
- 			ret = -EAGAIN;
- 			goto skip_cqe;
- 		}
--		if (unlikely((CQE_WRID_MSN(hw_cqe) != (wq->rq.msn)))) {
-+		if (unlikely(!CQE_STATUS(hw_cqe) &&
-+			     CQE_WRID_MSN(hw_cqe) != wq->rq.msn)) {
- 			t4_set_wq_in_error(wq);
--			hw_cqe->header |= htonl(V_CQE_STATUS(T4_ERR_MSN));
--			goto proc_cqe;
-+			hw_cqe->header |= cpu_to_be32(V_CQE_STATUS(T4_ERR_MSN));
- 		}
- 		goto proc_cqe;
- 	}
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -242,6 +242,7 @@ static void option_instat_callback(struc
+ /* These Quectel products use Quectel's vendor ID */
+ #define QUECTEL_PRODUCT_EC21			0x0121
+ #define QUECTEL_PRODUCT_EC25			0x0125
++#define QUECTEL_PRODUCT_BG96			0x0296
+ 
+ #define CMOTECH_VENDOR_ID			0x16d8
+ #define CMOTECH_PRODUCT_6001			0x6001
+@@ -1165,6 +1166,8 @@ static const struct usb_device_id option
+ 	  .driver_info = (kernel_ulong_t)&net_intf4_blacklist },
+ 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EC25),
+ 	  .driver_info = (kernel_ulong_t)&net_intf4_blacklist },
++	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
++	  .driver_info = (kernel_ulong_t)&net_intf4_blacklist },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6003),
