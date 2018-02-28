@@ -1,151 +1,136 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6r+tZll9rT7fP85ozIWQpYrK0gNiY4bTpcxGiseQ8F1T50SyJ5qhp5wi1BVUwp1l4CsP4
-ARC-Seal: i=1; a=rsa-sha256; t=1519676592; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ea653Se8GQjbJgKJCEAhaBnoi5QiWz/ldXx+FJ0M+prTd3A13q4oVvpo+Lv5xo/T9u
-         qyCvKGt+lkErJdO5DpO1xJSUa2N+f1ChdbKe2n1eLJSS3fIWxF6Dt8TwV3eRFrerb0pf
-         V4htQ2HedJCPjjXgNi6ryJFY33F89T7TRbxeCAt4gH/ByZnPC8rtuymauPVFd03yocT8
-         /PaJGsu1zhphW2kVzUOhzqt9UK/0grPSmiiMBjR7BEodIVuYljW+59JHj/HwYO3csndI
-         H5D4ONnXC2Ww3doNQAI3BhbPHJy3ceY/LE5FM9jiPWG8akMfpUQ0jCrdX1uA17c2w0rm
-         1GAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=5XNCKyeT80Stvo9Kv65mkI/jL0TBSA8kJ+Q17jPhSJk=;
-        b=Ig+SQddGrgn4qWtNb/POF74gn+58bNhBz7mxyqwKNysxcWm38pIeOYfoZRES+wFd+2
-         o/dd2jGkLdhzt36CkWEPv7kIErH2dNBM909yyDMb0hAaz9pbSsqaBMZ+4yXNNmlwQJcB
-         7K6BsIz5JOIcw7musMCX15sVi5g1LUkBAZla13RMR4t+N1i8LxavAJjXgbXve6iZomyi
-         c6uE+MY3eh33ysdTBFgWJ5JM2ZzoO9tf5jGxGTdLTOwkHjDy+fcKT80LlHsHq4ZnNjVY
-         vTS3ghfcLrsKLjRhMSZivi0fTfVA5++aCKzcTkVMV1CQ34beIFnAbD4lH3T+BbUSu3jd
-         OgTg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Krzysztof Piotr Oledzki <ole@ans.pl>
-Subject: [PATCH 4.14 01/54] netfilter: drop outermost socket lock in getsockopt()
-Date: Mon, 26 Feb 2018 21:21:38 +0100
-Message-Id: <20180226202144.443053148@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180226202144.375869933@linuxfoundation.org>
-References: <20180226202144.375869933@linuxfoundation.org>
-User-Agent: quilt/0.65
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3608014-1519801745-2-9042186766484959619
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519801744; b=c+llhgz/6jIZur4husOJF447mM8/Wp0ZBcvmCBOM4YYdlwA
+    peo41K5eW2JbkpOqOPFnKCts58l7gQCVj0UM6iXmZKnIdck+CttrBccKRGfTizMi
+    zLt/tnlybF3PBhJDkSvxT/frLG/Ut1vtVbkgSaWp+BEbda1t48Q78nWINqBVsgeG
+    qevTrMSVf3lk521zuIGOJVpTAr/867NPp2w/5d7I0uJbROVndDn6jMHJAENzP0Hi
+    8Nzos986+ttcFOg4V8j2tMq9dlWLLqripZxT1tSbc8LIx/dxrFquZ5VcTab8bI1X
+    JcjFyyULEfDdFthygecF10QrvU91hYq7swBBUkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519801744; bh=T
+    DAEmK3A/P9iEgFpIYas3cJ7FKF2EZ18QyTCwDgqFeg=; b=PDKyWGjiXgXUUZXQI
+    zi5m5Q80jqLyvgFRDqADDTjTJyp0CV53VrZ+49MR8gbX80XSE+ptzLAF/roJT+Bf
+    QVSV6boIyW7En3HEEHKvGh44NYuhLG2ppSZbpVKn+Sam4h2joBRPIwozvX0Sdn/R
+    j2mzH7WYLe4ivMvgg1gb2o0ubHBrmk7X5bP/5MhLyMhwPW9Z3xgabZhEHccbakqw
+    +JVSljIvUxBZd5yaP21DGSCZZT1AzSI1ULUpellk8Gi58hzAvn5l1B+77dc6xyn/
+    3o3lHjk6pEN4wXgXi/XoGh+JCgscTnGvZzN3iQLKwFRxGErb55yErBSNYHVUuuOk
+    9EkQg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <gregkh@linuxfoundation.org>
+Subject: [PATCH] staging: android: ashmem: Fix possible deadlock in
+ ashmem_ioctl
+Date: Wed, 28 Feb 2018 14:59:22 +0800
+Message-ID: <1519801162-52182-1-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: xieyisheng1@huawei.com, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, arve@android.com,
+ syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com, ben@decadent.org.uk
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495940069905483?=
-X-GMAIL-MSGID: =?utf-8?q?1593496402407432867?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+ashmem_mutex may create a chain of dependencies like:
 
-------------------
+CPU0                                    CPU1
+ mmap syscall                           ioctl syscall
+ -> mmap_sem (acquired)                 -> ashmem_ioctl
+ -> ashmem_mmap                            -> ashmem_mutex (acquired)
+    -> ashmem_mutex (try to acquire)       -> copy_from_user
+                                              -> mmap_sem (try to acquire)
 
-From: Paolo Abeni <pabeni@redhat.com>
+There is a lock odering problem between mmap_sem and ashmem_mutex causing
+a lockdep splat[1] during a syzcaller test. This patch fixes the problem
+by move copy_from_user out of ashmem_mutex.
 
-commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
+[1] https://www.spinics.net/lists/kernel/msg2733200.html
 
-The Syzbot reported a possible deadlock in the netfilter area caused by
-rtnl lock, xt lock and socket lock being acquired with a different order
-on different code paths, leading to the following backtrace:
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.15.0+ #301 Not tainted
-------------------------------------------------------
-syzkaller233489/4179 is trying to acquire lock:
-  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
-net/core/rtnetlink.c:74
-
-but task is already holding lock:
-  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
-xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
-
-which lock already depends on the new lock.
-===
-
-Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
-only in the required scope"), we already acquire the socket lock in
-the innermost scope, where needed. In such commit I forgot to remove
-the outer-most socket lock from the getsockopt() path, this commit
-addresses the issues dropping it now.
-
-v1 -> v2: fix bad subj, added relavant 'fixes' tag
-
-Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
-Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
-Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
-Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
-Suggested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: ce8a3a9e76d0 (staging: android: ashmem: Fix a race condition in pin ioctls)
+Reported-by: syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- net/ipv4/ip_sockglue.c   |    7 +------
- net/ipv6/ipv6_sockglue.c |   10 ++--------
- 2 files changed, 3 insertions(+), 14 deletions(-)
+ drivers/staging/android/ashmem.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1563,10 +1563,7 @@ int ip_getsockopt(struct sock *sk, int l
- 		if (get_user(len, optlen))
- 			return -EFAULT;
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 6dbba5a..8c55706 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -702,16 +702,14 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+ 	size_t pgstart, pgend;
+ 	int ret = -EINVAL;
  
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
-@@ -1598,9 +1595,7 @@ int compat_ip_getsockopt(struct sock *sk
- 		if (get_user(len, optlen))
- 			return -EFAULT;
++	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
++		return -EFAULT;
++
+ 	mutex_lock(&ashmem_mutex);
  
--		lock_sock(sk);
- 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
--		release_sock(sk);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -1355,10 +1355,7 @@ int ipv6_getsockopt(struct sock *sk, int
- 		if (get_user(len, optlen))
- 			return -EFAULT;
+ 	if (unlikely(!asma->file))
+ 		goto out_unlock;
  
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET6, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
-@@ -1397,10 +1394,7 @@ int compat_ipv6_getsockopt(struct sock *
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = compat_nf_getsockopt(sk, PF_INET6,
--					   optname, optval, &len);
--		release_sock(sk);
-+		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
+-	if (unlikely(copy_from_user(&pin, p, sizeof(pin)))) {
+-		ret = -EFAULT;
+-		goto out_unlock;
+-	}
+-
+ 	/* per custom, you can pass zero for len to mean "everything onward" */
+ 	if (!pin.len)
+ 		pin.len = PAGE_ALIGN(asma->size) - pin.offset;
+-- 
+1.7.12.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
