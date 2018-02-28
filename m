@@ -1,102 +1,112 @@
-Return-Path: <kernel-hardening-return-12054-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvzyb7+RBYL/WvtWyfGD3wav/xmTv3GW+VMB7p84ogLFZXvA9JP2s/9y0xEXIhCfNkrcMeL
-ARC-Seal: i=1; a=rsa-sha256; t=1519851779; cv=none;
+Return-Path: <kernel-hardening-return-12045-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsigISW2VYOldaew7vdrnsB/yj3ADXFsgS8YSg8Q7xoCYCvv+FzVJp5o2smggrl7yr2aM0w
+ARC-Seal: i=1; a=rsa-sha256; t=1519847692; cv=none;
         d=google.com; s=arc-20160816;
-        b=nhBGHTzlzMu0Zas6mCxfGJQgZnl5UGaq8d7FuC/xsgloS8g8ken+cWxpyobL449ibU
-         jslel491iDcO7LMX6aLGg2U+ATtzrZ6CgtCiCk3/YhIqUztkIcRnM9V8NpXNClfHoRyN
-         HBTZE8m8gWhm59YPc7icn17CchZFscPQZMraLRuBuqDeZ97mF3r+hd5vDNeXN06hrEs4
-         TyboHzz7BnMf5IU3mPRFfM9M60Q0Xlsq70773kzRW8Wd/QjuWNU25qqaIqz0qqz+c3lW
-         yT0OoFH0gdvwQqmrURenEqTRV4f6vKD1tVlkH8U7KIty7N/Qw31HZ2OVMAxHk0zlFT/E
-         elrw==
+        b=XR1J0Q8/aB+ER0xLSaJ75mYkNmA7lP2oUdH5faxtvZXtaiVXcgQ707yexgZpkAzyUX
+         IRtb2T2Is6oeQgxVflszGlyMd26B31MjzpoR7vwTNCtOapVEHALXTEqF1LQhHtQ4kzCb
+         ZNvLxhLY5lgKn7bmCDuo/jxiwj14S24rUDE3ZyW4UEMquh38ckund+0la+6nOtFinQhg
+         dc9R6jCd7pOrkDq5rjH7X4XX9csIT+fdtHWTGzSU+vj/fyMh4l3MZ2i0hC3diG/Fn6M/
+         pxXyXT/vSxxjVBFz9VbtsVow280cwSYm2LSm2zI6dLJS+Dy7Q8nNE4da8OjoV0gamtsS
+         GK8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:sender:mime-version:dkim-signature
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=/+BbvcQKPWdX7RD8uRA6lSaBOziDfR36ZlCoTXGgKRE=;
-        b=hgmUWjke1PXcCFaqvPAUuRVuqxxHt9aiqhyq3CK6+sNBnUduejEZz5EEr/DmFmZaNK
-         vBA9lo4P44PF93R5yFCQ10SYKXtC68bShcnXnUsFQZYfpSkBLMvaagmIV48RAr1kiBmc
-         PPiubRFhNwUl5oYCk7RXUzoBJW0ghG6ZAbm796Bw9XrPpqyvoQfOXV+Q5v2o79B8uHdR
-         AfayLbtF/6BE1hi39H87Euo17QDZsZtu1zcgDLLawUnJuJrybj+pyf8VFW/72a7udaMg
-         sKmJ3kaiJXKhoikAzUs7W4S/BOuN4YAbgJKhUrkUUXExQOJSrvsl3zutE2xFGAz3vIoO
-         UnQg==
+        bh=8nuzetamnbDVzWdUqCnlwpKPojsVJmWt4zMEvyOeGZ8=;
+        b=aKhEjflxvE5v1KyqNwd7loGpeuzrL3H3WiW3r1KulT+cq68HXobuas5GK0TFfvKSzK
+         SxbYxv/iPGoWdOZiCNqcbKMIsfC+kPfoi90TY/MxSQYYHDfRqZ1Tiu4fvCOpDnaa+FkI
+         a3eMWJsrrqV/N0YvPLOq8qs4FP6210huIu+sOfhLGqyhtH/8E4WzYpeyE3BWCxdbyZP+
+         CoEMTWZSMFgspZT6Yz55u13Y5eH/QsKCht5FInLn5RshRCCPBYqj9gvJYt5bC7Kr5cSs
+         cFxHDLCYQhctmi75+MCriWkhKEuqZr42Tlefr7tQcParFeuJphp4KNvQFDiF4+Ff7bpa
+         OeIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cW1o4dDa;
-       spf=pass (google.com: domain of kernel-hardening-return-12054-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12054-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=TKyB7lOw;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hhLx0wvF;
+       spf=pass (google.com: domain of kernel-hardening-return-12045-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12045-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cW1o4dDa;
-       spf=pass (google.com: domain of kernel-hardening-return-12054-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12054-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=TKyB7lOw;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hhLx0wvF;
+       spf=pass (google.com: domain of kernel-hardening-return-12045-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12045-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228183349.GA16336@bombadil.infradead.org>
+Sender: keescook@google.com
+In-Reply-To: <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
 References: <20180227131338.3699-1-blackzert@gmail.com> <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
- <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com> <20180228183349.GA16336@bombadil.infradead.org>
-From: Daniel Micay <danielmicay@gmail.com>
-Date: Wed, 28 Feb 2018 16:02:40 -0500
-Message-ID: <CA+DvKQKoo1U7T_iOOLhfEf9c+K1pzD068au+kGtx0RokFFNKHw@mail.gmail.com>
+ <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 28 Feb 2018 11:54:32 -0800
+X-Google-Sender-Auth: NYFjIqahP2zR9JElan52x58o_IQ
+Message-ID: <CAGXu5jLY4eX5BMU8-2HFr2myjSL717KE-m_SAQp1yeu=cg+w7g@mail.gmail.com>
 Subject: Re: [RFC PATCH] Randomization of address chosen by mmap.
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Ilya Smith <blackzert@gmail.com>, Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+To: Ilya Smith <blackzert@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
 	Michal Hocko <mhocko@suse.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>, Hugh Dickins <hughd@google.com>,
-	Helge Deller <deller@gmx.de>, Andrea Arcangeli <aarcange@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
-	Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, Helge Deller <deller@gmx.de>,
+	Andrea Arcangeli <aarcange@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Linux-MM <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
-X-GMAIL-MSGID: =?utf-8?q?1593680099741439211?=
+X-GMAIL-MSGID: =?utf-8?q?1593675813334726122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The option to add at least one guard page would be useful whether or
-not it's tied to randomization. It's not feasible to do that in
-userspace for mmap as a whole, only specific users of mmap like malloc
-and it adds significant overhead vs. a kernel implementation. It could
-optionally let you choose a minimum and maximum guard region size with
-it picking random sizes if they're not equal. It's important for it to
-be an enforced gap rather than something that can be filled in by
-another allocation. It will obviously help a lot more when it's being
-used with a hardened allocator designed to take advantage of this
-rather than glibc malloc or jemalloc.
+On Wed, Feb 28, 2018 at 9:13 AM, Ilya Smith <blackzert@gmail.com> wrote:
+>> On 27 Feb 2018, at 23:52, Kees Cook <keescook@chromium.org> wrote:
+>> What are the two phases here? Could this second one get collapsed into
+>> the first?
+>>
+>
+> Let me explain.
+> 1. we use current implementation to get larger address. Remember it as
+> =E2=80=98right_vma=E2=80=99.
+> 2. we walk tree from mm->mmap what is lowest vma.
+> 3. we check if current vma gap satisfies length and low/high constrains
+> 4. if so, we call random() to decide if we choose it. This how we randoml=
+y choose vma and gap
+> 5. we walk tree from lowest vma to highest and ignore subtrees with less =
+gap.
+> we do it until reach =E2=80=98right_vma=E2=80=99
+>
+> Once we found gap, we may randomly choose address inside it.
+>
+>>> +       addr =3D get_random_long() % ((high - low) >> PAGE_SHIFT);
+>>> +       addr =3D low + (addr << PAGE_SHIFT);
+>>> +       return addr;
+>>>
+>>
+>> How large are the gaps intended to be? Looking at the gaps on
+>> something like Xorg they differ a lot.
+>
+> Sorry, I can=E2=80=99t get clue. What's the context? You tried patch or w=
+hats the case?
 
-I don't think it makes sense for the kernel to attempt mitigations to
-hide libraries. The best way to do that is in userspace, by having the
-linker reserve a large PROT_NONE region for mapping libraries (both at
-initialization and for dlopen) including a random gap to act as a
-separate ASLR base. If an attacker has library addresses, it's hard to
-see much point in hiding the other libraries from them. It does make
-sense to keep them from knowing the location of any executable code if
-they leak non-library addresses. An isolated library region + gap is a
-feature we implemented in CopperheadOS and it works well, although we
-haven't ported it to Android 7.x or 8.x. I don't think the kernel can
-bring much / anything to the table for it. It's inherently the
-responsibility of libc to randomize the lower bits for secondary
-stacks too.
+I was trying to understand the target entropy level, and I'm worried
+it's a bit biased. For example, if the first allocation lands at 1/4th
+of the memory space, the next allocation (IIUC) has a 50% chance of
+falling on either side of it. If it goes on the small side, it then
+has much less entropy than if it had gone on the other side. I think
+this may be less entropy than choosing a random address and just
+seeing if it fits or not. Dealing with collisions could be done either
+by pushing the address until it doesn't collide or picking another
+random address, etc. This is probably more expensive, though, since it
+would need to walk the vma tree repeatedly. Anyway, I was ultimately
+curious about your measured entropy and what alternatives you
+considered.
 
-Fine-grained randomized mmap isn't going to be used if it causes
-unpredictable levels of fragmentation or has a high / unpredictable
-performance cost. I don't think it makes sense to approach it
-aggressively in a way that people can't use. The OpenBSD randomized
-mmap is a fairly conservative implementation to avoid causing
-excessive fragmentation. I think they do a bit more than adding random
-gaps by switching between different 'pivots' but that isn't very high
-benefit. The main benefit is having random bits of unmapped space all
-over the heap when combined with their hardened allocator which
-heavily uses small mmap mappings and has a fair bit of malloc-level
-randomization (it's a bitmap / hash table based slab allocator using
-4k regions with a page span cache and we use a port of it to Android
-with added hardening features but we're missing the fine-grained mmap
-rand it's meant to have underneath what it does itself).
+-Kees
 
-The default vm.max_map_count = 65530 is also a major problem for doing
-fine-grained mmap randomization of any kind and there's the 32-bit
-reference count overflow issue on high memory machines with
-max_map_count * pid_max which isn't resolved yet.
+--=20
+Kees Cook
+Pixel Security
