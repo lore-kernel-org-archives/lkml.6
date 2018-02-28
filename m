@@ -1,196 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934936AbeB1VUU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:20:20 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49657 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933074AbeB1VUT (ORCPT
+        id S934886AbeB1VXj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:23:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49598 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933074AbeB1VXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:20:19 -0500
-Date: Wed, 28 Feb 2018 22:20:16 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Woody Suwalski <terraluna977@gmail.com>
-cc: Linux Kernel List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        William Grant <william.grant@canonical.com>
-Subject: Re: 4.16 regression: s2ram broken on non-PAE i686
-In-Reply-To: <da61401a-5d97-c925-ef0b-fcd937c2712a@gmail.com>
-Message-ID: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
-References: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com> <alpine.DEB.2.21.1802280959180.1886@nanos.tec.linutronix.de> <da61401a-5d97-c925-ef0b-fcd937c2712a@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Feb 2018 16:23:37 -0500
+Subject: Re: [PATCH v2 01/15] KVM: s390: refactor crypto initialization
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180228183741.5276e3d3.cohuck@redhat.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 16:23:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180228183741.5276e3d3.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18022821-0024-0000-0000-0000032F0D08
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008604; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00996478; UDB=6.00506598; IPR=6.00775800;
+ MB=3.00019784; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-28 21:23:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022821-0025-0000-0000-0000472E4645
+Message-Id: <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280259
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Woody,
-
-On Wed, 28 Feb 2018, Woody Suwalski wrote:
-> Certainly. I understand you want dmesg output for kernels build with and
-> without PAE, not just PAE=n on the cmdline :-)
-> Here it is...
-
-Thanks for providing the data. It did not pinpoint the issue but at least
-it gave me the hint to look into the right direction.
-
-Does the patch below fix the issue for you? It's untested as I'm at home
-and have no access to a 32bit machine right now.
-
-Thanks,
-
-	tglx
-
-8<------------------
-Subject: x86/cpu_entry_area: Sync cpu_entry_area to initial_page_table
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Wed, 28 Feb 2018 21:14:26 +0100
-
-The separation of the cpu_entry_area from the fixmap missed the fact that
-on 32bit non-PAE kernels the cpu_entry_area mapping might not be covered in
-initial_page_table by the previous synchronizations.
-
-This results in suspend/resume failures because 32bit utilizes initial page
-table for resume. The absence of the cpu_entry_area mapping results in a
-triple fault, aka. insta reboot.
-
-Synchronize the initial page table after setting up the cpu entry
-area. Instead of adding yet another copy of the same code, move it to a
-function and invoke it from the various places.
-
-It needs to be investigated if the existing calls in setup_arch() and
-setup_per_cpu_areas() can be replaced by the later invocation from
-setup_cpu_entry_areas(), but that's beyond the scope of this fix.
-
-Fixes: 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
-Reported-by: Woody Suwalski <terraluna977@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
----
- arch/x86/include/asm/pgtable_32.h |    1 +
- arch/x86/include/asm/pgtable_64.h |    1 +
- arch/x86/kernel/setup.c           |   17 +++++------------
- arch/x86/kernel/setup_percpu.c    |   17 ++++-------------
- arch/x86/mm/cpu_entry_area.c      |    6 ++++++
- arch/x86/mm/init_32.c             |   15 +++++++++++++++
- 6 files changed, 32 insertions(+), 25 deletions(-)
-
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -32,6 +32,7 @@ extern pmd_t initial_pg_pmd[];
- static inline void pgtable_cache_init(void) { }
- static inline void check_pgt_cache(void) { }
- void paging_init(void);
-+void sync_initial_page_table(void);
- 
- /*
-  * Define this if things work differently on an i386 and an i486:
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -28,6 +28,7 @@ extern pgd_t init_top_pgt[];
- #define swapper_pg_dir init_top_pgt
- 
- extern void paging_init(void);
-+static inline void sync_initial_page_table(void) { }
- 
- #define pte_ERROR(e)					\
- 	pr_err("%s:%d: bad pte %p(%016lx)\n",		\
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1204,20 +1204,13 @@ void __init setup_arch(char **cmdline_p)
- 
- 	kasan_init();
- 
--#ifdef CONFIG_X86_32
--	/* sync back kernel address range */
--	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			KERNEL_PGD_PTRS);
--
- 	/*
--	 * sync back low identity map too.  It is used for example
--	 * in the 32-bit EFI stub.
-+	 * Sync back kernel address range.
-+	 *
-+	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
-+	 * this call?
- 	 */
--	clone_pgd_range(initial_page_table,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
--#endif
-+	sync_initial_page_table();
- 
- 	tboot_probe();
- 
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -287,24 +287,15 @@ void __init setup_per_cpu_areas(void)
- 	/* Setup cpu initialized, callin, callout masks */
- 	setup_cpu_local_masks();
- 
--#ifdef CONFIG_X86_32
- 	/*
- 	 * Sync back kernel address range again.  We already did this in
- 	 * setup_arch(), but percpu data also needs to be available in
- 	 * the smpboot asm.  We can't reliably pick up percpu mappings
- 	 * using vmalloc_fault(), because exception dispatch needs
- 	 * percpu data.
-+	 *
-+	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
-+	 * this call?
- 	 */
--	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			KERNEL_PGD_PTRS);
--
--	/*
--	 * sync back low identity map too.  It is used for example
--	 * in the 32-bit EFI stub.
--	 */
--	clone_pgd_range(initial_page_table,
--			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
--			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
--#endif
-+	sync_initial_page_table();
- }
---- a/arch/x86/mm/cpu_entry_area.c
-+++ b/arch/x86/mm/cpu_entry_area.c
-@@ -163,4 +163,10 @@ void __init setup_cpu_entry_areas(void)
- 
- 	for_each_possible_cpu(cpu)
- 		setup_cpu_entry_area(cpu);
-+
-+	/*
-+	 * This is the last essential update to swapper_pgdir which needs
-+	 * to be synchronized to initial_page_table on 32bit.
-+	 */
-+	sync_initial_page_table();
- }
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -453,6 +453,21 @@ static inline void permanent_kmaps_init(
- }
- #endif /* CONFIG_HIGHMEM */
- 
-+void __init sync_initial_page_table(void)
-+{
-+	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
-+			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-+			KERNEL_PGD_PTRS);
-+
-+	/*
-+	 * sync back low identity map too.  It is used for example
-+	 * in the 32-bit EFI stub.
-+	 */
-+	clone_pgd_range(initial_page_table,
-+			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-+			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
-+}
-+
- void __init native_pagetable_init(void)
- {
- 	unsigned long pfn, va;
+On 02/28/2018 12:37 PM, Cornelia Huck wrote:
+> On Tue, 27 Feb 2018 09:27:59 -0500
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> The crypto control block designation (CRYCBD) is a 32-bit
+>> field in the KVM guest's SIE state description. The
+>> contents of bits 1-28 of this field, with three zero bits
+>> appended on the right, designate the host real 31-bit
+>> address of a crypto control block (CRYCB). Bits 30-31
+>> specify the format of the CRYCB. In the current
+>> implementation, the address of the CRYCB is stored in
+>> the CRYCBD only if the Message-Security-Assist extension
+>> 3 (MSA3) facility is installed. Virtualization of AP
+>> facilities, however, requires that a CRYCB of the
+>> appropriate format be made available to SIE regardless
+>> of whether MSA3 is installed or not.
+>>
+>> This patch introduces a new compilation unit to provide
+>> all interfaces related to configuration of AP facilities.
+>> Let's start by moving the function for setting the CRYCB
+>> format from arch/s390/kvm/kvm-s390 to this new AP
+>> configuration interface.
+> Hm, I would tweak this patch description a bit. First, you talk about
+> what the crycbd is; then, what needs to be done for vfio-ap support;
+> then you simply state that you move some interfaces to a new file. I'd
+> like to see a connection between those parts :)
+>
+> [It sounds a bit like you'd just introduce a new file and move some
+> functions, while you do have more changes in there.]
+I'll try to wordsmith the patch description.
+>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> ---
+>>   MAINTAINERS                      |   10 ++++++
+>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++
+>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>   arch/s390/kvm/Makefile           |    2 +-
+>>   arch/s390/kvm/kvm-ap.c           |   47 ++++++++++++++++++++++++++++
+>>   arch/s390/kvm/kvm-s390.c         |   62 +++++---------------------------------
+>>   6 files changed, 83 insertions(+), 55 deletions(-)
+>>   create mode 100644 arch/s390/include/asm/kvm-ap.h
+>>   create mode 100644 arch/s390/kvm/kvm-ap.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 0ec5881..4acf7c2 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11875,6 +11875,16 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+>>   S:	Supported
+>>   F:	drivers/s390/crypto/
+>>   
+>> +S390 VFIO AP DRIVER
+>> +M:	Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> +M:	Christian BornTraeger <borntraeger@de.ibm.com>
+> Typo.
+Will fix
+>
+>> +M:	Martin Schwidefsky <schwidefsky@de.ibm.com>
+>> +L:	linux-s390@vger.kernel.org
+>> +W:	http://www.ibm.com/developerworks/linux/linux390/
+>> +S:	Supported
+>> +F:	arch/s390/include/asm/kvm/kvm-ap.h
+>> +F:	arch/s390/kvm/kvm-ap.c
+>> +
+>>   S390 ZFCP DRIVER
+>>   M:	Steffen Maier <maier@linux.vnet.ibm.com>
+>>   M:	Benjamin Block <bblock@linux.vnet.ibm.com>
+> (...)
+>
+>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>> new file mode 100644
+>> index 0000000..5305f4c
+>> --- /dev/null
+>> +++ b/arch/s390/kvm/kvm-ap.c
+>> @@ -0,0 +1,47 @@
+>> +/*
+>> + * Adjunct Processor (AP) configuration management for KVM guests
+>> + *
+>> + * Copyright IBM Corp. 2017
+>> + *
+>> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+>> + */
+>> +
+>> +#include <asm/kvm-ap.h>
+>> +#include <asm/ap.h>
+>> +
+>> +#include "kvm-s390.h"
+>> +
+>> +static int kvm_ap_apxa_installed(void)
+>> +{
+>> +	int ret;
+>> +	struct ap_config_info config;
+>> +
+>> +	ret = ap_query_configuration(&config);
+> Doesn't that introduce a dependency on CONFIG_ZCRYPT?
+It does, but AFAIK zcrypt is built into the kernel. Or is that not what 
+you are asking?
+>
+>> +	if (ret)
+>> +		return 0;
+>> +
+>> +	return (config.apxa == 1);
+>> +}
+>> +KVM guest's use.
+>> +/**
+>> + * kvm_ap_set_crycb_format
+>> + *
+>> + * Set the CRYCB format in the CRYCBD for the KVM guest.
+> Spell out "crypto control block" somewhere?
+Done
+>
+>> + *
+>> + * @kvm:	the KVM guest
+>> + * @crycbd:	the CRYCB descriptor
+>> + */
+>> +void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd)
+>> +{
+>> +	*crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
+>> +
+>> +	*crycbd &= ~(CRYCB_FORMAT_MASK);
+>> +
+>> +	/* If the MSAX3 is installed */
+> /* check whether MSAX3 is installed */ ?
+Sure, why not
+>
+>> +	if (test_kvm_facility(kvm, 76)) {
+>> +		if (kvm_ap_apxa_installed())
+>> +			*crycbd |= CRYCB_FORMAT2;
+>> +		else
+>> +			*crycbd |= CRYCB_FORMAT1;
+>> +	}
+>> +}
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 5f5a4cb..de1e299 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -1913,12 +1866,13 @@ static u64 kvm_s390_get_initial_cpuid(void)
+>>   
+>>   static void kvm_s390_crypto_init(struct kvm *kvm)
+>>   {
+>> +	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>> +	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
+>> +	kvm_ap_set_crycb_format(kvm, &kvm->arch.crypto.crycbd);
+> Doesn't kvm_ap_set_crycb_format() already initialize its second
+> parameter?
+Yes it does. I'm going to have to rework this (see comment below)
+>
+> Would it make sense to do
+>
+> kvm->arch.crypto.crycbd = kvm_ap_build_crycbd(kvm);
+>
+> or so instead?
+It would if this was the only place the function gets called. In patch 
+2, this is called
+from VSIE and it wouldn't make sense in that context. I like your idea, 
+let me work on this
+and figure out how best to make it happen.
+>
+>> +
+>>   	if (!test_kvm_facility(kvm, 76))
+>>   		return;
+>>   
+>> -	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>> -	kvm_s390_set_crycb_format(kvm);
+>> -
+>>   	/* Enable AES/DEA protected key functions by default */
+>>   	kvm->arch.crypto.aes_kw = 1;
+>>   	kvm->arch.crypto.dea_kw = 1;
