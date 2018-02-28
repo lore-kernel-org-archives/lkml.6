@@ -1,108 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeB1HAB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 02:00:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55604 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751717AbeB1HAA (ORCPT
+        id S1751994AbeB1HGR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 02:06:17 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43969 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751631AbeB1HGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 02:00:00 -0500
-Subject: Re: [RFC REBASED 5/5] powerpc/mm/slice: use the dynamic high slice
- size to limit bitmap operations
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
- <5badd882663833576c10b8aafe235fe1e443f119.1518382747.git.christophe.leroy@c-s.fr>
- <87bmga7qng.fsf@linux.vnet.ibm.com>
- <20180227191125.659d5cbe@roar.ozlabs.ibm.com>
- <878tbe7ggs.fsf@linux.vnet.ibm.com>
- <20180228165331.6e09959d@roar.ozlabs.ibm.com>
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Date: Wed, 28 Feb 2018 12:29:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180228165331.6e09959d@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022806-0044-0000-0000-000003EB2F21
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00996192; UDB=6.00506426; IPR=6.00775515;
- MB=3.00019772; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-28 06:59:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022806-0045-0000-0000-0000081B3ACE
-Message-Id: <1f14fec4-a2b9-30c8-4c73-ecf00dbba0d7@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280083
+        Wed, 28 Feb 2018 02:06:15 -0500
+X-Google-Smtp-Source: AH8x227J3V3Dg9rvfgoTe/8XFc5gfKkVBxTJuc0leinYIBjpfs3Fbm+Uf8n4WNiMYA6Q6j7qfUua9g==
+From: Baegjae Sung <baegjae@gmail.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        baegjae@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] nvme-multipath: fix sysfs dangerously created links
+Date: Wed, 28 Feb 2018 16:06:04 +0900
+Message-Id: <20180228070604.25868-1-baegjae@gmail.com>
+X-Mailer: git-send-email 2.8.3.windows.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If multipathing is enabled, each NVMe subsystem creates a head
+namespace (e.g., nvme0n1) and multiple private namespaces
+(e.g., nvme0c0n1 and nvme0c1n1) in sysfs. When creating links for
+private namespaces, links of head namespace are used, so the
+namespace creation order must be followed (e.g., nvme0n1 ->
+nvme0c1n1). If the order is not followed, links of sysfs will be
+incomplete or kernel panic will occur.
 
+The kernel panic was:
+  kernel BUG at fs/sysfs/symlink.c:27!
+  Call Trace:
+    nvme_mpath_add_disk_links+0x5d/0x80 [nvme_core]
+    nvme_validate_ns+0x5c2/0x850 [nvme_core]
+    nvme_scan_work+0x1af/0x2d0 [nvme_core]
 
-On 02/28/2018 12:23 PM, Nicholas Piggin wrote:
-> On Tue, 27 Feb 2018 18:11:07 +0530
-> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
-> 
->> Nicholas Piggin <npiggin@gmail.com> writes:
->>
->>> On Tue, 27 Feb 2018 14:31:07 +0530
->>> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
->>>   
->>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>>>    
->>>>> The number of high slices a process might use now depends on its
->>>>> address space size, and what allocation address it has requested.
->>>>>
->>>>> This patch uses that limit throughout call chains where possible,
->>>>> rather than use the fixed SLICE_NUM_HIGH for bitmap operations.
->>>>> This saves some cost for processes that don't use very large address
->>>>> spaces.
->>>>
->>>> I haven't really looked at the final code. One of the issue we had was
->>>> with the below scenario.
->>>>
->>>> mmap(addr, len) where addr < 128TB and addr+len > 128TB  We want to make
->>>> sure we build the mask such that we don't find the addr available.
->>>
->>> We should run it through the mmap regression tests. I *think* we moved
->>> all of that logic from the slice code to get_ummapped_area before going
->>> in to slices. I may have missed something though, it would be good to
->>> have more eyes on it.
->>>   
->>
->> mmap(-1,...) failed with the test. Something like below fix it
->>
->> @@ -756,7 +770,7 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
->>          mm->context.low_slices_psize = lpsizes;
->>   
->>          hpsizes = mm->context.high_slices_psize;
->> -       high_slices = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
->> +       high_slices = SLICE_NUM_HIGH;
->>          for (i = 0; i < high_slices; i++) {
->>                  mask_index = i & 0x1;
->>                  index = i >> 1;
->>
->> I guess for everything in the mm_context_t, we should compute it till
->> SLICE_NUM_HIGH. The reason for failure was, even though we recompute the
->> slice mask cached in mm_context on slb_addr_limit, it was still derived
->> from the high_slices_psizes which was computed with lower value.
-> 
-> Okay thanks for catching that Aneesh. I guess that's a slow path so it
-> should be okay. Christophe if you're taking care of the series can you
-> fold it in? Otherwise I'll do that after yours gets merged.
-> 
+Correct order
+Context A     Context B
+nvme0n1
+nvme0c0n1     nvme0c1n1
 
-should we also compute the mm_context_t.slice_mask using SLICE_NUM_HIGH 
-and skip the recalc_slice_mask_cache when we change the addr limit?
+Incorrect order
+Context A     Context B
+              nvme0c1n1
+nvme0n1
+nvme0c0n1
 
--aneesh
+The nvme_mpath_add_disk (for creating head namespace) is called
+just before the nvme_mpath_add_disk_links (for creating private
+namespaces). In nvme_mpath_add_disk, the first context acquires
+the lock of subsystem and creates a head namespace, and other
+contexts do nothing by checking GENHD_FL_UP of a head namespace
+after waiting to acquire the lock. We verified the code with or
+without multipathing using three vendors of dual-port NVMe SSDs.
+
+Signed-off-by: Baegjae Sung <baegjae@gmail.com>
+---
+ drivers/nvme/host/core.c      | 12 +++---------
+ drivers/nvme/host/multipath.c | 15 ++++++++++-----
+ 2 files changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 0fe7ea35c221..817e5e2766da 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2844,7 +2844,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
+ }
+ 
+ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+-		struct nvme_id_ns *id, bool *new)
++		struct nvme_id_ns *id)
+ {
+ 	struct nvme_ctrl *ctrl = ns->ctrl;
+ 	bool is_shared = id->nmic & (1 << 0);
+@@ -2860,8 +2860,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+ 			ret = PTR_ERR(head);
+ 			goto out_unlock;
+ 		}
+-
+-		*new = true;
+ 	} else {
+ 		struct nvme_ns_ids ids;
+ 
+@@ -2873,8 +2871,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
+ 			ret = -EINVAL;
+ 			goto out_unlock;
+ 		}
+-
+-		*new = false;
+ 	}
+ 
+ 	list_add_tail(&ns->siblings, &head->list);
+@@ -2945,7 +2941,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	struct nvme_id_ns *id;
+ 	char disk_name[DISK_NAME_LEN];
+ 	int node = dev_to_node(ctrl->dev), flags = GENHD_FL_EXT_DEVT;
+-	bool new = true;
+ 
+ 	ns = kzalloc_node(sizeof(*ns), GFP_KERNEL, node);
+ 	if (!ns)
+@@ -2971,7 +2966,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	if (id->ncap == 0)
+ 		goto out_free_id;
+ 
+-	if (nvme_init_ns_head(ns, nsid, id, &new))
++	if (nvme_init_ns_head(ns, nsid, id))
+ 		goto out_free_id;
+ 	nvme_setup_streams_ns(ctrl, ns);
+ 	
+@@ -3037,8 +3032,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
+ 			ns->disk->disk_name);
+ 
+-	if (new)
+-		nvme_mpath_add_disk(ns->head);
++	nvme_mpath_add_disk(ns->head);
+ 	nvme_mpath_add_disk_links(ns);
+ 	return;
+  out_unlink_ns:
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 3b211d9e58b8..b7e5c6db4d92 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -198,11 +198,16 @@ void nvme_mpath_add_disk(struct nvme_ns_head *head)
+ {
+ 	if (!head->disk)
+ 		return;
+-	device_add_disk(&head->subsys->dev, head->disk);
+-	if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
+-			&nvme_ns_id_attr_group))
+-		pr_warn("%s: failed to create sysfs group for identification\n",
+-			head->disk->disk_name);
++
++	mutex_lock(&head->subsys->lock);
++	if (!(head->disk->flags & GENHD_FL_UP)) {
++		device_add_disk(&head->subsys->dev, head->disk);
++		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
++				&nvme_ns_id_attr_group))
++			pr_warn("%s: failed to create sysfs group for identification\n",
++				head->disk->disk_name);
++	}
++	mutex_unlock(&head->subsys->lock);
+ }
+ 
+ void nvme_mpath_add_disk_links(struct nvme_ns *ns)
+-- 
+2.16.2
