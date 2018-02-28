@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752124AbeB1GfX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:35:23 -0500
-Received: from david.siemens.de ([192.35.17.14]:45985 "EHLO david.siemens.de"
+        id S1752096AbeB1GfW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:35:22 -0500
+Received: from david.siemens.de ([192.35.17.14]:46006 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751721AbeB1GfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:35:13 -0500
+        id S1751758AbeB1GfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:35:18 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
@@ -13,10 +13,10 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Benedikt Spranger <b.spranger@linutronix.de>
-Subject: [PATCH v2 2/6] PCI: Scan all functions when running over Jailhouse
-Date: Wed, 28 Feb 2018 07:34:47 +0100
-Message-Id: <021d3dde4276c9bf4325f7bdc37e3c47069e48fc.1519799691.git.jan.kiszka@siemens.com>
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 1/6] jailhouse: Provide detection for non-x86 systems
+Date: Wed, 28 Feb 2018 07:34:46 +0100
+Message-Id: <558f5cbae432ae029e2d8ee9b0ef44d837318625.1519799691.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
 References: <cover.1519799691.git.jan.kiszka@siemens.com>
@@ -28,90 +28,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
-have a function 0.  Therefore, Linux scans for devices at function 0
-(devfn 0/8/16/...) and only scans for other functions if function 0
-has its Multi-Function Device bit set or ARI or SR-IOV indicate
-there are more functions.
+Implement jailhouse_paravirt() via device tree probing on architectures
+!= x86. Will be used by the PCI core.
 
-The Jailhouse hypervisor may pass individual functions of a
-multi-function device to a guest without passing function 0, which
-means a Linux guest won't find them.
-
-Change Linux PCI probing so it scans all function numbers when
-running as a guest over Jailhouse.
-
-This is technically prohibited by the spec, so it is possible that
-PCI devices without the Multi-Function Device bit set may have
-unexpected behavior in response to this probe.
-
-Based on patch by Benedikt Spranger, adding Jailhouse probing to avoid
-changing the behavior in the absence of the hypervisor.
-
-CC: Benedikt Spranger <b.spranger@linutronix.de>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/x86/pci/legacy.c | 4 +++-
- drivers/pci/probe.c   | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+ arch/x86/include/asm/jailhouse_para.h           |  2 +-
+ include/linux/hypervisor.h                      | 17 +++++++++++++++--
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
 
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 1cb01abcb1be..dfbe6ac38830 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -4,6 +4,7 @@
- #include <linux/init.h>
- #include <linux/export.h>
- #include <linux/pci.h>
-+#include <asm/jailhouse_para.h>
- #include <asm/pci_x86.h>
+diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
+new file mode 100644
+index 000000000000..2901c25ff340
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jailhouse.txt
+@@ -0,0 +1,8 @@
++Jailhouse non-root cell device tree bindings
++--------------------------------------------
++
++When running in a non-root Jailhouse cell (partition), the device tree of this
++platform shall have a top-level "hypervisor" node with the following
++properties:
++
++- compatible = "jailhouse,cell"
+diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
+index 875b54376689..b885a961a150 100644
+--- a/arch/x86/include/asm/jailhouse_para.h
++++ b/arch/x86/include/asm/jailhouse_para.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL2.0 */
  
  /*
-@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
+- * Jailhouse paravirt_ops implementation
++ * Jailhouse paravirt detection
+  *
+  * Copyright (c) Siemens AG, 2015-2017
+  *
+diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
+index b19563f9a8eb..fc08b433c856 100644
+--- a/include/linux/hypervisor.h
++++ b/include/linux/hypervisor.h
+@@ -8,15 +8,28 @@
+  */
  
- void pcibios_scan_specific_bus(int busn)
+ #ifdef CONFIG_X86
++
++#include <asm/jailhouse_para.h>
+ #include <asm/x86_init.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
  {
-+	int stride = jailhouse_paravirt() ? 1 : 8;
- 	int devfn;
- 	u32 l;
- 
- 	if (pci_find_bus(0, busn))
- 		return;
- 
--	for (devfn = 0; devfn < 256; devfn += 8) {
-+	for (devfn = 0; devfn < 256; devfn += stride) {
- 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
- 		    l != 0x0000 && l != 0xffff) {
- 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef5377438a1e..ce728251ae36 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -16,6 +16,7 @@
- #include <linux/pci-aspm.h>
- #include <linux/aer.h>
- #include <linux/acpi.h>
-+#include <linux/hypervisor.h>
- #include <linux/irqdomain.h>
- #include <linux/pm_runtime.h>
- #include "pci.h"
-@@ -2517,6 +2518,7 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
- 					      unsigned int available_buses)
+ 	x86_platform.hyper.pin_vcpu(cpu);
+ }
+-#else
++
++#else /* !CONFIG_X86 */
++
++#include <linux/of.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
  {
- 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
-+	unsigned int stride = jailhouse_paravirt() ? 1 : 8;
- 	unsigned int start = bus->busn_res.start;
- 	unsigned int devfn, cmax, max = start;
- 	struct pci_dev *dev;
-@@ -2524,7 +2526,7 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
- 	dev_dbg(&bus->dev, "scanning bus\n");
+ }
+-#endif
++
++static inline bool jailhouse_paravirt(void)
++{
++	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
++}
++
++#endif /* !CONFIG_X86 */
  
- 	/* Go find them, Rover! */
--	for (devfn = 0; devfn < 0x100; devfn += 8)
-+	for (devfn = 0; devfn < 0x100; devfn += stride)
- 		pci_scan_slot(bus, devfn);
- 
- 	/* Reserve buses for SR-IOV capability */
+ #endif /* __LINUX_HYPEVISOR_H */
 -- 
 2.13.6
