@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752603AbeB1KaX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:30:23 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37172 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752500AbeB1K3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:29:19 -0500
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6/7] x86/microcode: Request microcode on the BSP
-Date: Wed, 28 Feb 2018 11:28:45 +0100
-Message-Id: <20180228102846.13447-7-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180228102846.13447-1-bp@alien8.de>
-References: <20180228102846.13447-1-bp@alien8.de>
+        id S932117AbeB1Kat (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:30:49 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752096AbeB1Kar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:30:47 -0500
+Date: Wed, 28 Feb 2018 11:30:42 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] net: iucv: Free memory obtained by kzalloc
+Message-ID: <20180228113042.6a2f5177.cohuck@redhat.com>
+In-Reply-To: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
+References: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Wed, 28 Feb 2018 15:24:16 +0530
+Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
 
-... so that any newer version can land in the cache and can later be
-fished out by the application functions. Do that before grabbing the
-hotplug lock.
+> Free memory, if afiucv_iucv_init is not successful and
+> removing a IUCV driver.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  net/iucv/af_iucv.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+> index 1e8cc7b..eb0995a 100644
+> --- a/net/iucv/af_iucv.c
+> +++ b/net/iucv/af_iucv.c
+> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
+>  	af_iucv_dev->driver = &af_iucv_driver;
+>  	err = device_register(af_iucv_dev);
+>  	if (err)
+> -		goto out_driver;
+> +		goto out_iucv_dev;
+>  	return 0;
+>  
+> +out_iucv_dev:
+> +	kfree(af_iucv_dev);
+>  out_driver:
+>  	driver_unregister(&af_iucv_driver);
+>  out_iucv:
+> @@ -2496,6 +2498,7 @@ static void __exit afiucv_exit(void)
+>  {
+>  	if (pr_iucv) {
+>  		device_unregister(af_iucv_dev);
+> +		kfree(af_iucv_dev);
+>  		driver_unregister(&af_iucv_driver);
+>  		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
+>  		symbol_put(iucv_if);
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/kernel/cpu/microcode/core.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index fa32cb3dcca5..5dd157d48606 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -499,15 +499,10 @@ static int check_online_cpus(void)
- static enum ucode_state reload_for_cpu(int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
--	enum ucode_state ustate;
- 
- 	if (!uci->valid)
- 		return UCODE_OK;
- 
--	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
--	if (ustate != UCODE_OK)
--		return ustate;
--
- 	return apply_microcode_on_target(cpu);
- }
- 
-@@ -515,11 +510,11 @@ static ssize_t reload_store(struct device *dev,
- 			    struct device_attribute *attr,
- 			    const char *buf, size_t size)
- {
-+	int cpu, bsp = boot_cpu_data.cpu_index;
- 	enum ucode_state tmp_ret = UCODE_OK;
- 	bool do_callback = false;
- 	unsigned long val;
- 	ssize_t ret = 0;
--	int cpu;
- 
- 	ret = kstrtoul(buf, 0, &val);
- 	if (ret)
-@@ -528,6 +523,10 @@ static ssize_t reload_store(struct device *dev,
- 	if (val != 1)
- 		return size;
- 
-+	tmp_ret = microcode_ops->request_microcode_fw(bsp, &microcode_pdev->dev, true);
-+	if (tmp_ret != UCODE_OK)
-+		return size;
-+
- 	get_online_cpus();
- 
- 	ret = check_online_cpus();
--- 
-2.13.0
+No, you must not use kfree() after you called device_register() (even
+if it was not successful!) -- see the comment for device_register().
