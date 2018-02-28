@@ -1,103 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934811AbeB1U6U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 15:58:20 -0500
-Received: from mail-cys01nam02on0077.outbound.protection.outlook.com ([104.47.37.77]:14659
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934698AbeB1U6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:58:18 -0500
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Borislav Petkov <bp@suse.de>
-CC: Tony Luck <tony.luck@intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v2 0/8] Decode IA32/X64 CPER
-Thread-Topic: [PATCH v2 0/8] Decode IA32/X64 CPER
-Thread-Index: AQHTrzmGNIT5DEMr+0GLgvlHp3HCk6O5geyAgABgJNCAACPSgIAARNAQ
-Date: Wed, 28 Feb 2018 20:58:15 +0000
-Message-ID: <DM5PR12MB19169CD3BC3BAE3230C1DCA3F8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180228084321.GA2969@pd.tnic>
- <DM5PR12MB1916B6CA08F0D423B3635EDDF8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180228163539.GC2969@pd.tnic>
-In-Reply-To: <20180228163539.GC2969@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-x-originating-ip: [71.199.237.95]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1721;7:ufuGlUHn2XrKvsh/NVlaOo9z9mUzgCKcW1ILZ8C7EM5SdcmNJY20BmCpteupVwXXgntiCsr1KD6B0MNVC3nlYpZO2TSmZ9fkQwUH0ZbDjR1+OFMfMhy+10OZ+Dsou8xDSHDeNBrBYiNPje/XsC8aIf4NUs0Puti36cvAZ0wD0yctuIk1jVuKWr03VrRsHVPJ/tEpsdaqZ7h2bs147uS9ICOpFyphOJBUw3eoC57f2yIL3N0YqXoE+JG2Z/bMzSxu;20:UAz0hal/pRHMP4UN+XOW/KNRWr1JQi6n/wna6l9BN2YR7kNN4Wir6RuLXNHSv7W8QT70O15+5601FVeCthMU/kzM1+zhmQIjxOONo+buh8b6yFho0kG+1DihXz1EdmlD0/aN0/R7laexNVUZhdAvNJixR7rM+jxPSI/+rvNrP7CIitMAmFVLBcIsFrj7WWctjEd8YTSkpT9xYlVKZDKW73iOPQlfnm8eicQXIRtj5xjgKPpBoZct6LaEZMc69jEr
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 016acee0-46e7-42d4-e935-08d57eedfcc1
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1721;
-x-ms-traffictypediagnostic: DM5PR12MB1721:
-x-microsoft-antispam-prvs: <DM5PR12MB1721EA28F4939920DB687FF9F8C70@DM5PR12MB1721.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231220)(944501161)(52105095)(3002001)(6055026)(6041288)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB1721;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1721;
-x-forefront-prvs: 0597911EE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(396003)(346002)(366004)(39860400002)(13464003)(189003)(199004)(6246003)(68736007)(99286004)(81156014)(2906002)(14454004)(106356001)(3280700002)(3660700001)(3846002)(6116002)(81166006)(8676002)(76176011)(8936002)(6916009)(66066001)(7696005)(186003)(105586002)(5250100002)(5660300001)(26005)(72206003)(305945005)(7736002)(316002)(54906003)(74316002)(2950100002)(97736004)(229853002)(86362001)(102836004)(6436002)(9686003)(33656002)(53936002)(25786009)(93886005)(55016002)(478600001)(2900100001)(53546011)(6506007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1721;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 0eYDvoaZxOQq1R74vJ/lxKz/6NI7z5gKlCNV6mFjmWZHV7j2q0a3boYGhb+KX99gGKKtRSWe43W2gWER2tammnPqhVT/2RqIqNjflBD9SuEi6xJ0EGzyaFbU1YpAdoi+rId/6NKeA/ihtSFz5MSTjAmY/pNKz7ouBngcIFVLObo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 016acee0-46e7-42d4-e935-08d57eedfcc1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2018 20:58:15.5083
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1721
+        id S934843AbeB1U60 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 15:58:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:65339 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934698AbeB1U6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 15:58:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="scan'208";a="24042539"
+From: Rajvi Jingar <rajvi.jingar@intel.com>
+To: rajvi.jingar@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, christopher.s.hall@intel.com
+Subject: [PATCH] x86/tsc: Always Running Timer (ART) nanoseconds clocksource
+Date: Wed, 28 Feb 2018 03:54:45 -0800
+Message-Id: <1519818885-5480-1-git-send-email-rajvi.jingar@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1SKwSPD017748
 
-> -----Original Message-----
-> From: Borislav Petkov [mailto:bp@suse.de]
-> Sent: Wednesday, February 28, 2018 11:36 AM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: Tony Luck <tony.luck@intel.com>; linux-efi@vger.kernel.org; linux-
-> kernel@vger.kernel.org; ard.biesheuvel@linaro.org; x86@kernel.org
-> Subject: Re: [PATCH v2 0/8] Decode IA32/X64 CPER
-> 
-> On Wed, Feb 28, 2018 at 03:12:09PM +0000, Ghannam, Yazen wrote:
-> > CPER is the format used for BERT, etc. We'll only ever see a CPER if the
-> > firmware creates it. And it's up to firmware policy what is shared with
-> > the OS.
-> 
-> Yap, but we should still tie it into our infra.
-> 
+Some clock distribution mechanisms (e.g. PCIe-PTM) require time to be
+distributed in units of nanoseconds. In order to cross-timestamp local
+device time across domains the local device timestamp needs to be
+correlated with TSC.
 
-Okay, so how about this?
+On systems that support ART, a CPUID leaf (0x15) returns parameter
+Nominal Core Crystal Clock Frequency such that:
 
-1) We keep this set mostly as-is. This would be our fallback if we don't have
-anything better.
+ART_value (in ticks) = (cryst_freq * ART.ns) / 1e9
 
-2) I add the MCA decoding to this set. I was thinking to do this in a separate
-set but maybe it's better to do it all together.
+Add a special case for Goldmont-based platform (which returns cryst_freq 0)
+to manually set the frequency to 19.2MHz.
 
-Number 2 would mean we do a quick check on the CPER to see if it contains
-MCA info. There's no spec-defined way to do this, but we can make a good
-guess by seeing if we have an "MSR register" context and that context has
-an "MSR address" that is an MCA register.
+Signed-off-by: Rajvi Jingar <rajvi.jingar@intel.com>
+Signed-off-by: Christopher S. Hall <christopher.s.hall@intel.com>
+---
+ arch/x86/include/asm/cpufeatures.h |  1 +
+ arch/x86/include/asm/tsc.h         |  1 +
+ arch/x86/kernel/tsc.c              | 35 +++++++++++++++++++++++++++++++++--
+ 3 files changed, 35 insertions(+), 2 deletions(-)
 
-If we think we have MCA info, then we pull as much out of the CPER as we
-can and put it in a struct mce which we then pass to the notifier chain.
-
-If we don't think we have MCA info, then we fallback to number 1.
-
-At the moment, it seems we'll be using x86 CPER to represent MCA errors
-in BERT since there's no other option in BERT. So I think having number 2
-would catch most, if not all, errors reported with x86 CPER.
-
-Thanks,
-Yazen
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 0dfe4d3..32d295c 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -108,6 +108,7 @@
+ #define X86_FEATURE_EXTD_APICID		( 3*32+26) /* Extended APICID (8 bits) */
+ #define X86_FEATURE_AMD_DCM		( 3*32+27) /* AMD multi-node processor */
+ #define X86_FEATURE_APERFMPERF		( 3*32+28) /* P-State hardware coordination feedback capability (APERF/MPERF MSRs) */
++#define X86_FEATURE_ART_NS		( 3*32+29) /* Always running timer (ART) in nanoseconds */
+ #define X86_FEATURE_NONSTOP_TSC_S3	( 3*32+30) /* TSC doesn't stop in S3 state */
+ #define X86_FEATURE_TSC_KNOWN_FREQ	( 3*32+31) /* TSC has known frequency */
+ 
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index cf5d53c..2701d22 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -31,6 +31,7 @@ static inline cycles_t get_cycles(void)
+ }
+ 
+ extern struct system_counterval_t convert_art_to_tsc(u64 art);
++extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
+ 
+ extern void tsc_early_delay_calibrate(void);
+ extern void tsc_init(void);
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index fb43027..7b57751 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -49,6 +49,7 @@ int tsc_clocksource_reliable;
+ 
+ static u32 art_to_tsc_numerator;
+ static u32 art_to_tsc_denominator;
++static u32 art_to_tsc_hz;
+ static u64 art_to_tsc_offset;
+ struct clocksource *art_related_clocksource;
+ 
+@@ -976,7 +977,7 @@ core_initcall(cpufreq_register_tsc_scaling);
+  */
+ static void __init detect_art(void)
+ {
+-	unsigned int unused[2];
++	unsigned int unused;
+ 
+ 	if (boot_cpu_data.cpuid_level < ART_CPUID_LEAF)
+ 		return;
+@@ -992,7 +993,7 @@ static void __init detect_art(void)
+ 		return;
+ 
+ 	cpuid(ART_CPUID_LEAF, &art_to_tsc_denominator,
+-	      &art_to_tsc_numerator, unused, unused+1);
++	      &art_to_tsc_numerator, &art_to_tsc_hz, &unused);
+ 
+ 	if (art_to_tsc_denominator < ART_MIN_DENOMINATOR)
+ 		return;
+@@ -1001,6 +1002,15 @@ static void __init detect_art(void)
+ 
+ 	/* Make this sticky over multiple CPU init calls */
+ 	setup_force_cpu_cap(X86_FEATURE_ART);
++
++	if (art_to_tsc_hz == 0) {
++		if (boot_cpu_data.x86_model == INTEL_FAM6_ATOM_GOLDMONT)
++			art_to_tsc_hz = 19200000;
++		else
++			return;
++	}
++
++	setup_force_cpu_cap(X86_FEATURE_ART_NS);
+ }
+ 
+ 
+@@ -1179,6 +1189,27 @@ struct system_counterval_t convert_art_to_tsc(u64 art)
+ }
+ EXPORT_SYMBOL(convert_art_to_tsc);
+ 
++#define ART_NS_QUANTITY	1000000000
++
++/*
++ * Convert ART ns to TSC given numerator/denominator found in detect_art()
++ */
++struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
++{
++	u64 tmp, rem, res, art;
++
++	rem = do_div(art_ns, ART_NS_QUANTITY);
++
++	res = art_ns * art_to_tsc_hz;
++	tmp = rem * art_to_tsc_hz;
++
++	do_div(tmp, ART_NS_QUANTITY);
++	art = res + tmp;
++
++	return convert_art_to_tsc(art);
++}
++EXPORT_SYMBOL(convert_art_ns_to_tsc);
++
+ static void tsc_refine_calibration_work(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
+ /**
+-- 
+2.7.4
