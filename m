@@ -1,151 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeB1O2i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:28:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48987 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752465AbeB1O2h (ORCPT
+        id S1752743AbeB1Obg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:31:36 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35411 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752241AbeB1Obe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:28:37 -0500
-Date: Wed, 28 Feb 2018 06:28:13 -0800
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-04860d48a8aba5b21ae5ba1f86b0d4e3bc628fff@git.kernel.org>
-Cc: peterz@infradead.org, tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, bp@suse.de, tglx@linutronix.de
-In-Reply-To: <20180226134926.23069-1-bp@alien8.de>
-References: <20180226134926.23069-1-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lockdep: Show unadorned pointers
-Git-Commit-ID: 04860d48a8aba5b21ae5ba1f86b0d4e3bc628fff
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 28 Feb 2018 09:31:34 -0500
+Message-ID: <1519828292.3975.3.camel@pengutronix.de>
+Subject: Re: [PATCH v6] reset: add support for non-DT systems
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        David Lechner <david@lechnology.com>
+Date: Wed, 28 Feb 2018 15:31:32 +0100
+In-Reply-To: <20180228130857.5342-1-brgl@bgdev.pl>
+References: <20180228130857.5342-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  04860d48a8aba5b21ae5ba1f86b0d4e3bc628fff
-Gitweb:     https://git.kernel.org/tip/04860d48a8aba5b21ae5ba1f86b0d4e3bc628fff
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Mon, 26 Feb 2018 14:49:26 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 15:25:44 +0100
+On Wed, 2018-02-28 at 14:08 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The reset framework only supports device-tree. There are some platforms
+> however, which need to use it even in legacy, board-file based mode.
+> 
+> An example of such architecture is the DaVinci family of SoCs which
+> supports both device tree and legacy boot modes and we don't want to
+> introduce any regressions.
+> 
+> We're currently working on converting the platform from its hand-crafted
+> clock API to using the common clock framework. Part of the overhaul will
+> be representing the chip's power sleep controller's reset lines using
+> the reset framework.
+> 
+> This changeset extends the core reset code with a new reset lookup
+> entry structure. It contains data allowing the reset core to associate
+> reset lines with devices by comparing the dev_id and con_id strings.
+> 
+> It also provides a function allowing drivers to register lookup entries
+> with the framework.
+> 
+> The new lookup function is only called as a fallback in case the
+> of_node field is NULL and doesn't change anything for current users.
+> 
+> Tested with a dummy reset driver with several lookup entries.
+> 
+> An example lookup table registration from a driver can be found below:
+> 
+> static struct reset_control_lookup foobar_reset_lookup[] = {
+> 	RESET_LOOKUP("foo.0", "foo", 15),
+> 	RESET_LOOKUP("bar.0", NULL,   5),
+> };
+> 
+> foobar_probe()
+> {
+> ...
+> 
+>         reset_controller_add_lookup(&rcdev, foobar_reset_lookup,
+>                                     ARRAY_SIZE(foobar_reset_lookup));
+> 
+> ...
+> }
+> 
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: David Lechner <david@lechnology.com>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+> v1 -> v2:
+> - renamed the new function to __reset_control_get_from_lookup()
+> - added a missing break; when a matching entry is found
+> - rearranged the code in __reset_control_get() - we can no longer get to the
+>   return at the bottom, so remove it and return from
+>   __reset_control_get_from_lookup() if __of_reset_control_get() fails
+> - return -ENOENT from reset_contol_get() if we can't find a matching entry,
+>   prevously returned -EINVAL referred to the fact that we passed a device
+>   without the of_node which is no longer an error condition
+> - add a comment about needing a sentinel in the lookup table
+> 
+> v2 -> v3:
+> - added the reset id number field to the lookup struct so that we don't need
+>   to rely on the array index
+> 
+> v3 -> v4:
+> - separated the driver and lookup table registration logic by adding a
+>   function meant to be called by machine-specific code that adds a lookup
+>   table to the internal list
+> - the correct reset controller is now found by first finding the lookup
+>   table associated with it, then finding the actual reset controller by
+>   the associated device
+> 
+> v4 -> v5:
+> - since the first user of this will be the davinci clk driver and it
+>   already registers clock lookup from within the driver code - allow
+>   drivers to register lookups with the assumption that the code can be
+>   extended to make it possible to register entries from machine code as
+>   well
+> - simplify the code - only expose a single lookup structure and a simply
+>   registration function
+> - add the RESET_LOOKUP macro for brevity
+> 
+> v5 -> v6:
+> - fixed a potential crash if one of the strings passed to strcmp is NULL
+> - added a check for NULL dev_id when adding the lookup entry
 
-locking/lockdep: Show unadorned pointers
+Thanks, applied to reset/next
 
-Show unadorned pointers in lockdep reports - lockdep is a debugging
-facility and hashing pointers there doesn't make a whole lotta sense.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20180226134926.23069-1-bp@alien8.de
-
----
- kernel/locking/lockdep.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 89b5f83f1969..12a2805dd64a 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -557,7 +557,7 @@ static void print_lock(struct held_lock *hlock)
- 	}
- 
- 	print_lock_name(lock_classes + class_idx - 1);
--	printk(KERN_CONT ", at: [<%p>] %pS\n",
-+	printk(KERN_CONT ", at: [<%px>] %pS\n",
- 		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
- }
- 
-@@ -808,7 +808,7 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
- 	if (verbose(class)) {
- 		graph_unlock();
- 
--		printk("\nnew class %p: %s", class->key, class->name);
-+		printk("\nnew class %px: %s", class->key, class->name);
- 		if (class->name_version > 1)
- 			printk(KERN_CONT "#%d", class->name_version);
- 		printk(KERN_CONT "\n");
-@@ -1407,7 +1407,7 @@ static void print_lock_class_header(struct lock_class *class, int depth)
- 	}
- 	printk("%*s }\n", depth, "");
- 
--	printk("%*s ... key      at: [<%p>] %pS\n",
-+	printk("%*s ... key      at: [<%px>] %pS\n",
- 		depth, "", class->key, class->key);
- }
- 
-@@ -2340,7 +2340,7 @@ cache_hit:
- 
- 		if (very_verbose(class)) {
- 			printk("\nhash chain already cached, key: "
--					"%016Lx tail class: [%p] %s\n",
-+					"%016Lx tail class: [%px] %s\n",
- 					(unsigned long long)chain_key,
- 					class->key, class->name);
- 		}
-@@ -2349,7 +2349,7 @@ cache_hit:
- 	}
- 
- 	if (very_verbose(class)) {
--		printk("\nnew hash chain, key: %016Lx tail class: [%p] %s\n",
-+		printk("\nnew hash chain, key: %016Lx tail class: [%px] %s\n",
- 			(unsigned long long)chain_key, class->key, class->name);
- 	}
- 
-@@ -2676,16 +2676,16 @@ check_usage_backwards(struct task_struct *curr, struct held_lock *this,
- void print_irqtrace_events(struct task_struct *curr)
- {
- 	printk("irq event stamp: %u\n", curr->irq_events);
--	printk("hardirqs last  enabled at (%u): [<%p>] %pS\n",
-+	printk("hardirqs last  enabled at (%u): [<%px>] %pS\n",
- 		curr->hardirq_enable_event, (void *)curr->hardirq_enable_ip,
- 		(void *)curr->hardirq_enable_ip);
--	printk("hardirqs last disabled at (%u): [<%p>] %pS\n",
-+	printk("hardirqs last disabled at (%u): [<%px>] %pS\n",
- 		curr->hardirq_disable_event, (void *)curr->hardirq_disable_ip,
- 		(void *)curr->hardirq_disable_ip);
--	printk("softirqs last  enabled at (%u): [<%p>] %pS\n",
-+	printk("softirqs last  enabled at (%u): [<%px>] %pS\n",
- 		curr->softirq_enable_event, (void *)curr->softirq_enable_ip,
- 		(void *)curr->softirq_enable_ip);
--	printk("softirqs last disabled at (%u): [<%p>] %pS\n",
-+	printk("softirqs last disabled at (%u): [<%px>] %pS\n",
- 		curr->softirq_disable_event, (void *)curr->softirq_disable_ip,
- 		(void *)curr->softirq_disable_ip);
- }
-@@ -3207,7 +3207,7 @@ static void __lockdep_init_map(struct lockdep_map *lock, const char *name,
- 	 * Sanity check, the lock-class key must be persistent:
- 	 */
- 	if (!static_obj(key)) {
--		printk("BUG: key %p not in .data!\n", key);
-+		printk("BUG: key %px not in .data!\n", key);
- 		/*
- 		 * What it says above ^^^^^, I suggest you read it.
- 		 */
-@@ -3322,7 +3322,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	}
- 	atomic_inc((atomic_t *)&class->ops);
- 	if (very_verbose(class)) {
--		printk("\nacquire class [%p] %s", class->key, class->name);
-+		printk("\nacquire class [%px] %s", class->key, class->name);
- 		if (class->name_version > 1)
- 			printk(KERN_CONT "#%d", class->name_version);
- 		printk(KERN_CONT "\n");
-@@ -4376,7 +4376,7 @@ print_freed_lock_bug(struct task_struct *curr, const void *mem_from,
- 	pr_warn("WARNING: held lock freed!\n");
- 	print_kernel_ident();
- 	pr_warn("-------------------------\n");
--	pr_warn("%s/%d is freeing memory %p-%p, with a lock still held there!\n",
-+	pr_warn("%s/%d is freeing memory %px-%px, with a lock still held there!\n",
- 		curr->comm, task_pid_nr(curr), mem_from, mem_to-1);
- 	print_lock(hlock);
- 	lockdep_print_held_locks(curr);
+regards
+Philipp
