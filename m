@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933489AbeB1Pr6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:47:58 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46821 "EHLO
+        id S1752856AbeB1RSc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:18:32 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46838 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933437AbeB1Prv (ORCPT
+        by vger.kernel.org with ESMTP id S933337AbeB1Pr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:47:51 -0500
+        Wed, 28 Feb 2018 10:47:57 -0500
 From: Ludovic Barre <ludovic.Barre@st.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>
 CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -15,9 +15,9 @@ CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 1/5] dt-bindings: mmc: document the stm32 sdmmc bindings
-Date: Wed, 28 Feb 2018 16:47:20 +0100
-Message-ID: <1519832844-28068-2-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V2 4/5] ARM: dts: stm32: add sdmmc1 support for stm32h743i-eval
+Date: Wed, 28 Feb 2018 16:47:23 +0100
+Message-ID: <1519832844-28068-5-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
 References: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
@@ -32,54 +32,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-Document the binding for stm32 sdmmc controller.
+This patch adds support of micro sd card connected to sdmmc1.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+ arch/arm/boot/dts/stm32h743-pinctrl.dtsi | 26 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/stm32h743i-eval.dts    | 11 +++++++++++
+ 2 files changed, 37 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
-new file mode 100644
-index 0000000..74d0bff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
-@@ -0,0 +1,35 @@
-+* STMicroelectronics STM32 SDMMC controller
+diff --git a/arch/arm/boot/dts/stm32h743-pinctrl.dtsi b/arch/arm/boot/dts/stm32h743-pinctrl.dtsi
+index 65c1cd0..ef17192 100644
+--- a/arch/arm/boot/dts/stm32h743-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32h743-pinctrl.dtsi
+@@ -164,6 +164,32 @@
+ 					bias-disable;
+ 				};
+ 			};
 +
-+The highspeed MMC host controller on STM32 soc family
-+provides an interface for MMC, SD and SDIO types of memory cards.
++			sdmmc1_b4_pins_a: sdmmc1-b4@0 {
++				pins {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>, /* SDMMC1_CK */
++						 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
++					slew-rate = <3>;
++					drive-push-pull;
++					bias-disable;
++				};
++			};
 +
-+This file documents differences between the core properties described
-+by mmc.txt and the properties used by the sdmmc driver.
++			sdmmc1_dir_pins_a: sdmmc1-dir@0 {
++				pins {
++					pinmux = <STM32_PINMUX('C', 6, AF8)>, /* SDMMC1_D0DIR */
++						 <STM32_PINMUX('C', 7, AF8)>, /* SDMMC1_D123DIR */
++						 <STM32_PINMUX('B', 9, AF7)>, /* SDMMC1_CDIR */
++						 <STM32_PINMUX('B', 8, AF7)>; /* SDMMC1_CKIN */
++					slew-rate = <3>;
++					drive-push-pull;
++					bias-pull-up;
++				};
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/stm32h743i-eval.dts b/arch/arm/boot/dts/stm32h743i-eval.dts
+index c6ceda8..e1dbfaf 100644
+--- a/arch/arm/boot/dts/stm32h743i-eval.dts
++++ b/arch/arm/boot/dts/stm32h743i-eval.dts
+@@ -98,6 +98,17 @@
+ 	clock-frequency = <25000000>;
+ };
+ 
++&sdmmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc1_b4_pins_a &sdmmc1_dir_pins_a>;
++	broken-cd;
++	st,dir-output-high;
++	st,neg-edge;
++	st,use-ckin;
++	bus-width = <4>;
++	status = "okay";
++};
 +
-+Required properties:
-+ - compatible: Should be "st,stm32h7-sdmmc"
-+ - reg: mmc controller base registers
-+ - interrupts: Should contain the interrupt number
-+ - clocks: Should contain phandle for the clock feeding the controller
-+ - resets: Should contain phandle for the reset feeding the controller
-+
-+Optional property:
-+- st,dir-output-high: Allow to select direction polarity of external voltage
-+  transceiver (which manage data and command direction).
-+  if set: Voltage transceiver IOs are driven as output when direction signals are high,
-+  else: Voltage transceiver IOs are driven as output when direction signals are low.
-+- st,neg-edge: generate data & command on sdmmc clock falling edge
-+- st,use-ckin: use sdmmc_ckin pin from an external driver to sample
-+  the receive data (example: with voltage switch transceiver).
-+
-+Example:
-+	sdmmc1: mmc@52007000 {
-+		compatible = "st,stm32h7-sdmmc";
-+		reg = <0x52007000 0x1000>;
-+		interrupts = <49>;
-+		clocks = <&rcc SDMMC1_CK>;
-+		resets = <&rcc SDMMC1_R>;
-+		bus-width = <4>;
-+		cap-sd-highspeed;
-+		cap-mmc-highspeed;
-+	};
+ &usart1 {
+ 	pinctrl-0 = <&usart1_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
