@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519836346-2-8462231812209332739
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519836339-2-1305351037577920314
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519836345; b=Du/BiWm1tGNe7+ynVPodHxXXrxPvQ2ZTer8X8QlyNz4GTqN
-    gedhHTwNcIutuLXd82PEyBx8IUJU+QIMPk64prEC5jCel+Ssi0rhOi0EWgmZpTc9
-    UQBt2xRRFuLWR0w8jc2NywgngzRGs45UffJ4MPSgrOf8nSkPH9kCNG80FFQz7xvp
-    KcSnJt9MpuBBHgEgipRJMeYzDvPWDfQRgNoS/eh41AgiMQuWwLTPgUcV38MgBOfg
-    IhoQ9o8t8J9yiwZb2vtD9AZ+2x3ohge3y+l2msHx6Gk5iXTZwRAmCErscYC1n0lM
-    VdCaCM7Xz37dCcpIN4iY8TrPVPAMmIM73J2hgaA==
+    t=1519836338; b=BFva2fguTh0YTrQHamT1h79WjBd/h6qUBgPaJ2ZJExMwg9n
+    i2NWxgBvHSJTWLgkBmhX5zYbyYXb8Lqz1TL8daw6TEZTCFNgzfRh3MbB2q1NhXLu
+    Yh2YjKZCdlVjPC1IfvWp2tVxYIM5KiM2HY3PzW0Ady+eGDLN07sLv51yHxJleZL3
+    VKkkgu1suy6xk5COf3jHQth26c6knCYjDF+b4x+GXQT7RuDF9UzgCcqhPhHRCigJ
+    B1u/8owKjkIsBfCdaSl9bxDDcB382hB+bgw28lNOVBnFvEErPDsdo7UzeegjF9Vk
+    t8e7VNEQ8ecAibuKukoHe9ygWDfyNZDtWhbRoNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519836345; bh=jat1zsMS8BWZaN8Kvx/
-    aIInYT/ET0a0TsGfFlLzL9Sg=; b=rDHnffp/BrB8hpB+BNoWC8IAYINtz8RXyOZ
-    26XhjXjiVzyyiZl7lgyFx4SPmfxoSq7xcOSlAEHnOedLzi2+YqGa51d4XoI8h+Ye
-    Z+EFtQChb5H4pAtrSpqrHMLbT2AME+SNWQB+jpo/v6TFdDErp7kwJN4SoGBkSsR2
-    WKce4f6sNThLSJUdezzXeN8AyD44WIPMlLLVioq0kb8MTFSuFgtaHHePxHWzr9/C
-    lfNE2slvw4NrTHjBv7Nw6BuA3pnRYKTWFRWLn99+lhVVTd01afw4FnP0olKit38Z
-    bZHrvzPhKP5TTd1rJFwgNsijBFRRq1wwc0OBwlz1NcvL2sQM+EA==
+    :sender:list-id; s=arctest; t=1519836338; bh=PCAOGmIfDmvzjx/6VmJ
+    qaQ8w7VwKMTLmGEbH7lrckqM=; b=OCeu9TukyBr4r8vsh7rG5TPBD3ykbW0jExS
+    cu7y/UfdFtL5weWI6GCLt+QhF9SmruZeyLMWOKjT2aC6lkNbfNBuxYqcco8Ryxrl
+    aFUiU6+mpwkVeVSBSERcITYgfIPuP0rJBTfH/XII2YFXxyqxo6ujED83ivPlqzca
+    P9iQ4RuMQToDLtMrELTa0a+55SZQYhClad0nBYU2WS07TMIKaNDy3Q6KEdknSUPo
+    k5ZZUIJAYj2fBNrcwrjiRECWWTNosXtCoLz/7HJxPGczUY+HsuB/MIyKE9ZMvQp3
+    O3t0Ot+nZOvVJbRzUnnquMmwrwYS1bP5bGWhv2vF4WTJ3CD328w==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeB1QAV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:00:21 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34651 "EHLO
+        id S932176AbeB1QA3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:00:29 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34657 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753064AbeB1QAU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:20 -0500
+        by vger.kernel.org with ESMTP id S932236AbeB1QA1 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:27 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Christoph Hellwig" <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Huacai Chen" <chenhc@lemote.com>
+CC: akpm@linux-foundation.org,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.454612149@decadent.org.uk>
+Message-ID: <lsq.1519831218.371412363@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 010/254] scsi: libsas: align sata_device's rps_resp
- on a cacheline
+Subject: [PATCH 3.16 087/254] ipv4: Avoid reading user iov twice after
+ raw_probe_proto_opt
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,43 +81,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit c2e8fbf908afd81ad502b567a6639598f92c9b9d upstream.
+commit c008ba5bdc9fa830e1a349b20b0be5a137bdef7a upstream.
 
-The rps_resp buffer in ata_device is a DMA target, but it isn't
-explicitly cacheline aligned. Due to this, adjacent fields can be
-overwritten with stale data from memory on non-coherent architectures.
-As a result, the kernel is sometimes unable to communicate with an SATA
-device behind a SAS expander.
+Ever since raw_probe_proto_opt was added it had the problem of
+causing the user iov to be read twice, once during the probe for
+the protocol header and once again in ip_append_data.
 
-Fix this by ensuring that the rps_resp buffer is cacheline aligned.
+This is a potential security problem since it means that whatever
+we're probing may be invalid.  This patch plugs the hole by
+firstly advancing the iov so we don't read the same spot again,
+and secondly saving what we read the first time around for use
+by ip_append_data.
 
-This issue is similar to that fixed by Commit 84bda12af31f93 ("libata:
-align ap->sector_buf") and Commit 4ee34ea3a12396f35b26 ("libata: Align
-ata_device's id on a cacheline").
-
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/scsi/libsas.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/raw.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 54 insertions(+), 8 deletions(-)
 
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -170,11 +170,11 @@ enum ata_command_set {
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -78,6 +78,16 @@
+ #include <linux/netfilter.h>
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/compat.h>
++#include <linux/uio.h>
++
++struct raw_frag_vec {
++	struct iovec *iov;
++	union {
++		struct icmphdr icmph;
++		char c[1];
++	} hdr;
++	int hlen;
++};
  
- struct sata_device {
-         enum   ata_command_set command_set;
--        struct smp_resp        rps_resp; /* report_phy_sata_resp */
-         u8     port_no;        /* port number, if this is a PM (Port) */
+ static struct raw_hashinfo raw_v4_hashinfo = {
+ 	.lock = __RW_LOCK_UNLOCKED(raw_v4_hashinfo.lock),
+@@ -415,25 +425,57 @@ error:
+ 	return err;
+ }
  
- 	struct ata_port *ap;
- 	struct ata_host ata_host;
-+	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
- 	u8     fis[ATA_RESP_FIS_SIZE];
- };
+-static int raw_probe_proto_opt(struct flowi4 *fl4, struct msghdr *msg)
++static int raw_probe_proto_opt(struct raw_frag_vec *rfv, struct flowi4 *fl4)
+ {
+-	struct icmphdr icmph;
+ 	int err;
  
+ 	if (fl4->flowi4_proto != IPPROTO_ICMP)
+ 		return 0;
+ 
+ 	/* We only need the first two bytes. */
+-	err = memcpy_fromiovecend((void *)&icmph, msg->msg_iov, 0, 2);
++	rfv->hlen = 2;
++
++	err = memcpy_fromiovec(rfv->hdr.c, rfv->iov, rfv->hlen);
+ 	if (err)
+ 		return err;
+ 
+-	fl4->fl4_icmp_type = icmph.type;
+-	fl4->fl4_icmp_code = icmph.code;
++	fl4->fl4_icmp_type = rfv->hdr.icmph.type;
++	fl4->fl4_icmp_code = rfv->hdr.icmph.code;
+ 
+ 	return 0;
+ }
+ 
++static int raw_getfrag(void *from, char *to, int offset, int len, int odd,
++		       struct sk_buff *skb)
++{
++	struct raw_frag_vec *rfv = from;
++
++	if (offset < rfv->hlen) {
++		int copy = min(rfv->hlen - offset, len);
++
++		if (skb->ip_summed == CHECKSUM_PARTIAL)
++			memcpy(to, rfv->hdr.c + offset, copy);
++		else
++			skb->csum = csum_block_add(
++				skb->csum,
++				csum_partial_copy_nocheck(rfv->hdr.c + offset,
++							  to, copy, 0),
++				odd);
++
++		odd = 0;
++		offset += copy;
++		to += copy;
++		len -= copy;
++
++		if (!len)
++			return 0;
++	}
++
++	offset -= rfv->hlen;
++
++	return ip_generic_getfrag(rfv->iov, to, offset, len, odd, skb);
++}
++
+ static int raw_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
+ 		       size_t len)
+ {
+@@ -447,6 +489,7 @@ static int raw_sendmsg(struct kiocb *ioc
+ 	u8  tos;
+ 	int err;
+ 	struct ip_options_data opt_copy;
++	struct raw_frag_vec rfv;
+ 
+ 	err = -EMSGSIZE;
+ 	if (len > 0xFFFF)
+@@ -554,7 +597,10 @@ static int raw_sendmsg(struct kiocb *ioc
+ 			   daddr, saddr, 0, 0);
+ 
+ 	if (!inet->hdrincl) {
+-		err = raw_probe_proto_opt(&fl4, msg);
++		rfv.iov = msg->msg_iov;
++		rfv.hlen = 0;
++
++		err = raw_probe_proto_opt(&rfv, &fl4);
+ 		if (err)
+ 			goto done;
+ 	}
+@@ -583,8 +629,8 @@ back_from_confirm:
+ 		if (!ipc.addr)
+ 			ipc.addr = fl4.daddr;
+ 		lock_sock(sk);
+-		err = ip_append_data(sk, &fl4, ip_generic_getfrag,
+-				     msg->msg_iov, len, 0,
++		err = ip_append_data(sk, &fl4, raw_getfrag,
++				     &rfv, len, 0,
+ 				     &ipc, &rt, msg->msg_flags);
+ 		if (err)
+ 			ip_flush_pending_frames(sk);
