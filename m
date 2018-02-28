@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519836339-2-1305351037577920314
+X-Cyrus-Session-Id: sloti22d1t05-564561-1519836331-2-2312022537096073680
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519836338; b=BFva2fguTh0YTrQHamT1h79WjBd/h6qUBgPaJ2ZJExMwg9n
-    i2NWxgBvHSJTWLgkBmhX5zYbyYXb8Lqz1TL8daw6TEZTCFNgzfRh3MbB2q1NhXLu
-    Yh2YjKZCdlVjPC1IfvWp2tVxYIM5KiM2HY3PzW0Ady+eGDLN07sLv51yHxJleZL3
-    VKkkgu1suy6xk5COf3jHQth26c6knCYjDF+b4x+GXQT7RuDF9UzgCcqhPhHRCigJ
-    B1u/8owKjkIsBfCdaSl9bxDDcB382hB+bgw28lNOVBnFvEErPDsdo7UzeegjF9Vk
-    t8e7VNEQ8ecAibuKukoHe9ygWDfyNZDtWhbRoNg==
+    t=1519836330; b=Ug5kr6YdJhIe39j7t0w4xvzGtn1EbwY6XJZmupAP3rC7BkX
+    zbwUo1Esb7BHlVocyY9becm32CCzABW88pyTm9c8K+iWQ8Fv9bVA9MLFbWJbfbh6
+    JzXZDRX9b0WgVWuPmvQhnW4zbD2mi59E7x3cLYLyd2CiIdytEm1TEgS4KixGLam8
+    RDhaLZpdmDazYylCW/bvVGhT/pUvDUY+/5Wyt0wsvxqAWE3Obh2OppLw2whS8gVI
+    jM9J5fE5MThM6u2/mrP4SPQrwVEawKRSwLyu6/YWQ53M2XJsgwnR03IGhtTfZHF6
+    vd1sNmxX1MZt4FcyPxwc4yiAmqvToa8+eLn9QrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519836338; bh=PCAOGmIfDmvzjx/6VmJ
-    qaQ8w7VwKMTLmGEbH7lrckqM=; b=OCeu9TukyBr4r8vsh7rG5TPBD3ykbW0jExS
-    cu7y/UfdFtL5weWI6GCLt+QhF9SmruZeyLMWOKjT2aC6lkNbfNBuxYqcco8Ryxrl
-    aFUiU6+mpwkVeVSBSERcITYgfIPuP0rJBTfH/XII2YFXxyqxo6ujED83ivPlqzca
-    P9iQ4RuMQToDLtMrELTa0a+55SZQYhClad0nBYU2WS07TMIKaNDy3Q6KEdknSUPo
-    k5ZZUIJAYj2fBNrcwrjiRECWWTNosXtCoLz/7HJxPGczUY+HsuB/MIyKE9ZMvQp3
-    O3t0Ot+nZOvVJbRzUnnquMmwrwYS1bP5bGWhv2vF4WTJ3CD328w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519836330; bh=Pa6evtyhutOpFEj6eZw
+    70PMj+p4oU3rr+7yu5k8IbdQ=; b=Fgay0AXnBjkg/cNinzCLSjApCHPJnbzh+QX
+    xN6L8xK3iIWid/s2zEFRuar1Lt2wcaeI04/XWem8U/c6OFOnjz8UHw9TgzMyKoMa
+    1N2p4iOhzBvrw6gED1Gk640krn2l5bZzLNfaY+OcbFhiLHg+t9uVUpDCqR9Uxto1
+    CLh2Im9Ts8jHeMr8xFyE5AxiaiWBUhRqGF1sEI1QxAFfaYEG/RKHh6vKbHHJrgoq
+    tfPw3qNwja0cnvns8YvSAWUy6GOtZWov2a18nCek1RiByFdASs0GTwODNNbOu1eZ
+    ZCerNEY7fxq5tohTK5Ni2Tn8LxBxP06DsoKhnRByqpGIhhBayeA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932176AbeB1QA3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:00:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34657 "EHLO
+        id S932091AbeB1QpP (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:45:15 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34665 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932236AbeB1QA1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:27 -0500
+        by vger.kernel.org with ESMTP id S932236AbeB1QAd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:33 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, linux-mips@linux-mips.org,
+        "Paul Burton" <paul.burton@imgtec.com>,
+        "Ralf Baechle" <ralf@linux-mips.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.371412363@decadent.org.uk>
+Message-ID: <lsq.1519831218.175832776@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 087/254] ipv4: Avoid reading user iov twice after
- raw_probe_proto_opt
+Subject: [PATCH 3.16 094/254] MIPS: prevent FP context set via ptrace
+ being discarded
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,137 +81,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Paul Burton <paul.burton@imgtec.com>
 
-commit c008ba5bdc9fa830e1a349b20b0be5a137bdef7a upstream.
+commit ac9ad83bc318635ed7496e9dff30beaa522eaec7 upstream.
 
-Ever since raw_probe_proto_opt was added it had the problem of
-causing the user iov to be read twice, once during the probe for
-the protocol header and once again in ip_append_data.
+If a ptracee has not used the FPU and the ptracer sets its FP context
+using PTRACE_POKEUSR, PTRACE_SETFPREGS or PTRACE_SETREGSET then that
+context will be discarded upon either the ptracee using the FPU or a
+further write to the context via ptrace. Prevent this loss by recording
+that the task has "used" math once its FP context has been written to.
+The context initialisation code that was present for the PTRACE_POKEUSR
+case is reused for the other 2 cases to provide consistent behaviour
+for the different ptrace requests.
 
-This is a potential security problem since it means that whatever
-we're probing may be invalid.  This patch plugs the hole by
-firstly advancing the iov so we don't read the same spot again,
-and secondly saving what we read the first time around for use
-by ip_append_data.
-
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/9166/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/raw.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 54 insertions(+), 8 deletions(-)
+ arch/mips/kernel/ptrace.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -78,6 +78,16 @@
- #include <linux/netfilter.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/compat.h>
-+#include <linux/uio.h>
-+
-+struct raw_frag_vec {
-+	struct iovec *iov;
-+	union {
-+		struct icmphdr icmph;
-+		char c[1];
-+	} hdr;
-+	int hlen;
-+};
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -47,6 +47,26 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/syscalls.h>
  
- static struct raw_hashinfo raw_v4_hashinfo = {
- 	.lock = __RW_LOCK_UNLOCKED(raw_v4_hashinfo.lock),
-@@ -415,25 +425,57 @@ error:
- 	return err;
- }
- 
--static int raw_probe_proto_opt(struct flowi4 *fl4, struct msghdr *msg)
-+static int raw_probe_proto_opt(struct raw_frag_vec *rfv, struct flowi4 *fl4)
- {
--	struct icmphdr icmph;
- 	int err;
- 
- 	if (fl4->flowi4_proto != IPPROTO_ICMP)
- 		return 0;
- 
- 	/* We only need the first two bytes. */
--	err = memcpy_fromiovecend((void *)&icmph, msg->msg_iov, 0, 2);
-+	rfv->hlen = 2;
-+
-+	err = memcpy_fromiovec(rfv->hdr.c, rfv->iov, rfv->hlen);
- 	if (err)
- 		return err;
- 
--	fl4->fl4_icmp_type = icmph.type;
--	fl4->fl4_icmp_code = icmph.code;
-+	fl4->fl4_icmp_type = rfv->hdr.icmph.type;
-+	fl4->fl4_icmp_code = rfv->hdr.icmph.code;
- 
- 	return 0;
- }
- 
-+static int raw_getfrag(void *from, char *to, int offset, int len, int odd,
-+		       struct sk_buff *skb)
++static void init_fp_ctx(struct task_struct *target)
 +{
-+	struct raw_frag_vec *rfv = from;
++	/* If FP has been used then the target already has context */
++	if (tsk_used_math(target))
++		return;
 +
-+	if (offset < rfv->hlen) {
-+		int copy = min(rfv->hlen - offset, len);
++	/* Begin with data registers set to all 1s... */
++	memset(&target->thread.fpu.fpr, ~0, sizeof(target->thread.fpu.fpr));
 +
-+		if (skb->ip_summed == CHECKSUM_PARTIAL)
-+			memcpy(to, rfv->hdr.c + offset, copy);
-+		else
-+			skb->csum = csum_block_add(
-+				skb->csum,
-+				csum_partial_copy_nocheck(rfv->hdr.c + offset,
-+							  to, copy, 0),
-+				odd);
++	/* ...and FCSR zeroed */
++	target->thread.fpu.fcr31 = 0;
 +
-+		odd = 0;
-+		offset += copy;
-+		to += copy;
-+		len -= copy;
-+
-+		if (!len)
-+			return 0;
-+	}
-+
-+	offset -= rfv->hlen;
-+
-+	return ip_generic_getfrag(rfv->iov, to, offset, len, odd, skb);
++	/*
++	 * Record that the target has "used" math, such that the context
++	 * just initialised, and any modifications made by the caller,
++	 * aren't discarded.
++	 */
++	set_stopped_child_used_math(target);
 +}
 +
- static int raw_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
- 		       size_t len)
- {
-@@ -447,6 +489,7 @@ static int raw_sendmsg(struct kiocb *ioc
- 	u8  tos;
- 	int err;
- 	struct ip_options_data opt_copy;
-+	struct raw_frag_vec rfv;
+ /*
+  * Called by kernel/ptrace.c when detaching..
+  *
+@@ -143,6 +163,7 @@ int ptrace_setfpregs(struct task_struct
+ 	if (!access_ok(VERIFY_READ, data, 33 * 8))
+ 		return -EIO;
  
- 	err = -EMSGSIZE;
- 	if (len > 0xFFFF)
-@@ -554,7 +597,10 @@ static int raw_sendmsg(struct kiocb *ioc
- 			   daddr, saddr, 0, 0);
++	init_fp_ctx(child);
+ 	fregs = get_fpu_regs(child);
  
- 	if (!inet->hdrincl) {
--		err = raw_probe_proto_opt(&fl4, msg);
-+		rfv.iov = msg->msg_iov;
-+		rfv.hlen = 0;
+ 	for (i = 0; i < 32; i++) {
+@@ -440,6 +461,8 @@ static int fpr_set(struct task_struct *t
+ 
+ 	/* XXX fcr31  */
+ 
++	init_fp_ctx(target);
 +
-+		err = raw_probe_proto_opt(&rfv, &fl4);
- 		if (err)
- 			goto done;
- 	}
-@@ -583,8 +629,8 @@ back_from_confirm:
- 		if (!ipc.addr)
- 			ipc.addr = fl4.daddr;
- 		lock_sock(sk);
--		err = ip_append_data(sk, &fl4, ip_generic_getfrag,
--				     msg->msg_iov, len, 0,
-+		err = ip_append_data(sk, &fl4, raw_getfrag,
-+				     &rfv, len, 0,
- 				     &ipc, &rt, msg->msg_flags);
- 		if (err)
- 			ip_flush_pending_frames(sk);
+ 	if (sizeof(target->thread.fpu.fpr[i]) == sizeof(elf_fpreg_t))
+ 		return user_regset_copyin(&pos, &count, &kbuf, &ubuf,
+ 					  &target->thread.fpu,
+@@ -678,12 +701,7 @@ long arch_ptrace(struct task_struct *chi
+ 		case FPR_BASE ... FPR_BASE + 31: {
+ 			union fpureg *fregs = get_fpu_regs(child);
+ 
+-			if (!tsk_used_math(child)) {
+-				/* FP not yet used  */
+-				memset(&child->thread.fpu, ~0,
+-				       sizeof(child->thread.fpu));
+-				child->thread.fpu.fcr31 = 0;
+-			}
++			init_fp_ctx(child);
+ #ifdef CONFIG_32BIT
+ 			if (test_thread_flag(TIF_32BIT_FPREGS)) {
+ 				/*
