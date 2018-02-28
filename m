@@ -1,211 +1,79 @@
-Return-Path: <kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225SLV0ekQZNt8x2xyHvIQXd11xgLzlOwS5nK4/iO7XeIRx0+w8TYSkk8V6icJpR71P7AG8W
-ARC-Seal: i=1; a=rsa-sha256; t=1519838001; cv=none;
+Return-Path: <kernel-hardening-return-12044-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtNqaRYGxzSnkkvFdHpCHMOowN2nWiW7nk7/DjYtk1tPCUvvyz8YjdFs7Y4OISr2o+7KeMu
+ARC-Seal: i=1; a=rsa-sha256; t=1519842861; cv=none;
         d=google.com; s=arc-20160816;
-        b=iSJjR81kACIK3/ereUQwRHSmCTAYY+6dUkwMWbL1Abiz/3TfFaWUfI2Z3cqP3Yd1vL
-         3irFCeYUfF19hA+CB03c9Ux/Ue1JQv06J+rPM/xJYg+PYQJz1h/TjLWINmmnAl2bbYeh
-         Y0j0kNScK34y7P0zWFZwZxK43FtUwSB4GK39NTacNGWPpku3k1vZoDlhFtwmyG7cdTsV
-         EhGSdB+nb+V+Rv4k5B6m3uHlyFZI8zXau/qifnMQILgqo2qUw1AnC2IJQTS7SposMT0G
-         04s83bR6tm3xl6cCogGX1HBZ4tgHu8J2HWlpMrb7YmnuBGMM3KCxem9bN1QGB204yXoZ
-         iucw==
+        b=xt9i/cN2ijDUex0NX8bYxml0HTUKtyCZijLibV7qzT0z7r50Jb67a1s72NHPy9+rOF
+         fWNm19Sll1/cwqq72qQ9owq69p3tIOfk4jO2UD6zJvs3Ic5yOAIf3Rm2a/PXIXe9Ya2L
+         mlyUz1FcnMWS9HkTdYWmyMI9GBZfoEOb4fl7f0BE4j7sNPOhoPCY9DeRuj7Haz/O0rHR
+         hDqF+DVmyN+uRlaJB+8cStfkt1LiR1FKw6QuihQV2heGhqBbJJdYPvvD/XObA9L8R0Q+
+         WGqw2fFXJb2MZnbH5j6u/aerWamR/EORfp9ZfppM6Me7bq1f7f2JlhEQ+Ler6IE4K+g8
+         U1yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=ZapZwXxUBCAF2rGOx9l0tXAvPjZUIaPXb5FxqCpZK+M=;
-        b=LJgl8DaiJEKRJvZj+q1g2fgu2Kg8FqmcNkVf/NKGw3sYGbM9feftESPc2IsrtZacUH
-         xThKgNjWMjQkdLXa8jTUJJCcpaDtHkN4TsOgXPghbiNG5oC2BJSioRQtvzAA7dB5dc/V
-         Koh5F6pgNZNNdGhjWMRaWYQBWJGzcVm5VQUnXyaRVWvuutHFveHO8UDm+byz09pWD82G
-         mYOCV9E0DED+of1xnOtb8fiZJ3BlpK6q39bbogiz7FG6qYilbO7+Zv790/iWcws6Vsf1
-         3psrH8yTF8eN6Z1S9SzTMc5AyWOkYid9tXxIeNP1AkQPK212w/c/tP3FC+rZG/9SUQ6X
-         gMVQ==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=g8SX4SLi4RkiFOdy8Mlxeym76W4/EErheyMzRMrdrys=;
+        b=nWg/JHJ9sBVqyqVAOT/p65OzoMptTy1+YwGW12XTi1mC3I2pUsLU0jQFeGFHKigvFs
+         i+iZCr6l5SPiCHTzGjqfoAd1gEb7scgDR8QL0fR9oJhfvEmfNvd69tzKHeLudQwehprF
+         gwm1CrI6soM2Hhm5env3wCI07AAGrhhYoV5QBEox5pcnWMbleZGq6hMHcgF9PwiVNBGg
+         5OL1qNYuWCXSNWnmnB0OeYJokWKRHdWGFl6q13m2w8sH5BytySiQhe8+L3DiSAiwVpdD
+         eovjkG2xrOKXcdZKpoicPdqm7hWOnDyZelFdRi2wyv1htXRBRn47lN+eVj2c2kODXuCx
+         abOg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jQiAnod1;
-       spf=pass (google.com: domain of kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Q0aCEXj/;
+       spf=pass (google.com: domain of kernel-hardening-return-12044-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12044-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jQiAnod1;
-       spf=pass (google.com: domain of kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Q0aCEXj/;
+       spf=pass (google.com: domain of kernel-hardening-return-12044-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12044-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Content-Type: text/plain;
-	charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Date: Wed, 28 Feb 2018 10:33:49 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Ilya Smith <blackzert@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
+	Hugh Dickins <hughd@google.com>, Helge Deller <deller@gmx.de>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oleg Nesterov <oleg@redhat.com>, Linux-MM <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
 Subject: Re: [RFC PATCH] Randomization of address chosen by mmap.
-From: Ilya Smith <blackzert@gmail.com>
-In-Reply-To: <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
-Date: Wed, 28 Feb 2018 20:13:00 +0300
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Michal Hocko <mhocko@suse.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Jan Kara <jack@suse.cz>,
- Jerome Glisse <jglisse@redhat.com>,
- Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Helge Deller <deller@gmx.de>,
- Andrea Arcangeli <aarcange@redhat.com>,
- Oleg Nesterov <oleg@redhat.com>,
- Linux-MM <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+Message-ID: <20180228183349.GA16336@bombadil.infradead.org>
 References: <20180227131338.3699-1-blackzert@gmail.com>
  <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
-To: Kees Cook <keescook@chromium.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+ <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
-X-GMAIL-MSGID: =?utf-8?q?1593665651403309312?=
+X-GMAIL-MSGID: =?utf-8?q?1593670748384435219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello Kees,
+On Wed, Feb 28, 2018 at 08:13:00PM +0300, Ilya Smith wrote:
+> > It would be worth spelling out the "not recommended" bit some more
+> > too: this fragments the mmap space, which has some serious issues on
+> > smaller address spaces if you get into a situation where you cannot
+> > allocate a hole large enough between the other allocations.
+> > 
+> 
+> I’m agree, that's the point.
 
-Thanks for your time spent on that!
-
-> On 27 Feb 2018, at 23:52, Kees Cook <keescook@chromium.org> wrote:
->=20
-> I'd like more details on the threat model here; if it's just a matter
-> of .so loading order, I wonder if load order randomization would get a
-> comparable level of uncertainty without the memory fragmentation,
-> like:
-> https://android-review.googlesource.com/c/platform/bionic/+/178130/2
-> If glibc, for example, could do this too, it would go a long way to
-> improving things. Obviously, it's not as extreme as loading stuff all
-> over the place, but it seems like the effect for an attack would be
-> similar. The search _area_ remains small, but the ordering wouldn't be
-> deterministic any more.
->=20
-
-I=E2=80=99m afraid library order randomization wouldn=E2=80=99t help =
-much, there are several=20
-cases described in chapter 2 here:=20
-http://www.openwall.com/lists/oss-security/2018/02/27/5
-when it is possible to bypass ASLR.=20
-
-I=E2=80=99m agree library randomizaiton is a good improvement but after =
-my patch
-I think not much valuable. On my GitHub =
-https://github.com/blackzert/aslur=20
-I provided tests and will make them 'all in one=E2=80=99 chain later.
-
-> It would be worth spelling out the "not recommended" bit some more
-> too: this fragments the mmap space, which has some serious issues on
-> smaller address spaces if you get into a situation where you cannot
-> allocate a hole large enough between the other allocations.
->=20
-
-I=E2=80=99m agree, that's the point.
-
->> vm_unmapped_area(struct vm_unmapped_area_info *info)
->> {
->> +       if (current->flags & PF_RANDOMIZE)
->> +               return unmapped_area_random(info);
->=20
-> I think this will need a larger knob -- doing this by default is
-> likely to break stuff, I'd imagine? Bikeshedding: I'm not sure if this
-> should be setting "3" for /proc/sys/kernel/randomize_va_space, or a
-> separate one like /proc/sys/mm/randomize_mmap_allocation.
-
-I will improve it like you said. It looks like a better option.
-
->> +       // first lets find right border with unmapped_area_topdown
->=20
-> Nit: kernel comments are /* */. (It's a good idea to run patches
-> through scripts/checkpatch.pl first.)
->=20
-
-Sorry, I will fix it. Thanks!
-
-
->> +                       if (!rb_parent(prev))
->> +                               return -ENOMEM;
->> +                       vma =3D rb_entry(rb_parent(prev),
->> +                                      struct vm_area_struct, vm_rb);
->> +                       if (prev =3D=3D vma->vm_rb.rb_right) {
->> +                               gap_start =3D vma->vm_prev ?
->> +                                       vm_end_gap(vma->vm_prev) : 0;
->> +                               goto check_current_down;
->> +                       }
->> +               }
->> +       }
->=20
-> Everything from here up is identical to the existing
-> unmapped_area_topdown(), yes? This likely needs to be refactored
-> instead of copy/pasted, and adjust to handle both unmapped_area() and
-> unmapped_area_topdown().
->=20
-
-This part also keeps =E2=80=98right_vma' as a border. If it is ok, that =
-combined version
- will return vma struct, I=E2=80=99ll do it.
-
->> +               /* Go back up the rbtree to find next candidate node =
-*/
->> +               while (true) {
->> +                       struct rb_node *prev =3D &vma->vm_rb;
->> +
->> +                       if (!rb_parent(prev))
->> +                               BUG(); // this should not happen
->> +                       vma =3D rb_entry(rb_parent(prev),
->> +                                      struct vm_area_struct, vm_rb);
->> +                       if (prev =3D=3D vma->vm_rb.rb_left) {
->> +                               gap_start =3D =
-vm_end_gap(vma->vm_prev);
->> +                               gap_end =3D vm_start_gap(vma);
->> +                               if (vma =3D=3D right_vma)
->=20
-> mm/mmap.c: In function =E2=80=98unmapped_area_random=E2=80=99:
-> mm/mmap.c:1939:8: warning: =E2=80=98vma=E2=80=99 may be used =
-uninitialized in this
-> function [-Wmaybe-uninitialized]
->     if (vma =3D=3D right_vma)
->        ^
-
-Thanks, fixed!
-
->> +                                       break;
->> +                               goto check_current_up;
->> +                       }
->> +               }
->> +       }
->=20
-> What are the two phases here? Could this second one get collapsed into
-> the first?
->=20
-
-Let me explain.=20
-1. we use current implementation to get larger address. Remember it as=20=
-
-=E2=80=98right_vma=E2=80=99.
-2. we walk tree from mm->mmap what is lowest vma.
-3. we check if current vma gap satisfies length and low/high constrains
-4. if so, we call random() to decide if we choose it. This how we =
-randomly choos
-e vma and gap
-5. we walk tree from lowest vma to highest and ignore subtrees with less =
-gap.=20
-we do it until reach =E2=80=98right_vma=E2=80=99
-
-Once we found gap, we may randomly choose address inside it.
-
->> +       addr =3D get_random_long() % ((high - low) >> PAGE_SHIFT);
->> +       addr =3D low + (addr << PAGE_SHIFT);
->> +       return addr;
->>=20
->=20
-> How large are the gaps intended to be? Looking at the gaps on
-> something like Xorg they differ a lot.
-
-Sorry, I can=E2=80=99t get clue. What's the context? You tried patch or =
-whats the case?
-
-Thanks,
-Ilya
+Would it be worth randomising the address returned just ever so slightly?
+ie instead of allocating exactly the next address, put in a guard hole
+of (configurable, by default maybe) 1-15 pages?  Is that enough extra
+entropy to foil an interesting number of attacks, or do we need the full
+randomise-the-address-space approach in order to be useful?
