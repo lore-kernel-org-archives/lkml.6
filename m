@@ -1,204 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeB1MEq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:04:46 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:64722 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752223AbeB1MEn (ORCPT
+        id S1752293AbeB1MGY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:06:24 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52158 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752192AbeB1MGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:04:43 -0500
-Subject: Re: [PATCH v2 3/3] PCI: dra7xx: Enable x2 mode support for dra74x,
- dra76x and dra72x
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20171219085823.8695-1-kishon@ti.com>
- <20171219085823.8695-4-kishon@ti.com>
- <20180226103058.GB19841@e107981-ln.cambridge.arm.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <nsekhar@ti.com>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <ad8c490f-2691-6c58-96a1-59788b88fc84@ti.com>
-Date: Wed, 28 Feb 2018 17:34:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Wed, 28 Feb 2018 07:06:22 -0500
+Date: Wed, 28 Feb 2018 04:06:17 -0800
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, ananth@linux.vnet.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, oleg@redhat.com
+Subject: Re: [RFC 0/4] trace_uprobe: Support SDT markers having semaphore
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180228075345.674-1-ravi.bangoria@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180226103058.GB19841@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180228075345.674-1-ravi.bangoria@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18022812-0008-0000-0000-000004D57706
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022812-0009-0000-0000-00001E689B4E
+Message-Id: <20180228120617.GA63063@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280145
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+* Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> [2018-02-28 13:23:41]:
 
-On Monday 26 February 2018 04:00 PM, Lorenzo Pieralisi wrote:
-> On Tue, Dec 19, 2017 at 02:28:23PM +0530, Kishon Vijay Abraham I wrote:
->> dra74x/dra76x and dra72x has separate compatible strings. Add support
+>   # readelf -n ./tick
+>   Provider: tick
+>   Name: loop2
+>   ... Semaphore: 0x0000000010020036
 > 
-> s/has/have
+>   # readelf -SW ./tick | grep probes
+>   [25] .probes           PROGBITS        0000000010020034 010034
 > 
->> for these compatible strings in pci-dra7xx driver to perform syscon
->> configurations required to get x2 mode working.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  drivers/pci/dwc/pci-dra7xx.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 90 insertions(+)
->>
->> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
->> index e77a4ceed74c..3b4427c10228 100644
->> --- a/drivers/pci/dwc/pci-dra7xx.c
->> +++ b/drivers/pci/dwc/pci-dra7xx.c
->> @@ -83,11 +83,15 @@
->>  #define MSI_REQ_GRANT					BIT(0)
->>  #define MSI_VECTOR_SHIFT				7
->>  
->> +#define PCIE_1LANE_2LANE_SELECTION			BIT(13)
->> +#define PCIE_B1C0_MODE_SEL				BIT(2)
->> +
->>  struct dra7xx_pcie {
->>  	struct dw_pcie		*pci;
->>  	void __iomem		*base;		/* DT ti_conf */
->>  	int			phy_count;	/* DT phy-names count */
->>  	struct phy		**phy;
->> +	u32			*b1c0_mask;
 > 
-> This looks unused in the current patch.
+> Semaphore offset is 0x10036. I don't have educated 'perf probe'
+> about semaphore. So instead of using 'perf probe' command, I'm
+> manually adding entry in the <tracefs>/uprobe_events file.
+> Special char * denotes semaphore offset.
+> 
+> 
+>   # echo "p:sdt_tick/loop2 /tmp/tick:0x6e4 *0x10036" > uprobe_events
+> 
+>   # perf stat -e sdt_tick:loop2 -- /tmp/tick
+>   hi: 0
+>   hi: 1
+>   hi: 2
+>   hi: 3
+>   ^C
+>   Performance counter stats for '/tmp/tick':
+>               4      sdt_tick:loop2                                              
+>      3.359047827 seconds time elapsed
+> 
+> 
+> Feedback?
+> 
+> TODO:
+>  - Educate perf tool about semaphore.
+> 
 
-yeah, I'll remove it while sending the next revision.
-> 
->>  	int			link_gen;
->>  	struct irq_domain	*irq_domain;
->>  	enum dw_pcie_device_mode mode;
->> @@ -95,6 +99,7 @@ struct dra7xx_pcie {
->>  
->>  struct dra7xx_pcie_of_data {
->>  	enum dw_pcie_device_mode mode;
->> +	u32 b1co_mode_sel_mask;
->>  };
->>  
->>  #define to_dra7xx_pcie(x)	dev_get_drvdata((x)->dev)
->> @@ -533,6 +538,26 @@ static const struct dra7xx_pcie_of_data dra7xx_pcie_ep_of_data = {
->>  	.mode = DW_PCIE_EP_TYPE,
->>  };
->>  
->> +static const struct dra7xx_pcie_of_data dra746_pcie_rc_of_data = {
->> +	.b1co_mode_sel_mask = BIT(2),
-> 
-> Nit: DT guys are more familiar than me on how this data should be
-> encoded but maybe bit offset + length can be better ? I do not know, I
-> have no problem leaving them as masks.
-> 
->> +	.mode = DW_PCIE_RC_TYPE,
->> +};
->> +
->> +static const struct dra7xx_pcie_of_data dra726_pcie_rc_of_data = {
->> +	.b1co_mode_sel_mask = GENMASK(3, 2),
->> +	.mode = DW_PCIE_RC_TYPE,
->> +};
->> +
->> +static const struct dra7xx_pcie_of_data dra746_pcie_ep_of_data = {
->> +	.b1co_mode_sel_mask = BIT(2),
->> +	.mode = DW_PCIE_EP_TYPE,
->> +};
->> +
->> +static const struct dra7xx_pcie_of_data dra726_pcie_ep_of_data = {
->> +	.b1co_mode_sel_mask = GENMASK(3, 2),
->> +	.mode = DW_PCIE_EP_TYPE,
->> +};
->> +
->>  static const struct of_device_id of_dra7xx_pcie_match[] = {
->>  	{
->>  		.compatible = "ti,dra7-pcie",
->> @@ -542,6 +567,22 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
->>  		.compatible = "ti,dra7-pcie-ep",
->>  		.data = &dra7xx_pcie_ep_of_data,
->>  	},
->> +	{
->> +		.compatible = "ti,dra746-pcie-rc",
->> +		.data = &dra746_pcie_rc_of_data,
->> +	},
->> +	{
->> +		.compatible = "ti,dra726-pcie-rc",
->> +		.data = &dra726_pcie_rc_of_data,
->> +	},
->> +	{
->> +		.compatible = "ti,dra746-pcie-ep",
->> +		.data = &dra746_pcie_ep_of_data,
->> +	},
->> +	{
->> +		.compatible = "ti,dra726-pcie-ep",
->> +		.data = &dra726_pcie_ep_of_data,
->> +	},
->>  	{},
->>  };
->>  
->> @@ -587,6 +628,47 @@ static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
->>  	return ret;
->>  }
->>  
->> +static int dra7xx_pcie_configure_two_lane(struct device *dev,
->> +					  u32 b1co_mode_sel_mask)
->> +{
->> +	struct device_node *np = dev->of_node;
->> +	struct regmap *pcie_syscon;
->> +	unsigned int pcie_reg;
->> +
->> +	pcie_syscon = syscon_regmap_lookup_by_phandle(np,
->> +						      "ti,syscon-lane-conf");
->> +	if (IS_ERR(pcie_syscon)) {
->> +		dev_err(dev, "unable to get ti,syscon-lane-conf\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (of_property_read_u32_index(np, "ti,syscon-lane-conf", 1,
->> +				       &pcie_reg)) {
->> +		dev_err(dev, "couldn't get lane configuration reg offset\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	regmap_update_bits(pcie_syscon, pcie_reg, PCIE_1LANE_2LANE_SELECTION,
->> +			   PCIE_1LANE_2LANE_SELECTION);
-> 
-> I do not know if this can create issues but the regmap should clear
-> those bits in the error path ?
-
-hmm yeah, maybe we should try to fall back to 1 lane mode.
-> 
->> +
->> +	pcie_syscon = syscon_regmap_lookup_by_phandle(np, "ti,syscon-lane-sel");
->> +	if (IS_ERR(pcie_syscon)) {
->> +		dev_err(dev, "unable to get ti,syscon-lane-sel\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (of_property_read_u32_index(np, "ti,syscon-lane-sel", 1,
->> +				       &pcie_reg)) {
->> +		dev_err(dev, "couldn't get lane selection reg offset\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	regmap_update_bits(pcie_syscon, pcie_reg, b1co_mode_sel_mask,
->> +			   PCIE_B1C0_MODE_SEL);
->> +
->> +	return 0;
->> +}
->> +
->>  static int __init dra7xx_pcie_probe(struct platform_device *pdev)
->>  {
->>  	u32 reg;
->> @@ -608,6 +690,7 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
->>  	const struct of_device_id *match;
->>  	const struct dra7xx_pcie_of_data *data;
->>  	enum dw_pcie_device_mode mode;
->> +	u32 b1co_mode_sel_mask;
-> 
-> Again, do you need this temporary variable (given that you pass the
-> value below) ?
-
-I used so that we don't cross the 80 line character limit below.
-
-Thanks
-Kishon
+Is it possible to extend perf buildcache with a new option to work with
+semaphore?
