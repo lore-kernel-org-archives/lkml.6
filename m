@@ -1,142 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934704AbeB1Rxp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:53:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41354 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934285AbeB1Rxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:53:42 -0500
-Subject: Re: [PATCH v2 2/5] sysctl: Add flags to support min/max range
- clamping
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-3-git-send-email-longman@redhat.com>
- <20180228004753.GY14069@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <23264b8f-e84d-48cf-0da0-eb328916b2aa@redhat.com>
-Date: Wed, 28 Feb 2018 12:53:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180228004753.GY14069@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S934594AbeB1Ry1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:54:27 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34347 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934371AbeB1Rv2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:51:28 -0500
+X-Google-Smtp-Source: AH8x227MBs7Fmu097KLLJIgzZejz3iZ1PEWKGqUwH5W4IFn14ABJhOl5h2ixGadSR13bkQ69h5NkzQ==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+Date: Wed, 28 Feb 2018 23:19:01 +0530
+Message-Id: <20180228174906.22721-6-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
+References: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 07:47 PM, Luis R. Rodriguez wrote:
-> On Tue, Feb 27, 2018 at 03:49:48PM -0500, Waiman Long wrote:
->> When minimum/maximum values are specified for a sysctl parameter in
->> the ctl_table structure with proc_dointvec_minmax() handler,
-> an
->
->> update
->> to that parameter will fail with error if the given value is outside
->> of the required range.
->>
->> There are use cases where it may be better to clamp the value of
->> the sysctl parameter to the given range without failing the update,
->> especially if the users are not aware of the actual range limits.
-> Makes me wonder if we should add something which does let one query
-> for the ranges. Then scripts can fetch that as well.
+Add gpio nodes for Actions Semi S900 SoC.
 
-That will actually be better than printing out the range in the dmesg
-log. However, I haven't figured out an easy way of doing that. If you
-have any suggestion, please let me know about it.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 95 ++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
 
->
->> Reading the value back after the update will now be a good practice
->> to see if the provided value exceeds the range limits.
->>
->> To provide this less restrictive form of range checking, a new flags
->> field is added to the ctl_table structure. The new field is a 16-bit
->> value that just fits into the hole left by the 16-bit umode_t field
->> without increasing the size of the structure.
->>
->> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table entry,
->> any update from the userspace will be clamped to the given range
->> without error.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  include/linux/sysctl.h |  6 ++++++
->>  kernel/sysctl.c        | 58 ++++++++++++++++++++++++++++++++++++++++----------
->>  2 files changed, 53 insertions(+), 11 deletions(-)
->>
->> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->> index b769ecf..eceeaee 100644
->> --- a/include/linux/sysctl.h
->> +++ b/include/linux/sysctl.h
->> @@ -116,6 +116,7 @@ struct ctl_table
->>  	void *data;
->>  	int maxlen;
->>  	umode_t mode;
->> +	uint16_t flags;
->>  	struct ctl_table *child;	/* Deprecated */
->>  	proc_handler *proc_handler;	/* Callback for text formatting */
->>  	struct ctl_table_poll *poll;
->> @@ -123,6 +124,11 @@ struct ctl_table
->>  	void *extra2;
->>  } __randomize_layout;
->>  
->> +/*
->> + * ctl_table flags (16 different flags, at most)
->> + */
->> +#define CTL_FLAGS_CLAMP_RANGE	(1 << 0) /* Clamp to min/max range */
-> Since its only 16 best we kdocify, we can do so with
->
-> /**                                                                             
->  * enum ctl_table_flags - flags for the ctl table
->  *
->  * @CTL_FLAGS_CLAMP_RANGE: If set this indicates that the entry should be
->  *	flexibly clamp to min/max range in case the user provided an incorrect
->  *	value.
->  */
-> enum ctl_table_flags {
-> 	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
-> }
->
-> This lets us document this nicely.
-
-Thanks for the suggestion. Will update the code accordingly.
-
->> +
->>  struct ctl_node {
->>  	struct rb_node node;
->>  	struct ctl_table_header *header;
->> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->> index 52b647a..2b2b30c 100644
->> --- a/kernel/sysctl.c
->> +++ b/kernel/sysctl.c
->> @@ -2505,15 +2505,21 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
->>   *
->>   * The do_proc_dointvec_minmax_conv_param structure provides the
->>   * minimum and maximum values for doing range checking for those sysctl
->> - * parameters that use the proc_dointvec_minmax() handler. The error
->> - * code -EINVAL will be returned if the range check fails.
->> + * parameters that use the proc_dointvec_minmax() handler.
->> + *
->> + * The error code -EINVAL will be returned if the range check fails
->> + * and the CTL_FLAGS_CLAMP_RANGE bit is not set in the given flags.
->> + * If that flag is set, the new sysctl value will be clamped to the
->> + * given range without returning any error.
-> This last part seems odd, we silently set the value to a limit if the
-> user set an invalid value?
->
-> Since this is actually not really undefined documenting that we set it
-> to the max value if the input value is greater than the max allowed would
-> be good. Likewise for the minimum.
->
->   Luis
-
-Will clarify the comment on that.
-
-Cheers,
-Longman
+diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+new file mode 100644
+index 000000000000..d2939ca6cfaf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+@@ -0,0 +1,95 @@
++* Actions Semi OWL GPIO controller bindings
++
++The GPIOs are organized as individual banks/ports with variable number
++of GPIOs. Each bank is represented as an individual GPIO controller.
++
++Required properties:
++- compatible            : Should be "actions,s900-gpio"
++- reg                   : Address and range of the GPIO controller registers.
++- gpio-controller       : Marks the device node as a GPIO controller.
++- #gpio-cells           : Should be <2>. The first cell is the gpio number
++                          and the second cell is used to specify optional
++                          parameters.
++- interrupt-controller  : Marks the device node as an interrupt controller.
++- #interrupt-cells      : Specifies the number of cells needed to encode an
++                          interrupt.  Shall be set to 2.  The first cell
++                          defines the interrupt number, the second encodes
++                          the trigger flags described in
++                          bindings/interrupt-controller/interrupts.txt
++
++Optional properties:
++- gpio-ranges           : Mapping between GPIO and pinctrl
++
++Note: Each GPIO port should have an alias correctly numbered in "aliases"
++node.
++
++Examples:
++
++aliases {
++        gpio0 = &gpioa;
++        gpio1 = &gpiob;
++        gpio2 = &gpioc;
++        gpio3 = &gpiod;
++        gpio4 = &gpioe;
++        gpio5 = &gpiof;
++};
++
++       gpioa: gpioa@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 0 32>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
++
++       gpiob: gpiob@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 32 32>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
++
++       gpioc: gpioc@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 64 12>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
++
++       gpiod: gpiod@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 76 30>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
++
++       gpioe: gpioe@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 106 32>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
++
++       gpiof: gpiof@e01b0000 {
++               compatible = "actions,s900-gpio";
++               reg = <0x0 0xe01b0000 0x0 0x1000>;
++               gpio-controller;
++               #gpio-cells = <2>;
++               gpio-ranges = <&pinctrl 0 138 8>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++       };
+-- 
+2.14.1
