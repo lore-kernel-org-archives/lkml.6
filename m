@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519833919-2-8661143594896844817
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519833877-2-13184476992069691050
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833918; b=oyWiVVWF1IlJbjwu3Z9uMYdB/6Za6KG/SluemF6idRH3Q5e
-    bYgxM6D1Ciwu45QX1RUZOHye78ngAUG6ZWCs3gEE+j66h2asMAGaewwiuoWo0PFJ
-    mO0IWcC00nasWN+UUrwu6n5u/Dndm3B9GpdY5bwrHAH+zW+OlQp5WHYOnNniEOdn
-    0WlEMXR+Rpc9aImlKARlNmCQC8Iy3UyfPgywBgNKtbpTF8E0niX3Bk+UpQUYmcF4
-    +8V4CgrA4FBG/bBJXc7OsmDSCwkPjPrcdvAXWQK9A5DN3xzQZRj8dGrLESIb1hUc
-    mgUmwpwLmblpeb0oTN+XpWP97+nQVQW7boFmXZA==
+    t=1519833876; b=qYLd2x+2asrpjAQ/DZLIGCDF2YJIRdlHgj5t+FP3Q7M7pfm
+    xsoTU1mnGVzW3VcahGWacM2bbhydc1gJGoEMtDe1Yw+uufjM/MDfrnz7sxvZ2vMb
+    fgBeJzviub95TupNBpRctWPD3446QE9f2MHKEsleZHDVEhJNv+LGmzR990z8UGbh
+    xAazRx4BccukQJNF5jtqjffvJXWb8HVJUbsaUsxnxWjiFIfbrFIcwVNtXxH4kBzV
+    eJjOZBki1Rzwms6mhpXwuu5AfdNmPlaWwcTf+4seJff9tvxlRrWr84YkTCjZVGx0
+    G/0aqyoC07UeUWEQk2m5UfzjPMc7+TpqXiykYrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833918; bh=zvS/b25yPtYxItPjp47
-    6mzJ9wscTDFaeUMjr8iAQ5/c=; b=Zw88KE5kYsTV8MjZCrOUMczt3oUp49ONZXl
-    XSJVmYEwafVxYhuh3+LNfYdMGPABMG1PxwnDmTWP91kqmCJUSwHbVlcGy2JOahvO
-    od0CWo679IVKszzNLaHOEhf5PkMS3xrU3jGEaoFRU8mmFp8G7JEqg8i2pYGuYz7V
-    LWLz0LucLWbZ46QAfyXmnSlHiB/9nrku5uzQ0Gdai7NYtdwB/bQeyNm6CNtKYahx
-    ArHfIfa3fKprwE7VioePofZhbScuyYpPts3IKng2U+2zEz6PV6w2mitVye5RnXBb
-    KuglFlGzC+uliQX69dbFsEp2JDXdGXBRtQupZD0F1Vg3wrlUS6w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833876; bh=fFSC4Zc4C4M1VPt3aGu
+    lJsiSXJFqy2Jywj3ZxF0YXxw=; b=EobIRnyiyrPCv86GezdhG7WZ86vdwjbvsk3
+    sG/loF/5IdTLW87cK6/5olQg/RndJ/ujIVz1QPIEGTzfG8iTKiRgZ8n19eRVhpeA
+    ja5ih33X3c2TuOjTRqqChv8BdekZBvAg839765qhqpQoCN2xOUhRa5AbdmHxKR0Z
+    7wEa+9kgjohXNZScIvQ+UHk+4EtanrHiiXAopLtTW0pPSJbLiQCuN1Jli3UsQZB+
+    O5uRVylMBC3e1tONsgC7GqN/5AN3X4ZvgNc+TixUFDtJo++M56S4Kwhg40fbBgX5
+    Y9JVnhbF6+j5A3GZj5fscy1wOZ1b/9uwW4cWvzHoWdKU/5PBzdA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934474AbeB1QFR (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:17 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34875 "EHLO
+        id S1753230AbeB1QEd (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:04:33 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34829 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934460AbeB1QFQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:16 -0500
+        by vger.kernel.org with ESMTP id S1753264AbeB1QEb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:31 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Erez Shitrit" <erezsh@mellanox.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Alex Vesker" <valex@mellanox.com>,
-        "Leon Romanovsky" <leon@kernel.org>
+CC: akpm@linux-foundation.org,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Aaron Ma" <aaron.ma@canonical.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.812578439@decadent.org.uk>
+Message-ID: <lsq.1519831218.94727659@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 156/254] IB/ipoib: Fix race condition in neigh creation
+Subject: [PATCH 3.16 226/254] Input: trackpoint - force 3 buttons if 0
+ button is reported
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,133 +81,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit 16ba3defb8bd01a9464ba4820a487f5b196b455b upstream.
+commit f5d07b9e98022d50720e38aa936fc11c67868ece upstream.
 
-When using enhanced mode for IPoIB, two threads may execute xmit in
-parallel to two different TX queues while the target is the same.
-In this case, both of them will add the same neighbor to the path's
-neigh link list and we might see the following message:
+Lenovo introduced trackpoint compatible sticks with minimum PS/2 commands.
+They supposed to reply with 0x02, 0x03, or 0x04 in response to the
+"Read Extended ID" command, so we would know not to try certain extended
+commands. Unfortunately even some trackpoints reporting the original IBM
+version (0x01 firmware 0x0e) now respond with incorrect data to the "Get
+Extended Buttons" command:
 
-  list_add double add: new=ffff88024767a348, prev=ffff88024767a348...
-  WARNING: lib/list_debug.c:31__list_add_valid+0x4e/0x70
-  ipoib_start_xmit+0x477/0x680 [ib_ipoib]
-  dev_hard_start_xmit+0xb9/0x3e0
-  sch_direct_xmit+0xf9/0x250
-  __qdisc_run+0x176/0x5d0
-  __dev_queue_xmit+0x1f5/0xb10
-  __dev_queue_xmit+0x55/0xb10
+ thinkpad_acpi: ThinkPad BIOS R0DET87W (1.87 ), EC unknown
+ thinkpad_acpi: Lenovo ThinkPad E470, model 20H1004SGE
 
-Analysis:
-Two SKB are scheduled to be transmitted from two cores.
-In ipoib_start_xmit, both gets NULL when calling ipoib_neigh_get.
-Two calls to neigh_add_path are made. One thread takes the spin-lock
-and calls ipoib_neigh_alloc which creates the neigh structure,
-then (after the __path_find) the neigh is added to the path's neigh
-link list. When the second thread enters the critical section it also
-calls ipoib_neigh_alloc but in this case it gets the already allocated
-ipoib_neigh structure, which is already linked to the path's neigh
-link list and adds it again to the list. Which beside of triggering
-the list, it creates a loop in the linked list. This loop leads to
-endless loop inside path_rec_completion.
+ psmouse serio2: trackpoint: IBM TrackPoint firmware: 0x0e, buttons: 0/0
 
-Solution:
-Check list_empty(&neigh->list) before adding to the list.
-Add a similar fix in "ipoib_multicast.c::ipoib_mcast_send"
+Since there are no trackpoints without buttons, let's assume the trackpoint
+has 3 buttons when we get 0 response to the extended buttons query.
 
-Fixes: b63b70d87741 ('IPoIB: Use a private hash table for path lookup in xmit path')
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=196253
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c      | 25 ++++++++++++++++++-------
- drivers/infiniband/ulp/ipoib/ipoib_multicast.c |  5 ++++-
- 2 files changed, 22 insertions(+), 8 deletions(-)
+ drivers/input/mouse/trackpoint.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -615,8 +615,8 @@ static int path_rec_start(struct net_dev
- 	return 0;
- }
- 
--static void neigh_add_path(struct sk_buff *skb, u8 *daddr,
--			   struct net_device *dev)
-+static struct ipoib_neigh *neigh_add_path(struct sk_buff *skb, u8 *daddr,
-+					  struct net_device *dev)
- {
- 	struct ipoib_dev_priv *priv = netdev_priv(dev);
- 	struct ipoib_path *path;
-@@ -629,7 +629,15 @@ static void neigh_add_path(struct sk_buf
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		++dev->stats.tx_dropped;
- 		dev_kfree_skb_any(skb);
--		return;
-+		return NULL;
-+	}
-+
-+	/* To avoid race condition, make sure that the
-+	 * neigh will be added only once.
-+	 */
-+	if (unlikely(!list_empty(&neigh->list))) {
-+		spin_unlock_irqrestore(&priv->lock, flags);
-+		return neigh;
+--- a/drivers/input/mouse/trackpoint.c
++++ b/drivers/input/mouse/trackpoint.c
+@@ -379,6 +379,9 @@ int trackpoint_detect(struct psmouse *ps
+ 	if (trackpoint_read(&psmouse->ps2dev, TP_EXT_BTN, &button_info)) {
+ 		psmouse_warn(psmouse, "failed to get extended button data, assuming 3 buttons\n");
+ 		button_info = 0x33;
++	} else if (!button_info) {
++		psmouse_warn(psmouse, "got 0 in extended button data, assuming 3 buttons\n");
++		button_info = 0x33;
  	}
  
- 	path = __path_find(dev, daddr + 4);
-@@ -665,7 +673,7 @@ static void neigh_add_path(struct sk_buf
- 			spin_unlock_irqrestore(&priv->lock, flags);
- 			ipoib_send(dev, skb, path->ah, IPOIB_QPN(daddr));
- 			ipoib_neigh_put(neigh);
--			return;
-+			return NULL;
- 		}
- 	} else {
- 		neigh->ah  = NULL;
-@@ -678,7 +686,7 @@ static void neigh_add_path(struct sk_buf
- 
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 	ipoib_neigh_put(neigh);
--	return;
-+	return NULL;
- 
- err_path:
- 	ipoib_neigh_free(neigh);
-@@ -688,6 +696,8 @@ err_drop:
- 
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 	ipoib_neigh_put(neigh);
-+
-+	return NULL;
- }
- 
- static void unicast_arp_send(struct sk_buff *skb, struct net_device *dev,
-@@ -784,8 +794,9 @@ static int ipoib_start_xmit(struct sk_bu
- 	case htons(ETH_P_TIPC):
- 		neigh = ipoib_neigh_get(dev, cb->hwaddr);
- 		if (unlikely(!neigh)) {
--			neigh_add_path(skb, cb->hwaddr, dev);
--			return NETDEV_TX_OK;
-+			neigh = neigh_add_path(skb, cb->hwaddr, dev);
-+			if (likely(!neigh))
-+				return NETDEV_TX_OK;
- 		}
- 		break;
- 	case htons(ETH_P_ARP):
---- a/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
-@@ -728,7 +728,10 @@ out:
- 		spin_lock_irqsave(&priv->lock, flags);
- 		if (!neigh) {
- 			neigh = ipoib_neigh_alloc(daddr, dev);
--			if (neigh) {
-+			/* Make sure that the neigh will be added only
-+			 * once to mcast list.
-+			 */
-+			if (neigh && list_empty(&neigh->list)) {
- 				kref_get(&mcast->ah->ref);
- 				neigh->ah	= mcast->ah;
- 				list_add_tail(&neigh->list, &mcast->neigh_list);
+ 	psmouse->private = kzalloc(sizeof(struct trackpoint_data), GFP_KERNEL);
