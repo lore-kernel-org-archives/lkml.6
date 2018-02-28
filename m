@@ -1,48 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933063AbeB1Pnc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:43:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39470 "EHLO mail.bootlin.com"
+        id S933100AbeB1Pou (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:44:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:52026 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932654AbeB1Pn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:43:29 -0500
-Date: Wed, 28 Feb 2018 16:43:18 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ARM Maintainers <arm@kernel.org>
-Subject: Re: [PATCH 1/3] MAINTAINERS: ARM: at91: update entry for
- ARM/Microchip
-Message-ID: <20180228154318.GN1479@piout.net>
-References: <c00e7bf21945e844c6154b374924b7ff520d1316.1519829594.git.nicolas.ferre@microchip.com>
+        id S932653AbeB1Poq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:44:46 -0500
+Date: Wed, 28 Feb 2018 15:44:44 +0000
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: DRI-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
+ setting.
+Message-ID: <20180228154444.GA20827@e110455-lin.cambridge.arm.com>
+References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
+ <20180228154041.GK5453@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c00e7bf21945e844c6154b374924b7ff520d1316.1519829594.git.nicolas.ferre@microchip.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180228154041.GK5453@intel.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/2018 at 15:56:41 +0100, Nicolas Ferre wrote:
-> Change the entry name and move it to its alphabetical location.
-> We move to ARM/Microchip instead of ARM/ATMEL to reflect the merger
-> that is now nearly 2 years old.
-> AT91 is kept as the identity of our community. The atmel pattern is
-> obviously kept as well. I removed the names of the different SoCs as
-> they are better exposed in the arch/arm/mach-at91/Kconfig entries.
+On Wed, Feb 28, 2018 at 05:40:41PM +0200, Ville Syrjälä wrote:
+> On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
+> > The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
+> > ioctl expects that any capability set by the client will have a value of 1.
+> > Make the check early so that we don't have to test the value for each
+> > capability.
 > 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
-> Hi,
-> 
-> This patch goes on top of linux-next because Alexandre's email change is taken
-> into account (already in arm-soc).
-> 
+> What if we want a a non-boolean capability at some point?
 
-All applied in my at91-soc branch which takes care of the dependency
+Well, I'm adding another boolean capability soon, so you will be going
+against the trend :)
+
+I guess you will have 2 options: revert the patch or add a condition to
+the test.
+
+I don't have strong feelings, just felt like too much copying when
+adding another capability so I thought to do some "cleanup".
+
+Best regards,
+Liviu
+
+> 
+> > 
+> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> > ---
+> >  drivers/gpu/drm/drm_ioctl.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> > index af782911c505..02ffa0e8d77b 100644
+> > --- a/drivers/gpu/drm/drm_ioctl.c
+> > +++ b/drivers/gpu/drm/drm_ioctl.c
+> > @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
+> >  {
+> >  	struct drm_set_client_cap *req = data;
+> >  
+> > +	if (req->value > 1)
+> > +		return -EINVAL;
+> > +
+> >  	switch (req->capability) {
+> >  	case DRM_CLIENT_CAP_STEREO_3D:
+> > -		if (req->value > 1)
+> > -			return -EINVAL;
+> >  		file_priv->stereo_allowed = req->value;
+> >  		break;
+> >  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
+> > -		if (req->value > 1)
+> > -			return -EINVAL;
+> >  		file_priv->universal_planes = req->value;
+> >  		break;
+> >  	case DRM_CLIENT_CAP_ATOMIC:
+> >  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
+> >  			return -EINVAL;
+> > -		if (req->value > 1)
+> > -			return -EINVAL;
+> >  		file_priv->atomic = req->value;
+> >  		file_priv->universal_planes = req->value;
+> >  		break;
+> > -- 
+> > 2.16.2
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Ville Syrjälä
+> Intel OTC
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
