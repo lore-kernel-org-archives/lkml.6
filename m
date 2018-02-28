@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519833043-2-16100183300900733415
+X-Cyrus-Session-Id: sloti22d1t05-476314-1519832886-2-14414452741390628565
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833042; b=AwmcxHMWS5T6usbVPnnZxJXEMnHgzMdyVQ4BOBSbIfBulYJ
-    voK8gYS3HTib6Dstuxzpn0TuhrYupvV65aci1FqtZnZvryNnBWRhukhR1Hb9OpD+
-    /tbLwpC8EPMR9XWHY9Hl5aN5DFR89ONRUO7jd6OiX/IhWsou+/ZSyeE7jUiMnaT9
-    m4zRJ+z2o3E3xWahQONP5Ek28yVt3rtRFiIoaBKtrsZHbDt2RzwuYcv7Lr4xM6av
-    IGbspFFUO3PJBbzepgq3IJLNXhbYzeTOOUNTis8Uqmbcw6yse1Jgn2suIngrew+Z
-    qXCi247rRBB3HAmH7v3tnMPrcmxqZwb8dtjQRdw==
+    t=1519832886; b=vMgJYMjtWlMypl7JXSFd7y1PnJAwMNvEbmZ3st7g9wo4zrp
+    RxkkkIuTN/mf9m04pJ7cHOfOGgQ5zRVHXLJ9+ttLjNoO0XXJknCxIIQOSY7ooM6b
+    VFr7zNcmdoUWpbGfchCdkoqNPV0sWoqpS9nTBpZ8TyjDUVjdZZG8PNaohOliUp1E
+    6qZsgibYhOhXB9P6Spt4SJIqG4/jm6fkrePUsgPTHshmBwnWr1Wudq5I+WJr9Mmq
+    ANS4xd+N8q+ygvV1D7Z9B6qnsS6aO3wgPVz0KBz2QWk8kohKMGA2vyTmUmCKlANK
+    IR+J6xjOCw+qshiHCfVhWlHIKc1p6eHGmHt3h/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833042; bh=0Xu/0JAuEF2jrR7XNmT
-    Tbe8QxYXQuicId2r7QFErKaI=; b=mjWLa60emsVPLz9qY/i27ZHebML+Y22svmy
-    qH5Apghqlk0CKB3mWsztB7crlZJnmOJwI9/w7XGVIN+MIb7HSULJ0GuDy3B9K6m5
-    oMgRPu3Ti7LosebEJw9D12pQYaHlKUdE6G3taFPDP6p7QultSuRNipKVrN1TCYRT
-    yIbm0ds/z6AX6ii6c43C774Oulspn2bJI33Ojplr/EP411NIlbuUTUz4HY6UR6LQ
-    siIkupq2RRb9Yf9wO5cTt86Jk6XIF5JBths5OLEaUqITjTkWQh3D9b9+XmEtSqvQ
-    kq2QZbGoKzH9okHXVDJMcBW9/wutSgbHauiOyYhEv3TDWmEZe5w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519832886; bh=8uHDYMBatQT0G2pId4n
+    LXxq9dVt6udFke7nwy+5x/q0=; b=ablFPeFa+3FXiIP3LhDPCndelP76IkpvDP2
+    h38vqqkSlwLb3PEOQAVSYk/3LyPDe7SvGVZl2IW0hKVhD8gQw9+Brl5PbbzKHyoQ
+    gn9bCJjh2bCc2uu7Ne/8068QeNUD/B9BdxZH8l1SgHm24uI49JS/2XId+ImjVR6W
+    TC6xQdB63Ebex7/R3rrCFL/kkovBle/GEY0xvOz0DgMFkgZRHRypUaRFutW2kjDx
+    7uHspH3eyFIHAvB7sDIi0QyXhtY9F2/mh59k7njwEoFIZkz1Ee90Ss59l+RVlySE
+    xUJP/w/bP/l5tchseOc6fybX1aw7ecwNfPJgLHkdeWc1BqdVvQw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,28 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752920AbeB1Pu0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:50:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34323 "EHLO
+        id S933292AbeB1PsB (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:48:01 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34226 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933668AbeB1PuY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:50:24 -0500
+        by vger.kernel.org with ESMTP id S933490AbeB1Pr7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:47:59 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Neil Horman" <nhorman@tuxdriver.com>,
-        syzbot+ac6ea7baa4432811eb50@syzkaller.appspotmail.com,
-        "Xin Long" <lucien.xin@gmail.com>
+CC: akpm@linux-foundation.org,
+        "Marc Kleine-Budde" <mkl@pengutronix.de>,
+        syzbot+e3b775f40babeff6e68b@syzkaller.appspotmail.com,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Oliver Hartkopp" <socketcan@hartkopp.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.483853923@decadent.org.uk>
+Message-ID: <lsq.1519831218.206733726@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 210/254] sctp: return error if the asoc has been
- peeled off in sctp_wait_for_sndbuf
+Subject: [PATCH 3.16 220/254] can: af_can: canfd_rcv(): replace WARN_ONCE
+ by pr_warn_once
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,85 +83,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit a0ff660058b88d12625a783ce9e5c1371c87951f upstream.
+commit d4689846881d160a4d12a514e991a740bcb5d65a upstream.
 
-After commit cea0cc80a677 ("sctp: use the right sk after waking up from
-wait_buf sleep"), it may change to lock another sk if the asoc has been
-peeled off in sctp_wait_for_sndbuf.
+If an invalid CANFD frame is received, from a driver or from a tun
+interface, a Kernel warning is generated.
 
-However, the asoc's new sk could be already closed elsewhere, as it's in
-the sendmsg context of the old sk that can't avoid the new sk's closing.
-If the sk's last one refcnt is held by this asoc, later on after putting
-this asoc, the new sk will be freed, while under it's own lock.
+This patch replaces the WARN_ONCE by a simple pr_warn_once, so that a
+kernel, bootet with panic_on_warn, does not panic. A printk seems to be
+more appropriate here.
 
-This patch is to revert that commit, but fix the old issue by returning
-error under the old sk's lock.
-
-Fixes: cea0cc80a677 ("sctp: use the right sk after waking up from wait_buf sleep")
-Reported-by: syzbot+ac6ea7baa4432811eb50@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: syzbot+e3b775f40babeff6e68b@syzkaller.appspotmail.com
+Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+[bwh: Backported to 3.16:
+ - Keep using the 'drop' label, as it has another user
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sctp/socket.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -83,7 +83,7 @@
- static int sctp_writeable(struct sock *sk);
- static void sctp_wfree(struct sk_buff *skb);
- static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
--				size_t msg_len, struct sock **orig_sk);
-+				size_t msg_len);
- static int sctp_wait_for_packet(struct sock *sk, int *err, long *timeo_p);
- static int sctp_wait_for_connect(struct sctp_association *, long *timeo_p);
- static int sctp_wait_for_accept(struct sock *sk, long timeo);
-@@ -1906,7 +1906,7 @@ static int sctp_sendmsg(struct kiocb *io
- 	timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- 	if (!sctp_wspace(asoc)) {
- 		/* sk can be changed by peel off when waiting for buf. */
--		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len, &sk);
-+		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len);
- 		if (err)
- 			goto out_free;
- 	}
-@@ -6732,12 +6732,12 @@ void sctp_sock_rfree(struct sk_buff *skb
+--- a/net/can/af_can.c
++++ b/net/can/af_can.c
+@@ -742,13 +742,12 @@ static int canfd_rcv(struct sk_buff *skb
+ 	if (unlikely(!net_eq(dev_net(dev), &init_net)))
+ 		goto drop;
  
- /* Helper function to wait for space in the sndbuf.  */
- static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
--				size_t msg_len, struct sock **orig_sk)
-+				size_t msg_len)
- {
- 	struct sock *sk = asoc->base.sk;
--	int err = 0;
- 	long current_timeo = *timeo_p;
- 	DEFINE_WAIT(wait);
-+	int err = 0;
+-	if (WARN_ONCE(dev->type != ARPHRD_CAN ||
+-		      skb->len != CANFD_MTU ||
+-		      cfd->len > CANFD_MAX_DLEN,
+-		      "PF_CAN: dropped non conform CAN FD skbuf: "
+-		      "dev type %d, len %d, datalen %d\n",
+-		      dev->type, skb->len, cfd->len))
++	if (unlikely(dev->type != ARPHRD_CAN || skb->len != CANFD_MTU ||
++		     cfd->len > CANFD_MAX_DLEN)) {
++		pr_warn_once("PF_CAN: dropped non conform CAN FD skbuf: dev type %d, len %d, datalen %d\n",
++			     dev->type, skb->len, cfd->len);
+ 		goto drop;
++	}
  
- 	pr_debug("%s: asoc:%p, timeo:%ld, msg_len:%zu\n", __func__, asoc,
- 		 *timeo_p, msg_len);
-@@ -6765,17 +6765,13 @@ static int sctp_wait_for_sndbuf(struct s
- 		release_sock(sk);
- 		current_timeo = schedule_timeout(current_timeo);
- 		lock_sock(sk);
--		if (sk != asoc->base.sk) {
--			release_sock(sk);
--			sk = asoc->base.sk;
--			lock_sock(sk);
--		}
-+		if (sk != asoc->base.sk)
-+			goto do_error;
- 
- 		*timeo_p = current_timeo;
- 	}
- 
- out:
--	*orig_sk = sk;
- 	finish_wait(&asoc->wait, &wait);
- 
- 	/* Release the association's refcnt.  */
+ 	can_receive(skb, dev);
+ 	return NET_RX_SUCCESS;
