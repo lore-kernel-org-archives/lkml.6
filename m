@@ -1,95 +1,120 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-617694-1519837045-2-10058131803008366960
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519836397-2-7747700698393343205
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837045; b=CnzM5J+6bE7nQEPIV49DZ4ZOGo8y9AydVq70PE5lxrSPVyB
-    YcxTmWPsgVMgxCXKaiUCDd1tdsHU3dcwF5eNdIMzZFJtXAt65RmZYkpYyaRT9cYp
-    zcKXvBS028ajam4nrq9FsD/UIlajKS+E8+2GEUA176D35Tb1h0ODPKO4g3kLbMdS
-    eNKurz42fqeCwRk4zkggHKiYX4YOjqETOKkhUktDQBlP103rSf2kkcDxc8bHUXvW
-    MjRVrW5eFOh1IAnq7L8BR0wdHVBCyzaRNFkP+rix5N/GeDV08QvQu3tV9WiM6G/Q
-    hfAALNT/grMB6AwyUaTbLiNVcaNZOAYVyq8kezA==
+    t=1519836396; b=j6NUWoM2y3VvCLnS/FQJqxWN6QQVmbytHryeh3wwRj1LUoH
+    KTEmUFUTorX7bFv5kjXn6bAaGNBXzeSAH5me3uW2OksTXy/Xc2MwwHwvVTtfK1rv
+    axJVui6RvvJFplHBQyTYpivACafMQrzDm7YfTi6OVurl/NEYYB2baCQaqBRRNpj3
+    1IFMLkTq1wnnimvoHxwSJbJgYsU1IY7bBM0vAJyw4YQQjbPqJjn0zUI8TA8xCBNS
+    N52eEMB3S27yguWvWbUNXMBUt/E+lx/xZqqKR4DqgcdS7IjDZlr4dkv3iigXxrQ7
+    UELWKSM4jLSoDXuPyxCnk8ZKWQDVOhf1XXX4iZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519837045; bh=KK98U9v8P/Gyp/rUrrD4TC3xuB
-    nZRzBWH4wyxbTQOdA=; b=sMlJ3ZfPCCx1TZVeyjtwslDztzQdODf372a42/Tjjd
-    mSh6xFeJM+V9t1U0L51X8pQZ0ZuDIJn7JRAVik8j2uF0Xk8e5RM9lWQIxbchNIFB
-    fNBEZb35z8zLfMzDHvRqfaRCipnpIlvi2wVDQGYD4LjEfuCYl3t85jkSsmrAovEH
-    35M9kGR8BQNd61WW25kSlI+SvnYNZkkBbcMUf1lBeZPMreWE69cUV4c/9uXKAZbQ
-    nhardM5gDPJstBmbX3CzTgmN7YNmiEBBtQ//hybkN7kobiYfgaAC5A6S1k/AyMsX
-    7hD5kkq1yXOA9lf1oIkOaG5xGwS9GguXSqT+fnelqgJg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=QXcNKERG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
+    :sender:list-id; s=arctest; t=1519836396; bh=5K4GN3N2L/oIBgXdhg4
+    mWnpC+YtYEcX9KTs6hFaL694=; b=uUUvknZqhPvEmgT5ymGdQz9t4ta4cHnQ586
+    +KZmWViK6Kds42aZM/wSNdE9MGrFyuhukyBwEycEViKXGdBUuCQKWZiNpYgber7M
+    r3sljMQdLImQFR3V/KKToX4VhIOnyN39OWA7FuUqQMAodOpynTLsAehxfmr4GjwG
+    rMexvbmzzfnRaHTikdDHJyU07LUt2eEBJiwRf3GWBNNNGNXP0UZf0oTVlJnwC+27
+    4IloifCuP7wFBfwZVJvKILqnHUiZZEAF8LqfF+w9Vh2PppY09F+BZZIvWkqeQXkV
+    9v2mpUlLxaZD/+DM8f7fkbJmvQ09fBDF/nVHqRNhU7Iwkxnlnww==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DfLGaqgY;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=QXcNKERG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DfLGaqgY;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932188AbeB1Q5I (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:57:08 -0500
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:44978 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932153AbeB1Q5G (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:57:06 -0500
-X-Google-Smtp-Source: AH8x2272NECVYiSbDKl4aPZ3P1mGbUJ+e/bTdS3X4/ulkB3LMBvVL0ymg3JKQQkDsNPH+Gd4/G7Wkg==
-Date: Wed, 28 Feb 2018 08:57:03 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH 3.2 000/140] 3.2.100-rc1 review
-Message-ID: <20180228165703.GA15218@roeck-us.net>
-References: <lsq.1519831221.703311959@decadent.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1753028AbeB1QAL (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:00:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34637 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752450AbeB1QAJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:09 -0500
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Sean Young" <sean@mess.org>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Laurent Caumont" <lcaumont2@gmail.com>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.208773313@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 022/140] media: dvb: i2c transfers over usb cannot be
+ done from stack
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 03:20:21PM +0000, Ben Hutchings wrote:
-> This is the start of the stable review cycle for the 3.2.100 release.
-> There are 140 patches in this series, which will be posted as responses
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri Mar 02 18:00:00 UTC 2018.
-> Anything received after that time might be too late.
-> 
+3.2.100-rc1 review patch.  If anyone has any objections, please let me know.
 
-Build results:
-	total: 86 pass: 86 fail: 0
-Qemu test results:
-	total: 69 pass: 69 fail: 0
+------------------
 
-Details are available at http://kerneltests.org/builders.
+From: Laurent Caumont <lcaumont2@gmail.com>
 
-Guenter
+commit 6d33377f2abbf9f0e561b116dd468d1c3ff36a6a upstream.
+
+Signed-off-by: Laurent Caumont <lcaumont2@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/media/dvb/dvb-usb/dibusb-common.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+--- a/drivers/media/dvb/dvb-usb/dibusb-common.c
++++ b/drivers/media/dvb/dvb-usb/dibusb-common.c
+@@ -169,8 +169,20 @@ EXPORT_SYMBOL(dibusb_i2c_algo);
+ 
+ int dibusb_read_eeprom_byte(struct dvb_usb_device *d, u8 offs, u8 *val)
+ {
+-	u8 wbuf[1] = { offs };
+-	return dibusb_i2c_msg(d, 0x50, wbuf, 1, val, 1);
++	u8 *buf;
++	int rc;
++
++	buf = kmalloc(2, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	buf[0] = offs;
++
++	rc = dibusb_i2c_msg(d, 0x50, &buf[0], 1, &buf[1], 1);
++	*val = buf[1];
++	kfree(buf);
++
++	return rc;
+ }
+ EXPORT_SYMBOL(dibusb_read_eeprom_byte);
+ 
