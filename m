@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834651-2-2472989997295817496
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834627-2-18045122984493699414
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834650; b=FGXGSCXZjuDnZjjVSmiDTrdhBWBAcJv0o0ejAckW6rpBhko
-    QPHkeqvX8AuURSVLlvkAqDlffrlqg0b/zltREDJOs9kUbAbR4yLE/xfBqAyXCZWD
-    YmEVKTmHX9Ct58GTQ1CDDx/pqnFFiOAa60SZB3g/XQ+PkW9xY7K8qKFQBjmLZuTC
-    dvmPHjnAg1+0xVpR5ySAH5d8TMz8wAhQSwJPMCbd70/bfn0vbHrPyri5+alIFOM/
-    HFW7V1CKzXUOhXyGkZRQslZu+gt7+e6tENehvsccKsdndqg8Hkd99XvA248t9QlS
-    gQQoE6XZMeMqqFJBue8hvWnJcmnm63K8EjpW/vQ==
+    t=1519834627; b=JcpLC7o/tjg17FjdB9AwUYlnSunkLCZRJ+vLwcy5M/yx0Za
+    HL/lA/AG3LTYV2i8OZ0IjIXcAyykVWBAHqNbZZErSQouVQeN5bWPcMTlNkpPXOSj
+    OwYjeg6ENrxvOrk0FTfx0jg2e7C08N7xWwrJqZt/j+WhTnZo5bXlhYNal63mBxER
+    6DEF38ao5BOZ8qJNXL8zW0U0GFSBlDHacnX2sWcXYPEBldms/OlD1yFWhmS82HVZ
+    PPy8v/U4IauFmrZuQhKTzKrxHb53SRxH2gAd8lAVT46bTjCFidWZXGT4WkzQwCA7
+    S+7nU7hd3Hy4lwn+9xnMdH5nqRgY61kqfVk+86Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834650; bh=TK2ogfjZfzbZzJHI/+B
-    R2khG8jlqxdARZGvm3woGgN0=; b=WrxIF21qU1hZLoOje5LvdQVLCcqctaywLMH
-    WreF04UAmqM1FSFf/CPo4wwDwiytRiQxJh6a3IryzUiycLsg+I5ehdcyTnBJCQeS
-    wgw0l6bwGI7mO7fNrNl4dIjHecUH6enPWT1vrODsVeI2qDYz4qTsl0fX2ycHKN2+
-    5zhajmYYlU5K7tUCfqAjIePzcf8ac7rJWil1hXe9Yx7bBD2pjOcbwxxDk03CwMom
-    yjdi3oZoPtouTSPjdFHs9sI2gp6IvJqMc6W19QqLkyaXOWxS98efh2HVtOtibyev
-    OUKGP8zbdnmfN2I2A2UAoxkLRUHD8mbJsTuj9Z3g/XPWx0a0EDg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834627; bh=QjfBTYgRfze/9r46X2n
+    epwCfmJm0mKvmtoMahKlzfrc=; b=RG9G/P9wLQb8FN0SfDirAPZ4p9I6sC2gKAW
+    BxglhRch5XITUpYAPN1FIUytURSqwgEu7AWpNA7afOtetp9L/wEyyvqDtDZynCTg
+    2yN66UNcFX3zV+7o/N98S+xUlkjCYPT1t+0p9szKBQTxI+TSRPiT1fnq0fZFpLYy
+    YwVmRGkb7Cjy7esmS4sg2jkddv1Hk8xu8UpTtGa/5dwGVke5MHAkgAL/KTmr6lcH
+    177qWwkyiG3TBzmdOrGbrGfjjuErEsTI7XBb377NWS8HKmZon0ibuOGk4bB9ROpU
+    1BxAQJhtDYakQ930ikmDYzAsUb5UxJLUOH4yB0pbJWnZyZZN/AA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934967AbeB1QQg (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:16:36 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35241 "EHLO
+        id S934857AbeB1QQy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:16:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35248 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934542AbeB1QQe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:16:34 -0500
+        by vger.kernel.org with ESMTP id S932654AbeB1QQj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:16:39 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Nogah Frankel" <nogahf@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org,
+        "John W. Linville" <linville@tuxdriver.com>,
+        "Andrew Bresticker" <abrestic@chromium.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.849819311@decadent.org.uk>
+Message-ID: <lsq.1519831218.203403009@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 057/254] net_sched: red: Avoid illegal values
+Subject: [PATCH 3.16 233/254] mac80211_hwsim: fix compiler warning on MIPS
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,89 +80,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nogah Frankel <nogahf@mellanox.com>
+From: Andrew Bresticker <abrestic@chromium.org>
 
-commit 8afa10cbe281b10371fee5a87ab266e48d71a7f9 upstream.
+commit 5d26b50813ea6206a7bbab2e645e68044f101ac5 upstream.
 
-Check the qmin & qmax values doesn't overflow for the given Wlog value.
-Check that qmin <= qmax.
+The dividend in do_div() is expected to be an unsigned 64-bit integer,
+which leads to the following warning when building for 32-bit MIPS:
 
-Fixes: a783474591f2 ("[PKT_SCHED]: Generic RED layer")
-Signed-off-by: Nogah Frankel <nogahf@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  drivers/net/wireless/mac80211_hwsim.c: In function 'mac80211_hwsim_set_tsf':
+  drivers/net/wireless/mac80211_hwsim.c:664:98: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+    data->bcn_delta = do_div(delta, bcn_int);
+
+Since we care about the signedness of delta when adjusting tsf_offset
+and bcm_delta, use the absolute value for the division and compare
+the two timestamps to determine the sign.
+
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/net/red.h     | 11 +++++++++++
- net/sched/sch_choke.c |  3 +++
- net/sched/sch_gred.c  |  3 +++
- net/sched/sch_red.c   |  2 ++
- net/sched/sch_sfq.c   |  3 +++
- 5 files changed, 22 insertions(+)
+ drivers/net/wireless/mac80211_hwsim.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/include/net/red.h
-+++ b/include/net/red.h
-@@ -167,6 +167,17 @@ static inline void red_set_vars(struct r
- 	v->qcount	= -1;
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -685,11 +685,16 @@ static void mac80211_hwsim_set_tsf(struc
+ 	struct mac80211_hwsim_data *data = hw->priv;
+ 	u64 now = mac80211_hwsim_get_tsf(hw, vif);
+ 	u32 bcn_int = data->beacon_int;
+-	s64 delta = tsf - now;
++	u64 delta = abs64(tsf - now);
+ 
+-	data->tsf_offset += delta;
+ 	/* adjust after beaconing with new timestamp at old TBTT */
+-	data->bcn_delta = do_div(delta, bcn_int);
++	if (tsf > now) {
++		data->tsf_offset += delta;
++		data->bcn_delta = do_div(delta, bcn_int);
++	} else {
++		data->tsf_offset -= delta;
++		data->bcn_delta = -do_div(delta, bcn_int);
++	}
  }
  
-+static inline bool red_check_params(u32 qth_min, u32 qth_max, u8 Wlog)
-+{
-+	if (fls(qth_min) + Wlog > 32)
-+		return false;
-+	if (fls(qth_max) + Wlog > 32)
-+		return false;
-+	if (qth_max < qth_min)
-+		return false;
-+	return true;
-+}
-+
- static inline void red_set_parms(struct red_parms *p,
- 				 u32 qth_min, u32 qth_max, u8 Wlog, u8 Plog,
- 				 u8 Scell_log, u8 *stab, u32 max_P)
---- a/net/sched/sch_choke.c
-+++ b/net/sched/sch_choke.c
-@@ -419,6 +419,9 @@ static int choke_change(struct Qdisc *sc
- 
- 	ctl = nla_data(tb[TCA_CHOKE_PARMS]);
- 
-+	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
-+		return -EINVAL;
-+
- 	if (ctl->limit > CHOKE_MAX_QUEUE)
- 		return -EINVAL;
- 
---- a/net/sched/sch_gred.c
-+++ b/net/sched/sch_gred.c
-@@ -388,6 +388,9 @@ static inline int gred_change_vq(struct
- 	struct gred_sched *table = qdisc_priv(sch);
- 	struct gred_sched_data *q = table->tab[dp];
- 
-+	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
-+		return -EINVAL;
-+
- 	if (!q) {
- 		table->tab[dp] = q = *prealloc;
- 		*prealloc = NULL;
---- a/net/sched/sch_red.c
-+++ b/net/sched/sch_red.c
-@@ -199,6 +199,8 @@ static int red_change(struct Qdisc *sch,
- 	max_P = tb[TCA_RED_MAX_P] ? nla_get_u32(tb[TCA_RED_MAX_P]) : 0;
- 
- 	ctl = nla_data(tb[TCA_RED_PARMS]);
-+	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
-+		return -EINVAL;
- 
- 	if (ctl->limit > 0) {
- 		child = fifo_create_dflt(sch, &bfifo_qdisc_ops, ctl->limit);
---- a/net/sched/sch_sfq.c
-+++ b/net/sched/sch_sfq.c
-@@ -658,6 +658,9 @@ static int sfq_change(struct Qdisc *sch,
- 	if (ctl->divisor &&
- 	    (!is_power_of_2(ctl->divisor) || ctl->divisor > 65536))
- 		return -EINVAL;
-+	if (ctl_v1 && !red_check_params(ctl_v1->qth_min, ctl_v1->qth_max,
-+					ctl_v1->Wlog))
-+		return -EINVAL;
- 	if (ctl_v1 && ctl_v1->qth_min) {
- 		p = kmalloc(sizeof(*p), GFP_KERNEL);
- 		if (!p)
+ static void mac80211_hwsim_monitor_rx(struct ieee80211_hw *hw,
