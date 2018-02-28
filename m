@@ -1,65 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752395AbeB1Jku (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:40:50 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44753 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752350AbeB1Jkq (ORCPT
+        id S1752431AbeB1JlB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:41:01 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33277 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbeB1Jk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:40:46 -0500
-X-Google-Smtp-Source: AG47ELtQKCn+PUINI8UrYMVrlKF6gBmHvfVW2S4uZjUefH0se6nDWGCtA7aQFwnmADZKDX5+ixBvuRNJHwYyye1T1pI=
-MIME-Version: 1.0
-In-Reply-To: <20180227231952.GA9001@embeddedor.com>
-References: <20180227231952.GA9001@embeddedor.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 28 Feb 2018 11:40:45 +0200
-Message-ID: <CAHp75Vfy_fRP7nEbSOG32S78Wc4s4ci+Mmh2AJzgrizp7y3j-Q@mail.gmail.com>
-Subject: Re: [PATCH] PCI/ASPM: Change type of threshold_ns variable to u32
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Feb 2018 04:40:59 -0500
+X-Google-Smtp-Source: AG47ELv7WSsQ6c+VQ9+fe7s6mg/CBjwsKIzQ75+iVyuaVKA+2nL0dZjxqoBB3sh+Mlw06Ucq7BFofQ==
+From: Sebastian Panceac <sebastian@resin.io>
+To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        x86@kernel.org
+Cc: Sebastian Panceac <sebastian@resin.io>
+Subject: [PATCH v3 1/1] x86: Fix Intel Edison module stuck reboot
+Date: Wed, 28 Feb 2018 11:40:49 +0200
+Message-Id: <1519810849-15131-1-git-send-email-sebastian@resin.io>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAHp75Vfdqky9HK9ddUk8+3OuU5pSDhg+9_ychW2ysb+bzAR4Yw@mail.gmail.com>
+References: <CAHp75Vfdqky9HK9ddUk8+3OuU5pSDhg+9_ychW2ysb+bzAR4Yw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 1:19 AM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
-> It seems that the expression threshold_us * 1000 will never exceed the
-> 32-bit limits [1]. So changing the type of threshold_ns from u64 to u32
-> seems sensible [2].
->
-> [1] https://marc.info/?l=linux-kernel&m=151855021100725&w=2
-> [2] https://marc.info/?l=linux-kernel&m=151976318924615&w=2
->
+When powering Intel Edison module with 3.3V, the "reboot" command makes
+the module stuck.
+If the module is powered at a greater voltage, like 4.4V (as the Edison
+Mini Breakout board does), reboot works OK.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+This patch copies the behaviour from the official Intel Edison BSP,
+where "IPCMSG_COLD_RESET" message was sent to SCU by default at
+reboot time.
 
-> Addresses-Coverity-ID: 1462501
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
->  drivers/pci/pcie/aspm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 57feef2..8633fc4 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -322,7 +322,7 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
->
->  static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
->  {
-> -       u64 threshold_ns = threshold_us * 1000;
-> +       u32 threshold_ns = threshold_us * 1000;
->
->         /* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
->         if (threshold_ns < 32) {
-> --
-> 2.7.4
->
+In the official BSP, sending the "IPCMSG_COLD_BOOT" message instead of
+"IPCMSG_COLD_RESET" was possible, by using a kernel command
+line parameter.
 
+Signed-off-by: Sebastian Panceac <sebastian@resin.io>
+---
 
+Hi,
 
+I submitted again the patch, after taking into consideration Andy's suggestions.
+
+Regards!
+
+ arch/x86/platform/intel-mid/intel-mid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
+index 2c67bae..fb1df94 100644
+--- a/arch/x86/platform/intel-mid/intel-mid.c
++++ b/arch/x86/platform/intel-mid/intel-mid.c
+@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
+ 
+ static void intel_mid_reboot(void)
+ {
+-	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
++	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
+ }
+ 
+ static unsigned long __init intel_mid_calibrate_tsc(void)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
