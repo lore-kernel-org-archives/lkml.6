@@ -1,106 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeB1OO4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:14:56 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11280 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752417AbeB1OOz (ORCPT
+        id S1752602AbeB1ORQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:17:16 -0500
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:44444 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752417AbeB1ORO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:14:55 -0500
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 28 Feb 2018 06:14:54 -0800
-Date: Wed, 28 Feb 2018 16:14:48 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-Message-ID: <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+        Wed, 28 Feb 2018 09:17:14 -0500
+X-Google-Smtp-Source: AG47ELsTwB2y/JHgnqsJ4tudYBMIJwGGXFzUMCeE9dPwVGonm1LXpNCBBN3G0aBZ4CAeAwUoVQQs2A==
+Reply-To: minyard@acm.org
+Subject: Re: Regression in IPMI on 4.15.6
+From: Corey Minyard <minyard@acm.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: openipmi-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <7b4cd699-1a77-5412-5346-b30e44bfc9c9@redhat.com>
+ <33fb6125-7ffa-0d3a-e1d6-1a849b816867@acm.org>
+Message-ID: <bdb67791-9a2c-bd04-5678-efb6b3cdf962@acm.org>
+Date: Wed, 28 Feb 2018 08:17:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.21.24.170]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
- (10.26.138.13)
+In-Reply-To: <33fb6125-7ffa-0d3a-e1d6-1a849b816867@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
-> On 28.02.2018 12:36, Peter De Schrijver wrote:
-> > On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
-> >> On 27.02.2018 02:04, Marcel Ziswiler wrote:
-> >>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
-> >>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
-> >>>>> Turns out latest upstream U-Boot does not configure/enable pllu
-> >>>>> which
-> >>>>> leaves it at some default rate of 500 kHz:
-> >>>>>
-> >>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
-> >>>>> pll_u
-> >>>>>        pll_u                  3        3        0      500000      
-> >>>>>     0
-> >>>>>
-> >>>>> Of course this won't quite work leading to the following messages:
-> >>>>>
-> >>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
-> >>>>> tegra-
-> >>>>> ehci
-> >>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
-> >>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
-> >>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
-> >>>>> tegra-
-> >>>>> ehci
-> >>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
-> >>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
-> >>>>> [   48.049658] usb usb2-port1: attempt power cycle
-> >>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
-> >>>>> tegra-
-> >>>>> ehci
-> >>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
-> >>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
-> >>>>> tegra-
-> >>>>> ehci
-> >>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
-> >>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
-> >>>>>
-> >>>>> Fix this by actually allowing the rate also being set from within
-> >>>>> the Linux kernel.
-> > 
-> > I think the best solution to this problem would be to make pll_u a fixed
-> > clock and enable it and program the rate if it's not enabled at boot.
-> 
-> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
-> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
-> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
-> there.
-> 
+On 02/28/2018 07:53 AM, Corey Minyard wrote:
+> On 02/27/2018 05:55 PM, Laura Abbott wrote:
+>> Hi,
+>>
+>> Fedora got a bug report of a crash in IPMI on 4.15.6
+>> https://bugzilla.redhat.com/show_bug.cgi?id=1549316
+>> Unfortunately, it's only a screenshot but it's fairly
+>> clear. It looks like a panic in the error handling path
+>> in platform_device_unregister. Any ideas?
+>>
+>
 
-AFAIK we only use one rate ever?
+You may also run into another issue.  You can pull the
+individual patch at
 
-> > This is how it's done for Tegra210. The reason is that the USB IP blocks
-> > can control the pll_u state in hw. This means that if sw would disable
-> > and then re-enable the pll_u clock, but there is no USB activity, pll_u
-> > will still be disable and therefor not lock, causing an error. Today
-> > this is worked around by not polling the lock bit for pll_u, but a better
-> > solution would be to just remove all sw controls for pll_u.
-> 
-> SW controls could be removed, but I don't think it is really necessary as in our
-> case SW is the PHY driver and we know what it does. Alternatively we can enable
-> PLL_U in the init table to keep it "always" enabled.
+https://github.com/cminyard/linux-ipmi.git 
+c8a1972e77dbe321ce5ce0247056e727234cbaec
+
+for that fix.
+
+-corey
+
+> Yeah, this is fixed by 174134ac7602 "ipmi_si: Fix error
+> handling of platform device" in mainstream.
+>
+> I guess I need to request a backport of this.
+>
+> Thanks for reporting.
+>
+> -corey
+>
+>
+>> Thanks,
+>> Laura
+>
+>
