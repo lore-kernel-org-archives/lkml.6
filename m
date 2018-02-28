@@ -1,153 +1,140 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225bCMEQCZnmuaDE/j/lmQ5ssXmS3quUbIZDVvRIBMAORLm/iCaw6hArG4+NLgDjOOY6lpyG
-ARC-Seal: i=1; a=rsa-sha256; t=1519788024; cv=none;
+Return-Path: <pasha.tatashin@oracle.com>
+X-Google-Smtp-Source: AG47ELu0Bjx3KGU9wjgNvCKa6/RuImE3va1zCHH0F7kAml6Jr9V45/EtcddizHINY1XPjdJiL6e6
+ARC-Seal: i=1; a=rsa-sha256; t=1519787011; cv=none;
         d=google.com; s=arc-20160816;
-        b=k9QztKxNAbKTeEeYfQEq31u41yhv3RI0gwjdQnn4dii4WQlu36C14vON4MwIhePdU9
-         Nc+XFfiUj5aw6P2gUwYVrSGWA2Xd28YAlvQblXa9bo9fgv8nFHyDsSi1rBoBNmezCGia
-         vUUoWxuqD7OLkH/n3KjXm0fSGlJeukffGuaVlY09y0CvkEbMOEEWY0Qca9w8Iyd0+Hyd
-         Br/txJU9yO8B7isqXRWl3nTpiNDOqhAaT838u0N98CfTXF5JelaEdEZEm2nQq/wowomS
-         x+Fv4rhatIEPgZXOWVNRRhXiridbtK8NMgloHhuHGvB4IAduC1ERNJifSO/01raNVb6R
-         jb5A==
+        b=DEagk5cjPENnY6Pn9Uv86vM5eJarJXpjoOnENq3s34h/LtikX9Ss+Il4i3z+vNe4Ar
+         nixrPEJW0YsjvBxLGyMS/JJRsj1U7rpnrDv8n1PqM/F6v/sNUaQIijdqZTNIBB9B2KL2
+         JdWBcCfRb+gfh4nkRJ/L/VQd4R+Ua8dwlVQk/HEVXoIn+z2HHkVrjEkqoYKfUNHzxZ2k
+         4QHpXB/XaILlNUBW0j/THrpYvyVBzk9iHyzVm0R0ENxl+0vojv3go2WQy4w6zh96f+YV
+         ZFBbvyTLV6RARB2IOgBwwhX89QRVsiMrdJcAV9xVqipTiTVrejo1m6XC93piyZICBJTm
+         i6+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dmarc-filter:arc-authentication-results;
-        bh=3Qd+2U2Dt7w/XgXQWAYG7a9WSyN4RIQQNGT3t2bzkG8=;
-        b=RU3+vvB83MD+UjaA1NSrfiXJch1V86jeSBk9cbSD9UhO4F1vDwPqcFuCyptMjxk0qk
-         M6UJYoBymA88VKnxbE2w8pyVP7HtiMwnPH0niRyeBOqwAR80oe925x8yl4FgUxYycGeu
-         OVivfasuJkBZWxTuCbU56Iu/SK4JUHI4ZYOTVyp1cWXkbKBZar6Na+Pdd+8pS4RGzoij
-         CGd/4BXL8DK6GaB4eAt8R5NsgOvPklOH41JJLzwjygkI+z3MpX1hbrxAAxN6ImueJTTZ
-         s1bIDx9I5B0qmA99rY2n3K6kdWvkA3dfvIC4PDkmsiLpas5I2tsvDdOF+AMztu7iWVOv
-         U8cw==
+        h=message-id:date:subject:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=ahhR1X13KhHU9hX320FszCz5w/ufXT2ZCOBwMjML0SU=;
+        b=tq8b7neL6pkgcL9o9+d8bcPkHSTzbjnACQ23nzHK64Y5GjyK+XYa7619thI1Xfor4q
+         2CG+mO/gUBb9+9ntaUKjzILMItZMpE2fu9yJCBa+F0VE3RdtlhFEtiYP+GCkT1rz1hE+
+         +Ai4osOGVvS8pcIK/pdVH0765lra1HEFpNPP4l/C6tJjPezYOILWOGzVw7oy+nd0JjAB
+         Cviu4CtdCDD029YFPwXT68BA7tHafWNGNx451yAdDXLWn2CN8QIRA69+QJjBq6iYo5Bc
+         Y0z02tpOlswtRUcjcfI3HVsPW8QJw6XWH9kJZAc0LVVaRav8hPwjEOgQiwfpcKY22OI3
+         BVXA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=lE07fO5z;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751761AbeB1DUX (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 27 Feb 2018 22:20:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751706AbeB1DUX (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:20:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6142168D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: [PATCH v4 01/19] [BUGFIX] tracing: probeevent: Fix to support minus offset from symbol
-Date: Wed, 28 Feb 2018 12:19:53 +0900
-Message-Id: <151978799370.2577.9456049827647614166.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <151978796240.2577.6531711990653677529.stgit@devbox>
-References: <151978796240.2577.6531711990653677529.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=lE07fO5z;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, vbabka@suse.cz, bharata@linux.vnet.ibm.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        bhe@redhat.com
+Subject: [v5 0/6] optimize memory hotplug
+Date: Tue, 27 Feb 2018 22:03:02 -0500
+Message-Id: <20180228030308.1116-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.2
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=798
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802280034
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593613247827918493?=
-X-GMAIL-MSGID: =?utf-8?q?1593613247827918493?=
+X-GMAIL-THRID: =?utf-8?q?1593612185598129869?=
+X-GMAIL-MSGID: =?utf-8?q?1593612185598129869?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In Documentation/trace/kprobetrace.txt, it says
+Changelog:
+	v5 - v4
+	- Addressed more comments from Ingo Molnar and Michal Hocko.
+	- In the patch "optimize memory hotplug" we are now using
+	  struct memory_block to hold node id as suggested by Michal.
+	- In the patch "don't read nid from struct page during hotplug"
+	  renamed register_new_memory() to hotplug_memory_register() as
+	  suggested by Ingo. Also, in this patch replaced the
+	  description with the one provided by Michal.
+	- Fixed other spelling issues found by Ingo.
 
- @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+	v3 - v4
+	Addressed comments from Ingo Molnar and from Michal Hocko
+	Split 4th patch into three patches
+	Instead of using section table to save node ids, saving node id in
+	the first page of every section.
 
-However, the parser doesn't parse minus offset correctly, since
-commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-unsigned") drops minus ("-") offset support for kprobe probe
-address usage.
+	v2 - v3
+	Fixed two issues found during testing
+	Addressed Kbuild warning reports
 
-This fixes the traceprobe_split_symbol_offset() to parse minus
-offset again with checking the offset range, and add a minus
-offset check in kprobe probe address usage.
+	v1 - v2
+	Added struct page poisoning checking in order to verify that
+	struct pages are never accessed until initialized during memory
+	hotplug
 
-Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Changes in v3:
-  - Use kstrtol instead of kstrtoul. (Thanks Namhyung!)
- Changes in v4:
-  - Fix to decode sign. (Thanks Namhyung!)
-  - Fix to check UINT_MAX for kprobe offset.
----
- kernel/trace/trace_kprobe.c |    4 ++--
- kernel/trace/trace_probe.c  |    8 +++-----
- kernel/trace/trace_probe.h  |    2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+This patchset:
+- Improves hotplug performance by eliminating a number of
+struct page traverses during memory hotplug.
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 5ce9b8cf7be3..1cd3fb4d70f8 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -667,7 +667,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 	char *symbol = NULL, *event = NULL, *group = NULL;
- 	int maxactive = 0;
- 	char *arg;
--	unsigned long offset = 0;
-+	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
- 
-@@ -755,7 +755,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 		symbol = argv[1];
- 		/* TODO: support .init module functions */
- 		ret = traceprobe_split_symbol_offset(symbol, &offset);
--		if (ret) {
-+		if (ret || offset < 0 || offset > UINT_MAX) {
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index d59357308677..daf54bda4dc8 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_function(const struct fetch_type *type,
- }
- 
- /* Split symbol and offset. */
--int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-+int traceprobe_split_symbol_offset(char *symbol, long *offset)
- {
- 	char *tmp;
- 	int ret;
-@@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
- 	if (!offset)
- 		return -EINVAL;
- 
--	tmp = strchr(symbol, '+');
-+	tmp = strpbrk(symbol, "+-");
- 	if (tmp) {
--		/* skip sign because kstrtoul doesn't accept '+' */
--		ret = kstrtoul(tmp + 1, 0, offset);
-+		ret = kstrtol(tmp, 0, offset);
- 		if (ret)
- 			return ret;
--
- 		*tmp = '\0';
- 	} else
- 		*offset = 0;
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 0745f895f780..75daff22ccea 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -365,7 +365,7 @@ extern int traceprobe_conflict_field_name(const char *name,
- extern void traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
- 
--extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-+extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
- 
- /* Sum up total data length for dynamic arraies (strings) */
- static nokprobe_inline int
+- Fixes some issues with hotplugging, where boundaries
+were not properly checked. And on x86 block size was not properly aligned
+with end of memory
 
+- Also, potentially improves boot performance by eliminating condition from
+  __init_single_page().
+
+- Adds robustness by verifying that that struct pages are correctly
+  poisoned when flags are accessed.
+
+The following experiments were performed on Xeon(R)
+CPU E7-8895 v3 @ 2.60GHz with 1T RAM:
+
+booting in qemu with 960G of memory, time to initialize struct pages:
+
+no-kvm:
+	TRY1		TRY2
+BEFORE:	39.433668	39.39705
+AFTER:	36.903781	36.989329
+
+with-kvm:
+BEFORE:	10.977447	11.103164
+AFTER:	10.929072	10.751885
+
+Hotplug 896G memory:
+no-kvm:
+	TRY1		TRY2
+BEFORE: 848.740000	846.910000
+AFTER:  783.070000	786.560000
+
+with-kvm:
+	TRY1		TRY2
+BEFORE: 34.410000	33.57
+AFTER:	29.810000	29.580000
+
+Pavel Tatashin (6):
+  mm/memory_hotplug: enforce block size aligned range check
+  x86/mm/memory_hotplug: determine block size based on the end of boot
+    memory
+  mm: add uninitialized struct page poisoning sanity checking
+  mm/memory_hotplug: optimize probe routine
+  mm/memory_hotplug: don't read nid from struct page during hotplug
+  mm/memory_hotplug: optimize memory hotplug
+
+ arch/x86/mm/init_64.c      | 33 +++++++++++++++++++++++++++++----
+ drivers/base/memory.c      | 40 ++++++++++++++++++++++------------------
+ drivers/base/node.c        | 24 +++++++++++++++++-------
+ include/linux/memory.h     |  3 ++-
+ include/linux/mm.h         |  4 +++-
+ include/linux/node.h       |  4 ++--
+ include/linux/page-flags.h | 22 +++++++++++++++++-----
+ mm/memblock.c              |  2 +-
+ mm/memory_hotplug.c        | 44 +++++++++++++++++---------------------------
+ mm/page_alloc.c            | 28 ++++++++++------------------
+ mm/sparse.c                |  8 +++++++-
+ 11 files changed, 127 insertions(+), 85 deletions(-)
+
+-- 
+2.16.2
