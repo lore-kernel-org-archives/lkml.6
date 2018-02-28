@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-617694-1519837217-2-17318605223834587118
+X-Cyrus-Session-Id: sloti22d1t05-617694-1519837210-2-15384028288073543927
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,28 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837216; b=ZHJEcWJPdfGd9bcgNygdxvlsFhyNKt6vylYgdW19IVHhoCw
-    wacgjYkHu+EfnW7hplsetcHeFToKTW9vq5tsg5VjgL8jbhNPeXJIwoz43O3CwiOD
-    PzhJE3rDC571Wr4HhmVuQ2K6QoCMbtJKOvBzYAB3IwSMF8wDl+IwTiZMRZPnKel2
-    wBTrU7X6Oi4CMNpKUsEdaf/VrD9loThIrrLEWyQ0f7jvxYVuKx36EJqxwpbRWtPE
-    CRP36vIpVwNVRz41FyMxl4Rsf10tSKDOap8Wpsc0KcqnvVubwniFEnGj0ZO9BPnm
-    fgkKgkCtIYfmUbpizS2Ycij15vDVigb//eeEVHQ==
+    t=1519837210; b=Z6uG8Kvw8F8oLVujB8yE+PjkdRJlrVHJzLKGSh1F8vFjuo/
+    TXMMaW93rIhcFEJZdercobJ0z9k02gT9ctldC8mXGnq5e2jys6lJ9c9y+272FooC
+    hI5gYxNxyOkLbn//pxH9as42bwDZMGXjCr7+gehKDuGwlJNL+xqjOAJeoVgk3UJ0
+    gb5iqDdUF2JefOBbXrNnx+FDfFf5jkh/+bEAje/81x9RIb05E5Hv+/Krb5ovUonu
+    XgtmCHJynLxXYeGsgN0UwwMJATGOuTm0tMcU9GBNv+DMVn55EGfWe1rcmU18kg6V
+    1Cg5WrkC+aXUt72mdUf83xz05+p2dUw4qb8saHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519837216; bh=AJFVcwphBEL0FVCYObQ
-    LdazLSkEdO3KkROLt0r//DSE=; b=R2F6x9raXA58p8gH0PaPGPLaWER2ldoBiCA
-    4RZK2jxsjBiuCWnwsLhJt5R2xUn46XHfCJIJPBukulJ7q8Fik9+JJZs9//nh5R+e
-    e5OthnGz+ffE7bRN+EQfOCov9W6akGvsFrz5/nnRUufzidZksqLtUgb3PiOhncy+
-    J1KU0AJMtjwjC7hZkjVfDoPZftC1QhswwJTZrGn8k9pjLa3Lc3ourwBy9gp5SoVs
-    WgALNKdjRRExDAlcENKWnNYoAziB9/vQGdv5RJM6CK8dMM0P2lR3sRFE91oBGpYy
-    vQ/T4bpE+2bv6HHMLbC7TsBVv10AgeWOxDEqztGXfhMCcJYwOZQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519837210; bh=X+BNMbUy4DJf7w97klE
+    0j1KDxTBhr3T589zt5kfnDuQ=; b=ep9fzz5eYl0l3B8TXP09rL7SeWvSSudd/M/
+    kGcXAztJR31cVMaluE9oIjFVcLkNeJ9yuCTk3+TPWl4bQ99aQEZ5K6CUdT/rl+N/
+    y8YVdcDPS3ITKKyYO9ZrH88YmFFghK8P9m6FFmRKIEUTcJJKtewjujYc/NYvqWHW
+    ETqlutLN6UBLSVBXRlrHpeLU1zGIVAGhW9SyZUYb4XVgIhr0MHP6ttiOWG18Z/rc
+    8ILZENYCBBUot7xyPXjo4Ofsz23U4Tl/RivtnRfjGAj3qMG54yZhMsZG1EdRXAeD
+    ck0wYbGhswIAhMrsSZ6gVGNSsxMvnIbUFeXXVTJOZwgMwCLRYVQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,28 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933825AbeB1PwQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:52:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34385 "EHLO
+        id S933586AbeB1PwX (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:52:23 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34391 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933786AbeB1PwO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:52:14 -0500
+        by vger.kernel.org with ESMTP id S932426AbeB1PwV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:52:21 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Huacai Chen" <chenhc@lemote.com>, "Christoph Hellwig" <hch@lst.de>
+CC: akpm@linux-foundation.org, "Tianyu Lan" <lantianyu1986@gmail.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Jeremi Piotrowski" <jeremi.piotrowski@gmail.com>,
+        "Tianyu Lan" <Tianyu.Lan@microsoft.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.964022879@decadent.org.uk>
+Message-ID: <lsq.1519831218.483435444@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 009/254] scsi: use dma_get_cache_alignment() as
- minimum DMA alignment
+Subject: [PATCH 3.16 213/254] KVM/x86: Fix wrong macro references of
+ X86_CR0_PG_BIT and X86_CR4_PAE_BIT in kvm_valid_sregs()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,44 +83,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Tianyu Lan <lantianyu1986@gmail.com>
 
-commit 90addc6b3c9cda0146fbd62a08e234c2b224a80c upstream.
+commit 37b95951c58fdf08dc10afa9d02066ed9f176fb5 upstream.
 
-In non-coherent DMA mode, kernel uses cache flushing operations to
-maintain I/O coherency, so scsi's block queue should be aligned to the
-value returned by dma_get_cache_alignment().  Otherwise, If a DMA buffer
-and a kernel structure share a same cache line, and if the kernel
-structure has dirty data, cache_invalidate (no writeback) will cause
-data corruption.
+kvm_valid_sregs() should use X86_CR0_PG and X86_CR4_PAE to check bit
+status rather than X86_CR0_PG_BIT and X86_CR4_PAE_BIT. This patch is
+to fix it.
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-[hch: rebased and updated the comment and changelog]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16: adjust context]
+Fixes: f29810335965a(KVM/x86: Check input paging mode when cs.l is set)
+Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/scsi_lib.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/kvm/x86.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1671,11 +1671,13 @@ struct request_queue *__scsi_alloc_queue
- 		q->limits.cluster = 0;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6581,13 +6581,13 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
  
- 	/*
--	 * set a reasonable default alignment on word boundaries: the
--	 * host and device may alter it using
--	 * blk_queue_update_dma_alignment() later.
-+	 * Set a reasonable default alignment:  The larger of 32-byte (dword),
-+	 * which is a common minimum for HBAs, and the minimum DMA alignment,
-+	 * which is set by the platform.
-+	 *
-+	 * Devices that require a bigger alignment can increase it later.
- 	 */
--	blk_queue_dma_alignment(q, 0x03);
-+	blk_queue_dma_alignment(q, max(4, dma_get_cache_alignment()) - 1);
- 
- 	return q;
- }
+ int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+ {
+-	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG_BIT)) {
++	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
+ 		/*
+ 		 * When EFER.LME and CR0.PG are set, the processor is in
+ 		 * 64-bit mode (though maybe in a 32-bit code segment).
+ 		 * CR4.PAE and EFER.LMA must be set.
+ 		 */
+-		if (!(sregs->cr4 & X86_CR4_PAE_BIT)
++		if (!(sregs->cr4 & X86_CR4_PAE)
+ 		    || !(sregs->efer & EFER_LMA))
+ 			return -EINVAL;
+ 	} else {
