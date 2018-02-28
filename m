@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-422553-1519831567-2-6660446307258386883
+X-Cyrus-Session-Id: sloti22d1t05-420878-1519831514-2-1606097346973617422
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519831566; b=eY5efHsEn1VvVvl70fuLVtfVJgVBpVtjEgIttIg2H0akzbs
-    NJYy9v8bfAv3tAjQyppLgjeowZHjPksYZVqzI9y7uAJmWgUtaxeIFPT1tqDIqrRJ
-    u6E3xIf3gT2L0mP1J7kzHmT00O0F2bxBHdHoNEPl0TdZCtiulXjFO1qh+9Zu82L0
-    aoh8aLuoFJe/l0L/9YIz3+E1SMuJAsSJX+nW5DesfFdq7hIpPpVCaqtO2pUnVytX
-    kxazYKaAW0M+bHxSD8PsGnJmwpyajtAIFS+GZHIsBQ5bXqvSUlvaccTb47wvez41
-    hCa+4MGjbhbO8gN2rPad4kbOvdiPbtDdgzUYwtA==
+    t=1519831514; b=OjDqc7AdS5A7jxSXnGxF1NignPDQgRdmhAAy5jQISXLfhJR
+    sxJkTZ2S6/5/tcCQx9/bO7ugRBSUhFyOhy1ZTR1K0HBDXaqX8YtNl1s5xcrF3kq0
+    0L1Y6J7XHELp4nzzX+jmBNrj2NfFTCBRHViLs/1T5MrdSMYKYkCnDiEDwicKPQqh
+    0J9JvHCY28TZA/tUlthfvK7P8pQjOfBTdHLTB9/ShTmLOkOh8D4FcPl4zMgL86oi
+    nzQxuPgINg/J5eiE14E27Gu1HVpx4+v0KnjuElqaxJld8TP/yOeQGINncNWyUI28
+    aEASly1q8OJwCxYZ+m/TO2jkFLQPwKCt6hqJ2YA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519831566; bh=+UaOFvfv9kntBdADI73
-    9mdKPSN+tYb8VXf+bZpwIOYQ=; b=uWijJKmlVN48AblrTn6kv3KVGtp7rX6uKSz
-    Q70vu4Qa3cdLvULka3mzsNU7G6lEZbcFdh76m2pLgi2UtjvaqSaIpN5e3/LqowtG
-    GS5OxqY4nDX+rcO/oG8YPyLfKwB104uVKgajKvuc2GEbH9uXkFDDx8B8aGDyo8wY
-    +vOQePQg/dYwzNlu8ZIrOMB+MEzhWXph8PTtUw3dcLCSgB8W59inWhOI3KUOHA7V
-    y1hwGcyPfitV9fxMjOEkHKvMrP5Tl6HiR7/SAo9QiMZ9BCaOnddNjbXRR5uAFTSj
-    uO0PNp+IA6Fju3zI0cH+hShNwsnSuWyGtPbqOjKKRGIxd29ZUew==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519831514; bh=GEKXjZmassIul/RfchI
+    bG5sez6ULpvEcpYxIoGdCp2E=; b=EvJ3tkKDppAfe/mdarngxJGJZ9iB9B1NvsN
+    yHSm8SxHnX9Ih0YPloRD2k1rw4lRNwZttd9IHiL08uoup7RW1J4SP5DNs5nLAjzM
+    08Grb4xk49oeP0LlRuCWjN47+Yy+JYmfMLiDvTW9HZJVuL2I+EwzhImstlfX4XLS
+    WDvgM9jxQLOMQQHFic3IdtjkuwZ3bIkSkxe4pLSjTABxD3ob2qhaQhNtc1dOmruu
+    GbE0hCEC8JkzFhYwz2r7v/b/BGNuvUeyeJWivJ6ri5YPhsewgbnejDx0ADIeKdw2
+    CWqUfmdOmUVtB2o2nlHF9D/wofKNr76tYcPma3C3WrjLkRPT6gw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,27 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932716AbeB1PZW (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:25:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33378 "EHLO
+        id S932828AbeB1PYJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:24:09 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33400 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752876AbeB1PWo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:44 -0500
+        by vger.kernel.org with ESMTP id S1752887AbeB1PWp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:45 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC: akpm@linux-foundation.org, "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Maarten Lankhorst" <dev@mblankhorst.nl>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.625133933@decadent.org.uk>
+Message-ID: <lsq.1519831221.196894121@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 045/140] ALSA: rawmidi: Avoid racy info ioctl via ctl
- device
+Subject: [PATCH 3.2 050/140] PCI / PM: Force devices to D0 in
+ pci_pm_thaw_noirq()
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,64 +82,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-commit c1cfd9025cc394fd137a01159d74335c5ac978ce upstream.
+commit 5839ee7389e893a31e4e3c9cf17b50d14103c902 upstream.
 
-The rawmidi also allows to obtaining the information via ioctl of ctl
-API.  It means that user can issue an ioctl to the rawmidi device even
-when it's being removed as long as the control device is present.
-Although the code has some protection via the global register_mutex,
-its range is limited to the search of the corresponding rawmidi
-object, and the mutex is already unlocked at accessing the rawmidi
-object.  This may lead to a use-after-free.
+It is incorrect to call pci_restore_state() for devices in low-power
+states (D1-D3), as that involves the restoration of MSI setup which
+requires MMIO to be operational and that is only the case in D0.
 
-For avoiding it, this patch widens the application of register_mutex
-to the whole snd_rawmidi_info_select() function.  We have another
-mutex per rawmidi object, but this operation isn't very hot path, so
-it shouldn't matter from the performance POV.
+However, pci_pm_thaw_noirq() may do that if the driver's "freeze"
+callbacks put the device into a low-power state, so fix it by making
+it force devices into D0 via pci_set_power_state() instead of trying
+to "update" their power state which is pointless.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.2: adjust context]
+Fixes: e60514bd4485 (PCI/PM: Restore the status of PCI devices across hibernation)
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Maarten Lankhorst <dev@mblankhorst.nl>
+Tested-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Maarten Lankhorst <dev@mblankhorst.nl>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/rawmidi.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/pci/pci-driver.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -575,15 +575,14 @@ static int snd_rawmidi_info_user(struct
- 	return 0;
- }
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -872,7 +872,12 @@ static int pci_pm_thaw_noirq(struct devi
+ 	if (pci_has_legacy_pm_support(pci_dev))
+ 		return pci_legacy_resume_early(dev);
  
--int snd_rawmidi_info_select(struct snd_card *card, struct snd_rawmidi_info *info)
-+static int __snd_rawmidi_info_select(struct snd_card *card,
-+				     struct snd_rawmidi_info *info)
- {
- 	struct snd_rawmidi *rmidi;
- 	struct snd_rawmidi_str *pstr;
- 	struct snd_rawmidi_substream *substream;
+-	pci_update_current_state(pci_dev, PCI_D0);
++	/*
++	 * pci_restore_state() requires the device to be in D0 (because of MSI
++	 * restoration among other things), so force it into D0 in case the
++	 * driver's "freeze" callbacks put it into a low-power state directly.
++	 */
++	pci_set_power_state(pci_dev, PCI_D0);
+ 	pci_restore_state(pci_dev);
  
--	mutex_lock(&register_mutex);
- 	rmidi = snd_rawmidi_search(card, info->device);
--	mutex_unlock(&register_mutex);
- 	if (!rmidi)
- 		return -ENXIO;
- 	if (info->stream < 0 || info->stream > 1)
-@@ -600,6 +599,16 @@ int snd_rawmidi_info_select(struct snd_c
- 	return -ENXIO;
- }
- 
-+int snd_rawmidi_info_select(struct snd_card *card, struct snd_rawmidi_info *info)
-+{
-+	int ret;
-+
-+	mutex_lock(&register_mutex);
-+	ret = __snd_rawmidi_info_select(card, info);
-+	mutex_unlock(&register_mutex);
-+	return ret;
-+}
-+
- static int snd_rawmidi_info_select_user(struct snd_card *card,
- 					struct snd_rawmidi_info __user *_info)
- {
+ 	if (drv && drv->pm && drv->pm->thaw_noirq)
