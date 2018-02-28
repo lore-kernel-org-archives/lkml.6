@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-449106-1519833534-2-10899959220380098925
+X-Cyrus-Session-Id: sloti22d1t05-476314-1519833411-2-17777049815594087177
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833533; b=FHENrWyj4EXW0NW3lwZPZgraoTcBv9MURNd2jXUhLW9Vd6b
-    O8V2rk7Fzmko3/SmIXhk3t9EiDSjxEI1UF3ADoxUFTiNEFyALFpktGTHHF6H77fk
-    oGBW2Hhmrtaq8PbLDlU5fhs+q45UFCAiVj0SUzoP14SsVxm45iYAoOiNVF/Q6usD
-    iup+eU0NQ4ZrfV0wfhR4Hy7cR0erULmF7rd0qTc818OpNNxN3jgJUGVW6+hfW2AQ
-    DV7fzFBwkjC8PGR8Mzu413oEu7kOmNfykYurCotu7K7/mpRttuBI2IX5nIzpIrED
-    7KOalAPQ6ix58Bb3m3DY4QqeK1fjRs3f/3E7wrA==
+    t=1519833410; b=e5hnHVJdyhbcUyIuajo+ndG0uFXaOGrPL+eUPPzd3JGgxgu
+    uVKnGegwoRzAUamNr5qKM6XZd4exJu5taDXQ4bje19sgeXsXBSPt+t8eijdbpZf2
+    DN54VwhCbW1rVVCVCqR4ABFtjxW4QtnLCFto1Jvz3tRep8O5ZVqySp2Lt5GBptFG
+    FyCeov8GSQF87e8YWDvBRU2zD3a4Im5o7lvXR4hujWrMlsfJTOb74Fj+n9LRwaFK
+    B+f3mLvF6fuazGptB9LE5kDa4M9jfjtlm+AN0IUcWBML1ahsaz9OK71Ic4hTQfGX
+    fIuKdOQGzcyY0sfa9tFzNtPWSP1X1gLAiaPn47g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833533; bh=30/lAAojNiu7P1h876q
-    VMz5Pog0rOR3fOjAHQ3r++oY=; b=N83/izEdwxr8MfEFr+583VbgZRRoz32Zk4x
-    OXkzBACySAAWstPRO8Sl9zPV2AfFhr1jUsVoZ6WyiVu0R+gItpRNc/BYuF4DJu2X
-    YU4eBQXFCeBHHyb/wuU050fiMvQzgR0jvSd6c1+KsQdqvimSWa1wDypTliGkMtjx
-    ZUjlfAwcxwUG4/GW66LIGhv9iG3HFqcBCgfjC5mGNlPMkhfrD7c3x2fpl0TqBl4y
-    Rt70WDE5Sfpv7S9BoXEMzqgndRYzhAYdJtIeQz5L/hGoS4DREoYbGfTTi26tU6tR
-    aBgj5bgOr2mvec0C+h0F6MLXOERQp7l8emmVmh0yTDb3NSMvTqg==
+    :sender:list-id; s=arctest; t=1519833410; bh=3KCPpi5Hc409SCXpDGX
+    iCh6f++DVQwjeBsfB1mZJdvU=; b=nPkuzJU2iH6SfhdbaxwkzuYUUdCw43J/xzo
+    hjhymz7QdnusGZAQh4ZewTj8D7WxQ4ffeGQ+XCLF/hIjON6tkJwwXNaRB2j74dtU
+    9Yq9/xARxxOOp+x6SF3ichJ8hSM2ArL9dA6f/MN7SILsulhbBBjDQhusYccGXxky
+    rXIVl16IqYSAFTZonV/Su8bzBcKpO4NZvP9xghRJXCh0IrNpNOhvQBs9dXk+hAtS
+    MR9Ur3t7JwUqVNhZtQ4sJ3bKFl6F1dT8jqm8HdE5vPE1AZgc8Nl90BFdyN6exIgx
+    UkXnMFppaxNr1NKu4NFIUlz0opOc9/wsytUTXt7TwZVC9dFDnxA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933833AbeB1P6t (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:58:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34578 "EHLO
+        id S933691AbeB1PxO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:53:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34437 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934293AbeB1P6r (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:58:47 -0500
+        by vger.kernel.org with ESMTP id S933975AbeB1PxJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:53:09 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,14 +60,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ben Hutchings" <ben.hutchings@codethink.co.uk>,
-        "J. Bruce Fields" <bfields@redhat.com>
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Mike Looijmans" <mike.looijmans@topic.nl>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.840871204@decadent.org.uk>
+Message-ID: <lsq.1519831218.367221591@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 115/254] nfsd: auth: Fix gid sorting when rootsquash
- enabled
+Subject: [PATCH 3.16 024/254] usb: hub: Cycle HUB power when
+ initialization fails
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,44 +82,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Mike Looijmans <mike.looijmans@topic.nl>
 
-commit 1995266727fa8143897e89b55f5d3c79aa828420 upstream.
+commit 973593a960ddac0f14f0d8877d2d0abe0afda795 upstream.
 
-Commit bdcf0a423ea1 ("kernel: make groups_sort calling a responsibility
-group_info allocators") appears to break nfsd rootsquash in a pretty
-major way.
+Sometimes the USB device gets confused about the state of the initialization and
+the connection fails. In particular, the device thinks that it's already set up
+and running while the host thinks the device still needs to be configured. To
+work around this issue, power-cycle the hub's output to issue a sort of "reset"
+to the device. This makes the device restart its state machine and then the
+initialization succeeds.
 
-It adds a call to groups_sort() inside the loop that copies/squashes
-gids, which means the valid gids are sorted along with the following
-garbage.  The net result is that the highest numbered valid gids are
-replaced with any lower-valued garbage gids, possibly including 0.
+This fixes problems where the kernel reports a list of errors like this:
 
-We should sort only once, after filling in all the gids.
+usb 1-1.3: device not accepting address 19, error -71
 
-Fixes: bdcf0a423ea1 ("kernel: make groups_sort calling a responsibility ...")
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Acked-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: adjust context]
+The end result is a non-functioning device. After this patch, the sequence
+becomes like this:
+
+usb 1-1.3: new high-speed USB device number 18 using ci_hdrc
+usb 1-1.3: device not accepting address 18, error -71
+usb 1-1.3: new high-speed USB device number 19 using ci_hdrc
+usb 1-1.3: device not accepting address 19, error -71
+usb 1-1-port3: attempt power cycle
+usb 1-1.3: new high-speed USB device number 21 using ci_hdrc
+usb-storage 1-1.3:1.2: USB Mass Storage device detected
+
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/nfsd/auth.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/core/hub.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/nfsd/auth.c
-+++ b/fs/nfsd/auth.c
-@@ -59,10 +59,10 @@ int nfsd_setuser(struct svc_rqst *rqstp,
- 				GROUP_AT(gi, i) = exp->ex_anon_gid;
- 			else
- 				GROUP_AT(gi, i) = GROUP_AT(rqgi, i);
--
--			/* Each thread allocates its own gi, no race */
--			groups_sort(gi);
- 		}
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -4792,6 +4792,15 @@ loop:
+ 		usb_put_dev(udev);
+ 		if ((status == -ENOTCONN) || (status == -ENOTSUPP))
+ 			break;
 +
-+		/* Each thread allocates its own gi, no race */
-+		groups_sort(gi);
- 	} else {
- 		gi = get_group_info(rqgi);
++		/* When halfway through our retry count, power-cycle the port */
++		if (i == (SET_CONFIG_TRIES / 2) - 1) {
++			dev_info(&port_dev->dev, "attempt power cycle\n");
++			usb_hub_set_port_power(hdev, hub, port1, false);
++			msleep(2 * hub_power_on_good_delay(hub));
++			usb_hub_set_port_power(hdev, hub, port1, true);
++			msleep(hub_power_on_good_delay(hub));
++		}
  	}
+ 	if (hub->hdev->parent ||
+ 			!hcd->driver->port_handed_over ||
