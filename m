@@ -1,108 +1,206 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753007AbeB1SzS (ORCPT <rfc822;w@1wt.eu>);
+        id S1753093AbeB1SzZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:55:25 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33951 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753026AbeB1SzS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 13:55:18 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752601AbeB1SzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:55:16 -0500
-Message-ID: <1519844114.28560.216.camel@redhat.com>
-Subject: Re: [PATCH] RDMA/core: reduce IB_POLL_BATCH constant
-From: Doug Ledford <dledford@redhat.com>
-To: Max Gurtovoy <maxg@mellanox.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Chuck Lever <chuck.lever@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>,
+X-Google-Smtp-Source: AG47ELsKNPk/0xF0GZL1hT4YdB+YXFuNRot04SUvAVZMWUQKZTCPpMp8JI155Ul+3rYV5pkC2e00rQ==
+Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Mark Brown <broonie@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "leonro@mellanox.com" <leonro@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Date: Wed, 28 Feb 2018 13:55:14 -0500
-In-Reply-To: <1e7c373f-21bd-4d45-3dd6-68467bf09d0d@mellanox.com>
-References: <20180220205924.2035765-1-arnd@arndb.de>
-         <1519161268.3737.12.camel@wdc.com>
-         <F2FB1034-BFB6-45ED-878E-6FADD756157D@oracle.com>
-         <c3eab137-1c37-0e6c-a53a-df2cf80653d2@grimberg.me>
-         <0f90134c-3d40-1d24-711f-e4ab32802bd8@mellanox.com>
-         <c1bcd5cc-381d-2d94-1278-f9fb5c9c0b14@grimberg.me>
-         <20180227220958.GA21714@ziepe.ca>
-         <193aaf91-c9d1-38b1-a89f-45f129ca5798@mellanox.com>
-         <d2875648-20d9-43b9-abf1-8ecbf049c4bf@wdc.com>
-         <1e7c373f-21bd-4d45-3dd6-68467bf09d0d@mellanox.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-CYAKZfCrWJJbB8XaESeN"
-Mime-Version: 1.0
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-2-srinivas.kandagatla@linaro.org>
+ <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
+ <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
+ <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
+ <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
+ <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
+ <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
+Message-ID: <62ee863c-c3e8-ac81-0d83-8162da8d0458@linaro.org>
+Date: Wed, 28 Feb 2018 18:55:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-CYAKZfCrWJJbB8XaESeN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2018-02-28 at 11:50 +0200, Max Gurtovoy wrote:
->=20
-> On 2/28/2018 2:21 AM, Bart Van Assche wrote:
-> > On 02/27/18 14:15, Max Gurtovoy wrote:
-> > > -static int __ib_process_cq(struct ib_cq *cq, int budget, struct ib_w=
-c=20
-> > > *poll_wc)
-> > > +static int __ib_process_cq(struct ib_cq *cq, int budget, struct ib_w=
-c=20
-> > > *poll_wc,
-> > > +                          int batch)
-> > >   {
-> > > -       int i, n, completed =3D 0;
-> > > -       struct ib_wc *wcs =3D poll_wc ? : cq->wc;
-> > > +       int i, n, ib_poll_batch, completed =3D 0;
-> > > +       struct ib_wc *wcs;
-> > > +
-> > > +       if (poll_wc) {
-> > > +               wcs =3D poll_wc;
-> > > +               ib_poll_batch =3D batch;
-> > > +       } else {
-> > > +               wcs =3D cq->wc;
-> > > +               ib_poll_batch =3D IB_POLL_BATCH;
-> > > +       }
-> >=20
-> > Since this code has to be touched I think that we can use this=20
-> > opportunity to get rid of the "poll_wc ? : cq->wc" conditional and=20
-> > instead use what the caller passes. That will require to update all=20
-> > __ib_process_cq(..., ..., NULL) calls. I also propose to let the caller=
-=20
-> > pass ib_poll_batch instead of figuring it out in this function.=20
-> > Otherwise the approach of this patch looks fine to me.
->=20
-> Thanks Bart.
-> I'll make these changes and submit.
+On 22/02/18 10:03, Srinivas Kandagatla wrote:
+>>> Also the versions of each service are independent to each other.
+>>
+>> Not sure I follow the last statement. Meaning firmware updates change
+>> the services?
+> Sorry for not being clear, so the services like AFE, ASM, ADM have 
+> different version numbers for a given SoC/firmware.
+> 
+> Not 100% sure if firmware updates would change the service version 
+> number, even if it does, it can be queried dynamically on new B family 
+> SoCs, and on older A Family SoCs I have not seen the firmware updates in 
+> last 4 years.
+> 
+>> I don't see any versioning of services here.
+> 
+> Yes, Plan is that it will be part of the compatible string in cases 
+> where version query is not supported on older QCOM A family SoCs.
+> On B Family SoCs we can query the version dynamically.
+> 
+>>
+>>>
+>>>>>
+>>>>> apr {
+>>>>>           compatible = "qcom,apr-v2";
+>>>>>           qcom,smd-channels = "apr_audio_svc";
+>>>>>           qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
+>>>>>
+>>>>>           apr-services {
+>>>>>                   q6core {
+>>>>>                           qcom,apr-svc-name = "CORE";
+>>>>>                           qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
+>>>>>                           compatible = "qcom,q6core";
+>>>>>                   };
+>>>>>
+>>>>>                   q6afe: q6afe {
+>>>>>                           compatible = "qcom,q6afe";
+>>>>>                           qcom,apr-svc-name = "AFE";
+>>>>>                           qcom,apr-svc-id = <APR_SVC_AFE>;
+>>>>>                           #sound-dai-cells = <1>;
+>>>>>                   };
+>>>>>
+>>>>>                   q6asm: q6asm {
+>>>>>                           compatible = "qcom,q6asm";
+>>>>>                           qcom,apr-svc-name = "ASM";
+>>>>>                           qcom,apr-svc-id = <APR_SVC_ASM>;
+>>>>>                           #sound-dai-cells = <1>;
+>>>>>                   };
+>>>>>
+>>>>>                   q6adm: q6adm {, "external-sleep"
+>>>>>                           compatible = "qcom,q6adm";
+>>>>>                           qcom,apr-svc-name = "ADM";
+>>>>>                           qcom,apr-svc-id = <APR_SVC_ADM>;
+>>>>>                           #sound-dai-cells = <0>;
+>>>>>                   };
+>>>>
+>>>>
+>>>> All these DAI nodes could be a single node and the cell value be the
+>>>> svc-id?
+>>>
+> So we will have 2 cell values, one representing the apr service and 
+> other the dai.
+> 
+>>> No, DAI's here are both backends and frontends, and some of the services
+>>> like core, USM are not DAI's
+>>>
+>>> Are you also saying that we should have a single driver entity for 
+>>> all these
+>>> services?
+>>
+>> DT nodes do not equate driver entities. A driver can instantiate other 
+>> drivers.
+>>
+>> Am I saying a single DT node for this? Yes, perhaps.
+> Yes, I will give that a go.
 
-That sounds reasonable to me too, thanks for reworking and resubmitting.
+I did try your suggestion of making audio services into a single node 
+and it ended up more messy and non scalable.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-CYAKZfCrWJJbB8XaESeN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Mainly because q6afe node has more than one interface type of backend 
+dais (child nodes).
 
------BEGIN PGP SIGNATURE-----
+Each of this backend dai may need board specific setting ex: MI2S case 
+where board could wire up specific tx and rx lines from 4 possible lines 
+for that board. Also other type of dais also have some interface 
+specific properties.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqW+xIACgkQuCajMw5X
-L92yoBAAoX6ppzz3BTC8UJViwV+8KOklKRhAcs7HQ6+oxxRBLTQrwkARXIEAVUSD
-w4/rQIp9T4UPIIrtzqmLIji5QStlABbpIko02BMUsZ0zw3t6PTNX0QkbyCXeXxdn
-FDP7tHATdQue1ONhqsNM3YLDy2qeazxCiYQsqvzx+YmkVkmaoeKF5bK9BTjnuDQa
-UsBD20RBDUEhm911fYTP0ah8JrVWfaiafhdZAzp/vSWzP2Wrqb+crblWjZ0N0x3f
-d5Z4ESq0HAlv0OhiBklxyLrws3MjMyJrDeOJ06s3btr7dqIjbnBeveDO8vGJSUGx
-Bd/maWQ1AKobevvys2oPc5cNO7eXZPWk6wjGa8ZqOmfTm5X0V6V71v0kB7hGks+e
-K1bJcbQvfO4M+HqbGdbDdHVA1KtWBhbqCUIkVixrPi4g2JKfunwBwih6DEVuAMOj
-CqX3semucdFc8v8q0/AQlFZmkgZfVEuig2N5OUdVzKihOL1jeIDbsaM4DzZK8V41
-aLAAbVuHZ/8MJ0USUvZskvEUfbhA3JUEkKpqrwdaA5EvFLTNwDoEZri+JXPYQ3Tr
-+fV3pcPtvPtsOjM8nCdTKVWmiYc1/iTEATtMk86/K58V78LUV4rUxb1QboDr+Gcv
-XbGQPWQDCfxTLPnJ4c/g2jrMqLIMt9Bgf2SIgawRcwHAsNyvZfE=
-=pUan
------END PGP SIGNATURE-----
+MI2S example:
+apr {
+	...
+	q6afe: q6afe {
+		compatible = "qcom,q6afe";
+		qcom,apr-svc-name = "AFE";
+		qcom,apr-svc-id = <APR_SVC_AFE>;
+		pinctrl-0 = <&ext_sec_tlmm_lines_act>;
+		pinctrl-names = "default";
+		#sound-dai-cells = <1>;
 
---=-CYAKZfCrWJJbB8XaESeN--
+                 mi2s_prim_rx_dai@34{
+			reg = <34>;
+			rx-lines = <0>;
+			...
+		};
+
+		mi2s_prim_tx_dai@35{
+			reg = <35>;
+			tx-lines = <1 2>
+			...
+		};
+	     	...
+	};
+};
+
+Here is block diagram to give a quick overview of the components
+
+
+   +---------+          +---------+         +---------+
+   |  q6asm  |          |q6routing|         | q6afe   |
+   |  fedai  | <------> |  mixers | <-----> | bedai   |
+   +---------+          +---------+         +---------+
+       ^                     ^                   ^
+       |                     |                   |
+       |  +------------------+----------------+  |
+       |  |                  |                |  |
+       v  v                  v                v  v
+   +---------+          +---------+         +---------+
+   |   q6ASM |          |  q6ADM  |         |   q6AFE |
+   +---------+          +---------+         +---------+
+       ^                     ^                   ^          ^
+       |                     |                   | CPU Side |
+------+---------------------+-------------------+--------
+       |                     |                   |
+       |APR                  |APR                |APR
+       |                     |                   |
+       |  +------------------+----------------+  |
+       |  |                  |                |  |
++-----+--+-----------------------------------+--+-------
+       |  |                  |                |  | QDSP Side |
+       v  v                  v                v  v           v
+  +---------+          +---------+         +---------+
+  |   ASM   | <------> |   ADM   | <-----> |   AFE   |
+  +---------+          +---------+         +---------+
+                                                ^
+                                                |
+                            +-------------------+
+                            |
+---------------------------+--------------------------
+                            |            Audio I/O |
+                            v                      v
+     +--------------------------------------------------+
+     |                Audio devices                     |
+     | CODEC | HDMI-TX | PCM  | SLIMBUS | I2S |MI2S |...|
+     |                                                  |
+     +--------------------------------------------------+
+
+thanks,
+srini
