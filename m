@@ -1,134 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeB1IwJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 03:52:09 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38454 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751646AbeB1IwI (ORCPT
+        id S1752096AbeB1IzF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 03:55:05 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47368 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbeB1IzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 03:52:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DCE960249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=maggarwa@codeaurora.org
-From: Mohit Aggarwal <maggarwa@codeaurora.org>
-To: a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: Mohit Aggarwal <maggarwa@codeaurora.org>, rtc-linux@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc-pm8xxx: Fix issue in RTC write path
-Date: Wed, 28 Feb 2018 14:21:18 +0530
-Message-Id: <1519807878-14842-1-git-send-email-maggarwa@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 28 Feb 2018 03:55:03 -0500
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH V2] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
+Date: Wed, 28 Feb 2018 16:55:13 +0800
+Message-Id: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802280108
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to set time in rtc, need to disable
-rtc hw before writing into rtc registers.
+In scsi core, __scsi_queue_insert should just put request back on
+the queue and retry using the same command as before. However, for
+blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
+the request. To align with the semantics of __scsi_queue_insert,
+use blk_mq_requeue_request with kick_requeue_list == true and put
+the reference of scsi_device.
 
-Also fixes disabling of alarm while setting
-rtc time.
+V1 -> V2:
+ - add put_device on scsi_device->sdev_gendev
 
-Change-Id: Ia2c9c922dd78e2ecb92554d5722c894706d83ac0
-Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- drivers/rtc/rtc-pm8xxx.c | 49 +++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 38 insertions(+), 11 deletions(-)
+ drivers/scsi/scsi_lib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-index fac8355..5309edc 100644
---- a/drivers/rtc/rtc-pm8xxx.c
-+++ b/drivers/rtc/rtc-pm8xxx.c
-@@ -74,16 +74,18 @@ struct pm8xxx_rtc {
- /*
-  * Steps to write the RTC registers.
-  * 1. Disable alarm if enabled.
-- * 2. Write 0x00 to LSB.
-- * 3. Write Byte[1], Byte[2], Byte[3] then Byte[0].
-- * 4. Enable alarm if disabled in step 1.
-+ * 2. Disable rtc if enabled.
-+ * 3. Write 0x00 to LSB.
-+ * 4. Write Byte[1], Byte[2], Byte[3] then Byte[0].
-+ * 5. Enable rtc if disabled in step 2.
-+ * 6. Enable alarm if disabled in step 1.
-  */
- static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
- 	int rc, i;
- 	unsigned long secs, irq_flags;
--	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0;
--	unsigned int ctrl_reg;
-+	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0, rtc_disabled = 0;
-+	unsigned int ctrl_reg, rtc_ctrl_reg;
- 	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
- 	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
- 
-@@ -92,23 +94,38 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 
- 	rtc_tm_to_time(tm, &secs);
- 
-+	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
-+
- 	for (i = 0; i < NUM_8_BIT_RTC_REGS; i++) {
- 		value[i] = secs & 0xFF;
- 		secs >>= 8;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index a86df9c..6fa7b0c 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -191,7 +191,8 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+ 	 */
+ 	cmd->result = 0;
+ 	if (q->mq_ops) {
+-		scsi_mq_requeue_cmd(cmd);
++		blk_mq_requeue_request(cmd->request, true);
++		put_device(&device->sdev_gendev);
+ 		return;
  	}
- 
--	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
--
- 	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
- 
--	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &ctrl_reg);
-+	rc = regmap_read(rtc_dd->regmap, regs->alarm_ctrl, &ctrl_reg);
- 	if (rc)
- 		goto rtc_rw_fail;
- 
- 	if (ctrl_reg & regs->alarm_en) {
- 		alarm_enabled = 1;
- 		ctrl_reg &= ~regs->alarm_en;
--		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
-+		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
-+		if (rc) {
-+			dev_err(dev, "Write to RTC Alarm control register failed\n");
-+			goto rtc_rw_fail;
-+		}
-+	}
-+
-+	/* Disable RTC H/w before writing on RTC register */
-+	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &rtc_ctrl_reg);
-+	if (rc)
-+		goto rtc_rw_fail;
-+
-+	if (rtc_ctrl_reg & PM8xxx_RTC_ENABLE) {
-+		rtc_disabled = 1;
-+		rtc_ctrl_reg &= ~PM8xxx_RTC_ENABLE;
-+		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
- 		if (rc) {
- 			dev_err(dev, "Write to RTC control register failed\n");
- 			goto rtc_rw_fail;
-@@ -137,11 +154,21 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 		goto rtc_rw_fail;
- 	}
- 
-+	/* Enable RTC H/w after writing on RTC register */
-+	if (rtc_disabled) {
-+		rtc_ctrl_reg |= PM8xxx_RTC_ENABLE;
-+		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
-+		if (rc) {
-+			dev_err(dev, "Write to RTC control register failed\n");
-+			goto rtc_rw_fail;
-+		}
-+	}
-+
- 	if (alarm_enabled) {
- 		ctrl_reg |= regs->alarm_en;
--		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
-+		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
- 		if (rc) {
--			dev_err(dev, "Write to RTC control register failed\n");
-+			dev_err(dev, "Write to RTC Alarm control register failed\n");
- 			goto rtc_rw_fail;
- 		}
- 	}
+ 	spin_lock_irqsave(q->queue_lock, flags);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
