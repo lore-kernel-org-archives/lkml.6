@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELscIXoPps8F4XK3MSP69uTFwUEsmjCpaxQw7nf/wFxRdpxlag0UY7T1Pexh0Lpf/AN/v2VB
-ARC-Seal: i=1; a=rsa-sha256; t=1519831345; cv=none;
+X-Google-Smtp-Source: AH8x227CexjaN3LRMhNysfDSnARiSHjfAPu4X8r3fkDBRCsKXab9Q1jxnL4sdqbaEndYKtr0LCei
+ARC-Seal: i=1; a=rsa-sha256; t=1519831344; cv=none;
         d=google.com; s=arc-20160816;
-        b=pD8xajAqW7Uwm86/98gZHHFqLeYR7nTGQ7zRmcHy2hEths6XQAEJOA0UkDSMAlXdzQ
-         BEb7CTWJ2z9x4Pf5Dxr364QJuvum3QBtH62wb+qYf/faG1Q63EtPp/BEZYXfcS19OAQs
-         Y7UfXNvjSYL0O3gIMIW461IlPxGCCJCUrLu+VXEn0nE1xpx0sqyug8BejHCAnwuMRZAk
-         co2Ehpp1qC44BJa2Ciro6IcYjsx/nhHrvcUlWrElXp76HIUCp05HLDN9D3XrQhee+lDX
-         ouNO9sXJGeNky+F59ape6iXL7Ryay40BTIbjqBQZscsL1tbjuoUmDYCxH3G9e3jCpseE
-         aAnw==
+        b=QwCLtr67z4XwCjo2Q8R++Z81HOgNBF8SNohrBQg8VBhnCHiXPUiAUej8IXHqhrlqzP
+         6gLl+8HW5FdkVEanrgChLmrpHyVeWSFM+GxGzWyLLcXbiZX6NVYnhBmDrPHbpg0iZcBA
+         b7E+wgyFDtaB+ifGtcZ/wrt1NsSXE/PHXMMgz8/1QsUYit+gQwRJO9pRGcpMIPtGCyGO
+         yWgfHKNW4cTshD7tfXrEn2Jz6QhNF3dFt5iEolj6jZ1Ze4PVB/PmVpUus73gqHzG8KOK
+         iPnlPgj5jPouxD2WZok7g/V5tSFBEA+675+OIFlV3cm+237MX8qNXLZePs/bxdmoC7cy
+         aqtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=0aqxCRq9hXo16T6uFI+XDiQQZ7UxxVtBdm99yJByfyw=;
-        b=1JboLoFscaZxALdOPB/eNOIXRM9o7RjceOiWnBT1Bfr4BbdF44Wxc6+G+rZHANgniS
-         3K4rxBHLjKh86SYEnYMGxZhV9lNy5+I6IaGMAW6Udl2YC1UE/XHRt1DNZ6h06L4f4rjx
-         fiDL7lkb4/+KbDBHIf8lfoDdWLbQ52MEXIDJHEiH3P/lDurOB4idjug9o9/21p3dVI7a
-         kjkzVWUL4ymMAy1YeK0rYoL1lnOPVddpObW2CXIa1vGgjG4y6RCkQ/zzN+yw7BpgmCm5
-         3SFjDMBSMyI9JGp34l5wuyNlgxrotTCVdG2v3ulljMrAXWSykvjQlSyMPINuKpYLntf3
-         99CA==
+        bh=k3dEO0R8AN+oiztzBcJCo9ShVPK0L/x70ZgZXxlR0oc=;
+        b=ls0WI/qzyVhTy8V1rSBipdEdOwBBiUPcMltBXE2VdpgvPw0dfAGFcF0VfM3JNVM0en
+         M+BXPQiQxvlXl6EudpIIkBjRphgEI6X/f2xiDcNHp9BGJq0qegYfOTOTWZZOnSkV/INk
+         4+NC6f5MBdi/kze7vMNQcirfM9BEpkXhaeD4S/ALs9cCSB3facD96PamVbau6k6IMjen
+         WrLqQI/X4Lf8Tjr9U3hM8E714dltdikAwoTJb0jjaE8szHV2N4BDHcMZIc22TbmoT+RU
+         rwzSLYPmxw1z7CJw8+Wuupv37et71GmWNkBq1fffXDVpD6xYslIgh/1TbgfRoKhCVic2
+         tDfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,19 +30,28 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Oliver Neukum" <oneukum@suse.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
+ "Matt Fleming" <matt@codeblueprint.co.uk>,
+ "Dave Young" <dyoung@redhat.com>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ linux-efi@vger.kernel.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "H. Peter Anvin" <hpa@zytor.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.464370818@decadent.org.uk>
+Message-ID: <lsq.1519831218.738032988@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 131/254] usb: add RESET_RESUME for ELSA MicroLink 56K
+Subject: [PATCH 3.16 061/254] efi: Move some sysfs files to be read-only
+ by root
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658665862784090?=
-X-GMAIL-MSGID: =?utf-8?q?1593658672995707190?=
+X-GMAIL-THRID: =?utf-8?q?1593658671653555925?=
+X-GMAIL-MSGID: =?utf-8?q?1593658671653555925?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,29 +59,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit b9096d9f15c142574ebebe8fbb137012bb9d99c2 upstream.
+commit af97a77bc01ce49a466f9d4c0125479e2e2230b6 upstream.
 
-This modem needs this quirk to operate. It produces timeouts when
-resumed without reset.
+Thanks to the scripts/leaking_addresses.pl script, it was found that
+some EFI values should not be readable by non-root users.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+So make them root-only, and to do that, add a __ATTR_RO_MODE() macro to
+make this easier, and use it in other places at the same time.
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20171206095010.24170-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: drop changes in esrt.c]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -151,6 +151,9 @@ static const struct usb_device_id usb_qu
- 	/* Genesys Logic hub, internally used by KY-688 USB 3.1 Type-C Hub */
- 	{ USB_DEVICE(0x05e3, 0x0612), .driver_info = USB_QUIRK_NO_LPM },
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -72,8 +72,7 @@ static ssize_t systab_show(struct kobjec
+ 	return str - buf;
+ }
  
-+	/* ELSA MicroLink 56K */
-+	{ USB_DEVICE(0x05cc, 0x2267), .driver_info = USB_QUIRK_RESET_RESUME },
+-static struct kobj_attribute efi_attr_systab =
+-			__ATTR(systab, 0400, systab_show, NULL);
++static struct kobj_attribute efi_attr_systab = __ATTR_RO_MODE(systab, 0400);
+ 
+ #define EFI_FIELD(var) efi.var
+ 
+--- a/drivers/firmware/efi/runtime-map.c
++++ b/drivers/firmware/efi/runtime-map.c
+@@ -67,11 +67,11 @@ static ssize_t map_attr_show(struct kobj
+ 	return map_attr->show(entry, buf);
+ }
+ 
+-static struct map_attribute map_type_attr = __ATTR_RO(type);
+-static struct map_attribute map_phys_addr_attr   = __ATTR_RO(phys_addr);
+-static struct map_attribute map_virt_addr_attr  = __ATTR_RO(virt_addr);
+-static struct map_attribute map_num_pages_attr  = __ATTR_RO(num_pages);
+-static struct map_attribute map_attribute_attr  = __ATTR_RO(attribute);
++static struct map_attribute map_type_attr = __ATTR_RO_MODE(type, 0400);
++static struct map_attribute map_phys_addr_attr = __ATTR_RO_MODE(phys_addr, 0400);
++static struct map_attribute map_virt_addr_attr = __ATTR_RO_MODE(virt_addr, 0400);
++static struct map_attribute map_num_pages_attr = __ATTR_RO_MODE(num_pages, 0400);
++static struct map_attribute map_attribute_attr = __ATTR_RO_MODE(attribute, 0400);
+ 
+ /*
+  * These are default attributes that are added for every memmap entry.
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -82,6 +82,12 @@ struct attribute_group {
+ 	.show	= _name##_show,						\
+ }
+ 
++#define __ATTR_RO_MODE(_name, _mode) {					\
++	.attr	= { .name = __stringify(_name),				\
++		    .mode = VERIFY_OCTAL_PERMISSIONS(_mode) },		\
++	.show	= _name##_show,						\
++}
 +
- 	/* Genesys Logic hub, internally used by Moshi USB to Ethernet Adapter */
- 	{ USB_DEVICE(0x05e3, 0x0616), .driver_info = USB_QUIRK_NO_LPM },
- 
+ #define __ATTR_WO(_name) {						\
+ 	.attr	= { .name = __stringify(_name), .mode = S_IWUSR },	\
+ 	.store	= _name##_store,					\
