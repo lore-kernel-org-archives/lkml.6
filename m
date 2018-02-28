@@ -1,238 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935550AbeB1WdE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:33:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44456 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935452AbeB1WcJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:32:09 -0500
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        id S935517AbeB1We1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:34:27 -0500
+Received: from muru.com ([72.249.23.125]:58874 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935369AbeB1WeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 17:34:24 -0500
+Date: Wed, 28 Feb 2018 14:34:21 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/4] mm: Split page_type out from _map_count
-Date: Wed, 28 Feb 2018 14:31:55 -0800
-Message-Id: <20180228223157.9281-3-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180228223157.9281-1-willy@infradead.org>
-References: <20180228223157.9281-1-willy@infradead.org>
+Subject: Re: [PATCH v2 15/15] ARM: dts: dra7: Add high speed modes capability
+ to MMC1/MMC2 dt node
+Message-ID: <20180228223421.GM5448@atomide.com>
+References: <20180206125806.19350-1-kishon@ti.com>
+ <20180206125806.19350-16-kishon@ti.com>
+ <210939ed-67fc-fa37-b4f2-c1faefcc4642@ti.com>
+ <b411cf11-61e9-e688-6f04-e624fe52ac66@ti.com>
+ <4f18dab9-aee3-1023-d301-f142c6e2d358@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f18dab9-aee3-1023-d301-f142c6e2d358@ti.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+* Sekhar Nori <nsekhar@ti.com> [180213 11:11]:
+> On Wednesday 07 February 2018 02:51 PM, Kishon Vijay Abraham I wrote:
+> > Hi,
+> > 
+> > On Wednesday 07 February 2018 02:41 PM, Sekhar Nori wrote:
+> >> Kishon,
+> >>
+> >> On Tuesday 06 February 2018 06:28 PM, Kishon Vijay Abraham I wrote:
+> >>> Add UHS/HS200/DDR speed mode capability to MMC1 and MMC2 dt nodes.
+> >>>
+> >>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >>
+> >> Along with this, dont we need to have
+> >>
+> >> 	/delete-property/ mmc-hs200-1_8v;
+> >>
+> >> for eMMC on Beagle x15 which does not support HS200?
+> >>
+> >> Or are you planning to depend on lack of pinctrl entries for HS200 to
+> >> take care of that?
+> > 
+> > right now it relies on lack of pinctrl entries but I think adding delete
+> > property is appropriate. Actually I missed porting the patch that adds
+> > /delete-property/.
+> 
+> Actually, thinking more, this should be probably be handled using
+> "no-1-8-v" property. Reading the comment above SDHCI_QUIRK2_NO_1_8_V, it
+> is specifically meant for the case when system (board) does not support
+> 1.8V even when host (controller) does. Which is exactly the case with
+> Beagle x15.
 
-We're already using a union of many fields here, so stop abusing the
-_map_count and make page_type its own field.  That implies renaming some
-of the machinery that creates PageBuddy, PageBalloon and PageKmemcg;
-bring back the PG_buddy, PG_balloon and PG_kmemcg names.
+OK so that seems to be related to the last patch. I've applied
+the first two defconfig patches into omap-for-v4.17/defconfig
+and patches up to patch 13/15 into omap-for-v4.17/dt-sdhci.
 
-As suggested by Kirill, make page_type a bitmask.  Because it starts out
-life as -1 (thanks to sharing the storage with _map_count), setting a
-page flag means clearing the appropriate bit.  This gives us space for
-probably twenty or so extra bits (depending how paranoid we want to be
-about _mapcount underflow).
+Kishon, please repost the missing changes or ping me when
+the driver dependencies have cleared for further patches to
+be applied to enable sdhci.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- fs/proc/page.c             |  2 +-
- include/linux/mm_types.h   | 13 ++++++++-----
- include/linux/page-flags.h | 45 ++++++++++++++++++++++++++-------------------
- kernel/crash_core.c        |  1 +
- mm/page_alloc.c            | 13 +++++--------
- scripts/tags.sh            |  6 +++---
- 6 files changed, 44 insertions(+), 36 deletions(-)
+Regards,
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 1491918a33c3..35a67069fa02 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -106,7 +106,7 @@ u64 stable_page_flags(struct page *page)
- 	 * Note that page->_mapcount is overloaded in SLOB/SLUB/SLQB, so the
- 	 * simple test in page_mapped() is not enough.
- 	 */
--	if (!PageSlab(page) && page_mapped(page))
-+	if (!PageSlab(page) && !PageType(page, 0) && page_mapped(page))
- 		u |= 1 << KPF_MMAP;
- 	if (PageAnon(page))
- 		u |= 1 << KPF_ANON;
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index fd1af6b9591d..1c5dea402501 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -94,6 +94,14 @@ struct page {
- 	};
- 
- 	union {
-+		/*
-+		 * If the page is neither PageSlab nor PageAnon, the value
-+		 * stored here may help distinguish it from page cache pages.
-+		 * See page-flags.h for a list of page types which are
-+		 * currently stored here.
-+		 */
-+		unsigned int page_type;
-+
- 		_slub_counter_t counters;
- 		unsigned int active;		/* SLAB */
- 		struct {			/* SLUB */
-@@ -107,11 +115,6 @@ struct page {
- 			/*
- 			 * Count of ptes mapped in mms, to show when
- 			 * page is mapped & limit reverse map searches.
--			 *
--			 * Extra information about page type may be
--			 * stored here for pages that are never mapped,
--			 * in which case the value MUST BE <= -2.
--			 * See page-flags.h for more details.
- 			 */
- 			atomic_t _mapcount;
- 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 50c2b8786831..d151f590bbc6 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -630,49 +630,56 @@ PAGEFLAG_FALSE(DoubleMap)
- #endif
- 
- /*
-- * For pages that are never mapped to userspace, page->mapcount may be
-- * used for storing extra information about page type. Any value used
-- * for this purpose must be <= -2, but it's better start not too close
-- * to -2 so that an underflow of the page_mapcount() won't be mistaken
-- * for a special page.
-+ * For pages that are never mapped to userspace (and aren't PageSlab),
-+ * page_type may be used.  Because it is initialised to -1, we invert the
-+ * sense of the bit, so __SetPageFoo *clears* the bit used for PageFoo, and
-+ * __ClearPageFoo *sets* the bit used for PageFoo.  We leave a gap in the bit
-+ * assignments so that an underflow of page_mapcount() won't be mistaken for
-+ * a special page.
-  */
--#define PAGE_MAPCOUNT_OPS(uname, lname)					\
-+
-+#define PAGE_TYPE_BASE	0xff000000
-+/* Reserve		0x0000007f to catch underflows of page_mapcount */
-+#define PG_buddy	0x00000080
-+#define PG_balloon	0x00000100
-+#define PG_kmemcg	0x00000200
-+
-+#define PageType(page, flag)						\
-+	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-+
-+#define PAGE_TYPE_OPS(uname, lname)					\
- static __always_inline int Page##uname(struct page *page)		\
- {									\
--	return atomic_read(&page->_mapcount) ==				\
--				PAGE_##lname##_MAPCOUNT_VALUE;		\
-+	return PageType(page, PG_##lname);				\
- }									\
- static __always_inline void __SetPage##uname(struct page *page)		\
- {									\
--	VM_BUG_ON_PAGE(atomic_read(&page->_mapcount) != -1, page);	\
--	atomic_set(&page->_mapcount, PAGE_##lname##_MAPCOUNT_VALUE);	\
-+	VM_BUG_ON_PAGE(!PageType(page, 0), page);			\
-+	page->page_type &= ~PG_##lname;					\
- }									\
- static __always_inline void __ClearPage##uname(struct page *page)	\
- {									\
- 	VM_BUG_ON_PAGE(!Page##uname(page), page);			\
--	atomic_set(&page->_mapcount, -1);				\
-+	page->page_type |= PG_##lname;					\
- }
- 
- /*
-- * PageBuddy() indicate that the page is free and in the buddy system
-+ * PageBuddy() indicates that the page is free and in the buddy system
-  * (see mm/page_alloc.c).
-  */
--#define PAGE_BUDDY_MAPCOUNT_VALUE		(-128)
--PAGE_MAPCOUNT_OPS(Buddy, BUDDY)
-+PAGE_TYPE_OPS(Buddy, buddy)
- 
- /*
-- * PageBalloon() is set on pages that are on the balloon page list
-+ * PageBalloon() is true for pages that are on the balloon page list
-  * (see mm/balloon_compaction.c).
-  */
--#define PAGE_BALLOON_MAPCOUNT_VALUE		(-256)
--PAGE_MAPCOUNT_OPS(Balloon, BALLOON)
-+PAGE_TYPE_OPS(Balloon, balloon)
- 
- /*
-  * If kmemcg is enabled, the buddy allocator will set PageKmemcg() on
-  * pages allocated with __GFP_ACCOUNT. It gets cleared on page free.
-  */
--#define PAGE_KMEMCG_MAPCOUNT_VALUE		(-512)
--PAGE_MAPCOUNT_OPS(Kmemcg, KMEMCG)
-+PAGE_TYPE_OPS(Kmemcg, kmemcg)
- 
- extern bool is_free_buddy_page(struct page *page);
- 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 4f63597c824d..b02340fb99ff 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -458,6 +458,7 @@ static int __init crash_save_vmcoreinfo_init(void)
- 	VMCOREINFO_NUMBER(PG_hwpoison);
- #endif
- 	VMCOREINFO_NUMBER(PG_head_mask);
-+#define PAGE_BUDDY_MAPCOUNT_VALUE	(~PG_buddy)
- 	VMCOREINFO_NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE);
- #ifdef CONFIG_HUGETLB_PAGE
- 	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cb416723538f..41e56cf5bd7d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -744,16 +744,14 @@ static inline void rmv_page_order(struct page *page)
- 
- /*
-  * This function checks whether a page is free && is the buddy
-- * we can do coalesce a page and its buddy if
-+ * we can coalesce a page and its buddy if
-  * (a) the buddy is not in a hole (check before calling!) &&
-  * (b) the buddy is in the buddy system &&
-  * (c) a page and its buddy have the same order &&
-  * (d) a page and its buddy are in the same zone.
-  *
-- * For recording whether a page is in the buddy system, we set ->_mapcount
-- * PAGE_BUDDY_MAPCOUNT_VALUE.
-- * Setting, clearing, and testing _mapcount PAGE_BUDDY_MAPCOUNT_VALUE is
-- * serialized by zone->lock.
-+ * For recording whether a page is in the buddy system, we set PG_buddy.
-+ * Setting, clearing, and testing PG_buddy is serialized by zone->lock.
-  *
-  * For recording page's order, we use page_private(page).
-  */
-@@ -798,9 +796,8 @@ static inline int page_is_buddy(struct page *page, struct page *buddy,
-  * as necessary, plus some accounting needed to play nicely with other
-  * parts of the VM system.
-  * At each level, we keep a list of pages, which are heads of continuous
-- * free pages of length of (1 << order) and marked with _mapcount
-- * PAGE_BUDDY_MAPCOUNT_VALUE. Page's order is recorded in page_private(page)
-- * field.
-+ * free pages of length of (1 << order) and marked with PageBuddy().
-+ * Page's order is recorded in page_private(page) field.
-  * So when we are allocating or freeing one, we can derive the state of the
-  * other.  That is, if we allocate a small block, and both were
-  * free, the remainder of the region must be split into blocks.
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 78e546ff689c..8c3ae36d4ea8 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -188,9 +188,9 @@ regex_c=(
- 	'/\<CLEARPAGEFLAG_NOOP(\([[:alnum:]_]*\).*/ClearPage\1/'
- 	'/\<__CLEARPAGEFLAG_NOOP(\([[:alnum:]_]*\).*/__ClearPage\1/'
- 	'/\<TESTCLEARFLAG_FALSE(\([[:alnum:]_]*\).*/TestClearPage\1/'
--	'/^PAGE_MAPCOUNT_OPS(\([[:alnum:]_]*\).*/Page\1/'
--	'/^PAGE_MAPCOUNT_OPS(\([[:alnum:]_]*\).*/__SetPage\1/'
--	'/^PAGE_MAPCOUNT_OPS(\([[:alnum:]_]*\).*/__ClearPage\1/'
-+	'/^PAGE_TYPE_OPS(\([[:alnum:]_]*\).*/Page\1/'
-+	'/^PAGE_TYPE_OPS(\([[:alnum:]_]*\).*/__SetPage\1/'
-+	'/^PAGE_TYPE_OPS(\([[:alnum:]_]*\).*/__ClearPage\1/'
- 	'/^TASK_PFA_TEST([^,]*, *\([[:alnum:]_]*\))/task_\1/'
- 	'/^TASK_PFA_SET([^,]*, *\([[:alnum:]_]*\))/task_set_\1/'
- 	'/^TASK_PFA_CLEAR([^,]*, *\([[:alnum:]_]*\))/task_clear_\1/'
--- 
-2.16.1
+Tony
