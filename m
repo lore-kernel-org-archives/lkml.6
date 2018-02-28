@@ -1,66 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeB1CGi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 21:06:38 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48482 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751811AbeB1CGf (ORCPT
+        id S1751754AbeB1CKc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 21:10:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59898 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751521AbeB1CKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 21:06:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F1E860390
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
-Date: Tue, 27 Feb 2018 20:06:31 -0600
-From: Richard Kuo <rkuo@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-hexagon@vger.kernel.org, Chen Liqin <liqin.linux@gmail.com>,
-        Lennox Wu <lennox.wu@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180228020631.GB3780@codeaurora.org>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222191758.GB5180@codeaurora.org>
- <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
+        Tue, 27 Feb 2018 21:10:30 -0500
+Subject: Re: [PATCH v2 6/6] kconfig: rename silentoldconfig to syncconfig
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc: Marc Herbert <marc.herbert@intel.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>
+References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
+ <1519776926-30459-7-git-send-email-yamada.masahiro@socionext.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6fc6557b-8806-0f5d-671e-eeda67c5e3dc@infradead.org>
+Date: Tue, 27 Feb 2018 18:10:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1519776926-30459-7-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 11:43:10PM +0100, Arnd Bergmann wrote:
-> - How do I build an llvm based toolchain for Hexagon? Do I need patches
->   on top of the llvm-6 release branch? Where can I find the corresponding
->   binutils-2.30 sources?
+On 02/27/2018 04:15 PM, Masahiro Yamada wrote:
+> As commit cedd55d49dee ("kconfig: Remove silentoldconfig from help
+> and docs; fix kconfig/conf's help") mentioned, 'silentoldconfig' is a
+> historical misnomer.  That commit removed it from help and docs since
+> it is an internal interface.  If so, it should be allowed to rename
+> it to something more intuitive.  'syncconfig' is the one I came up
+> with because it updates the .config if necessary, then synchronize
+> other files with it.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v2:
+>   - newly added
+> 
+>  Documentation/kbuild/kconfig.txt |  2 +-
+>  Makefile                         |  2 +-
+>  scripts/kconfig/Makefile         |  4 ++--
+>  scripts/kconfig/conf.c           | 20 ++++++++++----------
+>  4 files changed, 14 insertions(+), 14 deletions(-)
 
-Just to follow up on this, the closest thing right now to compile the kernel
-for Hexagon is the toolchain included with the Hexagon SDK.  However, the 
-linker will fail because of something in the kernel build process that
-I think produces empty sections, which that linker can't handle.  A newer
-linker can handle it, but that's not scheduled to be released until much later
-this year.
+It wouldn't hurt to update this line also: (I would just drop "silentoldconfig")
 
-That's actually the closest option currently.  I tried the upstream source
-but it seems to lack some specific patches to support kernel compilation,
-so I will need to chase those down.
+     Make oldconfig/silentoldconfig/menuconfig/etc.
+
+in Documentation/networking/i40e.txt.
 
 
-
-Thanks,
-Richard Kuo
-
-
-
+thanks,
 -- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+~Randy
