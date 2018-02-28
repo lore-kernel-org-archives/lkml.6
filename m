@@ -1,92 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeB1DRz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 22:17:55 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56448 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751646AbeB1DRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:17:54 -0500
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation in ->readdir"
-Date: Wed, 28 Feb 2018 11:17:37 +0800
-Message-ID: <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+        id S1752099AbeB1D1J (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 22:27:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58724 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751830AbeB1D1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 22:27:07 -0500
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, pagupta@redhat.com
+Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH v3 0/4] mm/sparse: Optimize memmap allocation during sparse_init()
+Date: Wed, 28 Feb 2018 11:26:53 +0800
+Message-Id: <20180228032657.32385-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
+This is v3 post. V1 can be found here:
+https://www.spinics.net/lists/linux-mm/msg144486.html
 
-Conflicts:
-	fs/f2fs/dir.c
+In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+are allocated with the size of NR_MEM_SECTIONS. They are used to store
+each memory section's usemap and mem map if marked as present. In
+5-level paging mode, this will cost 512M memory though they will be
+released at the end of sparse_init(). System with few memory, like
+kdump kernel which usually only has about 256M, will fail to boot
+because of allocation failure if CONFIG_X86_5LEVEL=y.
 
-In some platforms (such as arm), high memory is used, then the
-decrypting filename will cause panic, the reason see commit
-569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
-for decrypting filename"):
+In this patchset, optimize the memmap allocation code to only use
+usemap_map and map_map with the size of nr_present_sections. This
+makes kdump kernel boot up with normal crashkernel='' setting when
+CONFIG_X86_5LEVEL=y.
 
- We got dentry pages from high_mem, and its address space directly goes into the
- decryption path via f2fs_fname_disk_to_usr.
- But, sg_init_one assumes the address is not from high_mem, so we can get this
- panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+Change log:
+v2->v3:
+  Change nr_present_sections as __initdata and add code comment
+  according to Andrew's suggestion.
 
- kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
- Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
- ...
-  (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
-  (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
-  (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
-  (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
-  (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
-  (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
-  (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
-  (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
-  (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
-  (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
-  (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+  Change the local variable 'i' as idx_present which loops over the
+  present sections, and improve the code. These are suggested by
+  Dave and Pankaj.
 
-Howerver, later patch:
-commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
-reverts the codes, which causes panic again in arm, so fix it back to the old version.
+  Add a new patch 0003 which adds a new parameter 'data_unit_size'
+  to function alloc_usemap_and_memmap() in which we will update 'data'
+  to make it point at new position. However its type 'void *' can't give
+  us needed info to do that. Need pass the unit size in. So change code
+  in patch 0004 accordingly. This is a code bug fix found when tested
+  the memory deployed on multiple nodes.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+v1-v2:
+  Split out the nr_present_sections adding as a single patch for easier
+  reviewing.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f00b5ed..de2e295 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			int save_len = fstr->len;
- 			int err;
- 
-+			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
-+			if (!de_name.name)
-+				return -ENOMEM;
-+
-+			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
-+
- 			err = fscrypt_fname_disk_to_usr(d->inode,
- 						(u32)de->hash_code, 0,
- 						&de_name, fstr);
-+			kfree(de_name.name);
- 			if (err)
- 				return err;
- 
+  Rewrite patch log according to Dave's suggestion.
+
+  Fix code bug in patch 0002 reported by test robot.
+
+Baoquan He (4):
+  mm/sparse: Add a static variable nr_present_sections
+  mm/sparsemem: Defer the ms->section_mem_map clearing
+  mm/sparse: Add a new parameter 'data_unit_size' for
+    alloc_usemap_and_memmap
+  mm/sparse: Optimize memmap allocation during sparse_init()
+
+ mm/sparse-vmemmap.c |  6 +++---
+ mm/sparse.c         | 62 ++++++++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 48 insertions(+), 20 deletions(-)
+
 -- 
-1.8.5.2
+2.13.6
