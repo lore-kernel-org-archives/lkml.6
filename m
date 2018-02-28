@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519839469-2-1169411437774745347
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519839467-2-305523208506049412
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839468; b=jayhvev9E0vrWixm5cD0FO2qBiQ9klsNry+ycGEfgZ+LHKI
-    NEtn7CXIFlOB19kzIDcGwEIwAfBPqVFM0X2S8hi2LDDG7ZoWxkh1A85QIHnYs5r3
-    r72jlaDDe1aIXcRoeCcgCECns4HmMMTLbGJWcagYNqhoiutHtRQxOzP5T0WyfJR1
-    wcuMZGHBpEjFIXj38hPAdn20AO0OMkbIvfY+aotLkjbQ17in13oZzNXXLgz0bYMC
-    Z9X31Btiteowpiw9nE0ZOyYlOC000mamsETnSD3+YfxLOOZPbTqkfz1Pj7JcWM4w
-    gfsfqj5YRC7JCJYgDAJYbmFQQG4LROLVRk/lFzA==
+    t=1519839466; b=gBksJ4OngV6JHxydyTjrYEmYt7XqGRaLZZ1A0sxHNHU98fZ
+    T+pWhcvuTi4O57Crq8gCwR+ngwqj+UFK+EDHTqChzzN8HpfSNdyKygseSATsgouk
+    F7oNQP207Y6KqDjo27CT+ztie0WFh6XwSB5RLWtYp53hCVj4F6tuWN/+XvBweNGB
+    TjFwyiY0v2tBR9sMG6BWlLgJyYwu6krm6vCPZIDocgkHw/+b9MAH2HeV/qsv1gCm
+    2PCmC8mL7S843Dr3kbiewLEXTR8fLDcr1Gx+9SSdunSiB9bAcO0ZDVW2dGipYmDp
+    ZS/IG3bsjQIwfpi2WVkrksVdofeZzt7uAE8lR/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839468; bh=+VmN0zJr49jBJojtZZp
-    w9XQYNeuB9zV97bejMOi0mvc=; b=B0mqd2a7bVEPllr8T7m+BHnJ47iv1ok6hyE
-    uI3mmaQi4P7/bDSZuVYnAZUffclFQeNV2RhPeaoagIAMKQ95MQbNAoBBPjdutNkT
-    lB4Q9uanVEmBcG4+zVngBCSL9C/b1k+PxeRefUDyWUyuiBwc1JLblGBOS4agA9io
-    CST16vQv3IQDzvmSpr7TcPJxHrVI74uOLmcpUGMxMMW9zhmJuPJJrqcSHQWC/ivl
-    2Rw6jOw1JhdhrjWnF9ifWZdOsFged0mE6nSKrKV2gV4A6+IgvNf7YlHdT7fXv7Xk
-    5CmsglrdON+bkmSM0pOYLiVxkESMIqkJnTgRBB68MOlo8QaBW1w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839466; bh=KYlA8kOiHKn3w4adDXW
+    0+FTJ/Z+eN4RsyMpJR3o41vU=; b=L5NBx700WpBzmXc6x4/Vy+al6pBUCYYnMvy
+    JBZgOyKkJv87JqL34Ol70+5VdE/S+WKX8w0Zrv2sLarRIcfhCdpADXMu3OiinVIz
+    09RSKybnqUEl86sBI/gxCV+nlS/XVwUbmMeV4dnQZtUNOPasTlmyw/G+SoCTDS0Y
+    Wje3H5b/nk/rV8IETqHdfCnPW3skx1haKNudb28kNyIpCS2tKtt0ONEcgneW5m6S
+    9QcUtW+AXOgy60DsM1rzjtBuymTWod1U9jjmtvpildRf2OFyaMrn1L8zLLQhlk3x
+    EsmGg/BKWSA604f3RMaaqWM1VdoJ09FEgoVGi6RjfZTn1B9WEbA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeB1Rg1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:36:27 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33185 "EHLO
+        id S932961AbeB1Rg2 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:36:28 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33173 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932540AbeB1PWO (ORCPT
+        by vger.kernel.org with ESMTP id S932532AbeB1PWO (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:14 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Mauro Carvalho Chehab" <m.chehab@samsung.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        "Guennadi Liakhovetski" <g.liakhovetski@gmx.de>,
+        "Mauro Carvalho Chehab" <mchehab@osg.samsung.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.234714968@decadent.org.uk>
+Message-ID: <lsq.1519831222.490269691@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 122/140] [media] v4l2-compat-ioctl32: fix sparse warnings
+Subject: [PATCH 3.2 123/140] [media] V4L2: fix VIDIOC_CREATE_BUFS 32-bit
+ compatibility mode data copy-back
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,145 +82,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-commit 8ae632b11775254c5e555ee8c42b7d19baeb1473 upstream.
+commit 6ed9b28504326f8cf542e6b68245b2f7ce009216 upstream.
 
-A lot of these warnings are caused by the fact that we don't generally use
-__user in videodev2.h. Normally the video_usercopy function will copy anything
-pointed to by pointers into kernel space, so having __user in the struct will only
-cause lots of warnings in the drivers. But the flip side of that is that you
-need to add __force casts here.
+Similar to an earlier patch, fixing reading user-space data for the
+VIDIOC_CREATE_BUFS ioctl() in 32-bit compatibility mode, this patch fixes
+writing back of the possibly modified struct to the user. However, unlike
+the former bug, this one is much less harmful, because it only results in
+the kernel failing to write the .type field back to the user, but in fact
+this is likely unneeded, because the kernel will hardly want to change
+that field. Therefore this bug is more of a theoretical nature.
 
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:337:26: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:337:30: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:338:31: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:338:49: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:343:21: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:346:21: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:349:35: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:349:46: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:352:35: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:352:54: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:363:26: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:363:32: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:364:31: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:364:51: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:371:35: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:371:56: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:376:35: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:376:48: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:430:30: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:433:48: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:433:56: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:501:24: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:507:48: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:507:56: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:565:18: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:670:22: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:680:29: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:692:55: warning: incorrect type in initializer (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:773:18: warning: incorrect type in assignment (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:786:30: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:786:44: warning: incorrect type in argument 2 (different address spaces)
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:674:37: warning: dereference of noderef expression
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:718:37: warning: dereference of noderef expression
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-[bwh: Backported to 3.2:
- - Drop changes in {get,put}_v4l2_edid32()
- - Adjust filename, context]
+Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+[bwh: Backported to 3.2: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
+ drivers/media/video/v4l2-compat-ioctl32.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
 --- a/drivers/media/video/v4l2-compat-ioctl32.c
 +++ b/drivers/media/video/v4l2-compat-ioctl32.c
-@@ -334,7 +334,7 @@ struct v4l2_buffer32 {
- 	__u32			reserved;
- };
+@@ -226,6 +226,9 @@ static int get_v4l2_create32(struct v4l2
  
--static int get_v4l2_plane32(struct v4l2_plane *up, struct v4l2_plane32 *up32,
-+static int get_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 				enum v4l2_memory memory)
+ static int __put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
  {
- 	void __user *up_pln;
-@@ -360,7 +360,7 @@ static int get_v4l2_plane32(struct v4l2_
- 	return 0;
- }
- 
--static int put_v4l2_plane32(struct v4l2_plane *up, struct v4l2_plane32 *up32,
-+static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 				enum v4l2_memory memory)
- {
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
-@@ -426,7 +426,7 @@ static int get_v4l2_buffer32(struct v4l2
- 		 * by passing a very big num_planes value */
- 		uplane = compat_alloc_user_space(num_planes *
- 						sizeof(struct v4l2_plane));
--		kp->m.planes = uplane;
-+		kp->m.planes = (__force struct v4l2_plane *)uplane;
- 
- 		while (--num_planes >= 0) {
- 			ret = get_v4l2_plane32(uplane, uplane32, kp->memory);
-@@ -493,7 +493,7 @@ static int put_v4l2_buffer32(struct v4l2
- 		if (num_planes == 0)
- 			return 0;
- 
--		uplane = kp->m.planes;
-+		uplane = (__force struct v4l2_plane __user *)kp->m.planes;
- 		if (get_user(p, &up->m.planes))
- 			return -EFAULT;
- 		uplane32 = compat_ptr(p);
-@@ -543,7 +543,7 @@ static int get_v4l2_framebuffer32(struct
- 		get_user(kp->capability, &up->capability) ||
- 		get_user(kp->flags, &up->flags))
- 			return -EFAULT;
--	kp->base = compat_ptr(tmp);
-+	kp->base = (__force void *)compat_ptr(tmp);
- 	get_v4l2_pix_format(&kp->fmt, &up->fmt);
- 	return 0;
- }
-@@ -649,11 +649,15 @@ static int get_v4l2_ext_controls32(struc
- 			n * sizeof(struct v4l2_ext_control32)))
- 		return -EFAULT;
- 	kcontrols = compat_alloc_user_space(n * sizeof(struct v4l2_ext_control));
--	kp->controls = kcontrols;
-+	kp->controls = (__force struct v4l2_ext_control *)kcontrols;
- 	while (--n >= 0) {
-+		u32 id;
++	if (put_user(kp->type, &up->type))
++		return -EFAULT;
 +
- 		if (copy_in_user(kcontrols, ucontrols, sizeof(*ucontrols)))
- 			return -EFAULT;
--		if (ctrl_is_pointer(kcontrols->id)) {
-+		if (get_user(id, &kcontrols->id))
-+			return -EFAULT;
-+		if (ctrl_is_pointer(id)) {
- 			void __user *s;
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+@@ -256,8 +259,7 @@ static int __put_v4l2_format32(struct v4
  
- 			if (get_user(p, &ucontrols->string))
-@@ -671,7 +675,8 @@ static int get_v4l2_ext_controls32(struc
- static int put_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
+ static int put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
  {
- 	struct v4l2_ext_control32 __user *ucontrols;
--	struct v4l2_ext_control __user *kcontrols = kp->controls;
-+	struct v4l2_ext_control __user *kcontrols =
-+		(__force struct v4l2_ext_control __user *)kp->controls;
- 	int n = kp->count;
- 	compat_caddr_t p;
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)) ||
+-		put_user(kp->type, &up->type))
++	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)))
+ 		return -EFAULT;
+ 	return __put_v4l2_format32(kp, up);
+ }
+@@ -265,8 +267,8 @@ static int put_v4l2_format32(struct v4l2
+ static int put_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
+ {
+ 	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_create_buffers32)) ||
+-	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format.fmt)))
+-			return -EFAULT;
++	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format)))
++		return -EFAULT;
+ 	return __put_v4l2_format32(&kp->format, &up->format);
+ }
  
-@@ -693,11 +698,14 @@ static int put_v4l2_ext_controls32(struc
- 
- 	while (--n >= 0) {
- 		unsigned size = sizeof(*ucontrols);
-+		u32 id;
- 
-+		if (get_user(id, &kcontrols->id))
-+			return -EFAULT;
- 		/* Do not modify the pointer when copying a pointer control.
- 		   The contents of the pointer was changed, not the pointer
- 		   itself. */
--		if (ctrl_is_pointer(kcontrols->id))
-+		if (ctrl_is_pointer(id))
- 			size -= sizeof(ucontrols->value64);
- 		if (copy_in_user(ucontrols, kcontrols, size))
- 			return -EFAULT;
