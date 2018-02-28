@@ -1,198 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752460AbeB1Luy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 06:50:54 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41289 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752418AbeB1Luw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 06:50:52 -0500
-X-Google-Smtp-Source: AH8x227OG99z14ArPhjy+YFmmAmaVRvvdQvNKgF8g+IPdG7Xs0Uo9JYE9i3vxHmG9KykafQ89nYnalBGMJzgKAE3+a0=
+        id S1752329AbeB1Lxc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 06:53:32 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752147AbeB1Lxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 06:53:31 -0500
+Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+ <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+ <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+ <20180226161310.061ce3a8@w520.home>
+ <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
+ <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+Cc: "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+Date: Wed, 28 Feb 2018 12:53:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180227020549-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-3-marcandre.lureau@redhat.com> <20180227020549-mutt-send-email-mst@kernel.org>
-From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@gmail.com>
-Date: Wed, 28 Feb 2018 12:50:50 +0100
-Message-ID: <CAJ+F1CLE6zshabQRSNpWefWfoF89r2ae-GaCbNb5q5EV8tR6oA@mail.gmail.com>
-Subject: Re: [PATCH v15 02/11] fw_cfg: add a public uapi header
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: open list <linux-kernel@vger.kernel.org>, slp@redhat.com,
-        bhe@redhat.com, somlo@cmu.edu, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1SBoxOq032458
 
-On Tue, Feb 27, 2018 at 1:06 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Thu, Feb 15, 2018 at 10:33:03PM +0100, Marc-André Lureau wrote:
->> Create a common header file for well-known values and structures to be
->> shared by the Linux kernel with qemu or other projects.
->>
->> It is based from qemu/docs/specs/fw_cfg.txt which references
->> qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
->> authoritative list" & vmcoreinfo.txt. Those files don't have an
->> explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
->> Michael S. Tsirkin suggested to use the same license.
->>
->> The patch intentionally left out DMA & vmcoreinfo structures &
->> defines, which are added in the commits making usage of it.
->>
->> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
->> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
->>
->> ---
->>
->> The related qemu patch making use of it, to be submitted:
->> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
->> ---
->>  MAINTAINERS                    |  1 +
->>  drivers/firmware/qemu_fw_cfg.c | 22 ++------------
->>  include/uapi/linux/fw_cfg.h    | 66 ++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 69 insertions(+), 20 deletions(-)
->>  create mode 100644 include/uapi/linux/fw_cfg.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 3bdc260e36b7..a66b65f62811 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -11352,6 +11352,7 @@ M:    "Michael S. Tsirkin" <mst@redhat.com>
->>  L:   qemu-devel@nongnu.org
->>  S:   Maintained
->>  F:   drivers/firmware/qemu_fw_cfg.c
->> +F:   include/uapi/linux/fw_cfg.h
->>
->>  QIB DRIVER
->>  M:   Dennis Dalessandro <dennis.dalessandro@intel.com>
->
-> Why fw_cfg.h and not qemu_fw_cfg.h ? fw_cfg.h seems too generic.
+Hi Shameer,
 
-ok
+On 28/02/18 10:25, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Auger Eric [mailto:eric.auger@redhat.com]
+>> Sent: Wednesday, February 28, 2018 9:02 AM
+>> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+>> Alex Williamson <alex.williamson@redhat.com>
+>> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+>> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin Murphy
+>> <robin.murphy@arm.com>
+>> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
+>> iova range
+>>
+>> Hi Shameer,
+>>
+>> On 27/02/18 10:57, Shameerali Kolothum Thodi wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Auger Eric [mailto:eric.auger@redhat.com]
+>>>> Sent: Tuesday, February 27, 2018 8:27 AM
+>>>> To: Alex Williamson <alex.williamson@redhat.com>
+>>>> Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+>>>> pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+>>>> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+>>>> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
+>> Murphy
+>>>> <robin.murphy@arm.com>
+>>>> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+>> valid
+>>>> iova range
+>>>>
+>>>> Hi,
+>>>> On 27/02/18 00:13, Alex Williamson wrote:
+>>>>> On Mon, 26 Feb 2018 23:05:43 +0100
+>>>>> Auger Eric <eric.auger@redhat.com> wrote:
+>>>>>
+>>>>>> Hi Shameer,
+>>>>>>
+>>>>>> [Adding Robin in CC]
+>>>>>> On 21/02/18 13:22, Shameer Kolothum wrote:
+>>>>>>> This checks and rejects any dma map request outside valid iova
+>>>>>>> range.
+>>>>>>>
+>>>>>>> Signed-off-by: Shameer Kolothum
+>>>> <shameerali.kolothum.thodi@huawei.com>
+>>>>>>> ---
+>>>>>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
+>>>>>>>  1 file changed, 22 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/vfio/vfio_iommu_type1.c
+>>>> b/drivers/vfio/vfio_iommu_type1.c
+>>>>>>> index a80884e..3049393 100644
+>>>>>>> --- a/drivers/vfio/vfio_iommu_type1.c
+>>>>>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>>>>>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct vfio_iommu
+>>>> *iommu, struct vfio_dma *dma,
+>>>>>>>  	return ret;
+>>>>>>>  }
+>>>>>>>
+>>>>>>> +/*
+>>>>>>> + * Check dma map request is within a valid iova range
+>>>>>>> + */
+>>>>>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+>>>>>>> +				dma_addr_t start, dma_addr_t end)
+>>>>>>> +{
+>>>>>>> +	struct list_head *iova = &iommu->iova_list;
+>>>>>>> +	struct vfio_iova *node;
+>>>>>>> +
+>>>>>>> +	list_for_each_entry(node, iova, list) {
+>>>>>>> +		if ((start >= node->start) && (end <= node->end))
+>>>>>>> +			return true;
+>>>>>> I am now confused by the fact this change will prevent existing QEMU
+>>>>>> from working with this series on some platforms. For instance QEMU virt
+>>>>>> machine GPA space collides with Seattle PCI host bridge windows. On
+>> ARM
+>>>>>> the smmu and smmuv3 drivers report the PCI host bridge windows as
+>>>>>> reserved regions which does not seem to be the case on other platforms.
+>>>>>> The change happened in commit
+>>>> 273df9635385b2156851c7ee49f40658d7bcb29d
+>>>>>> (iommu/dma: Make PCI window reservation generic).
+>>>>>>
+>>>>>> For background, we already discussed the topic after LPC 2016. See
+>>>>>> https://www.spinics.net/lists/kernel/msg2379607.html.
+>>>>>>
+>>>>>> So is it the right choice to expose PCI host bridge windows as reserved
+>>>>>> regions? If yes shouldn't we make a difference between those and MSI
+>>>>>> windows in this series and do not reject any user space DMA_MAP
+>> attempt
+>>>>>> within PCI host bridge windows.
+>>>>>
+>>>>> If the QEMU machine GPA collides with a reserved region today, then
+>>>>> either:
+>>>>>
+>>>>> a) The mapping through the IOMMU works and the reserved region is
+>> wrong
+>>>>>
+>>>>> or
+>>>>>
+>>>>> b) The mapping doesn't actually work, QEMU is at risk of data loss by
+>>>>> being told that it worked, and we're justified in changing that
+>>>>> behavior.
+>>>>>
+>>>>> Without knowing the specifics of SMMU, it doesn't particularly make
+>>>>> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
+>>>>> unless perhaps the IOMMU is incapable of translating those IOVAs.
+>>>> to me the limitation does not come from the smmu itself, which is a
+>>>> separate HW block sitting between the root complex and the interconnect.
+>>>> If ACS is not enforced by the PCIe subsystem, the transaction will never
+>>>> reach the IOMMU.
+>>>
+>>> True. And we do have one such platform where ACS is not enforced but
+>>> reserving the regions and possibly creating holes while launching VM will
+>>> make it secure. But I do wonder how we will solve the device grouping
+>>> in such cases.
+>>>
+>>> The Seattle PCI host bridge windows case you mentioned has any pci quirk
+>>> to claim that they support ACS?
+>> No there is none to my knowledge. I am applying Alex' not upstream ACS
+>> overwrite patch.
+> 
+> Ok. But isn't that patch actually applicable to cases where ACS is really supported
+> by hardware but the capability is not available?
 
->
->> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
->> index a41b572eeeb1..42601a3eaed5 100644
->> --- a/drivers/firmware/qemu_fw_cfg.c
->> +++ b/drivers/firmware/qemu_fw_cfg.c
->> @@ -32,30 +32,12 @@
->>  #include <linux/slab.h>
->>  #include <linux/io.h>
->>  #include <linux/ioport.h>
->> +#include <uapi/linux/fw_cfg.h>
->>
->>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
->>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
->>  MODULE_LICENSE("GPL");
->>
->> -/* selector key values for "well-known" fw_cfg entries */
->> -#define FW_CFG_SIGNATURE  0x00
->> -#define FW_CFG_ID         0x01
->> -#define FW_CFG_FILE_DIR   0x19
->> -
->> -/* size in bytes of fw_cfg signature */
->> -#define FW_CFG_SIG_SIZE 4
->> -
->> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
->> -#define FW_CFG_MAX_FILE_PATH 56
->> -
->> -/* fw_cfg file directory entry type */
->> -struct fw_cfg_file {
->> -     u32 size;
->> -     u16 select;
->> -     u16 reserved;
->> -     char name[FW_CFG_MAX_FILE_PATH];
->> -};
->> -
->>  /* fw_cfg device i/o register addresses */
->>  static bool fw_cfg_is_mmio;
->>  static phys_addr_t fw_cfg_p_base;
->> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
->>
->>  #ifdef CONFIG_ACPI
->>  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
->> -     { "QEMU0002", },
->> +     { FW_CFG_ACPI_DEVICE_ID, },
->>       {},
->>  };
->>  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
->> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
->> new file mode 100644
->> index 000000000000..c698ac3812f6
->> --- /dev/null
->> +++ b/include/uapi/linux/fw_cfg.h
->> @@ -0,0 +1,66 @@
->> +/* SPDX-License-Identifier: BSD-3-Clause */
->> +#ifndef _LINUX_FW_CFG_H
->> +#define _LINUX_FW_CFG_H
->> +
->> +#include <linux/types.h>
->> +
->> +#define FW_CFG_ACPI_DEVICE_ID        "QEMU0002"
->> +
->> +/* selector key values for "well-known" fw_cfg entries */
->> +#define FW_CFG_SIGNATURE     0x00
->> +#define FW_CFG_ID            0x01
->> +#define FW_CFG_UUID          0x02
->> +#define FW_CFG_RAM_SIZE              0x03
->> +#define FW_CFG_NOGRAPHIC     0x04
->> +#define FW_CFG_NB_CPUS               0x05
->> +#define FW_CFG_MACHINE_ID    0x06
->> +#define FW_CFG_KERNEL_ADDR   0x07
->> +#define FW_CFG_KERNEL_SIZE   0x08
->> +#define FW_CFG_KERNEL_CMDLINE        0x09
->> +#define FW_CFG_INITRD_ADDR   0x0a
->> +#define FW_CFG_INITRD_SIZE   0x0b
->> +#define FW_CFG_BOOT_DEVICE   0x0c
->> +#define FW_CFG_NUMA          0x0d
->> +#define FW_CFG_BOOT_MENU     0x0e
->> +#define FW_CFG_MAX_CPUS              0x0f
->> +#define FW_CFG_KERNEL_ENTRY  0x10
->> +#define FW_CFG_KERNEL_DATA   0x11
->> +#define FW_CFG_INITRD_DATA   0x12
->> +#define FW_CFG_CMDLINE_ADDR  0x13
->> +#define FW_CFG_CMDLINE_SIZE  0x14
->> +#define FW_CFG_CMDLINE_DATA  0x15
->> +#define FW_CFG_SETUP_ADDR    0x16
->> +#define FW_CFG_SETUP_SIZE    0x17
->> +#define FW_CFG_SETUP_DATA    0x18
->> +#define FW_CFG_FILE_DIR              0x19
->> +
->> +#define FW_CFG_FILE_FIRST    0x20
->> +#define FW_CFG_FILE_SLOTS_MIN        0x10
->> +
->> +#define FW_CFG_WRITE_CHANNEL 0x4000
->> +#define FW_CFG_ARCH_LOCAL    0x8000
->> +#define FW_CFG_ENTRY_MASK    (~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
->> +
->> +#define FW_CFG_INVALID               0xffff
->> +
->> +/* width in bytes of fw_cfg control register */
->> +#define FW_CFG_CTL_SIZE              0x02
->> +
->> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
->> +#define FW_CFG_MAX_FILE_PATH 56
->> +
->> +/* size in bytes of fw_cfg signature */
->> +#define FW_CFG_SIG_SIZE 4
->> +
->> +/* FW_CFG_ID bits */
->> +#define FW_CFG_VERSION               0x01
->> +
->> +/* fw_cfg file directory entry type */
->> +struct fw_cfg_file {
->> +     __be32 size;
->> +     __be16 select;
->> +     __u16 reserved;
->> +     char name[FW_CFG_MAX_FILE_PATH];
->> +};
->> +
->> +#endif
->> --
->> 2.16.1.73.g5832b7e9f2
+My understanding is normally yes. If you apply the patch whereas the HW
+practically does not support ACS, then you fool the kernel pretending
+there is isolation whereas there is not. I don't know the exact
+capability of the HW on AMD Seattle and effectively I should have cared
+about it much earlier and if the HW capability were supported and not
+properly exposed we should have implemented a clean quirk for this platform.
 
 
+  I am just trying to see whether
+> the argument that we should allow DMA MAP requests for this(non-ACS case)
+> even if the Guest GPA conflict with reserved region holds good. The fact that may
+> be it was working before is that the Guest never actually allocated any GPA from
+> the reserved region or maybe I am missing something here.
 
--- 
-Marc-André Lureau
+If my understanding is correct, in ideal world we would report the PCI
+host bridge window as reserved only in case ACS is not supported. If you
+apply the patch and overrides the ACS, then the DMA_MAP  would be
+allowed. In case the HW does not support ACS, then you could face
+situations where one EP tries to access GPA that never reaches the IOMMU
+(because it corresponds to the BAR of another downstream EP). Same can
+happen at the moment.
+
+Thanks
+
+Eric
+> 
+> Thanks,
+> Shameer
+> 
+>> Thanks
+>>
+>> Eric
+>>>
+>>>> In the case of such overlap, shouldn't we just warn the end-user that
+>>>> this situation is dangerous instead of forbidding the use case which
+>>>> worked "in most cases" until now.
+>>>
+>>> Yes, may be something similar to the allow_unsafe_interrupts case, if
+>>> that is acceptable.
+>>>
+>>> Thanks,
+>>> Shameer
+>>>
+>>>>> Are we trying to prevent untranslated p2p with this reserved range?
+>>>>> That's not necessarily a terrible idea, but it seems that doing it for
+>>>>> that purpose would need to be a lot smarter, taking into account ACS
+>>>>> and precisely selecting ranges within the peer address space that would
+>>>>> be untranslated.  Perhaps only populated MMIO within non-ACS
+>>>>> hierarchies.  Thanks,
+>>>>
+>>>> Indeed taking into account the ACS capability would refine the
+>>>> situations where a risk exists.
+>>>>
+>>>> Thanks
+>>>>
+>>>> Eric
+>>>>>
+>>>>> Alex
+>>>>>
