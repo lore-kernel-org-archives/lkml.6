@@ -1,73 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752757AbeB1N0n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:26:43 -0500
-Received: from mga01.intel.com ([192.55.52.88]:23688 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752565AbeB1N0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:26:41 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
-   d="scan'208";a="21428012"
-Date: Wed, 28 Feb 2018 05:26:40 -0800
-From: "Raj, Ashok" <ashok.raj@intel.com>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [PATCH 4/7] x86/microcode: Do not upload microcode if CPUs are
- offline
-Message-ID: <20180228132639.GA23235@araj-mobl1.jf.intel.com>
-References: <20180228102846.13447-1-bp@alien8.de>
- <20180228102846.13447-5-bp@alien8.de>
- <20180228131156.i4y6la7besdflffd@khazad-dum.debian.net>
+        id S1752722AbeB1N1O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:27:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbeB1N1N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:27:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB2E9602BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
+ of_find_node_by_phandle()
+To: frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <ab87b605-6ec4-0b65-89ff-6232c89cb75f@codeaurora.org>
+Date: Wed, 28 Feb 2018 18:57:08 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228131156.i4y6la7besdflffd@khazad-dum.debian.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 10:11:56AM -0300, Henrique de Moraes Holschuh wrote:
-> > Avoid loading microcode if any of the CPUs are offline, and issue a
-> > warning. Having different microcode revisions on the system at any time
-> > is outright dangerous.
-> 
-> Even if we update that microcode during CPU early bring-up, before we
-> mark it on-line and start using it?
-> 
-> AFAIK, late-loading or not, this is what should happen in the current
-> code: APs that are brought up after a microcode update is loaded (either
-> by the early or late driver, it doesn't matter) will be always
-> *early-updated* to the new microcode.
-> 
-> Is it dangerous to have an offline core at an older microcode revision
-> than the online cores?
-
-We don't want to leave a system and allow the user to update microcode
-when some cpus are offline. Remember cpu_offline in linux is only 
-logical offlining.. so the cpu is still in the system.. it can even 
-participate in MCE for e.g. It is very much alive. Its not a question
-that "Would it not work" but its not worth to leave an open door and 
-being paranoid is best!
 
 
+On 2/15/2018 6:22 AM, frowand.list@gmail.com wrote:
 
-> 
-> I am not against the patch, mind you, but I am curious about why it is
-> supposed to be dangerous if we're updating the CPUs before we start
-> using them *anyway*.
-> 
-> Also, if this is really dangerous, does it means safe CPU hotplug isn't
-> possible?  AFAICT, the firmware would have to do it for us, but it
-> *doesn't* have the up-to-date microcode (*we* had to update it)...
+> +static void of_populate_phandle_cache(void)
+> +{
+> +	unsigned long flags;
+> +	u32 cache_entries;
+> +	struct device_node *np;
+> +	u32 phandles = 0;
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +
+> +	kfree(phandle_cache);
+> +	phandle_cache = NULL;
+> +
+> +	for_each_of_allnodes(np)
+> +		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> +			phandles++;
+> +
+> +	cache_entries = roundup_pow_of_two(phandles);
+> +	phandle_cache_mask = cache_entries - 1;
+> +
+> +	phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
+> +				GFP_ATOMIC);
+> +
 
-The difference is hot-adding you know you are going to update the current
-microcode. But leaving a cpu in offline state is leaving it stale for a long
-time without realizing that you have some stale cores.
+NULL check of phandle_cache would be good to have.
+
+> +	for_each_of_allnodes(np)
+> +		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> +			phandle_cache[np->phandle & phandle_cache_mask] = np;
+> +
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +}
+
+
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
