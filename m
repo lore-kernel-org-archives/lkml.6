@@ -1,79 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752645AbeB1NmL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:42:11 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:52703 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbeB1NmJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:42:09 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>, David Lechner <david@lechnology.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Meghana Madhyastha <meghana.madhyastha@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tinydrm: add backlight dependency
-Date: Wed, 28 Feb 2018 14:40:48 +0100
-Message-Id: <20180228134111.2042877-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:e/i3ftyCf7oTYTma45OqIhkCHPxtjiBYiog4qvnKHi8KBpciuRU
- bEFYkA9kNGnki/zAbiOXs0mftrUca6dpFg0L94gW76A8ECcKd+jUFmcU81UHtUx0sQfieLD
- kUTtGBjv0MN7mVL+NzvSapeMypE8iQcCvZ2+8lywM4tH/CNnrhnqgYBRJTxRoPrpsF9Z19V
- b4d7LKGzLrzJcFCKENjdA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5dcZjLIgImc=:Wl2s6i8CF0eP8F7ZZqfeXU
- LDvRpy95YnUhK1Qo1lcsB3Bk9k2n4GVkuXUG0k3d5oxH7ECmFvTSZW+9/Wi0ZjRlWskVGr1/T
- 0vZnU7NL6Wvth9kqvpZqc0U8DcmZbitaBqOUv5bS77kUKa07q6kdCsUPBT1ZIdYUYpQFwlW0i
- 5voiTa7byOaCtatdRTJPpUd1QxaOi1iyBYLY/R+U+BilmMTv2OrCkZr3+QwbXPBMa3UpJX9Qu
- m5aHYRNfm/xS6lQT4Ux8+B11FZ+ieGySTqIX4eIjmxP1+MrO6nF0kEwWN85VT42t4S6vi44To
- 3Vj81xDFZEe4ydSt57mWsaDkHFC6kyHD4/iW0b2VjPl/HhREttS4JmQg9u+WMQP+wpfZL+0s/
- LUleNptWl/URQd8M3cPLSJ9pP2QGs8mZS6+D076TMdn9PG1TkklfcBp6AZXnmrliC2eAk3xdC
- UCwfCSA/RUTM6SXs1keDGZbyIrnD/tG6w0r0QHKakcm0GrmvUIs1jdLZ737mHM4f6OTIJWGUS
- dTmDGgMj0z0mS7lXhYD+TYccSOo3pX5JiAcrf+dY7m9tmZk1QYA9bsoi1aSq9Dvok3kqRxTzk
- hgf7AzpEs/R8A4+qH+jyVnrF8cXrnpYtNz3ml7nc9FrHw7sw1pP86SEtF57oVNrpCc7g0Vzs4
- 4Hf0IRUGe8K7VRpSKKfyVXK2dC9sjYcm8UsVYNJZeM9tnzKdZRmKbCY9ik9vqQjqODiRgah8n
- fVPunkB8Pd66ZOa//Nr4hGMFozMNyHNvlKrDlw==
+        id S1752626AbeB1NoI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:44:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752206AbeB1NoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:44:06 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Andrey Smetanin <asmetanin@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
+Subject: [PATCH 0/3] x86/kvm/hyper-v: More fixes for TSC page clocksource for Hyper-V on KVM
+Date: Wed, 28 Feb 2018 14:43:58 +0100
+Message-Id: <20180228134401.6544-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling devm_of_find_backlight directly means we get a link failure
-without CONFIG_BACKLIGHT_CLASS_DEVICE:
+Previously (see commit 72c139bacf) it was found that Hyper-V frequency
+MSRs are required to make Hyper-V on KVM pass through TSC page as stable
+clocksource to its guests. However, to make things work this is not
+enough. Hyper-V tries to prove that TSC frequency underneath it won't
+change (e.g. when it's migrated), there are two mechanisms:
 
-drivers/gpu/drm/tinydrm/mi0283qt.o: In function `mi0283qt_probe':
-mi0283qt.c:(.text+0x684): undefined reference to `devm_of_find_backlight'
+1) Invariant TSC (CPUID.80000007H:EDX[8]). If Hyper-V sees this bit it will
+ treat TSC as stable. We, however, don't want to pass it as it makes
+ migration hard (e.g. Qemu adds a migration blocker when 'invtsc' flag is
+ passed. Genuine Hyper-V running in L0 doesn't pass it either.
 
-This adds an explicit Kconfig dependency for it. While I did not
-observe that failure for st7735r, I assume the same change is needed
-there for the same reason.
+2) Hyper-V Reenlightenment (CPUID.40000003H:EAX[13]).
 
-Fixes: d1a2e7004b5e ("drm/tinydrm: Replace tinydrm_of_find_backlight with of_find_backlight")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/tinydrm/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+This patch series add rudimentary support for Hyper-V reenlightenment
+notifications to KVM ('producer' part; we already implemented
+reenlightenment 'consumer' for KVM-on Hyper-V some time ago) and fixes
+bugs I found during testing. Fully fledged reenlightenment  implementation
+will be added later when we learn to migrate nested workloads in KVM making
+testing possible.
 
-diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
-index 13339be843bc..4592a5e3f20b 100644
---- a/drivers/gpu/drm/tinydrm/Kconfig
-+++ b/drivers/gpu/drm/tinydrm/Kconfig
-@@ -23,6 +23,7 @@ config TINYDRM_ILI9225
- config TINYDRM_MI0283QT
- 	tristate "DRM support for MI0283QT"
- 	depends on DRM_TINYDRM && SPI
-+	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
- 	help
- 	  DRM driver for the Multi-Inno MI0283QT display panel
-@@ -54,6 +55,7 @@ config TINYDRM_ST7586
- config TINYDRM_ST7735R
- 	tristate "DRM support for Sitronix ST7735R display panels"
- 	depends on DRM_TINYDRM && SPI
-+	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
- 	help
- 	  DRM driver Sitronix ST7735R with one of the following LCDs:
+Qemu patches are also required, I'll post them separately.
+
+Vitaly Kuznetsov (3):
+  x86/kvm/hyper-v: add reenlightenment MSRs support
+  x86/kvm/hyper-v: remove stale entries from vec_bitmap/auto_eoi_bitmap
+    on vector change
+  x86/kvm/hyper-v: inject #GP only when invalid SINTx vector is unmasked
+
+ arch/x86/include/asm/kvm_host.h    |  4 +++
+ arch/x86/include/uapi/asm/hyperv.h |  3 ++
+ arch/x86/kvm/hyperv.c              | 58 +++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/x86.c                 | 12 +++++++-
+ 4 files changed, 66 insertions(+), 11 deletions(-)
+
 -- 
-2.9.0
+2.14.3
