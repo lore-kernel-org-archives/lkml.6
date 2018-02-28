@@ -1,68 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933397AbeB1TV3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59140 "EHLO mail.kernel.org"
+        id S933741AbeB1TVj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:21:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43037 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753021AbeB1TV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:21:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DD62133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=djwong@kernel.org
-Date: Wed, 28 Feb 2018 11:21:25 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>
-Subject: [GIT PULL] xfs: fixes for 4.16-rc4
-Message-ID: <20180228192125.GM19312@magnolia>
+        id S933424AbeB1TVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 14:21:32 -0500
+Subject: Re: [PATCH] xen-netfront: Fix hang on device removal
+To: Jason Andryuk <jandryuk@gmail.com>, xen-devel@lists.xenproject.org,
+        netdev@vger.kernel.org
+Cc: Eduardo Otubo <otubo@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180228122323.3914-1-jandryuk@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <d6411bf3-9edd-15a7-1f4e-a9f51869129d@suse.com>
+Date: Wed, 28 Feb 2018 20:21:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180228122323.3914-1-jandryuk@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 28/02/18 13:23, Jason Andryuk wrote:
+> A toolstack may delete the vif frontend and backend xenstore entries
+> while xen-netfront is in the removal code path.  In that case, the
+> checks for xenbus_read_driver_state would return XenbusStateUnknown, and
+> xennet_remove would hang indefinitely.  This hang prevents system
+> shutdown.
+> 
+> xennet_remove must be able to handle XenbusStateUnknown, and
+> netback_changed must also wake up the wake_queue for that state as well.
+> 
+> Fixes: 5b5971df3bc2 ("xen-netfront: remove warning when unloading module")
+> 
+> Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+> Cc: Eduardo Otubo <otubo@redhat.com>
 
-Here's the first round of bugfixes for 4.16.  It should merge cleanly,
-but please let me know if it doesn't.
+Committed to xen/tip for-linus-4.16a
 
---Darrick
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.16-fixes-2
-
-for you to fetch changes up to 5b4c845ea4f4b86c43096eb924354c83a2e26f3c:
-
-  xfs: fix potential memory leak in mount option parsing (2018-02-26 10:02:13 -0800)
-
-----------------------------------------------------------------
-Changes since last update:
-- Fix some compiler warnings
-- Fix block rservations for transactions created during log recovery
-- Fix resource leaks when respecifying mount options
-
-----------------------------------------------------------------
-Chengguang Xu (1):
-      xfs: fix potential memory leak in mount option parsing
-
-Darrick J. Wong (1):
-      xfs: reserve blocks for refcount / rmap log item recovery
-
-Eric Sandeen (1):
-      xfs: use memset to initialize xfs_scrub_agfl_info
-
- fs/xfs/scrub/agheader.c    | 3 ++-
- fs/xfs/xfs_refcount_item.c | 9 ++++++---
- fs/xfs/xfs_rmap_item.c     | 4 +++-
- fs/xfs/xfs_super.c         | 2 ++
- 4 files changed, 13 insertions(+), 5 deletions(-)
+Juergen
