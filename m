@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932396AbeB1Opt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:45:49 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46700 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeB1Olk (ORCPT
+        id S1752877AbeB1Olj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:39 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43255 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeB1Old (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:40 -0500
-X-Google-Smtp-Source: AH8x225IbED7XJgq+gga81q2o3O2RjBWb6t12hcpMjZs6bAryFczvSzIEKQuiC+U/iE8zN0KYfbK1Q==
+        Wed, 28 Feb 2018 09:41:33 -0500
+X-Google-Smtp-Source: AH8x226nKe4dKjDAYukWfsqvrK8sQO99qiIDDn4KCZg5lRq4Dlf4gN+1+/wzm/T+rXZzEIqMFKhYpg==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 10/22] nvmem: mtk-efuse: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:54 -0800
-Message-Id: <20180228144106.16363-11-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 05/22] nvmem: imx-ocotp: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:49 -0800
+Message-Id: <20180228144106.16363-6-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -45,19 +45,20 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/mtk-efuse.c | 12 +-----------
+ drivers/nvmem/imx-ocotp.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
-index 9ee3479cfc7b..97ab7e6a4789 100644
---- a/drivers/nvmem/mtk-efuse.c
-+++ b/drivers/nvmem/mtk-efuse.c
-@@ -72,22 +72,13 @@ static int mtk_efuse_probe(struct platform_device *pdev)
- 	econfig.size = resource_size(res);
- 	econfig.priv = priv;
- 	econfig.dev = dev;
--	nvmem = nvmem_register(&econfig);
-+	nvmem = devm_nvmem_register(dev, &econfig);
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index d7ba351a70c9..68deffe636f3 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -466,26 +466,16 @@ static int imx_ocotp_probe(struct platform_device *pdev)
+ 	imx_ocotp_nvmem_config.dev = dev;
+ 	imx_ocotp_nvmem_config.priv = priv;
+ 	priv->config = &imx_ocotp_nvmem_config;
+-	nvmem = nvmem_register(&imx_ocotp_nvmem_config);
++	nvmem = devm_nvmem_register(dev, &imx_ocotp_nvmem_config);
+ 
  	if (IS_ERR(nvmem))
  		return PTR_ERR(nvmem);
  
@@ -66,23 +67,18 @@ index 9ee3479cfc7b..97ab7e6a4789 100644
  	return 0;
  }
  
--static int mtk_efuse_remove(struct platform_device *pdev)
+-static int imx_ocotp_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
 -	return nvmem_unregister(nvmem);
 -}
 -
- static const struct of_device_id mtk_efuse_of_match[] = {
- 	{ .compatible = "mediatek,mt8173-efuse",},
- 	{ .compatible = "mediatek,efuse",},
-@@ -97,7 +88,6 @@ MODULE_DEVICE_TABLE(of, mtk_efuse_of_match);
- 
- static struct platform_driver mtk_efuse_driver = {
- 	.probe = mtk_efuse_probe,
--	.remove = mtk_efuse_remove,
+ static struct platform_driver imx_ocotp_driver = {
+ 	.probe	= imx_ocotp_probe,
+-	.remove	= imx_ocotp_remove,
  	.driver = {
- 		.name = "mediatek,efuse",
- 		.of_match_table = mtk_efuse_of_match,
+ 		.name	= "imx_ocotp",
+ 		.of_match_table = imx_ocotp_dt_ids,
 -- 
 2.14.3
