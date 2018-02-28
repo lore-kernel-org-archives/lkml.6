@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELuhVczGfPYzNa56tfBXF7+YLQYLWiS45qCXV62E8pNfLJWaPStsOjmC7W7KYHXEiMWH0VCF
-ARC-Seal: i=1; a=rsa-sha256; t=1519831336; cv=none;
+X-Google-Smtp-Source: AH8x226FdklPSZMjh+qTIDG2M9ojkivjakxXmO9AaWjPr4YQWLaXm94C9z0j1fITIpaFR1eMoMTl
+ARC-Seal: i=1; a=rsa-sha256; t=1519831335; cv=none;
         d=google.com; s=arc-20160816;
-        b=oxWAtZsjv9BB2a1Rjr+Y1zNuDLjFmqyP/qUP4ELRBucbPVFE/ZG0+QkZSJB43jGKI2
-         j0mWcBVStrdxB0YwDmyKTwa2s/tYUywHXK9D71f3A/PQFnSKMwyQOAfONI0E45FSLxUs
-         TnMU9422Tw2kt877KHTU6lVPoD1ngJctk91cf9x6UCQH3wWZl4rorja4V9M8/5uCp0AO
-         2YakZi5h06sXPiLNBiUeDp2VCUfAW3fqUlQyrHBmzB68ztFTUFV/fM05UudQqtIe03rQ
-         IR7Yn8GgxQ+yBCy2f6HPKFbBDXAPWNoNQDa8eH2uZ3FDRcv0oxW/lNY5CK2cHE8vm0A+
-         UvSQ==
+        b=YPgucj6hUxn4x9Mug3Rds4/aIxx+y/DRSt42c+4dQ+CSM/YpShLtw/S7tJ9sVfbDDZ
+         N8ZM7HPnBhKhJn9K6aGZAFLG9XnA5pY6vrNQghHHv1qnJ7846+JGGm+FnJGUeplqx7Ur
+         jlLBTfLqEuMLkIOf84uUgTZpabbTRaqArSqqLYCmGuHBa5P56BvNc7KtrDz+rBCPYPKd
+         i9/AeWgNj2c30P7BV7BZAvI9z4RPfOzrL6SBiKtq8vWCMyYBSwkXav2FhlNj0KQWUnMs
+         OqD5j2yAvnfbfAse6bWl8bCp7lWd7AbX5koatl2FGJvEQfllFRfkjpWymXN/DsJUyiQG
+         RqoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=stWkUm3B6fN71vj/2lnO8GOCTMc+9obiXysDx3TpGuw=;
-        b=n3jaNCpjHVKXZQh+f94D9M09vvpIGGRh8ugy1VsXTWpuL1Ns2aDxC4w0AWy/CzuX/4
-         mVfbK3wIC3LStsL9FIYVPHxF40/SPWKqvwylmH69/IwORDpuqNSk8AdUUN7MkjFI+KKu
-         2dvawgqjTQvfl2SBCI/rRx2phUEuoZqRoVHODVzHl7N8s/3Z6k/EZBGnMsufdzfpUVT4
-         saqactU1rXN/1HIGtqJwGBnCS/0G52x6RJThy8sYfXBv2pue3VB7LveofOssT+LJCObF
-         liV19hVBE0VVOhhD3RNz4ecDLQv+QLDBz8mZN0JTNlZoblV6gAXhQcMLQM+J9oh74+u9
-         jeXA==
+        bh=aaYgO1ccU17p+ngIB8/2f9+Dv/waaMsyqkBGC22OfI4=;
+        b=CWXcUdVzj5YDgUtgcbmKFACN6KVB8cidHKoeokndbxscdaZFPzNFnNIlyYFpcOhyqU
+         wnlfM3z01uG9i9nRaqa0GsBgKX4N+7UTedwA4JxYi/mYcVge+cLdbYh/4tHW5Td6DCfA
+         zv0cO6T3D8q//LnMkM+XzF0uNwwA301q17zeMccEW6Ki8PdMQVBW3npWErpPQByxozYS
+         X7lH7h5SANaM8k4Vd3tqMQEvW6LTBNFw4aVR+/W1ZMUs5AXUSd8sUTlp6L0YZwpJToVp
+         inDo5C9SNUjPFyGfhELKQPv0d9J9oeTTKlfj8t4IvIRXjM+TpSx/gKh7WHL5N47QGMVJ
+         ddng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Dmitry Fleytman Dmitry Fleytman" <dmitry.fleytman@gmail.com>
-Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.630668146@decadent.org.uk>
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ "Colin Ian King" <colin.king@canonical.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.540472503@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 063/140] usb: Add device quirk for Logitech HD Pro
- Webcam C925e
+Subject: [PATCH 3.2 015/140] usb: host: fix incorrect updating of offset
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658663305028477?=
-X-GMAIL-MSGID: =?utf-8?q?1593658663305028477?=
+X-GMAIL-THRID: =?utf-8?q?1593658662601688064?=
+X-GMAIL-MSGID: =?utf-8?q?1593658662601688064?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Fleytman Dmitry Fleytman <dmitry.fleytman@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 7f038d256c723dd390d2fca942919573995f4cfd upstream.
+commit 1d5a31582ef046d3b233f0da1a68ae26519b2f0a upstream.
 
-Commit e0429362ab15
-("usb: Add device quirk for Logitech HD Pro Webcams C920 and C930e")
-introduced quirk to workaround an issue with some Logitech webcams.
+The variable temp is incorrectly being updated, instead it should
+be offset otherwise the loop just reads the same capability value
+and loops forever.  Thanks to Alan Stern for pointing out the
+correct fix to my original fix.  Fix also cleans up clang warning:
 
-There is one more model that has the same issue - C925e, so applying
-the same quirk as well.
+drivers/usb/host/ehci-dbg.c:840:4: warning: Value stored to 'temp'
+is never read
 
-See aforementioned commit message for detailed explanation of the problem.
-
-Signed-off-by: Dmitry Fleytman <dmitry.fleytman@gmail.com>
+Fixes: d49d43174400 ("USB: misc ehci updates")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/quirks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/host/ehci-dbg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -53,10 +53,11 @@ static const struct usb_device_id usb_qu
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
- 
--	/* Logitech HD Pro Webcams C920, C920-C and C930e */
-+	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
- 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
- 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
- 	{ USB_DEVICE(0x046d, 0x0843), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x046d, 0x085b), .driver_info = USB_QUIRK_DELAY_INIT },
- 
- 	/* Logitech ConferenceCam CC3000e */
- 	{ USB_DEVICE(0x046d, 0x0847), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/drivers/usb/host/ehci-dbg.c
++++ b/drivers/usb/host/ehci-dbg.c
+@@ -785,7 +785,7 @@ static ssize_t fill_registers_buffer(str
+ 			default:		/* unknown */
+ 				break;
+ 			}
+-			temp = (cap >> 8) & 0xff;
++			offset = (cap >> 8) & 0xff;
+ 		}
+ 	}
+ #endif
