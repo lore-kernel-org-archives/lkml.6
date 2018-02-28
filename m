@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-449106-1519833331-2-15760920234507399035
+X-Cyrus-Session-Id: sloti22d1t05-449106-1519833312-2-16449905721684381328
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833330; b=DvlSvfi9PybHUQLVE8321n7Fb637i50ddCAWSG7ET8oFgxG
-    O0wnbDGepyUzIcNd2eSDcEjnrlFTQqZscff1Br9zTXDgb8Temrmr9JJBf0JMLCfg
-    /3QHhXnc+vmobSmWyxdyVuHuABT2l2413c0/55pAc4MTKe2lGLG3lwhmqS5FkFRL
-    cAPB5FsJTnHDZqyYKTWp87XAeXGecKa1QabbACQYejyLFJmKVdXgSoWNaU0Bq7Lr
-    32lca0AqLumFX9JvNFIG40IhCMX5Nh6OumjSVoJvdT7yBYGa0R4UkkcUJAVglnrz
-    CwC4glzMRGQr6cbqkhkFVA2EyjM33kdtSev6F7g==
+    t=1519833312; b=duS7haHEK/2qJTsQUE+fK6suTeu5DGO8RkbdP4+cMHjTYCw
+    Qc7gBHFYKUqV1wznBq03FydZl7Lkk8aG6CgtFfeiRX7PiGFsOqtcpiHRTKBgpGog
+    lM17eAI3ziw7Ky5H74hLae4hoaofsYtRGKZM/aYiBxfmhMZ1dXZO7lw1LFcyp57D
+    fSfSB5NHyLYOIC7AosoSBUoOzTe3zxF0jG4vRUcXFgWV8Ed9+UeSMrR2pmAY8Hdl
+    5jEnhMj9YzuZiyVbxg56Z58Xo+ruABtN5XIlUUrk/iZGmM7zSYZQtE+jm3TfEqYV
+    ZsmD9QeKD8PfdMymlGbbHGynGNADqkZ9SFdqHUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833330; bh=vlooNmcNMSg6jBSjKIT
-    0FImsdsG1UO81o1kYVX7PLHc=; b=gTNk9IiU5HVMOvWwm4nIi9vA+rzZLhF5fj7
-    m9F+RoNUYnlpbF8M6pMlcdg8cKd4TBPvFFabgV4sJH0L2ZLWZT3zgAj7V8VwrLYH
-    Ie4EecO0gBnBoRC0Voxj2Ro/q8/CQgHGzLnOiGFXK4/O7V7teM3vxh29vOALJGI4
-    qEXjQa3tUNv0AynvrbTjNQA5GkIiEoWfd5/gq5KiI50uZKTJmX6FspzSAZDVEqSr
-    7vRTynghsj2eych7C9eIBF62ENpDxCSQcXgyaInsg5ZWr0Hj5LmgN48p+qgv4SlX
-    EIwxTmIQOJjmk9d7IYYq68sc6NPmA1QSjg/drKoFUnqZYsBXMWA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833312; bh=KWG6p3qumO30HvKGLFI
+    LQbsEMIfC/gusQ9ysnqplXkU=; b=cPQxIJlFGP9imamiWJo23ZjcBWTr+vy03GM
+    OMcPO8jzwS4gfv5lWT9G8e7p3z09sGHgoPRKZkrtAqOiJYcsT+EiT1atIGn+TyeJ
+    M8LgtDzw95Uc6dGQX1a52Zm6v3WuC9OvPyXslkfnNw1NV01n6zbuNbYXSJ1b9NiM
+    pY/7LylWrvW57uEOjhI6ImyL+DKH/ZtD3IMlZ4fGAiei1qahu7+b5hcoU7AmRko1
+    rGJAF+Vb9E0k1zcS3I7pWl0UVBkuWNF3cL1LRZx5jE+jAgeaiTSX7cGKmGsHDmrd
+    rt2C09NOPpFxjBA9L2shsSxN8Md0GeCQSlXkP9NWKcqWaKVymPQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933991AbeB1PxU (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:53:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34442 "EHLO
+        id S932678AbeB1PzI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:55:08 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34449 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933722AbeB1PxT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:53:19 -0500
+        by vger.kernel.org with ESMTP id S933722AbeB1PxY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:53:24 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>,
-        "Martin Kelly" <mkelly@xevo.com>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Nicolai Stange" <nstange@suse.de>,
+        "Stefano Brivio" <sbrivio@redhat.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.853956474@decadent.org.uk>
+Message-ID: <lsq.1519831218.307656752@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 069/254] can: kvaser_usb: cancel urb on -EPIPE and
- -EPROTO
+Subject: [PATCH 3.16 195/254] net: ipv4: emulate READ_ONCE() on ->hdrincl
+ bit-field in raw_sendmsg()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,33 +81,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Nicolai Stange <nstange@suse.de>
 
-commit 6aa8d5945502baf4687d80de59b7ac865e9e666b upstream.
+commit 20b50d79974ea3192e8c3ab7faf4e536e5f14d8f upstream.
 
-In mcba_usb, we have observed that when you unplug the device, the driver will
-endlessly resubmit failing URBs, which can cause CPU stalls. This issue
-is fixed in mcba_usb by catching the codes seen on device disconnect
-(-EPIPE and -EPROTO).
+Commit 8f659a03a0ba ("net: ipv4: fix for a race condition in
+raw_sendmsg") fixed the issue of possibly inconsistent ->hdrincl handling
+due to concurrent updates by reading this bit-field member into a local
+variable and using the thus stabilized value in subsequent tests.
 
-This driver also resubmits in the case of -EPIPE and -EPROTO, so fix it
-in the same way.
+However, aforementioned commit also adds the (correct) comment that
 
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+  /* hdrincl should be READ_ONCE(inet->hdrincl)
+   * but READ_ONCE() doesn't work with bit fields
+   */
+
+because as it stands, the compiler is free to shortcut or even eliminate
+the local variable at its will.
+
+Note that I have not seen anything like this happening in reality and thus,
+the concern is a theoretical one.
+
+However, in order to be on the safe side, emulate a READ_ONCE() on the
+bit-field by doing it on the local 'hdrincl' variable itself:
+
+	int hdrincl = inet->hdrincl;
+	hdrincl = READ_ONCE(hdrincl);
+
+This breaks the chain in the sense that the compiler is not allowed
+to replace subsequent reads from hdrincl with reloads from inet->hdrincl.
+
+Fixes: 8f659a03a0ba ("net: ipv4: fix for a race condition in raw_sendmsg")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: use ACCESS_ONCE()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/can/usb/kvaser_usb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/raw.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/usb/kvaser_usb.c
-+++ b/drivers/net/can/usb/kvaser_usb.c
-@@ -975,6 +975,8 @@ static void kvaser_usb_read_bulk_callbac
- 	case 0:
- 		break;
- 	case -ENOENT:
-+	case -EPIPE:
-+	case -EPROTO:
- 	case -ESHUTDOWN:
- 		return;
- 	default:
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -497,9 +497,11 @@ static int raw_sendmsg(struct kiocb *ioc
+ 		goto out;
+ 
+ 	/* hdrincl should be READ_ONCE(inet->hdrincl)
+-	 * but READ_ONCE() doesn't work with bit fields
++	 * but READ_ONCE() doesn't work with bit fields.
++	 * Doing this indirectly yields the same result.
+ 	 */
+ 	hdrincl = inet->hdrincl;
++	hdrincl = ACCESS_ONCE(hdrincl);
+ 	/*
+ 	 *	Check the flags.
+ 	 */
