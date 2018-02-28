@@ -1,477 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935567AbeB1WkK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:40:10 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36020 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935511AbeB1Wjo (ORCPT
+        id S935583AbeB1WkT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:40:19 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50443 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935511AbeB1WkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:39:44 -0500
-X-Google-Smtp-Source: AG47ELt1CHayysWpKVVXPbsRW+Ae9BOw4+FOOL503nzNbFF4/N5kNZQ4+5NbwvVKdNl3kZMWxo2bWA==
-From: Rob Herring <robh@kernel.org>
-To: Michal Simek <monstr@monstr.eu>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] microblaze: remove redundant early_printk support
-Date: Wed, 28 Feb 2018 16:39:36 -0600
-Message-Id: <20180228223937.29196-3-robh@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180228223937.29196-1-robh@kernel.org>
-References: <20180228223937.29196-1-robh@kernel.org>
+        Wed, 28 Feb 2018 17:40:14 -0500
+Date: Wed, 28 Feb 2018 14:40:06 -0800
+From: tip-bot for Lingutla Chandrasekhar <tipbot@zytor.com>
+Message-ID: <tip-c52232a49e203a65a6e1a670cd5262f59e9364a0@git.kernel.org>
+Cc: neeraju@codeaurora.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, clingutla@codeaurora.org, anna-maria@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, neeraju@codeaurora.org,
+        linux-kernel@vger.kernel.org, anna-maria@linutronix.de,
+        clingutla@codeaurora.org, tglx@linutronix.de
+In-Reply-To: <20180118115022.6368-1-clingutla@codeaurora.org>
+References: <20180118115022.6368-1-clingutla@codeaurora.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] timers: Forward timer base before migrating
+ timers
+Git-Commit-ID: c52232a49e203a65a6e1a670cd5262f59e9364a0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With earlycon support now enabled, the arch specific early_printk support
-can be removed.
+Commit-ID:  c52232a49e203a65a6e1a670cd5262f59e9364a0
+Gitweb:     https://git.kernel.org/tip/c52232a49e203a65a6e1a670cd5262f59e9364a0
+Author:     Lingutla Chandrasekhar <clingutla@codeaurora.org>
+AuthorDate: Thu, 18 Jan 2018 17:20:22 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Feb 2018 23:34:33 +0100
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Michal Simek <monstr@monstr.eu>
+timers: Forward timer base before migrating timers
+
+On CPU hotunplug the enqueued timers of the unplugged CPU are migrated to a
+live CPU. This happens from the control thread which initiated the unplug.
+
+If the CPU on which the control thread runs came out from a longer idle
+period then the base clock of that CPU might be stale because the control
+thread runs prior to any event which forwards the clock.
+
+In such a case the timers from the unplugged CPU are queued on the live CPU
+based on the stale clock which can cause large delays due to increased
+granularity of the outer timer wheels which are far away from base:;clock.
+
+But there is a worse problem than that. The following sequence of events
+illustrates it:
+
+ - CPU0 timer1 is queued expires = 59969 and base->clk = 59131.
+
+   The timer is queued at wheel level 2, with resulting expiry time = 60032
+   (due to level granularity).
+
+ - CPU1 enters idle @60007, with next timer expiry @60020.
+
+ - CPU0 is hotplugged at @60009
+
+ - CPU1 exits idle and runs the control thread which migrates the
+   timers from CPU0
+
+   timer1 is now queued in level 0 for immediate handling in the next
+   softirq because the requested expiry time 59969 is before CPU1 base->clk
+   60007
+
+ - CPU1 runs code which forwards the base clock which succeeds because the
+   next expiring timer. which was collected at idle entry time is still set
+   to 60020.
+
+   So it forwards beyond 60007 and therefore misses to expire the migrated
+   timer1. That timer gets expired when the wheel wraps around again, which
+   takes between 63 and 630ms depending on the HZ setting.
+
+Address both problems by invoking forward_timer_base() for the control CPUs
+timer base. All other places, which might run into a similar problem
+(mod_timer()/add_timer_on()) already invoke forward_timer_base() to avoid
+that.
+
+[ tglx: Massaged comment and changelog ]
+
+Fixes: a683f390b93f ("timers: Forward the wheel clock whenever possible")
+Co-developed-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Lingutla Chandrasekhar <clingutla@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180118115022.6368-1-clingutla@codeaurora.org
 ---
- arch/microblaze/Kconfig.debug         |   8 --
- arch/microblaze/include/asm/prom.h    |  27 -----
- arch/microblaze/kernel/Makefile       |   1 -
- arch/microblaze/kernel/early_printk.c | 184 ----------------------------------
- arch/microblaze/kernel/misc.S         |  35 -------
- arch/microblaze/kernel/prom.c         |  80 ---------------
- arch/microblaze/kernel/setup.c        |  12 +--
- 7 files changed, 1 insertion(+), 346 deletions(-)
- delete mode 100644 arch/microblaze/include/asm/prom.h
- delete mode 100644 arch/microblaze/kernel/early_printk.c
+ kernel/time/timer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/microblaze/Kconfig.debug b/arch/microblaze/Kconfig.debug
-index 012e377330cd..331a3bb66297 100644
---- a/arch/microblaze/Kconfig.debug
-+++ b/arch/microblaze/Kconfig.debug
-@@ -8,14 +8,6 @@ config TRACE_IRQFLAGS_SUPPORT
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 48150ab42de9..4a4fd567fb26 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1894,6 +1894,12 @@ int timers_dead_cpu(unsigned int cpu)
+ 		raw_spin_lock_irq(&new_base->lock);
+ 		raw_spin_lock_nested(&old_base->lock, SINGLE_DEPTH_NESTING);
  
- source "lib/Kconfig.debug"
++		/*
++		 * The current CPUs base clock might be stale. Update it
++		 * before moving the timers over.
++		 */
++		forward_timer_base(new_base);
++
+ 		BUG_ON(old_base->running_timer);
  
--config EARLY_PRINTK
--	bool "Early printk function for kernel"
--	depends on SERIAL_UARTLITE_CONSOLE || SERIAL_8250_CONSOLE
--	default n
--	help
--	  This option turns on/off early printk messages to console.
--	  First Uartlite node is taken.
--
- config HEART_BEAT
- 	bool "Heart beat function for kernel"
- 	default n
-diff --git a/arch/microblaze/include/asm/prom.h b/arch/microblaze/include/asm/prom.h
-deleted file mode 100644
-index 2f03ac815851..000000000000
---- a/arch/microblaze/include/asm/prom.h
-+++ /dev/null
-@@ -1,27 +0,0 @@
--/*
-- * Definitions for talking to the Open Firmware PROM on
-- * Power Macintosh computers.
-- *
-- * Copyright (C) 1996-2005 Paul Mackerras.
-- *
-- * Updates for PPC64 by Peter Bergner & David Engebretsen, IBM Corp.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- */
--#ifndef _ASM_MICROBLAZE_PROM_H
--#define _ASM_MICROBLAZE_PROM_H
--
--#include <linux/of.h>
--
--/* Other Prototypes */
--enum early_consoles {
--	UARTLITE = 1,
--	UART16550 = 2,
--};
--
--extern int of_early_console(void *version);
--
--#endif /* _ASM_MICROBLAZE_PROM_H */
-diff --git a/arch/microblaze/kernel/Makefile b/arch/microblaze/kernel/Makefile
-index 0da76fa1ab17..7e99cf6984a1 100644
---- a/arch/microblaze/kernel/Makefile
-+++ b/arch/microblaze/kernel/Makefile
-@@ -22,7 +22,6 @@ obj-y += dma.o exceptions.o \
- 
- obj-y += cpu/
- 
--obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
- obj-$(CONFIG_HEART_BEAT)	+= heartbeat.o
- obj-$(CONFIG_MODULES)		+= microblaze_ksyms.o module.o
- obj-$(CONFIG_MMU)		+= misc.o
-diff --git a/arch/microblaze/kernel/early_printk.c b/arch/microblaze/kernel/early_printk.c
-deleted file mode 100644
-index 365f2d53f1b2..000000000000
---- a/arch/microblaze/kernel/early_printk.c
-+++ /dev/null
-@@ -1,184 +0,0 @@
--/*
-- * Early printk support for Microblaze.
-- *
-- * Copyright (C) 2007-2009 Michal Simek <monstr@monstr.eu>
-- * Copyright (C) 2007-2009 PetaLogix
-- * Copyright (C) 2003-2006 Yasushi SHOJI <yashi@atmark-techno.com>
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License. See the file "COPYING" in the main directory of this archive
-- * for more details.
-- */
--
--#include <linux/console.h>
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/string.h>
--#include <linux/tty.h>
--#include <linux/io.h>
--#include <asm/processor.h>
--#include <linux/fcntl.h>
--#include <asm/setup.h>
--#include <asm/prom.h>
--
--static u32 base_addr;
--
--#ifdef CONFIG_SERIAL_UARTLITE_CONSOLE
--static void early_printk_uartlite_putc(char c)
--{
--	/*
--	 * Limit how many times we'll spin waiting for TX FIFO status.
--	 * This will prevent lockups if the base address is incorrectly
--	 * set, or any other issue on the UARTLITE.
--	 * This limit is pretty arbitrary, unless we are at about 10 baud
--	 * we'll never timeout on a working UART.
--	 */
--
--	unsigned retries = 1000000;
--	/* read status bit - 0x8 offset */
--	while (--retries && (in_be32(base_addr + 8) & (1 << 3)))
--		;
--
--	/* Only attempt the iowrite if we didn't timeout */
--	/* write to TX_FIFO - 0x4 offset */
--	if (retries)
--		out_be32(base_addr + 4, c & 0xff);
--}
--
--static void early_printk_uartlite_write(struct console *unused,
--					const char *s, unsigned n)
--{
--	while (*s && n-- > 0) {
--		if (*s == '\n')
--			early_printk_uartlite_putc('\r');
--		early_printk_uartlite_putc(*s);
--		s++;
--	}
--}
--
--static struct console early_serial_uartlite_console = {
--	.name = "earlyser",
--	.write = early_printk_uartlite_write,
--	.flags = CON_PRINTBUFFER | CON_BOOT,
--	.index = -1,
--};
--#endif /* CONFIG_SERIAL_UARTLITE_CONSOLE */
--
--#ifdef CONFIG_SERIAL_8250_CONSOLE
--static void early_printk_uart16550_putc(char c)
--{
--	/*
--	 * Limit how many times we'll spin waiting for TX FIFO status.
--	 * This will prevent lockups if the base address is incorrectly
--	 * set, or any other issue on the UARTLITE.
--	 * This limit is pretty arbitrary, unless we are at about 10 baud
--	 * we'll never timeout on a working UART.
--	 */
--
--	#define UART_LSR_TEMT	0x40 /* Transmitter empty */
--	#define UART_LSR_THRE	0x20 /* Transmit-hold-register empty */
--	#define BOTH_EMPTY (UART_LSR_TEMT | UART_LSR_THRE)
--
--	unsigned retries = 10000;
--
--	while (--retries &&
--		!((in_be32(base_addr + 0x14) & BOTH_EMPTY) == BOTH_EMPTY))
--		;
--
--	if (retries)
--		out_be32(base_addr, c & 0xff);
--}
--
--static void early_printk_uart16550_write(struct console *unused,
--					const char *s, unsigned n)
--{
--	while (*s && n-- > 0) {
--		if (*s == '\n')
--			early_printk_uart16550_putc('\r');
--		early_printk_uart16550_putc(*s);
--		s++;
--	}
--}
--
--static struct console early_serial_uart16550_console = {
--	.name = "earlyser",
--	.write = early_printk_uart16550_write,
--	.flags = CON_PRINTBUFFER | CON_BOOT,
--	.index = -1,
--};
--#endif /* CONFIG_SERIAL_8250_CONSOLE */
--
--int __init setup_early_printk(char *opt)
--{
--	int version = 0;
--
--	if (early_console)
--		return 1;
--
--	base_addr = of_early_console(&version);
--	if (base_addr) {
--#ifdef CONFIG_MMU
--		early_console_reg_tlb_alloc(base_addr);
--#endif
--		switch (version) {
--#ifdef CONFIG_SERIAL_UARTLITE_CONSOLE
--		case UARTLITE:
--			pr_info("Early console on uartlite at 0x%08x\n",
--								base_addr);
--			early_console = &early_serial_uartlite_console;
--			break;
--#endif
--#ifdef CONFIG_SERIAL_8250_CONSOLE
--		case UART16550:
--			pr_info("Early console on uart16650 at 0x%08x\n",
--								base_addr);
--			early_console = &early_serial_uart16550_console;
--			break;
--#endif
--		default:
--			pr_info("Unsupported early console %d\n",
--								version);
--			return 1;
--		}
--
--		register_console(early_console);
--		return 0;
--	}
--	return 1;
--}
--
--/* Remap early console to virtual address and do not allocate one TLB
-- * only for early console because of performance degression */
--void __init remap_early_printk(void)
--{
--	if (!early_console)
--		return;
--	pr_info("early_printk_console remapping from 0x%x to ", base_addr);
--	base_addr = (u32) ioremap(base_addr, PAGE_SIZE);
--	pr_cont("0x%x\n", base_addr);
--
--#ifdef CONFIG_MMU
--	/*
--	 * Early console is on the top of skipped TLB entries
--	 * decrease tlb_skip size ensure that hardcoded TLB entry will be
--	 * used by generic algorithm
--	 * FIXME check if early console mapping is on the top by rereading
--	 * TLB entry and compare baseaddr
--	 *  mts  rtlbx, (tlb_skip - 1)
--	 *  nop
--	 *  mfs  rX, rtlblo
--	 *  nop
--	 *  cmp rX, orig_base_addr
--	 */
--	tlb_skip -= 1;
--#endif
--}
--
--void __init disable_early_printk(void)
--{
--	if (!early_console)
--		return;
--	pr_warn("disabling early console\n");
--	unregister_console(early_console);
--	early_console = NULL;
--}
-diff --git a/arch/microblaze/kernel/misc.S b/arch/microblaze/kernel/misc.S
-index 1dafddeb8a0b..6759af688451 100644
---- a/arch/microblaze/kernel/misc.S
-+++ b/arch/microblaze/kernel/misc.S
-@@ -63,38 +63,3 @@ _tlbie_1:
- 	nop
- 
- 	.size  _tlbie, . - _tlbie
--
--/*
-- * Allocate TLB entry for early console
-- */
--.globl early_console_reg_tlb_alloc;
--.type  early_console_reg_tlb_alloc, @function
--.align 4;
--early_console_reg_tlb_alloc:
--	/*
--	 * Load a TLB entry for the UART, so that microblaze_progress() can use
--	 * the UARTs nice and early.  We use a 4k real==virtual mapping.
--	 */
--	lwi	r4, r0, tlb_skip
--	mts	rtlbx, r4 /* TLB slot 63 */
--
--	or	r4,r5,r0
--	andi	r4,r4,0xfffff000
--	ori	r4,r4,(TLB_WR|TLB_I|TLB_M|TLB_G)
--
--	andi	r5,r5,0xfffff000
--	ori	r5,r5,(TLB_VALID | TLB_PAGESZ(PAGESZ_4K))
--
--	mts	rtlblo,r4 /* Load the data portion of the entry */
--	nop
--	mts	rtlbhi,r5 /* Load the tag portion of the entry */
--	nop
--
--	lwi	r5, r0, tlb_skip
--	addik	r5, r5, 1
--	swi	r5, r0, tlb_skip
--
--	rtsd	r15, 8
--	nop
--
--	.size  early_console_reg_tlb_alloc, . - early_console_reg_tlb_alloc
-diff --git a/arch/microblaze/kernel/prom.c b/arch/microblaze/kernel/prom.c
-index 68f099960ebc..f15cc1933bab 100644
---- a/arch/microblaze/kernel/prom.c
-+++ b/arch/microblaze/kernel/prom.c
-@@ -13,91 +13,11 @@
-  *      2 of the License, or (at your option) any later version.
-  */
- 
--#include <stdarg.h>
--#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/string.h>
--#include <linux/init.h>
--#include <linux/threads.h>
--#include <linux/spinlock.h>
--#include <linux/types.h>
--#include <linux/pci.h>
--#include <linux/stringify.h>
--#include <linux/delay.h>
--#include <linux/initrd.h>
--#include <linux/bitops.h>
--#include <linux/kexec.h>
--#include <linux/debugfs.h>
--#include <linux/irq.h>
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
- 
--#include <asm/prom.h>
--#include <asm/page.h>
--#include <asm/processor.h>
--#include <asm/irq.h>
--#include <linux/io.h>
--#include <asm/mmu.h>
--#include <asm/pgtable.h>
--#include <asm/sections.h>
--#include <asm/pci-bridge.h>
--
--#ifdef CONFIG_EARLY_PRINTK
--static const char *stdout;
--
--static int __init early_init_dt_scan_chosen_serial(unsigned long node,
--				const char *uname, int depth, void *data)
--{
--	int l;
--	const char *p;
--
--	pr_debug("%s: depth: %d, uname: %s\n", __func__, depth, uname);
--
--	if (depth == 1 && (strcmp(uname, "chosen") == 0 ||
--				strcmp(uname, "chosen@0") == 0)) {
--		p = of_get_flat_dt_prop(node, "linux,stdout-path", &l);
--		if (p != NULL && l > 0)
--			stdout = p; /* store pointer to stdout-path */
--	}
--
--	if (stdout && strstr(stdout, uname)) {
--		p = of_get_flat_dt_prop(node, "compatible", &l);
--		pr_debug("Compatible string: %s\n", p);
--
--		if ((strncmp(p, "xlnx,xps-uart16550", 18) == 0) ||
--			(strncmp(p, "xlnx,axi-uart16550", 18) == 0)) {
--			unsigned int addr;
--
--			*(u32 *)data = UART16550;
--
--			addr = *(u32 *)of_get_flat_dt_prop(node, "reg", &l);
--			addr += *(u32 *)of_get_flat_dt_prop(node,
--							"reg-offset", &l);
--			/* clear register offset */
--			return be32_to_cpu(addr) & ~3;
--		}
--		if ((strncmp(p, "xlnx,xps-uartlite", 17) == 0) ||
--				(strncmp(p, "xlnx,opb-uartlite", 17) == 0) ||
--				(strncmp(p, "xlnx,axi-uartlite", 17) == 0) ||
--				(strncmp(p, "xlnx,mdm", 8) == 0)) {
--			const unsigned int *addrp;
--
--			*(u32 *)data = UARTLITE;
--
--			addrp = of_get_flat_dt_prop(node, "reg", &l);
--			return be32_to_cpup(addrp); /* return address */
--		}
--	}
--	return 0;
--}
--
--/* this function is looking for early console - Microblaze specific */
--int __init of_early_console(void *version)
--{
--	return of_scan_flat_dt(early_init_dt_scan_chosen_serial, version);
--}
--#endif
--
- void __init early_init_devtree(void *params)
- {
- 	pr_debug(" -> early_init_devtree(%p)\n", params);
-diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
-index be98ffe28ca8..bd47aba352af 100644
---- a/arch/microblaze/kernel/setup.c
-+++ b/arch/microblaze/kernel/setup.c
-@@ -27,13 +27,12 @@
- #include <linux/param.h>
- #include <linux/pci.h>
- #include <linux/cache.h>
--#include <linux/of_platform.h>
-+#include <linux/of.h>
- #include <linux/dma-mapping.h>
- #include <asm/cacheflush.h>
- #include <asm/entry.h>
- #include <asm/cpuinfo.h>
- 
--#include <asm/prom.h>
- #include <asm/pgtable.h>
- 
- DEFINE_PER_CPU(unsigned int, KSP);	/* Saved kernel stack pointer */
-@@ -64,11 +63,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	setup_memory();
- 
--#ifdef CONFIG_EARLY_PRINTK
--	/* remap early console to virtual address */
--	remap_early_printk();
--#endif
--
- 	xilinx_pci_init();
- 
- #if defined(CONFIG_DUMMY_CONSOLE)
-@@ -133,10 +127,6 @@ void __init machine_early_init(const char *cmdline, unsigned int ram,
- /* initialize device tree for usage in early_printk */
- 	early_init_devtree(_fdt_start);
- 
--#ifdef CONFIG_EARLY_PRINTK
--	setup_early_printk(NULL);
--#endif
--
- 	/* setup kernel_tlb after BSS cleaning
- 	 * Maybe worth to move to asm code */
- 	kernel_tlb = tlb0 + tlb1;
--- 
-2.14.1
+ 		for (i = 0; i < WHEEL_SIZE; i++)
