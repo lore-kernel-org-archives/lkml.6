@@ -1,107 +1,293 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeB1NiP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:38:15 -0500
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:45721 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752346AbeB1NiN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:38:13 -0500
-X-Google-Smtp-Source: AG47ELvy32KD71A7+Pj6ELq9+HCt0CW9s2JI5g98gXVfAwId6FuHVrGa0/o93bXAJZ8zbIcae48TZQ==
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Fix deadlocks in autosuspend
-Date: Wed, 28 Feb 2018 14:37:57 +0100
-Message-Id: <20180228133803.30040-1-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        id S932148AbeB1Nj4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:39:56 -0500
+Received: from lhrrgout.huawei.com ([194.213.3.17]:27798 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752346AbeB1Njy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:39:54 -0500
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+CC: "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>
+Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+Thread-Topic: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+Thread-Index: AQHTqw7IDIDDogvQkEq1sqcC26ySeqO3NQKAgAAS2QCAAJqhgIAAKFgQgAFz7gCAABQHgIAAG9KAgAArLSA=
+Date: Wed, 28 Feb 2018 13:39:40 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA83865DEB7@FRAEML521-MBX.china.huawei.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+ <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+ <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+ <20180226161310.061ce3a8@w520.home>
+ <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
+ <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+ <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+In-Reply-To: <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Eric,
 
-I have not recieved any feedback on these so I resend them.
+> -----Original Message-----
+> From: Auger Eric [mailto:eric.auger@redhat.com]
+> Sent: Wednesday, February 28, 2018 11:53 AM
+> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> Alex Williamson <alex.williamson@redhat.com>
+> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin Murphy
+> <robin.murphy@arm.com>
+> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
+> iova range
+> 
+> Hi Shameer,
+> 
+> On 28/02/18 10:25, Shameerali Kolothum Thodi wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Auger Eric [mailto:eric.auger@redhat.com]
+> >> Sent: Wednesday, February 28, 2018 9:02 AM
+> >> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> >> Alex Williamson <alex.williamson@redhat.com>
+> >> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+> >> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> >> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
+> Murphy
+> >> <robin.murphy@arm.com>
+> >> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+> valid
+> >> iova range
+> >>
+> >> Hi Shameer,
+> >>
+> >> On 27/02/18 10:57, Shameerali Kolothum Thodi wrote:
+> >>>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Auger Eric [mailto:eric.auger@redhat.com]
+> >>>> Sent: Tuesday, February 27, 2018 8:27 AM
+> >>>> To: Alex Williamson <alex.williamson@redhat.com>
+> >>>> Cc: Shameerali Kolothum Thodi
+> <shameerali.kolothum.thodi@huawei.com>;
+> >>>> pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+> >>>> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> >>>> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
+> >> Murphy
+> >>>> <robin.murphy@arm.com>
+> >>>> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+> >> valid
+> >>>> iova range
+> >>>>
+> >>>> Hi,
+> >>>> On 27/02/18 00:13, Alex Williamson wrote:
+> >>>>> On Mon, 26 Feb 2018 23:05:43 +0100
+> >>>>> Auger Eric <eric.auger@redhat.com> wrote:
+> >>>>>
+> >>>>>> Hi Shameer,
+> >>>>>>
+> >>>>>> [Adding Robin in CC]
+> >>>>>> On 21/02/18 13:22, Shameer Kolothum wrote:
+> >>>>>>> This checks and rejects any dma map request outside valid iova
+> >>>>>>> range.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Shameer Kolothum
+> >>>> <shameerali.kolothum.thodi@huawei.com>
+> >>>>>>> ---
+> >>>>>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
+> >>>>>>>  1 file changed, 22 insertions(+)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/vfio/vfio_iommu_type1.c
+> >>>> b/drivers/vfio/vfio_iommu_type1.c
+> >>>>>>> index a80884e..3049393 100644
+> >>>>>>> --- a/drivers/vfio/vfio_iommu_type1.c
+> >>>>>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+> >>>>>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct
+> vfio_iommu
+> >>>> *iommu, struct vfio_dma *dma,
+> >>>>>>>  	return ret;
+> >>>>>>>  }
+> >>>>>>>
+> >>>>>>> +/*
+> >>>>>>> + * Check dma map request is within a valid iova range
+> >>>>>>> + */
+> >>>>>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+> >>>>>>> +				dma_addr_t start, dma_addr_t end)
+> >>>>>>> +{
+> >>>>>>> +	struct list_head *iova = &iommu->iova_list;
+> >>>>>>> +	struct vfio_iova *node;
+> >>>>>>> +
+> >>>>>>> +	list_for_each_entry(node, iova, list) {
+> >>>>>>> +		if ((start >= node->start) && (end <= node->end))
+> >>>>>>> +			return true;
+> >>>>>> I am now confused by the fact this change will prevent existing QEMU
+> >>>>>> from working with this series on some platforms. For instance QEMU
+> virt
+> >>>>>> machine GPA space collides with Seattle PCI host bridge windows. On
+> >> ARM
+> >>>>>> the smmu and smmuv3 drivers report the PCI host bridge windows as
+> >>>>>> reserved regions which does not seem to be the case on other
+> platforms.
+> >>>>>> The change happened in commit
+> >>>> 273df9635385b2156851c7ee49f40658d7bcb29d
+> >>>>>> (iommu/dma: Make PCI window reservation generic).
+> >>>>>>
+> >>>>>> For background, we already discussed the topic after LPC 2016. See
+> >>>>>> https://www.spinics.net/lists/kernel/msg2379607.html.
+> >>>>>>
+> >>>>>> So is it the right choice to expose PCI host bridge windows as reserved
+> >>>>>> regions? If yes shouldn't we make a difference between those and MSI
+> >>>>>> windows in this series and do not reject any user space DMA_MAP
+> >> attempt
+> >>>>>> within PCI host bridge windows.
+> >>>>>
+> >>>>> If the QEMU machine GPA collides with a reserved region today, then
+> >>>>> either:
+> >>>>>
+> >>>>> a) The mapping through the IOMMU works and the reserved region is
+> >> wrong
+> >>>>>
+> >>>>> or
+> >>>>>
+> >>>>> b) The mapping doesn't actually work, QEMU is at risk of data loss by
+> >>>>> being told that it worked, and we're justified in changing that
+> >>>>> behavior.
+> >>>>>
+> >>>>> Without knowing the specifics of SMMU, it doesn't particularly make
+> >>>>> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
+> >>>>> unless perhaps the IOMMU is incapable of translating those IOVAs.
+> >>>> to me the limitation does not come from the smmu itself, which is a
+> >>>> separate HW block sitting between the root complex and the
+> interconnect.
+> >>>> If ACS is not enforced by the PCIe subsystem, the transaction will never
+> >>>> reach the IOMMU.
+> >>>
+> >>> True. And we do have one such platform where ACS is not enforced but
+> >>> reserving the regions and possibly creating holes while launching VM will
+> >>> make it secure. But I do wonder how we will solve the device grouping
+> >>> in such cases.
+> >>>
+> >>> The Seattle PCI host bridge windows case you mentioned has any pci quirk
+> >>> to claim that they support ACS?
+> >> No there is none to my knowledge. I am applying Alex' not upstream ACS
+> >> overwrite patch.
+> >
+> > Ok. But isn't that patch actually applicable to cases where ACS is really
+> supported
+> > by hardware but the capability is not available?
+> 
+> My understanding is normally yes. If you apply the patch whereas the HW
+> practically does not support ACS, then you fool the kernel pretending
+> there is isolation whereas there is not. I don't know the exact
+> capability of the HW on AMD Seattle and effectively I should have cared
+> about it much earlier and if the HW capability were supported and not
+> properly exposed we should have implemented a clean quirk for this platform.
 
-I got this deadlock on my own driver (pxrc) when using the same
-construction.
+Ok. Thanks for the details.
+ 
+> 
+>   I am just trying to see whether
+> > the argument that we should allow DMA MAP requests for this(non-ACS case)
+> > even if the Guest GPA conflict with reserved region holds good. The fact that
+> may
+> > be it was working before is that the Guest never actually allocated any GPA
+> from
+> > the reserved region or maybe I am missing something here.
+> 
+> If my understanding is correct, in ideal world we would report the PCI
+> host bridge window as reserved only in case ACS is not supported. If you
+> apply the patch and overrides the ACS, then the DMA_MAP  would be
+> allowed. In case the HW does not support ACS, then you could face
+> situations where one EP tries to access GPA that never reaches the IOMMU
+> (because it corresponds to the BAR of another downstream EP). Same can
+> happen at the moment.
 
-Please have a look
+Yes, this is my understanding too.
 
-Here is a clip from 
-[PATCH v3] input: pxrc: new driver for PhoenixRC Flight Controller Adapter [1]
-that describes the problem.
-
--------------------------------8<----------------------------------------------
-Also, I think we have a deadlock in the synaptics_usb driver.
-
-When the device is suspended and someone is open the device, the input
-subsystem will call input_open_device() which takes the
-input_dev->mutex and then call input_dev->open().
-
-synusb_open() has a call to usb_autopm_get_interface() which will
-result in a call to the registered resume-function if the device is
-suspended. (see Documentation/driver-api/usb/power-manaement.rst).
-
-In the case of snaptics_usb, it will take the input_dev->mutex in the
-resume function.
-
-I have no synaptic mouse, but tested to put the same code into my
-driver just to confirm, and got the following dump:
-
-[ 9215.626476] INFO: task input-events:8590 blocked for more than 120 seconds.
-[ 9215.626495]       Not tainted 4.15.0-rc8-ARCH+ #6
-[ 9215.626500] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 9215.626507] input-events    D    0  8590   4394 0x00000004
-[ 9215.626520] Call Trace:
-[ 9215.626546]  ? __schedule+0x236/0x850
-[ 9215.626559]  schedule+0x2f/0x90
-[ 9215.626569]  schedule_preempt_disabled+0x11/0x20
-[ 9215.626579]  __mutex_lock.isra.0+0x1aa/0x520
-[ 9215.626609]  ? usb_runtime_suspend+0x70/0x70 [usbcore]
-[ 9215.626622]  ? pxrc_resume+0x37/0x70 [pxrc]
-[ 9215.626632]  pxrc_resume+0x37/0x70 [pxrc]
-[ 9215.626655]  usb_resume_interface.isra.2+0x39/0xe0 [usbcore]
-[ 9215.626676]  usb_resume_both+0xd2/0x120 [usbcore]
-[ 9215.626688]  __rpm_callback+0xb6/0x1f0
-[ 9215.626699]  rpm_callback+0x1f/0x70
-[ 9215.626718]  ? usb_runtime_suspend+0x70/0x70 [usbcore]
-[ 9215.626726]  rpm_resume+0x4e2/0x7f0
-[ 9215.626737]  rpm_resume+0x582/0x7f0
-[ 9215.626749]  __pm_runtime_resume+0x3a/0x50
-[ 9215.626767]  usb_autopm_get_interface+0x1d/0x50 [usbcore]
-[ 9215.626780]  pxrc_open+0x17/0x8d [pxrc]
-[ 9215.626791]  input_open_device+0x70/0xa0
-[ 9215.626804]  evdev_open+0x183/0x1c0 [evdev]
-[ 9215.626819]  chrdev_open+0xa0/0x1b0
-[ 9215.626830]  ? cdev_put.part.1+0x20/0x20
-[ 9215.626840]  do_dentry_open+0x1ad/0x2c0
-[ 9215.626855]  path_openat+0x576/0x1300
-[ 9215.626868]  ? alloc_set_pte+0x22c/0x520
-[ 9215.626883]  ? filemap_map_pages+0x19b/0x340
-[ 9215.626893]  do_filp_open+0x9b/0x110
-[ 9215.626908]  ? __check_object_size+0x9d/0x190
-[ 9215.626920]  ? __alloc_fd+0xaf/0x160
-[ 9215.626931]  ? do_sys_open+0x1bd/0x250
-[ 9215.626942]  do_sys_open+0x1bd/0x250
-[ 9215.626956]  entry_SYSCALL_64_fastpath+0x20/0x83
-[ 9215.626967] RIP: 0033:0x7fbf6358f7ae
-
-
-tablet/pegasus_notetaker.c and touchscreen/usbtouchscreen.c has the same
-construction (taking input_dev->mutex in resume/suspend and call
-usb_autopm_get_interface() in open()).
-
-I will create a separate "pm_mutex" to use instead of input_dev->mutex
-to get rid of the lockups in those drivers 
-
--------------------------------8<----------------------------------------------
-
-
-[1] https://lkml.org/lkml/2018/1/20/191
+Just wondering the below changes to the iommu_dma_get_resv_regions() is
+good enough to take care this issue or not.
 
 Thanks,
+Shameer
 
-Best regards
-Marcus Folkesson
+-- >8 --
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index f05f3cf..b6e89d5 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -34,6 +34,8 @@
+ 
+ #define IOMMU_MAPPING_ERROR	0
+ 
++#define REQ_ACS_FLAGS   (PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF)
++
+ struct iommu_dma_msi_page {
+ 	struct list_head	list;
+ 	dma_addr_t		iova;
+@@ -183,6 +185,9 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+ 	if (!dev_is_pci(dev))
+ 		return;
+ 
++	if (pci_acs_path_enabled(to_pci_dev(dev), NULL, REQ_ACS_FLAGS))
++		return;
++
+ 	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
+ 	resource_list_for_each_entry(window, &bridge->windows) {
+ 		struct iommu_resv_region *region;
+---8--
+
+
+> 
+> Eric
+> >
+> > Thanks,
+> > Shameer
+> >
+> >> Thanks
+> >>
+> >> Eric
+> >>>
+> >>>> In the case of such overlap, shouldn't we just warn the end-user that
+> >>>> this situation is dangerous instead of forbidding the use case which
+> >>>> worked "in most cases" until now.
+> >>>
+> >>> Yes, may be something similar to the allow_unsafe_interrupts case, if
+> >>> that is acceptable.
+> >>>
+> >>> Thanks,
+> >>> Shameer
+> >>>
+> >>>>> Are we trying to prevent untranslated p2p with this reserved range?
+> >>>>> That's not necessarily a terrible idea, but it seems that doing it for
+> >>>>> that purpose would need to be a lot smarter, taking into account ACS
+> >>>>> and precisely selecting ranges within the peer address space that would
+> >>>>> be untranslated.  Perhaps only populated MMIO within non-ACS
+> >>>>> hierarchies.  Thanks,
+> >>>>
+> >>>> Indeed taking into account the ACS capability would refine the
+> >>>> situations where a risk exists.
+> >>>>
+> >>>> Thanks
+> >>>>
+> >>>> Eric
+> >>>>>
+> >>>>> Alex
+> >>>>>
