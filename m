@@ -1,162 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeB1KEo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:04:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48883 "EHLO mx2.suse.de"
+        id S1752330AbeB1KH1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:07:27 -0500
+Received: from mga12.intel.com ([192.55.52.136]:45161 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752332AbeB1KEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:04:42 -0500
-Date: Wed, 28 Feb 2018 11:04:37 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH v2 8/9] lib/vsprintf: Remove useless NULL checks
-Message-ID: <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
- <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
- <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
- <1519752950.10722.231.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519752950.10722.231.camel@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1751819AbeB1KH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:07:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
+   d="scan'208";a="207682699"
+Message-ID: <1519812442.10722.248.camel@linux.intel.com>
+Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bhupesh Sharma <bhsharma@redhat.com>,
+        Jonathan Toppins <jtoppins@redhat.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        astone@redhat.com, Jonathan Masters <jcm@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, rafael.j.wysocki@intel.com,
+        Ingo Molnar <mingo@kernel.org>, Prarit Bhargava <prarit@redhat.com>,
+        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2018 12:07:22 +0200
+In-Reply-To: <CACi5LpMv_LB3wi7qn33b6mysdK_weki0YYsG0EkqPhR8FvFq5w@mail.gmail.com>
+References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
+         <CACi5LpM9hn17o7i7R3GUjQYy=6DFtCFKSbDUN7A7MGBTuf7=xw@mail.gmail.com>
+         <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
+         <CACi5LpMv_LB3wi7qn33b6mysdK_weki0YYsG0EkqPhR8FvFq5w@mail.gmail.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-02-27 19:35:50, Andy Shevchenko wrote:
-> On Tue, 2018-02-27 at 16:50 +0100, Petr Mladek wrote:
-> > On Fri 2018-02-16 23:07:10, Andy Shevchenko wrote:
-> > > The pointer can't be NULL since it's first what has been done in the
-> > > pointer().
+On Wed, 2018-02-28 at 00:29 +0530, Bhupesh Sharma wrote:
+> On Tue, Feb 27, 2018 at 8:14 PM, Jonathan Toppins <jtoppins@redhat.com
+> > wrote:
+> > On 02/27/2018 07:40 AM, Bhupesh Sharma wrote:
 > > > 
-> > > Remove useless checks.
-> > > 
-> > > Note we leave check for !CONFIG_HAVE_CLK to make compiler
-> > > to optimize code away when possible.
-> > > 
-> > > Cc: Petr Mladek <pmladek@suse.com>
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > ---
-> > >  lib/vsprintf.c | 13 +------------
-> > >  1 file changed, 1 insertion(+), 12 deletions(-)
-> > > 
-> > > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> > > index 97be2d07297a..a49da00b79e7 100644
-> > > --- a/lib/vsprintf.c
-> > > +++ b/lib/vsprintf.c
-> > > @@ -819,10 +819,6 @@ char *hex_string(char *buf, char *end, u8
-> > > *addr, struct printf_spec spec,
-> > >  		/* nothing to print */
-> > >  		return buf;
-> > >  
-> > > -	if (ZERO_OR_NULL_PTR(addr))
-> > 
-> > This macro matches also values <= 16.
-> 
-> Yes, I know.
-> 
-> This had been discussed with Rasmus and we agreed that printing a result
-> of kmalloc(0) is rather weird.
 
-I see
-https://lkml.kernel.org/r/1500546142.29303.133.camel@linux.intel.com
-There you suggested to move this check into pointer(). But I do not
-see any agreement on this.
+> > For arm64 DT is suppose to *not* be the preferred method, yet still
+> > DT
+> > is preferred if the firmware provides both tables to the kernel.
 
+> However several arm64 products in embedded applications are still not
+> SBSA/SBBR compliant (and I have worked on a couple of such
+> implementations earlier) and still use bootloaders like u-boot (and
+> also closed-source implementations) which have no support for ACPI
+> currently and still rely on a DT to pass the system hardware
+> information to the kernel.
 
-> Moreover, in couple of cases I added these checks.
->  
-> > >  	switch (fmt[1]) {
-> > > @@ -1580,9 +1572,6 @@ char *device_node_string(char *buf, char *end,
-> > > struct device_node *dn,
-> > >  	if (!IS_ENABLED(CONFIG_OF))
-> > >  		return string(buf, end, "(!OF)", spec);
-> > >  
-> > > -	if ((unsigned long)dn < PAGE_SIZE)
-> > > -		return string(buf, end, "(null)", spec);
-> > 
-> > In this case, "null" was printed for ptr < PAGE_SIZE. The same check
-> > is also in string() function.
-> 
-> Do we have a uses cases when invalid (non-NULL) pointer is supplied to
-> print function?
-> 
-> Those call sites have to be fixed.
+> So far only open source implementation of a ACPI compliant firmware is
+> EDK2/UEFI which supports ACPI as the preferred boot method
 
-I am not aware of any. But this patch will make fixing such locations
-more complicated. The kernel would crash and might not show any message.
-Is this really what we want?
+You mean for non-x86?
 
-Note that it will most likely crash in vprintk_emit() on the line
+>  and I am
+> not sure if all u-boot/in-house firmware implementations are planned
+> to be ported over to EDK2/UEFI for embedded applications.
 
-   text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
+Why do you need that? ACPI (if you are talking about ACPI only, w/o EFI)
+is supported in U-Boot for few x86 SoCs/platforms. Moreover, one of them
+had never been shipped with ACPI/EFI complaint services in firmware and
+ACPI layer is purely done in U-Boot.
 
-It will be with logbug_lock() taken. The nested printk() messages
-will be stored in per-CPU buffer thanks to printk_safe code.
-They might eventually be printed by printk_safe_flush_on_panic()
-but it is not guaranteed.
-
-
-> > Note that it is not only about the printed value. The pointer is later
-> > derefecend. We will start crashing on dn > 0 && dn < PAGE_SIZE.
-> 
-> Yes.
-> So, fix the call sites!
-
-It would be easier if printk() was able to show the message
-when hitting this place.
-
-I did some archaeology. The first check for PAGE_SIZE was added
-by the pre-git commit:
-
-commit 8bcb3ba1dec5749a7f1eed570cb69a20c2e4bd41
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Tue Oct 21 18:22:28 2003 -0700
-
-    [PATCH] make printk more robust with "null" pointers
-    
-    Expand printk's traditional handling of null pointers so that anything in the
-    first page is considered a null pointer.
-    
-    This gives us better behaviour when someone (acpi..) accidentally prints a
-    string which is embedded in a struct, the pointer to which is null.
-
-
-IMHO, it would make sense to hanve this check also pointers that are
-being deferred.
-
-
-> > To be honest, I do not feel experienced enough to decide
-> > about the preferred behavior. On one hand, it is bad when
-> > printk() would crash the kernel. On the other hand, hiding wide
-> > range of values under "(null)" string might confuse people.
-> 
-> > Would it make sense to survive and write different strings for
-> > difference intervals? For example?
-> > 
-> >     "(null)"     for ptr == 0
-> >     "(null-16)"  for ptr > 0 && ptr <= 16
-> >     "(null-pg)"  for prt > 16 && ptr <= PAGE_SIZE
-> > 
-> > In each case, this patch changes the behavior and it should
-> > be documented in the commit message.
-> 
-> Personally I strongly disagree with blowing code up in such places for
-> little or none benefit.
-
-I do not have strong opinion here. I could imagine that this might
-save a day to some people. But I have never encountered such a bug
-myself.
-
-To make it clear. Your clean up work makes sense. I just want to point
-out that this patch is not as innocent as the commit message suggest.
-Also I think that it goes in the wrong direction regarding the
-ability to show useful information in a buggy situation.
-
-Best Regards,
-Petr
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
