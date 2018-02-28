@@ -1,102 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeB1Nvi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:51:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49798 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752441AbeB1Nvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:51:37 -0500
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs,
- wifi reset)
-To: Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-References: <20180227204711.29357-1-dianders@chromium.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8ea0415b-6069-a548-0272-67fcdbc08d39@arm.com>
-Date: Wed, 28 Feb 2018 13:51:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1752705AbeB1Nwe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:52:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752441AbeB1Nwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:52:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F2A21782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH 1/5 v2] f2fs: add mount option for segment
+ allocation policy
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180226174731.26679-1-jaegeuk@kernel.org>
+ <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
+Date: Wed, 28 Feb 2018 21:47:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180227204711.29357-1-dianders@chromium.org>
+In-Reply-To: <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/18 20:47, Douglas Anderson wrote:
-> Back in the early days when gru devices were still under development
-> we found an issue where the WiFi reset line needed to be configured as
-> early as possible during the boot process to avoid the WiFi module
-> being in a bad state.
+On 2018/2/28 13:09, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - add doc :)
 > 
-> We found that the way to get the kernel to do this in the earliest
-> possible place was to configure this line in the pinctrl hogs, so
-> that's what we did.  For some history here you can see
-> <http://crosreview.com/368770>.  After the time that change landed in
-> the kernel, we landed a firmware change to configure this line even
-> earlier.  See <http://crosreview.com/399919>.  However, even after the
-> firmware change landed we kept the kernel change to deal with the fact
-> that some people working on devices might take a little while to
-> update their firmware.
+> This patch adds an mount option, "alloc_mode=%s" having two options, "default"
+> and "reuse".
 > 
-> At this there are definitely zero devices out in the wild that have
-> firmware without the fix in it.  Specifically looking in the firmware
-> branch several critically important fixes for memory stability landed
-> after the patch in coreboot and I know we didn't ship without those.
-> Thus, by now, everyone should have the new firmware and it's safe to
-> not have the kernel set this up in a pinctrl hog.
-> 
-> Historically, even though it wasn't needed to have this in a pinctrl
-> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
-> default hog at bootup and then would never touch things again.  That
-> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
-> during suspend/resume").  After that commit then we'll re-apply the
-> default hog at resume time and that can screw up the reset state of
-> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
-> then the whole system can go haywire.  That's what was happening.
-> Specifically you'd resume a rk3399-gru-* device and it would mostly
-> resume, then would crash with some crazy weird crash.
-> 
-> One could say, perhaps, that the recent pinctrl change was at fault
-> (and should be fixed) since it changed behavior.  ...but that's not
-> really true.  The device tree for rk3399-gru is really to blame.
-> Specifically since the pinctrl is defined in the hog and not in the
-> "wlan-pd-n" node then the actual user of this pin doesn't have a
-> pinctrl entry for it.  That's bad.
-> 
-> Let's fix our problems by just moving the control of
-> "wlan_module_reset_l pinctrl" out of the hog and put them in the
-> proper place.
-> 
-> NOTE: in theory, I think it should actually be possible to have a pin
-> controlled _both_ by the hog and by an actual device.  Once the device
-> claims the pin I think the hog is supposed to let go.  I'm not 100%
-> sure that this works and in any case this solution would be more
-> complex than is necessary.
-> 
-> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
-> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
-> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during suspend/resume")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
+> all the time to reassign segments. It'd be useful for small-sized eMMC parts.
 
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+We have to restore old alloc_mode if we encounter any failure in ->remount, right?
 
 Thanks,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  Documentation/filesystems/f2fs.txt |  2 ++
+>  fs/f2fs/f2fs.h                     |  8 ++++++++
+>  fs/f2fs/segment.c                  |  5 +++++
+>  fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
+>  4 files changed, 39 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+> index 0caf7da0a532..0409c47584ea 100644
+> --- a/Documentation/filesystems/f2fs.txt
+> +++ b/Documentation/filesystems/f2fs.txt
+> @@ -180,6 +180,8 @@ whint_mode=%s          Control which write hints are passed down to block
+>                         down hints. In "user-based" mode, f2fs tries to pass
+>                         down hints given by users. And in "fs-based" mode, f2fs
+>                         passes down hints with its policy.
+> +alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
+> +                       and "default".
+>  
+>  ================================================================================
+>  DEBUGFS ENTRIES
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f68ece08b5a2..d1bfdf691afc 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1043,6 +1043,11 @@ enum {
+>  	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
+>  };
+>  
+> +enum {
+> +	ALLOC_MODE_DEFAULT,	/* stay default */
+> +	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
+> +};
+> +
+>  struct f2fs_sb_info {
+>  	struct super_block *sb;			/* pointer to VFS super block */
+>  	struct proc_dir_entry *s_proc;		/* proc entry */
+> @@ -1229,6 +1234,9 @@ struct f2fs_sb_info {
+>  #endif
+>  	/* For which write hints are passed down to block layer */
+>  	int whint_mode;
+> +
+> +	/* segment allocation policy */
+> +	int alloc_mode;
+>  };
+>  
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 0646d5de8cd0..5e5e2936a26a 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2170,6 +2170,11 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+>  
+>  	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+>  		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
+> +
+> +	/* find segments from 0 to reuse freed segments */
+> +	if (sbi->alloc_mode == ALLOC_MODE_REUSE)
+> +		return 0;
+> +
+>  	return CURSEG_I(sbi, type)->segno;
+>  }
+>  
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 2d832866720c..1345ef167140 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -130,6 +130,7 @@ enum {
+>  	Opt_jqfmt_vfsv0,
+>  	Opt_jqfmt_vfsv1,
+>  	Opt_whint,
+> +	Opt_alloc,
+>  	Opt_err,
+>  };
+>  
+> @@ -184,6 +185,7 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
+>  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+>  	{Opt_whint, "whint_mode=%s"},
+> +	{Opt_alloc, "alloc_mode=%s"},
+>  	{Opt_err, NULL},
+>  };
+>  
+> @@ -700,6 +702,23 @@ static int parse_options(struct super_block *sb, char *options)
+>  			}
+>  			kfree(name);
+>  			break;
+> +		case Opt_alloc:
+> +			name = match_strdup(&args[0]);
+> +			if (!name)
+> +				return -ENOMEM;
+> +
+> +			if (strlen(name) == 7 &&
+> +					!strncmp(name, "default", 7)) {
+> +				sbi->alloc_mode = ALLOC_MODE_DEFAULT;
+> +			} else if (strlen(name) == 5 &&
+> +					!strncmp(name, "reuse", 5)) {
+> +				sbi->alloc_mode = ALLOC_MODE_REUSE;
+> +			} else {
+> +				kfree(name);
+> +				return -EINVAL;
+> +			}
+> +			kfree(name);
+> +			break;
+>  		default:
+>  			f2fs_msg(sb, KERN_ERR,
+>  				"Unrecognized mount option \"%s\" or missing value",
+> @@ -1264,6 +1283,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  	else if (sbi->whint_mode == WHINT_MODE_FS)
+>  		seq_printf(seq, ",whint_mode=%s", "fs-based");
+>  
+> +	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
+> +		seq_printf(seq, ",alloc_mode=%s", "default");
+> +	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
+> +		seq_printf(seq, ",alloc_mode=%s", "reuse");
+>  	return 0;
+>  }
+>  
+> @@ -1273,6 +1296,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+>  	sbi->active_logs = NR_CURSEG_TYPE;
+>  	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
+>  	sbi->whint_mode = WHINT_MODE_OFF;
+> +	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
+>  
+>  	set_opt(sbi, BG_GC);
+>  	set_opt(sbi, INLINE_XATTR);
+> 
