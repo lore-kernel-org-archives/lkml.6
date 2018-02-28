@@ -1,94 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeB1OkR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:40:17 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:35045 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752528AbeB1OkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:40:15 -0500
-Date: Wed, 28 Feb 2018 15:40:13 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        wens@csie.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, thomas.petazzoni@bootlin.com,
-        mylene.josserand@bootlin.com
-Subject: Re: [PATCH 0/3] add CPUs OPPs to sun8i a83t
-Message-ID: <20180228144013.ayd65zbezdya7cbo@flea>
-References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6mf4y4m4gj2fmxli"
-Content-Disposition: inline
-In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-User-Agent: NeoMutt/20180223
+        id S1752738AbeB1Ol2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:28 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40500 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeB1Ol1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:41:27 -0500
+X-Google-Smtp-Source: AH8x2256ldoN+uUMzT7rtjRb9ZLL/3ikgXaBxx15Grl8rC8TCQ7K4i5pyZQgviv0LlaVfuukT+em9w==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, cphealy@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 00/22] Verbatim device names and devm_nvmem_(un)register()
+Date: Wed, 28 Feb 2018 06:40:44 -0800
+Message-Id: <20180228144106.16363-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Srinivas, all:
 
---6mf4y4m4gj2fmxli
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset contains various small changes that I recently made to
+ppNVMEM, more specifically:
 
-On Wed, Feb 28, 2018 at 02:11:19PM +0100, Quentin Schulz wrote:
-> Hi all,
->=20
-> The Allwinner A83T is an octacore A7 divided in two clusters of 4 A7,
-> each cluster having its own regulator and clock.
->=20
-> Let's add the OPPs for each cluster so that we can use cpufreq on this So=
-C.
->=20
-> The operating points were found in Allwinner BSP and fex files and have
-> been tested on a TBS A711 with cpuburn and cpufreq-ljt-stress-test.
->=20
-> Note that there are a few OPPs that are missing:
->=20
-> 1608000000Hz with 920000mV
-> 1800000000Hz with 1000000mV
-> 2016000000Hz with 1080000mV
->=20
-> These OPPs are pretty unstable but it might be due to the SoC quickly
-> overheating (till the board completely shuts down).
-> It seems[1] impossible to reach those frequencies with none or passive
-> cooling, so better leave them out by default.
->=20
-> It's still possible to add those OPPs on a per-board basis though.
->=20
-> [1] http://linux-sunxi.org/User:Tkaiser#First_steps_with_Banana_Pi_M3
+ - Patches 1 and 3 are two changes I am hoping are acceptable upstream
 
-Applied all three. The patch 3/3 wasn't ordered properly, so I fixed
-it, and I removed the newline pointed out by Thomas.
+ - Patches 4 to 15 are a follow up to patch 2
 
-Thanks!
-Maxime
+ - Patches 16 to 22 are just trivial fixups and I am more than happy
+   to drop them if they seem to add more pointless churn rather then
+   value.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Feedback is appreciated!
 
---6mf4y4m4gj2fmxli
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Andrey Smirnov
 
------BEGIN PGP SIGNATURE-----
+Changes since [v3]:
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqWv0wACgkQ0rTAlCFN
-r3RJXBAAkKBrPoLCjiNPWSC4VcL/RFmryHF6u9AAEi048Plk7i3SFsvKVhwHBjtN
-youjnFAzX7En/rHgAFsK9D4IyvvZW5tcHFwWpo60pwmcHfmikzC7oQeQKaq+F8Lz
-Ldn0eSIfzmn8mPc0yv+v7zvk6eqW9KjrD8H3mRarY2WQwG/QTFFbjRyxmwYoZNOf
-Nq+cgNcGRqS0rByxRmfsVXEPIb/iNEmdTgva0YsrdBoNHmvS22VLlpCiDbRQYx3g
-z/Uz6wZPKwNic3II7CeXvZpm5V2GXJgsFdaLNO1VhBUQk4TH4Br2vRGMijlfqJa0
-uoOazryXiCAABk8YuBmRvwLx5AmIfxtFm4t5+pdgBzGbQA6KrkwIPhEc07Uf4eqF
-eMZR8GwOsiotvug4YP5zW/gJ5vxSE0qPI6WN8UMAnF8eg/P3sC4GcoDer1oj/LYz
-01Z4b8FuSSl6TQHtLTxl8Uo6qSjjjJRr4TUHz7tTIMK4ABznG9pSBwpHm+GZukC+
-WTa0oEwtxflJ0Nk66aVcly1dd7447pYOVEhhdJBGNin4DOL7kbgXmVNolQ0lXQyx
-CysteY+rs7iGxoDyLlKCMcDGABR3jV5m67VDyDf6WsK8+/NaR77h9E7zK8JbTK0C
-XtIB0iwMwanygmwWcqCeZH8Vsu4fQ//CeeYoj9X1E0cWJoys9Hc=
-=Fqwd
------END PGP SIGNATURE-----
+ - Patchset rebased on post 4.16-rc1 master from Linus
 
---6mf4y4m4gj2fmxli--
+Changes since [v2]:
+
+ - Added a patch with kerenl doc for struct nvmem_config as a
+   prerequsite for patch #2
+
+ - Documented behaviour of nvmem_register() when id is set to -1
+
+ - Added kernel doc for devm_nvmem_(un)register()
+
+
+Changes since [v1]:
+
+ - Fixed a build break detected by kbuild test robot
+
+ - Added a patch to unconditionally enable COMPILE_TEST for meson-efuse
+
+ - Dropped Joachim Eastwood from CC list due to bouncing e-mail
+
+[v3] lkml.kernel.org/r/20180103200114.23922-1-andrew.smirnov@gmail.com
+[v2] lkml.kernel.org/r/20180101232310.30420-1-andrew.smirnov@gmail.com
+[v1] lkml.kernel.org/r/20171227225956.14442-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (22):
+  nvmem: Document struct nvmem_config
+  nvmem: core: Allow specifying device name verbatim
+  nvmem: Introduce devm_nvmem_(un)register()
+  nvmem: vf610-ocotp: Convert to use devm_nvmem_register()
+  nvmem: imx-ocotp: Convert to use devm_nvmem_register()
+  nvmem: uniphier-efuse: Convert to use devm_nvmem_register()
+  nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
+  nvmem: qfprom: Convert to use devm_nvmem_register()
+  nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
+  nvmem: mtk-efuse: Convert to use devm_nvmem_register()
+  nvmem: meson-mx-efuse: Convert to use devm_nvmem_register()
+  nvmem: meson-efuse: Convert to use devm_nvmem_register()
+  nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
+  nvmem: imx-iim: Convert to use devm_nvmem_register()
+  nvmem: bcm-ocotp: Convert to use devm_nvmem_register()
+  nvmem: meson-efuse: Do no gate COMPILE_TEST with MESON_SM
+  nvmem: snvs_lpgpr: Convert commas to semicolons
+  nvmem: rockchip-efuse: Make use of of_device_get_match_data()
+  nvmem: vf610-ocotp: Do not use "&pdev->dev" explicitly
+  nvmem: rockchip-efuse: Do not use "&pdev->dev" explicitly
+  nvmem: imx-iim: Do not use "&pdev->dev" explicitly
+  nvmem: bcm-ocotp: Do not use "&pdev->dev" explicitly
+
+ drivers/nvmem/Kconfig          |  2 +-
+ drivers/nvmem/bcm-ocotp.c      | 15 ++--------
+ drivers/nvmem/core.c           | 68 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/nvmem/imx-iim.c        | 14 ++-------
+ drivers/nvmem/imx-ocotp.c      | 12 +-------
+ drivers/nvmem/lpc18xx_otp.c    | 12 +-------
+ drivers/nvmem/meson-efuse.c    | 12 +-------
+ drivers/nvmem/meson-mx-efuse.c | 12 +-------
+ drivers/nvmem/mtk-efuse.c      | 12 +-------
+ drivers/nvmem/qfprom.c         | 12 +-------
+ drivers/nvmem/rockchip-efuse.c | 28 ++++++-----------
+ drivers/nvmem/snvs_lpgpr.c     | 26 +++++-----------
+ drivers/nvmem/uniphier-efuse.c | 12 +-------
+ drivers/nvmem/vf610-ocotp.c    | 15 ++--------
+ include/linux/nvmem-provider.h | 42 ++++++++++++++++++++++++++
+ 15 files changed, 138 insertions(+), 156 deletions(-)
+
+-- 
+2.14.3
