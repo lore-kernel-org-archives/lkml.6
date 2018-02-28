@@ -1,45 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932812AbeB1RWl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:22:41 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:49372 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753414AbeB1RWc (ORCPT
+        id S1753320AbeB1RYi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:24:38 -0500
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:40382 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753119AbeB1RYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:22:32 -0500
-Date: Wed, 28 Feb 2018 12:22:31 -0500 (EST)
-Message-Id: <20180228.122231.1811613646832502397.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] virtio-net: disable NAPI only when enabled during
- XDP set
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1519813204-10002-1-git-send-email-jasowang@redhat.com>
-References: <1519813204-10002-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Feb 2018 12:24:36 -0500
+X-Google-Smtp-Source: AH8x226LCI3ff6XwaY93wIdM0kszml1efZ9zH8+OMtmPYq3rsYgm/42/XKVe7pqssF1yU321i64rQA==
+Date: Wed, 28 Feb 2018 18:24:20 +0100
+From: Robin Jarry <robin.jarry@6wind.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] kbuild: fix host progs build with libs in non
+ standard locations
+Message-ID: <20180228172420.usinpmathg4gvvav@6wind.com>
+References: <cover.1519393674.git.robin.jarry@6wind.com>
+ <cover.1519668832.git.robin.jarry@6wind.com>
+ <20180227174518.qzw6eqmuyggcvjl6@treble>
+ <CAK7LNAQLDRefb34KzF=3UUBdRLsDXtaZhRVQjRE2ZMaqNEb4LA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQLDRefb34KzF=3UUBdRLsDXtaZhRVQjRE2ZMaqNEb4LA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 28 Feb 2018 18:20:04 +0800
-
-> We try to disable NAPI to prevent a single XDP TX queue being used by
-> multiple cpus. But we don't check if device is up (NAPI is enabled),
-> this could result stall because of infinite wait in
-> napi_disable(). Fixing this by checking device state through
-> netif_running() before.
+2018-02-28, Masahiro Yamada:
+[snip]
+> So, my idea is to rename existing
 > 
-> Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>  HOSTCFLAGS     ->  KBUILD_HOSTCFLAGS
+>  HOSTCXXFLAGS   ->  KBUILD_HOSTCXXFLAGS
+>  HOSTLDFLAGS    ->  KBUILD_HOSTLDFLAGS
+>  HOST_LOADLIBES ->  KBUILD_HOSTLDLIBS
+> 
+> 
+> ("LOADLIBES" is too long, so rename it to "LDLIBS")
+> 
+> 
+> Then, re-add no-prefix ones as user interface.
 
-Yes, mis-paired NAPI enable/disable are really a pain.
+Hi Masahiro,
 
-Probably, we can do something in the interfaces or mechanisms to make
-this less error prone and less fragile.
+Ok, I'll add the rename patch in a v3 of my series.
 
-Anyways, applied and queued up for -stable, thanks!
+-- 
+Robin
