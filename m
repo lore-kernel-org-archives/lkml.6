@@ -1,232 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932883AbeB1Plz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:41:55 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44078 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752869AbeB1Plx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:41:53 -0500
-X-Google-Smtp-Source: AG47ELsuPefUM+TCqjMluEcBtlUbwk+nGjphCkb2U4RhDVttuoH2QTd9789X/27TMSTzJwlxk+g4MKrm2GqwMfhgoh8=
+        id S933330AbeB1PnK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:43:10 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932654AbeB1PnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:43:08 -0500
+Date: Wed, 28 Feb 2018 17:43:06 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+Message-ID: <20180228174100-mutt-send-email-mst@kernel.org>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+ <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+ <20180226223252-mutt-send-email-mst@kernel.org>
+ <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
+ <20180227190703-mutt-send-email-mst@kernel.org>
+ <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
+ <20180228060845-mutt-send-email-mst@kernel.org>
+ <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
+ <20180228155121-mutt-send-email-mst@kernel.org>
+ <f5c4904f-4bf1-1dc3-a57f-766a5b120d85@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228173444-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-12-marcandre.lureau@redhat.com> <20180227020104-mutt-send-email-mst@kernel.org>
- <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com> <20180228173444-mutt-send-email-mst@kernel.org>
-From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
-Date: Wed, 28 Feb 2018 16:41:51 +0100
-Message-ID: <CAMxuvax37dKhY0jTqbOqjOxQORA=hdDZc3S33b8RFiAbcOLWTg@mail.gmail.com>
-Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f5c4904f-4bf1-1dc3-a57f-766a5b120d85@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 4:35 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Wed, Feb 28, 2018 at 01:27:02PM +0100, Marc-André Lureau wrote:
->> Hi
->>
->> On Tue, Feb 27, 2018 at 1:04 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> > On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-André Lureau wrote:
->> >> Modify fw_cfg_read_blob() to use DMA if the device supports it.
->> >> Return errors, because the operation may fail.
->> >>
->> >> So far, only one call in fw_cfg_register_dir_entries() is using
->> >> kmalloc'ed buf and is thus clearly eligible to DMA read.
->> >>
->> >> Initially, I didn't implement DMA read to speed up boot time, but as a
->> >> first step before introducing DMA write (since read operations were
->> >> already presents). Even more, I didn't realize fw-cfg entries were
->> >> being read by the kernel during boot by default. But actally fw-cfg
->> >> entries are being populated during module probe. I knew DMA improved a
->> >> lot bios boot time (the main reason the DMA interface was added
->> >> afaik). Let see the time it would take to read the whole ACPI
->> >> tables (128kb allocated)
->> >>
->> >>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
->> >>   - with DMA: sys 0m0.003s
->> >>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
->> >>
->> >> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
->> >> boot to populate sysfs qemu_fw_cfg directory, and it is quite
->> >> small (1-2kb). Since it does not expose itself, in order to measure
->> >> the time it takes to read such small file, I took a comparable sized
->> >> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
->> >> modified read_raw enabling DMA)
->> >>
->> >>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
->> >>   - with DMA:
->> >>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
->> >>   - without DMA:
->> >>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
->> >>
->> >> That's a few msec saved during boot by enabling DMA read (the gain
->> >> would be more substantial if other & bigger fw-cfg entries are read by
->> >> others from sysfs, unfortunately, it's not clear if we can always
->> >> enable DMA there)
->> >>
->> >> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
->> >> ---
->> >>  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
->> >>  1 file changed, 50 insertions(+), 11 deletions(-)
->> >>
->> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
->> >> index 3015e77aebca..94df57e9be66 100644
->> >> --- a/drivers/firmware/qemu_fw_cfg.c
->> >> +++ b/drivers/firmware/qemu_fw_cfg.c
->> >> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
->> >>       return ret;
->> >>  }
->> >>
->> >> +/* with acpi & dev locks taken */
->> >> +static ssize_t fw_cfg_read_blob_dma(u16 key,
->> >> +                             void *buf, loff_t pos, size_t count)
->> >> +{
->> >> +     ssize_t ret;
->> >> +
->> >> +     if (pos == 0) {
->> >> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
->> >> +                                     | FW_CFG_DMA_CTL_SELECT
->> >> +                                     | FW_CFG_DMA_CTL_READ);
->> >> +     } else {
->> >> +             fw_cfg_sel_endianness(key);
->> >> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
->> >> +             if (ret < 0)
->> >> +                     return ret;
->> >> +             ret = fw_cfg_dma_transfer(buf, count,
->> >> +                                     FW_CFG_DMA_CTL_READ);
->> >> +     }
->> >> +
->> >> +     return ret;
->> >> +}
->> >> +
->> >> +/* with acpi & dev locks taken */
->> >> +static ssize_t fw_cfg_read_blob_io(u16 key,
->> >> +                             void *buf, loff_t pos, size_t count)
->> >> +{
->> >> +     fw_cfg_sel_endianness(key);
->> >> +     while (pos-- > 0)
->> >> +             ioread8(fw_cfg_reg_data);
->> >> +     ioread8_rep(fw_cfg_reg_data, buf, count);
->> >> +     return count;
->> >> +}
->> >> +
->> >>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
->> >>  static ssize_t fw_cfg_read_blob(u16 key,
->> >> -                             void *buf, loff_t pos, size_t count)
->> >> +                             void *buf, loff_t pos, size_t count,
->> >> +                             bool dma)
->> >>  {
->> >>       u32 glk = -1U;
->> >>       acpi_status status;
->> >> +     ssize_t ret;
->> >>
->> >>       /* If we have ACPI, ensure mutual exclusion against any potential
->> >>        * device access by the firmware, e.g. via AML methods:
->> >
->> > so this adds a dma flag to fw_cfg_read_blob.
->> >
->> >
->> >
->> >> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
->> >>       }
->> >>
->> >>       mutex_lock(&fw_cfg_dev_lock);
->> >> -     fw_cfg_sel_endianness(key);
->> >> -     while (pos-- > 0)
->> >> -             ioread8(fw_cfg_reg_data);
->> >> -     ioread8_rep(fw_cfg_reg_data, buf, count);
->> >> +     if (dma && fw_cfg_dma_enabled()) {
->> >> +             ret = fw_cfg_read_blob_dma(key, buf, pos, count);
->> >> +     } else {
->> >> +             ret = fw_cfg_read_blob_io(key, buf, pos, count);
->> >> +     }
->> >> +
->> >>       mutex_unlock(&fw_cfg_dev_lock);
->> >>
->> >>       acpi_release_global_lock(glk);
->> >> -     return count;
->> >> +
->> >> +     return ret;
->> >>  }
->> >>
->> >>  #ifdef CONFIG_CRASH_CORE
->> >
->> > If set to false it does io, if set to true it does dma.
->> >
->> > I would prefer passing an accessor function pointer
->> > since that's clearer than true/false.
->>
->> ok
->>
->> >
->> >> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
->> >>
->> >>       /* verify fw_cfg device signature */
->> >>       if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
->> >> -                             0, FW_CFG_SIG_SIZE) < 0 ||
->> >> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
->> >>               memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
->> >>               fw_cfg_io_cleanup();
->> >>               return -ENODEV;
->> >> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
->> >>       if (count > entry->size - pos)
->> >>               count = entry->size - pos;
->> >>
->> >> -     return fw_cfg_read_blob(entry->select, buf, pos, count);
->> >> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
->> >> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
->> >>  }
->> >>
->> >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
->> >> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
->> >>       size_t dir_size;
->> >>
->> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
->> >> -                     0, sizeof(files_count));
->> >> +                     0, sizeof(files_count), false);
->> >>       if (ret < 0)
->> >>               return ret;
->> >>
->> >> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
->> >>               return -ENOMEM;
->> >>
->> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
->> >> -                     sizeof(files_count), dir_size);
->> >> +                     sizeof(files_count), dir_size, false);
->> >>       if (ret < 0)
->> >>               goto end;
->> >>
->> >> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->> >>               goto err_probe;
->> >>
->> >>       /* get revision number, add matching top-level attribute */
->> >> -     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
->> >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
->> >>       if (err < 0)
->> >>               goto err_probe;
->> >
->> >
->> > Looks like all callers pass in false as parameter.
->> > Given this, how can this speed up any operations?
->> >
->> > Are you sure you tested this properly?
->>
->>
->> I did modify read_raw to conduct testing ( the part "with a
->> modified read_raw enabling DMA" should be before, updating commit message).
->
-> So this patch does nothing, it's just infrastructure so DMA can be
-> enabled in the future - is that right?
+On Wed, Feb 28, 2018 at 10:20:33PM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年02月28日 22:01, Michael S. Tsirkin wrote:
+> > On Wed, Feb 28, 2018 at 02:28:21PM +0800, Jason Wang wrote:
+> > > 
+> > > On 2018年02月28日 12:09, Michael S. Tsirkin wrote:
+> > > > > > Or we can add plist to a union:
+> > > > > > 
+> > > > > > 
+> > > > > > struct sk_buff {
+> > > > > >            union {
+> > > > > >                    struct {
+> > > > > >                            /* These two members must be first. */
+> > > > > >                            struct sk_buff          *next;
+> > > > > >                            struct sk_buff          *prev;
+> > > > > >                            union {
+> > > > > >                                    struct net_device       *dev;
+> > > > > >                                    /* Some protocols might use this space to store information,
+> > > > > >                                     * while device pointer would be NULL.
+> > > > > >                                     * UDP receive path is one user.
+> > > > > >                                     */
+> > > > > >                                    unsigned long           dev_scratch;
+> > > > > >                            };
+> > > > > >                    };
+> > > > > >                    struct rb_node  rbnode; /* used in netem & tcp stack */
+> > > > > > +		struct plist plist; /* For use with ptr_ring */
+> > > > > >            };
+> > > > > > 
+> > > > > This look ok.
+> > > > > 
+> > > > > > > For XDP, we need to embed plist in struct xdp_buff too,
+> > > > > > Right - that's pretty straightforward, isn't it?
+> > > > > Yes, it's not clear to me this is really needed for XDP consider the lock
+> > > > > contention it brings.
+> > > > > 
+> > > > > Thanks
+> > > > The contention is only when the ring overflows into the list though.
+> > > > 
+> > > Right, but there's usually a mismatch of speed between producer and
+> > > consumer. In case of a fast producer, we may get this contention very
+> > > frequently.
+> > > 
+> > > Thanks
+> > This is not true in my experiments.  In my experiments, ring size of 4k
+> > bytes is enough to see packet drops in single %s of cases.
+> > 
+> > To you have workloads where rings are full most of the time?
+> 
+> E.g using xdp_redirect to redirect packets from ixgbe to tap. In my test,
+> ixgeb can produce ~8Mpps. But vhost can only consume ~3.5Mpps.
 
-There is a small nit in v15, where I passed dma=false for in
-read(FW_CFG_FILE_DIR), it should have been true. It is fixed in v16.
+Then you are better off just using a small ring and dropping
+packets early, right?
 
-I don't know if it's always safe to enable dma in read_raw(), how
-could we know? Is there a check we could use to choose one or ther
-other (and thus avoiding explicit dma/readfn argument)?
+> > 
+> > One other nice side effect of this patch is that instead of dropping
+> > packets quickly it slows down producer to match consumer speeds.
+> 
+> In some case, producer may not want to be slowed down, e.g in devmap which
+> can redirect packets into several different interfaces.
+> > IOW, it can go either way in theory, we will need to test and see the effect.
+> > 
+> 
+> Yes.
+> 
+> Thanks
