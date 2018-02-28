@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790660-2-16301553014690283605
+X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790656-2-9970881089804452512
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roensk.us-ascii, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790660; b=SumM/CIkDXQE2PCHGK9XWM9yiZrlCLNx2M7DX+05rO+zJEy
-    psEbVb2Sh/TeQ1UMlcXtY5B9IKivWaNnSXMVKzmNk2DBihH/l3UDInyjXbZ5gsEZ
-    nWYn0hdkCb+yEiLn1a+OWuGLcpnOVC3YC6zWxebDOI8pp5slfkCqYg8sRSwx1KGU
-    xLBKUnHQo5JZAEPgHtboN39MDg6h1mXS6WqEMP3clBepMBv3MMG9neuC8caOvDDU
-    /T83OBQcBotxsj8tt6EtjbNkhWusV/x9PEMPTHraDMFCjv+U295E+RGgVNaT/tOp
-    QjVdWHrXt/w0dStuMxOwtNXUQtPpvdUMaTcAOiQ==
+    t=1519790655; b=nwNL8AT/r2axErcBOFF5JVkhfw0GhWedf2ePVj2JvM3UVPI
+    fQfe2z7tfjQ8wAmVQajXfaauRdii1hGby8b4sLr3Awgtxn3jJnCwYDlYnfm8j5sM
+    2mUTptkrHjT8eZCJH8l/PpFkbO1QjD1+5WULrZ7KiAuisur7VPNuX7aLaeSgCEft
+    05g4oj5934rVotARZ9uGfeP80d2oQQcD2RoV/J334Gs75LbZjv+KPeiv7aOp9oAe
+    UrKmsnH9HZk5/C4R30NtBy55Gd2MZmcezAHezW8Jk+HglXtzEvlP2K6xn3MZnL/i
+    p55Vp4ALz3/FBgK6Dhf2cqswSx6K4j4QKzwBbnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790660;
-    bh=9AGPVua7FerW9MHbnW3GGajj8cb4hN8hkiOyT6YzHrQ=; b=Lfz8k7f2GOCb
-    88q2D840jasSYhF8JyB+Mm4UV5aa/xMUxIKlwihtfhPrP0bvdne62W6IBolzMLen
-    Wb96dERlYHgftoefgAW748/zqQ5LUi9C8xl0X2uHOWZJrF6Cem/WJFesL+LiGcLx
-    Ppcml0H85tkUcrT9iVDSkoaFxaKEvx3DZmKznPKkW0WqZ4trNjIy9cRTGNoA/qk1
-    bJtvqgrLHD38o7oAkueMS6ecAMcRf5wlCUx/Wxs431IEzSxB+b0cZ0nLWbJBQ6Gb
-    VKEVFsglUX45LMb/uCpNto1erja/vFAdVWVK2hW/KmTx+q+sF2xJJf4NXJRH8SED
-    44cYsMDOIg==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790655;
+    bh=xF6X5uN03sAA3yMb21/xX2XvZZVdgl9P5oiG1iJTS6M=; b=Vod7mBm2d9yI
+    X4ohfPeRkInQfc+ZYptj+t0mbLX3YGhicqbjeyfgBVbLmgpI8vZQ+d2EyK4zWdxH
+    naKSXoq1QDD4L4qvAYtwPKRLorvi3zoaHw8VTUJZcc6gEofNMK8nmbtz8VZDAkF5
+    3hJcPsG6IyeatCjOLgOYq2nnMs4KF7++wGTDmi59urjZjI5EwtAOfbpC/S03jofg
+    ADng48UNA7DTieWPLpLFa0Gv9Ml8J1pfDZu+VfBvd7KImwLP9SzcFFfNqSVlQvSj
+    kdWCKiTnxVeoTBVBkPVafAFsELkuMDFOWWbdvSSDrWlVQHmFe+Ixl0DWxOtiBSuR
+    QUoCR9ocLQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=DgNjoIR8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=B3gaaLmT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GJ05QnnV;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qbFxiXqL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=DgNjoIR8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=B3gaaLmT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GJ05QnnV;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qbFxiXqL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeB1D6f (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 22:58:35 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43072 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752108AbeB1D6c (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:32 -0500
-X-Google-Smtp-Source: AH8x224QwyjU2+Hp9QVT8vm8vMuWqKIhQOJJDw2FO6iottKghpCQpD2EKoSGdMNf9sP9zlpiTLyarQ==
+        id S1751868AbeB1D6m (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 22:58:42 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37544 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbeB1D6k (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:40 -0500
+X-Google-Smtp-Source: AH8x2276Ssu5nImPJ5ci7EdlVwXFxyk9sTJtWUEbt7cMTHTBfJ77+Q/xgvioTWL6+4nYqK7RVudQJA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,11 +63,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Jessica Yu <jeyu@redhat.com>, Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 08/29] module: extend 'rodata=off' boot cmdline parameter to module mappings
-Date: Wed, 28 Feb 2018 11:56:30 +0800
-Message-Id: <1519790211-16582-9-git-send-email-alex.shi@linaro.org>
+Cc: Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 09/29] arm64: entry: Add exception trampoline page for exceptions from EL0
+Date: Wed, 28 Feb 2018 11:56:31 +0800
+Message-Id: <1519790211-16582-10-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -77,143 +76,195 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 39290b389ea upstream.
+commit c7b9adaf85f8 upstream.
 
-The current "rodata=off" parameter disables read-only kernel mappings
-under CONFIG_DEBUG_RODATA:
-    commit d2aa1acad22f ("mm/init: Add 'rodata=off' boot cmdline parameter
-    to disable read-only kernel mappings")
+To allow unmapping of the kernel whilst running at EL0, we need to
+point the exception vectors at an entry trampoline that can map/unmap
+the kernel on entry/exit respectively.
 
-This patch is a logical extension to module mappings ie. read-only mappings
-at module loading can be disabled even if CONFIG_DEBUG_SET_MODULE_RONX
-(mainly for debug use). Please note, however, that it only affects RO/RW
-permissions, keeping NX set.
+This patch adds the trampoline page, although it is not yet plugged
+into the vector table and is therefore unused.
 
-This is the first step to make CONFIG_DEBUG_SET_MODULE_RONX mandatory
-(always-on) in the future as CONFIG_DEBUG_RODATA on x86 and arm64.
-
-Suggested-by: and Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Rusty Russell <rusty@rustcorp.com.au>
-Link: http://lkml.kernel.org/r/20161114061505.15238-1-takahiro.akashi@linaro.org
-Signed-off-by: Jessica Yu <jeyu@redhat.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 
 Conflicts:
-	keeping kaiser.h in init/main.c
+	add asm/mmu.h in entry.S for ASID marco
+	add kernel-pgtable.h in entry.S for SWAPPER_DIR_SIZE and
+	RESERVED_TTBR0_SIZE
+	no SW PAN in vmlinux.lds.S
 ---
- include/linux/init.h |  3 +++
- init/main.c          |  7 +++++--
- kernel/module.c      | 20 +++++++++++++++++---
- 3 files changed, 25 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/kernel-pgtable.h |  2 +
+ arch/arm64/kernel/entry.S               | 86 +++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/vmlinux.lds.S         | 17 +++++++
+ 3 files changed, 105 insertions(+)
 
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 8e346d1..4dfe300 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -133,6 +133,9 @@ void prepare_namespace(void);
- void __init load_default_modules(void);
- int __init init_rootfs(void);
+diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
+index e4ddac9..135e829 100644
+--- a/arch/arm64/include/asm/kernel-pgtable.h
++++ b/arch/arm64/include/asm/kernel-pgtable.h
+@@ -54,6 +54,8 @@
+ #define SWAPPER_DIR_SIZE	(SWAPPER_PGTABLE_LEVELS * PAGE_SIZE)
+ #define IDMAP_DIR_SIZE		(IDMAP_PGTABLE_LEVELS * PAGE_SIZE)
  
-+#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_DEBUG_SET_MODULE_RONX)
-+extern bool rodata_enabled;
-+#endif
- #ifdef CONFIG_DEBUG_RODATA
- void mark_rodata_ro(void);
++#define RESERVED_TTBR0_SIZE	(0) /*no CONFIG_ARM64_SW_TTBR0_PAN  introduced */
++
+ /* Initial memory map size */
+ #if ARM64_SWAPPER_USES_SECTION_MAPS
+ #define SWAPPER_BLOCK_SHIFT	SECTION_SHIFT
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 60b202a..f0c6b37 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -29,9 +29,11 @@
+ #include <asm/esr.h>
+ #include <asm/irq.h>
+ #include <asm/memory.h>
++#include <asm/mmu.h>
+ #include <asm/thread_info.h>
+ #include <asm/asm-uaccess.h>
+ #include <asm/unistd.h>
++#include <asm/kernel-pgtable.h>
+ 
+ /*
+  * Context tracking subsystem.  Used to instrument transitions
+@@ -828,6 +830,90 @@ __ni_sys_trace:
+ 
+ 	.popsection				// .entry.text
+ 
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++/*
++ * Exception vectors trampoline.
++ */
++	.pushsection ".entry.tramp.text", "ax"
++
++	.macro tramp_map_kernel, tmp
++	mrs	\tmp, ttbr1_el1
++	sub	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
++	bic	\tmp, \tmp, #USER_ASID_FLAG
++	msr	ttbr1_el1, \tmp
++	.endm
++
++	.macro tramp_unmap_kernel, tmp
++	mrs	\tmp, ttbr1_el1
++	add	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
++	orr	\tmp, \tmp, #USER_ASID_FLAG
++	msr	ttbr1_el1, \tmp
++	/*
++	 * We avoid running the post_ttbr_update_workaround here because the
++	 * user and kernel ASIDs don't have conflicting mappings, so any
++	 * "blessing" as described in:
++	 *
++	 *   http://lkml.kernel.org/r/56BB848A.6060603@caviumnetworks.com
++	 *
++	 * will not hurt correctness. Whilst this may partially defeat the
++	 * point of using split ASIDs in the first place, it avoids
++	 * the hit of invalidating the entire I-cache on every return to
++	 * userspace.
++	 */
++	.endm
++
++	.macro tramp_ventry, regsize = 64
++	.align	7
++1:
++	.if	\regsize == 64
++	msr	tpidrro_el0, x30	// Restored in kernel_ventry
++	.endif
++	tramp_map_kernel	x30
++	ldr	x30, =vectors
++	prfm	plil1strm, [x30, #(1b - tramp_vectors)]
++	msr	vbar_el1, x30
++	add	x30, x30, #(1b - tramp_vectors)
++	isb
++	br	x30
++	.endm
++
++	.macro tramp_exit, regsize = 64
++	adr	x30, tramp_vectors
++	msr	vbar_el1, x30
++	tramp_unmap_kernel	x30
++	.if	\regsize == 64
++	mrs	x30, far_el1
++	.endif
++	eret
++	.endm
++
++	.align	11
++ENTRY(tramp_vectors)
++	.space	0x400
++
++	tramp_ventry
++	tramp_ventry
++	tramp_ventry
++	tramp_ventry
++
++	tramp_ventry	32
++	tramp_ventry	32
++	tramp_ventry	32
++	tramp_ventry	32
++END(tramp_vectors)
++
++ENTRY(tramp_exit_native)
++	tramp_exit
++END(tramp_exit_native)
++
++ENTRY(tramp_exit_compat)
++	tramp_exit	32
++END(tramp_exit_compat)
++
++	.ltorg
++	.popsection				// .entry.tramp.text
++#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
++
+ /*
+  * Special system call wrappers.
+  */
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 1105aab..466a43a 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -56,6 +56,17 @@ jiffies = jiffies_64;
+ #define HIBERNATE_TEXT
  #endif
-diff --git a/init/main.c b/init/main.c
-index 99f0265..f22957a 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -81,6 +81,7 @@
- #include <linux/proc_ns.h>
- #include <linux/io.h>
- #include <linux/kaiser.h>
-+#include <linux/cache.h>
  
- #include <asm/io.h>
- #include <asm/bugs.h>
-@@ -914,14 +915,16 @@ static int try_to_run_init_process(const char *init_filename)
- 
- static noinline void __init kernel_init_freeable(void);
- 
--#ifdef CONFIG_DEBUG_RODATA
--static bool rodata_enabled = true;
-+#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_SET_MODULE_RONX)
-+bool rodata_enabled __ro_after_init = true;
- static int __init set_debug_rodata(char *str)
- {
- 	return strtobool(str, &rodata_enabled);
- }
- __setup("rodata=", set_debug_rodata);
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++#define TRAMP_TEXT					\
++	. = ALIGN(PAGE_SIZE);				\
++	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;	\
++	*(.entry.tramp.text)				\
++	. = ALIGN(PAGE_SIZE);				\
++	VMLINUX_SYMBOL(__entry_tramp_text_end) = .;
++#else
++#define TRAMP_TEXT
 +#endif
- 
-+#ifdef CONFIG_DEBUG_RODATA
- static void mark_readonly(void)
- {
- 	if (rodata_enabled)
-diff --git a/kernel/module.c b/kernel/module.c
-index 07bfb99..0651f2d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1911,6 +1911,9 @@ static void frob_writable_data(const struct module_layout *layout,
- /* livepatching wants to disable read-only so it can frob module. */
- void module_disable_ro(const struct module *mod)
- {
-+	if (!rodata_enabled)
-+		return;
 +
- 	frob_text(&mod->core_layout, set_memory_rw);
- 	frob_rodata(&mod->core_layout, set_memory_rw);
- 	frob_ro_after_init(&mod->core_layout, set_memory_rw);
-@@ -1920,6 +1923,9 @@ void module_disable_ro(const struct module *mod)
+ /*
+  * The size of the PE/COFF section that covers the kernel image, which
+  * runs from stext to _edata, must be a round multiple of the PE/COFF
+@@ -128,6 +139,7 @@ SECTIONS
+ 			HYPERVISOR_TEXT
+ 			IDMAP_TEXT
+ 			HIBERNATE_TEXT
++			TRAMP_TEXT
+ 			*(.fixup)
+ 			*(.gnu.warning)
+ 		. = ALIGN(16);
+@@ -216,6 +228,11 @@ SECTIONS
+ 	swapper_pg_dir = .;
+ 	. += SWAPPER_DIR_SIZE;
  
- void module_enable_ro(const struct module *mod, bool after_init)
- {
-+	if (!rodata_enabled)
-+		return;
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++	tramp_pg_dir = .;
++	. += PAGE_SIZE;
++#endif
 +
- 	frob_text(&mod->core_layout, set_memory_ro);
- 	frob_rodata(&mod->core_layout, set_memory_ro);
- 	frob_text(&mod->init_layout, set_memory_ro);
-@@ -1952,6 +1958,9 @@ void set_all_modules_text_rw(void)
- {
- 	struct module *mod;
+ 	_end = .;
  
-+	if (!rodata_enabled)
-+		return;
-+
- 	mutex_lock(&module_mutex);
- 	list_for_each_entry_rcu(mod, &modules, list) {
- 		if (mod->state == MODULE_STATE_UNFORMED)
-@@ -1968,6 +1977,9 @@ void set_all_modules_text_ro(void)
- {
- 	struct module *mod;
- 
-+	if (!rodata_enabled)
-+		return;
-+
- 	mutex_lock(&module_mutex);
- 	list_for_each_entry_rcu(mod, &modules, list) {
- 		if (mod->state == MODULE_STATE_UNFORMED)
-@@ -1981,10 +1993,12 @@ void set_all_modules_text_ro(void)
- 
- static void disable_ro_nx(const struct module_layout *layout)
- {
--	frob_text(layout, set_memory_rw);
--	frob_rodata(layout, set_memory_rw);
-+	if (rodata_enabled) {
-+		frob_text(layout, set_memory_rw);
-+		frob_rodata(layout, set_memory_rw);
-+		frob_ro_after_init(layout, set_memory_rw);
-+	}
- 	frob_rodata(layout, set_memory_x);
--	frob_ro_after_init(layout, set_memory_rw);
- 	frob_ro_after_init(layout, set_memory_x);
- 	frob_writable_data(layout, set_memory_x);
- }
+ 	STABS_DEBUG
 -- 
 2.7.4
