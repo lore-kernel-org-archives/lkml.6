@@ -1,68 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933719AbeB1RnJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:43:09 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752647AbeB1RnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:43:07 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Roman Kagan <rkagan@virtuozzo.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        "Denis V . Lunev" <den@openvz.org>
-Subject: Re: [PATCH 1/3] x86/kvm/hyper-v: add reenlightenment MSRs support
-References: <20180228134401.6544-1-vkuznets@redhat.com>
-        <20180228134401.6544-2-vkuznets@redhat.com>
-        <20180228164822.GA12531@rkaganb.sw.ru>
-Date: Wed, 28 Feb 2018 18:43:00 +0100
-In-Reply-To: <20180228164822.GA12531@rkaganb.sw.ru> (Roman Kagan's message of
-        "Wed, 28 Feb 2018 19:48:22 +0300")
-Message-ID: <87efl5ggd7.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S934226AbeB1RpC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:45:02 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:32190 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932466AbeB1Ro7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:44:59 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HnAADY6ZZah2Oa6ERbGgEBAQEBAgEBA?=
+ =?us-ascii?q?QEIAQEBAYMfggcom2WDGJZACoUwglhXFQECAQEBAQEBAgECEAEBAQoLCQgoL4I?=
+ =?us-ascii?q?4IoNKT28ThRyuBohughYyhSOCJ4FXgWaIMoJwgxsFiByFVnSLbAmCC45pAoFkh?=
+ =?us-ascii?q?1GFPQGRU4EuNIF1cIMSgXMBTxAMghpYjDwBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2HnAADY6ZZah2Oa6ERbGgEBAQEBAgEBAQEIAQEBAYMfggc?=
+ =?us-ascii?q?om2WDGJZACoUwglhXFQECAQEBAQEBAgECEAEBAQoLCQgoL4I4IoNKT28ThRyuB?=
+ =?us-ascii?q?ohughYyhSOCJ4FXgWaIMoJwgxsFiByFVnSLbAmCC45pAoFkh1GFPQGRU4EuNIF?=
+ =?us-ascii?q?1cIMSgXMBTxAMghpYjDwBAQE?=
+X-LoopCount0: from 10.208.86.39
+X-IronPort-AV: E=Sophos;i="5.47,406,1515477600";
+   d="scan'208";a="1222142815"
+X-DLP: DLP_GlobalPCIDSS
+From: Mario Limonciello <mario.limonciello@dell.com>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc: linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [RFC] power/hibernate: Make passing hibernate offsets more friendly
+Date: Wed, 28 Feb 2018 11:43:49 -0600
+Message-Id: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Kagan <rkagan@virtuozzo.com> writes:
+Currently the only way to specify a hibernate offset for a swap
+file is on the kernel command line.
 
-> On Wed, Feb 28, 2018 at 02:43:59PM +0100, Vitaly Kuznetsov wrote:
->> Nested Hyper-V/Windows guest running on top of KVM will use TSC page
->> clocksource in two cases:
->> - L0 exposes invariant TSC (CPUID.80000007H:EDX[8]).
->> - L0 provides Hyper-V Reenlightenment support (CPUID.40000003H:EAX[13]).
->> 
->> Exposing invariant TSC effectively blocks migration to hosts with different
->> TSC frequencies,
->
-> I wonder if TSC scaling on the destination host doesn't allow to relax
-> this requirement?
+This makes some changes to improve:
+1) Add a new /sys/power/disk_offset that lets userspace specify
+the offset and disk to use when initiating a hibernate cycle.
 
-I don't see why it wouldn't, Skylake+ should be fine (but this, of
-course, will limit possible destination hosts to those supporting the
-feature -- even if no other CPU features are required).
+2) Adjust /sys/power/resume interpretation to also read in an
+offset.
 
->> providing reenlightenment support will be needed when we
->> start migrating nested workloads.
->> 
->> Implement rudimentary support for reenlightenment MSRs. For now, these are
->> just read/write MSRs with no effect.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/include/asm/kvm_host.h |  4 ++++
->>  arch/x86/kvm/hyperv.c           | 21 +++++++++++++++++++++
->>  arch/x86/kvm/x86.c              | 12 +++++++++++-
->>  3 files changed, 36 insertions(+), 1 deletion(-)
->
-> Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+Actually klibc's /bin/resume has supported passing a hibernate
+offset in since 20695264e21dcbde309cd81f73cfe2cea42e779d.
 
-Thanks!
+The kernel was just lobbing anything after the device specified
+off the string.  Instead parse that and populate hibernate offset
+with it.
 
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+An alternative to introducing a new sysfs parameter may be to document
+setting these values via /sys/power/resume.  If the wrong signature is found
+on the swapfile/swap partition by the kernel it does show an error
+but it updates the values and they'll work when actually invoked later.
+
+In that case it may make sense to adjust that error and make it level
+info and explain the situation.
+
+ kernel/power/hibernate.c | 59 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 47 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index a5c36e9..f606ed6 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -1025,33 +1025,68 @@ static ssize_t disk_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ power_attr(disk);
+ 
+-static ssize_t resume_show(struct kobject *kobj, struct kobj_attribute *attr,
+-			   char *buf)
+-{
+-	return sprintf(buf,"%d:%d\n", MAJOR(swsusp_resume_device),
+-		       MINOR(swsusp_resume_device));
+-}
+-
+-static ssize_t resume_store(struct kobject *kobj, struct kobj_attribute *attr,
+-			    const char *buf, size_t n)
++static int parse_device_input(const char *buf, size_t n)
+ {
++	unsigned long long offset;
+ 	dev_t res;
+ 	int len = n;
+ 	char *name;
++	char *last;
+ 
+ 	if (len && buf[len-1] == '\n')
+ 		len--;
+ 	name = kstrndup(buf, len, GFP_KERNEL);
+ 	if (!name)
+ 		return -ENOMEM;
+-
++	last = strrchr(name, ':');
++	printk("%lu %s %s %d", last-name, name, last, len);
++	if (last != NULL &&
++	    (last-name) != len-1 &&
++	    sscanf(last+1, "%llu", &offset) == 1)
++                swsusp_resume_block = offset;
+ 	res = name_to_dev_t(name);
+ 	kfree(name);
+ 	if (!res)
+ 		return -EINVAL;
++	swsusp_resume_device = res;
++
++	return 1;
++}
++
++static ssize_t disk_offset_show(struct kobject *kobj, struct kobj_attribute *attr,
++				char *buf)
++{
++	return sprintf(buf,"%d:%d:%lu\n", MAJOR(swsusp_resume_device),
++		       MINOR(swsusp_resume_device), swsusp_resume_block);
++}
++
++static ssize_t disk_offset_store(struct kobject *kobj, struct kobj_attribute *attr,
++				 const char *buf, size_t n)
++{
++	ssize_t rc = parse_device_input(buf, n);
++	if (rc < 0)
++		return rc;
++
++	return n;
++}
++
++power_attr(disk_offset);
++
++static ssize_t resume_show(struct kobject *kobj, struct kobj_attribute *attr,
++			   char *buf)
++{
++	return sprintf(buf,"%d:%d\n", MAJOR(swsusp_resume_device),
++		       MINOR(swsusp_resume_device));
++}
++
++static ssize_t resume_store(struct kobject *kobj, struct kobj_attribute *attr,
++			    const char *buf, size_t n)
++{
++	ssize_t rc = parse_device_input(buf, n);
++	if (rc < 0)
++		return rc;
+ 
+ 	lock_system_sleep();
+-	swsusp_resume_device = res;
+ 	unlock_system_sleep();
+ 	pr_info("Starting manual resume from disk\n");
+ 	noresume = 0;
+@@ -1106,6 +1141,7 @@ power_attr(reserved_size);
+ 
+ static struct attribute * g[] = {
+ 	&disk_attr.attr,
++	&disk_offset_attr.attr,
+ 	&resume_attr.attr,
+ 	&image_size_attr.attr,
+ 	&reserved_size_attr.attr,
+@@ -1125,7 +1161,6 @@ static int __init pm_disk_init(void)
+ 
+ core_initcall(pm_disk_init);
+ 
+-
+ static int __init resume_setup(char *str)
+ {
+ 	if (noresume)
 -- 
-  Vitaly
+2.7.4
