@@ -1,48 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932443AbeB1Ooe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:44:34 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:40265 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932161AbeB1Ooa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:44:30 -0500
-Date: Wed, 28 Feb 2018 15:44:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-input@vger.kernel.org
-Subject: Re: [RFC 0/4] Add support for the Gateworks System Controller
-Message-ID: <20180228144424.GC12303@lunn.ch>
-References: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S932448AbeB1Oo5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:44:57 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33854 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932183AbeB1Olo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:41:44 -0500
+X-Google-Smtp-Source: AH8x2249HrUNwTphMX0KMn7SORAG9pdz7uurfn1O0+t9CTklDQrABuo5mq9z35hXyX9W0X/PqQFuFA==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, cphealy@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 13/22] nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:57 -0800
+Message-Id: <20180228144106.16363-14-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
+References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 05:21:10PM -0800, Tim Harvey wrote:
-> This series adds support for the Gateworks System Controller used on Gateworks
-> Laguna, Ventana, and Newport product families.
-> 
-> The GSC is an MSP430 I2C slave controller whose firmware embeds the following
-> features:
->  - I/O expander (16 GPIO's emulating a PCA955x)
->  - EEPROM (enumating AT24)
->  - RTC (enumating DS1672)
+Drop all of the code related to .remove hook and make use of
+devm_nvmem_register() instead.
 
-Hi Tim
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: cphealy@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/nvmem/lpc18xx_otp.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Maybe it is in these patches, and i missed it....
-
-How do these emulated devices work? Does the controller respond to
-different addresses for these different emulated devices? Or is it an
-I2c bus mux?
-
-    Andrew
+diff --git a/drivers/nvmem/lpc18xx_otp.c b/drivers/nvmem/lpc18xx_otp.c
+index 95268db155e9..74777bfe2dcd 100644
+--- a/drivers/nvmem/lpc18xx_otp.c
++++ b/drivers/nvmem/lpc18xx_otp.c
+@@ -86,22 +86,13 @@ static int lpc18xx_otp_probe(struct platform_device *pdev)
+ 	lpc18xx_otp_nvmem_config.dev = &pdev->dev;
+ 	lpc18xx_otp_nvmem_config.priv = otp;
+ 
+-	nvmem = nvmem_register(&lpc18xx_otp_nvmem_config);
++	nvmem = devm_nvmem_register(&pdev->dev, &lpc18xx_otp_nvmem_config);
+ 	if (IS_ERR(nvmem))
+ 		return PTR_ERR(nvmem);
+ 
+-	platform_set_drvdata(pdev, nvmem);
+-
+ 	return 0;
+ }
+ 
+-static int lpc18xx_otp_remove(struct platform_device *pdev)
+-{
+-	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
+-
+-	return nvmem_unregister(nvmem);
+-}
+-
+ static const struct of_device_id lpc18xx_otp_dt_ids[] = {
+ 	{ .compatible = "nxp,lpc1850-otp" },
+ 	{ },
+@@ -110,7 +101,6 @@ MODULE_DEVICE_TABLE(of, lpc18xx_otp_dt_ids);
+ 
+ static struct platform_driver lpc18xx_otp_driver = {
+ 	.probe	= lpc18xx_otp_probe,
+-	.remove	= lpc18xx_otp_remove,
+ 	.driver = {
+ 		.name	= "lpc18xx_otp",
+ 		.of_match_table = lpc18xx_otp_dt_ids,
+-- 
+2.14.3
