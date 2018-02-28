@@ -1,321 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeB1FU3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 00:20:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59879 "EHLO mx2.suse.de"
+        id S1751692AbeB1FXK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 00:23:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751679AbeB1FU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 00:20:28 -0500
-From: Benjamin Poirier <bpoirier@suse.com>
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: Alexander Duyck <alexander.duyck@gmail.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] e1000e: Fix link status in case of error.
-Date: Wed, 28 Feb 2018 14:20:06 +0900
-Message-Id: <20180228052006.12074-1-bpoirier@suse.com>
-X-Mailer: git-send-email 2.16.1
+        id S1750775AbeB1FXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 00:23:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657E52064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 27 Feb 2018 21:23:08 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: handle quota for orphan inodes
+Message-ID: <20180228052308.GE81737@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180210022841.5707-1-jaegeuk@kernel.org>
+ <e48fd2e5-fab6-57c5-5fff-2e44f5a817b0@kernel.org>
+ <49c1d817-f375-4194-8139-c352503a9a2d@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49c1d817-f375-4194-8139-c352503a9a2d@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before commit 19110cfbb34d ("e1000e: Separate signaling for link check/link
-up"), errors which happen after "get_link_status = false" in the copper
-check_for_link callbacks would be ignored and the link considered up. After
-that commit, any error implies that the link is down. Since all
-combinations of link up/down and error/no error are possible, do the same
-thing as e1000e_phy_has_link_generic() and return the link status in a
-separate variable.
+On 02/27, Chao Yu wrote:
+> Ping,
+> 
+> On 2018/2/13 22:33, Chao Yu wrote:
+> > On 2018/2/10 10:28, Jaegeuk Kim wrote:
+> >> This is to fix missing dquot_initialize for orphan inodes.
+> > 
+> > IMO, we don't need to call dquot_initialize as we have call the function
+> > in evict(), right?
 
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
----
- drivers/net/ethernet/intel/e1000e/82571.c   |  6 ++++--
- drivers/net/ethernet/intel/e1000e/ethtool.c |  5 +++--
- drivers/net/ethernet/intel/e1000e/hw.h      |  2 +-
- drivers/net/ethernet/intel/e1000e/ich8lan.c | 19 +++++++++++--------
- drivers/net/ethernet/intel/e1000e/mac.c     | 26 +++++++++++++++-----------
- drivers/net/ethernet/intel/e1000e/mac.h     |  6 +++---
- drivers/net/ethernet/intel/e1000e/netdev.c  | 11 +++--------
- 7 files changed, 40 insertions(+), 35 deletions(-)
+I think we'd better detect any error in early stage.
 
-diff --git a/drivers/net/ethernet/intel/e1000e/82571.c b/drivers/net/ethernet/intel/e1000e/82571.c
-index 6b03c8553e59..980ed89e61ea 100644
---- a/drivers/net/ethernet/intel/e1000e/82571.c
-+++ b/drivers/net/ethernet/intel/e1000e/82571.c
-@@ -40,7 +40,8 @@
- static s32 e1000_get_phy_id_82571(struct e1000_hw *hw);
- static s32 e1000_setup_copper_link_82571(struct e1000_hw *hw);
- static s32 e1000_setup_fiber_serdes_link_82571(struct e1000_hw *hw);
--static s32 e1000_check_for_serdes_link_82571(struct e1000_hw *hw);
-+static s32 e1000_check_for_serdes_link_82571(struct e1000_hw *hw,
-+					     bool *unused);
- static s32 e1000_write_nvm_eewr_82571(struct e1000_hw *hw, u16 offset,
- 				      u16 words, u16 *data);
- static s32 e1000_fix_nvm_checksum_82571(struct e1000_hw *hw);
-@@ -1493,6 +1494,7 @@ static s32 e1000_setup_fiber_serdes_link_82571(struct e1000_hw *hw)
- /**
-  *  e1000_check_for_serdes_link_82571 - Check for link (Serdes)
-  *  @hw: pointer to the HW structure
-+ *  @unused: unused for serdes links
-  *
-  *  Reports the link state as up or down.
-  *
-@@ -1509,7 +1511,7 @@ static s32 e1000_setup_fiber_serdes_link_82571(struct e1000_hw *hw)
-  *  4) forced_up (the link has been forced up, it did not autonegotiate)
-  *
-  **/
--static s32 e1000_check_for_serdes_link_82571(struct e1000_hw *hw)
-+static s32 e1000_check_for_serdes_link_82571(struct e1000_hw *hw, bool *unused)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	u32 rxcw;
-diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/net/ethernet/intel/e1000e/ethtool.c
-index 003cbd605799..1946ddae06c0 100644
---- a/drivers/net/ethernet/intel/e1000e/ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
-@@ -1753,6 +1753,7 @@ static int e1000_loopback_test(struct e1000_adapter *adapter, u64 *data)
- static int e1000_link_test(struct e1000_adapter *adapter, u64 *data)
- {
- 	struct e1000_hw *hw = &adapter->hw;
-+	bool link_status;
- 
- 	*data = 0;
- 	if (hw->phy.media_type == e1000_media_type_internal_serdes) {
-@@ -1764,7 +1765,7 @@ static int e1000_link_test(struct e1000_adapter *adapter, u64 *data)
- 		 * could take as long as 2-3 minutes
- 		 */
- 		do {
--			hw->mac.ops.check_for_link(hw);
-+			hw->mac.ops.check_for_link(hw, NULL);
- 			if (hw->mac.serdes_has_link)
- 				return *data;
- 			msleep(20);
-@@ -1772,7 +1773,7 @@ static int e1000_link_test(struct e1000_adapter *adapter, u64 *data)
- 
- 		*data = 1;
- 	} else {
--		hw->mac.ops.check_for_link(hw);
-+		hw->mac.ops.check_for_link(hw, &link_status);
- 		if (hw->mac.autoneg)
- 			/* On some Phy/switch combinations, link establishment
- 			 * can take a few seconds more than expected.
-diff --git a/drivers/net/ethernet/intel/e1000e/hw.h b/drivers/net/ethernet/intel/e1000e/hw.h
-index d803b1a12349..4dff6df469bb 100644
---- a/drivers/net/ethernet/intel/e1000e/hw.h
-+++ b/drivers/net/ethernet/intel/e1000e/hw.h
-@@ -472,7 +472,7 @@ struct e1000_mac_operations {
- 	s32  (*id_led_init)(struct e1000_hw *);
- 	s32  (*blink_led)(struct e1000_hw *);
- 	bool (*check_mng_mode)(struct e1000_hw *);
--	s32  (*check_for_link)(struct e1000_hw *);
-+	s32  (*check_for_link)(struct e1000_hw *, bool *);
- 	s32  (*cleanup_led)(struct e1000_hw *);
- 	void (*clear_hw_cntrs)(struct e1000_hw *);
- 	void (*clear_vfta)(struct e1000_hw *);
-diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-index ff308b05d68c..3d25255289ff 100644
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1363,15 +1363,14 @@ static s32 e1000_disable_ulp_lpt_lp(struct e1000_hw *hw, bool force)
- /**
-  *  e1000_check_for_copper_link_ich8lan - Check for link (Copper)
-  *  @hw: pointer to the HW structure
-+ *  @link_status: pointer to whether the link is up or not
-  *
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-- *
-- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-- *  up).
-  **/
--static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
-+static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw,
-+					       bool *link_status)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	s32 ret_val, tipg_reg = 0;
-@@ -1384,8 +1383,11 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 * get_link_status flag is set upon receiving a Link Status
- 	 * Change or Rx Sequence Error interrupt.
- 	 */
--	if (!mac->get_link_status)
--		return 1;
-+	if (!mac->get_link_status) {
-+		*link_status = true;
-+		return 0;
-+	}
-+	*link_status = false;
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
-@@ -1554,6 +1556,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	if (!link)
- 		return 0;	/* No link detected */
- 
-+	*link_status = true;
- 	mac->get_link_status = false;
- 
- 	switch (hw->mac.type) {
-@@ -1602,7 +1605,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return 1;
-+		return 0;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
-@@ -1621,7 +1624,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 		return ret_val;
- 	}
- 
--	return 1;
-+	return 0;
- }
- 
- static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
-diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
-index db735644b312..5a5e219fc864 100644
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -406,15 +406,13 @@ void e1000e_clear_hw_cntrs_base(struct e1000_hw *hw)
- /**
-  *  e1000e_check_for_copper_link - Check for link (Copper)
-  *  @hw: pointer to the HW structure
-+ *  @link_status: pointer to whether the link is up or not
-  *
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-- *
-- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-- *  up).
-  **/
--s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
-+s32 e1000e_check_for_copper_link(struct e1000_hw *hw, bool *link_status)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	s32 ret_val;
-@@ -425,8 +423,11 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 * get_link_status flag is set upon receiving a Link Status
- 	 * Change or Rx Sequence Error interrupt.
- 	 */
--	if (!mac->get_link_status)
--		return 1;
-+	if (!mac->get_link_status) {
-+		*link_status = true;
-+		return 0;
-+	}
-+	*link_status = false;
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
-@@ -439,6 +440,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	if (!link)
- 		return 0;	/* No link detected */
- 
-+	*link_status = true;
- 	mac->get_link_status = false;
- 
- 	/* Check if there was DownShift, must be checked
-@@ -450,7 +452,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return 1;
-+		return 0;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
-@@ -469,17 +471,18 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 		return ret_val;
- 	}
- 
--	return 1;
-+	return 0;
- }
- 
- /**
-  *  e1000e_check_for_fiber_link - Check for link (Fiber)
-  *  @hw: pointer to the HW structure
-+ *  @unused: unused for fiber links
-  *
-  *  Checks for link up on the hardware.  If link is not up and we have
-  *  a signal, then we need to force link up.
-  **/
--s32 e1000e_check_for_fiber_link(struct e1000_hw *hw)
-+s32 e1000e_check_for_fiber_link(struct e1000_hw *hw, bool *unused)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	u32 rxcw;
-@@ -540,11 +543,12 @@ s32 e1000e_check_for_fiber_link(struct e1000_hw *hw)
- /**
-  *  e1000e_check_for_serdes_link - Check for link (Serdes)
-  *  @hw: pointer to the HW structure
-+ *  @unused: unused for serdes links
-  *
-  *  Checks for link up on the hardware.  If link is not up and we have
-  *  a signal, then we need to force link up.
-  **/
--s32 e1000e_check_for_serdes_link(struct e1000_hw *hw)
-+s32 e1000e_check_for_serdes_link(struct e1000_hw *hw, bool *unused)
- {
- 	struct e1000_mac_info *mac = &hw->mac;
- 	u32 rxcw;
-@@ -833,7 +837,7 @@ static s32 e1000_poll_fiber_serdes_link_generic(struct e1000_hw *hw)
- 		 * link up if we detect a signal. This will allow us to
- 		 * communicate with non-autonegotiating link partners.
- 		 */
--		ret_val = mac->ops.check_for_link(hw);
-+		ret_val = mac->ops.check_for_link(hw, NULL);
- 		if (ret_val) {
- 			e_dbg("Error while checking for link\n");
- 			return ret_val;
-diff --git a/drivers/net/ethernet/intel/e1000e/mac.h b/drivers/net/ethernet/intel/e1000e/mac.h
-index 8284618af9ff..74299bf1a5bb 100644
---- a/drivers/net/ethernet/intel/e1000e/mac.h
-+++ b/drivers/net/ethernet/intel/e1000e/mac.h
-@@ -23,9 +23,9 @@
- #define _E1000E_MAC_H_
- 
- s32 e1000e_blink_led_generic(struct e1000_hw *hw);
--s32 e1000e_check_for_copper_link(struct e1000_hw *hw);
--s32 e1000e_check_for_fiber_link(struct e1000_hw *hw);
--s32 e1000e_check_for_serdes_link(struct e1000_hw *hw);
-+s32 e1000e_check_for_copper_link(struct e1000_hw *hw, bool *link_status);
-+s32 e1000e_check_for_fiber_link(struct e1000_hw *hw, bool *unused);
-+s32 e1000e_check_for_serdes_link(struct e1000_hw *hw, bool *unused);
- s32 e1000e_cleanup_led_generic(struct e1000_hw *hw);
- s32 e1000e_config_fc_after_link_up(struct e1000_hw *hw);
- s32 e1000e_disable_pcie_master(struct e1000_hw *hw);
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 9fd4050a91ca..548250108dc5 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -5088,19 +5088,14 @@ static bool e1000e_has_link(struct e1000_adapter *adapter)
- 	 */
- 	switch (hw->phy.media_type) {
- 	case e1000_media_type_copper:
--		if (hw->mac.get_link_status) {
--			ret_val = hw->mac.ops.check_for_link(hw);
--			link_active = ret_val > 0;
--		} else {
--			link_active = true;
--		}
-+		ret_val = hw->mac.ops.check_for_link(hw, &link_active);
- 		break;
- 	case e1000_media_type_fiber:
--		ret_val = hw->mac.ops.check_for_link(hw);
-+		ret_val = hw->mac.ops.check_for_link(hw, NULL);
- 		link_active = !!(er32(STATUS) & E1000_STATUS_LU);
- 		break;
- 	case e1000_media_type_internal_serdes:
--		ret_val = hw->mac.ops.check_for_link(hw);
-+		ret_val = hw->mac.ops.check_for_link(hw, NULL);
- 		link_active = hw->mac.serdes_has_link;
- 		break;
- 	default:
--- 
-2.16.1
+Thanks,
+
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >> ---
+> >>  fs/f2fs/checkpoint.c | 28 ++++++++++++++++------------
+> >>  1 file changed, 16 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >> index 8b0945ba284d..e3bf753a47be 100644
+> >> --- a/fs/f2fs/checkpoint.c
+> >> +++ b/fs/f2fs/checkpoint.c
+> >> @@ -569,13 +569,8 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> >>  	struct node_info ni;
+> >>  	int err = acquire_orphan_inode(sbi);
+> >>  
+> >> -	if (err) {
+> >> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> >> -		f2fs_msg(sbi->sb, KERN_WARNING,
+> >> -				"%s: orphan failed (ino=%x), run fsck to fix.",
+> >> -				__func__, ino);
+> >> -		return err;
+> >> -	}
+> >> +	if (err)
+> >> +		goto err_out;
+> >>  
+> >>  	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
+> >>  
+> >> @@ -589,6 +584,11 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> >>  		return PTR_ERR(inode);
+> >>  	}
+> >>  
+> >> +	err = dquot_initialize(inode);
+> >> +	if (err)
+> >> +		goto err_out;
+> >> +
+> >> +	dquot_initialize(inode);
+> >>  	clear_nlink(inode);
+> >>  
+> >>  	/* truncate all the data during iput */
+> >> @@ -598,14 +598,18 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> >>  
+> >>  	/* ENOMEM was fully retried in f2fs_evict_inode. */
+> >>  	if (ni.blk_addr != NULL_ADDR) {
+> >> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> >> -		f2fs_msg(sbi->sb, KERN_WARNING,
+> >> -			"%s: orphan failed (ino=%x) by kernel, retry mount.",
+> >> -				__func__, ino);
+> >> -		return -EIO;
+> >> +		err = -EIO;
+> >> +		goto err_out;
+> >>  	}
+> >>  	__remove_ino_entry(sbi, ino, ORPHAN_INO);
+> >>  	return 0;
+> >> +
+> >> +err_out:
+> >> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> >> +	f2fs_msg(sbi->sb, KERN_WARNING,
+> >> +			"%s: orphan failed (ino=%x), run fsck to fix.",
+> >> +			__func__, ino);
+> >> +	return err;
+> >>  }
+> >>  
+> >>  int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+> >>
+> > 
+> > .
+> > 
