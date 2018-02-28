@@ -1,153 +1,170 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3813331-1519806334-2-9969280412451991716
+X-Cyrus-Session-Id: sloti22d1t05-3813331-1519806438-2-466436042572651765
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519806333; b=b9OXNghk8IQaJ9S5KD24KwF+Ksg1u2ZewECQfQSKOCOasCr
-    JO01VsDFB5KDWiJBxsJJyadFaYyjbX2Z69b9X+WJMZGC1UHvf4SD6H8wP5/gClGB
-    R5p62occBLNzYI3iwcxHCcPvlXreR8pDCrVBwt7RgSX1HqhXUXHIGzIBPJgUCjCx
-    JH+aZlrZ9xuybZXv6lJ+NRPhxMk3YnlUGQTqpi4jgDkAvJ79v7ItIFSFgbckpkLB
-    2PPCHE4cpswFmuTGQ4oO9kQqlZ6MWqb1SHGMl0nWP2ri5rbZbWskAlcyXh0z5Ygk
-    iH2pKAjCAFiBpS47dwZApXXdZziPWM+y//P7AVw==
+    t=1519806438; b=ZxRFcLw6VQWC03uDHmnm1Sp9LaxNFSti5hRR8+KMiGWJG8M
+    M/5ubD0K0SNS6/oyAJFGHVPdUdST9ROOzBQWQPRR/GS4z2RjvDidPgwStZazdHtG
+    diR0T4VMrMv/qy51xH6N3wJLjnqDIT4MHgsW2F8g7c/s4Aztg6QvMf38zmZdBzP7
+    PLQbwJ0ZJeAWydNxHefJccWYjFN+T7gEdfnwIfchYonxdbjo81Qv54WKc2BiC57R
+    QxixtSovYX+1yhb6CiO+8k9uwTCY8H/e/zGXhoGK0d/XE17YJafH7dvM2Pu9z0gj
+    bQ20DO03dUFZpA1L11jSA4oCEuRBmJv9eNLye4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id:mime-version
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519806333; bh=hRl9+xDDWgKmntM8jLjUISH/4t6jaokyayocGekygy0=; b=F
-    wmsPc3t5J/7AwHOlPrTI49iD6bvjtzsGOx0E54zskJmxveDwmfIvMDHDCLPX6+d0
-    uh6pROo1vFqCvuVehBWAA2YKHq79sk3hsw74LQbaAXyq6YBdoKJq/5BS0v1C/e5H
-    Q2EodEkDerQyrfvR6Gyv768H4TqS362jflrgW3ZdY2NYxz8eJeWkGN61F77bWMP/
-    7huRtcGwq3TF+bl6wG3cDatSJyAgujsONM2lbZ0CwKKvoVrZraQ2pCRwEXidXUkg
-    5waOFOicWibpNjsxrh7H63wub6soVdaSU7EOcPilZtYS7lkvhs39V7k3obL/YZrt
-    LqmZI0gr1Q7UvvgrN54DQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim-adsp=pass (ADSP policy from amazon.de);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=hxSd5Rp8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.de;
+    1519806438; bh=gHhAfmwukSr5fCVw1+jOQYoAqvyHiXYleFDxNNbMfeQ=; b=r
+    bq7FFsK8EZlABB+BkJArOi1gdW6u5XePWWhGPq0FLzYvIcmqd3fJ4vGV7eyXxFtE
+    5P+FP0cW5/0t6zXGxcGhNUxBtiP8wC0yHzgpO6YEGerROX66k2s/duhzGYSfBlZ8
+    Sv6x6gGaJpeluwpKLCeD0JUMD8iwOL2h6IHCYxLFoiqIRUKHPuat3mOthlgSxg84
+    r9qjSVdFPApuNsnYWGOOYAV0CtH7+K5BX6XxNtfwqd46nbc74xKjF8V5XD0QDs2V
+    6qGFBhncGFdXMw2D2QAYpuCt9vCcMPSSl+NjnyS2to73mpYi0ZssbJJ5jEEMlpJB
+    7gRX1QEq6CnT7w5EadjoQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim-adsp=pass (ADSP policy from amazon.de);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=hxSd5Rp8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.de header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751707AbeB1IZc (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 03:25:32 -0500
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:55828 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751552AbeB1IZb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 03:25:31 -0500
-X-IronPort-AV: E=Sophos;i="5.47,404,1515456000";
-   d="scan'208";a="668648056"
-From: "Shah, Amit" <aams@amazon.de>
-To: "roger.pau@citrix.com" <roger.pau@citrix.com>
-CC: "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        id S1751798AbeB1I1Q (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 03:27:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42289 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751758AbeB1I1Q (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 28 Feb 2018 03:27:16 -0500
+Subject: Re: [PATCH v2 2/2] xen: events: free irqs in error condition
+To: "Shah, Amit" <aams@amazon.de>,
+        "roger.pau@citrix.com" <roger.pau@citrix.com>
+Cc: "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "kys@microsoft.com" <kys@microsoft.com>,
-        "jgross@suse.com" <jgross@suse.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "shuo.a.liu@intel.com" <shuo.a.liu@intel.com>,
         "anoob.soman@citrix.com" <anoob.soman@citrix.com>,
         "Valentin, Eduardo" <eduval@lab126.com>,
         "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: Re: [PATCH v2 2/2] xen: events: free irqs in error condition
-Thread-Topic: [PATCH v2 2/2] xen: events: free irqs in error condition
-Thread-Index: AQHTr+N3ya6twxWFfkm0peLZmzunHKO4eysAgAAHDQCAAPbYgIAAAoQA
-Date: Wed, 28 Feb 2018 08:25:23 +0000
-Message-ID: <1519806324.4965.25.camel@amazon.com>
 References: <1519746958-52077-1-git-send-email-aams@amazon.com>
-         <1519746958-52077-3-git-send-email-aams@amazon.com>
-         <20180227170740.jcaxsvpepsn6eot2@MacBook-Pro-de-Roger.local>
-         <1519752774.4965.23.camel@amazon.com>
-         <20180228081623.umnyv4w67h2rsrwk@MacBook-Pro-de-Roger.local>
-In-Reply-To: <20180228081623.umnyv4w67h2rsrwk@MacBook-Pro-de-Roger.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CE479E4A7C8A0B45BE6E00F788D21CE2@amazon.com>
+ <1519746958-52077-3-git-send-email-aams@amazon.com>
+ <20180227170740.jcaxsvpepsn6eot2@MacBook-Pro-de-Roger.local>
+ <1519752774.4965.23.camel@amazon.com>
+ <20180228081623.umnyv4w67h2rsrwk@MacBook-Pro-de-Roger.local>
+ <1519806324.4965.25.camel@amazon.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <ea7f2264-08e4-d107-ac95-89488c144fa4@suse.com>
+Date: Wed, 28 Feb 2018 09:27:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+In-Reply-To: <1519806324.4965.25.camel@amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQpPbiBNaSwgMjAxOC0wMi0yOCBhdCAwODoxNiArMDAwMCwgUm9nZXIgUGF1IE1vbm7DqSB3cm90
-ZToNCj4gT24gVHVlLCBGZWIgMjcsIDIwMTggYXQgMDU6MzI6NTNQTSArMDAwMCwgU2hhaCwgQW1p
-dCB3cm90ZToNCj4gPiANCj4gPiANCj4gPiBPbiBEaSwgMjAxOC0wMi0yNyBhdCAxNzowNyArMDAw
-MCwgUm9nZXIgUGF1IE1vbm7DqSB3cm90ZToNCj4gPiA+IA0KPiA+ID4gT24gVHVlLCBGZWIgMjcs
-IDIwMTggYXQgMDM6NTU6NThQTSArMDAwMCwgQW1pdCBTaGFoIHdyb3RlOg0KPiA+ID4gPiANCj4g
-PiA+ID4gDQo+ID4gPiA+IEluIGNhc2Ugb2YgZXJyb3JzIGluIGlycSBzZXR1cCBmb3IgTVNJLCBm
-cmVlIHVwIHRoZSBhbGxvY2F0ZWQNCj4gPiA+ID4gaXJxcy4NCj4gPiA+ID4gDQo+ID4gPiA+IEZp
-eGVzOiA0ODkyYzliNGFkYTlmOSAoInhlbjogYWRkIHN1cHBvcnQgZm9yIE1TSSBtZXNzYWdlDQo+
-ID4gPiA+IGdyb3VwcyIpDQo+ID4gPiA+IFJlcG9ydGVkLWJ5OiBIb29tYW4gTWlyaGFkaSA8bWly
-aGFkaWhAYW1hem9uLmNvbT4NCj4gPiA+ID4gQ0M6IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0K
-PiA+ID4gPiBDQzogUm9nZXIgUGF1IE1vbm7DqSA8cm9nZXIucGF1QGNpdHJpeC5jb20+DQo+ID4g
-PiA+IENDOiBCb3JpcyBPc3Ryb3Zza3kgPGJvcmlzLm9zdHJvdnNreUBvcmFjbGUuY29tPg0KPiA+
-ID4gPiBDQzogRWR1YXJkbyBWYWxlbnRpbiA8ZWR1dmFsQGFtYXpvbi5jb20+DQo+ID4gPiA+IEND
-OiBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQo+ID4gPiA+IENDOiBUaG9tYXMgR2xl
-aXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4NCj4gPiA+ID4gQ0M6ICJLLiBZLiBTcmluaXZhc2Fu
-IiA8a3lzQG1pY3Jvc29mdC5jb20+DQo+ID4gPiA+IENDOiBMaXUgU2h1byA8c2h1by5hLmxpdUBp
-bnRlbC5jb20+DQo+ID4gPiA+IENDOiBBbm9vYiBTb21hbiA8YW5vb2Iuc29tYW5AY2l0cml4LmNv
-bT4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogQW1pdCBTaGFoIDxhYW1zQGFtYXpvbi5jb20+DQo+
-ID4gPiA+IC0tLQ0KPiA+ID4gPiDCoGRyaXZlcnMveGVuL2V2ZW50cy9ldmVudHNfYmFzZS5jIHwg
-NSArKysrLQ0KPiA+ID4gPiDCoDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVs
-ZXRpb24oLSkNCj4gPiA+ID4gDQo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3hlbi9ldmVu
-dHMvZXZlbnRzX2Jhc2UuYw0KPiA+ID4gPiBiL2RyaXZlcnMveGVuL2V2ZW50cy9ldmVudHNfYmFz
-ZS5jDQo+ID4gPiA+IGluZGV4IGM4NmQxMGUuLmEyOTk1ODYgMTAwNjQ0DQo+ID4gPiA+IC0tLSBh
-L2RyaXZlcnMveGVuL2V2ZW50cy9ldmVudHNfYmFzZS5jDQo+ID4gPiA+ICsrKyBiL2RyaXZlcnMv
-eGVuL2V2ZW50cy9ldmVudHNfYmFzZS5jDQo+ID4gPiA+IEBAIC03NTAsMTEgKzc1MCwxNCBAQCBp
-bnQgeGVuX2JpbmRfcGlycV9tc2lfdG9faXJxKHN0cnVjdA0KPiA+ID4gPiBwY2lfZGV2DQo+ID4g
-PiA+ICpkZXYsIHN0cnVjdCBtc2lfZGVzYyAqbXNpZGVzYywNCj4gPiA+ID4gwqANCj4gPiA+ID4g
-wqAJcmV0ID0gaXJxX3NldF9tc2lfZGVzYyhpcnEsIG1zaWRlc2MpOw0KPiA+ID4gPiDCoAlpZiAo
-cmV0IDwgMCkNCj4gPiA+ID4gLQkJZ290byBlcnJvcl9pcnE7DQo+ID4gPiA+ICsJCWdvdG8gZXJy
-b3JfZGVzYzsNCj4gPiA+ID4gwqBvdXQ6DQo+ID4gPiA+IMKgCW11dGV4X3VubG9jaygmaXJxX21h
-cHBpbmdfdXBkYXRlX2xvY2spOw0KPiA+ID4gPiDCoAlyZXR1cm4gaXJxOw0KPiA+ID4gPiDCoGVy
-cm9yX2lycToNCj4gPiA+ID4gKwl3aGlsZSAoLS1udmVjID49IGkpDQo+ID4gPiA+ICsJCXhlbl9m
-cmVlX2lycShpcnEgKyBudmVjKTsNCj4gPiA+ID4gK2Vycm9yX2Rlc2M6DQo+ID4gPiA+IMKgCXdo
-aWxlIChpID4gMCkgew0KPiA+ID4gPiDCoAkJaS0tOw0KPiA+ID4gPiDCoAkJX191bmJpbmRfZnJv
-bV9pcnEoaXJxICsgaSk7DQo+ID4gPiBJdCBzZWVtcyBwb2ludGxlc3MgdG8gaW50cm9kdWNlIGFu
-b3RoZXIgbGFiZWwgYW5kIGFub3RoZXIgbG9vcCB0bw0KPiA+ID4gZml4DQo+ID4gPiBzb21ldGhp
-bmcgdGhhdCBjYW4gYmUgZml4ZWQgd2l0aCBhIHNpbmdsZSBsYWJlbCBhbmQgYSBzaW5nbGUNCj4g
-PiA+IGxvb3AsDQo+ID4gPiB0aGlzIGp1c3QgbWFrZXMgdGhlIGNvZGUgbW9yZSBjb21wbGV4IGZv
-ciBubyByZWFzb24uDQo+ID4gSSBkaXNhZ3JlZSwganVzdCBiZWNhdXNlIHRoZXJlIGFyZSB0d28g
-ZGlmZmVyZW50IGNsZWFudXBzIHRvIGJlDQo+ID4gbWFkZQ0KPiA+IGZvciB0d28gZGlmZmVyZW50
-IGlzc3VlczsgaXQncyBub3QgYXMgaWYgdGhlIGlmLi4gYW5kIGVsc2UNCj4gPiBjb25kaXRpb25z
-DQo+ID4gYXJlIGdvaW5nIHRvIGJlIGludGVybGVhdmVkLg0KPiBPaCwgSSBkb24ndCBtaW5kIHNv
-IG11Y2ggd2hldGhlciBpdCBlbmRzIHVwIGJlaW5nIHR3byBwYXRjaGVzIG9yIGENCj4gc2luZ2xl
-IG9uZSwgYnV0IElNSE8gdGhlIGNvZGUgc2hvdWxkIGVuZCB1cCBsb29raW5nIHNpbWlsYXIgdG8g
-d2hhdCBJDQo+IHByb3Bvc2VkLCBJIHdvdWxkIGxpa2UgdG8gYXZvaWQgaGF2aW5nIHR3byBsb29w
-cyBhbmQgdHdvIGxhYmVscy4NCj4gDQo+IENvdWxkIHlvdSByZXdvcmsgdGhlIHNlcmllcyBzbyB0
-aGF0IHRoZSBlbmQgcmVzdWx0IHVzZXMgYSBzaW5nbGUgbG9vcA0KPiAoYW5kIGxhYmVsKT8NCg0K
-VGhhdCB3YXMgdGhlIHBhcnQgSSBkaWRuJ3QgbGlrZSBtdWNoLCBzbyBpdCB3b3VsZCBiZSBiZXR0
-ZXIgaWYgdGhlDQpwYXRjaCBjYW1lIGZyb20geW91IDopDQoNCgkJCQlBbWl0DQoNCkFtYXpvbiBE
-ZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICkJlcmxpbiAtIERyZXNkZW4gLSBBYWNoZW4K
-bWFpbiBvZmZpY2U6IEtyYXVzZW5zdHIuIDM4LCAxMDExNyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhy
-ZXI6IERyLiBSYWxmIEhlcmJyaWNoLCBDaHJpc3RpYW4gU2NobGFlZ2VyClVzdC1JRDogREUyODky
-Mzc4NzkKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hhcmxvdHRlbmJ1cmcgSFJCIDE0OTE3
-MyBCCg==
+On 28/02/18 09:25, Shah, Amit wrote:
+> 
+> On Mi, 2018-02-28 at 08:16 +0000, Roger Pau Monné wrote:
+>> On Tue, Feb 27, 2018 at 05:32:53PM +0000, Shah, Amit wrote:
+>>>
+>>>
+>>> On Di, 2018-02-27 at 17:07 +0000, Roger Pau Monné wrote:
+>>>>
+>>>> On Tue, Feb 27, 2018 at 03:55:58PM +0000, Amit Shah wrote:
+>>>>>
+>>>>>
+>>>>> In case of errors in irq setup for MSI, free up the allocated
+>>>>> irqs.
+>>>>>
+>>>>> Fixes: 4892c9b4ada9f9 ("xen: add support for MSI message
+>>>>> groups")
+>>>>> Reported-by: Hooman Mirhadi <mirhadih@amazon.com>
+>>>>> CC: <stable@vger.kernel.org>
+>>>>> CC: Roger Pau Monné <roger.pau@citrix.com>
+>>>>> CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>>> CC: Eduardo Valentin <eduval@amazon.com>
+>>>>> CC: Juergen Gross <jgross@suse.com>
+>>>>> CC: Thomas Gleixner <tglx@linutronix.de>
+>>>>> CC: "K. Y. Srinivasan" <kys@microsoft.com>
+>>>>> CC: Liu Shuo <shuo.a.liu@intel.com>
+>>>>> CC: Anoob Soman <anoob.soman@citrix.com>
+>>>>> Signed-off-by: Amit Shah <aams@amazon.com>
+>>>>> ---
+>>>>>  drivers/xen/events/events_base.c | 5 ++++-
+>>>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/xen/events/events_base.c
+>>>>> b/drivers/xen/events/events_base.c
+>>>>> index c86d10e..a299586 100644
+>>>>> --- a/drivers/xen/events/events_base.c
+>>>>> +++ b/drivers/xen/events/events_base.c
+>>>>> @@ -750,11 +750,14 @@ int xen_bind_pirq_msi_to_irq(struct
+>>>>> pci_dev
+>>>>> *dev, struct msi_desc *msidesc,
+>>>>>  
+>>>>>  	ret = irq_set_msi_desc(irq, msidesc);
+>>>>>  	if (ret < 0)
+>>>>> -		goto error_irq;
+>>>>> +		goto error_desc;
+>>>>>  out:
+>>>>>  	mutex_unlock(&irq_mapping_update_lock);
+>>>>>  	return irq;
+>>>>>  error_irq:
+>>>>> +	while (--nvec >= i)
+>>>>> +		xen_free_irq(irq + nvec);
+>>>>> +error_desc:
+>>>>>  	while (i > 0) {
+>>>>>  		i--;
+>>>>>  		__unbind_from_irq(irq + i);
+>>>> It seems pointless to introduce another label and another loop to
+>>>> fix
+>>>> something that can be fixed with a single label and a single
+>>>> loop,
+>>>> this just makes the code more complex for no reason.
+>>> I disagree, just because there are two different cleanups to be
+>>> made
+>>> for two different issues; it's not as if the if.. and else
+>>> conditions
+>>> are going to be interleaved.
+>> Oh, I don't mind so much whether it ends up being two patches or a
+>> single one, but IMHO the code should end up looking similar to what I
+>> proposed, I would like to avoid having two loops and two labels.
+>>
+>> Could you rework the series so that the end result uses a single loop
+>> (and label)?
+> 
+> That was the part I didn't like much, so it would be better if the
+> patch came from you :)
+
+I'd prefer Roger's solution, too.
+
+Roger, in case you don't want to write the patch, I can do it.
+
+
+Juergen
