@@ -1,66 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeB1MaP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:30:15 -0500
-Received: from mail-vk0-f42.google.com ([209.85.213.42]:38500 "EHLO
-        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752340AbeB1MaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:30:13 -0500
-X-Google-Smtp-Source: AG47ELsacK4jPy8bFWzFM36uj1GWLmA1QAShKIZLjFa3hqHmCQZolVTxm0LocIhvws3n+pSCgldT4Q==
+        id S1752565AbeB1Mbi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:31:38 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53220 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752329AbeB1Mbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:31:36 -0500
+Date: Wed, 28 Feb 2018 13:31:31 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] net: iucv: Free memory obtained by kzalloc
+Message-ID: <20180228133131.0df907ff.cohuck@redhat.com>
+In-Reply-To: <78058d34-7cbb-a3e6-6471-e001b93a0523@gmail.com>
+References: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
+        <20180228113042.6a2f5177.cohuck@redhat.com>
+        <e4784c9b-380f-4dad-6883-b6350a9e0614@gmail.com>
+        <20180228125629.3062ac1d.cohuck@redhat.com>
+        <78058d34-7cbb-a3e6-6471-e001b93a0523@gmail.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com> <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 28 Feb 2018 21:29:50 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
-Message-ID: <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Wed, 28 Feb 2018 17:39:53 +0530
+Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
 
-On Wed, Feb 28, 2018 at 9:17 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Jeffy,
->
-> On Wed, Feb 28, 2018 at 12:11 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
->> Currently we are adding all of the attached devices' clocks as pm clocks
->> and enable them when powering on the power domain.
->>
->> This seems unnecessary, because those clocks are already controlled in
->> the devices' drivers with better error handling.
->>
->> Tested on my chromebook minnie(rk3288) and chromebook kevin(rk3399).
->>
->> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
->
-> Thanks for your patch!
->
-> Just wondering: so you prefer to handle the clocks explicitly in all drivers,
-> instead of delegating this task to Runtime PM?
+> On Wednesday 28 February 2018 05:26 PM, Cornelia Huck wrote:
+> > On Wed, 28 Feb 2018 17:14:55 +0530
+> > Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> >  
+> >> On Wednesday 28 February 2018 04:00 PM, Cornelia Huck wrote:  
+> >>> On Wed, 28 Feb 2018 15:24:16 +0530
+> >>> Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> >>>     
+> >>>> Free memory, if afiucv_iucv_init is not successful and
+> >>>> removing a IUCV driver.
+> >>>>
+> >>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> >>>> ---
+> >>>>    net/iucv/af_iucv.c | 5 ++++-
+> >>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+> >>>> index 1e8cc7b..eb0995a 100644
+> >>>> --- a/net/iucv/af_iucv.c
+> >>>> +++ b/net/iucv/af_iucv.c
+> >>>> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
+> >>>>    	af_iucv_dev->driver = &af_iucv_driver;
+> >>>>    	err = device_register(af_iucv_dev);
+> >>>>    	if (err)
+> >>>> -		goto out_driver;
+> >>>> +		goto out_iucv_dev;
+> >>>>    	return 0;
+> >>>>    
+> >>>> +out_iucv_dev:
+> >>>> +	kfree(af_iucv_dev);
+> >>>>    out_driver:
+> >>>>    	driver_unregister(&af_iucv_driver);
+> >>>>    out_iucv:
+> >>>> @@ -2496,6 +2498,7 @@ static void __exit afiucv_exit(void)
+> >>>>    {
+> >>>>    	if (pr_iucv) {
+> >>>>    		device_unregister(af_iucv_dev);
+> >>>> +		kfree(af_iucv_dev);
+> >>>>    		driver_unregister(&af_iucv_driver);
+> >>>>    		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
+> >>>>    		symbol_put(iucv_if);  
+> >>> No, you must not use kfree() after you called device_register() (even
+> >>> if it was not successful!) -- see the comment for device_register().  
+> >> Yes, Your are right. First we need to call put_device() then kfree().
+> >> I will send updated patch.  
+> > No, that's not correct, either. device_register() will give up any
+> > reference it obtained, and the caller did not obtain any additional
+> > reference, so a put_device() would be wrong. A kfree() on a refcounted
+> > structure is wrong as well.  
+> If you will see the comment for device_register() (drivers/base/core.c)
+> there is mentioned that
+> 'NOTE: _Never_ directly free @dev after calling this function, even
+> if it returned an error! Always use put_device() to give up the
+> reference initialized in this function instead.'
+> But as per you comment. we should not use.
 
-Is it already possible to gate clocks immediately when the device
-idles, but defer turning the power domain off until time long enough
-to cover the power down and up latency elapses?
-
-Also, how about systems where runtime PM is disabled? I think that's
-one of the reasons we control the clocks explicitly in the drivers
-anyway.
-
-Best regards,
-Tomasz
+You don't need to do a put_device() after your device_unregister(),
+that's all managed by the driver core.
