@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeB1M7I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:59:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41805 "EHLO
+        id S932117AbeB1M7l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:59:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41081 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752395AbeB1M7H (ORCPT
+        with ESMTP id S1752417AbeB1M7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:59:07 -0500
-Date: Wed, 28 Feb 2018 04:58:56 -0800
-From: tip-bot for Felix Fietkau <tipbot@zytor.com>
-Message-ID: <tip-5753405e27f8fe4c42c1537d3ddbd9e058e54cdc@git.kernel.org>
-Cc: tglx@linutronix.de, nbd@nbd.name, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: tglx@linutronix.de, nbd@nbd.name, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180228095610.50341-1-nbd@nbd.name>
-References: <20180228095610.50341-1-nbd@nbd.name>
+        Wed, 28 Feb 2018 07:59:40 -0500
+Date: Wed, 28 Feb 2018 04:59:30 -0800
+From: tip-bot for Vineet Gupta <tipbot@zytor.com>
+Message-ID: <tip-a4f538573cd72e7961f4ec5eb13c171f5add58ec@git.kernel.org>
+Cc: vgupta@synopsys.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, daniel.lezcano@linaro.org,
+        Vineet.Gupta1@synopsys.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, Vineet.Gupta1@synopsys.com, mingo@kernel.org,
+        daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, vgupta@synopsys.com
+In-Reply-To: <1519241491-12570-1-git-send-email-vgupta@synopsys.com>
+References: <1519241491-12570-1-git-send-email-vgupta@synopsys.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] clocksource/drivers/mips-gic-timer: Use correct
- shift count to extract data
-Git-Commit-ID: 5753405e27f8fe4c42c1537d3ddbd9e058e54cdc
+Subject: [tip:timers/urgent] clocksource/drivers/arc_timer: Update some
+ comments
+Git-Commit-ID: a4f538573cd72e7961f4ec5eb13c171f5add58ec
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,44 +34,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5753405e27f8fe4c42c1537d3ddbd9e058e54cdc
-Gitweb:     https://git.kernel.org/tip/5753405e27f8fe4c42c1537d3ddbd9e058e54cdc
-Author:     Felix Fietkau <nbd@nbd.name>
-AuthorDate: Wed, 28 Feb 2018 10:56:10 +0100
+Commit-ID:  a4f538573cd72e7961f4ec5eb13c171f5add58ec
+Gitweb:     https://git.kernel.org/tip/a4f538573cd72e7961f4ec5eb13c171f5add58ec
+Author:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+AuthorDate: Wed, 21 Feb 2018 11:31:31 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 28 Feb 2018 13:55:14 +0100
 
-clocksource/drivers/mips-gic-timer: Use correct shift count to extract data
+clocksource/drivers/arc_timer: Update some comments
 
-__gic_clocksource_init() extracts the GIC_CONFIG_COUNTBITS field from
-read_gic_config() by right shifting the register value. The shift count is
-determined by the most significant bit (__fls) of the bitmask which is
-wrong as it shifts out the complete bitfield.
+TIMER0 interrupt ACK is different for ARC700 and HS3x cores.
 
-Use the least significant bit (__ffs) instead to shift the bitfield down to
-bit 0.
+This came to light in some internal discussions and it is nice to have this
+documented rather than digging up the PRM (Programmers Reference Manual).
 
-Fixes: e07127a077c7 ("clocksource: mips-gic-timer: Use new GIC accessor functions")
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: daniel.lezcano@linaro.org
-Cc: paul.burton@imgtec.com
-Link: https://lkml.kernel.org/r/20180228095610.50341-1-nbd@nbd.name
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+Link: https://lkml.kernel.org/r/1519241491-12570-1-git-send-email-vgupta@synopsys.com
 
 ---
- drivers/clocksource/mips-gic-timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/arc_timer.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
-index 65e18c86d9b9..986b6796b631 100644
---- a/drivers/clocksource/mips-gic-timer.c
-+++ b/drivers/clocksource/mips-gic-timer.c
-@@ -166,7 +166,7 @@ static int __init __gic_clocksource_init(void)
+diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+index 4927355f9cbe..471b428d8034 100644
+--- a/drivers/clocksource/arc_timer.c
++++ b/drivers/clocksource/arc_timer.c
+@@ -251,9 +251,14 @@ static irqreturn_t timer_irq_handler(int irq, void *dev_id)
+ 	int irq_reenable = clockevent_state_periodic(evt);
  
- 	/* Set clocksource mask. */
- 	count_width = read_gic_config() & GIC_CONFIG_COUNTBITS;
--	count_width >>= __fls(GIC_CONFIG_COUNTBITS);
-+	count_width >>= __ffs(GIC_CONFIG_COUNTBITS);
- 	count_width *= 4;
- 	count_width += 32;
- 	gic_clocksource.mask = CLOCKSOURCE_MASK(count_width);
+ 	/*
+-	 * Any write to CTRL reg ACks the interrupt, we rewrite the
+-	 * Count when [N]ot [H]alted bit.
+-	 * And re-arm it if perioid by [I]nterrupt [E]nable bit
++	 * 1. ACK the interrupt
++	 *    - For ARC700, any write to CTRL reg ACKs it, so just rewrite
++	 *      Count when [N]ot [H]alted bit.
++	 *    - For HS3x, it is a bit subtle. On taken count-down interrupt,
++	 *      IP bit [3] is set, which needs to be cleared for ACK'ing.
++	 *      The write below can only update the other two bits, hence
++	 *      explicitly clears IP bit
++	 * 2. Re-arm interrupt if periodic by writing to IE bit [0]
+ 	 */
+ 	write_aux_reg(ARC_REG_TIMER0_CTRL, irq_reenable | TIMER_CTRL_NH);
+ 
