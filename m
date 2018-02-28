@@ -1,151 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeB1SKb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:10:31 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751803AbeB1SK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:10:29 -0500
-Date: Wed, 28 Feb 2018 19:10:19 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-Subject: Re: [PATCH v2 05/15] s390: vfio-ap: base implementation of VFIO AP
- device driver
-Message-ID: <20180228191019.20507888.cohuck@redhat.com>
-In-Reply-To: <c7ae5d8e-aa40-9da5-afdf-af53487de3c3@linux.vnet.ibm.com>
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1519741693-17440-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <bdc22d47-afe6-a71a-615d-3beffd4ada3e@linux.vnet.ibm.com>
-        <c7ae5d8e-aa40-9da5-afdf-af53487de3c3@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752876AbeB1SLW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:11:22 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:34523 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeB1SLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 13:11:20 -0500
+X-Google-Smtp-Source: AG47ELtOacsA+WkpHPZHPpUzGbEpHWmxi+2XYpPVKE0ZVx8cYdd8iQ39g+XFUrhdg4i1DgCSV+MmueiLeHFaRK7ByEA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
+References: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 20:11:18 +0200
+Message-ID: <CAHp75VcdsALCUBNoO4BoOj0rHuxurhr6B3GL2i7D79BxRL77kQ@mail.gmail.com>
+Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018 11:43:37 -0500
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Wed, Feb 28, 2018 at 7:43 PM, Mario Limonciello
+<mario.limonciello@dell.com> wrote:
+> Currently the only way to specify a hibernate offset for a swap
+> file is on the kernel command line.
+>
+> This makes some changes to improve:
+> 1) Add a new /sys/power/disk_offset that lets userspace specify
+> the offset and disk to use when initiating a hibernate cycle.
+>
+> 2) Adjust /sys/power/resume interpretation to also read in an
+> offset.
 
-> On 02/28/2018 10:33 AM, Pierre Morel wrote:
-> > On 27/02/2018 15:28, Tony Krowiak wrote:  
+Read is okay per se (not consistent though), showing is not.
+It might break an ABI.
 
-(...)
+> Actually klibc's /bin/resume has supported passing a hibernate
+> offset in since 20695264e21dcbde309cd81f73cfe2cea42e779d.
+>
+> The kernel was just lobbing anything after the device specified
+> off the string.  Instead parse that and populate hibernate offset
+> with it.
 
-> >> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> >> index cbe1d97..9f23caf 100644
-> >> --- a/arch/s390/Kconfig
-> >> +++ b/arch/s390/Kconfig
-> >> @@ -771,6 +771,14 @@ config VFIO_CCW
-> >>         To compile this driver as a module, choose M here: the
-> >>         module will be called vfio_ccw.
-> >>
-> >> +config VFIO_AP
-> >> +    def_tristate m
+> An alternative to introducing a new sysfs parameter may be to document
+> setting these values via /sys/power/resume.  If the wrong signature is found
+> on the swapfile/swap partition by the kernel it does show an error
+> but it updates the values and they'll work when actually invoked later.
 
-Any reason you default to m instead of n here?
+Don't you need to document new node?
 
-> >> +    prompt "Support for virtual Adjunct Processor device interface"  
-> >
-> > The VFIO AP devices are not virtual.
-> > What about
-> >     "VFIO support for AP devices"  
-> Sounds good.
+> +static int parse_device_input(const char *buf, size_t n)
+>  {
+> +       unsigned long long offset;
+>         dev_t res;
+>         int len = n;
+>         char *name;
+> +       char *last;
+>
+>         if (len && buf[len-1] == '\n')
+>                 len--;
 
-+1
+I'm not sure first part even needed, but okay, it's in original code.
 
-> >  
-> >> +    depends on ZCRYPT && VFIO_MDEV_DEVICE
-> >> +    help
-> >> +        driver grants access to Adjunct Processor (AP) devices
+>         name = kstrndup(buf, len, GFP_KERNEL);
+>         if (!name)
+>                 return -ENOMEM;
 
-s/driver/This driver/
+Side notes.
+This whole dance b/c of high probability of '\n' at the end which
+breaks _some_ kernel parsers.
+It might make sense to do a wrapper and call the guts of this function
+with or without memory allocation depending on presence of '\n'.
 
-> >> +        via the VFIO mediated device interface.
+> -
 
-You also might want to add
+This is not needed to be removed.
 
-"To compile this driver as a module, choose M here: the
-module will be called..."
+> +       last = strrchr(name, ':');
 
-> >> +
-> >>   endmenu
+> +       printk("%lu %s %s %d", last-name, name, last, len);
 
-It's a tad confusing to find this in the I/O submenu, but I don't
-really have a better idea.
+Ouch. I guess it's only for RFC.
 
-> >>
-> >>   menu "Dump support"
-> >> diff --git a/arch/s390/configs/default_defconfig 
-> >> b/arch/s390/configs/default_defconfig
-> >> index 5af8458..40fa3f6 100644
-> >> --- a/arch/s390/configs/default_defconfig
-> >> +++ b/arch/s390/configs/default_defconfig  
-> >
-> > Not sure that this file belongs to this patch  
-> Neither am I, but at the time I inserted this here - well before August 
-> of last year - I was using vfio-ccw as a model.
-> If someone can verify this does not belong here, I'd be more than happy 
-> to remove it.
+> +       if (last != NULL &&
 
-I don't see any entry for VFIO_CCW in there?
+> +           (last-name) != len-1 &&
 
-> >
-> >  
-> >> @@ -719,3 +719,6 @@ CONFIG_APPLDATA_BASE=y
-> >>   CONFIG_KVM=m
-> >>   CONFIG_KVM_S390_UCONTROL=y
-> >>   CONFIG_VHOST_NET=m
-> >> +VFIO_MDEV=m
-> >> +VFIO_MDEV_DEVICE=m
-> >> +CONFIG_VFIO_AP=m  
-> >
-> > What is your goal when modifying this three files?
-> > Could you add a comment in the commit message?  
-> As stated above, this was originally based on the vfio-ccw model and has 
-> been in the
-> patch series since its inception. I'd be happy to remove it if it is not 
-> necessary.
+> +           sscanf(last+1, "%llu", &offset) == 1)
 
-I'd vote for removing it.
+This is effectively
 
-(...)
+if (last && *(last+1)) {
+  int ret = kstrtoull(...&swsusp_resume_block...);
+  if (ret)
+   ...warn?..
+}
 
-> >> +static int vfio_ap_matrix_dev_create(void)
-> >> +{
-> >> +    int ret;
-> >> +
-> >> +    vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
-> >> +
-> >> +    ret = PTR_ERR_OR_ZERO(vfio_ap_root_device);  
-> >
-> > IS_ERR() is enough, root_device_register() never return NULL.  
-> I searched the kernel code to look at other places the 
-> root_device_register()
-> function is called to see how the return value is handled. I've seen all 
-> of the
-> following used:
-> if (IS_ERR())
->      ret = PTR_ERR()
-> PTR_ERR()
-> PTR_ERR_OR_ZERO()
-> 
-> I'm not sure why this is a concern, but I'll use the first option above
-> since PTR_ERR_OR_ZERO() also embeds the first option.
+?
 
-PTR_ERR_OR_ZERO() seems like the best choice for the way the return
-code is processed here. (It's just unfortunate that its name conjures
-up connotations of NULL-pointer handling.)
+> +                swsusp_resume_block = offset;
 
-> >> +    if (ret)
-> >> +        goto done;
+> +       swsusp_resume_device = res;
+> +
+
+> +       return 1;
+
+???
+Why not traditional 0?
+
+> +}
+
+> @@ -1125,7 +1161,6 @@ static int __init pm_disk_init(void)
+>
+>  core_initcall(pm_disk_init);
+>
+> -
+
+This doesn't belong to the change.
+
+-- 
+With Best Regards,
+Andy Shevchenko
