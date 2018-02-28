@@ -1,52 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeB1ODA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:03:00 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34318 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752213AbeB1OC7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:02:59 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        acourbot@chromium.org, kernel@collabora.com
-Subject: [PATCH] arm64: defconfig: Enable typec-phy and extcon-usbc-cros-ec for rk3399
-Date: Wed, 28 Feb 2018 15:02:51 +0100
-Message-Id: <20180228140251.22232-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
+        id S932197AbeB1OEb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:04:31 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36414 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752228AbeB1OEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:04:30 -0500
+Date: Wed, 28 Feb 2018 15:04:25 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jianlin Shi <jishi@redhat.com>, Stefano Brivio <sbrivio@redhat.com>,
+        David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ipv4: avoid unused variable warning for sysctl
+Message-ID: <20180228140425.GA2577@bistromath.localdomain>
+References: <20180228133310.1816221-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180228133310.1816221-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enables typec phyter and extcon driver for cable detection that is used by
-USB 3.0 controller for Rockchip rk3399 SoCs.
+2018-02-28, 14:32:48 +0100, Arnd Bergmann wrote:
+> The newly introudced ip_min_valid_pmtu variable is only used when
+> CONFIG_SYSCTL is set:
+> 
+> net/ipv4/route.c:135:12: error: 'ip_min_valid_pmtu' defined but not used [-Werror=unused-variable]
+> 
+> This moves it to the other variables like it, to avoid the harmless
+> warning.
+> 
+> Fixes: c7272c2f1229 ("net: ipv4: don't allow setting net.ipv4.route.min_pmtu below 68")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Crap. Thanks, and sorry for the mess.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 78b47bc7dc54..d4c25aa55785 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -544,6 +544,7 @@ CONFIG_ARCH_TEGRA_132_SOC=y
- CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_ARCH_TEGRA_186_SOC=y
- CONFIG_EXTCON_USB_GPIO=y
-+CONFIG_EXTCON_USBC_CROS_EC=y
- CONFIG_IIO=y
- CONFIG_EXYNOS_ADC=y
- CONFIG_ROCKCHIP_SARADC=m
-@@ -564,6 +565,7 @@ CONFIG_PHY_MVEBU_CP110_COMPHY=y
- CONFIG_PHY_ROCKCHIP_INNO_USB2=y
- CONFIG_PHY_ROCKCHIP_EMMC=y
- CONFIG_PHY_ROCKCHIP_PCIE=m
-+CONFIG_PHY_ROCKCHIP_TYPEC=y
- CONFIG_PHY_XGENE=y
- CONFIG_PHY_TEGRA_XUSB=y
- CONFIG_QCOM_L2_PMU=y
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+
 -- 
-2.16.1
+Sabrina
