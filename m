@@ -1,117 +1,507 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935463AbeB1WI6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:08:58 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39517 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935284AbeB1WIz (ORCPT
+        id S935310AbeB1WRO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:17:14 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42451 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935237AbeB1WRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:08:55 -0500
-X-Google-Smtp-Source: AG47ELskW3R0kdtRa9ll8r5qfYsTIKWP7tzf+c9/NcRHlcpNVt4/4KAxIoBlR1WbBfn36TYSiY0qoy+ylRDj6K+KnYk=
-MIME-Version: 1.0
-In-Reply-To: <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
-References: <20180228134822.2194009-1-arnd@arndb.de> <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 28 Feb 2018 23:08:54 +0100
-X-Google-Sender-Auth: qPNSyquVh2-S3tQIwyCkbfvEBow
-Message-ID: <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Feb 2018 17:17:12 -0500
+X-Google-Smtp-Source: AH8x227hUDOO9ySzpjpRrGk5FPEPsZajJh7omuIi3PsIeTttodIh/EWoFmoSmDyfdGu2PCX+hmtt3Q==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] drm/radeon/mkregtable: Delete unused list functions and macros
+Date: Wed, 28 Feb 2018 14:17:03 -0800
+Message-Id: <20180228221703.92391-1-mka@chromium.org>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 10:47 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> Hi Arnd,
->
-> Thanks for the fix.
->
-> On Wed, Feb 28, 2018 at 02:48:08PM +0100, Arnd Bergmann wrote:
->> When the firmware driver is a loadable module, the gpio driver cannot be
->> built-in:
->>
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
->> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
->> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
->> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
->> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
->> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
->> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
->> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
->> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
->>
->> We already have a Kconfig dependency for it, but when compile-testing, it
->> is disregarded.
->>
->> This changes the dependency so that compile-testing is only done when the
->> firmware driver is completely disabled.
->
-> What about the CONFIG_ARCH_BCM2835=y case? The combination of
-> CONFIG_GPIO_RASPBERRYPI_EXP=y and CONFIG_RASPBERRYPI_FIRMWARE=m is still
-> valid. Wouldn't that break the build?
->
-> Isn't there a way in Kconfig to force CONFIG_GPIO_RASPBERRYPI_EXP=m when
-> CONFIG_RASPBERRYPI_FIRMWARE=m?
+The util mkregtable includes a copy of the kernel API for linked lists,
+only a small subset of it is used. Delete the unused functions and macros.
 
-The problem I ran into only happens with CONFIG_ARCH_BCM2835=y to
-start with. My fix handles that case correctly, it forces
-CONFIG_GPIO_RASPBERRYPI_EXP to be either 'n' or 'm'
-when CONFIG_RASPBERRYPI_FIRMWARE=m.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/gpu/drm/radeon/mkregtable.c | 433 ----------------------------
+ 1 file changed, 433 deletions(-)
 
-> What about 'depends on m || RASPBERRYPI_FIRMWARE=y'?
-
-That would be (slightly) wrong, it would force CONFIG_GPIO_RASPBERRYPI_EXP
-to be 'm' even if RASPBERRYPI_FIRMWARE=n.
-
-> Grepping around I also found this:
->
-> drivers/power/supply/Kconfig:   depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
-
-That is what I did here as well, except the !RASPBERRYPI_FIRMWARE
-only applies for COMPILE_TEST.
-
-> And this:
->
-> drivers/infiniband/Kconfig:     depends on m || IPV6 != m
-
-This is a less common way to express it. The idiomatic
-Kconfig expression here would be 'depends on IPV6 || !IPV6'.
-
->> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  drivers/gpio/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->> index 2ecd2adbaec6..52a8b0a6f4e1 100644
->> --- a/drivers/gpio/Kconfig
->> +++ b/drivers/gpio/Kconfig
->> @@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
->>       tristate "Raspberry Pi 3 GPIO Expander"
->>       default RASPBERRYPI_FIRMWARE
->>       depends on OF_GPIO
->> -     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
->> +     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
->
-> This is really non-obvious. An inline comment here might help, IMO.
-
-How about
-
-       # RASPBERRYPI_FIRMWARE is only available for ARCH_BCM2835, but we want to
-       # allow compile-testing when it is disabled
-
-?
-
-       Arnd
+diff --git a/drivers/gpu/drm/radeon/mkregtable.c b/drivers/gpu/drm/radeon/mkregtable.c
+index c21d8fa591ef..ba704633b072 100644
+--- a/drivers/gpu/drm/radeon/mkregtable.c
++++ b/drivers/gpu/drm/radeon/mkregtable.c
+@@ -43,10 +43,6 @@ struct list_head {
+ 	struct list_head *next, *prev;
+ };
+ 
+-#define LIST_HEAD_INIT(name) { &(name), &(name) }
+-
+-#define LIST_HEAD(name) \
+-	struct list_head name = LIST_HEAD_INIT(name)
+ 
+ static inline void INIT_LIST_HEAD(struct list_head *list)
+ {
+@@ -74,19 +70,6 @@ extern void __list_add(struct list_head *new,
+ 		       struct list_head *prev, struct list_head *next);
+ #endif
+ 
+-/**
+- * list_add - add a new entry
+- * @new: new entry to be added
+- * @head: list head to add it after
+- *
+- * Insert a new entry after the specified head.
+- * This is good for implementing stacks.
+- */
+-static inline void list_add(struct list_head *new, struct list_head *head)
+-{
+-	__list_add(new, head, head->next);
+-}
+-
+ /**
+  * list_add_tail - add a new entry
+  * @new: new entry to be added
+@@ -100,250 +83,6 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
+ 	__list_add(new, head->prev, head);
+ }
+ 
+-/*
+- * Delete a list entry by making the prev/next entries
+- * point to each other.
+- *
+- * This is only for internal list manipulation where we know
+- * the prev/next entries already!
+- */
+-static inline void __list_del(struct list_head *prev, struct list_head *next)
+-{
+-	next->prev = prev;
+-	prev->next = next;
+-}
+-
+-/**
+- * list_del - deletes entry from list.
+- * @entry: the element to delete from the list.
+- * Note: list_empty() on entry does not return true after this, the entry is
+- * in an undefined state.
+- */
+-#ifndef CONFIG_DEBUG_LIST
+-static inline void list_del(struct list_head *entry)
+-{
+-	__list_del(entry->prev, entry->next);
+-	entry->next = (void *)0xDEADBEEF;
+-	entry->prev = (void *)0xBEEFDEAD;
+-}
+-#else
+-extern void list_del(struct list_head *entry);
+-#endif
+-
+-/**
+- * list_replace - replace old entry by new one
+- * @old : the element to be replaced
+- * @new : the new element to insert
+- *
+- * If @old was empty, it will be overwritten.
+- */
+-static inline void list_replace(struct list_head *old, struct list_head *new)
+-{
+-	new->next = old->next;
+-	new->next->prev = new;
+-	new->prev = old->prev;
+-	new->prev->next = new;
+-}
+-
+-static inline void list_replace_init(struct list_head *old,
+-				     struct list_head *new)
+-{
+-	list_replace(old, new);
+-	INIT_LIST_HEAD(old);
+-}
+-
+-/**
+- * list_del_init - deletes entry from list and reinitialize it.
+- * @entry: the element to delete from the list.
+- */
+-static inline void list_del_init(struct list_head *entry)
+-{
+-	__list_del(entry->prev, entry->next);
+-	INIT_LIST_HEAD(entry);
+-}
+-
+-/**
+- * list_move - delete from one list and add as another's head
+- * @list: the entry to move
+- * @head: the head that will precede our entry
+- */
+-static inline void list_move(struct list_head *list, struct list_head *head)
+-{
+-	__list_del(list->prev, list->next);
+-	list_add(list, head);
+-}
+-
+-/**
+- * list_move_tail - delete from one list and add as another's tail
+- * @list: the entry to move
+- * @head: the head that will follow our entry
+- */
+-static inline void list_move_tail(struct list_head *list,
+-				  struct list_head *head)
+-{
+-	__list_del(list->prev, list->next);
+-	list_add_tail(list, head);
+-}
+-
+-/**
+- * list_is_last - tests whether @list is the last entry in list @head
+- * @list: the entry to test
+- * @head: the head of the list
+- */
+-static inline int list_is_last(const struct list_head *list,
+-			       const struct list_head *head)
+-{
+-	return list->next == head;
+-}
+-
+-/**
+- * list_empty - tests whether a list is empty
+- * @head: the list to test.
+- */
+-static inline int list_empty(const struct list_head *head)
+-{
+-	return head->next == head;
+-}
+-
+-/**
+- * list_empty_careful - tests whether a list is empty and not being modified
+- * @head: the list to test
+- *
+- * Description:
+- * tests whether a list is empty _and_ checks that no other CPU might be
+- * in the process of modifying either member (next or prev)
+- *
+- * NOTE: using list_empty_careful() without synchronization
+- * can only be safe if the only activity that can happen
+- * to the list entry is list_del_init(). Eg. it cannot be used
+- * if another CPU could re-list_add() it.
+- */
+-static inline int list_empty_careful(const struct list_head *head)
+-{
+-	struct list_head *next = head->next;
+-	return (next == head) && (next == head->prev);
+-}
+-
+-/**
+- * list_is_singular - tests whether a list has just one entry.
+- * @head: the list to test.
+- */
+-static inline int list_is_singular(const struct list_head *head)
+-{
+-	return !list_empty(head) && (head->next == head->prev);
+-}
+-
+-static inline void __list_cut_position(struct list_head *list,
+-				       struct list_head *head,
+-				       struct list_head *entry)
+-{
+-	struct list_head *new_first = entry->next;
+-	list->next = head->next;
+-	list->next->prev = list;
+-	list->prev = entry;
+-	entry->next = list;
+-	head->next = new_first;
+-	new_first->prev = head;
+-}
+-
+-/**
+- * list_cut_position - cut a list into two
+- * @list: a new list to add all removed entries
+- * @head: a list with entries
+- * @entry: an entry within head, could be the head itself
+- *	and if so we won't cut the list
+- *
+- * This helper moves the initial part of @head, up to and
+- * including @entry, from @head to @list. You should
+- * pass on @entry an element you know is on @head. @list
+- * should be an empty list or a list you do not care about
+- * losing its data.
+- *
+- */
+-static inline void list_cut_position(struct list_head *list,
+-				     struct list_head *head,
+-				     struct list_head *entry)
+-{
+-	if (list_empty(head))
+-		return;
+-	if (list_is_singular(head) && (head->next != entry && head != entry))
+-		return;
+-	if (entry == head)
+-		INIT_LIST_HEAD(list);
+-	else
+-		__list_cut_position(list, head, entry);
+-}
+-
+-static inline void __list_splice(const struct list_head *list,
+-				 struct list_head *prev, struct list_head *next)
+-{
+-	struct list_head *first = list->next;
+-	struct list_head *last = list->prev;
+-
+-	first->prev = prev;
+-	prev->next = first;
+-
+-	last->next = next;
+-	next->prev = last;
+-}
+-
+-/**
+- * list_splice - join two lists, this is designed for stacks
+- * @list: the new list to add.
+- * @head: the place to add it in the first list.
+- */
+-static inline void list_splice(const struct list_head *list,
+-			       struct list_head *head)
+-{
+-	if (!list_empty(list))
+-		__list_splice(list, head, head->next);
+-}
+-
+-/**
+- * list_splice_tail - join two lists, each list being a queue
+- * @list: the new list to add.
+- * @head: the place to add it in the first list.
+- */
+-static inline void list_splice_tail(struct list_head *list,
+-				    struct list_head *head)
+-{
+-	if (!list_empty(list))
+-		__list_splice(list, head->prev, head);
+-}
+-
+-/**
+- * list_splice_init - join two lists and reinitialise the emptied list.
+- * @list: the new list to add.
+- * @head: the place to add it in the first list.
+- *
+- * The list at @list is reinitialised
+- */
+-static inline void list_splice_init(struct list_head *list,
+-				    struct list_head *head)
+-{
+-	if (!list_empty(list)) {
+-		__list_splice(list, head, head->next);
+-		INIT_LIST_HEAD(list);
+-	}
+-}
+-
+-/**
+- * list_splice_tail_init - join two lists and reinitialise the emptied list
+- * @list: the new list to add.
+- * @head: the place to add it in the first list.
+- *
+- * Each of the lists is a queue.
+- * The list at @list is reinitialised
+- */
+-static inline void list_splice_tail_init(struct list_head *list,
+-					 struct list_head *head)
+-{
+-	if (!list_empty(list)) {
+-		__list_splice(list, head->prev, head);
+-		INIT_LIST_HEAD(list);
+-	}
+-}
+-
+ /**
+  * list_entry - get the struct for this entry
+  * @ptr:	the &struct list_head pointer.
+@@ -353,56 +92,6 @@ static inline void list_splice_tail_init(struct list_head *list,
+ #define list_entry(ptr, type, member) \
+ 	container_of(ptr, type, member)
+ 
+-/**
+- * list_first_entry - get the first element from a list
+- * @ptr:	the list head to take the element from.
+- * @type:	the type of the struct this is embedded in.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Note, that list is expected to be not empty.
+- */
+-#define list_first_entry(ptr, type, member) \
+-	list_entry((ptr)->next, type, member)
+-
+-/**
+- * list_for_each	-	iterate over a list
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @head:	the head for your list.
+- */
+-#define list_for_each(pos, head) \
+-	for (pos = (head)->next; prefetch(pos->next), pos != (head); \
+-		pos = pos->next)
+-
+-/**
+- * list_for_each_prev	-	iterate over a list backwards
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @head:	the head for your list.
+- */
+-#define list_for_each_prev(pos, head) \
+-	for (pos = (head)->prev; prefetch(pos->prev), pos != (head); \
+-		pos = pos->prev)
+-
+-/**
+- * list_for_each_safe - iterate over a list safe against removal of list entry
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @n:		another &struct list_head to use as temporary storage
+- * @head:	the head for your list.
+- */
+-#define list_for_each_safe(pos, n, head) \
+-	for (pos = (head)->next, n = pos->next; pos != (head); \
+-		pos = n, n = pos->next)
+-
+-/**
+- * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @n:		another &struct list_head to use as temporary storage
+- * @head:	the head for your list.
+- */
+-#define list_for_each_prev_safe(pos, n, head) \
+-	for (pos = (head)->prev, n = pos->prev; \
+-	     prefetch(pos->prev), pos != (head); \
+-	     pos = n, n = pos->prev)
+-
+ /**
+  * list_for_each_entry	-	iterate over list of given type
+  * @pos:	the type * to use as a loop cursor.
+@@ -414,128 +103,6 @@ static inline void list_splice_tail_init(struct list_head *list,
+ 	     &pos->member != (head); 	\
+ 	     pos = list_entry(pos->member.next, typeof(*pos), member))
+ 
+-/**
+- * list_for_each_entry_reverse - iterate backwards over list of given type.
+- * @pos:	the type * to use as a loop cursor.
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_for_each_entry_reverse(pos, head, member)			\
+-	for (pos = list_entry((head)->prev, typeof(*pos), member);	\
+-	     prefetch(pos->member.prev), &pos->member != (head); 	\
+-	     pos = list_entry(pos->member.prev, typeof(*pos), member))
+-
+-/**
+- * list_prepare_entry - prepare a pos entry for use in list_for_each_entry_continue()
+- * @pos:	the type * to use as a start point
+- * @head:	the head of the list
+- * @member:	the name of the list_head within the struct.
+- *
+- * Prepares a pos entry for use as a start point in list_for_each_entry_continue().
+- */
+-#define list_prepare_entry(pos, head, member) \
+-	((pos) ? : list_entry(head, typeof(*pos), member))
+-
+-/**
+- * list_for_each_entry_continue - continue iteration over list of given type
+- * @pos:	the type * to use as a loop cursor.
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Continue to iterate over list of given type, continuing after
+- * the current position.
+- */
+-#define list_for_each_entry_continue(pos, head, member) 		\
+-	for (pos = list_entry(pos->member.next, typeof(*pos), member);	\
+-	     prefetch(pos->member.next), &pos->member != (head);	\
+-	     pos = list_entry(pos->member.next, typeof(*pos), member))
+-
+-/**
+- * list_for_each_entry_continue_reverse - iterate backwards from the given point
+- * @pos:	the type * to use as a loop cursor.
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Start to iterate over list of given type backwards, continuing after
+- * the current position.
+- */
+-#define list_for_each_entry_continue_reverse(pos, head, member)		\
+-	for (pos = list_entry(pos->member.prev, typeof(*pos), member);	\
+-	     prefetch(pos->member.prev), &pos->member != (head);	\
+-	     pos = list_entry(pos->member.prev, typeof(*pos), member))
+-
+-/**
+- * list_for_each_entry_from - iterate over list of given type from the current point
+- * @pos:	the type * to use as a loop cursor.
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Iterate over list of given type, continuing from current position.
+- */
+-#define list_for_each_entry_from(pos, head, member) 			\
+-	for (; prefetch(pos->member.next), &pos->member != (head);	\
+-	     pos = list_entry(pos->member.next, typeof(*pos), member))
+-
+-/**
+- * list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_for_each_entry_safe(pos, n, head, member)			\
+-	for (pos = list_entry((head)->next, typeof(*pos), member),	\
+-		n = list_entry(pos->member.next, typeof(*pos), member);	\
+-	     &pos->member != (head); 					\
+-	     pos = n, n = list_entry(n->member.next, typeof(*n), member))
+-
+-/**
+- * list_for_each_entry_safe_continue
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Iterate over list of given type, continuing after current point,
+- * safe against removal of list entry.
+- */
+-#define list_for_each_entry_safe_continue(pos, n, head, member) 		\
+-	for (pos = list_entry(pos->member.next, typeof(*pos), member), 		\
+-		n = list_entry(pos->member.next, typeof(*pos), member);		\
+-	     &pos->member != (head);						\
+-	     pos = n, n = list_entry(n->member.next, typeof(*n), member))
+-
+-/**
+- * list_for_each_entry_safe_from
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Iterate over list of given type from current point, safe against
+- * removal of list entry.
+- */
+-#define list_for_each_entry_safe_from(pos, n, head, member) 			\
+-	for (n = list_entry(pos->member.next, typeof(*pos), member);		\
+-	     &pos->member != (head);						\
+-	     pos = n, n = list_entry(n->member.next, typeof(*n), member))
+-
+-/**
+- * list_for_each_entry_safe_reverse
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Iterate backwards over list of given type, safe against removal
+- * of list entry.
+- */
+-#define list_for_each_entry_safe_reverse(pos, n, head, member)		\
+-	for (pos = list_entry((head)->prev, typeof(*pos), member),	\
+-		n = list_entry(pos->member.prev, typeof(*pos), member);	\
+-	     &pos->member != (head); 					\
+-	     pos = n, n = list_entry(n->member.prev, typeof(*n), member))
+-
+ struct offset {
+ 	struct list_head list;
+ 	unsigned offset;
+-- 
+2.16.2.395.g2e18187dfd-goog
