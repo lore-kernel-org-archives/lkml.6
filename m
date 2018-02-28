@@ -1,92 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932964AbeB1Sez (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:34:55 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:55392 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932406AbeB1Sex (ORCPT
+        id S932513AbeB1Sg6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:36:58 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40499 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbeB1Sgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:34:53 -0500
-X-UUID: da03a9c6407c4ba88693df2daa977aa9-20180301
-Message-ID: <1519842888.8089.88.camel@mtkswgap22>
-Subject: Re: [PATCH v3 01/22] nvmem: Document struct nvmem_config
-From: Sean Wang <sean.wang@mediatek.com>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, <linux-rockchip@lists.infradead.org>,
-        Kevin Hilman <khilman@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, Carlo Caione <carlo@caione.org>,
-        <cphealy@gmail.com>
-Date: Thu, 1 Mar 2018 02:34:48 +0800
-In-Reply-To: <20180103200114.23922-2-andrew.smirnov@gmail.com>
-References: <20180103200114.23922-1-andrew.smirnov@gmail.com>
-         <20180103200114.23922-2-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Feb 2018 13:36:55 -0500
+X-Google-Smtp-Source: AG47ELtqnRvhR90kfcjfDBrSLzr0NJrqoSaU4BXf/WCGPSvAvOEKb4BjPazYb/YBbGJ+DqQsp1CLb1Sb4VUNd1sz0BA=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
+References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org> <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 20:36:53 +0200
+Message-ID: <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] pinctrl: actions: Add Actions S900 pinctrl driver
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-03 at 12:00 -0800, Andrey Smirnov wrote:
-> Add a simple description of struct nvmem_config and its fields.
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Carlo Caione <carlo@caione.org>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: cphealy@gmail.com
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  include/linux/nvmem-provider.h | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-> index 497706f5adca..27e599222ec1 100644
-> --- a/include/linux/nvmem-provider.h
-> +++ b/include/linux/nvmem-provider.h
-> @@ -22,6 +22,28 @@ typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
->  typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
->  				 void *val, size_t bytes);
->  
-> +/**
-> + * struct nvmem_config - NVMEM device configuration
-> + *
-> + * @dev:	Parent device.
-> + * @name:	Optional name.
-> + * @id:		Optional device ID used in full name. Ignored if name is NULL.
-> + * @owner:	Pointer to exporter module. Used for refcounting.
-> + * @cells:	Optional array of pre-defined NVMEM cells.
-> + * @ncells:	Number of elements in cells.
-> + * @read_only:	Device is read-only.
-> + * @root_only:	Device is accessibly to root only.
-> + * @reg_read:	Callback to read data.
-> + * @reg_write:	Callback to write data.
-> + * @size:	Device size.
-> + * @word_size:	Minimum read/write access granularity.
-> + * @stride:	Minimum read/write access stide.
+On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add pinctrl driver for Actions Semi S900 SoC. The driver supports
+> pinctrl, pinmux and pinconf functionalities through a range of registers
+> common to both gpio driver and pinctrl driver.
+>
+> Pinmux functionality is available only for the pin groups while the
+> pinconf functionality is available for both pin groups and individual
+> pins.
 
-typo on stide ?
+> +static int owl_set_mux(struct pinctrl_dev *pctrldev,
+> +                               unsigned int function,
+> +                               unsigned int group)
+> +{
 
-> + * @priv:	User context passed to read/write callbacks.
-> + *
-> + * Note: A default "nvmem<id>" name will be assigned to the device if
-> + * no name is specified in its configuration. In such case "<id>" is
-> + * generated with ida_simple_get() and provided id field is ignored.
-> + */
->  struct nvmem_config {
->  	struct device		*dev;
->  	const char		*name;
+> +       mfpval = readl(pctrl->base + g->mfpctl_reg);
+> +       mfpval &= ~mask;
+> +       mfpval |= val;
+> +       writel(mfpval, pctrl->base + g->mfpctl_reg);
+
+This is called owl_update_bits().
+
+> +static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+> +                               unsigned int pin,
+> +                               unsigned long *configs,
+> +                               unsigned int num_configs)
+> +{
+
+> +       int ret = 0;
+
+Redundant assignment?
+
+> +               mask = (1 << width) - 1;
+> +               mask = mask << bit;
+> +               tmp = readl(pctrl->base + reg);
+> +               tmp &= ~mask;
+> +               tmp |= arg << bit;
+> +               writel(tmp, pctrl->base + reg);
+
+This is called owl_update_bits().
+
+> +}
+
+> +static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+> +                               unsigned int param,
+> +                               u32 *arg)
+> +{
+
+> +       case PIN_CONFIG_SLEW_RATE:
+> +               if (*arg)
+> +                       *arg = 1;
+> +               else
+> +                       *arg = 0;
+
+Doesn't slew rate allow a non-binary value?
+
+> +       return 0;
+> +}
+> +
+> +static int owl_group_config_get(struct pinctrl_dev *pctrldev,
+> +                               unsigned int group,
+> +                               unsigned long *config)
+> +{
+> +       int ret = 0;
+
+Redundant assignment.
+
+> +}
+
+> +static int owl_group_config_set(struct pinctrl_dev *pctrldev,
+> +                               unsigned int group,
+> +                               unsigned long *configs,
+> +                               unsigned int num_configs)
+> +{
+> +       int ret = 0;
+
+Redundant assignment, see below.
+
+> +               mask = (1 << width) - 1;
+> +               mask = mask << bit;
+> +               tmp = readl(pctrl->base + reg);
+> +               tmp &= ~mask;
+> +               tmp |= arg << bit;
+> +               writel(tmp, pctrl->base + reg);
+
+This is called owl_update_bits().
+
+> +       return ret;
+
+return 0; ?
+
+> +}
+
+> +int owl_pinctrl_probe(struct platform_device *pdev,
+> +                               struct owl_pinctrl_soc_data *soc_data)
+> +{
+
+> +       clk_prepare_enable(pctrl->clk);
+
+This can fail.
+
+> +}
+
+> +static const struct of_device_id s900_pinctrl_of_match[] = {
+> +       { .compatible = "actions,s900-pinctrl", },
+
+> +       { },
+
+No comma needed.
+
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
