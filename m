@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeB1NoI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:44:08 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35892 "EHLO mx1.redhat.com"
+        id S932142AbeB1NoL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:44:11 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35906 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752206AbeB1NoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:44:06 -0500
+        id S1752604AbeB1NoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:44:08 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -15,46 +15,131 @@ Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Andrey Smetanin <asmetanin@virtuozzo.com>,
         Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: [PATCH 0/3] x86/kvm/hyper-v: More fixes for TSC page clocksource for Hyper-V on KVM
-Date: Wed, 28 Feb 2018 14:43:58 +0100
-Message-Id: <20180228134401.6544-1-vkuznets@redhat.com>
+Subject: [PATCH 1/3] x86/kvm/hyper-v: add reenlightenment MSRs support
+Date: Wed, 28 Feb 2018 14:43:59 +0100
+Message-Id: <20180228134401.6544-2-vkuznets@redhat.com>
+In-Reply-To: <20180228134401.6544-1-vkuznets@redhat.com>
+References: <20180228134401.6544-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously (see commit 72c139bacf) it was found that Hyper-V frequency
-MSRs are required to make Hyper-V on KVM pass through TSC page as stable
-clocksource to its guests. However, to make things work this is not
-enough. Hyper-V tries to prove that TSC frequency underneath it won't
-change (e.g. when it's migrated), there are two mechanisms:
+Nested Hyper-V/Windows guest running on top of KVM will use TSC page
+clocksource in two cases:
+- L0 exposes invariant TSC (CPUID.80000007H:EDX[8]).
+- L0 provides Hyper-V Reenlightenment support (CPUID.40000003H:EAX[13]).
 
-1) Invariant TSC (CPUID.80000007H:EDX[8]). If Hyper-V sees this bit it will
- treat TSC as stable. We, however, don't want to pass it as it makes
- migration hard (e.g. Qemu adds a migration blocker when 'invtsc' flag is
- passed. Genuine Hyper-V running in L0 doesn't pass it either.
+Exposing invariant TSC effectively blocks migration to hosts with different
+TSC frequencies, providing reenlightenment support will be needed when we
+start migrating nested workloads.
 
-2) Hyper-V Reenlightenment (CPUID.40000003H:EAX[13]).
+Implement rudimentary support for reenlightenment MSRs. For now, these are
+just read/write MSRs with no effect.
 
-This patch series add rudimentary support for Hyper-V reenlightenment
-notifications to KVM ('producer' part; we already implemented
-reenlightenment 'consumer' for KVM-on Hyper-V some time ago) and fixes
-bugs I found during testing. Fully fledged reenlightenment  implementation
-will be added later when we learn to migrate nested workloads in KVM making
-testing possible.
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/include/asm/kvm_host.h |  4 ++++
+ arch/x86/kvm/hyperv.c           | 21 +++++++++++++++++++++
+ arch/x86/kvm/x86.c              | 12 +++++++++++-
+ 3 files changed, 36 insertions(+), 1 deletion(-)
 
-Qemu patches are also required, I'll post them separately.
-
-Vitaly Kuznetsov (3):
-  x86/kvm/hyper-v: add reenlightenment MSRs support
-  x86/kvm/hyper-v: remove stale entries from vec_bitmap/auto_eoi_bitmap
-    on vector change
-  x86/kvm/hyper-v: inject #GP only when invalid SINTx vector is unmasked
-
- arch/x86/include/asm/kvm_host.h    |  4 +++
- arch/x86/include/uapi/asm/hyperv.h |  3 ++
- arch/x86/kvm/hyperv.c              | 58 +++++++++++++++++++++++++++++++-------
- arch/x86/kvm/x86.c                 | 12 +++++++-
- 4 files changed, 66 insertions(+), 11 deletions(-)
-
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 516798431328..eff8aa880333 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -752,6 +752,10 @@ struct kvm_hv {
+ 	u64 hv_crash_ctl;
+ 
+ 	HV_REFERENCE_TSC_PAGE tsc_ref;
++
++	u64 hv_reenlightenment_control;
++	u64 hv_tsc_emulation_control;
++	u64 hv_tsc_emulation_status;
+ };
+ 
+ enum kvm_irqchip_mode {
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index dc97f2544b6f..05f414525538 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -736,6 +736,9 @@ static bool kvm_hv_msr_partition_wide(u32 msr)
+ 	case HV_X64_MSR_CRASH_CTL:
+ 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
+ 	case HV_X64_MSR_RESET:
++	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_STATUS:
+ 		r = true;
+ 		break;
+ 	}
+@@ -981,6 +984,15 @@ static int kvm_hv_set_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 data,
+ 			kvm_make_request(KVM_REQ_HV_RESET, vcpu);
+ 		}
+ 		break;
++	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
++		hv->hv_reenlightenment_control = data;
++		break;
++	case HV_X64_MSR_TSC_EMULATION_CONTROL:
++		hv->hv_tsc_emulation_control = data;
++		break;
++	case HV_X64_MSR_TSC_EMULATION_STATUS:
++		hv->hv_tsc_emulation_status = data;
++		break;
+ 	default:
+ 		vcpu_unimpl(vcpu, "Hyper-V uhandled wrmsr: 0x%x data 0x%llx\n",
+ 			    msr, data);
+@@ -1105,6 +1117,15 @@ static int kvm_hv_get_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+ 	case HV_X64_MSR_RESET:
+ 		data = 0;
+ 		break;
++	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
++		data = hv->hv_reenlightenment_control;
++		break;
++	case HV_X64_MSR_TSC_EMULATION_CONTROL:
++		data = hv->hv_tsc_emulation_control;
++		break;
++	case HV_X64_MSR_TSC_EMULATION_STATUS:
++		data = hv->hv_tsc_emulation_status;
++		break;
+ 	default:
+ 		vcpu_unimpl(vcpu, "Hyper-V unhandled rdmsr: 0x%x\n", msr);
+ 		return 1;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index c53298dfbf50..d97ab134b2d9 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1026,7 +1026,11 @@ static u32 emulated_msrs[] = {
+ 	HV_X64_MSR_VP_RUNTIME,
+ 	HV_X64_MSR_SCONTROL,
+ 	HV_X64_MSR_STIMER0_CONFIG,
+-	HV_X64_MSR_APIC_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
++	HV_X64_MSR_APIC_ASSIST_PAGE,
++	HV_X64_MSR_REENLIGHTENMENT_CONTROL, HV_X64_MSR_TSC_EMULATION_CONTROL,
++	HV_X64_MSR_TSC_EMULATION_STATUS,
++
++	MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
+ 	MSR_KVM_PV_EOI_EN,
+ 
+ 	MSR_IA32_TSC_ADJUST,
+@@ -2325,6 +2329,9 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
+ 	case HV_X64_MSR_CRASH_CTL:
+ 	case HV_X64_MSR_STIMER0_CONFIG ... HV_X64_MSR_STIMER3_COUNT:
++	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_STATUS:
+ 		return kvm_hv_set_msr_common(vcpu, msr, data,
+ 					     msr_info->host_initiated);
+ 	case MSR_IA32_BBL_CR_CTL3:
+@@ -2551,6 +2558,9 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
+ 	case HV_X64_MSR_CRASH_CTL:
+ 	case HV_X64_MSR_STIMER0_CONFIG ... HV_X64_MSR_STIMER3_COUNT:
++	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_CONTROL:
++	case HV_X64_MSR_TSC_EMULATION_STATUS:
+ 		return kvm_hv_get_msr_common(vcpu,
+ 					     msr_info->index, &msr_info->data);
+ 		break;
 -- 
 2.14.3
