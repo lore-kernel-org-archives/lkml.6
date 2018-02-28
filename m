@@ -1,445 +1,162 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AG47ELupIlHWdXw+DvqIpj6E9ACY1IUhFMeCX2QOT5AlykNdU6yfxlNYVQBUgaU1zXkD4ZrbN8dV
-ARC-Seal: i=1; a=rsa-sha256; t=1519670368; cv=none;
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519821916; cv=none;
         d=google.com; s=arc-20160816;
-        b=BT20MFFpOj+2AxJx54nKySl46w8+spx3OjsJQtdnnYxEfGNh6ALny435g+R3suFcnH
-         UT6UIxint8VIv7AZ9lGAABdZHdY4VjOZEDUUl8r34eR2nKF7HwkcuL7zLNbqyOgOTSLN
-         TpE3MOJ51dNuLryCslWZVvzXwRvRdfgbIJqH3WaTDbaiI3j8AD8hEhBp8D1P7u0ZRoIz
-         8X/RbPi0rGkR4PmmK5GvH22cCJvNsaBkxlihJKVo3wL9E3lI6RHEG436Kf6rGm2qPQGL
-         9oq///2leCafN4rQA9Su04VFIryKB9HtB9q3yJpX1KN03tE64NpgfMiRAFMBfOyBf5/3
-         e3Yw==
+        b=mve3YzxvtUSiav2F6tuVtPfRKH//pdswOuDIKo3LME7jmj9kZCjW3ELpH/sDfLq6ck
+         cdQHO82x8VlhV90tlUtTn/ZqC3Qbbvda6l+xqIi30+zF5ayXsUC4wC3Vtk09XpZCHSX6
+         jR871ZBOBHVfbZi35saHPoRTtQB97kfftMDiK1wtLXm6yuL+W8bRMrqeUGpAc2BE8j7M
+         U/+9AjHIttuba9GTPSuHJGUL8DVi+wZL4xQZnvNBckEZjZoDMZ9rJ1pEwDuYMq9Nxkaz
+         3CBKI5iiuOMlE+XXM0RsWzAOCvHyc0ytsdOos4R3RnvhInSiCDSxI+BHRcf0tnlD9JGE
+         O8ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=jLCPamjNbLGGzH99LrB79438Ormt/aCt1hM5U43OPDc=;
-        b=zHO1pa9x9I9wuKCXbwO1kzIHOuzkIv50l+uuyWz/MPVwxLOJy9KSeymEZUnEm4Knjf
-         +6vydy7JjPrF9lo/3cLt+vzqkDoy1XE6IVrHRoJJTG3OEeB7Uw4Z61Vc/Q2bh1AprXOA
-         6vUQbAhJJy02BEeQOKTQVyV3vTbZBPD+NYwXOzLb92xQqukcB9CUwBhQCPtdTbjfhA+z
-         rFvx3ORixlUXrLWr4vsIWVb6dCsYKb4gFlFCEpGJb2aZ6rwwE/tAf6n5Ih9vWnon2byY
-         XQfTGhEXLtRJGylJk00rV2AktKV5sfmISUSvy2+6vBcHtg31qL4GYUpb3gZ6U8goWSxx
-         eFeA==
+        bh=PHB58ugZyHCrmN8anIQa/VSNJ5iqk7j285imOYhNisc=;
+        b=Tz6qad2EYdK5TDB0tmG1DcywQoLDdiXSTBHB3dn3qZsF08tF/XIc4IiPcQwZHE/hIy
+         gjE8drJIZi55NqodsMEgU+PfWCxL/sT3sfRo7gf4kHqCP5iZpeA3NuAWeWCJMfCu4dWK
+         HlUh3/N85grGdf+HUszlt7VrNQxlwoeXTdWIzTB37clph5JMD75y4aaz951cvsd24kic
+         qA9PTV1Kle51l/19kZKpRru5RsJO+Q/8rIjlO8lMFFnFBNne67IAm9AjLknVNNViuIXB
+         90EIxiNMzAmky4wYDvnI4wba/wamXOD/cBKD3zugUMNWxHlKQzdtEM1I+vMNvJk3ZiwN
+         bGuw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=XkYGAGzL;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
+       dkim=pass header.i=@linaro.org header.s=google header.b=XkYGAGzL;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AH8x226etYuwbMuEB4sSadcsT14E6WSSS6v9U3dXw/bZ8fDQjwYSKTqJphzGoWzquZuKmPhk7VGcPA==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: dmitry.torokhov@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org,
+	lumotuwe@gmail.com,
+	arvind.yadav.cs@gmail.com,
+	josephl@nvidia.com,
+	kstewart@linuxfoundation.org,
+	pombredanne@nexb.com,
+	tglx@linutronix.de,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v4 02/12] usb: typec: Start using ERR_PTR
-Date: Mon, 26 Feb 2018 19:39:09 +0100
-Message-Id: <20180226183919.24353-3-hdegoede@redhat.com>
-In-Reply-To: <20180226183919.24353-1-hdegoede@redhat.com>
-References: <20180226183919.24353-1-hdegoede@redhat.com>
+	broonie@kernel.org,
+	linus.walleij@linaro.org,
+	arnd@arndb.de,
+	baolin.wang@linaro.org
+Subject: [PATCH v3] Input: gpio_keys: Add level trigger support for GPIO keys
+Date: Wed, 28 Feb 2018 20:44:36 +0800
+Message-Id: <826093167e8fb24723f474b0272f3dcab1b6a97e.1519821626.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454020032800489?=
-X-GMAIL-MSGID: =?utf-8?q?1593489875576700443?=
+X-GMAIL-THRID: =?utf-8?q?1593648786277200792?=
+X-GMAIL-MSGID: =?utf-8?q?1593648786277200792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On some platforms (such as Spreadtrum platform), the GPIO keys can only
+be triggered by level type. So this patch introduces one property to
+indicate if the GPIO trigger type is level trigger or edge trigger.
 
-In order to allow the USB Type-C Class driver take care of
-things like muxes and other possible dependencies for the
-port drivers, returning ERR_PTR instead of NULL from the
-registration functions in case of failure.
-
-The reason for taking over control of the muxes for example
-is because handling them in the port drivers would be just
-boilerplate.
-
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
-Changes in v4:
--Add Andy's Reviewed-by
+Changes since v2:
+ - Use 'interrupt' property to indicate the irq type.
 
-Changes in v3:
--Add Guenter's Reviewed-by
-
-Changes in v2:
--Add IS_ERR_OR_NULL() checks to the unregister functions
+Changes since v1:
+ - Diable the GPIO irq until reversing the GPIO level type.
 ---
- drivers/usb/typec/tcpm.c      | 16 +++++++++-------
- drivers/usb/typec/tps6598x.c  | 15 ++++++++-------
- drivers/usb/typec/typec.c     | 44 +++++++++++++++++++++----------------------
- drivers/usb/typec/ucsi/ucsi.c | 31 ++++++++++++++++++------------
- 4 files changed, 58 insertions(+), 48 deletions(-)
+ drivers/input/keyboard/gpio_keys.c |   32 ++++++++++++++++++++++++++++++--
+ include/linux/gpio_keys.h          |    3 +++
+ 2 files changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index f4d563ee7690..7cd28b700a7f 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -1044,7 +1044,7 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
- 		break;
- 	case CMDT_RSP_ACK:
- 		/* silently drop message if we are not connected */
--		if (!port->partner)
-+		if (IS_ERR_OR_NULL(port->partner))
- 			break;
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 87e613d..9e05c80 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -385,6 +385,20 @@ static void gpio_keys_gpio_work_func(struct work_struct *work)
+ 	struct gpio_button_data *bdata =
+ 		container_of(work, struct gpio_button_data, work.work);
  
- 		switch (cmd) {
-@@ -3743,8 +3743,8 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	port->port_type = tcpc->config->type;
- 
- 	port->typec_port = typec_register_port(port->dev, &port->typec_caps);
--	if (!port->typec_port) {
--		err = -ENOMEM;
-+	if (IS_ERR(port->typec_port)) {
-+		err = PTR_ERR(port->typec_port);
- 		goto out_destroy_wq;
- 	}
- 
-@@ -3753,15 +3753,17 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 
- 		i = 0;
- 		while (paltmode->svid && i < ARRAY_SIZE(port->port_altmode)) {
--			port->port_altmode[i] =
--			  typec_port_register_altmode(port->typec_port,
--						      paltmode);
--			if (!port->port_altmode[i]) {
-+			struct typec_altmode *alt;
++	if (bdata->button->level_trigger) {
++		unsigned int trigger =
++			irq_get_trigger_type(bdata->irq) & ~IRQF_TRIGGER_MASK;
++		int state = gpiod_get_raw_value_cansleep(bdata->gpiod);
 +
-+			alt = typec_port_register_altmode(port->typec_port,
-+							  paltmode);
-+			if (IS_ERR(alt)) {
- 				tcpm_log(port,
- 					 "%s: failed to register port alternate mode 0x%x",
- 					 dev_name(dev), paltmode->svid);
- 				break;
- 			}
-+			port->port_altmode[i] = alt;
- 			i++;
- 			paltmode++;
- 		}
-diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-index 2719f5d382f7..37a15c14a6c6 100644
---- a/drivers/usb/typec/tps6598x.c
-+++ b/drivers/usb/typec/tps6598x.c
-@@ -158,15 +158,15 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 		desc.identity = &tps->partner_identity;
- 	}
- 
--	tps->partner = typec_register_partner(tps->port, &desc);
--	if (!tps->partner)
--		return -ENODEV;
--
- 	typec_set_pwr_opmode(tps->port, mode);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
- 	typec_set_vconn_role(tps->port, TPS_STATUS_VCONN(status));
- 	typec_set_data_role(tps->port, TPS_STATUS_DATAROLE(status));
- 
-+	tps->partner = typec_register_partner(tps->port, &desc);
-+	if (IS_ERR(tps->partner))
-+		return PTR_ERR(tps->partner);
++		if (state)
++			trigger |= IRQF_TRIGGER_LOW;
++		else
++			trigger |= IRQF_TRIGGER_HIGH;
 +
- 	if (desc.identity)
- 		typec_partner_set_identity(tps->partner);
- 
-@@ -175,7 +175,8 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 
- static void tps6598x_disconnect(struct tps6598x *tps, u32 status)
- {
--	typec_unregister_partner(tps->partner);
-+	if (!IS_ERR(tps->partner))
-+		typec_unregister_partner(tps->partner);
- 	tps->partner = NULL;
- 	typec_set_pwr_opmode(tps->port, TYPEC_PWR_MODE_USB);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
-@@ -418,8 +419,8 @@ static int tps6598x_probe(struct i2c_client *client)
- 	tps->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
- 
- 	tps->port = typec_register_port(&client->dev, &tps->typec_cap);
--	if (!tps->port)
--		return -ENODEV;
-+	if (IS_ERR(tps->port))
-+		return PTR_ERR(tps->port);
- 
- 	if (status & TPS_STATUS_PLUG_PRESENT) {
- 		ret = tps6598x_connect(tps, status);
-diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/typec.c
-index 735726ced602..dc28ad868d93 100644
---- a/drivers/usb/typec/typec.c
-+++ b/drivers/usb/typec/typec.c
-@@ -386,7 +386,7 @@ typec_register_altmode(struct device *parent,
- 
- 	alt = kzalloc(sizeof(*alt), GFP_KERNEL);
- 	if (!alt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	alt->svid = desc->svid;
- 	alt->n_modes = desc->n_modes;
-@@ -402,7 +402,7 @@ typec_register_altmode(struct device *parent,
- 		dev_err(parent, "failed to register alternate mode (%d)\n",
- 			ret);
- 		put_device(&alt->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return alt;
-@@ -417,7 +417,7 @@ typec_register_altmode(struct device *parent,
-  */
- void typec_unregister_altmode(struct typec_altmode *alt)
- {
--	if (alt)
-+	if (!IS_ERR_OR_NULL(alt))
- 		device_unregister(&alt->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_altmode);
-@@ -509,7 +509,7 @@ EXPORT_SYMBOL_GPL(typec_partner_register_altmode);
-  *
-  * Registers a device for USB Type-C Partner described in @desc.
-  *
-- * Returns handle to the partner on success or NULL on failure.
-+ * Returns handle to the partner on success or ERR_PTR on failure.
-  */
- struct typec_partner *typec_register_partner(struct typec_port *port,
- 					     struct typec_partner_desc *desc)
-@@ -519,7 +519,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 
- 	partner = kzalloc(sizeof(*partner), GFP_KERNEL);
- 	if (!partner)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	partner->usb_pd = desc->usb_pd;
- 	partner->accessory = desc->accessory;
-@@ -542,7 +542,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
- 		put_device(&partner->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return partner;
-@@ -557,7 +557,7 @@ EXPORT_SYMBOL_GPL(typec_register_partner);
-  */
- void typec_unregister_partner(struct typec_partner *partner)
- {
--	if (partner)
-+	if (!IS_ERR_OR_NULL(partner))
- 		device_unregister(&partner->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_partner);
-@@ -587,7 +587,7 @@ static const struct device_type typec_plug_dev_type = {
-  * the plug lists in response to Discover Modes command need to be listed in an
-  * array in @desc.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_plug_register_altmode(struct typec_plug *plug,
-@@ -606,7 +606,7 @@ EXPORT_SYMBOL_GPL(typec_plug_register_altmode);
-  * Cable Plug represents a plug with electronics in it that can response to USB
-  * Power Delivery SOP Prime or SOP Double Prime packages.
-  *
-- * Returns handle to the cable plug on success or NULL on failure.
-+ * Returns handle to the cable plug on success or ERR_PTR on failure.
-  */
- struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 				       struct typec_plug_desc *desc)
-@@ -617,7 +617,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 
- 	plug = kzalloc(sizeof(*plug), GFP_KERNEL);
- 	if (!plug)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sprintf(name, "plug%d", desc->index);
- 
-@@ -631,7 +631,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 	if (ret) {
- 		dev_err(&cable->dev, "failed to register plug (%d)\n", ret);
- 		put_device(&plug->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return plug;
-@@ -646,7 +646,7 @@ EXPORT_SYMBOL_GPL(typec_register_plug);
-  */
- void typec_unregister_plug(struct typec_plug *plug)
- {
--	if (plug)
-+	if (!IS_ERR_OR_NULL(plug))
- 		device_unregister(&plug->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_plug);
-@@ -724,7 +724,7 @@ EXPORT_SYMBOL_GPL(typec_cable_set_identity);
-  * Registers a device for USB Type-C Cable described in @desc. The cable will be
-  * parent for the optional cable plug devises.
-  *
-- * Returns handle to the cable on success or NULL on failure.
-+ * Returns handle to the cable on success or ERR_PTR on failure.
-  */
- struct typec_cable *typec_register_cable(struct typec_port *port,
- 					 struct typec_cable_desc *desc)
-@@ -734,7 +734,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 
- 	cable = kzalloc(sizeof(*cable), GFP_KERNEL);
- 	if (!cable)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	cable->type = desc->type;
- 	cable->active = desc->active;
-@@ -757,7 +757,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register cable (%d)\n", ret);
- 		put_device(&cable->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return cable;
-@@ -772,7 +772,7 @@ EXPORT_SYMBOL_GPL(typec_register_cable);
-  */
- void typec_unregister_cable(struct typec_cable *cable)
- {
--	if (cable)
-+	if (!IS_ERR_OR_NULL(cable))
- 		device_unregister(&cable->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_cable);
-@@ -1256,7 +1256,7 @@ EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
-  * This routine is used to register an alternate mode that @port is capable of
-  * supporting.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_port_register_altmode(struct typec_port *port,
-@@ -1273,7 +1273,7 @@ EXPORT_SYMBOL_GPL(typec_port_register_altmode);
-  *
-  * Registers a device for USB Type-C Port described in @cap.
-  *
-- * Returns handle to the port on success or NULL on failure.
-+ * Returns handle to the port on success or ERR_PTR on failure.
-  */
- struct typec_port *typec_register_port(struct device *parent,
- 				       const struct typec_capability *cap)
-@@ -1285,12 +1285,12 @@ struct typec_port *typec_register_port(struct device *parent,
- 
- 	port = kzalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	id = ida_simple_get(&typec_index_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		kfree(port);
--		return NULL;
-+		return ERR_PTR(id);
- 	}
- 
- 	if (cap->type == TYPEC_PORT_DFP)
-@@ -1326,7 +1326,7 @@ struct typec_port *typec_register_port(struct device *parent,
- 	if (ret) {
- 		dev_err(parent, "failed to register port (%d)\n", ret);
- 		put_device(&port->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return port;
-@@ -1341,7 +1341,7 @@ EXPORT_SYMBOL_GPL(typec_register_port);
-  */
- void typec_unregister_port(struct typec_port *port)
- {
--	if (port)
-+	if (!IS_ERR_OR_NULL(port))
- 		device_unregister(&port->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_port);
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 79046fe66426..69d544cfcd45 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -260,38 +260,45 @@ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
- 
- static int ucsi_register_partner(struct ucsi_connector *con)
- {
--	struct typec_partner_desc partner;
-+	struct typec_partner_desc desc;
-+	struct typec_partner *partner;
- 
- 	if (con->partner)
- 		return 0;
- 
--	memset(&partner, 0, sizeof(partner));
-+	memset(&desc, 0, sizeof(desc));
- 
- 	switch (con->status.partner_type) {
- 	case UCSI_CONSTAT_PARTNER_TYPE_DEBUG:
--		partner.accessory = TYPEC_ACCESSORY_DEBUG;
-+		desc.accessory = TYPEC_ACCESSORY_DEBUG;
- 		break;
- 	case UCSI_CONSTAT_PARTNER_TYPE_AUDIO:
--		partner.accessory = TYPEC_ACCESSORY_AUDIO;
-+		desc.accessory = TYPEC_ACCESSORY_AUDIO;
- 		break;
- 	default:
- 		break;
- 	}
- 
--	partner.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
-+	desc.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
- 
--	con->partner = typec_register_partner(con->port, &partner);
--	if (!con->partner) {
--		dev_err(con->ucsi->dev, "con%d: failed to register partner\n",
--			con->num);
--		return -ENODEV;
-+	partner = typec_register_partner(con->port, &desc);
-+	if (IS_ERR(partner)) {
-+		dev_err(con->ucsi->dev,
-+			"con%d: failed to register partner (%ld)\n", con->num,
-+			PTR_ERR(partner));
-+		return PTR_ERR(partner);
- 	}
- 
-+	con->partner = partner;
++		irq_set_irq_type(bdata->irq, trigger);
++		enable_irq(bdata->irq);
++	}
 +
- 	return 0;
- }
+ 	gpio_keys_gpio_report_event(bdata);
  
- static void ucsi_unregister_partner(struct ucsi_connector *con)
- {
-+	if (!con->partner)
-+		return;
+ 	if (bdata->button->wakeup)
+@@ -397,6 +411,9 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
+ 
+ 	BUG_ON(irq != bdata->irq);
+ 
++	if (bdata->button->level_trigger)
++		disable_irq_nosync(bdata->irq);
 +
- 	typec_unregister_partner(con->partner);
- 	con->partner = NULL;
- }
-@@ -606,8 +613,8 @@ static int ucsi_register_port(struct ucsi *ucsi, int index)
+ 	if (bdata->button->wakeup) {
+ 		const struct gpio_keys_button *button = bdata->button;
  
- 	/* Register the connector */
- 	con->port = typec_register_port(ucsi->dev, cap);
--	if (!con->port)
--		return -ENODEV;
-+	if (IS_ERR(con->port))
-+		return PTR_ERR(con->port);
+@@ -566,7 +583,11 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+ 		INIT_DELAYED_WORK(&bdata->work, gpio_keys_gpio_work_func);
  
- 	/* Get the status */
- 	UCSI_CMD_GET_CONNECTOR_STATUS(ctrl, con->num);
+ 		isr = gpio_keys_gpio_isr;
+-		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
++		if (button->level_trigger)
++			irqflags = gpiod_is_active_low(bdata->gpiod) ?
++				IRQF_TRIGGER_LOW : IRQF_TRIGGER_HIGH;
++		else
++			irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
+ 
+ 	} else {
+ 		if (!button->irq) {
+@@ -696,10 +717,17 @@ static void gpio_keys_close(struct input_dev *input)
+ 	device_property_read_string(dev, "label", &pdata->name);
+ 
+ 	device_for_each_child_node(dev, child) {
+-		if (is_of_node(child))
++		if (is_of_node(child)) {
+ 			button->irq =
+ 				irq_of_parse_and_map(to_of_node(child), 0);
+ 
++			if (button->irq)
++				button->level_trigger =
++					irq_get_trigger_type(button->irq) &
++					(IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW) ?
++					true : false;
++		}
++
+ 		if (fwnode_property_read_u32(child, "linux,code",
+ 					     &button->code)) {
+ 			dev_err(dev, "Button without keycode\n");
+diff --git a/include/linux/gpio_keys.h b/include/linux/gpio_keys.h
+index d06bf77..1286136 100644
+--- a/include/linux/gpio_keys.h
++++ b/include/linux/gpio_keys.h
+@@ -16,6 +16,8 @@
+  * @debounce_interval:	debounce ticks interval in msecs
+  * @can_disable:	%true indicates that userspace is allowed to
+  *			disable button via sysfs
++ * @level_trigger:	indicate if the button's interrupt type is
++ *			level trigger or not
+  * @value:		axis value for %EV_ABS
+  * @irq:		Irq number in case of interrupt keys
+  */
+@@ -28,6 +30,7 @@ struct gpio_keys_button {
+ 	int wakeup;
+ 	int debounce_interval;
+ 	bool can_disable;
++	bool level_trigger;
+ 	int value;
+ 	unsigned int irq;
+ };
 -- 
-2.14.3
+1.7.9.5
