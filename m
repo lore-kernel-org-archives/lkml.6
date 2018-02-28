@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeB1Olb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:41:31 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34235 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeB1Ol3 (ORCPT
+        id S932219AbeB1Olp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:45 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39711 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932140AbeB1Oll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:29 -0500
-X-Google-Smtp-Source: AH8x224LqJPB37WS8tvevvtk1Jzvh7SDZ3y9gTiWBXcQj80tDIZD+/HSzJeHyiJw7EK8oy/zw0ZcWg==
+        Wed, 28 Feb 2018 09:41:41 -0500
+X-Google-Smtp-Source: AH8x225yqWqkQZ5/0ccIu8GWDuj7QuZFJo0tA4DNZ//Ayz5O4ve3n+5OutN/I4BcWPZ9srdkFC9G9g==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 02/22] nvmem: core: Allow specifying device name verbatim
-Date: Wed, 28 Feb 2018 06:40:46 -0800
-Message-Id: <20180228144106.16363-3-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 11/22] nvmem: meson-mx-efuse: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:55 -0800
+Message-Id: <20180228144106.16363-12-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -28,8 +28,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add code to allow avoid having nvmem core append a numeric suffix to
-the end of the name by passing config->id of -1.
+Drop all of the code related to .remove hook and make use of
+devm_nvmem_register() instead.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -45,45 +45,39 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/core.c           | 11 ++++++++---
- include/linux/nvmem-provider.h |  3 +++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/nvmem/meson-mx-efuse.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 35a3dbeea324..99e04cfcc723 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -473,9 +473,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->reg_read = config->reg_read;
- 	nvmem->reg_write = config->reg_write;
- 	nvmem->dev.of_node = config->dev->of_node;
--	dev_set_name(&nvmem->dev, "%s%d",
--		     config->name ? : "nvmem",
--		     config->name ? config->id : nvmem->id);
-+
-+	if (config->id == -1 && config->name) {
-+		dev_set_name(&nvmem->dev, "%s", config->name);
-+	} else {
-+		dev_set_name(&nvmem->dev, "%s%d",
-+			     config->name ? : "nvmem",
-+			     config->name ? config->id : nvmem->id);
-+	}
+diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
+index 41d3a3c1104e..db1e8b072034 100644
+--- a/drivers/nvmem/meson-mx-efuse.c
++++ b/drivers/nvmem/meson-mx-efuse.c
+@@ -233,25 +233,15 @@ static int meson_mx_efuse_probe(struct platform_device *pdev)
+ 		return PTR_ERR(efuse->core_clk);
+ 	}
  
- 	nvmem->read_only = device_property_present(config->dev, "read-only") |
- 			   config->read_only;
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 27e599222ec1..4889a6c62a81 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -43,6 +43,9 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
-  * Note: A default "nvmem<id>" name will be assigned to the device if
-  * no name is specified in its configuration. In such case "<id>" is
-  * generated with ida_simple_get() and provided id field is ignored.
-+ *
-+ * Note: Specifying name and setting id to -1 implies a unique device
-+ * whose name is provided as-is (kept unaltered).
-  */
- struct nvmem_config {
- 	struct device		*dev;
+-	efuse->nvmem = nvmem_register(&efuse->config);
++	efuse->nvmem = devm_nvmem_register(&pdev->dev, &efuse->config);
+ 	if (IS_ERR(efuse->nvmem))
+ 		return PTR_ERR(efuse->nvmem);
+ 
+-	platform_set_drvdata(pdev, efuse);
+-
+ 	return 0;
+ }
+ 
+-static int meson_mx_efuse_remove(struct platform_device *pdev)
+-{
+-	struct meson_mx_efuse *efuse = platform_get_drvdata(pdev);
+-
+-	return nvmem_unregister(efuse->nvmem);
+-}
+-
+ static struct platform_driver meson_mx_efuse_driver = {
+ 	.probe = meson_mx_efuse_probe,
+-	.remove = meson_mx_efuse_remove,
+ 	.driver = {
+ 		.name = "meson-mx-efuse",
+ 		.of_match_table = meson_mx_efuse_match,
 -- 
 2.14.3
