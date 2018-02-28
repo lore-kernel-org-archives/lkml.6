@@ -1,112 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeB1LWt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 06:22:49 -0500
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44618 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751777AbeB1LWs (ORCPT
+        id S1752263AbeB1LYM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 06:24:12 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42203 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751899AbeB1LYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 06:22:48 -0500
-X-Google-Smtp-Source: AG47ELutS8siY5QjPROseqAUevHGebPxVfEC7knLuk/5XU2suP9ISq1aXvNPRXGwV37H2UCRrioSE80ERgQAXmlKbwg=
+        Wed, 28 Feb 2018 06:24:11 -0500
+X-Google-Smtp-Source: AH8x225lD0XrIZ+t6HWQReAkEv1HjU5ghvNVH0NC35xbS8UcF/ti59pg1z7tqUNDVXz/HEveWVmwTA==
+Date: Wed, 28 Feb 2018 12:24:03 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] Documentation/locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180228112403.GA32228@andrea>
+References: <1519814372-19941-1-git-send-email-parri.andrea@gmail.com>
+ <20180228105631.GA7681@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1519815970-5686-1-git-send-email-claudio@evidence.eu.com>
-References: <1519815970-5686-1-git-send-email-claudio@evidence.eu.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 28 Feb 2018 12:22:46 +0100
-X-Google-Sender-Auth: vDvcry_HlGNhKki_7k8fg9qD-7k
-Message-ID: <CAJZ5v0g5SS7A6xNQo=GNaMudRgFC8BL9wP1C4Nh8T-+NygYS+A@mail.gmail.com>
-Subject: Re: [PATCH v2] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228105631.GA7681@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 12:06 PM, Claudio Scordino
-<claudio@evidence.eu.com> wrote:
-> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
-> we should not wait for the rate limit, otherwise we may miss some
-> deadline.
->
-> Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
-> shown reductions of even 10% of deadline misses with a negligible
-> increase of energy consumption (measured through Baylibre Cape).
->
-> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> CC: Morten Rasmussen <morten.rasmussen@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Vincent Guittot <vincent.guittot@linaro.org>
-> CC: Todd Kjos <tkjos@android.com>
-> CC: Joel Fernandes <joelaf@google.com>
-> CC: linux-pm@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
-> Changes from v1:
->  - Logic moved from sugov_should_update_freq() to
->    sugov_update_single()/_shared() to not duplicate data structures
->  - Rate limit not ignored in case of "fast switch"
+On Wed, Feb 28, 2018 at 10:56:32AM +0000, Will Deacon wrote:
+> On Wed, Feb 28, 2018 at 11:39:32AM +0100, Andrea Parri wrote:
+> > There appeared to be a certain, recurrent uncertainty concerning the
+> > semantics of spin_is_locked(), likely a consequence of the fact that
+> > this semantics remains undocumented or that it has been historically
+> > linked to the (likewise unclear) semantics of spin_unlock_wait().
+> > 
+> > Document this semantics.
+> > 
+> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> > Cc: Alan Stern <stern@rowland.harvard.edu>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> > Cc: Luc Maranget <luc.maranget@inria.fr>
+> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> > Cc: Akira Yokosawa <akiyks@gmail.com>
+> > ---
+> >  include/linux/spinlock.h | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+> > index 4894d322d2584..2639fdc9a916c 100644
+> > --- a/include/linux/spinlock.h
+> > +++ b/include/linux/spinlock.h
+> > @@ -380,6 +380,17 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+> >  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+> >  })
+> >  
+> > +/**
+> > + * spin_is_locked() - Check whether a spinlock is locked.
+> > + * @lock: Pointer to the spinlock.
+> > + *
+> > + * This function is NOT required to provide any memory ordering
+> > + * guarantees; it could be used for debugging purposes or, when
+> > + * additional synchronization is needed, accompanied with other
+> > + * constructs (memory barriers) enforcing the synchronization.
+> > + *
+> > + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
+> > + */
+> 
+> I also don't think this is quite right, since the spin_is_locked check
+> must be ordered after all prior lock acquisitions (to any lock) on the same
+> CPU. That's why we have an smp_mb() in there on arm64 (see 38b850a73034f).
 
-I'm not sure about this last bit.
+So, arm64 (and powerpc) complies to the semantics I _have_ in mind ...
 
-IMO you can set sg_policy->need_freq_update even in the "fast switch"
-case to start with and special case it in the future if that turns out
-to be problematic.  That is, unless you have data indicating that it
-already is problematic, of course. :-)
 
-> ---
->  kernel/sched/cpufreq_schedutil.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 7936f54..ca6ce72 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -273,6 +273,14 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->         sugov_set_iowait_boost(sg_cpu, time);
->         sg_cpu->last_update = time;
->
-> +       /*
-> +        * Make sugov_should_update_freq() ignore the rate limit when DL
-> +        * has increased the utilization.
-> +        */
-> +       if ((cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl) &&
-> +                       !(sg_policy->policy->fast_switch_enabled))
-> +               sg_policy->need_freq_update = true;
-> +
->         if (!sugov_should_update_freq(sg_policy, time))
->                 return;
->
-> @@ -354,6 +362,14 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
->
->         raw_spin_lock(&sg_policy->update_lock);
->
-> +       /*
-> +        * Make sugov_should_update_freq() ignore the rate limit when DL
-> +        * has increased the utilization.
-> +        */
-> +       if ((cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl) &&
-> +                       !(sg_policy->policy->fast_switch_enabled))
-> +               sg_policy->need_freq_update = true;
-> +
->         sugov_get_util(sg_cpu);
->         sg_cpu->flags = flags;
->
-> --
-> 2.7.4
->
+> 
+> So this is a change in semantics and we need to audit the users before
+> proceeding. We should also keep spin_is_locked consistent with the versions
+> for mutex, rwsem, bit_spin.
+
+Well, strictly speaking, it isn't (given that the current semantics is,
+as reported above, currently undocumented); for the same reason, cases
+relying on anything more than _nothing_ (if any) are already broken ...
+
+  Andrea
+
+
+> 
+> Will
