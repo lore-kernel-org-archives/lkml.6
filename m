@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834793-2-18022314810242598349
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834783-2-9518016094958427733
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834793; b=GBb4G7acOsNxMpH1r1bQ86LWsHpUJzoxavAWyBwIC/HslD8
-    WRQyK7VqTLiZ/bsc/ohR0wmVmzumCx7py61qYst/EFqFq5aqCfju7ifjH5wi4t7K
-    o9CDSQi/4Og/UjdM+8JtQNy5AxqOYOW0SegNTIga6vKpCPbW1buarObwue75xFWk
-    kQtw16NM7Uxvw8pzt5LNIlOXCug14/n0hVw2ObYRRzrbcYk1yRS+viX93Qk8tXHJ
-    yiTcSCtxiMn4LPcNMutbKL4AwJnZvVXm5OjHqALMtBjaAFBzEIGhTRn26yW9STmv
-    mqko0XtLOoAp4wFYtgQx0i5A1Xkn7kgbYbJjpYw==
+    t=1519834783; b=Hzkqoi/b5squFghMwrNduSSLEie8dJt107y+9gXlyihoOKe
+    SdS0lsEmzkvl4j0bXt/Kq5TOLejKC0Nqvpc9UlS7M1O7EcCKF07m/afmhQYgR8dd
+    7nhhfzblcapOzTA+FG+FYyLeCBzSXBoBFwg6x/6XUy/NclOMmdRGa+fWXlCFghhK
+    lxXyVEdtyVcd7mcIpHYdRWGlEseW+N1flIfKCXXfifYx4356c/7N3NnFXV1OVQ41
+    t3adDd9zn8t5IgSQA9oy42K6Qbwa3ItB5ppcpr7Wqhi+nB9ZVn7DOhC0s7Yvi8yF
+    jX9z7fkydeR4yUcxOGyurF99Jd3IcrPe98nOXgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834793; bh=vcT1ktBhZ4DPiB2J4HC
-    ovN1NuPYkVf1yT+dpVddR9wU=; b=qaILle/7SvrVv/k/f7XQ5al7JwnFbH2qwgF
-    9bWOqg2PQL2iEH04nIrfXDHqJ4I3yOaEYtphcjK45F+NabswMbXG/xx57qQtfHww
-    0DhUBKZvYFLZFuc5gMsQ9po/RStDHE8ijNAI6hPtaWyCRS0SZpiVvjge0a4HfZOU
-    Vmlvu+K3VRzuL/9B7s9mgCataHP572plCuPeyTDAWOzxxGCzVxzrH/VOzjCDyEX7
-    So7J4WzTXUX3paZQBRtb+WveBiaJnQ6iTzc7ri0WbIwoXHsWgJJ6ep0Fz1LSxk4C
-    t8dzbKgtV3qPJFkOqATyMKu3Xy//489FVQS/nkabreMbTJp9p2Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834783; bh=AaKsQYghqme0XbO8NVE
+    tugYjVsTmWhJGPngte/YLbEw=; b=iOo7otbQKdQoH15h6nhibtm/s5XNNHiWZ+q
+    EQH6TM16WLR66aXM/981ehn+DUzRJf+Gi1Uet8EyMM4B2wHXHj0Sa4LehF/ApFjR
+    ZsfWgc6XlOgONeSKYXe9h7hMv1CLL4MgsD271NU+b2NkEniprKRxObjMjtIDpkmk
+    Jy49/gfqymoJJZ65O2ArQ6x6FPzZktF42M/9erzMx/vevpLTQVDQ/WjPxr0BatEz
+    j3LrdVJs9H3IS3DjkDBW88y0Brq6z4Mb5/sMNYxp/OR2P2ECuFMSYOYbolTIZg5T
+    UBNSJZaOymbtpA478oXz4X61mo3E3nEaNwF0UFWxvXsi1xmvZ8Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,29 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934525AbeB1QRm (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:17:42 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35261 "EHLO
+        id S935014AbeB1QRp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:17:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35267 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932298AbeB1QRk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:17:40 -0500
+        by vger.kernel.org with ESMTP id S934903AbeB1QRn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:17:43 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Johannes Berg" <johannes.berg@intel.com>,
-        syzbot+8dd9051ff19940290931@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org, "Dave Martin" <Dave.Martin@arm.com>,
+        "Paul Burton" <Paul.Burton@mips.com>,
+        "Alex Smith" <alex@alex-smith.me.uk>,
+        "Ralf Baechle" <ralf@linux-mips.org>,
+        "Maciej W. Rozycki" <macro@mips.com>,
+        "James Hogan" <james.hogan@mips.com>, linux-mips@linux-mips.org
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.184488353@decadent.org.uk>
+Message-ID: <lsq.1519831218.658464417@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 206/254] mac80211_hwsim: validate number of different
- channels
+Subject: [PATCH 3.16 107/254] MIPS: Factor out NT_PRFPREG regset access
+ helpers
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,58 +84,180 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-commit 51a1aaa631c90223888d8beac4d649dc11d2ca55 upstream.
+commit a03fe72572c12e98f4173f8a535f32468e48b6ec upstream.
 
-When creating a new radio on the fly, hwsim allows this
-to be done with an arbitrary number of channels, but
-cfg80211 only supports a limited number of simultaneous
-channels, leading to a warning.
+In preparation to fix a commit 72b22bbad1e7 ("MIPS: Don't assume 64-bit
+FP registers for FP regset") FCSR access regression factor out
+NT_PRFPREG regset access helpers for the non-MSA and the MSA variants
+respectively, to avoid having to deal with excessive indentation in the
+actual fix.
 
-Fix this by validating the number - this requires moving
-the define for the maximum out to a visible header file.
+No functional change, however use `target->thread.fpu.fpr[0]' rather
+than `target->thread.fpu.fpr[i]' for FGR holding type size determination
+as there's no `i' variable to refer to anymore, and for the factored out
+`i' variable declaration use `unsigned int' rather than `unsigned' as
+its type, following the common style.
 
-Reported-by: syzbot+8dd9051ff19940290931@syzkaller.appspotmail.com
-Fixes: b59ec8dd4394 ("mac80211_hwsim: fix number of channels in interface combinations")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-[bwh: Backported to 3.16:
- - Test chans intead of param.channels
- - GENL_SET_ERR_MSG() is not available
- - Adjust context]
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Fixes: 72b22bbad1e7 ("MIPS: Don't assume 64-bit FP registers for FP regset")
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Paul Burton <Paul.Burton@mips.com>
+Cc: Alex Smith <alex@alex-smith.me.uk>
+Cc: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/17925/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2439,6 +2439,9 @@ static int hwsim_create_radio_nl(struct
- 	if (info->attrs[HWSIM_ATTR_CHANNELS])
- 		chans = nla_get_u32(info->attrs[HWSIM_ATTR_CHANNELS]);
+ arch/mips/kernel/ptrace.c | 108 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 83 insertions(+), 25 deletions(-)
+
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -438,25 +438,36 @@ static int gpr64_set(struct task_struct
  
-+	if (chans > CFG80211_MAX_NUM_DIFFERENT_CHANNELS)
-+		return -EINVAL;
-+
- 	if (info->attrs[HWSIM_ATTR_USE_CHANCTX])
- 		use_chanctx = true;
- 	else
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -716,6 +716,8 @@ struct cfg80211_csa_settings {
- 	u8 count;
- };
+ #endif /* CONFIG_64BIT */
  
-+#define CFG80211_MAX_NUM_DIFFERENT_CHANNELS 10
-+
- /**
-  * enum station_parameters_apply_mask - station parameter values to apply
-  * @STATION_PARAM_APPLY_UAPSD: apply new uAPSD parameters (uapsd_queues, max_sp)
---- a/net/wireless/core.h
-+++ b/net/wireless/core.h
-@@ -456,8 +456,6 @@ void cfg80211_leave(struct cfg80211_regi
- void cfg80211_stop_p2p_device(struct cfg80211_registered_device *rdev,
- 			      struct wireless_dev *wdev);
- 
--#define CFG80211_MAX_NUM_DIFFERENT_CHANNELS 10
+-static int fpr_get(struct task_struct *target,
+-		   const struct user_regset *regset,
+-		   unsigned int pos, unsigned int count,
+-		   void *kbuf, void __user *ubuf)
++/*
++ * Copy the floating-point context to the supplied NT_PRFPREG buffer,
++ * !CONFIG_CPU_HAS_MSA variant.  FP context's general register slots
++ * correspond 1:1 to buffer slots.
++ */
++static int fpr_get_fpa(struct task_struct *target,
++		       unsigned int *pos, unsigned int *count,
++		       void **kbuf, void __user **ubuf)
+ {
+-	unsigned i;
+-	int err;
+-	u64 fpr_val;
 -
- #ifdef CONFIG_CFG80211_DEVELOPER_WARNINGS
- #define CFG80211_DEV_WARN_ON(cond)	WARN_ON(cond)
- #else
+-	/* XXX fcr31  */
++	return user_regset_copyout(pos, count, kbuf, ubuf,
++				   &target->thread.fpu,
++				   0, sizeof(elf_fpregset_t));
++}
+ 
+-	if (sizeof(target->thread.fpu.fpr[i]) == sizeof(elf_fpreg_t))
+-		return user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+-					   &target->thread.fpu,
+-					   0, sizeof(elf_fpregset_t));
++/*
++ * Copy the floating-point context to the supplied NT_PRFPREG buffer,
++ * CONFIG_CPU_HAS_MSA variant.  Only lower 64 bits of FP context's
++ * general register slots are copied to buffer slots.
++ */
++static int fpr_get_msa(struct task_struct *target,
++		       unsigned int *pos, unsigned int *count,
++		       void **kbuf, void __user **ubuf)
++{
++	unsigned int i;
++	u64 fpr_val;
++	int err;
+ 
+ 	for (i = 0; i < NUM_FPU_REGS; i++) {
+ 		fpr_val = get_fpr64(&target->thread.fpu.fpr[i], 0);
+-		err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
++		err = user_regset_copyout(pos, count, kbuf, ubuf,
+ 					  &fpr_val, i * sizeof(elf_fpreg_t),
+ 					  (i + 1) * sizeof(elf_fpreg_t));
+ 		if (err)
+@@ -466,27 +477,54 @@ static int fpr_get(struct task_struct *t
+ 	return 0;
+ }
+ 
+-static int fpr_set(struct task_struct *target,
++/* Copy the floating-point context to the supplied NT_PRFPREG buffer.  */
++static int fpr_get(struct task_struct *target,
+ 		   const struct user_regset *regset,
+ 		   unsigned int pos, unsigned int count,
+-		   const void *kbuf, const void __user *ubuf)
++		   void *kbuf, void __user *ubuf)
+ {
+-	unsigned i;
+ 	int err;
+-	u64 fpr_val;
+ 
+ 	/* XXX fcr31  */
+ 
+-	init_fp_ctx(target);
++	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
++		err = fpr_get_fpa(target, &pos, &count, &kbuf, &ubuf);
++	else
++		err = fpr_get_msa(target, &pos, &count, &kbuf, &ubuf);
++
++	return err;
++}
+ 
+-	if (sizeof(target->thread.fpu.fpr[i]) == sizeof(elf_fpreg_t))
+-		return user_regset_copyin(&pos, &count, &kbuf, &ubuf,
+-					  &target->thread.fpu,
+-					  0, sizeof(elf_fpregset_t));
++/*
++ * Copy the supplied NT_PRFPREG buffer to the floating-point context,
++ * !CONFIG_CPU_HAS_MSA variant.   Buffer slots correspond 1:1 to FP
++ * context's general register slots.
++ */
++static int fpr_set_fpa(struct task_struct *target,
++		       unsigned int *pos, unsigned int *count,
++		       const void **kbuf, const void __user **ubuf)
++{
++	return user_regset_copyin(pos, count, kbuf, ubuf,
++				  &target->thread.fpu,
++				  0, sizeof(elf_fpregset_t));
++}
++
++/*
++ * Copy the supplied NT_PRFPREG buffer to the floating-point context,
++ * CONFIG_CPU_HAS_MSA variant.  Buffer slots are copied to lower 64
++ * bits only of FP context's general register slots.
++ */
++static int fpr_set_msa(struct task_struct *target,
++		       unsigned int *pos, unsigned int *count,
++		       const void **kbuf, const void __user **ubuf)
++{
++	unsigned int i;
++	u64 fpr_val;
++	int err;
+ 
+ 	BUILD_BUG_ON(sizeof(fpr_val) != sizeof(elf_fpreg_t));
+-	for (i = 0; i < NUM_FPU_REGS && count >= sizeof(elf_fpreg_t); i++) {
+-		err = user_regset_copyin(&pos, &count, &kbuf, &ubuf,
++	for (i = 0; i < NUM_FPU_REGS && *count >= sizeof(elf_fpreg_t); i++) {
++		err = user_regset_copyin(pos, count, kbuf, ubuf,
+ 					 &fpr_val, i * sizeof(elf_fpreg_t),
+ 					 (i + 1) * sizeof(elf_fpreg_t));
+ 		if (err)
+@@ -497,6 +535,26 @@ static int fpr_set(struct task_struct *t
+ 	return 0;
+ }
+ 
++/* Copy the supplied NT_PRFPREG buffer to the floating-point context.  */
++static int fpr_set(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   const void *kbuf, const void __user *ubuf)
++{
++	int err;
++
++	/* XXX fcr31  */
++
++	init_fp_ctx(target);
++
++	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
++		err = fpr_set_fpa(target, &pos, &count, &kbuf, &ubuf);
++	else
++		err = fpr_set_msa(target, &pos, &count, &kbuf, &ubuf);
++
++	return err;
++}
++
+ enum mips_regset {
+ 	REGSET_GPR,
+ 	REGSET_FPR,
