@@ -1,93 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932569AbeB1SWR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:22:17 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:40698 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeB1SWQ (ORCPT
+        id S932693AbeB1SWo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:22:44 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32869 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932126AbeB1SWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:22:16 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] drm/sun4i: init dclk_min_div & dclk_max_div inside
- encoder init functions
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1519822318-3974-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180228155559.lqm22dzeiptrwyxe@flea>
- <ee7bff10-527a-5481-598b-47e1d7a9eeb6@micronovasrl.com>
-Message-ID: <83d1a6d8-0816-9f75-34f6-4b93e84393e4@micronovasrl.com>
-Date: Wed, 28 Feb 2018 19:22:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Wed, 28 Feb 2018 13:22:42 -0500
+X-Google-Smtp-Source: AG47ELu9FFwTBem1VpOZBCuFkIuToNoTUO3HD/rZ/L0WO3L2viDtzhC7mW4bnPFhYg8OUETUE1Btcw==
+Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
+ of_find_node_by_phandle()
+To: Chintan Pandya <cpandya@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+ <ab87b605-6ec4-0b65-89ff-6232c89cb75f@codeaurora.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <22ed033d-fd35-7f06-39e3-075c500492b4@gmail.com>
+Date: Wed, 28 Feb 2018 10:22:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <ee7bff10-527a-5481-598b-47e1d7a9eeb6@micronovasrl.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
+In-Reply-To: <ab87b605-6ec4-0b65-89ff-6232c89cb75f@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Il 28/02/2018 17:34, Giulio Benetti ha scritto:
-> Hi,
+On 02/28/18 05:27, Chintan Pandya wrote:
 > 
-> Il 28/02/2018 16:55, Maxime Ripard ha scritto:
->> Hi,
->>
->> On Wed, Feb 28, 2018 at 01:51:58PM +0100, Giulio Benetti wrote:
->>> sun4i_dclk_round_rate is called before sun4i_tcon_mode_set,
->>> so it finds dclk_min_div and dclk_max_div set to 0 and fails
->>> adding crtc.
->>>
->>> Move dclk_min_div and dclk_max_div to encoders init functions.
->>>
->>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
->>
->> I sent a similar patch there:
->> https://lists.freedesktop.org/archives/dri-devel/2018-February/166666.html 
->>
 > 
-> I've missed that.
-> And where you put it is better, since it's called every time set_mode is 
-> called.
+> On 2/15/2018 6:22 AM, frowand.list@gmail.com wrote:
 > 
-> On lvds instead I don't see anything about this,
-> it should have the same potential problem.
-> Also I can't understand why it has been set min=7 and max=7 on lvds.
-> With those values I would obtain 77Mhz only.
-> And I can't find values on datasheet for minimum and maximum.
-
-Submitted patchset for that.
-
+>> +static void of_populate_phandle_cache(void)
+>> +{
+>> +    unsigned long flags;
+>> +    u32 cache_entries;
+>> +    struct device_node *np;
+>> +    u32 phandles = 0;
+>> +
+>> +    raw_spin_lock_irqsave(&devtree_lock, flags);
+>> +
+>> +    kfree(phandle_cache);
+>> +    phandle_cache = NULL;
+>> +
+>> +    for_each_of_allnodes(np)
+>> +        if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+>> +            phandles++;
+>> +
+>> +    cache_entries = roundup_pow_of_two(phandles);
+>> +    phandle_cache_mask = cache_entries - 1;
+>> +
+>> +    phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
+>> +                GFP_ATOMIC);
+>> +
 > 
->>
->> I guess eventually, we'll want to remove the usage of the clock
->> framework entirely, but it's not really the scope of a fix.
+> NULL check of phandle_cache would be good to have.
+
+Thanks for catching that.
+
+
+>> +    for_each_of_allnodes(np)
+>> +        if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+>> +            phandle_cache[np->phandle & phandle_cache_mask] = np;
+>> +
+>> +    raw_spin_unlock_irqrestore(&devtree_lock, flags);
+>> +}
 > 
-> Where would you handle dclk instead of tcon?
-
-Don't mind.
-
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale � 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
-
 > 
-> Thanks
-> 
+> Chintan
