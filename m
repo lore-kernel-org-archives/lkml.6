@@ -1,66 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932395AbeB1S6z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:58:55 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932176AbeB1S6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:58:54 -0500
-Subject: Re: [PATCH v2 2/5] sysctl: Add flags to support min/max range
- clamping
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1519764591-27456-1-git-send-email-longman@redhat.com>
- <1519764591-27456-3-git-send-email-longman@redhat.com>
- <20180228004753.GY14069@wotan.suse.de>
- <23264b8f-e84d-48cf-0da0-eb328916b2aa@redhat.com>
- <20180228184325.GJ14069@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e5ac80d5-2919-8944-293d-ee9b70f6ad02@redhat.com>
-Date: Wed, 28 Feb 2018 13:58:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932728AbeB1TB3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:01:29 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43381 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932088AbeB1TB2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 14:01:28 -0500
+Date: Wed, 28 Feb 2018 11:01:04 -0800
+From: tip-bot for Geert Uytterhoeven <tipbot@zytor.com>
+Message-ID: <tip-7998a4ecc61fbef5547afd379b8953b526709dd2@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, marc.zyngier@arm.com,
+        tglx@linutronix.de, horms+renesas@verge.net.au, mark.rutland@arm.com,
+        geert+renesas@glider.be, robh+dt@kernel.org, jason@lakedaemon.net,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        marc.zyngier@arm.com, horms+renesas@verge.net.au, mark.rutland@arm.com,
+        jason@lakedaemon.net, robh+dt@kernel.org, geert+renesas@glider.be,
+        mingo@kernel.org
+In-Reply-To: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
+References: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/urgent] dt-bindings/irqchip/renesas-irqc: Document R-Car
+ M3-N support
+Git-Commit-ID: 7998a4ecc61fbef5547afd379b8953b526709dd2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180228184325.GJ14069@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/2018 01:43 PM, Luis R. Rodriguez wrote:
-> On Wed, Feb 28, 2018 at 12:53:40PM -0500, Waiman Long wrote:
->> On 02/27/2018 07:47 PM, Luis R. Rodriguez wrote:
->>> On Tue, Feb 27, 2018 at 03:49:48PM -0500, Waiman Long wrote:
->>>> When minimum/maximum values are specified for a sysctl parameter in
->>>> the ctl_table structure with proc_dointvec_minmax() handler,
->>> an
->>>
->>>> update
->>>> to that parameter will fail with error if the given value is outside
->>>> of the required range.
->>>>
->>>> There are use cases where it may be better to clamp the value of
->>>> the sysctl parameter to the given range without failing the update,
->>>> especially if the users are not aware of the actual range limits.
->>> Makes me wonder if we should add something which does let one query
->>> for the ranges. Then scripts can fetch that as well.
->> That will actually be better than printing out the range in the dmesg
->> log. However, I haven't figured out an easy way of doing that. If you
->> have any suggestion, please let me know about it.
-> I think a macro that also adds yet another proc read-only entry with a postfix
-> "_range" with an internal handler which prints the range may suffice.
->
->   Luis
+Commit-ID:  7998a4ecc61fbef5547afd379b8953b526709dd2
+Gitweb:     https://git.kernel.org/tip/7998a4ecc61fbef5547afd379b8953b526709dd2
+Author:     Geert Uytterhoeven <geert+renesas@glider.be>
+AuthorDate: Mon, 26 Feb 2018 16:25:12 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Feb 2018 19:55:43 +0100
 
-I think that is a possible solution. Instead of adding a macro, I will
-add one more flag which does the magic when the ctl_table entry is being
-processed. I think that will be simpler from the user point of view.
+dt-bindings/irqchip/renesas-irqc: Document R-Car M3-N support
 
-Cheers,
-Longman
+Document support for the Interrupt Controller for Externel Devices
+(INTC-EX) in the Renesas M3-N (r8a77965) SoC.
+
+No driver update is needed.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Link: https://lkml.kernel.org/r/1519658712-22910-1-git-send-email-geert%2Brenesas@glider.be
+
+---
+ Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+index 33c9a10fdc91..20f121daa910 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+@@ -14,6 +14,7 @@ Required properties:
+     - "renesas,irqc-r8a7794" (R-Car E2)
+     - "renesas,intc-ex-r8a7795" (R-Car H3)
+     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
++    - "renesas,intc-ex-r8a77965" (R-Car M3-N)
+     - "renesas,intc-ex-r8a77970" (R-Car V3M)
+     - "renesas,intc-ex-r8a77995" (R-Car D3)
+ - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
