@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519833592-2-6917947652029061151
+X-Cyrus-Session-Id: sloti22d1t05-476314-1519833556-2-2864433862479803444
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833591; b=ikhCIjG8Ylcku+LTGmhy8Cl/t4xCiuYrhLhDTj83F+gzNHe
-    2YcOel6GzZp7/n28+sHFKGp0Cz6nBadcjZ8rV5Cozjl3YiE7H1T/VU1CEknURM8n
-    HSAP3zb3PRIa+B4iebKMPM1TeCsFSck0TAVwQOXI49YUNF7EetgFy82x4u0SP/zk
-    LMmyB87wy3HhicpuY4+CphQwz8PRxpGHaH/W27vbCVHZ9YNIcUjxf8iEo8W63vdh
-    lrr6TYEZFoVE6E/7unPYEQby4OLOUvfaSpD7ayWeajSCbygcboibQnekBr34gl+I
-    3g4CNurb+N9IBOX0Rsjc+c9IQwg8d6V79VoUctw==
+    t=1519833555; b=cvWALqHFiSxsnr7gMbQHC6jlGee3Und6iJNDwm2F+K+W9dN
+    yXaX4wxauK4HC698WlkR2mecWwiuaPv5CtA4B9mFAOvyGTq6yF+Xv/4j/h2RYzTs
+    y6HTemv4EkvUL1qeNozFbLueA10LZyu33w3Nk2KhTXavpnSSQar+e05B4IEgeX9b
+    5B+7APKKVp/Sg/g+6HrH30NDpJooDFONhGddX38WwJg8dr050TnvQ5ssyZC7mpUD
+    Pin4/NMobSIlvzc5aNJnmqXreUmC4g3VQUPgg0YUcS3tHH86X+lh3jCcJNS6iY9s
+    PXHcDrPBknJPf4drrTW5wD6m86z2OOIYoBY7oQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833591; bh=tyIPU0GNxmfLVCOyy0+
-    O6onixUyrNk7PqYOe9gqZOQE=; b=jpq1c03+ojQj3Pr/shyvAUpdvWjAwjI3ILh
-    I/SJg+M3t9d4j/CwlXsE2SiT72pm3hYLMObiHAemBq4UbHVzRH6XMcUyd2gVItFn
-    4QzljQch9/qG3a8hzhVzxX4Wf5aViAlj9pkK0eE/nG+ytCi11dB1DuT9RQmapcC3
-    ZnhodH1R7ijXJDhSuoDQ8eXLVTdHxjVaDcRog07dba9Ke6hHm63rzJ/+LfgJhgYe
-    qQPLS+Nkkn/p6yttyooeaT6plB/IX4ODl1HE44EQlZsQkSFRqfYh+SfquhflsrWi
-    QYR4bQ8QLzGpEAhvHwPM4oK6KeBHlg5eu40u8+ihPRdoyMLpjjA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833555; bh=U3IHPtSvwhz9pHMfL3d
+    WsmAvl+9GVQZtBP0NzadBSoY=; b=iRI9lWIJU82Wdo2ld8PYiQTOuj8cLzYnPgM
+    q3GYBLfGo/dd+4oOzHTRiHRKV1nFEZalDCHVQ/PfbecMAGUI18Q65TJ1ZtK7GypO
+    Lzw0qB3w1HAfiXMLgjYT2t37Om7joGYHkGuQ4KS9hGeaBaB4M0+Mu2FucgebrWhw
+    jEld6oGS0XnSKw9jLJTa/6kFN3s/diTE3AZeZ+Dzwl0IVN5I4yyGHMbiqYtbyNVn
+    HIRIhAMLlBTguTu7O4dBDTyo/M8nnTASdThRFKmkSz1HxeFw9ajXPoMRBdj2ds17
+    AW0my/6m2teGp/Z/TkYYhIxtfdpJTyt+NY5smxyWhgErWlpD4DQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,31 +47,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933810AbeB1P7Q (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:59:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34611 "EHLO
+        id S933850AbeB1P7N (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:59:13 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34608 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934361AbeB1P7O (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:59:14 -0500
+        by vger.kernel.org with ESMTP id S932418AbeB1P7M (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:59:12 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Guenter Roeck" <linux@roeck-us.net>,
-        "Guenter Roeck" <groeck@google.com>,
-        "Fan Ning" <fanning4@hisilicon.com>,
-        "yangdi" <yangdi10@hisilicon.com>,
-        "Li Rui" <lirui39@hisilicon.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Yu Chen" <chenyu56@huawei.com>,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Guenter Roeck" <groeck@chromium.org>
+CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.381332768@decadent.org.uk>
+Message-ID: <lsq.1519831218.186829863@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 047/254] usb: xhci: fix panic in xhci_free_virt_devices_depth_first
+Subject: [PATCH 3.16 189/254] Input: 88pm860x-ts - fix child-node lookup
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -86,70 +79,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yu Chen <chenyu56@huawei.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 80e457699a8dbdd70f2d26911e46f538645c55fc upstream.
+commit 906bf7daa0618d0ef39f4872ca42218c29a3631f upstream.
 
-Check vdev->real_port 0 to avoid panic
-[    9.261347] [<ffffff800884a390>] xhci_free_virt_devices_depth_first+0x58/0x108
-[    9.261352] [<ffffff800884a814>] xhci_mem_cleanup+0x1bc/0x570
-[    9.261355] [<ffffff8008842de8>] xhci_stop+0x140/0x1c8
-[    9.261365] [<ffffff80087ed304>] usb_remove_hcd+0xfc/0x1d0
-[    9.261369] [<ffffff80088551c4>] xhci_plat_remove+0x6c/0xa8
-[    9.261377] [<ffffff80086e928c>] platform_drv_remove+0x2c/0x70
-[    9.261384] [<ffffff80086e6ea0>] __device_release_driver+0x80/0x108
-[    9.261387] [<ffffff80086e7a1c>] device_release_driver+0x2c/0x40
-[    9.261392] [<ffffff80086e5f28>] bus_remove_device+0xe0/0x120
-[    9.261396] [<ffffff80086e2e34>] device_del+0x114/0x210
-[    9.261399] [<ffffff80086e9e00>] platform_device_del+0x30/0xa0
-[    9.261403] [<ffffff8008810bdc>] dwc3_otg_work+0x204/0x488
-[    9.261407] [<ffffff80088133fc>] event_work+0x304/0x5b8
-[    9.261414] [<ffffff80080e31b0>] process_one_work+0x148/0x490
-[    9.261417] [<ffffff80080e3548>] worker_thread+0x50/0x4a0
-[    9.261421] [<ffffff80080e9ea0>] kthread+0xe8/0x100
-[    9.261427] [<ffffff8008083680>] ret_from_fork+0x10/0x50
+Fix child node-lookup during probe, which ended up searching the whole
+device tree depth-first starting at parent rather than just matching on
+its children.
 
-The problem can occur if xhci_plat_remove() is called shortly after
-xhci_plat_probe(). While xhci_free_virt_devices_depth_first been
-called before the device has been setup and get real_port initialized.
-The problem occurred on Hikey960 and was reproduced by Guenter Roeck
-on Kevin with chromeos-4.4.
+To make things worse, the parent node was prematurely freed, while the
+child node was leaked.
 
-Fixes: ee8665e28e8d ("xhci: free xhci virtual devices with leaf nodes first")
-Cc: Guenter Roeck <groeck@google.com>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Fan Ning <fanning4@hisilicon.com>
-Signed-off-by: Li Rui <lirui39@hisilicon.com>
-Signed-off-by: yangdi <yangdi10@hisilicon.com>
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 2e57d56747e6 ("mfd: 88pm860x: Device tree support")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/host/xhci-mem.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/input/touchscreen/88pm860x-ts.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -982,6 +982,12 @@ void xhci_free_virt_devices_depth_first(
- 	if (!vdev)
- 		return;
- 
-+	if (vdev->real_port == 0 ||
-+			vdev->real_port > HCS_MAX_PORTS(xhci->hcs_params1)) {
-+		xhci_dbg(xhci, "Bad vdev->real_port.\n");
-+		goto out;
-+	}
-+
- 	tt_list_head = &(xhci->rh_bw[vdev->real_port - 1].tts);
- 	list_for_each_entry_safe(tt_info, next, tt_list_head, tt_list) {
- 		/* is this a hub device that added a tt_info to the tts list */
-@@ -995,6 +1001,7 @@ void xhci_free_virt_devices_depth_first(
- 			}
- 		}
+--- a/drivers/input/touchscreen/88pm860x-ts.c
++++ b/drivers/input/touchscreen/88pm860x-ts.c
+@@ -126,7 +126,7 @@ static int pm860x_touch_dt_init(struct p
+ 	int data, n, ret;
+ 	if (!np)
+ 		return -ENODEV;
+-	np = of_find_node_by_name(np, "touch");
++	np = of_get_child_by_name(np, "touch");
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "Can't find touch node\n");
+ 		return -EINVAL;
+@@ -144,13 +144,13 @@ static int pm860x_touch_dt_init(struct p
+ 	if (data) {
+ 		ret = pm860x_reg_write(i2c, PM8607_GPADC_MISC1, data);
+ 		if (ret < 0)
+-			return -EINVAL;
++			goto err_put_node;
  	}
-+out:
- 	/* we are now at a leaf device */
- 	xhci_free_virt_device(xhci, slot_id);
+ 	/* set tsi prebias time */
+ 	if (!of_property_read_u32(np, "marvell,88pm860x-tsi-prebias", &data)) {
+ 		ret = pm860x_reg_write(i2c, PM8607_TSI_PREBIAS, data);
+ 		if (ret < 0)
+-			return -EINVAL;
++			goto err_put_node;
+ 	}
+ 	/* set prebias & prechg time of pen detect */
+ 	data = 0;
+@@ -161,10 +161,18 @@ static int pm860x_touch_dt_init(struct p
+ 	if (data) {
+ 		ret = pm860x_reg_write(i2c, PM8607_PD_PREBIAS, data);
+ 		if (ret < 0)
+-			return -EINVAL;
++			goto err_put_node;
+ 	}
+ 	of_property_read_u32(np, "marvell,88pm860x-resistor-X", res_x);
++
++	of_node_put(np);
++
+ 	return 0;
++
++err_put_node:
++	of_node_put(np);
++
++	return -EINVAL;
  }
+ #else
+ #define pm860x_touch_dt_init(x, y, z)	(-1)
