@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-438867-1519832088-2-15509430811093179306
+X-Cyrus-Session-Id: sloti22d1t05-449106-1519832058-2-14243146319819019725
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosk.us-ascii,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519832088; b=BuJv9PdXT7mfzmRpPdUAPmGYApv3NtM53dyzrOw5VnLcjcE
-    dyTa4SIfQf9IulwpPRnz7D9AIoY8S4Ep77wQ/Nt4113TlwqM9k+ISD//+AcZAysS
-    cJgYt1XtAgGkNYYDeMo9L3PIKr6RgLwng5h3af90oXVTii0Z1gdSiHLY2dHtUBaP
-    yGMxxF+Q/mtT6EY6l9NiW+jyOmYh+PaOFNhMF2dcdRF+wVKsnmLMqyCMVFXsLyIz
-    SoH/IddWaFqwTYU9x0b0oJQif93+Mk0Y/CZVU9OwhHaJnmWDeZnqQA5ZOgi8YVmp
-    +yTfNyK5O1BUZMrBGE6gMBsftJdMP88E+INYA9w==
+    t=1519832057; b=o7tt3xz6BJ7z+G4mbY2vgXRZeJhJ6SxcyM9ZEYzUvSCODTI
+    xZ+A86oevnsvIvCbG78/FIKfuJtzynSIuzxnuIkXf1I33H9JuYtbUGhBOYLUv4Q7
+    tmF+6tBNsHfD5tB0SDtot6rxqfFEsUQyb0KlgyIkJkdCUxTsacSp4Xjt5ZQ7H64x
+    H7xaHhmWjdoz9Fmmh14cTEtZRrU+umnkusuHxJ2GyDkRcqhOOD4aPgxqXOSy21mG
+    7cvQk/6wPJ55oXQ+zN31og9PMLY+ADCe4c91lmAPwM12h7iWUBt+0WSzSSloctdt
+    ABLTHSdRj59pAW4MkviUnB4JEFGTKuGrBh0uJEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519832088; bh=mzHMqXJ+a75z/meapzE
-    mh0/KO+4/Qpn3XwsRS02Dcv0=; b=KpNmG13kCM/lCEXK4HVclYynF8bZRNla1yW
-    QaZafhQC3P9oEZ7P1np/j3iz+iABwFyN0F53HZmM/AtdGPeKCVa7+JlZeRNuxKsg
-    /V1cDfUDZoMYFofeokHknhfsLpq/6k+B9UMtRI7Z7Lq+PH+bWGz0jiUR1a+Ljfdk
-    +zXiAh+6IYx5VuP+jBgDGGOjmj/qf5XsQxtQj13oNcfvc57Ww28IGwzDwqrgi3TP
-    SN6OnhOgnXqaJ0JzsaWUrNOi/VS3vZIHSWLNlEzSdzeiL0P0OtMStL0Wodkm4+vH
-    4Q4U39vW5sYLOwRFmqicshV49Nj61Hp8PY/aTP/isDqz6ysNVIQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519832057; bh=wnlzroWSDXmPbNBvUK3
+    TfBV7gdA6+ZNgvZJ/DZIMm/s=; b=UoPY+A7CBQh29kW7LBlyfwUFXFJf1hWr/fH
+    5j+ubesnvlsQdWG9HKUV1/VVfdcxdiu3C1FfYD37vBCb96OUQCq03neU/QnOC4Km
+    Pu/tkNfk3i9zrKJCHtNhV4nBmqJ216AxthIw71OXkS7QHrBrFMG7UvQGAnWifpDL
+    b1ppagwRLmOvF7qcUXkdm2TXByIPO5jvX5EN3jD0N/SHIh04V2AYVnBoqBmx1uWk
+    zaA9JTBvwwWt5SM2ZFqbcQ/aOSvJqfkd60CqdOTnXJpEd7kGrzXiRTyUHTICtbpt
+    1e+6YIdPacK44jKTlQsz6ADdco960LxxuN6c8eB9HC9eGjVRzGw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933126AbeB1Peo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:34:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33296 "EHLO
+        id S933055AbeB1PcY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:32:24 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33313 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752814AbeB1PWg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:36 -0500
+        by vger.kernel.org with ESMTP id S1752859AbeB1PWi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:38 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,13 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        "Mark Brown" <broonie@kernel.org>
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        "Harsh Jain" <Harsh@chelsio.com>,
+        "Robin Murphy" <robin.murphy@arm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.902311745@decadent.org.uk>
+Message-ID: <lsq.1519831218.606322283@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 014/254] ASoC: fsl_ssi: add AC'97 ops setting check
- and cleanup
+Subject: [PATCH 3.16 006/254] iommu/vt-d: Fix scatterlist offset handling
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,42 +81,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+From: Robin Murphy <robin.murphy@arm.com>
 
-commit 04143d614f3af84a3f39e79a24a7ca740bd39efd upstream.
+commit 29a90b70893817e2f2bb3cea40a29f5308e21b21 upstream.
 
-Check whether setting AC'97 ops succeeded and clean them
-on removal so the fsl_ssi driver can be reloaded.
+The intel-iommu DMA ops fail to correctly handle scatterlists where
+sg->offset is greater than PAGE_SIZE - the IOVA allocation is computed
+appropriately based on the page-aligned portion of the offset, but the
+mapping is set up relative to sg->page, which means it fails to actually
+cover the whole buffer (and in the worst case doesn't cover it at all):
 
-Signed-off-by: Maciej Szmigiero <mail@maciej.szmigiero.name>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+    (sg->dma_address + sg->dma_len) ----+
+    sg->dma_address ---------+          |
+    iov_pfn------+           |          |
+                 |           |          |
+                 v           v          v
+iova:   a        b        c        d        e        f
+        |--------|--------|--------|--------|--------|
+                          <...calculated....>
+                 [_____mapped______]
+pfn:    0        1        2        3        4        5
+        |--------|--------|--------|--------|--------|
+                 ^           ^          ^
+                 |           |          |
+    sg->page ----+           |          |
+    sg->offset --------------+          |
+    (sg->offset + sg->length) ----------+
+
+As a result, the caller ends up overrunning the mapping into whatever
+lies beyond, which usually goes badly:
+
+[  429.645492] DMAR: DRHD: handling fault status reg 2
+[  429.650847] DMAR: [DMA Write] Request device [02:00.4] fault addr f2682000 ...
+
+Whilst this is a fairly rare occurrence, it can happen from the result
+of intermediate scatterlist processing such as scatterwalk_ffwd() in the
+crypto layer. Whilst that particular site could be fixed up, it still
+seems worthwhile to bring intel-iommu in line with other DMA API
+implementations in handling this robustly.
+
+To that end, fix the intel_map_sg() path to line up the mapping
+correctly (in units of MM pages rather than VT-d pages to match the
+aligned_nrpages() calculation) regardless of the offset, and use
+sg_phys() consistently for clarity.
+
+Reported-by: Harsh Jain <Harsh@chelsio.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed by: Ashok Raj <ashok.raj@intel.com>
+Tested by: Jacob Pan <jacob.jun.pan@intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/fsl/fsl_ssi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -1274,7 +1274,11 @@ static int fsl_ssi_probe(struct platform
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2008,10 +2008,12 @@ static int __domain_mapping(struct dmar_
+ 		uint64_t tmp;
  
- 		fsl_ac97_data = ssi_private;
- 
--		snd_soc_set_ac97_ops_of_reset(&fsl_ssi_ac97_ops, pdev);
-+		ret = snd_soc_set_ac97_ops_of_reset(&fsl_ssi_ac97_ops, pdev);
-+		if (ret) {
-+			dev_err(&pdev->dev, "could not set AC'97 ops\n");
-+			return ret;
-+		}
- 	} else {
- 		/* Initialize this copy of the CPU DAI driver structure */
- 		memcpy(&ssi_private->cpu_dai_drv, &fsl_ssi_dai_template,
-@@ -1422,6 +1426,9 @@ static int fsl_ssi_remove(struct platfor
- 	if (ssi_private->use_dma)
- 		irq_dispose_mapping(ssi_private->irq);
- 
-+	if (fsl_ssi_is_ac97(ssi_private))
-+		snd_soc_set_ac97_ops(NULL);
+ 		if (!sg_res) {
++			unsigned int pgoff = sg->offset & ~PAGE_MASK;
 +
- 	return 0;
- }
+ 			sg_res = aligned_nrpages(sg->offset, sg->length);
+-			sg->dma_address = ((dma_addr_t)iov_pfn << VTD_PAGE_SHIFT) + sg->offset;
++			sg->dma_address = ((dma_addr_t)iov_pfn << VTD_PAGE_SHIFT) + pgoff;
+ 			sg->dma_length = sg->length;
+-			pteval = page_to_phys(sg_page(sg)) | prot;
++			pteval = (sg_phys(sg) - pgoff) | prot;
+ 			phys_pfn = pteval >> VTD_PAGE_SHIFT;
+ 		}
  
+@@ -3345,7 +3347,7 @@ static int intel_nontranslate_map_sg(str
+ 
+ 	for_each_sg(sglist, sg, nelems, i) {
+ 		BUG_ON(!sg_page(sg));
+-		sg->dma_address = page_to_phys(sg_page(sg)) + sg->offset;
++		sg->dma_address = sg_phys(sg);
+ 		sg->dma_length = sg->length;
+ 	}
+ 	return nelems;
