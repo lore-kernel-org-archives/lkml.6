@@ -1,64 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeB1Oht (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:37:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43056 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeB1Ohr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:37:47 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6C1C9601A3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1752807AbeB1OiA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:38:00 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:55670 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752213AbeB1Oh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:37:58 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thierry Escande <thierry.escande@collabora.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Yakir Yang <ykk@rock-chips.com>,
+        =?ISO-8859-1?Q?=D8rjan?= Eide <orjan.eide@arm.com>,
+        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
+Subject: Re: [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in analogix_dp_bind
+Date: Wed, 28 Feb 2018 15:37:40 +0100
+Message-ID: <2776489.2p7NH6SBud@diego>
+In-Reply-To: <20180130202913.28724-6-thierry.escande@collabora.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com> <20180130202913.28724-6-thierry.escande@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: bcma: add HP Stream Notebook
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180208162542.20100-1-GNUtoo@no-log.org>
-References: <20180208162542.20100-1-GNUtoo@no-log.org>
-To: "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180228143746.EF77E60272@smtp.codeaurora.org>
-Date: Wed, 28 Feb 2018 14:37:46 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Denis 'GNUtoo' Carikli <GNUtoo@no-log.org> wrote:
-
-> In this laptop we have the following PCI device:
-> 02:00.0 Network controller [0280]: Broadcom Limited BCM43142 802.11b/g/n [14e4:4365] (rev 01)
-> 	Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n [103c:804a]
-> 	[...]
-> 	Region 0: Memory at 91000000 (64-bit, non-prefetchable) [size=32K]
-> 	[...]
+Am Dienstag, 30. Januar 2018, 21:28:35 CET schrieb Thierry Escande:
+> From: zain wang <wzz@rock-chips.com>
 > 
-> With this patch, we can now see its WiFi chip:
->   bcma: bus0: Found chip with id 43142, rev 0x01 and package 0x08
->   bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x28, class 0x0)
->   bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x21, class 0x0)
->   bcma: bus0: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x16, class 0x0)
->   bcma: bus0: Core 3 found: UNKNOWN (manuf 0x43B, id 0x368, rev 0x00, class 0x0)
->   bcma: bus0: Found rev 15 PMU (capabilities 0x518C5E0F)
->   bcma: bus0: SPROM offset 0x840
->   bcma: bus0: Found SPROM revision 10
->   bcma: bus0: Workarounds unknown or not needed for device 0xA886
->   bcma: bus0: Bus registered
+> The bridge does not need to be powered in analogix_dp_bind(), so
+> remove the calls to pm_runtime_get()/phy_power_on()/analogix_dp_init_dp()
+> as well as their power-off counterparts.
 > 
-> But it not yet supported by brcmsmac so it won't work for now:
->   brcmsmac bcma0:1: brcms_b_attach wl0: vendor 0x14e4 device 0x4365
->   brcmsmac: unknown device id 4365
+> Cc: Stéphane Marchesin <marcheu@chromium.org>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+> [the patch originally just removed the power_on portion, seanpaul removed
+> the power off code as well as improved the commit message]
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 10 ----------
+>  1 file changed, 10 deletions(-)
 > 
-> Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
+> cb5e18d6ba04..1477ea9ba85d 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -1382,11 +1382,6 @@ analogix_dp_bind(struct device *dev, struct
+> drm_device *drm_dev,
+> 
+>  	pm_runtime_enable(dev);
+> 
+> -	pm_runtime_get_sync(dev);
+> -	phy_power_on(dp->phy);
+> -
+> -	analogix_dp_init_dp(dp);
+> -
+>  	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+>  					analogix_dp_hardirq,
+>  					analogix_dp_irq_thread,
 
-Patch applied to wireless-drivers-next.git, thanks.
+Not 100% sure here, as the driver has the request-irq + disable-irq hack
+here. So a pending interrupt could possibly fire between request and
+disable.
 
-985324a16efb bcma: add HP Stream Notebook
+Right now the block should be on, but can it still handle such an irq
+when the power is removed?
 
--- 
-https://patchwork.kernel.org/patch/10207423/
+So before removing the power here, we might want something
+similar to what Marc posted for the vop [0] for the analogix-dp?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
+Heiko
+
+[0] https://patchwork.kernel.org/patch/10210513/
