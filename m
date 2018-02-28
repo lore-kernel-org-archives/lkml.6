@@ -1,136 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeB1Mpb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:45:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752454AbeB1Mp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:45:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944D0214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 28 Feb 2018 09:45:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Agustin Vega-Frias <agustinv@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
-Subject: Re: [RFC 3/3] perf pmu: Restore auto-merging of PMU events created
- by prefix match
-Message-ID: <20180228124524.GA6102@kernel.org>
-References: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
- <1519770848-26738-4-git-send-email-agustinv@codeaurora.org>
- <20180228094038.GA9474@krava>
+        id S1752488AbeB1Mtc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:49:32 -0500
+Received: from mail-ua0-f181.google.com ([209.85.217.181]:46336 "EHLO
+        mail-ua0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752427AbeB1Mtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:49:31 -0500
+X-Google-Smtp-Source: AG47ELsULwCON71r5A/gXwmu468JVR6CMQZsJg0g9E8hdKLMMsI/XLqCHpxAaWhQLEKICC6sPL8dKw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228094038.GA9474@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
+ <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+ <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com> <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 28 Feb 2018 21:49:06 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
+Message-ID: <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Feb 28, 2018 at 10:40:38AM +0100, Jiri Olsa escreveu:
-> On Tue, Feb 27, 2018 at 05:34:08PM -0500, Agustin Vega-Frias wrote:
-> > This was disabled when auto-merging of non-alias events was disabled in
-> > commit 63ce844 (perf stat: Only auto-merge events that are PMU aliases).
-> 
-> this changes the output, right? please provide before/after output
+On Wed, Feb 28, 2018 at 9:32 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Tomasz,
+>
+> On Wed, Feb 28, 2018 at 1:29 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+>> On Wed, Feb 28, 2018 at 9:17 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Wed, Feb 28, 2018 at 12:11 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>>>> Currently we are adding all of the attached devices' clocks as pm clocks
+>>>> and enable them when powering on the power domain.
+>>>>
+>>>> This seems unnecessary, because those clocks are already controlled in
+>>>> the devices' drivers with better error handling.
+>>>>
+>>>> Tested on my chromebook minnie(rk3288) and chromebook kevin(rk3399).
+>>>>
+>>>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>> Just wondering: so you prefer to handle the clocks explicitly in all drivers,
+>>> instead of delegating this task to Runtime PM?
+>>
+>> Is it already possible to gate clocks immediately when the device
+>> idles, but defer turning the power domain off until time long enough
+>> to cover the power down and up latency elapses?
+>
+> I'm not 100% sure.
+> Note that clocks are turned off when the device idles, while powering down
+> the power domain requires all devices in the domain to be idle.
 
-Yes, please show how it was and how it became, also please update the
-documentation, as pointed out by Andi.
+I remember seeing some ongoing work for multiple power states of PM
+domains on LWN, which could possibly solve it. I guess it's not done
+yet.
 
-- Arnaldo
- 
-> thanks,
-> jirka
-> 
-> > 
-> > Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
-> > ---
-> >  tools/perf/util/parse-events.c | 13 +++----------
-> >  tools/perf/util/parse-events.h |  2 +-
-> >  tools/perf/util/parse-events.y |  4 ++--
-> >  3 files changed, 6 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> > index bafc91e..4e80ca3 100644
-> > --- a/tools/perf/util/parse-events.c
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -1217,7 +1217,7 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
-> >  			 get_config_name(head_config), &config_terms);
-> >  }
-> > 
-> > -static int __parse_events_add_pmu(struct parse_events_state *parse_state,
-> > +int parse_events_add_pmu(struct parse_events_state *parse_state,
-> >  			 struct list_head *list, char *name,
-> >  			 struct list_head *head_config, bool auto_merge_stats)
-> >  {
-> > @@ -1287,13 +1287,6 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
-> >  	return evsel ? 0 : -ENOMEM;
-> >  }
-> > 
-> > -int parse_events_add_pmu(struct parse_events_state *parse_state,
-> > -			 struct list_head *list, char *name,
-> > -			 struct list_head *head_config)
-> > -{
-> > -	return __parse_events_add_pmu(parse_state, list, name, head_config, false);
-> > -}
-> > -
-> >  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-> >  			       char *str, struct list_head **listp)
-> >  {
-> > @@ -1323,8 +1316,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-> >  					return -1;
-> >  				list_add_tail(&term->list, head);
-> > 
-> > -				if (!__parse_events_add_pmu(parse_state, list,
-> > -							    pmu->name, head, true)) {
-> > +				if (!parse_events_add_pmu(parse_state, list,
-> > +							  pmu->name, head, true)) {
-> >  					pr_debug("%s -> %s/%s/\n", str,
-> >  						 pmu->name, alias->str);
-> >  					ok++;
-> > diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-> > index 88108cd..5015cfd 100644
-> > --- a/tools/perf/util/parse-events.h
-> > +++ b/tools/perf/util/parse-events.h
-> > @@ -167,7 +167,7 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
-> >  				void *ptr, char *type, u64 len);
-> >  int parse_events_add_pmu(struct parse_events_state *parse_state,
-> >  			 struct list_head *list, char *name,
-> > -			 struct list_head *head_config);
-> > +			 struct list_head *head_config, bool auto_merge_stats);
-> > 
-> >  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-> >  			       char *str,
-> > diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> > index c528469..b51278f 100644
-> > --- a/tools/perf/util/parse-events.y
-> > +++ b/tools/perf/util/parse-events.y
-> > @@ -232,7 +232,7 @@ PE_NAME opt_event_config
-> >  		YYABORT;
-> > 
-> >  	ALLOC_LIST(list);
-> > -	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
-> > +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
-> >  		struct perf_pmu *pmu = NULL;
-> >  		int ok = 0;
-> > 
-> > @@ -245,7 +245,7 @@ PE_NAME opt_event_config
-> >  			if (!strncmp($1, name, strlen($1)) || !fnmatch($1, name, 0)) {
-> >  				if (parse_events_copy_term_list(orig_terms, &terms))
-> >  					YYABORT;
-> > -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
-> > +				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
-> >  					ok++;
-> >  				parse_events_terms__delete(terms);
-> >  			}
-> > --
-> > 2.7.4
-> > 
+Also, for Rockchip SoC, the typical setup is one device per domain,
++/- some auxiliary devices such as IOMMU, which would have the same
+runtime PM state as the master device. (It isn't implemented yet, but
+Jeffy posted patches for using device links some time ago.)
+
+>
+>> Also, how about systems where runtime PM is disabled? I think that's
+>> one of the reasons we control the clocks explicitly in the drivers
+>> anyway.
+>
+> On many platforms, Runtime PM is always enabled.
+
+Can we make such assumption? If so, could we just make an explicit
+"select PM_RUNTIME" in Kconfig of the SoC?
+
+Best regards,
+Tomasz
