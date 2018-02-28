@@ -1,131 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933016AbeB1Se4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:34:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:27616 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932651AbeB1Sey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:34:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
-   d="scan'208";a="207738152"
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
- <85c96e41-5a54-d3dd-bda4-d8ef9c28b1d8@intel.com>
- <alpine.DEB.2.21.1802281819390.1392@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1802281858420.1392@nanos.tec.linutronix.de>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <057523c7-5192-9a29-ca04-a8b299ef9685@intel.com>
-Date: Wed, 28 Feb 2018 10:34:53 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1802281858420.1392@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S932964AbeB1Sez (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:34:55 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55392 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932406AbeB1Sex (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 13:34:53 -0500
+X-UUID: da03a9c6407c4ba88693df2daa977aa9-20180301
+Message-ID: <1519842888.8089.88.camel@mtkswgap22>
+Subject: Re: [PATCH v3 01/22] nvmem: Document struct nvmem_config
+From: Sean Wang <sean.wang@mediatek.com>
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>, <linux-rockchip@lists.infradead.org>,
+        Kevin Hilman <khilman@baylibre.com>, <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, Carlo Caione <carlo@caione.org>,
+        <cphealy@gmail.com>
+Date: Thu, 1 Mar 2018 02:34:48 +0800
+In-Reply-To: <20180103200114.23922-2-andrew.smirnov@gmail.com>
+References: <20180103200114.23922-1-andrew.smirnov@gmail.com>
+         <20180103200114.23922-2-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On 2/28/2018 9:59 AM, Thomas Gleixner wrote:
-> On Wed, 28 Feb 2018, Thomas Gleixner wrote:
->> On Tue, 27 Feb 2018, Reinette Chatre wrote:
->>> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
->>>> Let's look at the existing crtl/mon groups which are each represented by a
->>>> directory already.
->>>>
->>>>  - Adding a 'size' file to the ctrl groups would be a natural extension
->>>>    which makes sense for regular cache allocations as well.
->>>>
->>>
->>> I would like to clarify how you envision the value of "size" computed. A
->>> resource group may have several resources associated with it. Some of
->>> these resources may indeed overlap, for example, if there is L2 and L3
->>> CAT capable resources on the system. Similarly when CDP is enabled,
->>> there would be overlap in bitmasks referring to the same cache locations
->>> but treated as different resources. Indeed, there may in the future be
->>> some resources that are capable of allocation but not cache specifically
->>> that could also be handled within a single resource group.
->>>
->>> Summarizing all of these cases with a single "size" associated with the
->>> resource group does not seem straightforward to me.
->>
->> We have the schemata file which covers everthing. So the size file inside a
->> resource group should show the sizes for each domain/resource as well.
->>
->> L2:0=128K;1=256K;
->> L3:0=1M;1=2M;
->>
->> L3DATA:0=128K
->> L3CODE:0=128K
->>
->> or such. That would be consistent with the schemata file. If there are
->> resources which cannot be expressed in size, like MBA then you simply do
->> not print them.
->>
->> At the top level you want to show the inuse areas. I'd go for straight
->> bitmap display there:
->>
->> L2:0=00011100;1=11111111;
->> L3:0=11001100;1=11111111;
->>
->> If L3 CDP is enabled then you can show:
->>
->> L3:0=1DCCDC00;1=DDDD00CC;
->>
->> where:
->>
->> 0 = unused
->> 1 = overlapping C/D
->> C = code
->> D = data
+On Wed, 2018-01-03 at 12:00 -0800, Andrey Smirnov wrote:
+> Add a simple description of struct nvmem_config and its fields.
 > 
-> Hit send too early....
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Carlo Caione <carlo@caione.org>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: cphealy@gmail.com
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-amlogic@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  include/linux/nvmem-provider.h | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> For the locked case this would add:
-> 
->  L = locked
+> diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+> index 497706f5adca..27e599222ec1 100644
+> --- a/include/linux/nvmem-provider.h
+> +++ b/include/linux/nvmem-provider.h
+> @@ -22,6 +22,28 @@ typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
+>  typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
+>  				 void *val, size_t bytes);
+>  
+> +/**
+> + * struct nvmem_config - NVMEM device configuration
+> + *
+> + * @dev:	Parent device.
+> + * @name:	Optional name.
+> + * @id:		Optional device ID used in full name. Ignored if name is NULL.
+> + * @owner:	Pointer to exporter module. Used for refcounting.
+> + * @cells:	Optional array of pre-defined NVMEM cells.
+> + * @ncells:	Number of elements in cells.
+> + * @read_only:	Device is read-only.
+> + * @root_only:	Device is accessibly to root only.
+> + * @reg_read:	Callback to read data.
+> + * @reg_write:	Callback to write data.
+> + * @size:	Device size.
+> + * @word_size:	Minimum read/write access granularity.
+> + * @stride:	Minimum read/write access stide.
 
-I hesitated doing something like this because during the review of this
-series there was resistance to using sysfs files for multiple values. I
-will proceed with your suggestion noting that it is tied with schemata file.
+typo on stide ?
 
-I do not think we need these special labels for CDP though. From what I
-understand when CDP is enabled there will be two new resources in the
-info directory. For example,
-
-info/L3DATA/
-info/L3CODE/
-
-Each would have its own file(s) noting which bits are in use.
-
-At this time I am also not enabling pseudo-locking when CDP is enabled
-so the locked label is not needed.
-
-There is already the file "shareable_bits" in the info directory
-associated with each resource. At the moment it only reflects the bits
-that could be used by other entities on the system. Considering its name
-and us now introducing the idea of "shareable" I was thinking of adding
-all "shareable" bits (hardware and software) of this resource to this
-file. This still leaves the new "inuse_bits" (or perhaps "unused_bits")
-info file that will communicate the "exclusive" and "locked" bits in
-addition so what is in "shareable_bits". Between these two files users
-should have information needed to choose regions for their tasks. These
-would all use bitmap displays.
-
-Thank you very much
-
-Reinette
+> + * @priv:	User context passed to read/write callbacks.
+> + *
+> + * Note: A default "nvmem<id>" name will be assigned to the device if
+> + * no name is specified in its configuration. In such case "<id>" is
+> + * generated with ida_simple_get() and provided id field is ignored.
+> + */
+>  struct nvmem_config {
+>  	struct device		*dev;
+>  	const char		*name;
