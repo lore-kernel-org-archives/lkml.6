@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935530AbeB1Wjq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:39:46 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43141 "EHLO
+        id S935555AbeB1Wjv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:39:51 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33822 "EHLO
         mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935486AbeB1Wjl (ORCPT
+        with ESMTP id S935526AbeB1Wjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:39:41 -0500
-X-Google-Smtp-Source: AG47ELu1gMTNEyeUqgy3UYgE7aNiz6u83mSFU7HtJ35JLFcr06IYw2V6sjp4zcEszjf4l06IYo0ZzQ==
+        Wed, 28 Feb 2018 17:39:45 -0500
+X-Google-Smtp-Source: AG47ELtkc+9OtF6F3OjziTmR4V/sct6Htf7o8Li3qmghIuWA5n+NBQQjMGnruuWmsHIxNak2lCtfIQ==
 From: Rob Herring <robh@kernel.org>
 To: Michal Simek <monstr@monstr.eu>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] microblaze: remove unnecessary prom.h includes
-Date: Wed, 28 Feb 2018 16:39:35 -0600
-Message-Id: <20180228223937.29196-2-robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 3/3] microblaze: dts: replace 'linux,stdout-path' with 'stdout-path'
+Date: Wed, 28 Feb 2018 16:39:37 -0600
+Message-Id: <20180228223937.29196-4-robh@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180228223937.29196-1-robh@kernel.org>
 References: <20180228223937.29196-1-robh@kernel.org>
@@ -21,65 +22,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to remove prom.h, remove unnecessary prom.h includes.
+'linux,stdout-path' has been deprecated for some time in favor of
+'stdout-path'. Now dtc will warn on occurrences of 'linux,stdout-path'.
+Search and replace the one occurrence with 'stdout-path'.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Michal Simek <monstr@monstr.eu>
+Cc: devicetree@vger.kernel.org
 ---
- arch/microblaze/include/asm/cpuinfo.h | 2 +-
- arch/microblaze/include/asm/pci.h     | 1 -
- arch/microblaze/kernel/platform.c     | 1 -
- arch/microblaze/pci/indirect_pci.c    | 1 -
- 4 files changed, 1 insertion(+), 4 deletions(-)
+ arch/microblaze/boot/dts/system.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/microblaze/include/asm/cpuinfo.h b/arch/microblaze/include/asm/cpuinfo.h
-index 3337417fcdca..8f4996730552 100644
---- a/arch/microblaze/include/asm/cpuinfo.h
-+++ b/arch/microblaze/include/asm/cpuinfo.h
-@@ -13,7 +13,7 @@
- #ifndef _ASM_MICROBLAZE_CPUINFO_H
- #define _ASM_MICROBLAZE_CPUINFO_H
- 
--#include <asm/prom.h>
-+#include <linux/of.h>
- 
- /* CPU Version and FPGA Family code conversion table type */
- struct cpu_ver_key {
-diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
-index 114b93488193..c1ee76d30aed 100644
---- a/arch/microblaze/include/asm/pci.h
-+++ b/arch/microblaze/include/asm/pci.h
-@@ -19,7 +19,6 @@
- #include <linux/scatterlist.h>
- 
- #include <asm/io.h>
--#include <asm/prom.h>
- #include <asm/pci-bridge.h>
- 
- #define PCIBIOS_MIN_IO		0x1000
-diff --git a/arch/microblaze/kernel/platform.c b/arch/microblaze/kernel/platform.c
-index b9529caa507a..2540d60610d9 100644
---- a/arch/microblaze/kernel/platform.c
-+++ b/arch/microblaze/kernel/platform.c
-@@ -12,7 +12,6 @@
- 
- #include <linux/init.h>
- #include <linux/of_platform.h>
--#include <asm/prom.h>
- #include <asm/setup.h>
- 
- static struct of_device_id xilinx_of_bus_ids[] __initdata = {
-diff --git a/arch/microblaze/pci/indirect_pci.c b/arch/microblaze/pci/indirect_pci.c
-index ae4fca46c9f6..24030837a425 100644
---- a/arch/microblaze/pci/indirect_pci.c
-+++ b/arch/microblaze/pci/indirect_pci.c
-@@ -16,7 +16,6 @@
- #include <linux/init.h>
- 
- #include <linux/io.h>
--#include <asm/prom.h>
- #include <asm/pci-bridge.h>
- 
- static int
+diff --git a/arch/microblaze/boot/dts/system.dts b/arch/microblaze/boot/dts/system.dts
+index b620da23febb..8a420c6702eb 100644
+--- a/arch/microblaze/boot/dts/system.dts
++++ b/arch/microblaze/boot/dts/system.dts
+@@ -44,7 +44,7 @@
+ 	} ;
+ 	chosen {
+ 		bootargs = "console=ttyUL0,115200 highres=on";
+-		linux,stdout-path = "/plb@0/serial@84000000";
++		stdout-path = "/plb@0/serial@84000000";
+ 	} ;
+ 	cpus {
+ 		#address-cells = <1>;
 -- 
 2.14.1
