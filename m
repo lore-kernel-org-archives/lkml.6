@@ -1,87 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933772AbeB1RNj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:13:39 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40008 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752856AbeB1Ptu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:49:50 -0500
-X-Google-Smtp-Source: AG47ELsgrZzbAn7DMYLZ9gtDy/VgsNfKE8x/45gj3l5RZHErEpb0jhKh2gfqbzabgB76peVu5zdWBQ==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 02/15] lightnvm: add controller capabilities to 2.0
-Date: Wed, 28 Feb 2018 16:49:22 +0100
-Message-Id: <1519832975-25432-3-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
-References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S933832AbeB1RQ0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:16:26 -0500
+Received: from mga06.intel.com ([134.134.136.31]:55316 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932363AbeB1RQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:16:24 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="asc'?scan'208";a="34362288"
+Message-ID: <1519838202.7902.2.camel@intel.com>
+Subject: Re: [PATCH] e1000e: Fix link status in case of error.
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To: Benjamin Poirier <bpoirier@suse.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2018 09:16:42 -0800
+In-Reply-To: <20180228052006.12074-1-bpoirier@suse.com>
+References: <20180228052006.12074-1-bpoirier@suse.com>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-dYk7EE0c69HXZkRp/BCL"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign missing mccap value on 2.0 path
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/nvme/host/lightnvm.c | 4 +++-
- include/linux/lightnvm.h     | 8 +++++---
- 2 files changed, 8 insertions(+), 4 deletions(-)
+--=-dYk7EE0c69HXZkRp/BCL
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index e276ace28c64..5b2024ebac76 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -318,7 +318,7 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
- 	geo->ws_opt = sec_per_pg;
- 	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values */
- 
--	geo->mccap = le32_to_cpu(src->mccap);
-+	geo->cap = le32_to_cpu(src->mccap);
- 
- 	geo->trdt = le32_to_cpu(src->trdt);
- 	geo->trdm = le32_to_cpu(src->trdm);
-@@ -396,6 +396,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
- 	geo->ws_opt = le32_to_cpu(id->ws_opt);
- 	geo->mw_cunits = le32_to_cpu(id->mw_cunits);
- 
-+	geo->cap = le32_to_cpu(id->mccap);
-+
- 	geo->trdt = le32_to_cpu(id->trdt);
- 	geo->trdm = le32_to_cpu(id->trdm);
- 	geo->tprt = le32_to_cpu(id->twrt);
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 16255fcd5250..b9f0d2070de9 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -288,8 +288,10 @@ struct nvm_geo {
- 	u32	ws_opt;		/* optimal write size */
- 	u32	mw_cunits;	/* distance required for successful read */
- 
--	/* device capabilities */
--	u32	mccap;
-+	/* device capabilities. Note that this represents capabilities in 1.2
-+	 * and media and controller capabilities in 2.0
-+	 */
-+	u32	cap;
- 
- 	/* device timings */
- 	u32	trdt;		/* Avg. Tread (ns) */
-@@ -304,7 +306,7 @@ struct nvm_geo {
- 
- 	/* 1.2 compatibility */
- 	u8	vmnt;
--	u32	cap;
-+	u32	mccap;
- 	u32	dom;
- 
- 	u8	mtype;
--- 
-2.7.4
+On Wed, 2018-02-28 at 14:20 +0900, Benjamin Poirier wrote:
+> Before commit 19110cfbb34d ("e1000e: Separate signaling for link
+> check/link
+> up"), errors which happen after "get_link_status =3D false" in the
+> copper
+> check_for_link callbacks would be ignored and the link considered up.
+> After
+> that commit, any error implies that the link is down. Since all
+> combinations of link up/down and error/no error are possible, do the
+> same
+> thing as e1000e_phy_has_link_generic() and return the link status in
+> a
+> separate variable.
+>=20
+> Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link
+> up")
+> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+
+A minor nitpick, almost every patch you send out, has your patch
+title/subject ending in a period which is not needed or wanted.  Patch
+titles/subjects should not be complete sentences, so they do not need
+punctuation at the end.
+--=-dYk7EE0c69HXZkRp/BCL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlqW4/oACgkQ5W/vlVpL
+7c7UvhAAgKYScTugDY9MeGxIqbFFMgVt5r00sUlKA9rbxhOBw+9GH/Jkex6Njagx
+sg99+ge30xdsQEec7pW9pnzFmf4Upm0PAjNB1rRLEdBah73aLKJZS4W1S8KtTYlB
+cjt1c+Dq2EultiUtx6u4NwG72pZliShrCGD0jVYz3cYJP2DcOSgxUjqwCHotHTMG
+Qp/2a2ZPdJ9Kvu6dvJeT+5HbOvAsBl2PxNG5tZaawtNxVwOQoVGTtktlLIIyTB1t
+ftDnrY0nFFJTJnEus8ZNDqVb7Ca8AGLNcbd9ckYEq+XtVB3sL1dBgv5tQ+akqpYc
+DmTOsmIgzSB2PRU7N8T1Mntc6FaRSUNW1+0l6IykfQEsdtO0kcaJ2gy0L4r9kViN
+nCega+mQXufWg3di84cp2qlIUTLjCgoGdJ4OWKmnjx0Qk4OL3agbE6T5J4V8NtFc
+srD6AAf+PEpa2cC6lMAh/c0k0hocE82hKFovqsnqlmbGHJ6MS2G7UX5ZhhM/FWJI
+VrUxqUO3bjBGEUHa3Pv9QiLJRo2wrggqXVATFPJObBB8QUXD5SJMF/7vS4jJh57G
+9NsmWz8h8lt+OIrjgRTh6SpBQ80PloXSb+5T7YEcuN0L7d1f0DznqeJjZpx44c6o
+S/cS9EkKIM5x/cInAIH7nSEADoSySaBqw83h0S1dPT7WHQ8iakA=
+=aD1y
+-----END PGP SIGNATURE-----
+
+--=-dYk7EE0c69HXZkRp/BCL--
