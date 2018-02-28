@@ -1,54 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeB1Ins (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 03:43:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43482 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751646AbeB1Inr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 03:43:47 -0500
-Date: Wed, 28 Feb 2018 09:43:21 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, x86@kernel.org
-Subject: Re: [PATCH v2 0/8] Decode IA32/X64 CPER
-Message-ID: <20180228084321.GA2969@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
+        id S1752161AbeB1IoK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 03:44:10 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48153 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751646AbeB1IoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 03:44:09 -0500
+Date: Wed, 28 Feb 2018 09:44:12 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Benedikt Spranger <b.spranger@linutronix.de>
+Subject: Re: [PATCH v2 2/6] PCI: Scan all functions when running over
+ Jailhouse
+In-Reply-To: <021d3dde4276c9bf4325f7bdc37e3c47069e48fc.1519799691.git.jan.kiszka@siemens.com>
+Message-ID: <alpine.DEB.2.21.1802280938380.1886@nanos.tec.linutronix.de>
+References: <cover.1519799691.git.jan.kiszka@siemens.com> <021d3dde4276c9bf4325f7bdc37e3c47069e48fc.1519799691.git.jan.kiszka@siemens.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 01:38:56PM -0600, Yazen Ghannam wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Wed, 28 Feb 2018, Jan Kiszka wrote:
+
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> This series adds decoding for the IA32/X64 Common Platform Error Record.
+> Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
+> have a function 0.  Therefore, Linux scans for devices at function 0
+> (devfn 0/8/16/...) and only scans for other functions if function 0
+> has its Multi-Function Device bit set or ARI or SR-IOV indicate
+> there are more functions.
+> 
+> The Jailhouse hypervisor may pass individual functions of a
+> multi-function device to a guest without passing function 0, which
+> means a Linux guest won't find them.
+> 
+> Change Linux PCI probing so it scans all function numbers when
+> running as a guest over Jailhouse.
 
-One much more important thing I forgot about yesterday: how is
-this thing playing into our RAS reporting, x86 decoding chain, etc
-infrastructure?
+>  void pcibios_scan_specific_bus(int busn)
+>  {
+> +	int stride = jailhouse_paravirt() ? 1 : 8;
+>  	int devfn;
+>  	u32 l;
+>  
+>  	if (pci_find_bus(0, busn))
+>  		return;
+>  
+> -	for (devfn = 0; devfn < 256; devfn += 8) {
+> +	for (devfn = 0; devfn < 256; devfn += stride) {
+>  		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+>  		    l != 0x0000 && l != 0xffff) {
+>  			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
 
-Is CPER bypassing it completely and the firmware is doing everything
-now? I sure hope not.
+Shouldn't that take the situation into account where the MFD bit is set on
+a regular devfn, i.e. (devfn % 8) == 0? In that case you'd scan the
+subfunctions twice.
 
-If not, it needs to tie into our infrastructure and the errors need
-to go into the decoding chain where different things look at them and
-filter them.
+Thanks,
 
-Tony, what are your plans here?
-
-Perhaps we can finally get MCE decoding on Intel too :-)
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+	tglx
