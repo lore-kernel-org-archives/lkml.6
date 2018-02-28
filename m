@@ -1,5 +1,5 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519832833-2-203443043851928390
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4104350-1519815217-2-14257936550259696224
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,145 +7,99 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519832833; b=liNQRwE6kaehybg6zw6tLWIxpZX8Shm4v539Q6NYYxab3Cj
-    fhoFj1Svy2SkSjhWgK0nvWMMUkqoAn8yha6Xe3LOfHU8SEpMpJ/twETEFB3T/Byr
-    a64BSKd98Tkfxi1YBz8pI0W/j2pSPI0oSBMXRxQS+YvhjjNtIHu+iX+ryNFS6hR2
-    HPENghAe5/Z9rb1RolgmBO+O+9zDjeOLUOjE/SdyeglGJxhVkHATBJwZykHDeH6P
-    EhU+Ic2DQX5vv4lxhrx97qQCaZH05peR9qUCL6X4HyC5fDrxoE1aY4ArB0dZwSx/
-    rN0G+px7zM58m+BPZ9OWg/H6z4wL3x/TObkEoWA==
+    t=1519815217; b=seS+72gxq3YRyL9GfbOeJBMPCN5DgRZYppYRbXGaADx+af3
+    U2e/xSYXJxuLniU6isJqGSVPA9qSzjDvx8uIMkOQAUkyWVmjF4SuBJdtrurwuHic
+    jpXrbjHZwUJk+Zwj6wmEXh6z8xCsXyZfr6SMp+lA398ycU6QDfr62kkdAyLLbecx
+    pXDiHtZnbXo6CEp1y/VGw8Zq2R1bNqfLm7W4QKxRlfxRNZE+AM7iUmTg8SHhoOa0
+    XhBZ19v4hDa8bfOm59y9o+1ttzssD/iNS7mmi7q6vDFJr4ddY65Gd6jOMA+21ZRe
+    XfEzySrkOvNXQWm0dbz1vv2b1hjIwwDc3BuoFcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519832833; bh=0DqD3AfyJntSZfJrkDhaspcvuO
-    OGdX+mlJ0pYFzuuAQ=; b=MgIDkiKNJeuYuMidigT3q6hXt6kcOkdOTkfBswKSoP
-    XrEgG8KP6V1K0zlQ/noEd8Pvus9nv10QWzlgB4ZPiRS6FZWwYfEz2e8IH9v+PEhd
-    y0qqCXwmPwlUMMKjb80DyxhEv9ccQJEEKlafIkqJ7SY75c8kCe8kpbmXbWi8drr+
-    Grjs5kgutmfrlscrFMRg9DoDUbRdI87kLyVT6dk5f7EnqwgjP7GeAbcgBNjZpa7d
-    m/tDU9M0daiLkVAk+ooRgZ+B0OY4NslbEW0DkkXjz+R8r4wAxHo3vThr4TY5sYv7
-    16InwxT0RoLgtDILZebCs0aFyvl0As2r63i7IVH7HclQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1519815217; bh=e1nkTm/TvJpptATu2Kuu6h8SlH
+    xr2Pwz9XJ9+FYXjjs=; b=e2TpSM6O08tJnuVos2zVB/LvisuTZZ3IFLBsAt0QBB
+    a1MtzHGUxgg5QVafCPvF/aPvR1pxvuGTAbhToNihKrmgwsBybgcA9uvuRCJwBayV
+    6UsjpDXGJfMKHIND2+LoXidvWEF/vEd9PbHLyHpLVjXHiCJ0OxEBtgkQ8hrxGqqE
+    wo5ZB6GpaOzzAnNae0Xm5u7NMaxRTSgzS2lZ2ZRCsIDyadelmQshyBMv1p0hNrXl
+    TpRwCO+u5DMiwX6nIsZNnSe249YU/ZfMN6MFKT+LV1a4wjiy1WN3o0ik/06teQ1d
+    1p/G5G9iSA/3xK4s+ANw3IOPE8o8mRQ+hZ5FbFWqUpXQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arm.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arm.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933070AbeB1PrB (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:47:01 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52098 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932668AbeB1PrA (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:47:00 -0500
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Christoffer Dall" <christoffer.dall@linaro.org>
-Subject: Re: [PATCH 4.9 09/66] KVM: arm/arm64: Check pagesize when allocating a hugepage at Stage 2
-References: <20180129123839.842860149@linuxfoundation.org>
-        <20180129123840.324072883@linuxfoundation.org>
-        <HE1PR04MB321245D8E0ED5DB3DA6F4DA0E0C70@HE1PR04MB3212.eurprd04.prod.outlook.com>
-Date: Wed, 28 Feb 2018 15:46:58 +0000
-In-Reply-To: <HE1PR04MB321245D8E0ED5DB3DA6F4DA0E0C70@HE1PR04MB3212.eurprd04.prod.outlook.com>
-        (Ioana Ciornei's message of "Wed, 28 Feb 2018 15:33:03 +0000")
-Message-ID: <87efl515hp.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752656AbeB1Kwn convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Wed, 28 Feb 2018 05:52:43 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4290 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752283AbeB1Kwi (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:52:38 -0500
+From: Bich HEMON <bich.hemon@st.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Bich HEMON <bich.hemon@st.com>
+Subject: [PATCH 0/2] Update interrupt names
+Thread-Topic: [PATCH 0/2] Update interrupt names
+Thread-Index: AQHTsIIPpjIbAcUZf0OKeLK3O9cgzA==
+Date: Wed, 28 Feb 2018 10:51:16 +0000
+Message-ID: <1519815044-22669-1-git-send-email-bich.hemon@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_06:,,
+ signatures=0
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Ioana,
+This patchset updates existing stm32 usart driver by updating interrupt
+initialization by name.
 
-Ioana Ciornei <ioana.ciornei@nxp.com> writes:
+Bich Hemon (2):
+  dt-bindings: serial: stm32: add wakeup option using note
+  serial: stm32: update interrupt initialization
 
->> 4.9-stable review patch.  If anyone has any objections, please let me know.
->
-> I know that my response comes late but I just found out that the version of the patch applied in 4.9-stable, the one in this email, is different than the one applied on 4.14-stable.
-> This is the one applied on 4.14: https://patchwork.kernel.org/patch/10177715/
->
-> As you can see, the check against PMD_SIZE which is present in 4.14 is not present in this version of the patch.
->
-> Am I missing something or should I send a patch to rectify this?
-
-You're right. The check against PMD_SIZE was lost during the rebase to
-v4.9. I should've noticed this before it got sent.
-
-Please send a patch to fix this. Alternately, I can fix this with your
-reported by.
-
-Thanks,
-Punit
-
->
-> Thanks,
-> Ioana Ciornei
->
->> 
->> ------------------
->> 
->> From: Punit Agrawal <punit.agrawal@arm.com>
->> 
->> commit c507babf10ead4d5c8cca704539b170752a8ac84 upstream.
->> 
->> KVM only supports PMD hugepages at stage 2 but doesn't actually check that
->> the provided hugepage memory pagesize is PMD_SIZE before populating
->> stage 2 entries.
->> 
->> In cases where the backing hugepage size is smaller than PMD_SIZE (such as
->> when using contiguous hugepages), KVM can end up creating stage 2
->> mappings that extend beyond the supplied memory.
->> 
->> Fix this by checking for the pagesize of userspace vma before creating PMD
->> hugepage at stage 2.
->> 
->> Fixes: 66b3923a1a0f77a ("arm64: hugetlb: add support for PTE contiguous
->> bit")
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
->> Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> 
->> ---
->>  arch/arm/kvm/mmu.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> --- a/arch/arm/kvm/mmu.c
->> +++ b/arch/arm/kvm/mmu.c
->> @@ -1284,7 +1284,7 @@ static int user_mem_abort(struct kvm_vcp
->>  		return -EFAULT;
->>  	}
->> 
->> -	if (is_vm_hugetlb_page(vma) && !logging_active) {
->> +	if (vma_kernel_pagesize(vma) && !logging_active) {
->>  		hugetlb = true;
->>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->>  	} else {
->> 
->
+ Documentation/devicetree/bindings/serial/st,stm32-usart.txt | 4 ++++
+ drivers/tty/serial/stm32-usart.c                            | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
 -- 
-<JHM> Being overloaded is the sign of a true Debian maintainer.
+1.9.1
