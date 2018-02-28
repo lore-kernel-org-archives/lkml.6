@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELvtRj6ahRBwH+R482iPbMax59/gRkFve/zbnyCiooGI8rl/lClyPSwMc/IXUVNtFTN+/YXj
-ARC-Seal: i=1; a=rsa-sha256; t=1519831339; cv=none;
+X-Google-Smtp-Source: AH8x227J0HidX2x9ij/6RRVZRPi41XAq7u6Vwy4rXx1DORG6P+XGHTFYjFWF5TXBWaxZuEcRYyiT
+ARC-Seal: i=1; a=rsa-sha256; t=1519831338; cv=none;
         d=google.com; s=arc-20160816;
-        b=dL6qax3z56rsg5hN7nAUvBbOj0q/JmoWXziByPAEotEQO9sLGsC0xF+iXnE+kO7LXN
-         Aa09ehz3yz5x0id5WruWo00OjhdYKPBaMwR5YosqdL2CfVMHRWUalzcd76fSkcC4DRui
-         1cIxB9Jtfm7b3yUA60wJKSdQVzUUK5auTXC4fa3uI5VBGyaxvOx1Co3E41hPexeBU5Fd
-         a9WSusF1TbQ5/jNRM3pnzDKERHqyg0D79sulCFXOf5EvCkevAJGD4RCkX2UI5HRkDPPH
-         gItgR25zQDRDQAmyCMq+i8YyebV7OZXgtKKb0Jypsdg8UGxPXkO7fFbwL7Wpcg7clkuX
-         OZpg==
+        b=BCtuolNb94jtQT/DnENifoZgtucVlHrboFLpndoF+XJvssViW3vsJLvBB3CUHbt21F
+         lzVh7LzxaKCIHuMGS7V40WLB0XfkD5tqbCdYBQsvnf3jRLJN1wf/W+PGsfcc4/NVThTY
+         gJLuRSIbtuKZBpHBc3pw4uSruxXYx9ghTIngeoYVq64FnSyqyu+tR4wi5AxMdnb0ubcO
+         YyBwPmb0BPO8jQft800bCpvvLftea/nVMI51JFwlIrzlIpo+tWDiX2gAnH+r6CpIScdr
+         CNq3UzeeBYVYHQVp/2cDzncULXlyW7nb2y3/pAUcnrINHR2ZUfoC8ZYucq63x3MmuBHS
+         5ibg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=BFDx7kOwTlnYdl/K2bCcF4E0DXAsolOYCq7v0JAl0Dw=;
-        b=Vx6OR0CAyys8h0ZCeDfAcROSEdtFkXiWOfr9SZECk8FegwVZr/jjrhT9KEUadi2PL4
-         sUmj8dN64Qa6gqAHl+5MctJJl0AcHIEHDhsQLL1fYlmtx0IztBhQKBnFfMhjqu2RjCzW
-         OLVPOj8CYwgunKMozsTEFunZf3zvYatlqFXK2ZgvmWdX6rmKk5t/Mog5H8q/fXlrb/ly
-         9WawpA0jajlA5U6uBVVD741OHgh+Lm3UHo/RqWVeFNYb6Xq+l0YB7RLGRs99EF/Q7mTr
-         73I4YmY6dVodvb8Ixhn71pnjqp5Y11vuQT2n6OSAy9pzxUTEsWSrL2kooHtOvex8ogVw
-         ateg==
+        bh=d2JDXerV0zAdHg5TaW9SlC42MYjM8PF+r76f/nMPxLo=;
+        b=refAyPgagYgvftbi7Cd2uQ/mjiIBmhFZAjP5Nv0mF11buJRnGlrAik+4A/5s8c0Wrh
+         G1q6Pehkk5CQGh84buxZerCEnCy7plMLchxMoiP5vD5a38XPIfIdy+EBVrdWbPatQ3Vt
+         k8L39wVvoF3I91gtH81Uhseuo9dhzbLpt2J20PPhQQDuYWPybwghzZDHeqAiTxWAUPBq
+         wWL5jG96b8bwvunslrCwU4eE1E9xq91VWlxUdk+XXDtTGNamhU5V9sbDg3wR+MyK2tJQ
+         tRrpIO8zUYgPUCxlXX/n/5AD/oN7WAQRiYDantIzgea4I/7hwPJwJL/MCu8u7VqOQ/iO
+         Yt0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,19 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Mathias Nyman" <mathias.nyman@linux.intel.com>,
+ "Oliver Neukum" <oneukum@suse.com>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.196117579@decadent.org.uk>
+Date: Wed, 28 Feb 2018 15:20:22 +0000
+Message-ID: <lsq.1519831222.695583148@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 038/140] xhci: Don't add a virt_dev to the devs array
- before it's fully allocated
+Subject: [PATCH 3.2 062/140] usb: add RESET_RESUME for ELSA MicroLink 56K
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658666539369196?=
-X-GMAIL-MSGID: =?utf-8?q?1593658666539369196?=
+X-GMAIL-THRID: =?utf-8?q?1593658665862784090?=
+X-GMAIL-MSGID: =?utf-8?q?1593658665862784090?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,61 +50,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 5d9b70f7d52eb14bb37861c663bae44de9521c35 upstream.
+commit b9096d9f15c142574ebebe8fbb137012bb9d99c2 upstream.
 
-Avoid null pointer dereference if some function is walking through the
-devs array accessing members of a new virt_dev that is mid allocation.
+This modem needs this quirk to operate. It produces timeouts when
+resumed without reset.
 
-Add the virt_dev to xhci->devs[i] _after_ the virt_device and all its
-members are properly allocated.
-
-issue found by KASAN: null-ptr-deref in xhci_find_slot_id_by_port
-
-"Quick analysis suggests that xhci_alloc_virt_device() is not mutex
-protected. If so, there is a time frame where xhci->devs[slot_id] is set
-but not fully initialized. Specifically, xhci->devs[i]->udev can be NULL."
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: There is an extra failure path, so we may need to
- free dev->eps[0].ring] 
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -873,10 +873,9 @@ int xhci_alloc_virt_device(struct xhci_h
- 		return 0;
- 	}
+ drivers/usb/core/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -128,6 +128,9 @@ static const struct usb_device_id usb_qu
+ 	/* appletouch */
+ 	{ USB_DEVICE(0x05ac, 0x021a), .driver_info = USB_QUIRK_RESET_RESUME },
  
--	xhci->devs[slot_id] = kzalloc(sizeof(*xhci->devs[slot_id]), flags);
--	if (!xhci->devs[slot_id])
-+	dev = kzalloc(sizeof(*dev), flags);
-+	if (!dev)
- 		return 0;
--	dev = xhci->devs[slot_id];
- 
- 	/* Allocate the (output) device context that will be used in the HC. */
- 	dev->out_ctx = xhci_alloc_container_ctx(xhci, XHCI_CTX_TYPE_DEVICE, flags);
-@@ -925,9 +924,19 @@ int xhci_alloc_virt_device(struct xhci_h
- 		 &xhci->dcbaa->dev_context_ptrs[slot_id],
- 		 le64_to_cpu(xhci->dcbaa->dev_context_ptrs[slot_id]));
- 
-+	xhci->devs[slot_id] = dev;
++	/* ELSA MicroLink 56K */
++	{ USB_DEVICE(0x05cc, 0x2267), .driver_info = USB_QUIRK_RESET_RESUME },
 +
- 	return 1;
- fail:
--	xhci_free_virt_device(xhci, slot_id);
-+
-+	if (dev->eps[0].ring)
-+		xhci_ring_free(xhci, dev->eps[0].ring);
-+	if (dev->in_ctx)
-+		xhci_free_container_ctx(xhci, dev->in_ctx);
-+	if (dev->out_ctx)
-+		xhci_free_container_ctx(xhci, dev->out_ctx);
-+	kfree(dev);
-+
- 	return 0;
- }
- 
+ 	/* Avision AV600U */
+ 	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
+ 	  USB_QUIRK_STRING_FETCH_255 },
