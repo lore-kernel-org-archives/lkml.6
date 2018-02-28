@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933248AbeB1SoP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:44:15 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35418 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933131AbeB1Snt (ORCPT
+        id S933291AbeB1Sol (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:44:41 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44970 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933123AbeB1Snr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:43:49 -0500
-X-Google-Smtp-Source: AG47ELuCrJVUGIy05PgvkzkyWXRzrI7B/IbkJRqRTcbKS1z6ZEfoAT4Wl4r5/Eq/c09Z7pRKLVLt/w==
+        Wed, 28 Feb 2018 13:43:47 -0500
+X-Google-Smtp-Source: AH8x225AD6wb14/V1PiXm6r9vQc9RgabX9yzY9p5k1NIsqQiwDSBqHul/BnVWBcWHEoYBNNwrd9nxQ==
 From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
@@ -16,9 +16,9 @@ To: Jiri Kosina <jikos@kernel.org>,
         =?UTF-8?q?Cl=C3=A9ment=20VUCHENER?= <clement.vuchener@gmail.com>,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Subject: [PATCH v4 4/4] HID: steam: add battery device.
-Date: Wed, 28 Feb 2018 19:43:22 +0100
-Message-Id: <20180228184322.29636-5-rodrigorivascosta@gmail.com>
+Subject: [PATCH v4 3/4] HID: steam: command to check wireless connection
+Date: Wed, 28 Feb 2018 19:43:21 +0100
+Message-Id: <20180228184322.29636-4-rodrigorivascosta@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180228184322.29636-1-rodrigorivascosta@gmail.com>
 References: <20180228184322.29636-1-rodrigorivascosta@gmail.com>
@@ -26,218 +26,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The wireless Steam Controller is battery operated, so add the battery
-device and power information.
+The wireless adaptor does not tell if a device is already connected when
+steam_probe() is run.
+Use a command to request the connection status.
 
 Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 ---
- drivers/hid/hid-steam.c | 141 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 140 insertions(+), 1 deletion(-)
+ drivers/hid/hid-steam.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index 894b678685d3..ff38fddb4f6c 100644
+index 9e4b1f640bef..894b678685d3 100644
 --- a/drivers/hid/hid-steam.c
 +++ b/drivers/hid/hid-steam.c
-@@ -19,6 +19,7 @@
- #include <linux/workqueue.h>
- #include <linux/rcupdate.h>
- #include <linux/delay.h>
-+#include <linux/power_supply.h>
- #include "hid-ids.h"
- 
- MODULE_LICENSE("GPL");
-@@ -43,6 +44,10 @@ struct steam_device {
- 	struct work_struct work_connect;
- 	bool connected;
- 	char serial_no[11];
-+	struct power_supply_desc battery_desc;
-+	struct power_supply __rcu *battery;
-+	u8 battery_charge;
-+	u16 voltage;
- };
- 
- static int steam_recv_report(struct steam_device *steam,
-@@ -164,6 +169,85 @@ static void steam_input_close(struct input_dev *dev)
- 	hid_hw_close(steam->hdev);
+@@ -114,6 +114,11 @@ static int steam_send_report(struct steam_device *steam,
+ 	return ret;
  }
  
-+static enum power_supply_property steam_battery_props[] = {
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_SCOPE,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_CAPACITY,
-+};
-+
-+static int steam_battery_get_property(struct power_supply *psy,
-+				enum power_supply_property psp,
-+				union power_supply_propval *val)
++static inline int steam_send_report_byte(struct steam_device *steam, u8 cmd)
 +{
-+	struct steam_device *steam = power_supply_get_drvdata(psy);
-+	unsigned long flags;
-+	s16 volts;
-+	u8 batt;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&steam->lock, flags);
-+	volts = steam->voltage;
-+	batt = steam->battery_charge;
-+	spin_unlock_irqrestore(&steam->lock, flags);
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		val->intval = 1;
-+		break;
-+	case POWER_SUPPLY_PROP_SCOPE:
-+		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		val->intval = volts * 1000; /* mV -> uV */
-+		break;
-+	case POWER_SUPPLY_PROP_CAPACITY:
-+		val->intval = batt;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+	return ret;
++	return steam_send_report(steam, &cmd, 1);
 +}
 +
-+static int steam_battery_register(struct steam_device *steam)
-+{
-+	struct power_supply *battery;
-+	struct power_supply_config battery_cfg = { .drv_data = steam, };
-+	unsigned long flags;
-+	int ret;
-+
-+	steam->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
-+	steam->battery_desc.properties = steam_battery_props;
-+	steam->battery_desc.num_properties = ARRAY_SIZE(steam_battery_props);
-+	steam->battery_desc.get_property = steam_battery_get_property;
-+	steam->battery_desc.name = devm_kasprintf(&steam->hdev->dev,
-+			GFP_KERNEL, "steam-controller-%s-battery",
-+			steam->serial_no);
-+	if (!steam->battery_desc.name)
-+		return -ENOMEM;
-+
-+	/* avoid the warning of 0% battery while waiting for the first info */
-+	spin_lock_irqsave(&steam->lock, flags);
-+	steam->voltage = 3000;
-+	steam->battery_charge = 100;
-+	spin_unlock_irqrestore(&steam->lock, flags);
-+
-+	battery = power_supply_register(&steam->hdev->dev,
-+			&steam->battery_desc, &battery_cfg);
-+	if (IS_ERR(battery)) {
-+		ret = PTR_ERR(battery);
-+		hid_err(steam->hdev,
-+				"%s:power_supply_register failed with error %d\n",
-+				__func__, ret);
-+		return ret;
-+	}
-+	rcu_assign_pointer(steam->battery, battery);
-+	power_supply_powers(battery, &steam->hdev->dev);
-+	return 0;
-+}
-+
- static int steam_register(struct steam_device *steam)
+ static int steam_get_serial(struct steam_device *steam)
  {
- 	struct hid_device *hdev = steam->hdev;
-@@ -251,6 +335,10 @@ static int steam_register(struct steam_device *steam)
- 
- 	rcu_assign_pointer(steam->input, input);
- 
-+	/* ignore battery errors, we can live without it */
-+	if (steam->quirks & STEAM_QUIRK_WIRELESS)
-+		steam_battery_register(steam);
-+
+ 	/*
+@@ -135,6 +140,16 @@ static int steam_get_serial(struct steam_device *steam)
  	return 0;
- 
- input_register_fail:
-@@ -261,11 +349,18 @@ static int steam_register(struct steam_device *steam)
- static void steam_unregister(struct steam_device *steam)
- {
- 	struct input_dev *input;
-+	struct power_supply *battery;
- 
- 	rcu_read_lock();
- 	input = rcu_dereference(steam->input);
-+	battery = rcu_dereference(steam->battery);
- 	rcu_read_unlock();
- 
-+	if (battery) {
-+		RCU_INIT_POINTER(steam->battery, NULL);
-+		synchronize_rcu();
-+		power_supply_unregister(battery);
-+	}
- 	if (input) {
- 		RCU_INIT_POINTER(steam->input, NULL);
- 		synchronize_rcu();
-@@ -568,12 +663,44 @@ static void steam_do_input_event(struct steam_device *steam,
- 	input_sync(input);
  }
  
 +/*
-+ * The size for this message payload is 11.
-+ * The known values are:
-+ *  Offset| Type  | Meaning
-+ * -------+-------+---------------------------
-+ *  4-7   | u32   | sequence number
-+ *  8-11  | --    | always 0
-+ *  12-13 | u16   | voltage (mV)
-+ *  14    | u8    | battery percent
++ * This command requests the wireless adaptor to post an event
++ * with the connection status. Useful if this driver is loaded when
++ * the controller is already connected.
 + */
-+static void steam_do_battery_event(struct steam_device *steam,
-+		struct power_supply *battery, u8 *data)
++static inline int steam_request_conn_status(struct steam_device *steam)
 +{
-+	unsigned long flags;
-+
-+	s16 volts = le16_to_cpup((__le16 *)(data + 12));
-+	u8 batt = data[14];
-+
-+	/* Creating the battery may have failed */
-+	rcu_read_lock();
-+	battery = rcu_dereference(steam->battery);
-+	if (likely(battery)) {
-+		spin_lock_irqsave(&steam->lock, flags);
-+		steam->voltage = volts;
-+		steam->battery_charge = batt;
-+		spin_unlock_irqrestore(&steam->lock, flags);
-+		power_supply_changed(battery);
-+	}
-+	rcu_read_unlock();
++	return steam_send_report_byte(steam, 0xb4);
 +}
 +
- static int steam_raw_event(struct hid_device *hdev,
- 			struct hid_report *report, u8 *data,
- 			int size)
+ static int steam_input_open(struct input_dev *dev)
  {
- 	struct steam_device *steam = hid_get_drvdata(hdev);
- 	struct input_dev *input;
-+	struct power_supply *battery;
- 
- 	if (!steam)
- 		return 0;
-@@ -626,7 +753,19 @@ static int steam_raw_event(struct hid_device *hdev,
+ 	struct steam_device *steam = input_get_drvdata(dev);
+@@ -363,6 +378,7 @@ static int steam_probe(struct hid_device *hdev,
+ 			goto hid_hw_open_fail;
  		}
- 		break;
- 	case 0x04:
--		/* TODO battery status */
-+		if (steam->quirks & STEAM_QUIRK_WIRELESS) {
-+			rcu_read_lock();
-+			battery = rcu_dereference(steam->battery);
-+			if (likely(battery)) {
-+				steam_do_battery_event(steam, battery, data);
-+			} else {
-+				dbg_hid(
-+				  "%s: battery data without connect event\n",
-+				  __func__);
-+				steam_do_connect_event(steam, true);
-+			}
-+			rcu_read_unlock();
-+		}
- 		break;
- 	}
- 	return 0;
+ 		hid_info(hdev, "Steam wireless receiver connected");
++		steam_request_conn_status(steam);
+ 	} else {
+ 		ret = steam_register(steam);
+ 		if (ret) {
 -- 
 2.16.2
