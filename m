@@ -1,92 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932155AbeB1NBO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:01:14 -0500
-Received: from regular1.263xmail.com ([211.150.99.138]:38791 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932066AbeB1NBM (ORCPT
+        id S932135AbeB1NHx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:07:53 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:43055 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbeB1NHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:01:12 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: robin.murphy@arm.com
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <77fd01b7be4465c845cce387e3324a64>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A96A809.2020509@rock-chips.com>
-Date: Wed, 28 Feb 2018 21:00:57 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
-MIME-Version: 1.0
-To: Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>, simon xue <xxm@rock-chips.com>,
-        devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 08/13] iommu/rockchip: Control clocks needed to access
- the IOMMU
-References: <20180124103516.2571-1-jeffy.chen@rock-chips.com> <20180124103516.2571-9-jeffy.chen@rock-chips.com> <20180130170515.3g6wtadqgmehxh5b@rob-hp-laptop> <CAAFQd5A383Ey3Ntg_hcsvzHj2DsSuW6RMQ+kP=LPAZ1YmqjHOg@mail.gmail.com> <CAL_JsqKFW0USD_TgGCO-s4wMBw9O2psToMObjeSEwCNReq-3=w@mail.gmail.com> <5A72F7D2.1050201@rock-chips.com> <5A8FEBC6.4000408@rock-chips.com> <33d1d6bd-3455-5cad-6990-a9ca94063f3a@arm.com>
-In-Reply-To: <33d1d6bd-3455-5cad-6990-a9ca94063f3a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Feb 2018 08:07:51 -0500
+From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+To: kishon@ti.com
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.shevchenko@gmail.com,
+        Rolf Evers-Fischer <embedded24@evers-fischer.de>
+Subject: [PATCH v4 0/3] pci: endpoint: Fix double free in pci_epf_create()
+Date: Wed, 28 Feb 2018 14:07:16 +0100
+Message-Id: <20180228130719.31218-1-embedded24@evers-fischer.de>
+X-Mailer: git-send-email 2.16.2
+X-Provags-ID: V03:K0:SqhKdHUopVWtKJRM0RDI8WhbDAV3gph4n+/65cX2WeAT3A12dIY
+ zOyndKnrJnCYygLrUmJK+lrJx5kjPM02zsmzclIW5iqf76WS86uRh4r71n3CpAFykEKPhbJ
+ VC8Awaj0gyJHLeSPi+CdDv/UKC1dMZcIkR5r3Nz23VzrNszZJfo7wEQs7/KB/WQkfs/RrZn
+ jywF1YCtKOIzi5cj7sdzg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dPj4wDhfWmM=:1lqv0LvJ41QLfj4f8k5dxk
+ aUo9V8Xm0p2ZKN6t59PGR6TbmZCfRm2q5Ygn9wH49glV6OKyBmOc6yOH6YG/eGolbqpaQkDeJ
+ oo8SJ2iWXezwnd00tgcUyIMfjQUgFGXPbJuNrFvGCpSoWKlgtpVb245OAWuv26uA/y3TD0/yP
+ qfKCec7spH01o8nn+7EOjHG6kxnKfArP3tZeHAbPz+VfoCI3u3ez4Ove/gyiqQrlbEoLziCUh
+ wbT4mWcPjImFTvSLYc/tQywiX/Zmpd2EGITW2a+jkibtY4cfvgT0YTblRJfu0FIGwM8U/Ka4c
+ jHFzLd9yX5uptyU867AQh8C7mG/1TDkLCoDb1WWu27bHhKz8oVQZFSvcuhW+1Uw3JOaM5Hxyh
+ NdKFAj9wcfE1sdv5AG5MmYRFRM5vL0yNBmlqFRRp+W9d+YKVRUjZS6dJ0WhuhWqnID7hQOu1N
+ 98E359m6/dzwxrIIPU0Zm3wjWEAaUwruk1kVBWzWeay+CGdoh4bJLlwnNWF8g4mgYVU/+xO1o
+ 6Yo4gBPTqZ1TN3+28yEFNctixwj9y/jmR31+MtlccMw5B0TYkVbcaF3vfEiWamgjHqYzimEPI
+ hpxwrHzxaPFwXAGalSmBi7XkMtEBNA2f7W6zVDJpk11f/W2mWwa1kxMdkfMldggn+8ZMJwG7e
+ cwd51jMf8rULfcHreWvIQjPoVujeNdQav0LE4gnggL9tVU1XCLuu2QzXR6g6CueCr6sYNsP7V
+ 2own1ss7OtarhaDRH8VNr2Nu0tyihSWZN0hk4A==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+This is version 4 of a patchset to avoid double free in function
+'pci_epf_create()'.
 
-Thanks for your reply.
+When I accidentally created a new endpoint device with an empty name,
+the kernel warned about "attempted to be registered with empty name!"
+and crashed afterwards.
 
-On 02/28/2018 12:59 AM, Robin Murphy wrote:
->>> the rockchip IOMMU is part of the master block in hardware, so it needs
->>> to control the master's power domain and some of the master's clocks
->>> when access it's registers.
->>>
->>> and the number of clocks needed here, might be different between each
->>> IOMMUs(according to which master block it belongs), it's a little like
->>> our power domain:
->>> https://elixir.free-electrons.com/linux/latest/source/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L935
->>>
->>>
->>>
->>> i'm not sure how to describe this correctly, is it ok use something like
->>> "the same as it's master block"?
->>
->> would it make sense to add a property to specify the master who owns
->> the iommu, and we can get all clocks(only some of those clocks are
->> actually needed) from it in the of_xlate()? and we can also reuse the
->> clock-names of that master to build clk_bulk_data and log errors in
->> clk_bulk_get.
->
-> I'm inclined to agree with Rob here - if we're to add anything to the
-> binding, it should only be whatever clock inputs are defined for the
-> IOMMU IP block itself. If Linux doesn't properly handle the interconnect
-> clock hierarchy external to a particular integration, that's a separate
-> issue and it's not the binding's problem.
->
-> I actually quite like the hack of "borrowing" the clocks from
-> dev->of_node in of_xlate() - you shouldn't need any DT changes for that,
-> because you already know that each IOMMU instance only has the one
-> master device anyway.
+It turned out that the crash was not caused by the 'device_add()'
+function itself, but by a double kfree of 'epf->name' and 'epf'.
 
-Thanks:) but actually we are going to support sharing IOMMU between 
-multiple masters(one of them is the main master i think) in the newer 
-chips(not yet supported on upstream kernel)...
+The first patch just simplifies the code, while the second patch
+fixes the problem. The third patch removes the goto labels.
 
-So we might have to get all clocks from all masters, or find a way to 
-specify the main master...and for the multiple masters case, do it in 
-of_xlate() turns out to be a little racy...maybe we can add a property 
-to specify main master, and get it's clocks in probe()?
+Thank you Andy and Kishon for your Ack/Review on v3 for patches 1 and 2.
+In v4 of these patches only the first lines of the commit messages
+have been changed.
 
->
-> Robin.
+Changes in v4:
+- s/pci/PCI and s/epf/EPF in the first line of
+  recent commit messages (thanks, Bjorn!)
+- The new patch #3 removes the goto labels
+  in function 'pci_epf_create()' (thanks, Lorenzo!)
+
+Changes in v3:
+- Matched to other pending pci endpoint commits (thanks, Bjorn!)
+- Added "Fixes" tag in patch 2 (thanks, Andy!)
+
+Changes in v2:
+- Based on feedback from Lorenzo, Andy and Kishon (thanks!)
+- Change IDs removed
+- First patch completely reworked in order to eliminate the
+  need for the second 'kstrdup' allocation and the 'kfree' of
+  the first allocation.
+  It was tested with name="pci_epf_test.0" and name="pci_epb":
+  The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
+
+Rolf Evers-Fischer (3):
+  PCI: endpoint: Simplify name allocation for EPF device
+  PCI: endpoint: Fix kernel panic after put_device()
+  PCI: endpoint: pci_epf_create: remove goto labels
+
+ drivers/pci/endpoint/pci-epf-core.c | 50 +++++++++----------------------------
+ 1 file changed, 12 insertions(+), 38 deletions(-)
+
+-- 
+2.16.2
