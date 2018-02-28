@@ -1,448 +1,311 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1327050-1519862029-2-12820839298981411662
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519839431-2-6506820970586387979
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES frcaro,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: .config.gz
+X-Spam-charsets: to='iso-8859-1', cc='iso-8859-1', plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519862029; b=Oqhqf7eQS1dCC9+JC0r14pA0AOPYD/0A+o4t4xK9Imo3+/z
-    KJvtMH8TQT1RNE9JMjnAyVXrUQ0X/T1R3tdH/h03lVb9rZ61AcW8CBzBxKXLgDmb
-    EkCzgNnOVc2+WAh1jyNqoQUtOGU3bqCKT4bPZeJEsuO7ttTdp8XH9CoF5w7frS0t
-    aws/RrLmpwWsi0GdyhnD3GJbaaZfFCdTTelfznaQIzVZ6NX6ptHmNqajOO6thsiF
-    CLmVeUMhKz84usagBDbxi70duvuRMuVFnHTqSo/dyeWooHdfvgtsGEYwAWIxoWVL
-    f8KwkpAkL/eTYHiAcvcVXpk5a9/qB7kThh26jEw==
+    t=1519839430; b=teT05NLQYOz3Qn6oAVaHqMV7Sp6xo4NyB5eVGnzy5xhXZ+7
+    hF6dGV4izqtArrrXCFIa3jjt4fCxDFPyIBhNVds5pm8IHdQKlZdgACk7lmZSAgq+
+    jjjrRvpi4QuE3fBSVjwUZoHJ3+4hlIkjOEJ0yDe1QOzsja2kVIZzWgQAlLxpXulq
+    az4gIyqDWVkmar0A/YLHLBIg/LYXqKtBFZUfoywLCjN3dXOnCfzPU2Oz2zI0VJSe
+    maOWjs9HNHUvl9WA0HN6dUV/9hHL7w6pMRSl027CnirekBaTZo4IHh/h6JTp26N8
+    jrs5Gj6Y9IDb/R2PbIuTChQ0ROTaKnA5/kXrEtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519862029; bh=Py6nvQtuMxMLUGkVwBNLmWJs8F
-    1f2fN2gjeH4wbxs1Y=; b=aReuy+EsBx3o2GWHiVSASAVVRRH3g1teAsfoALSziR
-    xOl2kRgftJ3mcBF0zvBbgQOmiDiBfzmdIGrqF4KWiviFxbVgwn9Lnek2KViKsC/F
-    +opLfMxkXnh2EeG8TNmclJwsOwbjL+hG7FYO5UtN8S7kytzxe3xMh3P57HfX6Uf7
-    AOWW/I/CksR7C7KMubL5vld8JcAjNg1Ta6DiJA1Fu5BS9wf4Ef5nRuG1LXteeiLM
-    iYGxwVQXsi7BoeW6qvYTLeq+65+gP/MKR+Y83z1k/889ZDq8aMgCTldfTTVR31aE
-    rjXwBPZ9wmQOQa4yELoL03Y8nGYgdbkYBy9rM8OQW+ww==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=arctest; t=1519839430; bh=PnHsJ8B
+    cab9ZQ6Je0mq9lrdihcSCMXhP8N2Rh/YhJJM=; b=PgYaw3u/nc9iPHHqXVCDIxZ
+    NmB7d5vj0etOElpgq9MX9owkZWiR1QCasv8hgp+Kj5NfgrASqxQcOzXLQQ5zujuP
+    h+KITsxJ+FJqt1RYKMBxMBxGDd85XzDyTKIWD0GIMCFviQcmN4EGaR9flijP8471
+    jLi32PwRfK3KzuV3fagNGAu1Lu2cwB8R2MDVdwloji6zq+S7KnwVmKatP9wntVlz
+    Wy6GK5wPryPitHawadco+h2pLwJT4+/YMBlSRv5a5bCFVMUbhhfbv9jVTPiQVw2i
+    mPc4ylTyYVgSoQ+OqnejTx+iFzsctnAmdVPPHKxu3+eByR5YVCKSoo3oswKg1Ag=
+    =
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965077AbeB1Xxo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 18:53:44 -0500
-Received: from mga17.intel.com ([192.55.52.151]:9498 "EHLO mga17.intel.com"
+        id S932621AbeB1Rgp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:36:45 -0500
+Received: from mga18.intel.com ([134.134.136.126]:37189 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964830AbeB1Xxn (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:53:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S932543AbeB1Rgn (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:36:43 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
-   d="gz'50?scan'50,208,50";a="34945377"
-Date: Thu, 1 Mar 2018 07:52:48 +0800
+   d="scan'208";a="178789648"
+Date: Thu, 1 Mar 2018 01:35:48 +0800
 From: kbuild test robot <lkp@intel.com>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: kbuild-all@01.org, gregkh@linuxfoundation.org, oneukum@suse.com,
-        willy@infradead.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH v4] usb: core: Add "quirks" parameter for usbcore
-Message-ID: <201803010737.uBXbRAIU%fengguang.wu@intel.com>
-References: <20180226150457.22299-1-kai.heng.feng@canonical.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Jann Horn <jann@thejh.net>, Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v8 06/11] bpf,landlock: Add a new map type: inode
+Message-ID: <201803010105.33CKFRaJ%fengguang.wu@intel.com>
+References: <20180227004121.3633-7-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2oS5YaxWCcQjTEyO"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180226150457.22299-1-kai.heng.feng@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180227004121.3633-7-mic@digikod.net>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 X-SA-Exim-Connect-IP: <locally generated>
 X-SA-Exim-Mail-From: fengguang.wu@intel.com
 X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Mickaël,
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I love your patch! Perhaps something to improve:
 
-Hi Kai-Heng,
+[auto build test WARNING on bpf-next/master]
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on v4.16-rc3 next-20180228]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Kai-Heng-Feng/usb-core-Add-quirks-parameter-for-usbcore/20180227-211635
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-config: tile-tilegx_defconfig (attached as .config)
-compiler: tilegx-linux-gcc (GCC) 7.2.0
+url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM-Toward-unprivileged-sandboxing/20180228-233659
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
 reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=tile 
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-All errors (new ones prefixed by >>):
 
->> drivers/usb/core/quirks.c:15:43: error: expected ')' before 'sizeof'
-    module_param_string(quirks, quirks_param, sizeof(quirks_param), 0644);
-                                              ^~~~~~
-   drivers/usb/core/quirks.c:16:26: error: expected ')' before string constant
-    MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
-                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sparse warnings: (new ones prefixed by >>)
 
-vim +15 drivers/usb/core/quirks.c
+   include/linux/init.h:134:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/init.h:135:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/init.h:268:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/init.h:269:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/printk.h:200:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:32:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:34:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:37:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:38:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:40:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:42:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:43:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:45:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:46:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:49:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/qspinlock.h:53:32: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/workqueue.h:646:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/workqueue.h:647:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:34:12: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:35:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:62:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:64:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:173:8: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:174:8: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:174:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:176:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:178:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:180:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/apic.h:254:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/apic.h:430:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/io_apic.h:184:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:113:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:125:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:126:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:110:33: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:112:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:114:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:118:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:126:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/hrtimer.h:497:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/memory_hotplug.h:221:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mmzone.h:1292:15: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/kmemleak.h:29:33: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/kasan.h:29:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/kasan.h:30:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/pgtable.h:28:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/slab.h:135:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/slab.h:716:6: sparse: attribute 'indirect_branch': unknown attribute
+>> security/landlock/tag.c:127:18: sparse: incompatible types in comparison expression (different address spaces)
+   security/landlock/tag.c:257:16: sparse: incompatible types in comparison expression (different address spaces)
+   security/landlock/tag.c:263:24: sparse: incompatible types in comparison expression (different address spaces)
+   security/landlock/tag.c:357:16: sparse: incompatible types in comparison expression (different address spaces)
+--
+   arch/x86/include/asm/mem_encrypt.h:37:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:38:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:40:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:42:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:43:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:45:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:46:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/mem_encrypt.h:49:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/qspinlock.h:53:32: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/workqueue.h:646:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/workqueue.h:647:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/wait_bit.h:41:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:34:12: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:35:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/numa.h:62:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:64:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:173:8: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/vmalloc.h:174:8: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:174:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:176:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:178:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/fixmap.h:180:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/apic.h:254:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/apic.h:430:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/io_apic.h:184:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:113:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:125:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/smp.h:126:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:110:33: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:112:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:114:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:118:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/percpu.h:126:12: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:63:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:64:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:65:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:66:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/memory_hotplug.h:221:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mmzone.h:1292:15: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:2422:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:2423:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/fs.h:3330:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/hrtimer.h:497:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/kmemleak.h:29:33: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/kasan.h:29:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/kasan.h:30:6: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/pgtable.h:28:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/slab.h:135:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/slab.h:716:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mm.h:1753:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mm.h:1941:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mm.h:2083:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/mm.h:2671:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/swiotlb.h:39:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/swiotlb.h:124:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/swiotlb.h:9:12: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/swiotlb.h:10:12: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/swiotlb.h:11:13: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/swiotlb.h:12:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/dma-contiguous.h:85:5: sparse: attribute 'indirect_branch': unknown attribute
+   arch/x86/include/asm/vdso.h:44:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/cred.h:167:13: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/nsproxy.h:74:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/io.h:47:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/netdevice.h:302:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/netdevice.h:4056:5: sparse: attribute 'indirect_branch': unknown attribute
+   include/linux/ftrace.h:462:6: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:59:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:95:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:120:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:150:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:191:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:231:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:285:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/bpf.h:315:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/xdp.h:28:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/xdp.h:53:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/xdp.h:155:1: sparse: attribute 'indirect_branch': unknown attribute
+   include/trace/events/xdp.h:190:1: sparse: attribute 'indirect_branch': unknown attribute
+   kernel/bpf/core.c:1549:31: sparse: incorrect type in return expression (different address spaces) @@    expected struct bpf_prog_array [noderef] <asn:4>* @@    got sn:4>* @@
+   kernel/bpf/core.c:1549:31:    expected struct bpf_prog_array [noderef] <asn:4>*
+   kernel/bpf/core.c:1549:31:    got void *
+   kernel/bpf/core.c:1553:17: sparse: incorrect type in return expression (different address spaces) @@    expected struct bpf_prog_array [noderef] <asn:4>* @@    got rray [noderef] <asn:4>* @@
+   kernel/bpf/core.c:1553:17:    expected struct bpf_prog_array [noderef] <asn:4>*
+   kernel/bpf/core.c:1553:17:    got struct bpf_prog_array *<noident>
+   kernel/bpf/core.c:1561:9: sparse: incorrect type in argument 1 (different address spaces) @@    expected struct callback_head *head @@    got struct callback_hstruct callback_head *head @@
+   kernel/bpf/core.c:1561:9:    expected struct callback_head *head
+   kernel/bpf/core.c:1561:9:    got struct callback_head [noderef] <asn:4>*<noident>
+   kernel/bpf/core.c:1624:34: sparse: incorrect type in initializer (different address spaces) @@    expected struct bpf_prog **prog @@    got struct bpf_prog *struct bpf_prog **prog @@
+   kernel/bpf/core.c:1624:34:    expected struct bpf_prog **prog
+   kernel/bpf/core.c:1624:34:    got struct bpf_prog *[noderef] <asn:4>*<noident>
+   kernel/bpf/core.c:1647:31: sparse: incorrect type in assignment (different address spaces) @@    expected struct bpf_prog **existing_prog @@    got struct bpf_prog *struct bpf_prog **existing_prog @@
+   kernel/bpf/core.c:1647:31:    expected struct bpf_prog **existing_prog
+   kernel/bpf/core.c:1647:31:    got struct bpf_prog *[noderef] <asn:4>*<noident>
+   kernel/bpf/core.c:1669:15: sparse: incorrect type in assignment (different address spaces) @@    expected struct bpf_prog_array *array @@    got struct bpf_prog_astruct bpf_prog_array *array @@
+   kernel/bpf/core.c:1669:15:    expected struct bpf_prog_array *array
+   kernel/bpf/core.c:1669:15:    got struct bpf_prog_array [noderef] <asn:4>*
+   kernel/bpf/core.c:1675:31: sparse: incorrect type in assignment (different address spaces) @@    expected struct bpf_prog **[assigned] existing_prog @@    got structstruct bpf_prog **[assigned] existing_prog @@
+   kernel/bpf/core.c:1675:31:    expected struct bpf_prog **[assigned] existing_prog
+   kernel/bpf/core.c:1675:31:    got struct bpf_prog *[noderef] <asn:4>*<noident>
+   include/trace/events/bpf.h:59:1: sparse: Using plain integer as NULL pointer
+   include/trace/events/bpf.h:95:1: sparse: Using plain integer as NULL pointer
+   include/trace/events/bpf.h:120:1: sparse: Using plain integer as NULL pointer
+   include/trace/events/bpf.h:191:1: sparse: Using plain integer as NULL pointer
+   include/trace/events/bpf.h:231:1: sparse: Using plain integer as NULL pointer
+   include/trace/events/bpf.h:285:1: sparse: too many warnings
 
-    13	
-    14	static char quirks_param[128];
-  > 15	module_param_string(quirks, quirks_param, sizeof(quirks_param), 0644);
-    16	MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
-    17	
+vim +127 security/landlock/tag.c
+
+   116	
+   117	/* return true if the tag_root is queued for freeing, false otherwise */
+   118	static void put_tag_root(struct landlock_tag_root **root,
+   119			spinlock_t *root_lock)
+   120	{
+   121		struct landlock_tag_root *freeme;
+   122	
+   123		if (!root || WARN_ON(!root_lock))
+   124			return;
+   125	
+   126		rcu_read_lock();
+ > 127		freeme = rcu_dereference(*root);
+   128		if (WARN_ON(!freeme))
+   129			goto out_rcu;
+   130		if (!refcount_dec_and_lock(&freeme->tag_nb, root_lock))
+   131			goto out_rcu;
+   132	
+   133		rcu_assign_pointer(*root, NULL);
+   134		spin_unlock(root_lock);
+   135		call_rcu(&freeme->rcu_put, put_tag_root_rcu);
+   136	
+   137	out_rcu:
+   138		rcu_read_unlock();
+   139	}
+   140	
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---2oS5YaxWCcQjTEyO--
