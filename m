@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932448AbeB1Oo5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:44:57 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33854 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932183AbeB1Olo (ORCPT
+        id S932177AbeB1Oln (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:41:43 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36796 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752845AbeB1Olg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:44 -0500
-X-Google-Smtp-Source: AH8x2249HrUNwTphMX0KMn7SORAG9pdz7uurfn1O0+t9CTklDQrABuo5mq9z35hXyX9W0X/PqQFuFA==
+        Wed, 28 Feb 2018 09:41:36 -0500
+X-Google-Smtp-Source: AH8x225EzNIqgvPvel0hteLVTp92wNlNio+0Heq+AmU6c2EO3T4zX7LiC5NxWEcHb5e8+908U2JQew==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 13/22] nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:57 -0800
-Message-Id: <20180228144106.16363-14-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 07/22] nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:51 -0800
+Message-Id: <20180228144106.16363-8-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -45,19 +45,19 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/lpc18xx_otp.c | 12 +-----------
+ drivers/nvmem/snvs_lpgpr.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/nvmem/lpc18xx_otp.c b/drivers/nvmem/lpc18xx_otp.c
-index 95268db155e9..74777bfe2dcd 100644
---- a/drivers/nvmem/lpc18xx_otp.c
-+++ b/drivers/nvmem/lpc18xx_otp.c
-@@ -86,22 +86,13 @@ static int lpc18xx_otp_probe(struct platform_device *pdev)
- 	lpc18xx_otp_nvmem_config.dev = &pdev->dev;
- 	lpc18xx_otp_nvmem_config.priv = otp;
+diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
+index e5c2a4a17f03..6a2fdd09e74a 100644
+--- a/drivers/nvmem/snvs_lpgpr.c
++++ b/drivers/nvmem/snvs_lpgpr.c
+@@ -117,22 +117,13 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
+ 	cfg->reg_read  = snvs_lpgpr_read,
+ 	cfg->reg_write = snvs_lpgpr_write,
  
--	nvmem = nvmem_register(&lpc18xx_otp_nvmem_config);
-+	nvmem = devm_nvmem_register(&pdev->dev, &lpc18xx_otp_nvmem_config);
+-	nvmem = nvmem_register(cfg);
++	nvmem = devm_nvmem_register(dev, cfg);
  	if (IS_ERR(nvmem))
  		return PTR_ERR(nvmem);
  
@@ -66,23 +66,23 @@ index 95268db155e9..74777bfe2dcd 100644
  	return 0;
  }
  
--static int lpc18xx_otp_remove(struct platform_device *pdev)
+-static int snvs_lpgpr_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
 -	return nvmem_unregister(nvmem);
 -}
 -
- static const struct of_device_id lpc18xx_otp_dt_ids[] = {
- 	{ .compatible = "nxp,lpc1850-otp" },
- 	{ },
-@@ -110,7 +101,6 @@ MODULE_DEVICE_TABLE(of, lpc18xx_otp_dt_ids);
+ static const struct of_device_id snvs_lpgpr_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6q-snvs-lpgpr", .data = &snvs_lpgpr_cfg_imx6q },
+ 	{ .compatible = "fsl,imx6ul-snvs-lpgpr",
+@@ -143,7 +134,6 @@ MODULE_DEVICE_TABLE(of, snvs_lpgpr_dt_ids);
  
- static struct platform_driver lpc18xx_otp_driver = {
- 	.probe	= lpc18xx_otp_probe,
--	.remove	= lpc18xx_otp_remove,
+ static struct platform_driver snvs_lpgpr_driver = {
+ 	.probe	= snvs_lpgpr_probe,
+-	.remove	= snvs_lpgpr_remove,
  	.driver = {
- 		.name	= "lpc18xx_otp",
- 		.of_match_table = lpc18xx_otp_dt_ids,
+ 		.name	= "snvs_lpgpr",
+ 		.of_match_table = snvs_lpgpr_dt_ids,
 -- 
 2.14.3
