@@ -1,172 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934465AbeB1URx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 15:17:53 -0500
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:35985 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934107AbeB1URv (ORCPT
+        id S934553AbeB1UTL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 15:19:11 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:45996 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934107AbeB1UTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:17:51 -0500
-X-Google-Smtp-Source: AG47ELvPY2QbQcNOy8YEjL19yyQkdFC0gBZg2h6knj6nd+nXpgWtKot5CLUwB/FB4G57TU9nAZl/POPX6oH1FHBXR/Y=
+        Wed, 28 Feb 2018 15:19:09 -0500
+X-Google-Smtp-Source: AG47ELtvjUkT3OaP0Q6qEtODEpj8D1BEi/8DHK0nPHmmbb7RIyek2sXsCVM085DCMlXljnnOsCvB4NFQI0+VTiNEjiY=
 MIME-Version: 1.0
-In-Reply-To: <20180228184322.29636-3-rodrigorivascosta@gmail.com>
-References: <20180228184322.29636-1-rodrigorivascosta@gmail.com> <20180228184322.29636-3-rodrigorivascosta@gmail.com>
+In-Reply-To: <c5d81c10-8b92-0a5d-93c2-8b8377b1396f@gmail.com>
+References: <1519844656-16443-1-git-send-email-frowand.list@gmail.com>
+ <1519844656-16443-2-git-send-email-frowand.list@gmail.com>
+ <CAHp75VfD6Hi0NScdZrYozp9dAqmUUYjcLuPPyRwM31ezxNO2fw@mail.gmail.com> <c5d81c10-8b92-0a5d-93c2-8b8377b1396f@gmail.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 28 Feb 2018 22:17:50 +0200
-Message-ID: <CAHp75VfxaxLJWK1Hk9PRiU0L2MuLPX5VoPsn6RRmmXg-apXo6Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] HID: steam: add serial number information.
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Cameron Gutman <aicommander@gmail.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
+Date: Wed, 28 Feb 2018 22:19:08 +0200
+Message-ID: <CAHp75Vc4jbJqM0=Yy-1SY6E2WhzHOAAcrn1+KE-jT7MWPtWPpA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 8:43 PM, Rodrigo Rivas Costa
-<rodrigorivascosta@gmail.com> wrote:
-> This device has a feature report to send and receive commands.
-> Use it to get the serial number and set the device's uniq value.
+On Wed, Feb 28, 2018 at 9:44 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+> On 02/28/18 11:31, Andy Shevchenko wrote:
+>> On Wed, Feb 28, 2018 at 9:04 PM,  <frowand.list@gmail.com> wrote:
 
->  #include <linux/module.h>
->  #include <linux/workqueue.h>
->  #include <linux/rcupdate.h>
-
-> +#include <linux/delay.h>
-
-Better to keep it somehow sorted (yes, I see it's not originally, but
-better to squeeze new header to the most ordered part).
-
-
-> @@ -41,8 +42,99 @@ struct steam_device {
->         unsigned long quirks;
->         struct work_struct work_connect;
->         bool connected;
-
-> +       char serial_no[11];
-
-11 is a magic.
-
->  };
+>> The question is why O(1) is so important? O(log(n)) wouldn't work?
 >
-> +static int steam_recv_report(struct steam_device *steam,
-> +               u8 *data, int size)
-> +{
-> +       struct hid_report *r;
-> +       u8 *buf;
-> +       int ret;
-> +
-> +       r = steam->hdev->report_enum[HID_FEATURE_REPORT].report_id_hash[0];
-> +       if (hid_report_len(r) < 64)
-> +               return -EINVAL;
+> O(1) is not critical.  It was just a nice side result.
+>
+>
+>> Using radix_tree() I suppose allows to dynamically extend or shrink
+>> the cache which would work with DT overlays.
+>
+> The memory usage of the phandle cache in this patch is fairly small.
+> The memory overhead of a radix_tree() would not be justified.
 
-+ empty line.
-
-> +       buf = hid_alloc_report_buf(r, GFP_KERNEL);
-> +       if (!buf)
-> +               return -ENOMEM;
-> +
-> +       /*
-> +        * The report ID is always 0, so strip the first byte from the output.
-> +        * hid_report_len() is not counting the report ID, so +1 to the length
-> +        * or else we get a EOVERFLOW. We are safe from a buffer overflow
-> +        * because hid_alloc_report_buf() allocates +7 bytes.
-> +        */
-> +       ret = hid_hw_raw_request(steam->hdev, 0x00,
-> +                       buf, hid_report_len(r) + 1,
-> +                       HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
-> +       if (ret > 0)
-> +               memcpy(data, buf + 1, min(size, ret - 1));
-> +       kfree(buf);
-> +       return ret;
-> +}
-> +
-> +static int steam_send_report(struct steam_device *steam,
-> +               u8 *cmd, int size)
-> +{
-> +       struct hid_report *r;
-> +       u8 *buf;
-> +       int retry;
-> +       int ret;
-> +
-> +       r = steam->hdev->report_enum[HID_FEATURE_REPORT].report_id_hash[0];
-> +       if (hid_report_len(r) < 64)
-> +               return -EINVAL;
-
-+empty line.
-
-> +       buf = hid_alloc_report_buf(r, GFP_KERNEL);
-> +       if (!buf)
-> +               return -ENOMEM;
-> +
-> +       /* The report ID is always 0 */
-> +       memcpy(buf + 1, cmd, size);
-> +
-> +       /*
-> +        * Sometimes the wireless controller fails with EPIPE
-> +        * when sending a feature report.
-> +        * Doing a HID_REQ_GET_REPORT and waiting for a while
-> +        * seems to fix that.
-> +        */
-
-> +       for (retry = 0; retry < 10; ++retry) {
-> +               ret = hid_hw_raw_request(steam->hdev, 0,
-> +                               buf, size + 1,
-> +                               HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
-> +               if (ret != -EPIPE)
-> +                       break;
-> +               steam_recv_report(steam, NULL, 0);
-> +               msleep(50);
-> +       }
-
-Personally I consider do{}while in case of "timeout loops" much easier to parse.
-
-unsigned int retry = 10;
-...
-
-do {
-...
-} while (--retry);
-
-> +       kfree(buf);
-> +       if (ret < 0)
-> +               hid_err(steam->hdev, "%s: error %d (%*ph)\n", __func__,
-> +                               ret, size, cmd);
-> +       return ret;
-> +}
-> +
-> +static int steam_get_serial(struct steam_device *steam)
-> +{
-> +       /*
-> +        * Send: 0xae 0x15 0x01
-> +        * Recv: 0xae 0x15 0x01 serialnumber (10 chars)
-> +        */
-> +       int ret;
-> +       u8 cmd[] = {0xae, 0x15, 0x01};
-
-> +       u8 reply[14];
-> +
-> +       ret = steam_send_report(steam, cmd, sizeof(cmd));
-> +       if (ret < 0)
-> +               return ret;
-> +       ret = steam_recv_report(steam, reply, sizeof(reply));
-> +       if (ret < 0)
-> +               return ret;
-
-
-> +       reply[13] = 0;
-> +       strcpy(steam->serial_no, reply + 3);
-
-strlcpy()
-
-> +       return 0;
-> +}
-
+OTOH the advantage I mentioned isn't a good argument?
 
 -- 
 With Best Regards,
