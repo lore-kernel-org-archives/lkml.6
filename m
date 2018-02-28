@@ -1,98 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752480AbeB1MAc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:00:32 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41171 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752390AbeB1MA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:00:28 -0500
-X-Google-Smtp-Source: AG47ELtS5iliPIe8eh3gQ4upnd4K7KHntCoxPJ46xFYyGijya6/dbVgcBmMkcDuqG2RezV9THKySXg==
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
-Date: Wed, 28 Feb 2018 15:00:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752370AbeB1MDM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:03:12 -0500
+Received: from mga14.intel.com ([192.55.52.115]:8055 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752195AbeB1MDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:03:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
+   d="asc'?scan'208";a="38105551"
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: HRTimer causing rtctest to fail
+In-Reply-To: <alpine.DEB.2.21.1802281246420.1886@nanos.tec.linutronix.de>
+References: <87vaei601x.fsf@linux.intel.com> <alpine.DEB.2.21.1802271640010.1886@nanos.tec.linutronix.de> <87muzt5usg.fsf@linux.intel.com> <alpine.DEB.2.21.1802281043050.1886@nanos.tec.linutronix.de> <87k1ux5qpf.fsf@linux.intel.com> <alpine.DEB.2.21.1802281246420.1886@nanos.tec.linutronix.de>
+Date: Wed, 28 Feb 2018 14:02:20 +0200
+Message-ID: <87h8q15nlf.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.02.2018 12:36, Peter De Schrijver wrote:
-> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>> which
->>>>> leaves it at some default rate of 500 kHz:
->>>>>
->>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>> pll_u
->>>>>        pll_u                  3        3        0      500000      
->>>>>     0
->>>>>
->>>>> Of course this won't quite work leading to the following messages:
->>>>>
->>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>> tegra-
->>>>> ehci
->>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>> tegra-
->>>>> ehci
->>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>> tegra-
->>>>> ehci
->>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>> tegra-
->>>>> ehci
->>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>
->>>>> Fix this by actually allowing the rate also being set from within
->>>>> the Linux kernel.
-> 
-> I think the best solution to this problem would be to make pll_u a fixed
-> clock and enable it and program the rate if it's not enabled at boot.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
-yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
-correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
-there.
 
-> This is how it's done for Tegra210. The reason is that the USB IP blocks
-> can control the pll_u state in hw. This means that if sw would disable
-> and then re-enable the pll_u clock, but there is no USB activity, pll_u
-> will still be disable and therefor not lock, causing an error. Today
-> this is worked around by not polling the lock bit for pll_u, but a better
-> solution would be to just remove all sw controls for pll_u.
+Hi,
 
-SW controls could be removed, but I don't think it is really necessary as in our
-case SW is the PHY driver and we know what it does. Alternatively we can enable
-PLL_U in the init table to keep it "always" enabled.
+Thomas Gleixner <tglx@linutronix.de> writes:
+> On Wed, 28 Feb 2018, Felipe Balbi wrote:
+>> Thomas Gleixner <tglx@linutronix.de> writes:
+>> > All numbers in micro seconds! What happens if you load the system or
+>> > restrict C-States?
+>>=20
+>> added intel_idle.max_cstate=3D0 to cmdline. Still see some failures,
+>> albeit a lot more rare, for example, caught one on iteration 8 of
+>> 8192Hz:
+>>=20
+>> 8192Hz:	 1 2 3 4 5 6 7
+>> PIE delta error: 0.000135 should be close to 0.000122
+>>=20
+>> That is, however, only 13 uS late. Is that within the limits of "we
+>> don't quite care"?
+>
+> I think so. 13us (depending on the machine) can easily happen if multiple
+> interrupts/timers happen at the same time or if something keeps interrupts
+> disabled for a few microseconds which is certainly possible.
+>
+> What kind of system is this?
+
+4 core Kabylake.
+
+>> BTW, it took some effort to get that one failure. I'll leave rtctest
+>> running in a long loop and try to figure out approximately how frequently
+>> it fails, but it seems like it's within the realm of "don't care", would
+>> you agree?
+>
+> Yes.
+
+cool, thanks
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqWmkwACgkQzL64meEa
+mQb/ew/9Gnyi62Ax+VhMMlisM+4JJVP2AqY+MM9c7KMs/TwdNEaUwBhdkIE2gd4L
+jb+x9RdKRL8cpx3dZkzrhXSRvOfOfL7EXNjL2rUJkX/R+PUSkP1yMH0P90CqmMmD
+awGBxmveQ6/Dwg+jcSR0nRhbShLfY8Q36nRESHUQtTCBDweNcQTB7qFyDsF3/KHY
+476+lpNVWc8thm7yxATZN8epGU9SbhI39pmnzyrPnEOPCOi7Gf+qit/AHOtYB7x2
+kUZRVqHeOdnBAFMwTxV+syWKNsIE/lA5Km3wf+d0bubDhAHsBZvLj1JBslkxY5lf
+in0yrsFLmKHJYJBvctRbGQuRwf1yY7LWFFD07spjIIDHCK8dBn1wdC2jq0a90tM6
+a+SIjL+YryOKF0kPR85y4JJYKUq4XcIw9VXqkcFaYt4fgQ9TCwpI7hZfv+5Vys3W
+QegfxWWIqaMpnAIwnJEf63+4qj2pzlX2n7fMK/ZlU/pOVmFXvYEJSLbuUFcdgcIK
+7WznEQgbCW8lfzhScjqswvWPSrf1R6KuYo8vRAYFMxccCKSiRfbC84Te6xqcq8WQ
+Bu/UL+v/f97jV0vpnv7dqv07Di+C48PWY9aUoImV6EvNI+X0g/sKQEhaxBR4I5Ab
+up8RR+W0kOEB9sN3KN4CyIOmCioLZ6oVFTW7QzyM7QLZzq2K/4s=
+=dEkH
+-----END PGP SIGNATURE-----
+--=-=-=--
