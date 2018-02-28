@@ -1,86 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeB1NU0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:20:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38680 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752267AbeB1NUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:20:25 -0500
-Date: Wed, 28 Feb 2018 14:20:22 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-Subject: Re: [PATCH v0 2/3] livepatch: update documentation/samples for
- callbacks
-In-Reply-To: <f87dbd4e-7262-5c90-0a5f-a54e4d0af20d@redhat.com>
-Message-ID: <alpine.LSU.2.21.1802271600520.19255@pobox.suse.cz>
-References: <1519421630-12025-1-git-send-email-joe.lawrence@redhat.com> <1519421630-12025-3-git-send-email-joe.lawrence@redhat.com> <alpine.LSU.2.21.1802271324370.19255@pobox.suse.cz> <f87dbd4e-7262-5c90-0a5f-a54e4d0af20d@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1752647AbeB1NZQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:25:16 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2888 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752453AbeB1NZL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:25:11 -0500
+From: Fabien Dessenne <fabien.dessenne@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        "Ludovic Barre" <ludovic.barre@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH 0/2] mailbox: introduce STMicroelectronics STM32 IPCC driver
+Date: Wed, 28 Feb 2018 14:24:28 +0100
+Message-ID: <1519824270-7134-1-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.25]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Feb 2018, Joe Lawrence wrote:
+The STMicroelectronics STM32 Inter-Processor Communication Controller
+(IPCC) is used for communicating data between two processors.
+It provides a non blocking signaling mechanism to post and retrieve
+communication data in an atomic way.
 
-> On 02/27/2018 07:36 AM, Miroslav Benes wrote:
-> > On Fri, 23 Feb 2018, Joe Lawrence wrote:
-> > 
-> >> [ ... snip ... ]
-> >>  
-> >> +If a livepatch is replaced by a cumulative patch, then only the
-> >> +callbacks belonging to the cumulative patch will be executed.  This
-> >> +simplifies the livepatching core for it is the responsibility of the
-> >> +cumulative patch to safely revert whatever needs to be reverted.  See
-> >> +Documentation/livepatch/cumulative.txt for more information on such
-> >> +patches.
-> > 
-> > s/cumulative/atomic replace/ almost everywhere?
-> > 
-> > 'Documentation/livepatch/cumulative.txt' should be 
-> > 'Documentation/livepatch/cumulative-patches.txt' and we may rename it 
-> > atomic-replace-patches.txt. I don't know. Cumulative patches forms a 
-> > subset of atomic replace patches in my understanding. The feature itself 
-> > is more general. Even if practically used for cumulative patches only. But 
-> > it is for you and Petr to decide.
-> 
-> Hi Miroslav,
-> 
-> Thanks for reviewing!
-> 
-> I guess I'm a little confused about the distinction here.
-> 
-> I understood a "cumulative-patch" to mean that it would contain the sum
-> of all changes.  So instead of this:
-> 
->   patch 1 = A
-> + patch 2 =     B
-> + patch 3 =         C
-> -----------------------
->   net     = A + B + C
-> 
-> We can group all of the changes together into a single cumulative-patch
-> for the same net effect:
-> 
->   patch 1 = A               -replaced by-
->   patch 2 = A + B             -replaced by-
->   patch 3 = A + B + C
+Fabien Dessenne (2):
+  dt-bindings: mailbox: add STMicroelectronics STM32 IPCC binding
+  mailbox: add STMicroelectronics STM32 IPCC driver
 
-Yes.
- 
-> I assumed this would also mean to include any reverted changes as well.
-> So in the example above, if change C needed to be reverted, then:
-> 
->   patch 4 = A + B
-> 
-> and that would still be considered a "cumulative-patch".
+ .../devicetree/bindings/mailbox/stm32-ipcc.txt     |  48 +++
+ drivers/mailbox/Kconfig                            |   8 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/stm32-ipcc.c                       | 403 +++++++++++++++++++++
+ 4 files changed, 461 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
+ create mode 100644 drivers/mailbox/stm32-ipcc.c
 
-Ah, ok. This is where we differ. I didn't consider this to be a cumulative 
-patch. But I understand your reasoning. 
-
-Miroslav
+-- 
+2.7.4
