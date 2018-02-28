@@ -1,63 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935129AbeB1Vjx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:39:53 -0500
-Received: from anholt.net ([50.246.234.109]:34548 "EHLO anholt.net"
+        id S935174AbeB1VkZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:40:25 -0500
+Received: from vern.gendns.com ([206.190.152.46]:50059 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935101AbeB1Vjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:39:51 -0500
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>
-Subject: [GIT PULL 1/2] bcm2835-dt-next-2018-02-28
-Date: Wed, 28 Feb 2018 13:39:44 -0800
-Message-Id: <20180228213945.6781-1-eric@anholt.net>
-X-Mailer: git-send-email 2.16.2
+        id S932597AbeB1VkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 16:40:22 -0500
+Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <1519071723-31790-11-git-send-email-david@lechnology.com>
+ <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
+Date: Wed, 28 Feb 2018 15:40:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
+> 
+> I think I found the reason for the strange crashes we were
+> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
+> me in the right direction.
+> 
+> The mdio driver fails to probe with v7 due to the supplied clock rate
+> being wrong. Before failing we register the emac clock with
+> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
+> reference count of the clock, but we never actually increased it in
+> the first place in the line above. The core clock code then destroys
+> the associated clk_core structure. When the next user comes around (in
+> our case the clk debug functions) the system crashes.
+> 
+> I believe there to be two issues: one is with v7 - we need to increase
+> the clock reference count in davinci_psc_genpd_attach_dev().
+> 
+> Second is the error path in the clock framework - we should remove the
+> destroyed clk_core from the debug list, which is not being done now.
+> 
+> Why we even need to track the refcount of clk_core is a mistery for me
+> though. Stephen, Mike?
+> 
+> Best regards,
+> Bartosz Golaszewski
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Great find. I figured it had to be something like this, but I wasn't
+able to reproduce the problem yet.
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://github.com/anholt/linux tags/bcm2835-dt-next-2018-02-28
-
-for you to fetch changes up to bcc76c4014dce4e3834dbd5b7f6593cbcfbfebe0:
-
-  ARM: dts: bcm2835-rpi-zero-w: Enable OTG mode (2018-02-26 15:02:23 -0800)
-
-----------------------------------------------------------------
-This pull request adds automatic BT probing to the Pi Zero W, OTG mode
-for the Zero W, the GPIO expander on the Pi3, and fixes I2S probe
-(which is disabled by default, but often used downstream)
-
-----------------------------------------------------------------
-Baruch Siach (2):
-      ARM: dts: bcm2835: make the firmware node into a bus
-      ARM: dts: bcm2837-rpi-3-b: add GPIO expander
-
-Henry Zhang (1):
-      ARM: dts: bcm283x: Fix pin function of JTAG pins
-
-Stefan Wahren (5):
-      dt-bindings: bcm283x: Fix register ranges of bcm2835-i2s
-      ARM: dts: bcm283x: Fix probing of bcm2835-i2s
-      ARM: dts: bcm283x: Apply pull settings to Zero W relevant groups
-      ARM: dts: bcm2835-rpi-zero-w: Add bcm43438 serial slave
-      ARM: dts: bcm2835-rpi-zero-w: Enable OTG mode
-
- .../devicetree/bindings/dma/brcm,bcm2835-dma.txt        |  4 ++--
- .../devicetree/bindings/sound/brcm,bcm2835-i2s.txt      |  9 ++++-----
- arch/arm/boot/dts/bcm2835-rpi-zero-w.dts                | 16 ++++++++++++++--
- arch/arm/boot/dts/bcm2835-rpi.dtsi                      |  4 +++-
- arch/arm/boot/dts/bcm2837-rpi-3-b.dts                   | 17 +++++++++++++++++
- arch/arm/boot/dts/bcm283x.dtsi                          |  9 ++++++---
- 6 files changed, 46 insertions(+), 13 deletions(-)
+I suppose it is time to spin up a v8 with some fixes.
