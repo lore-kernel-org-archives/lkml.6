@@ -1,145 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965047AbeB1Xby (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:31:54 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49857 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964903AbeB1Xbw (ORCPT
+        id S965063AbeB1XdA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:33:00 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:43595 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964903AbeB1Xc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:31:52 -0500
-Date: Thu, 1 Mar 2018 00:31:42 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: kbuild test robot <fengguang.wu@intel.com>
-cc: Dou Liyang <douly.fnst@cn.fujitsu.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, tipbuild@zytor.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [tip:x86/apic 1/2] arch/x86/kernel/apic/apic.c:1507:2: error:
- 'i' undeclared
-In-Reply-To: <201803010700.cyWg3pUI%fengguang.wu@intel.com>
-Message-ID: <alpine.DEB.2.21.1803010030530.1392@nanos.tec.linutronix.de>
-References: <201803010700.cyWg3pUI%fengguang.wu@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 28 Feb 2018 18:32:58 -0500
+X-Google-Smtp-Source: AG47ELssIUV3kmHAIXPwu/NGOMZI1cqGNSJyxjbBYyUi7ZnDkvk+ahAoLbNNBhXmg5OTJo2/SfyuDQ==
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] dtc updates for 4.17
+Date: Wed, 28 Feb 2018 17:32:43 -0600
+Message-Id: <20180228233249.26281-1-robh@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dou,
+This series updates building dtc with flex and bison rather than using 
+the _shipped files and updates dtc to the current upstream version. The 
+new dtc adds some new warnings, so turn off the noisiest ones. While 
+here adjusting the warnings, we can also now re-enable some that have 
+gotten fixed.
 
-can you please look into that? I zapped the commits from x86/apic for now.
+Yamada-san, I figured out why you wanted the dtc update after I wrote 
+the patch to remove the shipped files... :) I guess you may already have 
+a similar patch. I suppose the first patch should go into 4.16, but 
+nothing needs the fix yet. So it may be easier if you can just ack it 
+and I'll keep it with the rest of the series.
 
-Thanks,
+Rob
 
-	tglx
+Rob Herring (6):
+  kbuild: remove remaining use of undefined YACC_PREFIX
+  kbuild: add dtc as dependency on .dtb files
+  scripts: re-enable some now fixed dtc warnings
+  scripts/dtc: generate lexer and parser during build instead of
+    shipping
+  scripts/dtc: Update to upstream version v1.4.6-9-gaadd0b65c987
+  scripts: turn off some new dtc warnings by default
 
-On Thu, 1 Mar 2018, kbuild test robot wrote:
+ include/linux/libfdt_env.h           |    6 +-
+ scripts/Makefile.lib                 |    9 +-
+ scripts/dtc/Makefile                 |    6 +-
+ scripts/dtc/checks.c                 |  439 ++++---
+ scripts/dtc/dtc-lexer.lex.c_shipped  | 2259 ---------------------------------
+ scripts/dtc/dtc-parser.tab.c_shipped | 2321 ----------------------------------
+ scripts/dtc/dtc-parser.tab.h_shipped |  125 --
+ scripts/dtc/dtc-parser.y             |   17 +-
+ scripts/dtc/dtc.c                    |    7 +-
+ scripts/dtc/dtc.h                    |   11 +-
+ scripts/dtc/flattree.c               |    2 +-
+ scripts/dtc/libfdt/fdt.c             |   13 +-
+ scripts/dtc/libfdt/fdt.h             |    6 +-
+ scripts/dtc/libfdt/fdt_overlay.c     |   51 +
+ scripts/dtc/libfdt/fdt_ro.c          |  132 +-
+ scripts/dtc/libfdt/fdt_rw.c          |   90 +-
+ scripts/dtc/libfdt/fdt_sw.c          |   24 +-
+ scripts/dtc/libfdt/fdt_wip.c         |   10 +-
+ scripts/dtc/libfdt/libfdt.h          |   37 +-
+ scripts/dtc/libfdt/libfdt_env.h      |   33 +-
+ scripts/dtc/libfdt/libfdt_internal.h |   32 +-
+ scripts/dtc/livetree.c               |   10 +-
+ scripts/dtc/srcpos.c                 |    5 -
+ scripts/dtc/srcpos.h                 |    6 +-
+ scripts/dtc/update-dtc-source.sh     |    5 -
+ scripts/dtc/util.h                   |    9 +-
+ scripts/dtc/version_gen.h            |    2 +-
+ 27 files changed, 630 insertions(+), 5037 deletions(-)
+ delete mode 100644 scripts/dtc/dtc-lexer.lex.c_shipped
+ delete mode 100644 scripts/dtc/dtc-parser.tab.c_shipped
+ delete mode 100644 scripts/dtc/dtc-parser.tab.h_shipped
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
-> head:   ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1
-> commit: 2066f4d67e7d9cbe44e451d782cdcc0a0d12e5d3 [1/2] x86/apic: Move pending intr check code into it's own function
-> config: i386-randconfig-x004-201808 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         git checkout 2066f4d67e7d9cbe44e451d782cdcc0a0d12e5d3
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    arch/x86/kernel/apic/apic.c: In function 'setup_local_APIC':
-> >> arch/x86/kernel/apic/apic.c:1507:2: error: 'i' undeclared (first use in this function)
->      i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
->      ^
->    arch/x86/kernel/apic/apic.c:1507:2: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> vim +/i +1507 arch/x86/kernel/apic/apic.c
-> 
-> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1460  
-> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1461  /**
-> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1462   * setup_local_APIC - setup the local APIC
-> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1463   *
-> 543113d2 arch/x86/kernel/apic/apic.c Dou Liyang         2017-02-07  1464   * Used to setup local APIC while initializing BSP or bringing up APs.
-> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1465   * Always called with preemption disabled.
-> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1466   */
-> b753a2b7 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-14  1467  static void setup_local_APIC(void)
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1468  {
-> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1469  	int cpu = smp_processor_id();
-> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1470  	unsigned int value;
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1471  
-> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1472  	if (disable_apic) {
-> 7167d08e arch/x86/kernel/apic/apic.c Henrik Kretzschmar 2011-02-22  1473  		disable_ioapic_support();
-> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1474  		return;
-> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1475  	}
-> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1476  
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1477  #ifdef CONFIG_X86_32
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1478  	/* Pound the ESR really hard over the head with a big hammer - mbligh */
-> 08125d3e arch/x86/kernel/apic.c      Ingo Molnar        2009-01-28  1479  	if (lapic_is_integrated() && apic->disable_esr) {
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1480  		apic_write(APIC_ESR, 0);
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1481  		apic_write(APIC_ESR, 0);
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1482  		apic_write(APIC_ESR, 0);
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1483  		apic_write(APIC_ESR, 0);
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1484  	}
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1485  #endif
-> cdd6c482 arch/x86/kernel/apic/apic.c Ingo Molnar        2009-09-21  1486  	perf_events_lapic_init();
-> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1487  
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1488  	/*
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1489  	 * Double-check whether this APIC is really registered.
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1490  	 * This is meaningless in clustered apic mode, so we skip it.
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1491  	 */
-> c2777f98 arch/x86/kernel/apic/apic.c Daniel Walker      2009-09-12  1492  	BUG_ON(!apic->apic_id_registered());
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1493  
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1494  	/*
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1495  	 * Intel recommends to set DFR, LDR and TPR before enabling
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1496  	 * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1497  	 * document number 292116).  So here it goes...
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1498  	 */
-> a5c43296 arch/x86/kernel/apic.c      Ingo Molnar        2009-01-28  1499  	apic->init_apic_ldr();
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1500  
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1501  #ifdef CONFIG_X86_32
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1502  	/*
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1503  	 * APIC LDR is initialized.  If logical_apicid mapping was
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1504  	 * initialized during get_smp_config(), make sure it matches the
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1505  	 * actual value.
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1506  	 */
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23 @1507  	i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1508  	WARN_ON(i != BAD_APICID && i != logical_smp_processor_id());
-> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1509  	/* always use the value from LDR */
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1510  	early_per_cpu(x86_cpu_to_logical_apicid, cpu) =
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1511  		logical_smp_processor_id();
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1512  #endif
-> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1513  
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1514  	/*
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1515  	 * Set Task Priority to 'accept all'. We never change this
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1516  	 * later on.
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1517  	 */
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1518  	value = apic_read(APIC_TASKPRI);
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1519  	value &= ~APIC_TPRI_MASK;
-> 11a8e778 arch/x86_64/kernel/apic.c   Andi Kleen         2006-01-11  1520  	apic_write(APIC_TASKPRI, value);
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1521  
-> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1522  	apic_pending_intr_clear();
-> da7ed9f9 arch/x86_64/kernel/apic.c   Vivek Goyal        2006-03-25  1523  
-> da7ed9f9 arch/x86_64/kernel/apic.c   Vivek Goyal        2006-03-25  1524  	/*
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1525  	 * Now that we are all set up, enable the APIC
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1526  	 */
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1527  	value = apic_read(APIC_SPIV);
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1528  	value &= ~APIC_VECTOR_MASK;
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1529  	/*
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1530  	 * Enable APIC
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1531  	 */
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1532  	value |= APIC_SPIV_APIC_ENABLED;
-> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1533  
-> 
-> :::::: The code at line 1507 was first introduced by commit
-> :::::: acb8bc09c6185e4d3d582d0076aaa6a89f19d8c5 x86: Add apic->x86_32_early_logical_apicid()
-> 
-> :::::: TO: Tejun Heo <tj@kernel.org>
-> :::::: CC: Ingo Molnar <mingo@elte.hu>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+-- 
+2.14.1
