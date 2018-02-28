@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932854AbeB1QvO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 11:51:14 -0500
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:52816 "EHLO
+        id S932408AbeB1QvN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 11:51:13 -0500
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:31508 "EHLO
         cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753059AbeB1QvK (ORCPT
+        by vger.kernel.org with ESMTP id S1753074AbeB1QvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:51:10 -0500
+        Wed, 28 Feb 2018 11:51:11 -0500
 From: Liviu Dudau <Liviu.Dudau@arm.com>
 To: DRI-devel <dri-devel@lists.freedesktop.org>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
@@ -17,102 +17,71 @@ Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v6 3/3] drm: writeback: Add client capability for exposing writeback connectors
-Date: Wed, 28 Feb 2018 16:50:57 +0000
-Message-Id: <20180228165057.26856-4-Liviu.Dudau@arm.com>
+        Mali DP Maintainers <malidp@foss.arm.com>
+Subject: [PATCH v6 0/3] drm: Introduce writeback connectors
+Date: Wed, 28 Feb 2018 16:50:54 +0000
+Message-Id: <20180228165057.26856-1-Liviu.Dudau@arm.com>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180228165057.26856-1-Liviu.Dudau@arm.com>
-References: <20180228165057.26856-1-Liviu.Dudau@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to the fact that writeback connectors behave in a special way
-in DRM (they always report being disconnected) we might confuse some
-userspace. Add a client capability for writeback connectors that will
-filter them out for clients that don't understand the capability.
+Hi,
 
-Re-requested-by: Sean Paul <seanpaul@chromium.org>
-Cc: Brian Starkey <brian.starkey@arm.com>
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/drm_ioctl.c       | 5 +++++
- drivers/gpu/drm/drm_mode_config.c | 5 +++++
- include/drm/drm_file.h            | 7 +++++++
- include/uapi/drm/drm.h            | 9 +++++++++
- 4 files changed, 26 insertions(+)
+This is v6 of the writeback connector series. Based on renewed
+interest in the feature and recent efforts from Rob Clark I'm
+refreshing the series to address some comments and feedback.
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index 02ffa0e8d77b..48895a469963 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -322,6 +322,11 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
- 		file_priv->atomic = req->value;
- 		file_priv->universal_planes = req->value;
- 		break;
-+	case DRM_CLIENT_CAP_WRITEBACK_CONNECTORS:
-+		if (!file_priv->atomic || !drm_core_check_feature(dev, DRIVER_ATOMIC))
-+			return -EINVAL;
-+		file_priv->writeback_connectors = req->value;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
-index e5c653357024..21e353bd3948 100644
---- a/drivers/gpu/drm/drm_mode_config.c
-+++ b/drivers/gpu/drm/drm_mode_config.c
-@@ -145,6 +145,11 @@ int drm_mode_getresources(struct drm_device *dev, void *data,
- 	count = 0;
- 	connector_id = u64_to_user_ptr(card_res->connector_id_ptr);
- 	drm_for_each_connector_iter(connector, &conn_iter) {
-+		/* only expose writeback connectors if userspace understands them */
-+		if (!file_priv->writeback_connectors &&
-+		    (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK))
-+			continue;
-+
- 		if (drm_lease_held(file_priv, connector->base.id)) {
- 			if (count < card_res->count_connectors &&
- 			    put_user(connector->base.id, connector_id + count)) {
-diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
-index 5176c3797680..2a09b3c8965c 100644
---- a/include/drm/drm_file.h
-+++ b/include/drm/drm_file.h
-@@ -181,6 +181,13 @@ struct drm_file {
- 	/** @atomic: True if client understands atomic properties. */
- 	unsigned atomic:1;
- 
-+	/**
-+	 * @writeback_connectors:
-+	 *
-+	 * True if client understands writeback connectors
-+	 */
-+	unsigned writeback_connectors:1;
-+
- 	/**
- 	 * @is_master:
- 	 *
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 6fdff5945c8a..59f27ea928b4 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -680,6 +680,15 @@ struct drm_get_cap {
-  */
- #define DRM_CLIENT_CAP_ATOMIC	3
- 
-+/**
-+ * DRM_CLIENT_CAP_WRITEBACK_CONNECTORS
-+ *
-+ * If set to 1, the DRM core will expose special connectors to be used for
-+ * writing back to memory the scene setup in the commit. Depends on client
-+ * also supporting DRM_CLIENT_CAP_ATOMIC
-+ */
-+#define DRM_CLIENT_CAP_WRITEBACK_CONNECTORS	4
-+
- /** DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
- struct drm_set_client_cap {
- 	__u64 capability;
+Main changes are to incorporate Rob Clark's atomic_commit() vfunc
+for the connector helper funcs, change the signature of the
+create_writeback_properties() function to return the error code
+rather than a boolean false and making sure that the writeback job
+doesn't get freed in the cleanup_work() function but when the
+connector state gets discarded.
+
+Additionally, based on Sean Paul's comments, I'm providing the
+3rd patch in the series that adds a client cap for exposing the
+writeback connectors to userspace. The idea was initially considered
+unnecessary by Daniel Vetter here [1] but Sean thinks it is useful.
+Note that the patch depends on the cleanup patch [2] sent earlier.
+
+
+Comments are welcome on the suitability of this series.
+
+Best regards,
+Liviu
+
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2016-October/120519.html
+[2] https://lists.freedesktop.org/archives/dri-devel/2018-February/167677.html
+
+Brian Starkey (2):
+  drm: Add writeback connector type
+  drm: writeback: Add out-fences for writeback connectors
+
+Liviu Dudau (1):
+  drm: writeback: Add client capability for exposing writeback
+    connectors
+
+ Documentation/gpu/drm-kms.rst            |   9 +
+ drivers/gpu/drm/Makefile                 |   2 +-
+ drivers/gpu/drm/drm_atomic.c             | 227 ++++++++++++++++++-
+ drivers/gpu/drm/drm_atomic_helper.c      |  30 +++
+ drivers/gpu/drm/drm_connector.c          |   4 +-
+ drivers/gpu/drm/drm_ioctl.c              |   5 +
+ drivers/gpu/drm/drm_mode_config.c        |   5 +
+ drivers/gpu/drm/drm_writeback.c          | 360 +++++++++++++++++++++++++++++++
+ include/drm/drm_atomic.h                 |  11 +
+ include/drm/drm_connector.h              |  13 ++
+ include/drm/drm_file.h                   |   7 +
+ include/drm/drm_mode_config.h            |  23 ++
+ include/drm/drm_modeset_helper_vtables.h |  11 +
+ include/drm/drm_writeback.h              | 129 +++++++++++
+ include/uapi/drm/drm.h                   |   9 +
+ include/uapi/drm/drm_mode.h              |   1 +
+ 16 files changed, 835 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_writeback.c
+ create mode 100644 include/drm/drm_writeback.h
+
 -- 
 2.16.2
