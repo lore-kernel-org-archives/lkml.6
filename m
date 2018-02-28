@@ -1,583 +1,290 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935544AbeB1WoS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:44:18 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34887 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935384AbeB1WoL (ORCPT
+        id S964777AbeB1WpQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:45:16 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37195 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935461AbeB1WpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:44:11 -0500
-X-Google-Smtp-Source: AG47ELsJb7OJqUUwDvR7XIIePWDuJlQ5zvhPhTUHzB9uS2EuFzdmpNY/riDc7MBAO2bwpliJ68BPlw==
-From: Rob Herring <robh@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc: dts: replace 'linux,stdout-path' with 'stdout-path'
-Date: Wed, 28 Feb 2018 16:44:06 -0600
-Message-Id: <20180228224406.7049-1-robh@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Wed, 28 Feb 2018 17:45:13 -0500
+X-Google-Smtp-Source: AG47ELs+R0KC1ceflwx+o1UP/rJZHK6CKJ2k1QZCqpchFCgD/VtG5kHJC1KyRx5s+d/chcihfsHHng==
+Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+To: Alexander Duyck <alexander.duyck@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
+References: <20180227190520.3273.79728.stgit@localhost.localdomain>
+ <20180227144015.228d4f5c@w520.home>
+ <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
+ <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
+From: Gregory Rose <gvrose8192@gmail.com>
+Message-ID: <ace79c7b-cdc7-5ebb-0175-bfa5e48eb175@gmail.com>
+Date: Wed, 28 Feb 2018 14:45:07 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'linux,stdout-path' has been deprecated for some time in favor of
-'stdout-path'. Now dtc will warn on occurrences of 'linux,stdout-path'.
-Search and replace all the of occurrences with 'stdout-path'.
+On 2/28/2018 9:49 AM, Alexander Duyck wrote:
+> On Tue, Feb 27, 2018 at 2:25 PM, Alexander Duyck
+> <alexander.duyck@gmail.com> wrote:
+>> On Tue, Feb 27, 2018 at 1:40 PM, Alex Williamson
+>> <alex.williamson@redhat.com> wrote:
+>>> On Tue, 27 Feb 2018 11:06:54 -0800
+>>> Alexander Duyck <alexander.duyck@gmail.com> wrote:
+>>>
+>>>> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>>>>
+>>>> This patch is meant to add support for SR-IOV on devices when the VFs are
+>>>> not managed by the kernel. Examples of recent patches attempting to do this
+>>>> include:
+>>> It appears to enable sriov when the _pf_ is not managed by the
+>>> kernel, but by "managed" we mean that either there is no pf driver or
+>>> the pf driver doesn't provide an sriov_configure callback,
+>>> intentionally or otherwise.
+>>>
+>>>> virto - https://patchwork.kernel.org/patch/10241225/
+>>>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>>>> vfio - https://patchwork.kernel.org/patch/10103353/
+>>>> uio - https://patchwork.kernel.org/patch/9974031/
+>>> So is the goal to get around the issues with enabling sriov on each of
+>>> the above drivers by doing it under the covers or are you really just
+>>> trying to enable sriov for a truly unmanage (no pf driver) case?  For
+>>> example, should a driver explicitly not wanting sriov enabled implement
+>>> a dummy sriov_configure function?
+>>>
+>>>> Since this is quickly blowing up into a multi-driver problem it is probably
+>>>> best to implement this solution in one spot.
+>>>>
+>>>> This patch is an attempt to do that. What we do with this patch is provide
+>>>> a generic call to enable SR-IOV in the case that the PF driver is either
+>>>> not present, or the PF driver doesn't support configuring SR-IOV.
+>>>>
+>>>> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
+>>>> value is used as the drivers_autoprobe setting of the VFs when they are
+>>>> being managed by an external entity such as userspace or device firmware
+>>>> instead of being managed by the kernel.
+>>> Documentation/ABI/testing/sysfs-bus-pci update is missing.
+>> I can make sure to update that in the next version.
+>>
+>>>> One side effect of this change is that the sriov_drivers_autoprobe and
+>>>> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
+>>>> disabled. Attempts to update them when SR-IOV is in use will only update
+>>>> the local value and will not update sriov->autoprobe.
+>>> And we expect users to understand when sriov_drivers_autoprobe applies
+>>> vs sriov_unmanaged_autoprobe, even though they're using the same
+>>> interfaces to enable sriov?  Are all combinations expected to work, ex.
+>>> unmanaged sriov is enabled, a native pf driver loads, vfs work?  Not
+>>> only does it seems like there's opportunity to use this incorrectly, I
+>>> think maybe it might be difficult to use correctly.
+>>>
+>>>> I based my patch set originally on the patch by Mark Rustad but there isn't
+>>>> much left after going through and cleaning out the bits that were no longer
+>>>> needed, and after incorporating the feedback from David Miller.
+>>>>
+>>>> I have included the authors of the original 4 patches above in the Cc here.
+>>>> My hope is to get feedback and/or review on if this works for their use
+>>>> cases.
+>>>>
+>>>> Cc: Mark Rustad <mark.d.rustad@intel.com>
+>>>> Cc: Maximilian Heyne <mheyne@amazon.de>
+>>>> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+>>>> Cc: David Woodhouse <dwmw@amazon.co.uk>
+>>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>>>> ---
+>>>>   drivers/pci/iov.c        |   27 +++++++++++++++++++-
+>>>>   drivers/pci/pci-driver.c |    2 +
+>>>>   drivers/pci/pci-sysfs.c  |   62 +++++++++++++++++++++++++++++++++++++++++-----
+>>>>   drivers/pci/pci.h        |    4 ++-
+>>>>   include/linux/pci.h      |    1 +
+>>>>   5 files changed, 86 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+>>>> index 677924ae0350..7b8858bd8d03 100644
+>>>> --- a/drivers/pci/iov.c
+>>>> +++ b/drivers/pci/iov.c
+>>>> @@ -446,6 +446,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+>>>>        pci_read_config_word(dev, pos + PCI_SRIOV_VF_DID, &iov->vf_device);
+>>>>        iov->pgsz = pgsz;
+>>>>        iov->self = dev;
+>>>> +     iov->autoprobe = true;
+>>>>        iov->drivers_autoprobe = true;
+>>>>        pci_read_config_dword(dev, pos + PCI_SRIOV_CAP, &iov->cap);
+>>>>        pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
+>>>> @@ -643,8 +644,11 @@ void pci_restore_iov_state(struct pci_dev *dev)
+>>>>    */
+>>>>   void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool auto_probe)
+>>>>   {
+>>>> -     if (dev->is_physfn)
+>>>> +     if (dev->is_physfn) {
+>>>>                dev->sriov->drivers_autoprobe = auto_probe;
+>>>> +             if (!dev->sriov->num_VFs)
+>>>> +                     dev->sriov->autoprobe = auto_probe;
+>>> Why is dev->sriov->autoprobe set any time other than immediately prior
+>>> to enabling VFs?
+>> My concern here was drivers that are still floating around with the
+>> old module parameter option for enabling SR-IOV. In the unlikely event
+>> that somebody was to use such a driver I wanted to make certain that
+>> the drivers_autoprobe state was pre-populated.
+>>
+>>>> +     }
+>>>>   }
+>>>>
+>>>>   /**
+>>>> @@ -703,6 +707,27 @@ void pci_disable_sriov(struct pci_dev *dev)
+>>>>   EXPORT_SYMBOL_GPL(pci_disable_sriov);
+>>>>
+>>>>   /**
+>>>> + * pci_sriov_configure_unmanaged - helper to configure unmanaged SR-IOV
+>>>> + * @dev: the PCI device
+>>>> + * @nr_virtfn: number of virtual functions to enable, 0 to disable
+>>>> + *
+>>>> + * Used to provide generic enable/disable SR-IOV option for devices
+>>>> + * that do not manage the VFs generated by their driver, or have no
+>>>> + * driver present.
+>>>> + */
+>>>> +int pci_sriov_configure_unmanaged(struct pci_dev *dev, int nr_virtfn)
+>>>> +{
+>>>> +     int rc = 0;
+>>>> +
+>>>> +     if (!nr_virtfn)
+>>>> +             pci_disable_sriov(dev);
+>>>> +     else
+>>>> +             rc = pci_enable_sriov(dev, nr_virtfn);
+>>>> +
+>>>> +     return rc ? rc : nr_virtfn;
+>>>> +}
+>>>> +
+>>>> +/**
+>>>>    * pci_num_vf - return number of VFs associated with a PF device_release_driver
+>>>>    * @dev: the PCI device
+>>>>    *
+>>>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+>>>> index 3bed6beda051..2cc68dff6130 100644
+>>>> --- a/drivers/pci/pci-driver.c
+>>>> +++ b/drivers/pci/pci-driver.c
+>>>> @@ -398,7 +398,7 @@ void __weak pcibios_free_irq(struct pci_dev *dev)
+>>>>   #ifdef CONFIG_PCI_IOV
+>>>>   static inline bool pci_device_can_probe(struct pci_dev *pdev)
+>>>>   {
+>>>> -     return (!pdev->is_virtfn || pdev->physfn->sriov->drivers_autoprobe);
+>>>> +     return (!pdev->is_virtfn || pdev->physfn->sriov->autoprobe);
+>>>>   }
+>>>>   #else
+>>>>   static inline bool pci_device_can_probe(struct pci_dev *pdev)
+>>>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+>>>> index eb6bee8724cc..e701b6dbc267 100644
+>>>> --- a/drivers/pci/pci-sysfs.c
+>>>> +++ b/drivers/pci/pci-sysfs.c
+>>>> @@ -605,6 +605,7 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+>>>>                                  struct device_attribute *attr,
+>>>>                                  const char *buf, size_t count)
+>>>>   {
+>>>> +     int (*sriov_configure)(struct pci_dev *dev, int num_vfs);
+>>>>        struct pci_dev *pdev = to_pci_dev(dev);
+>>>>        int ret;
+>>>>        u16 num_vfs;
+>>>> @@ -622,15 +623,20 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+>>>>                goto exit;
+>>>>
+>>>>        /* is PF driver loaded w/callback */
+>>>> -     if (!pdev->driver || !pdev->driver->sriov_configure) {
+>>>> -             pci_info(pdev, "Driver doesn't support SRIOV configuration via sysfs\n");
+>>>> -             ret = -ENOENT;
+>>>> -             goto exit;
+>>>> -     }
+>>>> +     if (pdev->driver && pdev->driver->sriov_configure)
+>>>> +             sriov_configure = pdev->driver->sriov_configure;
+>>>> +     else
+>>>> +             sriov_configure = pci_sriov_configure_unmanaged;
+>>> So an unwitting user is now able to enable vfs, independent of the
+>>> pf... the trouble being that they're probably going to expect them to
+>>> work and the more common case is that they won't.  For instance, what
+>>> can you do with an igbvf when igb isn't managing the pf?
+>> Well the VFs wouldn't be able to do anything. Basically they would be
+>> sitting there with no driver loaded on them unless they are assigned
+>> to a guest, or the root user had enabled the unmanaged option. If you
+>> did load a driver on it the VF would sit there with link down unless
+>> either the PF driver is loaded or some user-space entity steps in to
+>> start managing the PF.
+>>
+>> In reality this can already happen as last I recall igb and ixgbe were
+>> already capable of having the PF driver removed when SR-IOV was
+>> enabled and VFs were assigned. Basically the VFs just report link down
+>> and don't do anything. Reloading the PF driver would have it take over
+>> in the case of igb and ixgbe since they were designed to handle that
+>> type of scenario.
+>>
+>>> Or what happens when vfio-pci owns the pf, sriov is enabled via the
+>>> unmanaged interface, and the pf user driver segfaults and gets killed,
+>>> causing vfio-pci to restore the pf state, including wiping the sriov
+>>> config?
+>> Wiping the config shouldn't have any effect on the allocated VF pci
+>> devices. It will cause the VFs to act as though they have fallen off
+>> of the bus though and the guests would see a surprise remove type
+>> behavior if I am not mistaken. The MMIO and config accesses would fail
+>> until the SR-IOV configuration is restored. Really this shouldn't be a
+>> problem as long as the SR-IOV is enabled prior to loading the vfio-pci
+>> driver as I would assume it would restore the state an re-enable
+>> SR-IOV.
+>>
+>> In the grand scheme of things how would the situation you describe be
+>> any different than someone using the "reset" sysfs control on the PF
+>> while using SR-IOV with driver supported SR-IOV?
+>>
+>> I suppose if you really wanted we could add a new call that you could
+>> put into the sriov_configure pointer that would just make it always
+>> return error. Then that way the configuration could be locked until
+>> the driver is unloaded.
+>>
+>>> I guess I don't understand how vfs can operate fully independent of the
+>>> pf and why vfio-pci wouldn't just implement a dummy sriov_configure to
+>>> avoid contending with such issues.
+>> This approach isn't without risk, but it isn't as if it is really a
+>> new risk we are introducing, and we could do further work to help
+>> smooth out issues like this. Much of this depends on the design of the
+>> device and the drivers involved. What is happening in this case is
+>> that the VFs are managed outside of the kernel itself either by some
+>> user-space entity or by a firmware entity.
+> So I was thinking about this some more. In the case of vfio-pci things
+> are a bit different since you are essentially taking a given device
+> and handing it to a VM or userspace and it doesn't guarantee a
+> communication between the two.
+>
+> My thought is to look at making SR-IOV configuration static or treat
+> it as read-only when the vfio-pci driver is loaded on a given
+> interface. In addition I would set the TAINT_USER flag and add a
+> warning about loading vfio-pci on an active PF, and provide the number
+> of VFs that were allocated.
+>
+> The idea with all of this being that we would at least have a partial
+> lock on all of this so that you can allocate some number of VFs, and
+> then start partitioning things up where you could assign the PF and
+> VFs as needed to the various interfaces. Once the PF is assigned to
+> the vfio-pci driver it would be locked in terms of the number of VFs
+> that are provided so there would be no need for an extra communication
+> channel between the PF driver and the host to deal with changes.
+>
+> Thoughts?
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org
----
- arch/powerpc/boot/dts/acadia.dts           | 2 +-
- arch/powerpc/boot/dts/adder875-redboot.dts | 2 +-
- arch/powerpc/boot/dts/adder875-uboot.dts   | 2 +-
- arch/powerpc/boot/dts/akebono.dts          | 2 +-
- arch/powerpc/boot/dts/amigaone.dts         | 2 +-
- arch/powerpc/boot/dts/asp834x-redboot.dts  | 2 +-
- arch/powerpc/boot/dts/bamboo.dts           | 2 +-
- arch/powerpc/boot/dts/c2k.dts              | 2 +-
- arch/powerpc/boot/dts/currituck.dts        | 2 +-
- arch/powerpc/boot/dts/ebony.dts            | 2 +-
- arch/powerpc/boot/dts/eiger.dts            | 2 +-
- arch/powerpc/boot/dts/ep405.dts            | 2 +-
- arch/powerpc/boot/dts/fsl/mvme7100.dts     | 2 +-
- arch/powerpc/boot/dts/fsp2.dts             | 2 +-
- arch/powerpc/boot/dts/holly.dts            | 2 +-
- arch/powerpc/boot/dts/hotfoot.dts          | 2 +-
- arch/powerpc/boot/dts/icon.dts             | 2 +-
- arch/powerpc/boot/dts/iss4xx-mpic.dts      | 2 +-
- arch/powerpc/boot/dts/iss4xx.dts           | 2 +-
- arch/powerpc/boot/dts/katmai.dts           | 2 +-
- arch/powerpc/boot/dts/klondike.dts         | 2 +-
- arch/powerpc/boot/dts/ksi8560.dts          | 2 +-
- arch/powerpc/boot/dts/media5200.dts        | 2 +-
- arch/powerpc/boot/dts/mpc8272ads.dts       | 2 +-
- arch/powerpc/boot/dts/mpc866ads.dts        | 2 +-
- arch/powerpc/boot/dts/mpc885ads.dts        | 2 +-
- arch/powerpc/boot/dts/mvme5100.dts         | 2 +-
- arch/powerpc/boot/dts/obs600.dts           | 2 +-
- arch/powerpc/boot/dts/pq2fads.dts          | 2 +-
- arch/powerpc/boot/dts/rainier.dts          | 2 +-
- arch/powerpc/boot/dts/redwood.dts          | 2 +-
- arch/powerpc/boot/dts/sam440ep.dts         | 2 +-
- arch/powerpc/boot/dts/sequoia.dts          | 2 +-
- arch/powerpc/boot/dts/storcenter.dts       | 2 +-
- arch/powerpc/boot/dts/taishan.dts          | 2 +-
- arch/powerpc/boot/dts/virtex440-ml507.dts  | 2 +-
- arch/powerpc/boot/dts/virtex440-ml510.dts  | 2 +-
- arch/powerpc/boot/dts/walnut.dts           | 2 +-
- arch/powerpc/boot/dts/warp.dts             | 2 +-
- arch/powerpc/boot/dts/xpedite5200_xmon.dts | 2 +-
- arch/powerpc/boot/dts/yosemite.dts         | 2 +-
- 41 files changed, 41 insertions(+), 41 deletions(-)
+I've been following this conversation and I think putting in some 
+restrictions in order to simplify the design
+is definitely worth considering.  I think there's a lot of potential for 
+this but KISS still applies.
 
-diff --git a/arch/powerpc/boot/dts/acadia.dts b/arch/powerpc/boot/dts/acadia.dts
-index 86266159521e..deb52e41ab84 100644
---- a/arch/powerpc/boot/dts/acadia.dts
-+++ b/arch/powerpc/boot/dts/acadia.dts
-@@ -219,6 +219,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/adder875-redboot.dts b/arch/powerpc/boot/dts/adder875-redboot.dts
-index 083984720b2f..7f5ff4168482 100644
---- a/arch/powerpc/boot/dts/adder875-redboot.dts
-+++ b/arch/powerpc/boot/dts/adder875-redboot.dts
-@@ -178,6 +178,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &console;
-+		stdout-path = &console;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/adder875-uboot.dts b/arch/powerpc/boot/dts/adder875-uboot.dts
-index e4554caf8f8d..bd9f33c57737 100644
---- a/arch/powerpc/boot/dts/adder875-uboot.dts
-+++ b/arch/powerpc/boot/dts/adder875-uboot.dts
-@@ -177,6 +177,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &console;
-+		stdout-path = &console;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/akebono.dts b/arch/powerpc/boot/dts/akebono.dts
-index 746779202a12..8a7a10139bc9 100644
---- a/arch/powerpc/boot/dts/akebono.dts
-+++ b/arch/powerpc/boot/dts/akebono.dts
-@@ -410,6 +410,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &UART0;
-+		stdout-path = &UART0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/amigaone.dts b/arch/powerpc/boot/dts/amigaone.dts
-index 49ac36b16dd7..712430155b99 100644
---- a/arch/powerpc/boot/dts/amigaone.dts
-+++ b/arch/powerpc/boot/dts/amigaone.dts
-@@ -168,6 +168,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/pci@80000000/isa@7/serial@3f8";
-+		stdout-path = "/pci@80000000/isa@7/serial@3f8";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/asp834x-redboot.dts b/arch/powerpc/boot/dts/asp834x-redboot.dts
-index 9198745f45fb..e987b5af9326 100644
---- a/arch/powerpc/boot/dts/asp834x-redboot.dts
-+++ b/arch/powerpc/boot/dts/asp834x-redboot.dts
-@@ -304,7 +304,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttyS0,38400 root=/dev/mtdblock3 rootfstype=jffs2";
--		linux,stdout-path = &serial0;
-+		stdout-path = &serial0;
- 	};
- 
- };
-diff --git a/arch/powerpc/boot/dts/bamboo.dts b/arch/powerpc/boot/dts/bamboo.dts
-index aa68911f6560..538e42b1120d 100644
---- a/arch/powerpc/boot/dts/bamboo.dts
-+++ b/arch/powerpc/boot/dts/bamboo.dts
-@@ -295,6 +295,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/c2k.dts b/arch/powerpc/boot/dts/c2k.dts
-index 27f169e3ade9..c5beb72d18b7 100644
---- a/arch/powerpc/boot/dts/c2k.dts
-+++ b/arch/powerpc/boot/dts/c2k.dts
-@@ -361,6 +361,6 @@
- 		};
- 	};
- 	chosen {
--		linux,stdout-path = &MPSC0;
-+		stdout-path = &MPSC0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/currituck.dts b/arch/powerpc/boot/dts/currituck.dts
-index f2ad5815f08d..a04a4fcfde63 100644
---- a/arch/powerpc/boot/dts/currituck.dts
-+++ b/arch/powerpc/boot/dts/currituck.dts
-@@ -237,6 +237,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &UART0;
-+		stdout-path = &UART0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/ebony.dts b/arch/powerpc/boot/dts/ebony.dts
-index ec2d142291b4..5d11e6ea7405 100644
---- a/arch/powerpc/boot/dts/ebony.dts
-+++ b/arch/powerpc/boot/dts/ebony.dts
-@@ -332,6 +332,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@40000200";
-+		stdout-path = "/plb/opb/serial@40000200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/eiger.dts b/arch/powerpc/boot/dts/eiger.dts
-index 48bcf7187924..7a1231d9d6f0 100644
---- a/arch/powerpc/boot/dts/eiger.dts
-+++ b/arch/powerpc/boot/dts/eiger.dts
-@@ -421,7 +421,7 @@
- 
- 	};
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600200";
-+		stdout-path = "/plb/opb/serial@ef600200";
- 	};
- 
- };
-diff --git a/arch/powerpc/boot/dts/ep405.dts b/arch/powerpc/boot/dts/ep405.dts
-index 53ef06cc2134..4ac9c5ab6e6b 100644
---- a/arch/powerpc/boot/dts/ep405.dts
-+++ b/arch/powerpc/boot/dts/ep405.dts
-@@ -225,6 +225,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/fsl/mvme7100.dts b/arch/powerpc/boot/dts/fsl/mvme7100.dts
-index e2d306ad37a6..721cb53758ae 100644
---- a/arch/powerpc/boot/dts/fsl/mvme7100.dts
-+++ b/arch/powerpc/boot/dts/fsl/mvme7100.dts
-@@ -146,7 +146,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &serial0;
-+		stdout-path = &serial0;
- 	};
- };
- 
-diff --git a/arch/powerpc/boot/dts/fsp2.dts b/arch/powerpc/boot/dts/fsp2.dts
-index 6560283c5aec..9311b86b1bd9 100644
---- a/arch/powerpc/boot/dts/fsp2.dts
-+++ b/arch/powerpc/boot/dts/fsp2.dts
-@@ -607,7 +607,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@b0020000";
-+		stdout-path = "/plb/opb/serial@b0020000";
- 		bootargs = "console=ttyS0,115200 rw log_buf_len=32768 debug";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/holly.dts b/arch/powerpc/boot/dts/holly.dts
-index 43e6f0c8e449..02bd304c7d38 100644
---- a/arch/powerpc/boot/dts/holly.dts
-+++ b/arch/powerpc/boot/dts/holly.dts
-@@ -191,6 +191,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/tsi109@c0000000/serial@7808";
-+		stdout-path = "/tsi109@c0000000/serial@7808";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/hotfoot.dts b/arch/powerpc/boot/dts/hotfoot.dts
-index 71d3bb4931dc..b93bf2d9dd5b 100644
---- a/arch/powerpc/boot/dts/hotfoot.dts
-+++ b/arch/powerpc/boot/dts/hotfoot.dts
-@@ -291,6 +291,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &UART0;
-+		stdout-path = &UART0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/icon.dts b/arch/powerpc/boot/dts/icon.dts
-index 9c94fd737f7c..2e6e3a7b2604 100644
---- a/arch/powerpc/boot/dts/icon.dts
-+++ b/arch/powerpc/boot/dts/icon.dts
-@@ -442,6 +442,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@f0000200";
-+		stdout-path = "/plb/opb/serial@f0000200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/iss4xx-mpic.dts b/arch/powerpc/boot/dts/iss4xx-mpic.dts
-index 23e9d9b7e400..f7063198b2dc 100644
---- a/arch/powerpc/boot/dts/iss4xx-mpic.dts
-+++ b/arch/powerpc/boot/dts/iss4xx-mpic.dts
-@@ -150,6 +150,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@40000200";
-+		stdout-path = "/plb/opb/serial@40000200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/iss4xx.dts b/arch/powerpc/boot/dts/iss4xx.dts
-index 4ff6555c866d..5533aff25e41 100644
---- a/arch/powerpc/boot/dts/iss4xx.dts
-+++ b/arch/powerpc/boot/dts/iss4xx.dts
-@@ -111,6 +111,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@40000200";
-+		stdout-path = "/plb/opb/serial@40000200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/katmai.dts b/arch/powerpc/boot/dts/katmai.dts
-index f913dbe25d35..02629e119b87 100644
---- a/arch/powerpc/boot/dts/katmai.dts
-+++ b/arch/powerpc/boot/dts/katmai.dts
-@@ -505,6 +505,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@f0000200";
-+		stdout-path = "/plb/opb/serial@f0000200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/klondike.dts b/arch/powerpc/boot/dts/klondike.dts
-index 8c9429033618..d9613b7b945f 100644
---- a/arch/powerpc/boot/dts/klondike.dts
-+++ b/arch/powerpc/boot/dts/klondike.dts
-@@ -222,6 +222,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@50001000";
-+		stdout-path = "/plb/opb/serial@50001000";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/ksi8560.dts b/arch/powerpc/boot/dts/ksi8560.dts
-index 5d68236e7c3c..fe6c17c8812a 100644
---- a/arch/powerpc/boot/dts/ksi8560.dts
-+++ b/arch/powerpc/boot/dts/ksi8560.dts
-@@ -339,6 +339,6 @@
- 
- 
- 	chosen {
--		linux,stdout-path = "/soc/cpm/serial@91a00";
-+		stdout-path = "/soc/cpm/serial@91a00";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/media5200.dts b/arch/powerpc/boot/dts/media5200.dts
-index b5413cb85f13..843f156a49c4 100644
---- a/arch/powerpc/boot/dts/media5200.dts
-+++ b/arch/powerpc/boot/dts/media5200.dts
-@@ -25,7 +25,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &console;
-+		stdout-path = &console;
- 	};
- 
- 	cpus {
-diff --git a/arch/powerpc/boot/dts/mpc8272ads.dts b/arch/powerpc/boot/dts/mpc8272ads.dts
-index 6d2cddf64cfd..98282c18d989 100644
---- a/arch/powerpc/boot/dts/mpc8272ads.dts
-+++ b/arch/powerpc/boot/dts/mpc8272ads.dts
-@@ -262,6 +262,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/soc/cpm/serial@11a00";
-+		stdout-path = "/soc/cpm/serial@11a00";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/mpc866ads.dts b/arch/powerpc/boot/dts/mpc866ads.dts
-index 34c1f48b1a09..4443fac3f576 100644
---- a/arch/powerpc/boot/dts/mpc866ads.dts
-+++ b/arch/powerpc/boot/dts/mpc866ads.dts
-@@ -185,6 +185,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/soc/cpm/serial@a80";
-+		stdout-path = "/soc/cpm/serial@a80";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/mpc885ads.dts b/arch/powerpc/boot/dts/mpc885ads.dts
-index 4e93bd961e0f..5b037f51741d 100644
---- a/arch/powerpc/boot/dts/mpc885ads.dts
-+++ b/arch/powerpc/boot/dts/mpc885ads.dts
-@@ -227,6 +227,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/soc/cpm/serial@a80";
-+		stdout-path = "/soc/cpm/serial@a80";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/mvme5100.dts b/arch/powerpc/boot/dts/mvme5100.dts
-index 1ecb341a232a..a7eb6d25903d 100644
---- a/arch/powerpc/boot/dts/mvme5100.dts
-+++ b/arch/powerpc/boot/dts/mvme5100.dts
-@@ -179,7 +179,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &serial0;
-+		stdout-path = &serial0;
-         };
- 
- };
-diff --git a/arch/powerpc/boot/dts/obs600.dts b/arch/powerpc/boot/dts/obs600.dts
-index 18e7d79ee4c3..d10b0411809b 100644
---- a/arch/powerpc/boot/dts/obs600.dts
-+++ b/arch/powerpc/boot/dts/obs600.dts
-@@ -309,6 +309,6 @@
- 		};
- 	};
-         chosen {
--                linux,stdout-path = "/plb/opb/serial@ef600200";
-+                stdout-path = "/plb/opb/serial@ef600200";
-         };
- };
-diff --git a/arch/powerpc/boot/dts/pq2fads.dts b/arch/powerpc/boot/dts/pq2fads.dts
-index 0c525ff0c257..a477615e3468 100644
---- a/arch/powerpc/boot/dts/pq2fads.dts
-+++ b/arch/powerpc/boot/dts/pq2fads.dts
-@@ -242,6 +242,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/soc/cpm/serial@11a00";
-+		stdout-path = "/soc/cpm/serial@11a00";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/rainier.dts b/arch/powerpc/boot/dts/rainier.dts
-index 9684c80e4093..e59829cff556 100644
---- a/arch/powerpc/boot/dts/rainier.dts
-+++ b/arch/powerpc/boot/dts/rainier.dts
-@@ -344,7 +344,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 		bootargs = "console=ttyS0,115200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/redwood.dts b/arch/powerpc/boot/dts/redwood.dts
-index d86a3a498118..f3e046fb49e2 100644
---- a/arch/powerpc/boot/dts/redwood.dts
-+++ b/arch/powerpc/boot/dts/redwood.dts
-@@ -381,7 +381,7 @@
- 
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600200";
-+		stdout-path = "/plb/opb/serial@ef600200";
- 	};
- 
- };
-diff --git a/arch/powerpc/boot/dts/sam440ep.dts b/arch/powerpc/boot/dts/sam440ep.dts
-index 088361cf4636..7d15f18e1180 100644
---- a/arch/powerpc/boot/dts/sam440ep.dts
-+++ b/arch/powerpc/boot/dts/sam440ep.dts
-@@ -288,6 +288,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/sequoia.dts b/arch/powerpc/boot/dts/sequoia.dts
-index e41b88a5eaee..60d211da9593 100644
---- a/arch/powerpc/boot/dts/sequoia.dts
-+++ b/arch/powerpc/boot/dts/sequoia.dts
-@@ -406,7 +406,7 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 		bootargs = "console=ttyS0,115200";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/storcenter.dts b/arch/powerpc/boot/dts/storcenter.dts
-index 2a555738517e..99f6f544dc5f 100644
---- a/arch/powerpc/boot/dts/storcenter.dts
-+++ b/arch/powerpc/boot/dts/storcenter.dts
-@@ -137,6 +137,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = &serial0;
-+		stdout-path = &serial0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/taishan.dts b/arch/powerpc/boot/dts/taishan.dts
-index 1657ad0bf8a6..803f1bff7fa8 100644
---- a/arch/powerpc/boot/dts/taishan.dts
-+++ b/arch/powerpc/boot/dts/taishan.dts
-@@ -422,6 +422,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@40000300";
-+		stdout-path = "/plb/opb/serial@40000300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/virtex440-ml507.dts b/arch/powerpc/boot/dts/virtex440-ml507.dts
-index 391a4e299783..66f1c6312de6 100644
---- a/arch/powerpc/boot/dts/virtex440-ml507.dts
-+++ b/arch/powerpc/boot/dts/virtex440-ml507.dts
-@@ -32,7 +32,7 @@
- 	} ;
- 	chosen {
- 		bootargs = "console=ttyS0 root=/dev/ram";
--		linux,stdout-path = &RS232_Uart_1;
-+		stdout-path = &RS232_Uart_1;
- 	} ;
- 	cpus {
- 		#address-cells = <1>;
-diff --git a/arch/powerpc/boot/dts/virtex440-ml510.dts b/arch/powerpc/boot/dts/virtex440-ml510.dts
-index 81201d3907e2..3b736ca26ddc 100644
---- a/arch/powerpc/boot/dts/virtex440-ml510.dts
-+++ b/arch/powerpc/boot/dts/virtex440-ml510.dts
-@@ -26,7 +26,7 @@
- 	} ;
- 	chosen {
- 		bootargs = "console=ttyS0 root=/dev/ram";
--		linux,stdout-path = "/plb@0/serial@83e00000";
-+		stdout-path = "/plb@0/serial@83e00000";
- 	} ;
- 	cpus {
- 		#address-cells = <1>;
-diff --git a/arch/powerpc/boot/dts/walnut.dts b/arch/powerpc/boot/dts/walnut.dts
-index 4a9f726ada13..0872862c9363 100644
---- a/arch/powerpc/boot/dts/walnut.dts
-+++ b/arch/powerpc/boot/dts/walnut.dts
-@@ -241,6 +241,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/warp.dts b/arch/powerpc/boot/dts/warp.dts
-index ea9053ef4819..b4f32740870e 100644
---- a/arch/powerpc/boot/dts/warp.dts
-+++ b/arch/powerpc/boot/dts/warp.dts
-@@ -304,6 +304,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/xpedite5200_xmon.dts b/arch/powerpc/boot/dts/xpedite5200_xmon.dts
-index 646acfbef0dd..d5e14421c39a 100644
---- a/arch/powerpc/boot/dts/xpedite5200_xmon.dts
-+++ b/arch/powerpc/boot/dts/xpedite5200_xmon.dts
-@@ -503,6 +503,6 @@
- 
- 	/* Needed for dtbImage boot wrapper compatibility */
- 	chosen {
--		linux,stdout-path = &serial0;
-+		stdout-path = &serial0;
- 	};
- };
-diff --git a/arch/powerpc/boot/dts/yosemite.dts b/arch/powerpc/boot/dts/yosemite.dts
-index 30bb4753577a..56508785ce13 100644
---- a/arch/powerpc/boot/dts/yosemite.dts
-+++ b/arch/powerpc/boot/dts/yosemite.dts
-@@ -327,6 +327,6 @@
- 	};
- 
- 	chosen {
--		linux,stdout-path = "/plb/opb/serial@ef600300";
-+		stdout-path = "/plb/opb/serial@ef600300";
- 	};
- };
--- 
-2.14.1
+Thanks for the work on this!
+
+- Greg
