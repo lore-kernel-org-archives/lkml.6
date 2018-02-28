@@ -1,80 +1,60 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519798925; cv=none;
+Return-Path: <merlijn@wizzup.org>
+X-Google-Smtp-Source: AG47ELvcGQf/dx8eGPPSQY1GAMG/eft7oHvKrr0+mups1p7ekK2WYfLSe3j7HMhKLxa2qkyO8FNg
+ARC-Seal: i=1; a=rsa-sha256; t=1519779969; cv=none;
         d=google.com; s=arc-20160816;
-        b=WAmf5EVcDuGn242f3emz+1Wg67uO3Wdz71nyNKJrpiqxv5VTaPau22WlCt9BoCy8w0
-         Sn69uG62X/6o0zDq0Kn5ie3/bg+6S4YHKk5+kI+yWP08jwuzNzQM3pXoVt1XO070D47a
-         jqrDFcyfMP3RKgx87gJBth9m/hQTakqamVVMGOWslGqwHEOLyGxRzMz2UK1F8tUWeiS9
-         AhlCDIgdadFXHcojAhbXxVCRwBcIVKRUQofm/qhJkMB739/s1Ur6uEEiuA5o660E7g9w
-         9WrqH3EvYCX0xLV0vCJd95E8j8BsF+dHSi9oK7YsdWPsVj8EbI1pUNTlBYViSqCEk7QA
-         yGDQ==
+        b=EQfjSbKik5rMHKhxvBBxX0b0ZscNE8jvI8Fx5qcaR8HANzqSPogBxGyw/xjicHYN3C
+         8Lt1f/KU+kl5jeUC/ArUlsCiHWf3SzqtiCOXgS7TXv/qMElyTkljY6hbV6SuHMTH0Rou
+         go5Mi7B3hrwLiEMjnZUteuXaAe9dBzpbY8+ZrHltMswh2/XinQbohm1TjnYv0z0+qj1m
+         hbILpZTNqHWteUSD7ybOnEHPJJ/zQd7LWOseCOfSMnh/ZEBq0Edv8hU7p0xBHwDIMnpH
+         xNY972yINvVvoIFtFipu7qPw4ArUNoLvMU/EaI57LCi7EREJKl5d6YHtiP4npcWdBOh/
+         e7UQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=gqVFp9FvVvaKoNpsBt3zSXePlAWW80Lv/EZk0/AzO0I=;
-        b=F6KQ4KB5hGDcfpzC4ehaaVMvkA9xMG4dvLBKCBOdZ9XwGmBFXvm0vIj/d4T9T0K6ec
-         yNkYFfZzFufVXkwfM3E5XDdkJaLVO+GPvjGcu/vyCnGEDuIHFZvjZ6ICmDLMMIKNgDpy
-         f0JgHM+6tzTRpNgK4ZXdGYcWGUZuzG9e1Va3OSSFVwgJmrAjqAnnI32MYYylfq+HFLAW
-         lCwP5IesFCxpRhg7jKw3sxym5s6rsJiWKCkQ8d5mMW9sTZu+ZaJmClS74/k30rxOz749
-         7IemuREZfN0vYBDIX0ZqAbDf5u5onNz+ziQOBAwa5CCqd/VonOGYAoHyK8h3+V/mo7U0
-         DJiQ==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=pbUxWgrB3rq4rLIGVROlSWz+qQVHMq8j388JMG/Y95Y=;
+        b=aaEzyQU06Ocx09DHBsrtxl+GiRDQq4LHLRepL7l9gkDnQHoGhQ9qYUfjPY/9IXs39t
+         CESqmYvQnwL23M2IjP95GTBsxcCfRg6TUS06X8RBmKliRCqNe4qXTSnDGGyPoe9+VJgP
+         LObCnp9yOzTm/VW/2EkRb2tRGAUW1RguFJ7SbYisVSJ5xzcM9D7XY4Eg8NMTjLGxZxtq
+         WQDuQ/CqUpBTgCfQyIz5f4FtBRTtGzOKfj1PdZuh7Mal1aCwV/73yo5S8YqiNH+w108z
+         dS7a7sQmgtaeDNg112kpFrQf1KBBW1J3lghw71tKNsSwd3MRhN9/reC1c+F1bjfaLcWp
+         7eUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FbvVS8Dr;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=neutral (google.com: 188.165.243.101 is neither permitted nor denied by best guess record for domain of merlijn@wizzup.org) smtp.mailfrom=merlijn@wizzup.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FbvVS8Dr;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x225cAN1abrh906N0uRYTR8k5xvwbBRsq3/UdU1s6DVs9j3O78ZTNJXxjKxvK0bh/guiQf4kmPg==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	arnd@arndb.de
-Cc: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	baolin.wang@linaro.org
-Subject: [PATCH] m32r: Use read_persistent_clock64() instead of read_persistent_clock()
-Date: Wed, 28 Feb 2018 14:21:24 +0800
-Message-Id: <872a6089557b74f6e01bf1399b84a89af2a85ee2.1519798740.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+       spf=neutral (google.com: 188.165.243.101 is neither permitted nor denied by best guess record for domain of merlijn@wizzup.org) smtp.mailfrom=merlijn@wizzup.org
+From: Merlijn Wajer <merlijn@wizzup.org>
+To: linux-omap@vger.kernel.org
+Cc: merlijn@wizzup.org,
+	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+	"Andrew F. Davis" <afd@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Breck <kernel@networkimprov.net>,
+	Matt Ranostay <matt.ranostay@konsulko.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] power: supply: bq27xxx: Call power_supply_changed on status change
+Date: Wed, 28 Feb 2018 02:04:43 +0100
+Message-Id: <20180228010452.1713-1-merlijn@wizzup.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593624678665009389?=
-X-GMAIL-MSGID: =?utf-8?q?1593624678665009389?=
+X-GMAIL-THRID: =?utf-8?q?1593604801076921688?=
+X-GMAIL-MSGID: =?utf-8?q?1593604801076921688?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since struct timespec is not y2038 safe on 32bit machines, this patch
-converts read_persistent_clock() to read_persistent_clock64() using
-struct timespec64, as well as converting mktime() to mktime64().
+Hi,
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- arch/m32r/kernel/time.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It seems that bq27xxx_battery_update does not call power_supply_changed when the
+charging status changes, and instead only when the capacity changes.
 
-diff --git a/arch/m32r/kernel/time.c b/arch/m32r/kernel/time.c
-index 521749f..3ef3123 100644
---- a/arch/m32r/kernel/time.c
-+++ b/arch/m32r/kernel/time.c
-@@ -138,7 +138,7 @@ static irqreturn_t timer_interrupt(int irq, void *dev_id)
- 	.name = "MFT2",
- };
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	unsigned int epoch, year, mon, day, hour, min, sec;
- 
-@@ -158,7 +158,7 @@ void read_persistent_clock(struct timespec *ts)
- 		epoch = 1952;
- 	year += epoch;
- 
--	ts->tv_sec = mktime(year, mon, day, hour, min, sec);
-+	ts->tv_sec = mktime64(year, mon, day, hour, min, sec);
- 	ts->tv_nsec = (INITIAL_JIFFIES % HZ) * (NSEC_PER_SEC / HZ);
- }
- 
--- 
-1.7.9.5
+This can cause considerable delays in reporting charging status changes to
+userspace. This patch turns the battery status reading function into one that
+returns the value directly (as other *_read functions), adds the status to the
+cache, uses the cache when reporting the values and finally will trigger
+power_supply_changed when the charging status changes.
+
+There is still a noticable delay in detecting charger status, but that seems to
+have a different cause.
+
+Cheers,
+Merlijn
