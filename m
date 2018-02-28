@@ -1,306 +1,872 @@
-Return-Path: <prvs=1594D10D68=shufan_lee@richtek.com>
-X-Cyrus-Session-Id: sloti22d1t05-2956071-1519784055-2-6929967608588463476
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-2956071-1519783790-2-11368017300721800703
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, SPF_PASS -0.001,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='220.130.44.152', Host='mg.richtek.com', Country='TW', FromHeader='com',
-  MailFrom='com', XOriginatingCountry='TW'
-X-Spam-charsets: from='big5', cc='big5', subject='big5', plain='big5'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  HTML_MESSAGE 0.001, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.216.180', Host='mail-qt0-f180.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: from='UTF-8', plain='UTF-8', html='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: prvs=1594D10D68=shufan_lee@richtek.com
+X-Mail-from: leechu729@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519784053; b=djg0hZlPe9S96G10WlA6jlJR/UJiKQ7xlRRe54XNrKH8Hbv
-    kfFplVBztatS8fQ0Whjdd0EZ9ohnnT3er7cH/M1uF4c/uiY4G2aL0OPf0liUy3d4
-    uAuBVkkX/8h87DAj8a4duVpKMMFGTLstV/dQjyMTKpVF1L+Jm4F62bphQr1BMpC+
-    zpLAzxRzkC4ex/Owu9CKdMUft8RnwgDaWApQufRzL+Si1FZOBKnB9XvVBztqzITs
-    6l5/2ggTjL3G7Nskbw9HHRZ65h1u2YaEsAIkdnGwcBPDPsMqLqt0js7DeyE7aq4v
-    ZopyNdSTQWUPYX95NxkGpyXTr7V+kfzeqpS9MAA==
+    t=1519783789; b=iCs8fvgSTkIQ5QqNcwa1o99RviJBL0wiVOD0+KLBiW/RH2C
+    BIhLBCWr7UQHZXSSe1qlCfuoSKBcvvRrpITby3za5b622fim+O4k+csorYXHtyr7
+    mkhfbS20bfarDhcx4oB1QLy/HQ3U26psP7ulQUUKAYsVXACTxoxWAyZJBlcjekBk
+    i2qQh4kj2QNyZjiHDqBCBvZYrm5x6zMDJNXxmJBUkK6ZMySl70PZRU77Yk9Md8D2
+    w4l1Op3w2xZnqlK6VbYj8jYwvdJOxdKCKGED2iHeoxJXjIGKMeY0zLAVj+z++DIg
+    IP1+t5lrG8cjg60v/ZsWRgXtnnHo1Pw6EQlLwQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version; s=arctest; t=1519784053; bh=KN7UoR7UWoNMqRgt4WpP6
-    0VRHHimQCWlJ6ilm1C9zaA=; b=hU4rnvn59j4+nO8VcGgTfpsPP/x5l3AeLErms
-    VwJ4Pu+MhG2W6RWcjp/uubRAl9UEPfxFVtF6kEJG8sJeAQIvxokRIV+DVb9Ibglg
-    sRlA0PquRGzJodxXrc8Hyl1+qoySdeN0uJ9HcXE3mqZeD7tNvPasleYxbVqSdxA/
-    q4MD9qErLzxA+86g7bJHU24MLro+aHYmd7MgJwAST/KgCzBWdGNWUJlaktUhsBh0
-    /Gb8Y/2gy+03sqUnqknbjlWXW9L7nNUN66bUwKBKLupah34yaJHNkRqPBPEWiN41
-    2kFoCnqZ9SBs1ois/zSyfZjnuAQBm8PysUudVejpNYFrtF2YQ==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type; s=arctest; t=
+    1519783789; bh=zKP4PV0WiZJJy7M6P1938d56hHtv38J/f+Uekj8knFc=; b=U
+    PmbURoiFWc7tmUdvAc0YF3asxGyuO0ozAhrc80mOvytjZ1butK4dcCZE0KuEK1sH
+    69+XrkyXhQXcQpzNtyJ1X974dXrXQahqjXjHf77iSapjXvoKI7mkZhN06X8haclN
+    QxLKMJb92U8Va+wR/n6x2Gi9i+K808aZKWxT9KxJC3LQFml7cchCK+hqzZGP5NSW
+    +MBx0L0ATFKHC4MJf7TFe5UbBSjO3mZcyC7RSAHEEppIM5+QkqVXRfXkuZ0RZWW3
+    3V0JSUe4qV5/S5aX8fQo0a2uJei7ZCNkfCpwZXyIseXbCLGk2iz6Luj5sodJ6/3o
+    F4xu9XdwCX5HCqLHQHnYg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=richtek.com;
-    iprev=pass policy.iprev=220.130.44.152 (mg.richtek.com);
-    spf=pass smtp.mailfrom=prvs=1594D10D68=shufan_lee@richtek.com smtp.helo=mg.richtek.com;
-    x-aligned-from=domain_pass;
-    x-ptr=pass x-ptr-helo=mg.richtek.com x-ptr-lookup=mg.richtek.com;
-    x-return-mx=pass smtp.domain=richtek.com smtp.result=pass smtp_is_org_domain=yes header.domain=richtek.com header.result=pass header_is_org_domain=yes
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HDxWrQQm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.216.180 (mail-qt0-f180.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qt0-f180.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Kz5pztlT;
+    x-ptr=pass x-ptr-helo=mail-qt0-f180.google.com x-ptr-lookup=mail-qt0-f180.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=richtek.com;
-    iprev=pass policy.iprev=220.130.44.152 (mg.richtek.com);
-    spf=pass smtp.mailfrom=prvs=1594D10D68=shufan_lee@richtek.com smtp.helo=mg.richtek.com;
-    x-aligned-from=domain_pass;
-    x-ptr=pass x-ptr-helo=mg.richtek.com x-ptr-lookup=mg.richtek.com;
-    x-return-mx=pass smtp.domain=richtek.com smtp.result=pass smtp_is_org_domain=yes header.domain=richtek.com header.result=pass header_is_org_domain=yes
-X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
-	LIVER,40,3)
-From: =?big5?B?c2h1ZmFuX2xlZSin9a7Rpnwp?= <shufan_lee@richtek.com>
-To: Guenter Roeck <linux@roeck-us.net>, ShuFanLee <leechu729@gmail.com>
-CC: "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-	"greg@kroah.com" <greg@kroah.com>, =?big5?B?Y3lfaHVhbmcotsCx0q3sKQ==?=
-	<cy_huang@richtek.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>
-Subject: =?big5?B?pl7C0DogW1BBVENIXSBzdGFnaW5nOiB0eXBlYzogaGFuZGxlIHZlbmRvciBkZWZp?=
- =?big5?Q?ned_part_and_modify_drp_toggling_flow?=
-Thread-Topic: [PATCH] staging: typec: handle vendor defined part and modify
- drp toggling flow
-Thread-Index: AQHTqyUC1KfEVAIOvUSu1Z3CmdjNFaOu5n4AgAo2wKU=
-Date: Wed, 28 Feb 2018 02:14:04 +0000
-Message-ID: <1519784044744.14709@richtek.com>
-References: <1519225343-2929-1-git-send-email-leechu729@gmail.com>,<20180221221514.GA31916@roeck-us.net>
-In-Reply-To: <20180221221514.GA31916@roeck-us.net>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [114.32.235.24]
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HDxWrQQm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.216.180 (mail-qt0-f180.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qt0-f180.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Kz5pztlT;
+    x-ptr=pass x-ptr-helo=mail-qt0-f180.google.com x-ptr-lookup=mail-qt0-f180.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELuF+Fup+0rWrnctnc81h10smL13W6Blep6CUrGTfSVhCZ4+lEtyol5wsJAV5tpugnQEQQd11Pv+l4J+i5UkMrY=
 MIME-Version: 1.0
+In-Reply-To: <20180221221514.GA31916@roeck-us.net>
+References: <1519225343-2929-1-git-send-email-leechu729@gmail.com> <20180221221514.GA31916@roeck-us.net>
+From: =?UTF-8?B?5p2O5pu45biG?= <leechu729@gmail.com>
+Date: Wed, 28 Feb 2018 10:09:47 +0800
+Message-ID: <CAFaeLdQVXS+PBUeC=T5qb6YkNA0ggak_c2MxKfZeoYzryimFaw@mail.gmail.com>
+Subject: Re: [PATCH] staging: typec: handle vendor defined part and modify drp
+ toggling flow
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: heikki.krogerus@linux.intel.com, Greg KH <greg@kroah.com>, shufan_lee@richtek.com,
+	cy_huang@richtek.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: multipart/alternative; boundary="001a11425e86cc5a5205663c3c72"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkgR3VlbnRlciwNCg0KICByZWdtYXBfd3JpdGUgcmV0dXJucyBhIG5lZ2F0aXZlIHJldHVybiBj
-b2RlIG9yIDAsIHRodXMgdGhpcyBjYW4gYmUNCnNpbXBsaWZpZWQgdG8NCiAgICAgICAgcmV0dXJu
-IHJlZ21hcF93cml0ZSguLi4pOw0KDQogIE9rLCBJJ2xsIG1vZGlmeSBpdCBpbiB2NA0KDQpIbW0s
-IG5vcm1hbGx5IEknZCBleHBlY3QgdGhpcyBmdW5jdGlvbiBfYWZ0ZXJfIHRoZSBmdW5jdGlvbiBp
-dCBjYWxscy4NCkd1ZXNzIHRoYXQgZG9lc24ndCBtYXR0ZXIgbXVjaCBoZXJlLCBzbyBJIGFtIGZp
-bmUgd2l0aCBpdCBhcyBsb25nDQphcyBHcmVnIGlzIG9rIHdpdGggaXQgYXMgd2VsbC4NCg0KICBE
-byB5b3UgbWVhbiBpdCBtYXliZSBiZXR0ZXIgdG8gY2FsbCB2ZW5kb3IncyBzZXRfdmNvbm4gYWZ0
-ZXIgbm9ybWFsIHNldF92Y29ubiBpcyBmaW5pc2hlZD8NCiAgSWYgSSB1bmRlcnN0YW5kIGNvcnJl
-Y3RseSwgSSBjYW4gYWxzbyBtb2RpZnkgaXQgaW4gdjQuIEZvciBSVDE3MTFILCBpdCBhbHNvIHdv
-cmtzIGJ5IGVuYWJsaW5nL2Rpc2FibGluZyBpZGxlIG1vZGUgYWZ0ZXIgc2V0X3Zjb25uLg0KDQpC
-ZXN0IFJlZ2FyZHMsDQoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKg0K
-U2h1LUZhbiBMZWUNClJpY2h0ZWsgVGVjaG5vbG9neSBDb3Jwb3JhdGlvbg0KVEVMOiArODg2LTMt
-NTUyNjc4OSAjMjM1OQ0KRkFYOiArODg2LTMtNTUyNjYxMg0KKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioNCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXw0KsUil86rMOiBHdWVudGVyIFJvZWNrIDxncm9lY2s3QGdtYWlsLmNvbT4gpU6q7SBH
-dWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+DQqxSKXzpOm0wTogMjAxOKZ+MqTrMjKk
-6SCkV6TIIDA2OjE1DQqmrKXzqsw6IFNodUZhbkxlZQ0KsMaluzogaGVpa2tpLmtyb2dlcnVzQGxp
-bnV4LmludGVsLmNvbTsgZ3JlZ0Brcm9haC5jb207IHNodWZhbl9sZWUop/Wu0aZ8KTsgY3lfaHVh
-bmcotsCx0q3sKTsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtdXNiQHZnZXIu
-a2VybmVsLm9yZw0KpUSmrjogUmU6IFtQQVRDSF0gc3RhZ2luZzogdHlwZWM6IGhhbmRsZSB2ZW5k
-b3IgZGVmaW5lZCBwYXJ0IGFuZCBtb2RpZnkgZHJwIHRvZ2dsaW5nIGZsb3cNCg0KT24gV2VkLCBG
-ZWIgMjEsIDIwMTggYXQgMTE6MDI6MjNQTSArMDgwMCwgU2h1RmFuTGVlIHdyb3RlOg0KPiBGcm9t
-OiBTaHVGYW5MZWUgPHNodWZhbl9sZWVAcmljaHRlay5jb20+DQo+DQo+IEhhbmRsZSB2ZW5kb3Ig
-ZGVmaW5lZCBiZWhhdmlvciBpbiB0Y3BjaV9pbml0LCB0Y3BjaV9zZXRfdmNvbm4gYW5kIGV4cG9y
-dCB0Y3BjaV9pcnEuDQo+IE1vcmUgb3BlcmF0aW9ucyBjYW4gYmUgZXh0ZW5kZWQgaW4gdGNwY2lf
-ZGF0YSBpZiBuZWVkZWQuDQo+IEFjY29yZGluZyB0byBUQ1BDSSBzcGVjaWZpY2F0aW9uLCA0LjQu
-NS4yIFJPTEVfQ09OVFJPTCwNCj4gVENQQyBzaGFsbCBub3Qgc3RhcnQgRFJQIHRvZ2dsaW5nIHVu
-dGlsIHN1YnNlcXVlbnRseSB0aGUgVENQTQ0KPiB3cml0ZXMgdG8gdGhlIENPTU1BTkQgcmVnaXN0
-ZXIgdG8gc3RhcnQgRFJQIHRvZ2dsaW5nLg0KPiBEUlAgdG9nZ2xpbmcgZmxvdyBpcyBjaGFnbmVk
-IGFzIGZvbGxvd2luZzoNCj4gICAtIFdyaXRlIERSUCA9IDAgJiBSZC9SZA0KPiAgIC0gV3JpdGUg
-RFJQID0gMQ0KPiAgIC0gU2V0IExPT0s0Q09OTkVDVElPTiBjb21tYW5kDQo+DQo+IFNpZ25lZC1v
-ZmYtYnk6IFNodUZhbkxlZSA8c2h1ZmFuX2xlZUByaWNodGVrLmNvbT4NCg0KTW9zdGx5IGxvb29r
-cyBnb29kIHRvIG1lLiBDb3VwbGUgb2Ygbml0cGlja3MgYmVsb3cuDQoNCkd1ZW50ZXINCg0KPiAt
-LS0NCj4gIGRyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jIHwgMTI4ICsrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQ0KPiAgZHJpdmVycy9zdGFnaW5nL3R5cGVjL3Rj
-cGNpLmggfCAgMTMgKysrKysNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTE1IGluc2VydGlvbnMoKyks
-IDI2IGRlbGV0aW9ucygtKQ0KPg0KPiAgcGF0Y2ggY2hhbmdlbG9ncyBiZXR3ZWVuIHYxICYgdjIN
-Cj4gIC0gUmVtb3ZlIHVubmVjZXNzYXJ5IGkyY19jbGllbnQgaW4gdGhlIHN0cnVjdHVyZSBvZiB0
-Y3BjaQ0KPiAgLSBSZW5hbWUgc3RydWN0dXJlIG9mIHRjcGNpX3ZlbmRvcl9kYXRhIHRvIHRjcGNp
-X2RhdGENCj4gIC0gTm90IGV4cG9ydGluZyB0Y3BjaSByZWFkL3dyaXRlIHdyYXBwZXJzIGJ1dCBy
-ZWdpc3RlciBpMmMgcmVnbWFwIGluIGdsdWUgZHJpdmVyDQo+ICAtIEFkZCBzZXRfdmNvbm4gb3Bz
-IGluIHRjcGNpX2RhdGENCj4gICAgKEl0IGlzIG5lY2Vzc2FyeSBmb3IgUlQxNzExSCB0byBlbmFi
-bGUvZGlzYWJsZSBpZGxlIG1vZGUgYmVmb3JlIGRpc2FibGluZy9lbmFibGluZyB2Y29ubikNCj4g
-IC0gRXhwb3J0IHRjcGNpX2lycSBzbyB0aGF0IHZlbmRvciBjYW4gY2FsbCBpdCBpbiB0aGVpciBv
-d24gSVJRIGhhbmRsZXINCj4NCj4gIHBhdGNoIGNoYW5nZWxvZ3MgYmV0d2VlbiB2MiAmIHYzDQo+
-ICAtIENoYW5nZSB0aGUgcmV0dXJuIHR5cGUgb2YgdGNwY2lfaXJxIGZyb20gaW50IHRvIGlycXJl
-dHVybl90DQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvdHlwZWMvdGNwY2kuYyBi
-L2RyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+IGluZGV4IDliZDQ0MTIuLjQ5NTljNjkg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+ICsrKyBiL2Ry
-aXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+IEBAIC0yMSw3ICsyMSw2IEBADQo+DQo+ICBz
-dHJ1Y3QgdGNwY2kgew0KPiAgICAgICBzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+IC0gICAgIHN0cnVj
-dCBpMmNfY2xpZW50ICpjbGllbnQ7DQo+DQo+ICAgICAgIHN0cnVjdCB0Y3BtX3BvcnQgKnBvcnQ7
-DQo+DQo+IEBAIC0zMCw2ICsyOSwxMiBAQCBzdHJ1Y3QgdGNwY2kgew0KPiAgICAgICBib29sIGNv
-bnRyb2xzX3ZidXM7DQo+DQo+ICAgICAgIHN0cnVjdCB0Y3BjX2RldiB0Y3BjOw0KPiArICAgICBz
-dHJ1Y3QgdGNwY2lfZGF0YSAqZGF0YTsNCj4gK307DQo+ICsNCj4gK3N0cnVjdCB0Y3BjaV9jaGlw
-IHsNCj4gKyAgICAgc3RydWN0IHRjcGNpICp0Y3BjaTsNCj4gKyAgICAgc3RydWN0IHRjcGNpX2Rh
-dGEgZGF0YTsNCj4gIH07DQo+DQo+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCB0Y3BjaSAqdGNwY190
-b190Y3BjaShzdHJ1Y3QgdGNwY19kZXYgKnRjcGMpDQo+IEBAIC0zNyw4ICs0Miw3IEBAIHN0YXRp
-YyBpbmxpbmUgc3RydWN0IHRjcGNpICp0Y3BjX3RvX3RjcGNpKHN0cnVjdCB0Y3BjX2RldiAqdGNw
-YykNCj4gICAgICAgcmV0dXJuIGNvbnRhaW5lcl9vZih0Y3BjLCBzdHJ1Y3QgdGNwY2ksIHRjcGMp
-Ow0KPiAgfQ0KPg0KPiAtc3RhdGljIGludCB0Y3BjaV9yZWFkMTYoc3RydWN0IHRjcGNpICp0Y3Bj
-aSwgdW5zaWduZWQgaW50IHJlZywNCj4gLSAgICAgICAgICAgICAgICAgICAgIHUxNiAqdmFsKQ0K
-PiArc3RhdGljIGludCB0Y3BjaV9yZWFkMTYoc3RydWN0IHRjcGNpICp0Y3BjaSwgdW5zaWduZWQg
-aW50IHJlZywgdTE2ICp2YWwpDQo+ICB7DQo+ICAgICAgIHJldHVybiByZWdtYXBfcmF3X3JlYWQo
-dGNwY2ktPnJlZ21hcCwgcmVnLCB2YWwsIHNpemVvZih1MTYpKTsNCj4gIH0NCj4gQEAgLTk4LDgg
-KzEwMiwxMCBAQCBzdGF0aWMgaW50IHRjcGNpX3NldF9jYyhzdHJ1Y3QgdGNwY19kZXYgKnRjcGMs
-IGVudW0gdHlwZWNfY2Nfc3RhdHVzIGNjKQ0KPiAgc3RhdGljIGludCB0Y3BjaV9zdGFydF9kcnBf
-dG9nZ2xpbmcoc3RydWN0IHRjcGNfZGV2ICp0Y3BjLA0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgZW51bSB0eXBlY19jY19zdGF0dXMgY2MpDQo+ICB7DQo+ICsgICAgIGludCBy
-ZXQ7DQo+ICAgICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSB0Y3BjX3RvX3RjcGNpKHRjcGMpOw0K
-PiAtICAgICB1bnNpZ25lZCBpbnQgcmVnID0gVENQQ19ST0xFX0NUUkxfRFJQOw0KPiArICAgICB1
-bnNpZ25lZCBpbnQgcmVnID0gKFRDUENfUk9MRV9DVFJMX0NDX1JEIDw8IFRDUENfUk9MRV9DVFJM
-X0NDMV9TSElGVCkgfA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgKFRDUENfUk9MRV9DVFJM
-X0NDX1JEIDw8IFRDUENfUk9MRV9DVFJMX0NDMl9TSElGVCk7DQo+DQo+ICAgICAgIHN3aXRjaCAo
-Y2MpIHsNCj4gICAgICAgZGVmYXVsdDoNCj4gQEAgLTExNyw3ICsxMjMsMTkgQEAgc3RhdGljIGlu
-dCB0Y3BjaV9zdGFydF9kcnBfdG9nZ2xpbmcoc3RydWN0IHRjcGNfZGV2ICp0Y3BjLA0KPiAgICAg
-ICAgICAgICAgIGJyZWFrOw0KPiAgICAgICB9DQo+DQo+IC0gICAgIHJldHVybiByZWdtYXBfd3Jp
-dGUodGNwY2ktPnJlZ21hcCwgVENQQ19ST0xFX0NUUkwsIHJlZyk7DQo+ICsgICAgIHJldCA9IHJl
-Z21hcF93cml0ZSh0Y3BjaS0+cmVnbWFwLCBUQ1BDX1JPTEVfQ1RSTCwgcmVnKTsNCj4gKyAgICAg
-aWYgKHJldCA8IDApDQo+ICsgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gKyAgICAgdXNsZWVw
-X3JhbmdlKDUwMCwgMTAwMCk7DQo+ICsgICAgIHJlZyB8PSBUQ1BDX1JPTEVfQ1RSTF9EUlA7DQo+
-ICsgICAgIHJldCA9IHJlZ21hcF93cml0ZSh0Y3BjaS0+cmVnbWFwLCBUQ1BDX1JPTEVfQ1RSTCwg
-cmVnKTsNCj4gKyAgICAgaWYgKHJldCA8IDApDQo+ICsgICAgICAgICAgICAgcmV0dXJuIHJldDsN
-Cj4gKyAgICAgcmV0ID0gcmVnbWFwX3dyaXRlKHRjcGNpLT5yZWdtYXAsIFRDUENfQ09NTUFORCwN
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgIFRDUENfQ01EX0xPT0s0Q09OTkVDVElPTik7DQo+
-ICsgICAgIGlmIChyZXQgPCAwKQ0KPiArICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ICsgICAg
-IHJldHVybiAwOw0KDQpyZWdtYXBfd3JpdGUgcmV0dXJucyBhIG5lZ2F0aXZlIHJldHVybiBjb2Rl
-IG9yIDAsIHRodXMgdGhpcyBjYW4gYmUNCnNpbXBsaWZpZWQgdG8NCiAgICAgICAgcmV0dXJuIHJl
-Z21hcF93cml0ZSguLi4pOw0KDQo+ICB9DQo+DQo+ICBzdGF0aWMgZW51bSB0eXBlY19jY19zdGF0
-dXMgdGNwY2lfdG9fdHlwZWNfY2ModW5zaWduZWQgaW50IGNjLCBib29sIHNpbmspDQo+IEBAIC0x
-NzgsNiArMTk2LDE2IEBAIHN0YXRpYyBpbnQgdGNwY2lfc2V0X3Zjb25uKHN0cnVjdCB0Y3BjX2Rl
-diAqdGNwYywgYm9vbCBlbmFibGUpDQo+ICAgICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSB0Y3Bj
-X3RvX3RjcGNpKHRjcGMpOw0KPiAgICAgICBpbnQgcmV0Ow0KPg0KPiArICAgICAvKiBIYW5kbGUg
-dmVuZG9yIHNldCB2Y29ubiAqLw0KPiArICAgICBpZiAodGNwY2ktPmRhdGEpIHsNCj4gKyAgICAg
-ICAgICAgICBpZiAodGNwY2ktPmRhdGEtPnNldF92Y29ubikgew0KPiArICAgICAgICAgICAgICAg
-ICAgICAgcmV0ID0gdGNwY2ktPmRhdGEtPnNldF92Y29ubih0Y3BjaSwgdGNwY2ktPmRhdGEsDQo+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVuYWJs
-ZSk7DQo+ICsgICAgICAgICAgICAgICAgICAgICBpZiAocmV0IDwgMCkNCj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gKyAgICAgICAgICAgICB9DQo+ICsgICAg
-IH0NCj4gKw0KPiAgICAgICByZXQgPSByZWdtYXBfd3JpdGUodGNwY2ktPnJlZ21hcCwgVENQQ19Q
-T1dFUl9DVFJMLA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgZW5hYmxlID8gVENQQ19QT1dF
-Ul9DVFJMX1ZDT05OX0VOQUJMRSA6IDApOw0KPiAgICAgICBpZiAocmV0IDwgMCkNCj4gQEAgLTMy
-Myw2ICszNTEsMTUgQEAgc3RhdGljIGludCB0Y3BjaV9pbml0KHN0cnVjdCB0Y3BjX2RldiAqdGNw
-YykNCj4gICAgICAgaWYgKHRpbWVfYWZ0ZXIoamlmZmllcywgdGltZW91dCkpDQo+ICAgICAgICAg
-ICAgICAgcmV0dXJuIC1FVElNRURPVVQ7DQo+DQo+ICsgICAgIC8qIEhhbmRsZSB2ZW5kb3IgaW5p
-dCAqLw0KPiArICAgICBpZiAodGNwY2ktPmRhdGEpIHsNCj4gKyAgICAgICAgICAgICBpZiAodGNw
-Y2ktPmRhdGEtPmluaXQpIHsNCj4gKyAgICAgICAgICAgICAgICAgICAgIHJldCA9IHRjcGNpLT5k
-YXRhLT5pbml0KHRjcGNpLCB0Y3BjaS0+ZGF0YSk7DQo+ICsgICAgICAgICAgICAgICAgICAgICBp
-ZiAocmV0IDwgMCkNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsN
-Cj4gKyAgICAgICAgICAgICB9DQo+ICsgICAgIH0NCj4gKw0KPiAgICAgICAvKiBDbGVhciBhbGwg
-ZXZlbnRzICovDQo+ICAgICAgIHJldCA9IHRjcGNpX3dyaXRlMTYodGNwY2ksIFRDUENfQUxFUlQs
-IDB4ZmZmZik7DQo+ICAgICAgIGlmIChyZXQgPCAwKQ0KPiBAQCAtMzQ0LDkgKzM4MSwxNSBAQCBz
-dGF0aWMgaW50IHRjcGNpX2luaXQoc3RydWN0IHRjcGNfZGV2ICp0Y3BjKQ0KPiAgICAgICByZXR1
-cm4gdGNwY2lfd3JpdGUxNih0Y3BjaSwgVENQQ19BTEVSVF9NQVNLLCByZWcpOw0KPiAgfQ0KPg0K
-PiAtc3RhdGljIGlycXJldHVybl90IHRjcGNpX2lycShpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+
-ICtzdGF0aWMgaXJxcmV0dXJuX3QgX3RjcGNpX2lycShpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+
-ICB7DQo+ICAgICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSBkZXZfaWQ7DQo+ICsNCj4gKyAgICAg
-cmV0dXJuIHRjcGNpX2lycSh0Y3BjaSk7DQo+ICt9DQoNCkhtbSwgbm9ybWFsbHkgSSdkIGV4cGVj
-dCB0aGlzIGZ1bmN0aW9uIF9hZnRlcl8gdGhlIGZ1bmN0aW9uIGl0IGNhbGxzLg0KR3Vlc3MgdGhh
-dCBkb2Vzbid0IG1hdHRlciBtdWNoIGhlcmUsIHNvIEkgYW0gZmluZSB3aXRoIGl0IGFzIGxvbmcN
-CmFzIEdyZWcgaXMgb2sgd2l0aCBpdCBhcyB3ZWxsLg0KDQo+ICsNCj4gK2lycXJldHVybl90IHRj
-cGNpX2lycShzdHJ1Y3QgdGNwY2kgKnRjcGNpKQ0KPiArew0KPiAgICAgICB1MTYgc3RhdHVzOw0K
-Pg0KPiAgICAgICB0Y3BjaV9yZWFkMTYodGNwY2ksIFRDUENfQUxFUlQsICZzdGF0dXMpOw0KPiBA
-QCAtNDEyLDYgKzQ1NSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCB0Y3BjaV9pcnEoaW50IGlycSwg
-dm9pZCAqZGV2X2lkKQ0KPg0KPiAgICAgICByZXR1cm4gSVJRX0hBTkRMRUQ7DQo+ICB9DQo+ICtF
-WFBPUlRfU1lNQk9MX0dQTCh0Y3BjaV9pcnEpOw0KPg0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBy
-ZWdtYXBfY29uZmlnIHRjcGNpX3JlZ21hcF9jb25maWcgPSB7DQo+ICAgICAgIC5yZWdfYml0cyA9
-IDgsDQo+IEBAIC00MzUsMjIgKzQ3OSwxOCBAQCBzdGF0aWMgaW50IHRjcGNpX3BhcnNlX2NvbmZp
-ZyhzdHJ1Y3QgdGNwY2kgKnRjcGNpKQ0KPiAgICAgICByZXR1cm4gMDsNCj4gIH0NCj4NCj4gLXN0
-YXRpYyBpbnQgdGNwY2lfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4gLSAgICAg
-ICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IGkyY19kZXZpY2VfaWQgKmkyY19pZCkNCj4gK3N0
-cnVjdCB0Y3BjaSAqdGNwY2lfcmVnaXN0ZXJfcG9ydChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
-dCB0Y3BjaV9kYXRhICpkYXRhKQ0KPiAgew0KPiAgICAgICBzdHJ1Y3QgdGNwY2kgKnRjcGNpOw0K
-PiAgICAgICBpbnQgZXJyOw0KPg0KPiAtICAgICB0Y3BjaSA9IGRldm1fa3phbGxvYygmY2xpZW50
-LT5kZXYsIHNpemVvZigqdGNwY2kpLCBHRlBfS0VSTkVMKTsNCj4gKyAgICAgdGNwY2kgPSBkZXZt
-X2t6YWxsb2MoZGV2LCBzaXplb2YoKnRjcGNpKSwgR0ZQX0tFUk5FTCk7DQo+ICAgICAgIGlmICgh
-dGNwY2kpDQo+IC0gICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ICsgICAgICAgICAgICAg
-cmV0dXJuIEVSUl9QVFIoLUVOT01FTSk7DQo+DQo+IC0gICAgIHRjcGNpLT5jbGllbnQgPSBjbGll
-bnQ7DQo+IC0gICAgIHRjcGNpLT5kZXYgPSAmY2xpZW50LT5kZXY7DQo+IC0gICAgIGkyY19zZXRf
-Y2xpZW50ZGF0YShjbGllbnQsIHRjcGNpKTsNCj4gLSAgICAgdGNwY2ktPnJlZ21hcCA9IGRldm1f
-cmVnbWFwX2luaXRfaTJjKGNsaWVudCwgJnRjcGNpX3JlZ21hcF9jb25maWcpOw0KPiAtICAgICBp
-ZiAoSVNfRVJSKHRjcGNpLT5yZWdtYXApKQ0KPiAtICAgICAgICAgICAgIHJldHVybiBQVFJfRVJS
-KHRjcGNpLT5yZWdtYXApOw0KPiArICAgICB0Y3BjaS0+ZGV2ID0gZGV2Ow0KPiArICAgICB0Y3Bj
-aS0+ZGF0YSA9IGRhdGE7DQo+ICsgICAgIHRjcGNpLT5yZWdtYXAgPSBkYXRhLT5yZWdtYXA7DQo+
-DQo+ICAgICAgIHRjcGNpLT50Y3BjLmluaXQgPSB0Y3BjaV9pbml0Ow0KPiAgICAgICB0Y3BjaS0+
-dGNwYy5nZXRfdmJ1cyA9IHRjcGNpX2dldF92YnVzOw0KPiBAQCAtNDY3LDI3ICs1MDcsNjMgQEAg
-c3RhdGljIGludCB0Y3BjaV9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPg0KPiAg
-ICAgICBlcnIgPSB0Y3BjaV9wYXJzZV9jb25maWcodGNwY2kpOw0KPiAgICAgICBpZiAoZXJyIDwg
-MCkNCj4gLSAgICAgICAgICAgICByZXR1cm4gZXJyOw0KPiArICAgICAgICAgICAgIHJldHVybiBF
-UlJfUFRSKGVycik7DQo+ICsNCj4gKyAgICAgdGNwY2ktPnBvcnQgPSB0Y3BtX3JlZ2lzdGVyX3Bv
-cnQodGNwY2ktPmRldiwgJnRjcGNpLT50Y3BjKTsNCj4gKyAgICAgaWYgKFBUUl9FUlJfT1JfWkVS
-Tyh0Y3BjaS0+cG9ydCkpDQo+ICsgICAgICAgICAgICAgcmV0dXJuIEVSUl9DQVNUKHRjcGNpLT5w
-b3J0KTsNCj4NCj4gLSAgICAgLyogRGlzYWJsZSBjaGlwIGludGVycnVwdHMgKi8NCj4gLSAgICAg
-dGNwY2lfd3JpdGUxNih0Y3BjaSwgVENQQ19BTEVSVF9NQVNLLCAwKTsNCj4gKyAgICAgcmV0dXJu
-IHRjcGNpOw0KPiArfQ0KPiArRVhQT1JUX1NZTUJPTF9HUEwodGNwY2lfcmVnaXN0ZXJfcG9ydCk7
-DQo+ICsNCj4gK3ZvaWQgdGNwY2lfdW5yZWdpc3Rlcl9wb3J0KHN0cnVjdCB0Y3BjaSAqdGNwY2kp
-DQo+ICt7DQo+ICsgICAgIHRjcG1fdW5yZWdpc3Rlcl9wb3J0KHRjcGNpLT5wb3J0KTsNCj4gK30N
-Cj4gK0VYUE9SVF9TWU1CT0xfR1BMKHRjcGNpX3VucmVnaXN0ZXJfcG9ydCk7DQo+DQo+IC0gICAg
-IGVyciA9IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEodGNwY2ktPmRldiwgY2xpZW50LT5pcnEs
-IE5VTEwsDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdGNwY2lfaXJx
-LA0KPiArc3RhdGljIGludCB0Y3BjaV9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0K
-PiArICAgICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaTJjX2lk
-KQ0KPiArew0KPiArICAgICBzdHJ1Y3QgdGNwY2lfY2hpcCAqY2hpcDsNCj4gKyAgICAgaW50IGVy
-cjsNCj4gKyAgICAgdTE2IHZhbCA9IDA7DQo+ICsNCj4gKyAgICAgY2hpcCA9IGRldm1fa3phbGxv
-YygmY2xpZW50LT5kZXYsIHNpemVvZigqY2hpcCksIEdGUF9LRVJORUwpOw0KPiArICAgICBpZiAo
-IWNoaXApDQo+ICsgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ICsNCj4gKyAgICAgY2hp
-cC0+ZGF0YS5yZWdtYXAgPSBkZXZtX3JlZ21hcF9pbml0X2kyYyhjbGllbnQsICZ0Y3BjaV9yZWdt
-YXBfY29uZmlnKTsNCj4gKyAgICAgaWYgKElTX0VSUihjaGlwLT5kYXRhLnJlZ21hcCkpDQo+ICsg
-ICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIoY2hpcC0+ZGF0YS5yZWdtYXApOw0KPiArDQo+ICsg
-ICAgIC8qIERpc2FibGUgY2hpcCBpbnRlcnJ1cHRzIGJlZm9yZSByZXF1ZXN0aW5nIGlycSAqLw0K
-PiArICAgICBlcnIgPSByZWdtYXBfcmF3X3dyaXRlKGNoaXAtPmRhdGEucmVnbWFwLCBUQ1BDX0FM
-RVJUX01BU0ssICZ2YWwsDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6ZW9mKHUx
-NikpOw0KPiArICAgICBpZiAoZXJyIDwgMCkNCj4gKyAgICAgICAgICAgICByZXR1cm4gZXJyOw0K
-PiArDQo+ICsgICAgIGVyciA9IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoJmNsaWVudC0+ZGV2
-LCBjbGllbnQtPmlycSwgTlVMTCwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBfdGNwY2lfaXJxLA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IElSUUZfT05FU0hPVCB8IElSUUZfVFJJR0dFUl9MT1csDQo+IC0gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgZGV2X25hbWUodGNwY2ktPmRldiksIHRjcGNpKTsNCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfbmFtZSgmY2xpZW50LT5kZXYpLCBj
-aGlwKTsNCj4gICAgICAgaWYgKGVyciA8IDApDQo+ICAgICAgICAgICAgICAgcmV0dXJuIGVycjsN
-Cj4NCj4gLSAgICAgdGNwY2ktPnBvcnQgPSB0Y3BtX3JlZ2lzdGVyX3BvcnQodGNwY2ktPmRldiwg
-JnRjcGNpLT50Y3BjKTsNCj4gLSAgICAgcmV0dXJuIFBUUl9FUlJfT1JfWkVSTyh0Y3BjaS0+cG9y
-dCk7DQo+ICsgICAgIGNoaXAtPnRjcGNpID0gdGNwY2lfcmVnaXN0ZXJfcG9ydCgmY2xpZW50LT5k
-ZXYsICZjaGlwLT5kYXRhKTsNCj4gKyAgICAgaWYgKFBUUl9FUlJfT1JfWkVSTyhjaGlwLT50Y3Bj
-aSkpDQo+ICsgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIoY2hpcC0+dGNwY2kpOw0KPiArDQo+
-ICsgICAgIGkyY19zZXRfY2xpZW50ZGF0YShjbGllbnQsIGNoaXApOw0KPiArICAgICByZXR1cm4g
-MDsNCj4gIH0NCj4NCj4gIHN0YXRpYyBpbnQgdGNwY2lfcmVtb3ZlKHN0cnVjdCBpMmNfY2xpZW50
-ICpjbGllbnQpDQo+ICB7DQo+IC0gICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSBpMmNfZ2V0X2Ns
-aWVudGRhdGEoY2xpZW50KTsNCj4gKyAgICAgc3RydWN0IHRjcGNpX2NoaXAgKmNoaXAgPSBpMmNf
-Z2V0X2NsaWVudGRhdGEoY2xpZW50KTsNCj4NCj4gLSAgICAgdGNwbV91bnJlZ2lzdGVyX3BvcnQo
-dGNwY2ktPnBvcnQpOw0KPiArICAgICB0Y3BjaV91bnJlZ2lzdGVyX3BvcnQoY2hpcC0+dGNwY2kp
-Ow0KPg0KPiAgICAgICByZXR1cm4gMDsNCj4gIH0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3Rh
-Z2luZy90eXBlYy90Y3BjaS5oIGIvZHJpdmVycy9zdGFnaW5nL3R5cGVjL3RjcGNpLmgNCj4gaW5k
-ZXggZmRmYjA2Yy4uNDAwMjViMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3R5cGVj
-L3RjcGNpLmgNCj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL3R5cGVjL3RjcGNpLmgNCj4gQEAgLTU5
-LDYgKzU5LDcgQEANCj4gICNkZWZpbmUgVENQQ19QT1dFUl9DVFJMX1ZDT05OX0VOQUJMRSBCSVQo
-MCkNCj4NCj4gICNkZWZpbmUgVENQQ19DQ19TVEFUVVMgICAgICAgICAgICAgICAgICAgICAgIDB4
-MWQNCj4gKyNkZWZpbmUgVENQQ19DQ19TVEFUVVNfRFJQUlNUICAgICAgICAgICAgICAgIEJJVCg1
-KQ0KPiAgI2RlZmluZSBUQ1BDX0NDX1NUQVRVU19URVJNICAgICAgICAgIEJJVCg0KQ0KPiAgI2Rl
-ZmluZSBUQ1BDX0NDX1NUQVRVU19DQzJfU0hJRlQgICAgIDINCj4gICNkZWZpbmUgVENQQ19DQ19T
-VEFUVVNfQ0MyX01BU0sgICAgICAgICAgICAgIDB4Mw0KPiBAQCAtMTIxLDQgKzEyMiwxNiBAQA0K
-PiAgI2RlZmluZSBUQ1BDX1ZCVVNfVk9MVEFHRV9BTEFSTV9ISV9DRkcgICAgICAgICAgICAgICAw
-eDc2DQo+ICAjZGVmaW5lIFRDUENfVkJVU19WT0xUQUdFX0FMQVJNX0xPX0NGRyAgICAgICAgICAg
-ICAgIDB4NzgNCj4NCj4gK3N0cnVjdCB0Y3BjaTsNCj4gK3N0cnVjdCB0Y3BjaV9kYXRhIHsNCj4g
-KyAgICAgc3RydWN0IHJlZ21hcCAqcmVnbWFwOw0KPiArICAgICBpbnQgKCppbml0KShzdHJ1Y3Qg
-dGNwY2kgKnRjcGNpLCBzdHJ1Y3QgdGNwY2lfZGF0YSAqZGF0YSk7DQo+ICsgICAgIGludCAoKnNl
-dF92Y29ubikoc3RydWN0IHRjcGNpICp0Y3BjaSwgc3RydWN0IHRjcGNpX2RhdGEgKmRhdGEsDQo+
-ICsgICAgICAgICAgICAgICAgICAgICAgYm9vbCBlbmFibGUpOw0KPiArfTsNCj4gKw0KPiArc3Ry
-dWN0IHRjcGNpICp0Y3BjaV9yZWdpc3Rlcl9wb3J0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0
-IHRjcGNpX2RhdGEgKmRhdGEpOw0KPiArdm9pZCB0Y3BjaV91bnJlZ2lzdGVyX3BvcnQoc3RydWN0
-IHRjcGNpICp0Y3BjaSk7DQo+ICtpcnFyZXR1cm5fdCB0Y3BjaV9pcnEoc3RydWN0IHRjcGNpICp0
-Y3BjaSk7DQo+ICsNCj4gICNlbmRpZiAvKiBfX0xJTlVYX1VTQl9UQ1BDSV9IICovDQo+IC0tDQo+
-IDEuOS4xDQo+DQoqKioqKioqKioqKioqIEVtYWlsIENvbmZpZGVudGlhbGl0eSBOb3RpY2UgKioq
-KioqKioqKioqKioqKioqKioNCg0KVGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBpbiB0aGlzIGUt
-bWFpbCBtZXNzYWdlIChpbmNsdWRpbmcgYW55IGF0dGFjaG1lbnRzKSBtYXkgYmUgY29uZmlkZW50
-aWFsLCBwcm9wcmlldGFyeSwgcHJpdmlsZWdlZCwgb3Igb3RoZXJ3aXNlIGV4ZW1wdCBmcm9tIGRp
-c2Nsb3N1cmUgdW5kZXIgYXBwbGljYWJsZSBsYXdzLiBJdCBpcyBpbnRlbmRlZCB0byBiZSBjb252
-ZXllZCBvbmx5IHRvIHRoZSBkZXNpZ25hdGVkIHJlY2lwaWVudChzKS4gQW55IHVzZSwgZGlzc2Vt
-aW5hdGlvbiwgZGlzdHJpYnV0aW9uLCBwcmludGluZywgcmV0YWluaW5nIG9yIGNvcHlpbmcgb2Yg
-dGhpcyBlLW1haWwgKGluY2x1ZGluZyBpdHMgYXR0YWNobWVudHMpIGJ5IHVuaW50ZW5kZWQgcmVj
-aXBpZW50KHMpIGlzIHN0cmljdGx5IHByb2hpYml0ZWQgYW5kIG1heSBiZSB1bmxhd2Z1bC4gSWYg
-eW91IGFyZSBub3QgYW4gaW50ZW5kZWQgcmVjaXBpZW50IG9mIHRoaXMgZS1tYWlsLCBvciBiZWxp
-ZXZlIHRoYXQgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgaW4gZXJyb3IsIHBsZWFzZSBu
-b3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSAoYnkgcmVwbHlpbmcgdG8gdGhpcyBlLW1haWwp
-LCBkZWxldGUgYW55IGFuZCBhbGwgY29waWVzIG9mIHRoaXMgZS1tYWlsIChpbmNsdWRpbmcgYW55
-IGF0dGFjaG1lbnRzKSBmcm9tIHlvdXIgc3lzdGVtLCBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBj
-b250ZW50IG9mIHRoaXMgZS1tYWlsIHRvIGFueSBvdGhlciBwZXJzb24uIFRoYW5rIHlvdSENCg==
+--001a11425e86cc5a5205663c3c72
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Guenter,
+
+  regmap_write returns a negative return code or 0, thus this can be
+simplified to
+        return regmap_write(...);
+
+  Ok, I'll modify it in v4
+
+
+Hmm, normally I'd expect this function _after_ the function it calls.
+Guess that doesn't matter much here, so I am fine with it as long
+as Greg is ok with it as well.
+
+  Do you mean it maybe better to call vendor's set_vconn after normal
+set_vconn is finished?
+  If I understand correctly, I can also modify it in v4. For RT1711H, it
+also works by enabling/disabling idle mode after set_vconn.
+
+
+2018-02-22 6:15 GMT+08:00 Guenter Roeck <linux@roeck-us.net>:
+
+> On Wed, Feb 21, 2018 at 11:02:23PM +0800, ShuFanLee wrote:
+> > From: ShuFanLee <shufan_lee@richtek.com>
+> >
+> > Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and expor=
+t
+> tcpci_irq.
+> > More operations can be extended in tcpci_data if needed.
+> > According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+> > TCPC shall not start DRP toggling until subsequently the TCPM
+> > writes to the COMMAND register to start DRP toggling.
+> > DRP toggling flow is chagned as following:
+> >   - Write DRP =3D 0 & Rd/Rd
+> >   - Write DRP =3D 1
+> >   - Set LOOK4CONNECTION command
+> >
+> > Signed-off-by: ShuFanLee <shufan_lee@richtek.com>
+>
+> Mostly loooks good to me. Couple of nitpicks below.
+>
+> Guenter
+>
+> > ---
+> >  drivers/staging/typec/tcpci.c | 128 ++++++++++++++++++++++++++++++
+> +++---------
+> >  drivers/staging/typec/tcpci.h |  13 +++++
+> >  2 files changed, 115 insertions(+), 26 deletions(-)
+> >
+> >  patch changelogs between v1 & v2
+> >  - Remove unnecessary i2c_client in the structure of tcpci
+> >  - Rename structure of tcpci_vendor_data to tcpci_data
+> >  - Not exporting tcpci read/write wrappers but register i2c regmap in
+> glue driver
+> >  - Add set_vconn ops in tcpci_data
+> >    (It is necessary for RT1711H to enable/disable idle mode before
+> disabling/enabling vconn)
+> >  - Export tcpci_irq so that vendor can call it in their own IRQ handler
+> >
+> >  patch changelogs between v2 & v3
+> >  - Change the return type of tcpci_irq from int to irqreturn_t
+> >
+> > diff --git a/drivers/staging/typec/tcpci.c
+> b/drivers/staging/typec/tcpci.c
+> > index 9bd4412..4959c69 100644
+> > --- a/drivers/staging/typec/tcpci.c
+> > +++ b/drivers/staging/typec/tcpci.c
+> > @@ -21,7 +21,6 @@
+> >
+> >  struct tcpci {
+> >       struct device *dev;
+> > -     struct i2c_client *client;
+> >
+> >       struct tcpm_port *port;
+> >
+> > @@ -30,6 +29,12 @@ struct tcpci {
+> >       bool controls_vbus;
+> >
+> >       struct tcpc_dev tcpc;
+> > +     struct tcpci_data *data;
+> > +};
+> > +
+> > +struct tcpci_chip {
+> > +     struct tcpci *tcpci;
+> > +     struct tcpci_data data;
+> >  };
+> >
+> >  static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+> > @@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct
+> tcpc_dev *tcpc)
+> >       return container_of(tcpc, struct tcpci, tcpc);
+> >  }
+> >
+> > -static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+> > -                     u16 *val)
+> > +static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *va=
+l)
+> >  {
+> >       return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+> >  }
+> > @@ -98,8 +102,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum
+> typec_cc_status cc)
+> >  static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+> >                                   enum typec_cc_status cc)
+> >  {
+> > +     int ret;
+> >       struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);
+> > -     unsigned int reg =3D TCPC_ROLE_CTRL_DRP;
+> > +     unsigned int reg =3D (TCPC_ROLE_CTRL_CC_RD <<
+> TCPC_ROLE_CTRL_CC1_SHIFT) |
+> > +                        (TCPC_ROLE_CTRL_CC_RD <<
+> TCPC_ROLE_CTRL_CC2_SHIFT);
+> >
+> >       switch (cc) {
+> >       default:
+> > @@ -117,7 +123,19 @@ static int tcpci_start_drp_toggling(struct
+> tcpc_dev *tcpc,
+> >               break;
+> >       }
+> >
+> > -     return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> > +     ret =3D regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +     usleep_range(500, 1000);
+> > +     reg |=3D TCPC_ROLE_CTRL_DRP;
+> > +     ret =3D regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +     ret =3D regmap_write(tcpci->regmap, TCPC_COMMAND,
+> > +                        TCPC_CMD_LOOK4CONNECTION);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +     return 0;
+>
+> regmap_write returns a negative return code or 0, thus this can be
+> simplified to
+>         return regmap_write(...);
+>
+> >  }
+> >
+> >  static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool
+> sink)
+> > @@ -178,6 +196,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc,
+> bool enable)
+> >       struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);
+> >       int ret;
+> >
+> > +     /* Handle vendor set vconn */
+> > +     if (tcpci->data) {
+> > +             if (tcpci->data->set_vconn) {
+> > +                     ret =3D tcpci->data->set_vconn(tcpci, tcpci->data=
+,
+> > +                                                  enable);
+> > +                     if (ret < 0)
+> > +                             return ret;
+> > +             }
+> > +     }
+> > +
+> >       ret =3D regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+> >                          enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+> >       if (ret < 0)
+> > @@ -323,6 +351,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+> >       if (time_after(jiffies, timeout))
+> >               return -ETIMEDOUT;
+> >
+> > +     /* Handle vendor init */
+> > +     if (tcpci->data) {
+> > +             if (tcpci->data->init) {
+> > +                     ret =3D tcpci->data->init(tcpci, tcpci->data);
+> > +                     if (ret < 0)
+> > +                             return ret;
+> > +             }
+> > +     }
+> > +
+> >       /* Clear all events */
+> >       ret =3D tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+> >       if (ret < 0)
+> > @@ -344,9 +381,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+> >       return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+> >  }
+> >
+> > -static irqreturn_t tcpci_irq(int irq, void *dev_id)
+> > +static irqreturn_t _tcpci_irq(int irq, void *dev_id)
+> >  {
+> >       struct tcpci *tcpci =3D dev_id;
+> > +
+> > +     return tcpci_irq(tcpci);
+> > +}
+>
+> Hmm, normally I'd expect this function _after_ the function it calls.
+> Guess that doesn't matter much here, so I am fine with it as long
+> as Greg is ok with it as well.
+>
+> > +
+> > +irqreturn_t tcpci_irq(struct tcpci *tcpci)
+> > +{
+> >       u16 status;
+> >
+> >       tcpci_read16(tcpci, TCPC_ALERT, &status);
+> > @@ -412,6 +455,7 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+> >
+> >       return IRQ_HANDLED;
+> >  }
+> > +EXPORT_SYMBOL_GPL(tcpci_irq);
+> >
+> >  static const struct regmap_config tcpci_regmap_config =3D {
+> >       .reg_bits =3D 8,
+> > @@ -435,22 +479,18 @@ static int tcpci_parse_config(struct tcpci *tcpci=
+)
+> >       return 0;
+> >  }
+> >
+> > -static int tcpci_probe(struct i2c_client *client,
+> > -                    const struct i2c_device_id *i2c_id)
+> > +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_dat=
+a
+> *data)
+> >  {
+> >       struct tcpci *tcpci;
+> >       int err;
+> >
+> > -     tcpci =3D devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
+> > +     tcpci =3D devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+> >       if (!tcpci)
+> > -             return -ENOMEM;
+> > +             return ERR_PTR(-ENOMEM);
+> >
+> > -     tcpci->client =3D client;
+> > -     tcpci->dev =3D &client->dev;
+> > -     i2c_set_clientdata(client, tcpci);
+> > -     tcpci->regmap =3D devm_regmap_init_i2c(client, &tcpci_regmap_conf=
+ig);
+> > -     if (IS_ERR(tcpci->regmap))
+> > -             return PTR_ERR(tcpci->regmap);
+> > +     tcpci->dev =3D dev;
+> > +     tcpci->data =3D data;
+> > +     tcpci->regmap =3D data->regmap;
+> >
+> >       tcpci->tcpc.init =3D tcpci_init;
+> >       tcpci->tcpc.get_vbus =3D tcpci_get_vbus;
+> > @@ -467,27 +507,63 @@ static int tcpci_probe(struct i2c_client *client,
+> >
+> >       err =3D tcpci_parse_config(tcpci);
+> >       if (err < 0)
+> > -             return err;
+> > +             return ERR_PTR(err);
+> > +
+> > +     tcpci->port =3D tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+> > +     if (PTR_ERR_OR_ZERO(tcpci->port))
+> > +             return ERR_CAST(tcpci->port);
+> >
+> > -     /* Disable chip interrupts */
+> > -     tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
+> > +     return tcpci;
+> > +}
+> > +EXPORT_SYMBOL_GPL(tcpci_register_port);
+> > +
+> > +void tcpci_unregister_port(struct tcpci *tcpci)
+> > +{
+> > +     tcpm_unregister_port(tcpci->port);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+> >
+> > -     err =3D devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+> > -                                     tcpci_irq,
+> > +static int tcpci_probe(struct i2c_client *client,
+> > +                    const struct i2c_device_id *i2c_id)
+> > +{
+> > +     struct tcpci_chip *chip;
+> > +     int err;
+> > +     u16 val =3D 0;
+> > +
+> > +     chip =3D devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> > +     if (!chip)
+> > +             return -ENOMEM;
+> > +
+> > +     chip->data.regmap =3D devm_regmap_init_i2c(client,
+> &tcpci_regmap_config);
+> > +     if (IS_ERR(chip->data.regmap))
+> > +             return PTR_ERR(chip->data.regmap);
+> > +
+> > +     /* Disable chip interrupts before requesting irq */
+> > +     err =3D regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val=
+,
+> > +                            sizeof(u16));
+> > +     if (err < 0)
+> > +             return err;
+> > +
+> > +     err =3D devm_request_threaded_irq(&client->dev, client->irq, NULL=
+,
+> > +                                     _tcpci_irq,
+> >                                       IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+> > -                                     dev_name(tcpci->dev), tcpci);
+> > +                                     dev_name(&client->dev), chip);
+> >       if (err < 0)
+> >               return err;
+> >
+> > -     tcpci->port =3D tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+> > -     return PTR_ERR_OR_ZERO(tcpci->port);
+> > +     chip->tcpci =3D tcpci_register_port(&client->dev, &chip->data);
+> > +     if (PTR_ERR_OR_ZERO(chip->tcpci))
+> > +             return PTR_ERR(chip->tcpci);
+> > +
+> > +     i2c_set_clientdata(client, chip);
+> > +     return 0;
+> >  }
+> >
+> >  static int tcpci_remove(struct i2c_client *client)
+> >  {
+> > -     struct tcpci *tcpci =3D i2c_get_clientdata(client);
+> > +     struct tcpci_chip *chip =3D i2c_get_clientdata(client);
+> >
+> > -     tcpm_unregister_port(tcpci->port);
+> > +     tcpci_unregister_port(chip->tcpci);
+> >
+> >       return 0;
+> >  }
+> > diff --git a/drivers/staging/typec/tcpci.h
+> b/drivers/staging/typec/tcpci.h
+> > index fdfb06c..40025b2 100644
+> > --- a/drivers/staging/typec/tcpci.h
+> > +++ b/drivers/staging/typec/tcpci.h
+> > @@ -59,6 +59,7 @@
+> >  #define TCPC_POWER_CTRL_VCONN_ENABLE BIT(0)
+> >
+> >  #define TCPC_CC_STATUS                       0x1d
+> > +#define TCPC_CC_STATUS_DRPRST                BIT(5)
+> >  #define TCPC_CC_STATUS_TERM          BIT(4)
+> >  #define TCPC_CC_STATUS_CC2_SHIFT     2
+> >  #define TCPC_CC_STATUS_CC2_MASK              0x3
+> > @@ -121,4 +122,16 @@
+> >  #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG               0x76
+> >  #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG               0x78
+> >
+> > +struct tcpci;
+> > +struct tcpci_data {
+> > +     struct regmap *regmap;
+> > +     int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
+> > +     int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
+> > +                      bool enable);
+> > +};
+> > +
+> > +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_dat=
+a
+> *data);
+> > +void tcpci_unregister_port(struct tcpci *tcpci);
+> > +irqreturn_t tcpci_irq(struct tcpci *tcpci);
+> > +
+> >  #endif /* __LINUX_USB_TCPCI_H */
+> > --
+> > 1.9.1
+> >
+>
+
+
+
+--=20
+Best Regards,
+=E6=9B=B8=E5=B8=86
+
+--001a11425e86cc5a5205663c3c72
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Guenter,<div><br></div><div>=C2=A0=C2=A0<span style=3D"=
+font-size:14px">regmap_write returns a negative return code or 0, thus this=
+ can be</span></div><span style=3D"font-size:14px">simplified to</span><br =
+style=3D"font-size:14px"><span style=3D"font-size:14px">=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 return regmap_write(...);<br></span><br style=3D"font-size:14px"=
+><div style=3D"font-size:14px"><div class=3D"gmail-adm"><div id=3D"gmail-q_=
+161ba858af417c1c_4" class=3D"gmail-ajR gmail-h4"></div></div></div><div>=C2=
+=A0 Ok, I&#39;ll modify it in v4</div><div><br></div><div><br></div><div><s=
+pan style=3D"font-size:14px">Hmm, normally I&#39;d expect this function _af=
+ter_ the function it calls.</span><br style=3D"font-size:14px"><span style=
+=3D"font-size:14px">Guess that doesn&#39;t matter much here, so I am fine w=
+ith it as long</span><br style=3D"font-size:14px"><span style=3D"font-size:=
+14px">as Greg is ok with it as well.</span><br></div><div><span style=3D"fo=
+nt-size:14px"><br></span></div><div><span style=3D"font-size:14px">=C2=A0 D=
+o you mean it maybe better to call vendor&#39;s set_vconn after normal set_=
+vconn is finished?<br>=C2=A0 If I understand correctly, I can also modify i=
+t in v4. For RT1711H, it also works by enabling/disabling idle mode after s=
+et_vconn.</span></div><div><span style=3D"font-size:14px"><br></span></div>=
+</div><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">2018-02-22 =
+6:15 GMT+08:00 Guenter Roeck <span dir=3D"ltr">&lt;<a href=3D"mailto:linux@=
+roeck-us.net" target=3D"_blank">linux@roeck-us.net</a>&gt;</span>:<br><bloc=
+kquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #cc=
+c solid;padding-left:1ex"><span class=3D"">On Wed, Feb 21, 2018 at 11:02:23=
+PM +0800, ShuFanLee wrote:<br>
+&gt; From: ShuFanLee &lt;<a href=3D"mailto:shufan_lee@richtek.com">shufan_l=
+ee@richtek.com</a>&gt;<br>
+&gt;<br>
+&gt; Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and expo=
+rt tcpci_irq.<br>
+&gt; More operations can be extended in tcpci_data if needed.<br>
+&gt; According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,<br>
+&gt; TCPC shall not start DRP toggling until subsequently the TCPM<br>
+&gt; writes to the COMMAND register to start DRP toggling.<br>
+&gt; DRP toggling flow is chagned as following:<br>
+&gt;=C2=A0 =C2=A0- Write DRP =3D 0 &amp; Rd/Rd<br>
+&gt;=C2=A0 =C2=A0- Write DRP =3D 1<br>
+&gt;=C2=A0 =C2=A0- Set LOOK4CONNECTION command<br>
+&gt;<br>
+&gt; Signed-off-by: ShuFanLee &lt;<a href=3D"mailto:shufan_lee@richtek.com"=
+>shufan_lee@richtek.com</a>&gt;<br>
+<br>
+</span>Mostly loooks good to me. Couple of nitpicks below.<br>
+<br>
+Guenter<br>
+<div><div class=3D"h5"><br>
+&gt; ---<br>
+&gt;=C2=A0 drivers/staging/typec/tcpci.c | 128 ++++++++++++++++++++++++++++=
+++<wbr>+++---------<br>
+&gt;=C2=A0 drivers/staging/typec/tcpci.h |=C2=A0 13 +++++<br>
+&gt;=C2=A0 2 files changed, 115 insertions(+), 26 deletions(-)<br>
+&gt;<br>
+&gt;=C2=A0 patch changelogs between v1 &amp; v2<br>
+&gt;=C2=A0 - Remove unnecessary i2c_client in the structure of tcpci<br>
+&gt;=C2=A0 - Rename structure of tcpci_vendor_data to tcpci_data<br>
+&gt;=C2=A0 - Not exporting tcpci read/write wrappers but register i2c regma=
+p in glue driver<br>
+&gt;=C2=A0 - Add set_vconn ops in tcpci_data<br>
+&gt;=C2=A0 =C2=A0 (It is necessary for RT1711H to enable/disable idle mode =
+before disabling/enabling vconn)<br>
+&gt;=C2=A0 - Export tcpci_irq so that vendor can call it in their own IRQ h=
+andler<br>
+&gt;<br>
+&gt;=C2=A0 patch changelogs between v2 &amp; v3<br>
+&gt;=C2=A0 - Change the return type of tcpci_irq from int to irqreturn_t<br=
+>
+&gt;<br>
+&gt; diff --git a/drivers/staging/typec/tcpci.<wbr>c b/drivers/staging/type=
+c/tcpci.<wbr>c<br>
+&gt; index 9bd4412..4959c69 100644<br>
+&gt; --- a/drivers/staging/typec/tcpci.<wbr>c<br>
+&gt; +++ b/drivers/staging/typec/tcpci.<wbr>c<br>
+&gt; @@ -21,7 +21,6 @@<br>
+&gt;<br>
+&gt;=C2=A0 struct tcpci {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct device *dev;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0struct i2c_client *client;<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpm_port *port;<br>
+&gt;<br>
+&gt; @@ -30,6 +29,12 @@ struct tcpci {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0bool controls_vbus;<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpc_dev tcpc;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct tcpci_data *data;<br>
+&gt; +};<br>
+&gt; +<br>
+&gt; +struct tcpci_chip {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct tcpci_data data;<br>
+&gt;=C2=A0 };<br>
+&gt;<br>
+&gt;=C2=A0 static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)=
+<br>
+&gt; @@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcp=
+c_dev *tcpc)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return container_of(tcpc, struct tcpci, tcpc=
+);<br>
+&gt;=C2=A0 }<br>
+&gt;<br>
+&gt; -static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0u16 *val)<br>
+&gt; +static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *v=
+al)<br>
+&gt;=C2=A0 {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return regmap_raw_read(tcpci-&gt;regmap, reg=
+, val, sizeof(u16));<br>
+&gt;=C2=A0 }<br>
+&gt; @@ -98,8 +102,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enu=
+m typec_cc_status cc)<br>
+&gt;=C2=A0 static int tcpci_start_drp_toggling(<wbr>struct tcpc_dev *tcpc,<=
+br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0enum typec_cc_status=
+ cc)<br>
+&gt;=C2=A0 {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int ret;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);=
+<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0unsigned int reg =3D TCPC_ROLE_CTRL_DRP;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0unsigned int reg =3D (TCPC_ROLE_CTRL_CC_RD &lt;&l=
+t; TCPC_ROLE_CTRL_CC1_SHIFT) |<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 (TCPC_ROLE_CTRL_CC_RD &lt;&lt; TCPC_ROLE_CTRL_CC2_SHIFT);<br=
+>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0switch (cc) {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0default:<br>
+&gt; @@ -117,7 +123,19 @@ static int tcpci_start_drp_toggling(<wbr>struct t=
+cpc_dev *tcpc,<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0return regmap_write(tcpci-&gt;regmap, TCPC_ROLE_C=
+TRL, reg);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;regmap, TCPC_ROLE_=
+CTRL, reg);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0usleep_range(500, 1000);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0reg |=3D TCPC_ROLE_CTRL_DRP;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;regmap, TCPC_ROLE_=
+CTRL, reg);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;regmap, TCPC_COMMA=
+ND,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 TCPC_CMD_LOOK4CONNECTION);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0return 0;<br>
+<br>
+</div></div>regmap_write returns a negative return code or 0, thus this can=
+ be<br>
+simplified to<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return regmap_write(...);<br>
+<div><div class=3D"h5"><br>
+&gt;=C2=A0 }<br>
+&gt;<br>
+&gt;=C2=A0 static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, b=
+ool sink)<br>
+&gt; @@ -178,6 +196,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc,=
+ bool enable)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);=
+<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
+&gt;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/* Handle vendor set vconn */<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (tcpci-&gt;data) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (tcpci-&gt;data-&g=
+t;set_vconn) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0ret =3D tcpci-&gt;data-&gt;set_vconn(tcpci, tcpci-&gt;data,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 enable);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0if (ret &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;regmap, TCPC_=
+POWER_CTRL,<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; @@ -323,6 +351,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (time_after(jiffies, timeout))<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ETIMEDOU=
+T;<br>
+&gt;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/* Handle vendor init */<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (tcpci-&gt;data) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (tcpci-&gt;data-&g=
+t;init) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0ret =3D tcpci-&gt;data-&gt;init(tcpci, tcpci-&gt;data);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0if (ret &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Clear all events */<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D tcpci_write16(tcpci, TCPC_ALERT, 0xf=
+fff);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; @@ -344,9 +381,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return tcpci_write16(tcpci, TCPC_ALERT_MASK,=
+ reg);<br>
+&gt;=C2=A0 }<br>
+&gt;<br>
+&gt; -static irqreturn_t tcpci_irq(int irq, void *dev_id)<br>
+&gt; +static irqreturn_t _tcpci_irq(int irq, void *dev_id)<br>
+&gt;=C2=A0 {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci =3D dev_id;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0return tcpci_irq(tcpci);<br>
+&gt; +}<br>
+<br>
+</div></div>Hmm, normally I&#39;d expect this function _after_ the function=
+ it calls.<br>
+Guess that doesn&#39;t matter much here, so I am fine with it as long<br>
+as Greg is ok with it as well.<br>
+<div class=3D"HOEnZb"><div class=3D"h5"><br>
+&gt; +<br>
+&gt; +irqreturn_t tcpci_irq(struct tcpci *tcpci)<br>
+&gt; +{<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0u16 status;<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tcpci_read16(tcpci, TCPC_ALERT, &amp;status)=
+;<br>
+&gt; @@ -412,6 +455,7 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id=
+)<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return IRQ_HANDLED;<br>
+&gt;=C2=A0 }<br>
+&gt; +EXPORT_SYMBOL_GPL(tcpci_irq);<br>
+&gt;<br>
+&gt;=C2=A0 static const struct regmap_config tcpci_regmap_config =3D {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0.reg_bits =3D 8,<br>
+&gt; @@ -435,22 +479,18 @@ static int tcpci_parse_config(struct tcpci *tcpc=
+i)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
+&gt;=C2=A0 }<br>
+&gt;<br>
+&gt; -static int tcpci_probe(struct i2c_client *client,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ const struct i2c_device_id *i2c_id)<br>
+&gt; +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_da=
+ta *data)<br>
+&gt;=C2=A0 {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0int err;<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci =3D devm_kzalloc(&amp;client-&gt;dev, sizeo=
+f(*tcpci), GFP_KERNEL);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci =3D devm_kzalloc(dev, sizeof(*tcpci), GFP_K=
+ERNEL);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!tcpci)<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_PTR(-ENOME=
+M);<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci-&gt;client =3D client;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci-&gt;dev =3D &amp;client-&gt;dev;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0i2c_set_clientdata(client, tcpci);<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci-&gt;regmap =3D devm_regmap_init_i2c(client,=
+ &amp;tcpci_regmap_config);<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0if (IS_ERR(tcpci-&gt;regmap))<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return PTR_ERR(tcpci-=
+&gt;regmap);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci-&gt;dev =3D dev;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci-&gt;data =3D data;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci-&gt;regmap =3D data-&gt;regmap;<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tcpci-&gt;tcpc.init =3D tcpci_init;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tcpci-&gt;tcpc.get_vbus =3D tcpci_get_vbus;<=
+br>
+&gt; @@ -467,27 +507,63 @@ static int tcpci_probe(struct i2c_client *client=
+,<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D tcpci_parse_config(tcpci);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return err;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_PTR(err);<=
+br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci-&gt;port =3D tcpm_register_port(tcpci-&gt;d=
+ev, &amp;tcpci-&gt;tcpc);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (PTR_ERR_OR_ZERO(tcpci-&gt;port))<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ERR_CAST(tcpci=
+-&gt;port);<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0/* Disable chip interrupts */<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0return tcpci;<br>
+&gt; +}<br>
+&gt; +EXPORT_SYMBOL_GPL(tcpci_<wbr>register_port);<br>
+&gt; +<br>
+&gt; +void tcpci_unregister_port(struct tcpci *tcpci)<br>
+&gt; +{<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpm_unregister_port(tcpci-&gt;<wbr>port);<br>
+&gt; +}<br>
+&gt; +EXPORT_SYMBOL_GPL(tcpci_<wbr>unregister_port);<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0err =3D devm_request_threaded_irq(<wbr>tcpci-&gt;=
+dev, client-&gt;irq, NULL,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tcpci_irq,<b=
+r>
+&gt; +static int tcpci_probe(struct i2c_client *client,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ const struct i2c_device_id *i2c_id)<br>
+&gt; +{<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct tcpci_chip *chip;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int err;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0u16 val =3D 0;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0chip =3D devm_kzalloc(&amp;client-&gt;dev, sizeof=
+(*chip), GFP_KERNEL);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (!chip)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0chip-&gt;data.regmap =3D devm_regmap_init_i2c(cli=
+ent, &amp;tcpci_regmap_config);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (IS_ERR(chip-&gt;data.regmap))<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return PTR_ERR(chip-&=
+gt;data.regmap);<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/* Disable chip interrupts before requesting irq =
+*/<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0err =3D regmap_raw_write(chip-&gt;data.<wbr>regma=
+p, TCPC_ALERT_MASK, &amp;val,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 sizeof(u16));<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return err;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0err =3D devm_request_threaded_irq(&amp;<wbr>clien=
+t-&gt;dev, client-&gt;irq, NULL,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0_tcpci_irq,<=
+br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0IRQF_O=
+NESHOT | IRQF_TRIGGER_LOW,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_name(tcp=
+ci-&gt;dev), tcpci);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_name(&am=
+p;client-&gt;dev), chip);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (err &lt; 0)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return err;<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpci-&gt;port =3D tcpm_register_port(tcpci-&gt;d=
+ev, &amp;tcpci-&gt;tcpc);<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0return PTR_ERR_OR_ZERO(tcpci-&gt;port);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0chip-&gt;tcpci =3D tcpci_register_port(&amp;clien=
+t-&gt;<wbr>dev, &amp;chip-&gt;data);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (PTR_ERR_OR_ZERO(chip-&gt;tcpci))<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return PTR_ERR(chip-&=
+gt;tcpci);<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0i2c_set_clientdata(client, chip);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0return 0;<br>
+&gt;=C2=A0 }<br>
+&gt;<br>
+&gt;=C2=A0 static int tcpci_remove(struct i2c_client *client)<br>
+&gt;=C2=A0 {<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci =3D i2c_get_clientdata(client=
+);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct tcpci_chip *chip =3D i2c_get_clientdata(cl=
+ient);<br>
+&gt;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tcpm_unregister_port(tcpci-&gt;<wbr>port);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tcpci_unregister_port(chip-&gt;<wbr>tcpci);<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
+&gt;=C2=A0 }<br>
+&gt; diff --git a/drivers/staging/typec/tcpci.<wbr>h b/drivers/staging/type=
+c/tcpci.<wbr>h<br>
+&gt; index fdfb06c..40025b2 100644<br>
+&gt; --- a/drivers/staging/typec/tcpci.<wbr>h<br>
+&gt; +++ b/drivers/staging/typec/tcpci.<wbr>h<br>
+&gt; @@ -59,6 +59,7 @@<br>
+&gt;=C2=A0 #define TCPC_POWER_CTRL_VCONN_ENABLE BIT(0)<br>
+&gt;<br>
+&gt;=C2=A0 #define TCPC_CC_STATUS=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x1d<br>
+&gt; +#define TCPC_CC_STATUS_DRPRST=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 BIT(5)<br>
+&gt;=C2=A0 #define TCPC_CC_STATUS_TERM=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 BI=
+T(4)<br>
+&gt;=C2=A0 #define TCPC_CC_STATUS_CC2_SHIFT=C2=A0 =C2=A0 =C2=A02<br>
+&gt;=C2=A0 #define TCPC_CC_STATUS_CC2_MASK=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 0x3<br>
+&gt; @@ -121,4 +122,16 @@<br>
+&gt;=C2=A0 #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x76<br>
+&gt;=C2=A0 #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x78<br>
+&gt;<br>
+&gt; +struct tcpci;<br>
+&gt; +struct tcpci_data {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0struct regmap *regmap;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int (*init)(struct tcpci *tcpci, struct tcpci_dat=
+a *data);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int (*set_vconn)(struct tcpci *tcpci, struct tcpc=
+i_data *data,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 bool enable);<br>
+&gt; +};<br>
+&gt; +<br>
+&gt; +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_da=
+ta *data);<br>
+&gt; +void tcpci_unregister_port(struct tcpci *tcpci);<br>
+&gt; +irqreturn_t tcpci_irq(struct tcpci *tcpci);<br>
+&gt; +<br>
+&gt;=C2=A0 #endif /* __LINUX_USB_TCPCI_H */<br>
+&gt; --<br>
+&gt; 1.9.1<br>
+&gt;<br>
+</div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <br>=
+<div class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=
+=3D"ltr">Best Regards,<div>=E6=9B=B8=E5=B8=86</div></div></div>
+</div>
+
+--001a11425e86cc5a5205663c3c72--
