@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790521-2-3295405419827395925
+X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790513-2-3615419244527091141
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790521; b=h4r9THKGedxojkO7z4NYweu5/V1/B2MkMwWyrc0amWQPjop
-    cB3nvHW1zgWvbisd3ZEHVfNv0zCkkCjad+SldXwU3upcKA6V4lDRpt4WRHi7S+sJ
-    LkPI9NVX6w+wG0jAckY1GTyafTHQjIbMK+byu2YgXRGfdF86revoPaKg6qE/ynr4
-    Pa7Kf0SMRXZXbjHvpi4b5hR4udI2dXC5GOqKQ8wPWcW2XPyaEYgWY97VvyRqIoUZ
-    tnvrHDVF1xx2FORn1b5KSxbh+HjZuJ1iEoKe2OfZheg+9JJEOOKB4YaZmOMyElfY
-    n4xskVJsvpWKFt3RDVcYRYv2Pk7xKDeyWnZ8Aag==
+    t=1519790513; b=QqwgnfXAW9iVWreJXRU6KT0x/TV6ul9CwSL6fR5p9a0xEJL
+    mceWnXRJjHTXoMB93foPAj4mcOtIAAnQJtWJ624v6C5Ekr4cGF5qAA2ryu/4aFpu
+    sC8WgegLuZJJo3why9TNf+4JAnH//Xg//qk3+/vM9BYiZeBmHFjandfwrnSHfpit
+    m3+w7a/8WAiuTVhXQwyAOmsX4zC4nGesSKxlHbauiVdXpxZDqbaRkI/UwmRxkPo/
+    ysPO14S8ldkonhT74T8cD+bKi6Bpyfba/nqG1FXme39YvuIXuH+VhBUMFr6GO+IR
+    AXRAF75KFghZvFXvCtiUvggSNZ5O4vAmLjIreJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790521;
-    bh=PoybqqZSHPpCwyXKEdU/iRxK/k+IGVxzQYoov7ys+2E=; b=QqOfU0aOd1Ao
-    iWuvJ3kArEogF/ISquLzmywVdzZRc/g7U6ReaxGUmuyQp4SvyP3i1mff/dp09eqv
-    ifhydetnJ5fZb0UUcVuP+L5Pp29pj5Perk8nE6UeI3v3qpk+jxT/ym3ZgpkXJndy
-    YIElTVjVYyDwONnFfUIcdNntoicT6c/mI31mZjDgID1hgMYQsvbScthgRNpEbiAk
-    avq9tNOiZQkpjttIbO+Z8fCXL1QXxcUou7fF0dKJC+AOrcX0acMxilP1zAQsIokA
-    aQeQKJqZmuTJE3V3yqLtAvaVvvI3Pi72q8KppfrzlYUPZaLe1t8fl5uLLS62C7Ha
-    M0bd3+5Hzg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=V2xzAr5l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790513;
+    bh=JC5B9Ogq58f9r18lYBOpTdl94tTzOD0MxFQZk4nXoSI=; b=HcrE8klb/Hu5
+    HRhBItStQXU8Hqw0TnZlgHV7uTaynQ/sBC10tyIrjH8Nx+2fTNWcOL22s/9XFpmJ
+    U7+64LJ7vGD9YTu17UmPBMKd7wl0Ca7MBOoq8DQ3g9EC71C002k699HdcS8c7q57
+    +MHjl8qjwdbxSQDygD0q4/3rt6UX6uN2Io+UflU6KjLYbVmiRViuUJw0UfDzPSLG
+    eFEHHxBLGJOOvoCS9URQ/ufzEvxCoB0X5QDfejebz5EOpGs+h7+T52OiNwIIjkcz
+    gpamj/eZMHuI6P5bZK9unX5JCU5Rqiwr2v1bst5kbniE4qn07PhZNH5pGflJSmwr
+    DNNcsUpgiA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ZrT0fHbE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=m3Drit5k;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sylWBO9O;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=V2xzAr5l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ZrT0fHbE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=m3Drit5k;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sylWBO9O;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752314AbeB1EAV (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 23:00:21 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44075 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751830AbeB1EAT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 23:00:19 -0500
-X-Google-Smtp-Source: AH8x225D90VN+zl0PaeJjUnCZftqo0VnRdNiLcxKUzeQOzCZsvGL27EkX6LZYBSC9EfuvXfld/VnnA==
+        id S1752347AbeB1EA3 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 23:00:29 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34165 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752340AbeB1EA0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 23:00:26 -0500
+X-Google-Smtp-Source: AH8x224+CnVfyUNg1L5afvXWuQl4vQMpd6FZ6JGuN/m2lUj3lz2krvUHm1GwwXqLBenkqUebj9TXQQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -65,9 +65,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         linux-kernel@vger.kernel.org
 Cc: Jayachandran C <jnair@caviumnetworks.com>,
         Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 23/29] arm64: cputype: Add MIDR values for Cavium ThunderX2 CPUs
-Date: Wed, 28 Feb 2018 11:56:45 +0800
-Message-Id: <1519790211-16582-24-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 24/29] arm64: Turn on KPTI only on CPUs that need it
+Date: Wed, 28 Feb 2018 11:56:46 +0800
+Message-Id: <1519790211-16582-25-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -79,42 +79,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jayachandran C <jnair@caviumnetworks.com>
 
-commit 0d90718871fe upstream.
+commit 0ba2e29c7fc1 upstream.
 
-Add the older Broadcom ID as well as the new Cavium ID for ThunderX2
-CPUs.
+Whitelist Broadcom Vulcan/Cavium ThunderX2 processors in
+unmap_kernel_at_el0(). These CPUs are not vulnerable to
+CVE-2017-5754 and do not need KPTI when KASLR is off.
 
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
-
-Conflicts:
-	no falkor support in arch/arm64/include/asm/cputype.h
 ---
- arch/arm64/include/asm/cputype.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/cpufeature.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 0843b3f..9ee3038 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -84,6 +84,7 @@
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 6200b81..e62583d 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -766,6 +766,13 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+ 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+ 		return true;
  
- #define CAVIUM_CPU_PART_THUNDERX	0x0A1
- #define CAVIUM_CPU_PART_THUNDERX_81XX	0x0A2
-+#define CAVIUM_CPU_PART_THUNDERX2	0x0AF
- 
- #define BRCM_CPU_PART_VULCAN		0x516
- 
-@@ -94,6 +95,8 @@
- #define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
-+#define MIDR_CAVIUM_THUNDERX2 MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX2)
-+#define MIDR_BRCM_VULCAN MIDR_CPU_MODEL(ARM_CPU_IMP_BRCM, BRCM_CPU_PART_VULCAN)
- 
- #ifndef __ASSEMBLY__
- 
++	/* Don't force KPTI for CPUs that are not vulnerable */
++	switch (read_cpuid_id() & MIDR_CPU_MODEL_MASK) {
++	case MIDR_CAVIUM_THUNDERX2:
++	case MIDR_BRCM_VULCAN:
++		return false;
++	}
++
+ 	/* Defer to CPU feature registers */
+ 	return !cpuid_feature_extract_unsigned_field(pfr0,
+ 						     ID_AA64PFR0_CSV3_SHIFT);
 -- 
 2.7.4
