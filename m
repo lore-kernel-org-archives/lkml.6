@@ -1,94 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeB1MDM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:03:12 -0500
-Received: from mga14.intel.com ([192.55.52.115]:8055 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752195AbeB1MDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:03:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
-   d="asc'?scan'208";a="38105551"
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: HRTimer causing rtctest to fail
-In-Reply-To: <alpine.DEB.2.21.1802281246420.1886@nanos.tec.linutronix.de>
-References: <87vaei601x.fsf@linux.intel.com> <alpine.DEB.2.21.1802271640010.1886@nanos.tec.linutronix.de> <87muzt5usg.fsf@linux.intel.com> <alpine.DEB.2.21.1802281043050.1886@nanos.tec.linutronix.de> <87k1ux5qpf.fsf@linux.intel.com> <alpine.DEB.2.21.1802281246420.1886@nanos.tec.linutronix.de>
-Date: Wed, 28 Feb 2018 14:02:20 +0200
-Message-ID: <87h8q15nlf.fsf@linux.intel.com>
+        id S1752465AbeB1MEq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:04:46 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:64722 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752223AbeB1MEn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:04:43 -0500
+Subject: Re: [PATCH v2 3/3] PCI: dra7xx: Enable x2 mode support for dra74x,
+ dra76x and dra72x
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <20171219085823.8695-1-kishon@ti.com>
+ <20171219085823.8695-4-kishon@ti.com>
+ <20180226103058.GB19841@e107981-ln.cambridge.arm.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <nsekhar@ti.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <ad8c490f-2691-6c58-96a1-59788b88fc84@ti.com>
+Date: Wed, 28 Feb 2018 17:34:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <20180226103058.GB19841@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Lorenzo,
 
+On Monday 26 February 2018 04:00 PM, Lorenzo Pieralisi wrote:
+> On Tue, Dec 19, 2017 at 02:28:23PM +0530, Kishon Vijay Abraham I wrote:
+>> dra74x/dra76x and dra72x has separate compatible strings. Add support
+> 
+> s/has/have
+> 
+>> for these compatible strings in pci-dra7xx driver to perform syscon
+>> configurations required to get x2 mode working.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  drivers/pci/dwc/pci-dra7xx.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 90 insertions(+)
+>>
+>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>> index e77a4ceed74c..3b4427c10228 100644
+>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>> @@ -83,11 +83,15 @@
+>>  #define MSI_REQ_GRANT					BIT(0)
+>>  #define MSI_VECTOR_SHIFT				7
+>>  
+>> +#define PCIE_1LANE_2LANE_SELECTION			BIT(13)
+>> +#define PCIE_B1C0_MODE_SEL				BIT(2)
+>> +
+>>  struct dra7xx_pcie {
+>>  	struct dw_pcie		*pci;
+>>  	void __iomem		*base;		/* DT ti_conf */
+>>  	int			phy_count;	/* DT phy-names count */
+>>  	struct phy		**phy;
+>> +	u32			*b1c0_mask;
+> 
+> This looks unused in the current patch.
 
-Hi,
+yeah, I'll remove it while sending the next revision.
+> 
+>>  	int			link_gen;
+>>  	struct irq_domain	*irq_domain;
+>>  	enum dw_pcie_device_mode mode;
+>> @@ -95,6 +99,7 @@ struct dra7xx_pcie {
+>>  
+>>  struct dra7xx_pcie_of_data {
+>>  	enum dw_pcie_device_mode mode;
+>> +	u32 b1co_mode_sel_mask;
+>>  };
+>>  
+>>  #define to_dra7xx_pcie(x)	dev_get_drvdata((x)->dev)
+>> @@ -533,6 +538,26 @@ static const struct dra7xx_pcie_of_data dra7xx_pcie_ep_of_data = {
+>>  	.mode = DW_PCIE_EP_TYPE,
+>>  };
+>>  
+>> +static const struct dra7xx_pcie_of_data dra746_pcie_rc_of_data = {
+>> +	.b1co_mode_sel_mask = BIT(2),
+> 
+> Nit: DT guys are more familiar than me on how this data should be
+> encoded but maybe bit offset + length can be better ? I do not know, I
+> have no problem leaving them as masks.
+> 
+>> +	.mode = DW_PCIE_RC_TYPE,
+>> +};
+>> +
+>> +static const struct dra7xx_pcie_of_data dra726_pcie_rc_of_data = {
+>> +	.b1co_mode_sel_mask = GENMASK(3, 2),
+>> +	.mode = DW_PCIE_RC_TYPE,
+>> +};
+>> +
+>> +static const struct dra7xx_pcie_of_data dra746_pcie_ep_of_data = {
+>> +	.b1co_mode_sel_mask = BIT(2),
+>> +	.mode = DW_PCIE_EP_TYPE,
+>> +};
+>> +
+>> +static const struct dra7xx_pcie_of_data dra726_pcie_ep_of_data = {
+>> +	.b1co_mode_sel_mask = GENMASK(3, 2),
+>> +	.mode = DW_PCIE_EP_TYPE,
+>> +};
+>> +
+>>  static const struct of_device_id of_dra7xx_pcie_match[] = {
+>>  	{
+>>  		.compatible = "ti,dra7-pcie",
+>> @@ -542,6 +567,22 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+>>  		.compatible = "ti,dra7-pcie-ep",
+>>  		.data = &dra7xx_pcie_ep_of_data,
+>>  	},
+>> +	{
+>> +		.compatible = "ti,dra746-pcie-rc",
+>> +		.data = &dra746_pcie_rc_of_data,
+>> +	},
+>> +	{
+>> +		.compatible = "ti,dra726-pcie-rc",
+>> +		.data = &dra726_pcie_rc_of_data,
+>> +	},
+>> +	{
+>> +		.compatible = "ti,dra746-pcie-ep",
+>> +		.data = &dra746_pcie_ep_of_data,
+>> +	},
+>> +	{
+>> +		.compatible = "ti,dra726-pcie-ep",
+>> +		.data = &dra726_pcie_ep_of_data,
+>> +	},
+>>  	{},
+>>  };
+>>  
+>> @@ -587,6 +628,47 @@ static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
+>>  	return ret;
+>>  }
+>>  
+>> +static int dra7xx_pcie_configure_two_lane(struct device *dev,
+>> +					  u32 b1co_mode_sel_mask)
+>> +{
+>> +	struct device_node *np = dev->of_node;
+>> +	struct regmap *pcie_syscon;
+>> +	unsigned int pcie_reg;
+>> +
+>> +	pcie_syscon = syscon_regmap_lookup_by_phandle(np,
+>> +						      "ti,syscon-lane-conf");
+>> +	if (IS_ERR(pcie_syscon)) {
+>> +		dev_err(dev, "unable to get ti,syscon-lane-conf\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (of_property_read_u32_index(np, "ti,syscon-lane-conf", 1,
+>> +				       &pcie_reg)) {
+>> +		dev_err(dev, "couldn't get lane configuration reg offset\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	regmap_update_bits(pcie_syscon, pcie_reg, PCIE_1LANE_2LANE_SELECTION,
+>> +			   PCIE_1LANE_2LANE_SELECTION);
+> 
+> I do not know if this can create issues but the regmap should clear
+> those bits in the error path ?
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-> On Wed, 28 Feb 2018, Felipe Balbi wrote:
->> Thomas Gleixner <tglx@linutronix.de> writes:
->> > All numbers in micro seconds! What happens if you load the system or
->> > restrict C-States?
->>=20
->> added intel_idle.max_cstate=3D0 to cmdline. Still see some failures,
->> albeit a lot more rare, for example, caught one on iteration 8 of
->> 8192Hz:
->>=20
->> 8192Hz:	 1 2 3 4 5 6 7
->> PIE delta error: 0.000135 should be close to 0.000122
->>=20
->> That is, however, only 13 uS late. Is that within the limits of "we
->> don't quite care"?
->
-> I think so. 13us (depending on the machine) can easily happen if multiple
-> interrupts/timers happen at the same time or if something keeps interrupts
-> disabled for a few microseconds which is certainly possible.
->
-> What kind of system is this?
+hmm yeah, maybe we should try to fall back to 1 lane mode.
+> 
+>> +
+>> +	pcie_syscon = syscon_regmap_lookup_by_phandle(np, "ti,syscon-lane-sel");
+>> +	if (IS_ERR(pcie_syscon)) {
+>> +		dev_err(dev, "unable to get ti,syscon-lane-sel\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (of_property_read_u32_index(np, "ti,syscon-lane-sel", 1,
+>> +				       &pcie_reg)) {
+>> +		dev_err(dev, "couldn't get lane selection reg offset\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	regmap_update_bits(pcie_syscon, pcie_reg, b1co_mode_sel_mask,
+>> +			   PCIE_B1C0_MODE_SEL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>>  {
+>>  	u32 reg;
+>> @@ -608,6 +690,7 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>>  	const struct of_device_id *match;
+>>  	const struct dra7xx_pcie_of_data *data;
+>>  	enum dw_pcie_device_mode mode;
+>> +	u32 b1co_mode_sel_mask;
+> 
+> Again, do you need this temporary variable (given that you pass the
+> value below) ?
 
-4 core Kabylake.
+I used so that we don't cross the 80 line character limit below.
 
->> BTW, it took some effort to get that one failure. I'll leave rtctest
->> running in a long loop and try to figure out approximately how frequently
->> it fails, but it seems like it's within the realm of "don't care", would
->> you agree?
->
-> Yes.
-
-cool, thanks
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqWmkwACgkQzL64meEa
-mQb/ew/9Gnyi62Ax+VhMMlisM+4JJVP2AqY+MM9c7KMs/TwdNEaUwBhdkIE2gd4L
-jb+x9RdKRL8cpx3dZkzrhXSRvOfOfL7EXNjL2rUJkX/R+PUSkP1yMH0P90CqmMmD
-awGBxmveQ6/Dwg+jcSR0nRhbShLfY8Q36nRESHUQtTCBDweNcQTB7qFyDsF3/KHY
-476+lpNVWc8thm7yxATZN8epGU9SbhI39pmnzyrPnEOPCOi7Gf+qit/AHOtYB7x2
-kUZRVqHeOdnBAFMwTxV+syWKNsIE/lA5Km3wf+d0bubDhAHsBZvLj1JBslkxY5lf
-in0yrsFLmKHJYJBvctRbGQuRwf1yY7LWFFD07spjIIDHCK8dBn1wdC2jq0a90tM6
-a+SIjL+YryOKF0kPR85y4JJYKUq4XcIw9VXqkcFaYt4fgQ9TCwpI7hZfv+5Vys3W
-QegfxWWIqaMpnAIwnJEf63+4qj2pzlX2n7fMK/ZlU/pOVmFXvYEJSLbuUFcdgcIK
-7WznEQgbCW8lfzhScjqswvWPSrf1R6KuYo8vRAYFMxccCKSiRfbC84Te6xqcq8WQ
-Bu/UL+v/f97jV0vpnv7dqv07Di+C48PWY9aUoImV6EvNI+X0g/sKQEhaxBR4I5Ab
-up8RR+W0kOEB9sN3KN4CyIOmCioLZ6oVFTW7QzyM7QLZzq2K/4s=
-=dEkH
------END PGP SIGNATURE-----
---=-=-=--
+Thanks
+Kishon
