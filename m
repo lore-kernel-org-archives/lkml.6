@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790656-2-9970881089804452512
+X-Cyrus-Session-Id: sloti22d1t05-3238909-1519790651-2-13236957378381071883
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790655; b=nwNL8AT/r2axErcBOFF5JVkhfw0GhWedf2ePVj2JvM3UVPI
-    fQfe2z7tfjQ8wAmVQajXfaauRdii1hGby8b4sLr3Awgtxn3jJnCwYDlYnfm8j5sM
-    2mUTptkrHjT8eZCJH8l/PpFkbO1QjD1+5WULrZ7KiAuisur7VPNuX7aLaeSgCEft
-    05g4oj5934rVotARZ9uGfeP80d2oQQcD2RoV/J334Gs75LbZjv+KPeiv7aOp9oAe
-    UrKmsnH9HZk5/C4R30NtBy55Gd2MZmcezAHezW8Jk+HglXtzEvlP2K6xn3MZnL/i
-    p55Vp4ALz3/FBgK6Dhf2cqswSx6K4j4QKzwBbnw==
+    t=1519790651; b=K+wfDn2UuzxNn6oSxJhZNOfzItVM3p/DV0gr0mVHdgrVjg4
+    MeNX+p9KZ/XBwcbOIkAaCILsMt48ZLytBhLNFz9nACGuDR1FjEcf01WAWYDX0ELt
+    W6lXHNxbqjKD9cDmz9cdCyGJ/p912lNlz8NN3gjJtQwjf3fUaeHDkW13E/JLLl3W
+    VZjHmqxPW2OQK3vWaCsF2GyHEXDDIuzByoDTcDmkqkNm3FonOJMHeTK4CAdne7rX
+    uxtY+P8yeUwxNHI/tUVUx9FXPNdv0W59I8ga7ZjMrZ50lbqkhPl55c/wMG49aycw
+    3LToxMgjI2JxfthMVEQIIxmSf/nzmemnFY4EMIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790655;
-    bh=xF6X5uN03sAA3yMb21/xX2XvZZVdgl9P5oiG1iJTS6M=; b=Vod7mBm2d9yI
-    X4ohfPeRkInQfc+ZYptj+t0mbLX3YGhicqbjeyfgBVbLmgpI8vZQ+d2EyK4zWdxH
-    naKSXoq1QDD4L4qvAYtwPKRLorvi3zoaHw8VTUJZcc6gEofNMK8nmbtz8VZDAkF5
-    3hJcPsG6IyeatCjOLgOYq2nnMs4KF7++wGTDmi59urjZjI5EwtAOfbpC/S03jofg
-    ADng48UNA7DTieWPLpLFa0Gv9Ml8J1pfDZu+VfBvd7KImwLP9SzcFFfNqSVlQvSj
-    kdWCKiTnxVeoTBVBkPVafAFsELkuMDFOWWbdvSSDrWlVQHmFe+Ixl0DWxOtiBSuR
-    QUoCR9ocLQ==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790651;
+    bh=Dc0kkeu44UfOi1EiXBfePyqu3iL2CZsHYUa6WCie3uU=; b=OBAAER5/9KBO
+    ANoFvpbGR0SX9BfL32x2zMCAqJDE/F/PTWwvZ5Uij9ZuWHGajErKgWFLY/1bGCc8
+    VI4Ui+0E7x2+aYPM1VpVCSDmVV8XrIUjh9MVOmXq0CH4w0EqDsWNrGxAmFPCEWOd
+    Eoo+h5unylzP6cGgqiQqhVJ/HhS3ymgl++fK1B8b1k73oHoTicokqmkfkIMEDcA3
+    BhJcd+7iEQPsremjM0DZGXuwJJOD6/JrbtH+d0qOQc4KYIt/EkTdnDVtjUtG4iiN
+    Jwpc5RImwt+xaTJk1maD8XEZWgDpybiGYUakwG1JBpMQ68rU0KpGv46dl/lAVp5q
+    igOTIaZxSg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=B3gaaLmT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=I2x2yCrd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qbFxiXqL;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=X7g26pQA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=B3gaaLmT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=I2x2yCrd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qbFxiXqL;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=X7g26pQA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751868AbeB1D6m (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 22:58:42 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37544 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbeB1D6k (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:40 -0500
-X-Google-Smtp-Source: AH8x2276Ssu5nImPJ5ci7EdlVwXFxyk9sTJtWUEbt7cMTHTBfJ77+Q/xgvioTWL6+4nYqK7RVudQJA==
+        id S1752154AbeB1D6u (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 22:58:50 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46142 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbeB1D6r (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:47 -0500
+X-Google-Smtp-Source: AH8x224WkdghL1tTZMNhJ1vSPNgcpos2tRhb2ECIB11WwhkEg/97wPtYuzDpv6DQ22wEiXS9R7DC6g==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 09/29] arm64: entry: Add exception trampoline page for exceptions from EL0
-Date: Wed, 28 Feb 2018 11:56:31 +0800
-Message-Id: <1519790211-16582-10-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 10/29] arm64: mm: Map entry trampoline into trampoline and kernel page tables
+Date: Wed, 28 Feb 2018 11:56:32 +0800
+Message-Id: <1519790211-16582-11-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -78,14 +78,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Will Deacon <will.deacon@arm.com>
 
-commit c7b9adaf85f8 upstream.
+commit 51a0048beb44 upstream.
 
-To allow unmapping of the kernel whilst running at EL0, we need to
-point the exception vectors at an entry trampoline that can map/unmap
-the kernel on entry/exit respectively.
+The exception entry trampoline needs to be mapped at the same virtual
+address in both the trampoline page table (which maps nothing else)
+and also the kernel page table, so that we can swizzle TTBR1_EL1 on
+exceptions from and return to EL0.
 
-This patch adds the trampoline page, although it is not yet plugged
-into the vector table and is therefore unused.
+This patch maps the trampoline at a fixed virtual address in the fixmap
+area of the kernel virtual address space, which allows the kernel proper
+to be randomized with respect to the trampoline when KASLR is enabled.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -94,177 +96,104 @@ Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 
 Conflicts:
-	add asm/mmu.h in entry.S for ASID marco
-	add kernel-pgtable.h in entry.S for SWAPPER_DIR_SIZE and
-	RESERVED_TTBR0_SIZE
-	no SW PAN in vmlinux.lds.S
+	no acpi apei in arch/arm64/include/asm/fixmap.h
+	no rodata in arch/arm64/mm/mmu.c
 ---
- arch/arm64/include/asm/kernel-pgtable.h |  2 +
- arch/arm64/kernel/entry.S               | 86 +++++++++++++++++++++++++++++++++
- arch/arm64/kernel/vmlinux.lds.S         | 17 +++++++
- 3 files changed, 105 insertions(+)
+ arch/arm64/include/asm/fixmap.h  |  5 +++++
+ arch/arm64/include/asm/pgtable.h |  1 +
+ arch/arm64/kernel/asm-offsets.c  |  6 +++++-
+ arch/arm64/mm/mmu.c              | 23 +++++++++++++++++++++++
+ 4 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
-index e4ddac9..135e829 100644
---- a/arch/arm64/include/asm/kernel-pgtable.h
-+++ b/arch/arm64/include/asm/kernel-pgtable.h
-@@ -54,6 +54,8 @@
- #define SWAPPER_DIR_SIZE	(SWAPPER_PGTABLE_LEVELS * PAGE_SIZE)
- #define IDMAP_DIR_SIZE		(IDMAP_PGTABLE_LEVELS * PAGE_SIZE)
+diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
+index caf86be..7b1d88c 100644
+--- a/arch/arm64/include/asm/fixmap.h
++++ b/arch/arm64/include/asm/fixmap.h
+@@ -51,6 +51,11 @@ enum fixed_addresses {
  
-+#define RESERVED_TTBR0_SIZE	(0) /*no CONFIG_ARM64_SW_TTBR0_PAN  introduced */
+ 	FIX_EARLYCON_MEM_BASE,
+ 	FIX_TEXT_POKE0,
 +
- /* Initial memory map size */
- #if ARM64_SWAPPER_USES_SECTION_MAPS
- #define SWAPPER_BLOCK_SHIFT	SECTION_SHIFT
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 60b202a..f0c6b37 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -29,9 +29,11 @@
- #include <asm/esr.h>
- #include <asm/irq.h>
- #include <asm/memory.h>
-+#include <asm/mmu.h>
- #include <asm/thread_info.h>
- #include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
-+#include <asm/kernel-pgtable.h>
- 
- /*
-  * Context tracking subsystem.  Used to instrument transitions
-@@ -828,6 +830,90 @@ __ni_sys_trace:
- 
- 	.popsection				// .entry.text
- 
 +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+/*
-+ * Exception vectors trampoline.
-+ */
-+	.pushsection ".entry.tramp.text", "ax"
-+
-+	.macro tramp_map_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	sub	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
-+	bic	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	.endm
-+
-+	.macro tramp_unmap_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	add	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
-+	orr	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	/*
-+	 * We avoid running the post_ttbr_update_workaround here because the
-+	 * user and kernel ASIDs don't have conflicting mappings, so any
-+	 * "blessing" as described in:
-+	 *
-+	 *   http://lkml.kernel.org/r/56BB848A.6060603@caviumnetworks.com
-+	 *
-+	 * will not hurt correctness. Whilst this may partially defeat the
-+	 * point of using split ASIDs in the first place, it avoids
-+	 * the hit of invalidating the entire I-cache on every return to
-+	 * userspace.
-+	 */
-+	.endm
-+
-+	.macro tramp_ventry, regsize = 64
-+	.align	7
-+1:
-+	.if	\regsize == 64
-+	msr	tpidrro_el0, x30	// Restored in kernel_ventry
-+	.endif
-+	tramp_map_kernel	x30
-+	ldr	x30, =vectors
-+	prfm	plil1strm, [x30, #(1b - tramp_vectors)]
-+	msr	vbar_el1, x30
-+	add	x30, x30, #(1b - tramp_vectors)
-+	isb
-+	br	x30
-+	.endm
-+
-+	.macro tramp_exit, regsize = 64
-+	adr	x30, tramp_vectors
-+	msr	vbar_el1, x30
-+	tramp_unmap_kernel	x30
-+	.if	\regsize == 64
-+	mrs	x30, far_el1
-+	.endif
-+	eret
-+	.endm
-+
-+	.align	11
-+ENTRY(tramp_vectors)
-+	.space	0x400
-+
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+END(tramp_vectors)
-+
-+ENTRY(tramp_exit_native)
-+	tramp_exit
-+END(tramp_exit_native)
-+
-+ENTRY(tramp_exit_compat)
-+	tramp_exit	32
-+END(tramp_exit_compat)
-+
-+	.ltorg
-+	.popsection				// .entry.tramp.text
++	FIX_ENTRY_TRAMP_TEXT,
++#define TRAMP_VALIAS		(__fix_to_virt(FIX_ENTRY_TRAMP_TEXT))
 +#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+ 	__end_of_permanent_fixed_addresses,
+ 
+ 	/*
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 7acd3c5..3a30a39 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -692,6 +692,7 @@ static inline void pmdp_set_wrprotect(struct mm_struct *mm,
+ 
+ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
++extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
+ 
+ /*
+  * Encode and decode a swap entry:
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index c58ddf8..5f4bf3c 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -24,6 +24,7 @@
+ #include <linux/kvm_host.h>
+ #include <linux/suspend.h>
+ #include <asm/cpufeature.h>
++#include <asm/fixmap.h>
+ #include <asm/thread_info.h>
+ #include <asm/memory.h>
+ #include <asm/smp_plat.h>
+@@ -144,11 +145,14 @@ int main(void)
+   DEFINE(ARM_SMCCC_RES_X2_OFFS,		offsetof(struct arm_smccc_res, a2));
+   DEFINE(ARM_SMCCC_QUIRK_ID_OFFS,	offsetof(struct arm_smccc_quirk, id));
+   DEFINE(ARM_SMCCC_QUIRK_STATE_OFFS,	offsetof(struct arm_smccc_quirk, state));
+-
+   BLANK();
+   DEFINE(HIBERN_PBE_ORIG,	offsetof(struct pbe, orig_address));
+   DEFINE(HIBERN_PBE_ADDR,	offsetof(struct pbe, address));
+   DEFINE(HIBERN_PBE_NEXT,	offsetof(struct pbe, next));
+   DEFINE(ARM64_FTR_SYSVAL,	offsetof(struct arm64_ftr_reg, sys_val));
++  BLANK();
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++  DEFINE(TRAMP_VALIAS,		TRAMP_VALIAS);
++#endif
+   return 0;
+ }
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index d5cc6d7..84945c9 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -419,6 +419,29 @@ static void __init map_kernel_segment(pgd_t *pgd, void *va_start, void *va_end,
+ 	vm_area_add_early(vma);
+ }
+ 
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++static int __init map_entry_trampoline(void)
++{
++	extern char __entry_tramp_text_start[];
++
++	pgprot_t prot = rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
++	phys_addr_t pa_start = __pa_symbol(__entry_tramp_text_start);
++
++	/* The trampoline is always mapped and can therefore be global */
++	pgprot_val(prot) &= ~PTE_NG;
++
++	/* Map only the text into the trampoline page table */
++	memset(tramp_pg_dir, 0, PGD_SIZE);
++	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
++			     prot, pgd_pgtable_alloc, 0);
++
++	/* ...as well as the kernel page table */
++	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
++	return 0;
++}
++core_initcall(map_entry_trampoline);
++#endif
 +
  /*
-  * Special system call wrappers.
+  * Create fine-grained mappings for the kernel.
   */
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 1105aab..466a43a 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -56,6 +56,17 @@ jiffies = jiffies_64;
- #define HIBERNATE_TEXT
- #endif
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define TRAMP_TEXT					\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;	\
-+	*(.entry.tramp.text)				\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_end) = .;
-+#else
-+#define TRAMP_TEXT
-+#endif
-+
- /*
-  * The size of the PE/COFF section that covers the kernel image, which
-  * runs from stext to _edata, must be a round multiple of the PE/COFF
-@@ -128,6 +139,7 @@ SECTIONS
- 			HYPERVISOR_TEXT
- 			IDMAP_TEXT
- 			HIBERNATE_TEXT
-+			TRAMP_TEXT
- 			*(.fixup)
- 			*(.gnu.warning)
- 		. = ALIGN(16);
-@@ -216,6 +228,11 @@ SECTIONS
- 	swapper_pg_dir = .;
- 	. += SWAPPER_DIR_SIZE;
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	tramp_pg_dir = .;
-+	. += PAGE_SIZE;
-+#endif
-+
- 	_end = .;
- 
- 	STABS_DEBUG
 -- 
 2.7.4
