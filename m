@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933642AbeB1RJt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:09:49 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35316 "EHLO
+        id S933395AbeB1RJr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:09:47 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51746 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933504AbeB1Pt7 (ORCPT
+        with ESMTP id S933621AbeB1Pt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 10:49:59 -0500
-X-Google-Smtp-Source: AH8x2272sBg5PxF0zzh65eM6aRtuIBz3/0gWOAMISBzdZuomtWRAQQPew48qtu5hV9SthDXJQy9Xjg==
+X-Google-Smtp-Source: AG47ELtcBqFi3ce2kT2xf3Ci6o2gyoDCKLGv+wmnnxmAam0+9gwz7J7PT5l5d2HrO+oZrMJoSFYpow==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 09/15] lightnvm: implement get log report chunk helpers
-Date: Wed, 28 Feb 2018 16:49:29 +0100
-Message-Id: <1519832975-25432-10-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 10/15] lightnvm: pblk: check for supported version
+Date: Wed, 28 Feb 2018 16:49:30 +0100
+Message-Id: <1519832975-25432-11-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
 References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
@@ -27,248 +27,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 2.0 spec provides a report chunk log page that can be retrieved
-using the stangard nvme get log page. This replaces the dedicated
-get/put bad block table in 1.2.
-
-This patch implements the helper functions to allow targets retrieve the
-chunk metadata using get log page. It makes nvme_get_log_ext available
-outside of nvme core so that we can use it form lightnvm.
+At this point, only 1.2 spec is supported, thus check for it. Also,
+since device-side L2P is only supported in the 1.2 spec, make sure to
+only check its value under 1.2.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/core.c      | 11 +++++++
- drivers/nvme/host/core.c     |  6 ++--
- drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/nvme.h     |  3 ++
- include/linux/lightnvm.h     | 24 ++++++++++++++
- 5 files changed, 115 insertions(+), 3 deletions(-)
+ drivers/lightnvm/pblk-init.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index ed33e0b11788..4141871f460d 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -712,6 +712,17 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
- 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
- }
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 11424beb214c..b67b5b11ae16 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -991,9 +991,15 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 	struct pblk *pblk;
+ 	int ret;
  
-+int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
-+		struct ppa_addr ppa, int nchks)
-+{
-+	struct nvm_dev *dev = tgt_dev->parent;
-+
-+	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
-+
-+	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
-+						(sector_t)ppa.ppa, nchks);
-+}
-+EXPORT_SYMBOL(nvm_get_chunk_meta);
- 
- int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
- 		       int nr_ppas, int type)
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 2e9e9f973a75..af642ce6ba69 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2127,9 +2127,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	return ret;
- }
- 
--static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
--			    u8 log_page, void *log,
--			    size_t size, size_t offset)
-+int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-+		     u8 log_page, void *log,
-+		     size_t size, size_t offset)
- {
- 	struct nvme_command c = { };
- 	unsigned long dwlen = size / 4 - 1;
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index f7135659f918..a1796241040f 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
- 	nvme_nvm_admin_set_bb_tbl	= 0xf1,
- };
- 
-+enum nvme_nvm_log_page {
-+	NVME_NVM_LOG_REPORT_CHUNK	= 0xca,
-+};
-+
- struct nvme_nvm_ph_rw {
- 	__u8			opcode;
- 	__u8			flags;
-@@ -236,6 +240,16 @@ struct nvme_nvm_id20 {
- 	__u8			vs[1024];
- };
- 
-+struct nvme_nvm_chk_meta {
-+	__u8	state;
-+	__u8	type;
-+	__u8	wi;
-+	__u8	rsvd[5];
-+	__le64	slba;
-+	__le64	cnlb;
-+	__le64	wp;
-+};
-+
- /*
-  * Check we didn't inadvertently grow the command struct
-  */
-@@ -252,6 +266,9 @@ static inline void _nvme_nvm_check_size(void)
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) != 32);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=
-+						sizeof(struct nvm_chk_meta));
- }
- 
- static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
-@@ -555,6 +572,61 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
- 	return ret;
- }
- 
-+/*
-+ * Expect the lba in device format
-+ */
-+static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
-+				 struct nvm_chk_meta *meta,
-+				 sector_t slba, int nchks)
-+{
-+	struct nvm_geo *geo = &ndev->geo;
-+	struct nvme_ns *ns = ndev->q->queuedata;
-+	struct nvme_ctrl *ctrl = ns->ctrl;
-+	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
-+	struct ppa_addr ppa;
-+	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
-+	size_t log_pos, offset, len;
-+	int ret, i;
-+
-+	/* Normalize lba address space to obtain log offset */
-+	ppa.ppa = slba;
-+	ppa = dev_to_generic_addr(ndev, ppa);
-+
-+	log_pos = ppa.m.chk;
-+	log_pos += ppa.m.pu * geo->num_chk;
-+	log_pos += ppa.m.grp * geo->num_lun * geo->num_chk;
-+
-+	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
-+
-+	while (left) {
-+		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
-+
-+		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
-+				dev_meta, len, offset);
-+		if (ret) {
-+			dev_err(ctrl->device, "Get REPORT CHUNK log error\n");
-+			break;
-+		}
-+
-+		for (i = 0; i < len; i += sizeof(struct nvme_nvm_chk_meta)) {
-+			meta->state = dev_meta->state;
-+			meta->type = dev_meta->type;
-+			meta->wi = dev_meta->wi;
-+			meta->slba = le64_to_cpu(dev_meta->slba);
-+			meta->cnlb = le64_to_cpu(dev_meta->cnlb);
-+			meta->wp = le64_to_cpu(dev_meta->wp);
-+
-+			meta++;
-+			dev_meta++;
-+		}
-+
-+		offset += len;
-+		left -= len;
+-	if (dev->geo.dom & NVM_RSP_L2P) {
++	if (geo->version != NVM_OCSSD_SPEC_12) {
++		pr_err("pblk: OCSSD version not supported (%u)\n",
++							geo->version);
++		return ERR_PTR(-EINVAL);
 +	}
 +
-+	return ret;
-+}
-+
- static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct nvme_ns *ns,
- 				    struct nvme_nvm_command *c)
- {
-@@ -686,6 +758,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
- 	.get_bb_tbl		= nvme_nvm_get_bb_tbl,
- 	.set_bb_tbl		= nvme_nvm_set_bb_tbl,
++	if (geo->version == NVM_OCSSD_SPEC_12 && geo->dom & NVM_RSP_L2P) {
+ 		pr_err("pblk: host-side L2P table not supported. (%x)\n",
+-							dev->geo.dom);
++							geo->dom);
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
-+	.get_chk_meta		= nvme_nvm_get_chk_meta,
-+
- 	.submit_io		= nvme_nvm_submit_io,
- 	.submit_io_sync		= nvme_nvm_submit_io_sync,
- 
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 1ca08f4993ba..505f797f8c6c 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -396,6 +396,9 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
- int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
- int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
- 
-+int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-+		     u8 log_page, void *log, size_t size, size_t offset);
-+
- extern const struct attribute_group nvme_ns_id_attr_group;
- extern const struct block_device_operations nvme_ns_head_ops;
- 
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index e878b95aeec4..9fe37f7e8185 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -81,10 +81,13 @@ struct nvm_rq;
- struct nvm_id;
- struct nvm_dev;
- struct nvm_tgt_dev;
-+struct nvm_chk_meta;
- 
- typedef int (nvm_id_fn)(struct nvm_dev *);
- typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
- typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
-+typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct nvm_chk_meta *,
-+								sector_t, int);
- typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
-@@ -98,6 +101,8 @@ struct nvm_dev_ops {
- 	nvm_op_bb_tbl_fn	*get_bb_tbl;
- 	nvm_op_set_bb_fn	*set_bb_tbl;
- 
-+	nvm_get_chk_meta_fn	*get_chk_meta;
-+
- 	nvm_submit_io_fn	*submit_io;
- 	nvm_submit_io_sync_fn	*submit_io_sync;
- 
-@@ -227,6 +232,20 @@ struct nvm_addr_format {
- 	u64	rsv_mask[2];
- };
- 
-+/*
-+ * Note: The structure size is linked to nvme_nvm_chk_meta such that the same
-+ * buffer can be used when converting from little endian to cpu addressing.
-+ */
-+struct nvm_chk_meta {
-+	u8	state;
-+	u8	type;
-+	u8	wi;
-+	u8	rsvd[5];
-+	u64	slba;
-+	u64	cnlb;
-+	u64	wp;
-+};
-+
- struct nvm_target {
- 	struct list_head list;
- 	struct nvm_tgt_dev *dev;
-@@ -496,6 +515,11 @@ extern struct nvm_dev *nvm_alloc_dev(int);
- extern int nvm_register(struct nvm_dev *);
- extern void nvm_unregister(struct nvm_dev *);
- 
-+
-+extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
-+			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
-+			      int nchks);
-+
- extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
- 			      int, int);
- extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
 -- 
 2.7.4
