@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeB1Nd2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:33:28 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:47909 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeB1Nd0 (ORCPT
+        id S932135AbeB1Ndf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:33:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55806 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752627AbeB1Nda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:33:26 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: Jianlin Shi <jishi@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: ipv4: avoid unused variable warning for sysctl
-Date: Wed, 28 Feb 2018 14:32:48 +0100
-Message-Id: <20180228133310.1816221-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:GuEI6Gy/ujjYdIMBRnIPiDzRJncFk19uV4JM3y/8KnEi2t/I7qk
- 7OYI3gzWi/YAz/yJwUcJeWT7LGmJ6Xa9Mj2fmORA3CRDz6E5hN4Vqzgf27RvGQJOqL5iPHD
- VX/VKL1yZDBC5H7oJghqlxvU0UD89z4vS2FwmAt/ORMjyIvc4m1oYDucp+8U/lrZ26B3Y9z
- oRCw6dO1fq4J27YWocRhA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RJJklWIbVl4=:axdcu3eiCJQjBUxiduACI7
- /GVUcS+Mm67jw8uhlL6yispUWLG+M//FaWqUtOWE0Rzg8syXXIzGjrmhjlxRzSCgrASb9pDwh
- weRe+BaHHxW04aXhQnXzTl51T+IaODjXTb0y28zUC6uGJr67tkcSLcbrW/mIQrhhowjqShAfc
- nJGFYCvK0xOiGRkuEeelNYRKyioN/JHxxC4ObLUgHAzf2WVuafy/ycE3JFPXp68zx5G0KTkOm
- LxW4ffy71UvKUhYplQIHSBp5cDBfGc8QyjZIc86XTC1XgC3HWhGnUugWhXy1kGGq4bb0H3oyW
- 4CM5GtPlR7NvLb+ti03mGp4hZ0mS9heFdHwydzLACrOiogDLkVzvPzdz0Kz/Lz6PRW1D+tanE
- ipYXkp0Wlsv3ti844yXHHila73dboNjtdStwZqJW2TXpfLD6g5wbW7gDpjHRkijHWIm/RvG2/
- TQUUDkuOwBMm41afgEsrITT8ECTlZe6n5GAThmPgXyL2NEf/92CO2vm+NP9EJjdIS18SyoPGq
- ONFyQWbDTH4hk6emzmO78Dw8CmOBaDrxTLn2byvE0eXIswe6jRlvGFyggFHuD1dTV5ePbTkvp
- GdOTa9H4o5rWlspzwyuIBFzPAyRJ8oeqiY28CFizZC9NLUOvlXfhgEMxj2s9va+NMlrCUMPt+
- kayPtbrV4NhDj35n7X788dYHomfWzAl9O2exvfusO0o5KL7NknAte8n89yfpuYlUtGeyNmGQW
- hyycxpI9MTwJA/RmaWoLF91Qq7ugxPZEXaBjAQ==
+        Wed, 28 Feb 2018 08:33:30 -0500
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
+Subject: [PATCH 1/2] perf annotate: Remove s390 basr instruction from call table
+Date: Wed, 28 Feb 2018 14:33:08 +0100
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18022813-0020-0000-0000-000003FCDF37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022813-0021-0000-0000-000042910955
+Message-Id: <20180228133309.15758-1-tmricht@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280163
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly introudced ip_min_valid_pmtu variable is only used when
-CONFIG_SYSCTL is set:
+Perf annotate displays function call assembler instructions
+with a right arrow. Hitting enter on this line/instruction
+causes the browser to disassemble this target function and
+show it on the screen.
 
-net/ipv4/route.c:135:12: error: 'ip_min_valid_pmtu' defined but not used [-Werror=unused-variable]
+S390 assembler instruction 'basr %r1,%r2'
+jumps to address stored in register 2. Since the
+target address is unknown to perf it can not be handled.
 
-This moves it to the other variables like it, to avoid the harmless
-warning.
+Therefore remove the right arrow from such an instruction
+as the target function can not be identified.
 
-Fixes: c7272c2f1229 ("net: ipv4: don't allow setting net.ipv4.route.min_pmtu below 68")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 ---
- net/ipv4/route.c | 3 +--
+ tools/perf/arch/s390/annotate/instructions.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 5c85db355d1f..8d1f5c3a1745 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -132,8 +132,6 @@ static int ip_rt_min_advmss __read_mostly	= 256;
- 
- static int ip_rt_gc_timeout __read_mostly	= RT_GC_TIMEOUT;
- 
--static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
--
- /*
-  *	Interface to generic destination cache.
-  */
-@@ -2805,6 +2803,7 @@ void ip_rt_multicast_event(struct in_device *in_dev)
- static int ip_rt_gc_interval __read_mostly  = 60 * HZ;
- static int ip_rt_gc_min_interval __read_mostly	= HZ / 2;
- static int ip_rt_gc_elasticity __read_mostly	= 8;
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
- 
- static int ipv4_sysctl_rtcache_flush(struct ctl_table *__ctl, int write,
- 					void __user *buffer,
+diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
+index 8c72b44444cb..05f53bd092d4 100644
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -12,8 +12,7 @@ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *na
+ 		ops = &jump_ops;
+ 	/* override call/returns */
+ 	if (!strcmp(name, "bras") ||
+-	    !strcmp(name, "brasl") ||
+-	    !strcmp(name, "basr"))
++	    !strcmp(name, "brasl"))
+ 		ops = &call_ops;
+ 	if (!strcmp(name, "br"))
+ 		ops = &ret_ops;
 -- 
-2.9.0
+2.14.3
