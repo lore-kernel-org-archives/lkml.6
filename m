@@ -1,73 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeB1MeM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:34:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49166 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752482AbeB1MeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:34:10 -0500
-Date: Wed, 28 Feb 2018 20:33:59 +0800
-From: Dave Young <dyoung@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, bauerman@linux.vnet.ibm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/13] kexec_file: make an use of purgatory optional
-Message-ID: <20180228123359.GB2228@dhcp-128-65.nay.redhat.com>
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
- <20180222111732.23051-3-takahiro.akashi@linaro.org>
- <20180223084934.GB4433@dhcp-128-65.nay.redhat.com>
- <20180226102418.GD6019@linaro.org>
+        id S1752346AbeB1MgJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:36:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35568 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752195AbeB1MgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:36:08 -0500
+Date: Wed, 28 Feb 2018 13:36:06 +0100
+From: Jan Kara <jack@suse.cz>
+To: Chengguang Xu <cgxu519@icloud.com>
+Cc: jack@suse.cz, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] udf: fix potential refcnt problem of nls module
+Message-ID: <20180228123606.z3zcwawbvh4g72ym@quack2.suse.cz>
+References: <1519565107-213857-1-git-send-email-cgxu519@icloud.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180226102418.GD6019@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1519565107-213857-1-git-send-email-cgxu519@icloud.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/18 at 07:24pm, AKASHI Takahiro wrote:
-> On Fri, Feb 23, 2018 at 04:49:34PM +0800, Dave Young wrote:
-> > Hi AKASHI,
-> > 
-> > On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
-> > > On arm64, no trampline code between old kernel and new kernel will be
-> > > required in kexec_file implementation. This patch introduces a new
-> > > configuration, ARCH_HAS_KEXEC_PURGATORY, and allows related code to be
-> > > compiled in only if necessary.
-> > 
-> > Here also need the explanation about why no purgatory is needed, it would be
-> > required for kexec if no strong reason.
+On Sun 25-02-18 21:25:07, Chengguang Xu wrote:
+> When specifiying iocharset multiple times in a mount
+> or once/multiple in a remount, current option parsing
+> may cause inaccurate refcount of nls module.
+> Also, in the failure cleanup of option parsing,
+> the condition of calling unload_nls is not sufficient.
 > 
-> OK, I will add the reason:
-> On arm64, crash dump kernel's usable memory is protected by
-> *unmapping* it from kernel virtual space unlike other architectures
-> where the region is just made read-only.
-> So our key developers think that it is highly unlikely that the region
-> is accidentally corrupted and this rationalizes that digest check code
-> be also dropped from purgatory.
-> This greatly simplifies our purgatory without any need for a bit ugly
-> relocation stuff, i.e. arch_kexec_apply_relocations_add().
+> Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
+> ---
 > 
-> Please see:
->    http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545428.html
-> to find out how simple our purgatory was. All that it does is
-> to shuffle arguments and jump into a new kernel.
+> Hi Jan,
 > 
-> Without this patch, we would have to have purgatory with a space for
-> a hash value (purgatory_sha256_digest) which is never checked against.
-> 
-> Do you think it makes sense?
+> I found this issue by checking code so now post the fix for rewiew,
+> but sorry I did't get enough resource to fully test it, I can only
+> make sure the fix can successfuly comiple with no error.
 
-Hmm, it looks reasonable, I remember there could be some performance
-issue for a purgatory because of cache disabled for arm64. I do not
-object this.
+Thanks for the patch. I have added it to my tree.
 
-[snip]
+								Honza
 
-Thanks
-Dave
+> 
+>  fs/udf/super.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index 7b27b06..7e73a98 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
+> @@ -523,8 +523,12 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
+>  			break;
+>  #ifdef CONFIG_UDF_NLS
+>  		case Opt_iocharset:
+> -			uopt->nls_map = load_nls(args[0].from);
+> -			uopt->flags |= (1 << UDF_FLAG_NLS_MAP);
+> +			if (!remount) {
+> +				if (uopt->nls_map)
+> +					unload_nls(uopt->nls_map);
+> +				uopt->nls_map = load_nls(args[0].from);
+> +				uopt->flags |= (1 << UDF_FLAG_NLS_MAP);
+> +			}
+>  			break;
+>  #endif
+>  		case Opt_uignore:
+> @@ -2082,8 +2086,8 @@ error_out:
+>  		for (i = 0; i < sbi->s_partitions; i++)
+>  			udf_free_partition(&sbi->s_partmaps[i]);
+>  #ifdef CONFIG_UDF_NLS
+> -	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
+> -		unload_nls(sbi->s_nls_map);
+> +	if (uopt.nls_map)
+> +		unload_nls(uopt.nls_map);
+>  #endif
+>  	if (!(sb->s_flags & MS_RDONLY))
+>  		udf_close_lvid(sb);
+> -- 
+> 1.8.3.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
