@@ -1,84 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933386AbeB1RT2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:19:28 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49142 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932947AbeB1RTZ (ORCPT
+        id S933540AbeB1RUL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:20:11 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46816 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933405AbeB1Prt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:19:25 -0500
-Date: Wed, 28 Feb 2018 18:19:21 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Enlightened VMCS support for KVM on Hyper-V
-In-Reply-To: <20180226171121.18974-1-vkuznets@redhat.com>
-Message-ID: <alpine.DEB.2.21.1802281818580.1392@nanos.tec.linutronix.de>
-References: <20180226171121.18974-1-vkuznets@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Feb 2018 10:47:49 -0500
+From: Ludovic Barre <ludovic.Barre@st.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V2 5/5] ARM: configs: stm32: add mmc and ext2/3/4 support
+Date: Wed, 28 Feb 2018 16:47:24 +0100
+Message-ID: <1519832844-28068-6-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
+References: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Feb 2018, Vitaly Kuznetsov wrote:
+From: Ludovic Barre <ludovic.barre@st.com>
 
-For the non KVM pats of this series:
+This patch adds support of
+-mmc framework and stm32 sdmmc controller
+-ext2/3/4 filesystem
+-LBDAF to support huge file (needed for ext4)
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ arch/arm/configs/stm32_defconfig | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-> Changes since v1:
-> - The only comment I got for v1 was from kbuild test robot. The issue
->   was addressed by moving HV_X64_ENLIGHTENED_VMCS_RECOMMENDED definition
->   to PATCH2.
-> - Rebased to current kvm/queue.
-> 
-> When running nested KVM on Hyper-V it's possible to use so called
-> 'Enlightened VMCS' and do normal memory reads/writes instead of
-> doing VMWRITE/VMREAD instructions. In addition, clean field mask
-> provides a huge room for optimization on L0's side.
-> 
-> Tight CPUID loop test shows significant speedup (current kvm/queue on
-> E5-2667 v4 @ 3.20GHz):
->  Before: 20766 cycles
->  After: 8912 cycles
-> 
-> The series is based on current kvm/queue tree.
-> 
-> Ladi Prosek (1):
->   x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
->     HV_X64_MSR_VP_ASSIST_PAGE
-> 
-> Vitaly Kuznetsov (4):
->   x86/hyper-v: allocate and use Virtual Processor Assist Pages
->   x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
->   x86/hyper-v: detect nested features
->   x86/kvm: use Enlightened VMCS when running on Hyper-V
-> 
->  arch/x86/hyperv/hv_init.c          |  33 +++
->  arch/x86/include/asm/mshyperv.h    |  12 +
->  arch/x86/include/uapi/asm/hyperv.h | 223 ++++++++++++++-
->  arch/x86/kernel/cpu/mshyperv.c     |   3 +
->  arch/x86/kvm/hyperv.c              |   8 +-
->  arch/x86/kvm/lapic.h               |   2 +-
->  arch/x86/kvm/vmx.c                 | 561 ++++++++++++++++++++++++++++++++++++-
->  arch/x86/kvm/x86.c                 |   2 +-
->  8 files changed, 825 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.14.3
-> 
-> 
+diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
+index 91014ea..2573355 100644
+--- a/arch/arm/configs/stm32_defconfig
++++ b/arch/arm/configs/stm32_defconfig
+@@ -15,7 +15,6 @@ CONFIG_EMBEDDED=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+ # CONFIG_SLUB_DEBUG is not set
+ CONFIG_MODULES=y
+-# CONFIG_LBDAF is not set
+ # CONFIG_BLK_DEV_BSG is not set
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+@@ -57,6 +56,8 @@ CONFIG_MFD_STMPE=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_USB_SUPPORT is not set
++CONFIG_MMC=y
++CONFIG_MMC_STM32_SDMMC=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+@@ -71,6 +72,7 @@ CONFIG_STM32_MDMA=y
+ CONFIG_IIO=y
+ CONFIG_STM32_ADC_CORE=y
+ CONFIG_STM32_ADC=y
++CONFIG_EXT3_FS=y
+ # CONFIG_FILE_LOCKING is not set
+ # CONFIG_DNOTIFY is not set
+ # CONFIG_INOTIFY_USER is not set
+-- 
+2.7.4
