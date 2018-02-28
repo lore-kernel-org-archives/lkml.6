@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-449106-1519832196-2-157096199233714953
+X-Cyrus-Session-Id: sloti22d1t05-449106-1519832186-2-5593741579056441358
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519832195; b=N7XH+0SqoxzYMVGHVi2Bd5YONSijuuQXeyhcvZzPDEvBWtk
-    yRTy+z9j1jOShsGVbIZ5r7bGb44fNK00zuWLcDc724SxTt3XLZs3/frI5R0glk6k
-    ciRGPdI+A7FWebxgdUjboOjZk+gRLNGRm2+s//RB6iV4z5+cPly4OShrL+8cFkDx
-    jA67AEAH7IPRFxwWYE2OYY4PpTgiQI0DQtYP3y5iQ1CWCcrB9EXQ00ru1WW7/mqQ
-    bM/mU+lfruu82d+wkTv2gweINqW9/PERse6JPFsNnLL/l6/OzV/smLhI8nb3Stbb
-    8s74wgYq4H4+iWj6FHtP0Kq2NuQ5MofeFIJXxEQ==
+    t=1519832185; b=Vz4u9kFccYtORv2ircW3MwInAtSIunklsF/FN+8yn5FVqcx
+    nzwrr9KdtNiwrobLm2T/SgORv/Q5vd84fz7Kfw/7GZ4jnVvbrT1AsjH3FPyN2Jro
+    r4vJLx32mbVU20I3/6offv9628etGz/xoKG2sqSSNLnVNhWE0PffSENLkjqxUlPW
+    3KEWFkWT2brlSf5y4Ik/XX4zdSsNjLAXW+m4z9HbB9c97vaVJimjJCEm0/cfgmhC
+    /12OSVUXHBR6V1YzeqInQ9zBDtmL/c4PPQGKVHbvtus3Nuwv2qzQ1e4ipS+LDi++
+    Th+SvoY7LfTHZ89tPHn6tU1dIkKjQnoxzx5lGNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519832195; bh=e8fJu+C+MeW6M6y6r7Y
-    CE4jywINouwW5Xam/VSpieRA=; b=cGxZcx/CjiNhywzsD+JE6maLq2eSUmnBAFL
-    Ztovc+BhOL8UtdMAa4veTbNZLjkaxn7GnrzEDkfv2stYLT7RUj259CYSCR9xScQG
-    ilYfs0NqPPCCVS84jtir6CFk5a4ZAY7+3tOhbgq+0j5ogZ+F0MdhdbVd/toDFyax
-    smJLe/jTwQg10e/j8Rrn7oBeHchnktMs8XMn83rIXxKa8FIgFxG4Z0EQcTcnrQ96
-    JWxvs6wlyA+f/A8uPhCkqhmWHcr0GedXLcoqbj7+i2DB5RREUHxABXbl/YcYDKmX
-    w/8lMDaai8cBkRNuNUyU5KtjFv3uh2FhfAs3v5ioEsl8iAHs51A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519832185; bh=vjYmkZ8RX6qk06vPUad
+    ZMx7B5nFUbU910Mj0C2giMK4=; b=YDy+A7cv34a1khgoExefaS+GmRrJ7xkeJu0
+    iPqiRFYyqai0o4X9x0IypWg/gbwAREgJnPal8JOwSsJC4RapInH6sLI73kCjdNth
+    beQdPsgHP88MJ6sdgkMrV1k3Aw9ovir9/hQryUGZuByg29GoBljxfm9Y9RA1AJZd
+    exnA39XiX/Y8gXhIm4M8nt8ztGjEmjN/cZjSB4b9MFbGjbu8ZPvq9s4YWLchl1ko
+    btWt1Zx2kTEq4hBwPcie2Q+LgwDkgq1JHcfn7aNCtXjzhqRhMySZdvkb/B+4R8sa
+    Whdb+MctT4+UdOELuCN00ebRtmZlEzqTN+FbrLnmNF+3c/cIyMQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933049AbeB1Pen (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:34:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33306 "EHLO
+        id S933120AbeB1Peo (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:34:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33297 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752768AbeB1PWh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:37 -0500
+        by vger.kernel.org with ESMTP id S1752829AbeB1PWg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:36 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Robb Glasser" <rglasser@google.com>,
-        "Nick Desaulniers" <ndesaulniers@google.com>,
-        "Takashi Iwai" <tiwai@suse.de>
-Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.894392238@decadent.org.uk>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 28 Feb 2018 15:20:22 +0000
+Message-ID: <lsq.1519831222.530024627@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 032/140] ALSA: pcm: prevent UAF in snd_pcm_info
+Subject: [PATCH 3.2 093/140] SolutionEngine771x: fix Ether platform data
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,34 +79,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robb Glasser <rglasser@google.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 362bca57f5d78220f8b5907b875961af9436e229 upstream.
+commit 195e2addbce09e5afbc766efc1e6567c9ce840d3 upstream.
 
-When the device descriptor is closed, the `substream->runtime` pointer
-is freed. But another thread may be in the ioctl handler, case
-SNDRV_CTL_IOCTL_PCM_INFO. This case calls snd_pcm_info_user() which
-calls snd_pcm_info() which accesses the now freed `substream->runtime`.
+The 'sh_eth' driver's probe() method would fail  on the SolutionEngine7710
+board and crash on SolutionEngine7712 board  as the platform code is
+hopelessly behind the driver's platform data --  it passes the PHY address
+instead of 'struct sh_eth_plat_data *'; pass the latter to the driver in
+order to fix the bug...
 
-Note: this fixes CVE-2017-0861
-
-Signed-off-by: Robb Glasser <rglasser@google.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 71557a37adb5 ("[netdrvr] sh_eth: Add SH7619 support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/pcm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/sh/boards/mach-se/770x/setup.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -145,7 +145,9 @@ static int snd_pcm_control_ioctl(struct
- 				err = -ENXIO;
- 				goto _error;
- 			}
-+			mutex_lock(&pcm->open_mutex);
- 			err = snd_pcm_info_user(substream, info);
-+			mutex_unlock(&pcm->open_mutex);
- 		_error:
- 			mutex_unlock(&register_mutex);
- 			return err;
+--- a/arch/sh/boards/mach-se/770x/setup.c
++++ b/arch/sh/boards/mach-se/770x/setup.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/sh_eth.h>
+ #include <mach-se/mach/se.h>
+ #include <mach-se/mach/mrshpc.h>
+ #include <asm/machvec.h>
+@@ -114,6 +115,11 @@ static struct platform_device heartbeat_
+ #if defined(CONFIG_CPU_SUBTYPE_SH7710) ||\
+ 	defined(CONFIG_CPU_SUBTYPE_SH7712)
+ /* SH771X Ethernet driver */
++static struct sh_eth_plat_data sh_eth_plat = {
++	.phy = PHY_ID,
++	.phy_interface = PHY_INTERFACE_MODE_MII,
++};
++
+ static struct resource sh_eth0_resources[] = {
+ 	[0] = {
+ 		.start = SH_ETH0_BASE,
+@@ -131,7 +137,7 @@ static struct platform_device sh_eth0_de
+ 	.name = "sh-eth",
+ 	.id	= 0,
+ 	.dev = {
+-		.platform_data = PHY_ID,
++		.platform_data = &sh_eth_plat,
+ 	},
+ 	.num_resources = ARRAY_SIZE(sh_eth0_resources),
+ 	.resource = sh_eth0_resources,
+@@ -154,7 +160,7 @@ static struct platform_device sh_eth1_de
+ 	.name = "sh-eth",
+ 	.id	= 1,
+ 	.dev = {
+-		.platform_data = PHY_ID,
++		.platform_data = &sh_eth_plat,
+ 	},
+ 	.num_resources = ARRAY_SIZE(sh_eth1_resources),
+ 	.resource = sh_eth1_resources,
