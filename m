@@ -1,61 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933752AbeB1RLv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:11:51 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933179AbeB1Pty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:49:54 -0500
-From: Vratislav Bendel <vbendel@redhat.com>
-To: linux-xfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
-Date: Wed, 28 Feb 2018 16:49:51 +0100
-Message-Id: <20180228154951.31714-1-vbendel@redhat.com>
+        id S933217AbeB1RLt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:11:49 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38938 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932932AbeB1Ptx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:49:53 -0500
+X-Google-Smtp-Source: AH8x227fRPlEk1WCtBa/B6qcg61AqHK+o6n73MrDhF5KI4lZ5cQDJJTvGnFBBzavCdn0RCrFZtCDMg==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH 05/15] lightnvm: complete geo structure with maxoc*
+Date: Wed, 28 Feb 2018 16:49:25 +0100
+Message-Id: <1519832975-25432-6-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
+References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function xfs_buftarg_isolate() used by xfs buffer schrinkers 
-to determine whether a buffer should be isolated and disposed 
-from LRU list, has inverted logic.
+Complete the generic geometry structure with the maxoc and maxocpu
+felds, present in the 2.0 spec. Also, expose them through sysfs.
 
-Excerpt from xfs_buftarg_isolate():
-        /*
-         * Decrement the b_lru_ref count unless the value is already
-         * zero. If the value is already zero, we need to reclaim the
-         * buffer, otherwise it gets another trip through the LRU.
-         */
-        if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-                spin_unlock(&bp->b_lock);
-                return LRU_ROTATE;
-        }
-
-However, as per documentation, atomic_add_unless() returns _zero_
-if the atomic value was originally equal to the specified *unsless* value.
-
-Ultimately causing a xfs_buffer with ->b_lru_ref == 0, to take another 
-trip around LRU, while isolating buffers with non-zero b_lru_ref.
-
-Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
-CC: Brian Foster <bfoster@redhat.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- fs/xfs/xfs_buf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/lightnvm.c | 17 +++++++++++++++++
+ include/linux/lightnvm.h     |  2 ++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index d1da2ee9e6db..ac669a10c62f 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1708,7 +1708,7 @@ xfs_buftarg_isolate(
- 	 * zero. If the value is already zero, we need to reclaim the
- 	 * buffer, otherwise it gets another trip through the LRU.
- 	 */
--	if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-+	if (atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
- 		spin_unlock(&bp->b_lock);
- 		return LRU_ROTATE;
- 	}
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 85f336a79cda..afb5f883f8c8 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -323,6 +323,13 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+ 	geo->ws_opt = sec_per_pg;
+ 	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values */
+ 
++	/* Do not impose values for maximum number of open blocks as it is
++	 * unspecified in 1.2. Users of 1.2 must be aware of this and eventually
++	 * specify these values through a quirk if restrictions apply.
++	 */
++	geo->maxoc = geo->all_luns * geo->nr_chks;
++	geo->maxocpu = geo->nr_chks;
++
+ 	geo->cap = le32_to_cpu(src->mccap);
+ 
+ 	geo->trdt = le32_to_cpu(src->trdt);
+@@ -410,6 +417,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+ 	geo->ws_min = le32_to_cpu(id->ws_min);
+ 	geo->ws_opt = le32_to_cpu(id->ws_opt);
+ 	geo->mw_cunits = le32_to_cpu(id->mw_cunits);
++	geo->maxoc = le32_to_cpu(id->maxoc);
++	geo->maxocpu = le32_to_cpu(id->maxocpu);
+ 
+ 	geo->cap = le32_to_cpu(id->mccap);
+ 
+@@ -1054,6 +1063,10 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_min);
+ 	} else if (strcmp(attr->name, "ws_opt") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_opt);
++	} else if (strcmp(attr->name, "maxoc") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxoc);
++	} else if (strcmp(attr->name, "maxocpu") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxocpu);
+ 	} else if (strcmp(attr->name, "mw_cunits") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->mw_cunits);
+ 	} else if (strcmp(attr->name, "write_typ") == 0) {
+@@ -1151,6 +1164,8 @@ static NVM_DEV_ATTR_20_RO(chunks);
+ static NVM_DEV_ATTR_20_RO(clba);
+ static NVM_DEV_ATTR_20_RO(ws_min);
+ static NVM_DEV_ATTR_20_RO(ws_opt);
++static NVM_DEV_ATTR_20_RO(maxoc);
++static NVM_DEV_ATTR_20_RO(maxocpu);
+ static NVM_DEV_ATTR_20_RO(mw_cunits);
+ static NVM_DEV_ATTR_20_RO(write_typ);
+ static NVM_DEV_ATTR_20_RO(write_max);
+@@ -1167,6 +1182,8 @@ static struct attribute *nvm_dev_attrs_20[] = {
+ 	&dev_attr_clba.attr,
+ 	&dev_attr_ws_min.attr,
+ 	&dev_attr_ws_opt.attr,
++	&dev_attr_maxoc.attr,
++	&dev_attr_maxocpu.attr,
+ 	&dev_attr_mw_cunits.attr,
+ 
+ 	&dev_attr_read_typ.attr,
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index b8bc158a2472..2102b092c7eb 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -296,6 +296,8 @@ struct nvm_geo {
+ 	u32	ws_min;		/* minimum write size */
+ 	u32	ws_opt;		/* optimal write size */
+ 	u32	mw_cunits;	/* distance required for successful read */
++	u32	maxoc;		/* maximum open chunks */
++	u32	maxocpu;	/* maximum open chunks per parallel unit */
+ 
+ 	/* device capabilities. Note that this represents capabilities in 1.2
+ 	 * and media and controller capabilities in 2.0
 -- 
-2.14.3
+2.7.4
