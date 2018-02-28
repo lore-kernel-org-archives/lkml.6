@@ -1,135 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeB1I7H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 03:59:07 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41453 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeB1I7F (ORCPT
+        id S1752168AbeB1I73 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 03:59:29 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48188 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbeB1I72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 03:59:05 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Shyti <andi.shyti@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Utkin <andrey_utkin@fastmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>,
-        Christoph =?ISO-8859-1?Q?B=F6hmwalder?=
-        <christoph@boehmwalder.at>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        Daniele Nicolodi <daniele@grinta.net>,
-        David =?ISO-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>,
-        Devendra Sharma <devendra.sharma9091@gmail.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>,
-        Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Max Kellermann <max.kellermann@gmail.com>,
-        Mike Isely <isely@pobox.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Santosh Kumar Singh <kumar.san1093@gmail.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Shyam Saini <mayhs11saini@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [v2] [media] Use common error handling code in 20 functions
-Date: Wed, 28 Feb 2018 10:59:52 +0200
-Message-ID: <3444809.dyh5Vmx7Dp@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <783e7eff-2028-72be-b83c-77fc4340484e@users.sourceforge.net>
-References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net> <3895609.4O6dNuP5Wm@avalon> <783e7eff-2028-72be-b83c-77fc4340484e@users.sourceforge.net>
+        Wed, 28 Feb 2018 03:59:28 -0500
+Date: Wed, 28 Feb 2018 09:59:43 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Woody Suwalski <terraluna977@gmail.com>
+cc: Linux Kernel List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        William Grant <william.grant@canonical.com>
+Subject: Re: 4.16 regression: s2ram broken on non-PAE i686
+In-Reply-To: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1802280959180.1886@nanos.tec.linutronix.de>
+References: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Woody,
 
-On Wednesday, 28 February 2018 10:45:21 EET SF Markus Elfring wrote:
-> >> +put_isp:
-> >> +	omap3isp_put(video->isp);
-> >> +delete_fh:
-> >> +	v4l2_fh_del(&handle->vfh);
-> >> +	v4l2_fh_exit(&handle->vfh);
-> >> +	kfree(handle);
-> > 
-> > Please prefix the error labels with error_.
-> 
-> How often do you really need such an extra prefix?
-> 
-> >> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> >> @@ -994,10 +994,8 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file,
-> >> void *fh, struct v4l2_queryctrl qc = { .id = ctrl->id };
-> >> 
-> >>  			ret = uvc_query_v4l2_ctrl(chain, &qc);
-> >> 
-> >> -			if (ret < 0) {
-> >> -				ctrls->error_idx = i;
-> >> -				return ret;
-> >> -			}
-> >> +			if (ret < 0)
-> >> +				goto set_index;
-> >> 
-> >>  			ctrl->value = qc.default_value;
-> >>  		
-> >>  		}
-> >> 
-> >> @@ -1013,14 +1011,17 @@ static int uvc_ioctl_g_ext_ctrls(struct file
-> >> *file,
-> >> void *fh, ret = uvc_ctrl_get(chain, ctrl);
-> >> 
-> >>  		if (ret < 0) {
-> >>  		
-> >>  			uvc_ctrl_rollback(handle);
-> >> 
-> >> -			ctrls->error_idx = i;
-> >> -			return ret;
-> >> +			goto set_index;
-> >> 
-> >>  		}
-> >>  	
-> >>  	}
-> >>  	
-> >>  	ctrls->error_idx = 0;
-> >>  	
-> >>  	return uvc_ctrl_rollback(handle);
-> >> 
-> >> +
-> >> +set_index:
-> >> +	ctrls->error_idx = i;
-> >> +	return ret;
-> >> 
-> >>  }
-> > 
-> > For uvcvideo I find this to hinder readability
-> 
-> I got an other development view.
-> 
-> > without adding much added value.
-> 
-> There can be a small effect for such a function implementation.
-> 
-> > Please drop the uvcvideo change from this patch.
-> 
-> Would it be nice if this source code adjustment could be integrated also?
+On Tue, 27 Feb 2018, Woody Suwalski wrote:
 
-Just for the record, and to avoid merging this patch by mistake,
+> There is a problem with s2ram on 4.16, and it has now been propagated
+> to 4.15 and 4.14 stable updates.
+> 
+> It originates from
+> 
+> commit 62c00e6122a6b5aa7b1350023967a2d7a12b54c9
+> Author: William Grant <william.grant@canonical.com
+> <mailto:william.grant@canonical.com>>
+> Date:   Tue Jan 30 22:22:55 2018 +1100
+> 
+>     x86/mm: Fix overlap of i386 CPU_ENTRY_AREA with FIX_BTMAP
+> 
+> s2ram works OK on PAE kernels, breaks badly on non-PAE. I do not think
+> that the problem can be duplicated in VMPlayer, but it is 100%
+> reproducible on a "real" hardware.
+> System goes to sleep OK, but when woken - it reboots the PC.
+> 
+> The issue is tracked in Bugzilla bug 198763
+> [https://bugzilla.kernel.org/show_bug.cgi?id=198763]
 
-Nacked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thanks for digging into this so far. Can you please provide dmesg output
+from a PAE=y and PAE=n kernel after boot?
 
-at least until the requested changes are implemented.
+Thanks,
 
--- 
-Regards,
-
-Laurent Pinchart
+	tglx
