@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790534-2-11033439589045453671
+X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790527-2-10248868143058053362
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790534; b=nMEUtPUGuPlWnTj3BFVQNX9FyEhF2z5BlUW++A8QLvDt/fi
-    utZ4p+9trGLrq1BWPu0id/hk7rNWou/0A8Tmack4Fqr2nWWGM7DTZK9xB12zY394
-    LvEQL5JvfXmMci2VdC0cDb1ysT9UepkCXMKJBBV3Rnf7IQUMpyh0o9yq+AAxOtrG
-    XzzEw8XKtmrV6h42UgzyW4/nSuCf3ywopYuWKL7aMuOtzTfyEwjcs8efXls+MSlx
-    Ae4jhDasKFlbZo+aT0ZWdyQyno9Sg/r4ZfV8kpMG2cVjuf0UZ5A1RDl26oi5bTlF
-    I06H+q7w/0c+3TduolRFqgiGJe5npvFg6XYy9kQ==
+    t=1519790527; b=PsWgbjjgz2jJnNGDmBPEf3YWDCwhjctfYdA4LSZgYLHGIoT
+    lD+qwNDV3RaAIl7/ZnXOEHAh6ycEJS1UW9UCIxstcNHue3lfT4hAait8O864pLVt
+    0erPiV7aFAQmfElFajocb8wiHKlwT72WrUK5S5oLt7fzzfYgx8+RYrJykgYtBqEP
+    KgvFpLO9tuaVKb239qQiDarREmz9HvPyAHqmSeDpUQnyspOsloaxMnwLlzwL40NL
+    gwhILN2U8MT6uJQW1XX4pITfIPS1Qq/JPPlAm36WwjpTlPv+pqfqv1Bed75MNux3
+    S5L8GDiBSArSzfvbfzPyr30dLIalRgbPH4ZSd4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790534;
-    bh=dHNDx9kw7MHipWQb550NFtLt7C6FAMAdmYc8+9G2iPE=; b=m2dylP1zd7zb
-    7wYRlCDlcBk9J/hZsrnsbqyg00XZvDW4zAFdN7RrJ1eeRG9pOuacAulEVcikRkIE
-    YClEZ/Hq9b6Zj/22QE4INNAKm8Dk/+cWUZFCwAIxzALnrADVC7StmNSogolvqKUl
-    r8l3ZzLPgf4IIdnBAO+yqoBs5zm0VN+6NGf6FXiW0BueEG370+BnFpjJ07ccNc5u
-    P8pQRsa37YIwLQXEO9k1wPlE6GVYU1IF7UESusOmGD9/qlCzNAL0IVqOwB9MyhXK
-    tvWmAfwRRLuzmO41ct5vglbPcfCU5dl9Fc0UTwRwRpW3iEPb+k8Wh8XME5MHKWTQ
-    RXnSAFy3AA==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790527;
+    bh=B05qSaRVvuSwICdyeBBOpt9FC3ROQfdqk+Z0jYLXYB8=; b=VRDU9XgbjiXv
+    ORmP7Rr0SezBdrr0Pn59NzNLx9HzNMZngVXGgOFnuxGPa2EQXWbNQlSfRd1cP7YK
+    nsIUH5vNRENg2REL1xHtV1VReD2A/Bmj2huw+pMAXXIu4AmEwC8HttPKlW31IC8L
+    YfYaUWcNf0Uzmj+xgRyl7r1ytQitSfF5ElKf5NvIyWpGU+d3ujpOv1gWk1kDC4Fo
+    jNT4/5fsJ+r9/MeeqyPj2x+ZaTBS99Q3NY++Z3ldqXm2+qLtOQzfdrlBCPeSoRzm
+    i7JMfaWa9LMZIH6AndqE32vGPaABwHgBiqkcOGZokgNjVDxpCGW6f2J4I2DjO9w5
+    locLiNwa3A==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=h1S8wsae x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=E6ju6OjC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=L4nEm7CR;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HicPDVwo;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=h1S8wsae x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=E6ju6OjC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=L4nEm7CR;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HicPDVwo;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeB1EAI (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 23:00:08 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36762 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbeB1EAG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 23:00:06 -0500
-X-Google-Smtp-Source: AH8x226R0HDxtLi6JPqOw4eV1yPJLsUE4g6zFxXsD/R3h/pydHsMcCt/VdIIVLsfOfGvZa+73NoV9g==
+        id S1752298AbeB1EAQ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 23:00:16 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41406 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752291AbeB1EAN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 23:00:13 -0500
+X-Google-Smtp-Source: AG47ELsHFW2+6mjLK6Lr7ZKpgVwU0U+4qRpBbCd/nF1TV+qpprNROKHN/AwgS0zQfZxtcxo9/m2s/A==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,12 +63,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 21/29] arm64: capabilities: Handle duplicate entries for a capability
-Date: Wed, 28 Feb 2018 11:56:43 +0800
-Message-Id: <1519790211-16582-22-git-send-email-alex.shi@linaro.org>
+Cc: Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 22/29] arm64: cputype: Add missing MIDR values for Cortex-A72 and Cortex-A75
+Date: Wed, 28 Feb 2018 11:56:44 +0800
+Message-Id: <1519790211-16582-23-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -78,110 +76,46 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 67948af41f2e upstream.
+commit f0be3364335d47267aa1f7c5ed5faaa59c70db13 upstream
 
-Sometimes a single capability could be listed multiple times with
-differing matches(), e.g, CPU errata for different MIDR versions.
-This breaks verify_local_cpu_feature() and this_cpu_has_cap() as
-we stop checking for a capability on a CPU with the first
-entry in the given table, which is not sufficient. Make sure we
-run the checks for all entries of the same capability. We do
-this by fixing __this_cpu_has_cap() to run through all the
-entries in the given table for a match and reuse it for
-verify_local_cpu_feature().
+Hook up MIDR values for the Cortex-A72 and Cortex-A75 CPUs, since they
+will soon need MIDR matches for hardening the branch predictor.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 
 Conflicts:
-	arch/arm64/kernel/cpufeature.c
+	add A73 type in arch/arm64/include/asm/cputype.h
 ---
- arch/arm64/kernel/cpufeature.c | 44 ++++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ arch/arm64/include/asm/cputype.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 4e5dff1..6200b81 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -969,6 +969,26 @@ static void __init setup_elf_hwcaps(const struct arm64_cpu_capabilities *hwcaps)
- 			cap_set_elf_hwcap(hwcaps);
- }
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index 26a68dd..0843b3f 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -75,7 +75,10 @@
+ #define ARM_CPU_PART_AEM_V8		0xD0F
+ #define ARM_CPU_PART_FOUNDATION		0xD00
+ #define ARM_CPU_PART_CORTEX_A57		0xD07
++#define ARM_CPU_PART_CORTEX_A72		0xD08
+ #define ARM_CPU_PART_CORTEX_A53		0xD03
++#define ARM_CPU_PART_CORTEX_A73		0xD09
++#define ARM_CPU_PART_CORTEX_A75		0xD0A
  
-+/*
-+ * Check if the current CPU has a given feature capability.
-+ * Should be called from non-preemptible context.
-+ */
-+static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
-+			       unsigned int cap)
-+{
-+	const struct arm64_cpu_capabilities *caps;
-+
-+	if (WARN_ON(preemptible()))
-+		return false;
-+
-+	for (caps = cap_array; caps->desc; caps++)
-+		if (caps->capability == cap &&
-+		    caps->matches &&
-+		    caps->matches(caps, SCOPE_LOCAL_CPU))
-+			return true;
-+	return false;
-+}
-+
- void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 			    const char *info)
- {
-@@ -1037,8 +1057,9 @@ verify_local_elf_hwcaps(const struct arm64_cpu_capabilities *caps)
- }
+ #define APM_CPU_PART_POTENZA		0x000
  
- static void
--verify_local_cpu_features(const struct arm64_cpu_capabilities *caps)
-+verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
- {
-+	const struct arm64_cpu_capabilities *caps = caps_list;
- 	for (; caps->matches; caps++) {
- 		if (!cpus_have_cap(caps->capability))
- 			continue;
-@@ -1046,7 +1067,7 @@ verify_local_cpu_features(const struct arm64_cpu_capabilities *caps)
- 		 * If the new CPU misses an advertised feature, we cannot proceed
- 		 * further, park the cpu.
- 		 */
--		if (!caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+		if (!__this_cpu_has_cap(caps_list, caps->capability)) {
- 			pr_crit("CPU%d: missing feature: %s\n",
- 					smp_processor_id(), caps->desc);
- 			cpu_die_early();
-@@ -1099,25 +1120,6 @@ static void __init setup_feature_capabilities(void)
- 	enable_cpu_capabilities(arm64_features);
- }
+@@ -86,6 +89,9 @@
  
--/*
-- * Check if the current CPU has a given feature capability.
-- * Should be called from non-preemptible context.
-- */
--static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
--			       unsigned int cap)
--{
--	const struct arm64_cpu_capabilities *caps;
--
--	if (WARN_ON(preemptible()))
--		return false;
--
--	for (caps = cap_array; caps->desc; caps++)
--		if (caps->capability == cap && caps->matches)
--			return caps->matches(caps, SCOPE_LOCAL_CPU);
--
--	return false;
--}
--
- extern const struct arm64_cpu_capabilities arm64_errata[];
+ #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
+ #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
++#define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
++#define MIDR_CORTEX_A73 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A73)
++#define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
+ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
+ #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
  
- bool this_cpu_has_cap(unsigned int cap)
 -- 
 2.7.4
