@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x227IHPz1xkX8OpXB+nA6wWIQlkSIZZvGQVyI1emkfF5M2sk2y9pnMu2boXIKp369iFji5uzE
-ARC-Seal: i=1; a=rsa-sha256; t=1519831341; cv=none;
+X-Google-Smtp-Source: AG47ELsFVLJdmqw7tv0Wk7JfKxv1Nq14ZIZAF2GvCCykRREb+EZxzvosrCR8fvRLmKWCRPPRI6jc
+ARC-Seal: i=1; a=rsa-sha256; t=1519831340; cv=none;
         d=google.com; s=arc-20160816;
-        b=CWcJoQ0k42UN2nSzxs8ZvL6BekFz0PhDGzRfwpcqwTvvi2+4gbkppdbjuRW1TVemXn
-         b73PArL13s09RAFClSancWm4QYNd3yGfIGZundCJTXxgM6jeXnhXdwK54ibetuc3hkJt
-         5dMnIgL8hIKzsosM9JMzY+WuIYKjvKzLk+qXc+c7xY/LCvDaJoDEZQh3eaXwNY3k82xf
-         gW1x9vxqbtsHslk9ou6pr7mIO6EN7GjTxx5/6/jEj6v/8TpcHtV8Snspdll6TsEbilQG
-         TsiWp2QCnF4m5JMAJDh45cECZZDkD1Vb7J9CwrGt7fCYwSbpwR6M13CNbKX2be+d+mXm
-         Jwbg==
+        b=T9kF3pWpTT8DGyDutHl083UAZUh+D9Ws561As81xg+xq4Jgr6CSGH5EV6hjJOSXKIN
+         TqSv+h0Xsmk1D5GsIQrp6q87xuIhWSlRjJRzUT+kUvFKtB/rGziOG+Git9NWrxavgj4j
+         0l6id+axAab89sOUrWtKW5ynzH66yPoFPkqpdhhWAMqrnofaBEY8Zbx2euqb4NhBm5xx
+         X6eIitZP5ACreEWgw8v+/5MJKJXGkrGdDumC+l5TnQBNB8NxCSeiFtgxM3PXmB2UXE1M
+         0QlOZjdJyc5It7vnfDgzreWUmFIseYfIEf+tTGxLZRiuQTnDzjiBw/w93GS7KQc+dKcq
+         7HpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=ggXTt+StUKQfZPPdEw1yCwYGXCEeLEXW9KNPFveyvYo=;
-        b=J6/o5bvCjy8kI6tFcvtwnausn3k0FidZlEuisXx46v3+damUVaMa8wbytfEwU6qRke
-         Ggswbeh3ptDLwe3Uj3f0+RmvXiJBiw8TXphrB9m+TiSoCtvTl+0dvbuzQYBGVtvzrSfY
-         DRTnOYcCbGAuEvfqmVRF8kqxlDWGYmvMS+RA6mFUyDjhQkaOmBdxED7bJ+0LlkT/yY6n
-         +m0wX8vI+Rma8yZqWo+cYy0fILwujleFyZQkpI2mA3pwXtNgbSox1kkhXffVnp3ScnYE
-         qrbNOPNVNVPTr+GoqGnNfuaKZE3xVTxPjAEptSp/mxGTBWeWgjYBNUJ07TfYwR4WmCSm
-         gEYw==
+        bh=ynJC4YipiN6sPp5+H79hiUFHmZ2Xko/qakkPc2KdBqQ=;
+        b=SqAbdhekCGGBSJC1E8tzSDyymo2riSzqyCx5jT/Rdp1kkVfY/JWUjNlFUJpNV4hkEY
+         Jp2Bn6+5aYKVrnXydFkqubS1DCZwnPM9WBuB8BjG+3puUATC6aA5oyP/v/QvZ4F41Lvl
+         eW+6NiH3va46HidLJ0fxsss8UyYZyxHHWE83Pl6Cgi8ged+p9T25ZizFh0DNUlE0hN6T
+         Cgb4nYCdHe8W5FhPi6jlcoDeiCDTOvgkcqZ8nJ6CWH0otVHzg9+q+6lvnHZss76nrdNC
+         A6OsLDGLxbWap+WK2Y2Ht9I1Dy5di5jOb97R12ql91CWFbx+dR+CFnT5lVg3qfo03xKS
+         AuOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,21 +30,23 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "David Kozub" <zub@linux.fjfi.cvut.cz>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.762525108@decadent.org.uk>
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>,
+ "syzkaller" <syzkaller@googlegroups.com>,
+ "Jiri Slaby" <jslaby@suse.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date: Wed, 28 Feb 2018 15:20:22 +0000
+Message-ID: <lsq.1519831222.121669136@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 037/140] USB: uas and storage: Add US_FL_BROKEN_FUA
- for another JMicron JMS567 ID
+Subject: [PATCH 3.2 064/140] n_tty: fix EXTPROC vs ICANON interaction with
+ TIOCINQ (aka FIONREAD)
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658669092712757?=
-X-GMAIL-MSGID: =?utf-8?q?1593658669092712757?=
+X-GMAIL-THRID: =?utf-8?q?1593658668272179572?=
+X-GMAIL-MSGID: =?utf-8?q?1593658668272179572?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,46 +54,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Kozub <zub@linux.fjfi.cvut.cz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 62354454625741f0569c2cbe45b2d192f8fd258e upstream.
+commit 966031f340185eddd05affcf72b740549f056348 upstream.
 
-There is another JMS567-based USB3 UAS enclosure (152d:0578) that fails
-with the following error:
+We added support for EXTPROC back in 2010 in commit 26df6d13406d ("tty:
+Add EXTPROC support for LINEMODE") and the intent was to allow it to
+override some (all?) ICANON behavior.  Quoting from that original commit
+message:
 
-[sda] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[sda] tag#0 Sense Key : Illegal Request [current]
-[sda] tag#0 Add. Sense: Invalid field in cdb
+         There is a new bit in the termios local flag word, EXTPROC.
+         When this bit is set, several aspects of the terminal driver
+         are disabled.  Input line editing, character echo, and mapping
+         of signals are all disabled.  This allows the telnetd to turn
+         off these functions when in linemode, but still keep track of
+         what state the user wants the terminal to be in.
 
-The issue occurs both with UAS (occasionally) and mass storage
-(immediately after mounting a FS on a disk in the enclosure).
+but the problem turns out that "several aspects of the terminal driver
+are disabled" is a bit ambiguous, and you can really confuse the n_tty
+layer by setting EXTPROC and then causing some of the ICANON invariants
+to no longer be maintained.
 
-Enabling US_FL_BROKEN_FUA quirk solves this issue.
+This fixes at least one such case (TIOCINQ) becoming unhappy because of
+the confusion over whether ICANON really means ICANON when EXTPROC is set.
 
-This patch adds an UNUSUAL_DEV with US_FL_BROKEN_FUA for the enclosure
-for both UAS and mass storage.
+This basically makes TIOCINQ match the case of read: if EXTPROC is set,
+we ignore ICANON.  Also, make sure to reset the ICANON state ie EXTPROC
+changes, not just if ICANON changes.
 
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 26df6d13406d ("tty: Add EXTPROC support for LINEMODE")
+Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Reported-by: syzkaller <syzkaller@googlegroups.com>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2:
- - Drop uas change
- - Adjust context]
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1961,6 +1961,13 @@ UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_BROKEN_FUA ),
+ drivers/tty/n_tty.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -1459,7 +1459,7 @@ static void n_tty_set_termios(struct tty
+ 	BUG_ON(!tty);
  
-+/* Reported by David Kozub <zub@linux.fjfi.cvut.cz> */
-+UNUSUAL_DEV(0x152d, 0x0578, 0x0000, 0x9999,
-+		"JMicron",
-+		"JMS567",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BROKEN_FUA),
-+
- /* Reported by Alexandre Oliva <oliva@lsd.ic.unicamp.br>
-  * JMicron responds to USN and several other SCSI ioctls with a
-  * residue that causes subsequent I/O requests to fail.  */
+ 	if (old)
+-		canon_change = (old->c_lflag ^ tty->termios->c_lflag) & ICANON;
++		canon_change = (old->c_lflag ^ tty->termios->c_lflag) & (ICANON | EXTPROC);
+ 	if (canon_change) {
+ 		memset(&tty->read_flags, 0, sizeof tty->read_flags);
+ 		tty->canon_head = tty->read_tail;
+@@ -2096,7 +2096,7 @@ static int n_tty_ioctl(struct tty_struct
+ 	case TIOCINQ:
+ 		/* FIXME: Locking */
+ 		retval = tty->read_cnt;
+-		if (L_ICANON(tty))
++		if (L_ICANON(tty) && !L_EXTPROC(tty))
+ 			retval = inq_canon(tty);
+ 		return put_user(retval, (unsigned int __user *) arg);
+ 	default:
