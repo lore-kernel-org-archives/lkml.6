@@ -1,140 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934594AbeB1Ry1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:54:27 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34347 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934371AbeB1Rv2 (ORCPT
+        id S934621AbeB1Ryq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:54:46 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:39788 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934187AbeB1Ryo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:51:28 -0500
-X-Google-Smtp-Source: AH8x227MBs7Fmu097KLLJIgzZejz3iZ1PEWKGqUwH5W4IFn14ABJhOl5h2ixGadSR13bkQ69h5NkzQ==
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
-Date: Wed, 28 Feb 2018 23:19:01 +0530
-Message-Id: <20180228174906.22721-6-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
-References: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
+        Wed, 28 Feb 2018 12:54:44 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH 1/2] drm/sun4i: increase lvds dclk max divisor
+Date: Wed, 28 Feb 2018 18:53:51 +0100
+Message-Id: <1519840432-61489-1-git-send-email-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio nodes for Actions Semi S900 SoC.
+At the moment both min and max dclk div are set to 7.
+This doesn't allow to have lower frequencies.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Increase dclk_max_div to 18 to achieve 30Mhz.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-new file mode 100644
-index 000000000000..d2939ca6cfaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-@@ -0,0 +1,95 @@
-+* Actions Semi OWL GPIO controller bindings
-+
-+The GPIOs are organized as individual banks/ports with variable number
-+of GPIOs. Each bank is represented as an individual GPIO controller.
-+
-+Required properties:
-+- compatible            : Should be "actions,s900-gpio"
-+- reg                   : Address and range of the GPIO controller registers.
-+- gpio-controller       : Marks the device node as a GPIO controller.
-+- #gpio-cells           : Should be <2>. The first cell is the gpio number
-+                          and the second cell is used to specify optional
-+                          parameters.
-+- interrupt-controller  : Marks the device node as an interrupt controller.
-+- #interrupt-cells      : Specifies the number of cells needed to encode an
-+                          interrupt.  Shall be set to 2.  The first cell
-+                          defines the interrupt number, the second encodes
-+                          the trigger flags described in
-+                          bindings/interrupt-controller/interrupts.txt
-+
-+Optional properties:
-+- gpio-ranges           : Mapping between GPIO and pinctrl
-+
-+Note: Each GPIO port should have an alias correctly numbered in "aliases"
-+node.
-+
-+Examples:
-+
-+aliases {
-+        gpio0 = &gpioa;
-+        gpio1 = &gpiob;
-+        gpio2 = &gpioc;
-+        gpio3 = &gpiod;
-+        gpio4 = &gpioe;
-+        gpio5 = &gpiof;
-+};
-+
-+       gpioa: gpioa@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 0 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiob: gpiob@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 32 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpioc: gpioc@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 64 12>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiod: gpiod@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 76 30>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpioe: gpioe@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 106 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiof: gpiof@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 138 8>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 029d2ce..bb35f41 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -278,7 +278,7 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ 	u32 reg, val = 0;
+ 
+ 	tcon->dclk_min_div = 7;
+-	tcon->dclk_max_div = 7;
++	tcon->dclk_max_div = 18;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+ 
+ 	/* Adjust clock delay */
 -- 
-2.14.1
+2.7.4
