@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeB1K3U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:29:20 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37126 "EHLO mail.skyhub.de"
+        id S932090AbeB1KaZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:30:25 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37160 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752425AbeB1K3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:29:17 -0500
+        id S1752475AbeB1K3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:29:19 -0500
 From: Borislav Petkov <bp@alien8.de>
 To: X86 ML <x86@kernel.org>
 Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>,
         Ashok Raj <ashok.raj@intel.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/7] x86/microcode/intel: Check microcode revision before updating sibling threads
-Date: Wed, 28 Feb 2018 11:28:41 +0100
-Message-Id: <20180228102846.13447-3-bp@alien8.de>
+Subject: [PATCH 5/7] x86/microcode/intel: Look into the patch cache first
+Date: Wed, 28 Feb 2018 11:28:44 +0100
+Message-Id: <20180228102846.13447-6-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180228102846.13447-1-bp@alien8.de>
 References: <20180228102846.13447-1-bp@alien8.de>
@@ -22,87 +22,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: Borislav Petkov <bp@suse.de>
 
-After updating microcode on one of the threads of a core, the other
-thread sibling automatically gets the update since the microcode
-resources on a hyperthreaded core are shared between the two threads.
+The cache might contain a newer patch - look in there first.
 
-Check the microcode revision on the CPU before performing a microcode
-update and thus save us the WRMSR 0x79 because it is a particularly
-expensive operation.
+A follow-on change will make sure newest patches are loaded into the
+cache of microcode patches.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-2-git-send-email-ashok.raj@intel.com
-[ Massage it. ]
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/microcode/intel.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 923054a6b760..87bd6dc94081 100644
+index e2864bc2d575..2aded9db1d42 100644
 --- a/arch/x86/kernel/cpu/microcode/intel.c
 +++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -589,6 +589,17 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
- 	if (!mc)
- 		return 0;
+@@ -791,9 +791,9 @@ static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
  
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -776,7 +787,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ static enum ucode_state apply_microcode_intel(int cpu)
  {
- 	struct microcode_intel *mc;
- 	struct ucode_cpu_info *uci;
--	struct cpuinfo_x86 *c;
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
+-	struct microcode_intel *mc;
+-	struct ucode_cpu_info *uci;
++	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
++	struct microcode_intel *mc;
  	static int prev_rev;
  	u32 rev;
  
-@@ -793,6 +804,18 @@ static enum ucode_state apply_microcode_intel(int cpu)
+@@ -801,11 +801,10 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+ 		return UCODE_ERROR;
+ 
+-	uci = ucode_cpu_info + cpu;
+-	mc = uci->mc;
++	/* Look for a newer patch in our cache: */
++	mc = find_patch(uci);
+ 	if (!mc) {
+-		/* Look for a newer patch in our cache: */
+-		mc = find_patch(uci);
++		mc = uci->mc;
+ 		if (!mc)
  			return UCODE_NFOUND;
  	}
- 
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		c->microcode = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -813,8 +836,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		prev_rev = rev;
- 	}
- 
--	c = &cpu_data(cpu);
--
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
 -- 
 2.13.0
