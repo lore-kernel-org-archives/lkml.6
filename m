@@ -1,28 +1,58 @@
-Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELv3VAY8BZclJoLKD0T5uAiu2p7mFewgR/kQlre0s+YEVHn/UoYavulNb+rXAfZMAUVpsemz
-ARC-Seal: i=1; a=rsa-sha256; t=1519836614; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UqFszrCuwhq6hflKXldi2eETTonaMPxLsN1Win7yyi6JBI7qwp2yTWPxCRTs8va2Kt
-         Qsgq3MfkiFBZ5rH02Bt8LDU2RFums4yQtWZ9P5l/ZTgeedoxUVgIP1YkUvhewrga0n2C
-         u01PEdK6QKOvlYgA4+42r3kH/R2QngDL+L/AgalPcXDY84IrSJtb9NTeUCv+QCVbufQz
-         XNxKXhk70EWSlTh2shK3hGb415aA8d9gjvuUbA1PxGp5M6bKiwdhdaa0R6Ik5Es9uFii
-         u4TFvOyetLkW8TrQn6JCEhd+EK7gAZsHjKJsF1DGs4H2ygg+bvUNbKZWUeCXKIGrK4nv
-         8iGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
-         :content-transfer-encoding:content-disposition
-         :arc-authentication-results;
-        bh=TkvVKiDdrSdhTcQorRw5nwSma3dKcjPAp28SJiYvvHs=;
-        b=AlSxEQigr8tcsl9RydUDz0VDHkVHAonLgm2qIKPuTYNOa4Fv6eEmdJ506SSrToyf6z
-         xDCAP7tpRT/mi/MCxgzn8lSUIWoTQbfcouxpn0qh9JPfNO1R9KzABmLikCjb33RmhtS8
-         JKvWUXmqxvr4/G54kRyaZY/KKGuwfWG0Def0JMfnQZOWXcUSq1bmg5XA49Ikqrq22WLl
-         6Eo79ZQgL7dDH53Epr8xErcaiDrA0hdlo7tXGc1+C2O2bnxUEujnmf/+/s2Uwd6k1wgd
-         XBAnR6tnVPqHHYQJKVBwjnA/A8EDGWKicfd3t6md5SJh7PiiDTqn7K+CowblREm4IjkV
-         ugpA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-564561-1519836581-2-6804176223862848274
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519836579; b=JEr9K964tZzfP/jOU+2YGntP2+C2zakgjQ7MNRGtIdAC5P/
+    xqqbHqUDZpGklHp28ZnJqeLnvN9tj2j/ByRtz7FrZ7dyDDZFqgeEkSheTvCJ68no
+    HIKgP9sQcC1mh2hxdoxn9RnRnwVvvGFlpTim/T+WJRpfma0Bs5pFvm7DM6h804yV
+    e3R5iuk++fyWQFtclQtAavsHKZDhu+aP6QH9ko9b3a8340kvpTW/GlrEnZlzERig
+    txrI5x/AAK/yywxPPzZ51AieMeSJ4cJQQBHu+LAkRe3i09+gfeyQM/kSm606HGcF
+    I1xTYHMOAgX09DFxT4m+gdShc1MInJqSIL13Xgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
+    :sender:list-id; s=arctest; t=1519836579; bh=RommifVPZff5bHXTCAN
+    UKA+F4H/oN1Zn7QveTZnCDjk=; b=GYDQEJKMwFfy9xQ4NTW6eUupZat09a7wxWx
+    Uv1ANR/1Fj6h8PWy8ks6QehGgaarkSJLez2IjyWNuTdQZBI9+BPwN5kFoPdUsM16
+    ocLJWi6k3s937twprYQd2irJ9JMX5h7th9t6MgXED26h30UfrVfHTt8IFo/NHiq2
+    Rx6BOWTi2jiFGaUf0XRqNS/urkapfzZuE21+uOtDCnoBpBvpJNmBH2IWcmkNWA/m
+    dZD0+3gzj9sUUG2BQYzJLk/qF2T/rKFCWlm/C5vyr38BUveW2g/X8MtcWNPwI0Sg
+    aNycRD3+UU1CE7Mx3JbiSxsp3GpWagR8+opAlxvXVvXGReYwb3w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934099AbeB1P6p (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:58:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34574 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934277AbeB1P6n (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:58:43 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -30,21 +60,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "William Breathitt Gray" <vilhelm.gray@gmail.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Wang Qize" <wang_qize@venustech.com.cn>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.126018723@decadent.org.uk>
+Message-ID: <lsq.1519831218.494351907@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 028/254] isa: Prevent NULL dereference in isa_bus
- driver callbacks
+Subject: [PATCH 3.16 253/254] ACPI: sbshc: remove raw pointer from
+ printk() message
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658658225391842?=
-X-GMAIL-MSGID: =?utf-8?q?1593664198144202984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,74 +82,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 5a244727f428a06634f22bb890e78024ab0c89f3 upstream.
+commit 43cdd1b716b26f6af16da4e145b6578f98798bf6 upstream.
 
-The isa_driver structure for an isa_bus device is stored in the device
-platform_data member of the respective device structure. This
-platform_data member may be reset to NULL if isa_driver match callback
-for the device fails, indicating a device unsupported by the ISA driver.
+There's no need to be printing a raw kernel pointer to the kernel log at
+every boot.  So just remove it, and change the whole message to use the
+correct dev_info() call at the same time.
 
-This patch fixes a possible NULL pointer dereference if one of the
-isa_driver callbacks to attempted for an unsupported device. This error
-should not occur in practice since ISA devices are typically manually
-configured and loaded by the users, but we may as well prevent this
-error from popping up for the 0day testers.
-
-Fixes: a5117ba7da37 ("[PATCH] Driver model: add ISA bus")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Wang Qize <wang_qize@venustech.com.cn>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/base/isa.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/acpi/sbshc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/base/isa.c
-+++ b/drivers/base/isa.c
-@@ -39,7 +39,7 @@ static int isa_bus_probe(struct device *
- {
- 	struct isa_driver *isa_driver = dev->platform_data;
+--- a/drivers/acpi/sbshc.c
++++ b/drivers/acpi/sbshc.c
+@@ -287,8 +287,8 @@ static int acpi_smbus_hc_add(struct acpi
+ 	device->driver_data = hc;
  
--	if (isa_driver->probe)
-+	if (isa_driver && isa_driver->probe)
- 		return isa_driver->probe(dev, to_isa_dev(dev)->id);
- 
- 	return 0;
-@@ -49,7 +49,7 @@ static int isa_bus_remove(struct device
- {
- 	struct isa_driver *isa_driver = dev->platform_data;
- 
--	if (isa_driver->remove)
-+	if (isa_driver && isa_driver->remove)
- 		return isa_driver->remove(dev, to_isa_dev(dev)->id);
+ 	acpi_ec_add_query_handler(hc->ec, hc->query_bit, NULL, smbus_alarm, hc);
+-	printk(KERN_INFO PREFIX "SBS HC: EC = 0x%p, offset = 0x%0x, query_bit = 0x%0x\n",
+-		hc->ec, hc->offset, hc->query_bit);
++	dev_info(&device->dev, "SBS HC: offset = 0x%0x, query_bit = 0x%0x\n",
++		 hc->offset, hc->query_bit);
  
  	return 0;
-@@ -59,7 +59,7 @@ static void isa_bus_shutdown(struct devi
- {
- 	struct isa_driver *isa_driver = dev->platform_data;
- 
--	if (isa_driver->shutdown)
-+	if (isa_driver && isa_driver->shutdown)
- 		isa_driver->shutdown(dev, to_isa_dev(dev)->id);
  }
- 
-@@ -67,7 +67,7 @@ static int isa_bus_suspend(struct device
- {
- 	struct isa_driver *isa_driver = dev->platform_data;
- 
--	if (isa_driver->suspend)
-+	if (isa_driver && isa_driver->suspend)
- 		return isa_driver->suspend(dev, to_isa_dev(dev)->id, state);
- 
- 	return 0;
-@@ -77,7 +77,7 @@ static int isa_bus_resume(struct device
- {
- 	struct isa_driver *isa_driver = dev->platform_data;
- 
--	if (isa_driver->resume)
-+	if (isa_driver && isa_driver->resume)
- 		return isa_driver->resume(dev, to_isa_dev(dev)->id);
- 
- 	return 0;
