@@ -1,206 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752385AbeB1JZ2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:25:28 -0500
-Received: from lhrrgout.huawei.com ([194.213.3.17]:27736 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751631AbeB1JZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:25:22 -0500
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC: "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>
-Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Topic: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Index: AQHTqw7IDIDDogvQkEq1sqcC26ySeqO3NQKAgAAS2QCAAJqhgIAAKFgQgAFz7gCAABQHgA==
-Date: Wed, 28 Feb 2018 09:25:09 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
-References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
- <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
- <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
- <20180226161310.061ce3a8@w520.home>
- <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
- <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
- <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
-In-Reply-To: <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752184AbeB1J0y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:26:54 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48239 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeB1J0x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:26:53 -0500
+Date: Wed, 28 Feb 2018 10:27:08 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Felix Fietkau <nbd@nbd.name>
+cc: linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        paul.burton@imgtec.com
+Subject: Re: [PATCH] clocksource: mips-gic-timer: fix clocksource counter
+ width
+In-Reply-To: <207b6722-a506-1e6a-c81c-a530e772dfa6@nbd.name>
+Message-ID: <alpine.DEB.2.21.1802281025390.1886@nanos.tec.linutronix.de>
+References: <20180221124749.39471-1-nbd@nbd.name> <alpine.DEB.2.21.1802280955430.1886@nanos.tec.linutronix.de> <207b6722-a506-1e6a-c81c-a530e772dfa6@nbd.name>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 28 Feb 2018, Felix Fietkau wrote:
+> On 2018-02-28 09:56, Thomas Gleixner wrote:
+> > On Wed, 21 Feb 2018, Felix Fietkau wrote:
+> > 
+> >> This code needs to use ffs instead of fls on the mask to determine the
+> >> shift for reading the GIC_CONFIG_COUNTBITS field.
+> > 
+> > Why?
+> >>  	count_width = read_gic_config() & GIC_CONFIG_COUNTBITS;
+> >> -	count_width >>= __fls(GIC_CONFIG_COUNTBITS);
+> >> +	count_width >>= __ffs(GIC_CONFIG_COUNTBITS);
+> This code is trying to extract the GIC_CONFIG_COUNTBITS field from
+> read_gic_config(), so it needs to shift count_width right by the index
+> of the least significant bit (__ffs) instead of the most significant bit
+> (__fls) of the field mask.
 
-
-> -----Original Message-----
-> From: Auger Eric [mailto:eric.auger@redhat.com]
-> Sent: Wednesday, February 28, 2018 9:02 AM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> Alex Williamson <alex.williamson@redhat.com>
-> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin Murphy
-> <robin.murphy@arm.com>
-> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
-> iova range
-> 
-> Hi Shameer,
-> 
-> On 27/02/18 10:57, Shameerali Kolothum Thodi wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Auger Eric [mailto:eric.auger@redhat.com]
-> >> Sent: Tuesday, February 27, 2018 8:27 AM
-> >> To: Alex Williamson <alex.williamson@redhat.com>
-> >> Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> >> pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
-> >> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> >> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
-> Murphy
-> >> <robin.murphy@arm.com>
-> >> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
-> valid
-> >> iova range
-> >>
-> >> Hi,
-> >> On 27/02/18 00:13, Alex Williamson wrote:
-> >>> On Mon, 26 Feb 2018 23:05:43 +0100
-> >>> Auger Eric <eric.auger@redhat.com> wrote:
-> >>>
-> >>>> Hi Shameer,
-> >>>>
-> >>>> [Adding Robin in CC]
-> >>>> On 21/02/18 13:22, Shameer Kolothum wrote:
-> >>>>> This checks and rejects any dma map request outside valid iova
-> >>>>> range.
-> >>>>>
-> >>>>> Signed-off-by: Shameer Kolothum
-> >> <shameerali.kolothum.thodi@huawei.com>
-> >>>>> ---
-> >>>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
-> >>>>>  1 file changed, 22 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/vfio/vfio_iommu_type1.c
-> >> b/drivers/vfio/vfio_iommu_type1.c
-> >>>>> index a80884e..3049393 100644
-> >>>>> --- a/drivers/vfio/vfio_iommu_type1.c
-> >>>>> +++ b/drivers/vfio/vfio_iommu_type1.c
-> >>>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct vfio_iommu
-> >> *iommu, struct vfio_dma *dma,
-> >>>>>  	return ret;
-> >>>>>  }
-> >>>>>
-> >>>>> +/*
-> >>>>> + * Check dma map request is within a valid iova range
-> >>>>> + */
-> >>>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
-> >>>>> +				dma_addr_t start, dma_addr_t end)
-> >>>>> +{
-> >>>>> +	struct list_head *iova = &iommu->iova_list;
-> >>>>> +	struct vfio_iova *node;
-> >>>>> +
-> >>>>> +	list_for_each_entry(node, iova, list) {
-> >>>>> +		if ((start >= node->start) && (end <= node->end))
-> >>>>> +			return true;
-> >>>> I am now confused by the fact this change will prevent existing QEMU
-> >>>> from working with this series on some platforms. For instance QEMU virt
-> >>>> machine GPA space collides with Seattle PCI host bridge windows. On
-> ARM
-> >>>> the smmu and smmuv3 drivers report the PCI host bridge windows as
-> >>>> reserved regions which does not seem to be the case on other platforms.
-> >>>> The change happened in commit
-> >> 273df9635385b2156851c7ee49f40658d7bcb29d
-> >>>> (iommu/dma: Make PCI window reservation generic).
-> >>>>
-> >>>> For background, we already discussed the topic after LPC 2016. See
-> >>>> https://www.spinics.net/lists/kernel/msg2379607.html.
-> >>>>
-> >>>> So is it the right choice to expose PCI host bridge windows as reserved
-> >>>> regions? If yes shouldn't we make a difference between those and MSI
-> >>>> windows in this series and do not reject any user space DMA_MAP
-> attempt
-> >>>> within PCI host bridge windows.
-> >>>
-> >>> If the QEMU machine GPA collides with a reserved region today, then
-> >>> either:
-> >>>
-> >>> a) The mapping through the IOMMU works and the reserved region is
-> wrong
-> >>>
-> >>> or
-> >>>
-> >>> b) The mapping doesn't actually work, QEMU is at risk of data loss by
-> >>> being told that it worked, and we're justified in changing that
-> >>> behavior.
-> >>>
-> >>> Without knowing the specifics of SMMU, it doesn't particularly make
-> >>> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
-> >>> unless perhaps the IOMMU is incapable of translating those IOVAs.
-> >> to me the limitation does not come from the smmu itself, which is a
-> >> separate HW block sitting between the root complex and the interconnect.
-> >> If ACS is not enforced by the PCIe subsystem, the transaction will never
-> >> reach the IOMMU.
-> >
-> > True. And we do have one such platform where ACS is not enforced but
-> > reserving the regions and possibly creating holes while launching VM will
-> > make it secure. But I do wonder how we will solve the device grouping
-> > in such cases.
-> >
-> > The Seattle PCI host bridge windows case you mentioned has any pci quirk
-> > to claim that they support ACS?
-> No there is none to my knowledge. I am applying Alex' not upstream ACS
-> overwrite patch.
-
-Ok. But isn't that patch actually applicable to cases where ACS is really supported
-by hardware but the capability is not available?  I am just trying to see whether
-the argument that we should allow DMA MAP requests for this(non-ACS case)
-even if the Guest GPA conflict with reserved region holds good. The fact that may
-be it was working before is that the Guest never actually allocated any GPA from
-the reserved region or maybe I am missing something here.
+Sure, but that information wants to be in the changelog.
 
 Thanks,
-Shameer
 
-> Thanks
-> 
-> Eric
-> >
-> >> In the case of such overlap, shouldn't we just warn the end-user that
-> >> this situation is dangerous instead of forbidding the use case which
-> >> worked "in most cases" until now.
-> >
-> > Yes, may be something similar to the allow_unsafe_interrupts case, if
-> > that is acceptable.
-> >
-> > Thanks,
-> > Shameer
-> >
-> >>> Are we trying to prevent untranslated p2p with this reserved range?
-> >>> That's not necessarily a terrible idea, but it seems that doing it for
-> >>> that purpose would need to be a lot smarter, taking into account ACS
-> >>> and precisely selecting ranges within the peer address space that would
-> >>> be untranslated.  Perhaps only populated MMIO within non-ACS
-> >>> hierarchies.  Thanks,
-> >>
-> >> Indeed taking into account the ACS capability would refine the
-> >> situations where a risk exists.
-> >>
-> >> Thanks
-> >>
-> >> Eric
-> >>>
-> >>> Alex
-> >>>
+	tglx
