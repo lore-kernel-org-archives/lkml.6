@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835132-2-6175722313935586501
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835125-2-6435251519681153892
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,27 +8,27 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835130; b=ePU6ANo+YNTPJygYXRcw/oZnf2yu0tozaIJ1un7mjFCpL/B
-    UcNhhJXzCOCPBG0A9x5mLQgpd1xEU2vfHWdwBJQ+O/qfs2dG3gMseSeZhZvNQ9ZO
-    ysdTVmdS8vq5VZtVWrZQFd2O9daOujOfsl2OFS/F/sOfg3ZMvg7DfCg5y0zK/hXY
-    ANJvVjpWRxt0Cqz1QdyRQag2aLNSYBGAINg9m29VllnXSGWl14xfEieb9rsQMZcY
-    Yj2nZ8dkn2efbIfXvnxN3xhevjsgUabQJ0YmUbz5k5qzfT+Ia1nHDIAumoCntuDj
-    3jIf8uVhWL1vpMpWTrDpw8vLAI4hLHQpxBrtrPw==
+    t=1519835124; b=lUdO0GWDWb+lIPwUFfhEnnHy+ynpsZyl46MoFSrtbAZ4jnD
+    5UXzyS50JbgeylAlhKdGxbq69oPSt9NCYKYNwFaW2MPHdPrvLvdJF1lwGY0R25JJ
+    2ObEfcJ5/2GwMruPT9D26guH1AH5fNt1CGDN2/6LKektfF/3SxfUybL5vHqh9CHz
+    R64SD2yGj0ZIdt0KdFe31gsmblKSB8wOxNur0Emy8Bcfdzf81oIyReZK9S+k0acp
+    deDsupqo3xjUlojNse3jN3rirvivBOf9nPEhGZsirjOHSvQ4Mvx5ENkHArlNje54
+    UIcEbQlEpVv84isiTbNiHigZWtPOd+hGFdufViA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835130; bh=hUyS4dj3Vwdgd+IELcM
-    x5iExeeLMRGrrBjkd30Q+nQ0=; b=Ilu7S1DKK9AYpPXrHBdVH9v6X1uFIgyHFTd
-    gDQqhVgorN2rSsKXz/sJCjF7P65tioXuFcB3OWOJSUoPOrJlvex0Eyuiul8GEZq6
-    9p0Tydh5wTVOCBWw/3iYB1IQebDi+RymKE70pFnvOjn+jPyqHopcFg5gJxsWTJD8
-    e51UavqTTe2L2EZ+j8mJ00fozMd3PfBC1ZRbbogX1TjeSehMwxXDplNozhEtJKFO
-    kaEcmt/UK84BiFmToq5JNThBNl5Jz60Qjg4xMUcd1ELHMV1mJHMlUc0B323MXPpU
-    LCyaN3E/QKN1XXt5pzCz4khsGlsyHlV3wVPHnd0VNEbLZuWJ9MA==
+    :sender:list-id; s=arctest; t=1519835124; bh=Bf/szv837tqWIPmS05v
+    813WagDe8/xtJ7hhs8SbHbF0=; b=v42LqIuKjl+sgsGS6W7MOCl/Np7rLsS/Qa/
+    FK9ngrUYL8rPDula4R5Kxe44LjOnoVUVTLeGr03yh/jLWfFClYbS5K7TbGRRwfbi
+    2+usEo4ZJ1cW3MninFagfZZ3SFMlhtXiLThqDrC7M73eXOA9mrVhu1IUhUWGpU5A
+    Eo6/nAnxqQdW8riQepP3yqhv9mdISQgVYSv9wYeUY0nGwvWhQuVqWuxdKfcqdNVO
+    2ulZGnrGbn3yyq/Cd2KkxyWdqgUU+JBb9rIK1inRhdk2QcvQmxJ2Zgwogo+DlSUF
+    BX11wyn/qCQ5IAuEasLiXzsJxGa+fggWcsz33+EiNCOpKTYRaIA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,29 +47,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935123AbeB1QU2 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:20:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35351 "EHLO
+        id S935131AbeB1QU3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:20:29 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35347 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935122AbeB1QU1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:27 -0500
+        by vger.kernel.org with ESMTP id S935024AbeB1QU0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:26 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
-        "Christian Hesse" <list@eworm.de>,
-        "Aaron Brown" <aaron.f.brown@intel.com>,
-        "Gabriel C" <nix.or.die@gmail.com>,
-        "Benjamin Poirier" <bpoirier@suse.com>
+CC: akpm@linux-foundation.org, "Dmitry Vyukov" <dvyukov@google.com>,
+        "Jim Mattson" <jmattson@google.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        "Lan Tianyu" <tianyu.lan@intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.831357343@decadent.org.uk>
+Message-ID: <lsq.1519831218.16960132@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 158/254] e1000e: Fix e1000_check_for_copper_link_ich8lan
- return value.
+Subject: [PATCH 3.16 212/254] KVM/x86: Check input paging mode when cs.l
+ is set
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -84,63 +83,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Lan Tianyu <tianyu.lan@intel.com>
 
-commit 4110e02eb45ea447ec6f5459c9934de0a273fb91 upstream.
+commit f29810335965ac1f7bcb501ee2af5f039f792416 upstream.
 
-e1000e_check_for_copper_link() and e1000_check_for_copper_link_ich8lan()
-are the two functions that may be assigned to mac.ops.check_for_link when
-phy.media_type == e1000_media_type_copper. Commit 19110cfbb34d ("e1000e:
-Separate signaling for link check/link up") changed the meaning of the
-return value of check_for_link for copper media but only adjusted the first
-function. This patch adjusts the second function likewise.
+Reported by syzkaller:
+    WARNING: CPU: 0 PID: 27962 at arch/x86/kvm/emulate.c:5631 x86_emulate_insn+0x557/0x15f0 [kvm]
+    Modules linked in: kvm_intel kvm [last unloaded: kvm]
+    CPU: 0 PID: 27962 Comm: syz-executor Tainted: G    B   W        4.15.0-rc2-next-20171208+ #32
+    Hardware name: Intel Corporation S1200SP/S1200SP, BIOS S1200SP.86B.01.03.0006.040720161253 04/07/2016
+    RIP: 0010:x86_emulate_insn+0x557/0x15f0 [kvm]
+    RSP: 0018:ffff8807234476d0 EFLAGS: 00010282
+    RAX: 0000000000000000 RBX: ffff88072d0237a0 RCX: ffffffffa0065c4d
+    RDX: 1ffff100e5a046f9 RSI: 0000000000000003 RDI: ffff88072d0237c8
+    RBP: ffff880723447728 R08: ffff88072d020000 R09: ffffffffa008d240
+    R10: 0000000000000002 R11: ffffed00e7d87db3 R12: ffff88072d0237c8
+    R13: ffff88072d023870 R14: ffff88072d0238c2 R15: ffffffffa008d080
+    FS:  00007f8a68666700(0000) GS:ffff880802200000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 000000002009506c CR3: 000000071fec4005 CR4: 00000000003626f0
+    Call Trace:
+     x86_emulate_instruction+0x3bc/0xb70 [kvm]
+     ? reexecute_instruction.part.162+0x130/0x130 [kvm]
+     vmx_handle_exit+0x46d/0x14f0 [kvm_intel]
+     ? trace_event_raw_event_kvm_entry+0xe7/0x150 [kvm]
+     ? handle_vmfunc+0x2f0/0x2f0 [kvm_intel]
+     ? wait_lapic_expire+0x25/0x270 [kvm]
+     vcpu_enter_guest+0x720/0x1ef0 [kvm]
+     ...
 
-Reported-by: Christian Hesse <list@eworm.de>
-Reported-by: Gabriel C <nix.or.die@gmail.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=198047
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Christian Hesse <list@eworm.de>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+When CS.L is set, vcpu should run in the 64 bit paging mode.
+Current kvm set_sregs function doesn't have such check when
+userspace inputs sreg values. This will lead unexpected behavior.
+This patch is to add checks for CS.L, EFER.LME, EFER.LMA and
+CR4.PAE when get SREG inputs from userspace in order to avoid
+unexpected behavior.
+
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Jim Mattson <jmattson@google.com>
+Signed-off-by: Tianyu Lan <tianyu.lan@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/x86/kvm/x86.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1300,6 +1300,9 @@ out:
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-+ *
-+ *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-+ *  up).
-  **/
- static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- {
-@@ -1314,7 +1317,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * Change or Rx Sequence Error interrupt.
- 	 */
- 	if (!mac->get_link_status)
--		return 0;
-+		return 1;
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
-@@ -1453,10 +1456,12 @@ static s32 e1000_check_for_copper_link_i
- 	 * different link partner.
- 	 */
- 	ret_val = e1000e_config_fc_after_link_up(hw);
--	if (ret_val)
-+	if (ret_val) {
- 		e_dbg("Error configuring flow control\n");
-+		return ret_val;
-+	}
- 
--	return ret_val;
-+	return 1;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6579,6 +6579,29 @@ int kvm_task_switch(struct kvm_vcpu *vcp
  }
+ EXPORT_SYMBOL_GPL(kvm_task_switch);
  
- static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
++int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
++{
++	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG_BIT)) {
++		/*
++		 * When EFER.LME and CR0.PG are set, the processor is in
++		 * 64-bit mode (though maybe in a 32-bit code segment).
++		 * CR4.PAE and EFER.LMA must be set.
++		 */
++		if (!(sregs->cr4 & X86_CR4_PAE_BIT)
++		    || !(sregs->efer & EFER_LMA))
++			return -EINVAL;
++	} else {
++		/*
++		 * Not in 64-bit mode: EFER.LMA is clear and the code
++		 * segment cannot be 64-bit.
++		 */
++		if (sregs->efer & EFER_LMA || sregs->cs.l)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ 				  struct kvm_sregs *sregs)
+ {
+@@ -6590,6 +6613,9 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct
+ 	if (!guest_cpuid_has_xsave(vcpu) && (sregs->cr4 & X86_CR4_OSXSAVE))
+ 		return -EINVAL;
+ 
++	if (kvm_valid_sregs(vcpu, sregs))
++		return -EINVAL;
++
+ 	dt.size = sregs->idt.limit;
+ 	dt.address = sregs->idt.base;
+ 	kvm_x86_ops->set_idt(vcpu, &dt);
