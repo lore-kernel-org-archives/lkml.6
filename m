@@ -1,71 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeB1KKQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:10:16 -0500
-Received: from mga17.intel.com ([192.55.52.151]:34961 "EHLO mga17.intel.com"
+        id S1752395AbeB1KM3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:12:29 -0500
+Received: from mga06.intel.com ([134.134.136.31]:38331 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752050AbeB1KKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:10:15 -0500
+        id S1752072AbeB1KM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:12:27 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
-   d="scan'208";a="20900104"
-Subject: Re: [PATCH] arm64/acpi: make ACPI boot preference configurable
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        astone@redhat.com, Jonathan Masters <jcm@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>,
-        Prarit Bhargava <prarit@redhat.com>, James Morse <james.morse@arm.com>,
-        linux-kernel@vger.kernel.org
-References: <85047448dc1d2d3c725b6b78d5ef2a89fc81b83b.1519659254.git.jtoppins@redhat.com>
- <CACi5LpM9hn17o7i7R3GUjQYy=6DFtCFKSbDUN7A7MGBTuf7=xw@mail.gmail.com>
- <1b5a55bd-5bc7-ecd0-99f0-71dd05119743@redhat.com>
- <CACi5LpMv_LB3wi7qn33b6mysdK_weki0YYsG0EkqPhR8FvFq5w@mail.gmail.com>
- <1519812442.10722.248.camel@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <395d024f-b710-3626-f004-e069de0b812b@intel.com>
-Date: Wed, 28 Feb 2018 11:10:11 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519812442.10722.248.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+   d="scan'208";a="34255365"
+Message-ID: <1519812742.10722.251.camel@linux.intel.com>
+Subject: Re: [PATCH v1 4/4] pci: Re-use new dmi_get_bios_year() helper
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2018 12:12:22 +0200
+In-Reply-To: <20180226181943.GC25159@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+         <20180222125923.57385-4-andriy.shevchenko@linux.intel.com>
+         <20180223214051.GN14632@bhelgaas-glaptop.roam.corp.google.com>
+         <1519565224.10722.148.camel@linux.intel.com>
+         <20180226181943.GC25159@bhelgaas-glaptop.roam.corp.google.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/28/2018 11:07 AM, Andy Shevchenko wrote:
-> On Wed, 2018-02-28 at 00:29 +0530, Bhupesh Sharma wrote:
->> On Tue, Feb 27, 2018 at 8:14 PM, Jonathan Toppins <jtoppins@redhat.com
->>> wrote:
->>> On 02/27/2018 07:40 AM, Bhupesh Sharma wrote:
->>> For arm64 DT is suppose to *not* be the preferred method, yet still
->>> DT
->>> is preferred if the firmware provides both tables to the kernel.
->> However several arm64 products in embedded applications are still not
->> SBSA/SBBR compliant (and I have worked on a couple of such
->> implementations earlier) and still use bootloaders like u-boot (and
->> also closed-source implementations) which have no support for ACPI
->> currently and still rely on a DT to pass the system hardware
->> information to the kernel.
->> So far only open source implementation of a ACPI compliant firmware is
->> EDK2/UEFI which supports ACPI as the preferred boot method
-> You mean for non-x86?
->
->>   and I am
->> not sure if all u-boot/in-house firmware implementations are planned
->> to be ported over to EDK2/UEFI for embedded applications.
-> Why do you need that? ACPI (if you are talking about ACPI only, w/o EFI)
-> is supported in U-Boot for few x86 SoCs/platforms. Moreover, one of them
-> had never been shipped with ACPI/EFI complaint services in firmware and
-> ACPI layer is purely done in U-Boot.
->
-Right, let alone Chromebooks. :-)
+On Mon, 2018-02-26 at 12:19 -0600, Bjorn Helgaas wrote:
+> On Sun, Feb 25, 2018 at 03:27:04PM +0200, Andy Shevchenko wrote:
+> > On Fri, 2018-02-23 at 15:40 -0600, Bjorn Helgaas wrote:
+> > > On Thu, Feb 22, 2018 at 02:59:23PM +0200, Andy Shevchenko wrote:
+> > > > ...instead of open coding its functionality.
+> > > 
+> > > Same comment about making the changelog complete, independent of
+> > > the
+> > > subject.
+> > 
+> > Any suggestion how it would look like? (Same question for previous
+> > comment)
+> 
+>   PCI: Re-use new dmi_get_bios_year() helper
+> 
+>   Use new dmi_get_bios_year() helper instead of open-coding its
+>   functionality.
+> 
+> The usual document structure is something like:
+> 
+>   TITLE
+> 
+>   This abstract contains a summary of the entire document, in a few
+>   paragraphs of complete sentences.
+> 
+> Where "TITLE" makes sense all by itself, even without reading the
+> body, and "Body" is a complete statement that also makes sense all by
+> itself without having to read "TITLE" first.
+> 
+
+Thank you for a hint!
+
+> Granted, it's trivial, but following the convention improves
+> readability slightly because it fits the reader's expectations.
+
+> When the body is "...instead of open coding its functionality", it's a
+> bit of a hiccup because I have to start over and look back up to the
+> title to re-read the thing as a whole.
+
+OK, I got your point, though I don't like duplication in the subject and
+body.
+
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
