@@ -1,102 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751813AbeB1Bwq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 20:52:46 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43280 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751605AbeB1Bwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 20:52:44 -0500
-Subject: Re: [linux-sunxi] [PATCH v2 1/4] dt-bindings: pwm: binding allwinner
- sun8i.
-To: hao5781286@gmail.com, thierry.reding@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@free-electrons.com
-References: <20180225135045.GA14508@arx-s1>
-Cc: linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Organization: ARM Ltd.
-Message-ID: <56645bca-9f4a-3191-72d8-32b60ebbc26e@arm.com>
-Date: Wed, 28 Feb 2018 01:51:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1751857AbeB1Bxd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 20:53:33 -0500
+Received: from lucky1.263xmail.com ([211.157.147.132]:55867 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751521AbeB1Bxb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 20:53:31 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-renesas-soc@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <49b43cc86fd9130fbe9a917b2a905841>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
+To: Phil Edworthy <phil.edworthy@renesas.com>
+References: <1519739731-27920-1-git-send-email-phil.edworthy@renesas.com>
+ <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
+ <HK2PR0601MB1393B39958A128DCB8CA0E44F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+ <b725dcf5-2f53-dab7-1e0c-85ea138f54a9@rock-chips.com>
+ <HK2PR0601MB139380F295EF5CE849288F91F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <52191012-300a-e13d-fa54-8717eb97c2e1@rock-chips.com>
+Date: Wed, 28 Feb 2018 09:53:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180225135045.GA14508@arx-s1>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <HK2PR0601MB139380F295EF5CE849288F91F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 25/02/18 13:50, hao_zhang wrote:
-> This patch adds allwinner sun8i pwm binding documents.
+On 2018/2/27 23:05, Phil Edworthy wrote:
+> Hi Shawn,
 > 
-> Signed-off-by: hao_zhang <hao5781286@gmail.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-sun8i.txt | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> On 27 February 2018 14:42, Shawn Lin wrote:
+>> On 2018/2/27 22:31, Phil Edworthy wrote:
+>>> Hi Shawn,
+>>>
+>>> On 27 February 2018 14:28, Shawn Lin wrote:
+>>>> 在 2018/2/27 21:55, Phil Edworthy 写道:
+>>>>> Since the controller does not support the end-of-busy IRQ, don't use it.
+>>>>> Otherwise, on older SD cards you will get lots of these messages:
+>>>>> "mmc0: Got data interrupt 0x00000002 even though no data operation
+>>>>> was
+>>>> in progress"
+>>>>>
+>>>>
+>>>> I'm afraid you have to explain which version of arasan's IP suffer
+>>>> from this and what does the "older SD cards" mean?
+>>> Ok, I'll try to find out the IP version...
+>>> For "older SD cards", I can provide a list of a few cards that exhibit
+>>> this problem and others that don't, is that enough info?
+>>
+>> What I meant is could you elaborate more about what kind of cards, e.g, are
+>> them the  legacy SDSC cards or SDHC cards, or maybe they are only running
+>> with defaut speed? or whatever, but not just with a vague "older" cards. :)
+> Unfortunately, I have one SDHC card that works, one that doesn't. Both cards
+> are running with a 50MHz SD clock. All I know is this:
+
+Thanks for sharing these, though it looks wired as I never remember I
+saw this problem when extensively tested SD cards on one of arasan
+controllers in 2014.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> new file mode 100644
-> index 0000000..e8c48be
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> @@ -0,0 +1,18 @@
-> +Allwinner sun8i R40/V40/T3 SoC PWM controller
-> +
-> +Required properties:
-> +  - compatible: should be one of:
-> +    - "allwinner,sun8i-r40-pwm"
-> +  - reg: physical base address and length of the controller's registers
-> +  - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
-> +    the cells format.
-> +  - clocks: From common clock binding, handle to the parent clock.
-
-The manual tells me that there are two possible clock sources (24 MHz
-OSC and APB1), with actually two bits for encoding the mux source,
-allowing for two more potential clock sources.
-So can we extend this description to provide up to four clocks, with a
-clock-names property telling the driver how this maps to the mux value?
-Either we use clock names matching the clocks mentioned in the manual:
-	clocks = <&osc24M>, <&ccu CLK_APB1>;
-	clock-names = "osc", "apb1";
-or we encode the mux values in the clock-names:
-	clock-names = "mux-0", "mux-1";
-Don't know what's more widely used in those cases, the latter seems to
-be more future-proof.
-Each channel pair can be configured to use one of the two (or four)
-clocks, so we can be more flexible with multiple clocks.
-
-
-Also, can you please add an "interrupts" property here? You don't need
-to use it in the driver right now, but since there are multiple
-registers dealing with the interrupts we should have it in the binding.
-If in need, we can then add support later.
-
-> +
-> +Example:
-> +
-> +pwm: pwm@1c23400 {
-> +	     compatible = "allwinner,sun8i-pwm";
-
-That should match what you wrote above: allwinner,sun8i-r40-pwm.
-And I believe this is the right compatible name, since there are
-numerous other sun8i SoCs with the sun4i PWM IP, so just sun8i-pwm would
-be misleading and confusing.
-
-> +	     reg = <0x01c23400 0x154>;
-> +	     clocks = <&osc24M>;
-
-This should then be amended to what I sketched above.
-
-> +	     #pwm-cells = <3>;
-
-And then here please add:
-	     interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-
-Cheers,
-Andre
+> SD cards that report unexpected interrupts:
+> 2GB Sandisk Extreme III                     (e624 SD02G 1.89 GiB)
+> 8GB Sandisk (SDHC class 4)              (aaaa SU08G 7.40 GiB)
+> 8GB Sandisk Extreme III (SDHC class 6)    (bb4e SD08G 7.61 GiB)
+> 
+> SD cards that work ok:
+> 16GB Samsung (microSDHC U1 class 10)          (0001 00000 14.6 GiB)
+> 16GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL16G 14.8 GiB)
+> 32GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL32G 29.7 GiB)
+> 
+> Thanks
+> Phil
+> 
+>>>>> This has been reported on Xilinx devices that also use the Arasan IP.
+>>>>> See https://patchwork.kernel.org/patch/8062871/
+>>>>>
+>>>>> This has been tested on the Renesas RZ/ND-DB board with the RZ/N1
+>> SoC.
+>>>>>
+>>>>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+>>>>> ---
+>>>>>     drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
+>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c
+>>>>> b/drivers/mmc/host/sdhci-of-arasan.c
+>>>>> index c33a5f7..ab66e32 100644
+>>>>> --- a/drivers/mmc/host/sdhci-of-arasan.c
+>>>>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+>>>>> @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data
+>>>> sdhci_arasan_pdata = {
+>>>>>     	.ops = &sdhci_arasan_ops,
+>>>>>     	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+>>>>>     	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+>>>>> -			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
+>>>>> +			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
+>>>>> +			SDHCI_QUIRK2_STOP_WITH_TC,
+>>>>>     };
+>>>>>
+>>>>>     static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32
+>>>>> intmask)
+>>>>>
+>>>>
+>>>>
+>>>> --
+>>>> Best Regards
+>>>> Shawn Lin
+>>>
+>>>
+>>>
+>>>
+>>
+>>
+>> --
+>> Best Regards
+>> Shawn Lin
+> 
+> 
+> 
+> 
