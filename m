@@ -1,93 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751948AbeB1GYL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:24:11 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34178 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeB1GYJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:24:09 -0500
-X-Google-Smtp-Source: AG47ELt90JbiGC7w5Te5bw1kQkTsZqsFpGrkChcNo1SgOlW653vzbDJCCkQOG4NjpBXdhRinpwim/g==
-Date: Wed, 28 Feb 2018 15:19:03 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Tyler Baicar <tbaicar@codeaurora.org>
-Cc: ard.biesheuvel@linaro.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jhugo@codeaurora.org,
-        sgoel@codeaurora.org, timur@codeaurora.org
-Subject: Re: [PATCH 0/2] ESRT fixes for relocatable kexec'd kernel
-Message-ID: <20180228061901.GJ6019@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>, ard.biesheuvel@linaro.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jhugo@codeaurora.org, sgoel@codeaurora.org, timur@codeaurora.org
-References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
+        id S1751907AbeB1G22 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:28:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751646AbeB1G21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:28:27 -0500
+Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        David Miller <davem@davemloft.net>
+References: <1519607771-20613-1-git-send-email-mst@redhat.com>
+ <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
+ <20180226223252-mutt-send-email-mst@kernel.org>
+ <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
+ <20180227190703-mutt-send-email-mst@kernel.org>
+ <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
+ <20180228060845-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
+Date: Wed, 28 Feb 2018 14:28:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180228060845-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tyler,
-
-# I missed catching your patch as its subject doesn't contain arm64.
-
-On Fri, Feb 23, 2018 at 12:42:31PM -0700, Tyler Baicar wrote:
-> Currently on arm64 ESRT memory does not appear to be properly blocked off.
-> Upon successful initialization, ESRT prints out the memory region that it
-> exists in like:
-> 
-> esrt: Reserving ESRT space from 0x000000000a4c1c18 to 0x000000000a4c1cf0.
-> 
-> But then by dumping /proc/iomem this region appears as part of System RAM
-> rather than being reserved:
-> 
-> 08f10000-0deeffff : System RAM
-> 
-> This causes issues when trying to kexec if the kernel is relocatable. When
-> kexec tries to execute, this memory can be selected to relocate the kernel to
-> which then overwrites all the ESRT information. Then when the kexec'd kernel
-> tries to initialize ESRT, it doesn't recognize the ESRT version number and
-> just returns from efi_esrt_init().
-
-I'm not sure what is the root cause of your problem.
-Do you have good confidence that the kernel (2nd kernel image in this case?)
-really overwrite ESRT region?
-To my best knowledge, kexec is carefully designed not to do such a thing
-as it allocates a temporary buffer for kernel image and copies it to the
-final destination at the very end of the 1st kernel.
-
-My guess is that kexec, or rather kexec-tools, tries to load the kernel image
-at 0x8f80000 (or 0x9080000?, not sure) in your case. It may or may not be
-overlapped with ESRT.
-(Try "-d" option when executing kexec command for confirmation.)
-
-Are you using initrd with kexec?
-
-Thanks,
--Takahiro AKASHI
 
 
-> This causes an early ioremap leak because
-> the memory allocated for 'va' is never unmapped. So first fix that error
-> case to properly unmap 'va' before returning.
-> 
-> This still leaves ESRT unable to initialize in the kexec'd kernel, so now
-> mark the ESRT memory block as nomap so that this memory is not treated as
-> System RAM. With this change I'm able to see that the ESRT data is not
-> overwritten when running a kexec'd kernel.
-> 
-> Tyler Baicar (2):
->   efi/esrt: fix unsupported version initialization failure
->   efi/esrt: mark ESRT memory region as nomap
-> 
->  drivers/firmware/efi/esrt.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> -- 
-> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
-> 
+On 2018年02月28日 12:09, Michael S. Tsirkin wrote:
+>>> Or we can add plist to a union:
+>>>
+>>>
+>>> struct sk_buff {
+>>>           union {
+>>>                   struct {
+>>>                           /* These two members must be first. */
+>>>                           struct sk_buff          *next;
+>>>                           struct sk_buff          *prev;
+>>>                           union {
+>>>                                   struct net_device       *dev;
+>>>                                   /* Some protocols might use this space to store information,
+>>>                                    * while device pointer would be NULL.
+>>>                                    * UDP receive path is one user.
+>>>                                    */
+>>>                                   unsigned long           dev_scratch;
+>>>                           };
+>>>                   };
+>>>                   struct rb_node  rbnode; /* used in netem & tcp stack */
+>>> +		struct plist plist; /* For use with ptr_ring */
+>>>           };
+>>>
+>> This look ok.
+>>
+>>>> For XDP, we need to embed plist in struct xdp_buff too,
+>>> Right - that's pretty straightforward, isn't it?
+>> Yes, it's not clear to me this is really needed for XDP consider the lock
+>> contention it brings.
+>>
+>> Thanks
+> The contention is only when the ring overflows into the list though.
+>
+
+Right, but there's usually a mismatch of speed between producer and 
+consumer. In case of a fast producer, we may get this contention very 
+frequently.
+
+Thanks
