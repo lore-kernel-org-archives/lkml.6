@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-422553-1519831623-2-11708879536491908519
+X-Cyrus-Session-Id: sloti22d1t05-420878-1519831584-2-9433854350814095668
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519831622; b=wbunwceZg8XDcNZh9LpY1mSqcOn1xZxxJBHyYQ3NJjghlC/
-    wtjchTurh9QnRGvSrQst2vhk2xEs3JhlerO0t8raT38aQ74078n4VDQPF1jhgVAq
-    4gsY4Hrcj+sAeO25cd+CkqZSTTSflZ5XnNI1ke5KirywJWwdJXCXGXmBqhu9PwSE
-    0Bd/0lOLMw6xBHIRgRUUI6c6LhsyAA9BM9Bldw9jAI+aWQMgXp1ZX+v4jH5/uln1
-    gwaIewOiq1nkWoNyQTlssSAECPEvFq1f+UxScSPiZjiVrlBBZCPZfby87QgCp1cB
-    4wlQOOkpAZITQzhegmNNPFO2T8USwIri/JdeEsw==
+    t=1519831584; b=ncr/viv/rzJ6B2k52iPFUUIQ9sqKMYQ1BD8RE9RIMosYj+B
+    l69LlXycA+li0OxCF+hU4UYpy5KTQ9mlaqNrrRtYLLZmtRxe5ee8GSc/jutFWh9W
+    a82IwCSVE06Q1mtwWiqnmAc4D6j0yHAek560ZBfd5eNKGwlfM67zTifhDGdwiNSj
+    cGXjGqGTvCgka19/OoepImNz6E/rcueE41rCzAUwWeix6juMyg5K8igUfF1KYi9x
+    qv9bofV4RMfcOvgK5YhdFY9mC9eicQzNm7STBoJatEJCC7cDgVfWUWR8GIPvsPnu
+    rKUvdJD+1s39ibjNij5ZVeLFThrylUtk2C0yarQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519831622; bh=NM0QpUWzfqOcAXUCok2
-    OrU1S4z1MqvfNBHp+0IIvoc4=; b=KCKPzWGmnww+CTVWnMV4qlYmMq2tfMROPA/
-    Dcz4w75oweJfn9519/dyoILThpBBPPAobl3IubTy4kAu0sd14DsJrQQF8FxQ97HJ
-    l8RsMvCxoJJLAKrzW7XF1R0wpMOPqQnORAKxWFpikV0oBatU/Q+v72ff4upAu70M
-    JK0VyjrdITRqiMnkYNK0sqLqjc8kECrhldGNYP3awCrTUSstPrdzUkEFRVlr7G7b
-    KEtDacos7pZcIE+7A5bSMGBKOfNaldoYBN/8G4miJNjXC3gtfcE59WLjA18vMVVa
-    NZHA1AAkBoik5oQ3olENqzbJFpaiWMV+07JH6ReySUvsSuycrvA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519831584; bh=cSSmz+Clm3Nq2b6xxaz
+    gBSdqfjJkHTw+CxcB1V6xmtM=; b=sjF5U8hZhRhvVN+SNfnwf5IkXTNQ//bjwRS
+    vAsWG7ZI4XanNG591u0m9LcT4k5qV3cUIR0x/Cm5FsILKlR7g8jCbwThg+0zxAM6
+    kLjY6BUgGwLaSkXYroaXYm2bJyjsNK4N2exZnUUlzqb7mWzKSOUqbvkXa0p95UFo
+    95iCojsNCcvANC1Zlr9n2MEBgVHPVAqB2sFdhIis8oZmvM08koWYeV4dDqXKoTfB
+    qyubVZbbqYTc0tVlqk6bFSQbyQJYy5xtJSWmTa3RmDxFkMa6SO9RyEzWKpj1KiSh
+    Wr0Vo6fTCDTTxtrCPnGfMA+Eq/T/6IBmon8MLppb3iEq0AMYDwA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeB1P00 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:26:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33352 "EHLO
+        id S932369AbeB1PZW (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:25:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33328 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752875AbeB1PWk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:40 -0500
+        by vger.kernel.org with ESMTP id S1752883AbeB1PWo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:44 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
+CC: akpm@linux-foundation.org, "Christoph Paasch" <cpaasch@apple.com>,
         "David S. Miller" <davem@davemloft.net>,
-        "Mohamed Ghannam" <simo.ghannam@gmail.com>
+        "Eric Dumazet" <edumazet@google.com>
 Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.818577494@decadent.org.uk>
+Message-ID: <lsq.1519831221.391134937@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 041/140] net: ipv4: fix for a race condition in
- raw_sendmsg
+Subject: [PATCH 3.2 043/140] tcp md5sig: Use skb's saddr when replying to
+ an incoming segment
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,70 +81,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohamed Ghannam <simo.ghannam@gmail.com>
+From: Christoph Paasch <cpaasch@apple.com>
 
-commit 8f659a03a0ba9289b9aeb9b4470e6fb263d6f483 upstream.
+commit 30791ac41927ebd3e75486f9504b6d2280463bf0 upstream.
 
-inet->hdrincl is racy, and could lead to uninitialized stack pointer
-usage, so its value should be read only once.
+The MD5-key that belongs to a connection is identified by the peer's
+IP-address. When we are in tcp_v4(6)_reqsk_send_ack(), we are replying
+to an incoming segment from tcp_check_req() that failed the seq-number
+checks.
 
-Fixes: c008ba5bdc9f ("ipv4: Avoid reading user iov twice after raw_probe_proto_opt")
-Signed-off-by: Mohamed Ghannam <simo.ghannam@gmail.com>
+Thus, to find the correct key, we need to use the skb's saddr and not
+the daddr.
+
+This bug seems to have been there since quite a while, but probably got
+unnoticed because the consequences are not catastrophic. We will call
+tcp_v4_reqsk_send_ack only to send a challenge-ACK back to the peer,
+thus the connection doesn't really fail.
+
+Fixes: 9501f9722922 ("tcp md5sig: Let the caller pass appropriate key for tcp_v{4,6}_do_calc_md5_hash().")
+Signed-off-by: Christoph Paasch <cpaasch@apple.com>
 Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2:
- - flowi4 flags don't depend on hdrincl
- - Adjust context]
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -484,11 +484,16 @@ static int raw_sendmsg(struct kiocb *ioc
- 	int err;
- 	struct ip_options_data opt_copy;
- 	struct raw_frag_vec rfv;
-+	int hdrincl;
+ net/ipv4/tcp_ipv4.c | 2 +-
+ net/ipv6/tcp_ipv6.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -764,7 +764,7 @@ static void tcp_v4_reqsk_send_ack(struct
+ 			tcp_rsk(req)->rcv_isn + 1, req->rcv_wnd,
+ 			req->ts_recent,
+ 			0,
+-			tcp_v4_md5_do_lookup(sk, ip_hdr(skb)->daddr),
++			tcp_v4_md5_do_lookup(sk, ip_hdr(skb)->saddr),
+ 			inet_rsk(req)->no_srccheck ? IP_REPLY_ARG_NOSRCCHECK : 0,
+ 			ip_hdr(skb)->tos);
+ }
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1116,7 +1116,7 @@ static void tcp_v6_reqsk_send_ack(struct
+ 				  struct request_sock *req)
+ {
+ 	tcp_v6_send_ack(skb, tcp_rsk(req)->snt_isn + 1, tcp_rsk(req)->rcv_isn + 1, req->rcv_wnd, req->ts_recent,
+-			tcp_v6_md5_do_lookup(sk, &ipv6_hdr(skb)->daddr), 0);
++			tcp_v6_md5_do_lookup(sk, &ipv6_hdr(skb)->saddr), 0);
+ }
  
- 	err = -EMSGSIZE;
- 	if (len > 0xFFFF)
- 		goto out;
- 
-+	/* hdrincl should be READ_ONCE(inet->hdrincl)
-+	 * but READ_ONCE() doesn't work with bit fields
-+	 */
-+	hdrincl = inet->hdrincl;
- 	/*
- 	 *	Check the flags.
- 	 */
-@@ -564,7 +569,7 @@ static int raw_sendmsg(struct kiocb *ioc
- 		/* Linux does not mangle headers on raw sockets,
- 		 * so that IP options + IP_HDRINCL is non-sense.
- 		 */
--		if (inet->hdrincl)
-+		if (hdrincl)
- 			goto done;
- 		if (ipc.opt->opt.srr) {
- 			if (!daddr)
-@@ -585,11 +590,11 @@ static int raw_sendmsg(struct kiocb *ioc
- 
- 	flowi4_init_output(&fl4, ipc.oif, sk->sk_mark, tos,
- 			   RT_SCOPE_UNIVERSE,
--			   inet->hdrincl ? IPPROTO_RAW : sk->sk_protocol,
-+			   hdrincl ? IPPROTO_RAW : sk->sk_protocol,
- 			   inet_sk_flowi_flags(sk) | FLOWI_FLAG_CAN_SLEEP,
- 			   daddr, saddr, 0, 0);
- 
--	if (!inet->hdrincl) {
-+	if (!hdrincl) {
- 		rfv.iov = msg->msg_iov;
- 		rfv.hlen = 0;
- 
-@@ -614,7 +619,7 @@ static int raw_sendmsg(struct kiocb *ioc
- 		goto do_confirm;
- back_from_confirm:
- 
--	if (inet->hdrincl)
-+	if (hdrincl)
- 		err = raw_send_hdrinc(sk, &fl4, msg->msg_iov, len,
- 				      &rt, msg->msg_flags);
  
