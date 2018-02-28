@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835549-2-17475217031483135753
+X-Cyrus-Session-Id: sloti22d1t05-564561-1519835543-2-13186477722304702618
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835549; b=hIZ8eqIkMptAvi6PdYm6qcA6xCSThcq86K6q6weFI3aoII/
-    A7Susm5922pURzRw4WRy9/lOOWO3tNe5YYwBmGypJB2UDiGTf7S6VaeP0zZvdNBp
-    1yirqo5UslmdW//7Aa4z4Zk8qGsA+GdM4x1RzskOB0OjuN8uNsZIx+lULXbirWmO
-    HcwB1o3GuDnIK+3Ye7lQTDxCpgtnovulRFxrRB2MmaZmP4AaPeWSiwoZXsSWH6AO
-    fuUwhtY09vtwb7GE4Tn+tAWqPDuVVBldvayKC+liEwtyAy/nmXg4jC9ZVzgQD979
-    kQC0XkaYEk4vHYUOWpcSCk9YbI83WBtg58H5tvg==
+    t=1519835542; b=Jtxn1ZY+3yKoum6T3DXs0+AIi8uf7pbqyaZ7N1j+Gst4kCn
+    4XbwkMIfv8H9iiikKk6t6BaqYlYcfUbXXPpekIJdrOrqYNjzFtiMKJnB2KfyHF6P
+    5jdGwn620zhJk+LbnQODd35KzTiQ3iNGnEMCgA3Lb46FOCpgUpcMJ1CY9XUbWy9R
+    Akp5LieHXFOK/5Ke7s8Sm/gIeiYc2/C6E8yauaGsSkJhBemMq1GodO+CDQ8X/3ds
+    gn56yyawL2pbHnsbkFQq0j+/JJgiONZh2wqOQn5hPB3Yt5+SAJj/k8rSvvfMQVLW
+    ye+nLqtATNpK5Mx2sPbj76UoIhNUqDZkscEYn3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835549; bh=RUAWTWZacs/+H+ITN6u
-    GJ23aZY0HZWYslFUVMDHo0fA=; b=KA3b9LrOa6J2dY1Y/0eDlZBPP/o3h7ApYyl
-    DFHT0liVHGlGiLiPhlv0nL66ssZfC3mc3o4ji5DJsHbnuBrB4oYF2LoN9mghf4vt
-    H4BQaqnEEdRdBxOX4tUHqj6i1S4OjKoAH6lAuTn5hijVFfg3DJVhHsOaglpDpFrv
-    Dk24uHYYM8o33fQB8orawvphI/lYcs4sHMD7qw820BACEuXtzFY0NrxQqy54QgvS
-    nUXLg0g84r5fW8pkLDQM8u3a78KA18YN9TbC5EOnfjog2hrxz7P9/v/A+yO1g+Hd
-    5XuWiuWaOSkKD+0Eg9/+VxAzJGlxeThgViw/OIxQJ9EbSrRiRrA==
+    :sender:list-id; s=arctest; t=1519835542; bh=y43Y+Br2nos8zKNy8NP
+    cNYfOwJUseCJnAMBf2ZN8WP8=; b=fbceNByYMDIsnyMI6BjQNuDcF/2q73txkTK
+    /CnUqS4XKiMoMbuvD460R7SGBCsw3c5K4lZDzyMHuyO4C3WNMwk6vDWY10xwt7h7
+    STx51psPDP6yNzcTfzQaqsyqHumVlUcegu/4w0LQbjMouFyWmFWDzU8a3PNpj9ul
+    w1aXG03itS49rMQn1zjONghZxEfikna7v3KIav1tfBu+zC2hq+B+H70DfUmOz9be
+    3KEHjqXrJ5yUAq05CLL3cwvuyrSuQHfT6YIHpelMoF38k50wG//0OcrJ/v+VnRwo
+    l1vilNC0fbFBP0HFr2FZKtmtuNoyNRvFNjEKiqkHoW7Cz1z3NLA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeB1QOY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:14:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35104 "EHLO
+        id S1753301AbeB1QOa (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:14:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35114 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753118AbeB1QOT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:14:19 -0500
+        by vger.kernel.org with ESMTP id S1753118AbeB1QO3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:14:29 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>
+CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Borislav Petkov" <bp@alien8.de>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.186100743@decadent.org.uk>
+Message-ID: <lsq.1519831218.291303251@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 240/254] media: v4l2-ioctl.c: don't copy back the
- result for -ENOTTY
+Subject: [PATCH 3.16 222/254] x86/mce: Make machine check speculation
+ protected
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,35 +81,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 181a4a2d5a0a7b43cab08a70710d727e7764ccdd upstream.
+commit 6f41c34d69eb005e7848716bbcafc979b35037d5 upstream.
 
-If the ioctl returned -ENOTTY, then don't bother copying
-back the result as there is no point.
+The machine check idtentry uses an indirect branch directly from the low
+level code. This evades the speculation protection.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Replace it by a direct call into C code and issue the indirect call there
+so the compiler can apply the proper speculation protection.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by:Borislav Petkov <bp@alien8.de>
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Niced-by: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1801181626290.1847@nanos
+[bwh: Backported to 3.16
+ - #include <asm/traps.h> in mce.c
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 16bffd851bf9..e2f71def945a 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2402,8 +2402,11 @@ video_usercopy(struct file *file, unsigned int cmd, unsigned long arg,
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -91,6 +91,7 @@ dotraplinkage void do_simd_coprocessor_e
+ #ifdef CONFIG_X86_32
+ dotraplinkage void do_iret_error(struct pt_regs *, long);
+ #endif
++dotraplinkage void do_mce(struct pt_regs *, long);
  
- 	/* Handles IOCTL */
- 	err = func(file, cmd, parg);
--	if (err == -ENOIOCTLCMD)
-+	if (err == -ENOTTY || err == -ENOIOCTLCMD) {
- 		err = -ENOTTY;
-+		goto out;
-+	}
+ static inline int get_si_code(unsigned long condition)
+ {
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -46,6 +46,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
++#include <asm/traps.h>
+ 
+ #include "mce-internal.h"
+ 
+@@ -1693,6 +1694,11 @@ static void unexpected_machine_check(str
+ void (*machine_check_vector)(struct pt_regs *, long error_code) =
+ 						unexpected_machine_check;
+ 
++dotraplinkage void do_mce(struct pt_regs *regs, long error_code)
++{
++	machine_check_vector(regs, error_code);
++}
 +
- 	if (err == 0) {
- 		if (cmd == VIDIOC_DQBUF)
- 			trace_v4l2_dqbuf(video_devdata(file)->minor, parg);
+ /*
+  * Called for each booted CPU to set up machine checks.
+  * Must be called with preempt off:
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -1320,7 +1320,7 @@ trace_idtentry page_fault do_page_fault
+ idtentry async_page_fault do_async_page_fault has_error_code=1
+ #endif
+ #ifdef CONFIG_X86_MCE
+-idtentry machine_check has_error_code=0 paranoid=1 do_sym=*machine_check_vector(%rip)
++idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ #endif
+ 
+ 	/*
