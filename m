@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933543AbeB1TSs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:18:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38818 "EHLO
+        id S933582AbeB1TS4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:18:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39582 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932780AbeB1TSp (ORCPT
+        by vger.kernel.org with ESMTP id S932780AbeB1TSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:18:45 -0500
+        Wed, 28 Feb 2018 14:18:53 -0500
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
@@ -14,83 +14,53 @@ Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
         jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
         jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH 1/3] tpm: move TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h
-Date: Wed, 28 Feb 2018 14:18:26 -0500
+Subject: [PATCH 2/3] tpm: reduce poll sleep time between send() and recv() in tpm_transmit()
+Date: Wed, 28 Feb 2018 14:18:27 -0500
 X-Mailer: git-send-email 2.13.3
+In-Reply-To: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18022819-0012-0000-0000-000005B71DDE
+x-cbid: 18022819-0040-0000-0000-000004191E60
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022819-0013-0000-0000-000019331EFF
-Message-Id: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+x-cbparentid: 18022819-0041-0000-0000-0000261C1F6A
+Message-Id: <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802280234
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h, renaming
-it to TPM_TIMEOUT_POLL, to follow the existing enum naming
-conventions.
+In tpm_transmit, after send(), the code checks for status in a loop
+with polling every 5msec. It is expected that the tpm might return
+earlier than 5msec, so it might be adding to unnecessary delay.
+
+This patch reduces the polling sleep time from 5msec to 1msec.
+
+After this change, performance on a TPM 1.2 with an 8 byte
+burstcount for 1000 extends improved from ~14sec to ~10.7sec.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm.h          |  3 ++-
- drivers/char/tpm/tpm_tis_core.c | 10 ++--------
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f895fba4e20d..7e797377e1eb 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -53,7 +53,8 @@ enum tpm_const {
- enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
--	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
-+	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
-+	TPM_TIMEOUT_POLL = 1	/* msecs */
- };
- 
- /* TPM addresses */
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 183a5f54d875..dc474e7244a6 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -31,12 +31,6 @@
- #include "tpm.h"
- #include "tpm_tis_core.h"
- 
--/* This is a polling delay to check for status and burstcount.
-- * As per ddwg input, expectation is that status check and burstcount
-- * check should return within few usecs.
-- */
--#define TPM_POLL_SLEEP	1  /* msec */
--
- static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
- 
- static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-@@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 76df4fbcf089..2d22f981f0c9 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 			goto out;
  		}
- 	} else {
- 		do {
--			tpm_msleep(TPM_POLL_SLEEP);
-+			tpm_msleep(TPM_TIMEOUT_POLL);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
-@@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		tpm_msleep(TPM_POLL_SLEEP);
+ 
+-		tpm_msleep(TPM_TIMEOUT);
 +		tpm_msleep(TPM_TIMEOUT_POLL);
+ 		rmb();
  	} while (time_before(jiffies, stop));
- 	return -EBUSY;
- }
+ 
 -- 
 2.13.3
