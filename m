@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AH8x226W8gf0NVabIfm1zHB8IrRRr08xxWlnbaO7zcElmnVHNjjupAVP8FcMGpxWbKZzbaEE5PoV
-ARC-Seal: i=1; a=rsa-sha256; t=1519787071; cv=none;
+X-Google-Smtp-Source: AG47ELsNvVr/WKUc32nGC1cu2Em9nGgs1JTmhB5qh5IklSXLJ7llJEBQzU6p7MzAfA+ELFfQ4oIF
+ARC-Seal: i=1; a=rsa-sha256; t=1519787019; cv=none;
         d=google.com; s=arc-20160816;
-        b=P7olacfkX8LFwU5mMVYVc4Crbf9GGFJCrh0lCmlqy6DGmOUMcC2J1NJUDMnNeV36gw
-         0HoUCbNA7ndu4uoPcZJMKsXRsx4Ey0rsOcgfdYYlnydd61PeVK0MWm5/c1LVxKG4jier
-         0vVF1ZTDRqlRRyU1ZPqrpmntql4MmDf6xeDjFMvVhAmUp72TV4unF8Vm1S2kRH2hiiO6
-         u5vu4F9si0NmIp2lSW9lQ+eDLEFzpGL7xdExyJLMjAaHCtUEIyfESBTPPBPYcYqaHVoX
-         2oYj1TOCq567HjcVxKETfp1fHIT7YugwMy602iZYSdP6hMh0SE8OnCmSqski6bKv3qRP
-         qZvA==
+        b=qoeSnGy3Vi8xSwg6hvb6ah3GArPANt9bCz7rmTEqy4wkqwY+PIZBfOhN8lAqdmtTjE
+         mjuoGNVqjyW1uuhSGqUEWK1XiQ8D2gGe7CQRJxY0odllTM1AxyPjoMwqgigpilF5I6EF
+         pKaMpJkLcP9pPi2J3SIia3CCAPufBc+c66m+nh2ZRKkjQrXyUtA14JV3D9BB6oQz3W0e
+         dKZm1G+NXxRl5/EDqm/c8/g5gWF8coygWwap5x2KIrFQWWd78Cl6U/pz9I0u21V6labv
+         94NhiAEaCxlt0aVNfUCRzR343iaZuWgz9uGOgbUIv0F9epPC5TDXJYuqk7Jk6JuXuxTr
+         MGMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=hQHYPIVnOZUsy0WvDQICaa/+QkofvyLnQV5hRx/K5y4=;
-        b=YL+sKhQiVeda0sCpM3za12naakHCkMEkl6CPHLfmKd8LZneOG58ZKG6LF5mAZ933om
-         aFjgDFmsDFvH7MGosxUKktRmIBgmdvpUgkQHG0/FqcvWx7FtP0+tLYsUxWDYXkmm2Qs+
-         c4s8zgUUqwuRTKHUptCoN4uzsjsg2CQ35kiubAaSfXdtj855l6ByKLeUJJcIBKlJ0qyF
-         HzwI848INUl4PW4xn9ONZhYowpuJJKFvirBtPFkpkuOvRcIoopHqsixy7g/E7wbWiP/C
-         py2yWHQOAWU+8kXvTrbYvSkChf62UtctV2iOfcs/OLP9wfDc/N8Fr99TbosPchwtinQg
-         JcVw==
+        bh=WdpVhJl7PHM5XouF/F1etdV62yGyC4doJFh2uBAg9dE=;
+        b=mv+U/kreVFcUZenv8FLabR+lY6F0csohEg0UcLgXckU1Vh3X+HUdLV5aULFmIrnLmk
+         AFwrjc74NRluERG/zLU4/ThzTGnHFhhUisNbG7I5X+0EOSprhI0Fc3/1tcoAnGiF/Xvf
+         cAIPAEjrPmY9xpSLUDXKTrG/t5jO55Y0uSF5xcj96ZdjOnOan/EgDIhv1UwM2OvlYm5l
+         L+h+hWH5h556U+ePXYM/XykGEgXeOd8NRQf+dkBIrkERcLCmdRFYVoorXqfDVqXtGwl2
+         Y6jvezMeAiYNXquC6oGkH4CdikRSwocRpItMVoMHONpSU8caBp/0JCnpCTXGqWxW18Q/
+         eRNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Z6oz4wtz;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=dhUlnbYL;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Z6oz4wtz;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=dhUlnbYL;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -34,120 +34,239 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
         bhe@redhat.com
-Subject: [v5 3/6] mm: add uninitialized struct page poisoning sanity checking
-Date: Tue, 27 Feb 2018 22:03:05 -0500
-Message-Id: <20180228030308.1116-4-pasha.tatashin@oracle.com>
+Subject: [v5 6/6] mm/memory_hotplug: optimize memory hotplug
+Date: Tue, 27 Feb 2018 22:03:08 -0500
+Message-Id: <20180228030308.1116-7-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180228030308.1116-1-pasha.tatashin@oracle.com>
 References: <20180228030308.1116-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=65 spamscore=0 mlxscore=0 mlxlogscore=699
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802280034
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593612248407323654?=
-X-GMAIL-MSGID: =?utf-8?q?1593612248407323654?=
+X-GMAIL-THRID: =?utf-8?q?1593612193900570371?=
+X-GMAIL-MSGID: =?utf-8?q?1593612193900570371?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-During boot we poison struct page memory in order to ensure that no one is
-accessing this memory until the struct pages are initialized in
-__init_single_page().
+During memory hotplugging we traverse struct pages three times:
 
-This patch adds more scrutiny to this checking by making sure that flags
-do not equal the poison pattern when they are accessed.  The pattern is all
-ones.
+1. memset(0) in sparse_add_one_section()
+2. loop in __add_section() to set do: set_page_node(page, nid); and
+   SetPageReserved(page);
+3. loop in memmap_init_zone() to call __init_single_pfn()
 
-Since node id is also stored in struct page, and may be accessed quite
-early, we add this enforcement into page_to_nid() function as well.
-Note, this is applicable only when NODE_NOT_IN_PAGE_FLAGS=n
+This patch removes the first two loops, and leaves only loop 3. All struct
+pages are initialized in one place, the same as it is done during boot.
+
+The benefits:
+- We improve memory hotplug performance because we are not evicting the
+  cache several times and also reduce loop branching overhead.
+
+- Remove condition from hotpath in __init_single_pfn(), that was added in
+  order to fix the problem that was reported by Bharata in the above email
+  thread, thus also improve performance during normal boot.
+
+- Make memory hotplug more similar to the boot memory initialization path
+  because we zero and initialize struct pages only in one function.
+
+- Simplifies memory hotplug struct page initialization code, and thus
+  enables future improvements, such as multi-threading the initialization
+  of struct pages in order to improve hotplug performance even further on
+  larger machines.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
 ---
- include/linux/mm.h         |  4 +++-
- include/linux/page-flags.h | 22 +++++++++++++++++-----
- mm/memblock.c              |  2 +-
- 3 files changed, 21 insertions(+), 7 deletions(-)
+ drivers/base/node.c    |  2 ++
+ include/linux/memory.h |  1 +
+ mm/memory_hotplug.c    | 27 ++++++++-------------------
+ mm/page_alloc.c        | 28 ++++++++++------------------
+ mm/sparse.c            |  8 +++++++-
+ 5 files changed, 28 insertions(+), 38 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42adb1a..ad71136a6494 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -896,7 +896,9 @@ extern int page_to_nid(const struct page *page);
- #else
- static inline int page_to_nid(const struct page *page)
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index d7cfc8d8a5c5..51de4af290ac 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -405,6 +405,8 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+ 
+ 	if (!mem_blk)
+ 		return -EFAULT;
++
++	mem_blk->nid = nid;
+ 	if (!node_online(nid))
+ 		return 0;
+ 
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index 9f8cd856ca1e..31ca3e28b0eb 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -33,6 +33,7 @@ struct memory_block {
+ 	void *hw;			/* optional pointer to fw/hw data */
+ 	int (*phys_callback)(struct memory_block *);
+ 	struct device dev;
++	int nid;			/* NID for this memory block */
+ };
+ 
+ int arch_get_memory_phys_device(unsigned long start_pfn);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 477e183a4ac7..6a9ba14e18ed 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -250,7 +250,6 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 		struct vmem_altmap *altmap, bool want_memblock)
  {
--	return (page->flags >> NODES_PGSHIFT) & NODES_MASK;
-+	struct page *p = (struct page *)page;
+ 	int ret;
+-	int i;
+ 
+ 	if (pfn_valid(phys_start_pfn))
+ 		return -EEXIST;
+@@ -259,23 +258,6 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/*
+-	 * Make all the pages reserved so that nobody will stumble over half
+-	 * initialized state.
+-	 * FIXME: We also have to associate it with a node because page_to_nid
+-	 * relies on having page with the proper node.
+-	 */
+-	for (i = 0; i < PAGES_PER_SECTION; i++) {
+-		unsigned long pfn = phys_start_pfn + i;
+-		struct page *page;
+-		if (!pfn_valid(pfn))
+-			continue;
+-
+-		page = pfn_to_page(pfn);
+-		set_page_node(page, nid);
+-		SetPageReserved(page);
+-	}
+-
+ 	if (!want_memblock)
+ 		return 0;
+ 
+@@ -908,8 +890,15 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	int nid;
+ 	int ret;
+ 	struct memory_notify arg;
++	struct memory_block *mem;
 +
-+	return (PF_POISONED_CHECK(p)->flags >> NODES_PGSHIFT) & NODES_MASK;
++	/*
++	 * We can't use pfn_to_nid() because nid might be stored in struct page
++	 * which is not yet initialized. Instead, we find nid from memory block.
++	 */
++	mem = find_memory_block(__pfn_to_section(pfn));
++	nid = mem->nid;
+ 
+-	nid = pfn_to_nid(pfn);
+ 	/* associate pfn range with the zone */
+ 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb416723538f..8bf3b9c215c1 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1181,10 +1181,9 @@ static void free_one_page(struct zone *zone,
  }
+ 
+ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+-				unsigned long zone, int nid, bool zero)
++				unsigned long zone, int nid)
+ {
+-	if (zero)
+-		mm_zero_struct_page(page);
++	mm_zero_struct_page(page);
+ 	set_page_links(page, zone, nid, pfn);
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+@@ -1198,12 +1197,6 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ #endif
+ }
+ 
+-static void __meminit __init_single_pfn(unsigned long pfn, unsigned long zone,
+-					int nid, bool zero)
+-{
+-	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid, zero);
+-}
+-
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ static void __meminit init_reserved_page(unsigned long pfn)
+ {
+@@ -1222,7 +1215,7 @@ static void __meminit init_reserved_page(unsigned long pfn)
+ 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
+ 			break;
+ 	}
+-	__init_single_pfn(pfn, zid, nid, true);
++	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+ }
+ #else
+ static inline void init_reserved_page(unsigned long pfn)
+@@ -1539,7 +1532,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
+ 		} else {
+ 			page++;
+ 		}
+-		__init_single_page(page, pfn, zid, nid, true);
++		__init_single_page(page, pfn, zid, nid);
+ 		nr_pages++;
+ 	}
+ 	return (nr_pages);
+@@ -5332,6 +5325,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 	pg_data_t *pgdat = NODE_DATA(nid);
+ 	unsigned long pfn;
+ 	unsigned long nr_initialised = 0;
++	struct page *page;
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	struct memblock_region *r = NULL, *tmp;
+ #endif
+@@ -5393,6 +5387,11 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
  #endif
  
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 50c2b8786831..e34a27727b9a 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -156,9 +156,18 @@ static __always_inline int PageCompound(struct page *page)
- 	return test_bit(PG_head, &page->flags) || PageTail(page);
- }
- 
-+#define	PAGE_POISON_PATTERN	-1l
-+static inline int PagePoisoned(const struct page *page)
-+{
-+	return page->flags == PAGE_POISON_PATTERN;
-+}
+ not_early:
++		page = pfn_to_page(pfn);
++		__init_single_page(page, pfn, zone, nid);
++		if (context == MEMMAP_HOTPLUG)
++			SetPageReserved(page);
 +
- /*
-  * Page flags policies wrt compound pages
-  *
-+ * PF_POISONED_CHECK
-+ *     check if this struct page poisoned/uninitialized
-+ *
-  * PF_ANY:
-  *     the page flag is relevant for small, head and tail pages.
-  *
-@@ -176,17 +185,20 @@ static __always_inline int PageCompound(struct page *page)
-  * PF_NO_COMPOUND:
-  *     the page flag is not relevant for compound pages.
-  */
--#define PF_ANY(page, enforce)	page
--#define PF_HEAD(page, enforce)	compound_head(page)
-+#define PF_POISONED_CHECK(page) ({					\
-+		VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);		\
-+		page; })
-+#define PF_ANY(page, enforce)	PF_POISONED_CHECK(page)
-+#define PF_HEAD(page, enforce)	PF_POISONED_CHECK(compound_head(page))
- #define PF_ONLY_HEAD(page, enforce) ({					\
- 		VM_BUG_ON_PGFLAGS(PageTail(page), page);		\
--		page;})
-+		PF_POISONED_CHECK(page); })
- #define PF_NO_TAIL(page, enforce) ({					\
- 		VM_BUG_ON_PGFLAGS(enforce && PageTail(page), page);	\
--		compound_head(page);})
-+		PF_POISONED_CHECK(compound_head(page)); })
- #define PF_NO_COMPOUND(page, enforce) ({				\
- 		VM_BUG_ON_PGFLAGS(enforce && PageCompound(page), page);	\
--		page;})
-+		PF_POISONED_CHECK(page); })
- 
- /*
-  * Macros to create function definitions for page flags
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 5a9ca2a1751b..d85c8754e0ce 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1373,7 +1373,7 @@ void * __init memblock_virt_alloc_try_nid_raw(
- 					   min_addr, max_addr, nid);
- #ifdef CONFIG_DEBUG_VM
- 	if (ptr && size > 0)
--		memset(ptr, 0xff, size);
-+		memset(ptr, PAGE_POISON_PATTERN, size);
- #endif
- 	return ptr;
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
+ 		 * movable at startup. This will force kernel allocations
+@@ -5409,15 +5408,8 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		 * because this is done early in sparse_add_one_section
+ 		 */
+ 		if (!(pfn & (pageblock_nr_pages - 1))) {
+-			struct page *page = pfn_to_page(pfn);
+-
+-			__init_single_page(page, pfn, zone, nid,
+-					context != MEMMAP_HOTPLUG);
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+ 			cond_resched();
+-		} else {
+-			__init_single_pfn(pfn, zone, nid,
+-					context != MEMMAP_HOTPLUG);
+ 		}
+ 	}
  }
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 7af5e7a92528..775e1a4fd95e 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -816,7 +816,13 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+ 		goto out;
+ 	}
+ 
+-	memset(memmap, 0, sizeof(struct page) * PAGES_PER_SECTION);
++#ifdef CONFIG_DEBUG_VM
++	/*
++	 * Poison uninitialized struct pages in order to catch invalid flags
++	 * combinations.
++	 */
++	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
++#endif
+ 
+ 	section_mark_present(ms);
+ 
 -- 
 2.16.2
