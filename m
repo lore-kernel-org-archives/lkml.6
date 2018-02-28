@@ -1,75 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeB1G22 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:28:28 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44148 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751646AbeB1G21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:28:27 -0500
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
- <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
- <20180226223252-mutt-send-email-mst@kernel.org>
- <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
- <20180227190703-mutt-send-email-mst@kernel.org>
- <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
- <20180228060845-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
-Date: Wed, 28 Feb 2018 14:28:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180228060845-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1751973AbeB1G34 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:29:56 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39834 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751689AbeB1G3z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:29:55 -0500
+X-Google-Smtp-Source: AG47ELvzVz/VmIFibdEqNuDbcdcSyhvsqc8wZbRuIDPE/DuYyFdaNyI9crAQy2GmKv5E3tDA3MChIw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: geert@linux-m68k.org, mingo@kernel.org, arnd@arndb.de
+Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, baolin.wang@linaro.org
+Subject: [PATCH] m68k: Use read_persistent_clock64() instead of read_persistent_clock()
+Date: Wed, 28 Feb 2018 14:29:12 +0800
+Message-Id: <d4493391d55b44b53da4a7c4a7fd9b865b5d57cd.1519799224.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since struct timespec is not y2038 safe on 32bit machines, this patch
+converts read_persistent_clock() to read_persistent_clock64() using
+struct timespec64, as well as converting mktime() to mktime64().
 
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ arch/m68k/kernel/time.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 2018年02月28日 12:09, Michael S. Tsirkin wrote:
->>> Or we can add plist to a union:
->>>
->>>
->>> struct sk_buff {
->>>           union {
->>>                   struct {
->>>                           /* These two members must be first. */
->>>                           struct sk_buff          *next;
->>>                           struct sk_buff          *prev;
->>>                           union {
->>>                                   struct net_device       *dev;
->>>                                   /* Some protocols might use this space to store information,
->>>                                    * while device pointer would be NULL.
->>>                                    * UDP receive path is one user.
->>>                                    */
->>>                                   unsigned long           dev_scratch;
->>>                           };
->>>                   };
->>>                   struct rb_node  rbnode; /* used in netem & tcp stack */
->>> +		struct plist plist; /* For use with ptr_ring */
->>>           };
->>>
->> This look ok.
->>
->>>> For XDP, we need to embed plist in struct xdp_buff too,
->>> Right - that's pretty straightforward, isn't it?
->> Yes, it's not clear to me this is really needed for XDP consider the lock
->> contention it brings.
->>
->> Thanks
-> The contention is only when the ring overflows into the list though.
->
-
-Right, but there's usually a mismatch of speed between producer and 
-consumer. In case of a fast producer, we may get this contention very 
-frequently.
-
-Thanks
+diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
+index 87160b4..8cd79c9 100644
+--- a/arch/m68k/kernel/time.c
++++ b/arch/m68k/kernel/time.c
+@@ -71,7 +71,7 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
+ 	return IRQ_HANDLED;
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	struct rtc_time time;
+ 	ts->tv_sec = 0;
+@@ -82,7 +82,7 @@ void read_persistent_clock(struct timespec *ts)
+ 
+ 		if ((time.tm_year += 1900) < 1970)
+ 			time.tm_year += 100;
+-		ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
++		ts->tv_sec = mktime64(time.tm_year, time.tm_mon, time.tm_mday,
+ 				      time.tm_hour, time.tm_min, time.tm_sec);
+ 	}
+ }
+-- 
+1.7.9.5
