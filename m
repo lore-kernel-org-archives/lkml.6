@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-620147-1519838095-2-13867532329736149780
+X-Cyrus-Session-Id: sloti22d1t05-620147-1519838090-2-10444202797371816104
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838095; b=PwBQDXWdQTGptOwVBDqnj5YuM9XEqLTC5jeQYOwGBYr9GTp
-    y6HV8MP2Q+sADq3QJmI61B+WbxEgpSX9wWt9TBX+nP7Zo7QfD1ffBl2e9zcNC3Sd
-    hBX/fTpNWGnnlZaxQJU43R6lyTpPImIpcFUruXYSpemZBR9+ZFZLH9v7i1j4MbgI
-    37Xm0hcRfYOMXNSXqndJY7/X+1nChZ5w9c8ZnmdHwpALT7lQXBkS6tSdFWTFAYNK
-    7N7nN3vO3PpIIdMFJFCzbU/n+FtxZcY5LWcXDQNBWWtLmnQW/giGqfyRfNMGkIQb
-    08V2n9B6cT4HJCwnkfayDImM8MXSi58jOivo7Xg==
+    t=1519838089; b=Dg23wdA3xu1Do4zfE6Z/0wRMXyU11l1pCfmqsA2VSCWPipz
+    /MRojoBtdXGiYi9RyFHegJ2qBUAk7CAKxoAM1duVH6+UWORaDGjtfrIHqMP8A94t
+    Jzjd1PbGNJ+51maXMr/0jn8BpVqZB+YJVpbyDQJ/32qhY83TGCuANfXnl29ktdUb
+    ZF47RGY1Y7Ge9ikY0IGxf9bvKS8dOmt2lPSAxxaHI4DqllUJFOdjBOBHIFZmPXm9
+    LKhIzMuRjcc2UVnebf9vt2hVtp2wqCLY/EO9qLSHSLSh3Ti74H/GphUHwcoPkcPC
+    sSINPOX4aLcGe5ydybio3DesUn6ojIbT07Fha0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838095; bh=6ON8dcuvrEb/l3JdYLM
-    L/5Lo2dTNx598FCGgTse0AY0=; b=tKWjS92RN9BO1oVfMHhJ6WYpYzhV4d851eE
-    3RiNYOFS/w2/0Bpfp/C2Rx9s+WjLmjg2cOrKuJ0fFgsSYp/dJscqWj49S3FYOtJq
-    NnEdi5A7T1Ll6NBUMpNsv41vtfUSCTqV+xb5NrwFKCYaKTunnhSiBWf37Pch0ki8
-    Rxvu8ejB8iufetXoSSAR7ibSejJU1lOLx0bKZGgnJTTjU1RaG/YTeNOR7Bp10GKu
-    qwO7WNKMwaeQxonccPITgWiG0fReNdRiDFr6oUolT+PR6Kl5BffKWezgUvMp86d/
-    xh0K0bkE1NMGcRVVjZdENSjuHBI29gE0Yy2JgKrlx7+YmRotEEA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838089; bh=+z/jt2lQBQ/SJ9gPEyX
+    8ZJhTdYGuOsCBXZEMjNT4850=; b=m0SjdTb0hzREtHsMUN/FfxKidNvU2Pyf6hG
+    aKxwMS8QaoMDrCYTcmw5U+gqd0cMAbpVj8am0etY6piWIGKlqxtkZswSsoV7ARJj
+    42KFiuFIORWdNr/rrxc4O6Rvgm47tfSVZ7d2mn+pXqPZ0FDAvynqYvEmSi5fp3sf
+    ivAzTweabpCeprtXBNkauOUFqE+efvVZAezDrMhUrwB8c89FGkWESeCf+30yJxE/
+    8mB/EHL5djgtgJucZqzJKUeXssqTEWmgQzN9WihgPqFd+9OO8FtI0nIe0Rkm6Mi8
+    vUmsYModAheyKbDLaW+hJ8VypgfChIc+SWerYUXVXTwLnpRfysQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,23 +47,27 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933368AbeB1Psg (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:48:36 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34264 "EHLO
+        id S932878AbeB1ROg (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:14:36 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34267 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933174AbeB1Psf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:48:35 -0500
+        by vger.kernel.org with ESMTP id S932362AbeB1Psh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:48:37 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC: akpm@linux-foundation.org,
+        "Gregory CLEMENT" <gregory.clement@free-electrons.com>,
+        "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
+        "Andrew Lunn" <andrew@lunn.ch>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.121827452@decadent.org.uk>
+Message-ID: <lsq.1519831218.884090596@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 177/254] ALSA: aloop: Fix racy hw constraints adjustment
+Subject: [PATCH 3.16 173/254] ARM: dts: kirkwood: fix pin-muxing of MPP7
+ on OpenBlocks A7
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -78,146 +82,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-commit 898dfe4687f460ba337a01c11549f87269a13fa2 upstream.
+commit 56aeb07c914a616ab84357d34f8414a69b140cdf upstream.
 
-The aloop driver tries to update the hw constraints of the connected
-target on the cable of the opened PCM substream.  This is done by
-adding the extra hw constraints rules referring to the substream
-runtime->hw fields, while the other substream may update the runtime
-hw of another side on the fly.
+MPP7 is currently muxed as "gpio", but this function doesn't exist for
+MPP7, only "gpo" is available. This causes the following error:
 
-This is, however, racy and may result in the inconsistent values when
-both PCM streams perform the prepare concurrently.  One of the reason
-is that it overwrites the other's runtime->hw field; which is not only
-racy but also broken when it's called before the open of another side
-finishes.  And, since the reference to runtime->hw isn't protected,
-the concurrent write may give the partial value update and become
-inconsistent.
+kirkwood-pinctrl f1010000.pin-controller: unsupported function gpio on pin mpp7
+pinctrl core: failed to register map default (6): invalid type given
+kirkwood-pinctrl f1010000.pin-controller: error claiming hogs: -22
+kirkwood-pinctrl f1010000.pin-controller: could not claim hogs: -22
+kirkwood-pinctrl f1010000.pin-controller: unable to register pinctrl driver
+kirkwood-pinctrl: probe of f1010000.pin-controller failed with error -22
 
-This patch is an attempt to fix and clean up:
-- The prepare doesn't change the runtime->hw of other side any longer,
-  but only update the cable->hw that is referred commonly.
-- The extra rules refer to the loopback_pcm object instead of the
-  runtime->hw.  The actual hw is deduced from cable->hw.
-- The extra rules take the cable_lock to protect against the race.
+So the pinctrl driver is not probed, all device drivers (including the
+UART driver) do a -EPROBE_DEFER, and therefore the system doesn't
+really boot (well, it boots, but with no UART, and no devices that
+require pin-muxing).
 
-Fixes: b1c73fc8e697 ("ALSA: snd-aloop: Fix hw_params restrictions and checking")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Back when the Device Tree file for this board was introduced, the
+definition was already wrong. The pinctrl driver also always described
+as "gpo" this function for MPP7. However, between Linux 4.10 and 4.11,
+a hog pin failing to be muxed was turned from a simple warning to a
+hard error that caused the entire pinctrl driver probe to bail
+out. This is probably the result of commit 6118714275f0a ("pinctrl:
+core: Fix pinctrl_register_and_init() with pinctrl_enable()").
+
+This commit fixes the Device Tree to use the proper "gpo" function for
+MPP7, which fixes the boot of OpenBlocks A7, which was broken since
+Linux 4.11.
+
+Fixes: f24b56cbcd9d ("ARM: kirkwood: add support for OpenBlocks A7 platform")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/drivers/aloop.c | 51 +++++++++++++++++++++------------------------------
- 1 file changed, 21 insertions(+), 30 deletions(-)
+ arch/arm/boot/dts/kirkwood-openblocks_a7.dts | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/drivers/aloop.c
-+++ b/sound/drivers/aloop.c
-@@ -307,19 +307,6 @@ static int loopback_trigger(struct snd_p
- 	return 0;
- }
+--- a/arch/arm/boot/dts/kirkwood-openblocks_a7.dts
++++ b/arch/arm/boot/dts/kirkwood-openblocks_a7.dts
+@@ -53,7 +53,8 @@
+ 		};
  
--static void params_change_substream(struct loopback_pcm *dpcm,
--				    struct snd_pcm_runtime *runtime)
--{
--	struct snd_pcm_runtime *dst_runtime;
--
--	if (dpcm == NULL || dpcm->substream == NULL)
--		return;
--	dst_runtime = dpcm->substream->runtime;
--	if (dst_runtime == NULL)
--		return;
--	dst_runtime->hw = dpcm->cable->hw;
--}
--
- static void params_change(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-@@ -331,10 +318,6 @@ static void params_change(struct snd_pcm
- 	cable->hw.rate_max = runtime->rate;
- 	cable->hw.channels_min = runtime->channels;
- 	cable->hw.channels_max = runtime->channels;
--	params_change_substream(cable->streams[SNDRV_PCM_STREAM_PLAYBACK],
--				runtime);
--	params_change_substream(cable->streams[SNDRV_PCM_STREAM_CAPTURE],
--				runtime);
- }
+ 		pinctrl: pin-controller@10000 {
+-			pinctrl-0 = <&pmx_dip_switches &pmx_gpio_header>;
++			pinctrl-0 = <&pmx_dip_switches &pmx_gpio_header
++				     &pmx_gpio_header_gpo>;
+ 			pinctrl-names = "default";
  
- static int loopback_prepare(struct snd_pcm_substream *substream)
-@@ -622,24 +605,29 @@ static unsigned int get_cable_index(stru
- static int rule_format(struct snd_pcm_hw_params *params,
- 		       struct snd_pcm_hw_rule *rule)
- {
--
--	struct snd_pcm_hardware *hw = rule->private;
-+	struct loopback_pcm *dpcm = rule->private;
-+	struct loopback_cable *cable = dpcm->cable;
- 	struct snd_mask m;
+ 			pmx_uart0: pmx-uart0 {
+@@ -85,11 +86,16 @@
+ 			 * ground.
+ 			 */
+ 			pmx_gpio_header: pmx-gpio-header {
+-				marvell,pins = "mpp17", "mpp7", "mpp29", "mpp28",
++				marvell,pins = "mpp17", "mpp29", "mpp28",
+ 					       "mpp35", "mpp34", "mpp40";
+ 				marvell,function = "gpio";
+ 			};
  
- 	snd_mask_none(&m);
--	m.bits[0] = (u_int32_t)hw->formats;
--	m.bits[1] = (u_int32_t)(hw->formats >> 32);
-+	mutex_lock(&dpcm->loopback->cable_lock);
-+	m.bits[0] = (u_int32_t)cable->hw.formats;
-+	m.bits[1] = (u_int32_t)(cable->hw.formats >> 32);
-+	mutex_unlock(&dpcm->loopback->cable_lock);
- 	return snd_mask_refine(hw_param_mask(params, rule->var), &m);
- }
- 
- static int rule_rate(struct snd_pcm_hw_params *params,
- 		     struct snd_pcm_hw_rule *rule)
- {
--	struct snd_pcm_hardware *hw = rule->private;
-+	struct loopback_pcm *dpcm = rule->private;
-+	struct loopback_cable *cable = dpcm->cable;
- 	struct snd_interval t;
- 
--        t.min = hw->rate_min;
--        t.max = hw->rate_max;
-+	mutex_lock(&dpcm->loopback->cable_lock);
-+	t.min = cable->hw.rate_min;
-+	t.max = cable->hw.rate_max;
-+	mutex_unlock(&dpcm->loopback->cable_lock);
-         t.openmin = t.openmax = 0;
-         t.integer = 0;
- 	return snd_interval_refine(hw_param_interval(params, rule->var), &t);
-@@ -648,11 +636,14 @@ static int rule_rate(struct snd_pcm_hw_p
- static int rule_channels(struct snd_pcm_hw_params *params,
- 			 struct snd_pcm_hw_rule *rule)
- {
--	struct snd_pcm_hardware *hw = rule->private;
-+	struct loopback_pcm *dpcm = rule->private;
-+	struct loopback_cable *cable = dpcm->cable;
- 	struct snd_interval t;
- 
--        t.min = hw->channels_min;
--        t.max = hw->channels_max;
-+	mutex_lock(&dpcm->loopback->cable_lock);
-+	t.min = cable->hw.channels_min;
-+	t.max = cable->hw.channels_max;
-+	mutex_unlock(&dpcm->loopback->cable_lock);
-         t.openmin = t.openmax = 0;
-         t.integer = 0;
- 	return snd_interval_refine(hw_param_interval(params, rule->var), &t);
-@@ -718,19 +709,19 @@ static int loopback_open(struct snd_pcm_
- 	/* are cached -> they do not reflect the actual state */
- 	err = snd_pcm_hw_rule_add(runtime, 0,
- 				  SNDRV_PCM_HW_PARAM_FORMAT,
--				  rule_format, &runtime->hw,
-+				  rule_format, dpcm,
- 				  SNDRV_PCM_HW_PARAM_FORMAT, -1);
- 	if (err < 0)
- 		goto unlock;
- 	err = snd_pcm_hw_rule_add(runtime, 0,
- 				  SNDRV_PCM_HW_PARAM_RATE,
--				  rule_rate, &runtime->hw,
-+				  rule_rate, dpcm,
- 				  SNDRV_PCM_HW_PARAM_RATE, -1);
- 	if (err < 0)
- 		goto unlock;
- 	err = snd_pcm_hw_rule_add(runtime, 0,
- 				  SNDRV_PCM_HW_PARAM_CHANNELS,
--				  rule_channels, &runtime->hw,
-+				  rule_channels, dpcm,
- 				  SNDRV_PCM_HW_PARAM_CHANNELS, -1);
- 	if (err < 0)
- 		goto unlock;
++			pmx_gpio_header_gpo: pxm-gpio-header-gpo {
++				marvell,pins = "mpp7";
++				marvell,function = "gpo";
++			};
++
+ 			pmx_gpio_init: pmx-init {
+ 				marvell,pins = "mpp38";
+ 				marvell,function = "gpio";
