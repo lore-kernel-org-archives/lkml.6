@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790690-2-4209652626069784773
+X-Cyrus-Session-Id: sloti22d1t05-3238909-1519790686-2-17045211876496530037
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790690; b=piOdvV5Zk3TYv/NQvUyM6+OJHeMC8lFVYzeXpIya5LoicYo
-    R7p9oZ2nehR0+lkHUIS7dCXKKKJ230oWFIO2loS/fu2yMfmjLUmClto1KfMb+fEb
-    O+LQJVpB5EPd50oukB1kWjo6J2ItPkVrwCCfYHGT/riK64MmSB7FqIPwV9eNWd3T
-    lNHhL+Pkw0ZdUmVtY0rifjILzAWPryPFeSP1x7RtWgHt2aeVW1ESH5V1EZ4PVqcg
-    6V1HMYsgOlLKcwwhupdvoiWu0R8hd6YPZbotFh60GxPK3ioCu6ZvEKsvwS08q0wM
-    U/5wysQOAJ3ZMw+uw+0zzkZgraV+JOrfHXpzIZg==
+    t=1519790685; b=L9b6qY7KzW8WJYsU42QU1hGTxXN0fpN6I3TdRoL6jqfHQHv
+    330CaDjc+DZ7RDmRR88RBYs1M4d+DPOLiSgctsen3pmi/sp73HWGZz8cYwhJU2Hh
+    E525Bpn0oizyv1JlaFK8D/muLw8NNWYzopumlTfje0kezcuTuh1VMXKH+mGjRETt
+    UQbWLCsXHM+4ZnlQf/dyN/aTuh2DPIVVSdZorqbNveWXgmmV8PTEGuL9v1ZCn+x+
+    ZwQeavGUx753JXRQYyXi/nTJfuXk+4uIsQtexET7YXQDgfhVxUnZIqaG2IouNGEo
+    5QP8kqOkze2rpAL/+p+RnqYUs5LDi/UimxXAvUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790690;
-    bh=ei8K/u/Kw0usIbJStlCx/X9r89lOl79D4a+wZXmBbiM=; b=wAtm40ZBAgfA
-    4ogNOzEkI5DHcSnZYG2JpwwGHWwCY1HNoPtjoi3lYn/1P36WNkB0lG18MjmSCSw/
-    J2xxKhTxc89L+bN8yoynSaQ0GrD0DXIrX21u73+eCIMUkjy5yjWQa05vV3UOsXSx
-    SxT3rCeqPI6IO6c26/iQReMizADLC6mftxU8nCdWr53iRQ3HL0C8d8S7+/QjE0Wc
-    DAO8O0vA5XJ++PXJPoZuhXhs6EeY6tOJTJbXaijeME6nYsyZmlwAYRYDS4k3RG1d
-    OJ0Z6e22dWkw6IIMZ2QvWGwyocrvJwKrzP/lsyanQiDcJFBtN79ntcKla37VavO0
-    sb6OlCiJDw==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790685;
+    bh=fBaV2So5mLi7XEyJz2SzruPt01XLduxFQhFmGwjPC28=; b=CPTMYfpqEIrl
+    WroW6q0szUwwCx2ggF9rr1wu4pttfrNK4jpfi1lqzewwAVbeFNbFixunAO3dvSYI
+    UzfgEfsWYqoSE6v1ZFdSLaRzh2sgA8IZFYRI+Nx1zxwQrIWiY6Xv/F2JpsfKOHCZ
+    U5aUibsDRnsFR3XKbUJP3W893WDIO+QKIAt1KmU8g3H7ea1jWvkulIDmh/cytZBw
+    B249RziuiwUU4wmuF3vemt1M0a8kEgxn7DbB4tAb1j9kwd5pJAFpwq0MuF9cTMy/
+    pFuqAlMOaiWdasiOfclanSJYRuto7b9egm2kOgbD8VoDCxK9hU1bg1USV1ZCQNZq
+    /dEl8xo2fw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=CZzvQxfG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=LtkiNWUt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oREu3izv;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YXJ1Y0Uk;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=CZzvQxfG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=LtkiNWUt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oREu3izv;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YXJ1Y0Uk;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeB1D5y (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 22:57:54 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43054 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751811AbeB1D5v (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:57:51 -0500
-X-Google-Smtp-Source: AH8x225/NZ7mzysgfeYj3kn1hWAbvofRNbXpE6bobCK+GVWXabT+4n2gYu8+o9CImYu42riJWcoATA==
+        id S1751982AbeB1D6B (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 22:58:01 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35019 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751942AbeB1D56 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:57:58 -0500
+X-Google-Smtp-Source: AH8x227NNwt59P8zNFltxcKEDfIxLuFyVjMkn1WYR1Yh89ilf5IOVtnz1MLHzpwnHzQvYwaA911tww==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 03/29] arm64: mm: Allocate ASIDs in pairs
-Date: Wed, 28 Feb 2018 11:56:25 +0800
-Message-Id: <1519790211-16582-4-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 04/29] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
+Date: Wed, 28 Feb 2018 11:56:26 +0800
+Message-Id: <1519790211-16582-5-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -78,99 +78,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Will Deacon <will.deacon@arm.com>
 
-commit 0c8ea531b774 upstream.
+commit fc0e1299da54 upstream.
 
-In preparation for separate kernel/user ASIDs, allocate them in pairs
-for each mm_struct. The bottom bit distinguishes the two: if it is set,
-then the ASID will map only userspace.
+In order for code such as TLB invalidation to operate efficiently when
+the decision to map the kernel at EL0 is determined at runtime, this
+patch introduces a helper function, arm64_kernel_unmapped_at_el0, to
+determine whether or not the kernel is mapped whilst running in userspace.
+
+Currently, this just reports the value of CONFIG_UNMAP_KERNEL_AT_EL0,
+but will later be hooked up to a fake CPU capability using a static key.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
 Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
-
-Conflicts:
-	no MMCF_AARCH32 in arch/arm64/include/asm/mmu.h
 ---
- arch/arm64/include/asm/mmu.h |  2 ++
- arch/arm64/mm/context.c      | 25 +++++++++++++++++--------
- 2 files changed, 19 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/mmu.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-index 8d9fce0..49924e5 100644
+index 49924e5..279e75b 100644
 --- a/arch/arm64/include/asm/mmu.h
 +++ b/arch/arm64/include/asm/mmu.h
-@@ -16,6 +16,8 @@
- #ifndef __ASM_MMU_H
- #define __ASM_MMU_H
+@@ -18,6 +18,8 @@
  
-+#define USER_ASID_FLAG	(UL(1) << 48)
+ #define USER_ASID_FLAG	(UL(1) << 48)
+ 
++#ifndef __ASSEMBLY__
 +
  typedef struct {
  	atomic64_t	id;
  	void		*vdso;
-diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
-index efcf1f7..f00f5ee 100644
---- a/arch/arm64/mm/context.c
-+++ b/arch/arm64/mm/context.c
-@@ -39,7 +39,16 @@ static cpumask_t tlb_flush_pending;
+@@ -30,6 +32,11 @@ typedef struct {
+  */
+ #define ASID(mm)	((mm)->context.id.counter & 0xffff)
  
- #define ASID_MASK		(~GENMASK(asid_bits - 1, 0))
- #define ASID_FIRST_VERSION	(1UL << asid_bits)
--#define NUM_USER_ASIDS		ASID_FIRST_VERSION
++static inline bool arm64_kernel_unmapped_at_el0(void)
++{
++	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
++}
 +
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define NUM_USER_ASIDS		(ASID_FIRST_VERSION >> 1)
-+#define asid2idx(asid)		(((asid) & ~ASID_MASK) >> 1)
-+#define idx2asid(idx)		(((idx) << 1) & ~ASID_MASK)
-+#else
-+#define NUM_USER_ASIDS		(ASID_FIRST_VERSION)
-+#define asid2idx(asid)		((asid) & ~ASID_MASK)
-+#define idx2asid(idx)		asid2idx(idx)
-+#endif
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+ extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+@@ -39,4 +46,5 @@ extern void create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
+ 			       pgprot_t prot, bool allow_block_mappings);
+ extern void *fixmap_remap_fdt(phys_addr_t dt_phys);
  
- /* Get the ASIDBits supported by the current CPU */
- static u32 get_cpu_asid_bits(void)
-@@ -104,7 +113,7 @@ static void flush_context(unsigned int cpu)
- 		 */
- 		if (asid == 0)
- 			asid = per_cpu(reserved_asids, i);
--		__set_bit(asid & ~ASID_MASK, asid_map);
-+		__set_bit(asid2idx(asid), asid_map);
- 		per_cpu(reserved_asids, i) = asid;
- 	}
- 
-@@ -159,16 +168,16 @@ static u64 new_context(struct mm_struct *mm, unsigned int cpu)
- 		 * We had a valid ASID in a previous life, so try to re-use
- 		 * it if possible.
- 		 */
--		asid &= ~ASID_MASK;
--		if (!__test_and_set_bit(asid, asid_map))
-+		if (!__test_and_set_bit(asid2idx(asid), asid_map))
- 			return newasid;
- 	}
- 
- 	/*
- 	 * Allocate a free ASID. If we can't find one, take a note of the
--	 * currently active ASIDs and mark the TLBs as requiring flushes.
--	 * We always count from ASID #1, as we use ASID #0 when setting a
--	 * reserved TTBR0 for the init_mm.
-+	 * currently active ASIDs and mark the TLBs as requiring flushes.  We
-+	 * always count from ASID #2 (index 1), as we use ASID #0 when setting
-+	 * a reserved TTBR0 for the init_mm and we allocate ASIDs in even/odd
-+	 * pairs.
- 	 */
- 	asid = find_next_zero_bit(asid_map, NUM_USER_ASIDS, cur_idx);
- 	if (asid != NUM_USER_ASIDS)
-@@ -185,7 +194,7 @@ static u64 new_context(struct mm_struct *mm, unsigned int cpu)
- set_asid:
- 	__set_bit(asid, asid_map);
- 	cur_idx = asid;
--	return asid | generation;
-+	return idx2asid(asid) | generation;
- }
- 
- void check_and_switch_context(struct mm_struct *mm, unsigned int cpu)
++#endif	/* !__ASSEMBLY__ */
+ #endif
 -- 
 2.7.4
