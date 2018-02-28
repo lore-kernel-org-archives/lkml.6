@@ -1,99 +1,120 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvIUWObRtUFDUWpX6IUmniWY0JiWczQyigqvXUkbJz3gumZ1mUJRvuP34C82e5/nz/Za9zx
-ARC-Seal: i=1; a=rsa-sha256; t=1519980966; cv=none;
+Return-Path: <kkamagui@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519849903; cv=none;
         d=google.com; s=arc-20160816;
-        b=HhOYAExT5qCaKAW3oDJt85DYi7CAWe1TYak1FcLjp7q5dbCMxLyxi4yr6fz6KElZV9
-         FOlQs8PqEDbZlAFoxmJYrA2/XJb0yiwYu9f+zszFSEGChIYgWw6Jc7M9VQ7PUV5D9gjc
-         rNZn1g84biG1zHKoEXWPBdbOkhyEvdHfyIYlBXfn3S9wFUECD0WVIH1PUcCegcTnLbxC
-         /q7fRAA/GipBNoBsNZ3Y6hU9ua22PL8mPXYiYauCyf3NAXq+Z+dQlqV6dfuACN8yaw8P
-         WAf5YIeu94gE/mPDI5Z6kD3LbjhKgdUsCYoMS0RbcmIEzmOY5lXQtwhokKRYyftc5Lop
-         XngA==
+        b=ME60vmohveopalW9QjRXzZe1P1aJzXIi1rRKgnU035+GcQtH4pDoyANhoQZWVED5Gx
+         G2Q/qZ80KwvGmdJQxOWJj1O1hGK1Tdho5klhDtQFqJLoT5t0Y7VMiWKY+8URtIwXliqf
+         lc/Oe7+10UhJ6V5bJ9TR0EGTaKcLnrtLq/mwSCYIuEs9rF0suSTfINOWWdTAMf35aqXD
+         FHCacEDmJf3Hc7HW3SLhfWw/fO7gec/klATrihEACi6SnMnHybNqQravvY67NH+/gjeD
+         ALODSdMgQ3nO/09z4aSJEt83ZR2kSXLusLKHg/NTUAnN5SgAIZwgUhdWlaMt1HcBXbVi
+         eVSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=FuMbSUTuauZ7D3T5sDtlvH5Y5Vvf90VpJsO4TVB0Yvo=;
-        b=fAkHAUDjg7wfmrsz6gaN98oEWl4UwpeQ2CrM8bwJQCQAsqJ3ztgXNgdaJxzIgaJyYo
-         cXH/1HAzelSkd8iF1N3s+lH4tK5iLaqU61jCExJO8a4AsYt2iXSFoOyOmErPY5jZNd1D
-         adq7lGhFGyC+GTlWkpjLkwOilWVDvesWa16CLE+cnGmAD4N4pCBH003hlvwfjPbkP6aw
-         0pbDn+hujxXyrxSvFqkXBWAOqHF/kWHM967MFS6nBGV4JIBPEtR+Pj+DMikZ6tirmbPz
-         fnpbdPHG+kt6Ikg/sIEvtHxQ6vW/HJ94tLuVZ+cxbIa+tqmrJVuHWesWdN0NIDhwssU0
-         ZcYA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=hf2Z5V6JSGyVPbid2pfabIGyulMtCJAalxlrd4giEx8=;
+        b=kV3WEyr0RvfbFHgVdVeQB7di3C7TEofVjwPodUlZZNC8ncafJp/UGqk44YSZ5LGlJ5
+         qPQkgnRoiXEAHgCHVrl92vdSv7Hs2A//Qroung4N7Hlhy3WGzTL3qOtHOeoR8ygQ/Hm9
+         hJbFW4MhNMU/HwyOYNf2t+o9o5PKFgmjywXe2Kzaxt6eEBUXdD/VsJB/S1QW4doplukZ
+         6VV45aM1Ui7XcKzZqJ2+1omKYS+oJ9RkGFSusJBxu125ralPD3UiyhxexGrKpFOJt9CN
+         RAk+IrwxPT5CXVdg+elwSyMZKv6/TaHMvYy+8lIJyKm6Cy27tTlct8A+mVkQJUAGEsCz
+         eLsg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=f7Bo4NR3;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ben Gardner <gardner.ben@gmail.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.9 02/56] i2c: designware: must wait for enable
-Date: Fri,  2 Mar 2018 09:50:48 +0100
-Message-Id: <20180302084449.770255417@linuxfoundation.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=f7Bo4NR3;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x224hE2fYPh6Im9LBF+g8BOjTYqbiOkokVmuaoL9oPpztItef1bCs0C18bj0jJlmFHd2aCCE9wg==
+From: Seunghun Han <kkamagui@gmail.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH V2] x86: mce: fix kernel panic when check_interval is changed
+Date: Thu,  1 Mar 2018 05:31:31 +0900
+Message-Id: <20180228203131.3176-1-kkamagui@gmail.com>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
-References: <20180302084449.568562222@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815562317859663?=
-X-GMAIL-MSGID: =?utf-8?q?1593815562317859663?=
+X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
+X-GMAIL-MSGID: =?utf-8?q?1593678132194799669?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+I am Seunghun Han and a senior security researcher at National Security
+Research Institute of South Korea.
 
-------------------
+I found a security issue which can make kernel panic in userspace. After
+analyzing the issue carefully, I found that MCE driver in the kernel has a
+problem which can be occurred in SMP environment.
 
-From: Ben Gardner <gardner.ben@gmail.com>
+The check_interval file in
+/sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
+global timer value for MCE polling. If it is changed by one CPU, MCE driver
+in kernel calls mce_restart() function and broadcasts the event to other
+CPUs to delete and restart MCE polling timer.
 
-commit fba4adbbf670577e605f9ad306629db6031cd48b upstream.
+The __mcheck_cpu_init_timer() function which is called by mce_restart()
+function initializes the mce_timer variable, and the "lock" in mce_timer is
+also reinitialized. If more than one CPU write a specific value to
+check_interval file concurrently, one can initialize the "lock" in mce_timer
+while the others are handling "lock" in mce_timer. This problem causes some
+synchronization errors such as kernel panic and kernel hang.
 
-One I2C bus on my Atom E3845 board has been broken since 4.9.
-It has two devices, both declared by ACPI and with built-in drivers.
+It is a security problem because the attacker can make kernel panic by
+writing a value to the check_interval file in userspace, and it can be used
+for Denial-of-Service (DoS) attack.
 
-There are two back-to-back transactions originating from the kernel, one
-targeting each device. The first transaction works, the second one locks
-up the I2C controller. The controller never recovers.
+To fix this problem, I added a mce_sysfs_mutex to serialize requests.
 
-These kernel logs show up whenever an I2C transaction is attempted after
-this failure.
-i2c-designware-pci 0000:00:18.3: timeout in disabling adapter
-i2c-designware-pci 0000:00:18.3: timeout waiting for bus ready
-
-Waiting for the I2C controller status to indicate that it is enabled
-before programming it fixes the issue.
-
-I have tested this patch on 4.14 and 4.15.
-
-Fixes: commit 2702ea7dbec5 ("i2c: designware: wait for disable/enable only if necessary")
-Cc: linux-stable <stable@vger.kernel.org> #4.13+
-Signed-off-by: Ben Gardner <gardner.ben@gmail.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Ben Gardner <gardner.ben@gmail.com>
-[Jarkko: Backported to v4.9..v4.12 before i2c-designware-core.c was renamed to i2c-designware-master.c]
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
 ---
- drivers/i2c/busses/i2c-designware-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1: add mce_sysfs_mutex according to review result.
 
---- a/drivers/i2c/busses/i2c-designware-core.c
-+++ b/drivers/i2c/busses/i2c-designware-core.c
-@@ -507,7 +507,7 @@ static void i2c_dw_xfer_init(struct dw_i
- 	i2c_dw_disable_int(dev);
+ arch/x86/kernel/cpu/mcheck/mce.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 706584681a4c..bee0795a3b8c 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -55,6 +55,7 @@
+ #include "mce-internal.h"
  
- 	/* Enable the adapter */
--	__i2c_dw_enable(dev, true);
-+	__i2c_dw_enable_and_wait(dev, true);
+ static DEFINE_MUTEX(mce_log_mutex);
++static DEFINE_MUTEX(mce_sysfs_mutex);
  
- 	/* Clear and enable interrupts */
- 	dw_readl(dev, DW_IC_CLR_INTR);
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/mce.h>
+@@ -2045,8 +2046,11 @@ static void mce_enable_ce(void *all)
+ 		return;
+ 	cmci_reenable();
+ 	cmci_recheck();
+-	if (all)
++	if (all) {
++		mutex_lock(&mce_sysfs_mutex);
+ 		__mcheck_cpu_init_timer();
++		mutex_unlock(&mce_sysfs_mutex);
++	}
+ }
+ 
+ static struct bus_type mce_subsys = {
+@@ -2132,8 +2136,14 @@ static ssize_t store_int_with_restart(struct device *s,
+ 				      struct device_attribute *attr,
+ 				      const char *buf, size_t size)
+ {
++	unsigned long old_check_interval = check_interval;
+ 	ssize_t ret = device_store_int(s, attr, buf, size);
++
++	if (check_interval == old_check_interval)
++		return ret;
++	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
++	mutex_unlock(&mce_sysfs_mutex);
+ 	return ret;
+ }
+ 
+-- 
+2.16.2
