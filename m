@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519839388-2-13247371981585165727
+X-Cyrus-Session-Id: sloti22d1t05-667456-1519839385-2-1879006993973992056
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,27 +8,27 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839388; b=G9z55oeyw/7AgvaSz9LvpohOheIrl9P95IMaeKtxXIt1Eia
-    ffhvMd5anvIpB6AJy+1iFB6NMM/Pvf084QuRWd1KftEAvicuVoq2sZtcYGurI79/
-    HR85Gu+yEEXo2UMj6cpE9P3jJUcFPCKU61TGESoHt+3FAiftrPHFOij4pOVdu+N0
-    DHxVt+xWJKEeUyRP8UHwbLOujIYXf5kJp7NC2m79OHxUBL2cYutyEcZwr0pTDPHB
-    HeqTCo5PThowE04MU5spBws6ZapaN7Jlla/vSa5Y8vxe2gSLUjEeAG6Yqk0GPWz0
-    JBdoj75GUBD2dYR4ec4e5UJA6+p/BTqnpJuFx5Q==
+    t=1519839384; b=RjdCrWUjUsKlEgUApBpLXkNDNh15y2Y6Gos8qn34Q5TpU9u
+    Y9dYJ092CNrNZCP/O5bSJW2K2whuYCpO+aurX0TGwHYrLCnAEN9WyLB2/MTPWQzs
+    nHURDTJJpLyiY9VCcz++/Ns+XU0cTHsOZesaNrCgc3BS/+7FSI51C9Ya99rzUupr
+    ewpMGr2DNsYPkQhcfbWJqrbVnAxbuxgR4iKVtlMLgrbsII3rXOfIdm4vB/gPSTZ9
+    R37w1zuZ5Zaqhe5NRQ/rFBRINmbXZ82oCUAjjApjJuvXDzv5CrPWz5Fx5rnwA+f9
+    0RYbVT2qNz868nVdid7fV8criQE5COkfwNmZ9dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839388; bh=wOQJ8lMnIvmIDMq0SH8
-    UqReoeth5G8jfd47kWReg5rc=; b=qmRC4mwGpN5sA72o1zxHZhk3or40fkWy8cZ
-    f1Hg0LvXuu9+UOjjlJT4DFOYhBZtfigt2sRGNYo4h7uVSKIRsJSBaDzYzdg5ebUa
-    IU/gZp2wFv56glx4vOWM7/cNi5EFgG+vC6Ick19nNJpe0fHOb/hgK3mCWyU/aTJk
-    I3TU+qh7YYPV6tx7qlceP4pMKworF96O+zLDumTGPPFy8QKoFAzUflnaLXsgDSlk
-    hRvUNsBSsi6lQ+m6dooKZCuAfNpKwPlhnXAlyAwyBbw+aSptWcsVcNAIoyo8hY2H
-    XozZiWYpd58iJ6txpuFucjg2Rk3t7v6GB9Guowi3EooHpr2QVkg==
+    :sender:list-id; s=arctest; t=1519839384; bh=4dVRTo8UUAzfD5edEFo
+    QKQOl4jlFahlNqVYqZCo+Mo0=; b=CgQpJpLBHlUJ25kecAldX+BpkxZhi/ZMb4a
+    PZ2KZxgelVYegc129Fj82p7f3dRwlk8aeZoOEL0toENJcz0HX/NFJwkO1KYo262H
+    PPyCYvD9j+1CW5+N3QCAcfASUcUvkclbLLt2sUXzo71siy16UippQsd3soC01Y4j
+    6v33jlTxVp4Y9KByPY3TNK31+bzwS6fZe5cunMiLLEZDe60GU/yGOBFYntL9paCK
+    8jmSZFFZAXaKmTSVIe/C1lhEXDDzjOOyyVhDuFfaS48/oQvzv/QsooLL2Daz0OsZ
+    rS3CSVvh/XBam2pgSBe+pU19FGmAFwZSJsECYBM/WlTN0xYngJw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932560AbeB1Rfn (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:35:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33199 "EHLO
+        id S932903AbeB1Rfo (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:35:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33205 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932552AbeB1PWO (ORCPT
+        by vger.kernel.org with ESMTP id S932554AbeB1PWO (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:14 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,16 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
-        "Johannes Berg" <johannes.berg@intel.com>
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        "Jeremi Piotrowski" <jeremi.piotrowski@gmail.com>,
+        "Tianyu Lan" <lantianyu1986@gmail.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Tianyu Lan" <Tianyu.Lan@microsoft.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.981908245@decadent.org.uk>
+Message-ID: <lsq.1519831222.278830417@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 099/140] cfg80211: check dev_set_name() return value
+Subject: [PATCH 3.2 104/140] KVM/x86: Fix wrong macro references of
+ X86_CR0_PG_BIT and X86_CR4_PAE_BIT in kvm_valid_sregs()
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,43 +84,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Tianyu Lan <lantianyu1986@gmail.com>
 
-commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
+commit 37b95951c58fdf08dc10afa9d02066ed9f176fb5 upstream.
 
-syzbot reported a warning from rfkill_alloc(), and after a while
-I think that the reason is that it was doing fault injection and
-the dev_set_name() failed, leaving the name NULL, and we didn't
-check the return value and got to rfkill_alloc() with a NULL name.
-Since we really don't want a NULL name, we ought to check the
-return value.
+kvm_valid_sregs() should use X86_CR0_PG and X86_CR4_PAE to check bit
+status rather than X86_CR0_PG_BIT and X86_CR4_PAE_BIT. This patch is
+to fix it.
 
-Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
-Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-[bwh: Backported to 3.2: adjust context]
+Fixes: f29810335965a(KVM/x86: Check input paging mode when cs.l is set)
+Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -329,6 +329,7 @@ struct wiphy *wiphy_new(const struct cfg
+ arch/x86/kvm/x86.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6174,13 +6174,13 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
  
- 	struct cfg80211_registered_device *rdev;
- 	int alloc_size;
-+	int rv;
- 
- 	WARN_ON(ops->add_key && (!ops->del_key || !ops->set_default_key));
- 	WARN_ON(ops->auth && (!ops->assoc || !ops->deauth || !ops->disassoc));
-@@ -362,7 +363,11 @@ struct wiphy *wiphy_new(const struct cfg
- 	mutex_unlock(&cfg80211_mutex);
- 
- 	/* give it a proper name */
--	dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+	rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+	if (rv < 0) {
-+		kfree(rdev);
-+		return NULL;
-+	}
- 
- 	mutex_init(&rdev->mtx);
- 	mutex_init(&rdev->devlist_mtx);
+ int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+ {
+-	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG_BIT)) {
++	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
+ 		/*
+ 		 * When EFER.LME and CR0.PG are set, the processor is in
+ 		 * 64-bit mode (though maybe in a 32-bit code segment).
+ 		 * CR4.PAE and EFER.LMA must be set.
+ 		 */
+-		if (!(sregs->cr4 & X86_CR4_PAE_BIT)
++		if (!(sregs->cr4 & X86_CR4_PAE)
+ 		    || !(sregs->efer & EFER_LMA))
+ 			return -EINVAL;
+ 	} else {
