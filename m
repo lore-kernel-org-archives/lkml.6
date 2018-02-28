@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834324-2-6909947827478683951
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834312-8-10058509794232706987
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834323; b=TdBaDfbOs3057vw5rypetasiA7rCBAXeg14pnqszGRydm6a
-    +v1bDyhFSse01O8kIJ9wi4iUpWi33OmaSliE0nAfCGaejmmvQ0GrJ5E+h+E+Kb1n
-    /HoNu+RLNNwZgtC8WKPRQ1zYkvwxGkJkWSKY7L1v2OGANGS163gfRow/QIpExsZr
-    7D3CQu7P47EegD3NgWs6C1l32OUUNrYibLROKggqJ9h6MPiXEZq1nk/1Ooggz33N
-    /blThdJ5ZqEVuOq3JIlyMjvm6lWFWnMTMQZiGbdDK+VLW9k5/WF19Q4tpBwCpAe8
-    VvZ5VGnSjdfbs5KxI5zC4DuGGcD0oAbkDvgXRvg==
+    t=1519834312; b=PnmuRXXcnsU0R0uMwJmMiIEqi6gvyxV/ixBAeAm3oQMJRaC
+    rIpRleErkN1xWzRb2FO8Y9XVcWC9U4JfzUjwb/06G0PLduywDR5yBEKbSe9W0oQ5
+    j9UMmlyIfeOuC+dow+BOLjpe88CDe5h0mPn5jJf/n3fu+rgkT5T2Ibg7BE3LdHUA
+    zOepNe8G20jJBUY4U6eMi9AuxpEh+sCO2pMGRnpbnFzVvDoqkbqZNf5yZRiOxL4o
+    WKqfPdr+J7345aTWDGf3wKqKR1yfmATDBi2Vt9uzCc5M2No6obC2ivduAxS6IL+W
+    7NoE4/OiUg0Vycwzg3s1o2RbVmxHgJ7NBMJ3sqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834323; bh=gwWmIRWhU3Ui/4s+Ap2
-    xK2niVgvaKF4QGJEkWdtgdT0=; b=govwIpU8+9puaENwFgdNIC/1Lo8AJ44sVpx
-    rQ8BKAifOYmC1CiXSEdZp0v2W35VxB+Jp15wPKH70BmW+BBse/8wTQ+oAsWymNU3
-    3x7CgA5/Ca12AdE8scP+08nMTFK7S+X22ovje4emrIMSy7VrmB2Ku0SlV1btMptb
-    Quwy1c9iOc3iE4zCULRNQnrts1YG9wEQUMl97ehIHv06UhaZ61KGo6qM6cyLEJX9
-    YSzv5kv6sZmUIRZXFSUxxqzINtxlh1Cy9rBUrhhuQRMfOAq8AhyNP+63dw6peQyo
-    sEe180jBWt3NKeWk4KVgk0ShXC/Gxm6LhXlhxwV8417S45jM4nA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834312; bh=GHwI+yRMBcfsFAZDbaF
+    DF0fYc9PniaGYaQ8nw+SL0xA=; b=I7ShUZmvgL1+stvUiTt5mzi9PlLqCI3xwoE
+    NQa5wlY61lFgnyoV7KdHDlhHfs8smcT7AS4ovIldKiIt0dOKr2ewNCQGi5b2HbBm
+    Ghr0/5R4EHaHcKR0VSPNKyfZMQ20pe8EyTHt+7jC5qYHQ7fIMIksGgWArAI6Ejr9
+    rsmjBPjsC4YLrZ701SjjuwM1fCyat2JdRJgxFpY1cM2z6uPe6JGlWf/G3auHUANO
+    VzZ1Kkyg+UeiUd9yufB0rrWdWeKXITSTQCAViwTTPe7Q5yezumX9Pp4l93Joz92p
+    voRvxEAaw3MEGG0RNq322tI+s7z2NX6hksCK+eKSl/D6rxxkcuA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933333AbeB1QMA (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:12:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35022 "EHLO
+        id S934526AbeB1QIZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:08:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34941 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933269AbeB1QL6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:11:58 -0500
+        by vger.kernel.org with ESMTP id S934474AbeB1QIY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:08:24 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,14 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Christoffer Dall" <christoffer.dall@linaro.org>,
-        "Andre Przywara" <andre.przywara@arm.com>,
-        "Marc Zyngier" <marc.zyngier@arm.com>
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        linux-mips@linux-mips.org, "Ralf Baechle" <ralf@linux-mips.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.180482909@decadent.org.uk>
+Message-ID: <lsq.1519831218.942966468@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 119/254] KVM: arm/arm64: Fix HYP unmapping going off
- limits
+Subject: [PATCH 3.16 099/254] MIPS: math-emu: Define IEEE 754-2008 feature
+ control bits
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,59 +81,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
 
-commit 7839c672e58bf62da8f2f0197fefb442c02ba1dd upstream.
+commit f1f3b7ebac08161761c352fd070cfa07b7b94c54 upstream.
 
-When we unmap the HYP memory, we try to be clever and unmap one
-PGD at a time. If we start with a non-PGD aligned address and try
-to unmap a whole PGD, things go horribly wrong in unmap_hyp_range
-(addr and end can never match, and it all goes really badly as we
-keep incrementing pgd and parse random memory as page tables...).
+Define IEEE 754-2008 feature control bits: FIR.HAS2008, FCSR.ABS2008 and
+FCSR.NAN2008, and update the `_ieee754_csr' structure accordingly.
 
-The obvious fix is to let unmap_hyp_range do what it does best,
-which is to iterate over a range.
+For completeness define FIR.UFRP too.
 
-The size of the linear mapping, which begins at PAGE_OFFSET, can be
-easily calculated by subtracting PAGE_OFFSET form high_memory, because
-high_memory is defined as the linear map address of the last byte of
-DRAM, plus one.
-
-The size of the vmalloc region is given trivially by VMALLOC_END -
-VMALLOC_START.
-
-Reported-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
-[bwh: Backported to 3.16: adjust filename, context]
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/9709/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+[bwh: Backported to 3.16: In cop1Emulate(), keep converting the rounding mode]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/kvm/mmu.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -345,17 +345,15 @@ void free_boot_hyp_pgd(void)
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -136,10 +136,13 @@
+ #define FPU_CSR_COND7	0x80000000	/* $fcc7 */
+ 
+ /*
+- * Bits 18 - 20 of the FPU Status Register will be read as 0,
++ * Bits 22:20 of the FPU Status Register will be read as 0,
+  * and should be written as zero.
   */
- void free_hyp_pgds(void)
- {
--	unsigned long addr;
--
- 	free_boot_hyp_pgd();
+-#define FPU_CSR_RSVD	0x001c0000
++#define FPU_CSR_RSVD	(_ULCAST_(7) << 20)
++
++#define FPU_CSR_ABS2008	(_ULCAST_(1) << 19)
++#define FPU_CSR_NAN2008	(_ULCAST_(1) << 18)
  
- 	mutex_lock(&kvm_hyp_pgd_mutex);
+ /*
+  * X the exception cause indicator
+@@ -687,6 +690,8 @@
+ #define MIPS_FPIR_W		(_ULCAST_(1) << 20)
+ #define MIPS_FPIR_L		(_ULCAST_(1) << 21)
+ #define MIPS_FPIR_F64		(_ULCAST_(1) << 22)
++#define MIPS_FPIR_HAS2008	(_ULCAST_(1) << 23)
++#define MIPS_FPIR_UFRP		(_ULCAST_(1) << 28)
  
- 	if (hyp_pgd) {
--		for (addr = PAGE_OFFSET; virt_addr_valid(addr); addr += PGDIR_SIZE)
--			unmap_range(NULL, hyp_pgd, KERN_TO_HYP(addr), PGDIR_SIZE);
--		for (addr = VMALLOC_START; is_vmalloc_addr((void*)addr); addr += PGDIR_SIZE)
--			unmap_range(NULL, hyp_pgd, KERN_TO_HYP(addr), PGDIR_SIZE);
-+		unmap_range(NULL, hyp_pgd, KERN_TO_HYP(PAGE_OFFSET),
-+			    (uintptr_t)high_memory - PAGE_OFFSET);
-+		unmap_range(NULL, hyp_pgd, KERN_TO_HYP(VMALLOC_START),
-+			    VMALLOC_END - VMALLOC_START);
+ /*
+  * Bits in the MIPS32 Memory Segmentation registers.
+--- a/arch/mips/math-emu/cp1emu.c
++++ b/arch/mips/math-emu/cp1emu.c
+@@ -929,10 +929,12 @@ emul:
+ 					 MIPSInst_RT(ir), value);
  
- 		free_pages((unsigned long)hyp_pgd, pgd_order);
- 		hyp_pgd = NULL;
+ 				/*
+-				 * Don't write reserved bits,
++				 * Don't write unsupported bits,
+ 				 * and convert to ieee library modes
+ 				 */
+-				ctx->fcr31 = (value & ~(FPU_CSR_RSVD | FPU_CSR_RM)) |
++				ctx->fcr31 = (value &
++					      ~(FPU_CSR_RSVD | FPU_CSR_ABS2008 |
++						FPU_CSR_NAN2008 | FPU_CSR_RM)) |
+ 					     modeindex(value);
+ 			}
+ 			if ((ctx->fcr31 >> 5) & ctx->fcr31 & FPU_CSR_ALL_E) {
+--- a/arch/mips/math-emu/ieee754.h
++++ b/arch/mips/math-emu/ieee754.h
+@@ -195,15 +195,17 @@ static inline int ieee754dp_ge(union iee
+  * The control status register
+  */
+ struct _ieee754_csr {
+-	__BITFIELD_FIELD(unsigned pad0:7,
+-	__BITFIELD_FIELD(unsigned nod:1,	/* set 1 for no denormalised numbers */
+-	__BITFIELD_FIELD(unsigned c:1,		/* condition */
+-	__BITFIELD_FIELD(unsigned pad1:5,
++	__BITFIELD_FIELD(unsigned fcc:7,	/* condition[7:1] */
++	__BITFIELD_FIELD(unsigned nod:1,	/* set 1 for no denormals */
++	__BITFIELD_FIELD(unsigned c:1,		/* condition[0] */
++	__BITFIELD_FIELD(unsigned pad0:3,
++	__BITFIELD_FIELD(unsigned abs2008:1,	/* IEEE 754-2008 ABS/NEG.fmt */
++	__BITFIELD_FIELD(unsigned nan2008:1,	/* IEEE 754-2008 NaN mode */
+ 	__BITFIELD_FIELD(unsigned cx:6,		/* exceptions this operation */
+ 	__BITFIELD_FIELD(unsigned mx:5,		/* exception enable  mask */
+ 	__BITFIELD_FIELD(unsigned sx:5,		/* exceptions total */
+ 	__BITFIELD_FIELD(unsigned rm:2,		/* current rounding mode */
+-	;))))))))
++	;))))))))))
+ };
+ #define ieee754_csr (*(struct _ieee754_csr *)(&current->thread.fpu.fcr31))
+ 
