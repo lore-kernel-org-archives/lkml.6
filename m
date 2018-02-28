@@ -1,22 +1,23 @@
 Return-Path: <merlijn@wizzup.org>
-X-Google-Smtp-Source: AG47ELvcGQf/dx8eGPPSQY1GAMG/eft7oHvKrr0+mups1p7ekK2WYfLSe3j7HMhKLxa2qkyO8FNg
-ARC-Seal: i=1; a=rsa-sha256; t=1519779969; cv=none;
+X-Google-Smtp-Source: AG47ELsdUDyn20iuCuPmp0CWWe34s4LygstAuMs6y66kXLWcMFRZ3mlAt7He1fI97BGax485R6xc
+ARC-Seal: i=1; a=rsa-sha256; t=1519779982; cv=none;
         d=google.com; s=arc-20160816;
-        b=EQfjSbKik5rMHKhxvBBxX0b0ZscNE8jvI8Fx5qcaR8HANzqSPogBxGyw/xjicHYN3C
-         8Lt1f/KU+kl5jeUC/ArUlsCiHWf3SzqtiCOXgS7TXv/qMElyTkljY6hbV6SuHMTH0Rou
-         go5Mi7B3hrwLiEMjnZUteuXaAe9dBzpbY8+ZrHltMswh2/XinQbohm1TjnYv0z0+qj1m
-         hbILpZTNqHWteUSD7ybOnEHPJJ/zQd7LWOseCOfSMnh/ZEBq0Edv8hU7p0xBHwDIMnpH
-         xNY972yINvVvoIFtFipu7qPw4ArUNoLvMU/EaI57LCi7EREJKl5d6YHtiP4npcWdBOh/
-         e7UQ==
+        b=k1qPqco/qwswhhEQ/dGAu6TfsS8eHSmwT4bm2MUaHLlyEjpNme9bo4wQtZ605OTYiF
+         jMr3dVysye9uQCOMg5RJKi1thsgYID0MheVHwvBwy+StwUaITNXDLAfblisbpwcq1i/5
+         pBxTg3jRqNTVNuqCWejyOOVJ6vZyCYB2c1Z5UvATkxE69WR3E0Xk5tyrJYLs6+YzMaDC
+         i5YZspe5EKhzMh+34Ch7sCcHjoAkF5qXYNA8QBe9D1yKozNlFQm6KUpvGpvJWQyg0mQX
+         m8OouoaeRfPcbloPmauiE3grq9e5P7Yy6TFG5qTMTI3bNllz2kev8Cx3Rq9vSBNS4oXk
+         OSfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=pbUxWgrB3rq4rLIGVROlSWz+qQVHMq8j388JMG/Y95Y=;
-        b=aaEzyQU06Ocx09DHBsrtxl+GiRDQq4LHLRepL7l9gkDnQHoGhQ9qYUfjPY/9IXs39t
-         CESqmYvQnwL23M2IjP95GTBsxcCfRg6TUS06X8RBmKliRCqNe4qXTSnDGGyPoe9+VJgP
-         LObCnp9yOzTm/VW/2EkRb2tRGAUW1RguFJ7SbYisVSJ5xzcM9D7XY4Eg8NMTjLGxZxtq
-         WQDuQ/CqUpBTgCfQyIz5f4FtBRTtGzOKfj1PdZuh7Mal1aCwV/73yo5S8YqiNH+w108z
-         dS7a7sQmgtaeDNg112kpFrQf1KBBW1J3lghw71tKNsSwd3MRhN9/reC1c+F1bjfaLcWp
-         7eUA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=r5fduV1tUTDk3f0J5UOoeu1OSLS8n+1xQ8IzYCgaToM=;
+        b=vn+cBNStqSyJ6h4ORHTGPxAnrHsvfZMqjt21b9JYieZ8JidWlF6WS8192LVGwb1loi
+         kC/8FXnnTrIg233+5Xti/Gy56jsXfUrk/Lnp1R2GwgH3Yc5yO1ga8g8WOlNCcvVz3Mok
+         GY/ptp7XU7i2jlXR0XiICb0i1gVoWvlFmRuzBFpjKcGPQOjR53r9XFgpXRe18OchgztK
+         MnoddkOBUtR2FnZp35dDDLEd+qivafyt9xOcangqpMbZUCXE0QjVofnr1jh5O14ZVJ6/
+         J+zEcFyDS8PqQyR+pDyQu6XuCO9OJ2ziQ8FlQbEp6sJT7HD+BdNd9duo8FYtBmaIIAmx
+         +w4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 188.165.243.101 is neither permitted nor denied by best guess record for domain of merlijn@wizzup.org) smtp.mailfrom=merlijn@wizzup.org
 Authentication-Results: mx.google.com;
@@ -29,32 +30,144 @@ Cc: merlijn@wizzup.org,
 	Sebastian Reichel <sre@kernel.org>,
 	Liam Breck <kernel@networkimprov.net>,
 	Matt Ranostay <matt.ranostay@konsulko.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/1] power: supply: bq27xxx: Call power_supply_changed on status change
-Date: Wed, 28 Feb 2018 02:04:43 +0100
-Message-Id: <20180228010452.1713-1-merlijn@wizzup.org>
+Subject: [RFC PATCH 1/1] power: supply: bq27xxx: Call power_supply_changed on status change
+Date: Wed, 28 Feb 2018 02:04:44 +0100
+Message-Id: <20180228010452.1713-2-merlijn@wizzup.org>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180228010452.1713-1-merlijn@wizzup.org>
+References: <20180228010452.1713-1-merlijn@wizzup.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593604801076921688?=
-X-GMAIL-MSGID: =?utf-8?q?1593604801076921688?=
+X-GMAIL-MSGID: =?utf-8?q?1593604815086646120?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
+---
+ drivers/power/supply/bq27xxx_battery.c | 59 +++++++++++++++++-----------------
+ include/linux/power/bq27xxx_battery.h  |  1 +
+ 2 files changed, 30 insertions(+), 30 deletions(-)
 
-It seems that bq27xxx_battery_update does not call power_supply_changed when the
-charging status changes, and instead only when the capacity changes.
-
-This can cause considerable delays in reporting charging status changes to
-userspace. This patch turns the battery status reading function into one that
-returns the value directly (as other *_read functions), adds the status to the
-cache, uses the cache when reporting the values and finally will trigger
-power_supply_changed when the charging status changes.
-
-There is still a noticable delay in detecting charger status, but that seems to
-have a different cause.
-
-Cheers,
-Merlijn
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index 0a203672744c..218d153fb431 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -1527,6 +1527,31 @@ static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
+ 	return POWER_SUPPLY_HEALTH_GOOD;
+ }
+ 
++static int bq27xxx_battery_read_status(struct bq27xxx_device_info *di)
++{
++	int status;
++
++	if (di->opts & BQ27XXX_O_ZERO) {
++		if (di->cache.flags & BQ27000_FLAG_FC)
++			status = POWER_SUPPLY_STATUS_FULL;
++		else if (di->cache.flags & BQ27000_FLAG_CHGS)
++			status = POWER_SUPPLY_STATUS_CHARGING;
++		else if (power_supply_am_i_supplied(di->bat) > 0)
++			status = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		else
++			status = POWER_SUPPLY_STATUS_DISCHARGING;
++	} else {
++		if (di->cache.flags & BQ27XXX_FLAG_FC)
++			status = POWER_SUPPLY_STATUS_FULL;
++		else if (di->cache.flags & BQ27XXX_FLAG_DSC)
++			status = POWER_SUPPLY_STATUS_DISCHARGING;
++		else
++			status = POWER_SUPPLY_STATUS_CHARGING;
++	}
++
++	return status;
++}
++
+ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ {
+ 	struct bq27xxx_reg_cache cache = {0, };
+@@ -1547,6 +1572,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			cache.time_to_full = -ENODATA;
+ 			cache.charge_full = -ENODATA;
+ 			cache.health = -ENODATA;
++			cache.status = bq27xxx_battery_read_status(di);
+ 		} else {
+ 			if (di->regs[BQ27XXX_REG_TTE] != INVALID_REG_ADDR)
+ 				cache.time_to_empty = bq27xxx_battery_read_time(di, BQ27XXX_REG_TTE);
+@@ -1559,6 +1585,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			if (di->regs[BQ27XXX_REG_AE] != INVALID_REG_ADDR)
+ 				cache.energy = bq27xxx_battery_read_energy(di);
+ 			cache.health = bq27xxx_battery_read_health(di);
++			cache.status = bq27xxx_battery_read_status(di);
+ 		}
+ 		if (di->regs[BQ27XXX_REG_CYCT] != INVALID_REG_ADDR)
+ 			cache.cycle_count = bq27xxx_battery_read_cyct(di);
+@@ -1570,7 +1597,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			di->charge_design_full = bq27xxx_battery_read_dcap(di);
+ 	}
+ 
+-	if (di->cache.capacity != cache.capacity)
++	if ((di->cache.capacity != cache.capacity) || (di->cache.status != cache.status))
+ 		power_supply_changed(di->bat);
+ 
+ 	if (memcmp(&di->cache, &cache, sizeof(cache)) != 0)
+@@ -1625,34 +1652,6 @@ static int bq27xxx_battery_current(struct bq27xxx_device_info *di,
+ 	return 0;
+ }
+ 
+-static int bq27xxx_battery_status(struct bq27xxx_device_info *di,
+-				  union power_supply_propval *val)
+-{
+-	int status;
+-
+-	if (di->opts & BQ27XXX_O_ZERO) {
+-		if (di->cache.flags & BQ27000_FLAG_FC)
+-			status = POWER_SUPPLY_STATUS_FULL;
+-		else if (di->cache.flags & BQ27000_FLAG_CHGS)
+-			status = POWER_SUPPLY_STATUS_CHARGING;
+-		else if (power_supply_am_i_supplied(di->bat) > 0)
+-			status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+-		else
+-			status = POWER_SUPPLY_STATUS_DISCHARGING;
+-	} else {
+-		if (di->cache.flags & BQ27XXX_FLAG_FC)
+-			status = POWER_SUPPLY_STATUS_FULL;
+-		else if (di->cache.flags & BQ27XXX_FLAG_DSC)
+-			status = POWER_SUPPLY_STATUS_DISCHARGING;
+-		else
+-			status = POWER_SUPPLY_STATUS_CHARGING;
+-	}
+-
+-	val->intval = status;
+-
+-	return 0;
+-}
+-
+ static int bq27xxx_battery_capacity_level(struct bq27xxx_device_info *di,
+ 					  union power_supply_propval *val)
+ {
+@@ -1733,7 +1732,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_STATUS:
+-		ret = bq27xxx_battery_status(di, val);
++		ret = bq27xxx_simple_value(di->cache.status, val);
+ 		break;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+ 		ret = bq27xxx_battery_voltage(di, val);
+diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
+index e6187f524f2c..4f27656045fd 100644
+--- a/include/linux/power/bq27xxx_battery.h
++++ b/include/linux/power/bq27xxx_battery.h
+@@ -49,6 +49,7 @@ struct bq27xxx_reg_cache {
+ 	int flags;
+ 	int power_avg;
+ 	int health;
++	int status;
+ };
+ 
+ struct bq27xxx_device_info {
+-- 
+2.16.2
