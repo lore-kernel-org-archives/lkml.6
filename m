@@ -1,48 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934553AbeB1UTL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 15:19:11 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45996 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934107AbeB1UTJ (ORCPT
+        id S934587AbeB1UTi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 15:19:38 -0500
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:37014 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934107AbeB1UTg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:19:09 -0500
-X-Google-Smtp-Source: AG47ELtvjUkT3OaP0Q6qEtODEpj8D1BEi/8DHK0nPHmmbb7RIyek2sXsCVM085DCMlXljnnOsCvB4NFQI0+VTiNEjiY=
+        Wed, 28 Feb 2018 15:19:36 -0500
+X-Google-Smtp-Source: AG47ELt9IEpTCDjL6jQPBwRt24HsW8hDUu9cFKTjxznFDJQ/0unx/ZWDbttwZveyxVqC/D6LqIYovg==
+Date: Wed, 28 Feb 2018 15:19:35 -0500
+From: Sean Paul <seanpaul@chromium.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        David Airlie <airlied@linux.ie>, David Lechner <david@lechnology.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Meghana Madhyastha <meghana.madhyastha@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tinydrm: add backlight dependency
+Message-ID: <20180228201935.GL223881@art_vandelay>
+References: <20180228134111.2042877-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <c5d81c10-8b92-0a5d-93c2-8b8377b1396f@gmail.com>
-References: <1519844656-16443-1-git-send-email-frowand.list@gmail.com>
- <1519844656-16443-2-git-send-email-frowand.list@gmail.com>
- <CAHp75VfD6Hi0NScdZrYozp9dAqmUUYjcLuPPyRwM31ezxNO2fw@mail.gmail.com> <c5d81c10-8b92-0a5d-93c2-8b8377b1396f@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 28 Feb 2018 22:19:08 +0200
-Message-ID: <CAHp75Vc4jbJqM0=Yy-1SY6E2WhzHOAAcrn1+KE-jT7MWPtWPpA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228134111.2042877-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 9:44 PM, Frank Rowand <frowand.list@gmail.com> wrote:
-> On 02/28/18 11:31, Andy Shevchenko wrote:
->> On Wed, Feb 28, 2018 at 9:04 PM,  <frowand.list@gmail.com> wrote:
+On Wed, Feb 28, 2018 at 02:40:48PM +0100, Arnd Bergmann wrote:
+> Calling devm_of_find_backlight directly means we get a link failure
+> without CONFIG_BACKLIGHT_CLASS_DEVICE:
+> 
+> drivers/gpu/drm/tinydrm/mi0283qt.o: In function `mi0283qt_probe':
+> mi0283qt.c:(.text+0x684): undefined reference to `devm_of_find_backlight'
+> 
+> This adds an explicit Kconfig dependency for it. While I did not
+> observe that failure for st7735r, I assume the same change is needed
+> there for the same reason.
+> 
+> Fixes: d1a2e7004b5e ("drm/tinydrm: Replace tinydrm_of_find_backlight with of_find_backlight")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->> The question is why O(1) is so important? O(log(n)) wouldn't work?
->
-> O(1) is not critical.  It was just a nice side result.
->
->
->> Using radix_tree() I suppose allows to dynamically extend or shrink
->> the cache which would work with DT overlays.
->
-> The memory usage of the phandle cache in this patch is fairly small.
-> The memory overhead of a radix_tree() would not be justified.
+Applied to drm-misc-next, thanks!
 
-OTOH the advantage I mentioned isn't a good argument?
+Sean
+
+> ---
+>  drivers/gpu/drm/tinydrm/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+> index 13339be843bc..4592a5e3f20b 100644
+> --- a/drivers/gpu/drm/tinydrm/Kconfig
+> +++ b/drivers/gpu/drm/tinydrm/Kconfig
+> @@ -23,6 +23,7 @@ config TINYDRM_ILI9225
+>  config TINYDRM_MI0283QT
+>  	tristate "DRM support for MI0283QT"
+>  	depends on DRM_TINYDRM && SPI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+>  	select TINYDRM_MIPI_DBI
+>  	help
+>  	  DRM driver for the Multi-Inno MI0283QT display panel
+> @@ -54,6 +55,7 @@ config TINYDRM_ST7586
+>  config TINYDRM_ST7735R
+>  	tristate "DRM support for Sitronix ST7735R display panels"
+>  	depends on DRM_TINYDRM && SPI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+>  	select TINYDRM_MIPI_DBI
+>  	help
+>  	  DRM driver Sitronix ST7735R with one of the following LCDs:
+> -- 
+> 2.9.0
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Sean Paul, Software Engineer, Google / Chromium OS
