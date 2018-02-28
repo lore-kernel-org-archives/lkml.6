@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932693AbeB1SWo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:22:44 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32869 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeB1SWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:22:42 -0500
-X-Google-Smtp-Source: AG47ELu9FFwTBem1VpOZBCuFkIuToNoTUO3HD/rZ/L0WO3L2viDtzhC7mW4bnPFhYg8OUETUE1Btcw==
-Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
- of_find_node_by_phandle()
-To: Chintan Pandya <cpandya@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
- <ab87b605-6ec4-0b65-89ff-6232c89cb75f@codeaurora.org>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <22ed033d-fd35-7f06-39e3-075c500492b4@gmail.com>
-Date: Wed, 28 Feb 2018 10:22:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932758AbeB1SWz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932126AbeB1SWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 13:22:53 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F11F21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 28 Feb 2018 12:22:52 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 4/6] x86: Consolidate PCI_MMCONFIG configs
+Message-ID: <20180228182252.GG127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1519799691.git.jan.kiszka@siemens.com>
+ <76a05abd818c89032161585ba130511a5bd673f0.1519799691.git.jan.kiszka@siemens.com>
+ <CAHp75Vf35N1Q0aVjKNwz5UMAVKR-q8PypoDhgr8bCbbiqVeSqQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ab87b605-6ec4-0b65-89ff-6232c89cb75f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf35N1Q0aVjKNwz5UMAVKR-q8PypoDhgr8bCbbiqVeSqQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/18 05:27, Chintan Pandya wrote:
-> 
-> 
-> On 2/15/2018 6:22 AM, frowand.list@gmail.com wrote:
-> 
->> +static void of_populate_phandle_cache(void)
->> +{
->> +    unsigned long flags;
->> +    u32 cache_entries;
->> +    struct device_node *np;
->> +    u32 phandles = 0;
->> +
->> +    raw_spin_lock_irqsave(&devtree_lock, flags);
->> +
->> +    kfree(phandle_cache);
->> +    phandle_cache = NULL;
->> +
->> +    for_each_of_allnodes(np)
->> +        if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
->> +            phandles++;
->> +
->> +    cache_entries = roundup_pow_of_two(phandles);
->> +    phandle_cache_mask = cache_entries - 1;
->> +
->> +    phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
->> +                GFP_ATOMIC);
->> +
-> 
-> NULL check of phandle_cache would be good to have.
+On Wed, Feb 28, 2018 at 05:45:37PM +0200, Andy Shevchenko wrote:
+> On Wed, Feb 28, 2018 at 8:34 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> > From: Jan Kiszka <jan.kiszka@siemens.com>
+> >
+> > Not sure if those two worked by design or just by chance so far. In any
+> > case, it's at least cleaner and clearer to express this in a single
+> > config statement.
 
-Thanks for catching that.
+It would be nice if this were a complete statement of what the patch
+does, but without the subject, it's not.  E.g., as I'm composing this
+response in an editor window, I can't see the subject, so it seems
+incomplete.
 
+> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > ---
+> >  arch/x86/Kconfig | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index eb7f43f23521..63e85e7da12e 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -2641,8 +2641,9 @@ config PCI_DIRECT
+> >         depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
+> >
+> >  config PCI_MMCONFIG
+> > -       def_bool y
+> > -       depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
+> > +       bool "Support mmconfig PCI config space access" if X86_64
+> > +       default y
+> > +       depends on PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY || X86_64)
+> 
+> Looking to the above context I would rather put it like
+> 
+> depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY || PCI_GOMMCONFIG))
 
->> +    for_each_of_allnodes(np)
->> +        if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
->> +            phandle_cache[np->phandle & phandle_cache_mask] = np;
->> +
->> +    raw_spin_unlock_irqrestore(&devtree_lock, flags);
->> +}
-> 
-> 
-> Chintan
+The changelog doesn't point out any intended functional change, but I
+think both these proposals add some new configs that previously could
+not occur, e.g.,
+
+  CONFIG_X86_64=y
+  CONFIG_SFI=y
+  # CONFIG_ACPI is unset
+  CONFIG_PCI_MMCONFIG=y
+
+If this is intended, the changelog should mention it.
