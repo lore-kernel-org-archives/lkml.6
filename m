@@ -1,151 +1,268 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuOGx/Q7JvQydMBMNS7fytqRm9t8vZKGvHSCf2Qv1yO2QL6WlQXFpqkpGO/Wn1iHJMqAuV/
-ARC-Seal: i=1; a=rsa-sha256; t=1519676191; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gAXgeJENZGfCbZW/1Y7u1ZkwNMDUe7vcjDZMuE55nC4uvE4vXmSb4OTi2kArn6ySn/
-         GTCkIbgYjpMS+MS1z4kH0l5d/ShaPsN9cR4++52v6VkEG4xj/FBAsxX2iMwcgeSDzuiP
-         lLPtchzRbM2Le2yGzSrQwZ7NoSQ4lA3d8cY1pAa3UHycwMxnwiUUbB+PlSVBApQ9KZk7
-         yvhZXS1MB79+wL6Ix4vClxPRkBrUyKOC9llZwZGcaAKiEV4Vulqs7mQMAFAGT4xjlmaV
-         MHkV0cAHzviS3Blnnwl+bBFA6ZQx9XLl3Xi1TqUoaVBhUZUNScDEPLuQXHXGkYB1EzS8
-         Npog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=IeL4pWsLGG2BDcj+u4ymfXMssTFpCwM3cna4VZYOefo=;
-        b=QJGt9mLG/WHSMEWfXk9hTVKpG8ejgj/KyKv8YLpLN9x0zyaCA2c/2Fi3own1hdepLt
-         POX7DSOjwv8k+IHWoH4vJe6BYoGPDi9Z2LDSys779T3rqf1X4FHbBdx+5af9ZVXBEfRG
-         9U+K7XRH8UW/j8I/OSL2Z+wZvTBG41eXHeb9YWAqg4nBSXAdK0RFqWZsHCFTyoa48BKH
-         aLsgPm3rUVooJqq1HZweA8O9ukLwYjBnCRct1Hj1VZoa4t5SmGnJXHUe9DEc15f5CdIc
-         69NMSKMgDZe89FIwLk07ITdu/iiT5H00hrsqXJtAJN0xvYdi6WBIDfLRi3l0HWGKfyGG
-         PxYg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Krzysztof Piotr Oledzki <ole@ans.pl>
-Subject: [PATCH 4.4 01/22] netfilter: drop outermost socket lock in getsockopt()
-Date: Mon, 26 Feb 2018 21:16:01 +0100
-Message-Id: <20180226201558.768932489@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180226201558.681421374@linuxfoundation.org>
-References: <20180226201558.681421374@linuxfoundation.org>
-User-Agent: quilt/0.65
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4191898-1519819911-2-6553438206598322806
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='iso-8859-1'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519819910; b=C60+OmmOkSYipGybwr34JSVA/NbbDWBV14gy4mhw/fG1u87
+    tSgv1kNfS7FZ2BVZnWkV8uKNHH5r2lTJgNFgepvDAnSx8/EoiqBp3/oAwdWG+2HM
+    a0CZQNAunolSJ5xK7GCYs5jXxDNuuMmERXy/k/sfblnoo3qJv5Kc8bV6G3Sq05dl
+    BhrPoF9raj5GFz/SIUhL9ZivRdvGf/3I1MJg8F3rB7d43mTYYquKrKpOS2nECuA0
+    4i/6sCD1GpgILb/84zSdbVaABqcYz4Sq5SXzSi6E/mcbhkrNhzTEsMTxce8YJ+qJ
+    n3xuMUGsdVh+ZflzmNF82ClBaMHB1lPH741F85g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1519819910; bh=XIMLRcy42s5TFW31mJN/xOCQXKRvS6VYrMW6Nc3lXok=; b=p
+    Gmsmf082vSoaO99eKquzXWFL6KyjlmiS3kp15d0B+M2Ioa8zscjEMULyuXu/YiNf
+    Dpq9qeflkCvDAENu3iLofcwP3rsgMEsc+ovjzIpRYIY7tIirG6GJCkPFXHZH2k1f
+    8/RsVMTPxPQL8DZUsGEzs9lwg+7QDhduuGdZraVhxlSSVEtjtvHd/Wz6CzU29HoJ
+    ycJoWww3PXMxE/G0uSiDH87wy66bfKi3VaWZotiA0ai/yxaZMl7dT5t5MeDthTTV
+    mfB8sr1q9yJNR2UYkbgOitoWLtCkq1jGR4nbPqzvNV6/LjT2fh88YOnZcAcVa/VV
+    vzrLTxjcpmxHCFyQLHt2w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752247AbeB1MJi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 07:09:38 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46304 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeB1MJg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 07:09:36 -0500
+Date: Wed, 28 Feb 2018 13:09:37 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.85
+Message-ID: <20180228120937.GA15533@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495940069905483?=
-X-GMAIL-MSGID: =?utf-8?q?1593495982061197299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Paolo Abeni <pabeni@redhat.com>
+I'm announcing the release of the 4.9.85 kernel.
 
-commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
+All users of the 4.9 kernel series must upgrade.
 
-The Syzbot reported a possible deadlock in the netfilter area caused by
-rtnl lock, xt lock and socket lock being acquired with a different order
-on different code paths, leading to the following backtrace:
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.15.0+ #301 Not tainted
-------------------------------------------------------
-syzkaller233489/4179 is trying to acquire lock:
-  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
-net/core/rtnetlink.c:74
+thanks,
 
-but task is already holding lock:
-  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
-xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
+greg k-h
 
-which lock already depends on the new lock.
-===
+------------
 
-Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
-only in the required scope"), we already acquire the socket lock in
-the innermost scope, where needed. In such commit I forgot to remove
-the outer-most socket lock from the getsockopt() path, this commit
-addresses the issues dropping it now.
+ Makefile                                         |    2=20
+ arch/arm64/kernel/traps.c                        |    2=20
+ arch/x86/entry/entry_64.S                        |   13 ++++
+ arch/x86/oprofile/nmi_int.c                      |    2=20
+ arch/xtensa/mm/init.c                            |   70 ++++++++++++++++++=
+++---
+ crypto/asymmetric_keys/pkcs7_verify.c            |    2=20
+ crypto/asymmetric_keys/public_key.c              |    4 -
+ crypto/asymmetric_keys/restrict.c                |    7 +-
+ drivers/android/binder.c                         |    4 -
+ drivers/dax/dax.c                                |   12 +++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |   58 ++++++++++++++++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       |    2=20
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c              |    5 +
+ drivers/gpu/drm/drm_edid.c                       |    3=20
+ drivers/hid/hid-core.c                           |    3=20
+ drivers/hid/hid-ids.h                            |    3=20
+ drivers/iio/imu/adis_trigger.c                   |    7 +-
+ drivers/iio/industrialio-buffer.c                |    2=20
+ drivers/infiniband/core/umem.c                   |    2=20
+ drivers/infiniband/core/uverbs_main.c            |   27 ++++++--
+ drivers/irqchip/irq-gic-v3.c                     |    2=20
+ drivers/media/v4l2-core/videobuf-dma-sg.c        |    5 -
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c       |   10 ---
+ drivers/nvdimm/bus.c                             |   11 +--
+ drivers/nvdimm/pfn_devs.c                        |   15 +++-
+ drivers/pci/quirks.c                             |   39 +++++++-----
+ drivers/scsi/ibmvscsi/ibmvfc.h                   |    2=20
+ drivers/usb/core/quirks.c                        |    3=20
+ drivers/usb/dwc3/gadget.c                        |    2=20
+ drivers/usb/gadget/function/f_fs.c               |    6 -
+ drivers/usb/host/ohci-hcd.c                      |   10 ++-
+ drivers/usb/host/ohci-hub.c                      |    4 -
+ drivers/usb/host/ohci-q.c                        |   17 +++--
+ drivers/usb/misc/ldusb.c                         |    6 +
+ drivers/usb/musb/musb_host.c                     |    8 --
+ drivers/usb/renesas_usbhs/fifo.c                 |    5 +
+ fs/dax.c                                         |    1=20
+ include/linux/dax.h                              |    5 -
+ include/linux/fs.h                               |   20 ++++++
+ include/linux/kernel.h                           |    1=20
+ include/linux/mm.h                               |   13 ++++
+ kernel/memremap.c                                |   13 ++--
+ mm/frame_vector.c                                |   12 +++
+ mm/gup.c                                         |   64 ++++++++++++++++++=
++++
+ mm/memory.c                                      |   40 +++++++++----
+ net/ipv4/ip_sockglue.c                           |    7 --
+ net/ipv6/ipv6_sockglue.c                         |   10 ---
+ net/mac80211/cfg.c                               |    2=20
+ 48 files changed, 432 insertions(+), 131 deletions(-)
 
-v1 -> v2: fix bad subj, added relavant 'fixes' tag
+AMAN DEEP (1):
+      usb: ohci: Proper handling of ed_rm_list to handle race condition bet=
+ween usb_kill_urb() and finish_unlinks()
 
-Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
-Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
-Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
-Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
-Suggested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Alex Deucher (3):
+      drm/amdgpu: Add dpm quirk for Jet PRO (v2)
+      drm/amdgpu: add atpx quirk handling (v2)
+      drm/amdgpu: Avoid leaking PM domain on driver unbind (v2)
 
----
- net/ipv4/ip_sockglue.c   |    7 +------
- net/ipv6/ipv6_sockglue.c |   10 ++--------
- 2 files changed, 3 insertions(+), 14 deletions(-)
+Arnd Bergmann (2):
+      cfg80211: fix cfg80211_beacon_dup
+      x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1527,10 +1527,7 @@ int ip_getsockopt(struct sock *sk, int l
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
-@@ -1562,9 +1559,7 @@ int compat_ip_getsockopt(struct sock *sk
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
- 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
--		release_sock(sk);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -1340,10 +1340,7 @@ int ipv6_getsockopt(struct sock *sk, int
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET6, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
-@@ -1382,10 +1379,7 @@ int compat_ipv6_getsockopt(struct sock *
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = compat_nf_getsockopt(sk, PF_INET6,
--					   optname, optval, &len);
--		release_sock(sk);
-+		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
+Bin Liu (1):
+      Revert "usb: musb: host: don't start next rx urb if current one faile=
+d"
+
+Casey Leedom (1):
+      PCI/cxgb4: Extend T3 PCI quirk to T4+ devices
+
+Dan Williams (8):
+      libnvdimm: fix integer overflow static analysis warning
+      device-dax: implement ->split() to catch invalid munmap attempts
+      mm: introduce get_user_pages_longterm
+      v4l2: disable filesystem-dax mapping support
+      IB/core: disable memory registration of filesystem-dax vmas
+      libnvdimm, dax: fix 1GB-aligned namespaces vs physical misalignment
+      mm: fail get_vaddr_frames() for filesystem-dax mappings
+      x86/entry/64: Clear extra registers beyond syscall arguments, to redu=
+ce speculation attack surface
+
+Eric Biggers (4):
+      X.509: fix BUG_ON() when hash algorithm is unsupported
+      PKCS#7: fix certificate chain verification
+      binder: add missing binder_unlock()
+      X.509: fix NULL dereference when restricting key with unsupported_sig
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.85
+
+Jack Pham (1):
+      usb: gadget: f_fs: Process all descriptors during bind
+
+Jack Stocker (1):
+      Add delay-init quirk for Corsair K70 RGB keyboards
+
+Jan H. Sch=F6nherr (1):
+      mm: Fix devm_memremap_pages() collision handling
+
+Jan Kara (1):
+      fs/dax.c: fix inefficiency in dax_writeback_mapping_range()
+
+Kai-Heng Feng (2):
+      drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
+      drm/amdgpu: add new device to use atpx quirk
+
+Karsten Koop (1):
+      usb: ldusb: add PIDs for new CASSY devices supported by this driver
+
+Lars-Peter Clausen (1):
+      iio: adis_lib: Initialize trigger before requesting interrupt
+
+Leon Romanovsky (1):
+      RDMA/uverbs: Protect from command mask overflow
+
+Max Filippov (1):
+      xtensa: fix high memory/reserved memory collision
+
+Michael Weiser (1):
+      arm64: Disable unhandled signal log messages by default
+
+Paolo Abeni (1):
+      netfilter: drop outermost socket lock in getsockopt()
+
+Ross Zwisler (1):
+      mm: avoid spurious 'bad pmd' warning messages
+
+Shanker Donthineni (1):
+      irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
+
+Shigeru Yoshida (1):
+      ohci-hcd: Fix race condition caused by ohci_urb_enqueue() and io_watc=
+hdog_func()
+
+Stefan Windfeldt-Prytz (1):
+      iio: buffer: check if a buffer has been set up when poll is called
+
+Thinh Nguyen (1):
+      usb: dwc3: gadget: Set maxpacket size for ep0 IN
+
+Tyrel Datwyler (1):
+      scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
+
+Yoshihiro Shimoda (1):
+      usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
+
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqWnAAACgkQONu9yGCS
+aT6FMhAAv/LD7KNYd/AKHtnk4QPUg50ficUsVF6Q1wt2gzjNh127c8EyUk53w9Hg
+LrNX1av0eoXg+sYm98mM9aFwJNq0zw6/12WTUGGPcp5JIQVDTvXLJ6D5NXcniImo
+0MjIS8UFNPnjl6rE0fbiFIFZMORHJPpvxuAayEN0FURUYszMp14FlfKnVNLjm9rE
+AAVbB5JHp4Fv2l5VFTWGvdHFYIefmlYCoxBKRAXz0nxHEkdBfGq30Dc+D9VUR5ug
+9yItvxEm4Jjd3nIE+SN7/HEky2X/fjc6KBa05FmK7X5hZDHJeHTZwNVCtE4MHhz1
+keKihxMUNQ+yTJR1/cpz71g/YUVOhBhEUTzQ+AAVYhtb7tXpe86VoqJgbkY/hmmJ
+fM0YWD7t3IKZha+W+vRwCThiw8mmUyoVjkPtTbjTg4lWgoFFtwesjg03JOeaEZ4j
+oS9kh87A+LZi1LitomqOWo5uf4tJmZhuyUE6HBPnPAxZKFjjHZP9Vkjnv3BU7Xtb
+gc9YQcUQmraP5rdAVIDfCjxOKRQJJduNYQ41slFVxOR5Os61sPjFdgqsRzxbMlFL
+vKSXLJIhLzj52gGkXwaPxgjZulipQpaLSSNQLk3M9DdKNV1xG9sfdtdXWdodVI9z
+YNky3fNqsXXkVCJVAM8IfyIoQYmBRH70XauGNhK1e2RsnBjMPvA=
+=f2tH
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
