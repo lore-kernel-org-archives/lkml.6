@@ -1,63 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753111AbeB1RTS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:19:18 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:53285 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752887AbeB1RTO (ORCPT
+        id S933386AbeB1RT2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:19:28 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49142 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932947AbeB1RTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:19:14 -0500
-X-ME-Sender: <xms:keSWWpdOBxtUoIV5amNYK9bjCrVZZ3KRe3SVoz3zGbBGLBwTlRSqQg>
-Subject: Re: [PATCH 3/3] mailbox: sunxi-msgbox: Add a new mailbox driver
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Andre Przywara <andre.przywara@arm.com>
-References: <20180228022714.30068-1-samuel@sholland.org>
- <20180228022714.30068-4-samuel@sholland.org>
- <20180228083214.h4oi2kmjjqmoyfhn@flea>
-From: Samuel Holland <samuel@sholland.org>
-Message-ID: <fdf86770-6f45-3b3c-50ea-7a8363894639@sholland.org>
-Date: Wed, 28 Feb 2018 11:19:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 28 Feb 2018 12:19:25 -0500
+Date: Wed, 28 Feb 2018 18:19:21 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Enlightened VMCS support for KVM on Hyper-V
+In-Reply-To: <20180226171121.18974-1-vkuznets@redhat.com>
+Message-ID: <alpine.DEB.2.21.1802281818580.1392@nanos.tec.linutronix.de>
+References: <20180226171121.18974-1-vkuznets@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180228083214.h4oi2kmjjqmoyfhn@flea>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 26 Feb 2018, Vitaly Kuznetsov wrote:
 
-On 02/28/18 02:32, Maxime Ripard wrote:
-> On Tue, Feb 27, 2018 at 08:27:14PM -0600, Samuel Holland wrote:
->> +	/*
->> +	 * The failure path should not disable the clock or assert the reset,
->> +	 * because the PSCI implementation in firmware relies on this device
->> +	 * being functional. Claiming the clock in this driver is required to
->> +	 * prevent Linux from turning it off.
->> +	 */
->> +	ret = clk_prepare_enable(clk);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to enable bus clock: %d\n", ret);
->> +		return ret;
->> +	}
+For the non KVM pats of this series:
+
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+
+
+> Changes since v1:
+> - The only comment I got for v1 was from kbuild test robot. The issue
+>   was addressed by moving HV_X64_ENLIGHTENED_VMCS_RECOMMENDED definition
+>   to PATCH2.
+> - Rebased to current kvm/queue.
 > 
-> You don't need it to be always on though. You only need it to be
-> enabled when you access the registers (on both sides I guess?). So you
-> could very well enable the clock in your registers accessors in Linux,
-> and do the same in the ARISC firmware. That should work.
-
-It does need to always be on because the *PSCI* implementation (ATF) also uses
-SCPI concurrently with Linux (on a separate channel). Turning off the clock
-anywhere in Linux could turn it off in the middle of a PSCI SCPI call on a
-different CPU, causing ATF to hang in EL3 (which would be very bad).
-
-> Maxime
-
-Regards,
-Samuel
+> When running nested KVM on Hyper-V it's possible to use so called
+> 'Enlightened VMCS' and do normal memory reads/writes instead of
+> doing VMWRITE/VMREAD instructions. In addition, clean field mask
+> provides a huge room for optimization on L0's side.
+> 
+> Tight CPUID loop test shows significant speedup (current kvm/queue on
+> E5-2667 v4 @ 3.20GHz):
+>  Before: 20766 cycles
+>  After: 8912 cycles
+> 
+> The series is based on current kvm/queue tree.
+> 
+> Ladi Prosek (1):
+>   x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+>     HV_X64_MSR_VP_ASSIST_PAGE
+> 
+> Vitaly Kuznetsov (4):
+>   x86/hyper-v: allocate and use Virtual Processor Assist Pages
+>   x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+>   x86/hyper-v: detect nested features
+>   x86/kvm: use Enlightened VMCS when running on Hyper-V
+> 
+>  arch/x86/hyperv/hv_init.c          |  33 +++
+>  arch/x86/include/asm/mshyperv.h    |  12 +
+>  arch/x86/include/uapi/asm/hyperv.h | 223 ++++++++++++++-
+>  arch/x86/kernel/cpu/mshyperv.c     |   3 +
+>  arch/x86/kvm/hyperv.c              |   8 +-
+>  arch/x86/kvm/lapic.h               |   2 +-
+>  arch/x86/kvm/vmx.c                 | 561 ++++++++++++++++++++++++++++++++++++-
+>  arch/x86/kvm/x86.c                 |   2 +-
+>  8 files changed, 825 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.14.3
+> 
+> 
