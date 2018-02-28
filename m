@@ -1,82 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeB1Cir (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 21:38:47 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751463AbeB1Ciq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 21:38:46 -0500
-Subject: Re: [PATCH RFC 2/2] vhost: packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <1518575829-1431-1-git-send-email-jasowang@redhat.com>
- <1518575829-1431-3-git-send-email-jasowang@redhat.com>
- <20180227090319.h7hxmxp5rpozrb5s@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <4a77554f-a4ce-a1d7-97c4-ffeb56bf1c90@redhat.com>
-Date: Wed, 28 Feb 2018 10:38:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180227090319.h7hxmxp5rpozrb5s@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1751721AbeB1Cor (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 21:44:47 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:59810 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751605AbeB1Cop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 21:44:45 -0500
+From: Liu Song <liu.song11@zte.com.cn>
+To: richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
+        liu.song11@zte.com.cn
+Subject: [PATCH] fs/UBIFS: make 'sum' definition closer to where it is used
+Date: Wed, 28 Feb 2018 10:42:03 +0800
+Message-Id: <1519785723-105686-1-git-send-email-liu.song11@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-02-28 10:44:44,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-02-28 10:44:32,
+        Serialize complete at 2018-02-28 10:44:32
+X-MAIL: mse01.zte.com.cn w1S2ieNW074802
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Local var sum is only used in one branch, and it may be not used if 
+it is defined outside the branch. Try to move the definition into 
+the branch to make it closer to where it is actually used. 
 
+Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ fs/ubifs/find.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 2018年02月27日 17:03, Tiwei Bie wrote:
-> On Wed, Feb 14, 2018 at 10:37:09AM +0800, Jason Wang wrote:
-> [...]
->> +static void set_desc_used(struct vhost_virtqueue *vq,
->> +			  struct vring_desc_packed *desc, bool wrap_counter)
->> +{
->> +	__virtio16 flags = desc->flags;
->> +
->> +	if (wrap_counter) {
->> +		desc->flags |= cpu_to_vhost16(vq, DESC_AVAIL);
->> +		desc->flags |= cpu_to_vhost16(vq, DESC_USED);
->> +	} else {
->> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_AVAIL);
->> +		desc->flags &= ~cpu_to_vhost16(vq, DESC_USED);
->> +	}
->> +
->> +	desc->flags = flags;
-> The `desc->flags` is restored after the change.
-
-Right, will fix.
-
->> +}
->> +
->> +static int vhost_get_vq_desc_packed(struct vhost_virtqueue *vq,
->> +				    struct iovec iov[], unsigned int iov_size,
->> +				    unsigned int *out_num, unsigned int *in_num,
->> +				    struct vhost_log *log,
->> +				    unsigned int *log_num)
->> +{
->> +	struct vring_desc_packed desc;
->> +	int ret, access, i;
->> +	u16 avail_idx = vq->last_avail_idx;
->> +
->> +	/* When we start there are none of either input nor output. */
->> +	*out_num = *in_num = 0;
->> +	if (unlikely(log))
->> +		*log_num = 0;
->> +
->> +	do {
->> +		unsigned int iov_count = *in_num + *out_num;
->> +
->> +		i = vq->last_avail_idx & (vq->num - 1);
-> The queue size may not be a power of 2 in packed ring.
-
-Will fix this too.
-
-Thanks
-
-> Best regards,
-> Tiwei Bie
+diff --git a/fs/ubifs/find.c b/fs/ubifs/find.c
+index 2dcf3d4..4eb11c1 100644
+--- a/fs/ubifs/find.c
++++ b/fs/ubifs/find.c
+@@ -233,7 +233,7 @@ static const struct ubifs_lprops *scan_for_dirty(struct ubifs_info *c,
+ int ubifs_find_dirty_leb(struct ubifs_info *c, struct ubifs_lprops *ret_lp,
+ 			 int min_space, int pick_free)
+ {
+-	int err = 0, sum, exclude_index = pick_free == 2 ? 1 : 0;
++	int err = 0, exclude_index = pick_free == 2 ? 1 : 0;
+ 	const struct ubifs_lprops *lp = NULL, *idx_lp = NULL;
+ 	struct ubifs_lpt_heap *heap, *idx_heap;
+ 
+@@ -285,6 +285,7 @@ int ubifs_find_dirty_leb(struct ubifs_info *c, struct ubifs_lprops *ret_lp,
+ 	idx_heap = &c->lpt_heap[LPROPS_DIRTY_IDX - 1];
+ 
+ 	if (idx_heap->cnt && !exclude_index) {
++		int sum;
+ 		idx_lp = idx_heap->arr[0];
+ 		sum = idx_lp->free + idx_lp->dirty;
+ 		/*
+-- 
+1.8.3.1
