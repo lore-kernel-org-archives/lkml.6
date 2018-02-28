@@ -1,58 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933618AbeB1RAU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:00:20 -0500
-Received: from foss.arm.com ([217.140.101.70]:54216 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932236AbeB1RAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:00:17 -0500
-Date: Wed, 28 Feb 2018 17:00:12 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Ley Foon Tan <lftan@altera.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        rfi@lists.rocketboards.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] PCI: altera: Fix bool initialization in tlp_read_packet
-Message-ID: <20180228170012.GB14610@e107981-ln.cambridge.arm.com>
-References: <20180120032651.GA14512@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180120032651.GA14512@embeddedgus>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S933872AbeB1RA7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:00:59 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:49104 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932784AbeB1RAz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:00:55 -0500
+Date: Wed, 28 Feb 2018 12:00:53 -0500 (EST)
+Message-Id: <20180228.120053.2191389931116539808.davem@davemloft.net>
+To: fthain@telegraphics.com.au
+Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/2] Fixes, cleanup and modernization for macmace
+ driver
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1519771871.git.fthain@telegraphics.com.au>
+References: <cover.1519771871.git.fthain@telegraphics.com.au>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 19, 2018 at 09:26:51PM -0600, Gustavo A. R. Silva wrote:
-> Bool initializations should use true and false.
-> 
-> This issue was detected with the help of Coccinelle.
-> 
-> Fixes: eaa6111b70a7 ("PCI: altera: Add Altera PCIe host controller driver")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/pci/host/pcie-altera.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Finn Thain <fthain@telegraphics.com.au>
+Date: Tue, 27 Feb 2018 23:22:32 -0500 (EST)
 
-Applied to pci/altera for v4.17, thanks.
+> Changes since v4 of combined patch series:
+> - Removed redundant and non-portable MACH_IS_MAC tests.
+> - Omitted patches unrelated to macmace driver.
 
-Lorenzo
-
-> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-> index 5cc4f59..f9ee090 100644
-> --- a/drivers/pci/host/pcie-altera.c
-> +++ b/drivers/pci/host/pcie-altera.c
-> @@ -156,7 +156,7 @@ static bool altera_pcie_valid_device(struct altera_pcie *pcie,
->  static int tlp_read_packet(struct altera_pcie *pcie, u32 *value)
->  {
->  	int i;
-> -	bool sop = 0;
-> +	bool sop = false;
->  	u32 ctrl;
->  	u32 reg0, reg1;
->  	u32 comp_status = 1;
-> -- 
-> 2.7.4
-> 
+Series applied, thank you.
