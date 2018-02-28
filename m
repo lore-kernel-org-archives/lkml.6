@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519839155-2-6657705638313800314
+X-Cyrus-Session-Id: sloti22d1t05-667456-1519839087-2-12269556402947202087
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839155; b=ZJwdYsEYqKgqWiINUjfAntXLEtEMJvofUMaZZnlCtvzlk5q
-    uU4JMlweaFGuf9v4KefoLRtqoRUm+Fx2TBPeI+K4Lc5jlSZD0dvTzNKhxsqrouZ1
-    60bHAgfebQTIrq785/iypQ5LAJxu20CngudXRo94GiPneYGqfaQnUqPiTOHRdDB1
-    +r3WjYGz354lVo5e3axj5re9zdadS7PA20Zr9kMCMPJlJNfWEFp33MvNdKKY4MNr
-    nO4N/atb2la2hztyA+u9DoUCgjbHD5g8mnaPQU1yt/D7LOlskuVoAoaTqOngCvIK
-    E95ho4eInZNuOoRW/YaQJvQyz5QuvKFdmJlWxSQ==
+    t=1519839086; b=OEPZo9jLsb/ScllAkcD6qbcxnzAG8HFufn97Yyrf2dBgyo7
+    N8UXsG+wEVLDXqghIlPXnA1vceiw7ZIVs7CqVbJZ/ufFpm8XqoOdAYp2Edl2V4M/
+    YVW9BsPebKLmtnXmhyy/dRgbLLP+GMqhW4plg5bJmcu83OAVTtZOuYtOuWLUeNf5
+    4QDf53dQGt02QmFqrjlVfofn38JIvjVnmLP0yYiY2Kj4a3LN0JK2i7y0J1ho1Ef3
+    ebxiV3w6BDXYuGNXxgxiMfu1pEghurwJYJ7mBRiZM362y5qFMKYhDs9qS3YVkh4F
+    iipUcShvmUQo6jTJAjROr2sX7G811gNEb8ROi7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839155; bh=5R7R4L0DfDK/VfEwOKV
-    XeqIhMYNmfuW3NGNEI/B7uHs=; b=SxQQXiAbO84m9NI0Sxjle2O9Wo3rehuBHpm
-    70Jr5K3uIAeA5wtITyx70QJpqvfh0hECSpU1hEvx4Fj9J+v0Z2Y1lBDwj7jaBMX7
-    7nuhohwsDn5iS/oxhSdzhpa3s6YuflL+rNxSMrxuI+iB809XcVruvOUQ0i1mzEeg
-    RfzFbrQqrbDdTqjkd7PNRFNoil/0xjpy+7YBgaAFDYPHsTRuugPjbjbUWaZO9jlL
-    WO95xBcavSx1WpeCegYe10f2wZHC4aiUvsphVfzf6TE+onAmc/SYb8UtGrE2nA6v
-    IiTGT3rBwc0WNyI/I9vt3cfFf0tiR6KlZCmDUDkK9hV7EJYIT9Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839086; bh=4puIHcE39YS212ESGh4
+    dYD/As2lDFUzvO3qlNqHPOtI=; b=uK3N9nt/ubMWzEYfLNofjiy2Ut2pbS1/XEY
+    t9rQg1nl4yTXF2EGFJCP2CtEmLmY5sM8dIETwBhtZI+jMPCznQMHqVhx+3S7wRAo
+    8kPe3D+yVfdpHO+q/KBQ3rUoz6lEco6bqKbSeeyY7vJ/bWSMibs3TieB57NsnXk4
+    HgogxyTqNO6vPsIHScIjezVzq5nKGFcYQrdBbeDh9hFlkx+cUvFJqqJ3Mz/dW2Lh
+    cpB66iRnO18R/J/uy6besmkzMNhDvxas4merSYzZjM0zdgRM4GaGtX/eXX8XHw9q
+    SAS1DC9aQAQjDnagRofTBTHBx0A8RLZkzrMpYWOW0bc7MFxnUEQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933841AbeB1Rba (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:31:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33200 "EHLO
+        id S932342AbeB1RbZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:31:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33229 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932550AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932580AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,12 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Neil Horman" <nhorman@tuxdriver.com>,
+        "Xin Long" <lucien.xin@gmail.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.101901346@decadent.org.uk>
+Message-ID: <lsq.1519831222.541085420@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 096/140] ALSA: pcm: Remove yet superfluous WARN_ON()
+Subject: [PATCH 3.2 100/140] sctp: use the right sk after waking up from
+ wait_buf sleep
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,35 +81,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 23b19b7b50fe1867da8d431eea9cd3e4b6328c2c upstream.
+commit cea0cc80a6777beb6eb643d4ad53690e1ad1d4ff upstream.
 
-muldiv32() contains a snd_BUG_ON() (which is morphed as WARN_ON() with
-debug option) for checking the case of 0 / 0.  This would be helpful
-if this happens only as a logical error; however, since the hw refine
-is performed with any data set provided by user, the inconsistent
-values that can trigger such a condition might be passed easily.
-Actually, syzbot caught this by passing some zero'ed old hw_params
-ioctl.
+Commit dfcb9f4f99f1 ("sctp: deny peeloff operation on asocs with threads
+sleeping on it") fixed the race between peeloff and wait sndbuf by
+checking waitqueue_active(&asoc->wait) in sctp_do_peeloff().
 
-So, having snd_BUG_ON() there is simply superfluous and rather
-harmful to give unnecessary confusions.  Let's get rid of it.
+But it actually doesn't work, as even if waitqueue_active returns false
+the waiting sndbuf thread may still not yet hold sk lock. After asoc is
+peeled off, sk is not asoc->base.sk any more, then to hold the old sk
+lock couldn't make assoc safe to access.
 
-Reported-by: syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This patch is to fix this by changing to hold the new sk lock if sk is
+not asoc->base.sk, meanwhile, also set the sk in sctp_sendmsg with the
+new sk.
+
+With this fix, there is no more race between peeloff and waitbuf, the
+check 'waitqueue_active' in sctp_do_peeloff can be removed.
+
+Thanks Marcelo and Neil for making this clear.
+
+v1->v2:
+  fix it by changing to lock the new sock instead of adding a flag in asoc.
+
+Suggested-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/pcm_lib.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/sctp/socket.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/sound/core/pcm_lib.c
-+++ b/sound/core/pcm_lib.c
-@@ -590,7 +590,6 @@ static inline unsigned int muldiv32(unsi
- {
- 	u_int64_t n = (u_int64_t) a * b;
- 	if (c == 0) {
--		snd_BUG_ON(!n);
- 		*r = 0;
- 		return UINT_MAX;
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -93,8 +93,8 @@
+ /* Forward declarations for internal helper functions. */
+ static int sctp_writeable(struct sock *sk);
+ static void sctp_wfree(struct sk_buff *skb);
+-static int sctp_wait_for_sndbuf(struct sctp_association *, long *timeo_p,
+-				size_t msg_len);
++static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
++				size_t msg_len, struct sock **orig_sk);
+ static int sctp_wait_for_packet(struct sock * sk, int *err, long *timeo_p);
+ static int sctp_wait_for_connect(struct sctp_association *, long *timeo_p);
+ static int sctp_wait_for_accept(struct sock *sk, long timeo);
+@@ -1911,7 +1911,8 @@ SCTP_STATIC int sctp_sendmsg(struct kioc
+ 
+ 	timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
+ 	if (!sctp_wspace(asoc)) {
+-		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len);
++		/* sk can be changed by peel off when waiting for buf. */
++		err = sctp_wait_for_sndbuf(asoc, &timeo, msg_len, &sk);
+ 		if (err)
+ 			goto out_free;
  	}
+@@ -4247,12 +4248,6 @@ SCTP_STATIC int sctp_do_peeloff(struct s
+ 	if (!net_eq(current->nsproxy->net_ns, sock_net(sk)))
+ 		return -EINVAL;
+ 
+-	/* If there is a thread waiting on more sndbuf space for
+-	 * sending on this asoc, it cannot be peeled.
+-	 */
+-	if (waitqueue_active(&asoc->wait))
+-		return -EBUSY;
+-
+ 	/* An association cannot be branched off from an already peeled-off
+ 	 * socket, nor is this supported for tcp style sockets.
+ 	 */
+@@ -6470,7 +6465,7 @@ void sctp_sock_rfree(struct sk_buff *skb
+ 
+ /* Helper function to wait for space in the sndbuf.  */
+ static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
+-				size_t msg_len)
++				size_t msg_len, struct sock **orig_sk)
+ {
+ 	struct sock *sk = asoc->base.sk;
+ 	int err = 0;
+@@ -6503,11 +6498,17 @@ static int sctp_wait_for_sndbuf(struct s
+ 		sctp_release_sock(sk);
+ 		current_timeo = schedule_timeout(current_timeo);
+ 		sctp_lock_sock(sk);
++		if (sk != asoc->base.sk) {
++			release_sock(sk);
++			sk = asoc->base.sk;
++			lock_sock(sk);
++		}
+ 
+ 		*timeo_p = current_timeo;
+ 	}
+ 
+ out:
++	*orig_sk = sk;
+ 	finish_wait(&asoc->wait, &wait);
+ 
+ 	/* Release the association's refcnt.  */
