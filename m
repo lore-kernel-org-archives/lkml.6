@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-617694-1519837691-2-677999367376703077
+X-Cyrus-Session-Id: sloti22d1t05-617694-1519837650-2-17948220460279569466
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837690; b=PlE3QM/URCmRqte7CS31fWgypod0DauoJRKfRAQC0+y9spM
-    unGzkEzYTpGXBnBxBYLQqJr12rVaOuOvFUhUebRiBJ4An1EGY3uZTLlJ2s/MxicG
-    k//u+wD9z0ukFZ6PfxYOVWspgNG0zYNAfTCfEy35w2LPICGfk1AkWaAyTJ1g+vt3
-    drxugzdIrhFEVjYiuvsAH+gMYR7O+xuz7NwCRF384qj+K0IC8atI65r7eQIKKQom
-    x2hgboH+GknhJCLPW92ncBwSgmwOV7IQ4GcgyYie2enP/cJvyk2MzccIk67e9XtR
-    fdara+yWwhtPrBPR5D5pXh0w+pHIrcqZDj8ShxQ==
+    t=1519837649; b=VJcfo/1xwvcOQIyt+rL6lymsuz46WSpDb1NAfB52Tbq7fzz
+    o55bia+x5nmlK01G2OpDb4tWqTJ/VKAgTCh6xayO/BiEYfNn77x2bH6q7hw65F0v
+    4NkYhFT47BHtm0AoaxEbcxUpDJiJ+Hd2gjZGfTkUIk2UUFqRZTdxNj//DwK3pD5r
+    6QAEOgQBn0WrXMpyZ4OU92EKZMIWwx/GwW8fJ32etJijCEdOm3WGFRq1OteAMhlT
+    n+cG2a/dXc/ccG6HAG7xGheJEOAtzrfMG7+U1QMAv2T2R+FzeOeM8LjHwfKS6eRx
+    WgrfDQLEZjUeUlNZEdwyt1eFwgCcYgRT51upWPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519837690; bh=JyqsWcN1PQ6A4ZanHON
-    xfCQKf7IRghs/aR2j6oMu238=; b=NLz9kQDvElpnHU1osgPUHPBJJIzPv7THbma
-    YYevQ2fHFRbKRIstLQwdBS+MNtD5EyIjUbGloSLkp043p64mky2q1ZfUjGhLXBbT
-    M/UbJZKRBTMVyhyA2ZWsTt6+FuOhEfPBK0udoCtWVWSzhli+AzzJ62xHo0N0NsqJ
-    n6nf4yUZCvUT5xT7U+Jg/KAdVrTgb6JXp+LQhilkbkytsya6NKmhZ0rEjMWHeOCh
-    atUwtc7+Omu6RmBfXFydOSqvq+Ex00PjWPnMyMFa90Xi/imK5e92HeoOl/5tkYRb
-    cCXm2wLTLJ7BW8M8Nzq0eEDGhfRpESPfwa3RxtwuvqlerxowdVw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519837649; bh=i8Hat/jn5IuaMcxGvNR
+    QKe2qI4hCZ2MdJGx+/UoJXtM=; b=q7DGKUKs5VxXBQhP3fDWzv/4fsbE+2rGVdz
+    CRbdUf6lRXWDjCLVj3hdqMOx1SwGPlligdZ1KdCFf5wRALFpUJE/KN5B4xvz2a/g
+    gjkZKLZDVK5UwVKvoAkd4e0JBhNvkHx8h3ao84yhDQzlPqiUWubGcgyohqscjuM6
+    Ez+uS77AEK5HDnXaf7jEGNjVynULXdfhiSDNCzG9bYil71ckUXkgwaRzRIQRhURD
+    jyYOlriY/eUr2V0yl10/juHjzuAEWtwuNr50oJN2dRBN8XYNok+kFzsFLGS8MhZy
+    g08btv2L+XpzBwuOGvtcVs4UxmNY3lXmDOEfG+ipH8PzXSxDafA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,23 +47,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeB1RHe (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:07:34 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34310 "EHLO
+        id S1752894AbeB1PuR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:50:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34313 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933212AbeB1PuN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:50:13 -0500
+        by vger.kernel.org with ESMTP id S1752793AbeB1PuQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:50:16 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jens Axboe" <axboe@kernel.dk>
+CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.499547565@decadent.org.uk>
+Message-ID: <lsq.1519831218.448229823@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 016/254] blktrace: fix trace mutex deadlock
+Subject: [PATCH 3.16 030/254] sctp: force the params with right types for
+ sctp csum apis
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -78,39 +81,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 2967acbb257a6a9bf912f4778b727e00972eac9b upstream.
+commit af2697a0273f7665429c47d71ab26f2412af924e upstream.
 
-A previous commit changed the locking around registration/cleanup,
-but direct callers of blk_trace_remove() were missed. This means
-that if we hit the error path in setup, we will deadlock on
-attempting to re-acquire the queue trace mutex.
+Now sctp_csum_xxx doesn't really match the param types of these common
+csum apis. As sctp_csum_xxx is defined in sctp/checksum.h, many sparse
+errors occur when make C=2 not only with M=net/sctp but also with other
+modules that include this header file.
 
-Fixes: 1f2cac107c59 ("blktrace: fix unlocked access to init/start-stop/teardown")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This patch is to force them fit in csum apis with the right types.
+
+Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/trace/blktrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/net/sctp/checksum.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -562,7 +562,7 @@ static int __blk_trace_setup(struct requ
- 		return ret;
+--- a/include/net/sctp/checksum.h
++++ b/include/net/sctp/checksum.h
+@@ -48,31 +48,32 @@ static inline __wsum sctp_csum_update(co
+ 	/* This uses the crypto implementation of crc32c, which is either
+ 	 * implemented w/ hardware support or resolves to __crc32c_le().
+ 	 */
+-	return crc32c(sum, buff, len);
++	return (__force __wsum)crc32c((__force __u32)sum, buff, len);
+ }
  
- 	if (copy_to_user(arg, &buts, sizeof(buts))) {
--		blk_trace_remove(q);
-+		__blk_trace_remove(q);
- 		return -EFAULT;
- 	}
- 	return 0;
-@@ -608,7 +608,7 @@ static int compat_blk_trace_setup(struct
- 		return ret;
+ static inline __wsum sctp_csum_combine(__wsum csum, __wsum csum2,
+ 				       int offset, int len)
+ {
+-	return __crc32c_le_combine(csum, csum2, len);
++	return (__force __wsum)__crc32c_le_combine((__force __u32)csum,
++						   (__force __u32)csum2, len);
+ }
  
- 	if (copy_to_user(arg, &buts.name, ARRAY_SIZE(buts.name))) {
--		blk_trace_remove(q);
-+		__blk_trace_remove(q);
- 		return -EFAULT;
- 	}
+ static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
+ 					unsigned int offset)
+ {
+ 	struct sctphdr *sh = sctp_hdr(skb);
+-        __le32 ret, old = sh->checksum;
+ 	const struct skb_checksum_ops ops = {
+ 		.update  = sctp_csum_update,
+ 		.combine = sctp_csum_combine,
+ 	};
++	__le32 old = sh->checksum;
++	__wsum new;
  
+ 	sh->checksum = 0;
+-	ret = cpu_to_le32(~__skb_checksum(skb, offset, skb->len - offset,
+-					  ~(__u32)0, &ops));
++	new = ~__skb_checksum(skb, offset, skb->len - offset, ~(__wsum)0, &ops);
+ 	sh->checksum = old;
+ 
+-	return ret;
++	return cpu_to_le32((__force __u32)new);
+ }
+ 
+ #endif /* __sctp_checksum_h__ */
