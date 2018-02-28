@@ -1,188 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964881AbeB1XHv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:07:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58648 "EHLO mail.kernel.org"
+        id S964898AbeB1XIc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:08:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964867AbeB1XHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:07:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22A8214EE
+        id S964867AbeB1XIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 18:08:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AFC214EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 28 Feb 2018 17:07:48 -0600
+Date: Wed, 28 Feb 2018 17:08:29 -0600
 From: Bjorn Helgaas <helgaas@kernel.org>
-To: David Woodhouse <dwmw@amazon.co.uk>
-Cc: chris@zankel.net, jcmvbkbc@gmail.com, linux-xtensa@linux-xtensa.org,
-        bhelgaas@google.com, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] xtensa: Use generic pci_mmap_resource_range()
-Message-ID: <20180228230747.GQ127842@bhelgaas-glaptop.roam.corp.google.com>
-References: <1519045353-22496-1-git-send-email-dwmw@amazon.co.uk>
+To: David Miller <davem@davemloft.net>
+Cc: dwmw2@infradead.org, sparclinux@vger.kernel.org, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] sparc: Use generic pci_mmap_resource_range()
+Message-ID: <20180228230828.GR127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1519045452-22645-1-git-send-email-dwmw@amazon.co.uk>
+ <20180219.094951.2098243214524004486.davem@davemloft.net>
+ <1519053858.7876.84.camel@infradead.org>
+ <20180219.103025.1676484157305869188.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1519045353-22496-1-git-send-email-dwmw@amazon.co.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180219.103025.1676484157305869188.davem@davemloft.net>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 01:02:33PM +0000, David Woodhouse wrote:
-> Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
-> ARM64") added this generic function with the intent of using it
-> everywhere and ultimately killing the old arch-specific implementations.
+On Mon, Feb 19, 2018 at 10:30:25AM -0500, David Miller wrote:
+> From: David Woodhouse <dwmw2@infradead.org>
+> Date: Mon, 19 Feb 2018 15:24:18 +0000
 > 
-> Let's get on with that eradication...
+> >> For one, the sparc specific code allows mmap'ing any address range
+> >> within a PCI bus device.  The generic code does not allow that.
+> > 
+> > 
+> > You mean any address range in a given PCI bus even if there is no
+> > actual device with a BAR at the corresponding address?
+> > 
+> > Would I be right to assume this was only available through the legacy
+> > procfs API? I think it should be possible to accommodate it, and it
+> > does look like I'd missed this requirement the first time round; thanks
+> > for pointing it out.
 > 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> It was probably the case that only procfs could do it.
+> 
+> It is the mechanism by which we were able to let the X server poke
+> around in VGA ISA space.  It does a bus I/O space map for the bus
+> device above the VGA card.
 
-Applied to pci/resource-mmap for v4.17, thanks!
-
-Xtensa folks, let me know if you have applied this or would like to, and
-I'll drop it.
-
-> ---
->  arch/xtensa/include/asm/pci.h |  7 ++--
->  arch/xtensa/kernel/pci.c      | 94 ++++---------------------------------------
->  2 files changed, 12 insertions(+), 89 deletions(-)
-> 
-> diff --git a/arch/xtensa/include/asm/pci.h b/arch/xtensa/include/asm/pci.h
-> index 5c83798..d5a8215 100644
-> --- a/arch/xtensa/include/asm/pci.h
-> +++ b/arch/xtensa/include/asm/pci.h
-> @@ -44,9 +44,10 @@ extern struct pci_controller* pcibios_alloc_controller(void);
->  
->  #define PCI_DMA_BUS_IS_PHYS	(1)
->  
-> -/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() */
-> -#define HAVE_PCI_MMAP		1
-> -#define arch_can_pci_mmap_io()	1
-> +/* Tell PCI code what kind of PCI resource mappings we support */
-> +#define HAVE_PCI_MMAP			1
-> +#define ARCH_GENERIC_PCI_MMAP_RESOURCE	1
-> +#define arch_can_pci_mmap_io()		1
->  
->  #endif /* __KERNEL__ */
->  
-> diff --git a/arch/xtensa/kernel/pci.c b/arch/xtensa/kernel/pci.c
-> index d981f01..b7c7a60 100644
-> --- a/arch/xtensa/kernel/pci.c
-> +++ b/arch/xtensa/kernel/pci.c
-> @@ -39,7 +39,6 @@
->   * pcibios_align_resource
->   * pcibios_fixup_bus
->   * pci_bus_add_device
-> - * pci_mmap_page_range
->   */
->  
->  struct pci_controller* pci_ctrl_head;
-> @@ -258,98 +257,21 @@ pci_controller_num(struct pci_dev *dev)
->  #endif /* CONFIG_PROC_FS */
->  
->  /*
-> - * Platform support for /proc/bus/pci/X/Y mmap()s,
-> - * modelled on the sparc64 implementation by Dave Miller.
-> + * Platform support for /proc/bus/pci/X/Y mmap()s.
->   *  -- paulus.
->   */
->  
-> -/*
-> - * Adjust vm_pgoff of VMA such that it is the physical page offset
-> - * corresponding to the 32-bit pci bus offset for DEV requested by the user.
-> - *
-> - * Basically, the user finds the base address for his device which he wishes
-> - * to mmap.  They read the 32-bit value from the config space base register,
-> - * add whatever PAGE_SIZE multiple offset they wish, and feed this into the
-> - * offset parameter of mmap on /proc/bus/pci/XXX for that device.
-> - *
-> - * Returns negative error code on failure, zero on success.
-> - */
-> -static __inline__ int
-> -__pci_mmap_make_offset(struct pci_dev *dev, struct vm_area_struct *vma,
-> -		       enum pci_mmap_state mmap_state)
-> +int pci_iobar_pfn(struct pci_dev *pdev, int bar, struct vm_area_struct *vma)
->  {
-> -	struct pci_controller *pci_ctrl = (struct pci_controller*) dev->sysdata;
-> -	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
-> -	unsigned long io_offset = 0;
-> -	int i, res_bit;
-> +	struct pci_controller *pci_ctrl = (struct pci_controller*) pdev->sysdata;
-> +	resource_size_t ioaddr = pci_resource_start(pdev, bar);
->  
->  	if (pci_ctrl == 0)
->  		return -EINVAL;		/* should never happen */
->  
-> -	/* If memory, add on the PCI bridge address offset */
-> -	if (mmap_state == pci_mmap_mem) {
-> -		res_bit = IORESOURCE_MEM;
-> -	} else {
-> -		io_offset = (unsigned long)pci_ctrl->io_space.base;
-> -		offset += io_offset;
-> -		res_bit = IORESOURCE_IO;
-> -	}
-> -
-> -	/*
-> -	 * Check that the offset requested corresponds to one of the
-> -	 * resources of the device.
-> -	 */
-> -	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
-> -		struct resource *rp = &dev->resource[i];
-> -		int flags = rp->flags;
-> -
-> -		/* treat ROM as memory (should be already) */
-> -		if (i == PCI_ROM_RESOURCE)
-> -			flags |= IORESOURCE_MEM;
-> -
-> -		/* Active and same type? */
-> -		if ((flags & res_bit) == 0)
-> -			continue;
-> -
-> -		/* In the range of this resource? */
-> -		if (offset < (rp->start & PAGE_MASK) || offset > rp->end)
-> -			continue;
-> -
-> -		/* found it! construct the final physical address */
-> -		if (mmap_state == pci_mmap_io)
-> -			offset += pci_ctrl->io_space.start - io_offset;
-> -		vma->vm_pgoff = offset >> PAGE_SHIFT;
-> -		return 0;
-> -	}
-> -
-> -	return -EINVAL;
-> -}
-> +	/* Convert to an offset within this PCI controller */
-> +	ioaddr -= (unsigned long)pci_ctrl->io_space.base;
->  
-> -/*
-> - * Perform the actual remap of the pages for a PCI device mapping, as
-> - * appropriate for this architecture.  The region in the process to map
-> - * is described by vm_start and vm_end members of VMA, the base physical
-> - * address is found in vm_pgoff.
-> - * The pci device structure is provided so that architectures may make mapping
-> - * decisions on a per-device or per-bus basis.
-> - *
-> - * Returns a negative error code on failure, zero on success.
-> - */
-> -int pci_mmap_page_range(struct pci_dev *dev, int bar,
-> -			struct vm_area_struct *vma,
-> -			enum pci_mmap_state mmap_state,
-> -			int write_combine)
-> -{
-> -	int ret;
-> -
-> -	ret = __pci_mmap_make_offset(dev, vma, mmap_state);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	vma->vm_page_prot = pgprot_device(vma->vm_page_prot);
-> -
-> -	ret = io_remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
-> -			         vma->vm_end - vma->vm_start,vma->vm_page_prot);
-> -
-> -	return ret;
-> +	vma->vm_pgoff += (ioaddr + pci_ctrl->io_space.start) >> PAGE_SHIFT;
-> +	return 0;
->  }
-> -- 
-> 2.7.4
-> 
+What's the bottom line?  Do we want this for sparc?  If so, do you
+want to take it, Dave M, or would you like me to?
