@@ -1,127 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933767AbeB1Rsj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:48:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55152 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933539AbeB1Rsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:48:30 -0500
-Date: Wed, 28 Feb 2018 17:48:26 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Philip Elcan <pelcan@codeaurora.org>
-Subject: Re: [PATCH v5] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-Message-ID: <20180228174826.dgfxu75iqq2y3qsr@lakrids.cambridge.arm.com>
-References: <1519474193-25973-1-git-send-email-shankerd@codeaurora.org>
+        id S934171AbeB1Rs4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:48:56 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:47379 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932464AbeB1Rsw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:48:52 -0500
+X-ME-Sender: <xms:hOuWWgTRMAx-SVbS5ssvtfZoyLKiHWO4Xn6gJBWqkQMppGb4Q8QGXg>
+Date: Wed, 28 Feb 2018 14:48:48 -0300
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] x86/microcode: Synchronize late microcode loading
+Message-ID: <20180228174848.cs5jn2y7nzh6pu6u@khazad-dum.debian.net>
+References: <20180228102846.13447-1-bp@alien8.de>
+ <20180228102846.13447-8-bp@alien8.de>
+ <20180228135931.uwveegfdv5afozxe@khazad-dum.debian.net>
+ <20180228140806.GD3769@pd.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519474193-25973-1-git-send-email-shankerd@codeaurora.org>
+In-Reply-To: <20180228140806.GD3769@pd.tnic>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 28 Feb 2018, Borislav Petkov wrote:
+> On Wed, Feb 28, 2018 at 10:59:31AM -0300, Henrique de Moraes Holschuh wrote:
+> > Eek! If I read that right, this effectively halts the entire box until
+> > every core is updated, with one core entering deep-coma at a time (the
+> > rest are left either spinning or cpu_relax()ing
+> 
+> I think *you* should relax. :)
 
-On Sat, Feb 24, 2018 at 06:09:53AM -0600, Shanker Donthineni wrote:
-> +config ARM64_SKIP_CACHE_POU
-> +	bool "Enable support to skip cache POU operations"
+Well, I don't expect any general-use distro to unleash late loading on
+the users, certainly :-)  Least of all, Debian...  It is, nowadays, "use
+it only if you know what you're doing" land.
 
-Nit: s/POU/PoU/ in text
+But it is not yet sufficiently documented as such, I fear.
 
-> +	default y
-> +	help
-> +	  Explicit point of unification cache operations can be eliminated
-> +	  in software if the hardware handles transparently. The new bits in
-> +	  CTR_EL0, CTR_EL0.DIC and CTR_EL0.IDC indicates the hardware
-> +	  capabilities of ICache and DCache POU requirements.
+> Late microcode loading on a long running box is not something you do
+> more than 2-3 times a year. And if the box needs to restart, it'll get
+> the early microcode.
 
-Likewise, s/POU/PoU/.
+Sure, but the thing is so damn expensive (and the time it takes is
+directly proportional to the number of cores, thus likely to hurt worse
+exactly those who would want to use it), that I was left wondering if it
+should not be optimized further to do the work in parallel (if that can
+be made safe enough).
 
-> +
-> +	  Selecting this feature will allow the kernel to optimize the POU
-> +	  cache maintaince operations where it requires 'D{I}C C{I}VAU'
+Besides, we likely don't want to have early microcode updates end up
+being the reason AP bringup has to be serialized during boot either (and
+it *is* likely to dominate the time taken for AP bringup, too!), so it
+would be nice to have a way to make parallel microcode updates possible
+in general...  but I don't think we're there, yet.
 
-The instruction expansion here is a bit odd. It'd probably be best to
-just say:
+No matter. I am not opposing the patch in the first place.  And any
+paralell microcode update work would be best done in an incremental
+fashion, on top of working serial updates, anyway.
 
-  Selecting this feature will allow the kernel to optimize cache
-  maintenance to the PoU.
+> And yes, this is addressing *late* loading, if you haven't noticed yet.
 
-[...]
+I did get that message, yes :)
 
-> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-> index ea9bb4e..e22178b 100644
-> --- a/arch/arm64/include/asm/cache.h
-> +++ b/arch/arm64/include/asm/cache.h
-> @@ -20,8 +20,13 @@
->  
->  #define CTR_L1IP_SHIFT		14
->  #define CTR_L1IP_MASK		3
-> +#define CTR_DMLINE_SHIFT	16
-> +#define CTR_ERG_SHIFT		20
->  #define CTR_CWG_SHIFT		24
->  #define CTR_CWG_MASK		15
-> +#define CTR_IDC_SHIFT		28
-> +#define CTR_DIC_SHIFT		29
-> +#define CTR_B31_SHIFT		31
+> So keep doing the early method and you'll be fine.
 
-I think the CTR_B31_SHIFT define is gratuitous...
+We need that in the documentation :-P  Microcode updates have always
+been somewhat slow, but now they are potentially going to be *much* more
+painful and noticeable in the late-update case...
 
-[...]
-
->  static const struct arm64_ftr_bits ftr_ctr[] = {
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
-
-... and we can/should leave this line as-is.
-
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, CTR_B31_SHIFT, 1, 1),         /* RES1 */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
-
-... though the other changes are fine by me.
-
-[...]
-
-
-> +static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
-> +			  int __unused)
-> +{
-> +	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_IDC_SHIFT));
-> +}
-
-This can be:
-
-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
-
-> +static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
-> +			  int __unused)
-> +{
-> +	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_DIC_SHIFT));
-> +}
-
-Likewise:
-
-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
-
-Otherwise, this looks good to me.
-
-Thanks,
-Mark.
+-- 
+  Henrique Holschuh
