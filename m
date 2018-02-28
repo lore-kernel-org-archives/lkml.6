@@ -1,86 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeB1GcA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48660 "EHLO mail.kernel.org"
+        id S1751948AbeB1GfO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:35:14 -0500
+Received: from david.siemens.de ([192.35.17.14]:45976 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751818AbeB1Gb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:31:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B44221771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Wed, 28 Feb 2018 14:31:33 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: dts: imx6: RDU2: Add RAVE SP device
-Message-ID: <20180228063132.GI3217@dragon>
-References: <20180226144943.9835-1-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226144943.9835-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1751646AbeB1GfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:35:12 -0500
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH v2 4/6] x86: Consolidate PCI_MMCONFIG configs
+Date: Wed, 28 Feb 2018 07:34:49 +0100
+Message-Id: <76a05abd818c89032161585ba130511a5bd673f0.1519799691.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
+References: <cover.1519799691.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
+References: <cover.1519799691.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 06:49:41AM -0800, Andrey Smirnov wrote:
-> With MFD and watchdog drivers for RAVE SP device support added by
-> 538ee27290fa ("mfd: Add driver for RAVE Supervisory Processor") and
-> c3bb33345721 ("watchdog: Add RAVE SP watchdog driver") add
-> corresponding DT node for RDU2.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> index 72f52fcecee1..460931089509 100644
-> --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> @@ -305,6 +305,17 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_uart4>;
->  	status = "okay";
-> +
-> +	rave-sp {
-> +		compatible = "zii,rave-sp-rdu2";
-> +		current-speed = <1000000>;
-> +		status = "okay";
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The okay status is to flip the state of devices that are initially
-disabled.  I think it's unnecessary for the case here.
+Not sure if those two worked by design or just by chance so far. In any
+case, it's at least cleaner and clearer to express this in a single
+config statement.
 
-> +
-> +		watchdog {
-> +			compatible = "zii,rave-sp-watchdog";
-> +			status = "okay";
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ arch/x86/Kconfig | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Ditto
-
-Shawn
-
-> +		};
-> +	};
->  };
->  
->  &ecspi1 {
-> -- 
-> 2.14.3
-> 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f23521..63e85e7da12e 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2641,8 +2641,9 @@ config PCI_DIRECT
+ 	depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
+ 
+ config PCI_MMCONFIG
+-	def_bool y
+-	depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
++	bool "Support mmconfig PCI config space access" if X86_64
++	default y
++	depends on PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY || X86_64)
+ 
+ config PCI_OLPC
+ 	def_bool y
+@@ -2657,10 +2658,6 @@ config PCI_DOMAINS
+ 	def_bool y
+ 	depends on PCI
+ 
+-config PCI_MMCONFIG
+-	bool "Support mmconfig PCI config space access"
+-	depends on X86_64 && PCI && ACPI
+-
+ config PCI_CNB20LE_QUIRK
+ 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
+ 	depends on PCI
+-- 
+2.13.6
