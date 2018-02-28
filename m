@@ -1,61 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751872AbeB1APt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 19:15:49 -0500
-Received: from mail-yw0-f201.google.com ([209.85.161.201]:38033 "EHLO
-        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeB1APl (ORCPT
+        id S1751972AbeB1AQv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 19:16:51 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:24307 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751654AbeB1AQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 19:15:41 -0500
-X-Google-Smtp-Source: AH8x224bYposoy1daIouSUVaGJenxIcTQnPsywUtQjxJNVKF9vZkRPKdupqvQF3yyP/oCN4SCD/HWOguFVG6
-MIME-Version: 1.0
-Date: Wed, 28 Feb 2018 01:15:25 +0100
-In-Reply-To: <20180228001525.96044-1-delroth@google.com>
-Message-Id: <20180228001525.96044-2-delroth@google.com>
-References: <20180228001525.96044-1-delroth@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
-Subject: [PATCH v3 2/2] dt-bindings: iio: light: Add bh1730fvc bindings
-From: Pierre Bourdon <delroth@google.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Pierre Bourdon <delroth@google.com>, linux-iio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-To: unlisted-recipients:; (no To-header on input)
+        Tue, 27 Feb 2018 19:16:47 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w1S0Fahl000353
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Marc Herbert <marc.herbert@intel.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/6] kconfig: do not call check_conf() for olddefconfig
+Date: Wed, 28 Feb 2018 09:15:21 +0900
+Message-Id: <1519776926-30459-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Pierre Bourdon <delroth@google.com>
----
- .../devicetree/bindings/iio/light/bh1730.txt      | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/light/bh1730.txt
+check_conf() traverses the menu tree, but it is completely no-op for
+olddefconfig because the following if-else block does nothing.
 
-diff --git a/Documentation/devicetree/bindings/iio/light/bh1730.txt b/Documentation/devicetree/bindings/iio/light/bh1730.txt
-new file mode 100644
-index 000000000000..6b38c4010647
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/light/bh1730.txt
-@@ -0,0 +1,15 @@
-+* ROHM BH1730FVC ambient light sensor
-+
-+http://www.rohm.com/web/global/products/-/product/BH1730FVC
-+
-+Required properties:
-+
-+  - compatible : should be "rohm,bh1730fvc"
-+  - reg : the I2C address of the sensor
-+
-+Example:
-+
-+bh1730fvc@29 {
-+	compatible = "rohm,bh1730fvc";
-+	reg = <0x29>;
-+};
+    if (input_mode == listnewconfig) {
+            ...
+    } else if (input_mode != olddefconfig) {
+            ...
+    }
+
+As the help message says, olddefconfig automatically sets new symbols
+to their default value.  There is no room for manual intervention.
+So, calling check_conf() for olddefconfig is odd in the first place.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+
+Changes in v2: None
+
+ scripts/kconfig/conf.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 822dc51..4227d3b 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -424,7 +424,7 @@ static void check_conf(struct menu *menu)
+ 				if (sym->name && !sym_is_choice_value(sym)) {
+ 					printf("%s%s\n", CONFIG_, sym->name);
+ 				}
+-			} else if (input_mode != olddefconfig) {
++			} else {
+ 				if (!conf_cnt++)
+ 					printf(_("*\n* Restart config...\n*\n"));
+ 				rootEntry = menu_get_parent_menu(menu);
+@@ -666,15 +666,15 @@ int main(int ac, char **av)
+ 		/* fall through */
+ 	case oldconfig:
+ 	case listnewconfig:
+-	case olddefconfig:
+ 	case silentoldconfig:
+ 		/* Update until a loop caused no more changes */
+ 		do {
+ 			conf_cnt = 0;
+ 			check_conf(&rootmenu);
+-		} while (conf_cnt &&
+-			 (input_mode != listnewconfig &&
+-			  input_mode != olddefconfig));
++		} while (conf_cnt && input_mode != listnewconfig);
++		break;
++	case olddefconfig:
++	default:
+ 		break;
+ 	}
+ 
 -- 
-2.16.2.395.g2e18187dfd-goog
+2.7.4
