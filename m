@@ -1,52 +1,71 @@
-Return-Path: <Jason@zx2c4.com>
-X-Google-Smtp-Source: AH8x225ugIX7zAdvwFxuSdVM4wH6cOuLmxLr9itEcBgQQPYVZmUNhpJevsA+7pYrBCC902qbbTNT
-ARC-Seal: i=1; a=rsa-sha256; t=1519182484; cv=none;
+Return-Path: <arvindprasanna@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519801257; cv=none;
         d=google.com; s=arc-20160816;
-        b=Dp5oep/+tKSRi8VRG26r9R+yickQie07DUHC3Bwb7Oi3y5IXiUpoxn1d93mw/PnxnD
-         vXQEDRo0Ts5q6cQcfKHUf/aifT4GsDPPiTbqtIwUJTexcxS/NYmLE+S4Y5UtkzJUfXCL
-         xsjK5dIhS1bv+VSVRvNSA0qbFvgOqE6jCvSfYxe5tz8r44PSz3gHxv1T2btYWHH6aAVu
-         22hV87eXHijinCvxDgK5Fl6VqnH+2+WsCtIxg0xS1/wagzBr4aUgRLVBAaxn4+3sfpYM
-         S1X0uD6XOYUhMNM/6WemIWmRYtmpF3UdHIrL7p8xkeuhqA8/RpYEOqZrga7b+KR2NWS8
-         8Gtg==
+        b=RvwOcAiAA0baUIh5jI9NSCnj9dwS1GFZNSKOHNYni4M8EODqtu2Zez2FWjviVYTW0I
+         sU5qoKK7K9TrIWnM7zcY344byhvVZ3qlxkDts+vreX6xn90jq+37JlqS8REpqQ7J2Ecz
+         WtoHttpyPaBqYP0upa5vn9caNz0NZIWdk8Dhk6uWHccTPYkfnZHYhZtrDCtClkW3FT5r
+         Mv2wGQhAKD8IxCtPKR7g4PyNj61f8ZKUonEMhwSPEDcAoJwmYpoIrEx9sejrDKg2X2WQ
+         3so8I/6IceqqtiOIk3y9LrpkFP2HDR3utxFlcjpKGKLXopEMFaVqQtK6OVditrYA1ecG
+         kYTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=uKgFkudF76iYuS+ekiTDNPpchtWyYpxmnfAw5a/tIjA=;
-        b=CI8MNNLxWnv1x+gBDkNpbREzEVBJK3H2OS7fBkQXds0COdJppVA4APGUM24toTJfe3
-         Jc7RArjAmOLLg02kOEjkMFVtKMjExXBWgrb89SwXrgS2NdGs0mcvPVelQGPIiIoR7Rcf
-         DjdycC2cNtP2x5AOp2vUCaUA/oRMSM/XhACPwiy8sd2zSCU9YJJyTiOnlyTRqFRdo1wK
-         /KnTW193cVrUXzRvf6tnEEd1il1Vdjw+KHgIRZvzFjskYsgPsIgeChHbbnBZHshIvbei
-         XLuSiE0lxEN3UmcwZzvGdArDlr20tPHnKzkIbN/fV6yqCdh/WjPOcV8YPkgt6BMiQMgV
-         sIoQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=0WmfroH9aNX1j8ok9I7+T7bqaLKfmCXI+V8pMqDb2SE=;
+        b=ESyFFQHSkC4dqr+hLqLsqp+vo1kxRXqjxOyndThItRL1RPakuVRYegEiXOusra4adq
+         DU/u4dm6aalmtmugrUFBMP14/NN1m/Xpg1eFQeDY9EhpVZzm0aqgILjz1o3EbIsp2K0o
+         o1+t67UvuSLUlCvoIZmEPgY9jlW/vEDuEA1ItO5eXWrK33RgpYs2M4JY8Ry1sWS/zFWu
+         PFJ3/Xme0pJc36rJas8QlqwVgy1OELuwW5SW/iUHx/a/OPIuBnW/yu/SqVBuhsHwzh6s
+         3HdPqlT0RoARzJ8bQkb6zu867oqEwX4Pd0IbkzE6tDZjVQwKKghjw6gO173gtvP/xowZ
+         HCuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@zx2c4.com header.s=mail header.b=a6oye3ph;
-       spf=pass (google.com: domain of jason@zx2c4.com designates 192.95.5.64 as permitted sender) smtp.mailfrom=Jason@zx2c4.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=zx2c4.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vdLOTmuQ;
+       spf=pass (google.com: domain of arvindprasanna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvindprasanna@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@zx2c4.com header.s=mail header.b=a6oye3ph;
-       spf=pass (google.com: domain of jason@zx2c4.com designates 192.95.5.64 as permitted sender) smtp.mailfrom=Jason@zx2c4.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=zx2c4.com
-MIME-Version: 1.0
-In-Reply-To: <20180204220746.12441-1-Jason@zx2c4.com>
-References: <20180204220746.12441-1-Jason@zx2c4.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Wed, 21 Feb 2018 04:08:01 +0100
-X-Gmail-Original-Message-ID: <CAHmME9pFFjX89ixw6Zqv0J_7eAd8eGyzUzTU4zzGOnc1e9XPfQ@mail.gmail.com>
-Message-ID: <CAHmME9pFFjX89ixw6Zqv0J_7eAd8eGyzUzTU4zzGOnc1e9XPfQ@mail.gmail.com>
-Subject: Re: [PATCH] random: always fill buffer in get_random_bytes_wait
-To: "Theodore Ts'o" <tytso@mit.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vdLOTmuQ;
+       spf=pass (google.com: domain of arvindprasanna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvindprasanna@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELvA/nGmi4H0DJHXM4iEaLxyXXU0Fohh4DxJ1a82R9n7e8d5NX9actFrt8LP/xvjslq5aWgT3g==
+From: Arvind Prasanna <arvindprasanna@gmail.com>
+To: 
+Cc: Arvind Prasanna <arvindprasanna@gmail.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: Update ncurses package names for menuconfig
+Date: Wed, 28 Feb 2018 01:59:50 -0500
+Message-Id: <1519801192-31201-1-git-send-email-arvindprasanna@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591509863893639891?=
-X-GMAIL-MSGID: =?utf-8?q?1592978293139936074?=
+X-GMAIL-THRID: =?utf-8?q?1593627124178304067?=
+X-GMAIL-MSGID: =?utf-8?q?1593627124178304067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Ted,
+The package name is ncurses-devel for Redhat based distros
+and libncurses-devel for Debian based distros.
 
-Can you apply this?
+Signed-off-by: Arvind Prasanna <arvindprasanna@gmail.com>
+---
+ scripts/kconfig/lxdialog/check-lxdialog.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Jason
+diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
+index a10bd9d..4353e40 100755
+--- a/scripts/kconfig/lxdialog/check-lxdialog.sh
++++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
+@@ -55,7 +55,8 @@ EOF
+ 	    echo " *** required header files."                            1>&2
+ 	    echo " *** 'make menuconfig' requires the ncurses libraries." 1>&2
+ 	    echo " *** "                                                  1>&2
+-	    echo " *** Install ncurses (ncurses-devel) and try again."    1>&2
++	    echo " *** Install ncurses (ncurses-devel or libncurses-dev   1>&2
++	           *** depending on your distribution) and try again."    1>&2
+ 	    echo " *** "                                                  1>&2
+ 	    exit 1
+ 	fi
+-- 
+2.7.4
