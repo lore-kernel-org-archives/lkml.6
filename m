@@ -1,90 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933149AbeB1Pkr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:40:47 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47952 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932362AbeB1Pkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:40:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
-   d="scan'208";a="34814127"
-Date: Wed, 28 Feb 2018 17:40:41 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: DRI-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
- setting.
-Message-ID: <20180228154041.GK5453@intel.com>
-References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
+        id S932883AbeB1Plz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:41:55 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44078 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752869AbeB1Plx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:41:53 -0500
+X-Google-Smtp-Source: AG47ELsuPefUM+TCqjMluEcBtlUbwk+nGjphCkb2U4RhDVttuoH2QTd9789X/27TMSTzJwlxk+g4MKrm2GqwMfhgoh8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180228152741.22507-1-Liviu.Dudau@arm.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180228173444-mutt-send-email-mst@kernel.org>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+ <20180215213312.29234-12-marcandre.lureau@redhat.com> <20180227020104-mutt-send-email-mst@kernel.org>
+ <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com> <20180228173444-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
+Date: Wed, 28 Feb 2018 16:41:51 +0100
+Message-ID: <CAMxuvax37dKhY0jTqbOqjOxQORA=hdDZc3S33b8RFiAbcOLWTg@mail.gmail.com>
+Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
-> The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
-> ioctl expects that any capability set by the client will have a value of 1.
-> Make the check early so that we don't have to test the value for each
-> capability.
+On Wed, Feb 28, 2018 at 4:35 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 28, 2018 at 01:27:02PM +0100, Marc-Andr√© Lureau wrote:
+>> Hi
+>>
+>> On Tue, Feb 27, 2018 at 1:04 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> > On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-Andr√© Lureau wrote:
+>> >> Modify fw_cfg_read_blob() to use DMA if the device supports it.
+>> >> Return errors, because the operation may fail.
+>> >>
+>> >> So far, only one call in fw_cfg_register_dir_entries() is using
+>> >> kmalloc'ed buf and is thus clearly eligible to DMA read.
+>> >>
+>> >> Initially, I didn't implement DMA read to speed up boot time, but as a
+>> >> first step before introducing DMA write (since read operations were
+>> >> already presents). Even more, I didn't realize fw-cfg entries were
+>> >> being read by the kernel during boot by default. But actally fw-cfg
+>> >> entries are being populated during module probe. I knew DMA improved a
+>> >> lot bios boot time (the main reason the DMA interface was added
+>> >> afaik). Let see the time it would take to read the whole ACPI
+>> >> tables (128kb allocated)
+>> >>
+>> >>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
+>> >>   - with DMA: sys 0m0.003s
+>> >>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
+>> >>
+>> >> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
+>> >> boot to populate sysfs qemu_fw_cfg directory, and it is quite
+>> >> small (1-2kb). Since it does not expose itself, in order to measure
+>> >> the time it takes to read such small file, I took a comparable sized
+>> >> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
+>> >> modified read_raw enabling DMA)
+>> >>
+>> >>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
+>> >>   - with DMA:
+>> >>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
+>> >>   - without DMA:
+>> >>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
+>> >>
+>> >> That's a few msec saved during boot by enabling DMA read (the gain
+>> >> would be more substantial if other & bigger fw-cfg entries are read by
+>> >> others from sysfs, unfortunately, it's not clear if we can always
+>> >> enable DMA there)
+>> >>
+>> >> Signed-off-by: Marc-Andr√© Lureau <marcandre.lureau@redhat.com>
+>> >> ---
+>> >>  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
+>> >>  1 file changed, 50 insertions(+), 11 deletions(-)
+>> >>
+>> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> >> index 3015e77aebca..94df57e9be66 100644
+>> >> --- a/drivers/firmware/qemu_fw_cfg.c
+>> >> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> >> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
+>> >>       return ret;
+>> >>  }
+>> >>
+>> >> +/* with acpi & dev locks taken */
+>> >> +static ssize_t fw_cfg_read_blob_dma(u16 key,
+>> >> +                             void *buf, loff_t pos, size_t count)
+>> >> +{
+>> >> +     ssize_t ret;
+>> >> +
+>> >> +     if (pos == 0) {
+>> >> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
+>> >> +                                     | FW_CFG_DMA_CTL_SELECT
+>> >> +                                     | FW_CFG_DMA_CTL_READ);
+>> >> +     } else {
+>> >> +             fw_cfg_sel_endianness(key);
+>> >> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
+>> >> +             if (ret < 0)
+>> >> +                     return ret;
+>> >> +             ret = fw_cfg_dma_transfer(buf, count,
+>> >> +                                     FW_CFG_DMA_CTL_READ);
+>> >> +     }
+>> >> +
+>> >> +     return ret;
+>> >> +}
+>> >> +
+>> >> +/* with acpi & dev locks taken */
+>> >> +static ssize_t fw_cfg_read_blob_io(u16 key,
+>> >> +                             void *buf, loff_t pos, size_t count)
+>> >> +{
+>> >> +     fw_cfg_sel_endianness(key);
+>> >> +     while (pos-- > 0)
+>> >> +             ioread8(fw_cfg_reg_data);
+>> >> +     ioread8_rep(fw_cfg_reg_data, buf, count);
+>> >> +     return count;
+>> >> +}
+>> >> +
+>> >>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>> >>  static ssize_t fw_cfg_read_blob(u16 key,
+>> >> -                             void *buf, loff_t pos, size_t count)
+>> >> +                             void *buf, loff_t pos, size_t count,
+>> >> +                             bool dma)
+>> >>  {
+>> >>       u32 glk = -1U;
+>> >>       acpi_status status;
+>> >> +     ssize_t ret;
+>> >>
+>> >>       /* If we have ACPI, ensure mutual exclusion against any potential
+>> >>        * device access by the firmware, e.g. via AML methods:
+>> >
+>> > so this adds a dma flag to fw_cfg_read_blob.
+>> >
+>> >
+>> >
+>> >> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
+>> >>       }
+>> >>
+>> >>       mutex_lock(&fw_cfg_dev_lock);
+>> >> -     fw_cfg_sel_endianness(key);
+>> >> -     while (pos-- > 0)
+>> >> -             ioread8(fw_cfg_reg_data);
+>> >> -     ioread8_rep(fw_cfg_reg_data, buf, count);
+>> >> +     if (dma && fw_cfg_dma_enabled()) {
+>> >> +             ret = fw_cfg_read_blob_dma(key, buf, pos, count);
+>> >> +     } else {
+>> >> +             ret = fw_cfg_read_blob_io(key, buf, pos, count);
+>> >> +     }
+>> >> +
+>> >>       mutex_unlock(&fw_cfg_dev_lock);
+>> >>
+>> >>       acpi_release_global_lock(glk);
+>> >> -     return count;
+>> >> +
+>> >> +     return ret;
+>> >>  }
+>> >>
+>> >>  #ifdef CONFIG_CRASH_CORE
+>> >
+>> > If set to false it does io, if set to true it does dma.
+>> >
+>> > I would prefer passing an accessor function pointer
+>> > since that's clearer than true/false.
+>>
+>> ok
+>>
+>> >
+>> >> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>> >>
+>> >>       /* verify fw_cfg device signature */
+>> >>       if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
+>> >> -                             0, FW_CFG_SIG_SIZE) < 0 ||
+>> >> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
+>> >>               memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>> >>               fw_cfg_io_cleanup();
+>> >>               return -ENODEV;
+>> >> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+>> >>       if (count > entry->size - pos)
+>> >>               count = entry->size - pos;
+>> >>
+>> >> -     return fw_cfg_read_blob(entry->select, buf, pos, count);
+>> >> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
+>> >> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
+>> >>  }
+>> >>
+>> >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
+>> >> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
+>> >>       size_t dir_size;
+>> >>
+>> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
+>> >> -                     0, sizeof(files_count));
+>> >> +                     0, sizeof(files_count), false);
+>> >>       if (ret < 0)
+>> >>               return ret;
+>> >>
+>> >> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
+>> >>               return -ENOMEM;
+>> >>
+>> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
+>> >> -                     sizeof(files_count), dir_size);
+>> >> +                     sizeof(files_count), dir_size, false);
+>> >>       if (ret < 0)
+>> >>               goto end;
+>> >>
+>> >> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+>> >>               goto err_probe;
+>> >>
+>> >>       /* get revision number, add matching top-level attribute */
+>> >> -     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
+>> >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
+>> >>       if (err < 0)
+>> >>               goto err_probe;
+>> >
+>> >
+>> > Looks like all callers pass in false as parameter.
+>> > Given this, how can this speed up any operations?
+>> >
+>> > Are you sure you tested this properly?
+>>
+>>
+>> I did modify read_raw to conduct testing ( the part "with a
+>> modified read_raw enabling DMA" should be before, updating commit message).
+>
+> So this patch does nothing, it's just infrastructure so DMA can be
+> enabled in the future - is that right?
 
-What if we want a a non-boolean capability at some point?
+There is a small nit in v15, where I passed dma=false for in
+read(FW_CFG_FILE_DIR), it should have been true. It is fixed in v16.
 
-> 
-> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-> ---
->  drivers/gpu/drm/drm_ioctl.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> index af782911c505..02ffa0e8d77b 100644
-> --- a/drivers/gpu/drm/drm_ioctl.c
-> +++ b/drivers/gpu/drm/drm_ioctl.c
-> @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
->  {
->  	struct drm_set_client_cap *req = data;
->  
-> +	if (req->value > 1)
-> +		return -EINVAL;
-> +
->  	switch (req->capability) {
->  	case DRM_CLIENT_CAP_STEREO_3D:
-> -		if (req->value > 1)
-> -			return -EINVAL;
->  		file_priv->stereo_allowed = req->value;
->  		break;
->  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
-> -		if (req->value > 1)
-> -			return -EINVAL;
->  		file_priv->universal_planes = req->value;
->  		break;
->  	case DRM_CLIENT_CAP_ATOMIC:
->  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
->  			return -EINVAL;
-> -		if (req->value > 1)
-> -			return -EINVAL;
->  		file_priv->atomic = req->value;
->  		file_priv->universal_planes = req->value;
->  		break;
-> -- 
-> 2.16.2
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Ville Syrj‰l‰
-Intel OTC
+I don't know if it's always safe to enable dma in read_raw(), how
+could we know? Is there a check we could use to choose one or ther
+other (and thus avoiding explicit dma/readfn argument)?
