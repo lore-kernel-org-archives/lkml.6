@@ -1,332 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933551AbeB1RUw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:20:52 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:61716 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753154AbeB1RUt (ORCPT
+        id S1753235AbeB1RVE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:21:04 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44071 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752817AbeB1RUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:20:49 -0500
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH v2] media: stm32-dcmi: add JPEG support
-Date: Wed, 28 Feb 2018 18:20:16 +0100
-Message-ID: <1519838416-15455-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 28 Feb 2018 12:20:51 -0500
+X-Google-Smtp-Source: AH8x225UCVAfLs7SYw3/dII7/dbu0ICPa+HWK0DBRm+1KQ8vNnnWSCgSu2Wb3Q+S3lc5Hxo76P90iw==
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+Date: Wed, 28 Feb 2018 20:20:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_09:,,
- signatures=0
+In-Reply-To: <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DCMI JPEG support.
+On 28.02.2018 17:14, Peter De Schrijver wrote:
+> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>>>>>> which
+>>>>>>> leaves it at some default rate of 500 kHz:
+>>>>>>>
+>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>>>>>> pll_u
+>>>>>>>        pll_u                  3        3        0      500000      
+>>>>>>>     0
+>>>>>>>
+>>>>>>> Of course this won't quite work leading to the following messages:
+>>>>>>>
+>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>>>>>
+>>>>>>> Fix this by actually allowing the rate also being set from within
+>>>>>>> the Linux kernel.
+>>>
+>>> I think the best solution to this problem would be to make pll_u a fixed
+>>> clock and enable it and program the rate if it's not enabled at boot.
+>>
+>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+>> there.
+>>
+> 
+> AFAIK we only use one rate ever?
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
-version 2:
-  - Removed V4L2_FMT_FLAG_COMPRESSED flag setting already set by V4L2 core
-    See https://www.mail-archive.com/linux-media@vger.kernel.org/msg126825.html
+IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
 
- drivers/media/platform/stm32/stm32-dcmi.c | 193 ++++++++++++++++++++++--------
- 1 file changed, 146 insertions(+), 47 deletions(-)
-
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 269e963..36f9a77 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -93,6 +93,11 @@ enum state {
- #define MIN_HEIGHT	16U
- #define MAX_HEIGHT	2048U
- 
-+#define MIN_JPEG_WIDTH	16U
-+#define MAX_JPEG_WIDTH	2592U
-+#define MIN_JPEG_HEIGHT	16U
-+#define MAX_JPEG_HEIGHT	2592U
-+
- #define TIMEOUT_MS	1000
- 
- struct dcmi_graph_entity {
-@@ -191,14 +196,67 @@ static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
- 
- static int dcmi_start_capture(struct stm32_dcmi *dcmi);
- 
-+static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
-+			     struct dcmi_buf *buf,
-+			     size_t bytesused,
-+			     int err)
-+{
-+	struct vb2_v4l2_buffer *vbuf;
-+
-+	if (!buf)
-+		return;
-+
-+	vbuf = &buf->vb;
-+
-+	vbuf->sequence = dcmi->sequence++;
-+	vbuf->field = V4L2_FIELD_NONE;
-+	vbuf->vb2_buf.timestamp = ktime_get_ns();
-+	vb2_set_plane_payload(&vbuf->vb2_buf, 0, bytesused);
-+	vb2_buffer_done(&vbuf->vb2_buf,
-+			err ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
-+	dev_dbg(dcmi->dev, "buffer[%d] done seq=%d, bytesused=%zu\n",
-+		vbuf->vb2_buf.index, vbuf->sequence, bytesused);
-+
-+	dcmi->buffers_count++;
-+	dcmi->active = NULL;
-+}
-+
-+static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
-+{
-+	spin_lock_irq(&dcmi->irqlock);
-+
-+	if (dcmi->state != RUNNING) {
-+		spin_unlock_irq(&dcmi->irqlock);
-+		return -EINVAL;
-+	}
-+
-+	/* Restart a new DMA transfer with next buffer */
-+	if (list_empty(&dcmi->buffers)) {
-+		dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
-+			__func__);
-+		dcmi->errors_count++;
-+		dcmi->active = NULL;
-+
-+		spin_unlock_irq(&dcmi->irqlock);
-+		return -EINVAL;
-+	}
-+
-+	dcmi->active = list_entry(dcmi->buffers.next,
-+				  struct dcmi_buf, list);
-+	list_del_init(&dcmi->active->list);
-+
-+	spin_unlock_irq(&dcmi->irqlock);
-+
-+	return dcmi_start_capture(dcmi);
-+}
-+
- static void dcmi_dma_callback(void *param)
- {
- 	struct stm32_dcmi *dcmi = (struct stm32_dcmi *)param;
- 	struct dma_chan *chan = dcmi->dma_chan;
- 	struct dma_tx_state state;
- 	enum dma_status status;
--
--	spin_lock_irq(&dcmi->irqlock);
-+	struct dcmi_buf *buf = dcmi->active;
- 
- 	/* Check DMA status */
- 	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
-@@ -216,53 +274,18 @@ static void dcmi_dma_callback(void *param)
- 	case DMA_COMPLETE:
- 		dev_dbg(dcmi->dev, "%s: Received DMA_COMPLETE\n", __func__);
- 
--		if (dcmi->active) {
--			struct dcmi_buf *buf = dcmi->active;
--			struct vb2_v4l2_buffer *vbuf = &dcmi->active->vb;
--
--			vbuf->sequence = dcmi->sequence++;
--			vbuf->field = V4L2_FIELD_NONE;
--			vbuf->vb2_buf.timestamp = ktime_get_ns();
--			vb2_set_plane_payload(&vbuf->vb2_buf, 0, buf->size);
--			vb2_buffer_done(&vbuf->vb2_buf, VB2_BUF_STATE_DONE);
--			dev_dbg(dcmi->dev, "buffer[%d] done seq=%d\n",
--				vbuf->vb2_buf.index, vbuf->sequence);
--
--			dcmi->buffers_count++;
--			dcmi->active = NULL;
--		}
--
--		/* Restart a new DMA transfer with next buffer */
--		if (dcmi->state == RUNNING) {
--			if (list_empty(&dcmi->buffers)) {
--				dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
--					__func__);
--				dcmi->errors_count++;
--				dcmi->active = NULL;
--
--				spin_unlock_irq(&dcmi->irqlock);
--				return;
--			}
--
--			dcmi->active = list_entry(dcmi->buffers.next,
--						  struct dcmi_buf, list);
--
--			list_del_init(&dcmi->active->list);
--
--			spin_unlock_irq(&dcmi->irqlock);
--			if (dcmi_start_capture(dcmi))
--				dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
--					__func__);
--			return;
--		}
-+		/* Return buffer to V4L2 */
-+		dcmi_buffer_done(dcmi, buf, buf->size, 0);
- 
-+		/* Restart capture */
-+		if (dcmi_restart_capture(dcmi))
-+			dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
-+				__func__);
- 		break;
- 	default:
- 		dev_err(dcmi->dev, "%s: Received unknown status\n", __func__);
- 		break;
- 	}
--
--	spin_unlock_irq(&dcmi->irqlock);
- }
- 
- static int dcmi_start_dma(struct stm32_dcmi *dcmi,
-@@ -355,6 +378,52 @@ static void dcmi_set_crop(struct stm32_dcmi *dcmi)
- 	reg_set(dcmi->regs, DCMI_CR, CR_CROP);
- }
- 
-+static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
-+{
-+	struct dma_tx_state state;
-+	enum dma_status status;
-+	struct dma_chan *chan = dcmi->dma_chan;
-+	struct dcmi_buf *buf = dcmi->active;
-+
-+	if (!buf)
-+		return;
-+
-+	/*
-+	 * Because of variable JPEG buffer size sent by sensor,
-+	 * DMA transfer never completes due to transfer size
-+	 * never reached.
-+	 * In order to ensure that all the JPEG data are transferred
-+	 * in active buffer memory, DMA is drained.
-+	 * Then DMA tx status gives the amount of data transferred
-+	 * to memory, which is then returned to V4L2 through the active
-+	 * buffer payload.
-+	 */
-+
-+	/* Drain DMA */
-+	dmaengine_synchronize(chan);
-+
-+	/* Get DMA residue to get JPEG size */
-+	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
-+	if (status != DMA_ERROR && state.residue < buf->size) {
-+		/* Return JPEG buffer to V4L2 with received JPEG buffer size */
-+		dcmi_buffer_done(dcmi, buf, buf->size - state.residue, 0);
-+	} else {
-+		dcmi->errors_count++;
-+		dev_err(dcmi->dev, "%s: Cannot get JPEG size from DMA\n",
-+			__func__);
-+		/* Return JPEG buffer to V4L2 in ERROR state */
-+		dcmi_buffer_done(dcmi, buf, 0, -EIO);
-+	}
-+
-+	/* Abort DMA operation */
-+	dmaengine_terminate_all(dcmi->dma_chan);
-+
-+	/* Restart capture */
-+	if (dcmi_restart_capture(dcmi))
-+		dev_err(dcmi->dev, "%s: Cannot restart capture on JPEG received\n",
-+			__func__);
-+}
-+
- static irqreturn_t dcmi_irq_thread(int irq, void *arg)
- {
- 	struct stm32_dcmi *dcmi = arg;
-@@ -379,6 +448,14 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
- 			dcmi->overrun_count++;
- 	}
- 
-+	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG &&
-+	    dcmi->misr & IT_FRAME) {
-+		/* JPEG received */
-+		spin_unlock_irq(&dcmi->irqlock);
-+		dcmi_process_jpeg(dcmi);
-+		return IRQ_HANDLED;
-+	}
-+
- 	spin_unlock_irq(&dcmi->irqlock);
- 	return IRQ_HANDLED;
- }
-@@ -552,6 +629,10 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	if (dcmi->do_crop)
- 		dcmi_set_crop(dcmi);
- 
-+	/* Enable jpeg capture */
-+	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG)
-+		reg_set(dcmi->regs, DCMI_CR, CR_CM);/* Snapshot mode */
-+
- 	/* Enable dcmi */
- 	reg_set(dcmi->regs, DCMI_CR, CR_ENABLE);
- 
-@@ -752,6 +833,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
- 	struct v4l2_subdev_format format = {
- 		.which = V4L2_SUBDEV_FORMAT_TRY,
- 	};
-+	bool do_crop;
- 	int ret;
- 
- 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
-@@ -761,10 +843,19 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
- 	}
- 
- 	/* Limit to hardware capabilities */
--	pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
--	pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
-+	if (pix->pixelformat == V4L2_PIX_FMT_JPEG) {
-+		pix->width = clamp(pix->width, MIN_JPEG_WIDTH, MAX_JPEG_WIDTH);
-+		pix->height =
-+			clamp(pix->height, MIN_JPEG_HEIGHT, MAX_JPEG_HEIGHT);
-+	} else {
-+		pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
-+		pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
-+	}
-+
-+	/* No crop if JPEG is requested */
-+	do_crop = dcmi->do_crop && (pix->pixelformat != V4L2_PIX_FMT_JPEG);
- 
--	if (dcmi->do_crop && dcmi->num_of_sd_framesizes) {
-+	if (do_crop && dcmi->num_of_sd_framesizes) {
- 		struct dcmi_framesize outer_sd_fsize;
- 		/*
- 		 * If crop is requested and sensor have discrete frame sizes,
-@@ -788,7 +879,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
- 	sd_fsize.width = pix->width;
- 	sd_fsize.height = pix->height;
- 
--	if (dcmi->do_crop) {
-+	if (do_crop) {
- 		struct v4l2_rect c = dcmi->crop;
- 		struct v4l2_rect max_rect;
- 
-@@ -843,6 +934,10 @@ static int dcmi_set_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f)
- 	if (ret)
- 		return ret;
- 
-+	/* Disable crop if JPEG is requested */
-+	if (pix->pixelformat == V4L2_PIX_FMT_JPEG)
-+		dcmi->do_crop = false;
-+
- 	/* pix to mbus format */
- 	v4l2_fill_mbus_format(mf, pix,
- 			      sd_format->mbus_code);
-@@ -1315,6 +1410,10 @@ static int dcmi_set_default_fmt(struct stm32_dcmi *dcmi)
- 		.fourcc = V4L2_PIX_FMT_UYVY,
- 		.mbus_code = MEDIA_BUS_FMT_UYVY8_2X8,
- 		.bpp = 2,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_JPEG,
-+		.mbus_code = MEDIA_BUS_FMT_JPEG_1X8,
-+		.bpp = 1,
- 	},
- };
- 
--- 
-1.9.1
+>>> This is how it's done for Tegra210. The reason is that the USB IP blocks
+>>> can control the pll_u state in hw. This means that if sw would disable
+>>> and then re-enable the pll_u clock, but there is no USB activity, pll_u
+>>> will still be disable and therefor not lock, causing an error. Today
+>>> this is worked around by not polling the lock bit for pll_u, but a better
+>>> solution would be to just remove all sw controls for pll_u.
+>>
+>> SW controls could be removed, but I don't think it is really necessary as in our
+>> case SW is the PHY driver and we know what it does. Alternatively we can enable
+>> PLL_U in the init table to keep it "always" enabled.
