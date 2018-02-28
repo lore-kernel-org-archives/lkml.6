@@ -1,146 +1,70 @@
-Return-Path: <konrad.wilk@oracle.com>
-X-Google-Smtp-Source: AG47ELtHQoX9l97pQvPZ7LnnlJ8j7HRPRTrJFUK/G20QlnsvxuPmOmz58Q93tvSaLJeHy3eaQvEV
-ARC-Seal: i=1; a=rsa-sha256; t=1519852442; cv=none;
+Return-Path: <pbonzini@redhat.com>
+X-Google-Smtp-Source: AG47ELs6y4BsJfMQI1hk5Ih5dTdCibjxxPE0CsM34AmOlMqeCo/HRHPezFL5KLg+pcywAQnZyDwj
+ARC-Seal: i=1; a=rsa-sha256; t=1519853737; cv=none;
         d=google.com; s=arc-20160816;
-        b=wzRfI8wyXQrofTAE2pyxIO6fTU+YYR+EFNgPok1/aUSXobhUzqBHhycTPTyuv+yfb0
-         ifLNCwlMykNjWUw6qJF/cZ2nall8FpnFnQ1z5HKRxby7GViEBdlWW4SA4Wnm9YzLhqW6
-         UO7CNqFXQge7xxlzSNcdWPBmnSTUJs/WNQnh6nvHedy1KjZKFx6LLVvIQvom9Zn1NnjE
-         InghD9JVwQUGXSfJ2Yi53FNeQTRac995EO1lE/B4+gYUEiZD1w1Al0RzW/gLDsG1Zlts
-         kP6ur9ldey9zgeLtGe+/KGd1HWDHMsdBISw1VVsCGTpRTkbwJfA/u6+S8kVxKcPQOEvO
-         GRqQ==
+        b=Ydw+xNqwb+fmuDuQdpjid0PXLNh4zRAFyhYi0/E3iZWUqVujJRB2ljnOxYcVvfLztb
+         EBd70286yit5Yp4hCKsRmkIZ4q89RsyeNX9UPgdnyDMlz3nJLXLipPkco5cicOoUHKyV
+         WEmNWIm2Ayt5Wyc+8/CVErPXDPg9+ZjyI9CKzdfhYnDE+pHbokQoG7mXaoe4K3ik6nrS
+         pNk1P9U9rJXXKmPwpuoAnUs8ReFIz0H+C1D4MQ+3/SEp1sDCKGwcafFBhf8/F1b3xu3k
+         nitOu5/XV+6dLjfpOrtDBn/21MZw8r4jb6eleQHHipxhLizuyeI6VlnB8U8SzmKh+5pE
+         vG1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=wvDD1PXe+Icvn8ECu3gSfD/p/X88Rkmt9GXamBYlThI=;
-        b=dVHBmEGsXC16+dMqdkbk7XTdZr4VBt1D6MopfaCnZfEi+DwJOH7cRe/TdVEOSJLYcL
-         iXC2f0p/46QZ7oUy7JkvzMl+jVyeWf4AwunCf8EG/m7AJhwqNUMeuDTvlDIG6yP6FApw
-         eep7LxsBW8DWj36OJG9M1T8S6zAC0qqtwUyEqhkUNJmTLAEEnrWlg43rECiHtovnEBws
-         7GEHXF6EG1ljdCJpV9ajAwQ0bwR2M8rzjDRMX1zXHXzf3EYL3UCHyTZtG+U2XBdpOo1K
-         ygyqBr4rxWL+F3XST4/Mud75eIGxQfy5MWbTmA3Yo4A4KGS/dVw/ArztqoPGkeQ+OcQM
-         rOVg==
+        bh=SfdizMlv7E7EL76AqxyBna6bHOjmKqtR6eHUrHfmjb4=;
+        b=bWfc0Q5ZttMuMtVrtCJvhTytfsjOM1Sy3pFnY0LhxvE0XZJeu60/9q7q9bQxZ80h61
+         +8OLk51otGR7qV6nFWCAq6Fbjy4/SzhBD0VU1GqcIV2Lmpji4ZjBTL4MyBzhvVRNhpTE
+         iMA3j6FHF4wCYoY7y/hi/zw4mN8Xu0NASET4m+yIJX90tP0hrnwt6cyYCRHajZQnYzZz
+         V+O8a8BR1u6YEGxdgTjv18B9jAjrjuFWZBfol/U5uVCYyXYHvujxyRcPnUGov7nRtHjj
+         mUhPN2UK9N6RzezePiqGYEpMvCZCFM0AXZm54/+tLbIDFMaG1NK+4uM2JkkSq0mjdVok
+         6ddg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=E16lkVmo;
-       spf=pass (google.com: domain of konrad.wilk@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=konrad.wilk@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of pbonzini@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=pbonzini@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=E16lkVmo;
-       spf=pass (google.com: domain of konrad.wilk@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=konrad.wilk@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Wed, 28 Feb 2018 16:08:14 -0500
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Maran Wilson <maran.wilson@oracle.com>
-Cc: pbonzini@redhat.com, jgross@suse.com, boris.ostrovsky@oracle.com,
-        roger.pau@citrix.com, andrew.cooper3@citrix.com, hch@infradead.org,
-        JBeulich@suse.com, x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        thomas.lendacky@amd.com, dave.hansen@linux.intel.com,
-        rkrcmar@redhat.com, gregkh@linuxfoundation.org, mchehab@kernel.org,
-        hpa@zytor.com, linus.walleij@linaro.org, mingo@redhat.com,
-        rdunlap@infradead.org, luto@kernel.org, jpoimboe@redhat.com,
-        tglx@linutronix.de, bp@suse.de, davem@davemloft.net,
-        kirill.shutemov@linux.intel.com
+       spf=pass (google.com: domain of pbonzini@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=pbonzini@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Subject: Re: [Xen-devel] [RFC PATCH v4 2/7] xen/pvh: Move PVH entry code out
  of Xen specific tree
-Message-ID: <20180228210814.GK11576@char.us.oracle.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Maran Wilson <maran.wilson@oracle.com>
+Cc: jgross@suse.com, boris.ostrovsky@oracle.com, roger.pau@citrix.com,
+ andrew.cooper3@citrix.com, hch@infradead.org, JBeulich@suse.com,
+ x86@kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, thomas.lendacky@amd.com,
+ dave.hansen@linux.intel.com, rkrcmar@redhat.com, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, hpa@zytor.com, linus.walleij@linaro.org,
+ mingo@redhat.com, rdunlap@infradead.org, luto@kernel.org,
+ jpoimboe@redhat.com, tglx@linutronix.de, bp@suse.de, davem@davemloft.net,
+ kirill.shutemov@linux.intel.com
 References: <1519842483-8887-1-git-send-email-maran.wilson@oracle.com>
  <1519842483-8887-3-git-send-email-maran.wilson@oracle.com>
+ <20180228210814.GK11576@char.us.oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <e9133f97-7ecf-2868-6883-3f0cda7bbb2f@redhat.com>
+Date: Wed, 28 Feb 2018 22:35:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519842483-8887-3-git-send-email-maran.wilson@oracle.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8818 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802280257
+In-Reply-To: <20180228210814.GK11576@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593670476619272001?=
-X-GMAIL-MSGID: =?utf-8?q?1593680793885758807?=
+X-GMAIL-MSGID: =?utf-8?q?1593682153155462084?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 10:27:58AM -0800, Maran Wilson wrote:
-> Once hypervisors other than Xen start using the PVH entry point for
-> starting VMs, we would like the option of being able to compile PVH entry
-> capable kernels without enabling CONFIG_XEN and all the code that comes
-> along with that. To allow that, we are moving the PVH code out of Xen and
-> into files sitting at a higher level in the tree.
-> 
-> This patch is not introducing any code or functional changes, just moving
-> files from one location to another.
-> 
-> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-
-Thank you!
-> ---
->  MAINTAINERS                             | 1 +
->  arch/x86/Kbuild                         | 3 +++
->  arch/x86/{xen/xen-pvh.S => pvh-head.S}  | 0
->  arch/x86/{xen/enlighten_pvh.c => pvh.c} | 0
->  arch/x86/xen/Makefile                   | 2 --
->  5 files changed, 4 insertions(+), 2 deletions(-)
->  rename arch/x86/{xen/xen-pvh.S => pvh-head.S} (100%)
->  rename arch/x86/{xen/enlighten_pvh.c => pvh.c} (100%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 93a12af4f180..dc89f3a279bd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15210,6 +15210,7 @@ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
->  S:	Supported
->  F:	arch/x86/xen/
-> +F:	arch/x86/*pvh*
->  F:	drivers/*/xen-*front.c
->  F:	drivers/xen/
->  F:	arch/x86/include/asm/xen/
-> diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-> index 0038a2d10a7a..a4e5e3d348dc 100644
-> --- a/arch/x86/Kbuild
-> +++ b/arch/x86/Kbuild
-> @@ -7,6 +7,9 @@ obj-$(CONFIG_KVM) += kvm/
->  # Xen paravirtualization support
->  obj-$(CONFIG_XEN) += xen/
->  
+On 28/02/2018 22:08, Konrad Rzeszutek Wilk wrote:
 > +obj-$(CONFIG_XEN_PVH) += pvh.o
 > +obj-$(CONFIG_XEN_PVH) += pvh-head.o
 > +
->  # Hyper-V paravirtualization support
->  obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
->  
-> diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/pvh-head.S
-> similarity index 100%
-> rename from arch/x86/xen/xen-pvh.S
-> rename to arch/x86/pvh-head.S
-> diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/pvh.c
-> similarity index 100%
-> rename from arch/x86/xen/enlighten_pvh.c
-> rename to arch/x86/pvh.c
-> diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-> index d83cb5478f54..7e8145b33997 100644
-> --- a/arch/x86/xen/Makefile
-> +++ b/arch/x86/xen/Makefile
-> @@ -21,7 +21,6 @@ obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
->  obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
->  obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
->  						p2m.o enlighten_pv.o mmu_pv.o
-> -obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
->  
->  obj-$(CONFIG_EVENT_TRACING) += trace.o
->  
-> @@ -33,4 +32,3 @@ obj-$(CONFIG_XEN_DEBUG_FS)	+= debugfs.o
->  obj-$(CONFIG_XEN_DOM0)		+= vga.o
->  obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
->  obj-$(CONFIG_XEN_EFI)		+= efi.o
-> -obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
-> -- 
-> 2.16.1
-> 
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+
+Probably a better place for these would be
+arch/x86/platform/pvh/{enlighten.c,head.S}.  (Just because there are no
+.c or .S files in arch/x86).  Maybe Xen ought to be moved under
+arch/x86/platform too.
+
+Paolo
