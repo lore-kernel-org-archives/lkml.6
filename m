@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-476314-1519834070-2-1035263192666654315
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834045-2-1677002002892086087
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834070; b=ZDsNYoUOWW8QOwe8C1oU08SI1JZgVbGrUfUyH46EnWU4LQW
-    0ScUcgxN/8JaOP9UBwnhcDAOVHsSTvOf5UGrx1d4cO/bxVVXOAUqSZOg940mCU0A
-    2MbnC1m19m3TJoX5PaB/UofytqKmEULNfaCeuKpUtJ/U3sgtqMj6sxdrvYqjpSj6
-    SOBUvNhecCYhv9g3M6QkC4TcAsS3zqXptC8yFFHZ61jFIEQsmJD0rBwB819z/Q4e
-    28S4jHLOJlaBqvh8lH5MTAgrM4Ear0k1CZRvEWm0++o7agyMlJVvB3Ot9qCroTrE
-    2R/RPmZUeWQDSEndhBWpBAjLhig6h5THr8OuT3Q==
+    t=1519834045; b=sJE0+zBI5pTxClDkycbHho0fx5gGx9v9RCL6h/ID/Dqs8eI
+    nVwjr771iKeojqkfAyl3RpFb5stxLyVlcLPh9ix9tICe4PntJo9HsBzv2XDW7QHC
+    WefS3OA1K2rh+qmvpmbO6COCfmr99hEatPR/BjiTGNvG3fEw4eIAJNnbNGB0JmFh
+    XYlu8YvnEhdIHWiemB9CnWzXItFARwr1vuRfNDUZ74qDarl/yqqIp/iqqWXW7rwy
+    4SWkARiPsVfxMXWwf20TtjYvdmxjR1p3UHYiUxZF67rdTt72WF8xIbSwi4JiX92x
+    CXeqIVNPt2FadzK6b4FY/3Jm3KAsLapKcB5q/ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834070; bh=wE2fl0YNkPWF7SmK/HZ
-    BwFyXv5BzoK3+Ffm49ru76uw=; b=isdb0gzvOAt2s5+7QlbH5VHyGQ5Z/f5hwXa
-    yb4BJotLAI7IIp5wCxzj3kqZ7ly2R9ZvJI3+JLNsfFAvnZ43O1m3NR0cKdD9U6Ns
-    JSiZeSQ12n6nzkiYDutNv6GDzB0qRTzNhlN6hT+TPBn0ubkEfQXFVFVWpQECTuZ9
-    FqbssSv6dxHwKiltrFttVOTswO58cfLKOeOh65UOjGrcDg5Jl9CN49WdAZchxu0a
-    nv4KXuzd+iY3RU1gR9bvtXgSTvoHyQ+1M48eSapFxG7LVWXQ0T9JCbkszY4KMs0i
-    iRv53V/lzMNf+1V3nnXpiw94BB8KnuFn5InfsY2U2DmlIUPvc9g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834045; bh=y/Tg+m9rR6zlDkBgTDD
+    CrA5wnh/dWcD1eQDqtDw6Xis=; b=V3IKVugPcRUnV8yb64LSZQxtoZThaD+dGN4
+    lWn7MyjrWBznZW4tn5DnXT0biNmKqmnMgfWfgw6PDdo/K7Bin54R36dgDyrfOhiR
+    r3ChbnEmyf6WBUQtWf7oeVf3gQ0/EjCo80LUXCMMdoQp76q7hLhbf4eiYTjp/gA5
+    QnEeHPjaDUVhEYB3GFN9xIaABO9X3+lW+jbIqRKc9xxU/M8t6f17N/jaazDlFKCg
+    UiNjnzFsAF5dXTvCxIHValXGbpJlXv1Jdaps4EQLKv65AihiiSsjkvzr5f0DDnOc
+    o1Yxa1EX4TKdGW2Oqlr7qKeDUUzy33ebm/h/vppq9iiaZIdxpgQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934456AbeB1QFO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34870 "EHLO
+        id S934490AbeB1QFY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:05:24 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34880 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934454AbeB1QFJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:09 -0500
+        by vger.kernel.org with ESMTP id S934460AbeB1QFT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:19 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "Jaejoong Kim" <climbbb.kim@gmail.com>
+CC: akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.72057639@decadent.org.uk>
+Message-ID: <lsq.1519831218.391174386@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 049/254] ALSA: usb-audio: Fix out-of-bound error
+Subject: [PATCH 3.16 111/254] powerpc/perf: Dereference BHRB entries safely
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,92 +80,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jaejoong Kim <climbbb.kim@gmail.com>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 
-commit 251552a2b0d454badc8f486e6d79100970c744b0 upstream.
+commit f41d84dddc66b164ac16acf3f584c276146f1c48 upstream.
 
-The snd_usb_copy_string_desc() retrieves the usb string corresponding to
-the index number through the usb_string(). The problem is that the
-usb_string() returns the length of the string (>= 0) when successful, but
-it can also return a negative value about the error case or status of
-usb_control_msg().
+It's theoretically possible that branch instructions recorded in
+BHRB (Branch History Rolling Buffer) entries have already been
+unmapped before they are processed by the kernel. Hence, trying to
+dereference such memory location will result in a crash. eg:
 
-If iClockSource is '0' as shown below, usb_string() will returns -EINVAL.
-This will result in '0' being inserted into buf[-22], and the following
-KASAN out-of-bound error message will be output.
+    Unable to handle kernel paging request for data at address 0xd000000019c41764
+    Faulting instruction address: 0xc000000000084a14
+    NIP [c000000000084a14] branch_target+0x4/0x70
+    LR [c0000000000eb828] record_and_restart+0x568/0x5c0
+    Call Trace:
+    [c0000000000eb3b4] record_and_restart+0xf4/0x5c0 (unreliable)
+    [c0000000000ec378] perf_event_interrupt+0x298/0x460
+    [c000000000027964] performance_monitor_exception+0x54/0x70
+    [c000000000009ba4] performance_monitor_common+0x114/0x120
 
-AudioControl Interface Descriptor:
-  bLength                 8
-  bDescriptorType        36
-  bDescriptorSubtype     10 (CLOCK_SOURCE)
-  bClockID                1
-  bmAttributes         0x07 Internal programmable Clock (synced to SOF)
-  bmControls           0x07
-  Clock Frequency Control (read/write)
-  Clock Validity Control (read-only)
-  bAssocTerminal          0
-  iClockSource            0
+Fix it by deferefencing the addresses safely.
 
-To fix it, check usb_string()'return value and bail out.
-
-==================================================================
-BUG: KASAN: stack-out-of-bounds in parse_audio_unit+0x1327/0x1960 [snd_usb_audio]
-Write of size 1 at addr ffff88007e66735a by task systemd-udevd/18376
-
-CPU: 0 PID: 18376 Comm: systemd-udevd Not tainted 4.13.0+ #3
-Hardware name: LG Electronics                   15N540-RFLGL/White Tip Mountain, BIOS 15N5
-Call Trace:
-dump_stack+0x63/0x8d
-print_address_description+0x70/0x290
-? parse_audio_unit+0x1327/0x1960 [snd_usb_audio]
-kasan_report+0x265/0x350
-__asan_store1+0x4a/0x50
-parse_audio_unit+0x1327/0x1960 [snd_usb_audio]
-? save_stack+0xb5/0xd0
-? save_stack_trace+0x1b/0x20
-? save_stack+0x46/0xd0
-? kasan_kmalloc+0xad/0xe0
-? kmem_cache_alloc_trace+0xff/0x230
-? snd_usb_create_mixer+0xb0/0x4b0 [snd_usb_audio]
-? usb_audio_probe+0x4de/0xf40 [snd_usb_audio]
-? usb_probe_interface+0x1f5/0x440
-? driver_probe_device+0x3ed/0x660
-? build_feature_ctl+0xb10/0xb10 [snd_usb_audio]
-? save_stack_trace+0x1b/0x20
-? init_object+0x69/0xa0
-? snd_usb_find_csint_desc+0xa8/0xf0 [snd_usb_audio]
-snd_usb_mixer_controls+0x1dc/0x370 [snd_usb_audio]
-? build_audio_procunit+0x890/0x890 [snd_usb_audio]
-? snd_usb_create_mixer+0xb0/0x4b0 [snd_usb_audio]
-? kmem_cache_alloc_trace+0xff/0x230
-? usb_ifnum_to_if+0xbd/0xf0
-snd_usb_create_mixer+0x25b/0x4b0 [snd_usb_audio]
-? snd_usb_create_stream+0x255/0x2c0 [snd_usb_audio]
-usb_audio_probe+0x4de/0xf40 [snd_usb_audio]
-? snd_usb_autosuspend.part.7+0x30/0x30 [snd_usb_audio]
-? __pm_runtime_idle+0x90/0x90
-? kernfs_activate+0xa6/0xc0
-? usb_match_one_id_intf+0xdc/0x130
-? __pm_runtime_set_status+0x2d4/0x450
-usb_probe_interface+0x1f5/0x440
-
-Signed-off-by: Jaejoong Kim <climbbb.kim@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 691231846ceb ("powerpc/perf: Fix setting of "to" addresses for BHRB")
+Suggested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+[mpe: Use probe_kernel_read() which is clearer, tweak change log]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/usb/mixer.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/perf/core-book3s.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -199,6 +199,10 @@ static int snd_usb_copy_string_desc(stru
- 				    int index, char *buf, int maxlen)
- {
- 	int len = usb_string(state->chip->dev, index, buf, maxlen - 1);
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -391,8 +391,12 @@ static __u64 power_pmu_bhrb_to(u64 addr)
+ 	int ret;
+ 	__u64 target;
+ 
+-	if (is_kernel_addr(addr))
+-		return branch_target((unsigned int *)addr);
++	if (is_kernel_addr(addr)) {
++		if (probe_kernel_read(&instr, (void *)addr, sizeof(instr)))
++			return 0;
 +
-+	if (len < 0)
-+		return 0;
-+
- 	buf[len] = 0;
- 	return len;
- }
++		return branch_target(&instr);
++	}
+ 
+ 	/* Userspace: need copy instruction here then translate it */
+ 	pagefault_disable();
