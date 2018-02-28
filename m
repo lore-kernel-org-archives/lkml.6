@@ -1,96 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933623AbeB1Pvj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:51:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52264 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933272AbeB1Pvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:51:36 -0500
-Subject: Re: [PATCH] arm64: dts: juno: fix size of GICv2m MSI frames
-To: Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-References: <20180207143255.17003-3-marc.zyngier@arm.com>
- <1519832935-7338-1-git-send-email-sudeep.holla@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <36126393-ee37-40f1-9d5d-1c7f25c648dc@arm.com>
-Date: Wed, 28 Feb 2018 15:51:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519832935-7338-1-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1753434AbeB1REC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:04:02 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:49174 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753403AbeB1REA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:04:00 -0500
+Date: Wed, 28 Feb 2018 12:03:58 -0500 (EST)
+Message-Id: <20180228.120358.511315280246637626.davem@davemloft.net>
+To: joeypabalinas@gmail.com
+Cc: netdev@vger.kernel.org, shemminger@linux-foundation.org,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/tcp/illinois: replace broken algorithm reference
+ link
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180228080553.wfgmz46fn452hddn@gmail.com>
+References: <20180228080553.wfgmz46fn452hddn@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudeep,
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+Date: Tue, 27 Feb 2018 22:05:53 -1000
 
-Cheers for sorting it out...
-
-On 28/02/18 15:48, Sudeep Holla wrote:
-> Currently the size of GICv2m MSI frames are listed as 4kB while the
-> Juno TRM specifies 64kB for each of these MSI frames.
+> The link to the pdf containing the algorithm description is now a
+> dead link; it seems http://www.ifp.illinois.edu/~srikant/ has been
+> moved to https://sites.google.com/a/illinois.edu/srikant/ and none of
+> the original papers can be found there...
 > 
-> Though the devices connected themself might just use the first 4kB,
-
-s/themself/themselves/
-
-> to be consistent with the genaral practice of 64kB boundary alignment
-
-s/genaral/general/
-
-> to all the devices, lets keep the size as 64kB. This might also help
-> in avoiding any surprise when passing the device to a VM.
+> I have replaced it with the only working copy I was able to find.
 > 
-> This patch increase the size of each GICv2m MSI frames from 4kB to 64kB
-> as per the specification.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->   arch/arm64/boot/dts/arm/juno-base.dtsi | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> n.b. there is also a copy available at:
 > 
-> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> index f8088c45b060..eb749c50a736 100644
-> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
-> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> @@ -72,25 +72,25 @@
->   		v2m_0: v2m@0 {
->   			compatible = "arm,gic-v2m-frame";
->   			msi-controller;
-> -			reg = <0 0 0 0x1000>;
-> +			reg = <0 0 0 0x10000>;
->   		};
->   
->   		v2m@10000 {
->   			compatible = "arm,gic-v2m-frame";
->   			msi-controller;
-> -			reg = <0 0x10000 0 0x1000>;
-> +			reg = <0 0x10000 0 0x10000>;
->   		};
->   
->   		v2m@20000 {
->   			compatible = "arm,gic-v2m-frame";
->   			msi-controller;
-> -			reg = <0 0x20000 0 0x1000>;
-> +			reg = <0 0x20000 0 0x10000>;
->   		};
->   
->   		v2m@30000 {
->   			compatible = "arm,gic-v2m-frame";
->   			msi-controller;
-> -			reg = <0 0x30000 0 0x1000>;
-> +			reg = <0 0x30000 0 0x10000>;
->   		};
->   	};
->   
+> http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.296.6350&rep=rep1&type=pdf
 > 
+> However, this seems to only be a *cached* version, so I am unsure
+> exactly how reliable that link can be expected to remain over time
+> and have decided against using that one.
+> 
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+
+Applied, thank you.
