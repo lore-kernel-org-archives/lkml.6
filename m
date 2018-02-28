@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835614-2-2138621944093762417
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835195-2-4955366962218536379
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835614; b=a3v5jqH1Vl8sy+ZC9U4BXHeOK2UgXXUBsJMuaEBHPiT9Gt7
-    dLrWrEdsIdxur1O1ZsyyOtBbgo1egzKzZ+I8CExRbUQIdW7WzfT6GGMvGgda/+SV
-    Ab5YXCm6rTdQ5T+Vvn4CiSKixwU7xQjeUwAKfUGUXHc2iuNnYv1R0tzV3Q3sGJni
-    CrAbwz1rPI9RMGyJ0wUxGTeZYItXg3BP18Qo94k8MwTyouotNmKvrjVMZzxYHtlY
-    xFHUIHI22KeyhiXY0p+P+4WNZ5jigJqmVyhKa73zw9hoVrXArF3LJfHdKzUZ6tvn
-    /e3u+0SbxHO3+rSR2DGxuYvtHcKvOmjn9BRR3Ng==
+    t=1519835194; b=WzbVL/7YKJBeENy4QzBWn4IpUZDtpTpU5G4yIGIANNmIlH0
+    KSpuQWpFuhvWNlia034KzP8MqLyn4wY/QSym52hV0y0xSd3MGVJLJSurx961HQDi
+    FG9Td+IuPeFesBa51dB2cWv0H8xrgf7X6wFyaEWz7np0oEhUTyXxehvE6uN/v8NM
+    lxQrDsBKsJ9eS72KxEYcmzTq3gC/AMxOLAp/nqXu4/xtyIgLPCNobSmOtObtCJ8P
+    BgZXvC4F21hNW56o4Uf4+rxRl5qcXZtilzW4goQi05bJiyeow6jKRaJwX0DymGsE
+    js1RsC8iUVhOGMZdfun/eqmfmSyi1PM/ZzZgi2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835614; bh=LriiJijAU7uLefXR+KW
-    rmt6W0pHcjsgHSttLd+uwVK8=; b=lXimPTCLlH4IfpcslbQ16sYVAecBpVdp5an
-    PvRbAD4QRlOPrfR0oYHAEooEUblUCrb2Q57f4Pdh39LaNxjorddPLLwApbT7flaf
-    idTdC0SVSa81VINc+90tjDJ8Rw5WPViQmsr8zNxcwy8ZbMijuiAEAPFROI2ESLRE
-    Wzg2NJrW/MZIbLH7PW5IiSJhUp1htYQ/MeqRkYeNoKHik9aCUugw4OPFeHaZ/sUN
-    b7IgQrsnE53pQYD3XSWOiUnk+rnrCxeHWid91Y1iNnptkFFT24CnfFt8v9AQ1Jr+
-    5IAAoulQkUy+sby9YvffSonc2ezwLc1jmwIaXhAY3ZHc0AAEtnw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835194; bh=VOzdRPOvkpZJbr7eMCt
+    6/uNQx3w0x+ncZSdJMBH5nho=; b=WTtqQdFlOpFgVo33rb29hGc+E2Lp0uBdSMR
+    pN7HLvSb+XCGus9zaJDa8HMk/sCWEor7tiuIg3nvu4RmSeqLNy5q9C8Od22Ie3eV
+    g9fWhOQQySc/lCGmigzhGCOV0g7TAmVYsA83SiWRcP0XnvTJXp7RmdREeJxJe1rL
+    WFh3Hiyz7AWwVxhreKI1tOBsBHpdtZ3mHE0d/rMgpTVJKphMVXglDs+4zuReOPYX
+    MD6b4aNpRl71vjI63aiJPTxDgSe2WFAyWiq59cS/vsIyEmdHGTKZrEwA61znsgN0
+    qvT0wQY6buVfi/d3df6MFmGAKuUbSlmIUMPycQFTRlslCHj2HAA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753114AbeB1QdQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:33:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35096 "EHLO
+        id S932712AbeB1Q0R (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:26:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35318 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752697AbeB1QOP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:14:15 -0500
+        by vger.kernel.org with ESMTP id S933235AbeB1QUK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:10 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        "Heiner Kallweit" <hkallweit1@gmail.com>
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        "syzbot" <syzkaller@googlegroups.com>
 Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.280477732@decadent.org.uk>
+Message-ID: <lsq.1519831221.392932626@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 020/140] eeprom: at24: check at24_read/write arguments
+Subject: [PATCH 3.2 021/140] ALSA: seq: Remove spurious WARN_ON() at timer
+ check
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,39 +80,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d9bcd462daf34aebb8de9ad7f76de0198bb5a0f0 upstream.
+commit 43a3542870328601be02fcc9d27b09db467336ef upstream.
 
-So far we completely rely on the caller to provide valid arguments.
-To be on the safe side perform an own sanity check.
+The use of snd_BUG_ON() in ALSA sequencer timer may lead to a spurious
+WARN_ON() when a slave timer is deployed as its backend and a
+corresponding master timer stops meanwhile.  The symptom was triggered
+by syzkaller spontaneously.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Since the NULL timer is valid there, rip off snd_BUG_ON().
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/misc/eeprom/at24.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/core/seq/seq_timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -274,6 +274,9 @@ static ssize_t at24_read(struct at24_dat
- 	if (unlikely(!count))
- 		return count;
+--- a/sound/core/seq/seq_timer.c
++++ b/sound/core/seq/seq_timer.c
+@@ -357,7 +357,7 @@ static int initialize_timer(struct snd_s
+ 	unsigned long freq;
  
-+	if (off + count > at24->chip.byte_len)
-+		return -EINVAL;
-+
- 	/*
- 	 * Read data from chip, protecting against concurrent updates
- 	 * from this host, but not from other I2C masters.
-@@ -396,6 +399,9 @@ static ssize_t at24_write(struct at24_da
- 	if (unlikely(!count))
- 		return count;
+ 	t = tmr->timeri->timer;
+-	if (snd_BUG_ON(!t))
++	if (!t)
+ 		return -EINVAL;
  
-+	if (off + count > at24->chip.byte_len)
-+		return -EINVAL;
-+
- 	/*
- 	 * Write data to chip, protecting against concurrent updates
- 	 * from this host, but not from other I2C masters.
+ 	freq = tmr->preferred_resolution;
