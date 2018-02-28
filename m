@@ -1,92 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeB1KdQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:33:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:46006 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752096AbeB1KdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:33:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,405,1515484800";
-   d="scan'208";a="207610027"
-Message-ID: <1519813990.10722.262.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 28 Feb 2018 12:33:10 +0200
-In-Reply-To: <20180227101422.7c0efb40@endymion>
+        id S1752578AbeB1Kdn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:33:43 -0500
+Received: from mail-ot0-f172.google.com ([74.125.82.172]:42143 "EHLO
+        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752522AbeB1Kdk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:33:40 -0500
+X-Google-Smtp-Source: AG47ELtAYg99ly4+SWoJBdIBtNHfUSZsskbqQ5vXB2etMkSxPZNr/J79GkXoO+Prq1psBh0rqrga0P6pUhHprqiYvP4=
+MIME-Version: 1.0
+In-Reply-To: <1519813744.10722.258.camel@linux.intel.com>
 References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-         <20180227101422.7c0efb40@endymion>
-Organization: Intel Finland Oy
+ <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+ <20180226172832.7bf82336@endymion> <1519813744.10722.258.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 28 Feb 2018 11:33:39 +0100
+X-Google-Sender-Auth: BJmhAJq5I5qNvK91Kvsj0aYeWOQ
+Message-ID: <CAJZ5v0hOvU25zWfVjBw-2iz5Y7V2FkSwoTZVZTpjEG9KOCQ6oQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jean Delvare <jdelvare@suse.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-27 at 10:14 +0100, Jean Delvare wrote:
-> Hi Andy,
-> 
-> On Thu, 22 Feb 2018 14:59:20 +0200, Andy Shevchenko wrote:
-> > It's used in several places and more users may come.
-> > By using this helper they may create a slightly cleaner code.
-> 
-> In general I'm not a big fan of arbitrary API shortcuts. I won't
-> object
-> if you think it's a good one to have, however I'm a bit concerned
-> about
-> the silent handling of the "error case", which could cause unexpected
-> default decisions as seen in patch 2/4 of this series.
+On Wed, Feb 28, 2018 at 11:29 AM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Mon, 2018-02-26 at 17:28 +0100, Jean Delvare wrote:
+>
+>> > -   if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year
+>> > < 2008) {
+>> > -           if (iomem_resource.end <= 0xffffffff)
+>> > -                   pci_use_crs = false;
+>> > -   }
+>> > +   if ((dmi_get_bios_year() < 2008) && (iomem_resource.end <=
+>> > 0xffffffff))
+>> > +           pci_use_crs = false;
+>>
+>> You are changing the behavior here, when DMI does not provide a BIOS
+>> date. Beforehand, the test would fail and pci_use_crs would be left
+>> alone. After your change, dmi_get_bios_year() will return 0, and
+>> "0 < 2008" is true, so pci_use_crs is set to false.
+>
+> Hmm... Indeed.
+>
+>> I have no opinion on what this driver should do in such case,
+>
+> I would assume that no BIOS date is related to prehistoric firmwares and
+>  using _CRS would sound weird on them.
 
-Yes, we better to return -ERRNO in such case and allow callers to behave
-correspondingly.
+Careful here.
 
->  The fact that
-> dmi_get_bios_year() returns 0 if there is no DMI BIOS date provided
-> should at least be documented, to limit the risk.
-> 
-> I also wonder if dmi_get_date() itself couldn't be optimized a bit if
-> it turns out that most callers are only interested in the year.
-> Currently it will parse the whole string even if the caller isn't
-> interested in the month and day.
-> 
-> The fact that dmi_get_date() returns true even if it couldn't parse
-> the
-> date string at all is also strange, although unrelated with your
-> current work.
-
-So, what I consider is to
-- move inline function to be regular one
-- optimize it with current dmi_get_date()
-- return error code when year is not parsable
-- consider current use cases where we do compare for less than a given
-year
-
-Does it sound a correct approach?
-
-> 
-> checkpatch complains:
-> 
-> WARNING: Missing a blank line after declarations
-> #61: FILE: include/linux/dmi.h:153:
-> +	int year;
-> +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-> 
-> And I would tend to agree. Just because it is an inline function in a
-> header file doesn't mean we don't stick to the usual coding style
-> policy.
-
-Ingo fixed that.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+You seem to be assuming that the DMI information is always valid
+and/or complete which is know to not be the case sometimes.
