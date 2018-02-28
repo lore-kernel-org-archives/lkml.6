@@ -1,135 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752293AbeB1JmT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:42:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752015AbeB1JmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:42:17 -0500
-Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
-Date: Wed, 28 Feb 2018 10:42:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752389AbeB1JnI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:43:08 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56834 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752066AbeB1JnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:43:07 -0500
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+ <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+ <20180228053401.GA86647@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <6284a81f-ef96-7070-528b-0d058e6040b7@huawei.com>
+Date: Wed, 28 Feb 2018 17:46:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180228053401.GA86647@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.02.2018 15:28, Tony Krowiak wrote:
-> Introduces a new interface to enable AP interpretive
-> execution (IE) mode for the KVM guest. When running
-> with IE mode enabled, AP instructions executed on the
-> KVM guest will be interpreted by the firmware and
-> passed directly through to an AP device installed on
-> the system. The CPU model feature for AP must
-> be enabled for the KVM guest in order to enable
-> interpretive execution mode.
+On 2018/2/28 13:34, Jaegeuk Kim wrote:
+> On 02/27, Chao Yu wrote:
+>> Ping,
+>>
+>> On 2018/2/13 15:34, Chao Yu wrote:
+>>> Hi Jaegeuk,
+>>>
+>>> On 2018/2/10 10:52, Chao Yu wrote:
+>>>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+>>>>> On 02/01, Chao Yu wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+>>>>>>> On 01/31, Chao Yu wrote:
+>>>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+>>>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+>>>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+>>>>>>>>
+>>>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+>>>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+>>>>>>>> valid range of extended area in node block, but we don't know which
+>>>>>>>> fields/features are valid/enabled or not.
+>>>>>>>>
+>>>>>>>> One more thing is that if we can add one feature flag for each field, we got one
+>>>>>>>> more chance to disable it dynamically.
+>>>>>>>>
+>>>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+>>>>>>>>
+>>>>>>>> Yes, using raw 1017 is not appropriate here.
+>>>>>>>>
+>>>>>>>>> entries. Like this?
+>>>>>>>>> 		union {
+>>>>>>>>> 			struct node_v1;
+>>>>>>>>> 			struct node_v2;
+>>>>>>>>> 			struct node_v3;
+>>>>>>>>> 			...
+>>>>>>>>> 			struct direct_node dn;
+>>>>>>>>> 			struct indirect_node in;
+>>>>>>>>> 		};
+>>>>>>>>> 	};
+>>>>>>>>>
+>>>>>>>>> 	struct node_v1 {
+>>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>>>>>>>> 		__le32 node_checksum;
+>>>>>>>>> 	}
+>>>>>>>>>
+>>>>>>>>> 	struct node_v2 {
+>>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+>>>>>>>>
+>>>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+>>>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+>>>>>>>>
+>>>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+>>>>>>>> fields, node version count can be a large number, it results in complicated
+>>>>>>>> version recognization and handling.
+>>>>>>>>
+>>>>>>>> One more question is how can we control which fields are valid or not in
+>>>>>>>> comp[Vx_NSIZE]?
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+>>>>>>>> the one used by f2fs_inode:
+>>>>>>>>
+>>>>>>>> struct f2fs_node {
+>>>>>>>> 	union {
+>>>>>>>> 		struct f2fs_inode i;
+>>>>>>>> 		union {
+>>>>>>>> 			struct {
+>>>>>>>> 				__le32 node_checksum;
+>>>>>>>> 				__le32 feature_field_1;
+>>>>>>>> 				__le32 feature_field_2;
+>>>>>>>> 				....
+>>>>>>>> 				__le32 addr[];
+>>>>>>>> 				
+>>>>>>>> 			};
+>>>>>>>> 			struct direct_node dn;
+>>>>>>>> 			struct indirect_node in;
+>>>>>>>> 		};
+>>>>>>>> 	};
+>>>>>>>> 	struct node_footer footer;
+>>>>>>>> } __packed;
+>>>>>>>>
+>>>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+>>>>>>>> macro to indicate actual size of addr.
+>>>>>>>
+>>>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+>>>>>>
+>>>>>> OK, I think we need more discussion.. ;)
+>>>>>>
+>>>>>>> can't set each of features individually. Like the second entry should have
+>>>>>>
+>>>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+>>>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+>>>>>> example:
+>>>>>>
+>>>>>> #define F2FS_NODE_CHECKSUM	0x0001
+>>>>>> #define F2FS_NODE_FIELD1	0x0002
+>>>>>> #define F2FS_NODE_FIELD2	0x0004
+>>>>>>
+>>>>>> 	union {
+>>>>>> 		struct {
+>>>>>> 			__le32 node_checksum;
+>>>>>> 			__le32 field_1;
+>>>>>> 			__le32 field_2;
+>>>>>> 			....
+>>>>>> 			__le32 addr[];
+>>>>>> 		};
+>>>>>> 		struct direct_node dn;
+>>>>>> 		struct indirect_node in;
+>>>>>> 	};
+>>>>>>
+>>>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+>>>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+>>>>>>
+>>>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+>>>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+>>>>>
+>>>>> So, that's why I thought we may need a sort of each formats.
+>>>>
+>>>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+>>>> of all formats, as:
+>>>>
+>>>> struct original {
+>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+>>>> }
+>>>>
+>>>> struct node_v1 {
+>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>>> 	__le32 field_1;
+>>>> }
+>>>>
+>>>> struct node_v2 {
+>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+>>>> 	__le32 field_2;
+>>>> }
+>>>>
+>>>> struct node_v2 {
+>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+>>>> 	__le32 field_1;
+>>>> 	__le32 field_2;
+>>>> }
+>>>>
+>>>> If we add more new fields, the node version will increase sharply due
+>>>> to there is (n << 2) combination with n fields. Right? Any thoughts to
+>>>> reduce maintaining overhead on those node versions structures?
+>>>
+>>> Do you have time to explain more about the design of multiple version structure
+>>> for node block, I'm still be confused about two things:
+>>> 1. what will we do if we want to add one new field in node structure.
+>>> 2. how can we recognize which fields are valid and which ones are invalid.
 > 
-> This interface will be used in a subsequent patch
-> by the VFIO AP device driver.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->  arch/s390/include/asm/kvm-ap.h   |    2 ++
->  arch/s390/include/asm/kvm_host.h |    1 +
->  arch/s390/kvm/kvm-ap.c           |   27 +++++++++++++++++++++++++++
->  arch/s390/kvm/kvm-s390.h         |    1 +
->  4 files changed, 31 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-> index 46e7c5b..6bd6bfb 100644
-> --- a/arch/s390/include/asm/kvm-ap.h
-> +++ b/arch/s390/include/asm/kvm-ap.h
-> @@ -51,4 +51,6 @@ struct kvm_ap_matrix {
->  
->  void kvm_ap_deconfigure_matrix(struct kvm *kvm);
->  
-> +int kvm_ap_enable_ie_mode(struct kvm *kvm);
-> +
->  #endif /* _ASM_KVM_AP */
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index a4c77d3..1eebdd6 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -186,6 +186,7 @@ struct kvm_s390_sie_block {
->  #define ECA_AIV		0x00200000
->  #define ECA_VX		0x00020000
->  #define ECA_PROTEXCI	0x00002000
-> +#define ECA_APIE	0x00000008
->  #define ECA_SII		0x00000001
->  	__u32	eca;			/* 0x004c */
->  #define ICPT_INST	0x04
-> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-> index bb29045..862e54b 100644
-> --- a/arch/s390/kvm/kvm-ap.c
-> +++ b/arch/s390/kvm/kvm-ap.c
-> @@ -307,3 +307,30 @@ void kvm_ap_deconfigure_matrix(struct kvm *kvm)
->  	kvm_ap_clear_crycb_masks(kvm);
->  }
->  EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
-> +
-> +/**
-> + * kvm_ap_enable_ie_mode
-> + *
-> + * Enable interpretrive execution of AP instructions for the guest. When
-> + * enabled, AP instructions executed on the guest will be interpreted and
-> + * passed through to an AP installed on the host system.
-> + *
-> + * Returns 0 if interpretrive execution is enabled. Returns -EOPNOTSUPP
-> + * if AP facilities are not installed for the guest.
-> + *
-> + * @kvm: the guest's kvm structure
-> + */
-> +int kvm_ap_enable_ie_mode(struct kvm *kvm)
-> +{
-> +	int i;
-> +	struct kvm_vcpu *vcpu;
-> +
-> +	if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
-> +		return -EOPNOTSUPP;
-> +
-> +	kvm_for_each_vcpu(i, vcpu, kvm)
-> +		vcpu->arch.sie_block->eca |= ECA_APIE;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
-> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-> index 1b5621f..3142541 100644
-> --- a/arch/s390/kvm/kvm-s390.h
-> +++ b/arch/s390/kvm/kvm-s390.h
-> @@ -18,6 +18,7 @@
->  #include <asm/facility.h>
->  #include <asm/processor.h>
->  #include <asm/sclp.h>
-> +#include <asm/ap.h>
->  
->  /* Transactional Memory Execution related macros */
->  #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
-> 
+> Can we discuss this in LSF/MM, if we get an invitation letter? :P
 
-What about VSIE?
-
--- 
+I'm OK, I hope we can get the invitation and reach an agreement about node
+extension format, so I can add checksum for node block as soon as possible,
+since during development our guys suffer node block inconsistence occasionally,
+I hope checksum can relief us from hard debug work on fs. ;)
 
 Thanks,
 
-David / dhildenb
+> 
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>>>
+>>>>>> Any thoughts?
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>> enabled node_checksum, which we may not want to do.
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>>> 		__le32 comp[V2_NSIZE];
+>>>>>>>>> 	}
+>>>>>>>>> 	...
+>>>>>>>>>
+>>>>>>>>>> +			};
+>>>>>>>>>> +			struct direct_node dn;
+>>>>>>>>>> +			struct indirect_node in;
+>>>>>>>>>> +		};
+>>>>>>>>>>  	};
+>>>>>>>>>>  	struct node_footer footer;
+>>>>>>>>>>  } __packed;
+>>>>>>>>>> -- 
+>>>>>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>>>>>
+>>>>>>>>> .
+>>>>>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+> 
+> .
+> 
