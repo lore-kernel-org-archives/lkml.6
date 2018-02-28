@@ -1,324 +1,614 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeB1JIE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:08:04 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5683 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752354AbeB1JH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:07:59 -0500
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: support hot file extension
-Date: Wed, 28 Feb 2018 17:07:27 +0800
-Message-ID: <20180228090727.34138-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+        id S1752203AbeB1JOm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:14:42 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54119 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751707AbeB1JOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:14:40 -0500
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: [PATCH net-next v2] net: mvpp2: Add hardware offloading for VLAN filtering
+Date: Wed, 28 Feb 2018 10:14:13 +0100
+Message-Id: <20180228091413.10008-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch supports to recognize hot file extension in f2fs, so that we
-can allocate proper hot segment location for its data, which can lead to
-better hot/cold seperation in filesystem.
+Marvell PPv2 controller allows for generic packet filtering. This commit
+adds entries to implement VLAN filtering. The approach taken is :
 
-In addition, we changes a bit on query/add/del operation method for
-extension_list sysfs entry as below:
+ - Filter entries that would match on the presence of the VLAN tag
+   (existing VLAN detection, DSA / EDSA detection) will set the next
+   lookup ID to be for the VID.
 
-- Query: cat /sys/fs/f2fs/<disk>/extension_list
-- Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
-- Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
-- Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
-- Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
-- [h] means add/del hot file extension
-- [c] means add/del cold file extension
+ - For each VLAN existing on a given port, we add an entry that matches
+   this specific VID. If the incoming packet matches the VID entry, it is
+   set for the next lookup in the chain (LU_L2).
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+ - A Guard entry is added for each port, that will match if the incoming
+   packet didn't match any of the above VID entries. This entry tags the
+   packet to be dropped.
+
+Due to this design, and the fact that the total 256 filter entries are
+also used for other purposes, we have a limit of 10 VLANs per port. To
+accommodate the case where we would need more VLANS on one port, this
+patch implements the ndo_set_features to allow for disabling of VLAN
+filtering using ethtool.
+
+The default config has VLAN filtering disabled.
+
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
-v2:
-- fix to use hot data segment for hot file's data.
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++-
- fs/f2fs/f2fs.h                          |  6 ++-
- fs/f2fs/namei.c                         | 79 ++++++++++++++++++++++++---------
- fs/f2fs/segment.c                       |  3 +-
- fs/f2fs/sysfs.c                         | 30 ++++++++++---
- include/linux/f2fs_fs.h                 |  3 +-
- 6 files changed, 96 insertions(+), 31 deletions(-)
+V2: Use correct order for local variable declarations
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 7fa84e349ad9..540553c933b6 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -199,5 +199,7 @@ Contact:	"Chao Yu" <yuchao0@huawei.com>
- Description:
- 		 Used to control configure extension list:
- 		 - Query: cat /sys/fs/f2fs/<disk>/extension_list
--		 - Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
--		 - Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - [h] means add/del hot file extension
-+		 - [c] means add/del cold file extension
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8024ad1ce689..a9881ddb16f5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -578,6 +578,7 @@ enum {
- #define FADVISE_ENCRYPT_BIT	0x04
- #define FADVISE_ENC_NAME_BIT	0x08
- #define FADVISE_KEEP_SIZE_BIT	0x10
-+#define FADVISE_HOT_BIT		0x20
+ drivers/net/ethernet/marvell/mvpp2.c | 414 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 380 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 5a1668cdb461..9418f6eed086 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -65,6 +65,10 @@
+ #define     MVPP2_RXQ_PACKET_OFFSET_MASK	0x70000000
+ #define     MVPP2_RXQ_DISABLE_MASK		BIT(31)
  
- #define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
- #define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
-@@ -592,6 +593,9 @@ enum {
- #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
- #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
- #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
-+#define file_is_hot(inode)	is_file(inode, FADVISE_HOT_BIT)
-+#define file_set_hot(inode)	set_file(inode, FADVISE_HOT_BIT)
-+#define file_clear_hot(inode)	clear_file(inode, FADVISE_HOT_BIT)
++/* Top Registers */
++#define MVPP2_MH_REG(port)			(0x5040 + 4 * (port))
++#define MVPP2_DSA_EXTENDED			BIT(5)
++
+ /* Parser Registers */
+ #define MVPP2_PRS_INIT_LOOKUP_REG		0x1000
+ #define     MVPP2_PRS_PORT_LU_MAX		0xf
+@@ -473,6 +477,7 @@
+ #define MVPP2_ETH_TYPE_LEN		2
+ #define MVPP2_PPPOE_HDR_SIZE		8
+ #define MVPP2_VLAN_TAG_LEN		4
++#define MVPP2_VLAN_TAG_EDSA_LEN		8
  
- #define DEF_DIR_LEVEL		0
+ /* Lbtd 802.3 type */
+ #define MVPP2_IP_LBDT_TYPE		0xfffa
+@@ -609,35 +614,64 @@ enum mvpp2_tag_type {
+ #define MVPP2_PRS_TCAM_LU_BYTE			20
+ #define MVPP2_PRS_TCAM_EN_OFFS(offs)		((offs) + 2)
+ #define MVPP2_PRS_TCAM_INV_WORD			5
++
++#define MVPP2_PRS_VID_TCAM_BYTE         2
++
++/* There is a TCAM range reserved for VLAN filtering entries, range size is 33
++ * 10 VLAN ID filter entries per port
++ * 1 default VLAN filter entry per port
++ * It is assumed that there are 3 ports for filter, not including loopback port
++ */
++#define MVPP2_PRS_VLAN_FILT_MAX		11
++#define MVPP2_PRS_VLAN_FILT_RANGE_SIZE	33
++
++#define MVPP2_PRS_VLAN_FILT_MAX_ENTRY   (MVPP2_PRS_VLAN_FILT_MAX - 2)
++#define MVPP2_PRS_VLAN_FILT_DFLT_ENTRY  (MVPP2_PRS_VLAN_FILT_MAX - 1)
++
+ /* Tcam entries ID */
+ #define MVPP2_PE_DROP_ALL		0
+ #define MVPP2_PE_FIRST_FREE_TID		1
+-#define MVPP2_PE_LAST_FREE_TID		(MVPP2_PRS_TCAM_SRAM_SIZE - 31)
++
++/* VLAN filtering range */
++#define MVPP2_PE_VID_FILT_RANGE_END     (MVPP2_PRS_TCAM_SRAM_SIZE - 31)
++#define MVPP2_PE_VID_FILT_RANGE_START   (MVPP2_PE_VID_FILT_RANGE_END - \
++					 MVPP2_PRS_VLAN_FILT_RANGE_SIZE + 1)
++#define MVPP2_PE_LAST_FREE_TID          (MVPP2_PE_VID_FILT_RANGE_START - 1)
+ #define MVPP2_PE_IP6_EXT_PROTO_UN	(MVPP2_PRS_TCAM_SRAM_SIZE - 30)
+ #define MVPP2_PE_MAC_MC_IP6		(MVPP2_PRS_TCAM_SRAM_SIZE - 29)
+ #define MVPP2_PE_IP6_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 28)
+ #define MVPP2_PE_IP4_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 27)
+ #define MVPP2_PE_LAST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 26)
+-#define MVPP2_PE_FIRST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 19)
+-#define MVPP2_PE_EDSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 18)
+-#define MVPP2_PE_EDSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 17)
+-#define MVPP2_PE_DSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 16)
+-#define MVPP2_PE_DSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 15)
+-#define MVPP2_PE_ETYPE_EDSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 14)
+-#define MVPP2_PE_ETYPE_EDSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 13)
+-#define MVPP2_PE_ETYPE_DSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 12)
+-#define MVPP2_PE_ETYPE_DSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 11)
+-#define MVPP2_PE_MH_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 10)
+-#define MVPP2_PE_DSA_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 9)
+-#define MVPP2_PE_IP6_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 8)
+-#define MVPP2_PE_IP4_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 7)
+-#define MVPP2_PE_ETH_TYPE_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 6)
++#define MVPP2_PE_FIRST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 21)
++#define MVPP2_PE_EDSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 20)
++#define MVPP2_PE_EDSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 19)
++#define MVPP2_PE_DSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 18)
++#define MVPP2_PE_DSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 17)
++#define MVPP2_PE_ETYPE_EDSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 16)
++#define MVPP2_PE_ETYPE_EDSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 15)
++#define MVPP2_PE_ETYPE_DSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 14)
++#define MVPP2_PE_ETYPE_DSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 13)
++#define MVPP2_PE_MH_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 12)
++#define MVPP2_PE_DSA_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 11)
++#define MVPP2_PE_IP6_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 10)
++#define MVPP2_PE_IP4_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 9)
++#define MVPP2_PE_ETH_TYPE_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 8)
++#define MVPP2_PE_VID_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 7)
++#define MVPP2_PE_VID_EDSA_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 6)
+ #define MVPP2_PE_VLAN_DBL		(MVPP2_PRS_TCAM_SRAM_SIZE - 5)
+ #define MVPP2_PE_VLAN_NONE		(MVPP2_PRS_TCAM_SRAM_SIZE - 4)
+ #define MVPP2_PE_MAC_MC_ALL		(MVPP2_PRS_TCAM_SRAM_SIZE - 3)
+ #define MVPP2_PE_MAC_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 2)
+ #define MVPP2_PE_MAC_NON_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 1)
  
-@@ -2622,7 +2626,7 @@ void handle_failed_inode(struct inode *inode);
-  * namei.c
++#define MVPP2_PRS_VID_PORT_FIRST(port)	(MVPP2_PE_VID_FILT_RANGE_START + \
++					 ((port) * MVPP2_PRS_VLAN_FILT_MAX))
++#define MVPP2_PRS_VID_PORT_LAST(port)	(MVPP2_PRS_VID_PORT_FIRST(port) \
++					 + MVPP2_PRS_VLAN_FILT_MAX_ENTRY)
++/* Index of default vid filter for given port */
++#define MVPP2_PRS_VID_PORT_DFLT(port)	(MVPP2_PRS_VID_PORT_FIRST(port) \
++					 + MVPP2_PRS_VLAN_FILT_DFLT_ENTRY)
++
+ /* Sram structure
+  * The fields are represented by MVPP2_PRS_TCAM_DATA_REG(3)->(0).
   */
- int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
--								bool set);
-+							bool hot, bool set);
- struct dentry *f2fs_get_parent(struct dentry *child);
+@@ -725,6 +759,7 @@ enum mvpp2_tag_type {
+ #define MVPP2_PRS_IPV6_EXT_AH_L4_AI_BIT		BIT(4)
+ #define MVPP2_PRS_SINGLE_VLAN_AI		0
+ #define MVPP2_PRS_DBL_VLAN_AI_BIT		BIT(7)
++#define MVPP2_PRS_EDSA_VID_AI_BIT		BIT(0)
  
- /*
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index fa8e5c06ba39..b747fb832eed 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -142,7 +142,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	return ERR_PTR(err);
+ /* DSA/EDSA type */
+ #define MVPP2_PRS_TAGGED		true
+@@ -747,6 +782,7 @@ enum mvpp2_prs_lookup {
+ 	MVPP2_PRS_LU_MAC,
+ 	MVPP2_PRS_LU_DSA,
+ 	MVPP2_PRS_LU_VLAN,
++	MVPP2_PRS_LU_VID,
+ 	MVPP2_PRS_LU_L2,
+ 	MVPP2_PRS_LU_PPPOE,
+ 	MVPP2_PRS_LU_IP4,
+@@ -1662,6 +1698,14 @@ static void mvpp2_prs_match_etype(struct mvpp2_prs_entry *pe, int offset,
+ 	mvpp2_prs_tcam_data_byte_set(pe, offset + 1, ethertype & 0xff, 0xff);
  }
  
--static int is_multimedia_file(const unsigned char *s, const char *sub)
-+static int is_extension_exist(const unsigned char *s, const char *sub)
- {
- 	size_t slen = strlen(s);
- 	size_t sublen = strlen(sub);
-@@ -168,33 +168,59 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
- /*
-  * Set multimedia files as cold files for hot/cold data separation
-  */
--static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
-+static inline void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
- 		const unsigned char *name)
- {
- 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
--	int i, count;
-+	int i, cold_count, hot_count;
- 
- 	down_read(&sbi->sb_lock);
- 
--	count = le32_to_cpu(sbi->raw_super->extension_count);
-+	cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+	hot_count = sbi->raw_super->hot_ext_count;
- 
--	for (i = 0; i < count; i++) {
--		if (is_multimedia_file(name, extlist[i])) {
-+	for (i = 0; i < cold_count + hot_count; i++) {
-+		if (!is_extension_exist(name, extlist[i]))
-+			continue;
-+		if (i < cold_count)
- 			file_set_cold(inode);
--			break;
--		}
-+		else
-+			file_set_hot(inode);
-+		break;
- 	}
- 
- 	up_read(&sbi->sb_lock);
- }
- 
--int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
-+int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
-+							bool hot, bool set)
- {
- 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
--	int count = le32_to_cpu(sbi->raw_super->extension_count);
-+	int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+	int hot_count = sbi->raw_super->hot_ext_count;
-+	int total_count = cold_count + hot_count;
-+	int start, count;
- 	int i;
- 
--	for (i = 0; i < count; i++) {
-+	if (set) {
-+		if (total_count == F2FS_MAX_EXTENSION)
-+			return -EINVAL;
-+	} else {
-+		if (!hot && !cold_count)
-+			return -EINVAL;
-+		if (hot && !hot_count)
-+			return -EINVAL;
-+	}
++/* Set vid in tcam sw entry */
++static void mvpp2_prs_match_vid(struct mvpp2_prs_entry *pe, int offset,
++				unsigned short vid)
++{
++	mvpp2_prs_tcam_data_byte_set(pe, offset + 0, (vid & 0xf00) >> 8, 0xf);
++	mvpp2_prs_tcam_data_byte_set(pe, offset + 1, vid & 0xff, 0xff);
++}
 +
-+	if (hot) {
-+		start = cold_count;
-+		count = total_count;
-+	} else {
-+		start = 0;
-+		count = cold_count;
-+	}
-+
-+	for (i = start; i < count; i++) {
- 		if (strcmp(name, extlist[i]))
- 			continue;
+ /* Set bits in sram sw entry */
+ static void mvpp2_prs_sram_bits_set(struct mvpp2_prs_entry *pe, int bit_num,
+ 				    int val)
+@@ -2029,24 +2073,30 @@ static void mvpp2_prs_dsa_tag_set(struct mvpp2 *priv, int port, bool add,
+ 		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_DSA);
+ 		pe.index = tid;
  
-@@ -202,20 +228,33 @@ int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
- 			return -EINVAL;
- 
- 		memcpy(extlist[i], extlist[i + 1],
--				F2FS_EXTENSION_LEN * (count - i - 1));
--		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
--		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
-+				F2FS_EXTENSION_LEN * (total_count - i - 1));
-+		memset(extlist[total_count - 1], 0, F2FS_EXTENSION_LEN);
-+		if (hot)
-+			sbi->raw_super->hot_ext_count = hot_count - 1;
-+		else
-+			sbi->raw_super->extension_count =
-+						cpu_to_le32(cold_count - 1);
- 		return 0;
- 	}
- 
- 	if (!set)
- 		return -EINVAL;
- 
--	if (count == F2FS_MAX_EXTENSION)
--		return -EINVAL;
+-		/* Shift 4 bytes if DSA tag or 8 bytes in case of EDSA tag*/
+-		mvpp2_prs_sram_shift_set(&pe, shift,
+-					 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
 -
--	strncpy(extlist[count], name, strlen(name));
--	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
-+	if (hot) {
-+		strncpy(extlist[count], name, strlen(name));
-+		sbi->raw_super->hot_ext_count = hot_count + 1;
-+	} else {
-+		char buf[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];
+ 		/* Update shadow table */
+ 		mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_DSA);
+ 
+ 		if (tagged) {
+ 			/* Set tagged bit in DSA tag */
+ 			mvpp2_prs_tcam_data_byte_set(&pe, 0,
+-						     MVPP2_PRS_TCAM_DSA_TAGGED_BIT,
+-						     MVPP2_PRS_TCAM_DSA_TAGGED_BIT);
+-			/* Clear all ai bits for next iteration */
+-			mvpp2_prs_sram_ai_update(&pe, 0,
+-						 MVPP2_PRS_SRAM_AI_MASK);
+-			/* If packet is tagged continue check vlans */
+-			mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VLAN);
++					     MVPP2_PRS_TCAM_DSA_TAGGED_BIT,
++					     MVPP2_PRS_TCAM_DSA_TAGGED_BIT);
 +
-+		memcpy(buf, &extlist[cold_count],
-+				F2FS_EXTENSION_LEN * hot_count);
-+		memset(extlist[cold_count], 0, F2FS_EXTENSION_LEN);
-+		strncpy(extlist[cold_count], name, strlen(name));
-+		memcpy(&extlist[cold_count + 1], buf,
-+				F2FS_EXTENSION_LEN * hot_count);
-+		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
-+	}
++			/* Set ai bits for next iteration */
++			if (extend)
++				mvpp2_prs_sram_ai_update(&pe, 1,
++							MVPP2_PRS_SRAM_AI_MASK);
++			else
++				mvpp2_prs_sram_ai_update(&pe, 0,
++							MVPP2_PRS_SRAM_AI_MASK);
++
++			/* If packet is tagged continue check vid filtering */
++			mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VID);
+ 		} else {
++			/* Shift 4 bytes for DSA tag or 8 bytes for EDSA tag*/
++			mvpp2_prs_sram_shift_set(&pe, shift,
++					MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++
+ 			/* Set result info bits to 'no vlans' */
+ 			mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_NONE,
+ 						 MVPP2_PRS_RI_VLAN_MASK);
+@@ -2231,10 +2281,9 @@ static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
+ 
+ 		mvpp2_prs_match_etype(pe, 0, tpid);
+ 
+-		mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_L2);
+-		/* Shift 4 bytes - skip 1 vlan tag */
+-		mvpp2_prs_sram_shift_set(pe, MVPP2_VLAN_TAG_LEN,
+-					 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++		/* VLAN tag detected, proceed with VID filtering */
++		mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_VID);
++
+ 		/* Clear all ai bits for next iteration */
+ 		mvpp2_prs_sram_ai_update(pe, 0, MVPP2_PRS_SRAM_AI_MASK);
+ 
+@@ -2375,8 +2424,8 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
+ 		mvpp2_prs_match_etype(pe, 4, tpid2);
+ 
+ 		mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_VLAN);
+-		/* Shift 8 bytes - skip 2 vlan tags */
+-		mvpp2_prs_sram_shift_set(pe, 2 * MVPP2_VLAN_TAG_LEN,
++		/* Shift 4 bytes - skip outer vlan tag */
++		mvpp2_prs_sram_shift_set(pe, MVPP2_VLAN_TAG_LEN,
+ 					 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
+ 		mvpp2_prs_sram_ri_update(pe, MVPP2_PRS_RI_VLAN_DOUBLE,
+ 					 MVPP2_PRS_RI_VLAN_MASK);
+@@ -2755,6 +2804,62 @@ static void mvpp2_prs_dsa_init(struct mvpp2 *priv)
+ 	mvpp2_prs_hw_write(priv, &pe);
+ }
+ 
++/* Initialize parser entries for VID filtering */
++static void mvpp2_prs_vid_init(struct mvpp2 *priv)
++{
++	struct mvpp2_prs_entry pe;
++
++	memset(&pe, 0, sizeof(pe));
++
++	/* Set default vid entry */
++	pe.index = MVPP2_PE_VID_FLTR_DEFAULT;
++	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VID);
++
++	mvpp2_prs_tcam_ai_update(&pe, 0, MVPP2_PRS_EDSA_VID_AI_BIT);
++
++	/* Skip VLAN header - Set offset to 4 bytes */
++	mvpp2_prs_sram_shift_set(&pe, MVPP2_VLAN_TAG_LEN,
++				 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++
++	/* Clear all ai bits for next iteration */
++	mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
++
++	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_L2);
++
++	/* Unmask all ports */
++	mvpp2_prs_tcam_port_map_set(&pe, MVPP2_PRS_PORT_MASK);
++
++	/* Update shadow table and hw entry */
++	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VID);
++	mvpp2_prs_hw_write(priv, &pe);
++
++	/* Set default vid entry for extended DSA*/
++	memset(&pe, 0, sizeof(pe));
++
++	/* Set default vid entry */
++	pe.index = MVPP2_PE_VID_EDSA_FLTR_DEFAULT;
++	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VID);
++
++	mvpp2_prs_tcam_ai_update(&pe, MVPP2_PRS_EDSA_VID_AI_BIT,
++				 MVPP2_PRS_EDSA_VID_AI_BIT);
++
++	/* Skip VLAN header - Set offset to 8 bytes */
++	mvpp2_prs_sram_shift_set(&pe, MVPP2_VLAN_TAG_EDSA_LEN,
++				 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++
++	/* Clear all ai bits for next iteration */
++	mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
++
++	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_L2);
++
++	/* Unmask all ports */
++	mvpp2_prs_tcam_port_map_set(&pe, MVPP2_PRS_PORT_MASK);
++
++	/* Update shadow table and hw entry */
++	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VID);
++	mvpp2_prs_hw_write(priv, &pe);
++}
++
+ /* Match basic ethertypes */
+ static int mvpp2_prs_etype_init(struct mvpp2 *priv)
+ {
+@@ -3023,7 +3128,8 @@ static int mvpp2_prs_vlan_init(struct platform_device *pdev, struct mvpp2 *priv)
+ 	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VLAN);
+ 	pe.index = MVPP2_PE_VLAN_DBL;
+ 
+-	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_L2);
++	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VID);
++
+ 	/* Clear ai for next iterations */
+ 	mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
+ 	mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_DOUBLE,
+@@ -3386,6 +3492,192 @@ static int mvpp2_prs_ip6_init(struct mvpp2 *priv)
  	return 0;
  }
  
-@@ -239,7 +278,7 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 		return PTR_ERR(inode);
- 
- 	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
--		set_cold_files(sbi, inode, dentry->d_name.name);
-+		set_file_temperature(sbi, inode, dentry->d_name.name);
- 
- 	inode->i_op = &f2fs_file_inode_operations;
- 	inode->i_fop = &f2fs_file_operations;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bda2ad048ea0..7b981efa3693 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2588,7 +2588,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 
- 		if (is_cold_data(fio->page) || file_is_cold(inode))
- 			return CURSEG_COLD_DATA;
--		if (is_inode_flag_set(inode, FI_HOT_DATA))
-+		if (file_is_hot(inode) ||
-+				is_inode_flag_set(inode, FI_HOT_DATA))
- 			return CURSEG_HOT_DATA;
- 		return rw_hint_to_seg_type(inode->i_write_hint);
- 	} else {
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index d27b28e602a6..23a2d8d66c43 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -139,10 +139,19 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	if (!strcmp(a->attr.name, "extension_list")) {
- 		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
- 					sbi->raw_super->extension_list;
--		int count = le32_to_cpu(sbi->raw_super->extension_count);
-+		int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+		int hot_count = sbi->raw_super->hot_ext_count;
- 		int len = 0, i;
- 
--		for (i = 0; i < count; i++)
-+		len += snprintf(buf + len, PAGE_SIZE - len,
-+						"cold file extenstion:\n");
-+		for (i = 0; i < cold_count; i++)
-+			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
-+								extlist[i]);
++/* Find tcam entry with matched pair <vid,port> */
++static int mvpp2_prs_vid_range_find(struct mvpp2 *priv, int pmap, u16 vid,
++				    u16 mask)
++{
++	unsigned char byte[2], enable[2];
++	struct mvpp2_prs_entry pe;
++	u16 rvid, rmask;
++	int tid;
 +
-+		len += snprintf(buf + len, PAGE_SIZE - len,
-+						"hot file extenstion:\n");
-+		for (i = cold_count; i < cold_count + hot_count; i++)
- 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
- 								extlist[i]);
- 		return len;
-@@ -168,9 +177,18 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 
- 	if (!strcmp(a->attr.name, "extension_list")) {
- 		const char *name = strim((char *)buf);
--		bool set = true;
-+		bool set = true, hot;
++	/* Go through the all entries with MVPP2_PRS_LU_VID */
++	for (tid = MVPP2_PE_VID_FILT_RANGE_START;
++	     tid <= MVPP2_PE_VID_FILT_RANGE_END; tid++) {
++		if (!priv->prs_shadow[tid].valid ||
++		    priv->prs_shadow[tid].lu != MVPP2_PRS_LU_VID)
++			continue;
 +
-+		if (!strncmp(name, "[h]", 3))
-+			hot = true;
-+		else if (!strncmp(name, "[c]", 3))
-+			hot = false;
-+		else
-+			return -EINVAL;
++		pe.index = tid;
 +
-+		name += 3;
++		mvpp2_prs_hw_read(priv, &pe);
++		mvpp2_prs_tcam_data_byte_get(&pe, 2, &byte[0], &enable[0]);
++		mvpp2_prs_tcam_data_byte_get(&pe, 3, &byte[1], &enable[1]);
++
++		rvid = ((byte[0] & 0xf) << 8) + byte[1];
++		rmask = ((enable[0] & 0xf) << 8) + enable[1];
++
++		if (rvid != vid || rmask != mask)
++			continue;
++
++		return tid;
++	}
++
++	return 0;
++}
++
++/* Write parser entry for VID filtering */
++static int mvpp2_prs_vid_entry_add(struct mvpp2_port *port, u16 vid)
++{
++	unsigned int vid_start = MVPP2_PE_VID_FILT_RANGE_START +
++				 port->id * MVPP2_PRS_VLAN_FILT_MAX;
++	unsigned int mask = 0xfff, reg_val, shift;
++	struct mvpp2 *priv = port->priv;
++	struct mvpp2_prs_entry pe;
++	int tid;
++
++	/* Scan TCAM and see if entry with this <vid,port> already exist */
++	tid = mvpp2_prs_vid_range_find(priv, (1 << port->id), vid, mask);
++
++	reg_val = mvpp2_read(priv, MVPP2_MH_REG(port->id));
++	if (reg_val & MVPP2_DSA_EXTENDED)
++		shift = MVPP2_VLAN_TAG_EDSA_LEN;
++	else
++		shift = MVPP2_VLAN_TAG_LEN;
++
++	/* No such entry */
++	if (!tid) {
++		memset(&pe, 0, sizeof(pe));
++
++		/* Go through all entries from first to last in vlan range */
++		tid = mvpp2_prs_tcam_first_free(priv, vid_start,
++						vid_start +
++						MVPP2_PRS_VLAN_FILT_MAX_ENTRY);
++
++		/* There isn't room for a new VID filter */
++		if (tid < 0)
++			return tid;
++
++		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VID);
++		pe.index = tid;
++
++		/* Mask all ports */
++		mvpp2_prs_tcam_port_map_set(&pe, 0);
++	} else {
++		mvpp2_prs_hw_read(priv, &pe);
++	}
++
++	/* Enable the current port */
++	mvpp2_prs_tcam_port_set(&pe, port->id, true);
++
++	/* Continue - set next lookup */
++	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_L2);
++
++	/* Skip VLAN header - Set offset to 4 or 8 bytes */
++	mvpp2_prs_sram_shift_set(&pe, shift, MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++
++	/* Set match on VID */
++	mvpp2_prs_match_vid(&pe, MVPP2_PRS_VID_TCAM_BYTE, vid);
++
++	/* Clear all ai bits for next iteration */
++	mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
++
++	/* Update shadow table */
++	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VID);
++	mvpp2_prs_hw_write(priv, &pe);
++
++	return 0;
++}
++
++/* Write parser entry for VID filtering */
++static void mvpp2_prs_vid_entry_remove(struct mvpp2_port *port, u16 vid)
++{
++	struct mvpp2 *priv = port->priv;
++	int tid;
++
++	/* Scan TCAM and see if entry with this <vid,port> already exist */
++	tid = mvpp2_prs_vid_range_find(priv, (1 << port->id), vid, 0xfff);
++
++	/* No such entry */
++	if (tid)
++		return;
++
++	mvpp2_prs_hw_inv(priv, tid);
++	priv->prs_shadow[tid].valid = false;
++}
++
++/* Remove all existing VID filters on this port */
++static void mvpp2_prs_vid_remove_all(struct mvpp2_port *port)
++{
++	struct mvpp2 *priv = port->priv;
++	int tid;
++
++	for (tid = MVPP2_PRS_VID_PORT_FIRST(port->id);
++	     tid <= MVPP2_PRS_VID_PORT_LAST(port->id); tid++) {
++		if (priv->prs_shadow[tid].valid)
++			mvpp2_prs_vid_entry_remove(port, tid);
++	}
++}
++
++/* Remove VID filering entry for this port */
++static void mvpp2_prs_vid_disable_filtering(struct mvpp2_port *port)
++{
++	unsigned int tid = MVPP2_PRS_VID_PORT_DFLT(port->id);
++	struct mvpp2 *priv = port->priv;
++
++	/* Invalidate the guard entry */
++	mvpp2_prs_hw_inv(priv, tid);
++
++	priv->prs_shadow[tid].valid = false;
++}
++
++/* Add guard entry that drops packets when no VID is matched on this port */
++static void mvpp2_prs_vid_enable_filtering(struct mvpp2_port *port)
++{
++	unsigned int tid = MVPP2_PRS_VID_PORT_DFLT(port->id);
++	struct mvpp2 *priv = port->priv;
++	unsigned int reg_val, shift;
++	struct mvpp2_prs_entry pe;
++
++	if (priv->prs_shadow[tid].valid)
++		return;
++
++	memset(&pe, 0, sizeof(pe));
++
++	pe.index = tid;
++
++	reg_val = mvpp2_read(priv, MVPP2_MH_REG(port->id));
++	if (reg_val & MVPP2_DSA_EXTENDED)
++		shift = MVPP2_VLAN_TAG_EDSA_LEN;
++	else
++		shift = MVPP2_VLAN_TAG_LEN;
++
++	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VID);
++
++	/* Mask all ports */
++	mvpp2_prs_tcam_port_map_set(&pe, 0);
++
++	/* Update port mask */
++	mvpp2_prs_tcam_port_set(&pe, port->id, true);
++
++	/* Continue - set next lookup */
++	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_L2);
++
++	/* Skip VLAN header - Set offset to 4 or 8 bytes */
++	mvpp2_prs_sram_shift_set(&pe, shift, MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
++
++	/* Drop VLAN packets that don't belong to any VIDs on this port */
++	mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_DROP_MASK,
++				 MVPP2_PRS_RI_DROP_MASK);
++
++	/* Clear all ai bits for next iteration */
++	mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
++
++	/* Update shadow table */
++	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VID);
++	mvpp2_prs_hw_write(priv, &pe);
++}
++
+ /* Parser default initialization */
+ static int mvpp2_prs_default_init(struct platform_device *pdev,
+ 				  struct mvpp2 *priv)
+@@ -3429,6 +3721,8 @@ static int mvpp2_prs_default_init(struct platform_device *pdev,
  
--		if (name[0] == '!') {
-+		if (*name == '!') {
- 			name++;
- 			set = false;
+ 	mvpp2_prs_dsa_init(priv);
+ 
++	mvpp2_prs_vid_init(priv);
++
+ 	err = mvpp2_prs_etype_init(priv);
+ 	if (err)
+ 		return err;
+@@ -7153,6 +7447,12 @@ static void mvpp2_set_rx_mode(struct net_device *dev)
+ 			}
  		}
-@@ -180,13 +198,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	}
++
++	/* Disable VLAN filtering in promiscuous mode */
++	if (dev->flags & IFF_PROMISC)
++		mvpp2_prs_vid_disable_filtering(port);
++	else
++		mvpp2_prs_vid_enable_filtering(port);
+ }
  
- 		down_write(&sbi->sb_lock);
+ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+@@ -7292,6 +7592,48 @@ static int mvpp2_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	return ret;
+ }
  
--		ret = update_extension_list(sbi, name, set);
-+		ret = update_extension_list(sbi, name, hot, set);
- 		if (ret)
- 			goto out;
++static int mvpp2_vlan_rx_add_vid(struct net_device *dev, __be16 proto, u16 vid)
++{
++	struct mvpp2_port *port = netdev_priv(dev);
++	int ret;
++
++	ret = mvpp2_prs_vid_entry_add(port, vid);
++	if (ret)
++		netdev_err(dev, "rx-vlan-filter offloading cannot accept more than %d VIDs per port\n",
++			   MVPP2_PRS_VLAN_FILT_MAX - 1);
++	return ret;
++}
++
++static int mvpp2_vlan_rx_kill_vid(struct net_device *dev, __be16 proto, u16 vid)
++{
++	struct mvpp2_port *port = netdev_priv(dev);
++
++	mvpp2_prs_vid_entry_remove(port, vid);
++	return 0;
++}
++
++static int mvpp2_set_features(struct net_device *dev,
++			      netdev_features_t features)
++{
++	netdev_features_t changed = dev->features ^ features;
++	struct mvpp2_port *port = netdev_priv(dev);
++
++	if (changed & NETIF_F_HW_VLAN_CTAG_FILTER) {
++		if (features & NETIF_F_HW_VLAN_CTAG_FILTER) {
++			mvpp2_prs_vid_enable_filtering(port);
++		} else {
++			/* Invalidate all registered VID filters for this
++			 * port
++			 */
++			mvpp2_prs_vid_remove_all(port);
++
++			mvpp2_prs_vid_disable_filtering(port);
++		}
++	}
++
++	return 0;
++}
++
+ /* Ethtool methods */
  
- 		ret = f2fs_commit_super(sbi, false);
- 		if (ret)
--			update_extension_list(sbi, name, !set);
-+			update_extension_list(sbi, name, hot, !set);
- out:
- 		up_write(&sbi->sb_lock);
- 		return ret ? ret : count;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 3d03f51282ac..44f531d27eaa 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -112,7 +112,8 @@ struct f2fs_super_block {
- 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
- 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
- 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
--	__u8 reserved[315];		/* valid reserved region */
-+	__u8 hot_ext_count;		/* # of hot file extension */
-+	__u8 reserved[314];		/* valid reserved region */
- } __packed;
+ /* Set interrupt coalescing for ethtools */
+@@ -7433,6 +7775,9 @@ static const struct net_device_ops mvpp2_netdev_ops = {
+ 	.ndo_change_mtu		= mvpp2_change_mtu,
+ 	.ndo_get_stats64	= mvpp2_get_stats64,
+ 	.ndo_do_ioctl		= mvpp2_ioctl,
++	.ndo_vlan_rx_add_vid	= mvpp2_vlan_rx_add_vid,
++	.ndo_vlan_rx_kill_vid	= mvpp2_vlan_rx_kill_vid,
++	.ndo_set_features	= mvpp2_set_features,
+ };
  
- /*
+ static const struct ethtool_ops mvpp2_eth_tool_ops = {
+@@ -7945,7 +8290,8 @@ static int mvpp2_port_probe(struct platform_device *pdev,
+ 
+ 	features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_TSO;
+ 	dev->features = features | NETIF_F_RXCSUM;
+-	dev->hw_features |= features | NETIF_F_RXCSUM | NETIF_F_GRO;
++	dev->hw_features |= features | NETIF_F_RXCSUM | NETIF_F_GRO |
++			    NETIF_F_HW_VLAN_CTAG_FILTER;
+ 	dev->vlan_features |= features;
+ 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
+ 
 -- 
-2.15.0.55.gc2ece9dc4de6
+2.11.0
