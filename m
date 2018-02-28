@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519833710-2-1270610701843227775
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519833701-2-14745257825871197824
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833710; b=N657YT2g66/M36stQp2skgNnhRw9ZWtysAQDyATCayNbtI7
-    lkgjUn+KFwwNtDF9FasvRw7DdySifav/BKg/fZgJLZ7UCD9+UwfDf4PXrMP3LKGu
-    YFzOW7UkRkZz8W8ZbMAN3hZuglZ37CUFp5WmfcUjIG8Np4UACyyRs/C0FENJiwjC
-    E2/7dG5RH6ay9a2HXg1sF0XMLyxCQrBf6HS8NcDfT7Kj/y8OmWymAPu4GaCv3aaB
-    iJLvkjLGTkY2MhGDhMqhlrSpYT3Ywiekb5G7uYf08d+yo7NTYLknCqwYZEaaN23e
-    DP3lykjrNKYf3UKI3qDXZ0ByLK0xX4c2JXGZxHg==
+    t=1519833700; b=IEPvdwEhQvIWAt+mOOwMqitYAW7lNZNuGcHUaGlHqVBPnpP
+    gejA5xC13OApCS2kUrAG+DSziuHvNTAcbD2rnFYz7VreLYKmSYPIXcGsZp9nEVAa
+    f6n1P86ewLLORo5C2iIAQlLT9J1Fcfj3/Ca42qS8d9m+i8zp1Rwo6pJDfVHwTYCk
+    TEIOXFaG9RDMMFwLiMLZXe9bZemKQvK9bJ6yZRL9fZDLMBXwSTq/KLcWHjPgzmwu
+    18GcJLtbIic9HROFVtDkFPUktCrjhVmENpDnyaJnjw5G+TR1owfN5OmERIelLK7S
+    bm8+Brej18ZWoEhb4KZRofjlo53g1omydRCR+Gg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833710; bh=C1bGcVnqo6iOqjqEQjN
-    neaCpl5eSwxp0zOFVMNK1fq4=; b=cckSTZpFFt98caMdt1si1xTubPP8xTxyHDT
-    twq/qQao2Yff7rEJ4YsJhuenjp5Vd2qG1byMmvIMkxlIcLQh+nBXctz5RHIIydf8
-    NiOf+aG3CWUlrwKIToUkRjSmbLpp5Gjw3evopWX373CkFAvCAMv6OakIsMcszkGG
-    V6/8XWVBjNkO46RHDrEqO+xrsSugxie9UIBzMvSQ7imTXBsCi+0DAPW7Ntbl4Inm
-    ddwqy19eN+N3SiOuM/MNcd8FgYih3xe3i9C1hy+qqU86cBItWqsc19tlOxcMGPmT
-    lPT7LYHsoPALVnsXZZpJdBVzeJPzRrsGWbVAAbyCLzEMXrPeCiQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833700; bh=hjj4kWbvf3qXgomW8QY
+    XAJadkPJlylyPIxqPWJIDCno=; b=FZqWr23rY4f1FDyKA4h/x9gRD83agrzVdYq
+    PmNaXoCc2b6n6Q2Ivjlhsc90b9CEar62MKV2t3GOoABoFPoW0UqmbNQQeOfpNySn
+    hxFEGA283My2C9eXgGSJMCOvq6qgk7Mfth6Mj1oCzt6dr/GYWjpcLvQyXqgFXGnu
+    IR2kSvlkOYYRsUIWo3tIKeOBW9ZuPe3DYCeoUOa1hAjhx8cls8KjrPL+2r2uuuFu
+    2R6vPHOHYQgcGZJk2mGSYkkgRZ/Kl89qA9L0pBuKACRrUoKAQYKES2csMtJBKot2
+    z2sgFOxUW8tPK0ZnxfKYaaG5dJsPbH5pnV/MnXdSLzTzismMF2Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,31 +47,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932470AbeB1QAq (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:00:46 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34681 "EHLO
+        id S1752615AbeB1QBX (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:01:23 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34689 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932458AbeB1QAn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:43 -0500
+        by vger.kernel.org with ESMTP id S932146AbeB1QBI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:01:08 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Sebastian Siewior" <bigeasy@linutronix.de>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
-        "Frederic Weisbecker" <fweisbec@gmail.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Sebastian Siewior" <bigeasy@linutronix.d>,
-        "Paul McKenney" <paulmck@linux.vnet.ibm.com>
+CC: akpm@linux-foundation.org, "Robert Lippert" <rlippert@google.com>,
+        "Robert Lippert" <roblip@gmail.com>,
+        "Guenter Roeck" <linux@roeck-us.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.117173069@decadent.org.uk>
+Message-ID: <lsq.1519831218.575894016@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 147/254] nohz: Prevent a timer interrupt storm in
- tick_nohz_stop_sched_tick()
+Subject: [PATCH 3.16 017/254] hwmon: (pmbus) Use 64bit math for DIRECT
+ format values
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -86,77 +81,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Robert Lippert <roblip@gmail.com>
 
-commit 5d62c183f9e9df1deeea0906d099a94e8a43047a upstream.
+commit bd467e4eababe4c04272c1e646f066db02734c79 upstream.
 
-The conditions in irq_exit() to invoke tick_nohz_irq_exit() which
-subsequently invokes tick_nohz_stop_sched_tick() are:
+Power values in the 100s of watt range can easily blow past
+32bit math limits when processing everything in microwatts.
 
-  if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu))
+Use 64bit math instead to avoid these issues on common 32bit ARM
+BMC platforms.
 
-If need_resched() is not set, but a timer softirq is pending then this is
-an indication that the softirq code punted and delegated the execution to
-softirqd. need_resched() is not true because the current interrupted task
-takes precedence over softirqd.
-
-Invoking tick_nohz_irq_exit() in this case can cause an endless loop of
-timer interrupts because the timer wheel contains an expired timer, but
-softirqs are not yet executed. So it returns an immediate expiry request,
-which causes the timer to fire immediately again. Lather, rinse and
-repeat....
-
-Prevent that by adding a check for a pending timer soft interrupt to the
-conditions in tick_nohz_stop_sched_tick() which avoid calling
-get_next_timer_interrupt(). That keeps the tick sched timer on the tick and
-prevents a repetitive programming of an already expired timer.
-
-Reported-by: Sebastian Siewior <bigeasy@linutronix.d>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Sebastian Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1712272156050.2431@nanos
-[bwh: Backported to 3.16: adjust context]
+Fixes: 442aba78728e ("hwmon: PMBus device driver")
+Signed-off-by: Robert Lippert <rlippert@google.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/time/tick-sched.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/hwmon/pmbus/pmbus_core.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -527,6 +527,11 @@ u64 get_cpu_iowait_time_us(int cpu, u64
- }
- EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+--- a/drivers/hwmon/pmbus/pmbus_core.c
++++ b/drivers/hwmon/pmbus/pmbus_core.c
+@@ -20,6 +20,7 @@
+  */
  
-+static inline bool local_timer_softirq_pending(void)
-+{
-+	return local_softirq_pending() & TIMER_SOFTIRQ;
-+}
-+
- static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
- 					 ktime_t now, int cpu)
+ #include <linux/kernel.h>
++#include <linux/math64.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/err.h>
+@@ -443,8 +444,8 @@ static long pmbus_reg2data_linear(struct
+ static long pmbus_reg2data_direct(struct pmbus_data *data,
+ 				  struct pmbus_sensor *sensor)
  {
-@@ -545,8 +550,18 @@ static ktime_t tick_nohz_stop_sched_tick
- 		last_jiffies = jiffies;
- 	} while (read_seqretry(&jiffies_lock, seq));
+-	long val = (s16) sensor->data;
+-	long m, b, R;
++	s64 b, val = (s16)sensor->data;
++	s32 m, R;
  
--	if (rcu_needs_cpu(cpu, &rcu_delta_jiffies) ||
--	    arch_needs_cpu(cpu) || irq_work_needs_cpu()) {
-+	/*
-+	 * Keep the periodic tick, when RCU, architecture or irq_work
-+	 * requests it.
-+	 * Aside of that check whether the local timer softirq is
-+	 * pending. If so its a bad idea to call get_next_timer_interrupt()
-+	 * because there is an already expired timer, so it will request
-+	 * immeditate expiry, which rearms the hardware timer with a
-+	 * minimal delta which brings us back to this place
-+	 * immediately. Lather, rinse and repeat...
-+	 */
-+	if (rcu_needs_cpu(cpu, &rcu_delta_jiffies) || arch_needs_cpu(cpu) ||
-+	    irq_work_needs_cpu() || local_timer_softirq_pending()) {
- 		next_jiffies = last_jiffies + 1;
- 		delta_jiffies = 1;
- 	} else {
+ 	m = data->info->m[sensor->class];
+ 	b = data->info->b[sensor->class];
+@@ -472,11 +473,12 @@ static long pmbus_reg2data_direct(struct
+ 		R--;
+ 	}
+ 	while (R < 0) {
+-		val = DIV_ROUND_CLOSEST(val, 10);
++		val = div_s64(val + 5LL, 10L);  /* round closest */
+ 		R++;
+ 	}
+ 
+-	return (val - b) / m;
++	val = div_s64(val - b, m);
++	return clamp_val(val, LONG_MIN, LONG_MAX);
+ }
+ 
+ /*
+@@ -588,7 +590,8 @@ static u16 pmbus_data2reg_linear(struct
+ static u16 pmbus_data2reg_direct(struct pmbus_data *data,
+ 				 struct pmbus_sensor *sensor, long val)
+ {
+-	long m, b, R;
++	s64 b, val64 = val;
++	s32 m, R;
+ 
+ 	m = data->info->m[sensor->class];
+ 	b = data->info->b[sensor->class];
+@@ -605,18 +608,18 @@ static u16 pmbus_data2reg_direct(struct
+ 		R -= 3;		/* Adjust R and b for data in milli-units */
+ 		b *= 1000;
+ 	}
+-	val = val * m + b;
++	val64 = val64 * m + b;
+ 
+ 	while (R > 0) {
+-		val *= 10;
++		val64 *= 10;
+ 		R--;
+ 	}
+ 	while (R < 0) {
+-		val = DIV_ROUND_CLOSEST(val, 10);
++		val64 = div_s64(val64 + 5LL, 10L);  /* round closest */
+ 		R++;
+ 	}
+ 
+-	return val;
++	return (u16)clamp_val(val64, S16_MIN, S16_MAX);
+ }
+ 
+ static u16 pmbus_data2reg_vid(struct pmbus_data *data,
