@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeB1GgE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:36:04 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:53979 "EHLO thoth.sbs.de"
+        id S1752168AbeB1GgU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:36:20 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:53980 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751707AbeB1GfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751692AbeB1GfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 01:35:13 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -13,9 +13,9 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH v2 3/6] x86/jailhouse: Enable PCI mmconfig access in inmates
-Date: Wed, 28 Feb 2018 07:34:48 +0100
-Message-Id: <d0a39c4d5ee792c4adbf064079870f12bb06e4c4.1519799691.git.jan.kiszka@siemens.com>
+Subject: [PATCH v2 6/6] MAINTAINERS: Add entry for Jailhouse
+Date: Wed, 28 Feb 2018 07:34:51 +0100
+Message-Id: <394fdbc4d90e55403e5c0907d90f7e5aaba48ed7.1519799691.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
 References: <cover.1519799691.git.jan.kiszka@siemens.com>
@@ -25,65 +25,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Otavio Pontes <otavio.pontes@intel.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Use the PCI mmconfig base address exported by jailhouse in boot
-parameters in order to access the memory mapped PCI configuration space.
-
-Signed-off-by: Otavio Pontes <otavio.pontes@intel.com>
-[Jan: rebased, fixed !CONFIG_PCI_MMCONFIG]
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- arch/x86/include/asm/pci_x86.h | 2 ++
- arch/x86/kernel/jailhouse.c    | 7 +++++++
- arch/x86/pci/mmconfig-shared.c | 4 ++--
- 3 files changed, 11 insertions(+), 2 deletions(-)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-index eb66fa9cd0fc..959d618dbb17 100644
---- a/arch/x86/include/asm/pci_x86.h
-+++ b/arch/x86/include/asm/pci_x86.h
-@@ -151,6 +151,8 @@ extern int pci_mmconfig_insert(struct device *dev, u16 seg, u8 start, u8 end,
- 			       phys_addr_t addr);
- extern int pci_mmconfig_delete(u16 seg, u8 start, u8 end);
- extern struct pci_mmcfg_region *pci_mmconfig_lookup(int segment, int bus);
-+extern struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
-+							int end, u64 addr);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93a12af4f180..4b889f282c77 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7521,6 +7521,13 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ S:	Maintained
+ F:	drivers/media/dvb-frontends/ix2505v*
  
- extern struct list_head pci_mmcfg_list;
- 
-diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-index b68fd895235a..7fe2a73da0b3 100644
---- a/arch/x86/kernel/jailhouse.c
-+++ b/arch/x86/kernel/jailhouse.c
-@@ -124,6 +124,13 @@ static int __init jailhouse_pci_arch_init(void)
- 	if (pcibios_last_bus < 0)
- 		pcibios_last_bus = 0xff;
- 
-+#ifdef CONFIG_PCI_MMCONFIG
-+	if (setup_data.pci_mmconfig_base) {
-+		pci_mmconfig_add(0, 0, 0xff, setup_data.pci_mmconfig_base);
-+		pci_mmcfg_arch_init();
-+	}
-+#endif
++JAILHOUSE HYPERVISOR INTERFACE
++M:	Jan Kiszka <jan.kiszka@siemens.com>
++L:	jailhouse-dev@googlegroups.com
++S:	Maintained
++F:	arch/x86/kernel/jailhouse.c
++F:	arch/x86/include/asm/jailhouse_para.h
 +
- 	return 0;
- }
- 
-diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
-index 96684d0adcf9..0e590272366b 100644
---- a/arch/x86/pci/mmconfig-shared.c
-+++ b/arch/x86/pci/mmconfig-shared.c
-@@ -94,8 +94,8 @@ static struct pci_mmcfg_region *pci_mmconfig_alloc(int segment, int start,
- 	return new;
- }
- 
--static struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
--							int end, u64 addr)
-+struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
-+						 int end, u64 addr)
- {
- 	struct pci_mmcfg_region *new;
- 
+ JC42.4 TEMPERATURE SENSOR DRIVER
+ M:	Guenter Roeck <linux@roeck-us.net>
+ L:	linux-hwmon@vger.kernel.org
 -- 
 2.13.6
