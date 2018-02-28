@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834894-2-2897157559130335250
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834882-2-15929914447083576989
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834893; b=ins8XFl0D0qtvKbDMJ4qJlDIm2hfimm5EO4kJWrcxjRNM9P
-    Vxcu94op0qs28H10XKHi24x3bBluM/6gQqdYqE5D+0DcMBEsQuu10Mc5I1kpYYQ3
-    iUCuswJDYRmlvq7qYNEeRxwlD/GLRHsR/0Tbb9MsnJSYtpp5K846NFqs3bvkXoe8
-    iVf/W6MCyUvnhw+OcO7rAkFM2yqiRBRYY9bPt263XpXa0EnM93zgKU0UMDCgy51b
-    DikDHcuVKt0hYszwhBT4Kut8hXeO5bIFVX+al6VsRzxeVCf7K8FiIzcPcaCQhRzi
-    8sEqyJrCRTkTSuHVqMV8LmBRp3MIy6xfWNXUT8w==
+    t=1519834881; b=GfoRdC0oOZ8awHVSOrDzKlmZWzYWcnLDhy6k7gB2O2ByS60
+    TdAHz28DNqv6Wy2A415L95JL62QA709o6ebbPITIic9eAFUdCexY1TdD2Y5HlEk5
+    TTrXrJdmwE9e9v0cRwYeaz+h0mq9/WOVHBXoTSkcgsDN71yeGtl3rZ3n4hMxPpJz
+    /TK42/QCKamQm4PYUvdoQCoYXnK/+DYsDq4OlEijDsMicrxc1F9/WBlIyUY36g9d
+    XIhbY2XOulMta460haj1oEVmdi/iBUEmmJ246ezfKJdXYySxQOcEX9layBfuLlBf
+    RgmtdylmX8GHygXQb7FMweYbHhtMuL5bXL1XBRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834893; bh=Isj0k/CRHlZ66CPsFXh
-    qE6TFvEb34CYlaNtxrs3JEq0=; b=Ul8YkD+lbTUoekly5UjKmTTTguFurZMavqN
-    vXpwpSm7mfxtGDBfkSJUfMxqkG1r0AfNhl3LLwVwwvofi+FKs+son5/0jxTC1Bbt
-    BzWNP9d8OzgEKX+mmc8KNhq2Z6trKycPy/CiUnCoA1RHjGtHs29KTBQk2BieP1cM
-    ap6YG8xv0uOgu0JUWNstk5kOo7ElXwjagtIB5duSxQa0DdEwCRlM14+LI2zIW/rY
-    rwcCIzUD/cmma/UFSegcLt/a52WelC/gvriSlT3d3fYJN8Em4INuRRCGZeKo/wN3
-    HlKwaPT1vxu04ITwdHR3lr0byypRT3HDf4cKnPAO15z9HHkk5Lg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834881; bh=VSwY4BBIrJGRVgBLgfI
+    X7oeQqXKxvgdURxdw0xiFfWI=; b=IV8R8NoW8TYJbc3CchiW58r8xxBOgU50bDE
+    a81hrW7+EeNI7eddW6N/hBzcB4dBDL6sNSKZSb1lU4qgF/6lWx5zxS43m/ekHng5
+    7pAIJ1ebrQWbFio5pzLIFwl+X25xbdVQkUIib5aDLJtA+dAnbC+SFtl59aBs42du
+    M+3vgGACsM3BSawZVSbR8NFgu/n0z3gJhywS+hI7U6bDBHL5VlfOxDxUgwAYgPij
+    h7frcW7e4K48LGAyY7/Du8fxzTvGARJN/PB3+r22z7L7njp5e/2VX/ypBTeWl5Zm
+    Hovzhg2Fnhe+22flQ4Da8yGuZY1j0vH4eKnJiIFkIklu0PsGZ/g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,24 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934936AbeB1QVC (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:21:02 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35410 "EHLO
+        id S935278AbeB1QVD (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:21:03 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35406 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935261AbeB1QVA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:21:00 -0500
+        by vger.kernel.org with ESMTP id S935236AbeB1QU7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:59 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        peterz@infradead.org, "Li Jinyue" <lijinyue@huawei.com>,
-        dvhart@infradead.org
+CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.39324522@decadent.org.uk>
+Message-ID: <lsq.1519831218.978797534@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 204/254] futex: Prevent overflow by strengthen input
- validation
+Subject: [PATCH 3.16 160/254] mmc: s3mci: mark debug_regs[] as static
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,38 +79,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Li Jinyue <lijinyue@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit fbe0e839d1e22d88810f3ee3e2f1479be4c0aa4a upstream.
+commit 2bd7b4aacdb6efa5ccd4749c365c171b884791d2 upstream.
 
-UBSAN reports signed integer overflow in kernel/futex.c:
+The global array clashes with a newly added symbol of the same name:
 
- UBSAN: Undefined behaviour in kernel/futex.c:2041:18
- signed integer overflow:
- 0 - -2147483648 cannot be represented in type 'int'
+drivers/staging/ccree/cc_debugfs.o:(.data+0x0): multiple definition of `debug_regs'
+drivers/mmc/host/s3cmci.o:(.data+0x70): first defined here
 
-Add a sanity check to catch negative values of nr_wake and nr_requeue.
+We should fix both, this one addresses the s3cmci driver by removing
+the symbol from the global namespace. While at it, this separates
+the declaration from the type definition and makes the variable const.
 
-Signed-off-by: Li Jinyue <lijinyue@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: peterz@infradead.org
-Cc: dvhart@infradead.org
-Link: https://lkml.kernel.org/r/1513242294-31786-1-git-send-email-lijinyue@huawei.com
-[bwh: Backported to 3.16: adjust context]
+Fixes: 9bdd203b4dc8 ("s3cmci: add debugfs support for examining driver and hardware state")
+Fixes: b3ec9a6736f2 ("staging: ccree: staging: ccree: replace sysfs by debugfs interface")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/futex.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/s3cmci.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1531,6 +1531,9 @@ static int futex_requeue(u32 __user *uad
- 	struct futex_hash_bucket *hb1, *hb2;
- 	struct futex_q *this, *next;
- 
-+	if (nr_wake < 0 || nr_requeue < 0)
-+		return -EINVAL;
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -1537,7 +1537,9 @@ static const struct file_operations s3cm
+ struct s3cmci_reg {
+ 	unsigned short	addr;
+ 	unsigned char	*name;
+-} debug_regs[] = {
++};
 +
- 	if (requeue_pi) {
- 		/*
- 		 * Requeue PI only works on two distinct uaddrs. This
++static const struct s3cmci_reg debug_regs[] = {
+ 	DBG_REG(CON),
+ 	DBG_REG(PRE),
+ 	DBG_REG(CMDARG),
+@@ -1559,7 +1561,7 @@ struct s3cmci_reg {
+ static int s3cmci_regs_show(struct seq_file *seq, void *v)
+ {
+ 	struct s3cmci_host *host = seq->private;
+-	struct s3cmci_reg *rptr = debug_regs;
++	const struct s3cmci_reg *rptr = debug_regs;
+ 
+ 	for (; rptr->name; rptr++)
+ 		seq_printf(seq, "SDI%s\t=0x%08x\n", rptr->name,
