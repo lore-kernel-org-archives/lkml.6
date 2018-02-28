@@ -1,109 +1,111 @@
-Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AH8x224M+YagH+sbsijSvJcKiAZBUJwSWRjZ8F//WmO8UFZUz5JbZUwtBJrEHXSZxxYv4vMVDWlq
-ARC-Seal: i=1; a=rsa-sha256; t=1519440379; cv=none;
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AG47ELuFt5kA7/5yHKmP9nz+98fsTfdl9L6aNS3pMw1U1vw20xC/pW8eDM4ap22+C314MTFuU+eX
+ARC-Seal: i=1; a=rsa-sha256; t=1519830473; cv=none;
         d=google.com; s=arc-20160816;
-        b=I7UAFfKeQn++KvbQNvtMR2nBCQVb13uMJJTpM24slCxvVIADfXKOkYXQu4tE+lerEJ
-         aA31rZrv7hDL3efJeK7xr8iBOrVO18X5wOQPxzuWA99FY4ZG1pVi7oxtDvfwMie2dMiY
-         KPyKQ+EE0Wjp8TOEKUf5v8QRufgOJAg+qv/Q7wiLASUhPt6c56fZewTmIFnUe3TevYxp
-         Wd90rK2t2ZcYxFa2y0eR8pUCHXV4WUiP6rn2VK2prA8MB/bQnQJGpuNW6zaI9q3JX+8M
-         ynBswJdFMIGEPvmRSIUXx0QUCQ70uhv3UzN1xewuV8fxnblwLi3EpXAiLEkK+Nc86df6
-         loJg==
+        b=bWJqefrjq9MwhWlzl/CsGx+FA6uqWNFpMgU0X+SjwD2KrwjutA42FoPFhziRrO9OWv
+         Mcbq0s3EmAInIM1E+SijsN24En1P8BosromgH3vU27w4qogXFc1uEqUaytmVD3wPN3S5
+         +5mrCSUnSIAPIkrk7Wk0oYF28mONNtXohj4m7Hs6w5eLrDUlxPxBtaqhyjMH6S5IYxrE
+         2e78RnE/R+YlbfPwF4oO5H5zT7pjp+aEA67CbP9DDYRMM2JAJ8r6IUbdfa3ZYYjNcbc9
+         crGPNCV8o8ac+jHI35nG7r4OInu0zC4R/K2brT7X7hH+Cy6sfHKLBLIyZN/WzleDzP3i
+         O4ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=B6/oJg/hA0NPXRqP9gnM4Ltvx76C4Zm7as8g1lDSodY=;
-        b=Nq0HXDa75mdxxjASxP5qPzo484GhRKe4CcPGoZ3cV1pGtPBlHJWsynLboHyyZ/DqQh
-         rrDkN0kC7E0hQl8dM6zblfB+CnuWXju9Z5LqVl1Zd8rfY6wQ/E869tfupuNnjgVy3NHJ
-         KVMnDVX0t6dFPYRsYcotmr1po8BoHYy38eLwf19w3vg0r3yfAzQdcQlqADspzjbszb4h
-         +IKfaKKzi0/bBRloP6WTQczHdhFUpdmI0JpWuFzfJYD0GXGTpszRyNMzQ7FmCAuPcXh+
-         ia+1YxqWhqZncyCnQX4K6Rm31gTSvXzBkFxcocf3SqYiFe7F62qNVM8fhcyRAIlti+RC
-         droA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=9IreIH8ocOTYBMHrmHQJF1VdQdqx9bdt4Lm9xolu2Pk=;
+        b=Po+3WQZ2p4bgE5S/8sZcQMYKPP8DQ5QC4uF0PVYh7a2y2Ngf4W1exqqF2blYi9VONK
+         bt0QbV0Cu98yCxIqraNRX8mjz/RAdD2FwENelfF0unT9S0SM/qZ+5HmHLsmOL1YIuq5R
+         2+LgZK0HQwitKx7Ymssm0LXSgdODLauBqQpxYaRKB9VHsXBY9nggcZC3VQ4GMipex8M8
+         rOhSMc8fFPpHqhiQ6gP3b9KEZtwvRd3EBEaLMlCVlazLqCXpliaSedOoLDYZs12hhnvi
+         LXs7587i4Pd+2/QODEKR69/KpgW48JTZc/jW9Hw4u+TfvJxymIBlsE6UNMwYTCBoCpP5
+         z4gQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9907A217BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	keescook@chromium.org,
-	shuah@kernel.org,
-	mfuzzey@parkeon.com,
-	zohar@linux.vnet.ibm.com,
-	dhowells@redhat.com,
-	pali.rohar@gmail.com,
-	tiwai@suse.de,
-	arend.vanspriel@broadcom.com,
-	zajec5@gmail.com,
-	nbroeking@me.com,
-	markivx@codeaurora.org,
-	stephen.boyd@linaro.org,
-	broonie@kernel.org,
-	dmitry.torokhov@gmail.com,
-	dwmw2@infradead.org,
-	torvalds@linux-foundation.org,
-	Abhay_Salunke@dell.com,
-	bjorn.andersson@linaro.org,
-	jewalt@lgsinnovations.com,
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v2 03/11] firmware: enable to split firmware_class into separate target files
-Date: Fri, 23 Feb 2018 18:46:05 -0800
-Message-Id: <20180224024613.24078-4-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20180224024613.24078-1-mcgrof@kernel.org>
-References: <20180224024613.24078-1-mcgrof@kernel.org>
+	linux-usb@vger.kernel.org
+Subject: [PATCH v5 00/12] USB Type-C device-connection, mux and switch support
+Date: Wed, 28 Feb 2018 16:07:37 +0100
+Message-Id: <20180228150749.26831-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593248715380192069?=
-X-GMAIL-MSGID: =?utf-8?q?1593248715380192069?=
+X-GMAIL-THRID: =?utf-8?q?1593657759289650329?=
+X-GMAIL-MSGID: =?utf-8?q?1593657759289650329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The firmware loader code has grown quite a bit over the years.
-The practice of stuffing everything we need into one file makes
-the code hard to follow.
+Hi All,
 
-In order to split the firmware loader code into different components
-we must pick a module name and a first object target file. We must
-keep the firmware_class name to remain compatible with scripts which
-have been relying on the sysfs loader path for years, so the old module
-name stays. We can however rename the C file without affecting the
-module name.
+Here is version 5 of Heikki's and my USB Type-C device-connection, mux and
+switch support series. Versions 2 - 5 bring various small code and style
+fixes based on review (no major changes).
 
-The firmware_class used to represent the idea that the code was a simple
-sysfs firmware loader, provided by the struct class firmware_class.
-The sysfs firmware loader used to be the default, today its only the
-fallback mechanism.
+Here is the original cover-letter of v1:
 
-This only renames the target code then to make emphasis of what the code
-does these days. With this change new features can also use a new object
-files.
+Some devices with an USB Type-C connector have a bunch of muxes
+behind that connector which need to be controlled by the kernel (rather
+then having them controlled by firmware as on most devices).
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- drivers/base/Makefile                                | 1 +
- drivers/base/{firmware_class.c => firmware_loader.c} | 0
- 2 files changed, 1 insertion(+)
- rename drivers/base/{firmware_class.c => firmware_loader.c} (100%)
+Quite a while back I submitted a patch-series to tie together these muxes
+and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
+framework. But the way I used the mux framework went against what it was
+designed for, so in the end that series got nowhere.
 
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index e32a52490051..f261143fafbf 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
- obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
- obj-$(CONFIG_ISA_BUS_API)	+= isa.o
- obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
-+firmware_class-objs := firmware_loader.o
- obj-$(CONFIG_NUMA)	+= node.o
- obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
- ifeq ($(CONFIG_SYSFS),y)
-diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_loader.c
-similarity index 100%
-rename from drivers/base/firmware_class.c
-rename to drivers/base/firmware_loader.c
--- 
-2.16.2
+Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
+recently been working on solving the same problem for some boards he is
+doing hardware-enablement for.
+
+Heikki has come up with a number of infrastructure patches for this.
+The first one is a new device-connection framework. This solves the
+problem of describing non bus device-links on x86 in what in my experience
+with this problematic area is a really nice simple, clean and *generic*
+way. This could for example in the near future also replace the custom
+lookup code in the pwm subsys and the custom pwm_add_table() /
+pwm_remove_table() functions.
+
+The other 3 patches add a framework for the different type of Type-C /
+USB "muxes".
+
+Heikki and I have gone through a number of iterations of these patches
+together and we believe these are now ready for merging. Since merging
+infrastructure patches without users is not done and Heikki's own use-case
+for these is not yet ready for merging, the rest of this series consists
+of patches by me to make the Type-C connector found on some Cherry Trail
+devices (finally) be able to actually work as an USB port and not just
+a charge port.
+
+The last patch uses the new usb-role-switch framework to also do proper
+devcie / host switching on CHT devices with a USB micro AB connector.
+This is also a big feature for CHT users, because before this they had
+to do a reboot to get an OTG-host cable recognized (on some devices).
+
+Part of this series is an usb-role-switch driver for the role-switch
+found inside the xhci controller on e.g. CHT devices, this is currently
+implemented as the generic xhci controller instantiating a platform
+child-device for this, since this really is a separate chunk of HW
+which happens to sit in the XHCI mmio space. This approach may not be
+universally liked, given that in this new series the role-switch driver
+is much smaller and does not have any external deps anymore we could
+just integrate it into the xhci code if that is preferred.
+
+About merging this series (once everything is reviewed, etc.), there are
+quite some interdependencies in it esp. a lot of the patches depend on
+the first patch. Luckily patches 1-10 all apply to subsystems which are
+maintained by Greg (most to the USB subsys). Which just leaves patches
+11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
+for the platform/x86 and extcon maintainers to merge once this is done?
+
+Regards,
+
+Hans
