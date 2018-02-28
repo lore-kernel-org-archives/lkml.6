@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519838849-2-10626167324038619206
+X-Cyrus-Session-Id: sloti22d1t05-678564-1519838844-2-14437379348220696976
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838849; b=DbbwtsZ4218ODl06E/oeTRf42JbfFPcGFQrTloQ7ggDNzZ0
-    6QJCpFNGcZYkBthN97X/zORp1YAiAzu3DyHvWaEwDoNxKCFiN4WEBiALOWjlVPVb
-    5wvI/mZZ+E9+tqRvQKBLYFAJ4L4NBWe4ufKtka3VwgoOqB/m0BKWr17qzrfixt1x
-    J751PNp/vGo1WljS6t2rL+ycBgT60BLriOdouQjOwtt6zdjl6cIEqjZ48Yyz3Y1i
-    i7Nc7WZdy0Fao4TSibd0nHUavdImiDlHXWs0slPMHFSrC65I9cxXnc2uXmTI/o31
-    zyX5ay/1vnMJSHVhe/x5MWO0ZnL7YSrW/0+O3Lw==
+    t=1519838844; b=f43bJarbh/qhdwz6AbIB1rO1DqHUVQek0BP3rwZo5qyAANc
+    zTGi/BHJD4PifLhDkZj9XiWHkq3wdgqrPDwW3RPCc5Akcr/0QZ8+zGobSTnzTUUe
+    COChTgGAWMaGMy9FM1s8pSqtzEo2eh0ae8INo69Lj5Op7kbdjyMbDdg3dZZkKmA0
+    r1P550p/n1Pxyg+v1xbpjpLDGnIBmYzCeeBFIjesMTqX5IL7ZwjDK7TnYe65PlOm
+    GWY7xq2xlps1JUE+9V8BKILVRhT4pSdl+e/2Mrcq0/dZ+QJw9mgCV2yDllE6T3CI
+    sKljFIhhWwua5rwjC2wOdBN7u6+cjVbU/vtIn6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838849; bh=0H+hlZdINve8YZASoqx
-    Pop9hc7DeKCpn0BjGfNZ/NIs=; b=otHSa80SZbWPLsa7ZGujrxojCrCTh3XPgA+
-    yg6myuP20YQG/EgMQ05f/qq/L/pqWWCo1K9meK7NNnqpBw1c6ZvsktMUjxjLdZLS
-    VNV7S7tXvs3+k6eRVbJm/Z6NaCfC8UQW8wh8xWa1BKcQ2Rau8lsjcKYm91z8gmmQ
-    hK0zIZXgLZXP3lAjkXilkQnziYb7FMm+azn27Dc322XFa00yYkqMU7wUILwYgBks
-    h9ED0gGecDWFz4HePyQzJYU0MJzsTLtnjfYUtVAarLPwStscsMjxunPLWanjBEuL
-    1kF5mXgMkqTi0bMoDt9rDPeVWDr6BGOFTQNFCymYgXBjLHvurFg==
+    :sender:list-id; s=arctest; t=1519838844; bh=5EQFM77MaU+WmjvdVL0
+    2dGW+m7l7HtrRJDfKgjLBiXo=; b=XKVfGpJPBISycu0EO2H3g/Ei6H7DrcG22Lq
+    9TkvUIxcwkdh3Tk4a2FMEYpjKr8QF1ersJe4cv5ZpxHe6ldgJiMuPTWor9Sft4UN
+    WfIpTqLIjnJ1lvK8dnf8VfDWTKqKWa0ZWI9maxmqgaSYNlqlYksk4wLMR4EjbNIG
+    3Q9bHBP0SCbHyi/ZdnEqLVUeGmnD/w943ARsDFto26MRlJqDr2SU0hkmdeu7jpQu
+    XiBftkE7+DIiRdS7+bTQKlHz7/4NjioJMwDz0STg4E3NPk/aFHi5kCeHs+1ZwGqQ
+    rY+wMmchT4UA2z1nPbn7QL8nvVnvFBHqFZRrBvtwzHXHzA9Qs2g==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeB1RZG (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:25:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33249 "EHLO
+        id S1753483AbeB1RZH (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:25:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33297 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932604AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932616AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,14 +59,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Christophe Leroy" <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, "Andy Lutomirski" <luto@amacapital.net>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Jiri Kosina" <jikos@kernel.org>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.863203486@decadent.org.uk>
+Message-ID: <lsq.1519831222.432319321@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 109/140] net: fs_enet: do not call phy_stop() in
- interrupts
+Subject: [PATCH 3.2 072/140] kbuild: add '-fno-stack-check' to kernel
+ build options
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,120 +82,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit f8b39039cbf2a15f2b8c9f081e1cbd5dee00aaf5 upstream.
+commit 3ce120b16cc548472f80cf8644f90eda958cf1b6 upstream.
 
-In case of TX timeout, fs_timeout() calls phy_stop(), which
-triggers the following BUG_ON() as we are in interrupt.
+It appears that hardened gentoo enables "-fstack-check" by default for
+gcc.
 
-[92708.199889] kernel BUG at drivers/net/phy/mdio_bus.c:482!
-[92708.204985] Oops: Exception in kernel mode, sig: 5 [#1]
-[92708.210119] PREEMPT
-[92708.212107] CMPC885
-[92708.214216] CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W       4.9.61 #39
-[92708.223227] task: c60f0a40 task.stack: c6104000
-[92708.227697] NIP: c02a84bc LR: c02a947c CTR: c02a93d8
-[92708.232614] REGS: c6105c70 TRAP: 0700   Tainted: G        W        (4.9.61)
-[92708.241193] MSR: 00021032 <ME,IR,DR,RI>[92708.244818]   CR: 24000822  XER: 20000000
-[92708.248767]
-GPR00: c02a947c c6105d20 c60f0a40 c62b4c00 00000005 0000001f c069aad8 0001a688
-GPR08: 00000007 00000100 c02a93d8 00000000 000005fc 00000000 c6213240 c06338e4
-GPR16: 00000001 c06330d4 c0633094 00000000 c0680000 c6104000 c6104000 00000000
-GPR24: 00000200 00000000 ffffffff 00000004 00000078 00009032 00000000 c62b4c00
-NIP [c02a84bc] mdiobus_read+0x20/0x74
-[92708.281517] LR [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.286547] Call Trace:
-[92708.288980] [c6105d20] [c6104000] 0xc6104000 (unreliable)
-[92708.294339] [c6105d40] [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.300098] [c6105d50] [c02a5330] phy_stop+0x60/0x9c
-[92708.305007] [c6105d60] [c02c84d0] fs_timeout+0xdc/0x110
-[92708.310197] [c6105d80] [c035cd48] dev_watchdog+0x268/0x2a0
-[92708.315593] [c6105db0] [c0060288] call_timer_fn+0x34/0x17c
-[92708.321014] [c6105dd0] [c00605f0] run_timer_softirq+0x21c/0x2e4
-[92708.326887] [c6105e50] [c001e19c] __do_softirq+0xf4/0x2f4
-[92708.332207] [c6105eb0] [c001e3c8] run_ksoftirqd+0x2c/0x40
-[92708.337560] [c6105ec0] [c003b420] smpboot_thread_fn+0x1f0/0x258
-[92708.343405] [c6105ef0] [c003745c] kthread+0xbc/0xd0
-[92708.348217] [c6105f40] [c000c400] ret_from_kernel_thread+0x5c/0x64
-[92708.354275] Instruction dump:
-[92708.357207] 7c0803a6 bbc10018 38210020 4e800020 7c0802a6 9421ffe0 54290024 bfc10018
-[92708.364865] 90010024 7c7f1b78 81290008 552902ee <0f090000> 3bc3002c 7fc3f378 90810008
-[92708.372711] ---[ end trace 42b05441616fafd7 ]---
+That doesn't work _at_all_ for the kernel, because the kernel stack
+doesn't act like a user stack at all: it's much smaller, and it doesn't
+auto-expand on use.  So the extra "probe one page below the stack" code
+generated by -fstack-check just breaks the kernel in horrible ways,
+causing infinite double faults etc.
 
-This patch moves fs_timeout() actions into an async worker.
+[ I have to say, that the particular code gcc generates looks very
+  stupid even for user space where it works, but that's a separate
+  issue.  ]
 
-Fixes: commit 48257c4f168e5 ("Add fs_enet ethernet network driver, for several embedded platforms")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2: adjust context]
+Reported-and-tested-by: Alexander Tsoy <alexander@tsoy.me>
+Reported-and-tested-by: Toralf Förster <toralf.foerster@gmx.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 16 +++++++++++++---
- drivers/net/ethernet/freescale/fs_enet/fs_enet.h      |  1 +
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -706,9 +706,11 @@ static int fs_enet_start_xmit(struct sk_
- 	return NETDEV_TX_OK;
- }
+--- a/Makefile
++++ b/Makefile
+@@ -631,6 +631,9 @@ KBUILD_CFLAGS += $(call cc-disable-warni
+ # disable invalid "can't wrap" optimizations for signed / pointers
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
  
--static void fs_timeout(struct net_device *dev)
-+static void fs_timeout_work(struct work_struct *work)
- {
--	struct fs_enet_private *fep = netdev_priv(dev);
-+	struct fs_enet_private *fep = container_of(work, struct fs_enet_private,
-+						   timeout_work);
-+	struct net_device *dev = fep->ndev;
- 	unsigned long flags;
- 	int wake = 0;
- 
-@@ -720,7 +722,6 @@ static void fs_timeout(struct net_device
- 		phy_stop(fep->phydev);
- 		(*fep->ops->stop)(dev);
- 		(*fep->ops->restart)(dev);
--		phy_start(fep->phydev);
- 	}
- 
- 	phy_start(fep->phydev);
-@@ -731,6 +732,13 @@ static void fs_timeout(struct net_device
- 		netif_wake_queue(dev);
- }
- 
-+static void fs_timeout(struct net_device *dev)
-+{
-+	struct fs_enet_private *fep = netdev_priv(dev);
++# Make sure -fstack-check isn't enabled (like gentoo apparently did)
++KBUILD_CFLAGS  += $(call cc-option,-fno-stack-check,)
 +
-+	schedule_work(&fep->timeout_work);
-+}
-+
- /*-----------------------------------------------------------------------------
-  *  generic link-change handler - should be sufficient for most cases
-  *-----------------------------------------------------------------------------*/
-@@ -857,6 +865,7 @@ static int fs_enet_close(struct net_devi
- 	netif_carrier_off(dev);
- 	if (fep->fpi->use_napi)
- 		napi_disable(&fep->napi);
-+	cancel_work_sync(&fep->timeout_work);
- 	phy_stop(fep->phydev);
+ # conserve stack if available
+ KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
  
- 	spin_lock_irqsave(&fep->lock, flags);
-@@ -1080,6 +1089,7 @@ static int __devinit fs_enet_probe(struc
- 
- 	ndev->netdev_ops = &fs_enet_netdev_ops;
- 	ndev->watchdog_timeo = 2 * HZ;
-+	INIT_WORK(&fep->timeout_work, fs_timeout_work);
- 	if (fpi->use_napi)
- 		netif_napi_add(ndev, &fep->napi, fs_enet_rx_napi,
- 		               fpi->napi_weight);
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-@@ -124,6 +124,7 @@ struct fs_enet_private {
- 	spinlock_t lock;	/* during all ops except TX pckt processing */
- 	spinlock_t tx_lock;	/* during fs_start_xmit and fs_tx         */
- 	struct fs_platform_info *fpi;
-+	struct work_struct timeout_work;
- 	const struct fs_ops *ops;
- 	int rx_ring, tx_ring;
- 	dma_addr_t ring_mem_addr;
