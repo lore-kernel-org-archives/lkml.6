@@ -1,97 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934088AbeB1Pyo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:54:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:45458 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933616AbeB1Pyl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:54:41 -0500
-Subject: Re: [PATCH] nvme-pci: assign separate irq vectors for adminq and ioq0
-To: Keith Busch <keith.busch@intel.com>
-Cc: axboe@fb.com, linux-kernel@vger.kernel.org, hch@lst.de,
-        linux-nvme@lists.infradead.org, sagi@grimberg.me
-References: <1519721177-2099-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180227151311.GD10832@localhost.localdomain>
- <9252f0a1-f3e5-414b-db49-e8053dfa48a6@oracle.com>
- <20180228152741.GA16002@localhost.localdomain>
- <8066e06c-90f4-c21b-e36f-89f6e8ca28c5@oracle.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <cc46058f-bb7a-e108-c6e9-621daddae577@oracle.com>
-Date: Wed, 28 Feb 2018 23:46:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934130AbeB1P4E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:56:04 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40255 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933397AbeB1P4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:56:02 -0500
+Date: Wed, 28 Feb 2018 16:55:59 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: init dclk_min_div & dclk_max_div inside
+ encoder init functions
+Message-ID: <20180228155559.lqm22dzeiptrwyxe@flea>
+References: <1519822318-3974-1-git-send-email-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <8066e06c-90f4-c21b-e36f-89f6e8ca28c5@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8817 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=544
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802280192
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5gbfw7g7hxhf23t4"
+Content-Disposition: inline
+In-Reply-To: <1519822318-3974-1-git-send-email-giulio.benetti@micronovasrl.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--5gbfw7g7hxhf23t4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/28/2018 11:42 PM, jianchao.wang wrote:
-> Hi Keith
-> 
-> Thanks for your kindly response and directive
-> 
-> On 02/28/2018 11:27 PM, Keith Busch wrote:
->> On Wed, Feb 28, 2018 at 10:53:31AM +0800, jianchao.wang wrote:
->>> On 02/27/2018 11:13 PM, Keith Busch wrote:
->>>> On Tue, Feb 27, 2018 at 04:46:17PM +0800, Jianchao Wang wrote:
->>>>> Currently, adminq and ioq0 share the same irq vector. This is
->>>>> unfair for both amdinq and ioq0.
->>>>>  - For adminq, its completion irq has to be bound on cpu0.
->>>>>  - For ioq0, when the irq fires for io completion, the adminq irq
->>>>>    action has to be checked also.
->>>>
->>>> This change log could use some improvements. Why is it bad if admin
->>>> interrupts affinity is with cpu0?
->>>
->>> adminq interrupts should be able to fire everywhere.
->>> do we have any reason to bound it on cpu0 ?
->>
->> Your patch will have the admin vector CPU affinity mask set to
->> 0xff..ff. The first set bit for an online CPU is the one the IRQ handler
->> will run on, so the admin queue will still only run on CPU 0.
-> 
-> hmmm...yes.
-> When I test there is only one irq vector, I get following result:
->  124:          0          0     253541          0          0          0          0          0  IR-PCI-MSI 1048576-edge      nvme0q0, nvme0q1
-> 
+Hi,
 
-the irqbalance may migrate the adminq irq away from cpu0.
+On Wed, Feb 28, 2018 at 01:51:58PM +0100, Giulio Benetti wrote:
+> sun4i_dclk_round_rate is called before sun4i_tcon_mode_set,
+> so it finds dclk_min_div and dclk_max_div set to 0 and fails
+> adding crtc.
+>=20
+> Move dclk_min_div and dclk_max_div to encoders init functions.
+>=20
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
->>  
->>>> Are you able to measure _any_ performance difference on IO queue 1 vs IO
->>>> queue 2 that you can attribute to IO queue 1's sharing vector 0?
->>>
->>> Actually, I didn't get any performance improving on my own NVMe card.
->>> But it may be needed on some enterprise card, especially the media is persist memory.
->>> nvme_irq will be invoked twice when ioq0 irq fires, this will introduce another unnecessary DMA
->>> accessing on cq entry.
->>
->> A CPU reading its own memory isn't a DMA. It's just a cheap memory read.
-> 
-> Oh sorry, my bad, I mean it is operation on DMA address, it is uncached.
-> nvme_irq
->   -> nvme_process_cq
->     -> nvme_read_cqe
->       -> nvme_cqe_valid
-> 
-> static inline bool nvme_cqe_valid(struct nvme_queue *nvmeq, u16 head,
-> 		u16 phase)
-> {
-> 	return (le16_to_cpu(nvmeq->cqes[head].status) & 1) == phase;
-> }
-> 
-> Sincerely
-> Jianchao
-> 
+I sent a similar patch there:
+https://lists.freedesktop.org/archives/dri-devel/2018-February/166666.html
+
+I guess eventually, we'll want to remove the usage of the clock
+framework entirely, but it's not really the scope of a fix.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--5gbfw7g7hxhf23t4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqW0Q4ACgkQ0rTAlCFN
+r3Sm9Q//SRjm419L2UjZkPa719KL759OGk396Oj7wSRWA9wUFREggYKpJyx5hcRF
+hKZYVV9gIn3IvKeNAVnOjeliSDHRQQ88dCjiTHLa4ClsxNoQvyo7cMTMHu9e9n8W
+Y+acGnnmUVKcyMgvimI+tmG72iAhvfhn5+7jL6yDyOxabiYhJPcYqMIDXO8Cxd5Q
+zjX+jRJkbAkEanOEjACbA2t93+jSs5RCeh6BVn5FhlLAcuNus+iahOeGJQwir8oh
+WtpLwPUJwWrp4wMuzmr3kRMqOdYka4A32leNFpR4/+ERayqbBNmqQXhRIncBOAfl
+8A3+GAfjwUlgL8sQ9aphmsgm+psY0KCL06LW77gyU6cIpKnmqlrKPQbAsxwZnLY7
+22Tp9ntHTLpYbEXvPBozGdpOiyhuKus69VgLSKfmht5GuhaUTptSt+u3C3M21iSs
+neHd4DKlG+39Z+/l2aumap4TQw2QCy6AXTqAicnF05xb8DX7LVh95KP3TrVNBrfS
+ELy8SlRtkmJRwdYezYdpJdbk5EdeSJQtPlstrsD9E5XzWpXnC5th9h+9kXHAQwrd
+h/Tiai7HzRDtv+IA9u9wcxuZty8+gbTeXPXVzaWHYovSAloI+WvabNt/LjWNm+VJ
+86ni6+BpTkT9B6LVscWwkE9bL+faW2ZSvh6q2cGcQp/rVidytpw=
+=EvAZ
+-----END PGP SIGNATURE-----
+
+--5gbfw7g7hxhf23t4--
