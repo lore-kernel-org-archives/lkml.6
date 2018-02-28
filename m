@@ -1,79 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933735AbeB1Te2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:34:28 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45525 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932389AbeB1Te0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:34:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
-   d="scan'208";a="21041991"
-Message-ID: <1519846461.10722.309.camel@linux.intel.com>
-Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jean Delvare <jdelvare@suse.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 28 Feb 2018 21:34:21 +0200
-In-Reply-To: <20180228202144.2ae8149f@endymion>
-References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-         <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
-         <20180226172832.7bf82336@endymion>
-         <1519813744.10722.258.camel@linux.intel.com>
-         <CAJZ5v0hOvU25zWfVjBw-2iz5Y7V2FkSwoTZVZTpjEG9KOCQ6oQ@mail.gmail.com>
-         <20180228202144.2ae8149f@endymion>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933851AbeB1ThN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:37:13 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35449 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933531AbeB1ThK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 14:37:10 -0500
+X-Google-Smtp-Source: AG47ELvUrFFMYVwBy+m5VwdPkQnv2NGd3+nG+JgpYGKmSceWfvr4eIGK5FDfb0zkpyeAsQVPZI7zyw==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Russell King <rmk@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next 4/5] net: phy: cortina: Utilize generic functions
+Date: Wed, 28 Feb 2018 11:36:11 -0800
+Message-Id: <20180228193612.29409-5-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180228193612.29409-1-f.fainelli@gmail.com>
+References: <20180228193612.29409-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-28 at 20:21 +0100, Jean Delvare wrote:
-> On Wed, 28 Feb 2018 11:33:39 +0100, Rafael J. Wysocki wrote:
-> > On Wed, Feb 28, 2018 at 11:29 AM, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > I would assume that no BIOS date is related to prehistoric
-> > > firmwares and
-> > >  using _CRS would sound weird on them.  
-> > 
-> > Careful here.
-> > 
-> > You seem to be assuming that the DMI information is always valid
-> > and/or complete which is know to not be the case sometimes.
-> 
-> True. While the BIOS date is not the worst offender when it comes to
-> broken DMI data, you must remember that the date comes as a string,
-> and
-> older SMBIOS specifications did not even recommend a specific format
-> for that string. As a matter of fact, my collection of DMI tables
-> includes a few creative samples like "Jul  7 2016" or "09-16-08" which
-> the kernel fails to parse.
-> 
-> So the default behavior at the driver level shouldn't be based on what
-> older systems are most likely to enjoy. The default behavior must be
-> the safest option, regardless of the age of the system.
+cortina_soft_reset() does the same thing as gen10g_soft_reset(), and
+cortina_config_aneg() is actually doing what gen10g_config_init() does
+for 10G capable PHYs.
 
-Yep.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/phy/cortina.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-And here is a very good question which path is more safer: use _CRS, or
-not?
-
-Rafael, do you know any consequences of not using _CRS for PCI on older
-and newer machines?
-
+diff --git a/drivers/net/phy/cortina.c b/drivers/net/phy/cortina.c
+index 9442db221834..9afbeb8b3667 100644
+--- a/drivers/net/phy/cortina.c
++++ b/drivers/net/phy/cortina.c
+@@ -30,14 +30,6 @@ static int cortina_read_reg(struct phy_device *phydev, u16 regnum)
+ 			    MII_ADDR_C45 | regnum);
+ }
+ 
+-static int cortina_config_aneg(struct phy_device *phydev)
+-{
+-	phydev->supported = SUPPORTED_10000baseT_Full;
+-	phydev->advertising = SUPPORTED_10000baseT_Full;
+-
+-	return 0;
+-}
+-
+ static int cortina_read_status(struct phy_device *phydev)
+ {
+ 	int gpio_int_status, ret = 0;
+@@ -61,11 +53,6 @@ static int cortina_read_status(struct phy_device *phydev)
+ 	return ret;
+ }
+ 
+-static int cortina_soft_reset(struct phy_device *phydev)
+-{
+-	return 0;
+-}
+-
+ static int cortina_probe(struct phy_device *phydev)
+ {
+ 	u32 phy_id = 0;
+@@ -101,9 +88,10 @@ static struct phy_driver cortina_driver[] = {
+ 	.phy_id		= PHY_ID_CS4340,
+ 	.phy_id_mask	= 0xffffffff,
+ 	.name		= "Cortina CS4340",
+-	.config_aneg	= cortina_config_aneg,
++	.config_init	= gen10g_config_init,
++	.config_aneg	= gen10g_config_aneg,
+ 	.read_status	= cortina_read_status,
+-	.soft_reset	= cortina_soft_reset,
++	.soft_reset	= gen10g_soft_reset,
+ 	.probe		= cortina_probe,
+ },
+ };
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.1
