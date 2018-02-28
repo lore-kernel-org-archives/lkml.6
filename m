@@ -1,72 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934932AbeB1VPV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:15:21 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45037 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933901AbeB1VPT (ORCPT
+        id S934925AbeB1VQH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:16:07 -0500
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:33516 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933018AbeB1VQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:15:19 -0500
-X-Google-Smtp-Source: AG47ELt+vWb1HkShzQzV1VExaqHF6o7HMWpbIleE++/+w88RSA+w2CtspSwAAB8D6aZH45iaVb/uyA==
-Date: Wed, 28 Feb 2018 14:15:14 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Eddie Wai <eddie.wai@broadcom.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-Message-ID: <20180228211514.GC13394@ziepe.ca>
-References: <20180220205638.1959033-1-arnd@arndb.de>
+        Wed, 28 Feb 2018 16:16:04 -0500
+X-Google-Smtp-Source: AH8x225WZ5Ua0xU4Qob/VSDzw/l5vEJAe5LEJs8CKmJZClD/UZ503l3gERwqLg9DEIiCIrvE4mLrNcXFITqBH/LsiMI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180220205638.1959033-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180228185302.GD1203@lunn.ch>
+References: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
+ <1519780874-8558-3-git-send-email-tharvey@gateworks.com> <20180228185302.GD1203@lunn.ch>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Wed, 28 Feb 2018 13:16:02 -0800
+Message-ID: <CAJ+vNU2aeFAKf6e7RashG50Gu5qb3mqGvJUEPprh4AjFGs+MLg@mail.gmail.com>
+Subject: Re: [RFC 2/4] mfd: add Gateworks System Controller core driver
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 09:56:26PM +0100, Arnd Bergmann wrote:
-> Building for a 32-bit target results in a couple of warnings from casting between
-> a 32-bit pointer and a 64-bit integer:
-> 
-> drivers/infiniband/hw/bnxt_re/qplib_fp.c: In function 'bnxt_qplib_service_nq':
-> drivers/infiniband/hw/bnxt_re/qplib_fp.c:333:23: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->     bnxt_qplib_arm_srq((struct bnxt_qplib_srq *)q_handle,
->                        ^
-> drivers/infiniband/hw/bnxt_re/qplib_fp.c:336:12: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->             (struct bnxt_qplib_srq *)q_handle,
->             ^
-> In file included from include/linux/byteorder/little_endian.h:5,
->                  from arch/arm/include/uapi/asm/byteorder.h:22,
->                  from include/asm-generic/bitops/le.h:6,
->                  from arch/arm/include/asm/bitops.h:342,
->                  from include/linux/bitops.h:38,
->                  from include/linux/kernel.h:11,
->                  from include/linux/interrupt.h:6,
->                  from drivers/infiniband/hw/bnxt_re/qplib_fp.c:39:
-> drivers/infiniband/hw/bnxt_re/qplib_fp.c: In function 'bnxt_qplib_create_srq':
-> include/uapi/linux/byteorder/little_endian.h:31:43: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
->  #define __cpu_to_le64(x) ((__force __le64)(__u64)(x))
->                                            ^
-> include/linux/byteorder/generic.h:86:21: note: in expansion of macro '__cpu_to_le64'
->  #define cpu_to_le64 __cpu_to_le64
->                      ^~~~~~~~~~~~~
-> drivers/infiniband/hw/bnxt_re/qplib_fp.c:569:19: note: in expansion of macro 'cpu_to_le64'
->   req.srq_handle = cpu_to_le64(srq);
-> 
-> Using a uintptr_t as an intermediate works on all architectures.
-> 
-> Fixes: 37cb11acf1f7 ("RDMA/bnxt_re: Add SRQ support for Broadcom adapters")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->  drivers/infiniband/hw/bnxt_re/qplib_fp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Feb 28, 2018 at 10:53 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> +             dev_err(&client->dev, ">> 0x%02x %d\n", reg, ret);
+>> +             return ret;
+>> +     }
+>> +     dev_dbg(&client->dev, ">> 0x%02x=0x%02x (%d)\n", reg, val, retry);
+>> +
+>> +        return 0;
+>
+> Hi Tim
+>
+> There appears to be a few spaces vs tabs issues in this file.
+>
+>       Andrew
+>
 
-I applied the series to for-next, thanks
+Thanks. I'll run through checkpatch prior to v2.
 
-Jason
+Tim
