@@ -1,168 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeB1G5k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:57:40 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39493 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbeB1G5i (ORCPT
+        id S1752002AbeB1HAB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 02:00:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55604 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751717AbeB1HAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:57:38 -0500
-X-Google-Smtp-Source: AH8x225A1MRqIcrlIRQlPz3oyPw9LGK7oxAFx4gU60iQuHCiXJA2PdWdZjkIRf0jspvPVCrPdL6XLA==
-Subject: Re: [PATCH RESEND v5 2/2] KVM: X86: Allow userspace to define the
- microcode version
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>, Nadav Amit <nadav.amit@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <1519797811-4560-1-git-send-email-wanpengli@tencent.com>
- <1519797811-4560-2-git-send-email-wanpengli@tencent.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <f1bb8a2e-34d9-d9d7-3f48-6c3a5057a59f@redhat.com>
-Date: Wed, 28 Feb 2018 07:57:35 +0100
+        Wed, 28 Feb 2018 02:00:00 -0500
+Subject: Re: [RFC REBASED 5/5] powerpc/mm/slice: use the dynamic high slice
+ size to limit bitmap operations
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+ <5badd882663833576c10b8aafe235fe1e443f119.1518382747.git.christophe.leroy@c-s.fr>
+ <87bmga7qng.fsf@linux.vnet.ibm.com>
+ <20180227191125.659d5cbe@roar.ozlabs.ibm.com>
+ <878tbe7ggs.fsf@linux.vnet.ibm.com>
+ <20180228165331.6e09959d@roar.ozlabs.ibm.com>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 12:29:52 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1519797811-4560-2-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180228165331.6e09959d@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022806-0044-0000-0000-000003EB2F21
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008601; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00996192; UDB=6.00506426; IPR=6.00775515;
+ MB=3.00019772; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-28 06:59:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022806-0045-0000-0000-0000081B3ACE
+Message-Id: <1f14fec4-a2b9-30c8-4c73-ecf00dbba0d7@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280083
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/2018 07:03, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+
+
+On 02/28/2018 12:23 PM, Nicholas Piggin wrote:
+> On Tue, 27 Feb 2018 18:11:07 +0530
+> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
 > 
-> Linux (among the others) has checks to make sure that certain features 
-> aren't enabled on a certain family/model/stepping if the microcode version 
-> isn't greater than or equal to a known good version.
+>> Nicholas Piggin <npiggin@gmail.com> writes:
+>>
+>>> On Tue, 27 Feb 2018 14:31:07 +0530
+>>> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
+>>>   
+>>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>>    
+>>>>> The number of high slices a process might use now depends on its
+>>>>> address space size, and what allocation address it has requested.
+>>>>>
+>>>>> This patch uses that limit throughout call chains where possible,
+>>>>> rather than use the fixed SLICE_NUM_HIGH for bitmap operations.
+>>>>> This saves some cost for processes that don't use very large address
+>>>>> spaces.
+>>>>
+>>>> I haven't really looked at the final code. One of the issue we had was
+>>>> with the below scenario.
+>>>>
+>>>> mmap(addr, len) where addr < 128TB and addr+len > 128TB  We want to make
+>>>> sure we build the mask such that we don't find the addr available.
+>>>
+>>> We should run it through the mmap regression tests. I *think* we moved
+>>> all of that logic from the slice code to get_ummapped_area before going
+>>> in to slices. I may have missed something though, it would be good to
+>>> have more eyes on it.
+>>>   
+>>
+>> mmap(-1,...) failed with the test. Something like below fix it
+>>
+>> @@ -756,7 +770,7 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
+>>          mm->context.low_slices_psize = lpsizes;
+>>   
+>>          hpsizes = mm->context.high_slices_psize;
+>> -       high_slices = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
+>> +       high_slices = SLICE_NUM_HIGH;
+>>          for (i = 0; i < high_slices; i++) {
+>>                  mask_index = i & 0x1;
+>>                  index = i >> 1;
+>>
+>> I guess for everything in the mm_context_t, we should compute it till
+>> SLICE_NUM_HIGH. The reason for failure was, even though we recompute the
+>> slice mask cached in mm_context on slb_addr_limit, it was still derived
+>> from the high_slices_psizes which was computed with lower value.
 > 
-> By exposing the real microcode version, we're preventing buggy guests that
-> don't check that they are running virtualized (i.e., they should trust the
-> hypervisor) from disabling features that are effectively not buggy.
-> 
-> Suggested-by: Filippo Sironi <sironi@amazon.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Cc: Nadav Amit <nadav.amit@gmail.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v4 -> v5:
->  * microcode_version be u64 and initialized suitable, remote hte shifts
-> v3 -> v4:
->  * add the shifts back
-> v2 -> v3:
->  * remove the shifts
->  * add the MSR_IA32_UCODE_REV version to the "feature MSRs"
-> v1 -> v2:
->  * add MSR_IA32_UCODE_REV to emulated_msrs
-> 
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/svm.c              |  4 +---
->  arch/x86/kvm/vmx.c              |  1 +
->  arch/x86/kvm/x86.c              | 11 +++++++++--
->  4 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 938d453..df6720f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -507,6 +507,7 @@ struct kvm_vcpu_arch {
->  	u64 smi_count;
->  	bool tpr_access_reporting;
->  	u64 ia32_xss;
-> +	u64 microcode_version;
->  
->  	/*
->  	 * Paging state of the vcpu
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index f874798..312f33f 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1907,6 +1907,7 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	u32 dummy;
->  	u32 eax = 1;
->  
-> +	vcpu->arch.microcode_version = 0x01000065;
->  	svm->spec_ctrl = 0;
->  
->  	if (!init_event) {
-> @@ -3962,9 +3963,6 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  
->  		msr_info->data = svm->spec_ctrl;
->  		break;
-> -	case MSR_IA32_UCODE_REV:
-> -		msr_info->data = 0x01000065;
-> -		break;
->  	case MSR_F15H_IC_CFG: {
->  
->  		int family, model;
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 9968906..2cdbea7 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -5781,6 +5781,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	vmx->rmode.vm86_active = 0;
->  	vmx->spec_ctrl = 0;
->  
-> +	vcpu->arch.microcode_version = 0x100000000ULL;
->  	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
->  	kvm_set_cr8(vcpu, 0);
->  
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index efc8554..5c93cbc 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1058,6 +1058,7 @@ static unsigned num_emulated_msrs;
->  static u32 msr_based_features[] = {
->  	MSR_IA32_ARCH_CAPABILITIES,
->  	MSR_F10H_DECFG,
-> +	MSR_IA32_UCODE_REV,
->  };
->  
->  static unsigned int num_msr_based_features;
-> @@ -1065,6 +1066,9 @@ static unsigned int num_msr_based_features;
->  static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
->  {
->  	switch (msr->index) {
-> +	case MSR_IA32_UCODE_REV:
-> +		rdmsrl(msr->index, msr->data);
-> +		break;
->  	default:
->  		if (kvm_x86_ops->get_msr_feature(msr))
->  			return 1;
-> @@ -2260,7 +2264,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  
->  	switch (msr) {
->  	case MSR_AMD64_NB_CFG:
-> -	case MSR_IA32_UCODE_REV:
->  	case MSR_IA32_UCODE_WRITE:
->  	case MSR_VM_HSAVE_PA:
->  	case MSR_AMD64_PATCH_LOADER:
-> @@ -2268,6 +2271,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	case MSR_AMD64_DC_CFG:
->  		break;
->  
-> +	case MSR_IA32_UCODE_REV:
-> +		if (msr_info->host_initiated)
-> +			vcpu->arch.microcode_version = data;
-> +		break;
->  	case MSR_EFER:
->  		return set_efer(vcpu, data);
->  	case MSR_K7_HWCR:
-> @@ -2563,7 +2570,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		msr_info->data = 0;
->  		break;
->  	case MSR_IA32_UCODE_REV:
-> -		msr_info->data = 0x100000000ULL;
-> +		msr_info->data = vcpu->arch.microcode_version;
->  		break;
->  	case MSR_MTRRcap:
->  	case 0x200 ... 0x2ff:
+> Okay thanks for catching that Aneesh. I guess that's a slow path so it
+> should be okay. Christophe if you're taking care of the series can you
+> fold it in? Otherwise I'll do that after yours gets merged.
 > 
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+should we also compute the mm_context_t.slice_mask using SLICE_NUM_HIGH 
+and skip the recalc_slice_mask_cache when we change the addr limit?
+
+-aneesh
