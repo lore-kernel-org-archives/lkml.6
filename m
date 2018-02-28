@@ -1,137 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932830AbeB1QP7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 11:15:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933001AbeB1QPy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:15:54 -0500
-Subject: Re: [PATCH v2 07/15] KVM: s390: Interfaces to configure/deconfigure
- guest's AP matrix
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Wed, 28 Feb 2018 17:15:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18022816-0040-0000-0000-000004190EE6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022816-0041-0000-0000-0000261C0F83
-Message-Id: <c06ad065-9f10-2d0d-f56f-faae813557d9@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280196
+        id S935009AbeB1QRH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 11:17:07 -0500
+Received: from mga06.intel.com ([134.134.136.31]:52336 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933165AbeB1QRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 11:17:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="scan'208";a="21467345"
+Message-ID: <1519834622.10722.302.camel@linux.intel.com>
+Subject: Re: [PATCH v1] extcon: int3496: Ignore incorrect IoRestriction for
+ ID pin
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2018 18:17:02 +0200
+In-Reply-To: <3c1d4636-237c-2344-6c7c-fcd4468f48b9@redhat.com>
+References: <20180226193444.69883-1-andriy.shevchenko@linux.intel.com>
+         <3c1d4636-237c-2344-6c7c-fcd4468f48b9@redhat.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2018 15:28, Tony Krowiak wrote:
-> Provides interfaces to assign AP adapters, usage domains
-> and control domains to a KVM guest.
->
-> A KVM guest is started by executing the Start Interpretive Execution (SIE)
-> instruction. The SIE state description is a control block that contains the
-> state information for a KVM guest and is supplied as input to the SIE
-> instruction. The SIE state description has a satellite structure called the
-> Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
-> identifying the adapters, queues (domains) and control domains assigned to
-> the KVM guest:
->
-> * The AP Adapter Mask (APM) field identifies the AP adapters assigned to
->    the KVM guest
->
-> * The AP Queue Mask (AQM) field identifies the AP queues assigned to
->    the KVM guest. Each AP queue is connected to a usage domain within
->    an AP adapter.
->
-> * The AP Domain Mask (ADM) field identifies the control domains
->    assigned to the KVM guest.
->
-> Each adapter, queue (usage domain) and control domain are identified by
-> a number from 0 to 255. The bits in each mask, from most significant to
-> least significant bit, correspond to the numbers 0-255. When a bit is
-> set, the corresponding adapter, queue (usage domain) or control domain
-> is assigned to the KVM guest.
+On Wed, 2018-02-28 at 16:01 +0100, Hans de Goede wrote:
+> Hi,
+> 
+> On 26-02-18 20:34, Andy Shevchenko wrote:
+> > The commit 70216fd937fe introduced a workaround for incorrect
+> > IoRestriction mode in ACPI table.
+> > 
+> > Now, when GPIO ACPI library does it in generic way, just set
+> > an appropriate quirk flag instead.
+> > 
+> > Cc: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Looks good to me and everything still works after this change,
+> so with the earlier review remarks fixed this is:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Tested-by: Hans de Goede <hdegoede@redhat.com>
 
-...snip...
+Thanks!
+I will send a v2 soon.
 
->   static int kvm_ap_apxa_installed(void)
->   {
->   	int ret;
-> @@ -50,3 +170,140 @@ void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd)
->   			*crycbd |= CRYCB_FORMAT1;
->   	}
->   }
-> +
-> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
-> +{
-> +	if (apxa)
-> +		ap_matrix->apm_max = 256;
-
-AFAIK the number of possible bits in the masks for a system is not a 
-generic value but is
-returned by the QCI instruction.
-Is there a reason to use a fix value?
-
-> +	else
-> +		ap_matrix->apm_max = 64;
-> +
-> +	ap_matrix->apm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->apm_max),
-> +				 GFP_KERNEL);
-> +	if (!ap_matrix->apm)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvm_ap_matrix_aqm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
-> +{
-> +	if (apxa)
-> +		ap_matrix->aqm_max = 256;
-
-same here
-
-> +	else
-> +		ap_matrix->aqm_max = 16;
-> +
-> +	ap_matrix->aqm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->aqm_max),
-> +				 GFP_KERNEL);
-> +	if (!ap_matrix->aqm)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvm_ap_matrix_adm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
-> +{
-> +	if (apxa)
-> +		ap_matrix->adm_max = 256;
-
-and here
-
-
-Pierre
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> 
+> 
+> > ---
+> >   drivers/extcon/extcon-intel-int3496.c | 9 +++++----
+> >   1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/extcon/extcon-intel-int3496.c
+> > b/drivers/extcon/extcon-intel-int3496.c
+> > index 191e99f06a9a..acaccb128fc4 100644
+> > --- a/drivers/extcon/extcon-intel-int3496.c
+> > +++ b/drivers/extcon/extcon-intel-int3496.c
+> > @@ -50,7 +50,11 @@ static const struct acpi_gpio_params vbus_gpios =
+> > { INT3496_GPIO_VBUS_EN, 0, fal
+> >   static const struct acpi_gpio_params mux_gpios = {
+> > INT3496_GPIO_USB_MUX, 0, false };
+> >   
+> >   static const struct acpi_gpio_mapping acpi_int3496_default_gpios[]
+> > = {
+> > -	{ "id-gpios", &id_gpios, 1 },
+> > +	/*
+> > +	 * Some platforms have a bug in ACPI GPIO description
+> > making IRQ
+> > +	 * GPIO to be output only. Ask the GPIO core to ignore this
+> > limit.
+> > +	 */
+> > +	{ "id-gpios", &id_gpios, 1,
+> > ACPI_GPIO_QUIRK_NO_IO_RESTRICTION },
+> >   	{ "vbus-gpios", &vbus_gpios, 1 },
+> >   	{ "mux-gpios", &mux_gpios, 1 },
+> >   	{ },
+> > @@ -112,9 +116,6 @@ static int int3496_probe(struct platform_device
+> > *pdev)
+> >   		ret = PTR_ERR(data->gpio_usb_id);
+> >   		dev_err(dev, "can't request USB ID GPIO: %d\n",
+> > ret);
+> >   		return ret;
+> > -	} else if (gpiod_get_direction(data->gpio_usb_id) !=
+> > GPIOF_DIR_IN) {
+> > -		dev_warn(dev, FW_BUG "USB ID GPIO not in input
+> > mode, fixing\n");
+> > -		gpiod_direction_input(data->gpio_usb_id);
+> >   	}
+> >   
+> >   	data->usb_id_irq = gpiod_to_irq(data->gpio_usb_id);
+> > 
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
