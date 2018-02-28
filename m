@@ -1,275 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934667AbeB1R45 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:56:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48980 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934478AbeB1R4x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:56:53 -0500
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: dhowells@redhat.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH 1/3] certs: define a trusted platform keyring
-Date: Wed, 28 Feb 2018 23:25:19 +0530
-X-Mailer: git-send-email 2.13.6
-X-TM-AS-GCONF: 00
-x-cbid: 18022817-0012-0000-0000-000005B717C9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022817-0013-0000-0000-0000193318BD
-Message-Id: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280218
+        id S934420AbeB1R4r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:56:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46802 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933283AbeB1R4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 12:56:46 -0500
+Subject: Re: [PATCH v2 4/5] ipc: Clamp msgmni and shmmni to the real IPCMNI
+ limit
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <1519764591-27456-1-git-send-email-longman@redhat.com>
+ <1519764591-27456-5-git-send-email-longman@redhat.com>
+ <20180228010100.GA14069@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <adeb1e42-6b59-bdcf-67f6-f8a9b6ae0742@redhat.com>
+Date: Wed, 28 Feb 2018 12:56:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180228010100.GA14069@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel can be supplied in SEEPROM or lockable flash memory
-in embedded devices. Some devices may not support secure boot,
-but the kernel is trusted because the image is stored in protected
-memory. That kernel may need to kexec additional kernels, it may
-be used as a bootloader, for example, or it may need to kexec a
-crashdump kernel. In such cases, it may want to verify the
-signature of the next kernel.
+On 02/27/2018 08:01 PM, Luis R. Rodriguez wrote:
+> On Tue, Feb 27, 2018 at 03:49:50PM -0500, Waiman Long wrote:
+>> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+>> index 8ad93c2..e4ab272 100644
+>> --- a/ipc/ipc_sysctl.c
+>> +++ b/ipc/ipc_sysctl.c
+>> @@ -41,12 +41,17 @@ static int proc_ipc_dointvec(struct ctl_table *table, int write,
+>>  static int proc_ipc_dointvec_minmax(struct ctl_table *table, int write,
+>>  	void __user *buffer, size_t *lenp, loff_t *ppos)
+>>  {
+>> +	int ret;
+>>  	struct ctl_table ipc_table;
+>>  
+>>  	memcpy(&ipc_table, table, sizeof(ipc_table));
+>>  	ipc_table.data = get_ipc(table);
+>>  
+>> -	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
+>> +	ret = proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
+>> +
+>> +	table->flags |= ipc_table.flags; /* Copy back any change in flags */
+> This seems fragile, why are we requiring this to be done by the users of
+> CTL_FLAGS_CLAMP_RANGE ?
+>
+>   Luis
 
-The kernel, however, cannot directly verify platform keys,
-and an administrator may therefore not want to trust them for
-arbitrary usage. In order to differentiate platform keys from
-other keys and provide the necessary separation of trust, the
-kernel needs an additional keyring to store platform keys.
+I should have just copied back the CTL_FLAGS_OOR_WARNED flag. That will
+clarify what it is for.
 
-This patch implements a built-in list of certificates that are
-loaded onto the trusted platform keyring named ".platform_keys"
-to facilitate signature verification during kexec. Because the
-platform keyring are builtin, it cannot be updated from userspace.
-
-This keyring can be enabled by setting CONFIG_PLATFORM_KEYRING.
-The platform certificate can be provided using
-CONFIG_PLATFORM_TRUSTED_KEYS.
-
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
- certs/Kconfig               | 17 +++++++++++
- certs/Makefile              | 13 ++++++++
- certs/system_certificates.S | 20 ++++++++++++
- certs/system_keyring.c      | 74 ++++++++++++++++++++++++++++++++++-----------
- 4 files changed, 107 insertions(+), 17 deletions(-)
-
-diff --git a/certs/Kconfig b/certs/Kconfig
-index 5f7663df6e8e..608a4358a25e 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -83,4 +83,21 @@ config SYSTEM_BLACKLIST_HASH_LIST
- 	  wrapper to incorporate the list into the kernel.  Each <hash> should
- 	  be a string of hex digits.
- 
-+config PLATFORM_KEYRING
-+        bool "Provide keyring for platform trusted keys"
-+        depends on KEYS
-+        depends on ASYMMETRIC_KEY_TYPE
-+        help
-+	  Provide a separate, distinct keyring for platform trusted keys, which
-+	  the kernel automatically populates during initialization from values
-+	  embedded during build, used for verifying the kexec'ed kernel image
-+	  and, possibly, the initramfs signature.
-+
-+config PLATFORM_TRUSTED_KEYS
-+	string "Platform/Firmware trusted X.509 certs."
-+	depends on PLATFORM_KEYRING
-+	help
-+	  Provide the filename of a PEM-formatted file containing the platform
-+	  trusted X.509 certificates to be loaded in the platform keyring.
-+
- endmenu
-diff --git a/certs/Makefile b/certs/Makefile
-index 5d0999b9e21b..680903725031 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -104,3 +104,16 @@ targets += signing_key.x509
- $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
- 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
- endif # CONFIG_MODULE_SIG
-+
-+
-+ifeq ($(CONFIG_PLATFORM_KEYRING),y)
-+
-+$(eval $(call config_filename,PLATFORM_TRUSTED_KEYS))
-+
-+# GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
-+$(obj)/system_certificates.o: $(obj)/platform_certificate_list
-+
-+targets += platform_certificate_list
-+$(obj)/platform_certificate_list: scripts/extract-cert $(PLATFORM_TRUSTED_KEYS_FILENAME) FORCE
-+	$(call if_changed,extract_certs,$(CONFIG_PLATFORM_TRUSTED_KEYS))
-+endif # CONFIG_PLATFORM_KEYRING
-diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-index 3918ff7235ed..b0eb448ee617 100644
---- a/certs/system_certificates.S
-+++ b/certs/system_certificates.S
-@@ -14,6 +14,15 @@ __cert_list_start:
- 	.incbin "certs/x509_certificate_list"
- __cert_list_end:
- 
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	.align 8
-+	.globl VMLINUX_SYMBOL(platform_certificate_list)
-+VMLINUX_SYMBOL(platform_certificate_list):
-+__platform_cert_list_start:
-+	.incbin "certs/platform_certificate_list"
-+__platform_cert_list_end:
-+#endif /* CONFIG_PLATFORM_KEYRING */
-+
- #ifdef CONFIG_SYSTEM_EXTRA_CERTIFICATE
- 	.globl VMLINUX_SYMBOL(system_extra_cert)
- 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
-@@ -35,3 +44,14 @@ VMLINUX_SYMBOL(system_certificate_list_size):
- #else
- 	.long __cert_list_end - __cert_list_start
- #endif
-+
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	.align 8
-+	.globl VMLINUX_SYMBOL(platform_certificate_list_size)
-+VMLINUX_SYMBOL(platform_certificate_list_size):
-+#ifdef CONFIG_64BIT
-+	.quad __platform_cert_list_end - __platform_cert_list_start
-+#else
-+	.long __platform_cert_list_end - __platform_cert_list_start
-+#endif
-+#endif /* CONFIG_PLATFORM_KEYRING */
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 6251d1b27f0c..1900466ed46c 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -19,14 +19,22 @@
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
- 
-+#define BUILTIN_TRUSTED_KEYRING	0
-+#define PLATFORM_KEYRING	1
-+
- static struct key *builtin_trusted_keys;
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- static struct key *secondary_trusted_keys;
- #endif
-+#ifdef CONFIG_PLATFORM_KEYRING
-+static struct key *platform_keys __ro_after_init;
-+#endif
- 
- extern __initconst const u8 system_certificate_list[];
- extern __initconst const unsigned long system_certificate_list_size;
- 
-+extern __initconst const u8 platform_certificate_list[];
-+extern __initconst const unsigned long platform_certificate_list_size;
- /**
-  * restrict_link_to_builtin_trusted - Restrict keyring addition by built in CA
-  *
-@@ -123,6 +131,18 @@ static __init int system_trusted_keyring_init(void)
- 		panic("Can't link trusted keyrings\n");
- #endif
- 
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	platform_keys =
-+		keyring_alloc(".platform_keys",
-+			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
-+			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
-+			       KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH),
-+			      KEY_ALLOC_NOT_IN_QUOTA,
-+			      NULL, NULL);
-+	if (IS_ERR(platform_keys))
-+		panic("Can't allocate platform keyring\n");
-+#endif
-+
- 	return 0;
- }
- 
-@@ -132,18 +152,19 @@ static __init int system_trusted_keyring_init(void)
- device_initcall(system_trusted_keyring_init);
- 
- /*
-- * Load the compiled-in list of X.509 certificates.
-+ * Load the certificates to the keyring.
-  */
--static __init int load_system_certificate_list(void)
-+static __init int load_certificate_list(const u8 *p, unsigned long size,
-+		struct key *keyring)
- {
- 	key_ref_t key;
--	const u8 *p, *end;
-+	const u8 *end;
- 	size_t plen;
- 
--	pr_notice("Loading compiled-in X.509 certificates\n");
-+	pr_notice("Loading compiled-in X.509 certificates to %s\n",
-+			keyring->description);
- 
--	p = system_certificate_list;
--	end = p + system_certificate_list_size;
-+	end = p + size;
- 	while (p < end) {
- 		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
- 		 * than 256 bytes in size.
-@@ -158,16 +179,17 @@ static __init int load_system_certificate_list(void)
- 		if (plen > end - p)
- 			goto dodgy_cert;
- 
--		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
--					   "asymmetric",
--					   NULL,
--					   p,
--					   plen,
--					   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
--					   KEY_USR_VIEW | KEY_USR_READ),
--					   KEY_ALLOC_NOT_IN_QUOTA |
--					   KEY_ALLOC_BUILT_IN |
--					   KEY_ALLOC_BYPASS_RESTRICTION);
-+		key = key_create_or_update(make_key_ref(keyring, 1),
-+				"asymmetric",
-+				NULL,
-+				p,
-+				plen,
-+				((KEY_POS_ALL & ~KEY_POS_SETATTR) |
-+				 KEY_USR_VIEW | KEY_USR_READ),
-+				KEY_ALLOC_NOT_IN_QUOTA |
-+				KEY_ALLOC_BUILT_IN |
-+				KEY_ALLOC_BYPASS_RESTRICTION);
-+
- 		if (IS_ERR(key)) {
- 			pr_err("Problem loading in-kernel X.509 certificate (%ld)\n",
- 			       PTR_ERR(key));
-@@ -185,7 +207,25 @@ static __init int load_system_certificate_list(void)
- 	pr_err("Problem parsing in-kernel X.509 certificate list\n");
- 	return 0;
- }
--late_initcall(load_system_certificate_list);
-+
-+/*
-+ * Load the compiled-in list of system and platform X.509 certificates.
-+ */
-+static __init int load_compiled_certificate_list(void)
-+{
-+	/* Loading certs in builtin keyring */
-+	load_certificate_list(system_certificate_list,
-+			system_certificate_list_size, builtin_trusted_keys);
-+
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	/* Loading certs in platform keyring */
-+	load_certificate_list(platform_certificate_list,
-+			platform_certificate_list_size, platform_keys);
-+#endif
-+
-+	return 0;
-+}
-+late_initcall(load_compiled_certificate_list);
- 
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
- 
--- 
-2.13.6
+Cheers,
+Longman
