@@ -1,79 +1,50 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-420878-1519831409-2-17538136476424503989
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensk.us-asciiro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519831408; b=dm5K36oc5ZhYWV25mroR77wHDdCLXzKTYsJKKesIzS315Rb
-    mGstwGIEx89UWDIug45a60WRz+vr9lFYbiDioHa9bZk/a5P44oXCP7PYfyLvgjc2
-    ias3cOlkMl3OgIt1c4ukSQHYtQmCvXkHk7AbCCqlILnJVTHYmNRfoJep/C1kW0X2
-    AhP1/cqekft5GKwKi+vG/EtNRil1Ls9g/PwWrX/eF8fG/ie77SlMfoGiFG1sKHuS
-    m/vp06/TNmBGKNSjwYIxay1sgh1KqsjholI9nQnjWz2q81+jiafgSOZ5DafOhJD7
-    Mg8l3o7Yyl76/B5yBz4nFWPcBKokwSCVHTKqGmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519831408; bh=Y1z3YWmDxrgEVp1hhWx
-    dYYOV0M+HYBm/qjSh4gx4CFk=; b=aNjVcdUuJMP+cmiU/WaT+ncZ4meCx68sV1i
-    mEaqDKStJivLJVzwC+IlohJU8kD/xlMkRt5e49t8fOh40ObQ/B3WCQXrHrZDfQqM
-    Ecfk5TWDuAFk8tH67Sc/RaTRssBeMaCQZyY9oQSMhxzx76WmDu/mlgghJ7YSo4e4
-    2Tk/BzgJKum4iCU7ENahWmZUVCkYraPNWmNUKtCZmOSqhtUuGv5olfozO2hp0EDx
-    ClfE+bWQfvaSfptlouiXIfjQVYxUJ8L6vPz8PGaOuRtYlydMJJwkOLQDS1W4WH/o
-    Ml/F92XakzyxhRrGRlA7M4uoUmH0WT+IM5HHwDZgjDqB6B4v/+g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeB1PX0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:23:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33412 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752892AbeB1PWq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:46 -0500
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AH8x227IHPz1xkX8OpXB+nA6wWIQlkSIZZvGQVyI1emkfF5M2sk2y9pnMu2boXIKp369iFji5uzE
+ARC-Seal: i=1; a=rsa-sha256; t=1519831341; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CWcJoQ0k42UN2nSzxs8ZvL6BekFz0PhDGzRfwpcqwTvvi2+4gbkppdbjuRW1TVemXn
+         b73PArL13s09RAFClSancWm4QYNd3yGfIGZundCJTXxgM6jeXnhXdwK54ibetuc3hkJt
+         5dMnIgL8hIKzsosM9JMzY+WuIYKjvKzLk+qXc+c7xY/LCvDaJoDEZQh3eaXwNY3k82xf
+         gW1x9vxqbtsHslk9ou6pr7mIO6EN7GjTxx5/6/jEj6v/8TpcHtV8Snspdll6TsEbilQG
+         TsiWp2QCnF4m5JMAJDh45cECZZDkD1Vb7J9CwrGt7fCYwSbpwR6M13CNbKX2be+d+mXm
+         Jwbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=ggXTt+StUKQfZPPdEw1yCwYGXCEeLEXW9KNPFveyvYo=;
+        b=J6/o5bvCjy8kI6tFcvtwnausn3k0FidZlEuisXx46v3+damUVaMa8wbytfEwU6qRke
+         Ggswbeh3ptDLwe3Uj3f0+RmvXiJBiw8TXphrB9m+TiSoCtvTl+0dvbuzQYBGVtvzrSfY
+         DRTnOYcCbGAuEvfqmVRF8kqxlDWGYmvMS+RA6mFUyDjhQkaOmBdxED7bJ+0LlkT/yY6n
+         +m0wX8vI+Rma8yZqWo+cYy0fILwujleFyZQkpI2mA3pwXtNgbSox1kkhXffVnp3ScnYE
+         qrbNOPNVNVPTr+GoqGnNfuaKZE3xVTxPjAEptSp/mxGTBWeWgjYBNUJ07TfYwR4WmCSm
+         gEYw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Juan Zea" <juan.zea@qindel.com>,
-        "Shuah Khan" <shuahkh@osg.samsung.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: akpm@linux-foundation.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "David Kozub" <zub@linux.fjfi.cvut.cz>,
+ "Alan Stern" <stern@rowland.harvard.edu>
 Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.18292864@decadent.org.uk>
+Message-ID: <lsq.1519831221.762525108@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 061/140] usbip: fix usbip bind writing random string
- after command in match_busid
+Subject: [PATCH 3.2 037/140] USB: uas and storage: Add US_FL_BROKEN_FUA
+ for another JMicron JMS567 ID
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593658669092712757?=
+X-GMAIL-MSGID: =?utf-8?q?1593658669092712757?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,49 +52,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Juan Zea <juan.zea@qindel.com>
+From: David Kozub <zub@linux.fjfi.cvut.cz>
 
-commit 544c4605acc5ae4afe7dd5914147947db182f2fb upstream.
+commit 62354454625741f0569c2cbe45b2d192f8fd258e upstream.
 
-usbip bind writes commands followed by random string when writing to
-match_busid attribute in sysfs, caused by using full variable size
-instead of string length.
+There is another JMS567-based USB3 UAS enclosure (152d:0578) that fails
+with the following error:
 
-Signed-off-by: Juan Zea <juan.zea@qindel.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+[sda] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[sda] tag#0 Sense Key : Illegal Request [current]
+[sda] tag#0 Add. Sense: Invalid field in cdb
+
+The issue occurs both with UAS (occasionally) and mass storage
+(immediately after mounting a FS on a disk in the enclosure).
+
+Enabling US_FL_BROKEN_FUA quirk solves this issue.
+
+This patch adds an UNUSUAL_DEV with US_FL_BROKEN_FUA for the enclosure
+for both UAS and mass storage.
+
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: adjust context]
+[bwh: Backported to 3.2:
+ - Drop uas change
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/userspace/src/utils.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
---- a/drivers/staging/usbip/userspace/src/utils.c
-+++ b/drivers/staging/usbip/userspace/src/utils.c
-@@ -34,6 +34,7 @@ int modify_match_busid(char *busid, int
- 	char match_busid_attr_path[SYSFS_PATH_MAX];
- 	struct sysfs_attribute *match_busid_attr;
- 	int rc, ret = 0;
-+	int cmd_size;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1961,6 +1961,13 @@ UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_BROKEN_FUA ),
  
- 	if (strnlen(busid, SYSFS_BUS_ID_SIZE) > SYSFS_BUS_ID_SIZE - 1) {
- 		dbg("busid is too long");
-@@ -58,13 +59,15 @@ int modify_match_busid(char *busid, int
- 	}
- 
- 	if (add)
--		snprintf(buff, SYSFS_BUS_ID_SIZE + 4, "add %s", busid);
-+		cmd_size = snprintf(buff, SYSFS_BUS_ID_SIZE + 4, "add %s",
-+				    busid);
- 	else
--		snprintf(buff, SYSFS_BUS_ID_SIZE + 4, "del %s", busid);
-+		cmd_size = snprintf(buff, SYSFS_BUS_ID_SIZE + 4, "del %s",
-+				    busid);
- 
- 	dbg("write \"%s\" to %s", buff, match_busid_attr->path);
- 
--	rc = sysfs_write_attribute(match_busid_attr, buff, sizeof(buff));
-+	rc = sysfs_write_attribute(match_busid_attr, buff, cmd_size);
- 	if (rc < 0) {
- 		dbg("failed to write match_busid: %s", strerror(errno));
- 		ret = -1;
++/* Reported by David Kozub <zub@linux.fjfi.cvut.cz> */
++UNUSUAL_DEV(0x152d, 0x0578, 0x0000, 0x9999,
++		"JMicron",
++		"JMS567",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BROKEN_FUA),
++
+ /* Reported by Alexandre Oliva <oliva@lsd.ic.unicamp.br>
+  * JMicron responds to USN and several other SCSI ioctls with a
+  * residue that causes subsequent I/O requests to fail.  */
