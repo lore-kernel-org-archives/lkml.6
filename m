@@ -1,113 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932304AbeB1PHT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:07:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52721 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932250AbeB1PHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:07:15 -0500
-Date: Wed, 28 Feb 2018 07:07:06 -0800
-From: tip-bot for Juergen Gross <tipbot@zytor.com>
-Message-ID: <tip-71c208dd54ab971036d83ff6d9837bae4976e623@git.kernel.org>
-Cc: jgross@suse.com, linux-kernel@vger.kernel.org, jbeulich@suse.com,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        jbeulich@suse.com, jgross@suse.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180226140818.4849-1-jgross@suse.com>
-References: <20180226140818.4849-1-jgross@suse.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
-Git-Commit-ID: 71c208dd54ab971036d83ff6d9837bae4976e623
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S932331AbeB1PHr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:07:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57908 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752856AbeB1PHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:07:07 -0500
+From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: arnd@arndb.de, bhe@redhat.com, slp@redhat.com, mst@redhat.com,
+        somlo@cmu.edu, xiaolong.ye@intel.com,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+Subject: [PATCH v16 10/11] fw_cfg: write vmcoreinfo details
+Date: Wed, 28 Feb 2018 16:06:14 +0100
+Message-Id: <20180228150615.17317-11-marcandre.lureau@redhat.com>
+In-Reply-To: <20180228150615.17317-1-marcandre.lureau@redhat.com>
+References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  71c208dd54ab971036d83ff6d9837bae4976e623
-Gitweb:     https://git.kernel.org/tip/71c208dd54ab971036d83ff6d9837bae4976e623
-Author:     Juergen Gross <jgross@suse.com>
-AuthorDate: Mon, 26 Feb 2018 15:08:18 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 16:03:19 +0100
+If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
+the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
 
-x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
+The DMA operation is expected to run synchronously with today qemu,
+but the specification states that it may become async, so we run
+"control" field check in a loop for eventual changes.
 
-Older Xen versions (4.5 and before) might have problems migrating pv
-guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
-suspending zero that MSR and restore it after being resumed.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Cc: stable@vger.kernel.org
-Cc: xen-devel@lists.xenproject.org
-Cc: boris.ostrovsky@oracle.com
-Link: https://lkml.kernel.org/r/20180226140818.4849-1-jgross@suse.com
-
+Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
 ---
- arch/x86/xen/suspend.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/firmware/qemu_fw_cfg.c   | 145 ++++++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/qemu_fw_cfg.h |  31 +++++++++
+ 2 files changed, 173 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
-index d9f96cc5d743..1d83152c761b 100644
---- a/arch/x86/xen/suspend.c
-+++ b/arch/x86/xen/suspend.c
-@@ -1,12 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/types.h>
- #include <linux/tick.h>
-+#include <linux/percpu-defs.h>
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index df028faa2d00..14fedbeca724 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -34,11 +34,17 @@
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+ #include <uapi/linux/qemu_fw_cfg.h>
++#include <linux/delay.h>
++#include <linux/crash_dump.h>
++#include <linux/crash_core.h>
  
- #include <xen/xen.h>
- #include <xen/interface/xen.h>
- #include <xen/grant_table.h>
- #include <xen/events.h>
+ MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+ MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+ MODULE_LICENSE("GPL");
  
-+#include <asm/cpufeatures.h>
-+#include <asm/msr-index.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/page.h>
- #include <asm/fixmap.h>
-@@ -15,6 +18,8 @@
- #include "mmu.h"
- #include "pmu.h"
- 
-+static DEFINE_PER_CPU(u64, spec_ctrl);
++/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
++static u32 fw_cfg_rev;
 +
- void xen_arch_pre_suspend(void)
- {
- 	xen_save_time_memory_area();
-@@ -35,6 +40,9 @@ void xen_arch_post_suspend(int cancelled)
- 
- static void xen_vcpu_notify_restore(void *data)
- {
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-+		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
-+
- 	/* Boot processor notified via generic timekeeping_resume() */
- 	if (smp_processor_id() == 0)
- 		return;
-@@ -44,7 +52,15 @@ static void xen_vcpu_notify_restore(void *data)
- 
- static void xen_vcpu_notify_suspend(void *data)
- {
-+	u64 tmp;
-+
- 	tick_suspend_local();
-+
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
-+		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
-+		this_cpu_write(spec_ctrl, tmp);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	}
+ /* fw_cfg device i/o register addresses */
+ static bool fw_cfg_is_mmio;
+ static phys_addr_t fw_cfg_p_base;
+@@ -60,6 +66,66 @@ static void fw_cfg_sel_endianness(u16 key)
+ 		iowrite16(key, fw_cfg_reg_ctrl);
  }
  
- void xen_arch_resume(void)
++#ifdef CONFIG_CRASH_CORE
++static inline bool fw_cfg_dma_enabled(void)
++{
++	return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
++}
++
++/* qemu fw_cfg device is sync today, but spec says it may become async */
++static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
++{
++	for (;;) {
++		u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
++
++		/* do not reorder the read to d->control */
++		rmb();
++		if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
++			return;
++
++		cpu_relax();
++	}
++}
++
++static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
++{
++	phys_addr_t dma;
++	struct fw_cfg_dma_access *d = NULL;
++	ssize_t ret = length;
++
++	d = kmalloc(sizeof(*d), GFP_KERNEL);
++	if (!d) {
++		ret = -ENOMEM;
++		goto end;
++	}
++
++	/* fw_cfg device does not need IOMMU protection, so use physical addresses */
++	*d = (struct fw_cfg_dma_access) {
++		.address = cpu_to_be64(address ? virt_to_phys(address) : 0),
++		.length = cpu_to_be32(length),
++		.control = cpu_to_be32(control)
++	};
++
++	dma = virt_to_phys(d);
++
++	iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
++	/* force memory to sync before notifying device via MMIO */
++	wmb();
++	iowrite32be(dma, fw_cfg_reg_dma + 4);
++
++	fw_cfg_wait_for_control(d);
++
++	if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
++		ret = -EIO;
++	}
++
++end:
++	kfree(d);
++
++	return ret;
++}
++#endif
++
+ /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+ static ssize_t fw_cfg_read_blob(u16 key,
+ 				void *buf, loff_t pos, size_t count)
+@@ -89,6 +155,47 @@ static ssize_t fw_cfg_read_blob(u16 key,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_CRASH_CORE
++/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
++static ssize_t fw_cfg_write_blob(u16 key,
++				 void *buf, loff_t pos, size_t count)
++{
++	u32 glk = -1U;
++	acpi_status status;
++	ssize_t ret = count;
++
++	/* If we have ACPI, ensure mutual exclusion against any potential
++	 * device access by the firmware, e.g. via AML methods:
++	 */
++	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
++	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
++		/* Should never get here */
++		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
++		return -EINVAL;
++	}
++
++	mutex_lock(&fw_cfg_dev_lock);
++	if (pos == 0) {
++		ret = fw_cfg_dma_transfer(buf, count, key << 16
++					  | FW_CFG_DMA_CTL_SELECT
++					  | FW_CFG_DMA_CTL_WRITE);
++	} else {
++		fw_cfg_sel_endianness(key);
++		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
++		if (ret < 0)
++			goto end;
++		ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
++	}
++
++end:
++	mutex_unlock(&fw_cfg_dev_lock);
++
++	acpi_release_global_lock(glk);
++
++	return ret;
++}
++#endif /* CONFIG_CRASH_CORE */
++
+ /* clean up fw_cfg device i/o */
+ static void fw_cfg_io_cleanup(void)
+ {
+@@ -188,9 +295,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+-static u32 fw_cfg_rev;
+-
+ static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+ {
+ 	return sprintf(buf, "%u\n", fw_cfg_rev);
+@@ -213,6 +317,32 @@ struct fw_cfg_sysfs_entry {
+ 	struct list_head list;
+ };
+ 
++#ifdef CONFIG_CRASH_CORE
++static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
++{
++	static struct fw_cfg_vmcoreinfo *data;
++	ssize_t ret;
++
++	data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	*data = (struct fw_cfg_vmcoreinfo) {
++		.guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
++		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
++		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
++	};
++	/* spare ourself reading host format support for now since we
++	 * don't know what else to format - host may ignore ours
++	 */
++	ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
++				0, sizeof(struct fw_cfg_vmcoreinfo));
++
++	kfree(data);
++	return ret;
++}
++#endif /* CONFIG_CRASH_CORE */
++
+ /* get fw_cfg_sysfs_entry from kobject member */
+ static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
+ {
+@@ -452,6 +582,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+ 	int err;
+ 	struct fw_cfg_sysfs_entry *entry;
+ 
++#ifdef CONFIG_CRASH_CORE
++	if (fw_cfg_dma_enabled() &&
++		strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
++		!is_kdump_kernel()) {
++		if (fw_cfg_write_vmcoreinfo(f) < 0)
++			pr_warn("fw_cfg: failed to write vmcoreinfo");
++	}
++#endif
++
+ 	/* allocate new entry */
+ 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+diff --git a/include/uapi/linux/qemu_fw_cfg.h b/include/uapi/linux/qemu_fw_cfg.h
+index c698ac3812f6..e089c0159ec2 100644
+--- a/include/uapi/linux/qemu_fw_cfg.h
++++ b/include/uapi/linux/qemu_fw_cfg.h
+@@ -54,6 +54,7 @@
+ 
+ /* FW_CFG_ID bits */
+ #define FW_CFG_VERSION		0x01
++#define FW_CFG_VERSION_DMA	0x02
+ 
+ /* fw_cfg file directory entry type */
+ struct fw_cfg_file {
+@@ -63,4 +64,34 @@ struct fw_cfg_file {
+ 	char name[FW_CFG_MAX_FILE_PATH];
+ };
+ 
++/* FW_CFG_DMA_CONTROL bits */
++#define FW_CFG_DMA_CTL_ERROR	0x01
++#define FW_CFG_DMA_CTL_READ	0x02
++#define FW_CFG_DMA_CTL_SKIP	0x04
++#define FW_CFG_DMA_CTL_SELECT	0x08
++#define FW_CFG_DMA_CTL_WRITE	0x10
++
++#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
++
++/* Control as first field allows for different structures selected by this
++ * field, which might be useful in the future
++ */
++struct fw_cfg_dma_access {
++	__be32 control;
++	__be32 length;
++	__be64 address;
++};
++
++#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
++
++#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
++#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
++
++struct fw_cfg_vmcoreinfo {
++	__le16 host_format;
++	__le16 guest_format;
++	__le32 size;
++	__le64 paddr;
++};
++
+ #endif
+-- 
+2.16.1.73.g5832b7e9f2
