@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932516AbeB1SP7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 13:15:59 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39155 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932451AbeB1SPy (ORCPT
+        id S932661AbeB1SQO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 13:16:14 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40021 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932451AbeB1SQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 13:15:54 -0500
-X-Google-Smtp-Source: AH8x22634gpfc5BwhIDqn3H7Tb9K6fgBvF109m6zv4aDVJ9DeFCqqG7wl4Yu8hFj0vY8VbO0p/wzDw==
+        Wed, 28 Feb 2018 13:16:10 -0500
+X-Google-Smtp-Source: AH8x226ea19EBQNhWCqCeSIqnyBqSbIedVjv8SQNg6zPPA/+OG/Qi8sV7ebNV22hf9zluAY4Xgb1cw==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,9 +17,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
         bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
-Date: Wed, 28 Feb 2018 23:44:27 +0530
-Message-Id: <20180228181432.26847-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 07/10] arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+Date: Wed, 28 Feb 2018 23:44:29 +0530
+Message-Id: <20180228181432.26847-8-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
 References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
@@ -27,114 +27,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio nodes for Actions Semi S900 SoC.
+Add gpio line names to Actions Semi S900 based Bubblegum-96 board.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 195 ++++++++++++++++++++++
+ 1 file changed, 195 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-new file mode 100644
-index 000000000000..d2939ca6cfaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-@@ -0,0 +1,95 @@
-+* Actions Semi OWL GPIO controller bindings
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+index 60ddaf98401b..05ec8a7e924d 100644
+--- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+@@ -40,3 +40,198 @@
+ 	status = "okay";
+ 	clocks = <&cmu CLK_UART5>;
+ };
 +
-+The GPIOs are organized as individual banks/ports with variable number
-+of GPIOs. Each bank is represented as an individual GPIO controller.
++/*
++ * GPIO name legend: proper name = the GPIO line is used as GPIO
++ *         NC = not connected (pin out but not routed from the chip to
++ *              anything the board)
++ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
++ *         LSEC = Low Speed External Connector
++ *         HSEC = High Speed External Connector
++ *
++ * Line names are taken from the schematic "Schematics Bubblegum96"
++ * version v1.0
++ *
++ * For the lines routed to the external connectors the
++ * lines are named after the 96Boards CE Specification 1.0,
++ * Appendix "Expansion Connector Signal Description".
++ *
++ * When the 96Boards naming of a line and the schematic name of
++ * the same line are in conflict, the 96Boards specification
++ * takes precedence, which means that the external UART on the
++ * LSEC is named UART0 while the schematic and SoC names this
++ * UART2. Only exception is the I2C lines for which the schematic
++ * naming has been preferred. This is only for the informational
++ * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
++ * are the only ones actually used for GPIO.
++ */
 +
-+Required properties:
-+- compatible            : Should be "actions,s900-gpio"
-+- reg                   : Address and range of the GPIO controller registers.
-+- gpio-controller       : Marks the device node as a GPIO controller.
-+- #gpio-cells           : Should be <2>. The first cell is the gpio number
-+                          and the second cell is used to specify optional
-+                          parameters.
-+- interrupt-controller  : Marks the device node as an interrupt controller.
-+- #interrupt-cells      : Specifies the number of cells needed to encode an
-+                          interrupt.  Shall be set to 2.  The first cell
-+                          defines the interrupt number, the second encodes
-+                          the trigger flags described in
-+                          bindings/interrupt-controller/interrupts.txt
-+
-+Optional properties:
-+- gpio-ranges           : Mapping between GPIO and pinctrl
-+
-+Note: Each GPIO port should have an alias correctly numbered in "aliases"
-+node.
-+
-+Examples:
-+
-+aliases {
-+        gpio0 = &gpioa;
-+        gpio1 = &gpiob;
-+        gpio2 = &gpioc;
-+        gpio3 = &gpiod;
-+        gpio4 = &gpioe;
-+        gpio5 = &gpiof;
++&gpioa {
++	gpio-line-names =
++		"GPIO-A", /* GPIO_0, LSEC pin 23 */
++		"GPIO-B", /* GPIO_1, LSEC pin 24 */
++		"GPIO-C", /* GPIO_2, LSEC pin 25 */
++		"GPIO-D", /* GPIO_3, LSEC pin 26 */
++		"GPIO-E", /* GPIO_4, LSEC pin 27 */
++		"GPIO-F", /* GPIO_5, LSEC pin 28 */
++		"GPIO-G", /* GPIO_6, LSEC pin 29 */
++		"GPIO-H", /* GPIO_7, LSEC pin 30 */
++		"GPIO-I", /* GPIO_8, LSEC pin 31 */
++		"GPIO-J", /* GPIO_9, LSEC pin 32 */
++		"NC", /* GPIO_10 */
++		"NC", /* GPIO_11 */
++		"SIRQ2_1V8", /* GPIO_12 */
++		"PCM0_OUT", /* GPIO_13 */
++		"WIFI_LED", /* GPIO_14 */
++		"PCM0_SYNC", /* GPIO_15 */
++		"PCM0_CLK", /* GPIO_16 */
++		"PCM0_IN", /* GPIO_17 */
++		"BT_LED", /* GPIO_18 */
++		"LED0", /* GPIO_19 */
++		"LED1", /* GPIO_20 */
++		"JTAG_TCK", /* GPIO_21 */
++		"JTAG_TMS", /* GPIO_22 */
++		"JTAG_TDI", /* GPIO_23 */
++		"JTAG_TDO", /* GPIO_24 */
++		"[UART1_RxD]", /* GPIO_25, LSEC pin 13 */
++		"NC", /* GPIO_26 */
++		"[UART1_TxD]", /* GPIO_27, LSEC pin 11 */
++		"SD0_D0", /* GPIO_28 */
++		"SD0_D1", /* GPIO_29 */
++		"SD0_D2", /* GPIO_30 */
++		"SD0_D3"; /* GPIO_31 */
 +};
 +
-+       gpioa: gpioa@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 0 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
++&gpiob {
++	gpio-line-names =
++		"SD1_D0", /* GPIO_32 */
++		"SD1_D1", /* GPIO_33 */
++		"SD1_D2", /* GPIO_34 */
++		"SD1_D3", /* GPIO_35 */
++		"SD0_CMD", /* GPIO_36 */
++		"SD0_CLK", /* GPIO_37 */
++		"SD1_CMD", /* GPIO_38 */
++		"SD1_CLK", /* GPIO_39 */
++		"SPI0_SCLK", /* GPIO_40, LSEC pin 8 */
++		"SPI0_CS", /* GPIO_41, LSEC pin 12 */
++		"SPI0_DIN", /* GPIO_42, LSEC pin 10 */
++		"SPI0_DOUT", /* GPIO_43, LSEC pin 14 */
++		"I2C5_SDATA", /* GPIO_44, HSEC pin 36 */
++		"I2C5_SCLK", /* GPIO_45, HSEC pin 38 */
++		"UART0_RX", /* GPIO_46, LSEC pin 7 */
++		"UART0_TX", /* GPIO_47, LSEC pin 5 */
++		"UART0_RTSB", /* GPIO_48, LSEC pin 9 */
++		"UART0_CTSB", /* GPIO_49, LSEC pin 3 */
++		"I2C4_SCLK", /* GPIO_50, HSEC pin 32 */
++		"I2C4_SDATA", /* GPIO_51, HSEC pin 34 */
++		"I2C0_SCLK", /* GPIO_52 */
++		"I2C0_SDATA", /* GPIO_53 */
++		"I2C1_SCLK", /* GPIO_54, LSEC pin 15 */
++		"I2C1_SDATA", /* GPIO_55, LSEC pin 17 */
++		"I2C2_SCLK", /* GPIO_56, LSEC pin 19 */
++		"I2C2_SDATA", /* GPIO_57, LSEC pin 21 */
++		"CSI0_DN0", /* GPIO_58, HSEC pin 10 */
++		"CSI0_DP0", /* GPIO_59, HSEC pin 8 */
++		"CSI0_DN1", /* GPIO_60, HSEC pin 16 */
++		"CSI0_DP1", /* GPIO_61, HSEC pin 14 */
++		"CSI0_CN", /* GPIO_62, HSEC pin 4 */
++		"CSI0_CP"; /* GPIO_63, HSEC pin 2 */
++};
 +
-+       gpiob: gpiob@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 32 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
++&gpioc {
++	gpio-line-names =
++		"CSI0_DN2", /* GPIO_64, HSEC pin 22 */
++		"CSI0_DP2", /* GPIO_65, HSEC pin 20 */
++		"CSI0_DN3", /* GPIO_66, HSEC pin 28 */
++		"CSI0_DP3", /* GPIO_67, HSEC pin 26 */
++		"[CLK0]", /* GPIO_68, HSEC pin 15 */
++		"CSI1_DN0", /* GPIO_69, HSEC pin 44 */
++		"CSI1_DP0", /* GPIO_70, HSEC pin 42 */
++		"CSI1_DN1", /* GPIO_71, HSEC pin 50 */
++		"CSI1_DP1", /* GPIO_72, HSEC pin 48 */
++		"CSI1_CN", /* GPIO_73, HSEC pin 56 */
++		"CSI1_CP", /* GPIO_74, HSEC pin 54 */
++		"[CLK1]"; /* GPIO_75, HSEC pin 17 */
++};
 +
-+       gpioc: gpioc@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 64 12>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
++&gpiod {
++	gpio-line-names =
++		"[GPIOD0]", /* GPIO_76 */
++		"[GPIOD1]", /* GPIO_77 */
++		"BT_RST_N", /* GPIO_78 */
++		"EXT_DC_EN", /* GPIO_79 */
++		"[PCM_DI]", /* GPIO_80, LSEC pin 22 */
++		"[PCM_DO]", /* GPIO_81, LSEC pin 20 */
++		"[PCM_CLK]", /* GPIO_82, LSEC pin 18 */
++		"[PCM_FS]", /* GPIO_83, LSEC pin 16 */
++		"WAKE_BT", /* GPIO_84 */
++		"WL_REG_ON", /* GPIO_85 */
++		"NC", /* GPIO_86 */
++		"NC", /* GPIO_87 */
++		"NC", /* GPIO_88 */
++		"NC", /* GPIO_89 */
++		"NC", /* GPIO_90 */
++		"WIFI_WAKE", /* GPIO_91 */
++		"BT_WAKE", /* GPIO_92 */
++		"NC", /* GPIO_93 */
++		"OTG_EN2", /* GPIO_94 */
++		"OTG_EN", /* GPIO_95 */
++		"DSI_DP3", /* GPIO_96, HSEC pin 45 */
++		"DSI_DN3", /* GPIO_97, HSEC pin 47 */
++		"DSI_DP1", /* GPIO_98, HSEC pin 33 */
++		"DSI_DN1", /* GPIO_99, HSEC pin 35 */
++		"DSI_CP", /* GPIO_100, HSEC pin 21 */
++		"DSI_CN", /* GPIO_101, HSEC pin 23 */
++		"DSI_DP0", /* GPIO_102, HSEC pin 27 */
++		"DSI_DN0", /* GPIO_103, HSEC pin 29 */
++		"DSI_DP2", /* GPIO_104, HSEC pin 39 */
++		"DSI_DN2"; /* GPIO_105, HSEC pin 41 */
++};
 +
-+       gpiod: gpiod@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 76 30>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
++&gpioe {
++	gpio-line-names =
++		"N0_D0", /* GPIO_106 */
++		"N0_D1", /* GPIO_107 */
++		"N0_D2", /* GPIO_108 */
++		"N0_D3", /* GPIO_109 */
++		"N0_D4", /* GPIO_110 */
++		"N0_D5", /* GPIO_111 */
++		"N0_D6", /* GPIO_112 */
++		"N0_D7", /* GPIO_113 */
++		"N0_DQS", /* GPIO_114 */
++		"N0_DQSN", /* GPIO_115 */
++		"NC", /* GPIO_116 */
++		"NC", /* GPIO_117 */
++		"NC", /* GPIO_118 */
++		"N0_CEB1", /* GPIO_119 */
++		"CARD_DT", /* GPIO_120 */
++		"N0_CEB3", /* GPIO_121 */
++		"SD_DAT0", /* GPIO_122, HSEC pin 1 */
++		"SD_DAT1", /* GPIO_123, HSEC pin 3 */
++		"SD_DAT2", /* GPIO_124, HSEC pin 5 */
++		"SD_DAT3", /* GPIO_125, HSEC pin 7 */
++		"NC", /* GPIO_126 */
++		"NC", /* GPIO_127 */
++		"[PWR_BTN_N]", /* GPIO_128, LSEC pin 4 */
++		"[RST_BTN_N]", /* GPIO_129, LSEC pin 6 */
++		"NC", /* GPIO_130 */
++		"SD_CMD", /* GPIO_131 */
++		"GPIO-L", /* GPIO_132, LSEC pin 34 */
++		"GPIO-K", /* GPIO_133, LSEC pin 33 */
++		"NC", /* GPIO_134 */
++		"SD_SCLK", /* GPIO_135 */
++		"NC", /* GPIO_136 */
++		"JTAG_TRST"; /* GPIO_137 */
++};
 +
-+       gpioe: gpioe@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 106 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiof: gpiof@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 138 8>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
++&gpiof {
++	gpio-line-names =
++		"I2C3_SCLK", /* GPIO_138 */
++		"LED2", /* GPIO_139 */
++		"LED3", /* GPIO_140 */
++		"I2C3_SDATA", /* GPIO_141 */
++		"UART3_RX", /* GPIO_142 */
++		"UART3_TX", /* GPIO_143 */
++		"UART3_RTSB", /* GPIO_144 */
++		"UART3_CTSB"; /* GPIO_145 */
++};
 -- 
 2.14.1
