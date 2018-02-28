@@ -1,95 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeB1PVN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:21:13 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:57456 "EHLO gloria.sntech.de"
+        id S932906AbeB1PYf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:24:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51784 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932104AbeB1PVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:21:12 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Thierry Escande <thierry.escande@collabora.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yakir Yang <ykk@rock-chips.com>,
-        =?ISO-8859-1?Q?=D8rjan?= Eide <orjan.eide@arm.com>,
-        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
-Subject: Re: [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in analogix_dp_bind
-Date: Wed, 28 Feb 2018 16:20:57 +0100
-Message-ID: <19741148.ZWsFISTM5I@diego>
-In-Reply-To: <20180130202913.28724-6-thierry.escande@collabora.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com> <20180130202913.28724-6-thierry.escande@collabora.com>
+        id S932383AbeB1PYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:24:32 -0500
+Date: Wed, 28 Feb 2018 08:24:17 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+Message-ID: <20180228082417.07c42a88@w520.home>
+In-Reply-To: <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+        <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+        <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+        <20180226161310.061ce3a8@w520.home>
+        <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+        <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
+        <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
+        <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+        <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 30. Januar 2018, 21:28:35 CET schrieb Thierry Escande:
-> From: zain wang <wzz@rock-chips.com>
-> 
-> The bridge does not need to be powered in analogix_dp_bind(), so
-> remove the calls to pm_runtime_get()/phy_power_on()/analogix_dp_init_dp()
-> as well as their power-off counterparts.
-> 
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> [the patch originally just removed the power_on portion, seanpaul removed
-> the power off code as well as improved the commit message]
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 10 ----------
->  1 file changed, 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
-> cb5e18d6ba04..1477ea9ba85d 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1382,11 +1382,6 @@ analogix_dp_bind(struct device *dev, struct
-> drm_device *drm_dev,
-> 
->  	pm_runtime_enable(dev);
-> 
-> -	pm_runtime_get_sync(dev);
-> -	phy_power_on(dp->phy);
-> -
-> -	analogix_dp_init_dp(dp);
-> -
->  	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
->  					analogix_dp_hardirq,
->  					analogix_dp_irq_thread,
-> @@ -1414,15 +1409,10 @@ analogix_dp_bind(struct device *dev, struct
-> drm_device *drm_dev, goto err_disable_pm_runtime;
->  	}
-> 
-> -	phy_power_off(dp->phy);
-> -	pm_runtime_put(dev);
-> -
->  	return dp;
-> 
->  err_disable_pm_runtime:
-> 
-> -	phy_power_off(dp->phy);
-> -	pm_runtime_put(dev);
->  	pm_runtime_disable(dev);
-> 
->  	return ERR_PTR(ret);
+On Wed, 28 Feb 2018 12:53:27 +0100
+Auger Eric <eric.auger@redhat.com> wrote:
 
-In general, this patch seems to also create the opposite than
-"drm/bridge: analogix_dp: Keep PHY powered between driver bind/unbind" [0]
+> Hi Shameer,
+> 
+> On 28/02/18 10:25, Shameerali Kolothum Thodi wrote:
+> > 
+> >   
+> >> -----Original Message-----
+> >> From: Auger Eric [mailto:eric.auger@redhat.com]
+> >> Sent: Wednesday, February 28, 2018 9:02 AM
+> >> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> >> Alex Williamson <alex.williamson@redhat.com>
+> >> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+> >> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> >> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin Murphy
+> >> <robin.murphy@arm.com>
+> >> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
+> >> iova range
+> >>
+> >> Hi Shameer,
+> >>
+> >> On 27/02/18 10:57, Shameerali Kolothum Thodi wrote:  
+> >>>
+> >>>  
+> >>>> -----Original Message-----
+> >>>> From: Auger Eric [mailto:eric.auger@redhat.com]
+> >>>> Sent: Tuesday, February 27, 2018 8:27 AM
+> >>>> To: Alex Williamson <alex.williamson@redhat.com>
+> >>>> Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> >>>> pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
+> >>>> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> >>>> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin  
+> >> Murphy  
+> >>>> <robin.murphy@arm.com>
+> >>>> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a  
+> >> valid  
+> >>>> iova range
+> >>>>
+> >>>> Hi,
+> >>>> On 27/02/18 00:13, Alex Williamson wrote:  
+> >>>>> On Mon, 26 Feb 2018 23:05:43 +0100
+> >>>>> Auger Eric <eric.auger@redhat.com> wrote:
+> >>>>>  
+> >>>>>> Hi Shameer,
+> >>>>>>
+> >>>>>> [Adding Robin in CC]
+> >>>>>> On 21/02/18 13:22, Shameer Kolothum wrote:  
+> >>>>>>> This checks and rejects any dma map request outside valid iova
+> >>>>>>> range.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Shameer Kolothum  
+> >>>> <shameerali.kolothum.thodi@huawei.com>  
+> >>>>>>> ---
+> >>>>>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
+> >>>>>>>  1 file changed, 22 insertions(+)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/vfio/vfio_iommu_type1.c  
+> >>>> b/drivers/vfio/vfio_iommu_type1.c  
+> >>>>>>> index a80884e..3049393 100644
+> >>>>>>> --- a/drivers/vfio/vfio_iommu_type1.c
+> >>>>>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+> >>>>>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct vfio_iommu  
+> >>>> *iommu, struct vfio_dma *dma,  
+> >>>>>>>  	return ret;
+> >>>>>>>  }
+> >>>>>>>
+> >>>>>>> +/*
+> >>>>>>> + * Check dma map request is within a valid iova range
+> >>>>>>> + */
+> >>>>>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+> >>>>>>> +				dma_addr_t start, dma_addr_t end)
+> >>>>>>> +{
+> >>>>>>> +	struct list_head *iova = &iommu->iova_list;
+> >>>>>>> +	struct vfio_iova *node;
+> >>>>>>> +
+> >>>>>>> +	list_for_each_entry(node, iova, list) {
+> >>>>>>> +		if ((start >= node->start) && (end <= node->end))
+> >>>>>>> +			return true;  
+> >>>>>> I am now confused by the fact this change will prevent existing QEMU
+> >>>>>> from working with this series on some platforms. For instance QEMU virt
+> >>>>>> machine GPA space collides with Seattle PCI host bridge windows. On  
+> >> ARM  
+> >>>>>> the smmu and smmuv3 drivers report the PCI host bridge windows as
+> >>>>>> reserved regions which does not seem to be the case on other platforms.
+> >>>>>> The change happened in commit  
+> >>>> 273df9635385b2156851c7ee49f40658d7bcb29d  
+> >>>>>> (iommu/dma: Make PCI window reservation generic).
+> >>>>>>
+> >>>>>> For background, we already discussed the topic after LPC 2016. See
+> >>>>>> https://www.spinics.net/lists/kernel/msg2379607.html.
+> >>>>>>
+> >>>>>> So is it the right choice to expose PCI host bridge windows as reserved
+> >>>>>> regions? If yes shouldn't we make a difference between those and MSI
+> >>>>>> windows in this series and do not reject any user space DMA_MAP  
+> >> attempt  
+> >>>>>> within PCI host bridge windows.  
+> >>>>>
+> >>>>> If the QEMU machine GPA collides with a reserved region today, then
+> >>>>> either:
+> >>>>>
+> >>>>> a) The mapping through the IOMMU works and the reserved region is  
+> >> wrong  
+> >>>>>
+> >>>>> or
+> >>>>>
+> >>>>> b) The mapping doesn't actually work, QEMU is at risk of data loss by
+> >>>>> being told that it worked, and we're justified in changing that
+> >>>>> behavior.
+> >>>>>
+> >>>>> Without knowing the specifics of SMMU, it doesn't particularly make
+> >>>>> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
+> >>>>> unless perhaps the IOMMU is incapable of translating those IOVAs.  
+> >>>> to me the limitation does not come from the smmu itself, which is a
+> >>>> separate HW block sitting between the root complex and the interconnect.
+> >>>> If ACS is not enforced by the PCIe subsystem, the transaction will never
+> >>>> reach the IOMMU.  
+> >>>
+> >>> True. And we do have one such platform where ACS is not enforced but
+> >>> reserving the regions and possibly creating holes while launching VM will
+> >>> make it secure. But I do wonder how we will solve the device grouping
+> >>> in such cases.
+> >>>
+> >>> The Seattle PCI host bridge windows case you mentioned has any pci quirk
+> >>> to claim that they support ACS?  
+> >> No there is none to my knowledge. I am applying Alex' not upstream ACS
+> >> overwrite patch.  
+> > 
+> > Ok. But isn't that patch actually applicable to cases where ACS is really supported
+> > by hardware but the capability is not available?  
+> 
+> My understanding is normally yes. If you apply the patch whereas the HW
+> practically does not support ACS, then you fool the kernel pretending
+> there is isolation whereas there is not. I don't know the exact
+> capability of the HW on AMD Seattle and effectively I should have cared
+> about it much earlier and if the HW capability were supported and not
+> properly exposed we should have implemented a clean quirk for this platform.
 
-posted on monday?
+Yes, there's a reason why the ACS override patch is not upstream, and
+any downstream distribution that actually intends to support their
+customers should not include it.  If we can verify with the hardware
+vendor that ACS equivalent isolation exists, we should be putting
+quirks into the kernel to enable it automatically.  Supporting users
+using the ACS override patch is a non-goal.
 
-[0] https://patchwork.kernel.org/patch/10242493/
+>   I am just trying to see whether
+> > the argument that we should allow DMA MAP requests for this(non-ACS case)
+> > even if the Guest GPA conflict with reserved region holds good. The fact that may
+> > be it was working before is that the Guest never actually allocated any GPA from
+> > the reserved region or maybe I am missing something here.  
+> 
+> If my understanding is correct, in ideal world we would report the PCI
+> host bridge window as reserved only in case ACS is not supported. If you
+> apply the patch and overrides the ACS, then the DMA_MAP  would be
+> allowed. In case the HW does not support ACS, then you could face
+> situations where one EP tries to access GPA that never reaches the IOMMU
+> (because it corresponds to the BAR of another downstream EP). Same can
+> happen at the moment.
+
+I still think you're overstretching the IOMMU reserved region interface
+by trying to report possible ACS conflicts.  Are we going to update the
+reserved list on device hotplug?  Are we going to update the list when
+MMIO is enabled or disabled for each device?  What if the BARs are
+reprogrammed or bridge apertures changed?  IMO, the IOMMU reserved list
+should account for specific IOVA exclusions that apply to transactions
+that actually reach the IOMMU, not aliasing that might occur in the
+downstream topology.  Additionally, the IOMMU group composition must be
+such that these sorts of aliasing issues can only occur within an IOMMU
+group.  If a transaction can be affected by the MMIO programming of
+another group, then the groups are drawn incorrectly for the isolation
+capabilities of the hardware.  Thanks,
+
+Alex
