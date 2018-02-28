@@ -1,61 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeB1MJr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:09:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752223AbeB1MJn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:09:43 -0500
-Date: Wed, 28 Feb 2018 04:09:29 -0800
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, ananth@linux.vnet.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com, oleg@redhat.com
-Subject: Re: [RFC 1/4] Uprobe: Rename map_info to uprobe_map_info
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180228075345.674-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180228075345.674-2-ravi.bangoria@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180228075345.674-2-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18022812-0040-0000-0000-00000438CB6A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022812-0041-0000-0000-000020DAFC9C
-Message-Id: <20180228120929.GB63063@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802280147
+        id S1752339AbeB1MPO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:15:14 -0500
+Received: from foss.arm.com ([217.140.101.70]:48536 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752192AbeB1MPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:15:13 -0500
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infraded.org>,
+        Rik van Riel <riel@redhat.com>, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] Detect early free of a live mm
+Date: Wed, 28 Feb 2018 12:14:58 +0000
+Message-Id: <20180228121458.2230-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> -static inline struct map_info *free_map_info(struct map_info *info)
-> +static inline struct uprobe_map_info *
-> +free_uprobe_map_info(struct uprobe_map_info *info)
->  {
-> -	struct map_info *next = info->next;
-> +	struct uprobe_map_info *next = info->next;
->  	kfree(info);
->  	return next;
->  }
-> 
-> -static struct map_info *
-> -build_map_info(struct address_space *mapping, loff_t offset, bool is_register)
-> +static struct uprobe_map_info *
-> +build_uprobe_map_info(struct address_space *mapping, loff_t offset,
-> +		      bool is_register)
+KASAN splats indicate that in some cases we free a live mm, then
+continue to access it, with potentially disastrous results. This is
+likely due to a mismatched mmdrop() somewhere in the kernel, but so far
+the culprit remains elusive.
 
-Imho, uprobe_build_map_info may be better than build_uprobe_map_info,
-similarly uprobe_free_map_info.
+Let's have __mmdrop() verify that the mm isn't live for the current
+task, similar to the existing check for init_mm. This way, we can catch
+this class of issue earlier, and without requiring KASAN.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Peter Zijlstra <peterz@infraded.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ kernel/fork.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+Hi,
+
+For context, we're seeing an intermittent use-after-free of an mm on
+arm64 [1], where it looks like an mm has been freed earlier than
+expected. So far KASAN has only caught legitimate mmdrop() uses, where
+mm_count is presumably already bogus.
+
+Mark.
+
+[1] https://lkml.kernel.org/r/20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e5d9d405ae4e..6922d93551b8 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -595,6 +595,8 @@ static void check_mm(struct mm_struct *mm)
+ void __mmdrop(struct mm_struct *mm)
+ {
+ 	BUG_ON(mm == &init_mm);
++	BUG_ON(mm == current->mm);
++	BUG_ON(mm == current->active_mm);
+ 	mm_free_pgd(mm);
+ 	destroy_context(mm);
+ 	hmm_mm_destroy(mm);
+-- 
+2.11.0
