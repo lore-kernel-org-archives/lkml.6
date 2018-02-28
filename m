@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519839168-2-6526395100259618320
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519839155-2-6657705638313800314
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,28 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839167; b=T6orcQiz1YQA0yzyp9oUFkpIaCmONeOMKfSfb1Gl10n80jv
-    j+zaaFwlAmvQoBu+/JRoC+MM0F8hFNWJ2ljZRRf/kgoNuXumiwyOs4iYQ6q8qjln
-    yNYIMWJAhvGo3Ti+GQkoNI7mLeW7cEb0UIyX2TELjOOsnmxy+p8NU+62I2LyxUiB
-    ABQcSv+xgSehfxq202MPBAjuKS6YAIfrrFVOX0dmBRw6gI0EJSYTikGeZKyRgniP
-    7sFopfpUCXuCOwGXnvBhqt8gPLT27Bnboe7q9IAFAd9ygcpKEzK2nL7K4i7o6l35
-    3CoXnZDZQdLL7NSI9mIDcOqVY67U6apiqp89hNA==
+    t=1519839155; b=ZJwdYsEYqKgqWiINUjfAntXLEtEMJvofUMaZZnlCtvzlk5q
+    uU4JMlweaFGuf9v4KefoLRtqoRUm+Fx2TBPeI+K4Lc5jlSZD0dvTzNKhxsqrouZ1
+    60bHAgfebQTIrq785/iypQ5LAJxu20CngudXRo94GiPneYGqfaQnUqPiTOHRdDB1
+    +r3WjYGz354lVo5e3axj5re9zdadS7PA20Zr9kMCMPJlJNfWEFp33MvNdKKY4MNr
+    nO4N/atb2la2hztyA+u9DoUCgjbHD5g8mnaPQU1yt/D7LOlskuVoAoaTqOngCvIK
+    E95ho4eInZNuOoRW/YaQJvQyz5QuvKFdmJlWxSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839167; bh=v81+PbZCt8Plm+1qxal
-    maLA18XVgQGIzizNftR+SB9g=; b=XjhzTnGZoTYXYolsfUyQWCrOWsIWgE2nu7N
-    Nn9ullDZlkmCkdBvsC84cq0Stz/nUx1+3RQu3biRi+dGvEmI887iRkiDs1d8xkt9
-    0qBvwzKN/gFnsNUFtry06E0Tivwrno2MNsdvugWT2EHjUwePLKxp8J+M1fPoUbn8
-    zgIpdI1aBcD3TWm5u0zwZCDv2q0fSApn7fqlQSwe6fAxndmD7V9GiPoBtc5UpGhb
-    ht29lgdp54UC0CLWhLmA4IneGHIVWVI7wHGdlXLO3bjarlwTVLrTWUEfiQbY5KlT
-    Y/gDfAoqxVtBhtihaOOAMptUVtlDgDttFWk4cXpSifrwfJhJvvQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839155; bh=5R7R4L0DfDK/VfEwOKV
+    XeqIhMYNmfuW3NGNEI/B7uHs=; b=SxQQXiAbO84m9NI0Sxjle2O9Wo3rehuBHpm
+    70Jr5K3uIAeA5wtITyx70QJpqvfh0hECSpU1hEvx4Fj9J+v0Z2Y1lBDwj7jaBMX7
+    7nuhohwsDn5iS/oxhSdzhpa3s6YuflL+rNxSMrxuI+iB809XcVruvOUQ0i1mzEeg
+    RfzFbrQqrbDdTqjkd7PNRFNoil/0xjpy+7YBgaAFDYPHsTRuugPjbjbUWaZO9jlL
+    WO95xBcavSx1WpeCegYe10f2wZHC4aiUvsphVfzf6TE+onAmc/SYb8UtGrE2nA6v
+    IiTGT3rBwc0WNyI/I9vt3cfFf0tiR6KlZCmDUDkK9hV7EJYIT9Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933557AbeB1Rb2 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:31:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33228 "EHLO
+        id S933841AbeB1Rba (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:31:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33200 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932581AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932550AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,16 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Santosh Shilimkar" <santosh.shilimkar@oracle.com>,
-        "=?UTF-8?q?H=C3=A5kon=20Bugge?=" <Haakon.Bugge@oracle.com>,
-        "syzbot" <syzkaller@googlegroups.com>,
-        "=?UTF-8?Q?H=C3=A5kon=20?=Bugge" <haakon.bugge@oracle.com>
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.312516202@decadent.org.uk>
+Message-ID: <lsq.1519831222.101901346@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 140/140] rds: Fix NULL pointer dereference in
- __rds_rdma_map
+Subject: [PATCH 3.2 096/140] ALSA: pcm: Remove yet superfluous WARN_ON()
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,86 +79,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Håkon Bugge <Haakon.Bugge@oracle.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit f3069c6d33f6ae63a1668737bc78aaaa51bff7ca upstream.
+commit 23b19b7b50fe1867da8d431eea9cd3e4b6328c2c upstream.
 
-This is a fix for syzkaller719569, where memory registration was
-attempted without any underlying transport being loaded.
+muldiv32() contains a snd_BUG_ON() (which is morphed as WARN_ON() with
+debug option) for checking the case of 0 / 0.  This would be helpful
+if this happens only as a logical error; however, since the hw refine
+is performed with any data set provided by user, the inconsistent
+values that can trigger such a condition might be passed easily.
+Actually, syzbot caught this by passing some zero'ed old hw_params
+ioctl.
 
-Analysis of the case reveals that it is the setsockopt() RDS_GET_MR
-(2) and RDS_GET_MR_FOR_DEST (7) that are vulnerable.
+So, having snd_BUG_ON() there is simply superfluous and rather
+harmful to give unnecessary confusions.  Let's get rid of it.
 
-Here is an example stack trace when the bug is hit:
-
-BUG: unable to handle kernel NULL pointer dereference at 00000000000000c0
-IP: __rds_rdma_map+0x36/0x440 [rds]
-PGD 2f93d03067 P4D 2f93d03067 PUD 2f93d02067 PMD 0
-Oops: 0000 [#1] SMP
-Modules linked in: bridge stp llc tun rpcsec_gss_krb5 nfsv4
-dns_resolver nfs fscache rds binfmt_misc sb_edac intel_powerclamp
-coretemp kvm_intel kvm irqbypass crct10dif_pclmul c rc32_pclmul
-ghash_clmulni_intel pcbc aesni_intel crypto_simd glue_helper cryptd
-iTCO_wdt mei_me sg iTCO_vendor_support ipmi_si mei ipmi_devintf nfsd
-shpchp pcspkr i2c_i801 ioatd ma ipmi_msghandler wmi lpc_ich mfd_core
-auth_rpcgss nfs_acl lockd grace sunrpc ip_tables ext4 mbcache jbd2
-mgag200 i2c_algo_bit drm_kms_helper ixgbe syscopyarea ahci sysfillrect
-sysimgblt libahci mdio fb_sys_fops ttm ptp libata sd_mod mlx4_core drm
-crc32c_intel pps_core megaraid_sas i2c_core dca dm_mirror
-dm_region_hash dm_log dm_mod
-CPU: 48 PID: 45787 Comm: repro_set2 Not tainted 4.14.2-3.el7uek.x86_64 #2
-Hardware name: Oracle Corporation ORACLE SERVER X5-2L/ASM,MOBO TRAY,2U, BIOS 31110000 03/03/2017
-task: ffff882f9190db00 task.stack: ffffc9002b994000
-RIP: 0010:__rds_rdma_map+0x36/0x440 [rds]
-RSP: 0018:ffffc9002b997df0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffff882fa2182580 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffc9002b997e40 RDI: ffff882fa2182580
-RBP: ffffc9002b997e30 R08: 0000000000000000 R09: 0000000000000002
-R10: ffff885fb29e3838 R11: 0000000000000000 R12: ffff882fa2182580
-R13: ffff882fa2182580 R14: 0000000000000002 R15: 0000000020000ffc
-FS:  00007fbffa20b700(0000) GS:ffff882fbfb80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000000c0 CR3: 0000002f98a66006 CR4: 00000000001606e0
-Call Trace:
- rds_get_mr+0x56/0x80 [rds]
- rds_setsockopt+0x172/0x340 [rds]
- ? __fget_light+0x25/0x60
- ? __fdget+0x13/0x20
- SyS_setsockopt+0x80/0xe0
- do_syscall_64+0x67/0x1b0
- entry_SYSCALL64_slow_path+0x25/0x25
-RIP: 0033:0x7fbff9b117f9
-RSP: 002b:00007fbffa20aed8 EFLAGS: 00000293 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000000c84a4 RCX: 00007fbff9b117f9
-RDX: 0000000000000002 RSI: 0000400000000114 RDI: 000000000000109b
-RBP: 00007fbffa20af10 R08: 0000000000000020 R09: 00007fbff9dd7860
-R10: 0000000020000ffc R11: 0000000000000293 R12: 0000000000000000
-R13: 00007fbffa20b9c0 R14: 00007fbffa20b700 R15: 0000000000000021
-
-Code: 41 56 41 55 49 89 fd 41 54 53 48 83 ec 18 8b 87 f0 02 00 00 48
-89 55 d0 48 89 4d c8 85 c0 0f 84 2d 03 00 00 48 8b 87 00 03 00 00 <48>
-83 b8 c0 00 00 00 00 0f 84 25 03 00 0 0 48 8b 06 48 8b 56 08
-
-The fix is to check the existence of an underlying transport in
-__rds_rdma_map().
-
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+7e6ee55011deeebce15d@syzkaller.appspotmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/rds/rdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/pcm_lib.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/rds/rdma.c
-+++ b/net/rds/rdma.c
-@@ -184,7 +184,7 @@ static int __rds_rdma_map(struct rds_soc
- 	long i;
- 	int ret;
- 
--	if (rs->rs_bound_addr == 0) {
-+	if (rs->rs_bound_addr == 0 || !rs->rs_transport) {
- 		ret = -ENOTCONN; /* XXX not a great errno */
- 		goto out;
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -590,7 +590,6 @@ static inline unsigned int muldiv32(unsi
+ {
+ 	u_int64_t n = (u_int64_t) a * b;
+ 	if (c == 0) {
+-		snd_BUG_ON(!n);
+ 		*r = 0;
+ 		return UINT_MAX;
  	}
