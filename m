@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834391-2-6064155519628373725
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834386-2-7345354632218718666
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834390; b=hpQ145r2HJ1SGJHJBddu42egPAAJMTXOHMbE4QM/+u5qzrT
-    0QCPG9C7KqX2dI/Z8O0gXT/5DULrAgPJKgjKv6z6RRzQyBa1toRnDRilt/uK87BM
-    vq5QpPxASkchptU8NwGQmw5Qs79Rptiu+AlzUQa2jhwXhjqlNa82miEIOZ8gkCrb
-    xvw+r9LxE5QrFKeSHWSJK7meeAWFZJ45eIzrLC7lH1R9BiW/UtVxd5gPLk0vaV4F
-    oD3wf/6miiN30Z3e26DavQ1x0/c7vi3t5vk09vpI8s9vJ/CdAh7sv64qxtPkJMao
-    IjYLEXrSCuIt102DCGCeM0GEcHqj3mFLCuQdT3A==
+    t=1519834386; b=csCz6ywiUHyTfr2QssI25XKibIB1UQXEYsYsVp2kovlubmA
+    3ae7jqfhh++0iiybhR+p80FvBmf8LtPKCNKSdWFKx1/9d501umZkH4GDYuPTaEfR
+    GDnHZ+aOGwbFunssRmXfH843cmuradGVwE+riXy3I9j/bij9ZbkDtdx4bnHOeTzZ
+    +m/7hqNcwx3jZh8gyVFv9FnWCC6Fe7xOf3+9la6jD+tMMGHQQvLRRU62fjAlJZ01
+    09kWB4ZfZr4b40eAT0NGMgMwJ1YkGvXs1qclwvSOuXKSkfQUbptxBAr2poawn8a9
+    TBDTMkfy8aA2Z73kOEaX4ioM2uMijF46P/uQV5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834390; bh=8RZbtIXCFKPs21lQSgO
-    993claMK9sscSJdL80Y2Xl74=; b=j+viny54i9ApJugO+6HBvrYy1rG9B7VeEFu
-    m357EXmqcc6pzF3zStv7iSAXGg1NYciWtmeAo7H6bCyjWdbN5sB4BhUNJ6MwuXOj
-    VA3eok5OZRub2MqMry+fSkS95viR2YLwdU2aMSeD01rtzBQkif5SSZj+MinmRE0O
-    XcPG+aEZHxz9Bz816V2YmpZ6LeRdXzf2xARhsOiUBkp2Q+AGH4pf49m6frGt+3qZ
-    AIBp/T7kBaMh1F3Uo+3GjJCzeWC+PAjqXTDE1WEvfMOKRP0fTVqtLY2xlifHrSc/
-    INXxPrSv4v/KHOiQYW1pzLmD67E+r4n8H4liQYmpPlwyIJbmlfQ==
+    :sender:list-id; s=arctest; t=1519834386; bh=DvKMAdHhncXRkDTJtR+
+    K98OpeeVDfiP5pdMJsuRR0J0=; b=bHsCeJO95rlBrgj9xtgX/+T06jYtFn94ctJ
+    Wdz49k0XHLNrIEAsJ3i9pEsCe6YN0dM4cmEK/1ul1DKkPy7bww2+d0MtULmbpCNb
+    WV1GDwPHB/JQJ1Es5sNLS/X8ksbLPfr8TdkG+1n1+FwHaMp8/S18ZYspsz77iGv2
+    fQf3VbRfTyxrV3arCYjWaIlgNIkgqENTv9DtYrOwaqIxw7XP4IdMmZFhKhITVq++
+    7fcdsUnoZjD2EKd2+N5FKyKwDe6DKZJhMmiOqYimfLX1WCvpFv5xWvNF1+gOfbcH
+    lobzxOLoyIzs+cLDYCEl2CvRlPsFyhikZINoknvOdrjtFkVXfZw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,27 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934462AbeB1QM0 (ORCPT <rfc822;greg@kroah.com>);
+        id S934475AbeB1QM0 (ORCPT <rfc822;greg@kroah.com>);
         Wed, 28 Feb 2018 11:12:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35040 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35034 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932649AbeB1QMX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:23 -0500
+        by vger.kernel.org with ESMTP id S932702AbeB1QMT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:19 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Cong Wang" <xiyou.wangcong@gmail.com>,
-        "Vlad Yasevich" <vyasevich@gmail.com>,
-        "Dmitry Vyukov" <dvyukov@google.com>,
-        "Ben Hutchings" <ben.hutchings@codethink.co.uk>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Hans Verkuil" <hans.verkuil@cisco.com>,
+        "Ricardo Ribalda" <ricardo.ribalda@gmail.com>,
+        "Dimitrios Katsaros" <patcherwork@gmail.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.860229307@decadent.org.uk>
+Message-ID: <lsq.1519831218.561298105@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 200/254] 8021q: fix a memory leak for VLAN 0 device
+Subject: [PATCH 3.16 241/254] vb2: V4L2_BUF_FLAG_DONE is set after DQBUF
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,42 +82,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
-commit 78bbb15f2239bc8e663aa20bbe1987c91a0b75f6 upstream.
+commit 3171cc2b4eb9831ab4df1d80d0410a945b8bc84e upstream.
 
-A vlan device with vid 0 is allow to creat by not able to be fully
-cleaned up by unregister_vlan_dev() which checks for vlan_id!=0.
+According to the doc, V4L2_BUF_FLAG_DONE is cleared after DQBUF:
 
-Also, VLAN 0 is probably not a valid number and it is kinda
-"reserved" for HW accelerating devices, but it is probably too
-late to reject it from creation even if makes sense. Instead,
-just remove the check in unregister_vlan_dev().
+V4L2_BUF_FLAG_DONE 0x00000004  ... After calling the VIDIOC_QBUF or
+VIDIOC_DQBUF it is always cleared ...
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Fixes: ad1afb003939 ("vlan_dev: VLAN 0 should be treated as "no vlan tag" (802.1p packet)")
-Cc: Vlad Yasevich <vyasevich@gmail.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Unfortunately, it seems that videobuf2 keeps it set after DQBUF. This
+can be tested with vivid and dev_debug:
+
+[257604.338082] video1: VIDIOC_DQBUF: 71:33:25.00260479 index=3,
+type=vid-cap, flags=0x00002004, field=none, sequence=163,
+memory=userptr, bytesused=460800, offset/userptr=0x344b000,
+length=460800
+
+This patch forces FLAG_DONE to 0 after calling DQBUF.
+
+Reported-by: Dimitrios Katsaros <patcherwork@gmail.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/8021q/vlan.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/media/v4l2-core/videobuf2-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/8021q/vlan.c
-+++ b/net/8021q/vlan.c
-@@ -111,12 +111,7 @@ void unregister_vlan_dev(struct net_devi
- 		vlan_gvrp_uninit_applicant(real_dev);
- 	}
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index e63a7904bf5b..ee8b697972bb 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2069,6 +2069,11 @@ static int vb2_internal_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool n
+ 	dprintk(1, "dqbuf of buffer %d, with state %d\n",
+ 			vb->v4l2_buf.index, vb->state);
  
--	/* Take it out of our own structures, but be sure to interlock with
--	 * HW accelerating devices or SW vlan input packet processing if
--	 * VLAN is not 0 (leave it there for 802.1p).
--	 */
--	if (vlan_id)
--		vlan_vid_del(real_dev, vlan->vlan_proto, vlan_id);
-+	vlan_vid_del(real_dev, vlan->vlan_proto, vlan_id);
++	/*
++	 * After calling the VIDIOC_DQBUF V4L2_BUF_FLAG_DONE must be
++	 * cleared.
++	 */
++	b->flags &= ~V4L2_BUF_FLAG_DONE;
+ 	return 0;
+ }
  
- 	/* Get rid of the vlan's reference to real_dev */
- 	dev_put(real_dev);
