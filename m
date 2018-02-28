@@ -1,84 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752346AbeB1MgJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:36:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35568 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752195AbeB1MgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:36:08 -0500
-Date: Wed, 28 Feb 2018 13:36:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: Chengguang Xu <cgxu519@icloud.com>
-Cc: jack@suse.cz, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] udf: fix potential refcnt problem of nls module
-Message-ID: <20180228123606.z3zcwawbvh4g72ym@quack2.suse.cz>
-References: <1519565107-213857-1-git-send-email-cgxu519@icloud.com>
+        id S1752490AbeB1Mg5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:36:57 -0500
+Received: from regular1.263xmail.com ([211.150.99.135]:47942 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbeB1Mgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:36:55 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: geert@linux-m68k.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <6cabef9d3f383d469f5925a87edfb282>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5A96A24E.80401@rock-chips.com>
+Date: Wed, 28 Feb 2018 20:36:30 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519565107-213857-1-git-send-email-cgxu519@icloud.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com> <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 25-02-18 21:25:07, Chengguang Xu wrote:
-> When specifiying iocharset multiple times in a mount
-> or once/multiple in a remount, current option parsing
-> may cause inaccurate refcount of nls module.
-> Also, in the failure cleanup of option parsing,
-> the condition of calling unload_nls is not sufficient.
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
-> ---
-> 
-> Hi Jan,
-> 
-> I found this issue by checking code so now post the fix for rewiew,
-> but sorry I did't get enough resource to fully test it, I can only
-> make sure the fix can successfuly comiple with no error.
+Hi Geert,
 
-Thanks for the patch. I have added it to my tree.
+Thanks for you reply.
 
-								Honza
+On 02/28/2018 08:17 PM, Geert Uytterhoeven wrote:
+> Hi Jeffy,
+>
+> On Wed, Feb 28, 2018 at 12:11 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>> Currently we are adding all of the attached devices' clocks as pm clocks
+>> and enable them when powering on the power domain.
+>>
+>> This seems unnecessary, because those clocks are already controlled in
+>> the devices' drivers with better error handling.
+>>
+>> Tested on my chromebook minnie(rk3288) and chromebook kevin(rk3399).
+>>
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>
+> Thanks for your patch!
+>
+> Just wondering: so you prefer to handle the clocks explicitly in all drivers,
+> instead of delegating this task to Runtime PM?
+hmmm, i think we should control PM clks here, but not all clocks...at 
+least some of the clocks are not required to be enabled while pd power 
+on(waste power?).
 
-> 
->  fs/udf/super.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 7b27b06..7e73a98 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -523,8 +523,12 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
->  			break;
->  #ifdef CONFIG_UDF_NLS
->  		case Opt_iocharset:
-> -			uopt->nls_map = load_nls(args[0].from);
-> -			uopt->flags |= (1 << UDF_FLAG_NLS_MAP);
-> +			if (!remount) {
-> +				if (uopt->nls_map)
-> +					unload_nls(uopt->nls_map);
-> +				uopt->nls_map = load_nls(args[0].from);
-> +				uopt->flags |= (1 << UDF_FLAG_NLS_MAP);
-> +			}
->  			break;
->  #endif
->  		case Opt_uignore:
-> @@ -2082,8 +2086,8 @@ error_out:
->  		for (i = 0; i < sbi->s_partitions; i++)
->  			udf_free_partition(&sbi->s_partmaps[i]);
->  #ifdef CONFIG_UDF_NLS
-> -	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
-> -		unload_nls(sbi->s_nls_map);
-> +	if (uopt.nls_map)
-> +		unload_nls(uopt.nls_map);
->  #endif
->  	if (!(sb->s_flags & MS_RDONLY))
->  		udf_close_lvid(sb);
-> -- 
-> 1.8.3.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+and seems the drivers might have better control for error 
+handling(decide to ignore or fail to probe or else).
+
+also Runtime PM seems optional(could be disabled in config), and some 
+devices(or even chips) don't have PM.
+
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
+>
+>
+>
