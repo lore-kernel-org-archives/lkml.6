@@ -1,125 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeB1Jkm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:40:42 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36402 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751863AbeB1Jkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:40:41 -0500
-Date: Wed, 28 Feb 2018 10:40:38 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Agustin Vega-Frias <agustinv@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
-Subject: Re: [RFC 3/3] perf pmu: Restore auto-merging of PMU events created
- by prefix match
-Message-ID: <20180228094038.GA9474@krava>
-References: <1519770848-26738-1-git-send-email-agustinv@codeaurora.org>
- <1519770848-26738-4-git-send-email-agustinv@codeaurora.org>
+        id S1752395AbeB1Jku (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:40:50 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44753 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752350AbeB1Jkq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:40:46 -0500
+X-Google-Smtp-Source: AG47ELtQKCn+PUINI8UrYMVrlKF6gBmHvfVW2S4uZjUefH0se6nDWGCtA7aQFwnmADZKDX5+ixBvuRNJHwYyye1T1pI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519770848-26738-4-git-send-email-agustinv@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180227231952.GA9001@embeddedor.com>
+References: <20180227231952.GA9001@embeddedor.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 11:40:45 +0200
+Message-ID: <CAHp75Vfy_fRP7nEbSOG32S78Wc4s4ci+Mmh2AJzgrizp7y3j-Q@mail.gmail.com>
+Subject: Re: [PATCH] PCI/ASPM: Change type of threshold_ns variable to u32
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 05:34:08PM -0500, Agustin Vega-Frias wrote:
-> This was disabled when auto-merging of non-alias events was disabled in
-> commit 63ce844 (perf stat: Only auto-merge events that are PMU aliases).
+On Wed, Feb 28, 2018 at 1:19 AM, Gustavo A. R. Silva
+<garsilva@embeddedor.com> wrote:
+> It seems that the expression threshold_us * 1000 will never exceed the
+> 32-bit limits [1]. So changing the type of threshold_ns from u64 to u32
+> seems sensible [2].
+>
+> [1] https://marc.info/?l=linux-kernel&m=151855021100725&w=2
+> [2] https://marc.info/?l=linux-kernel&m=151976318924615&w=2
+>
 
-this changes the output, right? please provide before/after output
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-thanks,
-jirka
-
-> 
-> Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+> Addresses-Coverity-ID: 1462501
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 > ---
->  tools/perf/util/parse-events.c | 13 +++----------
->  tools/perf/util/parse-events.h |  2 +-
->  tools/perf/util/parse-events.y |  4 ++--
->  3 files changed, 6 insertions(+), 13 deletions(-)
-> 
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index bafc91e..4e80ca3 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1217,7 +1217,7 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
->  			 get_config_name(head_config), &config_terms);
->  }
-> 
-> -static int __parse_events_add_pmu(struct parse_events_state *parse_state,
-> +int parse_events_add_pmu(struct parse_events_state *parse_state,
->  			 struct list_head *list, char *name,
->  			 struct list_head *head_config, bool auto_merge_stats)
+>  drivers/pci/pcie/aspm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 57feef2..8633fc4 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -322,7 +322,7 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
+>
+>  static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
 >  {
-> @@ -1287,13 +1287,6 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
->  	return evsel ? 0 : -ENOMEM;
->  }
-> 
-> -int parse_events_add_pmu(struct parse_events_state *parse_state,
-> -			 struct list_head *list, char *name,
-> -			 struct list_head *head_config)
-> -{
-> -	return __parse_events_add_pmu(parse_state, list, name, head_config, false);
-> -}
-> -
->  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->  			       char *str, struct list_head **listp)
->  {
-> @@ -1323,8 +1316,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->  					return -1;
->  				list_add_tail(&term->list, head);
-> 
-> -				if (!__parse_events_add_pmu(parse_state, list,
-> -							    pmu->name, head, true)) {
-> +				if (!parse_events_add_pmu(parse_state, list,
-> +							  pmu->name, head, true)) {
->  					pr_debug("%s -> %s/%s/\n", str,
->  						 pmu->name, alias->str);
->  					ok++;
-> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-> index 88108cd..5015cfd 100644
-> --- a/tools/perf/util/parse-events.h
-> +++ b/tools/perf/util/parse-events.h
-> @@ -167,7 +167,7 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
->  				void *ptr, char *type, u64 len);
->  int parse_events_add_pmu(struct parse_events_state *parse_state,
->  			 struct list_head *list, char *name,
-> -			 struct list_head *head_config);
-> +			 struct list_head *head_config, bool auto_merge_stats);
-> 
->  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->  			       char *str,
-> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> index c528469..b51278f 100644
-> --- a/tools/perf/util/parse-events.y
-> +++ b/tools/perf/util/parse-events.y
-> @@ -232,7 +232,7 @@ PE_NAME opt_event_config
->  		YYABORT;
-> 
->  	ALLOC_LIST(list);
-> -	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
-> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
->  		struct perf_pmu *pmu = NULL;
->  		int ok = 0;
-> 
-> @@ -245,7 +245,7 @@ PE_NAME opt_event_config
->  			if (!strncmp($1, name, strlen($1)) || !fnmatch($1, name, 0)) {
->  				if (parse_events_copy_term_list(orig_terms, &terms))
->  					YYABORT;
-> -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
-> +				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
->  					ok++;
->  				parse_events_terms__delete(terms);
->  			}
+> -       u64 threshold_ns = threshold_us * 1000;
+> +       u32 threshold_ns = threshold_us * 1000;
+>
+>         /* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
+>         if (threshold_ns < 32) {
 > --
 > 2.7.4
-> 
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
