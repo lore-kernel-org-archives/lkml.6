@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-678564-1519838933-2-9395042464675911769
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519838849-2-10626167324038619206
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838932; b=WjW8rQxSTJVCf+guRC/cFwZ3FE/j8Xi506R4T2aOTOUTme/
-    sjX0vODlwepUd6H8Wfvkr5OXa3h8eK+4S2MT1QhiMXgOmQQbuZ/quIAZGbeDkEWn
-    qt1nXHyfP+2zjI9l36cX0425RpRImSB9ncghHyvE3SsqFXCEJPCCXPAHcp7trjrP
-    YfTUWAoWtJ+P1sSjxn4j0x6YLYgRkqaphUJG8og68zKSQwxnWF17ji4kUK6l8pgC
-    81WpIYaYG/1FDsyMjX+ojS5LuMIf1nvf9TxU0Wo1G/eu6UaPv1qy8XhwsfnCkdhS
-    Xqej1pFAaXEPIJfVPyF5ElX3v0zVTMsPAZ/8POA==
+    t=1519838849; b=DbbwtsZ4218ODl06E/oeTRf42JbfFPcGFQrTloQ7ggDNzZ0
+    6QJCpFNGcZYkBthN97X/zORp1YAiAzu3DyHvWaEwDoNxKCFiN4WEBiALOWjlVPVb
+    5wvI/mZZ+E9+tqRvQKBLYFAJ4L4NBWe4ufKtka3VwgoOqB/m0BKWr17qzrfixt1x
+    J751PNp/vGo1WljS6t2rL+ycBgT60BLriOdouQjOwtt6zdjl6cIEqjZ48Yyz3Y1i
+    i7Nc7WZdy0Fao4TSibd0nHUavdImiDlHXWs0slPMHFSrC65I9cxXnc2uXmTI/o31
+    zyX5ay/1vnMJSHVhe/x5MWO0ZnL7YSrW/0+O3Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838932; bh=wedCyBu+MmlLQfmsAqu
-    /se7grpn6MO9apcfus7c9498=; b=UluwgSKZW2Rv8qH/akJbrAF8bjSTqHwewHB
-    qUYdRJYWgT5qnr173ot7tDwOoYE0nNXYZgCBcvvP2ohVz5D8CRkPlP9Zy8miy8b8
-    x5/9t/ud5bqc77NcWeOlsyryM852zp0xhcxgWZtHY4DfedIY/BGG1DzCe4UVTMtC
-    7Tg8P2N+AYp2hb3DabfdAD072K604YI3/N/Df1GzlWz/vckDQrZWc2XyXGOx4ful
-    /sAg6AHF/h7dbJx024N2IMKsT4Jel+Vo8oumbkpwS+Huv+qP3CQ6DM+upPuz+wH1
-    7c8ffeYDmGWscjS2ZoOIuHoZb5egzlZ59AhB6kMcfZ6nC3iNtuw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838849; bh=0H+hlZdINve8YZASoqx
+    Pop9hc7DeKCpn0BjGfNZ/NIs=; b=otHSa80SZbWPLsa7ZGujrxojCrCTh3XPgA+
+    yg6myuP20YQG/EgMQ05f/qq/L/pqWWCo1K9meK7NNnqpBw1c6ZvsktMUjxjLdZLS
+    VNV7S7tXvs3+k6eRVbJm/Z6NaCfC8UQW8wh8xWa1BKcQ2Rau8lsjcKYm91z8gmmQ
+    hK0zIZXgLZXP3lAjkXilkQnziYb7FMm+azn27Dc322XFa00yYkqMU7wUILwYgBks
+    h9ED0gGecDWFz4HePyQzJYU0MJzsTLtnjfYUtVAarLPwStscsMjxunPLWanjBEuL
+    1kF5mXgMkqTi0bMoDt9rDPeVWDr6BGOFTQNFCymYgXBjLHvurFg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932615AbeB1R1d (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:27:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33256 "EHLO
+        id S1753395AbeB1RZG (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:25:06 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33249 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932596AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932604AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        syzbot+993cb4cfcbbff3947c21@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org,
+        "Christophe Leroy" <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.702925477@decadent.org.uk>
+Message-ID: <lsq.1519831222.863203486@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 089/140] ALSA: pcm: Abort properly at pending signal
- in OSS read/write loops
+Subject: [PATCH 3.2 109/140] net: fs_enet: do not call phy_stop() in
+ interrupts
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,47 +81,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 29159a4ed7044c52e3e2cf1a9fb55cec4745c60b upstream.
+commit f8b39039cbf2a15f2b8c9f081e1cbd5dee00aaf5 upstream.
 
-The loops for read and write in PCM OSS emulation have no proper check
-of pending signals, and they keep processing even after user tries to
-break.  This results in a very long delay, often seen as RCU stall
-when a huge unprocessed bytes remain queued.  The bug could be easily
-triggered by syzkaller.
+In case of TX timeout, fs_timeout() calls phy_stop(), which
+triggers the following BUG_ON() as we are in interrupt.
 
-As a simple workaround, this patch adds the proper check of pending
-signals and aborts the loop appropriately.
+[92708.199889] kernel BUG at drivers/net/phy/mdio_bus.c:482!
+[92708.204985] Oops: Exception in kernel mode, sig: 5 [#1]
+[92708.210119] PREEMPT
+[92708.212107] CMPC885
+[92708.214216] CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W       4.9.61 #39
+[92708.223227] task: c60f0a40 task.stack: c6104000
+[92708.227697] NIP: c02a84bc LR: c02a947c CTR: c02a93d8
+[92708.232614] REGS: c6105c70 TRAP: 0700   Tainted: G        W        (4.9.61)
+[92708.241193] MSR: 00021032 <ME,IR,DR,RI>[92708.244818]   CR: 24000822  XER: 20000000
+[92708.248767]
+GPR00: c02a947c c6105d20 c60f0a40 c62b4c00 00000005 0000001f c069aad8 0001a688
+GPR08: 00000007 00000100 c02a93d8 00000000 000005fc 00000000 c6213240 c06338e4
+GPR16: 00000001 c06330d4 c0633094 00000000 c0680000 c6104000 c6104000 00000000
+GPR24: 00000200 00000000 ffffffff 00000004 00000078 00009032 00000000 c62b4c00
+NIP [c02a84bc] mdiobus_read+0x20/0x74
+[92708.281517] LR [c02a947c] kszphy_config_intr+0xa4/0xc4
+[92708.286547] Call Trace:
+[92708.288980] [c6105d20] [c6104000] 0xc6104000 (unreliable)
+[92708.294339] [c6105d40] [c02a947c] kszphy_config_intr+0xa4/0xc4
+[92708.300098] [c6105d50] [c02a5330] phy_stop+0x60/0x9c
+[92708.305007] [c6105d60] [c02c84d0] fs_timeout+0xdc/0x110
+[92708.310197] [c6105d80] [c035cd48] dev_watchdog+0x268/0x2a0
+[92708.315593] [c6105db0] [c0060288] call_timer_fn+0x34/0x17c
+[92708.321014] [c6105dd0] [c00605f0] run_timer_softirq+0x21c/0x2e4
+[92708.326887] [c6105e50] [c001e19c] __do_softirq+0xf4/0x2f4
+[92708.332207] [c6105eb0] [c001e3c8] run_ksoftirqd+0x2c/0x40
+[92708.337560] [c6105ec0] [c003b420] smpboot_thread_fn+0x1f0/0x258
+[92708.343405] [c6105ef0] [c003745c] kthread+0xbc/0xd0
+[92708.348217] [c6105f40] [c000c400] ret_from_kernel_thread+0x5c/0x64
+[92708.354275] Instruction dump:
+[92708.357207] 7c0803a6 bbc10018 38210020 4e800020 7c0802a6 9421ffe0 54290024 bfc10018
+[92708.364865] 90010024 7c7f1b78 81290008 552902ee <0f090000> 3bc3002c 7fc3f378 90810008
+[92708.372711] ---[ end trace 42b05441616fafd7 ]---
 
-Reported-by: syzbot+993cb4cfcbbff3947c21@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This patch moves fs_timeout() actions into an async worker.
+
+Fixes: commit 48257c4f168e5 ("Add fs_enet ethernet network driver, for several embedded platforms")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/oss/pcm_oss.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 16 +++++++++++++---
+ drivers/net/ethernet/freescale/fs_enet/fs_enet.h      |  1 +
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1422,6 +1422,10 @@ static ssize_t snd_pcm_oss_write1(struct
- 			    tmp != runtime->oss.period_bytes)
- 				break;
- 		}
-+		if (signal_pending(current)) {
-+			tmp = -ERESTARTSYS;
-+			goto err;
-+		}
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+@@ -706,9 +706,11 @@ static int fs_enet_start_xmit(struct sk_
+ 	return NETDEV_TX_OK;
+ }
+ 
+-static void fs_timeout(struct net_device *dev)
++static void fs_timeout_work(struct work_struct *work)
+ {
+-	struct fs_enet_private *fep = netdev_priv(dev);
++	struct fs_enet_private *fep = container_of(work, struct fs_enet_private,
++						   timeout_work);
++	struct net_device *dev = fep->ndev;
+ 	unsigned long flags;
+ 	int wake = 0;
+ 
+@@ -720,7 +722,6 @@ static void fs_timeout(struct net_device
+ 		phy_stop(fep->phydev);
+ 		(*fep->ops->stop)(dev);
+ 		(*fep->ops->restart)(dev);
+-		phy_start(fep->phydev);
  	}
- 	mutex_unlock(&runtime->oss.params_lock);
- 	return xfer;
-@@ -1507,6 +1511,10 @@ static ssize_t snd_pcm_oss_read1(struct
- 			bytes -= tmp;
- 			xfer += tmp;
- 		}
-+		if (signal_pending(current)) {
-+			tmp = -ERESTARTSYS;
-+			goto err;
-+		}
- 	}
- 	mutex_unlock(&runtime->oss.params_lock);
- 	return xfer;
+ 
+ 	phy_start(fep->phydev);
+@@ -731,6 +732,13 @@ static void fs_timeout(struct net_device
+ 		netif_wake_queue(dev);
+ }
+ 
++static void fs_timeout(struct net_device *dev)
++{
++	struct fs_enet_private *fep = netdev_priv(dev);
++
++	schedule_work(&fep->timeout_work);
++}
++
+ /*-----------------------------------------------------------------------------
+  *  generic link-change handler - should be sufficient for most cases
+  *-----------------------------------------------------------------------------*/
+@@ -857,6 +865,7 @@ static int fs_enet_close(struct net_devi
+ 	netif_carrier_off(dev);
+ 	if (fep->fpi->use_napi)
+ 		napi_disable(&fep->napi);
++	cancel_work_sync(&fep->timeout_work);
+ 	phy_stop(fep->phydev);
+ 
+ 	spin_lock_irqsave(&fep->lock, flags);
+@@ -1080,6 +1089,7 @@ static int __devinit fs_enet_probe(struc
+ 
+ 	ndev->netdev_ops = &fs_enet_netdev_ops;
+ 	ndev->watchdog_timeo = 2 * HZ;
++	INIT_WORK(&fep->timeout_work, fs_timeout_work);
+ 	if (fpi->use_napi)
+ 		netif_napi_add(ndev, &fep->napi, fs_enet_rx_napi,
+ 		               fpi->napi_weight);
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+@@ -124,6 +124,7 @@ struct fs_enet_private {
+ 	spinlock_t lock;	/* during all ops except TX pckt processing */
+ 	spinlock_t tx_lock;	/* during fs_start_xmit and fs_tx         */
+ 	struct fs_platform_info *fpi;
++	struct work_struct timeout_work;
+ 	const struct fs_ops *ops;
+ 	int rx_ring, tx_ring;
+ 	dma_addr_t ring_mem_addr;
