@@ -1,86 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935257AbeB1WEh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:04:37 -0500
-Received: from muru.com ([72.249.23.125]:58796 "EHLO muru.com"
+        id S935268AbeB1WGt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:06:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935105AbeB1WEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:04:36 -0500
-Date: Wed, 28 Feb 2018 14:04:33 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: Re: [PATCH] regmap: irq: fix ack-invert
-Message-ID: <20180228220433.GJ5448@atomide.com>
-References: <1519747558-17257-1-git-send-email-tharvey@gateworks.com>
- <20180227183908.GF5448@atomide.com>
- <CAJ+vNU2d-KKMHvb2bJt-b_9h7c2YM1NJS4PYYi7Y=YzT-VQJNg@mail.gmail.com>
+        id S935105AbeB1WGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 17:06:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0FB52133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 28 Feb 2018 16:06:46 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org,
+        Jan H =?iso-8859-1?Q?=2E_Sch=F6nherr?= <jschoenh@amazon.de>
+Subject: Re: [PATCH] pci: Do not read INTx PIN and LINE registers for virtual
+ functions
+Message-ID: <20180228220645.GO127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1516213829-14844-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAJ+vNU2d-KKMHvb2bJt-b_9h7c2YM1NJS4PYYi7Y=YzT-VQJNg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1516213829-14844-1-git-send-email-karahmed@amazon.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tim Harvey <tharvey@gateworks.com> [180228 21:18]:
-> On Tue, Feb 27, 2018 at 10:39 AM, Tony Lindgren <tony@atomide.com> wrote:
-> > * Tim Harvey <tharvey@gateworks.com> [180227 16:07]:
-> >> When acking irqs we need to take into account the ack-invert case. Without
-> >> this chips that require 0's to ACK interrupts will never clear the interrupt.
-> >>
-> >> I am working on an mfd driver that will use ack-invert and discovered
-> >> this issue. The only user of ack_invert currently appears to be the
-> >> motorola-cpcap driver. I'm not clear why that driver doesn't appear affected
-> >> so I'm cc'ing those involved with that driver for review and testing.
-> >
-> > I gave this a quick try and it fails with cpcap. So yeah, you're right,
-> > it seems we still have the cpcap config wrong.
-> >
+On Wed, Jan 17, 2018 at 07:30:29PM +0100, KarimAllah Ahmed wrote:
+> ... since INTx is not supported by-spec for virtual functions.
 > 
-> Tony,
-> 
-> So you would agree with my findings/patch right? I certainly don't
-> want to break regmap-irq in general :)
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 
-Yes I agree that it breaks now things for me, so if it works for you
-it seems we're good to go. But I don't want to ack it yet as I'm
-worried that it gets applied without the cpcap changes which would
-break things :)
+Applied to pci/virtualization for v4.17, thanks!
 
-> Adding Guo Zeng and Barry Song to the thread as they were the authors
-> of the ack_invert feature (a650fdd9427f1f5236f83d2d8137bea9b452fa53)
-> and I'm not clear what happened to the chip they were needing it for.
-> 
-> > Things do work with the following patch and your patch for cpcap. So
-> > they should both be applied together as a single patch.
-> >
-> > Care to fold in the following change and then repost your patch?
-> >
-> > Otherwise we might end up breaking things easily for booting or
-> > bisect or stable. Or else the patch below needs to be applied first
-> > to avoid breaking things.
-> >
-> 
-> So cpcap needs to write 1's to clear irq's not 0's right?
+I tweaked the changelog to include the motivation:
 
-Correct. And I tried to follow what the Motorola kernel tree
-was doing to configure things but got the configuration wrong
-but it worked so I never had a reason to doubt it before your
-patch.
+commit 16edf1c6345ab177ccf1e8b5ba3324ee01a50eb7
+Author: KarimAllah Ahmed <karahmed@amazon.de>
+Date:   Wed Jan 17 19:30:29 2018 +0100
 
-> Yes, I can certainly roll in the fix for cpcap if everyone agrees
-> that's the right move.
+    PCI/IOV: Skip INTx config reads for VFs
+    
+    Per PCIe r4.0, sec 9.2.1.4, VFs can not implement INTX, and their Interrupt
+    Line and Interrupt Pin registers must be RO Zero.  Some devices have
+    thousands of VFs, so skip reading the registers as an optimization.
+    
+    Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+    Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+    [bhelgaas: changelog, comment]
+    Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 
-OK thanks.
-
-> I'll wait for some feedback from Mark Brown as well.
-
-OK
-
-Tony
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 489660d0d384..a1cddca37793 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1230,6 +1230,13 @@ static void pci_read_irq(struct pci_dev *dev)
+ {
+ 	unsigned char irq;
+ 
++	/* VFs are not allowed to use INTx, so skip the config reads */
++	if (dev->is_virtfn) {
++		dev->pin = 0;
++		dev->irq = 0;
++		return;
++	}
++
+ 	pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &irq);
+ 	dev->pin = irq;
+ 	if (irq)
