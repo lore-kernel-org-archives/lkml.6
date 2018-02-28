@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-667456-1519838706-2-16398300292685543335
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519838675-2-13509800435988855640
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,28 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838705; b=Cos0OnENwEeNXjKr/T7BAVRmfhbxa73E5IhSr+r+vAUxy1f
-    D/Lr+3lvCcttfTz3hc8IdJyRO8g7ZESHn8cBQ57Rfxsgx5hg93u0w3T5y3rm72RY
-    J8tZw2yOgltdy027xa6Ys83tVCrceUXaM1yYHUhB0EVH7mPpTqenMgGPTAeF38RL
-    +kXDWmzzaiuIhfJ2YnUjuyEMJpWcUfOU840GVsRfPi9Gh5aeIBOrAOPq4u9Mgr+u
-    jOJzl2UVg57m+RsamHQAqu8Jub0Ruqfb+mb8ZRjekZ7Bzk7FPBBgkU+t50HraWK+
-    TQDV8GrRsgdL4cWOh4I10AFGXFeY8sCaASa1WIw==
+    t=1519838675; b=t6rjKNeF4X0l1IjlXn/scBrkiASkoCF5vCqF6sZ0sEKNiV7
+    wTUpkdIigRDAyO622tcTpSdpjISXz8b0oNsB/SJXmM/fUIj+SwKfSJUgLSzESkqe
+    GNeXcaQPIIT0+WA9a2YGTVHkVgdouQynPrcbmpVYYSbObFba6mmUUtQgX2swISpH
+    ZrWR+rbeCiACFKJGCWe5vuICqza1goJhf3shClKk/khA2d8jJ97/O504s91eGsJ2
+    8mIVTSzgH2YUZROwJPt5WGCPSaYhw2vC1VWHpapxTt+dVLmfpbiXTUatva0KhAb1
+    FQSxJ5b6IbpAsdEEuR3q2yzVv7RykOxr5XQNJnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838705; bh=FWEY3UEX/UDQh2kGGXW
-    SObwDK4wSN+A3jI+HbQ/99rA=; b=MJaJUG+JEK66sCUHWzbdER9bUGMbaNvbo3+
-    fpIoSM96gRHgwqX8HMAMufzvakbudEjtK/0Cq1LKMMpwlSeWRhDKCw9QFxeYUhZL
-    VaB8u0CUza4SNd/whGk6AN7Yi0X8r/IFDcKSbeP85obf+vsaUTzJB/yhszyFBoVF
-    +gFtAdbUVuZEqb8geiWL02xLScVji7PiNwnOmSrlHMAtH8LBNwkb+LsFB0XWIUWP
-    h1i3JmQTwxTdnmBsI3ofPK5Q1byFa6q3TV3QOV8YG9xHIBjjWkvj5Sv0Y+aqOJRE
-    QxYdYnJigDWJex5GCP4kYu+EMV1A5lwe/DrYHx3tTiBmTq6AE6A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838675; bh=8hu4qQEeq0yIPSj06tL
+    ToL+gzaAEggwBlCIz7grzlmA=; b=JOwd360lNlVB+Qezbtd8KnjWTymxHDu2E3z
+    GuTKCDCt/LvTAULJugkreTCjQBp0uTQb//99uk7oSIEvszZ2yW5p3mr416zZFyTs
+    f/mz5UM6fFdgXZkgL1pf1jsNW+5n16KTaJE1PgBZ7BJCmlbrb7FTP6BiGcReNLhK
+    AElGjkrK2iiB2TwWP53mwCARnKSK9i43eVX4BCB9fvG/tglNcd/3bhSiC3xX6gWS
+    /KAApJR9UCQ+Lg+VIFp0dT9Y25xKa3DvKCsbCpK+KQmvuLFCVP6+nQpZDattr2yv
+    EWJpoMWzkZCo9A5HJ+RMeASFu8AkRQk5rNH8lrpYAA8xxPHovCQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932145AbeB1RXw (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:23:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33314 "EHLO
+        id S932869AbeB1RXz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:23:55 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33313 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932626AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932625AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "=?UTF-8?q?Diego=20Elio=20Petten=C3=B2?=" <flameeyes@flameeyes.eu>
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.585366599@decadent.org.uk>
+Message-ID: <lsq.1519831222.759082744@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 073/140] USB: serial: cp210x: add IDs for LifeScan
- OneTouch Verio IQ
+Subject: [PATCH 3.2 080/140] ALSA: pcm: Add missing error checks in OSS
+ emulation plugin builder
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,27 +79,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Diego Elio Pettenò <flameeyes@flameeyes.eu>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 4307413256ac1e09b8f53e8715af3df9e49beec3 upstream.
+commit 6708913750344a900f2e73bfe4a4d6dbbce4fe8d upstream.
 
-Add IDs for the OneTouch Verio IQ that comes with an embedded
-USB-to-serial converter.
+In the OSS emulation plugin builder where the frame size is parsed in
+the plugin chain, some places miss the possible errors returned from
+the plugin src_ or dst_frames callback.
 
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.eu>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+This patch papers over such places.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/cp210x.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/core/oss/pcm_plugin.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -126,6 +126,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
- 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
- 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
-+	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
- 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
- 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
- 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -589,18 +589,26 @@ snd_pcm_sframes_t snd_pcm_plug_write_tra
+ 	snd_pcm_sframes_t frames = size;
+ 
+ 	plugin = snd_pcm_plug_first(plug);
+-	while (plugin && frames > 0) {
++	while (plugin) {
++		if (frames <= 0)
++			return frames;
+ 		if ((next = plugin->next) != NULL) {
+ 			snd_pcm_sframes_t frames1 = frames;
+-			if (plugin->dst_frames)
++			if (plugin->dst_frames) {
+ 				frames1 = plugin->dst_frames(plugin, frames);
++				if (frames1 <= 0)
++					return frames1;
++			}
+ 			if ((err = next->client_channels(next, frames1, &dst_channels)) < 0) {
+ 				return err;
+ 			}
+ 			if (err != frames1) {
+ 				frames = err;
+-				if (plugin->src_frames)
++				if (plugin->src_frames) {
+ 					frames = plugin->src_frames(plugin, frames1);
++					if (frames <= 0)
++						return frames;
++				}
+ 			}
+ 		} else
+ 			dst_channels = NULL;
