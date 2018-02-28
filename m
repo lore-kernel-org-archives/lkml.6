@@ -1,22 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AG47ELu6uysp1UFqhE7mdnAwNqTj0AmuFHhpdXoXn3CxmYl3FXHW9zXAR69CSaRyqvTMu/IHmvhA
-ARC-Seal: i=1; a=rsa-sha256; t=1519855627; cv=none;
+X-Google-Smtp-Source: AG47ELtYknmik7ju0XhxB6GyQO9bFtokAMfo+NFjIE4G/AJWJB+IGFZC5ay/6GTzN7IEWnD1VQqh
+ARC-Seal: i=1; a=rsa-sha256; t=1519855654; cv=none;
         d=google.com; s=arc-20160816;
-        b=moi4Ec+2FPTpnGgcnNsaS0cBzrSKKw3ZZmlMPYBwywgQQxUjq26D3hYzazGxR6fceb
-         lxBLcxYQ1sy3uI/iyZO7ljJk4HRsaq8KPwuKaoFwA8C6M/GzoJen9D4iSRx+h+5hCGaI
-         uDAiVNFJ9gs+pgxLZrh3dYnX9aMa3HHtpf5zPUI2jQyiQDPM0oMwSrGutfBWXQz4z+59
-         hpOUYqTDSnP1kxfWAOjeDBbWfBcVmUL2bMcV7qROcNfEwKPLgzZomg1TfTBCMKiLRVdK
-         KW6oSmHHI291MowBZnEBvbD2g8E1KEe1NnTq2ujFhzD3Oy6RLiD8olLoav0hIdeeDHMx
-         vUOQ==
+        b=Ck4R7AAhqSh2BnEVbvi7xd0sRwGyfkM48Bz/TQRv8ySr/ZqeTjV099I0dC7016hrJG
+         jUJKFqmgo0Dsg/6AkYRMr52/J3bnaURCGLdb0wnQQSXw8f47eYyZ2pi5o+RE2teMLxx9
+         jOnUPjmXDlUkkP6f/E2Vv6qPCqWcqFdJwSCnvjg3Gq+RQpluahDWR8yF2b1SCpQhaAhx
+         UIP5tB0JwZiNLH5xsEf63t7VMYzIzcqMsTkGLOYZ7oAV9N6NStaX8mmlBVLooSs8BX8b
+         gOpvjC4hWhuCwL0baN8Nh5rFxM+/ROu/b1xbnmouBezLNDT0I6wSUzu8FUnppsNNbqiO
+         da9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=TJnHEQNpkjd/L7g8njlDYco5WwDCujQX0INM2z3/VPQ=;
-        b=Xw9gAyzQV9QSw8VdVyxnFPgOgFUU/rspSOvdA8kWTHyVqdpIDdkMq6p32JHoqCQ9+a
-         d774fobD7vUqoGi2a0EzqD4jJ5nq8Haqmfw4PFqlJAWWqtKXcwSA7Uj1SxrhPOMt1Xdu
-         dq7anMUIGXZBBzmtsSEJiaFJl5TVyIzmWNPWcfvebzZ28pXDzSgcNWADb7hAq2H++NdK
-         7RGRmcbxy54hQkZfUx0FECGscAQeZi2R7oCu4+IQ7VIfHSPeyh3vRvBk0c/kP4PADWrX
-         lCWyRus3/aTb+FnS8PsT52FAs0TjWDrzxydGc22BAFLaJrokmy5NZKPxPRc4xa6C+ipW
-         j3CA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=m0LYSuwtP8U45Z7etrtHPtxdE00Z7mP4oopiGZ57PWA=;
+        b=U1uR8NXiO4zRHeTQfa/2bmbk7MTurmaFJCG+7GrFcZkiRmwoQw7mgWxD7mOTkxw3rF
+         8UL6c9hharWRH0O3ujiVcKoPcELcnTfSLrPOrHOfCL7aBn/30ZViRpya0mJIYynbqD8x
+         o93rMubei51wEng/dNShb3GbpdBjnZe2k4VWXbw2Vhi2LAOKjfKbFJ52Xgh44OaHcTI8
+         7usXPRIRXzuJjULL9jh9+6ecZZrRLqrjmp839QyuyjvPpRL1C6Yte9I1OEL2tkZhU5pz
+         P0WOO9aXuz4ER7mjxLITFWz5OwpCtRSybBOifAEVGaQyoqrEa+XcQk5M6eL8FVbwOj+L
+         fL0A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -45,119 +46,177 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	austinwc@codeaurora.org,
 	tnowicki@caviumnetworks.com,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v7 00/13] Support PPTT for ARM64
-Date: Wed, 28 Feb 2018 16:06:06 -0600
-Message-Id: <20180228220619.6992-1-jeremy.linton@arm.com>
+Subject: [PATCH v7 13/13] arm64: topology: divorce MC scheduling domain from core_siblings
+Date: Wed, 28 Feb 2018 16:06:19 -0600
+Message-Id: <20180228220619.6992-14-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180228220619.6992-1-jeremy.linton@arm.com>
+References: <20180228220619.6992-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593684134324692162?=
-X-GMAIL-MSGID: =?utf-8?q?1593684134324692162?=
+X-GMAIL-THRID: =?utf-8?q?1593684162193428124?=
+X-GMAIL-MSGID: =?utf-8?q?1593684162193428124?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-ACPI 6.2 adds the Processor Properties Topology Table (PPTT), which is
-used to describe the processor and cache topology. Ideally it is
-used to extend/override information provided by the hardware, but
-right now ARM64 is entirely dependent on firmware provided tables.
+Now that we have an accurate view of the physical topology
+we need to represent it correctly to the scheduler. In the
+case of NUMA in socket, we need to assure that the sched domain
+we build for the MC layer isn't larger than the DIE above it.
+To do this correctly, we should really base that on the cache
+topology immediately below the NUMA node (for NUMA in socket)
+or below the physical package for normal NUMA configurations.
 
-This patch parses the table for the cache topology and CPU topology.
-When we enable ACPI/PPTT for arm64 we map the physical_id to the
-PPTT node flagged as the physical package by the firmware.
-This results in topologies that match what the remainder of the
-system expects. To avoid inverted scheduler domains we then
-set the MC domain equal to the largest cache within the socket
-below the NUMA domain.
+This patch creates a set of early cache_siblings masks, then
+when the scheduler requests the coregroup mask we pick the
+smaller of the physical package siblings, or the numa siblings
+and locate the largest cache which is an entire subset of
+those siblings. If we are unable to find a proper subset of
+cores then we retain the original behavior and return the
+core_sibling list.
 
-For example on juno:
-[root@mammon-juno-rh topology]# lstopo-no-graphics
-  Package L#0
-    L2 L#0 (1024KB)
-      L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
-      L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
-      L1d L#2 (32KB) + L1i L#2 (32KB) + Core L#2 + PU L#2 (P#2)
-      L1d L#3 (32KB) + L1i L#3 (32KB) + Core L#3 + PU L#3 (P#3)
-    L2 L#1 (2048KB)
-      L1d L#4 (32KB) + L1i L#4 (48KB) + Core L#4 + PU L#4 (P#4)
-      L1d L#5 (32KB) + L1i L#5 (48KB) + Core L#5 + PU L#5 (P#5)
-  HostBridge L#0
-    PCIBridge
-      PCIBridge
-        PCIBridge
-          PCI 1095:3132
-            Block(Disk) L#0 "sda"
-        PCIBridge
-          PCI 1002:68f9
-            GPU L#1 "renderD128"
-            GPU L#2 "card0"
-            GPU L#3 "controlD64"
-        PCIBridge
-          PCI 11ab:4380
-            Net L#4 "enp8s0"
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+---
+ arch/arm64/include/asm/topology.h |  5 +++
+ arch/arm64/kernel/topology.c      | 64 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
 
-Git tree at:
-http://linux-arm.org/git?p=linux-jlinton.git
-branch: pptt_v7
-
-v6->v7:
-Add additional patch to use the last cache level within the NUMA
-  or socket as the MC domain. This assures the MC domain is
-  equal or smaller than the DIE.
-  
-Various formatting/etc review comments.
-
-Rebase to 4.16rc2
-
-v5->v6:
-Add additional patches which re-factor how the initial DT code sets
-  up the cacheinfo structure so that its not as dependent on the
-  of_node stored in that tree. Once that is done we rename it
-  for use with the ACPI code.
-
-Additionally there were a fair number of minor name/location/etc
-  tweaks scattered about made in response to review comments.
-
-v4->v5:
-Update the cache type from NOCACHE to UNIFIED when all the cache
-  attributes we update are valid. This fixes a problem where caches
-  which are entirely created by the PPTT don't show up in lstopo.
-
-Give the PPTT its own firmware_node in the cache structure instead of
-  sharing it with the of_node.
-
-Move some pieces around between patches.
-
-(see previous cover letters for futher changes)
-
-Jeremy Linton (13):
-  drivers: base: cacheinfo: move cache_setup_of_node()
-  drivers: base: cacheinfo: setup DT cache properties early
-  cacheinfo: rename of_node to fw_token
-  arm64/acpi: Create arch specific cpu to acpi id helper
-  ACPI/PPTT: Add Processor Properties Topology Table parsing
-  ACPI: Enable PPTT support on ARM64
-  drivers: base cacheinfo: Add support for ACPI based firmware tables
-  arm64: Add support for ACPI based firmware tables
-  ACPI/PPTT: Add topology parsing code
-  arm64: topology: rename cluster_id
-  arm64: topology: enable ACPI/PPTT based CPU topology
-  ACPI: Add PPTT to injectable table list
-  arm64: topology: divorce MC scheduling domain from core_siblings
-
- arch/arm64/Kconfig                |   1 +
- arch/arm64/include/asm/acpi.h     |   4 +
- arch/arm64/include/asm/topology.h |   9 +-
- arch/arm64/kernel/cacheinfo.c     |  15 +-
- arch/arm64/kernel/topology.c      | 132 +++++++-
- arch/riscv/kernel/cacheinfo.c     |   1 -
- drivers/acpi/Kconfig              |   3 +
- drivers/acpi/Makefile             |   1 +
- drivers/acpi/pptt.c               | 642 ++++++++++++++++++++++++++++++++++++++
- drivers/acpi/tables.c             |   2 +-
- drivers/base/cacheinfo.c          | 157 +++++-----
- include/linux/acpi.h              |   4 +
- include/linux/cacheinfo.h         |  17 +-
- 13 files changed, 882 insertions(+), 106 deletions(-)
- create mode 100644 drivers/acpi/pptt.c
-
+diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
+index 6b10459e6905..08db3e4e44e1 100644
+--- a/arch/arm64/include/asm/topology.h
++++ b/arch/arm64/include/asm/topology.h
+@@ -4,12 +4,17 @@
+ 
+ #include <linux/cpumask.h>
+ 
++#define MAX_CACHE_CHECKS 4
++
+ struct cpu_topology {
+ 	int thread_id;
+ 	int core_id;
+ 	int package_id;
++	int cache_id[MAX_CACHE_CHECKS];
+ 	cpumask_t thread_sibling;
+ 	cpumask_t core_sibling;
++	cpumask_t cache_siblings[MAX_CACHE_CHECKS];
++	int cache_level;
+ };
+ 
+ extern struct cpu_topology cpu_topology[NR_CPUS];
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index bd1aae438a31..1809dc9d347c 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -212,8 +212,42 @@ static int __init parse_dt_topology(void)
+ struct cpu_topology cpu_topology[NR_CPUS];
+ EXPORT_SYMBOL_GPL(cpu_topology);
+ 
++static void find_llc_topology_for_cpu(int cpu)
++{
++	/* first determine if we are a NUMA in package */
++	const cpumask_t *node_mask = cpumask_of_node(cpu_to_node(cpu));
++	int indx;
++
++	if (!cpumask_subset(node_mask, &cpu_topology[cpu].core_sibling)) {
++		/* not numa in package, lets use the package siblings */
++		node_mask = &cpu_topology[cpu].core_sibling;
++	}
++
++	/*
++	 * node_mask should represent the smallest package/numa grouping
++	 * lets search for the largest cache smaller than the node_mask.
++	 */
++	for (indx = 0; indx < MAX_CACHE_CHECKS; indx++) {
++		cpumask_t *cache_sibs = &cpu_topology[cpu].cache_siblings[indx];
++
++		if (cpu_topology[cpu].cache_id[indx] < 0)
++			continue;
++
++		if (cpumask_subset(cache_sibs, node_mask))
++			cpu_topology[cpu].cache_level = indx;
++	}
++}
++
+ const struct cpumask *cpu_coregroup_mask(int cpu)
+ {
++	int *llc = &cpu_topology[cpu].cache_level;
++
++	if (*llc == -1)
++		find_llc_topology_for_cpu(cpu);
++
++	if (*llc != -1)
++		return &cpu_topology[cpu].cache_siblings[*llc];
++
+ 	return &cpu_topology[cpu].core_sibling;
+ }
+ 
+@@ -221,6 +255,7 @@ static void update_siblings_masks(unsigned int cpuid)
+ {
+ 	struct cpu_topology *cpu_topo, *cpuid_topo = &cpu_topology[cpuid];
+ 	int cpu;
++	int idx;
+ 
+ 	/* update core and thread sibling masks */
+ 	for_each_possible_cpu(cpu) {
+@@ -229,6 +264,16 @@ static void update_siblings_masks(unsigned int cpuid)
+ 		if (cpuid_topo->package_id != cpu_topo->package_id)
+ 			continue;
+ 
++		for (idx = 0; idx < MAX_CACHE_CHECKS; idx++) {
++			cpumask_t *lsib;
++			int cput_id = cpuid_topo->cache_id[idx];
++
++			if (cput_id == cpu_topo->cache_id[idx]) {
++				lsib = &cpuid_topo->cache_siblings[idx];
++				cpumask_set_cpu(cpu, lsib);
++			}
++		}
++
+ 		cpumask_set_cpu(cpuid, &cpu_topo->core_sibling);
+ 		if (cpu != cpuid)
+ 			cpumask_set_cpu(cpu, &cpuid_topo->core_sibling);
+@@ -286,10 +331,18 @@ static void __init reset_cpu_topology(void)
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpu_topology *cpu_topo = &cpu_topology[cpu];
++		int idx;
+ 
+ 		cpu_topo->thread_id = -1;
+ 		cpu_topo->core_id = 0;
+ 		cpu_topo->package_id = -1;
++		cpu_topo->cache_level = -1;
++
++		for (idx = 0; idx < MAX_CACHE_CHECKS; idx++) {
++			cpu_topo->cache_id[idx] = -1;
++			cpumask_clear(&cpu_topo->cache_siblings[idx]);
++			cpumask_set_cpu(cpu, &cpu_topo->cache_siblings[idx]);
++		}
+ 
+ 		cpumask_clear(&cpu_topo->core_sibling);
+ 		cpumask_set_cpu(cpu, &cpu_topo->core_sibling);
+@@ -311,6 +364,9 @@ static int __init parse_acpi_topology(void)
+ 	is_threaded = read_cpuid_mpidr() & MPIDR_MT_BITMASK;
+ 
+ 	for_each_possible_cpu(cpu) {
++		int tidx = 0;
++		int i;
++
+ 		topology_id = find_acpi_cpu_topology(cpu, 0);
+ 		if (topology_id < 0)
+ 			return topology_id;
+@@ -325,6 +381,14 @@ static int __init parse_acpi_topology(void)
+ 		}
+ 		topology_id = find_acpi_cpu_topology_package(cpu);
+ 		cpu_topology[cpu].package_id = topology_id;
++
++		for (i = 0; i < MAX_CACHE_CHECKS; i++) {
++			topology_id = find_acpi_cpu_cache_topology(cpu, i + 1);
++			if (topology_id > 0) {
++				cpu_topology[cpu].cache_id[tidx] = topology_id;
++				tidx++;
++			}
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.13.6
