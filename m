@@ -1,71 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752473AbeB1NLQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:11:16 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39405 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752229AbeB1NLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:11:14 -0500
-X-Google-Smtp-Source: AG47ELtveBXd9DhZ6g5sJ4/8Er7m/bfQrtUxZTStzyE4/QNbjUU9wgONHEViJm3xzgl0mfRHlfM+HEuZbgEqmLEyKpg=
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
- <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
- <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
- <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com> <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Feb 2018 14:11:13 +0100
-X-Google-Sender-Auth: dWLebLQHwGvnTWSgr6PVeunEj2M
-Message-ID: <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752731AbeB1NLz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:11:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60489 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752569AbeB1NLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:11:51 -0500
+From: Quentin Schulz <quentin.schulz@bootlin.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        maxime.ripard@bootlin.com, wens@csie.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH 2/3] ARM: dts: sun8i: a711: set regulator for each cluster of CPUs
+Date: Wed, 28 Feb 2018 14:11:21 +0100
+Message-Id: <07883d44949420891c1ed2411ff15199d53075c0.1519823347.git-series.quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
+References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
+In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
+References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+The Allwinner A83T is a SoC with two clusters of 4 A7 which have a
+different clock and regulator.
 
-On Wed, Feb 28, 2018 at 1:49 PM, Tomasz Figa <tfiga@chromium.org> wrote:
-> On Wed, Feb 28, 2018 at 9:32 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Feb 28, 2018 at 1:29 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->>> Also, how about systems where runtime PM is disabled? I think that's
->>> one of the reasons we control the clocks explicitly in the drivers
->>> anyway.
->>
->> On many platforms, Runtime PM is always enabled.
->
-> Can we make such assumption? If so, could we just make an explicit
-> "select PM_RUNTIME" in Kconfig of the SoC?
+Set the CPU regulator.
 
-Note that the PM_RUNTIME symbol was removed in commit 464ed18ebdb6236f
-("PM: Eliminate CONFIG_PM_RUNTIME"), in favor of plain PM.
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+---
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts |  9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-The following already select PM unconditionally:
-  - ARCH_OMAP2PLUS_TYPICAL
-  - ARCH_RENESAS (except EMEV2)
-  - ARCH_TEGRA
-  - ARCH_VEXPRESS
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+index 1de362f..d65162c 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -128,6 +128,14 @@
+ 	};
+ };
+ 
++&cpu0 {
++	cpu-supply = <&reg_dcdc2>;
++};
++
++&cpu100 {
++	cpu-supply = <&reg_dcdc3>;
++};
++
+ &de {
+ 	status = "okay";
+ };
+@@ -136,6 +144,7 @@
+  * An USB-2 hub is connected here, which also means we don't need to
+  * enable the OHCI controller.
+  */
++
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+git-series 0.9.1
