@@ -1,85 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933502AbeB1TSj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:18:39 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38801 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932780AbeB1TSR (ORCPT
+        id S933543AbeB1TSs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:18:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38818 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932780AbeB1TSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:18:17 -0500
-X-Google-Smtp-Source: AH8x224bArGh0Nv+Ue9uLYJfwZnJpIYzt8yWApxTF8GkEyDSL/ialFoJ1dplaLurhmwejZFWW7SZwg==
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] fixdep: do not ignore kconfig.h
-Date: Wed, 28 Feb 2018 20:17:37 +0100
-Message-Id: <20180228191805.20094-3-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180228191805.20094-1-linux@rasmusvillemoes.dk>
-References: <CA+55aFz_ww8ohU68Jz34pg_x7gpGpJ+FC-dmS_Rm_VvY01GGpg@mail.gmail.com>
- <20180228191805.20094-1-linux@rasmusvillemoes.dk>
+        Wed, 28 Feb 2018 14:18:45 -0500
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
+        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH 1/3] tpm: move TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h
+Date: Wed, 28 Feb 2018 14:18:26 -0500
+X-Mailer: git-send-email 2.13.3
+X-TM-AS-GCONF: 00
+x-cbid: 18022819-0012-0000-0000-000005B71DDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022819-0013-0000-0000-000019331EFF
+Message-Id: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280234
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kconfig.h was excluded from consideration by fixdep by
-6a5be57f0f00 (fixdep: fix extraneous dependencies) to avoid some false
-positive hits
+This patch moves TPM_POLL_SLEEP from tpm_tis_core.c to tpm.h, renaming
+it to TPM_TIMEOUT_POLL, to follow the existing enum naming
+conventions.
 
-(1) include/config/.h
-(2) include/config/h.h
-(3) include/config/foo.h
-
-(1) occurred because kconfig.h contains the string CONFIG_ in a
-comment. However, since dee81e988674 (fixdep: faster CONFIG_ search), we
-have a check that the part after CONFIG_ is non-empty, so this does not
-happen anymore (and CONFIG_ appears by itself elsewhere, so that check
-is worthwhile).
-
-(2) comes from the include guard, __LINUX_KCONFIG_H. But with the
-previous patch, we no longer match that either.
-
-That leaves (3), which amounts to one [1] false dependency (aka stat() call
-done by make), which I think we can live with:
-
-We've already had one case [2] where the lack of include/linux/kconfig.h in
-the .o.cmd file caused a missing rebuild, and while I originally thought
-we should just put kconfig.h in the dependency list without parsing it
-for the CONFIG_ pattern, we actually do have some real CONFIG_ symbols
-mentioned in it, and one can imagine some translation unit that just
-does '#ifdef __BIG_ENDIAN' but doesn't through some other header
-actually depend on CONFIG_CPU_BIG_ENDIAN - so changing the target
-endianness could end up rebuilding the world, minus that small
-TU. Quoting Linus,
-
-  ... when missing dependencies cause a missed re-compile, the resulting
-  bugs can be _really_ subtle.
-
-[1] well, two, we now also have CONFIG_BOOGER/booger.h - we could change
-that to FOO if we care
-
-[2] https://lkml.org/lkml/2018/2/22/838
-
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- scripts/basic/fixdep.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/char/tpm/tpm.h          |  3 ++-
+ drivers/char/tpm/tpm_tis_core.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-index 1b21870d6e7f..449b68c4c90c 100644
---- a/scripts/basic/fixdep.c
-+++ b/scripts/basic/fixdep.c
-@@ -283,7 +283,6 @@ static int is_ignored_file(const char *s, int len)
- {
- 	return str_ends_with(s, len, "include/generated/autoconf.h") ||
- 	       str_ends_with(s, len, "include/generated/autoksyms.h") ||
--	       str_ends_with(s, len, "include/linux/kconfig.h") ||
- 	       str_ends_with(s, len, ".ver");
- }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f895fba4e20d..7e797377e1eb 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -53,7 +53,8 @@ enum tpm_const {
+ enum tpm_timeout {
+ 	TPM_TIMEOUT = 5,	/* msecs */
+ 	TPM_TIMEOUT_RETRY = 100, /* msecs */
+-	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
++	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
++	TPM_TIMEOUT_POLL = 1	/* msecs */
+ };
  
+ /* TPM addresses */
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 183a5f54d875..dc474e7244a6 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,12 +31,6 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
+-/* This is a polling delay to check for status and burstcount.
+- * As per ddwg input, expectation is that status check and burstcount
+- * check should return within few usecs.
+- */
+-#define TPM_POLL_SLEEP	1  /* msec */
+-
+ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+ 
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+@@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_POLL_SLEEP);
++			tpm_msleep(TPM_TIMEOUT_POLL);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_POLL_SLEEP);
++		tpm_msleep(TPM_TIMEOUT_POLL);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
 -- 
-2.15.1
+2.13.3
