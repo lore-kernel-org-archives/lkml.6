@@ -1,175 +1,107 @@
-Return-Path: <arvindprasanna@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519839561; cv=none;
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AH8x225JHoaeRSoyQtRZ0aXLiJ7A8TgFsU76lowUw5DNKswGfEn/4vYPcXAGo0S0/hIyJrDdSN1N
+ARC-Seal: i=1; a=rsa-sha256; t=1519844404; cv=none;
         d=google.com; s=arc-20160816;
-        b=IOTFZeaNH0xycaToYYkmYWbpjSUHItILxAMiWsZsE6sJYkPqk2IMewtFz+7mLCn93e
-         rDR6INZBM8uXZDuGmjVafZrZO6l3UHnaRrSsGM17hKlD4+xIlf3Ev/JG5/3XLYaI8uHc
-         W8/+cvKMP+pA2p9aX8vAX38tNr/8JMkBZgKtJweFtWV9WwI1A7dIY7VKUDT8ySxiEItW
-         z5Umb6w5V+ytdiR0ONjXiN8AWaW2nHQhLu3W+Si3mf65L1hd2//Zs11bm2MSqOVyHYBG
-         CMXd2ay5vE5akJjUv2WT7O9ZXYrrmaxW/Lm97/qyE4G+KZPLzB/yhi+CJm5lBD7ai/DH
-         M2fg==
+        b=hAeRr/C2i7HO9vf3yvLUIagosrvZfDUDO9coYyqzRG4vLL+4Q0AyXipmy+S4KsQ71G
+         0FQ91+3m4/QSz2fQpYZ68XTIGqL858Eclqj2ViKp0B5EXL8j0la/+geLP7TxnYID/Ic7
+         tLbkPzky2LLlSyGeEFlMcFdsCqVQyNTfxUpAgbTZtY9aCTxgrzceFuleotHWDxWdiLmj
+         DnUgSrYP1nXUA2FYUxUJjZ2o74GHmM8U9AXLvOWIq7ASgsVZwk1XoEgqiLM5rB8VW7Ku
+         ZtK4PJQ624pvrP/mJuI4U1mdKZIb+tkp0mng5r4qcv1dWgIhefMwlTh11qaET1q6ZUoh
+         o4Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=rfPcZeS6O6l+2Fc51E3qR4WJ4vzvLsax8LYDPOW2l5Y=;
-        b=yfnXsGakWCXI3l8EGumZb/zkgoRdgSggSzZEmEKmsdKziY0CT1Po6KDQX7eRCb2b8P
-         t/3iC5MGoOmkOHUJwNjlmr/+l+xSgU2r51VseT+QgowIlU+iRNuUN03wFjGyfiMBpiEI
-         ngVTdOddZUbFEQkRZN1ilr3F/03OADxI82HHi+bepFaMamjeVP8blkAuL+RnJf3+OJnO
-         pKtfoQR+fRCsW3k/iEl21cJbJWw0L7tBpMpKg5zOvzuu11sk33ulxXsGRVXMd3NbonPB
-         e/7tY5Qa7kJEte67XMzoMxng41Ys4ZRWGkPX0T3J0uk1zxMTvzLPp7zum/qFzsrWDhfz
-         0oNw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=4ucB0fi1GEhStWc5CY2tpfeiiwuwfP2S2yuABbPCZdg=;
+        b=EZwysefPriGwDmHySURoVG8nfZ7n5yO5dfT9itPvsE7zdL8WFQpEWTiCt/56s0lYHU
+         va8CxXhxJpGhkmkaoSneluRbnLIH5y3NiiloLEInyyLM73Dl8S5gyexPC3ExF3HuLPfZ
+         k5YjFMtdt/NTxcGwoGTsLNr8XP7p7N/Xg5EL5tyLFgXiXwbyNAldJ4y1NU+J5eFL3KKO
+         nIZAZUtrO7rdegfvLFI0A76RNV8pg998IkBIjkkedMDOGqA8FLM2pwgJnz3gv0soe0C9
+         fTS3144BoS9Ay3gE1kI5NHTkqOuhL1EjvS0vxKdVpNNPqSmj24P8g5g7LSi7KKor5uVF
+         HIbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iDLtgYkW;
-       spf=pass (google.com: domain of arvindprasanna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvindprasanna@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Re5YHoWR;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iDLtgYkW;
-       spf=pass (google.com: domain of arvindprasanna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvindprasanna@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuDtHY3Zf675dyl6HkPzx5FuSP982mkVBmSBH/TjgAf2VgED9h4/Y1kN6TZWNu+tutHDTS2xNrIwtA6oBMS6sA=
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Re5YHoWR;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+Subject: Re: [PATCH] Documentation: Update ncurses package names for
+ menuconfig
+To: Arvind Prasanna <arvindprasanna@gmail.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519801192-31201-1-git-send-email-arvindprasanna@gmail.com>
+ <43a91eb4-646a-b4d8-5b3d-b0bfde0019d9@infradead.org>
+ <CAK-=9LoNfYP_-tm+W2GvUWjWgs=BZ-VRFmVNzTCadzQWaee9yg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e484c42f-4fe6-10f5-dab8-cfd749911486@infradead.org>
+Date: Wed, 28 Feb 2018 10:59:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <43a91eb4-646a-b4d8-5b3d-b0bfde0019d9@infradead.org>
-References: <1519801192-31201-1-git-send-email-arvindprasanna@gmail.com> <43a91eb4-646a-b4d8-5b3d-b0bfde0019d9@infradead.org>
-From: Arvind Prasanna <arvindprasanna@gmail.com>
-Date: Wed, 28 Feb 2018 12:39:20 -0500
-Message-ID: <CAK-=9LoNfYP_-tm+W2GvUWjWgs=BZ-VRFmVNzTCadzQWaee9yg@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: Update ncurses package names for menuconfig
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/alternative; boundary="94eb2c1a68cc2968d80566493919"
+In-Reply-To: <CAK-=9LoNfYP_-tm+W2GvUWjWgs=BZ-VRFmVNzTCadzQWaee9yg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593627124178304067?=
-X-GMAIL-MSGID: =?utf-8?q?1593667287837674678?=
+X-GMAIL-MSGID: =?utf-8?q?1593672366054215269?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---94eb2c1a68cc2968d80566493919
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Randy:
-
-On 02/27/2018 10:59 PM, Arvind Prasanna wrote:
-> The package name is ncurses-devel for Redhat based distros
-> and libncurses-devel for Debian based distros.
-
-The above lines are part of the commit message and the patch says to
-install either ncurses-devel or libncurses-dev based on the user's Linux
-distribution. Would you prefer I add my commit message lines to the patch
-as well?
-
-Thanks,
-
-Arvind.
-
-
-On Wed, Feb 28, 2018 at 12:31 PM, Randy Dunlap <rdunlap@infradead.org>
-wrote:
-
+On 02/28/2018 09:39 AM, Arvind Prasanna wrote:
+> Hi Randy:
+> 
 > On 02/27/2018 10:59 PM, Arvind Prasanna wrote:
-> > The package name is ncurses-devel for Redhat based distros
-> > and libncurses-devel for Debian based distros.
->
->       ^^^^^^^^^^^^^^^^ That's not what the patch says. Please clarify.
->
-> >
-> > Signed-off-by: Arvind Prasanna <arvindprasanna@gmail.com>
-> > ---
-> >  scripts/kconfig/lxdialog/check-lxdialog.sh | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh
-> b/scripts/kconfig/lxdialog/check-lxdialog.sh
-> > index a10bd9d..4353e40 100755
-> > --- a/scripts/kconfig/lxdialog/check-lxdialog.sh
-> > +++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
-> > @@ -55,7 +55,8 @@ EOF
-> >           echo " *** required header files."
-> 1>&2
-> >           echo " *** 'make menuconfig' requires the ncurses libraries."
-> 1>&2
-> >           echo " *** "
-> 1>&2
-> > -         echo " *** Install ncurses (ncurses-devel) and try again."
-> 1>&2
-> > +         echo " *** Install ncurses (ncurses-devel or libncurses-dev
->  1>&2
-> > +                *** depending on your distribution) and try again."
-> 1>&2
-> >           echo " *** "
-> 1>&2
-> >           exit 1
-> >       fi
-> >
->
-> thanks,
-> --
-> ~Randy
->
+>> The package name is ncurses-devel for Redhat based distros
+>> and libncurses-devel for Debian based distros.
+> 
+> The above lines are part of the commit message and the patch says to install either ncurses-devel or libncurses-dev based on the user's Linux distribution. Would you prefer I add my commit message lines to the patch as well?
+> 
+> Thanks,
+> 
+> Arvind.
+> 
+> 
+> On Wed, Feb 28, 2018 at 12:31 PM, Randy Dunlap <rdunlap@infradead.org <mailto:rdunlap@infradead.org>> wrote:
+> 
+>     On 02/27/2018 10:59 PM, Arvind Prasanna wrote:
+>     > The package name is ncurses-devel for Redhat based distros
+>     > and libncurses-devel for Debian based distros.
+> 
+>           ^^^^^^^^^^^^^^^^ That's not what the patch says. Please clarify.
 
---94eb2c1a68cc2968d80566493919
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+For Debian-based distros, is it libncurses-devel (above) or is it
+libncurses-dev (as below)?  [latter is without the ending "el"]
 
-<div dir=3D"ltr">Hi Randy:<div><br></div><div><div>On 02/27/2018 10:59 PM, =
-Arvind Prasanna wrote:</div><div>&gt; The package name is ncurses-devel for=
- Redhat based distros</div><div>&gt; and libncurses-devel for Debian based =
-distros.</div></div><div><br></div><div>The above lines are part of the com=
-mit message and the patch says to install either ncurses-devel or libncurse=
-s-dev based on the user&#39;s Linux distribution. Would you prefer I add my=
- commit message lines to the patch as well?</div><div><br></div><div>Thanks=
-,</div><div><br>Arvind.</div><div><br></div></div><div class=3D"gmail_extra=
-"><br><div class=3D"gmail_quote">On Wed, Feb 28, 2018 at 12:31 PM, Randy Du=
-nlap <span dir=3D"ltr">&lt;<a href=3D"mailto:rdunlap@infradead.org" target=
-=3D"_blank">rdunlap@infradead.org</a>&gt;</span> wrote:<br><blockquote clas=
-s=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;pad=
-ding-left:1ex"><span class=3D"">On 02/27/2018 10:59 PM, Arvind Prasanna wro=
-te:<br>
-&gt; The package name is ncurses-devel for Redhat based distros<br>
-&gt; and libncurses-devel for Debian based distros.<br>
-<br>
-</span>=C2=A0 =C2=A0 =C2=A0 ^^^^^^^^^^^^^^^^ That&#39;s not what the patch =
-says. Please clarify.<br>
-<span class=3D""><br>
-&gt;<br>
-&gt; Signed-off-by: Arvind Prasanna &lt;<a href=3D"mailto:arvindprasanna@gm=
-ail.com">arvindprasanna@gmail.com</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 scripts/kconfig/lxdialog/<wbr>check-lxdialog.sh | 3 ++-<br>
-&gt;=C2=A0 1 file changed, 2 insertions(+), 1 deletion(-)<br>
-&gt;<br>
-&gt; diff --git a/scripts/kconfig/lxdialog/<wbr>check-lxdialog.sh b/scripts=
-/kconfig/lxdialog/<wbr>check-lxdialog.sh<br>
-&gt; index a10bd9d..4353e40 100755<br>
-&gt; --- a/scripts/kconfig/lxdialog/<wbr>check-lxdialog.sh<br>
-&gt; +++ b/scripts/kconfig/lxdialog/<wbr>check-lxdialog.sh<br>
-&gt; @@ -55,7 +55,8 @@ EOF<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** required heade=
-r files.&quot;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 1&gt;&amp;2<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** &#39;make menu=
-config&#39; requires the ncurses libraries.&quot; 1&gt;&amp;2<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** &quot;=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 1&gt;&amp;2<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** Install ncurses (nc=
-urses-devel) and try again.&quot;=C2=A0 =C2=A0 1&gt;&amp;2<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** Install ncurses (nc=
-urses-devel or libncurses-dev=C2=A0 =C2=A01&gt;&amp;2<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *** depending=
- on your distribution) and try again.&quot;=C2=A0 =C2=A0 1&gt;&amp;2<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0echo &quot; *** &quot;=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 1&gt;&amp;2<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0exit 1<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0fi<br>
-&gt;<br>
-<br>
-</span>thanks,<br>
-<span class=3D"HOEnZb"><font color=3D"#888888">--<br>
-~Randy<br>
-</font></span></blockquote></div><br></div>
 
---94eb2c1a68cc2968d80566493919--
+And what about the other few hundred distros?  (rhetorical)
+
+
+>     >
+>     > Signed-off-by: Arvind Prasanna <arvindprasanna@gmail.com <mailto:arvindprasanna@gmail.com>>
+>     > ---
+>     >  scripts/kconfig/lxdialog/check-lxdialog.sh | 3 ++-
+>     >  1 file changed, 2 insertions(+), 1 deletion(-)
+>     >
+>     > diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
+>     > index a10bd9d..4353e40 100755
+>     > --- a/scripts/kconfig/lxdialog/check-lxdialog.sh
+>     > +++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
+>     > @@ -55,7 +55,8 @@ EOF
+>     >           echo " *** required header files."                            1>&2
+>     >           echo " *** 'make menuconfig' requires the ncurses libraries." 1>&2
+>     >           echo " *** "                                                  1>&2
+>     > -         echo " *** Install ncurses (ncurses-devel) and try again."    1>&2
+>     > +         echo " *** Install ncurses (ncurses-devel or libncurses-dev   1>&2
+>     > +                *** depending on your distribution) and try again."    1>&2
+>     >           echo " *** "                                                  1>&2
+>     >           exit 1
+>     >       fi
+
+
+-- 
+~Randy
