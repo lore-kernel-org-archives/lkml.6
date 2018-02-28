@@ -1,85 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeB1NHx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:07:53 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:43055 "EHLO
+        id S932165AbeB1NID (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:08:03 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:41685 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752157AbeB1NHv (ORCPT
+        with ESMTP id S932138AbeB1NIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:07:51 -0500
+        Wed, 28 Feb 2018 08:08:01 -0500
 From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
 To: kishon@ti.com
 Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com,
         linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         andy.shevchenko@gmail.com,
-        Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Subject: [PATCH v4 0/3] pci: endpoint: Fix double free in pci_epf_create()
-Date: Wed, 28 Feb 2018 14:07:16 +0100
-Message-Id: <20180228130719.31218-1-embedded24@evers-fischer.de>
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: [PATCH v4 1/3] PCI: endpoint: Simplify name allocation for EPF device
+Date: Wed, 28 Feb 2018 14:07:17 +0100
+Message-Id: <20180228130719.31218-2-embedded24@evers-fischer.de>
 X-Mailer: git-send-email 2.16.2
-X-Provags-ID: V03:K0:SqhKdHUopVWtKJRM0RDI8WhbDAV3gph4n+/65cX2WeAT3A12dIY
- zOyndKnrJnCYygLrUmJK+lrJx5kjPM02zsmzclIW5iqf76WS86uRh4r71n3CpAFykEKPhbJ
- VC8Awaj0gyJHLeSPi+CdDv/UKC1dMZcIkR5r3Nz23VzrNszZJfo7wEQs7/KB/WQkfs/RrZn
- jywF1YCtKOIzi5cj7sdzg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:dPj4wDhfWmM=:1lqv0LvJ41QLfj4f8k5dxk
- aUo9V8Xm0p2ZKN6t59PGR6TbmZCfRm2q5Ygn9wH49glV6OKyBmOc6yOH6YG/eGolbqpaQkDeJ
- oo8SJ2iWXezwnd00tgcUyIMfjQUgFGXPbJuNrFvGCpSoWKlgtpVb245OAWuv26uA/y3TD0/yP
- qfKCec7spH01o8nn+7EOjHG6kxnKfArP3tZeHAbPz+VfoCI3u3ez4Ove/gyiqQrlbEoLziCUh
- wbT4mWcPjImFTvSLYc/tQywiX/Zmpd2EGITW2a+jkibtY4cfvgT0YTblRJfu0FIGwM8U/Ka4c
- jHFzLd9yX5uptyU867AQh8C7mG/1TDkLCoDb1WWu27bHhKz8oVQZFSvcuhW+1Uw3JOaM5Hxyh
- NdKFAj9wcfE1sdv5AG5MmYRFRM5vL0yNBmlqFRRp+W9d+YKVRUjZS6dJ0WhuhWqnID7hQOu1N
- 98E359m6/dzwxrIIPU0Zm3wjWEAaUwruk1kVBWzWeay+CGdoh4bJLlwnNWF8g4mgYVU/+xO1o
- 6Yo4gBPTqZ1TN3+28yEFNctixwj9y/jmR31+MtlccMw5B0TYkVbcaF3vfEiWamgjHqYzimEPI
- hpxwrHzxaPFwXAGalSmBi7XkMtEBNA2f7W6zVDJpk11f/W2mWwa1kxMdkfMldggn+8ZMJwG7e
- cwd51jMf8rULfcHreWvIQjPoVujeNdQav0LE4gnggL9tVU1XCLuu2QzXR6g6CueCr6sYNsP7V
- 2own1ss7OtarhaDRH8VNr2Nu0tyihSWZN0hk4A==
+In-Reply-To: <20180228130719.31218-1-embedded24@evers-fischer.de>
+References: <20180228130719.31218-1-embedded24@evers-fischer.de>
+X-Provags-ID: V03:K0:HPeWfnBRZ0AC4rTCc6OZZXBrUMpVCVFQXpMp4MGxctTYTCc49jK
+ nfDMOMmSLHvOsV6127O+CkOZod2HLhdXYXpGkvPKEcFtiVOxfn6wKstaIqTyVwnjpAXckEc
+ 75Ts2Z2BVZkyY0HL7T8h2SuuAl1WZjKUeC6VlLWmFdGOuvNNiXsEdGTEZtues91WbfTJR0p
+ JpeMTbvUAAmH4gfZkZVPQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nOMk4k6pMoE=:5wI4HsSlJAqtpSCViN+ut7
+ S/K5TrJ0qcmHHahJhDATfzNMykJqDqISSArG2GzfxQlz1lk5fE5ipPlZ0B7w1+ofc5QrLpJV4
+ 4SSuJ76MjrEjkxkre+Y5DHktX2XSE0/ZP33KE4HRZj3TnadRtbI/esFVimisE/5LbjvUxPTp2
+ PONf8w1qGQvDq+lgrhiBkDidmioNk/ddJOfuTZXPdgppftRtDmyfF8UUzUPgEspFsBRxVRRYg
+ GEJsZR0PeAq5I8ImrGS+eEs9lKYdU0AbxQF1JRbD2RUm8rs3FO/QzLoectajvgJxJpTsGM7ap
+ Mb2miWSzsO9WmDe1qlLi65mj2GYpU+ittU54/XWNR3N7W6U8U0M5xvp9Mq5e2fSj4tn4xcOFD
+ IpNRErRugZQvqfkm/29z5ZtaBp9WD7U/rNixhwh44sKFYer9cFPM+J84QOMAMnjXGyhJ4hzv6
+ O6iRXZWnalpS+2Ptoo648yaX3lbMcz0HEWl6Uhnn/rPd6NY3n5j09Y48GHgi9dCqSMtWVQChi
+ 3vOK4dq5skmE8C6NgsVagQedD8fb8FT9BxbgnOTYAAU13KzTJOnJZiIU7NIIGtYX8xbwQE7HG
+ S+WAEiC/CcBuOsjfCzBTNZK8Gr0EI9VWTEFDaEzVw9reAZ63wUufgKYEEavX415iXxzXmv1Gv
+ nNDz6VTKENma7+1etaga13sQTvyXcSStG/lXG6pdmrqMQ7TMFRLKlGy578kgUnEFqzy53JCBM
+ fjL5NFmLsuLQkSxwq6+Q3wXBcM9z/EJi2x3ULg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is version 4 of a patchset to avoid double free in function
-'pci_epf_create()'.
+From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
 
-When I accidentally created a new endpoint device with an empty name,
-the kernel warned about "attempted to be registered with empty name!"
-and crashed afterwards.
+This commit replaces allocating and freeing the intermediate
+'buf'/'func_name' with a combination of 'kstrndup()' and 'len'.
 
-It turned out that the crash was not caused by the 'device_add()'
-function itself, but by a double kfree of 'epf->name' and 'epf'.
+'len' is the required length of 'epf->name'.
+'epf->name' should be either the first part of 'name' preceding the '.'
+or the complete 'name', if there is no '.' in the name.
 
-The first patch just simplifies the code, while the second patch
-fixes the problem. The third patch removes the goto labels.
+Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+---
+ drivers/pci/endpoint/pci-epf-core.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
-Thank you Andy and Kishon for your Ack/Review on v3 for patches 1 and 2.
-In v4 of these patches only the first lines of the commit messages
-have been changed.
-
-Changes in v4:
-- s/pci/PCI and s/epf/EPF in the first line of
-  recent commit messages (thanks, Bjorn!)
-- The new patch #3 removes the goto labels
-  in function 'pci_epf_create()' (thanks, Lorenzo!)
-
-Changes in v3:
-- Matched to other pending pci endpoint commits (thanks, Bjorn!)
-- Added "Fixes" tag in patch 2 (thanks, Andy!)
-
-Changes in v2:
-- Based on feedback from Lorenzo, Andy and Kishon (thanks!)
-- Change IDs removed
-- First patch completely reworked in order to eliminate the
-  need for the second 'kstrdup' allocation and the 'kfree' of
-  the first allocation.
-  It was tested with name="pci_epf_test.0" and name="pci_epb":
-  The 'epf->name' was "pci_epf_test" or "pci_epb" (=unchanged).
-
-Rolf Evers-Fischer (3):
-  PCI: endpoint: Simplify name allocation for EPF device
-  PCI: endpoint: Fix kernel panic after put_device()
-  PCI: endpoint: pci_epf_create: remove goto labels
-
- drivers/pci/endpoint/pci-epf-core.c | 50 +++++++++----------------------------
- 1 file changed, 12 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+index 766ce1dca2ec..1f2506f32bb9 100644
+--- a/drivers/pci/endpoint/pci-epf-core.c
++++ b/drivers/pci/endpoint/pci-epf-core.c
+@@ -200,8 +200,7 @@ struct pci_epf *pci_epf_create(const char *name)
+ 	int ret;
+ 	struct pci_epf *epf;
+ 	struct device *dev;
+-	char *func_name;
+-	char *buf;
++	int len;
+ 
+ 	epf = kzalloc(sizeof(*epf), GFP_KERNEL);
+ 	if (!epf) {
+@@ -209,20 +208,11 @@ struct pci_epf *pci_epf_create(const char *name)
+ 		goto err_ret;
+ 	}
+ 
+-	buf = kstrdup(name, GFP_KERNEL);
+-	if (!buf) {
+-		ret = -ENOMEM;
+-		goto free_epf;
+-	}
+-
+-	func_name = buf;
+-	buf = strchrnul(buf, '.');
+-	*buf = '\0';
+-
+-	epf->name = kstrdup(func_name, GFP_KERNEL);
++	len = strchrnul(name, '.') - name;
++	epf->name = kstrndup(name, len, GFP_KERNEL);
+ 	if (!epf->name) {
+ 		ret = -ENOMEM;
+-		goto free_func_name;
++		goto free_epf;
+ 	}
+ 
+ 	dev = &epf->dev;
+@@ -238,16 +228,12 @@ struct pci_epf *pci_epf_create(const char *name)
+ 	if (ret)
+ 		goto put_dev;
+ 
+-	kfree(func_name);
+ 	return epf;
+ 
+ put_dev:
+ 	put_device(dev);
+ 	kfree(epf->name);
+ 
+-free_func_name:
+-	kfree(func_name);
+-
+ free_epf:
+ 	kfree(epf);
+ 
 -- 
 2.16.2
