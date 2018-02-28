@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-620147-1519836856-2-17199535353411437282
+X-Cyrus-Session-Id: sloti22d1t05-617694-1519836845-2-2771465636883351076
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519836855; b=Q/fNXTAjKhV1WQ+vYVL1cQ+OhWTWETK4iUt2pNxjXVBku5g
-    BVOeVZ17EpZcobdr7TeIenNWf97BhEsVCZRTkiMdOgdhwXEKfPaIzAin2QNnitKJ
-    eIhSywVJYIHeEp7z79cbFbjveZ24s55DAU4Z4Vvr52vsSYgchkLQertLV8s4YWYz
-    OB4fFg1mHWBU8ZK7KY8e22UlfpYo9HELq1borxZqWhfQvGjxDnNc4buIXXunpbR8
-    c0fOfzsz6e4Rr4wLEAEDg4TpE6bBQFJx8XNhe7YPA5aAUQQywtESMlGZyVS5UMc/
-    wNh3JAwr1LfbuygamQ06FovKQLWP3x3JiB6uNLg==
+    t=1519836844; b=mOnSq4A9+UgfaV6CDbOVr8dT0KuFwUjTkIRN4NFdG5fC9SH
+    Oe6gNuxBkbpSh6btPdCq5PKH7zLyeLUQyeY2EIK0IpHE7XZ2vBHwNKQxG3dwFNSL
+    zBf2ZwkxsBCTe5L6n58R/nosTmhK7BZ9rE07EF9Bwm1fKPh89DdUkBkG920YyTa9
+    MvAOC1ipUF5k2w0UyKqhBEFqQ2HIq8g6YOwJxr8Bg9Ttfte1MXdm6f31hXnOLgQL
+    YT7I8LtpUQcqEE4inMGKJ8ASfQNI1sdVGG0dGV2fTztNoFUQnql2JaXxAPDJxWS0
+    jhdXzn50VV8CxfAe9l+8aM3DgsJc7jvzy+LILoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519836855; bh=0kbMsJ/Zni13w0VWZt3
-    OJjqEmIRYFwzLtvwSh4gGLlk=; b=XNtFAFtU7a/jFvq2D5h7CFsNBR8KzToXys2
-    klK5Tr47UlNT54txiYWt86GcuFOFKHZHuSJnv8HGDYM5XhzV/5BJFwqj48n9cbB8
-    Un1eTlu/eiuZmnn/5PNW9IJHPRq31ObhGuZgCYI93xcxU2FKXifj+JXG8EjQXZ93
-    XOFLQgJnUnl+9bJadHHKtugOYra3Yr9Y8lrTQECyYj51SaQmxe5eqt6gsFptTfe7
-    S/Ue4x8tb12vW+eoVfm4kXxRfwncyj47D7i+4JPIpi8R/99QdBkvVrWchfATm10Q
-    bsdva5rEnCcFASPvqQbK/Zn9BpMtxvP3ouejgpGN/Dgk66wBFIw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519836844; bh=oZtyL762pbCke+S6eel
+    TuPLgzXTELDs0dJx3auV7XrY=; b=YFenqBKK2qiVO8+kWBdUT49XSTI2JwtVUxX
+    ZNeBu9NezArQXa6JcFL2dwLijB/Ibap2VVdmP/gmp4XH4VPTS9WB1mR8Njaq3ZLQ
+    DoDdMW+ecVlbs0Di59kt5R3R0VJHkA0/QAe4HBXXu7Q46fRgr6RIrhPhdOhxwJyp
+    8qr4YPPKybq5pQK/LLKL0rLj/QnumSzMofUCeL8EKDvjZZKjRUOCh81n8FHed8a0
+    IZhFiPm9BiKF7ZbJISLKVp/5vlsm7V2/6pU63SdTLy6+SCmiaPT7Xd4Q5Lm3yTlJ
+    rw1s3DxvKj1DXrGXop3tpaQK14sK6Qu3ioju9QnaLgxPXiLqJWw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933981AbeB1P5u (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:57:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34524 "EHLO
+        id S934128AbeB1P5y (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:57:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34529 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933979AbeB1P5t (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:57:49 -0500
+        by vger.kernel.org with ESMTP id S933979AbeB1P5x (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:57:53 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
+CC: akpm@linux-foundation.org,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Johan Hovold" <johan@kernel.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.887895406@decadent.org.uk>
+Message-ID: <lsq.1519831218.605078292@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 250/254] media: v4l2-compat-ioctl32.c: drop pr_info
- for unknown buffer type
+Subject: [PATCH 3.16 186/254] Input: twl4030-vibra - fix sibling-node lookup
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,39 +80,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 169f24ca68bf0f247d111aef07af00dd3a02ae88 upstream.
+commit 5b189201993ab03001a398de731045bfea90c689 upstream.
 
-There is nothing wrong with using an unknown buffer type. So
-stop spamming the kernel log whenever this happens. The kernel
-will just return -EINVAL to signal this.
+A helper purported to look up a child node based on its name was using
+the wrong of-helper and ended up prematurely freeing the parent of-node
+while searching the whole device tree depth-first starting at the parent
+node.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 64b9e4d803b1 ("input: twl4030-vibra: Support for DT booted kernel")
+Fixes: e661d0a04462 ("Input: twl4030-vibra - fix ERROR: Bad of_node_put() warning")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/input/misc/twl4030-vibra.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -170,8 +170,6 @@ static int __get_v4l2_format32(struct v4
- 		return copy_from_user(&kp->fmt.sliced, &up->fmt.sliced,
- 				      sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
- 	default:
--		printk(KERN_INFO "compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
--		       kp->type);
- 		return -EINVAL;
- 	}
- }
-@@ -217,8 +215,6 @@ static int __put_v4l2_format32(struct v4
- 		return copy_to_user(&up->fmt.sliced, &kp->fmt.sliced,
- 				    sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
- 	default:
--		printk(KERN_INFO "compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
--		       kp->type);
- 		return -EINVAL;
- 	}
- }
+--- a/drivers/input/misc/twl4030-vibra.c
++++ b/drivers/input/misc/twl4030-vibra.c
+@@ -180,12 +180,14 @@ static SIMPLE_DEV_PM_OPS(twl4030_vibra_p
+ 			 twl4030_vibra_suspend, twl4030_vibra_resume);
+ 
+ static bool twl4030_vibra_check_coexist(struct twl4030_vibra_data *pdata,
+-			      struct device_node *node)
++			      struct device_node *parent)
+ {
++	struct device_node *node;
++
+ 	if (pdata && pdata->coexist)
+ 		return true;
+ 
+-	node = of_find_node_by_name(node, "codec");
++	node = of_get_child_by_name(parent, "codec");
+ 	if (node) {
+ 		of_node_put(node);
+ 		return true;
