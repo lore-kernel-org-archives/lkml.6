@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834021-2-9259206703087575828
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834012-2-4029023510674896738
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834020; b=ilrA3GKxjE1+FOqjWIfWOpLWlzoOq6X14Nt7OxOejnyWH/L
-    B4d04WaAL0gtvETenwAAlQMpNFoMsjdFpY1XVQx9ij66A+7daPLr3umzKGtN4Qiu
-    FHTcgOv7QVO4bl7PWNyAZOje471a5EQAPk0MowpA4sY0frtkL6/AnYrTD8Hzb5VD
-    QXBggyXwdcQXQPiMi6c7y8uj3Pcd7yueahuyAYUSl8VyT/f38sj4WN+DQ0MOiNdx
-    5/4nJR89yE3N7rVPRWqMRah9dPuW9nqvC7lZysOSFG9PUvbcOeVImdejUkZ1hL1+
-    JOqMfpdcsP7/yXp1RNtOvi3SITKtQ86z1f1B3uw==
+    t=1519834012; b=ZjuxhBGDOJJA5CMsqJOgH8tMycm1Acjl+pd2Sju1y5QgR+B
+    t+abrfqZweraE29es5YR7jV/FBGvwq4z2kY3YeumvNoIa4e3LTjzX3788Wv48d9Y
+    UK39n+dBTOReVtd6xvtoefwEm8jQqzP6eoG4VPhopKXeVwkBxwMT+Xo/OzhIR3Yi
+    w8UHl4Tm68liEu7QHapq2os6HoDG3NXsdI6WfdtGU7A3roknCXkK3/brK1CW0AK4
+    92RyektgwN0XgFRa9bJS5StPOoAEj3z6VcaAYWggI/Rf7xBQGJCiQMgeqvFe2jR0
+    zgF/kaWkzS5F0qZqbgKm0ZfhDHPdiF2HRfscSQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834020; bh=AHs3I7CE7Qm6TrTkFaM
-    0p1l3Wk8n/h0NVP22lMBVrrw=; b=qMHwGcTooDy8naYmyTc0aRfqPeYOpW2KF5n
-    6rGhPSWmtlLzJB7QPtiqcF/ipK2Rs+eHLaFG1wZ/04Ddd0EClPEfcJps/eMsGqVo
-    2t6zrQLJPLB1tTMyJF8VZxkoaB1fxdfEa/wkPVCWV+GHXToNYHEmu43g9lSi7gLW
-    /Owz/PllAf/h2HxTgnNLJabWy2KKVJyxQ0M+EZYofOayvgdsIrPd4Vd9T7sh/exA
-    Q1MCxeWHYXz5XTuH+yMVA7h/H4kExJgGRnLIAbR5jPLH11PWVyIaL3Qvl9ctQI6I
-    fMVTtsoGviW8AvhDkkcNRQ2yH+adWogcHWHn8nUAWXlEUb4PjDA==
+    :sender:list-id; s=arctest; t=1519834012; bh=sz4SFgNkwcbQsnLMVEe
+    oI3FkzgKMAObh8+Z2OM/WEto=; b=K9whoYlEhpG4vptYvcXvy4RuHNGSouLB+Rd
+    0X8jcDdMaCgW8DD9T3mj01X7RlE3PEMgBDkXlQxpjkze4KD97IxwRPbSPcrIwAPB
+    a4n6JzJGyKm+Up9kclWn9tOcc7YzgFZVGI0PpiQQHJlrzly1CXjbgjSLsuZpVeGn
+    2WxJwZtUmgOFWo+g2UpjTTVqqV+BDsl/k9G2+80t/hZrSt7N/ZfQBqfMyNic+xFq
+    Vzg0wQXiFkihSrGJ19+7qNAxxEzhjTbQ4poE7SiAruamn2FXR1Pp1LrXAzh0MLYI
+    Ed9AVdNnQEiGjrn5flSRyE3vcexNEaCORTOpHfH1mIpYXzcb+PQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932241AbeB1QF1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:27 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34887 "EHLO
+        id S934522AbeB1QFc (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:05:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34890 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934501AbeB1QF0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:26 -0500
+        by vger.kernel.org with ESMTP id S934501AbeB1QFa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:30 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
-        "David Howells" <dhowells@redhat.com>,
-        "James Morris" <james.l.morris@oracle.com>
+CC: akpm@linux-foundation.org, "Jerome Brunet" <jbrunet@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Arnaud Patard" <arnaud.patard@rtp-net.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.433839646@decadent.org.uk>
+Message-ID: <lsq.1519831218.831406354@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 072/254] ASN.1: check for error from ASN1_OP_END__ACT
- actions
+Subject: [PATCH 3.16 167/254] net: stmmac: enable EEE in MII, GMII or
+ RGMII only
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,43 +81,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 81a7be2cd69b412ab6aeacfe5ebf1bb6e5bce955 upstream.
+commit 879626e3a52630316d817cbda7cec9a5446d1d82 upstream.
 
-asn1_ber_decoder() was ignoring errors from actions associated with the
-opcodes ASN1_OP_END_SEQ_ACT, ASN1_OP_END_SET_ACT,
-ASN1_OP_END_SEQ_OF_ACT, and ASN1_OP_END_SET_OF_ACT.  In practice, this
-meant the pkcs7_note_signed_info() action (since that was the only user
-of those opcodes).  Fix it by checking for the error, just like the
-decoder does for actions associated with the other opcodes.
+Note in the databook - Section 4.4 - EEE :
+" The EEE feature is not supported when the MAC is configured to use the
+TBI, RTBI, SMII, RMII or SGMII single PHY interface. Even if the MAC
+supports multiple PHY interfaces, you should activate the EEE mode only
+when the MAC is operating with GMII, MII, or RGMII interface."
 
-This bug allowed users to leak slab memory by repeatedly trying to add a
-specially crafted "pkcs7_test" key (requires CONFIG_PKCS7_TEST_KEY).
+Applying this restriction solves a stability issue observed on Amlogic
+gxl platforms operating with RMII interface and the internal PHY.
 
-In theory, this bug could also be used to bypass module signature
-verification, by providing a PKCS#7 message that is misparsed such that
-a signature's ->authattrs do not contain its ->msgdigest.  But it
-doesn't seem practical in normal cases, due to restrictions on the
-format of the ->authattrs.
-
-Fixes: 42d5ec27f873 ("X.509: Add an ASN.1 decoder")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+Fixes: 83bf79b6bb64 ("stmmac: disable at run-time the EEE if not supported")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Arnaud Patard <arnaud.patard@rtp-net.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjst context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- lib/asn1_decoder.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/lib/asn1_decoder.c
-+++ b/lib/asn1_decoder.c
-@@ -427,6 +427,8 @@ next_op:
- 			else
- 				act = machine[pc + 1];
- 			ret = actions[act](context, hdr, 0, data + tdp, len);
-+			if (ret < 0)
-+				return ret;
- 		}
- 		pc += asn1_op_lengths[op];
- 		goto next_op;
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -275,8 +275,14 @@ static void stmmac_eee_ctrl_timer(unsign
+  */
+ bool stmmac_eee_init(struct stmmac_priv *priv)
+ {
++	int interface = priv->plat->interface;
+ 	bool ret = false;
+ 
++	if ((interface != PHY_INTERFACE_MODE_MII) &&
++	    (interface != PHY_INTERFACE_MODE_GMII) &&
++	    !phy_interface_mode_is_rgmii(interface))
++		goto out;
++
+ 	/* Using PCS we cannot dial with the phy registers at this stage
+ 	 * so we do not support extra feature like EEE.
+ 	 */
