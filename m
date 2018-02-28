@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935507AbeB1WcN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:32:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44416 "EHLO
+        id S935519AbeB1WcZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:32:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44522 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935433AbeB1WcJ (ORCPT
+        with ESMTP id S935479AbeB1WcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:32:09 -0500
+        Wed, 28 Feb 2018 17:32:11 -0500
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-mm@kvack.org
 Cc: Matthew Wilcox <mawilcox@microsoft.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] s390: Use _refcount for pgtables
-Date: Wed, 28 Feb 2018 14:31:54 -0800
-Message-Id: <20180228223157.9281-2-willy@infradead.org>
+Subject: [PATCH v3 4/4] mm: Mark pages in use for page tables
+Date: Wed, 28 Feb 2018 14:31:57 -0800
+Message-Id: <20180228223157.9281-5-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228223157.9281-1-willy@infradead.org>
 References: <20180228223157.9281-1-willy@infradead.org>
@@ -24,102 +24,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-s390 borrows the storage used for _mapcount in struct page in order to
-account whether the bottom or top half is being used for 2kB page
-tables.  I want to use that for something else, so use the top byte of
-_refcount instead of the bottom byte of _mapcount.  _refcount may
-temporarily be incremented by other CPUs that see a stale pointer to
-this page in the page cache, but each CPU can only increment it by one,
-and there are no systems with 2^24 CPUs today, so they will not change
-the upper byte of _refcount.  We do have to be a little careful not to
-lose any of their writes (as they will subsequently decrement the
-counter).
+Define a new PageTable bit in the page_type and use it to mark pages in
+use as page tables.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- arch/s390/mm/pgalloc.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ include/linux/mm.h         | 2 ++
+ include/linux/page-flags.h | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
-index cb364153c43c..412c5f48a8e7 100644
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -189,14 +189,15 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
- 		if (!list_empty(&mm->context.pgtable_list)) {
- 			page = list_first_entry(&mm->context.pgtable_list,
- 						struct page, lru);
--			mask = atomic_read(&page->_mapcount);
-+			mask = atomic_read(&page->_refcount) >> 24;
- 			mask = (mask | (mask >> 4)) & 3;
- 			if (mask != 3) {
- 				table = (unsigned long *) page_to_phys(page);
- 				bit = mask & 1;		/* =1 -> second 2K */
- 				if (bit)
- 					table += PTRS_PER_PTE;
--				atomic_xor_bits(&page->_mapcount, 1U << bit);
-+				atomic_xor_bits(&page->_refcount,
-+							1U << (bit + 24));
- 				list_del(&page->lru);
- 			}
- 		}
-@@ -217,12 +218,12 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
- 	table = (unsigned long *) page_to_phys(page);
- 	if (mm_alloc_pgste(mm)) {
- 		/* Return 4K page table with PGSTEs */
--		atomic_set(&page->_mapcount, 3);
-+		atomic_xor_bits(&page->_refcount, 3 << 24);
- 		memset64((u64 *)table, _PAGE_INVALID, PTRS_PER_PTE);
- 		memset64((u64 *)table + PTRS_PER_PTE, 0, PTRS_PER_PTE);
- 	} else {
- 		/* Return the first 2K fragment of the page */
--		atomic_set(&page->_mapcount, 1);
-+		atomic_xor_bits(&page->_refcount, 1 << 24);
- 		memset64((u64 *)table, _PAGE_INVALID, 2 * PTRS_PER_PTE);
- 		spin_lock_bh(&mm->context.lock);
- 		list_add(&page->lru, &mm->context.pgtable_list);
-@@ -241,7 +242,8 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
- 		/* Free 2K page table fragment of a 4K page */
- 		bit = (__pa(table) & ~PAGE_MASK)/(PTRS_PER_PTE*sizeof(pte_t));
- 		spin_lock_bh(&mm->context.lock);
--		mask = atomic_xor_bits(&page->_mapcount, 1U << bit);
-+		mask = atomic_xor_bits(&page->_refcount, 1U << (bit + 24));
-+		mask >>= 24;
- 		if (mask & 3)
- 			list_add(&page->lru, &mm->context.pgtable_list);
- 		else
-@@ -252,7 +254,6 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
- 	}
- 
- 	pgtable_page_dtor(page);
--	atomic_set(&page->_mapcount, -1);
- 	__free_page(page);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..7a15042d6828 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1829,6 +1829,7 @@ static inline bool pgtable_page_ctor(struct page *page)
+ {
+ 	if (!ptlock_init(page))
+ 		return false;
++	__SetPageTable(page);
+ 	inc_zone_page_state(page, NR_PAGETABLE);
+ 	return true;
+ }
+@@ -1836,6 +1837,7 @@ static inline bool pgtable_page_ctor(struct page *page)
+ static inline void pgtable_page_dtor(struct page *page)
+ {
+ 	pte_lock_deinit(page);
++	__ClearPageTable(page);
+ 	dec_zone_page_state(page, NR_PAGETABLE);
  }
  
-@@ -273,7 +274,8 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table,
- 	}
- 	bit = (__pa(table) & ~PAGE_MASK) / (PTRS_PER_PTE*sizeof(pte_t));
- 	spin_lock_bh(&mm->context.lock);
--	mask = atomic_xor_bits(&page->_mapcount, 0x11U << bit);
-+	mask = atomic_xor_bits(&page->_refcount, 0x11U << (bit + 24));
-+	mask >>= 24;
- 	if (mask & 3)
- 		list_add_tail(&page->lru, &mm->context.pgtable_list);
- 	else
-@@ -295,12 +297,13 @@ static void __tlb_remove_table(void *_table)
- 		break;
- 	case 1:		/* lower 2K of a 4K page table */
- 	case 2:		/* higher 2K of a 4K page table */
--		if (atomic_xor_bits(&page->_mapcount, mask << 4) != 0)
-+		mask = atomic_xor_bits(&page->_refcount, mask << (4 + 24));
-+		mask >>= 24;
-+		if (mask != 0)
- 			break;
- 		/* fallthrough */
- 	case 3:		/* 4K page table with pgstes */
- 		pgtable_page_dtor(page);
--		atomic_set(&page->_mapcount, -1);
- 		__free_page(page);
- 		break;
- 	}
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 8142ab716e90..ac6bab90849c 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -644,6 +644,7 @@ PAGEFLAG_FALSE(DoubleMap)
+ #define PG_balloon	0x00000100
+ #define PG_kmemcg	0x00000200
+ #define PG_vmalloc	0x00000400
++#define PG_table	0x00000800
+ 
+ #define PageType(page, flag)						\
+ 	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+@@ -687,6 +688,11 @@ PAGE_TYPE_OPS(Kmemcg, kmemcg)
+  */
+ PAGE_TYPE_OPS(Vmalloc, vmalloc)
+ 
++/*
++ * Marks pages in use as page tables.
++ */
++PAGE_TYPE_OPS(Table, table)
++
+ extern bool is_free_buddy_page(struct page *page);
+ 
+ __PAGEFLAG(Isolated, isolated, PF_ANY);
 -- 
 2.16.1
