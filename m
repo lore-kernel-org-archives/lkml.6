@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965114AbeB1XdO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:33:14 -0500
-Received: from mail-ot0-f169.google.com ([74.125.82.169]:33810 "EHLO
-        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965090AbeB1XdH (ORCPT
+        id S965124AbeB1Xde (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:33:34 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:47019 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965097AbeB1XdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 18:33:07 -0500
-X-Google-Smtp-Source: AG47ELv5FasK7fJswOE3xxczD5oafkHaUDVSVCh7oB/UxX5PElAMh+bRzE5aiNNraF9P4dW9joBRvg==
+X-Google-Smtp-Source: AG47ELtV2KN5vWuikyDxv/IMY528/SZKdRg5WRt2kmq7Em03ZS1X8hE0eRhqPaCoTFRtzvfj81lvjg==
 From: Rob Herring <robh@kernel.org>
 To: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Frank Rowand <frowand.list@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] scripts/dtc: generate lexer and parser during build instead of shipping
-Date: Wed, 28 Feb 2018 17:32:47 -0600
-Message-Id: <20180228233249.26281-5-robh@kernel.org>
+Subject: [PATCH 5/6] scripts/dtc: Update to upstream version v1.4.6-9-gaadd0b65c987
+Date: Wed, 28 Feb 2018 17:32:48 -0600
+Message-Id: <20180228233249.26281-6-robh@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180228233249.26281-1-robh@kernel.org>
 References: <20180228233249.26281-1-robh@kernel.org>
@@ -22,4783 +22,2272 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the kernel build supports flex and bison, remove the _shipped
-files and generate them during the build instead.
+This adds the following commits from upstream:
 
-Based on Masahiro's original patch.
+aadd0b65c987 checks: centralize printing of property names in failure messages
+88960e398907 checks: centralize printing of node path in check_msg
+f1879e1a50eb Add limited read-only support for older (V2 and V3) device tree to libfdt.
+37dea76e9700 srcpos: drop special handling of tab
+65893da4aee0 libfdt: overlay: Add missing license
+962a45ca034d Avoid installing pylibfdt when dependencies are missing
+cd6ea1b2bea6 Makefile: Split INSTALL out into INSTALL_{PROGRAM,LIB,DATA,SCRIPT}
+51b3a16338df Makefile.tests: Add LIBDL make(1) variable for portability sake
+333d533a8f4d Attempt to auto-detect stat(1) being used if not given proper invocation
+e54388015af1 dtc: Bump version to v1.4.6
+a1fe86f380cb fdtoverlay: Switch from using alloca to malloc
+c8d5472de3ff tests: Improve compatibility with other platforms
+c81d389a10cc checks: add chosen node checks
+e671852042a7 checks: add aliases node checks
+d0c44ebe3f42 checks: check for #{size,address}-cells without child nodes
+18a3d84bb802 checks: add string list check for *-names properties
+8fe94fd6f19f checks: add string list check
+6c5730819604 checks: add a string check for 'label' property
+a384191eba09 checks: fix sound-dai phandle with arg property check
+b260c4f610c0 Fix ambiguous grammar for devicetree rule
+fe667e382bac tests: Add some basic tests for the pci_bridge checks
+7975f6422260 Fix widespread incorrect use of strneq(), replace with new strprefixeq()
+fca296445eab Add strstarts() helper function
+cc392f089007 tests: Check non-matching cases for fdt_node_check_compatible()
+bba26a5291c8 livetree: avoid assertion of orphan phandles with overlays
+c8f8194d76cc implement strnlen for systems that need it
+c8b38f65fdec libfdt: Remove leading underscores from identifiers
+3b62fdaebfe5 Remove leading underscores from identifiers
+2d45d1c5c65e Replace FDT_VERSION() with stringify()
+2e6fe5a107b5 Fix some errors in comments
+b0ae9e4b0ceb tests: Correct warning in sw_tree1.c
 
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Commit c8b38f65fdec upstream ("libfdt: Remove leading underscores from
+identifiers") changed the multiple inclusion define protection, so the
+kernel's libfdt_env.h needs the corresponding update.
+
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- scripts/dtc/Makefile                 |    6 +-
- scripts/dtc/dtc-lexer.lex.c_shipped  | 2259 ---------------------------------
- scripts/dtc/dtc-parser.tab.c_shipped | 2321 ----------------------------------
- scripts/dtc/dtc-parser.tab.h_shipped |  125 --
- scripts/dtc/update-dtc-source.sh     |    5 -
- 5 files changed, 4 insertions(+), 4712 deletions(-)
- delete mode 100644 scripts/dtc/dtc-lexer.lex.c_shipped
- delete mode 100644 scripts/dtc/dtc-parser.tab.c_shipped
- delete mode 100644 scripts/dtc/dtc-parser.tab.h_shipped
 
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 0dc922bb7aea..a88b8c9bf46d 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -28,5 +28,7 @@ HOSTCFLAGS_dtc-parser.tab.o := $(HOSTCFLAGS_DTC)
- # dependencies on generated files need to be listed explicitly
- $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
+As usual, this is a copy from upstream, so nothing to review here except 
+whether the script copied things correctly.
+
+ include/linux/libfdt_env.h           |   6 +-
+
+Except this file I had to fix manually.
+
+ scripts/dtc/checks.c                 | 439 +++++++++++++++++++++++------------
+ scripts/dtc/dtc-parser.y             |  17 +-
+ scripts/dtc/dtc.c                    |   7 +-
+ scripts/dtc/dtc.h                    |  11 +-
+ scripts/dtc/flattree.c               |   2 +-
+ scripts/dtc/libfdt/fdt.c             |  13 +-
+ scripts/dtc/libfdt/fdt.h             |   6 +-
+ scripts/dtc/libfdt/fdt_overlay.c     |  51 ++++
+ scripts/dtc/libfdt/fdt_ro.c          | 132 ++++++++---
+ scripts/dtc/libfdt/fdt_rw.c          |  90 +++----
+ scripts/dtc/libfdt/fdt_sw.c          |  24 +-
+ scripts/dtc/libfdt/fdt_wip.c         |  10 +-
+ scripts/dtc/libfdt/libfdt.h          |  37 +--
+ scripts/dtc/libfdt/libfdt_env.h      |  33 ++-
+ scripts/dtc/libfdt/libfdt_internal.h |  32 +--
+ scripts/dtc/livetree.c               |  10 +-
+ scripts/dtc/srcpos.c                 |   5 -
+ scripts/dtc/srcpos.h                 |   6 +-
+ scripts/dtc/util.h                   |   9 +-
+ scripts/dtc/version_gen.h            |   2 +-
+ 21 files changed, 622 insertions(+), 320 deletions(-)
+
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index 14997285e53d..c6ac1fe7ec68 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _LIBFDT_ENV_H
+-#define _LIBFDT_ENV_H
++#ifndef LIBFDT_ENV_H
++#define LIBFDT_ENV_H
  
--# generated files need to be cleaned explicitly
--clean-files	:= dtc-lexer.lex.c dtc-parser.tab.c dtc-parser.tab.h
-+# generated files need to include *.cmd and be cleaned explicitly
-+generated-files	:= dtc-lexer.lex.c dtc-parser.tab.c dtc-parser.tab.h
-+targets		:= $(generated-files)
-+clean-files	:= $(generated-files)
-diff --git a/scripts/dtc/dtc-lexer.lex.c_shipped b/scripts/dtc/dtc-lexer.lex.c_shipped
-deleted file mode 100644
-index 011bb9632ff2..000000000000
---- a/scripts/dtc/dtc-lexer.lex.c_shipped
-+++ /dev/null
-@@ -1,2259 +0,0 @@
--#line 2 "dtc-lexer.lex.c"
--
--#line 4 "dtc-lexer.lex.c"
--
--#define  YY_INT_ALIGNED short int
--
--/* A lexical scanner generated by flex */
--
--#define FLEX_SCANNER
--#define YY_FLEX_MAJOR_VERSION 2
--#define YY_FLEX_MINOR_VERSION 6
--#define YY_FLEX_SUBMINOR_VERSION 1
--#if YY_FLEX_SUBMINOR_VERSION > 0
--#define FLEX_BETA
--#endif
--
--/* First, we deal with  platform-specific or compiler-specific issues. */
--
--/* begin standard C headers. */
--#include <stdio.h>
--#include <string.h>
--#include <errno.h>
--#include <stdlib.h>
--
--/* end standard C headers. */
--
--/* flex integer type definitions */
--
--#ifndef FLEXINT_H
--#define FLEXINT_H
--
--/* C99 systems have <inttypes.h>. Non-C99 systems may or may not. */
--
--#if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
--
--/* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
-- * if you want the limit (max/min) macros for int types. 
-- */
--#ifndef __STDC_LIMIT_MACROS
--#define __STDC_LIMIT_MACROS 1
--#endif
--
--#include <inttypes.h>
--typedef int8_t flex_int8_t;
--typedef uint8_t flex_uint8_t;
--typedef int16_t flex_int16_t;
--typedef uint16_t flex_uint16_t;
--typedef int32_t flex_int32_t;
--typedef uint32_t flex_uint32_t;
--#else
--typedef signed char flex_int8_t;
--typedef short int flex_int16_t;
--typedef int flex_int32_t;
--typedef unsigned char flex_uint8_t; 
--typedef unsigned short int flex_uint16_t;
--typedef unsigned int flex_uint32_t;
--
--/* Limits of integral types. */
--#ifndef INT8_MIN
--#define INT8_MIN               (-128)
--#endif
--#ifndef INT16_MIN
--#define INT16_MIN              (-32767-1)
--#endif
--#ifndef INT32_MIN
--#define INT32_MIN              (-2147483647-1)
--#endif
--#ifndef INT8_MAX
--#define INT8_MAX               (127)
--#endif
--#ifndef INT16_MAX
--#define INT16_MAX              (32767)
--#endif
--#ifndef INT32_MAX
--#define INT32_MAX              (2147483647)
--#endif
--#ifndef UINT8_MAX
--#define UINT8_MAX              (255U)
--#endif
--#ifndef UINT16_MAX
--#define UINT16_MAX             (65535U)
--#endif
--#ifndef UINT32_MAX
--#define UINT32_MAX             (4294967295U)
--#endif
--
--#endif /* ! C99 */
--
--#endif /* ! FLEXINT_H */
--
--/* TODO: this is always defined, so inline it */
--#define yyconst const
--
--#if defined(__GNUC__) && __GNUC__ >= 3
--#define yynoreturn __attribute__((__noreturn__))
--#else
--#define yynoreturn
--#endif
--
--/* Returned upon end-of-file. */
--#define YY_NULL 0
--
--/* Promotes a possibly negative, possibly signed char to an unsigned
-- * integer for use as an array index.  If the signed char is negative,
-- * we want to instead treat it as an 8-bit unsigned char, hence the
-- * double cast.
-- */
--#define YY_SC_TO_UI(c) ((unsigned int) (unsigned char) c)
--
--/* Enter a start condition.  This macro really ought to take a parameter,
-- * but we do it the disgusting crufty way forced on us by the ()-less
-- * definition of BEGIN.
-- */
--#define BEGIN (yy_start) = 1 + 2 *
--
--/* Translate the current start state into a value that can be later handed
-- * to BEGIN to return to the state.  The YYSTATE alias is for lex
-- * compatibility.
-- */
--#define YY_START (((yy_start) - 1) / 2)
--#define YYSTATE YY_START
--
--/* Action number for EOF rule of a given start state. */
--#define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
--
--/* Special action meaning "start processing a new file". */
--#define YY_NEW_FILE yyrestart(yyin  )
--
--#define YY_END_OF_BUFFER_CHAR 0
--
--/* Size of default input buffer. */
--#ifndef YY_BUF_SIZE
--#ifdef __ia64__
--/* On IA-64, the buffer size is 16k, not 8k.
-- * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
-- * Ditto for the __ia64__ case accordingly.
-- */
--#define YY_BUF_SIZE 32768
--#else
--#define YY_BUF_SIZE 16384
--#endif /* __ia64__ */
--#endif
--
--/* The state buf must be large enough to hold one state per character in the main buffer.
-- */
--#define YY_STATE_BUF_SIZE   ((YY_BUF_SIZE + 2) * sizeof(yy_state_type))
--
--#ifndef YY_TYPEDEF_YY_BUFFER_STATE
--#define YY_TYPEDEF_YY_BUFFER_STATE
--typedef struct yy_buffer_state *YY_BUFFER_STATE;
--#endif
--
--#ifndef YY_TYPEDEF_YY_SIZE_T
--#define YY_TYPEDEF_YY_SIZE_T
--typedef size_t yy_size_t;
--#endif
--
--extern int yyleng;
--
--extern FILE *yyin, *yyout;
--
--#define EOB_ACT_CONTINUE_SCAN 0
--#define EOB_ACT_END_OF_FILE 1
--#define EOB_ACT_LAST_MATCH 2
--
--    #define YY_LESS_LINENO(n)
--    #define YY_LINENO_REWIND_TO(ptr)
--    
--/* Return all but the first "n" matched characters back to the input stream. */
--#define yyless(n) \
--	do \
--		{ \
--		/* Undo effects of setting up yytext. */ \
--        int yyless_macro_arg = (n); \
--        YY_LESS_LINENO(yyless_macro_arg);\
--		*yy_cp = (yy_hold_char); \
--		YY_RESTORE_YY_MORE_OFFSET \
--		(yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
--		YY_DO_BEFORE_ACTION; /* set up yytext again */ \
--		} \
--	while ( 0 )
--
--#define unput(c) yyunput( c, (yytext_ptr)  )
--
--#ifndef YY_STRUCT_YY_BUFFER_STATE
--#define YY_STRUCT_YY_BUFFER_STATE
--struct yy_buffer_state
--	{
--	FILE *yy_input_file;
--
--	char *yy_ch_buf;		/* input buffer */
--	char *yy_buf_pos;		/* current position in input buffer */
--
--	/* Size of input buffer in bytes, not including room for EOB
--	 * characters.
--	 */
--	int yy_buf_size;
--
--	/* Number of characters read into yy_ch_buf, not including EOB
--	 * characters.
--	 */
--	int yy_n_chars;
--
--	/* Whether we "own" the buffer - i.e., we know we created it,
--	 * and can realloc() it to grow it, and should free() it to
--	 * delete it.
--	 */
--	int yy_is_our_buffer;
--
--	/* Whether this is an "interactive" input source; if so, and
--	 * if we're using stdio for input, then we want to use getc()
--	 * instead of fread(), to make sure we stop fetching input after
--	 * each newline.
--	 */
--	int yy_is_interactive;
--
--	/* Whether we're considered to be at the beginning of a line.
--	 * If so, '^' rules will be active on the next match, otherwise
--	 * not.
--	 */
--	int yy_at_bol;
--
--    int yy_bs_lineno; /**< The line count. */
--    int yy_bs_column; /**< The column count. */
--
--	/* Whether to try to fill the input buffer when we reach the
--	 * end of it.
--	 */
--	int yy_fill_buffer;
--
--	int yy_buffer_status;
--
--#define YY_BUFFER_NEW 0
--#define YY_BUFFER_NORMAL 1
--	/* When an EOF's been seen but there's still some text to process
--	 * then we mark the buffer as YY_EOF_PENDING, to indicate that we
--	 * shouldn't try reading from the input source any more.  We might
--	 * still have a bunch of tokens to match, though, because of
--	 * possible backing-up.
--	 *
--	 * When we actually see the EOF, we change the status to "new"
--	 * (via yyrestart()), so that the user can continue scanning by
--	 * just pointing yyin at a new input file.
--	 */
--#define YY_BUFFER_EOF_PENDING 2
--
--	};
--#endif /* !YY_STRUCT_YY_BUFFER_STATE */
--
--/* Stack of input buffers. */
--static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */
--static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */
--static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
--
--/* We provide macros for accessing buffer states in case in the
-- * future we want to put the buffer states in a more general
-- * "scanner state".
-- *
-- * Returns the top of the stack, or NULL.
-- */
--#define YY_CURRENT_BUFFER ( (yy_buffer_stack) \
--                          ? (yy_buffer_stack)[(yy_buffer_stack_top)] \
--                          : NULL)
--
--/* Same as previous macro, but useful when we know that the buffer stack is not
-- * NULL or when we need an lvalue. For internal use only.
-- */
--#define YY_CURRENT_BUFFER_LVALUE (yy_buffer_stack)[(yy_buffer_stack_top)]
--
--/* yy_hold_char holds the character lost when yytext is formed. */
--static char yy_hold_char;
--static int yy_n_chars;		/* number of characters read into yy_ch_buf */
--int yyleng;
--
--/* Points to current character in buffer. */
--static char *yy_c_buf_p = NULL;
--static int yy_init = 0;		/* whether we need to initialize */
--static int yy_start = 0;	/* start state number */
--
--/* Flag which is used to allow yywrap()'s to do buffer switches
-- * instead of setting up a fresh yyin.  A bit of a hack ...
-- */
--static int yy_did_buffer_switch_on_eof;
--
--void yyrestart (FILE *input_file  );
--void yy_switch_to_buffer (YY_BUFFER_STATE new_buffer  );
--YY_BUFFER_STATE yy_create_buffer (FILE *file,int size  );
--void yy_delete_buffer (YY_BUFFER_STATE b  );
--void yy_flush_buffer (YY_BUFFER_STATE b  );
--void yypush_buffer_state (YY_BUFFER_STATE new_buffer  );
--void yypop_buffer_state (void );
--
--static void yyensure_buffer_stack (void );
--static void yy_load_buffer_state (void );
--static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
--
--#define YY_FLUSH_BUFFER yy_flush_buffer(YY_CURRENT_BUFFER )
--
--YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
--YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
--YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,int len  );
--
--void *yyalloc (yy_size_t  );
--void *yyrealloc (void *,yy_size_t  );
--void yyfree (void *  );
--
--#define yy_new_buffer yy_create_buffer
--
--#define yy_set_interactive(is_interactive) \
--	{ \
--	if ( ! YY_CURRENT_BUFFER ){ \
--        yyensure_buffer_stack (); \
--		YY_CURRENT_BUFFER_LVALUE =    \
--            yy_create_buffer(yyin,YY_BUF_SIZE ); \
--	} \
--	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
--	}
--
--#define yy_set_bol(at_bol) \
--	{ \
--	if ( ! YY_CURRENT_BUFFER ){\
--        yyensure_buffer_stack (); \
--		YY_CURRENT_BUFFER_LVALUE =    \
--            yy_create_buffer(yyin,YY_BUF_SIZE ); \
--	} \
--	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
--	}
--
--#define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
--
--/* Begin user sect3 */
--
--#define yywrap() (/*CONSTCOND*/1)
--#define YY_SKIP_YYWRAP
--
--typedef unsigned char YY_CHAR;
--
--FILE *yyin = NULL, *yyout = NULL;
--
--typedef int yy_state_type;
--
--extern int yylineno;
--
--int yylineno = 1;
--
--extern char *yytext;
--#ifdef yytext_ptr
--#undef yytext_ptr
--#endif
--#define yytext_ptr yytext
--
--static yy_state_type yy_get_previous_state (void );
--static yy_state_type yy_try_NUL_trans (yy_state_type current_state  );
--static int yy_get_next_buffer (void );
--static void yynoreturn yy_fatal_error (yyconst char* msg  );
--
--/* Done after the current pattern has been matched and before the
-- * corresponding action - sets up yytext.
-- */
--#define YY_DO_BEFORE_ACTION \
--	(yytext_ptr) = yy_bp; \
--	yyleng = (int) (yy_cp - yy_bp); \
--	(yy_hold_char) = *yy_cp; \
--	*yy_cp = '\0'; \
--	(yy_c_buf_p) = yy_cp;
--
--#define YY_NUM_RULES 31
--#define YY_END_OF_BUFFER 32
--/* This struct is not used in this scanner,
--   but its presence is necessary. */
--struct yy_trans_info
--	{
--	flex_int32_t yy_verify;
--	flex_int32_t yy_nxt;
--	};
--static yyconst flex_int16_t yy_accept[166] =
--    {   0,
--        0,    0,    0,    0,    0,    0,    0,    0,   32,   30,
--       19,   19,   30,   30,   30,   30,   30,   30,   30,   30,
--       30,   30,   30,   30,   30,   30,   16,   17,   17,   30,
--       17,   11,   11,   19,   27,    0,    3,    0,   28,   13,
--        0,    0,   12,    0,    0,    0,    0,    0,    0,    0,
--        0,   22,   24,   26,   25,   23,    0,   10,   29,    0,
--        0,    0,   15,   15,   17,   17,   17,   11,   11,   11,
--        0,   13,    0,   12,    0,    0,    0,   21,    0,    0,
--        0,    0,    0,    0,    0,    0,    0,   17,   11,   11,
--       11,    0,   14,   20,    0,    0,    0,    0,    0,    0,
--
--        0,    0,    0,    0,   17,    0,    0,    0,    0,    0,
--        0,    0,    0,    0,    0,   17,    7,    0,    0,    0,
--        0,    0,    0,    0,    2,    0,    0,    0,    0,    0,
--        0,    0,    0,    0,    4,   18,    0,    0,    5,    2,
--        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
--        0,    0,    1,    0,    0,    0,    0,    6,    9,    0,
--        0,    0,    0,    8,    0
--    } ;
--
--static yyconst YY_CHAR yy_ec[256] =
--    {   0,
--        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
--        4,    4,    4,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    2,    5,    6,    7,    1,    1,    8,    9,    1,
--        1,   10,   11,   11,   12,   11,   13,   14,   15,   16,
--       16,   16,   16,   16,   16,   16,   16,   17,    1,   18,
--       19,   20,   11,   11,   21,   21,   21,   21,   21,   21,
--       22,   22,   22,   22,   22,   23,   22,   22,   22,   22,
--       22,   22,   22,   22,   24,   22,   22,   25,   22,   22,
--        1,   26,   27,    1,   22,    1,   21,   28,   29,   30,
--
--       31,   21,   32,   22,   33,   22,   22,   34,   35,   36,
--       37,   38,   22,   39,   40,   41,   42,   43,   22,   25,
--       44,   22,   45,   46,   47,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1
--    } ;
--
--static yyconst YY_CHAR yy_meta[48] =
--    {   0,
--        1,    1,    1,    1,    1,    1,    2,    3,    1,    2,
--        2,    2,    4,    5,    5,    5,    6,    1,    1,    1,
--        7,    8,    8,    8,    8,    1,    1,    7,    7,    7,
--        7,    8,    8,    8,    8,    8,    8,    8,    8,    8,
--        8,    8,    8,    8,    3,    1,    4
--    } ;
--
--static yyconst flex_uint16_t yy_base[180] =
--    {   0,
--        0,  393,   35,  392,   66,  391,   38,  107,  397,  401,
--       55,  113,  377,  112,  111,  111,  114,   42,  376,  106,
--      377,  347,  126,  120,    0,  147,  401,    0,  124,    0,
--      137,  158,  170,  163,  401,  153,  401,  389,  401,    0,
--      378,  120,  401,  131,  380,  386,  355,  139,  351,  355,
--      351,  401,  401,  401,  401,  401,  367,  401,  401,  185,
--      350,  346,  401,  364,    0,  185,  347,  189,  356,  355,
--        0,    0,  330,  180,  366,  141,  372,  361,  332,  338,
--      331,  341,  334,  326,  205,  331,  337,  329,  401,  341,
--      167,  316,  401,  349,  348,  320,  328,  346,  180,  318,
--
--      324,  209,  324,  320,  322,  342,  338,  309,  306,  315,
--      305,  315,  312,  192,  342,  341,  401,  293,  306,  282,
--      268,  252,  255,  203,  285,  282,  272,  268,  252,  233,
--      232,  239,  208,  107,  401,  401,  238,  211,  401,  211,
--      212,  208,  228,  203,  215,  207,  233,  222,  212,  211,
--      203,  227,  401,  237,  225,  204,  185,  401,  401,  149,
--      128,   88,   42,  401,  401,  253,  259,  267,  271,  275,
--      281,  288,  292,  300,  308,  312,  318,  326,  334
--    } ;
--
--static yyconst flex_int16_t yy_def[180] =
--    {   0,
--      165,    1,    1,    3,  165,    5,    1,    1,  165,  165,
--      165,  165,  165,  166,  167,  168,  165,  165,  165,  165,
--      169,  165,  165,  165,  170,  169,  165,  171,  172,  171,
--      171,  165,  165,  165,  165,  166,  165,  166,  165,  173,
--      165,  168,  165,  168,  174,  175,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  169,  165,  165,  165,
--      165,  165,  165,  169,  171,  172,  171,  165,  165,  165,
--      176,  173,  177,  168,  174,  174,  175,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  171,  165,  165,
--      176,  177,  165,  165,  165,  165,  165,  165,  165,  165,
--
--      165,  165,  165,  165,  171,  165,  165,  165,  165,  165,
--      165,  165,  165,  178,  165,  171,  165,  165,  165,  165,
--      165,  165,  165,  178,  165,  178,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  179,  165,  165,
--      165,  179,  165,  179,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,    0,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165
--    } ;
--
--static yyconst flex_uint16_t yy_nxt[449] =
--    {   0,
--       10,   11,   12,   11,   13,   14,   10,   15,   16,   10,
--       10,   10,   17,   10,   10,   10,   10,   18,   19,   20,
--       21,   21,   21,   21,   21,   10,   10,   21,   21,   21,
--       21,   21,   21,   21,   21,   21,   21,   21,   21,   21,
--       21,   21,   21,   21,   10,   22,   10,   24,   25,   25,
--       25,   32,   33,   33,  164,   26,   34,   34,   34,   52,
--       53,   27,   26,   26,   26,   26,   10,   11,   12,   11,
--       13,   14,   28,   15,   16,   28,   28,   28,   24,   28,
--       28,   28,   10,   18,   19,   20,   29,   29,   29,   29,
--       29,   30,   10,   29,   29,   29,   29,   29,   29,   29,
--
--       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
--       10,   22,   10,   23,   34,   34,   34,   37,   39,   43,
--       32,   33,   33,   45,   55,   56,   46,   60,   43,   45,
--       65,  163,   46,   65,   65,   65,   44,   38,   60,   74,
--       58,   47,  141,   48,  142,   44,   49,   47,   50,   48,
--       76,   51,   62,   94,   50,   41,   44,   51,   37,   61,
--       64,   64,   64,   58,   34,   34,   34,   64,  162,   80,
--       67,   68,   68,   68,   64,   64,   64,   64,   38,   81,
--       69,   70,   71,   68,   68,   68,   60,  161,   43,   69,
--       70,   65,   69,   70,   65,   65,   65,  125,   85,   85,
--
--       85,   58,   68,   68,   68,   44,  102,  110,  125,  133,
--      102,   69,   70,  111,  114,  160,  159,  126,   85,   85,
--       85,  140,  140,  140,  140,  140,  140,  153,  126,  147,
--      147,  147,  153,  148,  147,  147,  147,  158,  148,  165,
--      157,  156,  155,  151,  150,  149,  146,  154,  145,  144,
--      143,  139,  154,   36,   36,   36,   36,   36,   36,   36,
--       36,   40,  138,  137,  136,   40,   40,   42,   42,   42,
--       42,   42,   42,   42,   42,   57,   57,   57,   57,   63,
--      135,   63,   65,  134,  165,   65,  133,   65,   65,   66,
--      132,  131,   66,   66,   66,   66,   72,  130,   72,   72,
--
--       75,   75,   75,   75,   75,   75,   75,   75,   77,   77,
--       77,   77,   77,   77,   77,   77,   91,  129,   91,   92,
--      128,   92,   92,  127,   92,   92,  124,  124,  124,  124,
--      124,  124,  124,  124,  152,  152,  152,  152,  152,  152,
--      152,  152,   60,   60,  123,  122,  121,  120,  119,  118,
--      117,   45,  116,  111,  115,  113,  112,  109,  108,  107,
--       46,  106,   93,   89,  105,  104,  103,  101,  100,   99,
--       98,   97,   96,   95,   78,   76,   93,   90,   89,   88,
--       58,   87,   86,   58,   84,   83,   82,   79,   78,   76,
--       73,  165,   59,   58,   54,   35,  165,   31,   23,   23,
--
--        9,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165
--    } ;
--
--static yyconst flex_int16_t yy_chk[449] =
--    {   0,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
--        1,    1,    1,    1,    1,    1,    1,    3,    3,    3,
--        3,    7,    7,    7,  163,    3,   11,   11,   11,   18,
--       18,    3,    3,    3,    3,    3,    5,    5,    5,    5,
--        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
--        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
--        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
--
--        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
--        5,    5,    5,    8,   12,   12,   12,   14,   15,   16,
--        8,    8,    8,   17,   20,   20,   17,   23,   42,   24,
--       29,  162,   24,   29,   29,   29,   16,   14,   31,   44,
--       29,   17,  134,   17,  134,   42,   17,   24,   17,   24,
--       76,   17,   24,   76,   24,   15,   44,   24,   36,   23,
--       26,   26,   26,   26,   34,   34,   34,   26,  161,   48,
--       31,   32,   32,   32,   26,   26,   26,   26,   36,   48,
--       32,   32,   32,   33,   33,   33,   60,  160,   74,   91,
--       91,   66,   33,   33,   66,   66,   66,  114,   60,   60,
--
--       60,   66,   68,   68,   68,   74,   85,   99,  124,  133,
--      102,   68,   68,   99,  102,  157,  156,  114,   85,   85,
--       85,  133,  133,  133,  140,  140,  140,  148,  124,  143,
--      143,  143,  152,  143,  147,  147,  147,  155,  147,  154,
--      151,  150,  149,  146,  145,  144,  142,  148,  141,  138,
--      137,  132,  152,  166,  166,  166,  166,  166,  166,  166,
--      166,  167,  131,  130,  129,  167,  167,  168,  168,  168,
--      168,  168,  168,  168,  168,  169,  169,  169,  169,  170,
--      128,  170,  171,  127,  126,  171,  125,  171,  171,  172,
--      123,  122,  172,  172,  172,  172,  173,  121,  173,  173,
--
--      174,  174,  174,  174,  174,  174,  174,  174,  175,  175,
--      175,  175,  175,  175,  175,  175,  176,  120,  176,  177,
--      119,  177,  177,  118,  177,  177,  178,  178,  178,  178,
--      178,  178,  178,  178,  179,  179,  179,  179,  179,  179,
--      179,  179,  116,  115,  113,  112,  111,  110,  109,  108,
--      107,  106,  105,  104,  103,  101,  100,   98,   97,   96,
--       95,   94,   92,   90,   88,   87,   86,   84,   83,   82,
--       81,   80,   79,   78,   77,   75,   73,   70,   69,   67,
--       64,   62,   61,   57,   51,   50,   49,   47,   46,   45,
--       41,   38,   22,   21,   19,   13,    9,    6,    4,    2,
--
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165,  165,  165,
--      165,  165,  165,  165,  165,  165,  165,  165
--    } ;
--
--static yy_state_type yy_last_accepting_state;
--static char *yy_last_accepting_cpos;
--
--extern int yy_flex_debug;
--int yy_flex_debug = 0;
--
--/* The intent behind this definition is that it'll catch
-- * any uses of REJECT which flex missed.
-- */
--#define REJECT reject_used_but_not_detected
--#define yymore() yymore_used_but_not_detected
--#define YY_MORE_ADJ 0
--#define YY_RESTORE_YY_MORE_OFFSET
--char *yytext;
--#line 1 "dtc-lexer.l"
--/*
-- * (C) Copyright David Gibson <dwg@au1.ibm.com>, IBM Corporation.  2005.
-- *
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; either version 2 of the
-- * License, or (at your option) any later version.
-- *
-- *  This program is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- *  General Public License for more details.
-- *
-- *  You should have received a copy of the GNU General Public License
-- *  along with this program; if not, write to the Free Software
-- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-- *                                                                   USA
-- */
--#define YY_NO_INPUT 1
--
--
--
--#line 37 "dtc-lexer.l"
--#include "dtc.h"
--#include "srcpos.h"
--#include "dtc-parser.tab.h"
--
--YYLTYPE yylloc;
--extern bool treesource_error;
--
--/* CAUTION: this will stop working if we ever use yyless() or yyunput() */
--#define	YY_USER_ACTION \
--	{ \
--		srcpos_update(&yylloc, yytext, yyleng); \
--	}
--
--/*#define LEXDEBUG	1*/
--
--#ifdef LEXDEBUG
--#define DPRINT(fmt, ...)	fprintf(stderr, fmt, ##__VA_ARGS__)
--#else
--#define DPRINT(fmt, ...)	do { } while (0)
--#endif
--
--static int dts_version = 1;
--
--#define BEGIN_DEFAULT()		DPRINT("<V1>\n"); \
--				BEGIN(V1); \
--
--static void push_input_file(const char *filename);
--static bool pop_input_file(void);
--static void PRINTF(1, 2) lexical_error(const char *fmt, ...);
--
--#line 661 "dtc-lexer.lex.c"
--
--#define INITIAL 0
--#define BYTESTRING 1
--#define PROPNODENAME 2
--#define V1 3
--
--#ifndef YY_NO_UNISTD_H
--/* Special case for "unistd.h", since it is non-ANSI. We include it way
-- * down here because we want the user's section 1 to have been scanned first.
-- * The user has a chance to override it with an option.
-- */
--#include <unistd.h>
--#endif
--
--#ifndef YY_EXTRA_TYPE
--#define YY_EXTRA_TYPE void *
--#endif
--
--static int yy_init_globals (void );
--
--/* Accessor methods to globals.
--   These are made visible to non-reentrant scanners for convenience. */
--
--int yylex_destroy (void );
--
--int yyget_debug (void );
--
--void yyset_debug (int debug_flag  );
--
--YY_EXTRA_TYPE yyget_extra (void );
--
--void yyset_extra (YY_EXTRA_TYPE user_defined  );
--
--FILE *yyget_in (void );
--
--void yyset_in  (FILE * _in_str  );
--
--FILE *yyget_out (void );
--
--void yyset_out  (FILE * _out_str  );
--
--			int yyget_leng (void );
--
--char *yyget_text (void );
--
--int yyget_lineno (void );
--
--void yyset_lineno (int _line_number  );
--
--/* Macros after this point can all be overridden by user definitions in
-- * section 1.
-- */
--
--#ifndef YY_SKIP_YYWRAP
--#ifdef __cplusplus
--extern "C" int yywrap (void );
--#else
--extern int yywrap (void );
--#endif
--#endif
--
--#ifndef YY_NO_UNPUT
--    
--#endif
--
--#ifndef yytext_ptr
--static void yy_flex_strncpy (char *,yyconst char *,int );
--#endif
--
--#ifdef YY_NEED_STRLEN
--static int yy_flex_strlen (yyconst char * );
--#endif
--
--#ifndef YY_NO_INPUT
--
--#ifdef __cplusplus
--static int yyinput (void );
--#else
--static int input (void );
--#endif
--
--#endif
--
--/* Amount of stuff to slurp up with each read. */
--#ifndef YY_READ_BUF_SIZE
--#ifdef __ia64__
--/* On IA-64, the buffer size is 16k, not 8k */
--#define YY_READ_BUF_SIZE 16384
--#else
--#define YY_READ_BUF_SIZE 8192
--#endif /* __ia64__ */
--#endif
--
--/* Copy whatever the last rule matched to the standard output. */
--#ifndef ECHO
--/* This used to be an fputs(), but since the string might contain NUL's,
-- * we now use fwrite().
-- */
--#define ECHO do { if (fwrite( yytext, (size_t) yyleng, 1, yyout )) {} } while (0)
--#endif
--
--/* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
-- * is returned in "result".
-- */
--#ifndef YY_INPUT
--#define YY_INPUT(buf,result,max_size) \
--	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
--		{ \
--		int c = '*'; \
--		size_t n; \
--		for ( n = 0; n < max_size && \
--			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
--			buf[n] = (char) c; \
--		if ( c == '\n' ) \
--			buf[n++] = (char) c; \
--		if ( c == EOF && ferror( yyin ) ) \
--			YY_FATAL_ERROR( "input in flex scanner failed" ); \
--		result = n; \
--		} \
--	else \
--		{ \
--		errno=0; \
--		while ( (result = (int) fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
--			{ \
--			if( errno != EINTR) \
--				{ \
--				YY_FATAL_ERROR( "input in flex scanner failed" ); \
--				break; \
--				} \
--			errno=0; \
--			clearerr(yyin); \
--			} \
--		}\
--\
--
--#endif
--
--/* No semi-colon after return; correct usage is to write "yyterminate();" -
-- * we don't want an extra ';' after the "return" because that will cause
-- * some compilers to complain about unreachable statements.
-- */
--#ifndef yyterminate
--#define yyterminate() return YY_NULL
--#endif
--
--/* Number of entries by which start-condition stack grows. */
--#ifndef YY_START_STACK_INCR
--#define YY_START_STACK_INCR 25
--#endif
--
--/* Report a fatal error. */
--#ifndef YY_FATAL_ERROR
--#define YY_FATAL_ERROR(msg) yy_fatal_error( msg )
--#endif
--
--/* end tables serialization structures and prototypes */
--
--/* Default declaration of generated scanner - a define so the user can
-- * easily add parameters.
-- */
--#ifndef YY_DECL
--#define YY_DECL_IS_OURS 1
--
--extern int yylex (void);
--
--#define YY_DECL int yylex (void)
--#endif /* !YY_DECL */
--
--/* Code executed at the beginning of each rule, after yytext and yyleng
-- * have been set up.
-- */
--#ifndef YY_USER_ACTION
--#define YY_USER_ACTION
--#endif
--
--/* Code executed at the end of each rule. */
--#ifndef YY_BREAK
--#define YY_BREAK /*LINTED*/break;
--#endif
--
--#define YY_RULE_SETUP \
--	if ( yyleng > 0 ) \
--		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
--				(yytext[yyleng - 1] == '\n'); \
--	YY_USER_ACTION
--
--/** The main scanner function which does all the work.
-- */
--YY_DECL
--{
--	yy_state_type yy_current_state;
--	char *yy_cp, *yy_bp;
--	int yy_act;
--    
--	if ( !(yy_init) )
+ #include <linux/string.h>
+ 
+@@ -15,4 +15,4 @@ typedef __be64 fdt64_t;
+ #define fdt64_to_cpu(x) be64_to_cpu(x)
+ #define cpu_to_fdt64(x) cpu_to_be64(x)
+ 
+-#endif /* _LIBFDT_ENV_H */
++#endif /* LIBFDT_ENV_H */
+diff --git a/scripts/dtc/checks.c b/scripts/dtc/checks.c
+index e66138449886..c07ba4da9e36 100644
+--- a/scripts/dtc/checks.c
++++ b/scripts/dtc/checks.c
+@@ -53,26 +53,28 @@ struct check {
+ 	struct check **prereq;
+ };
+ 
+-#define CHECK_ENTRY(_nm, _fn, _d, _w, _e, ...)	       \
+-	static struct check *_nm##_prereqs[] = { __VA_ARGS__ }; \
+-	static struct check _nm = { \
+-		.name = #_nm, \
+-		.fn = (_fn), \
+-		.data = (_d), \
+-		.warn = (_w), \
+-		.error = (_e), \
++#define CHECK_ENTRY(nm_, fn_, d_, w_, e_, ...)	       \
++	static struct check *nm_##_prereqs[] = { __VA_ARGS__ }; \
++	static struct check nm_ = { \
++		.name = #nm_, \
++		.fn = (fn_), \
++		.data = (d_), \
++		.warn = (w_), \
++		.error = (e_), \
+ 		.status = UNCHECKED, \
+-		.num_prereqs = ARRAY_SIZE(_nm##_prereqs), \
+-		.prereq = _nm##_prereqs, \
++		.num_prereqs = ARRAY_SIZE(nm_##_prereqs), \
++		.prereq = nm_##_prereqs, \
+ 	};
+-#define WARNING(_nm, _fn, _d, ...) \
+-	CHECK_ENTRY(_nm, _fn, _d, true, false, __VA_ARGS__)
+-#define ERROR(_nm, _fn, _d, ...) \
+-	CHECK_ENTRY(_nm, _fn, _d, false, true, __VA_ARGS__)
+-#define CHECK(_nm, _fn, _d, ...) \
+-	CHECK_ENTRY(_nm, _fn, _d, false, false, __VA_ARGS__)
+-
+-static inline void  PRINTF(3, 4) check_msg(struct check *c, struct dt_info *dti,
++#define WARNING(nm_, fn_, d_, ...) \
++	CHECK_ENTRY(nm_, fn_, d_, true, false, __VA_ARGS__)
++#define ERROR(nm_, fn_, d_, ...) \
++	CHECK_ENTRY(nm_, fn_, d_, false, true, __VA_ARGS__)
++#define CHECK(nm_, fn_, d_, ...) \
++	CHECK_ENTRY(nm_, fn_, d_, false, false, __VA_ARGS__)
++
++static inline void  PRINTF(5, 6) check_msg(struct check *c, struct dt_info *dti,
++					   struct node *node,
++					   struct property *prop,
+ 					   const char *fmt, ...)
+ {
+ 	va_list ap;
+@@ -83,19 +85,33 @@ static inline void  PRINTF(3, 4) check_msg(struct check *c, struct dt_info *dti,
+ 		fprintf(stderr, "%s: %s (%s): ",
+ 			strcmp(dti->outname, "-") ? dti->outname : "<stdout>",
+ 			(c->error) ? "ERROR" : "Warning", c->name);
++		if (node) {
++			fprintf(stderr, "%s", node->fullpath);
++			if (prop)
++				fprintf(stderr, ":%s", prop->name);
++			fputs(": ", stderr);
++		}
+ 		vfprintf(stderr, fmt, ap);
+ 		fprintf(stderr, "\n");
+ 	}
+ 	va_end(ap);
+ }
+ 
+-#define FAIL(c, dti, ...)						\
++#define FAIL(c, dti, node, ...)						\
++	do {								\
++		TRACE((c), "\t\tFAILED at %s:%d", __FILE__, __LINE__);	\
++		(c)->status = FAILED;					\
++		check_msg((c), dti, node, NULL, __VA_ARGS__);		\
++	} while (0)
++
++#define FAIL_PROP(c, dti, node, prop, ...)				\
+ 	do {								\
+ 		TRACE((c), "\t\tFAILED at %s:%d", __FILE__, __LINE__);	\
+ 		(c)->status = FAILED;					\
+-		check_msg((c), dti, __VA_ARGS__);			\
++		check_msg((c), dti, node, prop, __VA_ARGS__);		\
+ 	} while (0)
+ 
++
+ static void check_nodes_props(struct check *c, struct dt_info *dti, struct node *node)
+ {
+ 	struct node *child;
+@@ -126,7 +142,7 @@ static bool run_check(struct check *c, struct dt_info *dti)
+ 		error = error || run_check(prq, dti);
+ 		if (prq->status != PASSED) {
+ 			c->status = PREREQ;
+-			check_msg(c, dti, "Failed prerequisite '%s'",
++			check_msg(c, dti, NULL, NULL, "Failed prerequisite '%s'",
+ 				  c->prereq[i]->name);
+ 		}
+ 	}
+@@ -156,7 +172,7 @@ static bool run_check(struct check *c, struct dt_info *dti)
+ static inline void check_always_fail(struct check *c, struct dt_info *dti,
+ 				     struct node *node)
+ {
+-	FAIL(c, dti, "always_fail check");
++	FAIL(c, dti, node, "always_fail check");
+ }
+ CHECK(always_fail, check_always_fail, NULL);
+ 
+@@ -171,14 +187,42 @@ static void check_is_string(struct check *c, struct dt_info *dti,
+ 		return; /* Not present, assumed ok */
+ 
+ 	if (!data_is_one_string(prop->val))
+-		FAIL(c, dti, "\"%s\" property in %s is not a string",
+-		     propname, node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "property is not a string");
+ }
+ #define WARNING_IF_NOT_STRING(nm, propname) \
+ 	WARNING(nm, check_is_string, (propname))
+ #define ERROR_IF_NOT_STRING(nm, propname) \
+ 	ERROR(nm, check_is_string, (propname))
+ 
++static void check_is_string_list(struct check *c, struct dt_info *dti,
++				 struct node *node)
++{
++	int rem, l;
++	struct property *prop;
++	char *propname = c->data;
++	char *str;
++
++	prop = get_property(node, propname);
++	if (!prop)
++		return; /* Not present, assumed ok */
++
++	str = prop->val.val;
++	rem = prop->val.len;
++	while (rem > 0) {
++		l = strnlen(str, rem);
++		if (l == rem) {
++			FAIL_PROP(c, dti, node, prop, "property is not a string list");
++			break;
++		}
++		rem -= l + 1;
++		str += l + 1;
++	}
++}
++#define WARNING_IF_NOT_STRING_LIST(nm, propname) \
++	WARNING(nm, check_is_string_list, (propname))
++#define ERROR_IF_NOT_STRING_LIST(nm, propname) \
++	ERROR(nm, check_is_string_list, (propname))
++
+ static void check_is_cell(struct check *c, struct dt_info *dti,
+ 			  struct node *node)
+ {
+@@ -190,8 +234,7 @@ static void check_is_cell(struct check *c, struct dt_info *dti,
+ 		return; /* Not present, assumed ok */
+ 
+ 	if (prop->val.len != sizeof(cell_t))
+-		FAIL(c, dti, "\"%s\" property in %s is not a single cell",
+-		     propname, node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "property is not a single cell");
+ }
+ #define WARNING_IF_NOT_CELL(nm, propname) \
+ 	WARNING(nm, check_is_cell, (propname))
+@@ -212,8 +255,7 @@ static void check_duplicate_node_names(struct check *c, struct dt_info *dti,
+ 		     child2;
+ 		     child2 = child2->next_sibling)
+ 			if (streq(child->name, child2->name))
+-				FAIL(c, dti, "Duplicate node name %s",
+-				     child->fullpath);
++				FAIL(c, dti, node, "Duplicate node name");
+ }
+ ERROR(duplicate_node_names, check_duplicate_node_names, NULL);
+ 
+@@ -227,8 +269,7 @@ static void check_duplicate_property_names(struct check *c, struct dt_info *dti,
+ 			if (prop2->deleted)
+ 				continue;
+ 			if (streq(prop->name, prop2->name))
+-				FAIL(c, dti, "Duplicate property name %s in %s",
+-				     prop->name, node->fullpath);
++				FAIL_PROP(c, dti, node, prop, "Duplicate property name");
+ 		}
+ 	}
+ }
+@@ -246,8 +287,8 @@ static void check_node_name_chars(struct check *c, struct dt_info *dti,
+ 	int n = strspn(node->name, c->data);
+ 
+ 	if (n < strlen(node->name))
+-		FAIL(c, dti, "Bad character '%c' in node %s",
+-		     node->name[n], node->fullpath);
++		FAIL(c, dti, node, "Bad character '%c' in node name",
++		     node->name[n]);
+ }
+ ERROR(node_name_chars, check_node_name_chars, PROPNODECHARS "@");
+ 
+@@ -257,8 +298,8 @@ static void check_node_name_chars_strict(struct check *c, struct dt_info *dti,
+ 	int n = strspn(node->name, c->data);
+ 
+ 	if (n < node->basenamelen)
+-		FAIL(c, dti, "Character '%c' not recommended in node %s",
+-		     node->name[n], node->fullpath);
++		FAIL(c, dti, node, "Character '%c' not recommended in node name",
++		     node->name[n]);
+ }
+ CHECK(node_name_chars_strict, check_node_name_chars_strict, PROPNODECHARSSTRICT);
+ 
+@@ -266,8 +307,7 @@ static void check_node_name_format(struct check *c, struct dt_info *dti,
+ 				   struct node *node)
+ {
+ 	if (strchr(get_unitname(node), '@'))
+-		FAIL(c, dti, "Node %s has multiple '@' characters in name",
+-		     node->fullpath);
++		FAIL(c, dti, node, "multiple '@' characters in node name");
+ }
+ ERROR(node_name_format, check_node_name_format, NULL, &node_name_chars);
+ 
+@@ -285,12 +325,10 @@ static void check_unit_address_vs_reg(struct check *c, struct dt_info *dti,
+ 
+ 	if (prop) {
+ 		if (!unitname[0])
+-			FAIL(c, dti, "Node %s has a reg or ranges property, but no unit name",
+-			    node->fullpath);
++			FAIL(c, dti, node, "node has a reg or ranges property, but no unit name");
+ 	} else {
+ 		if (unitname[0])
+-			FAIL(c, dti, "Node %s has a unit name, but no reg property",
+-			    node->fullpath);
++			FAIL(c, dti, node, "node has a unit name, but no reg property");
+ 	}
+ }
+ WARNING(unit_address_vs_reg, check_unit_address_vs_reg, NULL);
+@@ -304,8 +342,8 @@ static void check_property_name_chars(struct check *c, struct dt_info *dti,
+ 		int n = strspn(prop->name, c->data);
+ 
+ 		if (n < strlen(prop->name))
+-			FAIL(c, dti, "Bad character '%c' in property name \"%s\", node %s",
+-			     prop->name[n], prop->name, node->fullpath);
++			FAIL_PROP(c, dti, node, prop, "Bad character '%c' in property name",
++				  prop->name[n]);
+ 	}
+ }
+ ERROR(property_name_chars, check_property_name_chars, PROPNODECHARS);
+@@ -336,8 +374,8 @@ static void check_property_name_chars_strict(struct check *c,
+ 			n = strspn(name, c->data);
+ 		}
+ 		if (n < strlen(name))
+-			FAIL(c, dti, "Character '%c' not recommended in property name \"%s\", node %s",
+-			     name[n], prop->name, node->fullpath);
++			FAIL_PROP(c, dti, node, prop, "Character '%c' not recommended in property name",
++				  name[n]);
+ 	}
+ }
+ CHECK(property_name_chars_strict, check_property_name_chars_strict, PROPNODECHARSSTRICT);
+@@ -370,7 +408,7 @@ static void check_duplicate_label(struct check *c, struct dt_info *dti,
+ 		return;
+ 
+ 	if ((othernode != node) || (otherprop != prop) || (othermark != mark))
+-		FAIL(c, dti, "Duplicate label '%s' on " DESCLABEL_FMT
++		FAIL(c, dti, node, "Duplicate label '%s' on " DESCLABEL_FMT
+ 		     " and " DESCLABEL_FMT,
+ 		     label, DESCLABEL_ARGS(node, prop, mark),
+ 		     DESCLABEL_ARGS(othernode, otherprop, othermark));
+@@ -410,8 +448,8 @@ static cell_t check_phandle_prop(struct check *c, struct dt_info *dti,
+ 		return 0;
+ 
+ 	if (prop->val.len != sizeof(cell_t)) {
+-		FAIL(c, dti, "%s has bad length (%d) %s property",
+-		     node->fullpath, prop->val.len, prop->name);
++		FAIL_PROP(c, dti, node, prop, "bad length (%d) %s property",
++			  prop->val.len, prop->name);
+ 		return 0;
+ 	}
+ 
+@@ -422,8 +460,8 @@ static cell_t check_phandle_prop(struct check *c, struct dt_info *dti,
+ 			/* "Set this node's phandle equal to some
+ 			 * other node's phandle".  That's nonsensical
+ 			 * by construction. */ {
+-			FAIL(c, dti, "%s in %s is a reference to another node",
+-			     prop->name, node->fullpath);
++			FAIL(c, dti, node, "%s is a reference to another node",
++			     prop->name);
+ 		}
+ 		/* But setting this node's phandle equal to its own
+ 		 * phandle is allowed - that means allocate a unique
+@@ -436,8 +474,8 @@ static cell_t check_phandle_prop(struct check *c, struct dt_info *dti,
+ 	phandle = propval_cell(prop);
+ 
+ 	if ((phandle == 0) || (phandle == -1)) {
+-		FAIL(c, dti, "%s has bad value (0x%x) in %s property",
+-		     node->fullpath, phandle, prop->name);
++		FAIL_PROP(c, dti, node, prop, "bad value (0x%x) in %s property",
++		     phandle, prop->name);
+ 		return 0;
+ 	}
+ 
+@@ -463,16 +501,16 @@ static void check_explicit_phandles(struct check *c, struct dt_info *dti,
+ 		return;
+ 
+ 	if (linux_phandle && phandle && (phandle != linux_phandle))
+-		FAIL(c, dti, "%s has mismatching 'phandle' and 'linux,phandle'"
+-		     " properties", node->fullpath);
++		FAIL(c, dti, node, "mismatching 'phandle' and 'linux,phandle'"
++		     " properties");
+ 
+ 	if (linux_phandle && !phandle)
+ 		phandle = linux_phandle;
+ 
+ 	other = get_node_by_phandle(root, phandle);
+ 	if (other && (other != node)) {
+-		FAIL(c, dti, "%s has duplicated phandle 0x%x (seen before at %s)",
+-		     node->fullpath, phandle, other->fullpath);
++		FAIL(c, dti, node, "duplicated phandle 0x%x (seen before at %s)",
++		     phandle, other->fullpath);
+ 		return;
+ 	}
+ 
+@@ -496,8 +534,8 @@ static void check_name_properties(struct check *c, struct dt_info *dti,
+ 
+ 	if ((prop->val.len != node->basenamelen+1)
+ 	    || (memcmp(prop->val.val, node->name, node->basenamelen) != 0)) {
+-		FAIL(c, dti, "\"name\" property in %s is incorrect (\"%s\" instead"
+-		     " of base node name)", node->fullpath, prop->val.val);
++		FAIL(c, dti, node, "\"name\" property is incorrect (\"%s\" instead"
++		     " of base node name)", prop->val.val);
+ 	} else {
+ 		/* The name property is correct, and therefore redundant.
+ 		 * Delete it */
+@@ -531,7 +569,7 @@ static void fixup_phandle_references(struct check *c, struct dt_info *dti,
+ 			refnode = get_node_by_ref(dt, m->ref);
+ 			if (! refnode) {
+ 				if (!(dti->dtsflags & DTSF_PLUGIN))
+-					FAIL(c, dti, "Reference to non-existent node or "
++					FAIL(c, dti, node, "Reference to non-existent node or "
+ 							"label \"%s\"\n", m->ref);
+ 				else /* mark the entry as unresolved */
+ 					*((fdt32_t *)(prop->val.val + m->offset)) =
+@@ -563,7 +601,7 @@ static void fixup_path_references(struct check *c, struct dt_info *dti,
+ 
+ 			refnode = get_node_by_ref(dt, m->ref);
+ 			if (!refnode) {
+-				FAIL(c, dti, "Reference to non-existent node or label \"%s\"\n",
++				FAIL(c, dti, node, "Reference to non-existent node or label \"%s\"\n",
+ 				     m->ref);
+ 				continue;
+ 			}
+@@ -586,6 +624,45 @@ WARNING_IF_NOT_CELL(interrupt_cells_is_cell, "#interrupt-cells");
+ WARNING_IF_NOT_STRING(device_type_is_string, "device_type");
+ WARNING_IF_NOT_STRING(model_is_string, "model");
+ WARNING_IF_NOT_STRING(status_is_string, "status");
++WARNING_IF_NOT_STRING(label_is_string, "label");
++
++WARNING_IF_NOT_STRING_LIST(compatible_is_string_list, "compatible");
++
++static void check_names_is_string_list(struct check *c, struct dt_info *dti,
++				       struct node *node)
++{
++	struct property *prop;
++
++	for_each_property(node, prop) {
++		const char *s = strrchr(prop->name, '-');
++		if (!s || !streq(s, "-names"))
++			continue;
++
++		c->data = prop->name;
++		check_is_string_list(c, dti, node);
++	}
++}
++WARNING(names_is_string_list, check_names_is_string_list, NULL);
++
++static void check_alias_paths(struct check *c, struct dt_info *dti,
++				    struct node *node)
++{
++	struct property *prop;
++
++	if (!streq(node->name, "aliases"))
++		return;
++
++	for_each_property(node, prop) {
++		if (!prop->val.val || !get_node_by_path(dti->dt, prop->val.val)) {
++			FAIL_PROP(c, dti, node, prop, "aliases property is not a valid node (%s)",
++				  prop->val.val);
++			continue;
++		}
++		if (strspn(prop->name, LOWERCASE DIGITS "-") != strlen(prop->name))
++			FAIL(c, dti, node, "aliases property name must include only lowercase and '-'");
++	}
++}
++WARNING(alias_paths, check_alias_paths, NULL);
+ 
+ static void fixup_addr_size_cells(struct check *c, struct dt_info *dti,
+ 				  struct node *node)
+@@ -622,21 +699,21 @@ static void check_reg_format(struct check *c, struct dt_info *dti,
+ 		return; /* No "reg", that's fine */
+ 
+ 	if (!node->parent) {
+-		FAIL(c, dti, "Root node has a \"reg\" property");
++		FAIL(c, dti, node, "Root node has a \"reg\" property");
+ 		return;
+ 	}
+ 
+ 	if (prop->val.len == 0)
+-		FAIL(c, dti, "\"reg\" property in %s is empty", node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "property is empty");
+ 
+ 	addr_cells = node_addr_cells(node->parent);
+ 	size_cells = node_size_cells(node->parent);
+ 	entrylen = (addr_cells + size_cells) * sizeof(cell_t);
+ 
+ 	if (!entrylen || (prop->val.len % entrylen) != 0)
+-		FAIL(c, dti, "\"reg\" property in %s has invalid length (%d bytes) "
+-		     "(#address-cells == %d, #size-cells == %d)",
+-		     node->fullpath, prop->val.len, addr_cells, size_cells);
++		FAIL_PROP(c, dti, node, prop, "property has invalid length (%d bytes) "
++			  "(#address-cells == %d, #size-cells == %d)",
++			  prop->val.len, addr_cells, size_cells);
+ }
+ WARNING(reg_format, check_reg_format, NULL, &addr_size_cells);
+ 
+@@ -651,7 +728,7 @@ static void check_ranges_format(struct check *c, struct dt_info *dti,
+ 		return;
+ 
+ 	if (!node->parent) {
+-		FAIL(c, dti, "Root node has a \"ranges\" property");
++		FAIL_PROP(c, dti, node, prop, "Root node has a \"ranges\" property");
+ 		return;
+ 	}
+ 
+@@ -663,20 +740,20 @@ static void check_ranges_format(struct check *c, struct dt_info *dti,
+ 
+ 	if (prop->val.len == 0) {
+ 		if (p_addr_cells != c_addr_cells)
+-			FAIL(c, dti, "%s has empty \"ranges\" property but its "
+-			     "#address-cells (%d) differs from %s (%d)",
+-			     node->fullpath, c_addr_cells, node->parent->fullpath,
+-			     p_addr_cells);
++			FAIL_PROP(c, dti, node, prop, "empty \"ranges\" property but its "
++				  "#address-cells (%d) differs from %s (%d)",
++				  c_addr_cells, node->parent->fullpath,
++				  p_addr_cells);
+ 		if (p_size_cells != c_size_cells)
+-			FAIL(c, dti, "%s has empty \"ranges\" property but its "
+-			     "#size-cells (%d) differs from %s (%d)",
+-			     node->fullpath, c_size_cells, node->parent->fullpath,
+-			     p_size_cells);
++			FAIL_PROP(c, dti, node, prop, "empty \"ranges\" property but its "
++				  "#size-cells (%d) differs from %s (%d)",
++				  c_size_cells, node->parent->fullpath,
++				  p_size_cells);
+ 	} else if ((prop->val.len % entrylen) != 0) {
+-		FAIL(c, dti, "\"ranges\" property in %s has invalid length (%d bytes) "
+-		     "(parent #address-cells == %d, child #address-cells == %d, "
+-		     "#size-cells == %d)", node->fullpath, prop->val.len,
+-		     p_addr_cells, c_addr_cells, c_size_cells);
++		FAIL_PROP(c, dti, node, prop, "\"ranges\" property has invalid length (%d bytes) "
++			  "(parent #address-cells == %d, child #address-cells == %d, "
++			  "#size-cells == %d)", prop->val.len,
++			  p_addr_cells, c_addr_cells, c_size_cells);
+ 	}
+ }
+ WARNING(ranges_format, check_ranges_format, NULL, &addr_size_cells);
+@@ -696,41 +773,33 @@ static void check_pci_bridge(struct check *c, struct dt_info *dti, struct node *
+ 
+ 	node->bus = &pci_bus;
+ 
+-	if (!strneq(node->name, "pci", node->basenamelen) &&
+-	    !strneq(node->name, "pcie", node->basenamelen))
+-		FAIL(c, dti, "Node %s node name is not \"pci\" or \"pcie\"",
+-			     node->fullpath);
++	if (!strprefixeq(node->name, node->basenamelen, "pci") &&
++	    !strprefixeq(node->name, node->basenamelen, "pcie"))
++		FAIL(c, dti, node, "node name is not \"pci\" or \"pcie\"");
+ 
+ 	prop = get_property(node, "ranges");
+ 	if (!prop)
+-		FAIL(c, dti, "Node %s missing ranges for PCI bridge (or not a bridge)",
+-			     node->fullpath);
++		FAIL(c, dti, node, "missing ranges for PCI bridge (or not a bridge)");
+ 
+ 	if (node_addr_cells(node) != 3)
+-		FAIL(c, dti, "Node %s incorrect #address-cells for PCI bridge",
+-			     node->fullpath);
++		FAIL(c, dti, node, "incorrect #address-cells for PCI bridge");
+ 	if (node_size_cells(node) != 2)
+-		FAIL(c, dti, "Node %s incorrect #size-cells for PCI bridge",
+-			     node->fullpath);
++		FAIL(c, dti, node, "incorrect #size-cells for PCI bridge");
+ 
+ 	prop = get_property(node, "bus-range");
+ 	if (!prop) {
+-		FAIL(c, dti, "Node %s missing bus-range for PCI bridge",
+-			     node->fullpath);
++		FAIL(c, dti, node, "missing bus-range for PCI bridge");
+ 		return;
+ 	}
+ 	if (prop->val.len != (sizeof(cell_t) * 2)) {
+-		FAIL(c, dti, "Node %s bus-range must be 2 cells",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "value must be 2 cells");
+ 		return;
+ 	}
+ 	cells = (cell_t *)prop->val.val;
+ 	if (fdt32_to_cpu(cells[0]) > fdt32_to_cpu(cells[1]))
+-		FAIL(c, dti, "Node %s bus-range 1st cell must be less than or equal to 2nd cell",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "1st cell must be less than or equal to 2nd cell");
+ 	if (fdt32_to_cpu(cells[1]) > 0xff)
+-		FAIL(c, dti, "Node %s bus-range maximum bus number must be less than 256",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "maximum bus number must be less than 256");
+ }
+ WARNING(pci_bridge, check_pci_bridge, NULL,
+ 	&device_type_is_string, &addr_size_cells);
+@@ -760,8 +829,8 @@ static void check_pci_device_bus_num(struct check *c, struct dt_info *dti, struc
+ 		max_bus = fdt32_to_cpu(cells[0]);
+ 	}
+ 	if ((bus_num < min_bus) || (bus_num > max_bus))
+-		FAIL(c, dti, "Node %s PCI bus number %d out of range, expected (%d - %d)",
+-		     node->fullpath, bus_num, min_bus, max_bus);
++		FAIL_PROP(c, dti, node, prop, "PCI bus number %d out of range, expected (%d - %d)",
++			  bus_num, min_bus, max_bus);
+ }
+ WARNING(pci_device_bus_num, check_pci_device_bus_num, NULL, &reg_format, &pci_bridge);
+ 
+@@ -778,25 +847,22 @@ static void check_pci_device_reg(struct check *c, struct dt_info *dti, struct no
+ 
+ 	prop = get_property(node, "reg");
+ 	if (!prop) {
+-		FAIL(c, dti, "Node %s missing PCI reg property", node->fullpath);
++		FAIL(c, dti, node, "missing PCI reg property");
+ 		return;
+ 	}
+ 
+ 	cells = (cell_t *)prop->val.val;
+ 	if (cells[1] || cells[2])
+-		FAIL(c, dti, "Node %s PCI reg config space address cells 2 and 3 must be 0",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "PCI reg config space address cells 2 and 3 must be 0");
+ 
+ 	reg = fdt32_to_cpu(cells[0]);
+ 	dev = (reg & 0xf800) >> 11;
+ 	func = (reg & 0x700) >> 8;
+ 
+ 	if (reg & 0xff000000)
+-		FAIL(c, dti, "Node %s PCI reg address is not configuration space",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "PCI reg address is not configuration space");
+ 	if (reg & 0x000000ff)
+-		FAIL(c, dti, "Node %s PCI reg config space address register number must be 0",
+-			     node->fullpath);
++		FAIL_PROP(c, dti, node, prop, "PCI reg config space address register number must be 0");
+ 
+ 	if (func == 0) {
+ 		snprintf(unit_addr, sizeof(unit_addr), "%x", dev);
+@@ -808,8 +874,8 @@ static void check_pci_device_reg(struct check *c, struct dt_info *dti, struct no
+ 	if (streq(unitname, unit_addr))
+ 		return;
+ 
+-	FAIL(c, dti, "Node %s PCI unit address format error, expected \"%s\"",
+-	     node->fullpath, unit_addr);
++	FAIL(c, dti, node, "PCI unit address format error, expected \"%s\"",
++	     unit_addr);
+ }
+ WARNING(pci_device_reg, check_pci_device_reg, NULL, &reg_format, &pci_bridge);
+ 
+@@ -828,7 +894,7 @@ static bool node_is_compatible(struct node *node, const char *compat)
+ 
+ 	for (str = prop->val.val, end = str + prop->val.len; str < end;
+ 	     str += strnlen(str, end - str) + 1) {
+-		if (strneq(str, compat, end - str))
++		if (strprefixeq(str, end - str, compat))
+ 			return true;
+ 	}
+ 	return false;
+@@ -865,7 +931,7 @@ static void check_simple_bus_reg(struct check *c, struct dt_info *dti, struct no
+ 
+ 	if (!cells) {
+ 		if (node->parent->parent && !(node->bus == &simple_bus))
+-			FAIL(c, dti, "Node %s missing or empty reg/ranges property", node->fullpath);
++			FAIL(c, dti, node, "missing or empty reg/ranges property");
+ 		return;
+ 	}
+ 
+@@ -875,8 +941,8 @@ static void check_simple_bus_reg(struct check *c, struct dt_info *dti, struct no
+ 
+ 	snprintf(unit_addr, sizeof(unit_addr), "%"PRIx64, reg);
+ 	if (!streq(unitname, unit_addr))
+-		FAIL(c, dti, "Node %s simple-bus unit address format error, expected \"%s\"",
+-		     node->fullpath, unit_addr);
++		FAIL(c, dti, node, "simple-bus unit address format error, expected \"%s\"",
++		     unit_addr);
+ }
+ WARNING(simple_bus_reg, check_simple_bus_reg, NULL, &reg_format, &simple_bus_bridge);
+ 
+@@ -892,14 +958,12 @@ static void check_unit_address_format(struct check *c, struct dt_info *dti,
+ 		return;
+ 
+ 	if (!strncmp(unitname, "0x", 2)) {
+-		FAIL(c, dti, "Node %s unit name should not have leading \"0x\"",
+-		    node->fullpath);
++		FAIL(c, dti, node, "unit name should not have leading \"0x\"");
+ 		/* skip over 0x for next test */
+ 		unitname += 2;
+ 	}
+ 	if (unitname[0] == '0' && isxdigit(unitname[1]))
+-		FAIL(c, dti, "Node %s unit name should not have leading 0s",
+-		    node->fullpath);
++		FAIL(c, dti, node, "unit name should not have leading 0s");
+ }
+ WARNING(unit_address_format, check_unit_address_format, NULL,
+ 	&node_name_format, &pci_bridge, &simple_bus_bridge);
+@@ -922,16 +986,38 @@ static void check_avoid_default_addr_size(struct check *c, struct dt_info *dti,
+ 		return;
+ 
+ 	if (node->parent->addr_cells == -1)
+-		FAIL(c, dti, "Relying on default #address-cells value for %s",
+-		     node->fullpath);
++		FAIL(c, dti, node, "Relying on default #address-cells value");
+ 
+ 	if (node->parent->size_cells == -1)
+-		FAIL(c, dti, "Relying on default #size-cells value for %s",
+-		     node->fullpath);
++		FAIL(c, dti, node, "Relying on default #size-cells value");
+ }
+ WARNING(avoid_default_addr_size, check_avoid_default_addr_size, NULL,
+ 	&addr_size_cells);
+ 
++static void check_avoid_unnecessary_addr_size(struct check *c, struct dt_info *dti,
++					      struct node *node)
++{
++	struct property *prop;
++	struct node *child;
++	bool has_reg = false;
++
++	if (!node->parent || node->addr_cells < 0 || node->size_cells < 0)
++		return;
++
++	if (get_property(node, "ranges") || !node->children)
++		return;
++
++	for_each_child(node, child) {
++		prop = get_property(child, "reg");
++		if (prop)
++			has_reg = true;
++	}
++
++	if (!has_reg)
++		FAIL(c, dti, node, "unnecessary #address-cells/#size-cells without \"ranges\" or child \"reg\" property");
++}
++WARNING(avoid_unnecessary_addr_size, check_avoid_unnecessary_addr_size, NULL, &avoid_default_addr_size);
++
+ static void check_obsolete_chosen_interrupt_controller(struct check *c,
+ 						       struct dt_info *dti,
+ 						       struct node *node)
+@@ -950,12 +1036,61 @@ static void check_obsolete_chosen_interrupt_controller(struct check *c,
+ 
+ 	prop = get_property(chosen, "interrupt-controller");
+ 	if (prop)
+-		FAIL(c, dti, "/chosen has obsolete \"interrupt-controller\" "
+-		     "property");
++		FAIL_PROP(c, dti, node, prop,
++			  "/chosen has obsolete \"interrupt-controller\" property");
+ }
+ WARNING(obsolete_chosen_interrupt_controller,
+ 	check_obsolete_chosen_interrupt_controller, NULL);
+ 
++static void check_chosen_node_is_root(struct check *c, struct dt_info *dti,
++				      struct node *node)
++{
++	if (!streq(node->name, "chosen"))
++		return;
++
++	if (node->parent != dti->dt)
++		FAIL(c, dti, node, "chosen node must be at root node");
++}
++WARNING(chosen_node_is_root, check_chosen_node_is_root, NULL);
++
++static void check_chosen_node_bootargs(struct check *c, struct dt_info *dti,
++				       struct node *node)
++{
++	struct property *prop;
++
++	if (!streq(node->name, "chosen"))
++		return;
++
++	prop = get_property(node, "bootargs");
++	if (!prop)
++		return;
++
++	c->data = prop->name;
++	check_is_string(c, dti, node);
++}
++WARNING(chosen_node_bootargs, check_chosen_node_bootargs, NULL);
++
++static void check_chosen_node_stdout_path(struct check *c, struct dt_info *dti,
++					  struct node *node)
++{
++	struct property *prop;
++
++	if (!streq(node->name, "chosen"))
++		return;
++
++	prop = get_property(node, "stdout-path");
++	if (!prop) {
++		prop = get_property(node, "linux,stdout-path");
++		if (!prop)
++			return;
++		FAIL_PROP(c, dti, node, prop, "Use 'stdout-path' instead");
++	}
++
++	c->data = prop->name;
++	check_is_string(c, dti, node);
++}
++WARNING(chosen_node_stdout_path, check_chosen_node_stdout_path, NULL);
++
+ struct provider {
+ 	const char *prop_name;
+ 	const char *cell_name;
+@@ -972,8 +1107,9 @@ static void check_property_phandle_args(struct check *c,
+ 	int cell, cellsize = 0;
+ 
+ 	if (prop->val.len % sizeof(cell_t)) {
+-		FAIL(c, dti, "property '%s' size (%d) is invalid, expected multiple of %zu in node %s",
+-		     prop->name, prop->val.len, sizeof(cell_t), node->fullpath);
++		FAIL_PROP(c, dti, node, prop,
++			  "property size (%d) is invalid, expected multiple of %zu",
++			  prop->val.len, sizeof(cell_t));
+ 		return;
+ 	}
+ 
+@@ -1004,14 +1140,16 @@ static void check_property_phandle_args(struct check *c,
+ 					break;
+ 			}
+ 			if (!m)
+-				FAIL(c, dti, "Property '%s', cell %d is not a phandle reference in %s",
+-				     prop->name, cell, node->fullpath);
++				FAIL_PROP(c, dti, node, prop,
++					  "cell %d is not a phandle reference",
++					  cell);
+ 		}
+ 
+ 		provider_node = get_node_by_phandle(root, phandle);
+ 		if (!provider_node) {
+-			FAIL(c, dti, "Could not get phandle node for %s:%s(cell %d)",
+-			     node->fullpath, prop->name, cell);
++			FAIL_PROP(c, dti, node, prop,
++				  "Could not get phandle node for (cell %d)",
++				  cell);
+ 			break;
+ 		}
+ 
+@@ -1021,16 +1159,17 @@ static void check_property_phandle_args(struct check *c,
+ 		} else if (provider->optional) {
+ 			cellsize = 0;
+ 		} else {
+-			FAIL(c, dti, "Missing property '%s' in node %s or bad phandle (referred from %s:%s[%d])",
++			FAIL(c, dti, node, "Missing property '%s' in node %s or bad phandle (referred from %s[%d])",
+ 			     provider->cell_name,
+ 			     provider_node->fullpath,
+-			     node->fullpath, prop->name, cell);
++			     prop->name, cell);
+ 			break;
+ 		}
+ 
+ 		if (prop->val.len < ((cell + cellsize + 1) * sizeof(cell_t))) {
+-			FAIL(c, dti, "%s property size (%d) too small for cell size %d in %s",
+-			     prop->name, prop->val.len, cellsize, node->fullpath);
++			FAIL_PROP(c, dti, node, prop,
++				  "property size (%d) too small for cell size %d",
++				  prop->val.len, cellsize);
+ 		}
+ 	}
+ }
+@@ -1066,7 +1205,7 @@ WARNING_PROPERTY_PHANDLE_CELLS(phys, "phys", "#phy-cells");
+ WARNING_PROPERTY_PHANDLE_CELLS(power_domains, "power-domains", "#power-domain-cells");
+ WARNING_PROPERTY_PHANDLE_CELLS(pwms, "pwms", "#pwm-cells");
+ WARNING_PROPERTY_PHANDLE_CELLS(resets, "resets", "#reset-cells");
+-WARNING_PROPERTY_PHANDLE_CELLS(sound_dais, "sound-dais", "#sound-dai-cells");
++WARNING_PROPERTY_PHANDLE_CELLS(sound_dai, "sound-dai", "#sound-dai-cells");
+ WARNING_PROPERTY_PHANDLE_CELLS(thermal_sensors, "thermal-sensors", "#thermal-sensor-cells");
+ 
+ static bool prop_is_gpio(struct property *prop)
+@@ -1132,8 +1271,8 @@ static void check_deprecated_gpio_property(struct check *c,
+ 		if (!streq(str, "gpio"))
+ 			continue;
+ 
+-		FAIL(c, dti, "'[*-]gpio' is deprecated, use '[*-]gpios' instead for %s:%s",
+-		     node->fullpath, prop->name);
++		FAIL_PROP(c, dti, node, prop,
++			  "'[*-]gpio' is deprecated, use '[*-]gpios' instead");
+ 	}
+ 
+ }
+@@ -1167,9 +1306,8 @@ static void check_interrupts_property(struct check *c,
+ 		return;
+ 
+ 	if (irq_prop->val.len % sizeof(cell_t))
+-		FAIL(c, dti, "property '%s' size (%d) is invalid, expected multiple of %zu in node %s",
+-		     irq_prop->name, irq_prop->val.len, sizeof(cell_t),
+-		     node->fullpath);
++		FAIL_PROP(c, dti, node, irq_prop, "size (%d) is invalid, expected multiple of %zu",
++		     irq_prop->val.len, sizeof(cell_t));
+ 
+ 	while (parent && !prop) {
+ 		if (parent != node && node_is_interrupt_provider(parent)) {
+@@ -1187,14 +1325,12 @@ static void check_interrupts_property(struct check *c,
+ 
+ 			irq_node = get_node_by_phandle(root, phandle);
+ 			if (!irq_node) {
+-				FAIL(c, dti, "Bad interrupt-parent phandle for %s",
+-				     node->fullpath);
++				FAIL_PROP(c, dti, parent, prop, "Bad phandle");
+ 				return;
+ 			}
+ 			if (!node_is_interrupt_provider(irq_node))
+-				FAIL(c, dti,
+-				     "Missing interrupt-controller or interrupt-map property in %s",
+-				     irq_node->fullpath);
++				FAIL(c, dti, irq_node,
++				     "Missing interrupt-controller or interrupt-map property");
+ 
+ 			break;
+ 		}
+@@ -1203,23 +1339,21 @@ static void check_interrupts_property(struct check *c,
+ 	}
+ 
+ 	if (!irq_node) {
+-		FAIL(c, dti, "Missing interrupt-parent for %s", node->fullpath);
++		FAIL(c, dti, node, "Missing interrupt-parent");
+ 		return;
+ 	}
+ 
+ 	prop = get_property(irq_node, "#interrupt-cells");
+ 	if (!prop) {
+-		FAIL(c, dti, "Missing #interrupt-cells in interrupt-parent %s",
+-		     irq_node->fullpath);
++		FAIL(c, dti, irq_node, "Missing #interrupt-cells in interrupt-parent");
+ 		return;
+ 	}
+ 
+ 	irq_cells = propval_cell(prop);
+ 	if (irq_prop->val.len % (irq_cells * sizeof(cell_t))) {
+-		FAIL(c, dti,
+-		     "interrupts size is (%d), expected multiple of %d in %s",
+-		     irq_prop->val.len, (int)(irq_cells * sizeof(cell_t)),
+-		     node->fullpath);
++		FAIL_PROP(c, dti, node, prop,
++			  "size is (%d), expected multiple of %d",
++			  irq_prop->val.len, (int)(irq_cells * sizeof(cell_t)));
+ 	}
+ }
+ WARNING(interrupts_property, check_interrupts_property, &phandle_references);
+@@ -1236,6 +1370,9 @@ static struct check *check_table[] = {
+ 
+ 	&address_cells_is_cell, &size_cells_is_cell, &interrupt_cells_is_cell,
+ 	&device_type_is_string, &model_is_string, &status_is_string,
++	&label_is_string,
++
++	&compatible_is_string_list, &names_is_string_list,
+ 
+ 	&property_name_chars_strict,
+ 	&node_name_chars_strict,
+@@ -1253,7 +1390,9 @@ static struct check *check_table[] = {
+ 	&simple_bus_reg,
+ 
+ 	&avoid_default_addr_size,
++	&avoid_unnecessary_addr_size,
+ 	&obsolete_chosen_interrupt_controller,
++	&chosen_node_is_root, &chosen_node_bootargs, &chosen_node_stdout_path,
+ 
+ 	&clocks_property,
+ 	&cooling_device_property,
+@@ -1269,13 +1408,15 @@ static struct check *check_table[] = {
+ 	&power_domains_property,
+ 	&pwms_property,
+ 	&resets_property,
+-	&sound_dais_property,
++	&sound_dai_property,
+ 	&thermal_sensors_property,
+ 
+ 	&deprecated_gpio_property,
+ 	&gpios_property,
+ 	&interrupts_property,
+ 
++	&alias_paths,
++
+ 	&always_fail,
+ };
+ 
+diff --git a/scripts/dtc/dtc-parser.y b/scripts/dtc/dtc-parser.y
+index affc81a8f9ab..44af170abfea 100644
+--- a/scripts/dtc/dtc-parser.y
++++ b/scripts/dtc/dtc-parser.y
+@@ -166,7 +166,17 @@ devicetree:
+ 		{
+ 			$$ = merge_nodes($1, $3);
+ 		}
+-
++	| DT_REF nodedef
++		{
++			/*
++			 * We rely on the rule being always:
++			 *   versioninfo plugindecl memreserves devicetree
++			 * so $-1 is what we want (plugindecl)
++			 */
++			if (!($<flags>-1 & DTSF_PLUGIN))
++				ERROR(&@2, "Label or path %s not found", $1);
++			$$ = add_orphan_node(name_node(build_node(NULL, NULL), ""), $2, $1);
++		}
+ 	| devicetree DT_LABEL DT_REF nodedef
+ 		{
+ 			struct node *target = get_node_by_ref($1, $3);
+@@ -209,11 +219,6 @@ devicetree:
+ 
+ 			$$ = $1;
+ 		}
+-	| /* empty */
 -		{
--		(yy_init) = 1;
--
--#ifdef YY_USER_INIT
--		YY_USER_INIT;
--#endif
--
--		if ( ! (yy_start) )
--			(yy_start) = 1;	/* first start state */
--
--		if ( ! yyin )
--			yyin = stdin;
--
--		if ( ! yyout )
--			yyout = stdout;
--
--		if ( ! YY_CURRENT_BUFFER ) {
--			yyensure_buffer_stack ();
--			YY_CURRENT_BUFFER_LVALUE =
--				yy_create_buffer(yyin,YY_BUF_SIZE );
--		}
--
--		yy_load_buffer_state( );
--		}
--
--	{
--#line 69 "dtc-lexer.l"
--
--#line 885 "dtc-lexer.lex.c"
--
--	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
--		{
--		yy_cp = (yy_c_buf_p);
--
--		/* Support of yytext. */
--		*yy_cp = (yy_hold_char);
--
--		/* yy_bp points to the position in yy_ch_buf of the start of
--		 * the current run.
--		 */
--		yy_bp = yy_cp;
--
--		yy_current_state = (yy_start);
--		yy_current_state += YY_AT_BOL();
--yy_match:
--		do
--			{
--			YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
--			if ( yy_accept[yy_current_state] )
--				{
--				(yy_last_accepting_state) = yy_current_state;
--				(yy_last_accepting_cpos) = yy_cp;
--				}
--			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
--				{
--				yy_current_state = (int) yy_def[yy_current_state];
--				if ( yy_current_state >= 166 )
--					yy_c = yy_meta[(unsigned int) yy_c];
--				}
--			yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
--			++yy_cp;
--			}
--		while ( yy_current_state != 165 );
--		yy_cp = (yy_last_accepting_cpos);
--		yy_current_state = (yy_last_accepting_state);
--
--yy_find_action:
--		yy_act = yy_accept[yy_current_state];
--
--		YY_DO_BEFORE_ACTION;
--
--do_action:	/* This label is used only to access EOF actions. */
--
--		switch ( yy_act )
--	{ /* beginning of action switch */
--			case 0: /* must back up */
--			/* undo the effects of YY_DO_BEFORE_ACTION */
--			*yy_cp = (yy_hold_char);
--			yy_cp = (yy_last_accepting_cpos);
--			yy_current_state = (yy_last_accepting_state);
--			goto yy_find_action;
--
--case 1:
--/* rule 1 can match eol */
--YY_RULE_SETUP
--#line 70 "dtc-lexer.l"
--{
--			char *name = strchr(yytext, '\"') + 1;
--			yytext[yyleng-1] = '\0';
--			push_input_file(name);
--		}
--	YY_BREAK
--case 2:
--/* rule 2 can match eol */
--YY_RULE_SETUP
--#line 76 "dtc-lexer.l"
--{
--			char *line, *fnstart, *fnend;
--			struct data fn;
--			/* skip text before line # */
--			line = yytext;
--			while (!isdigit((unsigned char)*line))
--				line++;
--
--			/* regexp ensures that first and list "
--			 * in the whole yytext are those at
--			 * beginning and end of the filename string */
--			fnstart = memchr(yytext, '"', yyleng);
--			for (fnend = yytext + yyleng - 1;
--			     *fnend != '"'; fnend--)
--				;
--			assert(fnstart && fnend && (fnend > fnstart));
--
--			fn = data_copy_escape_string(fnstart + 1,
--						     fnend - fnstart - 1);
--
--			/* Don't allow nuls in filenames */
--			if (memchr(fn.val, '\0', fn.len - 1))
--				lexical_error("nul in line number directive");
--
--			/* -1 since #line is the number of the next line */
--			srcpos_set_line(xstrdup(fn.val), atoi(line) - 1);
--			data_free(fn);
--		}
--	YY_BREAK
--case YY_STATE_EOF(INITIAL):
--case YY_STATE_EOF(BYTESTRING):
--case YY_STATE_EOF(PROPNODENAME):
--case YY_STATE_EOF(V1):
--#line 105 "dtc-lexer.l"
--{
--			if (!pop_input_file()) {
--				yyterminate();
--			}
--		}
--	YY_BREAK
--case 3:
--/* rule 3 can match eol */
--YY_RULE_SETUP
--#line 111 "dtc-lexer.l"
--{
--			DPRINT("String: %s\n", yytext);
--			yylval.data = data_copy_escape_string(yytext+1,
--					yyleng-2);
--			return DT_STRING;
--		}
--	YY_BREAK
--case 4:
--YY_RULE_SETUP
--#line 118 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /dts-v1/\n");
--			dts_version = 1;
--			BEGIN_DEFAULT();
--			return DT_V1;
--		}
--	YY_BREAK
--case 5:
--YY_RULE_SETUP
--#line 125 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /plugin/\n");
--			return DT_PLUGIN;
--		}
--	YY_BREAK
--case 6:
--YY_RULE_SETUP
--#line 130 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /memreserve/\n");
--			BEGIN_DEFAULT();
--			return DT_MEMRESERVE;
--		}
--	YY_BREAK
--case 7:
--YY_RULE_SETUP
--#line 136 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /bits/\n");
--			BEGIN_DEFAULT();
--			return DT_BITS;
--		}
--	YY_BREAK
--case 8:
--YY_RULE_SETUP
--#line 142 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /delete-property/\n");
--			DPRINT("<PROPNODENAME>\n");
--			BEGIN(PROPNODENAME);
--			return DT_DEL_PROP;
--		}
--	YY_BREAK
--case 9:
--YY_RULE_SETUP
--#line 149 "dtc-lexer.l"
--{
--			DPRINT("Keyword: /delete-node/\n");
--			DPRINT("<PROPNODENAME>\n");
--			BEGIN(PROPNODENAME);
--			return DT_DEL_NODE;
--		}
--	YY_BREAK
--case 10:
--YY_RULE_SETUP
--#line 156 "dtc-lexer.l"
--{
--			DPRINT("Label: %s\n", yytext);
--			yylval.labelref = xstrdup(yytext);
--			yylval.labelref[yyleng-1] = '\0';
--			return DT_LABEL;
--		}
--	YY_BREAK
--case 11:
--YY_RULE_SETUP
--#line 163 "dtc-lexer.l"
--{
--			char *e;
--			DPRINT("Integer Literal: '%s'\n", yytext);
--
--			errno = 0;
--			yylval.integer = strtoull(yytext, &e, 0);
--
--			if (*e && e[strspn(e, "UL")]) {
--				lexical_error("Bad integer literal '%s'",
--					      yytext);
--			}
--
--			if (errno == ERANGE)
--				lexical_error("Integer literal '%s' out of range",
--					      yytext);
--			else
--				/* ERANGE is the only strtoull error triggerable
--				 *  by strings matching the pattern */
--				assert(errno == 0);
--			return DT_LITERAL;
--		}
--	YY_BREAK
--case 12:
--/* rule 12 can match eol */
--YY_RULE_SETUP
--#line 185 "dtc-lexer.l"
--{
--			struct data d;
--			DPRINT("Character literal: %s\n", yytext);
--
--			d = data_copy_escape_string(yytext+1, yyleng-2);
--			if (d.len == 1) {
--				lexical_error("Empty character literal");
--				yylval.integer = 0;
--			} else {
--				yylval.integer = (unsigned char)d.val[0];
--
--				if (d.len > 2)
--					lexical_error("Character literal has %d"
--						      " characters instead of 1",
--						      d.len - 1);
--			}
--
--			data_free(d);
--			return DT_CHAR_LITERAL;
--		}
--	YY_BREAK
--case 13:
--YY_RULE_SETUP
--#line 206 "dtc-lexer.l"
--{	/* label reference */
--			DPRINT("Ref: %s\n", yytext+1);
--			yylval.labelref = xstrdup(yytext+1);
--			return DT_REF;
--		}
--	YY_BREAK
--case 14:
--YY_RULE_SETUP
--#line 212 "dtc-lexer.l"
--{	/* new-style path reference */
--			yytext[yyleng-1] = '\0';
--			DPRINT("Ref: %s\n", yytext+2);
--			yylval.labelref = xstrdup(yytext+2);
--			return DT_REF;
--		}
--	YY_BREAK
--case 15:
--YY_RULE_SETUP
--#line 219 "dtc-lexer.l"
--{
--			yylval.byte = strtol(yytext, NULL, 16);
--			DPRINT("Byte: %02x\n", (int)yylval.byte);
--			return DT_BYTE;
--		}
--	YY_BREAK
--case 16:
--YY_RULE_SETUP
--#line 225 "dtc-lexer.l"
--{
--			DPRINT("/BYTESTRING\n");
--			BEGIN_DEFAULT();
--			return ']';
--		}
--	YY_BREAK
--case 17:
--YY_RULE_SETUP
--#line 231 "dtc-lexer.l"
--{
--			DPRINT("PropNodeName: %s\n", yytext);
--			yylval.propnodename = xstrdup((yytext[0] == '\\') ?
--							yytext + 1 : yytext);
--			BEGIN_DEFAULT();
--			return DT_PROPNODENAME;
--		}
--	YY_BREAK
--case 18:
--YY_RULE_SETUP
--#line 239 "dtc-lexer.l"
--{
--			DPRINT("Binary Include\n");
--			return DT_INCBIN;
--		}
--	YY_BREAK
--case 19:
--/* rule 19 can match eol */
--YY_RULE_SETUP
--#line 244 "dtc-lexer.l"
--/* eat whitespace */
--	YY_BREAK
--case 20:
--/* rule 20 can match eol */
--YY_RULE_SETUP
--#line 245 "dtc-lexer.l"
--/* eat C-style comments */
--	YY_BREAK
--case 21:
--/* rule 21 can match eol */
--YY_RULE_SETUP
--#line 246 "dtc-lexer.l"
--/* eat C++-style comments */
--	YY_BREAK
--case 22:
--YY_RULE_SETUP
--#line 248 "dtc-lexer.l"
--{ return DT_LSHIFT; };
--	YY_BREAK
--case 23:
--YY_RULE_SETUP
--#line 249 "dtc-lexer.l"
--{ return DT_RSHIFT; };
--	YY_BREAK
--case 24:
--YY_RULE_SETUP
--#line 250 "dtc-lexer.l"
--{ return DT_LE; };
--	YY_BREAK
--case 25:
--YY_RULE_SETUP
--#line 251 "dtc-lexer.l"
--{ return DT_GE; };
--	YY_BREAK
--case 26:
--YY_RULE_SETUP
--#line 252 "dtc-lexer.l"
--{ return DT_EQ; };
--	YY_BREAK
--case 27:
--YY_RULE_SETUP
--#line 253 "dtc-lexer.l"
--{ return DT_NE; };
--	YY_BREAK
--case 28:
--YY_RULE_SETUP
--#line 254 "dtc-lexer.l"
--{ return DT_AND; };
--	YY_BREAK
--case 29:
--YY_RULE_SETUP
--#line 255 "dtc-lexer.l"
--{ return DT_OR; };
--	YY_BREAK
--case 30:
--YY_RULE_SETUP
--#line 257 "dtc-lexer.l"
--{
--			DPRINT("Char: %c (\\x%02x)\n", yytext[0],
--				(unsigned)yytext[0]);
--			if (yytext[0] == '[') {
--				DPRINT("<BYTESTRING>\n");
--				BEGIN(BYTESTRING);
--			}
--			if ((yytext[0] == '{')
--			    || (yytext[0] == ';')) {
--				DPRINT("<PROPNODENAME>\n");
--				BEGIN(PROPNODENAME);
--			}
--			return yytext[0];
--		}
--	YY_BREAK
--case 31:
--YY_RULE_SETUP
--#line 272 "dtc-lexer.l"
--ECHO;
--	YY_BREAK
--#line 1257 "dtc-lexer.lex.c"
--
--	case YY_END_OF_BUFFER:
--		{
--		/* Amount of text matched not including the EOB char. */
--		int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
--
--		/* Undo the effects of YY_DO_BEFORE_ACTION. */
--		*yy_cp = (yy_hold_char);
--		YY_RESTORE_YY_MORE_OFFSET
--
--		if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
--			{
--			/* We're scanning a new file or input source.  It's
--			 * possible that this happened because the user
--			 * just pointed yyin at a new source and called
--			 * yylex().  If so, then we have to assure
--			 * consistency between YY_CURRENT_BUFFER and our
--			 * globals.  Here is the right place to do so, because
--			 * this is the first action (other than possibly a
--			 * back-up) that will match for the new input source.
--			 */
--			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
--			YY_CURRENT_BUFFER_LVALUE->yy_input_file = yyin;
--			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
--			}
--
--		/* Note that here we test for yy_c_buf_p "<=" to the position
--		 * of the first EOB in the buffer, since yy_c_buf_p will
--		 * already have been incremented past the NUL character
--		 * (since all states make transitions on EOB to the
--		 * end-of-buffer state).  Contrast this with the test
--		 * in input().
--		 */
--		if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
--			{ /* This was really a NUL. */
--			yy_state_type yy_next_state;
--
--			(yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
--
--			yy_current_state = yy_get_previous_state(  );
--
--			/* Okay, we're now positioned to make the NUL
--			 * transition.  We couldn't have
--			 * yy_get_previous_state() go ahead and do it
--			 * for us because it doesn't know how to deal
--			 * with the possibility of jamming (and we don't
--			 * want to build jamming into it because then it
--			 * will run more slowly).
--			 */
--
--			yy_next_state = yy_try_NUL_trans( yy_current_state );
--
--			yy_bp = (yytext_ptr) + YY_MORE_ADJ;
--
--			if ( yy_next_state )
--				{
--				/* Consume the NUL. */
--				yy_cp = ++(yy_c_buf_p);
--				yy_current_state = yy_next_state;
--				goto yy_match;
--				}
--
--			else
--				{
--				yy_cp = (yy_last_accepting_cpos);
--				yy_current_state = (yy_last_accepting_state);
--				goto yy_find_action;
--				}
--			}
--
--		else switch ( yy_get_next_buffer(  ) )
--			{
--			case EOB_ACT_END_OF_FILE:
--				{
--				(yy_did_buffer_switch_on_eof) = 0;
--
--				if ( yywrap( ) )
--					{
--					/* Note: because we've taken care in
--					 * yy_get_next_buffer() to have set up
--					 * yytext, we can now set up
--					 * yy_c_buf_p so that if some total
--					 * hoser (like flex itself) wants to
--					 * call the scanner after we return the
--					 * YY_NULL, it'll still work - another
--					 * YY_NULL will get returned.
--					 */
--					(yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
--
--					yy_act = YY_STATE_EOF(YY_START);
--					goto do_action;
--					}
--
--				else
--					{
--					if ( ! (yy_did_buffer_switch_on_eof) )
--						YY_NEW_FILE;
--					}
--				break;
--				}
--
--			case EOB_ACT_CONTINUE_SCAN:
--				(yy_c_buf_p) =
--					(yytext_ptr) + yy_amount_of_matched_text;
--
--				yy_current_state = yy_get_previous_state(  );
--
--				yy_cp = (yy_c_buf_p);
--				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
--				goto yy_match;
--
--			case EOB_ACT_LAST_MATCH:
--				(yy_c_buf_p) =
--				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
--
--				yy_current_state = yy_get_previous_state(  );
--
--				yy_cp = (yy_c_buf_p);
--				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
--				goto yy_find_action;
--			}
--		break;
--		}
--
--	default:
--		YY_FATAL_ERROR(
--			"fatal flex scanner internal error--no action found" );
--	} /* end of action switch */
--		} /* end of scanning one token */
--	} /* end of user's declarations */
--} /* end of yylex */
--
--/* yy_get_next_buffer - try to read in a new buffer
-- *
-- * Returns a code representing an action:
-- *	EOB_ACT_LAST_MATCH -
-- *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
-- *	EOB_ACT_END_OF_FILE - end of file
-- */
--static int yy_get_next_buffer (void)
--{
--    	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
--	char *source = (yytext_ptr);
--	int number_to_move, i;
--	int ret_val;
--
--	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
--		YY_FATAL_ERROR(
--		"fatal flex scanner internal error--end of buffer missed" );
--
--	if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
--		{ /* Don't try to fill the buffer, so this is an EOF. */
--		if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
--			{
--			/* We matched a single character, the EOB, so
--			 * treat this as a final EOF.
--			 */
--			return EOB_ACT_END_OF_FILE;
--			}
--
--		else
--			{
--			/* We matched some text prior to the EOB, first
--			 * process it.
--			 */
--			return EOB_ACT_LAST_MATCH;
--			}
--		}
--
--	/* Try to read more data. */
--
--	/* First move last chars to start of buffer. */
--	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr) - 1);
--
--	for ( i = 0; i < number_to_move; ++i )
--		*(dest++) = *(source++);
--
--	if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
--		/* don't do the read, it's not guaranteed to return an EOF,
--		 * just force an EOF
--		 */
--		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
--
--	else
--		{
--			int num_to_read =
--			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
--
--		while ( num_to_read <= 0 )
--			{ /* Not enough room in the buffer - grow it. */
--
--			/* just a shorter name for the current buffer */
--			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
--
--			int yy_c_buf_p_offset =
--				(int) ((yy_c_buf_p) - b->yy_ch_buf);
--
--			if ( b->yy_is_our_buffer )
--				{
--				int new_size = b->yy_buf_size * 2;
--
--				if ( new_size <= 0 )
--					b->yy_buf_size += b->yy_buf_size / 8;
--				else
--					b->yy_buf_size *= 2;
--
--				b->yy_ch_buf = (char *)
--					/* Include room in for 2 EOB chars. */
--					yyrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
--				}
--			else
--				/* Can't grow it, we don't own it. */
--				b->yy_ch_buf = NULL;
--
--			if ( ! b->yy_ch_buf )
--				YY_FATAL_ERROR(
--				"fatal error - scanner input buffer overflow" );
--
--			(yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
--
--			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
--						number_to_move - 1;
--
--			}
--
--		if ( num_to_read > YY_READ_BUF_SIZE )
--			num_to_read = YY_READ_BUF_SIZE;
--
--		/* Read in more data. */
--		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
--			(yy_n_chars), num_to_read );
--
--		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
--		}
--
--	if ( (yy_n_chars) == 0 )
--		{
--		if ( number_to_move == YY_MORE_ADJ )
--			{
--			ret_val = EOB_ACT_END_OF_FILE;
--			yyrestart(yyin  );
--			}
--
--		else
--			{
--			ret_val = EOB_ACT_LAST_MATCH;
--			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
--				YY_BUFFER_EOF_PENDING;
--			}
--		}
--
--	else
--		ret_val = EOB_ACT_CONTINUE_SCAN;
--
--	if (((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
--		/* Extend the array by 50%, plus the number we really need. */
--		int new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
--		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size  );
--		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
--			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
--	}
--
--	(yy_n_chars) += number_to_move;
--	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
--	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
--
--	(yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
--
--	return ret_val;
--}
--
--/* yy_get_previous_state - get the state just before the EOB char was reached */
--
--    static yy_state_type yy_get_previous_state (void)
--{
--	yy_state_type yy_current_state;
--	char *yy_cp;
--    
--	yy_current_state = (yy_start);
--	yy_current_state += YY_AT_BOL();
--
--	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
--		{
--		YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
--		if ( yy_accept[yy_current_state] )
--			{
--			(yy_last_accepting_state) = yy_current_state;
--			(yy_last_accepting_cpos) = yy_cp;
--			}
--		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
--			{
--			yy_current_state = (int) yy_def[yy_current_state];
--			if ( yy_current_state >= 166 )
--				yy_c = yy_meta[(unsigned int) yy_c];
--			}
--		yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
--		}
--
--	return yy_current_state;
--}
--
--/* yy_try_NUL_trans - try to make a transition on the NUL character
-- *
-- * synopsis
-- *	next_state = yy_try_NUL_trans( current_state );
-- */
--    static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
--{
--	int yy_is_jam;
--    	char *yy_cp = (yy_c_buf_p);
--
--	YY_CHAR yy_c = 1;
--	if ( yy_accept[yy_current_state] )
--		{
--		(yy_last_accepting_state) = yy_current_state;
--		(yy_last_accepting_cpos) = yy_cp;
--		}
--	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
--		{
--		yy_current_state = (int) yy_def[yy_current_state];
--		if ( yy_current_state >= 166 )
--			yy_c = yy_meta[(unsigned int) yy_c];
--		}
--	yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
--	yy_is_jam = (yy_current_state == 165);
--
--		return yy_is_jam ? 0 : yy_current_state;
--}
--
--#ifndef YY_NO_UNPUT
--
--#endif
--
--#ifndef YY_NO_INPUT
--#ifdef __cplusplus
--    static int yyinput (void)
--#else
--    static int input  (void)
--#endif
--
--{
--	int c;
--    
--	*(yy_c_buf_p) = (yy_hold_char);
--
--	if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
--		{
--		/* yy_c_buf_p now points to the character we want to return.
--		 * If this occurs *before* the EOB characters, then it's a
--		 * valid NUL; if not, then we've hit the end of the buffer.
--		 */
--		if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
--			/* This was really a NUL. */
--			*(yy_c_buf_p) = '\0';
--
--		else
--			{ /* need more input */
--			int offset = (yy_c_buf_p) - (yytext_ptr);
--			++(yy_c_buf_p);
--
--			switch ( yy_get_next_buffer(  ) )
--				{
--				case EOB_ACT_LAST_MATCH:
--					/* This happens because yy_g_n_b()
--					 * sees that we've accumulated a
--					 * token and flags that we need to
--					 * try matching the token before
--					 * proceeding.  But for input(),
--					 * there's no matching to consider.
--					 * So convert the EOB_ACT_LAST_MATCH
--					 * to EOB_ACT_END_OF_FILE.
--					 */
--
--					/* Reset buffer status. */
--					yyrestart(yyin );
--
--					/*FALLTHROUGH*/
--
--				case EOB_ACT_END_OF_FILE:
--					{
--					if ( yywrap( ) )
--						return 0;
--
--					if ( ! (yy_did_buffer_switch_on_eof) )
--						YY_NEW_FILE;
--#ifdef __cplusplus
--					return yyinput();
--#else
--					return input();
--#endif
--					}
--
--				case EOB_ACT_CONTINUE_SCAN:
--					(yy_c_buf_p) = (yytext_ptr) + offset;
--					break;
--				}
--			}
--		}
--
--	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
--	*(yy_c_buf_p) = '\0';	/* preserve yytext */
--	(yy_hold_char) = *++(yy_c_buf_p);
--
--	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
--
--	return c;
--}
--#endif	/* ifndef YY_NO_INPUT */
--
--/** Immediately switch to a different input stream.
-- * @param input_file A readable stream.
-- * 
-- * @note This function does not reset the start condition to @c INITIAL .
-- */
--    void yyrestart  (FILE * input_file )
--{
--    
--	if ( ! YY_CURRENT_BUFFER ){
--        yyensure_buffer_stack ();
--		YY_CURRENT_BUFFER_LVALUE =
--            yy_create_buffer(yyin,YY_BUF_SIZE );
--	}
--
--	yy_init_buffer(YY_CURRENT_BUFFER,input_file );
--	yy_load_buffer_state( );
--}
--
--/** Switch to a different input buffer.
-- * @param new_buffer The new input buffer.
-- * 
-- */
--    void yy_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )
--{
--    
--	/* TODO. We should be able to replace this entire function body
--	 * with
--	 *		yypop_buffer_state();
--	 *		yypush_buffer_state(new_buffer);
--     */
--	yyensure_buffer_stack ();
--	if ( YY_CURRENT_BUFFER == new_buffer )
--		return;
--
--	if ( YY_CURRENT_BUFFER )
--		{
--		/* Flush out information for old buffer. */
--		*(yy_c_buf_p) = (yy_hold_char);
--		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
--		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
--		}
--
--	YY_CURRENT_BUFFER_LVALUE = new_buffer;
--	yy_load_buffer_state( );
--
--	/* We don't actually know whether we did this switch during
--	 * EOF (yywrap()) processing, but the only time this flag
--	 * is looked at is after yywrap() is called, so it's safe
--	 * to go ahead and always set it.
--	 */
--	(yy_did_buffer_switch_on_eof) = 1;
--}
--
--static void yy_load_buffer_state  (void)
--{
--    	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
--	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
--	yyin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
--	(yy_hold_char) = *(yy_c_buf_p);
--}
--
--/** Allocate and initialize an input buffer state.
-- * @param file A readable stream.
-- * @param size The character buffer size in bytes. When in doubt, use @c YY_BUF_SIZE.
-- * 
-- * @return the allocated buffer state.
-- */
--    YY_BUFFER_STATE yy_create_buffer  (FILE * file, int  size )
--{
--	YY_BUFFER_STATE b;
--    
--	b = (YY_BUFFER_STATE) yyalloc(sizeof( struct yy_buffer_state )  );
--	if ( ! b )
--		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
--
--	b->yy_buf_size = (yy_size_t)size;
--
--	/* yy_ch_buf has to be 2 characters longer than the size given because
--	 * we need to put in 2 end-of-buffer characters.
--	 */
--	b->yy_ch_buf = (char *) yyalloc(b->yy_buf_size + 2  );
--	if ( ! b->yy_ch_buf )
--		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
--
--	b->yy_is_our_buffer = 1;
--
--	yy_init_buffer(b,file );
--
--	return b;
--}
--
--/** Destroy the buffer.
-- * @param b a buffer created with yy_create_buffer()
-- * 
-- */
--    void yy_delete_buffer (YY_BUFFER_STATE  b )
--{
--    
--	if ( ! b )
--		return;
--
--	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
--		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
--
--	if ( b->yy_is_our_buffer )
--		yyfree((void *) b->yy_ch_buf  );
--
--	yyfree((void *) b  );
--}
--
--/* Initializes or reinitializes a buffer.
-- * This function is sometimes called more than once on the same buffer,
-- * such as during a yyrestart() or at EOF.
-- */
--    static void yy_init_buffer  (YY_BUFFER_STATE  b, FILE * file )
--
--{
--	int oerrno = errno;
--    
--	yy_flush_buffer(b );
--
--	b->yy_input_file = file;
--	b->yy_fill_buffer = 1;
--
--    /* If b is the current buffer, then yy_init_buffer was _probably_
--     * called from yyrestart() or through yy_get_next_buffer.
--     * In that case, we don't want to reset the lineno or column.
--     */
--    if (b != YY_CURRENT_BUFFER){
--        b->yy_bs_lineno = 1;
--        b->yy_bs_column = 0;
--    }
--
--        b->yy_is_interactive = 0;
--    
--	errno = oerrno;
--}
--
--/** Discard all buffered characters. On the next scan, YY_INPUT will be called.
-- * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
-- * 
-- */
--    void yy_flush_buffer (YY_BUFFER_STATE  b )
--{
--    	if ( ! b )
--		return;
--
--	b->yy_n_chars = 0;
--
--	/* We always need two end-of-buffer characters.  The first causes
--	 * a transition to the end-of-buffer state.  The second causes
--	 * a jam in that state.
--	 */
--	b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
--	b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
--
--	b->yy_buf_pos = &b->yy_ch_buf[0];
--
--	b->yy_at_bol = 1;
--	b->yy_buffer_status = YY_BUFFER_NEW;
--
--	if ( b == YY_CURRENT_BUFFER )
--		yy_load_buffer_state( );
--}
--
--/** Pushes the new state onto the stack. The new state becomes
-- *  the current state. This function will allocate the stack
-- *  if necessary.
-- *  @param new_buffer The new state.
-- *  
-- */
--void yypush_buffer_state (YY_BUFFER_STATE new_buffer )
--{
--    	if (new_buffer == NULL)
--		return;
--
--	yyensure_buffer_stack();
--
--	/* This block is copied from yy_switch_to_buffer. */
--	if ( YY_CURRENT_BUFFER )
--		{
--		/* Flush out information for old buffer. */
--		*(yy_c_buf_p) = (yy_hold_char);
--		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
--		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
--		}
--
--	/* Only push if top exists. Otherwise, replace top. */
--	if (YY_CURRENT_BUFFER)
--		(yy_buffer_stack_top)++;
--	YY_CURRENT_BUFFER_LVALUE = new_buffer;
--
--	/* copied from yy_switch_to_buffer. */
--	yy_load_buffer_state( );
--	(yy_did_buffer_switch_on_eof) = 1;
--}
--
--/** Removes and deletes the top of the stack, if present.
-- *  The next element becomes the new top.
-- *  
-- */
--void yypop_buffer_state (void)
--{
--    	if (!YY_CURRENT_BUFFER)
--		return;
--
--	yy_delete_buffer(YY_CURRENT_BUFFER );
--	YY_CURRENT_BUFFER_LVALUE = NULL;
--	if ((yy_buffer_stack_top) > 0)
--		--(yy_buffer_stack_top);
--
--	if (YY_CURRENT_BUFFER) {
--		yy_load_buffer_state( );
--		(yy_did_buffer_switch_on_eof) = 1;
--	}
--}
--
--/* Allocates the stack if it does not exist.
-- *  Guarantees space for at least one push.
-- */
--static void yyensure_buffer_stack (void)
--{
--	int num_to_alloc;
--    
--	if (!(yy_buffer_stack)) {
--
--		/* First allocation is just for 2 elements, since we don't know if this
--		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
--		 * immediate realloc on the next call.
--         */
--      num_to_alloc = 1; /* After all that talk, this was set to 1 anyways... */
--		(yy_buffer_stack) = (struct yy_buffer_state**)yyalloc
--								(num_to_alloc * sizeof(struct yy_buffer_state*)
--								);
--		if ( ! (yy_buffer_stack) )
--			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
--
--		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
--
--		(yy_buffer_stack_max) = num_to_alloc;
--		(yy_buffer_stack_top) = 0;
--		return;
--	}
--
--	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
--
--		/* Increase the buffer to prepare for a possible push. */
--		yy_size_t grow_size = 8 /* arbitrary grow size */;
--
--		num_to_alloc = (yy_buffer_stack_max) + grow_size;
--		(yy_buffer_stack) = (struct yy_buffer_state**)yyrealloc
--								((yy_buffer_stack),
--								num_to_alloc * sizeof(struct yy_buffer_state*)
--								);
--		if ( ! (yy_buffer_stack) )
--			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
--
--		/* zero only the new slots.*/
--		memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
--		(yy_buffer_stack_max) = num_to_alloc;
--	}
--}
--
--/** Setup the input buffer state to scan directly from a user-specified character buffer.
-- * @param base the character buffer
-- * @param size the size in bytes of the character buffer
-- * 
-- * @return the newly allocated buffer state object.
-- */
--YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
--{
--	YY_BUFFER_STATE b;
--    
--	if ( size < 2 ||
--	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
--	     base[size-1] != YY_END_OF_BUFFER_CHAR )
--		/* They forgot to leave room for the EOB's. */
--		return NULL;
--
--	b = (YY_BUFFER_STATE) yyalloc(sizeof( struct yy_buffer_state )  );
--	if ( ! b )
--		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
--
--	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
--	b->yy_buf_pos = b->yy_ch_buf = base;
--	b->yy_is_our_buffer = 0;
--	b->yy_input_file = NULL;
--	b->yy_n_chars = b->yy_buf_size;
--	b->yy_is_interactive = 0;
--	b->yy_at_bol = 1;
--	b->yy_fill_buffer = 0;
--	b->yy_buffer_status = YY_BUFFER_NEW;
--
--	yy_switch_to_buffer(b  );
--
--	return b;
--}
--
--/** Setup the input buffer state to scan a string. The next call to yylex() will
-- * scan from a @e copy of @a str.
-- * @param yystr a NUL-terminated string to scan
-- * 
-- * @return the newly allocated buffer state object.
-- * @note If you want to scan bytes that may contain NUL values, then use
-- *       yy_scan_bytes() instead.
-- */
--YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
--{
--    
--	return yy_scan_bytes(yystr,(int) strlen(yystr) );
--}
--
--/** Setup the input buffer state to scan the given bytes. The next call to yylex() will
-- * scan from a @e copy of @a bytes.
-- * @param yybytes the byte buffer to scan
-- * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
-- * 
-- * @return the newly allocated buffer state object.
-- */
--YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
--{
--	YY_BUFFER_STATE b;
--	char *buf;
--	yy_size_t n;
--	int i;
--    
--	/* Get memory for full buffer, including space for trailing EOB's. */
--	n = (yy_size_t) (_yybytes_len + 2);
--	buf = (char *) yyalloc(n  );
--	if ( ! buf )
--		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
--
--	for ( i = 0; i < _yybytes_len; ++i )
--		buf[i] = yybytes[i];
--
--	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
--
--	b = yy_scan_buffer(buf,n );
--	if ( ! b )
--		YY_FATAL_ERROR( "bad buffer in yy_scan_bytes()" );
--
--	/* It's okay to grow etc. this buffer, and we should throw it
--	 * away when we're done.
--	 */
--	b->yy_is_our_buffer = 1;
--
--	return b;
--}
--
--#ifndef YY_EXIT_FAILURE
--#define YY_EXIT_FAILURE 2
--#endif
--
--static void yynoreturn yy_fatal_error (yyconst char* msg )
--{
--			(void) fprintf( stderr, "%s\n", msg );
--	exit( YY_EXIT_FAILURE );
--}
--
--/* Redefine yyless() so it works in section 3 code. */
--
--#undef yyless
--#define yyless(n) \
--	do \
--		{ \
--		/* Undo effects of setting up yytext. */ \
--        int yyless_macro_arg = (n); \
--        YY_LESS_LINENO(yyless_macro_arg);\
--		yytext[yyleng] = (yy_hold_char); \
--		(yy_c_buf_p) = yytext + yyless_macro_arg; \
--		(yy_hold_char) = *(yy_c_buf_p); \
--		*(yy_c_buf_p) = '\0'; \
--		yyleng = yyless_macro_arg; \
--		} \
--	while ( 0 )
--
--/* Accessor  methods (get/set functions) to struct members. */
--
--/** Get the current line number.
-- * 
-- */
--int yyget_lineno  (void)
--{
--    
--    return yylineno;
--}
--
--/** Get the input stream.
-- * 
-- */
--FILE *yyget_in  (void)
--{
--        return yyin;
--}
--
--/** Get the output stream.
-- * 
-- */
--FILE *yyget_out  (void)
--{
--        return yyout;
--}
--
--/** Get the length of the current token.
-- * 
-- */
--int yyget_leng  (void)
--{
--        return yyleng;
--}
--
--/** Get the current token.
-- * 
-- */
--
--char *yyget_text  (void)
--{
--        return yytext;
--}
--
--/** Set the current line number.
-- * @param _line_number line number
-- * 
-- */
--void yyset_lineno (int  _line_number )
--{
--    
--    yylineno = _line_number;
--}
--
--/** Set the input stream. This does not discard the current
-- * input buffer.
-- * @param _in_str A readable stream.
-- * 
-- * @see yy_switch_to_buffer
-- */
--void yyset_in (FILE *  _in_str )
--{
--        yyin = _in_str ;
--}
--
--void yyset_out (FILE *  _out_str )
--{
--        yyout = _out_str ;
--}
--
--int yyget_debug  (void)
--{
--        return yy_flex_debug;
--}
--
--void yyset_debug (int  _bdebug )
--{
--        yy_flex_debug = _bdebug ;
--}
--
--static int yy_init_globals (void)
--{
--        /* Initialization is the same as for the non-reentrant scanner.
--     * This function is called from yylex_destroy(), so don't allocate here.
--     */
--
--    (yy_buffer_stack) = NULL;
--    (yy_buffer_stack_top) = 0;
--    (yy_buffer_stack_max) = 0;
--    (yy_c_buf_p) = NULL;
--    (yy_init) = 0;
--    (yy_start) = 0;
--
--/* Defined in main.c */
--#ifdef YY_STDINIT
--    yyin = stdin;
--    yyout = stdout;
--#else
--    yyin = NULL;
--    yyout = NULL;
--#endif
--
--    /* For future reference: Set errno on error, since we are called by
--     * yylex_init()
--     */
--    return 0;
--}
--
--/* yylex_destroy is for both reentrant and non-reentrant scanners. */
--int yylex_destroy  (void)
--{
--    
--    /* Pop the buffer stack, destroying each element. */
--	while(YY_CURRENT_BUFFER){
--		yy_delete_buffer(YY_CURRENT_BUFFER  );
--		YY_CURRENT_BUFFER_LVALUE = NULL;
--		yypop_buffer_state();
--	}
--
--	/* Destroy the stack itself. */
--	yyfree((yy_buffer_stack) );
--	(yy_buffer_stack) = NULL;
--
--    /* Reset the globals. This is important in a non-reentrant scanner so the next time
--     * yylex() is called, initialization will occur. */
--    yy_init_globals( );
--
--    return 0;
--}
--
--/*
-- * Internal utility routines.
-- */
--
--#ifndef yytext_ptr
--static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
--{
--		
--	int i;
--	for ( i = 0; i < n; ++i )
--		s1[i] = s2[i];
--}
--#endif
--
--#ifdef YY_NEED_STRLEN
--static int yy_flex_strlen (yyconst char * s )
--{
--	int n;
--	for ( n = 0; s[n]; ++n )
--		;
--
--	return n;
--}
--#endif
--
--void *yyalloc (yy_size_t  size )
--{
--			return malloc(size);
--}
--
--void *yyrealloc  (void * ptr, yy_size_t  size )
--{
--		
--	/* The cast to (char *) in the following accommodates both
--	 * implementations that use char* generic pointers, and those
--	 * that use void* generic pointers.  It works with the latter
--	 * because both ANSI C and C++ allow castless assignment from
--	 * any pointer type to void*, and deal with argument conversions
--	 * as though doing an assignment.
--	 */
--	return realloc(ptr, size);
--}
--
--void yyfree (void * ptr )
--{
--			free( (char *) ptr );	/* see yyrealloc() for (char *) cast */
--}
--
--#define YYTABLES_NAME "yytables"
--
--#line 272 "dtc-lexer.l"
--
--
--
--static void push_input_file(const char *filename)
--{
--	assert(filename);
--
--	srcfile_push(filename);
--
--	yyin = current_srcfile->f;
--
--	yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));
--}
--
--
--static bool pop_input_file(void)
--{
--	if (srcfile_pop() == 0)
--		return false;
--
--	yypop_buffer_state();
--	yyin = current_srcfile->f;
--
--	return true;
--}
--
--static void lexical_error(const char *fmt, ...)
--{
--	va_list ap;
--
--	va_start(ap, fmt);
--	srcpos_verror(&yylloc, "Lexical error", fmt, ap);
--	va_end(ap);
--
--	treesource_error = true;
--}
--
-diff --git a/scripts/dtc/dtc-parser.tab.c_shipped b/scripts/dtc/dtc-parser.tab.c_shipped
-deleted file mode 100644
-index aea514fa6928..000000000000
---- a/scripts/dtc/dtc-parser.tab.c_shipped
-+++ /dev/null
-@@ -1,2321 +0,0 @@
--/* A Bison parser, made by GNU Bison 3.0.4.  */
--
--/* Bison implementation for Yacc-like parsers in C
--
--   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
--
--   This program is free software: you can redistribute it and/or modify
--   it under the terms of the GNU General Public License as published by
--   the Free Software Foundation, either version 3 of the License, or
--   (at your option) any later version.
--
--   This program is distributed in the hope that it will be useful,
--   but WITHOUT ANY WARRANTY; without even the implied warranty of
--   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--   GNU General Public License for more details.
--
--   You should have received a copy of the GNU General Public License
--   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
--
--/* As a special exception, you may create a larger work that contains
--   part or all of the Bison parser skeleton and distribute that work
--   under terms of your choice, so long as that work isn't itself a
--   parser generator using the skeleton or a modified version thereof
--   as a parser skeleton.  Alternatively, if you modify or redistribute
--   the parser skeleton itself, you may (at your option) remove this
--   special exception, which will cause the skeleton and the resulting
--   Bison output files to be licensed under the GNU General Public
--   License without this special exception.
--
--   This special exception was added by the Free Software Foundation in
--   version 2.2 of Bison.  */
--
--/* C LALR(1) parser skeleton written by Richard Stallman, by
--   simplifying the original so-called "semantic" parser.  */
--
--/* All symbols defined below should begin with yy or YY, to avoid
--   infringing on user name space.  This should be done even for local
--   variables, as they might otherwise be expanded by user macros.
--   There are some unavoidable exceptions within include files to
--   define necessary library symbols; they are noted "INFRINGES ON
--   USER NAME SPACE" below.  */
--
--/* Identify Bison output.  */
--#define YYBISON 1
--
--/* Bison version.  */
--#define YYBISON_VERSION "3.0.4"
--
--/* Skeleton name.  */
--#define YYSKELETON_NAME "yacc.c"
--
--/* Pure parsers.  */
--#define YYPURE 0
--
--/* Push parsers.  */
--#define YYPUSH 0
--
--/* Pull parsers.  */
--#define YYPULL 1
--
--
--
--
--/* Copy the first part of user declarations.  */
--#line 20 "dtc-parser.y" /* yacc.c:339  */
--
--#include <stdio.h>
--#include <inttypes.h>
--
--#include "dtc.h"
--#include "srcpos.h"
--
--extern int yylex(void);
--extern void yyerror(char const *s);
--#define ERROR(loc, ...) \
--	do { \
--		srcpos_error((loc), "Error", __VA_ARGS__); \
--		treesource_error = true; \
--	} while (0)
--
--extern struct dt_info *parser_output;
--extern bool treesource_error;
--
--#line 85 "dtc-parser.tab.c" /* yacc.c:339  */
--
--# ifndef YY_NULLPTR
--#  if defined __cplusplus && 201103L <= __cplusplus
--#   define YY_NULLPTR nullptr
--#  else
--#   define YY_NULLPTR 0
--#  endif
--# endif
--
--/* Enabling verbose error messages.  */
--#ifdef YYERROR_VERBOSE
--# undef YYERROR_VERBOSE
--# define YYERROR_VERBOSE 1
--#else
--# define YYERROR_VERBOSE 0
--#endif
--
--/* In a future release of Bison, this section will be replaced
--   by #include "dtc-parser.tab.h".  */
--#ifndef YY_YY_DTC_PARSER_TAB_H_INCLUDED
--# define YY_YY_DTC_PARSER_TAB_H_INCLUDED
--/* Debug traces.  */
--#ifndef YYDEBUG
--# define YYDEBUG 0
--#endif
--#if YYDEBUG
--extern int yydebug;
--#endif
--
--/* Token type.  */
--#ifndef YYTOKENTYPE
--# define YYTOKENTYPE
--  enum yytokentype
--  {
--    DT_V1 = 258,
--    DT_PLUGIN = 259,
--    DT_MEMRESERVE = 260,
--    DT_LSHIFT = 261,
--    DT_RSHIFT = 262,
--    DT_LE = 263,
--    DT_GE = 264,
--    DT_EQ = 265,
--    DT_NE = 266,
--    DT_AND = 267,
--    DT_OR = 268,
--    DT_BITS = 269,
--    DT_DEL_PROP = 270,
--    DT_DEL_NODE = 271,
--    DT_PROPNODENAME = 272,
--    DT_LITERAL = 273,
--    DT_CHAR_LITERAL = 274,
--    DT_BYTE = 275,
--    DT_STRING = 276,
--    DT_LABEL = 277,
--    DT_REF = 278,
--    DT_INCBIN = 279
--  };
--#endif
--
--/* Value type.  */
--#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
--
--union YYSTYPE
--{
--#line 39 "dtc-parser.y" /* yacc.c:355  */
--
--	char *propnodename;
--	char *labelref;
--	uint8_t byte;
--	struct data data;
--
--	struct {
--		struct data	data;
--		int		bits;
--	} array;
--
--	struct property *prop;
--	struct property *proplist;
--	struct node *node;
--	struct node *nodelist;
--	struct reserve_info *re;
--	uint64_t integer;
--	unsigned int flags;
--
--#line 170 "dtc-parser.tab.c" /* yacc.c:355  */
--};
--
--typedef union YYSTYPE YYSTYPE;
--# define YYSTYPE_IS_TRIVIAL 1
--# define YYSTYPE_IS_DECLARED 1
--#endif
--
--/* Location type.  */
--#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
--typedef struct YYLTYPE YYLTYPE;
--struct YYLTYPE
--{
--  int first_line;
--  int first_column;
--  int last_line;
--  int last_column;
--};
--# define YYLTYPE_IS_DECLARED 1
--# define YYLTYPE_IS_TRIVIAL 1
--#endif
--
--
--extern YYSTYPE yylval;
--extern YYLTYPE yylloc;
--int yyparse (void);
--
--#endif /* !YY_YY_DTC_PARSER_TAB_H_INCLUDED  */
--
--/* Copy the second part of user declarations.  */
--
--#line 201 "dtc-parser.tab.c" /* yacc.c:358  */
--
--#ifdef short
--# undef short
--#endif
--
--#ifdef YYTYPE_UINT8
--typedef YYTYPE_UINT8 yytype_uint8;
--#else
--typedef unsigned char yytype_uint8;
--#endif
--
--#ifdef YYTYPE_INT8
--typedef YYTYPE_INT8 yytype_int8;
--#else
--typedef signed char yytype_int8;
--#endif
--
--#ifdef YYTYPE_UINT16
--typedef YYTYPE_UINT16 yytype_uint16;
--#else
--typedef unsigned short int yytype_uint16;
--#endif
--
--#ifdef YYTYPE_INT16
--typedef YYTYPE_INT16 yytype_int16;
--#else
--typedef short int yytype_int16;
--#endif
--
--#ifndef YYSIZE_T
--# ifdef __SIZE_TYPE__
--#  define YYSIZE_T __SIZE_TYPE__
--# elif defined size_t
--#  define YYSIZE_T size_t
--# elif ! defined YYSIZE_T
--#  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
--#  define YYSIZE_T size_t
--# else
--#  define YYSIZE_T unsigned int
--# endif
--#endif
--
--#define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
--
--#ifndef YY_
--# if defined YYENABLE_NLS && YYENABLE_NLS
--#  if ENABLE_NLS
--#   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
--#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
--#  endif
--# endif
--# ifndef YY_
--#  define YY_(Msgid) Msgid
--# endif
--#endif
--
--#ifndef YY_ATTRIBUTE
--# if (defined __GNUC__                                               \
--      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
--     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
--#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
--# else
--#  define YY_ATTRIBUTE(Spec) /* empty */
--# endif
--#endif
--
--#ifndef YY_ATTRIBUTE_PURE
--# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
--#endif
--
--#ifndef YY_ATTRIBUTE_UNUSED
--# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
--#endif
--
--#if !defined _Noreturn \
--     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
--# if defined _MSC_VER && 1200 <= _MSC_VER
--#  define _Noreturn __declspec (noreturn)
--# else
--#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
--# endif
--#endif
--
--/* Suppress unused-variable warnings by "using" E.  */
--#if ! defined lint || defined __GNUC__
--# define YYUSE(E) ((void) (E))
--#else
--# define YYUSE(E) /* empty */
--#endif
--
--#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
--/* Suppress an incorrect diagnostic about yylval being uninitialized.  */
--# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
--    _Pragma ("GCC diagnostic push") \
--    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")\
--    _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
--# define YY_IGNORE_MAYBE_UNINITIALIZED_END \
--    _Pragma ("GCC diagnostic pop")
--#else
--# define YY_INITIAL_VALUE(Value) Value
--#endif
--#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
--# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
--# define YY_IGNORE_MAYBE_UNINITIALIZED_END
--#endif
--#ifndef YY_INITIAL_VALUE
--# define YY_INITIAL_VALUE(Value) /* Nothing. */
--#endif
--
--
--#if ! defined yyoverflow || YYERROR_VERBOSE
--
--/* The parser invokes alloca or malloc; define the necessary symbols.  */
--
--# ifdef YYSTACK_USE_ALLOCA
--#  if YYSTACK_USE_ALLOCA
--#   ifdef __GNUC__
--#    define YYSTACK_ALLOC __builtin_alloca
--#   elif defined __BUILTIN_VA_ARG_INCR
--#    include <alloca.h> /* INFRINGES ON USER NAME SPACE */
--#   elif defined _AIX
--#    define YYSTACK_ALLOC __alloca
--#   elif defined _MSC_VER
--#    include <malloc.h> /* INFRINGES ON USER NAME SPACE */
--#    define alloca _alloca
--#   else
--#    define YYSTACK_ALLOC alloca
--#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
--#     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
--      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
--#     ifndef EXIT_SUCCESS
--#      define EXIT_SUCCESS 0
--#     endif
--#    endif
--#   endif
--#  endif
--# endif
--
--# ifdef YYSTACK_ALLOC
--   /* Pacify GCC's 'empty if-body' warning.  */
--#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
--#  ifndef YYSTACK_ALLOC_MAXIMUM
--    /* The OS might guarantee only one guard page at the bottom of the stack,
--       and a page size can be as small as 4096 bytes.  So we cannot safely
--       invoke alloca (N) if N exceeds 4096.  Use a slightly smaller number
--       to allow for a few compiler-allocated temporary stack slots.  */
--#   define YYSTACK_ALLOC_MAXIMUM 4032 /* reasonable circa 2006 */
--#  endif
--# else
--#  define YYSTACK_ALLOC YYMALLOC
--#  define YYSTACK_FREE YYFREE
--#  ifndef YYSTACK_ALLOC_MAXIMUM
--#   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
--#  endif
--#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
--       && ! ((defined YYMALLOC || defined malloc) \
--             && (defined YYFREE || defined free)))
--#   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
--#   ifndef EXIT_SUCCESS
--#    define EXIT_SUCCESS 0
--#   endif
--#  endif
--#  ifndef YYMALLOC
--#   define YYMALLOC malloc
--#   if ! defined malloc && ! defined EXIT_SUCCESS
--void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
--#   endif
--#  endif
--#  ifndef YYFREE
--#   define YYFREE free
--#   if ! defined free && ! defined EXIT_SUCCESS
--void free (void *); /* INFRINGES ON USER NAME SPACE */
--#   endif
--#  endif
--# endif
--#endif /* ! defined yyoverflow || YYERROR_VERBOSE */
--
--
--#if (! defined yyoverflow \
--     && (! defined __cplusplus \
--         || (defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL \
--             && defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
--
--/* A type that is properly aligned for any stack member.  */
--union yyalloc
--{
--  yytype_int16 yyss_alloc;
--  YYSTYPE yyvs_alloc;
--  YYLTYPE yyls_alloc;
--};
--
--/* The size of the maximum gap between one aligned stack and the next.  */
--# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
--
--/* The size of an array large to enough to hold all stacks, each with
--   N elements.  */
--# define YYSTACK_BYTES(N) \
--     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE) + sizeof (YYLTYPE)) \
--      + 2 * YYSTACK_GAP_MAXIMUM)
--
--# define YYCOPY_NEEDED 1
--
--/* Relocate STACK from its old location to the new one.  The
--   local variables YYSIZE and YYSTACKSIZE give the old and new number of
--   elements in the stack, and YYPTR gives the new location of the
--   stack.  Advance YYPTR to a properly aligned location for the next
--   stack.  */
--# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
--    do                                                                  \
--      {                                                                 \
--        YYSIZE_T yynewbytes;                                            \
--        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
--        Stack = &yyptr->Stack_alloc;                                    \
--        yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
--        yyptr += yynewbytes / sizeof (*yyptr);                          \
--      }                                                                 \
--    while (0)
--
--#endif
--
--#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
--/* Copy COUNT objects from SRC to DST.  The source and destination do
--   not overlap.  */
--# ifndef YYCOPY
--#  if defined __GNUC__ && 1 < __GNUC__
--#   define YYCOPY(Dst, Src, Count) \
--      __builtin_memcpy (Dst, Src, (Count) * sizeof (*(Src)))
--#  else
--#   define YYCOPY(Dst, Src, Count)              \
--      do                                        \
--        {                                       \
--          YYSIZE_T yyi;                         \
--          for (yyi = 0; yyi < (Count); yyi++)   \
--            (Dst)[yyi] = (Src)[yyi];            \
--        }                                       \
--      while (0)
--#  endif
--# endif
--#endif /* !YYCOPY_NEEDED */
--
--/* YYFINAL -- State number of the termination state.  */
--#define YYFINAL  6
--/* YYLAST -- Last index in YYTABLE.  */
--#define YYLAST   138
--
--/* YYNTOKENS -- Number of terminals.  */
--#define YYNTOKENS  48
--/* YYNNTS -- Number of nonterminals.  */
--#define YYNNTS  30
--/* YYNRULES -- Number of rules.  */
--#define YYNRULES  85
--/* YYNSTATES -- Number of states.  */
--#define YYNSTATES  149
--
--/* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
--   by yylex, with out-of-bounds checking.  */
--#define YYUNDEFTOK  2
--#define YYMAXUTOK   279
--
--#define YYTRANSLATE(YYX)                                                \
--  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
--
--/* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
--   as returned by yylex, without out-of-bounds checking.  */
--static const yytype_uint8 yytranslate[] =
--{
--       0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,    47,     2,     2,     2,    45,    41,     2,
--      33,    35,    44,    42,    34,    43,     2,    26,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,    38,    25,
--      36,    29,    30,    37,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,    31,     2,    32,    40,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,    27,    39,    28,    46,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
--       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
--       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
--      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
--};
--
--#if YYDEBUG
--  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
--static const yytype_uint16 yyrline[] =
--{
--       0,   109,   109,   117,   121,   128,   129,   139,   142,   149,
--     153,   161,   165,   170,   181,   200,   213,   220,   228,   231,
--     238,   242,   246,   250,   258,   262,   266,   270,   274,   290,
--     300,   308,   311,   315,   322,   338,   343,   362,   376,   383,
--     384,   385,   392,   396,   397,   401,   402,   406,   407,   411,
--     412,   416,   417,   421,   422,   426,   427,   428,   432,   433,
--     434,   435,   436,   440,   441,   442,   446,   447,   448,   452,
--     453,   462,   471,   475,   476,   477,   478,   483,   486,   490,
--     498,   501,   505,   513,   517,   521
--};
--#endif
--
--#if YYDEBUG || YYERROR_VERBOSE || 0
--/* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
--   First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
--static const char *const yytname[] =
--{
--  "$end", "error", "$undefined", "DT_V1", "DT_PLUGIN", "DT_MEMRESERVE",
--  "DT_LSHIFT", "DT_RSHIFT", "DT_LE", "DT_GE", "DT_EQ", "DT_NE", "DT_AND",
--  "DT_OR", "DT_BITS", "DT_DEL_PROP", "DT_DEL_NODE", "DT_PROPNODENAME",
--  "DT_LITERAL", "DT_CHAR_LITERAL", "DT_BYTE", "DT_STRING", "DT_LABEL",
--  "DT_REF", "DT_INCBIN", "';'", "'/'", "'{'", "'}'", "'='", "'>'", "'['",
--  "']'", "'('", "','", "')'", "'<'", "'?'", "':'", "'|'", "'^'", "'&'",
--  "'+'", "'-'", "'*'", "'%'", "'~'", "'!'", "$accept", "sourcefile",
--  "header", "headers", "memreserves", "memreserve", "devicetree",
--  "nodedef", "proplist", "propdef", "propdata", "propdataprefix",
--  "arrayprefix", "integer_prim", "integer_expr", "integer_trinary",
--  "integer_or", "integer_and", "integer_bitor", "integer_bitxor",
--  "integer_bitand", "integer_eq", "integer_rela", "integer_shift",
--  "integer_add", "integer_mul", "integer_unary", "bytestring", "subnodes",
--  "subnode", YY_NULLPTR
--};
--#endif
--
--# ifdef YYPRINT
--/* YYTOKNUM[NUM] -- (External) token number corresponding to the
--   (internal) symbol number NUM (which must be that of a token).  */
--static const yytype_uint16 yytoknum[] =
--{
--       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
--     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
--     275,   276,   277,   278,   279,    59,    47,   123,   125,    61,
--      62,    91,    93,    40,    44,    41,    60,    63,    58,   124,
--      94,    38,    43,    45,    42,    37,   126,    33
--};
--# endif
--
--#define YYPACT_NINF -44
--
--#define yypact_value_is_default(Yystate) \
--  (!!((Yystate) == (-44)))
--
--#define YYTABLE_NINF -1
--
--#define yytable_value_is_error(Yytable_value) \
--  0
--
--  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
--     STATE-NUM.  */
--static const yytype_int8 yypact[] =
--{
--      14,    27,    61,    14,     8,    18,   -44,   -44,    37,     8,
--      40,     8,    64,   -44,   -44,   -12,    37,   -44,    50,    52,
--     -44,   -44,   -12,   -12,   -12,   -44,    51,   -44,    -4,    78,
--      53,    54,    55,    17,     2,    30,    38,    -3,   -44,    66,
--     -44,   -44,    70,    72,    50,    50,   -44,   -44,   -44,   -44,
--     -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,
--     -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,   -44,
--       3,    73,    50,   -44,   -44,    78,    59,    53,    54,    55,
--      17,     2,     2,    30,    30,    30,    30,    38,    38,    -3,
--      -3,   -44,   -44,   -44,    82,    83,    44,     3,   -44,    74,
--       3,   -44,   -44,   -12,    76,    79,   -44,   -44,   -44,   -44,
--     -44,    80,   -44,   -44,   -44,   -44,   -44,   -10,    36,   -44,
--     -44,   -44,   -44,    85,   -44,   -44,   -44,    75,   -44,   -44,
--      21,    71,    88,    -6,   -44,   -44,   -44,   -44,   -44,    11,
--     -44,   -44,   -44,    37,   -44,    77,    37,    81,   -44
--};
--
--  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
--     Performed when YYTABLE does not specify something else to do.  Zero
--     means the default is an error.  */
--static const yytype_uint8 yydefact[] =
--{
--       0,     0,     0,     5,     7,     3,     1,     6,     0,     0,
--      16,     7,     0,    39,    40,     0,     0,    10,     0,     2,
--       8,     4,     0,     0,     0,    73,     0,    42,    43,    45,
--      47,    49,    51,    53,    55,    58,    65,    68,    72,     0,
--      18,    11,     0,     0,     0,     0,    74,    75,    76,    41,
--       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
--       0,     0,     0,     0,     0,     0,     0,     0,     0,     9,
--      80,     0,     0,    14,    12,    46,     0,    48,    50,    52,
--      54,    56,    57,    61,    62,    60,    59,    63,    64,    66,
--      67,    70,    69,    71,     0,     0,     0,     0,    19,     0,
--      80,    15,    13,     0,     0,     0,    21,    31,    83,    23,
--      85,     0,    82,    81,    44,    22,    84,     0,     0,    17,
--      30,    20,    32,     0,    24,    33,    27,     0,    77,    35,
--       0,     0,     0,     0,    38,    37,    25,    36,    34,     0,
--      78,    79,    26,     0,    29,     0,     0,     0,    28
--};
--
--  /* YYPGOTO[NTERM-NUM].  */
--static const yytype_int8 yypgoto[] =
--{
--     -44,   -44,   -44,   103,    99,   104,   -44,   -43,   -44,   -21,
--     -44,   -44,   -44,    -8,    63,     9,   -44,    65,    67,    68,
--      69,    62,    26,     4,    22,    23,   -19,   -44,    20,    28
--};
--
--  /* YYDEFGOTO[NTERM-NUM].  */
--static const yytype_int16 yydefgoto[] =
--{
--      -1,     2,     3,     4,    10,    11,    19,    41,    70,    98,
--     117,   118,   130,    25,    26,    27,    28,    29,    30,    31,
--      32,    33,    34,    35,    36,    37,    38,   133,    99,   100
--};
--
--  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
--     positive, shift that token.  If negative, reduce the rule whose
--     number is the opposite.  If YYTABLE_NINF, syntax error.  */
--static const yytype_uint8 yytable[] =
--{
--      16,    73,    74,    46,    47,    48,    13,    14,    39,    50,
--      58,    59,   120,     8,   140,   121,   141,     1,    94,    95,
--      96,    15,    12,    66,   122,    97,   142,    56,    57,   102,
--       9,    22,    60,    51,    23,    24,    62,    63,    61,    13,
--      14,    67,    68,   134,   135,   143,   144,    91,    92,    93,
--     123,   136,     5,   108,    15,    13,    14,   124,   125,   126,
--     127,     6,    83,    84,    85,    86,    18,   128,    42,   106,
--      15,    40,   129,   107,    43,    44,   109,    40,    45,   112,
--      64,    65,    81,    82,    87,    88,    49,    89,    90,    21,
--      52,    69,    53,    71,    54,    72,    55,   103,   101,   104,
--     105,   115,   111,   131,   116,   119,     7,   138,   132,   139,
--      20,   146,   114,    17,    76,    75,   148,    80,     0,    77,
--     113,    78,   137,    79,     0,   110,     0,     0,     0,     0,
--       0,     0,     0,     0,     0,   145,     0,     0,   147
--};
--
--static const yytype_int16 yycheck[] =
--{
--       8,    44,    45,    22,    23,    24,    18,    19,    16,    13,
--       8,     9,    22,     5,    20,    25,    22,     3,    15,    16,
--      17,    33,     4,    26,    34,    22,    32,    10,    11,    72,
--      22,    43,    30,    37,    46,    47,     6,     7,    36,    18,
--      19,    44,    45,    22,    23,    34,    35,    66,    67,    68,
--      14,    30,    25,    96,    33,    18,    19,    21,    22,    23,
--      24,     0,    58,    59,    60,    61,    26,    31,    16,    25,
--      33,    27,    36,    29,    22,    23,    97,    27,    26,   100,
--      42,    43,    56,    57,    62,    63,    35,    64,    65,    25,
--      12,    25,    39,    23,    40,    23,    41,    38,    25,    17,
--      17,    25,    28,    18,    25,    25,     3,    36,    33,    21,
--      11,    34,   103,     9,    51,    50,    35,    55,    -1,    52,
--     100,    53,   130,    54,    -1,    97,    -1,    -1,    -1,    -1,
--      -1,    -1,    -1,    -1,    -1,   143,    -1,    -1,   146
--};
--
--  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
--     symbol of state STATE-NUM.  */
--static const yytype_uint8 yystos[] =
--{
--       0,     3,    49,    50,    51,    25,     0,    51,     5,    22,
--      52,    53,     4,    18,    19,    33,    61,    53,    26,    54,
--      52,    25,    43,    46,    47,    61,    62,    63,    64,    65,
--      66,    67,    68,    69,    70,    71,    72,    73,    74,    61,
--      27,    55,    16,    22,    23,    26,    74,    74,    74,    35,
--      13,    37,    12,    39,    40,    41,    10,    11,     8,     9,
--      30,    36,     6,     7,    42,    43,    26,    44,    45,    25,
--      56,    23,    23,    55,    55,    65,    62,    66,    67,    68,
--      69,    70,    70,    71,    71,    71,    71,    72,    72,    73,
--      73,    74,    74,    74,    15,    16,    17,    22,    57,    76,
--      77,    25,    55,    38,    17,    17,    25,    29,    55,    57,
--      77,    28,    57,    76,    63,    25,    25,    58,    59,    25,
--      22,    25,    34,    14,    21,    22,    23,    24,    31,    36,
--      60,    18,    33,    75,    22,    23,    30,    61,    36,    21,
--      20,    22,    32,    34,    35,    61,    34,    61,    35
--};
--
--  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
--static const yytype_uint8 yyr1[] =
--{
--       0,    48,    49,    50,    50,    51,    51,    52,    52,    53,
--      53,    54,    54,    54,    54,    54,    54,    55,    56,    56,
--      57,    57,    57,    57,    58,    58,    58,    58,    58,    58,
--      58,    59,    59,    59,    60,    60,    60,    60,    60,    61,
--      61,    61,    62,    63,    63,    64,    64,    65,    65,    66,
--      66,    67,    67,    68,    68,    69,    69,    69,    70,    70,
--      70,    70,    70,    71,    71,    71,    72,    72,    72,    73,
--      73,    73,    73,    74,    74,    74,    74,    75,    75,    75,
--      76,    76,    76,    77,    77,    77
--};
--
--  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
--static const yytype_uint8 yyr2[] =
--{
--       0,     2,     3,     2,     4,     1,     2,     0,     2,     4,
--       2,     2,     3,     4,     3,     4,     0,     5,     0,     2,
--       4,     2,     3,     2,     2,     3,     4,     2,     9,     5,
--       2,     0,     2,     2,     3,     1,     2,     2,     2,     1,
--       1,     3,     1,     1,     5,     1,     3,     1,     3,     1,
--       3,     1,     3,     1,     3,     1,     3,     3,     1,     3,
--       3,     3,     3,     3,     3,     1,     3,     3,     1,     3,
--       3,     3,     1,     1,     2,     2,     2,     0,     2,     2,
--       0,     2,     2,     2,     3,     2
--};
--
--
--#define yyerrok         (yyerrstatus = 0)
--#define yyclearin       (yychar = YYEMPTY)
--#define YYEMPTY         (-2)
--#define YYEOF           0
--
--#define YYACCEPT        goto yyacceptlab
--#define YYABORT         goto yyabortlab
--#define YYERROR         goto yyerrorlab
--
--
--#define YYRECOVERING()  (!!yyerrstatus)
--
--#define YYBACKUP(Token, Value)                                  \
--do                                                              \
--  if (yychar == YYEMPTY)                                        \
--    {                                                           \
--      yychar = (Token);                                         \
--      yylval = (Value);                                         \
--      YYPOPSTACK (yylen);                                       \
--      yystate = *yyssp;                                         \
--      goto yybackup;                                            \
--    }                                                           \
--  else                                                          \
--    {                                                           \
--      yyerror (YY_("syntax error: cannot back up")); \
--      YYERROR;                                                  \
--    }                                                           \
--while (0)
--
--/* Error token number */
--#define YYTERROR        1
--#define YYERRCODE       256
--
--
--/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
--   If N is 0, then set CURRENT to the empty location which ends
--   the previous symbol: RHS[0] (always defined).  */
--
--#ifndef YYLLOC_DEFAULT
--# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
--    do                                                                  \
--      if (N)                                                            \
--        {                                                               \
--          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
--          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
--          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
--          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
--        }                                                               \
--      else                                                              \
--        {                                                               \
--          (Current).first_line   = (Current).last_line   =              \
--            YYRHSLOC (Rhs, 0).last_line;                                \
--          (Current).first_column = (Current).last_column =              \
--            YYRHSLOC (Rhs, 0).last_column;                              \
--        }                                                               \
--    while (0)
--#endif
--
--#define YYRHSLOC(Rhs, K) ((Rhs)[K])
--
--
--/* Enable debugging if requested.  */
--#if YYDEBUG
--
--# ifndef YYFPRINTF
--#  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
--#  define YYFPRINTF fprintf
--# endif
--
--# define YYDPRINTF(Args)                        \
--do {                                            \
--  if (yydebug)                                  \
--    YYFPRINTF Args;                             \
--} while (0)
--
--
--/* YY_LOCATION_PRINT -- Print the location on the stream.
--   This macro was not mandated originally: define only if we know
--   we won't break user code: when these are the locations we know.  */
--
--#ifndef YY_LOCATION_PRINT
--# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
--
--/* Print *YYLOCP on YYO.  Private, do not rely on its existence. */
--
--YY_ATTRIBUTE_UNUSED
--static unsigned
--yy_location_print_ (FILE *yyo, YYLTYPE const * const yylocp)
--{
--  unsigned res = 0;
--  int end_col = 0 != yylocp->last_column ? yylocp->last_column - 1 : 0;
--  if (0 <= yylocp->first_line)
--    {
--      res += YYFPRINTF (yyo, "%d", yylocp->first_line);
--      if (0 <= yylocp->first_column)
--        res += YYFPRINTF (yyo, ".%d", yylocp->first_column);
--    }
--  if (0 <= yylocp->last_line)
--    {
--      if (yylocp->first_line < yylocp->last_line)
--        {
--          res += YYFPRINTF (yyo, "-%d", yylocp->last_line);
--          if (0 <= end_col)
--            res += YYFPRINTF (yyo, ".%d", end_col);
--        }
--      else if (0 <= end_col && yylocp->first_column < end_col)
--        res += YYFPRINTF (yyo, "-%d", end_col);
--    }
--  return res;
-- }
--
--#  define YY_LOCATION_PRINT(File, Loc)          \
--  yy_location_print_ (File, &(Loc))
--
--# else
--#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
--# endif
--#endif
--
--
--# define YY_SYMBOL_PRINT(Title, Type, Value, Location)                    \
--do {                                                                      \
--  if (yydebug)                                                            \
--    {                                                                     \
--      YYFPRINTF (stderr, "%s ", Title);                                   \
--      yy_symbol_print (stderr,                                            \
--                  Type, Value, Location); \
--      YYFPRINTF (stderr, "\n");                                           \
--    }                                                                     \
--} while (0)
--
--
--/*----------------------------------------.
--| Print this symbol's value on YYOUTPUT.  |
--`----------------------------------------*/
--
--static void
--yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
--{
--  FILE *yyo = yyoutput;
--  YYUSE (yyo);
--  YYUSE (yylocationp);
--  if (!yyvaluep)
--    return;
--# ifdef YYPRINT
--  if (yytype < YYNTOKENS)
--    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
--# endif
--  YYUSE (yytype);
--}
--
--
--/*--------------------------------.
--| Print this symbol on YYOUTPUT.  |
--`--------------------------------*/
--
--static void
--yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
--{
--  YYFPRINTF (yyoutput, "%s %s (",
--             yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
--
--  YY_LOCATION_PRINT (yyoutput, *yylocationp);
--  YYFPRINTF (yyoutput, ": ");
--  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp);
--  YYFPRINTF (yyoutput, ")");
--}
--
--/*------------------------------------------------------------------.
--| yy_stack_print -- Print the state stack from its BOTTOM up to its |
--| TOP (included).                                                   |
--`------------------------------------------------------------------*/
--
--static void
--yy_stack_print (yytype_int16 *yybottom, yytype_int16 *yytop)
--{
--  YYFPRINTF (stderr, "Stack now");
--  for (; yybottom <= yytop; yybottom++)
--    {
--      int yybot = *yybottom;
--      YYFPRINTF (stderr, " %d", yybot);
--    }
--  YYFPRINTF (stderr, "\n");
--}
--
--# define YY_STACK_PRINT(Bottom, Top)                            \
--do {                                                            \
--  if (yydebug)                                                  \
--    yy_stack_print ((Bottom), (Top));                           \
--} while (0)
--
--
--/*------------------------------------------------.
--| Report that the YYRULE is going to be reduced.  |
--`------------------------------------------------*/
--
--static void
--yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule)
--{
--  unsigned long int yylno = yyrline[yyrule];
--  int yynrhs = yyr2[yyrule];
--  int yyi;
--  YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
--             yyrule - 1, yylno);
--  /* The symbols being reduced.  */
--  for (yyi = 0; yyi < yynrhs; yyi++)
--    {
--      YYFPRINTF (stderr, "   $%d = ", yyi + 1);
--      yy_symbol_print (stderr,
--                       yystos[yyssp[yyi + 1 - yynrhs]],
--                       &(yyvsp[(yyi + 1) - (yynrhs)])
--                       , &(yylsp[(yyi + 1) - (yynrhs)])                       );
--      YYFPRINTF (stderr, "\n");
--    }
--}
--
--# define YY_REDUCE_PRINT(Rule)          \
--do {                                    \
--  if (yydebug)                          \
--    yy_reduce_print (yyssp, yyvsp, yylsp, Rule); \
--} while (0)
--
--/* Nonzero means print parse trace.  It is left uninitialized so that
--   multiple parsers can coexist.  */
--int yydebug;
--#else /* !YYDEBUG */
--# define YYDPRINTF(Args)
--# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
--# define YY_STACK_PRINT(Bottom, Top)
--# define YY_REDUCE_PRINT(Rule)
--#endif /* !YYDEBUG */
--
--
--/* YYINITDEPTH -- initial size of the parser's stacks.  */
--#ifndef YYINITDEPTH
--# define YYINITDEPTH 200
--#endif
--
--/* YYMAXDEPTH -- maximum size the stacks can grow to (effective only
--   if the built-in stack extension method is used).
--
--   Do not make this value too large; the results are undefined if
--   YYSTACK_ALLOC_MAXIMUM < YYSTACK_BYTES (YYMAXDEPTH)
--   evaluated with infinite-precision integer arithmetic.  */
--
--#ifndef YYMAXDEPTH
--# define YYMAXDEPTH 10000
--#endif
--
--
--#if YYERROR_VERBOSE
--
--# ifndef yystrlen
--#  if defined __GLIBC__ && defined _STRING_H
--#   define yystrlen strlen
--#  else
--/* Return the length of YYSTR.  */
--static YYSIZE_T
--yystrlen (const char *yystr)
--{
--  YYSIZE_T yylen;
--  for (yylen = 0; yystr[yylen]; yylen++)
--    continue;
--  return yylen;
--}
--#  endif
--# endif
--
--# ifndef yystpcpy
--#  if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
--#   define yystpcpy stpcpy
--#  else
--/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
--   YYDEST.  */
--static char *
--yystpcpy (char *yydest, const char *yysrc)
--{
--  char *yyd = yydest;
--  const char *yys = yysrc;
--
--  while ((*yyd++ = *yys++) != '\0')
--    continue;
--
--  return yyd - 1;
--}
--#  endif
--# endif
--
--# ifndef yytnamerr
--/* Copy to YYRES the contents of YYSTR after stripping away unnecessary
--   quotes and backslashes, so that it's suitable for yyerror.  The
--   heuristic is that double-quoting is unnecessary unless the string
--   contains an apostrophe, a comma, or backslash (other than
--   backslash-backslash).  YYSTR is taken from yytname.  If YYRES is
--   null, do not copy; instead, return the length of what the result
--   would have been.  */
--static YYSIZE_T
--yytnamerr (char *yyres, const char *yystr)
--{
--  if (*yystr == '"')
--    {
--      YYSIZE_T yyn = 0;
--      char const *yyp = yystr;
--
--      for (;;)
--        switch (*++yyp)
--          {
--          case '\'':
--          case ',':
--            goto do_not_strip_quotes;
--
--          case '\\':
--            if (*++yyp != '\\')
--              goto do_not_strip_quotes;
--            /* Fall through.  */
--          default:
--            if (yyres)
--              yyres[yyn] = *yyp;
--            yyn++;
--            break;
--
--          case '"':
--            if (yyres)
--              yyres[yyn] = '\0';
--            return yyn;
--          }
--    do_not_strip_quotes: ;
--    }
--
--  if (! yyres)
--    return yystrlen (yystr);
--
--  return yystpcpy (yyres, yystr) - yyres;
--}
--# endif
--
--/* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
--   about the unexpected token YYTOKEN for the state stack whose top is
--   YYSSP.
--
--   Return 0 if *YYMSG was successfully written.  Return 1 if *YYMSG is
--   not large enough to hold the message.  In that case, also set
--   *YYMSG_ALLOC to the required number of bytes.  Return 2 if the
--   required number of bytes is too large to store.  */
--static int
--yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
--                yytype_int16 *yyssp, int yytoken)
--{
--  YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
--  YYSIZE_T yysize = yysize0;
--  enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
--  /* Internationalized format string. */
--  const char *yyformat = YY_NULLPTR;
--  /* Arguments of yyformat. */
--  char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
--  /* Number of reported tokens (one for the "unexpected", one per
--     "expected"). */
--  int yycount = 0;
--
--  /* There are many possibilities here to consider:
--     - If this state is a consistent state with a default action, then
--       the only way this function was invoked is if the default action
--       is an error action.  In that case, don't check for expected
--       tokens because there are none.
--     - The only way there can be no lookahead present (in yychar) is if
--       this state is a consistent state with a default action.  Thus,
--       detecting the absence of a lookahead is sufficient to determine
--       that there is no unexpected or expected token to report.  In that
--       case, just report a simple "syntax error".
--     - Don't assume there isn't a lookahead just because this state is a
--       consistent state with a default action.  There might have been a
--       previous inconsistent state, consistent state with a non-default
--       action, or user semantic action that manipulated yychar.
--     - Of course, the expected token list depends on states to have
--       correct lookahead information, and it depends on the parser not
--       to perform extra reductions after fetching a lookahead from the
--       scanner and before detecting a syntax error.  Thus, state merging
--       (from LALR or IELR) and default reductions corrupt the expected
--       token list.  However, the list is correct for canonical LR with
--       one exception: it will still contain any token that will not be
--       accepted due to an error action in a later state.
--  */
--  if (yytoken != YYEMPTY)
--    {
--      int yyn = yypact[*yyssp];
--      yyarg[yycount++] = yytname[yytoken];
--      if (!yypact_value_is_default (yyn))
--        {
--          /* Start YYX at -YYN if negative to avoid negative indexes in
--             YYCHECK.  In other words, skip the first -YYN actions for
--             this state because they are default actions.  */
--          int yyxbegin = yyn < 0 ? -yyn : 0;
--          /* Stay within bounds of both yycheck and yytname.  */
--          int yychecklim = YYLAST - yyn + 1;
--          int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
--          int yyx;
--
--          for (yyx = yyxbegin; yyx < yyxend; ++yyx)
--            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR
--                && !yytable_value_is_error (yytable[yyx + yyn]))
--              {
--                if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
--                  {
--                    yycount = 1;
--                    yysize = yysize0;
--                    break;
--                  }
--                yyarg[yycount++] = yytname[yyx];
--                {
--                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
--                  if (! (yysize <= yysize1
--                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
--                    return 2;
--                  yysize = yysize1;
--                }
--              }
--        }
--    }
--
--  switch (yycount)
--    {
--# define YYCASE_(N, S)                      \
--      case N:                               \
--        yyformat = S;                       \
--      break
--      YYCASE_(0, YY_("syntax error"));
--      YYCASE_(1, YY_("syntax error, unexpected %s"));
--      YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
--      YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
--      YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
--      YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
--# undef YYCASE_
--    }
--
--  {
--    YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
--    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
--      return 2;
--    yysize = yysize1;
--  }
--
--  if (*yymsg_alloc < yysize)
--    {
--      *yymsg_alloc = 2 * yysize;
--      if (! (yysize <= *yymsg_alloc
--             && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
--        *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
--      return 1;
--    }
--
--  /* Avoid sprintf, as that infringes on the user's name space.
--     Don't have undefined behavior even if the translation
--     produced a string with the wrong number of "%s"s.  */
--  {
--    char *yyp = *yymsg;
--    int yyi = 0;
--    while ((*yyp = *yyformat) != '\0')
--      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
--        {
--          yyp += yytnamerr (yyp, yyarg[yyi++]);
--          yyformat += 2;
--        }
--      else
--        {
--          yyp++;
--          yyformat++;
--        }
--  }
--  return 0;
--}
--#endif /* YYERROR_VERBOSE */
--
--/*-----------------------------------------------.
--| Release the memory associated to this symbol.  |
--`-----------------------------------------------*/
--
--static void
--yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp)
--{
--  YYUSE (yyvaluep);
--  YYUSE (yylocationp);
--  if (!yymsg)
--    yymsg = "Deleting";
--  YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
--
--  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
--  YYUSE (yytype);
--  YY_IGNORE_MAYBE_UNINITIALIZED_END
--}
--
--
--
--
--/* The lookahead symbol.  */
--int yychar;
--
--/* The semantic value of the lookahead symbol.  */
--YYSTYPE yylval;
--/* Location data for the lookahead symbol.  */
--YYLTYPE yylloc
--# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
--  = { 1, 1, 1, 1 }
--# endif
--;
--/* Number of syntax errors so far.  */
--int yynerrs;
--
--
--/*----------.
--| yyparse.  |
--`----------*/
--
--int
--yyparse (void)
--{
--    int yystate;
--    /* Number of tokens to shift before error messages enabled.  */
--    int yyerrstatus;
--
--    /* The stacks and their tools:
--       'yyss': related to states.
--       'yyvs': related to semantic values.
--       'yyls': related to locations.
--
--       Refer to the stacks through separate pointers, to allow yyoverflow
--       to reallocate them elsewhere.  */
--
--    /* The state stack.  */
--    yytype_int16 yyssa[YYINITDEPTH];
--    yytype_int16 *yyss;
--    yytype_int16 *yyssp;
--
--    /* The semantic value stack.  */
--    YYSTYPE yyvsa[YYINITDEPTH];
--    YYSTYPE *yyvs;
--    YYSTYPE *yyvsp;
--
--    /* The location stack.  */
--    YYLTYPE yylsa[YYINITDEPTH];
--    YYLTYPE *yyls;
--    YYLTYPE *yylsp;
--
--    /* The locations where the error started and ended.  */
--    YYLTYPE yyerror_range[3];
--
--    YYSIZE_T yystacksize;
--
--  int yyn;
--  int yyresult;
--  /* Lookahead token as an internal (translated) token number.  */
--  int yytoken = 0;
--  /* The variables used to return semantic value and location from the
--     action routines.  */
--  YYSTYPE yyval;
--  YYLTYPE yyloc;
--
--#if YYERROR_VERBOSE
--  /* Buffer for error messages, and its allocated size.  */
--  char yymsgbuf[128];
--  char *yymsg = yymsgbuf;
--  YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
--#endif
--
--#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N), yylsp -= (N))
--
--  /* The number of symbols on the RHS of the reduced rule.
--     Keep to zero when no symbol should be popped.  */
--  int yylen = 0;
--
--  yyssp = yyss = yyssa;
--  yyvsp = yyvs = yyvsa;
--  yylsp = yyls = yylsa;
--  yystacksize = YYINITDEPTH;
--
--  YYDPRINTF ((stderr, "Starting parse\n"));
--
--  yystate = 0;
--  yyerrstatus = 0;
--  yynerrs = 0;
--  yychar = YYEMPTY; /* Cause a token to be read.  */
--  yylsp[0] = yylloc;
--  goto yysetstate;
--
--/*------------------------------------------------------------.
--| yynewstate -- Push a new state, which is found in yystate.  |
--`------------------------------------------------------------*/
-- yynewstate:
--  /* In all cases, when you get here, the value and location stacks
--     have just been pushed.  So pushing a state here evens the stacks.  */
--  yyssp++;
--
-- yysetstate:
--  *yyssp = yystate;
--
--  if (yyss + yystacksize - 1 <= yyssp)
--    {
--      /* Get the current used size of the three stacks, in elements.  */
--      YYSIZE_T yysize = yyssp - yyss + 1;
--
--#ifdef yyoverflow
--      {
--        /* Give user a chance to reallocate the stack.  Use copies of
--           these so that the &'s don't force the real ones into
--           memory.  */
--        YYSTYPE *yyvs1 = yyvs;
--        yytype_int16 *yyss1 = yyss;
--        YYLTYPE *yyls1 = yyls;
--
--        /* Each stack pointer address is followed by the size of the
--           data in use in that stack, in bytes.  This used to be a
--           conditional around just the two extra args, but that might
--           be undefined if yyoverflow is a macro.  */
--        yyoverflow (YY_("memory exhausted"),
--                    &yyss1, yysize * sizeof (*yyssp),
--                    &yyvs1, yysize * sizeof (*yyvsp),
--                    &yyls1, yysize * sizeof (*yylsp),
--                    &yystacksize);
--
--        yyls = yyls1;
--        yyss = yyss1;
--        yyvs = yyvs1;
--      }
--#else /* no yyoverflow */
--# ifndef YYSTACK_RELOCATE
--      goto yyexhaustedlab;
--# else
--      /* Extend the stack our own way.  */
--      if (YYMAXDEPTH <= yystacksize)
--        goto yyexhaustedlab;
--      yystacksize *= 2;
--      if (YYMAXDEPTH < yystacksize)
--        yystacksize = YYMAXDEPTH;
--
--      {
--        yytype_int16 *yyss1 = yyss;
--        union yyalloc *yyptr =
--          (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
--        if (! yyptr)
--          goto yyexhaustedlab;
--        YYSTACK_RELOCATE (yyss_alloc, yyss);
--        YYSTACK_RELOCATE (yyvs_alloc, yyvs);
--        YYSTACK_RELOCATE (yyls_alloc, yyls);
--#  undef YYSTACK_RELOCATE
--        if (yyss1 != yyssa)
--          YYSTACK_FREE (yyss1);
--      }
--# endif
--#endif /* no yyoverflow */
--
--      yyssp = yyss + yysize - 1;
--      yyvsp = yyvs + yysize - 1;
--      yylsp = yyls + yysize - 1;
--
--      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
--                  (unsigned long int) yystacksize));
--
--      if (yyss + yystacksize - 1 <= yyssp)
--        YYABORT;
--    }
--
--  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
--
--  if (yystate == YYFINAL)
--    YYACCEPT;
--
--  goto yybackup;
--
--/*-----------.
--| yybackup.  |
--`-----------*/
--yybackup:
--
--  /* Do appropriate processing given the current state.  Read a
--     lookahead token if we need one and don't already have one.  */
--
--  /* First try to decide what to do without reference to lookahead token.  */
--  yyn = yypact[yystate];
--  if (yypact_value_is_default (yyn))
--    goto yydefault;
--
--  /* Not known => get a lookahead token if don't already have one.  */
--
--  /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
--  if (yychar == YYEMPTY)
--    {
--      YYDPRINTF ((stderr, "Reading a token: "));
--      yychar = yylex ();
--    }
--
--  if (yychar <= YYEOF)
--    {
--      yychar = yytoken = YYEOF;
--      YYDPRINTF ((stderr, "Now at end of input.\n"));
--    }
--  else
--    {
--      yytoken = YYTRANSLATE (yychar);
--      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
--    }
--
--  /* If the proper action on seeing token YYTOKEN is to reduce or to
--     detect an error, take that action.  */
--  yyn += yytoken;
--  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
--    goto yydefault;
--  yyn = yytable[yyn];
--  if (yyn <= 0)
--    {
--      if (yytable_value_is_error (yyn))
--        goto yyerrlab;
--      yyn = -yyn;
--      goto yyreduce;
--    }
--
--  /* Count tokens shifted since error; after three, turn off error
--     status.  */
--  if (yyerrstatus)
--    yyerrstatus--;
--
--  /* Shift the lookahead token.  */
--  YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
--
--  /* Discard the shifted token.  */
--  yychar = YYEMPTY;
--
--  yystate = yyn;
--  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
--  *++yyvsp = yylval;
--  YY_IGNORE_MAYBE_UNINITIALIZED_END
--  *++yylsp = yylloc;
--  goto yynewstate;
--
--
--/*-----------------------------------------------------------.
--| yydefault -- do the default action for the current state.  |
--`-----------------------------------------------------------*/
--yydefault:
--  yyn = yydefact[yystate];
--  if (yyn == 0)
--    goto yyerrlab;
--  goto yyreduce;
--
--
--/*-----------------------------.
--| yyreduce -- Do a reduction.  |
--`-----------------------------*/
--yyreduce:
--  /* yyn is the number of a rule to reduce with.  */
--  yylen = yyr2[yyn];
--
--  /* If YYLEN is nonzero, implement the default value of the action:
--     '$$ = $1'.
--
--     Otherwise, the following line sets YYVAL to garbage.
--     This behavior is undocumented and Bison
--     users should not rely upon it.  Assigning to YYVAL
--     unconditionally makes the parser a bit smaller, and it avoids a
--     GCC warning that YYVAL may be used uninitialized.  */
--  yyval = yyvsp[1-yylen];
--
--  /* Default location.  */
--  YYLLOC_DEFAULT (yyloc, (yylsp - yylen), yylen);
--  YY_REDUCE_PRINT (yyn);
--  switch (yyn)
--    {
--        case 2:
--#line 110 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			parser_output = build_dt_info((yyvsp[-2].flags), (yyvsp[-1].re), (yyvsp[0].node),
--			                              guess_boot_cpuid((yyvsp[0].node)));
--		}
--#line 1478 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 3:
--#line 118 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.flags) = DTSF_V1;
--		}
--#line 1486 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 4:
--#line 122 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.flags) = DTSF_V1 | DTSF_PLUGIN;
--		}
--#line 1494 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 6:
--#line 130 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			if ((yyvsp[0].flags) != (yyvsp[-1].flags))
--				ERROR(&(yylsp[0]), "Header flags don't match earlier ones");
--			(yyval.flags) = (yyvsp[-1].flags);
--		}
--#line 1504 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 7:
--#line 139 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.re) = NULL;
--		}
--#line 1512 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 8:
--#line 143 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.re) = chain_reserve_entry((yyvsp[-1].re), (yyvsp[0].re));
--		}
--#line 1520 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 9:
--#line 150 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.re) = build_reserve_entry((yyvsp[-2].integer), (yyvsp[-1].integer));
--		}
--#line 1528 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 10:
--#line 154 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			add_label(&(yyvsp[0].re)->labels, (yyvsp[-1].labelref));
--			(yyval.re) = (yyvsp[0].re);
--		}
--#line 1537 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 11:
--#line 162 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.node) = name_node((yyvsp[0].node), "");
--		}
--#line 1545 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 12:
--#line 166 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.node) = merge_nodes((yyvsp[-2].node), (yyvsp[0].node));
--		}
--#line 1553 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 13:
--#line 171 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			struct node *target = get_node_by_ref((yyvsp[-3].node), (yyvsp[-1].labelref));
--
--			if (target) {
--				add_label(&target->labels, (yyvsp[-2].labelref));
--				merge_nodes(target, (yyvsp[0].node));
--			} else
--				ERROR(&(yylsp[-1]), "Label or path %s not found", (yyvsp[-1].labelref));
--			(yyval.node) = (yyvsp[-3].node);
--		}
--#line 1568 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 14:
--#line 182 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			struct node *target = get_node_by_ref((yyvsp[-2].node), (yyvsp[-1].labelref));
--
--			if (target) {
--				merge_nodes(target, (yyvsp[0].node));
--			} else {
--				/*
--				 * We rely on the rule being always:
--				 *   versioninfo plugindecl memreserves devicetree
--				 * so $-1 is what we want (plugindecl)
--				 */
--				if ((yyvsp[(-1) - (3)].flags) & DTSF_PLUGIN)
--					add_orphan_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].labelref));
--				else
--					ERROR(&(yylsp[-1]), "Label or path %s not found", (yyvsp[-1].labelref));
--			}
--			(yyval.node) = (yyvsp[-2].node);
--		}
--#line 1591 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 15:
--#line 201 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			struct node *target = get_node_by_ref((yyvsp[-3].node), (yyvsp[-1].labelref));
--
--			if (target)
--				delete_node(target);
--			else
--				ERROR(&(yylsp[-1]), "Label or path %s not found", (yyvsp[-1].labelref));
--
--
--			(yyval.node) = (yyvsp[-3].node);
--		}
--#line 1607 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 16:
--#line 213 "dtc-parser.y" /* yacc.c:1646  */
--    {
 -			/* build empty node */
--			(yyval.node) = name_node(build_node(NULL, NULL), "");
+-			$$ = name_node(build_node(NULL, NULL), "");
 -		}
--#line 1616 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 17:
--#line 221 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.node) = build_node((yyvsp[-3].proplist), (yyvsp[-2].nodelist));
--		}
--#line 1624 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 18:
--#line 228 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.proplist) = NULL;
--		}
--#line 1632 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 19:
--#line 232 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.proplist) = chain_property((yyvsp[0].prop), (yyvsp[-1].proplist));
--		}
--#line 1640 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 20:
--#line 239 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.prop) = build_property((yyvsp[-3].propnodename), (yyvsp[-1].data));
--		}
--#line 1648 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 21:
--#line 243 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.prop) = build_property((yyvsp[-1].propnodename), empty_data);
--		}
--#line 1656 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 22:
--#line 247 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.prop) = build_property_delete((yyvsp[-1].propnodename));
--		}
--#line 1664 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 23:
--#line 251 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			add_label(&(yyvsp[0].prop)->labels, (yyvsp[-1].labelref));
--			(yyval.prop) = (yyvsp[0].prop);
--		}
--#line 1673 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 24:
--#line 259 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_merge((yyvsp[-1].data), (yyvsp[0].data));
--		}
--#line 1681 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 25:
--#line 263 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_merge((yyvsp[-2].data), (yyvsp[-1].array).data);
--		}
--#line 1689 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 26:
--#line 267 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_merge((yyvsp[-3].data), (yyvsp[-1].data));
--		}
--#line 1697 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 27:
--#line 271 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_add_marker((yyvsp[-1].data), REF_PATH, (yyvsp[0].labelref));
--		}
--#line 1705 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 28:
--#line 275 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			FILE *f = srcfile_relative_open((yyvsp[-5].data).val, NULL);
--			struct data d;
--
--			if ((yyvsp[-3].integer) != 0)
--				if (fseek(f, (yyvsp[-3].integer), SEEK_SET) != 0)
--					die("Couldn't seek to offset %llu in \"%s\": %s",
--					    (unsigned long long)(yyvsp[-3].integer), (yyvsp[-5].data).val,
--					    strerror(errno));
--
--			d = data_copy_file(f, (yyvsp[-1].integer));
--
--			(yyval.data) = data_merge((yyvsp[-8].data), d);
--			fclose(f);
--		}
--#line 1725 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 29:
--#line 291 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			FILE *f = srcfile_relative_open((yyvsp[-1].data).val, NULL);
--			struct data d = empty_data;
--
--			d = data_copy_file(f, -1);
--
--			(yyval.data) = data_merge((yyvsp[-4].data), d);
--			fclose(f);
--		}
--#line 1739 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 30:
--#line 301 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_add_marker((yyvsp[-1].data), LABEL, (yyvsp[0].labelref));
--		}
--#line 1747 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 31:
--#line 308 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = empty_data;
--		}
--#line 1755 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 32:
--#line 312 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = (yyvsp[-1].data);
--		}
--#line 1763 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 33:
--#line 316 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_add_marker((yyvsp[-1].data), LABEL, (yyvsp[0].labelref));
--		}
--#line 1771 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 34:
--#line 323 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			unsigned long long bits;
--
--			bits = (yyvsp[-1].integer);
--
--			if ((bits !=  8) && (bits != 16) &&
--			    (bits != 32) && (bits != 64)) {
--				ERROR(&(yylsp[-1]), "Array elements must be"
--				      " 8, 16, 32 or 64-bits");
--				bits = 32;
--			}
--
--			(yyval.array).data = empty_data;
--			(yyval.array).bits = bits;
--		}
--#line 1791 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 35:
--#line 339 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.array).data = empty_data;
--			(yyval.array).bits = 32;
--		}
--#line 1800 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 36:
--#line 344 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			if ((yyvsp[-1].array).bits < 64) {
--				uint64_t mask = (1ULL << (yyvsp[-1].array).bits) - 1;
--				/*
--				 * Bits above mask must either be all zero
--				 * (positive within range of mask) or all one
--				 * (negative and sign-extended). The second
--				 * condition is true if when we set all bits
--				 * within the mask to one (i.e. | in the
--				 * mask), all bits are one.
--				 */
--				if (((yyvsp[0].integer) > mask) && (((yyvsp[0].integer) | mask) != -1ULL))
--					ERROR(&(yylsp[0]), "Value out of range for"
--					      " %d-bit array element", (yyvsp[-1].array).bits);
--			}
--
--			(yyval.array).data = data_append_integer((yyvsp[-1].array).data, (yyvsp[0].integer), (yyvsp[-1].array).bits);
--		}
--#line 1823 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 37:
--#line 363 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			uint64_t val = ~0ULL >> (64 - (yyvsp[-1].array).bits);
--
--			if ((yyvsp[-1].array).bits == 32)
--				(yyvsp[-1].array).data = data_add_marker((yyvsp[-1].array).data,
--							  REF_PHANDLE,
--							  (yyvsp[0].labelref));
--			else
--				ERROR(&(yylsp[0]), "References are only allowed in "
--					    "arrays with 32-bit elements.");
--
--			(yyval.array).data = data_append_integer((yyvsp[-1].array).data, val, (yyvsp[-1].array).bits);
--		}
--#line 1841 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 38:
--#line 377 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.array).data = data_add_marker((yyvsp[-1].array).data, LABEL, (yyvsp[0].labelref));
--		}
--#line 1849 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 41:
--#line 386 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.integer) = (yyvsp[-1].integer);
--		}
--#line 1857 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 44:
--#line 397 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-4].integer) ? (yyvsp[-2].integer) : (yyvsp[0].integer); }
--#line 1863 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 46:
--#line 402 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) || (yyvsp[0].integer); }
--#line 1869 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 48:
--#line 407 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) && (yyvsp[0].integer); }
--#line 1875 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 50:
--#line 412 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) | (yyvsp[0].integer); }
--#line 1881 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 52:
--#line 417 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) ^ (yyvsp[0].integer); }
--#line 1887 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 54:
--#line 422 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) & (yyvsp[0].integer); }
--#line 1893 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 56:
--#line 427 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) == (yyvsp[0].integer); }
--#line 1899 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 57:
--#line 428 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) != (yyvsp[0].integer); }
--#line 1905 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 59:
--#line 433 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) < (yyvsp[0].integer); }
--#line 1911 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 60:
--#line 434 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) > (yyvsp[0].integer); }
--#line 1917 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 61:
--#line 435 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) <= (yyvsp[0].integer); }
--#line 1923 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 62:
--#line 436 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) >= (yyvsp[0].integer); }
--#line 1929 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 63:
--#line 440 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) << (yyvsp[0].integer); }
--#line 1935 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 64:
--#line 441 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) >> (yyvsp[0].integer); }
--#line 1941 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 66:
--#line 446 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) + (yyvsp[0].integer); }
--#line 1947 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 67:
--#line 447 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) - (yyvsp[0].integer); }
--#line 1953 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 69:
--#line 452 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = (yyvsp[-2].integer) * (yyvsp[0].integer); }
--#line 1959 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 70:
--#line 454 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			if ((yyvsp[0].integer) != 0) {
--				(yyval.integer) = (yyvsp[-2].integer) / (yyvsp[0].integer);
--			} else {
--				ERROR(&(yyloc), "Division by zero");
--				(yyval.integer) = 0;
--			}
--		}
--#line 1972 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 71:
--#line 463 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			if ((yyvsp[0].integer) != 0) {
--				(yyval.integer) = (yyvsp[-2].integer) % (yyvsp[0].integer);
--			} else {
--				ERROR(&(yyloc), "Division by zero");
--				(yyval.integer) = 0;
--			}
--		}
--#line 1985 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 74:
--#line 476 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = -(yyvsp[0].integer); }
--#line 1991 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 75:
--#line 477 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = ~(yyvsp[0].integer); }
--#line 1997 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 76:
--#line 478 "dtc-parser.y" /* yacc.c:1646  */
--    { (yyval.integer) = !(yyvsp[0].integer); }
--#line 2003 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 77:
--#line 483 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = empty_data;
--		}
--#line 2011 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 78:
--#line 487 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_append_byte((yyvsp[-1].data), (yyvsp[0].byte));
--		}
--#line 2019 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 79:
--#line 491 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.data) = data_add_marker((yyvsp[-1].data), LABEL, (yyvsp[0].labelref));
--		}
--#line 2027 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 80:
--#line 498 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.nodelist) = NULL;
--		}
--#line 2035 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 81:
--#line 502 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.nodelist) = chain_node((yyvsp[-1].node), (yyvsp[0].nodelist));
--		}
--#line 2043 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 82:
--#line 506 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			ERROR(&(yylsp[0]), "Properties must precede subnodes");
--			YYERROR;
--		}
--#line 2052 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 83:
--#line 514 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.node) = name_node((yyvsp[0].node), (yyvsp[-1].propnodename));
--		}
--#line 2060 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 84:
--#line 518 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			(yyval.node) = name_node(build_node_delete(), (yyvsp[-1].propnodename));
--		}
--#line 2068 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--  case 85:
--#line 522 "dtc-parser.y" /* yacc.c:1646  */
--    {
--			add_label(&(yyvsp[0].node)->labels, (yyvsp[-1].labelref));
--			(yyval.node) = (yyvsp[0].node);
--		}
--#line 2077 "dtc-parser.tab.c" /* yacc.c:1646  */
--    break;
--
--
--#line 2081 "dtc-parser.tab.c" /* yacc.c:1646  */
--      default: break;
--    }
--  /* User semantic actions sometimes alter yychar, and that requires
--     that yytoken be updated with the new translation.  We take the
--     approach of translating immediately before every use of yytoken.
--     One alternative is translating here after every semantic action,
--     but that translation would be missed if the semantic action invokes
--     YYABORT, YYACCEPT, or YYERROR immediately after altering yychar or
--     if it invokes YYBACKUP.  In the case of YYABORT or YYACCEPT, an
--     incorrect destructor might then be invoked immediately.  In the
--     case of YYERROR or YYBACKUP, subsequent parser actions might lead
--     to an incorrect destructor call or verbose syntax error message
--     before the lookahead is translated.  */
--  YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
--
--  YYPOPSTACK (yylen);
--  yylen = 0;
--  YY_STACK_PRINT (yyss, yyssp);
--
--  *++yyvsp = yyval;
--  *++yylsp = yyloc;
--
--  /* Now 'shift' the result of the reduction.  Determine what state
--     that goes to, based on the state we popped back to and the rule
--     number reduced by.  */
--
--  yyn = yyr1[yyn];
--
--  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
--  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
--    yystate = yytable[yystate];
--  else
--    yystate = yydefgoto[yyn - YYNTOKENS];
--
--  goto yynewstate;
--
--
--/*--------------------------------------.
--| yyerrlab -- here on detecting error.  |
--`--------------------------------------*/
--yyerrlab:
--  /* Make sure we have latest lookahead translation.  See comments at
--     user semantic actions for why this is necessary.  */
--  yytoken = yychar == YYEMPTY ? YYEMPTY : YYTRANSLATE (yychar);
--
--  /* If not already recovering from an error, report this error.  */
--  if (!yyerrstatus)
--    {
--      ++yynerrs;
--#if ! YYERROR_VERBOSE
--      yyerror (YY_("syntax error"));
--#else
--# define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
--                                        yyssp, yytoken)
--      {
--        char const *yymsgp = YY_("syntax error");
--        int yysyntax_error_status;
--        yysyntax_error_status = YYSYNTAX_ERROR;
--        if (yysyntax_error_status == 0)
--          yymsgp = yymsg;
--        else if (yysyntax_error_status == 1)
--          {
--            if (yymsg != yymsgbuf)
--              YYSTACK_FREE (yymsg);
--            yymsg = (char *) YYSTACK_ALLOC (yymsg_alloc);
--            if (!yymsg)
--              {
--                yymsg = yymsgbuf;
--                yymsg_alloc = sizeof yymsgbuf;
--                yysyntax_error_status = 2;
--              }
--            else
--              {
--                yysyntax_error_status = YYSYNTAX_ERROR;
--                yymsgp = yymsg;
--              }
--          }
--        yyerror (yymsgp);
--        if (yysyntax_error_status == 2)
--          goto yyexhaustedlab;
--      }
--# undef YYSYNTAX_ERROR
--#endif
--    }
--
--  yyerror_range[1] = yylloc;
--
--  if (yyerrstatus == 3)
--    {
--      /* If just tried and failed to reuse lookahead token after an
--         error, discard it.  */
--
--      if (yychar <= YYEOF)
--        {
--          /* Return failure if at end of input.  */
--          if (yychar == YYEOF)
--            YYABORT;
--        }
--      else
--        {
--          yydestruct ("Error: discarding",
--                      yytoken, &yylval, &yylloc);
--          yychar = YYEMPTY;
--        }
--    }
--
--  /* Else will try to reuse lookahead token after shifting the error
--     token.  */
--  goto yyerrlab1;
--
--
--/*---------------------------------------------------.
--| yyerrorlab -- error raised explicitly by YYERROR.  |
--`---------------------------------------------------*/
--yyerrorlab:
--
--  /* Pacify compilers like GCC when the user code never invokes
--     YYERROR and the label yyerrorlab therefore never appears in user
--     code.  */
--  if (/*CONSTCOND*/ 0)
--     goto yyerrorlab;
--
--  yyerror_range[1] = yylsp[1-yylen];
--  /* Do not reclaim the symbols of the rule whose action triggered
--     this YYERROR.  */
--  YYPOPSTACK (yylen);
--  yylen = 0;
--  YY_STACK_PRINT (yyss, yyssp);
--  yystate = *yyssp;
--  goto yyerrlab1;
--
--
--/*-------------------------------------------------------------.
--| yyerrlab1 -- common code for both syntax error and YYERROR.  |
--`-------------------------------------------------------------*/
--yyerrlab1:
--  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
--
--  for (;;)
--    {
--      yyn = yypact[yystate];
--      if (!yypact_value_is_default (yyn))
--        {
--          yyn += YYTERROR;
--          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
--            {
--              yyn = yytable[yyn];
--              if (0 < yyn)
--                break;
--            }
--        }
--
--      /* Pop the current state because it cannot handle the error token.  */
--      if (yyssp == yyss)
--        YYABORT;
--
--      yyerror_range[1] = *yylsp;
--      yydestruct ("Error: popping",
--                  yystos[yystate], yyvsp, yylsp);
--      YYPOPSTACK (1);
--      yystate = *yyssp;
--      YY_STACK_PRINT (yyss, yyssp);
--    }
--
--  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
--  *++yyvsp = yylval;
--  YY_IGNORE_MAYBE_UNINITIALIZED_END
--
--  yyerror_range[2] = yylloc;
--  /* Using YYLLOC is tempting, but would change the location of
--     the lookahead.  YYLOC is available though.  */
--  YYLLOC_DEFAULT (yyloc, yyerror_range, 2);
--  *++yylsp = yyloc;
--
--  /* Shift the error token.  */
--  YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
--
--  yystate = yyn;
--  goto yynewstate;
--
--
--/*-------------------------------------.
--| yyacceptlab -- YYACCEPT comes here.  |
--`-------------------------------------*/
--yyacceptlab:
--  yyresult = 0;
--  goto yyreturn;
--
--/*-----------------------------------.
--| yyabortlab -- YYABORT comes here.  |
--`-----------------------------------*/
--yyabortlab:
--  yyresult = 1;
--  goto yyreturn;
--
--#if !defined yyoverflow || YYERROR_VERBOSE
--/*-------------------------------------------------.
--| yyexhaustedlab -- memory exhaustion comes here.  |
--`-------------------------------------------------*/
--yyexhaustedlab:
--  yyerror (YY_("memory exhausted"));
--  yyresult = 2;
--  /* Fall through.  */
--#endif
--
--yyreturn:
--  if (yychar != YYEMPTY)
--    {
--      /* Make sure we have latest lookahead translation.  See comments at
--         user semantic actions for why this is necessary.  */
--      yytoken = YYTRANSLATE (yychar);
--      yydestruct ("Cleanup: discarding lookahead",
--                  yytoken, &yylval, &yylloc);
--    }
--  /* Do not reclaim the symbols of the rule whose action triggered
--     this YYABORT or YYACCEPT.  */
--  YYPOPSTACK (yylen);
--  YY_STACK_PRINT (yyss, yyssp);
--  while (yyssp != yyss)
--    {
--      yydestruct ("Cleanup: popping",
--                  yystos[*yyssp], yyvsp, yylsp);
--      YYPOPSTACK (1);
--    }
--#ifndef yyoverflow
--  if (yyss != yyssa)
--    YYSTACK_FREE (yyss);
--#endif
--#if YYERROR_VERBOSE
--  if (yymsg != yymsgbuf)
--    YYSTACK_FREE (yymsg);
--#endif
--  return yyresult;
--}
--#line 528 "dtc-parser.y" /* yacc.c:1906  */
--
--
--void yyerror(char const *s)
--{
--	ERROR(&yylloc, "%s", s);
--}
-diff --git a/scripts/dtc/dtc-parser.tab.h_shipped b/scripts/dtc/dtc-parser.tab.h_shipped
-deleted file mode 100644
-index 6aa512c1b337..000000000000
---- a/scripts/dtc/dtc-parser.tab.h_shipped
-+++ /dev/null
-@@ -1,125 +0,0 @@
--/* A Bison parser, made by GNU Bison 3.0.4.  */
--
--/* Bison interface for Yacc-like parsers in C
--
--   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
--
--   This program is free software: you can redistribute it and/or modify
--   it under the terms of the GNU General Public License as published by
--   the Free Software Foundation, either version 3 of the License, or
--   (at your option) any later version.
--
--   This program is distributed in the hope that it will be useful,
--   but WITHOUT ANY WARRANTY; without even the implied warranty of
--   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--   GNU General Public License for more details.
--
--   You should have received a copy of the GNU General Public License
--   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
--
--/* As a special exception, you may create a larger work that contains
--   part or all of the Bison parser skeleton and distribute that work
--   under terms of your choice, so long as that work isn't itself a
--   parser generator using the skeleton or a modified version thereof
--   as a parser skeleton.  Alternatively, if you modify or redistribute
--   the parser skeleton itself, you may (at your option) remove this
--   special exception, which will cause the skeleton and the resulting
--   Bison output files to be licensed under the GNU General Public
--   License without this special exception.
--
--   This special exception was added by the Free Software Foundation in
--   version 2.2 of Bison.  */
--
--#ifndef YY_YY_DTC_PARSER_TAB_H_INCLUDED
--# define YY_YY_DTC_PARSER_TAB_H_INCLUDED
--/* Debug traces.  */
--#ifndef YYDEBUG
--# define YYDEBUG 0
--#endif
--#if YYDEBUG
--extern int yydebug;
--#endif
--
--/* Token type.  */
--#ifndef YYTOKENTYPE
--# define YYTOKENTYPE
--  enum yytokentype
--  {
--    DT_V1 = 258,
--    DT_PLUGIN = 259,
--    DT_MEMRESERVE = 260,
--    DT_LSHIFT = 261,
--    DT_RSHIFT = 262,
--    DT_LE = 263,
--    DT_GE = 264,
--    DT_EQ = 265,
--    DT_NE = 266,
--    DT_AND = 267,
--    DT_OR = 268,
--    DT_BITS = 269,
--    DT_DEL_PROP = 270,
--    DT_DEL_NODE = 271,
--    DT_PROPNODENAME = 272,
--    DT_LITERAL = 273,
--    DT_CHAR_LITERAL = 274,
--    DT_BYTE = 275,
--    DT_STRING = 276,
--    DT_LABEL = 277,
--    DT_REF = 278,
--    DT_INCBIN = 279
--  };
--#endif
--
--/* Value type.  */
--#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
--
--union YYSTYPE
--{
--#line 39 "dtc-parser.y" /* yacc.c:1909  */
--
--	char *propnodename;
--	char *labelref;
--	uint8_t byte;
--	struct data data;
--
--	struct {
--		struct data	data;
--		int		bits;
--	} array;
--
--	struct property *prop;
--	struct property *proplist;
--	struct node *node;
--	struct node *nodelist;
--	struct reserve_info *re;
--	uint64_t integer;
--	unsigned int flags;
--
--#line 99 "dtc-parser.tab.h" /* yacc.c:1909  */
--};
--
--typedef union YYSTYPE YYSTYPE;
--# define YYSTYPE_IS_TRIVIAL 1
--# define YYSTYPE_IS_DECLARED 1
--#endif
--
--/* Location type.  */
--#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
--typedef struct YYLTYPE YYLTYPE;
--struct YYLTYPE
--{
--  int first_line;
--  int first_column;
--  int last_line;
--  int last_column;
--};
--# define YYLTYPE_IS_DECLARED 1
--# define YYLTYPE_IS_TRIVIAL 1
--#endif
--
--
--extern YYSTYPE yylval;
--extern YYLTYPE yylloc;
--int yyparse (void);
--
--#endif /* !YY_YY_DTC_PARSER_TAB_H_INCLUDED  */
-diff --git a/scripts/dtc/update-dtc-source.sh b/scripts/dtc/update-dtc-source.sh
-index fe8926bb3b54..2564a00a37d3 100755
---- a/scripts/dtc/update-dtc-source.sh
-+++ b/scripts/dtc/update-dtc-source.sh
-@@ -34,7 +34,6 @@ DTC_LINUX_PATH=`pwd`/scripts/dtc
- DTC_SOURCE="checks.c data.c dtc.c dtc.h flattree.c fstree.c livetree.c srcpos.c \
- 		srcpos.h treesource.c util.c util.h version_gen.h Makefile.dtc \
- 		dtc-lexer.l dtc-parser.y"
--DTC_GENERATED="dtc-lexer.lex.c dtc-parser.tab.c dtc-parser.tab.h"
- LIBFDT_SOURCE="Makefile.libfdt fdt.c fdt.h fdt_addresses.c fdt_empty_tree.c \
- 		fdt_overlay.c fdt_ro.c fdt_rw.c fdt_strerror.c fdt_sw.c \
- 		fdt_wip.c libfdt.h libfdt_env.h libfdt_internal.h"
-@@ -59,10 +58,6 @@ for f in $DTC_SOURCE; do
- 	cp ${DTC_UPSTREAM_PATH}/${f} ${f}
- 	git add ${f}
- done
--for f in $DTC_GENERATED; do
--	cp ${DTC_UPSTREAM_PATH}/$f ${f}_shipped
--	git add ${f}_shipped
--done
- for f in $LIBFDT_SOURCE; do
-        cp ${DTC_UPSTREAM_PATH}/libfdt/${f} libfdt/${f}
-        git add libfdt/${f}
+ 	;
+ 
+ nodedef:
+diff --git a/scripts/dtc/dtc.c b/scripts/dtc/dtc.c
+index 5ed873c72ad1..c36994e6eac5 100644
+--- a/scripts/dtc/dtc.c
++++ b/scripts/dtc/dtc.c
+@@ -59,8 +59,6 @@ static void fill_fullpaths(struct node *tree, const char *prefix)
+ }
+ 
+ /* Usage related data. */
+-#define FDT_VERSION(version)	_FDT_VERSION(version)
+-#define _FDT_VERSION(version)	#version
+ static const char usage_synopsis[] = "dtc [options] <input file>";
+ static const char usage_short_opts[] = "qI:O:o:V:d:R:S:p:a:fb:i:H:sW:E:@Ahv";
+ static struct option const usage_long_opts[] = {
+@@ -98,7 +96,7 @@ static const char * const usage_opts_help[] = {
+ 	 "\t\tdts - device tree source text\n"
+ 	 "\t\tdtb - device tree blob\n"
+ 	 "\t\tasm - assembler source",
+-	"\n\tBlob version to produce, defaults to "FDT_VERSION(DEFAULT_FDT_VERSION)" (for dtb and asm output)",
++	"\n\tBlob version to produce, defaults to "stringify(DEFAULT_FDT_VERSION)" (for dtb and asm output)",
+ 	"\n\tOutput dependency file",
+ 	"\n\tMake space for <number> reserve map entries (for dtb and asm output)",
+ 	"\n\tMake the blob at least <bytes> long (extra space)",
+@@ -319,13 +317,14 @@ int main(int argc, char *argv[])
+ 		dti->boot_cpuid_phys = cmdline_boot_cpuid;
+ 
+ 	fill_fullpaths(dti->dt, "");
+-	process_checks(force, dti);
+ 
+ 	/* on a plugin, generate by default */
+ 	if (dti->dtsflags & DTSF_PLUGIN) {
+ 		generate_fixups = 1;
+ 	}
+ 
++	process_checks(force, dti);
++
+ 	if (auto_label_aliases)
+ 		generate_label_tree(dti, "aliases", false);
+ 
+diff --git a/scripts/dtc/dtc.h b/scripts/dtc/dtc.h
+index 35cf926cc14a..3b18a42b866e 100644
+--- a/scripts/dtc/dtc.h
++++ b/scripts/dtc/dtc.h
+@@ -1,5 +1,5 @@
+-#ifndef _DTC_H
+-#define _DTC_H
++#ifndef DTC_H
++#define DTC_H
+ 
+ /*
+  * (C) Copyright David Gibson <dwg@au1.ibm.com>, IBM Corporation.  2005.
+@@ -67,7 +67,8 @@ typedef uint32_t cell_t;
+ 
+ 
+ #define streq(a, b)	(strcmp((a), (b)) == 0)
+-#define strneq(a, b, n)	(strncmp((a), (b), (n)) == 0)
++#define strstarts(s, prefix)	(strncmp((s), (prefix), strlen(prefix)) == 0)
++#define strprefixeq(a, n, b)	(strlen(b) == (n) && (memcmp(a, b, n) == 0))
+ 
+ #define ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
+ 
+@@ -203,7 +204,7 @@ struct node *build_node_delete(void);
+ struct node *name_node(struct node *node, char *name);
+ struct node *chain_node(struct node *first, struct node *list);
+ struct node *merge_nodes(struct node *old_node, struct node *new_node);
+-void add_orphan_node(struct node *old_node, struct node *new_node, char *ref);
++struct node *add_orphan_node(struct node *old_node, struct node *new_node, char *ref);
+ 
+ void add_property(struct node *node, struct property *prop);
+ void delete_property_by_name(struct node *node, char *name);
+@@ -289,4 +290,4 @@ struct dt_info *dt_from_source(const char *f);
+ 
+ struct dt_info *dt_from_fs(const char *dirname);
+ 
+-#endif /* _DTC_H */
++#endif /* DTC_H */
+diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
+index fcf71541d8a7..8d268fb785db 100644
+--- a/scripts/dtc/flattree.c
++++ b/scripts/dtc/flattree.c
+@@ -731,7 +731,7 @@ static char *nodename_from_path(const char *ppath, const char *cpath)
+ 
+ 	plen = strlen(ppath);
+ 
+-	if (!strneq(ppath, cpath, plen))
++	if (!strstarts(cpath, ppath))
+ 		die("Path \"%s\" is not valid as a child of \"%s\"\n",
+ 		    cpath, ppath);
+ 
+diff --git a/scripts/dtc/libfdt/fdt.c b/scripts/dtc/libfdt/fdt.c
+index 22286a1aaeaf..7855a1787763 100644
+--- a/scripts/dtc/libfdt/fdt.c
++++ b/scripts/dtc/libfdt/fdt.c
+@@ -88,7 +88,7 @@ const void *fdt_offset_ptr(const void *fdt, int offset, unsigned int len)
+ 		    || ((offset + len) > fdt_size_dt_struct(fdt)))
+ 			return NULL;
+ 
+-	return _fdt_offset_ptr(fdt, offset);
++	return fdt_offset_ptr_(fdt, offset);
+ }
+ 
+ uint32_t fdt_next_tag(const void *fdt, int startoffset, int *nextoffset)
+@@ -123,6 +123,9 @@ uint32_t fdt_next_tag(const void *fdt, int startoffset, int *nextoffset)
+ 		/* skip-name offset, length and value */
+ 		offset += sizeof(struct fdt_property) - FDT_TAGSIZE
+ 			+ fdt32_to_cpu(*lenp);
++		if (fdt_version(fdt) < 0x10 && fdt32_to_cpu(*lenp) >= 8 &&
++		    ((offset - fdt32_to_cpu(*lenp)) % 8) != 0)
++			offset += 4;
+ 		break;
+ 
+ 	case FDT_END:
+@@ -141,7 +144,7 @@ uint32_t fdt_next_tag(const void *fdt, int startoffset, int *nextoffset)
+ 	return tag;
+ }
+ 
+-int _fdt_check_node_offset(const void *fdt, int offset)
++int fdt_check_node_offset_(const void *fdt, int offset)
+ {
+ 	if ((offset < 0) || (offset % FDT_TAGSIZE)
+ 	    || (fdt_next_tag(fdt, offset, &offset) != FDT_BEGIN_NODE))
+@@ -150,7 +153,7 @@ int _fdt_check_node_offset(const void *fdt, int offset)
+ 	return offset;
+ }
+ 
+-int _fdt_check_prop_offset(const void *fdt, int offset)
++int fdt_check_prop_offset_(const void *fdt, int offset)
+ {
+ 	if ((offset < 0) || (offset % FDT_TAGSIZE)
+ 	    || (fdt_next_tag(fdt, offset, &offset) != FDT_PROP))
+@@ -165,7 +168,7 @@ int fdt_next_node(const void *fdt, int offset, int *depth)
+ 	uint32_t tag;
+ 
+ 	if (offset >= 0)
+-		if ((nextoffset = _fdt_check_node_offset(fdt, offset)) < 0)
++		if ((nextoffset = fdt_check_node_offset_(fdt, offset)) < 0)
+ 			return nextoffset;
+ 
+ 	do {
+@@ -227,7 +230,7 @@ int fdt_next_subnode(const void *fdt, int offset)
+ 	return offset;
+ }
+ 
+-const char *_fdt_find_string(const char *strtab, int tabsize, const char *s)
++const char *fdt_find_string_(const char *strtab, int tabsize, const char *s)
+ {
+ 	int len = strlen(s) + 1;
+ 	const char *last = strtab + tabsize - len;
+diff --git a/scripts/dtc/libfdt/fdt.h b/scripts/dtc/libfdt/fdt.h
+index 526aedb51556..74961f9026d1 100644
+--- a/scripts/dtc/libfdt/fdt.h
++++ b/scripts/dtc/libfdt/fdt.h
+@@ -1,5 +1,5 @@
+-#ifndef _FDT_H
+-#define _FDT_H
++#ifndef FDT_H
++#define FDT_H
+ /*
+  * libfdt - Flat Device Tree manipulation
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+@@ -108,4 +108,4 @@ struct fdt_property {
+ #define FDT_V16_SIZE	FDT_V3_SIZE
+ #define FDT_V17_SIZE	(FDT_V16_SIZE + sizeof(fdt32_t))
+ 
+-#endif /* _FDT_H */
++#endif /* FDT_H */
+diff --git a/scripts/dtc/libfdt/fdt_overlay.c b/scripts/dtc/libfdt/fdt_overlay.c
+index bd81241e6658..bf75388ec9a2 100644
+--- a/scripts/dtc/libfdt/fdt_overlay.c
++++ b/scripts/dtc/libfdt/fdt_overlay.c
+@@ -1,3 +1,54 @@
++/*
++ * libfdt - Flat Device Tree manipulation
++ * Copyright (C) 2016 Free Electrons
++ * Copyright (C) 2016 NextThing Co.
++ *
++ * libfdt is dual licensed: you can use it either under the terms of
++ * the GPL, or the BSD license, at your option.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ *     You should have received a copy of the GNU General Public
++ *     License along with this library; if not, write to the Free
++ *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
++ *     MA 02110-1301 USA
++ *
++ * Alternatively,
++ *
++ *  b) Redistribution and use in source and binary forms, with or
++ *     without modification, are permitted provided that the following
++ *     conditions are met:
++ *
++ *     1. Redistributions of source code must retain the above
++ *        copyright notice, this list of conditions and the following
++ *        disclaimer.
++ *     2. Redistributions in binary form must reproduce the above
++ *        copyright notice, this list of conditions and the following
++ *        disclaimer in the documentation and/or other materials
++ *        provided with the distribution.
++ *
++ *     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++ *     CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++ *     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ *     MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ *     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
++ *     CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *     SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ *     NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ *     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ *     HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ *     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ *     OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
++ *     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
+ #include "libfdt_env.h"
+ 
+ #include <fdt.h>
+diff --git a/scripts/dtc/libfdt/fdt_ro.c b/scripts/dtc/libfdt/fdt_ro.c
+index 08de2cce674d..dfb3236da388 100644
+--- a/scripts/dtc/libfdt/fdt_ro.c
++++ b/scripts/dtc/libfdt/fdt_ro.c
+@@ -55,12 +55,13 @@
+ 
+ #include "libfdt_internal.h"
+ 
+-static int _fdt_nodename_eq(const void *fdt, int offset,
++static int fdt_nodename_eq_(const void *fdt, int offset,
+ 			    const char *s, int len)
+ {
+-	const char *p = fdt_offset_ptr(fdt, offset + FDT_TAGSIZE, len+1);
++	int olen;
++	const char *p = fdt_get_name(fdt, offset, &olen);
+ 
+-	if (!p)
++	if (!p || olen < len)
+ 		/* short match */
+ 		return 0;
+ 
+@@ -80,7 +81,7 @@ const char *fdt_string(const void *fdt, int stroffset)
+ 	return (const char *)fdt + fdt_off_dt_strings(fdt) + stroffset;
+ }
+ 
+-static int _fdt_string_eq(const void *fdt, int stroffset,
++static int fdt_string_eq_(const void *fdt, int stroffset,
+ 			  const char *s, int len)
+ {
+ 	const char *p = fdt_string(fdt, stroffset);
+@@ -117,8 +118,8 @@ uint32_t fdt_get_max_phandle(const void *fdt)
+ int fdt_get_mem_rsv(const void *fdt, int n, uint64_t *address, uint64_t *size)
+ {
+ 	FDT_CHECK_HEADER(fdt);
+-	*address = fdt64_to_cpu(_fdt_mem_rsv(fdt, n)->address);
+-	*size = fdt64_to_cpu(_fdt_mem_rsv(fdt, n)->size);
++	*address = fdt64_to_cpu(fdt_mem_rsv_(fdt, n)->address);
++	*size = fdt64_to_cpu(fdt_mem_rsv_(fdt, n)->size);
+ 	return 0;
+ }
+ 
+@@ -126,12 +127,12 @@ int fdt_num_mem_rsv(const void *fdt)
+ {
+ 	int i = 0;
+ 
+-	while (fdt64_to_cpu(_fdt_mem_rsv(fdt, i)->size) != 0)
++	while (fdt64_to_cpu(fdt_mem_rsv_(fdt, i)->size) != 0)
+ 		i++;
+ 	return i;
+ }
+ 
+-static int _nextprop(const void *fdt, int offset)
++static int nextprop_(const void *fdt, int offset)
+ {
+ 	uint32_t tag;
+ 	int nextoffset;
+@@ -166,7 +167,7 @@ int fdt_subnode_offset_namelen(const void *fdt, int offset,
+ 	     (offset >= 0) && (depth >= 0);
+ 	     offset = fdt_next_node(fdt, offset, &depth))
+ 		if ((depth == 1)
+-		    && _fdt_nodename_eq(fdt, offset, name, namelen))
++		    && fdt_nodename_eq_(fdt, offset, name, namelen))
+ 			return offset;
+ 
+ 	if (depth < 0)
+@@ -232,17 +233,35 @@ int fdt_path_offset(const void *fdt, const char *path)
+ 
+ const char *fdt_get_name(const void *fdt, int nodeoffset, int *len)
+ {
+-	const struct fdt_node_header *nh = _fdt_offset_ptr(fdt, nodeoffset);
++	const struct fdt_node_header *nh = fdt_offset_ptr_(fdt, nodeoffset);
++	const char *nameptr;
+ 	int err;
+ 
+ 	if (((err = fdt_check_header(fdt)) != 0)
+-	    || ((err = _fdt_check_node_offset(fdt, nodeoffset)) < 0))
++	    || ((err = fdt_check_node_offset_(fdt, nodeoffset)) < 0))
+ 			goto fail;
+ 
++	nameptr = nh->name;
++
++	if (fdt_version(fdt) < 0x10) {
++		/*
++		 * For old FDT versions, match the naming conventions of V16:
++		 * give only the leaf name (after all /). The actual tree
++		 * contents are loosely checked.
++		 */
++		const char *leaf;
++		leaf = strrchr(nameptr, '/');
++		if (leaf == NULL) {
++			err = -FDT_ERR_BADSTRUCTURE;
++			goto fail;
++		}
++		nameptr = leaf+1;
++	}
++
+ 	if (len)
+-		*len = strlen(nh->name);
++		*len = strlen(nameptr);
+ 
+-	return nh->name;
++	return nameptr;
+ 
+  fail:
+ 	if (len)
+@@ -254,34 +273,34 @@ int fdt_first_property_offset(const void *fdt, int nodeoffset)
+ {
+ 	int offset;
+ 
+-	if ((offset = _fdt_check_node_offset(fdt, nodeoffset)) < 0)
++	if ((offset = fdt_check_node_offset_(fdt, nodeoffset)) < 0)
+ 		return offset;
+ 
+-	return _nextprop(fdt, offset);
++	return nextprop_(fdt, offset);
+ }
+ 
+ int fdt_next_property_offset(const void *fdt, int offset)
+ {
+-	if ((offset = _fdt_check_prop_offset(fdt, offset)) < 0)
++	if ((offset = fdt_check_prop_offset_(fdt, offset)) < 0)
+ 		return offset;
+ 
+-	return _nextprop(fdt, offset);
++	return nextprop_(fdt, offset);
+ }
+ 
+-const struct fdt_property *fdt_get_property_by_offset(const void *fdt,
+-						      int offset,
+-						      int *lenp)
++static const struct fdt_property *fdt_get_property_by_offset_(const void *fdt,
++						              int offset,
++						              int *lenp)
+ {
+ 	int err;
+ 	const struct fdt_property *prop;
+ 
+-	if ((err = _fdt_check_prop_offset(fdt, offset)) < 0) {
++	if ((err = fdt_check_prop_offset_(fdt, offset)) < 0) {
+ 		if (lenp)
+ 			*lenp = err;
+ 		return NULL;
+ 	}
+ 
+-	prop = _fdt_offset_ptr(fdt, offset);
++	prop = fdt_offset_ptr_(fdt, offset);
+ 
+ 	if (lenp)
+ 		*lenp = fdt32_to_cpu(prop->len);
+@@ -289,23 +308,44 @@ const struct fdt_property *fdt_get_property_by_offset(const void *fdt,
+ 	return prop;
+ }
+ 
+-const struct fdt_property *fdt_get_property_namelen(const void *fdt,
+-						    int offset,
+-						    const char *name,
+-						    int namelen, int *lenp)
++const struct fdt_property *fdt_get_property_by_offset(const void *fdt,
++						      int offset,
++						      int *lenp)
++{
++	/* Prior to version 16, properties may need realignment
++	 * and this API does not work. fdt_getprop_*() will, however. */
++
++	if (fdt_version(fdt) < 0x10) {
++		if (lenp)
++			*lenp = -FDT_ERR_BADVERSION;
++		return NULL;
++	}
++
++	return fdt_get_property_by_offset_(fdt, offset, lenp);
++}
++
++static const struct fdt_property *fdt_get_property_namelen_(const void *fdt,
++						            int offset,
++						            const char *name,
++						            int namelen,
++							    int *lenp,
++							    int *poffset)
+ {
+ 	for (offset = fdt_first_property_offset(fdt, offset);
+ 	     (offset >= 0);
+ 	     (offset = fdt_next_property_offset(fdt, offset))) {
+ 		const struct fdt_property *prop;
+ 
+-		if (!(prop = fdt_get_property_by_offset(fdt, offset, lenp))) {
++		if (!(prop = fdt_get_property_by_offset_(fdt, offset, lenp))) {
+ 			offset = -FDT_ERR_INTERNAL;
+ 			break;
+ 		}
+-		if (_fdt_string_eq(fdt, fdt32_to_cpu(prop->nameoff),
+-				   name, namelen))
++		if (fdt_string_eq_(fdt, fdt32_to_cpu(prop->nameoff),
++				   name, namelen)) {
++			if (poffset)
++				*poffset = offset;
+ 			return prop;
++		}
+ 	}
+ 
+ 	if (lenp)
+@@ -313,6 +353,25 @@ const struct fdt_property *fdt_get_property_namelen(const void *fdt,
+ 	return NULL;
+ }
+ 
++
++const struct fdt_property *fdt_get_property_namelen(const void *fdt,
++						    int offset,
++						    const char *name,
++						    int namelen, int *lenp)
++{
++	/* Prior to version 16, properties may need realignment
++	 * and this API does not work. fdt_getprop_*() will, however. */
++	if (fdt_version(fdt) < 0x10) {
++		if (lenp)
++			*lenp = -FDT_ERR_BADVERSION;
++		return NULL;
++	}
++
++	return fdt_get_property_namelen_(fdt, offset, name, namelen, lenp,
++					 NULL);
++}
++
++
+ const struct fdt_property *fdt_get_property(const void *fdt,
+ 					    int nodeoffset,
+ 					    const char *name, int *lenp)
+@@ -324,12 +383,18 @@ const struct fdt_property *fdt_get_property(const void *fdt,
+ const void *fdt_getprop_namelen(const void *fdt, int nodeoffset,
+ 				const char *name, int namelen, int *lenp)
+ {
++	int poffset;
+ 	const struct fdt_property *prop;
+ 
+-	prop = fdt_get_property_namelen(fdt, nodeoffset, name, namelen, lenp);
++	prop = fdt_get_property_namelen_(fdt, nodeoffset, name, namelen, lenp,
++					 &poffset);
+ 	if (!prop)
+ 		return NULL;
+ 
++	/* Handle realignment */
++	if (fdt_version(fdt) < 0x10 && (poffset + sizeof(*prop)) % 8 &&
++	    fdt32_to_cpu(prop->len) >= 8)
++		return prop->data + 4;
+ 	return prop->data;
+ }
+ 
+@@ -338,11 +403,16 @@ const void *fdt_getprop_by_offset(const void *fdt, int offset,
+ {
+ 	const struct fdt_property *prop;
+ 
+-	prop = fdt_get_property_by_offset(fdt, offset, lenp);
++	prop = fdt_get_property_by_offset_(fdt, offset, lenp);
+ 	if (!prop)
+ 		return NULL;
+ 	if (namep)
+ 		*namep = fdt_string(fdt, fdt32_to_cpu(prop->nameoff));
++
++	/* Handle realignment */
++	if (fdt_version(fdt) < 0x10 && (offset + sizeof(*prop)) % 8 &&
++	    fdt32_to_cpu(prop->len) >= 8)
++		return prop->data + 4;
+ 	return prop->data;
+ }
+ 
+diff --git a/scripts/dtc/libfdt/fdt_rw.c b/scripts/dtc/libfdt/fdt_rw.c
+index 5c3a2bb0bc6b..9b829051e444 100644
+--- a/scripts/dtc/libfdt/fdt_rw.c
++++ b/scripts/dtc/libfdt/fdt_rw.c
+@@ -55,8 +55,8 @@
+ 
+ #include "libfdt_internal.h"
+ 
+-static int _fdt_blocks_misordered(const void *fdt,
+-			      int mem_rsv_size, int struct_size)
++static int fdt_blocks_misordered_(const void *fdt,
++				  int mem_rsv_size, int struct_size)
+ {
+ 	return (fdt_off_mem_rsvmap(fdt) < FDT_ALIGN(sizeof(struct fdt_header), 8))
+ 		|| (fdt_off_dt_struct(fdt) <
+@@ -67,13 +67,13 @@ static int _fdt_blocks_misordered(const void *fdt,
+ 		    (fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt)));
+ }
+ 
+-static int _fdt_rw_check_header(void *fdt)
++static int fdt_rw_check_header_(void *fdt)
+ {
+ 	FDT_CHECK_HEADER(fdt);
+ 
+ 	if (fdt_version(fdt) < 17)
+ 		return -FDT_ERR_BADVERSION;
+-	if (_fdt_blocks_misordered(fdt, sizeof(struct fdt_reserve_entry),
++	if (fdt_blocks_misordered_(fdt, sizeof(struct fdt_reserve_entry),
+ 				   fdt_size_dt_struct(fdt)))
+ 		return -FDT_ERR_BADLAYOUT;
+ 	if (fdt_version(fdt) > 17)
+@@ -84,20 +84,20 @@ static int _fdt_rw_check_header(void *fdt)
+ 
+ #define FDT_RW_CHECK_HEADER(fdt) \
+ 	{ \
+-		int __err; \
+-		if ((__err = _fdt_rw_check_header(fdt)) != 0) \
+-			return __err; \
++		int err_; \
++		if ((err_ = fdt_rw_check_header_(fdt)) != 0) \
++			return err_; \
+ 	}
+ 
+-static inline int _fdt_data_size(void *fdt)
++static inline int fdt_data_size_(void *fdt)
+ {
+ 	return fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt);
+ }
+ 
+-static int _fdt_splice(void *fdt, void *splicepoint, int oldlen, int newlen)
++static int fdt_splice_(void *fdt, void *splicepoint, int oldlen, int newlen)
+ {
+ 	char *p = splicepoint;
+-	char *end = (char *)fdt + _fdt_data_size(fdt);
++	char *end = (char *)fdt + fdt_data_size_(fdt);
+ 
+ 	if (((p + oldlen) < p) || ((p + oldlen) > end))
+ 		return -FDT_ERR_BADOFFSET;
+@@ -109,12 +109,12 @@ static int _fdt_splice(void *fdt, void *splicepoint, int oldlen, int newlen)
+ 	return 0;
+ }
+ 
+-static int _fdt_splice_mem_rsv(void *fdt, struct fdt_reserve_entry *p,
++static int fdt_splice_mem_rsv_(void *fdt, struct fdt_reserve_entry *p,
+ 			       int oldn, int newn)
+ {
+ 	int delta = (newn - oldn) * sizeof(*p);
+ 	int err;
+-	err = _fdt_splice(fdt, p, oldn * sizeof(*p), newn * sizeof(*p));
++	err = fdt_splice_(fdt, p, oldn * sizeof(*p), newn * sizeof(*p));
+ 	if (err)
+ 		return err;
+ 	fdt_set_off_dt_struct(fdt, fdt_off_dt_struct(fdt) + delta);
+@@ -122,13 +122,13 @@ static int _fdt_splice_mem_rsv(void *fdt, struct fdt_reserve_entry *p,
+ 	return 0;
+ }
+ 
+-static int _fdt_splice_struct(void *fdt, void *p,
++static int fdt_splice_struct_(void *fdt, void *p,
+ 			      int oldlen, int newlen)
+ {
+ 	int delta = newlen - oldlen;
+ 	int err;
+ 
+-	if ((err = _fdt_splice(fdt, p, oldlen, newlen)))
++	if ((err = fdt_splice_(fdt, p, oldlen, newlen)))
+ 		return err;
+ 
+ 	fdt_set_size_dt_struct(fdt, fdt_size_dt_struct(fdt) + delta);
+@@ -136,20 +136,20 @@ static int _fdt_splice_struct(void *fdt, void *p,
+ 	return 0;
+ }
+ 
+-static int _fdt_splice_string(void *fdt, int newlen)
++static int fdt_splice_string_(void *fdt, int newlen)
+ {
+ 	void *p = (char *)fdt
+ 		+ fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt);
+ 	int err;
+ 
+-	if ((err = _fdt_splice(fdt, p, 0, newlen)))
++	if ((err = fdt_splice_(fdt, p, 0, newlen)))
+ 		return err;
+ 
+ 	fdt_set_size_dt_strings(fdt, fdt_size_dt_strings(fdt) + newlen);
+ 	return 0;
+ }
+ 
+-static int _fdt_find_add_string(void *fdt, const char *s)
++static int fdt_find_add_string_(void *fdt, const char *s)
+ {
+ 	char *strtab = (char *)fdt + fdt_off_dt_strings(fdt);
+ 	const char *p;
+@@ -157,13 +157,13 @@ static int _fdt_find_add_string(void *fdt, const char *s)
+ 	int len = strlen(s) + 1;
+ 	int err;
+ 
+-	p = _fdt_find_string(strtab, fdt_size_dt_strings(fdt), s);
++	p = fdt_find_string_(strtab, fdt_size_dt_strings(fdt), s);
+ 	if (p)
+ 		/* found it */
+ 		return (p - strtab);
+ 
+ 	new = strtab + fdt_size_dt_strings(fdt);
+-	err = _fdt_splice_string(fdt, len);
++	err = fdt_splice_string_(fdt, len);
+ 	if (err)
+ 		return err;
+ 
+@@ -178,8 +178,8 @@ int fdt_add_mem_rsv(void *fdt, uint64_t address, uint64_t size)
+ 
+ 	FDT_RW_CHECK_HEADER(fdt);
+ 
+-	re = _fdt_mem_rsv_w(fdt, fdt_num_mem_rsv(fdt));
+-	err = _fdt_splice_mem_rsv(fdt, re, 0, 1);
++	re = fdt_mem_rsv_w_(fdt, fdt_num_mem_rsv(fdt));
++	err = fdt_splice_mem_rsv_(fdt, re, 0, 1);
+ 	if (err)
+ 		return err;
+ 
+@@ -190,17 +190,17 @@ int fdt_add_mem_rsv(void *fdt, uint64_t address, uint64_t size)
+ 
+ int fdt_del_mem_rsv(void *fdt, int n)
+ {
+-	struct fdt_reserve_entry *re = _fdt_mem_rsv_w(fdt, n);
++	struct fdt_reserve_entry *re = fdt_mem_rsv_w_(fdt, n);
+ 
+ 	FDT_RW_CHECK_HEADER(fdt);
+ 
+ 	if (n >= fdt_num_mem_rsv(fdt))
+ 		return -FDT_ERR_NOTFOUND;
+ 
+-	return _fdt_splice_mem_rsv(fdt, re, 1, 0);
++	return fdt_splice_mem_rsv_(fdt, re, 1, 0);
+ }
+ 
+-static int _fdt_resize_property(void *fdt, int nodeoffset, const char *name,
++static int fdt_resize_property_(void *fdt, int nodeoffset, const char *name,
+ 				int len, struct fdt_property **prop)
+ {
+ 	int oldlen;
+@@ -210,7 +210,7 @@ static int _fdt_resize_property(void *fdt, int nodeoffset, const char *name,
+ 	if (!*prop)
+ 		return oldlen;
+ 
+-	if ((err = _fdt_splice_struct(fdt, (*prop)->data, FDT_TAGALIGN(oldlen),
++	if ((err = fdt_splice_struct_(fdt, (*prop)->data, FDT_TAGALIGN(oldlen),
+ 				      FDT_TAGALIGN(len))))
+ 		return err;
+ 
+@@ -218,7 +218,7 @@ static int _fdt_resize_property(void *fdt, int nodeoffset, const char *name,
+ 	return 0;
+ }
+ 
+-static int _fdt_add_property(void *fdt, int nodeoffset, const char *name,
++static int fdt_add_property_(void *fdt, int nodeoffset, const char *name,
+ 			     int len, struct fdt_property **prop)
+ {
+ 	int proplen;
+@@ -226,17 +226,17 @@ static int _fdt_add_property(void *fdt, int nodeoffset, const char *name,
+ 	int namestroff;
+ 	int err;
+ 
+-	if ((nextoffset = _fdt_check_node_offset(fdt, nodeoffset)) < 0)
++	if ((nextoffset = fdt_check_node_offset_(fdt, nodeoffset)) < 0)
+ 		return nextoffset;
+ 
+-	namestroff = _fdt_find_add_string(fdt, name);
++	namestroff = fdt_find_add_string_(fdt, name);
+ 	if (namestroff < 0)
+ 		return namestroff;
+ 
+-	*prop = _fdt_offset_ptr_w(fdt, nextoffset);
++	*prop = fdt_offset_ptr_w_(fdt, nextoffset);
+ 	proplen = sizeof(**prop) + FDT_TAGALIGN(len);
+ 
+-	err = _fdt_splice_struct(fdt, *prop, 0, proplen);
++	err = fdt_splice_struct_(fdt, *prop, 0, proplen);
+ 	if (err)
+ 		return err;
+ 
+@@ -260,7 +260,7 @@ int fdt_set_name(void *fdt, int nodeoffset, const char *name)
+ 
+ 	newlen = strlen(name);
+ 
+-	err = _fdt_splice_struct(fdt, namep, FDT_TAGALIGN(oldlen+1),
++	err = fdt_splice_struct_(fdt, namep, FDT_TAGALIGN(oldlen+1),
+ 				 FDT_TAGALIGN(newlen+1));
+ 	if (err)
+ 		return err;
+@@ -277,9 +277,9 @@ int fdt_setprop_placeholder(void *fdt, int nodeoffset, const char *name,
+ 
+ 	FDT_RW_CHECK_HEADER(fdt);
+ 
+-	err = _fdt_resize_property(fdt, nodeoffset, name, len, &prop);
++	err = fdt_resize_property_(fdt, nodeoffset, name, len, &prop);
+ 	if (err == -FDT_ERR_NOTFOUND)
+-		err = _fdt_add_property(fdt, nodeoffset, name, len, &prop);
++		err = fdt_add_property_(fdt, nodeoffset, name, len, &prop);
+ 	if (err)
+ 		return err;
+ 
+@@ -313,7 +313,7 @@ int fdt_appendprop(void *fdt, int nodeoffset, const char *name,
+ 	prop = fdt_get_property_w(fdt, nodeoffset, name, &oldlen);
+ 	if (prop) {
+ 		newlen = len + oldlen;
+-		err = _fdt_splice_struct(fdt, prop->data,
++		err = fdt_splice_struct_(fdt, prop->data,
+ 					 FDT_TAGALIGN(oldlen),
+ 					 FDT_TAGALIGN(newlen));
+ 		if (err)
+@@ -321,7 +321,7 @@ int fdt_appendprop(void *fdt, int nodeoffset, const char *name,
+ 		prop->len = cpu_to_fdt32(newlen);
+ 		memcpy(prop->data + oldlen, val, len);
+ 	} else {
+-		err = _fdt_add_property(fdt, nodeoffset, name, len, &prop);
++		err = fdt_add_property_(fdt, nodeoffset, name, len, &prop);
+ 		if (err)
+ 			return err;
+ 		memcpy(prop->data, val, len);
+@@ -341,7 +341,7 @@ int fdt_delprop(void *fdt, int nodeoffset, const char *name)
+ 		return len;
+ 
+ 	proplen = sizeof(*prop) + FDT_TAGALIGN(len);
+-	return _fdt_splice_struct(fdt, prop, proplen, 0);
++	return fdt_splice_struct_(fdt, prop, proplen, 0);
+ }
+ 
+ int fdt_add_subnode_namelen(void *fdt, int parentoffset,
+@@ -369,10 +369,10 @@ int fdt_add_subnode_namelen(void *fdt, int parentoffset,
+ 		tag = fdt_next_tag(fdt, offset, &nextoffset);
+ 	} while ((tag == FDT_PROP) || (tag == FDT_NOP));
+ 
+-	nh = _fdt_offset_ptr_w(fdt, offset);
++	nh = fdt_offset_ptr_w_(fdt, offset);
+ 	nodelen = sizeof(*nh) + FDT_TAGALIGN(namelen+1) + FDT_TAGSIZE;
+ 
+-	err = _fdt_splice_struct(fdt, nh, 0, nodelen);
++	err = fdt_splice_struct_(fdt, nh, 0, nodelen);
+ 	if (err)
+ 		return err;
+ 
+@@ -396,15 +396,15 @@ int fdt_del_node(void *fdt, int nodeoffset)
+ 
+ 	FDT_RW_CHECK_HEADER(fdt);
+ 
+-	endoffset = _fdt_node_end_offset(fdt, nodeoffset);
++	endoffset = fdt_node_end_offset_(fdt, nodeoffset);
+ 	if (endoffset < 0)
+ 		return endoffset;
+ 
+-	return _fdt_splice_struct(fdt, _fdt_offset_ptr_w(fdt, nodeoffset),
++	return fdt_splice_struct_(fdt, fdt_offset_ptr_w_(fdt, nodeoffset),
+ 				  endoffset - nodeoffset, 0);
+ }
+ 
+-static void _fdt_packblocks(const char *old, char *new,
++static void fdt_packblocks_(const char *old, char *new,
+ 			    int mem_rsv_size, int struct_size)
+ {
+ 	int mem_rsv_off, struct_off, strings_off;
+@@ -450,7 +450,7 @@ int fdt_open_into(const void *fdt, void *buf, int bufsize)
+ 			return struct_size;
+ 	}
+ 
+-	if (!_fdt_blocks_misordered(fdt, mem_rsv_size, struct_size)) {
++	if (!fdt_blocks_misordered_(fdt, mem_rsv_size, struct_size)) {
+ 		/* no further work necessary */
+ 		err = fdt_move(fdt, buf, bufsize);
+ 		if (err)
+@@ -478,7 +478,7 @@ int fdt_open_into(const void *fdt, void *buf, int bufsize)
+ 			return -FDT_ERR_NOSPACE;
+ 	}
+ 
+-	_fdt_packblocks(fdt, tmp, mem_rsv_size, struct_size);
++	fdt_packblocks_(fdt, tmp, mem_rsv_size, struct_size);
+ 	memmove(buf, tmp, newsize);
+ 
+ 	fdt_set_magic(buf, FDT_MAGIC);
+@@ -498,8 +498,8 @@ int fdt_pack(void *fdt)
+ 
+ 	mem_rsv_size = (fdt_num_mem_rsv(fdt)+1)
+ 		* sizeof(struct fdt_reserve_entry);
+-	_fdt_packblocks(fdt, fdt, mem_rsv_size, fdt_size_dt_struct(fdt));
+-	fdt_set_totalsize(fdt, _fdt_data_size(fdt));
++	fdt_packblocks_(fdt, fdt, mem_rsv_size, fdt_size_dt_struct(fdt));
++	fdt_set_totalsize(fdt, fdt_data_size_(fdt));
+ 
+ 	return 0;
+ }
+diff --git a/scripts/dtc/libfdt/fdt_sw.c b/scripts/dtc/libfdt/fdt_sw.c
+index 2bd15e7aef87..6d33cc29d022 100644
+--- a/scripts/dtc/libfdt/fdt_sw.c
++++ b/scripts/dtc/libfdt/fdt_sw.c
+@@ -55,7 +55,7 @@
+ 
+ #include "libfdt_internal.h"
+ 
+-static int _fdt_sw_check_header(void *fdt)
++static int fdt_sw_check_header_(void *fdt)
+ {
+ 	if (fdt_magic(fdt) != FDT_SW_MAGIC)
+ 		return -FDT_ERR_BADMAGIC;
+@@ -66,11 +66,11 @@ static int _fdt_sw_check_header(void *fdt)
+ #define FDT_SW_CHECK_HEADER(fdt) \
+ 	{ \
+ 		int err; \
+-		if ((err = _fdt_sw_check_header(fdt)) != 0) \
++		if ((err = fdt_sw_check_header_(fdt)) != 0) \
+ 			return err; \
+ 	}
+ 
+-static void *_fdt_grab_space(void *fdt, size_t len)
++static void *fdt_grab_space_(void *fdt, size_t len)
+ {
+ 	int offset = fdt_size_dt_struct(fdt);
+ 	int spaceleft;
+@@ -82,7 +82,7 @@ static void *_fdt_grab_space(void *fdt, size_t len)
+ 		return NULL;
+ 
+ 	fdt_set_size_dt_struct(fdt, offset + len);
+-	return _fdt_offset_ptr_w(fdt, offset);
++	return fdt_offset_ptr_w_(fdt, offset);
+ }
+ 
+ int fdt_create(void *buf, int bufsize)
+@@ -174,7 +174,7 @@ int fdt_begin_node(void *fdt, const char *name)
+ 
+ 	FDT_SW_CHECK_HEADER(fdt);
+ 
+-	nh = _fdt_grab_space(fdt, sizeof(*nh) + FDT_TAGALIGN(namelen));
++	nh = fdt_grab_space_(fdt, sizeof(*nh) + FDT_TAGALIGN(namelen));
+ 	if (! nh)
+ 		return -FDT_ERR_NOSPACE;
+ 
+@@ -189,7 +189,7 @@ int fdt_end_node(void *fdt)
+ 
+ 	FDT_SW_CHECK_HEADER(fdt);
+ 
+-	en = _fdt_grab_space(fdt, FDT_TAGSIZE);
++	en = fdt_grab_space_(fdt, FDT_TAGSIZE);
+ 	if (! en)
+ 		return -FDT_ERR_NOSPACE;
+ 
+@@ -197,7 +197,7 @@ int fdt_end_node(void *fdt)
+ 	return 0;
+ }
+ 
+-static int _fdt_find_add_string(void *fdt, const char *s)
++static int fdt_find_add_string_(void *fdt, const char *s)
+ {
+ 	char *strtab = (char *)fdt + fdt_totalsize(fdt);
+ 	const char *p;
+@@ -205,7 +205,7 @@ static int _fdt_find_add_string(void *fdt, const char *s)
+ 	int len = strlen(s) + 1;
+ 	int struct_top, offset;
+ 
+-	p = _fdt_find_string(strtab - strtabsize, strtabsize, s);
++	p = fdt_find_string_(strtab - strtabsize, strtabsize, s);
+ 	if (p)
+ 		return p - strtab;
+ 
+@@ -227,11 +227,11 @@ int fdt_property_placeholder(void *fdt, const char *name, int len, void **valp)
+ 
+ 	FDT_SW_CHECK_HEADER(fdt);
+ 
+-	nameoff = _fdt_find_add_string(fdt, name);
++	nameoff = fdt_find_add_string_(fdt, name);
+ 	if (nameoff == 0)
+ 		return -FDT_ERR_NOSPACE;
+ 
+-	prop = _fdt_grab_space(fdt, sizeof(*prop) + FDT_TAGALIGN(len));
++	prop = fdt_grab_space_(fdt, sizeof(*prop) + FDT_TAGALIGN(len));
+ 	if (! prop)
+ 		return -FDT_ERR_NOSPACE;
+ 
+@@ -265,7 +265,7 @@ int fdt_finish(void *fdt)
+ 	FDT_SW_CHECK_HEADER(fdt);
+ 
+ 	/* Add terminator */
+-	end = _fdt_grab_space(fdt, sizeof(*end));
++	end = fdt_grab_space_(fdt, sizeof(*end));
+ 	if (! end)
+ 		return -FDT_ERR_NOSPACE;
+ 	*end = cpu_to_fdt32(FDT_END);
+@@ -281,7 +281,7 @@ int fdt_finish(void *fdt)
+ 	while ((tag = fdt_next_tag(fdt, offset, &nextoffset)) != FDT_END) {
+ 		if (tag == FDT_PROP) {
+ 			struct fdt_property *prop =
+-				_fdt_offset_ptr_w(fdt, offset);
++				fdt_offset_ptr_w_(fdt, offset);
+ 			int nameoff;
+ 
+ 			nameoff = fdt32_to_cpu(prop->nameoff);
+diff --git a/scripts/dtc/libfdt/fdt_wip.c b/scripts/dtc/libfdt/fdt_wip.c
+index 5e859198622b..534c1cbbb2f3 100644
+--- a/scripts/dtc/libfdt/fdt_wip.c
++++ b/scripts/dtc/libfdt/fdt_wip.c
+@@ -93,7 +93,7 @@ int fdt_setprop_inplace(void *fdt, int nodeoffset, const char *name,
+ 						   val, len);
+ }
+ 
+-static void _fdt_nop_region(void *start, int len)
++static void fdt_nop_region_(void *start, int len)
+ {
+ 	fdt32_t *p;
+ 
+@@ -110,12 +110,12 @@ int fdt_nop_property(void *fdt, int nodeoffset, const char *name)
+ 	if (!prop)
+ 		return len;
+ 
+-	_fdt_nop_region(prop, len + sizeof(*prop));
++	fdt_nop_region_(prop, len + sizeof(*prop));
+ 
+ 	return 0;
+ }
+ 
+-int _fdt_node_end_offset(void *fdt, int offset)
++int fdt_node_end_offset_(void *fdt, int offset)
+ {
+ 	int depth = 0;
+ 
+@@ -129,11 +129,11 @@ int fdt_nop_node(void *fdt, int nodeoffset)
+ {
+ 	int endoffset;
+ 
+-	endoffset = _fdt_node_end_offset(fdt, nodeoffset);
++	endoffset = fdt_node_end_offset_(fdt, nodeoffset);
+ 	if (endoffset < 0)
+ 		return endoffset;
+ 
+-	_fdt_nop_region(fdt_offset_ptr_w(fdt, nodeoffset, 0),
++	fdt_nop_region_(fdt_offset_ptr_w(fdt, nodeoffset, 0),
+ 			endoffset - nodeoffset);
+ 	return 0;
+ }
+diff --git a/scripts/dtc/libfdt/libfdt.h b/scripts/dtc/libfdt/libfdt.h
+index 7f83023ee109..1e27780e1185 100644
+--- a/scripts/dtc/libfdt/libfdt.h
++++ b/scripts/dtc/libfdt/libfdt.h
+@@ -1,5 +1,5 @@
+-#ifndef _LIBFDT_H
+-#define _LIBFDT_H
++#ifndef LIBFDT_H
++#define LIBFDT_H
+ /*
+  * libfdt - Flat Device Tree manipulation
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+@@ -54,7 +54,7 @@
+ #include "libfdt_env.h"
+ #include "fdt.h"
+ 
+-#define FDT_FIRST_SUPPORTED_VERSION	0x10
++#define FDT_FIRST_SUPPORTED_VERSION	0x02
+ #define FDT_LAST_SUPPORTED_VERSION	0x11
+ 
+ /* Error codes: informative error codes */
+@@ -225,23 +225,23 @@ int fdt_next_subnode(const void *fdt, int offset);
+ #define fdt_size_dt_strings(fdt)	(fdt_get_header(fdt, size_dt_strings))
+ #define fdt_size_dt_struct(fdt)		(fdt_get_header(fdt, size_dt_struct))
+ 
+-#define __fdt_set_hdr(name) \
++#define fdt_set_hdr_(name) \
+ 	static inline void fdt_set_##name(void *fdt, uint32_t val) \
+ 	{ \
+ 		struct fdt_header *fdth = (struct fdt_header *)fdt; \
+ 		fdth->name = cpu_to_fdt32(val); \
+ 	}
+-__fdt_set_hdr(magic);
+-__fdt_set_hdr(totalsize);
+-__fdt_set_hdr(off_dt_struct);
+-__fdt_set_hdr(off_dt_strings);
+-__fdt_set_hdr(off_mem_rsvmap);
+-__fdt_set_hdr(version);
+-__fdt_set_hdr(last_comp_version);
+-__fdt_set_hdr(boot_cpuid_phys);
+-__fdt_set_hdr(size_dt_strings);
+-__fdt_set_hdr(size_dt_struct);
+-#undef __fdt_set_hdr
++fdt_set_hdr_(magic);
++fdt_set_hdr_(totalsize);
++fdt_set_hdr_(off_dt_struct);
++fdt_set_hdr_(off_dt_strings);
++fdt_set_hdr_(off_mem_rsvmap);
++fdt_set_hdr_(version);
++fdt_set_hdr_(last_comp_version);
++fdt_set_hdr_(boot_cpuid_phys);
++fdt_set_hdr_(size_dt_strings);
++fdt_set_hdr_(size_dt_struct);
++#undef fdt_set_hdr_
+ 
+ /**
+  * fdt_check_header - sanity check a device tree or possible device tree
+@@ -527,6 +527,9 @@ int fdt_next_property_offset(const void *fdt, int offset);
+  * offset.  If lenp is non-NULL, the length of the property value is
+  * also returned, in the integer pointed to by lenp.
+  *
++ * Note that this code only works on device tree versions >= 16. fdt_getprop()
++ * works on all versions.
++ *
+  * returns:
+  *	pointer to the structure representing the property
+  *		if lenp is non-NULL, *lenp contains the length of the property
+@@ -1449,7 +1452,7 @@ int fdt_setprop(void *fdt, int nodeoffset, const char *name,
+ 		const void *val, int len);
+ 
+ /**
+- * fdt_setprop _placeholder - allocate space for a property
++ * fdt_setprop_placeholder - allocate space for a property
+  * @fdt: pointer to the device tree blob
+  * @nodeoffset: offset of the node whose property to change
+  * @name: name of the property to change
+@@ -1896,4 +1899,4 @@ int fdt_overlay_apply(void *fdt, void *fdto);
+ 
+ const char *fdt_strerror(int errval);
+ 
+-#endif /* _LIBFDT_H */
++#endif /* LIBFDT_H */
+diff --git a/scripts/dtc/libfdt/libfdt_env.h b/scripts/dtc/libfdt/libfdt_env.h
+index 952056cddf09..bd2474628775 100644
+--- a/scripts/dtc/libfdt/libfdt_env.h
++++ b/scripts/dtc/libfdt/libfdt_env.h
+@@ -1,5 +1,5 @@
+-#ifndef _LIBFDT_ENV_H
+-#define _LIBFDT_ENV_H
++#ifndef LIBFDT_ENV_H
++#define LIBFDT_ENV_H
+ /*
+  * libfdt - Flat Device Tree manipulation
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+@@ -109,4 +109,31 @@ static inline fdt64_t cpu_to_fdt64(uint64_t x)
+ #undef CPU_TO_FDT16
+ #undef EXTRACT_BYTE
+ 
+-#endif /* _LIBFDT_ENV_H */
++#ifdef __APPLE__
++#include <AvailabilityMacros.h>
++
++/* strnlen() is not available on Mac OS < 10.7 */
++# if !defined(MAC_OS_X_VERSION_10_7) || (MAC_OS_X_VERSION_MAX_ALLOWED < \
++                                         MAC_OS_X_VERSION_10_7)
++
++#define strnlen fdt_strnlen
++
++/*
++ * fdt_strnlen: returns the length of a string or max_count - which ever is
++ * smallest.
++ * Input 1 string: the string whose size is to be determined
++ * Input 2 max_count: the maximum value returned by this function
++ * Output: length of the string or max_count (the smallest of the two)
++ */
++static inline size_t fdt_strnlen(const char *string, size_t max_count)
++{
++    const char *p = memchr(string, 0, max_count);
++    return p ? p - string : max_count;
++}
++
++#endif /* !defined(MAC_OS_X_VERSION_10_7) || (MAC_OS_X_VERSION_MAX_ALLOWED <
++          MAC_OS_X_VERSION_10_7) */
++
++#endif /* __APPLE__ */
++
++#endif /* LIBFDT_ENV_H */
+diff --git a/scripts/dtc/libfdt/libfdt_internal.h b/scripts/dtc/libfdt/libfdt_internal.h
+index 02cfa6fb612d..7681e192295b 100644
+--- a/scripts/dtc/libfdt/libfdt_internal.h
++++ b/scripts/dtc/libfdt/libfdt_internal.h
+@@ -1,5 +1,5 @@
+-#ifndef _LIBFDT_INTERNAL_H
+-#define _LIBFDT_INTERNAL_H
++#ifndef LIBFDT_INTERNAL_H
++#define LIBFDT_INTERNAL_H
+ /*
+  * libfdt - Flat Device Tree manipulation
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+@@ -57,27 +57,27 @@
+ 
+ #define FDT_CHECK_HEADER(fdt) \
+ 	{ \
+-		int __err; \
+-		if ((__err = fdt_check_header(fdt)) != 0) \
+-			return __err; \
++		int err_; \
++		if ((err_ = fdt_check_header(fdt)) != 0) \
++			return err_; \
+ 	}
+ 
+-int _fdt_check_node_offset(const void *fdt, int offset);
+-int _fdt_check_prop_offset(const void *fdt, int offset);
+-const char *_fdt_find_string(const char *strtab, int tabsize, const char *s);
+-int _fdt_node_end_offset(void *fdt, int nodeoffset);
++int fdt_check_node_offset_(const void *fdt, int offset);
++int fdt_check_prop_offset_(const void *fdt, int offset);
++const char *fdt_find_string_(const char *strtab, int tabsize, const char *s);
++int fdt_node_end_offset_(void *fdt, int nodeoffset);
+ 
+-static inline const void *_fdt_offset_ptr(const void *fdt, int offset)
++static inline const void *fdt_offset_ptr_(const void *fdt, int offset)
+ {
+ 	return (const char *)fdt + fdt_off_dt_struct(fdt) + offset;
+ }
+ 
+-static inline void *_fdt_offset_ptr_w(void *fdt, int offset)
++static inline void *fdt_offset_ptr_w_(void *fdt, int offset)
+ {
+-	return (void *)(uintptr_t)_fdt_offset_ptr(fdt, offset);
++	return (void *)(uintptr_t)fdt_offset_ptr_(fdt, offset);
+ }
+ 
+-static inline const struct fdt_reserve_entry *_fdt_mem_rsv(const void *fdt, int n)
++static inline const struct fdt_reserve_entry *fdt_mem_rsv_(const void *fdt, int n)
+ {
+ 	const struct fdt_reserve_entry *rsv_table =
+ 		(const struct fdt_reserve_entry *)
+@@ -85,11 +85,11 @@ static inline const struct fdt_reserve_entry *_fdt_mem_rsv(const void *fdt, int
+ 
+ 	return rsv_table + n;
+ }
+-static inline struct fdt_reserve_entry *_fdt_mem_rsv_w(void *fdt, int n)
++static inline struct fdt_reserve_entry *fdt_mem_rsv_w_(void *fdt, int n)
+ {
+-	return (void *)(uintptr_t)_fdt_mem_rsv(fdt, n);
++	return (void *)(uintptr_t)fdt_mem_rsv_(fdt, n);
+ }
+ 
+ #define FDT_SW_MAGIC		(~FDT_MAGIC)
+ 
+-#endif /* _LIBFDT_INTERNAL_H */
++#endif /* LIBFDT_INTERNAL_H */
+diff --git a/scripts/dtc/livetree.c b/scripts/dtc/livetree.c
+index 6846ad2fd6d2..57b7db2ed153 100644
+--- a/scripts/dtc/livetree.c
++++ b/scripts/dtc/livetree.c
+@@ -216,7 +216,7 @@ struct node *merge_nodes(struct node *old_node, struct node *new_node)
+ 	return old_node;
+ }
+ 
+-void add_orphan_node(struct node *dt, struct node *new_node, char *ref)
++struct node * add_orphan_node(struct node *dt, struct node *new_node, char *ref)
+ {
+ 	static unsigned int next_orphan_fragment = 0;
+ 	struct node *node;
+@@ -236,6 +236,7 @@ void add_orphan_node(struct node *dt, struct node *new_node, char *ref)
+ 	name_node(node, name);
+ 
+ 	add_child(dt, node);
++	return dt;
+ }
+ 
+ struct node *chain_node(struct node *first, struct node *list)
+@@ -507,7 +508,7 @@ struct node *get_node_by_path(struct node *tree, const char *path)
+ 
+ 	for_each_child(tree, child) {
+ 		if (p && (strlen(child->name) == p-path) &&
+-				strneq(path, child->name, p-path))
++		    strprefixeq(path, p - path, child->name))
+ 			return get_node_by_path(child, p+1);
+ 		else if (!p && streq(path, child->name))
+ 			return child;
+@@ -540,7 +541,10 @@ struct node *get_node_by_phandle(struct node *tree, cell_t phandle)
+ {
+ 	struct node *child, *node;
+ 
+-	assert((phandle != 0) && (phandle != -1));
++	if ((phandle == 0) || (phandle == -1)) {
++		assert(generate_fixups);
++		return NULL;
++	}
+ 
+ 	if (tree->phandle == phandle) {
+ 		if (tree->deleted)
+diff --git a/scripts/dtc/srcpos.c b/scripts/dtc/srcpos.c
+index 9d38459902f3..cb6ed0e3e5e4 100644
+--- a/scripts/dtc/srcpos.c
++++ b/scripts/dtc/srcpos.c
+@@ -209,8 +209,6 @@ struct srcpos srcpos_empty = {
+ 	.file = NULL,
+ };
+ 
+-#define TAB_SIZE      8
+-
+ void srcpos_update(struct srcpos *pos, const char *text, int len)
+ {
+ 	int i;
+@@ -224,9 +222,6 @@ void srcpos_update(struct srcpos *pos, const char *text, int len)
+ 		if (text[i] == '\n') {
+ 			current_srcfile->lineno++;
+ 			current_srcfile->colno = 1;
+-		} else if (text[i] == '\t') {
+-			current_srcfile->colno =
+-				ALIGN(current_srcfile->colno, TAB_SIZE);
+ 		} else {
+ 			current_srcfile->colno++;
+ 		}
+diff --git a/scripts/dtc/srcpos.h b/scripts/dtc/srcpos.h
+index 7caca8257c6d..9ded12a3830a 100644
+--- a/scripts/dtc/srcpos.h
++++ b/scripts/dtc/srcpos.h
+@@ -17,8 +17,8 @@
+  *                                                                   USA
+  */
+ 
+-#ifndef _SRCPOS_H_
+-#define _SRCPOS_H_
++#ifndef SRCPOS_H
++#define SRCPOS_H
+ 
+ #include <stdio.h>
+ #include <stdbool.h>
+@@ -114,4 +114,4 @@ extern void PRINTF(3, 4) srcpos_error(struct srcpos *pos, const char *prefix,
+ 
+ extern void srcpos_set_line(char *f, int l);
+ 
+-#endif /* _SRCPOS_H_ */
++#endif /* SRCPOS_H */
+diff --git a/scripts/dtc/util.h b/scripts/dtc/util.h
+index ad5f41199edb..66fba8ea709b 100644
+--- a/scripts/dtc/util.h
++++ b/scripts/dtc/util.h
+@@ -1,5 +1,5 @@
+-#ifndef _UTIL_H
+-#define _UTIL_H
++#ifndef UTIL_H
++#define UTIL_H
+ 
+ #include <stdarg.h>
+ #include <stdbool.h>
+@@ -35,6 +35,9 @@
+ 
+ #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+ 
++#define stringify(s)	stringify_(s)
++#define stringify_(s)	#s
++
+ static inline void NORETURN PRINTF(1, 2) die(const char *str, ...)
+ {
+ 	va_list ap;
+@@ -260,4 +263,4 @@ void NORETURN util_usage(const char *errmsg, const char *synopsis,
+ 	case 'V': util_version(); \
+ 	case '?': usage("unknown option");
+ 
+-#endif /* _UTIL_H */
++#endif /* UTIL_H */
+diff --git a/scripts/dtc/version_gen.h b/scripts/dtc/version_gen.h
+index 6a4e84798966..ad87849e333b 100644
+--- a/scripts/dtc/version_gen.h
++++ b/scripts/dtc/version_gen.h
+@@ -1 +1 @@
+-#define DTC_VERSION "DTC 1.4.5-gc1e55a55"
++#define DTC_VERSION "DTC 1.4.6-gaadd0b65"
 -- 
 2.14.1
