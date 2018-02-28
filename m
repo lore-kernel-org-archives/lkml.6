@@ -1,32 +1,32 @@
 Return-Path: <jarkko.sakkinen@intel.com>
-X-Google-Smtp-Source: AH8x2246NznwYkfUXw9X+sP104h/UoJCW2X7ldEjDLp3GtvUlG9dkZbuijG2QEEFzTJdIzczwvC9
-ARC-Seal: i=1; a=rsa-sha256; t=1519847944; cv=none;
+X-Google-Smtp-Source: AH8x225jQ384HxIPYUmTdipcMmWPjjxFkAHuXYzaz5QV4PCAZClEFtnCvS81/jY9MRrpGFHXhkRF
+ARC-Seal: i=1; a=rsa-sha256; t=1519847938; cv=none;
         d=google.com; s=arc-20160816;
-        b=uKkucAuJ2DxJJtwhE1JtknyEkaFsnDz6wz51GGIbwR1gWWdG73nlfete3mupP13+4G
-         ZdA1UVi4SmNnLmku9b4KTuh/m/iAzh1bQHt3axbHbxFxp53timF6z2+7+8gojwYx9dvH
-         kxZ1ufvyb7Yr9GMPgde2IsDSt4B3UzT5sayYB/lVl6Kmc5VuWLijCdQxnuO3sSWw4nGY
-         Da+2bgExtc7YKFvK5gLikpNFi6ypajrhgxF74StjRWI2633U/IPUUtvgcwEb8SCHZN1p
-         CwvwS5EHIqdGPERSGkXwjwaQg/gcWQIej4AYm37vTLPAjiQWWxTOOYugKX1VNQtHXxnN
-         yhbA==
+        b=ahKLGe76dwOtYjl2B/BoRxBfMTL/THBwaTXfD7ODQkLIwt4U5oc4X9N9AIYljmu8O3
+         MytHx8M/yAkwSiSjXAanGHgSXz41JTloMxgQuEXarD2yg308HkIAEK2tbtF/X1s9s0LD
+         /pd39qr086txF525FHFDLwW1JYo3wvDVtUxTBiBWCgOCUdNQ3i/1JlPFEPBkO9HygNdA
+         SKlpLd4/EQy838X7ZfsVFyopBmSu5ZI5y4QkIOXXklG/C8zVaJDWLm/2VLg7y6RzKaE8
+         Swabk6xJvS59qxO5tgr1FWo05+DIKbhIyhqiR4IIR8MXVgw0SHy+l2EXZW5t7OV+o25Z
+         TUmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=9f+hChP0fspdEIO7pNycYqKIbIWF+XndQ4qS27YScOo=;
-        b=Ki+9ge+lnpXIIPhTfFNCTporMM2fTMFwX37CbAPTfsDOgs2zI3DSvT5LkTIrsyazA9
-         ePBa85J0g87vYEomVUHzLVkmqXoztcluBEdV5nazkMuuJpG2arYG97g/86XHRJ9KYCGr
-         xAF371BoJmUTnnBLbf+VQ399k76cnceq6982oFC7DJ7RUMQOqqdrW/N1mmNe+Ck/cuPn
-         InneKQ8xur4vArWf8idRUroZnO6FWH6Xz0GOqUGLmkH+R0i8ebPi+gykeg1XxjKOb3GH
-         yaxWcTpszKJkNkL3pMbtD3SLN1c6RlPc78qSXRMCuFbj91583UWP24lZ6e2ceGZPF3jG
-         tQ2A==
+        bh=ymxgh626LGyuVoviv8Q+JZhxG10nJ8Kwk8ronjueZ+E=;
+        b=UmVasxMXPFlhRXLXuNuIkz2Ht9ylOsCEiAiAqHU1f454AriQ9dmlnqJ3S/eEV0c46o
+         i1icQqrqc9pS434VxZx2aGNhBbKeQmqiSLKTtS/eGNVE0OEWZSkKRex79CnQp/zh61HW
+         EVLvSLYSGSG4nLKlP7WW3VbYerBwyYDYNiFLntLgY2bHf+lLQrOv+NtU5t7f5xXj3ePG
+         F8OoKz8ZdXNeJBKjlrxJ/LxFW3IOtfGQArqq5PG9/qbGk7Lh5zMAM8Dy3BTe1/Oa7d57
+         5yN2nI6WiNfXy6QM7du3koPzUdJvLuwKGuE+UP9MAQPf4RZP+b6wjIMLbEFfQmvcYM8m
+         bf4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
-   d="scan'208";a="20929752"
+   d="scan'208";a="20929745"
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org,
@@ -37,200 +37,129 @@ Cc: linux-security-module@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 5/5] tpm: migrate tpm2_get_random() to use struct tpm_buf
-Date: Wed, 28 Feb 2018 21:58:18 +0200
-Message-Id: <20180228195819.22231-6-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4/5] tpm: migrate tpm2_get_tpm_pt() to use struct tpm_buf
+Date: Wed, 28 Feb 2018 21:58:17 +0200
+Message-Id: <20180228195819.22231-5-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
 References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593676078173406391?=
-X-GMAIL-MSGID: =?utf-8?q?1593676078173406391?=
+X-GMAIL-THRID: =?utf-8?q?1593676072454936612?=
+X-GMAIL-MSGID: =?utf-8?q?1593676072454936612?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In order to make struct tpm_buf the first class object for constructing
-TPM commands, migrate tpm2_get_random() to use it. In addition, removed
-remaining references to struct tpm2_cmd. All of them use it to acquire
-the length of the response, which can be achieved by using
-tpm_buf_length().
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, migrate tpm2_get_tpm_pt() to use it.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm.h      |  2 +-
- drivers/char/tpm/tpm2-cmd.c | 87 ++++++++++++++++-----------------------------
- 2 files changed, 31 insertions(+), 58 deletions(-)
+ drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
+ 1 file changed, 23 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index cccd5994a0e1..cffb71ec0289 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -557,7 +557,7 @@ static inline u32 tpm2_rc_value(u32 rc)
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
--int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-+int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
- void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 			    unsigned int flags);
- int tpm2_seal_trusted(struct tpm_chip *chip,
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 43791947b8e1..574caa33aab3 100644
+index 36f6b0ac412b..43791947b8e1 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -27,25 +27,6 @@ enum tpm2_session_attributes {
+@@ -27,20 +27,6 @@ enum tpm2_session_attributes {
  	TPM2_SA_CONTINUE_SESSION	= BIT(0),
  };
  
--struct tpm2_get_random_in {
--	__be16	size;
+-struct tpm2_get_tpm_pt_in {
+-	__be32	cap_id;
+-	__be32	property_id;
+-	__be32	property_cnt;
 -} __packed;
 -
--struct tpm2_get_random_out {
--	__be16	size;
--	u8	buffer[TPM_MAX_RNG_DATA];
+-struct tpm2_get_tpm_pt_out {
+-	u8	more_data;
+-	__be32	subcap_id;
+-	__be32	property_cnt;
+-	__be32	property_id;
+-	__be32	value;
 -} __packed;
 -
--union tpm2_cmd_params {
--	struct	tpm2_get_random_in	getrandom_in;
--	struct	tpm2_get_random_out	getrandom_out;
--};
--
--struct tpm2_cmd {
--	tpm_cmd_header		header;
--	union tpm2_cmd_params	params;
--} __packed;
--
- struct tpm2_hash {
- 	unsigned int crypto_id;
- 	unsigned int tpm_id;
-@@ -298,62 +279,58 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ struct tpm2_get_random_in {
+ 	__be16	size;
+ } __packed;
+@@ -51,8 +37,6 @@ struct tpm2_get_random_out {
+ } __packed;
+ 
+ union tpm2_cmd_params {
+-	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+-	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+ 	struct	tpm2_get_random_in	getrandom_in;
+ 	struct	tpm2_get_random_out	getrandom_out;
+ };
+@@ -377,19 +361,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 	return total ? total : -EIO;
  }
  
- 
--#define TPM2_GETRANDOM_IN_SIZE \
+-#define TPM2_GET_TPM_PT_IN_SIZE \
 -	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_get_random_in))
+-	 sizeof(struct tpm2_get_tpm_pt_in))
 -
--static const struct tpm_input_header tpm2_getrandom_header = {
+-#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
+-	 sizeof(struct tpm2_get_tpm_pt_out)
+-
+-static const struct tpm_input_header tpm2_get_tpm_pt_header = {
 -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_GETRANDOM_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_GET_RANDOM)
+-	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
 -};
-+struct tpm2_get_random_out {
-+	__be16 size;
-+	u8 buffer[TPM_MAX_RNG_DATA];
-+} __packed;
- 
+-
  /**
-  * tpm2_get_random() - get random bytes from the TPM RNG
-  *
+  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
   * @chip: TPM chip to use
-- * @out: destination buffer for the random bytes
-+ * @dest: destination buffer for the random bytes
-  * @max: the max number of bytes to write to @out
-  *
-  * Return:
-- *    Size of the output buffer, or -EIO on error.
-+ * size of the output buffer when the operation is successful.
-+ * A negative number for system errors (errno).
-  */
--int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-+int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+@@ -726,6 +697,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ 	return rc;
+ }
+ 
++struct tpm2_get_cap_out {
++	u8 more_data;
++	__be32 subcap_id;
++	__be32 property_cnt;
++	__be32 property_id;
++	__be32 value;
++} __packed;
++
+ /**
+  * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
+  * @chip:		TPM chip to use.
+@@ -738,19 +717,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+ 			const char *desc)
  {
 -	struct tpm2_cmd cmd;
--	u32 recd, rlength;
--	u32 num_bytes;
-+	struct tpm2_get_random_out *out;
++	struct tpm2_get_cap_out *out;
 +	struct tpm_buf buf;
-+	u32 recd;
-+	u32 num_bytes = max;
- 	int err;
- 	int total = 0;
- 	int retries = 5;
--	u8 *dest = out;
-+	u8 *dest_ptr = dest;
+ 	int rc;
  
--	num_bytes = min_t(u32, max, sizeof(cmd.params.getrandom_out.buffer));
+-	cmd.header.in = tpm2_get_tpm_pt_header;
+-	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
+-	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
+-	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
 -
--	if (!out || !num_bytes ||
--	    max > sizeof(cmd.params.getrandom_out.buffer))
-+	if (!num_bytes || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
- 	do {
--		cmd.header.in = tpm2_getrandom_header;
--		cmd.params.getrandom_in.size = cpu_to_be16(num_bytes);
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
+-			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
+-	if (!rc)
+-		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
 -
--		err = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
-+		err = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS,
-+				   TPM2_CC_GET_RANDOM);
-+		if (err)
-+			return err;
-+		tpm_buf_append_u16(&buf, num_bytes);
-+		err = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
- 				       offsetof(struct tpm2_get_random_out,
- 						buffer),
- 				       0, "attempting get random");
- 		if (err)
- 			break;
- 
--		recd = min_t(u32, be16_to_cpu(cmd.params.getrandom_out.size),
--			     num_bytes);
--		rlength = be32_to_cpu(cmd.header.out.length);
--		if (rlength < offsetof(struct tpm2_get_random_out, buffer) +
--			      recd)
-+		out = (struct tpm2_get_random_out *)
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
++	if (rc)
++		return rc;
++	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
++	tpm_buf_append_u32(&buf, property_id);
++	tpm_buf_append_u32(&buf, 1);
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
++	if (!rc) {
++		out = (struct tpm2_get_cap_out *)
 +			&buf.data[TPM_HEADER_SIZE];
-+		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
-+		if (tpm_buf_length(&buf) <
-+		    offsetof(struct tpm2_get_random_out, buffer) + recd)
- 			return -EFAULT;
--		memcpy(dest, cmd.params.getrandom_out.buffer, recd);
-+		memcpy(dest_ptr, out->buffer, recd);
- 
--		dest += recd;
-+		dest_ptr += recd;
- 		total += recd;
- 		num_bytes -= recd;
- 	} while (retries-- && total < max);
-@@ -435,7 +412,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- {
- 	unsigned int blob_len;
- 	struct tpm_buf buf;
--	u32 hash, rlength;
-+	u32 hash;
- 	int i;
- 	int rc;
- 
-@@ -510,8 +487,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		rc = -E2BIG;
- 		goto out;
- 	}
--	rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)->header.out.length);
--	if (rlength < TPM_HEADER_SIZE + 4 + blob_len) {
-+	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
- 		rc = -EFAULT;
- 		goto out;
- 	}
-@@ -621,7 +597,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	u16 data_len;
- 	u8 *data;
- 	int rc;
--	u32 rlength;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
- 	if (rc)
-@@ -649,9 +624,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			goto out;
- 		}
- 
--		rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)
--					->header.out.length);
--		if (rlength < TPM_HEADER_SIZE + 6 + data_len) {
-+		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 6 + data_len) {
- 			rc = -EFAULT;
- 			goto out;
- 		}
++		*value = be32_to_cpu(out->value);
++	}
++	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
 -- 
 2.15.1
