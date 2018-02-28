@@ -1,65 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751988AbeB1FI3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 00:08:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
+        id S1752027AbeB1FJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 00:09:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750868AbeB1FI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 00:08:28 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA0C21795
+        id S1751003AbeB1FJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 00:09:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A1F206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 27 Feb 2018 21:09:25 -0800
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: do gc in greedy mode for whole range if gc_urgent mode is set
-Date: Tue, 27 Feb 2018 21:08:26 -0800
-Message-Id: <20180228050826.83137-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
+Subject: Re: [PATCH 1/5 v2] f2fs: add mount option for segment allocation
+ policy
+Message-ID: <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180226174731.26679-1-jaegeuk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226174731.26679-1-jaegeuk@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Otherwise, f2fs conducts GC on 8GB range only based on slow cost-benefit.
+Change log from v1:
+ - add doc :)
+
+This patch adds an mount option, "alloc_mode=%s" having two options, "default"
+and "reuse".
+
+In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
+all the time to reassign segments. It'd be useful for small-sized eMMC parts.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/gc.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ Documentation/filesystems/f2fs.txt |  2 ++
+ fs/f2fs/f2fs.h                     |  8 ++++++++
+ fs/f2fs/segment.c                  |  5 +++++
+ fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
+ 4 files changed, 39 insertions(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index bc9420ce2275..bfb7a4a3a929 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -162,12 +162,17 @@ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
- {
- 	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 0caf7da0a532..0409c47584ea 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -180,6 +180,8 @@ whint_mode=%s          Control which write hints are passed down to block
+                        down hints. In "user-based" mode, f2fs tries to pass
+                        down hints given by users. And in "fs-based" mode, f2fs
+                        passes down hints with its policy.
++alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
++                       and "default".
  
--	if (gc_th && gc_th->gc_idle) {
-+	if (!gc_th)
-+		return gc_mode;
+ ================================================================================
+ DEBUGFS ENTRIES
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f68ece08b5a2..d1bfdf691afc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1043,6 +1043,11 @@ enum {
+ 	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
+ };
+ 
++enum {
++	ALLOC_MODE_DEFAULT,	/* stay default */
++	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
++};
 +
-+	if (gc_th->gc_idle) {
- 		if (gc_th->gc_idle == 1)
- 			gc_mode = GC_CB;
- 		else if (gc_th->gc_idle == 2)
- 			gc_mode = GC_GREEDY;
- 	}
-+	if (gc_th->gc_urgent)
-+		gc_mode = GC_GREEDY;
- 	return gc_mode;
+ struct f2fs_sb_info {
+ 	struct super_block *sb;			/* pointer to VFS super block */
+ 	struct proc_dir_entry *s_proc;		/* proc entry */
+@@ -1229,6 +1234,9 @@ struct f2fs_sb_info {
+ #endif
+ 	/* For which write hints are passed down to block layer */
+ 	int whint_mode;
++
++	/* segment allocation policy */
++	int alloc_mode;
+ };
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0646d5de8cd0..5e5e2936a26a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2170,6 +2170,11 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+ 
+ 	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+ 		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
++
++	/* find segments from 0 to reuse freed segments */
++	if (sbi->alloc_mode == ALLOC_MODE_REUSE)
++		return 0;
++
+ 	return CURSEG_I(sbi, type)->segno;
  }
  
-@@ -189,7 +194,9 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
- 	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2d832866720c..1345ef167140 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -130,6 +130,7 @@ enum {
+ 	Opt_jqfmt_vfsv0,
+ 	Opt_jqfmt_vfsv1,
+ 	Opt_whint,
++	Opt_alloc,
+ 	Opt_err,
+ };
  
- 	/* we need to check every dirty segments in the FG_GC case */
--	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
-+	if (gc_type != FG_GC &&
-+			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
-+			p->max_search > sbi->max_victim_search)
- 		p->max_search = sbi->max_victim_search;
+@@ -184,6 +185,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
+ 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+ 	{Opt_whint, "whint_mode=%s"},
++	{Opt_alloc, "alloc_mode=%s"},
+ 	{Opt_err, NULL},
+ };
  
- 	/* let's select beginning hot/small space first in no_heap mode*/
+@@ -700,6 +702,23 @@ static int parse_options(struct super_block *sb, char *options)
+ 			}
+ 			kfree(name);
+ 			break;
++		case Opt_alloc:
++			name = match_strdup(&args[0]);
++			if (!name)
++				return -ENOMEM;
++
++			if (strlen(name) == 7 &&
++					!strncmp(name, "default", 7)) {
++				sbi->alloc_mode = ALLOC_MODE_DEFAULT;
++			} else if (strlen(name) == 5 &&
++					!strncmp(name, "reuse", 5)) {
++				sbi->alloc_mode = ALLOC_MODE_REUSE;
++			} else {
++				kfree(name);
++				return -EINVAL;
++			}
++			kfree(name);
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -1264,6 +1283,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (sbi->whint_mode == WHINT_MODE_FS)
+ 		seq_printf(seq, ",whint_mode=%s", "fs-based");
+ 
++	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
++		seq_printf(seq, ",alloc_mode=%s", "default");
++	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
++		seq_printf(seq, ",alloc_mode=%s", "reuse");
+ 	return 0;
+ }
+ 
+@@ -1273,6 +1296,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	sbi->active_logs = NR_CURSEG_TYPE;
+ 	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
+ 	sbi->whint_mode = WHINT_MODE_OFF;
++	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
+ 
+ 	set_opt(sbi, BG_GC);
+ 	set_opt(sbi, INLINE_XATTR);
 -- 
 2.15.0.531.g2ccb3012c9-goog
