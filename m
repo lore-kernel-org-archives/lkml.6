@@ -1,116 +1,129 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AH8x225XaL88Oe7Fg9iSGth30Zei+R7gtG/VuHbNNLdSh8YEY8i3mY2lb35XpXfTCyIIxl8uDu5K
-ARC-Seal: i=1; a=rsa-sha256; t=1519864700; cv=none;
+Return-Path: <linux@rasmusvillemoes.dk>
+ARC-Seal: i=1; a=rsa-sha256; t=1519860181; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZkHiRiBzNsMQ7Wr/jMH3C3YUunT+6T/vm9zuz3dheXJYUlf9IXeBtryAi/wFAOYS+d
-         aBqu4joyXoDBOMmBYDGf1ZK9jiWs7wgthaIrJAqumumGBS6t84LoPOR7hmUrDvukTvdL
-         kfIuoyET691wfbprBNpx5xXRLpCAsrVKxL1DYROh4QmxKB7DXbL9IeSjmurz/HdTvKS3
-         +9VoQrjZSjdfaVfCVGLIejaKCeIxqZaC2MNuYl8mKj34M2GthvpbW0QmImoX4VIx5MZ0
-         E7L5JxabMDsfXxZrdTcX68OVKH/D+vmI4l855naHm2KRY/XhMEYun9nTFN+ZrLQOg0zj
-         Ov0A==
+        b=b7UOrkfngbGb7VzJIUPNLm9u2oCb4QQYTlN2UKVxPaZ61W0O2FABdmBXlHkE0+uGb6
+         YDW5sTWX+FLa4I/V9sa9Q1En7+xJtsg2J7ntt24v4P2THBWpXjDKxh2JjG75qm7ayynk
+         ImBLwHEUmu1tybnF8v3hhSrJeCZMHEMhuCHvas8YqLtSO+LJ1dkwIdIxx0g6B+Rlh4hS
+         Wc1tiSaFstLua3Z83Sot/irbPnkdJjAWU9vERV30FTEuuMC4BgJ6KFxwM5CGErXvfiaD
+         jVKHDb1f2C6kVr95SzZ/dPN8lTHamPca8MOCUoXBjilTezQfv6roSFFoamiJWCMqCgEh
+         889w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=cBP7LG6BUvs+nmQYRXBEI+P1B+pkmazkxBE/CnyXN00=;
-        b=QGrz0fzb1YKyljUSzJzqcOUdG2dsBNvB36O71GyxAgR2Ei0BRTqrnZw2e66fhAyUM9
-         ziCXIFoJF16PN+WOLhEIjjA+m8hQWxjwA+yiODIsAEjNuJlbJyA4m0kuSMWpQPtl2EEs
-         jK6VNy+YlxCcNeAqRcYds6O52NzVfJLmKobTzHipppCMnh0qfK5Ni20xbEcKLkwgZ5E0
-         +HoqKxy8t5KFocoizKtOd4Zab9kEu5stk9vHxKt6S70AWxqH8bBNidVcRRbxr4TJZg+J
-         V7IbBwlIwWHYv5E5JKm0qzjDs5t7nfuyrrA3BSRBr4mIhyUKf5etVWH3M7jNBgkO2nxA
-         cMxA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=y4lIwZBy83kkAtY3JWGGMiDSThgTEzVLEUw27b5wT4I=;
+        b=fxrLT15MJTgpevpBBpB914iAnnWioE0AD2n2dFzllKZWWaqvNqB6FeSJd/wPaocL0T
+         Ui9jYx6/1QPNmsOiYT3l+a6RGimquhwPO5SY7Bq5tIINRJbVMDYorzxh/mSWlNbBxVfs
+         HlnxPy/alvynbsShS2bRSxSWABHba3mAvi+qg+M9CizL3EbGPFOERQ4sb7vPSy4mQKHu
+         E3YLUoFtODKqM+pKJTVPzS1RV7d58FLcendF4A17oRPY1ZviVa7Gc9KuOYN1KkVHaLHP
+         3JVw32uzHMlL6cksNnMOqcBurz0UFR2zBp8wip4esCn018FIHM1J/aDXTe2kXl6FbHDd
+         ehZg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       dkim=pass header.i=@rasmusvillemoes.dk header.s=google header.b=T0ZAYtt5;
+       spf=pass (google.com: domain of linux@rasmusvillemoes.dk designates 209.85.220.65 as permitted sender) smtp.mailfrom=linux@rasmusvillemoes.dk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Thu, 1 Mar 2018 00:38:16 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Martin Fuzzey <mfuzzey@parkeon.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	David Howells <dhowells@redhat.com>, pali.rohar@gmail.com,
-	Takashi Iwai <tiwai@suse.de>, arend.vanspriel@broadcom.com,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	nbroeking@me.com, Vikram Mulukutla <markivx@codeaurora.org>,
-	stephen.boyd@linaro.org, Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Abhay_Salunke@dell.com, bjorn.andersson@linaro.org,
-	jewalt@lgsinnovations.com, LKML <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 11/11] test_firmware: test three firmware kernel
- configs using a proc knob
-Message-ID: <20180301003816.GR14069@wotan.suse.de>
-References: <20180224024613.24078-1-mcgrof@kernel.org>
- <20180224024613.24078-12-mcgrof@kernel.org>
- <CAGXu5jJ66nDeZ87M9epgamn+9KUnASjPVWYVL+9kwbC2rBO23Q@mail.gmail.com>
- <20180228013237.GH14069@wotan.suse.de>
- <20180228090723.GA11438@localhost>
- <20180228182603.GI14069@wotan.suse.de>
- <20180301000057.GA3426@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301000057.GA3426@localhost>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+       dkim=pass header.i=@rasmusvillemoes.dk header.s=google header.b=T0ZAYtt5;
+       spf=pass (google.com: domain of linux@rasmusvillemoes.dk designates 209.85.220.65 as permitted sender) smtp.mailfrom=linux@rasmusvillemoes.dk
+X-Google-Smtp-Source: AG47ELufW4cBhinitqkFKK+tTrXKvqgAREsZJvzkQ2ts16CewFMmVsVa8i5MA+By6defXlTkiJlr0w==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH resend] drivers/char/random.c: remove unused dont_count_entropy
+Date: Thu,  1 Mar 2018 00:22:47 +0100
+Message-Id: <20180228232247.16368-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593248724184221948?=
-X-GMAIL-MSGID: =?utf-8?q?1593693648291652441?=
+X-GMAIL-THRID: =?utf-8?q?1593688909749149990?=
+X-GMAIL-MSGID: =?utf-8?q?1593688909749149990?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 04:00:58PM -0800, Josh Triplett wrote:
-> On Wed, Feb 28, 2018 at 06:26:03PM +0000, Luis R. Rodriguez wrote:
-> > So for folks who enable CONFIG_FW_LOADER=y, they'd now be forced to gain an
-> > extra 13436 bytes broken down as follows:
-> 
-> Ah, I see.
-> 
-> If you have CONFIG_FW_LOADER and not CONFIG_FW_LOADER_USER_HELPER, then
-> you only have the in-kernel firmware loading mechanism?
+Ever since "random: kill dead extract_state struct" [1], the
+dont_count_entropy member of struct timer_rand_state has been
+effectively unused. Since it hasn't found a new use in 12 years, it's
+probably safe to finally kill it.
 
-Right, we don't have the old fallback mechanism (which BTW used to be
-the default way back in the hayday).
+[1] Pre-git, https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=c1c48e61c251f57e7a3f1bf11b3c462b2de9dcb5
 
-> Given the
-> *substantial* size difference between the two, it seems useful to have
-> that option.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/char/random.c | 53 ++++++++++++++++++++++++---------------------------
+ 1 file changed, 25 insertions(+), 28 deletions(-)
 
-That's what I wanted to get to, is 13436 bytes is*substantial* enough to
-merit a kernel configuration option? It seems like that is the case.
-
-> What would it gain to combine the two?
-
-Well Android enables CONFIG_FW_LOADER_USER_HELPER, and if they do, I was trying
-to think if there really was any point in having CONFIG_FW_LOADER_USER_HELPER
-as an option. Who would enable CONFIG_FW_LOADER but not
-CONFIG_FW_LOADER_USER_HELPER?
-
-You see other than
-CONFIG_FW_LOADER_USER_HELPER
-we also have
-CONFIG_FW_LOADER_USER_HELPER_FALLBACK
-and Android defaults that to y too.
-
-It used to be that CONFIG_FW_LOADER_USER_HELPER_FALLBACK was a mess to
-understand in code, and this series has reduced it to simple bool now.
-
-I started wondering if trimming kconfig options may be worth it. Sadly
-I don't think we can remove CONFIG_FW_LOADER_USER_HELPER_FALLBACK, and
-we'll have to just deal with it mapping to switching a sysctl option.
-
-But I figured it was a good time to also reconsider also if we even had
-any need for CONFIG_FW_LOADER_USER_HELPER.
-
-The less hairball of mess of kconfig options the better to test. Even
-though this series has reduced being able to consolidating being
-able to make a kernel now which lets us test all configurations in
-one build.
-
-Who would save some 13436 bytes in the real world?
-
-  Luis
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index e5b3d3ba4660..767c6c10f9a3 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -963,7 +963,6 @@ static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
+ struct timer_rand_state {
+ 	cycles_t last_time;
+ 	long last_delta, last_delta2;
+-	unsigned dont_count_entropy:1;
+ };
+ 
+ #define INIT_TIMER_RAND_STATE { INITIAL_JIFFIES, };
+@@ -1029,35 +1028,33 @@ static void add_timer_randomness(struct timer_rand_state *state, unsigned num)
+ 	 * We take into account the first, second and third-order deltas
+ 	 * in order to make our estimate.
+ 	 */
++	delta = sample.jiffies - state->last_time;
++	state->last_time = sample.jiffies;
++
++	delta2 = delta - state->last_delta;
++	state->last_delta = delta;
++
++	delta3 = delta2 - state->last_delta2;
++	state->last_delta2 = delta2;
++
++	if (delta < 0)
++		delta = -delta;
++	if (delta2 < 0)
++		delta2 = -delta2;
++	if (delta3 < 0)
++		delta3 = -delta3;
++	if (delta > delta2)
++		delta = delta2;
++	if (delta > delta3)
++		delta = delta3;
+ 
+-	if (!state->dont_count_entropy) {
+-		delta = sample.jiffies - state->last_time;
+-		state->last_time = sample.jiffies;
+-
+-		delta2 = delta - state->last_delta;
+-		state->last_delta = delta;
+-
+-		delta3 = delta2 - state->last_delta2;
+-		state->last_delta2 = delta2;
+-
+-		if (delta < 0)
+-			delta = -delta;
+-		if (delta2 < 0)
+-			delta2 = -delta2;
+-		if (delta3 < 0)
+-			delta3 = -delta3;
+-		if (delta > delta2)
+-			delta = delta2;
+-		if (delta > delta3)
+-			delta = delta3;
++	/*
++	 * delta is now minimum absolute delta.
++	 * Round down by 1 bit on general principles,
++	 * and limit entropy entimate to 12 bits.
++	 */
++	credit_entropy_bits(r, min_t(int, fls(delta>>1), 11));
+ 
+-		/*
+-		 * delta is now minimum absolute delta.
+-		 * Round down by 1 bit on general principles,
+-		 * and limit entropy entimate to 12 bits.
+-		 */
+-		credit_entropy_bits(r, min_t(int, fls(delta>>1), 11));
+-	}
+ 	preempt_enable();
+ }
+ 
+-- 
+2.15.1
