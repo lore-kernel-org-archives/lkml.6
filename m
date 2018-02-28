@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519833974-2-119088922670901253
+X-Cyrus-Session-Id: sloti22d1t05-476314-1519833919-2-8661143594896844817
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833973; b=wKG4wH2tnHA/Dj1FI6zIW3TNcW3OJIWMh0OMezZHMSRoIh2
-    6Unn7HHMKsjtTRcj5I1avCJ4qj5A+uKhzHcSO/vjqQd9lz+XAxFfc5DheZuVHkbh
-    6ADt8Ii2o7kVaiy0YUm+FLBODyctqcYcH5jr28ggI4HfipMftN+gbWIjdAurgzuL
-    LVtwqmZUU1u4O9QhunuBqNcFktgPkDpeioZaoWQvDlxPpvD+vqktUXwgunsETgio
-    zNcjOEk2/UdfZjKor9zb5NA2ad8Nrd5RWkNYaCTd7ObwQpM2ir9H0V4HrldqyGjz
-    lqR2SdoCSchAP4NWOn5M+1z3Vd2LJ/fqQJKxY5Q==
+    t=1519833918; b=oyWiVVWF1IlJbjwu3Z9uMYdB/6Za6KG/SluemF6idRH3Q5e
+    bYgxM6D1Ciwu45QX1RUZOHye78ngAUG6ZWCs3gEE+j66h2asMAGaewwiuoWo0PFJ
+    mO0IWcC00nasWN+UUrwu6n5u/Dndm3B9GpdY5bwrHAH+zW+OlQp5WHYOnNniEOdn
+    0WlEMXR+Rpc9aImlKARlNmCQC8Iy3UyfPgywBgNKtbpTF8E0niX3Bk+UpQUYmcF4
+    +8V4CgrA4FBG/bBJXc7OsmDSCwkPjPrcdvAXWQK9A5DN3xzQZRj8dGrLESIb1hUc
+    mgUmwpwLmblpeb0oTN+XpWP97+nQVQW7boFmXZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833973; bh=50dZtgeg3JYIq120hrs
-    mYUYGTdYbz9+4AKpG72YZ2d0=; b=b8NeiuEgoju/2ZB4U9TIlgj5jHc/URMaEC0
-    dxjG/nUQoG1SG76ZwoQknV0bWR0TBlV1QDPuYuEtZxRoGHheR6gYvJ5G4SaPnmO7
-    NuU6nroYtExFfVCe95Qxm0tEVyY/3w0jh18NnzPg2VX1+/H2JSwJ2juDUX1m4dqi
-    0APHFASEP+qA546MmUSv8A5tTaqgX//XNUzSZFLByNgFPydtCJz/8Pl2CmDugL3i
-    DU4ryqTEFJfqJGZZNwcQb1x37wr5YkaB+M/MhOPO+MUk8FXQF2TxZ03LBNEPNo4m
-    D5A22sKJTH7f47b7j05MLMoo8mDmEpWEUpVoK2iqJpd4SCBX3fg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833918; bh=zvS/b25yPtYxItPjp47
+    6mzJ9wscTDFaeUMjr8iAQ5/c=; b=Zw88KE5kYsTV8MjZCrOUMczt3oUp49ONZXl
+    XSJVmYEwafVxYhuh3+LNfYdMGPABMG1PxwnDmTWP91kqmCJUSwHbVlcGy2JOahvO
+    od0CWo679IVKszzNLaHOEhf5PkMS3xrU3jGEaoFRU8mmFp8G7JEqg8i2pYGuYz7V
+    LWLz0LucLWbZ46QAfyXmnSlHiB/9nrku5uzQ0Gdai7NYtdwB/bQeyNm6CNtKYahx
+    ArHfIfa3fKprwE7VioePofZhbScuyYpPts3IKng2U+2zEz6PV6w2mitVye5RnXBb
+    KuglFlGzC+uliQX69dbFsEp2JDXdGXBRtQupZD0F1Vg3wrlUS6w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,36 +47,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932652AbeB1QF7 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:05:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34908 "EHLO
+        id S934474AbeB1QFR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:05:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34875 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932438AbeB1QF4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:56 -0500
+        by vger.kernel.org with ESMTP id S934460AbeB1QFQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:16 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, ak@linux.intel.com,
-        "Kees Cook" <keescook@google.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Jiri Kosina" <jikos@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Rik van Riel" <riel@redhat.com>,
-        "Andy Lutomirski" <luto@amacapital.net>,
-        "Paul Turner" <pjt@google.com>, gnomes@lxorguk.ukuu.org.uk
+CC: akpm@linux-foundation.org, "Erez Shitrit" <erezsh@mellanox.com>,
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        "Alex Vesker" <valex@mellanox.com>,
+        "Leon Romanovsky" <leon@kernel.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.33661436@decadent.org.uk>
+Message-ID: <lsq.1519831218.812578439@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 174/254] x86/alternatives: Add missing '\n' at end of
- ALTERNATIVE inline asm
+Subject: [PATCH 3.16 156/254] IB/ipoib: Fix race condition in neigh creation
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -91,52 +81,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Erez Shitrit <erezsh@mellanox.com>
 
-commit b9e705ef7cfaf22db0daab91ad3cd33b0fa32eb9 upstream.
+commit 16ba3defb8bd01a9464ba4820a487f5b196b455b upstream.
 
-Where an ALTERNATIVE is used in the middle of an inline asm block, this
-would otherwise lead to the following instruction being appended directly
-to the trailing ".popsection", and a failed compile.
+When using enhanced mode for IPoIB, two threads may execute xmit in
+parallel to two different TX queues while the target is the same.
+In this case, both of them will add the same neighbor to the path's
+neigh link list and we might see the following message:
 
-Fixes: 9cebed423c84 ("x86, alternative: Use .pushsection/.popsection")
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: Rik van Riel <riel@redhat.com>
-Cc: ak@linux.intel.com
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Paul Turner <pjt@google.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kees Cook <keescook@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Link: https://lkml.kernel.org/r/20180104143710.8961-8-dwmw@amazon.co.uk
+  list_add double add: new=ffff88024767a348, prev=ffff88024767a348...
+  WARNING: lib/list_debug.c:31__list_add_valid+0x4e/0x70
+  ipoib_start_xmit+0x477/0x680 [ib_ipoib]
+  dev_hard_start_xmit+0xb9/0x3e0
+  sch_direct_xmit+0xf9/0x250
+  __qdisc_run+0x176/0x5d0
+  __dev_queue_xmit+0x1f5/0xb10
+  __dev_queue_xmit+0x55/0xb10
+
+Analysis:
+Two SKB are scheduled to be transmitted from two cores.
+In ipoib_start_xmit, both gets NULL when calling ipoib_neigh_get.
+Two calls to neigh_add_path are made. One thread takes the spin-lock
+and calls ipoib_neigh_alloc which creates the neigh structure,
+then (after the __path_find) the neigh is added to the path's neigh
+link list. When the second thread enters the critical section it also
+calls ipoib_neigh_alloc but in this case it gets the already allocated
+ipoib_neigh structure, which is already linked to the path's neigh
+link list and adds it again to the list. Which beside of triggering
+the list, it creates a loop in the linked list. This loop leads to
+endless loop inside path_rec_completion.
+
+Solution:
+Check list_empty(&neigh->list) before adding to the list.
+Add a similar fix in "ipoib_multicast.c::ipoib_mcast_send"
+
+Fixes: b63b70d87741 ('IPoIB: Use a private hash table for path lookup in xmit path')
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Reviewed-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/alternative.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c      | 25 ++++++++++++++++++-------
+ drivers/infiniband/ulp/ipoib/ipoib_multicast.c |  5 ++++-
+ 2 files changed, 22 insertions(+), 8 deletions(-)
 
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -124,7 +124,7 @@ static inline int alternatives_text_rese
- 	".popsection\n"							\
- 	".pushsection .altinstr_replacement, \"ax\"\n"			\
- 	ALTINSTR_REPLACEMENT(newinstr, feature, 1)			\
--	".popsection"
-+	".popsection\n"
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -615,8 +615,8 @@ static int path_rec_start(struct net_dev
+ 	return 0;
+ }
  
- #define ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2)\
- 	OLDINSTR_2(oldinstr, 1, 2)					\
-@@ -135,7 +135,7 @@ static inline int alternatives_text_rese
- 	".pushsection .altinstr_replacement, \"ax\"\n"			\
- 	ALTINSTR_REPLACEMENT(newinstr1, feature1, 1)			\
- 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
--	".popsection"
-+	".popsection\n"
+-static void neigh_add_path(struct sk_buff *skb, u8 *daddr,
+-			   struct net_device *dev)
++static struct ipoib_neigh *neigh_add_path(struct sk_buff *skb, u8 *daddr,
++					  struct net_device *dev)
+ {
+ 	struct ipoib_dev_priv *priv = netdev_priv(dev);
+ 	struct ipoib_path *path;
+@@ -629,7 +629,15 @@ static void neigh_add_path(struct sk_buf
+ 		spin_unlock_irqrestore(&priv->lock, flags);
+ 		++dev->stats.tx_dropped;
+ 		dev_kfree_skb_any(skb);
+-		return;
++		return NULL;
++	}
++
++	/* To avoid race condition, make sure that the
++	 * neigh will be added only once.
++	 */
++	if (unlikely(!list_empty(&neigh->list))) {
++		spin_unlock_irqrestore(&priv->lock, flags);
++		return neigh;
+ 	}
  
- /*
-  * This must be included *after* the definition of ALTERNATIVE due to
+ 	path = __path_find(dev, daddr + 4);
+@@ -665,7 +673,7 @@ static void neigh_add_path(struct sk_buf
+ 			spin_unlock_irqrestore(&priv->lock, flags);
+ 			ipoib_send(dev, skb, path->ah, IPOIB_QPN(daddr));
+ 			ipoib_neigh_put(neigh);
+-			return;
++			return NULL;
+ 		}
+ 	} else {
+ 		neigh->ah  = NULL;
+@@ -678,7 +686,7 @@ static void neigh_add_path(struct sk_buf
+ 
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 	ipoib_neigh_put(neigh);
+-	return;
++	return NULL;
+ 
+ err_path:
+ 	ipoib_neigh_free(neigh);
+@@ -688,6 +696,8 @@ err_drop:
+ 
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 	ipoib_neigh_put(neigh);
++
++	return NULL;
+ }
+ 
+ static void unicast_arp_send(struct sk_buff *skb, struct net_device *dev,
+@@ -784,8 +794,9 @@ static int ipoib_start_xmit(struct sk_bu
+ 	case htons(ETH_P_TIPC):
+ 		neigh = ipoib_neigh_get(dev, cb->hwaddr);
+ 		if (unlikely(!neigh)) {
+-			neigh_add_path(skb, cb->hwaddr, dev);
+-			return NETDEV_TX_OK;
++			neigh = neigh_add_path(skb, cb->hwaddr, dev);
++			if (likely(!neigh))
++				return NETDEV_TX_OK;
+ 		}
+ 		break;
+ 	case htons(ETH_P_ARP):
+--- a/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
+@@ -728,7 +728,10 @@ out:
+ 		spin_lock_irqsave(&priv->lock, flags);
+ 		if (!neigh) {
+ 			neigh = ipoib_neigh_alloc(daddr, dev);
+-			if (neigh) {
++			/* Make sure that the neigh will be added only
++			 * once to mcast list.
++			 */
++			if (neigh && list_empty(&neigh->list)) {
+ 				kref_get(&mcast->ah->ref);
+ 				neigh->ah	= mcast->ah;
+ 				list_add_tail(&neigh->list, &mcast->neigh_list);
