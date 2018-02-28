@@ -1,87 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeB1OiA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:38:00 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:55670 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752213AbeB1Oh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:37:58 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thierry Escande <thierry.escande@collabora.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yakir Yang <ykk@rock-chips.com>,
-        =?ISO-8859-1?Q?=D8rjan?= Eide <orjan.eide@arm.com>,
-        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
-Subject: Re: [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in analogix_dp_bind
-Date: Wed, 28 Feb 2018 15:37:40 +0100
-Message-ID: <2776489.2p7NH6SBud@diego>
-In-Reply-To: <20180130202913.28724-6-thierry.escande@collabora.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com> <20180130202913.28724-6-thierry.escande@collabora.com>
+        id S1752817AbeB1OjF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:39:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43464 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752571AbeB1OjB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:39:01 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0601760271
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Subject: Re: ssb: Prevent build of PCI host features in module
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1515767159-17226-1-git-send-email-matt.redfearn@mips.com>
+References: <1515767159-17226-1-git-send-email-matt.redfearn@mips.com>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Michael Buesch <m@bues.ch>, <linux-wireless@vger.kernel.org>,
+        Matt Redfearn <matt.redfearn@mips.com>, <linux-kernel@vger.kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180228143901.4799760272@smtp.codeaurora.org>
+Date: Wed, 28 Feb 2018 14:39:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 30. Januar 2018, 21:28:35 CET schrieb Thierry Escande:
-> From: zain wang <wzz@rock-chips.com>
+Matt Redfearn <matt.redfearn@mips.com> wrote:
+
+> Attempting to build ssb.ko with CONFIG_SSB_DRIVER_PCICORE=y results in
+> a build error due to use of symbols not exported from vmlinux:
 > 
-> The bridge does not need to be powered in analogix_dp_bind(), so
-> remove the calls to pm_runtime_get()/phy_power_on()/analogix_dp_init_dp()
-> as well as their power-off counterparts.
+> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
+> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
+> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
 > 
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> [the patch originally just removed the power_on portion, seanpaul removed
-> the power off code as well as improved the commit message]
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 10 ----------
->  1 file changed, 10 deletions(-)
+> To prevent this, don't allow the host mode feature to be built if
+> CONFIG_SSB=m
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
-> cb5e18d6ba04..1477ea9ba85d 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1382,11 +1382,6 @@ analogix_dp_bind(struct device *dev, struct
-> drm_device *drm_dev,
-> 
->  	pm_runtime_enable(dev);
-> 
-> -	pm_runtime_get_sync(dev);
-> -	phy_power_on(dp->phy);
-> -
-> -	analogix_dp_init_dp(dp);
-> -
->  	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
->  					analogix_dp_hardirq,
->  					analogix_dp_irq_thread,
+> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
-Not 100% sure here, as the driver has the request-irq + disable-irq hack
-here. So a pending interrupt could possibly fire between request and
-disable.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Right now the block should be on, but can it still handle such an irq
-when the power is removed?
+882164a4a928 ssb: Prevent build of PCI host features in module
 
-So before removing the power here, we might want something
-similar to what Marc posted for the vop [0] for the analogix-dp?
+-- 
+https://patchwork.kernel.org/patch/10161131/
 
-
-Heiko
-
-[0] https://patchwork.kernel.org/patch/10210513/
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
