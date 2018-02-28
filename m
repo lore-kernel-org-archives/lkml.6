@@ -1,96 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932460AbeB1Opv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:45:51 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:20144 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932251AbeB1Opu (ORCPT
+        id S932475AbeB1OqB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:46:01 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32966 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932241AbeB1Op4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:45:50 -0500
-X-RZG-AUTH: :L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySf+VvAflxJtId4Uwmx97D
-X-RZG-CLASS-ID: mo00
-Subject: Re: Build regressions/improvements in v4.16-rc3
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@ozlabs.org>
-References: <1519817278-30770-1-git-send-email-geert@linux-m68k.org>
- <CAMuHMdVEFXL6hXhBNya-9LjORrZnyJJPzoBNMrufAdPEBVhLtA@mail.gmail.com>
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <51783a88-f15e-f604-8439-1711282e4462@xenosoft.de>
-Date: Wed, 28 Feb 2018 15:39:41 +0100
+        Wed, 28 Feb 2018 09:45:56 -0500
+X-Google-Smtp-Source: AH8x227iDVdSxoZQ9GaXbO+5KaTjQpug27oiBdwX/Qn1zLzRr54eOey5XxD53R26j6v6ZW82DY0zUQ==
+Subject: Re: [PATCH] hwmon: g762: handle cleanup with devm_add_action
+To: Peng Hao <peng.hao2@zte.com.cn>, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519833106-74874-1-git-send-email-peng.hao2@zte.com.cn>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <fa30c24f-f637-b800-59a3-8bcea3a3fbec@roeck-us.net>
+Date: Wed, 28 Feb 2018 06:45:54 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVEFXL6hXhBNya-9LjORrZnyJJPzoBNMrufAdPEBVhLtA@mail.gmail.com>
+In-Reply-To: <1519833106-74874-1-git-send-email-peng.hao2@zte.com.cn>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On 02/28/2018 07:51 AM, Peng Hao wrote:
+> Simplify code and use devm_add_action() to handle cleanup.
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 
-The following patch should be in the commit 'kvm-ppc-next-4.16-2' [1]:
+Excellent idea. Some suggestions for improvements below.
 
-Fixes: accb757d798c ("KVM: Move vcpu_load to arch-specific 
-kvm_arch_vcpu_ioctl_run")
-Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
----
-arch/powerpc/kvm/powerpc.c | 2 ++
-1 file changed, 2 insertions(+)
+> ---
+>   drivers/hwmon/g762.c | 30 ++++++++++++++----------------
+>   1 file changed, 14 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
+> index 6d1208b..48e60d8 100644
+> --- a/drivers/hwmon/g762.c
+> +++ b/drivers/hwmon/g762.c
+> @@ -128,7 +128,6 @@ enum g762_regs {
+>   			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
+>   
+>   struct g762_data {
+> -	struct device *hwmon_dev;
+>   	struct i2c_client *client;
+>   	struct clk *clk;
+>   
+> @@ -1051,9 +1050,17 @@ static inline int g762_fan_init(struct device *dev)
+>   					 data->fan_cmd1);
+>   }
+>   
+> +static void g762_remove(void *data)
+> +{
+> +	struct g762_data *g762 = data;
+> +	struct i2c_client *client = g762->client;
+> +
+> +	g762_of_clock_disable(client);
+> +}
 
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index 403e642c78f5..0083142c2f84 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -1608,7 +1608,9 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, 
-struct kvm_run *run)
+You could instead just modify the arguments of g762_of_clock_disable()
+and call it directly.
 
-kvm_sigset_deactivate(vcpu);
+>   static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   {
+>   	struct device *dev = &client->dev;
+> +	struct device *hwmon_dev;
+>   	struct g762_data *data;
+>   	int ret;
+>   
+> @@ -1086,10 +1093,12 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   	if (ret)
+>   		goto clock_dis;
+>   
+> -	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
+> -							    data, g762_groups);
+> -	if (IS_ERR(data->hwmon_dev)) {
+> -		ret = PTR_ERR(data->hwmon_dev);
+> +	devm_add_action(dev, g762_remove, data);
 
-+#ifdef CONFIG_ALTIVEC
-out:
-+#endif
-vcpu_put(vcpu);
-return r;
-}
--- 
-2.11.0
+Move this into g762_of_clock_enable(), just before the return, and the
+dummy cleanup function can be dropped. You can then also drop the clock_dis:
+label amd instead return immediately on errors.
 
-Unfortunately I haven't found this patch in the 'kvm-ppc-next-4.16-2' [1]
+> +
+> +	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+> +							   data, g762_groups);
+> +	if (IS_ERR(hwmon_dev)) {
+> +		ret = PTR_ERR(hwmon_dev);
+>   		goto clock_dis;
 
-@Paul
-Could you please add this fix?
+Either case this would now be wrong since the cleanup is handled automatically.
+This can be changed to
+	return PTR_ERR_OR_ZERO(hwmon_dev);
 
-Thanks,
-Christian
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v4.16-rc3&id=1ab03c072feb579c9fd116de25be2b211e6bff6a
-
-
-On 28 February 2018 at 12:29PM, Geert Uytterhoeven wrote:
-> On Wed, Feb 28, 2018 at 12:27 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> JFYI, when comparing v4.16-rc3[1] to v4.16-rc2[3], the summaries are:
->>    - build errors: +1/-16
->    + /home/kisskb/slave/src/arch/powerpc/kvm/powerpc.c: error: label
-> 'out' defined but not used [-Werror=unused-label]:  => 1611:1
->
-> ppc64_defconfig+NO_ALTIVEC
->
->> [1] http://kisskb.ellerman.id.au/kisskb/head/4a3928c6f8a53fa1aed28ccba227742486e8ddcb/ (268 out of 274 configs)
->> [3] http://kisskb.ellerman.id.au/kisskb/head/91ab883eb21325ad80f3473633f794c78ac87f51/ (all 274 configs)
-> Gr{oetje,eeting}s,
->
->                          Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
->
+>   	}
+>   
+> @@ -1101,23 +1110,12 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   	return ret;
+>   }
+>   
+> -static int g762_remove(struct i2c_client *client)
+> -{
+> -	struct g762_data *data = i2c_get_clientdata(client);
+> -
+> -	hwmon_device_unregister(data->hwmon_dev);
+> -	g762_of_clock_disable(client);
+> -
+> -	return 0;
+> -}
+> -
+>   static struct i2c_driver g762_driver = {
+>   	.driver = {
+>   		.name = DRVNAME,
+>   		.of_match_table = of_match_ptr(g762_dt_match),
+>   	},
+>   	.probe	  = g762_probe,
+> -	.remove	  = g762_remove,
+>   	.id_table = g762_id,
+>   };
+>   
+> 
