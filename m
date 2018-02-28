@@ -1,226 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeB1K3q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:29:46 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37154 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752469AbeB1K3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:29:20 -0500
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/7] x86/microcode: Synchronize late microcode loading
-Date: Wed, 28 Feb 2018 11:28:46 +0100
-Message-Id: <20180228102846.13447-8-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180228102846.13447-1-bp@alien8.de>
-References: <20180228102846.13447-1-bp@alien8.de>
+        id S932065AbeB1K35 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:29:57 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:45727 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752456AbeB1K3y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 05:29:54 -0500
+Date: Wed, 28 Feb 2018 11:29:41 +0100 (CET)
+From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+X-X-Sender: rolf@5HSWXM1.fritz.box
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+cc: Rolf Evers-Fischer <embedded24@evers-fischer.de>, kishon@ti.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: Re: [PATCH v3 2/2] pci: endpoint: Fix kernel panic after
+ put_device()
+In-Reply-To: <20180227175756.GB12756@e107981-ln.cambridge.arm.com>
+Message-ID: <alpine.LNX.2.20.1802281122100.29501@5HSWXM1.fritz.box>
+References: <20180227100231.22561-1-embedded24@evers-fischer.de> <20180227100231.22561-3-embedded24@evers-fischer.de> <20180227175756.GB12756@e107981-ln.cambridge.arm.com>
+User-Agent: Alpine 2.20 (LNX 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K0:ls6qflnHy2CDB8QsbyQqN22kPDvyP5oy4xoubREtDLn+nUgpnsl
+ pe3g434vF41OFv5+Q5cR62czfcLeksyUuhDhYTQSFUFncykbRq1y9SBXz8h3OtJDwZSV4H3
+ piQeQviIcggEtFTyKSr+Dy68K8qiWu57RvWeU+BM1LaG77JpasC8xEfIvdAsifMAWcH/gnQ
+ yC5invDh3yo+CgmmiJtEw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gzveLpzt6no=:mWFQhKLhs+pQoltwlJxB9b
+ oiEhwqdIpAGkSJDe5YWivfW3IR6O/04mMOX6u8OxYAVbbiydB8hzLnk6bxmVzYdd44ZRpicAG
+ HfRBahs1XN0HGiwBUb0q9DbFdCtM+OVO2vQQZkOJEtA9rpONvXNjmx9tjUrmPoZjwhyyUGU4E
+ jx42eeNANP9Egd6JRKr/bjJ2TwTfX2zhQQxn2HnHl8h6iYDzs9Zg5hcYyP5s316dq2nUoV85K
+ 1f5y022AKuFe+Pp3jXs0k4/seHJeo1GEwOZie/Cdszg6g2N7X/oQvaYbRYlavM6V7Ob8m7gY6
+ KH5zWCbQDjPoSocrAWCevay6cfxS8r4I+JfKYVZKa9qmzpBqvRShZZejM9i5qaiSP1Uqo0HPu
+ /zCshK0MQLGt0GvEVT+o3Z/rRHhyRND2B4poS+WEZu3m1v7aa/akng9dxJlQxnPKGKllll3ZJ
+ e1GKIMU6m8soE+BbueOiaJewwP2k2OSE0F5BkIMbK+/drXR04SfVixqB5SxBXZkPz5Ijim3g/
+ j9uwElYPpdl4I4wJGyuboiTV3KvnkQDFEUtMSSKfq7B4Ty67xrFC53OiP0lekiR6GOAtG3MPk
+ IVclvIJ1cCxAlA2w9Zgdlxy14/+J8wVOhWrteaP0h35ShDR4ksz40fu3sqIWnx2I1Hq6Oz66Z
+ rlCLuoY86sVMG2BY6yGDbGx8Lx5H0wAAxsKlNQhis6p1fDA7N2SLN5E/t0P7PB/9CI8lvDjog
+ MQDz+DO+gtXk/Sz9m3/aY9mTmDYst246vDr6WRMWxVqd3rBS/Caad7i7zms=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ashok Raj <ashok.raj@intel.com>
+Hello Lorenzo!
 
-Original idea by Ashok, completely rewritten by Borislav.
+On Tue, 27 Feb 2018, Lorenzo Pieralisi wrote:
 
-Before you read any further: the early loading method is still the
-preferred one and you should always do that. The following patch is
-improving the late loading mechanism for long running jobs and cloud use
-cases.
+> On Tue, Feb 27, 2018 at 11:02:30AM +0100, Rolf Evers-Fischer wrote:
+> > From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > 
+> > 'put_device()' calls the relase function 'pci_epf_dev_release()',
+> > which already frees 'epf->name' and 'epf'.
+> > 
+> > Therefore we must not free them again after 'put_device()'.
+> > 
+> > Fixes: 5e8cb4033807 ("PCI: endpoint: Add EP core layer to enable EP controller and EP functions")
+> > 
+> > Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > ---
+> >  drivers/pci/endpoint/pci-epf-core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> > index 1f2506f32bb9..1878a6776519 100644
+> > --- a/drivers/pci/endpoint/pci-epf-core.c
+> > +++ b/drivers/pci/endpoint/pci-epf-core.c
+> > @@ -232,7 +232,7 @@ struct pci_epf *pci_epf_create(const char *name)
+> >  
+> >  put_dev:
+> >  	put_device(dev);
+> > -	kfree(epf->name);
+> > +	return ERR_PTR(ret);
+> 
+> Another thing you could do, which would get rid of these multiple return
+> statements (yes there is another one) would consist in removing the goto
+> labels completely and handle the errors at the respective call site and
+> just return instead of jumping around.
+> 
 
-Gather all cores and serialize the microcode update on them by doing it
-one-by-one to make the late update process as reliable as possible and
-avoid potential issues caused by the microcode update.
+Thank you for sharing this idea! I've already changed it locally and it 
+seems that we can get rid of 11 code lines with that.
+It is being verified. If it really works, there will be a new commit
+soon.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-[Rewrite completely. ]
-Co-developed-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/kernel/cpu/microcode/core.c | 118 +++++++++++++++++++++++++++--------
- 1 file changed, 92 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 5dd157d48606..70ecbc8099c9 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -22,13 +22,16 @@
- #define pr_fmt(fmt) "microcode: " fmt
- 
- #include <linux/platform_device.h>
-+#include <linux/stop_machine.h>
- #include <linux/syscore_ops.h>
- #include <linux/miscdevice.h>
- #include <linux/capability.h>
- #include <linux/firmware.h>
- #include <linux/kernel.h>
-+#include <linux/delay.h>
- #include <linux/mutex.h>
- #include <linux/cpu.h>
-+#include <linux/nmi.h>
- #include <linux/fs.h>
- #include <linux/mm.h>
- 
-@@ -64,6 +67,11 @@ LIST_HEAD(microcode_cache);
-  */
- static DEFINE_MUTEX(microcode_mutex);
- 
-+/*
-+ * Serialize late loading so that CPUs get updated one-by-one.
-+ */
-+static DEFINE_SPINLOCK(update_lock);
-+
- struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
- 
- struct cpu_info_ctx {
-@@ -486,6 +494,19 @@ static void __exit microcode_dev_exit(void)
- /* fake device for request_firmware */
- static struct platform_device	*microcode_pdev;
- 
-+/*
-+ * Late loading dance. Why the heavy-handed stomp_machine effort?
-+ *
-+ * - HT siblings must be idle and not execute other code while the other sibling
-+ *   is loading microcode in order to avoid any negative interactions caused by
-+ *   the loading.
-+ *
-+ * - In addition, microcode update on the cores must be serialized until this
-+ *   requirement can be relaxed in the future. Right now, this is conservative
-+ *   and good.
-+ */
-+#define SPINUNIT 100 /* 100 nsec */
-+
- static int check_online_cpus(void)
- {
- 	if (num_online_cpus() == num_present_cpus())
-@@ -496,23 +517,85 @@ static int check_online_cpus(void)
- 	return -EINVAL;
- }
- 
--static enum ucode_state reload_for_cpu(int cpu)
-+static atomic_t late_cpus;
-+
-+/*
-+ * Returns:
-+ * < 0 - on error
-+ *   0 - no update done
-+ *   1 - microcode was updated
-+ */
-+static int __reload_late(void *info)
- {
--	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
-+	unsigned int timeout = NSEC_PER_SEC;
-+	int all_cpus = num_online_cpus();
-+	int cpu = smp_processor_id();
-+	enum ucode_state err;
-+	int ret = 0;
- 
--	if (!uci->valid)
--		return UCODE_OK;
-+	atomic_dec(&late_cpus);
-+
-+	/*
-+	 * Wait for all CPUs to arrive. A load will not be attempted unless all
-+	 * CPUs show up.
-+	 * */
-+	while (atomic_read(&late_cpus)) {
-+		if (timeout < SPINUNIT) {
-+			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
-+				atomic_read(&late_cpus));
-+			return -1;
-+		}
-+
-+		ndelay(SPINUNIT);
-+		timeout -= SPINUNIT;
-+
-+		touch_nmi_watchdog();
-+	}
-+
-+	spin_lock(&update_lock);
-+	apply_microcode_local(&err);
-+	spin_unlock(&update_lock);
-+
-+	if (err > UCODE_NFOUND) {
-+		pr_warn("Error reloading microcode on CPU %d\n", cpu);
-+		ret = -1;
-+	} else if (err == UCODE_UPDATED) {
-+		ret = 1;
-+	}
- 
--	return apply_microcode_on_target(cpu);
-+	atomic_inc(&late_cpus);
-+
-+	while (atomic_read(&late_cpus) != all_cpus)
-+		cpu_relax();
-+
-+	return ret;
-+}
-+
-+/*
-+ * Reload microcode late on all CPUs. Wait for a sec until they
-+ * all gather together.
-+ */
-+static int microcode_reload_late(void)
-+{
-+	int ret;
-+
-+	atomic_set(&late_cpus, num_online_cpus());
-+
-+	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
-+	if (ret < 0)
-+		return ret;
-+	else if (ret > 0)
-+		microcode_check();
-+
-+	return ret;
- }
- 
- static ssize_t reload_store(struct device *dev,
- 			    struct device_attribute *attr,
- 			    const char *buf, size_t size)
- {
--	int cpu, bsp = boot_cpu_data.cpu_index;
- 	enum ucode_state tmp_ret = UCODE_OK;
--	bool do_callback = false;
-+	int bsp = boot_cpu_data.cpu_index;
- 	unsigned long val;
- 	ssize_t ret = 0;
- 
-@@ -534,30 +617,13 @@ static ssize_t reload_store(struct device *dev,
- 		goto put;
- 
- 	mutex_lock(&microcode_mutex);
--
--	for_each_online_cpu(cpu) {
--		tmp_ret = reload_for_cpu(cpu);
--		if (tmp_ret > UCODE_NFOUND) {
--			pr_warn("Error reloading microcode on CPU %d\n", cpu);
--
--			/* set retval for the first encountered reload error */
--			if (!ret)
--				ret = -EINVAL;
--		}
--
--		if (tmp_ret == UCODE_UPDATED)
--			do_callback = true;
--	}
--
--	if (!ret && do_callback)
--		microcode_check();
--
-+	ret = microcode_reload_late();
- 	mutex_unlock(&microcode_mutex);
- 
- put:
- 	put_online_cpus();
- 
--	if (!ret)
-+	if (ret >= 0)
- 		ret = size;
- 
- 	return ret;
--- 
-2.13.0
+Kind regards,
+ Rolf
