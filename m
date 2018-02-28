@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519833728-2-1896757954264899722
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519833710-2-1270610701843227775
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833728; b=JsGfmweoD81dLTsGYi0AWVkrzV2YNKapOdFPXCX5My5Gt8x
-    0im4WJCSmdjqeedV9dAoaa+/fSobHuKsoh9Vsneu+8f6ZDbAaoGysEz98A4Onlf1
-    DHw7PusAgbm2cwKeVBdNi9U8UnU1yDZoGv/Ll/gDc4cAaf3D2hQLbdC08H20Xb9o
-    S1RtslW6f5uBQAG6xhE4hgCJZu+MOoCS5dROgBr7FMyjvc1qRKuFnSvxBiN84vP0
-    h9s6lNeLQH49uvmtP5BiIw97mJQvO6k3l/KrOMhFv1wjW0jpmV/dFsWBbzWCJF1E
-    yNUn+1zX4HaiJ4i6hyTlruAUVBdtZGEGQDCZE7w==
+    t=1519833710; b=N657YT2g66/M36stQp2skgNnhRw9ZWtysAQDyATCayNbtI7
+    lkgjUn+KFwwNtDF9FasvRw7DdySifav/BKg/fZgJLZ7UCD9+UwfDf4PXrMP3LKGu
+    YFzOW7UkRkZz8W8ZbMAN3hZuglZ37CUFp5WmfcUjIG8Np4UACyyRs/C0FENJiwjC
+    E2/7dG5RH6ay9a2HXg1sF0XMLyxCQrBf6HS8NcDfT7Kj/y8OmWymAPu4GaCv3aaB
+    iJLvkjLGTkY2MhGDhMqhlrSpYT3Ywiekb5G7uYf08d+yo7NTYLknCqwYZEaaN23e
+    DP3lykjrNKYf3UKI3qDXZ0ByLK0xX4c2JXGZxHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833728; bh=xkzfDlTLJBoHbW8Nrgx
-    Hx52OdhX9RjLVYSNKjqZ18KA=; b=OIOCHq/O1Tcv028i2Z8AaClA1Y1qLA31ppm
-    4dzJbTqc8Xe7VPe1UZesEW1fR6G+TEARjzxnE53QkF/G2mhKeCseL79VBUksa96J
-    jLSU/IQY74N+9IwDBvpzGhNATdLRWlfuSjJwvGQBwDVEAzY1ygyaGinRxjMc+o72
-    VtYK8CA73WPyF6u9N7rbxQmwRcjGX6AQtvW5p0BeCg9tG4Dq3J24UtaNhYX8mXA4
-    xex0wCDU2/oxaYZ623SsrGoIn4DfbAEwa121BVvEpyIVICzHzJ8+KysnEdnmxIVS
-    xqQpHz+0i8Nd7oL8LSJBkn2dg7lDLYX5FOI+/gPO9Mn33wBpw3Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833710; bh=C1bGcVnqo6iOqjqEQjN
+    neaCpl5eSwxp0zOFVMNK1fq4=; b=cckSTZpFFt98caMdt1si1xTubPP8xTxyHDT
+    twq/qQao2Yff7rEJ4YsJhuenjp5Vd2qG1byMmvIMkxlIcLQh+nBXctz5RHIIydf8
+    NiOf+aG3CWUlrwKIToUkRjSmbLpp5Gjw3evopWX373CkFAvCAMv6OakIsMcszkGG
+    V6/8XWVBjNkO46RHDrEqO+xrsSugxie9UIBzMvSQ7imTXBsCi+0DAPW7Ntbl4Inm
+    ddwqy19eN+N3SiOuM/MNcd8FgYih3xe3i9C1hy+qqU86cBItWqsc19tlOxcMGPmT
+    lPT7LYHsoPALVnsXZZpJdBVzeJPzRrsGWbVAAbyCLzEMXrPeCiQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,30 +47,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeB1QCE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:02:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34704 "EHLO
+        id S932470AbeB1QAq (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:00:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34681 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753121AbeB1QCD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:02:03 -0500
+        by vger.kernel.org with ESMTP id S932458AbeB1QAn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:00:43 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "NeilBrown" <neilb@suse.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        "Matthew Wilcox" <mawilcox@microsoft.com>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Thiago Rafael Becker" <thiago.becker@gmail.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>
+CC: akpm@linux-foundation.org,
+        "Sebastian Siewior" <bigeasy@linutronix.de>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
+        "Frederic Weisbecker" <fweisbec@gmail.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Sebastian Siewior" <bigeasy@linutronix.d>,
+        "Paul McKenney" <paulmck@linux.vnet.ibm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.709445810@decadent.org.uk>
+Message-ID: <lsq.1519831218.117173069@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 114/254] kernel: make groups_sort calling a
- responsibility group_info allocators
+Subject: [PATCH 3.16 147/254] nohz: Prevent a timer interrupt storm in
+ tick_nohz_stop_sched_tick()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -85,154 +86,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thiago Rafael Becker <thiago.becker@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit bdcf0a423ea1c40bbb40e7ee483b50fc8aa3d758 upstream.
+commit 5d62c183f9e9df1deeea0906d099a94e8a43047a upstream.
 
-In testing, we found that nfsd threads may call set_groups in parallel
-for the same entry cached in auth.unix.gid, racing in the call of
-groups_sort, corrupting the groups for that entry and leading to
-permission denials for the client.
+The conditions in irq_exit() to invoke tick_nohz_irq_exit() which
+subsequently invokes tick_nohz_stop_sched_tick() are:
 
-This patch:
- - Make groups_sort globally visible.
- - Move the call to groups_sort to the modifiers of group_info
- - Remove the call to groups_sort from set_groups
+  if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu))
 
-Link: http://lkml.kernel.org/r/20171211151420.18655-1-thiago.becker@gmail.com
-Signed-off-by: Thiago Rafael Becker <thiago.becker@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Acked-by: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+If need_resched() is not set, but a timer softirq is pending then this is
+an indication that the softirq code punted and delegated the execution to
+softirqd. need_resched() is not true because the current interrupted task
+takes precedence over softirqd.
+
+Invoking tick_nohz_irq_exit() in this case can cause an endless loop of
+timer interrupts because the timer wheel contains an expired timer, but
+softirqs are not yet executed. So it returns an immediate expiry request,
+which causes the timer to fire immediately again. Lather, rinse and
+repeat....
+
+Prevent that by adding a check for a pending timer soft interrupt to the
+conditions in tick_nohz_stop_sched_tick() which avoid calling
+get_next_timer_interrupt(). That keeps the tick sched timer on the tick and
+prevents a repetitive programming of an already expired timer.
+
+Reported-by: Sebastian Siewior <bigeasy@linutronix.d>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1712272156050.2431@nanos
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/s390/kernel/compat_linux.c   | 1 +
- fs/nfsd/auth.c                    | 3 +++
- include/linux/cred.h              | 1 +
- kernel/groups.c                   | 5 +++--
- kernel/uid16.c                    | 1 +
- net/sunrpc/auth_gss/gss_rpc_xdr.c | 1 +
- net/sunrpc/auth_gss/svcauth_gss.c | 1 +
- net/sunrpc/svcauth_unix.c         | 2 ++
- 8 files changed, 13 insertions(+), 2 deletions(-)
+ kernel/time/tick-sched.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kernel/compat_linux.c
-+++ b/arch/s390/kernel/compat_linux.c
-@@ -263,6 +263,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setgroups16,
- 		return retval;
- 	}
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -527,6 +527,11 @@ u64 get_cpu_iowait_time_us(int cpu, u64
+ }
+ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
  
-+	groups_sort(group_info);
- 	retval = set_current_groups(group_info);
- 	put_group_info(group_info);
- 
---- a/fs/nfsd/auth.c
-+++ b/fs/nfsd/auth.c
-@@ -59,6 +59,9 @@ int nfsd_setuser(struct svc_rqst *rqstp,
- 				GROUP_AT(gi, i) = exp->ex_anon_gid;
- 			else
- 				GROUP_AT(gi, i) = GROUP_AT(rqgi, i);
++static inline bool local_timer_softirq_pending(void)
++{
++	return local_softirq_pending() & TIMER_SOFTIRQ;
++}
 +
-+			/* Each thread allocates its own gi, no race */
-+			groups_sort(gi);
- 		}
+ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
+ 					 ktime_t now, int cpu)
+ {
+@@ -545,8 +550,18 @@ static ktime_t tick_nohz_stop_sched_tick
+ 		last_jiffies = jiffies;
+ 	} while (read_seqretry(&jiffies_lock, seq));
+ 
+-	if (rcu_needs_cpu(cpu, &rcu_delta_jiffies) ||
+-	    arch_needs_cpu(cpu) || irq_work_needs_cpu()) {
++	/*
++	 * Keep the periodic tick, when RCU, architecture or irq_work
++	 * requests it.
++	 * Aside of that check whether the local timer softirq is
++	 * pending. If so its a bad idea to call get_next_timer_interrupt()
++	 * because there is an already expired timer, so it will request
++	 * immeditate expiry, which rearms the hardware timer with a
++	 * minimal delta which brings us back to this place
++	 * immediately. Lather, rinse and repeat...
++	 */
++	if (rcu_needs_cpu(cpu, &rcu_delta_jiffies) || arch_needs_cpu(cpu) ||
++	    irq_work_needs_cpu() || local_timer_softirq_pending()) {
+ 		next_jiffies = last_jiffies + 1;
+ 		delta_jiffies = 1;
  	} else {
- 		gi = get_group_info(rqgi);
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -69,6 +69,7 @@ extern int set_current_groups(struct gro
- extern void set_groups(struct cred *, struct group_info *);
- extern int groups_search(const struct group_info *, kgid_t);
- extern bool may_setgroups(void);
-+extern void groups_sort(struct group_info *);
- 
- /* access the groups "array" with this macro */
- #define GROUP_AT(gi, i) \
---- a/kernel/groups.c
-+++ b/kernel/groups.c
-@@ -104,7 +104,7 @@ static int groups_from_user(struct group
- }
- 
- /* a simple Shell sort */
--static void groups_sort(struct group_info *group_info)
-+void groups_sort(struct group_info *group_info)
- {
- 	int base, max, stride;
- 	int gidsetsize = group_info->ngroups;
-@@ -131,6 +131,7 @@ static void groups_sort(struct group_inf
- 		stride /= 3;
- 	}
- }
-+EXPORT_SYMBOL(groups_sort);
- 
- /* a simple bsearch */
- int groups_search(const struct group_info *group_info, kgid_t grp)
-@@ -162,7 +163,6 @@ int groups_search(const struct group_inf
- void set_groups(struct cred *new, struct group_info *group_info)
- {
- 	put_group_info(new->group_info);
--	groups_sort(group_info);
- 	get_group_info(group_info);
- 	new->group_info = group_info;
- }
-@@ -246,6 +246,7 @@ SYSCALL_DEFINE2(setgroups, int, gidsetsi
- 		return retval;
- 	}
- 
-+	groups_sort(group_info);
- 	retval = set_current_groups(group_info);
- 	put_group_info(group_info);
- 
---- a/kernel/uid16.c
-+++ b/kernel/uid16.c
-@@ -190,6 +190,7 @@ SYSCALL_DEFINE2(setgroups16, int, gidset
- 		return retval;
- 	}
- 
-+	groups_sort(group_info);
- 	retval = set_current_groups(group_info);
- 	put_group_info(group_info);
- 
---- a/net/sunrpc/auth_gss/gss_rpc_xdr.c
-+++ b/net/sunrpc/auth_gss/gss_rpc_xdr.c
-@@ -231,6 +231,7 @@ static int gssx_dec_linux_creds(struct x
- 			goto out_free_groups;
- 		GROUP_AT(creds->cr_group_info, i) = kgid;
- 	}
-+	groups_sort(creds->cr_group_info);
- 
- 	return 0;
- out_free_groups:
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -479,6 +479,7 @@ static int rsc_parse(struct cache_detail
- 				goto out;
- 			GROUP_AT(rsci.cred.cr_group_info, i) = kgid;
- 		}
-+		groups_sort(rsci.cred.cr_group_info);
- 
- 		/* mech name */
- 		len = qword_get(&mesg, buf, mlen);
---- a/net/sunrpc/svcauth_unix.c
-+++ b/net/sunrpc/svcauth_unix.c
-@@ -520,6 +520,7 @@ static int unix_gid_parse(struct cache_d
- 		GROUP_AT(ug.gi, i) = kgid;
- 	}
- 
-+	groups_sort(ug.gi);
- 	ugp = unix_gid_lookup(cd, uid);
- 	if (ugp) {
- 		struct cache_head *ch;
-@@ -827,6 +828,7 @@ svcauth_unix_accept(struct svc_rqst *rqs
- 		kgid_t kgid = make_kgid(&init_user_ns, svc_getnl(argv));
- 		GROUP_AT(cred->cr_group_info, i) = kgid;
- 	}
-+	groups_sort(cred->cr_group_info);
- 	if (svc_getu32(argv) != htonl(RPC_AUTH_NULL) || svc_getu32(argv) != 0) {
- 		*authp = rpc_autherr_badverf;
- 		return SVC_DENIED;
