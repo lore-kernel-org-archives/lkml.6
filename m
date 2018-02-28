@@ -1,54 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934976AbeB1VXs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:23:48 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:60828 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933957AbeB1VXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:23:40 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 00/16] Implement H3/H5 HDMI driver
-Date: Wed, 28 Feb 2018 22:23:35 +0100
-Message-ID: <2235934.0TF68fluGz@jernej-laptop>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+        id S935019AbeB1Va3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934954AbeB1Va2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 16:30:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1802133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 28 Feb 2018 15:30:26 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: Store more data about VFs into the SRIOV struct
+Message-ID: <20180228213026.GN127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1516211063-1488-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516211063-1488-1-git-send-email-karahmed@amazon.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-Dne torek, 27. februar 2018 ob 23:26:45 CET je Jernej Skrabec napisal(a):
-> This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
-> OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-> works well. Bug, which prevented correct operation for some resolutions,
-> is also fixed.
+On Wed, Jan 17, 2018 at 06:44:23PM +0100, KarimAllah Ahmed wrote:
+> ... to avoid reading them from the config space of all the PCI VFs. This is
+> specially a useful optimization when bringing up thousands of VFs.
 > 
-> Code is based on linux-next, next-20180226 tag.
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 
-Today I tried on this series on  next-20180228, but resolution switching 
-doesn't really work. The reason for this is use of clk_set_rate_exclusive() in 
-sun4i_tcon1_mode_set(). If I revert it to ordinary clk_set_rate() it works ok. 
-I investigated a bit and it seems that clocks stays at first set even if tcon 
-(the owner of exclusive lock) request the new one. Example:
+What does this patch apply to?  It doesn't apply to v4.16-rc1 (my
+"master" branch).  I don't see anything in the history of
+drivers/pci/iov.c about pci_iov_wq_fn().
 
-[   69.325732] TCON clk wanted: 148500000
-[   69.325740] TCON real clk: 69272728
-[   69.325770] HDMI clk wanted: 148500000
-[   69.325773] HDMI real clk: 138545455
-[   69.325815] HDMI PHY clk wanted: 148500000
-[   69.325819] HDMI PHY real clk: 138545454
-
-Is there anything I can do to help debug this?
-
-Best regards,
-Jernej
+> ---
+>  drivers/pci/iov.c   | 20 ++++++++++++++++++--
+>  drivers/pci/pci.h   |  6 +++++-
+>  drivers/pci/probe.c | 42 ++++++++++++++++++++++++++++++++----------
+>  3 files changed, 55 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index 168328a..78e9595 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -129,7 +129,7 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
+>  	if (!dev->is_physfn)
+>  		return 0;
+>  
+> -	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
+> +	return dev->sriov->vf_barsz[resno - PCI_IOV_RESOURCES];
+>  }
+>  
+>  int batch_pci_iov_add_virtfn(struct pci_dev *dev, struct pci_bus **bus,
+> @@ -325,6 +325,20 @@ static void pci_iov_wq_fn(struct work_struct *work)
+>  	kfree(req);
+>  }
+>  
+> +static void pci_read_vf_config_common(struct pci_bus *bus,
+> +				      struct pci_dev *dev)
+> +{
+> +	int devfn = pci_iov_virtfn_devfn(dev, 0);
+> +
+> +	pci_bus_read_config_dword(bus, devfn, PCI_CLASS_REVISION,
+> +				  &dev->sriov->vf_class);
+> +	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_ID,
+> +				 &dev->sriov->vf_subsystem_device);
+> +	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_VENDOR_ID,
+> +				 &dev->sriov->vf_subsystem_vendor);
+> +	pci_bus_read_config_byte(bus, devfn, PCI_HEADER_TYPE, &dev->sriov->vf_hdr_type);
+> +}
+> +
+>  static struct workqueue_struct *pci_iov_wq;
+>  
+>  static int __init init_pci_iov_wq(void)
+> @@ -361,6 +375,8 @@ static int enable_vfs(struct pci_dev *dev, int nr_vfs)
+>  			goto add_bus_fail;
+>  	}
+>  
+> +	pci_read_vf_config_common(bus[0], dev);
+> +
+>  	while (remaining_vfs > 0) {
+>  		bool ret;
+>  		struct pci_iov_wq_item *req;
+> @@ -617,7 +633,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+>  			rc = -EIO;
+>  			goto failed;
+>  		}
+> -		iov->barsz[i] = resource_size(res);
+> +		iov->vf_barsz[i] = resource_size(res);
+>  		res->end = res->start + resource_size(res) * total - 1;
+>  		dev_info(&dev->dev, "VF(n) BAR%d space: %pR (contains BAR%d for %d VFs)\n",
+>  			 i, res, i, total);
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index f6b58b3..3264c9e 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -271,7 +271,11 @@ struct pci_sriov {
+>  	u16 driver_max_VFs;	/* max num VFs driver supports */
+>  	struct pci_dev *dev;	/* lowest numbered PF */
+>  	struct pci_dev *self;	/* this PF */
+> -	resource_size_t barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
+> +	u8 vf_hdr_type;		/* VF header type */
+> +	u32 vf_class;		/* VF device */
+> +	u16 vf_subsystem_vendor;	/* VF subsystem vendor */
+> +	u16 vf_subsystem_device;	/* VF subsystem device */
+> +	resource_size_t vf_barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
+>  	bool drivers_autoprobe;	/* auto probing of VFs by driver */
+>  };
+>  
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 14e0ea1..65099d0 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -175,6 +175,7 @@ static inline unsigned long decode_bar(struct pci_dev *dev, u32 bar)
+>  int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+>  		    struct resource *res, unsigned int pos)
+>  {
+> +	int bar = res - dev->resource;
+>  	u32 l = 0, sz = 0, mask;
+>  	u64 l64, sz64, mask64;
+>  	u16 orig_cmd;
+> @@ -194,9 +195,13 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+>  	res->name = pci_name(dev);
+>  
+>  	pci_read_config_dword(dev, pos, &l);
+> -	pci_write_config_dword(dev, pos, l | mask);
+> -	pci_read_config_dword(dev, pos, &sz);
+> -	pci_write_config_dword(dev, pos, l);
+> +	if (dev->is_virtfn) {
+> +		sz = dev->physfn->sriov->vf_barsz[bar] & 0xffffffff;
+> +	} else {
+> +		pci_write_config_dword(dev, pos, l | mask);
+> +		pci_read_config_dword(dev, pos, &sz);
+> +		pci_write_config_dword(dev, pos, l);
+> +	}
+>  
+>  	/*
+>  	 * All bits set in sz means the device isn't working properly.
+> @@ -236,9 +241,14 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+>  
+>  	if (res->flags & IORESOURCE_MEM_64) {
+>  		pci_read_config_dword(dev, pos + 4, &l);
+> -		pci_write_config_dword(dev, pos + 4, ~0);
+> -		pci_read_config_dword(dev, pos + 4, &sz);
+> -		pci_write_config_dword(dev, pos + 4, l);
+> +
+> +		if (dev->is_virtfn) {
+> +			sz = (dev->physfn->sriov->vf_barsz[bar] >> 32) & 0xffffffff;
+> +		} else {
+> +			pci_write_config_dword(dev, pos + 4, ~0);
+> +			pci_read_config_dword(dev, pos + 4, &sz);
+> +			pci_write_config_dword(dev, pos + 4, l);
+> +		}
+>  
+>  		l64 |= ((u64)l << 32);
+>  		sz64 |= ((u64)sz << 32);
+> @@ -327,6 +337,8 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
+>  	for (pos = 0; pos < howmany; pos++) {
+>  		struct resource *res = &dev->resource[pos];
+>  		reg = PCI_BASE_ADDRESS_0 + (pos << 2);
+> +		if (dev->is_virtfn && dev->physfn->sriov->vf_barsz[pos] == 0)
+> +			continue;
+>  		pos += __pci_read_base(dev, pci_bar_unknown, res, reg);
+>  	}
+>  
+> @@ -1444,7 +1456,9 @@ int pci_setup_device(struct pci_dev *dev)
+>  	struct pci_bus_region region;
+>  	struct resource *res;
+>  
+> -	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
+> +	if (dev->is_virtfn)
+> +		hdr_type = dev->physfn->sriov->vf_hdr_type;
+> +	else if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
+>  		return -EIO;
+>  
+>  	dev->sysdata = dev->bus->sysdata;
+> @@ -1464,7 +1478,10 @@ int pci_setup_device(struct pci_dev *dev)
+>  		     dev->bus->number, PCI_SLOT(dev->devfn),
+>  		     PCI_FUNC(dev->devfn));
+>  
+> -	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
+> +	if (dev->is_virtfn)
+> +		class = dev->physfn->sriov->vf_class;
+> +	else
+> +		pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
+>  	dev->revision = class & 0xff;
+>  	dev->class = class >> 8;		    /* upper 3 bytes */
+>  
+> @@ -1503,8 +1520,13 @@ int pci_setup_device(struct pci_dev *dev)
+>  			goto bad;
+>  		pci_read_irq(dev);
+>  		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
+> -		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
+> -		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
+> +		if (dev->is_virtfn) {
+> +			dev->subsystem_vendor = dev->physfn->sriov->vf_subsystem_vendor;
+> +			dev->subsystem_device = dev->physfn->sriov->vf_subsystem_device;
+> +		} else {
+> +			pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
+> +			pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
+> +		}
+>  
+>  		/*
+>  		 * Do the ugly legacy mode stuff here rather than broken chip
+> -- 
+> 2.7.4
+> 
