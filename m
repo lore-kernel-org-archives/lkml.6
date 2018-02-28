@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519839071-2-4284626130921516014
+X-Cyrus-Session-Id: sloti22d1t05-678564-1519839068-2-11619203105651090015
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839070; b=oTxTW/oApgGBZZwliItRdtY6bPAoYGXo39F9uBLk0WoB7d2
-    oFECtzysN1qyLtmIz+M7uax3mHUVFJK3v8XdWvTKSA3k0QMFJe8s6n/PaOvpA6Po
-    4M6DckC1U4XUBAAej5O0nEL1nqJJctkgwCUcuZxjLY3Uc2t9D87TE3/qUlXSzC4p
-    YUUe5jX0LrGWOI0WXYiX33cFn/UZtrMsZMoVm8WJpdaWRZKcmtPv5gfA8kxTaq+W
-    4nwJnLVWIy6bBFMjxV6fthAoYZH2ZDeJhyUewoWWANe9QQnFQOqtm4W3NAYV/MeX
-    DxENT6QPGD2aFYbacwrpqK3y6wn5V/ocBk1mlKA==
+    t=1519839067; b=vrowKRwR3w+v95gohcn5IQsH9qen4IFDgxdlCsRceTYRZyP
+    TGFK3akwqeS/dycleIPY+DI7+YXfJyjRGx+Q/9EdSi1rqHJ/IE10vBOuh1o2Q5V3
+    VXlfHKLDiP+jgidN0v5LmXRbaDwWvcF1zRVQlrnI4/Y2QoO9lQi0EszVXAVlAaii
+    ZuYgwHXuOJt/vFiTdrNK2+3vrzEs58hhS90/FA1HuGPw6t1I4NuT3bd8Vv51levm
+    dYbDFInM4ThSJcyLFlsUHlvc7XTpbGJmJznt5v+KSmpZyKqWCi88zcoB1H+vOYBw
+    xtB1gDGZ8lpWxfm6ETQUTRBQ580pWGtPwfLrnDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839070; bh=lSVTKpaUl97L4Zyg2z0
-    EHsRAYE+32vkeBGcSKVOKD0A=; b=kdkVe+Ltr+CdJ7EXk+HeZt6MdWiakIKO2so
-    ix3lKgqF4TkZWHntHG5p3UxdyW9/A2BiAycZJTIr3O8TtUncR+407y1meSG+NeQo
-    WbjKIy6mYMexKAPKlZqsNin/eMAKw0wt34WW7IXCgu6nAeCYMTs9NgV+NvNcHnUd
-    dAoOBe4v7zh+gCppl9zFofI55LXZqph999nLUmB9ytuIfRrH1Z+SNLtncduHy5NS
-    iqxQojc389yrljHLKv0gPoP02V7FJ8A/D27tzPpja27+jKs5cgXoO5nJ1CWmFVfu
-    +adcXcZBOQAbJZRaBwphW4G8yUJIXzEIqbQsMnnmDb0PR3FzFhQ==
+    :sender:list-id; s=arctest; t=1519839067; bh=qi5GjdV16RcPyW2SmPy
+    9LZ1bH3PArtWGn2HTIdmsAb4=; b=R6+a8MCEeORAN11xPinT/xK1+usEQUVvu85
+    1dA8aPeYwhc2YUORSnYO5vYwtuwZAdIcj81LJiP1f5OXmGWhLaCfKkj0fNKY7c82
+    ffJLifbXZPQLzJZjuJ1B9skWKh0N+HJuNUHIttIVi6AaSr8ges8ZUrlGqekxmtay
+    k1lBlPHVPXX/F/ssT6xBdf8Yl6AgWE3eutRv7frS8NtwOl07jfwjfUDnNjO6v0di
+    bCb2HtHWyeVoyKrUNEVkVGQjAumBzJXIFQMI4l6GCrjpazAnuJ0yU+eSO+4XFDc/
+    0JnWGFxvcZxIBIqRVneHe/zy+YQHvVJoXV1qT6MOxtaDTrfcl1Q==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933057AbeB1R3I (ORCPT <rfc822;greg@kroah.com>);
+        id S933309AbeB1R3I (ORCPT <rfc822;greg@kroah.com>);
         Wed, 28 Feb 2018 12:29:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33232 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33258 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932590AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932594AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,14 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
-        "Alexey Kodanev" <alexey.kodanev@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, "Joe Thornber" <thornber@redhat.com>,
+        "Monty Pavel" <monty_pavel@sina.com>,
+        "Mike Snitzer" <snitzer@redhat.com>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.860610818@decadent.org.uk>
+Message-ID: <lsq.1519831222.188032977@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 118/140] dccp: don't restart ccid2_hc_tx_rto_expire()
- if sk in closed state
+Subject: [PATCH 3.2 107/140] dm btree: fix serious bug in btree_split_beneath()
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,41 +80,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Joe Thornber <thornber@redhat.com>
 
-commit dd5684ecae3bd8e44b644f50e2c12c7e57fdfef5 upstream.
+commit bc68d0a43560e950850fc69b58f0f8254b28f6d6 upstream.
 
-ccid2_hc_tx_rto_expire() timer callback always restarts the timer
-again and can run indefinitely (unless it is stopped outside), and after
-commit 120e9dabaf55 ("dccp: defer ccid_hc_tx_delete() at dismantle time"),
-which moved ccid_hc_tx_delete() (also includes sk_stop_timer()) from
-dccp_destroy_sock() to sk_destruct(), this started to happen quite often.
-The timer prevents releasing the socket, as a result, sk_destruct() won't
-be called.
+When inserting a new key/value pair into a btree we walk down the spine of
+btree nodes performing the following 2 operations:
 
-Found with LTP/dccp_ipsec tests running on the bonding device,
-which later couldn't be unloaded after the tests were completed:
+  i) space for a new entry
+  ii) adjusting the first key entry if the new key is lower than any in the node.
 
-  unregister_netdevice: waiting for bond0 to become free. Usage count = 148
+If the _root_ node is full, the function btree_split_beneath() allocates 2 new
+nodes, and redistibutes the root nodes entries between them.  The root node is
+left with 2 entries corresponding to the 2 new nodes.
 
-Fixes: 2a91aa396739 ("[DCCP] CCID2: Initial CCID2 (TCP-Like) implementation")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+btree_split_beneath() then adjusts the spine to point to one of the two new
+children.  This means the first key is never adjusted if the new key was lower,
+ie. operation (ii) gets missed out.  This can result in the new key being
+'lost' for a period; until another low valued key is inserted that will uncover
+it.
+
+This is a serious bug, and quite hard to make trigger in normal use.  A
+reproducing test case ("thin create devices-in-reverse-order") is
+available as part of the thin-provision-tools project:
+  https://github.com/jthornber/thin-provisioning-tools/blob/master/functional-tests/device-mapper/dm-tests.scm#L593
+
+Fix the issue by changing btree_split_beneath() so it no longer adjusts
+the spine.  Instead it unlocks both the new nodes, and lets the main
+loop in btree_insert_raw() relock the appropriate one and make any
+neccessary adjustments.
+
+Reported-by: Monty Pavel <monty_pavel@sina.com>
+Signed-off-by: Joe Thornber <thornber@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/dccp/ccids/ccid2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/md/persistent-data/dm-btree.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
---- a/net/dccp/ccids/ccid2.c
-+++ b/net/dccp/ccids/ccid2.c
-@@ -140,6 +140,9 @@ static void ccid2_hc_tx_rto_expire(unsig
+--- a/drivers/md/persistent-data/dm-btree.c
++++ b/drivers/md/persistent-data/dm-btree.c
+@@ -568,23 +568,8 @@ static int btree_split_beneath(struct sh
+ 	pn->keys[1] = rn->keys[0];
+ 	memcpy_disk(value_ptr(pn, 1, sizeof(__le64)), &val, sizeof(__le64));
  
- 	ccid2_pr_debug("RTO_EXPIRE\n");
+-	/*
+-	 * rejig the spine.  This is ugly, since it knows too
+-	 * much about the spine
+-	 */
+-	if (s->nodes[0] != new_parent) {
+-		unlock_block(s->info, s->nodes[0]);
+-		s->nodes[0] = new_parent;
+-	}
+-	if (key < le64_to_cpu(rn->keys[0])) {
+-		unlock_block(s->info, right);
+-		s->nodes[1] = left;
+-	} else {
+-		unlock_block(s->info, left);
+-		s->nodes[1] = right;
+-	}
+-	s->count = 2;
+-
++	unlock_block(s->info, left);
++	unlock_block(s->info, right);
+ 	return 0;
+ }
  
-+	if (sk->sk_state == DCCP_CLOSED)
-+		goto out;
-+
- 	/* back-off timer */
- 	hc->tx_rto <<= 1;
- 	if (hc->tx_rto > DCCP_RTO_MAX)
