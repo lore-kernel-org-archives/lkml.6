@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932177AbeB1PGu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:06:50 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51740 "EHLO mx1.redhat.com"
+        id S932214AbeB1PG5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:06:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57882 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932145AbeB1PGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:06:48 -0500
+        id S932145AbeB1PG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:06:56 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: arnd@arndb.de, bhe@redhat.com, slp@redhat.com, mst@redhat.com,
         somlo@cmu.edu, xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v16 07/11] fw_cfg: add a public uapi header
-Date: Wed, 28 Feb 2018 16:06:11 +0100
-Message-Id: <20180228150615.17317-8-marcandre.lureau@redhat.com>
+Subject: [PATCH v16 08/11] fw_cfg: add DMA register
+Date: Wed, 28 Feb 2018 16:06:12 +0100
+Message-Id: <20180228150615.17317-9-marcandre.lureau@redhat.com>
 In-Reply-To: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
@@ -23,160 +23,182 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a common header file for well-known values and structures to be
-shared by the Linux kernel with qemu or other projects.
+Add an optional <dma_off> kernel module (or command line) parameter
+using the following syntax:
 
-It is based from qemu/docs/specs/fw_cfg.txt which references
-qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
-authoritative list" & vmcoreinfo.txt. Those files don't have an
-explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
-Michael S. Tsirkin suggested to use the same license.
+      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
+ or
+      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
 
-The patch intentionally left out DMA & vmcoreinfo structures &
-defines, which are added in the commits making usage of it.
+and initializes the register address using given or default offset.
 
-Suggested-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-
+Reviewed-by: Gabriel Somlo <somlo@cmu.edu>
 ---
+ drivers/firmware/qemu_fw_cfg.c | 53 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 12 deletions(-)
 
-The related qemu patch making use of it, to be submitted:
-https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
----
- MAINTAINERS                      |  1 +
- drivers/firmware/qemu_fw_cfg.c   | 22 ++------------
- include/uapi/linux/qemu_fw_cfg.h | 66 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 69 insertions(+), 20 deletions(-)
- create mode 100644 include/uapi/linux/qemu_fw_cfg.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93a12af4f180..0ce1b3e536fd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11353,6 +11353,7 @@ M:	"Michael S. Tsirkin" <mst@redhat.com>
- L:	qemu-devel@nongnu.org
- S:	Maintained
- F:	drivers/firmware/qemu_fw_cfg.c
-+F:	include/uapi/linux/qemu_fw_cfg.h
- 
- QIB DRIVER
- M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
 diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 45bfc389b226..5de6bb406fb6 100644
+index 5de6bb406fb6..df028faa2d00 100644
 --- a/drivers/firmware/qemu_fw_cfg.c
 +++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -32,30 +32,12 @@
- #include <linux/slab.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-+#include <uapi/linux/qemu_fw_cfg.h>
+@@ -10,20 +10,21 @@
+  * and select subsets of aarch64), a Device Tree node (on arm), or using
+  * a kernel module (or command line) parameter with the following syntax:
+  *
+- *      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>]
++ *      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
+  * or
+- *      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>]
++ *      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
+  *
+  * where:
+  *      <size>     := size of ioport or mmio range
+  *      <base>     := physical base address of ioport or mmio range
+  *      <ctrl_off> := (optional) offset of control register
+  *      <data_off> := (optional) offset of data register
++ *      <dma_off> := (optional) offset of dma register
+  *
+  * e.g.:
+- *      qemu_fw_cfg.ioport=2@0x510:0:1		(the default on x86)
++ *      qemu_fw_cfg.ioport=12@0x510:0:1:4	(the default on x86)
+  * or
+- *      qemu_fw_cfg.mmio=0xA@0x9020000:8:0	(the default on arm)
++ *      qemu_fw_cfg.mmio=16@0x9020000:8:0:16	(the default on arm)
+  */
  
- MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
- MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
- MODULE_LICENSE("GPL");
+ #include <linux/module.h>
+@@ -45,6 +46,7 @@ static resource_size_t fw_cfg_p_size;
+ static void __iomem *fw_cfg_dev_base;
+ static void __iomem *fw_cfg_reg_ctrl;
+ static void __iomem *fw_cfg_reg_data;
++static void __iomem *fw_cfg_reg_dma;
  
--/* selector key values for "well-known" fw_cfg entries */
--#define FW_CFG_SIGNATURE  0x00
--#define FW_CFG_ID         0x01
--#define FW_CFG_FILE_DIR   0x19
--
--/* size in bytes of fw_cfg signature */
--#define FW_CFG_SIG_SIZE 4
--
--/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
--#define FW_CFG_MAX_FILE_PATH 56
--
--/* fw_cfg file directory entry type */
--struct fw_cfg_file {
--	u32 size;
--	u16 select;
--	u16 reserved;
--	char name[FW_CFG_MAX_FILE_PATH];
--};
--
- /* fw_cfg device i/o register addresses */
- static bool fw_cfg_is_mmio;
- static phys_addr_t fw_cfg_p_base;
-@@ -616,7 +598,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+ /* atomic access to fw_cfg device (potentially slow i/o, so using mutex) */
+ static DEFINE_MUTEX(fw_cfg_dev_lock);
+@@ -104,12 +106,14 @@ static void fw_cfg_io_cleanup(void)
+ # if (defined(CONFIG_ARM) || defined(CONFIG_ARM64))
+ #  define FW_CFG_CTRL_OFF 0x08
+ #  define FW_CFG_DATA_OFF 0x00
++#  define FW_CFG_DMA_OFF 0x10
+ # elif (defined(CONFIG_PPC_PMAC) || defined(CONFIG_SPARC32)) /* ppc/mac,sun4m */
+ #  define FW_CFG_CTRL_OFF 0x00
+ #  define FW_CFG_DATA_OFF 0x02
+ # elif (defined(CONFIG_X86) || defined(CONFIG_SPARC64)) /* x86, sun4u */
+ #  define FW_CFG_CTRL_OFF 0x00
+ #  define FW_CFG_DATA_OFF 0x01
++#  define FW_CFG_DMA_OFF 0x04
+ # else
+ #  error "QEMU FW_CFG not available on this architecture!"
+ # endif
+@@ -119,7 +123,7 @@ static void fw_cfg_io_cleanup(void)
+ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ {
+ 	char sig[FW_CFG_SIG_SIZE];
+-	struct resource *range, *ctrl, *data;
++	struct resource *range, *ctrl, *data, *dma;
  
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
--	{ "QEMU0002", },
-+	{ FW_CFG_ACPI_DEVICE_ID, },
- 	{},
- };
- MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
-diff --git a/include/uapi/linux/qemu_fw_cfg.h b/include/uapi/linux/qemu_fw_cfg.h
-new file mode 100644
-index 000000000000..c698ac3812f6
---- /dev/null
-+++ b/include/uapi/linux/qemu_fw_cfg.h
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: BSD-3-Clause */
-+#ifndef _LINUX_FW_CFG_H
-+#define _LINUX_FW_CFG_H
-+
-+#include <linux/types.h>
-+
-+#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
-+
-+/* selector key values for "well-known" fw_cfg entries */
-+#define FW_CFG_SIGNATURE	0x00
-+#define FW_CFG_ID		0x01
-+#define FW_CFG_UUID		0x02
-+#define FW_CFG_RAM_SIZE		0x03
-+#define FW_CFG_NOGRAPHIC	0x04
-+#define FW_CFG_NB_CPUS		0x05
-+#define FW_CFG_MACHINE_ID	0x06
-+#define FW_CFG_KERNEL_ADDR	0x07
-+#define FW_CFG_KERNEL_SIZE	0x08
-+#define FW_CFG_KERNEL_CMDLINE	0x09
-+#define FW_CFG_INITRD_ADDR	0x0a
-+#define FW_CFG_INITRD_SIZE	0x0b
-+#define FW_CFG_BOOT_DEVICE	0x0c
-+#define FW_CFG_NUMA		0x0d
-+#define FW_CFG_BOOT_MENU	0x0e
-+#define FW_CFG_MAX_CPUS		0x0f
-+#define FW_CFG_KERNEL_ENTRY	0x10
-+#define FW_CFG_KERNEL_DATA	0x11
-+#define FW_CFG_INITRD_DATA	0x12
-+#define FW_CFG_CMDLINE_ADDR	0x13
-+#define FW_CFG_CMDLINE_SIZE	0x14
-+#define FW_CFG_CMDLINE_DATA	0x15
-+#define FW_CFG_SETUP_ADDR	0x16
-+#define FW_CFG_SETUP_SIZE	0x17
-+#define FW_CFG_SETUP_DATA	0x18
-+#define FW_CFG_FILE_DIR		0x19
-+
-+#define FW_CFG_FILE_FIRST	0x20
-+#define FW_CFG_FILE_SLOTS_MIN	0x10
-+
-+#define FW_CFG_WRITE_CHANNEL	0x4000
-+#define FW_CFG_ARCH_LOCAL	0x8000
-+#define FW_CFG_ENTRY_MASK	(~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
-+
-+#define FW_CFG_INVALID		0xffff
-+
-+/* width in bytes of fw_cfg control register */
-+#define FW_CFG_CTL_SIZE		0x02
-+
-+/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
-+#define FW_CFG_MAX_FILE_PATH	56
-+
-+/* size in bytes of fw_cfg signature */
-+#define FW_CFG_SIG_SIZE 4
-+
-+/* FW_CFG_ID bits */
-+#define FW_CFG_VERSION		0x01
-+
-+/* fw_cfg file directory entry type */
-+struct fw_cfg_file {
-+	__be32 size;
-+	__be16 select;
-+	__u16 reserved;
-+	char name[FW_CFG_MAX_FILE_PATH];
-+};
-+
+ 	/* acquire i/o range details */
+ 	fw_cfg_is_mmio = false;
+@@ -156,6 +160,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ 	/* were custom register offsets provided (e.g. on the command line)? */
+ 	ctrl = platform_get_resource_byname(pdev, IORESOURCE_REG, "ctrl");
+ 	data = platform_get_resource_byname(pdev, IORESOURCE_REG, "data");
++	dma = platform_get_resource_byname(pdev, IORESOURCE_REG, "dma");
+ 	if (ctrl && data) {
+ 		fw_cfg_reg_ctrl = fw_cfg_dev_base + ctrl->start;
+ 		fw_cfg_reg_data = fw_cfg_dev_base + data->start;
+@@ -165,6 +170,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ 		fw_cfg_reg_data = fw_cfg_dev_base + FW_CFG_DATA_OFF;
+ 	}
+ 
++	if (dma)
++		fw_cfg_reg_dma = fw_cfg_dev_base + dma->start;
++#ifdef FW_CFG_DMA_OFF
++	else
++		fw_cfg_reg_dma = fw_cfg_dev_base + FW_CFG_DMA_OFF;
 +#endif
++
+ 	/* verify fw_cfg device signature */
+ 	if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
+ 				0, FW_CFG_SIG_SIZE) < 0 ||
+@@ -630,6 +642,7 @@ static struct platform_device *fw_cfg_cmdline_dev;
+ /* use special scanf/printf modifier for phys_addr_t, resource_size_t */
+ #define PH_ADDR_SCAN_FMT "@%" __PHYS_ADDR_PREFIX "i%n" \
+ 			 ":%" __PHYS_ADDR_PREFIX "i" \
++			 ":%" __PHYS_ADDR_PREFIX "i%n" \
+ 			 ":%" __PHYS_ADDR_PREFIX "i%n"
+ 
+ #define PH_ADDR_PR_1_FMT "0x%" __PHYS_ADDR_PREFIX "x@" \
+@@ -639,12 +652,15 @@ static struct platform_device *fw_cfg_cmdline_dev;
+ 			 ":%" __PHYS_ADDR_PREFIX "u" \
+ 			 ":%" __PHYS_ADDR_PREFIX "u"
+ 
++#define PH_ADDR_PR_4_FMT PH_ADDR_PR_3_FMT \
++			 ":%" __PHYS_ADDR_PREFIX "u"
++
+ static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
+ {
+-	struct resource res[3] = {};
++	struct resource res[4] = {};
+ 	char *str;
+ 	phys_addr_t base;
+-	resource_size_t size, ctrl_off, data_off;
++	resource_size_t size, ctrl_off, data_off, dma_off;
+ 	int processed, consumed = 0;
+ 
+ 	/* only one fw_cfg device can exist system-wide, so if one
+@@ -660,19 +676,20 @@ static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
+ 	/* consume "<size>" portion of command line argument */
+ 	size = memparse(arg, &str);
+ 
+-	/* get "@<base>[:<ctrl_off>:<data_off>]" chunks */
++	/* get "@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]" chunks */
+ 	processed = sscanf(str, PH_ADDR_SCAN_FMT,
+ 			   &base, &consumed,
+-			   &ctrl_off, &data_off, &consumed);
++			   &ctrl_off, &data_off, &consumed,
++			   &dma_off, &consumed);
+ 
+-	/* sscanf() must process precisely 1 or 3 chunks:
++	/* sscanf() must process precisely 1, 3 or 4 chunks:
+ 	 * <base> is mandatory, optionally followed by <ctrl_off>
+-	 * and <data_off>;
++	 * and <data_off>, and <dma_off>;
+ 	 * there must be no extra characters after the last chunk,
+ 	 * so str[consumed] must be '\0'.
+ 	 */
+ 	if (str[consumed] ||
+-	    (processed != 1 && processed != 3))
++	    (processed != 1 && processed != 3 && processed != 4))
+ 		return -EINVAL;
+ 
+ 	res[0].start = base;
+@@ -689,6 +706,11 @@ static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
+ 		res[2].start = data_off;
+ 		res[2].flags = IORESOURCE_REG;
+ 	}
++	if (processed > 3) {
++		res[3].name = "dma";
++		res[3].start = dma_off;
++		res[3].flags = IORESOURCE_REG;
++	}
+ 
+ 	/* "processed" happens to nicely match the number of resources
+ 	 * we need to pass in to this platform device.
+@@ -721,6 +743,13 @@ static int fw_cfg_cmdline_get(char *buf, const struct kernel_param *kp)
+ 				fw_cfg_cmdline_dev->resource[0].start,
+ 				fw_cfg_cmdline_dev->resource[1].start,
+ 				fw_cfg_cmdline_dev->resource[2].start);
++	case 4:
++		return snprintf(buf, PAGE_SIZE, PH_ADDR_PR_4_FMT,
++				resource_size(&fw_cfg_cmdline_dev->resource[0]),
++				fw_cfg_cmdline_dev->resource[0].start,
++				fw_cfg_cmdline_dev->resource[1].start,
++				fw_cfg_cmdline_dev->resource[2].start,
++				fw_cfg_cmdline_dev->resource[3].start);
+ 	}
+ 
+ 	/* Should never get here */
 -- 
 2.16.1.73.g5832b7e9f2
