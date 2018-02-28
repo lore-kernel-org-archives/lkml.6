@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834920-2-4313433376304532285
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834894-2-2897157559130335250
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834919; b=DfdjuXUoFcT6uneU/cjSV93oZwZsJQFHWbzLNvmYejYwfKE
-    hA/eIXEr4HBiii9sZBKQoGF0Chd8BZNXZhzgHVV9hMhDYq8rS/IOMAuLcQiigity
-    kRPt6KV8ShOsEoWIevdx94U9DKZaWEnhsLlRLV6Gj2HqIVuD102PSBeINe/EvZ13
-    04sIXVHk4lCWeleYQd7i9dNzRllp08sM/+J0JI2f9SIU1gQIHBtQb8ryzggXNwD/
-    7MCiZofbSIf5dTrGxnPGwX+U0Kfc5XHxq9O5+YbJD08A12QA1yW5yMJwS+efdh9t
-    wWqUN8B6bZpG8R77jatmcLqzWxHQbJHurNQ99qQ==
+    t=1519834893; b=ins8XFl0D0qtvKbDMJ4qJlDIm2hfimm5EO4kJWrcxjRNM9P
+    Vxcu94op0qs28H10XKHi24x3bBluM/6gQqdYqE5D+0DcMBEsQuu10Mc5I1kpYYQ3
+    iUCuswJDYRmlvq7qYNEeRxwlD/GLRHsR/0Tbb9MsnJSYtpp5K846NFqs3bvkXoe8
+    iVf/W6MCyUvnhw+OcO7rAkFM2yqiRBRYY9bPt263XpXa0EnM93zgKU0UMDCgy51b
+    DikDHcuVKt0hYszwhBT4Kut8hXeO5bIFVX+al6VsRzxeVCf7K8FiIzcPcaCQhRzi
+    8sEqyJrCRTkTSuHVqMV8LmBRp3MIy6xfWNXUT8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834919; bh=/Ih7GoCTlXX7kBkJvfa
-    jOvCY73pI/hVKbYFoh1VgxCI=; b=dyY6tvx+V3gsRhBJqktlMab3fJf+7FSmes/
-    CYp82Yn99tlD20dpd6e1dUecf9N11NQInyPRVLoAvZDHjdTXaeyqwqwgTP0Y9HSv
-    m+Xzl7gOoN4a1Cu9Z+O45RgllxTzftrQlwZBuwMkEAGjLNeihmHDIpuQV/fNU84m
-    6f8BzcYxg4eFsPkkhPlI/JAFCd55gCs7lmXl5Q6200pfhf/8kEukP6N76UgPVCQE
-    4YltWRMU6qC7rubyPoLrSaXEB3WTkhCYKWhmEkDz3go+/ZBUhEewcdcaS10xbJA+
-    Ed/xku7OJaV5rLq8sZjNX29rndgQ77f3Uc2RV/9XHur04HkSnBA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834893; bh=Isj0k/CRHlZ66CPsFXh
+    qE6TFvEb34CYlaNtxrs3JEq0=; b=Ul8YkD+lbTUoekly5UjKmTTTguFurZMavqN
+    vXpwpSm7mfxtGDBfkSJUfMxqkG1r0AfNhl3LLwVwwvofi+FKs+son5/0jxTC1Bbt
+    BzWNP9d8OzgEKX+mmc8KNhq2Z6trKycPy/CiUnCoA1RHjGtHs29KTBQk2BieP1cM
+    ap6YG8xv0uOgu0JUWNstk5kOo7ElXwjagtIB5duSxQa0DdEwCRlM14+LI2zIW/rY
+    rwcCIzUD/cmma/UFSegcLt/a52WelC/gvriSlT3d3fYJN8Em4INuRRCGZeKo/wN3
+    HlKwaPT1vxu04ITwdHR3lr0byypRT3HDf4cKnPAO15z9HHkk5Lg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935224AbeB1QU5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:20:57 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35403 "EHLO
+        id S934936AbeB1QVC (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:21:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35410 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935236AbeB1QUz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:55 -0500
+        by vger.kernel.org with ESMTP id S935261AbeB1QVA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:21:00 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Chandan Rajendra" <chandan@linux.vnet.ibm.com>,
-        "Abdul Haleem" <abdhalee@linux.vnet.ibm.com>
+CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        peterz@infradead.org, "Li Jinyue" <lijinyue@huawei.com>,
+        dvhart@infradead.org
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.235188593@decadent.org.uk>
+Message-ID: <lsq.1519831218.39324522@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 089/254] ext4: fix crash when a directory's i_size is
- too small
+Subject: [PATCH 3.16 204/254] futex: Prevent overflow by strengthen input
+ validation
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,54 +81,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+From: Li Jinyue <lijinyue@huawei.com>
 
-commit 9d5afec6b8bd46d6ed821aa1579634437f58ef1f upstream.
+commit fbe0e839d1e22d88810f3ee3e2f1479be4c0aa4a upstream.
 
-On a ppc64 machine, when mounting a fuzzed ext2 image (generated by
-fsfuzzer) the following call trace is seen,
+UBSAN reports signed integer overflow in kernel/futex.c:
 
-VFS: brelse: Trying to free free buffer
-WARNING: CPU: 1 PID: 6913 at /root/repos/linux/fs/buffer.c:1165 .__brelse.part.6+0x24/0x40
-.__brelse.part.6+0x20/0x40 (unreliable)
-.ext4_find_entry+0x384/0x4f0
-.ext4_lookup+0x84/0x250
-.lookup_slow+0xdc/0x230
-.walk_component+0x268/0x400
-.path_lookupat+0xec/0x2d0
-.filename_lookup+0x9c/0x1d0
-.vfs_statx+0x98/0x140
-.SyS_newfstatat+0x48/0x80
-system_call+0x58/0x6c
+ UBSAN: Undefined behaviour in kernel/futex.c:2041:18
+ signed integer overflow:
+ 0 - -2147483648 cannot be represented in type 'int'
 
-This happens because the directory that ext4_find_entry() looks up has
-inode->i_size that is less than the block size of the filesystem. This
-causes 'nblocks' to have a value of zero. ext4_bread_batch() ends up not
-reading any of the directory file's blocks. This renders the entries in
-bh_use[] array to continue to have garbage data. buffer_uptodate() on
-bh_use[0] can then return a zero value upon which brelse() function is
-invoked.
+Add a sanity check to catch negative values of nr_wake and nr_requeue.
 
-This commit fixes the bug by returning -ENOENT when the directory file
-has no associated blocks.
-
-Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Signed-off-by: Li Jinyue <lijinyue@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: dvhart@infradead.org
+Link: https://lkml.kernel.org/r/1513242294-31786-1-git-send-email-lijinyue@huawei.com
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/namei.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/futex.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1267,6 +1267,10 @@ static struct buffer_head * ext4_find_en
- 			       "falling back\n"));
- 	}
- 	nblocks = dir->i_size >> EXT4_BLOCK_SIZE_BITS(sb);
-+	if (!nblocks) {
-+		ret = NULL;
-+		goto cleanup_and_exit;
-+	}
- 	start = EXT4_I(dir)->i_dir_start_lookup;
- 	if (start >= nblocks)
- 		start = 0;
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1531,6 +1531,9 @@ static int futex_requeue(u32 __user *uad
+ 	struct futex_hash_bucket *hb1, *hb2;
+ 	struct futex_q *this, *next;
+ 
++	if (nr_wake < 0 || nr_requeue < 0)
++		return -EINVAL;
++
+ 	if (requeue_pi) {
+ 		/*
+ 		 * Requeue PI only works on two distinct uaddrs. This
