@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751947AbeB1BWI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 20:22:08 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41017 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeB1BVs (ORCPT
+        id S1751992AbeB1BWt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 20:22:49 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41490 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeB1BVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 20:21:48 -0500
-X-Google-Smtp-Source: AH8x22680wNfLWnoTl3kzE7gBm6BDd1//pvwlLmLCAGRmBbQ037dA2+lSfV3FDoiPYGLvKsMAeO42A==
+        Tue, 27 Feb 2018 20:21:43 -0500
+X-Google-Smtp-Source: AH8x224ndPSLoyDKFqRHHidzZNQt3WgfLi7jYKL+ufkgpVGLHKFlUl84XNtMAU/Ih3okW4gir6AHlQ==
 From: Tim Harvey <tharvey@gateworks.com>
 To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
@@ -15,9 +15,9 @@ To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
         linux-input@vger.kernel.org
-Subject: [RFC 4/4] input: misc: Add Gateworks System Controller support
-Date: Tue, 27 Feb 2018 17:21:14 -0800
-Message-Id: <1519780874-8558-5-git-send-email-tharvey@gateworks.com>
+Subject: [RFC 1/4] dt-bindings: mfd: Add Gateworks System Controller bindings
+Date: Tue, 27 Feb 2018 17:21:11 -0800
+Message-Id: <1519780874-8558-2-git-send-email-tharvey@gateworks.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
 References: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
@@ -25,247 +25,179 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for dispatching Linux Input events for the various interrupts
-the Gateworks System Controller provides.
+This patch adds documentation of device-tree bindings for the
+Gateworks System Controller (GSC).
 
 Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- drivers/input/misc/Kconfig     |   6 ++
- drivers/input/misc/Makefile    |   1 +
- drivers/input/misc/gsc-input.c | 196 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 drivers/input/misc/gsc-input.c
+ Documentation/devicetree/bindings/mfd/gsc.txt | 69 +++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/gsc.txt
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 9f082a3..3d18a0e 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -117,6 +117,12 @@ config INPUT_E3X0_BUTTON
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called e3x0_button.
- 
-+config INPUT_GSC
-+	tristate "Gateworks System Controller input support"
-+	depends on MFD_GSC
-+	help
-+	  Say Y here if you want Gateworks System Controller input support.
-+
- config INPUT_PCSPKR
- 	tristate "PC Speaker support"
- 	depends on PCSPKR_PLATFORM
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 4b6118d..969debe 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -38,6 +38,7 @@ obj-$(CONFIG_INPUT_GP2A)		+= gp2ap002a00f.o
- obj-$(CONFIG_INPUT_GPIO_BEEPER)		+= gpio-beeper.o
- obj-$(CONFIG_INPUT_GPIO_TILT_POLLED)	+= gpio_tilt_polled.o
- obj-$(CONFIG_INPUT_GPIO_DECODER)	+= gpio_decoder.o
-+obj-$(CONFIG_INPUT_GSC)			+= gsc-input.o
- obj-$(CONFIG_INPUT_HISI_POWERKEY)	+= hisi_powerkey.o
- obj-$(CONFIG_HP_SDC_RTC)		+= hp_sdc_rtc.o
- obj-$(CONFIG_INPUT_IMS_PCU)		+= ims-pcu.o
-diff --git a/drivers/input/misc/gsc-input.c b/drivers/input/misc/gsc-input.c
+diff --git a/Documentation/devicetree/bindings/mfd/gsc.txt b/Documentation/devicetree/bindings/mfd/gsc.txt
 new file mode 100644
-index 0000000..7cf217c
+index 0000000..7671347
 --- /dev/null
-+++ b/drivers/input/misc/gsc-input.c
-@@ -0,0 +1,196 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Gateworks Corporation
-+ */
-+#define DEBUG
++++ b/Documentation/devicetree/bindings/mfd/gsc.txt
+@@ -0,0 +1,159 @@
++Gateworks System Controller multi-function device
 +
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++The GSC is a Multifunction I2C slave device with the following submodules:
++- WDT
++- GPIO
++- Pushbutton controller
++- HWMON
 +
-+#include <linux/mfd/gsc.h>
++Required properties:
++- compatible : Must be "gw,gsc_v1", "gw,gsc_v2", "gw,gsc_v3"
++- reg: I2C address of the device
++- interrupts: interrupt triggered by GSC_IRQ# signal
++- interrupt-parent: Interrupt controller GSC is connected to
++- #interrupt-cells: should be <1>, index of the interrupt within the
++  controller, in accordance with the "one cell" variant of
++  <devicetree/bindings/interrupt-controller/interrupt.txt>
 +
-+struct gsc_irq {
-+	unsigned int irq;
-+	const char *name;
-+	unsigned int virq;
-+};
++Optional nodes:
++* watchdog:
++The GSC provides a Watchdog monitor which can power cycle the board's
++primary power supply on most board models when tripped.
 +
-+static struct gsc_irq gsc_irqs[] = {
-+	{ GSC_IRQ_PB,		"button" },
-+	{ GSC_IRQ_KEY_ERASED,	"key-erased" },
-+	{ GSC_IRQ_EEPROM_WP,	"eeprom-wp" },
-+	{ GSC_IRQ_TAMPER,	"tamper" },
-+	{ GSC_IRQ_SWITCH_HOLD,	"button-held" },
-+};
++Required properties:
++- compatible: must be "gw,gsc-watchdog"
 +
-+struct gsc_input_info {
-+	struct device *dev;
-+	struct gsc_dev *gsc;
-+	struct input_dev *input;
++* input:
++The GSC provides an input device capable of dispatching Linux Input events
++for user pushbutton events, tamper switch events, etc.
 +
-+	int irq;
-+	struct work_struct irq_work;
-+	struct mutex mutex;
-+};
++Required properties:
++- compatible: must be "gw,gsc-input"
 +
-+static void gsc_input_irq_work(struct work_struct *work)
-+{
-+	struct gsc_input_info *info = container_of(work, struct gsc_input_info,
-+						   irq_work);
-+	struct gsc_dev *gsc = info->gsc;
-+	int i, ret = 0;
-+	int key, sts;
-+	struct gsc_irq *gsc_irq = NULL;
++* hwmon:
++The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
++temperature and/or voltage monitoring.
 +
-+	dev_dbg(gsc->dev, "%s irq%d\n", __func__, info->irq);
-+	mutex_lock(&info->mutex);
++Required properties:
++- compatible: must be "gw,gsc-hwmon"
 +
-+	for (i = 0; i < ARRAY_SIZE(gsc_irqs);i++)
-+		if (info->irq == gsc_irqs[i].virq)
-+			gsc_irq = &gsc_irqs[i];
-+	if (!gsc_irq) {
-+		dev_err(info->dev, "interrupt: irq%d occurred\n", info->irq);
-+		mutex_unlock(&info->mutex);
-+		return;
-+	}
++Example:
 +
-+	ret = regmap_read(info->gsc->regmap, GSC_IRQ_STATUS, &sts);
-+	if (ret) {
-+		dev_err(info->dev, "failed to read status register\n");
-+		mutex_unlock(&info->mutex);
-+		return;
-+	}
++	gsc: gsc@20 {
++		compatible = "gw,gsc_v2";
++		reg = <0x20>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <4 GPIO_ACTIVE_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <1>;
 +
-+	key = -1;
-+	switch (gsc_irq->virq) {
-+	case GSC_IRQ_PB:
-+		key = BTN_0;
-+		break;
-+	case GSC_IRQ_KEY_ERASED:
-+		key = BTN_1;
-+		break;
-+	case GSC_IRQ_EEPROM_WP:
-+		key = BTN_2;
-+		break;
-+	case GSC_IRQ_GPIO:
-+		key = BTN_3;
-+		break;
-+	case GSC_IRQ_TAMPER:
-+		key = BTN_4;
-+		break;
-+	case GSC_IRQ_SWITCH_HOLD:
-+		key = BTN_5;
-+		break;
-+	}
++		gsc_input {
++			compatible = "gw,gsc-input";
++		};
 +
-+	if (key != -1) {
-+		dev_dbg(&info->input->dev, "bit%d: key=0x%03x %s\n",
-+			gsc_irq->virq, key, gsc_irq->name);
-+		input_report_key(info->input, key, 1);
-+		input_report_key(info->input, key, 0);
-+		input_sync(info->input);
-+	}
++		gsc_watchdog {
++			compatible = "gw,gsc-watchdog";
++		};
 +
-+	mutex_unlock(&info->mutex);
-+}
++		gsc_hwmon {
++			compatible = "gw,gsc-hwmon";
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+static irqreturn_t gsc_input_irq(int irq, void *data)
-+{
-+	struct gsc_input_info *info = data;
++			hwmon@0 { /* A0: Board Temperature */
++				type = <0>;
++				reg = <0x00>;
++				label = "temp";
++			};
 +
-+	dev_dbg(info->gsc->dev, "%s irq%d\n", __func__, irq);
-+	info->irq = irq;
-+	schedule_work(&info->irq_work);
++			hwmon@1 { /* A1: Input Voltage */
++				type = <1>;
++				reg = <0x02>;
++				label = "Vin";
++			};
 +
-+	return IRQ_HANDLED;
-+}
++			hwmon@2 { /* A2: 5P0 */
++				type = <1>;
++				reg = <0x0b>;
++				label = "5P0";
++			};
 +
-+static int gsc_input_probe(struct platform_device *pdev)
-+{
-+	struct gsc_dev *gsc = dev_get_drvdata(pdev->dev.parent);
-+	struct gsc_input_info *info;
-+	struct input_dev *input;
-+	int ret, i;
++			hwmon@4 { /* A4: 0-5V input */
++				type = <1>;
++				reg = <0x14>;
++				label = "ANL0";
++			};
 +
-+	dev_dbg(&pdev->dev, "%s\n", __func__);
-+	info = devm_kzalloc(&pdev->dev, sizeof(struct gsc_input_info),
-+			    GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+	info->dev = &pdev->dev;
-+	info->gsc = gsc;
++			hwmon@5 { /* A5: 2P5 PCIe/GigE */
++				type = <1>;
++				reg = <0x23>;
++				label = "2P5";
++			};
 +
-+	/* Register input device */
-+	input = devm_input_allocate_device(&pdev->dev);
-+	if (!input) {
-+		dev_err(&pdev->dev, "Can't allocate input device\n");
-+		return -ENOMEM;
-+	}
-+	info->input = input;
++			hwmon@6 { /* A6: 1P8 Aud/Vid */
++				type = <1>;
++				reg = <0x1d>;
++				label = "1P8";
++			};
 +
-+	input->name = KBUILD_MODNAME;
-+	input->dev.parent = &pdev->dev;
++			hwmon@7 { /* A7: GPS */
++				type = <1>;
++				reg = <0x26>;
++				label = "GPS";
++			};
 +
-+	input_set_capability(input, EV_KEY, BTN_0); /* button */
-+	input_set_capability(input, EV_KEY, BTN_1); /* key erased */
-+	input_set_capability(input, EV_KEY, BTN_2); /* ee wp */
-+	input_set_capability(input, EV_KEY, BTN_3); /* gpio */
-+	input_set_capability(input, EV_KEY, BTN_4); /* tamper */
-+	input_set_capability(input, EV_KEY, BTN_5); /* button held */
++			hwmon@12 { /* A12: VDD_CORE */
++				type = <1>;
++				reg = <0x3>;
++				label = "VDD_CORE";
++			};
 +
-+	ret = input_register_device(input);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Can't register input device: %d\n", ret);
-+		return ret;
-+	}
++			hwmon@13 { /* A13: VDD_SOC */
++				type = <1>;
++				reg = <0x11>;
++				label = "VDD_SOC";
++			};
 +
-+	platform_set_drvdata(pdev, gsc);
-+	mutex_init(&info->mutex);
-+	INIT_WORK(&info->irq_work, gsc_input_irq_work);
++			hwmon@14 { /* A14: 1P0 PCIe SW */
++				type = <1>;
++				reg = <0x20>;
++				label = "1P0";
++			};
 +
-+	/* Support irq domain */
-+	for (i = 0; i < ARRAY_SIZE(gsc_irqs); i++) {
-+		struct gsc_irq *gsc_irq = &gsc_irqs[i];
-+		int virq;
++			hwmon@15 { /* fan0 */
++				type = <2>;
++				reg = <0x2c>;
++				label = "fan_50p";
++			};
 +
-+		virq = regmap_irq_get_virq(gsc->irq_chip_data, gsc_irq->irq);
-+		if (virq <= 0)
-+			return -EINVAL;
-+		gsc_irq->virq = virq;
++			hwmon@16 { /* fan1 */
++				type = <2>;
++				reg = <0x2e>;
++				label = "fan_60p";
++			};
 +
-+		ret = devm_request_threaded_irq(&pdev->dev, virq, NULL,
-+						gsc_input_irq, 0,
-+						gsc_irq->name, info);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed: irq request (IRQ: %d, error: %d\n)",
-+				gsc_irq->irq, ret);
-+			return ret;
-+		}
-+	}
++			hwmon@17 { /* fan2 */
++				type = <2>;
++				reg = <0x30>;
++				label = "fan_70p";
++			};
 +
-+	return 0;
-+}
++			hwmon@18 { /* fan3 */
++				type = <2>;
++				reg = <0x32>;
++				label = "fan_80p";
++			};
 +
-+static const struct of_device_id gsc_input_dt_ids[] = {
-+	{ .compatible = "gw,gsc-input", },
-+	{}
-+};
++			hwmon@19 { /* fan4 */
++				type = <2>;
++				reg = <0x34>;
++				label = "fan_90p";
++			};
 +
-+static struct platform_driver gsc_input_driver = {
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = gsc_input_dt_ids,
-+	},
-+	.probe = gsc_input_probe,
-+};
-+
-+module_platform_driver(gsc_input_driver);
-+
-+MODULE_AUTHOR("Tim Harvey <tharvey@gateworks.com>");
-+MODULE_DESCRIPTION("GSC input driver");
-+MODULE_LICENSE("GPL v2");
++			hwmon@20 { /* fan5 */
++				type = <2>;
++				reg = <0x36>;
++				label = "fan_100p";
++			};
++		};
++	};
 -- 
 2.7.4
