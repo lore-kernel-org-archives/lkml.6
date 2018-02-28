@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519838822-2-12095531655800727393
+X-Cyrus-Session-Id: sloti22d1t05-667456-1519838818-2-3200775394329465976
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838822; b=IL3K8ei8uAkEJcDoxw73jwRG/ksZnYYnsYN6DLgw1PKjr0d
-    44pDghDGiGi1MVa6U5FCzWM8YBVW+m0VKVDIvBx4BQZaSSO6ptLJblnz+7+mjFZH
-    dPV/Hc3+9lFrMrMOriJybwLwWLzifAxS1j5ohzrdGP5+mKmRdeTEY97yGd5Fr/5B
-    7brwxqstqomwaRajPleQPV93n2QCHYAPXIDz7zOP6uYwI2u+UT36dK4Ouk/Ljge5
-    0mms23EKIWPhUzRVNXj9EF7yLt0bH9sKQBgWacwR+MgvkJ4PJ2GSBMipaMrBXn3L
-    2ALko+hgzfFfdytYXU6j5ViVlD/MpxHWJPydKNQ==
+    t=1519838817; b=O9kOPNBMafASGvrPTATKB2SvKDsVR9hqQ5H4YxFgw1kfEVA
+    wplBe18ZXpBS0NsZeEZC/aCUs4689YK5GrPu9OYCeXIjOE6gB7+fgqT8lLrkV/4v
+    G6aNo80guRLtHC9dry7lLUNVeyjr83spzdlP0fPpCgu56WiQpshVeAfnh9LpjJSZ
+    DYXGTtf4dxsuJjp3RZ5dm+Spe/XM7DkoWG8CZ1isQalARw0RUj8ml1Bz5S8xWlAZ
+    2h0jdfP9IuJxOKpno/Vzgcp73COC5QdCKFFJyxxAiz1/xcUAO3YOF7hOArD0dDb3
+    x9o7XuB/Ok+5aq3J4VoN+FgJan21lD9BJe1jtBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838822; bh=hy1RfoLl123atn8gowj
-    HpavpLjUX7p7/RyCHh6Bc6n8=; b=Xp3SHlxE+Glsfo+q50fZGjE3I4CzF5HJCza
-    NvaB5diGnUFYKuZQCoD70quoEDt5ct7etzUdC/nFtAnQQIIr0QYMETUTXqkSsicd
-    FuL5sRHRymuhmVsVxymwPEYF/ixGoAO3OVrlyeL0mpfRriiYYbm+j2VSnZqC/Srp
-    +rkqWcnOkdAj0Uwi6XhOFqiHbuNhssda/abturYkz0JxF4wxmjkqiYfshpAilS43
-    PYzGUP50CAAPrJoEKQv1mD+dN7zpwwj9jUPoykJnco3Qd4qn/SHV9/n9uWchQQKO
-    pR8jNwioEVGXHpGmvmWyvoymf0J+BCwGU2Y0vvKdfJqtqWwnjWg==
+    :sender:list-id; s=arctest; t=1519838817; bh=+dhvIBLNghs6iV7XxYA
+    aJrZQig35JJMC9yCuRVCDMxw=; b=AqQHOgjrHXngPicoej5Jke104TQzCVHHx/a
+    fDfhkEHwggGdvdeFw1ITVdEnGH3dASoGE3RJh/RrfRSi+I1KWZlLI4AoVifgqFRh
+    0ZKTs+kw+VYmQcYXMWg2cyBVaM/smoU2M2QadKudJTlY5L6Io34QEO3+IaaOCsYQ
+    eaqvXC6NlDeonp1TDVmkOxrNZoZZjpJqhaxPYYOd8H0YZ1C18Xc2F6dCs0cHDKHY
+    OO6/ff+mb0uiGCBoE3JQyPkuugNq0MpH/pgQqKZbUNMVIVk9Z/JDSBROxBtLUwqG
+    ZM7WsDz9a/4stvKX7NYyLI2zKjU824fb4oNyaNGD6wr2dgFQ/Bw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932617AbeB1RZK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:25:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33240 "EHLO
+        id S933014AbeB1RZL (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:25:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33277 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932455AbeB1PWP (ORCPT
+        by vger.kernel.org with ESMTP id S932608AbeB1PWP (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,15 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        syzbot+ed0838d0fa4c4f2b528e20286e6dc63effc7c14d@syzkaller.appspotmail.com,
-        "Xin Long" <lucien.xin@gmail.com>,
-        "Guillaume Nault" <g.nault@alphalink.fr>
+CC: akpm@linux-foundation.org,
+        syzbot+6f11c7e2a1b91d466432@syzkaller.appspotmail.com,
+        "Takashi Iwai" <tiwai@suse.de>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.609775583@decadent.org.uk>
+Message-ID: <lsq.1519831222.798529640@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 117/140] pppoe: take ->needed_headroom of lower device
- into account on xmit
+Subject: [PATCH 3.2 075/140] ALSA: pcm: Remove incorrect snd_BUG_ON() usages
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,123 +80,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 02612bb05e51df8489db5e94d0cf8d1c81f87b0c upstream.
+commit fe08f34d066f4404934a509b6806db1a4f700c86 upstream.
 
-In pppoe_sendmsg(), reserving dev->hard_header_len bytes of headroom
-was probably fine before the introduction of ->needed_headroom in
-commit f5184d267c1a ("net: Allow netdevices to specify needed head/tailroom").
+syzkaller triggered kernel warnings through PCM OSS emulation at
+closing a stream:
+  WARNING: CPU: 0 PID: 3502 at sound/core/pcm_lib.c:1635
+  snd_pcm_hw_param_first+0x289/0x690 sound/core/pcm_lib.c:1635
+  Call Trace:
+  ....
+   snd_pcm_hw_param_near.constprop.27+0x78d/0x9a0 sound/core/oss/pcm_oss.c:457
+   snd_pcm_oss_change_params+0x17d3/0x3720 sound/core/oss/pcm_oss.c:969
+   snd_pcm_oss_make_ready+0xaa/0x130 sound/core/oss/pcm_oss.c:1128
+   snd_pcm_oss_sync+0x257/0x830 sound/core/oss/pcm_oss.c:1638
+   snd_pcm_oss_release+0x20b/0x280 sound/core/oss/pcm_oss.c:2431
+   __fput+0x327/0x7e0 fs/file_table.c:210
+   ....
 
-But now, virtual devices typically advertise the size of their overhead
-in dev->needed_headroom, so we must also take it into account in
-skb_reserve().
-Allocation size of skb is also updated to take dev->needed_tailroom
-into account and replace the arbitrary 32 bytes with the real size of
-a PPPoE header.
+This happens while it tries to open and set up the aloop device
+concurrently.  The warning above (invoked from snd_BUG_ON() macro) is
+to detect the unexpected logical error where snd_pcm_hw_refine() call
+shouldn't fail.  The theory is true for the case where the hw_params
+config rules are static.  But for an aloop device, the hw_params rule
+condition does vary dynamically depending on the connected target;
+when another device is opened and changes the parameters, the device
+connected in another side is also affected, and it caused the error
+from snd_pcm_hw_refine().
 
-This issue was discovered by syzbot, who connected a pppoe socket to a
-gre device which had dev->header_ops->create == ipgre_header and
-dev->hard_header_len == 0. Therefore, PPPoE didn't reserve any
-headroom, and dev_hard_header() crashed when ipgre_header() tried to
-prepend its header to skb->data.
+That is, the simplest "solution" for this is to remove the incorrect
+assumption of static rules, and treat such an error as a normal error
+path.  As there are a couple of other places using snd_BUG_ON()
+incorrectly, this patch removes these spurious snd_BUG_ON() calls.
 
-skbuff: skb_under_panic: text:000000001d390b3a len:31 put:24
-head:00000000d8ed776f data:000000008150e823 tail:0x7 end:0xc0 dev:gre0
-------------[ cut here ]------------
-kernel BUG at net/core/skbuff.c:104!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 3670 Comm: syzkaller801466 Not tainted
-4.15.0-rc7-next-20180115+ #97
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:skb_panic+0x162/0x1f0 net/core/skbuff.c:100
-RSP: 0018:ffff8801d9bd7840 EFLAGS: 00010282
-RAX: 0000000000000083 RBX: ffff8801d4f083c0 RCX: 0000000000000000
-RDX: 0000000000000083 RSI: 1ffff1003b37ae92 RDI: ffffed003b37aefc
-RBP: ffff8801d9bd78a8 R08: 1ffff1003b37ae8a R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffffffff86200de0
-R13: ffffffff84a981ad R14: 0000000000000018 R15: ffff8801d2d34180
-FS:  00000000019c4880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000208bc000 CR3: 00000001d9111001 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  skb_under_panic net/core/skbuff.c:114 [inline]
-  skb_push+0xce/0xf0 net/core/skbuff.c:1714
-  ipgre_header+0x6d/0x4e0 net/ipv4/ip_gre.c:879
-  dev_hard_header include/linux/netdevice.h:2723 [inline]
-  pppoe_sendmsg+0x58e/0x8b0 drivers/net/ppp/pppoe.c:890
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  sock_write_iter+0x31a/0x5d0 net/socket.c:909
-  call_write_iter include/linux/fs.h:1775 [inline]
-  do_iter_readv_writev+0x525/0x7f0 fs/read_write.c:653
-  do_iter_write+0x154/0x540 fs/read_write.c:932
-  vfs_writev+0x18a/0x340 fs/read_write.c:977
-  do_writev+0xfc/0x2a0 fs/read_write.c:1012
-  SYSC_writev fs/read_write.c:1085 [inline]
-  SyS_writev+0x27/0x30 fs/read_write.c:1082
-  entry_SYSCALL_64_fastpath+0x29/0xa0
-
-Admittedly PPPoE shouldn't be allowed to run on non Ethernet-like
-interfaces, but reserving space for ->needed_headroom is a more
-fundamental issue that needs to be addressed first.
-
-Same problem exists for __pppoe_xmit(), which also needs to take
-dev->needed_headroom into account in skb_cow_head().
-
-Fixes: f5184d267c1a ("net: Allow netdevices to specify needed head/tailroom")
-Reported-by: syzbot+ed0838d0fa4c4f2b528e20286e6dc63effc7c14d@syzkaller.appspotmail.com
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+6f11c7e2a1b91d466432@syzkaller.appspotmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ppp/pppoe.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ sound/core/oss/pcm_oss.c | 1 -
+ sound/core/pcm_lib.c     | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -838,6 +838,7 @@ static int pppoe_sendmsg(struct kiocb *i
- 	struct pppoe_hdr *ph;
- 	struct net_device *dev;
- 	char *start;
-+	int hlen;
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -465,7 +465,6 @@ static int snd_pcm_hw_param_near(struct
+ 		v = snd_pcm_hw_param_last(pcm, params, var, dir);
+ 	else
+ 		v = snd_pcm_hw_param_first(pcm, params, var, dir);
+-	snd_BUG_ON(v < 0);
+ 	return v;
+ }
  
- 	lock_sock(sk);
- 	if (sock_flag(sk, SOCK_DEAD) || !(sk->sk_state & PPPOX_CONNECTED)) {
-@@ -856,16 +857,16 @@ static int pppoe_sendmsg(struct kiocb *i
- 	if (total_len > (dev->mtu + dev->hard_header_len))
- 		goto end;
- 
--
--	skb = sock_wmalloc(sk, total_len + dev->hard_header_len + 32,
--			   0, GFP_KERNEL);
-+	hlen = LL_RESERVED_SPACE(dev);
-+	skb = sock_wmalloc(sk, hlen + sizeof(*ph) + total_len +
-+			   dev->needed_tailroom, 0, GFP_KERNEL);
- 	if (!skb) {
- 		error = -ENOMEM;
- 		goto end;
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -1546,7 +1546,7 @@ int snd_pcm_hw_param_first(struct snd_pc
+ 		return changed;
+ 	if (params->rmask) {
+ 		int err = snd_pcm_hw_refine(pcm, params);
+-		if (snd_BUG_ON(err < 0))
++		if (err < 0)
+ 			return err;
  	}
- 
- 	/* Reserve space for headers. */
--	skb_reserve(skb, dev->hard_header_len);
-+	skb_reserve(skb, hlen);
- 	skb_reset_network_header(skb);
- 
- 	skb->dev = dev;
-@@ -926,7 +927,7 @@ static int __pppoe_xmit(struct sock *sk,
- 	/* Copy the data if there is no space for the header or if it's
- 	 * read-only.
- 	 */
--	if (skb_cow_head(skb, sizeof(*ph) + dev->hard_header_len))
-+	if (skb_cow_head(skb, LL_RESERVED_SPACE(dev) + sizeof(*ph)))
- 		goto abort;
- 
- 	__skb_push(skb, sizeof(*ph));
+ 	return snd_pcm_hw_param_value(params, var, dir);
+@@ -1592,7 +1592,7 @@ int snd_pcm_hw_param_last(struct snd_pcm
+ 		return changed;
+ 	if (params->rmask) {
+ 		int err = snd_pcm_hw_refine(pcm, params);
+-		if (snd_BUG_ON(err < 0))
++		if (err < 0)
+ 			return err;
+ 	}
+ 	return snd_pcm_hw_param_value(params, var, dir);
