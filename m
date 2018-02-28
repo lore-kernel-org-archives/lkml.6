@@ -1,78 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933123AbeB1THa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:07:30 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:57257 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932423AbeB1TH3 (ORCPT
+        id S933238AbeB1THr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:07:47 -0500
+Received: from mail-pg0-f45.google.com ([74.125.83.45]:42388 "EHLO
+        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932365AbeB1THp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:07:29 -0500
-X-ME-Sender: <xms:8P2WWh0HNsZMVz94kpFlV_AuNgrXk3jHfrXpWlPpxRabBrmaq5D5fg>
-Date: Wed, 28 Feb 2018 16:07:25 -0300
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-To: "Raj, Ashok" <ashok.raj@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/7] x86/microcode: Do not upload microcode if CPUs are
- offline
-Message-ID: <20180228190725.c2yuivmmfiezsict@khazad-dum.debian.net>
-References: <20180228102846.13447-1-bp@alien8.de>
- <20180228102846.13447-5-bp@alien8.de>
- <20180228131156.i4y6la7besdflffd@khazad-dum.debian.net>
- <20180228132639.GA23235@araj-mobl1.jf.intel.com>
+        Wed, 28 Feb 2018 14:07:45 -0500
+X-Google-Smtp-Source: AH8x226wphMvTsc8EJk9RYXFYlMSGBmWnAU4FFVuqJkjxLra6rYabQXhisvKJUYqfIdgYP24pyZ4Uw==
+Reply-To: minyard@acm.org
+Subject: Re: Regression in IPMI on 4.15.6
+From: Corey Minyard <minyard@acm.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: openipmi-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <7b4cd699-1a77-5412-5346-b30e44bfc9c9@redhat.com>
+ <33fb6125-7ffa-0d3a-e1d6-1a849b816867@acm.org>
+ <bdb67791-9a2c-bd04-5678-efb6b3cdf962@acm.org>
+Message-ID: <dc401118-8398-5985-3cb0-9a63bfe26148@acm.org>
+Date: Wed, 28 Feb 2018 13:07:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228132639.GA23235@araj-mobl1.jf.intel.com>
-X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
- 0BD9 E811 39CB 4807
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <bdb67791-9a2c-bd04-5678-efb6b3cdf962@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018, Raj, Ashok wrote:
-> On Wed, Feb 28, 2018 at 10:11:56AM -0300, Henrique de Moraes Holschuh wrote:
-> > > Avoid loading microcode if any of the CPUs are offline, and issue a
-> > > warning. Having different microcode revisions on the system at any time
-> > > is outright dangerous.
-> > 
-> > Even if we update that microcode during CPU early bring-up, before we
-> > mark it on-line and start using it?
-> > 
-> > AFAIK, late-loading or not, this is what should happen in the current
-> > code: APs that are brought up after a microcode update is loaded (either
-> > by the early or late driver, it doesn't matter) will be always
-> > *early-updated* to the new microcode.
-> > 
-> > Is it dangerous to have an offline core at an older microcode revision
-> > than the online cores?
-> 
-> We don't want to leave a system and allow the user to update microcode
-> when some cpus are offline. Remember cpu_offline in linux is only 
-> logical offlining.. so the cpu is still in the system.. it can even 
-> participate in MCE for e.g. It is very much alive. Its not a question
-> that "Would it not work" but its not worth to leave an open door and 
-> being paranoid is best!
+On 02/28/2018 08:17 AM, Corey Minyard wrote:
+> On 02/28/2018 07:53 AM, Corey Minyard wrote:
+>> On 02/27/2018 05:55 PM, Laura Abbott wrote:
+>>> Hi,
+>>>
+>>> Fedora got a bug report of a crash in IPMI on 4.15.6
+>>> https://bugzilla.redhat.com/show_bug.cgi?id=1549316
+>>> Unfortunately, it's only a screenshot but it's fairly
+>>> clear. It looks like a panic in the error handling path
+>>> in platform_device_unregister. Any ideas?
+>>>
+>>
+>
+> You may also run into another issue.  You can pull the
+> individual patch at
+>
+> https://github.com/cminyard/linux-ipmi.git 
+> c8a1972e77dbe321ce5ce0247056e727234cbaec
 
-I see.  Thanks for the explanation!
+Actually, it needed a few more tweaks.  Can you do change
+426fa6179dae677134dfb37b21d057819418515b
+instead?  It's "ipmi: Fix some error cleanup issues"
 
-> > I am not against the patch, mind you, but I am curious about why it is
-> > supposed to be dangerous if we're updating the CPUs before we start
-> > using them *anyway*.
-> > 
-> > Also, if this is really dangerous, does it means safe CPU hotplug isn't
-> > possible?  AFAICT, the firmware would have to do it for us, but it
-> > *doesn't* have the up-to-date microcode (*we* had to update it)...
-> 
-> The difference is hot-adding you know you are going to update the current
-> microcode. But leaving a cpu in offline state is leaving it stale for a long
-> time without realizing that you have some stale cores.
+I can send you patches, if you like.  If you could test and get back
+to me, that would be great.
 
-That begs the question: do we have any reasons to not update the
-microcode even the offline cores?
+BTW, the IPMI setup in your system is incorrect.  SMBIOS says it's at a
+memory address, but it's at an I/O address.  And the address given
+doesn't appear to be a valid address, the value read doesn't appear
+to be a valid value.
 
--- 
-  Henrique Holschuh
+-corey
+
+>
+> for that fix.
+>
+> -corey
+>
+>> Yeah, this is fixed by 174134ac7602 "ipmi_si: Fix error
+>> handling of platform device" in mainstream.
+>>
+>> I guess I need to request a backport of this.
+>>
+>> Thanks for reporting.
+>>
+>> -corey
+>>
+>>
+>>> Thanks,
+>>> Laura
+>>
+>>
+>
