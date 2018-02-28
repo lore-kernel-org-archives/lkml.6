@@ -1,49 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935126AbeB1Vnf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 16:43:35 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:42589 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932597AbeB1Vne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:43:34 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 06/16] drm/sun4i: Don't process LVDS if TCON doesn't support it
-Date: Wed, 28 Feb 2018 22:43:30 +0100
-Message-ID: <5333678.QYsGi30oEL@jernej-laptop>
-In-Reply-To: <20180228073608.r2zd3qkiudm2uarm@flea>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net> <20180227222701.9716-7-jernej.skrabec@siol.net> <20180228073608.r2zd3qkiudm2uarm@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S935167AbeB1Vnz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 16:43:55 -0500
+Received: from mga06.intel.com ([134.134.136.31]:4582 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935147AbeB1Vnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 16:43:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="scan'208";a="21849941"
+From: Andi Kleen <andi@firstfloor.org>
+To: tytso@mit.edu
+Cc: linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] random: Optimize add_interrupt_randomness
+Date: Wed, 28 Feb 2018 13:43:28 -0800
+Message-Id: <20180228214328.23108-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+From: Andi Kleen <ak@linux.intel.com>
 
-Dne sreda, 28. februar 2018 ob 08:36:08 CET je Maxime Ripard napisal(a):
-> On Tue, Feb 27, 2018 at 11:26:51PM +0100, Jernej Skrabec wrote:
-> > TCON checks for LVDS properties even if it doesn't support it. Add a
-> > check to skip that part of the code if TCON doesn't support channel 0.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> I have already sent a similar patch here:
-> https://lists.freedesktop.org/archives/dri-devel/2018-February/166665.html
+add_interrupt_randomess always wakes up
+code blocking on /dev/random. This wake up is done
+unconditionally. Unfortunately this means all interrupts
+take the wait queue spinlock, which can be rather expensive
+on large systems processing lots of interrupts.
 
-Right. However, check last chunk in my patch. There is no need to call 
-sun4i_rgb_init() if TCON doesn't support channel 0. It doesn't do anything, 
-except producing warning. Will you add that this change to your patch and then 
-I can remove this patch from next revision?
+We saw 1% cpu time spinning on this on a large macro workload
+running on a large system.
 
-BTW, your patch won't apply cleanly, since you didn't base it on latest code 
-(every TCON variant has at least one entry now).
+I believe it's a recent regression (?)
 
-Best regards,
-Jernej
+Always check if there is a waiter on the wait queue
+before waking up. This check can be done without
+taking a spinlock.
+
+1.06%         10460  [kernel.vmlinux] [k] native_queued_spin_lock_slowpath
+         |
+         ---native_queued_spin_lock_slowpath
+            |
+             --0.57%--_raw_spin_lock_irqsave
+                       |
+                        --0.56%--__wake_up_common_lock
+                                  credit_entropy_bits
+                                  add_interrupt_randomness
+                                  handle_irq_event_percpu
+                                  handle_irq_event
+                                  handle_edge_irq
+                                  handle_irq
+                                  do_IRQ
+                                  common_interrupt
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ drivers/char/random.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index e5b3d3ba4660..64a897a2888f 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -709,7 +709,8 @@ static void credit_entropy_bits(struct entropy_store *r, int nbits)
+ 		}
+ 
+ 		/* should we wake readers? */
+-		if (entropy_bits >= random_read_wakeup_bits) {
++		if (entropy_bits >= random_read_wakeup_bits &&
++		    wq_has_sleeper(&random_read_wait)) {
+ 			wake_up_interruptible(&random_read_wait);
+ 			kill_fasync(&fasync, SIGIO, POLL_IN);
+ 		}
+-- 
+2.14.3
