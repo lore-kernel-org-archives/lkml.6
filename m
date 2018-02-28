@@ -1,28 +1,58 @@
-Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELuVpnSYEUL9JykhjIRtSvUQOq6Ig3spHsodMuE5C1v2Jb4VvLH4HqFYu0GupdiCiB6XE4tP
-ARC-Seal: i=1; a=rsa-sha256; t=1519831344; cv=none;
-        d=google.com; s=arc-20160816;
-        b=I5DapMNRPRTe+en1q/TSEatHMMY0n35vHA+pX4kPhHxIMoBAybNmClV7bPwhFbOBJj
-         z1xX2UGyRI5W9E7QgNnvicfJ9NXndrT/DCAaxeyGIPaWJ3NWMDTAv+LJKWBSc5s6sA/+
-         XC5wFSauVhNU7VV4Vjl2dJdPKoIgMYlcfcLYa8jJ3b3n3ChAUdsGBU6CYRmlIW6FEKlv
-         GyvC4iFqLH86QhsdMuQmjVAQcaD1UEPvD+SRi39dfpF/2T8byeQRTua5pOjTTbs46P04
-         yFu9uGJ9aRwEVfWiIcKawOMcbm1eTtQWpmzW7Kf4LeUP0eNJhy4euReLNfTQbQl2L6Jg
-         TIEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
-         :content-transfer-encoding:content-disposition
-         :arc-authentication-results;
-        bh=SmfHUqHirySy5Er1Zf/s4X3OQbs6O/cEYv7kMTme39M=;
-        b=jL+uSGSzcmkH0BWNgBbk+sQ2MekeCFnJjjnK6Jh6AoIzK4JWtF1MXo46cA6FHjZIyi
-         CCGPx6RuybJ9RjIsTUiI0oyQ7/wG54JzR9r1z7cr3yxgX4OYFqu72bXj12KerjWQ7P5R
-         IMuQJ0ZS1m8KznIbQcWDVkX7q+q1uIzQvWW4+1XN574wU8RwsD05WMw3Y3CfXshz6mV2
-         BylNZo53Na5EJ3Tl5DKLOlKy8uEbsfpqm8zBgbNdzHsWcmxEn6nEgI7NSFcJmCcDqYnS
-         hCQuZn8Z+ZCDN5LnhDmuTitVLOgjl0HRjwyGkqOqO36eIxNEfpL4EgOw9aQRj4vVCydA
-         8HOA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-422553-1519831404-2-10275081889922275372
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519831404; b=LECHFXH2zbMGDUi7mdEPB65S6k8xiKOW2DHEh2OG/DPfNjl
+    mm+XdyzGSmLjxt+S7la/q77C72VHJXUI/cpDtl0jZuY0xWBF2vlb9EJht4XyoKCe
+    wx3Q/SVopOCvP5l5dJ8mB9LGwElPc+AJQ5KpXv4VSKlUYKb4jCPnKL/Gn3LGBZ2t
+    xfGxm0QJ6/k1x0gXcFeil56aIdKYxgcLA6k7NHYUoED8FM8RdbM6YkvJVP09OCJQ
+    pnNAzsHvXjqgfuPXH9lhDy+ylEM58lT3Kq6iQNZA6O69CCOrM3K/EdqkUK3ixogE
+    Rn/teoJUgx4pv/8sGsxK2nyqYShX46SCgmWyavQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
+    :sender:list-id; s=arctest; t=1519831404; bh=lw480g0p728cFqvjq0N
+    X/84SMjtp4+SYO/ZCZoGewHo=; b=KEwnRRxOhGFs0iX8mXG1rZ9OLO8iWXxg3a1
+    +F8bRewF0lXrLov22xcVvJMCWAqNQxuIbXW7QYsIrKQCJvyvBfzlaIZYAXykG+dG
+    jxCN5p2nBwCqFvLL8kvbpvhRn2z11MkeICZRa+pTXieqwpMofy3LeRGS1K4V4vYj
+    snxOiGFwdfTfuIwG+c9NFxYidzVetPqihL3TWQYRlWgrkyoAoyu/OGdX03Tzfsiq
+    nVCw8P33iVMPT2ww5GMtzQI/u7KEvkaUWGws5/UloIWXTunrZyuvlTno8gwYcnGT
+    whmyKh7Hd1FZ4zHzDhZwFvBfyBByYVrzI16c1a1K9D0N6NabdHg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932400AbeB1PWr (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:22:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33210 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752631AbeB1PWc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:32 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -30,20 +60,22 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Shuah Khan" <shuahkh@osg.samsung.com>
+        "James Morris" <james.l.morris@oracle.com>,
+        "Takashi Iwai" <tiwai@suse.de>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "David Howells" <dhowells@redhat.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.420930271@decadent.org.uk>
+Message-ID: <lsq.1519831218.233655938@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 128/254] usbip: stub: stop printing kernel pointer
- addresses in messages
+Subject: [PATCH 3.16 075/254] X.509: fix buffer overflow detection in
+ sprint_oid()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658664414227382?=
-X-GMAIL-MSGID: =?utf-8?q?1593658671803805142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +83,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 248a22044366f588d46754c54dfe29ffe4f8b4df upstream.
+commit 47e0a208fb9d91e3f3c86309e752b13a36470ae8 upstream.
 
-Remove and/or change debug, info. and error messages to not print
-kernel pointer addresses.
+In sprint_oid(), if the input buffer were to be more than 1 byte too
+small for the first snprintf(), 'bufsize' would underflow, causing a
+buffer overflow when printing the remainder of the OID.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Drop change in stub_complete()
- - Adjust filenames]
+Fortunately this cannot actually happen currently, because no users pass
+in a buffer that can be too small for the first snprintf().
+
+Regardless, fix it by checking the snprintf() return value correctly.
+
+For consistency also tweak the second snprintf() check to look the same.
+
+Fixes: 4f73175d0375 ("X.509: Add utility functions to render OIDs as strings")
+Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_main.c | 5 +++--
- drivers/staging/usbip/stub_rx.c   | 7 ++-----
- drivers/staging/usbip/stub_tx.c   | 6 +++---
- 3 files changed, 8 insertions(+), 10 deletions(-)
+ lib/oid_registry.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -256,11 +256,12 @@ void stub_device_cleanup_urbs(struct stu
- 	struct stub_priv *priv;
- 	struct urb *urb;
+--- a/lib/oid_registry.c
++++ b/lib/oid_registry.c
+@@ -120,10 +120,10 @@ int sprint_oid(const void *data, size_t
  
--	dev_dbg(&sdev->udev->dev, "free sdev %p\n", sdev);
-+	dev_dbg(&sdev->udev->dev, "Stub device cleaning up urbs\n");
+ 	n = *v++;
+ 	ret = count = snprintf(buffer, bufsize, "%u.%u", n / 40, n % 40);
++	if (count >= bufsize)
++		return -ENOBUFS;
+ 	buffer += count;
+ 	bufsize -= count;
+-	if (bufsize == 0)
+-		return -ENOBUFS;
  
- 	while ((priv = stub_priv_pop(sdev))) {
- 		urb = priv->urb;
--		dev_dbg(&sdev->udev->dev, "free urb %p\n", urb);
-+		dev_dbg(&sdev->udev->dev, "free urb seqnum %lu\n",
-+			priv->seqnum);
- 		usb_kill_urb(urb);
- 
- 		kmem_cache_free(stub_priv_cache, priv);
---- a/drivers/staging/usbip/stub_rx.c
-+++ b/drivers/staging/usbip/stub_rx.c
-@@ -225,9 +225,6 @@ static int stub_recv_cmd_unlink(struct s
- 		if (priv->seqnum != pdu->u.cmd_unlink.seqnum)
- 			continue;
- 
--		dev_info(&priv->urb->dev->dev, "unlink urb %p\n",
--			 priv->urb);
--
- 		/*
- 		 * This matched urb is not completed yet (i.e., be in
- 		 * flight in usb hcd hardware/driver). Now we are
-@@ -266,8 +263,8 @@ static int stub_recv_cmd_unlink(struct s
- 		ret = usb_unlink_urb(priv->urb);
- 		if (ret != -EINPROGRESS)
- 			dev_err(&priv->urb->dev->dev,
--				"failed to unlink a urb %p, ret %d\n",
--				priv->urb, ret);
-+				"failed to unlink a urb # %lu, ret %d\n",
-+				priv->seqnum, ret);
- 
- 		return 0;
+ 	while (v < end) {
+ 		num = 0;
+@@ -141,9 +141,9 @@ int sprint_oid(const void *data, size_t
+ 			} while (n & 0x80);
+ 		}
+ 		ret += count = snprintf(buffer, bufsize, ".%lu", num);
+-		buffer += count;
+-		if (bufsize <= count)
++		if (count >= bufsize)
+ 			return -ENOBUFS;
++		buffer += count;
+ 		bufsize -= count;
  	}
---- a/drivers/staging/usbip/stub_tx.c
-+++ b/drivers/staging/usbip/stub_tx.c
-@@ -201,8 +201,8 @@ static int stub_send_ret_submit(struct s
  
- 		/* 1. setup usbip_header */
- 		setup_ret_submit_pdu(&pdu_header, urb);
--		usbip_dbg_stub_tx("setup txdata seqnum: %d urb: %p\n",
--				  pdu_header.base.seqnum, urb);
-+		usbip_dbg_stub_tx("setup txdata seqnum: %d\n",
-+				  pdu_header.base.seqnum);
- 		usbip_header_correct_endian(&pdu_header, 1);
- 
- 		iov[iovnum].iov_base = &pdu_header;
