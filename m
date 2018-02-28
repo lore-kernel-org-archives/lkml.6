@@ -1,33 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964839AbeB1XHQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:07:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58516 "EHLO mail.kernel.org"
+        id S964881AbeB1XHv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:07:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935541AbeB1XHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:07:15 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE97214EE
+        id S964867AbeB1XHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 18:07:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22A8214EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 28 Feb 2018 17:07:13 -0600
+Date: Wed, 28 Feb 2018 17:07:48 -0600
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: David Woodhouse <dwmw@amazon.co.uk>
-Cc: mpe@ellerman.id.au, benh@kernel.crashing.org, bhelgaas@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+Cc: chris@zankel.net, jcmvbkbc@gmail.com, linux-xtensa@linux-xtensa.org,
+        bhelgaas@google.com, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Use generic pci_mmap_resource_range()
-Message-ID: <20180228230713.GP127842@bhelgaas-glaptop.roam.corp.google.com>
-References: <1519045191-22145-1-git-send-email-dwmw@amazon.co.uk>
+Subject: Re: [PATCH] xtensa: Use generic pci_mmap_resource_range()
+Message-ID: <20180228230747.GQ127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1519045353-22496-1-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519045191-22145-1-git-send-email-dwmw@amazon.co.uk>
+In-Reply-To: <1519045353-22496-1-git-send-email-dwmw@amazon.co.uk>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 12:59:51PM +0000, David Woodhouse wrote:
+On Mon, Feb 19, 2018 at 01:02:33PM +0000, David Woodhouse wrote:
 > Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
 > ARM64") added this generic function with the intent of using it
 > everywhere and ultimately killing the old arch-specific implementations.
@@ -38,40 +38,46 @@ On Mon, Feb 19, 2018 at 12:59:51PM +0000, David Woodhouse wrote:
 
 Applied to pci/resource-mmap for v4.17, thanks!
 
-Powerpc folks, let me know if you have applied this or would like to, and
+Xtensa folks, let me know if you have applied this or would like to, and
 I'll drop it.
 
 > ---
->  arch/powerpc/include/asm/pci.h   |   9 ++--
->  arch/powerpc/kernel/pci-common.c | 106 ++++-----------------------------------
->  2 files changed, 15 insertions(+), 100 deletions(-)
+>  arch/xtensa/include/asm/pci.h |  7 ++--
+>  arch/xtensa/kernel/pci.c      | 94 ++++---------------------------------------
+>  2 files changed, 12 insertions(+), 89 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/pci.h b/arch/powerpc/include/asm/pci.h
-> index d82802f..401c62a 100644
-> --- a/arch/powerpc/include/asm/pci.h
-> +++ b/arch/powerpc/include/asm/pci.h
-> @@ -76,10 +76,11 @@ extern int pci_proc_domain(struct pci_bus *bus);
+> diff --git a/arch/xtensa/include/asm/pci.h b/arch/xtensa/include/asm/pci.h
+> index 5c83798..d5a8215 100644
+> --- a/arch/xtensa/include/asm/pci.h
+> +++ b/arch/xtensa/include/asm/pci.h
+> @@ -44,9 +44,10 @@ extern struct pci_controller* pcibios_alloc_controller(void);
 >  
->  struct vm_area_struct;
+>  #define PCI_DMA_BUS_IS_PHYS	(1)
 >  
-> -/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() and it does WC */
+> -/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() */
 > -#define HAVE_PCI_MMAP		1
 > -#define arch_can_pci_mmap_io()	1
-> -#define arch_can_pci_mmap_wc()	1
 > +/* Tell PCI code what kind of PCI resource mappings we support */
 > +#define HAVE_PCI_MMAP			1
 > +#define ARCH_GENERIC_PCI_MMAP_RESOURCE	1
 > +#define arch_can_pci_mmap_io()		1
-> +#define arch_can_pci_mmap_wc()		1
 >  
->  extern int pci_legacy_read(struct pci_bus *bus, loff_t port, u32 *val,
->  			   size_t count);
-> diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-> index 446c796..fe9733f 100644
-> --- a/arch/powerpc/kernel/pci-common.c
-> +++ b/arch/powerpc/kernel/pci-common.c
-> @@ -410,72 +410,22 @@ static int pci_read_irq_line(struct pci_dev *pci_dev)
->  }
+>  #endif /* __KERNEL__ */
+>  
+> diff --git a/arch/xtensa/kernel/pci.c b/arch/xtensa/kernel/pci.c
+> index d981f01..b7c7a60 100644
+> --- a/arch/xtensa/kernel/pci.c
+> +++ b/arch/xtensa/kernel/pci.c
+> @@ -39,7 +39,6 @@
+>   * pcibios_align_resource
+>   * pcibios_fixup_bus
+>   * pci_bus_add_device
+> - * pci_mmap_page_range
+>   */
+>  
+>  struct pci_controller* pci_ctrl_head;
+> @@ -258,98 +257,21 @@ pci_controller_num(struct pci_dev *dev)
+>  #endif /* CONFIG_PROC_FS */
 >  
 >  /*
 > - * Platform support for /proc/bus/pci/X/Y mmap()s,
@@ -79,7 +85,7 @@ I'll drop it.
 > + * Platform support for /proc/bus/pci/X/Y mmap()s.
 >   *  -- paulus.
 >   */
-> -
+>  
 > -/*
 > - * Adjust vm_pgoff of VMA such that it is the physical page offset
 > - * corresponding to the 32-bit pci bus offset for DEV requested by the user.
@@ -91,27 +97,27 @@ I'll drop it.
 > - *
 > - * Returns negative error code on failure, zero on success.
 > - */
-> -static struct resource *__pci_mmap_make_offset(struct pci_dev *dev,
-> -					       resource_size_t *offset,
-> -					       enum pci_mmap_state mmap_state)
+> -static __inline__ int
+> -__pci_mmap_make_offset(struct pci_dev *dev, struct vm_area_struct *vma,
+> -		       enum pci_mmap_state mmap_state)
 > +int pci_iobar_pfn(struct pci_dev *pdev, int bar, struct vm_area_struct *vma)
 >  {
-> -	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+> -	struct pci_controller *pci_ctrl = (struct pci_controller*) dev->sysdata;
+> -	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
 > -	unsigned long io_offset = 0;
 > -	int i, res_bit;
-> -
-> -	if (hose == NULL)
-> -		return NULL;		/* should never happen */
-> -
+> +	struct pci_controller *pci_ctrl = (struct pci_controller*) pdev->sysdata;
+> +	resource_size_t ioaddr = pci_resource_start(pdev, bar);
+>  
+>  	if (pci_ctrl == 0)
+>  		return -EINVAL;		/* should never happen */
+>  
 > -	/* If memory, add on the PCI bridge address offset */
 > -	if (mmap_state == pci_mmap_mem) {
-> -#if 0 /* See comment in pci_resource_to_user() for why this is disabled */
-> -		*offset += hose->pci_mem_offset;
-> -#endif
 > -		res_bit = IORESOURCE_MEM;
 > -	} else {
-> -		io_offset = (unsigned long)hose->io_base_virt - _IO_BASE;
-> -		*offset += io_offset;
+> -		io_offset = (unsigned long)pci_ctrl->io_space.base;
+> -		offset += io_offset;
 > -		res_bit = IORESOURCE_IO;
 > -	}
 > -
@@ -122,9 +128,7 @@ I'll drop it.
 > -	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
 > -		struct resource *rp = &dev->resource[i];
 > -		int flags = rp->flags;
-> +	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-> +	resource_size_t ioaddr = pci_resource_start(pdev, bar);
->  
+> -
 > -		/* treat ROM as memory (should be already) */
 > -		if (i == PCI_ROM_RESOURCE)
 > -			flags |= IORESOURCE_MEM;
@@ -134,30 +138,21 @@ I'll drop it.
 > -			continue;
 > -
 > -		/* In the range of this resource? */
-> -		if (*offset < (rp->start & PAGE_MASK) || *offset > rp->end)
+> -		if (offset < (rp->start & PAGE_MASK) || offset > rp->end)
 > -			continue;
-> +	if (!hose)
-> +		return -EINVAL;
->  
+> -
 > -		/* found it! construct the final physical address */
 > -		if (mmap_state == pci_mmap_io)
-> -			*offset += hose->io_base_phys - io_offset;
-> -		return rp;
+> -			offset += pci_ctrl->io_space.start - io_offset;
+> -		vma->vm_pgoff = offset >> PAGE_SHIFT;
+> -		return 0;
 > -	}
-> +	/* Convert to an offset within this PCI controller */
-> +	ioaddr -= (unsigned long)hose->io_base_virt - _IO_BASE;
->  
-> -	return NULL;
-> +	vma->vm_pgoff += (ioaddr + hose->io_base_phys) >> PAGE_SHIFT;
-> +	return 0;
->  }
->  
->  /*
-> @@ -527,42 +477,6 @@ pgprot_t pci_phys_mem_access_prot(struct file *file,
->  	return prot;
->  }
->  
 > -
+> -	return -EINVAL;
+> -}
+> +	/* Convert to an offset within this PCI controller */
+> +	ioaddr -= (unsigned long)pci_ctrl->io_space.base;
+>  
 > -/*
 > - * Perform the actual remap of the pages for a PCI device mapping, as
 > - * appropriate for this architecture.  The region in the process to map
@@ -170,32 +165,24 @@ I'll drop it.
 > - */
 > -int pci_mmap_page_range(struct pci_dev *dev, int bar,
 > -			struct vm_area_struct *vma,
-> -			enum pci_mmap_state mmap_state, int write_combine)
+> -			enum pci_mmap_state mmap_state,
+> -			int write_combine)
 > -{
-> -	resource_size_t offset =
-> -		((resource_size_t)vma->vm_pgoff) << PAGE_SHIFT;
-> -	struct resource *rp;
 > -	int ret;
 > -
-> -	rp = __pci_mmap_make_offset(dev, &offset, mmap_state);
-> -	if (rp == NULL)
-> -		return -EINVAL;
+> -	ret = __pci_mmap_make_offset(dev, vma, mmap_state);
+> -	if (ret < 0)
+> -		return ret;
 > -
-> -	vma->vm_pgoff = offset >> PAGE_SHIFT;
-> -	if (write_combine)
-> -		vma->vm_page_prot = pgprot_noncached_wc(vma->vm_page_prot);
-> -	else
-> -		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> -	vma->vm_page_prot = pgprot_device(vma->vm_page_prot);
 > -
-> -	ret = remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
-> -			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
+> -	ret = io_remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+> -			         vma->vm_end - vma->vm_start,vma->vm_page_prot);
 > -
 > -	return ret;
-> -}
-> -
->  /* This provides legacy IO read access on a bus */
->  int pci_legacy_read(struct pci_bus *bus, loff_t port, u32 *val, size_t size)
->  {
+> +	vma->vm_pgoff += (ioaddr + pci_ctrl->io_space.start) >> PAGE_SHIFT;
+> +	return 0;
+>  }
 > -- 
 > 2.7.4
 > 
