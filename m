@@ -1,51 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeB1Gpd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:45:33 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37882 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeB1Gpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:45:32 -0500
-X-Google-Smtp-Source: AH8x224Zeoq6qMPnC0KKCi3M8QhITntXSh4sBRUi+ZuvgvAztMphMT93GUcAxh0g4VXGdJBiWIFpgQ==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: lftan@altera.com, arnd@arndb.de
-Cc: heiko@sntech.de, daniel.lezcano@linaro.org, linus.walleij@linaro.org,
-        viresh.kumar@linaro.org, linux@roeck-us.net,
-        nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, baolin.wang@linaro.org
-Subject: [PATCH] nios2: Use read_persistent_clock64() instead of read_persistent_clock()
-Date: Wed, 28 Feb 2018 14:44:51 +0800
-Message-Id: <c42b5f610064b37551b155cc8ddebda3cd094f2b.1519800122.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        id S1752002AbeB1GrL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:47:11 -0500
+Received: from mga17.intel.com ([192.55.52.151]:27079 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750846AbeB1GrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:47:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,404,1515484800";
+   d="scan'208";a="33420894"
+From: "Zhang, Ning A" <ning.a.zhang@intel.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: maybe a bug in SELinux: security_context_to_sid_core
+Thread-Topic: maybe a bug in SELinux: security_context_to_sid_core
+Thread-Index: AQHTsF/zXv0WT/3/k0CHbnK7eA84DQ==
+Date: Wed, 28 Feb 2018 06:47:07 +0000
+Message-ID: <1519800427.32465.22.camel@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.1]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2239AEC609D0AB4BAD84EC4079DA1A7D@intel.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1S6pKWo016265
 
-Since struct timespec is not y2038 safe on 32bit machines, this patch
-converts read_persistent_clock() to read_persistent_clock64() using
-struct timespec64, as well as converting mktime() to mktime64().
+Hi,
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- arch/nios2/kernel/time.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Before SELinux is initialized, get scontext by secid by using:
 
-diff --git a/arch/nios2/kernel/time.c b/arch/nios2/kernel/time.c
-index 20e8620..ab88b6d 100644
---- a/arch/nios2/kernel/time.c
-+++ b/arch/nios2/kernel/time.c
-@@ -336,9 +336,9 @@ static int __init nios2_time_init(struct device_node *timer)
- 	return ret;
- }
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
--	ts->tv_sec = mktime(2007, 1, 1, 0, 0, 0);
-+	ts->tv_sec = mktime64(2007, 1, 1, 0, 0, 0);
- 	ts->tv_nsec = 0;
- }
- 
--- 
-1.7.9.5
+security_secctx_to_secid() may return wrong numbe
+
+eg:
+security_secctx_to_secid("devnull", strlen("devnull"), &sid);
+
+sid here will be 1
+
+because:
+
+in security_context_to_sid_core:
+
+...
+	if (!ss_initialized) {
+		int i;
+
+		for (i = 1; i < SECINITSID_NUM; i++) {
+			if (!strcmp(initial_sid_to_string[i],
+scontext)) {
+				*sid = i;
+				return 0;
+			}
+		}
+		*sid = SECINITSID_KERNEL;
+		return 0;
+	}
+...
+
+and SECINITSID_DEVNULL equals to SECINITSID_NUM, and it will never get
+right secid for "devnull".
+
+is this by design or bug?
+
+BR.
+Ning.
