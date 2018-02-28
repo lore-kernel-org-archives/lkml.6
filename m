@@ -1,293 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932148AbeB1Nj4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:39:56 -0500
-Received: from lhrrgout.huawei.com ([194.213.3.17]:27798 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752346AbeB1Njy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:39:54 -0500
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC: "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>
-Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Topic: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Index: AQHTqw7IDIDDogvQkEq1sqcC26ySeqO3NQKAgAAS2QCAAJqhgIAAKFgQgAFz7gCAABQHgIAAG9KAgAArLSA=
-Date: Wed, 28 Feb 2018 13:39:40 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA83865DEB7@FRAEML521-MBX.china.huawei.com>
-References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
- <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
- <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
- <20180226161310.061ce3a8@w520.home>
- <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
- <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
- <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
- <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
- <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
-In-Reply-To: <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        id S1752645AbeB1NmL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:42:11 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:52703 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbeB1NmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:42:09 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Airlie <airlied@linux.ie>
+Cc: Arnd Bergmann <arnd@arndb.de>, David Lechner <david@lechnology.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Meghana Madhyastha <meghana.madhyastha@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tinydrm: add backlight dependency
+Date: Wed, 28 Feb 2018 14:40:48 +0100
+Message-Id: <20180228134111.2042877-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:e/i3ftyCf7oTYTma45OqIhkCHPxtjiBYiog4qvnKHi8KBpciuRU
+ bEFYkA9kNGnki/zAbiOXs0mftrUca6dpFg0L94gW76A8ECcKd+jUFmcU81UHtUx0sQfieLD
+ kUTtGBjv0MN7mVL+NzvSapeMypE8iQcCvZ2+8lywM4tH/CNnrhnqgYBRJTxRoPrpsF9Z19V
+ b4d7LKGzLrzJcFCKENjdA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5dcZjLIgImc=:Wl2s6i8CF0eP8F7ZZqfeXU
+ LDvRpy95YnUhK1Qo1lcsB3Bk9k2n4GVkuXUG0k3d5oxH7ECmFvTSZW+9/Wi0ZjRlWskVGr1/T
+ 0vZnU7NL6Wvth9kqvpZqc0U8DcmZbitaBqOUv5bS77kUKa07q6kdCsUPBT1ZIdYUYpQFwlW0i
+ 5voiTa7byOaCtatdRTJPpUd1QxaOi1iyBYLY/R+U+BilmMTv2OrCkZr3+QwbXPBMa3UpJX9Qu
+ m5aHYRNfm/xS6lQT4Ux8+B11FZ+ieGySTqIX4eIjmxP1+MrO6nF0kEwWN85VT42t4S6vi44To
+ 3Vj81xDFZEe4ydSt57mWsaDkHFC6kyHD4/iW0b2VjPl/HhREttS4JmQg9u+WMQP+wpfZL+0s/
+ LUleNptWl/URQd8M3cPLSJ9pP2QGs8mZS6+D076TMdn9PG1TkklfcBp6AZXnmrliC2eAk3xdC
+ UCwfCSA/RUTM6SXs1keDGZbyIrnD/tG6w0r0QHKakcm0GrmvUIs1jdLZ737mHM4f6OTIJWGUS
+ dTmDGgMj0z0mS7lXhYD+TYccSOo3pX5JiAcrf+dY7m9tmZk1QYA9bsoi1aSq9Dvok3kqRxTzk
+ hgf7AzpEs/R8A4+qH+jyVnrF8cXrnpYtNz3ml7nc9FrHw7sw1pP86SEtF57oVNrpCc7g0Vzs4
+ 4Hf0IRUGe8K7VRpSKKfyVXK2dC9sjYcm8UsVYNJZeM9tnzKdZRmKbCY9ik9vqQjqODiRgah8n
+ fVPunkB8Pd66ZOa//Nr4hGMFozMNyHNvlKrDlw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Calling devm_of_find_backlight directly means we get a link failure
+without CONFIG_BACKLIGHT_CLASS_DEVICE:
 
-> -----Original Message-----
-> From: Auger Eric [mailto:eric.auger@redhat.com]
-> Sent: Wednesday, February 28, 2018 11:53 AM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> Alex Williamson <alex.williamson@redhat.com>
-> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin Murphy
-> <robin.murphy@arm.com>
-> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
-> iova range
-> 
-> Hi Shameer,
-> 
-> On 28/02/18 10:25, Shameerali Kolothum Thodi wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Auger Eric [mailto:eric.auger@redhat.com]
-> >> Sent: Wednesday, February 28, 2018 9:02 AM
-> >> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> >> Alex Williamson <alex.williamson@redhat.com>
-> >> Cc: pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
-> >> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> >> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
-> Murphy
-> >> <robin.murphy@arm.com>
-> >> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
-> valid
-> >> iova range
-> >>
-> >> Hi Shameer,
-> >>
-> >> On 27/02/18 10:57, Shameerali Kolothum Thodi wrote:
-> >>>
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Auger Eric [mailto:eric.auger@redhat.com]
-> >>>> Sent: Tuesday, February 27, 2018 8:27 AM
-> >>>> To: Alex Williamson <alex.williamson@redhat.com>
-> >>>> Cc: Shameerali Kolothum Thodi
-> <shameerali.kolothum.thodi@huawei.com>;
-> >>>> pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org; linux-
-> >>>> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> >>>> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Robin
-> >> Murphy
-> >>>> <robin.murphy@arm.com>
-> >>>> Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
-> >> valid
-> >>>> iova range
-> >>>>
-> >>>> Hi,
-> >>>> On 27/02/18 00:13, Alex Williamson wrote:
-> >>>>> On Mon, 26 Feb 2018 23:05:43 +0100
-> >>>>> Auger Eric <eric.auger@redhat.com> wrote:
-> >>>>>
-> >>>>>> Hi Shameer,
-> >>>>>>
-> >>>>>> [Adding Robin in CC]
-> >>>>>> On 21/02/18 13:22, Shameer Kolothum wrote:
-> >>>>>>> This checks and rejects any dma map request outside valid iova
-> >>>>>>> range.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Shameer Kolothum
-> >>>> <shameerali.kolothum.thodi@huawei.com>
-> >>>>>>> ---
-> >>>>>>>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
-> >>>>>>>  1 file changed, 22 insertions(+)
-> >>>>>>>
-> >>>>>>> diff --git a/drivers/vfio/vfio_iommu_type1.c
-> >>>> b/drivers/vfio/vfio_iommu_type1.c
-> >>>>>>> index a80884e..3049393 100644
-> >>>>>>> --- a/drivers/vfio/vfio_iommu_type1.c
-> >>>>>>> +++ b/drivers/vfio/vfio_iommu_type1.c
-> >>>>>>> @@ -970,6 +970,23 @@ static int vfio_pin_map_dma(struct
-> vfio_iommu
-> >>>> *iommu, struct vfio_dma *dma,
-> >>>>>>>  	return ret;
-> >>>>>>>  }
-> >>>>>>>
-> >>>>>>> +/*
-> >>>>>>> + * Check dma map request is within a valid iova range
-> >>>>>>> + */
-> >>>>>>> +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
-> >>>>>>> +				dma_addr_t start, dma_addr_t end)
-> >>>>>>> +{
-> >>>>>>> +	struct list_head *iova = &iommu->iova_list;
-> >>>>>>> +	struct vfio_iova *node;
-> >>>>>>> +
-> >>>>>>> +	list_for_each_entry(node, iova, list) {
-> >>>>>>> +		if ((start >= node->start) && (end <= node->end))
-> >>>>>>> +			return true;
-> >>>>>> I am now confused by the fact this change will prevent existing QEMU
-> >>>>>> from working with this series on some platforms. For instance QEMU
-> virt
-> >>>>>> machine GPA space collides with Seattle PCI host bridge windows. On
-> >> ARM
-> >>>>>> the smmu and smmuv3 drivers report the PCI host bridge windows as
-> >>>>>> reserved regions which does not seem to be the case on other
-> platforms.
-> >>>>>> The change happened in commit
-> >>>> 273df9635385b2156851c7ee49f40658d7bcb29d
-> >>>>>> (iommu/dma: Make PCI window reservation generic).
-> >>>>>>
-> >>>>>> For background, we already discussed the topic after LPC 2016. See
-> >>>>>> https://www.spinics.net/lists/kernel/msg2379607.html.
-> >>>>>>
-> >>>>>> So is it the right choice to expose PCI host bridge windows as reserved
-> >>>>>> regions? If yes shouldn't we make a difference between those and MSI
-> >>>>>> windows in this series and do not reject any user space DMA_MAP
-> >> attempt
-> >>>>>> within PCI host bridge windows.
-> >>>>>
-> >>>>> If the QEMU machine GPA collides with a reserved region today, then
-> >>>>> either:
-> >>>>>
-> >>>>> a) The mapping through the IOMMU works and the reserved region is
-> >> wrong
-> >>>>>
-> >>>>> or
-> >>>>>
-> >>>>> b) The mapping doesn't actually work, QEMU is at risk of data loss by
-> >>>>> being told that it worked, and we're justified in changing that
-> >>>>> behavior.
-> >>>>>
-> >>>>> Without knowing the specifics of SMMU, it doesn't particularly make
-> >>>>> sense to me to mark the entire PCI hierarchy MMIO range as reserved,
-> >>>>> unless perhaps the IOMMU is incapable of translating those IOVAs.
-> >>>> to me the limitation does not come from the smmu itself, which is a
-> >>>> separate HW block sitting between the root complex and the
-> interconnect.
-> >>>> If ACS is not enforced by the PCIe subsystem, the transaction will never
-> >>>> reach the IOMMU.
-> >>>
-> >>> True. And we do have one such platform where ACS is not enforced but
-> >>> reserving the regions and possibly creating holes while launching VM will
-> >>> make it secure. But I do wonder how we will solve the device grouping
-> >>> in such cases.
-> >>>
-> >>> The Seattle PCI host bridge windows case you mentioned has any pci quirk
-> >>> to claim that they support ACS?
-> >> No there is none to my knowledge. I am applying Alex' not upstream ACS
-> >> overwrite patch.
-> >
-> > Ok. But isn't that patch actually applicable to cases where ACS is really
-> supported
-> > by hardware but the capability is not available?
-> 
-> My understanding is normally yes. If you apply the patch whereas the HW
-> practically does not support ACS, then you fool the kernel pretending
-> there is isolation whereas there is not. I don't know the exact
-> capability of the HW on AMD Seattle and effectively I should have cared
-> about it much earlier and if the HW capability were supported and not
-> properly exposed we should have implemented a clean quirk for this platform.
+drivers/gpu/drm/tinydrm/mi0283qt.o: In function `mi0283qt_probe':
+mi0283qt.c:(.text+0x684): undefined reference to `devm_of_find_backlight'
 
-Ok. Thanks for the details.
- 
-> 
->   I am just trying to see whether
-> > the argument that we should allow DMA MAP requests for this(non-ACS case)
-> > even if the Guest GPA conflict with reserved region holds good. The fact that
-> may
-> > be it was working before is that the Guest never actually allocated any GPA
-> from
-> > the reserved region or maybe I am missing something here.
-> 
-> If my understanding is correct, in ideal world we would report the PCI
-> host bridge window as reserved only in case ACS is not supported. If you
-> apply the patch and overrides the ACS, then the DMA_MAP  would be
-> allowed. In case the HW does not support ACS, then you could face
-> situations where one EP tries to access GPA that never reaches the IOMMU
-> (because it corresponds to the BAR of another downstream EP). Same can
-> happen at the moment.
+This adds an explicit Kconfig dependency for it. While I did not
+observe that failure for st7735r, I assume the same change is needed
+there for the same reason.
 
-Yes, this is my understanding too.
+Fixes: d1a2e7004b5e ("drm/tinydrm: Replace tinydrm_of_find_backlight with of_find_backlight")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/tinydrm/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Just wondering the below changes to the iommu_dma_get_resv_regions() is
-good enough to take care this issue or not.
-
-Thanks,
-Shameer
-
--- >8 --
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index f05f3cf..b6e89d5 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -34,6 +34,8 @@
- 
- #define IOMMU_MAPPING_ERROR	0
- 
-+#define REQ_ACS_FLAGS   (PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF)
-+
- struct iommu_dma_msi_page {
- 	struct list_head	list;
- 	dma_addr_t		iova;
-@@ -183,6 +185,9 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
- 	if (!dev_is_pci(dev))
- 		return;
- 
-+	if (pci_acs_path_enabled(to_pci_dev(dev), NULL, REQ_ACS_FLAGS))
-+		return;
-+
- 	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
- 	resource_list_for_each_entry(window, &bridge->windows) {
- 		struct iommu_resv_region *region;
----8--
-
-
-> 
-> Eric
-> >
-> > Thanks,
-> > Shameer
-> >
-> >> Thanks
-> >>
-> >> Eric
-> >>>
-> >>>> In the case of such overlap, shouldn't we just warn the end-user that
-> >>>> this situation is dangerous instead of forbidding the use case which
-> >>>> worked "in most cases" until now.
-> >>>
-> >>> Yes, may be something similar to the allow_unsafe_interrupts case, if
-> >>> that is acceptable.
-> >>>
-> >>> Thanks,
-> >>> Shameer
-> >>>
-> >>>>> Are we trying to prevent untranslated p2p with this reserved range?
-> >>>>> That's not necessarily a terrible idea, but it seems that doing it for
-> >>>>> that purpose would need to be a lot smarter, taking into account ACS
-> >>>>> and precisely selecting ranges within the peer address space that would
-> >>>>> be untranslated.  Perhaps only populated MMIO within non-ACS
-> >>>>> hierarchies.  Thanks,
-> >>>>
-> >>>> Indeed taking into account the ACS capability would refine the
-> >>>> situations where a risk exists.
-> >>>>
-> >>>> Thanks
-> >>>>
-> >>>> Eric
-> >>>>>
-> >>>>> Alex
-> >>>>>
+diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+index 13339be843bc..4592a5e3f20b 100644
+--- a/drivers/gpu/drm/tinydrm/Kconfig
++++ b/drivers/gpu/drm/tinydrm/Kconfig
+@@ -23,6 +23,7 @@ config TINYDRM_ILI9225
+ config TINYDRM_MI0283QT
+ 	tristate "DRM support for MI0283QT"
+ 	depends on DRM_TINYDRM && SPI
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
+ 	help
+ 	  DRM driver for the Multi-Inno MI0283QT display panel
+@@ -54,6 +55,7 @@ config TINYDRM_ST7586
+ config TINYDRM_ST7735R
+ 	tristate "DRM support for Sitronix ST7735R display panels"
+ 	depends on DRM_TINYDRM && SPI
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
+ 	help
+ 	  DRM driver Sitronix ST7735R with one of the following LCDs:
+-- 
+2.9.0
