@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x224stheKRs3GKjDpZvBhwmEdTXkJ5a+uFDhiA7z7kbwzYfFvHzzNEA1PVBri0lF/VGPtFmI6
-ARC-Seal: i=1; a=rsa-sha256; t=1519831347; cv=none;
+X-Google-Smtp-Source: AH8x225pgzWi1zaifyq53QSSPrG6eGu5z4L4JzUBBi+xQ5eEKuBxNUGXxsRpy52B0GvbqRJHNyMA
+ARC-Seal: i=1; a=rsa-sha256; t=1519831345; cv=none;
         d=google.com; s=arc-20160816;
-        b=p+qsdLXZzW6v/vsG1fECphDFQO3OYlRmLvX2EJgnECS7X14YPw3vapjPH61RWBgNUR
-         0CJnSZMHBzwg5xK/66N331Y7cQskKAUpC2tfp7Mn+ok2EgnYhXlO7QPPL4zqC8TAa6Ob
-         yS5yWRhVNyYeQDk+yhPBu+sUcjSAf/3okLke6L85IC1zte/2T/vx9ZEiSSSLRE/KWf2B
-         pGdPFoJu2LoCwqnBXwVDooK73yW5sE1pExR4d+wqPdqxFfB/UkargrfTCzslKdw7taD9
-         Qv8i2Q0njpWqvxQL27Onb1NnwRd0GueM4I2TRqvOe0V5g5kQ1COfd/MuqUYO8XHAQWgN
-         aqoA==
+        b=HEdEjOoCGyFQxKUqcNGJ6IbjJRPTxiI9TcTwnQ2L6HNobcpf2EEl+/uEzOnTKc6x26
+         TsmrValh4/LRuyDHj4QJVGdV/kCKB9srNvAOhX4XIG9Wn4JCUdmIn2qq9XeSPCtWc1hc
+         rCaSGR9N6ffUUW3U3h9SHW8MknsNug0sLGwOURfChG6lvi6czbvm3PMOYXFpTHRoHkCd
+         XNaaGkCAGjh+/o2Hyq2NkhwZsfjgpyty+wpy63lYAsuHcwGWdLpIGUN+YgTf9qe9jJcC
+         88qJCIlbZPvgZXIV9boxCYnlieKHkM/vONJord6j/wIQuR6Qr39RFyU/XQr/dWT6TXto
+         rO4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=o7xGbiYGzyS8HQaxfo3P7evG+W8BdH4l0ByUI/uk+zw=;
-        b=QeQ03rJcwqrFSA5X1oC4mSdCjRwiWcbE/Au55tXRTxBgl7H+K3uL5fzZFYM+HNTGm9
-         eQdl6Ptc0tanUX6sVCvTrqvoY/6TJ1a2E11y/wv7lGnCdydBxjX4UMvU6tuyRdIiT6b5
-         h7cJq5nJxa0v5Vj5M3js5GNCS9bsF57pCqncZvWH/NJtrfzzOf+DRlog5wTCUK9MzKKD
-         S+CFV0hi0pIQGh0BT4dxJ76gzE1JAkNVdm0Teu8sMMafLPnrXtBlNwkeShDLmb+guPXs
-         F7R6ZszuQKZqU7yxyRCrtZVfVeTSMW/QkUjLrRmumJl3Swcl4KFmetj/c7yb6MAeDdMP
-         pTMg==
+        bh=HJneUptBhPsn/l0rdaeJIVvXX1ssmBOVJoDq3b+AstY=;
+        b=zDHIZIBYY4eiZwM6xcaS85ps8ES+GR+nDD9EDefPgkruYBQ8opXEDmvEetuKzJJIbl
+         lNFW12uNq41xYLksuUyIDuU/mF/h0E8n6IWibXrXlVVQsB1PhMB/VTKsdsZ4ZH9+quKF
+         iOL3DC14CEdEfrn7ivKfVsAZ8ny/d+GZeQM8DhjiSY2oPtKkptBOc4L8NisEl36qUoAE
+         Zx89QbbOOONp4PJdqI1of1UQZ+VYOz7W8XUBoXMyY7otyArMooF6ONBOj2ajrESOHI/J
+         MBNRY7e2Q0QmBsT5hgq7EoFn1Z576TsD/VnHEOwz4yQfZNhjroBV5pZWERBDvq7B7G0Q
+         Mc/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,19 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Bin Liu" <b-liu@ti.com>
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ "David Kozub" <zub@linux.fjfi.cvut.cz>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.674591392@decadent.org.uk>
+Message-ID: <lsq.1519831218.946701501@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 077/254] usb: musb: da8xx: fix babble condition handling
+Subject: [PATCH 3.16 078/254] USB: uas and storage: Add US_FL_BROKEN_FUA
+ for another JMicron JMS567 ID
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658674928298239?=
-X-GMAIL-MSGID: =?utf-8?q?1593658674928298239?=
+X-GMAIL-THRID: =?utf-8?q?1593658669092712757?=
+X-GMAIL-MSGID: =?utf-8?q?1593658672406117364?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +52,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: David Kozub <zub@linux.fjfi.cvut.cz>
 
-commit bd3486ded7a0c313a6575343e6c2b21d14476645 upstream.
+commit 62354454625741f0569c2cbe45b2d192f8fd258e upstream.
 
-When babble condition happens, the musb controller might automatically
-turns off VBUS. On DA8xx platform, the controller generates drvvbus
-interrupt for turning off VBUS along with the babble interrupt.
+There is another JMS567-based USB3 UAS enclosure (152d:0578) that fails
+with the following error:
 
-In this case, we should handle the babble interrupt first and recover
-from the babble condition.
+[sda] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[sda] tag#0 Sense Key : Illegal Request [current]
+[sda] tag#0 Add. Sense: Invalid field in cdb
 
-This change ignores the drvvbus interrupt if babble interrupt is also
-generated at the same time, so the babble recovery routine works
-properly.
+The issue occurs both with UAS (occasionally) and mass storage
+(immediately after mounting a FS on a disk in the enclosure).
 
-Signed-off-by: Bin Liu <b-liu@ti.com>
+Enabling US_FL_BROKEN_FUA quirk solves this issue.
+
+This patch adds an UNUSUAL_DEV with US_FL_BROKEN_FUA for the enclosure
+for both UAS and mass storage.
+
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/musb/da8xx.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/usb/storage/unusual_devs.h | 7 +++++++
+ drivers/usb/storage/unusual_uas.h  | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
---- a/drivers/usb/musb/da8xx.c
-+++ b/drivers/usb/musb/da8xx.c
-@@ -350,7 +350,15 @@ static irqreturn_t da8xx_musb_interrupt(
- 			musb->xceiv->state = OTG_STATE_A_WAIT_VRISE;
- 			portstate(musb->port1_status |= USB_PORT_STAT_POWER);
- 			del_timer(&otg_workaround);
--		} else {
-+		} else if (!(musb->int_usb & MUSB_INTR_BABBLE)) {
-+			/*
-+			 * When babble condition happens, drvvbus interrupt
-+			 * is also generated. Ignore this drvvbus interrupt
-+			 * and let babble interrupt handler recovers the
-+			 * controller; otherwise, the host-mode flag is lost
-+			 * due to the MUSB_DEV_MODE() call below and babble
-+			 * recovery logic will not be called.
-+			 */
- 			musb->is_active = 0;
- 			MUSB_DEV_MODE(musb);
- 			otg->default_a = 0;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1981,6 +1981,13 @@ UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_BROKEN_FUA ),
+ 
++/* Reported by David Kozub <zub@linux.fjfi.cvut.cz> */
++UNUSUAL_DEV(0x152d, 0x0578, 0x0000, 0x9999,
++		"JMicron",
++		"JMS567",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BROKEN_FUA),
++
+ /* Reported by Alexandre Oliva <oliva@lsd.ic.unicamp.br>
+  * JMicron responds to USN and several other SCSI ioctls with a
+  * residue that causes subsequent I/O requests to fail.  */
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -131,6 +131,13 @@ UNUSUAL_DEV(0x152d, 0x0567, 0x0000, 0x99
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_BROKEN_FUA | US_FL_NO_REPORT_OPCODES),
+ 
++/* Reported-by: David Kozub <zub@linux.fjfi.cvut.cz> */
++UNUSUAL_DEV(0x152d, 0x0578, 0x0000, 0x9999,
++		"JMicron",
++		"JMS567",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BROKEN_FUA),
++
+ /* Reported-by: Hans de Goede <hdegoede@redhat.com> */
+ UNUSUAL_DEV(0x2109, 0x0711, 0x0000, 0x9999,
+ 		"VIA",
