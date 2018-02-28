@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519838059-3-3340791895859852547
+X-Cyrus-Session-Id: sloti22d1t05-620147-1519838050-2-6625893155302809763
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838058; b=d/OnhUaUep8AAnLvD/6wGfgsBzJfap5RHRBTkMZ8Q1//xIP
-    K2AY1Fsbw8kC0wzovKQsB4s9XAbaEdfc7U0XGDtWcAT8S1NwcqRkFrdEzRIOhhL5
-    fU5fwx8Yo2M4P8PI6if/naHvkwhltuvqnxRw0uwtnBPZ4W4aaKNqCRKEj4fIlY17
-    NHKSe2CBXiFf8D3afEEVaOmj2Cwt8E9+COOlXweTd8HcoXKVBTqnM1vYaC2a2mcb
-    e9AIUfomOOTfG5Zf2FndQYqP66HW2OKkdUO40uaTQ9OPOEGH0uy8ArnwDljVBiXa
-    BDV8quxMgz7aLJQOWFU0nRhtC6O/oC1nwgq+IOA==
+    t=1519838050; b=AGzhIUrADkUonbsnaUpccih/Q5nni71G3SKyS/VI+nkVTtf
+    KGMawXl8qzV3IF4pSzO0MlGAEEY8b4GJ4IXz/aD1ew262zHdU9UG6TBTnPl1rFk2
+    ihA/rsQmrXxcXQFL5JV6bIFhlPBpu7pTS5Q2SPM4HhZ0ta2rJ73/GGpD8A1qjAyG
+    wPIAovWjOK5ryxgHBev3D8ISNdziHTtzhFiclDymqXLmfJWYMFHOa1EL2SNdfjZd
+    IadwEFi5KCSy2AT3u0eEerh9swqz8FVd2zjJarvd8V0fixPswwj0ZpHzTndY0MlX
+    1lMo7xgHUsmE1N05iibDqIAZs5BuBIq5CQi0T+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838058; bh=GxsYNgPuMGa6IsCTcNV
-    kK7YZ34cE8sLpAKn+JBz473c=; b=Y4DLaHDeZ2rNLbToUcNCWHSCZtBh8pf/gda
-    2nnBiO98Zzp9PiOY8ZYX6p1kQvxvXpsta15GSYG2WZJ7nSRoLdygyr4IoK29Z9AP
-    zsAE8fEw4AjTwBH/HTJwUxThgVO5l761CFrDl8dIUknHWE19B7zt768N4rZXfebc
-    PUn52kGt69YaR4QCcg6wsIf8HkdM3/IziF6mZJ7cIulW1gJrWZZSy6CvTAJIdzTx
-    IBW3Y574gw9RdepUzTqS4r27zSMtPJFBkRphOTbH0SeyDcFZVKo4icftaTMEa7QB
-    DAMACSS1CZ2zJmp3jNFTbxyBLAjfqLBvO8wwbwT1S2wuBoBCv/A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838050; bh=0XBsSQKWBwSxDRcgC4d
+    gyo33mEmIf76uKkMGZczJkWA=; b=OYsgGaSlzBJUZ/klGvKctG8lX20d71dikKD
+    bLd5X2+CD/rxIW0fto/4g2J1uqaVbmdZtwE59HYlXzsZEfaMZAY5iqe1tI7xTuMU
+    Digiye2BstW/dZhfQFfAsJIpKPlvCqkGsOcJ3nnX+F7SIqeaVhGd6Z1oiGJMG4us
+    62ND30OhzWEcKSRRbgLF9qTGKDYyYFJuFhT10qeafa5VOYTJJA5T+jnsItdKw4pO
+    +lPFrNZ8Es/OJyzY1/HclpbqDIXZg+IjGIONkXHjiZocTvslpbH8JNSKNo/aaCwp
+    Vxns7bxaUpVxHSz1mbP6/misoXb71gx79LdGQfnVtl+EmjljA+w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,26 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933265AbeB1Psl (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:48:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34271 "EHLO
+        id S932696AbeB1RNi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:13:38 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34284 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933174AbeB1Psj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:48:39 -0500
+        by vger.kernel.org with ESMTP id S1752848AbeB1Ptu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:49:50 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Jimmy Assarsson" <jimmyassarsson@gmail.com>,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>
+CC: akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
+        "Steffen Klassert" <steffen.klassert@secunet.com>,
+        "Alexander Potapenko" <glider@google.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.841898304@decadent.org.uk>
+Message-ID: <lsq.1519831218.790897683@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 041/254] can: kvaser_usb: free buf in error paths
+Subject: [PATCH 3.16 150/254] af_key: fix buffer overread in
+ verify_address_len()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,34 +81,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jimmy Assarsson <jimmyassarsson@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 435019b48033138581a6171093b181fc6b4d3d30 upstream.
+commit 06b335cb51af018d5feeff5dd4fd53847ddb675a upstream.
 
-The allocated buffer was not freed if usb_submit_urb() failed.
+If a message sent to a PF_KEY socket ended with one of the extensions
+that takes a 'struct sadb_address' but there were not enough bytes
+remaining in the message for the ->sa_family member of the 'struct
+sockaddr' which is supposed to follow, then verify_address_len() read
+past the end of the message, into uninitialized memory.  Fix it by
+returning -EINVAL in this case.
 
-Signed-off-by: Jimmy Assarsson <jimmyassarsson@gmail.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This bug was found using syzkaller with KMSAN.
+
+Reproducer:
+
+	#include <linux/pfkeyv2.h>
+	#include <sys/socket.h>
+	#include <unistd.h>
+
+	int main()
+	{
+		int sock = socket(PF_KEY, SOCK_RAW, PF_KEY_V2);
+		char buf[24] = { 0 };
+		struct sadb_msg *msg = (void *)buf;
+		struct sadb_address *addr = (void *)(msg + 1);
+
+		msg->sadb_msg_version = PF_KEY_V2;
+		msg->sadb_msg_type = SADB_DELETE;
+		msg->sadb_msg_len = 3;
+		addr->sadb_address_len = 1;
+		addr->sadb_address_exttype = SADB_EXT_ADDRESS_SRC;
+
+		write(sock, buf, 24);
+	}
+
+Reported-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/can/usb/kvaser_usb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/key/af_key.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/can/usb/kvaser_usb.c
-+++ b/drivers/net/can/usb/kvaser_usb.c
-@@ -608,6 +608,7 @@ static int kvaser_usb_simple_msg_async(s
- 	if (err) {
- 		netdev_err(netdev, "Error transmitting URB\n");
- 		usb_unanchor_urb(urb);
-+		kfree(buf);
- 		usb_free_urb(urb);
- 		return err;
- 	}
-@@ -1406,6 +1407,7 @@ static netdev_tx_t kvaser_usb_start_xmit
- 		spin_unlock_irqrestore(&priv->tx_contexts_lock, flags);
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -397,6 +397,11 @@ static int verify_address_len(const void
+ #endif
+ 	int len;
  
- 		usb_unanchor_urb(urb);
-+		kfree(buf);
- 
- 		stats->tx_dropped++;
- 
++	if (sp->sadb_address_len <
++	    DIV_ROUND_UP(sizeof(*sp) + offsetofend(typeof(*addr), sa_family),
++			 sizeof(uint64_t)))
++		return -EINVAL;
++
+ 	switch (addr->sa_family) {
+ 	case AF_INET:
+ 		len = DIV_ROUND_UP(sizeof(*sp) + sizeof(*sin), sizeof(uint64_t));
