@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeB1PGV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:06:21 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37806 "EHLO mx1.redhat.com"
+        id S1752834AbeB1PGa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:06:30 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37830 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752250AbeB1PGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:06:19 -0500
+        id S1752250AbeB1PG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:06:28 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: arnd@arndb.de, bhe@redhat.com, slp@redhat.com, mst@redhat.com,
         somlo@cmu.edu, xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v16 00/11] fw_cfg: add DMA operations & etc/vmcoreinfo support
-Date: Wed, 28 Feb 2018 16:06:04 +0100
-Message-Id: <20180228150615.17317-1-marcandre.lureau@redhat.com>
+Subject: [PATCH v16 02/11] fw_cfg: fix sparse warnings with fw_cfg_file
+Date: Wed, 28 Feb 2018 16:06:06 +0100
+Message-Id: <20180228150615.17317-3-marcandre.lureau@redhat.com>
+In-Reply-To: <20180228150615.17317-1-marcandre.lureau@redhat.com>
+References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -21,72 +23,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Modify fw_cfg_sysfs_entry to store entry values, instead of reusing
+the restricted types.
 
-This series adds DMA operations support to the qemu fw_cfg kernel
-module and populates "etc/vmcoreinfo" with vmcoreinfo location
-details (entry added since qemu 2.11 with -device vmcoreinfo).
+Fixes warnings such as:
 
-v16:
-- patch reordering
-- commit message updates
-- rename fw_cfg.h -> qemu_fw_cfg.h
-- fix warning when CONFIG_CRASH_CORE=n without RFC DMA read patch
-  applied
-- use a function pointer rather than a dma hint to read_blob()
+$ make C=1 CF=-D__CHECK_ENDIAN__ drivers/firmware/qemu_fw_cfg.o
 
-v15:
-- fix fw_cfg.h uapi header #include
-- use BSD license for fw_cfg.h uapi header
-- move the uapi defines/structs for DMA & vmcoreinfo in the
-  corresponding patch
-- use cpu_relax() instead of usleep_range(50, 100);
-- replace do { } while(true) by for (;;)
-- fix the rmb() call location
-- add a preliminary patch to handle error from fw_cfg_write_blob()
-- rewrite fw_cfg_sel_endianness() to wrap iowrite() calls
+drivers/firmware/qemu_fw_cfg.c:491:29: warning: incorrect type in assignment (different base types)
+drivers/firmware/qemu_fw_cfg.c:491:29:    expected restricted __be32 [usertype] size
+drivers/firmware/qemu_fw_cfg.c:491:29:    got unsigned int
+drivers/firmware/qemu_fw_cfg.c:492:31: warning: incorrect type in assignment (different base types)
+drivers/firmware/qemu_fw_cfg.c:492:31:    expected restricted __be16 [usertype] select
+drivers/firmware/qemu_fw_cfg.c:492:31:    got int
 
-v14:
-- add "fw_cfg: add a public uapi header"
-- fix sparse warnings & don't introduce new warnings
-- add memory barriers to force IO ordering
-- split fw_cfg_read_blob() in fw_cfg_read_blob_io() and
-  fw_cfg_read_blob_dma()
-- add error handling to fw_cfg_read_blob() callers
-- minor stylistic changes
+Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+---
+ drivers/firmware/qemu_fw_cfg.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-v13:
-- reorder patch series, introduce DMA write before DMA read
-- do some measurements of DMA read speed-ups
-
-v12:
-- fix virt_to_phys(NULL) panic with CONFIG_DEBUG_VIRTUAL=y
-- do not use DMA read, except for kmalloc() memory we allocated
-  ourself (only fw_cfg_register_dir_entries() so far)
-
-v11:
-- add #include <linux/crash_core.h> in last patch,
-  fixing kbuild .config test
-
-Marc-André Lureau (11):
-  fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
-  fw_cfg: fix sparse warnings with fw_cfg_file
-  fw_cfg: fix sparse warning reading FW_CFG_ID
-  fw_cfg: fix sparse warnings around FW_CFG_FILE_DIR read
-  fw_cfg: remove inline from fw_cfg_read_blob()
-  fw_cfg: handle fw_cfg_read_blob() error
-  fw_cfg: add a public uapi header
-  fw_cfg: add DMA register
-  crash: export paddr_vmcoreinfo_note()
-  fw_cfg: write vmcoreinfo details
-  RFC: fw_cfg: do DMA read operation
-
- MAINTAINERS                      |   1 +
- drivers/firmware/qemu_fw_cfg.c   | 339 +++++++++++++++++++++++++++++++--------
- include/uapi/linux/qemu_fw_cfg.h |  97 +++++++++++
- kernel/crash_core.c              |   1 +
- 4 files changed, 374 insertions(+), 64 deletions(-)
- create mode 100644 include/uapi/linux/qemu_fw_cfg.h
-
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index e7ea2b3b1d11..7978844f6b37 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -211,7 +211,9 @@ static const struct {
+ /* fw_cfg_sysfs_entry type */
+ struct fw_cfg_sysfs_entry {
+ 	struct kobject kobj;
+-	struct fw_cfg_file f;
++	u32 size;
++	u16 select;
++	char name[FW_CFG_MAX_FILE_PATH];
+ 	struct list_head list;
+ };
+ 
+@@ -275,17 +277,17 @@ struct fw_cfg_sysfs_attribute fw_cfg_sysfs_attr_##_attr = { \
+ 
+ static ssize_t fw_cfg_sysfs_show_size(struct fw_cfg_sysfs_entry *e, char *buf)
+ {
+-	return sprintf(buf, "%u\n", e->f.size);
++	return sprintf(buf, "%u\n", e->size);
+ }
+ 
+ static ssize_t fw_cfg_sysfs_show_key(struct fw_cfg_sysfs_entry *e, char *buf)
+ {
+-	return sprintf(buf, "%u\n", e->f.select);
++	return sprintf(buf, "%u\n", e->select);
+ }
+ 
+ static ssize_t fw_cfg_sysfs_show_name(struct fw_cfg_sysfs_entry *e, char *buf)
+ {
+-	return sprintf(buf, "%s\n", e->f.name);
++	return sprintf(buf, "%s\n", e->name);
+ }
+ 
+ static FW_CFG_SYSFS_ATTR(size);
+@@ -336,13 +338,13 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+ {
+ 	struct fw_cfg_sysfs_entry *entry = to_entry(kobj);
+ 
+-	if (pos > entry->f.size)
++	if (pos > entry->size)
+ 		return -EINVAL;
+ 
+-	if (count > entry->f.size - pos)
+-		count = entry->f.size - pos;
++	if (count > entry->size - pos)
++		count = entry->size - pos;
+ 
+-	fw_cfg_read_blob(entry->f.select, buf, pos, count);
++	fw_cfg_read_blob(entry->select, buf, pos, count);
+ 	return count;
+ }
+ 
+@@ -461,11 +463,13 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+ 		return -ENOMEM;
+ 
+ 	/* set file entry information */
+-	memcpy(&entry->f, f, sizeof(struct fw_cfg_file));
++	entry->size = be32_to_cpu(f->size);
++	entry->select = be16_to_cpu(f->select);
++	memcpy(entry->name, f->name, FW_CFG_MAX_FILE_PATH);
+ 
+ 	/* register entry under "/sys/firmware/qemu_fw_cfg/by_key/" */
+ 	err = kobject_init_and_add(&entry->kobj, &fw_cfg_sysfs_entry_ktype,
+-				   fw_cfg_sel_ko, "%d", entry->f.select);
++				   fw_cfg_sel_ko, "%d", entry->select);
+ 	if (err)
+ 		goto err_register;
+ 
+@@ -475,7 +479,7 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+ 		goto err_add_raw;
+ 
+ 	/* try adding "/sys/firmware/qemu_fw_cfg/by_name/" symlink */
+-	fw_cfg_build_symlink(fw_cfg_fname_kset, &entry->kobj, entry->f.name);
++	fw_cfg_build_symlink(fw_cfg_fname_kset, &entry->kobj, entry->name);
+ 
+ 	/* success, add entry to global cache */
+ 	fw_cfg_sysfs_cache_enlist(entry);
+@@ -507,8 +511,6 @@ static int fw_cfg_register_dir_entries(void)
+ 	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(count), dir_size);
+ 
+ 	for (i = 0; i < count; i++) {
+-		dir[i].size = be32_to_cpu(dir[i].size);
+-		dir[i].select = be16_to_cpu(dir[i].select);
+ 		ret = fw_cfg_register_file(&dir[i]);
+ 		if (ret)
+ 			break;
 -- 
 2.16.1.73.g5832b7e9f2
