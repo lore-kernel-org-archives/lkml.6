@@ -1,85 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934476AbeB1Qe2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 11:34:28 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:36994 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbeB1QeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:34:25 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] drm/sun4i: init dclk_min_div & dclk_max_div inside
- encoder init functions
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1519822318-3974-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180228155559.lqm22dzeiptrwyxe@flea>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <ee7bff10-527a-5481-598b-47e1d7a9eeb6@micronovasrl.com>
-Date: Wed, 28 Feb 2018 17:34:19 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934735AbeB1Qef (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 11:34:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:53524 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932358AbeB1Qec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 11:34:32 -0500
+Date: Wed, 28 Feb 2018 16:34:30 +0000
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: DRI-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
+ setting.
+Message-ID: <20180228163430.GB20827@e110455-lin.cambridge.arm.com>
+References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
+ <20180228154041.GK5453@intel.com>
+ <20180228154444.GA20827@e110455-lin.cambridge.arm.com>
+ <20180228155715.GL5453@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228155559.lqm22dzeiptrwyxe@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180228155715.GL5453@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Il 28/02/2018 16:55, Maxime Ripard ha scritto:
-> Hi,
+On Wed, Feb 28, 2018 at 05:57:15PM +0200, Ville Syrjälä wrote:
+> On Wed, Feb 28, 2018 at 03:44:44PM +0000, Liviu Dudau wrote:
+> > On Wed, Feb 28, 2018 at 05:40:41PM +0200, Ville Syrjälä wrote:
+> > > On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
+> > > > The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
+> > > > ioctl expects that any capability set by the client will have a value of 1.
+> > > > Make the check early so that we don't have to test the value for each
+> > > > capability.
+> > > 
+> > > What if we want a a non-boolean capability at some point?
+> > 
+> > Well, I'm adding another boolean capability soon, so you will be going
+> > against the trend :)
 > 
-> On Wed, Feb 28, 2018 at 01:51:58PM +0100, Giulio Benetti wrote:
->> sun4i_dclk_round_rate is called before sun4i_tcon_mode_set,
->> so it finds dclk_min_div and dclk_max_div set to 0 and fails
->> adding crtc.
->>
->> Move dclk_min_div and dclk_max_div to encoders init functions.
->>
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> 
-> I sent a similar patch there:
-> https://lists.freedesktop.org/archives/dri-devel/2018-February/166666.html
+> Plenty of non-bools in driver specific counterparts I believe.
 
-I've missed that.
-And where you put it is better, since it's called every time set_mode is 
-called.
+So, is that a NACK? 
 
-On lvds instead I don't see anything about this,
-it should have the same potential problem.
-Also I can't understand why it has been set min=7 and max=7 on lvds.
-With those values I would obtain 77Mhz only.
-And I can't find values on datasheet for minimum and maximum.
 
 > 
-> I guess eventually, we'll want to remove the usage of the clock
-> framework entirely, but it's not really the scope of a fix.
-
-Where would you handle dclk instead of tcon?
-
-Thanks
+> > I guess you will have 2 options: revert the patch or add a condition to
+> > the test.
+> > 
+> > I don't have strong feelings, just felt like too much copying when
+> > adding another capability so I thought to do some "cleanup".
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > > 
+> > > > 
+> > > > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> > > > ---
+> > > >  drivers/gpu/drm/drm_ioctl.c | 9 +++------
+> > > >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> > > > index af782911c505..02ffa0e8d77b 100644
+> > > > --- a/drivers/gpu/drm/drm_ioctl.c
+> > > > +++ b/drivers/gpu/drm/drm_ioctl.c
+> > > > @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
+> > > >  {
+> > > >  	struct drm_set_client_cap *req = data;
+> > > >  
+> > > > +	if (req->value > 1)
+> > > > +		return -EINVAL;
+> > > > +
+> > > >  	switch (req->capability) {
+> > > >  	case DRM_CLIENT_CAP_STEREO_3D:
+> > > > -		if (req->value > 1)
+> > > > -			return -EINVAL;
+> > > >  		file_priv->stereo_allowed = req->value;
+> > > >  		break;
+> > > >  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
+> > > > -		if (req->value > 1)
+> > > > -			return -EINVAL;
+> > > >  		file_priv->universal_planes = req->value;
+> > > >  		break;
+> > > >  	case DRM_CLIENT_CAP_ATOMIC:
+> > > >  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
+> > > >  			return -EINVAL;
+> > > > -		if (req->value > 1)
+> > > > -			return -EINVAL;
+> > > >  		file_priv->atomic = req->value;
+> > > >  		file_priv->universal_planes = req->value;
+> > > >  		break;
+> > > > -- 
+> > > > 2.16.2
+> > > > 
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > 
+> > > -- 
+> > > Ville Syrjälä
+> > > Intel OTC
+> > 
+> > -- 
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ¯\_(ツ)_/¯
+> 
+> -- 
+> Ville Syrjälä
+> Intel OTC
 
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale � 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
-
-> 
-> Maxime
-> 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
