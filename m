@@ -1,78 +1,49 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-438867-1519831947-2-1584436859942076486
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519831946; b=UtYlc/oRMKJgCH6lGYF7VGaxVnIjZotiMqI+KfOH5ljfgEq
-    PdpqU1k6X/6CCXNeHEIXvpRLBK8o6Tr5EL224ieKbiFQaSPo1Nxd8kU8n0hRQR47
-    aR5FYKwn+1Xl5TVwLjAKuOcxPmHxReA5dYdT1drxo4qFWYt7F7AUYvV2lsrMag0x
-    xaa4AS7e1HJCIbUVGWd02tOJt+VpPDmYDexIX3MsQfT0WgFBZAZdLvwUf2QerxZ4
-    7RyR0OOyilSz0o3MyO+5GOJIdt+8n1Uh/gIepibflbRcK05aAHH8wAfKFkM13VW4
-    Xd2folKQq7AUB+YSlG6Gt7ExYBZzNNNORCwdUJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519831946; bh=AypA8cZcQtnsQY9USEA
-    zR7TYdTfwTadKm9SVPgbO9TU=; b=KpP2QQtGCvm7Ww/7VTLh8eeVqCzc2boOnuJ
-    uGWz8yCmC80mFtLWVQYFfTD8ANiyfsBy7LDVgjO1ZOICtTw2LiItOeQ/nj/GpIBk
-    37fdwfZ7RO5gA1XlZFD2FcJYPZJjCNK1rRK3QTpDgdNIJyOe6L+AVGophrWZi605
-    V3UQVm0p8fQKMeRKRRyKcP+VbhthOBX8Jvp4OTOypGiE56tey/yJt3WbirUFeMo+
-    uhEz7l9ckjeklWChkkULQGCdHN5SCjjw5G1zeoSCTsSPQ/ERjkPDP6uw2cHCZoPa
-    RTS+Zi7dp7ajKewsGxLMGEN0lhkGxluKZokwZLS5uOxQLH9IRDQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932305AbeB1PcW (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:32:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33314 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752869AbeB1PWi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:38 -0500
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AG47ELv6+BHDS1jBO4u/6jUVvaqNWy2epmZ4ru9X+Iyh2LSO2DmWCPOro8Mei/qesBR/APb0RE6+
+ARC-Seal: i=1; a=rsa-sha256; t=1519831347; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bGeH2HLh93LDGoB+BlYg6913mGqd9iZUZX4Uf1xdwgzrHQiB6/eyDA3kSd4cg/FMH8
+         d10ds9Wt4OeoqIGaQfMBABVx59i5M0zb4WccfnPsak7kIHVjuUaMhavG2tSgkhNYna0a
+         fi5NuA2hwN37HaJzADAxGsw8OOpwZb7yArEzGwR6n0fUN80g61TslRRWOCQJCpa837IR
+         jWUtSDuH7kwMRvfreBN0tMaIvNVDlKiutR1sENJPccJvmWeae1N+nmGntuLffw9sCCQK
+         7TXDW2Fgywu1JkpOzajj6o8V1sLT4NqK4D8OA6I2Xmjuk1OEZGpz1bFb5yFof7yTZp96
+         BJ6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=sC1tqxrc8NzviiJ6wH4YRniPuRGXrO6lrlsO/mqP4So=;
+        b=FMeFfCOsRI6fFNrqeXEHlJxlphwf9aG4eoS2UP6pJLf6sRU2IeD2vO06i428Fmlkwf
+         LFXYEpJlVmSmPVm1KSG8Jj2kv8uhxXv3gqbQIRNkNdibaJOFJaXCjCobkRIzVbTqomtY
+         UddNKR40b2pX4vF1qZ1L9hKWC/1UnpDMZf8GSseE8cU+IleaiM5JyrguZGj7AFlEifil
+         oEVWxJLoLNwI+0thQZqhkg6lsVRKoJZCE8l0IYTUzaxrK3qqfQh8McYl6/goy9txb6KO
+         aAr6z/4iWbc0OKbv77gpMNAmyLTWhUM9uIgJyxUrnh+TsvIcd8IjJ5oxHvVdMC/8+Xll
+         SjcQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Christoph Hellwig" <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC: akpm@linux-foundation.org,
+ "Shuah Khan" <shuahkh@osg.samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.515118045@decadent.org.uk>
+Message-ID: <lsq.1519831218.683007469@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 008/254] scsi: dma-mapping: always provide
- dma_get_cache_alignment
+Subject: [PATCH 3.16 129/254] usbip: prevent leaking socket pointer
+ address in messages
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593658664025208938?=
+X-GMAIL-MSGID: =?utf-8?q?1593658674824117176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,47 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christoph Hellwig <hch@lst.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 860dd4424f344400b491b212ee4acb3a358ba9d9 upstream.
+commit 90120d15f4c397272aaf41077960a157fc4212bf upstream.
 
-Provide the dummy version of dma_get_cache_alignment that always returns
-1 even if CONFIG_HAS_DMA is not set, so that drivers and subsystems can
-use it without ifdefs.
+usbip driver is leaking socket pointer address in messages. Remove
+the messages that aren't useful and print sockfd in the ones that
+are useful for debugging.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16: Also delete the conflicting declaration in
- <asm-generic/dma-mapping-broken.h>]
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -181,7 +181,6 @@ static inline void *dma_zalloc_coherent(
- 	return ret;
- }
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -190,8 +190,7 @@ static void stub_shutdown_connection(str
+ 	 * step 1?
+ 	 */
+ 	if (ud->tcp_socket) {
+-		dev_dbg(&sdev->udev->dev, "shutdown tcp_socket %p\n",
+-			ud->tcp_socket);
++		dev_dbg(&sdev->udev->dev, "shutdown sockfd %d\n", ud->sockfd);
+ 		kernel_sock_shutdown(ud->tcp_socket, SHUT_RDWR);
+ 	}
  
--#ifdef CONFIG_HAS_DMA
- static inline int dma_get_cache_alignment(void)
- {
- #ifdef ARCH_DMA_MINALIGN
-@@ -189,7 +188,6 @@ static inline int dma_get_cache_alignmen
- #endif
- 	return 1;
- }
--#endif
+--- a/drivers/staging/usbip/usbip_common.c
++++ b/drivers/staging/usbip/usbip_common.c
+@@ -333,13 +333,10 @@ int usbip_recv(struct socket *sock, void
+ 	char *bp = buf;
+ 	int osize = size;
  
- /* flags for the coherent memory api */
- #define	DMA_MEMORY_MAP			0x01
---- a/include/asm-generic/dma-mapping-broken.h
-+++ b/include/asm-generic/dma-mapping-broken.h
-@@ -85,9 +85,6 @@ dma_supported(struct device *dev, u64 ma
- extern int
- dma_set_mask(struct device *dev, u64 mask);
- 
--extern int
--dma_get_cache_alignment(void);
+-	usbip_dbg_xmit("enter\n");
 -
- extern void
- dma_cache_sync(struct device *dev, void *vaddr, size_t size,
- 	       enum dma_data_direction direction);
+-	if (!sock || !buf || !size) {
+-		pr_err("invalid arg, sock %p buff %p size %d\n", sock, buf,
+-		       size);
++	if (!sock || !buf || !size)
+ 		return -EINVAL;
+-	}
++
++	usbip_dbg_xmit("enter\n");
+ 
+ 	do {
+ 		sock->sk->sk_allocation = GFP_NOIO;
+@@ -352,11 +349,8 @@ int usbip_recv(struct socket *sock, void
+ 		msg.msg_flags      = MSG_NOSIGNAL;
+ 
+ 		result = kernel_recvmsg(sock, &msg, &iov, 1, size, MSG_WAITALL);
+-		if (result <= 0) {
+-			pr_debug("receive sock %p buf %p size %u ret %d total %d\n",
+-				 sock, buf, size, result, total);
++		if (result <= 0)
+ 			goto err;
+-		}
+ 
+ 		size -= result;
+ 		buf += result;
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -767,7 +767,7 @@ static void vhci_shutdown_connection(str
+ 
+ 	/* need this? see stub_dev.c */
+ 	if (ud->tcp_socket) {
+-		pr_debug("shutdown tcp_socket %p\n", ud->tcp_socket);
++		pr_debug("shutdown tcp_socket %d\n", ud->sockfd);
+ 		kernel_sock_shutdown(ud->tcp_socket, SHUT_RDWR);
+ 	}
+ 
