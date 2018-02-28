@@ -1,368 +1,211 @@
-Return-Path: <kernel-hardening-return-12014-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELurKV24Zu5o7mpAYbBsGRkvhs8N9O9m+IzGN1hedPISsxVL1ltLmxFWgAXivEX7x21wRRzI
-ARC-Seal: i=1; a=rsa-sha256; t=1519764772; cv=none;
+Return-Path: <kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x225SLV0ekQZNt8x2xyHvIQXd11xgLzlOwS5nK4/iO7XeIRx0+w8TYSkk8V6icJpR71P7AG8W
+ARC-Seal: i=1; a=rsa-sha256; t=1519838001; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fl3IDLSRhXQ+h0Aynq0G+2W+YR9zvLm1d4D+ock5txIvdioQTYSSRFFVvJIX9a37Oo
-         cvVJgQe0HG11O4BWburqrVbo/ShdJ6xgiONO7UeOcC8wB4FpbctNa/AMh5G8bvSuNHAm
-         WMBMhZF5TJMJ4s/hzlt7XwPiD+LsQLqkTnEtP5aObwgv378WWXH+5N8Jt5Am043kRXXq
-         sm4/8di4guJwH5J0sHtTfXl0o6Rua/BiWiW4Obx9NBGjaDHL3zUpRThIbd0fWINf6k/s
-         Z20kmrinI+NwHMIJIl5LI7ZHok0M88mq5zS+vBj4hLXBSnOBsW8apJfg1RsFVnias0b7
-         ltjw==
+        b=iSJjR81kACIK3/ereUQwRHSmCTAYY+6dUkwMWbL1Abiz/3TfFaWUfI2Z3cqP3Yd1vL
+         3irFCeYUfF19hA+CB03c9Ux/Ue1JQv06J+rPM/xJYg+PYQJz1h/TjLWINmmnAl2bbYeh
+         Y0j0kNScK34y7P0zWFZwZxK43FtUwSB4GK39NTacNGWPpku3k1vZoDlhFtwmyG7cdTsV
+         EhGSdB+nb+V+Rv4k5B6m3uHlyFZI8zXau/qifnMQILgqo2qUw1AnC2IJQTS7SposMT0G
+         04s83bR6tm3xl6cCogGX1HBZ4tgHu8J2HWlpMrb7YmnuBGMM3KCxem9bN1QGB204yXoZ
+         iucw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:sender:mime-version:dkim-signature
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=uZg0oc49wHwWNruqxdadf5Vf4dRZUO6NqKcAuCRgRvQ=;
-        b=GXYXDdeOurERVMq0v2IVNd9BZTD+xwwAUCQBfdNefCw4LYqnDgqVo2d0e0yDGCBpFR
-         K9p41GGCcCUnargmH+AwWWL+h1MEDP7G1fAcCOSd1sio1cN/ydpnhef5a5z459wBKHab
-         vLkySF5XRSLRv2vJOFHYnY+/eU71juu0BUsv14/pakX8RjABDCdZY63cH9OmFY/GHJAC
-         NcMRXm7n1KKX+xqtbCeaHN8cmSy1cAyS38DSw6Rn1P5rs5Id1mdu4PvPG91cs/ZUVrIu
-         RzJWS1c4vGlSQukL7H3PHDB4k+0a3KD4Xiu9DUj7MAvxyb1sd6hB8CqOneIo9w7qNlKL
-         3H4g==
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=ZapZwXxUBCAF2rGOx9l0tXAvPjZUIaPXb5FxqCpZK+M=;
+        b=LJgl8DaiJEKRJvZj+q1g2fgu2Kg8FqmcNkVf/NKGw3sYGbM9feftESPc2IsrtZacUH
+         xThKgNjWMjQkdLXa8jTUJJCcpaDtHkN4TsOgXPghbiNG5oC2BJSioRQtvzAA7dB5dc/V
+         Koh5F6pgNZNNdGhjWMRaWYQBWJGzcVm5VQUnXyaRVWvuutHFveHO8UDm+byz09pWD82G
+         mYOCV9E0DED+of1xnOtb8fiZJ3BlpK6q39bbogiz7FG6qYilbO7+Zv790/iWcws6Vsf1
+         3psrH8yTF8eN6Z1S9SzTMc5AyWOkYid9tXxIeNP1AkQPK212w/c/tP3FC+rZG/9SUQ6X
+         gMVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qVirbgOR;
-       dkim=pass header.i=@chromium.org header.s=google header.b=A0HaqiYi;
-       spf=pass (google.com: domain of kernel-hardening-return-12014-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12014-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jQiAnod1;
+       spf=pass (google.com: domain of kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qVirbgOR;
-       dkim=pass header.i=@chromium.org header.s=google header.b=A0HaqiYi;
-       spf=pass (google.com: domain of kernel-hardening-return-12014-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12014-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jQiAnod1;
+       spf=pass (google.com: domain of kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12042-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180227131338.3699-1-blackzert@gmail.com>
-References: <20180227131338.3699-1-blackzert@gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Feb 2018 12:52:29 -0800
-X-Google-Sender-Auth: B0i2rpZ0wwoh78OgwMQEprmwjts
-Message-ID: <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: [RFC PATCH] Randomization of address chosen by mmap.
-To: Ilya Smith <blackzert@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>, Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>, Helge Deller <deller@gmx.de>,
-	Andrea Arcangeli <aarcange@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Linux-MM <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Ilya Smith <blackzert@gmail.com>
+In-Reply-To: <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
+Date: Wed, 28 Feb 2018 20:13:00 +0300
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Michal Hocko <mhocko@suse.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Jan Kara <jack@suse.cz>,
+ Jerome Glisse <jglisse@redhat.com>,
+ Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Helge Deller <deller@gmx.de>,
+ Andrea Arcangeli <aarcange@redhat.com>,
+ Oleg Nesterov <oleg@redhat.com>,
+ Linux-MM <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+References: <20180227131338.3699-1-blackzert@gmail.com>
+ <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
+To: Kees Cook <keescook@chromium.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
-X-GMAIL-MSGID: =?utf-8?q?1593588865763081100?=
+X-GMAIL-MSGID: =?utf-8?q?1593665651403309312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 5:13 AM, Ilya Smith <blackzert@gmail.com> wrote:
-> This is more proof of concept. Current implementation doesn't randomize
-> address returned by mmap. All the entropy ends with choosing mmap_base_ad=
-dr
-> at the process creation. After that mmap build very predictable layout
-> of address space. It allows to bypass ASLR in many cases.
+Hello Kees,
 
-I'd like more details on the threat model here; if it's just a matter
-of .so loading order, I wonder if load order randomization would get a
-comparable level of uncertainty without the memory fragmentation,
-like:
-https://android-review.googlesource.com/c/platform/bionic/+/178130/2
-If glibc, for example, could do this too, it would go a long way to
-improving things. Obviously, it's not as extreme as loading stuff all
-over the place, but it seems like the effect for an attack would be
-similar. The search _area_ remains small, but the ordering wouldn't be
-deterministic any more.
+Thanks for your time spent on that!
 
-> This patch make randomization of address on any mmap call.
-> It works good on 64 bit system, but usage under 32 bit systems is not
-> recommended. This approach uses current implementation to simplify search
-> of address.
+> On 27 Feb 2018, at 23:52, Kees Cook <keescook@chromium.org> wrote:
+>=20
+> I'd like more details on the threat model here; if it's just a matter
+> of .so loading order, I wonder if load order randomization would get a
+> comparable level of uncertainty without the memory fragmentation,
+> like:
+> https://android-review.googlesource.com/c/platform/bionic/+/178130/2
+> If glibc, for example, could do this too, it would go a long way to
+> improving things. Obviously, it's not as extreme as loading stuff all
+> over the place, but it seems like the effect for an attack would be
+> similar. The search _area_ remains small, but the ordering wouldn't be
+> deterministic any more.
+>=20
 
-It would be worth spelling out the "not recommended" bit some more
-too: this fragments the mmap space, which has some serious issues on
-smaller address spaces if you get into a situation where you cannot
-allocate a hole large enough between the other allocations.
+I=E2=80=99m afraid library order randomization wouldn=E2=80=99t help =
+much, there are several=20
+cases described in chapter 2 here:=20
+http://www.openwall.com/lists/oss-security/2018/02/27/5
+when it is possible to bypass ASLR.=20
 
->
-> Here I would like to discuss this approach.
->
-> Signed-off-by: Ilya Smith <blackzert@gmail.com>
-> ---
->  include/linux/mm.h |   4 ++
->  mm/mmap.c          | 171 +++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 175 insertions(+)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ad06d42adb1a..f81b6c8a0bc5 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -25,6 +25,7 @@
->  #include <linux/err.h>
->  #include <linux/page_ref.h>
->  #include <linux/memremap.h>
-> +#include <linux/sched.h>
->
->  struct mempolicy;
->  struct anon_vma;
-> @@ -2253,6 +2254,7 @@ struct vm_unmapped_area_info {
->         unsigned long align_offset;
->  };
->
-> +extern unsigned long unmapped_area_random(struct vm_unmapped_area_info *=
-info);
->  extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
->  extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info =
-*info);
->
-> @@ -2268,6 +2270,8 @@ extern unsigned long unmapped_area_topdown(struct v=
-m_unmapped_area_info *info);
->  static inline unsigned long
->  vm_unmapped_area(struct vm_unmapped_area_info *info)
->  {
-> +       if (current->flags & PF_RANDOMIZE)
-> +               return unmapped_area_random(info);
+I=E2=80=99m agree library randomizaiton is a good improvement but after =
+my patch
+I think not much valuable. On my GitHub =
+https://github.com/blackzert/aslur=20
+I provided tests and will make them 'all in one=E2=80=99 chain later.
 
-I think this will need a larger knob -- doing this by default is
-likely to break stuff, I'd imagine? Bikeshedding: I'm not sure if this
-should be setting "3" for /proc/sys/kernel/randomize_va_space, or a
-separate one like /proc/sys/mm/randomize_mmap_allocation.
+> It would be worth spelling out the "not recommended" bit some more
+> too: this fragments the mmap space, which has some serious issues on
+> smaller address spaces if you get into a situation where you cannot
+> allocate a hole large enough between the other allocations.
+>=20
 
->         if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
->                 return unmapped_area_topdown(info);
->         else
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 9efdc021ad22..58110e065417 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -45,6 +45,7 @@
->  #include <linux/moduleparam.h>
->  #include <linux/pkeys.h>
->  #include <linux/oom.h>
-> +#include <linux/random.h>
->
->  #include <linux/uaccess.h>
->  #include <asm/cacheflush.h>
-> @@ -1780,6 +1781,176 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
->         return error;
->  }
->
-> +unsigned long unmapped_area_random(struct vm_unmapped_area_info *info)
-> +{
-> +       // first lets find right border with unmapped_area_topdown
+I=E2=80=99m agree, that's the point.
 
-Nit: kernel comments are /* */. (It's a good idea to run patches
-through scripts/checkpatch.pl first.)
+>> vm_unmapped_area(struct vm_unmapped_area_info *info)
+>> {
+>> +       if (current->flags & PF_RANDOMIZE)
+>> +               return unmapped_area_random(info);
+>=20
+> I think this will need a larger knob -- doing this by default is
+> likely to break stuff, I'd imagine? Bikeshedding: I'm not sure if this
+> should be setting "3" for /proc/sys/kernel/randomize_va_space, or a
+> separate one like /proc/sys/mm/randomize_mmap_allocation.
 
-> +       struct mm_struct *mm =3D current->mm;
-> +       struct vm_area_struct *vma;
-> +       struct vm_area_struct *right_vma =3D 0;
-> +       unsigned long entropy;
-> +       unsigned int entropy_count;
-> +       unsigned long length, low_limit, high_limit, gap_start, gap_end;
-> +       unsigned long addr, low, high;
-> +
-> +       /* Adjust search length to account for worst case alignment overh=
-ead */
-> +       length =3D info->length + info->align_mask;
-> +       if (length < info->length)
-> +               return -ENOMEM;
-> +
-> +       /*
-> +        * Adjust search limits by the desired length.
-> +        * See implementation comment at top of unmapped_area().
-> +        */
-> +       gap_end =3D info->high_limit;
-> +       if (gap_end < length)
-> +               return -ENOMEM;
-> +       high_limit =3D gap_end - length;
-> +
-> +       info->low_limit =3D 0x10000;
-> +       if (info->low_limit > high_limit)
-> +               return -ENOMEM;
-> +       low_limit =3D info->low_limit + length;
-> +
-> +       /* Check highest gap, which does not precede any rbtree node */
-> +       gap_start =3D mm->highest_vm_end;
-> +       if (gap_start <=3D high_limit)
-> +               goto found;
-> +
-> +       /* Check if rbtree root looks promising */
-> +       if (RB_EMPTY_ROOT(&mm->mm_rb))
-> +               return -ENOMEM;
-> +       vma =3D rb_entry(mm->mm_rb.rb_node, struct vm_area_struct, vm_rb)=
-;
-> +       if (vma->rb_subtree_gap < length)
-> +               return -ENOMEM;
-> +
-> +       while (true) {
-> +               /* Visit right subtree if it looks promising */
-> +               gap_start =3D vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0=
-;
-> +               if (gap_start <=3D high_limit && vma->vm_rb.rb_right) {
-> +                       struct vm_area_struct *right =3D
-> +                               rb_entry(vma->vm_rb.rb_right,
-> +                                        struct vm_area_struct, vm_rb);
-> +                       if (right->rb_subtree_gap >=3D length) {
-> +                               vma =3D right;
-> +                               continue;
-> +                       }
-> +               }
-> +
-> +check_current_down:
-> +               /* Check if current node has a suitable gap */
-> +               gap_end =3D vm_start_gap(vma);
-> +               if (gap_end < low_limit)
-> +                       return -ENOMEM;
-> +               if (gap_start <=3D high_limit &&
-> +                   gap_end > gap_start && gap_end - gap_start >=3D lengt=
-h)
-> +                       goto found;
-> +
-> +               /* Visit left subtree if it looks promising */
-> +               if (vma->vm_rb.rb_left) {
-> +                       struct vm_area_struct *left =3D
-> +                               rb_entry(vma->vm_rb.rb_left,
-> +                                        struct vm_area_struct, vm_rb);
-> +                       if (left->rb_subtree_gap >=3D length) {
-> +                               vma =3D left;
-> +                               continue;
-> +                       }
-> +               }
-> +
-> +               /* Go back up the rbtree to find next candidate node */
-> +               while (true) {
-> +                       struct rb_node *prev =3D &vma->vm_rb;
-> +
-> +                       if (!rb_parent(prev))
-> +                               return -ENOMEM;
-> +                       vma =3D rb_entry(rb_parent(prev),
-> +                                      struct vm_area_struct, vm_rb);
-> +                       if (prev =3D=3D vma->vm_rb.rb_right) {
-> +                               gap_start =3D vma->vm_prev ?
-> +                                       vm_end_gap(vma->vm_prev) : 0;
-> +                               goto check_current_down;
-> +                       }
-> +               }
-> +       }
+I will improve it like you said. It looks like a better option.
 
-Everything from here up is identical to the existing
-unmapped_area_topdown(), yes? This likely needs to be refactored
-instead of copy/pasted, and adjust to handle both unmapped_area() and
-unmapped_area_topdown().
+>> +       // first lets find right border with unmapped_area_topdown
+>=20
+> Nit: kernel comments are /* */. (It's a good idea to run patches
+> through scripts/checkpatch.pl first.)
+>=20
 
-> +
-> +found:
-> +       right_vma =3D vma;
-> +       low =3D gap_start;
-> +       high =3D gap_end - length;
-> +
-> +       entropy =3D get_random_long();
-> +       entropy_count =3D 0;
-> +
-> +       // from left node to right we check if node is fine and
-> +       // randomly select it.
-> +       vma =3D mm->mmap;
-> +       while (vma !=3D right_vma) {
-> +               /* Visit left subtree if it looks promising */
-> +               gap_end =3D vm_start_gap(vma);
-> +               if (gap_end >=3D low_limit && vma->vm_rb.rb_left) {
-> +                       struct vm_area_struct *left =3D
-> +                               rb_entry(vma->vm_rb.rb_left,
-> +                                        struct vm_area_struct, vm_rb);
-> +                       if (left->rb_subtree_gap >=3D length) {
-> +                               vma =3D left;
-> +                               continue;
-> +                       }
-> +               }
-> +
-> +               gap_start =3D vma->vm_prev ? vm_end_gap(vma->vm_prev) : l=
-ow_limit;
-> +check_current_up:
-> +               /* Check if current node has a suitable gap */
-> +               if (gap_start > high_limit)
-> +                       break;
-> +               if (gap_end >=3D low_limit &&
-> +                   gap_end > gap_start && gap_end - gap_start >=3D lengt=
-h) {
-> +                       if (entropy & 1) {
-> +                               low =3D gap_start;
-> +                               high =3D gap_end - length;
-> +                       }
-> +                       entropy >>=3D 1;
-> +                       if (++entropy_count =3D=3D 64) {
-> +                               entropy =3D get_random_long();
-> +                               entropy_count =3D 0;
-> +                       }
-> +               }
-> +
-> +               /* Visit right subtree if it looks promising */
-> +               if (vma->vm_rb.rb_right) {
-> +                       struct vm_area_struct *right =3D
-> +                               rb_entry(vma->vm_rb.rb_right,
-> +                                        struct vm_area_struct, vm_rb);
-> +                       if (right->rb_subtree_gap >=3D length) {
-> +                               vma =3D right;
-> +                               continue;
-> +                       }
-> +               }
-> +
-> +               /* Go back up the rbtree to find next candidate node */
-> +               while (true) {
-> +                       struct rb_node *prev =3D &vma->vm_rb;
-> +
-> +                       if (!rb_parent(prev))
-> +                               BUG(); // this should not happen
-> +                       vma =3D rb_entry(rb_parent(prev),
-> +                                      struct vm_area_struct, vm_rb);
-> +                       if (prev =3D=3D vma->vm_rb.rb_left) {
-> +                               gap_start =3D vm_end_gap(vma->vm_prev);
-> +                               gap_end =3D vm_start_gap(vma);
-> +                               if (vma =3D=3D right_vma)
+Sorry, I will fix it. Thanks!
 
-mm/mmap.c: In function =E2=80=98unmapped_area_random=E2=80=99:
-mm/mmap.c:1939:8: warning: =E2=80=98vma=E2=80=99 may be used uninitialized =
-in this
-function [-Wmaybe-uninitialized]
-     if (vma =3D=3D right_vma)
-        ^
 
-> +                                       break;
-> +                               goto check_current_up;
-> +                       }
-> +               }
-> +       }
+>> +                       if (!rb_parent(prev))
+>> +                               return -ENOMEM;
+>> +                       vma =3D rb_entry(rb_parent(prev),
+>> +                                      struct vm_area_struct, vm_rb);
+>> +                       if (prev =3D=3D vma->vm_rb.rb_right) {
+>> +                               gap_start =3D vma->vm_prev ?
+>> +                                       vm_end_gap(vma->vm_prev) : 0;
+>> +                               goto check_current_down;
+>> +                       }
+>> +               }
+>> +       }
+>=20
+> Everything from here up is identical to the existing
+> unmapped_area_topdown(), yes? This likely needs to be refactored
+> instead of copy/pasted, and adjust to handle both unmapped_area() and
+> unmapped_area_topdown().
+>=20
 
-What are the two phases here? Could this second one get collapsed into
-the first?
+This part also keeps =E2=80=98right_vma' as a border. If it is ok, that =
+combined version
+ will return vma struct, I=E2=80=99ll do it.
 
-> +
-> +       if (high =3D=3D low)
-> +               return low;
-> +
-> +       addr =3D get_random_long() % ((high - low) >> PAGE_SHIFT);
-> +       addr =3D low + (addr << PAGE_SHIFT);
-> +       return addr;
-> +}
-> +
->  unsigned long unmapped_area(struct vm_unmapped_area_info *info)
->  {
->         /*
+>> +               /* Go back up the rbtree to find next candidate node =
+*/
+>> +               while (true) {
+>> +                       struct rb_node *prev =3D &vma->vm_rb;
+>> +
+>> +                       if (!rb_parent(prev))
+>> +                               BUG(); // this should not happen
+>> +                       vma =3D rb_entry(rb_parent(prev),
+>> +                                      struct vm_area_struct, vm_rb);
+>> +                       if (prev =3D=3D vma->vm_rb.rb_left) {
+>> +                               gap_start =3D =
+vm_end_gap(vma->vm_prev);
+>> +                               gap_end =3D vm_start_gap(vma);
+>> +                               if (vma =3D=3D right_vma)
+>=20
+> mm/mmap.c: In function =E2=80=98unmapped_area_random=E2=80=99:
+> mm/mmap.c:1939:8: warning: =E2=80=98vma=E2=80=99 may be used =
+uninitialized in this
+> function [-Wmaybe-uninitialized]
+>     if (vma =3D=3D right_vma)
+>        ^
 
-How large are the gaps intended to be? Looking at the gaps on
-something like Xorg they differ a lot.
+Thanks, fixed!
 
-Otherwise, looks interesting!
+>> +                                       break;
+>> +                               goto check_current_up;
+>> +                       }
+>> +               }
+>> +       }
+>=20
+> What are the two phases here? Could this second one get collapsed into
+> the first?
+>=20
 
--Kees
+Let me explain.=20
+1. we use current implementation to get larger address. Remember it as=20=
 
---=20
-Kees Cook
-Pixel Security
+=E2=80=98right_vma=E2=80=99.
+2. we walk tree from mm->mmap what is lowest vma.
+3. we check if current vma gap satisfies length and low/high constrains
+4. if so, we call random() to decide if we choose it. This how we =
+randomly choos
+e vma and gap
+5. we walk tree from lowest vma to highest and ignore subtrees with less =
+gap.=20
+we do it until reach =E2=80=98right_vma=E2=80=99
+
+Once we found gap, we may randomly choose address inside it.
+
+>> +       addr =3D get_random_long() % ((high - low) >> PAGE_SHIFT);
+>> +       addr =3D low + (addr << PAGE_SHIFT);
+>> +       return addr;
+>>=20
+>=20
+> How large are the gaps intended to be? Looking at the gaps on
+> something like Xorg they differ a lot.
+
+Sorry, I can=E2=80=99t get clue. What's the context? You tried patch or =
+whats the case?
+
+Thanks,
+Ilya
