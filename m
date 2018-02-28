@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeB1OrA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:47:00 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45822 "EHLO
+        id S932249AbeB1Oq6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:46:58 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:37592 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752854AbeB1Olh (ORCPT
+        with ESMTP id S1752778AbeB1Oli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:37 -0500
-X-Google-Smtp-Source: AG47ELv+84MbStNETymzAffXXJ7bJdRM+/h1+yBNiVTYJBOdgpTJ/0LW2A7l68UPuR1KqWb32U2T2Q==
+        Wed, 28 Feb 2018 09:41:38 -0500
+X-Google-Smtp-Source: AH8x225IyCNZZbBo+M/xCnFf4/lm/ueXyf7yULqLmfNjl7ROFIjLlSALtnnWgfGa6eedrpD4jyTbgw==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 08/22] nvmem: qfprom: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:52 -0800
-Message-Id: <20180228144106.16363-9-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 09/22] nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:53 -0800
+Message-Id: <20180228144106.16363-10-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -45,31 +45,17 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/qfprom.c | 12 +-----------
+ drivers/nvmem/rockchip-efuse.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/nvmem/qfprom.c b/drivers/nvmem/qfprom.c
-index cb3b48b47d64..13bf43c84bd4 100644
---- a/drivers/nvmem/qfprom.c
-+++ b/drivers/nvmem/qfprom.c
-@@ -47,13 +47,6 @@ static int qfprom_reg_write(void *context,
- 	return 0;
- }
- 
--static int qfprom_remove(struct platform_device *pdev)
--{
--	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
--
--	return nvmem_unregister(nvmem);
--}
--
- static struct nvmem_config econfig = {
- 	.name = "qfprom",
- 	.stride = 1,
-@@ -82,12 +75,10 @@ static int qfprom_probe(struct platform_device *pdev)
- 	econfig.dev = dev;
- 	econfig.priv = priv;
- 
+diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
+index f13a8335f364..8ebb103abe23 100644
+--- a/drivers/nvmem/rockchip-efuse.c
++++ b/drivers/nvmem/rockchip-efuse.c
+@@ -289,25 +289,15 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
+ 	econfig.reg_read = match->data;
+ 	econfig.priv = efuse;
+ 	econfig.dev = efuse->dev;
 -	nvmem = nvmem_register(&econfig);
 +	nvmem = devm_nvmem_register(dev, &econfig);
  	if (IS_ERR(nvmem))
@@ -80,13 +66,18 @@ index cb3b48b47d64..13bf43c84bd4 100644
  	return 0;
  }
  
-@@ -99,7 +90,6 @@ MODULE_DEVICE_TABLE(of, qfprom_of_match);
- 
- static struct platform_driver qfprom_driver = {
- 	.probe = qfprom_probe,
--	.remove = qfprom_remove,
+-static int rockchip_efuse_remove(struct platform_device *pdev)
+-{
+-	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
+-
+-	return nvmem_unregister(nvmem);
+-}
+-
+ static struct platform_driver rockchip_efuse_driver = {
+ 	.probe = rockchip_efuse_probe,
+-	.remove = rockchip_efuse_remove,
  	.driver = {
- 		.name = "qcom,qfprom",
- 		.of_match_table = qfprom_of_match,
+ 		.name = "rockchip-efuse",
+ 		.of_match_table = rockchip_efuse_match,
 -- 
 2.14.3
