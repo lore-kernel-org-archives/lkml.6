@@ -1,65 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752431AbeB1JlB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:41:01 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33277 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbeB1Jk7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:40:59 -0500
-X-Google-Smtp-Source: AG47ELv7WSsQ6c+VQ9+fe7s6mg/CBjwsKIzQ75+iVyuaVKA+2nL0dZjxqoBB3sh+Mlw06Ucq7BFofQ==
-From: Sebastian Panceac <sebastian@resin.io>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        x86@kernel.org
-Cc: Sebastian Panceac <sebastian@resin.io>
-Subject: [PATCH v3 1/1] x86: Fix Intel Edison module stuck reboot
-Date: Wed, 28 Feb 2018 11:40:49 +0200
-Message-Id: <1519810849-15131-1-git-send-email-sebastian@resin.io>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <CAHp75Vfdqky9HK9ddUk8+3OuU5pSDhg+9_ychW2ysb+bzAR4Yw@mail.gmail.com>
-References: <CAHp75Vfdqky9HK9ddUk8+3OuU5pSDhg+9_ychW2ysb+bzAR4Yw@mail.gmail.com>
+        id S1752293AbeB1JmT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:42:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752015AbeB1JmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:42:17 -0500
+Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
+Date: Wed, 28 Feb 2018 10:42:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When powering Intel Edison module with 3.3V, the "reboot" command makes
-the module stuck.
-If the module is powered at a greater voltage, like 4.4V (as the Edison
-Mini Breakout board does), reboot works OK.
+On 27.02.2018 15:28, Tony Krowiak wrote:
+> Introduces a new interface to enable AP interpretive
+> execution (IE) mode for the KVM guest. When running
+> with IE mode enabled, AP instructions executed on the
+> KVM guest will be interpreted by the firmware and
+> passed directly through to an AP device installed on
+> the system. The CPU model feature for AP must
+> be enabled for the KVM guest in order to enable
+> interpretive execution mode.
+> 
+> This interface will be used in a subsequent patch
+> by the VFIO AP device driver.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>  arch/s390/include/asm/kvm-ap.h   |    2 ++
+>  arch/s390/include/asm/kvm_host.h |    1 +
+>  arch/s390/kvm/kvm-ap.c           |   27 +++++++++++++++++++++++++++
+>  arch/s390/kvm/kvm-s390.h         |    1 +
+>  4 files changed, 31 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+> index 46e7c5b..6bd6bfb 100644
+> --- a/arch/s390/include/asm/kvm-ap.h
+> +++ b/arch/s390/include/asm/kvm-ap.h
+> @@ -51,4 +51,6 @@ struct kvm_ap_matrix {
+>  
+>  void kvm_ap_deconfigure_matrix(struct kvm *kvm);
+>  
+> +int kvm_ap_enable_ie_mode(struct kvm *kvm);
+> +
+>  #endif /* _ASM_KVM_AP */
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index a4c77d3..1eebdd6 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -186,6 +186,7 @@ struct kvm_s390_sie_block {
+>  #define ECA_AIV		0x00200000
+>  #define ECA_VX		0x00020000
+>  #define ECA_PROTEXCI	0x00002000
+> +#define ECA_APIE	0x00000008
+>  #define ECA_SII		0x00000001
+>  	__u32	eca;			/* 0x004c */
+>  #define ICPT_INST	0x04
+> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+> index bb29045..862e54b 100644
+> --- a/arch/s390/kvm/kvm-ap.c
+> +++ b/arch/s390/kvm/kvm-ap.c
+> @@ -307,3 +307,30 @@ void kvm_ap_deconfigure_matrix(struct kvm *kvm)
+>  	kvm_ap_clear_crycb_masks(kvm);
+>  }
+>  EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
+> +
+> +/**
+> + * kvm_ap_enable_ie_mode
+> + *
+> + * Enable interpretrive execution of AP instructions for the guest. When
+> + * enabled, AP instructions executed on the guest will be interpreted and
+> + * passed through to an AP installed on the host system.
+> + *
+> + * Returns 0 if interpretrive execution is enabled. Returns -EOPNOTSUPP
+> + * if AP facilities are not installed for the guest.
+> + *
+> + * @kvm: the guest's kvm structure
+> + */
+> +int kvm_ap_enable_ie_mode(struct kvm *kvm)
+> +{
+> +	int i;
+> +	struct kvm_vcpu *vcpu;
+> +
+> +	if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+> +		return -EOPNOTSUPP;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm)
+> +		vcpu->arch.sie_block->eca |= ECA_APIE;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
+> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+> index 1b5621f..3142541 100644
+> --- a/arch/s390/kvm/kvm-s390.h
+> +++ b/arch/s390/kvm/kvm-s390.h
+> @@ -18,6 +18,7 @@
+>  #include <asm/facility.h>
+>  #include <asm/processor.h>
+>  #include <asm/sclp.h>
+> +#include <asm/ap.h>
+>  
+>  /* Transactional Memory Execution related macros */
+>  #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
+> 
 
-This patch copies the behaviour from the official Intel Edison BSP,
-where "IPCMSG_COLD_RESET" message was sent to SCU by default at
-reboot time.
+What about VSIE?
 
-In the official BSP, sending the "IPCMSG_COLD_BOOT" message instead of
-"IPCMSG_COLD_RESET" was possible, by using a kernel command
-line parameter.
-
-Signed-off-by: Sebastian Panceac <sebastian@resin.io>
----
-
-Hi,
-
-I submitted again the patch, after taking into consideration Andy's suggestions.
-
-Regards!
-
- arch/x86/platform/intel-mid/intel-mid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
-index 2c67bae..fb1df94 100644
---- a/arch/x86/platform/intel-mid/intel-mid.c
-+++ b/arch/x86/platform/intel-mid/intel-mid.c
-@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
- 
- static void intel_mid_reboot(void)
- {
--	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
-+	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
- }
- 
- static unsigned long __init intel_mid_calibrate_tsc(void)
 -- 
-2.7.4
+
+Thanks,
+
+David / dhildenb
