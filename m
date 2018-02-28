@@ -1,375 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933607AbeB1RHv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 12:07:51 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52975 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932082AbeB1RHe (ORCPT
+        id S933784AbeB1RId (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 12:08:33 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46579 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933248AbeB1PuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 12:07:34 -0500
-From: Hugues FRUCHET <hugues.fruchet@st.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick FERTRE <yannick.fertre@st.com>
-Subject: Re: [PATCH] media: stm32-dcmi: add JPEG support
-Thread-Topic: [PATCH] media: stm32-dcmi: add JPEG support
-Thread-Index: AQHTrwx7hCMtsqtio0OEqhHx/xMhCKO5/ksA
-Date: Wed, 28 Feb 2018 17:07:14 +0000
-Message-ID: <d33a6402-a2a1-fdea-1ca0-752c368b9668@st.com>
-References: <1519293110-20059-1-git-send-email-hugues.fruchet@st.com>
- <a0e231ee-b125-97b6-80a5-2f82c7299070@xs4all.nl>
-In-Reply-To: <a0e231ee-b125-97b6-80a5-2f82c7299070@xs4all.nl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EBF2439EEBB16B45BB914A84C85E7B55@st.com>
+        Wed, 28 Feb 2018 10:50:04 -0500
+X-Google-Smtp-Source: AG47ELt1YAQQKR7+BcarZoxH4uRoHk4Atc1i+YGt2kWoPkuCkLPl+Ga01mwEycAyqnGrOmMO4b+HFbdVzJeho9uBQL8=
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_09:,,
- signatures=0
+In-Reply-To: <20180227204243.GW21977@gate.crashing.org>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-2-malat@debian.org>
+ <CAHp75Vdpdr-0-vdvo0SBx2XcM=HePrUbbb4SM9+ExT_i-1B69Q@mail.gmail.com>
+ <CAHp75Ve_zxp4_N_YzzvJ=H8Qs65G5j7bgGBv_TvsZ6Ye2nuECA@mail.gmail.com>
+ <CA+7wUszK++8Tr9j1=4jQtRSu-36MH=dqgimq-ST9D9hvacrJSQ@mail.gmail.com>
+ <603d5335-6220-73f2-d902-b92bc74bc79e@c-s.fr> <CA+7wUsys=J8vkEOtzd26B6MGEhfTBRzaA_myuUWNzf24rMvn+A@mail.gmail.com>
+ <CAHp75VePco3hNo_vM916CiLzBAd18i=O1TaecD5YEDewvMpYYQ@mail.gmail.com> <20180227204243.GW21977@gate.crashing.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Feb 2018 17:50:03 +0200
+Message-ID: <CAHp75VfmSNs4jHJjybGHisHSGiwcYv8msBjhshp7bAQNDW9Oag@mail.gmail.com>
+Subject: Re: [PATCH 01/21] powerpc: Remove warning on array size when empty
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
+        <linuxppc-dev@lists.ozlabs.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1SH7vkU026794
 
-Hi Hans,
-
-Yes depends on 'fix lock scheme', I'll send a v2 of this jpeg commit for 
-unneeded V4L2_FMT_FLAG_COMPRESSED.
-
-Best regards,
-Hugues.
-
-On 02/26/2018 03:17 PM, Hans Verkuil wrote:
-> On 02/22/2018 10:51 AM, Hugues Fruchet wrote:
->> Add DCMI JPEG support.
-> 
-> Does this patch depend on the 'fix lock scheme' patch?
-> 
-> It looks good to me except for one small thing (see below), but I think this
-> depends on the 'fix lock scheme' patch, right?
-> 
+On Tue, Feb 27, 2018 at 10:42 PM, Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+> On Tue, Feb 27, 2018 at 05:52:06PM +0200, Andy Shevchenko wrote:
+>> On Tue, Feb 27, 2018 at 9:44 AM, Mathieu Malaterre <malat@debian.org> wrote:
+>> > On Tue, Feb 27, 2018 at 8:33 AM, Christophe LEROY
+>> > <christophe.leroy@c-s.fr> wrote:
 >>
->> Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
->> ---
->>   drivers/media/platform/stm32/stm32-dcmi.c | 195 +++++++++++++++++++++++-------
->>   1 file changed, 148 insertions(+), 47 deletions(-)
+>> >>>>> Much simpler is just add
+>> >>>>>
+>> >>>>> if (ARRAY_SIZE() == 0)
+>> >>>>>   return;
 >>
->> diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
->> index 269e963..7eaaf7c 100644
->> --- a/drivers/media/platform/stm32/stm32-dcmi.c
->> +++ b/drivers/media/platform/stm32/stm32-dcmi.c
->> @@ -93,6 +93,11 @@ enum state {
->>   #define MIN_HEIGHT	16U
->>   #define MAX_HEIGHT	2048U
->>   
->> +#define MIN_JPEG_WIDTH	16U
->> +#define MAX_JPEG_WIDTH	2592U
->> +#define MIN_JPEG_HEIGHT	16U
->> +#define MAX_JPEG_HEIGHT	2592U
->> +
->>   #define TIMEOUT_MS	1000
->>   
->>   struct dcmi_graph_entity {
->> @@ -191,14 +196,67 @@ static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
->>   
->>   static int dcmi_start_capture(struct stm32_dcmi *dcmi);
->>   
->> +static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
->> +			     struct dcmi_buf *buf,
->> +			     size_t bytesused,
->> +			     int err)
->> +{
->> +	struct vb2_v4l2_buffer *vbuf;
->> +
->> +	if (!buf)
->> +		return;
->> +
->> +	vbuf = &buf->vb;
->> +
->> +	vbuf->sequence = dcmi->sequence++;
->> +	vbuf->field = V4L2_FIELD_NONE;
->> +	vbuf->vb2_buf.timestamp = ktime_get_ns();
->> +	vb2_set_plane_payload(&vbuf->vb2_buf, 0, bytesused);
->> +	vb2_buffer_done(&vbuf->vb2_buf,
->> +			err ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
->> +	dev_dbg(dcmi->dev, "buffer[%d] done seq=%d, bytesused=%zu\n",
->> +		vbuf->vb2_buf.index, vbuf->sequence, bytesused);
->> +
->> +	dcmi->buffers_count++;
->> +	dcmi->active = NULL;
->> +}
->> +
->> +static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
->> +{
->> +	spin_lock_irq(&dcmi->irqlock);
->> +
->> +	if (dcmi->state != RUNNING) {
->> +		spin_unlock_irq(&dcmi->irqlock);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* Restart a new DMA transfer with next buffer */
->> +	if (list_empty(&dcmi->buffers)) {
->> +		dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
->> +			__func__);
->> +		dcmi->errors_count++;
->> +		dcmi->active = NULL;
->> +
->> +		spin_unlock_irq(&dcmi->irqlock);
->> +		return -EINVAL;
->> +	}
->> +
->> +	dcmi->active = list_entry(dcmi->buffers.next,
->> +				  struct dcmi_buf, list);
->> +	list_del_init(&dcmi->active->list);
->> +
->> +	spin_unlock_irq(&dcmi->irqlock);
->> +
->> +	return dcmi_start_capture(dcmi);
->> +}
->> +
->>   static void dcmi_dma_callback(void *param)
->>   {
->>   	struct stm32_dcmi *dcmi = (struct stm32_dcmi *)param;
->>   	struct dma_chan *chan = dcmi->dma_chan;
->>   	struct dma_tx_state state;
->>   	enum dma_status status;
->> -
->> -	spin_lock_irq(&dcmi->irqlock);
->> +	struct dcmi_buf *buf = dcmi->active;
->>   
->>   	/* Check DMA status */
->>   	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
->> @@ -216,53 +274,18 @@ static void dcmi_dma_callback(void *param)
->>   	case DMA_COMPLETE:
->>   		dev_dbg(dcmi->dev, "%s: Received DMA_COMPLETE\n", __func__);
->>   
->> -		if (dcmi->active) {
->> -			struct dcmi_buf *buf = dcmi->active;
->> -			struct vb2_v4l2_buffer *vbuf = &dcmi->active->vb;
->> -
->> -			vbuf->sequence = dcmi->sequence++;
->> -			vbuf->field = V4L2_FIELD_NONE;
->> -			vbuf->vb2_buf.timestamp = ktime_get_ns();
->> -			vb2_set_plane_payload(&vbuf->vb2_buf, 0, buf->size);
->> -			vb2_buffer_done(&vbuf->vb2_buf, VB2_BUF_STATE_DONE);
->> -			dev_dbg(dcmi->dev, "buffer[%d] done seq=%d\n",
->> -				vbuf->vb2_buf.index, vbuf->sequence);
->> -
->> -			dcmi->buffers_count++;
->> -			dcmi->active = NULL;
->> -		}
->> -
->> -		/* Restart a new DMA transfer with next buffer */
->> -		if (dcmi->state == RUNNING) {
->> -			if (list_empty(&dcmi->buffers)) {
->> -				dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
->> -					__func__);
->> -				dcmi->errors_count++;
->> -				dcmi->active = NULL;
->> -
->> -				spin_unlock_irq(&dcmi->irqlock);
->> -				return;
->> -			}
->> -
->> -			dcmi->active = list_entry(dcmi->buffers.next,
->> -						  struct dcmi_buf, list);
->> -
->> -			list_del_init(&dcmi->active->list);
->> -
->> -			spin_unlock_irq(&dcmi->irqlock);
->> -			if (dcmi_start_capture(dcmi))
->> -				dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
->> -					__func__);
->> -			return;
->> -		}
->> +		/* Return buffer to V4L2 */
->> +		dcmi_buffer_done(dcmi, buf, buf->size, 0);
->>   
->> +		/* Restart capture */
->> +		if (dcmi_restart_capture(dcmi))
->> +			dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
->> +				__func__);
->>   		break;
->>   	default:
->>   		dev_err(dcmi->dev, "%s: Received unknown status\n", __func__);
->>   		break;
->>   	}
->> -
->> -	spin_unlock_irq(&dcmi->irqlock);
->>   }
->>   
->>   static int dcmi_start_dma(struct stm32_dcmi *dcmi,
->> @@ -355,6 +378,52 @@ static void dcmi_set_crop(struct stm32_dcmi *dcmi)
->>   	reg_set(dcmi->regs, DCMI_CR, CR_CROP);
->>   }
->>   
->> +static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
->> +{
->> +	struct dma_tx_state state;
->> +	enum dma_status status;
->> +	struct dma_chan *chan = dcmi->dma_chan;
->> +	struct dcmi_buf *buf = dcmi->active;
->> +
->> +	if (!buf)
->> +		return;
->> +
->> +	/*
->> +	 * Because of variable JPEG buffer size sent by sensor,
->> +	 * DMA transfer never completes due to transfer size
->> +	 * never reached.
->> +	 * In order to ensure that all the JPEG data are transferred
->> +	 * in active buffer memory, DMA is drained.
->> +	 * Then DMA tx status gives the amount of data transferred
->> +	 * to memory, which is then returned to V4L2 through the active
->> +	 * buffer payload.
->> +	 */
->> +
->> +	/* Drain DMA */
->> +	dmaengine_synchronize(chan);
->> +
->> +	/* Get DMA residue to get JPEG size */
->> +	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
->> +	if (status != DMA_ERROR && state.residue < buf->size) {
->> +		/* Return JPEG buffer to V4L2 with received JPEG buffer size */
->> +		dcmi_buffer_done(dcmi, buf, buf->size - state.residue, 0);
->> +	} else {
->> +		dcmi->errors_count++;
->> +		dev_err(dcmi->dev, "%s: Cannot get JPEG size from DMA\n",
->> +			__func__);
->> +		/* Return JPEG buffer to V4L2 in ERROR state */
->> +		dcmi_buffer_done(dcmi, buf, 0, -EIO);
->> +	}
->> +
->> +	/* Abort DMA operation */
->> +	dmaengine_terminate_all(dcmi->dma_chan);
->> +
->> +	/* Restart capture */
->> +	if (dcmi_restart_capture(dcmi))
->> +		dev_err(dcmi->dev, "%s: Cannot restart capture on JPEG received\n",
->> +			__func__);
->> +}
->> +
->>   static irqreturn_t dcmi_irq_thread(int irq, void *arg)
->>   {
->>   	struct stm32_dcmi *dcmi = arg;
->> @@ -379,6 +448,14 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
->>   			dcmi->overrun_count++;
->>   	}
->>   
->> +	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG &&
->> +	    dcmi->misr & IT_FRAME) {
->> +		/* JPEG received */
->> +		spin_unlock_irq(&dcmi->irqlock);
->> +		dcmi_process_jpeg(dcmi);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->>   	spin_unlock_irq(&dcmi->irqlock);
->>   	return IRQ_HANDLED;
->>   }
->> @@ -552,6 +629,10 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
->>   	if (dcmi->do_crop)
->>   		dcmi_set_crop(dcmi);
->>   
->> +	/* Enable jpeg capture */
->> +	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG)
->> +		reg_set(dcmi->regs, DCMI_CR, CR_CM);/* Snapshot mode */
->> +
->>   	/* Enable dcmi */
->>   	reg_set(dcmi->regs, DCMI_CR, CR_ENABLE);
->>   
->> @@ -752,6 +833,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
->>   	struct v4l2_subdev_format format = {
->>   		.which = V4L2_SUBDEV_FORMAT_TRY,
->>   	};
->> +	bool do_crop;
->>   	int ret;
->>   
->>   	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
->> @@ -761,10 +843,19 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
->>   	}
->>   
->>   	/* Limit to hardware capabilities */
->> -	pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
->> -	pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
->> +	if (pix->pixelformat == V4L2_PIX_FMT_JPEG) {
->> +		pix->width = clamp(pix->width, MIN_JPEG_WIDTH, MAX_JPEG_WIDTH);
->> +		pix->height =
->> +			clamp(pix->height, MIN_JPEG_HEIGHT, MAX_JPEG_HEIGHT);
->> +	} else {
->> +		pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
->> +		pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
->> +	}
->> +
->> +	/* No crop if JPEG is requested */
->> +	do_crop = dcmi->do_crop && (pix->pixelformat != V4L2_PIX_FMT_JPEG);
->>   
->> -	if (dcmi->do_crop && dcmi->num_of_sd_framesizes) {
->> +	if (do_crop && dcmi->num_of_sd_framesizes) {
->>   		struct dcmi_framesize outer_sd_fsize;
->>   		/*
->>   		 * If crop is requested and sensor have discrete frame sizes,
->> @@ -788,7 +879,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
->>   	sd_fsize.width = pix->width;
->>   	sd_fsize.height = pix->height;
->>   
->> -	if (dcmi->do_crop) {
->> +	if (do_crop) {
->>   		struct v4l2_rect c = dcmi->crop;
->>   		struct v4l2_rect max_rect;
->>   
->> @@ -843,6 +934,10 @@ static int dcmi_set_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f)
->>   	if (ret)
->>   		return ret;
->>   
->> +	/* Disable crop if JPEG is requested */
->> +	if (pix->pixelformat == V4L2_PIX_FMT_JPEG)
->> +		dcmi->do_crop = false;
->> +
->>   	/* pix to mbus format */
->>   	v4l2_fill_mbus_format(mf, pix,
->>   			      sd_format->mbus_code);
->> @@ -895,6 +990,8 @@ static int dcmi_enum_fmt_vid_cap(struct file *file, void  *priv,
->>   		return -EINVAL;
->>   
->>   	f->pixelformat = dcmi->sd_formats[f->index]->fourcc;
->> +	if (f->pixelformat == V4L2_PIX_FMT_JPEG)
->> +		f->flags |= V4L2_FMT_FLAG_COMPRESSED;
-> 
-> Not needed, this is done for you in v4l2-ioctl.c.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>   	return 0;
->>   }
->>   
->> @@ -1315,6 +1412,10 @@ static int dcmi_set_default_fmt(struct stm32_dcmi *dcmi)
->>   		.fourcc = V4L2_PIX_FMT_UYVY,
->>   		.mbus_code = MEDIA_BUS_FMT_UYVY8_2X8,
->>   		.bpp = 2,
->> +	}, {
->> +		.fourcc = V4L2_PIX_FMT_JPEG,
->> +		.mbus_code = MEDIA_BUS_FMT_JPEG_1X8,
->> +		.bpp = 1,
->>   	},
->>   };
->>   
+>> >> Or add in front:
+>> >> if (!ARRAY_SIZE(feature_properties))
+>> >>         return;
+>> >
+>> > (not tested) I believe the compiler still go over the for() loop and
+>> > will complain about the original unsigned comparison.
 >>
+>> Did you run tests? Did you look into object file?
+>>
+>> In kernel we much rely on the compiling away the code which is
+>> deterministically not in use.
+>> Here I'm pretty sure it will compile away entire function.
+>
+> It does, but it also still warns (this warning is done very early in the
+> compiler pipeline).
+
+Oh, I see.
+Then the while () approach looks to me the best here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
