@@ -1,103 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752251AbeB1JXl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:23:41 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44286 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751954AbeB1JXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:23:38 -0500
-Date: Wed, 28 Feb 2018 10:23:35 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Fix trigger class trigger_on()
-Message-ID: <20180228092335.GA31021@krava>
-References: <1519807144-30694-1-git-send-email-adrian.hunter@intel.com>
+        id S1752317AbeB1JY0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:24:26 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:33863 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752084AbeB1JYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:24:23 -0500
+X-Google-Smtp-Source: AG47ELu+4FIfcoUdbjSBB2ZD7Tn8qQtZLPW8Vavlt1WEEPq10Joxm1BXu4ztATgUeEbKxKqe4HX6MRmvk2obFPBsELo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519807144-30694-1-git-send-email-adrian.hunter@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <15777453e64262505da0c3b803729672c68e84ff.1519771871.git.fthain@telegraphics.com.au>
+References: <cover.1519771871.git.fthain@telegraphics.com.au> <15777453e64262505da0c3b803729672c68e84ff.1519771871.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 10:24:22 +0100
+X-Google-Sender-Auth: GJVrua2OXr3oe1oYUPK9hOF-Taw
+Message-ID: <CAMuHMdVEOvy-54aWt2f9X52509YJMp8PvRtJSM7T=MgJa=E=uA@mail.gmail.com>
+Subject: Re: [PATCH net 1/2] net/macmace: Drop redundant MACH_IS_MAC test
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 10:39:04AM +0200, Adrian Hunter wrote:
-> trigger_on() means that the trigger is available but not ready, however
-> trigger_on() was making it ready. That can segfault if the signal comes
-> before trigger_ready(). e.g. (USR2 signal delivery not shown)
-> 
->   $ perf record -e intel_pt//u -S sleep 1
->   perf: Segmentation fault
->   Obtained 16 stack frames.
->   /home/ahunter/bin/perf(sighandler_dump_stack+0x40) [0x4ec550]
->   /lib/x86_64-linux-gnu/libc.so.6(+0x36caf) [0x7fa76411acaf]
->   /home/ahunter/bin/perf(perf_evsel__disable+0x26) [0x4b9dd6]
->   /home/ahunter/bin/perf() [0x43a45b]
->   /lib/x86_64-linux-gnu/libc.so.6(+0x36caf) [0x7fa76411acaf]
->   /lib/x86_64-linux-gnu/libc.so.6(__xstat64+0x15) [0x7fa7641d2cc5]
->   /home/ahunter/bin/perf() [0x4ec6c9]
->   /home/ahunter/bin/perf() [0x4ec73b]
->   /home/ahunter/bin/perf() [0x4ec73b]
->   /home/ahunter/bin/perf() [0x4ec73b]
->   /home/ahunter/bin/perf() [0x4eca15]
->   /home/ahunter/bin/perf(machine__create_kernel_maps+0x257) [0x4f0b77]
->   /home/ahunter/bin/perf(perf_session__new+0xc0) [0x4f86f0]
->   /home/ahunter/bin/perf(cmd_record+0x722) [0x43c132]
->   /home/ahunter/bin/perf() [0x4a11ae]
->   /home/ahunter/bin/perf(main+0x5d4) [0x427fb4]
-> 
-> Note, for testing purposes, this is hard to hit unless you add some sleep()
-> in builtin-record.c before record__open().
-> 
-> Fixes: 3dcc4436fa6f ("perf tools: Introduce trigger class")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+On Wed, Feb 28, 2018 at 5:22 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> The MACH_IS_MAC test is redundant here because the platform device
+> won't get registered unless MACH_IS_MAC.
+> Adopt module_platform_driver() convention.
+>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-thanks,
-jirka
+Gr{oetje,eeting}s,
 
-> ---
->  tools/perf/util/trigger.h | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/trigger.h b/tools/perf/util/trigger.h
-> index 370138e7e35c..88223bc7c82b 100644
-> --- a/tools/perf/util/trigger.h
-> +++ b/tools/perf/util/trigger.h
-> @@ -12,7 +12,7 @@
->   * States and transits:
->   *
->   *
-> - *  OFF--(on)--> READY --(hit)--> HIT
-> + *  OFF--> ON --> READY --(hit)--> HIT
->   *                 ^               |
->   *                 |            (ready)
->   *                 |               |
-> @@ -27,8 +27,9 @@ struct trigger {
->  	volatile enum {
->  		TRIGGER_ERROR		= -2,
->  		TRIGGER_OFF		= -1,
-> -		TRIGGER_READY		= 0,
-> -		TRIGGER_HIT		= 1,
-> +		TRIGGER_ON		= 0,
-> +		TRIGGER_READY		= 1,
-> +		TRIGGER_HIT		= 2,
->  	} state;
->  	const char *name;
->  };
-> @@ -50,7 +51,7 @@ static inline bool trigger_is_error(struct trigger *t)
->  static inline void trigger_on(struct trigger *t)
->  {
->  	TRIGGER_WARN_ONCE(t, TRIGGER_OFF);
-> -	t->state = TRIGGER_READY;
-> +	t->state = TRIGGER_ON;
->  }
->  
->  static inline void trigger_ready(struct trigger *t)
-> -- 
-> 1.9.1
-> 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
