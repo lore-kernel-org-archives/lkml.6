@@ -1,70 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932076AbeB1Jzi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 04:55:38 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:48295 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752173AbeB1Jzh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:55:37 -0500
-Date: Wed, 28 Feb 2018 10:55:47 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Felipe Balbi <felipe.balbi@linux.intel.com>
-cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: HRTimer causing rtctest to fail
-In-Reply-To: <87muzt5usg.fsf@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1802281043050.1886@nanos.tec.linutronix.de>
-References: <87vaei601x.fsf@linux.intel.com> <alpine.DEB.2.21.1802271640010.1886@nanos.tec.linutronix.de> <87muzt5usg.fsf@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752477AbeB1J4P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 04:56:15 -0500
+Received: from nbd.name ([46.4.11.11]:41686 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752150AbeB1J4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 04:56:14 -0500
+From: Felix Fietkau <nbd@nbd.name>
+To: linux-kernel@vger.kernel.org
+Cc: daniel.lezcano@linaro.org, paul.burton@imgtec.com, tglx@linutronix.de
+Subject: [PATCH v2] clocksource: mips-gic-timer: fix clocksource counter width
+Date: Wed, 28 Feb 2018 10:56:10 +0100
+Message-Id: <20180228095610.50341-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018, Felipe Balbi wrote:
-> Thomas Gleixner <tglx@linutronix.de> writes:
-> > Enable the hrtimer and scheduling tracepoints. That should give you a hint
-> > what's going on.
-> 
-> Thanks, that does give me a lot more information. So here you go:
-> 
->          rtctest-1348  [003] d..2   313.766141: hrtimer_start: hrtimer=00000000667ce595 function=rtc_pie_update_irq expires=313573983010 softexpires=313573983010 mode=REL
->           <idle>-0     [003] d.h1   313.767189: hrtimer_expire_entry: hrtimer=00000000667ce595 function=rtc_pie_update_irq now=313574053764
-> 
-> We still have a 70754 nS deviation. After changing to absolute time,
-> the deviation remains:
->
->           <idle>-0     [000] dNh2    29.303251: hrtimer_start: hrtimer=000000006858b496 function=rtc_pie_update_irq expires=28765551360 softexpires=28765551360 mode=ABS
->           <idle>-0     [000] d.h1    29.303565: hrtimer_expire_entry: hrtimer=000000006858b496 function=rtc_pie_update_irq now=28765621916
+This code is trying to extract the GIC_CONFIG_COUNTBITS field from
+read_gic_config(), so it needs to shift count_width right by the index
+of the least significant bit (__ffs) instead of the most significant bit
+(__fls) of the field mask.
 
-Changing REL/ABS in the kernel does not make a difference because periodic
-mode just forwards by period so even if the first timer is started with REL
-it results in a absolute timeline. What I meant is the user space
-measurement as it cannot figure out when the first event was supposed to
-happen so it's hard to calculate latency information.
+Fixes: e07127a077c7 ("clocksource: mips-gic-timer: Use new GIC accessor functions")
+Cc: Paul Burton <paul.burton@imgtec.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ drivers/clocksource/mips-gic-timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The interesting information is that the timer fires late and the system is
-idle. Now the question is in which idle state did the machine go?
-
-Wake up from deeper C-states can be slow. On my laptop the wakeup latencies
-are:
-
-POLL	   0
-C1	   2
-C1E	  10
-C3	  33
-C6	 133
-C7S	 166
-C8	 300
-C9	 600
-C10	2600
-
-All numbers in micro seconds! What happens if you load the system or
-restrict C-States?
-
-Thanks,
-
-	tglx
+diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
+index a04808a21d4e..bf0eee78c6ef 100644
+--- a/drivers/clocksource/mips-gic-timer.c
++++ b/drivers/clocksource/mips-gic-timer.c
+@@ -166,7 +166,7 @@ static int __init __gic_clocksource_init(void)
+ 
+ 	/* Set clocksource mask. */
+ 	count_width = read_gic_config() & GIC_CONFIG_COUNTBITS;
+-	count_width >>= __fls(GIC_CONFIG_COUNTBITS);
++	count_width >>= __ffs(GIC_CONFIG_COUNTBITS);
+ 	count_width *= 4;
+ 	count_width += 32;
+ 	gic_clocksource.mask = CLOCKSOURCE_MASK(count_width);
+-- 
+2.14.2
