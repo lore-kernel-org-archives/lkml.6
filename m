@@ -1,98 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeB1O43 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:56:29 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:56694 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752436AbeB1O4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:56:25 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-rockchip@lists.infradead.org,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yakir Yang <ykk@rock-chips.com>,
-        =?ISO-8859-1?Q?=D8rjan?= Eide <orjan.eide@arm.com>,
-        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
-Subject: Re: [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in analogix_dp_bind
-Date: Wed, 28 Feb 2018 15:56:12 +0100
-Message-ID: <7345252.P7zEYUIqsL@diego>
-In-Reply-To: <2c89da60-3c54-a8db-db9d-6079c51ed29d@arm.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com> <2776489.2p7NH6SBud@diego> <2c89da60-3c54-a8db-db9d-6079c51ed29d@arm.com>
+        id S1752578AbeB1PBS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:01:18 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56092 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeB1PBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:01:17 -0500
+X-Google-Smtp-Source: AG47ELvO/gLerhbVV50FvJh+w7QOCBwDaDEjN2EwxzyYulU071YOe2A8AwujvuB80Sco4lbfaKJbKw==
+Subject: Re: [PATCH v1] extcon: int3496: Ignore incorrect IoRestriction for ID
+ pin
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org
+References: <20180226193444.69883-1-andriy.shevchenko@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3c1d4636-237c-2344-6c7c-fcd4468f48b9@redhat.com>
+Date: Wed, 28 Feb 2018 16:01:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180226193444.69883-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 28. Februar 2018, 15:54:30 CET schrieb Marc Zyngier:
-> On 28/02/18 14:37, Heiko Stübner wrote:
-> > Am Dienstag, 30. Januar 2018, 21:28:35 CET schrieb Thierry Escande:
-> >> From: zain wang <wzz@rock-chips.com>
-> >> 
-> >> The bridge does not need to be powered in analogix_dp_bind(), so
-> >> remove the calls to pm_runtime_get()/phy_power_on()/analogix_dp_init_dp()
-> >> as well as their power-off counterparts.
-> >> 
-> >> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> >> Signed-off-by: zain wang <wzz@rock-chips.com>
-> >> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> >> [the patch originally just removed the power_on portion, seanpaul removed
-> >> the power off code as well as improved the commit message]
-> >> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> >> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 10 ----------
-> >>  1 file changed, 10 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> >> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
-> >> cb5e18d6ba04..1477ea9ba85d 100644
-> >> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> >> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> >> @@ -1382,11 +1382,6 @@ analogix_dp_bind(struct device *dev, struct
-> >> drm_device *drm_dev,
-> >> 
-> >>  	pm_runtime_enable(dev);
-> >> 
-> >> -	pm_runtime_get_sync(dev);
-> >> -	phy_power_on(dp->phy);
-> >> -
-> >> -	analogix_dp_init_dp(dp);
-> >> -
-> >> 
-> >>  	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
-> >>  	
-> >>  					analogix_dp_hardirq,
-> >>  					analogix_dp_irq_thread,
-> > 
-> > Not 100% sure here, as the driver has the request-irq + disable-irq hack
-> > here. So a pending interrupt could possibly fire between request and
-> > disable.
-> > 
-> > Right now the block should be on, but can it still handle such an irq
-> > when the power is removed?
-> 
-> Probably not (see below).
-> 
-> > So before removing the power here, we might want something
-> > similar to what Marc posted for the vop [0] for the analogix-dp?
-> 
-> You can do that trick only if the interrupt is not shared. In the VOP
-> case, it is shared with the IOMMU, which makes it more... interesting.
+Hi,
 
-Yep, which is why I mentioned it, as the dp-irq should not be shared
-I'd think :-)
+On 26-02-18 20:34, Andy Shevchenko wrote:
+> The commit 70216fd937fe introduced a workaround for incorrect
+> IoRestriction mode in ACPI table.
+> 
+> Now, when GPIO ACPI library does it in generic way, just set
+> an appropriate quirk flag instead.
+> 
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Looks good to me and everything still works after this change,
+so with the earlier review remarks fixed this is:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
-Heiko
+
+
+
+> ---
+>   drivers/extcon/extcon-intel-int3496.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
+> index 191e99f06a9a..acaccb128fc4 100644
+> --- a/drivers/extcon/extcon-intel-int3496.c
+> +++ b/drivers/extcon/extcon-intel-int3496.c
+> @@ -50,7 +50,11 @@ static const struct acpi_gpio_params vbus_gpios = { INT3496_GPIO_VBUS_EN, 0, fal
+>   static const struct acpi_gpio_params mux_gpios = { INT3496_GPIO_USB_MUX, 0, false };
+>   
+>   static const struct acpi_gpio_mapping acpi_int3496_default_gpios[] = {
+> -	{ "id-gpios", &id_gpios, 1 },
+> +	/*
+> +	 * Some platforms have a bug in ACPI GPIO description making IRQ
+> +	 * GPIO to be output only. Ask the GPIO core to ignore this limit.
+> +	 */
+> +	{ "id-gpios", &id_gpios, 1, ACPI_GPIO_QUIRK_NO_IO_RESTRICTION },
+>   	{ "vbus-gpios", &vbus_gpios, 1 },
+>   	{ "mux-gpios", &mux_gpios, 1 },
+>   	{ },
+> @@ -112,9 +116,6 @@ static int int3496_probe(struct platform_device *pdev)
+>   		ret = PTR_ERR(data->gpio_usb_id);
+>   		dev_err(dev, "can't request USB ID GPIO: %d\n", ret);
+>   		return ret;
+> -	} else if (gpiod_get_direction(data->gpio_usb_id) != GPIOF_DIR_IN) {
+> -		dev_warn(dev, FW_BUG "USB ID GPIO not in input mode, fixing\n");
+> -		gpiod_direction_input(data->gpio_usb_id);
+>   	}
+>   
+>   	data->usb_id_irq = gpiod_to_irq(data->gpio_usb_id);
+> 
