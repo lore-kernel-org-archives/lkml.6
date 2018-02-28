@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-420878-1519831400-2-13520258146983062144
+X-Cyrus-Session-Id: sloti22d1t05-422553-1519831370-2-7803492484679113167
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519831399; b=YOqxEtL3DNdmJGjahC/w6QgyWePs9iEGpvfyyQFkHo4DxMK
-    Rq0x9dWvkX6w9MRPCmIKqtHI1FOAvxLWwhAiKaE1MQ3ALHn24TRX+JUTDWNKff5/
-    9Xeg/6qFLI9Mkz2XjKGSeGrECwKEfdHw1DWtxJXBCHL3WjAXoc8Fc2ImCqYJBCgt
-    OVJ1wf1jFd+dDNzoCS8X2FNZLj1MDT3/3qxdCgMChPbB7s1kkAhGlT5VYrcRS8kF
-    LlWxUHtVC7tUDycljmFm1wBXe6Wfo1a+WuNGoh1BmAmeJyVvxhe59J7/7c/c54Yz
-    WmHTK9e70TsPLY66LIy6hWDeV3as7VcUghaMQtw==
+    t=1519831369; b=qh6tsWsVllUBwJ5+xTyfqNPSDOshhZWvgnR3XEF/6Pd0Q4T
+    ucnIdp9m6JSkCC8U36WmW98Wy82XsQGGfjkXZGyeJY63AgSQ+m0/gNgyKSv8S7+P
+    k4qVFRzy8q37pZen623KI4Zzq5EsZVmag5pqSpDNSUVnHSxByLZMtt6SQBHcBD1c
+    4Ogb+lTGRtsN0PLCSWjwnHzzZLAcIQ7R4mvhKLbMgyE1sxlIa8I9JHJnkrNsFmJ2
+    UHCjpa02kghZ4mVfvyHuOLQSJneCeGsf4kgcsK5j1CUe+49wvDfl+UgIOfq1oHHZ
+    b8c4mAQ5NwSs4PCCutvxTTwFK2FyiYbg2bjnYrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519831399; bh=Ep/s7aNF+8QhN+yAfeq
-    kgXJXwP1ruxV5QtQNlCPHoBw=; b=PXnZgtbDcOae7RFrS01UCWlIhF1PgE7hbqO
-    A7IzYkXNXHmmbZziLa2hwEHD+jw5fdJLFA6Idi0hGrY+r58Jv/a1sGsp9Amc2mIJ
-    gEQ23SKyqgDC5rJnV2TAXDgTZZQ6WQ7g6wHAYa/Vk40A4LuqM3C3VZ5+0QLbo5rK
-    ZFxzPhGgtNv3s5TnXrWQYSQqBvxix9Oux4EqSQ14oBw/whuicDxYmTTzJo3WR71P
-    uKyIhzIoD12w9d8EaRrIiI5C4gMnsfmtWFHNC6Wf36E51tU2ZaENptHonBUjAYjc
-    4L7rBpwUmIj5Yx3BeE6FmUGrZcM7t3bLk7T88gLT0v4wpcVvsMA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519831369; bh=xs4i8lW7hYj2RCkPwMc
+    Hlbm03qXUM0NH9Ux+esAeEI4=; b=i7NC4zy4/iCV++MG0N+ZWjWJt9TIMnIlcng
+    mBCE++tKESj8FUWJhGVTtRWjov0/rnQF3e4vB2YmljBIfvmfQ16iB0d95YaS0EGg
+    RMmS0oGdmUpOEpntFUEscMT1qVbvmiUOTZUAFf/whMzY+phedNAS1Hf0ydL+dPHk
+    GnR21RydDwOwIploWInC04T1PzfASSD0oDtrNrLyf95jmvFRPaLd6yP/AVkwlycN
+    rOkxw+qBNC7fHvWh22MYWshNn/WZz211Oq6GcCXflrZnR+Uu/Wbh1dhv5b4I7nWM
+    qAfJqitvN/a//UB8494KNIt3e4Jsh659exCjGpmBIH97PPwGzVg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,25 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932719AbeB1PWs (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:22:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33223 "EHLO
+        id S1752893AbeB1PWq (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:22:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33222 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752683AbeB1PWd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:33 -0500
+        by vger.kernel.org with ESMTP id S1752586AbeB1PWc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:32 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "Peter Ujfalusi" <peter.ujfalusi@ti.com>,
-        "Lee Jones" <lee.jones@linaro.org>
+CC: akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
+        "Nikolay Borisov" <nborisov@suse.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.742866676@decadent.org.uk>
+Message-ID: <lsq.1519831218.434836948@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 038/254] mfd: twl6040: Fix child-node lookup
+Subject: [PATCH 3.16 065/254] btrfs: Fix possible off-by-one in
+ btrfs_search_path_in_tree
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,51 +80,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 85e9b13cbb130a3209f21bd7933933399c389ffe upstream.
+commit c8bcbfbd239ed60a6562964b58034ac8a25f4c31 upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+The name char array passed to btrfs_search_path_in_tree is of size
+BTRFS_INO_LOOKUP_PATH_MAX (4080). So the actual accessible char indexes
+are in the range of [0, 4079]. Currently the code uses the define but this
+represents an off-by-one.
 
-To make things worse, the parent node was prematurely freed, while the
-child node was leaked.
+Implications:
 
-Note that the CONFIG_OF compile guard can be removed as
-of_get_child_by_name() provides a !CONFIG_OF implementation which always
-fails.
+Size of btrfs_ioctl_ino_lookup_args is 4096, so the new byte will be
+written to extra space, not some padding that could be provided by the
+allocator.
 
-Fixes: 37e13cecaa14 ("mfd: Add support for Device Tree to twl6040")
-Fixes: ca2cad6ae38e ("mfd: Fix twl6040 build failure")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+btrfs-progs store the arguments on stack, but kernel does own copy of
+the ioctl buffer and the off-by-one overwrite does not affect userspace,
+but the ending 0 might be lost.
+
+Kernel ioctl buffer is allocated dynamically so we're overwriting
+somebody else's memory, and the ioctl is privileged if args.objectid is
+not 256. Which is in most cases, but resolving a subvolume stored in
+another directory will trigger that path.
+
+Before this patch the buffer was one byte larger, but then the -1 was
+not added.
+
+Fixes: ac8e9819d71f907 ("Btrfs: add search and inode lookup ioctls")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ added implications ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mfd/twl6040.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/btrfs/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mfd/twl6040.c
-+++ b/drivers/mfd/twl6040.c
-@@ -97,12 +97,16 @@ static struct reg_default twl6040_patch[
- };
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2253,7 +2253,7 @@ static noinline int btrfs_search_path_in
+ 	if (!path)
+ 		return -ENOMEM;
  
+-	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX];
++	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX - 1];
  
--static bool twl6040_has_vibra(struct device_node *node)
-+static bool twl6040_has_vibra(struct device_node *parent)
- {
--#ifdef CONFIG_OF
--	if (of_find_node_by_name(node, "vibra"))
-+	struct device_node *node;
-+
-+	node = of_get_child_by_name(parent, "vibra");
-+	if (node) {
-+		of_node_put(node);
- 		return true;
--#endif
-+	}
-+
- 	return false;
- }
- 
+ 	key.objectid = tree_id;
+ 	key.type = BTRFS_ROOT_ITEM_KEY;
