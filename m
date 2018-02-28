@@ -1,148 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751994AbeB1HGR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 02:06:17 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43969 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751631AbeB1HGP (ORCPT
+        id S1751903AbeB1HIA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 02:08:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750835AbeB1HH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 02:06:15 -0500
-X-Google-Smtp-Source: AH8x227J3V3Dg9rvfgoTe/8XFc5gfKkVBxTJuc0leinYIBjpfs3Fbm+Uf8n4WNiMYA6Q6j7qfUua9g==
-From: Baegjae Sung <baegjae@gmail.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        baegjae@gmail.com
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] nvme-multipath: fix sysfs dangerously created links
-Date: Wed, 28 Feb 2018 16:06:04 +0900
-Message-Id: <20180228070604.25868-1-baegjae@gmail.com>
-X-Mailer: git-send-email 2.8.3.windows.1
+        Wed, 28 Feb 2018 02:07:59 -0500
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC REBASED 5/5] powerpc/mm/slice: use the dynamic high slice size to limit bitmap operations
+In-Reply-To: <5badd882663833576c10b8aafe235fe1e443f119.1518382747.git.christophe.leroy@c-s.fr>
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr> <5badd882663833576c10b8aafe235fe1e443f119.1518382747.git.christophe.leroy@c-s.fr>
+Date: Wed, 28 Feb 2018 12:37:50 +0530
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18022807-0008-0000-0000-000004D5590D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022807-0009-0000-0000-00001E687C11
+Message-Id: <87y3jda8xl.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If multipathing is enabled, each NVMe subsystem creates a head
-namespace (e.g., nvme0n1) and multiple private namespaces
-(e.g., nvme0c0n1 and nvme0c1n1) in sysfs. When creating links for
-private namespaces, links of head namespace are used, so the
-namespace creation order must be followed (e.g., nvme0n1 ->
-nvme0c1n1). If the order is not followed, links of sysfs will be
-incomplete or kernel panic will occur.
 
-The kernel panic was:
-  kernel BUG at fs/sysfs/symlink.c:27!
-  Call Trace:
-    nvme_mpath_add_disk_links+0x5d/0x80 [nvme_core]
-    nvme_validate_ns+0x5c2/0x850 [nvme_core]
-    nvme_scan_work+0x1af/0x2d0 [nvme_core]
+I also noticed that the slice mask printing use wrong variables now. I
+guess this should take care of it
 
-Correct order
-Context A     Context B
-nvme0n1
-nvme0c0n1     nvme0c1n1
-
-Incorrect order
-Context A     Context B
-              nvme0c1n1
-nvme0n1
-nvme0c0n1
-
-The nvme_mpath_add_disk (for creating head namespace) is called
-just before the nvme_mpath_add_disk_links (for creating private
-namespaces). In nvme_mpath_add_disk, the first context acquires
-the lock of subsystem and creates a head namespace, and other
-contexts do nothing by checking GENHD_FL_UP of a head namespace
-after waiting to acquire the lock. We verified the code with or
-without multipathing using three vendors of dual-port NVMe SSDs.
-
-Signed-off-by: Baegjae Sung <baegjae@gmail.com>
----
- drivers/nvme/host/core.c      | 12 +++---------
- drivers/nvme/host/multipath.c | 15 ++++++++++-----
- 2 files changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0fe7ea35c221..817e5e2766da 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2844,7 +2844,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
- }
- 
- static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
--		struct nvme_id_ns *id, bool *new)
-+		struct nvme_id_ns *id)
- {
- 	struct nvme_ctrl *ctrl = ns->ctrl;
- 	bool is_shared = id->nmic & (1 << 0);
-@@ -2860,8 +2860,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
- 			ret = PTR_ERR(head);
- 			goto out_unlock;
- 		}
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index fef3f36b0b73..6b3575c39668 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -535,8 +535,6 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	 * already
+ 	 */
+ 	maskp = slice_mask_for_size(mm, psize);
+-	slice_print_mask(" good_mask", &good_mask);
 -
--		*new = true;
- 	} else {
- 		struct nvme_ns_ids ids;
- 
-@@ -2873,8 +2871,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, unsigned nsid,
- 			ret = -EINVAL;
- 			goto out_unlock;
- 		}
--
--		*new = false;
+ 	/*
+ 	 * Here "good" means slices that are already the right page size,
+ 	 * "compat" means slices that have a compatible page size (i.e.
+@@ -569,6 +567,8 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	{
+ 		slice_copy_mask(&good_mask, maskp, high_slices);
  	}
++	slice_print_mask(" good_mask", &good_mask);
++	slice_print_mask(" compat_mask", compat_maskp);
  
- 	list_add_tail(&ns->siblings, &head->list);
-@@ -2945,7 +2941,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	struct nvme_id_ns *id;
- 	char disk_name[DISK_NAME_LEN];
- 	int node = dev_to_node(ctrl->dev), flags = GENHD_FL_EXT_DEVT;
--	bool new = true;
+ 	/* First check hint if it's valid or if we have MAP_FIXED */
+ 	if (addr || fixed) {
+@@ -646,7 +646,7 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
  
- 	ns = kzalloc_node(sizeof(*ns), GFP_KERNEL, node);
- 	if (!ns)
-@@ -2971,7 +2966,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	if (id->ncap == 0)
- 		goto out_free_id;
+ 	slice_range_to_mask(addr, len, &potential_mask, high_slices);
+ 	slice_dbg(" found potential area at 0x%lx\n", addr);
+-	slice_print_mask(" mask", maskp);
++	slice_print_mask(" mask", &potential_mask);
  
--	if (nvme_init_ns_head(ns, nsid, id, &new))
-+	if (nvme_init_ns_head(ns, nsid, id))
- 		goto out_free_id;
- 	nvme_setup_streams_ns(ctrl, ns);
- 	
-@@ -3037,8 +3032,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 		pr_warn("%s: failed to register lightnvm sysfs group for identification\n",
- 			ns->disk->disk_name);
- 
--	if (new)
--		nvme_mpath_add_disk(ns->head);
-+	nvme_mpath_add_disk(ns->head);
- 	nvme_mpath_add_disk_links(ns);
- 	return;
-  out_unlink_ns:
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 3b211d9e58b8..b7e5c6db4d92 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -198,11 +198,16 @@ void nvme_mpath_add_disk(struct nvme_ns_head *head)
- {
- 	if (!head->disk)
- 		return;
--	device_add_disk(&head->subsys->dev, head->disk);
--	if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
--			&nvme_ns_id_attr_group))
--		pr_warn("%s: failed to create sysfs group for identification\n",
--			head->disk->disk_name);
-+
-+	mutex_lock(&head->subsys->lock);
-+	if (!(head->disk->flags & GENHD_FL_UP)) {
-+		device_add_disk(&head->subsys->dev, head->disk);
-+		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
-+				&nvme_ns_id_attr_group))
-+			pr_warn("%s: failed to create sysfs group for identification\n",
-+				head->disk->disk_name);
-+	}
-+	mutex_unlock(&head->subsys->lock);
+  convert:
+ 	slice_andnot_mask(&potential_mask, &potential_mask, &good_mask, high_slices);
+@@ -836,13 +836,6 @@ int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
+ 		return !slice_check_range_fits(mm, &available, addr, len);
+ 	}
+ #endif
+-
+-#if 0 /* too verbose */
+-	slice_dbg("is_hugepage_only_range(mm=%p, addr=%lx, len=%lx)\n",
+-		 mm, addr, len);
+-	slice_print_mask(" mask", &mask);
+-	slice_print_mask(" available", &available);
+-#endif
+ 	return !slice_check_range_fits(mm, maskp, addr, len);
  }
- 
- void nvme_mpath_add_disk_links(struct nvme_ns *ns)
--- 
-2.16.2
+ #endif
