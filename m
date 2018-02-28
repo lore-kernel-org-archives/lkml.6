@@ -1,33 +1,33 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x225rEhHnRHgUxve/dvVBV2eDQa/A5iO29Zsyb6BJYWcKFczSvyz9YViLmlududVCq4DbxpwA
-ARC-Seal: i=1; a=rsa-sha256; t=1519837492; cv=none;
+X-Google-Smtp-Source: AH8x226Zioq7yqHNvyZ8EQU72PYGwzzOxrzHlrkEQ6aIYG8Ybu4sJYgG2ro2Oozc+BLBAS6PRV/g
+ARC-Seal: i=1; a=rsa-sha256; t=1519837488; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ete7q+OxAF+vqxgPAk5NFOaAlFFMvvwsg2r3CNSr6wg7Or0okgOGUwjkxGCNpsgS1j
-         0NoI1hBtyALJfcn0L2YcycGAot9i2A21mvJhK4IRPR3dfcng7ow2uZ8X/NgyikM7Edhd
-         QyiNjMfCR6zZEVPXxW6/zCIZkKAGFAT6FLcPN4Ge4IVUqSSdP+XUL5s2kw7EK8IlCWSy
-         MsSfksxnPVbe9q1ym12q/PlUjhOn1Tk8RJEwhKIJK3rtJTqcEWmAfN734MZCTCLuelFr
-         gRKdTKGU7Y2KYEx0hEoqMw0onBlhyLPa4tOmYCXrP9rGlS7GD8JOWTf9/1f7CpGvsqox
-         5HFw==
+        b=i/Ez4aO/Ct7blzT5voxqDhskz7RxM1/PK29hYTv2J+rXou5x8/lxMVfgF++8CprSla
+         WiO1ijd0tRp9zNam186JPy4ycq12JT24m14xh+TFQIdC0q9w5OBsRix2dq5dufSEcY6S
+         3bIyX77D3bdNJ5vX+fg912MYzbOetNxXKjXr53u2jolQC/wTcaQuwNafCYXCnvGOwlYG
+         k4nBvKk+17yN/1oZC8iHyKFk7gNSvKP+baQ9tW6erTN4rWEG/PgC42NIcRPrFFOl9Cwq
+         TyWDTu3/WuczECrCt5bu8/OhCMGZQf0EiIXg4ao1/31gLwGj4SJLhWvQuwE298NtOl7/
+         CN0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=3lDz54e4Yid8sUAeMtlxWZK8byxlJ8y5zCO1n9L29R8=;
-        b=kwrE2K6BX4ZzSRAKo3upLVFFVzfAxpbLJuxdz+WqYPzVryhONGvqZL17XlYyLuFxdp
-         O3yMG1HUhhw34/nJpCEnuEPaB00kh2THcTrJLgXsN1IWNZ1Jyrv84dUEq3I63sLmAKk8
-         NuVN3YeermuOiDkvHOlKPflBoq5PyKyGmjqeLNIO3X2ImAXuJREr9DT7ojwev8jRrfgP
-         VnL+a+yWmtm825FQAuFDM0Wi0ZPcfQ7Q9aaK4kuyv9WXmQxkvU6GV4jIIsjqf6ay/jhK
-         c5u09lDEotfnMmEr6xvVmvJJnqJiFXFazujCMOM6tPWAh6Um1irpQ1KtiwtBuG0OWeok
-         Ve6Q==
+        bh=h3by/I4VCyYUGVEYIiGTOmWXbriPot57Z1K45Ctr5O4=;
+        b=lqo5PTLMZEe2cCaSuC0FO00Xq4m8AVLV8BvS/5ANjmaMRCxe5CIFYV38aB6b4H+34D
+         veCKWklt78pZJKK6N5BUtm3I1ZBH88YwXZEnJlSiXArX9lelSHYpo6XPrRwlUJ4WFM/0
+         EPvxFnLNZZFiYxkfSiA0lSnAc+MJV/hjIOQRZeMpTeRB1onH1DaTxI9huPR0Vi2Dpvnx
+         j+uEAZMgDJMsJ49djkLAumAmxNZ9aGJqELVXtR3dLZ0kfE7AXJQdhFGULCrBppEZWc6W
+         F807escpZYolVJG6vpL/tltBHVTvNS1G4B1K4Qv1cMsXJm9H9jH6npco3jWPM+AWm8Ou
+         eZDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=TfAkUTJz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=o7BWCX9Y;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=hidHHpio;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Nco+FFj6;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=TfAkUTJz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=o7BWCX9Y;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=hidHHpio;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Nco+FFj6;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A417607E5
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F395B60240
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
 From: Oza Pawandeep <poza@codeaurora.org>
@@ -44,231 +44,146 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v12 4/6] PCI/DPC: Unify and plumb error handling into DPC
-Date: Wed, 28 Feb 2018 22:34:15 +0530
-Message-Id: <1519837457-3596-5-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v12 3/6] PCI/PORTDRV: Implement generic find service
+Date: Wed, 28 Feb 2018 22:34:14 +0530
+Message-Id: <1519837457-3596-4-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
 References: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593665118461645529?=
-X-GMAIL-MSGID: =?utf-8?q?1593665118461645529?=
+X-GMAIL-THRID: =?utf-8?q?1593665114849236705?=
+X-GMAIL-MSGID: =?utf-8?q?1593665114849236705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Current DPC driver does not do recovery, e.g. calling end-point's driver's
-callbacks, which sanitize the sw.
-
-DPC driver implements link_reset callback, and calls pci_do_recovery().
+This patch implements generic pcie_port_find_service() routine.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 98aeec4..9f1c983 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -19,6 +19,7 @@
- #include <linux/aer.h>
- #include <linux/pcieport_if.h>
- #include "portdrv.h"
-+#include "./../pci.h"
- 
- struct aer_broadcast_data {
- 	enum pci_channel_state state;
-@@ -179,11 +180,12 @@ static pci_ers_result_t default_reset_link(struct pci_dev *dev)
- 	return PCI_ERS_RESULT_RECOVERED;
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 4acec3b..aeb8236 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -231,32 +231,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
  }
  
--static pci_ers_result_t reset_link(struct pci_dev *dev)
-+static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
- {
- 	struct pci_dev *udev;
- 	pci_ers_result_t status;
- 	struct pcie_port_service_driver *driver = NULL;
-+	u32 service;
- 
- 	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
- 		/* Reset this port for all subordinates */
-@@ -193,8 +195,12 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
- 		udev = dev->bus->self;
+-static int find_aer_service_iter(struct device *device, void *data)
+-{
+-	struct pcie_port_service_driver *service_driver, **drv;
+-
+-	drv = (struct pcie_port_service_driver **) data;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
+-			*drv = service_driver;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+-{
+-	struct pcie_port_service_driver *drv = NULL;
+-
+-	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
+-
+-	return drv;
+-}
+-
+ /**
+  * handle_error_source - handle logging error into an event log
+  * @aerdev: pointer to pcie_device data structure of the root port
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index c48eb0a..98aeec4 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -194,7 +194,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
  	}
  
--	/* Use the aer driver of the component firstly */
--	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
-+	if (severity == DPC_FATAL)
-+		service = PCIE_PORT_SERVICE_DPC;
-+	else
-+		service = PCIE_PORT_SERVICE_AER;
-+
-+	driver = pcie_port_find_service(udev, service);
+ 	/* Use the aer driver of the component firstly */
+-	driver = find_aer_service(udev);
++	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
  
  	if (driver && driver->reset_link) {
  		status = driver->reset_link(udev);
-@@ -281,7 +287,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
- 	enum pci_channel_state state;
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 9a8d0dd..419bdf3 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -79,5 +79,6 @@ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask)
+ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask){}
+ #endif /* !CONFIG_ACPI */
  
--	if (severity == AER_FATAL)
-+	if ((severity == AER_FATAL) ||
-+	    (severity == DPC_FATAL))
- 		state = pci_channel_io_frozen;
- 	else
- 		state = pci_channel_io_normal;
-@@ -291,10 +298,13 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 			"error_detected",
- 			report_error_detected);
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index ef3bad4..ffc6f4f 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -23,6 +23,11 @@
  
--	if (severity == AER_FATAL) {
--		result = reset_link(dev);
-+	if ((severity == AER_FATAL) ||
-+	    (severity == DPC_FATAL)) {
-+		result = reset_link(dev, severity);
- 		if (result != PCI_ERS_RESULT_RECOVERED)
- 			goto failed;
-+		else if (severity == DPC_FATAL)
-+			goto resume;
- 	}
+ bool pciehp_msi_disabled;
  
- 	if (status == PCI_ERS_RESULT_CAN_RECOVER)
-@@ -318,6 +328,7 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	if (status != PCI_ERS_RESULT_RECOVERED)
- 		goto failed;
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	u32 service;
++};
++
+ static int __init pciehp_setup(char *str)
+ {
+ 	if (!strncmp(str, "nomsi", 5))
+@@ -414,6 +419,45 @@ static int remove_iter(struct device *dev, void *data)
+ 	return 0;
+ }
  
-+resume:
- 	broadcast_error_message(dev,
- 				state,
- 				"resume",
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index 38e40c6..517c8b4 100644
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -13,6 +13,7 @@
- #include <linux/pcieport_if.h>
- #include "../pci.h"
- #include "aer/aerdrv.h"
-+#include "portdrv.h"
- 
- struct dpc_dev {
- 	struct pcie_device	*dev;
-@@ -45,6 +46,33 @@ struct dpc_dev {
- 	"Memory Request Completion Timeout",		 /* Bit Position 18 */
- };
- 
-+static int find_dpc_dev_iter(struct device *device, void *data)
++static int find_service_iter(struct device *device, void *data)
 +{
 +	struct pcie_port_service_driver *service_driver;
-+	struct device **dev;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
 +
-+	dev = (struct device **) data;
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
 +
 +	if (device->bus == &pcie_port_bus_type && device->driver) {
 +		service_driver = to_service_driver(device->driver);
-+		if (service_driver->service == PCIE_PORT_SERVICE_DPC) {
-+			*dev = device;
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
 +			return 1;
 +		}
 +	}
 +
 +	return 0;
 +}
-+
-+static struct device *pci_find_dpc_dev(struct pci_dev *pdev)
-+{
-+	struct device *dev = NULL;
-+
-+	device_for_each_child(&pdev->dev, &dev, find_dpc_dev_iter);
-+
-+	return dev;
-+}
-+
- static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
- {
- 	unsigned long timeout = jiffies + HZ;
-@@ -82,12 +110,25 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- 		dev_warn(dev, "Link state not disabled for DPC event\n");
- }
- 
--static void dpc_work(struct work_struct *work)
 +/**
-+ * dpc_reset_link - reset link DPC routine
-+ * @pdev: pointer to Root Port's pci_dev data structure
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service devices associated with
++ * @service: Service to find
 + *
-+ * Invoked by Port Bus driver when performing link reset at Root Port.
++ * Find PCI Express port service driver associated with given service
 + */
-+static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
- {
--	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
--	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
- 	struct pci_bus *parent = pdev->subordinate;
--	u16 cap = dpc->cap_pos, ctl;
-+	struct pci_dev *dev, *temp;
-+	struct dpc_dev *dpc;
-+	struct pcie_device *pciedev;
-+	struct device *devdpc;
-+	u16 cap, ctl;
-+
-+	devdpc = pci_find_dpc_dev(pdev);
-+	pciedev = to_pcie_device(devdpc);
-+	dpc = get_service_data(pciedev);
-+	cap = dpc->cap_pos;
- 
- 	pci_lock_rescan_remove();
- 	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
-@@ -104,21 +145,31 @@ static void dpc_work(struct work_struct *work)
- 
- 	dpc_wait_link_inactive(dpc);
- 	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
--		return;
-+		return PCI_ERS_RESULT_DISCONNECT;
- 	if (dpc->rp_extensions && dpc->rp_pio_status) {
- 		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
- 				       dpc->rp_pio_status);
- 		dpc->rp_pio_status = 0;
- 	}
- 
--	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
-+	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
- 		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
- 
- 	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
- 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
- 			      ctl | PCI_EXP_DPC_CTL_INT_EN);
-+
-+	return PCI_ERS_RESULT_RECOVERED;
- }
- 
-+static void dpc_work(struct work_struct *work)
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
 +{
-+	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
-+	struct pci_dev *pdev = dpc->dev->port;
++	struct pcie_port_service_driver *drv = NULL;
++	struct portdrv_service_data pdrvs;
 +
-+	/* From DPC point of view error is always FATAL. */
-+	pcie_do_recovery(pdev, DPC_FATAL);
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
 +}
- static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
- {
- 	struct device *dev = &dpc->dev->device;
-@@ -297,6 +348,7 @@ static void dpc_remove(struct pcie_device *dev)
- 	.service	= PCIE_PORT_SERVICE_DPC,
- 	.probe		= dpc_probe,
- 	.remove		= dpc_remove,
-+	.reset_link     = dpc_reset_link,
- };
- 
- static int __init dpc_service_init(void)
-diff --git a/include/linux/aer.h b/include/linux/aer.h
-index 8f87bbe..9cfd0b8 100644
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@ -15,6 +15,8 @@
- #define AER_FATAL			1
- #define AER_CORRECTABLE			2
- 
-+#define DPC_FATAL			4
 +
- struct pci_dev;
- 
- struct aer_header_log_regs {
+ /**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
 a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
