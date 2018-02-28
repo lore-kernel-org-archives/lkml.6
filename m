@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835954-2-9097073313146882905
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835923-2-505949135762265748
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835953; b=jBB8NDU1gkiq67z/NNS5dDwiymex/6ZdjwWkU7aSwO2O0Tl
-    +KzT1JRrgv9yJ34xaURnhSNcWIvRrV1ajcP0DoX859x3jbS0rJqxEAomqM/7MoRF
-    yzy/RXwvAO0FNujmjNUjQQlLUS47yD71q+EugdJOHZTJGlcx8aY/lmoK5LqO8r5r
-    +1PY+MeP0JoDD3a8RJF9UVFThq/+yBGWrUc8FsyS/SrzWGkGklHVAz6bUWr7czO8
-    fCdcB1Ndbny+jnI3FGFy+PsMyIK/IHxsf1pbdFZ9+1wKrp8EWwpFdqOFOwS5VtA6
-    x+GzHSBrYQd1T1R8/MOnLmOHiDi4iJGzHmzMEhA==
+    t=1519835923; b=jtmO6RdwIMYv7vQ7CwzpsWv5sF2yvdgAqRtAAwiIhEUfwwf
+    CyKPm0tXgySy2wpBcYUkzc8dCI3qufLIYM313TpaTTpGrFwE99MGC84XQx4gx386
+    kWSPy0EtgGa3yPBvJdM1+B/2X0RA+UDMHNpsrtYFCmXSRvTYUhOtkbQpET7CsMl/
+    rQLpmHywSWp6ptwwD8/H+VWLaiDei8znO3Gij/wLOAySBlL7DrKBmi5AtazJmBdo
+    q2N7+biwkFfP6dzwU+i5q73vxhmWplrJfs0vCBHyHtpTLRu+HzreIa3MT44L25q4
+    QD/oV3UfPIs73TA9ogZ+P6b8h37lEJKBBpDJvGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835953; bh=1tyrCkoGMic6yhMCiNT
-    0NmijusZMLSPHkR5WAsqbZXU=; b=shEC37GF/lr65/I5gYdWsRrSUsPv4If4ohP
-    O8a6AW3W7DkuVoeiChH+jgc1d7gAytvUJ6Pn0WzC9wHZOfok9L9J6DnVqhkTp3HK
-    m6uNB1jfDTnQ+LmMk5wsRr92Mfk4haBqF9OCDhMMsN8N+Mgvm02M3N4kcIy4jGsT
-    40FM25J5D5k8e3rFTrSmBaF9TrGfu5nmIo884ZY9gj863JoAP5AnZRiRoFqsbDR1
-    FH1pzwMI4Qi9yEcG/olEAWnCD/p7zbEWqjD4UD/Dq0UqRDQXuLgb6a7y6K/jPTKS
-    qeoBV8GaABnX9l0y9HB3kyNp8E9V600pnGsfC0W8uclwpFOAbOg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835923; bh=aJRXZX/NRkzInDXCMwj
+    bDAPjZWcd15leYv/FUFXKVH0=; b=enlcl1nFq/GdaeHib/OiKKyZTmYKDraIoYs
+    0wKbSxFwtI/EKTHx2P/A8glN7JzOmJt4nH6Izihi78TASsNWVenQO0GJR6ywi0za
+    9XJ7bPlzvA4tOdDMznUSdL75x8Dsq7KySQYHtpvnaqIMeFcBqyur7W7i9eFVZH/w
+    Eun+FLe4UnGpXKKgQ2W/G5dIEWn3No47FPI9+rM4chUL3XLqMx7iHNRLB5twAYrN
+    urSy1Q+UYtw5UqSNe/dHekGmeATD0eNyvgVk/5q9Q+LxIBBjvP1rUWoqA+lANpC4
+    iEtSiGqSybC9fHGFTr08IBHC+49ZrW4j6YFV6gBCxPaQmLbMYnA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,24 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752601AbeB1QEK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:04:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34803 "EHLO
+        id S1753203AbeB1QER (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:04:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34810 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752516AbeB1QEI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:08 -0500
+        by vger.kernel.org with ESMTP id S1753190AbeB1QEP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:15 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Jia Zhang" <zhang.jia@linux.alibaba.com>,
-        "Borislav Petkov" <bp@suse.de>, "Tony Luck" <tony.luck@intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.974232031@decadent.org.uk>
+Message-ID: <lsq.1519831218.18705980@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 228/254] x86/microcode/intel: Extend BDW late-loading
- further with LLC size check
+Subject: [PATCH 3.16 184/254] sh_eth: fix TXALCR1 offsets
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,88 +79,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 7e702d17ed138cf4ae7c00e8c00681ed464587c7 upstream.
+commit 50f3d740d376f664f6accc7e86c9afd8f1c7e1e4 upstream.
 
-Commit b94b73733171 ("x86/microcode/intel: Extend BDW late-loading with a
-revision check") reduced the impact of erratum BDF90 for Broadwell model
-79.
+The  TXALCR1 offsets are incorrect in the register offset tables, most
+probably due to copy&paste error.  Luckily, the driver never uses this
+register. :-)
 
-The impact can be reduced further by checking the size of the last level
-cache portion per core.
-
-Tony: "The erratum says the problem only occurs on the large-cache SKUs.
-So we only need to avoid the update if we are on a big cache SKU that is
-also running old microcode."
-
-For more details, see erratum BDF90 in document #334165 (Intel Xeon
-Processor E7-8800/4800 v4 Product Family Specification Update) from
-September 2017.
-
-Fixes: b94b73733171 ("x86/microcode/intel: Extend BDW late-loading with a revision check")
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/1516321542-31161-1-git-send-email-zhang.jia@linux.alibaba.com
-[bwh: Backported to 3.16: adjust context]
+Fixes: 4a55530f38e4 ("net: sh_eth: modify the definitions of register")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -87,6 +87,9 @@ MODULE_DESCRIPTION("Microcode Update Dri
- MODULE_AUTHOR("Tigran Aivazian <tigran@aivazian.fsnet.co.uk>");
- MODULE_LICENSE("GPL");
- 
-+/* last level cache size per core */
-+static int llc_size_per_core;
-+
- static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
- {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu_num);
-@@ -273,12 +276,14 @@ static bool is_blacklisted(unsigned int
- 
- 	/*
- 	 * Late loading on model 79 with microcode revision less than 0x0b000021
--	 * may result in a system hang. This behavior is documented in item
--	 * BDF90, #334165 (Intel Xeon Processor E7-8800/4800 v4 Product Family).
-+	 * and LLC size per core bigger than 2.5MB may result in a system hang.
-+	 * This behavior is documented in item BDF90, #334165 (Intel Xeon
-+	 * Processor E7-8800/4800 v4 Product Family).
- 	 */
- 	if (c->x86 == 6 &&
- 	    c->x86_model == 0x4F &&
- 	    c->x86_mask == 0x01 &&
-+	    llc_size_per_core > 2621440 &&
- 	    c->microcode < 0x0b000021) {
- 		pr_err_once("Erratum BDF90: late loading with revision < 0x0b000021 (0x%x) disabled.\n", c->microcode);
- 		pr_err_once("Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
-@@ -345,6 +350,15 @@ static struct microcode_ops microcode_in
- 	.microcode_fini_cpu               = microcode_fini_cpu,
- };
- 
-+static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
-+{
-+	u64 llc_size = c->x86_cache_size * 1024;
-+
-+	do_div(llc_size, c->x86_max_cores);
-+
-+	return (int)llc_size;
-+}
-+
- struct microcode_ops * __init init_intel_microcode(void)
- {
- 	struct cpuinfo_x86 *c = &cpu_data(0);
-@@ -355,6 +369,8 @@ struct microcode_ops * __init init_intel
- 		return NULL;
- 	}
- 
-+	llc_size_per_core = calc_llc_size_per_core(c);
-+
- 	return &microcode_intel_ops;
- }
- 
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -142,7 +142,7 @@ static const u16 sh_eth_offset_gigabit[S
+ 	[FWNLCR0]	= 0x0090,
+ 	[FWALCR0]	= 0x0094,
+ 	[TXNLCR1]	= 0x00a0,
+-	[TXALCR1]	= 0x00a0,
++	[TXALCR1]	= 0x00a4,
+ 	[RXNLCR1]	= 0x00a8,
+ 	[RXALCR1]	= 0x00ac,
+ 	[FWNLCR1]	= 0x00b0,
+@@ -384,7 +384,7 @@ static const u16 sh_eth_offset_fast_sh3_
+ 	[FWNLCR0]	= 0x0090,
+ 	[FWALCR0]	= 0x0094,
+ 	[TXNLCR1]	= 0x00a0,
+-	[TXALCR1]	= 0x00a0,
++	[TXALCR1]	= 0x00a4,
+ 	[RXNLCR1]	= 0x00a8,
+ 	[RXALCR1]	= 0x00ac,
+ 	[FWNLCR1]	= 0x00b0,
