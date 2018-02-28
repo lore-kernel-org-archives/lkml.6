@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x224hhoELe8z4dhmuv4i4f4b2ofFTbFdM/IgsBETeWk7zfn8cg1irNm43cL4C7gHrhtCGZjjl
-ARC-Seal: i=1; a=rsa-sha256; t=1519788168; cv=none;
+X-Google-Smtp-Source: AH8x225+xXiiUni4DCi7OKJXU5nLvqUqyUTGszezKaiEZB+ce0ES07G/ijRjI4xOB3YOiQzN3hKI
+ARC-Seal: i=1; a=rsa-sha256; t=1519788151; cv=none;
         d=google.com; s=arc-20160816;
-        b=GCvezQ7V+Wgt3Y/u6t/y2ylxxU/mYlTa9aU4emA/rqTHcEMOZfBjF07RIFsB6Odrj5
-         B0STRr7G6AnEYSoPj/DCaFJELBiQ9UB25iCEaNcGzCZEDEyw81k30kyY6keFb5oDJPaE
-         zCQaqRapKbGSKYetYfMWt3Bekvh4uHQdOaOpePv3y6HcdVd8VMGLqxkjKAqZMYeOy0Ql
-         peY7VP8stQQqGVmZOsWrQwHFfL1X/UtxJwdBRLJczLE0nL8aEUqgBvthgXyyQsGmmxho
-         +vQ3MBjAnYW3XyvRZFp6vgYs9s1eFOevCTcBu0qDaxR8ffrjySYyeynse/tO3qSJ5Eui
-         J67w==
+        b=sadoM3iiEts3X6TOhmDBLnpDznh0Al2EUeKEU7DjxZRW0Uor5V7gTQRGABCDAgbFwj
+         ZboOtJ2Oy//4iuvXigp9Ra1U00JI0VKB29LzMlT4zNkD8/Kyz4KODu1vl6V88y/pbe+S
+         2ad4o6fqGMqHBW4kT2AwOQu3f2m0F0JTa+1hlVS/6d+FEU0nKwUKJxXj7qWyz8rk3tbh
+         lUth77svUGVmfwHE88p+vmeZpPZ6I7V2iWfe7cl9NeIEtCLqbWuwo3IygCdqPAoiGvKL
+         yyKJW3YPUNOi8cXTFFa5w61J/mLE12IggrYz/WRaZlaEjoxfaSpGghvOAjpHpSM44opb
+         017Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=tn1AVs8JfOfm0GVQI1hVWIQSva71L9HJNFTB0zG6Fc0=;
-        b=nT8/DSMxlwu7L6E4YhwT6VpfAtD4HlPY5NH2PnJWW+vEcAk50lq50/cCQTRG86QxQ0
-         mGMPmtqMEI7rrrLlJe0fZnhYZo6ZX2n7gSQFMgt9WWEtZbwb/Duv5X9pyaUAWwwozb8g
-         Fw8U9s9nwJjoX7VvvQzPGM/OQ0S2Ot38HxFun1tfCpbhWWLmjE82ycqKLJ2/w2C2+SqJ
-         zPqWQdntebUzU3Ft/R7XkWfisLZ0UHybr+j8Cbgi7o7h90nzWri+Vx7J4Zt443LFuS5T
-         YwESWd7BMhbKVYJnTkoQBxqMvuW1w6K6ZT37rxh8GjyFLfIc1yXQDpQ/POXiPhOyX3ST
-         ALuA==
+        bh=90XgKAxpVpMV9HgYIdvfQrs0rSaa+pxCZaNw+E0JqUQ=;
+        b=sslMYb8mrLWeSiN9qiuTQC+cD2iLZEBsiOBGKHiNe+cMaomUs54EoLaO9r0ViGeYQt
+         k0o7G155r0sgf8XINEa5tceUu+uvzYOFywpZaFtOstlcW4c9cf9xotXbroO6SdX4wIHa
+         8yeV/M63mZ5Gkc0BvCuA4Q6ORRD3TAb2T5LPad2g4kBukhh9VTxKxN6gW0BUzHSzt5L9
+         6qUIwBDwdKFFDBWyQxtCWMlN1MFI8yMhWP4JnsBMWK5hYswMvJYJIO3PgDRqU3PtYvaa
+         argYkjOSYFUz1ZGfV+9IfQO4vzM/2DC1EaAkf8hzpucoYVsIifObAYS85IGFiQr/+uPG
+         v9LQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeB1DWs (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 27 Feb 2018 22:22:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56166 "EHLO mail.kernel.org"
+        id S1751848AbeB1DWT (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 27 Feb 2018 22:22:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751713AbeB1DWr (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 27 Feb 2018 22:22:47 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66FC32168D
+        id S1751761AbeB1DWS (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 27 Feb 2018 22:22:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8366821797
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v4 06/19] tracing: probeevent: Cleanup argument field definition
-Date: Wed, 28 Feb 2018 12:22:23 +0900
-Message-Id: <151978814335.2577.15921272808526116424.stgit@devbox>
+Subject: [PATCH v4 05/19] tracing: probeevent: Cleanup print argument functions
+Date: Wed, 28 Feb 2018 12:21:54 +0900
+Message-Id: <151978811450.2577.6810415125195417013.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <151978796240.2577.6531711990653677529.stgit@devbox>
 References: <151978796240.2577.6531711990653677529.stgit@devbox>
@@ -54,151 +54,181 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593613398729987969?=
-X-GMAIL-MSGID: =?utf-8?q?1593613398729987969?=
+X-GMAIL-THRID: =?utf-8?q?1593613381291479557?=
+X-GMAIL-MSGID: =?utf-8?q?1593613381291479557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Cleanup event argument definition code in one place for
-maintenancability.
+Current print argument functions prints the argument
+name too. It is not good for printing out multiple
+values for one argument. This change it to just print
+out the value.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_kprobe.c |   32 ++++----------------------------
- kernel/trace/trace_probe.c  |   21 +++++++++++++++++++++
- kernel/trace/trace_probe.h  |    2 ++
- kernel/trace/trace_uprobe.c |   15 ++-------------
- 4 files changed, 29 insertions(+), 41 deletions(-)
+ kernel/trace/trace_kprobe.c |   20 ++++++--------------
+ kernel/trace/trace_probe.c  |   12 +++++-------
+ kernel/trace/trace_probe.h  |   19 ++++++++++++++++---
+ kernel/trace/trace_uprobe.c |    9 ++-------
+ 4 files changed, 29 insertions(+), 31 deletions(-)
 
 diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 81e2eb5a1566..a8f8cce066a9 100644
+index 1cd3fb4d70f8..81e2eb5a1566 100644
 --- a/kernel/trace/trace_kprobe.c
 +++ b/kernel/trace/trace_kprobe.c
-@@ -1146,49 +1146,25 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
+@@ -1090,8 +1090,6 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
+ 	struct kprobe_trace_entry_head *field;
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_probe *tp;
+-	u8 *data;
+-	int i;
  
- static int kprobe_event_define_fields(struct trace_event_call *event_call)
- {
--	int ret, i;
-+	int ret;
- 	struct kprobe_trace_entry_head field;
- 	struct trace_kprobe *tk = (struct trace_kprobe *)event_call->data;
+ 	field = (struct kprobe_trace_entry_head *)iter->ent;
+ 	tp = container_of(event, struct trace_probe, call.event);
+@@ -1103,11 +1101,9 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
  
- 	DEFINE_FIELD(unsigned long, ip, FIELD_STRING_IP, 0);
--	/* Set argument names as fields */
--	for (i = 0; i < tk->tp.nr_args; i++) {
--		struct probe_arg *parg = &tk->tp.args[i];
+ 	trace_seq_putc(s, ')');
  
--		ret = trace_define_field(event_call, parg->type->fmttype,
--					 parg->name,
--					 sizeof(field) + parg->offset,
--					 parg->type->size,
--					 parg->type->is_signed,
--					 FILTER_OTHER);
--		if (ret)
--			return ret;
--	}
--	return 0;
-+	return traceprobe_define_arg_fields(event_call, sizeof(field), &tk->tp);
- }
+-	data = (u8 *)&field[1];
+-	for (i = 0; i < tp->nr_args; i++)
+-		if (!tp->args[i].type->print(s, tp->args[i].name,
+-					     data + tp->args[i].offset, field))
+-			goto out;
++	if (print_probe_args(s, tp->args, tp->nr_args,
++			     (u8 *)&field[1], field) < 0)
++		goto out;
  
- static int kretprobe_event_define_fields(struct trace_event_call *event_call)
- {
--	int ret, i;
-+	int ret;
- 	struct kretprobe_trace_entry_head field;
- 	struct trace_kprobe *tk = (struct trace_kprobe *)event_call->data;
+ 	trace_seq_putc(s, '\n');
+  out:
+@@ -1121,8 +1117,6 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
+ 	struct kretprobe_trace_entry_head *field;
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_probe *tp;
+-	u8 *data;
+-	int i;
  
- 	DEFINE_FIELD(unsigned long, func, FIELD_STRING_FUNC, 0);
- 	DEFINE_FIELD(unsigned long, ret_ip, FIELD_STRING_RETIP, 0);
--	/* Set argument names as fields */
--	for (i = 0; i < tk->tp.nr_args; i++) {
--		struct probe_arg *parg = &tk->tp.args[i];
+ 	field = (struct kretprobe_trace_entry_head *)iter->ent;
+ 	tp = container_of(event, struct trace_probe, call.event);
+@@ -1139,11 +1133,9 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
  
--		ret = trace_define_field(event_call, parg->type->fmttype,
--					 parg->name,
--					 sizeof(field) + parg->offset,
--					 parg->type->size,
--					 parg->type->is_signed,
--					 FILTER_OTHER);
--		if (ret)
--			return ret;
--	}
--	return 0;
-+	return traceprobe_define_arg_fields(event_call, sizeof(field), &tk->tp);
- }
+ 	trace_seq_putc(s, ')');
  
- #ifdef CONFIG_PERF_EVENTS
+-	data = (u8 *)&field[1];
+-	for (i = 0; i < tp->nr_args; i++)
+-		if (!tp->args[i].type->print(s, tp->args[i].name,
+-					     data + tp->args[i].offset, field))
+-			goto out;
++	if (print_probe_args(s, tp->args, tp->nr_args,
++			     (u8 *)&field[1], field) < 0)
++		goto out;
+ 
+ 	trace_seq_putc(s, '\n');
+ 
 diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 8894b81e29b0..049e8531fdf8 100644
+index daf54bda4dc8..8894b81e29b0 100644
 --- a/kernel/trace/trace_probe.c
 +++ b/kernel/trace/trace_probe.c
-@@ -680,3 +680,24 @@ int set_print_fmt(struct trace_probe *tp, bool is_return)
+@@ -38,10 +38,9 @@ const char *reserved_field_names[] = {
  
- 	return 0;
+ /* Printing  in basic type function template */
+ #define DEFINE_BASIC_PRINT_TYPE_FUNC(tname, type, fmt)			\
+-int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, const char *name,	\
+-				void *data, void *ent)			\
++int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, void *data, void *ent)\
+ {									\
+-	trace_seq_printf(s, " %s=" fmt, name, *(type *)data);		\
++	trace_seq_printf(s, fmt, *(type *)data);			\
+ 	return !trace_seq_has_overflowed(s);				\
+ }									\
+ const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;				\
+@@ -61,15 +60,14 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
+ DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
+ 
+ /* Print type function for string type */
+-int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, const char *name,
+-				 void *data, void *ent)
++int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
+ {
+ 	int len = *(u32 *)data >> 16;
+ 
+ 	if (!len)
+-		trace_seq_printf(s, " %s=(fault)", name);
++		trace_seq_puts(s, "(fault)");
+ 	else
+-		trace_seq_printf(s, " %s=\"%s\"", name,
++		trace_seq_printf(s, "\"%s\"",
+ 				 (const char *)get_loc_data(data, ent));
+ 	return !trace_seq_has_overflowed(s);
  }
-+
-+int traceprobe_define_arg_fields(struct trace_event_call *event_call,
-+				 size_t offset, struct trace_probe *tp)
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 75daff22ccea..0c8e66f9c855 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -94,7 +94,7 @@ static nokprobe_inline void *get_loc_data(u32 *dl, void *ent)
+ /* Data fetch function type */
+ typedef	void (*fetch_func_t)(struct pt_regs *, void *, void *);
+ /* Printing function type */
+-typedef int (*print_type_func_t)(struct trace_seq *, const char *, void *, void *);
++typedef int (*print_type_func_t)(struct trace_seq *, void *, void *);
+ 
+ /* Fetch types */
+ enum {
+@@ -136,8 +136,7 @@ typedef u32 string_size;
+ 
+ /* Printing  in basic type function template */
+ #define DECLARE_BASIC_PRINT_TYPE_FUNC(type)				\
+-int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, const char *name,	\
+-				void *data, void *ent);			\
++int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, void *data, void *ent);\
+ extern const char PRINT_TYPE_FMT_NAME(type)[]
+ 
+ DECLARE_BASIC_PRINT_TYPE_FUNC(u8);
+@@ -415,6 +414,20 @@ store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
+ 	}
+ }
+ 
++static inline int
++print_probe_args(struct trace_seq *s, struct probe_arg *args, int nr_args,
++		 u8 *data, void *field)
 +{
-+	int ret, i;
++	int i;
 +
-+	/* Set argument names as fields */
-+	for (i = 0; i < tp->nr_args; i++) {
-+		struct probe_arg *parg = &tp->args[i];
-+
-+		ret = trace_define_field(event_call, parg->type->fmttype,
-+					 parg->name,
-+					 offset + parg->offset,
-+					 parg->type->size,
-+					 parg->type->is_signed,
-+					 FILTER_OTHER);
-+		if (ret)
-+			return ret;
++	for (i = 0; i < nr_args; i++) {
++		trace_seq_printf(s, " %s=", args[i].name);
++		if (!args[i].type->print(s, data + args[i].offset, field))
++			return -ENOMEM;
 +	}
 +	return 0;
 +}
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 0c8e66f9c855..de928052926b 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -440,3 +440,5 @@ extern struct trace_event_call *
- create_local_trace_uprobe(char *name, unsigned long offs, bool is_return);
- extern void destroy_local_trace_uprobe(struct trace_event_call *event_call);
- #endif
-+extern int traceprobe_define_arg_fields(struct trace_event_call *event_call,
-+					size_t offset, struct trace_probe *tp);
++
+ extern int set_print_fmt(struct trace_probe *tp, bool is_return);
+ 
+ #ifdef CONFIG_PERF_EVENTS
 diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 4c006a693663..887da2bb63aa 100644
+index 2014f4351ae0..4c006a693663 100644
 --- a/kernel/trace/trace_uprobe.c
 +++ b/kernel/trace/trace_uprobe.c
-@@ -982,7 +982,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+@@ -864,7 +864,6 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_uprobe *tu;
+ 	u8 *data;
+-	int i;
  
- static int uprobe_event_define_fields(struct trace_event_call *event_call)
- {
--	int ret, i, size;
-+	int ret, size;
- 	struct uprobe_trace_entry_head field;
- 	struct trace_uprobe *tu = event_call->data;
- 
-@@ -994,19 +994,8 @@ static int uprobe_event_define_fields(struct trace_event_call *event_call)
- 		DEFINE_FIELD(unsigned long, vaddr[0], FIELD_STRING_IP, 0);
- 		size = SIZEOF_TRACE_ENTRY(false);
+ 	entry = (struct uprobe_trace_entry_head *)iter->ent;
+ 	tu = container_of(event, struct trace_uprobe, tp.call.event);
+@@ -881,12 +880,8 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
+ 		data = DATAOF_TRACE_ENTRY(entry, false);
  	}
--	/* Set argument names as fields */
+ 
 -	for (i = 0; i < tu->tp.nr_args; i++) {
 -		struct probe_arg *parg = &tu->tp.args[i];
 -
--		ret = trace_define_field(event_call, parg->type->fmttype,
--					 parg->name, size + parg->offset,
--					 parg->type->size, parg->type->is_signed,
--					 FILTER_OTHER);
- 
--		if (ret)
--			return ret;
+-		if (!parg->type->print(s, parg->name, data + parg->offset, entry))
+-			goto out;
 -	}
--	return 0;
-+	return traceprobe_define_arg_fields(event_call, size, &tu->tp);
- }
++	if (print_probe_args(s, tu->tp.args, tu->tp.nr_args, data, entry) < 0)
++		goto out;
  
- #ifdef CONFIG_PERF_EVENTS
+ 	trace_seq_putc(s, '\n');
+ 
 
