@@ -1,88 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932131AbeB1OBZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:01:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36342 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752157AbeB1OBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:01:21 -0500
-Date: Wed, 28 Feb 2018 16:01:20 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-Message-ID: <20180228155121-mutt-send-email-mst@kernel.org>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
- <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
- <20180226223252-mutt-send-email-mst@kernel.org>
- <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
- <20180227190703-mutt-send-email-mst@kernel.org>
- <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
- <20180228060845-mutt-send-email-mst@kernel.org>
- <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <11ef5721-1a4c-f216-9f46-08a0ad0ca49d@redhat.com>
+        id S1752722AbeB1OBa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:01:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752679AbeB1OB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:01:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194921771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
+Date: Wed, 28 Feb 2018 22:01:20 +0800
+Message-Id: <20180228140120.8758-1-chao@kernel.org>
+X-Mailer: git-send-email 2.14.1.145.gb3622a4ee
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 02:28:21PM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年02月28日 12:09, Michael S. Tsirkin wrote:
-> > > > Or we can add plist to a union:
-> > > > 
-> > > > 
-> > > > struct sk_buff {
-> > > >           union {
-> > > >                   struct {
-> > > >                           /* These two members must be first. */
-> > > >                           struct sk_buff          *next;
-> > > >                           struct sk_buff          *prev;
-> > > >                           union {
-> > > >                                   struct net_device       *dev;
-> > > >                                   /* Some protocols might use this space to store information,
-> > > >                                    * while device pointer would be NULL.
-> > > >                                    * UDP receive path is one user.
-> > > >                                    */
-> > > >                                   unsigned long           dev_scratch;
-> > > >                           };
-> > > >                   };
-> > > >                   struct rb_node  rbnode; /* used in netem & tcp stack */
-> > > > +		struct plist plist; /* For use with ptr_ring */
-> > > >           };
-> > > > 
-> > > This look ok.
-> > > 
-> > > > > For XDP, we need to embed plist in struct xdp_buff too,
-> > > > Right - that's pretty straightforward, isn't it?
-> > > Yes, it's not clear to me this is really needed for XDP consider the lock
-> > > contention it brings.
-> > > 
-> > > Thanks
-> > The contention is only when the ring overflows into the list though.
-> > 
-> 
-> Right, but there's usually a mismatch of speed between producer and
-> consumer. In case of a fast producer, we may get this contention very
-> frequently.
-> 
-> Thanks
+From: Chao Yu <yuchao0@huawei.com>
 
-This is not true in my experiments.  In my experiments, ring size of 4k
-bytes is enough to see packet drops in single %s of cases.
+If we fail in ->remount_fs, it needs to restore old whint_mode as other
+mount options.
 
-To you have workloads where rings are full most of the time?
+Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-One other nice side effect of this patch is that instead of dropping
-packets quickly it slows down producer to match consumer speeds.
-
-IOW, it can go either way in theory, we will need to test and see the effect.
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 89abe4087e66..8a93f78efca2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		sbi->s_qf_names[i] = s_qf_names[i];
+ 	}
+ #endif
++	sbi->whint_mode = old_whint_mode;
+ 	sbi->mount_opt = org_mount_opt;
+ 	sbi->active_logs = active_logs;
+ 	sb->s_flags = old_sb_flags;
 -- 
-MST
+2.14.1.145.gb3622a4ee
