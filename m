@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-620147-1519837390-2-4729191050026888816
+X-Cyrus-Session-Id: sloti22d1t05-620147-1519837384-2-13258172664925318274
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837390; b=ROhkAO80dwIbJgBk3NCj/WiqrOQLhxq/VJTCd1LZ4NiBxir
-    f+Qoi66oOufL4UcCwYwyJKAh6ITRPwXagOTgWTYlZFpC/5m0rmk2py0HqhQNzRVr
-    DfQVUBlF7BCiaXhQCveyprxRQUxE7e5gxrKHFodnP4H2O3SMd00jU2zXG0Wv+TgG
-    AWPTQjlph2b4fRsxH91aKUg5r7nJgIH09ztCnkJ31ePM4FE/aTe+OgD2EDV/1r38
-    4bFjpfi2IerxmT2YnZdRFj04HIl6t78re05E94DhrLtzQfXhNEh/QfZk50F7JiAk
-    MhHZ1gZgcBRguNYLwll/ZESYs7qUTFb7NZ4jDYQ==
+    t=1519837384; b=ZZqwsEUCbkWmrQOX+Jr3YO3cBIY+4cs+6M8ccB+qGXvSloq
+    cMD++uAYuPT1HGXmXmp0hdeE5YnYeorMveJ0CUIV/gQlKjxZEP6VESGaCJhhM0PB
+    0aX/6ixgJkOzHFFkLZ5qFpmXHD54KW9TXF2Pv/MWDJQeUgqL51O10Tuau53UKyqS
+    RA0Vgfa9F/AJ6u01iSn04JGJ7N2+HjQSnEwGDbhJPXYG6d5NCKw3c94jXhevl/Ul
+    WcrPkOY5lwhfpoaS9ZaTkRQGsLS+ZVcSHWA8WcBa8uP39GJ/TdjnAWm1NxKDk62M
+    9blz0Wsknw0/9TO+BiUoKoL1mDX74ENnr6zSm0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519837390; bh=PWTuOekSGyWEdGvpy4h
-    M18/wNkwWFEZXxkaluuCXxxg=; b=ZdbcHarCBEzeAHWElk0w9Glj797cfNvimUl
-    0LxIP95l921IbduGrcAWXcRbCwaNNcFYNkWJE+Mgo03BLLKApXmP2rKbF4EDUymT
-    05vRV2qt5UJim9Z4vNBMDCHHaOjEnMhImeYs4gSm2KetdWVzjY3V+KXu0pBB8Eip
-    qW+ac5bSHOnUXqLrefyT6T2oGBUiHUzvocsWUIiMvh4brutPO1tT4JjUglkS5Ol/
-    mnhhMhBDyOigEBH/m9KDJa7cOLXEsLhF6Zd7N3fDZ4cIRLGjIuuZdceJDtI92Nmg
-    U1/HGhuRhd1ENMCb8G36W92a2BHJcLIlwo/e7tlHSlllQdQs9Qg==
+    :sender:list-id; s=arctest; t=1519837384; bh=52xfxLlkMJDg0RFgJnO
+    dPrv35hHBBv2htDLYDtH4CxU=; b=LoWo1Ci5QO1wdbwoB84gcytODglSwXbdC44
+    ylOrDL/Uv+LSeNFSeWXilwKhaKtg6drOKSE4kiJpeQ2ko7xg0k/pTxEaezIjmdYI
+    rNC37nCqWXy29ewA5G1qIchZJKkXPMznVdCZ0V1QTqSYnUhBoDNqkbH/BFzR+eVK
+    WsLATuH67xt67yd93ewJx8YndXkRwtxCfDHAZGV7L8J45OzuRePACJtnyf185XBq
+    FnQ/FIYsRSy2bjXsvMUGu/1EKaKSO2iVhjs13HB1tiHKKxEr1ptvOWEOHmjxv8VP
+    SA8G+NTjuwLgJOuQg4OWaiLuVbP5Vgl1sbJRNwUQRexYuSkESVg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933222AbeB1Pvu (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:51:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34353 "EHLO
+        id S933759AbeB1Pvv (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:51:51 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34352 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933733AbeB1Pvs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:51:48 -0500
+        by vger.kernel.org with ESMTP id S933736AbeB1Pvq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:51:46 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Kevin Cernekee" <cernekee@chromium.org>,
-        "Sebastian Gottschall" <s.gottschall@dd-wrt.com>,
-        "Felix Fietkau" <nbd@nbd.name>
+CC: akpm@linux-foundation.org, "Martin Kelly" <mkelly@xevo.com>,
+        "Marc Kleine-Budde" <mkl@pengutronix.de>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.956153668@decadent.org.uk>
+Message-ID: <lsq.1519831218.397936130@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 224/254] net: igmp: fix source address check for
- IGMPv3 reports
+Subject: [PATCH 3.16 070/254] can: usb_8dev: cancel urb on -EPIPE and -EPROTO
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,38 +79,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit ad23b750933ea7bf962678972a286c78a8fa36aa upstream.
+commit 12147edc434c9e4c7c2f5fee2e5519b2e5ac34ce upstream.
 
-Commit "net: igmp: Use correct source address on IGMPv3 reports"
-introduced a check to validate the source address of locally generated
-IGMPv3 packets.
-Instead of checking the local interface address directly, it uses
-inet_ifa_match(fl4->saddr, ifa), which checks if the address is on the
-local subnet (or equal to the point-to-point address if used).
+In mcba_usb, we have observed that when you unplug the device, the driver will
+endlessly resubmit failing URBs, which can cause CPU stalls. This issue
+is fixed in mcba_usb by catching the codes seen on device disconnect
+(-EPIPE and -EPROTO).
 
-This breaks for point-to-point interfaces, so check against
-ifa->ifa_local directly.
+This driver also resubmits in the case of -EPIPE and -EPROTO, so fix it
+in the same way.
 
-Cc: Kevin Cernekee <cernekee@chromium.org>
-Fixes: a46182b00290 ("net: igmp: Use correct source address on IGMPv3 reports")
-Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/igmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/usb/usb_8dev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -334,7 +334,7 @@ static __be32 igmpv3_get_srcaddr(struct
- 		return htonl(INADDR_ANY);
+--- a/drivers/net/can/usb/usb_8dev.c
++++ b/drivers/net/can/usb/usb_8dev.c
+@@ -527,6 +527,8 @@ static void usb_8dev_read_bulk_callback(
+ 		break;
  
- 	for_ifa(in_dev) {
--		if (inet_ifa_match(fl4->saddr, ifa))
-+		if (fl4->saddr == ifa->ifa_local)
- 			return fl4->saddr;
- 	} endfor_ifa(in_dev);
+ 	case -ENOENT:
++	case -EPIPE:
++	case -EPROTO:
+ 	case -ESHUTDOWN:
+ 		return;
  
