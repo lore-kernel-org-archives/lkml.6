@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519835900-2-17348371517761724573
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519835887-2-1229771975990845729
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enit,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835899; b=Y+Bxehab+djdO2b3sqgpTPQFFLTjaAXVKWhKXrvRg93Fk8C
-    W7d2dSr5ElRyaJzkMyW+uoDZXzh447bau4NCZR95Sxg9JzFWQqYdOuvKDhwch8ZW
-    my8bhfzyxTee+6ssKhF7G4Ox8OkWz2ab7yTZuG9NPg0dc8PVn9AgdSr5F+dNoIcP
-    hKFbit+vPJKqzrEy90eqVmdGtMJ86rOLXkIjo2UiuJiSfTYrbpoQIDdSf7xVT6MG
-    IY7eLFHtRZc0fZcxTffIKSoza2RG7r1UlIksrXiBLZcj3wLiUkhrHPFFOzTjT/X/
-    fnA4hZsBy8yEl87cuVXzIq+XM860/Hj6SBY2MuA==
+    t=1519835886; b=HOjWppP8LwN9lZpyThyI9Z1/V6yPcYeTMoG0Dlr2+p5kuiR
+    0/oXRiy4PLfnyGSoGIp1BKFCTfwodB8dB1Jeffmtt3RnlLlrUH9uFaPsvEJ0hrL/
+    qHy0DO/DLDuDH41tMks4f6ibfZGystkZi7mKtw12Qa5mvexo30sf7w6UoMWQEDrj
+    Rs2J8Zw26AgZgVoFdl4CadjHwNgUsyqYyc2CO1w57otN6ROfh35eytwD0L4LDLP+
+    cwr7jVTtf4g3uCvq8RSJYojW3vP1z73vTZ0onaWkMrtXHLq6Mmft7PYQrkkkGIyp
+    mi4PMcrXCnnRNqK715EXxKdf7UNejcQhjfqgxYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835899; bh=rw7Cn86svBAcgVjfIg6
-    m8yhgzXwHc32JSBPxRMIIAu4=; b=WK01pZTmRw+Jc4rO9lW0sjbF763ux/MetTN
-    qKo25pJyXKDDaDqzadVgOn4b5VCHYhjCsd60BZh/KO4nEkl+ZQ401LQw+0VqdacF
-    bphvDDs9O05XxdwCdcTAg+UxGAf7sytM34N7bH/2VONtZ5mt0uafzzyUBURaVRyW
-    5Llm9yxcpSNnj45li+N+e2TvO/nQ0VynoDrufoXxepgdOI4fQp8IK4GGUZgQ/6Kf
-    fIJPiQSq/9WxlFwPfUiJiuKps0jJ9+mDpeXru9vYkeW2jbKXJMFnoDstj7x2NBWz
-    njoWdyqD/XuBDOxV3AQwqDM+Gn92HBiBiYWJYYkWmU4c7r3XJCQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835886; bh=F9A6hIaSFSVipa39orJ
+    h5k5m0fh6qvXCArSFKWh2r60=; b=X+8Xqd9kKQLz2Sk7ikXRbJARc+DDioDOgYq
+    0bWS6mBO5ibeRlQ2MtDVc1VeqFnClkXCU463lrlsmOynCGpygMYtUHvCO84qV0R4
+    j4Oxsn6BZLRCVj/AFeGat63y5+9i02F+/hEjQrHTcRRPDchBT0tCZEU2wm1FkjUn
+    XWUYW1u9B5+dgwG51JDerb6Pxsq8VCk/K60v0kDFLHaRufA/tJbqXnN9i7SLY6gV
+    keTN3TCP5hItee57Zdo4SAcb10ZzQxfXVVSKWUq32iBeeidwLjCOtUiPlsmwtkNB
+    6NokJiO3dAHeYc9+eNOdOoi4qBo8qHGsugmRMHTQdYHgPPu5BvA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932904AbeB1QiG (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:38:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34821 "EHLO
+        id S1753190AbeB1QE1 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:04:27 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34819 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753084AbeB1QE0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:26 -0500
+        by vger.kernel.org with ESMTP id S1752569AbeB1QEY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:24 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
+CC: akpm@linux-foundation.org, "Saeed Mahameed" <saeedm@mellanox.com>,
+        "Eugenia Emantayev" <eugenia@mellanox.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.926380955@decadent.org.uk>
+Message-ID: <lsq.1519831218.172101379@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 197/254] SolutionEngine771x: add Ether TSU resource
+Subject: [PATCH 3.16 133/254] net/mlx5: Fix misspelling in the error
+ message and comment
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,68 +80,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Eugenia Emantayev <eugenia@mellanox.com>
 
-commit f9a531d6731d74f1e24298d9641c2dc1fef2631b upstream.
+commit 777ec2b2a3f2760505db395de1a9fa4115d74548 upstream.
 
-After the  Ether platform data is fixed, the driver probe() method would
-still fail since the 'struct sh_eth_cpu_data' corresponding  to SH771x
-indicates the presence of TSU but the memory resource for it is absent.
-Add the missing TSU resource  to both Ether devices and fix the harmless
-off-by-one error in the main memory resources, while at it...
+Fix misspelling in word syndrome.
 
-Fixes: 4986b996882d ("net: sh_eth: remove the SH_TSU_ADDR")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Eugenia Emantayev <eugenia@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+[bwh: Backported to 3.16: drop change in health.c]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/sh/boards/mach-se/770x/setup.c | 14 ++++++++++++--
- arch/sh/include/mach-se/mach/se.h   |  1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
---- a/arch/sh/boards/mach-se/770x/setup.c
-+++ b/arch/sh/boards/mach-se/770x/setup.c
-@@ -123,10 +123,15 @@ static struct sh_eth_plat_data sh_eth_pl
- static struct resource sh_eth0_resources[] = {
- 	[0] = {
- 		.start = SH_ETH0_BASE,
--		.end = SH_ETH0_BASE + 0x1B8,
-+		.end = SH_ETH0_BASE + 0x1B8 - 1,
- 		.flags = IORESOURCE_MEM,
- 	},
- 	[1] = {
-+		.start = SH_TSU_BASE,
-+		.end = SH_TSU_BASE + 0x200 - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[2] = {
- 		.start = SH_ETH0_IRQ,
- 		.end = SH_ETH0_IRQ,
- 		.flags = IORESOURCE_IRQ,
-@@ -146,10 +151,15 @@ static struct platform_device sh_eth0_de
- static struct resource sh_eth1_resources[] = {
- 	[0] = {
- 		.start = SH_ETH1_BASE,
--		.end = SH_ETH1_BASE + 0x1B8,
-+		.end = SH_ETH1_BASE + 0x1B8 - 1,
- 		.flags = IORESOURCE_MEM,
- 	},
- 	[1] = {
-+		.start = SH_TSU_BASE,
-+		.end = SH_TSU_BASE + 0x200 - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[2] = {
- 		.start = SH_ETH1_IRQ,
- 		.end = SH_ETH1_IRQ,
- 		.flags = IORESOURCE_IRQ,
---- a/arch/sh/include/mach-se/mach/se.h
-+++ b/arch/sh/include/mach-se/mach/se.h
-@@ -99,6 +99,7 @@
- /* Base address */
- #define SH_ETH0_BASE 0xA7000000
- #define SH_ETH1_BASE 0xA7000400
-+#define SH_TSU_BASE  0xA7000800
- /* PHY ID */
- #if defined(CONFIG_CPU_SUBTYPE_SH7710)
- # define PHY_ID 0x00
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -261,7 +261,7 @@ static int mlx5_eq_int(struct mlx5_core_
+ 			break;
+ 		case MLX5_EVENT_TYPE_CQ_ERROR:
+ 			cqn = be32_to_cpu(eqe->data.cq_err.cqn) & 0xffffff;
+-			mlx5_core_warn(dev, "CQ error on CQN 0x%x, syndrom 0x%x\n",
++			mlx5_core_warn(dev, "CQ error on CQN 0x%x, syndrome 0x%x\n",
+ 				       cqn, eqe->data.cq_err.syndrome);
+ 			mlx5_cq_event(dev, cqn, eqe->type);
+ 			break;
