@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-667456-1519838530-2-13085808940267550993
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519838524-2-9370161262522457683
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519838529; b=bRL2cu3DLuGw14tbgTNCqs/fvNhJ4v2Fb0sFlPIwVZRn2hd
-    TP6ah+/RPHWyaaXgDDp6TAbsXDLzyeZp0qaZjqc4r+VKqdjV+oSTO+iWu2EDLg+e
-    Vub7LYM+g3cv71k4Im+CfXahnuYrmKNAYdw2ZsIvCbPogvCD2Lrash8MCyUwjpcy
-    2vp5pIU/+R/jwE6qttnzzgldtN/16JnEHSIvoLj8jxeJJm3jpdoAFRruoZ04p5d3
-    xAlFWOTwNWH9Y06ECnTyU9zqbxHJt7ZxZU06FDBbYrZcMq8aZAnD6I+E+wh4ooeq
-    pk7qt1lbkGWfK/6CjfMMedaxH+NGygdItoIAjpw==
+    t=1519838523; b=PmtwdfRgiYmBKY4iaEiGi7P0lKScenOXPP2XaRvAFo6dH77
+    VoSt4YmIMWxoN003t9U2dJDvoaFEpf4X64EjzoFYzJJcqaXciljJBVW5R9NOsUvP
+    PaJlXMeChPikD6B4t68jleDUzBF1RXIGX0ysX9mr56uQuqmeMkMpz+Zpty9vUk8o
+    DHi52cwl/TwdncKLmHuoeGCTjGDzw5CWJRMHE4KUHiU7IVW1ub1G26580f+eV2Ho
+    0/C/4cSVAMVgLcUVEHPiqUkt8DpdwBWp//GAq+MvchFDAciRQ6BbQsFJM6BYg9/O
+    VSzoMpMul67l8mUGXA+BD5RofqYNwH8nVkn75Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519838529; bh=j5B6b6c2PKkPTh5z9fi
-    E9h1oq2a2TBVr8DzPNOsxVcw=; b=PdONNPbaRBlres1zT5dV/wK1u55lpMp2L2A
-    OSc2neK5w5S9dmngiEZMgW9w1LfmnC/5GAxpQfaX2ORa234tbsXE/PghNOWdrUNV
-    vW/h3yc03GmJGhWaV9RJvSXnql6G5jpWoZLhnyMoP16OVO+DE92F06ALUI9gUUhZ
-    VN2fHFwqsKL5gQmXghR1m8lAEj1peRKMylXAD/IO7KIDjHIWFXC53VRoBGcI00pT
-    Ar+jaM9DX0ixwrlcPXQP1JbP86wZQ1weTDmoF5yxMVYI/9ZAAryGYWNJ58ryE/f2
-    CX4ie7LgMCXgCM9Aq/B/MLiRGExxeg9mLDo1gWkwMDVkX6wHZKw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519838523; bh=hQHRbEolDCENQr5A7IY
+    zWDw5rydTO6lRouWcap5IqN4=; b=UfHtBVmuEiM2ecz21/5/7HBI2xMcTSCdo2M
+    ER+jFvTWaGSZKP9j0SBN85BrGQlm0WdCBqe9uSCwOjM1UinebVJi57UPtx6nZ2fg
+    Ud3vu63jSmkqofv4ogTE3Oy5nOAvECY2I/NqHaq7k1V/u+clF5HKbkoYh3vkSY6V
+    aWfCXrfZy8xtAlhcYNBH7DeI2mUjQUVjnD8hPXpqUNI0Ex5kLO6nfnD/a9IEVJ4z
+    pWaXlr3iybTM3QXilwdB6h/sQnOKjL/FeYsSdOWxYbYMzQtKFLYjwbZFprJjUp5z
+    CHXKyjSa721z1+uKa2rv+U2QfpU7+q+gG+1d9/jpuL3XShTQDhQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932660AbeB1PWQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 10:22:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33081 "EHLO
+        id S932663AbeB1Prk (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:47:40 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33337 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932437AbeB1PWL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:11 -0500
+        by vger.kernel.org with ESMTP id S932633AbeB1PWQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:16 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Gleb Natapov" <gleb@redhat.com>
-Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.481945703@decadent.org.uk>
+CC: akpm@linux-foundation.org,
+        "Steffen Klassert" <steffen.klassert@secunet.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
+Date: Wed, 28 Feb 2018 15:20:22 +0000
+Message-ID: <lsq.1519831222.194131703@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 002/140] KVM: VMX: do not try to reexecute failed
- instruction while emulating invalid guest state
+Subject: [PATCH 3.2 084/140] xfrm: Use __skb_queue_tail in xfrm_trans_queue
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,73 +80,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gleb Natapov <gleb@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 991eebf9f8e523e7ff1e4d31ac80641582b2e57a upstream.
+commit d16b46e4fd8bc6063624605f25b8c0835bb1fbe3 upstream.
 
-During invalid guest state emulation vcpu cannot enter guest mode to try
-to reexecute instruction that emulator failed to emulate, so emulation
-will happen again and again.  Prevent that by telling the emulator that
-instruction reexecution should not be attempted.
+We do not need locking in xfrm_trans_queue because it is designed
+to use per-CPU buffers.  However, the original code incorrectly
+used skb_queue_tail which takes the lock.  This patch switches
+it to __skb_queue_tail instead.
 
-Signed-off-by: Gleb Natapov <gleb@redhat.com>
-[bwh: Backported to 3.2: adjust context]
+Reported-and-tested-by: Artem Savkov <asavkov@redhat.com>
+Fixes: acf568ee859f ("xfrm: Reinject transport-mode packets...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -694,6 +694,7 @@ enum emulation_result {
- #define EMULTYPE_NO_DECODE	    (1 << 0)
- #define EMULTYPE_TRAP_UD	    (1 << 1)
- #define EMULTYPE_SKIP		    (1 << 2)
-+#define EMULTYPE_NO_REEXECUTE	    (1 << 4)
- int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
- 			    int emulation_type, void *insn, int insn_len);
+ net/xfrm/xfrm_input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -324,7 +324,7 @@ int xfrm_trans_queue(struct sk_buff *skb
+ 		return -ENOBUFS;
  
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4891,7 +4891,7 @@ static int handle_invalid_guest_state(st
- 		    && (kvm_get_rflags(&vmx->vcpu) & X86_EFLAGS_IF))
- 			return handle_interrupt_window(&vmx->vcpu);
- 
--		err = emulate_instruction(vcpu, 0);
-+		err = emulate_instruction(vcpu, EMULTYPE_NO_REEXECUTE);
- 
- 		if (err == EMULATE_DO_MMIO) {
- 			ret = 0;
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4888,10 +4888,14 @@ static int handle_emulation_failure(stru
- 	return r;
+ 	XFRM_TRANS_SKB_CB(skb)->finish = finish;
+-	skb_queue_tail(&trans->queue, skb);
++	__skb_queue_tail(&trans->queue, skb);
+ 	tasklet_schedule(&trans->tasklet);
+ 	return 0;
  }
- 
--static bool reexecute_instruction(struct kvm_vcpu *vcpu, gva_t gva)
-+static bool reexecute_instruction(struct kvm_vcpu *vcpu, gva_t gva,
-+				  int emulation_type)
- {
- 	gpa_t gpa;
- 
-+	if (emulation_type & EMULTYPE_NO_REEXECUTE)
-+		return false;
-+
- 	if (tdp_enabled)
- 		return false;
- 
-@@ -4942,7 +4946,7 @@ int x86_emulate_instruction(struct kvm_v
- 		if (r != EMULATION_OK)  {
- 			if (emulation_type & EMULTYPE_TRAP_UD)
- 				return EMULATE_FAIL;
--			if (reexecute_instruction(vcpu, cr2))
-+			if (reexecute_instruction(vcpu, cr2, emulation_type))
- 				return EMULATE_DONE;
- 			if (emulation_type & EMULTYPE_SKIP)
- 				return EMULATE_FAIL;
-@@ -4969,7 +4973,7 @@ restart:
- 		return EMULATE_DONE;
- 
- 	if (r == EMULATION_FAILED) {
--		if (reexecute_instruction(vcpu, cr2))
-+		if (reexecute_instruction(vcpu, cr2, emulation_type))
- 			return EMULATE_DONE;
- 
- 		return handle_emulation_failure(vcpu);
