@@ -1,72 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932080AbeB1KsA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 05:48:00 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36809 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeB1Kr4 (ORCPT
+        id S932075AbeB1Kvt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 05:51:49 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:39831 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752566AbeB1Kvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 05:47:56 -0500
-X-Google-Smtp-Source: AH8x225QnV6LPvwLjHPCd24NwXmIkL/n+OAfuDNcTXNTO3MUtAf3rWWMeHcOPZttMzzj4Rjr7GGZKw==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, arnd@arndb.de
-Cc: chunyan.zhang@linaro.org, orson.zhai@spreadtrum.com,
-        mathieu.poirier@linaro.org, devicetree@vger.kernel.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, baolin.wang@linaro.org
-Subject: [RESEND PATCH 2/7] arm64: dts: Add ADI device node for Spreadtrum SC9860
-Date: Wed, 28 Feb 2018 18:47:05 +0800
-Message-Id: <459e248911c44411fcf5171d4cdf0058dea850cf.1519814593.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
-References: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
-In-Reply-To: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
-References: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
+        Wed, 28 Feb 2018 05:51:46 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37332018"
+From: Chao Fan <fanc.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC: <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>, <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v9 5/5] document: add document for kaslr_boot_mem
+Date: Wed, 28 Feb 2018 18:51:05 +0800
+Message-ID: <20180228105105.11487-6-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
+References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-yoursite-MailScanner-ID: DD81648AE766.AADFB
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We will access the PMIC through ADI controller, thus this patch adds
-the ADI device node for Spreadtrum SC9860 platform.
-
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/arm64/boot/dts/sprd/sp9860g-1h10.dts |    1 +
- arch/arm64/boot/dts/sprd/whale2.dtsi      |    9 +++++++++
- 2 files changed, 10 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-index 0362ecd..550f323 100644
---- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-+++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-@@ -22,6 +22,7 @@
- 		serial1 = &uart1; /* UART console */
- 		serial2 = &uart2; /* Reserved */
- 		serial3 = &uart3; /* for GPS */
-+		spi0 = &adi_bus;
- 	};
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b37c1c30c16f..23232c9ffa39 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2389,6 +2389,16 @@
+ 			allocations which rules out almost all kernel
+ 			allocations. Use with caution!
  
- 	memory{
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index b9cc0fb..63fe89e 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -113,6 +113,15 @@
- 			#size-cells = <2>;
- 			ranges;
- 
-+			adi_bus: spi@40030000 {
-+				compatible = "sprd,sc9860-adi";
-+				reg = <0 0x40030000 0 0x10000>;
-+				hwlocks = <&hwlock 0>;
-+				hwlock-names = "adi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
++	kaslr_boot_mem=nn[KMG][@ss[KMG]]
++			[KNL] Force usage of a specific region of memory
++			for KASLR during kernel decompression stage.
++			Region of usable memory is from ss to ss+nn. If ss is
++			omitted, it is equivalent to kaslr_boot_mem=nn[KMG]@0.
++			Multiple regions can be specified, comma delimited.
++			Notice: only support 4 regions at most now.
++			Example:
++			kaslr_boot_mem=1G,500M@2G,1G@4G
 +
- 			hwlock: hwspinlock@40500000 {
- 				compatible = "sprd,hwspinlock-r3p0";
- 				reg = <0 0x40500000 0 0x1000>;
+ 	MTD_Partition=	[MTD]
+ 			Format: <name>,<region-number>,<size>,<offset>
+ 
 -- 
-1.7.9.5
+2.14.3
