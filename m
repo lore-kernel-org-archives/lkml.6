@@ -1,94 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeB1Gge (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:36:34 -0500
-Received: from david.siemens.de ([192.35.17.14]:45982 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751686AbeB1GfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:35:13 -0500
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH v2 5/6] x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
-Date: Wed, 28 Feb 2018 07:34:50 +0100
-Message-Id: <c6c3a5fd2881e8f63a5c4fe0b3006f2a66e645de.1519799691.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
-References: <cover.1519799691.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1519799691.git.jan.kiszka@siemens.com>
-References: <cover.1519799691.git.jan.kiszka@siemens.com>
+        id S1751686AbeB1Giv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:38:51 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:62663 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750891AbeB1Git (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:38:49 -0500
+Subject: Re: [PATCH] ARM: davinci: fix the GPIO lookup for omapl138-hawk
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180227121443.3191-1-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <2396d1a7-e4ef-95d7-3d38-309adcc3507e@ti.com>
+Date: Wed, 28 Feb 2018 12:08:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180227121443.3191-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Tuesday 27 February 2018 05:44 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The GPIO chip is called davinci_gpio.0 in legacy mode. Fix it, so that
+> mmc can correctly lookup the wp and cp gpios.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/mach-davinci/board-omapl138-hawk.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> index a3e78074be70..62eb7d668890 100644
+> --- a/arch/arm/mach-davinci/board-omapl138-hawk.c
+> +++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> @@ -127,8 +127,8 @@ static struct gpiod_lookup_table mmc_gpios_table = {
+>  	.dev_id = "da830-mmc.0",
+>  	.table = {
+>  		/* CD: gpio3_12: gpio60: chip 1 contains gpio range 32-63*/
+> -		GPIO_LOOKUP("davinci_gpio.1", 28, "cd", GPIO_ACTIVE_LOW),
+> -		GPIO_LOOKUP("davinci_gpio.1", 29, "wp", GPIO_ACTIVE_LOW),
+> +		GPIO_LOOKUP("davinci_gpio.0", 28, "cd", GPIO_ACTIVE_LOW),
+> +		GPIO_LOOKUP("davinci_gpio.0", 29, "wp", GPIO_ACTIVE_LOW),
 
-Jailhouse does not use ACPI, but it does support MMCONFIG. Make sure the
-latter can be built without having to enable ACPI as well. Primarily, we
-need to make the AMD mmconf-fam10h_64 depend upon MMCONFIG and ACPI,
-instead of just the former.
+Hmm, shouldn't this just be "davinci_gpio" since we use .id = -1 in
+da8xx_gpio_device?
 
-Saves some bytes in the Jailhouse non-root kernel.
+Also:
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- arch/x86/Kconfig          | 6 +++++-
- arch/x86/kernel/Makefile  | 2 +-
- arch/x86/kernel/cpu/amd.c | 2 +-
- 3 files changed, 7 insertions(+), 3 deletions(-)
+Fixes: c69f43fb4f26 ("ARM: davinci: hawk: use gpio descriptor for mmc pins")
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 63e85e7da12e..5b0ac52e357a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2643,7 +2643,7 @@ config PCI_DIRECT
- config PCI_MMCONFIG
- 	bool "Support mmconfig PCI config space access" if X86_64
- 	default y
--	depends on PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY || X86_64)
-+	depends on PCI && (ACPI || SFI || JAILHOUSE_GUEST) && (PCI_GOMMCONFIG || PCI_GOANY || X86_64)
- 
- config PCI_OLPC
- 	def_bool y
-@@ -2658,6 +2658,10 @@ config PCI_DOMAINS
- 	def_bool y
- 	depends on PCI
- 
-+config MMCONF_FAM10H
-+	def_bool y
-+	depends on PCI_MMCONFIG && ACPI
-+
- config PCI_CNB20LE_QUIRK
- 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
- 	depends on PCI
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 29786c87e864..73ccf80c09a2 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -146,6 +146,6 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_GART_IOMMU)	+= amd_gart_64.o aperture_64.o
- 	obj-$(CONFIG_CALGARY_IOMMU)	+= pci-calgary_64.o tce_64.o
- 
--	obj-$(CONFIG_PCI_MMCONFIG)	+= mmconf-fam10h_64.o
-+	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index f0e6456ca7d3..12bc0a1139da 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -716,7 +716,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 
- static void init_amd_gh(struct cpuinfo_x86 *c)
- {
--#ifdef CONFIG_X86_64
-+#ifdef CONFIG_MMCONF_FAM10H
- 	/* do this for boot cpu */
- 	if (c == &boot_cpu_data)
- 		check_enable_amd_mmconf_dmi();
--- 
-2.13.6
+Thanks,
+Sekhar
