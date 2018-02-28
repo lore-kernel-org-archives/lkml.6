@@ -1,77 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935268AbeB1WGt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:06:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935105AbeB1WGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:06:47 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0FB52133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 28 Feb 2018 16:06:46 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-kernel@vger.kernel.org,
-        Jan H =?iso-8859-1?Q?=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Subject: Re: [PATCH] pci: Do not read INTx PIN and LINE registers for virtual
- functions
-Message-ID: <20180228220645.GO127842@bhelgaas-glaptop.roam.corp.google.com>
-References: <1516213829-14844-1-git-send-email-karahmed@amazon.de>
+        id S935440AbeB1WII (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:08:08 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34633 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935420AbeB1WIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 17:08:05 -0500
+X-Google-Smtp-Source: AG47ELtO8GrdB6aoFQ8IjJM7ufmlRytchGqCMsH/DixezfplUfPMEse6dXTLgoYnSE630+tAiB2Inw==
+Subject: Re: [PATCH net-next 5/5] net: phy: marvell10g: Utilize
+ gen10g_soft_reset()
+To: Moritz Fischer <moritz.fischer@ettus.com>,
+        Russell King <rmk@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180228193612.29409-1-f.fainelli@gmail.com>
+ <20180228193612.29409-6-f.fainelli@gmail.com>
+ <20180228194449.GB30733@flint.armlinux.org.uk>
+ <CAAtXAHcdU-MuXk6qD+mM=WhCcHF8J2tQOwT-BFdyOLbdqNPfYQ@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <42e88f0b-61c4-7e59-a6e6-1f8b8677a480@gmail.com>
+Date: Wed, 28 Feb 2018 14:07:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAAtXAHcdU-MuXk6qD+mM=WhCcHF8J2tQOwT-BFdyOLbdqNPfYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1516213829-14844-1-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 17, 2018 at 07:30:29PM +0100, KarimAllah Ahmed wrote:
-> ... since INTx is not supported by-spec for virtual functions.
+On 02/28/2018 11:49 AM, Moritz Fischer wrote:
+> Florian,
 > 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+> On Wed, Feb 28, 2018 at 11:44 AM, Russell King <rmk@armlinux.org.uk> wrote:
+>> On Wed, Feb 28, 2018 at 11:36:12AM -0800, Florian Fainelli wrote:
+>>> We do the same thing as the generic function: nothing, so utilize it.
+>>>
+>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>>> ---
+>>>  drivers/net/phy/marvell10g.c | 7 +------
+>>>  1 file changed, 1 insertion(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
+>>> index 8a0bd98fdec7..da014eae1476 100644
+>>> --- a/drivers/net/phy/marvell10g.c
+>>> +++ b/drivers/net/phy/marvell10g.c
+>>> @@ -75,11 +75,6 @@ static int mv3310_probe(struct phy_device *phydev)
+>>>   * Resetting the MV88X3310 causes it to become non-responsive.  Avoid
+>>>   * setting the reset bit(s).
+>>>   */
+>>> -static int mv3310_soft_reset(struct phy_device *phydev)
+>>> -{
+>>> -     return 0;
+>>> -}
+>>> -
+>>
+>> You do realise that getting rid of that function makes a nonsense of the
+>> comment above it - and removing the comment along with the function gets
+>> rid of the very important reason _why_ we have en empty reset method?
+>>
+>>>  static int mv3310_config_init(struct phy_device *phydev)
+>>>  {
+>>>       __ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
+>>> @@ -377,7 +372,7 @@ static struct phy_driver mv3310_drivers[] = {
+>>>                                 SUPPORTED_10000baseT_Full |
+>>>                                 SUPPORTED_Backplane,
+>>>               .probe          = mv3310_probe,
+>>> -             .soft_reset     = mv3310_soft_reset,
+>>> +             .soft_reset     = gen10g_soft_reset,
+>>>               .config_init    = mv3310_config_init,
+>>>               .config_aneg    = mv3310_config_aneg,
+>>>               .aneg_done      = mv3310_aneg_done,
+>>> --
+>>> 2.14.1
+>>>
+>>
+>> --
+>> Russell King
+>> ARM architecture Linux Kernel maintainer
+> 
+> FWIW I have a local patch that goes something like that, which I meant to send
+> at one point and forgot
+> 
+> Something like that:
+> 
+>  static int gen10g_soft_reset(struct phy_device *phydev)
+>  {
+> +       int val;
+> +
+> +       val = phy_read_mmd(phydev, MDIO_MMD_PCS, MDIO_CTRL1);
+> +       if (val < 0)
+> +               return val;
+> +
+> +       val |= MDIO_CTRL1_RESET;
+> +       phy_write_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_CTRL1, val);
+> +
+>  -       /* Do nothing for now */
+>         return 0;
+>  }
+> 
+> If that looks reasonable I can properly submit a patch,
 
-Applied to pci/virtualization for v4.17, thanks!
+Sure, I would have to check the specification document to make sure
+whether this does not need to be coded similarly to what
+genphy_soft_reset() does, which is polling for the reset bit to clear
+itself.
 
-I tweaked the changelog to include the motivation:
-
-commit 16edf1c6345ab177ccf1e8b5ba3324ee01a50eb7
-Author: KarimAllah Ahmed <karahmed@amazon.de>
-Date:   Wed Jan 17 19:30:29 2018 +0100
-
-    PCI/IOV: Skip INTx config reads for VFs
-    
-    Per PCIe r4.0, sec 9.2.1.4, VFs can not implement INTX, and their Interrupt
-    Line and Interrupt Pin registers must be RO Zero.  Some devices have
-    thousands of VFs, so skip reading the registers as an optimization.
-    
-    Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-    Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
-    [bhelgaas: changelog, comment]
-    Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 489660d0d384..a1cddca37793 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1230,6 +1230,13 @@ static void pci_read_irq(struct pci_dev *dev)
- {
- 	unsigned char irq;
- 
-+	/* VFs are not allowed to use INTx, so skip the config reads */
-+	if (dev->is_virtfn) {
-+		dev->pin = 0;
-+		dev->irq = 0;
-+		return;
-+	}
-+
- 	pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &irq);
- 	dev->pin = irq;
- 	if (irq)
+v2 also renamed the current gen10g_soft_reset() into
+gen10g_no_soft_reset() so your implementation makes even more sense now.
+-- 
+Florian
