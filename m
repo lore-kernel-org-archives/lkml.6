@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519833836-2-6673444641833153522
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519833803-2-3147402137722323114
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519833832; b=MLkiay1xD8kjUAc3U44D+8ZQTTexPZC2xd8YHbWclyVvTm2
-    4LjNK83N6VSLTG/2FfSyJepvKg8q5Rp4MJpD+T/4fz3Eo20S/gig5inxp4JMxylN
-    6ZgJ9FTYavqfT9u1FkvD/eHHsmLLSix9P/xV4Bsa2MyPmJnrO48NeQR41Uyfvqeh
-    LGlIccZjUVey16AUsw4PucBSbW/pJ3W4e/2DWCLXX+yp7FBCFT4MUSblk1um/l/a
-    vRmnIn4ifvkzm1YVCn4A6XSBvgsNbove3THl1SWwLazkBiDWRBnGUOxPq290FTXQ
-    tOYbkgQen6WyetDsN7QT+0rqnXAlE3XE2SsvaKQ==
+    t=1519833802; b=IFE2GXI0HZ0xxd6tTAol3fr+HdxmQn6cuaNNgmgp5pWaIdr
+    naEa7MPCLthpMdf6iBWksAIEoket+7YKPGk6ICRBQlnyz4eMjgzAyIchY5NeEuu9
+    dxk9006hLFC9k+aGltRnahVgO2+ctiTMItLJxAtWCNp2C7J8Hx9HC79djsSycqs+
+    XoVVSzQRiJvRv7xiXFK8N1ud5sPoIbpdhoBoHYEhcrEistTTKMoV9KoongPNQr5m
+    +GA4t5CnjTH+Usq8qgDMWi6P7i43xuyATJaWHzIygthtKBS45i8gOuZ2OTW65VHr
+    otsmPDykoAOffRjR7aXVu4SXEipbEViYIZTX7uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519833832; bh=PKncXbW4oPyAet2hhcX
-    5kc4Qfm0M3TLsXRITWj8ZbAU=; b=gEyG6glWPBjUcXPUiyVwD/JkUBnrfYXX7uo
-    QeekWsoIjtmb858QPiv9UJcjOSpsYNfg+DJM1rMSOYtKIohLGKL3rVqiG3WEH4hv
-    vmEil3gRIztk4VwauYBD4F/BF/EuADjd5/oDgCPZpsYNL5RmHa0ZTIgCgoTBwr1X
-    MDhqWgCuQF3GHPwC2nN/rmaV7vcEhmChqiQiscIOIUqOztWrRKa3ZEb7KZtXbTGR
-    jChF084AzfsJw7sqNj1y76XYMuAChLlkqYUTKicGPc3NLu1srXkVzxjPHZhNM3H7
-    0+60H/q5ZXHJOleJg08DNsPsyGLkLY2SZjLXB8qYz33OTAsr/ZA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833802; bh=u1mMwSb418BpzB9hoIY
+    ObfE3sZSfkNKeLzeKjYNpOsU=; b=oEPQgqKKo+zdXt7YKO+dc4/mJrFLZKpFlkT
+    /ZWf6BxQO2dEg/TJaPwWV/ESbD7cxL0IW68KsW2B+a2Bwaoih5iZ6Oq3wjlYzE0x
+    g4LeKXIidSSOJkT59ON8m/6zQnb2ZxGrmioOTBovpH/XixDjcrSxfsPhNH22V0AF
+    iaC2/8A83yxTO57pWcSPHUf3rB4GudYT7TyIkizm8WIfsZ5+0dQllNZjDCgq7iOO
+    ++BQmij9mnw2KsHBT/MnHnsHPExGCNlsFu1iw0Rpwntad0yF2LzRdpbRRVVOzUac
+    RnuESBvSi7vaVCrhogqDxC+4icDjQ4fJgVXrNbhHe6qqwQKM8gA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933834AbeB1QDl (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:03:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34782 "EHLO
+        id S932830AbeB1QDU (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:03:20 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34755 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933258AbeB1QDj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:03:39 -0500
+        by vger.kernel.org with ESMTP id S932754AbeB1QDR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:03:17 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,15 +60,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Lennart Sorensen" <lsorense@csclub.uwaterloo.ca>,
-        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
-        "Aaron Brown" <aaron.f.brown@intel.com>,
-        "Benjamin Poirier" <bpoirier@suse.com>
+        "Marc Kleine-Budde" <mkl@pengutronix.de>,
+        "Martin Kelly" <mkelly@xevo.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.503486600@decadent.org.uk>
+Message-ID: <lsq.1519831218.946090759@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 157/254] e1000e: Separate signaling for link
- check/link up
+Subject: [PATCH 3.16 068/254] can: esd_usb2: cancel urb on -EPIPE and -EPROTO
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,86 +80,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 19110cfbb34d4af0cdfe14cd243f3b09dc95b013 upstream.
+commit 7a31ced3de06e9878e4f9c3abe8f87d9344d8144 upstream.
 
-Lennart reported the following race condition:
+In mcba_usb, we have observed that when you unplug the device, the driver will
+endlessly resubmit failing URBs, which can cause CPU stalls. This issue
+is fixed in mcba_usb by catching the codes seen on device disconnect
+(-EPIPE and -EPROTO).
 
-\ e1000_watchdog_task
-    \ e1000e_has_link
-        \ hw->mac.ops.check_for_link() === e1000e_check_for_copper_link
-            /* link is up */
-            mac->get_link_status = false;
+This driver also resubmits in the case of -EPIPE and -EPROTO, so fix it
+in the same way.
 
-                            /* interrupt */
-                            \ e1000_msix_other
-                                hw->mac.get_link_status = true;
-
-        link_active = !hw->mac.get_link_status
-        /* link_active is false, wrongly */
-
-This problem arises because the single flag get_link_status is used to
-signal two different states: link status needs checking and link status is
-down.
-
-Avoid the problem by using the return value of .check_for_link to signal
-the link status to e1000e_has_link().
-
-Reported-by: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/intel/e1000e/mac.c    | 11 ++++++++---
- drivers/net/ethernet/intel/e1000e/netdev.c |  2 +-
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/net/can/usb/esd_usb2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -410,6 +410,9 @@ void e1000e_clear_hw_cntrs_base(struct e
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-+ *
-+ *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-+ *  up).
-  **/
- s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- {
-@@ -423,7 +426,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * Change or Rx Sequence Error interrupt.
- 	 */
- 	if (!mac->get_link_status)
--		return 0;
-+		return 1;
+--- a/drivers/net/can/usb/esd_usb2.c
++++ b/drivers/net/can/usb/esd_usb2.c
+@@ -395,6 +395,8 @@ static void esd_usb2_read_bulk_callback(
+ 		break;
  
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
-@@ -461,10 +464,12 @@ s32 e1000e_check_for_copper_link(struct
- 	 * different link partner.
- 	 */
- 	ret_val = e1000e_config_fc_after_link_up(hw);
--	if (ret_val)
-+	if (ret_val) {
- 		e_dbg("Error configuring flow control\n");
-+		return ret_val;
-+	}
+ 	case -ENOENT:
++	case -EPIPE:
++	case -EPROTO:
+ 	case -ESHUTDOWN:
+ 		return;
  
--	return ret_val;
-+	return 1;
- }
- 
- /**
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -4844,7 +4844,7 @@ static bool e1000e_has_link(struct e1000
- 	case e1000_media_type_copper:
- 		if (hw->mac.get_link_status) {
- 			ret_val = hw->mac.ops.check_for_link(hw);
--			link_active = !hw->mac.get_link_status;
-+			link_active = ret_val > 0;
- 		} else {
- 			link_active = true;
- 		}
