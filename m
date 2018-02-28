@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELvjMfqG6zNe8eUQgGU5O4h6tX2eilOVsRw9ndAbMUHT4JK3t38WZWTuIqhapF5WwwcNHEX/
+X-Google-Smtp-Source: AH8x227beVLJAhBYkn9ENdCTHcf64ygl8r7FnSHiPS4IgBVUmifkSiCAHBlItgZMOxstgHmqYZuR
 ARC-Seal: i=1; a=rsa-sha256; t=1519831335; cv=none;
         d=google.com; s=arc-20160816;
-        b=iNI6qSfEqHiNACK/Qy2pMkF1kjV9SiI6HN09m4vME7FpObCkLlmycOowDnnLFEKnWW
-         R8TqeAX861fqu+KeeDN+jMiW9UFp8zXu+zSqwajJiAgiM+Qa8HlYoV9fdeN1Z4VJnLOz
-         sxJNerskNSa4plh2lwb6dPceNehfkrkzyzlb21UEyaIko1Hit+IyeVUz1z0fKBeeo+ff
-         6R/dT01F554JohOtYaWdJvOukxO2zeBksr7dT8wr9iGxq5cIsmppKQ9gZMg+GPsyyNG3
-         er/y0uZE72VfjpsknhSRBay+lItIh0HkK1KFD9m2v6MPdsGrhtpGNH4VAme9+zErZ8bk
-         aGFA==
+        b=TYe37Jst2gMX5PZOQ9d97zWY5aY1ReUKQHssW9lWCZrP0dQm6xWmM0rhyUWwHR7dAC
+         Edjm2RIc8of1OEuXT8PhH8lqXzEY0kTjLFdaRTCORnJSxkmp42dG+8Ahi2Cu51PbDzlW
+         BqQtZtLpLvlSba+1eWe0Gk7Saht8AFxtsPHLSZ7VHn3DvfwOpn8IF072Bpz2hzyUBRYS
+         gxFQ699fVyQM5v2ZqZA5Xr8mM8/rZt6dFaeFdNZ8knztxdhdUiOE6/NoED5Hi9EnTIar
+         mtPsDStR+CpfiYguh3o6pugExzm02mYb7EoQbjiGzUpUe6pProku+r2sBMc0RTvSJbYd
+         DygQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=H6yjl/x0zmp9+9GQaqhjEYsI1mp6W+akXsdSl2uYOLY=;
-        b=qAnzxrpwd9T/H73QFPGQG1HDLNfOYw+QGS79Z7ueBw0y2qHWEZ8YVc77RlVQY233c3
-         6vz8tWtFp4fZZj0a1SEAPMSd5y2qevTGSYT1AlwEr2YINcUF+4BpVPVUfIslsXuO0Jeb
-         EdPzhFYMJ3kXsze0yUa0Wv4HUNgRU3RuuvxyHtVXzVWG+jGRY2PPiYesYSVCjZXdtx6z
-         d3iyKL/v6VO1kj0FHq/84A5L8P/1vPDjJklh0ghTH9NxxpOcGKngyzxVpKMH3TR1d9ba
-         kt9cS+wkieAeP/m+Xbdni7FsLaiJUvJIbQSlxbXx0eLpumw4CWZlycTUwSd5SGmICW22
-         etbw==
+        bh=+C71Y/AG37luWygfaH3tZ7/MuOjfqavo+iI10hg5zhY=;
+        b=eUIFIycueihFUqPQSKsoR3AJwlvX7oXgOj9143i54N6FQgg5ZYVrPT6xfiFpbngY2R
+         M2oe7WgbQABvSsqIAwUX6HHqfboSmqeuDoMun0bAP98xVtk+NQ8XwAKimM4hSxuycrcU
+         I+vOooDOvsMryQhrbmqtuy0sdK1D69UL5Q29M/S474gOfs6mnETNDsyY03Q/6hJ3rpEF
+         QFAFDLIlvXgPyEamBrxlzFLZTQM2vM3g4XbhXIbM60tO0kXQ6sklLLZSXzcYXMRR3Jp1
+         wjlbQPXCZc5yVzthlQE54Xl/zGyn7Qe+zKmzv/EDs/Gc6edcVNAPldCceb5kOr5GuAQ7
+         5GDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Shuah Khan" <shuahkh@osg.samsung.com>,
+ "Masakazu Mokuno" <masakazu.mokuno@gmail.com>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.763585244@decadent.org.uk>
+Date: Wed, 28 Feb 2018 15:20:21 +0000
+Message-ID: <lsq.1519831221.466737990@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 081/140] usbip: remove kernel addresses from usb
- device and urb debug msgs
+Subject: [PATCH 3.2 016/140] USB: core: Add type-specific length check of
+ BOS descriptors
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593658662870212572?=
-X-GMAIL-MSGID: =?utf-8?q?1593658662870212572?=
+X-GMAIL-THRID: =?utf-8?q?1593658661964216527?=
+X-GMAIL-MSGID: =?utf-8?q?1593658661964216527?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +51,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Masakazu Mokuno <masakazu.mokuno@gmail.com>
 
-commit e1346fd87c71a1f61de1fe476ec8df1425ac931c upstream.
+commit 81cf4a45360f70528f1f64ba018d61cb5767249a upstream.
 
-usbip_dump_usb_device() and usbip_dump_urb() print kernel addresses.
-Remove kernel addresses from usb device and urb debug msgs and improve
-the message content.
+As most of BOS descriptors are longer in length than their header
+'struct usb_dev_cap_header', comparing solely with it is not sufficient
+to avoid out-of-bounds access to BOS descriptors.
 
-Instead of printing parent device and bus addresses, print parent device
-and bus names.
+This patch adds descriptor type specific length check in
+usb_get_bos_descriptor() to fix the issue.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Masakazu Mokuno <masakazu.mokuno@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: adjust filename, context]
+[bwh: Backported to 3.2:
+ - Drop handling of USB_PTM_CAP_TYPE and USB_SSP_CAP_TYPE
+ - Adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -115,7 +115,7 @@ static void usbip_dump_usb_device(struct
- 		break;
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -878,6 +878,13 @@ void usb_release_bos_descriptor(struct u
  	}
- 
--	pr_debug("tt %p, ttport %d\n", udev->tt, udev->ttport);
-+	pr_debug("tt hub ttport %d\n", udev->ttport);
- 
- 	dev_dbg(dev, "                    ");
- 	for (i = 0; i < 16; i++)
-@@ -148,11 +148,8 @@ static void usbip_dump_usb_device(struct
- 	}
- 	pr_debug("\n");
- 
--	dev_dbg(dev, "parent %p, bus %p\n", udev->parent, udev->bus);
--
--	dev_dbg(dev, "descriptor %p, config %p, actconfig %p, "
--		"rawdescriptors %p\n", &udev->descriptor, udev->config,
--		udev->actconfig, udev->rawdescriptors);
-+	dev_dbg(dev, "parent %s, bus %s\n", dev_name(&udev->parent->dev),
-+		udev->bus->bus_name);
- 
- 	dev_dbg(dev, "have_langid %d, string_langid %d\n",
- 		udev->have_langid, udev->string_langid);
-@@ -261,9 +258,6 @@ void usbip_dump_urb(struct urb *urb)
- 
- 	dev = &urb->dev->dev;
- 
--	dev_dbg(dev, "   urb                   :%p\n", urb);
--	dev_dbg(dev, "   dev                   :%p\n", urb->dev);
--
- 	usbip_dump_usb_device(urb->dev);
- 
- 	dev_dbg(dev, "   pipe                  :%08x ", urb->pipe);
-@@ -272,11 +266,9 @@ void usbip_dump_urb(struct urb *urb)
- 
- 	dev_dbg(dev, "   status                :%d\n", urb->status);
- 	dev_dbg(dev, "   transfer_flags        :%08X\n", urb->transfer_flags);
--	dev_dbg(dev, "   transfer_buffer       :%p\n", urb->transfer_buffer);
- 	dev_dbg(dev, "   transfer_buffer_length:%d\n",
- 						urb->transfer_buffer_length);
- 	dev_dbg(dev, "   actual_length         :%d\n", urb->actual_length);
--	dev_dbg(dev, "   setup_packet          :%p\n", urb->setup_packet);
- 
- 	if (urb->setup_packet && usb_pipetype(urb->pipe) == PIPE_CONTROL)
- 		usbip_dump_usb_ctrlrequest(
-@@ -286,8 +278,6 @@ void usbip_dump_urb(struct urb *urb)
- 	dev_dbg(dev, "   number_of_packets     :%d\n", urb->number_of_packets);
- 	dev_dbg(dev, "   interval              :%d\n", urb->interval);
- 	dev_dbg(dev, "   error_count           :%d\n", urb->error_count);
--	dev_dbg(dev, "   context               :%p\n", urb->context);
--	dev_dbg(dev, "   complete              :%p\n", urb->complete);
  }
- EXPORT_SYMBOL_GPL(usbip_dump_urb);
+ 
++static const __u8 bos_desc_len[256] = {
++	[USB_CAP_TYPE_WIRELESS_USB] = USB_DT_USB_WIRELESS_CAP_SIZE,
++	[USB_CAP_TYPE_EXT]          = USB_DT_USB_EXT_CAP_SIZE,
++	[USB_SS_CAP_TYPE]           = USB_DT_USB_SS_CAP_SIZE,
++	[CONTAINER_ID_TYPE]         = USB_DT_USB_SS_CONTN_ID_SIZE,
++};
++
+ /* Get BOS descriptor set */
+ int usb_get_bos_descriptor(struct usb_device *dev)
+ {
+@@ -886,6 +893,7 @@ int usb_get_bos_descriptor(struct usb_de
+ 	struct usb_dev_cap_header *cap;
+ 	unsigned char *buffer;
+ 	int length, total_len, num, i;
++	__u8 cap_type;
+ 	int ret;
+ 
+ 	bos = kzalloc(sizeof(struct usb_bos_descriptor), GFP_KERNEL);
+@@ -938,7 +946,13 @@ int usb_get_bos_descriptor(struct usb_de
+ 			dev->bos->desc->bNumDeviceCaps = i;
+ 			break;
+ 		}
++		cap_type = cap->bDevCapabilityType;
+ 		length = cap->bLength;
++		if (bos_desc_len[cap_type] && length < bos_desc_len[cap_type]) {
++			dev->bos->desc->bNumDeviceCaps = i;
++			break;
++		}
++
+ 		total_len -= length;
+ 
+ 		if (cap->bDescriptorType != USB_DT_DEVICE_CAPABILITY) {
+@@ -946,7 +960,7 @@ int usb_get_bos_descriptor(struct usb_de
+ 			continue;
+ 		}
+ 
+-		switch (cap->bDevCapabilityType) {
++		switch (cap_type) {
+ 		case USB_CAP_TYPE_WIRELESS_USB:
+ 			/* Wireless USB cap descriptor is handled by wusb */
+ 			break;
+--- a/include/linux/usb/ch9.h
++++ b/include/linux/usb/ch9.h
+@@ -800,6 +800,8 @@ struct usb_wireless_cap_descriptor {	/*
+ 	__u8  bReserved;
+ } __attribute__((packed));
+ 
++#define USB_DT_USB_WIRELESS_CAP_SIZE	11
++
+ /* USB 2.0 Extension descriptor */
+ #define	USB_CAP_TYPE_EXT		2
  
