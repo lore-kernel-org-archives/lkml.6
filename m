@@ -1,72 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeB1GrL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 01:47:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:27079 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750846AbeB1GrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 01:47:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,404,1515484800";
-   d="scan'208";a="33420894"
-From: "Zhang, Ning A" <ning.a.zhang@intel.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: maybe a bug in SELinux: security_context_to_sid_core
-Thread-Topic: maybe a bug in SELinux: security_context_to_sid_core
-Thread-Index: AQHTsF/zXv0WT/3/k0CHbnK7eA84DQ==
-Date: Wed, 28 Feb 2018 06:47:07 +0000
-Message-ID: <1519800427.32465.22.camel@intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.239.16.1]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2239AEC609D0AB4BAD84EC4079DA1A7D@intel.com>
-MIME-Version: 1.0
+        id S1752072AbeB1GsT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 01:48:19 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51918 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbeB1GsS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:48:18 -0500
+From: Alex Hung <alex.hung@canonical.com>
+To: jdelvare@suse.com, alex.hung@canonical.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] firmware: dmi_scan: add DMI_OEM_STRING support to dmi_matches
+Date: Tue, 27 Feb 2018 22:48:14 -0800
+Message-Id: <1519800494-32107-1-git-send-email-alex.hung@canonical.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1S6pKWo016265
 
-Hi,
+OEM strings are defined by each OEM and they contain customized and
+useful OEM information. Supporting it provides more flexible uses of
+the dmi_matches function.
 
-Before SELinux is initialized, get scontext by secid by using:
+Signed-off-by: Alex Hung <alex.hung@canonical.com>
+---
+ drivers/firmware/dmi_scan.c     | 11 +++++++++--
+ include/linux/mod_devicetable.h |  1 +
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-security_secctx_to_secid() may return wrong numbe
-
-eg:
-security_secctx_to_secid("devnull", strlen("devnull"), &sid);
-
-sid here will be 1
-
-because:
-
-in security_context_to_sid_core:
-
-...
-	if (!ss_initialized) {
-		int i;
-
-		for (i = 1; i < SECINITSID_NUM; i++) {
-			if (!strcmp(initial_sid_to_string[i],
-scontext)) {
-				*sid = i;
-				return 0;
-			}
-		}
-		*sid = SECINITSID_KERNEL;
-		return 0;
-	}
-...
-
-and SECINITSID_DEVNULL equals to SECINITSID_NUM, and it will never get
-right secid for "devnull".
-
-is this by design or bug?
-
-BR.
-Ning.
+diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+index e763e14..c712e66 100644
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -775,7 +775,15 @@ static bool dmi_matches(const struct dmi_system_id *dmi)
+ 		int s = dmi->matches[i].slot;
+ 		if (s == DMI_NONE)
+ 			break;
+-		if (dmi_ident[s]) {
++		if (s == DMI_OEM_STRING) {
++			/* DMI_OEM_STRING must be exact match */
++			const struct dmi_device *valid;
++
++			valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING,
++						dmi->matches[i].substr, NULL);
++			if (valid)
++				continue;
++		} else if (dmi_ident[s]) {
+ 			if (dmi->matches[i].exact_match) {
+ 				if (!strcmp(dmi_ident[s],
+ 					    dmi->matches[i].substr))
+@@ -786,7 +794,6 @@ static bool dmi_matches(const struct dmi_system_id *dmi)
+ 					continue;
+ 			}
+ 		}
+-
+ 		/* No match */
+ 		return false;
+ 	}
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index 48fb2b4..7d361be 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -502,6 +502,7 @@ enum dmi_field {
+ 	DMI_CHASSIS_SERIAL,
+ 	DMI_CHASSIS_ASSET_TAG,
+ 	DMI_STRING_MAX,
++	DMI_OEM_STRING,	/* special case - will not be in dmi_ident */
+ };
+ 
+ struct dmi_strmatch {
+-- 
+2.7.4
