@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-564561-1519835770-2-15588523519305066298
+X-Cyrus-Session-Id: sloti22d1t05-564561-1519835767-2-7642206709428842562
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835769; b=tRvKDhi7/+QyuLmmpnBFIDsOOWYGwyQBmf0GoGI+b3h/heg
-    /u9xnRdzgTTsKz5IxDKYDhyPsDuwNXrb4BbDRpcT7FgEErX8MQkWRo2oM1+Qz/ev
-    KAGNBbWifkbsHeshmHPaC86jwECoc+kZ42Pk8amWKgu793yhOVi6fqYP2l6eAFHB
-    1vA1kdpBq9j49QJ6WgBY5/NxD9h29tWN+AIq/zuTbSzw7n8TEG/mLdJgYmn2fdob
-    wkKN9STRtOJ7t6I98DS0HeCezAvX0vn8WImQX6biOwvmMM76HJkjMcbLUHmu3MPM
-    mJFxFBEm5pLPoQ/VJw8BDC4DJPnNN6+QJuvmx1w==
+    t=1519835766; b=DLFfFLjb+LpWz3N0nXC3Pp1qmrScPx/at6X5Y25x30hYdIK
+    jDU4AWpTC1L+OLD4upmR5vhOzYP/3pAb5t24/GcAzq50YCyFPKM4wdK8+sNW0erp
+    74NS9za7fIuZjmwoopS5o7KujRif2YEQYodxRLvck3F+Dsj+b+vmowcKmIDF5fMG
+    O1VXd0Gy3Ma6mILiO7bxJCmVWfj4tGfHzY6AL5RjI4taht1u8uYirST2ux7SEy93
+    0RSxCyMse2mT8qXCfodCs6ve1KbHore4NmfUoQXM8XbI9rW728d8VAPxwJ29hy9a
+    LOUMn/QSxY4+gnI9S1IvkOGuOm/vm/h9CVclm+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835769; bh=677rKUCgGpytzO0BlNP
-    1NF9kUU4WPiUikYQTlPxLchc=; b=jAMMAeooLKWbvtCoDbP9yR9HJ1Mm1PmU1CJ
-    2x2/xg5jhz9qm30miPrqNjoVUjqBTtgIwQjH8o1bhoNtlX7fVd6a6VL8imNK3iV8
-    hvS49O2RzVPCmnQYubkBu+kkBNC5zAsa2eOyQ/6pgecMtgaZ0raUqZxQZBHITwLD
-    pMIrWrGNvCvME98lCJcHG5YMjlYk6F7FvlKO2yeGgb1Xe4aa7raMy93v/chwCaor
-    boRVVaSsDYHeoY7KB+bNulJ21y7sOrrCiDBevNiP9gFfemL8dUikU3IZ0Kaoir9l
-    i/uqvdVyDB33jjIYJ1cCXBQ8cWvGrD3NG9SzmGO+bbaVWRj4anA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835766; bh=iFhWQosL7V8nRh3VZjp
+    lB/4jS/GbxoSDvQU2jtMEUg4=; b=usumzvuC1E83zLQrlVYssHVHfVVfz+q4yx9
+    XqpdLikMPyTin8y7RRu4BVgmAj7c4nly/k7aFJ8358TD9OlbM4AXAYCCiVQEKvU3
+    dSKwseuXB+2IfST2mXhqS0D02KOsX/ku+2DkpJvUBgTme01dH59EsRpzXxudXfD9
+    X5GwlHrR6MvIEFd8wb86KUC6GP1fxTUeP9eI6y5eIrDhrAP6Wd/zy0s6LgJt3u/t
+    d921e0tTeKQWCiEphbYzlfqNtYsS6Q203C3wxgk/H40QjKhRPVoqI3qwpi21nsCU
+    006nE75PDVRPaCTNM8YF/cq7eKujTp0ztoOB+NefU92n3PyArCQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752893AbeB1QLs (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:11:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34946 "EHLO
+        id S933272AbeB1QNg (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:13:36 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35058 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934524AbeB1QI0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:08:26 -0500
+        by vger.kernel.org with ESMTP id S933070AbeB1QNf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:13:35 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Daniel Mentz" <danielmentz@google.com>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Johannes Berg" <johannes.berg@intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.259950080@decadent.org.uk>
+Message-ID: <lsq.1519831218.561761089@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 248/254] media: v4l2-compat-ioctl32: Copy
- v4l2_window->global_alpha
+Subject: [PATCH 3.16 221/254] cfg80211: fix station info handling bugs
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,51 +79,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Mentz <danielmentz@google.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 025a26fa14f8fd55d50ab284a30c016a5be953d0 upstream.
+commit 5762d7d3eda25c03cc2d9d45227be3f5ab6bec9e upstream.
 
-Commit b2787845fb91 ("V4L/DVB (5289): Add support for video output
-overlays.") added the field global_alpha to struct v4l2_window but did
-not update the compat layer accordingly. This change adds global_alpha
-to struct v4l2_window32 and copies the value for global_alpha back and
-forth.
+Fix two places where the structure isn't initialized to zero,
+and thus can't be filled properly by the driver.
 
-Signed-off-by: Daniel Mentz <danielmentz@google.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 4a4b8169501b ("cfg80211: Accept multiple RSSI thresholds for CQM")
+Fixes: 9930380f0bd8 ("cfg80211: implement IWRATE")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: drop change in cfg80211_cqm_rssi_update()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -45,6 +45,7 @@ struct v4l2_window32 {
- 	compat_caddr_t		clips; /* actually struct v4l2_clip32 * */
- 	__u32			clipcount;
- 	compat_caddr_t		bitmap;
-+	__u8                    global_alpha;
- };
+--- a/net/wireless/wext-compat.c
++++ b/net/wireless/wext-compat.c
+@@ -1273,8 +1273,7 @@ static int cfg80211_wext_giwrate(struct
+ {
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wdev->wiphy);
+-	/* we are under RTNL - globally locked - so can use a static struct */
+-	static struct station_info sinfo;
++	struct station_info sinfo = {};
+ 	u8 addr[ETH_ALEN];
+ 	int err;
  
- static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
-@@ -53,7 +54,8 @@ static int get_v4l2_window32(struct v4l2
- 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
- 	    get_user(kp->field, &up->field) ||
- 	    get_user(kp->chromakey, &up->chromakey) ||
--	    get_user(kp->clipcount, &up->clipcount))
-+	    get_user(kp->clipcount, &up->clipcount) ||
-+	    get_user(kp->global_alpha, &up->global_alpha))
- 		return -EFAULT;
- 	if (kp->clipcount > 2048)
- 		return -EINVAL;
-@@ -86,7 +88,8 @@ static int put_v4l2_window32(struct v4l2
- 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
- 	    put_user(kp->field, &up->field) ||
- 	    put_user(kp->chromakey, &up->chromakey) ||
--	    put_user(kp->clipcount, &up->clipcount))
-+	    put_user(kp->clipcount, &up->clipcount) ||
-+	    put_user(kp->global_alpha, &up->global_alpha))
- 		return -EFAULT;
- 	return 0;
- }
