@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3220176-1519790668-2-11551798571266914110
+X-Cyrus-Session-Id: sloti22d1t05-3218881-1519790660-2-16301553014690283605
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES roensk.us-ascii, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519790667; b=rDHS4AnFxljBTPg9Q2YP3/oVjmByc8ebWsTKo7rDULEPWAA
-    rmABR+kONTMRIAkoPjARQ1zqveDHPW+yZaBlHfWKP09Ns6NxZj9nFDEg2OE+h3Yr
-    jY+c7G/MuDVK0QIO/iW28Yzw+XnqfMGNGovHQ2TiW7l8/i2oRhJZkbCLshyCL9dM
-    DiEjVL40rdMgfF2eKjOMIRbkUfWmTlmuvQI/u04lNlsHGevQPDwUZudSn7pWmkGp
-    Hay3p7JSSSzoJ5fnmaGtvFav+eo5KVDY2Os6zbmDcc1GUNrmOd66/4f8sv3HTwGZ
-    77hnXv9S/S0YlhOIUIbqrMHDXbkeLGnHUFG4dKQ==
+    t=1519790660; b=SumM/CIkDXQE2PCHGK9XWM9yiZrlCLNx2M7DX+05rO+zJEy
+    psEbVb2Sh/TeQ1UMlcXtY5B9IKivWaNnSXMVKzmNk2DBihH/l3UDInyjXbZ5gsEZ
+    nWYn0hdkCb+yEiLn1a+OWuGLcpnOVC3YC6zWxebDOI8pp5slfkCqYg8sRSwx1KGU
+    xLBKUnHQo5JZAEPgHtboN39MDg6h1mXS6WqEMP3clBepMBv3MMG9neuC8caOvDDU
+    /T83OBQcBotxsj8tt6EtjbNkhWusV/x9PEMPTHraDMFCjv+U295E+RGgVNaT/tOp
+    QjVdWHrXt/w0dStuMxOwtNXUQtPpvdUMaTcAOiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519790667;
-    bh=A0pfV/DwY+7OHAPDaT2NCm9JaxY5uj5pHP+9/1OoPcU=; b=LyJduUcLoDAA
-    hcNxznlxuU1CVLG1ArpWWTW66EAtqXx8raOhglECPPn7VwjueKvJehC5wSudbvwg
-    LGvq4qQSoc8xtB4SxmhkwH6E/Ry/QsBs0shHdcKQKKgpQdE5ZymoeD1VTFkiz0fR
-    2PTNsyIWPNnvhBEPQXxsWmgWmQIxqZ5sHVvWHWgxlha2ZRWM393i9yPn1NM4YuJ0
-    9N2n5RoF8EDEb0vAOBMVJetK9YO0caFYEU90Z3DK38x+yaU7+eBHe2mvccspDXVb
-    WT4d5cAGmkYCLy6Bsm+W/9h31XHAwp9/eHBSitNxpntqFJKMmOKap7AJfZ+oK+fy
-    zQ5zrTdaiw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=LtDf4XA4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519790660;
+    bh=9AGPVua7FerW9MHbnW3GGajj8cb4hN8hkiOyT6YzHrQ=; b=Lfz8k7f2GOCb
+    88q2D840jasSYhF8JyB+Mm4UV5aa/xMUxIKlwihtfhPrP0bvdne62W6IBolzMLen
+    Wb96dERlYHgftoefgAW748/zqQ5LUi9C8xl0X2uHOWZJrF6Cem/WJFesL+LiGcLx
+    Ppcml0H85tkUcrT9iVDSkoaFxaKEvx3DZmKznPKkW0WqZ4trNjIy9cRTGNoA/qk1
+    bJtvqgrLHD38o7oAkueMS6ecAMcRf5wlCUx/Wxs431IEzSxB+b0cZ0nLWbJBQ6Gb
+    VKEVFsglUX45LMb/uCpNto1erja/vFAdVWVK2hW/KmTx+q+sF2xJJf4NXJRH8SED
+    44cYsMDOIg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=DgNjoIR8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oD6cyfIU;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GJ05QnnV;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=LtDf4XA4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=DgNjoIR8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oD6cyfIU;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GJ05QnnV;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeB1D60 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Feb 2018 22:58:26 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:32909 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeB1D6Z (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:25 -0500
-X-Google-Smtp-Source: AH8x2253Dee0sEUZbnVLt41TwB06xx80AOnvSMHFm8pkOzE/dVsswcGfqdo0km+mGM5xh9aGvAMNjQ==
+        id S1752115AbeB1D6f (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Feb 2018 22:58:35 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43072 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752108AbeB1D6c (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Feb 2018 22:58:32 -0500
+X-Google-Smtp-Source: AH8x224QwyjU2+Hp9QVT8vm8vMuWqKIhQOJJDw2FO6iottKghpCQpD2EKoSGdMNf9sP9zlpiTLyarQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,13 +63,11 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Xie XiuQi <xiexiuqi@huawei.com>,
-        Wang Xiongfeng <wangxiongfengi2@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 07/29] arm64: entry.S: move SError handling into a C function for future expansion
-Date: Wed, 28 Feb 2018 11:56:29 +0800
-Message-Id: <1519790211-16582-8-git-send-email-alex.shi@linaro.org>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Jessica Yu <jeyu@redhat.com>, Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 08/29] module: extend 'rodata=off' boot cmdline parameter to module mappings
+Date: Wed, 28 Feb 2018 11:56:30 +0800
+Message-Id: <1519790211-16582-9-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
@@ -79,142 +77,143 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Xie XiuQi <xiexiuqi@huawei.com>
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
 
-commit a92d4d1454ab upstream.
+commit 39290b389ea upstream.
 
-Today SError is taken using the inv_entry macro that ends up in
-bad_mode.
+The current "rodata=off" parameter disables read-only kernel mappings
+under CONFIG_DEBUG_RODATA:
+    commit d2aa1acad22f ("mm/init: Add 'rodata=off' boot cmdline parameter
+    to disable read-only kernel mappings")
 
-SError can be used by the RAS Extensions to notify either the OS or
-firmware of CPU problems, some of which may have been corrected.
+This patch is a logical extension to module mappings ie. read-only mappings
+at module loading can be disabled even if CONFIG_DEBUG_SET_MODULE_RONX
+(mainly for debug use). Please note, however, that it only affects RO/RW
+permissions, keeping NX set.
 
-To allow this handling to be added, add a do_serror() C function
-that just panic()s. Add the entry.S boiler plate to save/restore the
-CPU registers and unmask debug exceptions. Future patches may change
-do_serror() to return if the SError Interrupt was notification of a
-corrected error.
+This is the first step to make CONFIG_DEBUG_SET_MODULE_RONX mandatory
+(always-on) in the future as CONFIG_DEBUG_RODATA on x86 and arm64.
 
-Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-Signed-off-by: Wang Xiongfeng <wangxiongfengi2@huawei.com>
-[Split out of a bigger patch, added compat path, renamed, enabled debug
- exceptions]
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-
+Suggested-by: and Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+Link: http://lkml.kernel.org/r/20161114061505.15238-1-takahiro.akashi@linaro.org
+Signed-off-by: Jessica Yu <jeyu@redhat.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 
 Conflicts:
-	no vmap_stack in arch/arm64/kernel/traps.c
-	using old enable_dbg_and_irq instead of enable_daif in
-		arch/arm64/kernel/entry.S
+	keeping kaiser.h in init/main.c
 ---
- arch/arm64/kernel/entry.S | 36 +++++++++++++++++++++++++++++-------
- arch/arm64/kernel/traps.c | 14 ++++++++++++++
- 2 files changed, 43 insertions(+), 7 deletions(-)
+ include/linux/init.h |  3 +++
+ init/main.c          |  7 +++++--
+ kernel/module.c      | 20 +++++++++++++++++---
+ 3 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index f5aa8f0..60b202a 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -270,18 +270,18 @@ ENTRY(vectors)
- 	kernel_ventry	el1_sync			// Synchronous EL1h
- 	kernel_ventry	el1_irq				// IRQ EL1h
- 	kernel_ventry	el1_fiq_invalid			// FIQ EL1h
--	kernel_ventry	el1_error_invalid		// Error EL1h
-+	kernel_ventry	el1_error			// Error EL1h
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 8e346d1..4dfe300 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,6 +133,9 @@ void prepare_namespace(void);
+ void __init load_default_modules(void);
+ int __init init_rootfs(void);
  
- 	kernel_ventry	el0_sync			// Synchronous 64-bit EL0
- 	kernel_ventry	el0_irq				// IRQ 64-bit EL0
- 	kernel_ventry	el0_fiq_invalid			// FIQ 64-bit EL0
--	kernel_ventry	el0_error_invalid		// Error 64-bit EL0
-+	kernel_ventry	el0_error			// Error 64-bit EL0
- 
- #ifdef CONFIG_COMPAT
- 	kernel_ventry	el0_sync_compat			// Synchronous 32-bit EL0
- 	kernel_ventry	el0_irq_compat			// IRQ 32-bit EL0
- 	kernel_ventry	el0_fiq_invalid_compat		// FIQ 32-bit EL0
--	kernel_ventry	el0_error_invalid_compat	// Error 32-bit EL0
-+	kernel_ventry	el0_error_compat		// Error 32-bit EL0
- #else
- 	kernel_ventry	el0_sync_invalid		// Synchronous 32-bit EL0
- 	kernel_ventry	el0_irq_invalid			// IRQ 32-bit EL0
-@@ -321,10 +321,6 @@ ENDPROC(el0_error_invalid)
- el0_fiq_invalid_compat:
- 	inv_entry 0, BAD_FIQ, 32
- ENDPROC(el0_fiq_invalid_compat)
--
--el0_error_invalid_compat:
--	inv_entry 0, BAD_ERROR, 32
--ENDPROC(el0_error_invalid_compat)
++#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_DEBUG_SET_MODULE_RONX)
++extern bool rodata_enabled;
++#endif
+ #ifdef CONFIG_DEBUG_RODATA
+ void mark_rodata_ro(void);
  #endif
+diff --git a/init/main.c b/init/main.c
+index 99f0265..f22957a 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -81,6 +81,7 @@
+ #include <linux/proc_ns.h>
+ #include <linux/io.h>
+ #include <linux/kaiser.h>
++#include <linux/cache.h>
  
- el1_sync_invalid:
-@@ -532,6 +528,10 @@ el0_svc_compat:
- el0_irq_compat:
- 	kernel_entry 0, 32
- 	b	el0_irq_naked
-+
-+el0_error_compat:
-+	kernel_entry 0, 32
-+	b	el0_error_naked
- #endif
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -914,14 +915,16 @@ static int try_to_run_init_process(const char *init_filename)
  
- el0_da:
-@@ -653,6 +653,28 @@ el0_irq_naked:
- 	b	ret_to_user
- ENDPROC(el0_irq)
+ static noinline void __init kernel_init_freeable(void);
  
-+el1_error:
-+	kernel_entry 1
-+	mrs	x1, esr_el1
-+	enable_dbg
-+	mov	x0, sp
-+	bl	do_serror
-+	kernel_exit 1
-+ENDPROC(el1_error)
-+
-+el0_error:
-+	kernel_entry 0
-+el0_error_naked:
-+	mrs	x1, esr_el1
-+	enable_dbg
-+	mov	x0, sp
-+	bl	do_serror
-+	enable_dbg_and_irq
-+	ct_user_exit
-+	b	ret_to_user
-+ENDPROC(el0_error)
-+
-+
- /*
-  * Register switch for AArch64. The callee-saved registers need to be saved
-  * and restored. On entry:
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index c743d1f..2ef7e33 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -637,6 +637,20 @@ asmlinkage void bad_el0_sync(struct pt_regs *regs, int reason, unsigned int esr)
- 	force_sig_info(info.si_signo, &info, current);
- }
- 
-+
-+asmlinkage void do_serror(struct pt_regs *regs, unsigned int esr)
-+{
-+	nmi_enter();
-+
-+	console_verbose();
-+
-+	pr_crit("SError Interrupt on CPU%d, code 0x%08x -- %s\n",
-+		smp_processor_id(), esr, esr_get_class_string(esr));
-+	__show_regs(regs);
-+
-+	panic("Asynchronous SError Interrupt");
-+}
-+
- void __pte_error(const char *file, int line, unsigned long val)
+-#ifdef CONFIG_DEBUG_RODATA
+-static bool rodata_enabled = true;
++#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_SET_MODULE_RONX)
++bool rodata_enabled __ro_after_init = true;
+ static int __init set_debug_rodata(char *str)
  {
- 	pr_err("%s:%d: bad pte %016lx.\n", file, line, val);
+ 	return strtobool(str, &rodata_enabled);
+ }
+ __setup("rodata=", set_debug_rodata);
++#endif
+ 
++#ifdef CONFIG_DEBUG_RODATA
+ static void mark_readonly(void)
+ {
+ 	if (rodata_enabled)
+diff --git a/kernel/module.c b/kernel/module.c
+index 07bfb99..0651f2d 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1911,6 +1911,9 @@ static void frob_writable_data(const struct module_layout *layout,
+ /* livepatching wants to disable read-only so it can frob module. */
+ void module_disable_ro(const struct module *mod)
+ {
++	if (!rodata_enabled)
++		return;
++
+ 	frob_text(&mod->core_layout, set_memory_rw);
+ 	frob_rodata(&mod->core_layout, set_memory_rw);
+ 	frob_ro_after_init(&mod->core_layout, set_memory_rw);
+@@ -1920,6 +1923,9 @@ void module_disable_ro(const struct module *mod)
+ 
+ void module_enable_ro(const struct module *mod, bool after_init)
+ {
++	if (!rodata_enabled)
++		return;
++
+ 	frob_text(&mod->core_layout, set_memory_ro);
+ 	frob_rodata(&mod->core_layout, set_memory_ro);
+ 	frob_text(&mod->init_layout, set_memory_ro);
+@@ -1952,6 +1958,9 @@ void set_all_modules_text_rw(void)
+ {
+ 	struct module *mod;
+ 
++	if (!rodata_enabled)
++		return;
++
+ 	mutex_lock(&module_mutex);
+ 	list_for_each_entry_rcu(mod, &modules, list) {
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+@@ -1968,6 +1977,9 @@ void set_all_modules_text_ro(void)
+ {
+ 	struct module *mod;
+ 
++	if (!rodata_enabled)
++		return;
++
+ 	mutex_lock(&module_mutex);
+ 	list_for_each_entry_rcu(mod, &modules, list) {
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+@@ -1981,10 +1993,12 @@ void set_all_modules_text_ro(void)
+ 
+ static void disable_ro_nx(const struct module_layout *layout)
+ {
+-	frob_text(layout, set_memory_rw);
+-	frob_rodata(layout, set_memory_rw);
++	if (rodata_enabled) {
++		frob_text(layout, set_memory_rw);
++		frob_rodata(layout, set_memory_rw);
++		frob_ro_after_init(layout, set_memory_rw);
++	}
+ 	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_rw);
+ 	frob_ro_after_init(layout, set_memory_x);
+ 	frob_writable_data(layout, set_memory_x);
+ }
 -- 
 2.7.4
