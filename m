@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519835085-2-151266471686666570
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519835066-2-9663992359555876212
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835084; b=Tq9BfAIUvGhJluwSxGJt4Hc8QYy7sdOeBrgkAEOcFH7k+u+
-    UdEYM1Dr1DXafI3+tPOW/n0jxEJoRO61+IOUhqu5n7KT6jZegcTneYEVPAVrHBw+
-    n1JaZEDKNIhg4BJp1xBAoVAbKuYWc7qjeMCcLJr44Y4CeJRzySYz8RAMKl9GSqPW
-    je9huO5eP94sPgcW5sPiAHkzRnMLrA7DF30JhECTaclJURt6XdrldqNICwK4bV2C
-    /q0lf3X0kE3C30hluppUVgYGgxRQ9xZIblhu7I5WdTQ71DgOvDpTMbsW+xEZXsAB
-    knAn5VUYsnfTXFc8S2wtDD6Lpy4c++3Eg8Np45g==
+    t=1519835065; b=mM1gLWzNK5NxE8EYC9sqAXa23n2IVJ4JaA4lOUahCA9DTB/
+    eeEMRl+gW3xUQxeKLYXkB6ao4lRK9E9KC2n5KIKtQrwud+aoUTr2qohbbKj3Kc+A
+    HkBvov2VsZzWRmVRniWI4DrGwBQpS+iAsdP5sKodWTjQwcdLOj/9B8ey9MzZHH3z
+    qgnE8Ig8uk9LtWKNTwONxC/RuZuUFQ54QVUGG/40QqL3SUcWzsPatYtAmP560VhM
+    XmXg1LoCbBCDbQ12w0pHec23KjmhNOSjFJ8pdTs85Nw2CF5tK9pbXP2EQpvr3q17
+    TtVFmG9xkfpVaZNHpNxUolY4yLRF13IfDEbbdKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835084; bh=7tQzegcagdvY5jy0fgx
-    1Gy+iiaVtos/iuBfRPqGs/zY=; b=gTwKhf5v9wdgaa/PR8JgQBo45Gb7NuvuMNk
-    Wch5gT9FeFDgnKwpiRvWSy7lC/5kw90wz2N4ActQprjsxJqu/c/1821FGfgcUNgO
-    njafRWVGCVe0Gea1eNIV2D4nbbSeO3q5rEblx0M+W4hFcoD1qgq+uhAhKmYSygWS
-    3m82iiRoTaNwYN96yBKU4YFsLup4/dtHvgQd00yGsbKiC5XTbEANFIz6EfdzYr80
-    NNhMtsuPWvygXx9aCXEP1AlQEzeH4u6sf9LYVnvnNxqo0S+oDTqKu0Tgd5wKVmxQ
-    S5igR4n8y6qc9dITIpz2bveYPjouJzI0+LBeZ6OlmAXD9S/QH3Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835065; bh=FJ1c3RSnbCNX69c3V0t
+    caCyDxQ4s4nxgpYOpBprtHY8=; b=T074z1/pe4q3Dt5I9lLWWX6NAHneqMZ9Ac4
+    2V+52tHQz6Pqj4BfsoYgJdwnjtpyRMG0Iov7xJ9XuHRw8zeL/c5aqUmbw51aRwEL
+    7AWUPs+ROtuUk+7tm/9oxbXsqhiZ3s8XCd5uK4SaM6JkRXcSxi6AZ45HN80Ha5XI
+    F+AsySEM6mIs9ZMLDYwKJ+WAnR3MrbrP2ieTgjwLWd6Oxl03JIfpkIe3qQ+kq0qj
+    gqkPJOmd/ZfqFHEKumGNYanYqz06kjrDSK1CtnxH5IDWy0EetdYGiC4FDj509C1/
+    omXZnVaUyqZkNbIFuS3uglcRcW41mGXsLJBhw95PO9AMuzLnupA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeB1QY0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:24:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35369 "EHLO
+        id S935172AbeB1QUi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:20:38 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35367 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935171AbeB1QUh (ORCPT
+        by vger.kernel.org with ESMTP id S935146AbeB1QUh (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:37 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Oscar Campos" <oscar.campos@member.fsf.org>,
+        "Peter Hutterer" <peter.hutterer@who-t.net>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.612805808@decadent.org.uk>
+Message-ID: <lsq.1519831218.828540188@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 178/254] sh_eth: fix SH7757 GEther initialization
+Subject: [PATCH 3.16 225/254] Input: trackpoint - assume 3 buttons when
+ buttons detection fails
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,48 +82,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Oscar Campos <oscar.campos@member.fsf.org>
 
-commit 5133550296d43236439494aa955bfb765a89f615 upstream.
+commit 293b915fd9bebf33cdc906516fb28d54649a25ac upstream.
 
-Renesas  SH7757 has 2 Fast and 2 Gigabit Ether controllers, while the
-'sh_eth' driver can only reset and initialize TSU of the first controller
-pair. Shimoda-san tried to solve that adding the 'needs_init' member to the
-'struct sh_eth_plat_data', however the platform code still never sets this
-flag. I think  that we can infer this information from the 'devno' variable
-(set  to 'platform_device::id') and reset/init the Ether controller pair
-only for an even 'devno'; therefore 'sh_eth_plat_data::needs_init' can be
-removed...
+Trackpoint buttons detection fails on ThinkPad 570 and 470 series,
+this makes the middle button of the trackpoint to not being recogized.
+As I don't believe there is any trackpoint with less than 3 buttons this
+patch just assumes three buttons when the extended button information
+read fails.
 
-Fixes: 150647fb2c31 ("net: sh_eth: change the condition of initialization")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Oscar Campos <oscar.campos@member.fsf.org>
+Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
- include/linux/sh_eth.h                | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/input/mouse/trackpoint.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2902,8 +2902,8 @@ static int sh_eth_drv_probe(struct platf
- 		ndev->features = NETIF_F_HW_VLAN_CTAG_FILTER;
+--- a/drivers/input/mouse/trackpoint.c
++++ b/drivers/input/mouse/trackpoint.c
+@@ -377,8 +377,8 @@ int trackpoint_detect(struct psmouse *ps
+ 		return 0;
+ 
+ 	if (trackpoint_read(&psmouse->ps2dev, TP_EXT_BTN, &button_info)) {
+-		psmouse_warn(psmouse, "failed to get extended button data\n");
+-		button_info = 0;
++		psmouse_warn(psmouse, "failed to get extended button data, assuming 3 buttons\n");
++		button_info = 0x33;
  	}
  
--	/* initialize first or needed device */
--	if (!devno || pd->needs_init) {
-+	/* Need to init only the first port of the two sharing a TSU */
-+	if (devno % 2 == 0) {
- 		if (mdp->cd->chip_reset)
- 			mdp->cd->chip_reset(ndev);
- 
---- a/include/linux/sh_eth.h
-+++ b/include/linux/sh_eth.h
-@@ -16,7 +16,6 @@ struct sh_eth_plat_data {
- 	unsigned char mac_addr[ETH_ALEN];
- 	unsigned no_ether_link:1;
- 	unsigned ether_link_active_low:1;
--	unsigned needs_init:1;
- };
- 
- #endif
+ 	psmouse->private = kzalloc(sizeof(struct trackpoint_data), GFP_KERNEL);
