@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-659992-1519839586-2-15683204205300992012
+X-Cyrus-Session-Id: sloti22d1t05-659992-1519839559-2-10164865794121556388
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519839586; b=QDvL/K18Ety7TRZT+BRhzgw4Ez9yOfqnULyhvD/h6jVj5EB
-    Pij2+dz6V2SHTj6wLwqhlZJ64fnO0LWkhzwLaGdMy4LgIrDUTNW0nKV5nooGR1vB
-    VLuj+FhRPjnkafV9u31h6TDQVxX8BXX6P+MK6ZSxuE9aZGzfUkN8ixs55FRct92B
-    SEz0GtKBa9clmLegiHtQHDM10BNf/eFpAwq4HMlOvpHHoGFUiWzMa2jQ30YpUePh
-    4aY+uT/Y82Y285j2VtUWluNyVIa8APSZGdZss7x4n5tvhbvTp6xtt7xmydw1G+xI
-    Dwaw3UKmRmIVeFGpbu5UPhVWhXXvHm+Z78MLglQ==
+    t=1519839558; b=RDl/zqdWVMxECIZs790XuDm6zu8aB+NC30VEQkl0gvMoB0E
+    E1t3MCmiE+zyvlXGaCs0S2IB8Z9xz1gStuyVTj9WrL8iFUDBc3LwAmaRCtuQldtF
+    IFGegEXr/BLpHAdvDqm0Kov7STdCUBOfRY9Cb/KPrBdPwA2fyUW31xgddK7DOGJh
+    otNOGL7sqs3jmtzZw/kCnxZwwFRGIxUl1FlVkljzrgcvFiWCupAYJe5PBQb3AWMs
+    3wPgZdmDgCzgwtoFt1vwPHqkHl66WU2Jfaa/HI6H4TKZaE29svW/UU2Yic0XC2wC
+    cliOC/BjyL8QmRZ3K7RaZdxFxuWZqga7MNkV5GA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519839586; bh=6I/myV1p+/jkAcV3QUT
-    KZFwUznj2VAzkb6DI1MWYZeg=; b=D+QYO8JLnffUNXgnM35Zp/ao2oUQRLhL/AD
-    DHZG3C23t/5a8AMPrhBvDRobi9wFEyJ5+aAtlfHeJftWfqL5wSN335+RXOWf/Byr
-    RpHbziNAWKjPFm3W4avtaBHbHbzWLB1U0qaKBqekMJl+qmgqdAvxwU70zj6m+CPJ
-    WpdYmkte46HpBajKI4o27NlIfrJj4bgX8+EoT3Y5ogyDZBPJBWlXSv6Rh/YKvNU/
-    d51zOW7qT/rhc5X/pLsUMYwDa49rx56GP1zwGEeuplykqmLEqm6hszCciuBj6N1Z
-    gEor5aqekC/8rk47Z3tbhjn8p/V4E4aGHvEwlGfYIXvoMwkvcaw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519839558; bh=PS/7GNWxHrATpEKu6ZJ
+    MBrvRo3Yf+7a50+q3YpaDg2k=; b=Eg1AJuUO+yP/KdSqgMsnuVsHaIElTJU9w97
+    FgmvaQGdkt+bnOlcb/AYBfPOkzu23HU8RRQKj1RsDJi7yZEpDZDh1dOx0Sm9CzoG
+    47lK38w40C1FIoVqPEXfF+xMDfxl2Rr5L12FhJLcWn+71WiDcO/kTt6c4Peu7/R8
+    OC+twN0ChyOnts32aAB+QeunfcHH0ALWuhT982Vab6oI5DOG8qVOAVt5tcNOboNV
+    U4Q6avdMzH7LWACjrgbNsnDoSfUQm/QaBI0flre1jp44JCGaJZVhRVhlmAhOqmUO
+    KReQX4nK5TNsxSRaiF09lky1LZioCwQ4h5bZ0lxv1jqrYUxnxBg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932947AbeB1RjP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:39:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33171 "EHLO
+        id S932626AbeB1RjO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 12:39:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33177 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932531AbeB1PWN (ORCPT
+        by vger.kernel.org with ESMTP id S932533AbeB1PWN (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:13 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,15 +60,16 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Oliver Hartkopp" <socketcan@hartkopp.net>,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>,
-        "Dmitry Vyukov" <dvyukov@google.com>,
-        syzbot+4386709c0c1284dca827@syzkaller.appspotmail.com
+        "Hirokazu Takata" <takata@linux-m32r.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Christoph Hellwig" <hch@lst.de>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
 Date: Wed, 28 Feb 2018 15:20:22 +0000
-Message-ID: <lsq.1519831222.221203413@decadent.org.uk>
+Message-ID: <lsq.1519831222.552531679@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 110/140] can: af_can: can_rcv(): replace WARN_ONCE by
- pr_warn_once
+Subject: [PATCH 3.2 120/140] m32r: fix 'fix breakage from "m32r: use
+ generic ptrace_resume code"' fallout
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,45 +84,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-commit 8cb68751c115d176ec851ca56ecfbb411568c9e8 upstream.
+commit a6b202979661eb32646048aeaad7be7b70c2cd22 upstream.
 
-If an invalid CAN frame is received, from a driver or from a tun
-interface, a Kernel warning is generated.
+Commit acdc0d5ef9dd ('m32r: fix breakage from "m32r: use generic
+ptrace_resume code"') tried to fix a problem in commit e34112e3966fc
+("m32r: use generic ptrace_resume code") by returning values in a
+function returning void, causing:
 
-This patch replaces the WARN_ONCE by a simple pr_warn_once, so that a
-kernel, bootet with panic_on_warn, does not panic. A printk seems to be
-more appropriate here.
+  arch/m32r/kernel/ptrace.c: In function 'user_enable_single_step':
+  arch/m32r/kernel/ptrace.c:594:3: warning: 'return' with a value, in function returning void [enabled by default]
+  arch/m32r/kernel/ptrace.c:598:3: warning: 'return' with a value, in function returning void [enabled by default]
+  arch/m32r/kernel/ptrace.c:601:3: warning: 'return' with a value, in function returning void [enabled by default]
+  arch/m32r/kernel/ptrace.c:604:2: warning: 'return' with a value, in function returning void [enabled by default]
 
-Reported-by: syzbot+4386709c0c1284dca827@syzkaller.appspotmail.com
-Suggested-by: Dmitry Vyukov <dvyukov@google.com>
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-[bwh: Backported to 3.2:
- - Keep using the 'drop' label, as it has another user
- - Adjust context]
+Remove the unneeded return values.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hirokazu Takata <takata@linux-m32r.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/can/af_can.c
-+++ b/net/can/af_can.c
-@@ -653,13 +653,13 @@ static int can_rcv(struct sk_buff *skb,
- 	if (!net_eq(dev_net(dev), &init_net))
- 		goto drop;
+ arch/m32r/kernel/ptrace.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+--- a/arch/m32r/kernel/ptrace.c
++++ b/arch/m32r/kernel/ptrace.c
+@@ -592,17 +592,16 @@ void user_enable_single_step(struct task
  
--	if (WARN_ONCE(dev->type != ARPHRD_CAN ||
--		      skb->len != sizeof(struct can_frame) ||
--		      cf->can_dlc > 8,
--		      "PF_CAN: dropped non conform skbuf: "
--		      "dev type %d, len %d, can_dlc %d\n",
--		      dev->type, skb->len, cf->can_dlc))
-+	if (unlikely(dev->type != ARPHRD_CAN ||
-+		     skb->len != sizeof(struct can_frame) ||
-+		     cf->can_dlc > 8)) {
-+		pr_warn_once("PF_CAN: dropped non conform CAN skbuf: dev type %d, len %d, can_dlc %d\n",
-+			     dev->type, skb->len, cf->can_dlc);
- 		goto drop;
-+	}
+ 	if (access_process_vm(child, pc&~3, &insn, sizeof(insn), 0)
+ 	    != sizeof(insn))
+-		return -EIO;
++		return;
  
- 	/* update statistics */
- 	can_stats.rx_frames++;
+ 	compute_next_pc(insn, pc, &next_pc, child);
+ 	if (next_pc & 0x80000000)
+-		return -EIO;
++		return;
+ 
+ 	if (embed_debug_trap(child, next_pc))
+-		return -EIO;
++		return;
+ 
+ 	invalidate_cache();
+-	return 0;
+ }
+ 
+ void user_disable_single_step(struct task_struct *child)
