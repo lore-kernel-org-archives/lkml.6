@@ -1,129 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752473AbeB1MPd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 07:15:33 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36397 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752436AbeB1MPb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 07:15:31 -0500
-X-Google-Smtp-Source: AH8x224VMkDZuZBB+nDDmSa1V47FxzW4PXoRyT0U5TB1++nKSmUoCt5+WPk6zo9kWDBqzjBORqpy5w==
-Date: Wed, 28 Feb 2018 13:15:23 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH] Documentation/locking: Document the semantics of
- spin_is_locked()
-Message-ID: <20180228121523.GA354@andrea>
-References: <1519814372-19941-1-git-send-email-parri.andrea@gmail.com>
- <20180228105631.GA7681@arm.com>
- <20180228112403.GA32228@andrea>
- <20180228113456.GC7681@arm.com>
+        id S1752436AbeB1MRa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 07:17:30 -0500
+Received: from mout.gmx.net ([212.227.17.21]:59595 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752192AbeB1MR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 07:17:28 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228113456.GC7681@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Message-ID: <trinity-0b7e3226-baf0-4d8e-a290-f774450957fc-1519820236087@3c-app-gmx-bs19>
+From: "Lino Sanfilippo" <LinoSanfilippo@gmx.de>
+To: "Arvind Yadav" <arvind.yadav.cs@gmail.com>
+Cc: "Cornelia Huck" <cohuck@redhat.com>, jwi@linux.vnet.ibm.com,
+        ubraun@linux.vnet.ibm.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Aw: Re: [PATCH] net: iucv: Free memory obtained by kzalloc
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 Feb 2018 13:17:16 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <78058d34-7cbb-a3e6-6471-e001b93a0523@gmail.com>
+References: <6fbfc0b8aa75852c4eed4d05e4c165a493304ced.1519811528.git.arvind.yadav.cs@gmail.com>
+ <20180228113042.6a2f5177.cohuck@redhat.com>
+ <e4784c9b-380f-4dad-6883-b6350a9e0614@gmail.com>
+ <20180228125629.3062ac1d.cohuck@redhat.com>
+ <78058d34-7cbb-a3e6-6471-e001b93a0523@gmail.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:uDY7uw3S+00zx3x0mBpASWpoGsm2Zo6YlGOoi2khI2a
+ xoWz+x3QTZAd5wbSHirXJD5BmOjwTGRxJSAy1sOMJNdTWMsyR/
+ ahspvo3pbZTiaY/leRP8wfHmH1VFxx3Rtdxa+oMpLguME0JWSs
+ EvlhB2mXwt5/UxDEzkEWwouefcEPGmjbQL1RwBDcvJ4TFzSj7Q
+ UWU8LEtccbUIxigJ9yGvscmzIoQpD5Gp4+088T580iOPiFQhpL
+ DbIzGY1raaFiIrzZYEgxb/ZDhLeTqlHXkr8t8tFCCYtEDsZLzV oFz2ZY=
+X-UI-Out-Filterresults: notjunk:1;V01:K0:S66t7Y5aESY=:sl62EUd2bHcGiSwq7aOzaB
+ CIdJIhxGyp4nevlJIxIRo7rrJGd9qtDZHPyhZqaxO3/UjUtL2naxn6pFQR7wbAIQyT3AuxGrb
+ Meci2JCgBk8xs2XECs7UDBME1KJyAewo4Q6GPpLY3HYrRWlAOqiz6PsXX6rxt4YRgVkvGy2qs
+ jyUkPbOBwGxACN7ogfNOiA4oRxYzP6mfSTxkt8H5loYMzSXNI7FZKSC8Es+hEV99mojiuc0Ui
+ htuGsRPtqRPYqCrb/WR5IVUxtB1NGZXzexnu+rec4EAcPc3YBQOUAdTGQqvXNA51D6dJ/O/Aa
+ /gfQs8ygEf0rIYi3JrCFNfgylsIu97/nKlxWc3AUaNRapR8qrlOWy+YuEnqV0wJBLF8c63FsT
+ 9ktb/pZ6Z5bPQVkbMOmme79ElteYtO1vXmDtMFk7xCuePSSG6zSV1elJysNx/v0IMwgPLl0/l
+ 79b7m1KHDfeSGHD3d/6QVvKOzuCDCEeWMEE0u98vLbgumji01AX8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 11:34:56AM +0000, Will Deacon wrote:
-> On Wed, Feb 28, 2018 at 12:24:03PM +0100, Andrea Parri wrote:
-> > On Wed, Feb 28, 2018 at 10:56:32AM +0000, Will Deacon wrote:
-> > > On Wed, Feb 28, 2018 at 11:39:32AM +0100, Andrea Parri wrote:
-> > > > There appeared to be a certain, recurrent uncertainty concerning the
-> > > > semantics of spin_is_locked(), likely a consequence of the fact that
-> > > > this semantics remains undocumented or that it has been historically
-> > > > linked to the (likewise unclear) semantics of spin_unlock_wait().
-> > > > 
-> > > > Document this semantics.
-> > > > 
-> > > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > > > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > > > Cc: Will Deacon <will.deacon@arm.com>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > > Cc: David Howells <dhowells@redhat.com>
-> > > > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> > > > Cc: Luc Maranget <luc.maranget@inria.fr>
-> > > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > > > Cc: Akira Yokosawa <akiyks@gmail.com>
-> > > > ---
-> > > >  include/linux/spinlock.h | 11 +++++++++++
-> > > >  1 file changed, 11 insertions(+)
-> > > > 
-> > > > diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-> > > > index 4894d322d2584..2639fdc9a916c 100644
-> > > > --- a/include/linux/spinlock.h
-> > > > +++ b/include/linux/spinlock.h
-> > > > @@ -380,6 +380,17 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
-> > > >  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
-> > > >  })
-> > > >  
-> > > > +/**
-> > > > + * spin_is_locked() - Check whether a spinlock is locked.
-> > > > + * @lock: Pointer to the spinlock.
-> > > > + *
-> > > > + * This function is NOT required to provide any memory ordering
-> > > > + * guarantees; it could be used for debugging purposes or, when
-> > > > + * additional synchronization is needed, accompanied with other
-> > > > + * constructs (memory barriers) enforcing the synchronization.
-> > > > + *
-> > > > + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
-> > > > + */
-> > > 
-> > > I also don't think this is quite right, since the spin_is_locked check
-> > > must be ordered after all prior lock acquisitions (to any lock) on the same
-> > > CPU. That's why we have an smp_mb() in there on arm64 (see 38b850a73034f).
-> > 
-> > So, arm64 (and powerpc) complies to the semantics I _have_ in mind ...
+Hi,
+
+
+> On Wednesday 28 February 2018 05:26 PM, Cornelia Huck wrote:
+> > On Wed, 28 Feb 2018 17:14:55 +0530
+> > Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> >
+> >> On Wednesday 28 February 2018 04:00 PM, Cornelia Huck wrote:
+> >>> On Wed, 28 Feb 2018 15:24:16 +0530
+> >>> Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> >>>   
+> >>>> Free memory, if afiucv_iucv_init is not successful and
+> >>>> removing a IUCV driver.
+> >>>>
+> >>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> >>>> ---
+> >>>>    net/iucv/af_iucv.c | 5 ++++-
+> >>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+> >>>> index 1e8cc7b..eb0995a 100644
+> >>>> --- a/net/iucv/af_iucv.c
+> >>>> +++ b/net/iucv/af_iucv.c
+> >>>> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
+> >>>>    	af_iucv_dev->driver = &af_iucv_driver;
+> >>>>    	err = device_register(af_iucv_dev);
+> >>>>    	if (err)
+> >>>> -		goto out_driver;
+> >>>> +		goto out_iucv_dev;
+> >>>>    	return 0;
+> >>>>    
+> >>>> +out_iucv_dev:
+> >>>> +	kfree(af_iucv_dev);
+> >>>>    out_driver:
+> >>>>    	driver_unregister(&af_iucv_driver);
+> >>>>    out_iucv:
+> >>>> @@ -2496,6 +2498,7 @@ static void __exit afiucv_exit(void)
+> >>>>    {
+> >>>>    	if (pr_iucv) {
+> >>>>    		device_unregister(af_iucv_dev);
+> >>>> +		kfree(af_iucv_dev);
+> >>>>    		driver_unregister(&af_iucv_driver);
+> >>>>    		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
+> >>>>    		symbol_put(iucv_if);
+> >>> No, you must not use kfree() after you called device_register() (even
+> >>> if it was not successful!) -- see the comment for device_register().
+> >> Yes, Your are right. First we need to call put_device() then kfree().
+> >> I will send updated patch.
+> > No, that's not correct, either. device_register() will give up any
+> > reference it obtained, and the caller did not obtain any additional
+> > reference, so a put_device() would be wrong. A kfree() on a refcounted
+> > structure is wrong as well.
+> If you will see the comment for device_register() (drivers/base/core.c)
+> there is mentioned that
+> 'NOTE: _Never_ directly free @dev after calling this function, even
+> if it returned an error! Always use put_device() to give up the
+> reference initialized in this function instead.'
+> But as per you comment. we should not use.
+> Thanks,
 > 
-> Sure, but they're offering more than that at present. If I can remove the
-> smp_mb() in our spin_is_locked implementation, I will, but we need to know
-> what that will break even if you consider that code to be broken because it
-> relies on something undocumented.
-> 
-> > > So this is a change in semantics and we need to audit the users before
-> > > proceeding. We should also keep spin_is_locked consistent with the versions
-> > > for mutex, rwsem, bit_spin.
-> > 
-> > Well, strictly speaking, it isn't (given that the current semantics is,
-> > as reported above, currently undocumented); for the same reason, cases
-> > relying on anything more than _nothing_ (if any) are already broken ...
-> 
-> I suppose it depends on whether you consider the code or the documentation
-> to be authoritative. I tend to err on the side of the former for the kernel.
-> To be clear: I'm perfectly ok relaxing the semantics, but only if there's
-> some evidence that you've looked at the callsites and determined that they
-> won't break.  That's why I think a better first step would be to convert a
-> bunch of them to using lockdep for the "assert that I hold this lock"
-> checks, so we can start to see where the interesting cases are.
 
-Sure, I'll do (queued after the RISC-V patches I'm currently working on).
+In case that device_register() fails simply call device_put(). This will decrement
+the last reference and then free the memory.
 
-So I think that we could all agree that the semantics I'm proposing here
-would be very simple to reason with ;-).  You know, OTOH, this auditing
-could turn out to be all but "simple"...
-
-  https://marc.info/?l=linux-kernel&m=149910202928559&w=2
-  https://marc.info/?l=linux-kernel&m=149886113629263&w=2
-  https://marc.info/?l=linux-kernel&m=149912971028729&w=2
-
-but I'll have a try, IAC.  Perhaps, a temporary solution/workaround can
-be to simplify/clarify the semantics and to insert the smp_mb() (or the
-smp_mb__before_islocked(), ...) in the "dubious" use cases.
-
-  Andrea
-
-
-> 
-> Will
+Regards,
+Lino
