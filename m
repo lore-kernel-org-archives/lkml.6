@@ -1,57 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752392AbeB1Lun (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 06:50:43 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:48503 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeB1Lum (ORCPT
+        id S1752460AbeB1Luy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 06:50:54 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41289 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbeB1Luw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 06:50:42 -0500
-Date: Wed, 28 Feb 2018 12:50:48 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Felipe Balbi <felipe.balbi@linux.intel.com>
-cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: HRTimer causing rtctest to fail
-In-Reply-To: <87k1ux5qpf.fsf@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1802281246420.1886@nanos.tec.linutronix.de>
-References: <87vaei601x.fsf@linux.intel.com> <alpine.DEB.2.21.1802271640010.1886@nanos.tec.linutronix.de> <87muzt5usg.fsf@linux.intel.com> <alpine.DEB.2.21.1802281043050.1886@nanos.tec.linutronix.de> <87k1ux5qpf.fsf@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Feb 2018 06:50:52 -0500
+X-Google-Smtp-Source: AH8x227OG99z14ArPhjy+YFmmAmaVRvvdQvNKgF8g+IPdG7Xs0Uo9JYE9i3vxHmG9KykafQ89nYnalBGMJzgKAE3+a0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180227020549-mutt-send-email-mst@kernel.org>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+ <20180215213312.29234-3-marcandre.lureau@redhat.com> <20180227020549-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@gmail.com>
+Date: Wed, 28 Feb 2018 12:50:50 +0100
+Message-ID: <CAJ+F1CLE6zshabQRSNpWefWfoF89r2ae-GaCbNb5q5EV8tR6oA@mail.gmail.com>
+Subject: Re: [PATCH v15 02/11] fw_cfg: add a public uapi header
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: open list <linux-kernel@vger.kernel.org>, slp@redhat.com,
+        bhe@redhat.com, somlo@cmu.edu, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1SBoxOq032458
 
-On Wed, 28 Feb 2018, Felipe Balbi wrote:
-> Thomas Gleixner <tglx@linutronix.de> writes:
-> > All numbers in micro seconds! What happens if you load the system or
-> > restrict C-States?
-> 
-> added intel_idle.max_cstate=0 to cmdline. Still see some failures,
-> albeit a lot more rare, for example, caught one on iteration 8 of
-> 8192Hz:
-> 
-> 8192Hz:	 1 2 3 4 5 6 7
-> PIE delta error: 0.000135 should be close to 0.000122
-> 
-> That is, however, only 13 uS late. Is that within the limits of "we
-> don't quite care"?
+On Tue, Feb 27, 2018 at 1:06 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Thu, Feb 15, 2018 at 10:33:03PM +0100, Marc-André Lureau wrote:
+>> Create a common header file for well-known values and structures to be
+>> shared by the Linux kernel with qemu or other projects.
+>>
+>> It is based from qemu/docs/specs/fw_cfg.txt which references
+>> qemu/include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
+>> authoritative list" & vmcoreinfo.txt. Those files don't have an
+>> explicit license, but qemu/hw/nvram/fw_cfg.c is BSD-license, so
+>> Michael S. Tsirkin suggested to use the same license.
+>>
+>> The patch intentionally left out DMA & vmcoreinfo structures &
+>> defines, which are added in the commits making usage of it.
+>>
+>> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>>
+>> ---
+>>
+>> The related qemu patch making use of it, to be submitted:
+>> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
+>> ---
+>>  MAINTAINERS                    |  1 +
+>>  drivers/firmware/qemu_fw_cfg.c | 22 ++------------
+>>  include/uapi/linux/fw_cfg.h    | 66 ++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 69 insertions(+), 20 deletions(-)
+>>  create mode 100644 include/uapi/linux/fw_cfg.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 3bdc260e36b7..a66b65f62811 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11352,6 +11352,7 @@ M:    "Michael S. Tsirkin" <mst@redhat.com>
+>>  L:   qemu-devel@nongnu.org
+>>  S:   Maintained
+>>  F:   drivers/firmware/qemu_fw_cfg.c
+>> +F:   include/uapi/linux/fw_cfg.h
+>>
+>>  QIB DRIVER
+>>  M:   Dennis Dalessandro <dennis.dalessandro@intel.com>
+>
+> Why fw_cfg.h and not qemu_fw_cfg.h ? fw_cfg.h seems too generic.
 
-I think so. 13us (depending on the machine) can easily happen if multiple
-interrupts/timers happen at the same time or if something keeps interrupts
-disabled for a few microseconds which is certainly possible.
+ok
 
-What kind of system is this?
+>
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index a41b572eeeb1..42601a3eaed5 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -32,30 +32,12 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/io.h>
+>>  #include <linux/ioport.h>
+>> +#include <uapi/linux/fw_cfg.h>
+>>
+>>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>>  MODULE_LICENSE("GPL");
+>>
+>> -/* selector key values for "well-known" fw_cfg entries */
+>> -#define FW_CFG_SIGNATURE  0x00
+>> -#define FW_CFG_ID         0x01
+>> -#define FW_CFG_FILE_DIR   0x19
+>> -
+>> -/* size in bytes of fw_cfg signature */
+>> -#define FW_CFG_SIG_SIZE 4
+>> -
+>> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+>> -#define FW_CFG_MAX_FILE_PATH 56
+>> -
+>> -/* fw_cfg file directory entry type */
+>> -struct fw_cfg_file {
+>> -     u32 size;
+>> -     u16 select;
+>> -     u16 reserved;
+>> -     char name[FW_CFG_MAX_FILE_PATH];
+>> -};
+>> -
+>>  /* fw_cfg device i/o register addresses */
+>>  static bool fw_cfg_is_mmio;
+>>  static phys_addr_t fw_cfg_p_base;
+>> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+>>
+>>  #ifdef CONFIG_ACPI
+>>  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
+>> -     { "QEMU0002", },
+>> +     { FW_CFG_ACPI_DEVICE_ID, },
+>>       {},
+>>  };
+>>  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
+>> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
+>> new file mode 100644
+>> index 000000000000..c698ac3812f6
+>> --- /dev/null
+>> +++ b/include/uapi/linux/fw_cfg.h
+>> @@ -0,0 +1,66 @@
+>> +/* SPDX-License-Identifier: BSD-3-Clause */
+>> +#ifndef _LINUX_FW_CFG_H
+>> +#define _LINUX_FW_CFG_H
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define FW_CFG_ACPI_DEVICE_ID        "QEMU0002"
+>> +
+>> +/* selector key values for "well-known" fw_cfg entries */
+>> +#define FW_CFG_SIGNATURE     0x00
+>> +#define FW_CFG_ID            0x01
+>> +#define FW_CFG_UUID          0x02
+>> +#define FW_CFG_RAM_SIZE              0x03
+>> +#define FW_CFG_NOGRAPHIC     0x04
+>> +#define FW_CFG_NB_CPUS               0x05
+>> +#define FW_CFG_MACHINE_ID    0x06
+>> +#define FW_CFG_KERNEL_ADDR   0x07
+>> +#define FW_CFG_KERNEL_SIZE   0x08
+>> +#define FW_CFG_KERNEL_CMDLINE        0x09
+>> +#define FW_CFG_INITRD_ADDR   0x0a
+>> +#define FW_CFG_INITRD_SIZE   0x0b
+>> +#define FW_CFG_BOOT_DEVICE   0x0c
+>> +#define FW_CFG_NUMA          0x0d
+>> +#define FW_CFG_BOOT_MENU     0x0e
+>> +#define FW_CFG_MAX_CPUS              0x0f
+>> +#define FW_CFG_KERNEL_ENTRY  0x10
+>> +#define FW_CFG_KERNEL_DATA   0x11
+>> +#define FW_CFG_INITRD_DATA   0x12
+>> +#define FW_CFG_CMDLINE_ADDR  0x13
+>> +#define FW_CFG_CMDLINE_SIZE  0x14
+>> +#define FW_CFG_CMDLINE_DATA  0x15
+>> +#define FW_CFG_SETUP_ADDR    0x16
+>> +#define FW_CFG_SETUP_SIZE    0x17
+>> +#define FW_CFG_SETUP_DATA    0x18
+>> +#define FW_CFG_FILE_DIR              0x19
+>> +
+>> +#define FW_CFG_FILE_FIRST    0x20
+>> +#define FW_CFG_FILE_SLOTS_MIN        0x10
+>> +
+>> +#define FW_CFG_WRITE_CHANNEL 0x4000
+>> +#define FW_CFG_ARCH_LOCAL    0x8000
+>> +#define FW_CFG_ENTRY_MASK    (~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
+>> +
+>> +#define FW_CFG_INVALID               0xffff
+>> +
+>> +/* width in bytes of fw_cfg control register */
+>> +#define FW_CFG_CTL_SIZE              0x02
+>> +
+>> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+>> +#define FW_CFG_MAX_FILE_PATH 56
+>> +
+>> +/* size in bytes of fw_cfg signature */
+>> +#define FW_CFG_SIG_SIZE 4
+>> +
+>> +/* FW_CFG_ID bits */
+>> +#define FW_CFG_VERSION               0x01
+>> +
+>> +/* fw_cfg file directory entry type */
+>> +struct fw_cfg_file {
+>> +     __be32 size;
+>> +     __be16 select;
+>> +     __u16 reserved;
+>> +     char name[FW_CFG_MAX_FILE_PATH];
+>> +};
+>> +
+>> +#endif
+>> --
+>> 2.16.1.73.g5832b7e9f2
 
-> BTW, it took some effort to get that one failure. I'll leave rtctest
-> running in a long loop and try to figure out approximately how frequently
-> it fails, but it seems like it's within the realm of "don't care", would
-> you agree?
 
-Yes.
 
-Thanks,
-
-	tglx
+-- 
+Marc-André Lureau
