@@ -1,33 +1,33 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AG47ELsiU0bIawxtymAEY4A+py5wZfwQTp3158OL2SrXbHn/9V599m6nMX0VO8OVtNUiPyu99uet
-ARC-Seal: i=1; a=rsa-sha256; t=1519837500; cv=none;
+X-Google-Smtp-Source: AH8x226guNSh+9fNdj9CjjI26H6E3DWwM/gldRP9mU0AMZLxsnPiRxduaa1K/7t+FjHblCFFxpyk
+ARC-Seal: i=1; a=rsa-sha256; t=1519837497; cv=none;
         d=google.com; s=arc-20160816;
-        b=pWv/KfDe4FoEGLj0SXwtORKiIiuWrRMqVY8D3u7AXL+KKOKXMLy7O22HRoo5T6JoFW
-         KKUXJSW4HmxZBrXhFZ3wGrQ6+lEPGLAPJG53NzH/of7d0L1UbVINZ+vRQ7Df+Oc6uLLh
-         wukCqvZ16l0KCarmqb5y+WafRxxo4X/trdAobeZrNZ3bygNbGNcjpy6aDFruCGyJlILA
-         /Y0/Z99eDvui5ZIEleVfIdj0BKrDUSxnt3egqO0hWx9ylUyhnJykT+zcoghToapH+gx5
-         pwDSXc/qEpRaALAzVHnA+Rvg/YprHQgqV64UFwVDT7nMWAb3Nc3Qyv19gXLSFHouxdYd
-         qAXQ==
+        b=HhpTfYVWgKbFIDAzRy5oqwetuQrxUq1dJMWcmbRITlYUyGLN8LlepVQ3L2xfvFBKdK
+         Afaod7h/s4BlflUjDiZBtyJ1SEUAgUfRzSoufmTboxSPtWFEnimcmhwXOCKHkcttcZlC
+         nlfabs+6fyc1H9UJAB2D8eiubKtJqxsei+pEhLNjrvamp5GyhUlBi2lklfmXbls/+QjX
+         2StO4+md/ZiX3KlXQu9EkHJV2a2Tw4SC6W3rGNbcJVkIfpoucf5R6RFfwCbEOymTXlfO
+         mNFUyMWX0SNqxLCE78Gsr3SlfQwOdR7lpzx9V31Fx3YTMNOdvYPAMi1bTNtAf1eHQ44m
+         M49w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=ixDaG35QzZ00T7iGqHadiZIYRBmR84Z/5et5n0u1NAs=;
-        b=wSQprwwbD5AnI7NATVgxw/t+tWCIQ0CpgNp4unmIR8cEoyteU0cWkqQy0YBrNvoVg2
-         7f9FhajuA0qMqllP79kvz4+ozlhGg7/+I6EWlpelh5z5n0hFykzo8SWv0EtSGrhG4u6O
-         bhQP1Ev18UrHhu5sD6K8YkMgOwCmIZR6+kyLnq3d/ZfziSIRUNCG65v6LLT5aCkK+Thb
-         a8prCpjNiFdyaWk9jhbbpcU6Gnpl5lJL70jkKRSwJqm3cuyATnUpvN9cFl/HMXXsXTnW
-         lSMvgjD1V8dIr3o/KyWrzqSMbc3jjgVKsYPLmlqqc+r6Brd/CSG90HRT5TXNmWOUUj00
-         98oA==
+        bh=6KTNgowjfN2mzrXRCCzwrDRXHBCsydxEM1GujcQqxKc=;
+        b=mWLcuZ9vvea89Eo/FYmkqz7XMgvlI7HEfWzJ1EQ48B9mnqA6J+CrAGwPRPZ5AQSxUA
+         1LqQBHqmUEyveocbTNK8QUjyo990JTu96oNpSYBJDIKARZUwN2jAR5+yKABISQ2X0CmP
+         s7NSPYbJfFIGoukqGOE5iY5Gjp47b2zndGxWwJ7CfWRxyZIStws8alkZ6tDLJAxJJHHc
+         /vF2RRF8ZV8pAPohW52I3miuRVMJ/BIkTqYm2BclQ/R8gnG6QigIKPKXi9ARC6PwxJ0/
+         y65Sj2MUGA2WAyzcS1PDCYX6dNHS5J00if4uvBxfAQADQZgwNVWsHN6/UtuRCXrPb5dx
+         k/GA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Vxo//1gW;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Dmb/snwQ;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=C0ea/7Rs;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=DsVdPyOR;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Vxo//1gW;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Dmb/snwQ;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=C0ea/7Rs;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=DsVdPyOR;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 292D2601CF
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16B3A607F5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
 From: Oza Pawandeep <poza@codeaurora.org>
@@ -44,133 +44,136 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v12 6/6] PCI/DPC: Enumerate the devices after DPC trigger event
-Date: Wed, 28 Feb 2018 22:34:17 +0530
-Message-Id: <1519837457-3596-7-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v12 5/6] PCI: Unify wait for link active into generic PCI
+Date: Wed, 28 Feb 2018 22:34:16 +0530
+Message-Id: <1519837457-3596-6-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
 References: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593665127333650681?=
-X-GMAIL-MSGID: =?utf-8?q?1593665127333650681?=
+X-GMAIL-THRID: =?utf-8?q?1593665123498862590?=
+X-GMAIL-MSGID: =?utf-8?q?1593665123498862590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Implement error_resume callback in DPC so, after DPC trigger event
-enumerates the devices beneath.
+Clients such as HP, DPC are using pcie_wait_link_active(), which waits
+till the link becomes active or inactive.
+
+Made generic function and moved it to drivers/pci/pci.c
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 9f1c983..d439bfd 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -237,7 +237,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
- static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 	enum pci_channel_state state,
- 	char *error_mesg,
--	int (*cb)(struct pci_dev *, void *))
-+	int (*cb)(struct pci_dev *, void *),
-+	int severity)
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8..e0c2b8e 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
+ 	return ret;
+ }
+ 
+-static void __pcie_wait_link_active(struct controller *ctrl, bool active)
+-{
+-	int timeout = 1000;
+-
+-	if (pciehp_check_link_active(ctrl) == active)
+-		return;
+-	while (timeout > 0) {
+-		msleep(10);
+-		timeout -= 10;
+-		if (pciehp_check_link_active(ctrl) == active)
+-			return;
+-	}
+-	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
+-			active ? "set" : "cleared");
+-}
+-
+ static void pcie_wait_link_active(struct controller *ctrl)
  {
- 	struct aer_broadcast_data result_data;
+-	__pcie_wait_link_active(ctrl, true);
++	struct pci_dev *pdev = ctrl_dev(ctrl);
++
++	pcie_wait_for_link(pdev, true);
+ }
  
-@@ -249,6 +250,17 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 		result_data.result = PCI_ERS_RESULT_RECOVERED;
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd1..bbea997 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4176,6 +4176,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
+ 	return 0;
+ }
  
- 	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-+		/* If DPC is triggered, call resume error handler
-+		 * because, at this point we can safely assume that
-+		 * link recovery has happened, this is only handled if
-+		 * callback is resume, as this function can be called
-+		 * with multiple callbacks.
-+		 */
-+		if ((severity == DPC_FATAL) &&
-+			(cb == report_resume)) {
-+			cb(dev, NULL);
-+			return PCI_ERS_RESULT_RECOVERED;
-+		}
- 		/*
- 		 * If the error is reported by a bridge, we think this error
- 		 * is related to the downstream link of the bridge, so we
-@@ -296,7 +308,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	status = broadcast_error_message(dev,
- 			state,
- 			"error_detected",
--			report_error_detected);
-+			report_error_detected,
-+			severity);
++/**
++ * pcie_wait_for_link - Wait for link till it's active/inactive
++ * @pdev: Bridge device
++ * @active: waiting for active or inactive ?
++ *
++ * Use this to wait till link becomes active or inactive.
++ */
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
++{
++	int timeout = 1000;
++	bool ret;
++	u16 lnk_status;
++
++	for (;;) {
++		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++		if (ret == active)
++			return true;
++		if (timeout <= 0)
++			break;
++		timeout -= 10;
++	}
++
++	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
++		 active ? "set" : "cleared");
++
++	return false;
++}
++
+ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
+ 	u16 ctrl;
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index abc514e..5c44fbc 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -345,6 +345,8 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
+ /* PCI error reporting and recovery */
+ void pcie_do_recovery(struct pci_dev *dev, int severity);
  
- 	if ((severity == AER_FATAL) ||
- 	    (severity == DPC_FATAL)) {
-@@ -311,7 +324,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 		status = broadcast_error_message(dev,
- 				state,
- 				"mmio_enabled",
--				report_mmio_enabled);
-+				report_mmio_enabled,
-+				severity);
- 
- 	if (status == PCI_ERS_RESULT_NEED_RESET) {
- 		/*
-@@ -322,7 +336,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 		status = broadcast_error_message(dev,
- 				state,
- 				"slot_reset",
--				report_slot_reset);
-+				report_slot_reset,
-+				severity);
- 	}
- 
- 	if (status != PCI_ERS_RESULT_RECOVERED)
-@@ -332,7 +347,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	broadcast_error_message(dev,
- 				state,
- 				"resume",
--				report_resume);
-+				report_resume,
-+				severity);
- 
- 	dev_info(&dev->dev, "Device recovery successful\n");
- 	return;
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
++
+ #ifdef CONFIG_PCIEASPM
+ void pcie_aspm_init_link_state(struct pci_dev *pdev);
+ void pcie_aspm_exit_link_state(struct pci_dev *pdev);
 diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index 8e1553b..fb6bbd3 100644
+index 517c8b4..8e1553b 100644
 --- a/drivers/pci/pcie/pcie-dpc.c
 +++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -101,9 +101,24 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+@@ -95,19 +95,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+ 
+ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ {
+-	unsigned long timeout = jiffies + HZ;
+ 	struct pci_dev *pdev = dpc->dev->port;
+-	struct device *dev = &dpc->dev->device;
+-	u16 lnk_status;
+ 
+-	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+-					!time_after(jiffies, timeout)) {
+-		msleep(10);
+-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	}
+-	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+-		dev_warn(dev, "Link state not disabled for DPC event\n");
++	pcie_wait_for_link(pdev, false);
  }
  
  /**
-- * dpc_reset_link - reset link DPC routine
-+ * dpc_error_resume - enumerate the devices beneath
-  * @pdev: pointer to Root Port's pci_dev data structure
-  *
-+ * Invoked by Port Bus driver during fatal recovery.
-+ */
-+static void dpc_error_resume(struct pci_dev *pdev)
-+{
-+	if (pcie_wait_for_link(pdev, true)) {
-+		pci_lock_rescan_remove();
-+		pci_rescan_bus(pdev->bus);
-+		pci_unlock_rescan_remove();
-+	}
-+}
-+
-+/**
-+ * dpc_reset_link - reset link DPC routine
-+ * @dev: pointer to Root Port's pci_dev data structure
-+ *
-  * Invoked by Port Bus driver when performing link reset at Root Port.
-  */
- static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
-@@ -338,6 +353,7 @@ static void dpc_remove(struct pcie_device *dev)
- 	.service	= PCIE_PORT_SERVICE_DPC,
- 	.probe		= dpc_probe,
- 	.remove		= dpc_remove,
-+	.error_resume	= dpc_error_resume,
- 	.reset_link     = dpc_reset_link,
- };
- 
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
 a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
