@@ -1,85 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932423AbeB1On6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:43:58 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33845 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932235AbeB1Olr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:47 -0500
-X-Google-Smtp-Source: AH8x224vrRty5pAb87PY1beGGXHvO62NUID+4W8kIEo4V1u+UyHluZa8KMBcJhnOSrLOyOttnDzltw==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>, cphealy@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 15/22] nvmem: bcm-ocotp: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:59 -0800
-Message-Id: <20180228144106.16363-16-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
-References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
+        id S932443AbeB1Ooe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:44:34 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40265 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932161AbeB1Ooa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:44:30 -0500
+Date: Wed, 28 Feb 2018 15:44:24 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-input@vger.kernel.org
+Subject: Re: [RFC 0/4] Add support for the Gateworks System Controller
+Message-ID: <20180228144424.GC12303@lunn.ch>
+References: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519780874-8558-1-git-send-email-tharvey@gateworks.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop all of the code related to .remove hook and make use of
-devm_nvmem_register() instead.
+On Tue, Feb 27, 2018 at 05:21:10PM -0800, Tim Harvey wrote:
+> This series adds support for the Gateworks System Controller used on Gateworks
+> Laguna, Ventana, and Newport product families.
+> 
+> The GSC is an MSP430 I2C slave controller whose firmware embeds the following
+> features:
+>  - I/O expander (16 GPIO's emulating a PCA955x)
+>  - EEPROM (enumating AT24)
+>  - RTC (enumating DS1672)
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: cphealy@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/nvmem/bcm-ocotp.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Hi Tim
 
-diff --git a/drivers/nvmem/bcm-ocotp.c b/drivers/nvmem/bcm-ocotp.c
-index 5e9e324427f9..24c30fa475cc 100644
---- a/drivers/nvmem/bcm-ocotp.c
-+++ b/drivers/nvmem/bcm-ocotp.c
-@@ -302,27 +302,17 @@ static int bcm_otpc_probe(struct platform_device *pdev)
- 
- 	priv->config = &bcm_otpc_nvmem_config;
- 
--	nvmem = nvmem_register(&bcm_otpc_nvmem_config);
-+	nvmem = devm_nvmem_register(dev, &bcm_otpc_nvmem_config);
- 	if (IS_ERR(nvmem)) {
- 		dev_err(dev, "error registering nvmem config\n");
- 		return PTR_ERR(nvmem);
- 	}
- 
--	platform_set_drvdata(pdev, nvmem);
--
- 	return 0;
- }
- 
--static int bcm_otpc_remove(struct platform_device *pdev)
--{
--	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
--
--	return nvmem_unregister(nvmem);
--}
--
- static struct platform_driver bcm_otpc_driver = {
- 	.probe	= bcm_otpc_probe,
--	.remove	= bcm_otpc_remove,
- 	.driver = {
- 		.name	= "brcm-otpc",
- 		.of_match_table = bcm_otpc_dt_ids,
--- 
-2.14.3
+Maybe it is in these patches, and i missed it....
+
+How do these emulated devices work? Does the controller respond to
+different addresses for these different emulated devices? Or is it an
+I2c bus mux?
+
+    Andrew
