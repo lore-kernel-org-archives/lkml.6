@@ -1,122 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeB1Obg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:31:36 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35411 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeB1Obe (ORCPT
+        id S1752614AbeB1Ofq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:35:46 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38552 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbeB1Ofo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:31:34 -0500
-Message-ID: <1519828292.3975.3.camel@pengutronix.de>
-Subject: Re: [PATCH v6] reset: add support for non-DT systems
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        David Lechner <david@lechnology.com>
-Date: Wed, 28 Feb 2018 15:31:32 +0100
-In-Reply-To: <20180228130857.5342-1-brgl@bgdev.pl>
-References: <20180228130857.5342-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Wed, 28 Feb 2018 09:35:44 -0500
+X-Google-Smtp-Source: AH8x2250eOjMv2ItX5KoeOkKRIcGz25mi2o1GVI2Twm2XzKMl6Te3knGK9JMbtRs/XclX9YKYSKQ3g==
+Subject: Re: [PATCH] watchdog: sbsa: use 32-bit read for WCV
+To: Jayachandran C <jnair@caviumnetworks.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org
+Cc: Fu Wei <fu.wei@linaro.org>, linux-kernel@vger.kernel.org
+References: <1519815140-5336-1-git-send-email-jnair@caviumnetworks.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <265c171f-8a08-2799-53b5-c6e3a5bf44b5@roeck-us.net>
+Date: Wed, 28 Feb 2018 06:35:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519815140-5336-1-git-send-email-jnair@caviumnetworks.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-28 at 14:08 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 02/28/2018 02:52 AM, Jayachandran C wrote:
+> According to SBSA spec v3.1 section 5.3:
+>    All registers are 32 bits in size and should be accessed using
+>    32-bit reads and writes. If an access size other than 32 bits
+>    is used then the results are IMPLEMENTATION DEFINED.
+>    [...]
+>    The Generic Watchdog is little-endian
 > 
-> The reset framework only supports device-tree. There are some platforms
-> however, which need to use it even in legacy, board-file based mode.
+> The current code uses readq to read the watchdog compare register
+> which does a 64-bit access. This fails on ThunderX2 which does not
+> implement 64-bit access to this register.
 > 
-> An example of such architecture is the DaVinci family of SoCs which
-> supports both device tree and legacy boot modes and we don't want to
-> introduce any regressions.
+> Fix this by using lo_hi_readq() that does two 32-bit reads.
 > 
-> We're currently working on converting the platform from its hand-crafted
-> clock API to using the common clock framework. Part of the overhaul will
-> be representing the chip's power sleep controller's reset lines using
-> the reset framework.
-> 
-> This changeset extends the core reset code with a new reset lookup
-> entry structure. It contains data allowing the reset core to associate
-> reset lines with devices by comparing the dev_id and con_id strings.
-> 
-> It also provides a function allowing drivers to register lookup entries
-> with the framework.
-> 
-> The new lookup function is only called as a fallback in case the
-> of_node field is NULL and doesn't change anything for current users.
-> 
-> Tested with a dummy reset driver with several lookup entries.
-> 
-> An example lookup table registration from a driver can be found below:
-> 
-> static struct reset_control_lookup foobar_reset_lookup[] = {
-> 	RESET_LOOKUP("foo.0", "foo", 15),
-> 	RESET_LOOKUP("bar.0", NULL,   5),
-> };
-> 
-> foobar_probe()
-> {
-> ...
-> 
->         reset_controller_add_lookup(&rcdev, foobar_reset_lookup,
->                                     ARRAY_SIZE(foobar_reset_lookup));
-> 
-> ...
-> }
-> 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: David Lechner <david@lechnology.com>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
-> v1 -> v2:
-> - renamed the new function to __reset_control_get_from_lookup()
-> - added a missing break; when a matching entry is found
-> - rearranged the code in __reset_control_get() - we can no longer get to the
->   return at the bottom, so remove it and return from
->   __reset_control_get_from_lookup() if __of_reset_control_get() fails
-> - return -ENOENT from reset_contol_get() if we can't find a matching entry,
->   prevously returned -EINVAL referred to the fact that we passed a device
->   without the of_node which is no longer an error condition
-> - add a comment about needing a sentinel in the lookup table
+>   drivers/watchdog/sbsa_gwdt.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> v2 -> v3:
-> - added the reset id number field to the lookup struct so that we don't need
->   to rely on the array index
+> diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
+> index 316c2eb..e8bd988 100644
+> --- a/drivers/watchdog/sbsa_gwdt.c
+> +++ b/drivers/watchdog/sbsa_gwdt.c
+> @@ -50,6 +50,7 @@
+>    */
+>   
+>   #include <linux/io.h>
+> +#include <linux/io-64-nonatomic-lo-hi.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
+> @@ -159,7 +160,7 @@ static unsigned int sbsa_gwdt_get_timeleft(struct watchdog_device *wdd)
+>   	    !(readl(gwdt->control_base + SBSA_GWDT_WCS) & SBSA_GWDT_WCS_WS0))
+>   		timeleft += readl(gwdt->control_base + SBSA_GWDT_WOR);
+>   
+> -	timeleft += readq(gwdt->control_base + SBSA_GWDT_WCV) -
+> +	timeleft += lo_hi_readq(gwdt->control_base + SBSA_GWDT_WCV) -
+>   		    arch_counter_get_cntvct();
+>   
+>   	do_div(timeleft, gwdt->clk);
 > 
-> v3 -> v4:
-> - separated the driver and lookup table registration logic by adding a
->   function meant to be called by machine-specific code that adds a lookup
->   table to the internal list
-> - the correct reset controller is now found by first finding the lookup
->   table associated with it, then finding the actual reset controller by
->   the associated device
-> 
-> v4 -> v5:
-> - since the first user of this will be the davinci clk driver and it
->   already registers clock lookup from within the driver code - allow
->   drivers to register lookups with the assumption that the code can be
->   extended to make it possible to register entries from machine code as
->   well
-> - simplify the code - only expose a single lookup structure and a simply
->   registration function
-> - add the RESET_LOOKUP macro for brevity
-> 
-> v5 -> v6:
-> - fixed a potential crash if one of the strings passed to strcmp is NULL
-> - added a check for NULL dev_id when adding the lookup entry
-
-Thanks, applied to reset/next
-
-regards
-Philipp
