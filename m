@@ -1,79 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932728AbeB1TB3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 14:01:29 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43381 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932088AbeB1TB2 (ORCPT
+        id S932852AbeB1TCr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 14:02:47 -0500
+Received: from mail2.candelatech.com ([208.74.158.173]:57724 "EHLO
+        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932088AbeB1TCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 14:01:28 -0500
-Date: Wed, 28 Feb 2018 11:01:04 -0800
-From: tip-bot for Geert Uytterhoeven <tipbot@zytor.com>
-Message-ID: <tip-7998a4ecc61fbef5547afd379b8953b526709dd2@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, marc.zyngier@arm.com,
-        tglx@linutronix.de, horms+renesas@verge.net.au, mark.rutland@arm.com,
-        geert+renesas@glider.be, robh+dt@kernel.org, jason@lakedaemon.net,
-        mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        marc.zyngier@arm.com, horms+renesas@verge.net.au, mark.rutland@arm.com,
-        jason@lakedaemon.net, robh+dt@kernel.org, geert+renesas@glider.be,
-        mingo@kernel.org
-In-Reply-To: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
-References: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/urgent] dt-bindings/irqchip/renesas-irqc: Document R-Car
- M3-N support
-Git-Commit-ID: 7998a4ecc61fbef5547afd379b8953b526709dd2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Feb 2018 14:02:45 -0500
+Subject: Re: [PATCH net] virtio-net: disable NAPI only when enabled during XDP
+ set
+To: David Miller <davem@davemloft.net>, jasowang@redhat.com
+References: <1519813204-10002-1-git-send-email-jasowang@redhat.com>
+ <20180228.122231.1811613646832502397.davem@davemloft.net>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+Message-ID: <d49359d8-08d3-686b-3606-843c6bb13dd8@candelatech.com>
+Date: Wed, 28 Feb 2018 11:02:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180228.122231.1811613646832502397.davem@davemloft.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7998a4ecc61fbef5547afd379b8953b526709dd2
-Gitweb:     https://git.kernel.org/tip/7998a4ecc61fbef5547afd379b8953b526709dd2
-Author:     Geert Uytterhoeven <geert+renesas@glider.be>
-AuthorDate: Mon, 26 Feb 2018 16:25:12 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Feb 2018 19:55:43 +0100
+On 02/28/2018 09:22 AM, David Miller wrote:
+> From: Jason Wang <jasowang@redhat.com>
+> Date: Wed, 28 Feb 2018 18:20:04 +0800
+>
+>> We try to disable NAPI to prevent a single XDP TX queue being used by
+>> multiple cpus. But we don't check if device is up (NAPI is enabled),
+>> this could result stall because of infinite wait in
+>> napi_disable(). Fixing this by checking device state through
+>> netif_running() before.
+>>
+>> Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>
+> Yes, mis-paired NAPI enable/disable are really a pain.
+>
+> Probably, we can do something in the interfaces or mechanisms to make
+> this less error prone and less fragile.
+>
+> Anyways, applied and queued up for -stable, thanks!
 
-dt-bindings/irqchip/renesas-irqc: Document R-Car M3-N support
 
-Document support for the Interrupt Controller for Externel Devices
-(INTC-EX) in the Renesas M3-N (r8a77965) SoC.
+I just hit a similar bug in ath10k.  It seems like napi has plenty
+of free bit flags so it could keep track of 'is-enabled' state and
+allow someone to call napi_disable multiple times w/out deadlocking.
 
-No driver update is needed.
+Thanks,
+Ben
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
-Link: https://lkml.kernel.org/r/1519658712-22910-1-git-send-email-geert%2Brenesas@glider.be
-
----
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index 33c9a10fdc91..20f121daa910 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -14,6 +14,7 @@ Required properties:
-     - "renesas,irqc-r8a7794" (R-Car E2)
-     - "renesas,intc-ex-r8a7795" (R-Car H3)
-     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
-+    - "renesas,intc-ex-r8a77965" (R-Car M3-N)
-     - "renesas,intc-ex-r8a77970" (R-Car V3M)
-     - "renesas,intc-ex-r8a77995" (R-Car D3)
- - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
