@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-617694-1519837329-2-2140718948108333560
+X-Cyrus-Session-Id: sloti22d1t05-620147-1519837314-2-18116004031407253681
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519837328; b=rjzHc28cDyT/gpcd6bNJJEimdmIFmBdOY9a3kDBWshXl/uk
-    DzkvAQgyM7uXMtDG4HCHuzRwuft5ctCUqyEbyD/U7Q3YqJ7AQCOPSrEO9v8uu2Tz
-    2EPL8JjF8GG2P3d0T+9Rx0rqNXQkuB0tq8vpxoAGqo2PIy/LeiWesqrDw9KSI+jF
-    U79gidfKjbhgguPnaf0tsmuYS5v5kyyk7xiYQ7MzyxijEkR/3alXjmfztVGG3byU
-    Pq2dIl//HJ21z84hm2UJJkcGoi92F126nPPpwPa/1lsLXgMV1UW65qqb2QCeBQFD
-    Y+swXAVYPiEWRmR7TuMHwr/HcBEF+S7eggPG1Ow==
+    t=1519837313; b=ASYOC+maVS1Ivwde0wYkuGhk92NyEuzcon4vPRXydQbF4vh
+    I4Ga9zOTJLuRrActJslnN42nrjmh2XhYSV+QEiIc/o2dFeO7vMbr/0964hppvdDs
+    WcngKx3XXgkcnkiL+YN7E/2jUFzdnJ9bRX9pOAef+759zZTC/3go/eq6g6G1L64j
+    8+KsjnlXdrar3cTRdoHbY0E98hOib3WCVYJlZ8oJeBYNba8J2mmZQHHySQkv1mN+
+    Oq8H4By2bEbyVrB8oNB87slKEWqYa+VxM2A8asoPBJTnkRuqSBUih/0dxQi+r0P9
+    pCF2s7ZbZC7b3NyF98LwqaDZxVik3mtmC8JY2VQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519837328; bh=Hg6/rF56nWCt67Idhep
-    M+YaUqPAhwziLQ4TNT14XkL0=; b=t5DMRRg+eH3fHL7RIj3fhQGmmu/ygGAJGjf
-    cqhCSl53YIJOBe8hJElDUmDJT1Zg4pPo5wCB7vZ/RjlcInbW5BVZnat3d1h18A1C
-    e53UqgJ7AypPK2Gzot5f4gzbbiVOwvVQqRFkWn+Z7kcpiYLVfzrULovomRApC9x2
-    g4iEDJkB1SAGYSb1b94RcexJ1r5FMgQJgtn6S758IRZWNPKfDPnIH3G07st3u1t0
-    oRbH4kIME6Tc1UF0+6w8v923INSfU8EP1rXSQOMrDxsELGeeLnj7QyzVBaGnvn0v
-    E7zilwKAOA7hZxCnUYI9vNe/1cBdBlUB6LGDZNV9Iy+Nh+7mKWQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519837313; bh=NwjeTM+/q7Fb2rNSYpG
+    dOYtRrN7bzNKa4EtIy4Bg4q8=; b=DkXU/vfh9MIfM/zf1vtz6fApJb4HxgrgNFn
+    uOsOQyTz41qqzgq8YbF5XABJdsETkUvPKHCwf3VzY7+A4I7eyAmc1Za2Fjsq4naI
+    0G5qE+23LyYv+hyHKi4AWo8Pe7IymDgtQhQqzqQLMptNgWutKD/En7+dlewzk/FK
+    JdStKPYTyuMvHepJAjmIkq+2ajs3nH5SOtpA6HGrRbYTj+/OzMDHmFnH3iTSPcd9
+    8wSzXD99BNxD3YzyvYw37HKUzYnP8L7bsel266v1poOHxwFXjfHCGULzQ46DSb6i
+    azpC13ExjOiCAsAvynhdkz0ma2txrSR59hIPM9n4RPl8YnhR7+A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932747AbeB1RBw (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 12:01:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34369 "EHLO
+        id S933192AbeB1PwE (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 10:52:04 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34366 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932696AbeB1PwE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:52:04 -0500
+        by vger.kernel.org with ESMTP id S933786AbeB1PwA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:52:00 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Zhao Qiang" <qiang.zhao@nxp.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.5007307@decadent.org.uk>
+Message-ID: <lsq.1519831218.442329863@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 124/254] ALSA: usb-audio: Fix the missing ctl name
- suffix at parsing SU
+Subject: [PATCH 3.16 122/254] net: phy: marvell: Limit 88m1101 autoneg
+ errata to 88E1145 as well.
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,72 +80,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Zhao Qiang <qiang.zhao@nxp.com>
 
-commit 5a15f289ee87eaf33f13f08a4909ec99d837ec5f upstream.
+commit c505873eaece2b4aefd07d339dc7e1400e0235ac upstream.
 
-The commit 89b89d121ffc ("ALSA: usb-audio: Add check return value for
-usb_string()") added the check of the return value from
-snd_usb_copy_string_desc(), which is correct per se, but it introduced
-a regression.  In the original code, either the "Clock Source",
-"Playback Source" or "Capture Source" suffix is added after the
-terminal string, while the commit changed it to add the suffix only
-when get_term_name() is failing.  It ended up with an incorrect ctl
-name like "PCM" instead of "PCM Capture Source".
+88E1145 also need this autoneg errata.
 
-Also, even the original code has a similar bug: when the ctl name is
-generated from snd_usb_copy_string_desc() for the given iSelector, it
-also doesn't put the suffix.
-
-This patch addresses these issues: the suffix is added always when no
-static mapping is found.  Also the patch tries to put more comments
-and cleans up the if/else block for better readability in order to
-avoid the same pitfall again.
-
-Fixes: 89b89d121ffc ("ALSA: usb-audio: Add check return value for usb_string()")
-Reported-and-tested-by: Mauro Santos <registo.mailling@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: f2899788353c ("net: phy: marvell: Limit errata to 88m1101")
+Signed-off-by: Zhao Qiang <qiang.zhao@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/usb/mixer.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ drivers/net/phy/marvell.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2095,20 +2095,25 @@ static int parse_audio_selector_unit(str
- 	kctl->private_value = (unsigned long)namelist;
- 	kctl->private_free = usb_mixer_selector_elem_free;
- 
--	nameid = uac_selector_unit_iSelector(desc);
-+	/* check the static mapping table at first */
- 	len = check_mapped_name(map, kctl->id.name, sizeof(kctl->id.name));
--	if (len)
--		;
--	else if (nameid)
--		len = snd_usb_copy_string_desc(state, nameid, kctl->id.name,
--					 sizeof(kctl->id.name));
--	else
--		len = get_term_name(state, &state->oterm,
--				    kctl->id.name, sizeof(kctl->id.name), 0);
--
- 	if (!len) {
--		strlcpy(kctl->id.name, "USB", sizeof(kctl->id.name));
-+		/* no mapping ? */
-+		/* if iSelector is given, use it */
-+		nameid = uac_selector_unit_iSelector(desc);
-+		if (nameid)
-+			len = snd_usb_copy_string_desc(state, nameid,
-+						       kctl->id.name,
-+						       sizeof(kctl->id.name));
-+		/* ... or pick up the terminal name at next */
-+		if (!len)
-+			len = get_term_name(state, &state->oterm,
-+				    kctl->id.name, sizeof(kctl->id.name), 0);
-+		/* ... or use the fixed string "USB" as the last resort */
-+		if (!len)
-+			strlcpy(kctl->id.name, "USB", sizeof(kctl->id.name));
- 
-+		/* and add the proper suffix */
- 		if (desc->bDescriptorSubtype == UAC2_CLOCK_SELECTOR)
- 			append_ctl_name(kctl, " Clock Source");
- 		else if ((state->oterm.type & 0xff00) == 0x0100)
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -988,7 +988,7 @@ static struct phy_driver marvell_drivers
+ 		.features = PHY_GBIT_FEATURES,
+ 		.flags = PHY_HAS_INTERRUPT,
+ 		.config_init = &m88e1145_config_init,
+-		.config_aneg = &marvell_config_aneg,
++		.config_aneg = &m88e1101_config_aneg,
+ 		.read_status = &genphy_read_status,
+ 		.ack_interrupt = &marvell_ack_interrupt,
+ 		.config_intr = &marvell_config_intr,
