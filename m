@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-560692-1519836221-2-7616896946597066641
+X-Cyrus-Session-Id: sloti22d1t05-560692-1519836213-2-10713445407914534412
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519836220; b=avf5g6kA5CWxCoqcFJpQZcHEFm/PVP4Ul5/hubAKLjs3DHf
-    LT7Uil77LtkwKqTUBKmieACsqbFZ2R6roJ3N8XEnvp6Kumu7AEi8sqYgAghdV/OS
-    bJYwwzVuRpqffiBp1RzzsNQ3SdOIWOcX7DuLWejxZvDpnbkCotZBU1dkbvdbkdpU
-    PY0uSzS5tZDSKQbXVFqRKxFCekS8SvEVyLHq7G1b+RW+QeMOu/NA+UlHwJzMG8c6
-    8uR5BnwoJAWQeSN9m5U1aQsPanCAyImN8CKlf9aSBSKysRrS+weW7+016pYllJaZ
-    rrQc6O4bUHlpq4Ka9evBBa8MQ/QNvvCcuFG91AQ==
+    t=1519836212; b=uMPpMVlliL7vSFh4ZYlKRtWFkq9vXghAwecvgtJrAqotibg
+    pX680CWSPAjKvZrQNaUlKnsBZL0hDnmosTzEPXux5f0ym5U6cdMTxXGxl5k3L3LN
+    DFC253twUvxGiFKnOkavwJqXWd4O+Hu66Kuy8eRRz8w4jkjj/pwaFLidkEbgt3i8
+    BE5jMutBn+UxCLmNpNh8zsIjfz0wJnHoAVK38x+FGdXLs9OVLjSv7Pok5q0DUkpa
+    zUzid2GX4lXU+1opLowjga0++hNlIAcUQvrf1BowcfD3Xt2zj54fm9VW/MqaFLGy
+    zxYmmW3L63Hz4nICAVmjzKnnD9skbTm4zBtnkRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519836220; bh=F7R79SgRjngHPOVuhhs
-    nXz1tSPwVTUJn24WzXRPnkHg=; b=Zgk13UFEN7nQlYhaKySvJhYNIk+q3AbgICJ
-    HwZ93mIo+mlioyyAfjL4r+Fg4iSCKbnLY7FBU0N3ZdUJOIsS4QQJa2P5Xe4CHpru
-    w9J7QJJndmO5KkGKQwxmwx6RJKxJ5EYxsrF6cf8itcaBC4SQ73bNTbg4pBJtr5K0
-    boKg0gTQ3fLMDY8XFIJx0w7wC/HrVMzK9bnmCeJNqeE1cqH1vIRY3XfDdRhEsvaG
-    369QNcefyeCXMjyj/VI/JGAr7eGilwD6FNZL726jDqkxme3udrOlfhVbKOetYppD
-    vOMhzbprIOrXFqyO0oJXlGYp3HKAY6FXMV+JWb/62eX+MA4xwRQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519836212; bh=L9mXpaMpnuqccpiz+8Q
+    qAUNbXynTcy5CL3IJEp7PXFs=; b=X04wtLG6/9IpLQ/zROMsGrvuAd4NyWjGTFq
+    wNcZsHmNvFHoeeMsgEVHYAq6EFQtIo/DxyqLiW9ieulVCUoCvEeck+pSjDfK1s0e
+    tHMdMX0GgS40fG6ciNCuGYjGKIiGz0aPP4neZdyFYdgyy/epfA68W3cbJnmX+s/d
+    113A9YbVR6I5mcFNBpPvAdtkhneddeHbkPWokrT8/tYQc6DtkvV72cLenr79aynK
+    ox02yHDsyZkVUIqqMdcUXd4QL+lM8sHcGPXe/WIXI5DiVzGGcYQzORZZSJrqOdAz
+    qBDILDj3Mlc2kEQpP2VXadFOkO20v/+pKGddtOFP8vli8cL/qxQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753184AbeB1QCr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:02:47 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34727 "EHLO
+        id S932242AbeB1QCv (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:02:51 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34728 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753147AbeB1QCo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:02:44 -0500
+        by vger.kernel.org with ESMTP id S932224AbeB1QCt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:02:49 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Jason Wessel" <jason.wessel@windriver.com>,
-        "Daniel Thompson" <daniel.thompson@linaro.org>
+CC: akpm@linux-foundation.org, "Shuah Khan" <shuahkh@osg.samsung.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Juan Zea" <juan.zea@qindel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.655444379@decadent.org.uk>
+Message-ID: <lsq.1519831218.698227140@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 062/254] kdb: Fix handling of kallsyms_symbol_next()
- return value
+Subject: [PATCH 3.16 130/254] usbip: fix usbip bind writing random string
+ after command in match_busid
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,33 +81,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Thompson <daniel.thompson@linaro.org>
+From: Juan Zea <juan.zea@qindel.com>
 
-commit c07d35338081d107e57cf37572d8cc931a8e32e2 upstream.
+commit 544c4605acc5ae4afe7dd5914147947db182f2fb upstream.
 
-kallsyms_symbol_next() returns a boolean (true on success). Currently
-kdb_read() tests the return value with an inequality that
-unconditionally evaluates to true.
+usbip bind writes commands followed by random string when writing to
+match_busid attribute in sysfs, caused by using full variable size
+instead of string length.
 
-This is fixed in the obvious way and, since the conditional branch is
-supposed to be unreachable, we also add a WARN_ON().
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
+Signed-off-by: Juan Zea <juan.zea@qindel.com>
+Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/debug/kdb/kdb_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/usbip/userspace/src/utils.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -349,7 +349,7 @@ poll_again:
- 			}
- 			kdb_printf("\n");
- 			for (i = 0; i < count; i++) {
--				if (kallsyms_symbol_next(p_tmp, i) < 0)
-+				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
- 					break;
- 				kdb_printf("%s ", p_tmp);
- 				*(p_tmp + len) = '\0';
+--- a/drivers/staging/usbip/userspace/src/utils.c
++++ b/drivers/staging/usbip/userspace/src/utils.c
+@@ -30,6 +30,7 @@ int modify_match_busid(char *busid, int
+ 	char command[SYSFS_BUS_ID_SIZE + 4];
+ 	char match_busid_attr_path[SYSFS_PATH_MAX];
+ 	int rc;
++	int cmd_size;
+ 
+ 	snprintf(match_busid_attr_path, sizeof(match_busid_attr_path),
+ 		 "%s/%s/%s/%s/%s/%s", SYSFS_MNT_PATH, SYSFS_BUS_NAME,
+@@ -37,12 +38,14 @@ int modify_match_busid(char *busid, int
+ 		 attr_name);
+ 
+ 	if (add)
+-		snprintf(command, SYSFS_BUS_ID_SIZE + 4, "add %s", busid);
++		cmd_size = snprintf(command, SYSFS_BUS_ID_SIZE + 4, "add %s",
++				    busid);
+ 	else
+-		snprintf(command, SYSFS_BUS_ID_SIZE + 4, "del %s", busid);
++		cmd_size = snprintf(command, SYSFS_BUS_ID_SIZE + 4, "del %s",
++				    busid);
+ 
+ 	rc = write_sysfs_attribute(match_busid_attr_path, command,
+-				   sizeof(command));
++				   cmd_size);
+ 	if (rc < 0) {
+ 		dbg("failed to write match_busid: %s", strerror(errno));
+ 		return -1;
