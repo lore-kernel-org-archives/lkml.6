@@ -1,28 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751692AbeB1FXK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 00:23:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41052 "EHLO mail.kernel.org"
+        id S1752070AbeB1FeE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 00:34:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750775AbeB1FXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 00:23:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657E52064E
+        id S1751784AbeB1FeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 00:34:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C44221771
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Tue, 27 Feb 2018 21:23:08 -0800
+Date: Tue, 27 Feb 2018 21:34:01 -0800
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: handle quota for orphan inodes
-Message-ID: <20180228052308.GE81737@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180210022841.5707-1-jaegeuk@kernel.org>
- <e48fd2e5-fab6-57c5-5fff-2e44f5a817b0@kernel.org>
- <49c1d817-f375-4194-8139-c352503a9a2d@huawei.com>
+To: Chao Yu <chao@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Message-ID: <20180228053401.GA86647@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+ <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49c1d817-f375-4194-8139-c352503a9a2d@huawei.com>
+In-Reply-To: <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,83 +38,192 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 02/27, Chao Yu wrote:
 > Ping,
 > 
-> On 2018/2/13 22:33, Chao Yu wrote:
-> > On 2018/2/10 10:28, Jaegeuk Kim wrote:
-> >> This is to fix missing dquot_initialize for orphan inodes.
+> On 2018/2/13 15:34, Chao Yu wrote:
+> > Hi Jaegeuk,
 > > 
-> > IMO, we don't need to call dquot_initialize as we have call the function
-> > in evict(), right?
+> > On 2018/2/10 10:52, Chao Yu wrote:
+> >> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+> >>> On 02/01, Chao Yu wrote:
+> >>>>
+> >>>>
+> >>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+> >>>>> On 01/31, Chao Yu wrote:
+> >>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> >>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+> >>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+> >>>>>>
+> >>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> >>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> >>>>>> valid range of extended area in node block, but we don't know which
+> >>>>>> fields/features are valid/enabled or not.
+> >>>>>>
+> >>>>>> One more thing is that if we can add one feature flag for each field, we got one
+> >>>>>> more chance to disable it dynamically.
+> >>>>>>
+> >>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+> >>>>>>
+> >>>>>> Yes, using raw 1017 is not appropriate here.
+> >>>>>>
+> >>>>>>> entries. Like this?
+> >>>>>>> 		union {
+> >>>>>>> 			struct node_v1;
+> >>>>>>> 			struct node_v2;
+> >>>>>>> 			struct node_v3;
+> >>>>>>> 			...
+> >>>>>>> 			struct direct_node dn;
+> >>>>>>> 			struct indirect_node in;
+> >>>>>>> 		};
+> >>>>>>> 	};
+> >>>>>>>
+> >>>>>>> 	struct node_v1 {
+> >>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>>>>>> 		__le32 node_checksum;
+> >>>>>>> 	}
+> >>>>>>>
+> >>>>>>> 	struct node_v2 {
+> >>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> >>>>>>
+> >>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> >>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> >>>>>>
+> >>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> >>>>>> fields, node version count can be a large number, it results in complicated
+> >>>>>> version recognization and handling.
+> >>>>>>
+> >>>>>> One more question is how can we control which fields are valid or not in
+> >>>>>> comp[Vx_NSIZE]?
+> >>>>>>
+> >>>>>>
+> >>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> >>>>>> the one used by f2fs_inode:
+> >>>>>>
+> >>>>>> struct f2fs_node {
+> >>>>>> 	union {
+> >>>>>> 		struct f2fs_inode i;
+> >>>>>> 		union {
+> >>>>>> 			struct {
+> >>>>>> 				__le32 node_checksum;
+> >>>>>> 				__le32 feature_field_1;
+> >>>>>> 				__le32 feature_field_2;
+> >>>>>> 				....
+> >>>>>> 				__le32 addr[];
+> >>>>>> 				
+> >>>>>> 			};
+> >>>>>> 			struct direct_node dn;
+> >>>>>> 			struct indirect_node in;
+> >>>>>> 		};
+> >>>>>> 	};
+> >>>>>> 	struct node_footer footer;
+> >>>>>> } __packed;
+> >>>>>>
+> >>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> >>>>>> macro to indicate actual size of addr.
+> >>>>>
+> >>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+> >>>>
+> >>>> OK, I think we need more discussion.. ;)
+> >>>>
+> >>>>> can't set each of features individually. Like the second entry should have
+> >>>>
+> >>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+> >>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+> >>>> example:
+> >>>>
+> >>>> #define F2FS_NODE_CHECKSUM	0x0001
+> >>>> #define F2FS_NODE_FIELD1	0x0002
+> >>>> #define F2FS_NODE_FIELD2	0x0004
+> >>>>
+> >>>> 	union {
+> >>>> 		struct {
+> >>>> 			__le32 node_checksum;
+> >>>> 			__le32 field_1;
+> >>>> 			__le32 field_2;
+> >>>> 			....
+> >>>> 			__le32 addr[];
+> >>>> 		};
+> >>>> 		struct direct_node dn;
+> >>>> 		struct indirect_node in;
+> >>>> 	};
+> >>>>
+> >>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+> >>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+> >>>>
+> >>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+> >>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+> >>>
+> >>> So, that's why I thought we may need a sort of each formats.
+> >>
+> >> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+> >> of all formats, as:
+> >>
+> >> struct original {
+> >> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+> >> }
+> >>
+> >> struct node_v1 {
+> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >> 	__le32 field_1;
+> >> }
+> >>
+> >> struct node_v2 {
+> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+> >> 	__le32 field_2;
+> >> }
+> >>
+> >> struct node_v2 {
+> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+> >> 	__le32 field_1;
+> >> 	__le32 field_2;
+> >> }
+> >>
+> >> If we add more new fields, the node version will increase sharply due
+> >> to there is (n << 2) combination with n fields. Right? Any thoughts to
+> >> reduce maintaining overhead on those node versions structures?
+> > 
+> > Do you have time to explain more about the design of multiple version structure
+> > for node block, I'm still be confused about two things:
+> > 1. what will we do if we want to add one new field in node structure.
+> > 2. how can we recognize which fields are valid and which ones are invalid.
 
-I think we'd better detect any error in early stage.
-
-Thanks,
+Can we discuss this in LSF/MM, if we get an invitation letter? :P
 
 > > 
 > > Thanks,
 > > 
 > >>
-> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> ---
-> >>  fs/f2fs/checkpoint.c | 28 ++++++++++++++++------------
-> >>  1 file changed, 16 insertions(+), 12 deletions(-)
+> >> Thanks,
 > >>
-> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >> index 8b0945ba284d..e3bf753a47be 100644
-> >> --- a/fs/f2fs/checkpoint.c
-> >> +++ b/fs/f2fs/checkpoint.c
-> >> @@ -569,13 +569,8 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
-> >>  	struct node_info ni;
-> >>  	int err = acquire_orphan_inode(sbi);
-> >>  
-> >> -	if (err) {
-> >> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> -		f2fs_msg(sbi->sb, KERN_WARNING,
-> >> -				"%s: orphan failed (ino=%x), run fsck to fix.",
-> >> -				__func__, ino);
-> >> -		return err;
-> >> -	}
-> >> +	if (err)
-> >> +		goto err_out;
-> >>  
-> >>  	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
-> >>  
-> >> @@ -589,6 +584,11 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
-> >>  		return PTR_ERR(inode);
-> >>  	}
-> >>  
-> >> +	err = dquot_initialize(inode);
-> >> +	if (err)
-> >> +		goto err_out;
-> >> +
-> >> +	dquot_initialize(inode);
-> >>  	clear_nlink(inode);
-> >>  
-> >>  	/* truncate all the data during iput */
-> >> @@ -598,14 +598,18 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
-> >>  
-> >>  	/* ENOMEM was fully retried in f2fs_evict_inode. */
-> >>  	if (ni.blk_addr != NULL_ADDR) {
-> >> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> -		f2fs_msg(sbi->sb, KERN_WARNING,
-> >> -			"%s: orphan failed (ino=%x) by kernel, retry mount.",
-> >> -				__func__, ino);
-> >> -		return -EIO;
-> >> +		err = -EIO;
-> >> +		goto err_out;
-> >>  	}
-> >>  	__remove_ino_entry(sbi, ino, ORPHAN_INO);
-> >>  	return 0;
-> >> +
-> >> +err_out:
-> >> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> +	f2fs_msg(sbi->sb, KERN_WARNING,
-> >> +			"%s: orphan failed (ino=%x), run fsck to fix.",
-> >> +			__func__, ino);
-> >> +	return err;
-> >>  }
-> >>  
-> >>  int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+> >>>
+> >>>>
+> >>>> Any thoughts?
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>> enabled node_checksum, which we may not want to do.
+> >>>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>> 		__le32 comp[V2_NSIZE];
+> >>>>>>> 	}
+> >>>>>>> 	...
+> >>>>>>>
+> >>>>>>>> +			};
+> >>>>>>>> +			struct direct_node dn;
+> >>>>>>>> +			struct indirect_node in;
+> >>>>>>>> +		};
+> >>>>>>>>  	};
+> >>>>>>>>  	struct node_footer footer;
+> >>>>>>>>  } __packed;
+> >>>>>>>> -- 
+> >>>>>>>> 2.15.0.55.gc2ece9dc4de6
+> >>>>>>>
+> >>>>>>> .
+> >>>>>>>
 > >>
-> > 
-> > .
+> >> .
+> >>
 > > 
