@@ -1,115 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935440AbeB1WII (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 17:08:08 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34633 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935420AbeB1WIF (ORCPT
+        id S935463AbeB1WI6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 17:08:58 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39517 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935284AbeB1WIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:08:05 -0500
-X-Google-Smtp-Source: AG47ELtO8GrdB6aoFQ8IjJM7ufmlRytchGqCMsH/DixezfplUfPMEse6dXTLgoYnSE630+tAiB2Inw==
-Subject: Re: [PATCH net-next 5/5] net: phy: marvell10g: Utilize
- gen10g_soft_reset()
-To: Moritz Fischer <moritz.fischer@ettus.com>,
-        Russell King <rmk@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180228193612.29409-1-f.fainelli@gmail.com>
- <20180228193612.29409-6-f.fainelli@gmail.com>
- <20180228194449.GB30733@flint.armlinux.org.uk>
- <CAAtXAHcdU-MuXk6qD+mM=WhCcHF8J2tQOwT-BFdyOLbdqNPfYQ@mail.gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <42e88f0b-61c4-7e59-a6e6-1f8b8677a480@gmail.com>
-Date: Wed, 28 Feb 2018 14:07:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Feb 2018 17:08:55 -0500
+X-Google-Smtp-Source: AG47ELskW3R0kdtRa9ll8r5qfYsTIKWP7tzf+c9/NcRHlcpNVt4/4KAxIoBlR1WbBfn36TYSiY0qoy+ylRDj6K+KnYk=
 MIME-Version: 1.0
-In-Reply-To: <CAAtXAHcdU-MuXk6qD+mM=WhCcHF8J2tQOwT-BFdyOLbdqNPfYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
+References: <20180228134822.2194009-1-arnd@arndb.de> <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 28 Feb 2018 23:08:54 +0100
+X-Google-Sender-Auth: qPNSyquVh2-S3tQIwyCkbfvEBow
+Message-ID: <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/2018 11:49 AM, Moritz Fischer wrote:
-> Florian,
-> 
-> On Wed, Feb 28, 2018 at 11:44 AM, Russell King <rmk@armlinux.org.uk> wrote:
->> On Wed, Feb 28, 2018 at 11:36:12AM -0800, Florian Fainelli wrote:
->>> We do the same thing as the generic function: nothing, so utilize it.
->>>
->>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->>> ---
->>>  drivers/net/phy/marvell10g.c | 7 +------
->>>  1 file changed, 1 insertion(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
->>> index 8a0bd98fdec7..da014eae1476 100644
->>> --- a/drivers/net/phy/marvell10g.c
->>> +++ b/drivers/net/phy/marvell10g.c
->>> @@ -75,11 +75,6 @@ static int mv3310_probe(struct phy_device *phydev)
->>>   * Resetting the MV88X3310 causes it to become non-responsive.  Avoid
->>>   * setting the reset bit(s).
->>>   */
->>> -static int mv3310_soft_reset(struct phy_device *phydev)
->>> -{
->>> -     return 0;
->>> -}
->>> -
+On Wed, Feb 28, 2018 at 10:47 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> Hi Arnd,
+>
+> Thanks for the fix.
+>
+> On Wed, Feb 28, 2018 at 02:48:08PM +0100, Arnd Bergmann wrote:
+>> When the firmware driver is a loadable module, the gpio driver cannot be
+>> built-in:
 >>
->> You do realise that getting rid of that function makes a nonsense of the
->> comment above it - and removing the comment along with the function gets
->> rid of the very important reason _why_ we have en empty reset method?
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
+>> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
+>> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
+>> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
+>> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
+>> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
+>> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
+>> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
+>> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
 >>
->>>  static int mv3310_config_init(struct phy_device *phydev)
->>>  {
->>>       __ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
->>> @@ -377,7 +372,7 @@ static struct phy_driver mv3310_drivers[] = {
->>>                                 SUPPORTED_10000baseT_Full |
->>>                                 SUPPORTED_Backplane,
->>>               .probe          = mv3310_probe,
->>> -             .soft_reset     = mv3310_soft_reset,
->>> +             .soft_reset     = gen10g_soft_reset,
->>>               .config_init    = mv3310_config_init,
->>>               .config_aneg    = mv3310_config_aneg,
->>>               .aneg_done      = mv3310_aneg_done,
->>> --
->>> 2.14.1
->>>
+>> We already have a Kconfig dependency for it, but when compile-testing, it
+>> is disregarded.
 >>
->> --
->> Russell King
->> ARM architecture Linux Kernel maintainer
-> 
-> FWIW I have a local patch that goes something like that, which I meant to send
-> at one point and forgot
-> 
-> Something like that:
-> 
->  static int gen10g_soft_reset(struct phy_device *phydev)
->  {
-> +       int val;
-> +
-> +       val = phy_read_mmd(phydev, MDIO_MMD_PCS, MDIO_CTRL1);
-> +       if (val < 0)
-> +               return val;
-> +
-> +       val |= MDIO_CTRL1_RESET;
-> +       phy_write_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_CTRL1, val);
-> +
->  -       /* Do nothing for now */
->         return 0;
->  }
-> 
-> If that looks reasonable I can properly submit a patch,
+>> This changes the dependency so that compile-testing is only done when the
+>> firmware driver is completely disabled.
+>
+> What about the CONFIG_ARCH_BCM2835=y case? The combination of
+> CONFIG_GPIO_RASPBERRYPI_EXP=y and CONFIG_RASPBERRYPI_FIRMWARE=m is still
+> valid. Wouldn't that break the build?
+>
+> Isn't there a way in Kconfig to force CONFIG_GPIO_RASPBERRYPI_EXP=m when
+> CONFIG_RASPBERRYPI_FIRMWARE=m?
 
-Sure, I would have to check the specification document to make sure
-whether this does not need to be coded similarly to what
-genphy_soft_reset() does, which is polling for the reset bit to clear
-itself.
+The problem I ran into only happens with CONFIG_ARCH_BCM2835=y to
+start with. My fix handles that case correctly, it forces
+CONFIG_GPIO_RASPBERRYPI_EXP to be either 'n' or 'm'
+when CONFIG_RASPBERRYPI_FIRMWARE=m.
 
-v2 also renamed the current gen10g_soft_reset() into
-gen10g_no_soft_reset() so your implementation makes even more sense now.
--- 
-Florian
+> What about 'depends on m || RASPBERRYPI_FIRMWARE=y'?
+
+That would be (slightly) wrong, it would force CONFIG_GPIO_RASPBERRYPI_EXP
+to be 'm' even if RASPBERRYPI_FIRMWARE=n.
+
+> Grepping around I also found this:
+>
+> drivers/power/supply/Kconfig:   depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+
+That is what I did here as well, except the !RASPBERRYPI_FIRMWARE
+only applies for COMPILE_TEST.
+
+> And this:
+>
+> drivers/infiniband/Kconfig:     depends on m || IPV6 != m
+
+This is a less common way to express it. The idiomatic
+Kconfig expression here would be 'depends on IPV6 || !IPV6'.
+
+>> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/gpio/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index 2ecd2adbaec6..52a8b0a6f4e1 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
+>>       tristate "Raspberry Pi 3 GPIO Expander"
+>>       default RASPBERRYPI_FIRMWARE
+>>       depends on OF_GPIO
+>> -     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
+>> +     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+>
+> This is really non-obvious. An inline comment here might help, IMO.
+
+How about
+
+       # RASPBERRYPI_FIRMWARE is only available for ARCH_BCM2835, but we want to
+       # allow compile-testing when it is disabled
+
+?
+
+       Arnd
