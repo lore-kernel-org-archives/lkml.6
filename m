@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-564561-1519835417-2-14412990368578377379
+X-Cyrus-Session-Id: sloti22d1t05-564561-1519835407-2-4916568111738442061
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensk.us-asciiro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519835415; b=Zk+bwCT0Adjsb6NNl6dtJVhVJCVknThlnz5loRlKiEbtDnE
-    pi0WECLVzL7nUOknysIjkrSo+oARt4/XNYoIoa/VyqKz4pwilSewp7uL0jprg08M
-    D1bZBrvvAzPDMC7dd3Et1TeOMXP20DXWg34M27Btlkuyagr/Gf11FLc2jSO9DWd0
-    hAHM5c4aGDgAadFMoTQ7Xzsp4dgC5HxQFZOsaSCopPiMbFc6ejrTGHmyhnvJCCob
-    SrQAMXpN+RM6JfP/0YXqggbJ/aO7yb+Pvndr2f3hlaIGbIyPK0LmaLzizlFX6W4V
-    ZxIOlV1HhY53eSKc+agvTDjg+wz6oz8z2Ac7sPA==
+    t=1519835406; b=Bre/jTPDBowE9nI8KMTJ2Mp3obr7VOssF73ux0MQCjRUehF
+    pi+Vw6jHqFA9fqkHpusdgmBtcpZ9N+d9mww4v9Y7hbtuZ7FscisVZPgOmtYiJAUD
+    b2k+6TWQAw8b/ID9aNad3CUSjqqjVLhSeGWZW4vcWa5l8q534rdHhnhpkuW8jLm+
+    iHXAnhtEsklHVvdSbuFucDLC9H7ZgjAfRUOVjyp4E84B9eoEDewd38C64IKEZY9t
+    Grs6gv2rcc7fXD5CaSCr887PtzS8G0CSF/vcFc2w3/4eVcBeNElQedH1Cc9Azvpp
+    lptKzTbQCHXCYZJvLrVKi/rozhMpyRSKO4uF5AQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519835415; bh=ud4XTHsc1Juhg2zrvLW
-    H1oE6lWQaH1fhpiSgS08ehoo=; b=mWeqURVE/K8VpCRgYn4TvAGkXmz8RYOlUFK
-    ZtqbD9Xc2VJDeGKhVbDs/hzdp51nbfOyeTy5EoTuxaBBDmT7IElBfZlN7ynJJtJF
-    TOVnL/+E4pcrXpUcSwAGAt2fBHXA1U1jA6qV738bbOeXDcKlGk/gmLc1OAvCPA+q
-    w7LmQSXZmS9cG4+/p0F0YiwPlVTHme6kyul0QpR287+NFGIsfuhIPbarcv7ijuk0
-    TouCSerZwft/3WtqZBJ6sRXeuJFHkGw04EgTnYA90cZIEcxqpcUyJkqwLsM1IF79
-    boYlpE3S1nHezwg65bZVcNpO2zy3dIntkD45dWEWdjxuccyU7xA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519835406; bh=xGRDG/rNXxTH3arx1/x
+    TgY2CJu8mOxxQPr8UB6Mr+MU=; b=trXngOT2xlIBQVOmRRQk10RakxXWiz4oai9
+    R5iEDuM/n5aRyo7BQxcJGp+aqWt2unKLVj07uCQt+YWv9G2TLF7ku2oYKtA5L53A
+    PMXvIew78EzCt7eY9lbT2lUvSGFNFlr3FxJmjGqRmxsr8ErSCPN22V/rtJ5AQETR
+    8QOVzVIAqcc3TEjJid0NWyolYLN0XSmnxqE8BELDZVH2Vz4IJPsTVfc+YlRv6Ss2
+    VV0EoYYIRMp4+Mx+T8nwVGqh1UgtyU1+67P7Xucsnzt2+yKKDcwViXUaHm9nJtki
+    l/C14MJxu1YEUK9vbYQq5N6057oCKZ4HuRbSwbptOX7K28QSUXw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934785AbeB1QPQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:15:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35163 "EHLO
+        id S933348AbeB1Q3z (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:29:55 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35170 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934530AbeB1QPN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:15:13 -0500
+        by vger.kernel.org with ESMTP id S934792AbeB1QPU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:15:20 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,13 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        linux-mips@linux-mips.org, "Ralf Baechle" <ralf@linux-mips.org>
+        "Dominik Brodowski" <linux@dominikbrodowski.net>,
+        "Johannes Berg" <johannes.berg@intel.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.799017230@decadent.org.uk>
+Message-ID: <lsq.1519831218.631518194@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 097/254] MIPS: Always clear FCSR cause bits after
- emulation
+Subject: [PATCH 3.16 205/254] nl80211: take RCU read lock when calling
+ ieee80211_bss_get_ie()
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,45 +81,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 443c44032a54f9acf027a8e688380fddc809bc19 upstream.
+commit 7a94b8c2eee7083ddccd0515830f8c81a8e44b1a upstream.
 
-Clear any FCSR cause bits recorded in the saved FPU context after
-emulation in all cases rather than in `do_fpe' only, so that any
-unmasked IEEE 754 exception left from emulation does not cause a fatal
-kernel-mode FPE hardware exception with the CTC1 instruction used by the
-kernel to subsequently restore FCSR hardware from the saved FPU context.
+As ieee80211_bss_get_ie() derefences an RCU to return ssid_ie, both
+the call to this function and any operation on this variable need
+protection by the RCU read lock.
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/9704/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-[bwh: Backported to 3.16: drop changes in mips-r2-to-r6-emul and simulate_fp()]
+Fixes: 44905265bc15 ("nl80211: don't expose wdev->ssid for most interfaces")
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -775,7 +775,7 @@ asmlinkage void do_fpe(struct pt_regs *r
- 
- 		/*
- 		 * We can't allow the emulated instruction to leave any of
--		 * the cause bit set in $fcr31.
-+		 * the cause bits set in $fcr31.
- 		 */
- 		current->thread.fpu.fcr31 &= ~FPU_CSR_ALL_X;
- 
-@@ -1292,6 +1292,13 @@ asmlinkage void do_cpu(struct pt_regs *r
- 			sig = fpu_emulator_cop1Handler(regs,
- 						       &current->thread.fpu,
- 						       0, &fault_addr);
-+
-+			/*
-+			 * We can't allow the emulated instruction to leave
-+			 * any of the cause bits set in $fcr31.
-+			 */
-+			current->thread.fpu.fcr31 &= ~FPU_CSR_ALL_X;
-+
- 			if (!process_fpemu_return(sig, fault_addr) && !err)
- 				mt_ase_fp_affinity();
+ net/wireless/nl80211.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -2354,12 +2354,13 @@ static int nl80211_send_iface(struct sk_
+ 		const u8 *ssid_ie;
+ 		if (!wdev->current_bss)
+ 			break;
++		rcu_read_lock();
+ 		ssid_ie = ieee80211_bss_get_ie(&wdev->current_bss->pub,
+ 					       WLAN_EID_SSID);
+-		if (!ssid_ie)
+-			break;
+-		if (nla_put(msg, NL80211_ATTR_SSID, ssid_ie[1], ssid_ie + 2))
+-			goto nla_put_failure_locked;
++		if (ssid_ie &&
++		    nla_put(msg, NL80211_ATTR_SSID, ssid_ie[1], ssid_ie + 2))
++			goto nla_put_failure_rcu_locked;
++		rcu_read_unlock();
+ 		break;
  		}
+ 	default:
+@@ -2370,6 +2371,8 @@ static int nl80211_send_iface(struct sk_
+ 
+ 	return genlmsg_end(msg, hdr);
+ 
++ nla_put_failure_rcu_locked:
++	rcu_read_unlock();
+  nla_put_failure_locked:
+ 	wdev_unlock(wdev);
+  nla_put_failure:
