@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965262AbeB1Xla (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 18:41:30 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:60180 "EHLO ale.deltatee.com"
+        id S965248AbeB1Xl3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 18:41:29 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:60166 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965039AbeB1XkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965036AbeB1XkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Feb 2018 18:40:25 -0500
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -19,239 +19,137 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 28 Feb 2018 16:40:02 -0700
-Message-Id: <20180228234006.21093-7-logang@deltatee.com>
+Date: Wed, 28 Feb 2018 16:39:58 -0700
+Message-Id: <20180228234006.21093-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180228234006.21093-1-logang@deltatee.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2 06/10] IB/core: Add optional PCI P2P flag to rdma_rw_ctx_[init|destroy]()
+Subject: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem stats
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to use PCI P2P memory pci_p2pmem_[un]map_sg() functions must be
-called to map the correct DMA address. To do this, we add a flags
-variable and the RDMA_RW_CTX_FLAG_PCI_P2P flag. When the flag is
-specified use the appropriate map function.
+Attributes display the total amount of P2P memory, the amount available
+and whether it is published or not.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/infiniband/core/rw.c            | 21 +++++++++++++++++----
- drivers/infiniband/ulp/isert/ib_isert.c |  5 +++--
- drivers/infiniband/ulp/srpt/ib_srpt.c   |  7 ++++---
- drivers/nvme/target/rdma.c              |  6 +++---
- include/rdma/rw.h                       |  7 +++++--
- net/sunrpc/xprtrdma/svc_rdma_rw.c       |  6 +++---
- 6 files changed, 35 insertions(+), 17 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-pci | 25 +++++++++++++++++
+ drivers/pci/p2pdma.c                    | 50 +++++++++++++++++++++++++++++++++
+ 2 files changed, 75 insertions(+)
 
-diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-index c8963e91f92a..775a9f8b15a6 100644
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -12,6 +12,7 @@
-  */
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
-+#include <linux/pci-p2pdma.h>
- #include <rdma/mr_pool.h>
- #include <rdma/rw.h>
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 44d4b2be92fd..f5656dae21be 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -323,3 +323,28 @@ Description:
  
-@@ -269,18 +270,24 @@ static int rdma_rw_init_single_wr(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
-  * @remote_addr:remote address to read/write (relative to @rkey)
-  * @rkey:	remote key to operate on
-  * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
-+ * @flags:      any of the RDMA_RW_CTX_FLAG_* flags
-  *
-  * Returns the number of WQEs that will be needed on the workqueue if
-  * successful, or a negative error code.
-  */
- int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		struct scatterlist *sg, u32 sg_cnt, u32 sg_offset,
--		u64 remote_addr, u32 rkey, enum dma_data_direction dir)
-+		u64 remote_addr, u32 rkey, enum dma_data_direction dir,
-+		unsigned int flags)
- {
- 	struct ib_device *dev = qp->pd->device;
- 	int ret;
- 
--	ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
-+	if (flags & RDMA_RW_CTX_FLAG_PCI_P2PDMA)
-+		ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
-+	else
-+		ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+ 		This is similar to /sys/bus/pci/drivers_autoprobe, but
+ 		affects only the VFs associated with a specific PF.
 +
- 	if (!ret)
- 		return -ENOMEM;
- 	sg_cnt = ret;
-@@ -579,9 +586,11 @@ EXPORT_SYMBOL(rdma_rw_ctx_post);
-  * @sg:		scatterlist that was used for the READ/WRITE
-  * @sg_cnt:	number of entries in @sg
-  * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
-+ * @flags:      the same flags used to init the context
-  */
- void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
--		struct scatterlist *sg, u32 sg_cnt, enum dma_data_direction dir)
-+		struct scatterlist *sg, u32 sg_cnt, enum dma_data_direction dir,
-+		unsigned int flags)
- {
- 	int i;
- 
-@@ -602,7 +611,11 @@ void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		break;
- 	}
- 
--	ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
-+	if (flags & RDMA_RW_CTX_FLAG_PCI_P2PDMA)
-+		pci_p2pdma_unmap_sg(qp->pd->device->dma_device, sg,
-+				    sg_cnt, dir);
-+	else
-+		ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
- }
- EXPORT_SYMBOL(rdma_rw_ctx_destroy);
- 
-diff --git a/drivers/infiniband/ulp/isert/ib_isert.c b/drivers/infiniband/ulp/isert/ib_isert.c
-index fff40b097947..933200645262 100644
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -1497,7 +1497,8 @@ isert_rdma_rw_ctx_destroy(struct isert_cmd *cmd, struct isert_conn *conn)
- 				se_cmd->t_prot_nents, dir);
- 	} else {
- 		rdma_rw_ctx_destroy(&cmd->rw, conn->qp, conn->cm_id->port_num,
--				se_cmd->t_data_sg, se_cmd->t_data_nents, dir);
-+				se_cmd->t_data_sg, se_cmd->t_data_nents,
-+				dir, 0);
- 	}
- 
- 	cmd->rw.nr_ops = 0;
-@@ -2152,7 +2153,7 @@ isert_rdma_rw_ctx_post(struct isert_cmd *cmd, struct isert_conn *conn,
- 	} else {
- 		ret = rdma_rw_ctx_init(&cmd->rw, conn->qp, port_num,
- 				se_cmd->t_data_sg, se_cmd->t_data_nents,
--				offset, addr, rkey, dir);
-+				offset, addr, rkey, dir, 0);
- 	}
- 
- 	if (ret < 0) {
-diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-index 0373b7c40902..5dcbe0a18db8 100644
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -899,7 +899,8 @@ static int srpt_alloc_rw_ctxs(struct srpt_send_ioctx *ioctx,
- 			goto unwind;
- 
- 		ret = rdma_rw_ctx_init(&ctx->rw, ch->qp, ch->sport->port,
--				ctx->sg, ctx->nents, 0, remote_addr, rkey, dir);
-+				ctx->sg, ctx->nents, 0, remote_addr, rkey,
-+				dir, 0);
- 		if (ret < 0) {
- 			target_free_sgl(ctx->sg, ctx->nents);
- 			goto unwind;
-@@ -928,7 +929,7 @@ static int srpt_alloc_rw_ctxs(struct srpt_send_ioctx *ioctx,
- 		struct srpt_rw_ctx *ctx = &ioctx->rw_ctxs[i];
- 
- 		rdma_rw_ctx_destroy(&ctx->rw, ch->qp, ch->sport->port,
--				ctx->sg, ctx->nents, dir);
-+				ctx->sg, ctx->nents, dir, 0);
- 		target_free_sgl(ctx->sg, ctx->nents);
- 	}
- 	if (ioctx->rw_ctxs != &ioctx->s_rw_ctx)
-@@ -946,7 +947,7 @@ static void srpt_free_rw_ctxs(struct srpt_rdma_ch *ch,
- 		struct srpt_rw_ctx *ctx = &ioctx->rw_ctxs[i];
- 
- 		rdma_rw_ctx_destroy(&ctx->rw, ch->qp, ch->sport->port,
--				ctx->sg, ctx->nents, dir);
-+				ctx->sg, ctx->nents, dir, 0);
- 		target_free_sgl(ctx->sg, ctx->nents);
- 	}
- 
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index 978e169c11bf..020354e11351 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -427,7 +427,7 @@ static void nvmet_rdma_release_rsp(struct nvmet_rdma_rsp *rsp)
- 	if (rsp->n_rdma) {
- 		rdma_rw_ctx_destroy(&rsp->rw, queue->cm_id->qp,
- 				queue->cm_id->port_num, rsp->req.sg,
--				rsp->req.sg_cnt, nvmet_data_dir(&rsp->req));
-+				rsp->req.sg_cnt, nvmet_data_dir(&rsp->req), 0);
- 	}
- 
- 	if (rsp->req.sg != &rsp->cmd->inline_sg)
-@@ -510,7 +510,7 @@ static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc)
- 	atomic_add(rsp->n_rdma, &queue->sq_wr_avail);
- 	rdma_rw_ctx_destroy(&rsp->rw, queue->cm_id->qp,
- 			queue->cm_id->port_num, rsp->req.sg,
--			rsp->req.sg_cnt, nvmet_data_dir(&rsp->req));
-+			rsp->req.sg_cnt, nvmet_data_dir(&rsp->req), 0);
- 	rsp->n_rdma = 0;
- 
- 	if (unlikely(wc->status != IB_WC_SUCCESS)) {
-@@ -579,7 +579,7 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
- 
- 	ret = rdma_rw_ctx_init(&rsp->rw, cm_id->qp, cm_id->port_num,
- 			rsp->req.sg, rsp->req.sg_cnt, 0, addr, key,
--			nvmet_data_dir(&rsp->req));
-+			nvmet_data_dir(&rsp->req), 0);
- 	if (ret < 0)
- 		return NVME_SC_INTERNAL;
- 	rsp->req.transfer_len += len;
-diff --git a/include/rdma/rw.h b/include/rdma/rw.h
-index a3cbbc7b6417..dbc342b53901 100644
---- a/include/rdma/rw.h
-+++ b/include/rdma/rw.h
-@@ -59,12 +59,15 @@ struct rdma_rw_ctx {
- 	};
++What:		/sys/bus/pci/devices/.../p2pmem/available
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the amount of memory that has not been
++		allocated (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/size
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the total ammount of memory that the device
++		provides (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/published
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains a '1' if the memory has been published for
++		use inside the kernel or a '0' if it is only intended
++		for use within the driver that published it.
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index ec0a6cb9e500..a57df78f6a32 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -29,6 +29,53 @@ struct pci_p2pdma {
+ 	bool published;
  };
  
-+#define RDMA_RW_CTX_FLAG_PCI_P2PDMA  (1 << 0)
++static ssize_t size_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t size = 0;
 +
- int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		struct scatterlist *sg, u32 sg_cnt, u32 sg_offset,
--		u64 remote_addr, u32 rkey, enum dma_data_direction dir);
-+		u64 remote_addr, u32 rkey, enum dma_data_direction dir,
-+		unsigned int flags);
- void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		struct scatterlist *sg, u32 sg_cnt,
--		enum dma_data_direction dir);
-+		enum dma_data_direction dir, unsigned int flags);
++	if (pdev->p2pdma->pool)
++		size = gen_pool_size(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
++}
++static DEVICE_ATTR_RO(size);
++
++static ssize_t available_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t avail = 0;
++
++	if (pdev->p2pdma->pool)
++		avail = gen_pool_avail(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
++}
++static DEVICE_ATTR_RO(available);
++
++static ssize_t published_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", pdev->p2pdma->published);
++}
++static DEVICE_ATTR_RO(published);
++
++static struct attribute *p2pmem_attrs[] = {
++	&dev_attr_size.attr,
++	&dev_attr_available.attr,
++	&dev_attr_published.attr,
++	NULL,
++};
++
++static const struct attribute_group p2pmem_group = {
++	.attrs = p2pmem_attrs,
++	.name = "p2pmem",
++};
++
+ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
+ {
+ 	struct pci_p2pdma *p2p =
+@@ -55,6 +102,7 @@ static void pci_p2pdma_release(void *data)
+ 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
  
- int rdma_rw_ctx_signature_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
- 		u8 port_num, struct scatterlist *sg, u32 sg_cnt,
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-index 12b9a7e0b6d2..4364a8e98470 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-@@ -140,7 +140,7 @@ static void svc_rdma_cc_release(struct svc_rdma_chunk_ctxt *cc,
+ 	gen_pool_destroy(pdev->p2pdma->pool);
++	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
+ 	pdev->p2pdma = NULL;
+ }
  
- 		rdma_rw_ctx_destroy(&ctxt->rw_ctx, rdma->sc_qp,
- 				    rdma->sc_port_num, ctxt->rw_sg_table.sgl,
--				    ctxt->rw_nents, dir);
-+				    ctxt->rw_nents, dir, 0);
- 		svc_rdma_put_rw_ctxt(rdma, ctxt);
- 	}
- 	svc_xprt_put(&rdma->sc_xprt);
-@@ -433,7 +433,7 @@ svc_rdma_build_writes(struct svc_rdma_write_info *info,
- 		ret = rdma_rw_ctx_init(&ctxt->rw_ctx, rdma->sc_qp,
- 				       rdma->sc_port_num, ctxt->rw_sg_table.sgl,
- 				       ctxt->rw_nents, 0, seg_offset,
--				       seg_handle, DMA_TO_DEVICE);
-+				       seg_handle, DMA_TO_DEVICE, 0);
- 		if (ret < 0)
- 			goto out_initerr;
+@@ -83,6 +131,8 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 	if (error)
+ 		goto out_pool_destroy;
  
-@@ -639,7 +639,7 @@ static int svc_rdma_build_read_segment(struct svc_rdma_read_info *info,
- 	ret = rdma_rw_ctx_init(&ctxt->rw_ctx, cc->cc_rdma->sc_qp,
- 			       cc->cc_rdma->sc_port_num,
- 			       ctxt->rw_sg_table.sgl, ctxt->rw_nents,
--			       0, offset, rkey, DMA_FROM_DEVICE);
-+			       0, offset, rkey, DMA_FROM_DEVICE, 0);
- 	if (ret < 0)
- 		goto out_initerr;
++	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
++
+ 	pdev->p2pdma = p2p;
  
+ 	return 0;
 -- 
 2.11.0
