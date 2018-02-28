@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834340-2-14835089742492707994
+X-Cyrus-Session-Id: sloti22d1t05-516909-1519834324-2-6909947827478683951
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834340; b=oTNqw/EVieB3emd2uFj93cN0/Qnz+3JBCS+cBpah7fup/CG
-    RDYIQJwn4swyhAUN01oJ/zM6OnIf0wwOqGUXpzXo/zP3p6kH1ofFV3j1bR4FpQjs
-    PuiZZ7dITB5pfryJewLw0O98ajph/3lR1rlwIukoGK3uR6An1N8x2rHp9QZb3VH2
-    2x9qj45R6O+isMoyxwwY5ADV2XjFDPAWb6OKWY08uV+D+aLZcSIFj9UitnBsb58H
-    tfI6pPQUtP8VjXatXKi+K36mY/E/XZvMl5FiyjbtwsrFhqEp6NU8CyTBi+6xLwAM
-    0ZpHVPVWUDy6iMy5cBCp6/TL9818viCYjfjW0AA==
+    t=1519834323; b=TdBaDfbOs3057vw5rypetasiA7rCBAXeg14pnqszGRydm6a
+    +v1bDyhFSse01O8kIJ9wi4iUpWi33OmaSliE0nAfCGaejmmvQ0GrJ5E+h+E+Kb1n
+    /HoNu+RLNNwZgtC8WKPRQ1zYkvwxGkJkWSKY7L1v2OGANGS163gfRow/QIpExsZr
+    7D3CQu7P47EegD3NgWs6C1l32OUUNrYibLROKggqJ9h6MPiXEZq1nk/1Ooggz33N
+    /blThdJ5ZqEVuOq3JIlyMjvm6lWFWnMTMQZiGbdDK+VLW9k5/WF19Q4tpBwCpAe8
+    VvZ5VGnSjdfbs5KxI5zC4DuGGcD0oAbkDvgXRvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834340; bh=iXkTx35Vyr+SYQ0ZF7j
-    9t8R4kpvJ/lhsM6+Y24enmSQ=; b=P12+uhYtO7Z+PfZqyy6rsJ2rnC8NUowDMn8
-    MzV9yqKqBp5DAq5MPttJEU2UAvtHkErPsmATvgY62LfVaLcjbGbADHcKLQurKn4m
-    b+x4V8niZR0oWYGRHCX341xyVrpwINO8ER0U67gpPZYj4rool9MYpHNv9C2QuXaT
-    iJ+cYYLlYg6l1+jkLM+NpU+C2GYZs8IZE+E0GJY7Ucf6KgobBSEMt2f63sOZd/Rn
-    P8ErjdgRcmkAkMuLr0BeyTR5sjVsqGRlISRoJS5YnieUU5x4H/9Y7IxDfvX/hxU0
-    6Uk5tNMWpxWWniMqj4IVQpwrZ7L9afbgioUVHN4hdERABiTML6Q==
+    :sender:list-id; s=arctest; t=1519834323; bh=gwWmIRWhU3Ui/4s+Ap2
+    xK2niVgvaKF4QGJEkWdtgdT0=; b=govwIpU8+9puaENwFgdNIC/1Lo8AJ44sVpx
+    rQ8BKAifOYmC1CiXSEdZp0v2W35VxB+Jp15wPKH70BmW+BBse/8wTQ+oAsWymNU3
+    3x7CgA5/Ca12AdE8scP+08nMTFK7S+X22ovje4emrIMSy7VrmB2Ku0SlV1btMptb
+    Quwy1c9iOc3iE4zCULRNQnrts1YG9wEQUMl97ehIHv06UhaZ61KGo6qM6cyLEJX9
+    YSzv5kv6sZmUIRZXFSUxxqzINtxlh1Cy9rBUrhhuQRMfOAq8AhyNP+63dw6peQyo
+    sEe180jBWt3NKeWk4KVgk0ShXC/Gxm6LhXlhxwV8417S45jM4nA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,29 +47,27 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934406AbeB1QMH (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:12:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35028 "EHLO
+        id S933333AbeB1QMA (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:12:00 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35022 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933269AbeB1QME (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:12:04 -0500
+        by vger.kernel.org with ESMTP id S933269AbeB1QL6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:11:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Dave Martin" <Dave.Martin@arm.com>,
-        "Paul Burton" <Paul.Burton@mips.com>,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        "Alex Smith" <alex@alex-smith.me.uk>,
-        "James Hogan" <james.hogan@mips.com>, linux-mips@linux-mips.org
+CC: akpm@linux-foundation.org,
+        "Christoffer Dall" <christoffer.dall@linaro.org>,
+        "Andre Przywara" <andre.przywara@arm.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.222715157@decadent.org.uk>
+Message-ID: <lsq.1519831218.180482909@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 108/254] MIPS: Guard against any partial write
- attempt with PTRACE_SETREGSET
+Subject: [PATCH 3.16 119/254] KVM: arm/arm64: Fix HYP unmapping going off
+ limits
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -84,60 +82,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@mips.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit dc24d0edf33c3e15099688b6bbdf7bdc24bf6e91 upstream.
+commit 7839c672e58bf62da8f2f0197fefb442c02ba1dd upstream.
 
-Complement commit d614fd58a283 ("mips/ptrace: Preserve previous
-registers for short regset write") and ensure that no partial register
-write attempt is made with PTRACE_SETREGSET, as we do not preinitialize
-any temporaries used to hold incoming register data and consequently
-random data could be written.
+When we unmap the HYP memory, we try to be clever and unmap one
+PGD at a time. If we start with a non-PGD aligned address and try
+to unmap a whole PGD, things go horribly wrong in unmap_hyp_range
+(addr and end can never match, and it all goes really badly as we
+keep incrementing pgd and parse random memory as page tables...).
 
-It is the responsibility of the caller, such as `ptrace_regset', to
-arrange for writes to span whole registers only, so here we only assert
-that it has indeed happened.
+The obvious fix is to let unmap_hyp_range do what it does best,
+which is to iterate over a range.
 
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Fixes: 72b22bbad1e7 ("MIPS: Don't assume 64-bit FP registers for FP regset")
-Cc: James Hogan <james.hogan@mips.com>
-Cc: Paul Burton <Paul.Burton@mips.com>
-Cc: Alex Smith <alex@alex-smith.me.uk>
-Cc: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/17926/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+The size of the linear mapping, which begins at PAGE_OFFSET, can be
+easily calculated by subtracting PAGE_OFFSET form high_memory, because
+high_memory is defined as the linear map address of the last byte of
+DRAM, plus one.
+
+The size of the vmalloc region is given trivially by VMALLOC_END -
+VMALLOC_START.
+
+Reported-by: Andre Przywara <andre.przywara@arm.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/kernel/ptrace.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/arm/kvm/mmu.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -535,7 +535,15 @@ static int fpr_set_msa(struct task_struc
- 	return 0;
- }
- 
--/* Copy the supplied NT_PRFPREG buffer to the floating-point context.  */
-+/*
-+ * Copy the supplied NT_PRFPREG buffer to the floating-point context.
-+ *
-+ * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
-+ * which is supposed to have been guaranteed by the kernel before
-+ * calling us, e.g. in `ptrace_regset'.  We enforce that requirement,
-+ * so that we can safely avoid preinitializing temporaries for
-+ * partial register writes.
-+ */
- static int fpr_set(struct task_struct *target,
- 		   const struct user_regset *regset,
- 		   unsigned int pos, unsigned int count,
-@@ -543,6 +551,8 @@ static int fpr_set(struct task_struct *t
+--- a/arch/arm/kvm/mmu.c
++++ b/arch/arm/kvm/mmu.c
+@@ -345,17 +345,15 @@ void free_boot_hyp_pgd(void)
+  */
+ void free_hyp_pgds(void)
  {
- 	int err;
+-	unsigned long addr;
+-
+ 	free_boot_hyp_pgd();
  
-+	BUG_ON(count % sizeof(elf_fpreg_t));
-+
- 	/* XXX fcr31  */
+ 	mutex_lock(&kvm_hyp_pgd_mutex);
  
- 	init_fp_ctx(target);
+ 	if (hyp_pgd) {
+-		for (addr = PAGE_OFFSET; virt_addr_valid(addr); addr += PGDIR_SIZE)
+-			unmap_range(NULL, hyp_pgd, KERN_TO_HYP(addr), PGDIR_SIZE);
+-		for (addr = VMALLOC_START; is_vmalloc_addr((void*)addr); addr += PGDIR_SIZE)
+-			unmap_range(NULL, hyp_pgd, KERN_TO_HYP(addr), PGDIR_SIZE);
++		unmap_range(NULL, hyp_pgd, KERN_TO_HYP(PAGE_OFFSET),
++			    (uintptr_t)high_memory - PAGE_OFFSET);
++		unmap_range(NULL, hyp_pgd, KERN_TO_HYP(VMALLOC_START),
++			    VMALLOC_END - VMALLOC_START);
+ 
+ 		free_pages((unsigned long)hyp_pgd, pgd_order);
+ 		hyp_pgd = NULL;
