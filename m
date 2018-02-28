@@ -1,170 +1,315 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3972292-1519811838-2-12789705323056415390
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519811838; b=nDex92TqGtjhnqG2Sxy+LAr6pRsStC3XDpT+qhcrdAITcN+
-    isDsUrG8ZPtI7V5QtchwOhouxUisISq5L9esguKJiy4oLJGZJli6JLGiNu03YZ1c
-    6LL9ixi0ma8uQE3a3qe3Mqn/STGd7+I2tDBBj6OmB6DXblpGHfNRS63DsUXXBBUG
-    Jc/BuKVaQFAIOAhLomk2SO95SMhySWMy/sGQ5FORW8vvwbcvqglMb5stC2GrW4cV
-    lQuLsn57l13W+mqsiLDmApw6N24GLsQ/7XTEt0fs+O1qVdJsIk9PS7jKmbki5RQt
-    peY3jCMpEunEMWW6cN4OVfOZOrV9J6G4zsW9NBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1519811838; bh=ifK93yq0kVL9681mlsQ1Tet53WmFZyO8SfPaRgFei1g=; b=V
-    8nNpA+XmsI6dUAAo7j55Fbuc2+JZHitohK6PT0yTfYHf3nsZU0iuN++UlGz7SypI
-    Kf+eishJvZVnxQ5BUDH7tzcce/8Upw4KiYn1BCxz3lXGD9SG4SeCkGF79WrJis/Y
-    9FnszS/9XXC5SowjHnsv395PE9GEAsKGkGPX0O9AL8Kp2OTBNjLaC8LM9xZ7mYWT
-    1HrTFIQKjfag5ZttmSmazBMcd++v5eBrvh8zTYGjv1yZE3Q0hNJ2v2d01sdGXFcm
-    jXxra1imrAGWtKatSnc3mtMTwaS7ZVsL9eys1/4ILRhx283GektoLLLe2QMfMWF9
-    Qduc+7BNjtWGMOh9P8pnQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeB1J5R (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 04:57:17 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32850 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752184AbeB1J5Q (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 04:57:16 -0500
-Date: Wed, 28 Feb 2018 10:57:14 +0100
+Date: Wed, 28 Feb 2018 10:57:18 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 3.18.97
-Message-ID: <20180228095714.GA6207@kroah.com>
+Subject: Re: Linux 3.18.97
+Message-ID: <20180228095718.GB6207@kroah.com>
+References: <20180228095714.GA6207@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180228095714.GA6207@kroah.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-I'm announcing the release of the 3.18.97 kernel.
-
-All users of the 3.18 kernel series must upgrade.
-
-The updated 3.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-3.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                           |    2 -
- arch/arm64/kernel/traps.c          |    2 -
- arch/x86/oprofile/nmi_int.c        |    2 -
- drivers/iio/imu/adis_trigger.c     |    7 +++---
- drivers/iio/industrialio-buffer.c  |    2 -
- drivers/irqchip/irq-gic-v3.c       |    2 -
- drivers/pci/host/pci-keystone.c    |    9 ++++++-
- drivers/scsi/ibmvscsi/ibmvfc.h     |    2 -
- drivers/usb/dwc3/gadget.c          |    2 +
- drivers/usb/gadget/function/f_fs.c |    6 +----
- lib/asn1_decoder.c                 |   43 ++++++++++++++++++++-----------------
- net/ipv4/ip_sockglue.c             |    7 ------
- net/ipv6/ipv6_sockglue.c           |   10 +-------
- net/mac80211/cfg.c                 |    2 -
- 14 files changed, 49 insertions(+), 49 deletions(-)
-
-Arnd Bergmann (2):
-      cfg80211: fix cfg80211_beacon_dup
-      x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
-
-Eric Biggers (1):
-      ASN.1: fix out-of-bounds read when parsing indefinite length item
-
-Greg Kroah-Hartman (1):
-      Linux 3.18.97
-
-Jack Pham (1):
-      usb: gadget: f_fs: Process all descriptors during bind
-
-Johan Hovold (1):
-      PCI: keystone: Fix interrupt-controller-node lookup
-
-Lars-Peter Clausen (1):
-      iio: adis_lib: Initialize trigger before requesting interrupt
-
-Michael Weiser (1):
-      arm64: Disable unhandled signal log messages by default
-
-Paolo Abeni (1):
-      netfilter: drop outermost socket lock in getsockopt()
-
-Shanker Donthineni (1):
-      irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-
-Stefan Windfeldt-Prytz (1):
-      iio: buffer: check if a buffer has been set up when poll is called
-
-Thinh Nguyen (1):
-      usb: dwc3: gadget: Set maxpacket size for ep0 IN
-
-Tyrel Datwyler (1):
-      scsi: ibmvfc: fix misdefined reserved field in ibmvfc_fcp_rsp_info
-
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqWfPYACgkQONu9yGCS
-aT4pWg//fUkbEO0m+wkq5plLxDfd9SLCLsjS81vr0KjcCjiX2xtjScx7qXjFnYvE
-4DwQ2IofoSb7A5BqaH9lt7C33BFhLPu3huZlCJ3hzEyhMiKKKrGom28GJEo06s4b
-tam16GdhSlqa0mSFsI6cibWofFxA2e7dkFDgv0sqml1GJvNVtXfzuO33jN4uTnsN
-mbUjh4Rcf629qsQhmwkoGTAqhYrN34UTahw3aaQmbC2hs8YfxvB1Wo4EpQ5Qpqso
-eQa8YvXRkvO+TNnKJ2d09BY9sgui8kYnFAUfTuah36LgpN2SGxbzZ3VnD5AK1IWa
-+uPn3NCICbbllThG5LNwOUP/Gfjf2xzqb/YcIXfS/Zss3a4TZxWuLo60saEcvVAA
-52jMuSAu/XQa32G4AEjv7kbyGIaGNdGejmAOdin2oKRZXiP1H0rJHWiBTz2cAVEu
-0ea51J14rfVC5JO+OKVhEEz3Z9PEmrqokj8ZYbsyTL18VzaHIZ4j634gIzUqG1sB
-U25KAdUe17mdeKcKPShTON8Hi0+6SfHGjHF8H+wRckVo/Yk9KngucTJDOKZUh4LG
-w7v6+n80XeWXB80haN7uJNbs8TtvEG2q/eYQ2oUMGLpTZzN3aKdCCZDO5tdECDGZ
-c14bZUguAdd58Jbwxj5KUXCRpa/KO8lhaOUB0dhAosDUH8zt2/Q=
-=HRX1
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+diff --git a/Makefile b/Makefile
+index aa45be375d8f..7781ca4f1ca2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 3
+ PATCHLEVEL = 18
+-SUBLEVEL = 96
++SUBLEVEL = 97
+ EXTRAVERSION =
+ NAME = Diseased Newt
+ 
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 27a2637543ff..1a1436c481ef 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -45,7 +45,7 @@ static const char *handler[]= {
+ 	"Error"
+ };
+ 
+-int show_unhandled_signals = 1;
++int show_unhandled_signals = 0;
+ 
+ /*
+  * Dump out the contents of some memory nicely...
+diff --git a/arch/x86/oprofile/nmi_int.c b/arch/x86/oprofile/nmi_int.c
+index 1d2e6392f5fa..f24bd7249536 100644
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -471,7 +471,7 @@ static int nmi_setup(void)
+ 		goto fail;
+ 
+ 	for_each_possible_cpu(cpu) {
+-		if (!cpu)
++		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
+ 			continue;
+ 
+ 		memcpy(per_cpu(cpu_msrs, cpu).counters,
+diff --git a/drivers/iio/imu/adis_trigger.c b/drivers/iio/imu/adis_trigger.c
+index f53e9a803a0e..93b99bd93738 100644
+--- a/drivers/iio/imu/adis_trigger.c
++++ b/drivers/iio/imu/adis_trigger.c
+@@ -47,6 +47,10 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
+ 	if (adis->trig == NULL)
+ 		return -ENOMEM;
+ 
++	adis->trig->dev.parent = &adis->spi->dev;
++	adis->trig->ops = &adis_trigger_ops;
++	iio_trigger_set_drvdata(adis->trig, adis);
++
+ 	ret = request_irq(adis->spi->irq,
+ 			  &iio_trigger_generic_data_rdy_poll,
+ 			  IRQF_TRIGGER_RISING,
+@@ -55,9 +59,6 @@ int adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
+ 	if (ret)
+ 		goto error_free_trig;
+ 
+-	adis->trig->dev.parent = &adis->spi->dev;
+-	adis->trig->ops = &adis_trigger_ops;
+-	iio_trigger_set_drvdata(adis->trig, adis);
+ 	ret = iio_trigger_register(adis->trig);
+ 
+ 	indio_dev->trig = iio_trigger_get(adis->trig);
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 25c68de393ad..1f64457cc6ba 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -92,7 +92,7 @@ unsigned int iio_buffer_poll(struct file *filp,
+ 	struct iio_dev *indio_dev = filp->private_data;
+ 	struct iio_buffer *rb = indio_dev->buffer;
+ 
+-	if (!indio_dev->info)
++	if (!indio_dev->info || rb == NULL)
+ 		return 0;
+ 
+ 	poll_wait(filp, &rb->pollq, wait);
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index ac897f051863..30b93dd1e612 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -503,7 +503,7 @@ static void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ 	 * Ensure that stores to Normal memory are visible to the
+ 	 * other CPUs before issuing the IPI.
+ 	 */
+-	smp_wmb();
++	wmb();
+ 
+ 	for_each_cpu_mask(cpu, *mask) {
+ 		u64 cluster_id = cpu_logical_map(cpu) & ~0xffUL;
+diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
+index 1b893bc8b842..1e934b7e0139 100644
+--- a/drivers/pci/host/pci-keystone.c
++++ b/drivers/pci/host/pci-keystone.c
+@@ -179,14 +179,16 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
+ 	}
+ 
+ 	/* interrupt controller is in a child node */
+-	*np_temp = of_find_node_by_name(np_pcie, controller);
++	*np_temp = of_get_child_by_name(np_pcie, controller);
+ 	if (!(*np_temp)) {
+ 		dev_err(dev, "Node for %s is absent\n", controller);
+ 		goto out;
+ 	}
+ 	temp = of_irq_count(*np_temp);
+-	if (!temp)
++	if (!temp) {
++		of_node_put(*np_temp);
+ 		goto out;
++	}
+ 	if (temp > max_host_irqs)
+ 		dev_warn(dev, "Too many %s interrupts defined %u\n",
+ 			(legacy ? "legacy" : "MSI"), temp);
+@@ -200,6 +202,9 @@ static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
+ 		if (host_irqs[temp] < 0)
+ 			break;
+ 	}
++
++	of_node_put(*np_temp);
++
+ 	if (temp) {
+ 		*num_irqs = temp;
+ 		ret = 0;
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.h b/drivers/scsi/ibmvscsi/ibmvfc.h
+index 8fae03215a85..543c10266984 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -366,7 +366,7 @@ enum ibmvfc_fcp_rsp_info_codes {
+ };
+ 
+ struct ibmvfc_fcp_rsp_info {
+-	__be16 reserved;
++	u8 reserved[3];
+ 	u8 rsp_code;
+ 	u8 reserved2[4];
+ }__attribute__((packed, aligned (2)));
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 6ce78e3ca7c6..a1ab83769191 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2345,6 +2345,8 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
+ 		break;
+ 	}
+ 
++	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
++
+ 	/* Enable USB2 LPM Capability */
+ 
+ 	if ((dwc->revision > DWC3_REVISION_194A)
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 88aa287f10ea..62d2a8b41bc4 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -2727,10 +2727,8 @@ static int _ffs_func_bind(struct usb_configuration *c,
+ 	struct ffs_data *ffs = func->ffs;
+ 
+ 	const int full = !!func->ffs->fs_descs_count;
+-	const int high = gadget_is_dualspeed(func->gadget) &&
+-		func->ffs->hs_descs_count;
+-	const int super = gadget_is_superspeed(func->gadget) &&
+-		func->ffs->ss_descs_count;
++	const int high = !!func->ffs->hs_descs_count;
++	const int super = !!func->ffs->ss_descs_count;
+ 
+ 	int fs_len, hs_len, ss_len, ret, i;
+ 
+diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+index 7f453b6ff0d0..c3a768ae1a40 100644
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -305,38 +305,43 @@ next_op:
+ 
+ 	/* Decide how to handle the operation */
+ 	switch (op) {
+-	case ASN1_OP_MATCH_ANY_ACT:
+-	case ASN1_OP_COND_MATCH_ANY_ACT:
+-		ret = actions[machine[pc + 1]](context, hdr, tag, data + dp, len);
+-		if (ret < 0)
+-			return ret;
+-		goto skip_data;
+-
+-	case ASN1_OP_MATCH_ACT:
+-	case ASN1_OP_MATCH_ACT_OR_SKIP:
+-	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
+-		ret = actions[machine[pc + 2]](context, hdr, tag, data + dp, len);
+-		if (ret < 0)
+-			return ret;
+-		goto skip_data;
+-
+ 	case ASN1_OP_MATCH:
+ 	case ASN1_OP_MATCH_OR_SKIP:
++	case ASN1_OP_MATCH_ACT:
++	case ASN1_OP_MATCH_ACT_OR_SKIP:
+ 	case ASN1_OP_MATCH_ANY:
++	case ASN1_OP_MATCH_ANY_ACT:
+ 	case ASN1_OP_COND_MATCH_OR_SKIP:
++	case ASN1_OP_COND_MATCH_ACT_OR_SKIP:
+ 	case ASN1_OP_COND_MATCH_ANY:
+-	skip_data:
++	case ASN1_OP_COND_MATCH_ANY_ACT:
++
+ 		if (!(flags & FLAG_CONS)) {
+ 			if (flags & FLAG_INDEFINITE_LENGTH) {
++				size_t tmp = dp;
++
+ 				ret = asn1_find_indefinite_length(
+-					data, datalen, &dp, &len, &errmsg);
++					data, datalen, &tmp, &len, &errmsg);
+ 				if (ret < 0)
+ 					goto error;
+-			} else {
+-				dp += len;
+ 			}
+ 			pr_debug("- LEAF: %zu\n", len);
+ 		}
++
++		if (op & ASN1_OP_MATCH__ACT) {
++			unsigned char act;
++
++			if (op & ASN1_OP_MATCH__ANY)
++				act = machine[pc + 1];
++			else
++				act = machine[pc + 2];
++			ret = actions[act](context, hdr, tag, data + dp, len);
++			if (ret < 0)
++				return ret;
++		}
++
++		if (!(flags & FLAG_CONS))
++			dp += len;
+ 		pc += asn1_op_lengths[op];
+ 		goto next_op;
+ 
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index 043cd43109ae..30b08bfc1dde 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1375,10 +1375,7 @@ int ip_getsockopt(struct sock *sk, int level,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+@@ -1410,9 +1407,7 @@ int compat_ip_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+ 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
+-		release_sock(sk);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
+index c31f8be7fe66..d0d7112bb7c9 100644
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1314,10 +1314,7 @@ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET6, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+@@ -1356,10 +1353,7 @@ int compat_ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = compat_nf_getsockopt(sk, PF_INET6,
+-					   optname, optval, &len);
+-		release_sock(sk);
++		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 095e3958d83c..d061814d1ae1 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -2769,7 +2769,7 @@ cfg80211_beacon_dup(struct cfg80211_beacon_data *beacon)
+ 	}
+ 	if (beacon->probe_resp_len) {
+ 		new_beacon->probe_resp_len = beacon->probe_resp_len;
+-		beacon->probe_resp = pos;
++		new_beacon->probe_resp = pos;
+ 		memcpy(pos, beacon->probe_resp, beacon->probe_resp_len);
+ 		pos += beacon->probe_resp_len;
+ 	}
