@@ -1,230 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeB1NMp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 08:12:45 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60496 "EHLO mail.bootlin.com"
+        id S1752647AbeB1NOF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 08:14:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60763 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752469AbeB1NLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 08:11:51 -0500
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        maxime.ripard@bootlin.com, wens@csie.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH 3/3] ARM: dts: sun8i: a83t: add stable OPP tables and CPUfreq
-Date: Wed, 28 Feb 2018 14:11:22 +0100
-Message-Id: <97c8e53f8cc1dbf9f83e147c5296feaa8b463d18.1519823347.git-series.quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
-References: <cover.f1ec43f8d2a0151c52434f0952e973b19626f285.1519823347.git-series.quentin.schulz@bootlin.com>
+        id S1752478AbeB1NOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 08:14:04 -0500
+Date: Wed, 28 Feb 2018 14:14:02 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        MIPS Mailing List <linux-mips@linux-mips.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] MIPS: mscc: add ocelot dtsi
+Message-ID: <20180228131402.GL1479@piout.net>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
+ <CAOiHx=n5bekhgaA_-teYZzJQCErfb2Vg1X9fTaq073B=kpWnTA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOiHx=n5bekhgaA_-teYZzJQCErfb2Vg1X9fTaq073B=kpWnTA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner A83T is an octacore A7 divided in two clusters of 4 A7,
-each cluster having its own regulator and clock.
+On 27/02/2018 at 22:01:37 +0100, Jonas Gorski wrote:
+> On 16 January 2018 at 11:12, Alexandre Belloni
+> <alexandre.belloni@free-electrons.com> wrote:
+> > Add a device tree include file for the Microsemi Ocelot SoC.
+> >
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > ---
+> >  arch/mips/boot/dts/Makefile         |   1 +
+> >  arch/mips/boot/dts/mscc/Makefile    |   4 ++
+> >  arch/mips/boot/dts/mscc/ocelot.dtsi | 110 ++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 115 insertions(+)
+> >  create mode 100644 arch/mips/boot/dts/mscc/Makefile
+> >  create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
+> >
+> > diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+> > index e2c6f131c8eb..1e79cab8e269 100644
+> > --- a/arch/mips/boot/dts/Makefile
+> > +++ b/arch/mips/boot/dts/Makefile
+> > @@ -4,6 +4,7 @@ subdir-y        += cavium-octeon
+> >  subdir-y       += img
+> >  subdir-y       += ingenic
+> >  subdir-y       += lantiq
+> > +subdir-y       += mscc
+> >  subdir-y       += mti
+> >  subdir-y       += netlogic
+> >  subdir-y       += ni
+> > diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
+> > new file mode 100644
+> > index 000000000000..f0a155a74e02
+> > --- /dev/null
+> > +++ b/arch/mips/boot/dts/mscc/Makefile
+> > @@ -0,0 +1,4 @@
+> > +obj-y                          += $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> > +
+> > +# Force kbuild to make empty built-in.o if necessary
+> > +obj-                           += dummy.o
+> > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > new file mode 100644
+> > index 000000000000..b2f936e1fbb9
+> > --- /dev/null
+> > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > @@ -0,0 +1,110 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> > +/* Copyright (c) 2017 Microsemi Corporation */
+> > +
+> > +/ {
+> > +       #address-cells = <1>;
+> > +       #size-cells = <1>;
+> > +       compatible = "mscc,ocelot";
+> > +
+> > +       cpus {
+> > +               #address-cells = <1>;
+> > +               #size-cells = <0>;
+> > +
+> > +               mips-hpt-frequency = <250000000>;
+> > +
+> > +               cpu@0 {
+> > +                       compatible = "mscc,ocelot";
+> 
+> You are using the same compatible string for the whole chip as well as
+> the cpu core of it, this doesn't seem right.
+> 
+> Also is this really a custom cpu core? Your product brief suggests
+> this is a "normal" 24KEc MIPS CPU, at least for ocelot-10 (VSC7514).
+> So something like "mips,mips24KEc" might be more appropriate here.
+> 
 
-The operating points were found in Allwinner BSP and fex files.
+Indeed, that is something I forgot to change before sending.
 
-Note that there are a few OPPs that are missing:
+> 
+> Regards
+> Jonas
 
-1608000000Hz with 920000mV
-1800000000Hz with 1000000mV
-2016000000Hz with 1080000mV
-
-These OPPs are pretty unstable but it might be due to the SoC quickly
-overheating (till the board completely shuts down).
-It seems impossible to reach those frequencies with none or passive
-cooling, so better leave them out by default.
-
-It's still possible to add those OPPs on a per-board basis though.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 118 +++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 016d22f..05d5dd7 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -56,55 +56,173 @@
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-720000000 {
-+			opp-hz = /bits/ 64 <720000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-864000000 {
-+			opp-hz = /bits/ 64 <864000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-912000000 {
-+			opp-hz = /bits/ 64 <912000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1008000000 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1128000000 {
-+			opp-hz = /bits/ 64 <1128000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+	};
-+
-+	cpu1_opp_table: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-720000000 {
-+			opp-hz = /bits/ 64 <720000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-864000000 {
-+			opp-hz = /bits/ 64 <864000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-912000000 {
-+			opp-hz = /bits/ 64 <912000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1008000000 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1128000000 {
-+			opp-hz = /bits/ 64 <1128000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <840000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		cpu0: cpu@0 {
-+			clocks = <&ccu CLK_C0CPUX>;
-+			clock-names = "cpu";
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			reg = <0>;
- 		};
- 
- 		cpu@1 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			reg = <1>;
- 		};
- 
- 		cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			reg = <2>;
- 		};
- 
- 		cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			reg = <3>;
- 		};
- 
- 		cpu100: cpu@100 {
-+			clocks = <&ccu CLK_C1CPUX>;
-+			clock-names = "cpu";
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu1_opp_table>;
- 			reg = <0x100>;
- 		};
- 
- 		cpu@101 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu1_opp_table>;
- 			reg = <0x101>;
- 		};
- 
- 		cpu@102 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu1_opp_table>;
- 			reg = <0x102>;
- 		};
- 
- 		cpu@103 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
-+			operating-points-v2 = <&cpu1_opp_table>;
- 			reg = <0x103>;
- 		};
- 	};
 -- 
-git-series 0.9.1
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
