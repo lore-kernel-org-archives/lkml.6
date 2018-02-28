@@ -1,103 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeB1Ozt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:55:49 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:26251 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752436AbeB1OzZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:55:25 -0500
-X-IronPort-AV: E=Sophos;i="5.47,406,1515481200";
-   d="scan'208";a="11853706"
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: <linux-kernel@vger.kernel.org>, ARM Maintainers <arm@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 3/3] ARM: at91: Kconfig: Update company to Microchip
-Date: Wed, 28 Feb 2018 15:56:43 +0100
-Message-ID: <2263d1871f18b8134187d53070830fd5398fb10a.1519829594.git.nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <c00e7bf21945e844c6154b374924b7ff520d1316.1519829594.git.nicolas.ferre@microchip.com>
-References: <c00e7bf21945e844c6154b374924b7ff520d1316.1519829594.git.nicolas.ferre@microchip.com>
+        id S1752816AbeB1O43 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:56:29 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:56694 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752436AbeB1O4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 09:56:25 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-rockchip@lists.infradead.org,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Yakir Yang <ykk@rock-chips.com>,
+        =?ISO-8859-1?Q?=D8rjan?= Eide <orjan.eide@arm.com>,
+        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>
+Subject: Re: [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in analogix_dp_bind
+Date: Wed, 28 Feb 2018 15:56:12 +0100
+Message-ID: <7345252.P7zEYUIqsL@diego>
+In-Reply-To: <2c89da60-3c54-a8db-db9d-6079c51ed29d@arm.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com> <2776489.2p7NH6SBud@diego> <2c89da60-3c54-a8db-db9d-6079c51ed29d@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update AT91 Kconfig text and help to move from Atmel to Microchip.
-The AT91 wording is kept in the title for historical reasons.
+Am Mittwoch, 28. Februar 2018, 15:54:30 CET schrieb Marc Zyngier:
+> On 28/02/18 14:37, Heiko Stübner wrote:
+> > Am Dienstag, 30. Januar 2018, 21:28:35 CET schrieb Thierry Escande:
+> >> From: zain wang <wzz@rock-chips.com>
+> >> 
+> >> The bridge does not need to be powered in analogix_dp_bind(), so
+> >> remove the calls to pm_runtime_get()/phy_power_on()/analogix_dp_init_dp()
+> >> as well as their power-off counterparts.
+> >> 
+> >> Cc: Stéphane Marchesin <marcheu@chromium.org>
+> >> Signed-off-by: zain wang <wzz@rock-chips.com>
+> >> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+> >> [the patch originally just removed the power_on portion, seanpaul removed
+> >> the power off code as well as improved the commit message]
+> >> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> >> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 10 ----------
+> >>  1 file changed, 10 deletions(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c index
+> >> cb5e18d6ba04..1477ea9ba85d 100644
+> >> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> @@ -1382,11 +1382,6 @@ analogix_dp_bind(struct device *dev, struct
+> >> drm_device *drm_dev,
+> >> 
+> >>  	pm_runtime_enable(dev);
+> >> 
+> >> -	pm_runtime_get_sync(dev);
+> >> -	phy_power_on(dp->phy);
+> >> -
+> >> -	analogix_dp_init_dp(dp);
+> >> -
+> >> 
+> >>  	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+> >>  	
+> >>  					analogix_dp_hardirq,
+> >>  					analogix_dp_irq_thread,
+> > 
+> > Not 100% sure here, as the driver has the request-irq + disable-irq hack
+> > here. So a pending interrupt could possibly fire between request and
+> > disable.
+> > 
+> > Right now the block should be on, but can it still handle such an irq
+> > when the power is removed?
+> 
+> Probably not (see below).
+> 
+> > So before removing the power here, we might want something
+> > similar to what Marc posted for the vop [0] for the analogix-dp?
+> 
+> You can do that trick only if the interrupt is not shared. In the VOP
+> case, it is shared with the IOMMU, which makes it more... interesting.
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- arch/arm/mach-at91/Kconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Yep, which is why I mentioned it, as the dp-irq should not be shared
+I'd think :-)
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 6d870421a7a6..1254bf9d91b4 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -1,5 +1,5 @@
- menuconfig ARCH_AT91
--	bool "Atmel SoCs"
-+	bool "AT91/Microchip SoCs"
- 	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
- 	select ARM_CPU_SUSPEND if PM && ARCH_MULTI_V7
- 	select COMMON_CLK_AT91
-@@ -13,7 +13,7 @@ config SOC_SAMV7
- 	select COMMON_CLK_AT91
- 	select PINCTRL_AT91
- 	help
--	  Select this if you are using an SoC from Atmel's SAME7, SAMS7 or SAMV7
-+	  Select this if you are using an SoC from Microchip's SAME7, SAMS7 or SAMV7
- 	  families.
- 
- config SOC_SAMA5D2
-@@ -29,7 +29,7 @@ config SOC_SAMA5D2
- 	select HAVE_AT91_AUDIO_PLL
- 	select PINCTRL_AT91PIO4
- 	help
--	  Select this if ou are using one of Atmel's SAMA5D2 family SoC.
-+	  Select this if ou are using one of Microchip's SAMA5D2 family SoC.
- 
- config SOC_SAMA5D3
- 	bool "SAMA5D3 family"
-@@ -41,7 +41,7 @@ config SOC_SAMA5D3
- 	select HAVE_AT91_USB_CLK
- 	select PINCTRL_AT91
- 	help
--	  Select this if you are using one of Atmel's SAMA5D3 family SoC.
-+	  Select this if you are using one of Microchip's SAMA5D3 family SoC.
- 	  This support covers SAMA5D31, SAMA5D33, SAMA5D34, SAMA5D35, SAMA5D36.
- 
- config SOC_SAMA5D4
-@@ -56,7 +56,7 @@ config SOC_SAMA5D4
- 	select HAVE_AT91_H32MX
- 	select PINCTRL_AT91
- 	help
--	  Select this if you are using one of Atmel's SAMA5D4 family SoC.
-+	  Select this if you are using one of Microchip's SAMA5D4 family SoC.
- 
- config SOC_AT91RM9200
- 	bool "AT91RM9200"
-@@ -70,7 +70,7 @@ config SOC_AT91RM9200
- 	select SOC_SAM_V4_V5
- 	select SRAM if PM
- 	help
--	  Select this if you are using Atmel's AT91RM9200 SoC.
-+	  Select this if you are using Microchip's AT91RM9200 SoC.
- 
- config SOC_AT91SAM9
- 	bool "AT91SAM9"
-@@ -88,7 +88,7 @@ config SOC_AT91SAM9
- 	select SOC_SAM_V4_V5
- 	select SRAM if PM
- 	help
--	  Select this if you are using one of those Atmel SoC:
-+	  Select this if you are using one of those Microchip SoC:
- 	    AT91SAM9260
- 	    AT91SAM9261
- 	    AT91SAM9263
--- 
-2.15.1
+
+Heiko
