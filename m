@@ -1,107 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeB1Le4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 06:34:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:48118 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751997AbeB1Lez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 06:34:55 -0500
-Date: Wed, 28 Feb 2018 11:34:56 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH] Documentation/locking: Document the semantics of
- spin_is_locked()
-Message-ID: <20180228113456.GC7681@arm.com>
-References: <1519814372-19941-1-git-send-email-parri.andrea@gmail.com>
- <20180228105631.GA7681@arm.com>
- <20180228112403.GA32228@andrea>
+        id S1752291AbeB1LkP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 06:40:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42244 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752183AbeB1LkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 06:40:13 -0500
+Subject: Re: [PATCH v2 03/15] s390: zcrypt: externalize AP instructions
+ available function
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Harald Freudenberger <freude@linux.vnet.ibm.com>
+Date: Wed, 28 Feb 2018 12:40:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228112403.GA32228@andrea>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1519741693-17440-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18022811-0012-0000-0000-000005B6651E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022811-0013-0000-0000-0000193273FE
+Message-Id: <5a786bdd-44d9-ebca-eb39-2c3d05b7d4be@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802280141
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 12:24:03PM +0100, Andrea Parri wrote:
-> On Wed, Feb 28, 2018 at 10:56:32AM +0000, Will Deacon wrote:
-> > On Wed, Feb 28, 2018 at 11:39:32AM +0100, Andrea Parri wrote:
-> > > There appeared to be a certain, recurrent uncertainty concerning the
-> > > semantics of spin_is_locked(), likely a consequence of the fact that
-> > > this semantics remains undocumented or that it has been historically
-> > > linked to the (likewise unclear) semantics of spin_unlock_wait().
-> > > 
-> > > Document this semantics.
-> > > 
-> > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> > > Cc: Luc Maranget <luc.maranget@inria.fr>
-> > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > > Cc: Akira Yokosawa <akiyks@gmail.com>
-> > > ---
-> > >  include/linux/spinlock.h | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-> > > index 4894d322d2584..2639fdc9a916c 100644
-> > > --- a/include/linux/spinlock.h
-> > > +++ b/include/linux/spinlock.h
-> > > @@ -380,6 +380,17 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
-> > >  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
-> > >  })
-> > >  
-> > > +/**
-> > > + * spin_is_locked() - Check whether a spinlock is locked.
-> > > + * @lock: Pointer to the spinlock.
-> > > + *
-> > > + * This function is NOT required to provide any memory ordering
-> > > + * guarantees; it could be used for debugging purposes or, when
-> > > + * additional synchronization is needed, accompanied with other
-> > > + * constructs (memory barriers) enforcing the synchronization.
-> > > + *
-> > > + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
-> > > + */
-> > 
-> > I also don't think this is quite right, since the spin_is_locked check
-> > must be ordered after all prior lock acquisitions (to any lock) on the same
-> > CPU. That's why we have an smp_mb() in there on arm64 (see 38b850a73034f).
-> 
-> So, arm64 (and powerpc) complies to the semantics I _have_ in mind ...
-
-Sure, but they're offering more than that at present. If I can remove the
-smp_mb() in our spin_is_locked implementation, I will, but we need to know
-what that will break even if you consider that code to be broken because it
-relies on something undocumented.
-
-> > So this is a change in semantics and we need to audit the users before
-> > proceeding. We should also keep spin_is_locked consistent with the versions
-> > for mutex, rwsem, bit_spin.
-> 
-> Well, strictly speaking, it isn't (given that the current semantics is,
-> as reported above, currently undocumented); for the same reason, cases
-> relying on anything more than _nothing_ (if any) are already broken ...
-
-I suppose it depends on whether you consider the code or the documentation
-to be authoritative. I tend to err on the side of the former for the kernel.
-To be clear: I'm perfectly ok relaxing the semantics, but only if there's
-some evidence that you've looked at the callsites and determined that they
-won't break.  That's why I think a better first step would be to convert a
-bunch of them to using lockdep for the "assert that I hold this lock"
-checks, so we can start to see where the interesting cases are.
-
-Will
+On 02/27/2018 03:28 PM, Tony Krowiak wrote:
+> If the AP instructions are not available on the linux host, then
+> AP devices can not be interpreted by the SIE. The AP bus has a
+> function it uses to determine if the AP instructions are
+> available. This patch provides a new function that wraps the
+> AP bus's function to externalize it for use by KVM.
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> ---
+>  arch/s390/include/asm/ap.h   |    7 +++++++
+>  drivers/s390/crypto/ap_bus.c |    6 ++++++
+>  2 files changed, 13 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+> index cfce683..1df6b59 100644
+> --- a/arch/s390/include/asm/ap.h
+> +++ b/arch/s390/include/asm/ap.h
+> @@ -120,4 +120,11 @@ struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
+>  					 struct ap_qirq_ctrl qirqctrl,
+>  					 void *ind);
+>
+> +/**
+> + * ap_instructions_installed() - Tests whether AP instructions are installed
+> + *
+> + * Returns 1 if the AP instructions are installed, otherwise; returns 0
+> + */
+> +int ap_instructions_installed(void);
+> +
+>  #endif /* _ASM_S390_AP_H_ */
+> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+> index 48d55dc..089b1cf 100644
+> --- a/drivers/s390/crypto/ap_bus.c
+> +++ b/drivers/s390/crypto/ap_bus.c
+> @@ -211,6 +211,12 @@ int ap_query_configuration(struct ap_config_info *info)
+>  }
+>  EXPORT_SYMBOL(ap_query_configuration);
+>
+> +int ap_instructions_installed(void)
+> +{
+> +	return (ap_instructions_available() == 0);
+> +}
+> +EXPORT_SYMBOL(ap_instructions_installed);
+> +
+>  /**
+>   * ap_init_configuration(): Allocate and query configuration array.
+>   */
+Reviewed-by: Harald Freudenberger <freude@linux.vnet.ibm.com>
