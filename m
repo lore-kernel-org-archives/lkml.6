@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-438867-1519832339-2-2276783373704363116
+X-Cyrus-Session-Id: sloti22d1t05-449106-1519832336-2-13285615326164049432
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519832338; b=q7933afqc1qOBXouj8VtavYz6ZGoUMF2OjCMMPX+b1N7PDk
-    glZHAAnoyR4v5ZIcvtbk4+/nJ+Zyw96ym7TQ6E1TxCYLWjmNDr7aq63cmaynAT2T
-    M8W4VHq4jhL/WF+0LXuXqMOhsNxFhoq1TPrsiXWX8qpaNCn/cNvgBs89ncEfzGJZ
-    wwTDIxXcqrNJ+SCK6+QY966uuFb5XdSZATsWQp0AfpjeBwD68rsPPFHshGKi6is6
-    153Bs0lAwufX1uxgVUdhG/JsIjRuT15zxS2XoQxQXl6NncXDOv+z0gNDvavWXyhJ
-    dtGPTRfP81bVs3Q2Hpo0C8aOPksSnXWM4W7sI3g==
+    t=1519832336; b=nPcLwxzLaRAJzeGzssgRMollPez9MhFFYpnxIQnqvej8p7+
+    Uf2qk4pwwPPZGO4+UZ5+nMmMg+XQ555hgiBrHCqoY+9di90xZrKOaDcnXNmgasxz
+    rLLkfLxtdlhNRsp4jFI8QWBGlWm9eIEbujav5lkx+XLDTWU/7OLvL68N/unPn9vs
+    c1lZhdgDUU0vAlj4CjXUKG83XjHdkgDO+4v+wQURVCs8SntQ9C7qGDpJFPUmHBis
+    7Zn8R9wilZvvagX6pveGt8cI0+JbOwpTrM5dsACBp0q1y5DLBcyKK4dweZ/rxTOf
+    WpOwbopac7TfjVUP4mev7BnmMg3646o4F02vsWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519832338; bh=zC+Vg6pVFEvIFUYdPat
-    7k8mwYmglBkyP3KC2V4sOKtc=; b=ownDbD+EUagPDyqHG3iAeB1MuBXbS/K9KNC
-    MbRklRA/fVbeI6Bsah5ekXAntuRhzbtEjkZE5iZKSSb+NBiVb3q58rQEQSVwk6Ns
-    h0YHBhswx2+wliiU3xl+aGKtkP64cLqfr5X0LTwC3q82m8ry28D7acT+KKAx7pVO
-    9rKC5dBOg2xeVmT1gzrj2GB4pNvzutUbuXfe67Uzqj06FF2ETHf4URtqcezG7znu
-    T9PjvDrizToCd04shuYUqHpa2VYENIJrFmGgOKRziDnn6LbEJnP7Yy+QNh47Z0xb
-    YOzpzkW+B1C8maRoFRnfJa4Qo55ulJ2vsEy0yHdpO4wqMMeAB8Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519832336; bh=C5zFCdT/yw5b88mrpNa
+    kWvAUfemLJ0/9Zw+MQt7Yemg=; b=INwHtubR1gc1lTzBpUMocjmEvln+lXyQwuH
+    wwPGRKjicXeqv/51ANGltr5H7W4ZWfJu1HJRE9r1AYviNaHWXT9I5I9OTxHlsDbM
+    YSC7a1VFL44WbIcBVWl2nMU32jd5BnmENv0K2GEFiwpBvYL6JGONZ3wI+1uCGWWw
+    jSPcLGmNeahP+4GUHjF2mdL4fe0xvQJOzsLrQWBCltQMIxZsD4uoqRSuPcnikavk
+    V3/4C5SyJ7l2q2vqrWS4SQzINzkF/pOEzHtNubkr4jmKLsSlvCURLRQ61tn+lkI5
+    nscjM2/+9jN1CtGKhNCEqr2UwL3BpjxJMJKrJLDZm7AEgN6cnRw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932896AbeB1Pgj (ORCPT <rfc822;greg@kroah.com>);
+        id S932981AbeB1Pgj (ORCPT <rfc822;greg@kroah.com>);
         Wed, 28 Feb 2018 10:36:39 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33284 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33294 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752812AbeB1PWf (ORCPT
+        by vger.kernel.org with ESMTP id S1752778AbeB1PWf (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 10:22:35 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,14 +59,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Johannes Thumshirn" <morbidrsa@gmail.com>,
-        "Mike Snitzer" <snitzer@redhat.com>
+CC: akpm@linux-foundation.org, "Marc Zyngier" <marc.zyngier@arm.com>,
+        "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+        "Kristina Martsenko" <kristina.martsenko@arm.com>,
+        "Christoffer Dall" <christoffer.dall@linaro.org>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.290831003@decadent.org.uk>
+Message-ID: <lsq.1519831218.496839452@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 053/254] dm mpath: simplify failure path of
- dm_multipath_init()
+Subject: [PATCH 3.16 033/254] arm64: KVM: fix VTTBR_BADDR_MASK BUG_ON
+ off-by-one
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,68 +82,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <morbidrsa@gmail.com>
+From: Kristina Martsenko <kristina.martsenko@arm.com>
 
-commit ff658e9c1aae9a84dd06d46f847dc0cd2bf0dd11 upstream.
+commit 26aa7b3b1c0fb3f1a6176a0c1847204ef4355693 upstream.
 
-Currently the cleanup of all error cases are open-coded.  Introduce a
-common exit path and labels.
+VTTBR_BADDR_MASK is used to sanity check the size and alignment of the
+VTTBR address. It seems to currently be off by one, thereby only
+allowing up to 47-bit addresses (instead of 48-bit) and also
+insufficiently checking the alignment. This patch fixes it.
 
-Signed-off-by: Johannes Thumshirn <morbidrsa@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+As an example, with 4k pages, before this patch we have:
+
+  PHYS_MASK_SHIFT = 48
+  VTTBR_X = 37 - 24 = 13
+  VTTBR_BADDR_SHIFT = 13 - 1 = 12
+  VTTBR_BADDR_MASK = ((1 << 35) - 1) << 12 = 0x00007ffffffff000
+
+Which is wrong, because the mask doesn't allow bit 47 of the VTTBR
+address to be set, and only requires the address to be 12-bit (4k)
+aligned, while it actually needs to be 13-bit (8k) aligned because we
+concatenate two 4k tables.
+
+With this patch, the mask becomes 0x0000ffffffffe000, which is what we
+want.
+
+Fixes: 0369f6a34b9f ("arm64: KVM: EL2 register definitions")
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-mpath.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/kvm_arm.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -1691,16 +1691,15 @@ static int __init dm_multipath_init(void
- 	r = dm_register_target(&multipath_target);
- 	if (r < 0) {
- 		DMERR("register failed %d", r);
--		kmem_cache_destroy(_mpio_cache);
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto bad_register_target;
- 	}
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -164,8 +164,7 @@
+ #define VTTBR_X		(37 - VTCR_EL2_T0SZ_40B)
+ #endif
  
- 	kmultipathd = alloc_workqueue("kmpathd", WQ_MEM_RECLAIM, 0);
- 	if (!kmultipathd) {
- 		DMERR("failed to create workqueue kmpathd");
--		dm_unregister_target(&multipath_target);
--		kmem_cache_destroy(_mpio_cache);
--		return -ENOMEM;
-+		r = -ENOMEM;
-+		goto bad_alloc_kmultipathd;
- 	}
- 
- 	/*
-@@ -1713,16 +1712,23 @@ static int __init dm_multipath_init(void
- 						  WQ_MEM_RECLAIM);
- 	if (!kmpath_handlerd) {
- 		DMERR("failed to create workqueue kmpath_handlerd");
--		destroy_workqueue(kmultipathd);
--		dm_unregister_target(&multipath_target);
--		kmem_cache_destroy(_mpio_cache);
--		return -ENOMEM;
-+		r = -ENOMEM;
-+		goto bad_alloc_kmpath_handlerd;
- 	}
- 
- 	DMINFO("version %u.%u.%u loaded",
- 	       multipath_target.version[0], multipath_target.version[1],
- 	       multipath_target.version[2]);
- 
-+	return 0;
-+
-+bad_alloc_kmpath_handlerd:
-+	destroy_workqueue(kmultipathd);
-+bad_alloc_kmultipathd:
-+	dm_unregister_target(&multipath_target);
-+bad_register_target:
-+	kmem_cache_destroy(_mpio_cache);
-+
- 	return r;
- }
+-#define VTTBR_BADDR_SHIFT (VTTBR_X - 1)
+-#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_BADDR_SHIFT)
++#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
+ #define VTTBR_VMID_SHIFT  (UL(48))
+ #define VTTBR_VMID_MASK	  (UL(0xFF) << VTTBR_VMID_SHIFT)
  
