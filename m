@@ -1,127 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933061AbeB1Pjq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:39:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:32962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932370AbeB1Pjo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:39:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D072B60213
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH 0/2] ESRT fixes for relocatable kexec'd kernel
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>, ard.biesheuvel@linaro.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sgoel@codeaurora.org, timur@codeaurora.org
-References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
- <20180228061901.GJ6019@linaro.org>
-From: Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <1f03865f-2d22-8ba1-a276-a6b49d7c14de@codeaurora.org>
-Date: Wed, 28 Feb 2018 08:39:42 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933149AbeB1Pkr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:40:47 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47952 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932362AbeB1Pkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:40:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,406,1515484800";
+   d="scan'208";a="34814127"
+Date: Wed, 28 Feb 2018 17:40:41 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: DRI-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
+ setting.
+Message-ID: <20180228154041.GK5453@intel.com>
+References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228061901.GJ6019@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180228152741.22507-1-Liviu.Dudau@arm.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/2018 11:19 PM, AKASHI Takahiro wrote:
-> Tyler,
-> 
-> # I missed catching your patch as its subject doesn't contain arm64.
-> 
-> On Fri, Feb 23, 2018 at 12:42:31PM -0700, Tyler Baicar wrote:
->> Currently on arm64 ESRT memory does not appear to be properly blocked off.
->> Upon successful initialization, ESRT prints out the memory region that it
->> exists in like:
->>
->> esrt: Reserving ESRT space from 0x000000000a4c1c18 to 0x000000000a4c1cf0.
->>
->> But then by dumping /proc/iomem this region appears as part of System RAM
->> rather than being reserved:
->>
->> 08f10000-0deeffff : System RAM
->>
->> This causes issues when trying to kexec if the kernel is relocatable. When
->> kexec tries to execute, this memory can be selected to relocate the kernel to
->> which then overwrites all the ESRT information. Then when the kexec'd kernel
->> tries to initialize ESRT, it doesn't recognize the ESRT version number and
->> just returns from efi_esrt_init().
-> 
-> I'm not sure what is the root cause of your problem.
-> Do you have good confidence that the kernel (2nd kernel image in this case?)
-> really overwrite ESRT region?
+On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
+> The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
+> ioctl expects that any capability set by the client will have a value of 1.
+> Make the check early so that we don't have to test the value for each
+> capability.
 
-According to my debug, yes.
-Using JTAG, I was able to determine that the ESRT memory region was 
-getting overwritten by the secondary kernel in 
-kernel/arch/arm64/kernel/relocate_kernel.S - specifically the 
-"copy_page" line of arm64_relocate_new_kernel()
-
-> To my best knowledge, kexec is carefully designed not to do such a thing
-> as it allocates a temporary buffer for kernel image and copies it to the
-> final destination at the very end of the 1st kernel.
-> 
-> My guess is that kexec, or rather kexec-tools, tries to load the kernel image
-> at 0x8f80000 (or 0x9080000?, not sure) in your case. It may or may not be
-> overlapped with ESRT.
-> (Try "-d" option when executing kexec command for confirmation.)
-
-With -d, I see
-
-get_memory_ranges_iomem_cb: 0000000009611000 - 000000000e5fffff : System RAM
-
-That overlaps the ESRT reservation -
-[ 0.000000] esrt: Reserving ESRT space from 0x000000000b708718 to 
-0x000000000b7087f0
+What if we want a a non-boolean capability at some point?
 
 > 
-> Are you using initrd with kexec?
-
-Yes
-
+> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+>  drivers/gpu/drm/drm_ioctl.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> Thanks,
-> -Takahiro AKASHI
+> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> index af782911c505..02ffa0e8d77b 100644
+> --- a/drivers/gpu/drm/drm_ioctl.c
+> +++ b/drivers/gpu/drm/drm_ioctl.c
+> @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
+>  {
+>  	struct drm_set_client_cap *req = data;
+>  
+> +	if (req->value > 1)
+> +		return -EINVAL;
+> +
+>  	switch (req->capability) {
+>  	case DRM_CLIENT_CAP_STEREO_3D:
+> -		if (req->value > 1)
+> -			return -EINVAL;
+>  		file_priv->stereo_allowed = req->value;
+>  		break;
+>  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
+> -		if (req->value > 1)
+> -			return -EINVAL;
+>  		file_priv->universal_planes = req->value;
+>  		break;
+>  	case DRM_CLIENT_CAP_ATOMIC:
+>  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
+>  			return -EINVAL;
+> -		if (req->value > 1)
+> -			return -EINVAL;
+>  		file_priv->atomic = req->value;
+>  		file_priv->universal_planes = req->value;
+>  		break;
+> -- 
+> 2.16.2
 > 
-> 
->> This causes an early ioremap leak because
->> the memory allocated for 'va' is never unmapped. So first fix that error
->> case to properly unmap 'va' before returning.
->>
->> This still leaves ESRT unable to initialize in the kexec'd kernel, so now
->> mark the ESRT memory block as nomap so that this memory is not treated as
->> System RAM. With this change I'm able to see that the ESRT data is not
->> overwritten when running a kexec'd kernel.
->>
->> Tyler Baicar (2):
->>    efi/esrt: fix unsupported version initialization failure
->>    efi/esrt: mark ESRT memory region as nomap
->>
->>   drivers/firmware/efi/esrt.c | 10 +++++++++-
->>   1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> -- 
->> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
->> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project.
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Ville Syrjälä
+Intel OTC
