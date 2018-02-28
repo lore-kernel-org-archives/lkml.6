@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516909-1519834087-2-7501984770285335858
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519833892-2-12086589466240266811
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834086; b=HXTWNH8SD5vMDq0H2428oC+3dJRoCFnVQgBS97YJdmheQt2
-    Jhmyy5lwJDhbDuRtswK+51WNRAQ/+4+ntWgAky+m4Nh/ze0GqZ4eGox3IUPY1CJi
-    y72SAFaHrClH5PpYUT06g9z49wJuRHqxGuMnH8k0TRsdTeqkiCPBH/H9s2XQrr+S
-    Oi40mct4FWE8Ib1i7NRDks3coPWVMVRAzPT4sHTqvxc/Hk+J56lwWFgwyol1mz1o
-    8HnRLjALzH/ediJ6Jlhw7QDmG5dnum/IeUKqK1DSC4TCUXqlYGbGsonpGzvi83MY
-    OXsJMhIVLAPARlJasuzNKBhByaWe5h6wefrvhCg==
+    t=1519833891; b=LlNPzB5iFJLePtRnov3YxmeaCEYDtO8oiCQ7K8Y9KPJ5o3u
+    +Avax8v5usnHTLxH4S7KvOu7xRPFIkV5uo9uIb11JL0AcSGOBZxeQIzAU4jB/D7H
+    VggqfUkbgX3Em96G1pAljUga3Y/TZINVY/mE6oENov3CpNoMe4tXX69BohTNxyZj
+    rMASLS0sfhsTvJJQK0nE88UBoTF/iji+db1OoSnDoNXhv5QFiW7z0U8dxyjDiqrq
+    trQ91vmg+3KrE3MpHH9JjUWyx57psY4cCfm0Ldl6IxAHDpKxh1ECfDXJgxEhzwsB
+    gViIGF8cVOhxypyZV4V9p+D27Cax2XFJHljbBqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834086; bh=42ks7Py6FDC21om1mz4
-    UsQGtkY0sM99Da6lM981KlBE=; b=laOjsKW1jLk6HROAH4EtbvApFxxc3xn3UqJ
-    eRYQ9HF62CHjMVznOomM6HVYDsM4ME8U1+E4itjpvb4+OiokaKXqLpX/q4bZrL2r
-    Yr2LOznieET7XONaNMK3Id1QeQtkhJuPF3bzWR63qlunXy0cRk5mnzeAO2mX4jp6
-    7uxZRD1S3F6aO1TJCjraTG0z399mc7d3Br40PtD/j1yJEf5a9BlLRD3Vur61hRZv
-    DU0whXsdhlYQd3Wgr/3SziQEK8lmynDLOp0ShvA8Lb76Jw1qtOSR54rdeb9mMglg
-    KVu9i/66kN6FxfnwfPsHdzQgqLHNh7l8N0MKiiCLrD8cMnlPg6g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519833891; bh=xYtsaiUkvTJypXggmsL
+    6qnLrDtqK3Ydoe/hrVcdj9o0=; b=C3HKmm/LmQl/NYVA++qbn/hO7lB8cUAdDiO
+    pfMF8IqdymfDJWo33SwDeOwTRS0vtdLeYpW51nSWLAArObL2c/o7PZ86PT5oMde7
+    Raa97FTE01KZbqXb+jhQnTzKD4jV/lKNNs3qDErf/lGhAsM/dcJrulzG+UVNpFRy
+    tA0NLb+AIP2QKOnyeEndXC9FGUfslL78oSYcvFem4MDcRstyPSMWzoTbPZDT93Rx
+    W9+Mj1rz6+HOBYmqZ/L9LLHFQ4wZtrYD46Y2lczk0d4Y5kps0Kk2pGMWZMFR4RXo
+    U8fnKYfNqc6pxg0ByTmKHBGI4cYAFx8h+fAp2bPIq/lGxjYrSgA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,27 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeB1QHr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:07:47 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34874 "EHLO
+        id S933001AbeB1QEp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:04:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34839 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934455AbeB1QFO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:05:14 -0500
+        by vger.kernel.org with ESMTP id S932702AbeB1QEm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:04:42 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Greg Kroah-Hartman" <gregkh@suse.de>,
-        "Bart Westgeest" <bart@elbrys.com>
+CC: akpm@linux-foundation.org, "Eric Biggers" <ebiggers3@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "John Stultz" <john.stultz@linaro.org>,
+        "Alexey Dobriyan" <adobriyan@gmail.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>
 Date: Wed, 28 Feb 2018 15:20:21 +0000
-Message-ID: <lsq.1519831221.992100649@decadent.org.uk>
+Message-ID: <lsq.1519831221.886888966@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 057/140] staging: usbip: removed dead code from
- receive function
+Subject: [PATCH 3.2 048/140] posix-timer: Properly check sigevent->sigev_notify
 In-Reply-To: <lsq.1519831221.703311959@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,172 +82,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Westgeest <bart@elbrys.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 5a08c5267e45fe936452051a8c126e8418984eb7 upstream.
+commit cef31d9af908243421258f1df35a4a644604efbe upstream.
 
-The usbip_xmit function supported sending and receiving data, however
-the sending part of the function was never used/executed. Renamed the
-function to usbip_recv, and removed the unused code.
+timer_create() specifies via sigevent->sigev_notify the signal delivery for
+the new timer. The valid modes are SIGEV_NONE, SIGEV_SIGNAL, SIGEV_THREAD
+and (SIGEV_SIGNAL | SIGEV_THREAD_ID).
 
-Signed-off-by: Bart Westgeest <bart@elbrys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+The sanity check in good_sigevent() is only checking the valid combination
+for the SIGEV_THREAD_ID bit, i.e. SIGEV_SIGNAL, but if SIGEV_THREAD_ID is
+not set it accepts any random value.
+
+This has no real effects on the posix timer and signal delivery code, but
+it affects show_timer() which handles the output of /proc/$PID/timers. That
+function uses a string array to pretty print sigev_notify. The access to
+that array has no bound checks, so random sigev_notify cause access beyond
+the array bounds.
+
+Add proper checks for the valid notify modes and remove the SIGEV_THREAD_ID
+masking from various code pathes as SIGEV_NONE can never be set in
+combination with SIGEV_THREAD_ID.
+
+Reported-by: Eric Biggers <ebiggers3@gmail.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+[bwh: Backported to 3.2:
+ - Add sig_none variable in common_timer_get(), added earlier upstream
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_rx.c      |  2 +-
- drivers/staging/usbip/usbip_common.c | 61 ++++++++++--------------------------
- drivers/staging/usbip/usbip_common.h |  3 +-
- drivers/staging/usbip/vhci_rx.c      |  2 +-
- 4 files changed, 20 insertions(+), 48 deletions(-)
+ kernel/posix-timers.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
---- a/drivers/staging/usbip/stub_rx.c
-+++ b/drivers/staging/usbip/stub_rx.c
-@@ -586,7 +586,7 @@ static void stub_rx_pdu(struct usbip_dev
- 	memset(&pdu, 0, sizeof(pdu));
- 
- 	/* 1. receive a pdu header */
--	ret = usbip_xmit(0, ud->tcp_socket, (char *) &pdu, sizeof(pdu), 0);
-+	ret = usbip_recv(ud->tcp_socket, &pdu, sizeof(pdu));
- 	if (ret != sizeof(pdu)) {
- 		dev_err(dev, "recv a header, %d\n", ret);
- 		usbip_event_add(ud, SDEV_EVENT_ERROR_TCP);
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -334,9 +334,8 @@ void usbip_dump_header(struct usbip_head
- }
- EXPORT_SYMBOL_GPL(usbip_dump_header);
- 
--/* Send/receive messages over TCP/IP. I refer drivers/block/nbd.c */
--int usbip_xmit(int send, struct socket *sock, char *buf, int size,
--	       int msg_flags)
-+/* Receive data over TCP/IP. */
-+int usbip_recv(struct socket *sock, void *buf, int size)
+--- a/kernel/posix-timers.c
++++ b/kernel/posix-timers.c
+@@ -440,17 +440,22 @@ static struct pid *good_sigevent(sigeven
  {
- 	int result;
- 	struct msghdr msg;
-@@ -355,19 +354,6 @@ int usbip_xmit(int send, struct socket *
- 		return -EINVAL;
- 	}
+ 	struct task_struct *rtn = current->group_leader;
  
--	if (usbip_dbg_flag_xmit) {
--		if (send) {
--			if (!in_interrupt())
--				pr_debug("%-10s:", current->comm);
--			else
--				pr_debug("interrupt  :");
+-	if ((event->sigev_notify & SIGEV_THREAD_ID ) &&
+-		(!(rtn = find_task_by_vpid(event->sigev_notify_thread_id)) ||
+-		 !same_thread_group(rtn, current) ||
+-		 (event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_SIGNAL))
++	switch (event->sigev_notify) {
++	case SIGEV_SIGNAL | SIGEV_THREAD_ID:
++		rtn = find_task_by_vpid(event->sigev_notify_thread_id);
++		if (!rtn || !same_thread_group(rtn, current))
++			return NULL;
++		/* FALLTHRU */
++	case SIGEV_SIGNAL:
++	case SIGEV_THREAD:
++		if (event->sigev_signo <= 0 || event->sigev_signo > SIGRTMAX)
++			return NULL;
++		/* FALLTHRU */
++	case SIGEV_NONE:
++		return task_pid(rtn);
++	default:
+ 		return NULL;
 -
--			pr_debug("sending... , sock %p, buf %p, size %d, "
--				 "msg_flags %d\n", sock, buf, size, msg_flags);
--			usbip_dump_buffer(buf, size);
--		}
--	}
+-	if (((event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE) &&
+-	    ((event->sigev_signo <= 0) || (event->sigev_signo > SIGRTMAX)))
+-		return NULL;
 -
- 	do {
- 		sock->sk->sk_allocation = GFP_NOIO;
- 		iov.iov_base    = buf;
-@@ -377,42 +363,30 @@ int usbip_xmit(int send, struct socket *
- 		msg.msg_control = NULL;
- 		msg.msg_controllen = 0;
- 		msg.msg_namelen    = 0;
--		msg.msg_flags      = msg_flags | MSG_NOSIGNAL;
--
--		if (send)
--			result = kernel_sendmsg(sock, &msg, &iov, 1, size);
--		else
--			result = kernel_recvmsg(sock, &msg, &iov, 1, size,
--						MSG_WAITALL);
-+		msg.msg_flags      = MSG_NOSIGNAL;
- 
-+		result = kernel_recvmsg(sock, &msg, &iov, 1, size, MSG_WAITALL);
- 		if (result <= 0) {
--			pr_debug("%s sock %p buf %p size %u ret %d total %d\n",
--				 send ? "send" : "receive", sock, buf, size,
--				 result, total);
-+			pr_debug("receive sock %p buf %p size %u ret %d total %d\n",
-+				 sock, buf, size, result, total);
- 			goto err;
- 		}
- 
- 		size -= result;
- 		buf += result;
- 		total += result;
--
- 	} while (size > 0);
- 
- 	if (usbip_dbg_flag_xmit) {
--		if (!send) {
--			if (!in_interrupt())
--				pr_debug("%-10s:", current->comm);
--			else
--				pr_debug("interrupt  :");
--
--			pr_debug("receiving....\n");
--			usbip_dump_buffer(bp, osize);
--			pr_debug("received, osize %d ret %d size %d total %d\n",
--				 osize, result, size, total);
--		}
-+		if (!in_interrupt())
-+			pr_debug("%-10s:", current->comm);
-+		else
-+			pr_debug("interrupt  :");
- 
--		if (send)
--			pr_debug("send, total %d\n", total);
-+		pr_debug("receiving....\n");
-+		usbip_dump_buffer(bp, osize);
-+		pr_debug("received, osize %d ret %d size %d total %d\n",
-+			osize, result, size, total);
- 	}
- 
- 	return total;
-@@ -420,7 +394,7 @@ int usbip_xmit(int send, struct socket *
- err:
- 	return result;
+-	return task_pid(rtn);
++	}
  }
--EXPORT_SYMBOL_GPL(usbip_xmit);
-+EXPORT_SYMBOL_GPL(usbip_recv);
  
- struct socket *sockfd_to_socket(unsigned int sockfd)
+ void posix_timers_register_clock(const clockid_t clock_id,
+@@ -683,16 +688,17 @@ common_timer_get(struct k_itimer *timr,
  {
-@@ -712,7 +686,7 @@ int usbip_recv_iso(struct usbip_device *
- 	if (!buff)
- 		return -ENOMEM;
+ 	ktime_t now, remaining, iv;
+ 	struct hrtimer *timer = &timr->it.real.timer;
++	bool sig_none;
  
--	ret = usbip_xmit(0, ud->tcp_socket, buff, size, 0);
-+	ret = usbip_recv(ud->tcp_socket, buff, size);
- 	if (ret != size) {
- 		dev_err(&urb->dev->dev, "recv iso_frame_descriptor, %d\n",
- 			ret);
-@@ -831,8 +805,7 @@ int usbip_recv_xbuff(struct usbip_device
- 		}
- 	}
+ 	memset(cur_setting, 0, sizeof(struct itimerspec));
  
--	ret = usbip_xmit(0, ud->tcp_socket, (char *)urb->transfer_buffer,
--			 size, 0);
-+	ret = usbip_recv(ud->tcp_socket, urb->transfer_buffer, size);
- 	if (ret != size) {
- 		dev_err(&urb->dev->dev, "recv xbuf, %d\n", ret);
- 		if (ud->side == USBIP_STUB) {
---- a/drivers/staging/usbip/usbip_common.h
-+++ b/drivers/staging/usbip/usbip_common.h
-@@ -306,8 +306,7 @@ void setreuse(struct socket *);
- void usbip_dump_urb(struct urb *purb);
- void usbip_dump_header(struct usbip_header *pdu);
++	sig_none = timr->it_sigev_notify == SIGEV_NONE;
+ 	iv = timr->it.real.interval;
  
--int usbip_xmit(int send, struct socket *sock, char *buf, int size,
--	       int msg_flags);
-+int usbip_recv(struct socket *sock, void *buf, int size);
- struct socket *sockfd_to_socket(unsigned int sockfd);
+ 	/* interval timer ? */
+ 	if (iv.tv64)
+ 		cur_setting->it_interval = ktime_to_timespec(iv);
+-	else if (!hrtimer_active(timer) &&
+-		 (timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
++	else if (!hrtimer_active(timer) && !sig_none)
+ 		return;
  
- void usbip_pack_pdu(struct usbip_header *pdu, struct urb *urb, int cmd,
---- a/drivers/staging/usbip/vhci_rx.c
-+++ b/drivers/staging/usbip/vhci_rx.c
-@@ -205,7 +205,7 @@ static void vhci_rx_pdu(struct usbip_dev
- 	memset(&pdu, 0, sizeof(pdu));
+ 	now = timer->base->get_time();
+@@ -702,8 +708,7 @@ common_timer_get(struct k_itimer *timr,
+ 	 * timer move the expiry time forward by intervals, so
+ 	 * expiry is > now.
+ 	 */
+-	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING ||
+-	    (timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE))
++	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING || sig_none))
+ 		timr->it_overrun += (unsigned int) hrtimer_forward(timer, now, iv);
  
- 	/* 1. receive a pdu header */
--	ret = usbip_xmit(0, ud->tcp_socket, (char *) &pdu, sizeof(pdu), 0);
-+	ret = usbip_recv(ud->tcp_socket, &pdu, sizeof(pdu));
- 	if (ret < 0) {
- 		if (ret == -ECONNRESET)
- 			pr_info("connection reset by peer\n");
+ 	remaining = __hrtimer_expires_remaining_adjusted(timer, now);
+@@ -713,7 +718,7 @@ common_timer_get(struct k_itimer *timr,
+ 		 * A single shot SIGEV_NONE timer must return 0, when
+ 		 * it is expired !
+ 		 */
+-		if ((timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
++		if (!sig_none)
+ 			cur_setting->it_value.tv_nsec = 1;
+ 	} else
+ 		cur_setting->it_value = ktime_to_timespec(remaining);
+@@ -811,7 +816,7 @@ common_timer_set(struct k_itimer *timr,
+ 	timr->it.real.interval = timespec_to_ktime(new_setting->it_interval);
+ 
+ 	/* SIGEV_NONE timers are not queued ! See common_timer_get */
+-	if (((timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE)) {
++	if (timr->it_sigev_notify == SIGEV_NONE) {
+ 		/* Setup correct expiry time for relative timers */
+ 		if (mode == HRTIMER_MODE_REL) {
+ 			hrtimer_add_expires(timer, timer->base->get_time());
