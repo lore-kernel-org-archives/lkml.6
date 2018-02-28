@@ -1,228 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933257AbeB1PfR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 10:35:17 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54554 "EHLO mx1.redhat.com"
+        id S932976AbeB1PgF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 10:36:05 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53024 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932791AbeB1PfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 10:35:15 -0500
-Date: Wed, 28 Feb 2018 17:35:10 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Subject: Re: [PATCH v15 11/11] RFC: fw_cfg: do DMA read operation
-Message-ID: <20180228173444-mutt-send-email-mst@kernel.org>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-12-marcandre.lureau@redhat.com>
- <20180227020104-mutt-send-email-mst@kernel.org>
- <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com>
+        id S932362AbeB1PgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 10:36:03 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Roman Kagan <rkagan@virtuozzo.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Andrey Smetanin <asmetanin@virtuozzo.com>,
+        "Denis V . Lunev" <den@openvz.org>
+Subject: Re: [PATCH 3/3] x86/kvm/hyper-v: inject #GP only when invalid SINTx vector is unmasked
+References: <20180228134401.6544-1-vkuznets@redhat.com>
+        <20180228134401.6544-4-vkuznets@redhat.com>
+        <20180228151843.GB2376@rkaganb.sw.ru>
+Date: Wed, 28 Feb 2018 16:35:59 +0100
+In-Reply-To: <20180228151843.GB2376@rkaganb.sw.ru> (Roman Kagan's message of
+        "Wed, 28 Feb 2018 18:18:44 +0300")
+Message-ID: <87lgfdgm8w.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMxuvay=4qSLZBVHoPPX+6ZNEmyS2G-69hHqW3HVdxFoS90h1g@mail.gmail.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 01:27:02PM +0100, Marc-André Lureau wrote:
-> Hi
-> 
-> On Tue, Feb 27, 2018 at 1:04 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Thu, Feb 15, 2018 at 10:33:12PM +0100, Marc-André Lureau wrote:
-> >> Modify fw_cfg_read_blob() to use DMA if the device supports it.
-> >> Return errors, because the operation may fail.
-> >>
-> >> So far, only one call in fw_cfg_register_dir_entries() is using
-> >> kmalloc'ed buf and is thus clearly eligible to DMA read.
-> >>
-> >> Initially, I didn't implement DMA read to speed up boot time, but as a
-> >> first step before introducing DMA write (since read operations were
-> >> already presents). Even more, I didn't realize fw-cfg entries were
-> >> being read by the kernel during boot by default. But actally fw-cfg
-> >> entries are being populated during module probe. I knew DMA improved a
-> >> lot bios boot time (the main reason the DMA interface was added
-> >> afaik). Let see the time it would take to read the whole ACPI
-> >> tables (128kb allocated)
-> >>
-> >>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
-> >>   - with DMA: sys 0m0.003s
-> >>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
-> >>
-> >> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
-> >> boot to populate sysfs qemu_fw_cfg directory, and it is quite
-> >> small (1-2kb). Since it does not expose itself, in order to measure
-> >> the time it takes to read such small file, I took a comparable sized
-> >> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
-> >> modified read_raw enabling DMA)
-> >>
-> >>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
-> >>   - with DMA:
-> >>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
-> >>   - without DMA:
-> >>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
-> >>
-> >> That's a few msec saved during boot by enabling DMA read (the gain
-> >> would be more substantial if other & bigger fw-cfg entries are read by
-> >> others from sysfs, unfortunately, it's not clear if we can always
-> >> enable DMA there)
-> >>
-> >> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-> >> ---
-> >>  drivers/firmware/qemu_fw_cfg.c | 61 ++++++++++++++++++++++++++++++++++--------
-> >>  1 file changed, 50 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> >> index 3015e77aebca..94df57e9be66 100644
-> >> --- a/drivers/firmware/qemu_fw_cfg.c
-> >> +++ b/drivers/firmware/qemu_fw_cfg.c
-> >> @@ -124,12 +124,47 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
-> >>       return ret;
-> >>  }
-> >>
-> >> +/* with acpi & dev locks taken */
-> >> +static ssize_t fw_cfg_read_blob_dma(u16 key,
-> >> +                             void *buf, loff_t pos, size_t count)
-> >> +{
-> >> +     ssize_t ret;
-> >> +
-> >> +     if (pos == 0) {
-> >> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
-> >> +                                     | FW_CFG_DMA_CTL_SELECT
-> >> +                                     | FW_CFG_DMA_CTL_READ);
-> >> +     } else {
-> >> +             fw_cfg_sel_endianness(key);
-> >> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
-> >> +             if (ret < 0)
-> >> +                     return ret;
-> >> +             ret = fw_cfg_dma_transfer(buf, count,
-> >> +                                     FW_CFG_DMA_CTL_READ);
-> >> +     }
-> >> +
-> >> +     return ret;
-> >> +}
-> >> +
-> >> +/* with acpi & dev locks taken */
-> >> +static ssize_t fw_cfg_read_blob_io(u16 key,
-> >> +                             void *buf, loff_t pos, size_t count)
-> >> +{
-> >> +     fw_cfg_sel_endianness(key);
-> >> +     while (pos-- > 0)
-> >> +             ioread8(fw_cfg_reg_data);
-> >> +     ioread8_rep(fw_cfg_reg_data, buf, count);
-> >> +     return count;
-> >> +}
-> >> +
-> >>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
-> >>  static ssize_t fw_cfg_read_blob(u16 key,
-> >> -                             void *buf, loff_t pos, size_t count)
-> >> +                             void *buf, loff_t pos, size_t count,
-> >> +                             bool dma)
-> >>  {
-> >>       u32 glk = -1U;
-> >>       acpi_status status;
-> >> +     ssize_t ret;
-> >>
-> >>       /* If we have ACPI, ensure mutual exclusion against any potential
-> >>        * device access by the firmware, e.g. via AML methods:
-> >
-> > so this adds a dma flag to fw_cfg_read_blob.
-> >
-> >
-> >
-> >> @@ -143,14 +178,17 @@ static ssize_t fw_cfg_read_blob(u16 key,
-> >>       }
-> >>
-> >>       mutex_lock(&fw_cfg_dev_lock);
-> >> -     fw_cfg_sel_endianness(key);
-> >> -     while (pos-- > 0)
-> >> -             ioread8(fw_cfg_reg_data);
-> >> -     ioread8_rep(fw_cfg_reg_data, buf, count);
-> >> +     if (dma && fw_cfg_dma_enabled()) {
-> >> +             ret = fw_cfg_read_blob_dma(key, buf, pos, count);
-> >> +     } else {
-> >> +             ret = fw_cfg_read_blob_io(key, buf, pos, count);
-> >> +     }
-> >> +
-> >>       mutex_unlock(&fw_cfg_dev_lock);
-> >>
-> >>       acpi_release_global_lock(glk);
-> >> -     return count;
-> >> +
-> >> +     return ret;
-> >>  }
-> >>
-> >>  #ifdef CONFIG_CRASH_CORE
-> >
-> > If set to false it does io, if set to true it does dma.
-> >
-> > I would prefer passing an accessor function pointer
-> > since that's clearer than true/false.
-> 
-> ok
-> 
-> >
-> >> @@ -284,7 +322,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
-> >>
-> >>       /* verify fw_cfg device signature */
-> >>       if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
-> >> -                             0, FW_CFG_SIG_SIZE) < 0 ||
-> >> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
-> >>               memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> >>               fw_cfg_io_cleanup();
-> >>               return -ENODEV;
-> >> @@ -468,7 +506,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
-> >>       if (count > entry->size - pos)
-> >>               count = entry->size - pos;
-> >>
-> >> -     return fw_cfg_read_blob(entry->select, buf, pos, count);
-> >> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
-> >> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
-> >>  }
-> >>
-> >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
-> >> @@ -634,7 +673,7 @@ static int fw_cfg_register_dir_entries(void)
-> >>       size_t dir_size;
-> >>
-> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
-> >> -                     0, sizeof(files_count));
-> >> +                     0, sizeof(files_count), false);
-> >>       if (ret < 0)
-> >>               return ret;
-> >>
-> >> @@ -646,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
-> >>               return -ENOMEM;
-> >>
-> >>       ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
-> >> -                     sizeof(files_count), dir_size);
-> >> +                     sizeof(files_count), dir_size, false);
-> >>       if (ret < 0)
-> >>               goto end;
-> >>
-> >> @@ -697,7 +736,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
-> >>               goto err_probe;
-> >>
-> >>       /* get revision number, add matching top-level attribute */
-> >> -     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
-> >>       if (err < 0)
-> >>               goto err_probe;
-> >
-> >
-> > Looks like all callers pass in false as parameter.
-> > Given this, how can this speed up any operations?
-> >
-> > Are you sure you tested this properly?
-> 
-> 
-> I did modify read_raw to conduct testing ( the part "with a
-> modified read_raw enabling DMA" should be before, updating commit message).
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
-So this patch does nothing, it's just infrastructure so DMA can be
-enabled in the future - is that right?
+> On Wed, Feb 28, 2018 at 02:44:01PM +0100, Vitaly Kuznetsov wrote:
+>> Hyper-V 2016 on KVM with SynIC enabled doesn't boot with the following
+>> trace:
+>> 
+>>     kvm_entry:            vcpu 0
+>>     kvm_exit:             reason MSR_WRITE rip 0xfffff8000131c1e5 info 0 0
+>>     kvm_hv_synic_set_msr: vcpu_id 0 msr 0x40000090 data 0x10000 host 0
+>>     kvm_msr:              msr_write 40000090 = 0x10000 (#GP)
+>>     kvm_inj_exception:    #GP (0x0)
+>
+> I don't remember having seen this...  Does this happen with the mainline
+> QEMU, which doesn't set the SintPollingModeAvailable (17) bit in cpuid
+> 0x40000003:edx?
 
-> >
-> >> --
-> >> 2.16.1.73.g5832b7e9f2
+Yes, you need to have Hyper-V role enabled, kvm-intel modules needs to
+be loaded with 'nesting' support enabled.
+
+>
+>> 
+>> KVM acts according to the following statement from TLFS:
+>> 
+>> "
+>> 11.8.4 SINTx Registers
+>> ...
+>> Valid values for vector are 16-255 inclusive. Specifying an invalid
+>> vector number results in #GP.
+>> "
+>> 
+>> However, I checked and genuine Hyper-V doesn't #GP when we write 0x10000
+>> to SINTx. I checked with Microsoft and they confirmed that if either the
+>> Masked bit (bit 16) or the Polling bit (bit 18) is set to 1, then they
+>> ignore the value of Vector. Make KVM act accordingly.
+>
+> I wonder if that cpuid setting affects this behavior?  Also curious what
+> exactly the guest is trying to achieve writing this bogus value?
+
+The value is actually the default value which is supposed to be there:
+
+"At virtual processor creation time, the default value of all SINTx
+(synthetic interrupt source) registers is 0x0000000000010000." so I
+guess this is just an intialization procedure.
+
+>
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/include/uapi/asm/hyperv.h | 1 +
+>>  arch/x86/kvm/hyperv.c              | 7 ++++++-
+>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+>> index 62c778a303a1..a492dc357bd7 100644
+>> --- a/arch/x86/include/uapi/asm/hyperv.h
+>> +++ b/arch/x86/include/uapi/asm/hyperv.h
+>> @@ -326,6 +326,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+>>  #define HV_SYNIC_SIEFP_ENABLE		(1ULL << 0)
+>>  #define HV_SYNIC_SINT_MASKED		(1ULL << 16)
+>>  #define HV_SYNIC_SINT_AUTO_EOI		(1ULL << 17)
+>> +#define HV_SYNIC_SINT_POLLING		(1ULL << 18)
+>>  #define HV_SYNIC_SINT_VECTOR_MASK	(0xFF)
+>>  
+>>  #define HV_SYNIC_STIMER_COUNT		(4)
+>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+>> index 6d14f808145d..d3d866c32976 100644
+>> --- a/arch/x86/kvm/hyperv.c
+>> +++ b/arch/x86/kvm/hyperv.c
+>> @@ -95,9 +95,14 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
+>>  			  u64 data, bool host)
+>>  {
+>>  	int vector, old_vector;
+>> +	bool masked, polling;
+>>  
+>>  	vector = data & HV_SYNIC_SINT_VECTOR_MASK;
+>> -	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
+>> +	masked = data & HV_SYNIC_SINT_MASKED;
+>> +	polling = data & HV_SYNIC_SINT_POLLING;
+>> +
+>> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR &&
+>> +	    !host && !masked && !polling)
+>>  		return 1;
+>>  	/*
+>>  	 * Guest may configure multiple SINTs to use the same vector, so
+>
+> I'm not sure this is enough to implement the polling mode: per spec,
+>
+
+Oh, no, I wasn't trying to -- and by the way we don't currently announce
+SintPollingModeAvailable so guests are not supposed to do that. This is
+rather a future proof to 'not forget'.
+
+>> Setting the polling bit will have the effect of unmasking an interrupt
+>> source, except that an actual interrupt is not generated.
+>
+> However, if the guest sets a valid vector and the masked bit cleared,
+> we'll consider it a usual SINT and add to masks and inject interrupts,
+> etc, regardless of the polling bit.
+>
+> I must admit I'm confused by the above quote from the spec: is the
+> polling bit supposed to come together with the masked bit?  If so, then
+> we probably should validate it here (but your logs indicate otherwise).
+> In general I'm missing the utility of this mode: why should an interrupt
+> controller be involved in polling at all?
+
+"Setting the polling bit will have the effect of unmasking an interrupt
+source, except that an actual interrupt is not generated."
+
+So, as I understand it, setting polling bit makes Vector value
+irrelevant - the interrupt is not generated so I *assume* we may see
+writes with zero Vector and polling bit set. But again, we're not
+implementing polling mode for now, I can just drop it from the patch if
+you think it is confusing.
+
+-- 
+  Vitaly
