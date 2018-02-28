@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-516026-1519834935-2-6568610943335288290
+X-Cyrus-Session-Id: sloti22d1t05-516026-1519834920-2-4313433376304532285
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519834934; b=CaYoTdAMYYqGW/4O1hc0g06+2iHKVVoD4I8kp3msN7/wHVv
-    7mKV8/nqwhrCx4DsErva51QPy82RdwBWg0ej1Y3SxSl2sEaOk8Wc2efvXEboLwB+
-    UdLi6pn2YM91zDCLLbRAX5GKsHdnQXvXGjJ0SdY/HremIqSg5auPY04AZr896R46
-    7vkjBQO/xTgqzFHImyhpVX3GTe1to3yakF8tRHMRhmHiQI6rmVh8qQznEAxpQvYF
-    NpHdeNY8UOb6E/xqJlvuv2q+Mt1K9MdHS1TQiLhSRa8qduWkZcE2hPldRjhdN9gz
-    C8z/JgPgMU7m3HMP+JSi9TO8kZdHX7rQUWpkxTg==
+    t=1519834919; b=DfdjuXUoFcT6uneU/cjSV93oZwZsJQFHWbzLNvmYejYwfKE
+    hA/eIXEr4HBiii9sZBKQoGF0Chd8BZNXZhzgHVV9hMhDYq8rS/IOMAuLcQiigity
+    kRPt6KV8ShOsEoWIevdx94U9DKZaWEnhsLlRLV6Gj2HqIVuD102PSBeINe/EvZ13
+    04sIXVHk4lCWeleYQd7i9dNzRllp08sM/+J0JI2f9SIU1gQIHBtQb8ryzggXNwD/
+    7MCiZofbSIf5dTrGxnPGwX+U0Kfc5XHxq9O5+YbJD08A12QA1yW5yMJwS+efdh9t
+    wWqUN8B6bZpG8R77jatmcLqzWxHQbJHurNQ99qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1519834934; bh=S3RSs0grV+zG9qCS7c0
-    tFekP4eVBO8OEJRizJ2ihYaU=; b=S7IIorKJiIF4u+xdijb5414EvMrVUkH+hrS
-    2FiwiUzDAkGvLGve/JhT4q2Im8Ar51jh5R2shUneDHuhYYsZ7OTVyCOYRgLcuha8
-    LitxD9/uoIJHQonT3VmwoLw/VpdOoEK8JQFaQMCWQD1JH6AzEMBFE9O2OrkWPkLr
-    s4LOvCfFpKDwBHyF1ar0fCfSysMBkAQKMQKg3KDlYOc7OIy/p1BDkRfFe0KN348F
-    T9WP4Otcbm5k9TTYmpHXb9wUlxkyqAydsbvzmeZqLajxxjjG0AaBiDXCPJRsUTJ+
-    a06fuCN4a9RWMoFG8hEilQV/TpYCbi3aXNutpsyDsJUKC3IAXhQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1519834919; bh=/Ih7GoCTlXX7kBkJvfa
+    jOvCY73pI/hVKbYFoh1VgxCI=; b=dyY6tvx+V3gsRhBJqktlMab3fJf+7FSmes/
+    CYp82Yn99tlD20dpd6e1dUecf9N11NQInyPRVLoAvZDHjdTXaeyqwqwgTP0Y9HSv
+    m+Xzl7gOoN4a1Cu9Z+O45RgllxTzftrQlwZBuwMkEAGjLNeihmHDIpuQV/fNU84m
+    6f8BzcYxg4eFsPkkhPlI/JAFCd55gCs7lmXl5Q6200pfhf/8kEukP6N76UgPVCQE
+    4YltWRMU6qC7rubyPoLrSaXEB3WTkhCYKWhmEkDz3go+/ZBUhEewcdcaS10xbJA+
+    Ed/xku7OJaV5rLq8sZjNX29rndgQ77f3Uc2RV/9XHur04HkSnBA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935046AbeB1QUy (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 11:20:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35396 "EHLO
+        id S935224AbeB1QU5 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 11:20:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35403 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935224AbeB1QUw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:52 -0500
+        by vger.kernel.org with ESMTP id S935236AbeB1QUz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Feb 2018 11:20:55 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Adam Wallis" <awallis@codeaurora.org>,
-        "Vinod Koul" <vinod.koul@intel.com>
+CC: akpm@linux-foundation.org,
+        "Chandan Rajendra" <chandan@linux.vnet.ibm.com>,
+        "Abdul Haleem" <abdhalee@linux.vnet.ibm.com>
 Date: Wed, 28 Feb 2018 15:20:18 +0000
-Message-ID: <lsq.1519831218.157345464@decadent.org.uk>
+Message-ID: <lsq.1519831218.235188593@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 082/254] dmaengine: dmatest: warn user when dma test
- times out
+Subject: [PATCH 3.16 089/254] ext4: fix crash when a directory's i_size is
+ too small
 In-Reply-To: <lsq.1519831217.271785318@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,34 +81,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adam Wallis <awallis@codeaurora.org>
+From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
 
-commit a9df21e34b422f79d9a9fa5c3eff8c2a53491be6 upstream.
+commit 9d5afec6b8bd46d6ed821aa1579634437f58ef1f upstream.
 
-Commit adfa543e7314 ("dmatest: don't use set_freezable_with_signal()")
-introduced a bug (that is in fact documented by the patch commit text)
-that leaves behind a dangling pointer. Since the done_wait structure is
-allocated on the stack, future invocations to the DMATEST can produce
-undesirable results (e.g., corrupted spinlocks). Ideally, this would be
-cleaned up in the thread handler, but at the very least, the kernel
-is left in a very precarious scenario that can lead to some long debug
-sessions when the crash comes later.
+On a ppc64 machine, when mounting a fuzzed ext2 image (generated by
+fsfuzzer) the following call trace is seen,
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197605
-Signed-off-by: Adam Wallis <awallis@codeaurora.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+VFS: brelse: Trying to free free buffer
+WARNING: CPU: 1 PID: 6913 at /root/repos/linux/fs/buffer.c:1165 .__brelse.part.6+0x24/0x40
+.__brelse.part.6+0x20/0x40 (unreliable)
+.ext4_find_entry+0x384/0x4f0
+.ext4_lookup+0x84/0x250
+.lookup_slow+0xdc/0x230
+.walk_component+0x268/0x400
+.path_lookupat+0xec/0x2d0
+.filename_lookup+0x9c/0x1d0
+.vfs_statx+0x98/0x140
+.SyS_newfstatat+0x48/0x80
+system_call+0x58/0x6c
+
+This happens because the directory that ext4_find_entry() looks up has
+inode->i_size that is less than the block size of the filesystem. This
+causes 'nblocks' to have a value of zero. ext4_bread_batch() ends up not
+reading any of the directory file's blocks. This renders the entries in
+bh_use[] array to continue to have garbage data. buffer_uptodate() on
+bh_use[0] can then return a zero value upon which brelse() function is
+invoked.
+
+This commit fixes the bug by returning -ENOENT when the directory file
+has no associated blocks.
+
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/dma/dmatest.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/namei.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -633,6 +633,7 @@ static int dmatest_func(void *data)
- 			 * free it this time?" dancing.  For now, just
- 			 * leave it dangling.
- 			 */
-+			WARN(1, "dmatest: Kernel stack may be corrupted!!\n");
- 			dmaengine_unmap_put(um);
- 			result("test timed out", total_tests, src_off, dst_off,
- 			       len, 0);
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1267,6 +1267,10 @@ static struct buffer_head * ext4_find_en
+ 			       "falling back\n"));
+ 	}
+ 	nblocks = dir->i_size >> EXT4_BLOCK_SIZE_BITS(sb);
++	if (!nblocks) {
++		ret = NULL;
++		goto cleanup_and_exit;
++	}
+ 	start = EXT4_I(dir)->i_dir_start_lookup;
+ 	if (start >= nblocks)
+ 		start = 0;
