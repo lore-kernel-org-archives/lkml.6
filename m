@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932177AbeB1Oln (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 09:41:43 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36796 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752845AbeB1Olg (ORCPT
+        id S932452AbeB1OpV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 09:45:21 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42785 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932155AbeB1Olm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 09:41:36 -0500
-X-Google-Smtp-Source: AH8x225EzNIqgvPvel0hteLVTp92wNlNio+0Heq+AmU6c2EO3T4zX7LiC5NxWEcHb5e8+908U2JQew==
+        Wed, 28 Feb 2018 09:41:42 -0500
+X-Google-Smtp-Source: AG47ELtQuSvdsxcwSmJtpipQmvMr9uS6DTfNcx+zBzrLbEGN88IlK7jlRpTdWKbkJAhUunW85IaDYw==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 07/22] nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
-Date: Wed, 28 Feb 2018 06:40:51 -0800
-Message-Id: <20180228144106.16363-8-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 12/22] nvmem: meson-efuse: Convert to use devm_nvmem_register()
+Date: Wed, 28 Feb 2018 06:40:56 -0800
+Message-Id: <20180228144106.16363-13-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180228144106.16363-1-andrew.smirnov@gmail.com>
 References: <20180228144106.16363-1-andrew.smirnov@gmail.com>
@@ -45,19 +45,19 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/snvs_lpgpr.c | 12 +-----------
+ drivers/nvmem/meson-efuse.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
-index e5c2a4a17f03..6a2fdd09e74a 100644
---- a/drivers/nvmem/snvs_lpgpr.c
-+++ b/drivers/nvmem/snvs_lpgpr.c
-@@ -117,22 +117,13 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
- 	cfg->reg_read  = snvs_lpgpr_read,
- 	cfg->reg_write = snvs_lpgpr_write,
+diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
+index a43c68f90937..66029fc85ba9 100644
+--- a/drivers/nvmem/meson-efuse.c
++++ b/drivers/nvmem/meson-efuse.c
+@@ -60,25 +60,15 @@ static int meson_efuse_probe(struct platform_device *pdev)
+ 	econfig.reg_read = meson_efuse_read;
+ 	econfig.size = size;
  
--	nvmem = nvmem_register(cfg);
-+	nvmem = devm_nvmem_register(dev, cfg);
+-	nvmem = nvmem_register(&econfig);
++	nvmem = devm_nvmem_register(&pdev->dev, &econfig);
  	if (IS_ERR(nvmem))
  		return PTR_ERR(nvmem);
  
@@ -66,23 +66,18 @@ index e5c2a4a17f03..6a2fdd09e74a 100644
  	return 0;
  }
  
--static int snvs_lpgpr_remove(struct platform_device *pdev)
+-static int meson_efuse_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
 -	return nvmem_unregister(nvmem);
 -}
 -
- static const struct of_device_id snvs_lpgpr_dt_ids[] = {
- 	{ .compatible = "fsl,imx6q-snvs-lpgpr", .data = &snvs_lpgpr_cfg_imx6q },
- 	{ .compatible = "fsl,imx6ul-snvs-lpgpr",
-@@ -143,7 +134,6 @@ MODULE_DEVICE_TABLE(of, snvs_lpgpr_dt_ids);
- 
- static struct platform_driver snvs_lpgpr_driver = {
- 	.probe	= snvs_lpgpr_probe,
--	.remove	= snvs_lpgpr_remove,
+ static struct platform_driver meson_efuse_driver = {
+ 	.probe = meson_efuse_probe,
+-	.remove = meson_efuse_remove,
  	.driver = {
- 		.name	= "snvs_lpgpr",
- 		.of_match_table = snvs_lpgpr_dt_ids,
+ 		.name = "meson-efuse",
+ 		.of_match_table = meson_efuse_match,
 -- 
 2.14.3
