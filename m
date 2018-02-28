@@ -1,64 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeB1ELC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Feb 2018 23:11:02 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52690 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751646AbeB1ELB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Feb 2018 23:11:01 -0500
-Date: Wed, 28 Feb 2018 06:11:00 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-Subject: Re: [RFC PATCH v2] ptr_ring: linked list fallback
-Message-ID: <20180228061003-mutt-send-email-mst@kernel.org>
-References: <1519607771-20613-1-git-send-email-mst@redhat.com>
- <01aff5eb-a92f-2170-05f7-664220985070@redhat.com>
- <20180226223252-mutt-send-email-mst@kernel.org>
- <0316016a-717b-9d3f-5aef-dccaf34d0fae@redhat.com>
- <20180227190703-mutt-send-email-mst@kernel.org>
- <b73c7c1e-4a63-45c0-cef5-0ec8f1195eca@redhat.com>
- <909327f0-52b8-5c3c-47fe-7b1b71dca196@redhat.com>
+        id S1751830AbeB1EVk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Feb 2018 23:21:40 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40994 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751628AbeB1EVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Feb 2018 23:21:39 -0500
+Date: Wed, 28 Feb 2018 05:21:34 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Robert Abel <rabel@robertabel.eu>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 3/4] auxdisplay: charlcd: fix x/y address commands
+Message-ID: <20180228042134.GA27815@1wt.eu>
+References: <9ec3c54c-f8fe-22d7-783e-8cf9862405bb@robertabel.eu>
+ <20180225235432.31209-1-rabel@robertabel.eu>
+ <20180225235432.31209-2-rabel@robertabel.eu>
+ <20180225235432.31209-3-rabel@robertabel.eu>
+ <20180225235432.31209-4-rabel@robertabel.eu>
+ <CANiq72mu2NkDx4XqXzcO39N8AZg50h+BxrONJ3eCc7LjJ0rJKg@mail.gmail.com>
+ <50a2fd51-8bdb-d2b7-c2b3-7df638fdedde@robertabel.eu>
+ <20180227051905.GA26781@1wt.eu>
+ <911beeb5-529f-09bb-0e5a-c5b626adba60@robertabel.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <909327f0-52b8-5c3c-47fe-7b1b71dca196@redhat.com>
+In-Reply-To: <911beeb5-529f-09bb-0e5a-c5b626adba60@robertabel.eu>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 11:39:15AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年02月28日 11:28, Jason Wang wrote:
-> > > > Well I believe the main user for this is qdisc, which use skb
-> > > > array. And we
-> > > > can not use what implemented in this patch directly for sk_buff
-> > > > without some
-> > > > changes on the data structure.
-> > > Why not? skb has next and prev pointers at 1st two fields:
-> > > 
-> > > struct sk_buff {
-> > >          union {
-> > >                  struct {
-> > >                          /* These two members must be first. */
-> > >                          struct sk_buff          *next;
-> > >                          struct sk_buff          *prev;
-> > > ...
-> > > }
-> > > 
-> > > so it's just a question of casting to struct plist.
-> > 
-> > Well, then the casting can only be done in skb_array implementation?
-> 
-> Ok, could be done in ptr ring. But still looks tricky, because of the
-> different meaning of prev and last.
-> 
-> Thanks
+Hi Robert,
 
-It doesn't matter much - the meaning is up to whoever has the skb
-queued. But sure - adding struct plist into the union is cleaner
-and just as easy.
+On Wed, Feb 28, 2018 at 12:29:38AM +0100, Robert Abel wrote:
+> It is however an edge case that incurs a
+> lot of code for little to no functionality.
+> I'd much prefer if we broke backwards compatibility here and actually
+> only parse the format that is indicated in the comment:
+> 
+> >         case 'x':       /* gotoxy : LxXXX[yYYY]; */
+> >         case 'y':       /* gotoxy : LyYYY[xXXX]; */
+> >  
+> 
+> Exactly one x command followed exactly by zero or one y command or
+> vice-versa.
+> 
+> If somebody changes their mind during the escape sequence, they can just
+> issue a new one instead of appending to the current one.
+> 
+> I'll post an example patch.
+
+I'm sorry but I think that your patch has simply proven that your point
+above doesn't stand. Adding 90 lines of code full of strchr, strpbrk and
+memcpy to replace 12 trivial lines, while possibly breaking compatibility
+isn't considered an improvement. Reducing code is an improvement,
+multiplying it by 7 is not, it adds maintenance burden for no benefit.
+
+Let's stick to Miguel's last version. At least now we know that the
+alternatives are worse, which is great.
+
+Thanks,
+Willy
