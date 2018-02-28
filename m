@@ -1,92 +1,107 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227TrA1xMRZlR7WX+i2Xdx+x3vcqeggBQB6cM04IPwPHE+baOJklXPIzBwKkpYa+HR48fvHl
-ARC-Seal: i=1; a=rsa-sha256; t=1519853524; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AH8x227NnW2BBb8PLFObDLugGiTpHvngBem2iLMWmSBvdaLY7LHM3PstCy9nV22y/kH0Y3hn98Z9
+ARC-Seal: i=1; a=rsa-sha256; t=1519853058; cv=none;
         d=google.com; s=arc-20160816;
-        b=RyRenD3j+e1xU9kpGTh89zf5g7jMzJG5YgQX0Umy0dNLeD4r462wjglFpUe9lH1mej
-         M46nWgL0zEMuwR3XIzqajX8u5jn/uYKPuQFiM23JQ6OI1ih9fsFTKmiU/yQ0hnXtJBm0
-         3Kyrl2b0Fi2ibZzg2EVaibHPaNnntilPjAW1883QjhilNipfDvabtR+1RYsPjjqHF1Jc
-         Ea4NYSQK5+qNjbovxoLzK0N71Z1SfrB+qzHYigHHnWvJXf+N+kCqk7uKYc35NjTs312/
-         uz3DwdX/NBuY+TgdbMwPwJl3MS5dTX9T1aSnf+Y3t0hUpJbDOKMu+oQ+RuVwvLBXNiL1
-         Zizw==
+        b=dF8+PrKF1jh6Eqarfus0KAYC6rxpxbcZVySIoiHPqgLOLLi9BzKdsioO1qGjifRQAJ
+         4+orfQc8SIebL1HByRF4Nx4/QqE+n91h/lqOPi6MOKhF51nq1sEGo8cwrEmbfwi5lQnK
+         PO0oBMV+Fu69Nw/dm8uSeuMRMAYGF2qDCblzzsb2vlYlFGY/Fii8LdgWLkZOH9FuMCTU
+         cEU3+u6e55VCJ0SINwAdvVUQSlz7noG6WJXI/AjBCc2N3TlnXskLSq0P7LDW8lCLc6rG
+         KjTpCl+iRa7zSnPovMHyZTWpNNyGWr4UgGHM6lF6fJyI0zNKDI1N1wkg7pWrB0Y9pWJ1
+         p0vQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:to:subject:arc-authentication-results;
-        bh=w8/OjG84632wdzzvmfO+lEk/0EZWUvJ9g0JmCRGKJW4=;
-        b=Wz8vzlMGnQU6HkMops22fNKX8eaWlyac7s3Oj9N4yMUely4ErmpgjiVTtCIvi8c54D
-         buA8BbdYvtgl/7rJh66XPP/8s3IWhqh1iHuusPkpgWu4xcYXjOnevG1fZKbzo+IU2F06
-         cE7v4jQulP8TqiitFO8eU8NEHGg15H6Tp2ZbgGV95Hk42RKcN9xZpCZWem8Qiy7j6M3h
-         yut8LjcCiMo8o4mgztwPUrd6h3phaxPvQtej2OjT+EMSogJa4/ahkueHwrMYTePR33sg
-         3Flr1+3Y+dd2ZGcW8PXgFH1ZamqJwx6q8gr3dkn/nYB/5LKmtWY4+MqAROab/PeB2K/L
-         tEjg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=5JlSGn1wMF4M8N4F1qD6nRWbYgtJXn44Q98BAF/hCbQ=;
+        b=EfZ0sptpBx40Jn9dQmKPm2yQTsuOtb3sc3r+B85s4g/gt+hOXjYevthm0DsYruUB6f
+         1PIPTAtYma/75zQc/smLhSyMYwU9cckCkAJeA4TQJbLVWJhOpmqxyO/S0nfvwUudnw8h
+         7xkbNjJfGus9jxcrYoYMEAfm8kuiR8PhpgewEomJJcqyV8eRcUmV5zrxEIsN2sCwxshH
+         ewrzT3etDV/ZzqZCkH2i79PO9Ssm8lTiE798m+2lmkP90YpOgAztkkTH5c2+np4BAyOH
+         8sAAJqt4u9Efzckdd/dm2fMQthmNO5uLkU9vXAMPrdnMiDCpbbHtBcFWvBLSLxnQZYQd
+         NdRg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935083AbeB1Vbm (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 28 Feb 2018 16:31:42 -0500
-Received: from www62.your-server.de ([213.133.104.62]:58395 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934866AbeB1Vbk (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 28 Feb 2018 16:31:40 -0500
-Subject: Re: [PATCH] selftests/bpf: Add bpf_probe_read_str to bpf_helpers.h
-To: Tushar Dave <tushar.n.dave@oracle.com>, ast@kernel.org,
-        shuah@kernel.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1519778024-3113-1-git-send-email-tushar.n.dave@oracle.com>
- <1d72361e-e8a7-38e0-16db-ade3f658ce92@iogearbox.net>
- <f7ff30a7-888f-bb3c-b6b5-48c82d5b0c08@oracle.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <916737aa-6b2b-b207-a1ed-4751c8deca3b@iogearbox.net>
-Date: Wed, 28 Feb 2018 22:31:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D312133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 28 Feb 2018 15:24:17 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
+	Kees Cook <keescook@chromium.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rajat Jain <rajatja@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2] PCI/ASPM: Suppress common clock mode setting failure
+Message-ID: <20180228212417.GM127842@bhelgaas-glaptop.roam.corp.google.com>
+References: <1516651924-21820-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <f7ff30a7-888f-bb3c-b6b5-48c82d5b0c08@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516651924-21820-1-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593681724365410647?=
-X-GMAIL-MSGID: =?utf-8?q?1593681928914219920?=
+X-GMAIL-THRID: =?utf-8?q?1590324818171191002?=
+X-GMAIL-MSGID: =?utf-8?q?1593681440750515144?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/28/2018 10:28 PM, Tushar Dave wrote:
-> On 02/28/2018 08:57 AM, Daniel Borkmann wrote:
->> Hi Tushar,
->>
->> On 02/28/2018 01:33 AM, Tushar Dave wrote:
->>> Using bpf_probe_read_str() from samples/bpf causes compiler warning.
->>> e.g.
->>> warning: implicit declaration of function 'bpf_probe_read_str' is invalid in C99
->>>        [-Wimplicit-function-declaration]
->>>          num = bpf_probe_read_str(buf, sizeof(buf), ctx->di);
->>>                ^
->>> 1 warning generated.
->>>
->>> Add bpf_probe_read_str() to bpf_helpers.h so it can be used by
->>> samples/bpf programs.
->>>
->>> Signed-off-by: Tushar Dave <tushar.n.dave@oracle.com>
->>
->> In general no objections to it, but it would need an in-tree
->> user first:
->>
->> $ git grep -n bpf_probe_read_str tools/
->> tools/include/uapi/linux/bpf.h:596: * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
->> $
->>
->> Why not adding this along with a sample?
-> Okay, I will send new patch along with new sample or add usage of
-> bpf_probe_read_str() in one of our exiting sample :)
+On Mon, Jan 22, 2018 at 03:12:01PM -0500, Sinan Kaya wrote:
+> Code is emitting warnings when it tries to set the common clock mode for
+> ASPM and ASPM is already configured to common clock mode by the UEFI BIOS.
+> Let's bail out silently in such a case.
+> 
+> pci 0004:00:00.0: ASPM: Could not configure common clock
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 
-Sounds great, the latter is totally fine as well. :-)
+Applied to pci/aspm for v4.17, thanks!
 
-Thanks,
-Daniel
+> ---
+>  drivers/pci/pcie/aspm.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 9783e10..913b90d 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -240,6 +240,24 @@ static void pcie_aspm_configure_common_clock(struct pcie_link_state *link)
+>  	if (!(reg16 & PCI_EXP_LNKSTA_SLC))
+>  		same_clock = 0;
+>  
+> +	/* Port might be already in common clock mode */
+> +	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
+> +	if (same_clock && (reg16 & PCI_EXP_LNKCTL_CCC)) {
+> +		bool consistent = true;
+> +
+> +		list_for_each_entry(child, &linkbus->devices, bus_list) {
+> +			pcie_capability_read_word(child, PCI_EXP_LNKCTL,
+> +						  &reg16);
+> +			if (!(reg16 & PCI_EXP_LNKCTL_CCC)) {
+> +				consistent = false;
+> +				break;
+> +			}
+> +		}
+> +		if (consistent)
+> +			return;
+> +		dev_warn(&parent->dev, "ASPM: current common clock configuration is broken, reconfiguring\n");
+> +	}
+> +
+>  	/* Configure downstream component, all functions */
+>  	list_for_each_entry(child, &linkbus->devices, bus_list) {
+>  		pcie_capability_read_word(child, PCI_EXP_LNKCTL, &reg16);
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
