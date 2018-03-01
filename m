@@ -1,77 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161655AbeCAUka (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:40:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57210 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1161578AbeCAUk2 (ORCPT
+        id S1161680AbeCAUlr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:41:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32810 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161629AbeCAUlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:40:28 -0500
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
- Memory
-From: Benjamin Herrenschmidt <benh@au1.ibm.com>
-Reply-To: benh@au1.ibm.com
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Date: Fri, 02 Mar 2018 07:40:15 +1100
-In-Reply-To: <1519936477.4592.23.camel@au1.ibm.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
-         <1519876489.4592.3.camel@kernel.crashing.org>
-         <1519876569.4592.4.camel@au1.ibm.com>
-         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
-         <1519936477.4592.23.camel@au1.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030120-0040-0000-0000-000004399CFF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030120-0041-0000-0000-000020DCA2EF
-Message-Id: <1519936815.4592.25.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010253
+        Thu, 1 Mar 2018 15:41:45 -0500
+Date: Thu, 1 Mar 2018 20:41:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 04/25] dt-bindings: sound: qcom: Add bindings for q6afe
+Message-ID: <20180301204133.GP12864@sirena.org.uk>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-5-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9pS2hy4/DrI8BQlq"
+Content-Disposition: inline
+In-Reply-To: <20180213165837.1620-5-srinivas.kandagatla@linaro.org>
+X-Cookie: Real Users hate Real Programmers.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 07:34 +1100, Benjamin Herrenschmidt wrote:
-> 
-> But what happens with that PCI memory ? Is it effectively turned into
-> nromal memory (ie, usable for normal allocations, potentially used to
-> populate user pages etc...) or is it kept aside ?
 
-(What I mean is is it added to the page allocator basically)
+--9pS2hy4/DrI8BQlq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also we need to be able to hard block MEMREMAP_WB mappings of non-RAM
-on ppc64 (maybe via an arch hook as it might depend on the processor
-family). Server powerpc cannot do cachable accesses on IO memory
-(unless it's special OpenCAPI or nVlink, but not on PCIe).
+On Tue, Feb 13, 2018 at 04:58:16PM +0000, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-> Also on ppc64, the physical addresses of PCIe make it so far appart
-> that there's no way we can map them into the linear mapping at the
-> normal offset of PAGE_OFFSET + (pfn << PAGE_SHIFT), so things like
-> page_address or virt_to_page cannot work as-is on PCIe addresses.
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.  Look at what existing commits in the area you're changing are
+doing and make sure your subject lines visually resemble what they're
+doing.
 
-Talking of which ... is there any documentation on the whole
-memremap_page ? my grep turned out empty...
+> +- but must contain the following property:
+> +
+> +- compatible:
+> +- qcom,apr-svc-id
+> +- qcom,apr-svc-name
+> +- #sound-dai-cells
 
-Cheers,
-Ben.
+Property or properties?  It's a bit surprising that both the ID and the
+name are mandatory, does the name actually get used for non-diagnostic
+reasons?
+
+--9pS2hy4/DrI8BQlq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYZX0ACgkQJNaLcl1U
+h9DVswgAgNJ4G1f96WfH9ZdNbYjqbFopiIHLA51w5qPJCavaMFl900adibi+E4Wd
+I77+PJxyz5HuLtxuZi/ioi2rzhy7HVoPRx/laRpn+PgVE5fwtUfAIHCL4/tqBpA7
+e/rqmW5dbv1H/OuG8sICw164RmcpSB+9IQ03IiJS+sfIP3qRv4ygPiP1353Ba7Jw
+zBER6PLEQ2VL+ASqf/Bhdu4pLJfAUu9OgFoR+7DpK6AFskRaLFCsYqKs7w2y4LWk
+1RcNXjflfvfwlXKO86oONrNcB8wiJSGp8gbRXLEDIG1ydJnr4hLLJ1hjkgl+HwTN
+Ux/aViDUZMRPrqBWIm7mtDotwLUmvg==
+=tDFr
+-----END PGP SIGNATURE-----
+
+--9pS2hy4/DrI8BQlq--
