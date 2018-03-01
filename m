@@ -1,71 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935757AbeCAHpG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 02:45:06 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:21060 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934962AbeCAHpE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:45:04 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w217ixhu022005
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: AG47ELvCOY+sAggrAAnKRgUaeJd5Nhoqt5vE3rmue0O2WxTbJ0FafHDNzftp49puRb+Y+9DTgXcdyKzV6UNy7PlpWaA=
+        id S935618AbeCAHr3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 02:47:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60450 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934908AbeCAHr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 02:47:27 -0500
+Date: Thu, 1 Mar 2018 08:47:13 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v1 2/4] ASoC: codecs: pcm179x: Add support for PCM1789
+Message-ID: <20180301084713.24bdda4e@dell-desktop.home>
+In-Reply-To: <20180227225629.5cc4e802@windsurf.lan>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-3-mylene.josserand@bootlin.com>
+        <20180227225629.5cc4e802@windsurf.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180228051525.a2vouqs6djnd2cnf@huvuddator>
-References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
- <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com> <20180228051525.a2vouqs6djnd2cnf@huvuddator>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 16:44:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
-Message-ID: <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] kconfig: invoke oldconfig instead of
- silentoldconfig from local*config
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-28 14:15 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> On Wed, Feb 28, 2018 at 09:15:25AM +0900, Masahiro Yamada wrote:
->> The purpose of local{yes,mod}config is to arrange the .config file
->> based on actually loaded modules.  It is unnecessary to update
->> include/generated/autoconf.h and include/config/* stuff here.
->>
->> They will be automatically updated during the build.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> Changes in v2:
->>   - newly added
->>
->>  scripts/kconfig/Makefile | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
->> index c5d1d1a..bf9289a 100644
->> --- a/scripts/kconfig/Makefile
->> +++ b/scripts/kconfig/Makefile
->> @@ -49,11 +49,11 @@ localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
->
-> (Unrelated: $(obj)/streamline_config.pl is a checked-in file, so I
-> wonder if there's any point to having it as a prerequisite of the phony
-> targets local{yes,mod}config.)
->
+Hello,
 
-Indeed.
+On Tue, 27 Feb 2018 22:56:29 +0100
+Thomas Petazzoni <thomas.petazzoni@bootlin.com> wrote:
 
-It it unrelated, but I think it is worth fixing.
+> Hello,
+> 
+> On Tue, 27 Feb 2018 22:24:31 +0100, Mylène Josserand wrote:
+> 
+> > diff --git a/sound/soc/codecs/pcm179x-i2c.c b/sound/soc/codecs/pcm179x-i2c.c
+> > index 795a0657c097..83a2e1508df8 100644
+> > --- a/sound/soc/codecs/pcm179x-i2c.c
+> > +++ b/sound/soc/codecs/pcm179x-i2c.c
+> > @@ -26,10 +26,13 @@
+> >  static int pcm179x_i2c_probe(struct i2c_client *client,
+> >  			      const struct i2c_device_id *id)
+> >  {
+> > -	struct regmap *regmap;
+> > +	struct regmap *regmap = NULL;  
+> 
+> I don't think this change is useful, since regmap is always initialized
+> below anyway.
 
-Care to send a patch, please?
+okay.
 
+> 
+> 
+> > +	if (mute)
+> > +		val = ~(PCM1789_MUTE_L_EN | PCM1789_MUTE_R_EN);  
+> 
+> That's not really useful with regmap_update_bits() which already does
+> the masking, no?
 
+Yep
 
+> 
+> > +	else
+> > +		val = PCM1789_MUTE_L_EN | PCM1789_MUTE_R_EN;
+> > +	ret = regmap_update_bits(priv->regmap, PCM1789_SOFT_MUTE,
+> > +				 PCM1789_MUTE_MASK, val);  
+> 
+> Couldn't this be:
+> 
+> 	if (mute)
+> 		val = 0;
+> 	else
+> 		val = PCM1789_MUTE_MASK;
+> 
+> 	ret = regmap_update_bits(priv->regmap, PCM1789_SOFT_MUTE,
+> 				 PCM1789_MUTE_MASK, val);
+> 
+
+I will update my V2 with it.
+
+> 
+> > +static struct snd_soc_dai_driver pcm1789_dai = {
+> > +	.name = "pcm1789-hifi",
+> > +	.playback = {
+> > +		.stream_name = "Playback",
+> > +		.channels_min = 2,
+> > +		.channels_max = 2,
+> > +		.rates = SNDRV_PCM_RATE_CONTINUOUS,
+> > +		.rate_min = 10000,
+> > +		.rate_max = 200000,
+> > +		.formats = PCM1792A_FORMATS, },  
+> 
+> Nit: the closing curly brace should be on a separate line.
+
+Yep, thanks.
+
+> 
+> 
+> > +	if (type == PCM1789)
+> > +		return devm_snd_soc_register_component(dev,
+> > +						       &soc_component_dev_pcm1789,
+> > +						       &pcm1789_dai, 1);
+> > +  
+> 
+> Perhaps a "else" here ?
+
+Sure
+
+> 
+> >  	return devm_snd_soc_register_component(dev,
+> >  			&soc_component_dev_pcm179x, &pcm179x_dai, 1);  
+> 
+> Thanks!
+> 
+> Thomas
+
+Thank you,
+
+Mylène
 
 -- 
-Best Regards
-Masahiro Yamada
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
