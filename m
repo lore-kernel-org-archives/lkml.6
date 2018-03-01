@@ -1,88 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161541AbeCAURx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:17:53 -0500
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:40731 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161487AbeCAURv (ORCPT
+        id S1161568AbeCAUU2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:20:28 -0500
+Received: from mail-pl0-f41.google.com ([209.85.160.41]:36196 "EHLO
+        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161487AbeCAUUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:17:51 -0500
-X-Google-Smtp-Source: AG47ELvvp3P7Nn/oAVKhCxREn6TXAQOMOAnGtuHZLNSLdEPjIc6Z8eOJKe4TE6hyePDyDgbTZ/yPtyu1RGvxrgZuR5c=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <CADYN=9Lbu608OGPnm4pdbFS24yuk+Pruhn5Wv5ArGitm6UOQpw@mail.gmail.com>
-References: <20180301083316.GA6779@localhost.localdomain> <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
- <CADYN=9Lbu608OGPnm4pdbFS24yuk+Pruhn5Wv5ArGitm6UOQpw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 1 Mar 2018 15:17:48 -0500
-Message-ID: <CAHC9VhQ3h0U8QzSktGbEKHK1pfmuvLGPLsGEZbEhBQQjQdr+-Q@mail.gmail.com>
-Subject: Re: Regression found when running LTP connect01 on next-20180301
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Richard Haines <richard_c_haines@btinternet.com>,
-        netdev@vger.kernel.org, selinux@tycho.nsa.gov,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Mar 2018 15:20:24 -0500
+X-Google-Smtp-Source: AG47ELv4wegzFK1rQoaSTvYQSzsQsGexSznybo0wO0eYqyQZu5i4bHmp/dUO8jGH6CT20V2hV6g+vQ==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <AF3403B9-9791-4A77-A6FB-3281B8EA7A31@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_83C1D3F3-F6FF-4590-B7E4-E000F852A5BA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: EXT4 Oops (Re: [PATCH V15 06/22] mmc: block: Add blk-mq support)
+Date: Thu, 1 Mar 2018 13:20:16 -0700
+In-Reply-To: <20180301160418.GA2490@thunk.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Dong Aisheng <dongas86@gmail.com>,
+        Das Asutosh <asutoshd@codeaurora.org>,
+        Zhangfei Gao <zhangfei.gao@gmail.com>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>
+To: "Theodore Ts'o" <tytso@mit.edu>
+References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
+ <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
+ <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
+ <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
+ <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
+ <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
+ <8876217f-ede6-fc81-2e05-b4fc976b3235@intel.com>
+ <6a1267b0-6242-fc9f-60ed-02bf34677b62@intel.com>
+ <20180301160418.GA2490@thunk.org>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 3:01 PM, Anders Roxell <anders.roxell@linaro.org> wrote:
-> On 1 March 2018 at 14:42, Paul Moore <paul@paul-moore.com> wrote:
->> On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@linaro.org> wrote:
->>> Hi,
->>>
->>> I was running LTP's testcase connect01 [1] and found a regression in linux-next
->>> (next-20180301).  Bisect gave me this patch as the problematic patch (sha
->>> d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
->>>
->>> Output from the test(LTP release 20180118):
->>> $ cd /opt/ltp/
->>> $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
->>> $ ./runltp -pq -f connect-syscall
->>> "
->>> Running tests.......
->>> connect01    1  TPASS  :  bad file descriptor successful
->>> connect01    2  TPASS  :  invalid socket buffer successful
->>> connect01    3  TPASS  :  invalid salen successful
->>> connect01    4  TPASS  :  invalid socket successful
->>> connect01    5  TPASS  :  already connected successful
->>> connect01    6  TPASS  :  connection refused successful
->>> connect01    7  TFAIL  :  connect01.c:146: invalid address family ; returned -1 (expected -1), errno 22 (expected 97)
->>> INFO: ltp-pan reported some tests FAIL
->>> LTP Version: 20180118
->>> "
->>>
->>> The output from the test expected 97 and we received 22, can you please
->>> elaborate on what have been changed?
->>>
->>> Cheers,
->>> Anders
->>> [1] https://github.com/linux-test-project/ltp/blob/20180118/testcases/kernel/syscalls/connect/connect01.c#L146
->>
->> Hi Anders,
->>
->> Thanks for the report.  Out of curiosity, we're you running the full
->> LTP test suite and this was the only failure, or did you just run the
->> connect01 test?
->
-> Normally we run all syscalls, but when we saw this regression I did the
-> bisect and only ran test connect01.
-> On every new push we ran 19 different sets of LTP tests, where
-> connect01 is part of the syscalls test set.
 
-So this means that only the connect01 test experienced failures?
+--Apple-Mail=_83C1D3F3-F6FF-4590-B7E4-E000F852A5BA
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
->>  Either answer is fine, I'm just trying to understand
->> the scope of the regression.
->>
->> Richard, are you able to look into this?  If not, let me know and I'll
->> dig a bit deeper (I'll likely take a quick look today, but if the
->> failure is subtle it might require some digging).
->>
->> --
->> paul moore
->> www.paul-moore.com
 
--- 
-paul moore
-www.paul-moore.com
+On Mar 1, 2018, at 9:04 AM, Theodore Ts'o <tytso@mit.edu> wrote:
+> This doesn't seem to make sense; the PC is where we are currently
+> executing, and LR is the "Link Register" where the flow of control
+> will be returning after the current function returns, right?  Well,
+> dx_probe should *not* be returning to __wait_on_bit().  So this just
+> seems.... weird.
+> 
+> Ignoring the LR register, this stack trace looks sane...  I can't see
+> which pointer could be NULL and getting dereferenced, though.  How
+> easily can you reproduce the problem?  Can you either (a) translate
+> the PC into a line number, or better yet, if you can reproduce, add a
+> series of BUG_ON's so we can see what's going on?
+> 
+> +	BUG_ON(frame);
+
+I think you mean:
+	BUG_ON(frame == NULL);
+or
+	BUG_ON(!frame);
+
+
+> 	memset(frame_in, 0, EXT4_HTREE_LEVEL * sizeof(frame_in[0]));
+> 	frame->bh = ext4_read_dirblock(dir, 0, INDEX);
+> 	if (IS_ERR(frame->bh))
+> 		return (struct dx_frame *) frame->bh;
+> 
+> +	BUG_ON(frame->bh);
+> +	BUG_ON(frame->bh->b_data);
+
+Same here.
+
+	BUG_ON(frame->bh == NULL);
+	BUG_ON(frame->bh->b_data == NULL);
+
+This is why I don't like implicit "is NULL" or "is non-zero" usage.  Lustre
+used to require "== NULL" or "!= NULL" to avoid bugs like this, but had to
+abandon that because of upstream code style.
+
+> 	root = (struct dx_root *) frame->bh->b_data;
+> 	if (root->info.hash_version != DX_HASH_TEA &&
+> 	    root->info.hash_version != DX_HASH_HALF_MD4 &&
+> 	    root->info.hash_version != DX_HASH_LEGACY) {
+> 
+> These are "could never" happen scenarios from looking at the code, but
+> that will help explain what is going on.
+> 
+> If this is reliably only happening with mq, the only way I could see
+> that if is something is returning an error when it previously wasn't.
+> This isn't a problem we're seeing with any of our testing, though.
+> 
+> Cheers,
+> 
+> 						- Ted
+> 
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_83C1D3F3-F6FF-4590-B7E4-E000F852A5BA
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlqYYIAACgkQcqXauRfM
+H+D1MQ/9HoJWn769M05/z1EIBrSufibX73AF41nPOwDkOkmUvcmf+48coM0H1y2y
+HJl6JonNCNZ/wPvpo8yFrXjrZ8/1R0Cekk0nptM9Zokg3ufJygmU8+BB3smeHB7L
+nw1O4ftW1jAXFGGDdj/HiB4Fuy5vij6FgpFaRLz5VtoenkL509d8WBZoRHBnBHsz
+RWD05dB/Hx6s9jVnVs6BkH9Q9r7qxLIjIq24hp6qKy1Zvu1GwjTxMEfqNADEj0Sf
+TjJ/AfG1kCtxnvhYsk2JRhnEj1b7xNbb+eFd9+T4ca/oB4o5hn3BltNBbDMReQBZ
+UHAzhf8N5w+k8psDLXpOl9HjQue9H+bPlYbF4g3JUHWhbRklWiObTU5XULegTNRc
+vVmsmw4iYIve6FEp3neb/DfLrKOnLHWBakESxVZel6N42OxFGJYk0XQc2XmoNCyj
+uC/HgZWV2Iah5F3o0HLpnWHnr2xWE/AVrIhCK2p5ecLq16niFCMh1CCksGqrrqwx
+eIirkF1z9atKTe4XTf7412gPSood0PjbT/2qe5FDLpRtdTiwDA8SMc+pDw7UpbYj
+ymhDIbQf019VSXV9AzN3rktNPaaya+HNSuxqkG26R2jLRsbf3qml1snoUjKga1fS
+DDu5H/nwTLVsjypDHpDapoXul04KRphOKdfUi5z+xJSXLUTwySI=
+=Vg/6
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_83C1D3F3-F6FF-4590-B7E4-E000F852A5BA--
