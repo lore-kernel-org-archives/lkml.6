@@ -1,47 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162389AbeCAVwO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:52:14 -0500
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:38139 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162122AbeCAVwK (ORCPT
+        id S1162357AbeCAVxM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:53:12 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43393 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162122AbeCAVxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:52:10 -0500
-X-Google-Smtp-Source: AG47ELsT1ZDjcZD7gT7laCW/Cx5RPMOw0zy8jX9aa0agm5xI983Y5X1vvonwNsYeE6IDl2NvYTfzqw==
-Date: Thu, 1 Mar 2018 15:52:09 -0600
+        Thu, 1 Mar 2018 16:53:10 -0500
+X-Google-Smtp-Source: AG47ELtRT1KNICk9nRNCrGioA+8ho4WH1vc6norWBjCm3hrkIPCpzbrmVqoWakMZKXhwvydN/bmKNQ==
+Date: Thu, 1 Mar 2018 15:53:09 -0600
 From: Rob Herring <robh@kernel.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 17/19] dt-bindings: net: ravb: Add support for
- r8a77965 SoC
-Message-ID: <20180301215209.724aqfekmo6tjczq@rob-hp-laptop>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-18-git-send-email-jacopo+renesas@jmondi.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/15] dt-bindings: arm: tegra: Remove duplicated
+ Tegra30+ MC binding
+Message-ID: <20180301215309.v6gk77j4trwkpn7j@rob-hp-laptop>
+References: <cover.1519141896.git.digetx@gmail.com>
+ <0d1b4a840954796f319621e481ec1a90baee98cc.1519141896.git.digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519139541-18783-18-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <0d1b4a840954796f319621e481ec1a90baee98cc.1519141896.git.digetx@gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 04:12:19PM +0100, Jacopo Mondi wrote:
-> Add documentation for r8a77965 compatible string to renesas ravb device
-> tree bindings documentation.
+On Tue, Feb 20, 2018 at 07:25:14PM +0300, Dmitry Osipenko wrote:
+> There are two bindings for the same Memory Controller. One of the bindings
+> became obsolete long time ago and probably was left unnoticed, remove it
+> for consistency.
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------------
+>  1 file changed, 18 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
