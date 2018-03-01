@@ -1,35 +1,35 @@
 Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AG47ELsK91/lSyH+//i4V7ZbX+Cp9PtcFQMjzYYrvglWWOF6iBD4KLu/iZ2ndT6xieVYQFtOLbBM
-ARC-Seal: i=1; a=rsa-sha256; t=1520335169; cv=none;
+X-Google-Smtp-Source: AG47ELsYYNh7q5hUeuhx2QPQdIEYs6pRJX3FeAW0SWwng97Od82Eu1i/hnkZurRSXdUHaB0+w11T
+ARC-Seal: i=1; a=rsa-sha256; t=1519933986; cv=none;
         d=google.com; s=arc-20160816;
-        b=HFmHJhPStVZB6OJS/zfYwXBuNU5FOxzp3SCWCZBfQ1vOUaLLF5FRVOgKshrHFh28yF
-         75dzUTO/TM1N/K9pqgYj8MK8AsiX9w7R685uTFvXi/Wdt8oPZU61VFIgoAhGPAnkAJJO
-         7nPD6Jp4PgFxOcGdeus+pvKJ5OKPDB46DSN0S6yNINo8JirfpRAEqspfXsu8GJO28Nrl
-         GyWVR9x6505m3iaXZ4xg0Tv6Am2jPE5E28TNaRfu8WoF9BasZI1EB31kQCUlRpewUbEc
-         7XKI4L9eYE5yETexyVQv+HI8XvmWNsOmn2RQzFpf3CzM0V2egxGG6G209nLo5oOb9Puu
-         DBUw==
+        b=WJrdWllA92knaEgpAQThGsvjhvLD49M5AbwDpskp+0SwBGJjD/kNHCXYwcNlFSAkpT
+         5h7xWpd6nIYLuCnsOzIFyt+UhoBpoxAA7IyPM1z6OTUxVxtJ5VZvDH6oGjoCHjS+4im0
+         40HLdf7qPDsJnJ0eAdKFx8rQEajYUOvWH0MDRQ9VULmik8erI7kVO3DHzVvGYIqf9aWm
+         QTIkzXE3pJ+VwsNd4Iy1z95hpfa/WolQdlvog7xQ7Y2dLWmobtbuNRacyyObCqnI5WSl
+         JLvJWDqffxny0+tJLpsEFrVGvxnV7f06RuYcxjD0n5IVI6iUUBeVYmUxzplRabFWObKR
+         O6vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:organization:references
          :in-reply-to:date:cc:to:from:subject:message-id
          :arc-authentication-results;
-        bh=Wc2Hpu6tunOeCo/9mNV/HDDdltRvCQlPyLDN6u2kXOU=;
-        b=IkwHurPCEiU9BsHx+G606ALpS6grJ/k45f8914nZly1ij0/0svURJdSJ+5D1ZJdqIq
-         OYeoMvNrLmS1dVRB+1SvcDNyYTYYzOwomEwo6hYcsFiKAFn2S+2jiBoKGh/7efRWwh4S
-         hLYTEGiuUKamp6oZrDbYkCJHWjkGOxXnYL2nnXAJrp7jzFc0xfQZm0QtQe1Noo3n2WYb
-         8kDRauEdbApOFPL64kQU09L8gm+lWAzTRA/8wGOxK229+OBx5+2knrRVEyL30TfYBH5N
-         duHveh6Gwa+eMUn9ynr6kHBlePcgAul+uT6MK2WA0P1hKFlqwm+q+6qp1OAhJmRPQ5WB
-         Oirg==
+        bh=tLw4SIR/xBMfO3YwlUliI9Vw+wxKeEEVge9yBE4MAuc=;
+        b=RJzAbV57B52NrjNSUXJ+eK8MdUnYjTvxgiOvZfHVuFJt2MKkud944W5yayiV+6udPt
+         IPkEdnpWZsKsoz5ObKrrEgFOdq2iP3/YX4gzXfzRjyfm2ud+ph0ckZ8Dgs4+G8l6ISJU
+         vFu2G6Vc16vy1MCsC336bGDr9TkRCdff/P5n4k2Kdz1TY7Zd4Xr/OcW3cprlLDu4YtwG
+         zptS3io78uvrcZj/PzYTDg3qmI0NRoIaynRGBc9fK8k/f7zckQkhqLZ3vg8VHg4P6IZO
+         lqBuBC3Ck1zwq94Abew50EkvPtomIDkXg/J06NNzTYsdUkp9zDdpZWph+3EvD1aukmFk
+         zSOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="22166832"
-Message-ID: <1520335161.10722.413.camel@linux.intel.com>
-Subject: Re: [PATCH v15 8/9] HISI LPC: Add ACPI support
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="208174901"
+Message-ID: <1519933978.10722.366.camel@linux.intel.com>
+Subject: Re: [PATCH v15 0/9] LPC: legacy ISA I/O support
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: John Garry <john.garry@huawei.com>, mika.westerberg@linux.intel.com,
  rafael@kernel.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net,
@@ -42,99 +42,286 @@ Cc: joe@perches.com, benh@kernel.crashing.org, linux-pci@vger.kernel.org,
  linux-arch@vger.kernel.org,  rdunlap@infradead.org,
  gregkh@linuxfoundation.org, akpm@linux-foundation.org,
  frowand.list@gmail.com, agraf@suse.de
-Date: Tue, 06 Mar 2018 13:19:21 +0200
-In-Reply-To: <10d3b5b8-0662-27b1-ff72-5080dd54d78e@huawei.com>
+Date: Thu, 01 Mar 2018 21:52:58 +0200
+In-Reply-To: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
 References: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
-	 <1519663249-9850-9-git-send-email-john.garry@huawei.com>
-	 <1519933855.10722.364.camel@linux.intel.com>
-	 <10d3b5b8-0662-27b1-ff72-5080dd54d78e@huawei.com>
 Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.5-1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593479230024368492?=
-X-GMAIL-MSGID: =?utf-8?q?1594186970667526269?=
+X-GMAIL-THRID: =?utf-8?q?1593479231373740190?=
+X-GMAIL-MSGID: =?utf-8?q?1593766300653877036?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-03-02 at 10:19 +0000, John Garry wrote:
-> On 01/03/2018 19:50, Andy Shevchenko wrote:
-> > On Tue, 2018-02-27 at 00:40 +0800, John Garry wrote:
-
-> > Ok, this needs to be thought about a bit more.
-> > 
-> > I guess I understand what's is the problem with PNP IDs in the
-> > driver.
-> > 
-> > You probe your LPC device quite late.
-> > One option is to move from classical probe to a event-driven model,
-> > i.e.
-> > via registering a notifier (see acpi_lpss.c), preparing necessary
-> > stuff
-> > at earlier stages and then register devices by their enumeration and
-> > appearance.
-> > 
-> > Though, if I would be you I would seek a opinion from Rafael and
-> > Mika
-> > (maybe others as well).
+On Tue, 2018-02-27 at 00:40 +0800, John Garry wrote:
+> This patchset supports the IPMI-bt device attached to the Low-Pin-
+> Count
+> interface implemented on Hisilicon Hip06/Hip07 SoC.
+>                         -----------
+>                         | LPC host|
+>                         |         |
+>                         -----------
+>                              |
+>                 _____________V_______________LPC
+>                   |                       |
+>                   V                       V
+>                                      ------------
+>                                      |  BT(ipmi)|
+>                                      ------------
 > 
-> I would like to give a bit more background on this HW. This HW is now 
-> for us a legacy device. It will be used in no more chipsets. It is
-> only 
-> used in hip06 and hip07 chipsets on our D03 and D05 boards, 
-> respectively. On these boards we have the following LPC slave devices
-> only:
-> D03: UART, IPMI
-> D05: IPMI
+> When master accesses those peripherals beneath the Hip06/Hip07 LPC, a
+> specific
+> LPC driver is needed to make LPC host generate the standard LPC I/O
+> cycles with
+> the target peripherals'I/O port addresses. But on curent arm64 world,
+> there is
+> no real I/O accesses. All the I/O operations through in/out accessors
+> are based
+> on MMIO ranges; on Hip06/Hip07 LPC the I/O accesses are performed
+> through driver
+> specific accessors rather than MMIO.
+> To solve this issue and keep the relevant existing peripherals'
+> drivers untouched,
+> this patchset:
+>    - introduces a generic I/O space management framework, logical PIO,
+> to support
+>       I/O operations on host controllers operating either on MMIO
+> buses or on buses
+>      requiring specific driver I/O accessors;
+>    - redefines the in/out accessors to provide a unified interface for
+> both MMIO
+>      and driver specific I/O operations. Using logical PIO, th call of
+> in/out() from
+>      the host children drivers, such as ipmi-si, will be redirected to
+> the
+>      corresponding device-specific I/O hooks to perform the I/O
+> accesses.
 > 
-> Supporting IPMI for D05 is required. Supporting legacy D03 and the
-> UART 
-> is a "nice-to-have". But it is definitely ok for us to not support
-> this 
-> device.
+> Based on this patch-set, all the I/O accesses to Hip06/Hip07 LPC
+> peripherals can
+> be supported without any changes on the existing ipmi-si driver.
+> 
+> The whole patchset has been tested on Hip07 D05 board both using DTB
+> and ACPI.
+> 
 
-I see. But it raises another question to the whole series, why do we
-introduce a generic indirect IO for only two devices ever?
+I did a review and don't see the patch 8 is ready to go.
 
-Can't it be done in the (MFD) driver itself?
+So, to move things forward I may suggest to reorder series that some
+small preparation stuff can go first w/o dependency to the actual Logic
+PIO / LPC.
 
-Possible another option, is to introduce a specific regmap for that and
-use it in the drivers (though it might be not so trivial with existing
-ones).
-
-> Our previous ACPI support solution did use a scan handler for this
-> host, 
-> but there was some sensible pushback on this - please check this if
-> not 
-> familiar: https://lkml.org/lkml/2018/2/14/532
-
-> Overall it does not make sense to try to move this back to
-> drivers/acpi 
-> and receive more pushback from that direction,
-
-Ah, I think the ARM people just worried mostly about arm64 in the
-pathnames, though your case is very similar to our LPSS for only few
-SoCs.
-
-I would rather think if you move it directly to drivers/acpi it would be
-fine.
-
->  and only delay 
-> indefinitely upstreaming this driver (which is now running at ~27
-> months 
-> since v1) to just support a PNP-compatible device which we don't care 
-> too much about.
-
-Ouch!
-
-As I suggested before, you would better to get an input from
-maintainers.
-
-My personal opinion that the handler approach is cleaner, though it's
-still non-generic stuff. I think that this is what Mika referred to in
-his mail.
+> Differences to v14:
+> - addressed coding style comments from Andy
+> - applied tags from Rafael, Andy, and Dann
+> - rebased to linux next 20180223 (had to fix locally arm64 build
+> issue)
+> 
+> Differences to v13:
+> - dropped ACPI scan handler and added patch to not enumerate children
+>   of indirect IO hosts in ACPI code
+> - tidied up logic_pio.c a bit for kerneldoc and made some APIs clearer
+>   to understand
+> - tided (and simplified) hisi_lpc.c and added new ACPI probe code
+>   (same as previous ACPI scan handler code, so comments from Rafael
+>   and Andy included)
+> - reinstated PCI range upper limit check in pci_pio_to_address()
+> - dropped Dann Frazier's "tested-by" tag in light of changes
+> - rebase to linuxnext 20180219 (had to fix locally arm64 build issue)
+> 
+> Differences to v12:
+>     - Addressed ACPI comments from Rafael and Andy, including:
+>      - added SPDX license identifiers (other new files in the series
+> got this also)
+>      - fixed style issues, like superflous newlines and symbol naming
+>      - add fuller acpi_indirectio.c patch commit message
+>      - dropped acpi_indirectio_host_data (author's decision) to
+> simplify
+>     - added Rob Herring's tag
+>     - rebase to linux-next 20180212
+>     
+> Differences to v11:
+>     - fixed build errors for i386, m68k, and tile
+>     - added a comment in LPC driver commit log why we set
+>        the kernel config as bool
+>     - some tidying logic_pio code
+> 
+> Differences to v10:
+>     - dropped CONFIG_LOGIC_PIO. Reason is that CONFIG_PCI
+>       depends on this, and CONFIG_PCI is a per-arch CONFIG.
+>       So we would require all arch's kconfig to select this.
+>     - Addressed Dann Frazier's comments on LPC driver, and
+>       sopme other cleanup
+>     - Moved logic_pio.h to be included in generic asm io.h
+>     - Fixed ACPI indirect IO host setup to handle >1 child
+>     - Relocated ACPI indirect IO host setup code to
+>       drivers/acpi
+>     - Rebased to linux next-20180118
+> 
+> Changes from v9:
+>   - patch 2 has been split into 3 patches according to Bjorn comments
+> on
+>     v9 thread
+>   - patch 1 has been reworked accordign to Bjorn comments on v9
+>   - now logic_pio_trans_hwaddr() has a sanity check to make sure the
+> resource
+>     size fits into the assigned range
+>   - in patch 5 the MFD framework has been used to probe the LPC
+> children
+>     according to the suggestion from Mika Westerberg
+>   - Maintaner has changed to Huawei Linuxarm mailing list
+> 
+> Changes from v8:
+>   - Simplified LIB IO framewrok
+>   - Moved INDIRECT PIO ACPI framework under acpi/arm64
+>   - Renamed occurrences of "lib io" and "indirect io" to "lib pio" and
+>     "indirect pio" to keep the patchset nomenclature consistent
+>   - Removed Alignment reuqirements
+>   - Moved LPC specific code out of ACPI common framework
+>   - Now PIO indirect HW ranges can overlap
+>   - Changed HiSilicon LPC driver maintainer (Gabriele Paoloni now) and
+> split
+>     maintaner file modifications in a separate commit
+>   - Removed the commit with the DT nodes support for hip06 and hip07
+> (to be
+>     pushed separately)
+>   - Added a checking on ioport_map() not to break that function as
+> Arnd points
+>     out in V7 review thread;
+>   - fixed the compile issues on alpha, m68k;
+> 
+> Changes from V7:
+>   - Based on Arnd's comment, rename the LIBIO as LOGIC_PIO;
+>   - Improved the mapping process in LOGIC_PIO to gain better
+> efficiency when
+>     redirecting the I/O accesses to right device driver;
+>   - To reduce the impact on PCI MMIO to a minimum, add a new
+>     CONFIG_INDIRECT_PIO for indirect-IO hosts/devices;
+>   - Added a new ACPI handler for indirect-IO hosts/devices;
+>   - Fixed the compile issues on V6;
+> 
+> Changes from V6:
+>   - According to the comments from Bjorn and Alex, merge PCI IO and
+> indirect-IO
+>     into a generic I/O space management, LIBIO;
+>   - Adopted the '_DEP' to replace the platform bus notifier. In this
+> way, we can
+>     ensure the LPC peripherals' I/O resources had been translated to
+> logical IO
+>     before the LPC peripheral enumeration;
+>   - Replaced the rwlock with rcu list based on Alex's suggestion;
+>   - Applied relaxed write/read to LPC driver;
+>   - Some bugs fixing and some optimazations based on the comments of
+> V6;
+> 
+> Changes from V5:
+>   - Made the extio driver more generic and locate in lib/;
+>   - Supported multiple indirect-IO bus instances;
+>   - Extended the pci_register_io_range() to support indirect-IO, then
+> dropped
+>   the I/O reservation used in previous patchset;
+>   - Reimplemented the ACPI LPC support;
+>   - Fixed some bugs, including the compile error on other archs, the
+> module
+>   building failure found by Ming Lei, etc;
+> 
+> Changes from V4:
+>   - Some revises based on the comments from Bjorn, Rob on V4;
+>   - Fixed the compile error on some platforms, such as openrisc;
+> 
+> Changes from V3:
+>   - UART support deferred to a separate patchset; This patchset only
+> support
+>   ipmi device under LPC;
+>   - LPC bus I/O range is fixed to 0 ~ (PCIBIOS_MIN_IO - 1), which is
+> separeted
+>   from PCI/PCIE PIO space;
+>   - Based on Arnd's remarks, removed the ranges property from Hip06
+> lpc dts and
+>   added a new fixup function, of_isa_indirect_io(), to get the I/O
+> address
+>   directly from LPC dts configurations;
+>   - Support in(w,l)/out(w,l) for Hip06 lpc I/O;
+>   - Decouple the header file dependency on the gerenic io.h by
+> defining in/out
+>   as normal functions in c file;
+>   - removed unused macro definitions in the LPC driver;
+> 
+> Changes from V2:
+>   - Support the PIO retrieval from the linux PIO generated by
+>   pci_address_to_pio. This method replace the 4K PIO reservation in
+> V2;
+>   - Support the flat-tree earlycon;
+>   - Some revises based on Arnd's remarks;
+>   - Make sure the linux PIO range allocated to Hip06 LPC peripherals
+> starts
+>   from non-ZERO;
+> 
+> Changes from V1:
+>   - Support the ACPI LPC device;
+>   - Optimize the dts LPC driver in ISA compatible mode;
+>   - Reserve the IO range below 4K in avoid the possible conflict with
+> PCI host
+>   IO ranges;
+>   - Support the LPC uart and relevant earlycon;
+> 
+> V14 thread here: https://lkml.org/lkml/2018/2/19/460
+> V13 thread here: https://lkml.org/lkml/2018/2/13/744
+> V12 thread here: https://lkml.org/lkml/2018/1/23/508
+> V11 thread here: https://lkml.org/lkml/2018/1/21/38
+> V10 thread here: https://lkml.org/lkml/2017/10/27/465
+> V9 thread here: https://lkml.org/lkml/2017/5/25/263
+> V8 thread here: https://lkml.org/lkml/2017/3/30/619
+> V7 thread here: https://lkml.org/lkml/2017/3/12/279
+> v6 thread here: https://lkml.org/lkml/2017/1/24/25
+> v5 thread here: https://lkml.org/lkml/2016/11/7/955
+> v4 thread here: https://lkml.org/lkml/2016/10/20/149
+> v3 thread here: https://lkml.org/lkml/2016/9/14/326
+> v2 thread here: https://lkml.org/lkml/2016/9/7/356
+> v1 thread here: https://lkml.org/lkml/2015/12/29/154
+> 
+> Gabriele Paoloni (2):
+>   PCI: Remove unused __weak attribute in pci_register_io_range()
+>   PCI: Add fwnode handler as input param of pci_register_io_range()
+> 
+> John Garry (3):
+>   ACPI / scan: do not enumerate Indirect IO host children
+>   HISI LPC: Add ACPI support
+>   MAINTAINERS: Add maintainer for HiSilicon LPC driver
+> 
+> Zhichang Yuan (4):
+>   LIB: Introduce a generic PIO mapping method
+>   PCI: Apply the new generic I/O management on PCI IO hosts
+>   OF: Add missing I/O range exception for indirect-IO devices
+>   HISI LPC: Support the LPC host on Hip06/Hip07 with DT bindings
+> 
+>  .../arm/hisilicon/hisilicon-low-pin-count.txt      |  33 ++
+>  MAINTAINERS                                        |   7 +
+>  drivers/acpi/pci_root.c                            |   8 +-
+>  drivers/acpi/scan.c                                |  14 +
+>  drivers/bus/Kconfig                                |   8 +
+>  drivers/bus/Makefile                               |   2 +
+>  drivers/bus/hisi_lpc.c                             | 624
+> +++++++++++++++++++++
+>  drivers/of/address.c                               |  96 +++-
+>  drivers/pci/pci.c                                  |  95 +---
+>  include/asm-generic/io.h                           |   4 +-
+>  include/linux/logic_pio.h                          | 127 +++++
+>  include/linux/pci.h                                |   3 +-
+>  lib/Kconfig                                        |  15 +
+>  lib/Makefile                                       |   2 +
+>  lib/logic_pio.c                                    | 285 ++++++++++
+>  15 files changed, 1225 insertions(+), 98 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-
+> count.txt
+>  create mode 100644 drivers/bus/hisi_lpc.c
+>  create mode 100644 include/linux/logic_pio.h
+>  create mode 100644 lib/logic_pio.c
+> 
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
