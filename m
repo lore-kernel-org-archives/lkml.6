@@ -1,92 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965606AbeCAC7Q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:59:16 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41252 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965531AbeCAC7O (ORCPT
+        id S965621AbeCADHZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 22:07:25 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38991 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965564AbeCADHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:59:14 -0500
-X-Google-Smtp-Source: AG47ELugXBi2zgrpiJCB6ZKjz0+MhLmVnD3jUWeZCPFPxV2B+Wxf3Su9ANMckYaveJbgEqGOxR9VgQ==
-Date: Thu, 1 Mar 2018 11:59:22 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Dave Young <dyoung@redhat.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/13] kexec_file: make an use of purgatory optional
-Message-ID: <20180301025921.GL6019@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, bauerman@linux.vnet.ibm.com,
-        dhowells@redhat.com, vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, akpm@linux-foundation.org, mpe@ellerman.id.au,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        julien.thierry@arm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
- <20180222111732.23051-3-takahiro.akashi@linaro.org>
- <20180223084934.GB4433@dhcp-128-65.nay.redhat.com>
- <20180226102418.GD6019@linaro.org>
- <20180228123359.GB2228@dhcp-128-65.nay.redhat.com>
+        Wed, 28 Feb 2018 22:07:23 -0500
+X-Google-Smtp-Source: AG47ELvXGO/4/VwqUv8HGsc4chtPDs49ZgioHeeALhLpPnyPZFCFd8apTW/QkOyUdqYN/7SVY/LE5Q==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: linux-omap@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
+        Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 11/12] PM / AVS: SmartReflex: Prepare to use device tree based probing
+Organization: BayLibre
+References: <20180223210100.86732-1-tony@atomide.com>
+        <20180223210100.86732-12-tony@atomide.com>
+Date: Wed, 28 Feb 2018 19:07:19 -0800
+In-Reply-To: <20180223210100.86732-12-tony@atomide.com> (Tony Lindgren's
+        message of "Fri, 23 Feb 2018 13:00:59 -0800")
+Message-ID: <7hr2p41ok8.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228123359.GB2228@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 08:33:59PM +0800, Dave Young wrote:
-> On 02/26/18 at 07:24pm, AKASHI Takahiro wrote:
-> > On Fri, Feb 23, 2018 at 04:49:34PM +0800, Dave Young wrote:
-> > > Hi AKASHI,
-> > > 
-> > > On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
-> > > > On arm64, no trampline code between old kernel and new kernel will be
-> > > > required in kexec_file implementation. This patch introduces a new
-> > > > configuration, ARCH_HAS_KEXEC_PURGATORY, and allows related code to be
-> > > > compiled in only if necessary.
-> > > 
-> > > Here also need the explanation about why no purgatory is needed, it would be
-> > > required for kexec if no strong reason.
-> > 
-> > OK, I will add the reason:
-> > On arm64, crash dump kernel's usable memory is protected by
-> > *unmapping* it from kernel virtual space unlike other architectures
-> > where the region is just made read-only.
-> > So our key developers think that it is highly unlikely that the region
-> > is accidentally corrupted and this rationalizes that digest check code
-> > be also dropped from purgatory.
-> > This greatly simplifies our purgatory without any need for a bit ugly
-> > relocation stuff, i.e. arch_kexec_apply_relocations_add().
-> > 
-> > Please see:
-> >    http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545428.html
-> > to find out how simple our purgatory was. All that it does is
-> > to shuffle arguments and jump into a new kernel.
-> > 
-> > Without this patch, we would have to have purgatory with a space for
-> > a hash value (purgatory_sha256_digest) which is never checked against.
-> > 
-> > Do you think it makes sense?
-> 
-> Hmm, it looks reasonable, I remember there could be some performance
-> issue for a purgatory because of cache disabled for arm64. I do not
-> object this.
+Tony Lindgren <tony@atomide.com> writes:
 
-Yeah, Pratyush(redhat) had expressed his concerns on slow boot-up of
-the 2nd kernel which is due to hash value calculation.
+> We are currently probing smartreflex with omap_device while we are
+> already probing smartreflex related interconnect target module with
+> ti-sysc driver and dts data.
+>
+> Before we can flip things on for ti-sysc, we need to prepare the
+> smartreflex driver a bit:
+>
+> 1. The smartreflex clock is really for the whole interconnect target
+>    module. So it may be configured at the parent device level with
+>    ti-sysc
+>
+> 2. With ti-sysc, we have the child device manage interconnect target
+>    module directly if pm_runtime_irq_safe() is set and there is only
+>    one child. In that case nobody else is going to call pm_runtime_get
+>    and put, so we need to add these calls to idle smartreflex properly
+>    after probe if not fully configured
+>
+> 3. With ti-sysc, the parent driver may rebind. So we want to use
+>    platform_driver_register() and don't want probe to be __init
+>
+> Note that this patch depends on the related changes to ti-sysc driver
+> and omap_device probing to prevent both ti-sysc and omap_device to
+> try to probe smartreflex.
+>
+> Cc: linux-pm@vger.kernel.org
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
--Takahiro AKASHI
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-> 
-> [snip]
-> 
-> Thanks
-> Dave
+I don't have anything else queued for this driver, so feel free to take
+it along with the rest of the series.
+
+Kevin
