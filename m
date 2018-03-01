@@ -1,212 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163175AbeCAXa3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:30:29 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:52468 "EHLO
+        id S1163161AbeCAXa2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:30:28 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:52476 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163009AbeCAX33 (ORCPT
+        with ESMTP id S1163022AbeCAX33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Mar 2018 18:29:29 -0500
 To: "David S. Miller" <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Message-Id: <8e341d5e01eab2699201434d3ffb978725744e67.1519813462.git.fthain@telegraphics.com.au>
+        linux-kernel@vger.kernel.org
+Message-Id: <efb485ce557c69c11b3d1e6442224b2bf4d4b9d0.1519813462.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1519813462.git.fthain@telegraphics.com.au>
 References: <cover.1519813462.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 2/4] net/mac89x0: Convert to platform_driver
+Subject: [PATCH net 4/4] net/mac89x0: Replace custom debug logging with
+ netif_* calls
 Date: Thu,  1 Mar 2018 18:29:28 -0500 (EST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apparently these Dayna cards don't have a pseudoslot declaration ROM
-which means they can't be probed like NuBus cards.
+Adopt the conventional style of debug logging because it is both
+shorter and more flexible.
+Remove the 'version_printed' flag as the version will be printed
+only once anyway (when the module loads).
 
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- arch/m68k/mac/config.c                |  4 +++
- drivers/net/Space.c                   |  3 --
- drivers/net/ethernet/cirrus/mac89x0.c | 68 +++++++++++++++--------------------
- include/net/Space.h                   |  1 -
- 4 files changed, 33 insertions(+), 43 deletions(-)
+ drivers/net/ethernet/cirrus/mac89x0.c | 47 +++++++++++------------------------
+ 1 file changed, 15 insertions(+), 32 deletions(-)
 
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index d3d435248a24..c73eb8209555 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -1088,6 +1088,10 @@ int __init mac_platform_init(void)
- 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
- 		platform_device_register_simple("macsonic", -1, NULL, 0);
- 
-+	if (macintosh_config->expansion_type == MAC_EXP_PDS ||
-+	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
-+		platform_device_register_simple("mac89x0", -1, NULL, 0);
-+
- 	if (macintosh_config->ether_type == MAC_ETHER_MACE)
- 		platform_device_register_simple("macmace", -1, NULL, 0);
- 
-diff --git a/drivers/net/Space.c b/drivers/net/Space.c
-index 64333ec999ac..3afda6561434 100644
---- a/drivers/net/Space.c
-+++ b/drivers/net/Space.c
-@@ -113,9 +113,6 @@ static struct devprobe2 m68k_probes[] __initdata = {
- #endif
- #ifdef CONFIG_MVME147_NET	/* MVME147 internal Ethernet */
- 	{mvme147lance_probe, 0},
--#endif
--#ifdef CONFIG_MAC89x0
--	{mac89x0_probe, 0},
- #endif
- 	{NULL, 0},
- };
 diff --git a/drivers/net/ethernet/cirrus/mac89x0.c b/drivers/net/ethernet/cirrus/mac89x0.c
-index 4fe0ae93ab36..911139abbe20 100644
+index 9a266496a538..3f8fe8fd79cc 100644
 --- a/drivers/net/ethernet/cirrus/mac89x0.c
 +++ b/drivers/net/ethernet/cirrus/mac89x0.c
-@@ -93,6 +93,7 @@ static const char version[] =
- #include <linux/errno.h>
- #include <linux/init.h>
- #include <linux/netdevice.h>
-+#include <linux/platform_device.h>
- #include <linux/etherdevice.h>
- #include <linux/skbuff.h>
- #include <linux/delay.h>
-@@ -105,6 +106,10 @@ static const char version[] =
+@@ -61,18 +61,6 @@
+ static const char version[] =
+ "cs89x0.c:v1.02 11/26/96 Russell Nelson <nelson@crynwr.com>\n";
+ 
+-/* ======================= configure the driver here ======================= */
+-
+-/* use 0 for production, 1 for verification, >2 for debug */
+-#ifndef NET_DEBUG
+-#define NET_DEBUG 0
+-#endif
+-
+-/* ======================= end of configuration ======================= */
+-
+-
+-/* Always include 'config.h' first in case the user wants to turn on
+-   or override something. */
+ #include <linux/module.h>
+ 
+ /*
+@@ -108,14 +96,13 @@ static const char version[] =
  
  #include "cs89x0.h"
  
-+static int debug;
-+module_param(debug, int, 0);
-+MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
-+
- static unsigned int net_debug = NET_DEBUG;
+-static int debug;
++static int debug = -1;
+ module_param(debug, int, 0);
+-MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
+-
+-static unsigned int net_debug = NET_DEBUG;
++MODULE_PARM_DESC(debug, "debug message level");
  
  /* Information that need to be kept for each board. */
-@@ -167,10 +172,9 @@ static const struct net_device_ops mac89x0_netdev_ops = {
- 
- /* Probe for the CS8900 card in slot E.  We won't bother looking
-    anywhere else until we have a really good reason to do so. */
--struct net_device * __init mac89x0_probe(int unit)
-+static int mac89x0_device_probe(struct platform_device *pdev)
+ struct net_local {
++	int msg_enable;
+ 	int chip_type;		/* one of: CS8900, CS8920, CS8920M */
+ 	char chip_revision;	/* revision letter of the chip ('A'...) */
+ 	int send_cmd;		/* the propercommand used to send a packet. */
+@@ -178,7 +165,6 @@ static int mac89x0_device_probe(struct platform_device *pdev)
  {
  	struct net_device *dev;
--	static int once_is_enough;
  	struct net_local *lp;
- 	static unsigned version_printed;
+-	static unsigned version_printed;
  	int i, slot;
-@@ -180,21 +184,11 @@ struct net_device * __init mac89x0_probe(int unit)
+ 	unsigned rev_type = 0;
+ 	unsigned long ioaddr;
+@@ -186,8 +172,6 @@ static int mac89x0_device_probe(struct platform_device *pdev)
  	int err = -ENODEV;
  	struct nubus_rsrc *fres;
  
--	if (!MACH_IS_MAC)
--		return ERR_PTR(-ENODEV);
-+	net_debug = debug;
- 
+-	net_debug = debug;
+-
  	dev = alloc_etherdev(sizeof(struct net_local));
  	if (!dev)
--		return ERR_PTR(-ENOMEM);
--
--	if (unit >= 0) {
--		sprintf(dev->name, "eth%d", unit);
--		netdev_boot_setup_check(dev);
--	}
--
--	if (once_is_enough)
--		goto out;
--	once_is_enough = 1;
-+		return -ENOMEM;
- 
- 	/* We might have to parameterize this later */
- 	slot = 0xE;
-@@ -221,6 +215,8 @@ struct net_device * __init mac89x0_probe(int unit)
- 	if (sig != swab16(CHIP_EISA_ID_SIG))
- 		goto out;
- 
-+	SET_NETDEV_DEV(dev, &pdev->dev);
-+
+ 		return -ENOMEM;
+@@ -222,6 +206,8 @@ static int mac89x0_device_probe(struct platform_device *pdev)
  	/* Initialize the net_device structure. */
  	lp = netdev_priv(dev);
  
-@@ -280,12 +276,14 @@ struct net_device * __init mac89x0_probe(int unit)
- 	err = register_netdev(dev);
- 	if (err)
- 		goto out1;
--	return NULL;
++	lp->msg_enable = netif_msg_init(debug, 0);
 +
-+	platform_set_drvdata(pdev, dev);
-+	return 0;
- out1:
- 	nubus_writew(0, dev->base_addr + ADD_PORT);
- out:
- 	free_netdev(dev);
--	return ERR_PTR(err);
-+	return err;
- }
+ 	/* Fill in the 'dev' fields. */
+ 	dev->base_addr = ioaddr;
+ 	dev->mem_start = (unsigned long)
+@@ -244,8 +230,7 @@ static int mac89x0_device_probe(struct platform_device *pdev)
+ 	if (lp->chip_type != CS8900 && lp->chip_revision >= 'C')
+ 		lp->send_cmd = TX_NOW;
  
- /* Open/initialize the board.  This is called (in the current kernel)
-@@ -571,32 +569,24 @@ static int set_mac_address(struct net_device *dev, void *addr)
- 	return 0;
- }
+-	if (net_debug && version_printed++ == 0)
+-		printk(version);
++	netif_dbg(lp, drv, dev, "%s", version);
  
--#ifdef MODULE
--
--static struct net_device *dev_cs89x0;
--static int debug;
--
--module_param(debug, int, 0);
--MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
- MODULE_LICENSE("GPL");
+ 	pr_info("cs89%c0%s rev %c found at %#8lx\n",
+ 		lp->chip_type == CS8900 ? '0' : '2',
+@@ -345,11 +330,9 @@ net_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	struct net_local *lp = netdev_priv(dev);
+ 	unsigned long flags;
  
--int __init
--init_module(void)
-+static int mac89x0_device_remove(struct platform_device *pdev)
+-	if (net_debug > 3)
+-		printk("%s: sent %d byte packet of type %x\n",
+-		       dev->name, skb->len,
+-		       (skb->data[ETH_ALEN+ETH_ALEN] << 8)
+-		       | skb->data[ETH_ALEN+ETH_ALEN+1]);
++	netif_dbg(lp, tx_queued, dev, "sent %d byte packet of type %x\n",
++		  skb->len, skb->data[ETH_ALEN + ETH_ALEN] << 8 |
++		  skb->data[ETH_ALEN + ETH_ALEN + 1]);
+ 
+ 	/* keep the upload from being interrupted, since we
+ 	   ask the chip to start transmitting before the
+@@ -398,7 +381,7 @@ static irqreturn_t net_interrupt(int irq, void *dev_id)
+            faster than you can read them off, you're screwed.  Hasta la
+            vista, baby!  */
+ 	while ((status = swab16(nubus_readw(dev->base_addr + ISQ_PORT)))) {
+-		if (net_debug > 4)printk("%s: event=%04x\n", dev->name, status);
++		netif_dbg(lp, intr, dev, "status=%04x\n", status);
+ 		switch(status & ISQ_EVENT_MASK) {
+ 		case ISQ_RECEIVER_EVENT:
+ 			/* Got a packet(s). */
+@@ -428,7 +411,7 @@ static irqreturn_t net_interrupt(int irq, void *dev_id)
+ 				netif_wake_queue(dev);
+ 			}
+ 			if (status & TX_UNDERRUN) {
+-				if (net_debug > 0) printk("%s: transmit underrun\n", dev->name);
++				netif_dbg(lp, tx_err, dev, "transmit underrun\n");
+                                 lp->send_underrun++;
+                                 if (lp->send_underrun == 3) lp->send_cmd = TX_AFTER_381;
+                                 else if (lp->send_underrun == 6) lp->send_cmd = TX_AFTER_ALL;
+@@ -449,6 +432,7 @@ static irqreturn_t net_interrupt(int irq, void *dev_id)
+ static void
+ net_rx(struct net_device *dev)
  {
--	net_debug = debug;
--        dev_cs89x0 = mac89x0_probe(-1);
--	if (IS_ERR(dev_cs89x0)) {
--                printk(KERN_WARNING "mac89x0.c: No card found\n");
--		return PTR_ERR(dev_cs89x0);
--	}
-+	struct net_device *dev = platform_get_drvdata(pdev);
-+
-+	unregister_netdev(dev);
-+	nubus_writew(0, dev->base_addr + ADD_PORT);
-+	free_netdev(dev);
- 	return 0;
- }
++	struct net_local *lp = netdev_priv(dev);
+ 	struct sk_buff *skb;
+ 	int status, length;
  
--void
--cleanup_module(void)
--{
--	unregister_netdev(dev_cs89x0);
--	nubus_writew(0, dev_cs89x0->base_addr + ADD_PORT);
--	free_netdev(dev_cs89x0);
--}
--#endif /* MODULE */
-+static struct platform_driver mac89x0_platform_driver = {
-+	.probe = mac89x0_device_probe,
-+	.remove = mac89x0_device_remove,
-+	.driver = {
-+		.name = "mac89x0",
-+	},
-+};
-+
-+module_platform_driver(mac89x0_platform_driver);
-diff --git a/include/net/Space.h b/include/net/Space.h
-index 336da258885a..9cce0d80d37a 100644
---- a/include/net/Space.h
-+++ b/include/net/Space.h
-@@ -20,7 +20,6 @@ struct net_device *cs89x0_probe(int unit);
- struct net_device *mvme147lance_probe(int unit);
- struct net_device *tc515_probe(int unit);
- struct net_device *lance_probe(int unit);
--struct net_device *mac89x0_probe(int unit);
- struct net_device *cops_probe(int unit);
- struct net_device *ltpc_probe(void);
+@@ -480,10 +464,9 @@ net_rx(struct net_device *dev)
+ 	skb_copy_to_linear_data(skb, (void *)(dev->mem_start + PP_RxFrame),
+ 				length);
  
+-	if (net_debug > 3)printk("%s: received %d byte packet of type %x\n",
+-                                 dev->name, length,
+-                                 (skb->data[ETH_ALEN+ETH_ALEN] << 8)
+-				 | skb->data[ETH_ALEN+ETH_ALEN+1]);
++	netif_dbg(lp, rx_status, dev, "received %d byte packet of type %x\n",
++		  length, skb->data[ETH_ALEN + ETH_ALEN] << 8 |
++		  skb->data[ETH_ALEN + ETH_ALEN + 1]);
+ 
+         skb->protocol=eth_type_trans(skb,dev);
+ 	netif_rx(skb);
 -- 
 2.16.1
