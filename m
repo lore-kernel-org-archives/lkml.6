@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966887AbeCAJXv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:23:51 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54768 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965026AbeCAJXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:23:46 -0500
-Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
- mergeable buffer
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        john.fastabend@gmail.com
-References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
- <20180301101038.4253424d@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
-Date: Thu, 1 Mar 2018 17:23:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180301101038.4253424d@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S966915AbeCAJYo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:24:44 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38474 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965026AbeCAJYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:24:36 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: kishon@ti.com, heiko@sntech.de
+Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
+        vicencb@gmail.com, Andre Przywara <andre.przywara@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Rask Ingemann Lambertsen <rask@formelder.dk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pierre-Hugues Husson <phh@phh.me>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        linux-rockchip@lists.infradead.org, Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        linux-kernel@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 0/6] phy: rockchip-typec: fix boards that does not report cable-state.
+Date: Thu,  1 Mar 2018 10:24:14 +0100
+Message-Id: <20180301092420.1191-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Commit c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port
+support for rk3399") introduced a regression on some rk3399 boards,
+and break USB. While some boards have support to report cable-state via
+extcon interface, other boards does not support. This patch series
+tries to fix this.
 
-On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:
-> On Thu,  1 Mar 2018 11:19:03 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
->
->> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
->> was removed since commit 7324f5399b06 ("virtio_net: disable
->> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
->>
->> - not enough tailroom was reserved which breaks cpumap
-> To address this at a more fundamental level, I would suggest that we/you
-> instead extend XDP to know it's buffers "frame" size/end.  (The
-> assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
-> ixgbe+virtio_net broke that assumption).
->
-> It should actually be fairly easy to implement:
->   * Simply extend xdp_buff with a "data_hard_end" pointer.
+First and second patch makes extcon optional, the following patches
+enables the typec phyter for others rk3399 boards. It has been tested on
+Samsung Chromebook Plus and Sapphire but not on the other boards, so I'll
+appreciate if someone can test it.
 
-Right, and then cpumap can warn and drop packets with insufficient 
-tailroom. But it should be a patch on top of this I think.
+Best regards,
+ Enric
 
-Thanks
+Enric Balletbo i Serra (6):
+  phy: rockchip-typec: fall back to working in host-mode if extcon is
+    missing.
+  dt-bindings: phy-rockchip-typec: move extcon property to be optional.
+  arm64: dts: rockchip: enable typec-phy for rk3399-sapphire.
+  arm64: dts: rockchip: enable typec-phy for rk3399-firefly.
+  arm64: dts: rockchip: enable typec-phy1 for rk3399-puma.
+  arm64: dts: rockchip: enable typec-phy0 for rk3399-puma-haikou.
 
->
-> Now cpumap is more safe... instead of crashing, it can now know/see when
-> it is safe to create an SKB using build_skb (could fallback to
-> dev_alloc_skb).
->
+ Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt | 2 ++
+ arch/arm64/boot/dts/rockchip/rk3399-firefly.dts              | 8 ++++++++
+ arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dts          | 4 ++++
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi                | 4 ++++
+ arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi            | 8 ++++++++
+ drivers/phy/rockchip/phy-rockchip-typec.c                    | 9 ++++++---
+ 6 files changed, 32 insertions(+), 3 deletions(-)
+
+-- 
+2.16.1
