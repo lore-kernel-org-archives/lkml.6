@@ -1,100 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033068AbeCAQ3C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:29:02 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43959 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1032934AbeCAQYN (ORCPT
+        id S1033061AbeCAQ31 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:29:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60426 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032785AbeCAQYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:24:13 -0500
-From: Loic Pallardy <loic.pallardy@st.com>
-To: <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 00/13] remoteproc: add fixed memory region support
-Date: Thu, 1 Mar 2018 17:23:47 +0100
-Message-ID: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 1 Mar 2018 11:24:01 -0500
+From: Colin King <colin.king@canonical.com>
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] infiniband: remove redundant assignment to pointer 'rdi'
+Date: Thu,  1 Mar 2018 16:23:54 +0000
+Message-Id: <20180301162354.17420-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_08:,,
- signatures=0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The aim of the series is to implement carveout memory management as
-discussed during OpenAMP weekly call and defined in proposed document [1]
+From: Colin Ian King <colin.king@canonical.com>
 
-This first series focus only on adding support of the different types of
-carveout memories (dynamic, fixed, platform driver depend...).
-64bit resource table will be addressed in a next series.
+The pointer rdi is being initialized with a value that is never read
+and re-assigned immediately after, hence the initialization is redundant
+and can be removed.
 
-[1]: http://openamp.github.io/docs/mca/coprocessor-memory-definition-v6.pdf
+Cleans up clang warning:
+drivers/infiniband/sw/rdmavt/vt.c:94:23: warning: Value stored to 'rdi'
+during its initialization is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Changes sine V2:
-Reshuffle the series to: 
-- Take into account Bjorn's comments.
-- Add patch to check consistency between carveout resource request and IOMMU
-  support.
-- Introduce platform specific prepare and unprepare ops to enable HW like
-  clock, bus, regulator, memory region... before loading co-processor firmware.
-- Rely on memory carveout management for all remoteproc memory allocations.
-- Lookup pre-registered carveout by name first.
-- Create a subdevice for each vdev declared in firmware resource table that
-  will be used by virtio based driver to retrieve specific memory pool.
+ drivers/infiniband/sw/rdmavt/vt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series takes some assumptions for carveout names associated to vdev:
-- For vring: "vdev%xvring%x" with vdev index from resource table and vring index
-  in vdev.
-- For vdev buffer: "vdev%xbuffer" with vdev index from resource table
-
-This will be changed in the future, adding names field in vdev resource in
-next resource table version.
-
-
-Changes since V1:
-- Minor corrections on first 7 patches (error management)
-- Add "memory device" support on the top of first 7 patches.
-  Goal is to answer use case reported during OpenAMP weekly discussion:
-  - "Be able to specify memory region for vring and buffer allocation, even
-    if no specific request defined in firmware resource table."
-  Patches offer the capability to create a "memory device" associated to a
-  carveout with a dedicated DMA memory pool. Different resource handlers are
-  modified to look-up for specific carveout by name. If match found and associated
-  "memory device" present, device is used instead of rproc platform device for
-  allocation.
-
-
-Loic Pallardy (13):
-  remoteproc: configure IOMMU only if device address requested
-  remoteproc: add rproc_va_to_pa function
-  remoteproc: add release ops in rproc_mem_entry struct
-  remoteproc: add name in rproc_mem_entry struct
-  remoteproc: add helper function to allocate and init rproc_mem_entry
-    struct
-  remoteproc: introduce rproc_add_carveout function
-  remoteproc: introduce rproc_find_carveout_by_name function
-  remoteproc: add prepare and unprepare ops
-  remoteproc: modify rproc_handle_carveout to support pre-registered
-    region
-  remoteproc: modify vring allocation to support pre-registered region
-  remoteproc: create vdev subdevice with specific dma memory pool
-  rpmsg: virtio: allocate buffer from parent
-  remoteproc: st: add reserved memory support
-
- drivers/remoteproc/remoteproc_core.c    | 332 ++++++++++++++++++++++++++++----
- drivers/remoteproc/remoteproc_debugfs.c |   1 +
- drivers/remoteproc/remoteproc_virtio.c  |   2 +-
- drivers/remoteproc/st_remoteproc.c      |  68 ++++++-
- drivers/rpmsg/virtio_rpmsg_bus.c        |   2 +-
- include/linux/remoteproc.h              |  22 ++-
- 6 files changed, 379 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/infiniband/sw/rdmavt/vt.c b/drivers/infiniband/sw/rdmavt/vt.c
+index a4553b2b3696..a67b0ddc2230 100644
+--- a/drivers/infiniband/sw/rdmavt/vt.c
++++ b/drivers/infiniband/sw/rdmavt/vt.c
+@@ -91,7 +91,7 @@ module_exit(rvt_cleanup);
+  */
+ struct rvt_dev_info *rvt_alloc_device(size_t size, int nports)
+ {
+-	struct rvt_dev_info *rdi = ERR_PTR(-ENOMEM);
++	struct rvt_dev_info *rdi;
+ 
+ 	rdi = (struct rvt_dev_info *)ib_alloc_device(size);
+ 	if (!rdi)
 -- 
-1.9.1
+2.15.1
