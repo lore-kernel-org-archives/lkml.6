@@ -1,131 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966376AbeCAG14 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 01:27:56 -0500
-Received: from mga03.intel.com ([134.134.136.65]:12103 "EHLO mga03.intel.com"
+        id S966370AbeCAGfm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 01:35:42 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:48066 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966268AbeCAG1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 01:27:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
-   d="scan'208";a="33761283"
-From: Aaron Lu <aaron.lu@intel.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>
-Subject: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when picking pages to free
-Date: Thu,  1 Mar 2018 14:28:44 +0800
-Message-Id: <20180301062845.26038-3-aaron.lu@intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180301062845.26038-1-aaron.lu@intel.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
+        id S966279AbeCAGfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 01:35:41 -0500
+From: Peng Hao <peng.hao2@zte.com.cn>
+To: jdelvare@suse.com, linux@roeck-us.net
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH v3] hwmon: g762: handle cleanup with devm_add_action
+Date: Thu, 1 Mar 2018 22:48:30 +0800
+Message-Id: <1519915710-82397-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-03-01 14:35:31,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-03-01 14:35:12,
+        Serialize complete at 2018-03-01 14:35:12
+X-MAIL: mse01.zte.com.cn w216ZO1f088019
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
-the zone->lock is held and then pages are chosen from PCP's migratetype
-list. While there is actually no need to do this 'choose part' under
-lock since it's PCP pages, the only CPU that can touch them is us and
-irq is also disabled.
+Simplify code and use devm_add_action() to handle cleanup.
 
-Moving this part outside could reduce lock held time and improve
-performance. Test with will-it-scale/page_fault1 full load:
-
-kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
-v4.16-rc2+  9034215        7971818       13667135       15677465
-this patch  9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
-
-What the test does is: starts $nr_cpu processes and each will repeatedly
-do the following for 5 minutes:
-1 mmap 128M anonymouse space;
-2 write access to that space;
-3 munmap.
-The score is the aggregated iteration.
-
-https://github.com/antonblanchard/will-it-scale/blob/master/tests/page_fault1.c
-
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- mm/page_alloc.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ drivers/hwmon/g762.c | 58 +++++++++++++++++-----------------------------------
+ 1 file changed, 19 insertions(+), 39 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index faa33eac1635..dafdcdec9c1f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1116,12 +1116,10 @@ static void free_pcppages_bulk(struct zone *zone, int count,
- 	int migratetype = 0;
- 	int batch_free = 0;
- 	bool isolated_pageblocks;
--
--	spin_lock(&zone->lock);
--	isolated_pageblocks = has_isolate_pageblock(zone);
-+	struct page *page, *tmp;
-+	LIST_HEAD(head);
+diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
+index 6d1208b..0f2d468 100644
+--- a/drivers/hwmon/g762.c
++++ b/drivers/hwmon/g762.c
+@@ -128,7 +128,6 @@ enum g762_regs {
+ 			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
  
- 	while (count) {
--		struct page *page;
- 		struct list_head *list;
+ struct g762_data {
+-	struct device *hwmon_dev;
+ 	struct i2c_client *client;
+ 	struct clk *clk;
  
- 		/*
-@@ -1143,27 +1141,36 @@ static void free_pcppages_bulk(struct zone *zone, int count,
- 			batch_free = count;
- 
- 		do {
--			int mt;	/* migratetype of the to-be-freed page */
--
- 			page = list_last_entry(list, struct page, lru);
--			/* must delete as __free_one_page list manipulates */
-+			/* must delete to avoid corrupting pcp list */
- 			list_del(&page->lru);
- 			pcp->count--;
- 
--			mt = get_pcppage_migratetype(page);
--			/* MIGRATE_ISOLATE page should not go to pcplists */
--			VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
--			/* Pageblock could have been isolated meanwhile */
--			if (unlikely(isolated_pageblocks))
--				mt = get_pageblock_migratetype(page);
--
- 			if (bulkfree_pcp_prepare(page))
- 				continue;
- 
--			__free_one_page(page, page_to_pfn(page), zone, 0, mt);
--			trace_mm_page_pcpu_drain(page, 0, mt);
-+			list_add_tail(&page->lru, &head);
- 		} while (--count && --batch_free && !list_empty(list));
- 	}
+@@ -594,6 +593,17 @@ static int do_set_fan_startv(struct device *dev, unsigned long val)
+  * call to g762_of_clock_disable(). Note that a reference to clock is kept
+  * in our private data structure to be used in this function.
+  */
++static void g762_of_clock_disable(void *data)
++{
++	struct g762_data *g762 = data;
 +
-+	spin_lock(&zone->lock);
-+	isolated_pageblocks = has_isolate_pageblock(zone);
++	if (!g762->clk)
++		return;
 +
-+	/*
-+	 * Use safe version since after __free_one_page(),
-+	 * page->lru.next will not point to original list.
-+	 */
-+	list_for_each_entry_safe(page, tmp, &head, lru) {
-+		int mt = get_pcppage_migratetype(page);
-+		/* MIGRATE_ISOLATE page should not go to pcplists */
-+		VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
-+		/* Pageblock could have been isolated meanwhile */
-+		if (unlikely(isolated_pageblocks))
-+			mt = get_pageblock_migratetype(page);
++	clk_disable_unprepare(g762->clk);
++	clk_put(g762->clk);
++}
 +
-+		__free_one_page(page, page_to_pfn(page), zone, 0, mt);
-+		trace_mm_page_pcpu_drain(page, 0, mt);
-+	}
- 	spin_unlock(&zone->lock);
+ static int g762_of_clock_enable(struct i2c_client *client)
+ {
+ 	struct g762_data *data;
+@@ -625,7 +635,8 @@ static int g762_of_clock_enable(struct i2c_client *client)
+ 
+ 	data = i2c_get_clientdata(client);
+ 	data->clk = clk;
+-
++
++	devm_add_action(&client->dev, g762_of_clock_disable, data);
+ 	return 0;
+ 
+  clk_unprep:
+@@ -637,17 +648,6 @@ static int g762_of_clock_enable(struct i2c_client *client)
+ 	return ret;
  }
  
+-static void g762_of_clock_disable(struct i2c_client *client)
+-{
+-	struct g762_data *data = i2c_get_clientdata(client);
+-
+-	if (!data->clk)
+-		return;
+-
+-	clk_disable_unprepare(data->clk);
+-	clk_put(data->clk);
+-}
+-
+ static int g762_of_prop_import_one(struct i2c_client *client,
+ 				   const char *pname,
+ 				   int (*psetter)(struct device *dev,
+@@ -699,7 +699,7 @@ static int g762_of_clock_enable(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static void g762_of_clock_disable(struct i2c_client *client) { }
++static void g762_of_clock_disable(void *data) { }
+ #endif
+ 
+ /*
+@@ -1054,6 +1054,7 @@ static inline int g762_fan_init(struct device *dev)
+ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ {
+ 	struct device *dev = &client->dev;
++	struct device *hwmon_dev;
+ 	struct g762_data *data;
+ 	int ret;
+ 
+@@ -1080,35 +1081,15 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		return ret;
+ 	ret = g762_of_prop_import(client);
+ 	if (ret)
+-		goto clock_dis;
++		return ret;
+ 	/* ... or platform_data */
+ 	ret = g762_pdata_prop_import(client);
+ 	if (ret)
+-		goto clock_dis;
++		return ret;
+ 
+-	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
++	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+ 							    data, g762_groups);
+-	if (IS_ERR(data->hwmon_dev)) {
+-		ret = PTR_ERR(data->hwmon_dev);
+-		goto clock_dis;
+-	}
+-
+-	return 0;
+-
+- clock_dis:
+-	g762_of_clock_disable(client);
+-
+-	return ret;
+-}
+-
+-static int g762_remove(struct i2c_client *client)
+-{
+-	struct g762_data *data = i2c_get_clientdata(client);
+-
+-	hwmon_device_unregister(data->hwmon_dev);
+-	g762_of_clock_disable(client);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(hwmon_dev);
+ }
+ 
+ static struct i2c_driver g762_driver = {
+@@ -1117,7 +1098,6 @@ static int g762_remove(struct i2c_client *client)
+ 		.of_match_table = of_match_ptr(g762_dt_match),
+ 	},
+ 	.probe	  = g762_probe,
+-	.remove	  = g762_remove,
+ 	.id_table = g762_id,
+ };
+ 
 -- 
-2.14.3
+1.8.3.1
