@@ -1,199 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030470AbeCAMrs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:47:48 -0500
-Received: from mx1.uni-rostock.de ([139.30.22.71]:61271 "EHLO
-        mx1.uni-rostock.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030423AbeCAMrr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:47:47 -0500
-Subject: Re: KASAN: use-after-free Read in mac80211_hwsim_del_radio
-To: Johannes Berg <johannes@sipsolutions.net>,
-        syzbot <syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com>,
-        <kvalo@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-References: <001a113ecf342db684056655e097@google.com>
- <1519896638.2292.7.camel@sipsolutions.net>
-From: Benjamin Beichler <Benjamin.Beichler@uni-rostock.de>
-Organization: =?UTF-8?Q?Universit=c3=a4t_Rostock?=
-Message-ID: <dca7b0bb-f29f-006a-5432-e875b9da7ffe@uni-rostock.de>
-Date: Thu, 1 Mar 2018 13:32:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1030508AbeCAMtb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 07:49:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37490 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030347AbeCAMta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 07:49:30 -0500
+Date: Thu, 1 Mar 2018 12:49:26 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] Detect early free of a live mm
+Message-ID: <20180301124925.k6q2fxvrphu7m7m6@lakrids.cambridge.arm.com>
+References: <20180228121458.2230-1-mark.rutland@arm.com>
+ <20180228121809.ztpcjb3256tj6tct@lakrids.cambridge.arm.com>
+ <20180301093522.GC15057@dhcp22.suse.cz>
+ <20180301112237.pjn5rmvkkpxcntl7@lakrids.cambridge.arm.com>
+ <20180301124024.GE15057@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1519896638.2292.7.camel@sipsolutions.net>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
-        micalg=sha-256; boundary="------------ms000400090303010802020304"
-X-Originating-IP: [139.30.201.127]
-X-ClientProxiedBy: email1.uni-rostock.de (139.30.22.81) To
- email1.uni-rostock.de (139.30.22.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301124024.GE15057@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------ms000400090303010802020304
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: de-DE
+On Thu, Mar 01, 2018 at 01:40:24PM +0100, Michal Hocko wrote:
+> On Thu 01-03-18 11:22:37, Mark Rutland wrote:
+> > On Thu, Mar 01, 2018 at 10:35:22AM +0100, Michal Hocko wrote:
+> > > On Wed 28-02-18 12:18:10, Mark Rutland wrote:
+> > > > Ugh, I messed up Peter's email when sending this out. please
+> > > > s/infraded/infradead/ if replying to the first mail.
+> > > > 
+> > > > Sorry about that.
+> > > > 
+> > > > Mark.
+> > > > 
+> > > > On Wed, Feb 28, 2018 at 12:14:58PM +0000, Mark Rutland wrote:
+> > > > > KASAN splats indicate that in some cases we free a live mm, then
+> > > > > continue to access it, with potentially disastrous results. This is
+> > > > > likely due to a mismatched mmdrop() somewhere in the kernel, but so far
+> > > > > the culprit remains elusive.
+> > > > > 
+> > > > > Let's have __mmdrop() verify that the mm isn't live for the current
+> > > > > task, similar to the existing check for init_mm. This way, we can catch
+> > > > > this class of issue earlier, and without requiring KASAN.
+> > > 
+> > > Wouldn't it be better to check the mm_users count instead?
+> > > {VM_}BUG_ON(atomic_read(&mm->mm_users));
+> > 
+> > Perhaps, but that won't catch a mismatched mmput(), which could
+> > decrement mm_users (and mm_count) to zero early, before current->mm is
+> > cleared in exit_mm().
+> 
+> true
+> 
+> > Locally, I'm testing with:
+> > 
+> >   BUG_ON(mm == current->mm);
+> >   BUG_ON(mm == current->active_mm);
+> >   BUG_ON(refcount_read(&mm->mm_users) != 0);
+> >   BUG_ON(refcount_read(&mm->mm_count) != 0);
+> > 
+> > ... so as to also catch an early free from another thread.
+> 
+> I would be careful about active_mm. At least {un}use_mm does some tricks
+> with it.
 
-Am 01.03.2018 um 10:30 schrieb Johannes Berg:
-> Hi,
->
->> syzbot hit the following crash on upstream commit
->> f3afe530d644488a074291da04a69a296ab63046 (Tue Feb 27 22:02:39 2018 +00=
-00)
->> Merge branch 'fixes-v4.16-rc4' of =20
->> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
->>
->> So far this crash happened 4 times on upstream.
->> Unfortunately, I don't have any reproducer for this crash yet.
->> Raw console output is attached.
-> That's ... a pretty complex scenario.
->
-> Looks like we have a race between destroying a network namespace, which=
+If that can leave mm == current->active_mm during __mmdrop(), I think
+that would be a bug in its own right, since that would leave
+current->active_mm pointing at a freed mm.
 
-> moves everything back into the init_ns and may have to rename objects
-> asynchronously (cleanup_net), with destroying the radio in hwsim that's=
+AFAICT, use_mm() does the usual mm_count balancing when flipping
+active_mm (i.e. we mmgrab() the new mm, make it active_mm, then mmdrop()
+the old active_mm), so even if the mmdrop() ends up freeing the old
+active_mm, that shouldn't trigger the BUG_ON(mm == current->active_mm).
 
-> also asynchronous (destroy_radio).
->
-> Benjamin, would you be able to take a look at this? I'm preparing for a=
+In unuse_mm() we don't poke active_mm at all, and leave that to the
+usual context_switch() + finish_task_switch() grab/drop.
 
-> trip and will leave Saturday for a week so I don't think I'll be able
-> to really dig into this before mid-March.
->
-> johannes
->
-Could you give me a link to or forward the original email ? I googled
-"KASAN: use-after-free Read in mac80211_hwsim_del_radio", but only your
-answer (without the logs) appears. I try to have a look then in the next
-few days.
+> > > Relying on current->mm resetting works currently but this is quite a
+> > > subtle dependency.
+> > 
+> > Do you mean because it only catches an early free in a thread using that
+> > mm, or is there another subtlety you had in mind?
+> 
+> No, I was more thinking about future changes when we stop clearing
+> tsk->mm at exit. This is rather unlikely to be honest because that
+> requires more changes.
 
-kind regards
+Ok.
 
-Benjamin
-
---=20
-M.Sc. Benjamin Beichler
-
-Universit=C3=A4t Rostock, Fakult=C3=A4t f=C3=BCr Informatik und Elektrote=
-chnik
-Institut f=C3=BCr Angewandte Mikroelektronik und Datentechnik
-
-University of Rostock, Department of CS and EE
-Institute of Applied Microelectronics and CE
-
-Richard-Wagner-Stra=C3=9Fe 31
-18119 Rostock
-Deutschland/Germany
-
-phone: +49 (0) 381 498 - 7278
-email: Benjamin.Beichler@uni-rostock.de
-www: http://www.imd.uni-rostock.de/
-
-
-
---------------ms000400090303010802020304
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-81Vs95cUAdtV/Oj7ywXmMkcerQ8egitlHVQh/jwG6EbsFLab9erzbPDs7VHsmusCAwEAAaOC
-Af4wggH6MBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMBEGA1UdIAQKMAgw
-BgYEVR0gADAdBgNVHQ4EFgQUsxX1olePg3vUENNc8o4+U/dvQzcwHwYDVR0jBBgwFoAUSbfG
-z+g9H3/qRHsTKffxCnA+3mQwHAYDVR0RBBUwE4ERY2FAdW5pLXJvc3RvY2suZGUwgYgGA1Ud
-HwSBgDB+MD2gO6A5hjdodHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMD2gO6A5hjdodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1y
-b290LWNhL3B1Yi9jcmwvY2FjcmwuY3JsMIHXBggrBgEFBQcBAQSByjCBxzAzBggrBgEFBQcw
-AYYnaHR0cDovL29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEcGCCsGAQUFBzAC
-hjtodHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWNhL3B1Yi9jYWNlcnQvY2Fj
-ZXJ0LmNydDBHBggrBgEFBQcwAoY7aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9v
-dC1jYS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBAE8SmQRK1aE9
-dqcmXuU9ZPzSN5dd19HgtQuvNAceB1mhearys7UljqQ9Ua3BAtWTthqLGuiy7vr7ul87frgp
-JRVozeRyIePOY7R0iKYbmPTbHgj4XHRyc9Z2D6h1Nec8pWQgx4BSqs3xALpio+gBK3UHsi3X
-sJx4ZpLTuboRR4+BFTmEwdtsGZf6fPLBapfbS0xls05HvPtrSw6JGWClE1PidPl3M5kiARjd
-Ep4HzDr+/IzTx9823poYGnxfCPL1M3Tb6ECugv7mBZiWE90bPzFfv9yEXkX0Pp5ielz/XkCC
-MOB+gDgVZbttmM/BSvoeuw+GtuCqqV1g6lc1/JZBNtgwggW3MIIEn6ADAgECAgcZvwa8Ukka
-MA0GCSqGSIb3DQEBCwUAMIGFMQswCQYDVQQGEwJERTEdMBsGA1UEChMUVW5pdmVyc2l0YWV0
-IFJvc3RvY2sxFjAUBgNVBAsTDVJlY2hlbnplbnRydW0xHTAbBgNVBAMTFFVuaSBSb3N0b2Nr
-IENBIC0gRzAyMSAwHgYJKoZIhvcNAQkBFhFjYUB1bmktcm9zdG9jay5kZTAeFw0xNTA3MTAw
-ODU4MjFaFw0xODA3MDkwODU4MjFaMFYxCzAJBgNVBAYTAkRFMR0wGwYDVQQKDBRVbml2ZXJz
-aXRhZXQgUm9zdG9jazEMMAoGA1UECwwDSUVGMRowGAYDVQQDDBFCZW5qYW1pbiBCZWljaGxl
-cjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMP+J5bUv7oCrhYz7tz+vKg/sGwQ
-9WHm3j528AX5cEn7Qh92cE/Y31gpimuSVlHN/CyYt/PEQ12Gc83vB8HU3gl0t00PwIElWroW
-yeGUBhMzH5Jfv0jkBz5xb/Byv8weXDVHbYvtTZfvWIv6SjDhgjY5puAHw/Z8XpEeksOoBLa6
-H7LQDR3O530Jwvay5ZDPFcWV9n01rBoglnAcfIh7v9Ua6A8BhqdZ/Yt0wlOXN94sTklsiCYy
-cmyKfhrrJWuJMD8WWAYEa69+mi9QodzHg/b58pzUDTE4QOLUR2jAk27g63yC3Nh/+lZi79gB
-e6JfSBieesen0Y2s4DYJG9T207MCAwEAAaOCAlgwggJUMEAGA1UdIAQ5MDcwEQYPKwYBBAGB
-rSGCLAEBBAMDMBEGDysGAQQBga0hgiwCAQQDATAPBg0rBgEEAYGtIYIsAQEEMAkGA1UdEwQC
-MAAwCwYDVR0PBAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDAdBgNVHQ4E
-FgQUNBPZS5VyYehPYcxCwh0ss/3r2zswHwYDVR0jBBgwFoAUsxX1olePg3vUENNc8o4+U/dv
-QzcwKwYDVR0RBCQwIoEgYmVuamFtaW4uYmVpY2hsZXJAdW5pLXJvc3RvY2suZGUwgY0GA1Ud
-HwSBhTCBgjA/oD2gO4Y5aHR0cDovL2NkcDEucGNhLmRmbi5kZS91bmktcm9zdG9jay1jYS9w
-dWIvY3JsL2dfY2FjcmwuY3JsMD+gPaA7hjlodHRwOi8vY2RwMi5wY2EuZGZuLmRlL3VuaS1y
-b3N0b2NrLWNhL3B1Yi9jcmwvZ19jYWNybC5jcmwwgdsGCCsGAQUFBwEBBIHOMIHLMDMGCCsG
-AQUFBzABhidodHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwSQYIKwYB
-BQUHMAKGPWh0dHA6Ly9jZHAxLnBjYS5kZm4uZGUvdW5pLXJvc3RvY2stY2EvcHViL2NhY2Vy
-dC9nX2NhY2VydC5jcnQwSQYIKwYBBQUHMAKGPWh0dHA6Ly9jZHAyLnBjYS5kZm4uZGUvdW5p
-LXJvc3RvY2stY2EvcHViL2NhY2VydC9nX2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEB
-ADPT0DMfqh3ie0QoV5dpv/ULazwuXoXFAYd3rikdZxxGfhR4/zzrQM9QtH4a1+nR66HnoAJR
-6NH76MDmaVY37LO3Jb+WHSbMQfN4ijv2j5Oxc8OnepTp/FY4Vo4qP0TzmW8dtqgJCwWVAcYj
-GPrZLG6oubw2aL0DYirEQYMpEh3LEAf2nemCKdLkahdmbvx5AMDcz1XODWLI9PDhGtifFHCA
-keel0T9YceFhA1myfawGh3GDD43ltM8i0PZzxaex/mw1ropnQ/wfzs3N6EYOmZNsc6RbRJLi
-HEJcraQTzI2bFSuO2Z856KRXMV+jj8c2cJ8xQuVd4ptYFSt1miDSGmwxggPkMIID4AIBATCB
-kTCBhTELMAkGA1UEBhMCREUxHTAbBgNVBAoTFFVuaXZlcnNpdGFldCBSb3N0b2NrMRYwFAYD
-VQQLEw1SZWNoZW56ZW50cnVtMR0wGwYDVQQDExRVbmkgUm9zdG9jayBDQSAtIEcwMjEgMB4G
-CSqGSIb3DQEJARYRY2FAdW5pLXJvc3RvY2suZGUCBxm/BrxSSRowDQYJYIZIAWUDBAIBBQCg
-ggIjMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDMwMTEy
-MzI0MlowLwYJKoZIhvcNAQkEMSIEIPv7efbdqdit3HKzn74HO8zUQEhPjqM2M3LpdnLgFXfb
-MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0D
-BzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwIC
-ASgwgaIGCSsGAQQBgjcQBDGBlDCBkTCBhTELMAkGA1UEBhMCREUxHTAbBgNVBAoTFFVuaXZl
-cnNpdGFldCBSb3N0b2NrMRYwFAYDVQQLEw1SZWNoZW56ZW50cnVtMR0wGwYDVQQDExRVbmkg
-Um9zdG9jayBDQSAtIEcwMjEgMB4GCSqGSIb3DQEJARYRY2FAdW5pLXJvc3RvY2suZGUCBxm/
-BrxSSRowgaQGCyqGSIb3DQEJEAILMYGUoIGRMIGFMQswCQYDVQQGEwJERTEdMBsGA1UEChMU
-VW5pdmVyc2l0YWV0IFJvc3RvY2sxFjAUBgNVBAsTDVJlY2hlbnplbnRydW0xHTAbBgNVBAMT
-FFVuaSBSb3N0b2NrIENBIC0gRzAyMSAwHgYJKoZIhvcNAQkBFhFjYUB1bmktcm9zdG9jay5k
-ZQIHGb8GvFJJGjANBgkqhkiG9w0BAQEFAASCAQADXOvMPaZtnzgaaoG/He1CEIZZNrBAcFhb
-Yd6wNDz4UgqIC6Dq88BTnsMV/jAu9/Gi6vT3XAKdUcM9mbnA00K/byK9nxbBo6HngCKTuJ92
-h68rFacZi+x8Y0LGzcMTdqUmP1kVCinGSGL23Z4eqhRTMFkVRPkdhfFPAaoc7muSKDDUjL+j
-p1B9tz8JUQkraVAlk92jvRuMf33zaz85iwOurZMFh2mKx0LHyvDCCiX5WmamSVm2kL9BFKLJ
-ba9UcMlKeE9oUZrX9vq6h0S2HeckqL3jzaOjAWx2x6JTde3VxBPkdB7ZGy2pqKOzIXxS4Eoj
-l3bjMz9tjIjAq4OfgdmuAAAAAAAA
---------------ms000400090303010802020304--
+Thanks,
+Mark.
