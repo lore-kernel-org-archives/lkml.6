@@ -1,95 +1,109 @@
 Return-Path: <boris.ostrovsky@oracle.com>
-X-Google-Smtp-Source: AG47ELt6laqdKdKbK+ZIhy15AgmeGnMF1Q/9MXQp8OEJirXW86SwCeCd3ZiDN9AGpnBMd8RfY/eX
-ARC-Seal: i=1; a=rsa-sha256; t=1519920910; cv=none;
+X-Google-Smtp-Source: AG47ELtC2bObOkkVdwFm47aehRkF4F8UjIbfH3VCq8VdhyxSMbLmagxYVB5lioGFwr/IYUHOQT7h
+ARC-Seal: i=1; a=rsa-sha256; t=1519916877; cv=none;
         d=google.com; s=arc-20160816;
-        b=LrOy4kwFCwshEOXb0u+Hit1UIkjc4uan6cGhshCzslW2tHU1nb33uYCpXBDmUkSa/u
-         eyg04esvGwVzGZ5cK4uvb1P+jOSP264lmoCaeXHuPpB7TssjVTcZwx5dcxXCKGKiI7mR
-         cWfJ24fBKS/KmVPuET16kAnFcO9JGqWv/HN96QlbWrNgWJ9Giw/5ZadtiXuLoU7xvsDR
-         QG9KIo71skTs9TRdnn6jYy5mLfwnuvoT71Fgv1Fj3vaXJivWnRxme88Dan9YfcLpL8yk
-         22DfQNRypZeQv1Gkeg20JSHzt8xMpddbcvSk/8cEWbYpw1pFKuHNmj2UYm80TV6cztPl
-         Jxsw==
+        b=mX3paXk9pn6/LxB2szexwdT8bpQ6BqXpaqwhPHgJ11AbnGFasR2mnI2uP+M71BsYUa
+         ri+Oz11UijtM8nthqHbD4i7IXJFWBdpyBEDtIJX6EAY0EpLTv0uwasC9VAzLy3TginG0
+         XeNVys963JJlt5rmzSZTjF18jGKadUUICwihaOZjVsSOpEKWXHhydpzugn5pLU328h34
+         qvG0KtDCh7zI10onHVLXjxHnlFynd0h/yVcEgn/SvbUumgSuXVf5XwsR0xIxMM9HxQtb
+         hF46EZeTtjQL90BlGIJ08BUgGUKmamr2vaSx5rEc6Tt7JZ/TK7wJ4ccItaB7lWJvYNCn
+         l8AQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :dkim-signature:arc-authentication-results;
-        bh=X/v3X+l1TVHqL8nl1gU/WFdvhBzvP10dXbNdTKwc38Q=;
-        b=Lq5KZzV4SdQPpUBaLfxU7T+kCgf/Yu+EQnlX0X6q21d9ocsvPoObKQJMa4XCaF4EEJ
-         1b/8ZBybANZlldUEPXrC4bDNKh5Q2ymC1FMuJmlQs9xJAi38Qv7IbplkOtOuMoA+MlVQ
-         150mmytD4kzO6ZfQTmJEUc+nysSyBp4uI8jBpyKPmTfJW5WCA9OqGWNBhX36KFtRneD1
-         5aG9/xcmIFT2KaZdkqRSTrUHS1/hV5kduFypDpX6tk3BHaI31uUzuL1Xpfya5h79mBNa
-         Q+//3ohWwPScmkjB1b6a3TVe0LdfdcF35j+sey7/9HnmGYxAJALtE/sHd9cnX5Q1Cuw1
-         3rxg==
+        bh=HJ9ts2R+50NAj722dkQJSBclf2nY/C6qYku7AxGcvBY=;
+        b=l7G9QR7zNy+aK+dhkMHiJHKXgMYLFwAhE3zyAdwkY5Qr8vHI6IFBoHakN1D5iy474P
+         djwsvcDsPN6VBPiRawGoRKVhFzFfgF8ejv8lOh7F36a9yBGaokzQo9oCn8D/BKiryT2H
+         n3HhvLpijNCMsjVDWDMkquT682B5nLBJruWeR2HETKF9j6TjbIx6z3Gejgav2tpqB0WQ
+         SyH8VgoJIIQfBbGFU+hyYn3CwmSpdenxszeATXKkk3svhGl7eMq0rnERFuuqQp8qCpXS
+         yedto0DlPWRqMhrV2kFioaxm0AgT+QTPw7+oemC+LUUiqjrGgCk6El7go1FpPvCcIJxZ
+         HSuw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Dn2ck1zJ;
-       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=bM9ilyER;
+       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Dn2ck1zJ;
-       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=bM9ilyER;
+       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Subject: Re: [Xen-devel] [RFC PATCH v4 2/7] xen/pvh: Move PVH entry code out
- of Xen specific tree
-To: Paolo Bonzini <pbonzini@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Maran Wilson <maran.wilson@oracle.com>
-Cc: roger.pau@citrix.com, andrew.cooper3@citrix.com, hch@infradead.org,
-        JBeulich@suse.com, x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        thomas.lendacky@amd.com, dave.hansen@linux.intel.com,
-        rkrcmar@redhat.com, gregkh@linuxfoundation.org, mchehab@kernel.org,
-        hpa@zytor.com, linus.walleij@linaro.org, mingo@redhat.com,
-        rdunlap@infradead.org, luto@kernel.org, jpoimboe@redhat.com,
-        tglx@linutronix.de, bp@suse.de, davem@davemloft.net,
-        kirill.shutemov@linux.intel.com
+Subject: Re: [RFC PATCH v4 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH
+ and CONFIG_XEN_PVH
+To: Maran Wilson <maran.wilson@oracle.com>, pbonzini@redhat.com,
+        jgross@suse.com, roger.pau@citrix.com, andrew.cooper3@citrix.com,
+        hch@infradead.org, JBeulich@suse.com, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rkrcmar@redhat.com,
+        jpoimboe@redhat.com, bp@suse.de, kirill.shutemov@linux.intel.com,
+        thomas.lendacky@amd.com, luto@kernel.org, dave.hansen@linux.intel.com,
+        davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org
 References: <1519842483-8887-1-git-send-email-maran.wilson@oracle.com>
- <1519842483-8887-3-git-send-email-maran.wilson@oracle.com>
- <20180228210814.GK11576@char.us.oracle.com>
- <e9133f97-7ecf-2868-6883-3f0cda7bbb2f@redhat.com>
- <20f82d4c-9591-7770-aeca-0331a7940f5d@suse.com>
- <98eda294-8491-35a2-b278-aeedc079640f@redhat.com>
+ <1519842483-8887-2-git-send-email-maran.wilson@oracle.com>
 From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <1b8962c1-8ab5-cddc-0c0b-a7419aab424b@oracle.com>
-Date: Thu, 1 Mar 2018 11:15:57 -0500
+Message-ID: <5be04d96-aa10-a022-2597-f7f40138f8f8@oracle.com>
+Date: Thu, 1 Mar 2018 10:02:35 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <98eda294-8491-35a2-b278-aeedc079640f@redhat.com>
+In-Reply-To: <1519842483-8887-2-git-send-email-maran.wilson@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8818 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=912
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=946
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803010202
+ engine=8.0.1-1711220000 definitions=main-1803010190
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593670476619272001?=
-X-GMAIL-MSGID: =?utf-8?q?1593752588284440660?=
+X-GMAIL-THRID: =?utf-8?q?1593670432609567761?=
+X-GMAIL-MSGID: =?utf-8?q?1593748360480503205?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/01/2018 03:46 AM, Paolo Bonzini wrote:
-> On 01/03/2018 07:11, Juergen Gross wrote:
->>> Probably a better place for these would be
->>> arch/x86/platform/pvh/{enlighten.c,head.S}.  (Just because there are no
->>> .c or .S files in arch/x86).
->> Right.
->>
->>> Maybe Xen ought to be moved under
->>> arch/x86/platform too.
->> And hyperv and kvm, too?
+On 02/28/2018 01:27 PM, Maran Wilson wrote:
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index eb7f43f23521..fa7cd0305125 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -791,6 +791,14 @@ config KVM_GUEST
+>  	  underlying device model, the host provides the guest with
+>  	  timing infrastructure such as time of day, and system time
+>  
+> +config PVH
+> +	bool "Support for running PVH guests"
+> +	depends on KVM_GUEST || XEN
 
 
-I was actually thinking about having arch/x86/virt where xen, kvm,
-hyperv etc should go. Not as part of this series, obviously.
+Not sure about XEN part. PVH is selected by XEN_PVH for Xen.
+
+What about introducing KVM_GUEST_PVH that will select PVH and then drop
+dependency here?
+
 
 -boris
 
+> +	def_bool n
+> +	---help---
+> +	  This option enables the PVH entry point for guest virtual machines
+> +	  as specified in the x86/HVM direct boot ABI.
+> +
+>  
 
-> Actually yes, though for kvm I'd move the files in arch/x86/kernel
-> (arch/x86/kvm is the hypervisor itself, not the "platform").
->
->> No, I think arch/x86/xen/ is fine.
-> np, it was just a (somewhat crazy) suggestion. :)
->
-> Paolo
+
+> diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+> index f605825a04ab..021c8591c3c0 100644
+> --- a/arch/x86/xen/Kconfig
+> +++ b/arch/x86/xen/Kconfig
+> @@ -77,8 +77,9 @@ config XEN_DEBUG_FS
+>  	  Enabling this option may incur a significant performance overhead.
+>  
+>  config XEN_PVH
+> -	bool "Support for running as a PVH guest"
+> +	bool "Support for running as a Xen PVH guest"
+>  	depends on XEN && XEN_PVHVM && ACPI
+>  	# Pre-built page tables are not ready to handle 5-level paging.
+>  	depends on !X86_5LEVEL
+> +	select PVH
+>  	def_bool n
