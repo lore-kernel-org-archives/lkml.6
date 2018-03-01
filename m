@@ -1,128 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965551AbeCACuM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:50:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965488AbeCACuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:50:11 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C8D214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Wed, 28 Feb 2018 18:50:09 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org,
-        yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com,
-        shengyong1@huawei.com, heyunlei@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
- in ->readdir"
-Message-ID: <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
- <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
- <c36a6024-209c-b660-ba61-e681a98e6f3b@huawei.com>
+        id S965567AbeCACuV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:50:21 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40974 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965554AbeCACuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:50:18 -0500
+X-Google-Smtp-Source: AG47ELsZ8WyNr1XtdYUHvuTvsWRt6HPYFkaw8xQG5DaPe8g0FDTIgiVZR6DTV6UUbQJYKNRfsNVfnw==
+Date: Thu, 1 Mar 2018 11:50:28 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: Jeffrey Hugo <jhugo@codeaurora.org>
+Cc: Tyler Baicar <tbaicar@codeaurora.org>, ard.biesheuvel@linaro.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sgoel@codeaurora.org, timur@codeaurora.org
+Subject: Re: [PATCH 0/2] ESRT fixes for relocatable kexec'd kernel
+Message-ID: <20180301025026.GK6019@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Tyler Baicar <tbaicar@codeaurora.org>, ard.biesheuvel@linaro.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sgoel@codeaurora.org, timur@codeaurora.org
+References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
+ <20180228061901.GJ6019@linaro.org>
+ <1f03865f-2d22-8ba1-a276-a6b49d7c14de@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c36a6024-209c-b660-ba61-e681a98e6f3b@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1f03865f-2d22-8ba1-a276-a6b49d7c14de@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2018/2/28 13:48, Jaegeuk Kim wrote:
-> > Hi Yunlong,
-> > 
-> > As Eric pointed out, how do you think using nohighmem for directory likewise
-> 
-> I'd like to ask, at the beginning, why we choose to use highmem for dentry page?
-> any history reason there?
+Hi,
 
-There was no huge preference on it based on performance. I just wanted not to
-abuse lowmem.
+On Wed, Feb 28, 2018 at 08:39:42AM -0700, Jeffrey Hugo wrote:
+> On 2/27/2018 11:19 PM, AKASHI Takahiro wrote:
+> >Tyler,
+> >
+> ># I missed catching your patch as its subject doesn't contain arm64.
+> >
+> >On Fri, Feb 23, 2018 at 12:42:31PM -0700, Tyler Baicar wrote:
+> >>Currently on arm64 ESRT memory does not appear to be properly blocked off.
+> >>Upon successful initialization, ESRT prints out the memory region that it
+> >>exists in like:
+> >>
+> >>esrt: Reserving ESRT space from 0x000000000a4c1c18 to 0x000000000a4c1cf0.
+> >>
+> >>But then by dumping /proc/iomem this region appears as part of System RAM
+> >>rather than being reserved:
+> >>
+> >>08f10000-0deeffff : System RAM
+> >>
+> >>This causes issues when trying to kexec if the kernel is relocatable. When
+> >>kexec tries to execute, this memory can be selected to relocate the kernel to
+> >>which then overwrites all the ESRT information. Then when the kexec'd kernel
+> >>tries to initialize ESRT, it doesn't recognize the ESRT version number and
+> >>just returns from efi_esrt_init().
+> >
+> >I'm not sure what is the root cause of your problem.
+> >Do you have good confidence that the kernel (2nd kernel image in this case?)
+> >really overwrite ESRT region?
+> 
+> According to my debug, yes.
+> Using JTAG, I was able to determine that the ESRT memory region was getting
+> overwritten by the secondary kernel in
+> kernel/arch/arm64/kernel/relocate_kernel.S - specifically the "copy_page"
+> line of arm64_relocate_new_kernel()
+> 
+> >To my best knowledge, kexec is carefully designed not to do such a thing
+> >as it allocates a temporary buffer for kernel image and copies it to the
+> >final destination at the very end of the 1st kernel.
+> >
+> >My guess is that kexec, or rather kexec-tools, tries to load the kernel image
+> >at 0x8f80000 (or 0x9080000?, not sure) in your case. It may or may not be
+> >overlapped with ESRT.
+> >(Try "-d" option when executing kexec command for confirmation.)
+> 
+> With -d, I see
+> 
+> get_memory_ranges_iomem_cb: 0000000009611000 - 000000000e5fffff : System RAM
+> 
+> That overlaps the ESRT reservation -
+> [ 0.000000] esrt: Reserving ESRT space from 0x000000000b708718 to
+> 0x000000000b7087f0
+> 
+> >
+> >Are you using initrd with kexec?
+> 
+> Yes
+
+To make the things clear, can you show me, if possible, the followings:
+* dmesg
+* /proc/iomem
+* the output from "kexec -d", particularly the last part like
+    kexec_load: entry = 0x411d7660 flags = 0xb70000
+    nr_segments = 3
+    segment[0].buf   = 0xffff86613010
+    segment[0].bufsz = 0x10e9b48
+    segment[0].mem   = 0x40080000
+    segment[0].memsz = 0x1156000
+    segment[1].buf   = 0xffff86211010
+    segment[1].bufsz = 0x20e
+    segment[1].mem   = 0x411d6000
+    segment[1].memsz = 0x1000
+    segment[2].buf   = 0x5045420
+    segment[2].bufsz = 0x31b8
+    segment[2].mem   = 0x411d7000
+    segment[2].memsz = 0x4000
 
 Thanks,
+-Takahiro AKASHI
 
+> >
+> >Thanks,
+> >-Takahiro AKASHI
+> >
+> >
+> >>This causes an early ioremap leak because
+> >>the memory allocated for 'va' is never unmapped. So first fix that error
+> >>case to properly unmap 'va' before returning.
+> >>
+> >>This still leaves ESRT unable to initialize in the kexec'd kernel, so now
+> >>mark the ESRT memory block as nomap so that this memory is not treated as
+> >>System RAM. With this change I'm able to see that the ESRT data is not
+> >>overwritten when running a kexec'd kernel.
+> >>
+> >>Tyler Baicar (2):
+> >>   efi/esrt: fix unsupported version initialization failure
+> >>   efi/esrt: mark ESRT memory region as nomap
+> >>
+> >>  drivers/firmware/efi/esrt.c | 10 +++++++++-
+> >>  1 file changed, 9 insertions(+), 1 deletion(-)
+> >>
+> >>-- 
+> >>Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+> >>Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+> >>a Linux Foundation Collaborative Project.
+> >>
+> >--
+> >To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> >the body of a message to majordomo@vger.kernel.org
+> >More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
 > 
-> > ext4, which looks like more efficient? Actually, we don't need to do this in
-> > most of recent kernels, right?
 > 
-> It's OK to me to keep a line with ext4.
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> > On 02/28, Yunlong Song wrote:
-> >> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
-> >>
-> >> Conflicts:
-> >> 	fs/f2fs/dir.c
-> >>
-> >> In some platforms (such as arm), high memory is used, then the
-> >> decrypting filename will cause panic, the reason see commit
-> >> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
-> >> for decrypting filename"):
-> >>
-> >>  We got dentry pages from high_mem, and its address space directly goes into the
-> >>  decryption path via f2fs_fname_disk_to_usr.
-> >>  But, sg_init_one assumes the address is not from high_mem, so we can get this
-> >>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
-> >>
-> >>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
-> >>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> >>  ...
-> >>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
-> >>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
-> >>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
-> >>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
-> >>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
-> >>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
-> >>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
-> >>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
-> >>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
-> >>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
-> >>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
-> >>
-> >> Howerver, later patch:
-> >> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
-> >> reverts the codes, which causes panic again in arm, so fix it back to the old version.
-> >>
-> >> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/dir.c | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> >> index f00b5ed..de2e295 100644
-> >> --- a/fs/f2fs/dir.c
-> >> +++ b/fs/f2fs/dir.c
-> >> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
-> >>  			int save_len = fstr->len;
-> >>  			int err;
-> >>  
-> >> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
-> >> +			if (!de_name.name)
-> >> +				return -ENOMEM;
-> >> +
-> >> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
-> >> +
-> >>  			err = fscrypt_fname_disk_to_usr(d->inode,
-> >>  						(u32)de->hash_code, 0,
-> >>  						&de_name, fstr);
-> >> +			kfree(de_name.name);
-> >>  			if (err)
-> >>  				return err;
-> >>  
-> >> -- 
-> >> 1.8.5.2
-> > 
-> > .
-> > 
+> -- 
+> Jeffrey Hugo
+> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
+> Inc.
+> Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
