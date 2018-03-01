@@ -1,215 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966979AbeCAKZP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:25:15 -0500
-Received: from regular1.263xmail.com ([211.150.99.137]:36613 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966587AbeCAKUM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:20:12 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <96aac0c3c29e72c1729236c1efc7555c>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v6 08/14] iommu/rockchip: Control clocks needed to access the IOMMU
-Date: Thu,  1 Mar 2018 18:18:31 +0800
-Message-Id: <20180301101837.27969-9-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
-References: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
+        id S967184AbeCAKZq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:25:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37981 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965971AbeCAKZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:25:42 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v2] rtc: m48t59: use generic nvmem
+Date: Thu,  1 Mar 2018 11:25:38 +0100
+Message-Id: <20180301102538.6515-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomasz Figa <tfiga@chromium.org>
+Instead of adding a binary sysfs attribute from the driver (which suffers
+from a race condition as the attribute appears after the device), use the
+core to register an nvmem device.
 
-Current code relies on master driver enabling necessary clocks before
-IOMMU is accessed, however there are cases when the IOMMU should be
-accessed while the master is not running yet, for example allocating
-V4L2 videobuf2 buffers, which is done by the VB2 framework using DMA
-mapping API and doesn't engage the master driver at all.
-
-This patch fixes the problem by letting clocks needed for IOMMU
-operation to be listed in Device Tree and making the driver enable them
-for the time of accessing the hardware.
-
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
+ drivers/rtc/rtc-m48t59.c | 56 +++++++++++++++++++++---------------------------
+ 1 file changed, 24 insertions(+), 32 deletions(-)
 
-Changes in v6:
-Fix dt-binding as Robin suggested.
-Use aclk and iface clk as Rob and Robin suggested, and split binding
-patch.
-
-Changes in v5:
-Use clk_bulk APIs.
-
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-
- drivers/iommu/rockchip-iommu.c | 54 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index c4131ca792e0..6c6275589bd5 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -4,6 +4,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/compiler.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -87,10 +88,17 @@ struct rk_iommu_domain {
- 	struct iommu_domain domain;
+diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
+index e248e56ff8a1..d2ba7d76dbb9 100644
+--- a/drivers/rtc/rtc-m48t59.c
++++ b/drivers/rtc/rtc-m48t59.c
+@@ -334,16 +334,16 @@ static const struct rtc_class_ops m48t02_rtc_ops = {
+ 	.set_time	= m48t59_rtc_set_time,
  };
  
-+/* list of clocks required by IOMMU */
-+static const char * const rk_iommu_clocks[] = {
-+	"aclk", "iface",
-+};
-+
- struct rk_iommu {
- 	struct device *dev;
- 	void __iomem **bases;
- 	int num_mmu;
-+	struct clk_bulk_data *clocks;
-+	int num_clocks;
- 	bool reset_disabled;
- 	struct iommu_device iommu;
- 	struct list_head node; /* entry in rk_iommu_domain.iommus */
-@@ -506,6 +514,8 @@ static irqreturn_t rk_iommu_irq(int irq, void *dev_id)
- 	irqreturn_t ret = IRQ_NONE;
- 	int i;
+-static ssize_t m48t59_nvram_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
+-				char *buf, loff_t pos, size_t size)
++static int m48t59_nvram_read(void *priv, unsigned int offset, void *val,
++			     size_t size)
+ {
+-	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
++	struct platform_device *pdev = priv;
++	struct device *dev = &pdev->dev;
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct m48t59_private *m48t59 = platform_get_drvdata(pdev);
+ 	ssize_t cnt = 0;
+ 	unsigned long flags;
++	u8 *buf = val;
  
-+	WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks));
-+
- 	for (i = 0; i < iommu->num_mmu; i++) {
- 		int_status = rk_iommu_read(iommu->bases[i], RK_MMU_INT_STATUS);
- 		if (int_status == 0)
-@@ -552,6 +562,8 @@ static irqreturn_t rk_iommu_irq(int irq, void *dev_id)
- 		rk_iommu_write(iommu->bases[i], RK_MMU_INT_CLEAR, int_status);
- 	}
+ 	spin_lock_irqsave(&m48t59->lock, flags);
  
-+	clk_bulk_disable(iommu->num_clocks, iommu->clocks);
-+
- 	return ret;
+@@ -352,19 +352,19 @@ static ssize_t m48t59_nvram_read(struct file *filp, struct kobject *kobj,
+ 
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
+ 
+-	return cnt;
++	return 0;
  }
  
-@@ -594,7 +606,9 @@ static void rk_iommu_zap_iova(struct rk_iommu_domain *rk_domain,
- 	list_for_each(pos, &rk_domain->iommus) {
- 		struct rk_iommu *iommu;
- 		iommu = list_entry(pos, struct rk_iommu, node);
-+		WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks));
- 		rk_iommu_zap_lines(iommu, iova, size);
-+		clk_bulk_disable(iommu->num_clocks, iommu->clocks);
- 	}
- 	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
- }
-@@ -823,10 +837,14 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 	if (!iommu)
- 		return 0;
+-static ssize_t m48t59_nvram_write(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
+-				char *buf, loff_t pos, size_t size)
++static int m48t59_nvram_write(void *priv, unsigned int offset, void *val,
++			      size_t size)
+ {
+-	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
++	struct platform_device *pdev = priv;
++	struct device *dev = &pdev->dev;
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct m48t59_private *m48t59 = platform_get_drvdata(pdev);
+ 	ssize_t cnt = 0;
+ 	unsigned long flags;
++	u8 *buf = val;
  
--	ret = rk_iommu_enable_stall(iommu);
-+	ret = clk_bulk_enable(iommu->num_clocks, iommu->clocks);
+ 	spin_lock_irqsave(&m48t59->lock, flags);
+ 
+@@ -373,18 +373,9 @@ static ssize_t m48t59_nvram_write(struct file *filp, struct kobject *kobj,
+ 
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
+ 
+-	return cnt;
++	return 0;
+ }
+ 
+-static struct bin_attribute m48t59_nvram_attr = {
+-	.attr = {
+-		.name = "nvram",
+-		.mode = S_IRUGO | S_IWUSR,
+-	},
+-	.read = m48t59_nvram_read,
+-	.write = m48t59_nvram_write,
+-};
+-
+ static int m48t59_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+@@ -393,6 +384,14 @@ static int m48t59_rtc_probe(struct platform_device *pdev)
+ 	int ret = -ENOMEM;
+ 	char *name;
+ 	const struct rtc_class_ops *ops;
++	struct nvmem_config nvmem_cfg = {
++		.name = "m48t59-",
++		.word_size = 1,
++		.stride = 1,
++		.reg_read = m48t59_nvram_read,
++		.reg_write = m48t59_nvram_write,
++		.priv = pdev,
++	};
+ 
+ 	/* This chip could be memory-mapped or I/O-mapped */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -484,27 +483,21 @@ static int m48t59_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(m48t59->rtc))
+ 		return PTR_ERR(m48t59->rtc);
+ 
++	m48t59->rtc->nvram_old_abi = true;
+ 	m48t59->rtc->ops = ops;
+ 
+-	ret = rtc_register_device(m48t59->rtc);
++	nvmem_cfg.size = pdata->offset;
++	ret = rtc_nvmem_register(m48t59->rtc, &nvmem_cfg);
  	if (ret)
  		return ret;
  
-+	ret = rk_iommu_enable_stall(iommu);
-+	if (ret)
-+		goto out_disable_clocks;
-+
- 	ret = rk_iommu_force_reset(iommu);
+-	m48t59_nvram_attr.size = pdata->offset;
+-
+-	ret = sysfs_create_bin_file(&pdev->dev.kobj, &m48t59_nvram_attr);
++	ret = rtc_register_device(m48t59->rtc);
  	if (ret)
- 		goto out_disable_stall;
-@@ -852,6 +870,8 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 
- out_disable_stall:
- 	rk_iommu_disable_stall(iommu);
-+out_disable_clocks:
-+	clk_bulk_disable(iommu->num_clocks, iommu->clocks);
- 	return ret;
- }
- 
-@@ -873,6 +893,7 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
- 	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
- 
- 	/* Ignore error while disabling, just keep going */
-+	WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks));
- 	rk_iommu_enable_stall(iommu);
- 	rk_iommu_disable_paging(iommu);
- 	for (i = 0; i < iommu->num_mmu; i++) {
-@@ -880,6 +901,7 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
- 		rk_iommu_write(iommu->bases[i], RK_MMU_DTE_ADDR, 0);
- 	}
- 	rk_iommu_disable_stall(iommu);
-+	clk_bulk_disable(iommu->num_clocks, iommu->clocks);
- 
- 	iommu->domain = NULL;
- 
-@@ -1172,18 +1194,38 @@ static int rk_iommu_probe(struct platform_device *pdev)
- 	iommu->reset_disabled = device_property_read_bool(dev,
- 					"rockchip,disable-mmu-reset");
- 
--	err = iommu_device_sysfs_add(&iommu->iommu, dev, NULL, dev_name(dev));
-+	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
-+	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
-+				     sizeof(*iommu->clocks), GFP_KERNEL);
-+	if (!iommu->clocks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < iommu->num_clocks; ++i)
-+		iommu->clocks[i].id = rk_iommu_clocks[i];
-+
-+	err = devm_clk_bulk_get(iommu->dev, iommu->num_clocks, iommu->clocks);
- 	if (err)
- 		return err;
- 
-+	err = clk_bulk_prepare(iommu->num_clocks, iommu->clocks);
-+	if (err)
-+		return err;
-+
-+	err = iommu_device_sysfs_add(&iommu->iommu, dev, NULL, dev_name(dev));
-+	if (err)
-+		goto err_unprepare_clocks;
-+
- 	iommu_device_set_ops(&iommu->iommu, &rk_iommu_ops);
- 	err = iommu_device_register(&iommu->iommu);
--	if (err) {
--		iommu_device_sysfs_remove(&iommu->iommu);
--		return err;
--	}
-+	if (err)
-+		goto err_remove_sysfs;
+ 		return ret;
  
  	return 0;
-+err_remove_sysfs:
-+	iommu_device_sysfs_remove(&iommu->iommu);
-+err_unprepare_clocks:
-+	clk_bulk_unprepare(iommu->num_clocks, iommu->clocks);
-+	return err;
  }
  
- static const struct of_device_id rk_iommu_dt_ids[] = {
+-static int m48t59_rtc_remove(struct platform_device *pdev)
+-{
+-	sysfs_remove_bin_file(&pdev->dev.kobj, &m48t59_nvram_attr);
+-	return 0;
+-}
+-
+ /* work with hotplug and coldplug */
+ MODULE_ALIAS("platform:rtc-m48t59");
+ 
+@@ -513,7 +506,6 @@ static struct platform_driver m48t59_rtc_driver = {
+ 		.name	= "rtc-m48t59",
+ 	},
+ 	.probe		= m48t59_rtc_probe,
+-	.remove		= m48t59_rtc_remove,
+ };
+ 
+ module_platform_driver(m48t59_rtc_driver);
 -- 
-2.11.0
+2.16.2
