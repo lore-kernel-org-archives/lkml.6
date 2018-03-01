@@ -1,71 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161257AbeCATUd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:20:33 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42179 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161191AbeCATUS (ORCPT
+        id S1161300AbeCATVS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 14:21:18 -0500
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:41489 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161188AbeCATVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:20:18 -0500
-X-Google-Smtp-Source: AG47ELudpG/iXOc1jkuVTnuNTLebo1Tp5BTgxakoqsCM+DmPkMG4HqFxBnWxkOkMo3MQbIsavc2xZg==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: imx51-zii-rdu1: Add node for RAVE SP device
-Date: Thu,  1 Mar 2018 11:20:07 -0800
-Message-Id: <20180301192007.29278-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180301192007.29278-1-andrew.smirnov@gmail.com>
-References: <20180301192007.29278-1-andrew.smirnov@gmail.com>
+        Thu, 1 Mar 2018 14:21:14 -0500
+X-Google-Smtp-Source: AG47ELvqthIeeYkfkqfeSxZqtRPGlyVv8NcKTkR9cbUqoYwf3oPYhGfhFNApbFbleqQmUA3HNmf/qiow5mRmoYhX7no=
+MIME-Version: 1.0
+In-Reply-To: <1519876569.4592.4.camel@au1.ibm.com>
+References: <20180228234006.21093-1-logang@deltatee.com> <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 1 Mar 2018 11:21:13 -0800
+Message-ID: <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+To: benh@au1.ibm.com
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With MFD and watchdog drivers for RAVE SP device support added by
-538ee27290fa ("mfd: Add driver for RAVE Supervisory Processor") and
-c3bb33345721 ("watchdog: Add RAVE SP watchdog driver") add
-corresponding DT node for RDU.
+On Wed, Feb 28, 2018 at 7:56 PM, Benjamin Herrenschmidt
+<benh@au1.ibm.com> wrote:
+> On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
+>> On Wed, 2018-02-28 at 16:39 -0700, Logan Gunthorpe wrote:
+>> > Hi Everyone,
+>>
+>>
+>> So Oliver (CC) was having issues getting any of that to work for us.
+>>
+>> The problem is that acccording to him (I didn't double check the latest
+>> patches) you effectively hotplug the PCIe memory into the system when
+>> creating struct pages.
+>>
+>> This cannot possibly work for us. First we cannot map PCIe memory as
+>> cachable. (Note that doing so is a bad idea if you are behind a PLX
+>> switch anyway since you'd ahve to manage cache coherency in SW).
+>
+> Note: I think the above means it won't work behind a switch on x86
+> either, will it ?
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- arch/arm/boot/dts/imx51-zii-rdu1.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-index 5306b78de0ca..84ad5ceefecc 100644
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -568,6 +568,15 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart3>;
- 	status = "okay";
-+
-+	rave-sp {
-+		compatible = "zii,rave-sp-rdu1";
-+		current-speed = <38400>;
-+
-+		watchdog {
-+			compatible = "zii,rave-sp-watchdog";
-+		};
-+	};
- };
- 
- &usbh1 {
--- 
-2.14.3
+The devm_memremap_pages() infrastructure allows placing the memmap in
+"System-RAM" even if the hotplugged range is in PCI space. So, even if
+it is an issue on some configurations, it's just a simple adjustment
+to where the memmap is placed.
