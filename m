@@ -1,249 +1,254 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AG47ELtiKh6YFLUb0SSMXL12GR1sbYDq2oWcMN4s0masChvawoM958VfCPcRg2vHqJ8UV6lHyT1P
-ARC-Seal: i=1; a=rsa-sha256; t=1520804281; cv=none;
+X-Google-Smtp-Source: AG47ELsTZi2xDo+8ak7vaoCbaGdNGveixdmgaBEvSgOASZdb/Cpu+ORZUkDRlV0Iqoyn9mVgeKZv
+ARC-Seal: i=1; a=rsa-sha256; t=1519947227; cv=none;
         d=google.com; s=arc-20160816;
-        b=JgNHCi7zfy1HoUE/5SJdFxazNOkgfUVixZiJ3qCJeY6NaOrq9lMU0jQZFre3XynVql
-         rvTsob4yTDi+FKVabGIugxqKk8GRGmtQzirH+DmpRtd5IcpwjiEvbxjBY1xUCjhAeghg
-         YBmwo1spwPJxsSPrFc+7E5k8Q5y1zcQ4GPvUISQkW3aYc0ZByPI5Q6hIAEngYS0oMXix
-         tE1/t5EFv/r2mAUAM/tYznTymN5PKNBGE3vJ05c68xCruS8bQYhEBI8vWtQu8xJoc/gk
-         xkOFq2sD78+VGTzyGK3/0to72PJkdf9smcBK1huFPk8eHhT4eyxTcupXvdXyYk2ODfQl
-         LK2w==
+        b=oTftECpWpJbOATS7OlEqltoFBPdo4G9qyUMiZO1zlI28g/1KvftLzyBQ50YThl/XSn
+         efWCWwRj5EcHFTq34eT4PNpFsKSraSG5gWUgyc87c6OGtPSQqUJJl9VlGzx+BFlaIaZf
+         /7dBiqF7bRwTL6XAIXMba5Femxh1IEPm0n+J3HYq2ikbgIS8zZkFRvc/LJz7mF+9aU2s
+         A4fcq98+1b/XV9D/tcb1IIrSoYSsjf6R5256mLF17QtNgX6QupWLWabb3vk0T7JzQ7ED
+         WJsnvQ5QAEEb2Ta2b4vjd0iFxUXYAj74SYGah9Vv/fMnyxfxFse0339Ei1ETVKht+zlY
+         KWpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
-         :from:arc-authentication-results;
-        bh=fRne6L/yAWrEUwzXwlb++XPdFbREsWDYkL2Z4djSm34=;
-        b=q/non18R6nN3FmDq12hAHYLKIgTwFl8FZ4felZMCg45efdMXM4qM/Iil7tcIvtjDRT
-         3qfsiyp/PtZg+9kYl5m/EFI1qKdQDn7sdLNQR5JsqqwjidAAymWxdOxpUgBATltW7BH3
-         OM1gWpUxHX7bpUYGA0aAk8p95JjHBoZSjziiUgjQmc6arsszdjOIpfiEQ4dw/uzAOODl
-         mrfJVmN2hne9BahRozNmTohVFQZW9yYRnUBiaibeuaD8sEzQydEWmNs5aMvkJB05NKsx
-         fKcgucMEK8CSjHyyt3k/e5PKeHhMoWnrh+LIVc3jWeYxvJz3m3Cf4gtryADhs2elYTFi
-         NyPA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=l4/cJAbrphNwYViqyUNNP5MOaIkeNFUmSHxcMxpYI30=;
+        b=h9OHDILtT3TkAWPFsQz2DaZ+SWpUPpwDQGJ5yNw/u6sezJSJR2GVm+bGHsgvqkLzb7
+         j2T61igTVWniOxfIXGghAjmGH5llkQvMFwM0OPBWJzZ6Zx/H3K/LakQcvg9n+GioNBLv
+         7jJPZvBXV9EnsreruxAGV00/rqOMJ932DhFtXV7MUGhGOBtHyMIx9kcMTxDDg9bzi1uI
+         z3oimGQRQAo4HhVag2EjVIUTWjK+jRIsWDxeFugroFEQ8vTVFBfKM90kdpcE5NDHsTxW
+         o3otOsDUIQpd7FWpcxDdkb1VL1tX3qtiYMpHl009fd78xCdcMlJ2zwh2t/LFSA3sA6Vq
+         2A/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 From: NeilBrown <neilb@suse.com>
-To: "Dilger\, Andreas" <andreas.dilger@intel.com>
-Date: Mon, 12 Mar 2018 08:37:49 +1100
-Cc: "Drokin\, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 11/17] staging: lustre: ptlrpc: use workqueue for pinger
-In-Reply-To: <63D7C945-5CBC-4434-BAF1-F3EBA912CDEF@intel.com>
-References: <151994679573.7628.1024109499321778846.stgit@noble> <151994708541.7628.5813099904100247526.stgit@noble> <63D7C945-5CBC-4434-BAF1-F3EBA912CDEF@intel.com>
-Message-ID: <87k1uie1jm.fsf@notabene.neil.brown.name>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Fri, 02 Mar 2018 10:31:25 +1100
+Subject: [PATCH 13/17] staging: lustre: remove 'ptlrpc_thread usage' for
+ sai_agl_thread
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <151994708549.7628.13268008928655143336.stgit@noble>
+In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
+References: <151994679573.7628.1024109499321778846.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593780168307156480?=
-X-GMAIL-MSGID: =?utf-8?q?1594678870387048715?=
+X-GMAIL-THRID: =?utf-8?q?1593780184664448130?=
+X-GMAIL-MSGID: =?utf-8?q?1593780184664448130?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Lustre has a 'struct ptlrpc_thread' which provides
+control functionality wrapped around kthreads.
+None of the functionality used in statahead.c requires
+ptlrcp_thread - it can all be done directly with kthreads.
 
-On Thu, Mar 08 2018, Dilger, Andreas wrote:
+So discard the ptlrpc_thread and just use a task_struct directly.
 
-> On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
->>=20
->> lustre has a "Pinger" kthread which periodically pings peers
->> to ensure all hosts are functioning.
->>=20
->> This can more easily be done using a work queue.
->>=20
->> As maintaining contact with other peers is import for
->> keeping the filesystem running, and as the filesystem might
->> be involved in freeing memory, it is safest to have a
->> separate WQ_MEM_RECLAIM workqueue.
->>=20
->> The SVC_EVENT functionality to wake up the thread can be
->> replaced with mod_delayed_work().
->>=20
->> Also use round_jiffies_up_relative() rather than setting a
->> minimum of 1 second delay.  The PING_INTERVAL is measured in
->> seconds so this meets the need is allow the workqueue to
->> keep wakeups synchronized.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->
-> Looks reasonable.  Fortunately, pinging the server does not need
-> to be very accurate since it is only done occasionally when the
-> client is otherwise idle, so it shouldn't matter if the workqueue
-> operation is delayed by a few seconds.
->
-> Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+One particular change worth noting is that in the current
+code, the thread performs some start-up actions and then
+signals that it is ready to go.  In the new code, the thread
+is first created, then the startup actions are perform, then
+the thread is woken up.  This means there is no need to wait
+any more than kthread_create() already waits.
 
-Thanks a lot for the thorough review!
-The above implies that we don't need WQ_MEM_RECLAIM.  I didn't dig in to
-exactly when and why pings happened so I thought having WQ_MEM_RECLAIM
-we safest.  If pings only happen when the client is otherwise idle, the
-it isn't needed.  I'll remove it.
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ .../staging/lustre/lustre/llite/llite_internal.h   |    2 -
+ drivers/staging/lustre/lustre/llite/statahead.c    |   78 +++++++-------------
+ 2 files changed, 28 insertions(+), 52 deletions(-)
 
-Thanks,
-NeilBrown
-
-
->
->> ---
->> drivers/staging/lustre/lustre/ptlrpc/pinger.c |   81 +++++++------------=
-------
->> 1 file changed, 24 insertions(+), 57 deletions(-)
->>=20
->> diff --git a/drivers/staging/lustre/lustre/ptlrpc/pinger.c b/drivers/sta=
-ging/lustre/lustre/ptlrpc/pinger.c
->> index b5f3cfee8e75..0775b7a048bb 100644
->> --- a/drivers/staging/lustre/lustre/ptlrpc/pinger.c
->> +++ b/drivers/staging/lustre/lustre/ptlrpc/pinger.c
->> @@ -217,21 +217,18 @@ static void ptlrpc_pinger_process_import(struct ob=
-d_import *imp,
->> 	}
->> }
->>=20
->> -static int ptlrpc_pinger_main(void *arg)
->> -{
->> -	struct ptlrpc_thread *thread =3D arg;
->> -
->> -	/* Record that the thread is running */
->> -	thread_set_flags(thread, SVC_RUNNING);
->> -	wake_up(&thread->t_ctl_waitq);
->> +static struct workqueue_struct *pinger_wq;
->> +static void ptlrpc_pinger_main(struct work_struct *ws);
->> +static DECLARE_DELAYED_WORK(ping_work, ptlrpc_pinger_main);
->>=20
->> -	/* And now, loop forever, pinging as needed. */
->> -	while (1) {
->> -		unsigned long this_ping =3D cfs_time_current();
->> -		long time_to_next_wake;
->> -		struct timeout_item *item;
->> -		struct obd_import *imp;
->> +static void ptlrpc_pinger_main(struct work_struct *ws)
->> +{
->> +	unsigned long this_ping =3D cfs_time_current();
->> +	long time_to_next_wake;
->> +	struct timeout_item *item;
->> +	struct obd_import *imp;
->>=20
->> +	do {
->> 		mutex_lock(&pinger_mutex);
->> 		list_for_each_entry(item, &timeout_list, ti_chain) {
->> 			item->ti_cb(item, item->ti_cb_data);
->> @@ -260,50 +257,24 @@ static int ptlrpc_pinger_main(void *arg)
->> 		       time_to_next_wake,
->> 		       cfs_time_add(this_ping,
->> 				    PING_INTERVAL * HZ));
->> -		if (time_to_next_wake > 0) {
->> -			wait_event_idle_timeout(thread->t_ctl_waitq,
->> -						thread_is_stopping(thread) ||
->> -						thread_is_event(thread),
->> -						max_t(long, time_to_next_wake, HZ));
->> -			if (thread_test_and_clear_flags(thread, SVC_STOPPING))
->> -				break;
->> -			/* woken after adding import to reset timer */
->> -			thread_test_and_clear_flags(thread, SVC_EVENT);
->> -		}
->> -	}
->> +	} while (time_to_next_wake <=3D 0);
->>=20
->> -	thread_set_flags(thread, SVC_STOPPED);
->> -	wake_up(&thread->t_ctl_waitq);
->> -
->> -	CDEBUG(D_NET, "pinger thread exiting, process %d\n", current_pid());
->> -	return 0;
->> +	queue_delayed_work(pinger_wq, &ping_work,
->> +			   round_jiffies_up_relative(time_to_next_wake));
->> }
->>=20
->> -static struct ptlrpc_thread pinger_thread;
->> -
->> int ptlrpc_start_pinger(void)
->> {
->> -	struct task_struct *task;
->> -	int rc;
->> -
->> -	if (!thread_is_init(&pinger_thread) &&
->> -	    !thread_is_stopped(&pinger_thread))
->> +	if (pinger_wq)
->> 		return -EALREADY;
->>=20
->> -	init_waitqueue_head(&pinger_thread.t_ctl_waitq);
->> -
->> -	strcpy(pinger_thread.t_name, "ll_ping");
->> -
->> -	task =3D kthread_run(ptlrpc_pinger_main, &pinger_thread,
->> -			   pinger_thread.t_name);
->> -	if (IS_ERR(task)) {
->> -		rc =3D PTR_ERR(task);
->> -		CERROR("cannot start pinger thread: rc =3D %d\n", rc);
->> -		return rc;
->> +	pinger_wq =3D alloc_workqueue("ptlrpc_pinger", WQ_MEM_RECLAIM, 1);
->> +	if (!pinger_wq) {
->> +		CERROR("cannot start pinger workqueue\n");
->> +		return -ENOMEM;
->> 	}
->> -	wait_event_idle(pinger_thread.t_ctl_waitq,
->> -			thread_is_running(&pinger_thread));
->>=20
->> +	queue_delayed_work(pinger_wq, &ping_work, 0);
->> 	return 0;
->> }
->>=20
->> @@ -313,16 +284,13 @@ int ptlrpc_stop_pinger(void)
->> {
->> 	int rc =3D 0;
->>=20
->> -	if (thread_is_init(&pinger_thread) ||
->> -	    thread_is_stopped(&pinger_thread))
->> +	if (!pinger_wq)
->> 		return -EALREADY;
->>=20
->> 	ptlrpc_pinger_remove_timeouts();
->> -	thread_set_flags(&pinger_thread, SVC_STOPPING);
->> -	wake_up(&pinger_thread.t_ctl_waitq);
->> -
->> -	wait_event_idle(pinger_thread.t_ctl_waitq,
->> -			thread_is_stopped(&pinger_thread));
->> +	cancel_delayed_work_sync(&ping_work);
->> +	destroy_workqueue(pinger_wq);
->> +	pinger_wq =3D NULL;
->>=20
->> 	return rc;
->> }
->> @@ -505,6 +473,5 @@ static int ptlrpc_pinger_remove_timeouts(void)
->>=20
->> void ptlrpc_pinger_wake_up(void)
->> {
->> -	thread_add_flags(&pinger_thread, SVC_EVENT);
->> -	wake_up(&pinger_thread.t_ctl_waitq);
->> +	mod_delayed_work(pinger_wq, &ping_work, 0);
->> }
->>=20
->>=20
->
-> Cheers, Andreas
-> --
-> Andreas Dilger
-> Lustre Principal Architect
-> Intel Corporation
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqloa0ACgkQOeye3VZi
-gbnang//QXPdz6/jX/KHeJyJqxMdT4jW+hBedU6R2YFQREgi7amLsiJ82be+6e3l
-jE4d+A+IPnUwXcemm1l9+3gETKpU8Z4PBi8Piz5/bfOsAdaXqPZmvfLzw+q+sBNL
-Po8ercPgHyDAPnuqcu7mOTwbAmvqblpqy0/3xMO/uh7meZfWHwcUpfTgY5B65jny
-cy5xb5wQhGznAOp+Zfk67LGQ8eD7bcGxCfVSGjppfc9Zi74icwwRF3DNEEbGmo4i
-lctzEihfNWIgtulWQ1uRfGel2tPp298mlPl1eY3taX/PxZ9EjWNUde0umu1b0p3R
-Rindf70Gqc+Xo4d50UQ8EFoQNX34BPOIfvPTnB57yJV/apboda4cUMd2gLIzmtUc
-4l0KE0QjeKqih9cVR1+Hsb0d8tJ5h428QXWY6G9eCmwqiPwa/qYZEky2Yqt6LFvI
-8YP1dXWVYfhSD4OpFX9xBtV23cMdmDKszp/A06hnbh/l0Ye4lhXlV75lCAUwc2xv
-k75SpHSuU4ZGZ5AP3xUgXvwPxue5rDdASuWqWI3kCeA9ALlHCuqTY4AderuyNstN
-pEeBHZ59lrv94hyRYzaaGRQo1CWL8htACo5C9EI2NL/GGofA+FDbAJZhFHBKaiyJ
-ltseGEEk/TSb1pYRcoQKkkMqjo+Cnp4wTSO25RFGQf2H7DjUmnk=
-=CzaI
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
+index f68c2e88f12b..0c2d717fd526 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_internal.h
++++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
+@@ -1071,7 +1071,7 @@ struct ll_statahead_info {
+ 				sai_in_readpage:1;/* statahead in readdir() */
+ 	wait_queue_head_t	sai_waitq;      /* stat-ahead wait queue */
+ 	struct ptlrpc_thread    sai_thread;     /* stat-ahead thread */
+-	struct ptlrpc_thread    sai_agl_thread; /* AGL thread */
++	struct task_struct     *sai_agl_task;   /* AGL thread */
+ 	struct list_head	sai_interim_entries; /* entries which got async
+ 						      * stat reply, but not
+ 						      * instantiated
+diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
+index ba00881a5745..39241b952bf4 100644
+--- a/drivers/staging/lustre/lustre/llite/statahead.c
++++ b/drivers/staging/lustre/lustre/llite/statahead.c
+@@ -383,7 +383,7 @@ static void ll_agl_add(struct ll_statahead_info *sai,
+ 	}
+ 
+ 	if (added > 0)
+-		wake_up(&sai->sai_agl_thread.t_ctl_waitq);
++		wake_up_process(sai->sai_agl_task);
+ }
+ 
+ /* allocate sai */
+@@ -404,7 +404,6 @@ static struct ll_statahead_info *ll_sai_alloc(struct dentry *dentry)
+ 	sai->sai_index = 1;
+ 	init_waitqueue_head(&sai->sai_waitq);
+ 	init_waitqueue_head(&sai->sai_thread.t_ctl_waitq);
+-	init_waitqueue_head(&sai->sai_agl_thread.t_ctl_waitq);
+ 
+ 	INIT_LIST_HEAD(&sai->sai_interim_entries);
+ 	INIT_LIST_HEAD(&sai->sai_entries);
+@@ -467,7 +466,7 @@ static void ll_sai_put(struct ll_statahead_info *sai)
+ 		spin_unlock(&lli->lli_sa_lock);
+ 
+ 		LASSERT(thread_is_stopped(&sai->sai_thread));
+-		LASSERT(thread_is_stopped(&sai->sai_agl_thread));
++		LASSERT(sai->sai_agl_task == NULL);
+ 		LASSERT(sai->sai_sent == sai->sai_replied);
+ 		LASSERT(!sa_has_callback(sai));
+ 
+@@ -861,35 +860,13 @@ static int ll_agl_thread(void *arg)
+ 	struct inode	     *dir    = d_inode(parent);
+ 	struct ll_inode_info     *plli   = ll_i2info(dir);
+ 	struct ll_inode_info     *clli;
+-	struct ll_sb_info	*sbi    = ll_i2sbi(dir);
+-	struct ll_statahead_info *sai;
+-	struct ptlrpc_thread *thread;
++	/* We already own this reference, so it is safe to take it without a lock. */
++	struct ll_statahead_info *sai = plli->lli_sai;
+ 
+-	sai = ll_sai_get(dir);
+-	thread = &sai->sai_agl_thread;
+-	thread->t_pid = current_pid();
+ 	CDEBUG(D_READA, "agl thread started: sai %p, parent %pd\n",
+ 	       sai, parent);
+ 
+-	atomic_inc(&sbi->ll_agl_total);
+-	spin_lock(&plli->lli_agl_lock);
+-	sai->sai_agl_valid = 1;
+-	if (thread_is_init(thread))
+-		/* If someone else has changed the thread state
+-		 * (e.g. already changed to SVC_STOPPING), we can't just
+-		 * blindly overwrite that setting.
+-		 */
+-		thread_set_flags(thread, SVC_RUNNING);
+-	spin_unlock(&plli->lli_agl_lock);
+-	wake_up(&thread->t_ctl_waitq);
+-
+-	while (1) {
+-		wait_event_idle(thread->t_ctl_waitq,
+-				!list_empty(&sai->sai_agls) ||
+-				!thread_is_running(thread));
+-
+-		if (!thread_is_running(thread))
+-			break;
++	while (!kthread_should_stop()) {
+ 
+ 		spin_lock(&plli->lli_agl_lock);
+ 		/* The statahead thread maybe help to process AGL entries,
+@@ -904,6 +881,12 @@ static int ll_agl_thread(void *arg)
+ 		} else {
+ 			spin_unlock(&plli->lli_agl_lock);
+ 		}
++
++		set_current_state(TASK_IDLE);
++		if (list_empty(&sai->sai_agls) &&
++		    !kthread_should_stop())
++			schedule();
++		__set_current_state(TASK_RUNNING);
+ 	}
+ 
+ 	spin_lock(&plli->lli_agl_lock);
+@@ -917,19 +900,16 @@ static int ll_agl_thread(void *arg)
+ 		iput(&clli->lli_vfs_inode);
+ 		spin_lock(&plli->lli_agl_lock);
+ 	}
+-	thread_set_flags(thread, SVC_STOPPED);
+ 	spin_unlock(&plli->lli_agl_lock);
+-	wake_up(&thread->t_ctl_waitq);
+-	ll_sai_put(sai);
+ 	CDEBUG(D_READA, "agl thread stopped: sai %p, parent %pd\n",
+ 	       sai, parent);
++	ll_sai_put(sai);
+ 	return 0;
+ }
+ 
+ /* start agl thread */
+ static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
+ {
+-	struct ptlrpc_thread *thread = &sai->sai_agl_thread;
+ 	struct ll_inode_info  *plli;
+ 	struct task_struct *task;
+ 
+@@ -937,16 +917,22 @@ static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
+ 	       sai, parent);
+ 
+ 	plli = ll_i2info(d_inode(parent));
+-	task = kthread_run(ll_agl_thread, parent, "ll_agl_%u",
+-			   plli->lli_opendir_pid);
++	task = kthread_create(ll_agl_thread, parent, "ll_agl_%u",
++			      plli->lli_opendir_pid);
+ 	if (IS_ERR(task)) {
+ 		CERROR("can't start ll_agl thread, rc: %ld\n", PTR_ERR(task));
+-		thread_set_flags(thread, SVC_STOPPED);
+ 		return;
+ 	}
+ 
+-	wait_event_idle(thread->t_ctl_waitq,
+-			thread_is_running(thread) || thread_is_stopped(thread));
++	sai->sai_agl_task = task;
++	atomic_inc(&ll_i2sbi(d_inode(parent))->ll_agl_total);
++	spin_lock(&plli->lli_agl_lock);
++	sai->sai_agl_valid = 1;
++	spin_unlock(&plli->lli_agl_lock);
++	/* Get an extra reference that the thread holds */
++	ll_sai_get(d_inode(parent));
++
++	wake_up_process(task);
+ }
+ 
+ /* statahead thread main function */
+@@ -958,7 +944,6 @@ static int ll_statahead_thread(void *arg)
+ 	struct ll_sb_info	*sbi    = ll_i2sbi(dir);
+ 	struct ll_statahead_info *sai;
+ 	struct ptlrpc_thread *sa_thread;
+-	struct ptlrpc_thread *agl_thread;
+ 	struct page	      *page = NULL;
+ 	__u64		     pos    = 0;
+ 	int		       first  = 0;
+@@ -967,7 +952,6 @@ static int ll_statahead_thread(void *arg)
+ 
+ 	sai = ll_sai_get(dir);
+ 	sa_thread = &sai->sai_thread;
+-	agl_thread = &sai->sai_agl_thread;
+ 	sa_thread->t_pid = current_pid();
+ 	CDEBUG(D_READA, "statahead thread starting: sai %p, parent %pd\n",
+ 	       sai, parent);
+@@ -1129,21 +1113,13 @@ static int ll_statahead_thread(void *arg)
+ 		sa_handle_callback(sai);
+ 	}
+ out:
+-	if (sai->sai_agl_valid) {
+-		spin_lock(&lli->lli_agl_lock);
+-		thread_set_flags(agl_thread, SVC_STOPPING);
+-		spin_unlock(&lli->lli_agl_lock);
+-		wake_up(&agl_thread->t_ctl_waitq);
++	if (sai->sai_agl_task) {
++		kthread_stop(sai->sai_agl_task);
+ 
+ 		CDEBUG(D_READA, "stop agl thread: sai %p pid %u\n",
+-		       sai, (unsigned int)agl_thread->t_pid);
+-		wait_event_idle(agl_thread->t_ctl_waitq,
+-				thread_is_stopped(agl_thread));
+-	} else {
+-		/* Set agl_thread flags anyway. */
+-		thread_set_flags(agl_thread, SVC_STOPPED);
++		       sai, (unsigned int)sai->sai_agl_task->pid);
++		sai->sai_agl_task = NULL;
+ 	}
+-
+ 	/*
+ 	 * wait for inflight statahead RPCs to finish, and then we can free sai
+ 	 * safely because statahead RPC will access sai data
