@@ -1,82 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163074AbeCAXN7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:13:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30247 "EHLO mga04.intel.com"
+        id S1163072AbeCAXOK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:14:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30415 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162811AbeCAXJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:09:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1162811AbeCAXOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:14:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
-   d="scan'208";a="208164989"
-From: kan.liang@linux.intel.com
-To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 03/14] perf python: Apply new perf_mmap__read_event() interface
-Date: Thu,  1 Mar 2018 18:09:00 -0500
-Message-Id: <1519945751-37786-3-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.4.11
-In-Reply-To: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
-References: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
+   d="scan'208";a="38605567"
+Date: Thu, 1 Mar 2018 15:06:40 -0800
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v3 2/3] x86: devicetree: enable multiprocessing in DT
+Message-ID: <20180301230640.GA48521@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Adding code to register the processors described in Device Tree.
+APIC ID is specified in 'intel-apic_id' propery as used in U-Boot.
+First address specified in 'reg' is used as default APIC ID.
 
-The perf python still use the legacy interface.
-
-No functional change.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
 ---
- tools/perf/util/python.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/kernel/devicetree.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 2918cac..62aed42 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -983,13 +983,19 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
- 	union perf_event *event;
- 	int sample_id_all = 1, cpu;
- 	static char *kwlist[] = { "cpu", "sample_id_all", NULL };
-+	struct perf_mmap *md;
-+	u64 end, start;
- 	int err;
- 
- 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|i", kwlist,
- 					 &cpu, &sample_id_all))
- 		return NULL;
- 
--	event = perf_evlist__mmap_read(evlist, cpu);
-+	md = &evlist->mmap[cpu];
-+	if (perf_mmap__read_init(md, 0, &start, &end) < 0)
-+		goto end;
-+
-+	event = perf_mmap__read_event(md, 0, &start, end);
- 	if (event != NULL) {
- 		PyObject *pyevent = pyrf_event__new(event);
- 		struct pyrf_event *pevent = (struct pyrf_event *)pyevent;
-@@ -1007,14 +1013,14 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
- 		err = perf_evsel__parse_sample(evsel, event, &pevent->sample);
- 
- 		/* Consume the even only after we parsed it out. */
--		perf_evlist__mmap_consume(evlist, cpu);
-+		perf_mmap__consume(md, 0);
- 
- 		if (err)
- 			return PyErr_Format(PyExc_OSError,
- 					    "perf: can't parse sample, err=%d", err);
- 		return pyevent;
- 	}
--
-+end:
- 	Py_INCREF(Py_None);
- 	return Py_None;
+diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+index 44189ee..ef1cd85 100644
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -130,6 +130,29 @@ static void __init dtb_setup_hpet(void)
+ #endif
  }
+ 
++static void __init dtb_cpu_setup(void)
++{
++	struct device_node *dn;
++	struct resource r;
++	const void *prop;
++	int apic_id, version;
++	int ret;
++
++	version = GET_APIC_VERSION(apic_read(APIC_LVR));
++	for_each_node_by_type(dn, "cpu") {
++		prop = of_get_property(dn, "intel,apic-id", NULL);
++		if (prop) {
++			apic_id = be32_to_cpup(prop);
++		} else {
++			ret = of_address_to_resource(dn, 0, &r);
++			if (WARN_ON_ONCE(ret))
++				continue;
++			apic_id = r.start;
++		}
++		generic_processor_info(apic_id, version);
++	}
++}
++
+ static void __init dtb_lapic_setup(void)
+ {
+ #ifdef CONFIG_X86_LOCAL_APIC
+@@ -153,8 +176,6 @@ static void __init dtb_lapic_setup(void)
+ 	smp_found_config = 1;
+ 	pic_mode = 1;
+ 	register_lapic_address(r.start);
+-	generic_processor_info(boot_cpu_physical_apicid,
+-			       GET_APIC_VERSION(apic_read(APIC_LVR)));
+ #endif
+ }
+ 
+@@ -256,6 +277,7 @@ static void __init dtb_ioapic_setup(void) {}
+ static void __init dtb_apic_setup(void)
+ {
+ 	dtb_lapic_setup();
++	dtb_cpu_setup();
+ 	dtb_ioapic_setup();
+ }
+ 
 -- 
-2.4.11
+2.7.4
