@@ -1,212 +1,116 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-727864-1520105241-2-13645089275214319450
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520105240; b=nY4h45G2Uh8XOL4q9iPtcnug59SmNTZ4HUWNDHqgGUlqTaE
-    8QAQw21anYlsM6QBtZkTBT9QEu+e9k8vV91ZZlONF65B++VXll2OBRVpokVK9JwJ
-    h+DOqFoBn2Mrh84hPx+3CzfvzkU11BPihOs6kJkPXK7+LIU7534iDfHt6wkqY5In
-    bkzkv8r0Ci5v2KxCK3AXh/Nt3NzdJVHJ1xi1x1QFP7pKFL5qZwjEG/ipecQkuZ0l
-    HZKEcELXTZRxUU4hFoma6szqX5AlEqoG6Gc+BQ42xcYTgT1CatjutJq3xRGfC3Jw
-    d3oH6csj+Ew/eZdy7iybFLA8iL8cdaHxfgjT0nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520105240; bh=QJE4vaWDBJXv38paW3Exv4K+xFiY1mAbuJ4tiz
-    BOXao=; b=bPzVn5IpF6bFXgGfV0XR8u+l395bcxtzWHklGcSx4fHSEal5UsqDPm
-    tYjfTiofWgqDE/z8yMcrUTLRNRLJzAHKg+E+w4AYFvvt6seXH7CMNyAb4x6A5aG2
-    s4wLoOTyU9KMVY96DSQmx4m75+ONJ0C6OxFljUGerV5NxSHflxHX9vHBzxGxaAnd
-    WBtMdrfJ9p0o8tyhF3k+4CEHIZGwD78O7O8aXNhugVd6mBE0I+Eh2JDBujq5QtOz
-    Sf6lklq3PkJOtJKTHFziyoyBTijJ60jTONdMV04gkYHheRfn3puypbruXrn2L40Z
-    3hqMfP7exAfy60Kv5j0H5dr/FZGLLNSA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=ngIeBAgQ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=bUNBHBi3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IRVjiTmn;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=ngIeBAgQ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=bUNBHBi3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IRVjiTmn;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeCCT1Q (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 14:27:16 -0500
-Received: from mail-yw0-f169.google.com ([209.85.161.169]:40842 "EHLO
-        mail-yw0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752310AbeCCT1N (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Sat, 3 Mar 2018 14:27:13 -0500
-X-Google-Smtp-Source: AG47ELs0vKXv0dQedVprR3YDm+1yRSuBGkqyHr3xaNtUma0Q/+NVXOCdnmp6vV+aN1kVrSLywY56HAWoxeZL+fetIKE=
+Return-Path: <adurbin@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519939449; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Z9xhFhEwxYwwy42zywsjjHhbueIfgYNEG6WINKolelOHsqbcFohEDP9T/3/IgUZAk1
+         OqkTEdhhz7hHgvN9dgmpuZFP1Yq/G4pT1+95A1psfSNrWBQJ/rhsmT0tuPH6e4vsK0DJ
+         7fC6s7J4PHoHQiHzhcUVNdt/+L8M12iB2+c0B/kD8VI0wsWNpLc+GGNj+wyizvLkYdPz
+         n9x9VMwh4t+j4W0w0M9HvK8168mWznnXwDGkedYr4UFRKiivHU6Q35hYs3ZegDg0ETH+
+         TypXb9yXULKYvgIRofjrDUGcb+ErTGajiO0GwJY1TQ+8IypXdXeo7zy/s6vxu4gYi10A
+         zfQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=6Feh5M0NXp0+mWVaYKxpjQSE+w8KrZs9lmeEI6DIBqE=;
+        b=gh2bwejA9AqeQhdag/jYzgBNqrV9L0iVh4zNtyFW2Kp1sscbaA5huyHbYSanCaMPWO
+         vdG4NHPtabLxSNDxe5x0A7kv8GmqP9tIo6Ydq7kUbjA36GEeLs97o+jopzQOD+SO60sn
+         2MEA690fmjHkLc4PXZXBwuE8gmVrcddXGOw1eB++8Lgu7SvfMt2mGUNSjJyvsLzlaBjy
+         fU3ltZe3RGIxBRunSxlvx0MzB+7oflx81r4TQue+mai54aG+FoKSNW2TVnWiFLqAFhy+
+         tSUBfjcUmj+Vv8vVYSInK0BKTzku+SfzB/2RDwonvmjaYmSA/MFKrOsXEVfnt7qZ3e1U
+         M/0A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=QLccx/Tq;
+       dkim=pass header.i=@chromium.org header.s=google header.b=K2vkhuCH;
+       spf=pass (google.com: domain of adurbin@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=adurbin@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=QLccx/Tq;
+       dkim=pass header.i=@chromium.org header.s=google header.b=K2vkhuCH;
+       spf=pass (google.com: domain of adurbin@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=adurbin@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELvmdXU2V25Rvdoq+qxNQqZry/SxMTjpl/Y2g2baqNJ+2GrP15KGd2+sS1pG60FBWmqOARK1YAtMdfVv/WD1gzU=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Veu=0w2sWpgn0mNFa0G3Gwp2SpHv55vPgLiWjrCAzaiGw@mail.gmail.com>
+Sender: adurbin@google.com
+In-Reply-To: <CAHp75VfL82ujwBa1h0B8nEgBtFcBJPmS9ir7H5YWByDgxFGskA@mail.gmail.com>
 References: <20180301184335.248378-1-djkurtz@chromium.org> <CAHp75VfHuNHnjMqsvLZPSNeP57YX1CDZgf=EH-JNSh5bAVdUBA@mail.gmail.com>
- <CAGS+omCfVUPb0yq3XOEqO_zQ0_uppkKaGhqtB0OqXmQDK9xH1Q@mail.gmail.com>
- <CAHp75VfL82ujwBa1h0B8nEgBtFcBJPmS9ir7H5YWByDgxFGskA@mail.gmail.com>
- <CAGS+omB76qbiuYjs7Rakff2JB7263_m5TRYDgvKM+wdBpaedNA@mail.gmail.com> <CAHp75Veu=0w2sWpgn0mNFa0G3Gwp2SpHv55vPgLiWjrCAzaiGw@mail.gmail.com>
+ <CAGS+omCfVUPb0yq3XOEqO_zQ0_uppkKaGhqtB0OqXmQDK9xH1Q@mail.gmail.com> <CAHp75VfL82ujwBa1h0B8nEgBtFcBJPmS9ir7H5YWByDgxFGskA@mail.gmail.com>
 From: Aaron Durbin <adurbin@chromium.org>
-Date: Sat, 3 Mar 2018 12:27:11 -0700
-X-Google-Sender-Auth: ByVlha7TELgY4_v8mTbBE9m4UCk
-Message-ID: <CAE2855sBoLaXjFwSKMqH7y9+6sO87-mrRM6Ojm+Xam4vwE3gjQ@mail.gmail.com>
+Date: Thu, 1 Mar 2018 14:24:08 -0700
+X-Google-Sender-Auth: JN3mM_pz1HSb1QoFAIcxnScaKeM
+Message-ID: <CAE2855vbQyMwu8pmH-Sq1kA+=h5TJPWddTWPQoVdEqOn6sAyBw@mail.gmail.com>
 Subject: Re: [PATCH v2] earlycon: Allow specifying a uartclk in options
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>,
-        Aaron Durbin <adurbin@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoffer Dall <cdall@linaro.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Cc: Daniel Kurtz <djkurtz@chromium.org>, Aaron Durbin <adurbin@chromium.org>,
+	Brian Norris <briannorris@chromium.org>, Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Christoffer Dall <cdall@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>, Frederic Weisbecker <frederic@kernel.org>,
+	David Woodhouse <dwmw@amazon.co.uk>, Tom Saeger <tom.saeger@oracle.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	"Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+	Linux Documentation List <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593761931178460290?=
+X-GMAIL-MSGID: =?utf-8?q?1593772028236092704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 3, 2018 at 8:56 AM, Andy Shevchenko
+On Thu, Mar 1, 2018 at 1:02 PM, Andy Shevchenko
 <andy.shevchenko@gmail.com> wrote:
-> On Fri, Mar 2, 2018 at 8:35 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
->> On Thu, Mar 1, 2018 at 1:02 PM Andy Shevchenko <andy.shevchenko@gmail.com>
+> On Thu, Mar 1, 2018 at 9:22 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+>> On Thu, Mar 1, 2018 at 11:47 AM Andy Shevchenko <andy.shevchenko@gmail.com>
 >> wrote:
->>> On Thu, Mar 1, 2018 at 9:22 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
->>> > On Thu, Mar 1, 2018 at 11:47 AM Andy Shevchenko <
->> andy.shevchenko@gmail.com>
->>> > wrote:
 >
->> the UART bitclock
->> is
->>> > always "BASE_BAUD * 16" (1843200).  While this may be true for many
->> UARTs,
->>> > it isn't true for AMD's CZ/ST which has a 8250_dw and uses a fixed 48
->> MHz
->>> > clock.  The main 8250_dw driver uses devm_clk_get to get the "baudclk"
->> and
->>> > uses its rate to initialize uartclk.  For AMD CZ/ST, this "baudclk" is
->>> > actually a set up in acpi_apd.c when there is an acpi match for
->> "AMD0020",
->>> > with a rate read from the .fixed_clk_rate param of the corresponding
->>> > apd_device_desc.
->
->> As
->>> > noted above, the information is actually already in the kernel and used
->> by
->>> > 8250_dw - I would happy be to hear recommendations for wiring this data
->>> > into earlycon that doesn't require adding another command line arg.
->
-> Brief look at the code shows that ->setup() call back is executed
-> after setting initial (which is hardcoded) clock.
->
-> What you need is to either create another type of earlycon for your
-> device with accompanied ->setup() callback, or patch 8250_early.c.
-
-If I'm understand you correctly, you are suggesting new driver code
-that sets the clock accordingly within the port structure such that
-the baud rate calculation actually works based on the correct input
-clock? Why wouldn't we just extened the generic earlycon driver like
-the original patch to support providing the clock? Anything in the
-earlycon path that tries to set a baud rate will fail once the
-hard-coded input clock assumption doesn't hold true. Why not provide
-the ability to correct the assumption for platforms that need it?
-
->
->>> > I see that support was also added recently to earlycon to let it use
->> ACPI
->>> > SPCR to choose a console and configure its parameters... but AFAICT,
->> this
->>> > path also doesn't allow specifying the uart clock.
->
-> It does specify baudrate. It means it's _firmware_ responsibility to
-> configure UART device properly.
-
-baudrate != input clock. The issue is that once the driver code
-attempts to set a baud rate w/o having the correct input clock then
-things break.
-
->
->>> Fix your firmware then. It should set console to 115200 like (almost)
->>> everyone does.
->>> Okay, configures a necessary IPs to feed UART with expected 1.8432M clock.
+>> "earlycon simply does not utilize the information".
 >>
->> The console is 115200 when it is enabled.  However, the firmware does not
->> always enable it by default.
+>> earlycon parses iotype, mapbase and baud (from options).  However, it is
+>> hard-coded to assume that the clock used to generate the UART bitclock is
+>> always "BASE_BAUD * 16" (1843200).  While this may be true for many UARTs,
+>> it isn't true for AMD's CZ/ST which has a 8250_dw and uses a fixed 48 MHz
+>> clock.  The main 8250_dw driver uses devm_clk_get to get the "baudclk" and
+>> uses its rate to initialize uartclk.  For AMD CZ/ST, this "baudclk" is
+>> actually a set up in acpi_apd.c when there is an acpi match for "AMD0020",
+>> with a rate read from the .fixed_clk_rate param of the corresponding
+>> apd_device_desc.
+>>
+>> This patch attempts to add a way to inform earlycon about this clock.  As
+>> noted above, the information is actually already in the kernel and used by
+>> 8250_dw - I would happy be to hear recommendations for wiring this data
+>> into earlycon that doesn't require adding another command line arg.
 >
-> Another firmware bug.
+> And it should not require that for sure!
 
-It's more complex than that. You seem to take the stance that the
-firmware should bring every IP block out of reset and/or clock and
-power gating. That then subsequently requires the kernel to enable all
-those soc drivers that put those devices in power or clock gated state
-to reach the maximum power savings. While that's certainly possible,
-it just leads to bloated kernels. That is orthogonal to the problem of
-setting baud rate w/o knowing the proper input clock frequency,
-though.
-
-If we do make the assumption the firmware sets up the uart, but the
-kernel earlycon has a different baud rate specified than what firmware
-set up then the baud rate calculation would be wrong as well since the
-input clock isn't known. As such one cannot use earlycon when: 1.
-firmware doesn't set up uart 2. firmware baud rate != earlycon
-specified baud rate.  Providing the proper input clock for the device
-in question solves both 1 and 2.
+But it does require that. There's an input clock to the uart ip block.
+That is a design constraint by the hardware and is required to make
+baud calculation work.
 
 >
->> The problem is that the UART IP block has a fixed 48 MHz input clock, but
->> earlycon assumes this clock is always 1843200.
+> I would look to this later. It's late here. I need to do a bit of
+> research for the answer.
 >
->> I looked a bit further, and I think this patch (or something similar) is
->> still required to teach generic earlycon how to handle an explicit
->> port->uartclk (ie, one that is not 1843200).
->> The extended string can then be explicitly set on the kernel command line
->> for this kind of hardware.
+>> I see that support was also added recently to earlycon to let it use ACPI
+>> SPCR to choose a console and configure its parameters... but AFAICT, this
+>> path also doesn't allow specifying the uart clock.
 >
-> No.
->
->> In addition, we can add another patch with a new quirk detector in
->> drivers/acpi/spcr.c:acpi_parse_spcr() to handle this hardware.
->> acpi_parse_spcr() can then use the extended option string to pass in the
->> appropriate UART clock to setup_eralycon().
->
-> Definitely no. It's not defined in SPCR spec.
->
->> This would again allow a user to just use the simple command line parameter
->> "earlycon" if the device's firmware has a correctly confiured ACPI SPCR
->> table.
->
-> NAK to the patch, see above alternatives.
+> Fix your firmware then. It should set console to 115200 like (almost)
+> everyone does.
+
+It's not a firmware problem. Its the driver's problem in that it
+assumes an input clock to the uart block that does not reflect
+reality.
+
+> Okay, configures a necessary IPs to feed UART with expected 1.8432M clock.
+
+That's only possible if there is a clock divider on the front end of
+the uart block. For this hardware that's not the case. I actually did
+this very thing on intel chromebook devices, but it was only possible
+because there was a hardware divider that could be tuned to reach the
+assumed clock that the code currently assumes.
+
 >
 > --
 > With Best Regards,
