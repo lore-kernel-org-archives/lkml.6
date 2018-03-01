@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966145AbeCAFlv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:41:51 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:47583 "EHLO thoth.sbs.de"
+        id S966177AbeCAFmJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:42:09 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:47577 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966072AbeCAFlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:41:11 -0500
+        id S966070AbeCAFlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 00:41:10 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
@@ -13,74 +13,61 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 0/6] jailhouse: Enhance secondary Jailhouse guest support /wrt PCI
-Date: Thu,  1 Mar 2018 06:40:43 +0100
-Message-Id: <cover.1519882849.git.jan.kiszka@siemens.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v3 4/6] x86: Consolidate PCI_MMCONFIG configs
+Date: Thu,  1 Mar 2018 06:40:47 +0100
+Message-Id: <8527c92b2e2920b8cd9096ddcbbb6d0f4004eb69.1519882849.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
+References: <cover.1519882849.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
+References: <cover.1519882849.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Basic x86 support [1] for running Linux as secondary Jailhouse [2] guest
-is currently pending in the tip tree. This builds on top and enhances
-the PCI support for x86 and also ARM guests (ARM[64] does not require
-platform patches and works already).
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Key elements of this series are:
- - detection of Jailhouse via device tree hypervisor node
- - function-level PCI scan if Jailhouse is detected
- - MMCONFIG support for x86 guests
+Since e279b6c1d329 ("x86: start unification of arch/x86/Kconfig.*"), we
+have two PCI_MMCONFIG entries, one from the original i386 and another
+from x86_64. This consolidates both entries into a single one.
 
-As most changes affect x86, I would suggest to route the series also via
-tip after the necessary acks are collected.
+The logic for x86_32, where this option was not under user control,
+remains identical. On x86_64, PCI_MMCONFIG becomes additionally
+configurable for SFI systems even if ACPI was disabled. This just
+simplifies the logic without restricting the configurability in any way.
 
-Changes in v3:
- - avoided duplicate scans of PCI functions under Jailhouse
- - reformated PCI_MMCONFIG condition and rephrase related commit log
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ arch/x86/Kconfig | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Changes in v2:
- - adjusted commit log and include ordering in patch 2
- - rebased over Linus master
-
-Jan
-
-[1] https://lkml.org/lkml/2017/11/27/125
-[2] http://jailhouse-project.org
-
-CC: Benedikt Spranger <b.spranger@linutronix.de>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: Otavio Pontes <otavio.pontes@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>
-
-Jan Kiszka (5):
-  jailhouse: Provide detection for non-x86 systems
-  PCI: Scan all functions when running over Jailhouse
-  x86: Consolidate PCI_MMCONFIG configs
-  x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
-  MAINTAINERS: Add entry for Jailhouse
-
-Otavio Pontes (1):
-  x86/jailhouse: Enable PCI mmconfig access in inmates
-
- Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
- MAINTAINERS                                     |  7 +++++++
- arch/x86/Kconfig                                | 11 ++++++-----
- arch/x86/include/asm/jailhouse_para.h           |  2 +-
- arch/x86/include/asm/pci_x86.h                  |  2 ++
- arch/x86/kernel/Makefile                        |  2 +-
- arch/x86/kernel/cpu/amd.c                       |  2 +-
- arch/x86/kernel/jailhouse.c                     |  7 +++++++
- arch/x86/pci/legacy.c                           |  4 +++-
- arch/x86/pci/mmconfig-shared.c                  |  4 ++--
- drivers/pci/probe.c                             | 22 +++++++++++++++++++---
- include/linux/hypervisor.h                      | 17 +++++++++++++++--
- 12 files changed, 72 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f23521..aef9d67ac186 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2641,8 +2641,9 @@ config PCI_DIRECT
+ 	depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
+ 
+ config PCI_MMCONFIG
+-	def_bool y
+-	depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
++	bool "Support mmconfig PCI config space access" if X86_64
++	default y
++	depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY || PCI_GOMMCONFIG))
+ 
+ config PCI_OLPC
+ 	def_bool y
+@@ -2657,10 +2658,6 @@ config PCI_DOMAINS
+ 	def_bool y
+ 	depends on PCI
+ 
+-config PCI_MMCONFIG
+-	bool "Support mmconfig PCI config space access"
+-	depends on X86_64 && PCI && ACPI
+-
+ config PCI_CNB20LE_QUIRK
+ 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
+ 	depends on PCI
 -- 
 2.13.6
