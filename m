@@ -1,130 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031921AbeCAPXk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:23:40 -0500
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:42741 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031893AbeCAPXf (ORCPT
+        id S1031995AbeCAPYu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:24:50 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:53268 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031977AbeCAPYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:23:35 -0500
-X-Google-Smtp-Source: AG47ELvsz8fi5X22+5mq9d4/NVjSGevKXq4dh/No29GRnAs2XvBnbKYXZ0PnMQuJjgKVeM9qkgRww0cUu6xmF45ogRE=
+        Thu, 1 Mar 2018 10:24:46 -0500
+X-IronPort-AV: E=Sophos;i="5.47,408,1515456000";
+   d="scan'208";a="725186399"
+From: "Raslan, KarimAllah" <karahmed@amazon.de>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC: "hpa@zytor.com" <hpa@zytor.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH 00/10] KVM/X86: Handle guest memory that does not have a
+ struct page
+Thread-Topic: [PATCH 00/10] KVM/X86: Handle guest memory that does not have a
+ struct page
+Thread-Index: AQHTqzwO4mFZ4WE2jEyHcxNKmi0cSaO7jFUA
+Date: Thu, 1 Mar 2018 15:24:34 +0000
+Message-ID: <1519917874.15908.41.camel@amazon.de>
+References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.111]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EA266598D4D66946BCF2CD39A4EAEBA5@amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
-References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
- <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com>
- <20180228051525.a2vouqs6djnd2cnf@huvuddator> <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
- <20180301111801.gdhoam4kqrbqnasv@huvuddator> <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Thu, 1 Mar 2018 16:23:33 +0100
-Message-ID: <CAFkk2KS=Z2qHgh5X_W9uTPPG1qHop_m7ZoHYQy5Ss9PpBTJd6Q@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: remove redundant streamline_config.pl prerequisite
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21FPLdd030214
 
-On Thu, Mar 1, 2018 at 3:39 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-03-01 20:18 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->> The local{yes,mod}config targets currently have streamline_config.pl as
->> a prerequisite. This is redundant, because streamline_config.pl is a
->> checked-in file with no prerequisites.
->>
->> Remove the prerequisite and reference streamline_config.pl directly in
->> the recipe of the rule instead.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
->>  scripts/kconfig/Makefile | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
->> index 1f74336d4e23..58be52cb464d 100644
->
->
-> Thanks! Almost good.
->
-> Just small nits.
->
->
->> --- a/scripts/kconfig/Makefile
->> +++ b/scripts/kconfig/Makefile
->> @@ -77,9 +77,9 @@ silentoldconfig: $(obj)/conf
->>             touch   include/generated/autoksyms.h
->>         $< $(silent) --$@ $(Kconfig)
->>
->> -localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
->> +localyesconfig localmodconfig: $(obj)/conf
->>         $(Q)mkdir -p include/config include/generated
->> -       $(Q)perl $< --$@ $(srctree) $(Kconfig) > .tmp.config
->> +       $(Q)perl $(obj)/streamline_config.pl --$@ $(srctree) $(Kconfig) > .tmp.config
->
->
->
-> '$(src)/streamline_config.pl' is better than '$(obj)/streamline_config.pl'
-> since it is a checked-in file.
->
-> '$(src)' and '$(obj)' are always the same.
-> (https://github.com/torvalds/linux/blob/master/scripts/Makefile.build#L6)
->
->
-> So, there is no effective difference.
-> It is just a coding convention to use $(obj)/ for generated files,
-> and $(src)/ for source files.
->
-> The original code already used $(obj)/, so this is not your fault
-> but I want to fix it while we are here.
->
->
->
-> One more nit.
->
-> $(obj)/conf $(silent) --silentoldconfig $(Kconfig);
->
-> can be
->
-> $< $(silent) --silentoldconfig $(Kconfig);
->
->
-> I guess you did not touch this line to avoid
-> conflict with my patch.
+Jim/Paolo/Radim,
 
-Yep, plus I wanted to keep the patch focused.
+Any complains about the current API? (introduced in 4/10)
 
->
->
->
-> If you agree those two, shall I fix it up
-> when I apply it?
+I have more patches on top and I would like to ensure that this is 
+agreed upon at least before sending more revisions/patches.
 
-That's fine by me. I'll assume less sanity from the existing code from
-now on. :)
+Also 1, 2, and 3 should be a bit straight forward and does not use 
+this API.
 
->
->
->
->
->
->>         $(Q)if [ -f .config ]; then                                     \
->>                         cmp -s .tmp.config .config ||                   \
->>                         (mv -f .config .config.old.1;                   \
->> --
->> 2.14.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+Thanks.
 
-Thanks,
-Ulf
+On Wed, 2018-02-21 at 18:47 +0100, KarimAllah Ahmed wrote:
+> For the most part, KVM can handle guest memory that does not have a struct
+> page (i.e. not directly managed by the kernel). However, There are a few places
+> in the code, specially in the nested code, that does not support that.
+> 
+> Patch 1, 2, and 3 avoid the mapping and unmapping all together and just
+> directly use kvm_guest_read and kvm_guest_write.
+> 
+> Patch 4 introduces a new guest mapping interface that encapsulate all the
+> bioler plate code that is needed to map and unmap guest memory. It also
+> supports guest memory without "struct page".
+> 
+> Patch 5, 6, 7, 8, 9, and 10 switch most of the offending code in VMX and hyperv
+> to use the new guest mapping API.
+> 
+> This patch series is the first set of fixes. Handling SVM and APIC-access page
+> will be handled in a different patch series.
+> 
+> KarimAllah Ahmed (10):
+>   X86/nVMX: handle_vmon: Read 4 bytes from guest memory instead of
+>     map->read->unmap sequence
+>   X86/nVMX: handle_vmptrld: Copy the VMCS12 directly from guest memory
+>     instead of map->copy->unmap sequence.
+>   X86/nVMX: Update the PML table without mapping and unmapping the page
+>   KVM: Introduce a new guest mapping API
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt
+>     descriptor table
+>   KVM/X86: Use kvm_vcpu_map in emulator_cmpxchg_emulated
+>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_clear_sint_msg_pending
+>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_deliver_msg
+> 
+>  arch/x86/kvm/hyperv.c    |  28 ++++-----
+>  arch/x86/kvm/vmx.c       | 144 +++++++++++++++--------------------------------
+>  arch/x86/kvm/x86.c       |  13 ++---
+>  include/linux/kvm_host.h |  15 +++++
+>  virt/kvm/kvm_main.c      |  50 ++++++++++++++++
+>  5 files changed, 129 insertions(+), 121 deletions(-)
+> 
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
