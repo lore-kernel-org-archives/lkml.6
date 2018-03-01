@@ -1,81 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033779AbeCASEz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:04:55 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:36960 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033627AbeCASEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:04:53 -0500
-To: benh@au1.ibm.com, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
-Date: Thu, 1 Mar 2018 11:04:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1033835AbeCASFb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:05:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033627AbeCASF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:05:28 -0500
+Date: Thu, 1 Mar 2018 10:05:25 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: wmi: Fix misuse of vsprintf extension %pULL
+Message-ID: <20180301180525.GB25613@fury>
+References: <77b9d62ee2600bb01c08c618e67b63c8aaa35f49.1519920316.git.joe@perches.com>
+ <CAHp75Ve6H9Ra4zm-EA6+1rHenoOkQJi9d=OJ+0B64HjxLkPBvQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1519876569.4592.4.camel@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, benh@au1.ibm.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Ve6H9Ra4zm-EA6+1rHenoOkQJi9d=OJ+0B64HjxLkPBvQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 28/02/18 08:56 PM, Benjamin Herrenschmidt wrote:
-> On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
->> The problem is that acccording to him (I didn't double check the latest
->> patches) you effectively hotplug the PCIe memory into the system when
->> creating struct pages.
->>
->> This cannot possibly work for us. First we cannot map PCIe memory as
->> cachable. (Note that doing so is a bad idea if you are behind a PLX
->> switch anyway since you'd ahve to manage cache coherency in SW).
+On Thu, Mar 01, 2018 at 06:39:07PM +0200, Andy Shevchenko wrote:
+> On Thu, Mar 1, 2018 at 6:08 PM, Joe Perches <joe@perches.com> wrote:
+> > %pULL doesn't officially exist but %pUL does.
+> >
+> > Miscellanea:
+> >
+> > o Add missing newlines to a couple logging messages
 > 
-> Note: I think the above means it won't work behind a switch on x86
-> either, will it ?
+> Darren, are you agree on the change?
+> 
+> To me it seems fine.
 
-This works perfectly fine on x86 behind a switch and we've tested it on 
-multiple machines. We've never had an issue of running out of virtual 
-space despite our PCI bars typically being located with an offset of 
-56TB or more. The arch code on x86 also somehow figures out not to map 
-the memory as cachable so that's not an issue (though, at this point, 
-the CPU never accesses the memory so even if it were, it wouldn't affect 
-anything).
+Yup, clearly a typo based on other usages within the file. Thanks Joe.
 
-We also had this working on ARM64 a while back but it required some out 
-of tree ZONE_DEVICE patches and some truly horrid hacks to it's arch 
-code to ioremap the memory into the page map.
+Applied.
 
-You didn't mention what architecture you were trying this on.
-
-It may make sense at this point to make this feature dependent on x86 
-until more work is done to make it properly portable. Something like 
-arch functions that allow adding IO memory pages to with a specific 
-cache setting. Though, if an arch has such restrictive limits on the map 
-size it would probably need to address that too somehow.
-
-Thanks,
-
-Logan
+-- 
+Darren Hart
+VMware Open Source Technology Center
