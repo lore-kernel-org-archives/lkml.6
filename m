@@ -1,145 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965856AbeCAEKo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 23:10:44 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:36272 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965779AbeCAEKn (ORCPT
+        id S965845AbeCAEOI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 23:14:08 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34544 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965770AbeCAEOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 23:10:43 -0500
-X-Google-Smtp-Source: AG47ELtrQImvj39m/IPpIZAEQdpfHczElw6F6j6yJTQkVahMjFBZVi+p0L3g/fZvotHU6sNd7HlB8g==
-Subject: Re: [PATCH v2] hwmon: g762: handle cleanup with devm_add_action
-To: Peng Hao <peng.hao2@zte.com.cn>, jdelvare@suse.com
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1519902202-80883-1-git-send-email-peng.hao2@zte.com.cn>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b4523e12-2abc-1cac-d190-120c04840469@roeck-us.net>
-Date: Wed, 28 Feb 2018 20:10:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519902202-80883-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Feb 2018 23:14:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1D690601A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC
+Date: Wed, 28 Feb 2018 22:14:00 -0600
+Message-Id: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2018 03:03 AM, Peng Hao wrote:
-> Simplify code and use devm_add_action() to handle cleanup.
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->   drivers/hwmon/g762.c | 43 +++++++++++++++++--------------------------
->   1 file changed, 17 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
-> index 6d1208b..49046b4 100644
-> --- a/drivers/hwmon/g762.c
-> +++ b/drivers/hwmon/g762.c
-> @@ -128,7 +128,6 @@ enum g762_regs {
->   			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
->   
->   struct g762_data {
-> -	struct device *hwmon_dev;
->   	struct i2c_client *client;
->   	struct clk *clk;
->   
-> @@ -174,6 +173,9 @@ struct g762_data {
->   		      */
->   };
->   
-> +static void g762_remove(void *data);
-> +
-> +
-Double empty line, and the need for a forward declaration usually means
-that something is less than perfect.
+The DCache clean & ICache invalidation requirements for instructions
+to be data coherence are discoverable through new fields in CTR_EL0.
+The following two control bits DIC and IDC were defined for this
+purpose. No need to perform point of unification cache maintenance
+operations from software on systems where CPU caches are transparent.
 
->   /*
->    * Convert count value from fan controller register (FAN_SET_CNT) into fan
->    * speed RPM value. Note that the datasheet documents a basic formula;
-> @@ -626,6 +628,7 @@ static int g762_of_clock_enable(struct i2c_client *client)
->   	data = i2c_get_clientdata(client);
->   	data->clk = clk;
->   
-> +	devm_add_action(&client->dev, g762_remove, data);
->   	return 0;
->   
->    clk_unprep:
-> @@ -1051,9 +1054,17 @@ static inline int g762_fan_init(struct device *dev)
->   					 data->fan_cmd1);
->   }
->   
-> +static void g762_remove(void *data)
-> +{
-> +	struct g762_data *g762 = data;
-> +
-> +	g762_of_clock_disable(g762->client);
+This patch optimize the three functions __flush_cache_user_range(),
+clean_dcache_area_pou() and invalidate_icache_range() if the hardware
+reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
+instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
+in order to avoid the unnecessary overhead.
 
-Why did you not just change the parameter of g762_of_clock_disable to
-void *data and call
-	devm_add_action(&client->dev, g762_of_clock_disable, data);
-above ?
+CTR_EL0.DIC: Instruction cache invalidation requirements for
+ instruction to data coherence. The meaning of this bit[29].
+  0: Instruction cache invalidation to the point of unification
+     is required for instruction to data coherence.
+  1: Instruction cache cleaning to the point of unification is
+      not required for instruction to data coherence.
 
-> +}
-> +
->   static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   {
->   	struct device *dev = &client->dev;
-> +	struct device *hwmon_dev;
->   	struct g762_data *data;
->   	int ret;
->   
-> @@ -1080,35 +1091,16 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   		return ret;
->   	ret = g762_of_prop_import(client);
->   	if (ret)
-> -		goto clock_dis;
-> +		return ret;
->   	/* ... or platform_data */
->   	ret = g762_pdata_prop_import(client);
->   	if (ret)
-> -		goto clock_dis;
-> +		return ret;
->   
-> -	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
-> +	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
->   							    data, g762_groups);
-> -	if (IS_ERR(data->hwmon_dev)) {
-> -		ret = PTR_ERR(data->hwmon_dev);
-> -		goto clock_dis;
-> -	}
-> -
-> -	return 0;
-> -
-> - clock_dis:
-> -	g762_of_clock_disable(client);
-> -
-> -	return ret;
-> -}
-> -
-> -static int g762_remove(struct i2c_client *client)
-> -{
-> -	struct g762_data *data = i2c_get_clientdata(client);
-> -
-> -	hwmon_device_unregister(data->hwmon_dev);
-> -	g762_of_clock_disable(client);
-> -
-> -	return 0;
-> +
-empty line is unnecessary.
+CTR_EL0.IDC: Data cache clean requirements for instruction to data
+ coherence. The meaning of this bit[28].
+  0: Data cache clean to the point of unification is required for
+     instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+     or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+  1: Data cache clean to the point of unification is not required
+     for instruction to data coherence.
 
-> +	return PTR_ERR_OR_ZERO(hwmon_dev);
->   }
->   
->   static struct i2c_driver g762_driver = {
-> @@ -1117,7 +1109,6 @@ static int g762_remove(struct i2c_client *client)
->   		.of_match_table = of_match_ptr(g762_dt_match),
->   	},
->   	.probe	  = g762_probe,
-> -	.remove	  = g762_remove,
->   	.id_table = g762_id,
->   };
->   
-> 
+Co-authored-by: Philip Elcan <pelcan@codeaurora.org>
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+Changes since v5:
+  -Addressed Mark's review comments.
+
+Changes since v4:
+  -Moved patching ARM64_HAS_CACHE_DIC inside invalidate_icache_by_line
+  -Removed 'dsb	ishst' for ARM64_HAS_CACHE_DIC as Mark suggested.
+
+Changes since v3:
+  -Added preprocessor guard CONFIG_xxx to code snippets in cache.S
+  -Changed barrier attributes from ISH to ISHST.
+
+Changes since v2:
+  -Included barriers, DSB/ISB with DIC set, and DSB with IDC set.
+  -Single Kconfig option.
+
+Changes since v1:
+  -Reworded commit text.
+  -Used the alternatives framework as Catalin suggested.
+  -Rebased on top of https://patchwork.kernel.org/patch/10227927/
+
+ arch/arm64/Kconfig                 | 12 ++++++++++++
+ arch/arm64/include/asm/assembler.h |  6 ++++++
+ arch/arm64/include/asm/cache.h     |  4 ++++
+ arch/arm64/include/asm/cpucaps.h   |  4 +++-
+ arch/arm64/kernel/cpufeature.c     | 40 ++++++++++++++++++++++++++++++++------
+ arch/arm64/mm/cache.S              | 13 +++++++++++++
+ 6 files changed, 72 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 7381eeb..41af850 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1091,6 +1091,18 @@ config ARM64_RAS_EXTN
+ 	  and access the new registers if the system supports the extension.
+ 	  Platform RAS features may additionally depend on firmware support.
+ 
++config ARM64_SKIP_CACHE_POU
++	bool "Enable support to skip cache PoU operations"
++	default y
++	help
++	  Explicit point of unification cache operations can be eliminated
++	  in software if the hardware handles transparently. The new bits in
++	  CTR_EL0, CTR_EL0.DIC and CTR_EL0.IDC indicates the hardware
++	  capabilities of ICache and DCache PoU requirements.
++
++	  Selecting this feature will allow the kernel to optimize cache
++	  maintenance to the PoU.
++
+ endmenu
+ 
+ config ARM64_SVE
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 3c78835..39f2274 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -444,6 +444,11 @@
+  * 	Corrupts:	tmp1, tmp2
+  */
+ 	.macro invalidate_icache_by_line start, end, tmp1, tmp2, label
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_DIC
++	b	9996f
++alternative_else_nop_endif
++#endif
+ 	icache_line_size \tmp1, \tmp2
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\tmp2, \start, \tmp2
+@@ -453,6 +458,7 @@
+ 	cmp	\tmp2, \end
+ 	b.lo	9997b
+ 	dsb	ish
++9996:
+ 	isb
+ 	.endm
+ 
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index ea9bb4e..d460e9f 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -20,8 +20,12 @@
+ 
+ #define CTR_L1IP_SHIFT		14
+ #define CTR_L1IP_MASK		3
++#define CTR_DMLINE_SHIFT	16
++#define CTR_ERG_SHIFT		20
+ #define CTR_CWG_SHIFT		24
+ #define CTR_CWG_MASK		15
++#define CTR_IDC_SHIFT		28
++#define CTR_DIC_SHIFT		29
+ 
+ #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+ 
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index bb26382..8dd42ae 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -45,7 +45,9 @@
+ #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+ #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+ #define ARM64_HAS_RAS_EXTN			26
++#define ARM64_HAS_CACHE_IDC			27
++#define ARM64_HAS_CACHE_DIC			28
+ 
+-#define ARM64_NCAPS				27
++#define ARM64_NCAPS				29
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 2985a06..0b64b55 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
+ };
+ 
+ static const struct arm64_ftr_bits ftr_ctr[] = {
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),                    /* RES1 */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
+ 	/*
+ 	 * Linux can handle differing I-cache policies. Userspace JITs will
+ 	 * make use of *minLine.
+@@ -852,6 +852,20 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
+ 					ID_AA64PFR0_FP_SHIFT) < 0;
+ }
+ 
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
++}
++
++static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
++}
++#endif
++
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+ 
+@@ -1088,6 +1102,20 @@ static int cpu_copy_el2regs(void *__unused)
+ 		.enable = cpu_clear_disr,
+ 	},
+ #endif /* CONFIG_ARM64_RAS_EXTN */
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++	{
++		.desc = "Skip D-Cache maintenance 'DC CVAU' (CTR_EL0.IDC=1)",
++		.capability = ARM64_HAS_CACHE_IDC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_idc,
++	},
++	{
++		.desc = "Skip I-Cache maintenance 'IC IVAU' (CTR_EL0.DIC=1)",
++		.capability = ARM64_HAS_CACHE_DIC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_dic,
++	},
++#endif /* CONFIG_ARM64_SKIP_CACHE_POU */
+ 	{},
+ };
+ 
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 758bde7..d8d7a32 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -50,6 +50,12 @@ ENTRY(flush_icache_range)
+  */
+ ENTRY(__flush_cache_user_range)
+ 	uaccess_ttbr0_enable x2, x3, x4
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	b	8f
++alternative_else_nop_endif
++#endif
+ 	dcache_line_size x2, x3
+ 	sub	x3, x2, #1
+ 	bic	x4, x0, x3
+@@ -60,6 +66,7 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+ 	b.lo	1b
+ 	dsb	ish
+ 
++8:
+ 	invalidate_icache_by_line x0, x1, x2, x3, 9f
+ 	mov	x0, #0
+ 1:
+@@ -116,6 +123,12 @@ ENDPIPROC(__flush_dcache_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pou)
++#ifdef CONFIG_ARM64_SKIP_CACHE_POU
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	ret
++alternative_else_nop_endif
++#endif
+ 	dcache_by_line_op cvau, ish, x0, x1, x2, x3
+ 	ret
+ ENDPROC(__clean_dcache_area_pou)
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
