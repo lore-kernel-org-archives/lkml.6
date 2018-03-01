@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909342-2-12650158750499098508
+X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909336-2-9019361515143439782
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909341; b=pUWp4uJqXyCShJDsOLZeXIrY4a4EfcYlrNjppAXJ4JC/UjN
-    E7D2UEqFKdR4SkWgDfT23oVX6mJlO5515j75Hd7bGyK+Y6HDHuXXGiADn/HUCRVw
-    iYIk3BVsHv9enSy1sG9FJc+KS2ngFj5tcor/O8/DGpyt8GCxRxlKX2XePMC1uvzD
-    nyUI7FemQXDhxrhDgskgA3AVzF3oqtOpHKa6KT4NoTIoFqjOj/anw+7d2S+NS109
-    DycqV1FhsYgaZ7UZrqollZYzVf6F9QYHbxPsdpZO/7+GG0P7a/Uu2ud3GNB1ascI
-    CZ/GJO7w0lJlxUrqvigV1DHblfeG53vUrsU0dog==
+    t=1519909335; b=qLmjiTmNskeTWRcKpiRH0XwJKKLp5YXLasDueZdZVsC/vcB
+    eZOj1CZb4hWC2JabeNq9oOxCu6CuCckaKRfMXIDwgk07/hFkONZ2YtUoLHmXfv3s
+    XE1wwdDRYx5v9ohZ7G08eBnUKaXhiYThK53952IVrOwnVf3JjtLbklVVjIlu6VNj
+    q74P96utAiW9kKYXqvgTHxioOs+FQpx+cqC3cOOUbjrdX+IRzLKKHV06zce82UZG
+    W/SflqaNv8a9rxwYJtQl15wzyUTb34TWz/mCOmNpHtctemNMpQzN9Rk7FnilZG1S
+    SmxlnBNplk6mCUL3RImHl2scDZrGeyeylKc1oRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909341;
-    bh=Jl8J60UuHWw6QycIueIONGAI64GFje0f/SkXAPYopdo=; b=KSVf5oeg7256
-    8Hjlg14V6zX1TPRcNtgKhol/3JuTvtUKzG4pioSF5y9Qu2zvyX948EOU+cK5ymeS
-    h4b3VdtJYabMLB5m+dzCEOgzNOwULz9XV1Hu4V++cfbcNLMLUEqztSLQBwxHQ4wa
-    EZ6M9bhTrnlIK54WMFkRKVQ9oYFk6A18hgYVaZdDWzvOAy2h1CzKQKYr1nqOsQdZ
-    S2WRxgG9fzSGrlc88gnEICwfsYbmzaItPH5dyiFbI0DDpn36gkfpYrEEloyPLP0S
-    HT/HM9QrhlYchJOWqTpODC6yWWvW7oZOXq12yjgogG2tMhAn7GR5JVfOcBdMX3gi
-    ufHv9B4+ng==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519909335;
+    bh=JR0dWBMHXzRrhmbkXPj+t5C5z62Z2EIDM9UumhZBlIo=; b=Aa+IvsofyFhw
+    CZTaSY3H37sEm0eDVKoLdQvyIZv6eUCBREXNDa2x9H4FWSbqEvridzaXxpT/TnkH
+    7TqiHi58RSuXJsTMILAPz9lBYX0T1vec7in4FkJGh+9WAGNX5UQfd5AcFiERYM0W
+    R6u8WsFmUsLMKnB3PbI5H+CZBcTH5fKGwNDlivJc6tiyPXdB8CPPYHMl7uTCIRyz
+    G3Nc0ZDrLXLuKbYcRC+VrnBvRXudlIECXEGX7//PQWGokJ0qL3h5j5MXTl72E/TI
+    d7nMsM5rmJgzGig1yRhFyZa0q+FY0xf5wSnsvgrOpBMeWOMkgvVE7wqc+vQfCocY
+    nvhk0TyX2w==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=gD/uH45g x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=cD6/Rp3l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CX5leYoB;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pvMcH5GS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=gD/uH45g x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=cD6/Rp3l x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CX5leYoB;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pvMcH5GS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031125AbeCANAi (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 08:00:38 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33877 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030872AbeCANAf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 08:00:35 -0500
-X-Google-Smtp-Source: AG47ELtS8FjouI8EH3/kb1o1Sfvd/osyFgXqGmtvWQKB5ZGqm4bL0ym578GrYRSG054K81mIMEljFw==
+        id S1030343AbeCANAq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 08:00:46 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38809 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030318AbeCANAn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 08:00:43 -0500
+X-Google-Smtp-Source: AG47ELvIy9+GRaoxIoQvHudoFnCGLxOqiWrkP5ZK6Hu5nCo0SCr8gWbtErJFS04iZkUmk0/36xZ3yw==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 39/45] arm64: KVM: Add SMCCC_ARCH_WORKAROUND_1 fast handling
-Date: Thu,  1 Mar 2018 20:54:16 +0800
-Message-Id: <1519908862-11425-40-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 40/45] firmware/psci: Expose PSCI conduit
+Date: Thu,  1 Mar 2018 20:54:17 +0800
+Message-Id: <1519908862-11425-41-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -78,69 +78,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit f72af90c3783 upstream.
+commit 09a8d6d48499 upstream.
 
-We want SMCCC_ARCH_WORKAROUND_1 to be fast. As fast as possible.
-So let's intercept it as early as we can by testing for the
-function call number as soon as we've identified a HVC call
-coming from the guest.
+In order to call into the firmware to apply workarounds, it is
+useful to find out whether we're using HVC or SMC. Let's expose
+this through the psci_ops.
 
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/kvm/hyp/hyp-entry.S | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ drivers/firmware/psci.c | 28 +++++++++++++++++++++++-----
+ include/linux/psci.h    |  7 +++++++
+ 2 files changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/kvm/hyp/hyp-entry.S b/arch/arm64/kvm/hyp/hyp-entry.S
-index 4e92399..4e9d50c 100644
---- a/arch/arm64/kvm/hyp/hyp-entry.S
-+++ b/arch/arm64/kvm/hyp/hyp-entry.S
-@@ -15,6 +15,7 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index 9a3ce76..a49196a 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -59,7 +59,9 @@ bool psci_tos_resident_on(int cpu)
+ 	return cpu == resident_cpu;
+ }
  
-+#include <linux/arm-smccc.h>
- #include <linux/linkage.h>
+-struct psci_operations psci_ops;
++struct psci_operations psci_ops = {
++	.conduit = PSCI_CONDUIT_NONE,
++};
  
- #include <asm/alternative.h>
-@@ -79,10 +80,11 @@ alternative_endif
- 	lsr	x0, x1, #ESR_ELx_EC_SHIFT
+ typedef unsigned long (psci_fn)(unsigned long, unsigned long,
+ 				unsigned long, unsigned long);
+@@ -210,6 +212,22 @@ static unsigned long psci_migrate_info_up_cpu(void)
+ 			      0, 0, 0);
+ }
  
- 	cmp	x0, #ESR_ELx_EC_HVC64
-+	ccmp	x0, #ESR_ELx_EC_HVC32, #4, ne
- 	b.ne	el1_trap
- 
--	mrs	x1, vttbr_el2		// If vttbr is valid, the 64bit guest
--	cbnz	x1, el1_trap		// called HVC
-+	mrs	x1, vttbr_el2		// If vttbr is valid, the guest
-+	cbnz	x1, el1_hvc_guest	// called HVC
- 
- 	/* Here, we're pretty sure the host called HVC. */
- 	ldp	x0, x1, [sp], #16
-@@ -101,6 +103,20 @@ alternative_endif
- 
- 2:	eret
- 
-+el1_hvc_guest:
-+	/*
-+	 * Fastest possible path for ARM_SMCCC_ARCH_WORKAROUND_1.
-+	 * The workaround has already been applied on the host,
-+	 * so let's quickly get back to the guest. We don't bother
-+	 * restoring x1, as it can be clobbered anyway.
-+	 */
-+	ldr	x1, [sp]				// Guest's x0
-+	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
-+	cbnz	w1, el1_trap
-+	mov	x0, x1
-+	add	sp, sp, #16
-+	eret
++static void set_conduit(enum psci_conduit conduit)
++{
++	switch (conduit) {
++	case PSCI_CONDUIT_HVC:
++		invoke_psci_fn = __invoke_psci_fn_hvc;
++		break;
++	case PSCI_CONDUIT_SMC:
++		invoke_psci_fn = __invoke_psci_fn_smc;
++		break;
++	default:
++		WARN(1, "Unexpected PSCI conduit %d\n", conduit);
++	}
 +
- el1_trap:
- 	/*
- 	 * x0: ESR_EC
++	psci_ops.conduit = conduit;
++}
++
+ static int get_set_conduit_method(struct device_node *np)
+ {
+ 	const char *method;
+@@ -222,9 +240,9 @@ static int get_set_conduit_method(struct device_node *np)
+ 	}
+ 
+ 	if (!strcmp("hvc", method)) {
+-		invoke_psci_fn = __invoke_psci_fn_hvc;
++		set_conduit(PSCI_CONDUIT_HVC);
+ 	} else if (!strcmp("smc", method)) {
+-		invoke_psci_fn = __invoke_psci_fn_smc;
++		set_conduit(PSCI_CONDUIT_SMC);
+ 	} else {
+ 		pr_warn("invalid \"method\" property: %s\n", method);
+ 		return -EINVAL;
+@@ -654,9 +672,9 @@ int __init psci_acpi_init(void)
+ 	pr_info("probing for conduit method from ACPI.\n");
+ 
+ 	if (acpi_psci_use_hvc())
+-		invoke_psci_fn = __invoke_psci_fn_hvc;
++		set_conduit(PSCI_CONDUIT_HVC);
+ 	else
+-		invoke_psci_fn = __invoke_psci_fn_smc;
++		set_conduit(PSCI_CONDUIT_SMC);
+ 
+ 	return psci_probe();
+ }
+diff --git a/include/linux/psci.h b/include/linux/psci.h
+index 6306ab1..66ff547 100644
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -25,6 +25,12 @@ bool psci_tos_resident_on(int cpu);
+ int psci_cpu_init_idle(unsigned int cpu);
+ int psci_cpu_suspend_enter(unsigned long index);
+ 
++enum psci_conduit {
++	PSCI_CONDUIT_NONE,
++	PSCI_CONDUIT_SMC,
++	PSCI_CONDUIT_HVC,
++};
++
+ struct psci_operations {
+ 	u32 (*get_version)(void);
+ 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
+@@ -34,6 +40,7 @@ struct psci_operations {
+ 	int (*affinity_info)(unsigned long target_affinity,
+ 			unsigned long lowest_affinity_level);
+ 	int (*migrate_info_type)(void);
++	enum psci_conduit conduit;
+ };
+ 
+ extern struct psci_operations psci_ops;
 -- 
 2.7.4
