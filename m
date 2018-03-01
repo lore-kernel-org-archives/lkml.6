@@ -1,81 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163144AbeCAX35 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:29:57 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39666 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163105AbeCAX3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:29:33 -0500
-To: Jason Gunthorpe <jgg@ziepe.ca>, Stephen Bates <sbates@raithlin.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
- <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
- <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
- <20180301184249.GI19007@ziepe.ca>
- <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
- <20180301224540.GL19007@ziepe.ca>
- <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
- <20180301232038.GO19007@ziepe.ca>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <bb1bb433-1a7c-2088-f150-e8627f46b884@deltatee.com>
-Date: Thu, 1 Mar 2018 16:29:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180301232038.GO19007@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, sbates@raithlin.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1163175AbeCAXa3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:30:29 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:52468 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163009AbeCAX33 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:29:29 -0500
+To: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Message-Id: <8e341d5e01eab2699201434d3ffb978725744e67.1519813462.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1519813462.git.fthain@telegraphics.com.au>
+References: <cover.1519813462.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net 2/4] net/mac89x0: Convert to platform_driver
+Date: Thu,  1 Mar 2018 18:29:28 -0500 (EST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Apparently these Dayna cards don't have a pseudoslot declaration ROM
+which means they can't be probed like NuBus cards.
 
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ arch/m68k/mac/config.c                |  4 +++
+ drivers/net/Space.c                   |  3 --
+ drivers/net/ethernet/cirrus/mac89x0.c | 68 +++++++++++++++--------------------
+ include/net/Space.h                   |  1 -
+ 4 files changed, 33 insertions(+), 43 deletions(-)
 
-On 01/03/18 04:20 PM, Jason Gunthorpe wrote:
-> On Thu, Mar 01, 2018 at 11:00:51PM +0000, Stephen  Bates wrote:
-
-> No, locality matters. If you have a bunch of NICs and bunch of drives
-> and the allocator chooses to put all P2P memory on a single drive your
-> performance will suck horribly even if all the traffic is offloaded.
-> 
-> Performance will suck if you have speed differences between the PCI-E
-> devices. Eg a bunch of Gen 3 x8 NVMe cards paired with a Gen 4 x16 NIC
-> will not reach full performance unless the p2p buffers are properly
-> balanced between all cards.
-
-This would be solved better by choosing the closest devices in the 
-hierarchy in the p2pmem_find function (ie. preferring devices involved 
-in the transaction). Also, based on the current code, it's a bit of a 
-moot point seeing it requires all devices to be on the same switch. So 
-unless you have a giant switch hidden somewhere you're not going to get 
-too many NIC/NVME pairs.
-
-In any case, we are looking at changing both those things so distance in 
-the topology is preferred and the ability to span multiple switches is 
-allowed. We're also discussing changing it to "user picks" which 
-simplifies all of this.
-
-Logan
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index d3d435248a24..c73eb8209555 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -1088,6 +1088,10 @@ int __init mac_platform_init(void)
+ 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
+ 		platform_device_register_simple("macsonic", -1, NULL, 0);
+ 
++	if (macintosh_config->expansion_type == MAC_EXP_PDS ||
++	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
++		platform_device_register_simple("mac89x0", -1, NULL, 0);
++
+ 	if (macintosh_config->ether_type == MAC_ETHER_MACE)
+ 		platform_device_register_simple("macmace", -1, NULL, 0);
+ 
+diff --git a/drivers/net/Space.c b/drivers/net/Space.c
+index 64333ec999ac..3afda6561434 100644
+--- a/drivers/net/Space.c
++++ b/drivers/net/Space.c
+@@ -113,9 +113,6 @@ static struct devprobe2 m68k_probes[] __initdata = {
+ #endif
+ #ifdef CONFIG_MVME147_NET	/* MVME147 internal Ethernet */
+ 	{mvme147lance_probe, 0},
+-#endif
+-#ifdef CONFIG_MAC89x0
+-	{mac89x0_probe, 0},
+ #endif
+ 	{NULL, 0},
+ };
+diff --git a/drivers/net/ethernet/cirrus/mac89x0.c b/drivers/net/ethernet/cirrus/mac89x0.c
+index 4fe0ae93ab36..911139abbe20 100644
+--- a/drivers/net/ethernet/cirrus/mac89x0.c
++++ b/drivers/net/ethernet/cirrus/mac89x0.c
+@@ -93,6 +93,7 @@ static const char version[] =
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/netdevice.h>
++#include <linux/platform_device.h>
+ #include <linux/etherdevice.h>
+ #include <linux/skbuff.h>
+ #include <linux/delay.h>
+@@ -105,6 +106,10 @@ static const char version[] =
+ 
+ #include "cs89x0.h"
+ 
++static int debug;
++module_param(debug, int, 0);
++MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
++
+ static unsigned int net_debug = NET_DEBUG;
+ 
+ /* Information that need to be kept for each board. */
+@@ -167,10 +172,9 @@ static const struct net_device_ops mac89x0_netdev_ops = {
+ 
+ /* Probe for the CS8900 card in slot E.  We won't bother looking
+    anywhere else until we have a really good reason to do so. */
+-struct net_device * __init mac89x0_probe(int unit)
++static int mac89x0_device_probe(struct platform_device *pdev)
+ {
+ 	struct net_device *dev;
+-	static int once_is_enough;
+ 	struct net_local *lp;
+ 	static unsigned version_printed;
+ 	int i, slot;
+@@ -180,21 +184,11 @@ struct net_device * __init mac89x0_probe(int unit)
+ 	int err = -ENODEV;
+ 	struct nubus_rsrc *fres;
+ 
+-	if (!MACH_IS_MAC)
+-		return ERR_PTR(-ENODEV);
++	net_debug = debug;
+ 
+ 	dev = alloc_etherdev(sizeof(struct net_local));
+ 	if (!dev)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (unit >= 0) {
+-		sprintf(dev->name, "eth%d", unit);
+-		netdev_boot_setup_check(dev);
+-	}
+-
+-	if (once_is_enough)
+-		goto out;
+-	once_is_enough = 1;
++		return -ENOMEM;
+ 
+ 	/* We might have to parameterize this later */
+ 	slot = 0xE;
+@@ -221,6 +215,8 @@ struct net_device * __init mac89x0_probe(int unit)
+ 	if (sig != swab16(CHIP_EISA_ID_SIG))
+ 		goto out;
+ 
++	SET_NETDEV_DEV(dev, &pdev->dev);
++
+ 	/* Initialize the net_device structure. */
+ 	lp = netdev_priv(dev);
+ 
+@@ -280,12 +276,14 @@ struct net_device * __init mac89x0_probe(int unit)
+ 	err = register_netdev(dev);
+ 	if (err)
+ 		goto out1;
+-	return NULL;
++
++	platform_set_drvdata(pdev, dev);
++	return 0;
+ out1:
+ 	nubus_writew(0, dev->base_addr + ADD_PORT);
+ out:
+ 	free_netdev(dev);
+-	return ERR_PTR(err);
++	return err;
+ }
+ 
+ /* Open/initialize the board.  This is called (in the current kernel)
+@@ -571,32 +569,24 @@ static int set_mac_address(struct net_device *dev, void *addr)
+ 	return 0;
+ }
+ 
+-#ifdef MODULE
+-
+-static struct net_device *dev_cs89x0;
+-static int debug;
+-
+-module_param(debug, int, 0);
+-MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
+ MODULE_LICENSE("GPL");
+ 
+-int __init
+-init_module(void)
++static int mac89x0_device_remove(struct platform_device *pdev)
+ {
+-	net_debug = debug;
+-        dev_cs89x0 = mac89x0_probe(-1);
+-	if (IS_ERR(dev_cs89x0)) {
+-                printk(KERN_WARNING "mac89x0.c: No card found\n");
+-		return PTR_ERR(dev_cs89x0);
+-	}
++	struct net_device *dev = platform_get_drvdata(pdev);
++
++	unregister_netdev(dev);
++	nubus_writew(0, dev->base_addr + ADD_PORT);
++	free_netdev(dev);
+ 	return 0;
+ }
+ 
+-void
+-cleanup_module(void)
+-{
+-	unregister_netdev(dev_cs89x0);
+-	nubus_writew(0, dev_cs89x0->base_addr + ADD_PORT);
+-	free_netdev(dev_cs89x0);
+-}
+-#endif /* MODULE */
++static struct platform_driver mac89x0_platform_driver = {
++	.probe = mac89x0_device_probe,
++	.remove = mac89x0_device_remove,
++	.driver = {
++		.name = "mac89x0",
++	},
++};
++
++module_platform_driver(mac89x0_platform_driver);
+diff --git a/include/net/Space.h b/include/net/Space.h
+index 336da258885a..9cce0d80d37a 100644
+--- a/include/net/Space.h
++++ b/include/net/Space.h
+@@ -20,7 +20,6 @@ struct net_device *cs89x0_probe(int unit);
+ struct net_device *mvme147lance_probe(int unit);
+ struct net_device *tc515_probe(int unit);
+ struct net_device *lance_probe(int unit);
+-struct net_device *mac89x0_probe(int unit);
+ struct net_device *cops_probe(int unit);
+ struct net_device *ltpc_probe(void);
+ 
+-- 
+2.16.1
