@@ -1,81 +1,93 @@
-Return-Path: <dave.hansen@intel.com>
-X-Google-Smtp-Source: AG47ELtYErh3n6oLRkzy6OUUM7stPplaZj2SgLisHEwb1c5r6yTLpzhQyvTDLIKKBrNJ8PyU9gBq
-ARC-Seal: i=1; a=rsa-sha256; t=1519929384; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AG47ELthHU1UEEiuf+ZPlJQq+twmzNz46BQFphU95d8IGC19sJw76BZB3JwaxzHoBzW6nyW8Xi2r
+ARC-Seal: i=1; a=rsa-sha256; t=1519905810; cv=none;
         d=google.com; s=arc-20160816;
-        b=nTmwy7bHmOrPrENsCv0vYLc/4Az27fUh2iPGBWiRyylFUfp8STLeZLKlHnVH6voe/O
-         hzVRuBp8fPNI01T44db8kLhbeCDuI5zTS/GXkZOxrv9OejY1aEbECVbbMlJrcqO/9Jsr
-         P7/RAxpuMh17TbY2oTyAqRLJU54zQup6qjZmyuyyo9rR9Kg/QqYxfsZPv20JE9Etdz6q
-         tBmHTU1yeQ4DlABClyk/EEOmrAphFuHzm1kPSDOo21c0uTBTcu8S1jRQ08ez7edp/qNI
-         19gku9AjjoKjGrDUzYo48HjFMh6m4kq2ww3d37FYDV5x87/IKmHqSfZCJVCsEWEaRjiU
-         htWQ==
+        b=FdEVnlrpzi4Q4cqdJeysYRXDWBw0C3cSG8+aJVqnLg00slRne+oJ8PnmE2y5vi26KP
+         1UE0OAr6+VmUiK40gzpgAqM8uT5yoWfW/Kqq7ILP3BOQGVHd0Z+aN9k4c/VzPSr9lj8k
+         MrgxS6+P1ECP1o9ruNF6Icqg6pChY2PClxfgtco1Uiiu0lQ9n1/rpWCcy9ey/XFF8aLO
+         n7E2oqEzYRGgee70BP1n7uM31Uf/BBI03Q/sSxuNJ8RYQ6EBUE6zOXfwTeRXgXi0/3Da
+         KJWb6qrafLcgnP7oUPO5JNTt/vjBFjHq1j5Cdj791L88A/NgFUmfpPCZY+JSyg9O4tPf
+         0OqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:cc:references:to:subject
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=Uzzx8ygMUerSIHehoE3DQaB0V4Emt8y81bMBwzniV5A=;
-        b=NiLkDg7cQ4hiDJ7WfC49s2Kb3XAVl5WLazENpeSA3NftPT1qSI8yp/RFVz5KbYJ70F
-         ec7wHOK0VstE+QVMy2OzgJyYnCK5V5SyHYm9XQ+uU3l/ybqVRuL5sHsQbj5DUQDipCdT
-         EXdlAfboVszu0c/YGTKn2KLFp7cmk0QwMz9hptR+THMlbTfKy17K3sPESPXdouFYR5Gt
-         vF7eupbLjfpvBBdaZA/vP0xy2r3hmZd8ASYEZJVYLfaalb/yEt4bFd43miKENDtg2UI3
-         I6TKGq2/BUrJdZVC6ULSrzWyK+85NjCTc5ug2b1B27XjxTXdlwR+EThZaU24TH9QjJ3Z
-         MrRg==
+        bh=2nhz6guC/zvzqvTI90jFxnHZfx6V27TYaQyfyu7o/oA=;
+        b=nAVz/pfRhBJwtLB5wXMt2HYvC3aOLoMA9NUGTTHo+hsslaMw9iQQVSeK3PRwEoDJ0V
+         JVMnOI/XeXj7Wok4u68MiLTmrFIwNG3kBUQ96vu+H/cB89uZRW5dEAvjPhembaEpUL/U
+         EkV7Y+4nyTJK4zCHuGEd4NmhGZBs0/pmxnT/JUIBrfeGvcecq0uZSoq4i6A1bY8vnZKn
+         LHtO9C0L8YGRKxlzQ1tBbeWCbWRhdKoiK8CkhvAC6iGTu49jKBaOs1kaRbs8itfnGxiK
+         56BDETaksBZ0+d/yRzE/rS7/OtzMJHT/C2UHtyqMizzolK9aO60BQpU5cC3jVkBYGROl
+         dBSw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dave.hansen@intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=pgeQ3yWL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dave.hansen@intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
-   d="scan'208";a="35202692"
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=pgeQ3yWL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Date: Thu, 1 Mar 2018 13:03:26 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de
 Subject: Re: [PATCH 12/31] x86/entry/32: Add PTI cr3 switch to non-NMI
  entry/exit points
-To: Brian Gerst <brgerst@gmail.com>, Joerg Roedel <jroedel@suse.de>
+Message-ID: <20180301120326.GN16484@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <1518168340-9392-13-git-send-email-joro@8bytes.org>
  <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
- <20180301133430.wda4qesqhxnww7d6@8bytes.org>
- <2ae8b01f-844b-b8b1-3198-5db70c3e083b@redhat.com>
- <20180301165019.kuynvb6fkcwdpxjx@suse.de>
- <CAMzpN2gxVnb65LHXbBioM4LAMN2d-d1-xx3QyQrmsHECBXC29g@mail.gmail.com>
-Cc: Waiman Long <longman@redhat.com>, Joerg Roedel <joro@8bytes.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, the arch/x86 maintainers
- <x86@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>,
- Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
- Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
- Jiri Kosina <jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- David Laight <David.Laight@aculab.com>, Denys Vlasenko
- <dvlasenk@redhat.com>, Eduardo Valentin <eduval@amazon.com>,
- Greg KH <gregkh@linuxfoundation.org>, Will Deacon <will.deacon@arm.com>,
- "Liguori, Anthony" <aliguori@amazon.com>,
- Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
- Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
- Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <7727356a-7266-1166-1903-c4ebc0002299@intel.com>
-Date: Thu, 1 Mar 2018 10:36:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMzpN2gxVnb65LHXbBioM4LAMN2d-d1-xx3QyQrmsHECBXC29g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914904588119761?=
-X-GMAIL-MSGID: =?utf-8?q?1593761473727230993?=
+X-GMAIL-MSGID: =?utf-8?q?1593736754174060753?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/01/2018 10:24 AM, Brian Gerst wrote:
-> One thing that I am not certain about is whether debug exception can
-> happen even if the IF flag is cleared. If it can, debug exception should
-> be handled like NMI as the state of the CR3 can be indeterminate if the
-> exception happens in the entry/exit code.
+On Tue, Feb 27, 2018 at 02:18:36PM -0500, Waiman Long wrote:
+> On 02/09/2018 04:25 AM, Joerg Roedel wrote:
+> >  	SAVE_ALL
+> >  	ENCODE_FRAME_POINTER
+> > +
+> > +	/* Make sure we are running on kernel cr3 */
+> > +	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+> > +
+> >  	xorl	%edx, %edx			# error code 0
+> >  	movl	%esp, %eax			# pt_regs pointer
+> >  
+> 
+> The debug exception calls ret_from_exception on exit. If coming from
+> userspace, the C function prepare_exit_to_usermode() will be called.
+> With the PTI-32 code, it means that function will be called with the
+> entry stack instead of the task stack. This can be problematic as macro
+> like current won't work anymore.
 
-It can happen with IF cleared.  I ran into it during PTI development
-more than once.  That's why the debug fault code uses paranoid_entry on
-64-bit just like the NMI code.
+This is not different from before, no? The debug handler already can be
+entered on entry stack before this patch-set.
+
+
+	Joerg
