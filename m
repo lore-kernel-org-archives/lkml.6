@@ -1,102 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034192AbeCAT5R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:57:17 -0500
-Received: from mail-qk0-f173.google.com ([209.85.220.173]:44076 "EHLO
-        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033214AbeCAT5P (ORCPT
+        id S1161425AbeCAUB4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:01:56 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42346 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033214AbeCAUBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:57:15 -0500
-X-Google-Smtp-Source: AG47ELtu4Z9Hk9KQE0NPZALJRaCyubui3tQT5sZtmRQlGgVs9RmAs1nSk3SYxUI0mkcUn1SLjgU38bZdORMTpAyHcsM=
+        Thu, 1 Mar 2018 15:01:54 -0500
+X-Google-Smtp-Source: AG47ELvW/RrF6Tgwdt+Q2enmAGHT3iRcUUIIOTZyykWUrUNMjEDdF7fxqrsPFqyA5AACiPG3umyvfs1ehAaRr41EAb4=
 MIME-Version: 1.0
-In-Reply-To: <20180301191348.GA9281@casa>
-References: <20180228184322.29636-1-rodrigorivascosta@gmail.com>
- <20180228184322.29636-2-rodrigorivascosta@gmail.com> <CAHp75VfPK=yAx9TLEX-W0SrK8xXQzrP4wAuFWS3zEjHGoPJRsw@mail.gmail.com>
- <20180228224926.GA7009@casa> <CAHp75Vd9wgX8S=4hGFERN5bEN9q4=DxYcDea9Z=mvSRi2GcxeQ@mail.gmail.com>
- <20180301191348.GA9281@casa>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 21:57:13 +0200
-Message-ID: <CAHp75Vd05R3fRhWp-A=nBaqgC9t_4CUe1fUPSknBDCVr9vdt_A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] HID: add driver for Valve Steam Controller
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Cameron Gutman <aicommander@gmail.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
+In-Reply-To: <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
+References: <20180301083316.GA6779@localhost.localdomain> <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Thu, 1 Mar 2018 21:01:53 +0100
+Message-ID: <CADYN=9Lbu608OGPnm4pdbFS24yuk+Pruhn5Wv5ArGitm6UOQpw@mail.gmail.com>
+Subject: Re: Regression found when running LTP connect01 on next-20180301
+To: Paul Moore <paul@paul-moore.com>
+Cc: Richard Haines <richard_c_haines@btinternet.com>,
+        netdev@vger.kernel.org, selinux@tycho.nsa.gov,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 9:13 PM, Rodrigo Rivas Costa
-<rodrigorivascosta@gmail.com> wrote:
-> On Thu, Mar 01, 2018 at 12:20:37PM +0200, Andy Shevchenko wrote:
->> On Thu, Mar 1, 2018 at 12:49 AM, Rodrigo Rivas Costa
->> <rodrigorivascosta@gmail.com> wrote:
->> > On Wed, Feb 28, 2018 at 09:21:15PM +0200, Andy Shevchenko wrote:
->> >> On Wed, Feb 28, 2018 at 8:43 PM, Rodrigo Rivas Costa
->> >> <rodrigorivascosta@gmail.com> wrote:
-
-> My bad, I didn't mean a literal free() call. More like:
+On 1 March 2018 at 14:42, Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@linaro.org> wrote:
+>> Hi,
+>>
+>> I was running LTP's testcase connect01 [1] and found a regression in linux-next
+>> (next-20180301).  Bisect gave me this patch as the problematic patch (sha
+>> d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
+>>
+>> Output from the test(LTP release 20180118):
+>> $ cd /opt/ltp/
+>> $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
+>> $ ./runltp -pq -f connect-syscall
+>> "
+>> Running tests.......
+>> connect01    1  TPASS  :  bad file descriptor successful
+>> connect01    2  TPASS  :  invalid socket buffer successful
+>> connect01    3  TPASS  :  invalid salen successful
+>> connect01    4  TPASS  :  invalid socket successful
+>> connect01    5  TPASS  :  already connected successful
+>> connect01    6  TPASS  :  connection refused successful
+>> connect01    7  TFAIL  :  connect01.c:146: invalid address family ; returned -1 (expected -1), errno 22 (expected 97)
+>> INFO: ltp-pan reported some tests FAIL
+>> LTP Version: 20180118
+>> "
+>>
+>> The output from the test expected 97 and we received 22, can you please
+>> elaborate on what have been changed?
+>>
+>> Cheers,
+>> Anders
+>> [1] https://github.com/linux-test-project/ltp/blob/20180118/testcases/kernel/syscalls/connect/connect01.c#L146
 >
-> static void steam_unregister(struct steam_device *steam)
-> {
->         struct input_dev *input;
->         struct power_supply *battery;
+> Hi Anders,
 >
->         rcu_read_lock();
->         input = rcu_dereference(steam->input);
->         battery = rcu_dereference(steam->battery);
->         input_gyro = rcu_dereference(steam->input_gyro);
->         rcu_read_unlock();
+> Thanks for the report.  Out of curiosity, we're you running the full
+> LTP test suite and this was the only failure, or did you just run the
+> connect01 test?
+
+Normally we run all syscalls, but when we saw this regression I did the
+bisect and only ran test connect01.
+On every new push we ran 19 different sets of LTP tests, where
+connect01 is part of the syscalls test set.
+
+Cheers,
+Anders
+
+>  Either answer is fine, I'm just trying to understand
+> the scope of the regression.
 >
-
->         if (input) {
->                 RCU_INIT_POINTER(steam->input, NULL);
->                 synchronize_rcu();
->                 hid_info(steam->hdev, "Steam Controller '%s' disconnected",
->                                 steam->serial_no);
->                 input_unregister_device(input);
-
-Candidate for a helper
-
-static void steam_unregister_input(...)
-{
-...
-}
-
-
-steam_unregister_input(input);
-
->         }
-
->         if (battery) {
->                 RCU_INIT_POINTER(steam->battery, NULL);
->                 synchronize_rcu();
->                 power_supply_unregister(battery);
->         }
-
-Ditto.
-
->         if (input_gyro) {
->                 RCU_INIT_POINTER(steam->input_gyro, NULL);
->                 synchronize_rcu();
->                 input_unregister_device(input_gyro);
->         }
-
-Ditto.
-
-> }
+> Richard, are you able to look into this?  If not, let me know and I'll
+> dig a bit deeper (I'll likely take a quick look today, but if the
+> failure is subtle it might require some digging).
 >
-> Also I think input_unregister_device() does not admit a NULL pointer.
-> Having a special `if (!input_gyro)return;` at the end looks just
-> wrong to me, it is no different from the other ones.
-
-See above. Hide that detail in a helper function.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> --
+> paul moore
+> www.paul-moore.com
