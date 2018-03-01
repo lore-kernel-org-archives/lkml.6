@@ -1,113 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163125AbeCAXhh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:37:37 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52497 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163358AbeCAXhc (ORCPT
+        id S1163518AbeCAXi0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:38:26 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:47015 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163159AbeCAXiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:37:32 -0500
-X-Google-Smtp-Source: AG47ELuz3gZL5nwkbcdpGID1fl0qtKwVmhKCPYbjABNyljJgt7o6L+wdV/gQ31gbNvTB3LtaNVTauQ==
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC 1/5] seq_file: introduce seq_open_data helper
-Date: Fri,  2 Mar 2018 00:37:20 +0100
-Message-Id: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.15.1
+        Thu, 1 Mar 2018 18:38:21 -0500
+X-Google-Smtp-Source: AG47ELvx/i7r7/sa5KX4j+sfXfBkGxmIlaE4rao86F+nEkvNusJRMvAweCw2XdGPQoABpiJrZ2+n5w==
+Subject: Re: [PATCH v4 1/4] of: change overlay apply input data from
+ unflattened to FDT
+From: Frank Rowand <frowand.list@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <1519927256-4868-1-git-send-email-frowand.list@gmail.com>
+ <1519927256-4868-2-git-send-email-frowand.list@gmail.com>
+ <CAL_JsqL9r8d4wZ0qrsE2fbK4siVWwuyq_9x4RcFJta_7RRhUyg@mail.gmail.com>
+ <53b47afa-f7df-777a-6a96-d0b986a389fb@gmail.com>
+Message-ID: <b627b147-b8b6-a6a6-35bb-b02e46879313@gmail.com>
+Date: Thu, 1 Mar 2018 15:38:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <53b47afa-f7df-777a-6a96-d0b986a389fb@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are quite a few callers of seq_open that could be simplified by
-setting the ->private member via the seq_open call instead of fetching
-file->private_data afterwards.
+On 03/01/18 14:36, Frank Rowand wrote:
+> On 03/01/18 13:02, Rob Herring wrote:
+>> On Thu, Mar 1, 2018 at 12:00 PM,  <frowand.list@gmail.com> wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>> (FDT) into the overlay application code.  To accomplish this,
+>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>
+>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>> original FDT.
+>>>
+>>> The unflattened devicetree now belongs to devicetree code, which is
+>>> thus responsible for freeing the unflattened devicetree.
+>>>
+>>> These ownership changes prevent early freeing of the duplicated FDT
+>>> or the unflattened devicetree, which could result in use after free
+>>> errors.
+>>>
+>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>> overlay loader.
+>>>
+>>> Update unittest.c to use of_overlay_fdt_apply() instead of
+>>> of_overlay_apply().
+>>>
+>>> Move overlay fragments from artificial locations in
+>>> drivers/of/unittest-data/tests-overlay.dtsi into one devicetree
+>>> source file per overlay.  This led to changes in
+>>> drivers/of/unitest-data/Makefile and drivers/of/unitest.c.
+>>>
+>>>   - Add overlay directives to the overlay devicetree source files so
+>>>     that dtc will compile them as true overlays into one FDT data
+>>>     chunk per overlay.
+>>>
+>>>   - Set CFLAGS for drivers/of/unittest-data/testcases.dts so that
+>>>     symbols will be generated for overlay resolution of overlays
+>>>     that are no longer artificially contained in testcases.dts
+>>>
+>>>   - Unflatten and apply each unittest overlay FDT using
+>>>     of_overlay_fdt_apply().
+>>>
+>>>   - Enable the of_resolve_phandles() check for whether the unflattened
+>>>     overlay is detached.  This check was previously disabled because the
+>>>     overlays from tests-overlay.dtsi were not unflattened into detached
+>>>     trees.
+>>>
+>>>   - Other changes to unittest.c infrastructure to manage multiple test
+>>>     FDTs built into the kernel image (access by name instead of
+>>>     arbitrary number).
+>>>
+>>>   - of_unittest_overlay_high_level(): previously unused code to add
+>>>     properties from the overlay_base devicetree to the live tree
+>>>     was triggered by the restructuring of tests-overlay.dtsi and thus
+>>>     testcases.dts.  This exposed two bugs: (1) the need to dup a
+>>>     property before adding it, and (2) property 'name' is
+>>>     auto-generated in the unflatten code and thus will be a duplicate
+>>>     in the __symbols__ node - do not treat this duplicate as an error.
+>>>
+>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>>> ---
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-I've just included a few examples of possible users of this helper,
-there are many more similar cases. As a bonus, the first two fix
-potential NULL derefs (if one believes that seq_open can actually
-fail).
+< snip >
 
-seq_open_private would have been a better name, but that one is
-already taken...
+>>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+>>> index 7a9abaae874d..2d706039ac96 100644
+>>> --- a/drivers/of/unittest.c
+>>> +++ b/drivers/of/unittest.c
 
-Documentation/filesystems/seq_file.txt | 9 +++++----
- fs/seq_file.c                          | 9 ++++++++-
- include/linux/seq_file.h               | 1 +
- 3 files changed, 14 insertions(+), 5 deletions(-)
+< snip >
 
-diff --git a/Documentation/filesystems/seq_file.txt b/Documentation/filesystems/seq_file.txt
-index 9de4303201e1..68571b8275d8 100644
---- a/Documentation/filesystems/seq_file.txt
-+++ b/Documentation/filesystems/seq_file.txt
-@@ -234,10 +234,11 @@ Here, the call to seq_open() takes the seq_operations structure we created
- before, and gets set up to iterate through the virtual file.
- 
- On a successful open, seq_open() stores the struct seq_file pointer in
--file->private_data. If you have an application where the same iterator can
--be used for more than one file, you can store an arbitrary pointer in the
--private field of the seq_file structure; that value can then be retrieved
--by the iterator functions.
-+file->private_data. If you have an application where the same iterator
-+can be used for more than one file, you can store an arbitrary pointer
-+in the private field of the seq_file structure; that value can then be
-+retrieved by the iterator functions. Using the wrapper seq_open_data()
-+allows you to set the initial value for that field.
- 
- There is also a wrapper function to seq_open() called seq_open_private(). It
- kmallocs a zero filled block of memory and stores a pointer to it in the
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index eea09f6d8830..f2145cb6e23d 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -45,7 +45,7 @@ static void *seq_buf_alloc(unsigned long size)
-  *	Note: seq_open() will allocate a struct seq_file and store its
-  *	pointer in @file->private_data. This pointer should not be modified.
-  */
--int seq_open(struct file *file, const struct seq_operations *op)
-+int seq_open_data(struct file *file, const struct seq_operations *op, void *data)
- {
- 	struct seq_file *p;
- 
-@@ -59,6 +59,7 @@ int seq_open(struct file *file, const struct seq_operations *op)
- 
- 	mutex_init(&p->lock);
- 	p->op = op;
-+	p->private = data;
- 
- 	// No refcounting: the lifetime of 'p' is constrained
- 	// to the lifetime of the file.
-@@ -85,6 +86,12 @@ int seq_open(struct file *file, const struct seq_operations *op)
- }
- EXPORT_SYMBOL(seq_open);
- 
-+int seq_open(struct file *file, const struct seq_operations *op)
-+{
-+	return seq_open_data(file, op, NULL);
-+}
-+EXPORT_SYMBOL(seq_open_data);
-+
- static int traverse(struct seq_file *m, loff_t offset)
- {
- 	loff_t pos = 0, index;
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index ab437dd2e3b9..f5ff376fa62b 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -107,6 +107,7 @@ void seq_pad(struct seq_file *m, char c);
- 
- char *mangle_path(char *s, const char *p, const char *esc);
- int seq_open(struct file *, const struct seq_operations *);
-+int seq_open_data(struct file *, const struct seq_operations *, void *);
- ssize_t seq_read(struct file *, char __user *, size_t, loff_t *);
- loff_t seq_lseek(struct file *, loff_t, int);
- int seq_release(struct inode *, struct file *);
--- 
-2.15.1
+>>> @@ -1263,25 +1264,19 @@ static void of_unittest_destroy_tracked_overlays(void)
+>>>         } while (defers > 0);
+>>>  }
+>>>
+>>> -static int of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
+>>> +static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
+>>>                 int *overlay_id)
+>>
+>> Why __init? Really, we want to move towards building the unittests as
+>> a module and we don't want __init for that. Though maybe __init is a
+>> nop for modules, I don't remember offhand.
+> 
+> It has to be a nop for modules.
+> 
+> __init makes sense when the unittests are an initcall.
+> 
+> 
+>> In any case, seems like a separate change.
+> 
+> Correct.  It was a gratuitous clean up when I was making other changes
+> to the function.  I'll remove it from this series.
+
+Now I remember, after trying to remove the __init.  I get a modpost warning
+when I build the kernel.
+
+Before the patches, the old overlay tests did not apply the overlays from
+overlay FDTs.  Instead the overlay fragment nodes were hand coded into
+the testcases dts, and the overlay apply code just grabbed the fragment
+nodes from the live testcases tree and called the overlay code to apply
+the fragment nodes.
+
+With the new FDT based overlay API, I was able to make the test overlays
+actual overlay dts files and dtbs. This change involved changing
+of_unittest_apply_overlay() to no longer call of_overlay_apply() (which
+passed in a pointer to a node from the live testcases tree), but
+instead call overlay_data_apply() (which handles finding the requested
+fdt and applies it).  overlay_data_apply() is already an __init() function.
+
+There are a few more functions that I would expect modpost to warn
+about, but it does not.
+
+> There is a mix of some functions being marked __init and some not,
+> so that will be worth another patch someday.
+> 
+> 
+>>
+>> Rob
+>>
+> 
+> 
