@@ -1,18 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163535AbeCAXpZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:45:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38258 "EHLO mail.kernel.org"
+        id S1163548AbeCAXtk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:49:40 -0500
+Received: from mga02.intel.com ([134.134.136.20]:8196 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163111AbeCAXpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:45:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5D92177C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 1 Mar 2018 17:45:19 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
+        id S1163110AbeCAXti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:49:38 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="21414328"
+Date: Thu, 1 Mar 2018 16:49:30 -0700
+From: Keith Busch <keith.busch@intel.com>
 To: Stephen Bates <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Logan Gunthorpe <logang@deltatee.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
@@ -20,58 +23,38 @@ Cc: Logan Gunthorpe <logang@deltatee.com>,
         "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
         Dan Williams <dan.j.williams@intel.com>,
         =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 01/10] PCI/P2PDMA: Support peer to peer memory
-Message-ID: <20180301234519.GC74737@bhelgaas-glaptop.roam.corp.google.com>
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+Message-ID: <20180301234930.GG14799@localhost.localdomain>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-2-logang@deltatee.com>
- <20180301173752.GE13722@bhelgaas-glaptop.roam.corp.google.com>
- <b81503c2-9f07-b5f6-df06-64d1fdc53386@deltatee.com>
- <20180301230032.GA74737@bhelgaas-glaptop.roam.corp.google.com>
- <b3121c36-4ef5-0d8e-e8ef-418b48de9589@deltatee.com>
- <9B84B347-2CCF-4250-89ED-B29892E76597@raithlin.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+ <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+ <20180301224540.GL19007@ziepe.ca>
+ <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9B84B347-2CCF-4250-89ED-B29892E76597@raithlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 11:14:46PM +0000, Stephen  Bates wrote:
-> > I'm pretty sure the spec disallows routing-to-self so doing a P2P 
-> > transaction in that sense isn't going to work unless the device 
-> > specifically supports it and intercepts the traffic before it gets to 
-> > the port.
+On Thu, Mar 01, 2018 at 11:00:51PM +0000, Stephen  Bates wrote:
 > 
-> This is correct. Unless the device intercepts the TLP before it hits
-> the root-port then this would be considered a "route to self"
-> violation and an error event would occur. The same holds for the
-> downstream port on a PCI switch (unless route-to-self violations are
-> disabled which violates the spec but which I have seen done in
-> certain applications).
+> P2P is about offloading the memory and PCI subsystem of the host CPU
+> and this is achieved no matter which p2p_dev is used.
 
-I agree that a function doing DMA to a sibling within the same
-multi-function device would probably not generate a TLP for it (I
-would be curious to read about this in the spec if you have a
-pointer).
-
-More fundamentally, is there some multi-function-specific restriction
-on peer-to-peer DMA?  In conventional PCI, single-function devices on
-the same bus can DMA to each other.  The transactions will appear on
-the bus, but the upstream bridge will ignore them because the address
-is inside the bridge's memory window.  As far as I know, the same
-should happen on PCIe.
-
-I don't know what happens with functions of a multi-function device,
-either in conventional PCI or PCIe.  I don't remember a restriction on
-whether they can DMA to each other, but maybe there is.
-
-Bjorn
+Even within a device, memory attributes for its various regions may not be
+the same. There's a meaningful difference between writing to an NVMe CMB
+vs PMR, and a single device could have both. We don't want to lump these
+all together without knowing which region you're allocating from, right?
