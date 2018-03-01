@@ -1,116 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032706AbeCAPu3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:50:29 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:49232 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031899AbeCAPu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:50:28 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: dri-devel@lists.freedesktop.org
-Cc: Thierry Escande <thierry.escande@collabora.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>, linux-rockchip@lists.infradead.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com
-Subject: Re: [PATCH v8 4/8] drm/rockchip: dw-mipi-dsi: Fix error handling path
-Date: Thu, 01 Mar 2018 16:50:18 +0100
-Message-ID: <13219770.NOTAg9tncx@diego>
-In-Reply-To: <20180110162348.22765-5-thierry.escande@collabora.com>
-References: <20180110162348.22765-1-thierry.escande@collabora.com> <20180110162348.22765-5-thierry.escande@collabora.com>
+        id S1032677AbeCAPxi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:53:38 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42949 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031978AbeCAPxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 10:53:36 -0500
+X-Google-Smtp-Source: AG47ELtMSiA9vz0XaB9lHMZk2SyW7Wn+QsAAC0STvoN2+CfeL+6LmwRoCnHrCgLj1ALv5MJa0gbzH8ex64e5FXXASr8=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180301151934.GA507@tigerII.localdomain>
+References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian> <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
+ <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz> <20180301013722.GA6763@tigerII.localdomain>
+ <CACT4Y+ZUDu588gwgCbqru5D1RD5C+s3+E5ydhP7h9RoCjwQWJw@mail.gmail.com> <20180301151934.GA507@tigerII.localdomain>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 1 Mar 2018 16:53:15 +0100
+Message-ID: <CACT4Y+byVgvjzTush=Zft_iQmZ3e46QS8X6ooZ15CmAxvPu-oA@mail.gmail.com>
+Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, kernel test robot <shun.hao@intel.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeffy, Thierry, Enric,
+On Thu, Mar 1, 2018 at 4:19 PM, Sergey Senozhatsky
+<sergey.senozhatsky@gmail.com> wrote:
+> On (03/01/18 09:51), Dmitry Vyukov wrote:
+>> > https://marc.info/?l=linux-kernel&m=151200883525299
+>> >
+>> > [..]
+>> >> I feel lost a bit.
+>> >
+>> > Yeah... can't understand what's going on there.
+>> >
+>> > The last time kasan didn't like this part
+>> >
+>> > [    0.003333]  ? console_unlock+0x605/0xcc0:
+>> >                               atomic_read at arch/x86/include/asm/atomic.h:27
+>> >                                (inlined by) static_key_count at include/linux/jump_label.h:191
+>> >                                (inlined by) static_key_false at include/linux/jump_label.h:201
+>> >                                (inlined by) trace_console_rcuidle at include/trace/events/printk.h:10
+>> >                                (inlined by) call_console_drivers at kernel/printk/printk.c:1556
+>> >                                (inlined by) console_unlock at kernel/printk/printk.c:2233
+>> >
+>> > complaining that there was a write of size 4... at atomic_read().
+>>
+>> Hi Sergey,
+>>
+>> Where is that report?
+>> I doubt that KASAN has instrumented a read as a write (at least there
+>> are no such known cases), so perhaps it's pointing to some other
+>> memory access.
+>
+> Hello Dmitry,
+>
+> I believe it's this one
+>
+> https://marc.info/?l=linux-kernel&m=151200883525299
 
-Am Mittwoch, 10. Januar 2018, 17:23:44 CET schrieb Thierry Escande:
-> From: Jeffy Chen <jeffy.chen@rock-chips.com>
-> 
-> Add missing pm_runtime_disable() in bind()'s error handling path.
-> 
-> Also cleanup encoder & connector in unbind().
 
-Can you please split all these surprise "Also" sections into separate
-patches?
-
-It looks like this is true for all following patch to some degree and
-the inno-hdmi patch even has a unbind reordering-change without
-mentioning it in the commit message.
-
-
-Thanks
-Heiko
-
-> Fixes: 80a9a059d4e4 ("drm/rockchip/dsi: add dw-mipi power domain support")
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> ---
->  drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c index b1fe0639227e..78e6b7919bf7
-> 100644
-> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> @@ -1282,7 +1282,7 @@ static int dw_mipi_dsi_bind(struct device *dev, struct
-> device *master, ret = dw_mipi_dsi_register(drm, dsi);
->  	if (ret) {
->  		DRM_DEV_ERROR(dev, "Failed to register mipi_dsi: %d\n", ret);
-> -		goto err_pllref;
-> +		goto err_disable_pllref;
->  	}
-> 
->  	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
-> @@ -1290,24 +1290,25 @@ static int dw_mipi_dsi_bind(struct device *dev,
-> struct device *master, ret = mipi_dsi_host_register(&dsi->dsi_host);
->  	if (ret) {
->  		DRM_DEV_ERROR(dev, "Failed to register MIPI host: %d\n", ret);
-> -		goto err_cleanup;
-> +		goto err_disable_pm_runtime;
->  	}
-> 
->  	if (!dsi->panel) {
->  		ret = -EPROBE_DEFER;
-> -		goto err_mipi_dsi_host;
-> +		goto err_unreg_mipi_dsi_host;
->  	}
-> 
->  	dev_set_drvdata(dev, dsi);
->  	pm_runtime_enable(dev);
->  	return 0;
-> 
-> -err_mipi_dsi_host:
-> +err_unreg_mipi_dsi_host:
->  	mipi_dsi_host_unregister(&dsi->dsi_host);
-> -err_cleanup:
-> -	drm_encoder_cleanup(&dsi->encoder);
-> -	drm_connector_cleanup(&dsi->connector);
-> -err_pllref:
-> +err_disable_pm_runtime:
-> +	pm_runtime_disable(dev);
-> +	dsi->connector.funcs->destroy(&dsi->connector);
-> +	dsi->encoder.funcs->destroy(&dsi->encoder);
-> +err_disable_pllref:
->  	clk_disable_unprepare(dsi->pllref_clk);
->  	return ret;
->  }
-> @@ -1319,6 +1320,10 @@ static void dw_mipi_dsi_unbind(struct device *dev,
-> struct device *master,
-> 
->  	mipi_dsi_host_unregister(&dsi->dsi_host);
->  	pm_runtime_disable(dev);
-> +
-> +	dsi->connector.funcs->destroy(&dsi->connector);
-> +	dsi->encoder.funcs->destroy(&dsi->encoder);
-> +
->  	clk_disable_unprepare(dsi->pllref_clk);
->  }
+Thanks, but now that I debugged this one, I think that one is the same issue.
+Amusingly a write in READ_ONCE is actually legitimate because
+GCC_PLUGIN_STRUCTLEAK emits an initializing write for __u variable in
+READ_ONCE implementation.
