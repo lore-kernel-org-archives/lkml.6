@@ -1,174 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031601AbeCAOkj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:40:39 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:47408 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031055AbeCAOkg (ORCPT
+        id S1031596AbeCAOm2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:42:28 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:32836 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031350AbeCAOmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:40:36 -0500
-Date: Thu, 1 Mar 2018 15:40:30 +0100
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
-        Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        John Keeping <john@metanate.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] PCI: endpoint: Handle 64-bit BARs properly
-Message-ID: <20180301144030.GA2348@axis.com>
-References: <20180227115908.14593-1-niklas.cassel@axis.com>
- <20180227115908.14593-2-niklas.cassel@axis.com>
- <20180228142148.GD21854@e107981-ln.cambridge.arm.com>
+        Thu, 1 Mar 2018 09:42:25 -0500
+X-Google-Smtp-Source: AG47ELvyszFMBiyTTcQZFWHXw0/tijeMsWyHf053zkupA8gQH3gpPA9VQsY22OFfdNo6txU8bgCL3A==
+Subject: Re: [PATCH v3] hwmon: g762: handle cleanup with devm_add_action
+To: Peng Hao <peng.hao2@zte.com.cn>, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519915710-82397-1-git-send-email-peng.hao2@zte.com.cn>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f2f23c95-7de3-4701-1691-cdd725e7bc18@roeck-us.net>
+Date: Thu, 1 Mar 2018 06:42:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228142148.GD21854@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
-X-TM-AS-GCONF: 00
+In-Reply-To: <1519915710-82397-1-git-send-email-peng.hao2@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 02:21:48PM +0000, Lorenzo Pieralisi wrote:
-> On Tue, Feb 27, 2018 at 12:59:05PM +0100, Niklas Cassel wrote:
-> > A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
-> > we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
-> > 
-> > If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
+On 03/01/2018 06:48 AM, Peng Hao wrote:
+> Simplify code and use devm_add_action() to handle cleanup.
 > 
-> PCI_BASE_ADDRESS_MEM_TYPE_64 is detected through a sizeof(dma_addr_t).
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+
+Excellent.
+
+The dummy function for g762_of_clock_disable() is no longer needed,
+and the NULL check for ->clk in g762_of_clock_disable() is not needed
+anymore either. No need to resend; I fixed that up.
+
+Applied to hwmon-next.
+
+Thanks,
+Guenter
+
+> ---
+>   drivers/hwmon/g762.c | 58 +++++++++++++++++-----------------------------------
+>   1 file changed, 19 insertions(+), 39 deletions(-)
 > 
-> I thought we decided to describe the BARs not as dma_addr_t + size but
-> as resources, which would allow you to have flags describing their
-> actual size.
+> diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
+> index 6d1208b..0f2d468 100644
+> --- a/drivers/hwmon/g762.c
+> +++ b/drivers/hwmon/g762.c
+> @@ -128,7 +128,6 @@ enum g762_regs {
+>   			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
+>   
+>   struct g762_data {
+> -	struct device *hwmon_dev;
+>   	struct i2c_client *client;
+>   	struct clk *clk;
+>   
+> @@ -594,6 +593,17 @@ static int do_set_fan_startv(struct device *dev, unsigned long val)
+>    * call to g762_of_clock_disable(). Note that a reference to clock is kept
+>    * in our private data structure to be used in this function.
+>    */
+> +static void g762_of_clock_disable(void *data)
+> +{
+> +	struct g762_data *g762 = data;
+> +
+> +	if (!g762->clk)
+> +		return;
+> +
+> +	clk_disable_unprepare(g762->clk);
+> +	clk_put(g762->clk);
+> +}
+> +
+>   static int g762_of_clock_enable(struct i2c_client *client)
+>   {
+>   	struct g762_data *data;
+> @@ -625,7 +635,8 @@ static int g762_of_clock_enable(struct i2c_client *client)
+>   
+>   	data = i2c_get_clientdata(client);
+>   	data->clk = clk;
+> -
+> +
+> +	devm_add_action(&client->dev, g762_of_clock_disable, data);
+>   	return 0;
+>   
+>    clk_unprep:
+> @@ -637,17 +648,6 @@ static int g762_of_clock_enable(struct i2c_client *client)
+>   	return ret;
+>   }
+>   
+> -static void g762_of_clock_disable(struct i2c_client *client)
+> -{
+> -	struct g762_data *data = i2c_get_clientdata(client);
+> -
+> -	if (!data->clk)
+> -		return;
+> -
+> -	clk_disable_unprepare(data->clk);
+> -	clk_put(data->clk);
+> -}
+> -
+>   static int g762_of_prop_import_one(struct i2c_client *client,
+>   				   const char *pname,
+>   				   int (*psetter)(struct device *dev,
+> @@ -699,7 +699,7 @@ static int g762_of_clock_enable(struct i2c_client *client)
+>   	return 0;
+>   }
+>   
+> -static void g762_of_clock_disable(struct i2c_client *client) { }
+> +static void g762_of_clock_disable(void *data) { }
+>   #endif
+>   
+>   /*
+> @@ -1054,6 +1054,7 @@ static inline int g762_fan_init(struct device *dev)
+>   static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   {
+>   	struct device *dev = &client->dev;
+> +	struct device *hwmon_dev;
+>   	struct g762_data *data;
+>   	int ret;
+>   
+> @@ -1080,35 +1081,15 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   		return ret;
+>   	ret = g762_of_prop_import(client);
+>   	if (ret)
+> -		goto clock_dis;
+> +		return ret;
+>   	/* ... or platform_data */
+>   	ret = g762_pdata_prop_import(client);
+>   	if (ret)
+> -		goto clock_dis;
+> +		return ret;
+>   
+> -	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
+> +	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+>   							    data, g762_groups);
+> -	if (IS_ERR(data->hwmon_dev)) {
+> -		ret = PTR_ERR(data->hwmon_dev);
+> -		goto clock_dis;
+> -	}
+> -
+> -	return 0;
+> -
+> - clock_dis:
+> -	g762_of_clock_disable(client);
+> -
+> -	return ret;
+> -}
+> -
+> -static int g762_remove(struct i2c_client *client)
+> -{
+> -	struct g762_data *data = i2c_get_clientdata(client);
+> -
+> -	hwmon_device_unregister(data->hwmon_dev);
+> -	g762_of_clock_disable(client);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(hwmon_dev);
+>   }
+>   
+>   static struct i2c_driver g762_driver = {
+> @@ -1117,7 +1098,6 @@ static int g762_remove(struct i2c_client *client)
+>   		.of_match_table = of_match_ptr(g762_dt_match),
+>   	},
+>   	.probe	  = g762_probe,
+> -	.remove	  = g762_remove,
+>   	.id_table = g762_id,
+>   };
+>   
 > 
-> Current code has a fixed BAR size defined by the dma_addr_t type size
-> and I do not think that's what we really want.
-
-You suggested to Kishon that the bar member array should be refactored
-to be an array of struct resources:
-
-https://marc.info/?l=linux-pci&m=151851776921594&w=2
-
-That refactoring would be a good thing,
-but can't it be done after the merge of this patch?
-
-
-I'm guessing that one of the reasons why you want this
-refactoring is so that you can actually call pci_epc_set_bar()
-on each array member, so that you don't need my patch:
-> > +           if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-> > +                   bar++;
-
-However, if we want to omit this, I think that other changes would be needed.
-
-Let's say that resource[x] is 64-bit, then resource[x+1] must not have
-(IORESOURCE_MEM or IORESOURCE_IO) set.
-
-It is important that BAR[x+1] == 0, for a 64-bit BAR.
-
-So either pci_epc_set_bar() or epc->ops->set_bar()
-must know to not touch its BAR (or BAR mask) register
-if neither of those flags are set.
-
-It's probably easier to change pci_epc_set_bar(), rather than
-changing all epc->ops->set_bar() implementations,
-here is e.g. part of set_bar() for DesignWare:
-
-static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
-                              enum pci_barno bar,
-                              dma_addr_t bar_phys, size_t size, int flags)
-{
-        int ret;
-        struct dw_pcie_ep *ep = epc_get_drvdata(epc);
-        struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-        enum dw_pcie_as_type as_type;
-        u32 reg = PCI_BASE_ADDRESS_0 + (4 * bar);
-
-        if (!(flags & PCI_BASE_ADDRESS_SPACE))
-                as_type = DW_PCIE_AS_MEM;
-        else
-                as_type = DW_PCIE_AS_IO;
-
-
-So I still see a point in having this patch, at least until
-someone has refactored the code to use resource + modified pci_epc_set_bar().
-
-
-> 
-> How is (in HW I mean) actually the BAR size configured in a given EPF ?
-
-For the DesignWare PCIe controller (assuming it has been synthesized with
-Programmable Masks), to configure a BAR, you set the usual prefetch+type bits
-in the standard PCI BAR register, but then the controller also has, for each
-bar, a special BAR mask register, which dw_pcie_ep_set_bar() sets to (size-1),
-this defines which bits that will be writable by the RC (and the RC can figure
-out the size of the BAR by writing all 1's as usual).
-
-For a 64-bit Memory Space BAR of size 16 GiB (prefetchable), you would set:
-BAR[x]        = 0000 0000 0000 0000 0000 0000 0000 1100
-BAR[x+1]      = 0000 0000 0000 0000 0000 0000 0000 0000
-
-BAR_MASK[x]   = 1111 1111 1111 1111 1111 1111 1111 1111
-BAR_MASK[x+1] = 0000 0000 0000 0000 0000 0000 0000 0011
-
-
-
-I guess that instead of patch 3/3 in this patch series,
-we could do:
-
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -136,8 +136,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
-                return ret;
- 
-        dw_pcie_dbi_ro_wr_en(pci);
--       dw_pcie_writel_dbi2(pci, reg, size - 1);
--       dw_pcie_writel_dbi(pci, reg, flags);
-+       if (upper_32_bits(size)) {
-+               dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-+               dw_pcie_writel_dbi(pci, reg, flags);
-+               dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-+               dw_pcie_writel_dbi(pci, reg + 4, 0);
-+       } else {
-+               dw_pcie_writel_dbi2(pci, reg, size - 1);
-+               dw_pcie_writel_dbi(pci, reg, flags);
-+       }
-        dw_pcie_dbi_ro_wr_dis(pci);
- 
-        return 0;
-
-However, since I don't have access to a 64-bit CPU with loads of RAM,
-that has the DesignWare PCIe controller, that patch is completely untested.
-But if everyone agrees, we could replace 3/3 of this series with that.
-
-
-> 
-> Thanks,
-> Lorenzo
-> 
-> > it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
-> > (and BAR_mask[x] and BAR_mask[x+1]).
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 64d8a17f8094..ecbf6a7750dc 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
-> >  			if (bar == test_reg_bar)
-> >  				return ret;
-> >  		}
-> > +		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-> > +			bar++;
-> >  	}
-> >  
-> >  	return 0;
-> > -- 
-> > 2.14.2
-> > 
