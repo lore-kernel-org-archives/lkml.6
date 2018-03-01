@@ -1,209 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965526AbeCACpa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:45:30 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45832 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965468AbeCACp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:45:27 -0500
-X-Google-Smtp-Source: AG47ELu5qzrnBjkfjfrIFMw58OkNoUAxjSe7neLxC2Bi9KSLs93/WdVnjVL3sw6z1Mob8MwlrGIO8w==
-Subject: Re: 4.16 regression: s2ram broken on non-PAE i686
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        William Grant <william.grant@canonical.com>
-References: <CAM6Zs0WTjWW+Lw3ws_iAH-K1dJgd5r9s0oC=u4TgEFUyC5bxig@mail.gmail.com>
- <alpine.DEB.2.21.1802280959180.1886@nanos.tec.linutronix.de>
- <da61401a-5d97-c925-ef0b-fcd937c2712a@gmail.com>
- <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
-From: Woody Suwalski <terraluna977@gmail.com>
-Message-ID: <80bffdab-be19-17f3-f3ba-bf96050130ee@gmail.com>
-Date: Wed, 28 Feb 2018 21:45:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
- SeaMonkey/2.49.2
+        id S965536AbeCACtV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:49:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45097 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965488AbeCACtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:49:20 -0500
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v3 1/2] mkfs.f2fs: support hot file extension
+Date: Thu, 1 Mar 2018 10:48:47 +0800
+Message-ID: <20180301024847.102769-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner wrote:
-> Woody,
->
-> On Wed, 28 Feb 2018, Woody Suwalski wrote:
->> Certainly. I understand you want dmesg output for kernels build with and
->> without PAE, not just PAE=n on the cmdline :-)
->> Here it is...
-> Thanks for providing the data. It did not pinpoint the issue but at least
-> it gave me the hint to look into the right direction.
->
-> Does the patch below fix the issue for you? It's untested as I'm at home
-> and have no access to a 32bit machine right now.
->
-> Thanks,
->
-> 	tglx
->
-> 8<------------------
-> Subject: x86/cpu_entry_area: Sync cpu_entry_area to initial_page_table
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Date: Wed, 28 Feb 2018 21:14:26 +0100
->
-> The separation of the cpu_entry_area from the fixmap missed the fact that
-> on 32bit non-PAE kernels the cpu_entry_area mapping might not be covered in
-> initial_page_table by the previous synchronizations.
->
-> This results in suspend/resume failures because 32bit utilizes initial page
-> table for resume. The absence of the cpu_entry_area mapping results in a
-> triple fault, aka. insta reboot.
->
-> Synchronize the initial page table after setting up the cpu entry
-> area. Instead of adding yet another copy of the same code, move it to a
-> function and invoke it from the various places.
->
-> It needs to be investigated if the existing calls in setup_arch() and
-> setup_per_cpu_areas() can be replaced by the later invocation from
-> setup_cpu_entry_areas(), but that's beyond the scope of this fix.
->
-> Fixes: 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
-> Reported-by: Woody Suwalski <terraluna977@gmail.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
->   arch/x86/include/asm/pgtable_32.h |    1 +
->   arch/x86/include/asm/pgtable_64.h |    1 +
->   arch/x86/kernel/setup.c           |   17 +++++------------
->   arch/x86/kernel/setup_percpu.c    |   17 ++++-------------
->   arch/x86/mm/cpu_entry_area.c      |    6 ++++++
->   arch/x86/mm/init_32.c             |   15 +++++++++++++++
->   6 files changed, 32 insertions(+), 25 deletions(-)
->
-> --- a/arch/x86/include/asm/pgtable_32.h
-> +++ b/arch/x86/include/asm/pgtable_32.h
-> @@ -32,6 +32,7 @@ extern pmd_t initial_pg_pmd[];
->   static inline void pgtable_cache_init(void) { }
->   static inline void check_pgt_cache(void) { }
->   void paging_init(void);
-> +void sync_initial_page_table(void);
->   
->   /*
->    * Define this if things work differently on an i386 and an i486:
-> --- a/arch/x86/include/asm/pgtable_64.h
-> +++ b/arch/x86/include/asm/pgtable_64.h
-> @@ -28,6 +28,7 @@ extern pgd_t init_top_pgt[];
->   #define swapper_pg_dir init_top_pgt
->   
->   extern void paging_init(void);
-> +static inline void sync_initial_page_table(void) { }
->   
->   #define pte_ERROR(e)					\
->   	pr_err("%s:%d: bad pte %p(%016lx)\n",		\
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -1204,20 +1204,13 @@ void __init setup_arch(char **cmdline_p)
->   
->   	kasan_init();
->   
-> -#ifdef CONFIG_X86_32
-> -	/* sync back kernel address range */
-> -	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
-> -			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> -			KERNEL_PGD_PTRS);
-> -
->   	/*
-> -	 * sync back low identity map too.  It is used for example
-> -	 * in the 32-bit EFI stub.
-> +	 * Sync back kernel address range.
-> +	 *
-> +	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
-> +	 * this call?
->   	 */
-> -	clone_pgd_range(initial_page_table,
-> -			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> -			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
-> -#endif
-> +	sync_initial_page_table();
->   
->   	tboot_probe();
->   
-> --- a/arch/x86/kernel/setup_percpu.c
-> +++ b/arch/x86/kernel/setup_percpu.c
-> @@ -287,24 +287,15 @@ void __init setup_per_cpu_areas(void)
->   	/* Setup cpu initialized, callin, callout masks */
->   	setup_cpu_local_masks();
->   
-> -#ifdef CONFIG_X86_32
->   	/*
->   	 * Sync back kernel address range again.  We already did this in
->   	 * setup_arch(), but percpu data also needs to be available in
->   	 * the smpboot asm.  We can't reliably pick up percpu mappings
->   	 * using vmalloc_fault(), because exception dispatch needs
->   	 * percpu data.
-> +	 *
-> +	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
-> +	 * this call?
->   	 */
-> -	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
-> -			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> -			KERNEL_PGD_PTRS);
-> -
-> -	/*
-> -	 * sync back low identity map too.  It is used for example
-> -	 * in the 32-bit EFI stub.
-> -	 */
-> -	clone_pgd_range(initial_page_table,
-> -			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> -			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
-> -#endif
-> +	sync_initial_page_table();
->   }
-> --- a/arch/x86/mm/cpu_entry_area.c
-> +++ b/arch/x86/mm/cpu_entry_area.c
-> @@ -163,4 +163,10 @@ void __init setup_cpu_entry_areas(void)
->   
->   	for_each_possible_cpu(cpu)
->   		setup_cpu_entry_area(cpu);
-> +
-> +	/*
-> +	 * This is the last essential update to swapper_pgdir which needs
-> +	 * to be synchronized to initial_page_table on 32bit.
-> +	 */
-> +	sync_initial_page_table();
->   }
-> --- a/arch/x86/mm/init_32.c
-> +++ b/arch/x86/mm/init_32.c
-> @@ -453,6 +453,21 @@ static inline void permanent_kmaps_init(
->   }
->   #endif /* CONFIG_HIGHMEM */
->   
-> +void __init sync_initial_page_table(void)
-> +{
-> +	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
-> +			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> +			KERNEL_PGD_PTRS);
-> +
-> +	/*
-> +	 * sync back low identity map too.  It is used for example
-> +	 * in the 32-bit EFI stub.
-> +	 */
-> +	clone_pgd_range(initial_page_table,
-> +			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
-> +			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
-> +}
-> +
->   void __init native_pagetable_init(void)
->   {
->   	unsigned long pfn, va;
-Thanks for the patch, good news, it did fix the problem.
-I did 2 builds and both worked OK over the s2ram cycle.
+This patch adds new option '-E' to accept user configured hot file
+extension, in order to let kernel module handle hot/cold file's datas
+separately better.
 
-It will be necessary to add the patch to 4.15-stable and 4.14-stable, I 
-believe that both have now broken s2ram.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- remove debug log.
+ include/f2fs_fs.h       |  5 ++--
+ mkfs/f2fs_format.c      | 74 +++++++++++++++++++++++++++++++------------------
+ mkfs/f2fs_format_main.c | 16 +++++++----
+ 3 files changed, 61 insertions(+), 34 deletions(-)
 
-I will build tomorrow 4.15 and 4.14 with your patch and try it out - the 
-patch seems to apply OK to 4.15.7 and 4.14.23...
-
-Thanks, Woody
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index ca4522d54de2..be0a2da8f950 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -347,7 +347,7 @@ struct f2fs_configuration {
+ 	int32_t dump_fd;
+ 	struct device_info devices[MAX_DEVICES];
+ 	int ndevs;
+-	char *extension_list;
++	char *extension_list[2];
+ 	const char *rootdev_name;
+ 	int dbg_lv;
+ 	int show_dentry;
+@@ -614,7 +614,8 @@ struct f2fs_super_block {
+ 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+-	__u8 reserved[315];		/* valid reserved region */
++	__u8 hot_ext_count;		/* # of hot file extension */
++	__u8 reserved[314];		/* valid reserved region */
+ } __attribute__((packed));
+ 
+ /*
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c9492f6bc986..befa80066d81 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
+ 	NULL
+ };
+ 
++const char *hot_ext_lists[] = {
++	NULL
++};
++
++const char **default_ext_list[] = {
++	media_ext_lists,
++	hot_ext_lists
++};
++
+ static bool is_extension_exist(const char *name)
+ {
+ 	int i;
+@@ -83,44 +92,55 @@ static bool is_extension_exist(const char *name)
+ 
+ static void cure_extension_list(void)
+ {
+-	const char **extlist = media_ext_lists;
+-	char *ext_str = c.extension_list;
++	const char **extlist;
++	char *ext_str;
+ 	char *ue;
+ 	int name_len;
+-	int i = 0;
++	int i, pos = 0;
+ 
+ 	set_sb(extension_count, 0);
+ 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
+ 
+-	while (*extlist) {
+-		name_len = strlen(*extlist);
+-		memcpy(sb->extension_list[i++], *extlist, name_len);
+-		extlist++;
+-	}
+-	set_sb(extension_count, i);
+-
+-	if (!ext_str)
+-		return;
++	for (i = 0; i < 2; i++) {
++		ext_str = c.extension_list[i];
++		extlist = default_ext_list[i];
+ 
+-	/* add user ext list */
+-	ue = strtok(ext_str, ", ");
+-	while (ue != NULL) {
+-		name_len = strlen(ue);
+-		if (name_len >= 8) {
+-			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
+-			goto next;
++		while (*extlist) {
++			name_len = strlen(*extlist);
++			memcpy(sb->extension_list[pos++], *extlist, name_len);
++			extlist++;
+ 		}
+-		if (!is_extension_exist(ue))
+-			memcpy(sb->extension_list[i++], ue, name_len);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);;
++
++		if (!ext_str)
++			continue;
++
++		/* add user ext list */
++		ue = strtok(ext_str, ", ");
++		while (ue != NULL) {
++			name_len = strlen(ue);
++			if (name_len >= 8) {
++				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
++				goto next;
++			}
++			if (!is_extension_exist(ue))
++				memcpy(sb->extension_list[pos++], ue, name_len);
+ next:
+-		ue = strtok(NULL, ", ");
+-		if (i >= F2FS_MAX_EXTENSION)
+-			break;
+-	}
++			ue = strtok(NULL, ", ");
++			if (pos >= F2FS_MAX_EXTENSION)
++				break;
++		}
+ 
+-	set_sb(extension_count, i);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);
+ 
+-	free(c.extension_list);
++		free(c.extension_list[i]);
++	}
+ }
+ 
+ static void verify_cur_segs(void)
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 120eeba91007..4a52a24cd297 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -44,7 +44,8 @@ static void mkfs_usage()
+ 	MSG(0, "  -a heap-based allocation [default:0]\n");
+ 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+-	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
+ 	MSG(0, "  -f force overwrite the exist filesystem\n");
+ 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
+ 	MSG(0, "  -l label\n");
+@@ -69,8 +70,10 @@ static void f2fs_show_info()
+ 		MSG(0, "Info: Disable heap-based policy\n");
+ 
+ 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
+-	if (c.extension_list)
+-		MSG(0, "Info: Add new extension list\n");
++	if (c.extension_list[0])
++		MSG(0, "Info: Add new cold file extension list\n");
++	if (c.extension_list[1])
++		MSG(0, "Info: Add new hot file extension list\n");
+ 
+ 	if (c.vol_label)
+ 		MSG(0, "Info: Label = %s\n", c.vol_label);
+@@ -103,7 +106,7 @@ static void parse_feature(const char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
++	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -131,7 +134,10 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			c.dbg_lv = atoi(optarg);
+ 			break;
+ 		case 'e':
+-			c.extension_list = strdup(optarg);
++			c.extension_list[0] = strdup(optarg);
++			break;
++		case 'E':
++			c.extension_list[1] = strdup(optarg);
+ 			break;
+ 		case 'i':
+ 			c.large_nat_bitmap = 1;
+-- 
+2.15.0.55.gc2ece9dc4de6
