@@ -1,67 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161209AbeCATKz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:10:55 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52219 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161124AbeCATKw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:10:52 -0500
-Date: Thu, 1 Mar 2018 20:10:49 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Stultz <john.stultz@linaro.org>, Petr Mladek <pmladek@suse.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-In-Reply-To: <alpine.DEB.2.21.1803011936200.1391@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1803012009550.1391@nanos.tec.linutronix.de>
-References: <20180301163331.987775783@linutronix.de> <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com> <alpine.DEB.2.21.1803011936200.1391@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1161203AbeCATNb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 14:13:31 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:37570 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161161AbeCATN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 14:13:27 -0500
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-5-logang@deltatee.com>
+ <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <bab9fb8b-1449-4b87-94de-7da26a279331@deltatee.com>
+Date: Thu, 1 Mar 2018 12:13:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018, Thomas Gleixner wrote:
-> On Thu, 1 Mar 2018, Linus Torvalds wrote:
-> > On Thu, Mar 1, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > >
-> > > This really needs lot of testing, documentation updates and more input from
-> > > userspace folks to make a final decision.
-> > 
-> > Honestly, I don't think we'd get the testing this kind of change needs
-> > except by just trying it.
-> > 
-> > I'm willing to merge this in the 4.17 merge window, with the
-> > understanding that if people end up reporting issues, we may just have
-> > to revert it all, and chalk it up to a learning experience - and add
-> > the appropriate commentary in the kernel code about exactly what it
-> > was that depended on that MONO/BOOT difference.
+
+
+On 01/03/18 11:02 AM, Bjorn Helgaas wrote:
+>>   void pci_enable_acs(struct pci_dev *dev)
+>>   {
+>> +	if (pci_p2pdma_disable_acs(dev))
+>> +		return;
 > 
-> Fair enough. So we maybe just merge the first two patches and merge the
-> cleanups and consolidation patches when we feel good enough.
+> This doesn't read naturally to me.  I do see that when
+> CONFIG_PCI_P2PDMA is not set, pci_p2pdma_disable_acs() does nothing
+> and returns 0, so we'll go ahead and try to enable ACS as before.
 > 
-> I surely can queue the whole lot in next, but from PTI the experience I
-> know how good the test coverage is. 4.14.stable would be the ideal testing
-> ground. /me runs fast and hides
+> But I think it would be clearer to have an #ifdef CONFIG_PCI_P2PDMA
+> right here so it's more obvious that we only disable ACS when it's
+> selected.
 
-That said, at least the people who are asking for that should provide
-testing results _before_ this gets applied or merged upstream.
+I could do this... however, I wrote it this way because I've read Linus 
+dislikes using #ifdef's inside function bodies and I personally agree 
+with that sentiment.
 
-Thanks,
-
-	tglx
+Logan
