@@ -1,355 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967500AbeCAKKJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:10:09 -0500
-Received: from regular1.263xmail.com ([211.150.99.133]:38608 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967458AbeCAKJ6 (ORCPT
+        id S1030189AbeCAKK7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:10:59 -0500
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.137]:25891 "EHLO
+        mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967363AbeCAKK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:09:58 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <58946972221f548102feb41b0bbd80e6>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Romain Perier <romain.perier@collabora.com>,
-        Arnd Bergmann <arnd@arndb.de>, Liang Chen <cl@rock-chips.com>,
-        Rob Herring <robh+dt@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Huibin Hong <huibin.hong@rock-chips.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>, Jacob Chen <jacob-chen@iotwrt.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-rockchip@lists.infradead.org, Will Deacon <will.deacon@arm.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v6 07/14] ARM: dts: rockchip: add clocks in iommu nodes
-Date: Thu,  1 Mar 2018 18:08:17 +0800
-Message-Id: <20180301100824.14887-8-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301100824.14887-1-jeffy.chen@rock-chips.com>
-References: <20180301100824.14887-1-jeffy.chen@rock-chips.com>
+        Thu, 1 Mar 2018 05:10:56 -0500
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRWlGSWpSXmKPExsUSt3Opse7ai9O
+  jDO5fU7K4vGsOm8WNdfvYLSauv8fqwOyxc9Zddo/Pm+QCmKJYM/OS8isSWDOW3l3IXtCvUfF8
+  0X/mBsYz6l2MXBxCAksYJV6e28zWxcjJwSZgKDHvzXvGLkYODhEge/N9B5AaZoHdjBKPb95kA
+  qkRFvCVOLF3L1i9iIC/xJF1C1ghbCOJeTdmgtksAioSFz6+ZAGxeQUCJI6uuwzWKyRgJ9F+4i
+  4LyHxOAXuJ/QvtQMKMArISXxpXM4PYzALiEreezAcrlxAQkFiy5zwzhC0q8fLxP1YIW17i5qt
+  jLBC2vcTre+/ARkoI6Ev0NRZDhA0lVk07AFViLnHsyAFmkBJmAU2J9bv0ITYpSkzpfsgOcaSg
+  xMmZT1gmMIrPQnLELISOWUg6ZiHpWMDIsopRozi1qCy1SNfQWC+pKDM9oyQ3MTNH19DAVC83t
+  bg4MT01JzGpWC85P3cTIzDmGIBgB+O/bZ6HGCU5mJREefuOTosS4kvKT6nMSCzOiC8qzUktPs
+  Qow8GhJMF78ML0KCHBotT01Iq0zBxg9MOkJTh4lER414OkeYsLEnOLM9MhUqcYjTluvHjdxsy
+  xZdmbNmYhlrz8vFQpcd4tIKUCIKUZpXlwg2BJ6RKjrJQwLyPQaUI8BalFuZklqPKvGMU5GJWE
+  eY+CTOHJzCuB2/cK6BQmoFOOfJ4CckpJIkJKqoGxc1HeGvcJSimdwZqJO9dnaT6Q1fGRM5w29
+  3zDhd0/j+p+ct4z0+xDzVoe6y22LZ+7H15hjWhpN5hwc4UXf/qm2udW4XV/9dwev1U5px25YU
+  Pb0VtaVxZF2h/imiu62HXSbzP75TEH5t11ucuQW1WU0yKYe0whacEMl6BjC3LSrye76WgaFv1
+  XYinOSDTUYi4qTgQAriuSLEUDAAA=
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-9.tower-179.messagelabs.com!1519899053!90530262!1
+X-Originating-IP: [94.185.165.51]
+X-StarScan-Received: 
+X-StarScan-Version: 9.4.45; banners=-,-,-
+X-VirusChecked: Checked
+From: Steve Twiss <stwiss.opensource@diasemi.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+CC: Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4] watchdog: add SPDX identifiers for watchdog subsystem
+Thread-Topic: [PATCH v4] watchdog: add SPDX identifiers for watchdog
+ subsystem
+Thread-Index: AQHTsKU445KjgJrxV0+AzSmRlfmdTKO7J2OA
+Date: Thu, 1 Mar 2018 10:10:51 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7019414ED80@SW-EX-MBX02.diasemi.com>
+References: <20180228150209.2525-1-marcus.folkesson@gmail.com>
+In-Reply-To: <20180228150209.2525-1-marcus.folkesson@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.26.49]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 01/03/2018 07:53:00
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21AB6IZ004542
 
-Add clocks in iommu nodes, since we are going to control clocks in
-rockchip iommu driver.
+On 28 February 2018 15:02, Marcus Folkesson wrote:
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+> Subject: [PATCH v4] watchdog: add SPDX identifiers for watchdog subsystem
+> 
+> - Add SPDX identifier
+> - Remove boiler plate license text
+> - If MODULE_LICENSE and boiler plate does not match, go for boiler plate license
 
-Changes in v6:
-Add clk names, and modify all iommu nodes in all existing rockchip dts
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
 
-Changes in v5:
-Remove clk names.
+Hi Marcus,
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+Acked for the files below.
 
- arch/arm/boot/dts/rk3036.dtsi            |  2 ++
- arch/arm/boot/dts/rk322x.dtsi            |  8 ++++++++
- arch/arm/boot/dts/rk3288.dtsi            | 12 ++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/rockchip/rk3368.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 14 ++++++++++++--
- 6 files changed, 54 insertions(+), 2 deletions(-)
+Regards,
+Steve
 
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index a97458112ff6..567a6a725f9c 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -197,6 +197,8 @@
- 		reg = <0x10118300 0x100>;
- 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vop_mmu";
-+		clocks = <&cru ACLK_LCDC>, <&cru HCLK_LCDC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index df1e47858675..be80e9a2c9af 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -584,6 +584,8 @@
- 		reg = <0x20020800 0x100>;
- 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vpu_mmu";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		clock-names = "aclk", "iface";
- 		iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -593,6 +595,8 @@
- 		reg = <0x20030480 0x40>, <0x200304c0 0x40>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vdec_mmu";
-+		clocks = <&cru ACLK_RKVDEC>, <&cru HCLK_RKVDEC>;
-+		clock-names = "aclk", "iface";
- 		iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -602,6 +606,8 @@
- 		reg = <0x20053f00 0x100>;
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vop_mmu";
-+		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
-+		clock-names = "aclk", "iface";
- 		iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -611,6 +617,8 @@
- 		reg = <0x20070800 0x100>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "iep_mmu";
-+		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
-+		clock-names = "aclk", "iface";
- 		iommu-cells = <0>;
- 		status = "disabled";
- 	};
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 6102e4e7f35c..ad77c8eb3c38 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -958,6 +958,8 @@
- 		reg = <0x0 0xff900800 0x0 0x40>;
- 		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "iep_mmu";
-+		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -967,6 +969,8 @@
- 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
- 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "isp_mmu";
-+		clocks = <&cru ACLK_ISP>, <&cru HCLK_ISP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		rockchip,disable-mmu-reset;
- 		status = "disabled";
-@@ -1026,6 +1030,8 @@
- 		reg = <0x0 0xff930300 0x0 0x100>;
- 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vopb_mmu";
-+		clocks = <&cru ACLK_VOP0>, <&cru HCLK_VOP0>;
-+		clock-names = "aclk", "iface";
- 		power-domains = <&power RK3288_PD_VIO>;
- 		#iommu-cells = <0>;
- 		status = "disabled";
-@@ -1074,6 +1080,8 @@
- 		reg = <0x0 0xff940300 0x0 0x100>;
- 		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vopl_mmu";
-+		clocks = <&cru ACLK_VOP1>, <&cru HCLK_VOP1>;
-+		clock-names = "aclk", "iface";
- 		power-domains = <&power RK3288_PD_VIO>;
- 		#iommu-cells = <0>;
- 		status = "disabled";
-@@ -1204,6 +1212,8 @@
- 		reg = <0x0 0xff9a0800 0x0 0x100>;
- 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vpu_mmu";
-+		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -1213,6 +1223,8 @@
- 		reg = <0x0 0xff9c0440 0x0 0x40>, <0x0 0xff9c0480 0x0 0x40>;
- 		interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "hevc_mmu";
-+		clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index be2bfbc6b483..b8e9da15e00c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -595,6 +595,8 @@
- 		reg = <0x0 0xff330200 0 0x100>;
- 		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "h265e_mmu";
-+		clocks = <&cru ACLK_H265>, <&cru PCLK_H265>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -604,6 +606,8 @@
- 		reg = <0x0 0xff340800 0x0 0x40>;
- 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vepu_mmu";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -613,6 +617,8 @@
- 		reg = <0x0 0xff350800 0x0 0x40>;
- 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vpu_mmu";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -622,6 +628,8 @@
- 		reg = <0x0 0xff360480 0x0 0x40>, <0x0 0xff3604c0 0x0 0x40>;
- 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "rkvdec_mmu";
-+		clocks = <&cru ACLK_RKVDEC>, <&cru HCLK_RKVDEC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -631,6 +639,8 @@
- 		reg = <0x0 0xff373f00 0x0 0x100>;
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vop_mmu";
-+		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-index 03458ac44201..ad91ced78649 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-@@ -742,6 +742,8 @@
- 		reg = <0x0 0xff900800 0x0 0x100>;
- 		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "iep_mmu";
-+		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -752,6 +754,8 @@
- 		      <0x0 0xff915000 0x0 0x100>;
- 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "isp_mmu";
-+		clocks = <&cru ACLK_ISP>, <&cru HCLK_ISP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		rockchip,disable-mmu-reset;
- 		status = "disabled";
-@@ -762,6 +766,8 @@
- 		reg = <0x0 0xff930300 0x0 0x100>;
- 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vop_mmu";
-+		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -772,6 +778,8 @@
- 		      <0x0 0xff9a0480 0x0 0x40>;
- 		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "hevc_mmu";
-+		clocks = <&cru ACLK_VIDEO>, <&cru HCLK_VIDEO>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -782,6 +790,8 @@
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vepu_mmu", "vdpu_mmu";
-+		clocks = <&cru ACLK_VIDEO>, <&cru HCLK_VIDEO>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index da0078eda485..8cb4ed5d43cc 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1234,6 +1234,8 @@
- 		reg = <0x0 0xff650800 0x0 0x40>;
- 		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "vpu_mmu";
-+		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -1243,6 +1245,8 @@
- 		reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
- 		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "vdec_mmu";
-+		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -1252,6 +1256,8 @@
- 		reg = <0x0 0xff670800 0x0 0x40>;
- 		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "iep_mmu";
-+		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
-@@ -1597,7 +1603,7 @@
- 		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "vopl_mmu";
- 		clocks = <&cru ACLK_VOP1>, <&cru HCLK_VOP1>;
--		clock-names = "aclk", "hclk";
-+		clock-names = "aclk", "iface";
- 		power-domains = <&power RK3399_PD_VOPL>;
- 		#iommu-cells = <0>;
- 		status = "disabled";
-@@ -1654,7 +1660,7 @@
- 		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "vopb_mmu";
- 		clocks = <&cru ACLK_VOP0>, <&cru HCLK_VOP0>;
--		clock-names = "aclk", "hclk";
-+		clock-names = "aclk", "iface";
- 		power-domains = <&power RK3399_PD_VOPB>;
- 		#iommu-cells = <0>;
- 		status = "disabled";
-@@ -1665,6 +1671,8 @@
- 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
- 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "isp0_mmu";
-+		clocks = <&cru ACLK_ISP0_NOC>, <&cru HCLK_ISP0_NOC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		rockchip,disable-mmu-reset;
- 		status = "disabled";
-@@ -1675,6 +1683,8 @@
- 		reg = <0x0 0xff924000 0x0 0x100>, <0x0 0xff925000 0x0 0x100>;
- 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH 0>;
- 		interrupt-names = "isp1_mmu";
-+		clocks = <&cru ACLK_ISP1_NOC>, <&cru HCLK_ISP1_NOC>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 		rockchip,disable-mmu-reset;
- 		status = "disabled";
--- 
-2.11.0
+[...]
+
+>  drivers/watchdog/da9052_wdt.c          |  6 +---
+>  drivers/watchdog/da9055_wdt.c          |  6 +---
+>  drivers/watchdog/da9062_wdt.c          | 10 +------
+>  drivers/watchdog/da9063_wdt.c          |  5 +---
+
+[...]
+
+> diff --git a/drivers/watchdog/da9052_wdt.c
+> b/drivers/watchdog/da9052_wdt.c
+> index d6d5006efa71..e263bad99574 100644
+> --- a/drivers/watchdog/da9052_wdt.c
+> +++ b/drivers/watchdog/da9052_wdt.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * System monitoring driver for DA9052 PMICs.
+>   *
+> @@ -5,11 +6,6 @@
+>   *
+>   * Author: Anthony Olech <Anthony.Olech@diasemi.com>
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+>   */
+> 
+>  #include <linux/module.h>
+> diff --git a/drivers/watchdog/da9055_wdt.c
+> b/drivers/watchdog/da9055_wdt.c
+> index 50bdd1022186..26a5b2984094 100644
+> --- a/drivers/watchdog/da9055_wdt.c
+> +++ b/drivers/watchdog/da9055_wdt.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * System monitoring driver for DA9055 PMICs.
+>   *
+> @@ -5,11 +6,6 @@
+>   *
+>   * Author: David Dajun Chen <dchen@diasemi.com>
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+>   */
+> 
+>  #include <linux/module.h>
+> diff --git a/drivers/watchdog/da9062_wdt.c
+> b/drivers/watchdog/da9062_wdt.c
+> index 814dff6045a4..a001782bbfdb 100644
+> --- a/drivers/watchdog/da9062_wdt.c
+> +++ b/drivers/watchdog/da9062_wdt.c
+> @@ -1,16 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Watchdog device driver for DA9062 and DA9061 PMICs
+>   * Copyright (C) 2015  Dialog Semiconductor Ltd.
+>   *
+> - * This program is free software; you can redistribute it and/or
+> - * modify it under the terms of the GNU General Public License
+> - * as published by the Free Software Foundation; either version 2
+> - * of the License, or (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+>   */
+> 
+>  #include <linux/kernel.h>
+> diff --git a/drivers/watchdog/da9063_wdt.c
+> b/drivers/watchdog/da9063_wdt.c
+> index 2a20fc163ed0..b17ac1bb1f28 100644
+> --- a/drivers/watchdog/da9063_wdt.c
+> +++ b/drivers/watchdog/da9063_wdt.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Watchdog driver for DA9063 PMICs.
+>   *
+> @@ -5,10 +6,6 @@
+>   *
+>   * Author: Mariusz Wojtasik <mariusz.wojtasik@diasemi.com>
+>   *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+> 
+>  #include <linux/kernel.h>
