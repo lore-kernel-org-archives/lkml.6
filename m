@@ -1,54 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163046AbeCAXMK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:12:10 -0500
-Received: from mga17.intel.com ([192.55.52.151]:6877 "EHLO mga17.intel.com"
+        id S1163053AbeCAXM0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:12:26 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30247 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162931AbeCAXMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:12:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1162918AbeCAXKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:10:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
-   d="scan'208";a="208215291"
-Date: Thu, 1 Mar 2018 15:04:45 -0800
-From: Ivan Gorinov <ivan.gorinov@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v3 0/3] x86: devicetree: re-enable x86-specific implementation
-Message-ID: <20180301230445.GA48473@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+   d="scan'208";a="208165051"
+From: kan.liang@linux.intel.com
+To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 09/14] perf test: Apply new perf_mmap__read_event() interface for perf-record
+Date: Thu,  1 Mar 2018 18:09:06 -0500
+Message-Id: <1519945751-37786-9-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
+In-Reply-To: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
+References: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixing x86-specific DT implementation in the kernel allows reusing most of
-firmware code for SoC that have ARM core replaced with x86, e.g. SC9853i.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Changes since v2:
+The perf test 'perf-record' still use the legacy interface.
 
- * WARN_ON_ONCE instead of WARN_ON to aviod multiple warnings
-   when APIC ID is missing in CPU device tree nodes
+No functional change.
 
- * Switched to Mutt because of white space issues:
-   "Preformatted" paragraph style does not work in Evolution 3.18.5.2
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ tools/perf/tests/perf-record.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Changes since first version:
-
- * Splitting a single patch into three parts
-
-Ivan Gorinov (3):
-  x86: devicetree: call early_init_dt_verify()
-  x86: devicetree: enable multiprocessing in DT
-  x86: devicetree: fix device IRQ settings in DT
-
- arch/x86/kernel/devicetree.c | 40 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 7 deletions(-)
-
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 0afafab..4fdd1d4 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -164,8 +164,14 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 
+ 		for (i = 0; i < evlist->nr_mmaps; i++) {
+ 			union perf_event *event;
++			struct perf_mmap *md;
++			u64 end, start;
+ 
+-			while ((event = perf_evlist__mmap_read(evlist, i)) != NULL) {
++			md = &evlist->mmap[i];
++			if (perf_mmap__read_init(md, 0, &start, &end) < 0)
++				continue;
++
++			while ((event = perf_mmap__read_event(md, 0, &start, end)) != NULL) {
+ 				const u32 type = event->header.type;
+ 				const char *name = perf_event__name(type);
+ 
+@@ -266,8 +272,9 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 					++errs;
+ 				}
+ 
+-				perf_evlist__mmap_consume(evlist, i);
++				perf_mmap__consume(md, 0);
+ 			}
++			perf_mmap__read_done(md);
+ 		}
+ 
+ 		/*
 -- 
-2.7.4
+2.4.11
