@@ -1,81 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967359AbeCAJ71 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:59:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55768 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967148AbeCAJ7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:59:21 -0500
-Date: Thu, 1 Mar 2018 10:59:15 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v2 01/15] KVM: s390: refactor crypto initialization
-Message-ID: <20180301105915.5c871524.cohuck@redhat.com>
-In-Reply-To: <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1519741693-17440-2-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180228183741.5276e3d3.cohuck@redhat.com>
-        <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S967372AbeCAKAB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:00:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36489 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967231AbeCAJ74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:59:56 -0500
+Date: Thu, 1 Mar 2018 10:59:44 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: wens@csie.org, a.zummo@towertech.it, maxime.ripard@bootlin.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4] rtc: ac100: Fix ac100 determine rate bug
+Message-ID: <20180301095944.GT1479@piout.net>
+References: <20180226211901.9805-1-embed3d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226211901.9805-1-embed3d@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018 16:23:29 -0500
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On 26/02/2018 at 22:19:01 +0100, Philipp Rossak wrote:
+> This patch fixes a bug, that prevents the Allwinner A83T and the A80
+> from a successful boot.
+> 
+> The bug is there since v4.16-rc1 and appeared after the clk branch was
+> merged.
+> 
+> You can find the shortend trace below:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address
+> 00000000
+> pgd = (ptrval)
+> [00000000] *pgd=00000000
+> Internal error: Oops: 5 [#1] SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
+> Hardware name: Allwinner sun8i Family
+> Workqueue: events deferred_probe_work_func
+> PC is at clk_hw_get_rate+0x0/0x34
+> LR is at ac100_clkout_determine_rate+0x48/0x19c
+> 
+> [ ... ]
+> 
+> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+> 
+> To fix that bug, we first check if the return of the
+> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+> clock parent.
+> 
+> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+> 
+> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
+> 
+> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> ---
+> 
+> Changes in v4:
+> 	* add more information to the comment
+> Changes in v3:
+> 	* add information when the bug appeared 
+> 	* make the comment more clear
+> Changes in v2:
+> 	* add tag Fixes: ... to commit message
+> 	* add comment to if statement why we are doing this check
+> 
+>  drivers/rtc/rtc-ac100.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+> 
+Applied, thanks.
 
-> On 02/28/2018 12:37 PM, Cornelia Huck wrote:
-> > On Tue, 27 Feb 2018 09:27:59 -0500
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> >> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-> >> new file mode 100644
-> >> index 0000000..5305f4c
-> >> --- /dev/null
-> >> +++ b/arch/s390/kvm/kvm-ap.c
-> >> @@ -0,0 +1,47 @@
-> >> +/*
-> >> + * Adjunct Processor (AP) configuration management for KVM guests
-> >> + *
-> >> + * Copyright IBM Corp. 2017
-> >> + *
-> >> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
-> >> + */
-> >> +
-> >> +#include <asm/kvm-ap.h>
-> >> +#include <asm/ap.h>
-> >> +
-> >> +#include "kvm-s390.h"
-> >> +
-> >> +static int kvm_ap_apxa_installed(void)
-> >> +{
-> >> +	int ret;
-> >> +	struct ap_config_info config;
-> >> +
-> >> +	ret = ap_query_configuration(&config);  
-> > Doesn't that introduce a dependency on CONFIG_ZCRYPT?  
-> It does, but AFAIK zcrypt is built into the kernel. Or is that not what 
-> you are asking?
-
-It is built into the kernel (and not into a module) if CONFIG_ZCRYPT is
-set. When I compile a kernel with CONFIG_KVM set and CONFIG_ZCRYPT
-unset, with this patch applied I get
-
-arch/s390/kvm/kvm-ap.o: In function `kvm_ap_apxa_installed':
-/home/cohuck/git/linux/arch/s390/kvm/kvm-ap.c:19: undefined reference to `ap_query_configuration'
-
-So I'm afraid you cannot use ap_query_configuration() in base s390 kvm
-code unless you move that function to a place where it is always built
-(or at least always built if either CONFIG_KVM or CONFIG_ZCRYPT are
-set).
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
