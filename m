@@ -1,47 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967341AbeCAJ7Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:59:16 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:56549 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967148AbeCAJ7O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:59:14 -0500
-Date: Thu, 1 Mar 2018 10:59:09 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: renesas-ceu: mark PM functions as __maybe_unused
-Message-ID: <20180301095909.of6irggy4bke6dmx@verge.net.au>
-References: <20180228231951.460060-1-arnd@arndb.de>
+        id S967359AbeCAJ71 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:59:27 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967148AbeCAJ7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:59:21 -0500
+Date: Thu, 1 Mar 2018 10:59:15 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v2 01/15] KVM: s390: refactor crypto initialization
+Message-ID: <20180301105915.5c871524.cohuck@redhat.com>
+In-Reply-To: <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1519741693-17440-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180228183741.5276e3d3.cohuck@redhat.com>
+        <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228231951.460060-1-arnd@arndb.de>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 12:19:37AM +0100, Arnd Bergmann wrote:
-> The PM runtime operations are unused when CONFIG_PM is disabled,
-> leading to a harmless warning:
-> 
-> drivers/media/platform/renesas-ceu.c:1003:12: error: 'ceu_runtime_suspend' defined but not used [-Werror=unused-function]
->  static int ceu_runtime_suspend(struct device *dev)
->             ^~~~~~~~~~~~~~~~~~~
-> drivers/media/platform/renesas-ceu.c:987:12: error: 'ceu_runtime_resume' defined but not used [-Werror=unused-function]
->  static int ceu_runtime_resume(struct device *dev)
->             ^~~~~~~~~~~~~~~~~~
-> 
-> This adds a __maybe_unused annotation to shut up the warning.
-> 
-> Fixes: 32e5a70dc8f4 ("media: platform: Add Renesas CEU driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Wed, 28 Feb 2018 16:23:29 -0500
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> On 02/28/2018 12:37 PM, Cornelia Huck wrote:
+> > On Tue, 27 Feb 2018 09:27:59 -0500
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+
+> >> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+> >> new file mode 100644
+> >> index 0000000..5305f4c
+> >> --- /dev/null
+> >> +++ b/arch/s390/kvm/kvm-ap.c
+> >> @@ -0,0 +1,47 @@
+> >> +/*
+> >> + * Adjunct Processor (AP) configuration management for KVM guests
+> >> + *
+> >> + * Copyright IBM Corp. 2017
+> >> + *
+> >> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+> >> + */
+> >> +
+> >> +#include <asm/kvm-ap.h>
+> >> +#include <asm/ap.h>
+> >> +
+> >> +#include "kvm-s390.h"
+> >> +
+> >> +static int kvm_ap_apxa_installed(void)
+> >> +{
+> >> +	int ret;
+> >> +	struct ap_config_info config;
+> >> +
+> >> +	ret = ap_query_configuration(&config);  
+> > Doesn't that introduce a dependency on CONFIG_ZCRYPT?  
+> It does, but AFAIK zcrypt is built into the kernel. Or is that not what 
+> you are asking?
+
+It is built into the kernel (and not into a module) if CONFIG_ZCRYPT is
+set. When I compile a kernel with CONFIG_KVM set and CONFIG_ZCRYPT
+unset, with this patch applied I get
+
+arch/s390/kvm/kvm-ap.o: In function `kvm_ap_apxa_installed':
+/home/cohuck/git/linux/arch/s390/kvm/kvm-ap.c:19: undefined reference to `ap_query_configuration'
+
+So I'm afraid you cannot use ap_query_configuration() in base s390 kvm
+code unless you move that function to a place where it is always built
+(or at least always built if either CONFIG_KVM or CONFIG_ZCRYPT are
+set).
