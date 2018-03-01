@@ -1,84 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031311AbeCAOP7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:15:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33838 "EHLO mx1.redhat.com"
+        id S1031331AbeCAOQI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:16:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42054 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031264AbeCAOPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:15:24 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: [PATCH v2 3/3] x86/kvm/hyper-v: inject #GP only when invalid SINTx vector is unmasked
-Date: Thu,  1 Mar 2018 15:15:14 +0100
-Message-Id: <20180301141514.3482-4-vkuznets@redhat.com>
-In-Reply-To: <20180301141514.3482-1-vkuznets@redhat.com>
-References: <20180301141514.3482-1-vkuznets@redhat.com>
+        id S1031264AbeCAOQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:16:06 -0500
+Date: Thu, 1 Mar 2018 15:16:01 +0100
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, brouer@redhat.com
+Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+Message-ID: <20180301151601.611d6b83@redhat.com>
+In-Reply-To: <872bf3ea-7631-4e5f-9a6a-d632213cd15c@redhat.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+        <20180301101038.4253424d@redhat.com>
+        <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
+        <20180301113531.7b25e2df@redhat.com>
+        <872bf3ea-7631-4e5f-9a6a-d632213cd15c@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hyper-V 2016 on KVM with SynIC enabled doesn't boot with the following
-trace:
+On Thu, 1 Mar 2018 21:15:36 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-    kvm_entry:            vcpu 0
-    kvm_exit:             reason MSR_WRITE rip 0xfffff8000131c1e5 info 0 0
-    kvm_hv_synic_set_msr: vcpu_id 0 msr 0x40000090 data 0x10000 host 0
-    kvm_msr:              msr_write 40000090 = 0x10000 (#GP)
-    kvm_inj_exception:    #GP (0x0)
+> On 2018年03月01日 18:35, Jesper Dangaard Brouer wrote:
+> > On Thu, 1 Mar 2018 17:23:37 +0800
+> > Jason Wang <jasowang@redhat.com> wrote:
+> >  
+> >> On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:  
+> >>> On Thu,  1 Mar 2018 11:19:03 +0800
+> >>> Jason Wang <jasowang@redhat.com> wrote:
+> >>>     
+> >>>> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
+> >>>> was removed since commit 7324f5399b06 ("virtio_net: disable
+> >>>> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
+> >>>>
+> >>>> - not enough tailroom was reserved which breaks cpumap  
+> >>> To address this at a more fundamental level, I would suggest that we/you
+> >>> instead extend XDP to know it's buffers "frame" size/end.  (The
+> >>> assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
+> >>> ixgbe+virtio_net broke that assumption).
+> >>>
+> >>> It should actually be fairly easy to implement:
+> >>>    * Simply extend xdp_buff with a "data_hard_end" pointer.  
+> >> Right, and then cpumap can warn and drop packets with insufficient
+> >> tailroom.
+> >>
+> >> But it should be a patch on top of this I think.  
+> > Hmmm, not really.  If we/you instead fix the issue of XDP doesn't know
+> > the end/size of the frame, then we don't need this mixed XDP
+> > generic/native code path mixing.  
+> 
+> I know this but I'm still a little bit confused. According to the commit 
+> log of 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in 
+> receive_mergeable() case"), you said:
+> 
+> """
+>      The longer explaination is that receive_mergeable() tries to
+>      work-around and satisfy these XDP requiresments e.g. by having a
+>      function xdp_linearize_page() that allocates and memcpy RX buffers
+>      around (in case packet is scattered across multiple rx buffers).  This
+>      does currently satisfy XDP_PASS, XDP_DROP and XDP_TX (but only because
+>      we have not implemented bpf_xdp_adjust_tail yet).
+> """
+> 
+> So I consider the tailroom is a must for the (future) tail adjustment.
 
-KVM acts according to the following statement from TLFS:
+That is true, BUT implementing the "data_hard_end" extension is a
+pre-requisite.  It will also be to catch the issue of too little
+tail-room if/when implementing bpf_xdp_adjust_tail().
 
-"
-11.8.4 SINTx Registers
-...
-Valid values for vector are 16-255 inclusive. Specifying an invalid
-vector number results in #GP.
-"
+It is of-cause a "nice-to-have", to fix this virtio_net driver's
+receive_mergeable() call to have enough tail-room, but I don't see it
+as a solution to the fundamental problem.
 
-However, I checked and genuine Hyper-V doesn't #GP when we write 0x10000
-to SINTx. I checked with Microsoft and they confirmed that if either the
-Masked bit (bit 16) or the Polling bit (bit 18) is set to 1, then they
-ignore the value of Vector. Make KVM act accordingly.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v1:
-- Drop 'polling' bit check for now as we don't support this mode. We'll
-  need to bring some form of this check back when polling mode is
-  implemented [Roman Kagan].
-- Add a comment explaining "!host && !masked" in synic_set_sint()
----
- arch/x86/kvm/hyperv.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> > You could re-enable native redirect, and push the responsibility to
+> > cpumap for detecting this too-small frame "missing tailroom" (and avoid
+> > crashing...). (If we really want to support this, cpumap could fallback
+> > to dev_alloc_skb, and handle it gracefully).
+> >  
+> 
+> Right but it will be slower than build_skb().
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 6d14f808145d..b390a4d9ea14 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -95,9 +95,17 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
- 			  u64 data, bool host)
- {
- 	int vector, old_vector;
-+	bool masked;
- 
- 	vector = data & HV_SYNIC_SINT_VECTOR_MASK;
--	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
-+	masked = data & HV_SYNIC_SINT_MASKED;
-+
-+	/*
-+	 * Valid vectors are 16-255, however, nested Hyper-V attempts to write
-+	 * default '0x10000' value on boot and this should not #GP. We need to
-+	 * allow zero-initing the register from host as well.
-+	 */
-+	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host && !masked)
- 		return 1;
- 	/*
- 	 * Guest may configure multiple SINTs to use the same vector, so
+True, but bad argument in this context, as you are already using a
+similar function call napi_alloc_skb().  And it will be even slower to
+call generic-XDP code path.
+
 -- 
-2.14.3
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
