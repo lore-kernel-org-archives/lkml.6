@@ -1,61 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162101AbeCAVoB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:44:01 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:37168 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161643AbeCAVn7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:43:59 -0500
-X-Google-Smtp-Source: AG47ELugJQnUquRGxCh4SHphEiV0ZiaBetbAyLEr9fSNFXDt26HOz3xnyneQW1puX4A+NRhK8t3ETQ==
-Date: Thu, 1 Mar 2018 15:43:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, pombredanne@nexb.com
-Subject: Re: [PATCH v4 6/7] arm64: tegra: Add Tegra194 chip device tree
-Message-ID: <20180301214357.a7wur5izbpk3udky@rob-hp-laptop>
-References: <20180220115812.24108-1-mperttunen@nvidia.com>
- <20180220115812.24108-7-mperttunen@nvidia.com>
+        id S1162150AbeCAVpa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:45:30 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:38942 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161731AbeCAVp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:45:28 -0500
+To: Dan Williams <dan.j.williams@intel.com>, benh@au1.ibm.com
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519936477.4592.23.camel@au1.ibm.com>
+ <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
+Date: Thu, 1 Mar 2018 14:45:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180220115812.24108-7-mperttunen@nvidia.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, jglisse@redhat.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, benh@au1.ibm.com, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 01:58:11PM +0200, Mikko Perttunen wrote:
-> Add the chip-level device tree, including binding headers, for the
-> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
-> are initially available, enough to boot to UART console.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> 
-> Notes:
->     v4:
->     - fixed copyright headers according to license-rules.rst
->     - removed comments from clock bindings
->     
->     v3:
->     - added hypervisor-related apertures to GIC node
->     - removed GPL boilerplate in favor of SPDX and harmonized
->       copyright headers
-> 
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 344 +++++++++++++++++++++++++
->  include/dt-bindings/clock/tegra194-clock.h     | 321 +++++++++++++++++++++++
->  include/dt-bindings/gpio/tegra194-gpio.h       |  61 +++++
->  include/dt-bindings/power/tegra194-powergate.h |  35 +++
->  include/dt-bindings/reset/tegra194-reset.h     | 152 +++++++++++
->  5 files changed, 913 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
->  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
->  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
->  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
->  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 01/03/18 02:37 PM, Dan Williams wrote:
+> Ah ok, I'd need to look at the details. I had been assuming that
+> sparse-vmemmap could handle such a situation, but that could indeed be
+> a broken assumption.
+
+It handles it fine for many situations. But when you try to map 
+something that is at the end of the physical address space then the 
+spares-vmemmap needs virtual address space that's the size of the 
+physical address space divided by PAGE_SIZE which may be a little bit 
+too large...
+
+Logan
