@@ -1,11 +1,11 @@
 Return-Path: <leechu729@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-1853510-1519876542-2-9830719679885083067
+X-Cyrus-Session-Id: sloti22d1t05-1794019-1519876065-2-3307650166805037846
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
   RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
-  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES roen,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES ro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='74.125.83.68', Host='mail-pg0-f68.google.com', Country='US',
   FromHeader='com', MailFrom='com'
@@ -14,44 +14,44 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: leechu729@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519876541; b=aafje6zKGPecGItl+Y9RUWdfzGovUR870522QbD8RvrVjtt
-    V8/Y0+JnBBEqsjR3GBE2WFsqbQGa9nk+6YjcTTW4agTDl4A0MIGL5kixVZF9RC5X
-    47J0QN3FSgMFJDb+I5eITvsj4mpzt/beP0FW5K9tzww9R8ljksyKooRI4PPaHF8s
-    03vPafGcuiVwAHZOUEoJOLiQ/GfOmY8qB9AoG9Z3CLais12x/+Gr+yW1mOV9XTXB
-    ywjZmbsqIquOYmdgk1+xfM0bQT3K92Ue94PkWB4o+yUd7Y3wZoo7vIGMTQkLqt1H
-    FciURdRbNh7ieI9VCM2RsKOTEt3ORfJPjvimgzQ==
+    t=1519876064; b=FngfeAPnzZ5OYOlRKZJoa31LLz5P6HXKC4sKq8ZfYb36Pc5
+    A4stxV8/W5qQEJoD1FbZteDw6mRyrA/TE48j/nRToca6JPFRKw04gzTpeg3qQ/Zx
+    /1NXjjKl12gbCvFVzroV3Vv6dFlWGvaWnJlz0xc+NV3syC0cb0IJI10cuVup5BDX
+    hPyhc7TtYW+ksHyAjOds8VQBKqsbizFeiop3h4g3CVU+OAd3grEQ+JDVs1Ok8N44
+    SUezkGD6KtMh12c6G50ODIEhUSOPUUb0McIR5mBgtNwpdaSq6d6ymaeuP/j3ckbG
+    XFZfml0McvDK1iuBkk7kEBAtOpvmURX+LYB1V8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id; s=
-    arctest; t=1519876541; bh=crMAXzrYUQegDbtcGYmx462kEfaXL60CD+vT0C
-    MLQIc=; b=I/8XXrZxCxB/veYHMl7Lo0rJPm99LxyYIuXx/EvfAPDjobVkZXqTUK
-    ZZD0hwXkZbwvTf8wIDZ4jP34FRQ0bOPbvr/FxawgwmftSX/j+D1EJ4Ka0SOGjN15
-    pXSx93e/GFeEIMSakf9bX48TKhUhYvkPxx13Q8dhzL/1O6uKsMnvP4mhz5/eQO9U
-    doRHZOROARxpBZyhAWvhSo4qZqPSl1GTsc7Qgzm75+6PVTfuhoOAJwpB9u1BgvpQ
-    8QXcDx7WXQmJ9U2E1ll+3m/NZHnO1Y7GTVrTJFpZ/DYIkNzLp4vPj+TEueM58kxU
-    PQwN7UnNtxPTb8fgMMMLyOjtzS0wEMQg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qnq9v8CH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    arctest; t=1519876064; bh=kxd8y8T67QiscEaskYnY+vOvQdXkdCYqEtpVWR
+    BAeL4=; b=N6n1y9fXEig61pXN3IxqIRgjt5+TSGMJGU8TZ7SUA06zjwkAETY9Cz
+    ryhckRsYEIgsKCDN1oMZzQgYklZiyUfqpguuZ97Y6mserGNFjLJ6Aivsjnf3UcOj
+    HlU0JA2aqes1Yxbt66SS79rmuVJ0rCgf1Ynmmd3ReZ5kwr9+tI455fgM1OACUA6p
+    FmRp0yJ+e+komCssDe93ys+piW1nr4kr9LOb6f/h2EPR6D04oKjR7zVOG4UDlM5M
+    gscHC6jbJJ6vdhtuNUA7daUgtpx3jIlTm6DIs8m7JzY66XNEVJpRL5atAbJtfKag
+    WVkcxQXDohGyHinQDPlyrix3bEXIecRg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qPHf/iTf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
     spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jn9XpT38;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U+a89Kzu;
     x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qnq9v8CH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qPHf/iTf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
     spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jn9XpT38;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=U+a89Kzu;
     x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AG47ELuFQ3oJ4Hj0RxGdQoWOrYD2t1Kv5tVFI0qtZXO0PVAO/XcPSKOE6kaBPGIo0PkJbMEN5JN8Yw==
-From: ShuFan Lee <leechu729@gmail.com>
+X-Google-Smtp-Source: AG47ELskj1m+slsGZw89rjKnf0OOjku0sgRYvPqgJSZtX3yoFPtgZbYsT8m/rl1vzia8cCsWKQaN0w==
+From: ShuFanLee <leechu729@gmail.com>
 To: heikki.krogerus@linux.intel.com,
 	linux@roeck-us.net,
 	greg@kroah.com
@@ -60,15 +60,15 @@ Cc: shufan_lee@richtek.com,
 	jun.li@nxp.com,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v5] staging: typec: handle vendor defined part and modify drp toggling flow
-Date: Thu,  1 Mar 2018 11:55:29 +0800
-Message-Id: <1519876529-14015-1-git-send-email-leechu729@gmail.com>
+Subject: [PATCH v4] staging: typec: handle vendor defined part and modify drp toggling flow
+Date: Thu,  1 Mar 2018 11:47:16 +0800
+Message-Id: <1519876036-13630-1-git-send-email-leechu729@gmail.com>
 X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: ShuFan Lee <shufan_lee@richtek.com>
+From: ShuFanLee <shufan_lee@richtek.com>
 
 Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and export tcpci_irq.
 More operations can be extended in tcpci_data if needed.
@@ -80,7 +80,7 @@ DRP toggling flow is chagned as following:
   - Write DRP = 1
   - Set LOOK4CONNECTION command
 
-Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
+Signed-off-by: ShuFanLee <shufan_lee@richtek.com>
 ---
  drivers/staging/typec/tcpci.c | 127 +++++++++++++++++++++++++++++++++---------
  drivers/staging/typec/tcpci.h |  13 +++++
@@ -100,9 +100,6 @@ Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
  patch changelogs between v3 & v4
  - Directly return regmap_write at the end of drp_toggling function
  - Because tcpci_irq is called in _tcpci_irq, move _tcpci_irq to the place after tcpci_irq
-
- patch changelogs between v4 & v5
- - Add a space between my first & last name, from ShuFanLee to ShuFan Lee.
 
 diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
 index 9bd4412..5bafcc4 100644
