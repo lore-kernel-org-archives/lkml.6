@@ -1,120 +1,186 @@
-Return-Path: <andreas.dilger@intel.com>
-X-Google-Smtp-Source: AG47ELsEzcGleSphVUR197Dz727d+bW7DpKGCj699fo+e8JYpRHa/Z8yA7Z/Uhb0f5ekTtVNDIvf
-ARC-Seal: i=1; a=rsa-sha256; t=1520553298; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AG47ELubcyvZKX5XIcKD7pQfYc7fCPr3YhxWn2HsGjDMzSCRIUlZpdxv7bytOUteBCy+T8ONLMcQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519947205; cv=none;
         d=google.com; s=arc-20160816;
-        b=BtMjCVKEnIxGQzRlGWgGaeDbhrwwBJfM0p0JHbKPNnKiCCQ54h2b83n1dxpPGDf2+m
-         MziqLuw2cQQYMiK7CGelW83io7mM2T9JTY2LWRDZ8mqk0WuzOyG9TTWdfPrFUwaWLO9e
-         iPyk05yfVtOpBi1ptyfVHhX6Og8XdHwiO8sZEQAxuzvXpFwd/6tvz+/jwGoeplkwBk0v
-         h2/KvhXczVn8kDR8jadzqWpZiyD7M5jG0t7TcjvuvetOyIdpdPilksgIL6aGqOXokPsO
-         RHl3KzkPrQOg4Sg6ED06y5X+TbdtBjUJhg/xFmtS+uNdBFymuZYk75Rj9VWBMrCnZNdE
-         mdAw==
+        b=ZhFfaaCxL33FC8nDRToj/Ko3vy+geT8BSkNw7D1z/bE9qpWDLTVNrMWSIrYdNZhygN
+         LNNDkk9nLi4xQqtsQbJnDX6RIykPRoCOCzobJPEHVPXWGHQAhRia5RErShIl8u6IWd4S
+         2HC0Yoe4dmVpuh6OD/cRE69x96Rdx06nBS+LOJUPTiOs9ilCHMOhCmEFyXgjDMj/HeEv
+         RzgB5A56kW3oi9l4s+UM4hQnW8olniDNiv8lFJW5fHZR1JOjp9+xrPmH5UMfKE29oFRj
+         OPSCc1R/SvOhpFQknBTVFBgKbDOlvATKTaJXH3d/GFPGwCag68SP2SeJosxTHHzfHdSg
+         4Dew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=oW1Kjh6HwSI3kArU9N2BANVOJpGFV3Da4LJdtVyalHA=;
-        b=JNm4EAIWgQp4cv+g9DU/GThQnNNXjV2KS8yKJCRCL+yNCpiIYUPQ7LG46jK9YiDVVR
-         HKQq0O8ueCBb/yBoZIVOkcSeXJLSe9sTgYzVLC3NAG3WmJy9AVEE8Hi0woPVDojEKJDp
-         Ui8dmJ75Kore2pioalwxJf3Mf21HzfJNJ4L/C4eBM8j+rz/SBrEeQh8YFN1ERcKAj0Px
-         fs1fuHTO+TzNyCovE+6Cir9Z/D9csRvoScVlr7j3CHh/q31GKpNmLmE/0GyvEvOkwT2v
-         JjvaKCQiY4MndWD5iiZTLERq9Pkg7Yyghqt5WGwHI4VuglDmHvjc5gTliZPTjDmAHPqG
-         C5oA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=BWjAVdFvTA+9LD5CEJsZ53/1YyU3dHyTm+m/uuIUO7Y=;
+        b=J8Y7p3nb7TIpLr3wgJCnerQ3plIBcdpOssDlr3i0I4X4YSIvjAEqVpmr+w7zPa2sXu
+         KxvKOZ0qVz4js9M/lntUyLj4WilcoHNPCbB9a/uUd8+yVsEXvmfBBF7DoxO5dA6hDeUI
+         AP6IbpotJxhoLMMfWAeckGbK9VkX+Jvbk8doENRghpVTvpmjynaKmbcHAmMNS0oKMq0z
+         coFBRml0YslVhmgPzYlUsuNtCKxRQjgfo4Y0Ro6nLH+CljqiuC6Gb2/qV0MHDwSkNRpC
+         xtwQ2t5SgubgDK8V2jDdI5J7EngpvgqaNMdPK65YDNazVV2VYdXNMsE8zBGu1wu0HoEQ
+         Y/pw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
-   d="scan'208";a="22887092"
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-To: NeilBrown <neilb@suse.com>
-CC: "Drokin, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List
-	<lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 12/17] staging: lustre: remove unused flag from
- ptlrpc_thread
-Thread-Topic: [PATCH 12/17] staging: lustre: remove unused flag from
- ptlrpc_thread
-Thread-Index: AQHTsbW7DN2UgoRlFEiiSJxjTGyqoKPHlGgA
-Date: Thu, 8 Mar 2018 23:54:56 +0000
-Message-ID: <5E9E1F23-3BC8-4267-8B12-C1BBAF396F02@intel.com>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Fri, 02 Mar 2018 10:31:25 +1100
+Subject: [PATCH 10/17] staging: lustre: ptlrpc: use delayed_work in sec_gc
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <151994708538.7628.11965951418635189732.stgit@noble>
+In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
 References: <151994679573.7628.1024109499321778846.stgit@noble>
- <151994708545.7628.17939519532029157797.stgit@noble>
-In-Reply-To: <151994708545.7628.17939519532029157797.stgit@noble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.37.249]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18574A9865699545BB38F9DE73F48EEC@intel.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593780175626155956?=
-X-GMAIL-MSGID: =?utf-8?q?1594415695171764814?=
+X-GMAIL-THRID: =?utf-8?q?1593780160747933116?=
+X-GMAIL-MSGID: =?utf-8?q?1593780160747933116?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
->=20
-> SVC_EVENT is no longer used.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.com>
+The garbage collection for security contexts currently
+has a dedicated kthread which wakes up every 30 minutes
+to discard old garbage.
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Replace this with a simple delayed_work item on the
+system work queue.
 
-> ---
-> drivers/staging/lustre/lustre/include/lustre_net.h |   11 -----------
-> 1 file changed, 11 deletions(-)
->=20
-> diff --git a/drivers/staging/lustre/lustre/include/lustre_net.h b/drivers=
-/staging/lustre/lustre/include/lustre_net.h
-> index 5a4434e7c85a..108683c54127 100644
-> --- a/drivers/staging/lustre/lustre/include/lustre_net.h
-> +++ b/drivers/staging/lustre/lustre/include/lustre_net.h
-> @@ -1259,7 +1259,6 @@ enum {
-> 	SVC_STOPPING    =3D 1 << 1,
-> 	SVC_STARTING    =3D 1 << 2,
-> 	SVC_RUNNING     =3D 1 << 3,
-> -	SVC_EVENT       =3D 1 << 4,
-> };
->=20
-> #define PTLRPC_THR_NAME_LEN		32
-> @@ -1302,11 +1301,6 @@ struct ptlrpc_thread {
-> 	char				t_name[PTLRPC_THR_NAME_LEN];
-> };
->=20
-> -static inline int thread_is_init(struct ptlrpc_thread *thread)
-> -{
-> -	return thread->t_flags =3D=3D 0;
-> -}
-> -
-> static inline int thread_is_stopped(struct ptlrpc_thread *thread)
-> {
-> 	return !!(thread->t_flags & SVC_STOPPED);
-> @@ -1327,11 +1321,6 @@ static inline int thread_is_running(struct ptlrpc_=
-thread *thread)
-> 	return !!(thread->t_flags & SVC_RUNNING);
-> }
->=20
-> -static inline int thread_is_event(struct ptlrpc_thread *thread)
-> -{
-> -	return !!(thread->t_flags & SVC_EVENT);
-> -}
-> -
-> static inline void thread_clear_flags(struct ptlrpc_thread *thread, __u32=
- flags)
-> {
-> 	thread->t_flags &=3D ~flags;
->=20
->=20
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ drivers/staging/lustre/lustre/ptlrpc/sec_gc.c |   90 ++++++++-----------------
+ 1 file changed, 28 insertions(+), 62 deletions(-)
 
-Cheers, Andreas
---
-Andreas Dilger
-Lustre Principal Architect
-Intel Corporation
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c b/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c
+index 48f1a72afd77..2c8bad7b7877 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c
+@@ -55,7 +55,6 @@ static spinlock_t sec_gc_list_lock;
+ static LIST_HEAD(sec_gc_ctx_list);
+ static spinlock_t sec_gc_ctx_list_lock;
+ 
+-static struct ptlrpc_thread sec_gc_thread;
+ static atomic_t sec_gc_wait_del = ATOMIC_INIT(0);
+ 
+ void sptlrpc_gc_add_sec(struct ptlrpc_sec *sec)
+@@ -139,86 +138,53 @@ static void sec_do_gc(struct ptlrpc_sec *sec)
+ 	sec->ps_gc_next = ktime_get_real_seconds() + sec->ps_gc_interval;
+ }
+ 
+-static int sec_gc_main(void *arg)
+-{
+-	struct ptlrpc_thread *thread = arg;
+-
+-	unshare_fs_struct();
++static void sec_gc_main(struct work_struct *ws);
++static DECLARE_DELAYED_WORK(sec_gc_work, sec_gc_main);
+ 
+-	/* Record that the thread is running */
+-	thread_set_flags(thread, SVC_RUNNING);
+-	wake_up(&thread->t_ctl_waitq);
+-
+-	while (1) {
+-		struct ptlrpc_sec *sec;
++static void sec_gc_main(struct work_struct *ws)
++{
++	struct ptlrpc_sec *sec;
+ 
+-		sec_process_ctx_list();
++	sec_process_ctx_list();
+ again:
+-		/* go through sec list do gc.
+-		 * FIXME here we iterate through the whole list each time which
+-		 * is not optimal. we perhaps want to use balanced binary tree
+-		 * to trace each sec as order of expiry time.
+-		 * another issue here is we wakeup as fixed interval instead of
+-		 * according to each sec's expiry time
++	/* go through sec list do gc.
++	 * FIXME here we iterate through the whole list each time which
++	 * is not optimal. we perhaps want to use balanced binary tree
++	 * to trace each sec as order of expiry time.
++	 * another issue here is we wakeup as fixed interval instead of
++	 * according to each sec's expiry time
++	 */
++	mutex_lock(&sec_gc_mutex);
++	list_for_each_entry(sec, &sec_gc_list, ps_gc_list) {
++		/* if someone is waiting to be deleted, let it
++		 * proceed as soon as possible.
+ 		 */
+-		mutex_lock(&sec_gc_mutex);
+-		list_for_each_entry(sec, &sec_gc_list, ps_gc_list) {
+-			/* if someone is waiting to be deleted, let it
+-			 * proceed as soon as possible.
+-			 */
+-			if (atomic_read(&sec_gc_wait_del)) {
+-				CDEBUG(D_SEC, "deletion pending, start over\n");
+-				mutex_unlock(&sec_gc_mutex);
+-				goto again;
+-			}
+-
+-			sec_do_gc(sec);
++		if (atomic_read(&sec_gc_wait_del)) {
++			CDEBUG(D_SEC, "deletion pending, start over\n");
++			mutex_unlock(&sec_gc_mutex);
++			goto again;
+ 		}
+-		mutex_unlock(&sec_gc_mutex);
+-
+-		/* check ctx list again before sleep */
+-		sec_process_ctx_list();
+-		wait_event_idle_timeout(thread->t_ctl_waitq,
+-					thread_is_stopping(thread),
+-					SEC_GC_INTERVAL * HZ);
+ 
+-		if (thread_test_and_clear_flags(thread, SVC_STOPPING))
+-			break;
++		sec_do_gc(sec);
+ 	}
++	mutex_unlock(&sec_gc_mutex);
+ 
+-	thread_set_flags(thread, SVC_STOPPED);
+-	wake_up(&thread->t_ctl_waitq);
+-	return 0;
++	/* check ctx list again before sleep */
++	sec_process_ctx_list();
++	schedule_delayed_work(&sec_gc_work, SEC_GC_INTERVAL * HZ);
+ }
+ 
+ int sptlrpc_gc_init(void)
+ {
+-	struct task_struct *task;
+-
+ 	mutex_init(&sec_gc_mutex);
+ 	spin_lock_init(&sec_gc_list_lock);
+ 	spin_lock_init(&sec_gc_ctx_list_lock);
+ 
+-	/* initialize thread control */
+-	memset(&sec_gc_thread, 0, sizeof(sec_gc_thread));
+-	init_waitqueue_head(&sec_gc_thread.t_ctl_waitq);
+-
+-	task = kthread_run(sec_gc_main, &sec_gc_thread, "sptlrpc_gc");
+-	if (IS_ERR(task)) {
+-		CERROR("can't start gc thread: %ld\n", PTR_ERR(task));
+-		return PTR_ERR(task);
+-	}
+-
+-	wait_event_idle(sec_gc_thread.t_ctl_waitq,
+-			thread_is_running(&sec_gc_thread));
++	schedule_delayed_work(&sec_gc_work, 0);
+ 	return 0;
+ }
+ 
+ void sptlrpc_gc_fini(void)
+ {
+-	thread_set_flags(&sec_gc_thread, SVC_STOPPING);
+-	wake_up(&sec_gc_thread.t_ctl_waitq);
+-
+-	wait_event_idle(sec_gc_thread.t_ctl_waitq,
+-			thread_is_stopped(&sec_gc_thread));
++	cancel_delayed_work_sync(&sec_gc_work);
+ }
