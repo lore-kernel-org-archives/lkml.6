@@ -1,70 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966001AbeCAFJb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:09:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965984AbeCAFJa (ORCPT
+        id S966011AbeCAFSt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:18:49 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:45764 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeCAFSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:09:30 -0500
-Subject: Re: [RFC 1/4] Uprobe: Rename map_info to uprobe_map_info
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, ananth@linux.vnet.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com, oleg@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-References: <20180228075345.674-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180228075345.674-2-ravi.bangoria@linux.vnet.ibm.com>
- <20180228120929.GB63063@linux.vnet.ibm.com>
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date: Thu, 1 Mar 2018 10:41:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 1 Mar 2018 00:18:46 -0500
+Subject: Re: [PATCH v2 15/15] ARM: dts: dra7: Add high speed modes capability
+ to MMC1/MMC2 dt node
+To: Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>
+References: <20180206125806.19350-1-kishon@ti.com>
+ <20180206125806.19350-16-kishon@ti.com>
+ <210939ed-67fc-fa37-b4f2-c1faefcc4642@ti.com>
+ <b411cf11-61e9-e688-6f04-e624fe52ac66@ti.com>
+ <4f18dab9-aee3-1023-d301-f142c6e2d358@ti.com>
+ <20180228223421.GM5448@atomide.com>
+CC: =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <f657b33e-8d02-4529-fe1f-20693a329fd3@ti.com>
+Date: Thu, 1 Mar 2018 10:48:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180228120929.GB63063@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180228223421.GM5448@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18030105-0040-0000-0000-000004394527
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030105-0041-0000-0000-000020DC4796
-Message-Id: <221509ff-12ae-5348-bb17-6073198717b6@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010065
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tony,
 
-
-On 02/28/2018 05:39 PM, Srikar Dronamraju wrote:
->> -static inline struct map_info *free_map_info(struct map_info *info)
->> +static inline struct uprobe_map_info *
->> +free_uprobe_map_info(struct uprobe_map_info *info)
->>  {
->> -	struct map_info *next = info->next;
->> +	struct uprobe_map_info *next = info->next;
->>  	kfree(info);
->>  	return next;
->>  }
+On Thursday 01 March 2018 04:04 AM, Tony Lindgren wrote:
+> * Sekhar Nori <nsekhar@ti.com> [180213 11:11]:
+>> On Wednesday 07 February 2018 02:51 PM, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Wednesday 07 February 2018 02:41 PM, Sekhar Nori wrote:
+>>>> Kishon,
+>>>>
+>>>> On Tuesday 06 February 2018 06:28 PM, Kishon Vijay Abraham I wrote:
+>>>>> Add UHS/HS200/DDR speed mode capability to MMC1 and MMC2 dt nodes.
+>>>>>
+>>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>>
+>>>> Along with this, dont we need to have
+>>>>
+>>>> 	/delete-property/ mmc-hs200-1_8v;
+>>>>
+>>>> for eMMC on Beagle x15 which does not support HS200?
+>>>>
+>>>> Or are you planning to depend on lack of pinctrl entries for HS200 to
+>>>> take care of that?
+>>>
+>>> right now it relies on lack of pinctrl entries but I think adding delete
+>>> property is appropriate. Actually I missed porting the patch that adds
+>>> /delete-property/.
 >>
->> -static struct map_info *
->> -build_map_info(struct address_space *mapping, loff_t offset, bool is_register)
->> +static struct uprobe_map_info *
->> +build_uprobe_map_info(struct address_space *mapping, loff_t offset,
->> +		      bool is_register)
-> Imho, uprobe_build_map_info may be better than build_uprobe_map_info,
-> similarly uprobe_free_map_info.
+>> Actually, thinking more, this should be probably be handled using
+>> "no-1-8-v" property. Reading the comment above SDHCI_QUIRK2_NO_1_8_V, it
+>> is specifically meant for the case when system (board) does not support
+>> 1.8V even when host (controller) does. Which is exactly the case with
+>> Beagle x15.
+> 
+> OK so that seems to be related to the last patch. I've applied
+> the first two defconfig patches into omap-for-v4.17/defconfig
+> and patches up to patch 13/15 into omap-for-v4.17/dt-sdhci.
+> 
+> Kishon, please repost the missing changes or ping me when
+> the driver dependencies have cleared for further patches to
+> be applied to enable sdhci.
 
-Sure, Will change it.
+sure, I'll repost when sdhci driver changes gets merged.
 
-Thanks,
-Ravi
+Thanks
+Kishon
