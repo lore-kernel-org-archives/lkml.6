@@ -1,43 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966728AbeCAJKX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:10:23 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41947 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966675AbeCAJJY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:09:24 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04421;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Sykfl9P_1519895346;
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-To: jeyu@kernel.org
-Cc: zhang.jia@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] module: Do not access sig_enforce directly
-Date: Thu,  1 Mar 2018 17:09:03 +0800
-Message-Id: <1519895346-7961-1-git-send-email-zhang.jia@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S966746AbeCAJKt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:10:49 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966675AbeCAJKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:10:46 -0500
+Date: Thu, 1 Mar 2018 10:10:38 +0100
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+Message-ID: <20180301101038.4253424d@redhat.com>
+In-Reply-To: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call is_module_sig_enforced() instead.
+On Thu,  1 Mar 2018 11:19:03 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
----
- kernel/module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
+> was removed since commit 7324f5399b06 ("virtio_net: disable
+> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
+> 
+> - not enough tailroom was reserved which breaks cpumap
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ad2d420..003d0ab 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2789,7 +2789,7 @@ static int module_sig_check(struct load_info *info, int flags)
- 	}
- 
- 	/* Not having a signature is only an error if we're strict. */
--	if (err == -ENOKEY && !sig_enforce)
-+	if (err == -ENOKEY && !is_module_sig_enforced())
- 		err = 0;
- 
- 	return err;
+To address this at a more fundamental level, I would suggest that we/you
+instead extend XDP to know it's buffers "frame" size/end.  (The
+assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
+ixgbe+virtio_net broke that assumption).
+
+It should actually be fairly easy to implement:
+ * Simply extend xdp_buff with a "data_hard_end" pointer.
+
+Now cpumap is more safe... instead of crashing, it can now know/see when
+it is safe to create an SKB using build_skb (could fallback to
+dev_alloc_skb).
+
 -- 
-1.8.3.1
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
