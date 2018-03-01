@@ -1,67 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162884AbeCAXUR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:20:17 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39570 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162811AbeCAXUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:20:15 -0500
-To: benh@au1.ibm.com, Dan Williams <dan.j.williams@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        id S1162925AbeCAXUt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:20:49 -0500
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:36405 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162891AbeCAXUq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:20:46 -0500
+X-Google-Smtp-Source: AG47ELuFjxbzYZT6CZDhrw9cZkcVRAvgwZtCqAuyZaWilzgR855FAz2DtJOgCj3NlVdDhaGBh3SM2w==
+Date: Thu, 1 Mar 2018 16:20:38 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Stephen Bates <sbates@raithlin.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
         Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+Message-ID: <20180301232038.GO19007@ziepe.ca>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
- <1519936477.4592.23.camel@au1.ibm.com>
- <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
- <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
- <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
- <1519945204.4592.45.camel@au1.ibm.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <595acefb-18fc-e650-e172-bae271263c4c@deltatee.com>
-Date: Thu, 1 Mar 2018 16:19:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+ <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+ <20180301224540.GL19007@ziepe.ca>
+ <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
 MIME-Version: 1.0
-In-Reply-To: <1519945204.4592.45.camel@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, alex.williamson@redhat.com, oliveroh@au1.ibm.com, keith.busch@intel.com, axboe@kernel.dk, dan.j.williams@intel.com, benh@au1.ibm.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 01, 2018 at 11:00:51PM +0000, Stephen  Bates wrote:
 
-
-On 01/03/18 04:00 PM, Benjamin Herrenschmidt wrote:
-> We use only 52 in practice but yes.
+> > Seems like a very subtle and hard to debug performance trap to leave
+> > for the users, and pretty much the only reason to use P2P is
+> > performance... So why have such a dangerous interface?
 > 
->>   That's 64PB. If you use need
->> a sparse vmemmap for the entire space it will take 16TB which leaves you
->> with 63.98PB of address space left. (Similar calculations for other
->> numbers of address bits.)
-> 
-> We only have 52 bits of virtual space for the kernel with the radix
-> MMU.
+> P2P is about offloading the memory and PCI subsystem of the host CPU
+> and this is achieved no matter which p2p_dev is used.
 
-Ok, assuming you only have 52 bits of physical address space: the sparse 
-vmemmap takes 1TB and you're left with 3.9PB of address space for other 
-things. So, again, why doesn't that work? Is my math wrong?
+No, locality matters. If you have a bunch of NICs and bunch of drives
+and the allocator chooses to put all P2P memory on a single drive your
+performance will suck horribly even if all the traffic is offloaded.
 
-Logan
+Performance will suck if you have speed differences between the PCI-E
+devices. Eg a bunch of Gen 3 x8 NVMe cards paired with a Gen 4 x16 NIC
+will not reach full performance unless the p2p buffers are properly
+balanced between all cards.
+
+This is why I think putting things in one big pool and pretending like
+any P2P mem is interchangable with any other makes zero sense to me,
+it is not how the system actually works. Proper locality matters a
+lot.
+
+Jason
