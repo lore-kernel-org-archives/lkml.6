@@ -1,119 +1,194 @@
-Return-Path: <amelie.delaunay@st.com>
-X-Google-Smtp-Source: AG47ELuxaEoGmECG2HdTUcL4nZaNdxgvxCnBtbjhFPUVAe821QrCJv7UB+RurV+Ks5g3GB0YP70v
-ARC-Seal: i=1; a=rsa-sha256; t=1521537052; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ULLNzrQLbBDQ+8a9QUYK2Mo6bW0LvT5GM536tGwrln7p3IqK+sD0I62/3bRNgBhE5O
-         hqNe9zKYBagwq8IhEJogQqmwcxYPFkQP3zhi+uS05VRMCpwfVrGOc7fi8VD+yXi0ToYR
-         JS0tCx6Bvl84thIKW0IcECZc3RPZWvmvXKeYsqM1z0KPIxLkKHVTAswSbDUY8aUjf0Mh
-         nlmq/+1S45gJOITQ77xQXkk9rklBZ1SAsbpFOv8tRouEqyxAPz+erSO72RcLGeXRC6Gk
-         cVCeSZqV1s0YNSv8diLBYboaAQtIUquMv9itueg3UGSBJc4Pu3H/o3y0ubVe3pWz+XLY
-         KMuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id:user-agent
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from
-         :arc-authentication-results;
-        bh=NtwjvY/33gfROngkXrclcqlDBIfigwxje79thbNWfmA=;
-        b=lXF5w8Dt52CzuoWIL4QBA4zsQg7Eme2k/is+XWD806udtm4lBBEMocLhaIAyPPDc1C
-         FcCmdHz7275lefOXEAujugxP6fF8XUu1C5MzmChBfxSMQAY/2BetnZFv8S5QDb1yuxnf
-         q2HypEtw9bMigEZ2PnJ9xzoaFWYR7XS7o5UnVDQmHgn9KWNkhktzavhDmB7VHEynrTPN
-         DViSJpXENAJkSiug0hgyZJgEYCRWl6POnbyOwQFtDwfU09IOSCqM+hjf/flbWNh/0I9p
-         Hkx/KfgmOPpy3/t1XD/odEvCmhW/cDBRwsECkIb/JE6zoFvnCWqwJiah0ImN/XlOomg1
-         1A2Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Rob Herring <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2558661-1519898037-2-2640090931121619775
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519898037; b=as9BHkTR9RYZu9FoaNH9EiG/moD9eSXcQ9QR9iv1m2SJuXi
+    Oy+UCq0c+OKE73zMi5avZlfZvoYyyW3wHRxQFlovwmD0RcwvA67Qs2IgEuundd4o
+    UVjreftxTpF9h/Red82XMYks/ujkfN7TOcgWC/YtBVDJfyocKQYl+ZxtkhsI8c/y
+    txIgWWu5IwAAgi0uMJrfial2ViwrcsCcWll0W6F1IoVgD4Tsl5hr6j4rbpb2rIkM
+    Wja4Hx1XbkV0C3djYjQo4zrBPxu5IBuM+LL3+pXNiFAxT0vb+/RobE6TXDKfoVBb
+    aydmyEjMnKBBOij7RcnvkBcVZXnc4l70XDryltQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519898037; bh=a3mIoNSP3WC5rjAcg4mIh4KdEr
+    Ew+R0XXdtn6bZPB+4=; b=JFOcpiTgDgKLClpasJA6LptIPAbjiJdvoSbyi1p/AE
+    cMmPz25hYl7rGM9JiZ6VQTjRv8mP3V+hf4vBf5Gtzpt0Ib/1lHeu4X27naF0QljH
+    Jbl+02B+/bGyhpc6bXKWwTC8XliX0l9nDcYxfmCqJrx2HNmPM6Kx0e0KteFvNsFN
+    pwWL6QT1g50tlYlsDvuYMiey//Ees81xsARY3k+a0CQlqBDIMFU4jwj6q8iLi0Vk
+    Az/DpttsdX5hLQIoAHphhRf7U9hI75HBoDIMTfNBe+9xcijHrUDgh9U4UpCIsoXL
+    SUq00LoKImtXTo3vknfg6Wu5ykVBI0LEgFFenZLu2S2A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S967146AbeCAJxc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 04:53:32 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14938 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967296AbeCAJx1 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 1 Mar 2018 04:53:27 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Tony Prisk <linux@prisktech.co.nz>,
-        Alan Stern
-	<stern@rowland.harvard.edu>, Roger Quadros <rogerq@ti.com>,
-        Felipe Balbi
-	<felipe.balbi@linux.intel.com>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated
- list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: usb: ehci: add optional external vbus
- supply property
-Thread-Topic: [PATCH v4 1/2] dt-bindings: usb: ehci: add optional external
- vbus supply property
-Thread-Index: AQHTsULphq1wm4Q97EiORpkn5P5TKaPCab6AgADMZYCAAAjPAIAVpGQA
-Date: Tue, 20 Mar 2018 09:10:38 +0000
-Message-ID: <e3370b8d-2398-b4c0-c57c-978abd75c0f2@st.com>
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Roger Quadros" <rogerq@ti.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "Robin Murphy" <robin.murphy@arm.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v4 2/2] usb: host: ehci-platform: add support for optional external vbus supply
+Date: Thu, 1 Mar 2018 10:51:39 +0100
+Message-ID: <1519897899-8577-3-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
 References: <1519897899-8577-1-git-send-email-amelie.delaunay@st.com>
- <1519897899-8577-2-git-send-email-amelie.delaunay@st.com>
- <20180306015743.uazy4e5quil2ijy2@rob-hp-laptop>
- <ae4c741e-d5aa-4a8c-4029-1dff6bef2cdd@arm.com>
- <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+iPZN-RV61+AFcRg-eKORQDQ9-4s4-vaFOrCqWBK8PDg@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <78844BF5406B594585633567020A4221@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-20_03:,,
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
  signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593728540425341885?=
-X-GMAIL-MSGID: =?utf-8?q?1595447235973512134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQoNCk9uIDAzLzA2LzIwMTggMDM6NDAgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBUdWUs
-IE1hciA2LCAyMDE4IGF0IDg6MDkgQU0sIFJvYmluIE11cnBoeSA8cm9iaW4ubXVycGh5QGFybS5j
-b20+IHdyb3RlOg0KPj4gT24gMDYvMDMvMTggMDE6NTcsIFJvYiBIZXJyaW5nIHdyb3RlOg0KPj4+
-DQo+Pj4gT24gVGh1LCBNYXIgMDEsIDIwMTggYXQgMTA6NTE6MzhBTSArMDEwMCwgQW1lbGllIERl
-bGF1bmF5IHdyb3RlOg0KPj4+Pg0KPj4+PiBPbiBzb21lIGJvYXJkcywgZXNwZWNpYWxseSB3aGVu
-IHZidXMgc3VwcGx5IHJlcXVpcmVzIGxhcmdlIGN1cnJlbnQsDQo+Pj4+IGFuZCB0aGUgY2hhcmdl
-IHB1bXAgb24gdGhlIFBIWSBpc24ndCBlbm91Z2gsIGFuIGV4dGVybmFsIHZidXMgcG93ZXINCj4+
-Pj4gc3dpdGNoDQo+Pj4+IHBlciBwb3J0IG1heSBiZSB1c2VkLg0KPj4+PiBBZGQgcG9ydE5fdmJ1
-cy1zdXBwbHkgcHJvcGVydHkgdG8gdXNiLWVoY2kgYmluZGluZ3MuIEFzIHRoZSBudW1iZXIgb2YN
-Cj4+Pj4gcG9ydHMNCj4+Pj4gZGVwZW5kcyBvbiB0aGUgZWhjaSBjb250cm9sbGVyLCBhbmQgdGhl
-IHBvcnQgb24gd2hpY2ggYW4gZXh0ZXJuYWwgdmJ1cw0KPj4+PiBzdXBwbHkgZGVwZW5kcyBvbiB0
-aGUgcGxhdGZvcm0sIDxwb3J0Tj4gaXMgdXNlZCB0byBtYWtlIGl0IGdlbmVyaWMuDQo+Pj4+DQo+
-Pj4+IFNpZ25lZC1vZmYtYnk6IEFtZWxpZSBEZWxhdW5heSA8YW1lbGllLmRlbGF1bmF5QHN0LmNv
-bT4NCj4+Pj4gLS0tDQo+Pj4+ICAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91
-c2IvdXNiLWVoY2kudHh0IHwgMSArDQo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
-bigrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3VzYi91c2ItZWhjaS50eHQNCj4+Pj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvdXNiL3VzYi1laGNpLnR4dA0KPj4+PiBpbmRleCAzZWZkZTEyLi5jZDU3NmRiIDEw
-MDY0NA0KPj4+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3Vz
-Yi1laGNpLnR4dA0KPj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-dXNiL3VzYi1laGNpLnR4dA0KPj4+PiBAQCAtMTksNiArMTksNyBAQCBPcHRpb25hbCBwcm9wZXJ0
-aWVzOg0KPj4+PiAgICAgLSBwaHlzIDogcGhhbmRsZSArIHBoeSBzcGVjaWZpZXIgcGFpcg0KPj4+
-PiAgICAgLSBwaHktbmFtZXMgOiAidXNiIg0KPj4+PiAgICAgLSByZXNldHMgOiBwaGFuZGxlICsg
-cmVzZXQgc3BlY2lmaWVyIHBhaXINCj4+Pj4gKyAtIHBvcnROX3ZidXMtc3VwcGx5IDogcGhhbmRs
-ZSBvZiByZWd1bGF0b3Igc3VwcGx5aW5nIHZidXMgZm9yIHBvcnQgTg0KPj4+DQo+Pj4NCj4+PiBK
-dXN0IG1ha2UgdGhpcyBhbiBhcnJheSB3aXRoIHRoZSBpbmRleCBiZWluZyB0aGUgcG9ydCAoYW5k
-IGRyb3ANCj4+PiAicG9ydE5fIikuDQo+Pg0KPj4NCj4+IERvZXMgdGhhdCBzdGlsbCB3b3JrIGlm
-IHRoZXJlIGlzIGFuIGV4dGVybmFsIHN1cHBseSBmb3IgcG9ydCAxIGJ1dCBub25lIGZvcg0KPj4g
-cG9ydCAwPyBJIGJlbGlldmUgdGhhdCB3YXMgYnJvdWdodCB1cCBhcyBhIHBvc3NpYmlsaXR5IGJl
-Zm9yZS4NCj4gDQo+IFllcywgaWYgeW91IHVzZSAwIG9yIC0xIHRvIHNraXAgb3ZlciBhbiBpbmRl
-eC4NCj4gDQo+IFJlYWxseSwgdGhpcyBzaG91bGQgZ28gaW4gdGhlIGNvbm5lY3RvciBub2RlIGlu
-c3RlYWQgYmVjYXVzZSBWYnVzIGlzDQo+IHN1cHBsaWVkIHRvIHRoZSBjb25uZWN0b3IsIG5vdCB0
-aGUgaG9zdCBjb250cm9sbGVyLiBUaGUgY29ubmVjdG9yDQo+IGJpbmRpbmcgaXMgb24gaXRzIHdh
-eSBpbnRvIG1haW5saW5lLg0KPiANCj4gUm9iDQo+IA0KDQpOb3Qgc3VyZSB0byBjYXRjaCB3aGF0
-IHlvdSBtZWFuIGJ5ICJtYWtlIHRoaXMgYW4gYXJyYXkiIGJlY2F1c2UgDQpyZWd1bGF0b3IgZnJh
-bWV3b3JrIGltcG9zZXMgPG5hbWU+LXN1cHBseTogcGhhbmRsZSB0byB0aGUgcmVndWxhdG9yIG5v
-ZGUuDQoNCkkgbWF5IGhhdmUgbWlzc2VkIHNvbWV0aGluZyBhcm91bmQgcmVndWxhdG9yIGNvbnN1
-bWVycyBtYW5hZ2VtZW50ID8NCg0KRG8geW91IG1lYW50IHNvbWV0aGluZyBsaWtlDQp2YnVzLXN1
-cHBseSA9IDwmcmVnX3BvcnQwICZyZWdfcG9ydDE+Ow0Kb3IgaW4gY2FzZSB0aGVyZSBpcyBhbiBl
-eHRlcm5hbCBzdXBwbHkgZm9yIHBvcnQgMSBidXQgbm9uZSBmb3IgcG9ydCAwDQp2YnVzLXN1cHBs
-eSA9IDwtMSAmcmVnX3BvcnQxPjsNCj8NCklmIHllcywgYSBuZXcgQVBJIGlzIG5lZWRlZCBpbiBy
-ZWd1bGF0b3IgZnJhbWV3b3JrIHRvIGdldCBhbiBhcnJheSBvZiANCnJlZ3VsYXRvcnMgPw0KDQoN
-ClJlZ2FyZHMsDQpBbWVsaWU=
+On some boards, especially when vbus supply requires large current,
+and the charge pump on the PHY isn't enough, an external vbus power switch
+may be used.
+Add support for optional external vbus supply per port in ehci-platform.
+
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Reviewed-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/host/ehci-platform.c | 51 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index b065a96..e0dace7 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -29,6 +29,7 @@
+ #include <linux/of.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+@@ -46,6 +47,7 @@ struct ehci_platform_priv {
+ 	struct reset_control *rsts;
+ 	struct phy **phys;
+ 	int num_phys;
++	struct regulator **vbus_supplies;
+ 	bool reset_on_resume;
+ };
+ 
+@@ -56,7 +58,8 @@ static int ehci_platform_reset(struct usb_hcd *hcd)
+ 	struct platform_device *pdev = to_platform_device(hcd->self.controller);
+ 	struct usb_ehci_pdata *pdata = dev_get_platdata(&pdev->dev);
+ 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
+-	int retval;
++	struct ehci_platform_priv *priv = hcd_to_ehci_priv(hcd);
++	int portnum, n_ports, retval;
+ 
+ 	ehci->has_synopsys_hc_bug = pdata->has_synopsys_hc_bug;
+ 
+@@ -71,11 +74,56 @@ static int ehci_platform_reset(struct usb_hcd *hcd)
+ 	if (retval)
+ 		return retval;
+ 
++	n_ports = HCS_N_PORTS(ehci->hcs_params);
++	priv->vbus_supplies = devm_kcalloc(&pdev->dev, n_ports,
++					   sizeof(*priv->vbus_supplies),
++					   GFP_KERNEL);
++	if (!priv->vbus_supplies)
++		return -ENOMEM;
++
++	for (portnum = 0; portnum < n_ports; portnum++) {
++		struct regulator *vbus_supply;
++		char id[20];
++
++		sprintf(id, "port%d_vbus", portnum);
++
++		vbus_supply = devm_regulator_get_optional(&pdev->dev, id);
++		if (IS_ERR(vbus_supply)) {
++			retval = PTR_ERR(vbus_supply);
++			if (retval != ENODEV)
++				return retval;
++		} else {
++			priv->vbus_supplies[portnum] = vbus_supply;
++		}
++	}
++
+ 	if (pdata->no_io_watchdog)
+ 		ehci->need_io_watchdog = 0;
+ 	return 0;
+ }
+ 
++static int ehci_platform_port_power(struct usb_hcd *hcd, int portnum,
++				    bool enable)
++{
++	struct ehci_platform_priv *priv = hcd_to_ehci_priv(hcd);
++	int ret;
++
++	if (!priv->vbus_supplies[portnum])
++		return 0;
++
++	if (enable)
++		ret = regulator_enable(priv->vbus_supplies[portnum]);
++	else
++		ret = regulator_disable(priv->vbus_supplies[portnum]);
++
++	if (ret)
++		dev_err(hcd->self.controller,
++			"failed to %s vbus supply for port %d: %d\n",
++			enable ? "enable" : "disable", portnum, ret);
++
++	return ret;
++}
++
+ static int ehci_platform_power_on(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+@@ -134,6 +182,7 @@ static struct hc_driver __read_mostly ehci_platform_hc_driver;
+ static const struct ehci_driver_overrides platform_overrides __initconst = {
+ 	.reset =		ehci_platform_reset,
+ 	.extra_priv_size =	sizeof(struct ehci_platform_priv),
++	.port_power =		ehci_platform_port_power,
+ };
+ 
+ static struct usb_ehci_pdata ehci_platform_defaults = {
+-- 
+2.7.4
+
