@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966360AbeCAG1y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 01:27:54 -0500
+        id S966389AbeCAG2C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 01:28:02 -0500
 Received: from mga03.intel.com ([134.134.136.65]:12103 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966268AbeCAG1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 01:27:52 -0500
+        id S966378AbeCAG14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 01:27:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
-   d="scan'208";a="33761278"
+   d="scan'208";a="33761289"
 From: Aaron Lu <aaron.lu@intel.com>
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -21,9 +21,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@techsingularity.net>,
         Matthew Wilcox <willy@infradead.org>,
         David Rientjes <rientjes@google.com>
-Subject: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
-Date: Thu,  1 Mar 2018 14:28:43 +0800
-Message-Id: <20180301062845.26038-2-aaron.lu@intel.com>
+Subject: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not holding lock
+Date: Thu,  1 Mar 2018 14:28:45 +0800
+Message-Id: <20180301062845.26038-4-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180301062845.26038-1-aaron.lu@intel.com>
 References: <20180301062845.26038-1-aaron.lu@intel.com>
@@ -31,61 +31,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthew Wilcox found that all callers of free_pcppages_bulk() currently
-update pcp->count immediately after so it's natural to do it inside
-free_pcppages_bulk().
+When a page is freed back to the global pool, its buddy will be checked
+to see if it's possible to do a merge. This requires accessing buddy's
+page structure and that access could take a long time if it's cache cold.
 
-No functionality or performance change is expected from this patch.
+This patch adds a prefetch to the to-be-freed page's buddy outside of
+zone->lock in hope of accessing buddy's page structure later under
+zone->lock will be faster. Since we *always* do buddy merging and check
+an order-0 page's buddy to try to merge it when it goes into the main
+allocator, the cacheline will always come in, i.e. the prefetched data
+will never be unused.
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
+In the meantime, there are two concerns:
+1 the prefetch could potentially evict existing cachelines, especially
+  for L1D cache since it is not huge;
+2 there is some additional instruction overhead, namely calculating
+  buddy pfn twice.
+
+For 1, it's hard to say, this microbenchmark though shows good result but
+the actual benefit of this patch will be workload/CPU dependant;
+For 2, since the calculation is a XOR on two local variables, it's expected
+in many cases that cycles spent will be offset by reduced memory latency
+later. This is especially true for NUMA machines where multiple CPUs are
+contending on zone->lock and the most time consuming part under zone->lock
+is the wait of 'struct page' cacheline of the to-be-freed pages and their
+buddies.
+
+Test with will-it-scale/page_fault1 full load:
+
+kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
+v4.16-rc2+  9034215        7971818       13667135       15677465
+patch2/3    9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
+this patch 10338868 +8.4%  8544477 +2.8% 14839808 +5.5% 17155464 +2.9%
+Note: this patch's performance improvement percent is against patch2/3.
+
+[changelog stole from Dave Hansen and Mel Gorman's comments]
+https://lkml.org/lkml/2018/1/24/551
+Suggested-by: Ying Huang <ying.huang@intel.com>
 Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
- mm/page_alloc.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ mm/page_alloc.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cb416723538f..faa33eac1635 100644
+index dafdcdec9c1f..1d838041931e 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+@@ -1141,6 +1141,9 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 			batch_free = count;
+ 
+ 		do {
++			unsigned long pfn, buddy_pfn;
++			struct page *buddy;
++
  			page = list_last_entry(list, struct page, lru);
- 			/* must delete as __free_one_page list manipulates */
+ 			/* must delete to avoid corrupting pcp list */
  			list_del(&page->lru);
-+			pcp->count--;
+@@ -1150,6 +1153,18 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 				continue;
  
- 			mt = get_pcppage_migratetype(page);
- 			/* MIGRATE_ISOLATE page should not go to pcplists */
-@@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
- 	local_irq_save(flags);
- 	batch = READ_ONCE(pcp->batch);
- 	to_drain = min(pcp->count, batch);
--	if (to_drain > 0) {
-+	if (to_drain > 0)
- 		free_pcppages_bulk(zone, to_drain, pcp);
--		pcp->count -= to_drain;
--	}
- 	local_irq_restore(flags);
- }
- #endif
-@@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
- 	pset = per_cpu_ptr(zone->pageset, cpu);
- 
- 	pcp = &pset->pcp;
--	if (pcp->count) {
-+	if (pcp->count)
- 		free_pcppages_bulk(zone, pcp->count, pcp);
--		pcp->count = 0;
--	}
- 	local_irq_restore(flags);
- }
- 
-@@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
- 	if (pcp->count >= pcp->high) {
- 		unsigned long batch = READ_ONCE(pcp->batch);
- 		free_pcppages_bulk(zone, batch, pcp);
--		pcp->count -= batch;
+ 			list_add_tail(&page->lru, &head);
++
++			/*
++			 * We are going to put the page back to the global
++			 * pool, prefetch its buddy to speed up later access
++			 * under zone->lock. It is believed the overhead of
++			 * calculating buddy_pfn here can be offset by reduced
++			 * memory latency later.
++			 */
++			pfn = page_to_pfn(page);
++			buddy_pfn = __find_buddy_pfn(pfn, 0);
++			buddy = page + (buddy_pfn - pfn);
++			prefetch(buddy);
+ 		} while (--count && --batch_free && !list_empty(list));
  	}
- }
  
 -- 
 2.14.3
