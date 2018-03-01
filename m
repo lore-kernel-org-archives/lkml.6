@@ -1,148 +1,447 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965347AbeCAAfR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 19:35:17 -0500
-Received: from mail-dm3nam03on0070.outbound.protection.outlook.com ([104.47.41.70]:24992
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965280AbeCAAfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 19:35:14 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com;
-Subject: Re: [PATCH 3/3] crypto: ccp - protect RSA implementation from too
- large input data
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: David Howells <dhowells@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <4af6c02f-db3f-3d82-9685-367913c684ff@maciej.szmigiero.name>
-From: Gary R Hook <gary.hook@amd.com>
-Message-ID: <49db7800-b052-79e8-8d8d-24ddc6382e48@amd.com>
-Date: Wed, 28 Feb 2018 18:35:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S965364AbeCAAgo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 19:36:44 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38245 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965280AbeCAAgl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 19:36:41 -0500
+X-Google-Smtp-Source: AG47ELvWbwXWKhJKt6gDNMn5pTRac0NWTTbee2U5frMM0mFpki9zqjVP5iCr9TCVws+hc7QoSRJZXQ0InVqkg0GsvD8=
 MIME-Version: 1.0
-In-Reply-To: <4af6c02f-db3f-3d82-9685-367913c684ff@maciej.szmigiero.name>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: DM3PR12CA0075.namprd12.prod.outlook.com (10.161.151.147) To
- BY2PR12MB0693.namprd12.prod.outlook.com (10.163.113.158)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bc08457c-9ca4-40ca-f80b-08d57f0c4ab7
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BY2PR12MB0693;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;3:mImU/D0XkBjq1xHQp0RLLCs/aWna2VRyqsQmE2AWgpa9KMOxmOP1nZPrtWEv7TRwfHOtVYq85RGcek6wAfZtxVUWMChr51tM5BzQ5s/nTYUrVMglO1s+4oWzH52nmpby6lg2jUCyb5ljd458JP6vXm566fKdMUJ/3w9kQicxRDXgUzRUJJmTPp2Eff28Dpz3JR1GTVJFY6d9jSpT91XrEmSCx03qZUgJ2GXLw6KCEHPF1Nqt7TvMOri5WaPqkYHc;25:fBVO7BL9v/XoZTki8HzaBt9yG9GVwzKpkHTfNqJJgwIUCBAG7d0flTWiAnHMnzqeUZ8PXwIAkAwzG7y75FiBD5yZTTMz+Omvva4AdfSMawGOnxj8VH4ZN1IPsPoUCNyvc2fYEk8n/QTEMTossD1pr2myi/A3XrpbekyjAg/isE7WrdUcuDPGAW9Q2wNOrV18pBTrYcQQVNjfsaD2H0u3Tt4K3yhmYMzdHqQ3wZvwtiCSOFMB+6H7CkbtzFtyJhOZaSnyKc7xKGniL/5MzDkoE3+K/NA9psWu2GhXtE6gK47vyhDVzAmwQvgvqoxiSIezE/FysZr/P8uQmSeQU/+Z4w==;31:TyGVUcOlFNllOPw2MFGcpViMm6bU1//dWQRpdsqFr6DdRuZJkVnEn8jjXnt2O9K5cYgqhrMeoDuVNrwBJDZo9NHYzWRWodIEgVcf7kXpEMRIaCtfTyK25BmQCJOeh1J3sd3J23k5dDE9SgfGFs5evGzOP8lnGMMDrQxO1VxeETrx4Go8YSCi5xergoRJ7QfW42MNOQp/U8IFb6rET6jGMvLL2cvcZViM8N8TisQz78U=
-X-MS-TrafficTypeDiagnostic: BY2PR12MB0693:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;20:hbepVuzM+wgzUS9i9PNrSMuGyFg3GQjd3a4W66+6c/HSYAtSRjMW+myp1OCp5zhmm66xjZj0o8VaTUbcxsE7t90O1hlYNsrJBTZvOhtT4/csuLzXCq6Z7YeHwjtgPbeQ3IratN8PbvJ65j6yedheCGg+djsizfGK26nHrJGnVQmdYv7z/xg+oQouCk5bWrvMOYJhYgIip1mhryAOeUtmAF6pyQB4XJOccvJhQHJJcZYKtkxsa8OZRDH4TnrOMFsv4o+EiXzGnMmxQOXQ24IX8oALJcvh1qUIJf9SDyQS8WGPLzS2FeeiiahDDhFLfhHBSIGID/LTnzpbzGsT3pOE/+MjiS44zrZi4gH2AHE7Zam0RbyfNRSiiWnV7IxPJDY2AcBTDadkuPXXw4oD7EMA9k8KYn7zRoAgPD3DW2OgNyfobB9eDeN9kG1R2zI7rBuoRI+4CAGeqnA5sva3sJPssa6dD+Xu3z9ddO9LVTMeZ4QV2BQCS3kfuV7hFwgZXBhs;4:JVXvERNSfGUUxF6HGk2rRPy1lxpeeDwXNB20fU0XMQRYp5WJKysNfvWDPfSHdxshJz2DoerOcSLw3iD5XWPep8vMvhD9eJVanEsnpzVCi9zzqfDlqeWUMMVs+IC/85KwRWQGvrmc/nmc7x9iooaGiRp0Y/mgwOidnIerXTZ8+3/uRJG/Q/mA/k3XHrHuXXVg/oqdRhl4lQWH1zQRCFScOuq9EgBO6j9Mimdk6m+hdsjIlMmjMTd8paV0nLfFbujIbvDeUUZCWDBwG1Sqd2xKTQ==
-X-Microsoft-Antispam-PRVS: <BY2PR12MB069373A49FA27B6E317FF705FDC60@BY2PR12MB0693.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231220)(944501161)(52105095)(3002001)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:BY2PR12MB0693;BCL:0;PCL:0;RULEID:;SRVR:BY2PR12MB0693;
-X-Forefront-PRVS: 05986C03E0
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(346002)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(105586002)(81166006)(6116002)(36756003)(25786009)(97736004)(59450400001)(53546011)(64126003)(65956001)(86362001)(66066001)(386003)(65806001)(4326008)(76176011)(106356001)(31696002)(3846002)(52396003)(72206003)(52116002)(31686004)(6246003)(53936002)(1250700005)(81156014)(8676002)(478600001)(67846002)(6486002)(90366009)(54906003)(58126008)(110136005)(2950100002)(16576012)(8936002)(6666003)(305945005)(68736007)(2906002)(230700001)(16526019)(186003)(50466002)(5660300001)(65826007)(316002)(7736002)(47776003)(26005)(77096007)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR12MB0693;H:[10.236.109.62];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?iso-8859-2?Q?1;BY2PR12MB0693;23:FP6mIAeg0dhG1M2BFqRCFmiJumskVTI3swNoO3+?=
- =?iso-8859-2?Q?FfkY6lMcsOWLJ6qdwRX57w38WhOOaINEXAoqBvmrpQmIVK5N4BZIn0e60G?=
- =?iso-8859-2?Q?pt6hvTZmu3czZ8CvHvaig3Iiurh5g/KcnaoeO8YTF8RXLnigKblV2LQFF0?=
- =?iso-8859-2?Q?mOt3OgvVxA8g+yFlEc1J+B7TyOHf7mMHHQtnDvLQnlz7gXdpnoan01Q1le?=
- =?iso-8859-2?Q?LFwepYpOxsEJpsGTxTLo3DCBOuEHu9ghpXaDXE2J9FKod4eDjl2XGvZtya?=
- =?iso-8859-2?Q?xboIU350Onh492aiJ8pe2UZZEtcwyxvBc3O6QX7dIbhhkN0zeordMRUtrs?=
- =?iso-8859-2?Q?FVqG5nqnouaTzardw3YGli/cLsA/INRBbpcFGF5EbVC1m9ExRannKTrIsG?=
- =?iso-8859-2?Q?ic25toMbXk3k4FFCVPyCSmDGbC5gIyZDxTmPUXZcxvaNLXxnE8KkWndeKB?=
- =?iso-8859-2?Q?0xsFKtCEJMAu5i1XCEG9QqcfD+ic37FasuwS8Bk8NB8i9zLznjrAxMLyQF?=
- =?iso-8859-2?Q?rMsRCEqQt7pE8zTdmRRKxcxCUGU4HB5aMRoUNP9E7y9FN+xYW7zV1ALf1E?=
- =?iso-8859-2?Q?Az1LBRzVoIf9gAKUH2yK4b6XpJvvkgVwxl6UzqV6s2TW0cDm2C/9qmpuhw?=
- =?iso-8859-2?Q?iGyiwt0Y6JFzOdNtV8I9z1SJssP/NQUR3ynQNb+UwXUGAvivBnb/Z78HE6?=
- =?iso-8859-2?Q?C7yhMKj59PVfgHttsAP5CNfrJ6xOSqIKg7QUtcJLGMSRVmty1orVT6hvA1?=
- =?iso-8859-2?Q?lSZBPk9v/GlTcLB/Ja2KhsJ0Zfg4O8fW+q3NNmrzhVTm/SaDpFPU+8xPRU?=
- =?iso-8859-2?Q?jPzAsvwJQJ4ypk8BZZtky2fxXhsabjLdlxkctigoh1ZiRLRxDrNGqGLtn2?=
- =?iso-8859-2?Q?E9Hey2SZEvlNrRPyITW8u9PWLAXT7Rvmvq5zMBm24YxIxjL4u66elNI0f0?=
- =?iso-8859-2?Q?f30mI/5C2+NalTNkZXMDGfsQ2excIUIE/n6JuwgMKbJVvKF6aNyEhagt6L?=
- =?iso-8859-2?Q?v8Rov6XX/KwXmIVROdO9IMTdXy+u3Yc6x9zqNkhUb7z25fmhL0IWcNA+lm?=
- =?iso-8859-2?Q?V4N8c9z6lBWsNR1cHyH0piKJYqCl/1rbYz3KR8D7A+yDjMH7fta0D3yr6O?=
- =?iso-8859-2?Q?lJ5pbq+5aXDkVqxlHJbmtqDCqfbMTG+ki03gXrnYRZVlKf1yOJyTteWwhp?=
- =?iso-8859-2?Q?zaFzp1C8RLxix7LMYciJpZU0E6k0pCGV0dxU4o6E+Dwe5jcuVVvSwRCcQH?=
- =?iso-8859-2?Q?p6rHadGd3K2OmdG7rEUJ5eGAX5qJpj/JN92sIL3xSXJkH+xCouacd92dIZ?=
- =?iso-8859-2?Q?42NfQG0ILIi1dCR/6u9mal8wkvlsBEzL96QP8O0GiPCe5VCvy5pxT1o6dg?=
- =?iso-8859-2?Q?mf77/2S4C0Y3EPGPjEBoCCmtdhKyMSCuufqePPYb+swhgEvvCldfdAEFVh?=
- =?iso-8859-2?Q?GGT0cKDkLozJjS7Clttwo4CapW2s2GFl41kcBNeYjeVAPgoMztiUrxJJqq?=
- =?iso-8859-2?Q?rgpAB2YHPNR+lKcAqJCc=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;6:aHM3WlBxOPE7UeFR8HxHcgU9vcDW97llU+CGuy2gtdIuGxmJCVwm60jKytSqoXPrD2MIiytCnoH+jC0NJpU+JFr5EbLKUwcnvb49yKKV84ap3z+rZkrap4xS7u05jDVCSZ55JTpQkPSFAfhTdivPj/16bOAOJ3h85xirQnZvEnMHLLQxsAdlqg9Yuxr7lcLX3cbJ9heeMBle55lzn37AcMUrOjgef2t5e/MsFzQ3kP6S1cbWnqrHecI+OGYprs5miM0ITvmJVulw12Ou6Y6p9YN3tq+JvgKUTfKIdgrhUOIg2KpvT4YTmCDPRXrhUirrmly0AXpek6IsqFAXPBx+BG7lZuw+q7Q/QJYNqfeNVgc=;5:son28TjlxvtxBR62tDw1An8AgG7fY8sLq3C7HPagL6oEL3zyITI3Vo5Wp8pQ7yR52uXTQNaSObZKRPEOw0TafCtCOZn16GBUq3Np2WGwTqKydeent6VgOcWzHuEnBUN230d4jkwwqos+SG+oVf7J6LWpjdNMF5MiBMPLwTqmUUM=;24:yDCDxwUM0Q1ioJCgZqoDDCDeAFDCAF1yxXVLUEQRoo/8ogYk/QovCXclyx6Pf9arIErbPJaylfsFnPkrXRu9n3h4heeQDOVMMciv4G9EJ4A=;7:V8DC+uflB9s6KKIGigXRHjL0rB54f2/JMaWban5Lw/kgxTFj4dAjtvNOrvtr1RDsx2UxR+GQKZZRxbuChPQVUxLP3GxJn3bYaHNpZ6WSp2jRIz/6pS3nj39fdkUeZaAOCAAjHLS8jwsypUGVh6OdBEM1gDiDRE24hZWnknPqSx+3rI8iIeMFp7hzXtY6OkiUuuC2SyQ6lGWXjxo7ctaQKl84Bv55yUpIOgb97i2JV6RlGa4usy6lDp0iflwac4II
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;20:Fez7dL5Au4q300Q5dAN9eX5z4OTtnwjwnUNo2s94O5oazuFq6Y29GyQJcmD2RlFhlfuICouxztRCRQ/TQSVN/IZDfOLkKu9HOnuruJ6fq1ZmBmtMX4nUioUqE+kyqxkGyu9I8mtBgok4UWZxR947GgwSMbCwxUxQSXsBkDmfnl6o2dDmrxmA4RHLvdWrX6WPkZC0qHdnH96z623UdO/ijdK5A4lNoTWQzJgm0bDfTMuP1xlrTQ/ZNCSckRNSVLs1
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2018 00:35:10.5823 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc08457c-9ca4-40ca-f80b-08d57f0c4ab7
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR12MB0693
+In-Reply-To: <20180228155949.00fde8ae@w520.home>
+References: <20180227190520.3273.79728.stgit@localhost.localdomain>
+ <20180227144015.228d4f5c@w520.home> <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
+ <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com> <20180228155949.00fde8ae@w520.home>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 28 Feb 2018 16:36:38 -0800
+Message-ID: <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
+Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/24/2018 10:03 AM, Maciej S. Szmigiero wrote:
-> CCP RSA implementation uses a hardware input buffer which size depends only
-> on the current RSA key length. Key modulus and a message to be processed
-> is then copied to this buffer based on their own lengths.
-> 
-> Since the price for providing too long input data is a buffer overflow and
-> there already has been a case when this has happened let's better reject
-> such oversized input data and log an error message in this case so we know
-> what is going on.
-> 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> ---
->   drivers/crypto/ccp/ccp-ops.c | 24 ++++++++++++++++++++----
->   1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/crypto/ccp/ccp-ops.c b/drivers/crypto/ccp/ccp-ops.c
-> index 406b95329b3d..517aeee30abf 100644
-> --- a/drivers/crypto/ccp/ccp-ops.c
-> +++ b/drivers/crypto/ccp/ccp-ops.c
-> @@ -1770,10 +1770,6 @@ static int ccp_run_rsa_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
->   	if (!rsa->exp || !rsa->mod || !rsa->src || !rsa->dst)
->   		return -EINVAL;
->   
-> -	memset(&op, 0, sizeof(op));
-> -	op.cmd_q = cmd_q;
-> -	op.jobid = CCP_NEW_JOBID(cmd_q->ccp);
-> -
->   	/* The RSA modulus must precede the message being acted upon, so
->   	 * it must be copied to a DMA area where the message and the
->   	 * modulus can be concatenated.  Therefore the input buffer
-> @@ -1785,6 +1781,26 @@ static int ccp_run_rsa_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
->   	o_len = 32 * ((rsa->key_size + 255) / 256);
->   	i_len = o_len * 2;
->   
-> +	if (rsa->mod_len > o_len) {
-> +		dev_err(cmd_q->ccp->dev,
-> +			"RSA modulus of %u bytes too large for key size of %u bits\n",
-> +			(unsigned int)rsa->mod_len,
-> +			(unsigned int)rsa->key_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (rsa->src_len > o_len) {
-> +		dev_err(cmd_q->ccp->dev,
-> +			"RSA data of %u bytes too large for key size of %u bits\n",
-> +			(unsigned int)rsa->src_len,
-> +			(unsigned int)rsa->key_size);
-> +		return -EINVAL;
-> +	}
+On Wed, Feb 28, 2018 at 2:59 PM, Alex Williamson
+<alex.williamson@redhat.com> wrote:
+> On Wed, 28 Feb 2018 09:49:21 -0800
+> Alexander Duyck <alexander.duyck@gmail.com> wrote:
+>
+>> On Tue, Feb 27, 2018 at 2:25 PM, Alexander Duyck
+>> <alexander.duyck@gmail.com> wrote:
+>> > On Tue, Feb 27, 2018 at 1:40 PM, Alex Williamson
+>> > <alex.williamson@redhat.com> wrote:
+>> >> On Tue, 27 Feb 2018 11:06:54 -0800
+>> >> Alexander Duyck <alexander.duyck@gmail.com> wrote:
+>> >>
+>> >>> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >>>
+>> >>> This patch is meant to add support for SR-IOV on devices when the VFs are
+>> >>> not managed by the kernel. Examples of recent patches attempting to do this
+>> >>> include:
+>> >>
+>> >> It appears to enable sriov when the _pf_ is not managed by the
+>> >> kernel, but by "managed" we mean that either there is no pf driver or
+>> >> the pf driver doesn't provide an sriov_configure callback,
+>> >> intentionally or otherwise.
+>> >>
+>> >>> virto - https://patchwork.kernel.org/patch/10241225/
+>> >>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>> >>> vfio - https://patchwork.kernel.org/patch/10103353/
+>> >>> uio - https://patchwork.kernel.org/patch/9974031/
+>> >>
+>> >> So is the goal to get around the issues with enabling sriov on each of
+>> >> the above drivers by doing it under the covers or are you really just
+>> >> trying to enable sriov for a truly unmanage (no pf driver) case?  For
+>> >> example, should a driver explicitly not wanting sriov enabled implement
+>> >> a dummy sriov_configure function?
+>> >>
+>> >>> Since this is quickly blowing up into a multi-driver problem it is probably
+>> >>> best to implement this solution in one spot.
+>> >>>
+>> >>> This patch is an attempt to do that. What we do with this patch is provide
+>> >>> a generic call to enable SR-IOV in the case that the PF driver is either
+>> >>> not present, or the PF driver doesn't support configuring SR-IOV.
+>> >>>
+>> >>> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
+>> >>> value is used as the drivers_autoprobe setting of the VFs when they are
+>> >>> being managed by an external entity such as userspace or device firmware
+>> >>> instead of being managed by the kernel.
+>> >>
+>> >> Documentation/ABI/testing/sysfs-bus-pci update is missing.
+>> >
+>> > I can make sure to update that in the next version.
+>> >
+>> >>> One side effect of this change is that the sriov_drivers_autoprobe and
+>> >>> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
+>> >>> disabled. Attempts to update them when SR-IOV is in use will only update
+>> >>> the local value and will not update sriov->autoprobe.
+>> >>
+>> >> And we expect users to understand when sriov_drivers_autoprobe applies
+>> >> vs sriov_unmanaged_autoprobe, even though they're using the same
+>> >> interfaces to enable sriov?  Are all combinations expected to work, ex.
+>> >> unmanaged sriov is enabled, a native pf driver loads, vfs work?  Not
+>> >> only does it seems like there's opportunity to use this incorrectly, I
+>> >> think maybe it might be difficult to use correctly.
+>> >>
+>> >>> I based my patch set originally on the patch by Mark Rustad but there isn't
+>> >>> much left after going through and cleaning out the bits that were no longer
+>> >>> needed, and after incorporating the feedback from David Miller.
+>> >>>
+>> >>> I have included the authors of the original 4 patches above in the Cc here.
+>> >>> My hope is to get feedback and/or review on if this works for their use
+>> >>> cases.
+>> >>>
+>> >>> Cc: Mark Rustad <mark.d.rustad@intel.com>
+>> >>> Cc: Maximilian Heyne <mheyne@amazon.de>
+>> >>> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+>> >>> Cc: David Woodhouse <dwmw@amazon.co.uk>
+>> >>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >>> ---
+>> >>>  drivers/pci/iov.c        |   27 +++++++++++++++++++-
+>> >>>  drivers/pci/pci-driver.c |    2 +
+>> >>>  drivers/pci/pci-sysfs.c  |   62 +++++++++++++++++++++++++++++++++++++++++-----
+>> >>>  drivers/pci/pci.h        |    4 ++-
+>> >>>  include/linux/pci.h      |    1 +
+>> >>>  5 files changed, 86 insertions(+), 10 deletions(-)
+>> >>>
+>> >>> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+>> >>> index 677924ae0350..7b8858bd8d03 100644
+>> >>> --- a/drivers/pci/iov.c
+>> >>> +++ b/drivers/pci/iov.c
+>> >>> @@ -446,6 +446,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+>> >>>       pci_read_config_word(dev, pos + PCI_SRIOV_VF_DID, &iov->vf_device);
+>> >>>       iov->pgsz = pgsz;
+>> >>>       iov->self = dev;
+>> >>> +     iov->autoprobe = true;
+>> >>>       iov->drivers_autoprobe = true;
+>> >>>       pci_read_config_dword(dev, pos + PCI_SRIOV_CAP, &iov->cap);
+>> >>>       pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
+>> >>> @@ -643,8 +644,11 @@ void pci_restore_iov_state(struct pci_dev *dev)
+>> >>>   */
+>> >>>  void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool auto_probe)
+>> >>>  {
+>> >>> -     if (dev->is_physfn)
+>> >>> +     if (dev->is_physfn) {
+>> >>>               dev->sriov->drivers_autoprobe = auto_probe;
+>> >>> +             if (!dev->sriov->num_VFs)
+>> >>> +                     dev->sriov->autoprobe = auto_probe;
+>> >>
+>> >> Why is dev->sriov->autoprobe set any time other than immediately prior
+>> >> to enabling VFs?
+>> >
+>> > My concern here was drivers that are still floating around with the
+>> > old module parameter option for enabling SR-IOV. In the unlikely event
+>> > that somebody was to use such a driver I wanted to make certain that
+>> > the drivers_autoprobe state was pre-populated.
+>
+> Good point, but maybe that just means we should be setting it in
+> sriov_enable()?
 
-We've talked about this, and we believe that a more central fix is 
-warranted. I intend to post another patch tomorrow that should address
-this problem.
+I suppose we could. I would just have to check and see if we have any
+drivers lurking out there that are supporting SR-IOV without
+supporting the sysfs approach. As long as that is the case we could
+probably put it there.
 
-> +
-> +	memset(&op, 0, sizeof(op));
-> +	op.cmd_q = cmd_q;
-> +	op.jobid = CCP_NEW_JOBID(cmd_q->ccp);
-> +
->   	sb_count = 0;
->   	if (cmd_q->ccp->vdata->version < CCP_VERSION(5, 0)) {
->   		/* sb_count is the number of storage block slots required
-> 
+>> >>> +     }
+>> >>>  }
+>> >>>
+>> >>>  /**
+>> >>> @@ -703,6 +707,27 @@ void pci_disable_sriov(struct pci_dev *dev)
+>> >>>  EXPORT_SYMBOL_GPL(pci_disable_sriov);
+>> >>>
+>> >>>  /**
+>> >>> + * pci_sriov_configure_unmanaged - helper to configure unmanaged SR-IOV
+>> >>> + * @dev: the PCI device
+>> >>> + * @nr_virtfn: number of virtual functions to enable, 0 to disable
+>> >>> + *
+>> >>> + * Used to provide generic enable/disable SR-IOV option for devices
+>> >>> + * that do not manage the VFs generated by their driver, or have no
+>> >>> + * driver present.
+>> >>> + */
+>> >>> +int pci_sriov_configure_unmanaged(struct pci_dev *dev, int nr_virtfn)
+>> >>> +{
+>> >>> +     int rc = 0;
+>> >>> +
+>> >>> +     if (!nr_virtfn)
+>> >>> +             pci_disable_sriov(dev);
+>> >>> +     else
+>> >>> +             rc = pci_enable_sriov(dev, nr_virtfn);
+>> >>> +
+>> >>> +     return rc ? rc : nr_virtfn;
+>> >>> +}
+>> >>> +
+>> >>> +/**
+>> >>>   * pci_num_vf - return number of VFs associated with a PF device_release_driver
+>> >>>   * @dev: the PCI device
+>> >>>   *
+>> >>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+>> >>> index 3bed6beda051..2cc68dff6130 100644
+>> >>> --- a/drivers/pci/pci-driver.c
+>> >>> +++ b/drivers/pci/pci-driver.c
+>> >>> @@ -398,7 +398,7 @@ void __weak pcibios_free_irq(struct pci_dev *dev)
+>> >>>  #ifdef CONFIG_PCI_IOV
+>> >>>  static inline bool pci_device_can_probe(struct pci_dev *pdev)
+>> >>>  {
+>> >>> -     return (!pdev->is_virtfn || pdev->physfn->sriov->drivers_autoprobe);
+>> >>> +     return (!pdev->is_virtfn || pdev->physfn->sriov->autoprobe);
+>> >>>  }
+>> >>>  #else
+>> >>>  static inline bool pci_device_can_probe(struct pci_dev *pdev)
+>> >>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+>> >>> index eb6bee8724cc..e701b6dbc267 100644
+>> >>> --- a/drivers/pci/pci-sysfs.c
+>> >>> +++ b/drivers/pci/pci-sysfs.c
+>> >>> @@ -605,6 +605,7 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+>> >>>                                 struct device_attribute *attr,
+>> >>>                                 const char *buf, size_t count)
+>> >>>  {
+>> >>> +     int (*sriov_configure)(struct pci_dev *dev, int num_vfs);
+>> >>>       struct pci_dev *pdev = to_pci_dev(dev);
+>> >>>       int ret;
+>> >>>       u16 num_vfs;
+>> >>> @@ -622,15 +623,20 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+>> >>>               goto exit;
+>> >>>
+>> >>>       /* is PF driver loaded w/callback */
+>> >>> -     if (!pdev->driver || !pdev->driver->sriov_configure) {
+>> >>> -             pci_info(pdev, "Driver doesn't support SRIOV configuration via sysfs\n");
+>> >>> -             ret = -ENOENT;
+>> >>> -             goto exit;
+>> >>> -     }
+>> >>> +     if (pdev->driver && pdev->driver->sriov_configure)
+>> >>> +             sriov_configure = pdev->driver->sriov_configure;
+>> >>> +     else
+>> >>> +             sriov_configure = pci_sriov_configure_unmanaged;
+>> >>
+>> >> So an unwitting user is now able to enable vfs, independent of the
+>> >> pf... the trouble being that they're probably going to expect them to
+>> >> work and the more common case is that they won't.  For instance, what
+>> >> can you do with an igbvf when igb isn't managing the pf?
+>> >
+>> > Well the VFs wouldn't be able to do anything. Basically they would be
+>> > sitting there with no driver loaded on them unless they are assigned
+>> > to a guest, or the root user had enabled the unmanaged option. If you
+>> > did load a driver on it the VF would sit there with link down unless
+>> > either the PF driver is loaded or some user-space entity steps in to
+>> > start managing the PF.
+>> >
+>> > In reality this can already happen as last I recall igb and ixgbe were
+>> > already capable of having the PF driver removed when SR-IOV was
+>> > enabled and VFs were assigned. Basically the VFs just report link down
+>> > and don't do anything. Reloading the PF driver would have it take over
+>> > in the case of igb and ixgbe since they were designed to handle that
+>> > type of scenario.
+>
+> I think only ixgbe behaves this way between the two, igb disables sriov
+> in its remove function unless we're hung up by that silly
+> pci_vfs_assigned() check, which doesn't apply to vfio assignment.
+> Regardless, yes, some pf drivers do leave sriov enabled on remove,
+> whether that's useful or reasonable is another question.
+
+Right. We can argue that another day. I was just sighting the igb behavior.
+
+>> >> Or what happens when vfio-pci owns the pf, sriov is enabled via the
+>> >> unmanaged interface, and the pf user driver segfaults and gets killed,
+>> >> causing vfio-pci to restore the pf state, including wiping the sriov
+>> >> config?
+>> >
+>> > Wiping the config shouldn't have any effect on the allocated VF pci
+>> > devices. It will cause the VFs to act as though they have fallen off
+>> > of the bus though and the guests would see a surprise remove type
+>> > behavior if I am not mistaken. The MMIO and config accesses would fail
+>> > until the SR-IOV configuration is restored. Really this shouldn't be a
+>> > problem as long as the SR-IOV is enabled prior to loading the vfio-pci
+>> > driver as I would assume it would restore the state an re-enable
+>> > SR-IOV.
+>
+> Nope, sriov does not appear to be part of the device state saved and
+> restored around reset, so I think we just end up in an inconsistent
+> state.  Also, vfio-pci stores a copy of the saved state of a device
+> prior to giving the user access to the device and tries to restore that
+> copy when released by the user, so anything that's part of the save
+> state and modified via side-channels while the device is opened, would
+> still be lost.
+
+Well it is but it isn't. The pci_restore_state will call
+pci_restore_iov_state which will just repopulate the data straight out
+of the pdev->sriov structure. I think the assumption is we were
+already carrying enough information that there wasn't any point in
+saving the state since we could just restore it from that structure
+anyway.
+
+I've been chasing it down and can verify that much this morning after
+testing. A regular hit of the sysfs reset control will not erase the
+state. One issue that I think I found that may be a bug though is if I
+load the vfio-pci driver on an interface and unbind it I am seeing the
+port state reset. I have it chased down to the idle D3 code. It looks
+like going from vfio_pci_probe to vfio_pci_remove is triggering the
+equivilent of the pci_pm_reset since it is cycling me through
+D0->D3->D0 without restoring state after the fact. I also verified
+that setting disable_idle_d3 resolves the issue. Would you have any
+complaints about me doing a save_state in the probe call, and a
+restore_state in the remove? It seems like that should probably be the
+easiest fix.
+
+>> > In the grand scheme of things how would the situation you describe be
+>> > any different than someone using the "reset" sysfs control on the PF
+>> > while using SR-IOV with driver supported SR-IOV?
+>
+> Similar, but the pf driver has enabled sriov and can register the
+> reset_done error handler to be notified to re-enable sriov or perform
+> other cleanup.  If the pf driver is not participating in sriov, it
+> would seem exceptional to support this.  Triggering reset via sysfs
+> also falls more closely to shooting yourself in the foot than I think
+> we want to design into driver/subsystem APIs.
+
+To some extent I agree with the shooting yourself in the foot. At the
+same time there isn't actually all that much to re-enable SR-IOV.
+Restoring the PCI SR-IOV configuration space and re-enabling the bus
+master enable.
+
+The Amazon guys would probably know better than I since I haven't
+really worked much with one of these parts yet. Actually the virtio
+that Mark pushed may behave the same way too. As far as I know in
+these firmware cases the hardware itself has everything
+pre-partitioned and set to re-enable as soon as the SR-IOV bits are
+set. I think all they need is a few bits toggled and they are pretty
+much good to go.
+
+>> > I suppose if you really wanted we could add a new call that you could
+>> > put into the sriov_configure pointer that would just make it always
+>> > return error. Then that way the configuration could be locked until
+>> > the driver is unloaded.
+>> >
+>> >> I guess I don't understand how vfs can operate fully independent of the
+>> >> pf and why vfio-pci wouldn't just implement a dummy sriov_configure to
+>> >> avoid contending with such issues.
+>> >
+>> > This approach isn't without risk, but it isn't as if it is really a
+>> > new risk we are introducing, and we could do further work to help
+>> > smooth out issues like this. Much of this depends on the design of the
+>> > device and the drivers involved. What is happening in this case is
+>> > that the VFs are managed outside of the kernel itself either by some
+>> > user-space entity or by a firmware entity.
+>
+> But we can't simply split vfs and pfs as separate resources, the vf is
+> dependent on the pf and that implies a privilege hierarchy, if not at
+> least cooperation.  The pf driver can intentionally or unintentionally
+> disconnect the vfs at any point in time, possibly leading to data loss
+> or at least denial of service for the vf consumer.  I also don't trust
+> that there aren't numerous sriov implementations where the pf isn't
+> privileged to the point of being able to snoop data from the vf.  So
+> what sort of usage models are we enabling for the vf?  A firmware owned
+> vf subject to these conditions seems mostly pointless.
+
+In the case of these sort of parts the PF isn't really all that
+privileged. Usually the PF is just a VF with the SR-IOV capability
+hanging off of it. I suspect the only thing that might outright
+control anything would be the bus master enable bit. Everything else
+could be independent. The PF driver in such cases doesn't do much. It
+is basically just the host for the configuration space.
+
+>> So I was thinking about this some more. In the case of vfio-pci things
+>> are a bit different since you are essentially taking a given device
+>> and handing it to a VM or userspace and it doesn't guarantee a
+>> communication between the two.
+>
+> Doesn't guarantee communication or cooperation or even trust.
+
+Right, but at the same time I consider this to be a shoot yourself in
+the foot type scenario. If you are going to hand off your PF while VFs
+are active then you are asking for whatever repercussions you end up
+getting. I've added a warning and a TAINT_USER flag to my code at this
+point if you load an active PF in vfio, and I have added a function
+that locks the setting so it cannot be changed once we place a PF in
+the control of vfio-pci.
+
+The way I see it there are two scenarios. One where the PF is just a
+VF with an extra bit of SR-IOV configuration space floating off of it.
+The other is where we want to have SR-IOV enabled and have some third
+party managing the PF.  The first one doesn't really care about the
+communication and would prefer that whatever owns the driver on the PF
+just ignore the SR-IOV portion of the configuration space. The second
+one actually cares and would want some sort of
+communication/cooperation but for now I don't see that as being the
+easiest thing to do so it might be best to just let it see a fixed
+number of VFs it just has to work with that.
+
+>> My thought is to look at making SR-IOV configuration static or treat
+>> it as read-only when the vfio-pci driver is loaded on a given
+>> interface. In addition I would set the TAINT_USER flag and add a
+>> warning about loading vfio-pci on an active PF, and provide the number
+>> of VFs that were allocated.
+>>
+>> The idea with all of this being that we would at least have a partial
+>> lock on all of this so that you can allocate some number of VFs, and
+>> then start partitioning things up where you could assign the PF and
+>> VFs as needed to the various interfaces. Once the PF is assigned to
+>> the vfio-pci driver it would be locked in terms of the number of VFs
+>> that are provided so there would be no need for an extra communication
+>> channel between the PF driver and the host to deal with changes.
+>>
+>> Thoughts?
+>
+> Is an sriov configuration ever static?  vfio is the most prolific user
+> of the pci reset interfaces, AFAIK.  Even if we add support for
+> restoring the sriov configuration and even if the pf user isn't trying
+> to be malicious, vf users would need to be prepared for their device
+> arbitrarily dropping off the bus, mmio randomly (from their
+> perspective) being disabled, and maybe other side-effects of the user
+> just trying to use the pf device.  Is there even any guarantee that a
+> pf driver can operate identically, regardless of the state of sriov on
+> the pf?  It seems like the pf driver needs to be aware of which queues
+> are available for itself vs the vfs in some designs.  Is there still
+> long term value in a solution for this if the kernel is tainted?
+
+As far as the device randomly resetting I don't really see how that is
+any different from what we already have in terms of solutions
+including stuff supported by in-driver SR-IOV. The Intel drivers are
+notorious for resetting for any little thing like an MTU change. Us
+resetting due to someone calling open/release on an interface wouldn't
+be anything new. In addition AER can always hit us too. Yes we don't
+have the same recovery mechanisms in place, but in the case of
+something such as this we probably don't need that complex of a
+recovery setup.
+
+I would think there probably is. If not we wouldn't have gotten the
+patches earlier that were still doing the tainting and warning and
+making use of the vfio-pci driver to enable SR-IOV. I suspect the use
+case for all this is to enable SR-IOV, setup the PF in vfio-pci, and
+then assign VFs into and out of guests. I don't see the PF doing a lot
+of moving after it is setup. The taint flag only really applies if
+someone is looking for support and quite honestly I figure for now the
+USER flag is appropriate for this kind of thing since we are deferring
+all the networking control to the PF which is managed by userspace.
+
+> Minimally, it seems like the pf driver (the user driver, not vfio-pci)
+> needs to be a cooperating party in this exchange.  How do we determine
+> that and what QoS guarantees are they providing by agreeing to it?
+
+I think the general idea here is that the user has already tested this
+out and determined for themselves that the user driver does what they
+want/need. If it didn't they wouldn't be going to all these lengths to
+set this up.
+
+> Otherwise it doesn't seem like sriov provides the sort of static, hard
+> partitioning of the device that you're asking for.  A vf is a piece of
+> the pf and we've released ownership and control of the pf to a user.
+> Thanks,
+>
+> Alex
+
+I am pretty sure that you are describing is true of some, but not for
+all. I think the Amazon solutions and the virtio solution are doing
+hard partitioning of the part. I will leave it to those guys to speak
+for themselves since I don't know anything about the hardware design
+of those parts.
