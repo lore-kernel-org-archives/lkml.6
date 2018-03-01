@@ -1,447 +1,411 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965364AbeCAAgo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 19:36:44 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:38245 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965280AbeCAAgl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 19:36:41 -0500
-X-Google-Smtp-Source: AG47ELvWbwXWKhJKt6gDNMn5pTRac0NWTTbee2U5frMM0mFpki9zqjVP5iCr9TCVws+hc7QoSRJZXQ0InVqkg0GsvD8=
+        id S965373AbeCAAhT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 19:37:19 -0500
+Received: from muru.com ([72.249.23.125]:58908 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965280AbeCAAhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 19:37:17 -0500
+Date: Wed, 28 Feb 2018 16:37:14 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: linux-omap@vger.kernel.org
+Cc: Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 07/12] bus: ti-sysc: Handle some devices in omap_device
+ compatible way
+Message-ID: <20180301003714.GB62820@atomide.com>
+References: <20180223210100.86732-1-tony@atomide.com>
+ <20180223210100.86732-8-tony@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228155949.00fde8ae@w520.home>
-References: <20180227190520.3273.79728.stgit@localhost.localdomain>
- <20180227144015.228d4f5c@w520.home> <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
- <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com> <20180228155949.00fde8ae@w520.home>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 28 Feb 2018 16:36:38 -0800
-Message-ID: <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
-Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223210100.86732-8-tony@atomide.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 2:59 PM, Alex Williamson
-<alex.williamson@redhat.com> wrote:
-> On Wed, 28 Feb 2018 09:49:21 -0800
-> Alexander Duyck <alexander.duyck@gmail.com> wrote:
->
->> On Tue, Feb 27, 2018 at 2:25 PM, Alexander Duyck
->> <alexander.duyck@gmail.com> wrote:
->> > On Tue, Feb 27, 2018 at 1:40 PM, Alex Williamson
->> > <alex.williamson@redhat.com> wrote:
->> >> On Tue, 27 Feb 2018 11:06:54 -0800
->> >> Alexander Duyck <alexander.duyck@gmail.com> wrote:
->> >>
->> >>> From: Alexander Duyck <alexander.h.duyck@intel.com>
->> >>>
->> >>> This patch is meant to add support for SR-IOV on devices when the VFs are
->> >>> not managed by the kernel. Examples of recent patches attempting to do this
->> >>> include:
->> >>
->> >> It appears to enable sriov when the _pf_ is not managed by the
->> >> kernel, but by "managed" we mean that either there is no pf driver or
->> >> the pf driver doesn't provide an sriov_configure callback,
->> >> intentionally or otherwise.
->> >>
->> >>> virto - https://patchwork.kernel.org/patch/10241225/
->> >>> pci-stub - https://patchwork.kernel.org/patch/10109935/
->> >>> vfio - https://patchwork.kernel.org/patch/10103353/
->> >>> uio - https://patchwork.kernel.org/patch/9974031/
->> >>
->> >> So is the goal to get around the issues with enabling sriov on each of
->> >> the above drivers by doing it under the covers or are you really just
->> >> trying to enable sriov for a truly unmanage (no pf driver) case?  For
->> >> example, should a driver explicitly not wanting sriov enabled implement
->> >> a dummy sriov_configure function?
->> >>
->> >>> Since this is quickly blowing up into a multi-driver problem it is probably
->> >>> best to implement this solution in one spot.
->> >>>
->> >>> This patch is an attempt to do that. What we do with this patch is provide
->> >>> a generic call to enable SR-IOV in the case that the PF driver is either
->> >>> not present, or the PF driver doesn't support configuring SR-IOV.
->> >>>
->> >>> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
->> >>> value is used as the drivers_autoprobe setting of the VFs when they are
->> >>> being managed by an external entity such as userspace or device firmware
->> >>> instead of being managed by the kernel.
->> >>
->> >> Documentation/ABI/testing/sysfs-bus-pci update is missing.
->> >
->> > I can make sure to update that in the next version.
->> >
->> >>> One side effect of this change is that the sriov_drivers_autoprobe and
->> >>> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
->> >>> disabled. Attempts to update them when SR-IOV is in use will only update
->> >>> the local value and will not update sriov->autoprobe.
->> >>
->> >> And we expect users to understand when sriov_drivers_autoprobe applies
->> >> vs sriov_unmanaged_autoprobe, even though they're using the same
->> >> interfaces to enable sriov?  Are all combinations expected to work, ex.
->> >> unmanaged sriov is enabled, a native pf driver loads, vfs work?  Not
->> >> only does it seems like there's opportunity to use this incorrectly, I
->> >> think maybe it might be difficult to use correctly.
->> >>
->> >>> I based my patch set originally on the patch by Mark Rustad but there isn't
->> >>> much left after going through and cleaning out the bits that were no longer
->> >>> needed, and after incorporating the feedback from David Miller.
->> >>>
->> >>> I have included the authors of the original 4 patches above in the Cc here.
->> >>> My hope is to get feedback and/or review on if this works for their use
->> >>> cases.
->> >>>
->> >>> Cc: Mark Rustad <mark.d.rustad@intel.com>
->> >>> Cc: Maximilian Heyne <mheyne@amazon.de>
->> >>> Cc: Liang-Min Wang <liang-min.wang@intel.com>
->> >>> Cc: David Woodhouse <dwmw@amazon.co.uk>
->> >>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
->> >>> ---
->> >>>  drivers/pci/iov.c        |   27 +++++++++++++++++++-
->> >>>  drivers/pci/pci-driver.c |    2 +
->> >>>  drivers/pci/pci-sysfs.c  |   62 +++++++++++++++++++++++++++++++++++++++++-----
->> >>>  drivers/pci/pci.h        |    4 ++-
->> >>>  include/linux/pci.h      |    1 +
->> >>>  5 files changed, 86 insertions(+), 10 deletions(-)
->> >>>
->> >>> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
->> >>> index 677924ae0350..7b8858bd8d03 100644
->> >>> --- a/drivers/pci/iov.c
->> >>> +++ b/drivers/pci/iov.c
->> >>> @@ -446,6 +446,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
->> >>>       pci_read_config_word(dev, pos + PCI_SRIOV_VF_DID, &iov->vf_device);
->> >>>       iov->pgsz = pgsz;
->> >>>       iov->self = dev;
->> >>> +     iov->autoprobe = true;
->> >>>       iov->drivers_autoprobe = true;
->> >>>       pci_read_config_dword(dev, pos + PCI_SRIOV_CAP, &iov->cap);
->> >>>       pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
->> >>> @@ -643,8 +644,11 @@ void pci_restore_iov_state(struct pci_dev *dev)
->> >>>   */
->> >>>  void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool auto_probe)
->> >>>  {
->> >>> -     if (dev->is_physfn)
->> >>> +     if (dev->is_physfn) {
->> >>>               dev->sriov->drivers_autoprobe = auto_probe;
->> >>> +             if (!dev->sriov->num_VFs)
->> >>> +                     dev->sriov->autoprobe = auto_probe;
->> >>
->> >> Why is dev->sriov->autoprobe set any time other than immediately prior
->> >> to enabling VFs?
->> >
->> > My concern here was drivers that are still floating around with the
->> > old module parameter option for enabling SR-IOV. In the unlikely event
->> > that somebody was to use such a driver I wanted to make certain that
->> > the drivers_autoprobe state was pre-populated.
->
-> Good point, but maybe that just means we should be setting it in
-> sriov_enable()?
+* Tony Lindgren <tony@atomide.com> [180223 21:03]:
+> Now that ti-sysc can manage child devices, we must also be backwards
+> compatible with the current omap_device code. With omap_device, we
+> assume that the child device manages the interconnect target module
+> directly.
+...
+>  /* At this point the module is configured enough to read the revision */
+>  static int sysc_init_module(struct sysc *ddata)
+>  {
+>  	int error;
+>  
+> +	if (ddata->cfg.quirks & (SYSC_QUIRK_NO_IDLE_ON_INIT |
+> +				 SYSC_QUIRK_NO_RESET_ON_INIT)) {
+> +		ddata->revision = sysc_read_revision(ddata);
+> +		goto rev_quirks;
+> +	}
+> +
+>  	error = pm_runtime_get_sync(ddata->dev);
+>  	if (error < 0) {
+>  		pm_runtime_put_noidle(ddata->dev);
 
-I suppose we could. I would just have to check and see if we have any
-drivers lurking out there that are supporting SR-IOV without
-supporting the sysfs approach. As long as that is the case we could
-probably put it there.
+This needs to use only SYSC_QUIRK_NO_IDLE_ON_INIT to skip PM
+runtime. Otherwise the module may not be enabled when it is
+being accessed.
 
->> >>> +     }
->> >>>  }
->> >>>
->> >>>  /**
->> >>> @@ -703,6 +707,27 @@ void pci_disable_sriov(struct pci_dev *dev)
->> >>>  EXPORT_SYMBOL_GPL(pci_disable_sriov);
->> >>>
->> >>>  /**
->> >>> + * pci_sriov_configure_unmanaged - helper to configure unmanaged SR-IOV
->> >>> + * @dev: the PCI device
->> >>> + * @nr_virtfn: number of virtual functions to enable, 0 to disable
->> >>> + *
->> >>> + * Used to provide generic enable/disable SR-IOV option for devices
->> >>> + * that do not manage the VFs generated by their driver, or have no
->> >>> + * driver present.
->> >>> + */
->> >>> +int pci_sriov_configure_unmanaged(struct pci_dev *dev, int nr_virtfn)
->> >>> +{
->> >>> +     int rc = 0;
->> >>> +
->> >>> +     if (!nr_virtfn)
->> >>> +             pci_disable_sriov(dev);
->> >>> +     else
->> >>> +             rc = pci_enable_sriov(dev, nr_virtfn);
->> >>> +
->> >>> +     return rc ? rc : nr_virtfn;
->> >>> +}
->> >>> +
->> >>> +/**
->> >>>   * pci_num_vf - return number of VFs associated with a PF device_release_driver
->> >>>   * @dev: the PCI device
->> >>>   *
->> >>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
->> >>> index 3bed6beda051..2cc68dff6130 100644
->> >>> --- a/drivers/pci/pci-driver.c
->> >>> +++ b/drivers/pci/pci-driver.c
->> >>> @@ -398,7 +398,7 @@ void __weak pcibios_free_irq(struct pci_dev *dev)
->> >>>  #ifdef CONFIG_PCI_IOV
->> >>>  static inline bool pci_device_can_probe(struct pci_dev *pdev)
->> >>>  {
->> >>> -     return (!pdev->is_virtfn || pdev->physfn->sriov->drivers_autoprobe);
->> >>> +     return (!pdev->is_virtfn || pdev->physfn->sriov->autoprobe);
->> >>>  }
->> >>>  #else
->> >>>  static inline bool pci_device_can_probe(struct pci_dev *pdev)
->> >>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
->> >>> index eb6bee8724cc..e701b6dbc267 100644
->> >>> --- a/drivers/pci/pci-sysfs.c
->> >>> +++ b/drivers/pci/pci-sysfs.c
->> >>> @@ -605,6 +605,7 @@ static ssize_t sriov_numvfs_store(struct device *dev,
->> >>>                                 struct device_attribute *attr,
->> >>>                                 const char *buf, size_t count)
->> >>>  {
->> >>> +     int (*sriov_configure)(struct pci_dev *dev, int num_vfs);
->> >>>       struct pci_dev *pdev = to_pci_dev(dev);
->> >>>       int ret;
->> >>>       u16 num_vfs;
->> >>> @@ -622,15 +623,20 @@ static ssize_t sriov_numvfs_store(struct device *dev,
->> >>>               goto exit;
->> >>>
->> >>>       /* is PF driver loaded w/callback */
->> >>> -     if (!pdev->driver || !pdev->driver->sriov_configure) {
->> >>> -             pci_info(pdev, "Driver doesn't support SRIOV configuration via sysfs\n");
->> >>> -             ret = -ENOENT;
->> >>> -             goto exit;
->> >>> -     }
->> >>> +     if (pdev->driver && pdev->driver->sriov_configure)
->> >>> +             sriov_configure = pdev->driver->sriov_configure;
->> >>> +     else
->> >>> +             sriov_configure = pci_sriov_configure_unmanaged;
->> >>
->> >> So an unwitting user is now able to enable vfs, independent of the
->> >> pf... the trouble being that they're probably going to expect them to
->> >> work and the more common case is that they won't.  For instance, what
->> >> can you do with an igbvf when igb isn't managing the pf?
->> >
->> > Well the VFs wouldn't be able to do anything. Basically they would be
->> > sitting there with no driver loaded on them unless they are assigned
->> > to a guest, or the root user had enabled the unmanaged option. If you
->> > did load a driver on it the VF would sit there with link down unless
->> > either the PF driver is loaded or some user-space entity steps in to
->> > start managing the PF.
->> >
->> > In reality this can already happen as last I recall igb and ixgbe were
->> > already capable of having the PF driver removed when SR-IOV was
->> > enabled and VFs were assigned. Basically the VFs just report link down
->> > and don't do anything. Reloading the PF driver would have it take over
->> > in the case of igb and ixgbe since they were designed to handle that
->> > type of scenario.
->
-> I think only ixgbe behaves this way between the two, igb disables sriov
-> in its remove function unless we're hung up by that silly
-> pci_vfs_assigned() check, which doesn't apply to vfio assignment.
-> Regardless, yes, some pf drivers do leave sriov enabled on remove,
-> whether that's useful or reasonable is another question.
+Updated patch below.
 
-Right. We can argue that another day. I was just sighting the igb behavior.
+Regards,
 
->> >> Or what happens when vfio-pci owns the pf, sriov is enabled via the
->> >> unmanaged interface, and the pf user driver segfaults and gets killed,
->> >> causing vfio-pci to restore the pf state, including wiping the sriov
->> >> config?
->> >
->> > Wiping the config shouldn't have any effect on the allocated VF pci
->> > devices. It will cause the VFs to act as though they have fallen off
->> > of the bus though and the guests would see a surprise remove type
->> > behavior if I am not mistaken. The MMIO and config accesses would fail
->> > until the SR-IOV configuration is restored. Really this shouldn't be a
->> > problem as long as the SR-IOV is enabled prior to loading the vfio-pci
->> > driver as I would assume it would restore the state an re-enable
->> > SR-IOV.
->
-> Nope, sriov does not appear to be part of the device state saved and
-> restored around reset, so I think we just end up in an inconsistent
-> state.  Also, vfio-pci stores a copy of the saved state of a device
-> prior to giving the user access to the device and tries to restore that
-> copy when released by the user, so anything that's part of the save
-> state and modified via side-channels while the device is opened, would
-> still be lost.
+Tony
 
-Well it is but it isn't. The pci_restore_state will call
-pci_restore_iov_state which will just repopulate the data straight out
-of the pdev->sriov structure. I think the assumption is we were
-already carrying enough information that there wasn't any point in
-saving the state since we could just restore it from that structure
-anyway.
+8< -------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Thu, 22 Feb 2018 14:03:48 -0800
+Subject: [PATCH] bus: ti-sysc: Handle some devices in omap_device
+ compatible way
 
-I've been chasing it down and can verify that much this morning after
-testing. A regular hit of the sysfs reset control will not erase the
-state. One issue that I think I found that may be a bug though is if I
-load the vfio-pci driver on an interface and unbind it I am seeing the
-port state reset. I have it chased down to the idle D3 code. It looks
-like going from vfio_pci_probe to vfio_pci_remove is triggering the
-equivilent of the pci_pm_reset since it is cycling me through
-D0->D3->D0 without restoring state after the fact. I also verified
-that setting disable_idle_d3 resolves the issue. Would you have any
-complaints about me doing a save_state in the probe call, and a
-restore_state in the remove? It seems like that should probably be the
-easiest fix.
+Now that ti-sysc can manage child devices, we must also be backwards
+compatible with the current omap_device code. With omap_device, we
+assume that the child device manages the interconnect target module
+directly.
 
->> > In the grand scheme of things how would the situation you describe be
->> > any different than someone using the "reset" sysfs control on the PF
->> > while using SR-IOV with driver supported SR-IOV?
->
-> Similar, but the pf driver has enabled sriov and can register the
-> reset_done error handler to be notified to re-enable sriov or perform
-> other cleanup.  If the pf driver is not participating in sriov, it
-> would seem exceptional to support this.  Triggering reset via sysfs
-> also falls more closely to shooting yourself in the foot than I think
-> we want to design into driver/subsystem APIs.
+The drivers needing special handling are the ones that still set
+pm_runtime_irq_safe(). In the long run we want to update those drivers
+as otherwise they will cause problems with genpd as a permanent PM
+runtime usage count is set on the parent device.
 
-To some extent I agree with the shooting yourself in the foot. At the
-same time there isn't actually all that much to re-enable SR-IOV.
-Restoring the PCI SR-IOV configuration space and re-enabling the bus
-master enable.
+We can handle omap_device these devices by improving the ti-sysc quirk
+handling to detect the devices needing special handling based on
+register map and revision register if usable. We also need to implement
+dev_pm_domain for these child devices just like omap_device does.
 
-The Amazon guys would probably know better than I since I haven't
-really worked much with one of these parts yet. Actually the virtio
-that Mark pushed may behave the same way too. As far as I know in
-these firmware cases the hardware itself has everything
-pre-partitioned and set to re-enable as soon as the SR-IOV bits are
-set. I think all they need is a few bits toggled and they are pretty
-much good to go.
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/bus/ti-sysc.c                 | 226 +++++++++++++++++++++++++++++++++-
+ include/linux/platform_data/ti-sysc.h |   1 +
+ 2 files changed, 224 insertions(+), 3 deletions(-)
 
->> > I suppose if you really wanted we could add a new call that you could
->> > put into the sriov_configure pointer that would just make it always
->> > return error. Then that way the configuration could be locked until
->> > the driver is unloaded.
->> >
->> >> I guess I don't understand how vfs can operate fully independent of the
->> >> pf and why vfio-pci wouldn't just implement a dummy sriov_configure to
->> >> avoid contending with such issues.
->> >
->> > This approach isn't without risk, but it isn't as if it is really a
->> > new risk we are introducing, and we could do further work to help
->> > smooth out issues like this. Much of this depends on the design of the
->> > device and the drivers involved. What is happening in this case is
->> > that the VFs are managed outside of the kernel itself either by some
->> > user-space entity or by a firmware entity.
->
-> But we can't simply split vfs and pfs as separate resources, the vf is
-> dependent on the pf and that implies a privilege hierarchy, if not at
-> least cooperation.  The pf driver can intentionally or unintentionally
-> disconnect the vfs at any point in time, possibly leading to data loss
-> or at least denial of service for the vf consumer.  I also don't trust
-> that there aren't numerous sriov implementations where the pf isn't
-> privileged to the point of being able to snoop data from the vf.  So
-> what sort of usage models are we enabling for the vf?  A firmware owned
-> vf subject to these conditions seems mostly pointless.
-
-In the case of these sort of parts the PF isn't really all that
-privileged. Usually the PF is just a VF with the SR-IOV capability
-hanging off of it. I suspect the only thing that might outright
-control anything would be the bus master enable bit. Everything else
-could be independent. The PF driver in such cases doesn't do much. It
-is basically just the host for the configuration space.
-
->> So I was thinking about this some more. In the case of vfio-pci things
->> are a bit different since you are essentially taking a given device
->> and handing it to a VM or userspace and it doesn't guarantee a
->> communication between the two.
->
-> Doesn't guarantee communication or cooperation or even trust.
-
-Right, but at the same time I consider this to be a shoot yourself in
-the foot type scenario. If you are going to hand off your PF while VFs
-are active then you are asking for whatever repercussions you end up
-getting. I've added a warning and a TAINT_USER flag to my code at this
-point if you load an active PF in vfio, and I have added a function
-that locks the setting so it cannot be changed once we place a PF in
-the control of vfio-pci.
-
-The way I see it there are two scenarios. One where the PF is just a
-VF with an extra bit of SR-IOV configuration space floating off of it.
-The other is where we want to have SR-IOV enabled and have some third
-party managing the PF.  The first one doesn't really care about the
-communication and would prefer that whatever owns the driver on the PF
-just ignore the SR-IOV portion of the configuration space. The second
-one actually cares and would want some sort of
-communication/cooperation but for now I don't see that as being the
-easiest thing to do so it might be best to just let it see a fixed
-number of VFs it just has to work with that.
-
->> My thought is to look at making SR-IOV configuration static or treat
->> it as read-only when the vfio-pci driver is loaded on a given
->> interface. In addition I would set the TAINT_USER flag and add a
->> warning about loading vfio-pci on an active PF, and provide the number
->> of VFs that were allocated.
->>
->> The idea with all of this being that we would at least have a partial
->> lock on all of this so that you can allocate some number of VFs, and
->> then start partitioning things up where you could assign the PF and
->> VFs as needed to the various interfaces. Once the PF is assigned to
->> the vfio-pci driver it would be locked in terms of the number of VFs
->> that are provided so there would be no need for an extra communication
->> channel between the PF driver and the host to deal with changes.
->>
->> Thoughts?
->
-> Is an sriov configuration ever static?  vfio is the most prolific user
-> of the pci reset interfaces, AFAIK.  Even if we add support for
-> restoring the sriov configuration and even if the pf user isn't trying
-> to be malicious, vf users would need to be prepared for their device
-> arbitrarily dropping off the bus, mmio randomly (from their
-> perspective) being disabled, and maybe other side-effects of the user
-> just trying to use the pf device.  Is there even any guarantee that a
-> pf driver can operate identically, regardless of the state of sriov on
-> the pf?  It seems like the pf driver needs to be aware of which queues
-> are available for itself vs the vfs in some designs.  Is there still
-> long term value in a solution for this if the kernel is tainted?
-
-As far as the device randomly resetting I don't really see how that is
-any different from what we already have in terms of solutions
-including stuff supported by in-driver SR-IOV. The Intel drivers are
-notorious for resetting for any little thing like an MTU change. Us
-resetting due to someone calling open/release on an interface wouldn't
-be anything new. In addition AER can always hit us too. Yes we don't
-have the same recovery mechanisms in place, but in the case of
-something such as this we probably don't need that complex of a
-recovery setup.
-
-I would think there probably is. If not we wouldn't have gotten the
-patches earlier that were still doing the tainting and warning and
-making use of the vfio-pci driver to enable SR-IOV. I suspect the use
-case for all this is to enable SR-IOV, setup the PF in vfio-pci, and
-then assign VFs into and out of guests. I don't see the PF doing a lot
-of moving after it is setup. The taint flag only really applies if
-someone is looking for support and quite honestly I figure for now the
-USER flag is appropriate for this kind of thing since we are deferring
-all the networking control to the PF which is managed by userspace.
-
-> Minimally, it seems like the pf driver (the user driver, not vfio-pci)
-> needs to be a cooperating party in this exchange.  How do we determine
-> that and what QoS guarantees are they providing by agreeing to it?
-
-I think the general idea here is that the user has already tested this
-out and determined for themselves that the user driver does what they
-want/need. If it didn't they wouldn't be going to all these lengths to
-set this up.
-
-> Otherwise it doesn't seem like sriov provides the sort of static, hard
-> partitioning of the device that you're asking for.  A vf is a piece of
-> the pf and we've released ownership and control of the pf to a user.
-> Thanks,
->
-> Alex
-
-I am pretty sure that you are describing is true of some, but not for
-all. I think the Amazon solutions and the virtio solution are doing
-hard partitioning of the part. I will leave it to those guys to speak
-for themselves since I don't know anything about the hardware design
-of those parts.
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -14,8 +14,10 @@
+ #include <linux/io.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+@@ -68,6 +70,7 @@ struct sysc {
+ 	u32 revision;
+ 	bool enabled;
+ 	bool needs_resume;
++	bool child_needs_resume;
+ 	struct delayed_work idle_work;
+ };
+ 
+@@ -474,6 +477,14 @@ static int sysc_show_reg(struct sysc *ddata,
+ 	return sprintf(bufp, ":%x", ddata->offsets[reg]);
+ }
+ 
++static int sysc_show_name(char *bufp, struct sysc *ddata)
++{
++	if (!ddata->name)
++		return 0;
++
++	return sprintf(bufp, ":%s", ddata->name);
++}
++
+ /**
+  * sysc_show_registers - show information about interconnect target module
+  * @ddata: device driver data
+@@ -488,7 +499,7 @@ static void sysc_show_registers(struct sysc *ddata)
+ 		bufp += sysc_show_reg(ddata, bufp, i);
+ 
+ 	bufp += sysc_show_rev(bufp, ddata);
+-	bufp += sysc_show_rev(bufp, ddata);
++	bufp += sysc_show_name(bufp, ddata);
+ 
+ 	dev_dbg(ddata->dev, "%llx:%x%s\n",
+ 		ddata->module_pa, ddata->module_size,
+@@ -612,11 +623,93 @@ static const struct dev_pm_ops sysc_pm_ops = {
+ 			   NULL)
+ };
+ 
++/* Module revision register based quirks */
++struct sysc_revision_quirk {
++	const char *name;
++	u32 base;
++	int rev_offset;
++	int sysc_offset;
++	int syss_offset;
++	u32 revision;
++	u32 revision_mask;
++	u32 quirks;
++};
++
++#define SYSC_QUIRK(optname, optbase, optrev, optsysc, optsyss,		\
++		   optrev_val, optrevmask, optquirkmask)		\
++	{								\
++		.name = (optname),					\
++		.base = (optbase),					\
++		.rev_offset = (optrev),					\
++		.sysc_offset = (optsysc),				\
++		.syss_offset = (optsyss),				\
++		.revision = (optrev_val),				\
++		.revision_mask = (optrevmask),				\
++		.quirks = (optquirkmask),				\
++	}
++
++static const struct sysc_revision_quirk sysc_revision_quirks[] = {
++	/* These drivers need to be fixed to not use pm_runtime_irq_safe() */
++	SYSC_QUIRK("gpio", 0, 0, 0x10, 0x114, 0x50600801, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("mmu", 0, 0, 0x10, 0x14, 0x00000020, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("mmu", 0, 0, 0x10, 0x14, 0x00000030, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("sham", 0, 0x100, 0x110, 0x114, 0x40000c03, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("smartreflex", 0, -1, 0x24, -1, 0x00000000, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("smartreflex", 0, -1, 0x38, -1, 0x00000000, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("timer", 0, 0, 0x10, 0x14, 0x00000015, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++	SYSC_QUIRK("uart", 0, 0x50, 0x54, 0x58, 0x00000052, 0xffffffff,
++		   SYSC_QUIRK_LEGACY_IDLE),
++};
++
++static void sysc_init_revision_quirks(struct sysc *ddata)
++{
++	const struct sysc_revision_quirk *q;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(sysc_revision_quirks); i++) {
++		q = &sysc_revision_quirks[i];
++
++		if (q->base && q->base != ddata->module_pa)
++			continue;
++
++		if (q->rev_offset >= 0 &&
++		    q->rev_offset != ddata->offsets[SYSC_REVISION])
++			continue;
++
++		if (q->sysc_offset >= 0 &&
++		    q->sysc_offset != ddata->offsets[SYSC_SYSCONFIG])
++			continue;
++
++		if (q->syss_offset >= 0 &&
++		    q->syss_offset != ddata->offsets[SYSC_SYSSTATUS])
++			continue;
++
++		if (q->revision == ddata->revision ||
++		    (q->revision & q->revision_mask) ==
++		    (ddata->revision & q->revision_mask)) {
++			ddata->name = q->name;
++			ddata->cfg.quirks |= q->quirks;
++		}
++	}
++}
++
+ /* At this point the module is configured enough to read the revision */
+ static int sysc_init_module(struct sysc *ddata)
+ {
+ 	int error;
+ 
++	if (ddata->cfg.quirks & SYSC_QUIRK_NO_IDLE_ON_INIT) {
++		ddata->revision = sysc_read_revision(ddata);
++		goto rev_quirks;
++	}
++
+ 	error = pm_runtime_get_sync(ddata->dev);
+ 	if (error < 0) {
+ 		pm_runtime_put_noidle(ddata->dev);
+@@ -626,6 +719,9 @@ static int sysc_init_module(struct sysc *ddata)
+ 	ddata->revision = sysc_read_revision(ddata);
+ 	pm_runtime_put_sync(ddata->dev);
+ 
++rev_quirks:
++	sysc_init_revision_quirks(ddata);
++
+ 	return 0;
+ }
+ 
+@@ -753,6 +849,127 @@ static struct sysc *sysc_child_to_parent(struct device *dev)
+ 	return dev_get_drvdata(parent);
+ }
+ 
++static int __maybe_unused sysc_child_runtime_suspend(struct device *dev)
++{
++	struct sysc *ddata;
++	int error;
++
++	ddata = sysc_child_to_parent(dev);
++
++	error = pm_generic_runtime_suspend(dev);
++	if (error)
++		return error;
++
++	if (!ddata->enabled)
++		return 0;
++
++	return sysc_runtime_suspend(ddata->dev);
++}
++
++static int __maybe_unused sysc_child_runtime_resume(struct device *dev)
++{
++	struct sysc *ddata;
++	int error;
++
++	ddata = sysc_child_to_parent(dev);
++
++	if (!ddata->enabled) {
++		error = sysc_runtime_resume(ddata->dev);
++		if (error < 0)
++			dev_err(ddata->dev,
++				"%s error: %i\n", __func__, error);
++	}
++
++	return pm_generic_runtime_resume(dev);
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int sysc_child_suspend_noirq(struct device *dev)
++{
++	struct sysc *ddata;
++	int error;
++
++	ddata = sysc_child_to_parent(dev);
++
++	error = pm_generic_suspend_noirq(dev);
++	if (error)
++		return error;
++
++	if (!pm_runtime_status_suspended(dev)) {
++		error = pm_generic_runtime_suspend(dev);
++		if (error)
++			return error;
++
++		error = sysc_runtime_suspend(ddata->dev);
++		if (error)
++			return error;
++
++		ddata->child_needs_resume = true;
++	}
++
++	return 0;
++}
++
++static int sysc_child_resume_noirq(struct device *dev)
++{
++	struct sysc *ddata;
++	int error;
++
++	ddata = sysc_child_to_parent(dev);
++
++	if (ddata->child_needs_resume) {
++		ddata->child_needs_resume = false;
++
++		error = sysc_runtime_resume(ddata->dev);
++		if (error)
++			dev_err(ddata->dev,
++				"%s runtime resume error: %i\n",
++				__func__, error);
++
++		error = pm_generic_runtime_resume(dev);
++		if (error)
++			dev_err(ddata->dev,
++				"%s generic runtime resume: %i\n",
++				__func__, error);
++	}
++
++	return pm_generic_resume_noirq(dev);
++}
++#endif
++
++struct dev_pm_domain sysc_child_pm_domain = {
++	.ops = {
++		SET_RUNTIME_PM_OPS(sysc_child_runtime_suspend,
++				   sysc_child_runtime_resume,
++				   NULL)
++		USE_PLATFORM_PM_SLEEP_OPS
++		SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(sysc_child_suspend_noirq,
++					      sysc_child_resume_noirq)
++	}
++};
++
++/**
++ * sysc_legacy_idle_quirk - handle children in omap_device compatible way
++ * @ddata: device driver data
++ * @child: child device driver
++ *
++ * Allow idle for child devices as done with _od_runtime_suspend().
++ * Otherwise many child devices will not idle because of the permanent
++ * parent usecount set in pm_runtime_irq_safe().
++ *
++ * Note that the long term solution is to just modify the child device
++ * drivers to not set pm_runtime_irq_safe() and then this can be just
++ * dropped.
++ */
++static void sysc_legacy_idle_quirk(struct sysc *ddata, struct device *child)
++{
++	if (!ddata->legacy_mode)
++		return;
++
++	if (ddata->cfg.quirks & SYSC_QUIRK_LEGACY_IDLE)
++		dev_pm_domain_set(child, &sysc_child_pm_domain);
++}
++
+ static int sysc_notifier_call(struct notifier_block *nb,
+ 			      unsigned long event, void *device)
+ {
+@@ -770,6 +987,7 @@ static int sysc_notifier_call(struct notifier_block *nb,
+ 		if (error && error != -EEXIST)
+ 			dev_warn(ddata->dev, "could not add %s fck: %i\n",
+ 				 dev_name(dev), error);
++		sysc_legacy_idle_quirk(ddata, dev);
+ 		break;
+ 	default:
+ 		break;
+@@ -974,7 +1192,8 @@ static const struct sysc_capabilities sysc_34xx_sr = {
+ 	.type = TI_SYSC_OMAP34XX_SR,
+ 	.sysc_mask = SYSC_OMAP2_CLOCKACTIVITY,
+ 	.regbits = &sysc_regbits_omap34xx_sr,
+-	.mod_quirks = SYSC_QUIRK_USE_CLOCKACT | SYSC_QUIRK_UNCACHED,
++	.mod_quirks = SYSC_QUIRK_USE_CLOCKACT | SYSC_QUIRK_UNCACHED |
++		      SYSC_QUIRK_LEGACY_IDLE,
+ };
+ 
+ /*
+@@ -995,12 +1214,13 @@ static const struct sysc_capabilities sysc_36xx_sr = {
+ 	.type = TI_SYSC_OMAP36XX_SR,
+ 	.sysc_mask = SYSC_OMAP3_SR_ENAWAKEUP,
+ 	.regbits = &sysc_regbits_omap36xx_sr,
+-	.mod_quirks = SYSC_QUIRK_UNCACHED,
++	.mod_quirks = SYSC_QUIRK_UNCACHED | SYSC_QUIRK_LEGACY_IDLE,
+ };
+ 
+ static const struct sysc_capabilities sysc_omap4_sr = {
+ 	.type = TI_SYSC_OMAP4_SR,
+ 	.regbits = &sysc_regbits_omap36xx_sr,
++	.mod_quirks = SYSC_QUIRK_LEGACY_IDLE,
+ };
+ 
+ /*
+diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
+--- a/include/linux/platform_data/ti-sysc.h
++++ b/include/linux/platform_data/ti-sysc.h
+@@ -45,6 +45,7 @@ struct sysc_regbits {
+ 	s8 emufree_shift;
+ };
+ 
++#define SYSC_QUIRK_LEGACY_IDLE		BIT(8)
+ #define SYSC_QUIRK_RESET_STATUS		BIT(7)
+ #define SYSC_QUIRK_NO_IDLE_ON_INIT	BIT(6)
+ #define SYSC_QUIRK_NO_RESET_ON_INIT	BIT(5)
+-- 
+2.16.2
