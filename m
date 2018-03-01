@@ -1,339 +1,129 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AH8x225P02RlXTjV7wF6CJTAvh9ryGJTleKkQmLEv0NzK2Mf1xQTpr5gfAaBSldhgNA2KaRBn8tg
-ARC-Seal: i=1; a=rsa-sha256; t=1519830475; cv=none;
-        d=google.com; s=arc-20160816;
-        b=meM+9NqSRuehXipb1e3FYEPLWDHP3zPU5Y5plrbTWIezdF0fw3vgkZit6YHFTHKoUm
-         nfHMzy+Bqyaf1tlcRqt9Mt+Gi8c28HRVEHhUXpeuHbL6qPmuDpFDokL0yogFwOmtX+JP
-         U3VfJhuQ+SqprHmUJD/blAkPBWyDaaZEU5TwKM+ByPhWErOYfcIznjoVS4cAj7Y6TxZR
-         SB/St5xjZ6HmMXzyhG2/Kodq12TK446y1PRomejf7W+UFxgrCQD9XInHfbJyCML8Mug7
-         81RWrxFkJZgRentxhVWPzdXA3AA+wZcalxPcPI5PFAaof/AoGIgH949GiWC/i1s1fEWy
-         jK4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=5TGzL2MjsEURwb52t8IwsiSf48xSFZ9gbd+K7I4lm04=;
-        b=FhGi1RnwlMheE8//eTk6bLP3G3rulaLkFaucSQCw4bo36Oej0a6uyeoTEhwD8TcHxw
-         lpnQJGhDKihv5Y6Htg/VRyMtO0ymzKZK4wdwzi+0pxQRzPikeK1fujAU1dkppKyghfus
-         Oz6lOVdDN+Dmy/kNsjQTfKJxUgXUBLZnhloCJadei4xjBpRujkGKVTYHQ2wSckjLiF/v
-         r+BNMtZKtccKK/QvGCCqCRgu0rCjUMJ3UpxmhAp1a66m84z9W7R94X8iTNDe1tEhDaFl
-         xcXQgDZc1nrY8PgMIGNX8AV9i1jJzymYApmZmrx9Rq1C3mXmxHDqHRREfYhdxEvI5mD3
-         3Vww==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v5 01/12] drivers: base: Unified device connection lookup
-Date: Wed, 28 Feb 2018 16:07:38 +0100
-Message-Id: <20180228150749.26831-2-hdegoede@redhat.com>
-In-Reply-To: <20180228150749.26831-1-hdegoede@redhat.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1446298-1519865839-2-15793346388809557953
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enroda, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='SG'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519865838; b=e42fv1Fy0HNT6jjVS9VbvF/ndloHxomL+r6frSEAmrBONTu
+    O8idVZbG6cuReoZzVFGrMmQ1EH3AfO/48vbz2A/h8tTrB6MCiPZazB40OAfS5Z+c
+    nDuhQUnGhUV/FHH+ZQJ6MNjbsDQ4meqfx8MCyy54judNAHYuvSCsX7PXxSgRk590
+    +nEDWznIll0D5GZUCyahMFJnfNCC+qv5l6RZ7w3W4J3r1VuXCo0lHrkf7ICwPNb4
+    hnelCJuCj/5dHl0ddKYvCAXcgEMW5l6sCBEOk3a0ckANyY0K09J7tEhLte3Mf+4A
+    FK9Vq1FlnqdN0qr5Htqhs734zpeatlK5f74v4Ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1519865838; bh=LNiq+n
+    XjVPLdSjUNNVjulLRifIIx5pQcMyQxWEVjz0I=; b=p+4zgkpi988oeleT5OzFlz
+    fVe6BhjYLMvedeDXp2LIAFuQ9+ggmFniOdLqCdBldo8OCgNVyeoHJPcDP39k2rw1
+    aWPzThnuMbjYnxMk1Vqt2eIs90WO/OxDNNwBBPBh/ptKPCtqibKoDmYdmBWupWZI
+    nyXQsNjb4ha+sfs7HLp0niMZzpFj1xgm2MEB3Z6ghPAXw4epS2f8p/1OnT9NKD9J
+    MfAIzsF1sLGp0pkHiYJZivENMALWH/gr0GeYQpt2VDHR6MoA2XCsTt9MSQf3HTlZ
+    qDpUaopKSVD8jEn7dJlyFv55TSdXtETS3D/alKDDhvT/hja3VMA2nO6Lb58SlBUw
+    ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=bniSumeM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nxp.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=bniSumeM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nxp.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965428AbeCAA5E (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Feb 2018 19:57:04 -0500
+Received: from mail-ve1eur01on0084.outbound.protection.outlook.com ([104.47.1.84]:41312
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965421AbeCAA5C (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 28 Feb 2018 19:57:02 -0500
+From: Jun Li <jun.li@nxp.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+CC: "platform-driver-x86@vger.kernel.org"
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH v5 01/12] drivers: base: Unified device connection lookup
+Thread-Topic: [PATCH v5 01/12] drivers: base: Unified device connection lookup
+Thread-Index: AQHTsKaevzsoXOOu8U6iPxtAGBj3OqO6jcMA
+Date: Thu, 1 Mar 2018 00:56:57 +0000
+Message-ID: <VI1PR0402MB3917DD93F114873CC736117389C60@VI1PR0402MB3917.eurprd04.prod.outlook.com>
 References: <20180228150749.26831-1-hdegoede@redhat.com>
+ <20180228150749.26831-2-hdegoede@redhat.com>
+In-Reply-To: <20180228150749.26831-2-hdegoede@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3630;6:BYU6+fEzocPYCrSCXaxKQlCnQs9Y/UkDkZsBrhvm6HK7TD5W7tzeEWDmvOnh+0qQvZkiewe4uhy9HdnQSsKXpeI4L+B/sWKYAYeH0kw6aV8LwrjV304En1xirKe/RpvJjku2tpSHHXLAEJKEalw2RPYe2S0sDlu4C93FKOaIscxuShQoZB7ZZqp52W/doDPnO601N1bJmOa0muCyLhRUlq5zIvm6EEX4M3erQZiVr6pf6qwuWyxEWJ82tjpn0QOIArquQCxUDlmrhPfX9JEUNkwtV0kPr2kArZZyiJPGyCysF05poMIyB/yj3x0tgqSaRbgdwvKgpbWCKGRHj+iz4aF5F6Mh5RiZHdz6I1+kEpF5A0KCKK5LOS06lW9rS4DQ;5:Sc7etgxNoQr8W+EIvjZzam2myLKYIU5g4x0/arRUY0N7iMLF3nzo7kcPAVJAxlpI3O3kyaAJVd4QABCH8kTAi1OOSnLvMx+6/Nz+Dmp4XKiebRz5a2f+BxVaEknkOaPAXvfxGhiozXPkwPdEcdTv1LxcDmTvrmsbormMnL62Oas=;24:F5upzZPOdxdZnPJGPQERUrc7iYGPHsQ+dxU/g2d+dePVpC2B746ohj7dNzlQ4OXjfrcLCLTHukjW6SLIQwBUzx7J2eT+4Z+4CEWQv150Bcc=;7:s+8M7wto05OBzclxJv9f8xsoGQhqY3YGs8JtB0awHhFsSULMowoDCdFKL42VfS45x0CroeGCTqM3haZ49fGahUdYm83Z5tMCflpcw5j59WC4K0bHqU+IVpSxD7S8V5qf55K5DcwGm2iadRwpC9dCW5bn/tYgiMBWrlt27S5DHN+zvEp1YCOjb8bJHg+mp+5Dl5vS7Gd81Jn+gOESAssEyG7bcigknGcBJt+p5lIn0rCbf9GSehO4ZMbI7wZUq4G0
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d138903a-94a9-4abf-2cbc-08d57f0f555e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:VI1PR0402MB3630;
+x-ms-traffictypediagnostic: VI1PR0402MB3630:
+x-microsoft-antispam-prvs: <VI1PR0402MB36302188E590BF87623B1FB389C60@VI1PR0402MB3630.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501221)(52105095)(6055026)(6041288)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:VI1PR0402MB3630;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3630;
+x-forefront-prvs: 05986C03E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(396003)(346002)(376002)(366004)(199004)(189003)(13464003)(74316002)(54906003)(110136005)(66066001)(68736007)(33656002)(2900100001)(7416002)(14454004)(97736004)(105586002)(106356001)(76176011)(186003)(316002)(5250100002)(305945005)(26005)(6506007)(3660700001)(102836004)(2950100002)(7736002)(3280700002)(5660300001)(7696005)(99286004)(4326008)(53936002)(6246003)(478600001)(3846002)(25786009)(55016002)(81166006)(6436002)(81156014)(229853002)(8676002)(6116002)(9686003)(2906002)(86362001)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3630;H:VI1PR0402MB3917.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: AGEi+kcQVAOgWSczP/JomJA9ko/TC2oyfDdX4Ksf6IOXvzpIGS22pISaQ8tz7zmZsIBO6T6XrBbZ0Npz5rgVXf/acMUYvxos5fdYO+s8Vea8SG6wbpEMknOTlPp2Oe0/VhNd88wThgrkh9KjgNZ2B4lIyoKnhuVaSs0hQhFIA+M=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d138903a-94a9-4abf-2cbc-08d57f0f555e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2018 00:56:57.3921
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3630
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454017476208824?=
-X-GMAIL-MSGID: =?utf-8?q?1593657760523901085?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Hi,
+> -----Original Message-----
 
-Several frameworks - clk, gpio, phy, pmw, etc. - maintain
-lookup tables for describing connections and provide custom
-API for handling them. This introduces a single generic
-lookup table and API for the connections.
+> +struct device *device_find_connection(struct device *dev, const char
+> +*con_id) {
+> +	return __device_find_connection(dev, con_id, generic_match, NULL); }
 
-The motivation for this commit is centralizing the
-connection lookup, but the goal is to ultimately extract the
-connection descriptions also from firmware by using the
-fwnode_graph_* functions and other mechanisms that are
-available.
+-       return __device_find_connection(dev, con_id, generic_match, NULL);
++       return __device_find_connection(dev, con_id, NULL, generic_match);
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v5:
--Add missing documentation for @list struct devcon member
+Jun Li
+> +EXPORT_SYMBOL_GPL(device_find_connection);
 
-Changes in v4:
--Add Andy's Reviewed-by
-
-Changes in v3:
--Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
-
-Changes in v2:
--Add a (struct devcon) cast to the DEVCON() macro
----
- Documentation/driver-api/device_connection.rst |  43 ++++++++
- drivers/base/Makefile                          |   3 +-
- drivers/base/devcon.c                          | 139 +++++++++++++++++++++++++
- include/linux/connection.h                     |  34 ++++++
- 4 files changed, 218 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/driver-api/device_connection.rst
- create mode 100644 drivers/base/devcon.c
- create mode 100644 include/linux/connection.h
-
-diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-new file mode 100644
-index 000000000000..64a3e5e9bb7c
---- /dev/null
-+++ b/Documentation/driver-api/device_connection.rst
-@@ -0,0 +1,43 @@
-+==================
-+Device connections
-+==================
-+
-+Introduction
-+------------
-+
-+Devices often have connections to other devices that are outside of the direct
-+child/parent relationship. A serial or network communication controller, which
-+could be a PCI device, may need to be able to get a reference to its PHY
-+component, which could be attached for example to the I2C bus. Some device
-+drivers need to be able to control the clocks or the GPIOs for their devices,
-+and so on.
-+
-+Device connections are generic descriptions of any type of connection between
-+two separate devices.
-+
-+Device connections alone do not create a dependency between the two devices.
-+They are only descriptions which are not tied to either of the devices directly.
-+A dependency between the two devices exists only if one of the two endpoint
-+devices requests a reference to the other. The descriptions themselves can be
-+defined in firmware (not yet supported) or they can be built-in.
-+
-+Usage
-+-----
-+
-+Device connections should exist before device ``->probe`` callback is called for
-+either endpoint device in the description. If the connections are defined in
-+firmware, this is not a problem. It should be considered if the connection
-+descriptions are "built-in", and need to be added separately.
-+
-+The connection description consists of the names of the two devices with the
-+connection, i.e. the endpoints, and unique identifier for the connection which
-+is needed if there are multiple connections between the two devices.
-+
-+After a description exists, the devices in it can request reference to the other
-+endpoint device, or they can request the description itself.
-+
-+API
-+---
-+
-+.. kernel-doc:: drivers/base/devcon.c
-+   : functions: __device_find_connection device_find_connection add_device_connection remove_device_connection
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index e32a52490051..12a7f64d35a9 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   driver.o class.o platform.o \
- 			   cpu.o firmware.o init.o map.o devres.o \
- 			   attribute_container.o transport_class.o \
--			   topology.o container.o property.o cacheinfo.o
-+			   topology.o container.o property.o cacheinfo.o \
-+			   devcon.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
- obj-y			+= power/
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-new file mode 100644
-index 000000000000..1628dcb34709
---- /dev/null
-+++ b/drivers/base/devcon.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * Device connections
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ */
-+
-+#include <linux/connection.h>
-+#include <linux/device.h>
-+
-+static DEFINE_MUTEX(devcon_lock);
-+static LIST_HEAD(devcon_list);
-+
-+/**
-+ * __device_find_connection - Find physical connection to a device
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and another
-+ * device. @match will be used to convert the connection description to data the
-+ * caller is expecting to be returned.
-+ */
-+void *__device_find_connection(struct device *dev, const char *con_id,
-+			       void *data,
-+			       void *(*match)(struct devcon *con, int ep,
-+					      void *data))
-+{
-+	const char *devname = dev_name(dev);
-+	struct devcon *con;
-+	void *ret = NULL;
-+	int ep;
-+
-+	if (!match)
-+		return NULL;
-+
-+	rcu_read_lock();
-+
-+	list_for_each_entry_rcu(con, &devcon_list, list) {
-+		ep = match_string(con->endpoint, 2, devname);
-+		if (ep < 0)
-+			continue;
-+
-+		if (con_id && strcmp(con->id, con_id))
-+			continue;
-+
-+		ret = match(con, !ep, data);
-+		if (ret)
-+			break;
-+	}
-+
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(__device_find_connection);
-+
-+#include <linux/platform_device.h>
-+#include <linux/spi/spi.h>
-+#include <linux/i2c.h>
-+#include <linux/pci.h>
-+
-+static struct bus_type *generic_match_buses[] = {
-+	&platform_bus_type,
-+#ifdef CONFIG_PCI
-+	&pci_bus_type,
-+#endif
-+#ifdef CONFIG_I2C
-+	&i2c_bus_type,
-+#endif
-+#ifdef CONFIG_SPI_MASTER
-+	&spi_bus_type,
-+#endif
-+	NULL,
-+};
-+
-+/* This tries to find the device from the most common bus types by name. */
-+static void *generic_match(struct devcon *con, int ep, void *data)
-+{
-+	struct bus_type *bus;
-+	struct device *dev;
-+
-+	for (bus = generic_match_buses[0]; bus; bus++) {
-+		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
-+		if (dev)
-+			return dev;
-+	}
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the other device to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * device_find_connection - Find two devices connected together
-+ * @dev: Device with the connection
-+ * @con_id: Identifier for the connection
-+ *
-+ * Find a connection with unique identifier @con_id between @dev and
-+ * another device. On success returns handle to the device that is connected
-+ * to @dev, with the reference count for the found device incremented. Returns
-+ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
-+ * connection was found but the other device has not been enumerated yet.
-+ */
-+struct device *device_find_connection(struct device *dev, const char *con_id)
-+{
-+	return __device_find_connection(dev, con_id, generic_match, NULL);
-+}
-+EXPORT_SYMBOL_GPL(device_find_connection);
-+
-+/**
-+ * add_device_connection - Register a collection of connection descriptions
-+ * @con: Collection of connection descriptions to be registered
-+ */
-+void add_device_connection(struct devcon *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_add_tail_rcu(&con->list, &devcon_list);
-+	mutex_unlock(&devcon_lock);
-+}
-+EXPORT_SYMBOL_GPL(add_device_connection);
-+
-+/**
-+ * remove_device_connections - Unregister collection of connection descriptions
-+ * @con: Collection of connection descriptions to be unregistered
-+ */
-+void remove_device_connection(struct devcon *con)
-+{
-+	mutex_lock(&devcon_lock);
-+	list_del_rcu(&con->list);
-+	mutex_unlock(&devcon_lock);
-+	/* The caller may free the devcon struct immediately afterwards. */
-+	synchronize_rcu();
-+}
-+EXPORT_SYMBOL_GPL(remove_device_connection);
-diff --git a/include/linux/connection.h b/include/linux/connection.h
-new file mode 100644
-index 000000000000..b2af70df5a97
---- /dev/null
-+++ b/include/linux/connection.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#ifndef _LINUX_CONNECTION_H_
-+#define _LINUX_CONNECTION_H_
-+
-+#include <linux/list.h>
-+
-+struct device;
-+
-+/**
-+ * struct devcon - Device Connection Descriptor
-+ * @endpoint: The names of the two devices connected together
-+ * @id: Unique identifier for the connection
-+ * @list: List head, private for devcon internal use only
-+ */
-+struct devcon {
-+	const char		*endpoint[2];
-+	const char		*id;
-+	struct list_head	list;
-+};
-+
-+void *__device_find_connection(struct device *dev, const char *con_id,
-+			       void *data,
-+			       void *(*match)(struct devcon *con, int ep,
-+					      void *data));
-+
-+struct device *device_find_connection(struct device *dev, const char *con_id);
-+
-+#define DEVCON(_ep0, _ep1, _id)    (struct devcon) { { _ep0, _ep1 }, _id, }
-+
-+void add_device_connection(struct devcon *con);
-+void remove_device_connection(struct devcon *con);
-+
-+#endif /* _LINUX_CONNECTION_H_ */
--- 
-2.14.3
