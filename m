@@ -1,68 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967235AbeCAKYS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:24:18 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:58538 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966014AbeCAKYO (ORCPT
+        id S967328AbeCAKYk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:24:40 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37717 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966289AbeCAKYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:24:14 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w21AO3J9019311
-X-Nifty-SrcIP: [209.85.217.169]
-X-Google-Smtp-Source: AG47ELumyNgf9yMfkMKk7xRw8NBNX8Mqe4OlMI3BGEyfItTeGtkUc1n3in6nBm6ZUo7cy5xxVZIdLN072OOjREJRIKA=
-MIME-Version: 1.0
-In-Reply-To: <20180301100640.7hi4lbx6a4gzhw2k@ltop.local>
-References: <20180227194828.GA29918@bombadil.infradead.org>
- <5a85a7cf-c59c-f338-2087-c9de799adbe8@infradead.org> <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
- <20180227223611.vglxasfco524cdy7@ltop.local> <CAK7LNASjV8jH+BMd0_4v9GeXiizyY9+hAQiBs+sZnz4S3eGB5Q@mail.gmail.com>
- <20180301100640.7hi4lbx6a4gzhw2k@ltop.local>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 19:23:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASYevi5UvTPqL9+00D5bthPwu_dPwaCz6M8DghjTy9=mg@mail.gmail.com>
-Message-ID: <CAK7LNASYevi5UvTPqL9+00D5bthPwu_dPwaCz6M8DghjTy9=mg@mail.gmail.com>
-Subject: Re: [PATCH] sparse doesn't support indirect_branch attribute
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Mar 2018 05:24:35 -0500
+X-Google-Smtp-Source: AG47ELsRBSzKsilNrsMZTVg1OaJ6uF5MiTdtHnLgYbE/we8yWWqZmZMcaZGm617Z3Xuljdo889puZA==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <D5C55585-6CB6-4F47-9AD0-6CE961BA1392@lightnvm.io>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_ED1D8CEC-8351-4A7E-9F4F-CE0937B9F135";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH V2] lightnvm: pblk: remove unused variable
+Date: Thu, 1 Mar 2018 11:24:30 +0100
+In-Reply-To: <2cf2565b-0a2c-ecba-ea55-9a63591d8f93@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <1519833444-28160-1-git-send-email-javier@cnexlabs.com>
+ <2cf2565b-0a2c-ecba-ea55-9a63591d8f93@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 19:06 GMT+09:00 Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
-> On Wed, Feb 28, 2018 at 10:30:58AM +0900, Masahiro Yamada wrote:
->> 2018-02-28 7:36 GMT+09:00 Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
->> >
->> > To compensate this, I sent a patch  to use '-Wno-unknown-attribute' for kernel
->> > builds. Masahiro Yamada has already taken it to the linux-kbuild tree.
->> > I'm not sure if it's planned for the next -rc or for 4.17, though.
->>
->> I am planning to send it in the next MW (i.e. v4.17-rc1)
->>
->> If you want me to send this earlier as fixes PR,
->> please let me know.
->>
->
-> Hi,
->
-> Thanks for having taken this patch promptly.
-> Given that the warnings is issued more than 148000 and thus tend
-> to drown the other, more useful, warnings in the noise, I think
-> it would be a good thing to have this patch already in 4.16.
-> I should have put this clearly in the patch description.
->
-> Best regards,
-> -- Luc Van Oostenryck
 
-
-OK.  I will send a PR for v4.16-rc4 this weekend.
+--Apple-Mail=_ED1D8CEC-8351-4A7E-9F4F-CE0937B9F135
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
 
 
+> On 1 Mar 2018, at 11.07, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 02/28/2018 04:57 PM, Javier Gonz=C3=A1lez wrote:
+>> # Changes since V1:
+>>  - Rebase on top of latest 2.0 changes
+>> Javier Gonz=C3=A1lez (1):
+>>   lightnvm: pblk: remove unused variable
+>>  drivers/lightnvm/pblk-core.c | 3 ---
+>>  1 file changed, 3 deletions(-)
+>=20
+> Okay if I merge this with Hans' patch? It has not gone upstream yet.
 
+Of course!
 
--- 
-Best Regards
-Masahiro Yamada
+Javier
+
+--Apple-Mail=_ED1D8CEC-8351-4A7E-9F4F-CE0937B9F135
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqX1N4ACgkQYx8FO3WZ
+GMrNmQ/+KVesNj1NbBlHdrbgW1CVgwau5syMCyq30tsBCqmLTPXZ5KbX+SRxp5oA
+d8cRej2ZdTYy8kXtGo4/ugEO/XOcqjzVaS7YpHox6cWx5U6BDPTQj/UOVT5K9MsU
+rIc6fIcWFkqGdibcUn+xW/E92j8qpyzSxd75VJF+kSlAaL01g/ksmapBJDpZ77EF
+subHy+znPR9t90ahB+s2wtTbWkGjaVux/jEHFdmwYsaUtWavrzEqCM3InX/xGqpj
+BVFaD/OQQFaeeaeTXbOJV5qDVh/IXExKPxbOWrBuEzjWB1OLvBOZcKtlAHPHYm37
+KN177qReqiDT8yShpP9FsvKfXaMEYc4TsZGUpNbcR/CWAJojIxkSQPo7rjFYv3E5
+Ajzrvdwd6KbYZgsA0iAESvy8iC8fb4OF3sq6M5anDA+yyz8TuqA4ZbyKURgEhvV/
+CQePUNCOIz66Sj2KRJhpdZfg7ho+U+vkGLK8wHidFKLXHMDyhx6o1ULa7Sckhnd0
+swSIa/yFRqZ4hZjqrQii3Qr2Fo/KSNUe3fZuGIs/1VfKixGzoFBsBwTtmiJgsQu5
+swiP1x1x2npmibUkgKt46Bs8M/vijcWmvNBs2D3dMRvIdQvaHNR6zK8R/jKS68cb
+/F1oyOexVTOMSK83Di8yQNggDXP2r6QcQ2FLm2S3YgVJkAs0X4Q=
+=b00f
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_ED1D8CEC-8351-4A7E-9F4F-CE0937B9F135--
