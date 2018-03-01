@@ -1,82 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031059AbeCAOEA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:04:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38950 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030876AbeCAOD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:03:56 -0500
-Date: Thu, 1 Mar 2018 14:03:52 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: robh+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        robin.murphy@arm.com, arnd@arndb.de, loic.pallardy@st.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: stm32: Add bindings for Extended
- TrustZone Protection
-Message-ID: <20180301140351.gokvstohs3mghz5q@lakrids.cambridge.arm.com>
-References: <20180301135806.19982-1-benjamin.gaignard@st.com>
- <20180301135806.19982-2-benjamin.gaignard@st.com>
+        id S1031137AbeCAOFE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:05:04 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:57046 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030876AbeCAOFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:05:02 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w21E4o0h022827
+X-Nifty-SrcIP: [209.85.213.48]
+X-Google-Smtp-Source: AG47ELt5v5tgCRRr/od/s1IjmJtn7qi4+r6lVvQuTPQFchusfyBA+j/EpeKurlh2b3BZsmB/f1bZTQiF+aW1NvwOfxY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301135806.19982-2-benjamin.gaignard@st.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
+References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-3-robh@kernel.org>
+ <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
+ <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com> <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 1 Mar 2018 23:04:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASCbTg1qSzyBQJ7LXGf1ZPOKZvWrOMXLWA+vc=sDjgHpA@mail.gmail.com>
+Message-ID: <CAK7LNASCbTg1qSzyBQJ7LXGf1ZPOKZvWrOMXLWA+vc=sDjgHpA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] kbuild: add dtc as dependency on .dtb files
+To: Rob Herring <robh@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 02:58:05PM +0100, Benjamin Gaignard wrote:
-> Extended TrustZone Protection driver is very basic and only needs
-> to know where are the registers (no clock, no interrupt)
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  .../bindings/arm/stm32/st,stm32mp1-etzpc.txt       | 25 ++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt b/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
-> new file mode 100644
-> index 000000000000..9407e37f7d15
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
-> @@ -0,0 +1,25 @@
-> +STMicroelectronics STM32 Extended TrustZone Protection driver
-> +
-> +Required properties:
-> + - compatible : value should be "st,stm32mp1-etzpc"
-> + - reg : physical base address of the IP registers and length of memory
-> +	 mapped region.
-> + - protected-devices: list of phandle of devices protected by etzpc.
-> +		      Because etzpc driver rely on the phandle index in
-> +		      the list, holes must be filled with a disabled node.
+2018-03-01 22:28 GMT+09:00 Rob Herring <robh@kernel.org>:
+> On Wed, Feb 28, 2018 at 11:45 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-03-01 13:33 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>>> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
+>>>> If dtc is rebuilt, we should rebuild .dtb files with the new dtc.
+>>>>
+>>>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> Signed-off-by: Rob Herring <robh@kernel.org>
+>>>
+>>>
+>>> Hmm, I am not 100% sure about this.
+>>>
+>>> Is there a case where resulted DTBs
+>>> depend on DTC version?
+>>>
+>>>
+>>> If I understand correctly,
+>>> DTS and DTB are 1:1
+>>> Unlike CC, there is no room for optimization.
+>>
+>>
+>> Maybe I was wrong.
+>>
+>> Is there room for optimization
+>> in 'DT strings' section?
+>
+> Not sure.
+>
+>> I guess it is optimized enough to avoid string duplication,
+>> but there could be different results
+>> without changing the specification.
+>
+> What I care about is rebuilding so new warnings get emitted especially
+> when developing those checks. Right now I have to manually delete the
+> dtb files each time.
+>
 
-... where the index corresponds to what, exactly?
+Fair enough.
+Probably, it is better to make sure all DTB are compiled
+by the latest DTC.
 
-Padding with a disabled node seems very hacky.
+Please go ahead.
+Seemed already queued up  :-)
 
-Thanks,
-Mark.
 
-> +
-> +Example for stm32mp1:
-> +
-> +reserved: disabled_node {
-> +	status = "disabled";
-> +};
-> +
-> +etzpc: etzpc@5c007000 {
-> +	compatible = "st,stm32mp1-etzpc";
-> +	reg = <0x5c007000 0x400>;
-> +		protected-devices = <&usart1>,
-> +				    <&spi6>,
-> +				    <&i2c4>,
-> +				    <&reserved>,
-> +				    <&rng1>;
-> +};
-> -- 
-> 2.15.0
-> 
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
