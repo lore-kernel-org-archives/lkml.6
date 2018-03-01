@@ -1,26 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967136AbeCAJo4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:44:56 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36316 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967079AbeCAJou (ORCPT
+        id S967167AbeCAJpL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:45:11 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64623 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967086AbeCAJpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:44:50 -0500
+        Thu, 1 Mar 2018 04:45:05 -0500
 From: <patrice.chotard@st.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <alexandre.torgue@st.com>,
         <lee.jones@linaro.org>
 CC: <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH 0/6] Add mmc support for STM32F7 boards
-Date: Thu, 1 Mar 2018 10:43:35 +0100
-Message-ID: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH 6/6] ARM: dts: stm32: Fix sdio2 rcc hard coded value
+Date: Thu, 1 Mar 2018 10:43:41 +0100
+Message-ID: <1519897421-23803-7-git-send-email-patrice.chotard@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
+References: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG6NODE3.st.com
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG6NODE3.st.com
  (10.75.127.18)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
  signatures=0
@@ -30,29 +32,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-This series adds :
- _ SDIO pins definition for STM32F7 SoCs family
- _ add sdio1 DT entry for STM32F746 Discovery board
- _ add sdio1 DT entry for STM32F746 Evaluation board
- _ add sdio1 DT entry for STM32F769 Discovery board
- _ add SDMMC2 entry in stm32f7-rcc.h
- _ replace sdio2 hard coded value in stm32f746.dtsi
+Replace sdio2 rcc hard coded clock value by its macro.
 
-Patrice Chotard (6):
-  ARM: dts: stm32: Add sdio pins definition for stm32f7
-  ARM: dts: stm32: Enable sdio1 for stm32f746-disco
-  ARM: dts: stm32: Enable sdio1 for stm32f746-eval
-  ARM: dts: stm32: Enable sdio1 for stm32f769-disco
-  dt-bindings: mfd: Add STM32F7 SDMMC2 rcc entry
-  ARM: dts: stm32: Fix sdio2 rcc hard coded value
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/boot/dts/stm32f746.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/stm32746g-eval.dts   | 17 ++++++++++
- arch/arm/boot/dts/stm32f7-pinctrl.dtsi | 62 ++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/stm32f746-disco.dts  | 19 +++++++++++
- arch/arm/boot/dts/stm32f746.dtsi       |  2 +-
- arch/arm/boot/dts/stm32f769-disco.dts  | 19 +++++++++++
- include/dt-bindings/mfd/stm32f7-rcc.h  |  1 +
- 6 files changed, 119 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
+index 07c29658696c..2c5704f96801 100644
+--- a/arch/arm/boot/dts/stm32f746.dtsi
++++ b/arch/arm/boot/dts/stm32f746.dtsi
+@@ -432,7 +432,7 @@
+ 			compatible = "arm,pl180", "arm,primecell";
+ 			arm,primecell-periphid = <0x00880180>;
+ 			reg = <0x40011c00 0x400>;
+-			clocks = <&rcc 0 167>;
++			clocks = <&rcc 0 STM32F7_APB2_CLOCK(SDMMC2)>;
+ 			clock-names = "apb_pclk";
+ 			interrupts = <103>;
+ 			max-frequency = <48000000>;
 -- 
 1.9.1
