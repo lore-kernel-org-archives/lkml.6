@@ -1,73 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163477AbeCAXex (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:34:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:61783 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163178AbeCAXev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:34:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
-   d="scan'208";a="34829814"
-From: Tony Luck <tony.luck@intel.com>
-To: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
-Subject: [PATCH] x86/mce: Save microcode revision in machine check records
-Date: Thu,  1 Mar 2018 15:34:49 -0800
-Message-Id: <20180301233449.24311-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.14.1
+        id S1163480AbeCAXfv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:35:51 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:55248 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163185AbeCAXdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:33:22 -0500
+Date: Fri, 2 Mar 2018 01:33:17 +0200
+From: Baruch Siach <baruch@tkos.co.il>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <stefan.wahren@i2se.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
+Message-ID: <20180301233317.ptmgx4coj6iedc34@tarshish>
+References: <20180228134822.2194009-1-arnd@arndb.de>
+ <CACRpkdajRp6PKYzMyeV81tu4dZxhnEDv7cKBvSCsNOUdW24KpQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdajRp6PKYzMyeV81tu4dZxhnEDv7cKBvSCsNOUdW24KpQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updating microcode used to be relatively rare. Now that it has become
-more common we should save the microcode version in a machine check
-record to make sure that those people looking at the error have this
-important information bundled with the rest of the logged information.
+Hi Linus,
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/uapi/asm/mce.h  | 1 +
- arch/x86/kernel/cpu/mcheck/mce.c | 5 +++++
- 2 files changed, 6 insertions(+)
+On Thu, Mar 01, 2018 at 10:28:52AM +0100, Linus Walleij wrote:
+> On Wed, Feb 28, 2018 at 2:48 PM, Arnd Bergmann <arnd@arndb.de> wrote: 
+> > When the firmware driver is a loadable module, the gpio driver cannot be
+> > built-in:
+> >
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
+> > gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
+> > gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
+> > gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
+> > gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
+> > gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
+> > drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
+> > drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
+> > gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
+> >
+> > We already have a Kconfig dependency for it, but when compile-testing, it
+> > is disregarded.
+> >
+> > This changes the dependency so that compile-testing is only done when the
+> > firmware driver is completely disabled.
+> >
+> > Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Baruch, are you waiting for a fixed fix or should I apply this?
+> 
+> It's a bit unclear from the mail chain what action I should take...
 
-diff --git a/arch/x86/include/uapi/asm/mce.h b/arch/x86/include/uapi/asm/mce.h
-index 91723461dc1f..435db58a7bad 100644
---- a/arch/x86/include/uapi/asm/mce.h
-+++ b/arch/x86/include/uapi/asm/mce.h
-@@ -30,6 +30,7 @@ struct mce {
- 	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
- 	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
- 	__u64 ppin;	/* Protected Processor Inventory Number */
-+	__u32 microcode;/* Microcode revision */
- };
- 
- #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 8ff94d1e2dce..b9403c446e05 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -118,6 +118,8 @@ BLOCKING_NOTIFIER_HEAD(x86_mce_decoder_chain);
- /* Do initial initialization of a struct mce */
- void mce_setup(struct mce *m)
- {
-+	struct cpuinfo_x86 *c;
-+
- 	memset(m, 0, sizeof(struct mce));
- 	m->cpu = m->extcpu = smp_processor_id();
- 	/* We hope get_seconds stays lockless */
-@@ -130,6 +132,9 @@ void mce_setup(struct mce *m)
- 
- 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
- 		rdmsrl(MSR_PPIN, m->ppin);
-+
-+	c = &cpu_data(m->cpu);
-+	m->microcode = c->microcode;
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
+This patch fixes the issue. I think that an inline comment should be added at 
+least, because otherwise the dependency in incomprehensible. I also prefer the
+
+  depends on m || DEPENDENCY != m 
+
+style to express this kind of dependencies.
+
+What do you think?
+
+baruch
+
 -- 
-2.14.1
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
