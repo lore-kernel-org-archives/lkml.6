@@ -1,134 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162575AbeCAWVV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 17:21:21 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14646 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162460AbeCAWVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:21:20 -0500
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 01 Mar 2018 14:21:17 -0800
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-To: Palmer Dabbelt <palmer@sifive.com>, <parri.andrea@gmail.com>
-CC: <peterz@infradead.org>, <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <albert@sifive.com>,
-        <stern@rowland.harvard.edu>, Will Deacon <will.deacon@arm.com>,
-        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        <mingo@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-riscv@lists.infradead.org>
-References: <mhng-82f403f2-fa94-4fdd-8770-3ee6f79a6752@palmer-si-x1c4>
-From: Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <ddd5ca34-805b-60c4-bf2a-d6a9d95d89e7@nvidia.com>
-Date: Thu, 1 Mar 2018 14:21:17 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1162594AbeCAWWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:22:34 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51212 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1162548AbeCAWWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 17:22:32 -0500
+Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
+ set out of range
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <1519926220-7453-5-git-send-email-longman@redhat.com>
+ <20180301133807.f5beb1bf1d1391f23e95ce63@linux-foundation.org>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <478592ec-3550-0e81-6242-41190bea6521@redhat.com>
+Date: Thu, 1 Mar 2018 17:22:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <mhng-82f403f2-fa94-4fdd-8770-3ee6f79a6752@palmer-si-x1c4>
-X-Originating-IP: [10.110.39.68]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180301133807.f5beb1bf1d1391f23e95ce63@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/1/2018 1:54 PM, Palmer Dabbelt wrote:
-> On Thu, 01 Mar 2018 07:11:41 PST (-0800), parri.andrea@gmail.com wrote:
->> Hi Daniel,
+On 03/01/2018 04:38 PM, Andrew Morton wrote:
+> On Thu,  1 Mar 2018 12:43:38 -0500 Waiman Long <longman@redhat.com> wrote:
+>
+>> Even with clamped sysctl parameters, it is still not that straight
+>> forward to figure out the exact range of those parameters. One may
+>> try to write extreme parameter values to see if they get clamped.
+>> To make it easier, a warning with the expected range will now be
+>> printed in the kernel ring buffer when a clamped sysctl parameter
+>> receives an out of range value.
 >>
->> On Thu, Feb 22, 2018 at 11:47:57AM -0800, Daniel Lustig wrote:
->>> On 2/22/2018 10:27 AM, Peter Zijlstra wrote:
->>> > On Thu, Feb 22, 2018 at 10:13:17AM -0800, Paul E. McKenney wrote:
->>> >> So we have something that is not all that rare in the Linux kernel
->>> >> community, namely two conflicting more-or-less concurrent changes.
->>> >> This clearly needs to be resolved, either by us not strengthening the
->>> >> Linux-kernel memory model in the way we were planning to or by you
->>> >> strengthening RISC-V to be no weaker than PowerPC for these sorts of
->>> >> externally viewed release-acquire situations.
->>> >>
->>> >> Other thoughts?
->>> >
->>> > Like said in the other email, I would _much_ prefer to not go weaker
->>> > than PPC, I find that PPC is already painfully weak at times.
->>>
->>> Sure, and RISC-V could make this work too by using RCsc instructions
->>> and/or by using lightweight fences instead.  It just wasn't clear at
->>> first whether smp_load_acquire() and smp_store_release() were RCpc,
->>> RCsc, or something else, and hence whether RISC-V would actually need
->>> to use something stronger than pure RCpc there.  Likewise for
->>> spin_unlock()/spin_lock() and everywhere else this comes up.
+>> ...
 >>
->> while digging into riscv's locks and atomics to fix the issues discussed
->> earlier in this thread, I became aware of another issue:
->>
->> Considering here the CMPXCHG primitives, for example, I noticed that the
->> implementation currently provides the four variants
->>
->>     ATOMIC_OPS(        , .aqrl)
->>     ATOMIC_OPS(_acquire,   .aq)
->>     ATOMIC_OPS(_release,   .rl)
->>     ATOMIC_OPS(_relaxed,      )
->>
->> (corresponding, resp., to
->>
->>     atomic_cmpxchg()
->>     atomic_cmpxchg_acquire()
->>     atomic_cmpxchg_release()
->>     atomic_cmpxchg_relaxed()  )
->>
->> so that the first variant above ends up doing
->>
->>     0:    lr.w.aqrl  %0, %addr
->>         bne        %0, %old, 1f
->>         sc.w.aqrl  %1, %new, %addr
->>         bnez       %1, 0b
->>         1:
->>
->> From Sect. 2.3.5. ("Acquire/Release Ordering") of the Spec.,
->>
->>  "AMOs with both .aq and .rl set are fully-ordered operations.  Treating
->>   the load part and the store part as independent RCsc operations is not
->>   in and of itself sufficient to enforce full fencing behavior, but this
->>   subtle weak behavior is counterintuitive and not much of an advantage
->>   architecturally, especially with lr and sc also available [...]."
->>
->> I understand that
->>
->>         { x = y = u = v = 0 }
->>
->>     P0()
->>
->>     WRITE_ONCE(x, 1);        ("relaxed" store, sw)
->>     atomic_cmpxchg(&u, 0, 1);
->>     r0 = READ_ONCE(y);        ("relaxed" load, lw)
->>
->>     P1()
->>
->>     WRITE_ONCE(y, 1);
->>     atomic_cmpxchg(&v, 0, 1);
->>     r1 = READ_ONCE(x);
->>
->> could result in (u = v = 1 and r0 = r1 = 0) at the end; can you confirm?
-> 
-> cmpxchg isn't an AMO, it's an LR SC sequence, so that blurb doesn't
-> apply.  I think "lr.w.aqrl" and "sc.w.aqrl" is not sufficient to
-> perform a fully ordered operation (ie, it's an incorrect
-> implementation of atomic_cmpxchg()), but I was hoping to get some
-> time to actually internalize this part of the RISC-V memory model at
-> some point to be sure.
+>> +		if (clamped && param->name &&
+>> +		   !(*param->flags & CTL_FLAGS_OOR_WARNED)) {
+>> +			proc_ctl_warn(d, param->name,
+>> +				param->min ? *param->min : -INT_MAX,
+>> +				param->max ? *param->max :  INT_MAX, val);
+>> +			*param->flags |= CTL_FLAGS_OOR_WARNED;
+>> +		}
+> The handling of ctl_table.flags looks racy on SMP or preemptible. 
+> That's not at all a serious problem in this usage, but such handling of
+> ctl_table.flags may be a problem in the future.  Which means that if
+> some future user of this field *is* sensitive to races then people are
+> going to have to come back to this code and add the needed locking.
+>
+> So we should at least think about what that locking is to be, and
+> document it in some fashion.  Do we already hold an appropriate lock at
+> this time?  If so, what is it?
+>
+> If some such future user of ctl_table.flags has to add a new lock to
+> the ctl_table for this purpose then we just eliminated your use-16-bit
+> space saving trick and we may as well use a ulong and operate on it
+> with bitops.
 
-Agreed, the current intention is that we'll add a fence rw,rw in there
-when we use lr/sc as the implementation, likely similar to what ARM does:
+We don't actually need locking if it is only the flags that we are
+worrying about. Doing some kind of atomic bit setting should be enough.
+I should probably add some comment to elaborate a bit more on this.
+Thanks for reminding me about this forward looking concern.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e86f0b409a44193f1587e87b69c5dcf8f65be67
-
-It's also probably not the only piece of synchronization-related code
-we'll have to go back and audit as we finalize the RISC-V memory
-consistency model over the next couple months or so.
-
-Dan
+Cheers,
+Longman
