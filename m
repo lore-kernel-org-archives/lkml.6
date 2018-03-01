@@ -1,204 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965411AbeCAA7W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 19:59:22 -0500
-Received: from SMTP.ANDREW.CMU.EDU ([128.2.157.37]:34712 "EHLO
-        smtp.andrew.cmu.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965286AbeCAA7V (ORCPT
+        id S965441AbeCAA7k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 19:59:40 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:56082 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965410AbeCAA7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 19:59:21 -0500
-Date: Wed, 28 Feb 2018 19:35:33 -0500
-From: Gabriel Somlo <somlo@cmu.edu>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>, slp@redhat.com,
-        bhe@redhat.com, xiaolong.ye@intel.com
-Subject: Re: [PATCH v15 08/11] fw_cfg: handle fw_cfg_read_blob() error
-Message-ID: <20180301003527.GA25373@crash.ini.cmu.edu>
-References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
- <20180215213312.29234-9-marcandre.lureau@redhat.com>
- <20180227021150-mutt-send-email-mst@kernel.org>
- <CAJ+F1CKwBjRDTxToDwOrPnnaiMHvF6EgK=dgSC-FW7n6UMDeKA@mail.gmail.com>
- <20180228173014-mutt-send-email-mst@kernel.org>
- <20180228232551.GA23743@crash.ini.cmu.edu>
- <20180301015743-mutt-send-email-mst@kernel.org>
+        Wed, 28 Feb 2018 19:59:39 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37353512"
+Subject: Re: [tip:x86/apic 1/2] arch/x86/kernel/apic/apic.c:1507:2: error: 'i'
+ undeclared
+To: Thomas Gleixner <tglx@linutronix.de>,
+        kbuild test robot <fengguang.wu@intel.com>
+CC: <kbuild-all@01.org>, <linux-kernel@vger.kernel.org>,
+        <tipbuild@zytor.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <201803010700.cyWg3pUI%fengguang.wu@intel.com>
+ <alpine.DEB.2.21.1803010030530.1392@nanos.tec.linutronix.de>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <865f76c0-e1f8-787c-8540-070725c1692b@cn.fujitsu.com>
+Date: Thu, 1 Mar 2018 08:59:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180301015743-mutt-send-email-mst@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-PMX-Version: 6.3.0.2556906, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2018.3.1.2416
-X-SMTP-Spam-Clean: 8% (
- MULTIPLE_RCPTS 0.1, HTML_00_01 0.05, HTML_00_10 0.05, DATE_TZ_NA 0, FROM_EDU_TLD 0, IN_REP_TO 0, LEGITIMATE_SIGNS 0, MSG_THREAD 0, MULTIPLE_REAL_RCPTS 0, NO_URI_HTTPS 0, RDNS_GENERIC_POOLED 0, RDNS_SUSP 0, RDNS_SUSP_GENERIC 0, REFERENCES 0, __ANY_URI 0, __BOUNCE_CHALLENGE_SUBJ 0, __BOUNCE_NDR_SUBJ_EXEMPT 0, __CC_NAME 0, __CC_NAME_DIFF_FROM_ACC 0, __CC_REAL_NAMES 0, __CD 0, __CT 0, __CTE 0, __CT_TEXT_PLAIN 0, __FORWARDED_MSG 0, __HAS_CC_HDR 0, __HAS_FROM 0, __HAS_MSGID 0, __INVOICE_MULTILINGUAL 0, __IN_REP_TO 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MIME_VERSION 0, __MULTIPLE_RCPTS_CC_X2 0, __NO_HTML_TAG_RAW 0, __PHISH_SPEAR_STRUCTURE_1 0, __REFERENCES 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __SUBJ_ALPHA_NEGATE 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0, __URI_NO_WWW 0, __URI_NS , __USER_AGENT 0)
-X-SMTP-Spam-Score: 8%
+In-Reply-To: <alpine.DEB.2.21.1803010030530.1392@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 86EE548AE761.AF8ED
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 01:58:01AM +0200, Michael S. Tsirkin wrote:
-> On Wed, Feb 28, 2018 at 06:25:58PM -0500, Gabriel Somlo wrote:
-> > On Wed, Feb 28, 2018 at 05:32:52PM +0200, Michael S. Tsirkin wrote:
-> > > On Wed, Feb 28, 2018 at 12:49:35PM +0100, Marc-André Lureau wrote:
-> > > > Hi
-> > > > 
-> > > > On Tue, Feb 27, 2018 at 1:20 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > On Thu, Feb 15, 2018 at 10:33:09PM +0100, Marc-André Lureau wrote:
-> > > > >> fw_cfg_read_blob() may fail, but does not return error. This may lead
-> > > > >> to undefined behaviours, such as a memcmp(sig, "QEMU") on uninitilized
-> > > > >> memory.
-> > > > >
-> > > > > I don't think that's true - there's a memset there that
-> > > > > will initialize the memory. probe is likely the only
-> > > > > case where it returns a slightly incorrect data.
-> > > > 
-> > > > Right, I'll update the commit message.
-> > > > 
-> > > > >> Return an error if ACPI locking failed. Also, the following
-> > > > >> DMA read/write extension will add more error paths that should be
-> > > > >> handled appropriately.
-> > > > >>
-> > > > >> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-> > > > >> ---
-> > > > >>  drivers/firmware/qemu_fw_cfg.c | 32 ++++++++++++++++++++++----------
-> > > > >>  1 file changed, 22 insertions(+), 10 deletions(-)
-> > > > >>
-> > > > >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> > > > >> index f6f90bef604c..5e6e5ac71dab 100644
-> > > > >> --- a/drivers/firmware/qemu_fw_cfg.c
-> > > > >> +++ b/drivers/firmware/qemu_fw_cfg.c
-> > > > >> @@ -59,8 +59,8 @@ static void fw_cfg_sel_endianness(u16 key)
-> > > > >>  }
-> > > > >>
-> > > > >>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
-> > > > >> -static void fw_cfg_read_blob(u16 key,
-> > > > >> -                     void *buf, loff_t pos, size_t count)
-> > > > >> +static ssize_t fw_cfg_read_blob(u16 key,
-> > > > >> +                             void *buf, loff_t pos, size_t count)
-> > > > >>  {
-> > > > >>       u32 glk = -1U;
-> > > > >>       acpi_status status;
-> > > > >> @@ -73,7 +73,7 @@ static void fw_cfg_read_blob(u16 key,
-> > > > >>               /* Should never get here */
-> > > > >>               WARN(1, "fw_cfg_read_blob: Failed to lock ACPI!\n");
-> > > > >>               memset(buf, 0, count);
-> > > > >> -             return;
-> > > > >> +             return -EINVAL;
-> > > > >>       }
-> > > > >>
-> > > > >>       mutex_lock(&fw_cfg_dev_lock);
-> > > > >
-> > > > > Wouldn't something like -EBUSY be more appropriate?
-> > > > 
-> > > > In theory, it would be a general failure right? I don't think we want
-> > > > the caller to retry. I think in EINVAL fits better, but I don't think
-> > > > it matters much this or EBUSY.
-> > > > 
-> > > > >> @@ -84,6 +84,7 @@ static void fw_cfg_read_blob(u16 key,
-> > > > >>       mutex_unlock(&fw_cfg_dev_lock);
-> > > > >>
-> > > > >>       acpi_release_global_lock(glk);
-> > > > >> +     return count;
-> > > > >>  }
-> > > > >>
-> > > > >>  /* clean up fw_cfg device i/o */
-> > > > >> @@ -165,8 +166,9 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
-> > > > >>       }
-> > > > >>
-> > > > >>       /* verify fw_cfg device signature */
-> > > > >> -     fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
-> > > > >> -     if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> > > > >> +     if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
-> > > > >> +                             0, FW_CFG_SIG_SIZE) < 0 ||
-> > > > >> +             memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> > > > >>               fw_cfg_io_cleanup();
-> > > > >>               return -ENODEV;
-> > > > >>       }
-> > > > >> @@ -326,8 +328,7 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
-> > > > >>       if (count > entry->size - pos)
-> > > > >>               count = entry->size - pos;
-> > > > >>
-> > > > >> -     fw_cfg_read_blob(entry->select, buf, pos, count);
-> > > > >> -     return count;
-> > > > >> +     return fw_cfg_read_blob(entry->select, buf, pos, count);
-> > > > >>  }
-> > > > >>
-> > > > >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
-> > > > >> @@ -483,7 +484,11 @@ static int fw_cfg_register_dir_entries(void)
-> > > > >>       struct fw_cfg_file *dir;
-> > > > >>       size_t dir_size;
-> > > > >>
-> > > > >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count, 0, sizeof(files_count));
-> > > > >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files_count,
-> > > > >> +                     0, sizeof(files_count));
-> > > > >> +     if (ret < 0)
-> > > > >> +             return ret;
-> > > > >> +
-> > > > >>       count = be32_to_cpu(files_count);
-> > > > >>       dir_size = count * sizeof(struct fw_cfg_file);
-> > > > >>
-> > > > >> @@ -491,7 +496,10 @@ static int fw_cfg_register_dir_entries(void)
-> > > > >>       if (!dir)
-> > > > >>               return -ENOMEM;
-> > > > >>
-> > > > >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files_count), dir_size);
-> > > > >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
-> > > > >> +                     sizeof(files_count), dir_size);
-> > > > >> +     if (ret < 0)
-> > > > >> +             goto end;
-> > > > >>
-> > > > >>       for (i = 0; i < count; i++) {
-> > > > >>               ret = fw_cfg_register_file(&dir[i]);
-> > > > >> @@ -499,6 +507,7 @@ static int fw_cfg_register_dir_entries(void)
-> > > > >>                       break;
-> > > > >>       }
-> > > > >>
-> > > > >> +end:
-> > > > >>       kfree(dir);
-> > > > >>       return ret;
-> > > > >>  }
-> > > > >> @@ -539,7 +548,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
-> > > > >>               goto err_probe;
-> > > > >>
-> > > > >>       /* get revision number, add matching top-level attribute */
-> > > > >> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> > > > >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> > > > >> +     if (err < 0)
-> > > > >> +             goto err_probe;
-> > > > >> +
-> > > > >>       fw_cfg_rev = le32_to_cpu(rev);
-> > > > >>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
-> > > > >>       if (err)
-> > > > >
-> > > > > I think that this is the only case where it's not doing the right thing right now in
-> > > > > that it shows 0 as the revision to the users.  Is it worth failing probe
-> > > > > here?  We could just skip the attribute, could we not?
-> > > > 
-> > > > I think it's best to fail the probe if we have a read failure at that time.
-> > > 
-> > > I'd rather we just dropped this attribute completely.
-> > > Why is it there?
-> > > Does any userspace actually need it?
-> > > Gabriel?
-> > 
-> > I'd recommend keeping it: `cat /sys/firmware/qemu_fw_cfg/rev` is how
-> > you can easily tell if, e.g., dma is supported :)
-> > 
-> > If you end up with a '0' there, it's because locking ACPI with
-> > WAIT_FOREVER failed with something other than AE_NOT_CONFIGURED, which
-> > should never happen, so we're off the reservation, having morally
-> > failed the equivalent of an assertion.
-> > 
-> > Perhaps memset to something other than 0 (all-Fs, so we'd get a -1 for
-> > rev)? 
-> > 
-> > Thanks,
-> > --Gabriel
+Hi Thomas,
+
+At 03/01/2018 07:31 AM, Thomas Gleixner wrote:
+> Dou,
 > 
-> Why not just skip adding the attribute on this error?
+> can you please look into that? I zapped the commits from x86/apic for now.
+> 
 
-Skipping only on error should be OK (since it's "never supposed to
-happen" anyway).
+OK, and zap them. I will send a new version.
 
---G
+> Thanks,
+> 
+> 	tglx
+> 
+> On Thu, 1 Mar 2018, kbuild test robot wrote:
+> 
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
+>> head:   ea5dfef5a890c9e6e47bdddfc23c4a4ba0c1bea1
+>> commit: 2066f4d67e7d9cbe44e451d782cdcc0a0d12e5d3 [1/2] x86/apic: Move pending intr check code into it's own function
+>> config: i386-randconfig-x004-201808 (attached as .config)
+>> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+>> reproduce:
+>>          git checkout 2066f4d67e7d9cbe44e451d782cdcc0a0d12e5d3
+>>          # save the attached .config to linux build tree
+>>          make ARCH=i386
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     arch/x86/kernel/apic/apic.c: In function 'setup_local_APIC':
+>>>> arch/x86/kernel/apic/apic.c:1507:2: error: 'i' undeclared (first use in this function)
+>>       i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+>>       ^
+
+Oops, my fault, I didn't consider the 32bit situation. lkp has reported
+it before, but I ignored it. I am too stupid.
+
+I will merge the following changes in the 1th patch
+
+---------------------------->8------------------------------
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1467,6 +1467,7 @@ static void setup_local_APIC(void)
+  {
+         int cpu = smp_processor_id();
+         unsigned int value;
++       int apicid;
+
+         if (disable_apic) {
+                 disable_ioapic_support();
+@@ -1503,8 +1504,8 @@ static void setup_local_APIC(void)
+          * initialized during get_smp_config(), make sure it matches the
+          * actual value.
+          */
+-       i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+-       WARN_ON(i != BAD_APICID && i != logical_smp_processor_id());
++       apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
++       WARN_ON(apicid != BAD_APICID && apicid != 
+logical_smp_processor_id());
+         /* always use the value from LDR */
+         early_per_cpu(x86_cpu_to_logical_apicid, cpu) =
+                 logical_smp_processor_id();
+Thanks,
+	dou
+
+>>     arch/x86/kernel/apic/apic.c:1507:2: note: each undeclared identifier is reported only once for each function it appears in
+>>
+>> vim +/i +1507 arch/x86/kernel/apic/apic.c
+>>
+>> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1460
+>> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1461  /**
+>> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1462   * setup_local_APIC - setup the local APIC
+>> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1463   *
+>> 543113d2 arch/x86/kernel/apic/apic.c Dou Liyang         2017-02-07  1464   * Used to setup local APIC while initializing BSP or bringing up APs.
+>> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1465   * Always called with preemption disabled.
+>> 0e078e2f arch/x86/kernel/apic_64.c   Thomas Gleixner    2008-01-30  1466   */
+>> b753a2b7 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-14  1467  static void setup_local_APIC(void)
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1468  {
+>> 0aa002fe arch/x86/kernel/apic/apic.c Tejun Heo          2010-12-09  1469  	int cpu = smp_processor_id();
+>> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1470  	unsigned int value;
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1471
+>> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1472  	if (disable_apic) {
+>> 7167d08e arch/x86/kernel/apic/apic.c Henrik Kretzschmar 2011-02-22  1473  		disable_ioapic_support();
+>> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1474  		return;
+>> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1475  	}
+>> f1182638 arch/x86/kernel/apic.c      Jan Beulich        2009-01-14  1476
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1477  #ifdef CONFIG_X86_32
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1478  	/* Pound the ESR really hard over the head with a big hammer - mbligh */
+>> 08125d3e arch/x86/kernel/apic.c      Ingo Molnar        2009-01-28  1479  	if (lapic_is_integrated() && apic->disable_esr) {
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1480  		apic_write(APIC_ESR, 0);
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1481  		apic_write(APIC_ESR, 0);
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1482  		apic_write(APIC_ESR, 0);
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1483  		apic_write(APIC_ESR, 0);
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1484  	}
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1485  #endif
+>> cdd6c482 arch/x86/kernel/apic/apic.c Ingo Molnar        2009-09-21  1486  	perf_events_lapic_init();
+>> 89c38c28 arch/x86/kernel/apic_64.c   Cyrill Gorcunov    2008-08-24  1487
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1488  	/*
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1489  	 * Double-check whether this APIC is really registered.
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1490  	 * This is meaningless in clustered apic mode, so we skip it.
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1491  	 */
+>> c2777f98 arch/x86/kernel/apic/apic.c Daniel Walker      2009-09-12  1492  	BUG_ON(!apic->apic_id_registered());
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1493
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1494  	/*
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1495  	 * Intel recommends to set DFR, LDR and TPR before enabling
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1496  	 * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1497  	 * document number 292116).  So here it goes...
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1498  	 */
+>> a5c43296 arch/x86/kernel/apic.c      Ingo Molnar        2009-01-28  1499  	apic->init_apic_ldr();
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1500
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1501  #ifdef CONFIG_X86_32
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1502  	/*
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1503  	 * APIC LDR is initialized.  If logical_apicid mapping was
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1504  	 * initialized during get_smp_config(), make sure it matches the
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1505  	 * actual value.
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1506  	 */
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23 @1507  	i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1508  	WARN_ON(i != BAD_APICID && i != logical_smp_processor_id());
+>> acb8bc09 arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1509  	/* always use the value from LDR */
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1510  	early_per_cpu(x86_cpu_to_logical_apicid, cpu) =
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1511  		logical_smp_processor_id();
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1512  #endif
+>> 6f802c4b arch/x86/kernel/apic/apic.c Tejun Heo          2011-01-23  1513
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1514  	/*
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1515  	 * Set Task Priority to 'accept all'. We never change this
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1516  	 * later on.
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1517  	 */
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1518  	value = apic_read(APIC_TASKPRI);
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1519  	value &= ~APIC_TPRI_MASK;
+>> 11a8e778 arch/x86_64/kernel/apic.c   Andi Kleen         2006-01-11  1520  	apic_write(APIC_TASKPRI, value);
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1521
+>> 2066f4d6 arch/x86/kernel/apic/apic.c Dou Liyang         2018-02-26  1522  	apic_pending_intr_clear();
+>> da7ed9f9 arch/x86_64/kernel/apic.c   Vivek Goyal        2006-03-25  1523
+>> da7ed9f9 arch/x86_64/kernel/apic.c   Vivek Goyal        2006-03-25  1524  	/*
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1525  	 * Now that we are all set up, enable the APIC
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1526  	 */
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1527  	value = apic_read(APIC_SPIV);
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1528  	value &= ~APIC_VECTOR_MASK;
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1529  	/*
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1530  	 * Enable APIC
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1531  	 */
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1532  	value |= APIC_SPIV_APIC_ENABLED;
+>> ^1da177e arch/x86_64/kernel/apic.c   Linus Torvalds     2005-04-16  1533
+>>
+>> :::::: The code at line 1507 was first introduced by commit
+>> :::::: acb8bc09c6185e4d3d582d0076aaa6a89f19d8c5 x86: Add apic->x86_32_early_logical_apicid()
+>>
+>> :::::: TO: Tejun Heo <tj@kernel.org>
+>> :::::: CC: Ingo Molnar <mingo@elte.hu>
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>>
+> 
+> 
+> 
