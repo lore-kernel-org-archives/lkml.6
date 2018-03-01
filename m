@@ -1,98 +1,352 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520304040; cv=none;
+Return-Path: <vitalya@ti.com>
+X-Google-Smtp-Source: AG47ELsJHZha/YtnA8bQEE+XEX7Nuup2e1EPbWLsg9r7Okj/ANWecfB438jNngdXPBA8EPQZws7h
+ARC-Seal: i=1; a=rsa-sha256; t=1519909030; cv=none;
         d=google.com; s=arc-20160816;
-        b=r+eA1BnYy/aFdPnICCVpMpV5ToSzIBM4ED0/u7NgIVzyX1l7JC7Y63mw5Oqu6x31Ba
-         L985qhHy1+8oxA/0tsqaWQYoyf8m72NtHa1TdN/dgcQXL251KFnRybMc7xOPWZCrScbm
-         stRwC4FqcaISEREKz7NdlcDARvDdOBdithf9jShOeV9m9bWQxWOsjCKJ73GhYvbO3OqV
-         yBJopgao8gJ1w+VCL+sicXC2cy2+udfu3B50ZM4jnyyx6B+TQ3Eeh3m8+7P7SbClLCd6
-         C4NDYtG5s967c6i0MKkCnzlLEyRyzGXAZmLb3AsZxtqE9i+xICx1wuDJ+F0qQUSd3NId
-         3Now==
+        b=SAEhq3mtCOGOA52ru07GGlxcKabgU2Funy4mSI/vHVggCM2fKZaIbJIUoJteAl+V0a
+         pUP1j5a5NJxFMkm26HWWXl+TkHYnbTsZb39Sa7NG1sjNKBTrGawZoLBXu+/Wu0w+diYv
+         YLzW/IYrSiKzOHiHMbYdWLbXRySPISPXH4/NbhfQq4GLu4HllAC3ZQjc9UGDGoRH9Oem
+         sZTewEw+41SoTnVnhZ7h7ZG4aoDfCFJ1dAHAjP4TTLXreOkP/NRcBhUpEhQ9T6J7nCFC
+         rd4bL1CAstUYlXp9xdJBmqTcSJlx47cYTq8Uc2j6Rr1J/FtOsFqSrmbRcX31RcywSlIz
+         qF2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=v4KtQsANTNoyoi+vz8vmBa9pM6p81NNPqfc7jcpZzVg=;
-        b=u4/NzmmmJsE0wbHTjCsX3qU3AWjaGzPhO9z1346/sfrJZqcyrEL+iChAFhoA2iz+Z1
-         GIC3nN2n2GxTmFwqil/9zc2mIXozJA/FT4uo2lCwhRDMVqcqlPpyqR4KeJbZtbPOmSbb
-         fmhllwnpAq+A3nrNMJRfVqE63D9Rs1LFlh3JajPonBvyVmacjrqwxHqBoLEPtYfFH8hu
-         inLiwbY1HSqAqF+sNXJptekHOEg0aAcYTABGK2KmAsNliA8FMxjtbSgi9vZJjhTOT1I0
-         5DkDlMzO+pMqUytocGbRUqmftOU9hSDL0MsMQEPuyUuVFYrHhemqU5UsEgy7AZDK6ggM
-         eSsg==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=1XX2FDzs7FE09ec9Up3QFVAF3nTMU4bQn72JqMk+GIY=;
+        b=tiMK21PGdcA4Ubyh/ZS/wYBs1p5WoO84PWnxMvD3AQv94mc9/TeDF9oyDm2ACV5rhv
+         3E6g7X+A0Mc79oyuDyHtNxl3OcoDFTtx6jOUytRjUZDT60t8IG8x4N9c/vHJ0knTVvAW
+         tDlRWbtEz74Mr6tUJYbSb3sKxSR1ZLMEq85mAKDPfCAurAOHv0QKtupAW474Cpt9qr63
+         qsfo5X7WT9OMpLvnMqJUz9VIbUd1VGV2XEnnU/mad5E/Y92Vvb3g1UAucbXwbtLVmHva
+         pMoJRN7b8lS6qov5EOM0O+bdCjCY899EP2s+T3Y09Rq/OnqxwvGRZbQGKkR2ey/GQDJC
+         6Kvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=t1KsjKmX;
+       spf=pass (google.com: domain of vitalya@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=vitalya@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AG47ELt0JdIfuWsDQNkxHaxwSB0cSpveUj8BNvxXbQUL+Xrju9GwHbdJtDZT8Cs3rVeNMXvhebKarA==
-Date: Mon, 5 Mar 2018 20:40:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vitaly Andrianov <vitalya@ti.com>
-Cc: mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, t-kristo@ti.com, m-karicheri2@ti.com
-Subject: Re: [PATCH 1/2] Documentation: dt: rng: add bindings doc for
- Keystone SA HWRNG driver
-Message-ID: <20180306024038.uszf3r4nb4pw6kkf@rob-hp-laptop>
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=t1KsjKmX;
+       spf=pass (google.com: domain of vitalya@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=vitalya@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+From: Vitaly Andrianov <vitalya@ti.com>
+To: <mpm@selenic.com>, <herbert@gondor.apana.org.au>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
+CC: <t-kristo@ti.com>, <vitalya@ti.com>, <m-karicheri2@ti.com>
+Subject: [PATCH 2/2] hw_random: keystone2: add hw_random driver
+Date: Thu, 1 Mar 2018 07:55:00 -0500
+Message-ID: <1519908900-10388-3-git-send-email-vitalya@ti.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519908900-10388-1-git-send-email-vitalya@ti.com>
 References: <1519908900-10388-1-git-send-email-vitalya@ti.com>
- <1519908900-10388-2-git-send-email-vitalya@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519908900-10388-2-git-send-email-vitalya@ti.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593740131120590051?=
-X-GMAIL-MSGID: =?utf-8?q?1594154329541195095?=
+X-GMAIL-THRID: =?utf-8?q?1593740130930599458?=
+X-GMAIL-MSGID: =?utf-8?q?1593740130930599458?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 01, 2018 at 07:54:59AM -0500, Vitaly Andrianov wrote:
-> The Keystone SA module has a hardware random generator module.
-> This commit adds binding doc for the KS2 SA HWRNG driver.
+Keystone Security Accelerator module has a hardware random generator
+sub-module. This commit adds the driver for this sub-module.
 
-Preferred subject prefix is "dt-bindings: rng: ..."
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+[t-kristo@ti.com: dropped one unnecessary dev_err message]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/char/hw_random/Kconfig     |   7 +
+ drivers/char/hw_random/Makefile    |   1 +
+ drivers/char/hw_random/ks-sa-rng.c | 257 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 265 insertions(+)
+ create mode 100644 drivers/char/hw_random/ks-sa-rng.c
 
-> 
-> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
-> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-> ---
->  Documentation/devicetree/bindings/rng/ks-sa-rng.txt | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/ks-sa-rng.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/rng/ks-sa-rng.txt b/Documentation/devicetree/bindings/rng/ks-sa-rng.txt
-> new file mode 100644
-> index 0000000..cc8ee44
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rng/ks-sa-rng.txt
-> @@ -0,0 +1,21 @@
-> +Keystone SoC Hardware Random Number Generator(HWRNG) Module
-> +
-> +On Keystone SoCs HWRNG module is a submodule of the Security Accelerator.
-> +
-> +- compatible: should be "ti,keystone-rng"
-> +- ti,syscon-sa-cfg: phandle to syscon node of the SA configuration registers.
-> +		    This registers are shared between hwrng and crypto drivers.
-> +- clocks: phandle to the reference clocks for the subsystem
-> +- clock-names: functional clock name. Should be set to "fck"
-> +- reg: HWRNG module register space
-> +
-> +Example:
-> +/* K2HK */
-> +
-> +hwrng@0x24000 {
-
-rng@24000
-
-With those,
-
-Reviewed-by: Rob Herring <robh@kernel.org>                                 
-
-> +	compatible = "ti,keystone-rng";
-> +	ti,syscon-sa-cfg = <&sa_config>;
-> +	clocks = <&clksa>;
-> +	clock-names = "fck";
-> +	reg = <0x24000 0x1000>;
-> +};
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 4d0f571..d53541e 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -452,3 +452,10 @@ config UML_RANDOM
+ 	  (check your distro, or download from
+ 	  http://sourceforge.net/projects/gkernel/).  rngd periodically reads
+ 	  /dev/hwrng and injects the entropy into /dev/random.
++
++config HW_RANDOM_KEYSTONE
++	depends on ARCH_KEYSTONE
++	default HW_RANDOM
++	tristate "TI Keystone NETCP SA Hardware random number generator"
++	help
++	  This option enables Keystone's hardware random generator.
+diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
+index b780370..533e913 100644
+--- a/drivers/char/hw_random/Makefile
++++ b/drivers/char/hw_random/Makefile
+@@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_MESON) += meson-rng.o
+ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
+ obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
+ obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
++obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
+diff --git a/drivers/char/hw_random/ks-sa-rng.c b/drivers/char/hw_random/ks-sa-rng.c
+new file mode 100644
+index 0000000..62c6696
+--- /dev/null
++++ b/drivers/char/hw_random/ks-sa-rng.c
+@@ -0,0 +1,257 @@
++/*
++ * Random Number Generator driver for the Keystone SOC
++ *
++ * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com
++ *
++ * Authors:	Sandeep Nair
++ *		Vitaly Andrianov
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++
++#include <linux/hw_random.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
++#include <linux/clk.h>
++#include <linux/pm_runtime.h>
++#include <linux/err.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/delay.h>
++
++#define SA_CMD_STATUS_OFS			0x8
++
++/* TRNG enable control in SA System module*/
++#define SA_CMD_STATUS_REG_TRNG_ENABLE		BIT(3)
++
++/* TRNG start control in TRNG module */
++#define TRNG_CNTL_REG_TRNG_ENABLE		BIT(10)
++
++/* Data ready indicator in STATUS register */
++#define TRNG_STATUS_REG_READY			BIT(0)
++
++/* Data ready clear control in INTACK register */
++#define TRNG_INTACK_REG_READY			BIT(0)
++
++/*
++ * Number of samples taken to gather entropy during startup.
++ * If value is 0, the number of samples is 2^24 else
++ * equals value times 2^8.
++ */
++#define TRNG_DEF_STARTUP_CYCLES			0
++#define TRNG_CNTL_REG_STARTUP_CYCLES_SHIFT	16
++
++/*
++ * Minimum number of samples taken to regenerate entropy
++ * If value is 0, the number of samples is 2^24 else
++ * equals value times 2^6.
++ */
++#define TRNG_DEF_MIN_REFILL_CYCLES		1
++#define TRNG_CFG_REG_MIN_REFILL_CYCLES_SHIFT	0
++
++/*
++ * Maximum number of samples taken to regenerate entropy
++ * If value is 0, the number of samples is 2^24 else
++ * equals value times 2^8.
++ */
++#define TRNG_DEF_MAX_REFILL_CYCLES		0
++#define TRNG_CFG_REG_MAX_REFILL_CYCLES_SHIFT	16
++
++/* Number of CLK input cycles between samples */
++#define TRNG_DEF_CLK_DIV_CYCLES			0
++#define TRNG_CFG_REG_SAMPLE_DIV_SHIFT		8
++
++/* Maximum retries to get rng data */
++#define SA_MAX_RNG_DATA_RETRIES			5
++/* Delay between retries (in usecs) */
++#define SA_RNG_DATA_RETRY_DELAY			5
++
++struct trng_regs {
++	u32	output_l;
++	u32	output_h;
++	u32	status;
++	u32	intmask;
++	u32	intack;
++	u32	control;
++	u32	config;
++};
++
++struct ks_sa_rng {
++	struct device	*dev;
++	struct hwrng	rng;
++	struct clk	*clk;
++	struct regmap	*regmap_cfg;
++	struct trng_regs *reg_rng;
++};
++
++static int ks_sa_rng_init(struct hwrng *rng)
++{
++	u32 value;
++	struct device *dev = (struct device *)rng->priv;
++	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
++
++	/* Enable RNG module */
++	regmap_write_bits(ks_sa_rng->regmap_cfg, SA_CMD_STATUS_OFS,
++			  SA_CMD_STATUS_REG_TRNG_ENABLE,
++			  SA_CMD_STATUS_REG_TRNG_ENABLE);
++
++	/* Configure RNG module */
++	writel(0, &ks_sa_rng->reg_rng->control);
++	value = TRNG_DEF_STARTUP_CYCLES << TRNG_CNTL_REG_STARTUP_CYCLES_SHIFT;
++	writel(value, &ks_sa_rng->reg_rng->control);
++
++	value =	(TRNG_DEF_MIN_REFILL_CYCLES <<
++		 TRNG_CFG_REG_MIN_REFILL_CYCLES_SHIFT) |
++		(TRNG_DEF_MAX_REFILL_CYCLES <<
++		 TRNG_CFG_REG_MAX_REFILL_CYCLES_SHIFT) |
++		(TRNG_DEF_CLK_DIV_CYCLES <<
++		 TRNG_CFG_REG_SAMPLE_DIV_SHIFT);
++
++	writel(value, &ks_sa_rng->reg_rng->config);
++
++	/* Disable all interrupts from TRNG */
++	writel(0, &ks_sa_rng->reg_rng->intmask);
++
++	/* Enable RNG */
++	value = readl(&ks_sa_rng->reg_rng->control);
++	value |= TRNG_CNTL_REG_TRNG_ENABLE;
++	writel(value, &ks_sa_rng->reg_rng->control);
++
++	return 0;
++}
++
++static void ks_sa_rng_cleanup(struct hwrng *rng)
++{
++	struct device *dev = (struct device *)rng->priv;
++	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
++
++	/* Disable RNG */
++	writel(0, &ks_sa_rng->reg_rng->control);
++	regmap_write_bits(ks_sa_rng->regmap_cfg, SA_CMD_STATUS_OFS,
++			  SA_CMD_STATUS_REG_TRNG_ENABLE, 0);
++}
++
++static int ks_sa_rng_data_read(struct hwrng *rng, u32 *data)
++{
++	struct device *dev = (struct device *)rng->priv;
++	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
++
++	/* Read random data */
++	data[0] = readl(&ks_sa_rng->reg_rng->output_l);
++	data[1] = readl(&ks_sa_rng->reg_rng->output_h);
++
++	writel(TRNG_INTACK_REG_READY, &ks_sa_rng->reg_rng->intack);
++
++	return sizeof(u32) * 2;
++}
++
++static int ks_sa_rng_data_present(struct hwrng *rng, int wait)
++{
++	struct device *dev = (struct device *)rng->priv;
++	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
++
++	u32	ready;
++	int	j;
++
++	for (j = 0; j < SA_MAX_RNG_DATA_RETRIES; j++) {
++		ready = readl(&ks_sa_rng->reg_rng->status);
++		ready &= TRNG_STATUS_REG_READY;
++
++		if (ready || !wait)
++			break;
++
++		udelay(SA_RNG_DATA_RETRY_DELAY);
++	}
++
++	return ready;
++}
++
++static int ks_sa_rng_probe(struct platform_device *pdev)
++{
++	struct ks_sa_rng	*ks_sa_rng;
++	struct device		*dev = &pdev->dev;
++	int			ret;
++	struct resource		*mem;
++
++	ks_sa_rng = devm_kzalloc(dev, sizeof(*ks_sa_rng), GFP_KERNEL);
++	if (!ks_sa_rng)
++		return -ENOMEM;
++
++	ks_sa_rng->dev = dev;
++	ks_sa_rng->rng = (struct hwrng) {
++		.name = "ks_sa_hwrng",
++		.init = ks_sa_rng_init,
++		.data_read = ks_sa_rng_data_read,
++		.data_present = ks_sa_rng_data_present,
++		.cleanup = ks_sa_rng_cleanup,
++	};
++	ks_sa_rng->rng.priv = (unsigned long)dev;
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ks_sa_rng->reg_rng = devm_ioremap_resource(dev, mem);
++	if (IS_ERR(ks_sa_rng->reg_rng))
++		return PTR_ERR(ks_sa_rng->reg_rng);
++
++	ks_sa_rng->regmap_cfg =
++		syscon_regmap_lookup_by_phandle(dev->of_node,
++						"ti,syscon-sa-cfg");
++
++	if (IS_ERR(ks_sa_rng->regmap_cfg)) {
++		dev_err(dev, "syscon_node_to_regmap failed\n");
++		return -EINVAL;
++	}
++
++	pm_runtime_enable(dev);
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		dev_err(dev, "Failed to enable SA power-domain\n");
++		pm_runtime_disable(dev);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, ks_sa_rng);
++
++	return devm_hwrng_register(&pdev->dev, &ks_sa_rng->rng);
++}
++
++static int ks_sa_rng_remove(struct platform_device *pdev)
++{
++	pm_runtime_put_sync(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct of_device_id ks_sa_rng_dt_match[] = {
++	{
++		.compatible = "ti,keystone-rng",
++	},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ks_sa_rng_dt_match);
++
++static struct platform_driver ks_sa_rng_driver = {
++	.driver		= {
++		.name	= "ks-sa-rng",
++		.of_match_table = ks_sa_rng_dt_match,
++	},
++	.probe		= ks_sa_rng_probe,
++	.remove		= ks_sa_rng_remove,
++};
++
++module_platform_driver(ks_sa_rng_driver);
++
++MODULE_DESCRIPTION("Keystone NETCP SA H/W Random Number Generator driver");
++MODULE_AUTHOR("Vitaly Andrianov <vitalya@ti.com>");
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
