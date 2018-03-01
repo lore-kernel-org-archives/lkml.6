@@ -1,40 +1,41 @@
-Return-Path: <andy.shevchenko@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519912752; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519914582; cv=none;
         d=google.com; s=arc-20160816;
-        b=0GlwpVBQeRNRSFFa74U/toclk12v7QOg1KNT7w1xXCLOyeoofTIpBFr17mbGW0SAaf
-         T69EgMod55dDkrjBvyBswZDNk1PFMR8fxodHkdeiHIJKB1FLdt/a7s4wF6BeJacf5teR
-         pqVkdl29iMDv0S3CmWInh8ywpV6DZK4mDczhqfHWjbRcCMASJqPyaFnFKyJjPxLPiLCL
-         Fdt79qRMMo9mcTV4o9H8rsb9prOM46ar3YnOCL83gO2CwPixhX4G2/To+1rmyQeTRDMl
-         40EplFngUakZ0qjNFr5Xx4IqWvNHi6FHLhZHJVo8Qj+Ygxy/oHGQdPXqzt5YgNeMYw0U
-         uvFw==
+        b=YQvJR3Z4fO3OJuA1taFyL0WRAPKwBgwQoVGjVuEpD1J3eC+Ko1ew4kLiIWWjrAjnMy
+         U5inOUP2CNTPRx2VXdHhWOvZTrnVFX62iQYgrtWhF0wodzlj7mJ+JzKN6cpkIU4kfOmo
+         HdtZqMXeJ+F7/z0lpxAXDPXJIHtoWq3B9MkJS6lS6K11oLPUr3SUeMCHgc8x0/9NhW4S
+         SB1p25tejcvGyCRrZCjmspiEkcfDxhNfteQOWt6rrez1/t0nOEDFSm9b4oJPxU50Qk3i
+         jkXhEzhKYVqMsP6c5uXXr+UKP609nOoEcFHf/FxPoE6M6QVk9bH3wC6CZP/jW9MXwB7Y
+         eDxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=KfontG6W3TBXe7pwLy9tyiUOl9sP5VPvBoU+M+TkNXY=;
-        b=nZjr57NRUI9G+Tv7HrRzHGR4jmE5vjMIFjdIot9i7CTCSXa5ZGysdOCnYjgj9M+yy8
-         6iyYc7aLuPphgkYtzCOeUevuFP70VgCl5kfeBaW15Njnyt78cb8uVWxIQFt/0qu9kZDX
-         W/2hRh/8G/YHgl69yfPQrp47tJRU8+VAiTtWbvAfltjoiwoih5Y2uwfz1EAu6XwoZ4K/
-         GjLjMPYgKU53zjVBX2Gp/UlcbgsvP25ErxM2DnTq2mpRwc2BvkxQJt2HgLgIoZRGlTmk
-         3j+pAH2BOeDbavTQeTQWb0bHUuu1ip9Nz+6/HpJjKKXcUxbeNmvB4Ye0+j4MhRt8yRXq
-         ZSVg==
+        bh=kh4BpCRV7tlho7lNaU1DQY2/Ue2VtDfSoLer/5vayHU=;
+        b=g+ptjopxtSZLjfrSNDlW+QrtfIaIIpCKTJU9S7ilwcHtrFby7z5EH+Q3b3chs0v69t
+         vdpdcVp0vkFkZNn8LYU7nPK887GJ83TMqWLVwJ8896dGjuYXWCvh8jxv76OlMuZiMlkk
+         ENDsrxBHUsY1RsYOULoDCXGzmWYMJ2Zat0ZNJx9bREfPmXt58U7Z2VhpYSEIOJVJs49B
+         LbrTuYj3W8EvNOpMwkbvguJwyIDwt07NZysbbr0zYQnD91T3RlDAyjS/2ilfLRvKKwZH
+         piuspUZ44ScQNNy39pFVwQ+wMnE5QIdITxQfydmKpdOH0v2WvQ+oFL4ItKo4xXrsjz6T
+         kZFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ckWuIIg3;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XBqOmNPi;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ckWuIIg3;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELubX3VlXEzNGsewPkz44TPONzvyepMg9yhpSfhwRKR/JhCXdnSwyH+2UUMZvmVOwEaY6B754ep9Ov0bl1auNSc=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XBqOmNPi;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELsOf3tF6w7dgZBXPEEHOiiJUZxAIEwq0yjtPrStQLuJgzbj0HKM1BUnx9S6hUdK57fJ01/PV+qdZ7PaZF3cPtM=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3iK7Oo_XrkoqXyE0cXBm9Ngx18Yyvk+0UJNN1Gz5DYcQ@mail.gmail.com>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CAHp75VdOLUF8UQYkuK0Pmi9uefJgk4oZVBerFoBObOXM7zpCUQ@mail.gmail.com>
 References: <9ea2faf9c1cf8439f3a8ad495c6a2b49dacad7bd.1519889208.git.baolin.wang@linaro.org>
- <CAHp75VcgUmOoo-jRbM-Gyp1JTY-2rJri8e7u2miYSvRM_4HmPg@mail.gmail.com> <CAK8P3a3iK7Oo_XrkoqXyE0cXBm9Ngx18Yyvk+0UJNN1Gz5DYcQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 15:59:11 +0200
-Message-ID: <CAHp75VdOLUF8UQYkuK0Pmi9uefJgk4oZVBerFoBObOXM7zpCUQ@mail.gmail.com>
+ <CAHp75VcgUmOoo-jRbM-Gyp1JTY-2rJri8e7u2miYSvRM_4HmPg@mail.gmail.com>
+ <CAK8P3a3iK7Oo_XrkoqXyE0cXBm9Ngx18Yyvk+0UJNN1Gz5DYcQ@mail.gmail.com> <CAHp75VdOLUF8UQYkuK0Pmi9uefJgk4oZVBerFoBObOXM7zpCUQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 1 Mar 2018 15:29:41 +0100
+X-Google-Sender-Auth: fPwQ1GXmN1jLYuGM74MuLqPdydQ
+Message-ID: <CAK8P3a3q8QdpXKGw2TtRnCXpnUcRubDZp8ok2=F6evw86O+nSA@mail.gmail.com>
 Subject: Re: [PATCH v4] Input: gpio_keys: Add level trigger support for GPIO keys
-To: Arnd Bergmann <arnd@arndb.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Baolin Wang <baolin.wang@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stephen lu <lumotuwe@gmail.com>,
@@ -47,46 +48,40 @@ Cc: Baolin Wang <baolin.wang@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593648786277200792?=
-X-GMAIL-MSGID: =?utf-8?q?1593744034803210166?=
+X-GMAIL-MSGID: =?utf-8?q?1593745952839922570?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 1, 2018 at 2:37 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Mar 1, 2018 at 1:09 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Thu, Mar 1, 2018 at 9:36 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->>> On some platforms (such as Spreadtrum platform), the GPIO keys can only
->>> be triggered by level type. So this patch introduces one trigger_type to
->>> indicate if the button's interrupt type is level trigger or edge trigger.
+On Thu, Mar 1, 2018 at 2:59 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Thu, Mar 1, 2018 at 2:37 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Thu, Mar 1, 2018 at 1:09 PM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>>> On Thu, Mar 1, 2018 at 9:36 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>> On some platforms (such as Spreadtrum platform), the GPIO keys can only
+>>>> be triggered by level type. So this patch introduces one trigger_type to
+>>>> indicate if the button's interrupt type is level trigger or edge trigger.
+>>>
+>>>>                         button->irq =
+>>>>                                 irq_of_parse_and_map(to_of_node(child), 0);
+>>>
+>>> AFAIU, 0 means NO_IRQ, thus,
+>>>
+>>>> +                       if (button->irq)
+>>>> +                               button->trigger_type =
+>>>> +                                       irq_get_trigger_type(button->irq);
+>>>
+>>> irq_get_trigger_type(NO_IRQ) should return 0.
+>>>
+>>> Therefore, if (button->irq) is redundant.
+>>> Did I miss anything?
 >>
->>>                         button->irq =
->>>                                 irq_of_parse_and_map(to_of_node(child), 0);
->>
->> AFAIU, 0 means NO_IRQ, thus,
->>
->>> +                       if (button->irq)
->>> +                               button->trigger_type =
->>> +                                       irq_get_trigger_type(button->irq);
->>
->> irq_get_trigger_type(NO_IRQ) should return 0.
->>
->> Therefore, if (button->irq) is redundant.
->> Did I miss anything?
+>> "irq_of_parse_and_map(to_of_node(child), 0);" is the first interrupt. A
+>> more common way to express the same thing in modern drivers is
+>> 'platform_get_irq(pdev, 0)'.
 >
-> "irq_of_parse_and_map(to_of_node(child), 0);" is the first interrupt. A
-> more common way to express the same thing in modern drivers is
-> 'platform_get_irq(pdev, 0)'.
+> Yes, though I'm talking about _returned_ value.
 
-Yes, though I'm talking about _returned_ value.
+Got it, yes you are right.
 
-> However, there is one more thing I'm missing: with my suggestion
-> of emulating edge-triggered interrupts in the irqchip/gpio driver, the
-> trigger type here should also be 'IRQF_TRIGGER_RISING |
-> IRQF_TRIGGER_FALLING' in the DT description, so I don't think
-> we need to change the gpio-keys driver at all, just the gpio driver.
-
-Sounds even better.
-
--- 
-With Best Regards,
-Andy Shevchenko
+      Arnd
