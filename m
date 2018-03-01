@@ -1,93 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032845AbeCAQHU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:07:20 -0500
-Received: from imap.thunk.org ([74.207.234.97]:42430 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031777AbeCAQHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:07:16 -0500
-Date: Thu, 1 Mar 2018 11:07:05 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Jose R R <jose.r.r@metztli.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-ext4@vger.kernel.org
-Subject: Re: EXT4 Oops (Re: [PATCH V15 06/22] mmc: block: Add blk-mq support)
-Message-ID: <20180301160705.GB2490@thunk.org>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Jose R R <jose.r.r@metztli.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-ext4@vger.kernel.org
-References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
- <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
- <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
- <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
- <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
- <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
- <8876217f-ede6-fc81-2e05-b4fc976b3235@intel.com>
- <6a1267b0-6242-fc9f-60ed-02bf34677b62@intel.com>
- <CAM12Q5TBGwtcMk1pgN70DeqsP7TWtdC4WXhx8jUJe0VekXZJBQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM12Q5TBGwtcMk1pgN70DeqsP7TWtdC4WXhx8jUJe0VekXZJBQ@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S1032764AbeCAQIa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:08:30 -0500
+Received: from smtprelay0041.hostedemail.com ([216.40.44.41]:54481 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1031777AbeCAQI3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 11:08:29 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:973:988:989:1260:1345:1437:1534:1541:1711:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3352:3867:5007:6261:6642:10004:10848:11026:11658:11914:12043:12296:12555:12679:12895:13069:13311:13357:13972:14181:14384:14394:14721:21080:21433:21627:30054,0,RBL:46.188.144.227:@perches.com:.lbl8.mailshell.net-62.8.110.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: ghost40_49b1b6b786929
+X-Filterd-Recvd-Size: 2055
+From: Joe Perches <joe@perches.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: wmi: Fix misuse of vsprintf extension %pULL
+Date: Thu,  1 Mar 2018 08:08:23 -0800
+Message-Id: <77b9d62ee2600bb01c08c618e67b63c8aaa35f49.1519920316.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 01:15:24AM -0800, Jose R R wrote:
-> Probably it is not wise to place all your eggs (data) in one basket
-> (ext4) and diversify to viable alternatives which won't be affected by
-> UNIX 2038 year date problem, likewise?
-> < https://metztli.it/blog/index.php/amatl8/reiser-nahui/reiser4-filesystem-and-the-unix
-> >
+%pULL doesn't officially exist but %pUL does.
 
-All of the modern file systems (btrfs, ext4, f2fs, xfs, etc.) are fine
-with respect to the 2038 problem.
+Miscellanea:
 
-     	   	 				- Ted
+o Add missing newlines to a couple logging messages
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/platform/x86/wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index f90ba83359f5..8e3d0146ff8c 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -936,7 +936,7 @@ static int wmi_dev_probe(struct device *dev)
+ 		wblock->char_dev.mode = 0444;
+ 		ret = misc_register(&wblock->char_dev);
+ 		if (ret) {
+-			dev_warn(dev, "failed to register char dev: %d", ret);
++			dev_warn(dev, "failed to register char dev: %d\n", ret);
+ 			ret = -ENOMEM;
+ 			goto probe_misc_failure;
+ 		}
+@@ -1039,7 +1039,7 @@ static int wmi_create_device(struct device *wmi_bus_dev,
+ 
+ 	if (result) {
+ 		dev_warn(wmi_bus_dev,
+-			 "%s data block query control method not found",
++			 "%s data block query control method not found\n",
+ 			 method);
+ 		return result;
+ 	}
+@@ -1189,7 +1189,7 @@ static int parse_wdg(struct device *wmi_bus_dev, struct acpi_device *device)
+ 
+ 		retval = device_add(&wblock->dev.dev);
+ 		if (retval) {
+-			dev_err(wmi_bus_dev, "failed to register %pULL\n",
++			dev_err(wmi_bus_dev, "failed to register %pUL\n",
+ 				wblock->gblock.guid);
+ 			if (debug_event)
+ 				wmi_method_enable(wblock, 0);
+-- 
+2.15.0
