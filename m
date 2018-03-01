@@ -1,76 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967182AbeCAJpT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:45:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967086AbeCAJpO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:45:14 -0500
-Subject: Re: [PATCH v2] net: iucv: Free memory obtained by kzalloc
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: jwi@linux.vnet.ibm.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <1519881952-6663-1-git-send-email-arvind.yadav.cs@gmail.com>
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Date: Thu, 1 Mar 2018 10:45:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967218AbeCAJpb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:45:31 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:43052 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967086AbeCAJpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:45:25 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: kishon@ti.com, groeck@chromium.org, gwendal@chromium.org,
+        kernel@collabora.com, vicencb@gmail.com,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] phy: rockchip-typec: fall back to working in host-mode if extcon is missing.
+Date: Thu, 01 Mar 2018 10:45:20 +0100
+Message-ID: <5052573.JZoBBeufta@diego>
+In-Reply-To: <20180301092420.1191-2-enric.balletbo@collabora.com>
+References: <20180301092420.1191-1-enric.balletbo@collabora.com> <20180301092420.1191-2-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <1519881952-6663-1-git-send-email-arvind.yadav.cs@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030109-0016-0000-0000-0000052B5EC3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030109-0017-0000-0000-000028686217
-Message-Id: <8f90da04-d059-648a-0b45-e3a381e4342d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010128
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Donnerstag, 1. März 2018, 10:24:15 CET schrieb Enric Balletbo i Serra:
+> Right now the rockchip typec-phy does fail probing when no extcon is
+> detected. Some boards get the cable-state via the extcon interface and
+> have this supported, other boards seem to use the fusb302 chip or
+> another but the driver currently does not seem to utilize the extcon
+> interface to report the cable-state. That's required to detect
+> cable-state changes but a missing extcon shouldn't fail to probe,
+> instead, should just fall back to working in host-mode if it cannot get
+> the extcon.
 
+And of course:
+Some boards use no controller at all and just connect the type-c to a
+standard USB-A port.
 
-On 03/01/2018 06:25 AM, Arvind Yadav wrote:
-> Free memory, if afiucv_iucv_init is not successful. So calling
-> put_device() before kfree(). This will decrement the last reference.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> Fixes: c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port
+> support for rk3399") Reported-by: Vicente Bergas <vicencb@gmail.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
-> changes in v2:
->              Calling put_device() before kfree().
 > 
->  net/iucv/af_iucv.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/phy/rockchip/phy-rockchip-typec.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-> index 1e8cc7b..a07943f 100644
-> --- a/net/iucv/af_iucv.c
-> +++ b/net/iucv/af_iucv.c
-> @@ -2433,9 +2433,12 @@ static int afiucv_iucv_init(void)
->  	af_iucv_dev->driver = &af_iucv_driver;
->  	err = device_register(af_iucv_dev);
->  	if (err)
-> -		goto out_driver;
-> +		goto out_iucv_dev;
->  	return 0;
+> diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c
+> b/drivers/phy/rockchip/phy-rockchip-typec.c index
+> 7492c8978217..3741afab5cd2 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-typec.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-typec.c
+> @@ -782,6 +782,9 @@ static int tcphy_get_mode(struct rockchip_typec_phy
+> *tcphy) u8 mode;
+>  	int ret;
 > 
-> +out_iucv_dev:
-> +	put_device(af_iucv_dev);
-> +	kfree(af_iucv_dev);
->  out_driver:
->  	driver_unregister(&af_iucv_driver);
->  out_iucv:
->
+> +	if (!edev)
+> +		return MODE_DFP_USB;
+> +
+>  	ufp = extcon_get_state(edev, EXTCON_USB);
+>  	dp = extcon_get_state(edev, EXTCON_DISP_DP);
+> 
+> @@ -1115,9 +1118,9 @@ static int rockchip_typec_phy_probe(struct
+> platform_device *pdev)
+> 
+>  	tcphy->extcon = extcon_get_edev_by_phandle(dev, 0);
+>  	if (IS_ERR(tcphy->extcon)) {
+> -		if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
+> -			dev_err(dev, "Invalid or missing extcon\n");
+> -		return PTR_ERR(tcphy->extcon);
+> +		if (PTR_ERR(tcphy->extcon) == -EPROBE_DEFER)
+> +			return PTR_ERR(tcphy->extcon);
+> +		tcphy->extcon = NULL;
 
-Just put_device() should be sufficient here; please get rid of the kfree() call.
- 
+Do we want to keep a bit of the error handling of extcon, a la
+
++		if (PTR_ERR(tcphy->extcon) == -ENODEV) {
++			tcphy->extcon = NULL;
++		} else {
++			if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
++				dev_err(dev, "Invalid or extcon\n");
++			return PTR_ERR(tcphy->extcon);
++		}
+
+So only make it NULL, if extcon really reports ENODEV?
+
+
+Heiko
