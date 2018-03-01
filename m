@@ -1,93 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161638AbeCAUe3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:34:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48750 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161578AbeCAUe0 (ORCPT
+        id S1034203AbeCAUew (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:34:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1033189AbeCAUeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:34:26 -0500
-Date: Thu, 1 Mar 2018 20:34:13 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
-Message-ID: <20180301203413.GN12864@sirena.org.uk>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-2-srinivas.kandagatla@linaro.org>
- <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
- <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
- <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
- <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
- <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
- <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3rMDlCEgcaHQQFB+"
-Content-Disposition: inline
-In-Reply-To: <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
-X-Cookie: Real Users hate Real Programmers.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Thu, 1 Mar 2018 15:34:50 -0500
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+From: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Reply-To: benh@au1.ibm.com
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Date: Fri, 02 Mar 2018 07:34:37 +1100
+In-Reply-To: <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+         <1519876489.4592.3.camel@kernel.crashing.org>
+         <1519876569.4592.4.camel@au1.ibm.com>
+         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030120-0016-0000-0000-0000052B9DEA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030120-0017-0000-0000-00002868A417
+Message-Id: <1519936477.4592.23.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-03-01 at 11:21 -0800, Dan Williams wrote:
+> On Wed, Feb 28, 2018 at 7:56 PM, Benjamin Herrenschmidt
+> <benh@au1.ibm.com> wrote:
+> > On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
+> > > On Wed, 2018-02-28 at 16:39 -0700, Logan Gunthorpe wrote:
+> > > > Hi Everyone,
+> > > 
+> > > 
+> > > So Oliver (CC) was having issues getting any of that to work for us.
+> > > 
+> > > The problem is that acccording to him (I didn't double check the latest
+> > > patches) you effectively hotplug the PCIe memory into the system when
+> > > creating struct pages.
+> > > 
+> > > This cannot possibly work for us. First we cannot map PCIe memory as
+> > > cachable. (Note that doing so is a bad idea if you are behind a PLX
+> > > switch anyway since you'd ahve to manage cache coherency in SW).
+> > 
+> > Note: I think the above means it won't work behind a switch on x86
+> > either, will it ?
+> 
+> The devm_memremap_pages() infrastructure allows placing the memmap in
+> "System-RAM" even if the hotplugged range is in PCI space. So, even if
+> it is an issue on some configurations, it's just a simple adjustment
+> to where the memmap is placed.
 
---3rMDlCEgcaHQQFB+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But what happens with that PCI memory ? Is it effectively turned into
+nromal memory (ie, usable for normal allocations, potentially used to
+populate user pages etc...) or is it kept aside ?
 
-On Thu, Feb 22, 2018 at 10:03:42AM +0000, Srinivas Kandagatla wrote:
-> On 22/02/18 00:14, Rob Herring wrote:
+Also on ppc64, the physical addresses of PCIe make it so far appart
+that there's no way we can map them into the linear mapping at the
+normal offset of PAGE_OFFSET + (pfn << PAGE_SHIFT), so things like
+page_address or virt_to_page cannot work as-is on PCIe addresses.
 
-> > Am I saying a single DT node for this? Yes, perhaps.
-> Yes, I will give that a go.
->=20
-> So we will endup having something like this in DT for one frontend and
-> backend dailink:
-
-Let's not start encoding DPCM into DT, DPCM is very much an
-implemntation detail of the current stack which we're gradually pushing
-towards replacing with something better.  What we want to be doing is
-just treating components inside the SoC the same as components in a
-CODEC, the routing within a SoC being the same as in a CODEC and
-similarly for externally connected devices.
-
-> 		fe@1 {
->                 	is-fe;
->                         link-name =3D "MultiMedia1";
-
-In particular having the concept of "front end" in the DT is *very*
-implementation specific.  We should just be describing the connections
-that exist in the system.
-
---3rMDlCEgcaHQQFB+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYY8QACgkQJNaLcl1U
-h9A2AQf/afU7I+Vlh5qhOLI+4+E9POiqDGkF2eC13xgr1bKvvC1JNlQFVnEpm4QM
-xonSvnwf2rv7WLTSP6lClTLAjvXdW4qQ5KvfR6U78HxabliiJyK2aiBVjolPWjse
-qvqHHciRTdA3LZmpmGE/rdo3lNAEkiCIHJups7g8spE9Dto6EaMS4Dp05q8OumgD
-1DRyte5vIF9m0geqjgexGeTbADs2SwQvdBDdl1PH2Wap/lan8ricHEBVwJlz94LF
-A2suvzqCPUUpCdd3vf2CaTo50oQf3Zb4mPD0iKXmpIrx2NFnB6DpqvQsH5EMFkD/
-lbxRSeYYJNNSXVbCJYd64Uqez55P3A==
-=9CV7
------END PGP SIGNATURE-----
-
---3rMDlCEgcaHQQFB+--
+Ben.
