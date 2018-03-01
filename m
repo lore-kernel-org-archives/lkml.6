@@ -1,716 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161319AbeCAT3n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:29:43 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52773 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161252AbeCAT3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:29:40 -0500
-X-Google-Smtp-Source: AG47ELugaMduWC/Xwn3d5LIckw2LJIZBP818wBr8gEzt50FIfgfcprH7Vw437qwgU6dVuAnEUtJflQ==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <ED151D27-0D29-451F-9E9D-155E6C8C6224@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_CD4ABD57-2684-4E7D-B671-8A3F13C53285";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] lightnvm: pblk: refactor init/exit sequences
-Date: Thu, 1 Mar 2018 20:29:23 +0100
-In-Reply-To: <8586a9e4-c76f-e38a-edcf-201cc7e2ddfb@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1519919998-20829-1-git-send-email-javier@cnexlabs.com>
- <1519919998-20829-2-git-send-email-javier@cnexlabs.com>
- <8586a9e4-c76f-e38a-edcf-201cc7e2ddfb@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1161330AbeCATaQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 14:30:16 -0500
+Received: from mail.kdab.com ([176.9.126.58]:8570 "EHLO mail.kdab.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161227AbeCATaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 14:30:15 -0500
+From: Milian Wolff <milian.wolff@kdab.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitri Prokhorov <Dmitry.Prohorov@intel.com>
+Subject: Re: [RFC PATCH] perf/core: exposing type of context-switch-out event
+Date: Thu, 01 Mar 2018 20:19:47 +0100
+Message-ID: <11785831.IWU0hVXpm2@agathebauer>
+Organization: KDAB
+In-Reply-To: <20180301180805.GI21543@tassilo.jf.intel.com>
+References: <06006a92-3745-0785-cb11-ddbf70e84ded@linux.intel.com>
+ <20180301180805.GI21543@tassilo.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart40001623.NxgcFnkRuN";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Apple-Mail=_CD4ABD57-2684-4E7D-B671-8A3F13C53285
+--nextPart40001623.NxgcFnkRuN
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+Content-Type: text/plain; charset="iso-8859-1"
 
-
-> On 1 Mar 2018, at 19.49, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+On Donnerstag, 1. M=E4rz 2018 19:08:05 CET Andi Kleen wrote:
+> On Thu, Mar 01, 2018 at 06:40:04PM +0300, Alexey Budankov wrote:
+> > Hi,
+> >=20
+> > This patch prototypes exposing the type of context-switch-out event usi=
+ng
+> > PERF_RECORD_MISC_EXT_RESERVED bit for PERF_RECORD_SWITCH[_CPU_WIDE]
+> > records.
+> It would be better to define an actually named bit in perf_event.h.
+> It can be the same value.
 >=20
-> On 03/01/2018 04:59 PM, Javier Gonz=C3=A1lez wrote:
->> Refactor init and exit sequences to eliminate dependencies among init
->> modules and improve readability.
->> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->> ---
->>  drivers/lightnvm/pblk-init.c | 415 =
-+++++++++++++++++++++----------------------
->>  1 file changed, 206 insertions(+), 209 deletions(-)
->> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->> index 25fc70ca07f7..87c390667dd6 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -103,7 +103,40 @@ static void pblk_l2p_free(struct pblk *pblk)
->>  	vfree(pblk->trans_map);
->>  }
->>  -static int pblk_l2p_init(struct pblk *pblk)
->> +static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
->> +{
->> +	struct pblk_line *line =3D NULL;
->> +
->> +	if (factory_init) {
->> +		pblk_setup_uuid(pblk);
->> +	} else {
->> +		line =3D pblk_recov_l2p(pblk);
->> +		if (IS_ERR(line)) {
->> +			pr_err("pblk: could not recover l2p table\n");
->> +			return -EFAULT;
->> +		}
->> +	}
->> +
->> +#ifdef CONFIG_NVM_DEBUG
->> +	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->> +#endif
->> +
->> +	/* Free full lines directly as GC has not been started yet */
->> +	pblk_gc_free_full_lines(pblk);
->> +
->> +	if (!line) {
->> +		/* Configure next line for user data */
->> +		line =3D pblk_line_get_first_data(pblk);
->> +		if (!line) {
->> +			pr_err("pblk: line list corrupted\n");
->> +			return -EFAULT;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
->>  {
->>  	sector_t i;
->>  	struct ppa_addr ppa;
->> @@ -119,7 +152,7 @@ static int pblk_l2p_init(struct pblk *pblk)
->>  	for (i =3D 0; i < pblk->rl.nr_secs; i++)
->>  		pblk_trans_map_set(pblk, i, ppa);
->>  -	return 0;
->> +	return pblk_l2p_recover(pblk, factory_init);
->>  }
->>    static void pblk_rwb_free(struct pblk *pblk)
->> @@ -159,7 +192,13 @@ static int pblk_set_ppaf(struct pblk *pblk)
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->>  	struct nvm_addr_format ppaf =3D geo->ppaf;
->> -	int power_len;
->> +	int mod, power_len;
->> +
->> +	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
->> +	if (mod) {
->> +		pr_err("pblk: bad configuration of sectors/pages\n");
->> +		return -EINVAL;
->> +	}
->>    	/* Re-calculate channel and lun format to adapt to configuration =
-*/
->>  	power_len =3D get_count_order(geo->nr_chnls);
->> @@ -252,12 +291,39 @@ static int pblk_core_init(struct pblk *pblk)
->>  {
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->> +	int max_write_ppas;
->> +
->> +	atomic64_set(&pblk->user_wa, 0);
->> +	atomic64_set(&pblk->pad_wa, 0);
->> +	atomic64_set(&pblk->gc_wa, 0);
->> +	pblk->user_rst_wa =3D 0;
->> +	pblk->pad_rst_wa =3D 0;
->> +	pblk->gc_rst_wa =3D 0;
->> +
->> +	atomic64_set(&pblk->nr_flush, 0);
->> +	pblk->nr_flush_rst =3D 0;
->>    	pblk->pgs_in_buffer =3D NVM_MEM_PAGE_WRITE * geo->sec_per_pg *
->>  						geo->nr_planes * =
-geo->all_luns;
->>  +	pblk->min_write_pgs =3D geo->sec_per_pl * (geo->sec_size / =
-PAGE_SIZE);
->> +	max_write_ppas =3D pblk->min_write_pgs * geo->all_luns;
->> +	pblk->max_write_pgs =3D min_t(int, max_write_ppas, =
-NVM_MAX_VLBA);
->> +	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
->> +
->> +	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
->> +		pr_err("pblk: vector list too big(%u > %u)\n",
->> +				pblk->max_write_pgs, =
-PBLK_MAX_REQ_ADDRS);
->> +		return -EINVAL;
->> +	}
->> +
->> +	pblk->pad_dist =3D kzalloc((pblk->min_write_pgs - 1) * =
-sizeof(atomic64_t),
->> +								=
-GFP_KERNEL);
->> +	if (!pblk->pad_dist)
->> +		return -ENOMEM;
->> +
->>  	if (pblk_init_global_caches(pblk))
->> -		return -ENOMEM;
->> +		goto fail_free_pad_dist;
->>    	/* Internal bios can be at most the sectors signaled by the =
-device. */
->>  	pblk->page_bio_pool =3D mempool_create_page_pool(NVM_MAX_VLBA, =
-0);
->> @@ -307,10 +373,8 @@ static int pblk_core_init(struct pblk *pblk)
->>  	if (pblk_set_ppaf(pblk))
->>  		goto free_r_end_wq;
->>  -	if (pblk_rwb_init(pblk))
->> -		goto free_r_end_wq;
->> -
->>  	INIT_LIST_HEAD(&pblk->compl_list);
->> +
->>  	return 0;
->>    free_r_end_wq:
->> @@ -333,6 +397,8 @@ static int pblk_core_init(struct pblk *pblk)
->>  	mempool_destroy(pblk->page_bio_pool);
->>  free_global_caches:
->>  	pblk_free_global_caches(pblk);
->> +fail_free_pad_dist:
->> +	kfree(pblk->pad_dist);
->>  	return -ENOMEM;
->>  }
->>  @@ -354,14 +420,8 @@ static void pblk_core_free(struct pblk *pblk)
->>  	mempool_destroy(pblk->e_rq_pool);
->>  	mempool_destroy(pblk->w_rq_pool);
->>  -	pblk_rwb_free(pblk);
->> -
->>  	pblk_free_global_caches(pblk);
->> -}
->> -
->> -static void pblk_luns_free(struct pblk *pblk)
->> -{
->> -	kfree(pblk->luns);
->> +	kfree(pblk->pad_dist);
->>  }
->>    static void pblk_line_mg_free(struct pblk *pblk)
->> @@ -378,8 +438,6 @@ static void pblk_line_mg_free(struct pblk *pblk)
->>  		pblk_mfree(l_mg->eline_meta[i]->buf, =
-l_mg->emeta_alloc_type);
->>  		kfree(l_mg->eline_meta[i]);
->>  	}
->> -
->> -	kfree(pblk->lines);
->>  }
->>    static void pblk_line_meta_free(struct pblk_line *line)
->> @@ -402,6 +460,11 @@ static void pblk_lines_free(struct pblk *pblk)
->>  		pblk_line_meta_free(line);
->>  	}
->>  	spin_unlock(&l_mg->free_lock);
->> +
->> +	pblk_line_mg_free(pblk);
->> +
->> +	kfree(pblk->luns);
->> +	kfree(pblk->lines);
->>  }
->>    static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct =
-pblk_lun *rlun,
->> @@ -476,7 +539,7 @@ static int pblk_bb_line(struct pblk *pblk, struct =
-pblk_line *line,
->>  	return bb_cnt;
->>  }
->>  -static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
->> +static int pblk_luns_init(struct pblk *pblk)
->>  {
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->> @@ -501,7 +564,7 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>  		int lunid =3D lun_raw + ch * geo->nr_luns;
->>    		rlun =3D &pblk->luns[i];
->> -		rlun->bppa =3D luns[lunid];
->> +		rlun->bppa =3D dev->luns[lunid];
->>    		sema_init(&rlun->wr_sem, 1);
->>  	}
->> @@ -509,38 +572,6 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>  	return 0;
->>  }
->>  -static int pblk_lines_configure(struct pblk *pblk, int flags)
->> -{
->> -	struct pblk_line *line =3D NULL;
->> -	int ret =3D 0;
->> -
->> -	if (!(flags & NVM_TARGET_FACTORY)) {
->> -		line =3D pblk_recov_l2p(pblk);
->> -		if (IS_ERR(line)) {
->> -			pr_err("pblk: could not recover l2p table\n");
->> -			ret =3D -EFAULT;
->> -		}
->> -	}
->> -
->> -#ifdef CONFIG_NVM_DEBUG
->> -	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->> -#endif
->> -
->> -	/* Free full lines directly as GC has not been started yet */
->> -	pblk_gc_free_full_lines(pblk);
->> -
->> -	if (!line) {
->> -		/* Configure next line for user data */
->> -		line =3D pblk_line_get_first_data(pblk);
->> -		if (!line) {
->> -			pr_err("pblk: line list corrupted\n");
->> -			ret =3D -EFAULT;
->> -		}
->> -	}
->> -
->> -	return ret;
->> -}
->> -
->>  /* See comment over struct line_emeta definition */
->>  static unsigned int calc_emeta_len(struct pblk *pblk)
->>  {
->> @@ -606,11 +637,70 @@ static void pblk_set_provision(struct pblk =
-*pblk, long nr_free_blks)
->>  	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
->>  }
->>  -static int pblk_lines_alloc_metadata(struct pblk *pblk)
->> +static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line =
-*line,
->> +				void *chunk_log, long *nr_bad_blks)
->>  {
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +
->> +	line->blk_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->> +	if (!line->blk_bitmap)
->> +		return -ENOMEM;
->> +
->> +	line->erase_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->> +	if (!line->erase_bitmap) {
->> +		kfree(line->blk_bitmap);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	*nr_bad_blks =3D pblk_bb_line(pblk, line, chunk_log, =
-lm->blk_per_line);
->> +
->> +	return 0;
->> +}
->> +
->> +static int pblk_line_mg_init(struct pblk *pblk)
->> +{
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->>  	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>  	struct pblk_line_meta *lm =3D &pblk->lm;
->> -	int i;
->> +	int i, bb_distance;
->> +
->> +	l_mg->nr_lines =3D geo->nr_chks;
->> +	l_mg->log_line =3D l_mg->data_line =3D NULL;
->> +	l_mg->l_seq_nr =3D l_mg->d_seq_nr =3D 0;
->> +	l_mg->nr_free_lines =3D 0;
->> +	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
->> +
->> +	INIT_LIST_HEAD(&l_mg->free_list);
->> +	INIT_LIST_HEAD(&l_mg->corrupt_list);
->> +	INIT_LIST_HEAD(&l_mg->bad_list);
->> +	INIT_LIST_HEAD(&l_mg->gc_full_list);
->> +	INIT_LIST_HEAD(&l_mg->gc_high_list);
->> +	INIT_LIST_HEAD(&l_mg->gc_mid_list);
->> +	INIT_LIST_HEAD(&l_mg->gc_low_list);
->> +	INIT_LIST_HEAD(&l_mg->gc_empty_list);
->> +
->> +	INIT_LIST_HEAD(&l_mg->emeta_list);
->> +
->> +	l_mg->gc_lists[0] =3D &l_mg->gc_high_list;
->> +	l_mg->gc_lists[1] =3D &l_mg->gc_mid_list;
->> +	l_mg->gc_lists[2] =3D &l_mg->gc_low_list;
->> +
->> +	spin_lock_init(&l_mg->free_lock);
->> +	spin_lock_init(&l_mg->close_lock);
->> +	spin_lock_init(&l_mg->gc_lock);
->> +
->> +	l_mg->vsc_list =3D kcalloc(l_mg->nr_lines, sizeof(__le32), =
-GFP_KERNEL);
->> +	if (!l_mg->vsc_list)
->> +		goto fail;
->> +
->> +	l_mg->bb_template =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->> +	if (!l_mg->bb_template)
->> +		goto fail_free_vsc_list;
->> +
->> +	l_mg->bb_aux =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->> +	if (!l_mg->bb_aux)
->> +		goto fail_free_bb_template;
->>    	/* smeta is always small enough to fit on a kmalloc memory =
-allocation,
->>  	 * emeta depends on the number of LUNs allocated to the pblk =
-instance
->> @@ -656,13 +746,13 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>  		}
->>  	}
->>  -	l_mg->vsc_list =3D kcalloc(l_mg->nr_lines, sizeof(__le32), =
-GFP_KERNEL);
->> -	if (!l_mg->vsc_list)
->> -		goto fail_free_emeta;
->> -
->>  	for (i =3D 0; i < l_mg->nr_lines; i++)
->>  		l_mg->vsc_list[i] =3D cpu_to_le32(EMPTY_ENTRY);
->>  +	bb_distance =3D (geo->all_luns) * geo->ws_opt;
->> +	for (i =3D 0; i < lm->sec_per_line; i +=3D bb_distance)
->> +		bitmap_set(l_mg->bb_template, i, geo->ws_opt);
->> +
->>  	return 0;
->>    fail_free_emeta:
->> @@ -673,69 +763,25 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>  			kfree(l_mg->eline_meta[i]->buf);
->>  		kfree(l_mg->eline_meta[i]);
->>  	}
->> -
->>  fail_free_smeta:
->>  	for (i =3D 0; i < PBLK_DATA_LINES; i++)
->>  		kfree(l_mg->sline_meta[i]);
->> -
->> +	kfree(l_mg->bb_aux);
->> +fail_free_bb_template:
->> +	kfree(l_mg->bb_template);
->> +fail_free_vsc_list:
->> +	kfree(l_mg->vsc_list);
->> +fail:
->>  	return -ENOMEM;
->>  }
->>  -static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line =
-*line,
->> -				void *chunk_log, long *nr_bad_blks)
->> -{
->> -	struct pblk_line_meta *lm =3D &pblk->lm;
->> -
->> -	line->blk_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->> -	if (!line->blk_bitmap)
->> -		return -ENOMEM;
->> -
->> -	line->erase_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->> -	if (!line->erase_bitmap) {
->> -		kfree(line->blk_bitmap);
->> -		return -ENOMEM;
->> -	}
->> -
->> -	*nr_bad_blks =3D pblk_bb_line(pblk, line, chunk_log, =
-lm->blk_per_line);
->> -
->> -	return 0;
->> -}
->> -
->> -static int pblk_lines_init(struct pblk *pblk)
->> +static int pblk_line_meta_init(struct pblk *pblk)
->>  {
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->> -	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>  	struct pblk_line_meta *lm =3D &pblk->lm;
->> -	struct pblk_line *line;
->> -	void *chunk_log;
->>  	unsigned int smeta_len, emeta_len;
->> -	long nr_bad_blks =3D 0, nr_free_blks =3D 0;
->> -	int bb_distance, max_write_ppas, mod;
->> -	int i, ret;
->> -
->> -	pblk->min_write_pgs =3D geo->sec_per_pl * (geo->sec_size / =
-PAGE_SIZE);
->> -	max_write_ppas =3D pblk->min_write_pgs * geo->all_luns;
->> -	pblk->max_write_pgs =3D min_t(int, max_write_ppas, =
-NVM_MAX_VLBA);
->> -	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
->> -
->> -	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
->> -		pr_err("pblk: vector list too big(%u > %u)\n",
->> -				pblk->max_write_pgs, =
-PBLK_MAX_REQ_ADDRS);
->> -		return -EINVAL;
->> -	}
->> -
->> -	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
->> -	if (mod) {
->> -		pr_err("pblk: bad configuration of sectors/pages\n");
->> -		return -EINVAL;
->> -	}
->> -
->> -	l_mg->nr_lines =3D geo->nr_chks;
->> -	l_mg->log_line =3D l_mg->data_line =3D NULL;
->> -	l_mg->l_seq_nr =3D l_mg->d_seq_nr =3D 0;
->> -	l_mg->nr_free_lines =3D 0;
->> -	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
->> +	int i;
->>    	lm->sec_per_line =3D geo->sec_per_chk * geo->all_luns;
->>  	lm->blk_per_line =3D geo->all_luns;
->> @@ -787,58 +833,43 @@ static int pblk_lines_init(struct pblk *pblk)
->>  		return -EINVAL;
->>  	}
->>  -	ret =3D pblk_lines_alloc_metadata(pblk);
->> +	return 0;
->> +}
->> +
->> +static int pblk_lines_init(struct pblk *pblk)
->> +{
->> +	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +	struct pblk_line *line;
->> +	void *chunk_log;
->> +	long nr_bad_blks =3D 0, nr_free_blks =3D 0;
->> +	int i, ret;
->> +
->> +	ret =3D pblk_line_meta_init(pblk);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret =3D pblk_line_mg_init(pblk);
->>  	if (ret)
->>  		return ret;
->>  -	l_mg->bb_template =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->> -	if (!l_mg->bb_template) {
->> -		ret =3D -ENOMEM;
->> +	ret =3D pblk_luns_init(pblk);
->> +	if (ret)
->>  		goto fail_free_meta;
->> -	}
->> -
->> -	l_mg->bb_aux =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->> -	if (!l_mg->bb_aux) {
->> -		ret =3D -ENOMEM;
->> -		goto fail_free_bb_template;
->> -	}
->> -
->> -	bb_distance =3D (geo->all_luns) * geo->sec_per_pl;
->> -	for (i =3D 0; i < lm->sec_per_line; i +=3D bb_distance)
->> -		bitmap_set(l_mg->bb_template, i, geo->sec_per_pl);
->> -
->> -	INIT_LIST_HEAD(&l_mg->free_list);
->> -	INIT_LIST_HEAD(&l_mg->corrupt_list);
->> -	INIT_LIST_HEAD(&l_mg->bad_list);
->> -	INIT_LIST_HEAD(&l_mg->gc_full_list);
->> -	INIT_LIST_HEAD(&l_mg->gc_high_list);
->> -	INIT_LIST_HEAD(&l_mg->gc_mid_list);
->> -	INIT_LIST_HEAD(&l_mg->gc_low_list);
->> -	INIT_LIST_HEAD(&l_mg->gc_empty_list);
->> -
->> -	INIT_LIST_HEAD(&l_mg->emeta_list);
->> -
->> -	l_mg->gc_lists[0] =3D &l_mg->gc_high_list;
->> -	l_mg->gc_lists[1] =3D &l_mg->gc_mid_list;
->> -	l_mg->gc_lists[2] =3D &l_mg->gc_low_list;
->> -
->> -	spin_lock_init(&l_mg->free_lock);
->> -	spin_lock_init(&l_mg->close_lock);
->> -	spin_lock_init(&l_mg->gc_lock);
->> -
->> -	pblk->lines =3D kcalloc(l_mg->nr_lines, sizeof(struct =
-pblk_line),
->> -								=
-GFP_KERNEL);
->> -	if (!pblk->lines) {
->> -		ret =3D -ENOMEM;
->> -		goto fail_free_bb_aux;
->> -	}
->>    	chunk_log =3D pblk_bb_get_log(pblk);
->>  	if (IS_ERR(chunk_log)) {
->>  		pr_err("pblk: could not get bad block log (%lu)\n",
->>  							=
-PTR_ERR(chunk_log));
->>  		ret =3D PTR_ERR(chunk_log);
->> -		goto fail_free_lines;
->> +		goto fail_free_luns;
->> +	}
->> +
->> +	pblk->lines =3D kcalloc(l_mg->nr_lines, sizeof(struct =
-pblk_line),
->> +								=
-GFP_KERNEL);
->> +	if (!pblk->lines) {
->> +		ret =3D -ENOMEM;
->> +		goto fail_free_chunk_log;
->>  	}
->>    	for (i =3D 0; i < l_mg->nr_lines; i++) {
->> @@ -856,7 +887,7 @@ static int pblk_lines_init(struct pblk *pblk)
->>    		ret =3D pblk_setup_line_meta(pblk, line, chunk_log, =
-&nr_bad_blks);
->>  		if (ret)
->> -			goto fail_free_chunk_log;
->> +			goto fail_free_lines;
->>    		chk_in_line =3D lm->blk_per_line - nr_bad_blks;
->>  		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
->> @@ -878,16 +909,14 @@ static int pblk_lines_init(struct pblk *pblk)
->>  	kfree(chunk_log);
->>  	return 0;
->>  -fail_free_chunk_log:
->> -	kfree(chunk_log);
->> +fail_free_lines:
->>  	while (--i >=3D 0)
->>  		pblk_line_meta_free(&pblk->lines[i]);
->> -fail_free_lines:
->>  	kfree(pblk->lines);
->> -fail_free_bb_aux:
->> -	kfree(l_mg->bb_aux);
->> -fail_free_bb_template:
->> -	kfree(l_mg->bb_template);
->> +fail_free_chunk_log:
->> +	kfree(chunk_log);
->> +fail_free_luns:
->> +	kfree(pblk->luns);
->>  fail_free_meta:
->>  	pblk_line_mg_free(pblk);
->>  @@ -930,12 +959,10 @@ static void pblk_writer_stop(struct pblk =
-*pblk)
->>    static void pblk_free(struct pblk *pblk)
->>  {
->> -	pblk_luns_free(pblk);
->>  	pblk_lines_free(pblk);
->> -	kfree(pblk->pad_dist);
->> -	pblk_line_mg_free(pblk);
->> -	pblk_core_free(pblk);
->>  	pblk_l2p_free(pblk);
->> +	pblk_rwb_free(pblk);
->> +	pblk_core_free(pblk);
->>    	kfree(pblk);
->>  }
->> @@ -1000,19 +1027,6 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>  	spin_lock_init(&pblk->trans_lock);
->>  	spin_lock_init(&pblk->lock);
->>  -	if (flags & NVM_TARGET_FACTORY)
->> -		pblk_setup_uuid(pblk);
->> -
->> -	atomic64_set(&pblk->user_wa, 0);
->> -	atomic64_set(&pblk->pad_wa, 0);
->> -	atomic64_set(&pblk->gc_wa, 0);
->> -	pblk->user_rst_wa =3D 0;
->> -	pblk->pad_rst_wa =3D 0;
->> -	pblk->gc_rst_wa =3D 0;
->> -
->> -	atomic64_set(&pblk->nr_flush, 0);
->> -	pblk->nr_flush_rst =3D 0;
->> -
->>  #ifdef CONFIG_NVM_DEBUG
->>  	atomic_long_set(&pblk->inflight_writes, 0);
->>  	atomic_long_set(&pblk->padded_writes, 0);
->> @@ -1036,48 +1050,35 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>  	atomic_long_set(&pblk->write_failed, 0);
->>  	atomic_long_set(&pblk->erase_failed, 0);
->>  -	ret =3D pblk_luns_init(pblk, dev->luns);
->> -	if (ret) {
->> -		pr_err("pblk: could not initialize luns\n");
->> -		goto fail;
->> -	}
->> -
->> -	ret =3D pblk_lines_init(pblk);
->> -	if (ret) {
->> -		pr_err("pblk: could not initialize lines\n");
->> -		goto fail_free_luns;
->> -	}
->> -
->> -	pblk->pad_dist =3D kzalloc((pblk->min_write_pgs - 1) * =
-sizeof(atomic64_t),
->> -				 GFP_KERNEL);
->> -	if (!pblk->pad_dist) {
->> -		ret =3D -ENOMEM;
->> -		goto fail_free_line_meta;
->> -	}
->> -
->>  	ret =3D pblk_core_init(pblk);
->>  	if (ret) {
->>  		pr_err("pblk: could not initialize core\n");
->> -		goto fail_free_pad_dist;
->> +		goto fail;
->>  	}
->>  -	ret =3D pblk_l2p_init(pblk);
->> +	ret =3D pblk_lines_init(pblk);
->>  	if (ret) {
->> -		pr_err("pblk: could not initialize maps\n");
->> +		pr_err("pblk: could not initialize lines\n");
->>  		goto fail_free_core;
->>  	}
->>  -	ret =3D pblk_lines_configure(pblk, flags);
->> +	ret =3D pblk_rwb_init(pblk);
->>  	if (ret) {
->> -		pr_err("pblk: could not configure lines\n");
->> -		goto fail_free_l2p;
->> +		pr_err("pblk: could not initialize write buffer\n");
->> +		goto fail_free_lines;
->> +	}
->> +
->> +	ret =3D pblk_l2p_init(pblk, flags & NVM_TARGET_FACTORY);
->> +	if (ret) {
->> +		pr_err("pblk: could not initialize maps\n");
->> +		goto fail_free_rwb;
->>  	}
->>    	ret =3D pblk_writer_init(pblk);
->>  	if (ret) {
->>  		if (ret !=3D -EINTR)
->>  			pr_err("pblk: could not initialize write =
-thread\n");
->> -		goto fail_free_lines;
->> +		goto fail_free_l2p;
->>  	}
->>    	ret =3D pblk_gc_init(pblk);
->> @@ -1112,18 +1113,14 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>    fail_stop_writer:
->>  	pblk_writer_stop(pblk);
->> -fail_free_lines:
->> -	pblk_lines_free(pblk);
->>  fail_free_l2p:
->>  	pblk_l2p_free(pblk);
->> +fail_free_rwb:
->> +	pblk_rwb_free(pblk);
->> +fail_free_lines:
->> +	pblk_lines_free(pblk);
->>  fail_free_core:
->>  	pblk_core_free(pblk);
->> -fail_free_pad_dist:
->> -	kfree(pblk->pad_dist);
->> -fail_free_line_meta:
->> -	pblk_line_mg_free(pblk);
->> -fail_free_luns:
->> -	pblk_luns_free(pblk);
->>  fail:
->>  	kfree(pblk);
->>  	return ERR_PTR(ret);
+> Also we would need a patch for perf script / perf report -D to print this
+> information.
 >=20
-> Thanks. I'm not able to squash it without conflict. Is it based on =
-for-4.17/core?
+> The rest looks good to me.
 
-Yes, it's based on for-4.17/core, but I can see a small conflict due to
-the patches applied in the middle of these two. How do you want to do
-it? We can keep them separately, or do a rebase on the current patches.
+Please also add documentation Documentation/perf.data-file-format.txt, but =
+I=20
+just noticed that not even PERF_RECORD_SWITCH is documented there...
 
-Javier
+Otherwise I also think that this would be a very nice feature addition!
+
+=2D-=20
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart40001623.NxgcFnkRuN
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgwMzAxMTkxOTQ3WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgp2vOiNBDVhQ6kGCHKIFs8kYvOZj5
+dEFXxu8K4KbgKF8wDQYJKoZIhvcNAQEBBQAEggEANRY/Gm1814QIvjG222t6JCLnsDDFhv0+2awd
+yqrePVcev7GwToUZj2sjeapYKVpdORAXnO1mWgXWX4M+4QYLWZnzLUWpEsCIXZQPwMvXpJApB+Eb
+IEQNhhtXrN1sU9q6sG/SuIxFZiE3xUjsMARZcPOXBmIdthnGp3bpPq+c+codconA1lnLMwj/Zr7s
+nRQmFpBbDqXf3ie6QeGohWoM2j5i/MWO5vMM+T0bUb/pa1GXGUqYDVS6D3dlT6XhOhWC9tZ8b40r
+dJrHuuoHVMPxbwl9Y6oDujdbyy5tfoXfDmN539Zcmrjc6vkcDy0TIIIAxA7aRJo8OBdfT5ODhaY4
+4gAAAAAAAA==
 
 
---Apple-Mail=_CD4ABD57-2684-4E7D-B671-8A3F13C53285
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlqYVJMACgkQPEYBfS0l
-eOAJlRAAxWP5mAptEyaj13mqdEhQGy54Pfij8qq1H+bjKO+5EKGkS+0L1z5PiRAX
-WfjlUdeNJVkytm+Djj6zFdQzbYQhXmg7XFsgsABQ7bnzFFSiydvRcWdRd0mujZJY
-MciSAZd2RoboQSjfJ/yX4THbdm1njIeKyC9YF+SkYxyw7HE+1M5IAAa2im7KiFIk
-a09UxcQvx3dUOsTiuBJ7lCwRl0oF5w3anIE96a7yKsAShg5n7qqsuOTy3sQh9GMR
-sQH1SPbd0kY9mpPYwUP0CVePdWNfOp0g7pF92M1B1uTlQaJXtrK06GcsHobvtuSZ
-vnzvbDz/wkA8cuCUwGHwneMNwmQ7Jvg29Lw8xlFBk7xbWoHqGnVrvYNq5Ys1q/Cl
-5/o2WAd9hHGx2omSx0rVJ+oGNk2Pr1a7hrLfvE4wWEJwVv6+jjeo9kNW7fnkWZhD
-Tjc2RhXwqqMEikZ9A3idhOp50O3VAlte51cr/y+/8lKGA5UCZneWhbbjXReOkZgA
-klvH+O38KyMl+4PRQgY8hOflmEpgBuEBYtgS5H3dgjdugeZ6A2gDwMJX6il2Bvl7
-aTOJxf54Sp++N51RLZblQUIFEXZ2O3TjrvmnRviIM4/v/DB+zLejN9dTlaJwFLCC
-PuV/2I6ZQTHow+O42EcvgnYHsHz3Ze9H5OzWQv5MmYyDQBz2Mbg=
-=WEDz
------END PGP SIGNATURE-----
-
---Apple-Mail=_CD4ABD57-2684-4E7D-B671-8A3F13C53285--
+--nextPart40001623.NxgcFnkRuN--
