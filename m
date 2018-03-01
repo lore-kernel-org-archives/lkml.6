@@ -1,191 +1,157 @@
-Return-Path: <kernel-hardening-return-12072-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvs6zPKc0oGXfnUUVL/z1muoau61VfrpjCnCiHIBQo7plQf0iR7mwb6ptbSLY90+TsEUjgq
-ARC-Seal: i=1; a=rsa-sha256; t=1519989298; cv=none;
+Return-Path: <festevam@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519920138; cv=none;
         d=google.com; s=arc-20160816;
-        b=q3yz6gn7Ywd73Fg1NcWJ/n9IXHiUs4nL8D9YiIrgU6yeECOOeJISSbCBdwCg97ID4H
-         N8MSidPcMtKacPL/bIt2e+yPNlLbhKZxCp84s+UZJOIiP8JRpXDMDkHfS1NOC2kC9Y7+
-         IZQtGbD+wU463Eg0Kc6wF2jRaRJDp1zUa8ggFhVRaqXGbmFxfzYaZZAm5D/f/tbvhJpU
-         ag5H+0OklUZ5IA8jX6kxLusj+ketJvII1IlYadfs6F63KnhbgjLx+iXvXbxdxRk+GEJW
-         fVrS82HsYCQt3On1vCgMMbmtQIU4I3qzbgzOsQxcUrLeKLapiIKwavNs1o3QI4VN6JVq
-         mT/w==
+        b=wdIRr0tqriECOi4wP/sVx98QWMWpJtovgdZJvqXDKNerXIufHpOYGyezWj/g2NLgwU
+         QeyZs4vEleX1fSZSk8k62AF8JRnmpz77VnB+E3PKVLh542VlCVk+y9kYT6u90R4dgl7S
+         4pOVuQtxy5U5p2SBkBzG1sfYT4QLtAOdm7nXHqxxC6IqCfMyLj2PVNxMWQnTqRJrXHgS
+         jqd5UKt9prFxqAxj/j0GH6thk2Q+TTovokOxd97n8YFINXM5yigE5cLRKM5pEOdGwRBK
+         oO4QQuyeuB+oTfnMg3iSnvXUtKiAJZUIYv/RSIJmEthJGw7xrVUS2d5iFGeXnUHlOc7i
+         HJCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:cc:references:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=UL/ugZxV1QhAkzEMnKwNL0Vi1KZN/dMJx8o+0I8WOJg=;
-        b=uE0hI1Da3SLsuB5t7zqClA9Bn5MThsINxZzB+NGw02f+j7Lzn27p/q/MJ42jW1Vlkv
-         heZMuLlUgp7Q4iEPvZhu/WqJSN/i35WTo28lopcuQtlB9lJSuRKKYWHbqoQvZIrreFTI
-         G29DgJ1rGU2ej6BF7HUwVFgv46GBFIRKAkuVWj1HsK8YayNlL/CL/5ItZ3YmPdT0DdUi
-         9cbj7iUegPzU77DcWMr+JUyiz6uZsEsMgFxQoFwFm2i5PsKXkzynKh3j04G2L2gSt0c/
-         33JtqoLXeJmPR65535Pv0vYg43DDdF2OY5oQ5Q5X5iW4pBkMZdPDjTsKqXwZXctfsR0p
-         nD/Q==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=wMzEW0hw1kJTlLlwsM4+3KqtnhApgaxMTGL62zhI3zE=;
+        b=IFvpXFV2Oe2Z1EW2b9bjSLNPV8yZb3qz6UdF8LJhFr0zhjbF1e+1zsLhofDdKdmWNT
+         nNwPYcRSfDLVV+QAthoWbKo9E3Ufp3yvn+j/a83ZEwoCfmc+bNriy5MVvSWlwZSevMU4
+         TeU+S4GCHlw4eSwSMfNsQzsKFwPrYQmBKSXulrwKWLxH5CuUD88076XdIedTZPD414Gs
+         65EMc/aU38iZunFahNRsBNrorVimkfElDlCjkEOzZSofmwa2gxlXAvIPJOWBbUVhtuF+
+         xAz9S9oJ1QtfRuKtiF/dLSbdVDlThZ8cwnrwTJ+duyV04aRLAWV88ryRhqnLEVGMTk/u
+         gr1A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12072-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12072-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hsui5btB;
+       spf=pass (google.com: domain of festevam@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=festevam@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12072-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12072-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 1/2] stackleak: Update for arm64
-To: Will Deacon <will.deacon@arm.com>, Laura Abbott <labbott@redhat.com>,
- Kees Cook <keescook@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-hardening@lists.openwall.com,
- richard.sandiford@arm.com
-References: <20180221011303.20392-1-labbott@redhat.com>
- <20180221011303.20392-2-labbott@redhat.com> <20180222165834.GC18421@arm.com>
- <97090ca6-efad-7c03-6084-a97674ae61c7@linux.com>
- <874lm2d96q.fsf@e105548-lin.cambridge.arm.com>
- <5d10c6ad-b4b6-eb27-79f0-ca235b73e7eb@linux.com>
- <87woywxezi.fsf@e105548-lin.cambridge.arm.com>
-Cc: PaX Team <pageexec@freemail.hu>
-From: Alexander Popov <alex.popov@linux.com>
-Message-ID: <b0575fc6-79f4-9aad-ee31-e761a9cac5d8@linux.com>
-Date: Fri, 2 Mar 2018 14:14:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hsui5btB;
+       spf=pass (google.com: domain of festevam@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=festevam@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELtLThmUiNd/bpbhKpqMjTa0kr6rHWmIO1KLg09KuuRsoz+/fxmNt/8++QDIhRSh81+fo37MrGCGKS4QhxmStZg=
 MIME-Version: 1.0
-In-Reply-To: <87woywxezi.fsf@e105548-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180301040939.GA13274@embeddedgus>
+References: <20180301040939.GA13274@embeddedgus>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 1 Mar 2018 13:02:17 -0300
+Message-ID: <CAOMZO5B_UGZ3De1UjUXzU6-wGMgRrRJVWZ8z+a+HoCpwWkeBwg@mail.gmail.com>
+Subject: Re: [PATCH] staging/imx: Fix inconsistent IS_ERR and PTR_ERR
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media <linux-media@vger.kernel.org>, devel@driverdev.osuosl.org,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592971096374608879?=
-X-GMAIL-MSGID: =?utf-8?q?1593824298973380976?=
+X-GMAIL-THRID: =?utf-8?q?1593706944440057524?=
+X-GMAIL-MSGID: =?utf-8?q?1593751779275466265?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Thanks for your reply, Richard!
+On Thu, Mar 1, 2018 at 1:09 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> Fix inconsistent IS_ERR and PTR_ERR in imx_csi_probe.
+> The proper pointer to be passed as argument is pinctrl
+> instead of priv->vdev.
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Fixes: 52e17089d185 ("media: imx: Don't initialize vars that won't be used")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/staging/media/imx/imx-media-csi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+> index 5a195f8..4f290a0 100644
+> --- a/drivers/staging/media/imx/imx-media-csi.c
+> +++ b/drivers/staging/media/imx/imx-media-csi.c
+> @@ -1798,7 +1798,7 @@ static int imx_csi_probe(struct platform_device *pdev)
+>         priv->dev->of_node = pdata->of_node;
+>         pinctrl = devm_pinctrl_get_select_default(priv->dev);
+>         if (IS_ERR(pinctrl)) {
+> -               ret = PTR_ERR(priv->vdev);
+> +               ret = PTR_ERR(pinctrl);
+>                 goto free;
 
-On 01.03.2018 13:33, Richard Sandiford wrote:
-> Alexander Popov <alex.popov@linux.com> writes:
->> On 27.02.2018 13:21, Richard Sandiford wrote:
->>> Alexander Popov <alex.popov@linux.com> writes:
->>>> Would you be so kind to take a look at the whole STACKLEAK plugin?
->>>> http://www.openwall.com/lists/kernel-hardening/2018/02/16/4
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/gcc-plugin/stackleak&id=57a0a6763b12e82dd462593d0f42be610e93cdc9
->>>>
->>>> It's not very big. I documented it in detail. I would be really
->>>> grateful for the
->>>> review!
->>>
->>> Looks good to me FWIW.  Just a couple of minor things:
->>>
->>>> +	/*
->>>> +	 * 1. Loop through the GIMPLE statements in each of cfun basic blocks.
->>>> +	 * cfun is a global variable which represents the function that is
->>>> +	 * currently processed.
->>>> +	 */
->>>> +	FOR_EACH_BB_FN(bb, cfun) {
->>>> +		for (gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
->>>> +			gimple stmt;
->>>> +
->>>> +			stmt = gsi_stmt(gsi);
->>>> +
->>>> +			/* Leaf function is a function which makes no calls */
->>>> +			if (is_gimple_call(stmt))
->>>> +				is_leaf = false;
->>>
->>> It's probably not going to matter in practice, but it might be worth
->>> emphasising in the comments that this leafness is only approximate.
->>
->> That's important, thank you! May I ask why you think it's not going to matter in
->> practice?
-> 
-> I just thought the kind of calls it misses are going to have very
-> shallow frames, but from what you said later I guess that isn't the
-> point.  It also might be a bit too hand-wavy for something like this :-)
-> 
->>> It will sometimes be a false positive, because we could still
->>> end up creating calls to libgcc functions from non-call statements
->>> (or for target-specific reasons).  It can also be a false negative,
->>> since call statements can be to built-in or internal functions that
->>> end up being open-coded.
->>
->> Oh, that raises the question: how does this leafness inaccuracy affect in my
->> particular case?
->>
->> is_leaf is currently used for finding the special cases to skip the
->> track_stack() call insertion:
->>
->> /*
->>  * Special cases to skip the instrumentation.
->>  *
->>  * Taking the address of static inline functions materializes them,
->>  * but we mustn't instrument some of them as the resulting stack
->>  * alignment required by the function call ABI will break other
->>  * assumptions regarding the expected (but not otherwise enforced)
->>  * register clobbering ABI.
->>  *
->>  * Case in point: native_save_fl on amd64 when optimized for size
->>  * clobbers rdx if it were instrumented here.
->>  *
->>  * TODO: any more special cases?
->>  */
->> if (is_leaf &&
->>     !TREE_PUBLIC(current_function_decl) &&
->>     DECL_DECLARED_INLINE_P(current_function_decl)) {
->> 	return 0;
->> }
->>
->>
->> And now it seems to me that the stackleak plugin should not instrument all
->> static inline functions, regardless of is_leaf. Do you agree?
-> 
-> OK.  I'd missed that this was just a heuristic to detect certain kinds
-> of linux function, so it's probably fine as it is.
-> 
-> Not sure whether it's safe to punt for general static inline functions.
-> E.g. couldn't you have a static inline function that just provides a
-> more convenient interface to another function?  But I guess it's a
-> linux-specific heuristic, so I can't really say.
+This patch is correct, but now I am seeing that
+devm_pinctrl_get_select_default() always fails.
 
-Huh, I got the insight! I think that the current approach (originally by PaX
-Team) should work fine despite the false positives which you described:
+I added this debug line:
 
-If some static inline function already does explicit calls (so is_leaf is
-false), adding the track_stack() call will not introduce anything special that
-can break the aforementioned register clobbering ABI in that function.
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -1799,6 +1799,7 @@ static int imx_csi_probe(struct platform_device *pdev)
+        pinctrl = devm_pinctrl_get_select_default(priv->dev);
+        if (IS_ERR(pinctrl)) {
+                ret = PTR_ERR(pinctrl);
++               pr_err("************ pinctrl failed\n");
+                goto free;
+        }
 
-Does it sound reasonable?
+and this is what I get in imx6q-sabresd:
 
-However, I don't know what to with false negatives.
+[    3.453905] imx-media: subdev ipu1_vdic bound
+[    3.458601] imx-media: subdev ipu2_vdic bound
+[    3.463341] imx-media: subdev ipu1_ic_prp bound
+[    3.468924] ipu1_ic_prpenc: Registered ipu1_ic_prpenc capture as /dev/video0
+[    3.476237] imx-media: subdev ipu1_ic_prpenc bound
+[    3.481621] ipu1_ic_prpvf: Registered ipu1_ic_prpvf capture as /dev/video1
+[    3.488805] imx-media: subdev ipu1_ic_prpvf bound
+[    3.493659] imx-media: subdev ipu2_ic_prp bound
+[    3.498839] ipu2_ic_prpenc: Registered ipu2_ic_prpenc capture as /dev/video2
+[    3.505958] imx-media: subdev ipu2_ic_prpenc bound
+[    3.511318] ipu2_ic_prpvf: Registered ipu2_ic_prpvf capture as /dev/video3
+[    3.518335] imx-media: subdev ipu2_ic_prpvf bound
+[    3.524622] ipu1_csi0: Registered ipu1_csi0 capture as /dev/video4
+[    3.530902] imx-media: subdev ipu1_csi0 bound
+[    3.535453] ************ pinctrl failed
+[    3.539684] ************ pinctrl failed
+[    3.543677] ************ pinctrl failed
+[    3.548278] imx-media: subdev imx6-mipi-csi2 bound
 
-> TBH the paravirt save_fl stuff seems like dancing on the edge,
-> but that's another story. :-)
+So imx_csi_probe() does not succeed anymore since
+devm_pinctrl_get_select_default() always fails.
 
-That's interesting. Could you elaborate on that?
+Not sure I understand the comments that explain the need for pinctrl
+handling inside the driver.
 
->>>> +	/*
->>>> +	 * The stackleak_final pass should be executed before the "final" pass,
->>>> +	 * which turns the RTL (Register Transfer Language) into assembly.
->>>> +	 */
->>>> +	PASS_INFO(stackleak_final, "final", 1, PASS_POS_INSERT_BEFORE);
->>>
->>> This might be too late, since it happens e.g. after addresses have
->>> been calculated for branch ranges, and after machine-specific passes
->>> (e.g. bundling on ia64).
->>>
->>> The stack size is final after reload, so inserting the pass after that
->>> might be better.
->>
->> Thanks for that notice. May I ask for the additional clarification?
->>
->> I specified -fdump-passes and see a lot of passes between reload and final:
-...
->>
->> Where exactly would you recommend me to insert the stackleak_final pass, which
->> removes the unneeded track_stack() calls?
-> 
-> Directly after rtl-reload seems best.  That's the first point at which
-> the frame size is final, and reload is one of the few rtl passes that
-> always runs.  Doing it there could also help with things like shrink
-> wrapping (part of rtl-pro_and_epilogue).
-Thanks a lot for your detailed answer. I'll follow your advice in the next
-version of the patch series.
+Can't we just get rid of it like this?
 
-Best regards,
-Alexander
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -14,7 +14,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of_graph.h>
+-#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-device.h>
+@@ -1739,7 +1738,6 @@ static const struct v4l2_subdev_internal_ops
+csi_internal_ops = {
+ static int imx_csi_probe(struct platform_device *pdev)
+ {
+        struct ipu_client_platformdata *pdata;
+-       struct pinctrl *pinctrl;
+        struct csi_priv *priv;
+        int ret;
+
+@@ -1789,19 +1787,7 @@ static int imx_csi_probe(struct platform_device *pdev)
+        v4l2_ctrl_handler_init(&priv->ctrl_hdlr, 0);
+        priv->sd.ctrl_handler = &priv->ctrl_hdlr;
+
+-       /*
+-        * The IPUv3 driver did not assign an of_node to this
+-        * device. As a result, pinctrl does not automatically
+-        * configure our pin groups, so we need to do that manually
+-        * here, after setting this device's of_node.
+-        */
+        priv->dev->of_node = pdata->of_node;
+-       pinctrl = devm_pinctrl_get_select_default(priv->dev);
+-       if (IS_ERR(pinctrl)) {
+-               ret = PTR_ERR(pinctrl);
+-               goto free;
+-       }
+-
+        ret = v4l2_async_register_subdev(&priv->sd);
+        if (ret)
+                goto free;
