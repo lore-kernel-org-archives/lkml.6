@@ -1,64 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161917AbeCAVPO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:15:14 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:38608 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033870AbeCAVPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:15:12 -0500
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        id S1034220AbeCAVSZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:18:25 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1033189AbeCAVSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:18:23 -0500
+Date: Thu, 1 Mar 2018 16:18:18 -0500
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: benh@au1.ibm.com, Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
         Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
         Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Oliver OHalloran <oliveroh@au1.ibm.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20180301211817.GC6742@redhat.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
  <1519876489.4592.3.camel@kernel.crashing.org>
  <1519876569.4592.4.camel@au1.ibm.com>
- <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
- <1519936195.4592.18.camel@au1.ibm.com> <20180301205548.GA6742@redhat.com>
- <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
- <20180301211036.GB6742@redhat.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8ed955f8-55c9-a2bd-1d58-90bf1dcfa055@deltatee.com>
-Date: Thu, 1 Mar 2018 14:15:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519938210.4592.30.camel@au1.ibm.com>
+ <1de70207-40ce-29f0-6093-337112852475@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301211036.GB6742@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, benh@au1.ibm.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1de70207-40ce-29f0-6093-337112852475@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/03/18 02:10 PM, Jerome Glisse wrote:
-> It seems people miss-understand HMM :( you do not have to use all of
-> its features. If all you care about is having struct page then just
-> use that for instance in your case only use those following 3 functions:
+On Thu, Mar 01, 2018 at 02:11:34PM -0700, Logan Gunthorpe wrote:
 > 
-> hmm_devmem_add() or hmm_devmem_add_resource() and hmm_devmem_remove()
-> for cleanup.
+> 
+> On 01/03/18 02:03 PM, Benjamin Herrenschmidt wrote:
+> > However, what happens if anything calls page_address() on them ? Some
+> > DMA ops do that for example, or some devices might ...
+> 
+> Although we could probably work around it with some pain, we rely on
+> page_address() and virt_to_phys(), etc to work on these pages. So on x86,
+> yes, it makes it into the linear mapping.
 
-To what benefit over just using devm_memremap_pages()? If I'm using the 
-hmm interface and disabling all the features, I don't see the point. 
-We've also cleaned up the devm_memremap_pages() interface to be more 
-usefully generic in such a way that I'd hope HMM starts using it too and 
-gets rid of the code duplication.
+This is pretty easy to do with HMM:
 
-Logan
+unsigned long hmm_page_to_phys_pfn(struct page *page)
+{
+    struct hmm_devmem *devmem;
+    unsigned long ppfn;
+
+    /* Sanity test maybe BUG_ON() */
+    if (!is_device_private_page(page))
+        return -1UL;
+
+    devmem = page->pgmap->data;
+    ppfn = page_to_page(page) - devmem->pfn_first;
+    return ppfn + devmem->device_phys_base_pfn;
+}
+
+Note that last field does not exist in today HMM because i did not need
+such helper so far but this can be added.
+
+Cheers,
+Jérôme
