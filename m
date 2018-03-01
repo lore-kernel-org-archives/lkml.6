@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966346AbeCAG1v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 01:27:51 -0500
+        id S966360AbeCAG1y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 01:27:54 -0500
 Received: from mga03.intel.com ([134.134.136.65]:12103 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966268AbeCAG1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 01:27:50 -0500
+        id S966268AbeCAG1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 01:27:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
-   d="scan'208";a="33761273"
+   d="scan'208";a="33761278"
 From: Aaron Lu <aaron.lu@intel.com>
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -21,42 +21,71 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@techsingularity.net>,
         Matthew Wilcox <willy@infradead.org>,
         David Rientjes <rientjes@google.com>
-Subject: [PATCH v4 0/3] mm: improve zone->lock scalability
-Date: Thu,  1 Mar 2018 14:28:42 +0800
-Message-Id: <20180301062845.26038-1-aaron.lu@intel.com>
+Subject: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
+Date: Thu,  1 Mar 2018 14:28:43 +0800
+Message-Id: <20180301062845.26038-2-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180301062845.26038-1-aaron.lu@intel.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch 1/3 is a small cleanup suggested by Matthew Wilcox which doesn't
-affect scalability or performance;
-Patch 2/3 moves some code in free_pcppages_bulk() outside of zone->lock
-and has Mel Gorman's ack;
-Patch 3/3 uses prefetch in free_pcppages_bulk() outside of zone->lock to
-speedup page merging under zone->lock but Mel Gorman has some concerns.
+Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+update pcp->count immediately after so it's natural to do it inside
+free_pcppages_bulk().
 
-For details, please see their changelogs.
+No functionality or performance change is expected from this patch.
 
-v4:
-Address David Rientjes' comments to not update pcp->count in front of
-free_pcppages_bulk() in patch 1/3.
-Reword code comments in patch 2/3 as suggested by David Rientjes.
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+---
+ mm/page_alloc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-v3:
-Added patch 1/3 to update pcp->count inside of free_pcppages_bulk();
-Rebase to v4.16-rc2.
-
-v2 & v1:
-https://lkml.org/lkml/2018/1/23/879
-
-Aaron Lu (3):
-  mm/free_pcppages_bulk: update pcp->count inside
-  mm/free_pcppages_bulk: do not hold lock when picking pages to free
-  mm/free_pcppages_bulk: prefetch buddy while not holding lock
-
- mm/page_alloc.c | 62 +++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
-
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb416723538f..faa33eac1635 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+ 			page = list_last_entry(list, struct page, lru);
+ 			/* must delete as __free_one_page list manipulates */
+ 			list_del(&page->lru);
++			pcp->count--;
+ 
+ 			mt = get_pcppage_migratetype(page);
+ 			/* MIGRATE_ISOLATE page should not go to pcplists */
+@@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+ 	local_irq_save(flags);
+ 	batch = READ_ONCE(pcp->batch);
+ 	to_drain = min(pcp->count, batch);
+-	if (to_drain > 0) {
++	if (to_drain > 0)
+ 		free_pcppages_bulk(zone, to_drain, pcp);
+-		pcp->count -= to_drain;
+-	}
+ 	local_irq_restore(flags);
+ }
+ #endif
+@@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+ 	pset = per_cpu_ptr(zone->pageset, cpu);
+ 
+ 	pcp = &pset->pcp;
+-	if (pcp->count) {
++	if (pcp->count)
+ 		free_pcppages_bulk(zone, pcp->count, pcp);
+-		pcp->count = 0;
+-	}
+ 	local_irq_restore(flags);
+ }
+ 
+@@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
+ 	if (pcp->count >= pcp->high) {
+ 		unsigned long batch = READ_ONCE(pcp->batch);
+ 		free_pcppages_bulk(zone, batch, pcp);
+-		pcp->count -= batch;
+ 	}
+ }
+ 
 -- 
 2.14.3
