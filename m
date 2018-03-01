@@ -1,105 +1,121 @@
-Return-Path: <marc.zyngier@arm.com>
-X-Cyrus-Session-Id: sloti22d1t05-1258868-1519986760-2-14635167950653426339
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2820880-1519905254-2-8607878122815461777
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, SPF_PASS -0.001,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='217.140.101.70', Host='foss.arm.com', Country='US', FromHeader='com',
-  MailFrom='com'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: marc.zyngier@arm.com
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519986759; b=ubYkHoDkait9R23BrzhqtBm/Oxvz8qtWeJpZpSu2I6eCM43
-    XsT9XSrFOFnVb1AH/7oRLPKskniGmw03ri1j1GYTQ7ZTQpr5drYdX7w9jubj1CKe
-    kIfvK3KFvwHt0T4Jo0STfhIpOFp3Tqv7XznYmGatAPzH7AFRLMR5DRDGYqPnkHZA
-    JewCcEDlXN4brZdly9jYu8zc5bEnRZky1rQECng8JxDjXRMMJHHtKIeX+0VKbwyb
-    ifoAFtaGNkfcQ+tuytospQjKP7CoRYuTWqHn88dHKOg3me0HKbCsdKi8qKQ4SJ3X
-    WSj6r3x6Tfa0b/tcUHRQRlUNUm08tk0o/FRapKw==
+    t=1519905253; b=kJtBzwaOy4X92BW4OZzZ61j6qtd6sQLc7SWZYD1V0Cik7F+
+    92yD7r5gKbzX6k2L1zZ76vSXAysTFeLfKdiDeBRmtDeqMJ6sgahBmNjdIbG3w/dM
+    MSL7if1fpTsP8u1iVMrrybxT3n1qcadjjjKs/h/BFZof18evPAjkOoVrKlvvL8Pa
+    H2iTLK/IgAcSnLbgmqx4WErHe0d5HbxVgV4wP7h8pt0rPVLeK8DHj+hvenKdY7c5
+    nP3U76UY/muEb4op+zNb8/4OXbM86R6PXQX/KBrgtuV0/fRhcNYdCZpOu+n1500L
+    QtQMJNGp/DX71MBYHCmjkJLv4dECl5L3URJP9uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:from:to:cc:subject
-    :in-reply-to:references:mime-version:content-type; s=arctest; t=
-    1519986759; bh=QqzfwMI9NTQGCKSIavn924kyYWokGvTzGlf6GrGEKcY=; b=T
-    72BrAP1dnc0OG3VwPLTzrtRRjq7AwsnB9CoTyiSEjI1kfY+nR9yicY+YMvVzkBNU
-    biY7JcB4wo/MdETP5195pvDyEaIUkdiWlrlYnwvqD5DKZHo2LzyVudY/zeYbPr5x
-    9v19vorNbufu2ZB4ZzPLslYfpgDpcs51I3VMQnI4A1bdoFL9GfZ9dxZX7z4VdymH
-    GhPI0GhCjxwNazJ2XRUysxkB+kHHMbIAjOAgXxOJQp3XdPD4KMJUBEgdTK8oFy0c
-    S9eqDnD/M0W5AtyJTyyDWnZ5e/1Lmnnw1NlNAKhqJBdq/bnVYajax7cg5H+aFLOf
-    CER6b1mNGLw6vC1Ed4NYA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=arm.com;
-    iprev=pass policy.iprev=217.140.101.70 (foss.arm.com,usa-sjc-mx-foss1.foss.arm.com);
-    spf=pass smtp.mailfrom=marc.zyngier@arm.com smtp.helo=foss.arm.com;
-    x-aligned-from=pass;
-    x-ptr=pass x-ptr-helo=foss.arm.com x-ptr-lookup=foss.arm.com,usa-sjc-mx-foss1.foss.arm.com;
-    x-return-mx=pass smtp.domain=arm.com smtp.result=pass smtp_is_org_domain=yes header.domain=arm.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519905253; bh=hiC6eveHiHLlo+ezQv/FCd8cz/Jh0vTHeV/+Egfkl0A=; b=e
+    2+FvGU7GDTyyfyDgSl3YyMcH3NrwLhdtSLnXzDGVqehwg6e3hAQ0RaB/bbID0ZHw
+    6n/pNjhw1lcUQ9rd3WdDj2PGYYVBih7LTxD42hj4BaBSIS6fcggs7pOx/8W0OtQu
+    K/Vot+TAL3mPLboBsBBVSBEUig/UiyG7qnPPLdRo9hv4JTXpjxYTQ7oSIAFQ7m8L
+    3rCensfameX/tkdcZwBrD7sMyt7XViugxo0hp4MdmXvcIgLUVPAQxOKVS27jxp7p
+    HequEp3qBB7zEUdwKYRxtbeyfo212xnAs3OpmENG4CGuZWs+SmCGfBkchpUK21Wn
+    fcsqMmqtexW7uauK5AUfg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=GOKVr3Dj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=amkFnKSr;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=arm.com;
-    iprev=pass policy.iprev=217.140.101.70 (foss.arm.com,usa-sjc-mx-foss1.foss.arm.com);
-    spf=pass smtp.mailfrom=marc.zyngier@arm.com smtp.helo=foss.arm.com;
-    x-aligned-from=pass;
-    x-ptr=pass x-ptr-helo=foss.arm.com x-ptr-lookup=foss.arm.com,usa-sjc-mx-foss1.foss.arm.com;
-    x-return-mx=pass smtp.domain=arm.com smtp.result=pass smtp_is_org_domain=yes header.domain=arm.com header.result=pass header_is_org_domain=yes
-Date: Fri, 02 Mar 2018 10:32:25 +0000
-Message-ID: <86po4m3gzq.wl-marc.zyngier@arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Alex Shi <alex.shi@linaro.org>
-Cc: Greg KH <greg@kroah.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	stable@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/29] arm meltdown fix backporting review for lts 4.9
-In-Reply-To: <5cf40379-9098-da02-a471-8abd7d8f0be8@linaro.org>
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=GOKVr3Dj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=amkFnKSr;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S967808AbeCALyL (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 06:54:11 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41523 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967795AbeCALyK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 06:54:10 -0500
+X-Google-Smtp-Source: AG47ELuvbaxGu6esKFP1+jhcRZ3LuwW9brU8phkr5WjfIl9J1cpQ4SFQvf3Qu/lpnVsPELR2r8Sgpg==
+Subject: Re: [PATCH 01/29] arm64: mm: Use non-global mappings for kernel space
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
 References: <1519790211-16582-1-git-send-email-alex.shi@linaro.org>
-	<20180301152450.GA4061@kroah.com>
-	<5cf40379-9098-da02-a471-8abd7d8f0be8@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-Organization: ARM Ltd
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+ <1519790211-16582-2-git-send-email-alex.shi@linaro.org>
+ <20180228120828.GB8453@kroah.com>
+From: Alex Shi <alex.shi@linaro.org>
+Message-ID: <92d7d0b8-7483-74d7-efe5-29249093d1ad@linaro.org>
+Date: Thu, 1 Mar 2018 19:53:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180228120828.GB8453@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 02 Mar 2018 09:14:50 +0000,
-Alex Shi wrote:
-> 
-> 
-> 
-> On 03/01/2018 11:24 PM, Greg KH wrote:
-> > On Wed, Feb 28, 2018 at 11:56:22AM +0800, Alex Shi wrote:
-> >> Hi All,
-> >>
-> >> This backport patchset fixed the meltdown issue, it's original branch:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=kpti
-> >> A few dependency or fixingpatches are also picked up, if they are necessary
-> >>  and no functional changes.
-> >>
-> >> The patchset also on repository:
-> >> 	git://git.linaro.org/kernel/linux-linaro-stable.git lts-4.9-spectrevv2 
-> >>
-> >> No bug found yet from kernelci.org and lkft testing.
-> > 
-> > No bugs is good, but does it actually fix the meltdown problem?  What
-> > did you test it on?
-> 
-> Oh, I have no A73/A75 cpu, so I can not reproduce meltdown bug.
 
-Cortex-A73 is not affected by Meltdown. Only A75 is. Please don't
-spread misinformation. They are both affected by Spectre though.
 
-	M.
+On 02/28/2018 08:08 PM, Greg KH wrote:
+> On Wed, Feb 28, 2018 at 11:56:23AM +0800, Alex Shi wrote:
+>> From: Will Deacon <will.deacon@arm.com>
+>>
+>> commit e046eb0c9bf2 upstream.
+>>
+>> In preparation for unmapping the kernel whilst running in userspace,
+>> make the kernel mappings non-global so we can avoid expensive TLB
+>> invalidation on kernel exit to userspace.
+>>
+>> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+>> Tested-by: Laura Abbott <labbott@redhat.com>
+>> Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+>> Signed-off-by: Will Deacon <will.deacon@arm.com>
+>> Signed-off-by: Alex Shi <alex.shi@linaro.org>
+>>
+>> Conflicts:
+>> 	skip PTE_RDONLY of PAGE_NONE in arch/arm64/include/asm/pgtable-prot.h
+> 
+> These "Conflicts:" lines need to be removed, or put below the --- line
+> please.
+> 
 
--- 
-Jazz is not dead, it just smell funny.
+Thanks response! Greg,
+
+There are still a boot hang on one of renesas board on
+CONFIG_RANDOMIZE_BASE. I am trying to get help from Renesas guys help on
+this. I will back after fix it.
+
+https://kernelci.org/boot/id/5a96f3dd59b5146590b3a4d5/
+
+Thanks
+Alex
