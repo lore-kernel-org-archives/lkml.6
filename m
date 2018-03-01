@@ -1,50 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030716AbeCAN1O (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:27:14 -0500
-Received: from mx-rz-1.rrze.uni-erlangen.de ([131.188.11.20]:48251 "EHLO
-        mx-rz-1.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1030379AbeCAN1K (ORCPT
+        id S1030747AbeCAN2f (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:28:35 -0500
+Received: from mail-io0-f172.google.com ([209.85.223.172]:42269 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030473AbeCAN2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:27:10 -0500
-Authentication-Results: mx-rz-1.rrze.uni-erlangen.de; dkim=none
-        reason="no signature"; dkim-adsp=none (unprotected policy);
-        dkim-atps=neutral
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 217.238.5.165
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][RESEND] block: sed-opal: fix u64 short atom length
-Date: Thu,  1 Mar 2018 14:27:00 +0100
-Message-Id: <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
-X-Mailer: git-send-email 2.16.1
+        Thu, 1 Mar 2018 08:28:31 -0500
+X-Google-Smtp-Source: AG47ELsZliYihqkMlsGZ5knZr9ArDcoSWVfEQjgaKaG5OFzDTfTlVwMTPBll7IFVF+07XvzTbha4RV0zDGgr/XqWhnQ=
+MIME-Version: 1.0
+In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Mar 2018 14:28:30 +0100
+Message-ID: <CACRpkdbu9Kxvuwr-nLHxyEYiTeGK38o7MKCFf-MMjYxwgcJPPA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/15] Krait clocks + Krait CPUfreq
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: viresh kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The length must be given as bytes and not as 4 bit tuples.
+Hi Sricharan,
 
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
----
- block/sed-opal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks for picking up Stephen's patch set and working on this
+clocking business!
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 36842bfa572e..d5f565e1557a 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -562,7 +562,7 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 	}
- 
- 	msb = fls(number);
--	len = DIV_ROUND_UP(msb, 4);
-+	len = DIV_ROUND_UP(msb, 8);
- 
- 	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
- 		pr_debug("Error adding u64: end of buffer.\n");
--- 
-2.13.6
+Would you happen to know if the MSM8660/APQ8060 that
+I'm using a bit has the same Krait clocking so I need to augment
+that SoC to use this too (on top of this, naturally, this is a good first
+step)?
+
+On Tue, Feb 27, 2018 at 3:06 PM, Sricharan R <sricharan@codeaurora.org> wrote:
+
+>   * Dropped the DT update from the series. Will send separately
+
+Are these available somewhere so I can test the sum total on
+the Nexus 7 and see if I get some graphics? I've been sticking a
+patch from Stephen's series in for some time and it makes the
+MDP graphics works on the 2013 Nexus 7.
+
+Yours,
+Linus Walleij
