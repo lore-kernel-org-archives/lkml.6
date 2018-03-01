@@ -1,140 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965574AbeCAC6x (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:58:53 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5690 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965531AbeCAC6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:58:52 -0500
-Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
- in ->readdir"
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: Yunlong Song <yunlong.song@huawei.com>, <chao@kernel.org>,
-        <yunlong.song@icloud.com>, <miaoxie@huawei.com>,
-        <bintian.wang@huawei.com>, <shengyong1@huawei.com>,
-        <heyunlei@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
- <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
- <c36a6024-209c-b660-ba61-e681a98e6f3b@huawei.com>
- <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <7836e341-f2ad-0037-6efc-9927a82e51dd@huawei.com>
-Date: Thu, 1 Mar 2018 11:02:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S965606AbeCAC7Q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:59:16 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41252 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965531AbeCAC7O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:59:14 -0500
+X-Google-Smtp-Source: AG47ELugXBi2zgrpiJCB6ZKjz0+MhLmVnD3jUWeZCPFPxV2B+Wxf3Su9ANMckYaveJbgEqGOxR9VgQ==
+Date: Thu, 1 Mar 2018 11:59:22 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: Dave Young <dyoung@redhat.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 02/13] kexec_file: make an use of purgatory optional
+Message-ID: <20180301025921.GL6019@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Young <dyoung@redhat.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, bauerman@linux.vnet.ibm.com,
+        dhowells@redhat.com, vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, akpm@linux-foundation.org, mpe@ellerman.id.au,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        julien.thierry@arm.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+ <20180222111732.23051-3-takahiro.akashi@linaro.org>
+ <20180223084934.GB4433@dhcp-128-65.nay.redhat.com>
+ <20180226102418.GD6019@linaro.org>
+ <20180228123359.GB2228@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228123359.GB2228@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/1 10:50, Jaegeuk Kim wrote:
-> On 02/28, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2018/2/28 13:48, Jaegeuk Kim wrote:
->>> Hi Yunlong,
->>>
->>> As Eric pointed out, how do you think using nohighmem for directory likewise
->>
->> I'd like to ask, at the beginning, why we choose to use highmem for dentry page?
->> any history reason there?
+On Wed, Feb 28, 2018 at 08:33:59PM +0800, Dave Young wrote:
+> On 02/26/18 at 07:24pm, AKASHI Takahiro wrote:
+> > On Fri, Feb 23, 2018 at 04:49:34PM +0800, Dave Young wrote:
+> > > Hi AKASHI,
+> > > 
+> > > On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
+> > > > On arm64, no trampline code between old kernel and new kernel will be
+> > > > required in kexec_file implementation. This patch introduces a new
+> > > > configuration, ARCH_HAS_KEXEC_PURGATORY, and allows related code to be
+> > > > compiled in only if necessary.
+> > > 
+> > > Here also need the explanation about why no purgatory is needed, it would be
+> > > required for kexec if no strong reason.
+> > 
+> > OK, I will add the reason:
+> > On arm64, crash dump kernel's usable memory is protected by
+> > *unmapping* it from kernel virtual space unlike other architectures
+> > where the region is just made read-only.
+> > So our key developers think that it is highly unlikely that the region
+> > is accidentally corrupted and this rationalizes that digest check code
+> > be also dropped from purgatory.
+> > This greatly simplifies our purgatory without any need for a bit ugly
+> > relocation stuff, i.e. arch_kexec_apply_relocations_add().
+> > 
+> > Please see:
+> >    http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545428.html
+> > to find out how simple our purgatory was. All that it does is
+> > to shuffle arguments and jump into a new kernel.
+> > 
+> > Without this patch, we would have to have purgatory with a space for
+> > a hash value (purgatory_sha256_digest) which is never checked against.
+> > 
+> > Do you think it makes sense?
 > 
-> There was no huge preference on it based on performance. I just wanted not to
-> abuse lowmem.
+> Hmm, it looks reasonable, I remember there could be some performance
+> issue for a purgatory because of cache disabled for arm64. I do not
+> object this.
 
-Got you, thanks for explanation.
+Yeah, Pratyush(redhat) had expressed his concerns on slow boot-up of
+the 2nd kernel which is due to hash value calculation.
 
-Thanks,
+-Takahiro AKASHI
 
 > 
-> Thanks,
+> [snip]
 > 
->>
->>> ext4, which looks like more efficient? Actually, we don't need to do this in
->>> most of recent kernels, right?
->>
->> It's OK to me to keep a line with ext4.
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>> On 02/28, Yunlong Song wrote:
->>>> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
->>>>
->>>> Conflicts:
->>>> 	fs/f2fs/dir.c
->>>>
->>>> In some platforms (such as arm), high memory is used, then the
->>>> decrypting filename will cause panic, the reason see commit
->>>> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
->>>> for decrypting filename"):
->>>>
->>>>  We got dentry pages from high_mem, and its address space directly goes into the
->>>>  decryption path via f2fs_fname_disk_to_usr.
->>>>  But, sg_init_one assumes the address is not from high_mem, so we can get this
->>>>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
->>>>
->>>>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->>>>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>>>  ...
->>>>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->>>>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->>>>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->>>>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->>>>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->>>>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->>>>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->>>>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->>>>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->>>>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->>>>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
->>>>
->>>> Howerver, later patch:
->>>> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
->>>> reverts the codes, which causes panic again in arm, so fix it back to the old version.
->>>>
->>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/dir.c | 7 +++++++
->>>>  1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index f00b5ed..de2e295 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>>>  			int save_len = fstr->len;
->>>>  			int err;
->>>>  
->>>> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
->>>> +			if (!de_name.name)
->>>> +				return -ENOMEM;
->>>> +
->>>> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
->>>> +
->>>>  			err = fscrypt_fname_disk_to_usr(d->inode,
->>>>  						(u32)de->hash_code, 0,
->>>>  						&de_name, fstr);
->>>> +			kfree(de_name.name);
->>>>  			if (err)
->>>>  				return err;
->>>>  
->>>> -- 
->>>> 1.8.5.2
->>>
->>> .
->>>
-> 
-> .
-> 
+> Thanks
+> Dave
