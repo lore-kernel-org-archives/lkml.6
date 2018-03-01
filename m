@@ -1,101 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033686AbeCASAV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033223AbeCASAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:00:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747AB214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shli@kernel.org
-Date: Thu, 1 Mar 2018 10:00:17 -0800
-From: Shaohua Li <shli@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org
-Subject: [GIT PULL] MD update for 4.16-rc3
-Message-ID: <20180301180017.nemyluj5dvbmitzp@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1033721AbeCASBr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:01:47 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46012 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033223AbeCASBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:01:43 -0500
+X-Google-Smtp-Source: AG47ELvbpOq8KmJQ6yrzExgT0N4srF0QROigs50XR694ZLN0Pw2Q0CIOIslk3j9ZxWnsZtc5qmXqlA==
+From: frowand.list@gmail.com
+To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com
+Subject: [PATCH v4 0/4] of: change overlay apply input data from unflattened
+Date: Thu,  1 Mar 2018 10:00:52 -0800
+Message-Id: <1519927256-4868-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-A few bug fixes for MD, please pull:
-- Fix raid5-ppl flush request handling hang from Artur
-- Fix a potential deadlock in raid5/10 reshape from BingJing
-- Fix a deadlock for dm-raid from Heinz
-- Fix two md-cluster of raid10 from Lidong and Guoqing
-- Fix a NULL deference problem in device removal from Neil
-- Fix a NULL deference problem in raid1/raid10 in specific condition from Yufen
-- Other cleanup and fixes
+From: Frank Rowand <frank.rowand@sony.com>
 
-Thanks,
-Shaohua
+Move duplicating and unflattening of an overlay flattened devicetree
+(FDT) into the overlay application code.  To accomplish this,
+of_overlay_apply() is replaced by of_overlay_fdt_apply().
 
-The following changes since commit c786427f57b6dc4f56f9a84da52b41216e94f125:
+The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+code, which is thus responsible for freeing the duplicate FDT.  The
+caller of of_overlay_fdt_apply() remains responsible for freeing the
+original FDT.
 
-  Merge tag 'for-linus-20180217' of git://git.kernel.dk/linux-block (2018-02-17 10:20:47 -0800)
+The unflattened devicetree now belongs to devicetree code, which is
+thus responsible for freeing the unflattened devicetree.
 
-are available in the git repository at:
+These ownership changes prevent early freeing of the duplicated FDT
+or the unflattened devicetree, which could result in use after free
+errors.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shli/md.git for-next
+These changes led to migrating some unittest overlay data into
+their own devicetree source files, and then converting most of
+them to use sugar syntax instead of hand coding fragments.
 
-for you to fetch changes up to 3de59bb9d551428cbdc76a9ea57883f82e350b4d:
+Changes from v3:
+  - patch 1/4: OF_OVERLAY: add select OF_FLATTREE
 
-  md/raid1: fix NULL pointer dereference (2018-02-25 10:44:39 -0800)
+Changes from v2:
+  - improve error messages in patch 4/4, as suggested by Geert
 
-----------------------------------------------------------------
-Aliaksei Karaliou (1):
-      md/raid5: simplify uninitialization of shrinker
+Changes from v1:
+  - rebase on v4.16-rc1
+  - update documentation
+  - split out error message to a separate patch
 
-Arnd Bergmann (1):
-      md: raid5: avoid string overflow warning
 
-Artur Paszkiewicz (1):
-      raid5-ppl: fix handling flush requests
+Frank Rowand (4):
+  of: change overlay apply input data from unflattened to FDT
+  of: Documentation: of_overlay_apply() replaced by
+    of_overlay_fdt_apply()
+  of: convert unittest overlay devicetree source to sugar syntax
+  of: improve reporting invalid overlay target path
 
-BingJing Chang (1):
-      md: fix a potential deadlock of raid5/raid10 reshape
+ Documentation/devicetree/overlay-notes.txt       |   4 +-
+ drivers/of/Kconfig                               |   1 +
+ drivers/of/of_private.h                          |   1 +
+ drivers/of/overlay.c                             | 129 ++++++++--
+ drivers/of/resolver.c                            |   6 -
+ drivers/of/unittest-data/Makefile                |  28 ++-
+ drivers/of/unittest-data/overlay.dts             | 101 ++++----
+ drivers/of/unittest-data/overlay_0.dts           |  14 ++
+ drivers/of/unittest-data/overlay_1.dts           |  14 ++
+ drivers/of/unittest-data/overlay_10.dts          |  27 +++
+ drivers/of/unittest-data/overlay_11.dts          |  28 +++
+ drivers/of/unittest-data/overlay_12.dts          |  14 ++
+ drivers/of/unittest-data/overlay_13.dts          |  14 ++
+ drivers/of/unittest-data/overlay_15.dts          |  30 +++
+ drivers/of/unittest-data/overlay_2.dts           |   9 +
+ drivers/of/unittest-data/overlay_3.dts           |   9 +
+ drivers/of/unittest-data/overlay_4.dts           |  18 ++
+ drivers/of/unittest-data/overlay_5.dts           |   9 +
+ drivers/of/unittest-data/overlay_6.dts           |  10 +
+ drivers/of/unittest-data/overlay_7.dts           |  10 +
+ drivers/of/unittest-data/overlay_8.dts           |  10 +
+ drivers/of/unittest-data/overlay_9.dts           |  10 +
+ drivers/of/unittest-data/overlay_bad_phandle.dts |  23 +-
+ drivers/of/unittest-data/overlay_bad_symbol.dts  |  25 +-
+ drivers/of/unittest-data/tests-overlay.dtsi      | 217 +----------------
+ drivers/of/unittest.c                            | 294 +++++++++++------------
+ include/linux/of.h                               |   7 -
+ 27 files changed, 575 insertions(+), 487 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_0.dts
+ create mode 100644 drivers/of/unittest-data/overlay_1.dts
+ create mode 100644 drivers/of/unittest-data/overlay_10.dts
+ create mode 100644 drivers/of/unittest-data/overlay_11.dts
+ create mode 100644 drivers/of/unittest-data/overlay_12.dts
+ create mode 100644 drivers/of/unittest-data/overlay_13.dts
+ create mode 100644 drivers/of/unittest-data/overlay_15.dts
+ create mode 100644 drivers/of/unittest-data/overlay_2.dts
+ create mode 100644 drivers/of/unittest-data/overlay_3.dts
+ create mode 100644 drivers/of/unittest-data/overlay_4.dts
+ create mode 100644 drivers/of/unittest-data/overlay_5.dts
+ create mode 100644 drivers/of/unittest-data/overlay_6.dts
+ create mode 100644 drivers/of/unittest-data/overlay_7.dts
+ create mode 100644 drivers/of/unittest-data/overlay_8.dts
+ create mode 100644 drivers/of/unittest-data/overlay_9.dts
 
-Guoqing Jiang (1):
-      raid10: change the size of resync window for clustered raid
-
-Heinz Mauelshagen (1):
-      md: fix md_write_start() deadlock w/o metadata devices
-
-Lidong Zhong (1):
-      md-cluster: choose correct label when clustered layout is not supported
-
-Luis de Bethencourt (1):
-      md/raid1: Fix trailing semicolon
-
-Markus Elfring (1):
-      md-multipath: Use seq_putc() in multipath_status()
-
-NeilBrown (2):
-      md: document lifetime of internal rdev pointer.
-      md: only allow remove_and_add_spares when no sync_thread running.
-
-Xiao Ni (1):
-      MD: Free bioset when md_run fails
-
-Yufen Yu (2):
-      md raid10: fix NULL deference in handle_write_completed()
-      md/raid1: fix NULL pointer dereference
-
- drivers/md/md-multipath.c |  2 +-
- drivers/md/md.c           | 53 ++++++++++++++++++++++++++++++++++++++++++-----
- drivers/md/md.h           |  2 ++
- drivers/md/raid1.c        | 13 +++++++++++-
- drivers/md/raid1.h        | 12 +++++++++++
- drivers/md/raid10.c       | 18 +++++++---------
- drivers/md/raid10.h       | 13 ++++++++++++
- drivers/md/raid5-log.h    |  3 ++-
- drivers/md/raid5-ppl.c    | 10 +++++++++
- drivers/md/raid5.c        | 19 ++++++-----------
- drivers/md/raid5.h        | 12 +++++++++++
- 11 files changed, 125 insertions(+), 32 deletions(-)
+-- 
+Frank Rowand <frank.rowand@sony.com>
