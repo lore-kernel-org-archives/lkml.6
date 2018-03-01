@@ -1,143 +1,107 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELuVhJ67A3YciWV/h7IA9cbD6Zunt53JOyHaBEJqHq9cfYtECL0HzC0SNqmd90mfgW3HsV/8
-ARC-Seal: i=1; a=rsa-sha256; t=1520081462; cv=none;
+Return-Path: <kernel-hardening-return-12062-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELuH5rhJnPvKu2AvM0rd8B13/48S4e7K4NiGf8w114GSCYIUptONXvvXUJV7PK6onxl1yx/T
+ARC-Seal: i=1; a=rsa-sha256; t=1519938411; cv=none;
         d=google.com; s=arc-20160816;
-        b=SCIEawimulm7yfcNDsSeY4BstDa6uyuysGieN/Xlpm3LyqoDCvNST5Dn6EpW1AXBXA
-         Lb1tICMRw2zZGLLZwm+1XSvmsmyaVsVC8sBiLCDe3GHKJ2u6L2tcbJhZJb0SG4GDpiey
-         INdtf4FJL1YW9ePcOcRK2BmF1mkDMXPr8nSwyFq4n9EcghHLhdCm3O6wWgQR1r682Ode
-         s7/T8WqVamxYNQwiGjTqaiJleyuvLJVN/imr/YhQLjRu0vtuH0ZB6KhCJf4/CikbzpSo
-         IV4Yv8TUrM5qAl4RLpEPwjy0NOUTR44qWxtCMCzeWFAZgvgx18+45sca3afTPXp3FTfl
-         yb1Q==
+        b=A9+ZEhW5HhjAc9x8Eo1WcIa5G1+IaZBmYBhfeRVJSqwxFHxG3dssctEXl7R28rbwaB
+         9STjUTootuQ9QqYytbh4luJUvOv9K8UqCAm4uimBt+X6jlSD8jrVLwCo2nYdjd85tlid
+         CqTvRZR+h+v345Zg/bFEDi3GKnW2l8d2S1lwADlYZeFdMAeArERv7CTDFbj0aijLU8JN
+         auDBEkuo4s4fB4Mrpcd/DK2hxb17yUJkj+6axya8+Mf8r0AN4RZ3pgFSsLBHEkn5ZxUj
+         EktroeKk2R4BvxRE+V8ahmn2LlFU8RcW8ERs/tT0b8hWksnEudo3qM7mepkZP/nEPmLH
+         a3oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=/YRb8Jv7YzZBcafNoyWoRSv6Sa23bek/7Ur3T23DW1g=;
-        b=yCXBYFdHMkXrswaLDdnSBLB/YfjhSSAOFTBQ7wu3qmpE7Nc0bdGLjEj34Yfw9p7qLp
-         B3dPtSkTjVtJiGRrtpZo+3Qtj04lWd0bWCWmMlY3EZafEVQmN6osDFGhfuR/PaWgn0AY
-         qvjH1h0qMgTCvVsmmhDYlYSEho28gLvE0/836WZ84D5BL8FzRk2tUnWMM1YJQj7E7/5h
-         iDevgAhD6owmuj2neaJNuSVbdKprgaaLQrjdxzJhhQ88bFU4fyBSg9/EYGA/v1lEXkoQ
-         ATyA16P0Q5QBXDDh5l0GBwDCyk4NRb0GOGBx2xSO+mMnKwTWU/DCtqGB5hLiNgHoipPm
-         HRVA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=viLmldWH8QBzleN79DMe7PMR+/dmwRGA+4gpiTrv4D0=;
+        b=ubhOJAo1G9U1/rDRBPeOqpMgKkKEshL59nnfPHxYwx53PuJw72YkmiYSnvGQI7mYeP
+         0F2w+25MquGsecRsF+2AvuZgOVzfCmVscbF2uGuAWQaK6PB9iJOVkiEyK4oEK/LLGG7c
+         z6d/rlV4Nb3GVRoUrpfx5eO1tTfQyfwMoWZhJIL+2N+EvJCHAy3ShNa4ThkJ82L2cGnc
+         Zz9lqMvBB703Q1haG7fP9GkySsD/Sb0ieZAP5Icp7DiwV/RvFlP42iHCs9wG5z2p9voW
+         chceWzUVAHOxA+zuhZExpnKP4qXB+Lgp0XVBHV2OfXnFLdoWJuscNRhkKNa7vt3LsiAD
+         dGdA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=DMS/YuPq;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=B8q5mYFu;
+       spf=pass (google.com: domain of kernel-hardening-return-12062-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12062-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeCCMvB (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 3 Mar 2018 07:51:01 -0500
-Received: from mga18.intel.com ([134.134.136.126]:7688 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751811AbeCCMvB (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 3 Mar 2018 07:51:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,417,1515484800";
-   d="scan'208";a="208538720"
-From: Li Zhijian <zhijianx.li@intel.com>
-To: shuah@kernel.org, akpm@linux-foundation.org, sj38.park@gmail.com,
-        pombredanne@nexb.com, aneesh.kumar@linux.vnet.ibm.com,
-        linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, lizhijian@cn.fujitsu.com,
-        Li Zhijian <zhijianx.li@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2] selftests/vm/run_vmtests: adjust hugetlb size accroding to nr_cpus
-Date: Sat,  3 Mar 2018 20:50:27 +0800
-Message-Id: <20180303125027.81638-1-zhijianx.li@intel.com>
-X-Mailer: git-send-email 2.11.0
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=DMS/YuPq;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=B8q5mYFu;
+       spf=pass (google.com: domain of kernel-hardening-return-12062-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12062-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-ME-Sender: <xms:UmuYWiEGixr43rmkLrhGAy67ujLHf02vAntIO9XCxH2Koagyb61LZw>
+Date: Fri, 2 Mar 2018 08:06:23 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: Tycho Andersen <tycho@tycho.ws>, LKML <linux-kernel@vger.kernel.org>,
+	Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Subject: Re: [PATCH 1/3] leaking_addresses: skip all /proc/PID except /proc/1
+Message-ID: <20180301210623.GA15198@eros>
+References: <1519706711-18580-1-git-send-email-me@tobin.cc>
+ <1519706711-18580-2-git-send-email-me@tobin.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519706711-18580-2-git-send-email-me@tobin.cc>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593920939898882066?=
-X-GMAIL-MSGID: =?utf-8?q?1593920939898882066?=
+X-GMAIL-THRID: =?utf-8?q?1593528026509077926?=
+X-GMAIL-MSGID: =?utf-8?q?1593770939560675035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix userfaultfd_hugetlb on hosts which have more than 64 cpus.
+On Tue, Feb 27, 2018 at 03:45:09PM +1100, Tobin C. Harding wrote:
+> When the system is idle it is likely that most files under /proc/PID
+> will be identical for various processes.  Scanning _all_ the PIDs under
+> /proc is unnecessary and implies that we are thoroughly scanning /proc.
+> This is _not_ the case because there may be ways userspace can trigger
+> creation of /proc files that leak addresses but were not present during
+> a scan.  For these two reasons we should exclude all PID directories
+> under /proc except '1/'
+> 
+> Exclude all /proc/PID except /proc/1.
+> 
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+>  scripts/leaking_addresses.pl | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
+> index 6e5bc57caeaa..fb40e2828f43 100755
+> --- a/scripts/leaking_addresses.pl
+> +++ b/scripts/leaking_addresses.pl
+> @@ -10,6 +10,14 @@
+>  # Use --debug to output path before parsing, this is useful to find files that
+>  # cause the script to choke.
+>  
+> +#
+> +# When the system is idle it is likely that most files under /proc/PID will be
+> +# identical for various processes.  Scanning _all_ the PIDs under /proc is
+> +# unnecessary and implies that we are thoroughly scanning /proc.  This is _not_
+> +# the case because there may be ways userspace can trigger creation of /proc
+> +# files that leak addresses but were not present during a scan.  For these two
+> +# reasons we exclude all PID directories under /proc except '1/'
+> +
+>  use warnings;
+>  use strict;
+>  use POSIX;
+> @@ -472,6 +480,9 @@ sub walk
+>  			my $path = "$pwd/$file";
+>  			next if (-l $path);
+>  
+> +			# skip /proc/PID except /proc/1
+> +			next if ($path =~ /\/proc\/(?:[2-9][0-9]*|1[0-9]+)/);
 
----------------------------
-running userfaultfd_hugetlb
----------------------------
-invalid MiB
-Usage: <MiB> <bounces>
-[FAIL]
+Perhaps the intent of this is clearer?
 
-Via userfaultfd.c we can know, hugetlb_size needs to meet hugetlb_size >=
-nr_cpus * hugepage_size.  hugepage_size is often 2M, so when host cpus >
-64, it requires more than 128M.
+			next if (($path =~ /^\/proc\/[0-9]+$/) &&
+			     	 ($path !~ /^\/proc\/1$/));
 
-Changes since v1:
-  - update changelog/comments and variable name to make code more easier to
-    read/understand(stolen from Mike Kravetz)
 
-Link: http://lkml.kernel.org/r/20180302024356.83359-1-zhijianx.li@intel.com
-Signed-off-by: Li Zhijian <zhijianx.li@intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: SeongJae Park <sj38.park@gmail.com>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
- tools/testing/selftests/vm/run_vmtests | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index d2561895a021a..22d5646738302 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -2,25 +2,33 @@
- # SPDX-License-Identifier: GPL-2.0
- #please run as root
- 
--#we need 256M, below is the size in kB
--needmem=262144
- mnt=./huge
- exitcode=0
- 
--#get pagesize and freepages from /proc/meminfo
-+#get huge pagesize and freepages from /proc/meminfo
- while read name size unit; do
- 	if [ "$name" = "HugePages_Free:" ]; then
- 		freepgs=$size
- 	fi
- 	if [ "$name" = "Hugepagesize:" ]; then
--		pgsize=$size
-+		hpgsize_KB=$size
- 	fi
- done < /proc/meminfo
- 
-+# Simple hugetlbfs tests have a hardcoded minimum requirement of
-+# huge pages totaling 256MB (262144KB) in size.  The userfaultfd
-+# hugetlb test requires a minimum of 2 * nr_cpus huge pages.  Take
-+# both of these requirements into account and attempt to increase
-+# number of huge pages available.
-+nr_cpus=$(nproc)
-+hpgsize_MB=$((hpgsize_KB / 1024))
-+half_ufd_size_MB=$((((nr_cpus * hpgsize_MB + 127) / 128) * 128))
-+needmem_KB=$((half_ufd_size_MB * 2 * 1024))
-+
- #set proper nr_hugepages
--if [ -n "$freepgs" ] && [ -n "$pgsize" ]; then
-+if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
- 	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
--	needpgs=`expr $needmem / $pgsize`
-+	needpgs=$((needmem_KB / hpgsize_KB))
- 	tries=2
- 	while [ $tries -gt 0 ] && [ $freepgs -lt $needpgs ]; do
- 		lackpgs=$(( $needpgs - $freepgs ))
-@@ -107,8 +115,9 @@ fi
- echo "---------------------------"
- echo "running userfaultfd_hugetlb"
- echo "---------------------------"
--# 256MB total huge pages == 128MB src and 128MB dst
--./userfaultfd hugetlb 128 32 $mnt/ufd_test_file
-+# Test requires source and destination huge pages.  Size of source
-+# (half_ufd_size_MB) is passed as argument to test.
-+./userfaultfd hugetlb $half_ufd_size_MB 32 $mnt/ufd_test_file
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
- 	exitcode=1
--- 
-2.11.0
-
+thanks,
+Tobin.
