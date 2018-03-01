@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3592446-1522152014-2-16523339652959277336
+X-Cyrus-Session-Id: sloti22d1t05-2399589-1519892760-2-17932404281657465488
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,84 +13,72 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522152013; b=Nclm7iPpgC/IJzRC2bRZ2Jw9xrq4VjvzG+T3RFxybO64kAP
-    uPso0oRK4gzIuPQ8RIdX56U4gTEuVBml8HqH28x+AeVkJ1gUo313y4Z+6OvT6pwU
-    G+HpnpwkEQJVg50kQ5gERD7GBmAtHwvhIohB+X6w3+D+x+nfdhcuIDKTbO8qxMo+
-    srs4Nb1EmycLtgPE0Ja+LpYyjMAfQdaYbZNdYsq+XykQJ3QzjAQpomKJAxCUAPnx
-    Z0yQhWENHJ/Ofq1/kXoEFBVW2bU5msPUCilldBflSf0oc6cTRwQW2rMbIIJTsMsJ
-    HZx9aAOGcvIZl1hTe3XMMPtp9e6hY/zjyNMiNeA==
+    t=1519892759; b=QqwMzpN+kuudJ4Fttus3mHHUZQwSMAPbP/0rbbq+IHiMyb6
+    KY3beb54qv4tTD8TSnEjA4Kb3bww3r1JydfIpL8ZepYV6tN0pDOP4AreeOfJO5/D
+    vFetLTFKxkWmecXTfmuPJJ80YkAsojVjou2xnc/QvO69kiyin2aSku8a9DALiEUp
+    Jzaze1BPhMDYtAFkhKYNU6Jfjcf6Btb1Xfx8ka3UIdmKZA4wt3vaoeR1eyZcJYQ2
+    lRHnApZYbOSINvUY8DcgDcm/I98Niwv2Z8QtcGCN9KfOsthjOGiMnLPHRoDVux5D
+    9rqox7pOagMLOP7r9PSRRUpCyLna+vb3mDxmEjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1522152013; bh=5zJFktkh9rEkVieT+s/CO11N/P
-    ZmPGvq9zE2OeS9T0A=; b=D+IsqZVwu0yiB6JeVkePMI8qHPEy5eIcMY30v9RYhM
-    FAYL2yP95KzCSK2xzLMQj+axmJ1sJQ9WpYD+XIot+4jKKgrrD9KPMA8IskC34nii
-    WaxqRat8KMFNIOX1RDa0sIS2EYp6q7hq21Dth0cyf6FwhLYb2L0xBeTYg73WmpNH
-    jat1EBd5kjuoq/YjSfmuh9nMlyWeSJ4t6xjpDYUE7fygkBsB4PgD94jYetYAONyP
-    AM7zwYLXn62xNeReT21AfW5v3YcdqF152rbPtP7V+cXIT0AlafxF7pmwSHuo0fuI
-    REzdmN+hgltVHOn0Mwe3KAxWH+0jQUWhnLR0dmtrv+6w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519892759; bh=gvIv5IVz0KnuXlFV9RIhli0Wjn
+    hwsbxCA+gHre0M/aY=; b=GBtwSTf4Ubku8uS3AK1XRRseFpxpxMOGeuv5p47EfO
+    eTP9UWXUviqoeWD03IbFuKTMQr4jvpz7jdPF0775CqDw2Tz3sapG5jm9QHW2dVQg
+    9i0HsWhLQqc4FK6cx4rPri6eOUfF98+rEyKXtBQchvFhK8wtsgS4f0oZeru/FuIj
+    wTQgCBx//NiK7+G/NuzBqoxJBcRo69IvanZQk2TE9Py56Hk7MyEj5VGIv0q9+qG8
+    GQHTX/rCref4OSffVhVdR3Gl/aYe8VN4AvxZjlm+oZYS9Xg+++y8rXysi5sBkeir
+    xIX/v7XrKZJUNYJ8mw4iONZxwEGhLpQcjfnqlLnyMMfA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJpqzp2sbhEsZXdzJzmaW2imu3ingOZrifqRr/xKWZe4TtZyltm6wXr5k4VwVH6mUFC1tnAh7sUBS9TumyvOrdcjPRW4EM858hb+hG+mY/CbZ1XjFUZf
-    L1Hz5izkd5fVk/ekvB9dKAejMXf4v/C4ekXmkn1WxkGYixX9kOxNU1afo8TY2YJ8EULpXuEbAhMChN/P5uNCMy0NeccqxiTO7DYLuDjxvenjTaFZFDKLdPkL
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=yhP3hfDoFvw4WTobnRwA:9 a=CjuIK1q_8ugA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeC0MAK (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 08:00:10 -0400
-Received: from mga06.intel.com ([134.134.136.31]:15056 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751187AbeC0MAK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:00:10 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,367,1517904000";
-   d="scan'208";a="215253902"
-Date: Tue, 27 Mar 2018 17:34:23 +0530
-From: Vinod Koul <vinod.koul@intel.com>
+        id S965201AbeCAIZq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 03:25:46 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:63078 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965138AbeCAIZo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 03:25:44 -0500
+X-IronPort-AV: E=Sophos;i="5.47,407,1515481200";
+   d="scan'208";a="11878920"
+Date: Thu, 1 Mar 2018 09:25:16 +0100
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
 To: Maxime Jayat <maxime.jayat@mobile-devices.fr>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>,
+CC: Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Vinod Koul <vinod.koul@intel.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
 Subject: Re: [PATCH] dmaengine: at_xdmac: fix rare residue corruption
-Message-ID: <20180327120422.GJ15443@localhost>
+Message-ID: <20180301082516.GL22457@rfolt0960.corp.atmel.com>
 References: <20180222113955.4043-1-maxime.jayat@mobile-devices.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <20180222113955.4043-1-maxime.jayat@mobile-devices.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Hi Maxime,
 
 On Thu, Feb 22, 2018 at 12:39:55PM +0100, Maxime Jayat wrote:
 > Despite the efforts made to correctly read the NDA and CUBC registers,
@@ -128,8 +116,61 @@ On Thu, Feb 22, 2018 at 12:39:55PM +0100, Maxime Jayat wrote:
 > The case where NDA is read before INITD is at 0 and CUBC is read after
 > INITD is back at 1 will be rejected by check_nda and cur_nda being
 > different.
+> 
+> Fixes: 53398f488821 ("dmaengine: at_xdmac: fix residue corruption")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Maxime Jayat <maxime.jayat@mobile-devices.fr>
 
-Applied, thanks
+Nice work! I agree with the change you propose.
 
--- 
-~Vinod
+I am disappointed we didn't spot this case so I would like to double-check with
+the hardware guy there is no issue with the sequence you propose. That's
+why I am waiting a bit before giving my ack.
+
+Regards
+
+Ludovic
+
+> ---
+> Hi,
+> 
+> I had a bug where the serial ports on the Atmel SAMA5D2 were sometimes
+> returning the same data twice, for up to 4096 bytes.
+> 
+> After investigation, I noticed that the ring buffer used in
+> atmel_serial (in rx dma mode) had sometimes a incorrect "head" value,
+> which made the ring buffer do a complete extraneous loop of data
+> pushed to the tty layer.
+> 
+> I tracked it down to the residue of the dma being wrong, and after
+> more head scratching, I found this bug in the reading of the
+> registers.
+> 
+> Before fixing this, I was able to reproduce the bug reliably in a few
+> minutes. With this patch applied, the bug did not reappear after
+> several hours in testing.
+> 
+> 
+>  drivers/dma/at_xdmac.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+> index c00e3923d7d8..94236ec9d410 100644
+> --- a/drivers/dma/at_xdmac.c
+> +++ b/drivers/dma/at_xdmac.c
+> @@ -1471,10 +1471,10 @@ at_xdmac_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+>  	for (retry = 0; retry < AT_XDMAC_RESIDUE_MAX_RETRIES; retry++) {
+>  		check_nda = at_xdmac_chan_read(atchan, AT_XDMAC_CNDA) & 0xfffffffc;
+>  		rmb();
+> -		initd = !!(at_xdmac_chan_read(atchan, AT_XDMAC_CC) & AT_XDMAC_CC_INITD);
+> -		rmb();
+>  		cur_ubc = at_xdmac_chan_read(atchan, AT_XDMAC_CUBC);
+>  		rmb();
+> +		initd = !!(at_xdmac_chan_read(atchan, AT_XDMAC_CC) & AT_XDMAC_CC_INITD);
+> +		rmb();
+>  		cur_nda = at_xdmac_chan_read(atchan, AT_XDMAC_CNDA) & 0xfffffffc;
+>  		rmb();
+>  
+> -- 
+> 2.14.1
+> 
