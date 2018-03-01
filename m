@@ -1,74 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162241AbeCAVkS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:40:18 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33212 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162182AbeCAVkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:40:14 -0500
-X-Google-Smtp-Source: AG47ELvrgzANh6wNF71jdgUraeo/+YMpvTT21EemPZ2Nxd+yvGVt9YxcpqmFifpR2R1IYrUa1mF2RQ==
-Date: Thu, 1 Mar 2018 15:40:10 -0600
-From: Rob Herring <robh@kernel.org>
-To: John Garry <john.garry@huawei.com>
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        mark.rutland@arm.com, linux-scsi@vger.kernel.org,
-        devicetree@vger.kernel.org, linuxarm@huawei.com,
-        linux-kernel@vger.kernel.org, Xiaofei Tan <tanxiaofei@huawei.com>
-Subject: Re: [PATCH 1/8] dt-bindings: scsi: hisi_sas: add an property of
- signal attenuation
-Message-ID: <20180301214010.ptcaoah756z5xias@rob-hp-laptop>
-References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
- <1519067611-206638-2-git-send-email-john.garry@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519067611-206638-2-git-send-email-john.garry@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1162182AbeCAVk7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:40:59 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:33025 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1162062AbeCAVe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:34:57 -0500
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Thu,  1 Mar 2018 22:34:27 +0100
+Message-Id: <20180301213442.16677-2-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 03:13:24AM +0800, John Garry wrote:
-> From: Xiaofei Tan <tanxiaofei@huawei.com>
-> 
-> For some new boards with hip07 chipset we are required to
-> set PHY config registers differently. The hw property which
-> determines how to set these registers is in the PHY signal
-> attenuation readings.
-> 
-> This patch add an devicetree property, signal-attenuation, which
-> is used to describe the signal attenuation of an board.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->  Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> index df3bef7..bd32ecd 100644
-> --- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> +++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> @@ -53,6 +53,13 @@ Main node required properties:
->  Optional main node properties:
->   - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
->  			    "am-max-transmissions" limitation.
-> + - signal-attenuation : array of 3 32-bit values, containing de-emphasis,
+Some NM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-Needs a vendor prefix.
+Add support for that constrain.
 
-> +		preshoot, and boost attenuation readings for the board. They
-> +		are used to describe the signal attenuation of the board. These
-> +		values' range is 7600 to 12400, and used to represent -24dB to
-> +		24dB.
-> +		The formula is "y = (x-10000)/10000". For example, 10478
-> +		means 4.78dB.
->  
->  Example:
->  	sas0: sas@c1000000 {
-> -- 
-> 1.9.1
-> 
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nm.c |  7 +++++++
+ drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a16de092bf94..4e2073307f34 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -117,6 +117,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nm->fixed_post_div;
+ 
++	if (rate < nm->min_rate) {
++		rate = nm->min_rate;
++		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
++			rate /= nm->fixed_post_div;
++		return rate;
++	}
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 			rate /= nm->fixed_post_div;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index eba586b4c7d0..1d8b459c50b7 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -37,6 +37,7 @@ struct ccu_nm {
+ 	struct ccu_sdm_internal		sdm;
+ 
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -88,6 +89,32 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
++					     _reg, _min_rate,		\
++					     _nshift, _nwidth,		\
++					     _mshift, _mwidth,		\
++					     _frac_en, _frac_sel,	\
++					     _frac_rate_0, _frac_rate_1,\
++					     _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
+-- 
+2.16.2
