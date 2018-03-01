@@ -1,89 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162940AbeCAXPl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35076 "EHLO mail.kernel.org"
+        id S1162884AbeCAXUR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:20:17 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:39570 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162872AbeCAXPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:15:39 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4842921741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 1 Mar 2018 17:15:36 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stephen Bates <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180301231536.GB74737@bhelgaas-glaptop.roam.corp.google.com>
+        id S1162811AbeCAXUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:20:15 -0500
+To: benh@au1.ibm.com, Dan Williams <dan.j.williams@intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-5-logang@deltatee.com>
- <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
- <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519936477.4592.23.camel@au1.ibm.com>
+ <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
+ <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
+ <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
+ <1519945204.4592.45.camel@au1.ibm.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <595acefb-18fc-e650-e172-bae271263c4c@deltatee.com>
+Date: Thu, 1 Mar 2018 16:19:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1519945204.4592.45.camel@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, alex.williamson@redhat.com, oliveroh@au1.ibm.com, keith.busch@intel.com, axboe@kernel.dk, dan.j.williams@intel.com, benh@au1.ibm.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 06:54:01PM +0000, Stephen  Bates wrote:
-> Thanks for the detailed review Bjorn!
-> 
-> >> +	  Enabling this option will also disable ACS on all ports behind
-> >> +	  any PCIe switch. This effictively puts all devices behind any
-> >> +	  switch into the same IOMMU group.
-> 
-> >  Does this really mean "all devices behind the same Root Port"?
-> 
-> Not necessarily. You might have a cascade of switches (i.e switches
-> below a switch) to achieve a very large fan-out (in an NVMe SSD
-> array for example) and we will only disable ACS on the ports below
-> the relevant switch.
 
-The question is what the relevant switch is.  We call pci_enable_acs()
-on every PCI device, including Root Ports.  It looks like this relies
-on get_upstream_bridge_port() to filter out some things.  I don't
-think get_upstream_bridge_port() is doing the right thing, so we need
-to sort that out first, I guess.
 
-> > What does this mean in terms of device security?  I assume it means,
-> > at least, that individual devices can't be assigned to separate VMs.
+On 01/03/18 04:00 PM, Benjamin Herrenschmidt wrote:
+> We use only 52 in practice but yes.
 > 
-> This was discussed during v1 [1]. Disabling ACS on all downstream
-> ports of the switch means that all the EPs below it have to part of
-> the same IOMMU grouping. However it was also agreed that as long as
-> the ACS disable occurred at boot time (which is does in v2) then the
-> virtualization layer will be aware of it and will perform the IOMMU
-> group formation correctly.
->     
-> > I don't mind admitting that this patch makes me pretty nervous, and I
-> > don't have a clear idea of what the implications of this are, or how
-> > to communicate those to end users.  "The same IOMMU group" is a pretty
-> > abstract idea.
->     
-> Alex gave a good overview of the implications in [1].
+>>   That's 64PB. If you use need
+>> a sparse vmemmap for the entire space it will take 16TB which leaves you
+>> with 63.98PB of address space left. (Similar calculations for other
+>> numbers of address bits.)
 > 
-> [1] https://marc.info/?l=linux-pci&m=151512320031739&w=2
+> We only have 52 bits of virtual space for the kernel with the radix
+> MMU.
 
-This might be a good start, but whatever the implications are, they
-need to be distilled and made clear directly in the changelog and the
-Kconfig help text.
+Ok, assuming you only have 52 bits of physical address space: the sparse 
+vmemmap takes 1TB and you're left with 3.9PB of address space for other 
+things. So, again, why doesn't that work? Is my math wrong?
 
-Bjorn
+Logan
