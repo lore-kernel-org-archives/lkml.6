@@ -1,77 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967910AbeCALyu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:54:50 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43407 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967800AbeCALyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:54:47 -0500
-X-Google-Smtp-Source: AG47ELtyRdQDKpto3cqqOHyFgodJ1+VG8yZxo6PHE/Ymh5EtTC3TRnnCt/hEtNHCa8SsBkbjRa+fJQs4PvGcpTeC8lM=
+        id S967880AbeCAL7m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:59:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37184 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967837AbeCAL7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 06:59:41 -0500
+Subject: Re: [PATCH 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric
+ capacity systems
+To: Gaku Inami <gaku.inami.xh@renesas.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>
+Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
+ <PS1PR06MB1755EB9FD0AFD1D2E0C85C7DA2C70@PS1PR06MB1755.apcprd06.prod.outlook.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <de99deff-b7ca-e7ea-2763-d2cd24c586c8@arm.com>
+Date: Thu, 1 Mar 2018 11:59:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrN0t6Jr-gAuU4_OHEvYap2fRiaUbZC5E7sAGAQOUQjjw@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
- <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
- <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
- <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
- <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
- <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
- <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com>
- <5A977638.8010506@rock-chips.com> <CAMuHMdU9PFAXwo+1Z7Baw1fanst9yFKZ3ohoSTiQiMKTaYMVVw@mail.gmail.com>
- <CAPDyKFq_hwao0hZCYmO-VrsW3vDJJboa1RG-TMLRQRgbt+YhpQ@mail.gmail.com>
- <CAMuHMdWg1y3Ragb9nYY12whZhUn8w0a4aOOR31LSNXa37NbfXg@mail.gmail.com> <CAPDyKFrN0t6Jr-gAuU4_OHEvYap2fRiaUbZC5E7sAGAQOUQjjw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Mar 2018 12:54:46 +0100
-X-Google-Sender-Auth: RGBiNSWknw4rAGLSsmcZosnauhk
-Message-ID: <CAMuHMdVXWj8GCAFy66usSj-z_zeWgY3SyxvpenUKf9cc-ZWK5w@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <PS1PR06MB1755EB9FD0AFD1D2E0C85C7DA2C70@PS1PR06MB1755.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+Hi,
 
-On Thu, Mar 1, 2018 at 12:22 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 1 March 2018 at 11:37, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Thu, Mar 1, 2018 at 11:18 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> Another problem with the PM clk is, more exactly with
->>> pm_clk_suspend|resume(), that those invokes only clk_enable|disable().
->>> pm_clk_suspend|resume() can't call clk_prepare|unprepare(), because we
->>> don't know if we running in atomic context when those are executed.
->>> Potentially this means leaving the clocks ungated - all the time.
->>>
->>> I have though about how to fix the above, several times, but I always
->>> ends up with thinking that's it more easy, to let the driver deal with
->>> the clocks, as then the problem goes away.
->>
->> There's a similar issue with powering on/off power areas.
->
-> I don't follow. Can you elaborate?
+On 02/28/2018 07:46 AM, Gaku Inami wrote:
+> Hi
+> 
+[...]
+> 
+> Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
+> 
+> I tested as same in other SoC. It looks fine.
+> 
 
-I intended to comment on the atomic context (or not).
-But I think I was wrong, and PM domain drivers do busy loops instead
-of sleeps.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for testing on your side !
