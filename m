@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2898263-1519908996-2-5197031397231210649
+X-Cyrus-Session-Id: sloti22d1t05-2899084-1519908924-2-17005596757719263630
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519908995; b=mpCWhA/vBwV2XpE5V5Dz8oyLb7mn23yBJDqXCuQEemRW7cG
-    2WN+oRRZ5mb5bWyF5iGNeAVuKrx+oi0A8D/JxRC1N+AcaV+J6kb9tnVKplvWhnJg
-    91D4df3khX72AQub0gqgbeoWgo/EYDObqpVB77cSZZIqYj3X0XWwJ135Mg8dGPhb
-    0b3WkhcXBsqSL426l9cNATeTOhlrW22oUOGnDNT34ig3o8/0Li9JdIXmw8Pq6u1o
-    4EmewpvrMhnVwJYGzBFCD9YFWkCnJzUhaGh08XnaPUuhAuC5CLly5OAUsyfiDtQS
-    zzlz9T2395+6s58PNZxRUfP3CVKsTnyIHMVkV+w==
+    t=1519908924; b=AnLec7+bR8JpSXWrmUmafXVo2Go9PT/OYMgV7WiU2pzZ4JR
+    2uhAnXIrm9K+3EL9z/KAEam+El1jgf60+U9+uCRi/r/WsA3YL7lsDLI7WiLjB5K5
+    vAjaQQBNY8A2gnWrCd0hOLuKHTMwdIP7WuGJbMdwVGpd1TvEv33bkGAQ5dqu2H0t
+    3cFcR4Q7wrVLYQ5IDk8CkLCXoBW/hErMkZ8INXnGvIk9zjQv3yP1ebUh/TFqHYRe
+    NRC2UBQV2aEH3lwY5OGZlPypRqlZDOeXJNAOcYnM3cYOEH05lF0SYnzaM3pZPsCo
+    BQNKZvV/ygDzQ+trOb0lB+DFNaMyj51PIC6/laA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519908995;
-    bh=Z+S2Ix53iGrX6+QKSywvcFw930P0kQ8cnUrXTnqGG/Q=; b=ax7hreDyjhXn
-    wiQgudlB3748ranoCsQ7snRM0Bg+9SpusvLyNBreyQlFKgL8pkA5kUJ3L5cjineo
-    5mA8dLFdj/9vdDk+7yRBxpmxLSKQVocZU84B64nXN48jxUifXfs7NAt9ZOuiCruM
-    m7K0Vc+FFbiPl+ll7Bw0M6c5xtic6EE4yjbDnxlU+YNib0WCap8ShHuTJdkxxMvR
-    FAXaUmKkNiuBpkhCC9PJQD3GsXoLtP1k3fRXEmqt35baJ11k2q5C7U7dIQfz1Qx3
-    ujQu8OdX2mZEXhlVy4BURGLAKjGKZfIlPi0+W0Z5NDt8zk9ceVqOZoJwIXO1a6uy
-    uUVstBwL6g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ShK26/14 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519908924;
+    bh=Bg7B0hfDb1LbDSK0bEabGd/Si+r1Y+auDWs+NQonZeA=; b=v5BZHDE1ML7X
+    ftAEES8wuSZUBveb7HJBtUohw7m09PaPYz3R0vdfzvbsKn1m73bHG/iZRFuMJ6/7
+    eR8KQm5hAnlPLnSu3IwpIvSI2WHFtBbDHgIed1s/b3jvs6uEdIL9tf9aAw0IHRej
+    in9NeZGbMlC1O4bhQPkQvfGgs+JdmCVDANsDiFF8qID16kO+pXnZ4qhj0ksGC+ST
+    blLy+Y7R0Q3zTA2OZ9tAFX+0lsLKKB7/M7aTzROF/wKWl/YKzwk0Gj+YxG/K3WHD
+    qq2BDsjMUXJOMXQ+vubiAwMDFlDCivKdQyn4U6jl0vgD8QpwQrOtwPZm5GgchV9w
+    WPTbgevjgQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Em5SaGCp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qdOP7bZ0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WBKLbEIW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ShK26/14 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Em5SaGCp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qdOP7bZ0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WBKLbEIW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030648AbeCAMzv (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 07:55:51 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34226 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030629AbeCAMzt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:55:49 -0500
-X-Google-Smtp-Source: AG47ELvtOJoxtae7VP52TxhHT2W0qDhxbZOyqW6tymQbQigwp50gvvZUG/syybv/FCab9JN0LxIYyQ==
+        id S1030486AbeCAMzT (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:55:19 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32852 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030549AbeCAMzQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:55:16 -0500
+X-Google-Smtp-Source: AG47ELtE0egcSDkbOW2sCHkd+qP67Yy8XRiwKXOj8uugzbA1Z7v5lP+mIxWrJL5etdQlLFPpwgcOhQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,13 +63,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Yury Norov <ynorov@caviumnetworks.com>,
-        Laura Abbott <labbott@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 05/45] arm64: move TASK_* definitions to <asm/processor.h>
-Date: Thu,  1 Mar 2018 20:53:42 +0800
-Message-Id: <1519908862-11425-6-git-send-email-alex.shi@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>, Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 01/45] mm: Introduce lm_alias
+Date: Thu,  1 Mar 2018 20:53:38 +0800
+Message-Id: <1519908862-11425-2-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -79,126 +76,38 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Yury Norov <ynorov@caviumnetworks.com>
+From: Laura Abbott <labbott@redhat.com>
 
-commit eef94a3d09aab upstream.
+commit 568c5fe5a54 upstream.
 
-ILP32 series [1] introduces the dependency on <asm/is_compat.h> for
-TASK_SIZE macro. Which in turn requires <asm/thread_info.h>, and
-<asm/thread_info.h> include <asm/memory.h>, giving a circular dependency,
-because TASK_SIZE is currently located in <asm/memory.h>.
+Certain architectures may have the kernel image mapped separately to
+alias the linear map. Introduce a macro lm_alias to translate a kernel
+image symbol into its linear alias. This is used in part with work to
+add CONFIG_DEBUG_VIRTUAL support for arm64.
 
-In other architectures, TASK_SIZE is defined in <asm/processor.h>, and
-moving TASK_SIZE there fixes the problem.
-
-Discussion: https://patchwork.kernel.org/patch/9929107/
-
-[1] https://github.com/norov/linux/tree/ilp32-next
-
-CC: Will Deacon <will.deacon@arm.com>
-CC: Laura Abbott <labbott@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/include/asm/memory.h    | 15 ---------------
- arch/arm64/include/asm/processor.h | 21 +++++++++++++++++++++
- arch/arm64/kernel/entry.S          |  2 +-
- 3 files changed, 22 insertions(+), 16 deletions(-)
+ include/linux/mm.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 53211a0..269b979 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -60,8 +60,6 @@
-  * KIMAGE_VADDR - the virtual address of the start of the kernel image
-  * VA_BITS - the maximum number of bits for virtual addresses.
-  * VA_START - the first kernel virtual address.
-- * TASK_SIZE - the maximum size of a user space task.
-- * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
-  */
- #define VA_BITS			(CONFIG_ARM64_VA_BITS)
- #define VA_START		(UL(0xffffffffffffffff) << VA_BITS)
-@@ -74,19 +72,6 @@
- #define PCI_IO_END		(VMEMMAP_START - SZ_2M)
- #define PCI_IO_START		(PCI_IO_END - PCI_IO_SIZE)
- #define FIXADDR_TOP		(PCI_IO_START - SZ_2M)
--#define TASK_SIZE_64		(UL(1) << VA_BITS)
--
--#ifdef CONFIG_COMPAT
--#define TASK_SIZE_32		UL(0x100000000)
--#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
--				TASK_SIZE_32 : TASK_SIZE_64)
--#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
--				TASK_SIZE_32 : TASK_SIZE_64)
--#else
--#define TASK_SIZE		TASK_SIZE_64
--#endif /* CONFIG_COMPAT */
--
--#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2217e2f..edd2480 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -76,6 +76,10 @@ extern int mmap_rnd_compat_bits __read_mostly;
+ #define page_to_virt(x)	__va(PFN_PHYS(page_to_pfn(x)))
+ #endif
  
- #define KERNEL_START      _text
- #define KERNEL_END        _end
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 60e3482..4258f4d 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -19,6 +19,10 @@
- #ifndef __ASM_PROCESSOR_H
- #define __ASM_PROCESSOR_H
- 
-+#define TASK_SIZE_64		(UL(1) << VA_BITS)
-+
-+#ifndef __ASSEMBLY__
++#ifndef lm_alias
++#define lm_alias(x)	__va(__pa_symbol(x))
++#endif
 +
  /*
-  * Default implementation of macro that returns current
-  * instruction pointer ("program counter").
-@@ -37,6 +41,22 @@
- #include <asm/ptrace.h>
- #include <asm/types.h>
- 
-+/*
-+ * TASK_SIZE - the maximum size of a user space task.
-+ * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
-+ */
-+#ifdef CONFIG_COMPAT
-+#define TASK_SIZE_32		UL(0x100000000)
-+#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
-+				TASK_SIZE_32 : TASK_SIZE_64)
-+#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
-+				TASK_SIZE_32 : TASK_SIZE_64)
-+#else
-+#define TASK_SIZE		TASK_SIZE_64
-+#endif /* CONFIG_COMPAT */
-+
-+#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
-+
- #define STACK_TOP_MAX		TASK_SIZE_64
- #ifdef CONFIG_COMPAT
- #define AARCH32_VECTORS_BASE	0xffff0000
-@@ -192,4 +212,5 @@ int cpu_enable_pan(void *__unused);
- int cpu_enable_uao(void *__unused);
- int cpu_enable_cache_maint_trap(void *__unused);
- 
-+#endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index b4c7db4..478f0fe 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -28,7 +28,7 @@
- #include <asm/errno.h>
- #include <asm/esr.h>
- #include <asm/irq.h>
--#include <asm/memory.h>
-+#include <asm/processor.h>
- #include <asm/thread_info.h>
- #include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
+  * To prevent common memory management code establishing
+  * a zero page mapping on a read fault.
 -- 
 2.7.4
