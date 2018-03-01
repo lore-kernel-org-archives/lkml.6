@@ -1,165 +1,131 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3921380-1521234524-2-6542388524401925707
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521234524; b=K1Bda8yMMUTEpK3tQT/iKhUPZW2j+ld5PsivRPnKmJ7QU7c
-    iO+UMOE3bRJs0mxvWt03GtS5hEhwMsUIBXzlC3rCuRgM6GJQr12faEi632jwIfGP
-    KMXLDND5UmdvGdRa1IhZhExnV1KIywRCrU3IIHQGigJ/JhfgKvpZ4IrLpNYlx3mc
-    kKtOXzQOkMVp3jFY/qOBetdUrpDaui4ZozPjaxnWWfDWVWmJcOKQt/pNKIK2lj4X
-    65yTQWF7wUUdmpBAU12qgDAMxbTOBShyA7d/iIjc+YusCXiDs/1NIhd2loq5jxnr
-    qwf5UDXmlt3PDsEuYYYx2EA8+5Cz/75STBoMLbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1521234524; bh=JyZLku324xsmIyw7zYw1Alow6J
-    Pylmgg6aJrzMgpnus=; b=X0J7mYfHndpWxBlDVHkXyPaBc2MIfMnVDLs4Ff6HG5
-    7vn5BKP7Tl9yDgN9elenlCjEghlAqfooj2Ca4igJVKTv6XFoGi25VkVZLMExxYz5
-    /erH1NQsxsLHjYqYX/l95QTU/4fsVPJZ7GsHyNcSiLSdSXBr4KAaocwcIlWnh1IR
-    qbIqlkfrGzywYV8SBMR0nRBZDatMrJCHRN5XAXWddbtq0Er0HXJYjyXPI7Ro5o2X
-    8wv0H13zgeaXidQ032kpyDkHMg93greldgWkKx/hEYm+fnrVXqAiG5dKL09uDmXc
-    gD4q3iWFPn6RXoss7b3Ys39XFrL94EgTyiCR6TLK0eVA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750826AbeCPVIj (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 17:08:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:22081 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750806AbeCPVIi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:08:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="212069018"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Eric Wheeler <linux-mm@lists.ewheeler.net>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [PATCHv2] mm/shmem: Do not wait for lock_page() in shmem_unused_huge_shrink()
-Date: Sat, 17 Mar 2018 00:08:30 +0300
-Message-Id: <20180316210830.43738-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AG47ELs5E/ZL78Rwujlafoa60jR2elY42itEZRHqlexjzAKyNMBJHDaudRwE6urTUjPvdAwVRQUo
+ARC-Seal: i=1; a=rsa-sha256; t=1519911272; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nZgWyS5LBprWZmwjT/E/MzBUIfYGgGl+rHlE8t3Vv8ciZ5ons7ZMRIt2cp91vgO7NH
+         UxAWcbMN9SAHgiPJ11RIx7/iKhmUV3EMwwjEz3qfybPB1bHmC4aH5PURo+i/Yltjm9oZ
+         xv+DqKEBnh5YfmG9sTIx7t1rCZ6h3lfrjrkbbb/OOyGknyes7r/mJjsOf5o/1lrYpitY
+         /Ho+QRAcY8lYR9/Ikm40cqWwR8DQ4YUL/pb/rf5GvgVQ4Bw98TF1b5J/4hRMPbhZ1Rjh
+         qFgW59jAIO2LyTCsT9L7EjTYe1eyhWxslN0JkGix+IYaUExeKV74iYce/gTlawUHRE41
+         gWOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=stK49IlzBzUMPbXGTk/uzcvakqauHAqYNGs4XBZ10cY=;
+        b=k40hG31A+jT051LNxeWBQCfBxd6Xyp1S5TwsCIqfukWxuJ4wPbQGidVGPoH1iHUUXK
+         FPVU/sfHhirRtUNmmNaxebCLib3VZcsu+40bMMI3EgwgzIe5NDIP5RMyWgpX2mTdd7Uy
+         CPXAakssPRITaA07YOD8ODOj4+0RZUxKoipGokz/omsE/RaOUuOv/uZ/d78LZexqNERs
+         ffNxt7czwMROJSrEC0NrFh3o5ravr3kVcaFBGwpOHPRzxqMzKyzDAvdnS2NRAwUQJkrZ
+         y4x0eLnMpOrWQjWQT+mb5fN3T9nDnU64EocmKuQEiTpL2CRDUudbqdgee6OV1IgxwYNk
+         mf1g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=F/pISCPD;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Authentication-Results: mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=F/pISCPD;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Date: Thu, 1 Mar 2018 14:34:30 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de
+Subject: Re: [PATCH 12/31] x86/entry/32: Add PTI cr3 switch to non-NMI
+ entry/exit points
+Message-ID: <20180301133430.wda4qesqhxnww7d6@8bytes.org>
+References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
+ <1518168340-9392-13-git-send-email-joro@8bytes.org>
+ <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591914904588119761?=
+X-GMAIL-MSGID: =?utf-8?q?1593742482150600868?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-shmem_unused_huge_shrink() gets called from reclaim path. Waiting for page
-lock may lead to deadlock there.
+On Tue, Feb 27, 2018 at 02:18:36PM -0500, Waiman Long wrote:
+> > +	/* Make sure we are running on kernel cr3 */
+> > +	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+> > +
+> >  	xorl	%edx, %edx			# error code 0
+> >  	movl	%esp, %eax			# pt_regs pointer
+> >  
+> 
+> The debug exception calls ret_from_exception on exit. If coming from
+> userspace, the C function prepare_exit_to_usermode() will be called.
+> With the PTI-32 code, it means that function will be called with the
+> entry stack instead of the task stack. This can be problematic as macro
+> like current won't work anymore.
 
-There was a bug report that may be attributed to this:
+Okay, I had another look at the debug handler. As I said before, it
+already handles the from-entry-stack case, but with these patches it
+gets more likely that we actually hit that path.
 
-http://lkml.kernel.org/r/alpine.LRH.2.11.1801242349220.30642@mail.ewheeler.net
+Also, with the special handling for from-kernel-with-entry-stack
+situations we can simplify the debug handler and make it more robust
+with the diff below. Thoughts?
 
-Replace lock_page() with trylock_page() and skip the page if we failed
-to lock it. We will get to the page on the next scan.
-
-We can test for the PageTransHuge() outside the page lock as we only
-need protection against splitting the page under us. Holding pin oni
-the page is enough for this.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Eric Wheeler <linux-mm@lists.ewheeler.net>
-Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
-Cc: stable@vger.kernel.org # v4.8+
----
- mm/shmem.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 1907688b75ee..b85919243399 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -493,36 +493,45 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
- 		info = list_entry(pos, struct shmem_inode_info, shrinklist);
- 		inode = &info->vfs_inode;
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 8c149f5..844aff1 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1318,33 +1318,14 @@ ENTRY(debug)
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
  
--		if (nr_to_split && split >= nr_to_split) {
--			iput(inode);
--			continue;
--		}
-+		if (nr_to_split && split >= nr_to_split)
-+			goto leave;
+-	SAVE_ALL
++	SAVE_ALL switch_stacks=1
+ 	ENCODE_FRAME_POINTER
  
--		page = find_lock_page(inode->i_mapping,
-+		page = find_get_page(inode->i_mapping,
- 				(inode->i_size & HPAGE_PMD_MASK) >> PAGE_SHIFT);
- 		if (!page)
- 			goto drop;
+-	/* Make sure we are running on kernel cr3 */
+-	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+-
+ 	xorl	%edx, %edx			# error code 0
+ 	movl	%esp, %eax			# pt_regs pointer
  
-+		/* No huge page at the end of the file: nothing to split */
- 		if (!PageTransHuge(page)) {
--			unlock_page(page);
- 			put_page(page);
- 			goto drop;
- 		}
+-	/* Are we currently on the SYSENTER stack? */
+-	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+-	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+-	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
+-	cmpl	$SIZEOF_entry_stack, %ecx
+-	jb	.Ldebug_from_sysenter_stack
+-
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	jmp	ret_from_exception
+-
+-.Ldebug_from_sysenter_stack:
+-	/* We're on the SYSENTER stack.  Switch off. */
+-	movl	%esp, %ebx
+-	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
+ 	TRACE_IRQS_OFF
+ 	call	do_debug
+-	movl	%ebx, %esp
+ 	jmp	ret_from_exception
+ END(debug)
  
-+		/*
-+		 * Leave the inode on the list if we failed to lock
-+		 * the page at this time.
-+		 *
-+		 * Waiting for the lock may lead to deadlock in the
-+		 * reclaim path.
-+		 */
-+		if (!trylock_page(page)) {
-+			put_page(page);
-+			goto leave;
-+		}
-+
- 		ret = split_huge_page(page);
- 		unlock_page(page);
- 		put_page(page);
- 
--		if (ret) {
--			/* split failed: leave it on the list */
--			iput(inode);
--			continue;
--		}
-+		/* If split failed leave the inode on the list */
-+		if (ret)
-+			goto leave;
- 
- 		split++;
- drop:
- 		list_del_init(&info->shrinklist);
- 		removed++;
-+leave:
- 		iput(inode);
- 	}
- 
--- 
-2.16.1
