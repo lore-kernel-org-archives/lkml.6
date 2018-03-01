@@ -1,103 +1,80 @@
-Return-Path: <kernel-hardening-return-12067-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtMb33SzxlIYhPRmlDtaEp6LsGVkL2ZDGw4ghX8g+aHc8rtGf29ZXifm/xuQShHYcIlmgie
-ARC-Seal: i=1; a=rsa-sha256; t=1519949651; cv=none;
+Return-Path: <kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsKfow6VLUQBOJWeIePjXlsky1k9jEjilQne1GVweW4iAD8wAvocc7ZVg5QuUjNFo2DUbUD
+ARC-Seal: i=1; a=rsa-sha256; t=1519941855; cv=none;
         d=google.com; s=arc-20160816;
-        b=NBjAON5bOAtgiyBRlwX6Oll2+Hh8M/bBTnYVXcC7jbHJH9+c1hmDnPZS7hsJfJoAKE
-         pAsSSUWNTj6EfqwcX7AolQYVS/jNW6OTJL8wfuGRDFOXwx7Bzvp9BW2dVzpDH83eSfqK
-         Ao441KtO6lqNhzpktPacodjDD4KsB88pVqsc8Z+bTboM7SCa6MirRe8H2JDNqBpHksDz
-         UlJSdbDIwk7HrHQSBDZ9Ty3yooLJz+BKIaZ/4Nr+kSfZubMclA5AqORMCUql+y7zUgjZ
-         Wk143bdWaKoHhwQkrxAziLllBxG1BEza7sHHXK2b9GIAF9RN9OM89yiOgjBiG+4h0tKf
-         G0gA==
+        b=Lh2P8L05lGxHZQL6kYinE3+vx/CJFOgbDEzzWAWVMcLdJX64XBWB/1J2SGJEwmUrKw
+         9RWxb681oLXYE9+SqBNJX1HtYigQ6kqHw4Kpca3ZjAZGMzSvnspZrgENDqRxjDFBgdkA
+         JZBMk8iZtgLARgQZtMQ8yzfUOmVvjcrtdoRzRK5ra5RefIZANCgnZyqsO9Rsx/k1o3zv
+         JsdXU1z0yeR62OSZbYSU4HXkCPs0os9/OI+a3v3SFYrAM9hjozNyPl01RsD4YnXa8IYZ
+         5JC9gdE6t3sYaUtyPDL+xH0WEC7SNyl7Fotay2No2Hcv6In9N8fk32u4qVPRIMyPvBjk
+         Yc0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=/Rmj6axvMG+GEvSSw4uq2b506/W9pk+oUmIw3rvCDsM=;
-        b=xrmiHW7fVyf389yKGSPVniFW17pN5Ta2YdbA5ZSe0d/fswpjgXVyMmAcX/B2EWvZoH
-         WwFF9mC50nnu6otkLBW/TDouAsXKvUU3oOx8kSMWlMuv1OxpVsUSxy5GA1buCvSQGCzu
-         pYjKcrZzGdyw7yV3besSbgWQU7G9vAss0GVdwjhCZOa3bfZdT4Es8/Vz2xu0xEgtiz3j
-         VSGXM7DcipxYD2ohtKtAOvbVLNrGVHpygzb9txFuS4B6QyJyV0rsRCRwF2fFB4GXgPIo
-         54IHSYHunvsv0rr5BAsG3gWsvSI5Z+wk4cm7RnY4N3hK4iRuj0yadeEYcqEr5Ze+HWwO
-         cK6Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=aE88WhNEM1RWMwmNE0en7qQyFse/3m+degho9/T+LUw=;
+        b=hrS1FfwRYoeeMLdDDPpR3J49PRxlK1jlRHYpsO/jbMx/RAxEECo56sE54JnSMoVGGv
+         +5c+4+Ws1URiEEEXqoFcCZKEhT8ye26KCO2X2Bs9ymF84WM2ulrztOO73d74zVSAPrig
+         XRGjKG6TIaovN+Wtpx8mCr4ZsqW2Nt7JZt7d7o4z6OtDJJovxQLA7TjvpCUh+P8WwUJ8
+         oJyeHhBlcclwOzgovjWiGo6xrGk/t5PEvF+FajMFFoPkeK2TQrRHS+ccv5vHX0xwCNh/
+         weonkKLHWUoNFXQcVNM08CUKhM0OL1hdHKb2P94yHHhoFZn9FZx0TShhTpTGGzj/N/1G
+         iCqw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=mkDaDWEr;
-       spf=pass (google.com: domain of kernel-hardening-return-12067-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12067-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=QeMXr02w;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BcyA3y93;
+       spf=pass (google.com: domain of kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=mkDaDWEr;
-       spf=pass (google.com: domain of kernel-hardening-return-12067-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12067-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=QeMXr02w;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BcyA3y93;
+       spf=pass (google.com: domain of kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Thu, 1 Mar 2018 17:13:49 -0700
-From: Tycho Andersen <tycho@tycho.ws>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+X-ME-Sender: <xms:vXiYWskLjba6RXI9z9Vu5qYvM4GhGsScAH2ECBVzYAHkmMn65y5QtQ>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	Tycho Andersen <tycho@tycho.ws>,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] leaking_addresses: check if file name contains
- address
-Message-ID: <20180302001349.buaus74hx3xjoaqs@cisco>
+Subject: [PATCH 1/2] leaking_addresses: explicitly name variable used in regex
+Date: Fri,  2 Mar 2018 09:03:19 +1100
+Message-Id: <1519941800-27710-2-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519941800-27710-1-git-send-email-me@tobin.cc>
 References: <1519941800-27710-1-git-send-email-me@tobin.cc>
- <1519941800-27710-3-git-send-email-me@tobin.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519941800-27710-3-git-send-email-me@tobin.cc>
-User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593774558815330695?=
-X-GMAIL-MSGID: =?utf-8?q?1593782725944105764?=
+X-GMAIL-THRID: =?utf-8?q?1593774551367950492?=
+X-GMAIL-MSGID: =?utf-8?q?1593774551367950492?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 02, 2018 at 09:03:20AM +1100, Tobin C. Harding wrote:
-> Sometimes files may be created by using output from printk.  As the scan
-> traverses the directory tree we should parse each path name and check if
-> it is leaking an address.
-> 
-> Add check for leaking address on each path name.
-> 
-> Suggested-by: Tycho Andersen <tycho@tycho.ws>
+Currently sub routine may_leak_address() is checking regex against Perl
+special variable $_ which is _fortunately_ being set correctly in a loop
+before this sub routine is called.  We already have declared a variable
+to hold this value '$line' we should use it.
 
-Acked-by: Tycho Andersen <tycho@tycho.ws>
+Use $line in regex match instead of implicit $_
 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> ---
->  scripts/leaking_addresses.pl | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-> index 65a65aa64d26..a550c9bc34f5 100755
-> --- a/scripts/leaking_addresses.pl
-> +++ b/scripts/leaking_addresses.pl
-> @@ -463,6 +463,16 @@ sub parse_file
->  	close $fh;
->  }
->  
-> +# Checks if the actual path name is leaking a kernel address.
-> +sub check_path_for_leaks
-> +{
-> +	my ($path) = @_;
-> +
-> +	if (may_leak_address($path)) {
-> +		printf("Path name may contain address: $path\n");
-> +	}
-> +}
-> +
->  # Recursively walk directory tree.
->  sub walk
->  {
-> @@ -484,6 +494,8 @@ sub walk
->  
->  			next if (skip($path));
->  
-> +			check_path_for_leaks($path);
-> +
->  			if (-d $path) {
->  				push @dirs, $path;
->  				next;
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ scripts/leaking_addresses.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
+index d5d31f3df97e..65a65aa64d26 100755
+--- a/scripts/leaking_addresses.pl
++++ b/scripts/leaking_addresses.pl
+@@ -363,7 +363,7 @@ sub may_leak_address
+ 	}
+ 
+ 	$address_re = get_address_re();
+-	while (/($address_re)/g) {
++	while ($line =~ /($address_re)/g) {
+ 		if (!is_false_positive($1)) {
+ 			return 1;
+ 		}
+-- 
+2.7.4
