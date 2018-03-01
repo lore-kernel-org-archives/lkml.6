@@ -1,79 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163035AbeCAXLw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:11:52 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30247 "EHLO mga04.intel.com"
+        id S1163046AbeCAXMK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:12:10 -0500
+Received: from mga17.intel.com ([192.55.52.151]:6877 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162931AbeCAXKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:10:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1162931AbeCAXMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:12:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
-   d="scan'208";a="208165065"
-From: kan.liang@linux.intel.com
-To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 11/14] perf test: Apply new perf_mmap__read_event() interface for sw-clock
-Date: Thu,  1 Mar 2018 18:09:08 -0500
-Message-Id: <1519945751-37786-11-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.4.11
-In-Reply-To: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
-References: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
+   d="scan'208";a="208215291"
+Date: Thu, 1 Mar 2018 15:04:45 -0800
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v3 0/3] x86: devicetree: re-enable x86-specific implementation
+Message-ID: <20180301230445.GA48473@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Fixing x86-specific DT implementation in the kernel allows reusing most of
+firmware code for SoC that have ARM core replaced with x86, e.g. SC9853i.
 
-The perf test 'sw-clock' still use the legacy interface.
+Changes since v2:
 
-No functional change.
+ * WARN_ON_ONCE instead of WARN_ON to aviod multiple warnings
+   when APIC ID is missing in CPU device tree nodes
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/tests/sw-clock.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ * Switched to Mutt because of white space issues:
+   "Preformatted" paragraph style does not work in Evolution 3.18.5.2
 
-diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
-index f6c72f9..206a111 100644
---- a/tools/perf/tests/sw-clock.c
-+++ b/tools/perf/tests/sw-clock.c
-@@ -39,6 +39,8 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 	};
- 	struct cpu_map *cpus;
- 	struct thread_map *threads;
-+	struct perf_mmap *md;
-+	u64 end, start;
- 
- 	attr.sample_freq = 500;
- 
-@@ -93,7 +95,11 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 
- 	perf_evlist__disable(evlist);
- 
--	while ((event = perf_evlist__mmap_read(evlist, 0)) != NULL) {
-+	md = &evlist->mmap[0];
-+	if (perf_mmap__read_init(md, 0, &start, &end) < 0)
-+		goto out_init;
-+
-+	while ((event = perf_mmap__read_event(md, 0, &start, end)) != NULL) {
- 		struct perf_sample sample;
- 
- 		if (event->header.type != PERF_RECORD_SAMPLE)
-@@ -108,9 +114,11 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 		total_periods += sample.period;
- 		nr_samples++;
- next_event:
--		perf_evlist__mmap_consume(evlist, 0);
-+		perf_mmap__consume(md, 0);
- 	}
-+	perf_mmap__read_done(md);
- 
-+out_init:
- 	if ((u64) nr_samples == total_periods) {
- 		pr_debug("All (%d) samples have period value of 1!\n",
- 			 nr_samples);
+Changes since first version:
+
+ * Splitting a single patch into three parts
+
+Ivan Gorinov (3):
+  x86: devicetree: call early_init_dt_verify()
+  x86: devicetree: enable multiprocessing in DT
+  x86: devicetree: fix device IRQ settings in DT
+
+ arch/x86/kernel/devicetree.c | 40 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
 -- 
-2.4.11
+2.7.4
