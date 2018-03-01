@@ -1,176 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967285AbeCAKDp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:03:45 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36721 "EHLO mail.bootlin.com"
+        id S967323AbeCAKFQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:05:16 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36802 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967069AbeCAKDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:03:42 -0500
-Date: Thu, 1 Mar 2018 11:03:28 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: Add a binding for the sunxi message box
-Message-ID: <20180301100328.3w36zdadeaqums44@flea>
-References: <20180228022714.30068-1-samuel@sholland.org>
- <20180228022714.30068-2-samuel@sholland.org>
- <20180228082843.fga47gfrv2g5kmiz@flea>
- <d124c54f-7ac1-2305-0e69-94bc33c6eafe@arm.com>
+        id S967069AbeCAKFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:05:14 -0500
+Date: Thu, 1 Mar 2018 11:05:02 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Mohit Aggarwal <maggarwa@codeaurora.org>
+Cc: a.zummo@towertech.it, rtc-linux@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] rtc-pm8xxx: Fix issue in RTC write path
+Message-ID: <20180301100502.GU1479@piout.net>
+References: <1519807878-14842-1-git-send-email-maggarwa@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="g67y5xrgkxtfee53"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d124c54f-7ac1-2305-0e69-94bc33c6eafe@arm.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1519807878-14842-1-git-send-email-maggarwa@codeaurora.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---g67y5xrgkxtfee53
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this was not sent to the correct mailingr- list, please use a more recent
+kernel ;)
 
-On Wed, Feb 28, 2018 at 05:17:03PM +0000, Andre Przywara wrote:
-> Hi Samuel,
->=20
-> thank you very much for writing and posting this!
->=20
-> On 28/02/18 08:28, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Tue, Feb 27, 2018 at 08:27:12PM -0600, Samuel Holland wrote:
-> >> This mailbox hardware is present in several Allwinner sun8i and sun50i
-> >> SoCs. Add a device tree binding for it.
-> >>
-> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> >> ---
-> >>  .../devicetree/bindings/mailbox/sunxi-msgbox.txt   | 40 +++++++++++++=
-+++++++++
-> >>  1 file changed, 40 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/mailbox/sunxi-ms=
-gbox.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.tx=
-t b/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.txt
-> >> new file mode 100644
-> >> index 000000000000..3b3ed7f870a0
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mailbox/sunxi-msgbox.txt
-> >> @@ -0,0 +1,40 @@
-> >> +Allwinner sunxi Message Box
-> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> >> +
-> >> +The hardware message box on sunxi SoCs is a two-user mailbox controll=
-er
-> >> +containing 8 unidirectional FIFOs bonded into 4 bidirectional mailbox=
- channels.
-> >> +An interrupt is raised for received messages, but software must poll =
-to know
-> >> +when a transmitted message has been acknowledged by the remote user.
-> >> +
-> >> +Refer to ./mailbox.txt for generic information about mailbox device-t=
-ree
-> >> +bindings.
-> >> +
-> >> +Mailbox Device Node:
-> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> +
-> >> +Required properties:
-> >> +--------------------
-> >> +- compatible:		Must be "allwinner,sunxi-msgbox".
-> >=20
-> > The IP change quite often in the Allwinner SoCs, so it would be better
-> > to use a more specific compatible there. IIRC that IP was introduced
-> > with the A31, so what about sun6i-a31-msgbox?
->=20
-> As much as I like generic compatible strings ;-) I agree with Maxime
-> here. Can you change this to something like:
->=20
-> - compatible: Must contain at least "allwinner,sun6i-a31-msgbox".
->               Should also contain one of the more specific strings, when
-> 	      used on other SoCs which are compatible:
->=20
-> And then list the strings for the SoCs which we know of, ideally have
-> been tested also?
->=20
-> The rationale behind this is that by listing those strings here we
-> reserve them, to cover for future extensions or bugs found in those
-> SoCs. So even though the driver would only match on
-> "allwinner,sun6i-a31-msgbox" right now, we can extend it in the future.
-> The actual DTs would always use:
-> 	compatible =3D "allwinner,sun50i-a64-msgbox",
-> 		     "allwinner,sun6i-a31-msgbox";
-> Right now the first string would not match anything, but the second
-> would. The driver would use the generic driver functionality.
-> Should we find a bug or speciality in the A64, we can add the a64 string
-> to the driver and connect it to the workaround, and the actual DTs would
-> not need to be touched.
-> Does this make sense?
+On 28/02/2018 at 14:21:18 +0530, Mohit Aggarwal wrote:
+> In order to set time in rtc, need to disable
+> rtc hw before writing into rtc registers.
+> 
+> Also fixes disabling of alarm while setting
+> rtc time.
+> 
+> Change-Id: Ia2c9c922dd78e2ecb92554d5722c894706d83ac0
 
-It does to me :)
+checkpatch rightfully complains loudly about that line.
 
-> >> +- reg:			Contains the mailbox register address range (base
-> >> +			address and length).
-> >> +- clocks:		phandle for the clock controller and specifier.
-> >> +- clock-names:		Must be "bus".
->=20
-> Maxime:
-> Out of curiosity: There is only one clock, and just to gate the APB
-> clock to the MMIO registers. So do we need clock-names?
+> Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
+> ---
+>  drivers/rtc/rtc-pm8xxx.c | 49 +++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 38 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+> index fac8355..5309edc 100644
+> --- a/drivers/rtc/rtc-pm8xxx.c
+> +++ b/drivers/rtc/rtc-pm8xxx.c
+> @@ -74,16 +74,18 @@ struct pm8xxx_rtc {
+>  /*
+>   * Steps to write the RTC registers.
+>   * 1. Disable alarm if enabled.
+> - * 2. Write 0x00 to LSB.
+> - * 3. Write Byte[1], Byte[2], Byte[3] then Byte[0].
+> - * 4. Enable alarm if disabled in step 1.
+> + * 2. Disable rtc if enabled.
+> + * 3. Write 0x00 to LSB.
+> + * 4. Write Byte[1], Byte[2], Byte[3] then Byte[0].
+> + * 5. Enable rtc if disabled in step 2.
+> + * 6. Enable alarm if disabled in step 1.
+>   */
+>  static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  {
+>  	int rc, i;
+>  	unsigned long secs, irq_flags;
+> -	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0;
+> -	unsigned int ctrl_reg;
+> +	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0, rtc_disabled = 0;
+> +	unsigned int ctrl_reg, rtc_ctrl_reg;
+>  	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
+>  	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
+>  
+> @@ -92,23 +94,38 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  
+>  	rtc_tm_to_time(tm, &secs);
+>  
+> +	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
+> +
+>  	for (i = 0; i < NUM_8_BIT_RTC_REGS; i++) {
+>  		value[i] = secs & 0xFF;
+>  		secs >>= 8;
+>  	}
+>  
+> -	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
+> -
+>  	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
+>  
+> -	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &ctrl_reg);
+> +	rc = regmap_read(rtc_dd->regmap, regs->alarm_ctrl, &ctrl_reg);
+>  	if (rc)
+>  		goto rtc_rw_fail;
+>  
+>  	if (ctrl_reg & regs->alarm_en) {
+>  		alarm_enabled = 1;
+>  		ctrl_reg &= ~regs->alarm_en;
+> -		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
+> +		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
+> +		if (rc) {
+> +			dev_err(dev, "Write to RTC Alarm control register failed\n");
+> +			goto rtc_rw_fail;
+> +		}
+> +	}
+> +
+> +	/* Disable RTC H/w before writing on RTC register */
+> +	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &rtc_ctrl_reg);
+> +	if (rc)
+> +		goto rtc_rw_fail;
+> +
+> +	if (rtc_ctrl_reg & PM8xxx_RTC_ENABLE) {
+> +		rtc_disabled = 1;
+> +		rtc_ctrl_reg &= ~PM8xxx_RTC_ENABLE;
+> +		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
+>  		if (rc) {
+>  			dev_err(dev, "Write to RTC control register failed\n");
+>  			goto rtc_rw_fail;
+> @@ -137,11 +154,21 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  		goto rtc_rw_fail;
+>  	}
+>  
+> +	/* Enable RTC H/w after writing on RTC register */
+> +	if (rtc_disabled) {
+> +		rtc_ctrl_reg |= PM8xxx_RTC_ENABLE;
+> +		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
+> +		if (rc) {
+> +			dev_err(dev, "Write to RTC control register failed\n");
+> +			goto rtc_rw_fail;
+> +		}
+> +	}
+> +
+>  	if (alarm_enabled) {
+>  		ctrl_reg |= regs->alarm_en;
+> -		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
+> +		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
+>  		if (rc) {
+> -			dev_err(dev, "Write to RTC control register failed\n");
+> +			dev_err(dev, "Write to RTC Alarm control register failed\n");
+>  			goto rtc_rw_fail;
+>  		}
+>  	}
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
 
-We don't.
-
-> Or is this good practise these days to allow extending the clocks
-> later in a compatible manner? (Thinking of the sunxi pinctrl here.)
-
-This is always doable, since if you ever have multiple clocks, you
-will have clock-names, so any newer clock will have a name, and the
-first one will usually be the first in the index. This is not as nice
-as having it from the start, but it's definitely something we can have
-in the binding as well.
-
-> And is "bus" the correct naming? I see "apb" being used as well, is this
-> legacy?
-
-So we were using apb/ahb at the beginning, but we've had some IPs
-moving from one generation to the other from the APB to AHB bus iirc
-(or the other way around, this was quite some time ago).
-
-Having some more generic name will also help to have genpd handle the
-clocks and resets lines, which is something I've wanted to have for
-quite some time, but is very low on my TODO-list...
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
-
---g67y5xrgkxtfee53
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXz+8ACgkQ0rTAlCFN
-r3QerBAAjzBFsAbOfcx7I/M5M1dca1mEfdVI27Udi0PDTlSGN3leyT7vQQP6HRbz
-W5OjRuTI4t5JjqdxvE5GC39WusQbDDG6bDtLyGd1CwXUd9pfffOk1ij+qxkFoWNT
-a0+J+ZryyuwW0N5z571pMtMbRzBJ4i8E1HgPmHxq1kMu8k4P/x3teHU0r3e3Z4dC
-hasrtlUtBnziHCYrYNnWdrefH1ydn4w/Ag8gb8HV4xKW4BBbd28zKa2JGDskf55O
-ud5IKJsLzlW+A79kSGKThsib8KWlu4iISnK5Nyr7nrVnP7X3Tg5+9Pc7vlLmNkl2
-hZMc2VoYliapOTEUI5QZNpecKhwEgbcoC30cbGg+ZVDtkkNghfWwYIHMuwdJbnr9
-zJPYIIaGbF8gWfipfyIDMHAy8wzxk3cDMfHTEj4H9mlR1a9l+IPNJPRLvtQLYoaj
-nmqBlwEB5+lvn0RHSS6NEcyWGuMltNydWrRmhUI8Mj15abX31Hel2URqh+ZSVDNG
-XjjJSaI1TQE34ZcB9GV1KsDh3OdSe59YYP8brNoaGsOA6enUC8qNiHkY1+oXbsgb
-W/SRtxePqGpYoJjfXfxPweS5+C5aPDjpzTkRe2QJ8BTD57Sl92qlgDa8lrAxLE/3
-pBPEyDnaRTbyeS/q5BHh0Q4RzSiB4rNp7Nk1Xuy+PKcK2G9zxe8=
-=XI5u
------END PGP SIGNATURE-----
-
---g67y5xrgkxtfee53--
