@@ -1,108 +1,107 @@
-Return-Path: <outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1519894646; cv=pass;
+Return-Path: <outreachy-kernel+bncBAABBN464PKAKGQEMYLVI2Y@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1519963959; cv=pass;
         d=google.com; s=arc-20160816;
-        b=Tj2q7687rViVKfzGMhxGdNxlO1MaJHN2MTngZcBT2n4YW01kLGZQOHAWLycoWk6og/
-         HtBmVDNb2tv399xizUIfBaosSVpRs/vkG9iI3sIwDZGV9spL2NJX9lygFZt2k5JeqxN7
-         0J/VLPXn3eGaVzdCeqaiVLbXWXVsGETCPVy/Ia0Ssh5OgVs6f352v2/+2XVmh+cqzl2N
-         jTUGGqcHRo5TN/3+B56YrPookHyLHiusnAo0A27HnOeNrzdVopDkp8D6cUBahDOe1G60
-         kkPJ6+674JFzoO3rrwAXsO5NQAbtFZEPpbgY045Pc/7alqvd0ifleYVSpfr8pxdycg7C
-         bYLg==
+        b=YL3I9xlrauH8/+ixZo19BuNLu9hDxekM8AWm+s/HXAJRQm/AuwamRW/RYZN/LpNHSr
+         WeXAAVM1wKWWOcrOP7Mo/Y5rrADQ4iXpMBOimGjV4LEGggFLNwXLJhV/Nknoez/uGial
+         ilDyHmsgc1yzOoJjdZjN/psyDMYIaUM3i7mBK0JDeVO2e3e+05MQgXzN79lpMSt3/RcV
+         jx2nrss5UntUEnGzOsh+SDxxNeBRUIzm3D0Xg7Zb9bDcBK0O2xEbnO1mSB+4qoYuUXBl
+         4D5DajF0nV1kxcazcQK+/xnLCdEmz/2GlfQN90AAHEG6TcYGK5tSrsgEz8Qankq6j4pr
+         oijA==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results:arc-message-signature
+         :mailing-list:precedence:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:dkim-filter
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results:arc-message-signature
          :arc-authentication-results;
-        bh=63AYGJLHdrgjTO8rCQVjw3zqjDAq0mi785LNk7sbhtE=;
-        b=d7vgFdWfDNdsckKcQTiic2zkXJcpYvJk5CIWulHESO+xUFcn+Y0UfnZomAHNW/k5vx
-         hcPJ7+ImbpZOzdPEJp86KLqomEz2zAz0b8VJ3zhO4ZkL/o26Br4enL91Pv4IyMvBUsF0
-         52IdfrMB17AJln9Al8+tcTPE0PZUu8yUayQZRY02f87+EOFbF9WapqMKb5Akp7S0zjoV
-         MG5ph9z++Bz5vEWvFpEQfEBBnc+iSdzXF14g9EadE92tL+nSxn91bfv9Q1US9Sh/pk7g
-         RCwp6d1xx27JRvvVQA4Pbtdd73NQlHv1fzj5VdBfe4IZt/nnvwpj5NlSZ+rHN3Abdfko
-         0LNQ==
+        bh=98GIv2tIaPwQLSD8FAhlg4K7UUZAG9ysaVRp0kNBKJg=;
+        b=hFL+IPj3HhoYV5VmJ5FfXzeWXWYTBHF0ns5ioDsSwvKkeY9ce0JX0ApAHKS0IXvZgJ
+         m/VSTlRYyQ1n1iwBtNgOULDbm1LOGQDYLjGC8M5ZHs3f1AqPWRW6S0RB1zdvCW3rI5y/
+         LI9u49lSK+zLoQC1KwzFFvIa1YrabvDy+SyI1FgzJImRK6ZZnwREMGL/ofinnW8ySmAI
+         gKIHtT6J/jX0hUgZLEHAw7piifb/gvmgWct2MlyxjLpDBZcNab5wz7Wu26gChjFwOgkx
+         IPm16Fy10Q9QfnXB7tXWy7JMTl1ZPMkkvU+CkR6sc6hEfU1JQ+HYP4q/6cDzlzIweYFs
+         rFfA==
 ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=R7dgBGTF;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QYXHMOqn;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbc4o7jfqxqfrb5ma37kakgqez4yzqmy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=J4IDAQno;
+       arc=pass (i=2 dkim=pass dkdomain=nifty.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbaabbn464pkakgqemylvi2y@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBAABBN464PKAKGQEMYLVI2Y@googlegroups.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=R7dgBGTF;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QYXHMOqn;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbc4o7jfqxqfrb5ma37kakgqez4yzqmy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-ARC-Seal: i=2; a=rsa-sha256; t=1519894646; cv=pass;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=J4IDAQno;
+       arc=pass (i=2 dkim=pass dkdomain=nifty.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbaabbn464pkakgqemylvi2y@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBAABBN464PKAKGQEMYLVI2Y@googlegroups.com
+ARC-Seal: i=2; a=rsa-sha256; t=1519963959; cv=pass;
         d=google.com; s=arc-20160816;
-        b=NLJPBT5yVqUQga+XEETns4fJUVgHvZML1o8WGQFAXHG5Y61LRfCi0j4ueSek9ZK4/K
-         px4VUIHks0MMa6wf0fmp0fyasEu/15EJKmLG6FwpXKS6L2yRTaClBAPI0jCmQatk8FVm
-         dSOgEQeYQeyvjwAhKyFf8ACBM0rgFPOa7RY59KaCua7+2UrXuFPHouGv+/Enf7rqt2GU
-         tm2a5ETrV+mht9pn7Z9XcPDbFyczhfLCOYVO8o7AFSSv2zn5xx0b4nBj5M+xUkjNACgs
-         hZppnj569b2faymEhO2tRhnZum9XeXtFl6oqdX2din2djFPkfz+cPJKvFH0nCr0E9dAA
-         fY3w==
+        b=hftQEhmtPWKrqZs6M9BXB6RppLf7U9g/WAVlNIosE5mQbKNpB2fkotQXMWZ/djBBzn
+         7T4l4h6mgelFNuALCY0dZ4kz796VuFDRONONrhUI68BzxJ3gqt51S/3sTLtVE9na10Ye
+         zbD8FYcTJwvA0TthjMWDJFKf8P+h6E2IxPSQOnPh/bEwenxbCMoVxzbU/wIWb585nljZ
+         KsQx4enuuedcn8/WXp2yWa2+InkfI52fLK6+uRFZm3hIiGae4rGL5WflfpZkruIJ7NVL
+         ulctQmnXh3hUCLQjvJi51AvgTeoK0SA9PQh9cLMK1LltvIk9lDBQZQjY17c7I4zORzEe
+         LRnQ==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=63AYGJLHdrgjTO8rCQVjw3zqjDAq0mi785LNk7sbhtE=;
-        b=lQJvzfw0su1bDeMRfxkzW55OesO1ViHTi9XnMOp+6bDnS+2c5WHFs+cpbGhL0IQ3ZV
-         y5zdgkeIdxP1A2zicxx53VY2VCM7dWDxU4Pf75un3VAy9JLp50/04oi/F9CIQun50xN8
-         ixPX30erahuWvnDlXDSxNOktKHFYusw0bqtjLAkZnDuj1UOB7lhdEmyLSRD0hbLJtHV0
-         1oTPTlB3Zd7ClZuk3RelxQhWqFDPr12OVRti+EOUkgMhMhDfDMdKbTIMLoJwZfcjsd1p
-         lGk4cLOZmeBoaoYo2fI8w0BWFtNIzKXzpLalREDIrS60XtA2RAYkhFLURGKx2AclSSd5
-         4VjQ==
+         :mailing-list:precedence:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:dkim-filter
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results;
+        bh=98GIv2tIaPwQLSD8FAhlg4K7UUZAG9ysaVRp0kNBKJg=;
+        b=kDVHq8B+2jzsxODLVo15qXi6xJp+sQMJb91/cBjZ3XS62AsgyNXSnQOfkOg4N3Ww5p
+         Up54qeSGPlE4gN9SBlO3jWvRPAdo5SBPh6eHdJgxoPh8Iwu3OcNRsy5xVD3UBD8b6+7X
+         6Tq+JpBQXwbhTyzncRpwXRbKJMd2kXZQhlmLlCCcc+xGkzfRdBq+P7xQb1KnTTevzB3t
+         T0ss5fCY+Kb+IzFH0ScGlnxyp6ZRRMExpMtLiA7ws1iVRrPLPHTbVMSmX7sCIKXFrFdB
+         oS/ptOjRsVl+sOrlQhCmch3Ej1hizmSyFiqJxX27gjr/wJEg2xE5H4hX45Nn2iqDDbTw
+         1NeQ==
 ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;
-       spf=pass (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as permitted sender) smtp.mailfrom=dafna3@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Z3QZAvna;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AG47ELva7ttP/lus+VGAm2f6vwpCZd6T/CN4y8JYX2JiPr7QrhDKXw7h/7RV1GaveMtRO0z+5tQ3HA==
+X-Google-Smtp-Source: AG47ELtK6TJdUnXbgsKng/AAwaobjbU/f/3kRP+ptlHGzUkN3fDOg2WZGPnf7t1RmH+/5rOPArjnpQ==
 X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1519894645; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1519917316; cv=none;
         d=google.com; s=arc-20160816;
-        b=BGUVNYNfD/v0T10DipKAArVwt5JlJsT+VQyeAabSGlnWthW5esmGeTR83OuxT8Nkn7
-         nRjiJSrNfSPCmrmsWg2H1zkBGSDzwluvpRghg3zqsPqqhRnskGhbdnslS+EFArRZdzfL
-         qbh/wTItnkME7Vno6TvvZ5rR5M/9XFKyPu6BLz+kuzDcP3Q8MuIbbAAOkU0wiRhp1bpN
-         Xz2OLfCc46kr5quMXJSB2i6nH07cVZOa/cfxfUrEqy4q76ODYQPa1ZLeypPSYzSRhAK9
-         ldtpSmXS6ovaI2FygRnW/Yw+RyUI5F7ccVwaK1wZVlujaWw3TQtZ+h2aMvCL3HN22gHB
-         Ky9w==
+        b=rzK9Wdo/96yyE7PYGFX/pvSJ27lB6YaSy9rkhK1osYuHlUUKsPt1HgF2kyugsYUmxv
+         CTYcotSFGQUdkGEjfF7LGXJN/EA6JSYGdXL6xJJ6CB8Y4u8Uf2S/QSEjv2bdnWgSygeJ
+         MLjCtSFRVwS8KesuphSQhwZEYXUEJ0aOL8jzdBDSGcWlwzYiWrumJU20va+6kUHBNyr0
+         eoqcoVopCUIE7Op1zM2hDdqYtDDUgEtDowidvzwBmvN317a+CZZyGdmZwfuQbV2qZyAu
+         okYIn0TM7+Sv+W6azR8Bwmugmv6P62/NR6oRPF6ajsyu2Z2RSkObqSmMWEtJmjswBD/P
+         B0Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=SD+fg8HBJsn6GE9PdO4Qs0QUv/WL5Hd4jfnxAOv3AWE=;
-        b=cPLGMSRxPe8A6Bb6j5fBX6Z1DwOjRItv/BcKx6FHX1+635gW+7cv+Y9LVARH5bzcLl
-         4ZbE4mlot1lnqfOktC7tQLolE6EhjgKPFDkstA4Zaskxq/yFX36HrGZq8uRqhR4WhGdR
-         c8umLmCHODEcm8KoxyW/IQYiMfv/rRFOm1oePH04ljEGuY1LHGRQpv4+G5/O+0WJgL7h
-         rNEtySnY2afOdjWj/OQC55UEJ5Mvttmq45tV+tZ/tj4S4duHQ7NTc1kSNfUCuhAyZ6YN
-         3YsHVe8OUVJYvUZBi5LDRLI0+sp1vsrv77iauwItsq40W/VxIejNr/2GF2lWsOe/YAd2
-         7+hA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
+        bh=J9I35bdh+3X4D5kEXAa20L765Aj7Q7mXHBElLWTMcF8=;
+        b=c0Rdxm521c76kMA827mXXuhanuXfP7Os7U94Syi6owQDRJ6xZyM6tYD6vDiSO8D4KC
+         N1oLg6fIThSlD4FsG5pIyRMDuQWT+m26JwXzx5GYFlpxnWyo3o7NDQFm7rvYQkm1mX9Y
+         UxEWmUpcKUsKB7BhmLxMetwLt7T65uzgRXcQWScSgZU/uju5L4SI60OSyiD4+D1Nh8gF
+         R4vui0SosASUekdBOBLViJRNUKLxxtcU2eAr6c1xfNStoZIBkM8u8jSSRBxXcZKziOwS
+         L79b/NJXUV2Ua4wMzccOPxo4XMmhRcJUxyd7hsaXDkRV6EQguMTV0C3+tMwx9t2t4Pwt
+         0rOg==
 ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;
-       spf=pass (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as permitted sender) smtp.mailfrom=dafna3@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Date: Thu, 1 Mar 2018 10:57:21 +0200
-From: Dafna Hirschfeld <dafna3@gmail.com>
-To: Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
-	michal.lkml@markovi.net, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Cc: outreachy-kernel@googlegroups.com
-Subject: [Outreachy kernel] [PATCH] Coccinelle: memdup: Fix typo in warning messages
-Message-ID: <20180301085717.GA4508@gmail.com>
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Z3QZAvna;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w21FEtjh018593
+X-Nifty-SrcIP: [209.85.217.171]
 MIME-Version: 1.0
+In-Reply-To: <20180301085717.GA4508@gmail.com>
+References: <20180301085717.GA4508@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Mar 2018 00:14:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASZo27PwwbhMPV+KPv1u=933Vkt0-ve1HG1E2gxmnCUhA@mail.gmail.com>
+Message-ID: <CAK7LNASZo27PwwbhMPV+KPv1u=933Vkt0-ve1HG1E2gxmnCUhA@mail.gmail.com>
+Subject: [Outreachy kernel] Re: [PATCH] Coccinelle: memdup: Fix typo in
+ warning messages
+To: Dafna Hirschfeld <dafna3@gmail.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        outreachy-kernel@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Original-Sender: dafna3@gmail.com
+X-Original-Sender: yamada.masahiro@socionext.com
 X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
- header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;       spf=pass
- (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as
- permitted sender) smtp.mailfrom=dafna3@gmail.com;       dmarc=pass (p=NONE
- sp=QUARANTINE dis=NONE) header.from=gmail.com
+ header.i=@nifty.com header.s=dec2015msa header.b=Z3QZAvna;       spf=softfail
+ (google.com: domain of transitioning yamada.masahiro@socionext.com does not
+ designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
 X-Google-Group-Id: 672804067692
 List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
 List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
@@ -111,41 +110,57 @@ List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegro
  <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593725048662035735?=
-X-GMAIL-MSGID: =?utf-8?q?1593725048662035735?=
+X-GMAIL-MSGID: =?utf-8?q?1593797728659305800?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace 'kmemdep' with 'kmemdup' in warning messages.
+2018-03-01 17:57 GMT+09:00 Dafna Hirschfeld <dafna3@gmail.com>:
+> Replace 'kmemdep' with 'kmemdup' in warning messages.
+>
+> Signed-off-by: Dafna Hirschfeld <dafna3@gmail.com>
+> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+> ---
 
-Signed-off-by: Dafna Hirschfeld <dafna3@gmail.com>
-Acked-by: Julia Lawall <julia.lawall@lip6.fr>
----
- scripts/coccinelle/api/memdup.cocci | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to linux-kbuild/fixes.  Thanks!
 
-diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api/memdup.cocci
-index 1249b72..8fd6437 100644
---- a/scripts/coccinelle/api/memdup.cocci
-+++ b/scripts/coccinelle/api/memdup.cocci
-@@ -56,10 +56,10 @@ statement S;
- p << r.p;
- @@
- 
--coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdep")
-+coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdup")
- 
- @script:python depends on report@
- p << r.p;
- @@
- 
--coccilib.report.print_report(p[0], "WARNING opportunity for kmemdep")
-+coccilib.report.print_report(p[0], "WARNING opportunity for kmemdup")
+
+>  scripts/coccinelle/api/memdup.cocci | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api/memdup.cocci
+> index 1249b72..8fd6437 100644
+> --- a/scripts/coccinelle/api/memdup.cocci
+> +++ b/scripts/coccinelle/api/memdup.cocci
+> @@ -56,10 +56,10 @@ statement S;
+>  p << r.p;
+>  @@
+>
+> -coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdep")
+> +coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdup")
+>
+>  @script:python depends on report@
+>  p << r.p;
+>  @@
+>
+> -coccilib.report.print_report(p[0], "WARNING opportunity for kmemdep")
+> +coccilib.report.print_report(p[0], "WARNING opportunity for kmemdup")
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
 
 -- 
 You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
 To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
 To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180301085717.GA4508%40gmail.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/CAK7LNASZo27PwwbhMPV%2BKPv1u%3D933Vkt0-ve1HG1E2gxmnCUhA%40mail.gmail.com.
 For more options, visit https://groups.google.com/d/optout.
