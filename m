@@ -1,41 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162437AbeCAV72 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:59:28 -0500
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:40393 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162159AbeCAV70 (ORCPT
+        id S1162489AbeCAWFr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:05:47 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:33477 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162420AbeCAWFq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:59:26 -0500
-X-Google-Smtp-Source: AG47ELtpw5hyN2IME8RMJ8/i5gcTn86blIVu57zSzvrrepMvr5kGbDZWrWvBUXLfDgIe+ktm4tX0dg==
-Date: Thu, 1 Mar 2018 13:59:22 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-ide@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pata_bk3710: clarify license version and use SPDX header
-Message-ID: <20180301215922.GD2421174@devbig577.frc2.facebook.com>
-References: <CGME20180301111603epcas1p20d8448be4c055efdc39e23551bd7f68e@epcas1p2.samsung.com>
- <1760511.OZqiSOBhjW@amdc3058>
+        Thu, 1 Mar 2018 17:05:46 -0500
+X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: arcml <linux-snps-arc@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: [GIT PULL] ARC fixes for 4.16-rc4
+Message-ID: <d363d22e-d465-c1de-a665-103543f21cf0@synopsys.com>
+Date: Thu, 1 Mar 2018 14:05:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1760511.OZqiSOBhjW@amdc3058>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 12:16:00PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> - clarify license version (it should be GPL 2.0)
-> - use SPDX header
-> 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Linus,
 
-Applied to libata/for-4.17.
+Please pull ARC fixes for 4.16-rc4.
 
-Thanks.
+Thx,
+-Vineet
 
--- 
-tejun
+------------------->
+The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
+
+   Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-4.15-rc4
+
+for you to fetch changes up to a29a25275452c97fe35815f1eb9564f2a07a1965:
+
+   ARC: setup cpu possible mask according to possible-cpus dts property 
+(2018-02-28 10:45:32 -0800)
+
+----------------------------------------------------------------
+ARC fixes for 4.16-rc4
+
+  - MCIP aka ARconnect fixes for SMP builds [Euginey]
+
+  - Preventive fix for SLC (L2 cache) flushing [Euginey]
+
+  - Kconfig default fix [Ulf Magnusson]
+
+  - trailing semicolon fixes [Luis de Bethencourt]
+
+  - other assorted minor fixes
+
+----------------------------------------------------------------
+Alexey Brodkin (2):
+       ARCv2: Don't pretend we may set L-bit in STATUS32 with kflag instruction
+       ARC: Enable fatal signals on boot for dev platforms
+
+Bartosz Golaszewski (1):
+       arc: dts: use 'atmel' as manufacturer for at24 in axs10x_mb
+
+Eugeniy Paltsev (4):
+       ARCv2: cache: fix slc_entire_op: flush only instead of flush-n-inv
+       ARC: mcip: halt GFRC counter when ARC cores halt
+       ARC: mcip: update MCIP debug mask when the new cpu came online
+       ARC: setup cpu possible mask according to possible-cpus dts property
+
+Luis de Bethencourt (2):
+       ARC: dw2 unwind: Fix trailing semicolon
+       ARC: boot log: Fix trailing semicolon
+
+Ulf Magnusson (1):
+       ARC: Fix malformed ARC_EMUL_UNALIGNED default
+
+Vineet Gupta (1):
+       ARCv2: boot log: fix HS48 release number
+
+  arch/arc/Kconfig                      |  1 -
+  arch/arc/boot/dts/axs101.dts          |  2 +-
+  arch/arc/boot/dts/axs10x_mb.dtsi      |  4 +-
+  arch/arc/boot/dts/haps_hs_idu.dts     |  2 +-
+  arch/arc/boot/dts/nsim_700.dts        |  2 +-
+  arch/arc/boot/dts/nsim_hs.dts         |  2 +-
+  arch/arc/boot/dts/nsim_hs_idu.dts     |  2 +-
+  arch/arc/boot/dts/nsimosci.dts        |  2 +-
+  arch/arc/boot/dts/nsimosci_hs.dts     |  2 +-
+  arch/arc/boot/dts/nsimosci_hs_idu.dts |  2 +-
+  arch/arc/include/asm/entry-arcv2.h    |  2 +-
+  arch/arc/kernel/mcip.c                | 74 ++++++++++++++++++++++++++++++++---
+  arch/arc/kernel/setup.c               |  4 +-
+  arch/arc/kernel/smp.c                 | 50 ++++++++++++++++++-----
+  arch/arc/kernel/unwind.c              |  2 +-
+  arch/arc/mm/cache.c                   |  5 ++-
+  include/soc/arc/mcip.h                |  5 +++
+  17 files changed, 132 insertions(+), 31 deletions(-)
