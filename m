@@ -1,77 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030933AbeCANvQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:51:16 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58336 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1030462AbeCANvO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:51:14 -0500
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "Ludovic BARRE" <ludovic.barre@st.com>
-Subject: Re: mailbox: return error in mbox_request_channel_byname
-Thread-Topic: mailbox: return error in mbox_request_channel_byname
-Thread-Index: AQHTsWRbRTLaSOWjkUavH29cKnAvWw==
-Date: Thu, 1 Mar 2018 13:51:10 +0000
-Message-ID: <58e2326d-e940-bae5-99e3-5b316caac297@st.com>
-References: <1519899374-21297-1-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1519899374-21297-1-git-send-email-fabien.dessenne@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7AF2958C9591D246968974ED1A47A7C9@st.com>
+        id S1030991AbeCANxV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:53:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46029 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030462AbeCANxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 08:53:19 -0500
+Date: Thu, 1 Mar 2018 14:53:16 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        alexandre.belloni@bootlin.com, LKML <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH v1 1/4] ASoC: codecs: pcm179x: Add PCM1789
+ id
+Message-ID: <20180301145316.4c5355b4@dell-desktop.home>
+In-Reply-To: <CAOf5uw=9aydTjTQbWJrZW4fFudcS9cp9=c4RhowyLyoWG97Q1A@mail.gmail.com>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-2-mylene.josserand@bootlin.com>
+        <20180227225140.6f9902b8@windsurf.lan>
+        <20180301084315.0811f712@dell-desktop.home>
+        <CAOf5uw=9aydTjTQbWJrZW4fFudcS9cp9=c4RhowyLyoWG97Q1A@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_07:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21DpOqI028105
 
-oops! you can forget this patch, the original implementation is correct
+Hello,
 
-BR
+On Thu, 1 Mar 2018 10:04:11 +0100
+Michael Nazzareno Trimarchi <michael@amarulasolutions.com> wrote:
 
-Fabien
+> Hi
+> 
+> On Thu, Mar 1, 2018 at 8:43 AM, Mylène Josserand
+> <mylene.josserand@bootlin.com> wrote:
+> > Hello,
+> >
+> > Thank you for the review.
+> >
+> > On Tue, 27 Feb 2018 22:51:40 +0100
+> > Thomas Petazzoni <thomas.petazzoni@bootlin.com> wrote:
+> >  
+> >> Hello,
+> >>
+> >> On Tue, 27 Feb 2018 22:24:30 +0100, Mylène Josserand wrote:  
+> >> > To prepare the support for the PCM1789, add a new compatible
+> >> > and use the i2c_id to handle, later, the differences between
+> >> > these two DACs even if they are pretty similar.
+> >> >
+> >> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> >> > ---
+> >> >  Documentation/devicetree/bindings/sound/pcm179x.txt | 2 +-  
+> >>
+> >> The DT binding change should be in a separate patch.
+> >>  
+> >> >  sound/soc/codecs/pcm179x-i2c.c                      | 6 ++++--
+> >> >  sound/soc/codecs/pcm179x.c                          | 3 ++-
+> >> >  sound/soc/codecs/pcm179x.h                          | 8 +++++++-  
+> >>
+> >> And this should be together with the PCM1789 support patch. Otherwise
+> >> your series is not bisectable: if we apply only PATCH 1/4, the driver
+> >> supports the new compatible string, but it doesn't have the actual code
+> >> to handle PCM1789. Am I missing something here ?  
+> >
+> > No, you are right, I will merge it with patch 02.
+> >  
+> 
+> Can you please include me in next series?
 
+Sure, I will do it.
 
-On 01/03/18 11:16, Fabien DESSENNE wrote:
-> If 'name' is not found in the "mbox-names" list, return an error
->
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-> ---
->   drivers/mailbox/mailbox.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index 674b35f..a31970a 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -391,11 +391,12 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
->   
->   	of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
->   		if (!strncmp(name, mbox_name, strlen(name)))
-> -			break;
-> +			return mbox_request_channel(cl, index);
->   		index++;
->   	}
->   
-> -	return mbox_request_channel(cl, index);
-> +	dev_err(cl->dev, "%s() mbox %s not found\n", __func__, name);
-> +	return ERR_PTR(-EINVAL);
->   }
->   EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
->   
+> 
+> I have several hardware running on pcm179x family
+
+Currently, some colleagues recommend me to create a new file for this
+driver instead of adding it in PCM179x driver. I think that I will not
+touch pcm179x driver anymore in my next series.
+
+Best regards,
+
+Mylène
+
+> 
+> Michael
+> 
+> >>  
+> >> > -   return pcm179x_common_init(&client->dev, regmap);
+> >> > +   return pcm179x_common_init(&client->dev, regmap, id->driver_data);  
+> >>
+> >> This can be done in a preparation patch.
+> >>  
+> >> >  }
+> >> >
+> >> >  static const struct of_device_id pcm179x_of_match[] = {
+> >> >     { .compatible = "ti,pcm1792a", },
+> >> > +   { .compatible = "ti,pcm1789", },
+> >> >     { }
+> >> >  };
+> >> >  MODULE_DEVICE_TABLE(of, pcm179x_of_match);
+> >> >
+> >> >  static const struct i2c_device_id pcm179x_i2c_ids[] = {
+> >> > -   { "pcm179x", 0 },
+> >> > +   { "pcm179x", PCM179X },  
+> >>
+> >> And also this addition.
+> >>  
+> >> > +   { "pcm1789", PCM1789 },
+> >> >     { }
+> >> >  };
+> >> >  MODULE_DEVICE_TABLE(i2c, pcm179x_i2c_ids);
+> >> > diff --git a/sound/soc/codecs/pcm179x.c b/sound/soc/codecs/pcm179x.c
+> >> > index 4b311c06f97d..81cbf09319f6 100644
+> >> > --- a/sound/soc/codecs/pcm179x.c
+> >> > +++ b/sound/soc/codecs/pcm179x.c
+> >> > @@ -218,7 +218,8 @@ static const struct snd_soc_component_driver soc_component_dev_pcm179x = {
+> >> >     .non_legacy_dai_naming  = 1,
+> >> >  };
+> >> >
+> >> > -int pcm179x_common_init(struct device *dev, struct regmap *regmap)
+> >> > +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> >> > +                   enum pcm17xx_type type)  
+> >>
+> >> And this done.
+> >>  
+> >> >  {
+> >> >     struct pcm179x_private *pcm179x;
+> >> >
+> >> > diff --git a/sound/soc/codecs/pcm179x.h b/sound/soc/codecs/pcm179x.h
+> >> > index cf8681c9a373..8c08689e3b8b 100644
+> >> > --- a/sound/soc/codecs/pcm179x.h
+> >> > +++ b/sound/soc/codecs/pcm179x.h
+> >> > @@ -17,11 +17,17 @@
+> >> >  #ifndef __PCM179X_H__
+> >> >  #define __PCM179X_H__
+> >> >
+> >> > +enum pcm17xx_type {
+> >> > +   PCM179X,  
+> >>
+> >> And this one.
+> >>  
+> >> > +   PCM1789,
+> >> > +};
+> >> > +
+> >> >  #define PCM1792A_FORMATS (SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S24_LE | \
+> >> >                       SNDRV_PCM_FMTBIT_S16_LE)
+> >> >
+> >> >  extern const struct regmap_config pcm179x_regmap_config;
+> >> >
+> >> > -int pcm179x_common_init(struct device *dev, struct regmap *regmap);
+> >> > +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> >> > +                   enum pcm17xx_type type);  
+> >>
+> >> And this one. Just as a "preparation patch" to support multiple codecs
+> >> in the existing pcm179x.c driver.
+> >>
+> >> Thanks!
+> >>
+> >> Thomas  
+> >
+> > Thanks,
+> >
+> > Mylène
+> >
+> > --
+> > Mylène Josserand, Bootlin (formerly Free Electrons)
+> > Embedded Linux and Kernel engineering
+> > http://bootlin.com
+> > _______________________________________________
+> > Alsa-devel mailing list
+> > Alsa-devel@alsa-project.org
+> > http://mailman.alsa-project.org/mailman/listinfo/alsa-devel  
+> 
+> 
+> 
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
