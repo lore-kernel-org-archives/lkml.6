@@ -1,82 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161315AbeCATVj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:21:39 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46738 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161242AbeCATUb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:20:31 -0500
-X-Google-Smtp-Source: AG47ELvWOsIpxnHUiDFxrJ1urFH0D6u9rsScTaJMIqHwlzPk+Xz3kZNdkUirfXisoCc+QYU6ScVYbQ==
-From: Moritz Fischer <mdf@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [RESEND PATCH v4 1/2] dt-bindings: net: Add bindings for National Instruments XGE netdev
-Date: Thu,  1 Mar 2018 11:15:46 -0800
-Message-Id: <20180301191547.2816-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.16.1
+        id S1161297AbeCAT1W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 14:27:22 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:37664 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033435AbeCAT1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 14:27:19 -0500
+To: Jason Gunthorpe <jgg@ziepe.ca>, Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+Date: Thu, 1 Mar 2018 12:27:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180301184249.GI19007@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, jgg@ziepe.ca
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds bindings for the NI XGE 1G/10G network device.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
 
-Changes from v3:
-- Added Rob's Reviewed-by
+On 01/03/18 11:42 AM, Jason Gunthorpe wrote:
+> On Thu, Mar 01, 2018 at 08:35:55PM +0200, Sagi Grimberg wrote:
+> This is also why I don't entirely understand why this series has a
+> generic allocator for p2p mem, it makes little sense to me.
 
-Changes from v2:
-- Addressed Rob's comments w.r.t to IRQ names and typo
+> Why wouldn't the nmve driver just claim the entire CMB of its local
+> device for its own use? Why involve p2p core code in this?
 
-Changes from v1:
-- Corrected from nixge -> nixge.txt
----
- Documentation/devicetree/bindings/net/nixge.txt | 32 +++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/nixge.txt
+We'd prefer to have a generic way to get p2pmem instead of restricting 
+ourselves to only using CMBs. We did work in the past where the P2P 
+memory was part of an IB adapter and not the NVMe card. So this won't 
+work if it's an NVMe only interface.
 
-diff --git a/Documentation/devicetree/bindings/net/nixge.txt b/Documentation/devicetree/bindings/net/nixge.txt
-new file mode 100644
-index 000000000000..e55af7f0881a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/nixge.txt
-@@ -0,0 +1,32 @@
-+* NI XGE Ethernet controller
-+
-+Required properties:
-+- compatible: Should be "ni,xge-enet-2.00"
-+- reg: Address and length of the register set for the device
-+- interrupts: Should contain tx and rx interrupt
-+- interrupt-names: Should be "rx" and "tx"
-+- phy-mode: See ethernet.txt file in the same directory.
-+- phy-handle: See ethernet.txt file in the same directory.
-+- nvmem-cells: Phandle of nvmem cell containing the MAC address
-+- nvmem-cell-names: Should be "address"
-+
-+Examples (10G generic PHY):
-+	nixge0: ethernet@40000000 {
-+		compatible = "ni,xge-enet-2.00";
-+		reg = <0x40000000 0x6000>;
-+
-+		nvmem-cells = <&eth1_addr>;
-+		nvmem-cell-names = "address";
-+
-+		interrupts = <0 29 IRQ_TYPE_LEVEL_HIGH>, <0 30 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "rx", "tx";
-+		interrupt-parent = <&intc>;
-+
-+		phy-mode = "xgmii";
-+		phy-handle = <&ethernet_phy1>;
-+
-+		ethernet_phy1: ethernet-phy@4 {
-+			compatible = "ethernet-phy-ieee802.3-c45";
-+			reg = <4>;
-+		};
-+	};
--- 
-2.16.1
+As Stephen mentioned, we also use a couple devices that only exposes P2P 
+memory and this isn't related to NVMe at all. So there's value in having 
+a generic interface and allocator to enable all devices to provide this 
+memory.
+
+If there were a hypothetical situation where a driver wants to use some 
+of the memory for P2P and some of it for other purposes then they'd just 
+divide it themselves and only pass a subset to 
+pci_p2pdma_add_resource(). However, as per our changes to the nvme-pci 
+code, it's really just easier to use the allocator for everything inside 
+the driver.
+
+Logan
