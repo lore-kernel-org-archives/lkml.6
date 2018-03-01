@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966553AbeCAKUB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:20:01 -0500
-Received: from regular1.263xmail.com ([211.150.99.135]:40418 "EHLO
+        id S966689AbeCAKUO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:20:14 -0500
+Received: from regular1.263xmail.com ([211.150.99.132]:57981 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966066AbeCAKTs (ORCPT
+        with ESMTP id S966066AbeCAKUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:19:48 -0500
+        Thu, 1 Mar 2018 05:20:06 -0500
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,19 +16,36 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <e7d4c41cfe02f244253ba78064adacfe>
+X-UNIQUE-TAG: <93b6f1bea60a6aa354bba25855f6d987>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
 To: linux-kernel@vger.kernel.org
 Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
         tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v6 05/14] iommu/rockchip: Use iopoll helpers to wait for hardware
-Date: Thu,  1 Mar 2018 18:18:28 +0800
-Message-Id: <20180301101837.27969-6-jeffy.chen@rock-chips.com>
+        Romain Perier <romain.perier@collabora.com>,
+        Arnd Bergmann <arnd@arndb.de>, Liang Chen <cl@rock-chips.com>,
+        Rob Herring <robh+dt@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huibin Hong <huibin.hong@rock-chips.com>,
+        David Wu <david.wu@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>, Jacob Chen <jacob-chen@iotwrt.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-rockchip@lists.infradead.org,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
+        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
+Subject: [RESEND PATCH v6 07/14] ARM: dts: rockchip: add clocks in iommu nodes
+Date: Thu,  1 Mar 2018 18:18:30 +0800
+Message-Id: <20180301101837.27969-8-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
 References: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
@@ -36,204 +53,305 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomasz Figa <tfiga@chromium.org>
+Add clocks in iommu nodes, since we are going to control clocks in
+rockchip iommu driver.
 
-This patch converts the rockchip-iommu driver to use the in-kernel
-iopoll helpers to wait for certain status bits to change in registers
-instead of an open-coded custom macro.
-
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
 
-Changes in v6: None
+Changes in v6:
+Add clk names, and modify all iommu nodes in all existing rockchip dts
+
 Changes in v5:
-Use RK_MMU_POLL_PERIOD_US instead of 100.
+Remove clk names.
 
 Changes in v4: None
 Changes in v3: None
 Changes in v2: None
 
- drivers/iommu/rockchip-iommu.c | 75 ++++++++++++++++++++++--------------------
- 1 file changed, 39 insertions(+), 36 deletions(-)
+ arch/arm/boot/dts/rk3036.dtsi            |  2 ++
+ arch/arm/boot/dts/rk322x.dtsi            |  8 ++++++++
+ arch/arm/boot/dts/rk3288.dtsi            | 12 ++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 14 ++++++++++++--
+ 6 files changed, 54 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index f7ff3a3645ea..baba283ccdf9 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -13,7 +13,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iommu.h>
--#include <linux/jiffies.h>
-+#include <linux/iopoll.h>
- #include <linux/list.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-@@ -36,7 +36,10 @@
- #define RK_MMU_AUTO_GATING	0x24
- 
- #define DTE_ADDR_DUMMY		0xCAFEBABE
--#define FORCE_RESET_TIMEOUT	100	/* ms */
-+
-+#define RK_MMU_POLL_PERIOD_US		100
-+#define RK_MMU_FORCE_RESET_TIMEOUT_US	100000
-+#define RK_MMU_POLL_TIMEOUT_US		1000
- 
- /* RK_MMU_STATUS fields */
- #define RK_MMU_STATUS_PAGING_ENABLED       BIT(0)
-@@ -73,8 +76,6 @@
-   */
- #define RK_IOMMU_PGSIZE_BITMAP 0x007ff000
- 
--#define IOMMU_REG_POLL_COUNT_FAST 1000
--
- struct rk_iommu_domain {
- 	struct list_head iommus;
- 	struct platform_device *pdev;
-@@ -109,27 +110,6 @@ static struct rk_iommu_domain *to_rk_domain(struct iommu_domain *dom)
- 	return container_of(dom, struct rk_iommu_domain, domain);
- }
- 
--/**
-- * Inspired by _wait_for in intel_drv.h
-- * This is NOT safe for use in interrupt context.
-- *
-- * Note that it's important that we check the condition again after having
-- * timed out, since the timeout could be due to preemption or similar and
-- * we've never had a chance to check the condition before the timeout.
-- */
--#define rk_wait_for(COND, MS) ({ \
--	unsigned long timeout__ = jiffies + msecs_to_jiffies(MS) + 1;	\
--	int ret__ = 0;							\
--	while (!(COND)) {						\
--		if (time_after(jiffies, timeout__)) {			\
--			ret__ = (COND) ? 0 : -ETIMEDOUT;		\
--			break;						\
--		}							\
--		usleep_range(50, 100);					\
--	}								\
--	ret__;								\
--})
--
- /*
-  * The Rockchip rk3288 iommu uses a 2-level page table.
-  * The first level is the "Directory Table" (DT).
-@@ -333,9 +313,21 @@ static bool rk_iommu_is_paging_enabled(struct rk_iommu *iommu)
- 	return enable;
- }
- 
-+static bool rk_iommu_is_reset_done(struct rk_iommu *iommu)
-+{
-+	bool done = true;
-+	int i;
-+
-+	for (i = 0; i < iommu->num_mmu; i++)
-+		done &= rk_iommu_read(iommu->bases[i], RK_MMU_DTE_ADDR) == 0;
-+
-+	return done;
-+}
-+
- static int rk_iommu_enable_stall(struct rk_iommu *iommu)
- {
- 	int ret, i;
-+	bool val;
- 
- 	if (rk_iommu_is_stall_active(iommu))
- 		return 0;
-@@ -346,7 +338,9 @@ static int rk_iommu_enable_stall(struct rk_iommu *iommu)
- 
- 	rk_iommu_command(iommu, RK_MMU_CMD_ENABLE_STALL);
- 
--	ret = rk_wait_for(rk_iommu_is_stall_active(iommu), 1);
-+	ret = readx_poll_timeout(rk_iommu_is_stall_active, iommu, val,
-+				 val, RK_MMU_POLL_PERIOD_US,
-+				 RK_MMU_POLL_TIMEOUT_US);
- 	if (ret)
- 		for (i = 0; i < iommu->num_mmu; i++)
- 			dev_err(iommu->dev, "Enable stall request timed out, status: %#08x\n",
-@@ -358,13 +352,16 @@ static int rk_iommu_enable_stall(struct rk_iommu *iommu)
- static int rk_iommu_disable_stall(struct rk_iommu *iommu)
- {
- 	int ret, i;
-+	bool val;
- 
- 	if (!rk_iommu_is_stall_active(iommu))
- 		return 0;
- 
- 	rk_iommu_command(iommu, RK_MMU_CMD_DISABLE_STALL);
- 
--	ret = rk_wait_for(!rk_iommu_is_stall_active(iommu), 1);
-+	ret = readx_poll_timeout(rk_iommu_is_stall_active, iommu, val,
-+				 !val, RK_MMU_POLL_PERIOD_US,
-+				 RK_MMU_POLL_TIMEOUT_US);
- 	if (ret)
- 		for (i = 0; i < iommu->num_mmu; i++)
- 			dev_err(iommu->dev, "Disable stall request timed out, status: %#08x\n",
-@@ -376,13 +373,16 @@ static int rk_iommu_disable_stall(struct rk_iommu *iommu)
- static int rk_iommu_enable_paging(struct rk_iommu *iommu)
- {
- 	int ret, i;
-+	bool val;
- 
- 	if (rk_iommu_is_paging_enabled(iommu))
- 		return 0;
- 
- 	rk_iommu_command(iommu, RK_MMU_CMD_ENABLE_PAGING);
- 
--	ret = rk_wait_for(rk_iommu_is_paging_enabled(iommu), 1);
-+	ret = readx_poll_timeout(rk_iommu_is_paging_enabled, iommu, val,
-+				 val, RK_MMU_POLL_PERIOD_US,
-+				 RK_MMU_POLL_TIMEOUT_US);
- 	if (ret)
- 		for (i = 0; i < iommu->num_mmu; i++)
- 			dev_err(iommu->dev, "Enable paging request timed out, status: %#08x\n",
-@@ -394,13 +394,16 @@ static int rk_iommu_enable_paging(struct rk_iommu *iommu)
- static int rk_iommu_disable_paging(struct rk_iommu *iommu)
- {
- 	int ret, i;
-+	bool val;
- 
- 	if (!rk_iommu_is_paging_enabled(iommu))
- 		return 0;
- 
- 	rk_iommu_command(iommu, RK_MMU_CMD_DISABLE_PAGING);
- 
--	ret = rk_wait_for(!rk_iommu_is_paging_enabled(iommu), 1);
-+	ret = readx_poll_timeout(rk_iommu_is_paging_enabled, iommu, val,
-+				 !val, RK_MMU_POLL_PERIOD_US,
-+				 RK_MMU_POLL_TIMEOUT_US);
- 	if (ret)
- 		for (i = 0; i < iommu->num_mmu; i++)
- 			dev_err(iommu->dev, "Disable paging request timed out, status: %#08x\n",
-@@ -413,6 +416,7 @@ static int rk_iommu_force_reset(struct rk_iommu *iommu)
- {
- 	int ret, i;
- 	u32 dte_addr;
-+	bool val;
- 
- 	if (iommu->reset_disabled)
- 		return 0;
-@@ -433,13 +437,12 @@ static int rk_iommu_force_reset(struct rk_iommu *iommu)
- 
- 	rk_iommu_command(iommu, RK_MMU_CMD_FORCE_RESET);
- 
--	for (i = 0; i < iommu->num_mmu; i++) {
--		ret = rk_wait_for(rk_iommu_read(iommu->bases[i], RK_MMU_DTE_ADDR) == 0x00000000,
--				  FORCE_RESET_TIMEOUT);
--		if (ret) {
--			dev_err(iommu->dev, "FORCE_RESET command timed out\n");
--			return ret;
--		}
-+	ret = readx_poll_timeout(rk_iommu_is_reset_done, iommu, val,
-+				 val, RK_MMU_FORCE_RESET_TIMEOUT_US,
-+				 RK_MMU_POLL_TIMEOUT_US);
-+	if (ret) {
-+		dev_err(iommu->dev, "FORCE_RESET command timed out\n");
-+		return ret;
- 	}
- 
- 	return 0;
+diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
+index a97458112ff6..567a6a725f9c 100644
+--- a/arch/arm/boot/dts/rk3036.dtsi
++++ b/arch/arm/boot/dts/rk3036.dtsi
+@@ -197,6 +197,8 @@
+ 		reg = <0x10118300 0x100>;
+ 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vop_mmu";
++		clocks = <&cru ACLK_LCDC>, <&cru HCLK_LCDC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index df1e47858675..be80e9a2c9af 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -584,6 +584,8 @@
+ 		reg = <0x20020800 0x100>;
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vpu_mmu";
++		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
++		clock-names = "aclk", "iface";
+ 		iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -593,6 +595,8 @@
+ 		reg = <0x20030480 0x40>, <0x200304c0 0x40>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vdec_mmu";
++		clocks = <&cru ACLK_RKVDEC>, <&cru HCLK_RKVDEC>;
++		clock-names = "aclk", "iface";
+ 		iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -602,6 +606,8 @@
+ 		reg = <0x20053f00 0x100>;
+ 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vop_mmu";
++		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
++		clock-names = "aclk", "iface";
+ 		iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -611,6 +617,8 @@
+ 		reg = <0x20070800 0x100>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "iep_mmu";
++		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
++		clock-names = "aclk", "iface";
+ 		iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 6102e4e7f35c..ad77c8eb3c38 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -958,6 +958,8 @@
+ 		reg = <0x0 0xff900800 0x0 0x40>;
+ 		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "iep_mmu";
++		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -967,6 +969,8 @@
+ 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "isp_mmu";
++		clocks = <&cru ACLK_ISP>, <&cru HCLK_ISP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		rockchip,disable-mmu-reset;
+ 		status = "disabled";
+@@ -1026,6 +1030,8 @@
+ 		reg = <0x0 0xff930300 0x0 0x100>;
+ 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vopb_mmu";
++		clocks = <&cru ACLK_VOP0>, <&cru HCLK_VOP0>;
++		clock-names = "aclk", "iface";
+ 		power-domains = <&power RK3288_PD_VIO>;
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+@@ -1074,6 +1080,8 @@
+ 		reg = <0x0 0xff940300 0x0 0x100>;
+ 		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vopl_mmu";
++		clocks = <&cru ACLK_VOP1>, <&cru HCLK_VOP1>;
++		clock-names = "aclk", "iface";
+ 		power-domains = <&power RK3288_PD_VIO>;
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+@@ -1204,6 +1212,8 @@
+ 		reg = <0x0 0xff9a0800 0x0 0x100>;
+ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vpu_mmu";
++		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -1213,6 +1223,8 @@
+ 		reg = <0x0 0xff9c0440 0x0 0x40>, <0x0 0xff9c0480 0x0 0x40>;
+ 		interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "hevc_mmu";
++		clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index be2bfbc6b483..b8e9da15e00c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -595,6 +595,8 @@
+ 		reg = <0x0 0xff330200 0 0x100>;
+ 		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "h265e_mmu";
++		clocks = <&cru ACLK_H265>, <&cru PCLK_H265>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -604,6 +606,8 @@
+ 		reg = <0x0 0xff340800 0x0 0x40>;
+ 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vepu_mmu";
++		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -613,6 +617,8 @@
+ 		reg = <0x0 0xff350800 0x0 0x40>;
+ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vpu_mmu";
++		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -622,6 +628,8 @@
+ 		reg = <0x0 0xff360480 0x0 0x40>, <0x0 0xff3604c0 0x0 0x40>;
+ 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "rkvdec_mmu";
++		clocks = <&cru ACLK_RKVDEC>, <&cru HCLK_RKVDEC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -631,6 +639,8 @@
+ 		reg = <0x0 0xff373f00 0x0 0x100>;
+ 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vop_mmu";
++		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+index 03458ac44201..ad91ced78649 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -742,6 +742,8 @@
+ 		reg = <0x0 0xff900800 0x0 0x100>;
+ 		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "iep_mmu";
++		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -752,6 +754,8 @@
+ 		      <0x0 0xff915000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "isp_mmu";
++		clocks = <&cru ACLK_ISP>, <&cru HCLK_ISP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		rockchip,disable-mmu-reset;
+ 		status = "disabled";
+@@ -762,6 +766,8 @@
+ 		reg = <0x0 0xff930300 0x0 0x100>;
+ 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vop_mmu";
++		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -772,6 +778,8 @@
+ 		      <0x0 0xff9a0480 0x0 0x40>;
+ 		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "hevc_mmu";
++		clocks = <&cru ACLK_VIDEO>, <&cru HCLK_VIDEO>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -782,6 +790,8 @@
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "vepu_mmu", "vdpu_mmu";
++		clocks = <&cru ACLK_VIDEO>, <&cru HCLK_VIDEO>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index da0078eda485..8cb4ed5d43cc 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -1234,6 +1234,8 @@
+ 		reg = <0x0 0xff650800 0x0 0x40>;
+ 		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "vpu_mmu";
++		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -1243,6 +1245,8 @@
+ 		reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
+ 		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "vdec_mmu";
++		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -1252,6 +1256,8 @@
+ 		reg = <0x0 0xff670800 0x0 0x40>;
+ 		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "iep_mmu";
++		clocks = <&cru ACLK_IEP>, <&cru HCLK_IEP>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+@@ -1597,7 +1603,7 @@
+ 		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "vopl_mmu";
+ 		clocks = <&cru ACLK_VOP1>, <&cru HCLK_VOP1>;
+-		clock-names = "aclk", "hclk";
++		clock-names = "aclk", "iface";
+ 		power-domains = <&power RK3399_PD_VOPL>;
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+@@ -1654,7 +1660,7 @@
+ 		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "vopb_mmu";
+ 		clocks = <&cru ACLK_VOP0>, <&cru HCLK_VOP0>;
+-		clock-names = "aclk", "hclk";
++		clock-names = "aclk", "iface";
+ 		power-domains = <&power RK3399_PD_VOPB>;
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+@@ -1665,6 +1671,8 @@
+ 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "isp0_mmu";
++		clocks = <&cru ACLK_ISP0_NOC>, <&cru HCLK_ISP0_NOC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		rockchip,disable-mmu-reset;
+ 		status = "disabled";
+@@ -1675,6 +1683,8 @@
+ 		reg = <0x0 0xff924000 0x0 0x100>, <0x0 0xff925000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		interrupt-names = "isp1_mmu";
++		clocks = <&cru ACLK_ISP1_NOC>, <&cru HCLK_ISP1_NOC>;
++		clock-names = "aclk", "iface";
+ 		#iommu-cells = <0>;
+ 		rockchip,disable-mmu-reset;
+ 		status = "disabled";
 -- 
 2.11.0
