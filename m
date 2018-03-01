@@ -1,157 +1,169 @@
-Return-Path: <maxime.ripard@bootlin.com>
-X-Google-Smtp-Source: AG47ELufGMoZH2icDA8NLvyMmFzdvvdUVpUsZcx44oOhxtUpHi6AT8hFQ7b1yFHliZ2YplRwmxuk
-ARC-Seal: i=1; a=rsa-sha256; t=1519895960; cv=none;
+Return-Path: <amelie.delaunay@st.com>
+X-Google-Smtp-Source: AG47ELu5ZhU97NbypdmVgPSN/CFO6g5mBRtEzS1y30uZC+M3GL/CoU+oXJpSNovhDFs3ohRnaaxZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519894210; cv=none;
         d=google.com; s=arc-20160816;
-        b=GOznWI41FRrQeDPTGlccN1gyuYLmPdXWjZWj8c3yWpMGeRRKv1wxLmNyXHYKcoXaCw
-         eByJoEI7DM/wvsTKwxMACbJRygi2UBoh2H3uljoFwKw98h/wyrvuhActPI+HRBZtoUuS
-         wpwV5TIDcH5PWGnmI/Zks3B50iJxjG4C6EORSGQ1/OT0L+iF2PKSTOmW612LRi1AQRFX
-         YqN7uvlymBa6u2Uu/ojZaDJVOgAlOeIwEs1hZT2Mz6DIBhRz5s5VLGt9vouE3wlES0V+
-         nkMPG2F1ohF2hIcLYdKQsfYZkF/+dNdRKw0yvBaYD91iHnOMUyXv2NzsiYMVfsQ5DDRZ
-         oK8Q==
+        b=y7dYga+JafrG/qG7HnTLMuhY1HeO88Sj2cFz6vBTFvesZco1KhM8ajv952paBHw9hb
+         opfb9i5I239CaBcOB+b8TkooFqNOO/7tMNWkC79Iv+46ExxfP+OrJT0zVbj8lfhrn2Z3
+         9gMiW90SxYFXfdEtvum0JSzp4uiaXXFmNCPzWBBVBcJFKymlMbn7aSeZQZcvLGzXCBjZ
+         16xxw2XyCFIYkhM4HE3Vy303F1A3wEtbhFIaKalbSF2RpmchX44BHHH5y5s/JRkLZqvF
+         DZYUNENveesbBle7dJM84MpOhbT2NqoYtOJr2mvfFFiKvnwA+BUeFXUu7IfV0CEG4Cy/
+         Tizw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=xrvHKzy6rlXUIPR+n/KBXcq9mQnrSS9PghICAI5EwsE=;
-        b=Hw5VR+jhiuVV5No1GBH2czNJ+8EizmLlppGIWS4ngSyaeOcs9ue8kg3JA4pyJCGKXq
-         rrZR70H1j1oJZyPAYwq/Yt5WZEKaxF46FUKHD/wbC3y969QauulYa6K/6tXOd85Xz2ko
-         Ao3m103jKXM2HS/m+mTCdNBYxLX3c7EUVyWnsosjYpsllseGyo9qpoNixJ9YXCNiVmPL
-         lB++KRlE+5YOaBQB1KGw7b6q0xVRZIkCKxmCDbUxHBMdXehpn2nH3DMh89bRqB0lxhse
-         UWp0KjDDtGPuklKAjNa9/ldkidPo8K3XVZo/vx6Xbs2kkYjPIS/TLg4iWCj/Hexmt763
-         vtMw==
+        h=mime-version:content-transfer-encoding:content-id:user-agent
+         :content-language:accept-language:in-reply-to:references:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=snCbtVXPcBOB0tYOOrRu2xPkQz0ImCjdyTJmJhI0JTo=;
+        b=voc7TfbL5ZTTlVLVawbd2EB+UAB6cf64Kl9GZkawPndMfZOfMtVJGqzmcySs5b2K0W
+         j6IwtUAgo0Ia7ajGGbU0rF9/KG5r3eMkfOM8b/+Hbb8rY1HVKnkOgpOlPcttf2jKXd4A
+         7n7leCy3lrkmqZDeRI5LKoXfOda3FKJBTo1LiAfJhlYcbNC8txEy3mMO/jCT71+FOTvq
+         dbzfowfkaQ3aySg1y+4UZVIWpuaO4BIhJQdx9iKlk77v+NwoLc5TBxI0WPP5v7g4HK/P
+         YmZDSfyfUc8vqMU/YkXtYtCoa5F3ll0YtBL01KeEC4qhLRpgWAeXpo1E4AZ7SxRrnUSw
+         J1rQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
-Date: Thu, 1 Mar 2018 10:19:08 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Liu <net147@gmail.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/sun4i: link in front-end code if needed
-Message-ID: <20180301091908.zcptz3ezqr2c6ly5@flea>
-References: <20180223131112.715992-1-arnd@arndb.de>
- <20180226092129.t4uogg2q7jkeolbu@flea.lan>
- <CAK8P3a1w=hLzZLPe1TURPyyu5oxpG8yD0eb_8GrVviUODy0zqQ@mail.gmail.com>
- <20180226105359.k5a3rz2wow4gweba@flea.lan>
- <CAGb2v64RKGMMMF+KZdfVq6BgheAYSJYmb=kg_a0hSp153hNT2Q@mail.gmail.com>
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Alan Stern
+	<stern@rowland.harvard.edu>, Roger Quadros <rogerq@ti.com>,
+        Felipe Balbi
+	<felipe.balbi@linux.intel.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] usb: host: ehci-platform: add support for optional
+ external vbus supply
+Thread-Topic: [PATCH v3] usb: host: ehci-platform: add support for optional
+ external vbus supply
+Thread-Index: AQHTrKzCYZNUhtND20uatt24NbM7OqO5x2kAgAFDBwA=
+Date: Thu, 1 Mar 2018 08:49:59 +0000
+Message-ID: <8655fa87-1403-21b9-1aea-69b0f21fbcea@st.com>
+References: <1519393611-31367-1-git-send-email-amelie.delaunay@st.com>
+ <dc412433-5a96-ea86-6d97-13877fe4806c@arm.com>
+In-Reply-To: <dc412433-5a96-ea86-6d97-13877fe4806c@arm.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7E31B96F4DDB00498E5F1A59BB672C00@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ohkkp44po5ae327o"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64RKGMMMF+KZdfVq6BgheAYSJYmb=kg_a0hSp153hNT2Q@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_04:,,
+ signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593197807586940998?=
-X-GMAIL-MSGID: =?utf-8?q?1593726426702943231?=
+X-GMAIL-THRID: =?utf-8?q?1592910586052663664?=
+X-GMAIL-MSGID: =?utf-8?q?1593724590826135467?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---ohkkp44po5ae327o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 26, 2018 at 06:55:49PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Feb 26, 2018 at 6:53 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Mon, Feb 26, 2018 at 10:31:51AM +0100, Arnd Bergmann wrote:
-> >> On Mon, Feb 26, 2018 at 10:21 AM, Maxime Ripard
-> >> <maxime.ripard@bootlin.com> wrote:
-> >> > Hi,
-> >> >
-> >> > On Fri, Feb 23, 2018 at 02:06:52PM +0100, Arnd Bergmann wrote:
-> >> >> When the base sun4i DRM driver is built-in but the back-end is
-> >> >> a loadable module, we run into a link error:
-> >> >>
-> >> >> drivers/gpu/drm/sun4i/sun4i_drv.o: In function `sun4i_drv_probe':
-> >> >> sun4i_drv.c:(.text+0x60c): undefined reference to `sun4i_frontend_o=
-f_table'
-> >> >>
-> >> >> The dependency is a bit tricky, the best workaround I have come up
-> >> >> with is to use a Makefile hack to to interpret both
-> >> >> CONFIG_DRM_SUN4I_BACKEND=3Dm and CONFIG_DRM_SUN4I_BACKEND=3Dy
-> >> >> as a directive to build the front-end the same way as the main modu=
-le.
-> >> >>
-> >> >> Fixes: dd0421f47505 ("drm/sun4i: Add a driver for the display front=
-end")
-> >> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> >> ---
-> >> >>  drivers/gpu/drm/sun4i/Makefile | 5 ++++-
-> >> >>  1 file changed, 4 insertions(+), 1 deletion(-)
-> >> >>
-> >> >> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i=
-/Makefile
-> >> >> index 582607c0c488..db14e023256b 100644
-> >> >> --- a/drivers/gpu/drm/sun4i/Makefile
-> >> >> +++ b/drivers/gpu/drm/sun4i/Makefile
-> >> >> @@ -25,6 +25,9 @@ obj-$(CONFIG_DRM_SUN4I)             +=3D sun4i-tc=
-on.o
-> >> >>  obj-$(CONFIG_DRM_SUN4I)              +=3D sun4i_tv.o
-> >> >>  obj-$(CONFIG_DRM_SUN4I)              +=3D sun6i_drc.o
-> >> >>
-> >> >> -obj-$(CONFIG_DRM_SUN4I_BACKEND)      +=3D sun4i-backend.o sun4i-fr=
-ontend.o
-> >> >> +obj-$(CONFIG_DRM_SUN4I_BACKEND)      +=3D sun4i-backend.o
-> >> >> +ifdef CONFIG_DRM_SUN4I_BACKEND
-> >> >> +obj-$(CONFIG_DRM_SUN4I)              +=3D sun4i-frontend.o
-> >> >> +endif
-> >> >
-> >> > Can we just create a Kconfig symbol, selected by DRM_SUN4I_BACKEND,
-> >> > and we would export the symbol?
-> >>
-> >> Yes, I think that would work just as well. Something like
-> >>
-> >> config DRM_SUN4I_FRONTEND
-> >>       tristate
-> >>       default DRM_SUN4I if CONFIG_DRM_SUN4I_BACKEND !=3D n
-> >>
-> >> should do the trick.
-> >
-> > I had more something like this in mind:
-> > https://pastebin.com/raw/XydvzAtz
->=20
-> This doesn't solve the issue at hand, which is sun4i-drv (CONFIG_DRM_SUN4=
-I)
-> requires something in sun4i-backend (CONFIG_DRM_SUN4I_BACKEND), and if
-> sun4i-drv is built-in, then anything it uses must also be built-in.
-
-Ah, right. Then I guess Arnd's suggestion is the best we can
-have. Arnd, can you resubmit that patch?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ohkkp44po5ae327o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXxYsACgkQ0rTAlCFN
-r3T/NA//TL9bvkhKa91HWj3wRC6m8fHdwPaRdtIcW56+YEi8YVDPy8mb+HmFs9Oz
-5QqmMCesVq/X2Mcg4hrCfyObpom+rrcz8X8ed3F6Ati2Z/P6s/ZdZxM1Tf3gyj9/
-xb15a4fOxCrVYpsEwVeGuRWTPDNMqrbEhJwLUBNKMcNd9y78lHZ6cPISIQxQ/+dF
-MNOj+0VOVd9jeYNEtQcsBm2DA0LqALiFrxNtWRGNgm6VBfHA+kquMdPyItCeRwxk
-Hhm7BDkL71AcZqvvZBLZNhGzcL3iFKC4dJ1ZUJGDYaMIZHYKqPtE4GYFnzPNUs4J
-g0slnzw9QwSvkBzqxtFAywcixv/jTEWjLPjUcO1is+BnbZs7YJ6vLgAKZmsBW1ON
-D1YBILz4nAyEspdYcBjF8m4uF6uf8aHWobus6yc2iwOZSd5LiSV7/yqXiRa5B8xv
-slkIOJ92T+k2jUudu6q34EroOHZcLz5L3xSI5y1iDEMiW+AGm3Grm7Dl9JWNmW2i
-XSVdJG9ze4L1EQ5TSv6dLpZrOpywsRxG9nPlhbKRPhxjr7Kx9bq3eyDxCVycevf5
-fzVmgem14+tyTNbhtL6vrf27WeBLSo64ybvEtm28erw0QJpDJJp0HgnvrEFlQD6j
-zioKaEmomkQckLUu/2G9AyrrxsEtXCzTsQkKZ1UNsQj4ukfvnRI=
-=MSo0
------END PGP SIGNATURE-----
-
---ohkkp44po5ae327o--
+SGkgUm9iaW4sDQoNCk9uIDAyLzI4LzIwMTggMDI6MzMgUE0sIFJvYmluIE11cnBoeSB3cm90ZToN
+Cj4gSGkgQW1lbGllLA0KPiANCj4gSnVzdCBhIGNvdXBsZSBvZiBkcml2ZS1ieSBjb2Rpbmcgc3R5
+bGUgY29tbWVudHMuLi4NCj4gDQo+IE9uIDIzLzAyLzE4IDEzOjQ2LCBBbWVsaWUgRGVsYXVuYXkg
+d3JvdGU6DQo+PiBPbiBzb21lIGJvYXJkcywgZXNwZWNpYWxseSB3aGVuIHZidXMgc3VwcGx5IHJl
+cXVpcmVzIGxhcmdlIGN1cnJlbnQsDQo+PiBhbmQgdGhlIGNoYXJnZSBwdW1wIG9uIHRoZSBQSFkg
+aXNuJ3QgZW5vdWdoLCBhbiBleHRlcm5hbCB2YnVzIHBvd2VyIHN3aXRjaA0KPj4gbWF5IGJlIHVz
+ZWQuDQo+PiBBZGQgc3VwcG9ydCBmb3Igb3B0aW9uYWwgZXh0ZXJuYWwgdmJ1cyBzdXBwbHkgcGVy
+IHBvcnQgaW4gZWhjaS1wbGF0Zm9ybS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBBbWVsaWUgRGVs
+YXVuYXkgPGFtZWxpZS5kZWxhdW5heUBzdC5jb20+DQo+Pg0KPj4gLS0tDQo+PiBDaGFuZ2VzIGlu
+IHYzOg0KPj4gICAgKiBBZGRyZXNzIEZlbGlwZSBCYWxiaSBjb21tZW50czogcmVkdWNlIGluZGVu
+dGF0aW9uIGluDQo+PiAgICAgIGVoY2lfcGxhdGZvcm1fcG9ydF9wb3dlci4NCj4+ICAgICogQWRk
+cmVzcyBSb2dlciBRdWFkcm9zIGFuZCBBbGFuIFN0ZXJuIGNvbW1lbnRzOiBwbGF0Zm9ybXMgY2Fu
+IGhhdmUgb25lDQo+PiAgICAgIGV4dGVybmFsIHZidXMgc3VwcGx5IHBlciBwb3J0LCBzbyBhZGQg
+c3VwcG9ydCB0byBnZXQgYXMgbWFueSBvcHRpb25hbA0KPj4gICAgICByZWd1bGF0b3IgYXMgaW1w
+bGVtZW50ZWQgcG9ydHMgb24gdGhlIGhvc3QgY29udHJvbGxlci4NCj4+DQo+PiBDaGFuZ2VzIGlu
+IHYyOg0KPj4gICAgKiBBZGRyZXNzIFJvZ2VyIFF1YWRyb3MgY29tbWVudHM6IG1vdmUgcmVndWxh
+dG9yX2VuYWJsZS9kaXNhYmxlIGZyb20NCj4+ICAgICAgZWhjaV9wbGF0Zm9ybV9wb3dlcl9vbi9v
+ZmYgdG8gZWhjaV9wbGF0Zm9ybV9wb3J0X3Bvd2VyLg0KPj4gLS0tDQo+PiAgICBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3VzYi1laGNpLnR4dCB8ICAxICsNCj4+ICAgIGRy
+aXZlcnMvdXNiL2hvc3QvZWhjaS1wbGF0Zm9ybS5jICAgICAgICAgICAgICAgICAgIHwgNTIgKysr
+KysrKysrKysrKysrKysrKysrLQ0KPj4gICAgMiBmaWxlcyBjaGFuZ2VkLCA1MiBpbnNlcnRpb25z
+KCspLCAxIGRlbGV0aW9uKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy91c2IvdXNiLWVoY2kudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL3VzYi91c2ItZWhjaS50eHQNCj4+IGluZGV4IDNlZmRlMTIuLmNkNTc2ZGIg
+MTAwNjQ0DQo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3Vz
+Yi1laGNpLnR4dA0KPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Vz
+Yi91c2ItZWhjaS50eHQNCj4+IEBAIC0xOSw2ICsxOSw3IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6
+DQo+PiAgICAgLSBwaHlzIDogcGhhbmRsZSArIHBoeSBzcGVjaWZpZXIgcGFpcg0KPj4gICAgIC0g
+cGh5LW5hbWVzIDogInVzYiINCj4+ICAgICAtIHJlc2V0cyA6IHBoYW5kbGUgKyByZXNldCBzcGVj
+aWZpZXIgcGFpcg0KPj4gKyAtIHBvcnROX3ZidXMtc3VwcGx5IDogcGhhbmRsZSBvZiByZWd1bGF0
+b3Igc3VwcGx5aW5nIHZidXMgZm9yIHBvcnQgTg0KPj4gICAgDQo+PiAgICBFeGFtcGxlIChTZXF1
+b2lhIDQ0MEVQeCk6DQo+PiAgICAgICAgZWhjaUBlMDAwMDMwMCB7DQo+PiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy91c2IvaG9zdC9laGNpLXBsYXRmb3JtLmMgYi9kcml2ZXJzL3VzYi9ob3N0L2VoY2kt
+cGxhdGZvcm0uYw0KPj4gaW5kZXggYjA2NWE5Ni4uOGU5ZjIwMSAxMDA2NDQNCj4+IC0tLSBhL2Ry
+aXZlcnMvdXNiL2hvc3QvZWhjaS1wbGF0Zm9ybS5jDQo+PiArKysgYi9kcml2ZXJzL3VzYi9ob3N0
+L2VoY2ktcGxhdGZvcm0uYw0KPj4gQEAgLTI5LDYgKzI5LDcgQEANCj4+ICAgICNpbmNsdWRlIDxs
+aW51eC9vZi5oPg0KPj4gICAgI2luY2x1ZGUgPGxpbnV4L3BoeS9waHkuaD4NCj4+ICAgICNpbmNs
+dWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvcmVndWxh
+dG9yL2NvbnN1bWVyLmg+DQo+PiAgICAjaW5jbHVkZSA8bGludXgvcmVzZXQuaD4NCj4+ICAgICNp
+bmNsdWRlIDxsaW51eC91c2IuaD4NCj4+ICAgICNpbmNsdWRlIDxsaW51eC91c2IvaGNkLmg+DQo+
+PiBAQCAtNDYsNiArNDcsNyBAQCBzdHJ1Y3QgZWhjaV9wbGF0Zm9ybV9wcml2IHsNCj4+ICAgIAlz
+dHJ1Y3QgcmVzZXRfY29udHJvbCAqcnN0czsNCj4+ICAgIAlzdHJ1Y3QgcGh5ICoqcGh5czsNCj4+
+ICAgIAlpbnQgbnVtX3BoeXM7DQo+PiArCXN0cnVjdCByZWd1bGF0b3IgKip2YnVzX3N1cHBsaWVz
+Ow0KPj4gICAgCWJvb2wgcmVzZXRfb25fcmVzdW1lOw0KPj4gICAgfTsNCj4+ICAgIA0KPj4gQEAg
+LTU2LDcgKzU4LDggQEAgc3RhdGljIGludCBlaGNpX3BsYXRmb3JtX3Jlc2V0KHN0cnVjdCB1c2Jf
+aGNkICpoY2QpDQo+PiAgICAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IHRvX3BsYXRm
+b3JtX2RldmljZShoY2QtPnNlbGYuY29udHJvbGxlcik7DQo+PiAgICAJc3RydWN0IHVzYl9laGNp
+X3BkYXRhICpwZGF0YSA9IGRldl9nZXRfcGxhdGRhdGEoJnBkZXYtPmRldik7DQo+PiAgICAJc3Ry
+dWN0IGVoY2lfaGNkICplaGNpID0gaGNkX3RvX2VoY2koaGNkKTsNCj4+IC0JaW50IHJldHZhbDsN
+Cj4+ICsJc3RydWN0IGVoY2lfcGxhdGZvcm1fcHJpdiAqcHJpdiA9IGhjZF90b19laGNpX3ByaXYo
+aGNkKTsNCj4+ICsJaW50IHBvcnRudW0sIG5fcG9ydHMsIHJldHZhbDsNCj4+ICAgIA0KPj4gICAg
+CWVoY2ktPmhhc19zeW5vcHN5c19oY19idWcgPSBwZGF0YS0+aGFzX3N5bm9wc3lzX2hjX2J1ZzsN
+Cj4+ICAgIA0KPj4gQEAgLTcxLDExICs3NCw1NyBAQCBzdGF0aWMgaW50IGVoY2lfcGxhdGZvcm1f
+cmVzZXQoc3RydWN0IHVzYl9oY2QgKmhjZCkNCj4+ICAgIAlpZiAocmV0dmFsKQ0KPj4gICAgCQly
+ZXR1cm4gcmV0dmFsOw0KPj4gICAgDQo+PiArCW5fcG9ydHMgPSBIQ1NfTl9QT1JUUyhlaGNpLT5o
+Y3NfcGFyYW1zKTsNCj4+ICsJcHJpdi0+dmJ1c19zdXBwbGllcyA9IGRldm1fa2NhbGxvYygmcGRl
+di0+ZGV2LCBuX3BvcnRzLA0KPj4gKwkJCQkJICAgc2l6ZW9mKHN0cnVjdCByZWd1bGF0b3IgKiks
+DQo+IA0KPiBVc2luZyAic2l6ZW9mKCpwcml2LT52YnVzX3N1cHBsaWVzKSIgaGVyZSB3aWxsIHBy
+ZXZlbnQgcGVvcGxlIHNlbmRpbmcNCj4gYW5ub3lpbmcgY2xlYW51cCBwYXRjaGVzIGxhdGVyLg0K
+PiANCg0KT0ssIEkgd2lsbCBmaXggaXQgaW4gdjQuDQoNCj4+ICsJCQkJCSAgIEdGUF9LRVJORUwp
+Ow0KPj4gKwlpZiAoIXByaXYtPnZidXNfc3VwcGxpZXMpDQo+PiArCQlyZXR1cm4gLUVOT01FTTsN
+Cj4+ICsNCj4+ICsJZm9yIChwb3J0bnVtID0gMDsgcG9ydG51bSA8IG5fcG9ydHM7IHBvcnRudW0r
+Kykgew0KPj4gKwkJc3RydWN0IHJlZ3VsYXRvciAqdmJ1c19zdXBwbHk7DQo+PiArCQljaGFyIGlk
+WzIwXTsNCj4+ICsNCj4+ICsJCXNwcmludGYoaWQsICJwb3J0JWRfdmJ1cyIsIHBvcnRudW0pOw0K
+Pj4gKw0KPj4gKwkJdmJ1c19zdXBwbHkgPSBkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwoJnBk
+ZXYtPmRldiwgaWQpOw0KPj4gKwkJaWYgKElTX0VSUih2YnVzX3N1cHBseSkpIHsNCj4+ICsJCQly
+ZXR2YWwgPSBQVFJfRVJSKHZidXNfc3VwcGx5KTsNCj4+ICsJCQlpZiAocmV0dmFsID09IC1FTk9E
+RVYpDQo+PiArCQkJCXByaXYtPnZidXNfc3VwcGxpZXNbcG9ydG51bV0gPSBOVUxMOw0KPiANCj4g
+VGhlIGFycmF5IGVsZW1lbnQgaGVyZSBoYXNuJ3QgeWV0IGJlZW4gYXNzaWduZWQgdG8gc2luY2Ug
+a2NhbGxvYygpDQo+IGluaXRpYWxseSB6ZXJvZWQgaXQsIHNvIHRoaXMgaXMgZW50aXJlbHkgcmVk
+dW5kYW50IC0geW91IGNhbiBzaW1wbHkgbWFrZQ0KPiB0aGUgY29tcGFyaXNvbiBhICIhPSIgYW5k
+IHJlbW92ZSB0aGUgImVsc2UiIGNhc2UuDQo+IA0KPiBSb2Jpbi4NCj4gDQoNClRoYW5rcyBmb3Ig
+c3BvdHRpbmcgdGhpcyEgRml4IGluIHY0Lg0KDQpBbWVsaWUNCg0KPj4gKwkJCWVsc2UNCj4+ICsJ
+CQkJcmV0dXJuIHJldHZhbDsNCj4+ICsJCX0gZWxzZSB7DQo+PiArCQkJcHJpdi0+dmJ1c19zdXBw
+bGllc1twb3J0bnVtXSA9IHZidXNfc3VwcGx5Ow0KPj4gKwkJfQ0KPj4gKwl9DQo+PiArDQo+PiAg
+ICAJaWYgKHBkYXRhLT5ub19pb193YXRjaGRvZykNCj4+ICAgIAkJZWhjaS0+bmVlZF9pb193YXRj
+aGRvZyA9IDA7DQo+PiAgICAJcmV0dXJuIDA7DQo+PiAgICB9DQo+PiAgICANCj4+ICtzdGF0aWMg
+aW50IGVoY2lfcGxhdGZvcm1fcG9ydF9wb3dlcihzdHJ1Y3QgdXNiX2hjZCAqaGNkLCBpbnQgcG9y
+dG51bSwNCj4+ICsJCQkJICAgIGJvb2wgZW5hYmxlKQ0KPj4gK3sNCj4+ICsJc3RydWN0IGVoY2lf
+cGxhdGZvcm1fcHJpdiAqcHJpdiA9IGhjZF90b19laGNpX3ByaXYoaGNkKTsNCj4+ICsJaW50IHJl
+dDsNCj4+ICsNCj4+ICsJaWYgKCFwcml2LT52YnVzX3N1cHBsaWVzW3BvcnRudW1dKQ0KPj4gKwkJ
+cmV0dXJuIDA7DQo+PiArDQo+PiArCWlmIChlbmFibGUpDQo+PiArCQlyZXQgPSByZWd1bGF0b3Jf
+ZW5hYmxlKHByaXYtPnZidXNfc3VwcGxpZXNbcG9ydG51bV0pOw0KPj4gKwllbHNlDQo+PiArCQly
+ZXQgPSByZWd1bGF0b3JfZGlzYWJsZShwcml2LT52YnVzX3N1cHBsaWVzW3BvcnRudW1dKTsNCj4+
+ICsJaWYgKHJldCkNCj4+ICsJCWRldl9lcnIoaGNkLT5zZWxmLmNvbnRyb2xsZXIsDQo+PiArCQkJ
+ImZhaWxlZCB0byAlcyB2YnVzIHN1cHBseSBmb3IgcG9ydCAlZDogJWRcbiIsDQo+PiArCQkJZW5h
+YmxlID8gImVuYWJsZSIgOiAiZGlzYWJsZSIsIHBvcnRudW0sIHJldCk7DQo+PiArDQo+PiArCXJl
+dHVybiByZXQ7DQo+PiArfQ0KPj4gKw0KPj4gICAgc3RhdGljIGludCBlaGNpX3BsYXRmb3JtX3Bv
+d2VyX29uKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldikNCj4+ICAgIHsNCj4+ICAgIAlzdHJ1
+Y3QgdXNiX2hjZCAqaGNkID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEoZGV2KTsNCj4+IEBAIC0xMzQs
+NiArMTgzLDcgQEAgc3RhdGljIHN0cnVjdCBoY19kcml2ZXIgX19yZWFkX21vc3RseSBlaGNpX3Bs
+YXRmb3JtX2hjX2RyaXZlcjsNCj4+ICAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZWhjaV9kcml2ZXJf
+b3ZlcnJpZGVzIHBsYXRmb3JtX292ZXJyaWRlcyBfX2luaXRjb25zdCA9IHsNCj4+ICAgIAkucmVz
+ZXQgPQkJZWhjaV9wbGF0Zm9ybV9yZXNldCwNCj4+ICAgIAkuZXh0cmFfcHJpdl9zaXplID0Jc2l6
+ZW9mKHN0cnVjdCBlaGNpX3BsYXRmb3JtX3ByaXYpLA0KPj4gKwkucG9ydF9wb3dlciA9CQllaGNp
+X3BsYXRmb3JtX3BvcnRfcG93ZXIsDQo+PiAgICB9Ow0KPj4gICAgDQo+PiAgICBzdGF0aWMgc3Ry
+dWN0IHVzYl9laGNpX3BkYXRhIGVoY2lfcGxhdGZvcm1fZGVmYXVsdHMgPSB7DQo+Pg==
