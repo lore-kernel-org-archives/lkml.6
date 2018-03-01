@@ -1,66 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966654AbeCAI5t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:57:49 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50515 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966635AbeCAI5r (ORCPT
+        id S966636AbeCAJAK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:00:10 -0500
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:41274 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965361AbeCAJAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:57:47 -0500
-Date: Thu, 1 Mar 2018 09:57:44 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ivan Gorinov <ivan.gorinov@intel.com>
-cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        x86@kernel.org
-Subject: Re: [PATCH v2 1/3] x86: devicetree: call early_init_dt_verify()
-In-Reply-To: <1519872327.58658.187.camel@intel.com>
-Message-ID: <alpine.DEB.2.21.1803010950280.1396@nanos.tec.linutronix.de>
-References: <1519872327.58658.187.camel@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Mar 2018 04:00:08 -0500
+X-Google-Smtp-Source: AG47ELuqq269sggVa8OvUF6HmwAHuhQTE+JOQ+bmUhu1vCkH3fDnZ2bscSJID0S+9/EWndPLIKL6kQ==
+Date: Thu, 1 Mar 2018 09:33:16 +0100
+From: Anders Roxell <anders.roxell@linaro.org>
+To: richard_c_haines@btinternet.com, paul@paul-moore.com
+Cc: netdev@vger.kernel.org, selinux@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org
+Subject: Regression found when running LTP connect01 on next-20180301
+Message-ID: <20180301083316.GA6779@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-526270464-1519894665=:1396"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323329-526270464-1519894665=:1396
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+I was running LTP's testcase connect01 [1] and found a regression in linux-next
+(next-20180301).  Bisect gave me this patch as the problematic patch (sha
+d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
 
-On Wed, 28 Feb 2018, Ivan Gorinov wrote:
+Output from the test(LTP release 20180118):
+$ cd /opt/ltp/
+$ cat runtest/syscalls |grep connect01>runtest/connect-syscall
+$ ./runltp -pq -f connect-syscall
+"
+Running tests.......
+connect01    1  TPASS  :  bad file descriptor successful
+connect01    2  TPASS  :  invalid socket buffer successful
+connect01    3  TPASS  :  invalid salen successful
+connect01    4  TPASS  :  invalid socket successful
+connect01    5  TPASS  :  already connected successful
+connect01    6  TPASS  :  connection refused successful
+connect01    7  TFAIL  :  connect01.c:146: invalid address family ; returned -1 (expected -1), errno 22 (expected 97)
+INFO: ltp-pan reported some tests FAIL
+LTP Version: 20180118
+"
 
-> Call to early_init_dt_verify() is required to prepare DTB data.
-> It was called from arch/arm and arch/powerpc, but not arch/x86.
-> 
-> Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
-> ---
->  arch/x86/kernel/devicetree.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-> index 25de5f6..44189ee 100644
-> --- a/arch/x86/kernel/devicetree.c
-> +++ b/arch/x86/kernel/devicetree.c
-> @@ -278,6 +278,7 @@ static void __init x86_flattree_get_config(void)
->  		map_len = size;
-
-  ^
-  ^
-  Your patches are still whitespace damaged and fail to apply
-
-patching file arch/x86/kernel/devicetree.c
-patch: **** malformed patch at line 23:  		map_len = size;
-
-Please fix your mail setup and please make the patch series properly
-threaded. There is plenty of documentation and your coworkers surely can
-help you with that.
-
-Thanks,
-
-	tglx
+The output from the test expected 97 and we received 22, can you please
+elaborate on what have been changed?
 
 
---8323329-526270464-1519894665=:1396--
+Cheers,
+Anders
+[1] https://github.com/linux-test-project/ltp/blob/20180118/testcases/kernel/syscalls/connect/connect01.c#L146
