@@ -1,67 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965389AbeCAI0v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:26:51 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964841AbeCAI0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:26:50 -0500
-Date: Thu, 1 Mar 2018 09:26:48 +0100
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH 0/9] drm/xen-front: Add support for Xen PV display
- frontend
-Message-ID: <20180301082648.frnslqyhffj2bkwl@sirius.home.kraxel.org>
-References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
- <4c7e6f65-1787-3815-22b5-f9495e388c06@gmail.com>
- <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
+        id S965215AbeCAIdZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:33:25 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45044 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964841AbeCAIdY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 03:33:24 -0500
+X-Google-Smtp-Source: AG47ELv0CARtL3Y1Xs5qeFzRAcIb3kmX+TBQAihzdFeEuOunIrlBuozFWAOo9UehfwlHplvFTgHthX4hHpRKnckORy4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <5A977638.8010506@rock-chips.com>
+References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
+ <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
+ <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
+ <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
+ <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
+ <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
+ <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com> <5A977638.8010506@rock-chips.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Mar 2018 09:33:22 +0100
+X-Google-Sender-Auth: dOIuCGn5hVjePbx296WYZzz0aBs
+Message-ID: <CAMuHMdU9PFAXwo+1Z7Baw1fanst9yFKZ3ohoSTiQiMKTaYMVVw@mail.gmail.com>
+Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
+To: JeffyChen <jeffy.chen@rock-chips.com>
+Cc: Tomasz Figa <tfiga@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+Hi Jeffy,
 
-> 1. Possible security issues - VirtIO devices are PCI bus masters, thus
-> allowing real device (running, for example, in untrusted driver domain)
-> to get control over guest's memory by writing to its memory
+On Thu, Mar 1, 2018 at 4:40 AM, JeffyChen <jeffy.chen@rock-chips.com> wrote:
+> if i'm reading the code right, the PM clk means:
+> 1/ the clocks which would be enabled while power on
+> 2/ these clocks are optional, it's ok if anything wrong with them
+> 3/ controlled by pm_domain(or USE_PM_CLK_RUNTIME_OPS & pm_clk_add_notifier)
 >
-> 2. VirtIO currently uses GFNs written into the shared ring, without Xen
-> grants support. This will require generic grant-mapping/sharing layer
-> to be added to VirtIO.
-> 
-> 3. VirtIO requires QEMU PCI emulation for setting up a device. Xen PV
-> (and PVH) domains don't use QEMU for platform emulation in order to
-> reduce attack surface.  (PVH is in the process of gaining PCI config
-> space emulation though, but it is optional, not a requirement)
+> and currently we're adding all clocks of the attached device as PM clk in
+> rockchip PM domain driver, which seems wrong. because we might have these
+> kinds of clocks:
+> 1/ critical, should block power on if anything wrong with it(failed to get/
+> prepare/ enable)
+> 2/ optional, could ignore it if anything wrong
+> 3/ only required in some special cases, for example register r/w, and
+> doesn't need to stay enabled while power on
+>
+> so maybe we can:
+> 1/ let the device(dts) or driver decide which clock is PM clk, and add it
+> using *pm_clk_add* APIs (even of_pm_clk_add_clks() if all clocks are pm clk)
+>
+> 2/ add support for critical PM clk, which would return error to the driver
+> if anything wrong
+>
+> 3/ make sure PM clk always be controlled(otherwise it might be unexpected
+> disabled by other clocks under the same clk parent?):
+>  a) make sure Runtime PM is always enabled. and as discussed, we can select
+> PM in ARCH_ROCKCHIP
 
-Well, that is wrong.  virtio doesn't require pci.  There are other
-transports (mmio, ccw), and it should be possible to create a xen
-specific transport which uses grant tables properly.  Seems there even
-was an attempt to implement that in 2011, see 
-https://wiki.xenproject.org/wiki/Virtio_On_Xen
+On Renesas SoCs, we only add the device's module clock with pm_clk_add().
+Drivers that don't care about properties of the module clock just call
+pm_runtime_*(). That way the same driver works on different SoCs using
+the same device, with and without power and/or clock domains.
 
-> 4. Most of the PV drivers a guest uses at the moment are Xen PV drivers,
-> e.g. net,
-> block, console, so only virtio-gpu will require QEMU to run.
+Drivers that care about properties of the module clock (mainly frequency)
+can still use the clk_*() API for that. Other (optional) clocks must be
+handled by the device driver itself.
 
-You are not forced to use qemu, you can certainly create an alternative
-host side implementation (and still use on the existing virtio guest
-drivers).
+Gr{oetje,eeting}s,
 
-Whenever writing a xenbus implementation for both guest and host or
-writing a virtio implementation for the host only is better -- dunno.
-The virtio path obviously needs some infrastructure work for virtio
-support in Xen, which may pay off long term.  Your call.
+                        Geert
 
-cheers,
-  Gerd
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
