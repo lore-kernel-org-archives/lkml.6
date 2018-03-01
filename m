@@ -1,182 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033338AbeCAQxs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:53:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51714 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033021AbeCAQwD (ORCPT
+        id S1033220AbeCAQ4R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:56:17 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:32805 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033021AbeCAQ4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:52:03 -0500
-Message-Id: <20180301165150.236279497@linutronix.de>
-User-Agent: quilt/0.63-1
-Date: Thu, 01 Mar 2018 17:33:35 +0100
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Stultz <john.stultz@linaro.org>, Petr Mladek <pmladek@suse.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [RFC/RFT patch 4/7] timekeeping: Remove boot time specific code
-References: <20180301163331.987775783@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline;
- filename=timekeeping--Remove-boot-time-specific-code.patch
+        Thu, 1 Mar 2018 11:56:15 -0500
+X-Google-Smtp-Source: AG47ELuZ+znZNbyay812IFbfiukqVhrdIF1C0MXxu6EkcU9E7rmUQ3wGoEt5UIN3mVvsDbF37CixxQ==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH v2 1/2] input: Add RAVE SP Powerbutton driver
+Date: Thu,  1 Mar 2018 08:55:26 -0800
+Message-Id: <20180301165527.22274-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that clock MONOTONIC and clock BOOTTIME are the same, remove all the
-special handling from timekeeping. Keep wrappers for the existing users of
-the *boot* timekeeper interfaces.
+Add driver that properly handles input event emitted by RAVE SP
+devices.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- include/linux/timekeeping.h |   42 +++++++++++++++++-------------------------
- kernel/time/timekeeping.c   |   31 -------------------------------
- 2 files changed, 17 insertions(+), 56 deletions(-)
 
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -38,15 +38,19 @@ extern int __getnstimeofday64(struct tim
- extern void getnstimeofday64(struct timespec64 *tv);
- extern void getboottime64(struct timespec64 *ts);
+Changes since [v1]:
+
+	- Removed redundant dev.parent assignment
+
+	- Various cosmetic changes
+
+[v1] lkml.kernel.org/r/20180226154130.25774-1-andrew.smirnov@gmail.com
+
+ drivers/input/misc/Kconfig             |  9 ++++
+ drivers/input/misc/Makefile            |  1 +
+ drivers/input/misc/rave-sp-pwrbutton.c | 94 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 104 insertions(+)
+ create mode 100644 drivers/input/misc/rave-sp-pwrbutton.c
+
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 62a1312a7387..6a3c753b093b 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -841,4 +841,13 @@ config INPUT_HISI_POWERKEY
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called hisi_powerkey.
  
--#define ktime_get_real_ts64(ts)	getnstimeofday64(ts)
-+#define ktime_get_real_ts64(ts)		getnstimeofday64(ts)
++config INPUT_RAVE_SP_PWRBUTTON
++	tristate "RAVE SP Power button Driver"
++	depends on RAVE_SP_CORE
++	help
++	  Say Y here if you want to enable power key reporting from RAVE SP
 +
-+/* Clock BOOTTIME compatibility wrappers */
-+static inline void get_monotonic_boottime64(struct timespec64 *ts)
++	  To compile this driver as a module, choose M here: the
++	  module will be called rave-sp-pwrbutton.
++
+ endif
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index a8f61af865aa..8cc58f362bb8 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -60,6 +60,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
+ obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
+ obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
+ obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
++obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
+ obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
+ obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
+ obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
+diff --git a/drivers/input/misc/rave-sp-pwrbutton.c b/drivers/input/misc/rave-sp-pwrbutton.c
+new file mode 100644
+index 000000000000..bcab3cdb7ebd
+--- /dev/null
++++ b/drivers/input/misc/rave-sp-pwrbutton.c
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Power Button driver for RAVE SP
++//
++// Copyright (C) 2017 Zodiac Inflight Innovations
++//
++//
++
++#include <linux/input.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/rave-sp.h>
++#include <linux/platform_device.h>
++
++#define RAVE_SP_EVNT_BUTTON_PRESS	(RAVE_SP_EVNT_BASE + 0x00)
++
++struct rave_sp_power_button {
++	struct input_dev *idev;
++	struct notifier_block nb;
++};
++
++static int rave_sp_power_button_event(struct notifier_block *nb,
++				      unsigned long action, void *data)
 +{
-+	ktime_get_ts64(ts);
-+}
- 
- /*
-  * ktime_t based interfaces
-  */
--
- enum tk_offsets {
- 	TK_OFFS_REAL,
--	TK_OFFS_BOOT,
- 	TK_OFFS_TAI,
- 	TK_OFFS_MAX,
- };
-@@ -57,6 +61,10 @@ extern ktime_t ktime_mono_to_any(ktime_t
- extern ktime_t ktime_get_raw(void);
- extern u32 ktime_get_resolution_ns(void);
- 
-+/* Clock BOOTTIME compatibility wrappers */
-+static inline ktime_t ktime_get_boottime(void) { return ktime_get(); }
-+static inline u64 ktime_get_boot_ns(void) { return ktime_get(); }
++	struct rave_sp_power_button *pb =
++		container_of(nb, struct rave_sp_power_button, nb);
++	const u8 event = rave_sp_action_unpack_event(action);
++	const u8 value = rave_sp_action_unpack_value(action);
++	struct input_dev *idev = pb->idev;
 +
- /**
-  * ktime_get_real - get the real (wall-) time in ktime_t format
-  */
-@@ -66,17 +74,6 @@ static inline ktime_t ktime_get_real(voi
- }
- 
- /**
-- * ktime_get_boottime - Returns monotonic time since boot in ktime_t format
-- *
-- * This is similar to CLOCK_MONTONIC/ktime_get, but also includes the
-- * time spent in suspend.
-- */
--static inline ktime_t ktime_get_boottime(void)
--{
--	return ktime_get_with_offset(TK_OFFS_BOOT);
--}
--
--/**
-  * ktime_get_clocktai - Returns the TAI time of day in ktime_t format
-  */
- static inline ktime_t ktime_get_clocktai(void)
-@@ -102,11 +99,6 @@ static inline u64 ktime_get_real_ns(void
- 	return ktime_to_ns(ktime_get_real());
- }
- 
--static inline u64 ktime_get_boot_ns(void)
--{
--	return ktime_to_ns(ktime_get_boottime());
--}
--
- static inline u64 ktime_get_tai_ns(void)
- {
- 	return ktime_to_ns(ktime_get_clocktai());
-@@ -119,17 +111,17 @@ static inline u64 ktime_get_raw_ns(void)
- 
- extern u64 ktime_get_mono_fast_ns(void);
- extern u64 ktime_get_raw_fast_ns(void);
--extern u64 ktime_get_boot_fast_ns(void);
- extern u64 ktime_get_real_fast_ns(void);
- 
--/*
-- * timespec64 interfaces utilizing the ktime based ones
-- */
--static inline void get_monotonic_boottime64(struct timespec64 *ts)
-+/* Clock BOOTTIME compatibility wrappers */
-+static inline u64 ktime_get_boot_fast_ns(void)
- {
--	*ts = ktime_to_timespec64(ktime_get_boottime());
-+	return ktime_get_mono_fast_ns();
- }
- 
-+/*
-+ * timespec64 interfaces utilizing the ktime based ones
-+ */
- static inline void timekeeping_clocktai64(struct timespec64 *ts)
- {
- 	*ts = ktime_to_timespec64(ktime_get_clocktai());
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -472,36 +472,6 @@ u64 ktime_get_raw_fast_ns(void)
- }
- EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
- 
--/**
-- * ktime_get_boot_fast_ns - NMI safe and fast access to boot clock.
-- *
-- * To keep it NMI safe since we're accessing from tracing, we're not using a
-- * separate timekeeper with updates to monotonic clock and boot offset
-- * protected with seqlocks. This has the following minor side effects:
-- *
-- * (1) Its possible that a timestamp be taken after the boot offset is updated
-- * but before the timekeeper is updated. If this happens, the new boot offset
-- * is added to the old timekeeping making the clock appear to update slightly
-- * earlier:
-- *    CPU 0                                        CPU 1
-- *    timekeeping_inject_sleeptime64()
-- *    __timekeeping_inject_sleeptime(tk, delta);
-- *                                                 timestamp();
-- *    timekeeping_update(tk, TK_CLEAR_NTP...);
-- *
-- * (2) On 32-bit systems, the 64-bit boot offset (tk->offs_boot) may be
-- * partially updated.  Since the tk->offs_boot update is a rare event, this
-- * should be a rare occurrence which postprocessing should be able to handle.
-- */
--u64 notrace ktime_get_boot_fast_ns(void)
--{
--	struct timekeeper *tk = &tk_core.timekeeper;
--
--	return (ktime_get_mono_fast_ns() + ktime_to_ns(tk->offs_boot));
--}
--EXPORT_SYMBOL_GPL(ktime_get_boot_fast_ns);
--
--
- /*
-  * See comment for __ktime_get_fast_ns() vs. timestamp ordering
-  */
-@@ -793,7 +763,6 @@ EXPORT_SYMBOL_GPL(ktime_get_resolution_n
- 
- static ktime_t *offsets[TK_OFFS_MAX] = {
- 	[TK_OFFS_REAL]	= &tk_core.timekeeper.offs_real,
--	[TK_OFFS_BOOT]	= &tk_core.timekeeper.offs_boot,
- 	[TK_OFFS_TAI]	= &tk_core.timekeeper.offs_tai,
- };
- 
++	if (event == RAVE_SP_EVNT_BUTTON_PRESS) {
++		input_report_key(idev, KEY_POWER, value);
++		input_sync(idev);
++
++		return NOTIFY_STOP;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static int rave_sp_pwrbutton_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rave_sp_power_button *pb;
++	struct input_dev *idev;
++	int error;
++
++	pb = devm_kzalloc(dev, sizeof(*pb), GFP_KERNEL);
++	if (!pb)
++		return -ENOMEM;
++
++	idev = devm_input_allocate_device(dev);
++	if (!idev)
++		return -ENOMEM;
++
++	idev->name = pdev->name;
++
++	input_set_capability(idev, EV_KEY, KEY_POWER);
++
++	error = input_register_device(idev);
++	if (error)
++		return error;
++
++	pb->idev = idev;
++	pb->nb.notifier_call = rave_sp_power_button_event;
++	pb->nb.priority = 128;
++
++	error = devm_rave_sp_register_event_notifier(dev, &pb->nb);
++	if (error)
++		return error;
++
++	return 0;
++}
++
++static const struct of_device_id rave_sp_pwrbutton_of_match[] = {
++	{ .compatible = "zii,rave-sp-pwrbutton" },
++	{}
++};
++
++static struct platform_driver rave_sp_pwrbutton_driver = {
++	.probe = rave_sp_pwrbutton_probe,
++	.driver	= {
++		.name = KBUILD_MODNAME,
++		.of_match_table = rave_sp_pwrbutton_of_match,
++	},
++};
++module_platform_driver(rave_sp_pwrbutton_driver);
++
++MODULE_DEVICE_TABLE(of, rave_sp_pwrbutton_of_match);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
++MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
++MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
++MODULE_DESCRIPTION("RAVE SP Power Button driver");
+-- 
+2.14.3
