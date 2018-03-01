@@ -1,66 +1,409 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161811AbeCAU5h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:57:37 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:38388 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161721AbeCAU5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:57:34 -0500
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
- <1519936477.4592.23.camel@au1.ibm.com> <1519936815.4592.25.camel@au1.ibm.com>
- <20180301205315.GJ19007@ziepe.ca>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <bfc3a780-4ca5-f52b-665f-7f13142a500f@deltatee.com>
-Date: Thu, 1 Mar 2018 13:57:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1161820AbeCAU6W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:58:22 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49998 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161721AbeCAU6U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 15:58:20 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: frowand.list@gmail.com
+Cc: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com
+Subject: Re: [PATCH v4 1/4] of: change overlay apply input data from unflattened to FDT
+Date: Thu, 01 Mar 2018 22:59:08 +0200
+Message-ID: <18109035.ZrMSJvtVAx@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1519927256-4868-2-git-send-email-frowand.list@gmail.com>
+References: <1519927256-4868-1-git-send-email-frowand.list@gmail.com> <1519927256-4868-2-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301205315.GJ19007@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, jglisse@redhat.com, maxg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, dan.j.williams@intel.com, benh@au1.ibm.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Frank,
 
+Thank you for the patch.
 
-On 01/03/18 01:53 PM, Jason Gunthorpe wrote:
-> On Fri, Mar 02, 2018 at 07:40:15AM +1100, Benjamin Herrenschmidt wrote:
->> Also we need to be able to hard block MEMREMAP_WB mappings of non-RAM
->> on ppc64 (maybe via an arch hook as it might depend on the processor
->> family). Server powerpc cannot do cachable accesses on IO memory
->> (unless it's special OpenCAPI or nVlink, but not on PCIe).
+On Thursday, 1 March 2018 20:00:53 EET frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> I think you are right on this - even on x86 we must not create
-> cachable mappings of PCI BARs - there is no way that works the way
-> anyone would expect.
+> Move duplicating and unflattening of an overlay flattened devicetree
+> (FDT) into the overlay application code.  To accomplish this,
+> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+> 
+> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+> code, which is thus responsible for freeing the duplicate FDT.  The
+> caller of of_overlay_fdt_apply() remains responsible for freeing the
+> original FDT.
+> 
+> The unflattened devicetree now belongs to devicetree code, which is
+> thus responsible for freeing the unflattened devicetree.
+> 
+> These ownership changes prevent early freeing of the duplicated FDT
+> or the unflattened devicetree, which could result in use after free
+> errors.
+> 
+> of_overlay_fdt_apply() is a private function for the anticipated
+> overlay loader.
+> 
+> Update unittest.c to use of_overlay_fdt_apply() instead of
+> of_overlay_apply().
+> 
+> Move overlay fragments from artificial locations in
+> drivers/of/unittest-data/tests-overlay.dtsi into one devicetree
+> source file per overlay.  This led to changes in
+> drivers/of/unitest-data/Makefile and drivers/of/unitest.c.
+> 
+>   - Add overlay directives to the overlay devicetree source files so
+>     that dtc will compile them as true overlays into one FDT data
+>     chunk per overlay.
+> 
+>   - Set CFLAGS for drivers/of/unittest-data/testcases.dts so that
+>     symbols will be generated for overlay resolution of overlays
+>     that are no longer artificially contained in testcases.dts
+> 
+>   - Unflatten and apply each unittest overlay FDT using
+>     of_overlay_fdt_apply().
+> 
+>   - Enable the of_resolve_phandles() check for whether the unflattened
+>     overlay is detached.  This check was previously disabled because the
+>     overlays from tests-overlay.dtsi were not unflattened into detached
+>     trees.
+> 
+>   - Other changes to unittest.c infrastructure to manage multiple test
+>     FDTs built into the kernel image (access by name instead of
+>     arbitrary number).
+> 
+>   - of_unittest_overlay_high_level(): previously unused code to add
+>     properties from the overlay_base devicetree to the live tree
+>     was triggered by the restructuring of tests-overlay.dtsi and thus
+>     testcases.dts.  This exposed two bugs: (1) the need to dup a
+>     property before adding it, and (2) property 'name' is
+>     auto-generated in the unflatten code and thus will be a duplicate
+>     in the __symbols__ node - do not treat this duplicate as an error.
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+> 
+> There are checkpatch warnings.  I have reviewed them and feel they
+> can be ignored.  They are "line over 80 characters" for either
+> pre-existing long lines, or lines in devicetree source files.
+> 
+> Changes from v3:
+>   - OF_OVERLAY: add select OF_FLATTREE
+> 
+> Changes from v1:
+>   - rebase on v4.16-rc1
+> 
+>  drivers/of/Kconfig                          |   1 +
+>  drivers/of/of_private.h                     |   1 +
+>  drivers/of/overlay.c                        | 107 +++++++++-
+>  drivers/of/resolver.c                       |   6 -
+>  drivers/of/unittest-data/Makefile           |  28 ++-
+>  drivers/of/unittest-data/overlay_0.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_1.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_10.dts     |  34 ++++
+>  drivers/of/unittest-data/overlay_11.dts     |  34 ++++
+>  drivers/of/unittest-data/overlay_12.dts     |  14 ++
+>  drivers/of/unittest-data/overlay_13.dts     |  14 ++
+>  drivers/of/unittest-data/overlay_15.dts     |  35 ++++
+>  drivers/of/unittest-data/overlay_2.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_3.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_4.dts      |  23 +++
+>  drivers/of/unittest-data/overlay_5.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_6.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_7.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_8.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_9.dts      |  15 ++
+>  drivers/of/unittest-data/tests-overlay.dtsi | 213 --------------------
+>  drivers/of/unittest.c                       | 294 ++++++++++++------------
+>  include/linux/of.h                          |   7 -
+>  23 files changed, 552 insertions(+), 389 deletions(-)
+>  create mode 100644 drivers/of/unittest-data/overlay_0.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_1.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_10.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_11.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_12.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_13.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_15.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_2.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_3.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_4.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_5.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_6.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_7.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_8.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_9.dts
+> 
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 783e0870bd22..ad3fcad4d75b 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -92,6 +92,7 @@ config OF_RESOLVE
+>  config OF_OVERLAY
+>  	bool "Device Tree overlays"
+>  	select OF_DYNAMIC
+> +	select OF_FLATTREE
+>  	select OF_RESOLVE
+>  	help
+>  	  Overlays are a method to dynamically modify part of the kernel's
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 0c609e7d0334..6e39dce3a979 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -77,6 +77,7 @@ static inline void __of_detach_node_sysfs(struct
+> device_node *np) {} #endif
+> 
+>  #if defined(CONFIG_OF_OVERLAY)
+> +int of_overlay_fdt_apply(void *overlay_fdt, int *ovcs_id);
 
-On x86, even if I try to make a cachable mapping of a PCI BAR it always 
-ends up being un-cached. The arch code in x86 always does the right 
-thing here.... Other arches, not so much.
+As discussed on IRC, could you move this to include/linux/of.h ?
 
-Logan
+>  void of_overlay_mutex_lock(void);
+>  void of_overlay_mutex_unlock(void);
+>  #else
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 3397d7642958..5f6c5569e97d 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -12,10 +12,12 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/string.h>
+>  #include <linux/ctype.h>
+>  #include <linux/errno.h>
+>  #include <linux/slab.h>
+> +#include <linux/libfdt.h>
+>  #include <linux/err.h>
+>  #include <linux/idr.h>
+> 
+> @@ -33,7 +35,9 @@ struct fragment {
+> 
+>  /**
+>   * struct overlay_changeset
+> + * @id:			changeset identifier
+>   * @ovcs_list:		list on which we are located
+> + * @fdt:		FDT that was unflattened to create @overlay_tree
+>   * @overlay_tree:	expanded device tree that contains the fragment nodes
+>   * @count:		count of fragment structures
+>   * @fragments:		fragment nodes in the overlay expanded device tree
+> @@ -43,6 +47,7 @@ struct fragment {
+>  struct overlay_changeset {
+>  	int id;
+>  	struct list_head ovcs_list;
+> +	const void *fdt;
+>  	struct device_node *overlay_tree;
+>  	int count;
+>  	struct fragment *fragments;
+> @@ -503,7 +508,8 @@ static struct device_node *find_target_node(struct
+> device_node *info_node)
+> 
+>  /**
+>   * init_overlay_changeset() - initialize overlay changeset from overlay
+> tree
+> - * @ovcs	Overlay changeset to build
+> + * @ovcs:	Overlay changeset to build
+> + * @fdt:	the FDT that was unflattened to create @tree
+>   * @tree:	Contains all the overlay fragments and overlay fixup nodes
+>   *
+>   * Initialize @ovcs.  Populate @ovcs->fragments with node information from
+> @@ -514,7 +520,7 @@ static struct device_node *find_target_node(struct
+> device_node *info_node) * detected in @tree, or -ENOSPC if idr_alloc()
+> error.
+>   */
+>  static int init_overlay_changeset(struct overlay_changeset *ovcs,
+> -		struct device_node *tree)
+> +		const void *fdt, struct device_node *tree)
+>  {
+>  	struct device_node *node, *overlay_node;
+>  	struct fragment *fragment;
+> @@ -535,6 +541,7 @@ static int init_overlay_changeset(struct
+> overlay_changeset *ovcs, pr_debug("%s() tree is not root\n", __func__);
+> 
+>  	ovcs->overlay_tree = tree;
+> +	ovcs->fdt = fdt;
+> 
+>  	INIT_LIST_HEAD(&ovcs->ovcs_list);
+> 
+> @@ -606,6 +613,7 @@ static int init_overlay_changeset(struct
+> overlay_changeset *ovcs, }
+> 
+>  	if (!cnt) {
+> +		pr_err("no fragments or symbols in overlay\n");
+>  		ret = -EINVAL;
+>  		goto err_free_fragments;
+>  	}
+> @@ -642,11 +650,24 @@ static void free_overlay_changeset(struct
+> overlay_changeset *ovcs) }
+>  	kfree(ovcs->fragments);
+> 
+> +	/*
+> +	 * TODO
+> +	 *
+> +	 * would like to: kfree(ovcs->overlay_tree);
+> +	 * but can not since drivers may have pointers into this data
+> +	 *
+> +	 * would like to: kfree(ovcs->fdt);
+> +	 * but can not since drivers may have pointers into this data
+> +	 */
+> +
+
+I assume you'll fix it at some point ? :-)
+
+>  	kfree(ovcs);
+>  }
+> 
+> -/**
+> +/*
+> + * internal documentation
+> + *
+>   * of_overlay_apply() - Create and apply an overlay changeset
+> + * @fdt:	the FDT that was unflattened to create @tree
+>   * @tree:	Expanded overlay device tree
+>   * @ovcs_id:	Pointer to overlay changeset id
+>   *
+> @@ -685,21 +706,29 @@ static void free_overlay_changeset(struct
+> overlay_changeset *ovcs) * id is returned to *ovcs_id.
+>   */
+> 
+> -int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+> +static int of_overlay_apply(const void *fdt, struct device_node *tree,
+> +		int *ovcs_id)
+>  {
+>  	struct overlay_changeset *ovcs;
+>  	int ret = 0, ret_revert, ret_tmp;
+> 
+> -	*ovcs_id = 0;
+> +	/*
+> +	 * As of this point, fdt and tree belong to the overlay changeset.
+> +	 * overlay changeset code is responsible for freeing them.
+> +	 */
+> 
+>  	if (devicetree_corrupt()) {
+>  		pr_err("devicetree state suspect, refuse to apply overlay\n");
+> +		kfree(fdt);
+> +		kfree(tree);
+>  		ret = -EBUSY;
+>  		goto out;
+>  	}
+> 
+>  	ovcs = kzalloc(sizeof(*ovcs), GFP_KERNEL);
+>  	if (!ovcs) {
+> +		kfree(fdt);
+> +		kfree(tree);
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> @@ -709,12 +738,17 @@ int of_overlay_apply(struct device_node *tree, int
+> *ovcs_id)
+> 
+>  	ret = of_resolve_phandles(tree);
+>  	if (ret)
+> -		goto err_free_overlay_changeset;
+> +		goto err_free_tree;
+> 
+> -	ret = init_overlay_changeset(ovcs, tree);
+> +	ret = init_overlay_changeset(ovcs, fdt, tree);
+>  	if (ret)
+> -		goto err_free_overlay_changeset;
+> +		goto err_free_tree;
+> 
+> +	/*
+> +	 * after overlay_notify(), ovcs->overlay_tree related pointers may have
+> +	 * leaked to drivers, so can not kfree() tree, aka ovcs->overlay_tree;
+> +	 * and can not free fdt, aka ovcs->fdt
+> +	 */
+>  	ret = overlay_notify(ovcs, OF_OVERLAY_PRE_APPLY);
+>  	if (ret) {
+>  		pr_err("overlay changeset pre-apply notify error %d\n", ret);
+> @@ -754,6 +788,9 @@ int of_overlay_apply(struct device_node *tree, int
+> *ovcs_id)
+> 
+>  	goto out_unlock;
+> 
+> +err_free_tree:
+> +	kfree(tree);
+> +
+>  err_free_overlay_changeset:
+>  	free_overlay_changeset(ovcs);
+> 
+> @@ -766,7 +803,59 @@ int of_overlay_apply(struct device_node *tree, int
+> *ovcs_id)
+> 
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(of_overlay_apply);
+> +
+> +int of_overlay_fdt_apply(void *overlay_fdt, int *ovcs_id)
+
+Can you make the overlay_fdt pointer const ?
+
+Apart from that the patch looks OK to me.
+
+> +{
+> +	const void *new_fdt;
+> +	int ret;
+> +	u32 size;
+> +	struct device_node *overlay_root;
+> +
+> +	*ovcs_id = 0;
+> +	ret = 0;
+> +
+> +	if (fdt_check_header(overlay_fdt)) {
+> +		pr_err("Invalid overlay_fdt header\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	size = fdt_totalsize(overlay_fdt);
+> +
+> +	/*
+> +	 * Must create permanent copy of FDT because of_fdt_unflatten_tree()
+> +	 * will create pointers to the passed in FDT in the unflattened tree.
+> +	 */
+> +	new_fdt = kmemdup(overlay_fdt, size, GFP_KERNEL);
+> +	if (!new_fdt)
+> +		return -ENOMEM;
+> +
+> +	of_fdt_unflatten_tree(new_fdt, NULL, &overlay_root);
+> +	if (!overlay_root) {
+> +		pr_err("unable to unflatten overlay_fdt\n");
+> +		ret = -EINVAL;
+> +		goto out_free_new_fdt;
+> +	}
+> +
+> +	ret = of_overlay_apply(new_fdt, overlay_root, ovcs_id);
+> +	if (ret < 0) {
+> +		/*
+> +		 * new_fdt and overlay_root now belong to the overlay
+> +		 * changeset.
+> +		 * overlay changeset code is responsible for freeing them.
+> +		 */
+> +		goto out;
+> +	}
+> +
+> +	return 0;
+> +
+> +
+> +out_free_new_fdt:
+> +	kfree(new_fdt);
+> +
+> +out:
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(of_overlay_fdt_apply);
+> 
+>  /*
+>   * Find @np in @tree.
+
+-- 
+Regards,
+
+Laurent Pinchart
