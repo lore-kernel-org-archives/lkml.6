@@ -1,139 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966513AbeCAK2o (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:28:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38114 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935764AbeCAK2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:28:40 -0500
-Date: Thu, 1 Mar 2018 11:28:36 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Samuel Holland <samuel@sholland.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 0/3] Allwinner sunxi message box support
-Message-ID: <20180301102836.odxjy4lak2spujii@flea>
-References: <20180228022714.30068-1-samuel@sholland.org>
- <20180228082459.o3juhfiml3logxwl@flea>
- <398d54c4-8bfc-c459-f7d4-fba4665d1250@sholland.org>
+        id S966944AbeCAK2y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:28:54 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35206 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966528AbeCAK2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:28:47 -0500
+X-Google-Smtp-Source: AG47ELtoSJYUvPnxbPbhVVEMwQOQz8BHl4liI50mPGSR1ZGIlOGD1X4ZhzuO0LFo5YqHB0BsjcvQVT6CaqhKBAuAwMQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q2dip6buehh4gsh7"
-Content-Disposition: inline
-In-Reply-To: <398d54c4-8bfc-c459-f7d4-fba4665d1250@sholland.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <2b4c650d27e59c81903fa4c2526bf18a2cf2d243.1519882849.git.jan.kiszka@siemens.com>
+References: <cover.1519882849.git.jan.kiszka@siemens.com> <2b4c650d27e59c81903fa4c2526bf18a2cf2d243.1519882849.git.jan.kiszka@siemens.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 1 Mar 2018 12:28:45 +0200
+Message-ID: <CAHp75VcKqgmVV7-sj9kfzcAyO-sTCt54vpPx3RL3TMcRp5i=EA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] PCI: Scan all functions when running over Jailhouse
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Benedikt Spranger <b.spranger@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 1, 2018 at 7:40 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
+> have a function 0.  Therefore, Linux scans for devices at function 0
+> (devfn 0/8/16/...) and only scans for other functions if function 0
+> has its Multi-Function Device bit set or ARI or SR-IOV indicate
+> there are more functions.
+>
+> The Jailhouse hypervisor may pass individual functions of a
+> multi-function device to a guest without passing function 0, which
+> means a Linux guest won't find them.
+>
+> Change Linux PCI probing so it scans all function numbers when
+> running as a guest over Jailhouse.
+>
+> This is technically prohibited by the spec, so it is possible that
+> PCI devices without the Multi-Function Device bit set may have
+> unexpected behavior in response to this probe.
+>
+> Derived from original patch by Benedikt Spranger.
+>
 
---q2dip6buehh4gsh7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Hi,
+One nit below.
 
-On Wed, Feb 28, 2018 at 11:18:50AM -0600, Samuel Holland wrote:
-> On 02/28/18 02:24, Maxime Ripard wrote:
-> > On Tue, Feb 27, 2018 at 08:27:11PM -0600, Samuel Holland wrote:
-> >> This series adds support for the "hardware message box" in recent
-> >> Allwinner sunxi SoCs, used for communication with the ARISC management
-> >> processor (the platform's equivalent of the ARM SCP). The end goal is =
-to
-> >> use the arm_scpi driver as a client, communicating with firmware runni=
-ng
-> >> on the ARISC CPU.
-> >>
-> >> This driver has been tested with the base arm_scpi driver (which sends
-> >> the SCPI_CMD_SCPI_CAPABILITIES command at probe time) and an in-progre=
-ss
-> >> firmware application running on the ARISC CPU. Because no firmware for
-> >> the other end of the mailbox is complete at the moment, I have not
-> >> included changes to the SoC device trees.
-> >=20
-> > This is not directly related to this series, but what is your end goal
-> > with regard to SCPI? What features do you expect to have there?
->=20
-> Current plans are to support in SCPI:
-> - SMP bringup and CPU hotplug (via PSCI in ATF)
-> - System reset and poweroff (via PSCI in ATF)
-> - System standby and suspend (via PSCI in ATF)
-> - DVFS for ARM CPUs
-> - Clock control for clocks in R_PRCM (e.g. R_CIR_RX)
-> - Thermal sensor reading
->=20
-> Other planned features of the firmware:
-> - System wakeup from poweroff (via GPIO or interrupt to firmware)
-> - System power/suspend LED control (connected to GPIO or PMIC GPIO)
-> - Polling of thermal sensor in firmware for thermal throttling
+> CC: Benedikt Spranger <b.spranger@linutronix.de>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  arch/x86/pci/legacy.c |  4 +++-
+>  drivers/pci/probe.c   | 22 +++++++++++++++++++---
+>  2 files changed, 22 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+> index 1cb01abcb1be..dfbe6ac38830 100644
+> --- a/arch/x86/pci/legacy.c
+> +++ b/arch/x86/pci/legacy.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/init.h>
+>  #include <linux/export.h>
+>  #include <linux/pci.h>
+> +#include <asm/jailhouse_para.h>
+>  #include <asm/pci_x86.h>
+>
+>  /*
+> @@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
+>
+>  void pcibios_scan_specific_bus(int busn)
+>  {
+> +       int stride = jailhouse_paravirt() ? 1 : 8;
+>         int devfn;
+>         u32 l;
+>
+>         if (pci_find_bus(0, busn))
+>                 return;
+>
+> -       for (devfn = 0; devfn < 256; devfn += 8) {
+> +       for (devfn = 0; devfn < 256; devfn += stride) {
+>                 if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+>                     l != 0x0000 && l != 0xffff) {
+>                         DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index ef5377438a1e..da22d6d216f8 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/pci-aspm.h>
+>  #include <linux/aer.h>
+>  #include <linux/acpi.h>
+> +#include <linux/hypervisor.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/pm_runtime.h>
+>  #include "pci.h"
+> @@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
+>  {
+>         unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
+>         unsigned int start = bus->busn_res.start;
+> -       unsigned int devfn, cmax, max = start;
+> +       unsigned int devfn, fn, cmax, max = start;
+>         struct pci_dev *dev;
+> +       int nr_devs;
+>
+>         dev_dbg(&bus->dev, "scanning bus\n");
+>
+>         /* Go find them, Rover! */
+> -       for (devfn = 0; devfn < 0x100; devfn += 8)
+> -               pci_scan_slot(bus, devfn);
 
-Nice.
+> +       for (devfn = 0; devfn < 0x100; devfn += 8) {
 
-> > I'm asking because last time we discussed this, SCPI wasn't able to abs=
-tract
-> > all the features the PMIC provides, and thus Linux needed to still be a=
-ble to
-> > access it.
->=20
-> This should only be an issue for devices with AXP PMICs.
+Since you touch this line perhaps make sense to unify with above, i.e.
+0x100 -> 256 ?
 
-So this should only be an issue for most devices out there :)
+> +               nr_devs = pci_scan_slot(bus, devfn);
+> +
+> +               /*
+> +                * The Jailhouse hypervisor may pass individual functions of a
+> +                * multi-function device to a guest without passing function 0.
+> +                * Look for them as well.
+> +                */
+> +               if (jailhouse_paravirt() && nr_devs == 0) {
+> +                       for (fn = 1; fn < 8; fn++) {
+> +                               dev = pci_scan_single_device(bus, devfn + fn);
+> +                               if (dev)
+> +                                       dev->multifunction = 1;
+> +                       }
+> +               }
+> +       }
+>
+>         /* Reserve buses for SR-IOV capability */
+>         used_buses = pci_iov_bus_range(bus);
+> --
+> 2.13.6
+>
 
-> Other devices with GPIO or simple I=B2C regulator control, such as H3
-> and H5 boards, can have all necessary features described with
-> standard SCPI commands. SCPI provides for 127 vendor-defined
-> "extended" commands, which could be used to build a full AXP PMIC
-> driver, or simply provide commands to read/write PMIC registers.
 
-So I'm not sure whether it was your plan, but the last plan that was
-discussed was that the whole RSB bus would be put outside of Linux
-control, hence why I was asking.
 
-And in this case the RSB bus is used to access the PMIC, but also its
-secondary devices such as the audio codec on the AC100/AC200, so we
-really need to have access to the RSB bus in Linux. If you can
-implement that through custom SCPI commands, that works for me though.
-
-Another thing that I'm not quire sure about is how would interrupts be
-reported throuh that mecanism? We want to use the PMIC as an interrupt
-controller for things like VBUS detection, GPIOs or the Jack detect in
-the codec. Is that doable?
-
-> For the moment I'm not concerned with battery powered devices. So
-> right now the relevant boards either a) don't have a PMIC, or b) can
-> have everything but DVFS voltage hard-coded in the firmware.
-
-I wasn't asking you to implement everything from the start, just that
-you consider the rest in your design.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---q2dip6buehh4gsh7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqX1dMACgkQ0rTAlCFN
-r3QhAQ/9EnasFCsnPOlSBd8Lq9/+KLWQE3QSm4Xtzz4p1ZPF/e0Ph62kHmd86J62
-smdkdbOfONuxRbIWw8qUFeQ5+HKRxUJDs58XnVK8pT9ylZBHhfphUPDe/QpzAJRf
-1mdvceU1d01e6Ea/b4/QzMkt9QzasFMkqd1ZfUT6WE7DZp3pRy2UHGoOX00uG5Kf
-1GaaJsLLfeMo8Qr/pealxr2PkoS+NPhpA+N0zOJFEsKkz/bblQaMYUEFgU0Q6VFh
-H1z7qZnRKHzAMvkRUthNSJ3UISI1gKoRWo3SX9p2XtdKOzYxhqqYTUodRgcww10+
-oJvnfeoD5hG+Hc5UhPIcIYuZAZMbdMYo9wNkQFtS+KpBGUEWU4wFG7Uql5lqv6kq
-SBFhrt92IAF3vUVo7+RX9ZKKOv6JSJJXjiJVngijX7lwcmMNTeUW2NWoc7ZOUyOc
-o2ImMrgyNIR1I7Z6Flj81EqVtorW1/WlthBftbob79rajPiMudyCAVriJQngoYYT
-Dfe33ns25F1KqWhJ+oJZyCi/Yclji6P6CIY4JuAa1InG4iBsNiKRXRkkY+xOEh0U
-6Z00IkiNOs4s+VFD1+VhBIguNsaqN4ulbmIuucyFuf3LZznf/gwdTW5h6oHAZ4dD
-Aed6lDU99COANPbbJPoJFZeHXFaKwePruoNQtJ65yht4lUXtN6Y=
-=4jx+
------END PGP SIGNATURE-----
-
---q2dip6buehh4gsh7--
+-- 
+With Best Regards,
+Andy Shevchenko
