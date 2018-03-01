@@ -1,45 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030317AbeCAMLQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:11:16 -0500
-Received: from mail-io0-f169.google.com ([209.85.223.169]:40133 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030253AbeCAMLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:11:14 -0500
-X-Google-Smtp-Source: AG47ELu6oI7rinhXRTQwdgc3+j/i0J9g9fu/bLE4ke/3nVUE8brhttHUiMPZQam4xnZYao/nUw8yGg==
-Date: Thu, 1 Mar 2018 04:11:11 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Aaron Lu <aaron.lu@intel.com>
-cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
-In-Reply-To: <20180301062845.26038-2-aaron.lu@intel.com>
-Message-ID: <alpine.DEB.2.20.1803010410580.91729@chino.kir.corp.google.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com> <20180301062845.26038-2-aaron.lu@intel.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1030325AbeCAMP3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 07:15:29 -0500
+Received: from ozlabs.org ([103.22.144.67]:37307 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030253AbeCAMP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 07:15:26 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 1 Mar 2018 23:15:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: jmorris@namei.org, jforbes@redhat.com, mjg59@google.com,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mtk.manpages@gmail.com
+Subject: Re: linux-next: UEFI Secure boot lockdown patchset
+Message-ID: <20180301231511.4dd1e79f@canb.auug.org.au>
+In-Reply-To: <26787.1519902415@warthog.procyon.org.uk>
+References: <26787.1519902415@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4==S0+IHk4B=DVeUSOUGCCI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018, Aaron Lu wrote:
+--Sig_/4==S0+IHk4B=DVeUSOUGCCI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Matthew Wilcox found that all callers of free_pcppages_bulk() currently
-> update pcp->count immediately after so it's natural to do it inside
-> free_pcppages_bulk().
-> 
-> No functionality or performance change is expected from this patch.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+Hi David,
 
-Acked-by: David Rientjes <rientjes@google.com>
+On Thu, 01 Mar 2018 11:06:55 +0000 David Howells <dhowells@redhat.com> wrot=
+e:
+>
+> Can you pull the following branch into linux-next please?  It does three
+> things:
+>=20
+>  (1) It restricts various accesses userspace may make upon the kernel whe=
+n the
+>      kernel is locked down.
+>=20
+>  (2) It engages the lockdown if UEFI Secure Boot mode is detected.
+>=20
+>  (3) It passes the UEFI Secure Boot mode indication across kexec.
+>=20
+> The restrictions include:
+>=20
+>  - Enforcing the use of module signatures
+>  - Enforcing the use of kexec image signatures
+>  - Requring IMA to use secure boot rules
+>  - Disabling:
+>    - The kexec_load() syscall
+>    - Use of /dev/{mem,kmem,port,kcore}
+>    - Hibernation
+>    - PCI BAR access
+>    - Direct I/O port access
+>  - Preventing direct port specification in drivers:
+>    - SCSI EATA
+>    - TIOCSSERIAL
+>    - Module parameters
+>  - Restricting:
+>    - MSR access
+>    - Certain ACPI features
+>    - kprobes
+>    - BPF
+>    - Perf
+>    - Debugfs
+>=20
+> The aim of the restrictions is twofold:
+>=20
+>   (1) Prevent userspace from altering the kernel image directly (eg. by
+>       /dev/mem) or indirectly (eg. by manipulating a device to do DMA);
+>=20
+>   (2) Prevent userspace from accessing crypto data stored in the kernel
+>       (eg. filesystem keys).
+>=20
+> A warning is logged if a restriction is triggered for which I've written a
+> manpage that is referenced in the message (see attached).
+
+Added from tomorrow.  I actually used this url:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#efi-l=
+ock-down
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/4==S0+IHk4B=DVeUSOUGCCI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqX7s8ACgkQAVBC80lX
+0GxxiAf/fVZB9wRNZSPSOiTYZ7yUkUKgnGzIoKURgobYx+FmY8UIvKIMoq75km5T
+aeeG0HKenRwxAWSxPvVb0fsGtPOLTCAaltB1kWXLHZbAKL8LDAgA8Nz69D7oh+dw
+1YtBQkjAz7uyZjUGvQTSeH2jaSCw5tgvdn/hZoI1c9+X68Ululdacw/VKc4T/i46
+H7qpgn3SalPcfz1UHqeFYbt2lDKZPnYuqxZ2Tcmb3gBlc71O64VCLndds2IwDZ1p
+3xP7zv58Z54LHx69tbdI8LzwTItbL4DF66CGP5eYhUdZNlww1TZvOF7fG4+BbSqR
+jl+SWSAVV99QPh7KEPX74slCfyPj1w==
+=vg3S
+-----END PGP SIGNATURE-----
+
+--Sig_/4==S0+IHk4B=DVeUSOUGCCI--
