@@ -1,145 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031345AbeCAOQm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:16:42 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031248AbeCAOPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:15:20 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: [PATCH v2 1/3] x86/kvm/hyper-v: add reenlightenment MSRs support
-Date: Thu,  1 Mar 2018 15:15:12 +0100
-Message-Id: <20180301141514.3482-2-vkuznets@redhat.com>
-In-Reply-To: <20180301141514.3482-1-vkuznets@redhat.com>
-References: <20180301141514.3482-1-vkuznets@redhat.com>
+        id S1031349AbeCAORP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:17:15 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:47058 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031061AbeCAORL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:17:11 -0500
+X-Google-Smtp-Source: AG47ELvwxPAvCYj+4VDvjFCZZHgrnwdcqjjOuFmo/JqnZdvNzPX6q+xxSLD2WsNy4oT/IMUnmf7J2Q==
+Date: Thu, 1 Mar 2018 04:17:07 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH v2] sound/pci/ice1712: replace strcpy() with strlcpy()
+Message-ID: <20180301141707.cp5dc6zbh6bur4xw@gmail.com>
+References: <20180301114535.bf3ibzcpvohyjweu@gmail.com>
+ <CAHp75Vf6kfPE_sRPj_mLMvLQfn9Fe9B_MeXqnGAHGAdzR7HX+Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5nv5xths47pkr5ye"
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf6kfPE_sRPj_mLMvLQfn9Fe9B_MeXqnGAHGAdzR7HX+Q@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nested Hyper-V/Windows guest running on top of KVM will use TSC page
-clocksource in two cases:
-- L0 exposes invariant TSC (CPUID.80000007H:EDX[8]).
-- L0 provides Hyper-V Reenlightenment support (CPUID.40000003H:EAX[13]).
 
-Exposing invariant TSC effectively blocks migration to hosts with different
-TSC frequencies, providing reenlightenment support will be needed when we
-start migrating nested workloads.
+--5nv5xths47pkr5ye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Implement rudimentary support for reenlightenment MSRs. For now, these are
-just read/write MSRs with no effect.
+Replace unsafe usages of strcpy() to copy the name
+argument into the sid.name buffer with strlcpy()
+to guard against possible buffer overflows.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
----
- arch/x86/include/asm/kvm_host.h |  4 ++++
- arch/x86/kvm/hyperv.c           | 21 +++++++++++++++++++++
- arch/x86/kvm/x86.c              | 12 +++++++++++-
- 3 files changed, 36 insertions(+), 1 deletion(-)
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 516798431328..eff8aa880333 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -752,6 +752,10 @@ struct kvm_hv {
- 	u64 hv_crash_ctl;
- 
- 	HV_REFERENCE_TSC_PAGE tsc_ref;
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/sound/pci/ice1712/juli.c b/sound/pci/ice1712/juli.c
+index 0dbaccf61f33270608..21806bab4757241a9e 100644
+--- a/sound/pci/ice1712/juli.c
++++ b/sound/pci/ice1712/juli.c
+@@ -27,6 +27,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+=20
+@@ -425,10 +426,9 @@ DECLARE_TLV_DB_SCALE(juli_master_db_scale, -6350, 50, =
+1);
+ static struct snd_kcontrol *ctl_find(struct snd_card *card,
+ 				     const char *name)
+ {
+-	struct snd_ctl_elem_id sid;
+-	memset(&sid, 0, sizeof(sid));
+-	/* FIXME: strcpy is bad. */
+-	strcpy(sid.name, name);
++	struct snd_ctl_elem_id sid =3D {0};
 +
-+	u64 hv_reenlightenment_control;
-+	u64 hv_tsc_emulation_control;
-+	u64 hv_tsc_emulation_status;
- };
- 
- enum kvm_irqchip_mode {
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index dc97f2544b6f..05f414525538 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -736,6 +736,9 @@ static bool kvm_hv_msr_partition_wide(u32 msr)
- 	case HV_X64_MSR_CRASH_CTL:
- 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
- 	case HV_X64_MSR_RESET:
-+	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_STATUS:
- 		r = true;
- 		break;
- 	}
-@@ -981,6 +984,15 @@ static int kvm_hv_set_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 data,
- 			kvm_make_request(KVM_REQ_HV_RESET, vcpu);
- 		}
- 		break;
-+	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
-+		hv->hv_reenlightenment_control = data;
-+		break;
-+	case HV_X64_MSR_TSC_EMULATION_CONTROL:
-+		hv->hv_tsc_emulation_control = data;
-+		break;
-+	case HV_X64_MSR_TSC_EMULATION_STATUS:
-+		hv->hv_tsc_emulation_status = data;
-+		break;
- 	default:
- 		vcpu_unimpl(vcpu, "Hyper-V uhandled wrmsr: 0x%x data 0x%llx\n",
- 			    msr, data);
-@@ -1105,6 +1117,15 @@ static int kvm_hv_get_msr_pw(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
- 	case HV_X64_MSR_RESET:
- 		data = 0;
- 		break;
-+	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
-+		data = hv->hv_reenlightenment_control;
-+		break;
-+	case HV_X64_MSR_TSC_EMULATION_CONTROL:
-+		data = hv->hv_tsc_emulation_control;
-+		break;
-+	case HV_X64_MSR_TSC_EMULATION_STATUS:
-+		data = hv->hv_tsc_emulation_status;
-+		break;
- 	default:
- 		vcpu_unimpl(vcpu, "Hyper-V unhandled rdmsr: 0x%x\n", msr);
- 		return 1;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c53298dfbf50..d97ab134b2d9 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1026,7 +1026,11 @@ static u32 emulated_msrs[] = {
- 	HV_X64_MSR_VP_RUNTIME,
- 	HV_X64_MSR_SCONTROL,
- 	HV_X64_MSR_STIMER0_CONFIG,
--	HV_X64_MSR_APIC_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
-+	HV_X64_MSR_APIC_ASSIST_PAGE,
-+	HV_X64_MSR_REENLIGHTENMENT_CONTROL, HV_X64_MSR_TSC_EMULATION_CONTROL,
-+	HV_X64_MSR_TSC_EMULATION_STATUS,
++	strlcpy(sid.name, name, sizeof(sid.name));
+ 	sid.iface =3D SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	return snd_ctl_find_id(card, &sid);
+ }
+diff --git a/sound/pci/ice1712/quartet.c b/sound/pci/ice1712/quartet.c
+index d145b5eb7ff86d978d..5bc836241c977feb51 100644
+--- a/sound/pci/ice1712/quartet.c
++++ b/sound/pci/ice1712/quartet.c
+@@ -26,6 +26,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+ #include <sound/info.h>
+@@ -785,10 +786,9 @@ DECLARE_TLV_DB_SCALE(qtet_master_db_scale, -6350, 50, =
+1);
+ static struct snd_kcontrol *ctl_find(struct snd_card *card,
+ 				     const char *name)
+ {
+-	struct snd_ctl_elem_id sid;
+-	memset(&sid, 0, sizeof(sid));
+-	/* FIXME: strcpy is bad. */
+-	strcpy(sid.name, name);
++	struct snd_ctl_elem_id sid =3D {0};
 +
-+	MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
- 	MSR_KVM_PV_EOI_EN,
- 
- 	MSR_IA32_TSC_ADJUST,
-@@ -2325,6 +2329,9 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
- 	case HV_X64_MSR_CRASH_CTL:
- 	case HV_X64_MSR_STIMER0_CONFIG ... HV_X64_MSR_STIMER3_COUNT:
-+	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_STATUS:
- 		return kvm_hv_set_msr_common(vcpu, msr, data,
- 					     msr_info->host_initiated);
- 	case MSR_IA32_BBL_CR_CTL3:
-@@ -2551,6 +2558,9 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case HV_X64_MSR_CRASH_P0 ... HV_X64_MSR_CRASH_P4:
- 	case HV_X64_MSR_CRASH_CTL:
- 	case HV_X64_MSR_STIMER0_CONFIG ... HV_X64_MSR_STIMER3_COUNT:
-+	case HV_X64_MSR_REENLIGHTENMENT_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_CONTROL:
-+	case HV_X64_MSR_TSC_EMULATION_STATUS:
- 		return kvm_hv_get_msr_common(vcpu,
- 					     msr_info->index, &msr_info->data);
- 		break;
--- 
-2.14.3
++	strlcpy(sid.name, name, sizeof(sid.name));
+ 	sid.iface =3D SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	return snd_ctl_find_id(card, &sid);
+ }
+--=20
+2.16.2
+
+--5nv5xths47pkr5ye
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlqYC2MACgkQruvLfWhy
+VBnS6A/9Hvtn6RWzEjUFO9rAVKI8bodYigHidWTkmrZ/9/v9AWhoF9n2/SZWtzPa
+1nz4ycET3qvGvHCWAwkPdUm5MfN7oBlIi1DxV6pacpEOVeor9yNOhnrBcTe8a9Vn
+wmXCWaNyhvco0zSQ1tHWQQojtB6WnQU0MDi0RzaNRqMu7cqWvHCvFPuCvdzYn3jK
+1u+WbXSqvSCUdew+tXRdcnKZ5ZIomsmymsbUivFUH/Lg38GUC9otmt1ZWVNr2dOl
+TyiAsnVCLziT+Vvn1XsiEDYCn+mNQ7F6RipXgY2URZkRjIIuhAZdBwpavNhBCMvl
+cbujtepxg3nib/v7dgeH7CfvszODSwM8mu/b348elhsLtBMsKc5KOHK3G4Z6R1LI
++BuTh/CaSpW7kOWK3ApmsPsYBnYeBheM2YmqRtH19pz/UVjkf01XBrireddUUjC/
+1muSK3Yrg0Ww5Ja25mkgI8nPg0gDMBHf3cVd9Fb9iJLt3NmsJS2oEvC2MsPy6Fs7
+/T0MO9PHWoVuK2E+rDuKXiphQRNB5+j+LDxgEVgr9/cfO8qPu/gaRwUb81DVCPXL
+g0n+FHvoX0mPgU0iBPrFbJ1zl6J5iapUMRO4ZxBMZ6EvHFxAqbhCpGNGixbs6+hR
+nBRhoqVz+klW406GWAmiv+Y7Vy/Ia1elgQG8/eY/grby/0Srjpk=
+=gZ4i
+-----END PGP SIGNATURE-----
+
+--5nv5xths47pkr5ye--
