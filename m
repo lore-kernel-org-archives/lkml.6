@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033306AbeCAQw2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:52:28 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51793 "EHLO
+        id S1033253AbeCAQwH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:52:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:51713 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033014AbeCAQwY (ORCPT
+        with ESMTP id S1033015AbeCAQwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:52:24 -0500
-Message-Id: <20180301165150.155899327@linutronix.de>
+        Thu, 1 Mar 2018 11:52:03 -0500
+Message-Id: <20180301163331.987775783@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Thu, 01 Mar 2018 17:33:34 +0100
+Date: Thu, 01 Mar 2018 17:33:31 +0100
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -22,58 +22,69 @@ Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Kevin Easton <kevin@guarana.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-input@vger.kernel.org
-Subject: [RFC/RFT patch 3/7] Input: evdev - Conflate clock MONOTONIC and
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
  BOOTTIME
-References: <20180301163331.987775783@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline;
- filename=Input--evdev---Conflate-clock-MONOTONIC-and-BOOTTIME.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that clock MONOTONIC and BOOTTIME are indentical remove all the special
-casing. The user space visible interfaces still support both clocks.
+While working through the melted spectrum induced backlog I found that last
+years discussion about unifying clock MONOTONIC and clock BOOTTIME has died
+out and obviously nobody had time to do testing on that half baken RFC patch:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org
+  https://lkml.kernel.org/r/alpine.DEB.2.20.1711180123360.2186@nanos
+
+So I sat down and revisited it a bit more carefully than last time. The
+following series is the result of this work. The main differences are:
+
+ 1) Provide CLOCK_MONOTONIC_ACTIVE which has the current CLOCK_MONOTONIC
+    behaviour, i.e. it's monotonic time since boot minus the time spent in
+    suspend.
+
+    The reason why I introduced it is that currently it's possible for user
+    space to determine the time spent in suspend by subtracting clock
+    monotonic and clock boot time time stamps. When CLOCK_MONOTONIC behaves
+    like CLOCK_BOOTTIME then this is not longer possible.
+
+    As a side effect when CLOCK_MONOTONIC_ACTIVE is supported by a kernel
+    then this is also an indicator that CLOCK_MONOTONIC and CLOCK_BOOTTIME
+    are identical. So it's possible to determine this w/o playing games
+    with kernel versions etc. Older kernels simply return -EiNVAL if
+    CLOCK_MONOTONIC_ACTIVE is requested in clock_gettime().
+
+ 2) Fixed a few places which I missed last time, which means also that my
+    warning in the original changelog was justified.
+
+ 3) Consolidated the core users to get rid of the seperate implementations
+    for the two clocks
+
+Note, there are user space visible side effects. The difference between
+CLOCK_MONOTONIC and CLOCK_BOOTTIME is well documented and it's unclear
+whether applications rely on it or not.
+
+This really needs lot of testing, documentation updates and more input from
+userspace folks to make a final decision.
+
+Thanks,
+
+	tglx
+
 ---
- drivers/input/evdev.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -31,7 +31,6 @@
- enum evdev_clock_type {
- 	EV_CLK_REAL = 0,
- 	EV_CLK_MONO,
--	EV_CLK_BOOT,
- 	EV_CLK_MAX
- };
- 
-@@ -198,12 +197,10 @@ static int evdev_set_clk_type(struct evd
- 	case CLOCK_REALTIME:
- 		clk_type = EV_CLK_REAL;
- 		break;
-+	case CLOCK_BOOTTIME:
- 	case CLOCK_MONOTONIC:
- 		clk_type = EV_CLK_MONO;
- 		break;
--	case CLOCK_BOOTTIME:
--		clk_type = EV_CLK_BOOT;
--		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -314,8 +311,6 @@ static void evdev_events(struct input_ha
- 
- 	ev_time[EV_CLK_MONO] = ktime_get();
- 	ev_time[EV_CLK_REAL] = ktime_mono_to_real(ev_time[EV_CLK_MONO]);
--	ev_time[EV_CLK_BOOT] = ktime_mono_to_any(ev_time[EV_CLK_MONO],
--						 TK_OFFS_BOOT);
- 
- 	rcu_read_lock();
- 
+ Documentation/trace/ftrace.txt      |   14 +-----
+ drivers/input/evdev.c               |    7 ---
+ include/linux/hrtimer.h             |    2 
+ include/linux/timekeeper_internal.h |    2 
+ include/linux/timekeeping.h         |   37 +++++------------
+ include/uapi/linux/time.h           |    1 
+ kernel/time/hrtimer.c               |   16 -------
+ kernel/time/posix-stubs.c           |    2 
+ kernel/time/posix-timers.c          |   26 ++++--------
+ kernel/time/tick-common.c           |   15 ++++++
+ kernel/time/tick-internal.h         |    6 ++
+ kernel/time/tick-sched.c            |    9 ++++
+ kernel/time/timekeeping.c           |   78 ++++++++++++++++++------------------
+ kernel/time/timekeeping.h           |    1 
+ kernel/trace/trace.c                |    2 
+ 15 files changed, 104 insertions(+), 114 deletions(-)
