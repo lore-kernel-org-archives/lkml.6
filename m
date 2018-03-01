@@ -1,129 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966428AbeCAHRS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 02:17:18 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:30158 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966384AbeCAHRR (ORCPT
+        id S966447AbeCAHR7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 02:17:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S966384AbeCAHR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:17:17 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w217H6Ts025018
-X-Nifty-SrcIP: [209.85.213.44]
-X-Google-Smtp-Source: AG47ELsCMpNXA3w72am5hkEcmZFcMZJ6R7YX1NRqZqMqPhyISn81pVQtKbcWu1pKcinxVl8EpuBmERweOTpj6+pTTbY=
+        Thu, 1 Mar 2018 02:17:57 -0500
+Date: Thu, 1 Mar 2018 08:17:50 +0100
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Split page_type out from mapcount
+In-Reply-To: <20180228223157.9281-1-willy@infradead.org>
+References: <20180228223157.9281-1-willy@infradead.org>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
-References: <1519657500-15094-1-git-send-email-will.deacon@arm.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 16:16:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATktPPTHDDhS0i=3o8p=XoVXBJ1KB+3VmDp_iqn239Z8g@mail.gmail.com>
-Message-ID: <CAK7LNATktPPTHDDhS0i=3o8p=XoVXBJ1KB+3VmDp_iqn239Z8g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/12] Rewrite asm-generic/bitops/{atomic,lock}.h
- and use on arm64
-To: Will Deacon <will.deacon@arm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030107-0012-0000-0000-000005B74FD3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030107-0013-0000-0000-000019335278
+Message-Id: <20180301081750.42b135c3@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010094
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-27 0:04 GMT+09:00 Will Deacon <will.deacon@arm.com>:
-> Hi everyone,
->
-> This is version two of the RFC I previously posted here:
->
->   https://www.spinics.net/lists/arm-kernel/msg634719.html
->
-> Changes since v1 include:
->
->   * Fixed __clear_bit_unlock to work on archs with lock-based atomics
->   * Moved lock ops into bitops/lock.h
->   * Fixed build breakage on lesser-spotted architectures
->
-> Trying to fix the circular #includes introduced by pulling atomic.h
-> into btops/lock.h has been driving me insane. I've ended up moving some
-> basic BIT definitions into bits.h, but this might all be better in
-> const.h which is being proposed by Masahiro. Feedback is especially
-> welcome on this part.
+On Wed, 28 Feb 2018 14:31:53 -0800
+Matthew Wilcox <willy@infradead.org> wrote:
 
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> I want to use the _mapcount field to record what a page is in use as.
+> This can help with debugging and we can also expose that information to
+> userspace through /proc/kpageflags to help diagnose memory usage (not
+> included as part of this patch set).
+> 
+> First, we need s390 to stop using _mapcount for its own purposes;
+> Martin, I hope you have time to look at this patch.  I must confess I
+> don't quite understand what the different bits are used for in the upper
+> nybble of the _mapcount, but I tried to replicate what you were doing
+> faithfully.
 
-Info for reviewers:
+Yeah, that is a nasty bit of code. On s390 we have 2K page tables (pte)
+but 4K pages. If we use full pages for the pte tables we waste 2K of
+memory for each of the tables. So we allocate 4K and split it into two
+2K pieces. Now we have to keep track of the pieces to be able to free
+them again.
 
-You can see my patches at the following:
-
-1/5: https://patchwork.kernel.org/patch/10235457/
-2/5: https://patchwork.kernel.org/patch/10235461/
-3/5: https://patchwork.kernel.org/patch/10235463/
-4/5: https://patchwork.kernel.org/patch/10235469/
-5/5: https://patchwork.kernel.org/patch/10235471/
-
-
-5/5 has conflict with Will's 2/12.
-
-Fortunately, it is at the tail of the series.
-It is easy to pick/drop/change
-when we decide how to organize it.
-
-
-
-
-
-
-
-
-> I've not bothered optimising for the case of a 64-bit, big-endian
-> architecture that uses the generic implementation of atomic64_t because
-> it's both messy and hypothetical. The code here should still work
-> correctly for that case, it just sucks (as does the implementation
-> currently in mainline).
->
-> Cheers,
->
-> Will
->
-> --->8
->
-> Will Deacon (12):
->   h8300: Don't include linux/kernel.h in asm/atomic.h
->   m68k: Don't use asm-generic/bitops/lock.h
->   asm-generic: Move some macros from linux/bitops.h to a new bits.h file
->   openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
->   sh: Don't pull in all of linux/bitops.h in asm/cmpxchg-xchg.h
->   arm64: fpsimd: include <linux/init.h> in fpsimd.h
->   arm64: lse: Include compiler_types.h and export.h for out-of-line
->     LL/SC
->   arm64: cmpxchg: Include build_bug.h instead of bug.h for BUILD_BUG
->   asm-generic/bitops/atomic.h: Rewrite using atomic_fetch_*
->   asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*
->   arm64: Replace our atomic/lock bitop implementations with asm-generic
->   arm64: bitops: Include <asm-generic/bitops/ext2-atomic-setbit.h>
->
->  arch/arm64/include/asm/bitops.h     |  21 +---
->  arch/arm64/include/asm/cmpxchg.h    |   2 +-
->  arch/arm64/include/asm/fpsimd.h     |   1 +
->  arch/arm64/include/asm/lse.h        |   2 +
->  arch/arm64/lib/Makefile             |   2 +-
->  arch/arm64/lib/bitops.S             |  76 ---------------
->  arch/h8300/include/asm/atomic.h     |   4 +-
->  arch/m68k/include/asm/bitops.h      |   6 +-
->  arch/openrisc/include/asm/cmpxchg.h |   3 +-
->  arch/sh/include/asm/cmpxchg-xchg.h  |   3 +-
->  include/asm-generic/bitops/atomic.h | 188 +++++++-----------------------------
->  include/asm-generic/bitops/lock.h   |  68 ++++++++++---
->  include/asm-generic/bits.h          |  26 +++++
->  include/linux/bitops.h              |  22 +----
->  14 files changed, 135 insertions(+), 289 deletions(-)
->  delete mode 100644 arch/arm64/lib/bitops.S
->  create mode 100644 include/asm-generic/bits.h
->
-> --
-> 2.1.4
->
-
-
+I try to give your patch a spin today. It should be stand-alone, no ?
 
 -- 
-Best Regards
-Masahiro Yamada
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
