@@ -1,73 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162925AbeCAXUt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:20:49 -0500
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:36405 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162891AbeCAXUq (ORCPT
+        id S1162962AbeCAXYX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:24:23 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45814 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162870AbeCAXYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:20:46 -0500
-X-Google-Smtp-Source: AG47ELuFjxbzYZT6CZDhrw9cZkcVRAvgwZtCqAuyZaWilzgR855FAz2DtJOgCj3NlVdDhaGBh3SM2w==
-Date: Thu, 1 Mar 2018 16:20:38 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Stephen Bates <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-Message-ID: <20180301232038.GO19007@ziepe.ca>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
- <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
- <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
- <20180301184249.GI19007@ziepe.ca>
- <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
- <20180301224540.GL19007@ziepe.ca>
- <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
+        Thu, 1 Mar 2018 18:24:21 -0500
+X-Google-Smtp-Source: AG47ELuMuGoxu63UXaGq4ObhdfaY+iusLUXbvJ2ernlIQDs+C5WZA8YOVyMD3WmwJApPQHNKr4IOsg==
+Date: Thu, 1 Mar 2018 17:24:19 -0600
+From: Rob Herring <robh@kernel.org>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
+Message-ID: <20180301232419.ypehol54rhqrqjds@rob-hp-laptop>
+References: <20180222143825.1517-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180222143825.1517-1-marcel@ziswiler.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 11:00:51PM +0000, Stephen  Bates wrote:
-
-> > Seems like a very subtle and hard to debug performance trap to leave
-> > for the users, and pretty much the only reason to use P2P is
-> > performance... So why have such a dangerous interface?
+On Thu, Feb 22, 2018 at 03:38:25PM +0100, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> P2P is about offloading the memory and PCI subsystem of the host CPU
-> and this is achieved no matter which p2p_dev is used.
+> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+> during registration") ULPI has been broken on Tegra20 leading to the
+> following error message during boot:
+> 
+> [    1.974698] ulpi_phy_power_on: ulpi write failed
+> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
+> 
+> Debugging through the changes and finally also consulting the TRM
+> revealed that rather than the CDEV2 clock off OSC requiring such pin
+> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+> just worked by chance of that one having been enabled which Stephen's
+> commit now changed when reparenting sclk away from pll_p_out4 leaving
+> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+> as the ULPI PHY clock.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+> Changes in v2:
+> - Updated device tree binding documentation as well.
+> - CCing Dmitry as well.
+> 
+>  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4 +++-
+>  arch/arm/boot/dts/tegra20.dtsi                                   | 2 +-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
-No, locality matters. If you have a bunch of NICs and bunch of drives
-and the allocator chooses to put all P2P memory on a single drive your
-performance will suck horribly even if all the traffic is offloaded.
-
-Performance will suck if you have speed differences between the PCI-E
-devices. Eg a bunch of Gen 3 x8 NVMe cards paired with a Gen 4 x16 NIC
-will not reach full performance unless the p2p buffers are properly
-balanced between all cards.
-
-This is why I think putting things in one big pool and pretending like
-any P2P mem is interchangable with any other makes zero sense to me,
-it is not how the system actually works. Proper locality matters a
-lot.
-
-Jason
+Reviewed-by: Rob Herring <robh@kernel.org>
