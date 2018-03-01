@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163315AbeCAXjQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:39:16 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52507 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163360AbeCAXhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:37:34 -0500
-X-Google-Smtp-Source: AG47ELvG5CAzDigVDFnhL9LJ11L4TERcM+gY0LdLo1IAJ//EA89f/I3RPhi3dqZW9Rvm4ePaudojXQ==
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [RFC 3/5] powerpc/pseries: use seq_open_data in hcall_inst_seq_open
-Date: Fri,  2 Mar 2018 00:37:22 +0100
-Message-Id: <20180301233724.20440-3-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
-References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
+        id S1163360AbeCAXkf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:40:35 -0500
+Received: from mga11.intel.com ([192.55.52.93]:2935 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163211AbeCAXkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:40:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="31774823"
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@suse.de>
+CC: Yazen Ghannam <yazen.ghannam@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Subject: RE: [PATCH] x86/mce: Save microcode revision in machine check
+ records
+Thread-Topic: [PATCH] x86/mce: Save microcode revision in machine check
+ records
+Thread-Index: AQHTsbXtzcRyDWfzp0yxyUIRnj/IiaO8CT2g
+Date: Thu, 1 Mar 2018 23:40:31 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7B388EF7@ORSMSX110.amr.corp.intel.com>
+References: <20180301233449.24311-1-tony.luck@intel.com>
+In-Reply-To: <20180301233449.24311-1-tony.luck@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTAyNDEwYWMtYTNlMC00NjMzLTlkODgtMDE2NzUzYjZkZmM1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJaMlhmXC9lQ3ZYcGxGaisxOVFUNUFNQkEzYm9KS0I2MWJENldndXlPcnZ0dHY4OFQxSzg4Q1FNU0cyQUJQUG5tTyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This code should check the return value of seq_open(); if it failed,
-file->private_data is NULL. But we can avoid the issue entirely and
-simplify the code by letting seq_open_data() set the ->private member.
++	c = &cpu_data(m->cpu);
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- arch/powerpc/platforms/pseries/hvCall_inst.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Bother. Breaks on systems with >255 cpus because "cpu" is __u8.
 
-diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
-index 89b7ce807e70..05990c9fe264 100644
---- a/arch/powerpc/platforms/pseries/hvCall_inst.c
-+++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
-@@ -92,14 +92,7 @@ static const struct seq_operations hcall_inst_seq_ops = {
- 
- static int hcall_inst_seq_open(struct inode *inode, struct file *file)
- {
--	int rc;
--	struct seq_file *seq;
--
--	rc = seq_open(file, &hcall_inst_seq_ops);
--	seq = file->private_data;
--	seq->private = file_inode(file)->i_private;
--
--	return rc;
-+	return seq_open_data(file, &hcall_inst_seq_ops, file_inode(file)->i_private);
- }
- 
- static const struct file_operations hcall_inst_seq_fops = {
--- 
-2.15.1
+s/m->cpu/m->extcpu/
+
+-Tony
