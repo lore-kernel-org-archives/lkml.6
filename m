@@ -1,445 +1,71 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AG47ELt9SpvBTgGm9Du7RtuP5a15E549gl02J4J6ASQDmzQn9ACZFct/tbHCtoo2qbFTpnmgxfg0
-ARC-Seal: i=1; a=rsa-sha256; t=1519830477; cv=none;
+Return-Path: <tytso@thunk.org>
+X-Google-Smtp-Source: AG47ELsqqMvL2VKfz1GX+Wt79wlqpHyvlvPX7m4PIpnN+9QbpD8lfSZXt7xhEP3DGbTGnIYL0Xu2
+ARC-Seal: i=1; a=rsa-sha256; t=1519862717; cv=none;
         d=google.com; s=arc-20160816;
-        b=lKPBrSpmmtXUHgmyDdRdzqTcdQGDitNeykAp5yOJOqnQPZDsrV5UHAeXPbvQFyENYY
-         k9emdisReXfNXf1TveqYknCpBuvOuiUs+7rpMrPg9WmQgs2RV7Zi1opz7CHE0LE56spw
-         yb/IL++rVS+MFzsKhwbm6zLcdt5uufYyevwK/XOHRI1IQEl29jc2Uf/0BEadpOT4LHVt
-         s+tmERhSqpdIHLUS1+Min13kpkSjE5zu39NwsAOarnjnv105+gi1szhdj8x9SbQChqkx
-         tk1HnUfOhZywrz8H9pVCRN/wRG1gQlp9cn8TEcX5SXRf8M4xWVdHRSJ7Exnlx56JJy0X
-         OGXw==
+        b=lvJ5EjKx+hNviZA3omUizfK2fh9a9v6wLt36XypAUKEwRGJxdMIfTGbMs5GO+Y5k0j
+         b7sKn7+XHBkbQD5djhd5bDhGKExHYoGdbVTSMjxqusLgFMRJ3LsAcpWGMdU8wb1lxGzH
+         y0Rr6b6/klx9yrohoDL6gVV0IlpGY07Gczg+AtyXhp/ZjbvFqUhEVwWQUU+aW0CrISIA
+         KS33eMtfoU393p8dmQLwVsfd3eVsupGaDq6Xm6Jc6ZJvgqGpsTs6jeaCTxg8Z+UXRtBR
+         HM6np8P/4XA3a3iAPzD7DpGqTKtKVY6jlm2TfEy2V0e5N5h+oy1f74F6Qb+Z1R5I2KUG
+         FBAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=jLCPamjNbLGGzH99LrB79438Ormt/aCt1hM5U43OPDc=;
-        b=XaSnwQBdN8Ru89Ry9Zq7eIQ/sDbcKyyjOotb5SpBv1e+6Nw3ZBVNYla8jRa2JJViBk
-         u2QVOSY0XU0dmbOZb8Glh2NNw5PEXY8dYHjbYirDYGsDxl6etR1QIE6usJI9XFuJZXrV
-         nMkICjzLyDm9scIBpsapCzdH1zdGs/lSh5mF4Whz7UyyjDanFVlQoaHqo6JtuDBY4wV9
-         E/LdfkhzSRV0pxcqhWVrtPD5S47zXlkVrnuPFgoubT2e2XySekYK7+owOTphQ/WkQDlB
-         r1Xgi5raFL9h/9YTx1Mn7NsG9tt7CMZxIr0JVHPfB0mwUbMGG6KA+twqQXK99uJDh17h
-         RM2A==
+        bh=GWv6qu5j5fOQxp9eFYpD09rDeZKU8Isoha/wmtA+P7s=;
+        b=NE/rFHP8GUBMUzYsaWTlc2raVbX4ZrdXVa6rUid0I/8QIKdftHtI9NXGy6cWNMCjFF
+         GrV7b6MFhTlt6uN1rl+D8GXd+Qk2MVq6SjKR3N4lDLKK19mNLy9EqcPPDOVvZgdcvZEQ
+         +qxd9aHVyXv8RaJhLCfhdb/rkwpfxNnzLZ2uKmP5CKZVlfNNJx5wMRdBijdRt24ggl+j
+         rxe0gauDH9l+zFEr761wejUl1rK1agQW+PCfQ1h2EDD+Iup+BOkQ7aJ7kPfYixjcJxrV
+         RgSJqiD5DVYwjtPf8UMf1PP6BdMmMr2HjOHjvgyUOBwqncuFc7hFPnalHNRXH2zO4KtJ
+         Kw3A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@thunk.org header.s=ef5046eb header.b=v0KHSbX5;
+       spf=pass (google.com: domain of tytso@thunk.org designates 2600:3c02::f03c:91ff:fe96:be03 as permitted sender) smtp.mailfrom=tytso@thunk.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+       dkim=pass header.i=@thunk.org header.s=ef5046eb header.b=v0KHSbX5;
+       spf=pass (google.com: domain of tytso@thunk.org designates 2600:3c02::f03c:91ff:fe96:be03 as permitted sender) smtp.mailfrom=tytso@thunk.org
+Date: Wed, 28 Feb 2018 19:05:15 -0500
+From: Theodore Ts'o <tytso@mit.edu>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v5 02/12] usb: typec: Start using ERR_PTR
-Date: Wed, 28 Feb 2018 16:07:39 +0100
-Message-Id: <20180228150749.26831-3-hdegoede@redhat.com>
-In-Reply-To: <20180228150749.26831-1-hdegoede@redhat.com>
-References: <20180228150749.26831-1-hdegoede@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] drivers/char/random.c: remove unused
+ dont_count_entropy
+Message-ID: <20180301000515.GD3862@thunk.org>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+References: <20180228232247.16368-1-linux@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228232247.16368-1-linux@rasmusvillemoes.dk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593657762548354791?=
-X-GMAIL-MSGID: =?utf-8?q?1593657762548354791?=
+X-GMAIL-THRID: =?utf-8?q?1593688909749149990?=
+X-GMAIL-MSGID: =?utf-8?q?1593691568592995604?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Thu, Mar 01, 2018 at 12:22:47AM +0100, Rasmus Villemoes wrote:
+> Ever since "random: kill dead extract_state struct" [1], the
+> dont_count_entropy member of struct timer_rand_state has been
+> effectively unused. Since it hasn't found a new use in 12 years, it's
+> probably safe to finally kill it.
+> 
+> [1] Pre-git, https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=c1c48e61c251f57e7a3f1bf11b3c462b2de9dcb5
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+>  drivers/char/random.c | 53 ++++++++++++++++++++++++---------------------------
 
-In order to allow the USB Type-C Class driver take care of
-things like muxes and other possible dependencies for the
-port drivers, returning ERR_PTR instead of NULL from the
-registration functions in case of failure.
+Thanks, applied.
 
-The reason for taking over control of the muxes for example
-is because handling them in the port drivers would be just
-boilerplate.
-
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v4:
--Add Andy's Reviewed-by
-
-Changes in v3:
--Add Guenter's Reviewed-by
-
-Changes in v2:
--Add IS_ERR_OR_NULL() checks to the unregister functions
----
- drivers/usb/typec/tcpm.c      | 16 +++++++++-------
- drivers/usb/typec/tps6598x.c  | 15 ++++++++-------
- drivers/usb/typec/typec.c     | 44 +++++++++++++++++++++----------------------
- drivers/usb/typec/ucsi/ucsi.c | 31 ++++++++++++++++++------------
- 4 files changed, 58 insertions(+), 48 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index f4d563ee7690..7cd28b700a7f 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -1044,7 +1044,7 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
- 		break;
- 	case CMDT_RSP_ACK:
- 		/* silently drop message if we are not connected */
--		if (!port->partner)
-+		if (IS_ERR_OR_NULL(port->partner))
- 			break;
- 
- 		switch (cmd) {
-@@ -3743,8 +3743,8 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	port->port_type = tcpc->config->type;
- 
- 	port->typec_port = typec_register_port(port->dev, &port->typec_caps);
--	if (!port->typec_port) {
--		err = -ENOMEM;
-+	if (IS_ERR(port->typec_port)) {
-+		err = PTR_ERR(port->typec_port);
- 		goto out_destroy_wq;
- 	}
- 
-@@ -3753,15 +3753,17 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 
- 		i = 0;
- 		while (paltmode->svid && i < ARRAY_SIZE(port->port_altmode)) {
--			port->port_altmode[i] =
--			  typec_port_register_altmode(port->typec_port,
--						      paltmode);
--			if (!port->port_altmode[i]) {
-+			struct typec_altmode *alt;
-+
-+			alt = typec_port_register_altmode(port->typec_port,
-+							  paltmode);
-+			if (IS_ERR(alt)) {
- 				tcpm_log(port,
- 					 "%s: failed to register port alternate mode 0x%x",
- 					 dev_name(dev), paltmode->svid);
- 				break;
- 			}
-+			port->port_altmode[i] = alt;
- 			i++;
- 			paltmode++;
- 		}
-diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-index 2719f5d382f7..37a15c14a6c6 100644
---- a/drivers/usb/typec/tps6598x.c
-+++ b/drivers/usb/typec/tps6598x.c
-@@ -158,15 +158,15 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 		desc.identity = &tps->partner_identity;
- 	}
- 
--	tps->partner = typec_register_partner(tps->port, &desc);
--	if (!tps->partner)
--		return -ENODEV;
--
- 	typec_set_pwr_opmode(tps->port, mode);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
- 	typec_set_vconn_role(tps->port, TPS_STATUS_VCONN(status));
- 	typec_set_data_role(tps->port, TPS_STATUS_DATAROLE(status));
- 
-+	tps->partner = typec_register_partner(tps->port, &desc);
-+	if (IS_ERR(tps->partner))
-+		return PTR_ERR(tps->partner);
-+
- 	if (desc.identity)
- 		typec_partner_set_identity(tps->partner);
- 
-@@ -175,7 +175,8 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 
- static void tps6598x_disconnect(struct tps6598x *tps, u32 status)
- {
--	typec_unregister_partner(tps->partner);
-+	if (!IS_ERR(tps->partner))
-+		typec_unregister_partner(tps->partner);
- 	tps->partner = NULL;
- 	typec_set_pwr_opmode(tps->port, TYPEC_PWR_MODE_USB);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
-@@ -418,8 +419,8 @@ static int tps6598x_probe(struct i2c_client *client)
- 	tps->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
- 
- 	tps->port = typec_register_port(&client->dev, &tps->typec_cap);
--	if (!tps->port)
--		return -ENODEV;
-+	if (IS_ERR(tps->port))
-+		return PTR_ERR(tps->port);
- 
- 	if (status & TPS_STATUS_PLUG_PRESENT) {
- 		ret = tps6598x_connect(tps, status);
-diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/typec.c
-index 735726ced602..dc28ad868d93 100644
---- a/drivers/usb/typec/typec.c
-+++ b/drivers/usb/typec/typec.c
-@@ -386,7 +386,7 @@ typec_register_altmode(struct device *parent,
- 
- 	alt = kzalloc(sizeof(*alt), GFP_KERNEL);
- 	if (!alt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	alt->svid = desc->svid;
- 	alt->n_modes = desc->n_modes;
-@@ -402,7 +402,7 @@ typec_register_altmode(struct device *parent,
- 		dev_err(parent, "failed to register alternate mode (%d)\n",
- 			ret);
- 		put_device(&alt->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return alt;
-@@ -417,7 +417,7 @@ typec_register_altmode(struct device *parent,
-  */
- void typec_unregister_altmode(struct typec_altmode *alt)
- {
--	if (alt)
-+	if (!IS_ERR_OR_NULL(alt))
- 		device_unregister(&alt->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_altmode);
-@@ -509,7 +509,7 @@ EXPORT_SYMBOL_GPL(typec_partner_register_altmode);
-  *
-  * Registers a device for USB Type-C Partner described in @desc.
-  *
-- * Returns handle to the partner on success or NULL on failure.
-+ * Returns handle to the partner on success or ERR_PTR on failure.
-  */
- struct typec_partner *typec_register_partner(struct typec_port *port,
- 					     struct typec_partner_desc *desc)
-@@ -519,7 +519,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 
- 	partner = kzalloc(sizeof(*partner), GFP_KERNEL);
- 	if (!partner)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	partner->usb_pd = desc->usb_pd;
- 	partner->accessory = desc->accessory;
-@@ -542,7 +542,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
- 		put_device(&partner->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return partner;
-@@ -557,7 +557,7 @@ EXPORT_SYMBOL_GPL(typec_register_partner);
-  */
- void typec_unregister_partner(struct typec_partner *partner)
- {
--	if (partner)
-+	if (!IS_ERR_OR_NULL(partner))
- 		device_unregister(&partner->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_partner);
-@@ -587,7 +587,7 @@ static const struct device_type typec_plug_dev_type = {
-  * the plug lists in response to Discover Modes command need to be listed in an
-  * array in @desc.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_plug_register_altmode(struct typec_plug *plug,
-@@ -606,7 +606,7 @@ EXPORT_SYMBOL_GPL(typec_plug_register_altmode);
-  * Cable Plug represents a plug with electronics in it that can response to USB
-  * Power Delivery SOP Prime or SOP Double Prime packages.
-  *
-- * Returns handle to the cable plug on success or NULL on failure.
-+ * Returns handle to the cable plug on success or ERR_PTR on failure.
-  */
- struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 				       struct typec_plug_desc *desc)
-@@ -617,7 +617,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 
- 	plug = kzalloc(sizeof(*plug), GFP_KERNEL);
- 	if (!plug)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sprintf(name, "plug%d", desc->index);
- 
-@@ -631,7 +631,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 	if (ret) {
- 		dev_err(&cable->dev, "failed to register plug (%d)\n", ret);
- 		put_device(&plug->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return plug;
-@@ -646,7 +646,7 @@ EXPORT_SYMBOL_GPL(typec_register_plug);
-  */
- void typec_unregister_plug(struct typec_plug *plug)
- {
--	if (plug)
-+	if (!IS_ERR_OR_NULL(plug))
- 		device_unregister(&plug->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_plug);
-@@ -724,7 +724,7 @@ EXPORT_SYMBOL_GPL(typec_cable_set_identity);
-  * Registers a device for USB Type-C Cable described in @desc. The cable will be
-  * parent for the optional cable plug devises.
-  *
-- * Returns handle to the cable on success or NULL on failure.
-+ * Returns handle to the cable on success or ERR_PTR on failure.
-  */
- struct typec_cable *typec_register_cable(struct typec_port *port,
- 					 struct typec_cable_desc *desc)
-@@ -734,7 +734,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 
- 	cable = kzalloc(sizeof(*cable), GFP_KERNEL);
- 	if (!cable)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	cable->type = desc->type;
- 	cable->active = desc->active;
-@@ -757,7 +757,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register cable (%d)\n", ret);
- 		put_device(&cable->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return cable;
-@@ -772,7 +772,7 @@ EXPORT_SYMBOL_GPL(typec_register_cable);
-  */
- void typec_unregister_cable(struct typec_cable *cable)
- {
--	if (cable)
-+	if (!IS_ERR_OR_NULL(cable))
- 		device_unregister(&cable->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_cable);
-@@ -1256,7 +1256,7 @@ EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
-  * This routine is used to register an alternate mode that @port is capable of
-  * supporting.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_port_register_altmode(struct typec_port *port,
-@@ -1273,7 +1273,7 @@ EXPORT_SYMBOL_GPL(typec_port_register_altmode);
-  *
-  * Registers a device for USB Type-C Port described in @cap.
-  *
-- * Returns handle to the port on success or NULL on failure.
-+ * Returns handle to the port on success or ERR_PTR on failure.
-  */
- struct typec_port *typec_register_port(struct device *parent,
- 				       const struct typec_capability *cap)
-@@ -1285,12 +1285,12 @@ struct typec_port *typec_register_port(struct device *parent,
- 
- 	port = kzalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	id = ida_simple_get(&typec_index_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		kfree(port);
--		return NULL;
-+		return ERR_PTR(id);
- 	}
- 
- 	if (cap->type == TYPEC_PORT_DFP)
-@@ -1326,7 +1326,7 @@ struct typec_port *typec_register_port(struct device *parent,
- 	if (ret) {
- 		dev_err(parent, "failed to register port (%d)\n", ret);
- 		put_device(&port->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return port;
-@@ -1341,7 +1341,7 @@ EXPORT_SYMBOL_GPL(typec_register_port);
-  */
- void typec_unregister_port(struct typec_port *port)
- {
--	if (port)
-+	if (!IS_ERR_OR_NULL(port))
- 		device_unregister(&port->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_port);
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 79046fe66426..69d544cfcd45 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -260,38 +260,45 @@ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
- 
- static int ucsi_register_partner(struct ucsi_connector *con)
- {
--	struct typec_partner_desc partner;
-+	struct typec_partner_desc desc;
-+	struct typec_partner *partner;
- 
- 	if (con->partner)
- 		return 0;
- 
--	memset(&partner, 0, sizeof(partner));
-+	memset(&desc, 0, sizeof(desc));
- 
- 	switch (con->status.partner_type) {
- 	case UCSI_CONSTAT_PARTNER_TYPE_DEBUG:
--		partner.accessory = TYPEC_ACCESSORY_DEBUG;
-+		desc.accessory = TYPEC_ACCESSORY_DEBUG;
- 		break;
- 	case UCSI_CONSTAT_PARTNER_TYPE_AUDIO:
--		partner.accessory = TYPEC_ACCESSORY_AUDIO;
-+		desc.accessory = TYPEC_ACCESSORY_AUDIO;
- 		break;
- 	default:
- 		break;
- 	}
- 
--	partner.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
-+	desc.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
- 
--	con->partner = typec_register_partner(con->port, &partner);
--	if (!con->partner) {
--		dev_err(con->ucsi->dev, "con%d: failed to register partner\n",
--			con->num);
--		return -ENODEV;
-+	partner = typec_register_partner(con->port, &desc);
-+	if (IS_ERR(partner)) {
-+		dev_err(con->ucsi->dev,
-+			"con%d: failed to register partner (%ld)\n", con->num,
-+			PTR_ERR(partner));
-+		return PTR_ERR(partner);
- 	}
- 
-+	con->partner = partner;
-+
- 	return 0;
- }
- 
- static void ucsi_unregister_partner(struct ucsi_connector *con)
- {
-+	if (!con->partner)
-+		return;
-+
- 	typec_unregister_partner(con->partner);
- 	con->partner = NULL;
- }
-@@ -606,8 +613,8 @@ static int ucsi_register_port(struct ucsi *ucsi, int index)
- 
- 	/* Register the connector */
- 	con->port = typec_register_port(ucsi->dev, cap);
--	if (!con->port)
--		return -ENODEV;
-+	if (IS_ERR(con->port))
-+		return PTR_ERR(con->port);
- 
- 	/* Get the status */
- 	UCSI_CMD_GET_CONNECTOR_STATUS(ctrl, con->num);
--- 
-2.14.3
+					- Ted
