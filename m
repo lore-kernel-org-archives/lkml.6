@@ -1,119 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033101AbeCAQ0K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:26:10 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50735 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1032981AbeCAQYT (ORCPT
+        id S1032893AbeCAQ01 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:26:27 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:54530 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032868AbeCAQ0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:24:19 -0500
-From: Loic Pallardy <loic.pallardy@st.com>
-To: <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 09/13] remoteproc: modify rproc_handle_carveout to support pre-registered region
-Date: Thu, 1 Mar 2018 17:23:56 +0100
-Message-ID: <1519921440-21356-10-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+        Thu, 1 Mar 2018 11:26:09 -0500
+X-Google-Smtp-Source: AG47ELvh0d0Xb6b7nV9rN5nUMrrlQslrOd4puA5t8EYcuc6QbmMRNEgTNDmvbiQ2QLc72IMdXKoUKA==
+Subject: Re: [PATCH 8/9] ASoC: Intel: bytcr_rt5640: Drop unwanted
+ ignore_suspend settings
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180218220146.22485-1-hdegoede@redhat.com>
+ <20180218220146.22485-9-hdegoede@redhat.com>
+ <20180301162215.GC12864@sirena.org.uk>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <55819630-6198-6227-63ef-69311b21b255@redhat.com>
+Date: Thu, 1 Mar 2018 17:26:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_08:,,
- signatures=0
+In-Reply-To: <20180301162215.GC12864@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In current version rproc_handle_carveout function support only dynamic
-region allocation.
-This patch extends rproc_handle_carveout function to support pre-registered
-region. Match is done on region name, then requested device address and
-length are checked.
-If no name match found, original allocation is used.
+Hi,
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 49 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
+On 01-03-18 17:22, Mark Brown wrote:
+> On Sun, Feb 18, 2018 at 11:01:45PM +0100, Hans de Goede wrote:
+>> The ignore_suspend settings were added in an attempt to try and fix
+>> suspend / resume issues. But they never fully fixed these and now we've
+>> a proper fix, so lets remove these.
+> 
+> Do these systems not have the ability to continue to play audio through
+> suspend using the DSP?  That's the sort of thing that ignore_suspend is
+> normally used for.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0ebbc4f..49b28a0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -679,7 +679,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 				 struct fw_rsc_carveout *rsc,
- 				 int offset, int avail)
- {
--	struct rproc_mem_entry *carveout, *mapping = NULL;
-+	struct rproc_mem_entry *carveout, *mapping = NULL, *mem;
- 	struct device *dev = &rproc->dev;
- 	dma_addr_t dma;
- 	void *va;
-@@ -699,6 +699,51 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
-+	/* Check carveout rsc already part of a registered carveout */
-+	/* Search by name */
-+	mem = rproc_find_carveout_by_name(rproc, rsc->name);
-+	if (mem) {
-+		int delta = 0;
-+
-+		if (rsc->da != FW_RSC_ADDR_ANY) {
-+			delta = rsc->da - mem->da;
-+
-+			/* Check requested resource belongs to registered carveout */
-+			if (delta < 0) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit da request\n");
-+				return -ENOMEM;
-+			}
-+
-+			if (delta + rsc->len > mem->len) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit len request\n");
-+				return -ENOMEM;
-+			}
-+		} else {
-+			/* Check requested resource length */
-+			if (rsc->len > mem->len) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit len request\n");
-+				return -ENOMEM;
-+			}
-+			/* Update resource da with registered resource value */
-+			rsc->da = mem->da;
-+		}
-+
-+		/*
-+		 * Update resource pa
-+		 * Use va if defined else dma to generate pa
-+		 */
-+		if (mem->va)
-+			rsc->pa = rproc_va_to_pa(mem->va) + delta;
-+		else
-+			rsc->pa = (u32)mem->dma + delta;
-+
-+		return 0;
-+	}
-+
-+	/* No registered carveout found, allocate a new one */
- 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
- 	if (!va) {
- 		dev_err(dev->parent,
-@@ -761,6 +806,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 
- 		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
- 			rsc->da, &dma);
-+	} else {
-+		rsc->da = (u32)dma;
- 	}
- 
- 	/*
--- 
-1.9.1
+In theory yes, in practice if we keep ignore_suspend set then we get
+audio for a couple of more seconds after suspend until the buffers
+are empty, as we have no code keeping them filled, which is not really
+useful, since we don't support this in a meaningful way it is better
+to just do a normal full suspend.
+
+Regards,
+
+Hans
