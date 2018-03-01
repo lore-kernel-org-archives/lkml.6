@@ -1,81 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031566AbeCAOrj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:47:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45628 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1031450AbeCAOrh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:47:37 -0500
-Date: Thu, 1 Mar 2018 15:47:30 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Split page_type out from mapcount
-In-Reply-To: <20180301124412.gm6jxwzyfskzxspa@node.shutemov.name>
-References: <20180228223157.9281-1-willy@infradead.org>
-        <20180301081750.42b135c3@mschwideX1>
-        <20180301124412.gm6jxwzyfskzxspa@node.shutemov.name>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1031592AbeCAOu0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:50:26 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39632 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031346AbeCAOuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:50:25 -0500
+Date: Thu, 1 Mar 2018 14:50:18 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: PCI: MediaTek: fix dtc warnings
+Message-ID: <20180301145018.GA2516@e107981-ln.cambridge.arm.com>
+References: <9940757fe2889f46d0de214c5f277bf3c2074205.1518577579.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030114-0040-0000-0000-000004397E56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030114-0041-0000-0000-000020DC82F8
-Message-Id: <20180301154730.3bfeaf03@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010186
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9940757fe2889f46d0de214c5f277bf3c2074205.1518577579.git.ryder.lee@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 15:44:12 +0300
-"Kirill A. Shutemov" <kirill@shutemov.name> wrote:
-
-> On Thu, Mar 01, 2018 at 08:17:50AM +0100, Martin Schwidefsky wrote:
-> > On Wed, 28 Feb 2018 14:31:53 -0800
-> > Matthew Wilcox <willy@infradead.org> wrote:
-> >   
-> > > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > > 
-> > > I want to use the _mapcount field to record what a page is in use as.
-> > > This can help with debugging and we can also expose that information to
-> > > userspace through /proc/kpageflags to help diagnose memory usage (not
-> > > included as part of this patch set).
-> > > 
-> > > First, we need s390 to stop using _mapcount for its own purposes;
-> > > Martin, I hope you have time to look at this patch.  I must confess I
-> > > don't quite understand what the different bits are used for in the upper
-> > > nybble of the _mapcount, but I tried to replicate what you were doing
-> > > faithfully.  
-> > 
-> > Yeah, that is a nasty bit of code. On s390 we have 2K page tables (pte)
-> > but 4K pages. If we use full pages for the pte tables we waste 2K of
-> > memory for each of the tables. So we allocate 4K and split it into two
-> > 2K pieces. Now we have to keep track of the pieces to be able to free
-> > them again.  
+On Wed, Feb 14, 2018 at 11:27:58AM +0800, Ryder Lee wrote:
+> dtc recently added PCI bus checks. Fix these warnings:
 > 
-> Have you considered to use slab for page table allocation instead?
-> IIRC some architectures practice this already.
+> Warning (pci_bridge): Node /pcie@1a140000/pcie@0,0 missing bus-range for PCI bridge
+> Warning (pci_bridge): Node /pcie@1a140000/pcie@1,0 missing bus-range for PCI bridge
+> Warning (pci_bridge): Node /pcie@1a140000/pcie@2,0 missing bus-range for PCI bridge
+> Warning (unit_address_format): Failed prerequisite 'pci_bridge'
+> Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
+> Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/pci/mediatek-pcie.txt | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 
-Well there is a complication with KVM and the page table management for
-gmaps. If mm_alloc_pgste(mm) == true then a 4K page page table has to be
-allocated. For the gmap I need a place to store an 8 byte value, currently
-we use page->index. But the slab/slub code uses page->index for its own
-purpose. This creates a conflict, but maybe doing a get_free_page for
-mm_alloc_pgste(mm) == true and using a slab cache for normal page tables
-might work.
+Given that changes to these bindings always went through the PCI tree,
+I've applied this patch to pci/mediatek for v4.17, thanks.
 
--- 
-blue skies,
-   Martin.
+Lorenzo
 
-"Reality continues to ruin my life." - Calvin.
+> diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+> index 3a6ce55..20227a8 100644
+> --- a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+> @@ -78,7 +78,7 @@ Examples for MT7623:
+>  		#reset-cells = <1>;
+>  	};
+>  
+> -	pcie: pcie-controller@1a140000 {
+> +	pcie: pcie@1a140000 {
+>  		compatible = "mediatek,mt7623-pcie";
+>  		device_type = "pci";
+>  		reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
+> @@ -111,7 +111,6 @@ Examples for MT7623:
+>  			  0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;	/* memory space */
+>  
+>  		pcie@0,0 {
+> -			device_type = "pci";
+>  			reg = <0x0000 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -123,7 +122,6 @@ Examples for MT7623:
+>  		};
+>  
+>  		pcie@1,0 {
+> -			device_type = "pci";
+>  			reg = <0x0800 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -135,7 +133,6 @@ Examples for MT7623:
+>  		};
+>  
+>  		pcie@2,0 {
+> -			device_type = "pci";
+>  			reg = <0x1000 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -148,6 +145,7 @@ Examples for MT7623:
+>  	};
+>  
+>  Examples for MT2712:
+> +
+>  	pcie: pcie@11700000 {
+>  		compatible = "mediatek,mt2712-pcie";
+>  		device_type = "pci";
+> @@ -169,7 +167,6 @@ Examples for MT2712:
+>  		ranges = <0x82000000 0 0x20000000  0x0 0x20000000  0 0x10000000>;
+>  
+>  		pcie0: pcie@0,0 {
+> -			device_type = "pci";
+>  			reg = <0x0000 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -189,7 +186,6 @@ Examples for MT2712:
+>  		};
+>  
+>  		pcie1: pcie@1,0 {
+> -			device_type = "pci";
+>  			reg = <0x0800 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -210,6 +206,7 @@ Examples for MT2712:
+>  	};
+>  
+>  Examples for MT7622:
+> +
+>  	pcie: pcie@1a140000 {
+>  		compatible = "mediatek,mt7622-pcie";
+>  		device_type = "pci";
+> @@ -243,7 +240,6 @@ Examples for MT7622:
+>  		ranges = <0x82000000 0 0x20000000  0x0 0x20000000  0 0x10000000>;
+>  
+>  		pcie0: pcie@0,0 {
+> -			device_type = "pci";
+>  			reg = <0x0000 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> @@ -263,7 +259,6 @@ Examples for MT7622:
+>  		};
+>  
+>  		pcie1: pcie@1,0 {
+> -			device_type = "pci";
+>  			reg = <0x0800 0 0 0 0>;
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> -- 
+> 1.9.1
+> 
