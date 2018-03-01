@@ -1,124 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031349AbeCAORP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:17:15 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:47058 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031061AbeCAORL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:17:11 -0500
-X-Google-Smtp-Source: AG47ELvwxPAvCYj+4VDvjFCZZHgrnwdcqjjOuFmo/JqnZdvNzPX6q+xxSLD2WsNy4oT/IMUnmf7J2Q==
-Date: Thu, 1 Mar 2018 04:17:07 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        id S1031288AbeCAOTZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:19:25 -0500
+Received: from foss.arm.com ([217.140.101.70]:39238 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031206AbeCAOTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:19:23 -0500
+Subject: Re: [PATCH v2 0/2] STM32 Extended TrustZone Protection driver
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Arnd Bergmann <arnd@arndb.de>, Loic PALLARDY <loic.pallardy@st.com>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH v2] sound/pci/ice1712: replace strcpy() with strlcpy()
-Message-ID: <20180301141707.cp5dc6zbh6bur4xw@gmail.com>
-References: <20180301114535.bf3ibzcpvohyjweu@gmail.com>
- <CAHp75Vf6kfPE_sRPj_mLMvLQfn9Fe9B_MeXqnGAHGAdzR7HX+Q@mail.gmail.com>
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+References: <20180301135806.19982-1-benjamin.gaignard@st.com>
+ <20180301140243.3uamdvdcvmsxv6im@lakrids.cambridge.arm.com>
+ <CA+M3ks6YPY6Lx-qBA+-Zrrtzr3Nqyzay=1wBHRGjd7PqJgAb0Q@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ad7a8214-875e-3c1a-87e1-0403d4328737@arm.com>
+Date: Thu, 1 Mar 2018 14:19:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5nv5xths47pkr5ye"
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf6kfPE_sRPj_mLMvLQfn9Fe9B_MeXqnGAHGAdzR7HX+Q@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CA+M3ks6YPY6Lx-qBA+-Zrrtzr3Nqyzay=1wBHRGjd7PqJgAb0Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/03/18 14:15, Benjamin Gaignard wrote:
+> 2018-03-01 15:02 GMT+01:00 Mark Rutland <mark.rutland@arm.com>:
+>> On Thu, Mar 01, 2018 at 02:58:04PM +0100, Benjamin Gaignard wrote:
+>>> On early boot stages STM32MP1 platform is able to dedicate some hardware blocks
+>>> to a secure OS running in TrustZone.
+>>> We need to avoid using those hardware blocks on non-secure context (i.e. kernel)
+>>> because read/write accesses could generate illegale access exceptions.
+>>>
+>>> Extended TrustZone Protection driver make sure that device is disabled if
+>>> non-secure world can't acces to it.
+>>>
+>>> version 2:
+>>> - do not use notifier anymore
+>>> - change status property value in device-tree if needed
+>>> - use a list of phandle instead of hard coded array
+>>
+>> As mentioned on v1, I don't think this should be done in Linux at all.
+>>
+>> If you wish to handle this dynamically, please fixup the DT *before*
+>> entering Linux.
+>>
+>> If you want a sane default in the dts file, put status = "disabled" on
+>> all nodes which the secure world might take ownership of.
+> 
+> That is the case, nodes are disabled by ealier boot stages before entering
+> in Linux but, since mistakes and/or errors are always possible, fixup the DT
+> to avoid illegal access exceptions make sense for me.
 
---5nv5xths47pkr5ye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So why not also run a test on the memory controller in case the 
+bootloader made a mistake in the memory node too? As I mentioned before, 
+if you can't trust the DT to describe your hardware correctly you've 
+already lost.
 
-Replace unsafe usages of strcpy() to copy the name
-argument into the sid.name buffer with strlcpy()
-to guard against possible buffer overflows.
-
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/sound/pci/ice1712/juli.c b/sound/pci/ice1712/juli.c
-index 0dbaccf61f33270608..21806bab4757241a9e 100644
---- a/sound/pci/ice1712/juli.c
-+++ b/sound/pci/ice1712/juli.c
-@@ -27,6 +27,7 @@
- #include <linux/interrupt.h>
- #include <linux/init.h>
- #include <linux/slab.h>
-+#include <linux/string.h>
- #include <sound/core.h>
- #include <sound/tlv.h>
-=20
-@@ -425,10 +426,9 @@ DECLARE_TLV_DB_SCALE(juli_master_db_scale, -6350, 50, =
-1);
- static struct snd_kcontrol *ctl_find(struct snd_card *card,
- 				     const char *name)
- {
--	struct snd_ctl_elem_id sid;
--	memset(&sid, 0, sizeof(sid));
--	/* FIXME: strcpy is bad. */
--	strcpy(sid.name, name);
-+	struct snd_ctl_elem_id sid =3D {0};
-+
-+	strlcpy(sid.name, name, sizeof(sid.name));
- 	sid.iface =3D SNDRV_CTL_ELEM_IFACE_MIXER;
- 	return snd_ctl_find_id(card, &sid);
- }
-diff --git a/sound/pci/ice1712/quartet.c b/sound/pci/ice1712/quartet.c
-index d145b5eb7ff86d978d..5bc836241c977feb51 100644
---- a/sound/pci/ice1712/quartet.c
-+++ b/sound/pci/ice1712/quartet.c
-@@ -26,6 +26,7 @@
- #include <linux/interrupt.h>
- #include <linux/init.h>
- #include <linux/slab.h>
-+#include <linux/string.h>
- #include <sound/core.h>
- #include <sound/tlv.h>
- #include <sound/info.h>
-@@ -785,10 +786,9 @@ DECLARE_TLV_DB_SCALE(qtet_master_db_scale, -6350, 50, =
-1);
- static struct snd_kcontrol *ctl_find(struct snd_card *card,
- 				     const char *name)
- {
--	struct snd_ctl_elem_id sid;
--	memset(&sid, 0, sizeof(sid));
--	/* FIXME: strcpy is bad. */
--	strcpy(sid.name, name);
-+	struct snd_ctl_elem_id sid =3D {0};
-+
-+	strlcpy(sid.name, name, sizeof(sid.name));
- 	sid.iface =3D SNDRV_CTL_ELEM_IFACE_MIXER;
- 	return snd_ctl_find_id(card, &sid);
- }
---=20
-2.16.2
-
---5nv5xths47pkr5ye
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlqYC2MACgkQruvLfWhy
-VBnS6A/9Hvtn6RWzEjUFO9rAVKI8bodYigHidWTkmrZ/9/v9AWhoF9n2/SZWtzPa
-1nz4ycET3qvGvHCWAwkPdUm5MfN7oBlIi1DxV6pacpEOVeor9yNOhnrBcTe8a9Vn
-wmXCWaNyhvco0zSQ1tHWQQojtB6WnQU0MDi0RzaNRqMu7cqWvHCvFPuCvdzYn3jK
-1u+WbXSqvSCUdew+tXRdcnKZ5ZIomsmymsbUivFUH/Lg38GUC9otmt1ZWVNr2dOl
-TyiAsnVCLziT+Vvn1XsiEDYCn+mNQ7F6RipXgY2URZkRjIIuhAZdBwpavNhBCMvl
-cbujtepxg3nib/v7dgeH7CfvszODSwM8mu/b348elhsLtBMsKc5KOHK3G4Z6R1LI
-+BuTh/CaSpW7kOWK3ApmsPsYBnYeBheM2YmqRtH19pz/UVjkf01XBrireddUUjC/
-1muSK3Yrg0Ww5Ja25mkgI8nPg0gDMBHf3cVd9Fb9iJLt3NmsJS2oEvC2MsPy6Fs7
-/T0MO9PHWoVuK2E+rDuKXiphQRNB5+j+LDxgEVgr9/cfO8qPu/gaRwUb81DVCPXL
-g0n+FHvoX0mPgU0iBPrFbJ1zl6J5iapUMRO4ZxBMZ6EvHFxAqbhCpGNGixbs6+hR
-nBRhoqVz+klW406GWAmiv+Y7Vy/Ia1elgQG8/eY/grby/0Srjpk=
-=gZ4i
------END PGP SIGNATURE-----
-
---5nv5xths47pkr5ye--
+Robin.
