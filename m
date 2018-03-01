@@ -1,218 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030752AbeCANIf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:08:35 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:51511 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030597AbeCANId (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:08:33 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@suse.de>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: clarify mmio pointer types
-Date: Thu,  1 Mar 2018 14:07:07 +0100
-Message-Id: <20180301130729.3278022-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:mNHd5emfBLJOXH5+47hbotn6VjR4/xUTyZcaDgrT3BWUSRxlUmr
- hyzfs8Cwc/gTONlUjbwLDoW1MRFPZvRkeSElh6sfzu2y10sHJeS4V2uDuhnUFnV3b2lxkAJ
- aIq9gFLA9l3826tabwBOFakeV75ujy25RSPlKhxBNgqifLTpo/pYgIi+qaYnzzW1O13Os6/
- N0SJuROOLNlb0XCqc12lg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Kyf9wzeXr1Q=:QAWvVL4fdOXUDbS34GVCFY
- l4D1rUeaJY7Xx+iPA+nLDMYKgw5dZUzRW5iaAaP29ZA2a92KtDk9Fq7AM+93KjS0agDK2Zkw5
- 1qOIuhnHMCgNOdMjFUFhBSSq0IvDOihdqOFmmIUxfri+vMnTI8RbW369FP9MPZ9YKzvjlS7Qj
- yWObk7WI/f8XxAgWfBsjHQxpEDcIDXftGPf3lFwXc0uv5LuAE6Z82qDHTXSzNl3ZXzTqhx90B
- ZPBiTaWinmGrw9IKwMaAdUzlfKZUpdf6JOywYbdrS8bryoWjo0heUEnE2Bl+qw1N10uP4JyFs
- VFUSTBMKLfXdUbGrvO2qwF7YU6A6Ex+7mnExpzxOJFKNBsRaMVYBqKz6r96PDott67+E1msiw
- I/JXaM25IrPp/SwZtdAHPNgY4ip3Zbj1fsR8pKZ2kbeYru7+rcBMUrKTI1b5Bfn+AYYQ7dVHz
- Feq8pdlv2ZrudRQ6YnHYOiFQ+lAZVSH8Qt7JvKfhhKfD4yIrmrJLlQFnGQFh4BSQVAJN6rkbU
- PVmq/kV+3Lm6sibBeKKQ87PdlVaeh5mQIVHtFzln/kaSFRpaXUvC3xqVCegDA047/M9SEIHNU
- P2qJ0tDahWYk1b4f2ytmiT1QXPlpggy4cvUrA14nrfkxpTDVPrDpjgvRhUvXuIyNWVQPg6tVa
- suBd1Ds/5wTUtpI+4fmfPPWK856leGdO4KTnY8cCTX9BUcU1kxzuRvbhHwnU2IvWW6+CfNUlt
- zgw8EG7b5in3UeNNLS5PSbOyBkgEOUXi2l+Tvg==
+        id S1030624AbeCANPo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:15:44 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030492AbeCANPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 08:15:42 -0500
+Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+ <20180301101038.4253424d@redhat.com>
+ <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
+ <20180301113531.7b25e2df@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <872bf3ea-7631-4e5f-9a6a-d632213cd15c@redhat.com>
+Date: Thu, 1 Mar 2018 21:15:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180301113531.7b25e2df@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added code mixes up phys_addr_t/resource_size_t with dma_addr_t
-and void pointers, as seen from these compiler warning:
 
-drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_base_get_chain_phys':
-drivers/scsi/mpt3sas/mpt3sas_base.c:235:21: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-  base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
-                     ^
-drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_clone_sg_entries':
-drivers/scsi/mpt3sas/mpt3sas_base.c:427:20: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-    sgel->Address = (dma_addr_t)dst_addr_phys;
-                    ^
-drivers/scsi/mpt3sas/mpt3sas_base.c:438:7: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-       (dma_addr_t)buff_ptr_phys;
-       ^
-drivers/scsi/mpt3sas/mpt3sas_base.c:444:10: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-          (dma_addr_t)buff_ptr_phys;
 
-Both dma_addr_t and phys_addr_t may be wider than a pointer, so we must
-avoid the conversion to pointer types. This also helps readability.
+On 2018年03月01日 18:35, Jesper Dangaard Brouer wrote:
+> On Thu, 1 Mar 2018 17:23:37 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:
+>>> On Thu,  1 Mar 2018 11:19:03 +0800
+>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>   
+>>>> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
+>>>> was removed since commit 7324f5399b06 ("virtio_net: disable
+>>>> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
+>>>>
+>>>> - not enough tailroom was reserved which breaks cpumap
+>>> To address this at a more fundamental level, I would suggest that we/you
+>>> instead extend XDP to know it's buffers "frame" size/end.  (The
+>>> assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
+>>> ixgbe+virtio_net broke that assumption).
+>>>
+>>> It should actually be fairly easy to implement:
+>>>    * Simply extend xdp_buff with a "data_hard_end" pointer.
+>> Right, and then cpumap can warn and drop packets with insufficient
+>> tailroom.
+>>
+>> But it should be a patch on top of this I think.
+> Hmmm, not really.  If we/you instead fix the issue of XDP doesn't know
+> the end/size of the frame, then we don't need this mixed XDP
+> generic/native code path mixing.
 
-A second problem is treating MMIO addresses from a 'struct resource'
-as addresses that can be used for DMA on that device. In almost all
-cases, those are the same, but on some of the more obscure architectures,
-PCI memory address 0 is mapped into the CPU address space at a nonzero
-offset. I don't have a good fix for that, so I'm adding a comment here,
-plus a WARN_ON() that triggers whenever the phys_addr_t number is
-outside of the low 32-bit address space and causes a straight overflow
-when assigned to the 32-bit sgel->Address.
+I know this but I'm still a little bit confused. According to the commit 
+log of 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in 
+receive_mergeable() case"), you said:
 
-Fixes: 182ac784b41f ("scsi: mpt3sas: Introduce Base function for cloning.")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 42 ++++++++++++++++++++-----------------
- drivers/scsi/mpt3sas/mpt3sas_base.h |  2 +-
- 2 files changed, 24 insertions(+), 20 deletions(-)
+"""
+     The longer explaination is that receive_mergeable() tries to
+     work-around and satisfy these XDP requiresments e.g. by having a
+     function xdp_linearize_page() that allocates and memcpy RX buffers
+     around (in case packet is scattered across multiple rx buffers).  This
+     does currently satisfy XDP_PASS, XDP_DROP and XDP_TX (but only because
+     we have not implemented bpf_xdp_adjust_tail yet).
+"""
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 9f2434e59b40..61f93a134956 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -225,14 +225,14 @@ _base_get_chain(struct MPT3SAS_ADAPTER *ioc, u16 smid,
-  *
-  * @Return - Physical chain address.
-  */
--static inline void *
-+static inline phys_addr_t
- _base_get_chain_phys(struct MPT3SAS_ADAPTER *ioc, u16 smid,
- 		u8 sge_chain_count)
- {
--	void *base_chain_phys, *chain_phys;
-+	phys_addr_t base_chain_phys, chain_phys;
- 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
- 
--	base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
-+	base_chain_phys  = ioc->chip_phys + MPI_FRAME_START_OFFSET +
- 		(cmd_credit * ioc->request_sz) +
- 		REPLY_FREE_POOL_SIZE;
- 	chain_phys = base_chain_phys + (smid * ioc->facts.MaxChainDepth *
-@@ -272,11 +272,11 @@ _base_get_buffer_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)
-  *
-  * @Returns - Pointer to buffer location in BAR0.
-  */
--static void *
-+static phys_addr_t
- _base_get_buffer_phys_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)
- {
- 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
--	void *chain_end_phys = _base_get_chain_phys(ioc,
-+	phys_addr_t chain_end_phys = _base_get_chain_phys(ioc,
- 			cmd_credit + 1,
- 			ioc->facts.MaxChainDepth);
- 	return chain_end_phys + (smid * 64 * 1024);
-@@ -330,11 +330,12 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 	bool is_write = 0;
- 	u16 i = 0;
- 	void __iomem *buffer_iomem;
--	void  *buffer_iomem_phys;
-+	phys_addr_t buffer_iomem_phys;
- 	void __iomem *buff_ptr;
--	void *buff_ptr_phys;
-+	phys_addr_t buff_ptr_phys;
- 	void __iomem *dst_chain_addr[MCPU_MAX_CHAINS_PER_IO];
--	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO], *dst_addr_phys;
-+	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO];
-+	phys_addr_t dst_addr_phys;
- 	MPI2RequestHeader_t *request_hdr;
- 	struct scsi_cmnd *scmd;
- 	struct scatterlist *sg_scmd = NULL;
-@@ -391,6 +392,7 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 
- 	buff_ptr = buffer_iomem;
- 	buff_ptr_phys = buffer_iomem_phys;
-+	WARN_ON(buff_ptr_phys > U32_MAX);
- 
- 	if (sgel->FlagsLength &
- 			(MPI2_SGE_FLAGS_HOST_TO_IOC << MPI2_SGE_FLAGS_SHIFT))
-@@ -421,10 +423,10 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 					smid, sge_chain_count);
- 			src_chain_addr[sge_chain_count] =
- 						(void *) sgel_next;
--			dst_addr_phys =
--				_base_get_chain_phys(ioc,
-+			dst_addr_phys = _base_get_chain_phys(ioc,
- 						smid, sge_chain_count);
--			sgel->Address = (dma_addr_t)dst_addr_phys;
-+			WARN_ON(dst_addr_phys > U32_MAX);
-+			sgel->Address = (u32)dst_addr_phys;
- 			sgel = sgel_next;
- 			sge_chain_count++;
- 			break;
-@@ -434,14 +436,16 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 					_base_clone_to_sys_mem(buff_ptr,
- 					    sg_virt(sg_scmd),
- 					    (sgel->FlagsLength & 0x00ffffff));
--					sgel->Address =
--						(dma_addr_t)buff_ptr_phys;
-+					/*
-+					 * FIXME: this relies on a a zero
-+					 * PCI mem_offset.
-+					 */
-+					sgel->Address = (u32)buff_ptr_phys;
- 				} else {
- 					_base_clone_to_sys_mem(buff_ptr,
- 					    ioc->config_vaddr,
- 					    (sgel->FlagsLength & 0x00ffffff));
--					sgel->Address =
--					    (dma_addr_t)buff_ptr_phys;
-+					sgel->Address = (u32)buff_ptr_phys;
- 				}
- 			}
- 			buff_ptr += (sgel->FlagsLength & 0x00ffffff);
-@@ -2941,7 +2945,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
- 	u32 pio_sz;
- 	int i, r = 0;
- 	u64 pio_chip = 0;
--	u64 chip_phys = 0;
-+	phys_addr_t chip_phys = 0;
- 	struct adapter_reply_queue *reply_q;
- 
- 	dinitprintk(ioc, pr_info(MPT3SAS_FMT "%s\n",
-@@ -2989,7 +2993,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
- 			if (memap_sz)
- 				continue;
- 			ioc->chip_phys = pci_resource_start(pdev, i);
--			chip_phys = (u64)ioc->chip_phys;
-+			chip_phys = ioc->chip_phys;
- 			memap_sz = pci_resource_len(pdev, i);
- 			ioc->chip = ioremap(ioc->chip_phys, memap_sz);
- 		}
-@@ -3064,8 +3068,8 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
- 		    "IO-APIC enabled"),
- 		    pci_irq_vector(ioc->pdev, reply_q->msix_index));
- 
--	pr_info(MPT3SAS_FMT "iomem(0x%016llx), mapped(0x%p), size(%d)\n",
--	    ioc->name, (unsigned long long)chip_phys, ioc->chip, memap_sz);
-+	pr_info(MPT3SAS_FMT "iomem(%pap), mapped(0x%p), size(%d)\n",
-+	    ioc->name, &chip_phys, ioc->chip, memap_sz);
- 	pr_info(MPT3SAS_FMT "ioport(0x%016llx), size(%d)\n",
- 	    ioc->name, (unsigned long long)pio_chip, pio_sz);
- 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
-index df8233c1e1c1..ae36d8fb2f2b 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.h
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
-@@ -1103,7 +1103,7 @@ struct MPT3SAS_ADAPTER {
- 	char		tmp_string[MPT_STRING_LENGTH];
- 	struct pci_dev	*pdev;
- 	Mpi2SystemInterfaceRegs_t __iomem *chip;
--	resource_size_t	chip_phys;
-+	phys_addr_t	chip_phys;
- 	int		logging_level;
- 	int		fwfault_debug;
- 	u8		ir_firmware;
--- 
-2.9.0
+So I consider the tailroom is a must for the (future) tail adjustment.
+
+>
+> You could re-enable native redirect, and push the responsibility to
+> cpumap for detecting this too-small frame "missing tailroom" (and avoid
+> crashing...). (If we really want to support this, cpumap could fallback
+> to dev_alloc_skb, and handle it gracefully).
+>
+
+Right but it will be slower than build_skb().
+
+Thanks
