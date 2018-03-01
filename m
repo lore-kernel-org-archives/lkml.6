@@ -1,60 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030747AbeCAN2f (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:28:35 -0500
-Received: from mail-io0-f172.google.com ([209.85.223.172]:42269 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030473AbeCAN2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:28:31 -0500
-X-Google-Smtp-Source: AG47ELsZliYihqkMlsGZ5knZr9ArDcoSWVfEQjgaKaG5OFzDTfTlVwMTPBll7IFVF+07XvzTbha4RV0zDGgr/XqWhnQ=
+        id S1030767AbeCAN3C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:29:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030460AbeCAN27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 08:28:59 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B6F21795
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AG47ELusvyZiJb6etQMIsIEQy4PoGRTJWr8BmkNfMeDQr5uOvGA+PRnEabIVaAhpl1QLFZz68/PTeP+N/hmVRwr0P6M=
 MIME-Version: 1.0
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 14:28:30 +0100
-Message-ID: <CACRpkdbu9Kxvuwr-nLHxyEYiTeGK38o7MKCFf-MMjYxwgcJPPA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/15] Krait clocks + Krait CPUfreq
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-pm@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>
+In-Reply-To: <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
+References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-3-robh@kernel.org>
+ <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com> <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 1 Mar 2018 07:28:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
+Message-ID: <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
+Subject: Re: [PATCH 2/6] kbuild: add dtc as dependency on .dtb files
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sricharan,
+On Wed, Feb 28, 2018 at 11:45 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-03-01 13:33 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
+>>> If dtc is rebuilt, we should rebuild .dtb files with the new dtc.
+>>>
+>>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> Signed-off-by: Rob Herring <robh@kernel.org>
+>>
+>>
+>> Hmm, I am not 100% sure about this.
+>>
+>> Is there a case where resulted DTBs
+>> depend on DTC version?
+>>
+>>
+>> If I understand correctly,
+>> DTS and DTB are 1:1
+>> Unlike CC, there is no room for optimization.
+>
+>
+> Maybe I was wrong.
+>
+> Is there room for optimization
+> in 'DT strings' section?
 
-thanks for picking up Stephen's patch set and working on this
-clocking business!
+Not sure.
 
-Would you happen to know if the MSM8660/APQ8060 that
-I'm using a bit has the same Krait clocking so I need to augment
-that SoC to use this too (on top of this, naturally, this is a good first
-step)?
+> I guess it is optimized enough to avoid string duplication,
+> but there could be different results
+> without changing the specification.
 
-On Tue, Feb 27, 2018 at 3:06 PM, Sricharan R <sricharan@codeaurora.org> wrote:
+What I care about is rebuilding so new warnings get emitted especially
+when developing those checks. Right now I have to manually delete the
+dtb files each time.
 
->   * Dropped the DT update from the series. Will send separately
-
-Are these available somewhere so I can test the sum total on
-the Nexus 7 and see if I get some graphics? I've been sticking a
-patch from Stephen's series in for some time and it makes the
-MDP graphics works on the 2013 Nexus 7.
-
-Yours,
-Linus Walleij
+Rob
