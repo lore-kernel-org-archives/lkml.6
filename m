@@ -1,83 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966011AbeCAFSt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:18:49 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:45764 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932157AbeCAFSq (ORCPT
+        id S966009AbeCAFWq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:22:46 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:56184 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932243AbeCAFWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:18:46 -0500
-Subject: Re: [PATCH v2 15/15] ARM: dts: dra7: Add high speed modes capability
- to MMC1/MMC2 dt node
-To: Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>
-References: <20180206125806.19350-1-kishon@ti.com>
- <20180206125806.19350-16-kishon@ti.com>
- <210939ed-67fc-fa37-b4f2-c1faefcc4642@ti.com>
- <b411cf11-61e9-e688-6f04-e624fe52ac66@ti.com>
- <4f18dab9-aee3-1023-d301-f142c6e2d358@ti.com>
- <20180228223421.GM5448@atomide.com>
-CC: =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <f657b33e-8d02-4529-fe1f-20693a329fd3@ti.com>
-Date: Thu, 1 Mar 2018 10:48:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Thu, 1 Mar 2018 00:22:44 -0500
+X-Google-Smtp-Source: AG47ELvRzhg/eCifWtbirA4yNICNmJKGljlwoxQW7qaUua3MrJydeEIERaiV2Xi5HDaVY0vu31j9zP+KFf+fJEHKFKQ=
 MIME-Version: 1.0
-In-Reply-To: <20180228223421.GM5448@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <e52b48cb-ce06-f4c4-ce20-9b893139e54d@sholland.org>
+References: <20180228022714.30068-1-samuel@sholland.org> <20180228022714.30068-4-samuel@sholland.org>
+ <CABb+yY2uueAK9kzXzU9DT2a4NtV3kK2dc_wtyFWTBn8=Z6Vi7Q@mail.gmail.com>
+ <d9e14058-6ffb-e54a-1565-f228342ee1f0@sholland.org> <CABb+yY3nfVxoA9wy1ym4mtCTKCZtJjepUTr7OP1uUPmzOEzniA@mail.gmail.com>
+ <e52b48cb-ce06-f4c4-ce20-9b893139e54d@sholland.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Thu, 1 Mar 2018 10:52:42 +0530
+Message-ID: <CABb+yY0PZCFtud0qYFNV4LO5A38f=JE=ZwoN2N89c0LiX9zV-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mailbox: sunxi-msgbox: Add a new mailbox driver
+To: Samuel Holland <samuel@sholland.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <", linux-arm-kernel"@lists.infradead.org>,
+        srv_heupstream <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
-
-On Thursday 01 March 2018 04:04 AM, Tony Lindgren wrote:
-> * Sekhar Nori <nsekhar@ti.com> [180213 11:11]:
->> On Wednesday 07 February 2018 02:51 PM, Kishon Vijay Abraham I wrote:
+On Thu, Mar 1, 2018 at 12:26 AM, Samuel Holland <samuel@sholland.org> wrote:
+> On 02/28/18 12:14, Jassi Brar wrote:
+>> On Wed, Feb 28, 2018 at 11:21 PM, Samuel Holland <samuel@sholland.org> wrote:
 >>> Hi,
 >>>
->>> On Wednesday 07 February 2018 02:41 PM, Sekhar Nori wrote:
->>>> Kishon,
+>>> On 02/28/18 03:16, Jassi Brar wrote:
+>>>> On Wed, Feb 28, 2018 at 7:57 AM, Samuel Holland <samuel@sholland.org> wrote:
+>>>> ....
 >>>>
->>>> On Tuesday 06 February 2018 06:28 PM, Kishon Vijay Abraham I wrote:
->>>>> Add UHS/HS200/DDR speed mode capability to MMC1 and MMC2 dt nodes.
+>>>>> +/*
+>>>>> + * The message box hardware provides 8 unidirectional channels. As the mailbox
+>>>>> + * framework expects them to be bidirectional
 >>>>>
->>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>>
->>>> Along with this, dont we need to have
->>>>
->>>> 	/delete-property/ mmc-hs200-1_8v;
->>>>
->>>> for eMMC on Beagle x15 which does not support HS200?
->>>>
->>>> Or are you planning to depend on lack of pinctrl entries for HS200 to
->>>> take care of that?
+>>>> That is incorrect. Mailbox framework does not require a channel to be
+>>>> TX and RX capable.
 >>>
->>> right now it relies on lack of pinctrl entries but I think adding delete
->>> property is appropriate. Actually I missed porting the patch that adds
->>> /delete-property/.
->>
->> Actually, thinking more, this should be probably be handled using
->> "no-1-8-v" property. Reading the comment above SDHCI_QUIRK2_NO_1_8_V, it
->> is specifically meant for the case when system (board) does not support
->> 1.8V even when host (controller) does. Which is exactly the case with
->> Beagle x15.
-> 
-> OK so that seems to be related to the last patch. I've applied
-> the first two defconfig patches into omap-for-v4.17/defconfig
-> and patches up to patch 13/15 into omap-for-v4.17/dt-sdhci.
-> 
-> Kishon, please repost the missing changes or ping me when
-> the driver dependencies have cleared for further patches to
-> be applied to enable sdhci.
+>>> Sorry, it would be more accurate to say that the intended mailbox _client_
+>>> expects the channels to be bidirectional.
+>>>
+>> Mailbox clients are very mailbox provider specific. Your client driver
+>> is unlikely to be reuseable over another controller+remote combo.
+>> Your client has to know already what a physical channel can do (RX, TX
+>> or RXTX). There is no api to provide that info.
+>
+> There's a public specification for SCPI available[1]. I'm writing the remote
+> endpoint to follow that protocol specification. (There's even an explicitly
+> platform-agnostic update to the protocol called SCMI[2]). Ideally, I should be
+> able to reuse the existing Linux client drivers for that protocol.
+>
+Thanks, I have already read those specs. Please note there are two
+parts of the spec - Chapter-4-Protocol and Chapter-5-Transport.
 
-sure, I'll repost when sdhci driver changes gets merged.
+You should definitely be able to reuse the Protocol implementation.
+
+However, transport can vary with platform - that is why it is
+separated out from Protocol. And mailbox is but one instance of
+transport.
+  Consider a platform with "power manager" chip connected via, say,
+I2C - one could still make use of SCMI protocol. Or consider another
+platform that does have mailbox link to the "power manager" but there
+is no shared memory between them - you could then pass packets via the
+mailbox FIFOs.
+  So no, we can't have common transport implementation for every platform.
+
+> Are you
+> suggesting that I need to write a copy of the arm_scpi driver, completely
+> identical except that it requests two mailbox channels per client (sending on
+> one and receiving on the other) instead of one? In the >1000 line file, this is
+> all that I would need to change:
+>
+I did unsuccessfully try to convince Sudeep to break the
+implementation into platform-agnostic protocol and platform-specific
+transport drivers. That way there would be no duplication of code.
+
+Also please realise that you should not be writing controller driver,
+keeping just one client driver (SCMI/SCPI) in mind. What if another
+platform with same mailbox controller needs 8 TX "broadcast" links?
+The h/w supports the usecase, but your driver wouldn't.
 
 Thanks
-Kishon
