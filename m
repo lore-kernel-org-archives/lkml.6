@@ -1,56 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967071AbeCAJfj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:35:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35267 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966966AbeCAJfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:35:24 -0500
-Date: Thu, 1 Mar 2018 10:35:22 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] Detect early free of a live mm
-Message-ID: <20180301093522.GC15057@dhcp22.suse.cz>
-References: <20180228121458.2230-1-mark.rutland@arm.com>
- <20180228121809.ztpcjb3256tj6tct@lakrids.cambridge.arm.com>
+        id S967056AbeCAJfh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:35:37 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55050 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967027AbeCAJfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:35:25 -0500
+Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <532c0f98-83d0-c687-55d6-a6c5cb263360@redhat.com>
+ <ef401e32-4a33-2fe6-8695-f0eff139f9db@linux.vnet.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <dd63866f-cf54-a11f-8bfd-cc2f9dbae9b7@redhat.com>
+Date: Thu, 1 Mar 2018 10:35:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228121809.ztpcjb3256tj6tct@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <ef401e32-4a33-2fe6-8695-f0eff139f9db@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 28-02-18 12:18:10, Mark Rutland wrote:
-> Ugh, I messed up Peter's email when sending this out. please
-> s/infraded/infradead/ if replying to the first mail.
-> 
-> Sorry about that.
-> 
-> Mark.
-> 
-> On Wed, Feb 28, 2018 at 12:14:58PM +0000, Mark Rutland wrote:
-> > KASAN splats indicate that in some cases we free a live mm, then
-> > continue to access it, with potentially disastrous results. This is
-> > likely due to a mismatched mmdrop() somewhere in the kernel, but so far
-> > the culprit remains elusive.
-> > 
-> > Let's have __mmdrop() verify that the mm isn't live for the current
-> > task, similar to the existing check for init_mm. This way, we can catch
-> > this class of issue earlier, and without requiring KASAN.
+On 28.02.2018 21:39, Tony Krowiak wrote:
+> On 02/28/2018 04:44 AM, David Hildenbrand wrote:
+>> On 27.02.2018 15:28, Tony Krowiak wrote:
+>>> Introduces a new interface to enable AP interpretive
+>>> execution (IE) mode for the KVM guest. When running
+>>> with IE mode enabled, AP instructions executed on the
+>>> KVM guest will be interpreted by the firmware and
+>>> passed directly through to an AP device installed on
+>>> the system. The CPU model feature for AP must
+>>> be enabled for the KVM guest in order to enable
+>>> interpretive execution mode.
+>>>
+>>> This interface will be used in a subsequent patch
+>>> by the VFIO AP device driver.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>>>   arch/s390/include/asm/kvm-ap.h   |    2 ++
+>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>   arch/s390/kvm/kvm-ap.c           |   27 +++++++++++++++++++++++++++
+>>>   arch/s390/kvm/kvm-s390.h         |    1 +
+>>>   4 files changed, 31 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+>>> index 46e7c5b..6bd6bfb 100644
+>>> --- a/arch/s390/include/asm/kvm-ap.h
+>>> +++ b/arch/s390/include/asm/kvm-ap.h
+>>> @@ -51,4 +51,6 @@ struct kvm_ap_matrix {
+>>>   
+>>>   void kvm_ap_deconfigure_matrix(struct kvm *kvm);
+>>>   
+>>> +int kvm_ap_enable_ie_mode(struct kvm *kvm);
+>>> +
+>>>   #endif /* _ASM_KVM_AP */
+>>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+>>> index a4c77d3..1eebdd6 100644
+>>> --- a/arch/s390/include/asm/kvm_host.h
+>>> +++ b/arch/s390/include/asm/kvm_host.h
+>>> @@ -186,6 +186,7 @@ struct kvm_s390_sie_block {
+>>>   #define ECA_AIV		0x00200000
+>>>   #define ECA_VX		0x00020000
+>>>   #define ECA_PROTEXCI	0x00002000
+>>> +#define ECA_APIE	0x00000008
+>>>   #define ECA_SII		0x00000001
+>>>   	__u32	eca;			/* 0x004c */
+>>>   #define ICPT_INST	0x04
+>>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>>> index bb29045..862e54b 100644
+>>> --- a/arch/s390/kvm/kvm-ap.c
+>>> +++ b/arch/s390/kvm/kvm-ap.c
+>>> @@ -307,3 +307,30 @@ void kvm_ap_deconfigure_matrix(struct kvm *kvm)
+>>>   	kvm_ap_clear_crycb_masks(kvm);
+>>>   }
+>>>   EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
+>>> +
+>>> +/**
+>>> + * kvm_ap_enable_ie_mode
+>>> + *
+>>> + * Enable interpretrive execution of AP instructions for the guest. When
+>>> + * enabled, AP instructions executed on the guest will be interpreted and
+>>> + * passed through to an AP installed on the host system.
+>>> + *
+>>> + * Returns 0 if interpretrive execution is enabled. Returns -EOPNOTSUPP
+>>> + * if AP facilities are not installed for the guest.
+>>> + *
+>>> + * @kvm: the guest's kvm structure
+>>> + */
+>>> +int kvm_ap_enable_ie_mode(struct kvm *kvm)
+>>> +{
+>>> +	int i;
+>>> +	struct kvm_vcpu *vcpu;
+>>> +
+>>> +	if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>>> +		return -EOPNOTSUPP;
+>>> +
+>>> +	kvm_for_each_vcpu(i, vcpu, kvm)
+>>> +		vcpu->arch.sie_block->eca |= ECA_APIE;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
+>>> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+>>> index 1b5621f..3142541 100644
+>>> --- a/arch/s390/kvm/kvm-s390.h
+>>> +++ b/arch/s390/kvm/kvm-s390.h
+>>> @@ -18,6 +18,7 @@
+>>>   #include <asm/facility.h>
+>>>   #include <asm/processor.h>
+>>>   #include <asm/sclp.h>
+>>> +#include <asm/ap.h>
+>>>   
+>>>   /* Transactional Memory Execution related macros */
+>>>   #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
+>>>
+>> And also, what about hot-plugged CPUs?
+> I haven't considered that, do you have any suggestions?
 
-Wouldn't it be better to check the mm_users count instead?
-{VM_}BUG_ON(atomic_read(&mm->mm_users));
+You should handle the KVM_S390_VM_CPU_FEAT_AP feature instead during
+kvm_arch_vcpu_setup(), independent of any configured AP devices.
 
-Relying on current->mm resetting works currently but this is quite a
-subtle dependency.
+This avoids the races I mentioned in regards to this series and also
+will handle hotplugged CPUs properly.
+
+If KVM_S390_VM_CPU_FEAT_AP is configured for a guest -> each CPU sets
+ECA_APIE during kvm_arch_vcpu_setup().
+
+
+(In the vSIE code, simply allow to set ECA_APIE in the shadow SCB in
+case KVM_S390_VM_CPU_FEAT_AP is enabled)
+
 -- 
-Michal Hocko
-SUSE Labs
+
+Thanks,
+
+David / dhildenb
