@@ -1,71 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967257AbeCAJ5f (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:57:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36297 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967092AbeCAJ5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:57:34 -0500
-Date: Thu, 1 Mar 2018 10:57:21 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/sun4i: add lvds mode_valid function
-Message-ID: <20180301095721.4iga7dcgg566j44m@flea>
-References: <1519840432-61489-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1519840432-61489-2-git-send-email-giulio.benetti@micronovasrl.com>
+        id S967318AbeCAJ6X (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:58:23 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37681 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967144AbeCAJ6S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:58:18 -0500
+Subject: Re: [PATCH V2 0/5] mmc: add stm32 sdmmc controller
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+References: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFpfPAaLRZLqpyi6RwC1-=7Ao=u+OmEfHaYBABzd_-BKAw@mail.gmail.com>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <8f328063-610f-a2e8-5f29-d3f0019384f2@st.com>
+Date: Thu, 1 Mar 2018 10:57:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vvs3fzmvisxtndlj"
-Content-Disposition: inline
-In-Reply-To: <1519840432-61489-2-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <CAPDyKFpfPAaLRZLqpyi6RwC1-=7Ao=u+OmEfHaYBABzd_-BKAw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ulf
 
---vvs3fzmvisxtndlj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/01/2018 10:06 AM, Ulf Hansson wrote:
+> Hi Ludovic,
+> 
+> On 28 February 2018 at 16:47, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> This patch serie adds support of stm32 SDMMC controller.
+>> stm32h7 is the first SoC to use stm32 SDMMC controller
+>> (previous SoC had pl180 controller).
+> 
+> I am a not convinced this isn't a new improved variant of the pl180.
+> According to register layout and the code you submitted in patch2,
+> there are great similarities to pl180 and the mmci driver.
 
-On Wed, Feb 28, 2018 at 06:53:52PM +0100, Giulio Benetti wrote:
->  static struct drm_connector_helper_funcs sun4i_lvds_con_helper_funcs =3D=
- {
->  	.get_modes	=3D sun4i_lvds_get_modes,
-> +	.mode_valid	=3D sun4i_lvds_mode_valid,
->  };
+In fact, ST designers which created stm32-sdmmc hardware block from 
+scratch are the same which have done the modifications on pl180 variant 
+(stm32 legacy f4, f7).
+So some registers or bits name seem identical (or strongly inspirited) 
+but the engine and features are different.
 
-This should be on the encoder, not the connector.
+You could find the datasheet of STM32H7x3 on:
+http://www.st.com/content/ccc/resource/technical/document/reference_manual/group0/c9/a3/76/fa/55/46/45/fa/DM00314099/files/DM00314099.pdf/jcr:content/translations/en.DM00314099.pdf
 
-Maxime
+Chapters: 55 Secure digital input/output MultiMediaCard interface
+(SDMMC)
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This hardware block has own roadmap and some features are already in the 
+pipe for next SoC.
 
---vvs3fzmvisxtndlj
-Content-Type: application/pgp-signature; name="signature.asc"
+For code design: like I also worked on pl180 in the past :-)
+my code is inspirited of this driver.
 
------BEGIN PGP SIGNATURE-----
+BR
+Ludo
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXzoAACgkQ0rTAlCFN
-r3SuYhAAhsQL2pw+oTcI1t4aNnH9HlJG5bKq+pSN3JfHC3pWr0qz2P00f3cG1YQX
-tkvMWalgR4xZlLYxcE2Lw7rtpM6cskyVtkV3a7pGLYofA43zxNzbEYDgsFufwelY
-/I4udeS65Zf9aujNl2HNz43dmGEw9tYVen3EDHRX8Jmrx9ZSEKHRwD+jl/76h+wo
-4Ikm8dqNF3ssTTxNFznS12qbtnK/9h5T0EOhKUS04nEu+96PInwIK6bI8KD4Wjd2
-L0+feJ+SaYw2aKrz0aD/N7qAyUWO3W+iHx2FEanj29KWVWyYYC3r+TGYLhTGCDwY
-sidvZEb9TmBDFtbAjLW7hHcI2Z7je1kXvR6vXVkULHQT7b+hcm+AOI3Oy0g2Vzr1
-GCaVj8HBQe1sKGLGongwCvyR8P4PalngzfFKSS5QYqSX5icuRUfbIhJMrXKmCARH
-lZatrXrw7/SUPVUL/KqbOscDSsJHoGxRQmAVOPLxSyQ8M/ERW1ccpzCtgrhvtu+I
-aj3dh1WehrBzQuyoFY8rXNBGieDZBAY7qwDLBTL3Xx2e6YwhOBsru8wUCFc+JI1U
-N8QF9QoOVXlooV8Lut89xNdFYXQokeHB69pnWqVNYbGvAqxFhdm/tncz85wSQcmt
-UTcuSmDb2mnWObbtd84Wb4O7blR1ncPzCvZpRatbEvNFpWpbcSw=
-=BkVM
------END PGP SIGNATURE-----
-
---vvs3fzmvisxtndlj--
+> 
+> In other words, it more sounds like an improved variant of pl180,
+> hence I am thinking that you should try to extend the mmci driver
+> instead. Could you please have a look at that, unless you can specify
+> more exactly why that isn't suitable?
+> 
+>>
+>> The SDMMC features include the following:
+>> -Full compliance with MultiMediaCard System Specification Version 4.51.
+>>   Card support for three different databus modes:
+>>   1-bit (default), 4-bit and 8-bit.
+>> -Full compliance with SD memory card specifications version 4.1.
+>>   SDR104 speed limited to maximum allowed I/O speed, SPI mode and
+>>   UHS-II mode not supported.
+>> -Full compliance with SDIO card specification version 4.0.
+>>
+>> change V2:
+>> -dt-bindings: properties name
+>> st,dir-output-high; st,neg-edge; st,use-ckin
+>> -dt-bindings: node example s/sdmmc@/mmc@/g
+>> -removes return of enable/disable_imask functions
+>> -adds dev_warn if clk divisor is too short.
+>> -replaces overprotection of n_elem by fail of dma_map_sg
+>> -removes shortcut host->base
+>> -Use device_property_present
+>>
+>> Ludovic Barre (5):
+>>    dt-bindings: mmc: document the stm32 sdmmc bindings
+>>    mmc: add stm32 sdmmc controller driver
+>>    ARM: dts: stm32: add sdmmc support for stm32h743
+>>    ARM: dts: stm32: add sdmmc1 support for stm32h743i-eval
+>>    ARM: configs: stm32: add mmc and ext2/3/4 support
+>>
+>>   .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     |  35 +
+>>   arch/arm/boot/dts/stm32h743-pinctrl.dtsi           |  26 +
+>>   arch/arm/boot/dts/stm32h743.dtsi                   |  26 +
+>>   arch/arm/boot/dts/stm32h743i-eval.dts              |  11 +
+>>   arch/arm/configs/stm32_defconfig                   |   4 +-
+>>   drivers/mmc/host/Kconfig                           |   8 +
+>>   drivers/mmc/host/Makefile                          |   1 +
+>>   drivers/mmc/host/stm32-sdmmc.c                     | 708 +++++++++++++++++++++
+>>   drivers/mmc/host/stm32-sdmmc.h                     | 220 +++++++
+>>   9 files changed, 1038 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+>>   create mode 100644 drivers/mmc/host/stm32-sdmmc.c
+>>   create mode 100644 drivers/mmc/host/stm32-sdmmc.h
+>>
+>> --
+>> 2.7.4
+>>
+> 
+> Kind regards
+> Uffe
+> 
