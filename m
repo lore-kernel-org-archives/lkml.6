@@ -1,71 +1,91 @@
-Return-Path: <kernel-hardening-return-12468-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuweeMD6AcIBfLKnENDIcXISqgz8JwEDJxopOAy+rLMwnB3rHliuAYV+o1aibzUsZSw+JKa
-ARC-Seal: i=1; a=rsa-sha256; t=1520873301; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519901168; cv=none;
         d=google.com; s=arc-20160816;
-        b=H8k2Z4VChk8yTfSlJzYswyIUsGFmJe0ytNdDpujvmCjpseg98D2oFJs3GeR5AseTFj
-         lkxgJ0dlw+CWViepQFCCzunenaisrARNLzTrkF6pKZkac4cKEnLq0HBdYREiLROAAqi6
-         YwpLx9uoiuL/I1fEO4YaZojoT6fE3jSOigmaNdiUQKjA6lMkLdwKDBPBcaHtDUfBSE2e
-         QRAyz2CvFh67uT01jNJ12X5Etan6h6eteusBlHx5WoxYDWKdPri71Pf8ADG1SkylegjU
-         LlVrjKU5pgxyAR1em37YOsthaqJ1qORrHiHjahYd+FQPM5ZW5QwQ6TA/VXYGEI6I3L2Y
-         Wmuw==
+        b=ZeJ51MpSzg0R3RkBkaUOM6T/6Lh++C1pW7/aXtIP8b10Go/rZw7D7Yn8RjK36JUh5f
+         ZpR4gEK7YQoIoChhuJ70+CnpsFz2r4C7HOhCtDO6Naz4P61VXZ41RtKCC9yP1V4z5RX+
+         LACC6hjwQhmsJYPOPnJJRgW6/FtJ8vJephJCY4f1uYNmPxf4nx2IGMSNUDuHIHQJw+rc
+         c4secexoiQfTkP22ZSPqQ9xUvoiuZ9+3zDmJtO+/BUrEhCDnzqlDbho8gfvJr6Aq9evo
+         qs4z4zDPX67U+dV92e+xODFdl5o56XCl9HL9wfXg/s8kHZ6hdekswmrOYVBC2BAnvI0Y
+         qGWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=l4p7bEM2VSNy0x85u0XmTE0AlyYZMetSh3xL+YVL3M0=;
-        b=zsTBEz4yYgm8RnXb0njgaquQDvN15fFAnvCAJWSemOcxRFaKgeLEQnXnJVJPJ2rPC8
-         5JpEU0xe7vE66HlhkXlfn3hmjXSgrxdlHAECrZmaEc8+gGfEOyGxnz3bXV7Wai/JFlMk
-         +7VApCl9fDmTgnie74nR/SWEIiiFNpJ+df9FwOlCUDIdJzAS8a3UAaIcmP9G4kh9H3NP
-         okgGAylZEA6c/YUslYVWOUJFzrztiX7yC+Pf0semafGhLsyhWJiCtiOoc8/Xd3vbqLzg
-         HxbjFF2cP+NvKn+P0465Vmi8uoTpMEtO+7ufeTDcHb/gU56kerZNK4omZoYzRnBAXTsO
-         NW+g==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=hlhSIIEK3Gvkj7YMAZRoPzXh3KZthq9+2VT4EpGLxgE=;
+        b=qu1mHdbwGcmNq/rhE++90/0aTyoIC4bwAD8mTFudjayhQp6othjhwnTfVDH8MAvRok
+         BJ409bthTAw8DDQmMd+2/CD3czmBaDBY8RMZEWsOk/WCwbe2LMtBRo56hT2w+b5nz7Bq
+         Cb736oRqlHZQjinCQMKyHnSWRcoG4f3Vi2ZRgQ0UjUTtQp9UoxGA3hQoJOJSG1ru0tq1
+         5BnkfCCi1QqhMcTFwpqYZ0PN9bqZ5PowHSh0a8p8PLfR52OPlbHyFStAQLr2PMJFkbut
+         Ob21eW+H9Oo7y75C1V1SMk+D4mwANJ7SEhvT656U7YQD5fcOnsHzXj2Gp2bTjJjRwnCE
+         dybw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RnsP55Am;
-       spf=pass (google.com: domain of kernel-hardening-return-12468-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12468-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TMjrgtGd;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RnsP55Am;
-       spf=pass (google.com: domain of kernel-hardening-return-12468-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12468-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TMjrgtGd;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELu33r44qO9yF2ltZfRCQTswDFmPusS/v6H/YNEnBHVUYDTq2IetokG3s+4tV/kLHj2vevEm4vvhRJFsRf9+35A=
 MIME-Version: 1.0
-In-Reply-To: <20180312.111432.849792523664957837.davem@davemloft.net>
-References: <1520802724-17509-1-git-send-email-s.mesoraca16@gmail.com> <20180312.111432.849792523664957837.davem@davemloft.net>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Mon, 12 Mar 2018 17:47:41 +0100
-Message-ID: <CAJHCu1Li=FWwxW2GdZGvm7RYbzkC5=dZRTu9tNukAMWMGwOCcw@mail.gmail.com>
-Subject: Re: [PATCH] net: llc: drop VLA in llc_sap_mcast()
-To: David Miller <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, netdev@vger.kernel.org,
-	paulmck@linux.vnet.ibm.com, rientjes@google.com, elena.reshetova@intel.com,
-	ishkamiel@gmail.com, keescook@chromium.org
+In-Reply-To: <1518032879-5844-1-git-send-email-sudipm.mukherjee@gmail.com>
+References: <1518032879-5844-1-git-send-email-sudipm.mukherjee@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 1 Mar 2018 12:46:07 +0200
+Message-ID: <CAHp75VdAEEjycTvxb=KLOsBESRfSjio1uDXfY=gR91TxCCOkVg@mail.gmail.com>
+Subject: Re: [PATCH 01/12] parport: ax88796: Delete an error message for a
+ failed memory allocation in parport_ax88796_probe()
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594677285477224056?=
-X-GMAIL-MSGID: =?utf-8?q?1594751242697287242?=
+X-GMAIL-THRID: =?utf-8?q?1591772848657448336?=
+X-GMAIL-MSGID: =?utf-8?q?1593731887268848462?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-12 16:14 GMT+01:00 David Miller <davem@davemloft.net>:
-> From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> Date: Sun, 11 Mar 2018 22:12:04 +0100
+On Wed, Feb 7, 2018 at 9:47 PM, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
 >
->> Avoid a VLA[1] by using a real constant expression instead of a variable.
->> The compiler should be able to optimize the original code and avoid using
->> an actual VLA. Anyway this change is useful because it will avoid a false
->> positive with -Wvla, it might also help the compiler generating better
->> code.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> Omit an extra message for a memory allocation failure in this function.
 >
-> Applied.
+> This issue was detected by using the Coccinelle software.
+>
 
-Thank you.
+Greg, just to be sure this series is under your scope.
+IIRC it had been sent during merge window, though it looks like your
+tty tree doesn't include it yet, while even older patches, which were
+sent as well during merge window, made it
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> ---
+>  drivers/parport/parport_ax88796.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/parport/parport_ax88796.c b/drivers/parport/parport_ax88796.c
+> index 2fc91ed..ef0aec4 100644
+> --- a/drivers/parport/parport_ax88796.c
+> +++ b/drivers/parport/parport_ax88796.c
+> @@ -281,10 +281,8 @@ static int parport_ax88796_probe(struct platform_device *pdev)
+>         int ret;
+>
+>         dd = kzalloc(sizeof(struct ax_drvdata), GFP_KERNEL);
+> -       if (dd == NULL) {
+> -               dev_err(_dev, "no memory for private data\n");
+> +       if (!dd)
+>                 return -ENOMEM;
+> -       }
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         if (res == NULL) {
+> --
+> 2.7.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
