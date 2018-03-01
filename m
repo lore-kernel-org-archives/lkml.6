@@ -1,78 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162065AbeCAVZz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:25:55 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1161816AbeCAVZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:25:46 -0500
-Date: Thu, 1 Mar 2018 16:25:42 -0500
-From: Jerome Glisse <jglisse@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-Message-ID: <20180301212541.GD6742@redhat.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
- <1519936195.4592.18.camel@au1.ibm.com>
- <20180301205548.GA6742@redhat.com>
- <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
- <20180301211036.GB6742@redhat.com>
- <8ed955f8-55c9-a2bd-1d58-90bf1dcfa055@deltatee.com>
+        id S1162053AbeCAV0Y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:26:24 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39455 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161816AbeCAV0W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:26:22 -0500
+X-Google-Smtp-Source: AG47ELuQ1Sv8imFBT2PNAmPrGeiM9r8WvoYzPMoGQ/OTKc/3iN4Iq90V60xYSpEz/10Mfq4J4QEd1Q==
+Date: Thu, 1 Mar 2018 15:26:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, briannorris@google.com, dtor@google.com,
+        dianders@google.com, devicetree@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 2/3] Input: gpio-keys - allow setting wakeup event
+ action in DT
+Message-ID: <20180301212620.bfrz6qjqsg4xkdaa@rob-hp-laptop>
+References: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
+ <20180210110907.5504-3-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8ed955f8-55c9-a2bd-1d58-90bf1dcfa055@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180210110907.5504-3-jeffy.chen@rock-chips.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 02:15:01PM -0700, Logan Gunthorpe wrote:
+On Sat, Feb 10, 2018 at 07:09:06PM +0800, Jeffy Chen wrote:
+> Allow specifying event actions to trigger wakeup when using the
+> gpio-keys input device as a wakeup source.
 > 
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> ---
 > 
-> On 01/03/18 02:10 PM, Jerome Glisse wrote:
-> > It seems people miss-understand HMM :( you do not have to use all of
-> > its features. If all you care about is having struct page then just
-> > use that for instance in your case only use those following 3 functions:
-> > 
-> > hmm_devmem_add() or hmm_devmem_add_resource() and hmm_devmem_remove()
-> > for cleanup.
+> Changes in v2:
+> Specify wakeup event action instead of irq trigger type as Brian
+> suggested.
 > 
-> To what benefit over just using devm_memremap_pages()? If I'm using the hmm
-> interface and disabling all the features, I don't see the point. We've also
-> cleaned up the devm_memremap_pages() interface to be more usefully generic
-> in such a way that I'd hope HMM starts using it too and gets rid of the code
-> duplication.
-> 
+>  Documentation/devicetree/bindings/input/gpio-keys.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-The first HMM variant find a hole and do not require a resource as input
-parameter. Beside that internaly for PCIE device memory devm_memremap_pages()
-does not do the right thing last time i check it always create a linear
-mapping of the range ie HMM call add_pages() while devm_memremap_pages()
-call arch_add_memory()
-
-When i upstreamed HMM, Dan didn't want me to touch devm_memremap_pages()
-to match my need. I am more than happy to modify devm_memremap_pages() to
-also handle HMM needs.
-
-Note that the intention of HMM is to be a middle layer between low level
-infrastructure and device driver. Idea is that such impedance layer should
-make it easier down the road to change how thing are handled down below
-without having to touch many device driver.
-
-Cheers,
-Jérôme
+Reviewed-by: Rob Herring <robh@kernel.org>
