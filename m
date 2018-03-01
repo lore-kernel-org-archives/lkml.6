@@ -1,75 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162981AbeCAXKW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:10:22 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30247 "EHLO mga04.intel.com"
+        id S1162968AbeCAXKT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:10:19 -0500
+Received: from ozlabs.org ([103.22.144.67]:53963 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162810AbeCAXKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:10:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
-   d="scan'208";a="208165079"
-From: kan.liang@linux.intel.com
-To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 13/14] perf test: Apply new perf_mmap__read_event() interface for task-exit
-Date: Thu,  1 Mar 2018 18:09:10 -0500
-Message-Id: <1519945751-37786-13-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.4.11
-In-Reply-To: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
-References: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
+        id S1162938AbeCAXKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:10:13 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 2 Mar 2018 10:09:27 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Karsten Graul <kgraul@linux.vnet.ibm.com>,
+        Ursula Braun <ubraun@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180302100927.0928653a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uFkRDOJnzDg0/xUaFdbOYIT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+--Sig_/uFkRDOJnzDg0/xUaFdbOYIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The perf test 'task-exit' still use the legacy interface.
+Hi all,
 
-No functional change.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/tests/task-exit.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+  net/smc/smc_core.c
 
-diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index 01b62b8..20884bc 100644
---- a/tools/perf/tests/task-exit.c
-+++ b/tools/perf/tests/task-exit.c
-@@ -47,6 +47,8 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 	char sbuf[STRERR_BUFSIZE];
- 	struct cpu_map *cpus;
- 	struct thread_map *threads;
-+	struct perf_mmap *md;
-+	u64 end, start;
- 
- 	signal(SIGCHLD, sig_handler);
- 
-@@ -110,13 +112,19 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 	perf_evlist__start_workload(evlist);
- 
- retry:
--	while ((event = perf_evlist__mmap_read(evlist, 0)) != NULL) {
-+	md = &evlist->mmap[0];
-+	if (perf_mmap__read_init(md, 0, &start, &end) < 0)
-+		goto out_init;
-+
-+	while ((event = perf_mmap__read_event(md, 0, &start, end)) != NULL) {
- 		if (event->header.type == PERF_RECORD_EXIT)
- 			nr_exit++;
- 
--		perf_evlist__mmap_consume(evlist, 0);
-+		perf_mmap__consume(md, 0);
- 	}
-+	perf_mmap__read_done(md);
- 
-+out_init:
- 	if (!exited || !nr_exit) {
- 		perf_evlist__poll(evlist, -1);
- 		goto retry;
--- 
-2.4.11
+between commit:
+
+  2be922f31606 ("net/smc: use link_id of server in confirm link reply")
+
+from the net tree and commit:
+
+  52bedf37bafe ("net/smc: process add/delete link messages")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uFkRDOJnzDg0/xUaFdbOYIT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqYiCcACgkQAVBC80lX
+0GwPZwgAnFA+0KcFtBpX+v7cG29U7YxF5GztEyC2RKFyOKYtJc5ND8qX2E/5mQuB
+R9diot6GDj+C3Yb82IifLsCF3OtvkJgFdiSqb94aPljqNrzZVHFbjEnMAhWb01IP
+IP7Ij0TqwyejX4dEAP9xg3i/hyMdpvrRolXehcnmHHv7/3SRX+vL+WQmczXucA97
+4cfdO5xiiIYfLk2ryniRLuPQSLGxggtThWug4oHCd3gjDAmtrjRFwUNLzGd5mWbO
+ePyIZe9jkaM3/llModmEwwH0G8nWIYK20RvSeXDDvpmIFVipYCrpk6MjSEkyVKn5
+skPcdrminFnVO05C/HPyiUH6K+umKw==
+=CCUm
+-----END PGP SIGNATURE-----
+
+--Sig_/uFkRDOJnzDg0/xUaFdbOYIT--
