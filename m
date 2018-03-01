@@ -1,147 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935745AbeCAHnK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 02:43:10 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13590 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934838AbeCAHnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:43:08 -0500
-X-UUID: 73f009aa7e7d4f8185e69e6780783b8f-20180301
-Message-ID: <1519890183.8089.114.camel@mtkswgap22>
-Subject: Re: [PATCH v2 4/4] pintcrl: support bias-disable of generic and
- special pins simultaneously
-From: Sean Wang <sean.wang@mediatek.com>
-To: Zhiyong Tao <zhiyong.tao@mediatek.com>
-CC: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <biao.huang@mediatek.com>, <erin.lo@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <hongzhou.yang@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-Date: Thu, 1 Mar 2018 15:43:03 +0800
-In-Reply-To: <1519876072.23198.17.camel@mhfsdcap03>
-References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1519634042-12063-5-git-send-email-zhiyong.tao@mediatek.com>
-         <1519803217.8089.31.camel@mtkswgap22> <1519804157.23198.9.camel@mhfsdcap03>
-         <1519876072.23198.17.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S935763AbeCAHnV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 02:43:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60328 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934838AbeCAHnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 02:43:19 -0500
+Date: Thu, 1 Mar 2018 08:43:15 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v1 1/4] ASoC: codecs: pcm179x: Add PCM1789 id
+Message-ID: <20180301084315.0811f712@dell-desktop.home>
+In-Reply-To: <20180227225140.6f9902b8@windsurf.lan>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-2-mylene.josserand@bootlin.com>
+        <20180227225140.6f9902b8@windsurf.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 11:47 +0800, Zhiyong Tao wrote:
-> On Wed, 2018-02-28 at 15:49 +0800, Zhiyong Tao wrote:
-> > On Wed, 2018-02-28 at 15:33 +0800, Sean Wang wrote:
-> > > On Mon, 2018-02-26 at 16:34 +0800, Zhiyong Tao wrote:
-> > > > For generic pins, parameter "arg" is 0 or 1.
-> > > > For special pins, bias-disable is set by R0R1,
-> > > > so we need transmited "00" to set bias-disable
-> > > > When we set "bias-disable" as high-z property,
-> > > > the parameter should be "MTK_PUPD_SET_R1R0_00".
-> > > > 
-> > > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > > ---
-> > > >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 13 +++++++++++--
-> > > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > index 3cf384f..e88ba04 100644
-> > > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > @@ -301,8 +301,17 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
-> > > >  	 * resistor bit, so we need this special handle.
-> > > >  	 */
-> > > >  	if (pctl->devdata->spec_pull_set) {
-> > > > -		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > > > -			pin, pctl->devdata->port_align, isup, arg);
-> > > > +		if (enable) {
-> > > > +			ret = pctl->devdata->spec_pull_set(
-> > > > +				mtk_get_regmap(pctl, pin), pin,
-> > > > +				pctl->devdata->port_align, isup,
-> > > > +				arg);
-> > > > +		} else {
-> > > > +			ret = pctl->devdata->spec_pull_set(
-> > > > +				mtk_get_regmap(pctl, pin), pin,
-> > > > +				pctl->devdata->port_align, isup,
-> > > > +				MTK_PUPD_SET_R1R0_00);
-> > > > +		}
-> > > 
-> > > 
-> > > it looks like you can use as following snippet with reusing original
-> > > logic and less effort on maintaining these common code (?)
-> > ==> Thanks for your suggestion very much. It seems better.
-> > I will change it in v3.
+Hello,
+
+Thank you for the review.
+
+On Tue, 27 Feb 2018 22:51:40 +0100
+Thomas Petazzoni <thomas.petazzoni@bootlin.com> wrote:
+
+> Hello,
 > 
-> ==>
->  Hi sean,
-> 
-> we try it in our site. we can't change like this.
-> Because we will check "arg" after setting "arg = MTK_PUPD_SET_R1R0_00;".
-> following snippet which check "arg" value is o or 1. If it not, which
-> will print error. so we can't change like this.
-> /* For generic pull config, default arg value should be 0 or 1. */
-> if (arg != 0 && arg != 1) {
-> 	dev_err(pctl->dev, "invalid pull-up argument %d on pin %d .\n", arg,
-> pin);
-> 	return -EINVAL;
-> }
-> 
-> Thanks.
-
-why not rewrite it with
-
-@@ -301,8 +301,10 @@ static int mtk_pconf_set_pull_select(struct
-mtk_pinctrl *pctl,
-         * resistor bit, so we need this special handle.
-         */
-        if (pctl->devdata->spec_pull_set) {
-+               unsigned int r1r0 = enable ? arg : MTK_PUPD_SET_R1R0_00;
-+
-                ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl,
-pin),
--                       pin, pctl->devdata->port_align, isup, arg);
-+                       pin, pctl->devdata->port_align, isup, r1r0);
-                if (!ret)
-                        return 0;
-        }
-
-and also I appeared to find another bug in the original code when I had
-a close look at the code path, but it's not related to the patch: 
-
-a special pin would still go through the code path to handle
-generic pin when the special pin uses an invalid argument.
-
-It looks like err-code from pctl->devdata->spec_pull_set cannot be
-used directly to judge its pin type. It's also possible to use it as an
-indication of the real failure during special pin is being set up.
-
-> > > 
-> > > 
-> > > if (pctl->devdata->spec_pull_set) {
-> > > 	+ if (!enable)
-> > > 	+ 	arg = MTK_PUPD_SET_R1R0_00;
-> > > 
-> > > 	ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > > 		pin, pctl->devdata->port_align, isup, arg);
-> > > 
-> > > 
-> > > Also, it's better to add more comments to such kind of special path for
-> > > allowing future SoCs to follow and extend more easily.
+> On Tue, 27 Feb 2018 22:24:30 +0100, Mylène Josserand wrote:
+> > To prepare the support for the PCM1789, add a new compatible
+> > and use the i2c_id to handle, later, the differences between
+> > these two DACs even if they are pretty similar.
 > > 
-> > ==> Thanks for your suggestion very much. I will add more comments here.
-> > > 
-> > > >  		if (!ret)
-> > > >  			return 0;
-> > > >  	}
-> > > 
-> > > 
-> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  Documentation/devicetree/bindings/sound/pcm179x.txt | 2 +-  
 > 
+> The DT binding change should be in a separate patch.
 > 
+> >  sound/soc/codecs/pcm179x-i2c.c                      | 6 ++++--
+> >  sound/soc/codecs/pcm179x.c                          | 3 ++-
+> >  sound/soc/codecs/pcm179x.h                          | 8 +++++++-  
+> 
+> And this should be together with the PCM1789 support patch. Otherwise
+> your series is not bisectable: if we apply only PATCH 1/4, the driver
+> supports the new compatible string, but it doesn't have the actual code
+> to handle PCM1789. Am I missing something here ?
+
+No, you are right, I will merge it with patch 02.
+
+> 
+> > -	return pcm179x_common_init(&client->dev, regmap);
+> > +	return pcm179x_common_init(&client->dev, regmap, id->driver_data);  
+> 
+> This can be done in a preparation patch.
+> 
+> >  }
+> >  
+> >  static const struct of_device_id pcm179x_of_match[] = {
+> >  	{ .compatible = "ti,pcm1792a", },
+> > +	{ .compatible = "ti,pcm1789", },
+> >  	{ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, pcm179x_of_match);
+> >  
+> >  static const struct i2c_device_id pcm179x_i2c_ids[] = {
+> > -	{ "pcm179x", 0 },
+> > +	{ "pcm179x", PCM179X },  
+> 
+> And also this addition.
+> 
+> > +	{ "pcm1789", PCM1789 },
+> >  	{ }
+> >  };
+> >  MODULE_DEVICE_TABLE(i2c, pcm179x_i2c_ids);
+> > diff --git a/sound/soc/codecs/pcm179x.c b/sound/soc/codecs/pcm179x.c
+> > index 4b311c06f97d..81cbf09319f6 100644
+> > --- a/sound/soc/codecs/pcm179x.c
+> > +++ b/sound/soc/codecs/pcm179x.c
+> > @@ -218,7 +218,8 @@ static const struct snd_soc_component_driver soc_component_dev_pcm179x = {
+> >  	.non_legacy_dai_naming	= 1,
+> >  };
+> >  
+> > -int pcm179x_common_init(struct device *dev, struct regmap *regmap)
+> > +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> > +			enum pcm17xx_type type)  
+> 
+> And this done.
+> 
+> >  {
+> >  	struct pcm179x_private *pcm179x;
+> >  
+> > diff --git a/sound/soc/codecs/pcm179x.h b/sound/soc/codecs/pcm179x.h
+> > index cf8681c9a373..8c08689e3b8b 100644
+> > --- a/sound/soc/codecs/pcm179x.h
+> > +++ b/sound/soc/codecs/pcm179x.h
+> > @@ -17,11 +17,17 @@
+> >  #ifndef __PCM179X_H__
+> >  #define __PCM179X_H__
+> >  
+> > +enum pcm17xx_type {
+> > +	PCM179X,  
+> 
+> And this one.
+> 
+> > +	PCM1789,
+> > +};
+> > +
+> >  #define PCM1792A_FORMATS (SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S24_LE | \
+> >  			  SNDRV_PCM_FMTBIT_S16_LE)
+> >  
+> >  extern const struct regmap_config pcm179x_regmap_config;
+> >  
+> > -int pcm179x_common_init(struct device *dev, struct regmap *regmap);
+> > +int pcm179x_common_init(struct device *dev, struct regmap *regmap,
+> > +			enum pcm17xx_type type);  
+> 
+> And this one. Just as a "preparation patch" to support multiple codecs
+> in the existing pcm179x.c driver.
+> 
+> Thanks!
+> 
+> Thomas
+
+Thanks,
+
+Mylène
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
