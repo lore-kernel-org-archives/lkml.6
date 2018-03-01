@@ -1,69 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966959AbeCAJ0L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:26:11 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39736 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966774AbeCAJ0G (ORCPT
+        id S966931AbeCAJ17 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:27:59 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38494 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966894AbeCAJYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:26:06 -0500
-X-Google-Smtp-Source: AG47ELsCcddGi087LifoDZKHYE3e39C8OVqEbIv0I+iPqD0egj6c15GbJSRdq+ejO3RTCxI44hY2qA==
-Date: Thu, 1 Mar 2018 14:55:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
-Subject: Re: [PATCH v3 01/10] dt-bindings: pinctrl: Add bindings for Actions
- S900 SoC
-Message-ID: <20180301092556.x4a5ohx3iccwsugw@linaro.org>
-References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
- <20180228181432.26847-2-manivannan.sadhasivam@linaro.org>
- <CACRpkdYG_aBJ0WME7NSOdv0pV5Vh_z8GVqQ+tUFnXGA7NGVMUg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYG_aBJ0WME7NSOdv0pV5Vh_z8GVqQ+tUFnXGA7NGVMUg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Thu, 1 Mar 2018 04:24:36 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: kishon@ti.com, heiko@sntech.de
+Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
+        vicencb@gmail.com, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/6] phy: rockchip-typec: fall back to working in host-mode if extcon is missing.
+Date: Thu,  1 Mar 2018 10:24:15 +0100
+Message-Id: <20180301092420.1191-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180301092420.1191-1-enric.balletbo@collabora.com>
+References: <20180301092420.1191-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-On Thu, Mar 01, 2018 at 10:20:29AM +0100, Linus Walleij wrote:
-> On Wed, Feb 28, 2018 at 7:14 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> > Add pinctrl bindings for Actions Semi S900 SoC
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> The previous (v2) version had Rob's Review tag, did you just forget
-> to add it or has something changed?
-> 
+Right now the rockchip typec-phy does fail probing when no extcon is
+detected. Some boards get the cable-state via the extcon interface and
+have this supported, other boards seem to use the fusb302 chip or
+another but the driver currently does not seem to utilize the extcon
+interface to report the cable-state. That's required to detect
+cable-state changes but a missing extcon shouldn't fail to probe,
+instead, should just fall back to working in host-mode if it cannot get
+the extcon.
 
-My bad. Slipped through the cracks.
+Fixes: c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port support for rk3399")
+Reported-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-> If nothing is changed I can add his tag when applying.
->
+ drivers/phy/rockchip/phy-rockchip-typec.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I will send out a new version of the whole series, incorporating Andy's
-pinctrl driver review.
-
-Also, FYI this pacthseries depends on Clock driver patchset I have submitted
-earlier. So far no reply from Stephen yet. He said that he is working on setting
-up his new environment and will begin reviewing shortly.
-
-Thanks,
-Mani 
-> Yours,
-> Linus Walleij
+diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
+index 7492c8978217..3741afab5cd2 100644
+--- a/drivers/phy/rockchip/phy-rockchip-typec.c
++++ b/drivers/phy/rockchip/phy-rockchip-typec.c
+@@ -782,6 +782,9 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
+ 	u8 mode;
+ 	int ret;
+ 
++	if (!edev)
++		return MODE_DFP_USB;
++
+ 	ufp = extcon_get_state(edev, EXTCON_USB);
+ 	dp = extcon_get_state(edev, EXTCON_DISP_DP);
+ 
+@@ -1115,9 +1118,9 @@ static int rockchip_typec_phy_probe(struct platform_device *pdev)
+ 
+ 	tcphy->extcon = extcon_get_edev_by_phandle(dev, 0);
+ 	if (IS_ERR(tcphy->extcon)) {
+-		if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
+-			dev_err(dev, "Invalid or missing extcon\n");
+-		return PTR_ERR(tcphy->extcon);
++		if (PTR_ERR(tcphy->extcon) == -EPROBE_DEFER)
++			return PTR_ERR(tcphy->extcon);
++		tcphy->extcon = NULL;
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-- 
+2.16.1
