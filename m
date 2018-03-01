@@ -1,123 +1,364 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519890076; cv=none;
-        d=google.com; s=arc-20160816;
-        b=abD+lintrX48jii0ei4h/VbN89zkeW+ua15Z0eWo7jwiNRGLQOI0IVn7SRqAV5CC/s
-         7we8H9Wi9MHNtHo/Co4Rurpph+HPvgfEH3fxTPFOBucQ9VbcAyvqVc8Fk/2z8h1KgTDo
-         6Nb/QuQpWfeVE6U6IhG4Lf8+7Bbezz1T7aHgv6Ly2tTz3eBcrn0puJyV7w0Wc0Zay3wC
-         7tAT+hOplAeeJPZne7+qylQ4PWDdgO0AXRTVbavxQRm9EtHbavlg/hyOelRp4P3xXaKj
-         amzJ40Ad1xkJoyN2HhIx3Vc6URKPFAcDGGoy5Vw5Tcu1QS0rnP6twcgiAN0wtbw5Xv+o
-         H/Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=rR+yhOTfmfndku+4+ZVkjfUdjmECR4VJcmO9ozhINfk=;
-        b=MzsvYAc7uBQL0JW06icG0zEFOOtYINKRtjxj7cYAKsv3TAyOt5THyRGOYUm20IrDU8
-         XIQ0mXzkciwglbbvRwenzMfbq+SReKsd9pqLSKW2mzvFW7aziO2bLMy9rL8Muenk538P
-         HN6Uwpvg1zUWDPkalOPyy5iLQj+8CX1ZM8E5NvYsHMknE433KHSYl+ZwirjpRoUiUViP
-         9XbK+iW6zgVbRFT4dzLBlISFJoMcIaAK5cdLqLVKExCyPjrFJZ1exGkbXcDIY4NUZpfG
-         rxSaHDxj+VRiqTqaT8D8OB1A/97YnWjTSMw9aPJcCQm0DUuuRMmc7uNidTycbaIHGgp/
-         owng==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=JLu9igWK;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=JLu9igWK;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELuW3LmwxXZRwT2i4IE7QIvNJAoeejjtXn5BwDXqG0o8Cz/ylB2iJ1qOkZX5a9uWDVM4hiOYTt8VjMoqCBemb5g=
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdad4ZYa27Xd73QAsxvhJmBZnFRhDk-10yiitKYSrvxzWQ@mail.gmail.com>
-References: <7fc26df245d56fd2014532b56e67630e76e2c513.1518316248.git.baolin.wang@linaro.org>
- <20180219181159.tzbhhvbvpc236qma@rob-hp-laptop> <CAMz4kuL-VZ8XY5-ZLWfXLVXWb4zmxD-aaLQ-ka9M8V83y1B7Ag@mail.gmail.com>
- <CAMz4ku+0uzSDiM3AOnDcnVDqAjoV47nVAK+yQAw2CzgO6Yw-Bg@mail.gmail.com> <CACRpkdad4ZYa27Xd73QAsxvhJmBZnFRhDk-10yiitKYSrvxzWQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 1 Mar 2018 15:41:15 +0800
-Message-ID: <CAMz4ku+g38dn2n+_VC96uXOjaxpb+zrWPXnN-rcPucZQpwDi5g@mail.gmail.com>
-Subject: Re: [PATCH v2] Input: gpio_keys: Add level trigger support for GPIO keys
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Greg KH <gregkh@linuxfoundation.org>,
-	stephen lu <lumotuwe@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	Joseph Lo <josephl@nvidia.com>, Kate Stewart <kstewart@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Linux Input <linux-input@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1853510-1519876542-2-9830719679885083067
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='74.125.83.68', Host='mail-pg0-f68.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: leechu729@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519876541; b=aafje6zKGPecGItl+Y9RUWdfzGovUR870522QbD8RvrVjtt
+    V8/Y0+JnBBEqsjR3GBE2WFsqbQGa9nk+6YjcTTW4agTDl4A0MIGL5kixVZF9RC5X
+    47J0QN3FSgMFJDb+I5eITvsj4mpzt/beP0FW5K9tzww9R8ljksyKooRI4PPaHF8s
+    03vPafGcuiVwAHZOUEoJOLiQ/GfOmY8qB9AoG9Z3CLais12x/+Gr+yW1mOV9XTXB
+    ywjZmbsqIquOYmdgk1+xfM0bQT3K92Ue94PkWB4o+yUd7Y3wZoo7vIGMTQkLqt1H
+    FciURdRbNh7ieI9VCM2RsKOTEt3ORfJPjvimgzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1519876541; bh=crMAXzrYUQegDbtcGYmx462kEfaXL60CD+vT0C
+    MLQIc=; b=I/8XXrZxCxB/veYHMl7Lo0rJPm99LxyYIuXx/EvfAPDjobVkZXqTUK
+    ZZD0hwXkZbwvTf8wIDZ4jP34FRQ0bOPbvr/FxawgwmftSX/j+D1EJ4Ka0SOGjN15
+    pXSx93e/GFeEIMSakf9bX48TKhUhYvkPxx13Q8dhzL/1O6uKsMnvP4mhz5/eQO9U
+    doRHZOROARxpBZyhAWvhSo4qZqPSl1GTsc7Qgzm75+6PVTfuhoOAJwpB9u1BgvpQ
+    8QXcDx7WXQmJ9U2E1ll+3m/NZHnO1Y7GTVrTJFpZ/DYIkNzLp4vPj+TEueM58kxU
+    PQwN7UnNtxPTb8fgMMMLyOjtzS0wEMQg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qnq9v8CH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jn9XpT38;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Qnq9v8CH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jn9XpT38;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELuFQ3oJ4Hj0RxGdQoWOrYD2t1Kv5tVFI0qtZXO0PVAO/XcPSKOE6kaBPGIo0PkJbMEN5JN8Yw==
+From: ShuFan Lee <leechu729@gmail.com>
+To: heikki.krogerus@linux.intel.com,
+	linux@roeck-us.net,
+	greg@kroah.com
+Cc: shufan_lee@richtek.com,
+	cy_huang@richtek.com,
+	jun.li@nxp.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v5] staging: typec: handle vendor defined part and modify drp toggling flow
+Date: Thu,  1 Mar 2018 11:55:29 +0800
+Message-Id: <1519876529-14015-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591902511604872416?=
-X-GMAIL-MSGID: =?utf-8?q?1593720256874762309?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 28 February 2018 at 20:53, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Feb 26, 2018 at 7:24 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> On 21 February 2018 at 19:35, Baolin Wang <baolin.wang@linaro.org> wrote:
->>> On 20 February 2018 at 02:11, Rob Herring <robh@kernel.org> wrote:
->
->>>>> diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
->>>>> index a949404..e3104bd 100644
->>>>> --- a/Documentation/devicetree/bindings/input/gpio-keys.txt
->>>>> +++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
->>>>> @@ -29,6 +29,8 @@ Optional subnode-properties:
->>>>>       - linux,can-disable: Boolean, indicates that button is connected
->>>>>         to dedicated (not shared) interrupt which can be disabled to
->>>>>         suppress events from the button.
->>>>> +     - gpio-key,level-trigger: Boolean, indicates that button's interrupt
->>>>> +       type is level trigger. Otherwise it is edge trigger as default.
->>>>
->>>> No. Just use 'interrupts' instead of 'gpios' and specify the trigger
->>>> type. Or put both if you need to read the state.
->>>
->>> Okay, so something as below to get the level type from the
->>> 'interrupts' property.
->>> if (fwnode_property_read_u32(child, "interrupts", &button->level_type))
->>>         button->level_type = IRQ_TYPE_NONE;
->>
->> After more thinking, if we use 'interrupts' to indicate the irq type
->> for this case, we cannot specify the irq number due to the irq number
->> should be get by gpiod_to_irq(). So the device nodes look weird, since
->> we should define the index of the interrupt controller instead of the
->> irq type if the #interrupt_cells is set to 1 according to the
->> interrupt controller documentation. What do you think about this?
->
-> I think what you're ultimately seeing is a bad fit between this
-> GPIO/irq-controller and the Linux gpio keys driver, it doesn't
-> have very much to do with the device tree bindings.
->
-> What I think is appropriate is to try to create a new input driver
-> in Linux that just takes an interrupt, not a GPIO, and let the
-> GPIO chip only act as an irqchip for this.
->
-> This avoid the complicated step of converting a GPIO to an
-> interrupt in order to use it, when all you really want to
-> do is use an interrupt, you don't really care about the
-> GPIO here, correct?
+From: ShuFan Lee <shufan_lee@richtek.com>
 
-Sometimes we should set the GPIO debounce, and read GPIO value to
-report the event, so I think we can not remove GPIO.
+Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and export tcpci_irq.
+More operations can be extended in tcpci_data if needed.
+According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+TCPC shall not start DRP toggling until subsequently the TCPM
+writes to the COMMAND register to start DRP toggling.
+DRP toggling flow is chagned as following:
+  - Write DRP = 0 & Rd/Rd
+  - Write DRP = 1
+  - Set LOOK4CONNECTION command
 
->
-> So we would create
-> drivers/input/keyboard/interrupt_keys.c
-> however I suspect a bunch of code would need to be shared
-> with gpio_keys.c so maybe it is necessary to break out the
-> parts of gpio_keys.c into its own helper file.
->
-> Or maybe even have the
-> pure interrupt handling as part of gpio_keys.c, i.e. if the
-> driver can't find any associated GPIO, it goes on to
-> check if there is an interrupt assigned to the device node
-> and use that directly instead.
->
-> Either way, Dmitry must be involved.
->
-> Yours,
-> Linus Walleij
+Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
+---
+ drivers/staging/typec/tcpci.c | 127 +++++++++++++++++++++++++++++++++---------
+ drivers/staging/typec/tcpci.h |  13 +++++
+ 2 files changed, 113 insertions(+), 27 deletions(-)
 
+ patch changelogs between v1 & v2
+ - Remove unnecessary i2c_client in the structure of tcpci
+ - Rename structure of tcpci_vendor_data to tcpci_data
+ - Not exporting tcpci read/write wrappers but register i2c regmap in glue driver
+ - Add set_vconn ops in tcpci_data
+   (It is necessary for RT1711H to enable/disable idle mode before disabling/enabling vconn)
+ - Export tcpci_irq so that vendor can call it in their own IRQ handler
 
+ patch changelogs between v2 & v3
+ - Change the return type of tcpci_irq from int to irqreturn_t
 
+ patch changelogs between v3 & v4
+ - Directly return regmap_write at the end of drp_toggling function
+ - Because tcpci_irq is called in _tcpci_irq, move _tcpci_irq to the place after tcpci_irq
+
+ patch changelogs between v4 & v5
+ - Add a space between my first & last name, from ShuFanLee to ShuFan Lee.
+
+diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+index 9bd4412..5bafcc4 100644
+--- a/drivers/staging/typec/tcpci.c
++++ b/drivers/staging/typec/tcpci.c
+@@ -21,7 +21,6 @@
+ 
+ struct tcpci {
+ 	struct device *dev;
+-	struct i2c_client *client;
+ 
+ 	struct tcpm_port *port;
+ 
+@@ -30,6 +29,12 @@ struct tcpci {
+ 	bool controls_vbus;
+ 
+ 	struct tcpc_dev tcpc;
++	struct tcpci_data *data;
++};
++
++struct tcpci_chip {
++	struct tcpci *tcpci;
++	struct tcpci_data data;
+ };
+ 
+ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+@@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+ 	return container_of(tcpc, struct tcpci, tcpc);
+ }
+ 
+-static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+-			u16 *val)
++static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
+ {
+ 	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+ }
+@@ -98,8 +102,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 				    enum typec_cc_status cc)
+ {
++	int ret;
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+-	unsigned int reg = TCPC_ROLE_CTRL_DRP;
++	unsigned int reg = (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
+ 
+ 	switch (cc) {
+ 	default:
+@@ -117,7 +123,16 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 		break;
+ 	}
+ 
+-	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	usleep_range(500, 1000);
++	reg |= TCPC_ROLE_CTRL_DRP;
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	return regmap_write(tcpci->regmap, TCPC_COMMAND,
++			    TCPC_CMD_LOOK4CONNECTION);
+ }
+ 
+ static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+@@ -178,6 +193,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc, bool enable)
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+ 	int ret;
+ 
++	/* Handle vendor set vconn */
++	if (tcpci->data) {
++		if (tcpci->data->set_vconn) {
++			ret = tcpci->data->set_vconn(tcpci, tcpci->data,
++						     enable);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	ret = regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+ 			   enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+ 	if (ret < 0)
+@@ -323,6 +348,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	if (time_after(jiffies, timeout))
+ 		return -ETIMEDOUT;
+ 
++	/* Handle vendor init */
++	if (tcpci->data) {
++		if (tcpci->data->init) {
++			ret = tcpci->data->init(tcpci, tcpci->data);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	/* Clear all events */
+ 	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+ 	if (ret < 0)
+@@ -344,9 +378,8 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+ }
+ 
+-static irqreturn_t tcpci_irq(int irq, void *dev_id)
++irqreturn_t tcpci_irq(struct tcpci *tcpci)
+ {
+-	struct tcpci *tcpci = dev_id;
+ 	u16 status;
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
+@@ -412,6 +445,14 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 
+ 	return IRQ_HANDLED;
+ }
++EXPORT_SYMBOL_GPL(tcpci_irq);
++
++static irqreturn_t _tcpci_irq(int irq, void *dev_id)
++{
++	struct tcpci *tcpci = dev_id;
++
++	return tcpci_irq(tcpci);
++}
+ 
+ static const struct regmap_config tcpci_regmap_config = {
+ 	.reg_bits = 8,
+@@ -435,22 +476,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+ 	return 0;
+ }
+ 
+-static int tcpci_probe(struct i2c_client *client,
+-		       const struct i2c_device_id *i2c_id)
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data)
+ {
+ 	struct tcpci *tcpci;
+ 	int err;
+ 
+-	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
++	tcpci = devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+ 	if (!tcpci)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+-	tcpci->client = client;
+-	tcpci->dev = &client->dev;
+-	i2c_set_clientdata(client, tcpci);
+-	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+-	if (IS_ERR(tcpci->regmap))
+-		return PTR_ERR(tcpci->regmap);
++	tcpci->dev = dev;
++	tcpci->data = data;
++	tcpci->regmap = data->regmap;
+ 
+ 	tcpci->tcpc.init = tcpci_init;
+ 	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+@@ -467,27 +504,63 @@ static int tcpci_probe(struct i2c_client *client,
+ 
+ 	err = tcpci_parse_config(tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
++
++	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
++	if (PTR_ERR_OR_ZERO(tcpci->port))
++		return ERR_CAST(tcpci->port);
+ 
+-	/* Disable chip interrupts */
+-	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
++	return tcpci;
++}
++EXPORT_SYMBOL_GPL(tcpci_register_port);
++
++void tcpci_unregister_port(struct tcpci *tcpci)
++{
++	tcpm_unregister_port(tcpci->port);
++}
++EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+ 
+-	err = devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+-					tcpci_irq,
++static int tcpci_probe(struct i2c_client *client,
++		       const struct i2c_device_id *i2c_id)
++{
++	struct tcpci_chip *chip;
++	int err;
++	u16 val = 0;
++
++	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->data.regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
++	if (IS_ERR(chip->data.regmap))
++		return PTR_ERR(chip->data.regmap);
++
++	/* Disable chip interrupts before requesting irq */
++	err = regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val,
++			       sizeof(u16));
++	if (err < 0)
++		return err;
++
++	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					_tcpci_irq,
+ 					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+-					dev_name(tcpci->dev), tcpci);
++					dev_name(&client->dev), chip);
+ 	if (err < 0)
+ 		return err;
+ 
+-	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+-	return PTR_ERR_OR_ZERO(tcpci->port);
++	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
++	if (PTR_ERR_OR_ZERO(chip->tcpci))
++		return PTR_ERR(chip->tcpci);
++
++	i2c_set_clientdata(client, chip);
++	return 0;
+ }
+ 
+ static int tcpci_remove(struct i2c_client *client)
+ {
+-	struct tcpci *tcpci = i2c_get_clientdata(client);
++	struct tcpci_chip *chip = i2c_get_clientdata(client);
+ 
+-	tcpm_unregister_port(tcpci->port);
++	tcpci_unregister_port(chip->tcpci);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+index fdfb06c..40025b2 100644
+--- a/drivers/staging/typec/tcpci.h
++++ b/drivers/staging/typec/tcpci.h
+@@ -59,6 +59,7 @@
+ #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+ 
+ #define TCPC_CC_STATUS			0x1d
++#define TCPC_CC_STATUS_DRPRST		BIT(5)
+ #define TCPC_CC_STATUS_TERM		BIT(4)
+ #define TCPC_CC_STATUS_CC2_SHIFT	2
+ #define TCPC_CC_STATUS_CC2_MASK		0x3
+@@ -121,4 +122,16 @@
+ #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+ #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+ 
++struct tcpci;
++struct tcpci_data {
++	struct regmap *regmap;
++	int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
++	int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
++			 bool enable);
++};
++
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
++void tcpci_unregister_port(struct tcpci *tcpci);
++irqreturn_t tcpci_irq(struct tcpci *tcpci);
++
+ #endif /* __LINUX_USB_TCPCI_H */
 -- 
-Baolin.wang
-Best Regards
+1.9.1
