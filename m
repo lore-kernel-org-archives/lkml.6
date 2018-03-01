@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033144AbeCAQjh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:39:37 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51523 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033113AbeCAQjb (ORCPT
+        id S1033188AbeCAQjv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:39:51 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33986 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032948AbeCAQjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:39:31 -0500
-X-Google-Smtp-Source: AG47ELuBP8gOtraCCc/N32EfmS8bFx+uWMfx/aMl4p67BKNkZR2nPIK0RjguCh7PBdfgz4cEYboolw==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        jassisinghbrar@gmail.com, andy.shevchenko@gmail.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 1/2] dt-bindings: i2c: add binding for Socionext SynQuacer I2C
-Date: Thu,  1 Mar 2018 16:38:14 +0000
-Message-Id: <20180301163815.30595-2-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301163815.30595-1-ard.biesheuvel@linaro.org>
-References: <20180301163815.30595-1-ard.biesheuvel@linaro.org>
+        Thu, 1 Mar 2018 11:39:35 -0500
+X-Google-Smtp-Source: AG47ELv49sBpGT8F2KIlKxosULtbxJpiuUQ/9LYPg6PyrDdIAtflLUPF9+X4nrkr3YQoFx+d+iCxtQ==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, linux-arch@vger.kernel.org, greentime@andestech.com,
+        green.hu@gmail.com, jesper.nilsson@axis.com, starvik@axis.com
+Subject: [PATCH] cris: add ioremap_nocache declaration before include asm-generic/io.h.
+Date: Fri,  2 Mar 2018 00:38:38 +0800
+Message-Id: <20180301163838.10818-1-greentime@andestech.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a binding for the I2C controller that can be found in the Socionext
-SynQuacer SoC.
+A future commit for the nds32 architecture bootstrap("asm-generic/io.h:
+move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef
+CONFIG_MMU") will move the ioremap_nocache out of the CONFIG_MMU ifdef.
+This means that in order to suppress re-definition errors we need to
+setup #define's before importing asm-generic/io.h.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Greentime Hu <greentime@andestech.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-synquacer.txt | 29 ++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ arch/cris/include/asm/io.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
-new file mode 100644
-index 000000000000..72f4a2f0fedc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
-@@ -0,0 +1,29 @@
-+Socionext SynQuacer I2C
-+
-+Required properties:
-+- compatible      : Must be "socionext,synquacer-i2c"
-+- reg             : Offset and length of the register set for the device
-+- interrupts      : A single interrupt specifier
-+- #address-cells  : Must be <1>;
-+- #size-cells     : Must be <0>;
-+- clock-names     : Must contain "pclk".
-+- clocks          : Must contain an entry for each name in clock-names.
-+                    (See the common clock bindings.)
-+
-+Optional properties:
-+- clock-frequency : Desired I2C bus clock frequency in Hz. As only Normal and
-+                    Fast modes are supported, possible values are 100000 and
-+                    400000.
-+
-+Example :
-+
-+    i2c@51210000 {
-+        compatible = "socionext,synquacer-i2c";
-+        reg = <0x51210000 0x1000>;
-+        interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clock-names = "pclk";
-+        clocks = <&clk_i2c>;
-+        clock-frequency = <400000>;
-+    };
+diff --git a/arch/cris/include/asm/io.h b/arch/cris/include/asm/io.h
+index c92712d30f54..3867db75c314 100644
+--- a/arch/cris/include/asm/io.h
++++ b/arch/cris/include/asm/io.h
+@@ -20,6 +20,7 @@ static inline void __iomem * ioremap (unsigned long offset, unsigned long size)
+ extern void iounmap(volatile void * __iomem addr);
+ 
+ extern void __iomem * ioremap_nocache(unsigned long offset, unsigned long size);
++#define ioremap_nocache ioremap_nocache
+ 
+ #include <asm-generic/io.h>
+ 
 -- 
-2.11.0
+I am picking up the patch in the nds32 tree that caused the regression.
+Subject: [linux-next:master 3188/3885] include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   eced78aae9cba83072d5335fbc9b2282a9270469
+commit: b3ada9d0ce8d286c8bbbb02fdbddec5036242b42 [3188/3885] asm-generic/io.h: move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef CONFIG_MMU
+config: cris-etrax-100lx_v2_defconfig (attached as .config)
+compiler: cris-linux-gcc (GCC) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout b3ada9d0ce8d286c8bbbb02fdbddec5036242b42
+        # save the attached .config to linux build tree
+        make.cross ARCH=cris
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/cris/include/asm/io.h:24:0,
+                    from include/linux/io.h:25,
+                    from include/linux/irq.h:25,
+                    from include/asm-generic/hardirq.h:13,
+                    from ./arch/cris/include/generated/asm/hardirq.h:1,
+                    from include/linux/hardirq.h:9,
+                    from include/linux/trace_events.h:9,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:82,
+                    from init/main.c:20:
+>> include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
+    void __iomem *ioremap(phys_addr_t phys_addr, size_t size);
+                  ^~~~~~~
